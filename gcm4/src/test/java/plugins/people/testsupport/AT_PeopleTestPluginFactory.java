@@ -17,6 +17,7 @@ import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestSimulation;
 import plugins.people.PeoplePluginData;
+import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonId;
 import plugins.stochastics.StochasticsPluginData;
 import plugins.stochastics.testsupport.TestRandomGeneratorId;
@@ -29,7 +30,8 @@ public class AT_PeopleTestPluginFactory {
 	private Consumer<ActorContext> factoryConsumer(MutableBoolean executed) {
 		return (c) -> {
 
-			// TODO: add checks
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			assertEquals(0, peopleDataManager.getPeople().size());
 
 			executed.setValue(true);
 		};

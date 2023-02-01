@@ -5,10 +5,12 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
 
+import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import nucleus.ActorContext;
@@ -18,12 +20,16 @@ import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestSimulation;
 import plugins.materials.MaterialsPluginData;
+import plugins.materials.support.StageId;
 import plugins.people.PeoplePluginData;
 import plugins.people.support.PersonId;
 import plugins.regions.RegionsPluginData;
+import plugins.regions.testsupport.TestRegionId;
+import plugins.regions.testsupport.TestRegionPropertyId;
 import plugins.resources.ResourcesPluginData;
 import plugins.stochastics.StochasticsPluginData;
 import plugins.stochastics.testsupport.TestRandomGeneratorId;
+import plugins.util.properties.TimeTrackingPolicy;
 import tools.annotations.UnitTestMethod;
 import util.random.RandomGeneratorProvider;
 import util.wrappers.MutableBoolean;
@@ -75,7 +81,7 @@ public class AT_MaterialsTestPluginFactory {
 		Class<?> classRef = expectedPluginData.getClass();
 		plugins.forEach((plugin) -> {
 			Set<PluginData> pluginDatas = plugin.getPluginDatas();
-			if(pluginDatas.size() > 0) {
+			if (pluginDatas.size() > 0) {
 				PluginData pluginData = pluginDatas.toArray(new PluginData[0])[0];
 				if (classRef.isAssignableFrom(pluginData.getClass())) {
 					assertEquals(expectedPluginData, classRef.cast(pluginData));
@@ -90,11 +96,41 @@ public class AT_MaterialsTestPluginFactory {
 	@UnitTestMethod(target = MaterialsTestPluginFactory.Factory.class, name = "setMaterialsPluginData", args = {
 			MaterialsPluginData.class })
 	public void testSetMaterialsPluginData() {
-		MaterialsPluginData.Builder builder = MaterialsPluginData.builder();
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(4328791012645031581L);
+		MaterialsPluginData.Builder materialsBuilder = MaterialsPluginData.builder();
 
-		// TODO: add stuff to builder
+		for (TestMaterialId testMaterialId : TestMaterialId.values()) {
+			materialsBuilder.addMaterial(testMaterialId);
+		}
 
-		MaterialsPluginData materialsPluginData = builder.build();
+		for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
+			materialsBuilder.addMaterialsProducerId(testMaterialsProducerId);
+		}
+
+		for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId
+				.values()) {
+			materialsBuilder.defineMaterialsProducerProperty(testMaterialsProducerPropertyId,
+					testMaterialsProducerPropertyId.getPropertyDefinition());
+		}
+
+		for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId
+				.getPropertiesWithoutDefaultValues()) {
+			for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
+				Object randomPropertyValue = testMaterialsProducerPropertyId.getRandomPropertyValue(randomGenerator);
+				materialsBuilder.setMaterialsProducerPropertyValue(testMaterialsProducerId,
+						testMaterialsProducerPropertyId, randomPropertyValue);
+			}
+		}
+
+		for (TestMaterialId testMaterialId : TestMaterialId.values()) {
+			Set<TestBatchPropertyId> testBatchPropertyIds = TestBatchPropertyId.getTestBatchPropertyIds(testMaterialId);
+			for (TestBatchPropertyId testBatchPropertyId : testBatchPropertyIds) {
+				materialsBuilder.defineBatchProperty(testMaterialId, testBatchPropertyId,
+						testBatchPropertyId.getPropertyDefinition());
+			}
+		}
+
+		MaterialsPluginData materialsPluginData = materialsBuilder.build();
 
 		List<Plugin> plugins = MaterialsTestPluginFactory.factory(0, 0, 0, 0, t -> {
 		}).setMaterialsPluginData(materialsPluginData).getPlugins();
@@ -124,11 +160,42 @@ public class AT_MaterialsTestPluginFactory {
 	@UnitTestMethod(target = MaterialsTestPluginFactory.Factory.class, name = "setRegionsPluginData", args = {
 			RegionsPluginData.class })
 	public void testSetRegionsPluginData() {
-		RegionsPluginData.Builder builder = RegionsPluginData.builder();
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(968101337385656117L);
+		int initialPopulation = 30;
+		List<PersonId> people = new ArrayList<>();
+		for (int i = 0; i < initialPopulation; i++) {
+			people.add(new PersonId(i));
+		}
 
-		// TODO: add stuff to builder
+		// add the region plugin
+		RegionsPluginData.Builder regionPluginBuilder = RegionsPluginData.builder();
+		for (TestRegionId regionId : TestRegionId.values()) {
+			regionPluginBuilder.addRegion(regionId);
+		}
 
-		RegionsPluginData regionsPluginData = builder.build();
+		for (TestRegionPropertyId testRegionPropertyId : TestRegionPropertyId.values()) {
+			regionPluginBuilder.defineRegionProperty(testRegionPropertyId,
+					testRegionPropertyId.getPropertyDefinition());
+		}
+
+		for (TestRegionId regionId : TestRegionId.values()) {
+			for (TestRegionPropertyId testRegionPropertyId : TestRegionPropertyId.values()) {
+				if (testRegionPropertyId.getPropertyDefinition().getDefaultValue().isEmpty()
+						|| randomGenerator.nextBoolean()) {
+					Object randomPropertyValue = testRegionPropertyId.getRandomPropertyValue(randomGenerator);
+					regionPluginBuilder.setRegionPropertyValue(regionId, testRegionPropertyId, randomPropertyValue);
+				}
+			}
+		}
+		TestRegionId testRegionId = TestRegionId.REGION_1;
+		for (PersonId personId : people) {
+			regionPluginBuilder.setPersonRegion(personId, testRegionId);
+			testRegionId = testRegionId.next();
+		}
+
+		regionPluginBuilder.setPersonRegionArrivalTracking(TimeTrackingPolicy.TRACK_TIME);
+
+		RegionsPluginData regionsPluginData = regionPluginBuilder.build();
 
 		List<Plugin> plugins = MaterialsTestPluginFactory.factory(0, 0, 0, 0, t -> {
 		}).setRegionsPluginData(regionsPluginData).getPlugins();
@@ -176,12 +243,24 @@ public class AT_MaterialsTestPluginFactory {
 	@UnitTestMethod(target = MaterialsTestPluginFactory.class, name = "getStandardMaterialsPluginData", args = {
 			int.class, int.class, int.class, long.class })
 	public void testGetStandardMaterialsPluginData() {
+		int numBatches = 50;
+		int numStages = 10;
+		int numBatchesInStage = 30;
 
-		MaterialsPluginData materialsPluginData = MaterialsTestPluginFactory.getStandardMaterialsPluginData(50, 10, 30,
+		MaterialsPluginData materialsPluginData = MaterialsTestPluginFactory.getStandardMaterialsPluginData(numBatches,
+				numStages, numBatchesInStage,
 				9029198675932589278L);
 		assertNotNull(materialsPluginData);
 
 		// TODO: add additional checks
+
+		assertEquals(numBatches * TestMaterialsProducerId.values().length, materialsPluginData.getBatchIds().size());
+		assertEquals(numStages * TestMaterialsProducerId.values().length, materialsPluginData.getStageIds().size());
+		int count = 0;
+		for(StageId stageId : materialsPluginData.getStageIds()) {
+			count += materialsPluginData.getStageBatches(stageId).size();
+		}
+		assertEquals(numBatchesInStage * TestMaterialsProducerId.values().length , count);
 	}
 
 	@Test

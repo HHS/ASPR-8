@@ -20,8 +20,10 @@ import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestSimulation;
 import plugins.people.PeoplePluginData;
+import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonId;
 import plugins.personproperties.PersonPropertiesPluginData;
+import plugins.personproperties.datamanagers.PersonPropertiesDataManager;
 import plugins.regions.RegionsPluginData;
 import plugins.regions.testsupport.TestRegionId;
 import plugins.regions.testsupport.TestRegionPropertyId;
@@ -37,8 +39,13 @@ public class AT_PersonPropertiesTestPluginFactory {
 	private Consumer<ActorContext> factoryConsumer(MutableBoolean executed) {
 		return (c) -> {
 
-			// TODO: add checks
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
 
+			assertEquals(100, peopleDataManager.getPeople().size());
+
+			assertEquals(TestPersonPropertyId.values().length, personPropertiesDataManager.getPersonPropertyIds().size());
+			
 			executed.setValue(true);
 		};
 	}
@@ -49,7 +56,7 @@ public class AT_PersonPropertiesTestPluginFactory {
 	public void testFactory1() {
 		MutableBoolean executed = new MutableBoolean();
 		TestSimulation.executeSimulation(PersonPropertiesTestPluginFactory
-				.factory(0, 4135374341935235561L, factoryConsumer(executed)).getPlugins());
+				.factory(100, 4135374341935235561L, factoryConsumer(executed)).getPlugins());
 		assertTrue(executed.getValue());
 	}
 
@@ -63,7 +70,7 @@ public class AT_PersonPropertiesTestPluginFactory {
 		TestPluginData testPluginData = pluginBuilder.build();
 
 		TestSimulation.executeSimulation(
-				PersonPropertiesTestPluginFactory.factory(0, 92376779979686632L, testPluginData).getPlugins());
+				PersonPropertiesTestPluginFactory.factory(100, 92376779979686632L, testPluginData).getPlugins());
 		assertTrue(executed.getValue());
 
 	}
@@ -232,7 +239,8 @@ public class AT_PersonPropertiesTestPluginFactory {
 				.getStandardPersonPropertiesPluginData(people, 4684903523797799712L);
 		assertNotNull(personPropertiesPluginData);
 
-		// TODO: add additional checks
+		assertEquals(TestPersonPropertyId.values().length, personPropertiesPluginData.getPersonPropertyIds().size());
+			
 	}
 
 	@Test

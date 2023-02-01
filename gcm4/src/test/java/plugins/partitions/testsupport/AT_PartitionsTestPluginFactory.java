@@ -19,10 +19,12 @@ import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestSimulation;
 import plugins.materials.MaterialsPluginId;
 import plugins.partitions.PartitionsPlugin;
+import plugins.partitions.testsupport.attributes.AttributesDataManager;
 import plugins.partitions.testsupport.attributes.AttributesPluginData;
 import plugins.partitions.testsupport.attributes.AttributesPluginId;
 import plugins.partitions.testsupport.attributes.support.TestAttributeId;
 import plugins.people.PeoplePluginData;
+import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonId;
 import plugins.stochastics.StochasticsPluginData;
 import plugins.stochastics.testsupport.TestRandomGeneratorId;
@@ -35,7 +37,15 @@ public class AT_PartitionsTestPluginFactory {
 	private Consumer<ActorContext> factoryConsumer(MutableBoolean executed) {
 		return (c) -> {
 
-			// TODO: add checks
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
+
+			assertEquals(100, peopleDataManager.getPeople().size());
+
+			for (TestAttributeId testAttributeId : TestAttributeId.values()) {
+				assertTrue(attributesDataManager.attributeExists(testAttributeId));
+			}
+			
 
 			executed.setValue(true);
 		};
@@ -47,7 +57,7 @@ public class AT_PartitionsTestPluginFactory {
 	public void testFactory1() {
 		MutableBoolean executed = new MutableBoolean();
 		TestSimulation.executeSimulation(PartitionsTestPluginFactory
-				.factory(0, 9029198675932589278L, factoryConsumer(executed)).getPlugins());
+				.factory(100, 9029198675932589278L, factoryConsumer(executed)).getPlugins());
 		assertTrue(executed.getValue());
 	}
 
@@ -61,7 +71,7 @@ public class AT_PartitionsTestPluginFactory {
 		TestPluginData testPluginData = pluginBuilder.build();
 
 		TestSimulation.executeSimulation(
-				PartitionsTestPluginFactory.factory(0, 2990359774692004249L, testPluginData).getPlugins());
+				PartitionsTestPluginFactory.factory(100, 2990359774692004249L, testPluginData).getPlugins());
 		assertTrue(executed.getValue());
 
 	}
