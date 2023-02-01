@@ -12,7 +12,6 @@ import org.junit.jupiter.api.Test;
 import nucleus.ActorContext;
 import nucleus.Plugin;
 import nucleus.testsupport.testplugin.TestActorPlan;
-import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestSimulation;
 import nucleus.testsupport.testplugin.TestSimulationOutputConsumer;
@@ -24,7 +23,7 @@ import plugins.reports.testsupport.ReportsTestPluginFactory;
 import plugins.resources.datamanagers.ResourcesDataManager;
 import plugins.resources.support.ResourcePropertyId;
 import plugins.resources.support.ResourcePropertyInitialization;
-import plugins.resources.testsupport.ResourcesActionSupport;
+import plugins.resources.testsupport.ResourcesTestPluginFactory;
 import plugins.resources.testsupport.TestResourceId;
 import plugins.resources.testsupport.TestResourcePropertyId;
 import plugins.util.properties.PropertyDefinition;
@@ -190,12 +189,10 @@ public class AT_ResourcePropertyReport {
 		expectedReportItems.put(getReportItem(3.0, TestResourceId.RESOURCE_2,
 				TestAuxiliaryResourcePropertyId.AUX_RESOURCE_PROPERTY_2_INTEGER_MUTABLE, 137), 1);
 
-		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
 		TestSimulationOutputConsumer outputConsumer = new TestSimulationOutputConsumer();
 
-		List<Plugin> pluginsToAdd = ResourcesActionSupport.setUpPluginsForTest(initialPopulation, 8914112012010329946L);
-		pluginsToAdd.add(testPlugin);
+		List<Plugin> pluginsToAdd = ResourcesTestPluginFactory.factory(initialPopulation, 8914112012010329946L, testPluginData).getPlugins();
 		pluginsToAdd.add(ReportsTestPluginFactory.getPluginFromReport(new ResourcePropertyReport(REPORT_ID)::init));
 		
 		TestSimulation.executeSimulation(pluginsToAdd, outputConsumer);
