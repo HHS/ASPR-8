@@ -1,5 +1,6 @@
 package nucleus.testsupport.testplugin;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.function.Consumer;
@@ -37,5 +38,11 @@ public class AT_TestPluginFactory {
 		TestSimulation.executeSimulation(TestPluginFactory.factory(testPluginData).getPlugins());
 		assertTrue(executed.getValue());
 
+	}
+
+	@Test
+	@UnitTestMethod(target = TestPluginFactory.Factory.class, name = "getPlugins", args = {})
+	public void testGetPlugins() {
+		assertEquals(1, TestPluginFactory.factory((c) -> {}).getPlugins().size());
 	}
 }
