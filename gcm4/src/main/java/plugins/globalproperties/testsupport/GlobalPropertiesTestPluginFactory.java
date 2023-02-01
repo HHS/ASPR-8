@@ -107,7 +107,7 @@ public final class GlobalPropertiesTestPluginFactory {
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, consumer));
 		TestPluginData testPluginData = pluginBuilder.build();
-		return new Factory(new Data(testPluginData));
+		return factory(testPluginData);
 	}
 
 	/**

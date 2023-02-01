@@ -226,7 +226,7 @@ public class MaterialsTestPluginFactory {
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, consumer));
 		TestPluginData testPluginData = pluginBuilder.build();
-		return new Factory(new Data(numBatches, numStages, numBatchesInStage, seed, testPluginData));
+		return factory(numBatches, numStages, numBatchesInStage, seed, testPluginData);
 	}
 
 	/**

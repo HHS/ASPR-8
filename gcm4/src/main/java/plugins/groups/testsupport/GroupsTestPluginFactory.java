@@ -186,8 +186,7 @@ public final class GroupsTestPluginFactory {
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, consumer));
 		TestPluginData testPluginData = pluginBuilder.build();
-		return new Factory(
-				new Data(initialPopulation, expectedGroupsPerPerson, expectedPeoplePerGroup, seed, testPluginData));
+		return factory(initialPopulation, expectedGroupsPerPerson, expectedPeoplePerGroup, seed, testPluginData);
 	}
 
 	/**
