@@ -39,7 +39,7 @@ public class AT_PeopleTestPluginFactory {
 
 	@Test
 	@UnitTestMethod(target = PeopleTestPluginFactory.class, name = "factory", args = { long.class, Consumer.class })
-	public void testFactory1() {
+	public void testFactory_Consumer() {
 		MutableBoolean executed = new MutableBoolean();
 		TestSimulation.executeSimulation(PeopleTestPluginFactory
 				.factory(6489240163414718858L, factoryConsumer(executed)).getPlugins());
@@ -49,7 +49,7 @@ public class AT_PeopleTestPluginFactory {
 	@Test
 	@UnitTestMethod(target = PeopleTestPluginFactory.class, name = "factory", args = { long.class,
 			TestPluginData.class })
-	public void testFactory2() {
+	public void testFactory_TestPluginData() {
 		MutableBoolean executed = new MutableBoolean();
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, factoryConsumer(executed)));

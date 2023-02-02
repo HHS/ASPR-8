@@ -64,7 +64,7 @@ public class AT_ResourcesTestPluginFactory {
 	@Test
 	@UnitTestMethod(target = ResourcesTestPluginFactory.class, name = "factory", args = { int.class, long.class,
 			Consumer.class })
-	public void testFactory1() {
+	public void testFactory_Consumer() {
 		MutableBoolean executed = new MutableBoolean();
 		TestSimulation.executeSimulation(ResourcesTestPluginFactory
 				.factory(100, 5785172948650781925L, factoryConsumer(executed))
@@ -75,7 +75,7 @@ public class AT_ResourcesTestPluginFactory {
 	@Test
 	@UnitTestMethod(target = ResourcesTestPluginFactory.class, name = "factory", args = { int.class, long.class,
 			TestPluginData.class })
-	public void testFactory2() {
+	public void testFactory_TestPluginData() {
 		MutableBoolean executed = new MutableBoolean();
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, factoryConsumer(executed)));

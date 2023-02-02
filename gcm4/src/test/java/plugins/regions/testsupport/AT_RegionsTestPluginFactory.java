@@ -61,7 +61,7 @@ public class AT_RegionsTestPluginFactory {
 	@Test
 	@UnitTestMethod(target = RegionsTestPluginFactory.class, name = "factory", args = { int.class, long.class,
 			TimeTrackingPolicy.class, Consumer.class }, tags = { UnitTag.INCOMPLETE })
-	public void testFactory1() {
+	public void testFactory_Consumer() {
 		MutableBoolean executed = new MutableBoolean();
 		TestSimulation.executeSimulation(RegionsTestPluginFactory
 				.factory(100, 5785172948650781925L, TimeTrackingPolicy.TRACK_TIME, factoryConsumer(executed))
@@ -72,7 +72,7 @@ public class AT_RegionsTestPluginFactory {
 	@Test
 	@UnitTestMethod(target = RegionsTestPluginFactory.class, name = "factory", args = { int.class, long.class,
 			TimeTrackingPolicy.class, TestPluginData.class }, tags = { UnitTag.INCOMPLETE })
-	public void testFactory2() {
+	public void testFactory_TestPluginData() {
 		MutableBoolean executed = new MutableBoolean();
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, factoryConsumer(executed)));

@@ -54,7 +54,7 @@ public class AT_PartitionsTestPluginFactory {
 	@Test
 	@UnitTestMethod(target = PartitionsTestPluginFactory.class, name = "factory", args = { int.class, long.class,
 			Consumer.class })
-	public void testFactory1() {
+	public void testFtestFactory_Consumeractory1() {
 		MutableBoolean executed = new MutableBoolean();
 		TestSimulation.executeSimulation(PartitionsTestPluginFactory
 				.factory(100, 9029198675932589278L, factoryConsumer(executed)).getPlugins());
@@ -64,7 +64,7 @@ public class AT_PartitionsTestPluginFactory {
 	@Test
 	@UnitTestMethod(target = PartitionsTestPluginFactory.class, name = "factory", args = { int.class, long.class,
 			TestPluginData.class })
-	public void testFactory2() {
+	public void testFactory_TestPluginData() {
 		MutableBoolean executed = new MutableBoolean();
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, factoryConsumer(executed)));

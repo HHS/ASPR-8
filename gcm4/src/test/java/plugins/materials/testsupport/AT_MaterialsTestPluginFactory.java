@@ -48,7 +48,7 @@ public class AT_MaterialsTestPluginFactory {
 	@Test
 	@UnitTestMethod(target = MaterialsTestPluginFactory.class, name = "factory", args = { int.class, int.class,
 			int.class, long.class, Consumer.class })
-	public void testFactory1() {
+	public void testFactory_Consumer() {
 		MutableBoolean executed = new MutableBoolean();
 		TestSimulation.executeSimulation(MaterialsTestPluginFactory
 				.factory(0, 0, 0, 3328026739613106739L, factoryConsumer(executed)).getPlugins());
@@ -58,7 +58,7 @@ public class AT_MaterialsTestPluginFactory {
 	@Test
 	@UnitTestMethod(target = MaterialsTestPluginFactory.class, name = "factory", args = { int.class, int.class,
 			int.class, long.class, TestPluginData.class })
-	public void testFactory2() {
+	public void testFactory_TestPluginData() {
 		MutableBoolean executed = new MutableBoolean();
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, factoryConsumer(executed)));
