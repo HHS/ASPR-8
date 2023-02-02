@@ -14,9 +14,10 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import nucleus.DataManagerContext;
+import nucleus.testsupport.testplugin.TestSimulation;
 import plugins.stochastics.support.RandomNumberGeneratorId;
 import plugins.stochastics.support.StochasticsError;
-import plugins.stochastics.testsupport.StochasticsActionSupport;
+import plugins.stochastics.testsupport.StochasticsTestPluginFactory;
 import plugins.stochastics.testsupport.TestRandomGeneratorId;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
@@ -34,7 +35,7 @@ public class AT_StochasticsDataManager {
 	@UnitTestMethod(target = StochasticsDataManager.class, name = "getRandomNumberGeneratorIds", args = {})
 	public void testGetRandomNumberGeneratorIds() {
 
-		StochasticsActionSupport.testConsumer(1244273915891145733L, (c) -> {
+		TestSimulation.executeSimulation(StochasticsTestPluginFactory.factory(1244273915891145733L, (c) -> {
 
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 
@@ -45,7 +46,7 @@ public class AT_StochasticsDataManager {
 				expectedRandomGeneratorIds.add(testRandomGeneratorId);
 			}
 			assertEquals(expectedRandomGeneratorIds, actualRandomNumberGeneratorIds);
-		});
+		}).getPlugins());
 	}
 
 	@Test
@@ -53,17 +54,17 @@ public class AT_StochasticsDataManager {
 	public void testGetRandomGeneratorFromId() {
 
 		// show that random generators can be retrieved by ids.
-		StochasticsActionSupport.testConsumer(5489824520767978373L, (c) -> {
+		TestSimulation.executeSimulation(StochasticsTestPluginFactory.factory(5489824520767978373L, (c) -> {
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			for (TestRandomGeneratorId testRandomGeneratorId : TestRandomGeneratorId.values()) {
 				RandomGenerator randomGeneratorFromId = stochasticsDataManager.getRandomGeneratorFromId(testRandomGeneratorId);
 				assertNotNull(randomGeneratorFromId);
 			}
-		});
+		}).getPlugins());
 
 		// show that an unknown random number generator id will retrieve a
 		// random generator
-		StochasticsActionSupport.testConsumer(5985120270606833945L, (c) -> {
+		TestSimulation.executeSimulation(StochasticsTestPluginFactory.factory(5985120270606833945L, (c) -> {
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 
 			RandomNumberGeneratorId randomNumberGeneratorIdA = new RandomNumberGeneratorId() {
@@ -98,14 +99,14 @@ public class AT_StochasticsDataManager {
 				assertEquals(valueA, valueB);
 			}
 
-		});
+		}).getPlugins());
 
 		// precondition test : if the random number generator is null
-		StochasticsActionSupport.testConsumer(1893848105389404535L, (c) -> {
+		TestSimulation.executeSimulation(StochasticsTestPluginFactory.factory(1893848105389404535L, (c) -> {
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> stochasticsDataManager.getRandomGeneratorFromId(null));
 			assertEquals(StochasticsError.NULL_RANDOM_NUMBER_GENERATOR_ID, contractException.getErrorType());
-		});
+		}).getPlugins());
 
 	}
 
@@ -113,11 +114,11 @@ public class AT_StochasticsDataManager {
 	@UnitTestMethod(target = StochasticsDataManager.class, name = "getRandomGenerator", args = {})
 	public void testGetRandomGenerator() {
 		// show that random generators can be retrieved by ids
-		StochasticsActionSupport.testConsumer(683597885444214892L, (c) -> {
+		TestSimulation.executeSimulation(StochasticsTestPluginFactory.factory(683597885444214892L, (c) -> {
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGeneratorFromId = stochasticsDataManager.getRandomGenerator();
 			assertNotNull(randomGeneratorFromId);
-		});
+		}).getPlugins());
 	}
 
 	@Test
@@ -130,7 +131,7 @@ public class AT_StochasticsDataManager {
 	@UnitTestMethod(target = StochasticsDataManager.class, name = "resetSeeds", args = { long.class })
 	public void testResetSeeds() {
 
-		StochasticsActionSupport.testConsumer(7392476210385850542L, (c) -> {
+		TestSimulation.executeSimulation(StochasticsTestPluginFactory.factory(7392476210385850542L, (c) -> {
 
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 
@@ -183,7 +184,7 @@ public class AT_StochasticsDataManager {
 				assertEquals(expectedGeneratorValues.get(testRandomGeneratorId), value);
 			}
 
-		});
+		}).getPlugins());
 
 	}
 
