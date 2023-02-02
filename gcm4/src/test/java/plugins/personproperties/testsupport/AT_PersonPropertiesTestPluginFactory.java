@@ -1,8 +1,8 @@
 package plugins.personproperties.testsupport;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
@@ -16,18 +16,23 @@ import org.junit.jupiter.api.Test;
 import nucleus.ActorContext;
 import nucleus.Plugin;
 import nucleus.PluginData;
+import nucleus.PluginId;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestSimulation;
 import plugins.people.PeoplePluginData;
+import plugins.people.PeoplePluginId;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonId;
 import plugins.personproperties.PersonPropertiesPluginData;
+import plugins.personproperties.PersonPropertiesPluginId;
 import plugins.personproperties.datamanagers.PersonPropertiesDataManager;
 import plugins.regions.RegionsPluginData;
+import plugins.regions.RegionsPluginId;
 import plugins.regions.testsupport.TestRegionId;
 import plugins.regions.testsupport.TestRegionPropertyId;
 import plugins.stochastics.StochasticsPluginData;
+import plugins.stochastics.StochasticsPluginId;
 import plugins.stochastics.testsupport.TestRandomGeneratorId;
 import plugins.util.properties.TimeTrackingPolicy;
 import tools.annotations.UnitTestMethod;
@@ -82,19 +87,21 @@ public class AT_PersonPropertiesTestPluginFactory {
 		}).getPlugins().size());
 	}
 
-	private <T extends PluginData> void checkPlugins(List<Plugin> plugins, T expectedPluginData) {
-		Class<?> classRef = expectedPluginData.getClass();
-		plugins.forEach((plugin) -> {
-			Set<PluginData> pluginDatas = plugin.getPluginDatas();
-			if(pluginDatas.size() > 0) {
-				PluginData pluginData = pluginDatas.toArray(new PluginData[0])[0];
-				if (classRef.isAssignableFrom(pluginData.getClass())) {
-					assertEquals(expectedPluginData, classRef.cast(pluginData));
-				} else {
-					assertNotEquals(expectedPluginData, pluginData);
-				}
+	private <T extends PluginData> void checkPlugins(List<Plugin> plugins, T expectedPluginData, PluginId pluginId) {
+		Plugin actualPlugin = null;
+		for(Plugin plugin : plugins) {
+			if(plugin.getPluginId().equals(pluginId)) {
+				assertNull(actualPlugin);
+				actualPlugin = plugin;
 			}
-		});
+		}
+
+		assertNotNull(actualPlugin);
+		Set<PluginData> actualPluginDatas = actualPlugin.getPluginDatas();
+		assertNotNull(actualPluginDatas);
+		assertEquals(1, actualPluginDatas.size());
+		PluginData actualPluginData = actualPluginDatas.stream().toList().get(0);
+		assertTrue(expectedPluginData == actualPluginData);
 	}
 
 	@Test
@@ -133,7 +140,7 @@ public class AT_PersonPropertiesTestPluginFactory {
 				.setPersonPropertiesPluginData(personPropertiesPluginData)
 				.getPlugins();
 
-		checkPlugins(plugins, personPropertiesPluginData);
+		checkPlugins(plugins, personPropertiesPluginData, PersonPropertiesPluginId.PLUGIN_ID);
 	}
 
 	@Test
@@ -154,7 +161,7 @@ public class AT_PersonPropertiesTestPluginFactory {
 				.setPeoplePluginData(peoplePluginData)
 				.getPlugins();
 
-		checkPlugins(plugins, peoplePluginData);
+		checkPlugins(plugins, peoplePluginData, PeoplePluginId.PLUGIN_ID);
 	}
 
 	@Test
@@ -202,7 +209,7 @@ public class AT_PersonPropertiesTestPluginFactory {
 		List<Plugin> plugins = PersonPropertiesTestPluginFactory.factory(0, 0, t -> {
 		}).setRegionsPluginData(regionsPluginData).getPlugins();
 
-		checkPlugins(plugins, regionsPluginData);
+		checkPlugins(plugins, regionsPluginData, RegionsPluginId.PLUGIN_ID);
 
 	}
 
@@ -222,7 +229,7 @@ public class AT_PersonPropertiesTestPluginFactory {
 				.setStochasticsPluginData(stochasticsPluginData)
 				.getPlugins();
 
-		checkPlugins(plugins, stochasticsPluginData);
+		checkPlugins(plugins, stochasticsPluginData, StochasticsPluginId.PLUGIN_ID);
 	}
 
 	@Test

@@ -1,7 +1,8 @@
 package plugins.globalproperties.testsupport;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
@@ -13,10 +14,12 @@ import org.junit.jupiter.api.Test;
 import nucleus.ActorContext;
 import nucleus.Plugin;
 import nucleus.PluginData;
+import nucleus.PluginId;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestSimulation;
 import plugins.globalproperties.GlobalPropertiesPluginData;
+import plugins.globalproperties.GlobalPropertiesPluginId;
 import plugins.globalproperties.datamanagers.GlobalPropertiesDataManager;
 import plugins.globalproperties.support.GlobalPropertyId;
 import plugins.globalproperties.support.SimpleGlobalPropertyId;
@@ -73,19 +76,21 @@ public class AT_GlobalPropertiesTestPluginFactory {
 		}).getPlugins().size());
 	}
 
-	private <T extends PluginData> void checkPlugins(List<Plugin> plugins, T expectedPluginData) {
-		Class<?> classRef = expectedPluginData.getClass();
-		plugins.forEach((plugin) -> {
-			Set<PluginData> pluginDatas = plugin.getPluginDatas();
-			if(pluginDatas.size() > 0) {
-				PluginData pluginData = pluginDatas.toArray(new PluginData[0])[0];
-				if (classRef.isAssignableFrom(pluginData.getClass())) {
-					assertEquals(expectedPluginData, classRef.cast(pluginData));
-				} else {
-					assertNotEquals(expectedPluginData, pluginData);
-				}
+	private <T extends PluginData> void checkPlugins(List<Plugin> plugins, T expectedPluginData, PluginId pluginId) {
+		Plugin actualPlugin = null;
+		for(Plugin plugin : plugins) {
+			if(plugin.getPluginId().equals(pluginId)) {
+				assertNull(actualPlugin);
+				actualPlugin = plugin;
 			}
-		});
+		}
+
+		assertNotNull(actualPlugin);
+		Set<PluginData> actualPluginDatas = actualPlugin.getPluginDatas();
+		assertNotNull(actualPluginDatas);
+		assertEquals(1, actualPluginDatas.size());
+		PluginData actualPluginData = actualPluginDatas.stream().toList().get(0);
+		assertTrue(expectedPluginData == actualPluginData);
 	}
 
 	@Test
@@ -112,7 +117,7 @@ public class AT_GlobalPropertiesTestPluginFactory {
 		List<Plugin> plugins = GlobalPropertiesTestPluginFactory.factory(t -> {
 		}).setGlobalPropertiesPluginData(globalPropertiesPluginData).getPlugins();
 
-		checkPlugins(plugins, globalPropertiesPluginData);
+		checkPlugins(plugins, globalPropertiesPluginData, GlobalPropertiesPluginId.PLUGIN_ID);
 	}
 
 	@Test
