@@ -1,7 +1,5 @@
 package nucleus;
 
-import java.util.function.Consumer;
-
 import util.errors.ContractException;
 
 /**
@@ -46,28 +44,4 @@ public interface SimulationContext {
 	 */
 	public boolean actorExists(ActorId actorId);
 
-	/**
-	 * Adds an actor to the simulation. The actor is added immediately, but the
-	 * consumer of ActorContext is invoked after event resolution is finished
-	 * and before time progresses.
-	 * 
-	 * @throws ContractException
-	 * 
-	 *             <li>{@link NucleusError#NULL_ACTOR_CONTEXT_CONSUMER} if the
-	 *             actor context consumer is null
-	 * 
-	 */
-	public ActorId addActor(Consumer<ActorContext> consumer);
-
-	/**
-	 * Removes the given actor from the simulation.
-	 * 
-	 * @throws ContractException
-	 *             <li>{@link NucleusError#NULL_ACTOR_ID} if the actorId is null
-	 *             <li>{@link NucleusError#NEGATIVE_ACTOR_ID} if the actor id is
-	 *             negative
-	 *             <li>{@link NucleusError#UNKNOWN_ACTOR_ID} if the actor id
-	 *             does not correspond to a known actor
-	 */
-	public void removeActor(ActorId actorId);
 }

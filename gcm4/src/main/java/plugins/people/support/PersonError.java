@@ -22,8 +22,7 @@ public enum PersonError implements ContractError {
 
 	NULL_SUGGESTED_POPULATION_SIZE("Scenario identifier is null"),
 	NEGATIVE_SUGGGESTED_POPULATION("Suggested population size is negative"),
-	NEGATIVE_GROWTH_PROJECTION("Growth projection count is negative"),
-	DUPLICATE_SUGGESTED_POPULATION_SIZE_ASSIGNMENT("Duplicate assignment of suggested population size");
+	NEGATIVE_GROWTH_PROJECTION("Growth projection count is negative");
 
 	
 	

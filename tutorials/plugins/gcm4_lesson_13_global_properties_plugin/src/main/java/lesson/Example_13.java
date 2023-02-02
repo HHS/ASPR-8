@@ -6,9 +6,9 @@ import java.util.List;
 
 import org.apache.commons.math3.util.Pair;
 
-import lesson.plugins.model.GlobalProperty;
 import lesson.plugins.model.ModelPlugin;
 import lesson.plugins.model.ModelReportId;
+import lesson.plugins.model.support.GlobalProperty;
 import nucleus.Dimension;
 import nucleus.Experiment;
 import nucleus.Plugin;

@@ -29,7 +29,7 @@ public class DataManager {
 	 *             if init() is invoked more than once</li>
 	 * 
 	 */
-	public void init(DataManagerContext dataManagerContext) {
+	protected void init(DataManagerContext dataManagerContext) {
 		if (initialized) {
 			throw new ContractException(NucleusError.DATA_MANAGER_DUPLICATE_INITIALIZATION);
 		}

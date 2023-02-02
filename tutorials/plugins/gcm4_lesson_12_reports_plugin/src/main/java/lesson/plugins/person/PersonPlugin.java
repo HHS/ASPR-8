@@ -1,5 +1,6 @@
 package lesson.plugins.person;
 
+import lesson.plugins.person.datamanagers.PersonDataManager;
 import nucleus.Plugin;
 
 public class PersonPlugin {

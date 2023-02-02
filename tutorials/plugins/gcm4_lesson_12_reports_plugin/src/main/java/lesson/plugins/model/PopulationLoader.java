@@ -3,10 +3,10 @@ package lesson.plugins.model;
 
 import org.apache.commons.math3.random.RandomGenerator;
 
-import lesson.plugins.family.FamilyDataManager;
-import lesson.plugins.family.FamilyId;
-import lesson.plugins.person.PersonDataManager;
-import lesson.plugins.person.PersonId;
+import lesson.plugins.family.datamanagers.FamilyDataManager;
+import lesson.plugins.family.support.FamilyId;
+import lesson.plugins.person.datamanagers.PersonDataManager;
+import lesson.plugins.person.support.PersonId;
 import nucleus.ActorContext;
 import plugins.stochastics.StochasticsDataManager;
 

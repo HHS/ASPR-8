@@ -1,19 +1,20 @@
 package plugins.reports.testsupport;
 
+import java.util.function.Consumer;
+
 import nucleus.Plugin;
+import nucleus.ReportContext;
 import plugins.reports.ReportsPlugin;
 import plugins.reports.ReportsPluginData;
-import plugins.reports.support.Report;
 
 public final class ReportsTestPluginFactory {
 
     private ReportsTestPluginFactory() {
     }
-
-    public static <T extends Report> Plugin getPluginFromReport(T report) {
-        ReportsPluginData reportsPluginData = ReportsPluginData.builder().addReport(() -> report::init)
+    
+    public static Plugin getPluginFromReport(Consumer<ReportContext> consumer) {
+        ReportsPluginData reportsPluginData = ReportsPluginData.builder().addReport(() -> consumer)
                 .build();
-
         return ReportsPlugin.getReportsPlugin(reportsPluginData);
     }
 }

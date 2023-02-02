@@ -8,8 +8,8 @@ import org.apache.commons.math3.random.RandomGenerator;
 
 import lesson.plugins.model.ModelPlugin;
 import lesson.plugins.model.ModelReportId;
-import lesson.plugins.model.actors.reports.ContagionReport;
-import lesson.plugins.model.actors.reports.DiseaseStateReport;
+import lesson.plugins.model.reports.ContagionReport;
+import lesson.plugins.model.reports.DiseaseStateReport;
 import lesson.plugins.model.support.DiseaseState;
 import lesson.plugins.model.support.GlobalProperty;
 import lesson.plugins.model.support.GroupProperty;

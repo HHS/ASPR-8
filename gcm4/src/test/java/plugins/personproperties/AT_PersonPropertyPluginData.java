@@ -98,6 +98,11 @@ public class AT_PersonPropertyPluginData {
 
 		// fill the builder with property definitions
 		for (TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.values()) {
+			TestPersonPropertyId testPersonPropertyId2 = testPersonPropertyId.next();
+			personPropertyBuilder.definePersonProperty(testPersonPropertyId, testPersonPropertyId2.getPropertyDefinition());
+			// replacing data to show that the value persists
+			personPropertyBuilder.definePersonProperty(testPersonPropertyId, testPersonPropertyId.getPropertyDefinition());
+			// adding duplicate data to show that the value persists
 			personPropertyBuilder.definePersonProperty(testPersonPropertyId, testPersonPropertyId.getPropertyDefinition());
 		}
 
@@ -131,15 +136,6 @@ public class AT_PersonPropertyPluginData {
 			builder.definePersonProperty(testPersonPropertyId, null);
 		});
 		assertEquals(PropertyError.NULL_PROPERTY_DEFINITION, contractException.getErrorType());
-
-		// if the person property definition is already added
-		contractException = assertThrows(ContractException.class, () -> {
-			PersonPropertiesPluginData.Builder builder = PersonPropertiesPluginData.builder();
-			TestPersonPropertyId testPersonPropertyId = TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK;
-			builder.definePersonProperty(testPersonPropertyId, testPersonPropertyId.getPropertyDefinition());
-			builder.definePersonProperty(testPersonPropertyId, testPersonPropertyId.getPropertyDefinition());
-		});
-		assertEquals(PropertyError.DUPLICATE_PROPERTY_DEFINITION, contractException.getErrorType());
 	}
 
 	@Test
@@ -281,13 +277,54 @@ public class AT_PersonPropertyPluginData {
 			for (int j = 0; j < propertyCount; j++) {
 				TestPersonPropertyId testPersonPropertyId = TestPersonPropertyId.getRandomPersonPropertyId(randomGenerator);
 				Object value = testPersonPropertyId.getRandomPropertyValue(randomGenerator);
+				Object value2 = testPersonPropertyId.getRandomPropertyValue(randomGenerator);
+				if (value instanceof Boolean) {
+					value2 = !(Boolean) value;
+				}
+				personPropertyBuilder.setPersonPropertyValue(personId, testPersonPropertyId, value2);
+				// replacing data to show that the value persists
 				personPropertyBuilder.setPersonPropertyValue(personId, testPersonPropertyId, value);
-				list.add(new PersonPropertyInitialization(testPersonPropertyId, value));
+				// adding duplicate data to show that the value persists
+				personPropertyBuilder.setPersonPropertyValue(personId, testPersonPropertyId, value);
+
+				int index = -1;
+				for (int a = 0; a < list.size(); a++) {
+					if (list.get(a).getPersonPropertyId().equals(testPersonPropertyId)) {
+						index = a;
+						break;
+					}
+				}
+
+				if (index == -1) {
+					list.add(new PersonPropertyInitialization(testPersonPropertyId, value));
+				} else {
+					list.set(index, new PersonPropertyInitialization(testPersonPropertyId, value));
+				}
 			}
 			for (TestPersonPropertyId testPersonPropertyId : propertiesWithoutDefaultValues) {
 				Object value = testPersonPropertyId.getRandomPropertyValue(randomGenerator);
+				Object value2 = testPersonPropertyId.getRandomPropertyValue(randomGenerator);
+				if (value instanceof Boolean) {
+					value2 = !(Boolean) value;
+				}
+				personPropertyBuilder.setPersonPropertyValue(personId, testPersonPropertyId, value2);
+				// replacing data to show that the value persists
 				personPropertyBuilder.setPersonPropertyValue(personId, testPersonPropertyId, value);
-				list.add(new PersonPropertyInitialization(testPersonPropertyId, value));
+				// adding duplicate data to show that the value persists
+				personPropertyBuilder.setPersonPropertyValue(personId, testPersonPropertyId, value);
+				int index = -1;
+				for (int j = 0; j < list.size(); j++) {
+					if (list.get(j).getPersonPropertyId().equals(testPersonPropertyId)) {
+						index = j;
+						break;
+					}
+				}
+
+				if (index == -1) {
+					list.add(new PersonPropertyInitialization(testPersonPropertyId, value));
+				} else {
+					list.set(index, new PersonPropertyInitialization(testPersonPropertyId, value));
+				}
 			}
 
 		}

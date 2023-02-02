@@ -42,7 +42,7 @@ public final class PeoplePlugin {
 						.setPluginId(PeoplePluginId.PLUGIN_ID)//
 						.setInitializer((c) -> {
 							PeoplePluginData pluginData = c.getPluginData(PeoplePluginData.class);
-							c.addDataManager(new PeopleDataManager(pluginData));
+							c.addDataManager(new PeopleDataManager(pluginData));							
 						})//
 						.build();
 	}
