@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,22 +16,19 @@ import org.junit.jupiter.api.Test;
 import nucleus.Plugin;
 import nucleus.ReportContext;
 import nucleus.testsupport.testplugin.TestActorPlan;
-import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestSimulation;
 import nucleus.testsupport.testplugin.TestSimulationOutputConsumer;
-import plugins.people.PeoplePlugin;
-import plugins.people.PeoplePluginData;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonConstructionData;
 import plugins.people.support.PersonId;
-import plugins.regions.RegionsPlugin;
 import plugins.regions.RegionsPluginData;
 import plugins.regions.datamanagers.RegionsDataManager;
 import plugins.regions.support.RegionId;
 import plugins.regions.support.RegionPropertyId;
 import plugins.regions.support.SimpleRegionId;
 import plugins.regions.support.SimpleRegionPropertyId;
+import plugins.regions.testsupport.RegionsTestPluginFactory;
 import plugins.reports.support.ReportError;
 import plugins.reports.support.ReportHeader;
 import plugins.reports.support.ReportId;
@@ -41,9 +37,8 @@ import plugins.reports.support.ReportPeriod;
 import plugins.reports.support.SimpleReportId;
 import plugins.reports.testsupport.ReportsTestPluginFactory;
 import plugins.stochastics.StochasticsDataManager;
-import plugins.stochastics.StochasticsPlugin;
-import plugins.stochastics.StochasticsPluginData;
 import plugins.util.properties.PropertyDefinition;
+import plugins.util.properties.TimeTrackingPolicy;
 import tools.annotations.UnitTag;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
@@ -79,7 +74,7 @@ public class AT_RegionTransferReport {
 		 * last task to for proper flushing in the report
 		 */
 
-		List<Plugin> pluginsToAdd = new ArrayList<>();
+		
 
 		RegionsPluginData.Builder regionBuilder = RegionsPluginData.builder();
 
@@ -99,11 +94,6 @@ public class AT_RegionTransferReport {
 		regionBuilder.defineRegionProperty(prop_age, propertyDefinition);
 
 		RegionsPluginData regionsPluginData = regionBuilder.build();
-		pluginsToAdd.add(RegionsPlugin.getRegionsPlugin(regionsPluginData));
-
-		// add remaining plugins
-		pluginsToAdd.add(PeoplePlugin.getPeoplePlugin(PeoplePluginData.builder().build()));
-
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
 		/*
@@ -172,13 +162,10 @@ public class AT_RegionTransferReport {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
 		TestSimulationOutputConsumer outputConsumer = new TestSimulationOutputConsumer();
-
-		pluginsToAdd.add(testPlugin);
+		List<Plugin> pluginsToAdd = RegionsTestPluginFactory.factory(numPeople, 3054641152904904632L, TimeTrackingPolicy.TRACK_TIME, testPluginData).setRegionsPluginData(regionsPluginData).getPlugins();
 		pluginsToAdd.add(ReportsTestPluginFactory.getPluginFromReport(new RegionTransferReport(REPORT_ID, ReportPeriod.DAILY)::init));
-		pluginsToAdd.add(StochasticsPlugin.getStochasticsPlugin(StochasticsPluginData.builder().setSeed(3054641152904904632L).build()));
 
 		TestSimulation.executeSimulation(pluginsToAdd, outputConsumer);
 
