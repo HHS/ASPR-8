@@ -9,11 +9,19 @@ import nucleus.Plugin;
 import nucleus.PluginData;
 
 /**
- * A static test support class for the test plugin.
+ * A static test support class for the {@linkplain TestPlugin}. Provides
+ * convenience
+ * methods for obtaining standarized PluginData for the listed Plugin.
  * 
- * contains factory methods to obtain a list of plugins that can be
+ * <p>
+ * Also contains factory methods to obtain a list of plugins that is the minimal
+ * set needed to adequately test this Plugin that can be
  * utilized with
- * {@code TestSimulation.executeSimulation()}
+ * </p>
+ * 
+ * <li>{@link TestSimulation#executeSimulation(List)}</li>
+ * <li>or
+ * <li>{@link TestSimulation#executeSimulation(List, nucleus.testsupport.testplugin.TestSimulationOutputConsumer)}
  * 
  */
 public final class TestPluginFactory {

@@ -12,6 +12,7 @@ import nucleus.PluginData;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
+import nucleus.testsupport.testplugin.TestSimulation;
 import plugins.people.PeoplePlugin;
 import plugins.people.PeoplePluginData;
 import plugins.people.support.PersonId;
@@ -23,6 +24,22 @@ import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.TimeTrackingPolicy;
 import util.random.RandomGeneratorProvider;
 
+/**
+ * A static test support class for the {@linkplain RegionsPlugin}. Provides
+ * convenience
+ * methods for obtaining standarized PluginData for the listed Plugin.
+ * 
+ * <p>
+ * Also contains factory methods to obtain a list of plugins that is the minimal
+ * set needed to adequately test this Plugin that can be
+ * utilized with
+ * </p>
+ * 
+ * <li>{@link TestSimulation#executeSimulation(List)}</li>
+ * <li>or
+ * <li>{@link TestSimulation#executeSimulation(List, nucleus.testsupport.testplugin.TestSimulationOutputConsumer)}
+ * 
+ */
 public final class RegionsTestPluginFactory {
 
 	private RegionsTestPluginFactory() {
@@ -38,7 +55,8 @@ public final class RegionsTestPluginFactory {
 				TestPluginData testPluginData) {
 
 			this.peoplePluginData = getStandardPeoplePluginData(initialPopulation);
-			this.regionsPluginData = getStandardRegionsPluginData(this.peoplePluginData.getPersonIds(), timeTrackingPolicy, seed);
+			this.regionsPluginData = getStandardRegionsPluginData(this.peoplePluginData.getPersonIds(),
+					timeTrackingPolicy, seed);
 			this.stochasticsPluginData = getStandardStochasticsPluginData(seed);
 			this.testPluginData = testPluginData;
 		}

@@ -6,20 +6,30 @@ import java.util.function.Consumer;
 
 import nucleus.ActorContext;
 import nucleus.Plugin;
+import nucleus.PluginData;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
+import nucleus.testsupport.testplugin.TestSimulation;
 import plugins.globalproperties.GlobalPropertiesPlugin;
 import plugins.globalproperties.GlobalPropertiesPluginData;
 
 /**
- * A static test support class for the globals plugin. Provides convenience
- * methods for obtaining standard GlobalProperties PluginData
+ * A static test support class for the {@linkplain GlobalPropertiesPlugin}.
+ * Provides
+ * convenience
+ * methods for obtaining standarized PluginData for the listed Plugin.
  * 
- * Also contains factory methods to obtain a list of plugins that can be
+ * <p>
+ * Also contains factory methods to obtain a list of plugins that is the minimal
+ * set needed to adequately test this Plugin that can be
  * utilized with
- * {@code TestSimulation.executeSimulation()}
- *
+ * </p>
+ * 
+ * <li>{@link TestSimulation#executeSimulation(List)}</li>
+ * <li>or
+ * <li>{@link TestSimulation#executeSimulation(List, nucleus.testsupport.testplugin.TestSimulationOutputConsumer)}
+ * 
  */
 public final class GlobalPropertiesTestPluginFactory {
 

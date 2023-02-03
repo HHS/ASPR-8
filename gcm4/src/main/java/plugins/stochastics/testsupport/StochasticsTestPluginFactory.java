@@ -10,16 +10,23 @@ import nucleus.PluginData;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
+import nucleus.testsupport.testplugin.TestSimulation;
 import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.StochasticsPluginData;
 
 /**
- * A static test support class for the stochastics plugin. Provides convenience
- * methods for integrating a test plugin into a stochastic simulation test
- * harness.
+ * A static test support class for the {@linkplain StochasticsPlugin}. Provides
+ * convenience
+ * methods for obtaining standarized PluginData for the listed Plugin.
  * 
+ * <p>Also contains factory methods to obtain a list of plugins that is the minimal
+ * set needed to adequately test this Plugin that can be
+ * utilized with</p>
  * 
- *
+ * <li>{@link TestSimulation#executeSimulation(List)}</li>
+ * <li>or
+ * <li>{@link TestSimulation#executeSimulation(List, nucleus.testsupport.testplugin.TestSimulationOutputConsumer)}
+ * 
  */
 public class StochasticsTestPluginFactory {
 
@@ -133,11 +140,13 @@ public class StochasticsTestPluginFactory {
 	}
 
 	/**
-	 * Creates a Standarized StocasticsPluginData that is minimally adequate for testing the StocasticsPlugin.
+	 * Creates a Standarized StocasticsPluginData that is minimally adequate for
+	 * testing the StocasticsPlugin.
 	 * <p>
 	 * The resulting StocasticsPluginData will include:
 	 * <li>Every randomGeneratorId included in {@link TestRandomGeneratorId}</li>
 	 * </p>
+	 * 
 	 * @param seed used to seed the StocasticsPluginData
 	 * @return the Standarized StocasticsPluginData
 	 * 

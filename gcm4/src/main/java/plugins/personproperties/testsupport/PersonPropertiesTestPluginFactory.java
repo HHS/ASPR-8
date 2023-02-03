@@ -12,6 +12,7 @@ import nucleus.PluginData;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
+import nucleus.testsupport.testplugin.TestSimulation;
 import plugins.people.PeoplePlugin;
 import plugins.people.PeoplePluginData;
 import plugins.people.support.PersonId;
@@ -24,6 +25,23 @@ import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.StochasticsPluginData;
 import util.random.RandomGeneratorProvider;
 
+/**
+ * A static test support class for the {@linkplain PersonPropertiesPlugin}.
+ * Provides
+ * convenience
+ * methods for obtaining standarized PluginData for the listed Plugin.
+ * 
+ * <p>
+ * Also contains factory methods to obtain a list of plugins that is the minimal
+ * set needed to adequately test this Plugin that can be
+ * utilized with
+ * </p>
+ * 
+ * <li>{@link TestSimulation#executeSimulation(List)}</li>
+ * <li>or
+ * <li>{@link TestSimulation#executeSimulation(List, nucleus.testsupport.testplugin.TestSimulationOutputConsumer)}
+ * 
+ */
 public class PersonPropertiesTestPluginFactory {
 
 	private PersonPropertiesTestPluginFactory() {
@@ -207,7 +225,8 @@ public class PersonPropertiesTestPluginFactory {
 		}
 		for (PersonId personId : people) {
 			for (TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.values()) {
-				boolean doesNotHaveDefaultValue = testPersonPropertyId.getPropertyDefinition().getDefaultValue().isEmpty();
+				boolean doesNotHaveDefaultValue = testPersonPropertyId.getPropertyDefinition().getDefaultValue()
+						.isEmpty();
 				if (doesNotHaveDefaultValue || randomGenerator.nextBoolean()) {
 					Object randomPropertyValue = testPersonPropertyId.getRandomPropertyValue(randomGenerator);
 					personPropertyBuilder.setPersonPropertyValue(personId, testPersonPropertyId, randomPropertyValue);

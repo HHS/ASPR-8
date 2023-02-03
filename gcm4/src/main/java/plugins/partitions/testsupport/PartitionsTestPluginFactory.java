@@ -12,6 +12,7 @@ import nucleus.PluginData;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
+import nucleus.testsupport.testplugin.TestSimulation;
 import plugins.partitions.PartitionsPlugin;
 import plugins.partitions.testsupport.attributes.AttributesPlugin;
 import plugins.partitions.testsupport.attributes.AttributesPluginData;
@@ -25,13 +26,19 @@ import plugins.stochastics.StochasticsPluginData;
 import util.random.RandomGeneratorProvider;
 
 /**
- * A static test support class for the partitions plugin. Provides convenience
- * methods for obtaining standard Attributes, People and
- * Stochastics PluginData.
+ * A static test support class for the {@linkplain PartitionsPlugin}. Provides
+ * convenience
+ * methods for obtaining standarized PluginData for the listed Plugin.
  * 
- * Also contains factory methods to obtain a list of plugins that can be
+ * <p>
+ * Also contains factory methods to obtain a list of plugins that is the minimal
+ * set needed to adequately test this Plugin that can be
  * utilized with
- * {@code TestSimulation.executeSimulation()}
+ * </p>
+ * 
+ * <li>{@link TestSimulation#executeSimulation(List)}</li>
+ * <li>or
+ * <li>{@link TestSimulation#executeSimulation(List, nucleus.testsupport.testplugin.TestSimulationOutputConsumer)}
  * 
  */
 public class PartitionsTestPluginFactory {
