@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.EnumSet;
@@ -14,6 +15,7 @@ import java.util.function.Consumer;
 import org.junit.jupiter.api.Test;
 
 import nucleus.ActorContext;
+import nucleus.NucleusError;
 import nucleus.Plugin;
 import nucleus.PluginData;
 import nucleus.PluginId;
@@ -25,10 +27,12 @@ import nucleus.testsupport.testplugin.TestSimulation;
 import plugins.globalproperties.GlobalPropertiesPluginData;
 import plugins.globalproperties.GlobalPropertiesPluginId;
 import plugins.globalproperties.datamanagers.GlobalPropertiesDataManager;
+import plugins.globalproperties.support.GlobalPropertiesError;
 import plugins.globalproperties.support.GlobalPropertyId;
 import plugins.globalproperties.support.SimpleGlobalPropertyId;
 import plugins.util.properties.PropertyDefinition;
 import tools.annotations.UnitTestMethod;
+import util.errors.ContractException;
 import util.wrappers.MutableBoolean;
 
 public class AT_GlobalPropertiesTestPluginFactory {
@@ -75,6 +79,12 @@ public class AT_GlobalPropertiesTestPluginFactory {
 		TestSimulation
 				.executeSimulation(GlobalPropertiesTestPluginFactory.factory(factoryConsumer(executed)).getPlugins());
 		assertTrue(executed.getValue());
+
+		// precondition: consumer is null
+		Consumer<ActorContext> nullConsumer = null;
+		ContractException contractException = assertThrows(ContractException.class,
+				() -> GlobalPropertiesTestPluginFactory.factory(nullConsumer));
+		assertEquals(NucleusError.NULL_ACTOR_CONTEXT_CONSUMER, contractException.getErrorType());
 	}
 
 	@Test
@@ -87,6 +97,12 @@ public class AT_GlobalPropertiesTestPluginFactory {
 
 		TestSimulation.executeSimulation(GlobalPropertiesTestPluginFactory.factory(testPluginData).getPlugins());
 		assertTrue(executed.getValue());
+
+		// precondition: testPluginData is null
+		TestPluginData nullTestPluginData = null;
+		ContractException contractException = assertThrows(ContractException.class,
+				() -> GlobalPropertiesTestPluginFactory.factory(nullTestPluginData));
+		assertEquals(NucleusError.NULL_PLUGIN_DATA, contractException.getErrorType());
 
 	}
 
@@ -158,6 +174,12 @@ public class AT_GlobalPropertiesTestPluginFactory {
 		}).setGlobalPropertiesPluginData(globalPropertiesPluginData).getPlugins();
 
 		checkPlugins(plugins, globalPropertiesPluginData, GlobalPropertiesPluginId.PLUGIN_ID);
+
+		// precondition: globalPropertiesPluginData is not null
+		ContractException contractException = assertThrows(ContractException.class,
+				() -> GlobalPropertiesTestPluginFactory.factory(t -> {
+				}).setGlobalPropertiesPluginData(null));
+		assertEquals(GlobalPropertiesError.NULL_GLOBAL_PLUGIN_DATA, contractException.getErrorType());
 	}
 
 	@Test
