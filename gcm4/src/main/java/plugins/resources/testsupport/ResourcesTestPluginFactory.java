@@ -37,10 +37,7 @@ import util.random.RandomGeneratorProvider;
  * utilized with
  * </p>
  * 
- * <li>{@link TestSimulation#executeSimulation(List)}</li>
- * <li>or
- * <li>{@link TestSimulation#executeSimulation(List, nucleus.testsupport.testplugin.TestSimulationOutputConsumer)}
- * 
+ * <li>{@link TestSimulation#executeSimulation}
  */
 public class ResourcesTestPluginFactory {
 
@@ -165,9 +162,48 @@ public class ResourcesTestPluginFactory {
 	}
 
 	/**
-	 * Method that will generate ResourcesPluginData,
-	 * RegionsPluginData, PeoplePluginData and
-	 * StocasticsPluginData based on some configuration parameters.
+	 * Creates a Factory that facilitates the creation of a minimal set of plugins
+	 * needed to adequately test the {@link ResourcesPlugin} by generating:
+	 * <p>
+	 * {@link ResourcesPluginData}
+	 * <p>
+	 * {@link RegionsPluginData}
+	 * <p>
+	 * {@link PeoplePluginData}
+	 * <p>
+	 * {@link StochasticsPluginData}
+	 * <p>
+	 * either directly (by default)
+	 * <p>
+	 * (
+	 * <p>
+	 * {@link #getStandardResourcesPluginData},
+	 * <p>
+	 * {@link #getStandardPeoplePluginData},
+	 * <p>
+	 * {@link #getStandardRegionsPluginData},
+	 * <p>
+	 * {@link #getStandardStochasticsPluginData}
+	 * <p>
+	 * )
+	 * </p>
+	 * or explicitly set
+	 * <p>
+	 * (
+	 * <p>
+	 * {@link Factory#setResourcesPluginData},
+	 * <p>
+	 * {@link Factory#setPeoplePluginData},
+	 * <p>
+	 * {@link Factory#setRegionsPluginData},
+	 * <p>
+	 * {@link Factory#setStochasticsPluginData}
+	 * <p>
+	 * )
+	 * </p>
+	 * 
+	 * via the
+	 * {@link Factory#getPlugins()} method.
 	 * 
 	 * @param initialPopulation the initial number of people in the simulation
 	 * @param seed              used to seed a RandomGenerator
@@ -183,10 +219,48 @@ public class ResourcesTestPluginFactory {
 	}
 
 	/**
-	 * Method that will generate ResourcesPluginData,
-	 * RegionsPluginData, PeoplePluginData,
-	 * StocasticsPluginData and TestPluginData based on some configuration
-	 * parameters.
+	 * Creates a Factory that facilitates the creation of a minimal set of plugins
+	 * needed to adequately test the {@link ResourcesPlugin} by generating:
+	 * <p>
+	 * {@link ResourcesPluginData}
+	 * <p>
+	 * {@link RegionsPluginData}
+	 * <p>
+	 * {@link PeoplePluginData}
+	 * <p>
+	 * {@link StochasticsPluginData}
+	 * <p>
+	 * either directly (by default)
+	 * <p>
+	 * (
+	 * <p>
+	 * {@link #getStandardResourcesPluginData},
+	 * <p>
+	 * {@link #getStandardPeoplePluginData},
+	 * <p>
+	 * {@link #getStandardRegionsPluginData},
+	 * <p>
+	 * {@link #getStandardStochasticsPluginData}
+	 * <p>
+	 * )
+	 * </p>
+	 * or explicitly set
+	 * <p>
+	 * (
+	 * <p>
+	 * {@link Factory#setResourcesPluginData},
+	 * <p>
+	 * {@link Factory#setPeoplePluginData},
+	 * <p>
+	 * {@link Factory#setRegionsPluginData},
+	 * <p>
+	 * {@link Factory#setStochasticsPluginData}
+	 * <p>
+	 * )
+	 * </p>
+	 * 
+	 * via the
+	 * {@link Factory#getPlugins()} method.
 	 * 
 	 * @param initialPopulation the initial population of the simulation
 	 * @param seed              used to seed a RandomGenerator

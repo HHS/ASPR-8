@@ -26,10 +26,7 @@ import plugins.globalproperties.GlobalPropertiesPluginData;
  * utilized with
  * </p>
  * 
- * <li>{@link TestSimulation#executeSimulation(List)}</li>
- * <li>or
- * <li>{@link TestSimulation#executeSimulation(List, nucleus.testsupport.testplugin.TestSimulationOutputConsumer)}
- * 
+ * <li>{@link TestSimulation#executeSimulation}
  */
 public final class GlobalPropertiesTestPluginFactory {
 
@@ -94,7 +91,30 @@ public final class GlobalPropertiesTestPluginFactory {
 	}
 
 	/**
-	 * Method that will generate GlobalPropertiesPluginData
+	 * Creates a Factory that facilitates the creation of a minimal set of plugins
+	 * needed to adequately test the {@link GlobalPropertiesPlugin} by generating:
+	 * <p>
+	 * {@link GlobalPropertiesPluginData}
+	 * <p>
+	 * either directly (by default)
+	 * <p>
+	 * (
+	 * <p>
+	 * {@link #getStandardGlobalPropertiesPluginData}
+	 * <p>
+	 * )
+	 * </p>
+	 * or explicitly set
+	 * <p>
+	 * (
+	 * <p>
+	 * {@link Factory#setGlobalPropertiesPluginData}
+	 * <p>
+	 * )
+	 * </p>
+	 * 
+	 * via the
+	 * {@link Factory#getPlugins()} method.
 	 * 
 	 * @param testPluginData PluginData that will be used to generate a TestPlugin
 	 * 
@@ -106,7 +126,30 @@ public final class GlobalPropertiesTestPluginFactory {
 	}
 
 	/**
-	 * Method that will generate GlobalPropertiesPluginData and TestPluginData
+	 * Creates a Factory that facilitates the creation of a minimal set of plugins
+	 * needed to adequately test the {@link GlobalPropertiesPlugin} by generating:
+	 * <p>
+	 * {@link GlobalPropertiesPluginData}
+	 * <p>
+	 * either directly (by default)
+	 * <p>
+	 * (
+	 * <p>
+	 * {@link #getStandardGlobalPropertiesPluginData}
+	 * <p>
+	 * )
+	 * </p>
+	 * or explicitly set
+	 * <p>
+	 * (
+	 * <p>
+	 * {@link Factory#setGlobalPropertiesPluginData}
+	 * <p>
+	 * )
+	 * </p>
+	 * 
+	 * via the
+	 * {@link Factory#getPlugins()} method.
 	 * 
 	 * @param consumer consumer used to generate TestPluginData
 	 * 

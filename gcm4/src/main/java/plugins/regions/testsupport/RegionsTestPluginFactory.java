@@ -35,9 +35,7 @@ import util.random.RandomGeneratorProvider;
  * utilized with
  * </p>
  * 
- * <li>{@link TestSimulation#executeSimulation(List)}</li>
- * <li>or
- * <li>{@link TestSimulation#executeSimulation(List, nucleus.testsupport.testplugin.TestSimulationOutputConsumer)}
+ * <li>{@link TestSimulation#executeSimulation}
  * 
  */
 public final class RegionsTestPluginFactory {
@@ -148,9 +146,42 @@ public final class RegionsTestPluginFactory {
 	}
 
 	/**
-	 * Method that will generate PeoplePluginData,
-	 * RegionsPluginData, StocasticsPluginData and TestPluginData based on some
-	 * configuration parameters.
+	 * Creates a Factory that facilitates the creation of a minimal set of plugins
+	 * needed to adequately test the {@link RegionsPlugin} by generating:
+	 * <p>
+	 * {@link RegionsPluginData}
+	 * <p>
+	 * {@link PeoplePluginData}
+	 * <p>
+	 * {@link StochasticsPluginData}
+	 * <p>
+	 * either directly (by default)
+	 * <p>
+	 * (
+	 * <p>
+	 * {@link #getStandardPeoplePluginData},
+	 * <p>
+	 * {@link #getStandardRegionsPluginData},
+	 * <p>
+	 * {@link #getStandardStochasticsPluginData}
+	 * <p>
+	 * )
+	 * </p>
+	 * or explicitly set
+	 * <p>
+	 * (
+	 * <p>
+	 * {@link Factory#setPeoplePluginData},
+	 * <p>
+	 * {@link Factory#setRegionsPluginData},
+	 * <p>
+	 * {@link Factory#setStochasticsPluginData}
+	 * <p>
+	 * )
+	 * </p>
+	 * 
+	 * via the
+	 * {@link Factory#getPlugins()} method.
 	 * 
 	 * @param initialPopulation  the initial size of the population in the
 	 *                           simulation
@@ -170,9 +201,42 @@ public final class RegionsTestPluginFactory {
 	}
 
 	/**
-	 * Method that will generate PeoplePluginData,
-	 * RegionsPluginData, StocasticsPluginData and TestPluginData based on some
-	 * configuration parameters.
+	 * Creates a Factory that facilitates the creation of a minimal set of plugins
+	 * needed to adequately test the {@link RegionsPlugin} by generating:
+	 * <p>
+	 * {@link RegionsPluginData}
+	 * <p>
+	 * {@link PeoplePluginData}
+	 * <p>
+	 * {@link StochasticsPluginData}
+	 * <p>
+	 * either directly (by default)
+	 * <p>
+	 * (
+	 * <p>
+	 * {@link #getStandardPeoplePluginData},
+	 * <p>
+	 * {@link #getStandardRegionsPluginData},
+	 * <p>
+	 * {@link #getStandardStochasticsPluginData}
+	 * <p>
+	 * )
+	 * </p>
+	 * or explicitly set
+	 * <p>
+	 * (
+	 * <p>
+	 * {@link Factory#setPeoplePluginData},
+	 * <p>
+	 * {@link Factory#setRegionsPluginData},
+	 * <p>
+	 * {@link Factory#setStochasticsPluginData}
+	 * <p>
+	 * )
+	 * </p>
+	 * 
+	 * via the
+	 * {@link Factory#getPlugins()} method.
 	 * 
 	 * @param initialPopulation  the initial size of the population in the
 	 *                           simulation

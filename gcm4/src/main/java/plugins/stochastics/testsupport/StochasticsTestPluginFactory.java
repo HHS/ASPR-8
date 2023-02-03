@@ -19,14 +19,13 @@ import plugins.stochastics.StochasticsPluginData;
  * convenience
  * methods for obtaining standarized PluginData for the listed Plugin.
  * 
- * <p>Also contains factory methods to obtain a list of plugins that is the minimal
+ * <p>
+ * Also contains factory methods to obtain a list of plugins that is the minimal
  * set needed to adequately test this Plugin that can be
- * utilized with</p>
+ * utilized with
+ * </p>
  * 
- * <li>{@link TestSimulation#executeSimulation(List)}</li>
- * <li>or
- * <li>{@link TestSimulation#executeSimulation(List, nucleus.testsupport.testplugin.TestSimulationOutputConsumer)}
- * 
+ * <li>{@link TestSimulation#executeSimulation}
  */
 public class StochasticsTestPluginFactory {
 
@@ -95,13 +94,28 @@ public class StochasticsTestPluginFactory {
 
 	/**
 	 * Creates a Factory that facilitates the creation of a minimal set of plugins
-	 * needed to adequately test the StocasticsPlugin by generating the Stocastics
-	 * and Test Plugins based on PluginData that is either defaulted
-	 * (see
-	 * {@link StochasticsTestPluginFactory#getStandardStochasticsPluginData(long)})
-	 * or
-	 * explicitly set via the
-	 * {@link Factory#setStochasticsPluginData(StochasticsPluginData)} via the
+	 * needed to adequately test the {@link StocasticsPlugin} by generating:
+	 * <p>
+	 * {@link StochasticsPluginData}
+	 * <p>
+	 * either directly (by default)
+	 * <p>
+	 * (
+	 * <p>
+	 * {@link #getStandardStochasticsPluginData}
+	 * <p>
+	 * )
+	 * </p>
+	 * or explicitly set
+	 * <p>
+	 * (
+	 * <p>
+	 * {@link Factory#setStochasticsPluginData}
+	 * <p>
+	 * )
+	 * </p>
+	 * 
+	 * via the
 	 * {@link Factory#getPlugins()} method.
 	 * 
 	 * @param seed     Used to seed the StocasticsPluginData
@@ -120,13 +134,28 @@ public class StochasticsTestPluginFactory {
 
 	/**
 	 * Creates a Factory that facilitates the creation of a minimal set of plugins
-	 * needed to adequately test the StocasticsPlugin by generating the Stocastics
-	 * and Test Plugins based on PluginData that is either defaulted
-	 * (see
-	 * {@link StochasticsTestPluginFactory#getStandardStochasticsPluginData(long)})
-	 * or
-	 * explicitly set via the
-	 * {@link Factory#setStochasticsPluginData(StochasticsPluginData)} via the
+	 * needed to adequately test the {@link StocasticsPlugin} by generating:
+	 * <p>
+	 * {@link StochasticsPluginData}
+	 * <p>
+	 * either directly (by default)
+	 * <p>
+	 * (
+	 * <p>
+	 * {@link #getStandardStochasticsPluginData}
+	 * <p>
+	 * )
+	 * </p>
+	 * or explicitly set
+	 * <p>
+	 * (
+	 * <p>
+	 * {@link Factory#setStochasticsPluginData}
+	 * <p>
+	 * )
+	 * </p>
+	 * 
+	 * via the
 	 * {@link Factory#getPlugins()} method.
 	 * 
 	 * @param seed           Used to seed the StocasticsPluginData

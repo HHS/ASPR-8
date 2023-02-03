@@ -38,10 +38,7 @@ import util.wrappers.MultiKey;
  * utilized with
  * </p>
  * 
- * <li>{@link TestSimulation#executeSimulation(List)}</li>
- * <li>or
- * <li>{@link TestSimulation#executeSimulation(List, nucleus.testsupport.testplugin.TestSimulationOutputConsumer)}
- * 
+ * <li>{@link TestSimulation#executeSimulation}
  */
 public final class GroupsTestPluginFactory {
 
@@ -152,9 +149,43 @@ public final class GroupsTestPluginFactory {
 	}
 
 	/**
-	 * Method that will generate GroupsPluginData, PeoplePluginData and
-	 * StocasticsPluginData based on some configuration parameters.
+	 * Creates a Factory that facilitates the creation of a minimal set of plugins
+	 * needed to adequately test the {@link GroupsPlugin} by generating:
+	 * <p>
+	 * {@link GroupsPluginData}
+	 * <p>
+	 * {@link PeoplePluginData}
+	 * <p>
+	 * {@link StochasticsPluginData}
+	 * <p>
+	 * either directly (by default)
+	 * <p>
+	 * (
+	 * <p>
+	 * {@link #getStandardGroupsPluginData},
+	 * <p>
+	 * {@link #getStandardPeoplePluginData},
+	 * <p>
+	 * {@link #getStandardStochasticsPluginData}
+	 * <p>
+	 * )
+	 * </p>
+	 * or explicitly set
+	 * <p>
+	 * (
+	 * <p>
+	 * {@link Factory#setGroupsPluginData},
+	 * <p>
+	 * {@link Factory#setPeoplePluginData},
+	 * <p>
+	 * {@link Factory#setStochasticsPluginData}
+	 * <p>
+	 * )
+	 * </p>
 	 * 
+	 * via the
+	 * {@link Factory#getPlugins()} method.
+	 *
 	 * @param initialPopulation       how many people are in the simulation at the
 	 *                                start
 	 * @param expectedGroupsPerPerson the average number of groups each person
@@ -174,10 +205,43 @@ public final class GroupsTestPluginFactory {
 	}
 
 	/**
-	 * Method that will generate GroupsPluginData, PeoplePluginData,
-	 * StocasticsPluginData and TestPluginData based on some configuration
-	 * parameters.
+	 * Creates a Factory that facilitates the creation of a minimal set of plugins
+	 * needed to adequately test the {@link GroupsPlugin} by generating:
+	 * <p>
+	 * {@link GroupsPluginData}
+	 * <p>
+	 * {@link PeoplePluginData}
+	 * <p>
+	 * {@link StochasticsPluginData}
+	 * <p>
+	 * either directly (by default)
+	 * <p>
+	 * (
+	 * <p>
+	 * {@link #getStandardGroupsPluginData},
+	 * <p>
+	 * {@link #getStandardPeoplePluginData},
+	 * <p>
+	 * {@link #getStandardStochasticsPluginData}
+	 * <p>
+	 * )
+	 * </p>
+	 * or explicitly set
+	 * <p>
+	 * (
+	 * <p>
+	 * {@link Factory#setGroupsPluginData},
+	 * <p>
+	 * {@link Factory#setPeoplePluginData},
+	 * <p>
+	 * {@link Factory#setStochasticsPluginData}
+	 * <p>
+	 * )
+	 * </p>
 	 * 
+	 * via the
+	 * {@link Factory#getPlugins()} method.
+	 *
 	 * @param initialPopulation       how many people are in the simulation at the
 	 *                                start
 	 * @param expectedGroupsPerPerson the average number of groups each person

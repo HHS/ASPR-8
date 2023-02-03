@@ -19,10 +19,7 @@ import nucleus.PluginData;
  * utilized with
  * </p>
  * 
- * <li>{@link TestSimulation#executeSimulation(List)}</li>
- * <li>or
- * <li>{@link TestSimulation#executeSimulation(List, nucleus.testsupport.testplugin.TestSimulationOutputConsumer)}
- * 
+ * <li>{@link TestSimulation#executeSimulation}
  */
 public final class TestPluginFactory {
 	private TestPluginFactory() {
@@ -67,7 +64,13 @@ public final class TestPluginFactory {
 	}
 
 	/**
-	 * Method that will generate TestPluginData based on a consumer
+	 * Creates a Factory that facilitates the creation of a minimal set of plugins
+	 * needed to adequately test the {@link TestPlugin} by generating:
+	 * <p>
+	 * {@link TestPluginData}
+	 * <p>
+	 * via the
+	 * {@link Factory#getPlugins()} method.
 	 * 
 	 * @param consumer consumer to use to generate TestPluginData
 	 * @return a new instance of Factory
@@ -83,7 +86,13 @@ public final class TestPluginFactory {
 	}
 
 	/**
-	 * Method that will generate TestPluginData based on passed in TestPluginData
+	 * Creates a Factory that facilitates the creation of a minimal set of plugins
+	 * needed to adequately test the {@link TestPlugin} by generating:
+	 * <p>
+	 * {@link TestPluginData}
+	 * <p>
+	 * via the
+	 * {@link Factory#getPlugins()} method.
 	 * 
 	 * @param testPluginData PluginData that will be used to generate a TestPlugin
 	 * @return a new instance of Factory

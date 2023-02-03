@@ -36,10 +36,7 @@ import util.random.RandomGeneratorProvider;
  * utilized with
  * </p>
  * 
- * <li>{@link TestSimulation#executeSimulation(List)}</li>
- * <li>or
- * <li>{@link TestSimulation#executeSimulation(List, nucleus.testsupport.testplugin.TestSimulationOutputConsumer)}
- * 
+ * <li>{@link TestSimulation#executeSimulation}
  */
 public class PartitionsTestPluginFactory {
 
@@ -164,10 +161,50 @@ public class PartitionsTestPluginFactory {
 	}
 
 	/**
-	 * Method that will generate AttributesPluginData, PartitionsPlugin,
-	 * PeoplePluginData, and StocasticsPluginData based on some configuration
-	 * parameters
+	 * Creates a Factory that facilitates the creation of a minimal set of plugins
+	 * needed to adequately test the {@link PartitionsPlugin} by generating:
+	 * <p>
+	 * {@link AttributesPluginData}
+	 * <p>
+	 * {@link PartitionsPlugin}
+	 * <p>
+	 * {@link PeoplePluginData}
+	 * <p>
+	 * {@link StochasticsPluginData}
+	 * <p>
+	 * either directly (by default)
+	 * <p>
+	 * (
+	 * <p>
+	 * {@link #getStandardAttributesPluginData},
+	 * <p>
+	 * {@link #getStandardPartitionsPlugin},
+	 * <p>
+	 * {@link #getStandardPeoplePluginData},
+	 * <p>
+	 * {@link #getStandardStochasticsPluginData}
+	 * <p>
+	 * )
+	 * </p>
+	 * or explicitly set
+	 * <p>
+	 * (
 	 * 
+	 * <p>
+	 * {@link Factory#setAttributesPluginData},
+	 * <p>
+	 * {@link Factory#setPartitionsPlugin},
+	 * <p>
+	 * {@link Factory#setPeoplePluginData},
+	 * <p>
+	 * {@link Factory#setStochasticsPluginData}
+	 * <p>
+	 * )
+	 * </p>
+	 * 
+	 * via the
+	 * {@link Factory#getPlugins()} method.
+	 *
 	 * @param initialPopulation the initial population of the simulation
 	 * @param seed              used to seed a RandomGenerator
 	 * @param consumer          consumer to use to generate TestPluginData
@@ -183,9 +220,49 @@ public class PartitionsTestPluginFactory {
 	}
 
 	/**
-	 * Method that will generate AttributesPluginData, PartitionsPlugin,
-	 * PeoplePluginData, and StocasticsPluginData based on some configuration
-	 * parameters
+	 * Creates a Factory that facilitates the creation of a minimal set of plugins
+	 * needed to adequately test the {@link PartitionsPlugin} by generating:
+	 * <p>
+	 * {@link AttributesPluginData}
+	 * <p>
+	 * {@link PartitionsPlugin}
+	 * <p>
+	 * {@link PeoplePluginData}
+	 * <p>
+	 * {@link StochasticsPluginData}
+	 * <p>
+	 * either directly (by default)
+	 * <p>
+	 * (
+	 * <p>
+	 * {@link #getStandardAttributesPluginData},
+	 * <p>
+	 * {@link #getStandardPartitionsPlugin},
+	 * <p>
+	 * {@link #getStandardPeoplePluginData},
+	 * <p>
+	 * {@link #getStandardStochasticsPluginData}
+	 * <p>
+	 * )
+	 * </p>
+	 * or explicitly set
+	 * <p>
+	 * (
+	 * 
+	 * <p>
+	 * {@link Factory#setAttributesPluginData},
+	 * <p>
+	 * {@link Factory#setPartitionsPlugin},
+	 * <p>
+	 * {@link Factory#setPeoplePluginData},
+	 * <p>
+	 * {@link Factory#setStochasticsPluginData}
+	 * <p>
+	 * )
+	 * </p>
+	 * 
+	 * via the
+	 * {@link Factory#getPlugins()} method.
 	 * 
 	 * @param initialPopulation the initial population of the simulation
 	 * @param seed              used to seed a RandomGenerator
