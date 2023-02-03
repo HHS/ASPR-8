@@ -1,8 +1,11 @@
 package nucleus.testsupport.testplugin;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
@@ -10,8 +13,10 @@ import java.util.function.Consumer;
 import org.junit.jupiter.api.Test;
 
 import nucleus.ActorContext;
+import nucleus.NucleusError;
 import nucleus.Plugin;
 import tools.annotations.UnitTestMethod;
+import util.errors.ContractException;
 import util.wrappers.MutableBoolean;
 
 public class AT_TestSimulation {
@@ -24,18 +29,29 @@ public class AT_TestSimulation {
 
     @Test
     @UnitTestMethod(target = TestSimulation.class, name = "executeSimulation", args = { List.class })
-    public void testExecuteSimulation1() {
+    public void testExecuteSimulation() {
         MutableBoolean executed = new MutableBoolean();
         TestPluginData testPluginData = TestPluginData.builder()
                 .addTestActorPlan("actor", new TestActorPlan(0, simulationConsumer(executed))).build();
         List<Plugin> plugins = Arrays.asList(TestPlugin.getTestPlugin(testPluginData));
         assertDoesNotThrow(() -> TestSimulation.executeSimulation(plugins));
         assertTrue(executed.getValue());
+
+        // precondition: list of plugins is null
+        ContractException contractException = assertThrows(ContractException.class,
+                () -> TestSimulation.executeSimulation(null));
+        assertEquals(NucleusError.NULL_PLUGIN, contractException.getErrorType());
+
+        // precondition: list of plugins is empty
+        contractException = assertThrows(ContractException.class,
+                () -> TestSimulation.executeSimulation(new ArrayList<>()));
+        assertEquals(NucleusError.EMPTY_PLUGIN_LIST, contractException.getErrorType());
     }
 
     @Test
-    @UnitTestMethod(target = TestSimulation.class, name = "executeSimulation", args = { List.class, TestSimulationOutputConsumer.class })
-    public void testExecuteSimulation2() {
+    @UnitTestMethod(target = TestSimulation.class, name = "executeSimulation", args = { List.class,
+            TestSimulationOutputConsumer.class })
+    public void testExecuteSimulation_OutputConsumer() {
         MutableBoolean executed = new MutableBoolean();
         TestSimulationOutputConsumer outputConsumer = new TestSimulationOutputConsumer();
         TestPluginData testPluginData = TestPluginData.builder()
@@ -44,5 +60,20 @@ public class AT_TestSimulation {
         assertDoesNotThrow(() -> TestSimulation.executeSimulation(plugins, outputConsumer));
         assertTrue(executed.getValue());
         assertTrue(outputConsumer.isComplete());
+
+        // precondition: list of plugins is null
+        ContractException contractException = assertThrows(ContractException.class,
+                () -> TestSimulation.executeSimulation(null, outputConsumer));
+        assertEquals(NucleusError.NULL_PLUGIN, contractException.getErrorType());
+
+        // precondition: list of plugins is empty
+        contractException = assertThrows(ContractException.class,
+                () -> TestSimulation.executeSimulation(new ArrayList<>(), outputConsumer));
+        assertEquals(NucleusError.EMPTY_PLUGIN_LIST, contractException.getErrorType());
+
+        // precondition: output consumer is null
+        contractException = assertThrows(ContractException.class,
+                () -> TestSimulation.executeSimulation(plugins, null));
+        assertEquals(NucleusError.NULL_OUTPUT_HANDLER, contractException.getErrorType());
     }
 }
