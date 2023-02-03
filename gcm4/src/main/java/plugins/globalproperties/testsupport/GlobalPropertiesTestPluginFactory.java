@@ -13,6 +13,8 @@ import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestSimulation;
 import plugins.globalproperties.GlobalPropertiesPlugin;
 import plugins.globalproperties.GlobalPropertiesPluginData;
+import plugins.globalproperties.support.GlobalPropertiesError;
+import util.errors.ContractException;
 
 /**
  * A static test support class for the {@linkplain GlobalPropertiesPlugin}.
@@ -55,8 +57,9 @@ public final class GlobalPropertiesTestPluginFactory {
 		}
 
 		/**
-		 * Method that will get the PluginData for the GlobalProperties and TestPlugin
-		 * and use the respective PluginData to build Plugins
+		 * Method that will get the currently set PluginData for the GlobalProperties
+		 * and TestPlugins
+		 * and use the respective PluginData to build the Plugins
 		 * 
 		 * @return a List containing a GlobalPropertiesPlugin and a TestPlugin
 		 * 
@@ -83,8 +86,16 @@ public final class GlobalPropertiesTestPluginFactory {
 		 * 
 		 * @return an instance of this Factory
 		 * 
+		 * @throws ContractExecption
+		 *                           {@linkplain GlobalPropertiesError#NULL_GLOBAL_PLUGIN_DATA}
+		 *                           if the passed in pluginData is null
+		 * 
 		 */
+
 		public Factory setGlobalPropertiesPluginData(GlobalPropertiesPluginData globalPropertiesPluginData) {
+			if (globalPropertiesPluginData == null) {
+				throw new ContractException(GlobalPropertiesError.NULL_GLOBAL_PLUGIN_DATA);
+			}
 			this.data.globalPropertiesPluginData = globalPropertiesPluginData;
 			return this;
 		}
@@ -164,9 +175,14 @@ public final class GlobalPropertiesTestPluginFactory {
 	}
 
 	/**
-	 * Method that will return a Standard GlobalPropertiesPluginData
+	 * Creates a Standardized GlobalPropertiesPluginData that is minimally adequate
+	 * for testing the GlobalPropertiesPlugin
+	 * <p>
+	 * The resulting GlobalPropertiesPluginData will include:
+	 * <li>Every globalPropertyId included in {@link TestGlobalPropertyId} along
+	 * with the defined propertyDefinition for each
 	 * 
-	 * @return the resulting GlobalPropertiesPluginData
+	 * @return the Standardized GlobalPropertiesPluginData
 	 * 
 	 */
 	public static GlobalPropertiesPluginData getStandardGlobalPropertiesPluginData() {
