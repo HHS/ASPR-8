@@ -110,6 +110,11 @@ public class AT_GlobalPropertiesPluginData {
 		// build the initial data
 		GlobalPropertiesPluginData globalInitialData = builder.build();
 
+		// show that the expected property ids are there
+		Set<GlobalPropertyId> actualGlobalPropertyIds = globalInitialData.getGlobalPropertyIds();
+		Set<GlobalPropertyId> expectedGlobalPropertyIds = expectedPropertyDefinitions.keySet();
+		assertEquals(expectedGlobalPropertyIds, actualGlobalPropertyIds);
+
 		// show that the property definitions are retrieved by their ids
 		for (GlobalPropertyId gpid : expectedPropertyDefinitions.keySet()) {
 			PropertyDefinition expectedPropertyDefinition = expectedPropertyDefinitions.get(gpid);
@@ -159,8 +164,15 @@ public class AT_GlobalPropertiesPluginData {
 			expectedValues.put(testGlobalPropertyId, value);
 		}
 
-		// show that the expected values are present
+		// build the initial data
 		GlobalPropertiesPluginData globalInitialData = builder.build();
+
+		// show that the expected property ids are there
+		Set<GlobalPropertyId> actualGlobalPropertyIds = globalInitialData.getGlobalPropertyIds();
+		Set<GlobalPropertyId> expectedGlobalPropertyIds = expectedValues.keySet();
+		assertEquals(expectedGlobalPropertyIds, actualGlobalPropertyIds);
+
+		// show that the expected values are present
 		for (TestGlobalPropertyId testGlobalPropertyId : TestGlobalPropertyId.values()) {
 			Integer expectedGlobalPropertyValue = expectedValues.get(testGlobalPropertyId);
 			Integer actualGlobalPropertyValue = globalInitialData.getGlobalPropertyValue(testGlobalPropertyId);
