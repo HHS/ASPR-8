@@ -42,7 +42,6 @@ public class AT_StochasticsTestPluginFactory {
 	 * <li>{@link StochasticsTestPluginFactory#factory(long, Consumer)}
 	 * <li>or indirectly via creating a TestPluginData and passing it to
 	 * <li>{@link StochasticsTestPluginFactory#factory(long, TestPluginData)}
-	 * </p>
 	 * 
 	 * @param executed boolean to set once the consumer completes
 	 * @return the consumer

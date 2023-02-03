@@ -29,6 +29,22 @@ import util.wrappers.MutableBoolean;
 
 public class AT_GlobalPropertiesTestPluginFactory {
 
+	/**
+	 * Convience method to create a consumer to facilitate testing the factory
+	 * methods
+	 * {@link AT_GlobalPropertiesTestPluginFactory#testFactory_Consumer()}
+	 * and
+	 * {@link AT_GlobalPropertiesTestPluginFactory#testFactory_TestPluginData()}
+	 * 
+	 * <li>either for passing directly to
+	 * <li>{@link GlobalPropertiesTestPluginFactory#factory(long, Consumer)}
+	 * <li>or indirectly via creating a TestPluginData and passing it to
+	 * <li>{@link GlobalPropertiesTestPluginFactory#factory(long, TestPluginData)}
+	 * 
+	 * @param executed boolean to set once the consumer completes
+	 * @return the consumer
+	 * 
+	 */
 	private Consumer<ActorContext> factoryConsumer(MutableBoolean executed) {
 		return (c) -> {
 			GlobalPropertiesDataManager globalPropertiesDataManager = c
