@@ -5,8 +5,10 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import nucleus.ActorContext;
+import nucleus.NucleusError;
 import nucleus.Plugin;
 import nucleus.PluginData;
+import util.errors.ContractException;
 
 /**
  * A static test support class for the {@linkplain TestPlugin}. Provides
@@ -75,9 +77,16 @@ public final class TestPluginFactory {
 	 * @param consumer consumer to use to generate TestPluginData
 	 * @return a new instance of Factory
 	 * 
+	 * @throws ContractExecption
+	 *                           {@linkplain NucleusError#NULL_ACTOR_CONTEXT_CONSUMER}
+	 *                           if consumer is null
+	 * 
+	 *
 	 */
 	public static Factory factory(Consumer<ActorContext> consumer) {
-
+		if (consumer == null) {
+			throw new ContractException(NucleusError.NULL_ACTOR_CONTEXT_CONSUMER);
+		}
 		TestPluginData testPluginData = TestPluginData.builder()//
 				.addTestActorPlan("actor", new TestActorPlan(0, consumer))//
 				.build();
@@ -97,8 +106,16 @@ public final class TestPluginFactory {
 	 * @param testPluginData PluginData that will be used to generate a TestPlugin
 	 * @return a new instance of Factory
 	 * 
+	 * @throws ContractExecption
+	 *                           {@linkplain NucleusError#NULL_PLUGIN_DATA}
+	 *                           if testPluginData is null
+	 * 
+	 * 
 	 */
 	public static Factory factory(TestPluginData testPluginData) {
+		if (testPluginData == null) {
+			throw new ContractException(NucleusError.NULL_PLUGIN_DATA);
+		}
 		return new Factory(new Data(testPluginData));
 	}
 }
