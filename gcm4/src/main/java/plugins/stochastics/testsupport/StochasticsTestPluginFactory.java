@@ -169,7 +169,7 @@ public class StochasticsTestPluginFactory {
 	}
 
 	/**
-	 * Creates a Standarized StocasticsPluginData that is minimally adequate for
+	 * Creates a Standardized StocasticsPluginData that is minimally adequate for
 	 * testing the StocasticsPlugin.
 	 * <p>
 	 * The resulting StocasticsPluginData will include:
@@ -177,7 +177,7 @@ public class StochasticsTestPluginFactory {
 	 * </p>
 	 * 
 	 * @param seed used to seed the StocasticsPluginData
-	 * @return the Standarized StocasticsPluginData
+	 * @return the Standardized StocasticsPluginData
 	 * 
 	 */
 	public static StochasticsPluginData getStandardStochasticsPluginData(long seed) {
