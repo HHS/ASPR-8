@@ -689,7 +689,9 @@ public final class PersonPropertiesDataManager extends DataManager {
 	private static enum EventFunctionId {
 		PERSON_PROPERTY_ID, //
 		REGION_ID, //
-		PERSON_ID;//
+		PERSON_ID,
+		CURRENT_VALUE,
+		PREVIOUS_VALUE;//
 	}
 
 	private IdentifiableFunctionMap<PersonPropertyUpdateEvent> functionMap = //
@@ -697,6 +699,8 @@ public final class PersonPropertiesDataManager extends DataManager {
 									.put(EventFunctionId.PERSON_PROPERTY_ID, e -> e.personPropertyId())//
 									.put(EventFunctionId.REGION_ID, e -> regionsDataManager.getPersonRegion(e.personId()))//
 									.put(EventFunctionId.PERSON_ID, e -> e.personId())//
+									.put(EventFunctionId.CURRENT_VALUE, e -> e.currentPropertyValue())
+									.put(EventFunctionId.PREVIOUS_VALUE, e -> e.previousPropertyValue())
 									.build();//
 
 	/**
@@ -705,6 +709,30 @@ public final class PersonPropertiesDataManager extends DataManager {
 	 */
 	public EventFilter<PersonPropertyUpdateEvent> getEventFilterForPersonPropertyUpdateEvent() {
 		return EventFilter.builder(PersonPropertyUpdateEvent.class).build();
+	}
+
+	/**
+	 * Returns an event filter used to subscribe to
+	 * {@link PersonPropertyUpdateEvent} events. Matches on person property id
+	 * and property value.
+	 *
+	 * @throws ContractException
+	 * 			   <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the person
+	 *			   property id is null</li>
+	 *			   <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if the
+	 *             person property id is not known</li>
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE} if the
+	 *             person property value is null</li>
+	 *
+	 */
+	public EventFilter<PersonPropertyUpdateEvent> getEventFilterForPersonPropertyUpdateEvent(PersonPropertyId personPropertyId, Object propertyValue, boolean useCurrentValue) {
+		validatePersonPropertyId(personPropertyId);
+		validatePersonPropertyValueNotNull(propertyValue);
+		EventFunctionId propertyValueEnum = useCurrentValue ? EventFunctionId.CURRENT_VALUE : EventFunctionId.PREVIOUS_VALUE;
+		return EventFilter.builder(PersonPropertyUpdateEvent.class)
+				.addFunctionValuePair(functionMap.get(EventFunctionId.PERSON_PROPERTY_ID), personPropertyId)//
+				.addFunctionValuePair(functionMap.get(propertyValueEnum), propertyValue)
+				.build();
 	}
 
 	/**
