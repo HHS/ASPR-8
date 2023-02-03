@@ -52,10 +52,10 @@ public final class GroupsTestPluginFactory {
 			int groupCount = expectedPeoplePerGroup == 0 ? 0
 					: (int) FastMath.round(membershipCount / expectedPeoplePerGroup);
 
-			this.peoplePluginData = GroupsTestPluginFactory.getStandardPeoplePluginData(initialPopulation);
-			this.groupsPluginData = GroupsTestPluginFactory.getStandardGroupsPluginData(groupCount, membershipCount,
+			this.peoplePluginData = getStandardPeoplePluginData(initialPopulation);
+			this.groupsPluginData = getStandardGroupsPluginData(groupCount, membershipCount,
 					this.peoplePluginData.getPersonIds(), seed);
-			this.stochasticsPluginData = GroupsTestPluginFactory.getStandardStochasticsPluginData(seed);
+			this.stochasticsPluginData = getStandardStochasticsPluginData(seed);
 			this.testPluginData = testPluginData;
 		}
 	}

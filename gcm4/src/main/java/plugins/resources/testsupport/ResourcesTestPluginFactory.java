@@ -46,11 +46,10 @@ public class ResourcesTestPluginFactory {
 		private TestPluginData testPluginData;
 
 		private Data(int initialPopulation, long seed, TestPluginData testPluginData) {
-			this.resourcesPluginData = ResourcesTestPluginFactory.getStandardResourcesPluginData(seed);
-			this.peoplePluginData = ResourcesTestPluginFactory.getStandardPeoplePluginData(initialPopulation);
-			this.regionsPluginData = ResourcesTestPluginFactory
-					.getStandardRegionsPluginData(this.peoplePluginData.getPersonIds(), seed);
-			this.stochasticsPluginData = ResourcesTestPluginFactory.getStandardStochasticsPluginData(seed);
+			this.resourcesPluginData = getStandardResourcesPluginData(seed);
+			this.peoplePluginData = getStandardPeoplePluginData(initialPopulation);
+			this.regionsPluginData = getStandardRegionsPluginData(this.peoplePluginData.getPersonIds(), seed);
+			this.stochasticsPluginData = getStandardStochasticsPluginData(seed);
 			this.testPluginData = testPluginData;
 		}
 	}

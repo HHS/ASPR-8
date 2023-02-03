@@ -37,10 +37,9 @@ public final class RegionsTestPluginFactory {
 		private Data(int initialPopulation, TimeTrackingPolicy timeTrackingPolicy, long seed,
 				TestPluginData testPluginData) {
 
-			this.peoplePluginData = RegionsTestPluginFactory.getStandardPeoplePluginData(initialPopulation);
-			this.regionsPluginData = RegionsTestPluginFactory
-					.getStandardRegionsPluginData(this.peoplePluginData.getPersonIds(), timeTrackingPolicy, seed);
-			this.stochasticsPluginData = RegionsTestPluginFactory.getStandardStochasticsPluginData(seed);
+			this.peoplePluginData = getStandardPeoplePluginData(initialPopulation);
+			this.regionsPluginData = getStandardRegionsPluginData(this.peoplePluginData.getPersonIds(), timeTrackingPolicy, seed);
+			this.stochasticsPluginData = getStandardStochasticsPluginData(seed);
 			this.testPluginData = testPluginData;
 		}
 	}

@@ -38,12 +38,12 @@ public class PersonPropertiesTestPluginFactory {
 
 		private Data(int initialPopulation, long seed, TestPluginData testPluginData) {
 
-			this.peoplePluginData = PersonPropertiesTestPluginFactory.getStandardPeoplePluginData(initialPopulation);
+			this.peoplePluginData = getStandardPeoplePluginData(initialPopulation);
 			this.personPropertiesPluginData = PersonPropertiesTestPluginFactory
 					.getStandardPersonPropertiesPluginData(this.peoplePluginData.getPersonIds(), seed);
 			this.regionsPluginData = PersonPropertiesTestPluginFactory
 					.getStandardRegionsPluginData(this.peoplePluginData.getPersonIds(), seed);
-			this.stochasticsPluginData = PersonPropertiesTestPluginFactory.getStandardStochasticsPluginData(seed);
+			this.stochasticsPluginData = getStandardStochasticsPluginData(seed);
 			this.testPluginData = testPluginData;
 		}
 	}

@@ -31,7 +31,7 @@ public final class GlobalPropertiesTestPluginFactory {
 		private TestPluginData testPluginData;
 
 		private Data(TestPluginData testPluginData) {
-			this.globalPropertiesPluginData = GlobalPropertiesTestPluginFactory.getStandardGlobalPropertiesPluginData();
+			this.globalPropertiesPluginData = getStandardGlobalPropertiesPluginData();
 			this.testPluginData = testPluginData;
 		}
 	}

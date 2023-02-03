@@ -58,12 +58,12 @@ public class MaterialsTestPluginFactory {
 
 		private Data(int numBatches, int numStages,
 				int numBatchesInStage, long seed, TestPluginData testPluginData) {
-			this.materialsPluginData = MaterialsTestPluginFactory.getStandardMaterialsPluginData(numBatches, numStages,
+			this.materialsPluginData = getStandardMaterialsPluginData(numBatches, numStages,
 					numBatchesInStage, seed);
-			this.resourcesPluginData = MaterialsTestPluginFactory.getStandardResourcesPluginData(seed);
-			this.regionsPluginData = MaterialsTestPluginFactory.getStandardRegionsPluginData();
-			this.peoplePluginData = MaterialsTestPluginFactory.getStandardPeoplePluginData();
-			this.stochasticsPluginData = MaterialsTestPluginFactory.getStandardStochasticsPluginData(seed);
+			this.resourcesPluginData = getStandardResourcesPluginData(seed);
+			this.regionsPluginData = getStandardRegionsPluginData();
+			this.peoplePluginData = getStandardPeoplePluginData();
+			this.stochasticsPluginData = getStandardStochasticsPluginData(seed);
 			this.testPluginData = testPluginData;
 		}
 	}

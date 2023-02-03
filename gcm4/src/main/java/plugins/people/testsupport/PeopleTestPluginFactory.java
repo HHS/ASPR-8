@@ -39,8 +39,8 @@ public class PeopleTestPluginFactory {
 
 		private Data(long seed, TestPluginData testPluginData) {
 
-			this.peoplePluginData = PeopleTestPluginFactory.getStandardPeoplePluginData();
-			this.stochasticsPluginData = PeopleTestPluginFactory.getStandardStochasticsPluginData(seed);
+			this.peoplePluginData = getStandardPeoplePluginData();
+			this.stochasticsPluginData = getStandardStochasticsPluginData(seed);
 			this.testPluginData = testPluginData;
 		}
 	}

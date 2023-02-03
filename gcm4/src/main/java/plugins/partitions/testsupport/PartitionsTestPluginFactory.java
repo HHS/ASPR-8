@@ -47,10 +47,10 @@ public class PartitionsTestPluginFactory {
 		private TestPluginData testPluginData;
 
 		private Data(int initialPopulation, long seed, TestPluginData testPluginData) {
-			this.attributesPluginData = PartitionsTestPluginFactory.getStandardAttributesPluginData();
-			this.partitionsPlugin = PartitionsTestPluginFactory.getStandardPartitionsPlugin();
-			this.peoplePluginData = PartitionsTestPluginFactory.getStandardPeoplePluginData(initialPopulation);
-			this.stochasticsPluginData = PartitionsTestPluginFactory.getStandardStochasticsPluginData(seed);
+			this.attributesPluginData = getStandardAttributesPluginData();
+			this.partitionsPlugin = getStandardPartitionsPlugin();
+			this.peoplePluginData = getStandardPeoplePluginData(initialPopulation);
+			this.stochasticsPluginData = getStandardStochasticsPluginData(seed);
 			this.testPluginData = testPluginData;
 		}
 	}
