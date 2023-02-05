@@ -8,7 +8,7 @@ import org.apache.commons.math3.random.RandomGenerator;
 
 import lesson.plugins.model.GlobalProperty;
 import lesson.plugins.model.ModelPlugin;
-import lesson.plugins.model.ModelReportId;
+import lesson.plugins.model.ModelReportLabel;
 import lesson.plugins.model.PersonProperty;
 import lesson.plugins.model.Region;
 import lesson.plugins.model.reports.VaccineReport;
@@ -47,13 +47,13 @@ public final class Example_16 {
 				ReportsPluginData	.builder()//
 									.addReport(() -> {
 										return PersonPropertyReport	.builder()//
-																	.setReportId(ModelReportId.PERSON_PROPERTY_REPORT)//
+																	.setReportLabel(ModelReportLabel.PERSON_PROPERTY_REPORT)//
 																	.setReportPeriod(ReportPeriod.END_OF_SIMULATION)//
 																	.setDefaultInclusion(true)//
 																	.build()::init;//
 									})//
 									.addReport(() -> {
-										return new VaccineReport(ModelReportId.VACCINATION)::init;
+										return new VaccineReport(ModelReportLabel.VACCINATION)::init;
 									})//
 									.build();
 
@@ -62,9 +62,9 @@ public final class Example_16 {
 
 	private NIOReportItemHandler getNIOReportItemHandler() {
 		return NIOReportItemHandler	.builder()//
-									.addReport(ModelReportId.PERSON_PROPERTY_REPORT, //
+									.addReport(ModelReportLabel.PERSON_PROPERTY_REPORT, //
 											Paths.get("C:\\temp\\gcm\\person_property_report.xls"))//
-									.addReport(ModelReportId.VACCINATION, //
+									.addReport(ModelReportLabel.VACCINATION, //
 											Paths.get("C:\\temp\\gcm\\vaccine_report.xls"))//
 									.build();
 	}

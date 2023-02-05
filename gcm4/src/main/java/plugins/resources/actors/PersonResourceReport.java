@@ -16,7 +16,7 @@ import plugins.regions.events.RegionAdditionEvent;
 import plugins.regions.support.RegionId;
 import plugins.reports.support.PeriodicReport;
 import plugins.reports.support.ReportHeader;
-import plugins.reports.support.ReportId;
+import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportItem;
 import plugins.reports.support.ReportPeriod;
 import plugins.resources.datamanagers.ResourcesDataManager;
@@ -46,8 +46,8 @@ import util.errors.ContractException;
  *
  */
 public final class PersonResourceReport extends PeriodicReport {
-	public PersonResourceReport(ReportId reportId, ReportPeriod reportPeriod, boolean reportPeopleWithoutResources, boolean reportZeroPopulations, ResourceId... resourceIds) {
-		super(reportId, reportPeriod);
+	public PersonResourceReport(ReportLabel reportLabel, ReportPeriod reportPeriod, boolean reportPeopleWithoutResources, boolean reportZeroPopulations, ResourceId... resourceIds) {
+		super(reportLabel, reportPeriod);
 		this.reportPeopleWithoutResources = reportPeopleWithoutResources;
 		this.reportZeroPopulations = reportZeroPopulations;
 		for (ResourceId resourceId : resourceIds) {
@@ -133,7 +133,7 @@ public final class PersonResourceReport extends PeriodicReport {
 
 				if (shouldReport) {
 					reportItemBuilder.setReportHeader(getReportHeader());
-					reportItemBuilder.setReportId(getReportId());
+					reportItemBuilder.setReportLabel(getReportLabel());
 
 					fillTimeFields(reportItemBuilder);
 					reportItemBuilder.addValue(regionId.toString());

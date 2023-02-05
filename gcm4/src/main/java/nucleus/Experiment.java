@@ -130,12 +130,12 @@ public final class Experiment {
 		}
 
 		/**
-		 * Instructs the experiment to halt on any exception thrown by any of
-		 * the simulation instances. The experiment will attempt to gracefully
+		 * When true, the experiment halts on any exception thrown by any of the
+		 * simulation instances. The experiment will attempt to gracefully
 		 * terminate, halting any ongoing simulation instances and completing
-		 * the experiment. Defaulted to false. When false, the experiment logs
-		 * the failure with the experiment context and continues with the rest
-		 * of the simulation instances.
+		 * the experiment. When false, the experiment logs the failure with the
+		 * experiment context and continues with the remaining simulation
+		 * instances. Defaulted to true.
 		 */
 		public Builder setHaltOnException(final boolean haltOnException) {
 			data.haltOnException = haltOnException;
@@ -152,7 +152,7 @@ public final class Experiment {
 		private final List<Plugin> plugins = new ArrayList<>();
 		private final List<Consumer<ExperimentContext>> experimentContextConsumers = new ArrayList<>();
 		private int threadCount;
-		private boolean haltOnException;
+		private boolean haltOnException = true;
 		private Path experimentProgressLogPath;
 		private boolean continueFromProgressLog;
 	}

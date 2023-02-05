@@ -12,7 +12,7 @@ import plugins.regions.events.PersonRegionUpdateEvent;
 import plugins.regions.support.RegionId;
 import plugins.reports.support.PeriodicReport;
 import plugins.reports.support.ReportHeader;
-import plugins.reports.support.ReportId;
+import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportItem;
 import plugins.reports.support.ReportPeriod;
 import util.wrappers.MultiKey;
@@ -39,8 +39,8 @@ import util.wrappers.MutableInteger;
  */
 public final class RegionTransferReport extends PeriodicReport {
 
-	public RegionTransferReport(ReportId reportId, ReportPeriod reportPeriod) {
-		super(reportId, reportPeriod);
+	public RegionTransferReport(ReportLabel reportLabel, ReportPeriod reportPeriod) {
+		super(reportLabel, reportPeriod);
 	}
 
 	/*
@@ -77,7 +77,7 @@ public final class RegionTransferReport extends PeriodicReport {
 			RegionId destinationRegionId = multiKey.getKey(1);
 			MutableInteger mutableInteger = baseMap.get(multiKey);
 			reportItemBuilder.setReportHeader(getReportHeader());
-			reportItemBuilder.setReportId(getReportId());
+			reportItemBuilder.setReportLabel(getReportLabel());
 			fillTimeFields(reportItemBuilder);
 			reportItemBuilder.addValue(sourceRegionId.toString());
 			reportItemBuilder.addValue(destinationRegionId.toString());

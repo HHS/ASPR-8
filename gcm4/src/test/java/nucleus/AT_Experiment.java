@@ -25,7 +25,6 @@ import util.wrappers.MultiKey;
 import util.wrappers.MutableInteger;
 import util.wrappers.MutableObject;
 
-
 public class AT_Experiment {
 
 	@Test
@@ -392,6 +391,13 @@ public class AT_Experiment {
 	@Test
 	@UnitTestMethod(target = Experiment.Builder.class, name = "setHaltOnException", args = { boolean.class })
 	public void testSetHaltOnException() {
+		testSetHaltOnException_Explicit_True();
+		testSetHaltOnException_Explicit_False();
+		testSetHaltOnException_Implicit();
+	}
+	
+	@Test	
+	private void testSetHaltOnException_Explicit_True() {
 		// This test will run the experiment two times in single thread mode
 
 		// we create a counter that will be incremented by each actor on
@@ -425,29 +431,14 @@ public class AT_Experiment {
 		};
 
 		/*
-		 * The default behavior of the experiment is to have haltOnException
-		 * equal to false. The simulation should execute both scenarios, with
-		 * each scenario executing only two of the actors before the simulation
-		 * fails. Thus we expect that the counter will be equal to four after
-		 * the experiment executes and that there will be no exception bubbling
-		 * out of the execute() invocation
+		 * By setting the haltOnException to true, the simulation should execute
+		 * both scenarios, with each scenario executing only two of the actors
+		 * before the simulation fails. Thus we expect that the counter will be
+		 * equal to four after the experiment executes and that there will be no
+		 * exception bubbling out of the execute() invocation
 		 */
-		Experiment	.builder()//
-					.addDimension(dimension)//
-					.addPlugin(plugin)//
-					.addExperimentContextConsumer(experimentContextConsumer)//
-					.build()//
-					.execute();
-		assertEquals(4, actorInitializationCounter.getValue());
-
-		// show that both scenarios executed and failed
-		assertEquals(ScenarioStatus.FAILED, experimentContext.getValue().getScenarioStatus(0).get());
-		assertEquals(ScenarioStatus.FAILED, experimentContext.getValue().getScenarioStatus(1).get());
-
-		// we reset the counter
-		actorInitializationCounter.setValue(0);
-
-		// We now set haltOnException to true
+		
+		//Explicitly setting the haltOnException to true
 		assertThrows(RuntimeException.class, () -> Experiment	.builder()//
 																.addDimension(dimension)//
 																.addPlugin(plugin)//
@@ -464,7 +455,119 @@ public class AT_Experiment {
 		// scenario should still be in READY status.
 		assertEquals(ScenarioStatus.FAILED, experimentContext.getValue().getScenarioStatus(0).get());
 		assertEquals(ScenarioStatus.READY, experimentContext.getValue().getScenarioStatus(1).get());
+	}
+
+		
+	private void testSetHaltOnException_Explicit_False() {
+		// This test will run the experiment two times in single thread mode
+
+		// we create a counter that will be incremented by each actor on
+		// initialization
+		MutableInteger actorInitializationCounter = new MutableInteger();
+		MutableObject<ExperimentContext> experimentContext = new MutableObject<>();
+
+		// we create a dimension with two levels
+		Dimension dimension = Dimension	.builder()//
+										.addLevel((c) -> new ArrayList<>())//
+										.addLevel((c) -> new ArrayList<>())//
+										.build();
+
+		// we create a plugin that will instantiate three actors, with the
+		// second actor throwing a runtime exception
+		Plugin plugin = Plugin.builder().setPluginId(new SimplePluginId("plugin")).setInitializer((c) -> {
+			c.addActor((c2) -> {
+				actorInitializationCounter.increment();
+			});
+			c.addActor((c2) -> {
+				actorInitializationCounter.increment();
+				throw new RuntimeException();
+			});
+			c.addActor((c2) -> {
+				actorInitializationCounter.increment();
+			});
+		}).build();
+
+		Consumer<ExperimentContext> experimentContextConsumer = (c) -> {
+			experimentContext.setValue(c);
+		};
+
+		//Explicitly setting the haltOnException to false 
+		Experiment	.builder()//
+					.addDimension(dimension)//
+					.addPlugin(plugin)//
+					.addExperimentContextConsumer(experimentContextConsumer)//
+					.setHaltOnException(false)//
+					.build()//
+					.execute();
+		assertEquals(4, actorInitializationCounter.getValue());
+
+		// show that both scenarios executed and failed
+		assertEquals(ScenarioStatus.FAILED, experimentContext.getValue().getScenarioStatus(0).get());
+		assertEquals(ScenarioStatus.FAILED, experimentContext.getValue().getScenarioStatus(1).get());
+
 
 	}
+	
+	private void testSetHaltOnException_Implicit() {
+		// This test will run the experiment two times in single thread mode
+
+		// we create a counter that will be incremented by each actor on
+		// initialization
+		MutableInteger actorInitializationCounter = new MutableInteger();
+		MutableObject<ExperimentContext> experimentContext = new MutableObject<>();
+
+		// we create a dimension with two levels
+		Dimension dimension = Dimension	.builder()//
+										.addLevel((c) -> new ArrayList<>())//
+										.addLevel((c) -> new ArrayList<>())//
+										.build();
+
+		// we create a plugin that will instantiate three actors, with the
+		// second actor throwing a runtime exception
+		Plugin plugin = Plugin.builder().setPluginId(new SimplePluginId("plugin")).setInitializer((c) -> {
+			c.addActor((c2) -> {
+				actorInitializationCounter.increment();
+			});
+			c.addActor((c2) -> {
+				actorInitializationCounter.increment();
+				throw new RuntimeException();
+			});
+			c.addActor((c2) -> {
+				actorInitializationCounter.increment();
+			});
+		}).build();
+
+		Consumer<ExperimentContext> experimentContextConsumer = (c) -> {
+			experimentContext.setValue(c);
+		};
+
+		/*
+		 * By setting the haltOnException to true, the simulation should execute
+		 * both scenarios, with each scenario executing only two of the actors
+		 * before the simulation fails. Thus we expect that the counter will be
+		 * equal to four after the experiment executes and that there will be no
+		 * exception bubbling out of the execute() invocation
+		 */
+
+		//Implicitly setting the haltOnException to true
+		assertThrows(RuntimeException.class, () -> Experiment	.builder()//
+																.addDimension(dimension)//
+																.addPlugin(plugin)//
+																.addExperimentContextConsumer(experimentContextConsumer)//																
+																.build()//
+																.execute());
+
+		// since the experiment should halt on the first failure, we expect only
+		// two of the actors to have initialized
+		assertEquals(2, actorInitializationCounter.getValue());
+
+		// show that only the first scenario executed and failed. The second
+		// scenario should still be in READY status.
+		assertEquals(ScenarioStatus.FAILED, experimentContext.getValue().getScenarioStatus(0).get());
+		assertEquals(ScenarioStatus.READY, experimentContext.getValue().getScenarioStatus(1).get());
+
+	}
+
+
 
 }

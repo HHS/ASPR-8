@@ -8,7 +8,7 @@ import org.apache.commons.math3.random.RandomGenerator;
 
 import lesson.plugins.model.GlobalProperty;
 import lesson.plugins.model.ModelPlugin;
-import lesson.plugins.model.ModelReportId;
+import lesson.plugins.model.ModelReportLabel;
 import lesson.plugins.model.PersonProperty;
 import lesson.plugins.model.Region;
 import lesson.plugins.model.Resource;
@@ -52,15 +52,15 @@ public final class Example_18 {
 	private Plugin getReportsPlugin() {
 		ReportsPluginData reportsPluginData = //
 				ReportsPluginData	.builder()//
-									.addReport(() -> new PersonResourceReport(ModelReportId.PERSON_RESOURCE_REPORT, //
+									.addReport(() -> new PersonResourceReport(ModelReportLabel.PERSON_RESOURCE_REPORT, //
 											ReportPeriod.END_OF_SIMULATION, //
 											true, //
 											true)//
 									::init)//
 
-									.addReport(() -> new TreatmentReport(ModelReportId.TREATMENT_REPORT)::init)//
-									.addReport(() -> new DeathReport(ModelReportId.DEATH_REPORT)::init)//
-									.addReport(() -> new QuestionnaireReport(ModelReportId.QUESTIONNAIRE_REPORT)::init)//
+									.addReport(() -> new TreatmentReport(ModelReportLabel.TREATMENT_REPORT)::init)//
+									.addReport(() -> new DeathReport(ModelReportLabel.DEATH_REPORT)::init)//
+									.addReport(() -> new QuestionnaireReport(ModelReportLabel.QUESTIONNAIRE_REPORT)::init)//
 									
 
 									.build();
@@ -79,10 +79,10 @@ public final class Example_18 {
 
 	private NIOReportItemHandler getNIOReportItemHandler() {
 		return NIOReportItemHandler	.builder()//
-									.addReport(ModelReportId.PERSON_RESOURCE_REPORT, Paths.get("c:\\temp\\gcm\\person_resource_report.xls"))//
-									.addReport(ModelReportId.TREATMENT_REPORT, Paths.get("c:\\temp\\gcm\\treatment_report.xls"))//
-									.addReport(ModelReportId.DEATH_REPORT, Paths.get("c:\\temp\\gcm\\death_report.xls"))//
-									.addReport(ModelReportId.QUESTIONNAIRE_REPORT, Paths.get("c:\\temp\\gcm\\questionnaire_report.xls"))//
+									.addReport(ModelReportLabel.PERSON_RESOURCE_REPORT, Paths.get("c:\\temp\\gcm\\person_resource_report.xls"))//
+									.addReport(ModelReportLabel.TREATMENT_REPORT, Paths.get("c:\\temp\\gcm\\treatment_report.xls"))//
+									.addReport(ModelReportLabel.DEATH_REPORT, Paths.get("c:\\temp\\gcm\\death_report.xls"))//
+									.addReport(ModelReportLabel.QUESTIONNAIRE_REPORT, Paths.get("c:\\temp\\gcm\\questionnaire_report.xls"))//
 									.build();
 	}
 

@@ -10,7 +10,7 @@ import plugins.globalproperties.events.GlobalPropertyUpdateEvent;
 import plugins.globalproperties.support.GlobalPropertyId;
 import plugins.reports.support.ReportError;
 import plugins.reports.support.ReportHeader;
-import plugins.reports.support.ReportId;
+import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportItem;
 import plugins.util.properties.PropertyError;
 import util.errors.ContractException;
@@ -49,8 +49,8 @@ public final class GlobalPropertyReport {
 		}
 
 		private void validate() {
-			if (data.reportId == null) {
-				throw new ContractException(ReportError.NULL_REPORT_ID);
+			if (data.reportLabel == null) {
+				throw new ContractException(ReportError.NULL_REPORT_LABEL);
 			}
 		}
 
@@ -58,8 +58,8 @@ public final class GlobalPropertyReport {
 		 * Returns the global property report from the collected data
 		 * 
 		 * @throws ContractException
-		 *             <li>{@linkplain ReportError#NULL_REPORT_ID} if the report
-		 *             id was not set</li>
+		 *             <li>{@linkplain ReportError#NULL_REPORT_LABEL} if the report
+		 *             label was not set</li>
 		 */
 		public GlobalPropertyReport build() {
 			try {
@@ -117,17 +117,17 @@ public final class GlobalPropertyReport {
 		}
 
 		/**
-		 * Sets the report id. Defaults to null.
+		 * Sets the report label. Defaults to null.
 		 * 
 		 * @throws ContractException
-		 *             <li>{@linkplain ReportError#NULL_REPORT_ID} if the report
-		 *             id is null</li>
+		 *             <li>{@linkplain ReportError#NULL_REPORT_LABEL} if the report
+		 *             label is null</li>
 		 */
-		public Builder setReportId(ReportId reportId) {
-			if (reportId == null) {
-				throw new ContractException(ReportError.NULL_REPORT_ID);
+		public Builder setReportLabel(ReportLabel reportLabel) {
+			if (reportLabel == null) {
+				throw new ContractException(ReportError.NULL_REPORT_LABEL);
 			}
-			data.reportId = reportId;
+			data.reportLabel = reportLabel;
 			return this;
 		}
 
@@ -145,7 +145,7 @@ public final class GlobalPropertyReport {
 	private static class Data {
 		private final Set<GlobalPropertyId> includedPropertyIds = new LinkedHashSet<>();
 		private final Set<GlobalPropertyId> excludedPropertyIds = new LinkedHashSet<>();
-		private ReportId reportId;
+		private ReportLabel reportLabel;
 		private boolean includeNewPropertyIds;
 		private boolean includeAllExtantPropertyIds;
 		private final ReportHeader reportHeader = ReportHeader	.builder()//
@@ -232,7 +232,7 @@ public final class GlobalPropertyReport {
 	private void writeProperty(final ReportContext reportContext, final GlobalPropertyId globalPropertyId, final Object globalPropertyValue) {
 		final ReportItem.Builder reportItemBuilder = ReportItem.builder();
 		reportItemBuilder.setReportHeader(data.reportHeader);
-		reportItemBuilder.setReportId(data.reportId);
+		reportItemBuilder.setReportLabel(data.reportLabel);
 		reportItemBuilder.addValue(reportContext.getTime());
 		reportItemBuilder.addValue(globalPropertyId.toString());
 		reportItemBuilder.addValue(globalPropertyValue);
