@@ -17,9 +17,9 @@ import util.errors.ContractException;
  *
  * 
  */
-public final class PluginDataBuilderContext {
+public final class DimensionContext {
 
-	private PluginDataBuilderContext() {
+	private DimensionContext() {
 	}
 
 	private Map<Class<?>, PluginDataBuilder> baseMap = new LinkedHashMap<>();
@@ -64,14 +64,14 @@ public final class PluginDataBuilderContext {
 	}
 
 	/**
-	 * Returns a typed Builder instance for PluginDataBuilderContext
+	 * Returns a typed Builder instance for DimensionContext
 	 */
 	public static Builder builder() {
 		return new Builder();
 	}
 
 	/**
-	 * A builder class for PluginDataBuilderContext
+	 * A builder class for DimensionContext
 	 * 
 	 *
 	 */
@@ -82,12 +82,12 @@ public final class PluginDataBuilderContext {
 		private Map<Class<?>, PluginDataBuilder> map = new LinkedHashMap<>();
 
 		/**
-		 * Returns the PluginDataBuilderContext instance composed from the
+		 * Returns the DimensionContext instance composed from the
 		 * inputs to this builder.
 		 */
-		public PluginDataBuilderContext build() {
+		public DimensionContext build() {
 			try {
-				PluginDataBuilderContext result = new PluginDataBuilderContext();
+				DimensionContext result = new DimensionContext();
 				result.baseMap = map;
 				return result;
 			} finally {

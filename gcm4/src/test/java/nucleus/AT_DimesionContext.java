@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
 
-public class AT_PluginDataBuilderContext {
+public class AT_DimesionContext {
 
 	private static class PluginDataBuilder1 implements PluginDataBuilder {
 		@Override
@@ -36,13 +36,13 @@ public class AT_PluginDataBuilderContext {
 	};
 
 	@Test
-	@UnitTestMethod(target = PluginDataBuilderContext.class, name = "builder", args = {})
+	@UnitTestMethod(target = DimensionContext.class, name = "builder", args = {})
 	public void testBuilder() {
-		assertNotNull(PluginDataBuilderContext.builder());
+		assertNotNull(DimensionContext.builder());
 	}
 
 	@Test
-	@UnitTestMethod(target = PluginDataBuilderContext.class, name = "get", args = { Class.class })
+	@UnitTestMethod(target = DimensionContext.class, name = "get", args = { Class.class })
 	public void testGet() {
 		PluginDataBuilder p1 = new PluginDataBuilder1();
 
@@ -52,37 +52,37 @@ public class AT_PluginDataBuilderContext {
 
 		PluginDataBuilder p4 = new PluginDataBuilder2();
 
-		PluginDataBuilderContext pluginDataBuilderContext = PluginDataBuilderContext.builder()//
+		DimensionContext dimensionContext = DimensionContext.builder()//
 																					.add(p1)//
 																					.add(p2)//
 																					.add(p3)//
 																					.add(p4)//
 																					.build();
 
-		PluginDataBuilder p = pluginDataBuilderContext.get(PluginDataBuilder1.class);
+		PluginDataBuilder p = dimensionContext.get(PluginDataBuilder1.class);
 		assertEquals(p3, p);
 
-		p = pluginDataBuilderContext.get(PluginDataBuilder2.class);
+		p = dimensionContext.get(PluginDataBuilder2.class);
 		assertEquals(p4, p);
 
 		/*
 		 * precondition test : if more than one plugin data builder matches the
 		 * given class reference
 		 */
-		ContractException contractException = assertThrows(ContractException.class, () -> pluginDataBuilderContext.get(PluginDataBuilder.class));
+		ContractException contractException = assertThrows(ContractException.class, () -> dimensionContext.get(PluginDataBuilder.class));
 		assertEquals(NucleusError.AMBIGUOUS_PLUGIN_DATA_BUILDER_CLASS, contractException.getErrorType());
 
 		/*
 		 * precondition test : if no plugin data builder matches the given class
 		 * reference
 		 */
-		contractException = assertThrows(ContractException.class, () -> pluginDataBuilderContext.get(PluginDataBuilder3.class));
+		contractException = assertThrows(ContractException.class, () -> dimensionContext.get(PluginDataBuilder3.class));
 		assertEquals(NucleusError.UNKNOWN_PLUGIN_DATA_BUILDER_CLASS, contractException.getErrorType());
 
 	}
 
 	@Test
-	@UnitTestMethod(target = PluginDataBuilderContext.class, name = "getContents", args = {})
+	@UnitTestMethod(target = DimensionContext.class, name = "getContents", args = {})
 	public void testGetContents() {
 		PluginDataBuilder p1 = new PluginDataBuilder1();
 
@@ -96,20 +96,20 @@ public class AT_PluginDataBuilderContext {
 		expectedContents.add(p3);
 		expectedContents.add(p4);
 
-		PluginDataBuilderContext pluginDataBuilderContext = PluginDataBuilderContext.builder()//
+		DimensionContext dimensionContext = DimensionContext.builder()//
 																					.add(p1)//
 																					.add(p2)//
 																					.add(p3)//
 																					.add(p4)//
 																					.build();
-		Set<PluginDataBuilder> actualContents = pluginDataBuilderContext.getContents();
+		Set<PluginDataBuilder> actualContents = dimensionContext.getContents();
 
 		assertEquals(expectedContents, actualContents);
 
 	}
 
 	@Test
-	@UnitTestMethod(target = PluginDataBuilderContext.Builder.class, name = "add", args = { PluginDataBuilder.class })
+	@UnitTestMethod(target = DimensionContext.Builder.class, name = "add", args = { PluginDataBuilder.class })
 	public void testAdd() {
 		PluginDataBuilder p1 = new PluginDataBuilder1();
 
@@ -119,18 +119,18 @@ public class AT_PluginDataBuilderContext {
 		expectedContents.add(p1);
 		expectedContents.add(p2);
 
-		PluginDataBuilderContext pluginDataBuilderContext = PluginDataBuilderContext.builder().add(p1).add(p2).build();
-		Set<PluginDataBuilder> actualContents = pluginDataBuilderContext.getContents();
+		DimensionContext dimensionContext = DimensionContext.builder().add(p1).add(p2).build();
+		Set<PluginDataBuilder> actualContents = dimensionContext.getContents();
 
 		assertEquals(expectedContents, actualContents);
 
-		ContractException contractException = assertThrows(ContractException.class, () -> PluginDataBuilderContext.builder().add(null));
+		ContractException contractException = assertThrows(ContractException.class, () -> DimensionContext.builder().add(null));
 		assertEquals(NucleusError.NULL_PLUGIN_DATA_BUILDER, contractException.getErrorType());
 
 	}
 
 	@Test
-	@UnitTestMethod(target = PluginDataBuilderContext.Builder.class, name = "build", args = {})
+	@UnitTestMethod(target = DimensionContext.Builder.class, name = "build", args = {})
 	public void testBuild() {
 		PluginDataBuilder p1 = new PluginDataBuilder1();
 
@@ -140,8 +140,8 @@ public class AT_PluginDataBuilderContext {
 		expectedContents.add(p1);
 		expectedContents.add(p2);
 
-		PluginDataBuilderContext pluginDataBuilderContext = PluginDataBuilderContext.builder().add(p1).add(p2).build();
-		Set<PluginDataBuilder> actualContents = pluginDataBuilderContext.getContents();
+		DimensionContext dimensionContext = DimensionContext.builder().add(p1).add(p2).build();
+		Set<PluginDataBuilder> actualContents = dimensionContext.getContents();
 
 		assertEquals(expectedContents, actualContents);
 
