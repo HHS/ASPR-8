@@ -52,7 +52,7 @@ public final class Dimension {
 
 		/**
 		 * Adds a level function to the dimension. Each such function consumes a
-		 * PluginDataBuilderContext of PluginDataBuilders and returns a list of scenario-level
+		 * DimensionContext of PluginDataBuilders and returns a list of scenario-level
 		 * meta data that describes the changes performed on the
 		 * PluginDataBuilders. The list of meta data is aligned to the
 		 * experiment level meta data contained in the dimension and must

@@ -64,14 +64,14 @@ public final class DimensionContext {
 	}
 
 	/**
-	 * Returns a typed Builder instance for PluginDataBuilderContext
+	 * Returns a typed Builder instance for DimensionContext
 	 */
 	public static Builder builder() {
 		return new Builder();
 	}
 
 	/**
-	 * A builder class for PluginDataBuilderContext
+	 * A builder class for DimensionContext
 	 * 
 	 *
 	 */
@@ -82,7 +82,7 @@ public final class DimensionContext {
 		private Map<Class<?>, PluginDataBuilder> map = new LinkedHashMap<>();
 
 		/**
-		 * Returns the PluginDataBuilderContext instance composed from the
+		 * Returns the DimensionContext instance composed from the
 		 * inputs to this builder.
 		 */
 		public DimensionContext build() {
