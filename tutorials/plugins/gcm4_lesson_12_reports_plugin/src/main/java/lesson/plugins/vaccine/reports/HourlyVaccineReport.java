@@ -204,7 +204,7 @@ public class HourlyVaccineReport extends PeriodicReport {
 	@Override
 	protected void flush(ReportContext reportContext) {
 		ReportItem.Builder builder = ReportItem	.builder()//
-												.setReportId(getReportId())//
+												.setReportLabel(getReportLabel())//
 												.setReportHeader(reportHeader);
 		fillTimeFields(builder);
 		for (FamilyVaccineStatus familyVaccineStatus : statusToFamiliesMap.keySet()) {

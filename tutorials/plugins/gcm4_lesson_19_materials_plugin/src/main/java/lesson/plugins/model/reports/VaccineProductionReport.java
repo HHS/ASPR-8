@@ -142,7 +142,7 @@ public final class VaccineProductionReport extends PeriodicReport {
 	@Override
 	protected void flush(final ReportContext reportContext) {
 		final ReportItem.Builder reportItemBuilder = ReportItem.builder();
-		reportItemBuilder.setReportId(getReportId());
+		reportItemBuilder.setReportLabel(getReportLabel());
 		reportItemBuilder.setReportHeader(reportHeader);
 		fillTimeFields(reportItemBuilder);
 

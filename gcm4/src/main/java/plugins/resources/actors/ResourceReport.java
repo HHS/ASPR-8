@@ -175,7 +175,7 @@ public final class ResourceReport extends PeriodicReport {
 					final Counter counter = activityMap.get(activity);
 					if (counter.actionCount > 0) {
 						reportItemBuilder.setReportHeader(getReportHeader());
-						reportItemBuilder.setReportId(getReportId());
+						reportItemBuilder.setReportLabel(getReportLabel());
 						fillTimeFields(reportItemBuilder);
 
 						reportItemBuilder.addValue(regionId.toString());

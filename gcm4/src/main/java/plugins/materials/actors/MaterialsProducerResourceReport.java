@@ -90,7 +90,7 @@ public final class MaterialsProducerResourceReport {
 	private void writeReportItem(ReportContext reportContext, final ResourceId resourceId, final MaterialsProducerId materialsProducerId, final Action action, final long amount) {
 		final ReportItem.Builder reportItemBuilder = ReportItem.builder();
 		reportItemBuilder.setReportHeader(getReportHeader());
-		reportItemBuilder.setReportId(reportLabel);
+		reportItemBuilder.setReportLabel(reportLabel);
 		reportItemBuilder.addValue(reportContext.getTime());
 		reportItemBuilder.addValue(resourceId.toString());
 		reportItemBuilder.addValue(materialsProducerId.toString());

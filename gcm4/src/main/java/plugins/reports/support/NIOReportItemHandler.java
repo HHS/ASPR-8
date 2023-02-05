@@ -38,8 +38,8 @@ public final class NIOReportItemHandler implements Consumer<ExperimentContext>{
 		 * 
 		 * @throws ContractException
 		 * 
-		 *             <li>{@linkplain ReportError#NULL_REPORT_ID} if the report
-		 *             id is null</li>
+		 *             <li>{@linkplain ReportError#NULL_REPORT_LABEL} if the report
+		 *             label is null</li>
 		 *             <li>{@linkplain ReportError#NULL_REPORT_PATH} if the path
 		 *             is null</li>
 		 * 
@@ -50,7 +50,7 @@ public final class NIOReportItemHandler implements Consumer<ExperimentContext>{
 				throw new ContractException(ReportError.NULL_REPORT_PATH);
 			}
 			if (reportLabel == null) {
-				throw new ContractException(ReportError.NULL_REPORT_ID);
+				throw new ContractException(ReportError.NULL_REPORT_LABEL);
 			}
 			data.reportMap.put(reportLabel, path);
 			return this;
@@ -58,7 +58,7 @@ public final class NIOReportItemHandler implements Consumer<ExperimentContext>{
 
 		private void validate() {
 			/*
-			 * Ensure that each path is associated with exactly one report id
+			 * Ensure that each path is associated with exactly one report label
 			 */
 			final Map<Path, ReportLabel> pathMap = new LinkedHashMap<>();
 			for (final ReportLabel reportLabel : data.reportMap.keySet()) {
@@ -135,7 +135,7 @@ public final class NIOReportItemHandler implements Consumer<ExperimentContext>{
 	}
 
 	private void handleOuput(ExperimentContext experimentContext, Integer scenarioId, ReportItem reportItem) {
-		final LineWriter lineWriter = lineWriterMap.get(reportItem.getReportId());
+		final LineWriter lineWriter = lineWriterMap.get(reportItem.getReportLabel());
 		if (lineWriter != null) {
 			lineWriter.write(experimentContext, scenarioId, reportItem);
 		}

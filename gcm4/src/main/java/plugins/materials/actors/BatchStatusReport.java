@@ -80,7 +80,7 @@ public final class BatchStatusReport {
 
 		final ReportItem.Builder reportItemBuilder = ReportItem.builder();
 		reportItemBuilder.setReportHeader(getReportHeader());
-		reportItemBuilder.setReportId(reportLabel);
+		reportItemBuilder.setReportLabel(reportLabel);
 		reportItemBuilder.addValue(batchRecord.time);
 		reportItemBuilder.addValue(batchRecord.batchId);
 		reportItemBuilder.addValue(batchRecord.materialsProducerId);

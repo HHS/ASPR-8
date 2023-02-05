@@ -295,7 +295,7 @@ public final class PersonPropertyInteractionReport extends PeriodicReport {
 					}
 					final ReportItem.Builder reportItemBuilder = ReportItem.builder();
 					reportItemBuilder.setReportHeader(getReportHeader());
-					reportItemBuilder.setReportId(getReportId());
+					reportItemBuilder.setReportLabel(getReportLabel());
 
 					fillTimeFields(reportItemBuilder);
 					reportItemBuilder.addValue(regionId.toString());

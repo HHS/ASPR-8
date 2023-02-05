@@ -54,7 +54,7 @@ public final class ContagionReport {
 		ReportItem.Builder reportItemBuilder = ReportItem.builder();
 		for (Integer i : countMap.keySet()) {
 			MutableInteger mutableInteger = countMap.get(i);
-			reportItemBuilder.setReportId(reportLabel);
+			reportItemBuilder.setReportLabel(reportLabel);
 			reportItemBuilder.setReportHeader(reportHeader);
 			reportItemBuilder.addValue(i);
 			reportItemBuilder.addValue(mutableInteger.getValue());

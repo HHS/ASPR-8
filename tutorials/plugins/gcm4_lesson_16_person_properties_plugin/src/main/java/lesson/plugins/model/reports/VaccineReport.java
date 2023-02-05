@@ -59,7 +59,7 @@ public final class VaccineReport {
 		}
 
 		ReportItem.Builder builder = ReportItem	.builder()//
-												.setReportId(reportLabel)//
+												.setReportLabel(reportLabel)//
 												.setReportHeader(reportHeader);
 
 		builder.addValue(vaccinated_immune);

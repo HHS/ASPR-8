@@ -78,7 +78,7 @@ public final class ResourcePropertyReport {
 	private void writeProperty(ReportContext reportContext, final ResourceId resourceId, final ResourcePropertyId resourcePropertyId, Object resourcePropertyValue) {
 		final ReportItem.Builder reportItemBuilder = ReportItem.builder();
 		reportItemBuilder.setReportHeader(getReportHeader());
-		reportItemBuilder.setReportId(reportLabel);
+		reportItemBuilder.setReportLabel(reportLabel);
 
 		reportItemBuilder.addValue(reportContext.getTime());
 		reportItemBuilder.addValue(resourceId.toString());

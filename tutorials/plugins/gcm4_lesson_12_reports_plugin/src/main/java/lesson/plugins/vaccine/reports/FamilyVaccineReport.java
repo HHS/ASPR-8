@@ -243,7 +243,7 @@ public class FamilyVaccineReport {
 	}
 
 	private void releaseReportItem() {
-		final ReportItem.Builder builder = ReportItem.builder().setReportId(reportLabel).setReportHeader(reportHeader);
+		final ReportItem.Builder builder = ReportItem.builder().setReportLabel(reportLabel).setReportHeader(reportHeader);
 		builder.addValue(reportContext.getTime());
 		for (final FamilyVaccineStatus familyVaccineStatus : statusToFamiliesMap.keySet()) {
 			MutableInteger mutableInteger = statusToFamiliesMap.get(familyVaccineStatus);

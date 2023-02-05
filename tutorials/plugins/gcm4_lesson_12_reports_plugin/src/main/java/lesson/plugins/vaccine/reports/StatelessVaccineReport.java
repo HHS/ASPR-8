@@ -70,7 +70,7 @@ public class StatelessVaccineReport extends PeriodicReport {
 		ReportHeader reportHeader = headerBuilder.build();
 		
 		ReportItem.Builder builder = ReportItem	.builder()//
-												.setReportId(getReportId())//
+												.setReportLabel(getReportLabel())//
 												.setReportHeader(reportHeader);
 		fillTimeFields(builder);
 		for (VaccineStatus vaccineStatus : VaccineStatus.values()) {

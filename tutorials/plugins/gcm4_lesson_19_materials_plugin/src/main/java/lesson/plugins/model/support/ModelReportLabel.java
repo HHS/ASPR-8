@@ -2,7 +2,7 @@ package lesson.plugins.model.support;
 
 import plugins.reports.support.ReportLabel;
 
-public enum ModelReportId implements ReportLabel {
+public enum ModelReportLabel implements ReportLabel {
 
 	DISEASE_STATE_REPORT,//
 	PERSON_PROPERTY_REPORT,//

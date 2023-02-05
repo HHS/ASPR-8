@@ -133,7 +133,7 @@ public final class PersonResourceReport extends PeriodicReport {
 
 				if (shouldReport) {
 					reportItemBuilder.setReportHeader(getReportHeader());
-					reportItemBuilder.setReportId(getReportId());
+					reportItemBuilder.setReportLabel(getReportLabel());
 
 					fillTimeFields(reportItemBuilder);
 					reportItemBuilder.addValue(regionId.toString());

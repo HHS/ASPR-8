@@ -103,13 +103,13 @@ public final class GroupPropertyReport extends PeriodicReport {
 		 * Sets the report period for this report
 		 * 
 		 * @throws ContractException
-		 *             <li>{@linkplain ReportError#NULL_REPORT_ID} if the report
-		 *             period is null</li>
+		 *             <li>{@linkplain ReportError#NULL_REPORT_LABEL} if the report
+		 *             label is null</li>
 		 * 
 		 */
-		public Builder setReportId(ReportLabel reportLabel) {
+		public Builder setReportLabel(ReportLabel reportLabel) {
 			if (reportLabel == null) {
-				throw new ContractException(ReportError.NULL_REPORT_ID);
+				throw new ContractException(ReportError.NULL_REPORT_LABEL);
 			}
 
 			scaffold.reportLabel = reportLabel;
@@ -227,7 +227,7 @@ public final class GroupPropertyReport extends PeriodicReport {
 					if (counter.count > 0) {
 						final int personCount = counter.count;
 						reportItemBuilder.setReportHeader(getReportHeader());
-						reportItemBuilder.setReportId(getReportId());
+						reportItemBuilder.setReportLabel(getReportLabel());
 
 						fillTimeFields(reportItemBuilder);
 						reportItemBuilder.addValue(groupTypeId.toString());

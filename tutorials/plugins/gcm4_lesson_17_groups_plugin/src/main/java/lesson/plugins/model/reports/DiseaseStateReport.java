@@ -44,7 +44,7 @@ public final class DiseaseStateReport extends PeriodicReport {
 	@Override
 	protected void flush(ReportContext reportContext) {
 		ReportItem.Builder reportItemBuilder = ReportItem.builder();
-		reportItemBuilder.setReportId(getReportId());
+		reportItemBuilder.setReportLabel(getReportLabel());
 		reportItemBuilder.setReportHeader(getReportHeader());
 		fillTimeFields(reportItemBuilder);
 

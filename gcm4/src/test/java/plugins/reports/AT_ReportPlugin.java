@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import nucleus.Plugin;
 import nucleus.Simulation;
 import plugins.reports.support.ReportLabel;
-import plugins.reports.support.SimpleReportId;
+import plugins.reports.support.SimpleReportLabel;
 import tools.annotations.UnitTestMethod;
 
 public class AT_ReportPlugin {
@@ -19,22 +19,22 @@ public class AT_ReportPlugin {
 	@UnitTestMethod(target = ReportsPlugin.class, name = "getReportsPlugin", args = { ReportsPluginData.class })
 	public void testGetReportPlugin() {
 		// Build the report plugin from two reports
-		ReportLabel reportId_1 = new SimpleReportId("report 1");
-		ReportLabel reportId_2 = new SimpleReportId("report 2");
+		ReportLabel reportLabel_1 = new SimpleReportLabel("report 1");
+		ReportLabel reportLabel_2 = new SimpleReportLabel("report 2");
 
-		Set<ReportLabel> expectedReportIds = new LinkedHashSet<>();
-		expectedReportIds.add(reportId_1);
-		expectedReportIds.add(reportId_2);
+		Set<ReportLabel> expectedReportLabels = new LinkedHashSet<>();
+		expectedReportLabels.add(reportLabel_1);
+		expectedReportLabels.add(reportLabel_2);
 
-		Set<ReportLabel> observedReportIds = new LinkedHashSet<>();
+		Set<ReportLabel> observedReportLabels = new LinkedHashSet<>();
 
 		ReportsPluginData.Builder builder = ReportsPluginData.builder();
 
 		builder.addReport(() -> (c) -> {
-			observedReportIds.add(reportId_1);
+			observedReportLabels.add(reportLabel_1);
 		});
 		builder.addReport(() -> (c) -> {
-			observedReportIds.add(reportId_2);
+			observedReportLabels.add(reportLabel_2);
 		});
 
 		ReportsPluginData reportsPluginData = builder.build();
@@ -50,7 +50,7 @@ public class AT_ReportPlugin {
 		// show that plugin correctly adds the reports to the simulation
 		Simulation.builder().addPlugin(reportPlugin).build().execute();
 
-		assertEquals(observedReportIds, expectedReportIds);
+		assertEquals(observedReportLabels, expectedReportLabels);
 
 	}
 

@@ -129,7 +129,7 @@ public final class StageReport {
 	private void writeReportItem(ReportContext reportContext, final StageRecord stageRecord) {
 		final ReportItem.Builder reportItemBuilder = ReportItem.builder();
 		reportItemBuilder.setReportHeader(getReportHeader());
-		reportItemBuilder.setReportId(reportLabel);
+		reportItemBuilder.setReportLabel(reportLabel);
 		reportItemBuilder.addValue(reportContext.getTime());
 		reportItemBuilder.addValue(stageRecord.stageId);
 		reportItemBuilder.addValue(stageRecord.materialsProducerId.toString());

@@ -51,7 +51,7 @@ public final class PopulationTraceReport {
 
 	private void generateReportItem(Action action, PersonId personId) {
 		ReportItem reportItem = ReportItem	.builder()//
-											.setReportId(reportLabel)//
+											.setReportLabel(reportLabel)//
 											.setReportHeader(reportHeader)//
 											.addValue(reportContext.getTime())//
 											.addValue(personId)//

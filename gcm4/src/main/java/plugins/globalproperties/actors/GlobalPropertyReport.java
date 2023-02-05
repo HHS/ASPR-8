@@ -50,7 +50,7 @@ public final class GlobalPropertyReport {
 
 		private void validate() {
 			if (data.reportLabel == null) {
-				throw new ContractException(ReportError.NULL_REPORT_ID);
+				throw new ContractException(ReportError.NULL_REPORT_LABEL);
 			}
 		}
 
@@ -58,8 +58,8 @@ public final class GlobalPropertyReport {
 		 * Returns the global property report from the collected data
 		 * 
 		 * @throws ContractException
-		 *             <li>{@linkplain ReportError#NULL_REPORT_ID} if the report
-		 *             id was not set</li>
+		 *             <li>{@linkplain ReportError#NULL_REPORT_LABEL} if the report
+		 *             label was not set</li>
 		 */
 		public GlobalPropertyReport build() {
 			try {
@@ -117,15 +117,15 @@ public final class GlobalPropertyReport {
 		}
 
 		/**
-		 * Sets the report id. Defaults to null.
+		 * Sets the report label. Defaults to null.
 		 * 
 		 * @throws ContractException
-		 *             <li>{@linkplain ReportError#NULL_REPORT_ID} if the report
-		 *             id is null</li>
+		 *             <li>{@linkplain ReportError#NULL_REPORT_LABEL} if the report
+		 *             label is null</li>
 		 */
-		public Builder setReportId(ReportLabel reportLabel) {
+		public Builder setReportLabel(ReportLabel reportLabel) {
 			if (reportLabel == null) {
-				throw new ContractException(ReportError.NULL_REPORT_ID);
+				throw new ContractException(ReportError.NULL_REPORT_LABEL);
 			}
 			data.reportLabel = reportLabel;
 			return this;
@@ -232,7 +232,7 @@ public final class GlobalPropertyReport {
 	private void writeProperty(final ReportContext reportContext, final GlobalPropertyId globalPropertyId, final Object globalPropertyValue) {
 		final ReportItem.Builder reportItemBuilder = ReportItem.builder();
 		reportItemBuilder.setReportHeader(data.reportHeader);
-		reportItemBuilder.setReportId(data.reportLabel);
+		reportItemBuilder.setReportLabel(data.reportLabel);
 		reportItemBuilder.addValue(reportContext.getTime());
 		reportItemBuilder.addValue(globalPropertyId.toString());
 		reportItemBuilder.addValue(globalPropertyValue);

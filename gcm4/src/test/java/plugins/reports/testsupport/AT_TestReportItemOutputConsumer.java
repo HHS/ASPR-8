@@ -18,22 +18,22 @@ import nucleus.testsupport.testplugin.TestPluginData;
 import plugins.reports.support.ReportHeader;
 import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportItem;
-import plugins.reports.support.SimpleReportId;
+import plugins.reports.support.SimpleReportLabel;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 import util.wrappers.MutableInteger;
 
 public class AT_TestReportItemOutputConsumer {
 
-	private enum ReportIds implements ReportLabel {
-		REPORT_ID_1(new SimpleReportId("id 1"), ReportHeader.builder().add("A").add("B").build()), //
-		REPORT_ID_2(new SimpleReportId("id 2"), ReportHeader.builder().add("C").add("D").add("E").build()), //
-		REPORT_ID_3(new SimpleReportId("id 3"), ReportHeader.builder().add("F").add("G").build());//
+	private enum ReportLabels implements ReportLabel {
+		REPORT_LABEL_1(new SimpleReportLabel("id 1"), ReportHeader.builder().add("A").add("B").build()), //
+		REPORT_LABEL_2(new SimpleReportLabel("id 2"), ReportHeader.builder().add("C").add("D").add("E").build()), //
+		REPORT_LABEL_3(new SimpleReportLabel("id 3"), ReportHeader.builder().add("F").add("G").build());//
 
 		private final ReportHeader reportHeader;
 		private final ReportLabel reportLabel;
 
-		private ReportIds(ReportLabel reportLabel, ReportHeader reportHeader) {
+		private ReportLabels(ReportLabel reportLabel, ReportHeader reportHeader) {
 			this.reportLabel = reportLabel;
 			this.reportHeader = reportHeader;
 		}
@@ -72,9 +72,9 @@ public class AT_TestReportItemOutputConsumer {
 
 			ReportItem reportItem;
 			if (scenarioId.getValue() == 0) {
-				reportItem = generateReportItem(ReportIds.REPORT_ID_1, 3.4, false);
+				reportItem = generateReportItem(ReportLabels.REPORT_LABEL_1, 3.4, false);
 			} else {
-				reportItem = generateReportItem(ReportIds.REPORT_ID_1, 6.7, true);
+				reportItem = generateReportItem(ReportLabels.REPORT_LABEL_1, 6.7, true);
 			}
 
 			record(reportItem, 2);
@@ -86,9 +86,9 @@ public class AT_TestReportItemOutputConsumer {
 
 			ReportItem reportItem;
 			if (scenarioId.getValue() == 0) {
-				reportItem = generateReportItem(ReportIds.REPORT_ID_2, 12, "tango", false);
+				reportItem = generateReportItem(ReportLabels.REPORT_LABEL_2, 12, "tango", false);
 			} else {
-				reportItem = generateReportItem(ReportIds.REPORT_ID_3, "bravo", 3.4);
+				reportItem = generateReportItem(ReportLabels.REPORT_LABEL_3, "bravo", 3.4);
 			}
 
 			record(reportItem, 1);
@@ -99,9 +99,9 @@ public class AT_TestReportItemOutputConsumer {
 
 			ReportItem reportItem;
 			if (scenarioId.getValue() == 0) {
-				reportItem = generateReportItem(ReportIds.REPORT_ID_1, 6.29, true);
+				reportItem = generateReportItem(ReportLabels.REPORT_LABEL_1, 6.29, true);
 			} else {
-				reportItem = generateReportItem(ReportIds.REPORT_ID_2, 45, "foxtrot", true);
+				reportItem = generateReportItem(ReportLabels.REPORT_LABEL_2, 45, "foxtrot", true);
 			}
 
 			record(reportItem, 3);
@@ -147,11 +147,11 @@ public class AT_TestReportItemOutputConsumer {
 		map.put(reportItem, count);
 	}
 
-	private static ReportItem generateReportItem(ReportIds reportIds, Object... values) {
+	private static ReportItem generateReportItem(ReportLabels reportLabels, Object... values) {
 
 		ReportItem.Builder builder = ReportItem.builder();//
-		builder.setReportId(reportIds.reportLabel);//
-		builder.setReportHeader(reportIds.reportHeader);//
+		builder.setReportLabel(reportLabels.reportLabel);//
+		builder.setReportHeader(reportLabels.reportHeader);//
 		for (Object value : values) {
 			builder.addValue(value);
 		}

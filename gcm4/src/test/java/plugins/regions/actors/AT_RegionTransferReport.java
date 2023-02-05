@@ -38,7 +38,7 @@ import plugins.reports.support.ReportHeader;
 import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportItem;
 import plugins.reports.support.ReportPeriod;
-import plugins.reports.support.SimpleReportId;
+import plugins.reports.support.SimpleReportLabel;
 import plugins.reports.testsupport.ReportsTestPluginFactory;
 import plugins.stochastics.StochasticsDataManager;
 import plugins.stochastics.StochasticsPlugin;
@@ -54,18 +54,18 @@ public class AT_RegionTransferReport {
 	@Test
 	@UnitTestConstructor(target = RegionTransferReport.class, args = { ReportLabel.class, ReportPeriod.class })
 	public void testConstructor() {
-		RegionTransferReport regionTransferReport = new RegionTransferReport(REPORT_ID, ReportPeriod.DAILY);
+		RegionTransferReport regionTransferReport = new RegionTransferReport(REPORT_LABEL, ReportPeriod.DAILY);
 
 		// Show not null
 		assertNotNull(regionTransferReport);
 
 		// precondition: null report period
-		ContractException contractException = assertThrows(ContractException.class, () -> new RegionTransferReport(REPORT_ID, null));
+		ContractException contractException = assertThrows(ContractException.class, () -> new RegionTransferReport(REPORT_LABEL, null));
 		assertEquals(ReportError.NULL_REPORT_PERIOD, contractException.getErrorType());
 
-		// precondition: null report id
+		// precondition: null report label
 		contractException = assertThrows(ContractException.class, () -> new RegionTransferReport(null, ReportPeriod.DAILY));
-		assertEquals(ReportError.NULL_REPORT_ID, contractException.getErrorType());
+		assertEquals(ReportError.NULL_REPORT_LABEL, contractException.getErrorType());
 	}
 
 	@Test
@@ -177,7 +177,7 @@ public class AT_RegionTransferReport {
 		TestSimulationOutputConsumer outputConsumer = new TestSimulationOutputConsumer();
 
 		pluginsToAdd.add(testPlugin);
-		pluginsToAdd.add(ReportsTestPluginFactory.getPluginFromReport(new RegionTransferReport(REPORT_ID, ReportPeriod.DAILY)::init));
+		pluginsToAdd.add(ReportsTestPluginFactory.getPluginFromReport(new RegionTransferReport(REPORT_LABEL, ReportPeriod.DAILY)::init));
 		pluginsToAdd.add(StochasticsPlugin.getStochasticsPlugin(StochasticsPluginData.builder().setSeed(3054641152904904632L).build()));
 
 		TestSimulation.executeSimulation(pluginsToAdd, outputConsumer);
@@ -203,14 +203,14 @@ public class AT_RegionTransferReport {
 
 		// precondition: Actor context is null
 		ContractException contractException = assertThrows(ContractException.class, () -> {
-			new RegionTransferReport(REPORT_ID, ReportPeriod.DAILY).init(null);
+			new RegionTransferReport(REPORT_LABEL, ReportPeriod.DAILY).init(null);
 		});
 		assertEquals(ReportError.NULL_CONTEXT, contractException.getErrorType());
 	}
 
 	private static ReportItem getReportItem(Object... values) {
 		ReportItem.Builder builder = ReportItem.builder();
-		builder.setReportId(REPORT_ID);
+		builder.setReportLabel(REPORT_LABEL);
 		builder.setReportHeader(REPORT_HEADER);
 		for (Object value : values) {
 			builder.addValue(value);
@@ -218,7 +218,7 @@ public class AT_RegionTransferReport {
 		return builder.build();
 	}
 
-	private static final ReportLabel REPORT_ID = new SimpleReportId("region transfer report");
+	private static final ReportLabel REPORT_LABEL = new SimpleReportLabel("region transfer report");
 
 	private static final ReportHeader REPORT_HEADER = ReportHeader.builder().add("day").add("source_region").add("destination_region").add("transfers").build();
 }

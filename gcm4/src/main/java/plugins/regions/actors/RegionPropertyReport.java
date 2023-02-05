@@ -144,7 +144,7 @@ public final class RegionPropertyReport {
 
 		final ReportItem.Builder reportItemBuilder = ReportItem.builder();
 		reportItemBuilder.setReportHeader(getReportHeader());
-		reportItemBuilder.setReportId(reportLabel);
+		reportItemBuilder.setReportLabel(reportLabel);
 
 		reportItemBuilder.addValue(reportContext.getTime());
 		reportItemBuilder.addValue(regionId.toString());

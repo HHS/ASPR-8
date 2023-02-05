@@ -62,7 +62,7 @@ public final class QuestionnaireReport {
 		}
 
 		reportItemBuilder.setReportHeader(reportHeader);
-		reportItemBuilder.setReportId(reportLabel);
+		reportItemBuilder.setReportLabel(reportLabel);
 		reportItemBuilder.addValue(deliveryRate);
 		reportItemBuilder.addValue(mean);
 		reportItemBuilder.addValue(stdev);

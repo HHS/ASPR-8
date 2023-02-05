@@ -89,7 +89,7 @@ public final class TreatmentReport {
 			boolean deadInHome = multiKey.getKey(5);
 
 			reportItemBuilder.setReportHeader(reportHeader);
-			reportItemBuilder.setReportId(reportLabel);
+			reportItemBuilder.setReportLabel(reportLabel);
 			reportItemBuilder.addValue(immune);
 			reportItemBuilder.addValue(infected);
 			reportItemBuilder.addValue(treatedWithAntiviral);

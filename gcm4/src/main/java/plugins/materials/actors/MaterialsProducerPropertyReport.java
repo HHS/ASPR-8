@@ -83,7 +83,7 @@ public final class MaterialsProducerPropertyReport {
 			Object materialsProducerPropertyValue) {
 		final ReportItem.Builder reportItemBuilder = ReportItem.builder();
 		reportItemBuilder.setReportHeader(getReportHeader());
-		reportItemBuilder.setReportId(reportLabel);
+		reportItemBuilder.setReportLabel(reportLabel);
 		reportItemBuilder.addValue(reportContext.getTime());
 		reportItemBuilder.addValue(materialsProducerId.toString());
 		reportItemBuilder.addValue(materialsProducerPropertyId.toString());

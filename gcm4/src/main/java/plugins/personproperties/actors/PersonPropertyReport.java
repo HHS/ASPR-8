@@ -127,15 +127,15 @@ public final class PersonPropertyReport extends PeriodicReport {
 		}
 
 		/**
-		 * Sets the report id
+		 * Sets the report label
 		 * 
 		 * @throws ContractException
-		 *             <li>{@linkplain ReportError#NULL_REPORT_ID} if the report
-		 *             id is null</li>
+		 *             <li>{@linkplain ReportError#NULL_REPORT_LABEL} if the report
+		 *             label is null</li>
 		 */
-		public Builder setReportId(ReportLabel reportLabel) {
+		public Builder setReportLabel(ReportLabel reportLabel) {
 			if (reportLabel == null) {
-				throw new ContractException(ReportError.NULL_REPORT_ID);
+				throw new ContractException(ReportError.NULL_REPORT_LABEL);
 			}
 			data.reportLabel = reportLabel;
 			return this;
@@ -225,7 +225,7 @@ public final class PersonPropertyReport extends PeriodicReport {
 					//if (counter.count > 0) {
 						final int personCount = counter.count;
 						reportItemBuilder.setReportHeader(getReportHeader());
-						reportItemBuilder.setReportId(getReportId());
+						reportItemBuilder.setReportLabel(getReportLabel());
 
 						fillTimeFields(reportItemBuilder);
 						reportItemBuilder.addValue(regionId.toString());

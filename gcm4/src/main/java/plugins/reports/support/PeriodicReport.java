@@ -35,7 +35,7 @@ public abstract class PeriodicReport  {
 		this.reportPeriod = reportPeriod;
 
 		if (reportLabel == null) {
-			throw new ContractException(ReportError.NULL_REPORT_ID);
+			throw new ContractException(ReportError.NULL_REPORT_LABEL);
 		}
 		this.reportLabel = reportLabel;
 	}
@@ -85,7 +85,7 @@ public abstract class PeriodicReport  {
 		return reportHeaderBuilder;
 	}
 
-	protected final ReportLabel getReportId() {
+	protected final ReportLabel getReportLabel() {
 		return reportLabel;
 	}
 

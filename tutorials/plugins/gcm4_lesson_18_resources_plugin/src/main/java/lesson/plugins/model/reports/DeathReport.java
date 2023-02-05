@@ -72,7 +72,7 @@ public final class DeathReport {
 
 			}
 			reportItemBuilder.setReportHeader(reportHeader);
-			reportItemBuilder.setReportId(reportLabel);
+			reportItemBuilder.setReportLabel(reportLabel);
 			reportItemBuilder.addValue(regionId);
 			reportItemBuilder.addValue(peopleInRegion.size());
 			reportItemBuilder.addValue(deathCount);

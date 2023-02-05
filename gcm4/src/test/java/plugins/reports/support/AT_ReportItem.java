@@ -30,7 +30,7 @@ public final class AT_ReportItem {
 
 		for (int i = 0; i < 10; i++) {
 			ReportItem reportItem = ReportItem	.builder()//
-												.setReportId(new SimpleReportId("report"))//
+												.setReportLabel(new SimpleReportLabel("report"))//
 												.setReportHeader(ReportHeader.builder().build())//
 												.addValue(i)//
 												.addValue(i - 1)//
@@ -53,14 +53,14 @@ public final class AT_ReportItem {
 		// precondition tests
 
 		ContractException contractException = assertThrows(ContractException.class, () -> {
-			ReportItem.builder().setReportId(new SimpleReportId("report")).build();
+			ReportItem.builder().setReportLabel(new SimpleReportLabel("report")).build();
 		});
 		assertEquals(ReportError.NULL_REPORT_HEADER, contractException.getErrorType());
 
 		contractException = assertThrows(ContractException.class, () -> {
 			ReportItem.builder().setReportHeader(ReportHeader.builder().build()).build();
 		});
-		assertEquals(ReportError.NULL_REPORT_ID, contractException.getErrorType());
+		assertEquals(ReportError.NULL_REPORT_LABEL, contractException.getErrorType());
 
 	}
 
@@ -69,7 +69,7 @@ public final class AT_ReportItem {
 	public void testSetReportHeader() {
 		ReportHeader reportHeader = ReportHeader.builder().add("A").add("B").build();
 
-		ReportItem reportItem = ReportItem.builder().setReportHeader(reportHeader).setReportId(new SimpleReportId("report")).build();
+		ReportItem reportItem = ReportItem.builder().setReportHeader(reportHeader).setReportLabel(new SimpleReportLabel("report")).build();
 
 		assertEquals(reportHeader, reportItem.getReportHeader());
 
@@ -80,29 +80,29 @@ public final class AT_ReportItem {
 	}
 
 	@Test
-	@UnitTestMethod(target = ReportItem.Builder.class, name = "setReportId", args = { ReportLabel.class })
-	public void testSetReportId() {
+	@UnitTestMethod(target = ReportItem.Builder.class, name = "setReportLabel", args = { ReportLabel.class })
+	public void testSetReportLabel() {
 
-		SimpleReportId reportId = new SimpleReportId("report");
+		SimpleReportLabel reportLabel = new SimpleReportLabel("report");
 
-		ReportItem reportItem = ReportItem.builder().setReportHeader(ReportHeader.builder().build()).setReportId(reportId).build();
+		ReportItem reportItem = ReportItem.builder().setReportHeader(ReportHeader.builder().build()).setReportLabel(reportLabel).build();
 
-		assertEquals(reportId, reportItem.getReportId());
+		assertEquals(reportLabel, reportItem.getReportLabel());
 
 		// precondition tests
-		ContractException contractException = assertThrows(ContractException.class, () -> ReportItem.builder().setReportId(null));
-		assertEquals(ReportError.NULL_REPORT_ID, contractException.getErrorType());
+		ContractException contractException = assertThrows(ContractException.class, () -> ReportItem.builder().setReportLabel(null));
+		assertEquals(ReportError.NULL_REPORT_LABEL, contractException.getErrorType());
 
 	}
 
 	@Test
-	@UnitTestMethod(target = ReportItem.class,name = "getReportId", args = {})
-	public void testGetReportId() {
-		SimpleReportId reportId = new SimpleReportId("report");
+	@UnitTestMethod(target = ReportItem.class,name = "getReportLabel", args = {})
+	public void testGetReportLabel() {
+		SimpleReportLabel reportLabel = new SimpleReportLabel("report");
 
-		ReportItem reportItem = ReportItem.builder().setReportHeader(ReportHeader.builder().build()).setReportId(reportId).build();
+		ReportItem reportItem = ReportItem.builder().setReportHeader(ReportHeader.builder().build()).setReportLabel(reportLabel).build();
 
-		assertEquals(reportId, reportItem.getReportId());
+		assertEquals(reportLabel, reportItem.getReportLabel());
 	}
 
 	@Test
@@ -111,7 +111,7 @@ public final class AT_ReportItem {
 	public void testGetReportHeader() {
 		ReportHeader reportHeader = ReportHeader.builder().add("A").add("B").build();
 
-		ReportItem reportItem = ReportItem.builder().setReportHeader(reportHeader).setReportId(new SimpleReportId("report")).build();
+		ReportItem reportItem = ReportItem.builder().setReportHeader(reportHeader).setReportLabel(new SimpleReportLabel("report")).build();
 
 		assertEquals(reportHeader, reportItem.getReportHeader());
 	}
@@ -123,7 +123,7 @@ public final class AT_ReportItem {
 		ReportHeader reportHeader = ReportHeader.builder().add("A").add("B").add("C").add("D").build();
 		ReportItem reportItem = ReportItem	.builder()//
 											.setReportHeader(reportHeader)//
-											.setReportId(new SimpleReportId("report"))//
+											.setReportLabel(new SimpleReportLabel("report"))//
 											.addValue("alpha")//
 											.addValue(12)//
 											.addValue(false)//
@@ -142,10 +142,10 @@ public final class AT_ReportItem {
 
 	public void testSize() {
 		ReportHeader reportHeader = ReportHeader.builder().build();
-		SimpleReportId reportId = new SimpleReportId("report");
+		SimpleReportLabel reportLabel = new SimpleReportLabel("report");
 
 		for (int i = 0; i < 10; i++) {
-			ReportItem.Builder builder = ReportItem.builder().setReportHeader(reportHeader).setReportId(reportId);
+			ReportItem.Builder builder = ReportItem.builder().setReportHeader(reportHeader).setReportLabel(reportLabel);
 			for (int j = 0; j < i; j++) {
 				builder.addValue(j);
 			}
@@ -159,11 +159,11 @@ public final class AT_ReportItem {
 	@UnitTestMethod(target = ReportItem.class,name = "toString", args = {})
 	public void testToString() {
 		ReportHeader reportHeader = ReportHeader.builder().build();
-		SimpleReportId reportId = new SimpleReportId("report");
+		SimpleReportLabel reportLabel = new SimpleReportLabel("report");
 
-		ReportItem reportItem = ReportItem.builder().setReportHeader(reportHeader).setReportId(reportId).addValue("A").addValue("B").build();
+		ReportItem reportItem = ReportItem.builder().setReportHeader(reportHeader).setReportLabel(reportLabel).addValue("A").addValue("B").build();
 
-		String expectedValue = "ReportItem [reportId=SimpleReportId [value=report], reportHeader=ReportHeader [headerStrings=[]], values=[A, B]]";
+		String expectedValue = "ReportItem [reportLabel=SimpleReportLabel [value=report], reportHeader=ReportHeader [headerStrings=[]], values=[A, B]]";
 		String actualValue = reportItem.toString();
 		assertEquals(expectedValue, actualValue);
 	}
@@ -175,18 +175,18 @@ public final class AT_ReportItem {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7481311225319288863L);
 		/*
 		 * Show equal report items have equal hash codes. We will focus on the
-		 * values part since other tests should cover the report id and header.
+		 * values part since other tests should cover the report label and header.
 		 */
 
 		ReportHeader reportHeader = ReportHeader.builder().build();
-		SimpleReportId reportId = new SimpleReportId("report");
+		SimpleReportLabel reportLabel = new SimpleReportLabel("report");
 
-		ReportItem reportItem1 = ReportItem.builder().setReportHeader(reportHeader).setReportId(reportId).build();
-		ReportItem reportItem2 = ReportItem.builder().setReportHeader(reportHeader).setReportId(reportId).build();
+		ReportItem reportItem1 = ReportItem.builder().setReportHeader(reportHeader).setReportLabel(reportLabel).build();
+		ReportItem reportItem2 = ReportItem.builder().setReportHeader(reportHeader).setReportLabel(reportLabel).build();
 		assertEquals(reportItem1.hashCode(), reportItem2.hashCode());
 
-		reportItem1 = ReportItem.builder().setReportHeader(reportHeader).setReportId(reportId).addValue("A").addValue("B").build();
-		reportItem2 = ReportItem.builder().setReportHeader(reportHeader).setReportId(reportId).addValue("A").addValue("B").build();
+		reportItem1 = ReportItem.builder().setReportHeader(reportHeader).setReportLabel(reportLabel).addValue("A").addValue("B").build();
+		reportItem2 = ReportItem.builder().setReportHeader(reportHeader).setReportLabel(reportLabel).addValue("A").addValue("B").build();
 		assertEquals(reportItem1.hashCode(), reportItem2.hashCode());
 
 		/*
@@ -198,7 +198,7 @@ public final class AT_ReportItem {
 
 		int sampleCount = 1000;
 		for (int i = 0; i < sampleCount; i++) {
-			builder.setReportHeader(reportHeader).setReportId(reportId);
+			builder.setReportHeader(reportHeader).setReportLabel(reportLabel);
 			int fieldCount = randomGenerator.nextInt(3) + 1;
 			for(int j = 0;j<fieldCount;j++) {
 				int stringLength = randomGenerator.nextInt(5)+1;
@@ -231,7 +231,7 @@ public final class AT_ReportItem {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7530977954336798039L);
 
 		ReportHeader reportHeader = ReportHeader.builder().build();
-		SimpleReportId reportId = new SimpleReportId("report");
+		SimpleReportLabel reportLabel = new SimpleReportLabel("report");
 
 
 		/*
@@ -243,8 +243,8 @@ public final class AT_ReportItem {
 
 		int sampleCount = 100;
 		for (int i = 0; i < sampleCount; i++) {
-			builder1.setReportHeader(reportHeader).setReportId(reportId);
-			builder2.setReportHeader(reportHeader).setReportId(reportId);
+			builder1.setReportHeader(reportHeader).setReportLabel(reportLabel);
+			builder2.setReportHeader(reportHeader).setReportLabel(reportLabel);
 			int fieldCount = randomGenerator.nextInt(3) + 1;
 			for(int j = 0;j<fieldCount;j++) {
 				int stringLength = randomGenerator.nextInt(5)+1;
@@ -262,8 +262,8 @@ public final class AT_ReportItem {
 		
 		//show that non-equal report items are not equal
 		for (int i = 0; i < sampleCount; i++) {
-			builder1.setReportHeader(reportHeader).setReportId(reportId);
-			builder2.setReportHeader(reportHeader).setReportId(reportId);
+			builder1.setReportHeader(reportHeader).setReportLabel(reportLabel);
+			builder2.setReportHeader(reportHeader).setReportLabel(reportLabel);
 			int fieldCount = randomGenerator.nextInt(3) + 1;
 			for(int j = 0;j<fieldCount;j++) {
 				int stringLength = randomGenerator.nextInt(5)+1;

@@ -91,7 +91,7 @@ public final class GroupPopulationReport extends PeriodicReport {
 
 				final int groupCount = counter.count;
 				reportItemBuilder.setReportHeader(getReportHeader());
-				reportItemBuilder.setReportId(getReportId());
+				reportItemBuilder.setReportLabel(getReportLabel());
 				fillTimeFields(reportItemBuilder);
 				reportItemBuilder.addValue(groupTypeId.toString());
 				reportItemBuilder.addValue(personCount);

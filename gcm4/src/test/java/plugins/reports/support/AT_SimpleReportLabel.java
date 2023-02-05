@@ -17,61 +17,61 @@ import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
 
-public class AT_SimpleReportId {
+public class AT_SimpleReportLabel {
 
 	@Test
-	@UnitTestConstructor(target = SimpleReportId.class, args = { Object.class })
+	@UnitTestConstructor(target = SimpleReportLabel.class, args = { Object.class })
 	public void testConstructor() {
-		assertNotNull(new SimpleReportId(5));
+		assertNotNull(new SimpleReportLabel(5));
 
-		// show that a null report id is not thrown
-		ContractException contractException = assertThrows(ContractException.class, () -> new SimpleReportId(null));
-		assertEquals(contractException.getErrorType(), ReportError.NULL_REPORT_ID);
+		// show that a null report label is not thrown
+		ContractException contractException = assertThrows(ContractException.class, () -> new SimpleReportLabel(null));
+		assertEquals(contractException.getErrorType(), ReportError.NULL_REPORT_LABEL);
 
 	}
 
 	@Test
-	@UnitTestMethod(target = SimpleReportId.class, name = "toString", args = {})
+	@UnitTestMethod(target = SimpleReportLabel.class, name = "toString", args = {})
 	public void testToString() {
 		Object value = 325;
-		SimpleReportId simpleReportId = new SimpleReportId(value);
-		String expectedString = "SimpleReportId [value=" + value + "]";
-		String actualString = simpleReportId.toString();
+		SimpleReportLabel simpleReportLabel = new SimpleReportLabel(value);
+		String expectedString = "SimpleReportLabel [value=" + value + "]";
+		String actualString = simpleReportLabel.toString();
 
 		assertEquals(expectedString, actualString);
 	}
 
 	@Test
-	@UnitTestMethod(target = SimpleReportId.class, name = "hashCode", args = {})
+	@UnitTestMethod(target = SimpleReportLabel.class, name = "hashCode", args = {})
 	public void testHashCode() {
 		// equal objects have equal hash codes
 		for (int i = 0; i < 30; i++) {
-			SimpleReportId s1 = new SimpleReportId(i);
-			SimpleReportId s2 = new SimpleReportId(i);
+			SimpleReportLabel s1 = new SimpleReportLabel(i);
+			SimpleReportLabel s2 = new SimpleReportLabel(i);
 			assertEquals(s1.hashCode(), s2.hashCode());
 		}
 
 		Set<Integer> hashCodes = new LinkedHashSet<>();
 		for (int i = 0; i < 30; i++) {
-			boolean unique = hashCodes.add(new SimpleReportId(i).hashCode());
+			boolean unique = hashCodes.add(new SimpleReportLabel(i).hashCode());
 			assertTrue(unique);
 		}
 	}
 
 	@Test
-	@UnitTestMethod(target = SimpleReportId.class, name = "equals", args = { Object.class }, tags = UnitTag.INCOMPLETE)
+	@UnitTestMethod(target = SimpleReportLabel.class, name = "equals", args = { Object.class }, tags = UnitTag.INCOMPLETE)
 	public void testEquals() {
 		Object value = 2;
-		SimpleReportId id_1 = new SimpleReportId(2);
-		SimpleReportId id_2 = new SimpleReportId(5);
-		SimpleReportId id_3 = new SimpleReportId(2);
-		SimpleReportId id_4 = new SimpleReportId("A");
-		SimpleReportId id_5 = new SimpleReportId("A");
-		SimpleReportId id_6 = new SimpleReportId("B");
-		SimpleReportId id_7 = new SimpleReportId("A");
+		SimpleReportLabel id_1 = new SimpleReportLabel(2);
+		SimpleReportLabel id_2 = new SimpleReportLabel(5);
+		SimpleReportLabel id_3 = new SimpleReportLabel(2);
+		SimpleReportLabel id_4 = new SimpleReportLabel("A");
+		SimpleReportLabel id_5 = new SimpleReportLabel("A");
+		SimpleReportLabel id_6 = new SimpleReportLabel("B");
+		SimpleReportLabel id_7 = new SimpleReportLabel("A");
 		SimpleGlobalPropertyId simpleGlobalPropertyId = new SimpleGlobalPropertyId(value);
 
-		// should return false if the object is not a SimpleReportId
+		// should return false if the object is not a SimpleReportLabel
 		assertNotEquals(id_1, simpleGlobalPropertyId);
 
 		assertEquals(id_1, id_1); // testing reflexive property

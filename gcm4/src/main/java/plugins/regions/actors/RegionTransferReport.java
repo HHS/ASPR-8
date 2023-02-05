@@ -77,7 +77,7 @@ public final class RegionTransferReport extends PeriodicReport {
 			RegionId destinationRegionId = multiKey.getKey(1);
 			MutableInteger mutableInteger = baseMap.get(multiKey);
 			reportItemBuilder.setReportHeader(getReportHeader());
-			reportItemBuilder.setReportId(getReportId());
+			reportItemBuilder.setReportLabel(getReportLabel());
 			fillTimeFields(reportItemBuilder);
 			reportItemBuilder.addValue(sourceRegionId.toString());
 			reportItemBuilder.addValue(destinationRegionId.toString());

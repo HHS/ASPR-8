@@ -32,7 +32,7 @@ import plugins.regions.support.SimpleRegionPropertyId;
 import plugins.reports.support.ReportHeader;
 import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportItem;
-import plugins.reports.support.SimpleReportId;
+import plugins.reports.support.SimpleReportLabel;
 import plugins.reports.testsupport.ReportsTestPluginFactory;
 import plugins.util.properties.PropertyDefinition;
 import tools.annotations.UnitTag;
@@ -44,7 +44,7 @@ public class AT_RegionPropertyReport {
 	@Test
 	@UnitTestConstructor(target = RegionPropertyReport.class, args = { ReportLabel.class, RegionPropertyId[].class })
 	public void testConstructor() {
-		RegionPropertyReport regionPropertyReport = new RegionPropertyReport(REPORT_ID);
+		RegionPropertyReport regionPropertyReport = new RegionPropertyReport(REPORT_LABEL);
 
 		// Show not null when given 0 RegionPropertyIds
 		assertNotNull(regionPropertyReport);
@@ -56,7 +56,7 @@ public class AT_RegionPropertyReport {
 		RegionPropertyId prop_policy = new SimpleRegionPropertyId("prop_policy");
 		RegionPropertyId prop_vaccine = new SimpleRegionPropertyId("prop_vaccine");
 
-		regionPropertyReport = new RegionPropertyReport(REPORT_ID, prop_age, prop_infected, prop_length, prop_height,
+		regionPropertyReport = new RegionPropertyReport(REPORT_LABEL, prop_age, prop_infected, prop_length, prop_height,
 				prop_policy, prop_vaccine);
 
 		// Show not null when given 1 or more RegionPropertyIds
@@ -220,7 +220,7 @@ public class AT_RegionPropertyReport {
 		TestSimulationOutputConsumer outputConsumer = new TestSimulationOutputConsumer();
 
 		pluginsToAdd.add(testPlugin);
-		pluginsToAdd.add(ReportsTestPluginFactory.getPluginFromReport(new RegionPropertyReport(REPORT_ID)::init));
+		pluginsToAdd.add(ReportsTestPluginFactory.getPluginFromReport(new RegionPropertyReport(REPORT_LABEL)::init));
 
 		TestSimulation.executeSimulation(pluginsToAdd, outputConsumer);
 
@@ -230,7 +230,7 @@ public class AT_RegionPropertyReport {
 
 	private static ReportItem getReportItem(Object... values) {
 		ReportItem.Builder builder = ReportItem.builder();
-		builder.setReportId(REPORT_ID);
+		builder.setReportLabel(REPORT_LABEL);
 		builder.setReportHeader(REPORT_HEADER);
 		for (Object value : values) {
 			builder.addValue(value);
@@ -238,7 +238,7 @@ public class AT_RegionPropertyReport {
 		return builder.build();
 	}
 
-	private static final ReportLabel REPORT_ID = new SimpleReportId("region property report");
+	private static final ReportLabel REPORT_LABEL = new SimpleReportLabel("region property report");
 
 	private static final ReportHeader REPORT_HEADER = ReportHeader.builder().add("Time").add("Region").add("Property")
 			.add("Value").build();

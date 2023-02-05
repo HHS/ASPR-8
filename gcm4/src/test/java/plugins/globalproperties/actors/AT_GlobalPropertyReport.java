@@ -27,7 +27,7 @@ import plugins.reports.support.ReportError;
 import plugins.reports.support.ReportHeader;
 import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportItem;
-import plugins.reports.support.SimpleReportId;
+import plugins.reports.support.SimpleReportLabel;
 import plugins.reports.testsupport.ReportsTestPluginFactory;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
@@ -90,7 +90,7 @@ public class AT_GlobalPropertyReport {
 				.setDefaultValue(199.16).build();
 
 		GlobalPropertyReport globalPropertyReport = GlobalPropertyReport.builder()//
-				.setReportId(REPORT_ID)//
+				.setReportLabel(REPORT_LABEL)//
 				.includeAllExtantPropertyIds(true)//
 				.includeNewPropertyIds(true)//
 				.build();
@@ -184,7 +184,7 @@ public class AT_GlobalPropertyReport {
 
 	private static ReportItem getReportItem(Object... values) {
 		ReportItem.Builder builder = ReportItem.builder();
-		builder.setReportId(REPORT_ID);
+		builder.setReportLabel(REPORT_LABEL);
 		builder.setReportHeader(REPORT_HEADER);
 		for (Object value : values) {
 			builder.addValue(value);
@@ -196,15 +196,15 @@ public class AT_GlobalPropertyReport {
 	@UnitTestMethod(target = GlobalPropertyReport.Builder.class, name = "build", args = {})
 	public void testBuild() {
 		GlobalPropertyReport.Builder builder = GlobalPropertyReport.builder();
-		ReportLabel reportLabel = new SimpleReportId(1000);
-		GlobalPropertyReport report = builder.setReportId(reportLabel).build();
+		ReportLabel reportLabel = new SimpleReportLabel(1000);
+		GlobalPropertyReport report = builder.setReportLabel(reportLabel).build();
 
 		assertNotNull(report);
 
-		// precondition: report id is null
+		// precondition: report label is null
 		ContractException contractException = assertThrows(ContractException.class,
 				() -> GlobalPropertyReport.builder().build());
-		assertEquals(ReportError.NULL_REPORT_ID, contractException.getErrorType());
+		assertEquals(ReportError.NULL_REPORT_LABEL, contractException.getErrorType());
 	}
 
 	@Test
@@ -247,17 +247,17 @@ public class AT_GlobalPropertyReport {
 	}
 
 	@Test
-	@UnitTestMethod(target = GlobalPropertyReport.Builder.class, name = "setReportId", args = { ReportLabel.class })
-	public void testSetReportId() {
+	@UnitTestMethod(target = GlobalPropertyReport.Builder.class, name = "setReportLabel", args = { ReportLabel.class })
+	public void testSetReportLabel() {
 		GlobalPropertyReport.Builder builder = GlobalPropertyReport.builder();
 
-		// precondition test: if the report id is null
-		ContractException contractException = assertThrows(ContractException.class, () -> builder.setReportId(null));
-		assertEquals(ReportError.NULL_REPORT_ID, contractException.getErrorType());
+		// precondition test: if the report label is null
+		ContractException contractException = assertThrows(ContractException.class, () -> builder.setReportLabel(null));
+		assertEquals(ReportError.NULL_REPORT_LABEL, contractException.getErrorType());
 
 	}
 
-	private static final ReportLabel REPORT_ID = new SimpleReportId("global property report");
+	private static final ReportLabel REPORT_LABEL = new SimpleReportLabel("global property report");
 
 	private static final ReportHeader REPORT_HEADER = ReportHeader.builder().add("time").add("property").add("value")
 			.build();
