@@ -447,7 +447,7 @@ public final class Experiment {
 		 * supplied to the dimensions of the experiment
 		 */
 
-		final PluginDataBuilderContext.Builder contextBuilder = PluginDataBuilderContext.builder();
+		final DimensionContext.Builder contextBuilder = DimensionContext.builder();
 
 		/*
 		 * Set up a map that will allow us to associate each data builder with
@@ -462,7 +462,7 @@ public final class Experiment {
 				contextBuilder.add(pluginDataBuilder);
 			}
 		}
-		final PluginDataBuilderContext pluginDataBuilderContext = contextBuilder.build();
+		final DimensionContext dimensionContext = contextBuilder.build();
 
 		// initialize the scenario meta data
 		final List<String> scenarioMetaData = new ArrayList<>();
@@ -481,11 +481,11 @@ public final class Experiment {
 			modulus *= dimension.size();
 
 			// get the function from the dimension
-			final Function<PluginDataBuilderContext, List<String>> levelFunction = dimension.getLevel(level);
+			final Function<DimensionContext, List<String>> levelFunction = dimension.getLevel(level);
 
 			// apply the function that will update the plugin builders and
 			// return the meta data for this function
-			scenarioMetaData.addAll(levelFunction.apply(pluginDataBuilderContext));
+			scenarioMetaData.addAll(levelFunction.apply(dimensionContext));
 
 		}
 
@@ -515,7 +515,7 @@ public final class Experiment {
 		// Get the plugin data builders and create the new plugin datas,
 		// associating each with the correct plugin. The plugin datas should be
 		// added in the order that they were in in the original plugins
-		for (final PluginDataBuilder pluginDataBuilder : pluginDataBuilderContext.getContents()) {
+		for (final PluginDataBuilder pluginDataBuilder : dimensionContext.getContents()) {
 			final PluginData pluginData = pluginDataBuilder.build();
 			PluginId pluginId = pluginBuilderToPluginIdMap.get(pluginDataBuilder);
 			Plugin.Builder pluginBuilder = dumptyMap.get(pluginId);
