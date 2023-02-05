@@ -21,7 +21,7 @@ import plugins.regions.events.PersonRegionUpdateEvent;
 import plugins.regions.support.RegionId;
 import plugins.reports.support.PeriodicReport;
 import plugins.reports.support.ReportHeader;
-import plugins.reports.support.ReportId;
+import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportItem;
 import plugins.reports.support.ReportPeriod;
 
@@ -44,8 +44,8 @@ import plugins.reports.support.ReportPeriod;
  */
 public final class PersonPropertyInteractionReport extends PeriodicReport {
 
-	public PersonPropertyInteractionReport(ReportId reportId, ReportPeriod reportPeriod, PersonPropertyId... personPropertyIds) {
-		super(reportId, reportPeriod);
+	public PersonPropertyInteractionReport(ReportLabel reportLabel, ReportPeriod reportPeriod, PersonPropertyId... personPropertyIds) {
+		super(reportLabel, reportPeriod);
 		for (PersonPropertyId personPropertyId : personPropertyIds) {
 			propertyIds.add(personPropertyId);
 		}
@@ -295,7 +295,7 @@ public final class PersonPropertyInteractionReport extends PeriodicReport {
 					}
 					final ReportItem.Builder reportItemBuilder = ReportItem.builder();
 					reportItemBuilder.setReportHeader(getReportHeader());
-					reportItemBuilder.setReportId(getReportId());
+					reportItemBuilder.setReportLabel(getReportLabel());
 
 					fillTimeFields(reportItemBuilder);
 					reportItemBuilder.addValue(regionId.toString());

@@ -12,16 +12,16 @@ import nucleus.ReportContext;
 import plugins.people.support.PersonId;
 import plugins.personproperties.datamanagers.PersonPropertiesDataManager;
 import plugins.reports.support.ReportHeader;
-import plugins.reports.support.ReportId;
+import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportItem;
 import util.wrappers.MutableInteger;
 
 public final class ContagionReport {
 	private final ReportHeader reportHeader = ReportHeader.builder().add("infected").add("count").build();
-	private final ReportId reportId;
+	private final ReportLabel reportLabel;
 
-	public ContagionReport(ReportId reportId) {
-		this.reportId = reportId;
+	public ContagionReport(ReportLabel reportLabel) {
+		this.reportLabel = reportLabel;
 	}
 
 	public void init(ReportContext reportContext) {
@@ -54,7 +54,7 @@ public final class ContagionReport {
 		ReportItem.Builder reportItemBuilder = ReportItem.builder();
 		for (Integer i : countMap.keySet()) {
 			MutableInteger mutableInteger = countMap.get(i);
-			reportItemBuilder.setReportId(reportId);
+			reportItemBuilder.setReportLabel(reportLabel);
 			reportItemBuilder.setReportHeader(reportHeader);
 			reportItemBuilder.addValue(i);
 			reportItemBuilder.addValue(mutableInteger.getValue());

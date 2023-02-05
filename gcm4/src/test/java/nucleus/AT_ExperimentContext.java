@@ -451,6 +451,7 @@ public class AT_ExperimentContext {
 
 						});
 					})//
+					.setHaltOnException(false)//
 					.build()//
 					.execute();//
 
@@ -701,6 +702,7 @@ public class AT_ExperimentContext {
 		Experiment	.builder()//
 					.addPlugin(testPlugin)//
 					.addExperimentContextConsumer(experimentContestConsumer)//
+					.setHaltOnException(false)//
 					.build()//
 					.execute();
 

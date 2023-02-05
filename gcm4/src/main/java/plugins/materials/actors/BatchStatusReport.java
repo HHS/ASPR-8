@@ -19,7 +19,7 @@ import plugins.materials.support.MaterialId;
 import plugins.materials.support.MaterialsProducerId;
 import plugins.materials.support.StageId;
 import plugins.reports.support.ReportHeader;
-import plugins.reports.support.ReportId;
+import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportItem;
 
 /**
@@ -61,10 +61,10 @@ public final class BatchStatusReport {
 
 	}
 
-	private final ReportId reportId;
+	private final ReportLabel reportLabel;
 
-	public BatchStatusReport(ReportId reportId) {
-		this.reportId = reportId;
+	public BatchStatusReport(ReportLabel reportLabel) {
+		this.reportLabel = reportLabel;
 	}
 
 	private Map<BatchId, BatchRecord> batchRecords = new LinkedHashMap<>();
@@ -80,7 +80,7 @@ public final class BatchStatusReport {
 
 		final ReportItem.Builder reportItemBuilder = ReportItem.builder();
 		reportItemBuilder.setReportHeader(getReportHeader());
-		reportItemBuilder.setReportId(reportId);
+		reportItemBuilder.setReportLabel(reportLabel);
 		reportItemBuilder.addValue(batchRecord.time);
 		reportItemBuilder.addValue(batchRecord.batchId);
 		reportItemBuilder.addValue(batchRecord.materialsProducerId);
