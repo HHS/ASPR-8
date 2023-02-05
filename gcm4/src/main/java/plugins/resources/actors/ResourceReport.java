@@ -17,7 +17,7 @@ import plugins.regions.events.RegionAdditionEvent;
 import plugins.regions.support.RegionId;
 import plugins.reports.support.PeriodicReport;
 import plugins.reports.support.ReportHeader;
-import plugins.reports.support.ReportId;
+import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportItem;
 import plugins.reports.support.ReportPeriod;
 import plugins.resources.datamanagers.ResourcesDataManager;
@@ -91,8 +91,8 @@ import util.errors.ContractException;
  */
 public final class ResourceReport extends PeriodicReport {
 
-	public ResourceReport(ReportId reportId, ReportPeriod reportPeriod, ResourceId... resourceIds) {
-		super(reportId, reportPeriod);
+	public ResourceReport(ReportLabel reportLabel, ReportPeriod reportPeriod, ResourceId... resourceIds) {
+		super(reportLabel, reportPeriod);
 		for (ResourceId resourceId : resourceIds) {
 			this.resourceIds.add(resourceId);
 		}

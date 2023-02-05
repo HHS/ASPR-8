@@ -17,15 +17,15 @@ import lesson.plugins.vaccine.events.VaccinationEvent;
 import nucleus.ReportContext;
 import plugins.reports.support.PeriodicReport;
 import plugins.reports.support.ReportHeader;
-import plugins.reports.support.ReportId;
+import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportItem;
 import plugins.reports.support.ReportPeriod;
 import util.wrappers.MutableInteger;
 
 public class HourlyVaccineReport extends PeriodicReport {
 
-	public HourlyVaccineReport(ReportId reportId, ReportPeriod reportPeriod) {
-		super(reportId, reportPeriod);
+	public HourlyVaccineReport(ReportLabel reportLabel, ReportPeriod reportPeriod) {
+		super(reportLabel, reportPeriod);
 
 		ReportHeader.Builder builder = ReportHeader.builder();
 		addTimeFieldHeaders(builder);

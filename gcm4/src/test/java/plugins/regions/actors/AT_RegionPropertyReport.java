@@ -30,7 +30,7 @@ import plugins.regions.support.RegionPropertyId;
 import plugins.regions.support.SimpleRegionId;
 import plugins.regions.support.SimpleRegionPropertyId;
 import plugins.reports.support.ReportHeader;
-import plugins.reports.support.ReportId;
+import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportItem;
 import plugins.reports.support.SimpleReportId;
 import plugins.reports.testsupport.ReportsTestPluginFactory;
@@ -42,7 +42,7 @@ import tools.annotations.UnitTestMethod;
 public class AT_RegionPropertyReport {
 
 	@Test
-	@UnitTestConstructor(target = RegionPropertyReport.class, args = { ReportId.class, RegionPropertyId[].class })
+	@UnitTestConstructor(target = RegionPropertyReport.class, args = { ReportLabel.class, RegionPropertyId[].class })
 	public void testConstructor() {
 		RegionPropertyReport regionPropertyReport = new RegionPropertyReport(REPORT_ID);
 
@@ -238,7 +238,7 @@ public class AT_RegionPropertyReport {
 		return builder.build();
 	}
 
-	private static final ReportId REPORT_ID = new SimpleReportId("region property report");
+	private static final ReportLabel REPORT_ID = new SimpleReportId("region property report");
 
 	private static final ReportHeader REPORT_HEADER = ReportHeader.builder().add("Time").add("Region").add("Property")
 			.add("Value").build();

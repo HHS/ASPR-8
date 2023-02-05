@@ -9,7 +9,7 @@ import util.errors.ContractException;
  *
  */
 @Immutable
-public final class SimpleReportId implements ReportId {
+public final class SimpleReportId implements ReportLabel {
 
 	private final Object value;
 

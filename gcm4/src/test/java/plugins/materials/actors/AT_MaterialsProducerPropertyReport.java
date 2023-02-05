@@ -27,7 +27,7 @@ import plugins.materials.testsupport.MaterialsActionSupport;
 import plugins.materials.testsupport.TestMaterialsProducerId;
 import plugins.materials.testsupport.TestMaterialsProducerPropertyId;
 import plugins.reports.support.ReportHeader;
-import plugins.reports.support.ReportId;
+import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportItem;
 import plugins.reports.support.ReportItem.Builder;
 import plugins.reports.support.SimpleReportId;
@@ -57,7 +57,7 @@ public final class AT_MaterialsProducerPropertyReport {
 	}
 
 	@Test
-	@UnitTestConstructor(target = MaterialsProducerPropertyReport.class, args = { ReportId.class })
+	@UnitTestConstructor(target = MaterialsProducerPropertyReport.class, args = { ReportLabel.class })
 	public void testConstructor() {
 		MaterialsProducerPropertyReport report = new MaterialsProducerPropertyReport(REPORT_ID);
 
@@ -161,7 +161,7 @@ public final class AT_MaterialsProducerPropertyReport {
 		return builder.build();
 	}
 
-	private static final ReportId REPORT_ID = new SimpleReportId("report");
+	private static final ReportLabel REPORT_ID = new SimpleReportId("report");
 
 	private static final ReportHeader REPORT_HEADER = getReportHeader();
 

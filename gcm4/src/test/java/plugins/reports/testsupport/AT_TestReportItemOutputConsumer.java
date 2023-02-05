@@ -16,7 +16,7 @@ import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
 import plugins.reports.support.ReportHeader;
-import plugins.reports.support.ReportId;
+import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportItem;
 import plugins.reports.support.SimpleReportId;
 import tools.annotations.UnitTestConstructor;
@@ -25,16 +25,16 @@ import util.wrappers.MutableInteger;
 
 public class AT_TestReportItemOutputConsumer {
 
-	private enum ReportIds implements ReportId {
+	private enum ReportIds implements ReportLabel {
 		REPORT_ID_1(new SimpleReportId("id 1"), ReportHeader.builder().add("A").add("B").build()), //
 		REPORT_ID_2(new SimpleReportId("id 2"), ReportHeader.builder().add("C").add("D").add("E").build()), //
 		REPORT_ID_3(new SimpleReportId("id 3"), ReportHeader.builder().add("F").add("G").build());//
 
 		private final ReportHeader reportHeader;
-		private final ReportId reportId;
+		private final ReportLabel reportLabel;
 
-		private ReportIds(ReportId reportId, ReportHeader reportHeader) {
-			this.reportId = reportId;
+		private ReportIds(ReportLabel reportLabel, ReportHeader reportHeader) {
+			this.reportLabel = reportLabel;
 			this.reportHeader = reportHeader;
 		}
 	}
@@ -150,7 +150,7 @@ public class AT_TestReportItemOutputConsumer {
 	private static ReportItem generateReportItem(ReportIds reportIds, Object... values) {
 
 		ReportItem.Builder builder = ReportItem.builder();//
-		builder.setReportId(reportIds.reportId);//
+		builder.setReportId(reportIds.reportLabel);//
 		builder.setReportHeader(reportIds.reportHeader);//
 		for (Object value : values) {
 			builder.addValue(value);

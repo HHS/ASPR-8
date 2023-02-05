@@ -27,7 +27,7 @@ import plugins.groups.testsupport.TestGroupTypeId;
 import plugins.people.support.PersonId;
 import plugins.reports.support.ReportError;
 import plugins.reports.support.ReportHeader;
-import plugins.reports.support.ReportId;
+import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportItem;
 import plugins.reports.support.ReportPeriod;
 import plugins.reports.support.SimpleReportId;
@@ -39,7 +39,7 @@ import util.errors.ContractException;
 public class AT_GroupPopulationReport {
 
 	@Test
-	@UnitTestConstructor(target = GroupPopulationReport.class, args = { ReportId.class, ReportPeriod.class })
+	@UnitTestConstructor(target = GroupPopulationReport.class, args = { ReportLabel.class, ReportPeriod.class })
 	public void testConstructor() {
 
 		assertNotNull(new GroupPopulationReport(REPORT_ID, ReportPeriod.HOURLY));
@@ -410,7 +410,7 @@ public class AT_GroupPopulationReport {
 		return builder.build();
 	}
 
-	private static final ReportId REPORT_ID = new SimpleReportId("group population property report");
+	private static final ReportLabel REPORT_ID = new SimpleReportId("group population property report");
 
 	private static final ReportHeader REPORT_DAILY_HEADER = ReportHeader.builder().add("day").add("group_type")
 			.add("person_count").add("group_count").build();

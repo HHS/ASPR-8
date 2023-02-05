@@ -11,7 +11,7 @@ import java.util.function.Supplier;
 import org.junit.jupiter.api.Test;
 
 import nucleus.ReportContext;
-import plugins.reports.support.ReportId;
+import plugins.reports.support.ReportLabel;
 import plugins.reports.support.SimpleReportId;
 import tools.annotations.UnitTestMethod;
 
@@ -32,14 +32,14 @@ public class AT_ReportsPluginData {
 	@Test
 	@UnitTestMethod(target = ReportsPluginData.Builder.class, name = "addReport", args = { Supplier.class })
 	public void testAddReport() {
-		ReportId reportId_1 = new SimpleReportId("report 1");
-		ReportId reportId_2 = new SimpleReportId("report 2");
+		ReportLabel reportId_1 = new SimpleReportId("report 1");
+		ReportLabel reportId_2 = new SimpleReportId("report 2");
 
-		Set<ReportId> expectedReportIds = new LinkedHashSet<>();
+		Set<ReportLabel> expectedReportIds = new LinkedHashSet<>();
 		expectedReportIds.add(reportId_1);
 		expectedReportIds.add(reportId_2);
 
-		Set<ReportId> observedReportIds = new LinkedHashSet<>();
+		Set<ReportLabel> observedReportIds = new LinkedHashSet<>();
 
 		ReportsPluginData.Builder builder = ReportsPluginData.builder();
 		builder.addReport(() -> (c) -> {
@@ -68,14 +68,14 @@ public class AT_ReportsPluginData {
 	@UnitTestMethod(target = ReportsPluginData.class, name = "getReports", args = {})
 	public void testGetReportIds() {
 
-		ReportId reportId_1 = new SimpleReportId("report 1");
-		ReportId reportId_2 = new SimpleReportId("report 2");
+		ReportLabel reportId_1 = new SimpleReportId("report 1");
+		ReportLabel reportId_2 = new SimpleReportId("report 2");
 
-		Set<ReportId> expectedReportIds = new LinkedHashSet<>();
+		Set<ReportLabel> expectedReportIds = new LinkedHashSet<>();
 		expectedReportIds.add(reportId_1);
 		expectedReportIds.add(reportId_2);
 
-		Set<ReportId> observedReportIds = new LinkedHashSet<>();
+		Set<ReportLabel> observedReportIds = new LinkedHashSet<>();
 
 		ReportsPluginData.Builder builder = ReportsPluginData.builder();
 		builder.addReport(() -> (c) -> {
@@ -103,14 +103,14 @@ public class AT_ReportsPluginData {
 	@Test
 	@UnitTestMethod(target = ReportsPluginData.class, name = "getCloneBuilder", args = {})
 	public void testGetCloneBuilder() {
-		ReportId reportId_1 = new SimpleReportId("report 1");
-		ReportId reportId_2 = new SimpleReportId("report 2");
+		ReportLabel reportId_1 = new SimpleReportId("report 1");
+		ReportLabel reportId_2 = new SimpleReportId("report 2");
 
-		Set<ReportId> expectedReportIds = new LinkedHashSet<>();
+		Set<ReportLabel> expectedReportIds = new LinkedHashSet<>();
 		expectedReportIds.add(reportId_1);
 		expectedReportIds.add(reportId_2);
 
-		Set<ReportId> observedReportIds = new LinkedHashSet<>();
+		Set<ReportLabel> observedReportIds = new LinkedHashSet<>();
 
 		ReportsPluginData.Builder builder = ReportsPluginData.builder();
 		builder.addReport(() -> (c) -> {

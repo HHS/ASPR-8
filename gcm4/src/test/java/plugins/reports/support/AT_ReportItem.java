@@ -80,7 +80,7 @@ public final class AT_ReportItem {
 	}
 
 	@Test
-	@UnitTestMethod(target = ReportItem.Builder.class, name = "setReportId", args = { ReportId.class })
+	@UnitTestMethod(target = ReportItem.Builder.class, name = "setReportId", args = { ReportLabel.class })
 	public void testSetReportId() {
 
 		SimpleReportId reportId = new SimpleReportId("report");

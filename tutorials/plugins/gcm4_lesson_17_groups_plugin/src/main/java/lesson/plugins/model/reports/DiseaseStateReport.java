@@ -6,7 +6,7 @@ import nucleus.ReportContext;
 import plugins.personproperties.datamanagers.PersonPropertiesDataManager;
 import plugins.reports.support.PeriodicReport;
 import plugins.reports.support.ReportHeader;
-import plugins.reports.support.ReportId;
+import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportItem;
 import plugins.reports.support.ReportPeriod;
 
@@ -18,8 +18,8 @@ import plugins.reports.support.ReportPeriod;
  */
 public final class DiseaseStateReport extends PeriodicReport {
 	
-	public DiseaseStateReport(ReportId reportId, ReportPeriod reportPeriod) {
-		super(reportId, reportPeriod);		
+	public DiseaseStateReport(ReportLabel reportLabel, ReportPeriod reportPeriod) {
+		super(reportLabel, reportPeriod);		
 	}
 
 	private ReportHeader reportHeader;

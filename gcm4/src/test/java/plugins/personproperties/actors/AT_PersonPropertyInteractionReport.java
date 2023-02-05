@@ -10,7 +10,7 @@ import nucleus.ActorContext;
 import plugins.personproperties.support.PersonPropertyId;
 import plugins.personproperties.testsupport.TestPersonPropertyId;
 import plugins.reports.support.ReportError;
-import plugins.reports.support.ReportId;
+import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportPeriod;
 import plugins.reports.support.SimpleReportId;
 import tools.annotations.UnitTag;
@@ -21,13 +21,13 @@ import util.errors.ContractException;
 public class AT_PersonPropertyInteractionReport {
 
 	@Test
-	@UnitTestConstructor(target = PersonPropertyInteractionReport.class, args = { ReportId.class, ReportPeriod.class, PersonPropertyId[].class })
+	@UnitTestConstructor(target = PersonPropertyInteractionReport.class, args = { ReportLabel.class, ReportPeriod.class, PersonPropertyId[].class })
 	public void testConstructor() {
-		ReportId reportId = new SimpleReportId(1000);
+		ReportLabel reportLabel = new SimpleReportId(1000);
 		ReportPeriod reportPeriod = ReportPeriod.DAILY;
 		PersonPropertyId[] personPropertyIds = { TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK, TestPersonPropertyId.PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK };
 
-		PersonPropertyInteractionReport report = new PersonPropertyInteractionReport(reportId, reportPeriod, personPropertyIds);
+		PersonPropertyInteractionReport report = new PersonPropertyInteractionReport(reportLabel, reportPeriod, personPropertyIds);
 
 		assertNotNull(report);
 
@@ -36,7 +36,7 @@ public class AT_PersonPropertyInteractionReport {
 		assertEquals(ReportError.NULL_REPORT_ID, contractException.getErrorType());
 
 		// precondition: report period is null
-		contractException = assertThrows(ContractException.class, () -> new PersonPropertyInteractionReport(reportId, null, personPropertyIds));
+		contractException = assertThrows(ContractException.class, () -> new PersonPropertyInteractionReport(reportLabel, null, personPropertyIds));
 		assertEquals(ReportError.NULL_REPORT_PERIOD, contractException.getErrorType());
 	}
 

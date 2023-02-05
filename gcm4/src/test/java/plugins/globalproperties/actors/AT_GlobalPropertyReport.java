@@ -25,7 +25,7 @@ import plugins.globalproperties.support.SimpleGlobalPropertyId;
 import plugins.globalproperties.testsupport.GlobalPropertiesTestPluginFactory;
 import plugins.reports.support.ReportError;
 import plugins.reports.support.ReportHeader;
-import plugins.reports.support.ReportId;
+import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportItem;
 import plugins.reports.support.SimpleReportId;
 import plugins.reports.testsupport.ReportsTestPluginFactory;
@@ -196,8 +196,8 @@ public class AT_GlobalPropertyReport {
 	@UnitTestMethod(target = GlobalPropertyReport.Builder.class, name = "build", args = {})
 	public void testBuild() {
 		GlobalPropertyReport.Builder builder = GlobalPropertyReport.builder();
-		ReportId reportId = new SimpleReportId(1000);
-		GlobalPropertyReport report = builder.setReportId(reportId).build();
+		ReportLabel reportLabel = new SimpleReportId(1000);
+		GlobalPropertyReport report = builder.setReportId(reportLabel).build();
 
 		assertNotNull(report);
 
@@ -247,7 +247,7 @@ public class AT_GlobalPropertyReport {
 	}
 
 	@Test
-	@UnitTestMethod(target = GlobalPropertyReport.Builder.class, name = "setReportId", args = { ReportId.class })
+	@UnitTestMethod(target = GlobalPropertyReport.Builder.class, name = "setReportId", args = { ReportLabel.class })
 	public void testSetReportId() {
 		GlobalPropertyReport.Builder builder = GlobalPropertyReport.builder();
 
@@ -257,7 +257,7 @@ public class AT_GlobalPropertyReport {
 
 	}
 
-	private static final ReportId REPORT_ID = new SimpleReportId("global property report");
+	private static final ReportLabel REPORT_ID = new SimpleReportId("global property report");
 
 	private static final ReportHeader REPORT_HEADER = ReportHeader.builder().add("time").add("property").add("value")
 			.build();

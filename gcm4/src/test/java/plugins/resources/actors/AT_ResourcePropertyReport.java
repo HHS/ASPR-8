@@ -17,7 +17,7 @@ import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestSimulation;
 import nucleus.testsupport.testplugin.TestSimulationOutputConsumer;
 import plugins.reports.support.ReportHeader;
-import plugins.reports.support.ReportId;
+import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportItem;
 import plugins.reports.support.SimpleReportId;
 import plugins.reports.testsupport.ReportsTestPluginFactory;
@@ -59,7 +59,7 @@ public class AT_ResourcePropertyReport {
 	}
 
 	@Test
-	@UnitTestConstructor(target = ResourcePropertyReport.class, args = { ReportId.class })
+	@UnitTestConstructor(target = ResourcePropertyReport.class, args = { ReportLabel.class })
 	public void testConstructor() {
 		// nothing to test
 	}
@@ -214,7 +214,7 @@ public class AT_ResourcePropertyReport {
 		return builder.build();
 	}
 
-	private static final ReportId REPORT_ID = new SimpleReportId("resource property report");
+	private static final ReportLabel REPORT_ID = new SimpleReportId("resource property report");
 
 	private static final ReportHeader REPORT_HEADER = ReportHeader.builder().add("time").add("resource").add("property")
 			.add("value").build();

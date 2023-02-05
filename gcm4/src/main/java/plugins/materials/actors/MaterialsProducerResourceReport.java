@@ -6,7 +6,7 @@ import plugins.materials.events.MaterialsProducerAdditionEvent;
 import plugins.materials.events.MaterialsProducerResourceUpdateEvent;
 import plugins.materials.support.MaterialsProducerId;
 import plugins.reports.support.ReportHeader;
-import plugins.reports.support.ReportId;
+import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportItem;
 import plugins.resources.datamanagers.ResourcesDataManager;
 import plugins.resources.events.ResourceIdAdditionEvent;
@@ -31,10 +31,10 @@ import plugins.resources.support.ResourceId;
  *
  */
 public final class MaterialsProducerResourceReport {
-	private final ReportId reportId;
+	private final ReportLabel reportLabel;
 
-	public MaterialsProducerResourceReport(ReportId reportId) {
-		this.reportId = reportId;
+	public MaterialsProducerResourceReport(ReportLabel reportLabel) {
+		this.reportLabel = reportLabel;
 	}
 
 	private static enum Action {
@@ -90,7 +90,7 @@ public final class MaterialsProducerResourceReport {
 	private void writeReportItem(ReportContext reportContext, final ResourceId resourceId, final MaterialsProducerId materialsProducerId, final Action action, final long amount) {
 		final ReportItem.Builder reportItemBuilder = ReportItem.builder();
 		reportItemBuilder.setReportHeader(getReportHeader());
-		reportItemBuilder.setReportId(reportId);
+		reportItemBuilder.setReportId(reportLabel);
 		reportItemBuilder.addValue(reportContext.getTime());
 		reportItemBuilder.addValue(resourceId.toString());
 		reportItemBuilder.addValue(materialsProducerId.toString());

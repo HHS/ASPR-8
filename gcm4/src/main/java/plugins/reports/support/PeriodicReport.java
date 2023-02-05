@@ -28,16 +28,16 @@ public abstract class PeriodicReport  {
 	 * @throws ContractException
 	 *             <li>if the report period is null</li>
 	 */
-	public PeriodicReport(ReportId reportId, ReportPeriod reportPeriod) {
+	public PeriodicReport(ReportLabel reportLabel, ReportPeriod reportPeriod) {
 		if (reportPeriod == null) {
 			throw new ContractException(ReportError.NULL_REPORT_PERIOD);
 		}
 		this.reportPeriod = reportPeriod;
 
-		if (reportId == null) {
+		if (reportLabel == null) {
 			throw new ContractException(ReportError.NULL_REPORT_ID);
 		}
-		this.reportId = reportId;
+		this.reportLabel = reportLabel;
 	}
 
 	/*
@@ -45,7 +45,7 @@ public abstract class PeriodicReport  {
 	 */
 	private ReportPeriod reportPeriod = ReportPeriod.DAILY;
 
-	private ReportId reportId;
+	private ReportLabel reportLabel;
 
 	/*
 	 * The day value to be used in report lines
@@ -85,8 +85,8 @@ public abstract class PeriodicReport  {
 		return reportHeaderBuilder;
 	}
 
-	protected final ReportId getReportId() {
-		return reportId;
+	protected final ReportLabel getReportId() {
+		return reportLabel;
 	}
 
 	/**

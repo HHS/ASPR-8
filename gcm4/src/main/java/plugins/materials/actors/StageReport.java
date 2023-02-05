@@ -12,7 +12,7 @@ import plugins.materials.events.StageOfferUpdateEvent;
 import plugins.materials.support.MaterialsProducerId;
 import plugins.materials.support.StageId;
 import plugins.reports.support.ReportHeader;
-import plugins.reports.support.ReportId;
+import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportItem;
 
 /**
@@ -40,10 +40,10 @@ import plugins.reports.support.ReportItem;
  *
  */
 public final class StageReport {
-	private final ReportId reportId;
+	private final ReportLabel reportLabel;
 
-	public StageReport(ReportId reportId) {
-		this.reportId = reportId;
+	public StageReport(ReportLabel reportLabel) {
+		this.reportLabel = reportLabel;
 	}
 
 	private static class StageRecord {
@@ -129,7 +129,7 @@ public final class StageReport {
 	private void writeReportItem(ReportContext reportContext, final StageRecord stageRecord) {
 		final ReportItem.Builder reportItemBuilder = ReportItem.builder();
 		reportItemBuilder.setReportHeader(getReportHeader());
-		reportItemBuilder.setReportId(reportId);
+		reportItemBuilder.setReportId(reportLabel);
 		reportItemBuilder.addValue(reportContext.getTime());
 		reportItemBuilder.addValue(stageRecord.stageId);
 		reportItemBuilder.addValue(stageRecord.materialsProducerId.toString());

@@ -35,7 +35,7 @@ import plugins.regions.support.SimpleRegionId;
 import plugins.regions.support.SimpleRegionPropertyId;
 import plugins.reports.support.ReportError;
 import plugins.reports.support.ReportHeader;
-import plugins.reports.support.ReportId;
+import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportItem;
 import plugins.reports.support.ReportPeriod;
 import plugins.reports.support.SimpleReportId;
@@ -52,7 +52,7 @@ import util.errors.ContractException;
 public class AT_RegionTransferReport {
 
 	@Test
-	@UnitTestConstructor(target = RegionTransferReport.class, args = { ReportId.class, ReportPeriod.class })
+	@UnitTestConstructor(target = RegionTransferReport.class, args = { ReportLabel.class, ReportPeriod.class })
 	public void testConstructor() {
 		RegionTransferReport regionTransferReport = new RegionTransferReport(REPORT_ID, ReportPeriod.DAILY);
 
@@ -218,7 +218,7 @@ public class AT_RegionTransferReport {
 		return builder.build();
 	}
 
-	private static final ReportId REPORT_ID = new SimpleReportId("region transfer report");
+	private static final ReportLabel REPORT_ID = new SimpleReportId("region transfer report");
 
 	private static final ReportHeader REPORT_HEADER = ReportHeader.builder().add("day").add("source_region").add("destination_region").add("transfers").build();
 }

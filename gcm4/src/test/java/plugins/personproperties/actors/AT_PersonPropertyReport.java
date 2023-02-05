@@ -10,7 +10,7 @@ import nucleus.ActorContext;
 import plugins.personproperties.support.PersonPropertyId;
 import plugins.personproperties.testsupport.TestPersonPropertyId;
 import plugins.reports.support.ReportError;
-import plugins.reports.support.ReportId;
+import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportPeriod;
 import plugins.reports.support.SimpleReportId;
 import plugins.util.properties.PropertyError;
@@ -60,11 +60,11 @@ public class AT_PersonPropertyReport {
 	}
 
 	@Test
-	@UnitTestMethod(target = PersonPropertyReport.Builder.class, name = "setReportId", args = { ReportId.class })
+	@UnitTestMethod(target = PersonPropertyReport.Builder.class, name = "setReportId", args = { ReportLabel.class })
 	public void testSetReportId() {
 		PersonPropertyReport.Builder builder = PersonPropertyReport.builder();
-		ReportId reportId = new SimpleReportId(1000);
-		builder.setReportId(reportId);
+		ReportLabel reportLabel = new SimpleReportId(1000);
+		builder.setReportId(reportLabel);
 		builder.setReportPeriod(ReportPeriod.DAILY);
 
 		PersonPropertyReport report = builder.build();
@@ -82,9 +82,9 @@ public class AT_PersonPropertyReport {
 	@UnitTestMethod(target = PersonPropertyReport.Builder.class, name = "setReportPeriod", args = { ReportPeriod.class })
 	public void testSetReportPeriod() {
 		PersonPropertyReport.Builder builder = PersonPropertyReport.builder();
-		ReportId reportId = new SimpleReportId(1000);
+		ReportLabel reportLabel = new SimpleReportId(1000);
 		ReportPeriod reportPeriod = ReportPeriod.DAILY;
-		builder.setReportId(reportId);
+		builder.setReportId(reportLabel);
 		builder.setReportPeriod(reportPeriod);
 
 		PersonPropertyReport report = builder.build();
@@ -108,9 +108,9 @@ public class AT_PersonPropertyReport {
 	@UnitTestMethod(target = PersonPropertyReport.Builder.class, name = "includePersonProperty", args = { PersonPropertyId.class })
 	public void testIncludePersonProperty() {
 		PersonPropertyReport.Builder builder = PersonPropertyReport.builder();
-		ReportId reportId = new SimpleReportId(1000);
+		ReportLabel reportLabel = new SimpleReportId(1000);
 		ReportPeriod reportPeriod = ReportPeriod.DAILY;
-		builder.setReportId(reportId);
+		builder.setReportId(reportLabel);
 		builder.setReportPeriod(reportPeriod);
 		builder.includePersonProperty(TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK);
 
@@ -129,9 +129,9 @@ public class AT_PersonPropertyReport {
 	@UnitTestMethod(target = PersonPropertyReport.Builder.class, name = "excludePersonProperty", args = { PersonPropertyId.class })
 	public void testExcludePersonProperty() {
 		PersonPropertyReport.Builder builder = PersonPropertyReport.builder();
-		ReportId reportId = new SimpleReportId(1000);
+		ReportLabel reportLabel = new SimpleReportId(1000);
 		ReportPeriod reportPeriod = ReportPeriod.DAILY;
-		builder.setReportId(reportId);
+		builder.setReportId(reportLabel);
 		builder.setReportPeriod(reportPeriod);
 		builder.excludePersonProperty(TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK);
 

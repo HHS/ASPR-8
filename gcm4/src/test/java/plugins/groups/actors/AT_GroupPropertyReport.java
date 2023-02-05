@@ -28,7 +28,7 @@ import plugins.groups.testsupport.TestAuxiliaryGroupTypeId;
 import plugins.groups.testsupport.TestGroupPropertyId;
 import plugins.groups.testsupport.TestGroupTypeId;
 import plugins.reports.support.ReportHeader;
-import plugins.reports.support.ReportId;
+import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportItem;
 import plugins.reports.support.ReportPeriod;
 import plugins.reports.support.SimpleReportId;
@@ -103,7 +103,7 @@ public class AT_GroupPropertyReport {
 	}
 
 	@Test
-	@UnitTestMethod(target = GroupPropertyReport.Builder.class, name = "setReportId", args = { ReportId.class })
+	@UnitTestMethod(target = GroupPropertyReport.Builder.class, name = "setReportId", args = { ReportLabel.class })
 	public void testSetReportId() {
 		// test covered by the consumers-based tests in this class
 
@@ -572,7 +572,7 @@ public class AT_GroupPropertyReport {
 		return builder.build();
 	}
 
-	private static final ReportId REPORT_ID = new SimpleReportId("group property report");
+	private static final ReportLabel REPORT_ID = new SimpleReportId("group property report");
 
 	private static final ReportHeader REPORT_DAILY_HEADER = ReportHeader.builder().add("day").add("group_type")
 			.add("property").add("value").add("group_count").build();

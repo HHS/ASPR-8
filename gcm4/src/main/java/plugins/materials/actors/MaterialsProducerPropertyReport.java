@@ -7,7 +7,7 @@ import plugins.materials.events.MaterialsProducerPropertyUpdateEvent;
 import plugins.materials.support.MaterialsProducerId;
 import plugins.materials.support.MaterialsProducerPropertyId;
 import plugins.reports.support.ReportHeader;
-import plugins.reports.support.ReportId;
+import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportItem;
 
 /**
@@ -28,10 +28,10 @@ import plugins.reports.support.ReportItem;
  */
 public final class MaterialsProducerPropertyReport {
 
-	private final ReportId reportId;
+	private final ReportLabel reportLabel;
 
-	public MaterialsProducerPropertyReport(ReportId reportId) {
-		this.reportId = reportId;
+	public MaterialsProducerPropertyReport(ReportLabel reportLabel) {
+		this.reportLabel = reportLabel;
 	}
 
 	private ReportHeader reportHeader;
@@ -83,7 +83,7 @@ public final class MaterialsProducerPropertyReport {
 			Object materialsProducerPropertyValue) {
 		final ReportItem.Builder reportItemBuilder = ReportItem.builder();
 		reportItemBuilder.setReportHeader(getReportHeader());
-		reportItemBuilder.setReportId(reportId);
+		reportItemBuilder.setReportId(reportLabel);
 		reportItemBuilder.addValue(reportContext.getTime());
 		reportItemBuilder.addValue(materialsProducerId.toString());
 		reportItemBuilder.addValue(materialsProducerPropertyId.toString());

@@ -16,7 +16,7 @@ import lesson.plugins.vaccine.datamanagers.VaccinationDataManager;
 import lesson.plugins.vaccine.events.VaccinationEvent;
 import nucleus.ReportContext;
 import plugins.reports.support.ReportHeader;
-import plugins.reports.support.ReportId;
+import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportItem;
 import util.wrappers.MutableInteger;
 
@@ -45,7 +45,7 @@ public class FamilyVaccineReport {
 		}
 	}
 
-	private final ReportId reportId;
+	private final ReportLabel reportLabel;
 	
 	private ReportHeader reportHeader;
 
@@ -65,8 +65,8 @@ public class FamilyVaccineReport {
 
 	
 
-	public FamilyVaccineReport(final ReportId reportId) {
-		this.reportId = reportId;
+	public FamilyVaccineReport(final ReportLabel reportLabel) {
+		this.reportLabel = reportLabel;
 		
 		final ReportHeader.Builder builder = ReportHeader.builder();
 		builder.add("time");
@@ -243,7 +243,7 @@ public class FamilyVaccineReport {
 	}
 
 	private void releaseReportItem() {
-		final ReportItem.Builder builder = ReportItem.builder().setReportId(reportId).setReportHeader(reportHeader);
+		final ReportItem.Builder builder = ReportItem.builder().setReportId(reportLabel).setReportHeader(reportHeader);
 		builder.addValue(reportContext.getTime());
 		for (final FamilyVaccineStatus familyVaccineStatus : statusToFamiliesMap.keySet()) {
 			MutableInteger mutableInteger = statusToFamiliesMap.get(familyVaccineStatus);

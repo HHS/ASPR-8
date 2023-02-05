@@ -25,7 +25,7 @@ import plugins.materials.support.StageId;
 import plugins.materials.testsupport.MaterialsActionSupport;
 import plugins.materials.testsupport.TestMaterialsProducerId;
 import plugins.reports.support.ReportHeader;
-import plugins.reports.support.ReportId;
+import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportItem;
 import plugins.reports.support.SimpleReportId;
 import plugins.reports.testsupport.ReportsTestPluginFactory;
@@ -68,7 +68,7 @@ public final class AT_StageReport {
 	}
 
 	@Test
-	@UnitTestConstructor(target = StageReport.class, args = { ReportId.class })
+	@UnitTestConstructor(target = StageReport.class, args = { ReportLabel.class })
 	public void testConstructor() {
 		StageReport report = new StageReport(REPORT_ID);
 		assertNotNull(report);
@@ -208,7 +208,7 @@ public final class AT_StageReport {
 		assertEquals(expectedReportItems, outputConsumer.getOutputItems(ReportItem.class));
 	}
 
-	private static final ReportId REPORT_ID = new SimpleReportId("report");
+	private static final ReportLabel REPORT_ID = new SimpleReportId("report");
 
 	private static final ReportHeader REPORT_HEADER = getReportHeader();
 

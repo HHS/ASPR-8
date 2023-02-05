@@ -6,11 +6,11 @@ import plugins.people.events.PersonAdditionEvent;
 import plugins.people.events.PersonImminentRemovalEvent;
 import plugins.people.support.PersonId;
 import plugins.reports.support.ReportHeader;
-import plugins.reports.support.ReportId;
+import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportItem;
 
 public final class PopulationTraceReport {
-	private final ReportId reportId;
+	private final ReportLabel reportLabel;
 
 	private static enum Action {
 		ADDITION, REMOVAL
@@ -24,8 +24,8 @@ public final class PopulationTraceReport {
 													.add("action")//
 													.build();
 
-	public PopulationTraceReport(ReportId reportId) {
-		this.reportId = reportId;
+	public PopulationTraceReport(ReportLabel reportLabel) {
+		this.reportLabel = reportLabel;
 	}
 
 	public void init(ReportContext reportContext) {
@@ -51,7 +51,7 @@ public final class PopulationTraceReport {
 
 	private void generateReportItem(Action action, PersonId personId) {
 		ReportItem reportItem = ReportItem	.builder()//
-											.setReportId(reportId)//
+											.setReportId(reportLabel)//
 											.setReportHeader(reportHeader)//
 											.addValue(reportContext.getTime())//
 											.addValue(personId)//

@@ -17,7 +17,7 @@ public class AT_NIOReportItemHandler {
 	}
 
 	@Test
-	@UnitTestMethod(target = NIOReportItemHandler.Builder.class, name = "addReport", args = { ReportId.class, Path.class }, tags = { UnitTag.MANUAL })
+	@UnitTestMethod(target = NIOReportItemHandler.Builder.class, name = "addReport", args = { ReportLabel.class, Path.class }, tags = { UnitTag.MANUAL })
 	public void testAddReport() {
 		// covered by test for accept in manual test
 	}

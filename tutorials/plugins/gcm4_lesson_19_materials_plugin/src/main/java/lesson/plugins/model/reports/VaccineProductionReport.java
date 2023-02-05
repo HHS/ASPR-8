@@ -17,7 +17,7 @@ import plugins.regions.datamanagers.RegionsDataManager;
 import plugins.regions.support.RegionId;
 import plugins.reports.support.PeriodicReport;
 import plugins.reports.support.ReportHeader;
-import plugins.reports.support.ReportId;
+import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportItem;
 import plugins.reports.support.ReportPeriod;
 import plugins.resources.datamanagers.ResourcesDataManager;
@@ -29,8 +29,8 @@ public final class VaccineProductionReport extends PeriodicReport {
 	private RegionsDataManager regionsDataManager;
 	private ResourcesDataManager resourcesDataManager;
 
-	public VaccineProductionReport(final ReportId reportId, final ReportPeriod reportPeriod) {
-		super(reportId, reportPeriod);
+	public VaccineProductionReport(final ReportLabel reportLabel, final ReportPeriod reportPeriod) {
+		super(reportLabel, reportPeriod);
 
 	}
 

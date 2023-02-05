@@ -45,14 +45,14 @@ public final class NIOReportItemHandler implements Consumer<ExperimentContext>{
 		 * 
 		 * 
 		 */
-		public Builder addReport(final ReportId reportId, final Path path) {
+		public Builder addReport(final ReportLabel reportLabel, final Path path) {
 			if (path == null) {
 				throw new ContractException(ReportError.NULL_REPORT_PATH);
 			}
-			if (reportId == null) {
+			if (reportLabel == null) {
 				throw new ContractException(ReportError.NULL_REPORT_ID);
 			}
-			data.reportMap.put(reportId, path);
+			data.reportMap.put(reportLabel, path);
 			return this;
 		}
 
@@ -60,13 +60,13 @@ public final class NIOReportItemHandler implements Consumer<ExperimentContext>{
 			/*
 			 * Ensure that each path is associated with exactly one report id
 			 */
-			final Map<Path, ReportId> pathMap = new LinkedHashMap<>();
-			for (final ReportId reportId : data.reportMap.keySet()) {
-				final Path path = data.reportMap.get(reportId);
+			final Map<Path, ReportLabel> pathMap = new LinkedHashMap<>();
+			for (final ReportLabel reportLabel : data.reportMap.keySet()) {
+				final Path path = data.reportMap.get(reportLabel);
 				if (pathMap.containsKey(path)) {
 					throw new ContractException(ReportError.PATH_COLLISION, path);
 				}
-				pathMap.put(path, reportId);
+				pathMap.put(path, reportLabel);
 			}
 
 		}
@@ -100,7 +100,7 @@ public final class NIOReportItemHandler implements Consumer<ExperimentContext>{
 	}
 
 	private static class Data {
-		private final Map<ReportId, Path> reportMap = new LinkedHashMap<>();
+		private final Map<ReportLabel, Path> reportMap = new LinkedHashMap<>();
 		private boolean displayExperimentColumnsInReports = DEFAULT_DISPLAY_EXPERIMENT_COLUMNS;
 	}
 
@@ -108,7 +108,7 @@ public final class NIOReportItemHandler implements Consumer<ExperimentContext>{
 
 	private final Map<Object, LineWriter> lineWriterMap = Collections.synchronizedMap(new LinkedHashMap<>());
 
-	private final Map<ReportId, Path> reportMap;
+	private final Map<ReportLabel, Path> reportMap;
 
 	private final boolean displayExperimentColumnsInReports;
 
@@ -143,10 +143,10 @@ public final class NIOReportItemHandler implements Consumer<ExperimentContext>{
 
 	private void openExperiment(ExperimentContext experimentContext) {
 		synchronized (lineWriterMap) {
-			for (final ReportId reportId : reportMap.keySet()) {
-				final Path path = reportMap.get(reportId);
+			for (final ReportLabel reportLabel : reportMap.keySet()) {
+				final Path path = reportMap.get(reportLabel);
 				final LineWriter lineWriter = new LineWriter(experimentContext, path, displayExperimentColumnsInReports);
-				lineWriterMap.put(reportId, lineWriter);
+				lineWriterMap.put(reportLabel, lineWriter);
 			}
 		}
 	}

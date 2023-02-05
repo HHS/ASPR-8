@@ -36,7 +36,7 @@ import plugins.materials.testsupport.TestBatchPropertyId;
 import plugins.materials.testsupport.TestMaterialId;
 import plugins.materials.testsupport.TestMaterialsProducerId;
 import plugins.reports.support.ReportHeader;
-import plugins.reports.support.ReportId;
+import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportItem;
 import plugins.reports.support.ReportItem.Builder;
 import plugins.reports.support.SimpleReportId;
@@ -86,7 +86,7 @@ public final class AT_BatchStatusReport {
 	}
 
 	@Test
-	@UnitTestConstructor(target = BatchStatusReport.class, args = { ReportId.class })
+	@UnitTestConstructor(target = BatchStatusReport.class, args = { ReportLabel.class })
 	public void testConstructor() {
 		BatchStatusReport report = new BatchStatusReport(REPORT_ID);
 
@@ -254,7 +254,7 @@ public final class AT_BatchStatusReport {
 		return builder.build();
 	}
 
-	private static final ReportId REPORT_ID = new SimpleReportId("report");
+	private static final ReportLabel REPORT_ID = new SimpleReportId("report");
 
 	private static final ReportHeader REPORT_HEADER = getReportHeader();
 

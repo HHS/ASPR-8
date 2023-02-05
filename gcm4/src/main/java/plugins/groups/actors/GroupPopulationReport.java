@@ -9,7 +9,7 @@ import plugins.groups.support.GroupId;
 import plugins.groups.support.GroupTypeId;
 import plugins.reports.support.PeriodicReport;
 import plugins.reports.support.ReportHeader;
-import plugins.reports.support.ReportId;
+import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportItem;
 import plugins.reports.support.ReportPeriod;
 
@@ -29,8 +29,8 @@ import plugins.reports.support.ReportPeriod;
  */
 public final class GroupPopulationReport extends PeriodicReport {
 
-	public GroupPopulationReport(ReportId reportId,ReportPeriod reportPeriod) {
-		super(reportId,reportPeriod);
+	public GroupPopulationReport(ReportLabel reportLabel,ReportPeriod reportPeriod) {
+		super(reportLabel,reportPeriod);
 	}
 
 	/*

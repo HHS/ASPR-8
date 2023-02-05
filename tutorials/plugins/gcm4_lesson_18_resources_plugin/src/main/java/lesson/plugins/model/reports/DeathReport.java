@@ -9,7 +9,7 @@ import plugins.personproperties.datamanagers.PersonPropertiesDataManager;
 import plugins.regions.datamanagers.RegionsDataManager;
 import plugins.regions.support.RegionId;
 import plugins.reports.support.ReportHeader;
-import plugins.reports.support.ReportId;
+import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportItem;
 
 /**
@@ -19,10 +19,10 @@ import plugins.reports.support.ReportItem;
  *
  */
 public final class DeathReport {
-	private final ReportId reportId;
+	private final ReportLabel reportLabel;
 
-	public DeathReport(ReportId reportId) {
-		this.reportId = reportId;
+	public DeathReport(ReportLabel reportLabel) {
+		this.reportLabel = reportLabel;
 	}
 
 	public void init(ReportContext reportContext) {
@@ -72,7 +72,7 @@ public final class DeathReport {
 
 			}
 			reportItemBuilder.setReportHeader(reportHeader);
-			reportItemBuilder.setReportId(reportId);
+			reportItemBuilder.setReportId(reportLabel);
 			reportItemBuilder.addValue(regionId);
 			reportItemBuilder.addValue(peopleInRegion.size());
 			reportItemBuilder.addValue(deathCount);

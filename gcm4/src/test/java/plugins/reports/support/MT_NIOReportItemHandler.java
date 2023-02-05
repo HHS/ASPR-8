@@ -19,7 +19,7 @@ import util.errors.ContractException;
 
 public class MT_NIOReportItemHandler {
 
-	private static enum ReportIds implements ReportId {
+	private static enum ReportIds implements ReportLabel {
 		ALPHA("ALPHA.txt"), BETA("BETA.txt"),;
 
 		private final String fileName;
@@ -82,8 +82,8 @@ public class MT_NIOReportItemHandler {
 	@UnitTestMethod(target = NIOReportItemHandler.Builder.class, name = "build", args = {})
 	private void testBuild() {
 		NIOReportItemHandler.Builder builder = NIOReportItemHandler.builder();
-		ReportId reportId1 = new SimpleReportId("testReportId1");
-		ReportId reportId2 = new SimpleReportId("testReportId2");
+		ReportLabel reportId1 = new SimpleReportId("testReportId1");
+		ReportLabel reportId2 = new SimpleReportId("testReportId2");
 		final Path path1 = Path.of("example_path1");
 		final Path path2 = Path.of("example_path2");
 
@@ -103,10 +103,10 @@ public class MT_NIOReportItemHandler {
 
 	}
 
-	@UnitTestMethod(target = NIOReportItemHandler.Builder.class, name = "addReport", args = { ReportId.class, Path.class })
+	@UnitTestMethod(target = NIOReportItemHandler.Builder.class, name = "addReport", args = { ReportLabel.class, Path.class })
 	private void testAddReport() {
 		NIOReportItemHandler.Builder builder = NIOReportItemHandler.builder();
-		ReportId reportId = new SimpleReportId("testReportId");
+		ReportLabel reportLabel = new SimpleReportId("testReportId");
 		final Path path1 = Path.of("example_path3");
 
 		// null report id check
@@ -114,7 +114,7 @@ public class MT_NIOReportItemHandler {
 		assertEquals(pathContractException.getErrorType(), ReportError.NULL_REPORT_ID);
 
 		// null report path check
-		ContractException idContractException = assertThrows(ContractException.class, () -> builder.addReport(reportId, null));
+		ContractException idContractException = assertThrows(ContractException.class, () -> builder.addReport(reportLabel, null));
 		assertEquals(idContractException.getErrorType(), ReportError.NULL_REPORT_PATH);
 
 	}

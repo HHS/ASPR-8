@@ -20,7 +20,7 @@ import plugins.regions.support.RegionId;
 import plugins.reports.support.PeriodicReport;
 import plugins.reports.support.ReportError;
 import plugins.reports.support.ReportHeader;
-import plugins.reports.support.ReportId;
+import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportItem;
 import plugins.reports.support.ReportPeriod;
 import plugins.util.properties.PropertyError;
@@ -51,7 +51,7 @@ public final class PersonPropertyReport extends PeriodicReport {
 	 * Data class for collecting the inputs to the report
 	 */
 	private static class Data {
-		private ReportId reportId;
+		private ReportLabel reportLabel;
 		private ReportPeriod reportPeriod;
 		private Set<PersonPropertyId> includedProperties = new LinkedHashSet<>();
 		private Set<PersonPropertyId> excludedProperties = new LinkedHashSet<>();
@@ -133,11 +133,11 @@ public final class PersonPropertyReport extends PeriodicReport {
 		 *             <li>{@linkplain ReportError#NULL_REPORT_ID} if the report
 		 *             id is null</li>
 		 */
-		public Builder setReportId(ReportId reportId) {
-			if (reportId == null) {
+		public Builder setReportId(ReportLabel reportLabel) {
+			if (reportLabel == null) {
 				throw new ContractException(ReportError.NULL_REPORT_ID);
 			}
-			data.reportId = reportId;
+			data.reportLabel = reportLabel;
 			return this;
 		}
 
@@ -161,7 +161,7 @@ public final class PersonPropertyReport extends PeriodicReport {
 	private final Data data;
 
 	private PersonPropertyReport(Data data) {
-		super(data.reportId, data.reportPeriod);
+		super(data.reportLabel, data.reportPeriod);
 		this.data = data;
 	}
 

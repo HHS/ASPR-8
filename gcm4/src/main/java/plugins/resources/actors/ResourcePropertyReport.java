@@ -2,7 +2,7 @@ package plugins.resources.actors;
 
 import nucleus.ReportContext;
 import plugins.reports.support.ReportHeader;
-import plugins.reports.support.ReportId;
+import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportItem;
 import plugins.resources.datamanagers.ResourcesDataManager;
 import plugins.resources.events.ResourcePropertyDefinitionEvent;
@@ -27,10 +27,10 @@ import plugins.resources.support.ResourcePropertyId;
  *
  */
 public final class ResourcePropertyReport {
-	private final ReportId reportId;
+	private final ReportLabel reportLabel;
 
-	public ResourcePropertyReport(ReportId reportId) {
-		this.reportId = reportId;
+	public ResourcePropertyReport(ReportLabel reportLabel) {
+		this.reportLabel = reportLabel;
 	}
 
 	private ReportHeader reportHeader;
@@ -78,7 +78,7 @@ public final class ResourcePropertyReport {
 	private void writeProperty(ReportContext reportContext, final ResourceId resourceId, final ResourcePropertyId resourcePropertyId, Object resourcePropertyValue) {
 		final ReportItem.Builder reportItemBuilder = ReportItem.builder();
 		reportItemBuilder.setReportHeader(getReportHeader());
-		reportItemBuilder.setReportId(reportId);
+		reportItemBuilder.setReportId(reportLabel);
 
 		reportItemBuilder.addValue(reportContext.getTime());
 		reportItemBuilder.addValue(resourceId.toString());

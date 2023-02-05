@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 
 import nucleus.Plugin;
 import nucleus.Simulation;
-import plugins.reports.support.ReportId;
+import plugins.reports.support.ReportLabel;
 import plugins.reports.support.SimpleReportId;
 import tools.annotations.UnitTestMethod;
 
@@ -19,14 +19,14 @@ public class AT_ReportPlugin {
 	@UnitTestMethod(target = ReportsPlugin.class, name = "getReportsPlugin", args = { ReportsPluginData.class })
 	public void testGetReportPlugin() {
 		// Build the report plugin from two reports
-		ReportId reportId_1 = new SimpleReportId("report 1");
-		ReportId reportId_2 = new SimpleReportId("report 2");
+		ReportLabel reportId_1 = new SimpleReportId("report 1");
+		ReportLabel reportId_2 = new SimpleReportId("report 2");
 
-		Set<ReportId> expectedReportIds = new LinkedHashSet<>();
+		Set<ReportLabel> expectedReportIds = new LinkedHashSet<>();
 		expectedReportIds.add(reportId_1);
 		expectedReportIds.add(reportId_2);
 
-		Set<ReportId> observedReportIds = new LinkedHashSet<>();
+		Set<ReportLabel> observedReportIds = new LinkedHashSet<>();
 
 		ReportsPluginData.Builder builder = ReportsPluginData.builder();
 

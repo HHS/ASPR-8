@@ -7,7 +7,7 @@ import nucleus.ReportContext;
 import plugins.people.support.PersonId;
 import plugins.personproperties.datamanagers.PersonPropertiesDataManager;
 import plugins.reports.support.ReportHeader;
-import plugins.reports.support.ReportId;
+import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportItem;
 import util.stats.MutableStat;
 
@@ -18,10 +18,10 @@ import util.stats.MutableStat;
  *
  */
 public final class QuestionnaireReport {
-	private final ReportId reportId;
+	private final ReportLabel reportLabel;
 
-	public QuestionnaireReport(ReportId reportId) {
-		this.reportId = reportId;
+	public QuestionnaireReport(ReportLabel reportLabel) {
+		this.reportLabel = reportLabel;
 	}
 
 	public void init(ReportContext reportContext) {
@@ -62,7 +62,7 @@ public final class QuestionnaireReport {
 		}
 
 		reportItemBuilder.setReportHeader(reportHeader);
-		reportItemBuilder.setReportId(reportId);
+		reportItemBuilder.setReportId(reportLabel);
 		reportItemBuilder.addValue(deliveryRate);
 		reportItemBuilder.addValue(mean);
 		reportItemBuilder.addValue(stdev);
