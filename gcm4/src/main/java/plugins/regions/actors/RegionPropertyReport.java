@@ -11,7 +11,7 @@ import plugins.regions.events.RegionPropertyUpdateEvent;
 import plugins.regions.support.RegionId;
 import plugins.regions.support.RegionPropertyId;
 import plugins.reports.support.ReportHeader;
-import plugins.reports.support.ReportId;
+import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportItem;
 import plugins.util.properties.PropertyError;
 import util.errors.ContractException;
@@ -63,12 +63,12 @@ public final class RegionPropertyReport {
 		}
 	}
 
-	private final ReportId reportId;
+	private final ReportLabel reportLabel;
 
 	private RegionsDataManager regionsDataManager;
 
-	public RegionPropertyReport(ReportId reportId, RegionPropertyId... regionPropertyIds) {
-		this.reportId = reportId;
+	public RegionPropertyReport(ReportLabel reportLabel, RegionPropertyId... regionPropertyIds) {
+		this.reportLabel = reportLabel;
 		for (RegionPropertyId regionPropertyId : regionPropertyIds) {
 			this.regionPropertyIds.add(regionPropertyId);
 		}
@@ -144,7 +144,7 @@ public final class RegionPropertyReport {
 
 		final ReportItem.Builder reportItemBuilder = ReportItem.builder();
 		reportItemBuilder.setReportHeader(getReportHeader());
-		reportItemBuilder.setReportId(reportId);
+		reportItemBuilder.setReportLabel(reportLabel);
 
 		reportItemBuilder.addValue(reportContext.getTime());
 		reportItemBuilder.addValue(regionId.toString());

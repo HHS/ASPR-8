@@ -4,27 +4,27 @@ import net.jcip.annotations.Immutable;
 import util.errors.ContractException;
 
 /**
- * A convenience implementor of ReportId that wraps a value.
+ * A convenience implementor of ReportLabel that wraps a value.
  * 
  *
  */
 @Immutable
-public final class SimpleReportId implements ReportId {
+public final class SimpleReportLabel implements ReportLabel {
 
 	private final Object value;
 
 	/**
-	 * Creates a ReportId from a value. The value must implement a proper equals
+	 * Creates a ReportLabel from a value. The value must implement a proper equals
 	 * contract and be immutable.
 	 * 
 	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain ReportError#NULL_REPORT_ID} if the value is
+	 *             <li>{@linkplain ReportError#NULL_REPORT_LABEL} if the value is
 	 *             null</li>
 	 */
-	public SimpleReportId(Object value) {
+	public SimpleReportLabel(Object value) {
 		if (value == null) {
-			throw new ContractException(ReportError.NULL_REPORT_ID);
+			throw new ContractException(ReportError.NULL_REPORT_LABEL);
 		}
 		this.value = value;
 	}
@@ -32,7 +32,7 @@ public final class SimpleReportId implements ReportId {
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("SimpleReportId [value=");
+		builder.append("SimpleReportLabel [value=");
 		builder.append(value);
 		builder.append("]");
 		return builder.toString();
@@ -51,10 +51,10 @@ public final class SimpleReportId implements ReportId {
 		if (this == obj) {
 			return true;
 		}
-		if (!(obj instanceof SimpleReportId)) {
+		if (!(obj instanceof SimpleReportLabel)) {
 			return false;
 		}
-		SimpleReportId other = (SimpleReportId) obj;
+		SimpleReportLabel other = (SimpleReportLabel) obj;
 		if (value == null) {
 			if (other.value != null) {
 				return false;

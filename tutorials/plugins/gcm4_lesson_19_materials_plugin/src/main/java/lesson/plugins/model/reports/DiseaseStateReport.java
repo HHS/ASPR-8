@@ -6,7 +6,7 @@ import nucleus.ReportContext;
 import plugins.personproperties.datamanagers.PersonPropertiesDataManager;
 import plugins.reports.support.PeriodicReport;
 import plugins.reports.support.ReportHeader;
-import plugins.reports.support.ReportId;
+import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportItem;
 import plugins.reports.support.ReportPeriod;
 
@@ -20,14 +20,14 @@ public final class DiseaseStateReport extends PeriodicReport {
 
 	private ReportHeader reportHeader;
 
-	public DiseaseStateReport(final ReportId reportId, final ReportPeriod reportPeriod) {
-		super(reportId, reportPeriod);
+	public DiseaseStateReport(final ReportLabel reportLabel, final ReportPeriod reportPeriod) {
+		super(reportLabel, reportPeriod);
 	}
 
 	@Override
 	protected void flush(final ReportContext reportContext) {
 		final ReportItem.Builder reportItemBuilder = ReportItem.builder();
-		reportItemBuilder.setReportId(getReportId());
+		reportItemBuilder.setReportLabel(getReportLabel());
 		reportItemBuilder.setReportHeader(getReportHeader());
 		fillTimeFields(reportItemBuilder);
 		reportItemBuilder.addValue(reportContext.getTime());

@@ -25,9 +25,9 @@ import plugins.materials.support.StageId;
 import plugins.materials.testsupport.MaterialsActionSupport;
 import plugins.materials.testsupport.TestMaterialsProducerId;
 import plugins.reports.support.ReportHeader;
-import plugins.reports.support.ReportId;
+import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportItem;
-import plugins.reports.support.SimpleReportId;
+import plugins.reports.support.SimpleReportLabel;
 import plugins.reports.testsupport.ReportsTestPluginFactory;
 import plugins.stochastics.StochasticsDataManager;
 import tools.annotations.UnitTag;
@@ -57,7 +57,7 @@ public final class AT_StageReport {
 			MaterialsProducerId materialsProducerId, boolean isOffered, Action action) {
 
 		return ReportItem.builder()//
-				.setReportId(REPORT_ID)//
+				.setReportLabel(REPORT_LABEL)//
 				.setReportHeader(REPORT_HEADER)//
 				.addValue(agentContext.getTime())//
 				.addValue(stageId)//
@@ -68,9 +68,9 @@ public final class AT_StageReport {
 	}
 
 	@Test
-	@UnitTestConstructor(target = StageReport.class, args = { ReportId.class })
+	@UnitTestConstructor(target = StageReport.class, args = { ReportLabel.class })
 	public void testConstructor() {
-		StageReport report = new StageReport(REPORT_ID);
+		StageReport report = new StageReport(REPORT_LABEL);
 		assertNotNull(report);
 	}
 
@@ -200,7 +200,7 @@ public final class AT_StageReport {
 
 		List<Plugin> pluginsToAdd = MaterialsActionSupport.setUpPluginsForTest(542686524159732447L);
 		pluginsToAdd.add(testPlugin);
-		pluginsToAdd.add(ReportsTestPluginFactory.getPluginFromReport(new StageReport(REPORT_ID)::init));
+		pluginsToAdd.add(ReportsTestPluginFactory.getPluginFromReport(new StageReport(REPORT_LABEL)::init));
 
 		TestSimulation.executeSimulation(pluginsToAdd, outputConsumer);
 
@@ -208,7 +208,7 @@ public final class AT_StageReport {
 		assertEquals(expectedReportItems, outputConsumer.getOutputItems(ReportItem.class));
 	}
 
-	private static final ReportId REPORT_ID = new SimpleReportId("report");
+	private static final ReportLabel REPORT_LABEL = new SimpleReportLabel("report");
 
 	private static final ReportHeader REPORT_HEADER = getReportHeader();
 
