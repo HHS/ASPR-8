@@ -1,11 +1,14 @@
 package plugins.regions.testsupport;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -14,69 +17,33 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import nucleus.ActorContext;
+import nucleus.NucleusError;
 import nucleus.Plugin;
 import nucleus.PluginData;
 import nucleus.PluginId;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPluginData;
+import nucleus.testsupport.testplugin.TestPluginId;
 import nucleus.testsupport.testplugin.TestSimulation;
 import plugins.people.PeoplePluginData;
 import plugins.people.PeoplePluginId;
-import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonId;
 import plugins.regions.RegionsPluginData;
 import plugins.regions.RegionsPluginId;
-import plugins.regions.datamanagers.RegionsDataManager;
 import plugins.regions.support.RegionId;
+import plugins.regions.support.RegionPropertyId;
 import plugins.stochastics.StochasticsPluginData;
 import plugins.stochastics.StochasticsPluginId;
 import plugins.stochastics.testsupport.TestRandomGeneratorId;
+import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.TimeTrackingPolicy;
 import tools.annotations.UnitTag;
 import tools.annotations.UnitTestMethod;
+import util.errors.ContractException;
 import util.random.RandomGeneratorProvider;
 import util.wrappers.MutableBoolean;
 
 public class AT_RegionsTestPluginFactory {
-
-	/**
-	 * Convience method to create a consumer to facilitate testing the factory
-	 * methods
-	 * {@link AT_RegionsTestPluginFactory#testFactory_Consumer()}
-	 * and
-	 * {@link AT_RegionsTestPluginFactory#testFactory_TestPluginData()}
-	 * 
-	 * <li>either for passing directly to
-	 * <li>{@link RegionsTestPluginFactory#factory(long, Consumer)}
-	 * <li>or indirectly via creating a TestPluginData and passing it to
-	 * <li>{@link RegionsTestPluginFactory#factory(long, TestPluginData)}
-	 * 
-	 * @param executed boolean to set once the consumer completes
-	 * @return the consumer
-	 * 
-	 */
-	private Consumer<ActorContext> factoryConsumer(MutableBoolean executed) {
-		return (c) -> {
-
-			// show that there are 100 people
-			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
-			assertEquals(100, peopleDataManager.getPopulationCount());
-
-			// show that time tracking policy
-			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
-			assertEquals(TimeTrackingPolicy.TRACK_TIME, regionsDataManager.getPersonRegionArrivalTrackingPolicy());
-
-			// show that there are regions
-			assertTrue(!regionsDataManager.getRegionIds().isEmpty());
-
-			// show that each region has a person
-			for (RegionId regionId : regionsDataManager.getRegionIds()) {
-				assertTrue(!regionsDataManager.getPeopleInRegion(regionId).isEmpty());
-			}
-
-			executed.setValue(true);
-		};
-	}
 
 	@Test
 	@UnitTestMethod(target = RegionsTestPluginFactory.class, name = "factory", args = { int.class, long.class,
@@ -84,9 +51,15 @@ public class AT_RegionsTestPluginFactory {
 	public void testFactory_Consumer() {
 		MutableBoolean executed = new MutableBoolean();
 		TestSimulation.executeSimulation(RegionsTestPluginFactory
-				.factory(100, 5785172948650781925L, TimeTrackingPolicy.TRACK_TIME, factoryConsumer(executed))
+				.factory(100, 5785172948650781925L, TimeTrackingPolicy.TRACK_TIME, c -> executed.setValue(true))
 				.getPlugins());
 		assertTrue(executed.getValue());
+
+		// precondition: consumer is null
+		Consumer<ActorContext> nullConsumer = null;
+		ContractException contractException = assertThrows(ContractException.class,
+				() -> RegionsTestPluginFactory.factory(0, 0, TimeTrackingPolicy.TRACK_TIME, nullConsumer));
+		assertEquals(NucleusError.NULL_ACTOR_CONTEXT_CONSUMER, contractException.getErrorType());
 	}
 
 	@Test
@@ -95,36 +68,62 @@ public class AT_RegionsTestPluginFactory {
 	public void testFactory_TestPluginData() {
 		MutableBoolean executed = new MutableBoolean();
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
-		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, factoryConsumer(executed)));
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, c -> executed.setValue(true)));
 		TestPluginData testPluginData = pluginBuilder.build();
 
 		TestSimulation.executeSimulation(RegionsTestPluginFactory
 				.factory(100, 5166994853007999229L, TimeTrackingPolicy.TRACK_TIME, testPluginData).getPlugins());
-
+		assertTrue(executed.getValue());
+		// precondition: testPluginData is null
+		TestPluginData nullTestPluginData = null;
+		ContractException contractException = assertThrows(ContractException.class,
+				() -> RegionsTestPluginFactory.factory(0, 0, TimeTrackingPolicy.TRACK_TIME, nullTestPluginData));
+		assertEquals(NucleusError.NULL_PLUGIN_DATA, contractException.getErrorType());
 	}
 
-	@Test
-	@UnitTestMethod(target = RegionsTestPluginFactory.Factory.class, name = "getPlugins", args = {})
-	public void testGetPlugins() {
-		assertEquals(4, RegionsTestPluginFactory.factory(0, 0, TimeTrackingPolicy.TRACK_TIME, t -> {
-		}).getPlugins().size());
-	}
-
-	private <T extends PluginData> void checkPlugins(List<Plugin> plugins, T expectedPluginData, PluginId pluginId) {
+	/*
+	 * Given a list of plugins, will show that the plugin with the given pluginId
+	 * exists, and exists EXACTLY once.
+	 */
+	private Plugin checkPluginExists(List<Plugin> plugins, PluginId pluginId) {
 		Plugin actualPlugin = null;
-		for(Plugin plugin : plugins) {
-			if(plugin.getPluginId().equals(pluginId)) {
+		for (Plugin plugin : plugins) {
+			if (plugin.getPluginId().equals(pluginId)) {
 				assertNull(actualPlugin);
 				actualPlugin = plugin;
 			}
 		}
 
 		assertNotNull(actualPlugin);
+
+		return actualPlugin;
+	}
+
+	/**
+	 * Given a list of plugins, will show that the explicit plugindata for the given
+	 * pluginid exists, and exists EXACTLY once.
+	 */
+	private <T extends PluginData> void checkPluginDataExists(List<Plugin> plugins, T expectedPluginData,
+			PluginId pluginId) {
+		Plugin actualPlugin = checkPluginExists(plugins, pluginId);
 		Set<PluginData> actualPluginDatas = actualPlugin.getPluginDatas();
 		assertNotNull(actualPluginDatas);
 		assertEquals(1, actualPluginDatas.size());
 		PluginData actualPluginData = actualPluginDatas.stream().toList().get(0);
 		assertTrue(expectedPluginData == actualPluginData);
+	}
+
+	@Test
+	@UnitTestMethod(target = RegionsTestPluginFactory.Factory.class, name = "getPlugins", args = {})
+	public void testGetPlugins() {
+		List<Plugin> plugins = RegionsTestPluginFactory.factory(0, 0, TimeTrackingPolicy.TRACK_TIME, t -> {
+		}).getPlugins();
+		assertEquals(4, plugins.size());
+
+		checkPluginExists(plugins, RegionsPluginId.PLUGIN_ID);
+		checkPluginExists(plugins, PeoplePluginId.PLUGIN_ID);
+		checkPluginExists(plugins, StochasticsPluginId.PLUGIN_ID);
+		checkPluginExists(plugins, TestPluginId.PLUGIN_ID);
 	}
 
 	@Test
@@ -145,14 +144,13 @@ public class AT_RegionsTestPluginFactory {
 				.setPeoplePluginData(peoplePluginData)
 				.getPlugins();
 
-		checkPlugins(plugins, peoplePluginData, PeoplePluginId.PLUGIN_ID);
+		checkPluginDataExists(plugins, peoplePluginData, PeoplePluginId.PLUGIN_ID);
 	}
 
 	@Test
 	@UnitTestMethod(target = RegionsTestPluginFactory.Factory.class, name = "setRegionsPluginData", args = {
 			RegionsPluginData.class })
 	public void testSetRegionsPluginData() {
-		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6932994470470639085L);
 		int initialPopulation = 30;
 		List<PersonId> people = new ArrayList<>();
 		for (int i = 0; i < initialPopulation; i++) {
@@ -170,15 +168,6 @@ public class AT_RegionsTestPluginFactory {
 					testRegionPropertyId.getPropertyDefinition());
 		}
 
-		for (TestRegionId regionId : TestRegionId.values()) {
-			for (TestRegionPropertyId testRegionPropertyId : TestRegionPropertyId.values()) {
-				if (testRegionPropertyId.getPropertyDefinition().getDefaultValue().isEmpty()
-						|| randomGenerator.nextBoolean()) {
-					Object randomPropertyValue = testRegionPropertyId.getRandomPropertyValue(randomGenerator);
-					regionPluginBuilder.setRegionPropertyValue(regionId, testRegionPropertyId, randomPropertyValue);
-				}
-			}
-		}
 		TestRegionId testRegionId = TestRegionId.REGION_1;
 		for (PersonId personId : people) {
 			regionPluginBuilder.setPersonRegion(personId, testRegionId);
@@ -192,7 +181,7 @@ public class AT_RegionsTestPluginFactory {
 		List<Plugin> plugins = RegionsTestPluginFactory.factory(0, 0, TimeTrackingPolicy.TRACK_TIME, t -> {
 		}).setRegionsPluginData(regionsPluginData).getPlugins();
 
-		checkPlugins(plugins, regionsPluginData, RegionsPluginId.PLUGIN_ID);
+		checkPluginDataExists(plugins, regionsPluginData, RegionsPluginId.PLUGIN_ID);
 
 	}
 
@@ -212,7 +201,7 @@ public class AT_RegionsTestPluginFactory {
 				.setStochasticsPluginData(stochasticsPluginData)
 				.getPlugins();
 
-		checkPlugins(plugins, stochasticsPluginData, StochasticsPluginId.PLUGIN_ID);
+		checkPluginDataExists(plugins, stochasticsPluginData, StochasticsPluginId.PLUGIN_ID);
 	}
 
 	@Test
@@ -220,18 +209,12 @@ public class AT_RegionsTestPluginFactory {
 			int.class })
 	public void testGetStandardPeoplePluginData() {
 
-		List<PersonId> people = new ArrayList<>();
-		for (int i = 0; i < 100; i++) {
-			people.add(new PersonId(i));
-		}
+		int initialPopulation = 100;
 
-		PeoplePluginData peoplePluginData = RegionsTestPluginFactory.getStandardPeoplePluginData(100);
+		PeoplePluginData peoplePluginData = RegionsTestPluginFactory.getStandardPeoplePluginData(initialPopulation);
 
-		assertEquals(100, peoplePluginData.getPersonIds().size());
+		assertEquals(initialPopulation, peoplePluginData.getPersonIds().size());
 
-		for (PersonId personId : people) {
-			assertTrue(peoplePluginData.getPersonIds().contains(personId));
-		}
 	}
 
 	@Test
@@ -239,21 +222,58 @@ public class AT_RegionsTestPluginFactory {
 			List.class, TimeTrackingPolicy.class, long.class })
 	public void testGetStandardRegionsPluginData() {
 
+		long seed = 6178540698301704248L;
+		int initialPopulation = 100;
 		List<PersonId> people = new ArrayList<>();
-		for (int i = 0; i < 100; i++) {
+		for (int i = 0; i < initialPopulation; i++) {
 			people.add(new PersonId(i));
 		}
 
 		RegionsPluginData regionsPluginData = RegionsTestPluginFactory.getStandardRegionsPluginData(people,
 				TimeTrackingPolicy.TRACK_TIME,
-				6178540698301704248L);
-		assertNotNull(regionsPluginData);
+				seed);
 
-		assertEquals(100, regionsPluginData.getPersonCount());
+		Set<TestRegionId> expectedRegionIds = EnumSet.allOf(TestRegionId.class);
+		assertFalse(expectedRegionIds.isEmpty());
+
+		Set<RegionId> actualRegionIds = regionsPluginData.getRegionIds();
+		assertEquals(expectedRegionIds, actualRegionIds);
+
+		Set<TestRegionPropertyId> expectedRegionPropertyIds = EnumSet.allOf(TestRegionPropertyId.class);
+		assertFalse(expectedRegionPropertyIds.isEmpty());
+
+		Set<RegionPropertyId> actualRegionPropertyIds = regionsPluginData.getRegionPropertyIds();
+		assertEquals(expectedRegionPropertyIds, actualRegionPropertyIds);
+
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
+
+		for (TestRegionPropertyId expectedRegionPropertyId : TestRegionPropertyId.values()) {
+			PropertyDefinition expectedPropertyDefinition = expectedRegionPropertyId.getPropertyDefinition();
+			PropertyDefinition actualPropertyDefinition = regionsPluginData
+					.getRegionPropertyDefinition(expectedRegionPropertyId);
+			assertEquals(expectedPropertyDefinition, actualPropertyDefinition);
+
+			if (expectedPropertyDefinition.getDefaultValue().isEmpty()) {
+				for (TestRegionId regionId : TestRegionId.values()) {
+					Object expectedPropertyValue = expectedRegionPropertyId.getRandomPropertyValue(randomGenerator);
+					regionsPluginData.getRegionPropertyValues(regionId);
+					assertTrue(
+							regionsPluginData.getRegionPropertyValues(regionId).containsKey(expectedRegionPropertyId));
+					assertEquals(expectedPropertyValue,
+							regionsPluginData.getRegionPropertyValues(regionId).get(expectedRegionPropertyId));
+				}
+			}
+
+		}
 		assertEquals(TimeTrackingPolicy.TRACK_TIME, regionsPluginData.getPersonRegionArrivalTrackingPolicy());
 
+		assertEquals(initialPopulation, regionsPluginData.getPersonCount());
+
+		TestRegionId regionId = TestRegionId.REGION_1;
 		for (PersonId personId : people) {
 			assertTrue(regionsPluginData.getPersonRegion(personId).isPresent());
+			assertEquals(regionId, regionsPluginData.getPersonRegion(personId).get());
+			regionId = regionId.next();
 		}
 	}
 
