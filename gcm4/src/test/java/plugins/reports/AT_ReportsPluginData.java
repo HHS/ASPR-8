@@ -10,9 +10,9 @@ import java.util.function.Supplier;
 
 import org.junit.jupiter.api.Test;
 
-import nucleus.ActorContext;
-import plugins.reports.support.ReportId;
-import plugins.reports.support.SimpleReportId;
+import nucleus.ReportContext;
+import plugins.reports.support.ReportLabel;
+import plugins.reports.support.SimpleReportLabel;
 import tools.annotations.UnitTestMethod;
 
 public class AT_ReportsPluginData {
@@ -32,107 +32,107 @@ public class AT_ReportsPluginData {
 	@Test
 	@UnitTestMethod(target = ReportsPluginData.Builder.class, name = "addReport", args = { Supplier.class })
 	public void testAddReport() {
-		ReportId reportId_1 = new SimpleReportId("report 1");
-		ReportId reportId_2 = new SimpleReportId("report 2");
+		ReportLabel reportLabel_1 = new SimpleReportLabel("report 1");
+		ReportLabel reportLabel_2 = new SimpleReportLabel("report 2");
 
-		Set<ReportId> expectedReportIds = new LinkedHashSet<>();
-		expectedReportIds.add(reportId_1);
-		expectedReportIds.add(reportId_2);
+		Set<ReportLabel> expectedReportLabels = new LinkedHashSet<>();
+		expectedReportLabels.add(reportLabel_1);
+		expectedReportLabels.add(reportLabel_2);
 
-		Set<ReportId> observedReportIds = new LinkedHashSet<>();
+		Set<ReportLabel> observedReportLabels = new LinkedHashSet<>();
 
 		ReportsPluginData.Builder builder = ReportsPluginData.builder();
 		builder.addReport(() -> (c) -> {
-			observedReportIds.add(reportId_1);
+			observedReportLabels.add(reportLabel_1);
 		});
 		builder.addReport(() -> (c) -> {
-			observedReportIds.add(reportId_2);
+			observedReportLabels.add(reportLabel_2);
 		});
 
 		ReportsPluginData reportsPluginData = builder.build();
 
-		Set<Consumer<ActorContext>> reports = reportsPluginData.getReports();
+		Set<Consumer<ReportContext>> reports = reportsPluginData.getReports();
 
 		assertNotNull(reports);
 
-		for (Consumer<ActorContext> report : reports) {
+		for (Consumer<ReportContext> report : reports) {
 			assertNotNull(report);
 			report.accept(null);
 		}
 
-		assertEquals(observedReportIds, expectedReportIds);
+		assertEquals(observedReportLabels, expectedReportLabels);
 
 	}
 
 	@Test
 	@UnitTestMethod(target = ReportsPluginData.class, name = "getReports", args = {})
-	public void testGetReportIds() {
+	public void testGetReportLabels() {
 
-		ReportId reportId_1 = new SimpleReportId("report 1");
-		ReportId reportId_2 = new SimpleReportId("report 2");
+		ReportLabel reportLabel_1 = new SimpleReportLabel("report 1");
+		ReportLabel reportLabel_2 = new SimpleReportLabel("report 2");
 
-		Set<ReportId> expectedReportIds = new LinkedHashSet<>();
-		expectedReportIds.add(reportId_1);
-		expectedReportIds.add(reportId_2);
+		Set<ReportLabel> expectedReportLabels = new LinkedHashSet<>();
+		expectedReportLabels.add(reportLabel_1);
+		expectedReportLabels.add(reportLabel_2);
 
-		Set<ReportId> observedReportIds = new LinkedHashSet<>();
+		Set<ReportLabel> observedReportLabels = new LinkedHashSet<>();
 
 		ReportsPluginData.Builder builder = ReportsPluginData.builder();
 		builder.addReport(() -> (c) -> {
-			observedReportIds.add(reportId_1);
+			observedReportLabels.add(reportLabel_1);
 		});
 		builder.addReport(() -> (c) -> {
-			observedReportIds.add(reportId_2);
+			observedReportLabels.add(reportLabel_2);
 		});
 
 		ReportsPluginData reportsPluginData = builder.build();
 
-		Set<Consumer<ActorContext>> reports = reportsPluginData.getReports();
+		Set<Consumer<ReportContext>> reports = reportsPluginData.getReports();
 
 		assertNotNull(reports);
 
-		for (Consumer<ActorContext> report : reports) {
+		for (Consumer<ReportContext> report : reports) {
 			assertNotNull(report);
 			report.accept(null);
 		}
 
-		assertEquals(observedReportIds, expectedReportIds);
+		assertEquals(observedReportLabels, expectedReportLabels);
 
 	}
 
 	@Test
 	@UnitTestMethod(target = ReportsPluginData.class, name = "getCloneBuilder", args = {})
 	public void testGetCloneBuilder() {
-		ReportId reportId_1 = new SimpleReportId("report 1");
-		ReportId reportId_2 = new SimpleReportId("report 2");
+		ReportLabel reportLabel_1 = new SimpleReportLabel("report 1");
+		ReportLabel reportLabel_2 = new SimpleReportLabel("report 2");
 
-		Set<ReportId> expectedReportIds = new LinkedHashSet<>();
-		expectedReportIds.add(reportId_1);
-		expectedReportIds.add(reportId_2);
+		Set<ReportLabel> expectedReportLabels = new LinkedHashSet<>();
+		expectedReportLabels.add(reportLabel_1);
+		expectedReportLabels.add(reportLabel_2);
 
-		Set<ReportId> observedReportIds = new LinkedHashSet<>();
+		Set<ReportLabel> observedReportLabels = new LinkedHashSet<>();
 
 		ReportsPluginData.Builder builder = ReportsPluginData.builder();
 		builder.addReport(() -> (c) -> {
-			observedReportIds.add(reportId_1);
+			observedReportLabels.add(reportLabel_1);
 		});
 		builder.addReport(() -> (c) -> {
-			observedReportIds.add(reportId_2);
+			observedReportLabels.add(reportLabel_2);
 		});
 
 		ReportsPluginData reportsPluginData = builder.build();
 		ReportsPluginData cloneReportsPluginData = (ReportsPluginData) reportsPluginData.getCloneBuilder().build();
 
-		Set<Consumer<ActorContext>> reports = cloneReportsPluginData.getReports();
+		Set<Consumer<ReportContext>> reports = cloneReportsPluginData.getReports();
 
 		assertNotNull(reports);
 
-		for (Consumer<ActorContext> report : reports) {
+		for (Consumer<ReportContext> report : reports) {
 			assertNotNull(report);
 			report.accept(null);
 		}
 
-		assertEquals(observedReportIds, expectedReportIds);
+		assertEquals(observedReportLabels, expectedReportLabels);
 	}
 
 }

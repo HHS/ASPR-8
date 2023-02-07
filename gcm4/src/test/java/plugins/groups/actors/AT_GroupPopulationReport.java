@@ -27,10 +27,10 @@ import plugins.groups.testsupport.TestGroupTypeId;
 import plugins.people.support.PersonId;
 import plugins.reports.support.ReportError;
 import plugins.reports.support.ReportHeader;
-import plugins.reports.support.ReportId;
+import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportItem;
 import plugins.reports.support.ReportPeriod;
-import plugins.reports.support.SimpleReportId;
+import plugins.reports.support.SimpleReportLabel;
 import plugins.reports.testsupport.ReportsTestPluginFactory;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
@@ -39,20 +39,20 @@ import util.errors.ContractException;
 public class AT_GroupPopulationReport {
 
 	@Test
-	@UnitTestConstructor(target = GroupPopulationReport.class, args = { ReportId.class, ReportPeriod.class })
+	@UnitTestConstructor(target = GroupPopulationReport.class, args = { ReportLabel.class, ReportPeriod.class })
 	public void testConstructor() {
 
-		assertNotNull(new GroupPopulationReport(REPORT_ID, ReportPeriod.HOURLY));
+		assertNotNull(new GroupPopulationReport(REPORT_LABEL, ReportPeriod.HOURLY));
 
 		// precondition: report period is null
 		ContractException contractException = assertThrows(ContractException.class,
-				() -> new GroupPopulationReport(REPORT_ID, null));
+				() -> new GroupPopulationReport(REPORT_LABEL, null));
 		assertEquals(ReportError.NULL_REPORT_PERIOD, contractException.getErrorType());
 
-		// precondition: report id is null
+		// precondition: report label is null
 		contractException = assertThrows(ContractException.class,
 				() -> new GroupPopulationReport(null, ReportPeriod.HOURLY));
-		assertEquals(ReportError.NULL_REPORT_ID, contractException.getErrorType());
+		assertEquals(ReportError.NULL_REPORT_LABEL, contractException.getErrorType());
 	}
 
 	@Test
@@ -160,11 +160,11 @@ public class AT_GroupPopulationReport {
 		expectedReportItems
 				.put(getReportItem(ReportPeriod.HOURLY, 1, 6, TestAuxiliaryGroupTypeId.GROUP_AUX_TYPE_1, 4, 1), 1);
 
-		GroupPopulationReport report = new GroupPopulationReport(REPORT_ID, ReportPeriod.HOURLY);
+		GroupPopulationReport report = new GroupPopulationReport(REPORT_LABEL, ReportPeriod.HOURLY);
 		TestSimulationOutputConsumer outputConsumer = new TestSimulationOutputConsumer();
 
 		List<Plugin> plugins = getPlugins(testPluginData, 5524610980534223950L);
-		plugins.add(ReportsTestPluginFactory.getPluginFromReport(report));
+		plugins.add(ReportsTestPluginFactory.getPluginFromReport(report::init));
 
 		TestSimulation.executeSimulation(plugins, outputConsumer);
 
@@ -268,11 +268,11 @@ public class AT_GroupPopulationReport {
 		expectedReportItems.put(getReportItem(ReportPeriod.DAILY, 5, TestGroupTypeId.GROUP_TYPE_1, 5, 2), 1);
 		expectedReportItems.put(getReportItem(ReportPeriod.DAILY, 5, TestGroupTypeId.GROUP_TYPE_2, 3, 1), 1);
 
-		GroupPopulationReport report = new GroupPopulationReport(REPORT_ID, ReportPeriod.DAILY);
+		GroupPopulationReport report = new GroupPopulationReport(REPORT_LABEL, ReportPeriod.DAILY);
 		TestSimulationOutputConsumer outputConsumer = new TestSimulationOutputConsumer();
 
 		List<Plugin> plugins = getPlugins(testPluginData, 4023600052052959521L);
-		plugins.add(ReportsTestPluginFactory.getPluginFromReport(report));
+		plugins.add(ReportsTestPluginFactory.getPluginFromReport(report::init));
 
 		TestSimulation.executeSimulation(plugins, outputConsumer);
 
@@ -340,9 +340,9 @@ public class AT_GroupPopulationReport {
 		expectedReportItems.put(getReportItem(ReportPeriod.END_OF_SIMULATION, TestGroupTypeId.GROUP_TYPE_1, 5, 2), 1);
 		expectedReportItems.put(getReportItem(ReportPeriod.END_OF_SIMULATION, TestGroupTypeId.GROUP_TYPE_2, 3, 1), 1);
 
-		GroupPopulationReport report = new GroupPopulationReport(REPORT_ID, ReportPeriod.END_OF_SIMULATION);
+		GroupPopulationReport report = new GroupPopulationReport(REPORT_LABEL, ReportPeriod.END_OF_SIMULATION);
 		List<Plugin> plugins = getPlugins(testPluginData, 6092832510476200219L);
-		plugins.add(ReportsTestPluginFactory.getPluginFromReport(report));
+		plugins.add(ReportsTestPluginFactory.getPluginFromReport(report::init));
 		TestSimulationOutputConsumer outputConsumer = new TestSimulationOutputConsumer();
 		TestSimulation.executeSimulation(plugins, outputConsumer);
 
@@ -387,7 +387,7 @@ public class AT_GroupPopulationReport {
 
 	private static ReportItem getReportItem(ReportPeriod reportPeriod, Object... values) {
 		ReportItem.Builder builder = ReportItem.builder();
-		builder.setReportId(REPORT_ID);
+		builder.setReportLabel(REPORT_LABEL);
 
 		switch (reportPeriod) {
 			case DAILY:
@@ -410,7 +410,7 @@ public class AT_GroupPopulationReport {
 		return builder.build();
 	}
 
-	private static final ReportId REPORT_ID = new SimpleReportId("group population property report");
+	private static final ReportLabel REPORT_LABEL = new SimpleReportLabel("group population property report");
 
 	private static final ReportHeader REPORT_DAILY_HEADER = ReportHeader.builder().add("day").add("group_type")
 			.add("person_count").add("group_count").build();

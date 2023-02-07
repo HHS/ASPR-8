@@ -8,10 +8,10 @@ import java.util.stream.IntStream;
 import org.apache.commons.math3.random.RandomGenerator;
 
 import lesson.plugins.model.ModelPlugin;
-import lesson.plugins.model.ModelReportId;
-import lesson.plugins.model.PopulationTraceReport;
-import lesson.plugins.vaccine.VaccineReport;
+import lesson.plugins.model.ModelReportLabel;
+import lesson.plugins.model.reports.PopulationTraceReport;
 import lesson.plugins.vaccine.VaccinePlugin;
+import lesson.plugins.vaccine.reports.VaccineReport;
 import nucleus.Dimension;
 import nucleus.Experiment;
 import nucleus.Plugin;
@@ -68,10 +68,10 @@ public final class Example_14 {
 		ReportsPluginData reportsPluginData = //
 				ReportsPluginData	.builder()//
 									.addReport(() -> {
-										return new PopulationTraceReport(ModelReportId.POPULATION_TRACE)::init;
+										return new PopulationTraceReport(ModelReportLabel.POPULATION_TRACE)::init;
 									})//
 									.addReport(() -> {
-										return new VaccineReport(ModelReportId.VACCINATION, ReportPeriod.DAILY, 6)::init;
+										return new VaccineReport(ModelReportLabel.VACCINATION, ReportPeriod.DAILY, 6)::init;
 									})//
 									.build();
 
@@ -79,9 +79,9 @@ public final class Example_14 {
 
 		NIOReportItemHandler nioReportItemHandler = //
 				NIOReportItemHandler.builder()//
-									.addReport(ModelReportId.POPULATION_TRACE, //
+									.addReport(ModelReportLabel.POPULATION_TRACE, //
 											Paths.get("C:\\temp\\gcm\\population_trace_report.xls"))//
-									.addReport(ModelReportId.VACCINATION, //
+									.addReport(ModelReportLabel.VACCINATION, //
 											Paths.get("C:\\temp\\gcm\\vaccination_report.xls"))//
 									.build();
 

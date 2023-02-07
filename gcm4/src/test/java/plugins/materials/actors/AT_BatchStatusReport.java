@@ -36,10 +36,10 @@ import plugins.materials.testsupport.TestBatchPropertyId;
 import plugins.materials.testsupport.TestMaterialId;
 import plugins.materials.testsupport.TestMaterialsProducerId;
 import plugins.reports.support.ReportHeader;
-import plugins.reports.support.ReportId;
+import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportItem;
 import plugins.reports.support.ReportItem.Builder;
-import plugins.reports.support.SimpleReportId;
+import plugins.reports.support.SimpleReportLabel;
 import plugins.reports.testsupport.ReportsTestPluginFactory;
 import plugins.stochastics.StochasticsDataManager;
 import tools.annotations.UnitTag;
@@ -86,9 +86,9 @@ public final class AT_BatchStatusReport {
 	}
 
 	@Test
-	@UnitTestConstructor(target = BatchStatusReport.class, args = { ReportId.class })
+	@UnitTestConstructor(target = BatchStatusReport.class, args = { ReportLabel.class })
 	public void testConstructor() {
-		BatchStatusReport report = new BatchStatusReport(REPORT_ID);
+		BatchStatusReport report = new BatchStatusReport(REPORT_LABEL);
 
 		assertNotNull(report);
 	}
@@ -238,7 +238,7 @@ public final class AT_BatchStatusReport {
 		TestSimulationOutputConsumer outputConsumer = new TestSimulationOutputConsumer();
 		List<Plugin> pluginsToAdd = MaterialsActionSupport.setUpPluginsForTest(2819236410498978100L);
 		pluginsToAdd.add(testPlugin);
-		pluginsToAdd.add(ReportsTestPluginFactory.getPluginFromReport(new BatchStatusReport(REPORT_ID)));
+		pluginsToAdd.add(ReportsTestPluginFactory.getPluginFromReport(new BatchStatusReport(REPORT_LABEL)::init));
 		
 		TestSimulation.executeSimulation(pluginsToAdd, outputConsumer);
 
@@ -247,14 +247,14 @@ public final class AT_BatchStatusReport {
 	}
 
 	private static ReportItem getReportItem(List<Object> values) {
-		Builder builder = ReportItem.builder().setReportId(REPORT_ID).setReportHeader(REPORT_HEADER);
+		Builder builder = ReportItem.builder().setReportLabel(REPORT_LABEL).setReportHeader(REPORT_HEADER);
 		for (Object value : values) {
 			builder.addValue(value);
 		}
 		return builder.build();
 	}
 
-	private static final ReportId REPORT_ID = new SimpleReportId("report");
+	private static final ReportLabel REPORT_LABEL = new SimpleReportLabel("report");
 
 	private static final ReportHeader REPORT_HEADER = getReportHeader();
 

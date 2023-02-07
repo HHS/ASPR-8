@@ -1,5 +1,7 @@
 package lesson.plugins.model;
 
+import lesson.plugins.model.actors.PopulationManager;
+import lesson.plugins.model.actors.Vaccinator;
 import nucleus.Plugin;
 import plugins.reports.ReportsPluginId;
 

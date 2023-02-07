@@ -8,12 +8,12 @@ import java.util.List;
 import lesson.plugins.family.FamilyPlugin;
 import lesson.plugins.family.FamilyPluginData;
 import lesson.plugins.model.ModelPlugin;
-import lesson.plugins.model.ModelReportId;
+import lesson.plugins.model.ModelLabel;
 import lesson.plugins.person.PersonPlugin;
-import lesson.plugins.vaccine.FamilyVaccineReport;
-import lesson.plugins.vaccine.HourlyVaccineReport;
-import lesson.plugins.vaccine.StatelessVaccineReport;
 import lesson.plugins.vaccine.VaccinePlugin;
+import lesson.plugins.vaccine.reports.FamilyVaccineReport;
+import lesson.plugins.vaccine.reports.HourlyVaccineReport;
+import lesson.plugins.vaccine.reports.StatelessVaccineReport;
 import nucleus.Dimension;
 import nucleus.Experiment;
 import nucleus.Plugin;
@@ -78,18 +78,18 @@ public final class Example_12 {
 		Plugin familyPlugin = FamilyPlugin.getFamilyPlugin(familyPluginData);		
 		
 		ReportsPluginData reportsPluginData = ReportsPluginData.builder()//
-				.addReport(()->new FamilyVaccineReport(ModelReportId.FAMILY_VACCINE_REPORT)::init)//
-				.addReport(()->new HourlyVaccineReport(ModelReportId.HOURLY_VACCINE_REPORT, ReportPeriod.HOURLY)::init)//
-				.addReport(()->new StatelessVaccineReport(ModelReportId.STATELESS_VACCINE_REPORT, ReportPeriod.HOURLY)::init)//
+				.addReport(()->new FamilyVaccineReport(ModelLabel.FAMILY_VACCINE_REPORT)::init)//
+				.addReport(()->new HourlyVaccineReport(ModelLabel.HOURLY_VACCINE_REPORT, ReportPeriod.HOURLY)::init)//
+				.addReport(()->new StatelessVaccineReport(ModelLabel.STATELESS_VACCINE_REPORT, ReportPeriod.HOURLY)::init)//
 				.build();
 		Plugin reportPlugin = ReportsPlugin.getReportsPlugin(reportsPluginData);
 		
 		Path outputDirectory = Paths.get("C:\\temp\\gcm");		
 		
 		NIOReportItemHandler nioReportItemHandler = NIOReportItemHandler.builder()//
-				.addReport(ModelReportId.FAMILY_VACCINE_REPORT, outputDirectory.resolve(Paths.get("family_vaccine_report.xls")))//
-				.addReport(ModelReportId.HOURLY_VACCINE_REPORT, outputDirectory.resolve(Paths.get("hourly_vaccine_report.xls")))//
-				.addReport(ModelReportId.STATELESS_VACCINE_REPORT, outputDirectory.resolve(Paths.get("stateless_vaccine_report.xls")))//
+				.addReport(ModelLabel.FAMILY_VACCINE_REPORT, outputDirectory.resolve(Paths.get("family_vaccine_report.xls")))//
+				.addReport(ModelLabel.HOURLY_VACCINE_REPORT, outputDirectory.resolve(Paths.get("hourly_vaccine_report.xls")))//
+				.addReport(ModelLabel.STATELESS_VACCINE_REPORT, outputDirectory.resolve(Paths.get("stateless_vaccine_report.xls")))//
 				.build();
 
 		

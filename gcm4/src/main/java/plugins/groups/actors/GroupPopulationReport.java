@@ -3,13 +3,13 @@ package plugins.groups.actors;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import nucleus.ActorContext;
+import nucleus.ReportContext;
 import plugins.groups.datamanagers.GroupsDataManager;
 import plugins.groups.support.GroupId;
 import plugins.groups.support.GroupTypeId;
 import plugins.reports.support.PeriodicReport;
 import plugins.reports.support.ReportHeader;
-import plugins.reports.support.ReportId;
+import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportItem;
 import plugins.reports.support.ReportPeriod;
 
@@ -29,8 +29,8 @@ import plugins.reports.support.ReportPeriod;
  */
 public final class GroupPopulationReport extends PeriodicReport {
 
-	public GroupPopulationReport(ReportId reportId,ReportPeriod reportPeriod) {
-		super(reportId,reportPeriod);
+	public GroupPopulationReport(ReportLabel reportLabel,ReportPeriod reportPeriod) {
+		super(reportLabel,reportPeriod);
 	}
 
 	/*
@@ -58,7 +58,7 @@ public final class GroupPopulationReport extends PeriodicReport {
 	}
 
 	@Override
-	protected void flush(ActorContext actorContext) {
+	protected void flush(ReportContext reportContext) {
 
 		final ReportItem.Builder reportItemBuilder = ReportItem.builder();
 
@@ -91,13 +91,13 @@ public final class GroupPopulationReport extends PeriodicReport {
 
 				final int groupCount = counter.count;
 				reportItemBuilder.setReportHeader(getReportHeader());
-				reportItemBuilder.setReportId(getReportId());
+				reportItemBuilder.setReportLabel(getReportLabel());
 				fillTimeFields(reportItemBuilder);
 				reportItemBuilder.addValue(groupTypeId.toString());
 				reportItemBuilder.addValue(personCount);
 				reportItemBuilder.addValue(groupCount);
 				ReportItem reportItem = reportItemBuilder.build();
-				actorContext.releaseOutput(reportItem);
+				reportContext.releaseOutput(reportItem);
 
 			}
 		}
@@ -107,9 +107,9 @@ public final class GroupPopulationReport extends PeriodicReport {
 	private GroupsDataManager groupsDataManager;
 
 	@Override
-	public void init(ActorContext actorContext) {
-		super.init(actorContext);
-		groupsDataManager = actorContext.getDataManager(GroupsDataManager.class);
+	public void init(ReportContext reportContext) {
+		super.init(reportContext);
+		groupsDataManager = reportContext.getDataManager(GroupsDataManager.class);
 	}
 
 }

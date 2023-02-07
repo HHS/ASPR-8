@@ -8,11 +8,11 @@ import java.util.stream.IntStream;
 import org.apache.commons.math3.random.RandomGenerator;
 
 import lesson.plugins.model.ModelPlugin;
-import lesson.plugins.model.ModelReportId;
+import lesson.plugins.model.ModelReportLabel;
 import lesson.plugins.model.Region;
 import lesson.plugins.model.RegionProperty;
 import lesson.plugins.vaccine.VaccinePlugin;
-import lesson.plugins.vaccine.VaccineReport;
+import lesson.plugins.vaccine.reports.VaccineReport;
 import nucleus.Dimension;
 import nucleus.Experiment;
 import nucleus.Plugin;
@@ -48,18 +48,18 @@ public final class Example_15 {
 				ReportsPluginData	.builder()//
 									.addReport(() -> {
 										return new RegionPropertyReport(
-												ModelReportId.REGION_PROPERTY_REPORT)//
+												ModelReportLabel.REGION_PROPERTY_REPORT)//
 												::init;
 									})//
 									.addReport(() -> {
 										return new RegionTransferReport(
-												ModelReportId.REGION_TRANSFER_REPORT,//
+												ModelReportLabel.REGION_TRANSFER_REPORT,//
 												ReportPeriod.END_OF_SIMULATION)//
 												::init;
 									})//
 									.addReport(() -> {
 										return new VaccineReport(
-												ModelReportId.VACCINATION,//
+												ModelReportLabel.VACCINATION,//
 												ReportPeriod.END_OF_SIMULATION,//
 												6)::init;
 									})//
@@ -70,11 +70,11 @@ public final class Example_15 {
 
 	private NIOReportItemHandler getNIOReportItemHandler() {
 		return NIOReportItemHandler	.builder()//
-									.addReport(ModelReportId.REGION_PROPERTY_REPORT, //
+									.addReport(ModelReportLabel.REGION_PROPERTY_REPORT, //
 											Paths.get("C:\\temp\\gcm\\region_property_report.xls"))//
-									.addReport(ModelReportId.REGION_TRANSFER_REPORT, //
+									.addReport(ModelReportLabel.REGION_TRANSFER_REPORT, //
 											Paths.get("C:\\temp\\gcm\\region_transfer_report.xls"))//
-									.addReport(ModelReportId.VACCINATION, //
+									.addReport(ModelReportLabel.VACCINATION, //
 											Paths.get("C:\\temp\\gcm\\vaccine_report.xls"))//
 									.build();
 	}

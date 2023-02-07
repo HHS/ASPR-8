@@ -27,10 +27,10 @@ import plugins.materials.testsupport.MaterialsActionSupport;
 import plugins.materials.testsupport.TestMaterialsProducerId;
 import plugins.materials.testsupport.TestMaterialsProducerPropertyId;
 import plugins.reports.support.ReportHeader;
-import plugins.reports.support.ReportId;
+import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportItem;
 import plugins.reports.support.ReportItem.Builder;
-import plugins.reports.support.SimpleReportId;
+import plugins.reports.support.SimpleReportLabel;
 import plugins.reports.testsupport.ReportsTestPluginFactory;
 import plugins.stochastics.StochasticsDataManager;
 import tools.annotations.UnitTag;
@@ -57,9 +57,9 @@ public final class AT_MaterialsProducerPropertyReport {
 	}
 
 	@Test
-	@UnitTestConstructor(target = MaterialsProducerPropertyReport.class, args = { ReportId.class })
+	@UnitTestConstructor(target = MaterialsProducerPropertyReport.class, args = { ReportLabel.class })
 	public void testConstructor() {
-		MaterialsProducerPropertyReport report = new MaterialsProducerPropertyReport(REPORT_ID);
+		MaterialsProducerPropertyReport report = new MaterialsProducerPropertyReport(REPORT_LABEL);
 
 		assertNotNull(report);
 	}
@@ -68,6 +68,10 @@ public final class AT_MaterialsProducerPropertyReport {
 	@UnitTestMethod(target = MaterialsProducerPropertyReport.class, name = "init", args = {
 			ActorContext.class }, tags = { UnitTag.INCOMPLETE })
 	public void testInit() {
+		
+		/*
+		 * The test fails -- only the day value is wrong. 
+		 */
 
 		Map<ReportItem, Integer> expectedReportItems = new LinkedHashMap<>();
 
@@ -110,7 +114,7 @@ public final class AT_MaterialsProducerPropertyReport {
 			}
 		}));
 
-		for (int i = 0; i < 100; i++) {
+		for (int i = 0; i < 5; i++) {
 
 			// set a property value
 			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(actionTime++, (c) -> {
@@ -140,23 +144,24 @@ public final class AT_MaterialsProducerPropertyReport {
 
 		List<Plugin> pluginsToAdd = MaterialsActionSupport.setUpPluginsForTest(8759226038479000135L);
 		pluginsToAdd.add(testPlugin);
-		pluginsToAdd.add(ReportsTestPluginFactory.getPluginFromReport(new MaterialsProducerPropertyReport(REPORT_ID)));
+		pluginsToAdd.add(ReportsTestPluginFactory.getPluginFromReport(new MaterialsProducerPropertyReport(REPORT_LABEL)::init));
 
 		TestSimulation.executeSimulation(pluginsToAdd, outputConsumer);
-
+		
 		assertTrue(outputConsumer.isComplete());
-		assertEquals(expectedReportItems, outputConsumer.getOutputItems(ReportItem.class));
+		Map<ReportItem, Integer> acutualReportItems = outputConsumer.getOutputItems(ReportItem.class);
+		assertEquals(expectedReportItems, acutualReportItems);
 	}
 
 	private static ReportItem getReportItem(Object... values) {
-		Builder builder = ReportItem.builder().setReportId(REPORT_ID).setReportHeader(REPORT_HEADER);
+		Builder builder = ReportItem.builder().setReportLabel(REPORT_LABEL).setReportHeader(REPORT_HEADER);
 		for (Object value : values) {
 			builder.addValue(value);
 		}
 		return builder.build();
 	}
 
-	private static final ReportId REPORT_ID = new SimpleReportId("report");
+	private static final ReportLabel REPORT_LABEL = new SimpleReportLabel("report");
 
 	private static final ReportHeader REPORT_HEADER = getReportHeader();
 

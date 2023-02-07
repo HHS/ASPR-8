@@ -1097,14 +1097,14 @@ public class AT_ActorContext {
 		 */
 		pluginDataBuilder.addTestDataManager("generator", () -> new TestDataManager());
 		pluginDataBuilder.addTestDataManagerPlan("generator", new TestDataManagerPlan(2, (c) -> {
-			c.releaseEvent(new DataChangeEvent(DatumType.TYPE_1, 0));
-			c.releaseEvent(new DataChangeEvent(DatumType.TYPE_2, 5));
-			c.releaseEvent(new DataChangeEvent(DatumType.TYPE_1, 20));
-			c.releaseEvent(new DataChangeEvent(DatumType.TYPE_2, 0));
-			c.releaseEvent(new DataChangeEvent(DatumType.TYPE_1, 5));
-			c.releaseEvent(new DataChangeEvent(DatumType.TYPE_2, 25));
-			c.releaseEvent(new DataChangeEvent(DatumType.TYPE_1, 38));
-			c.releaseEvent(new DataChangeEvent(DatumType.TYPE_2, 234));
+			c.releaseObservationEvent(new DataChangeEvent(DatumType.TYPE_1, 0));
+			c.releaseObservationEvent(new DataChangeEvent(DatumType.TYPE_2, 5));
+			c.releaseObservationEvent(new DataChangeEvent(DatumType.TYPE_1, 20));
+			c.releaseObservationEvent(new DataChangeEvent(DatumType.TYPE_2, 0));
+			c.releaseObservationEvent(new DataChangeEvent(DatumType.TYPE_1, 5));
+			c.releaseObservationEvent(new DataChangeEvent(DatumType.TYPE_2, 25));
+			c.releaseObservationEvent(new DataChangeEvent(DatumType.TYPE_1, 38));
+			c.releaseObservationEvent(new DataChangeEvent(DatumType.TYPE_2, 234));
 		}));
 
 		// build the plugin
@@ -1165,7 +1165,7 @@ public class AT_ActorContext {
 
 			for (Double time : eventGenerationTimes) {
 				c.addPlan((c2) -> {
-					c2.releaseEvent(new BaseEvent());
+					c2.releaseObservationEvent(new BaseEvent());
 				}, time);
 			}
 		}));

@@ -19,8 +19,8 @@ import util.errors.ContractException;
  * <li><b>AttributeValueAssignmentEvent</b>: Sets an attribute value for a
  * person</li>
  *
- * <li><b>AttributeUpdateEvent</b>: Notifies subscribed oberservers
- * of a person attribute value change</li>
+ * <li><b>AttributeUpdateEvent</b>: Notifies subscribed oberservers of a person
+ * attribute value change</li>
  *
  * </ul>
  * </p>
@@ -85,8 +85,9 @@ import util.errors.ContractException;
  *
  */
 public final class AttributesPlugin {
-	
-	private AttributesPlugin() {}
+
+	private AttributesPlugin() {
+	}
 
 	/**
 	 * Constructs this plugin
@@ -106,7 +107,7 @@ public final class AttributesPlugin {
 						.addPluginDependency(PeoplePluginId.PLUGIN_ID)//
 						.setInitializer((c) -> {
 							AttributesPluginData pluginData = c.getPluginData(AttributesPluginData.class);
-							c.addDataManager(new AttributesDataManager(pluginData));
+							c.addDataManager(new AttributesDataManager(pluginData));							
 						})//
 						.addPluginData(attributesPluginData)//
 						.build();

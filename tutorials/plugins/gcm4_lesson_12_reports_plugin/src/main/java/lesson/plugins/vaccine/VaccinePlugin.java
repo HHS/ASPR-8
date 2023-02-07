@@ -2,6 +2,7 @@ package lesson.plugins.vaccine;
 
 import lesson.plugins.family.FamilyPluginId;
 import lesson.plugins.person.PersonPluginId;
+import lesson.plugins.vaccine.datamanagers.VaccinationDataManager;
 import nucleus.Plugin;
 
 public class VaccinePlugin {

@@ -78,22 +78,42 @@ public class AT_GlobalPropertiesPluginData {
 
 		// define a few global properties
 		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(34).build();
+		PropertyDefinition propertyDefinition2 = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(57).build();
 		GlobalPropertyId globalPropertyId = new SimpleGlobalPropertyId("id 1");
-		expectedPropertyDefinitions.put(globalPropertyId, propertyDefinition);
+		builder.defineGlobalProperty(globalPropertyId, propertyDefinition2);
+		// replacing data to show that the value persists
 		builder.defineGlobalProperty(globalPropertyId, propertyDefinition);
+		// adding duplicate data to show that the value persists
+		builder.defineGlobalProperty(globalPropertyId, propertyDefinition);
+		expectedPropertyDefinitions.put(globalPropertyId, propertyDefinition);
 
 		propertyDefinition = PropertyDefinition.builder().setType(Double.class).setDefaultValue(234.34).build();
+		propertyDefinition2 = PropertyDefinition.builder().setType(Double.class).setDefaultValue(795.88).build();
 		globalPropertyId = new SimpleGlobalPropertyId("id 2");
-		expectedPropertyDefinitions.put(globalPropertyId, propertyDefinition);
+		builder.defineGlobalProperty(globalPropertyId, propertyDefinition2);
+		// replacing data to show that the value persists
 		builder.defineGlobalProperty(globalPropertyId, propertyDefinition);
+		// adding duplicate data to show that the value persists
+		builder.defineGlobalProperty(globalPropertyId, propertyDefinition);
+		expectedPropertyDefinitions.put(globalPropertyId, propertyDefinition);
 
 		propertyDefinition = PropertyDefinition.builder().setType(String.class).setDefaultValue("default value").build();
+		propertyDefinition2 = PropertyDefinition.builder().setType(String.class).setDefaultValue("second default").build();
 		globalPropertyId = new SimpleGlobalPropertyId("id 3");
-		expectedPropertyDefinitions.put(globalPropertyId, propertyDefinition);
+		builder.defineGlobalProperty(globalPropertyId, propertyDefinition2);
+		// replacing data to show that the value persists
 		builder.defineGlobalProperty(globalPropertyId, propertyDefinition);
+		// adding duplicate data to show that the value persists
+		builder.defineGlobalProperty(globalPropertyId, propertyDefinition);
+		expectedPropertyDefinitions.put(globalPropertyId, propertyDefinition);
 
 		// build the initial data
 		GlobalPropertiesPluginData globalInitialData = builder.build();
+
+		// show that the expected property ids are there
+		Set<GlobalPropertyId> actualGlobalPropertyIds = globalInitialData.getGlobalPropertyIds();
+		Set<GlobalPropertyId> expectedGlobalPropertyIds = expectedPropertyDefinitions.keySet();
+		assertEquals(expectedGlobalPropertyIds, actualGlobalPropertyIds);
 
 		// show that the property definitions are retrieved by their ids
 		for (GlobalPropertyId gpid : expectedPropertyDefinitions.keySet()) {
@@ -112,13 +132,6 @@ public class AT_GlobalPropertiesPluginData {
 		// if the property definition is null
 		contractException = assertThrows(ContractException.class, () -> builder.defineGlobalProperty(new SimpleGlobalPropertyId("id"), null));
 		assertEquals(PropertyError.NULL_PROPERTY_DEFINITION, contractException.getErrorType());
-
-		// if a property definition for the given global property id was
-		// previously defined.
-		builder.defineGlobalProperty(new SimpleGlobalPropertyId("id"), propDef);
-		contractException = assertThrows(ContractException.class, () -> builder.defineGlobalProperty(new SimpleGlobalPropertyId("id"), propDef));
-		assertEquals(PropertyError.DUPLICATE_PROPERTY_DEFINITION, contractException.getErrorType());
-
 	}
 
 	@Test
@@ -142,12 +155,24 @@ public class AT_GlobalPropertiesPluginData {
 		// set the values
 		for (TestGlobalPropertyId testGlobalPropertyId : TestGlobalPropertyId.values()) {
 			int value = randomGenerator.nextInt();
+			int value2 = randomGenerator.nextInt();
+			builder.setGlobalPropertyValue(testGlobalPropertyId, value2);
+			// replacing data to show that the value persists
+			builder.setGlobalPropertyValue(testGlobalPropertyId, value);
+			// duplicating data to show that the value persists
 			builder.setGlobalPropertyValue(testGlobalPropertyId, value);
 			expectedValues.put(testGlobalPropertyId, value);
 		}
 
-		// show that the expected values are present
+		// build the initial data
 		GlobalPropertiesPluginData globalInitialData = builder.build();
+
+		// show that the expected property ids are there
+		Set<GlobalPropertyId> actualGlobalPropertyIds = globalInitialData.getGlobalPropertyIds();
+		Set<GlobalPropertyId> expectedGlobalPropertyIds = expectedValues.keySet();
+		assertEquals(expectedGlobalPropertyIds, actualGlobalPropertyIds);
+
+		// show that the expected values are present
 		for (TestGlobalPropertyId testGlobalPropertyId : TestGlobalPropertyId.values()) {
 			Integer expectedGlobalPropertyValue = expectedValues.get(testGlobalPropertyId);
 			Integer actualGlobalPropertyValue = globalInitialData.getGlobalPropertyValue(testGlobalPropertyId);
@@ -167,17 +192,6 @@ public class AT_GlobalPropertiesPluginData {
 		// if the global property value is null
 		contractException = assertThrows(ContractException.class, () -> builder.setGlobalPropertyValue(TestGlobalPropertyId.GLOBAL_PROPERTY_1_BOOLEAN_MUTABLE, null));
 		assertEquals(PropertyError.NULL_PROPERTY_VALUE, contractException.getErrorType());
-
-		// // if the global property value was previously defined for the given
-		// // global property id
-		// builder.setGlobalPropertyValue(TestGlobalPropertyId.GLOBAL_PROPERTY_1_BOOLEAN_MUTABLE,
-		// 4);
-		// contractException = assertThrows(ContractException.class, () ->
-		// builder.setGlobalPropertyValue(TestGlobalPropertyId.GLOBAL_PROPERTY_1_BOOLEAN_MUTABLE,
-		// 5));
-		// assertEquals(PropertyError.DUPLICATE_PROPERTY_VALUE_ASSIGNMENT,
-		// contractException.getErrorType());
-
 	}
 
 	@Test
