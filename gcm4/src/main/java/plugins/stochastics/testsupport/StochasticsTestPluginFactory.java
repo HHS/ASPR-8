@@ -113,7 +113,6 @@ public class StochasticsTestPluginFactory {
 	 * @throws ContractExecption
 	 *                           {@linkplain NucleusError#NULL_PLUGIN_DATA}
 	 *                           if testPluginData is null
-	 * 
 	 */
 	public static Factory factory(long seed, TestPluginData testPluginData) {
 		if (testPluginData == null) {

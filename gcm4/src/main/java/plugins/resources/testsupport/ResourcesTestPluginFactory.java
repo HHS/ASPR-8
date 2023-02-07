@@ -301,7 +301,6 @@ public class ResourcesTestPluginFactory {
 	 * with the defined propertyDefinition for each. Each Resource will have a
 	 * random property value assigned based on a RandomGenerator that is created
 	 * with the passed in seed
-	 * 
 	 */
 	public static ResourcesPluginData getStandardResourcesPluginData(long seed) {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
