@@ -62,6 +62,8 @@ public final class AT_PeoplePluginData {
 		PeoplePluginData.Builder builder = PeoplePluginData.builder();
 		for (PersonId personId : expectedPersonIds) {
 			builder.addPersonId(personId);
+			// adding duplicate data to show that the value persists
+			builder.addPersonId(personId);
 		}
 
 		peoplePluginData = builder.build();
@@ -78,10 +80,8 @@ public final class AT_PeoplePluginData {
 		// precondition tests
 		builder.addPersonId(new PersonId(5));
 
-		ContractException contractException = assertThrows(ContractException.class, () -> builder.addPersonId(new PersonId(5)));
-		assertEquals(PersonError.DUPLICATE_PERSON_ID, contractException.getErrorType());
-
-		contractException = assertThrows(ContractException.class, () -> builder.addPersonId(null));
+		// null person id
+		ContractException contractException = assertThrows(ContractException.class, () -> builder.addPersonId(null));
 		assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
 
 	}

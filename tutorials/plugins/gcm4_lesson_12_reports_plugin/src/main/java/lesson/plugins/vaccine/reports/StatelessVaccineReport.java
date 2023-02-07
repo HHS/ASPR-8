@@ -12,7 +12,7 @@ import lesson.plugins.vaccine.datamanagers.VaccinationDataManager;
 import nucleus.ReportContext;
 import plugins.reports.support.PeriodicReport;
 import plugins.reports.support.ReportHeader;
-import plugins.reports.support.ReportId;
+import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportItem;
 import plugins.reports.support.ReportPeriod;
 import util.wrappers.MutableInteger;
@@ -33,8 +33,8 @@ public class StatelessVaccineReport extends PeriodicReport {
 		}
 	}
 	
-	public StatelessVaccineReport(ReportId reportId, ReportPeriod reportPeriod) {
-		super(reportId, reportPeriod);
+	public StatelessVaccineReport(ReportLabel reportLabel, ReportPeriod reportPeriod) {
+		super(reportLabel, reportPeriod);
 	}
 
 	@Override
@@ -70,7 +70,7 @@ public class StatelessVaccineReport extends PeriodicReport {
 		ReportHeader reportHeader = headerBuilder.build();
 		
 		ReportItem.Builder builder = ReportItem	.builder()//
-												.setReportId(getReportId())//
+												.setReportLabel(getReportLabel())//
 												.setReportHeader(reportHeader);
 		fillTimeFields(builder);
 		for (VaccineStatus vaccineStatus : VaccineStatus.values()) {

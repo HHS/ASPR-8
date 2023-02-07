@@ -8,15 +8,15 @@ import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonId;
 import plugins.personproperties.datamanagers.PersonPropertiesDataManager;
 import plugins.reports.support.ReportHeader;
-import plugins.reports.support.ReportId;
+import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportItem;
 
 public final class VaccineReport {
 
-	private final ReportId reportId;
+	private final ReportLabel reportLabel;
 
-	public VaccineReport(ReportId reportId) {
-		this.reportId = reportId;
+	public VaccineReport(ReportLabel reportLabel) {
+		this.reportLabel = reportLabel;
 	}
 
 	public void init(ReportContext reportContext) {
@@ -59,7 +59,7 @@ public final class VaccineReport {
 		}
 
 		ReportItem.Builder builder = ReportItem	.builder()//
-												.setReportId(reportId)//
+												.setReportLabel(reportLabel)//
 												.setReportHeader(reportHeader);
 
 		builder.addValue(vaccinated_immune);

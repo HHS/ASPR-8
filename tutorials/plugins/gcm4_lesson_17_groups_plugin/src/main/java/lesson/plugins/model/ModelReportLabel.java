@@ -1,8 +1,8 @@
 package lesson.plugins.model;
 
-import plugins.reports.support.ReportId;
+import plugins.reports.support.ReportLabel;
 
-public enum ModelReportId implements ReportId{	
+public enum ModelReportLabel implements ReportLabel{	
 	GROUP_POPULATON,
 	PERSON_PROPERTY,
 	DISEASE_STATE,

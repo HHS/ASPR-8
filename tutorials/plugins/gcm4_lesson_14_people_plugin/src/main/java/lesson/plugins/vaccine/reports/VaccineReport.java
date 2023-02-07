@@ -11,7 +11,7 @@ import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonId;
 import plugins.reports.support.PeriodicReport;
 import plugins.reports.support.ReportHeader;
-import plugins.reports.support.ReportId;
+import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportItem;
 import plugins.reports.support.ReportPeriod;
 import util.wrappers.MutableInteger;
@@ -20,8 +20,8 @@ public final class VaccineReport extends PeriodicReport {
 
 	private final int maxVaccinedCount;
 
-	public VaccineReport(ReportId reportId, ReportPeriod reportPeriod, int maxVaccineCount) {
-		super(reportId, reportPeriod);
+	public VaccineReport(ReportLabel reportLabel, ReportPeriod reportPeriod, int maxVaccineCount) {
+		super(reportLabel, reportPeriod);
 
 		this.maxVaccinedCount = FastMath.max(0, maxVaccineCount);
 
@@ -62,7 +62,7 @@ public final class VaccineReport extends PeriodicReport {
 			mutableInteger.increment();
 		}
 		ReportItem.Builder builder = ReportItem	.builder()//
-												.setReportId(getReportId())//
+												.setReportLabel(getReportLabel())//
 												.setReportHeader(reportHeader);
 		fillTimeFields(builder);
 

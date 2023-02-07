@@ -16,9 +16,9 @@ import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestSimulation;
 import nucleus.testsupport.testplugin.TestSimulationOutputConsumer;
 import plugins.reports.support.ReportHeader;
-import plugins.reports.support.ReportId;
+import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportItem;
-import plugins.reports.support.SimpleReportId;
+import plugins.reports.support.SimpleReportLabel;
 import plugins.reports.testsupport.ReportsTestPluginFactory;
 import plugins.resources.datamanagers.ResourcesDataManager;
 import plugins.resources.support.ResourcePropertyId;
@@ -58,7 +58,7 @@ public class AT_ResourcePropertyReport {
 	}
 
 	@Test
-	@UnitTestConstructor(target = ResourcePropertyReport.class, args = { ReportId.class })
+	@UnitTestConstructor(target = ResourcePropertyReport.class, args = { ReportLabel.class })
 	public void testConstructor() {
 		// nothing to test
 	}
@@ -193,7 +193,7 @@ public class AT_ResourcePropertyReport {
 		TestSimulationOutputConsumer outputConsumer = new TestSimulationOutputConsumer();
 
 		List<Plugin> pluginsToAdd = ResourcesTestPluginFactory.factory(initialPopulation, 8914112012010329946L, testPluginData).getPlugins();
-		pluginsToAdd.add(ReportsTestPluginFactory.getPluginFromReport(new ResourcePropertyReport(REPORT_ID)::init));
+		pluginsToAdd.add(ReportsTestPluginFactory.getPluginFromReport(new ResourcePropertyReport(REPORT_LABEL)::init));
 		
 		TestSimulation.executeSimulation(pluginsToAdd, outputConsumer);
 
@@ -203,7 +203,7 @@ public class AT_ResourcePropertyReport {
 
 	private static ReportItem getReportItem(Object... values) {
 		ReportItem.Builder builder = ReportItem.builder();
-		builder.setReportId(REPORT_ID);
+		builder.setReportLabel(REPORT_LABEL);
 		builder.setReportHeader(REPORT_HEADER);
 		for (Object value : values) {
 			builder.addValue(value);
@@ -211,7 +211,7 @@ public class AT_ResourcePropertyReport {
 		return builder.build();
 	}
 
-	private static final ReportId REPORT_ID = new SimpleReportId("resource property report");
+	private static final ReportLabel REPORT_LABEL = new SimpleReportLabel("resource property report");
 
 	private static final ReportHeader REPORT_HEADER = ReportHeader.builder().add("time").add("resource").add("property")
 			.add("value").build();

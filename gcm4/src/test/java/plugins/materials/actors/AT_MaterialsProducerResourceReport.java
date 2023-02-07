@@ -30,10 +30,10 @@ import plugins.materials.testsupport.TestMaterialsProducerId;
 import plugins.materials.testsupport.TestMaterialsProducerPropertyId;
 import plugins.regions.testsupport.TestRegionId;
 import plugins.reports.support.ReportHeader;
-import plugins.reports.support.ReportId;
+import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportItem;
 import plugins.reports.support.ReportItem.Builder;
-import plugins.reports.support.SimpleReportId;
+import plugins.reports.support.SimpleReportLabel;
 import plugins.reports.testsupport.ReportsTestPluginFactory;
 import plugins.resources.datamanagers.ResourcesDataManager;
 import plugins.resources.support.ResourceId;
@@ -63,9 +63,9 @@ public final class AT_MaterialsProducerResourceReport {
 	}
 
 	@Test
-	@UnitTestConstructor(target = MaterialsProducerResourceReport.class, args = { ReportId.class })
+	@UnitTestConstructor(target = MaterialsProducerResourceReport.class, args = { ReportLabel.class })
 	public void testConstructor() {
-		MaterialsProducerResourceReport report = new MaterialsProducerResourceReport(REPORT_ID);
+		MaterialsProducerResourceReport report = new MaterialsProducerResourceReport(REPORT_LABEL);
 		assertNotNull(report);
 	}
 
@@ -173,14 +173,14 @@ public final class AT_MaterialsProducerResourceReport {
 	}
 
 	private static ReportItem getReportItem(Object... values) {
-		Builder builder = ReportItem.builder().setReportId(REPORT_ID).setReportHeader(REPORT_HEADER);
+		Builder builder = ReportItem.builder().setReportLabel(REPORT_LABEL).setReportHeader(REPORT_HEADER);
 		for (Object value : values) {
 			builder.addValue(value);
 		}
 		return builder.build();
 	}
 
-	private static final ReportId REPORT_ID = new SimpleReportId("report");
+	private static final ReportLabel REPORT_LABEL = new SimpleReportLabel("report");
 
 	private static final ReportHeader REPORT_HEADER = getReportHeader();
 

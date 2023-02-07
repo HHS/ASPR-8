@@ -28,8 +28,8 @@ public class AT_PeriodicReport {
 
 	private static class TestReport extends PeriodicReport {
 
-		public TestReport(ReportId reportId, ReportPeriod reportPeriod) {
-			super(reportId, reportPeriod);
+		public TestReport(ReportLabel reportLabel, ReportPeriod reportPeriod) {
+			super(reportLabel, reportPeriod);
 		}
 
 		@Override
@@ -46,8 +46,8 @@ public class AT_PeriodicReport {
 
 		private MutableInteger testCounter = new MutableInteger();
 
-		public DailyTestReport(ReportId reportId, ReportPeriod reportPeriod) {
-			super(reportId, reportPeriod);
+		public DailyTestReport(ReportLabel reportLabel, ReportPeriod reportPeriod) {
+			super(reportLabel, reportPeriod);
 			if (reportPeriod != ReportPeriod.DAILY) {
 				throw new RuntimeException("must be a daily report");
 			}
@@ -63,7 +63,7 @@ public class AT_PeriodicReport {
 
 			fillTimeFields(reportItemBuilder);
 
-			ReportItem reportItem = reportItemBuilder.setReportId(getReportId()).setReportHeader(reportHeader).build();
+			ReportItem reportItem = reportItemBuilder.setReportLabel(getReportLabel()).setReportHeader(reportHeader).build();
 
 			int dayValue = (int) FastMath.ceil(reportContext.getTime());
 			dayValue--;
@@ -83,8 +83,8 @@ public class AT_PeriodicReport {
 
 		private MutableInteger testCounter = new MutableInteger();
 
-		public HourlyTestReport(ReportId reportId, ReportPeriod reportPeriod) {
-			super(reportId, reportPeriod);
+		public HourlyTestReport(ReportLabel reportLabel, ReportPeriod reportPeriod) {
+			super(reportLabel, reportPeriod);
 			if (reportPeriod != ReportPeriod.HOURLY) {
 				throw new RuntimeException("must be an hourly report");
 			}
@@ -101,7 +101,7 @@ public class AT_PeriodicReport {
 
 			fillTimeFields(reportItemBuilder);
 
-			ReportItem reportItem = reportItemBuilder.setReportId(getReportId()).setReportHeader(reportHeader).build();
+			ReportItem reportItem = reportItemBuilder.setReportLabel(getReportLabel()).setReportHeader(reportHeader).build();
 			double time = reportContext.getTime();
 			double hourScaledTime = time * 24;
 			double closestHourTime = FastMath.floor(time * 24);
@@ -130,8 +130,8 @@ public class AT_PeriodicReport {
 		private MutableInteger flushCount = new MutableInteger();
 		private MutableDouble flushTime = new MutableDouble();
 
-		public EndOfSimulationTestReport(ReportId reportId, ReportPeriod reportPeriod) {
-			super(reportId, reportPeriod);
+		public EndOfSimulationTestReport(ReportLabel reportLabel, ReportPeriod reportPeriod) {
+			super(reportLabel, reportPeriod);
 			if (reportPeriod != ReportPeriod.END_OF_SIMULATION) {
 				throw new RuntimeException("must be an end of simulation report");
 			}
@@ -148,7 +148,7 @@ public class AT_PeriodicReport {
 			ReportItem.Builder reportItemBuilder = ReportItem.builder();
 			fillTimeFields(reportItemBuilder);
 
-			ReportItem reportItem = reportItemBuilder.setReportId(getReportId()).setReportHeader(reportHeader).build();
+			ReportItem reportItem = reportItemBuilder.setReportLabel(getReportLabel()).setReportHeader(reportHeader).build();
 
 			assertEquals(0, reportItem.size());
 		}
@@ -158,8 +158,8 @@ public class AT_PeriodicReport {
 	private static class InitTestReport extends PeriodicReport {
 		private List<Double> flushTimes = new ArrayList<>();
 
-		public InitTestReport(ReportId reportId, ReportPeriod reportPeriod) {
-			super(reportId, reportPeriod);
+		public InitTestReport(ReportLabel reportLabel, ReportPeriod reportPeriod) {
+			super(reportLabel, reportPeriod);
 		}
 
 		@Override
@@ -170,12 +170,12 @@ public class AT_PeriodicReport {
 	}
 
 	@Test
-	@UnitTestConstructor(target = PeriodicReport.class, args = { ReportId.class, ReportPeriod.class })
+	@UnitTestConstructor(target = PeriodicReport.class, args = { ReportLabel.class, ReportPeriod.class })
 	public void testConstructor() {
 		ContractException contractException = assertThrows(ContractException.class, () -> new TestReport(null, ReportPeriod.DAILY));
-		assertEquals(ReportError.NULL_REPORT_ID, contractException.getErrorType());
+		assertEquals(ReportError.NULL_REPORT_LABEL, contractException.getErrorType());
 
-		contractException = assertThrows(ContractException.class, () -> new TestReport(new SimpleReportId("report"), null));
+		contractException = assertThrows(ContractException.class, () -> new TestReport(new SimpleReportLabel("report"), null));
 		assertEquals(ReportError.NULL_REPORT_PERIOD, contractException.getErrorType());
 
 	}
@@ -186,9 +186,9 @@ public class AT_PeriodicReport {
 
 		ReportHeader.Builder reportHeaderBuilder = ReportHeader.builder();
 
-		ReportId reportId = new SimpleReportId("report");
+		ReportLabel reportLabel = new SimpleReportLabel("report");
 
-		TestReport testReport = new TestReport(reportId, ReportPeriod.HOURLY);
+		TestReport testReport = new TestReport(reportLabel, ReportPeriod.HOURLY);
 		testReport.addTimeFieldHeaders(reportHeaderBuilder);
 		ReportHeader reportHeader = reportHeaderBuilder.build();
 		List<String> headerStrings = reportHeader.getHeaderStrings();
@@ -196,14 +196,14 @@ public class AT_PeriodicReport {
 		assertEquals("day", headerStrings.get(0));
 		assertEquals("hour", headerStrings.get(1));
 
-		testReport = new TestReport(reportId, ReportPeriod.DAILY);
+		testReport = new TestReport(reportLabel, ReportPeriod.DAILY);
 		testReport.addTimeFieldHeaders(reportHeaderBuilder);
 		reportHeader = reportHeaderBuilder.build();
 		headerStrings = reportHeader.getHeaderStrings();
 		assertEquals(1, headerStrings.size());
 		assertEquals("day", headerStrings.get(0));
 
-		testReport = new TestReport(reportId, ReportPeriod.END_OF_SIMULATION);
+		testReport = new TestReport(reportLabel, ReportPeriod.END_OF_SIMULATION);
 		testReport.addTimeFieldHeaders(reportHeaderBuilder);
 		reportHeader = reportHeaderBuilder.build();
 		headerStrings = reportHeader.getHeaderStrings();
@@ -218,8 +218,8 @@ public class AT_PeriodicReport {
 
 		Simulation.Builder builder = Simulation.builder();
 
-		ReportId reportId = new SimpleReportId("report");
-		DailyTestReport dailyTestReport = new DailyTestReport(reportId, ReportPeriod.DAILY);
+		ReportLabel reportLabel = new SimpleReportLabel("report");
+		DailyTestReport dailyTestReport = new DailyTestReport(reportLabel, ReportPeriod.DAILY);
 		ReportsPluginData reportsInitialData = ReportsPluginData.builder().addReport(() -> {
 			return dailyTestReport::init;
 		}).build();
@@ -254,8 +254,8 @@ public class AT_PeriodicReport {
 
 		Simulation.Builder builder = Simulation.builder();
 
-		ReportId reportId = new SimpleReportId("report");
-		HourlyTestReport hourlyTestReport = new HourlyTestReport(reportId, ReportPeriod.HOURLY);
+		ReportLabel reportLabel = new SimpleReportLabel("report");
+		HourlyTestReport hourlyTestReport = new HourlyTestReport(reportLabel, ReportPeriod.HOURLY);
 		ReportsPluginData reportsInitialData = ReportsPluginData.builder().addReport(() -> {
 			return hourlyTestReport::init;
 		}).build();
@@ -290,8 +290,8 @@ public class AT_PeriodicReport {
 
 		Simulation.Builder builder = Simulation.builder();
 
-		ReportId reportId = new SimpleReportId("report");
-		EndOfSimulationTestReport endOfSimulationTestReport = new EndOfSimulationTestReport(reportId, ReportPeriod.END_OF_SIMULATION);
+		ReportLabel reportLabel = new SimpleReportLabel("report");
+		EndOfSimulationTestReport endOfSimulationTestReport = new EndOfSimulationTestReport(reportLabel, ReportPeriod.END_OF_SIMULATION);
 		ReportsPluginData reportsInitialData = ReportsPluginData.builder().addReport(() -> {
 			return endOfSimulationTestReport::init;
 		}).build();
@@ -335,8 +335,8 @@ public class AT_PeriodicReport {
 
 			Simulation.Builder builder = Simulation.builder();
 
-			ReportId reportId = new SimpleReportId("report");
-			InitTestReport initTestReport = new InitTestReport(reportId, reportPeriod);
+			ReportLabel reportLabel = new SimpleReportLabel("report");
+			InitTestReport initTestReport = new InitTestReport(reportLabel, reportPeriod);
 			ReportsPluginData reportsInitialData = ReportsPluginData.builder().addReport(() -> {
 				return initTestReport::init;
 			}).build();
@@ -407,13 +407,13 @@ public class AT_PeriodicReport {
 
 			// precondition tests
 
-			TestReport testReport = new TestReport(reportId, ReportPeriod.DAILY);
+			TestReport testReport = new TestReport(reportLabel, ReportPeriod.DAILY);
 			ContractException contractException = assertThrows(ContractException.class, () -> testReport.init(null));
 			assertEquals(ReportError.NULL_CONTEXT, contractException.getErrorType());
 		}
 
 		// precondition tests
-		TestReport testReport = new TestReport(new SimpleReportId("report"), ReportPeriod.DAILY);
+		TestReport testReport = new TestReport(new SimpleReportLabel("report"), ReportPeriod.DAILY);
 		ContractException contractException = assertThrows(ContractException.class, () -> testReport.init(null));
 		assertEquals(ReportError.NULL_CONTEXT, contractException.getErrorType());
 	}
