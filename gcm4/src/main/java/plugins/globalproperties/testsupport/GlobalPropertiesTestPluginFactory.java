@@ -58,12 +58,13 @@ public final class GlobalPropertiesTestPluginFactory {
 		}
 
 		/**
-		 * Method that will get the currently set PluginData for the GlobalProperties
-		 * and TestPlugins
-		 * and use the respective PluginData to build the Plugins
+		 * Returns a list of plugins containing a GlobalProperties and a Test Plugin
+		 * built from the contributed PluginDatas.
 		 * 
-		 * @return a List containing a GlobalPropertiesPlugin and a TestPlugin
-		 * 
+		 * <li>GlobalPropertiesPlugin is defaulted to one formed from
+		 * {@link GlobalPropertiesTestPluginFactory#getStandardGlobalPropertiesPluginData}
+		 * <li>TestPlugin is formed from the TestPluginData passed into
+		 * {@link GlobalPropertiesTestPluginFactory#factory}
 		 */
 		public List<Plugin> getPlugins() {
 			List<Plugin> pluginsToAdd = new ArrayList<>();
@@ -79,20 +80,14 @@ public final class GlobalPropertiesTestPluginFactory {
 		}
 
 		/**
-		 * Method to set the GlobalPropertiesPluginData in this Factory.
-		 * 
-		 * @param globalPropertiesPluginData the GlobalPropertiesPluginData you want to
-		 *                                   use, if different from the standard
-		 *                                   PluginData
-		 * 
-		 * @return an instance of this Factory
+		 * Sets the {@link GlobalPropertiesPluginData} in this Factory.
+		 * This explicit instance of pluginData will be used to create a
+		 * GlobalPropertiesPlugin
 		 * 
 		 * @throws ContractExecption
 		 *                           {@linkplain GlobalPropertiesError#NULL_GLOBAL_PLUGIN_DATA}
 		 *                           if the passed in pluginData is null
-		 * 
 		 */
-
 		public Factory setGlobalPropertiesPluginData(GlobalPropertiesPluginData globalPropertiesPluginData) {
 			if (globalPropertiesPluginData == null) {
 				throw new ContractException(GlobalPropertiesError.NULL_GLOBAL_PLUGIN_DATA);
@@ -103,40 +98,27 @@ public final class GlobalPropertiesTestPluginFactory {
 	}
 
 	/**
-	 * Creates a Factory that facilitates the creation of a minimal set of plugins
+	 * Returns a Factory that facilitates the creation of a minimal set of plugins
 	 * needed to adequately test the {@link GlobalPropertiesPlugin} by generating:
-	 * <p>
+	 * <ul>
+	 * <li>
 	 * {@link GlobalPropertiesPluginData}
-	 * <p>
-	 * either directly (by default)
-	 * <p>
-	 * (
-	 * <p>
-	 * {@link #getStandardGlobalPropertiesPluginData}
-	 * <p>
-	 * )
-	 * </p>
-	 * or explicitly set
-	 * <p>
-	 * (
-	 * <p>
+	 * </ul>
+	 * <li>either directly (by default) via
+	 * <ul>
+	 * <li>{@link #getStandardGlobalPropertiesPluginData}
+	 * </ul>
+	 * <li>or explicitly set via
+	 * <ul>
+	 * <li>
 	 * {@link Factory#setGlobalPropertiesPluginData}
-	 * <p>
-	 * )
-	 * </p>
-	 * 
-	 * via the
+	 * </ul>
+	 * <li>via the
 	 * {@link Factory#getPlugins()} method.
-	 * 
-	 * @param testPluginData PluginData that will be used to generate a TestPlugin
-	 * 
-	 * @return a new instance of Factory
 	 * 
 	 * @throws ContractExecption
 	 *                           {@linkplain NucleusError#NULL_PLUGIN_DATA}
 	 *                           if testPluginData is null
-	 * 
-	 * 
 	 */
 	public static Factory factory(TestPluginData testPluginData) {
 		if (testPluginData == null) {
@@ -146,40 +128,27 @@ public final class GlobalPropertiesTestPluginFactory {
 	}
 
 	/**
-	 * Creates a Factory that facilitates the creation of a minimal set of plugins
+	 * Returns a Factory that facilitates the creation of a minimal set of plugins
 	 * needed to adequately test the {@link GlobalPropertiesPlugin} by generating:
-	 * <p>
+	 * <ul>
+	 * <li>
 	 * {@link GlobalPropertiesPluginData}
-	 * <p>
-	 * either directly (by default)
-	 * <p>
-	 * (
-	 * <p>
-	 * {@link #getStandardGlobalPropertiesPluginData}
-	 * <p>
-	 * )
-	 * </p>
-	 * or explicitly set
-	 * <p>
-	 * (
-	 * <p>
+	 * </ul>
+	 * <li>either directly (by default) via
+	 * <ul>
+	 * <li>{@link #getStandardGlobalPropertiesPluginData}
+	 * </ul>
+	 * <li>or explicitly set via
+	 * <ul>
+	 * <li>
 	 * {@link Factory#setGlobalPropertiesPluginData}
-	 * <p>
-	 * )
-	 * </p>
-	 * 
-	 * via the
+	 * </ul>
+	 * <li>via the
 	 * {@link Factory#getPlugins()} method.
-	 * 
-	 * @param consumer consumer used to generate TestPluginData
-	 * 
-	 * @return a new instance of Factory
 	 * 
 	 * @throws ContractExecption
 	 *                           {@linkplain NucleusError#NULL_ACTOR_CONTEXT_CONSUMER}
 	 *                           if consumer is null
-	 * 
-	 * 
 	 */
 	public static Factory factory(Consumer<ActorContext> consumer) {
 		if (consumer == null) {
@@ -192,15 +161,15 @@ public final class GlobalPropertiesTestPluginFactory {
 	}
 
 	/**
-	 * Creates a Standardized GlobalPropertiesPluginData that is minimally adequate
+	 * Returns a Standardized GlobalPropertiesPluginData that is minimally adequate
 	 * for testing the GlobalPropertiesPlugin
-	 * <p>
-	 * The resulting GlobalPropertiesPluginData will include:
-	 * <li>Every globalPropertyId included in {@link TestGlobalPropertyId} along
-	 * with the defined propertyDefinition for each
-	 * 
-	 * @return the Standardized GlobalPropertiesPluginData
-	 * 
+	 * <li>The resulting GlobalPropertiesPluginData will include:
+	 * <ul>
+	 * <li>Every GlobalPropertyId included in {@link TestGlobalPropertyId}
+	 * <ul>
+	 * <li>with the defined propertyDefinition for each
+	 * </ul>
+	 * </ul>
 	 */
 	public static GlobalPropertiesPluginData getStandardGlobalPropertiesPluginData() {
 		GlobalPropertiesPluginData.Builder globalsPluginBuilder = GlobalPropertiesPluginData.builder();

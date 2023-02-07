@@ -20,13 +20,11 @@ import nucleus.Plugin;
 import nucleus.PluginData;
 import nucleus.PluginId;
 import nucleus.testsupport.testplugin.TestActorPlan;
-import nucleus.testsupport.testplugin.TestPlanDataManager;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestPluginId;
 import nucleus.testsupport.testplugin.TestSimulation;
 import plugins.globalproperties.GlobalPropertiesPluginData;
 import plugins.globalproperties.GlobalPropertiesPluginId;
-import plugins.globalproperties.datamanagers.GlobalPropertiesDataManager;
 import plugins.globalproperties.support.GlobalPropertiesError;
 import plugins.globalproperties.support.GlobalPropertyId;
 import plugins.globalproperties.support.SimpleGlobalPropertyId;
@@ -37,47 +35,13 @@ import util.wrappers.MutableBoolean;
 
 public class AT_GlobalPropertiesTestPluginFactory {
 
-	/**
-	 * Convience method to create a consumer to facilitate testing the factory
-	 * methods
-	 * {@link AT_GlobalPropertiesTestPluginFactory#testFactory_Consumer()}
-	 * and
-	 * {@link AT_GlobalPropertiesTestPluginFactory#testFactory_TestPluginData()}
-	 * 
-	 * <li>either for passing directly to
-	 * <li>{@link GlobalPropertiesTestPluginFactory#factory(long, Consumer)}
-	 * <li>or indirectly via creating a TestPluginData and passing it to
-	 * <li>{@link GlobalPropertiesTestPluginFactory#factory(long, TestPluginData)}
-	 * 
-	 * @param executed boolean to set once the consumer completes
-	 * @return the consumer
-	 * 
-	 */
-	private Consumer<ActorContext> factoryConsumer(MutableBoolean executed) {
-		return (c) -> {
-			/*
-			 * Show that the minimal plugins for the test are present by confirming that the
-			 * corresponding datamanger is not null.
-			 * Do not need to explicitly test the data associated with the datamanager, as
-			 * that will be tested in the 'getStandardizedXPluginData' tests below.
-			 */
-			GlobalPropertiesDataManager globalPropertiesDataManager = c
-					.getDataManager(GlobalPropertiesDataManager.class);
-			assertNotNull(globalPropertiesDataManager);
-
-			TestPlanDataManager testPlanDataManager = c.getDataManager(TestPlanDataManager.class);
-			assertNotNull(testPlanDataManager);
-
-			executed.setValue(true);
-		};
-	}
-
 	@Test
 	@UnitTestMethod(target = GlobalPropertiesTestPluginFactory.class, name = "factory", args = { Consumer.class })
 	public void testFactory_Consumer() {
 		MutableBoolean executed = new MutableBoolean();
 		TestSimulation
-				.executeSimulation(GlobalPropertiesTestPluginFactory.factory(factoryConsumer(executed)).getPlugins());
+				.executeSimulation(
+						GlobalPropertiesTestPluginFactory.factory(c -> executed.setValue(true)).getPlugins());
 		assertTrue(executed.getValue());
 
 		// precondition: consumer is null
@@ -92,7 +56,7 @@ public class AT_GlobalPropertiesTestPluginFactory {
 	public void testFactory_TestPluginData() {
 		MutableBoolean executed = new MutableBoolean();
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
-		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, factoryConsumer(executed)));
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, c -> executed.setValue(true)));
 		TestPluginData testPluginData = pluginBuilder.build();
 
 		TestSimulation.executeSimulation(GlobalPropertiesTestPluginFactory.factory(testPluginData).getPlugins());
@@ -106,33 +70,11 @@ public class AT_GlobalPropertiesTestPluginFactory {
 
 	}
 
-	@Test
-	@UnitTestMethod(target = GlobalPropertiesTestPluginFactory.Factory.class, name = "getPlugins", args = {})
-	public void testGetPlugins() {
-
-		List<Plugin> plugins = GlobalPropertiesTestPluginFactory.factory(t -> {
-		}).getPlugins();
-		assertEquals(2, plugins.size());
-
-		Plugin globalPropertiesPlugin = null;
-		Plugin testPlugin = null;
-
-		for (Plugin plugin : plugins) {
-			if (plugin.getPluginId().equals(GlobalPropertiesPluginId.PLUGIN_ID)) {
-				assertNull(globalPropertiesPlugin);
-				globalPropertiesPlugin = plugin;
-			}
-			if (plugin.getPluginId().equals(TestPluginId.PLUGIN_ID)) {
-				assertNull(testPlugin);
-				testPlugin = plugin;
-			}
-		}
-
-		assertNotNull(globalPropertiesPlugin);
-		assertNotNull(testPlugin);
-	}
-
-	private <T extends PluginData> void checkPlugins(List<Plugin> plugins, T expectedPluginData, PluginId pluginId) {
+	/*
+	 * Given a list of plugins, will show that the plugin with the given pluginId
+	 * exists, and exists EXACTLY once.
+	 */
+	private Plugin checkPluginExists(List<Plugin> plugins, PluginId pluginId) {
 		Plugin actualPlugin = null;
 		for (Plugin plugin : plugins) {
 			if (plugin.getPluginId().equals(pluginId)) {
@@ -142,11 +84,34 @@ public class AT_GlobalPropertiesTestPluginFactory {
 		}
 
 		assertNotNull(actualPlugin);
+
+		return actualPlugin;
+	}
+
+	/**
+	 * Given a list of plugins, will show that the explicit plugindata for the given
+	 * pluginid exists, and exists EXACTLY once.
+	 */
+	private <T extends PluginData> void checkPluginDataExists(List<Plugin> plugins, T expectedPluginData,
+			PluginId pluginId) {
+		Plugin actualPlugin = checkPluginExists(plugins, pluginId);
 		Set<PluginData> actualPluginDatas = actualPlugin.getPluginDatas();
 		assertNotNull(actualPluginDatas);
 		assertEquals(1, actualPluginDatas.size());
 		PluginData actualPluginData = actualPluginDatas.stream().toList().get(0);
 		assertTrue(expectedPluginData == actualPluginData);
+	}
+
+	@Test
+	@UnitTestMethod(target = GlobalPropertiesTestPluginFactory.Factory.class, name = "getPlugins", args = {})
+	public void testGetPlugins() {
+
+		List<Plugin> plugins = GlobalPropertiesTestPluginFactory.factory(t -> {
+		}).getPlugins();
+		assertEquals(2, plugins.size());
+
+		checkPluginExists(plugins, GlobalPropertiesPluginId.PLUGIN_ID);
+		checkPluginExists(plugins, TestPluginId.PLUGIN_ID);
 	}
 
 	@Test
@@ -173,7 +138,7 @@ public class AT_GlobalPropertiesTestPluginFactory {
 		List<Plugin> plugins = GlobalPropertiesTestPluginFactory.factory(t -> {
 		}).setGlobalPropertiesPluginData(globalPropertiesPluginData).getPlugins();
 
-		checkPlugins(plugins, globalPropertiesPluginData, GlobalPropertiesPluginId.PLUGIN_ID);
+		checkPluginDataExists(plugins, globalPropertiesPluginData, GlobalPropertiesPluginId.PLUGIN_ID);
 
 		// precondition: globalPropertiesPluginData is not null
 		ContractException contractException = assertThrows(ContractException.class,
@@ -191,8 +156,8 @@ public class AT_GlobalPropertiesTestPluginFactory {
 		Set<TestGlobalPropertyId> expectedPropertyIds = EnumSet.allOf(TestGlobalPropertyId.class);
 		assertFalse(expectedPropertyIds.isEmpty());
 
-		Set<GlobalPropertyId> globalPropertyIds = globalPropertiesPluginData.getGlobalPropertyIds();
-		assertEquals(expectedPropertyIds, globalPropertyIds);
+		Set<GlobalPropertyId> actualGlobalPropertyIds = globalPropertiesPluginData.getGlobalPropertyIds();
+		assertEquals(expectedPropertyIds, actualGlobalPropertyIds);
 
 		for (TestGlobalPropertyId testGlobalPropertyId : TestGlobalPropertyId.values()) {
 			PropertyDefinition expectedPropertyDefinition = testGlobalPropertyId.getPropertyDefinition();
