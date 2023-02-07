@@ -19,24 +19,42 @@ public class TestSimulation {
 
 	/**
 	 * Executes a simulation instance
-	 * 
-	 * @param pluginsToAdd   - a list of plugins to add to the simulation
-	 * @param outputConsumer - a consumer that will handle all output from the
-	 *                       simulation
-	 * 
 	 * @throws ContractException
 	 *                           <li>{@linkplain NucleusError#NULL_OUTPUT_HANDLER}
 	 *                           if outputConsumer is null</li>
-	 * @throws ContractException
 	 *                           <li>{@linkplain NucleusError#NULL_PLUGIN} if
 	 *                           pluginsToAdd is null</li>
 	 *                           <li>{@linkplain NucleusError#EMPTY_PLUGIN_LIST} if
 	 *                           pluginsToAdd is an empty list</li>
+	 *                           <li>{@linkplain NucleusError#NULL_PLUGIN} if
+	 *                           pluginsToAdd contains a null plugin</li>
 	 *                           <li>{@linkplain TestError#TEST_EXECUTION_FAILURE}
 	 *                           if the simulation does not complete
 	 *                           successfully</li>
 	 */
 	public static void executeSimulation(List<Plugin> pluginsToAdd, TestSimulationOutputConsumer outputConsumer) {
+		_executeSimulation(pluginsToAdd, outputConsumer);
+	}
+
+	/**
+	 * Executes a simulation instance
+	 *  
+	 * @throws ContractException
+	 *                           <li>{@linkplain NucleusError#NULL_PLUGIN} if
+	 *                           pluginsToAdd is null</li>
+	 *                           <li>{@linkplain NucleusError#EMPTY_PLUGIN_LIST} if
+	 *                           pluginsToAdd is an empty list</li>
+	 *                           <li>{@linkplain NucleusError#NULL_PLUGIN} if
+	 *                           pluginsToAdd contains a null plugin</li>
+	 *                           <li>{@linkplain TestError#TEST_EXECUTION_FAILURE}
+	 *                           if the simulation does not complete
+	 *                           successfully</li>
+	 */
+	public static void executeSimulation(List<Plugin> pluginsToAdd) {
+		_executeSimulation(pluginsToAdd, new TestSimulationOutputConsumer());
+	}
+
+	private static void _executeSimulation(List<Plugin> pluginsToAdd, TestSimulationOutputConsumer outputConsumer) {
 		if (outputConsumer == null) {
 			throw new ContractException(NucleusError.NULL_OUTPUT_HANDLER,
 					"Output consumer was not set. Either set it or call the other version of this method that doesn't take a outputConsumer as a parameter.");
@@ -47,34 +65,11 @@ public class TestSimulation {
 		if (pluginsToAdd.isEmpty()) {
 			throw new ContractException(NucleusError.EMPTY_PLUGIN_LIST);
 		}
-		_executeSimulation(pluginsToAdd, outputConsumer);
-	}
-
-	/**
-	 * Executes a simulation instance
-	 * 
-	 * @param pluginsToAdd - a list of plugins to add to the simulation
-	 * 
-	 * @throws ContractException
-	 *                           <li>{@linkplain NucleusError#NULL_PLUGIN} if
-	 *                           pluginsToAdd is null</li>
-	 *                           <li>{@linkplain NucleusError#EMPTY_PLUGIN_LIST} if
-	 *                           pluginsToAdd is an empty list</li>
-	 *                           <li>{@linkplain TestError#TEST_EXECUTION_FAILURE}
-	 *                           if the simulation does not complete
-	 *                           successfully</li>
-	 */
-	public static void executeSimulation(List<Plugin> pluginsToAdd) {
-		if (pluginsToAdd == null) {
-			throw new ContractException(NucleusError.NULL_PLUGIN);
+		for (Plugin plugin : pluginsToAdd) {
+			if (plugin == null) {
+				throw new ContractException(NucleusError.NULL_PLUGIN);
+			}
 		}
-		if (pluginsToAdd.isEmpty()) {
-			throw new ContractException(NucleusError.EMPTY_PLUGIN_LIST);
-		}
-		_executeSimulation(pluginsToAdd, new TestSimulationOutputConsumer());
-	}
-
-	private static void _executeSimulation(List<Plugin> pluginsToAdd, TestSimulationOutputConsumer outputConsumer) {
 		Builder builder = Simulation.builder();
 
 		for (Plugin plugin : pluginsToAdd) {
