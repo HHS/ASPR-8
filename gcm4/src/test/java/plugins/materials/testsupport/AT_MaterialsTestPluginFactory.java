@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
@@ -15,6 +16,8 @@ import java.util.function.Consumer;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
+import nucleus.ActorContext;
+import nucleus.NucleusError;
 import nucleus.Plugin;
 import nucleus.PluginData;
 import nucleus.PluginId;
@@ -44,6 +47,7 @@ import plugins.stochastics.testsupport.TestRandomGeneratorId;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.TimeTrackingPolicy;
 import tools.annotations.UnitTestMethod;
+import util.errors.ContractException;
 import util.random.RandomGeneratorProvider;
 import util.wrappers.MutableBoolean;
 
@@ -57,6 +61,12 @@ public class AT_MaterialsTestPluginFactory {
 		TestSimulation.executeSimulation(MaterialsTestPluginFactory
 				.factory(0, 0, 0, 3328026739613106739L, c -> executed.setValue(true)).getPlugins());
 		assertTrue(executed.getValue());
+
+		// precondition: consumer is null
+		Consumer<ActorContext> nullConsumer = null;
+		ContractException contractException = assertThrows(ContractException.class,
+				() -> MaterialsTestPluginFactory.factory(0, 0, 0, 0, nullConsumer));
+		assertEquals(NucleusError.NULL_ACTOR_CONTEXT_CONSUMER, contractException.getErrorType());
 	}
 
 	@Test
@@ -71,6 +81,12 @@ public class AT_MaterialsTestPluginFactory {
 		TestSimulation.executeSimulation(
 				MaterialsTestPluginFactory.factory(0, 0, 0, 7995349318419680542L, testPluginData).getPlugins());
 		assertTrue(executed.getValue());
+
+		// precondition: testPluginData is null
+		TestPluginData nullTestPluginData = null;
+		ContractException contractException = assertThrows(ContractException.class,
+				() -> MaterialsTestPluginFactory.factory(0, 0, 0, 0, nullTestPluginData));
+		assertEquals(NucleusError.NULL_PLUGIN_DATA, contractException.getErrorType());
 
 	}
 
