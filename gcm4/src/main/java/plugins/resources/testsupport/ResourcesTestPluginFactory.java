@@ -7,6 +7,7 @@ import java.util.function.Consumer;
 import org.apache.commons.math3.random.RandomGenerator;
 
 import nucleus.ActorContext;
+import nucleus.NucleusError;
 import nucleus.Plugin;
 import nucleus.PluginData;
 import nucleus.testsupport.testplugin.TestActorPlan;
@@ -15,15 +16,20 @@ import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestSimulation;
 import plugins.people.PeoplePlugin;
 import plugins.people.PeoplePluginData;
+import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
 import plugins.regions.RegionsPlugin;
 import plugins.regions.RegionsPluginData;
+import plugins.regions.support.RegionError;
 import plugins.regions.testsupport.TestRegionId;
 import plugins.resources.ResourcesPlugin;
 import plugins.resources.ResourcesPluginData;
+import plugins.resources.support.ResourceError;
 import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.StochasticsPluginData;
+import plugins.stochastics.support.StochasticsError;
 import plugins.util.properties.PropertyDefinition;
+import util.errors.ContractException;
 import util.random.RandomGeneratorProvider;
 
 /**
@@ -72,26 +78,29 @@ public class ResourcesTestPluginFactory {
 		}
 
 		/**
-		 * Method that will get the PluginData for the Resources, Regions,
-		 * People, Stochastic and
-		 * Test Plugins
-		 * and use the respective PluginData to build Plugins
+		 * Returns a list of plugins containing a Resources, People, Regions,
+		 * Stochastics and Test Plugin built from the contributed PluginDatas.
 		 * 
-		 * @return a List containing a ResourcesPlugin, PeoplePlugin,
-		 *         RegionsPlugin, StochasticsPlugin and
-		 *         a TestPlugin
-		 * 
+		 * <li>ResourcesPlugin is defaulted to one formed from
+		 * {@link ResourcesTestPluginFactory#getStandardResourcesPluginData}
+		 * <li>RegionsPlugin is defaulted to one formed from
+		 * {@link ResourcesTestPluginFactory#getStandardRegionsPluginData}
+		 * <li>PeoplePlugin is defaulted to one formed from
+		 * {@link ResourcesTestPluginFactory#getStandardPeoplePluginData}
+		 * <li>StocasticsPlugin is defaulted to one formed from
+		 * {@link ResourcesTestPluginFactory#getStandardStochasticsPluginData}
+		 * <li>TestPlugin is formed from the TestPluginData passed into
+		 * {@link ResourcesTestPluginFactory#factory}
 		 */
 		public List<Plugin> getPlugins() {
 			List<Plugin> pluginsToAdd = new ArrayList<>();
 
 			Plugin resourcesPlugin = ResourcesPlugin.getResourcesPlugin(this.data.resourcesPluginData);
-			// add the people plugin
+
 			Plugin peoplePlugin = PeoplePlugin.getPeoplePlugin(this.data.peoplePluginData);
 
 			Plugin regionsPlugin = RegionsPlugin.getRegionsPlugin(this.data.regionsPluginData);
 
-			// add the stochastics plugin
 			Plugin stochasticPlugin = StochasticsPlugin.getStochasticsPlugin(this.data.stochasticsPluginData);
 
 			Plugin testPlugin = TestPlugin.getTestPlugin(this.data.testPluginData);
@@ -106,55 +115,69 @@ public class ResourcesTestPluginFactory {
 		}
 
 		/**
-		 * Method to set the ResourcesPluginData in this Factory.
+		 * Sets the {@link ResourcesPluginData} in this Factory.
+		 * This explicit instance of pluginData will be used to create a
+		 * GroupsPlugin
 		 * 
-		 * @param resourcesPluginData the ResourcesPluginData you want to use, if
-		 *                            different
-		 *                            from the standard PluginData
-		 * @return an instance of this Factory
-		 * 
+		 * @throws ContractExecption
+		 *                           {@linkplain ResourceError#NULL_RESOURCE_PLUGIN_DATA}
+		 *                           if the passed in pluginData is null
 		 */
 		public Factory setResourcesPluginData(ResourcesPluginData resourcesPluginData) {
+			if (resourcesPluginData == null) {
+				throw new ContractException(ResourceError.NULL_RESOURCE_PLUGIN_DATA);
+			}
 			this.data.resourcesPluginData = resourcesPluginData;
 			return this;
 		}
 
 		/**
-		 * Method to set the PeoplePluginData in this Factory.
+		 * Sets the {@link PeoplePluginData} in this Factory.
+		 * This explicit instance of pluginData will be used to create a
+		 * GroupsPlugin
 		 * 
-		 * @param peoplePluginData the PeoplePluginData you want to use, if different
-		 *                         from the standard PluginData
-		 * @return an instance of this Factory
-		 * 
+		 * @throws ContractExecption
+		 *                           {@linkplain PersonError#NULL_PEOPLE_PLUGIN_DATA}
+		 *                           if the passed in pluginData is null
 		 */
 		public Factory setPeoplePluginData(PeoplePluginData peoplePluginData) {
+			if (peoplePluginData == null) {
+				throw new ContractException(PersonError.NULL_PEOPLE_PLUGIN_DATA);
+			}
 			this.data.peoplePluginData = peoplePluginData;
 			return this;
 		}
 
 		/**
-		 * Method to set the RegionsPluginData in this Factory.
+		 * Sets the {@link RegionsPluginData} in this Factory.
+		 * This explicit instance of pluginData will be used to create a
+		 * GroupsPlugin
 		 * 
-		 * @param regionsPluginData the RegionsPluginData you want to use, if different
-		 *                          from the standard PluginData
-		 * @return an instance of this Factory
-		 * 
+		 * @throws ContractExecption
+		 *                           {@linkplain RegionError#NULL_REGION_PLUGIN_DATA}
+		 *                           if the passed in pluginData is null
 		 */
 		public Factory setRegionsPluginData(RegionsPluginData regionsPluginData) {
+			if (regionsPluginData == null) {
+				throw new ContractException(RegionError.NULL_REGION_PLUGIN_DATA);
+			}
 			this.data.regionsPluginData = regionsPluginData;
 			return this;
 		}
 
 		/**
-		 * Method to set the StochasticsPluginData in this Factory.
+		 * Sets the {@link StochasticsPluginData} in this Factory.
+		 * This explicit instance of pluginData will be used to create a
+		 * GroupsPlugin
 		 * 
-		 * @param stochasticsPluginData the StochasticsPluginData you want to use, if
-		 *                              different
-		 *                              from the standard PluginData
-		 * @return an instance of this Factory
-		 * 
+		 * @throws ContractExecption
+		 *                           {@linkplain StochasticsError#NULL_STOCHASTICS_PLUGIN_DATA}
+		 *                           if the passed in pluginData is null
 		 */
 		public Factory setStochasticsPluginData(StochasticsPluginData stochasticsPluginData) {
+			if (stochasticsPluginData == null) {
+				throw new ContractException(StochasticsError.NULL_STOCHASTICS_PLUGIN_DATA);
+			}
 			this.data.stochasticsPluginData = stochasticsPluginData;
 			return this;
 		}
@@ -164,54 +187,64 @@ public class ResourcesTestPluginFactory {
 	/**
 	 * Creates a Factory that facilitates the creation of a minimal set of plugins
 	 * needed to adequately test the {@link ResourcesPlugin} by generating:
-	 * <p>
-	 * {@link ResourcesPluginData}
-	 * <p>
-	 * {@link RegionsPluginData}
-	 * <p>
-	 * {@link PeoplePluginData}
-	 * <p>
-	 * {@link StochasticsPluginData}
-	 * <p>
-	 * either directly (by default)
-	 * <p>
-	 * (
-	 * <p>
-	 * {@link #getStandardResourcesPluginData},
-	 * <p>
-	 * {@link #getStandardPeoplePluginData},
-	 * <p>
-	 * {@link #getStandardRegionsPluginData},
-	 * <p>
-	 * {@link #getStandardStochasticsPluginData}
-	 * <p>
-	 * )
-	 * </p>
-	 * or explicitly set
-	 * <p>
-	 * (
-	 * <p>
-	 * {@link Factory#setResourcesPluginData},
-	 * <p>
-	 * {@link Factory#setPeoplePluginData},
-	 * <p>
-	 * {@link Factory#setRegionsPluginData},
-	 * <p>
-	 * {@link Factory#setStochasticsPluginData}
-	 * <p>
-	 * )
-	 * </p>
+	 * <li>{@link ResourcesPluginData}, {@link RegionsPluginData},
+	 * {@link PeoplePluginData}, {@link StochasticsPluginData}
+	 * <li>either directly (by default) via
 	 * 
-	 * via the
+	 * <li>{@link #getStandardResourcesPluginData}
+	 * {@link #getStandardPeoplePluginData},
+	 * {@link #getStandardRegionsPluginData},
+	 * {@link #getStandardStochasticsPluginData}
+	 * 
+	 * <li>or explicitly set via
+	 * {@link Factory#setResourcesPluginData},
+	 * {@link Factory#setPeoplePluginData},
+	 * {@link Factory#setRegionsPluginData},
+	 * {@link Factory#setStochasticsPluginData}
+	 * 
+	 * <li>via the
 	 * {@link Factory#getPlugins()} method.
 	 * 
-	 * @param initialPopulation the initial number of people in the simulation
-	 * @param seed              used to seed a RandomGenerator
-	 * @param consumer          consumer to use to generate TestPluginData
-	 * @return a new instance of Factory
+	 * @throws ContractExecption
+	 *                           {@linkplain NucleusError#NULL_PLUGIN_DATA}
+	 *                           if testPluginData is null
+	 */
+	public static Factory factory(int initialPopulation, long seed, TestPluginData testPluginData) {
+		if (testPluginData == null) {
+			throw new ContractException(NucleusError.NULL_PLUGIN_DATA);
+		}
+		return new Factory(new Data(initialPopulation, seed, testPluginData));
+	}
+
+	/**
+	 * Creates a Factory that facilitates the creation of a minimal set of plugins
+	 * needed to adequately test the {@link ResourcesPlugin} by generating:
+	 * <li>{@link ResourcesPluginData}, {@link RegionsPluginData},
+	 * {@link PeoplePluginData}, {@link StochasticsPluginData}
+	 * <li>either directly (by default) via
 	 * 
+	 * <li>{@link #getStandardResourcesPluginData}
+	 * {@link #getStandardPeoplePluginData},
+	 * {@link #getStandardRegionsPluginData},
+	 * {@link #getStandardStochasticsPluginData}
+	 * 
+	 * <li>or explicitly set via
+	 * {@link Factory#setResourcesPluginData},
+	 * {@link Factory#setPeoplePluginData},
+	 * {@link Factory#setRegionsPluginData},
+	 * {@link Factory#setStochasticsPluginData}
+	 * 
+	 * <li>via the
+	 * {@link Factory#getPlugins()} method.
+	 * 
+	 * @throws ContractExecption
+	 *                           {@linkplain NucleusError#NULL_ACTOR_CONTEXT_CONSUMER}
+	 *                           if consumer is null
 	 */
 	public static Factory factory(int initialPopulation, long seed, Consumer<ActorContext> consumer) {
+		if (consumer == null) {
+			throw new ContractException(NucleusError.NULL_ACTOR_CONTEXT_CONSUMER);
+		}
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, consumer));
 		TestPluginData testPluginData = pluginBuilder.build();
@@ -219,68 +252,10 @@ public class ResourcesTestPluginFactory {
 	}
 
 	/**
-	 * Creates a Factory that facilitates the creation of a minimal set of plugins
-	 * needed to adequately test the {@link ResourcesPlugin} by generating:
-	 * <p>
-	 * {@link ResourcesPluginData}
-	 * <p>
-	 * {@link RegionsPluginData}
-	 * <p>
-	 * {@link PeoplePluginData}
-	 * <p>
-	 * {@link StochasticsPluginData}
-	 * <p>
-	 * either directly (by default)
-	 * <p>
-	 * (
-	 * <p>
-	 * {@link #getStandardResourcesPluginData},
-	 * <p>
-	 * {@link #getStandardPeoplePluginData},
-	 * <p>
-	 * {@link #getStandardRegionsPluginData},
-	 * <p>
-	 * {@link #getStandardStochasticsPluginData}
-	 * <p>
-	 * )
-	 * </p>
-	 * or explicitly set
-	 * <p>
-	 * (
-	 * <p>
-	 * {@link Factory#setResourcesPluginData},
-	 * <p>
-	 * {@link Factory#setPeoplePluginData},
-	 * <p>
-	 * {@link Factory#setRegionsPluginData},
-	 * <p>
-	 * {@link Factory#setStochasticsPluginData}
-	 * <p>
-	 * )
-	 * </p>
-	 * 
-	 * via the
-	 * {@link Factory#getPlugins()} method.
-	 * 
-	 * @param initialPopulation the initial population of the simulation
-	 * @param seed              used to seed a RandomGenerator
-	 * @param testPluginData    PluginData that will be used to generate a Test
-	 *                          Plugin
-	 * @return a new instance of Factory
-	 * 
-	 */
-	public static Factory factory(int initialPopulation, long seed, TestPluginData testPluginData) {
-		return new Factory(new Data(initialPopulation, seed, testPluginData));
-	}
-
-	/**
-	 * Method that will return a Standard PeoplePluginData based on some
-	 * configuration parameters.
-	 * 
-	 * @param initialPopulation how many people should be in the simulation at the
-	 *                          start
-	 * @return the resulting PeoplePluginData
-	 * 
+	 * Returns a standardized PeoplePluginData that is minimally adequate for
+	 * testing the ResourcesPlugin
+	 * <li>The resutling PeoplePluginData will include:
+	 * <li>A number of people equal to the value of initialPopulation
 	 */
 	public static PeoplePluginData getStandardPeoplePluginData(int initialPopulation) {
 		PeoplePluginData.Builder peopleBuilder = PeoplePluginData.builder();
@@ -292,13 +267,13 @@ public class ResourcesTestPluginFactory {
 	}
 
 	/**
-	 * Method that will return a Standard RegionsPluginData based on some
-	 * configuration parameters.
-	 * 
-	 * @param people a list of people that are in the simulation
-	 * @param seed   used to seed a Random Generator
-	 * @return the resulting RegionsPluginData
-	 * 
+	 * Returns a standardized RegionsPluginData that is minimally adequate for
+	 * testing the ResourcesPlugin
+	 * <li>The resulting RegionsPluginData will include:
+	 * <li>Every RegionId included in {@link TestRegionId}
+	 * <li>Every person passed in via people. Each person will be assigned a random
+	 * region based
+	 * on the passed in seed
 	 */
 	public static RegionsPluginData getStandardRegionsPluginData(List<PersonId> people, long seed) {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
@@ -316,6 +291,18 @@ public class ResourcesTestPluginFactory {
 
 	}
 
+	/**
+	 * Returns a standardized ResourcesPluginData that is minimally adequate for
+	 * testing the ResourcesPlugin
+	 * <li>The resulting ResourcesPluginData will include:
+	 * <li>Every ResourceId included in {@link TestResourceId} along with the
+	 * defined timeTrackingPolicy for each
+	 * <li>Every ResourcePropertyId included in {@link TestResourcePropertyId} along
+	 * with the defined propertyDefinition for each. Each Resource will have a
+	 * random property value assigned based on a RandomGenerator that is created
+	 * with the passed in seed
+	 * 
+	 */
 	public static ResourcesPluginData getStandardResourcesPluginData(long seed) {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
 
@@ -338,12 +325,11 @@ public class ResourcesTestPluginFactory {
 	}
 
 	/**
-	 * Method that will return a Standard StochasticsPluginData based on some
-	 * configuration parameters.
-	 * 
-	 * @param seed a seed to seed a RandomGenerator
-	 * @return the resulting StocasticsPluginData
-	 * 
+	 * Returns a standardized StochasticsPluginData that is minimally adequate for
+	 * testing the ResourcesPlugin
+	 * <li>The resulting StochasticsPluginData will include:
+	 * <li>a seed based on the nextLong of a RandomGenerator seeded from the
+	 * passed in seed
 	 */
 	public static StochasticsPluginData getStandardStochasticsPluginData(long seed) {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
