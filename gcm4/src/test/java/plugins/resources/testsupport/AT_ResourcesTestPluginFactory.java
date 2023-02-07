@@ -157,6 +157,7 @@ public class AT_ResourcesTestPluginFactory {
 	@UnitTestMethod(target = ResourcesTestPluginFactory.Factory.class, name = "setRegionsPluginData", args = {
 			RegionsPluginData.class })
 	public void testSetRegionsPluginData() {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(3415883014218424925L);
 		int initialPopulation = 30;
 		List<PersonId> people = new ArrayList<>();
 		for (int i = 0; i < initialPopulation; i++) {
@@ -172,6 +173,16 @@ public class AT_ResourcesTestPluginFactory {
 		for (TestRegionPropertyId testRegionPropertyId : TestRegionPropertyId.values()) {
 			regionPluginBuilder.defineRegionProperty(testRegionPropertyId,
 					testRegionPropertyId.getPropertyDefinition());
+		}
+
+		for (TestRegionId regionId : TestRegionId.values()) {
+			for (TestRegionPropertyId testRegionPropertyId : TestRegionPropertyId.values()) {
+				if (testRegionPropertyId.getPropertyDefinition().getDefaultValue().isEmpty()
+						|| randomGenerator.nextBoolean()) {
+					Object randomPropertyValue = testRegionPropertyId.getRandomPropertyValue(randomGenerator);
+					regionPluginBuilder.setRegionPropertyValue(regionId, testRegionPropertyId, randomPropertyValue);
+				}
+			}
 		}
 
 		TestRegionId testRegionId = TestRegionId.REGION_1;
