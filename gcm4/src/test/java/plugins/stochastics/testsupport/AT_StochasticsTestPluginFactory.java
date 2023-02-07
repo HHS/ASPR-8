@@ -26,6 +26,7 @@ import nucleus.testsupport.testplugin.TestSimulation;
 import plugins.stochastics.StochasticsPluginData;
 import plugins.stochastics.StochasticsPluginId;
 import plugins.stochastics.support.RandomNumberGeneratorId;
+import plugins.stochastics.support.StochasticsError;
 import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.wrappers.MutableBoolean;
@@ -126,6 +127,12 @@ public class AT_StochasticsTestPluginFactory {
 		}).setStochasticsPluginData(stochasticsPluginData).getPlugins();
 
 		checkPluginDataExists(plugins, stochasticsPluginData, StochasticsPluginId.PLUGIN_ID);
+
+		// precondition: stochasticsPluginData is not null
+		ContractException contractException = assertThrows(ContractException.class,
+				() -> StochasticsTestPluginFactory.factory(5433603767451466687L, t -> {
+				}).setStochasticsPluginData(null));
+		assertEquals(StochasticsError.NULL_STOCHASTICS_PLUGIN_DATA, contractException.getErrorType());
 	}
 
 	@Test

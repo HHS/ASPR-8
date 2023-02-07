@@ -23,9 +23,11 @@ import nucleus.testsupport.testplugin.TestPluginId;
 import nucleus.testsupport.testplugin.TestSimulation;
 import plugins.people.PeoplePluginData;
 import plugins.people.PeoplePluginId;
+import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
 import plugins.stochastics.StochasticsPluginData;
 import plugins.stochastics.StochasticsPluginId;
+import plugins.stochastics.support.StochasticsError;
 import plugins.stochastics.testsupport.TestRandomGeneratorId;
 import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
@@ -134,6 +136,14 @@ public class AT_PeopleTestPluginFactory {
 				.getPlugins();
 
 		checkPluginDataExists(plugins, peoplePluginData, PeoplePluginId.PLUGIN_ID);
+
+		// precondition: peoplePluginData is not null
+		ContractException contractException = assertThrows(ContractException.class,
+				() -> PeopleTestPluginFactory
+						.factory(0, t -> {
+						})
+						.setPeoplePluginData(null));
+		assertEquals(PersonError.NULL_PEOPLE_PLUGIN_DATA, contractException.getErrorType());
 	}
 
 	@Test
@@ -153,6 +163,14 @@ public class AT_PeopleTestPluginFactory {
 				.getPlugins();
 
 		checkPluginDataExists(plugins, stochasticsPluginData, StochasticsPluginId.PLUGIN_ID);
+
+		// precondition: stochasticsPluginData is not null
+		ContractException contractException = assertThrows(ContractException.class,
+				() -> PeopleTestPluginFactory
+						.factory(0, t -> {
+						})
+						.setStochasticsPluginData(null));
+		assertEquals(StochasticsError.NULL_STOCHASTICS_PLUGIN_DATA, contractException.getErrorType());
 	}
 
 	@Test

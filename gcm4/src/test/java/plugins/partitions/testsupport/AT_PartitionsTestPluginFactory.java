@@ -26,15 +26,19 @@ import nucleus.testsupport.testplugin.TestSimulation;
 import plugins.materials.MaterialsPluginId;
 import plugins.partitions.PartitionsPlugin;
 import plugins.partitions.PartitionsPluginId;
+import plugins.partitions.support.PartitionError;
 import plugins.partitions.testsupport.attributes.AttributesPluginData;
 import plugins.partitions.testsupport.attributes.AttributesPluginId;
+import plugins.partitions.testsupport.attributes.support.AttributeError;
 import plugins.partitions.testsupport.attributes.support.AttributeId;
 import plugins.partitions.testsupport.attributes.support.TestAttributeId;
 import plugins.people.PeoplePluginData;
 import plugins.people.PeoplePluginId;
+import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
 import plugins.stochastics.StochasticsPluginData;
 import plugins.stochastics.StochasticsPluginId;
+import plugins.stochastics.support.StochasticsError;
 import plugins.stochastics.testsupport.TestRandomGeneratorId;
 import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
@@ -142,6 +146,11 @@ public class AT_PartitionsTestPluginFactory {
 
 		checkPluginDataExists(plugins, attributesPluginData, AttributesPluginId.PLUGIN_ID);
 
+		// precondition: attributesPluginData is not null
+		ContractException contractException = assertThrows(ContractException.class,
+				() -> PartitionsTestPluginFactory.factory(0, 0, t -> {
+				}).setAttributesPluginData(null));
+		assertEquals(AttributeError.NULL_ATTRIBUTES_PLUGIN_DATA, contractException.getErrorType());
 	}
 
 	@Test
@@ -157,6 +166,11 @@ public class AT_PartitionsTestPluginFactory {
 		Plugin actualPlugin = checkPluginExists(plugins, PartitionsPluginId.PLUGIN_ID);
 		assertTrue(partitionsPlugin == actualPlugin);
 
+		// precondition: partitionsPlugin is not null
+		ContractException contractException = assertThrows(ContractException.class,
+				() -> PartitionsTestPluginFactory.factory(0, 0, t -> {
+				}).setPartitionsPlugin(null));
+		assertEquals(PartitionError.NULL_PARTITION_PLUGIN, contractException.getErrorType());
 	}
 
 	@Test
@@ -176,6 +190,11 @@ public class AT_PartitionsTestPluginFactory {
 
 		checkPluginDataExists(plugins, peoplePluginData, PeoplePluginId.PLUGIN_ID);
 
+		// precondition: peoplePluginData is not null
+		ContractException contractException = assertThrows(ContractException.class,
+				() -> PartitionsTestPluginFactory.factory(0, 0, t -> {
+				}).setPeoplePluginData(null));
+		assertEquals(PersonError.NULL_PEOPLE_PLUGIN_DATA, contractException.getErrorType());
 	}
 
 	@Test
@@ -192,6 +211,12 @@ public class AT_PartitionsTestPluginFactory {
 		}).setStochasticsPluginData(stochasticsPluginData).getPlugins();
 
 		checkPluginDataExists(plugins, stochasticsPluginData, StochasticsPluginId.PLUGIN_ID);
+
+		// precondition: stochasticsPluginData is not null
+		ContractException contractException = assertThrows(ContractException.class,
+				() -> PartitionsTestPluginFactory.factory(0, 0, t -> {
+				}).setStochasticsPluginData(null));
+		assertEquals(StochasticsError.NULL_STOCHASTICS_PLUGIN_DATA, contractException.getErrorType());
 	}
 
 	@Test

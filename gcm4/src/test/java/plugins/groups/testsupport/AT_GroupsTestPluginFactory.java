@@ -30,14 +30,17 @@ import nucleus.testsupport.testplugin.TestPluginId;
 import nucleus.testsupport.testplugin.TestSimulation;
 import plugins.groups.GroupsPluginData;
 import plugins.groups.GroupsPluginId;
+import plugins.groups.support.GroupError;
 import plugins.groups.support.GroupId;
 import plugins.groups.support.GroupPropertyValue;
 import plugins.groups.support.GroupTypeId;
 import plugins.people.PeoplePluginData;
 import plugins.people.PeoplePluginId;
+import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
 import plugins.stochastics.StochasticsPluginData;
 import plugins.stochastics.StochasticsPluginId;
+import plugins.stochastics.support.StochasticsError;
 import plugins.stochastics.testsupport.TestRandomGeneratorId;
 import plugins.util.properties.PropertyDefinition;
 import tools.annotations.UnitTestMethod;
@@ -77,7 +80,7 @@ public class AT_GroupsTestPluginFactory {
 		TestSimulation.executeSimulation(
 				GroupsTestPluginFactory.factory(100, 3, 5, 1937810385546394605L, testPluginData).getPlugins());
 		assertTrue(executed.getValue());
-		
+
 		// precondition: testPluginData is null
 		TestPluginData nullTestPluginData = null;
 		ContractException contractException = assertThrows(ContractException.class,
@@ -151,6 +154,14 @@ public class AT_GroupsTestPluginFactory {
 				.getPlugins();
 
 		checkPluginDataExists(plugins, groupsPluginData, GroupsPluginId.PLUGIN_ID);
+
+		// precondition: groupsPluginData is not null
+		ContractException contractException = assertThrows(ContractException.class,
+				() -> GroupsTestPluginFactory
+						.factory(0, 0, 0, 0, t -> {
+						})
+						.setGroupsPluginData(null));
+		assertEquals(GroupError.NULL_GROUP_PLUGIN_DATA, contractException.getErrorType());
 	}
 
 	@Test
@@ -172,6 +183,14 @@ public class AT_GroupsTestPluginFactory {
 				.getPlugins();
 
 		checkPluginDataExists(plugins, peoplePluginData, PeoplePluginId.PLUGIN_ID);
+
+		// precondition: peoplePluginData is not null
+		ContractException contractException = assertThrows(ContractException.class,
+				() -> GroupsTestPluginFactory
+						.factory(0, 0, 0, 0, t -> {
+						})
+						.setPeoplePluginData(null));
+		assertEquals(PersonError.NULL_PEOPLE_PLUGIN_DATA, contractException.getErrorType());
 	}
 
 	@Test
@@ -191,6 +210,14 @@ public class AT_GroupsTestPluginFactory {
 				.getPlugins();
 
 		checkPluginDataExists(plugins, stochasticsPluginData, StochasticsPluginId.PLUGIN_ID);
+
+		// precondition: stochasticsPluginData is not null
+		ContractException contractException = assertThrows(ContractException.class,
+				() -> GroupsTestPluginFactory
+						.factory(0, 0, 0, 0, t -> {
+						})
+						.setStochasticsPluginData(null));
+		assertEquals(StochasticsError.NULL_STOCHASTICS_PLUGIN_DATA, contractException.getErrorType());
 	}
 
 	@Test

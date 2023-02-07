@@ -33,24 +33,29 @@ import plugins.materials.MaterialsPluginId;
 import plugins.materials.support.BatchId;
 import plugins.materials.support.BatchPropertyId;
 import plugins.materials.support.MaterialId;
+import plugins.materials.support.MaterialsError;
 import plugins.materials.support.MaterialsProducerId;
 import plugins.materials.support.MaterialsProducerPropertyId;
 import plugins.materials.support.StageId;
 import plugins.people.PeoplePluginData;
 import plugins.people.PeoplePluginId;
+import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
 import plugins.regions.RegionsPluginData;
 import plugins.regions.RegionsPluginId;
+import plugins.regions.support.RegionError;
 import plugins.regions.support.RegionId;
 import plugins.regions.testsupport.TestRegionId;
 import plugins.regions.testsupport.TestRegionPropertyId;
 import plugins.resources.ResourcesPluginData;
 import plugins.resources.ResourcesPluginId;
+import plugins.resources.support.ResourceError;
 import plugins.resources.support.ResourceId;
 import plugins.resources.testsupport.TestResourceId;
 import plugins.resources.testsupport.TestResourcePropertyId;
 import plugins.stochastics.StochasticsPluginData;
 import plugins.stochastics.StochasticsPluginId;
+import plugins.stochastics.support.StochasticsError;
 import plugins.stochastics.testsupport.TestRandomGeneratorId;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.TimeTrackingPolicy;
@@ -190,6 +195,12 @@ public class AT_MaterialsTestPluginFactory {
 
 		checkPluginDataExists(plugins, materialsPluginData, MaterialsPluginId.PLUGIN_ID);
 
+		// precondition: materialsPluginData is not null
+		ContractException contractException = assertThrows(ContractException.class,
+				() -> MaterialsTestPluginFactory.factory(0, 0, 0, 0, t -> {
+				}).setMaterialsPluginData(null));
+		assertEquals(MaterialsError.NULL_MATERIALS_PLUGIN_DATA, contractException.getErrorType());
+
 	}
 
 	@Test
@@ -205,6 +216,11 @@ public class AT_MaterialsTestPluginFactory {
 
 		checkPluginDataExists(plugins, resourcesPluginData, ResourcesPluginId.PLUGIN_ID);
 
+		// precondition: resourcesPluginData is not null
+		ContractException contractException = assertThrows(ContractException.class,
+				() -> MaterialsTestPluginFactory.factory(0, 0, 0, 0, t -> {
+				}).setResourcesPluginData(null));
+		assertEquals(ResourceError.NULL_RESOURCE_PLUGIN_DATA, contractException.getErrorType());
 	}
 
 	@Test
@@ -253,6 +269,11 @@ public class AT_MaterialsTestPluginFactory {
 
 		checkPluginDataExists(plugins, regionsPluginData, RegionsPluginId.PLUGIN_ID);
 
+		// precondition: regionsPluginData is not null
+		ContractException contractException = assertThrows(ContractException.class,
+				() -> MaterialsTestPluginFactory.factory(0, 0, 0, 0, t -> {
+				}).setRegionsPluginData(null));
+		assertEquals(RegionError.NULL_REGION_PLUGIN_DATA, contractException.getErrorType());
 	}
 
 	@Test
@@ -271,7 +292,12 @@ public class AT_MaterialsTestPluginFactory {
 		}).setPeoplePluginData(peoplePluginData).getPlugins();
 
 		checkPluginDataExists(plugins, peoplePluginData, PeoplePluginId.PLUGIN_ID);
-
+		
+		// precondition: peoplePluginData is not null
+		ContractException contractException = assertThrows(ContractException.class,
+				() -> MaterialsTestPluginFactory.factory(0, 0, 0, 0, t -> {
+				}).setPeoplePluginData(null));
+		assertEquals(PersonError.NULL_PEOPLE_PLUGIN_DATA, contractException.getErrorType());
 	}
 
 	@Test
@@ -288,6 +314,12 @@ public class AT_MaterialsTestPluginFactory {
 		}).setStochasticsPluginData(stochasticsPluginData).getPlugins();
 
 		checkPluginDataExists(plugins, stochasticsPluginData, StochasticsPluginId.PLUGIN_ID);
+
+		// precondition: stochasticsPluginData is not null
+		ContractException contractException = assertThrows(ContractException.class,
+				() -> MaterialsTestPluginFactory.factory(0, 0, 0, 0, t -> {
+				}).setStochasticsPluginData(null));
+		assertEquals(StochasticsError.NULL_STOCHASTICS_PLUGIN_DATA, contractException.getErrorType());
 	}
 
 	@Test
