@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -1281,6 +1282,67 @@ public final class AT_PersonPropertyDataManager {
 			return true;
 		}
 
+	}
+
+	@Test
+	@UnitTestMethod(target = PersonPropertiesDataManager.class, name = "getEventFilterForPersonPropertyUpdateEvent", args = { PersonPropertyId.class, Object.class, boolean.class })
+	public void testGetEventFilterForPersonPropertyUpdateEvent_propertyId_object() {
+
+		Set<MultiKey> expectedObservations = new LinkedHashSet<>();
+		Set<MultiKey> actualObservations = new LinkedHashSet<>();
+
+		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+
+		TestPersonPropertyId personPropertyId = TestPersonPropertyId.PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK;
+
+		// set the person property to 2, 3 , 4, or 5
+		// subscribe only to 2 and 3
+
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
+			// subscribe to values 2 and 3
+			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
+			EventFilter<PersonPropertyUpdateEvent> eventFilter = personPropertiesDataManager.getEventFilterForPersonPropertyUpdateEvent(personPropertyId, 2, true);
+			c.subscribe(eventFilter, (c2, e) -> {
+				MultiKey multiKey = new MultiKey(c.getTime(), e.personId(),e.personPropertyId(), e.getCurrentPropertyValue());
+				actualObservations.add(multiKey);
+			});
+
+			eventFilter = personPropertiesDataManager.getEventFilterForPersonPropertyUpdateEvent(personPropertyId, 3, true);
+			c.subscribe(eventFilter, (c2, e) -> {
+				MultiKey multiKey = new MultiKey(c.getTime(), e.personId(),e.personPropertyId(), e.getCurrentPropertyValue());
+				actualObservations.add(multiKey);
+			});
+
+		}));
+
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
+			// set a bunch of values
+			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			int[] values = new int[] {2,3,4,5};
+			int index = 0;
+			for (PersonId personId : peopleDataManager.getPeople()) {
+				int value = values[index++%4];
+				personPropertiesDataManager.setPersonPropertyValue(personId, personPropertyId, value);
+				if(value == 2 || value == 3) {
+					MultiKey multiKey = new MultiKey(c.getTime(), personId,personPropertyId, value);
+					expectedObservations.add(multiKey);
+				}
+			}
+		}));
+
+		// show that we only get the subscribed events
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(2, (c) -> {				
+			assertEquals(expectedObservations, actualObservations);
+		}));
+
+		// run the sim with 50 people
+
+		TestPluginData testPluginData = pluginBuilder.build();
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+
+		PersonPropertiesActionSupport.testConsumers(50, 7298392363960886874L, testPlugin);
+		
 	}
 
 	@Test
