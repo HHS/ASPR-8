@@ -87,7 +87,7 @@ public class ResourcesTestPluginFactory {
 		 * {@link ResourcesTestPluginFactory#getStandardRegionsPluginData}
 		 * <li>PeoplePlugin is defaulted to one formed from
 		 * {@link ResourcesTestPluginFactory#getStandardPeoplePluginData}
-		 * <li>StocasticsPlugin is defaulted to one formed from
+		 * <li>StochasticsPlugin is defaulted to one formed from
 		 * {@link ResourcesTestPluginFactory#getStandardStochasticsPluginData}
 		 * <li>TestPlugin is formed from the TestPluginData passed into
 		 * {@link ResourcesTestPluginFactory#factory}

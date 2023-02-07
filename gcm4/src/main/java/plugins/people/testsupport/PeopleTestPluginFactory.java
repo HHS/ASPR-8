@@ -71,7 +71,7 @@ public class PeopleTestPluginFactory {
 		 * 
 		 * <li>PeoplePlugin is defaulted to one formed from
 		 * {@link PeopleTestPluginFactory#getStandardPeoplePluginData}
-		 * <li>StocasticsPlugin is defaulted to one formed from
+		 * <li>StochasticsPlugin is defaulted to one formed from
 		 * {@link PeopleTestPluginFactory#getStandardStochasticsPluginData}
 		 * <li>TestPlugin is formed from the TestPluginData passed into
 		 * {@link PeopleTestPluginFactory#factory}
@@ -100,7 +100,6 @@ public class PeopleTestPluginFactory {
 		 * @throws ContractExecption
 		 *                           {@linkplain PersonError#NULL_PEOPLE_PLUGIN_DATA}
 		 *                           if the passed in pluginData is null
-		 * 
 		 */
 		public Factory setPeoplePluginData(PeoplePluginData peoplePluginData) {
 			if (peoplePluginData == null) {
@@ -118,7 +117,6 @@ public class PeopleTestPluginFactory {
 		 * @throws ContractExecption
 		 *                           {@linkplain StochasticsError#NULL_STOCHASTICS_PLUGIN_DATA}
 		 *                           if the passed in pluginData is null
-		 * 
 		 */
 		public Factory setStochasticsPluginData(StochasticsPluginData stochasticsPluginData) {
 			if (stochasticsPluginData == null) {
@@ -199,7 +197,7 @@ public class PeopleTestPluginFactory {
 
 	/**
 	 * Returns a standardized StochasticsPluginData that is minimally adequate for
-	 * testing the ResourcesPlugin
+	 * testing the PeoplePlugin
 	 * <li>The resulting StochasticsPluginData will include:
 	 * <li>a seed based on the nextLong of a RandomGenerator seeded from the
 	 * passed in seed

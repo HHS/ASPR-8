@@ -91,7 +91,7 @@ public final class GroupsTestPluginFactory {
 		 * {@link GroupsTestPluginFactory#getStandardGroupsPluginData}
 		 * <li>PeoplePlugin is defaulted to one formed from
 		 * {@link GroupsTestPluginFactory#getStandardPeoplePluginData}
-		 * <li>StocasticsPlugin is defaulted to one formed from
+		 * <li>StochasticsPlugin is defaulted to one formed from
 		 * {@link GroupsTestPluginFactory#getStandardStochasticsPluginData}
 		 * <li>TestPlugin is formed from the TestPluginData passed into
 		 * {@link GroupsTestPluginFactory#factory}
@@ -303,7 +303,7 @@ public final class GroupsTestPluginFactory {
 
 	/**
 	 * Returns a standardized StochasticsPluginData that is minimally adequate for
-	 * testing the ResourcesPlugin
+	 * testing the GroupsPlugin
 	 * <li>The resulting StochasticsPluginData will include:
 	 * <li>a seed based on the nextLong of a RandomGenerator seeded from the
 	 * passed in seed

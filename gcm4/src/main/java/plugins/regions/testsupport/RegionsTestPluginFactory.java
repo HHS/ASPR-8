@@ -83,7 +83,7 @@ public final class RegionsTestPluginFactory {
 		 * {@link RegionsTestPluginFactory#getStandardRegionsPluginData}
 		 * <li>PeoplePlugin is defaulted to one formed from
 		 * {@link RegionsTestPluginFactory#getStandardPeoplePluginData}
-		 * <li>StocasticsPlugin is defaulted to one formed from
+		 * <li>StochasticsPlugin is defaulted to one formed from
 		 * {@link RegionsTestPluginFactory#getStandardStochasticsPluginData}
 		 * <li>TestPlugin is formed from the TestPluginData passed into
 		 * {@link RegionsTestPluginFactory#factory}
@@ -110,12 +110,11 @@ public final class RegionsTestPluginFactory {
 		/**
 		 * Sets the {@link PeoplePluginData} in this Factory.
 		 * This explicit instance of pluginData will be used to create a
-		 * GroupsPlugin
+		 * PeoplePlugin
 		 * 
 		 * @throws ContractExecption
 		 *                           {@linkplain PersonError#NULL_PEOPLE_PLUGIN_DATA}
 		 *                           if the passed in pluginData is null
-		 * 
 		 */
 		public Factory setPeoplePluginData(PeoplePluginData peoplePluginData) {
 			if (peoplePluginData == null) {
@@ -128,12 +127,11 @@ public final class RegionsTestPluginFactory {
 		/**
 		 * Sets the {@link RegionsPluginData} in this Factory.
 		 * This explicit instance of pluginData will be used to create a
-		 * GroupsPlugin
+		 * RegionsPlugin
 		 * 
 		 * @throws ContractExecption
 		 *                           {@linkplain RegionError#NULL_REGION_PLUGIN_DATA}
 		 *                           if the passed in pluginData is null
-		 * 
 		 */
 		public Factory setRegionsPluginData(RegionsPluginData regionsPluginData) {
 			if (regionsPluginData == null) {
@@ -146,12 +144,11 @@ public final class RegionsTestPluginFactory {
 		/**
 		 * Sets the {@link StochasticsPluginData} in this Factory.
 		 * This explicit instance of pluginData will be used to create a
-		 * GroupsPlugin
+		 * StochasticsPlugin
 		 * 
 		 * @throws ContractExecption
 		 *                           {@linkplain StochasticsError#NULL_STOCHASTICS_PLUGIN_DATA}
 		 *                           if the passed in pluginData is null
-		 * 
 		 */
 		public Factory setStochasticsPluginData(StochasticsPluginData stochasticsPluginData) {
 			if (stochasticsPluginData == null) {

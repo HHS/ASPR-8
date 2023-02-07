@@ -90,7 +90,7 @@ public class PersonPropertiesTestPluginFactory {
 		 * {@link PersonPropertiesTestPluginFactory#getStandardRegionsPluginData}
 		 * <li>PeoplePlugin is defaulted to one formed from
 		 * {@link PersonPropertiesTestPluginFactory#getStandardPeoplePluginData}
-		 * <li>StocasticsPlugin is defaulted to one formed from
+		 * <li>StochasticsPlugin is defaulted to one formed from
 		 * {@link PersonPropertiesTestPluginFactory#getStandardStochasticsPluginData}
 		 * <li>TestPlugin is formed from the TestPluginData passed into
 		 * {@link PersonPropertiesTestPluginFactory#factory}
@@ -126,7 +126,6 @@ public class PersonPropertiesTestPluginFactory {
 		 * @throws ContractExecption
 		 *                           {@linkplain PersonPropertyError#NULL_PERSON_PROPERTY_PLUGN_DATA}
 		 *                           if the passed in pluginData is null
-		 * 
 		 */
 		public Factory setPersonPropertiesPluginData(PersonPropertiesPluginData personPropertiesPluginData) {
 			if (personPropertiesPluginData == null) {
@@ -144,7 +143,6 @@ public class PersonPropertiesTestPluginFactory {
 		 * @throws ContractExecption
 		 *                           {@linkplain PersonError#NULL_PEOPLE_PLUGIN_DATA}
 		 *                           if the passed in pluginData is null
-		 * 
 		 */
 		public Factory setPeoplePluginData(PeoplePluginData peoplePluginData) {
 			if (peoplePluginData == null) {
@@ -162,7 +160,6 @@ public class PersonPropertiesTestPluginFactory {
 		 * @throws ContractExecption
 		 *                           {@linkplain RegionError#NULL_REGION_PLUGIN_DATA}
 		 *                           if the passed in pluginData is null
-		 * 
 		 */
 		public Factory setRegionsPluginData(RegionsPluginData regionsPluginData) {
 			if (regionsPluginData == null) {
@@ -180,7 +177,6 @@ public class PersonPropertiesTestPluginFactory {
 		 * @throws ContractExecption
 		 *                           {@linkplain StochasticsError#NULL_STOCHASTICS_PLUGIN_DATA}
 		 *                           if the passed in pluginData is null
-		 * 
 		 */
 		public Factory setStochasticsPluginData(StochasticsPluginData stochasticsPluginData) {
 			if (stochasticsPluginData == null) {

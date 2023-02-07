@@ -60,7 +60,7 @@ public class StochasticsTestPluginFactory {
 		 * Returns a list of plugins containing a Stochastics and Test Plugin built from
 		 * the contributed PluginDatas.
 		 * 
-		 * <li>StocasticsPlugin is defaulted to one formed from
+		 * <li>StochasticsPlugin is defaulted to one formed from
 		 * {@link StochasticsTestPluginFactory#getStandardStochasticsPluginData}
 		 * <li>TestPlugin is formed from the TestPluginData passed into
 		 * {@link StochasticsTestPluginFactory#factory}
@@ -82,12 +82,11 @@ public class StochasticsTestPluginFactory {
 		/**
 		 * Sets the {@link StochasticsPluginData} in this Factory.
 		 * This explicit instance of pluginData will be used to create a
-		 * GroupsPlugin
+		 * StochasticsPlugin
 		 * 
 		 * @throws ContractExecption
 		 *                           {@linkplain StochasticsError#NULL_STOCHASTICS_PLUGIN_DATA}
 		 *                           if the passed in pluginData is null
-		 * 
 		 */
 		public Factory setStochasticsPluginData(StochasticsPluginData stochasticsPluginData) {
 			if (stochasticsPluginData == null) {
@@ -101,7 +100,7 @@ public class StochasticsTestPluginFactory {
 
 	/**
 	 * Creates a Factory that facilitates the creation of a minimal set of plugins
-	 * needed to adequately test the {@link StocasticsPlugin} by generating:
+	 * needed to adequately test the {@link StochasticsPlugin} by generating:
 	 * <li>{@link StochasticsPluginData}
 	 * 
 	 * <li>either directly (by default) via
@@ -126,7 +125,7 @@ public class StochasticsTestPluginFactory {
 
 	/**
 	 * Creates a Factory that facilitates the creation of a minimal set of plugins
-	 * needed to adequately test the {@link StocasticsPlugin} by generating:
+	 * needed to adequately test the {@link StochasticsPlugin} by generating:
 	 * <li>{@link StochasticsPluginData}
 	 * 
 	 * <li>either directly (by default) via
@@ -153,7 +152,7 @@ public class StochasticsTestPluginFactory {
 
 	/**
 	 * Creates a Standardized StocasticsPluginData that is minimally adequate for
-	 * testing the StocasticsPlugin.
+	 * testing the StochasticsPlugin.
 	 * <li>The resulting StocasticsPluginData will include:
 	 * <li>Every randomGeneratorId included in {@link TestRandomGeneratorId}</li>
 	 */
