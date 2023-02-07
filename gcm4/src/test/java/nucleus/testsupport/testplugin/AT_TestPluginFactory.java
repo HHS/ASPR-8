@@ -21,42 +21,12 @@ import util.wrappers.MutableBoolean;
 
 public class AT_TestPluginFactory {
 
-	/**
-	 * Convience method to create a consumer to facilitate testing the factory
-	 * methods
-	 * {@link AT_TestPluginFactory#testFactory_Consumer()}
-	 * and
-	 * {@link AT_TestPluginFactory#testFactory_TestPluginData()}
-	 * 
-	 * <li>either for passing directly to
-	 * <li>{@link TestPluginFactory#factory(long, Consumer)}
-	 * <li>or indirectly via creating a TestPluginData and passing it to
-	 * <li>{@link TestPluginFactory#factory(long, TestPluginData)}
-	 * 
-	 * @param executed boolean to set once the consumer completes
-	 * @return the consumer
-	 * 
-	 */
-	private Consumer<ActorContext> factoryConsumer(MutableBoolean executed) {
-		return (c) -> {
-			/*
-			 * Show that the minimal plugins for the test are present by confirming that the
-			 * corresponding datamanger is not null.
-			 * Do not need to explicitly test the data associated with the datamanager, as
-			 * that will be tested in the 'getStandardizedXPluginData' tests below.
-			 */
-			TestPlanDataManager testPlanDataManager = c.getDataManager(TestPlanDataManager.class);
-			assertNotNull(testPlanDataManager);
-			executed.setValue(true);
-		};
-	}
-
 	@Test
 	@UnitTestMethod(target = TestPluginFactory.class, name = "factory", args = { Consumer.class })
 	public void testFactory_Consumer() {
 		MutableBoolean executed = new MutableBoolean();
 		TestSimulation
-				.executeSimulation(TestPluginFactory.factory(factoryConsumer(executed)).getPlugins());
+				.executeSimulation(TestPluginFactory.factory(c -> executed.setValue(true)).getPlugins());
 		assertTrue(executed.getValue());
 
 		// precondition: consumer is null
@@ -71,7 +41,7 @@ public class AT_TestPluginFactory {
 	public void testFactory_TestPluginData() {
 		MutableBoolean executed = new MutableBoolean();
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
-		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, factoryConsumer(executed)));
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, c -> executed.setValue(true)));
 		TestPluginData testPluginData = pluginBuilder.build();
 
 		TestSimulation.executeSimulation(TestPluginFactory.factory(testPluginData).getPlugins());
@@ -89,12 +59,13 @@ public class AT_TestPluginFactory {
 	@UnitTestMethod(target = TestPluginFactory.Factory.class, name = "getPlugins", args = {})
 	public void testGetPlugins() {
 
-		List<Plugin> plugins = TestPluginFactory.factory((c) -> {}).getPlugins();
+		List<Plugin> plugins = TestPluginFactory.factory((c) -> {
+		}).getPlugins();
 		assertEquals(1, plugins.size());
 
 		Plugin testPlugin = null;
 
-		for(Plugin plugin : plugins) {
+		for (Plugin plugin : plugins) {
 			if (plugin.getPluginId().equals(TestPluginId.PLUGIN_ID)) {
 				assertNull(testPlugin);
 				testPlugin = plugin;

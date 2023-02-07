@@ -47,13 +47,11 @@ public final class TestPluginFactory {
 		}
 
 		/**
-		 * Method that will get the PluginData for the
-		 * Test Plugin
-		 * and use the respective PluginData to build the Plugin
+		 * Returns a list of plugins containing a TestPlugin built from the contributed
+		 * PluginDatas
 		 * 
-		 * @return a List containing
-		 *         a TestPlugin
-		 * 
+		 * <li>TestPlugin is formed from the TestPluginData passed into
+		 * {@link TestPluginFactory#factory}
 		 */
 		public List<Plugin> getPlugins() {
 			List<Plugin> pluginsToAdd = new ArrayList<>();
@@ -68,20 +66,35 @@ public final class TestPluginFactory {
 	/**
 	 * Creates a Factory that facilitates the creation of a minimal set of plugins
 	 * needed to adequately test the {@link TestPlugin} by generating:
-	 * <p>
-	 * {@link TestPluginData}
-	 * <p>
-	 * via the
+	 * <ul>
+	 * <li>{@link TestPluginData}
+	 * </ul>
+	 * <li>via the
 	 * {@link Factory#getPlugins()} method.
 	 * 
-	 * @param consumer consumer to use to generate TestPluginData
-	 * @return a new instance of Factory
+	 * @throws ContractExecption
+	 *                           {@linkplain NucleusError#NULL_PLUGIN_DATA}
+	 *                           if testPluginData is null
+	 */
+	public static Factory factory(TestPluginData testPluginData) {
+		if (testPluginData == null) {
+			throw new ContractException(NucleusError.NULL_PLUGIN_DATA);
+		}
+		return new Factory(new Data(testPluginData));
+	}
+
+	/**
+	 * Returns a Factory that facilitates the creation of a minimal set of plugins
+	 * needed to adequately test the {@link TestPlugin} by generating:
+	 * <ul>
+	 * <li>{@link TestPluginData}
+	 * </ul>
+	 * <li>via the
+	 * {@link Factory#getPlugins()} method.
 	 * 
 	 * @throws ContractExecption
 	 *                           {@linkplain NucleusError#NULL_ACTOR_CONTEXT_CONSUMER}
 	 *                           if consumer is null
-	 * 
-	 *
 	 */
 	public static Factory factory(Consumer<ActorContext> consumer) {
 		if (consumer == null) {
@@ -94,28 +107,4 @@ public final class TestPluginFactory {
 		return factory(testPluginData);
 	}
 
-	/**
-	 * Creates a Factory that facilitates the creation of a minimal set of plugins
-	 * needed to adequately test the {@link TestPlugin} by generating:
-	 * <p>
-	 * {@link TestPluginData}
-	 * <p>
-	 * via the
-	 * {@link Factory#getPlugins()} method.
-	 * 
-	 * @param testPluginData PluginData that will be used to generate a TestPlugin
-	 * @return a new instance of Factory
-	 * 
-	 * @throws ContractExecption
-	 *                           {@linkplain NucleusError#NULL_PLUGIN_DATA}
-	 *                           if testPluginData is null
-	 * 
-	 * 
-	 */
-	public static Factory factory(TestPluginData testPluginData) {
-		if (testPluginData == null) {
-			throw new ContractException(NucleusError.NULL_PLUGIN_DATA);
-		}
-		return new Factory(new Data(testPluginData));
-	}
 }
