@@ -68,18 +68,6 @@ public class AT_StochasticsTestPluginFactory {
 		assertEquals(NucleusError.NULL_PLUGIN_DATA, contractException.getErrorType());
 	}
 
-	@Test
-	@UnitTestMethod(target = StochasticsTestPluginFactory.Factory.class, name = "getPlugins", args = {})
-	public void testGetPlugins() {
-
-		List<Plugin> plugins = StochasticsTestPluginFactory.factory(3626443405517810332L, t -> {
-		}).getPlugins();
-		assertEquals(2, plugins.size());
-
-		checkPluginExists(plugins, StochasticsPluginId.PLUGIN_ID);
-		checkPluginExists(plugins, TestPluginId.PLUGIN_ID);
-	}
-
 	/*
 	 * Given a list of plugins, will show that the plugin with the given pluginId
 	 * exists, and exists EXACTLY once.
@@ -110,6 +98,18 @@ public class AT_StochasticsTestPluginFactory {
 		assertEquals(1, actualPluginDatas.size());
 		PluginData actualPluginData = actualPluginDatas.stream().toList().get(0);
 		assertTrue(expectedPluginData == actualPluginData);
+	}
+
+	@Test
+	@UnitTestMethod(target = StochasticsTestPluginFactory.Factory.class, name = "getPlugins", args = {})
+	public void testGetPlugins() {
+
+		List<Plugin> plugins = StochasticsTestPluginFactory.factory(3626443405517810332L, t -> {
+		}).getPlugins();
+		assertEquals(2, plugins.size());
+
+		checkPluginExists(plugins, StochasticsPluginId.PLUGIN_ID);
+		checkPluginExists(plugins, TestPluginId.PLUGIN_ID);
 	}
 
 	@Test
