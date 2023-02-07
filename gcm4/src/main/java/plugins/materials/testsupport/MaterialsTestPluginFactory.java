@@ -10,6 +10,7 @@ import java.util.function.Consumer;
 import org.apache.commons.math3.random.RandomGenerator;
 
 import nucleus.ActorContext;
+import nucleus.NucleusError;
 import nucleus.Plugin;
 import nucleus.PluginData;
 import nucleus.testsupport.testplugin.TestActorPlan;
@@ -19,19 +20,25 @@ import nucleus.testsupport.testplugin.TestSimulation;
 import plugins.materials.MaterialsPlugin;
 import plugins.materials.MaterialsPluginData;
 import plugins.materials.support.BatchId;
+import plugins.materials.support.MaterialsError;
 import plugins.materials.support.StageId;
 import plugins.people.PeoplePlugin;
 import plugins.people.PeoplePluginData;
+import plugins.people.support.PersonError;
 import plugins.regions.RegionsPlugin;
 import plugins.regions.RegionsPluginData;
+import plugins.regions.support.RegionError;
 import plugins.regions.testsupport.TestRegionId;
 import plugins.resources.ResourcesPlugin;
 import plugins.resources.ResourcesPluginData;
+import plugins.resources.support.ResourceError;
 import plugins.resources.testsupport.TestResourceId;
 import plugins.resources.testsupport.TestResourcePropertyId;
 import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.StochasticsPluginData;
+import plugins.stochastics.support.StochasticsError;
 import plugins.util.properties.PropertyDefinition;
+import util.errors.ContractException;
 import util.random.RandomGeneratorProvider;
 
 /**
@@ -84,15 +91,22 @@ public class MaterialsTestPluginFactory {
 		}
 
 		/**
-		 * Method that will get the PluginData for the Materials, Resources, Regions,
-		 * People, Stochastic and
-		 * Test Plugins
-		 * and use the respective PluginData to build Plugins
+		 * Returns a list of plugins containing a Materials, Resources, Regions,
+		 * People, Stochastic and Test Plugin
+		 * built from the contributed PluginDatas
 		 * 
-		 * @return a List containing a MaterialsPlugin, ResourcesPlugin, RegionsPlugin,
-		 *         PeoplePlugin, StochasticsPlugin and
-		 *         a TestPlugin
-		 * 
+		 * <li>MaterialsPlugin is defaulted to one formed from
+		 * {@link MaterialsTestPluginFactory#getStandardMaterialsPluginData}
+		 * <li>ResourcesPlugin is defaulted to one formed from
+		 * {@link MaterialsTestPluginFactory#getStandardResourcesPluginData}
+		 * <li>RegionsPlugin is defaulted to one formed from
+		 * {@link MaterialsTestPluginFactory#getStandardRegionsPluginData}
+		 * <li>PeoplePlugin is defaulted to one formed from
+		 * {@link MaterialsTestPluginFactory#getStandardPeoplePluginData}
+		 * <li>StochasticsPlugin is defaulted to one formed from
+		 * {@link MaterialsTestPluginFactory#getStandardStochasticsPluginData}
+		 * <li>TestPlugin is formed from the TestPluginData passed into
+		 * {@link MaterialsTestPluginFactory#factory}
 		 */
 		public List<Plugin> getPlugins() {
 			List<Plugin> pluginsToAdd = new ArrayList<>();
@@ -103,10 +117,8 @@ public class MaterialsTestPluginFactory {
 
 			Plugin regionsPlugin = RegionsPlugin.getRegionsPlugin(this.data.regionsPluginData);
 
-			// add the people plugin
 			Plugin peoplePlugin = PeoplePlugin.getPeoplePlugin(this.data.peoplePluginData);
 
-			// add the stochastics plugin
 			Plugin stochasticPlugin = StochasticsPlugin.getStochasticsPlugin(this.data.stochasticsPluginData);
 
 			Plugin testPlugin = TestPlugin.getTestPlugin(this.data.testPluginData);
@@ -122,69 +134,86 @@ public class MaterialsTestPluginFactory {
 		}
 
 		/**
-		 * Method to set the MaterialsPluginData in this Factory.
+		 * Sets the {@link MaterialsPluginData} in this Factory.
+		 * This explicit instance of pluginData will be used to create a
+		 * MaterialsPlugin
 		 * 
-		 * @param materialsPluginData the MaterialsPluginData you want to use, if
-		 *                            different
-		 *                            from the standard PluginData
-		 * @return an instance of this Factory
-		 * 
+		 * @throws ContractExecption
+		 *                           {@linkplain MaterialsError#NULL_MATERIALS_PLUGIN_DATA}
+		 *                           if the passed in pluginData is null
 		 */
 		public Factory setMaterialsPluginData(MaterialsPluginData materialsPluginData) {
+			if (materialsPluginData == null) {
+				throw new ContractException(MaterialsError.NULL_MATERIALS_PLUGIN_DATA);
+			}
 			this.data.materialsPluginData = materialsPluginData;
 			return this;
 		}
 
 		/**
-		 * Method to set the ResourcesPluginData in this Factory.
+		 * Sets the {@link ResourcesPluginData} in this Factory.
+		 * This explicit instance of pluginData will be used to create a
+		 * ResourcesPlugin
 		 * 
-		 * @param resourcesPluginData the ResourcesPluginData you want to use, if
-		 *                            different
-		 *                            from the standard PluginData
-		 * @return an instance of this Factory
-		 * 
+		 * @throws ContractExecption
+		 *                           {@linkplain ResourceError#NULL_RESOURCE_PLUGIN_DATA}
+		 *                           if the passed in pluginData is null
 		 */
 		public Factory setResourcesPluginData(ResourcesPluginData resourcesPluginData) {
+			if (resourcesPluginData == null) {
+				throw new ContractException(ResourceError.NULL_RESOURCE_PLUGIN_DATA);
+			}
 			this.data.resourcesPluginData = resourcesPluginData;
 			return this;
 		}
 
 		/**
-		 * Method to set the RegionsPluginData in this Factory.
+		 * Sets the {@link RegionsPluginData} in this Factory.
+		 * This explicit instance of pluginData will be used to create a
+		 * RegionsPlugin
 		 * 
-		 * @param regionsPluginData the RegionsPluginData you want to use, if different
-		 *                          from the standard PluginData
-		 * @return an instance of this Factory
-		 * 
+		 * @throws ContractExecption
+		 *                           {@linkplain RegionError#NULL_REGION_PLUGIN_DATA}
+		 *                           if the passed in pluginData is null
 		 */
 		public Factory setRegionsPluginData(RegionsPluginData regionsPluginData) {
+			if (regionsPluginData == null) {
+				throw new ContractException(RegionError.NULL_REGION_PLUGIN_DATA);
+			}
 			this.data.regionsPluginData = regionsPluginData;
 			return this;
 		}
 
 		/**
-		 * Method to set the PeoplePluginData in this Factory.
+		 * Sets the {@link PeoplePluginData} in this Factory.
+		 * This explicit instance of pluginData will be used to create a
+		 * PeoplePlugin
 		 * 
-		 * @param peoplePluginData the PeoplePluginData you want to use, if different
-		 *                         from the standard PluginData
-		 * @return an instance of this Factory
-		 * 
+		 * @throws ContractExecption
+		 *                           {@linkplain PersonError#NULL_PEOPLE_PLUGIN_DATA}
+		 *                           if the passed in pluginData is null
 		 */
 		public Factory setPeoplePluginData(PeoplePluginData peoplePluginData) {
+			if (peoplePluginData == null) {
+				throw new ContractException(PersonError.NULL_PEOPLE_PLUGIN_DATA);
+			}
 			this.data.peoplePluginData = peoplePluginData;
 			return this;
 		}
 
 		/**
-		 * Method to set the StochasticsPluginData in this Factory.
+		 * Sets the {@link StochasticsPluginData} in this Factory.
+		 * This explicit instance of pluginData will be used to create a
+		 * StochasticsPlugin
 		 * 
-		 * @param stochasticsPluginData the StochasticsPluginData you want to use, if
-		 *                              different
-		 *                              from the standard PluginData
-		 * @return an instance of this Factory
-		 * 
+		 * @throws ContractExecption
+		 *                           {@linkplain StochasticsError#NULL_STOCHASTICS_PLUGIN_DATA}
+		 *                           if the passed in pluginData is null
 		 */
 		public Factory setStochasticsPluginData(StochasticsPluginData stochasticsPluginData) {
+			if (stochasticsPluginData == null) {
+				throw new ContractException(StochasticsError.NULL_STOCHASTICS_PLUGIN_DATA);
+			}
 			this.data.stochasticsPluginData = stochasticsPluginData;
 			return this;
 		}
@@ -194,123 +223,84 @@ public class MaterialsTestPluginFactory {
 	/**
 	 * Creates a Factory that facilitates the creation of a minimal set of plugins
 	 * needed to adequately test the {@link MaterialsPlugin} by generating:
-	 * <p>
-	 * {@link MaterialsPluginData}
-	 * <p>
-	 * {@link ResourcesPluginData}
-	 * <p>
-	 * {@link RegionsPluginData}
-	 * <p>
-	 * {@link PeoplePluginData}
-	 * <p>
-	 * {@link StochasticsPluginData}
-	 * <p>
-	 * either directly (by default)
-	 * <p>
-	 * (
-	 * <p>
-	 * {@link #getStandardMaterialsPluginData},
-	 * <p>
-	 * {@link #getStandardResourcesPluginData},
-	 * <p>
-	 * {@link #getStandardPeoplePluginData},
-	 * <p>
-	 * {@link #getStandardRegionsPluginData},
-	 * <p>
-	 * {@link #getStandardStochasticsPluginData}
-	 * <p>
-	 * )
-	 * </p>
-	 * or explicitly set
-	 * <p>
-	 * (
-	 * <p>
-	 * {@link Factory#setResourcesPluginData},
-	 * <p>
-	 * {@link Factory#setPeoplePluginData},
-	 * <p>
-	 * {@link Factory#setRegionsPluginData},
-	 * <p>
-	 * {@link Factory#setStochasticsPluginData}
-	 * <p>
-	 * )
-	 * </p>
+	 * <ul>
+	 * <li>{@link MaterialsPluginData}
+	 * <li>{@link ResourcesPluginData}
+	 * <li>{@link RegionsPluginData}
+	 * <li>{@link PeoplePluginData}
+	 * <li>{@link StochasticsPluginData}
+	 * </ul>
+	 * <li>either directly (by default) via
+	 * <ul>
+	 * <li>{@link #getStandardMaterialsPluginData},
+	 * <li>{@link #getStandardResourcesPluginData},
+	 * <li>{@link #getStandardPeoplePluginData},
+	 * <li>{@link #getStandardRegionsPluginData},
+	 * <li>{@link #getStandardStochasticsPluginData}
+	 * </ul>
+	 * <li>or explicitly set via
+	 * <ul>
+	 * <li>{@link Factory#setMaterialsPluginData}
+	 * <li>{@link Factory#setResourcesPluginData},
+	 * <li>{@link Factory#setPeoplePluginData},
+	 * <li>{@link Factory#setRegionsPluginData},
+	 * <li>{@link Factory#setStochasticsPluginData}
+	 * </ul>
 	 * 
-	 * via the
+	 * <li>via the
 	 * {@link Factory#getPlugins()} method.
 	 * 
-	 * @param numBatches        number of batches to make
-	 * @param numStages         number of stages to make
-	 * @param numBatchesInStage number of batches that should be staged
-	 * @param seed              used to seed a RandomGenerator
-	 * @param testPluginData    PluginData that will be used to generate a
-	 *                          TestPlugin
-	 * @return a new instance of Factory
-	 * 
+	 * @throws ContractExecption
+	 *                           {@linkplain NucleusError#NULL_PLUGIN_DATA}
+	 *                           if testPluginData is null
 	 */
 	public static Factory factory(int numBatches, int numStages,
 			int numBatchesInStage, long seed, TestPluginData testPluginData) {
+		if (testPluginData == null) {
+			throw new ContractException(NucleusError.NULL_PLUGIN_DATA);
+		}
 		return new Factory(new Data(numBatches, numStages, numBatchesInStage, seed, testPluginData));
 	}
 
 	/**
 	 * Creates a Factory that facilitates the creation of a minimal set of plugins
 	 * needed to adequately test the {@link MaterialsPlugin} by generating:
-	 * <p>
-	 * {@link MaterialsPluginData}
-	 * <p>
-	 * {@link ResourcesPluginData}
-	 * <p>
-	 * {@link RegionsPluginData}
-	 * <p>
-	 * {@link PeoplePluginData}
-	 * <p>
-	 * {@link StochasticsPluginData}
-	 * <p>
-	 * either directly (by default)
-	 * <p>
-	 * (
-	 * <p>
-	 * {@link #getStandardMaterialsPluginData},
-	 * <p>
-	 * {@link #getStandardResourcesPluginData},
-	 * <p>
-	 * {@link #getStandardPeoplePluginData},
-	 * <p>
-	 * {@link #getStandardRegionsPluginData},
-	 * <p>
-	 * {@link #getStandardStochasticsPluginData}
-	 * <p>
-	 * )
-	 * </p>
-	 * or explicitly set
-	 * <p>
-	 * (
-	 * <p>
-	 * {@link Factory#setResourcesPluginData},
-	 * <p>
-	 * {@link Factory#setPeoplePluginData},
-	 * <p>
-	 * {@link Factory#setRegionsPluginData},
-	 * <p>
-	 * {@link Factory#setStochasticsPluginData}
-	 * <p>
-	 * )
-	 * </p>
+	 * <ul>
+	 * <li>{@link MaterialsPluginData}
+	 * <li>{@link ResourcesPluginData}
+	 * <li>{@link RegionsPluginData}
+	 * <li>{@link PeoplePluginData}
+	 * <li>{@link StochasticsPluginData}
+	 * </ul>
+	 * <li>either directly (by default) via
+	 * <ul>
+	 * <li>{@link #getStandardMaterialsPluginData},
+	 * <li>{@link #getStandardResourcesPluginData},
+	 * <li>{@link #getStandardPeoplePluginData},
+	 * <li>{@link #getStandardRegionsPluginData},
+	 * <li>{@link #getStandardStochasticsPluginData}
+	 * </ul>
+	 * <li>or explicitly set via
+	 * <ul>
+	 * <li>{@link Factory#setMaterialsPluginData}
+	 * <li>{@link Factory#setResourcesPluginData},
+	 * <li>{@link Factory#setPeoplePluginData},
+	 * <li>{@link Factory#setRegionsPluginData},
+	 * <li>{@link Factory#setStochasticsPluginData}
+	 * </ul>
 	 * 
-	 * via the
+	 * <li>via the
 	 * {@link Factory#getPlugins()} method.
 	 * 
-	 * @param numBatches        number of batches to make
-	 * @param numStages         number of stages to make
-	 * @param numBatchesInStage number of batches that should be staged
-	 * @param seed              used to seed a RandomGenerator
-	 * @param consumer          consumer to use to generate TestPluginData
-	 * @return a new instance of Factory
-	 * 
+	 * @throws ContractExecption
+	 *                           {@linkplain NucleusError#NULL_ACTOR_CONTEXT_CONSUMER}
+	 *                           if consumer is null
 	 */
 	public static Factory factory(int numBatches, int numStages,
 			int numBatchesInStage, long seed, Consumer<ActorContext> consumer) {
+		if (consumer == null) {
+			throw new ContractException(NucleusError.NULL_ACTOR_CONTEXT_CONSUMER);
+		}
 
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, consumer));
@@ -319,13 +309,43 @@ public class MaterialsTestPluginFactory {
 	}
 
 	/**
-	 * 
-	 * @param numBatches        number of batches to make
-	 * @param numStages         number of stages to make
-	 * @param numBatchesInStage number of batches that should be staged
-	 * @param seed              used to seed a RandomGenerator
-	 * @return the resulting MaterialsPluginData
-	 * 
+	 * Returns a standardized MaterialsPluginData that is minimally adequate for
+	 * testing the MaterialsPlugin
+	 * <li>The resulting MaterialsPluginData will include:
+	 * <ul>
+	 * <li>Every MaterialId included in {@link TestMaterialId}
+	 * <ul>
+	 * <li>Each MaterialId will be used to define a BatchProperty via
+	 * {@link TestBatchPropertyId#getTestBatchPropertyIds} along with the
+	 * propertyDefinition for each
+	 * </ul>
+	 * <li>Every MaterialProducerId included in {@link TestMaterialsProducerId}
+	 * With each one containing:
+	 * <ul>
+	 * <li>The specified number of batches. Each batch will have the following:
+	 * <ul>
+	 * <li>a random materialId gotten from
+	 * {@link TestMaterialId#getRandomMaterialId} based on a RandomGenerator seeded
+	 * by the passed in seed
+	 * <li>a random amount based on the same RandomGenerator.nextDouble
+	 * <li>Every BatchPropertyId included in {@link TestBatchPropertyId} where the
+	 * batchPropertyValue will be set if the batchPropertyDefinition does not have a
+	 * default value OR if randomGenerator.nextBoolean is true. Either way, the
+	 * value will be set to the result from
+	 * {@link TestBatchPropertyId#getRandomPropertyValue}
+	 * </ul>
+	 * <li>the specified number of stages. Exactly half will be offered.
+	 * <li>the specified number of batches in a stage dervied from a shuffled list
+	 * of batches via nextLong and a random stageId via nextInt
+	 * </ul>
+	 * <li>Every MaterialProducerPropertyId included in
+	 * {@link TestMaterialsProducerPropertyId} along with the defined
+	 * propertyDefinition for each.
+	 * <ul>
+	 * <li>The MaterialProducerPropertyIds that do not have default values will have
+	 * a property value set derived from
+	 * {@link TestMaterialsProducerPropertyId#getRandomPropertyValue}
+	 * </ul>
 	 */
 	public static MaterialsPluginData getStandardMaterialsPluginData(int numBatches, int numStages,
 			int numBatchesInStage, long seed) {
@@ -405,12 +425,20 @@ public class MaterialsTestPluginFactory {
 	}
 
 	/**
-	 * Method that will return a Standard ResourcesPluginData based on some
-	 * configuration parameters.
-	 * 
-	 * @param seed a seed to seed a RandomGenerator
-	 * @return the resulting ResourcesPluginData
-	 * 
+	 * Returns a standardized ResourcesPluginData that is minimally adequate for
+	 * testing the MaterialsPlugin
+	 * <li>The resulting ResourcesPluginData will include:
+	 * <ul>
+	 * <li>Every ResourceId included in {@link TestResourceId} along with the
+	 * defined timeTrackingPolicy for each
+	 * <li>Every ResourcePropertyId included in {@link TestResourcePropertyId} along
+	 * with the defined propertyDefinition for each.
+	 * <ul>
+	 * <li>Each Resource will have a
+	 * random property value assigned based on a RandomGenerator that is created
+	 * with the passed in seed
+	 * </ul>
+	 * </ul>
 	 */
 	public static ResourcesPluginData getStandardResourcesPluginData(long seed) {
 
@@ -434,11 +462,12 @@ public class MaterialsTestPluginFactory {
 	}
 
 	/**
-	 * Method that will return a Standard PeoplePluginData based on some
-	 * configuration parameters.
-	 * 
-	 * @return the resulting PeoplePluginData
-	 * 
+	 * Returns a standardized PeoplePluginData that is minimally adequate for
+	 * testing the MaterialsPlugin
+	 * <li>The resulting PeoplePluginData will be empty
+	 * <ul>
+	 * <li>the equivalent of PeoplePluginData.builder().build()
+	 * </ul>
 	 */
 	public static PeoplePluginData getStandardPeoplePluginData() {
 		PeoplePluginData.Builder peopleBuilder = PeoplePluginData.builder();
@@ -446,11 +475,12 @@ public class MaterialsTestPluginFactory {
 	}
 
 	/**
-	 * Method that will return a Standard RegionsPluginData based on some
-	 * configuration parameters.
-	 * 
-	 * @return the resulting RegionsPluginData
-	 * 
+	 * Returns a standardized RegionsPluginData that is minimally adequate for
+	 * testing the MaterialsPlugin
+	 * <li>The resulting RegionsPluginData will include:
+	 * <ul>
+	 * <li>Every RegionId included in {@link TestRegionId}
+	 * </ul>
 	 */
 	public static RegionsPluginData getStandardRegionsPluginData() {
 		RegionsPluginData.Builder regionsBuilder = RegionsPluginData.builder();
@@ -461,12 +491,13 @@ public class MaterialsTestPluginFactory {
 	}
 
 	/**
-	 * Method that will return a Standard StochasticsPluginData based on some
-	 * configuration parameters.
-	 * 
-	 * @param seed a seed to seed a RandomGenerator
-	 * @return the resulting StocasticsPluginData
-	 * 
+	 * Returns a standardized StochasticsPluginData that is minimally adequate for
+	 * testing the MaterialsPlugin
+	 * <li>The resulting StochasticsPluginData will include:
+	 * <ul>
+	 * <li>a seed based on the nextLong of a RandomGenerator seeded from the
+	 * passed in seed
+	 * </ul>
 	 */
 	public static StochasticsPluginData getStandardStochasticsPluginData(long seed) {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
