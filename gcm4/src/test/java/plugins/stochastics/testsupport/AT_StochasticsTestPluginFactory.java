@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.EnumSet;
@@ -14,75 +15,57 @@ import java.util.function.Consumer;
 import org.junit.jupiter.api.Test;
 
 import nucleus.ActorContext;
+import nucleus.NucleusError;
 import nucleus.Plugin;
 import nucleus.PluginData;
 import nucleus.PluginId;
 import nucleus.testsupport.testplugin.TestActorPlan;
-import nucleus.testsupport.testplugin.TestPlanDataManager;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestPluginId;
 import nucleus.testsupport.testplugin.TestSimulation;
-import plugins.stochastics.StochasticsDataManager;
 import plugins.stochastics.StochasticsPluginData;
 import plugins.stochastics.StochasticsPluginId;
 import plugins.stochastics.support.RandomNumberGeneratorId;
 import tools.annotations.UnitTestMethod;
+import util.errors.ContractException;
 import util.wrappers.MutableBoolean;
 
 public class AT_StochasticsTestPluginFactory {
-
-	/**
-	 * Convience method to create a consumer to facilitate testing the factory
-	 * methods
-	 * {@link AT_StochasticsTestPluginFactory#testFactory_Consumer()}
-	 * and
-	 * {@link AT_StochasticsTestPluginFactory#testFactory_TestPluginData()}
-	 * 
-	 * <li>either for passing directly to
-	 * <li>{@link StochasticsTestPluginFactory#factory(long, Consumer)}
-	 * <li>or indirectly via creating a TestPluginData and passing it to
-	 * <li>{@link StochasticsTestPluginFactory#factory(long, TestPluginData)}
-	 * 
-	 * @param executed boolean to set once the consumer completes
-	 * @return the consumer
-	 * 
-	 */
-	private Consumer<ActorContext> factoryConsumer(MutableBoolean executed) {
-		return (c) -> {
-
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
-			assertNotNull(stochasticsDataManager);
-			assertFalse(stochasticsDataManager.getRandomNumberGeneratorIds().isEmpty());
-
-			TestPlanDataManager testDataManager = c.getDataManager(TestPlanDataManager.class);
-			assertNotNull(testDataManager);
-
-			executed.setValue(true);
-		};
-	}
 
 	@Test
 	@UnitTestMethod(target = StochasticsTestPluginFactory.class, name = "factory", args = { long.class,
 			Consumer.class })
 	public void testFactory_Consumer() {
-		MutableBoolean actorExecuted = new MutableBoolean();
+		MutableBoolean executed = new MutableBoolean();
 		TestSimulation.executeSimulation(
-				StochasticsTestPluginFactory.factory(576570479777898470L, factoryConsumer(actorExecuted)).getPlugins());
-		assertTrue(actorExecuted.getValue());
+				StochasticsTestPluginFactory.factory(576570479777898470L, c -> executed.setValue(true)).getPlugins());
+		assertTrue(executed.getValue());
+
+		// precondition: consumer is null
+		Consumer<ActorContext> nullConsumer = null;
+		ContractException contractException = assertThrows(ContractException.class,
+				() -> StochasticsTestPluginFactory.factory(0, nullConsumer));
+		assertEquals(NucleusError.NULL_ACTOR_CONTEXT_CONSUMER, contractException.getErrorType());
 	}
 
 	@Test
 	@UnitTestMethod(target = StochasticsTestPluginFactory.class, name = "testConsumers", args = { long.class,
 			TestPluginData.class })
 	public void testFactory_TestPluginData() {
-		MutableBoolean actorExecuted = new MutableBoolean();
+		MutableBoolean executed = new MutableBoolean();
 
 		TestPluginData.Builder builder = TestPluginData.builder();
-		builder.addTestActorPlan("actor", new TestActorPlan(0, factoryConsumer(actorExecuted)));
+		builder.addTestActorPlan("actor", new TestActorPlan(0, c -> executed.setValue(true)));
 		TestPluginData testPluginData = builder.build();
 		TestSimulation.executeSimulation(
 				StochasticsTestPluginFactory.factory(45235233432345378L, testPluginData).getPlugins());
-		assertTrue(actorExecuted.getValue());
+		assertTrue(executed.getValue());
+
+		// precondition: testPluginData is null
+		TestPluginData nullTestPluginData = null;
+		ContractException contractException = assertThrows(ContractException.class,
+				() -> StochasticsTestPluginFactory.factory(0, nullTestPluginData));
+		assertEquals(NucleusError.NULL_PLUGIN_DATA, contractException.getErrorType());
 	}
 
 	@Test
@@ -93,24 +76,15 @@ public class AT_StochasticsTestPluginFactory {
 		}).getPlugins();
 		assertEquals(2, plugins.size());
 
-		Plugin stocasticsPlugin = null;
-		Plugin testPlugin = null;
-
-		for (Plugin plugin : plugins) {
-			if (plugin.getPluginId().equals(StochasticsPluginId.PLUGIN_ID)) {
-				assertNull(stocasticsPlugin);
-				stocasticsPlugin = plugin;
-			}
-			if (plugin.getPluginId().equals(TestPluginId.PLUGIN_ID)) {
-				assertNull(testPlugin);
-				testPlugin = plugin;
-			}
-		}
-		assertNotNull(stocasticsPlugin);
-		assertNotNull(testPlugin);
+		checkPluginExists(plugins, StochasticsPluginId.PLUGIN_ID);
+		checkPluginExists(plugins, TestPluginId.PLUGIN_ID);
 	}
 
-	private <T extends PluginData> void checkPlugins(List<Plugin> plugins, T expectedPluginData, PluginId pluginId) {
+	/*
+	 * Given a list of plugins, will show that the plugin with the given pluginId
+	 * exists, and exists EXACTLY once.
+	 */
+	private Plugin checkPluginExists(List<Plugin> plugins, PluginId pluginId) {
 		Plugin actualPlugin = null;
 		for (Plugin plugin : plugins) {
 			if (plugin.getPluginId().equals(pluginId)) {
@@ -120,6 +94,17 @@ public class AT_StochasticsTestPluginFactory {
 		}
 
 		assertNotNull(actualPlugin);
+
+		return actualPlugin;
+	}
+
+	/**
+	 * Given a list of plugins, will show that the explicit plugindata for the given
+	 * pluginid exists, and exists EXACTLY once.
+	 */
+	private <T extends PluginData> void checkPluginDataExists(List<Plugin> plugins, T expectedPluginData,
+			PluginId pluginId) {
+		Plugin actualPlugin = checkPluginExists(plugins, pluginId);
 		Set<PluginData> actualPluginDatas = actualPlugin.getPluginDatas();
 		assertNotNull(actualPluginDatas);
 		assertEquals(1, actualPluginDatas.size());
@@ -140,7 +125,7 @@ public class AT_StochasticsTestPluginFactory {
 		List<Plugin> plugins = StochasticsTestPluginFactory.factory(5433603767451466687L, t -> {
 		}).setStochasticsPluginData(stochasticsPluginData).getPlugins();
 
-		checkPlugins(plugins, stochasticsPluginData, StochasticsPluginId.PLUGIN_ID);
+		checkPluginDataExists(plugins, stochasticsPluginData, StochasticsPluginId.PLUGIN_ID);
 	}
 
 	@Test

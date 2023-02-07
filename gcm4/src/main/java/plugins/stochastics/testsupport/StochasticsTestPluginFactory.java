@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import nucleus.ActorContext;
+import nucleus.NucleusError;
 import nucleus.Plugin;
 import nucleus.PluginData;
 import nucleus.testsupport.testplugin.TestActorPlan;
@@ -13,6 +14,8 @@ import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestSimulation;
 import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.StochasticsPluginData;
+import plugins.stochastics.support.StochasticsError;
+import util.errors.ContractException;
 
 /**
  * A static test support class for the {@linkplain StochasticsPlugin}. Provides
@@ -54,13 +57,13 @@ public class StochasticsTestPluginFactory {
 		}
 
 		/**
-		 * Method that will get the currently set PluginData for the Stochastic and
-		 * Test Plugins
-		 * and use the respective PluginData to build Plugins
+		 * Returns a list of plugins containing a Stochastics and Test Plugin built from
+		 * the contributed PluginDatas.
 		 * 
-		 * @return a List containing a StochasticsPlugin and
-		 *         a TestPlugin
-		 * 
+		 * <li>StocasticsPlugin is defaulted to one formed from
+		 * {@link StochasticsTestPluginFactory#getStandardStochasticsPluginData}
+		 * <li>TestPlugin is formed from the TestPluginData passed into
+		 * {@link StochasticsTestPluginFactory#factory}
 		 */
 		public List<Plugin> getPlugins() {
 			List<Plugin> pluginsToAdd = new ArrayList<>();
@@ -77,15 +80,19 @@ public class StochasticsTestPluginFactory {
 		}
 
 		/**
-		 * Method to set the StochasticsPluginData in this Factory.
+		 * Sets the {@link StochasticsPluginData} in this Factory.
+		 * This explicit instance of pluginData will be used to create a
+		 * GroupsPlugin
 		 * 
-		 * @param stochasticsPluginData the StochasticsPluginData you want to use, if
-		 *                              different
-		 *                              from the standard PluginData
-		 * @return an instance of this Factory
+		 * @throws ContractExecption
+		 *                           {@linkplain StochasticsError#NULL_STOCHASTICS_PLUGIN_DATA}
+		 *                           if the passed in pluginData is null
 		 * 
 		 */
 		public Factory setStochasticsPluginData(StochasticsPluginData stochasticsPluginData) {
+			if (stochasticsPluginData == null) {
+				throw new ContractException(StochasticsError.NULL_STOCHASTICS_PLUGIN_DATA);
+			}
 			this.data.stochasticsPluginData = stochasticsPluginData;
 			return this;
 		}
@@ -95,36 +102,48 @@ public class StochasticsTestPluginFactory {
 	/**
 	 * Creates a Factory that facilitates the creation of a minimal set of plugins
 	 * needed to adequately test the {@link StocasticsPlugin} by generating:
-	 * <p>
-	 * {@link StochasticsPluginData}
-	 * <p>
-	 * either directly (by default)
-	 * <p>
-	 * (
-	 * <p>
-	 * {@link #getStandardStochasticsPluginData}
-	 * <p>
-	 * )
-	 * </p>
-	 * or explicitly set
-	 * <p>
-	 * (
-	 * <p>
-	 * {@link Factory#setStochasticsPluginData}
-	 * <p>
-	 * )
-	 * </p>
+	 * <li>{@link StochasticsPluginData}
 	 * 
-	 * via the
+	 * <li>either directly (by default) via
+	 * {@link #getStandardStochasticsPluginData}
+	 * <li>or explicitly set via
+	 * {@link Factory#setStochasticsPluginData}
+	 * <li>via the
 	 * {@link Factory#getPlugins()} method.
 	 * 
-	 * @param seed     Used to seed the StocasticsPluginData
-	 * @param consumer used to generate TestPluginData
-	 * @return a instance of Factory
+	 * @throws ContractExecption
+	 *                           {@linkplain NucleusError#NULL_PLUGIN_DATA}
+	 *                           if testPluginData is null
 	 * 
 	 */
-	public static Factory factory(long seed, Consumer<ActorContext> consumer) {
+	public static Factory factory(long seed, TestPluginData testPluginData) {
+		if (testPluginData == null) {
+			throw new ContractException(NucleusError.NULL_PLUGIN_DATA);
+		}
+		return new Factory(new Data(seed, testPluginData));
 
+	}
+
+	/**
+	 * Creates a Factory that facilitates the creation of a minimal set of plugins
+	 * needed to adequately test the {@link StocasticsPlugin} by generating:
+	 * <li>{@link StochasticsPluginData}
+	 * 
+	 * <li>either directly (by default) via
+	 * {@link #getStandardStochasticsPluginData}
+	 * <li>or explicitly set via
+	 * {@link Factory#setStochasticsPluginData}
+	 * <li>via the
+	 * {@link Factory#getPlugins()} method.
+	 * 
+	 * @throws ContractExecption
+	 *                           {@linkplain NucleusError#NULL_ACTOR_CONTEXT_CONSUMER}
+	 *                           if consumer is null
+	 */
+	public static Factory factory(long seed, Consumer<ActorContext> consumer) {
+		if (consumer == null) {
+			throw new ContractException(NucleusError.NULL_ACTOR_CONTEXT_CONSUMER);
+		}
 		TestPluginData testPluginData = TestPluginData.builder()//
 				.addTestActorPlan("actor", new TestActorPlan(0, consumer))//
 				.build();
@@ -133,52 +152,10 @@ public class StochasticsTestPluginFactory {
 	}
 
 	/**
-	 * Creates a Factory that facilitates the creation of a minimal set of plugins
-	 * needed to adequately test the {@link StocasticsPlugin} by generating:
-	 * <p>
-	 * {@link StochasticsPluginData}
-	 * <p>
-	 * either directly (by default)
-	 * <p>
-	 * (
-	 * <p>
-	 * {@link #getStandardStochasticsPluginData}
-	 * <p>
-	 * )
-	 * </p>
-	 * or explicitly set
-	 * <p>
-	 * (
-	 * <p>
-	 * {@link Factory#setStochasticsPluginData}
-	 * <p>
-	 * )
-	 * </p>
-	 * 
-	 * via the
-	 * {@link Factory#getPlugins()} method.
-	 * 
-	 * @param seed           Used to seed the StocasticsPluginData
-	 * @param testPluginData Used to generate a TestPlugin
-	 * @return a instance of Factory
-	 * 
-	 */
-	public static Factory factory(long seed, TestPluginData testPluginData) {
-		return new Factory(new Data(seed, testPluginData));
-
-	}
-
-	/**
 	 * Creates a Standardized StocasticsPluginData that is minimally adequate for
 	 * testing the StocasticsPlugin.
-	 * <p>
-	 * The resulting StocasticsPluginData will include:
+	 * <li>The resulting StocasticsPluginData will include:
 	 * <li>Every randomGeneratorId included in {@link TestRandomGeneratorId}</li>
-	 * </p>
-	 * 
-	 * @param seed used to seed the StocasticsPluginData
-	 * @return the Standardized StocasticsPluginData
-	 * 
 	 */
 	public static StochasticsPluginData getStandardStochasticsPluginData(long seed) {
 		StochasticsPluginData.Builder builder = StochasticsPluginData.builder();
