@@ -37,7 +37,6 @@ import plugins.stochastics.StochasticsPluginId;
 import plugins.stochastics.testsupport.TestRandomGeneratorId;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.TimeTrackingPolicy;
-import tools.annotations.UnitTag;
 import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.random.RandomGeneratorProvider;
@@ -47,7 +46,7 @@ public class AT_RegionsTestPluginFactory {
 
 	@Test
 	@UnitTestMethod(target = RegionsTestPluginFactory.class, name = "factory", args = { int.class, long.class,
-			TimeTrackingPolicy.class, Consumer.class }, tags = { UnitTag.INCOMPLETE })
+			TimeTrackingPolicy.class, Consumer.class })
 	public void testFactory_Consumer() {
 		MutableBoolean executed = new MutableBoolean();
 		TestSimulation.executeSimulation(RegionsTestPluginFactory
@@ -64,7 +63,7 @@ public class AT_RegionsTestPluginFactory {
 
 	@Test
 	@UnitTestMethod(target = RegionsTestPluginFactory.class, name = "factory", args = { int.class, long.class,
-			TimeTrackingPolicy.class, TestPluginData.class }, tags = { UnitTag.INCOMPLETE })
+			TimeTrackingPolicy.class, TestPluginData.class })
 	public void testFactory_TestPluginData() {
 		MutableBoolean executed = new MutableBoolean();
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
