@@ -117,7 +117,7 @@ public class ResourcesTestPluginFactory {
 		/**
 		 * Sets the {@link ResourcesPluginData} in this Factory.
 		 * This explicit instance of pluginData will be used to create a
-		 * GroupsPlugin
+		 * ResourcesPlugin
 		 * 
 		 * @throws ContractExecption
 		 *                           {@linkplain ResourceError#NULL_RESOURCE_PLUGIN_DATA}
@@ -134,7 +134,7 @@ public class ResourcesTestPluginFactory {
 		/**
 		 * Sets the {@link PeoplePluginData} in this Factory.
 		 * This explicit instance of pluginData will be used to create a
-		 * GroupsPlugin
+		 * PeoplePlugin
 		 * 
 		 * @throws ContractExecption
 		 *                           {@linkplain PersonError#NULL_PEOPLE_PLUGIN_DATA}
@@ -151,7 +151,7 @@ public class ResourcesTestPluginFactory {
 		/**
 		 * Sets the {@link RegionsPluginData} in this Factory.
 		 * This explicit instance of pluginData will be used to create a
-		 * GroupsPlugin
+		 * RegionsPlugin
 		 * 
 		 * @throws ContractExecption
 		 *                           {@linkplain RegionError#NULL_REGION_PLUGIN_DATA}
@@ -168,7 +168,7 @@ public class ResourcesTestPluginFactory {
 		/**
 		 * Sets the {@link StochasticsPluginData} in this Factory.
 		 * This explicit instance of pluginData will be used to create a
-		 * GroupsPlugin
+		 * StochasticsPlugin
 		 * 
 		 * @throws ContractExecption
 		 *                           {@linkplain StochasticsError#NULL_STOCHASTICS_PLUGIN_DATA}
