@@ -164,7 +164,7 @@ public final class AT_MaterialsProducerResourceReport {
 
 		List<Plugin> pluginsToAdd = MaterialsTestPluginFactory.factory(0, 0, 0, 6081341958178733565L, testPluginData)
 				.getPlugins();
-		pluginsToAdd.add(ReportsTestPluginFactory.getPluginFromReport(new MaterialsProducerResourceReport(REPORT_ID)::init));
+		pluginsToAdd.add(ReportsTestPluginFactory.getPluginFromReport(new MaterialsProducerResourceReport(REPORT_LABEL)::init));
 
 		TestSimulation.executeSimulation(pluginsToAdd, outputConsumer);
 
