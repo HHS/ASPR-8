@@ -77,6 +77,7 @@ public class AT_GroupsTestPluginFactory {
 		TestSimulation.executeSimulation(
 				GroupsTestPluginFactory.factory(100, 3, 5, 1937810385546394605L, testPluginData).getPlugins());
 		assertTrue(executed.getValue());
+		
 		// precondition: testPluginData is null
 		TestPluginData nullTestPluginData = null;
 		ContractException contractException = assertThrows(ContractException.class,
