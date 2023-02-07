@@ -7,6 +7,7 @@ import java.util.function.Consumer;
 import org.apache.commons.math3.random.RandomGenerator;
 
 import nucleus.ActorContext;
+import nucleus.NucleusError;
 import nucleus.Plugin;
 import nucleus.PluginData;
 import nucleus.testsupport.testplugin.TestActorPlan;
@@ -14,15 +15,20 @@ import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestSimulation;
 import plugins.partitions.PartitionsPlugin;
+import plugins.partitions.support.PartitionError;
 import plugins.partitions.testsupport.attributes.AttributesPlugin;
 import plugins.partitions.testsupport.attributes.AttributesPluginData;
 import plugins.partitions.testsupport.attributes.AttributesPluginId;
+import plugins.partitions.testsupport.attributes.support.AttributeError;
 import plugins.partitions.testsupport.attributes.support.TestAttributeId;
 import plugins.people.PeoplePlugin;
 import plugins.people.PeoplePluginData;
+import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
 import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.StochasticsPluginData;
+import plugins.stochastics.support.StochasticsError;
+import util.errors.ContractException;
 import util.random.RandomGeneratorProvider;
 
 /**
@@ -74,10 +80,19 @@ public class PartitionsTestPluginFactory {
 		 * Method that will get the PluginData for the Attributes, Partitions, People,
 		 * Stochastic and Test Plugins
 		 * and use the respective PluginData to build Plugins
+		 * Returns a list of plugins containing a Attributes, Partitions, People,
+		 * Stochastic and Test Plugin built from the contributed PluginDatas
 		 * 
-		 * @return a List containing a AttributesPlugin, PartitionsPlugin, PeoplePlugin,
-		 *         StochasticsPlugin and a TestPlugin
-		 * 
+		 * <li>AttributesPlugin is defaulted to one formed from
+		 * {@link PartitionsTestPluginFactory#getStandardAttributesPluginData}
+		 * <li>PartitionsPlugin is defaulted to one formed from
+		 * {@link PartitionsTestPluginFactory#getStandardPartitionsPlugin}
+		 * <li>PeoplePlugin is defaulted to one formed from
+		 * {@link PartitionsTestPluginFactory#getStandardPeoplePluginData}
+		 * <li>StochasticsPlugin is defaulted to one formed from
+		 * {@link PartitionsTestPluginFactory#getStandardStochasticsPluginData}
+		 * <li>TestPlugin is formed from the TestPluginData passed into
+		 * {@link PartitionsTestPluginFactory#factory}
 		 */
 		public List<Plugin> getPlugins() {
 			List<Plugin> pluginsToAdd = new ArrayList<>();
@@ -86,10 +101,8 @@ public class PartitionsTestPluginFactory {
 
 			Plugin partitionsPlugin = this.data.partitionsPlugin;
 
-			// add the people plugin
 			Plugin peoplePlugin = PeoplePlugin.getPeoplePlugin(this.data.peoplePluginData);
 
-			// add the stochastics plugin
 			Plugin stochasticPlugin = StochasticsPlugin.getStochasticsPlugin(this.data.stochasticsPluginData);
 
 			Plugin testPlugin = TestPlugin.getTestPlugin(this.data.testPluginData);
@@ -104,56 +117,69 @@ public class PartitionsTestPluginFactory {
 		}
 
 		/**
-		 * Method to set the AttributesPluginData in this Factory.
+		 * Sets the {@link AttributesPluginData} in this Factory.
+		 * This explicit instance of pluginData will be used to create a
+		 * AttributesPlugin
 		 * 
-		 * @param attributesPluginData the AttributesPluginData you want to use, if
-		 *                             different
-		 *                             from the standard PluginData
-		 * @return an instance of this Factory
-		 * 
+		 * @throws ContractExecption
+		 *                           {@linkplain AttributeError#NULL_ATTRIBUTES_PLUGIN_DATA}
+		 *                           if the passed in pluginData is null
 		 */
 		public Factory setAttributesPluginData(AttributesPluginData attributesPluginData) {
+			if (attributesPluginData == null) {
+				throw new ContractException(AttributeError.NULL_ATTRIBUTES_PLUGIN_DATA);
+			}
 			this.data.attributesPluginData = attributesPluginData;
 			return this;
 		}
 
 		/**
-		 * Method to set the PartitionsPlugin in this Factory.
+		 * Sets the {@link PartitionsPlugin} in this Factory.
+		 * This explicit instance of pluginData will be used to create a
+		 * PartitionsPlugin
 		 * 
-		 * @param partitionsPlugin the PartitionsPluginData you want to use, if
-		 *                         different
-		 *                         from the standard PluginData
-		 * @return an instance of this Factory
-		 * 
+		 * @throws ContractExecption
+		 *                           {@linkplain PartitionError#NULL_PARTITION_PLUGIN}
+		 *                           if the passed in pluginData is null
 		 */
 		public Factory setPartitionsPlugin(Plugin partitionsPlugin) {
+			if (partitionsPlugin == null) {
+				throw new ContractException(PartitionError.NULL_PARTITION_PLUGIN);
+			}
 			this.data.partitionsPlugin = partitionsPlugin;
 			return this;
 		}
 
 		/**
-		 * Method to set the PeoplePluginData in this Factory.
+		 * Sets the {@link PeoplePluginData} in this Factory.
+		 * This explicit instance of pluginData will be used to create a
+		 * PeoplePlugin
 		 * 
-		 * @param peoplePluginData the PeoplePluginData you want to use, if different
-		 *                         from the standard PluginData
-		 * @return an instance of this Factory
-		 * 
+		 * @throws ContractExecption
+		 *                           {@linkplain PersonError#NULL_PEOPLE_PLUGIN_DATA}
+		 *                           if the passed in pluginData is null
 		 */
 		public Factory setPeoplePluginData(PeoplePluginData peoplePluginData) {
+			if (peoplePluginData == null) {
+				throw new ContractException(PersonError.NULL_PEOPLE_PLUGIN_DATA);
+			}
 			this.data.peoplePluginData = peoplePluginData;
 			return this;
 		}
 
 		/**
-		 * Method to set the StochasticsPluginData in this Factory.
+		 * Sets the {@link StochasticsPluginData} in this Factory.
+		 * This explicit instance of pluginData will be used to create a
+		 * StochasticsPlugin
 		 * 
-		 * @param stochasticsPluginData the StochasticsPluginData you want to use, if
-		 *                              different
-		 *                              from the standard PluginData
-		 * @return an instance of this Factory
-		 * 
+		 * @throws ContractExecption
+		 *                           {@linkplain StochasticsError#NULL_STOCHASTICS_PLUGIN_DATA}
+		 *                           if the passed in pluginData is null
 		 */
 		public Factory setStochasticsPluginData(StochasticsPluginData stochasticsPluginData) {
+			if (stochasticsPluginData == null) {
+				throw new ContractException(StochasticsError.NULL_STOCHASTICS_PLUGIN_DATA);
+			}
 			this.data.stochasticsPluginData = stochasticsPluginData;
 			return this;
 		}
@@ -163,55 +189,76 @@ public class PartitionsTestPluginFactory {
 	/**
 	 * Creates a Factory that facilitates the creation of a minimal set of plugins
 	 * needed to adequately test the {@link PartitionsPlugin} by generating:
-	 * <p>
-	 * {@link AttributesPluginData}
-	 * <p>
-	 * {@link PartitionsPlugin}
-	 * <p>
-	 * {@link PeoplePluginData}
-	 * <p>
-	 * {@link StochasticsPluginData}
-	 * <p>
-	 * either directly (by default)
-	 * <p>
-	 * (
-	 * <p>
-	 * {@link #getStandardAttributesPluginData},
-	 * <p>
-	 * {@link #getStandardPartitionsPlugin},
-	 * <p>
-	 * {@link #getStandardPeoplePluginData},
-	 * <p>
-	 * {@link #getStandardStochasticsPluginData}
-	 * <p>
-	 * )
-	 * </p>
-	 * or explicitly set
-	 * <p>
-	 * (
+	 * <ul>
+	 * <li>{@link AttributesPluginData}
+	 * <li>{@link PartitionsPlugin}
+	 * <li>{@link PeoplePluginData}
+	 * <li>{@link StochasticsPluginData}
+	 * </ul>
+	 * <li>either directly (by default) via
+	 * <ul>
+	 * <li>{@link #getStandardAttributesPluginData}
+	 * <li>{@link #getStandardPartitionsPlugin}
+	 * <li>{@link #getStandardPeoplePluginData}
+	 * <li>{@link #getStandardStochasticsPluginData}
+	 * </ul>
+	 * <li>or explicitly set via
+	 * <ul>
+	 * <li>{@link Factory#setAttributesPluginData}
+	 * <li>{@link Factory#setPartitionsPlugin}
+	 * <li>{@link Factory#setPeoplePluginData}
+	 * <li>{@link Factory#setStochasticsPluginData}
+	 * </ul>
 	 * 
-	 * <p>
-	 * {@link Factory#setAttributesPluginData},
-	 * <p>
-	 * {@link Factory#setPartitionsPlugin},
-	 * <p>
-	 * {@link Factory#setPeoplePluginData},
-	 * <p>
-	 * {@link Factory#setStochasticsPluginData}
-	 * <p>
-	 * )
-	 * </p>
+	 * <li>via the
+	 * {@link Factory#getPlugins()} method.
 	 * 
-	 * via the
+	 * @throws ContractExecption
+	 *                           {@linkplain NucleusError#NULL_PLUGIN_DATA}
+	 *                           if testPluginData is null
+	 */
+	public static Factory factory(int initialPopulation, long seed, TestPluginData testPluginData) {
+		if (testPluginData == null) {
+			throw new ContractException(NucleusError.NULL_PLUGIN_DATA);
+		}
+		return new Factory(new Data(initialPopulation, seed, testPluginData));
+	}
+
+	/**
+	 * Creates a Factory that facilitates the creation of a minimal set of plugins
+	 * needed to adequately test the {@link PartitionsPlugin} by generating:
+	 * <ul>
+	 * <li>{@link AttributesPluginData}
+	 * <li>{@link PartitionsPlugin}
+	 * <li>{@link PeoplePluginData}
+	 * <li>{@link StochasticsPluginData}
+	 * </ul>
+	 * <li>either directly (by default) via
+	 * <ul>
+	 * <li>{@link #getStandardAttributesPluginData}
+	 * <li>{@link #getStandardPartitionsPlugin}
+	 * <li>{@link #getStandardPeoplePluginData}
+	 * <li>{@link #getStandardStochasticsPluginData}
+	 * </ul>
+	 * <li>or explicitly set via
+	 * <ul>
+	 * <li>{@link Factory#setAttributesPluginData}
+	 * <li>{@link Factory#setPartitionsPlugin}
+	 * <li>{@link Factory#setPeoplePluginData}
+	 * <li>{@link Factory#setStochasticsPluginData}
+	 * </ul>
+	 * 
+	 * <li>via the
 	 * {@link Factory#getPlugins()} method.
 	 *
-	 * @param initialPopulation the initial population of the simulation
-	 * @param seed              used to seed a RandomGenerator
-	 * @param consumer          consumer to use to generate TestPluginData
-	 * @return a new instance of Factory
-	 * 
+	 * @throws ContractExecption
+	 *                           {@linkplain NucleusError#NULL_ACTOR_CONTEXT_CONSUMER}
+	 *                           if consumer is null
 	 */
 	public static Factory factory(int initialPopulation, long seed, Consumer<ActorContext> consumer) {
+		if (consumer == null) {
+			throw new ContractException(NucleusError.NULL_ACTOR_CONTEXT_CONSUMER);
+		}
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0, consumer));
 		TestPluginData testPluginData = pluginDataBuilder.build();
@@ -220,68 +267,15 @@ public class PartitionsTestPluginFactory {
 	}
 
 	/**
-	 * Creates a Factory that facilitates the creation of a minimal set of plugins
-	 * needed to adequately test the {@link PartitionsPlugin} by generating:
-	 * <p>
-	 * {@link AttributesPluginData}
-	 * <p>
-	 * {@link PartitionsPlugin}
-	 * <p>
-	 * {@link PeoplePluginData}
-	 * <p>
-	 * {@link StochasticsPluginData}
-	 * <p>
-	 * either directly (by default)
-	 * <p>
-	 * (
-	 * <p>
-	 * {@link #getStandardAttributesPluginData},
-	 * <p>
-	 * {@link #getStandardPartitionsPlugin},
-	 * <p>
-	 * {@link #getStandardPeoplePluginData},
-	 * <p>
-	 * {@link #getStandardStochasticsPluginData}
-	 * <p>
-	 * )
-	 * </p>
-	 * or explicitly set
-	 * <p>
-	 * (
-	 * 
-	 * <p>
-	 * {@link Factory#setAttributesPluginData},
-	 * <p>
-	 * {@link Factory#setPartitionsPlugin},
-	 * <p>
-	 * {@link Factory#setPeoplePluginData},
-	 * <p>
-	 * {@link Factory#setStochasticsPluginData}
-	 * <p>
-	 * )
-	 * </p>
-	 * 
-	 * via the
-	 * {@link Factory#getPlugins()} method.
-	 * 
-	 * @param initialPopulation the initial population of the simulation
-	 * @param seed              used to seed a RandomGenerator
-	 * @param testPluginData    PluginData that will be used to generate a
-	 *                          TestPlugin
-	 * @return a new instance of Facotry
-	 * 
-	 */
-	public static Factory factory(int initialPopulation, long seed, TestPluginData testPluginData) {
-
-		return new Factory(new Data(initialPopulation, seed, testPluginData));
-	}
-
-	/**
-	 * Method that will return a Standard AttributesPluginData based on some
-	 * confirguration paramters
-	 * 
-	 * @return the resulting AttributesPluginData
-	 * 
+	 * Returns a standardized AttributesPluginData that is minimally adequate for
+	 * testing the PartitionsPlugin
+	 * <li>The resulting AttributesPluginData will include:
+	 * <ul>
+	 * <li>Every AttributeId included in {@link TestAttributeId}
+	 * <ul>
+	 * <li>along with the attributeDefinition for each
+	 * </ul>
+	 * </ul>
 	 */
 	public static AttributesPluginData getStandardAttributesPluginData() {
 		AttributesPluginData.Builder attributesBuilder = AttributesPluginData.builder();
@@ -292,30 +286,26 @@ public class PartitionsTestPluginFactory {
 	}
 
 	/**
-	 * Method that will return a Standard PartitionsPlugin that additionally depends
-	 * on the AttributesPlugin
-	 * 
-	 * @return the resulting PartitionsPlugin
-	 * 
+	 * Returns a Standardized PartitionsPlugin that is minimally adequate for
+	 * testing the PartitionsPlugin
+	 * <li>The resulting PartitionsPlugin will include:
+	 * <ul>
+	 * <li>the basic PartitionsPlugin from
+	 * {@link PartitionsPlugin#getPartitionsPlugin}
+	 * <li>An additional pluginDependency on {@link AttributesPluginId}
+	 * </ul>
 	 */
 	public static Plugin getStandardPartitionsPlugin() {
 		return PartitionsPlugin.getPartitionsPlugin(AttributesPluginId.PLUGIN_ID);
 	}
 
 	/**
-	 * Method that will return a Standard PeoplePluginData based on some
-	 * configuration parameters.
-	 * 
-	 * @return the resulting PeoplePluginData
-	 * 
-	 */
-	/**
-	 * Method that will return a Standard PeoplePluginData based on some
-	 * configuration parameters.
-	 * 
-	 * @param initialPopulation the initial population of the simulation
-	 * @return the resulting PeoplePluginData
-	 * 
+	 * Returns a standardized PeoplePluginData that is minimally adequate for
+	 * testing the PartitionsPlugin
+	 * <li>The resulting PeoplePluginData will include:
+	 * <ul>
+	 * <li>a number of people equal to the passed in intialPopulation
+	 * </ul>
 	 */
 	public static PeoplePluginData getStandardPeoplePluginData(int initialPopulation) {
 		// add the people plugin
@@ -328,12 +318,13 @@ public class PartitionsTestPluginFactory {
 	}
 
 	/**
-	 * Method that will return a Standard StochasticsPluginData based on some
-	 * configuration parameters.
-	 * 
-	 * @param seed a seed to seed a RandomGenerator
-	 * @return the resulting StocasticsPluginData
-	 * 
+	 * Returns a standardized StochasticsPluginData that is minimally adequate for
+	 * testing the PartitionsPlugin
+	 * <li>The resulting StochasticsPluginData will include:
+	 * <ul>
+	 * <li>a seed based on the nextLong of a RandomGenerator seeded from the
+	 * passed in seed
+	 * </ul>
 	 */
 	public static StochasticsPluginData getStandardStochasticsPluginData(long seed) {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
