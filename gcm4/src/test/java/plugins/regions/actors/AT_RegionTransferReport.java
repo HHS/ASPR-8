@@ -164,7 +164,7 @@ public class AT_RegionTransferReport {
 		TestPluginData testPluginData = pluginBuilder.build();
 
 		TestSimulationOutputConsumer outputConsumer = new TestSimulationOutputConsumer();
-		List<Plugin> pluginsToAdd = RegionsTestPluginFactory.factory(numPeople, 3054641152904904632L, TimeTrackingPolicy.TRACK_TIME, testPluginData).setRegionsPluginData(regionsPluginData).getPlugins();
+		List<Plugin> pluginsToAdd = RegionsTestPluginFactory.factory(0, 3054641152904904632L, TimeTrackingPolicy.TRACK_TIME, testPluginData).setRegionsPluginData(regionsPluginData).getPlugins();
 		pluginsToAdd.add(ReportsTestPluginFactory.getPluginFromReport(new RegionTransferReport(REPORT_LABEL, ReportPeriod.DAILY)::init));
 
 		TestSimulation.executeSimulation(pluginsToAdd, outputConsumer);
