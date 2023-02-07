@@ -157,7 +157,6 @@ public class AT_ResourcesTestPluginFactory {
 	@UnitTestMethod(target = ResourcesTestPluginFactory.Factory.class, name = "setRegionsPluginData", args = {
 			RegionsPluginData.class })
 	public void testSetRegionsPluginData() {
-		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6932994470470639085L);
 		int initialPopulation = 30;
 		List<PersonId> people = new ArrayList<>();
 		for (int i = 0; i < initialPopulation; i++) {
@@ -175,15 +174,6 @@ public class AT_ResourcesTestPluginFactory {
 					testRegionPropertyId.getPropertyDefinition());
 		}
 
-		for (TestRegionId regionId : TestRegionId.values()) {
-			for (TestRegionPropertyId testRegionPropertyId : TestRegionPropertyId.values()) {
-				if (testRegionPropertyId.getPropertyDefinition().getDefaultValue().isEmpty()
-						|| randomGenerator.nextBoolean()) {
-					Object randomPropertyValue = testRegionPropertyId.getRandomPropertyValue(randomGenerator);
-					regionPluginBuilder.setRegionPropertyValue(regionId, testRegionPropertyId, randomPropertyValue);
-				}
-			}
-		}
 		TestRegionId testRegionId = TestRegionId.REGION_1;
 		for (PersonId personId : people) {
 			regionPluginBuilder.setPersonRegion(personId, testRegionId);
@@ -249,8 +239,8 @@ public class AT_ResourcesTestPluginFactory {
 		Set<TestRegionId> expectedRegionIds = EnumSet.allOf(TestRegionId.class);
 		assertFalse(expectedRegionIds.isEmpty());
 
-		Set<RegionId> actualResourceIds = regionsPluginData.getRegionIds();
-		assertEquals(expectedRegionIds, actualResourceIds);
+		Set<RegionId> actualRegionIds = regionsPluginData.getRegionIds();
+		assertEquals(expectedRegionIds, actualRegionIds);
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
 
