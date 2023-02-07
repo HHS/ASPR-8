@@ -187,21 +187,26 @@ public class ResourcesTestPluginFactory {
 	/**
 	 * Creates a Factory that facilitates the creation of a minimal set of plugins
 	 * needed to adequately test the {@link ResourcesPlugin} by generating:
-	 * <li>{@link ResourcesPluginData}, {@link RegionsPluginData},
-	 * {@link PeoplePluginData}, {@link StochasticsPluginData}
+	 * <ul>
+	 * <li>{@link ResourcesPluginData}
+	 * <li>{@link RegionsPluginData}
+	 * <li>{@link PeoplePluginData}
+	 * <li>{@link StochasticsPluginData}
+	 * </ul>
 	 * <li>either directly (by default) via
-	 * 
+	 * <ul>
 	 * <li>{@link #getStandardResourcesPluginData}
-	 * {@link #getStandardPeoplePluginData},
-	 * {@link #getStandardRegionsPluginData},
-	 * {@link #getStandardStochasticsPluginData}
-	 * 
+	 * <li>{@link #getStandardPeoplePluginData},
+	 * <li>{@link #getStandardRegionsPluginData},
+	 * <li>{@link #getStandardStochasticsPluginData}
+	 * </ul>
 	 * <li>or explicitly set via
-	 * {@link Factory#setResourcesPluginData},
-	 * {@link Factory#setPeoplePluginData},
-	 * {@link Factory#setRegionsPluginData},
-	 * {@link Factory#setStochasticsPluginData}
-	 * 
+	 * <ul>
+	 * <li>{@link Factory#setResourcesPluginData},
+	 * <li>{@link Factory#setPeoplePluginData},
+	 * <li>{@link Factory#setRegionsPluginData},
+	 * <li>{@link Factory#setStochasticsPluginData}
+	 * </ul>
 	 * <li>via the
 	 * {@link Factory#getPlugins()} method.
 	 * 
@@ -219,21 +224,26 @@ public class ResourcesTestPluginFactory {
 	/**
 	 * Creates a Factory that facilitates the creation of a minimal set of plugins
 	 * needed to adequately test the {@link ResourcesPlugin} by generating:
-	 * <li>{@link ResourcesPluginData}, {@link RegionsPluginData},
-	 * {@link PeoplePluginData}, {@link StochasticsPluginData}
+	 * <ul>
+	 * <li>{@link ResourcesPluginData}
+	 * <li>{@link RegionsPluginData}
+	 * <li>{@link PeoplePluginData}
+	 * <li>{@link StochasticsPluginData}
+	 * </ul>
 	 * <li>either directly (by default) via
-	 * 
+	 * <ul>
 	 * <li>{@link #getStandardResourcesPluginData}
-	 * {@link #getStandardPeoplePluginData},
-	 * {@link #getStandardRegionsPluginData},
-	 * {@link #getStandardStochasticsPluginData}
-	 * 
+	 * <li>{@link #getStandardPeoplePluginData},
+	 * <li>{@link #getStandardRegionsPluginData},
+	 * <li>{@link #getStandardStochasticsPluginData}
+	 * </ul>
 	 * <li>or explicitly set via
-	 * {@link Factory#setResourcesPluginData},
-	 * {@link Factory#setPeoplePluginData},
-	 * {@link Factory#setRegionsPluginData},
-	 * {@link Factory#setStochasticsPluginData}
-	 * 
+	 * <ul>
+	 * <li>{@link Factory#setResourcesPluginData},
+	 * <li>{@link Factory#setPeoplePluginData},
+	 * <li>{@link Factory#setRegionsPluginData},
+	 * <li>{@link Factory#setStochasticsPluginData}
+	 * </ul>
 	 * <li>via the
 	 * {@link Factory#getPlugins()} method.
 	 * 
@@ -255,7 +265,9 @@ public class ResourcesTestPluginFactory {
 	 * Returns a standardized PeoplePluginData that is minimally adequate for
 	 * testing the ResourcesPlugin
 	 * <li>The resutling PeoplePluginData will include:
+	 * <ul>
 	 * <li>A number of people equal to the value of initialPopulation
+	 * </ul>
 	 */
 	public static PeoplePluginData getStandardPeoplePluginData(int initialPopulation) {
 		PeoplePluginData.Builder peopleBuilder = PeoplePluginData.builder();
@@ -270,10 +282,15 @@ public class ResourcesTestPluginFactory {
 	 * Returns a standardized RegionsPluginData that is minimally adequate for
 	 * testing the ResourcesPlugin
 	 * <li>The resulting RegionsPluginData will include:
+	 * <ul>
 	 * <li>Every RegionId included in {@link TestRegionId}
-	 * <li>Every person passed in via people. Each person will be assigned a random
+	 * <li>Every person passed in via people.
+	 * <ul>
+	 * <li>Each person will be assigned a random
 	 * region based
 	 * on the passed in seed
+	 * </ul>
+	 * </ul>
 	 */
 	public static RegionsPluginData getStandardRegionsPluginData(List<PersonId> people, long seed) {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
@@ -295,12 +312,20 @@ public class ResourcesTestPluginFactory {
 	 * Returns a standardized ResourcesPluginData that is minimally adequate for
 	 * testing the ResourcesPlugin
 	 * <li>The resulting ResourcesPluginData will include:
-	 * <li>Every ResourceId included in {@link TestResourceId} along with the
+	 * <ul>
+	 * <li>Every ResourceId included in {@link TestResourceId}
+	 * <ul>
+	 * <li>along with the
 	 * defined timeTrackingPolicy for each
+	 * </ul>
 	 * <li>Every ResourcePropertyId included in {@link TestResourcePropertyId} along
-	 * with the defined propertyDefinition for each. Each Resource will have a
+	 * with the defined propertyDefinition for each.
+	 * <ul>
+	 * <li>Each Resource will have a
 	 * random property value assigned based on a RandomGenerator that is created
 	 * with the passed in seed
+	 * </ul>
+	 * </ul>
 	 */
 	public static ResourcesPluginData getStandardResourcesPluginData(long seed) {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
@@ -327,8 +352,10 @@ public class ResourcesTestPluginFactory {
 	 * Returns a standardized StochasticsPluginData that is minimally adequate for
 	 * testing the ResourcesPlugin
 	 * <li>The resulting StochasticsPluginData will include:
+	 * <ul>
 	 * <li>a seed based on the nextLong of a RandomGenerator seeded from the
 	 * passed in seed
+	 * </ul>
 	 */
 	public static StochasticsPluginData getStandardStochasticsPluginData(long seed) {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);

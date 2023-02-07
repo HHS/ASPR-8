@@ -101,12 +101,17 @@ public class StochasticsTestPluginFactory {
 	/**
 	 * Creates a Factory that facilitates the creation of a minimal set of plugins
 	 * needed to adequately test the {@link StochasticsPlugin} by generating:
+	 * <ul>
 	 * <li>{@link StochasticsPluginData}
-	 * 
+	 * </ul>
 	 * <li>either directly (by default) via
-	 * {@link #getStandardStochasticsPluginData}
+	 * <ul>
+	 * <li>{@link #getStandardStochasticsPluginData}
+	 * </ul>
 	 * <li>or explicitly set via
-	 * {@link Factory#setStochasticsPluginData}
+	 * <ul>
+	 * <li>{@link Factory#setStochasticsPluginData}
+	 * </ul>
 	 * <li>via the
 	 * {@link Factory#getPlugins()} method.
 	 * 
@@ -125,12 +130,17 @@ public class StochasticsTestPluginFactory {
 	/**
 	 * Creates a Factory that facilitates the creation of a minimal set of plugins
 	 * needed to adequately test the {@link StochasticsPlugin} by generating:
+	 * <ul>
 	 * <li>{@link StochasticsPluginData}
-	 * 
+	 * </ul>
 	 * <li>either directly (by default) via
-	 * {@link #getStandardStochasticsPluginData}
+	 * <ul>
+	 * <li>{@link #getStandardStochasticsPluginData}
+	 * </ul>
 	 * <li>or explicitly set via
-	 * {@link Factory#setStochasticsPluginData}
+	 * <ul>
+	 * <li>{@link Factory#setStochasticsPluginData}
+	 * </ul>
 	 * <li>via the
 	 * {@link Factory#getPlugins()} method.
 	 * 
@@ -153,7 +163,9 @@ public class StochasticsTestPluginFactory {
 	 * Creates a Standardized StocasticsPluginData that is minimally adequate for
 	 * testing the StochasticsPlugin.
 	 * <li>The resulting StocasticsPluginData will include:
-	 * <li>Every randomGeneratorId included in {@link TestRandomGeneratorId}</li>
+	 * <ul>
+	 * <li>Every randomGeneratorId included in {@link TestRandomGeneratorId}
+	 * </ul>
 	 */
 	public static StochasticsPluginData getStandardStochasticsPluginData(long seed) {
 		StochasticsPluginData.Builder builder = StochasticsPluginData.builder();

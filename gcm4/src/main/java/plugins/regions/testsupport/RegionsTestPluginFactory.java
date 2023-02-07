@@ -163,17 +163,23 @@ public final class RegionsTestPluginFactory {
 	/**
 	 * Creates a Factory that facilitates the creation of a minimal set of plugins
 	 * needed to adequately test the {@link RegionsPlugin} by generating:
-	 * <li>{@link RegionsPluginData},{@link PeoplePluginData},
-	 * {@link StochasticsPluginData}
+	 * <ul>
+	 * <li>{@link RegionsPluginData}
+	 * <li>{@link PeoplePluginData}
+	 * <li>{@link StochasticsPluginData}
+	 * </ul>
 	 * <li>either directly (by default) via
+	 * <ul>
 	 * <li>{@link #getStandardPeoplePluginData},
 	 * <li>{@link #getStandardRegionsPluginData},
 	 * <li>{@link #getStandardStochasticsPluginData}
+	 * </ul>
 	 * <li>or explicitly set via
+	 * <ul>
 	 * <li>{@link Factory#setPeoplePluginData},
 	 * <li>{@link Factory#setRegionsPluginData},
 	 * <li>{@link Factory#setStochasticsPluginData}
-	 * 
+	 * </ul>
 	 * <li>via the
 	 * {@link Factory#getPlugins()} method.
 	 * 
@@ -194,17 +200,23 @@ public final class RegionsTestPluginFactory {
 	/**
 	 * Creates a Factory that facilitates the creation of a minimal set of plugins
 	 * needed to adequately test the {@link RegionsPlugin} by generating:
-	 * <li>{@link RegionsPluginData},{@link PeoplePluginData},
-	 * {@link StochasticsPluginData}
+	 * <ul>
+	 * <li>{@link RegionsPluginData}
+	 * <li>{@link PeoplePluginData}
+	 * <li>{@link StochasticsPluginData}
+	 * </ul>
 	 * <li>either directly (by default) via
+	 * <ul>
 	 * <li>{@link #getStandardPeoplePluginData},
 	 * <li>{@link #getStandardRegionsPluginData},
 	 * <li>{@link #getStandardStochasticsPluginData}
+	 * </ul>
 	 * <li>or explicitly set via
+	 * <ul>
 	 * <li>{@link Factory#setPeoplePluginData},
 	 * <li>{@link Factory#setRegionsPluginData},
 	 * <li>{@link Factory#setStochasticsPluginData}
-	 * 
+	 * </ul>
 	 * <li>via the
 	 * {@link Factory#getPlugins()} method.
 	 * 
@@ -228,16 +240,24 @@ public final class RegionsTestPluginFactory {
 	 * Returns a standardized RegionsPluginData that is minimally adequate for
 	 * testing the RegionsPlugin
 	 * <li>The resulting RegionsPluginData will include:
+	 * <ul>
 	 * <li>Every RegionId in {@link TestRegionId}
-	 * <li>Every RegionPropertyId in {@link TestRegionPropertyId} along with the
+	 * <li>Every RegionPropertyId in {@link TestRegionPropertyId}
+	 * <ul>
+	 * <li>along with the
 	 * propertyDefinition for each.
-	 * If the propertyDefinition has a default value, that value is used.
+	 * <li>If the propertyDefinition has a default value, that value is used.
 	 * Otherwise a randomPropertyValue is set using a RandomGenerator seeded by the
 	 * passed in seed via {@link TestRegionPropertyId#getRandomPropertyValue}
+	 * </ul>
 	 * <li>the passed in timeTrackingPolicy
 	 * <li>Every person in the passed in list will be added to
-	 * a TestRegionId starting with RegionId_1 and looping through all possible
+	 * a RegionId
+	 * <ul>
+	 * <li>starting with RegionId_1 and looping through all possible
 	 * RegionIds in {@link TestRegionId}
+	 * </ul>
+	 * </ul>
 	 */
 	public static RegionsPluginData getStandardRegionsPluginData(List<PersonId> people,
 			TimeTrackingPolicy timeTrackingPolicy, long seed) {
@@ -272,7 +292,9 @@ public final class RegionsTestPluginFactory {
 	 * Returns a standardized PeoplePluginData that is minimally adequate for
 	 * testing the RegionsPlugin
 	 * <li>The resulting PeoplePluginData will include:
+	 * <ul>
 	 * <li>a number of people equal to the passed in intialPopulation
+	 * </ul>
 	 */
 	public static PeoplePluginData getStandardPeoplePluginData(int initialPopulation) {
 		List<PersonId> people = new ArrayList<>();
@@ -291,8 +313,10 @@ public final class RegionsTestPluginFactory {
 	 * Returns a standardized StochasticsPluginData that is minimally adequate for
 	 * testing the RegionsPlugin
 	 * <li>The resulting StochasticsPluginData will include:
+	 * <ul>
 	 * <li>a seed based on the nextLong of a RandomGenerator seeded from the
 	 * passed in seed
+	 * </ul>
 	 */
 	public static StochasticsPluginData getStandardStochasticsPluginData(long seed) {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);

@@ -131,13 +131,20 @@ public class PeopleTestPluginFactory {
 	/**
 	 * Creates a Factory that facilitates the creation of a minimal set of plugins
 	 * needed to adequately test the {@link PeoplePlugin} by generating:
-	 * <li>{@link PeoplePluginData},{@link StochasticsPluginData}
+	 * <ul>
+	 * <li>{@link PeoplePluginData}
+	 * <li>{@link StochasticsPluginData}
+	 * </ul>
 	 * <li>either directly (by default) via
+	 * <ul>
 	 * <li>{@link #getStandardPeoplePluginData},
 	 * <li>{@link #getStandardStochasticsPluginData}
+	 * </ul>
 	 * <li>or explicitly set via
+	 * <ul>
 	 * <li>{@link Factory#setPeoplePluginData},
 	 * <li>{@link Factory#setStochasticsPluginData}
+	 * </ul>
 	 * 
 	 * <li>via the
 	 * {@link Factory#getPlugins()} method.
@@ -156,13 +163,20 @@ public class PeopleTestPluginFactory {
 	/**
 	 * Creates a Factory that facilitates the creation of a minimal set of plugins
 	 * needed to adequately test the {@link PeoplePlugin} by generating:
-	 * <li>{@link PeoplePluginData},{@link StochasticsPluginData}
+	 * <ul>
+	 * <li>{@link PeoplePluginData}
+	 * <li>{@link StochasticsPluginData}
+	 * </ul>
 	 * <li>either directly (by default) via
+	 * <ul>
 	 * <li>{@link #getStandardPeoplePluginData},
 	 * <li>{@link #getStandardStochasticsPluginData}
+	 * </ul>
 	 * <li>or explicitly set via
+	 * <ul>
 	 * <li>{@link Factory#setPeoplePluginData},
 	 * <li>{@link Factory#setStochasticsPluginData}
+	 * </ul>
 	 * 
 	 * <li>via the
 	 * {@link Factory#getPlugins()} method.
@@ -185,8 +199,10 @@ public class PeopleTestPluginFactory {
 	/**
 	 * Returns a standardized PeoplePluginData that is minimally adequate for
 	 * testing the PeoplePlugin
-	 * <li>The resulting PeoplePluginData will be empty;
-	 * the equivalent of PeoplePluginData.builder().build()
+	 * <li>The resulting PeoplePluginData will be empty
+	 * <ul>
+	 * <li>the equivalent of PeoplePluginData.builder().build()
+	 * </ul>
 	 */
 	public static PeoplePluginData getStandardPeoplePluginData() {
 		PeoplePluginData.Builder peopleBuilder = PeoplePluginData.builder();
@@ -198,8 +214,10 @@ public class PeopleTestPluginFactory {
 	 * Returns a standardized StochasticsPluginData that is minimally adequate for
 	 * testing the PeoplePlugin
 	 * <li>The resulting StochasticsPluginData will include:
+	 * <ul>
 	 * <li>a seed based on the nextLong of a RandomGenerator seeded from the
 	 * passed in seed
+	 * </ul>
 	 */
 	public static StochasticsPluginData getStandardStochasticsPluginData(long seed) {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);

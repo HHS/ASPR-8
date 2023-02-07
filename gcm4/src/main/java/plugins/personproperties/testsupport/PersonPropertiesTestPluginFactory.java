@@ -191,19 +191,27 @@ public class PersonPropertiesTestPluginFactory {
 	/**
 	 * Creates a Factory that facilitates the creation of a minimal set of plugins
 	 * needed to adequately test the {@link PersonPropertiesPlugin} by generating:
-	 * <li>{@link PersonPropertiesPluginData},
-	 * {@link RegionsPluginData},{@link PeoplePluginData},{@link StochasticsPluginData}
+	 * <ul>
+	 * <li>{@link PersonPropertiesPluginData}
+	 * <li>{@link RegionsPluginData}
+	 * <li>{@link PeoplePluginData}
+	 * <li>{@link StochasticsPluginData}
+	 * </ul>
 	 * 
 	 * <li>either directly (by default) via
+	 * <ul>
 	 * <li>{@link #getStandardPersonPropertiesPluginData}
 	 * <li>{@link #getStandardPeoplePluginData},
 	 * <li>{@link #getStandardRegionsPluginData},
 	 * <li>{@link #getStandardStochasticsPluginData}
+	 * </ul>
 	 * <li>or explicitly set via
+	 * <ul>
 	 * <li>{@link Factory#setPersonPropertiesPluginData}
 	 * <li>{@link Factory#setPeoplePluginData},
 	 * <li>{@link Factory#setRegionsPluginData},
 	 * <li>{@link Factory#setStochasticsPluginData}
+	 * </ul>
 	 * 
 	 * <li>via the
 	 * {@link Factory#getPlugins()} method.
@@ -222,19 +230,27 @@ public class PersonPropertiesTestPluginFactory {
 	/**
 	 * Creates a Factory that facilitates the creation of a minimal set of plugins
 	 * needed to adequately test the {@link PersonPropertiesPlugin} by generating:
-	 * <li>{@link PersonPropertiesPluginData},
-	 * {@link RegionsPluginData},{@link PeoplePluginData},{@link StochasticsPluginData}
+	 * <ul>
+	 * <li>{@link PersonPropertiesPluginData}
+	 * <li>{@link RegionsPluginData}
+	 * <li>{@link PeoplePluginData}
+	 * <li>{@link StochasticsPluginData}
+	 * </ul>
 	 * 
 	 * <li>either directly (by default) via
+	 * <ul>
 	 * <li>{@link #getStandardPersonPropertiesPluginData}
 	 * <li>{@link #getStandardPeoplePluginData},
 	 * <li>{@link #getStandardRegionsPluginData},
 	 * <li>{@link #getStandardStochasticsPluginData}
+	 * </ul>
 	 * <li>or explicitly set via
+	 * <ul>
 	 * <li>{@link Factory#setPersonPropertiesPluginData}
 	 * <li>{@link Factory#setPeoplePluginData},
 	 * <li>{@link Factory#setRegionsPluginData},
 	 * <li>{@link Factory#setStochasticsPluginData}
+	 * </ul>
 	 * 
 	 * <li>via the
 	 * {@link Factory#getPlugins()} method.
@@ -258,12 +274,21 @@ public class PersonPropertiesTestPluginFactory {
 	 * Returns a standardized PersonPropertiesPluginData that is minimally adequate
 	 * for testing the PersonPropertiesPlugin.
 	 * <li>The resulting PersonPropertiesPluginData will include:
-	 * <li>Every PersonPropertyId included in {@link TestPersonPropertyId} along
+	 * <ul>
+	 * <li>Every PersonPropertyId included in {@link TestPersonPropertyId}
+	 * <ul>
+	 * <li>along
 	 * with the propertyDefinition for each
-	 * <li>Every person in the list of passed in people. Each person will have a
+	 * </ul>
+	 * <li>Every person in the list of passed in people.
+	 * <ul>
+	 * <li>Each person will have a
 	 * property value if the propertyDefinition does not have a defaultValue, OR via
-	 * a RandomGenerator seeded by the passed in seed via nextBoolean. The property
+	 * a RandomGenerator seeded by the passed in seed via nextBoolean.
+	 * <li>The property
 	 * value is gotten from {@link TestPersonPropertyId#getRandomPropertyValue}
+	 * </ul>
+	 * </ul>
 	 */
 	public static PersonPropertiesPluginData getStandardPersonPropertiesPluginData(List<PersonId> people, long seed) {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
@@ -290,7 +315,9 @@ public class PersonPropertiesTestPluginFactory {
 	 * Returns a standardized PeoplePluginData that is minimally adequate for
 	 * testing the PersonPropertiesPlugin
 	 * <li>The resulting PeoplePluginData will include:
+	 * <ul>
 	 * <li>a number of people equal to the passed in intialPopulation
+	 * </ul>
 	 */
 	public static PeoplePluginData getStandardPeoplePluginData(int initialPopulation) {
 		PeoplePluginData.Builder peopleBuilder = PeoplePluginData.builder();
@@ -305,10 +332,15 @@ public class PersonPropertiesTestPluginFactory {
 	 * Returns a standardized RegionsPluginData that is minimally adequate for
 	 * testing the PersonPropertiesPlugin
 	 * <li>The resulting RegionsPluginData will include:
+	 * <ul>
 	 * <li>Every RegionId included in {@link TestRegionId}
-	 * <li>Every person in the list of passed in people. Each person will be
+	 * <li>Every person in the list of passed in people.
+	 * <ul>
+	 * <li>Each person will be
 	 * assigned to a random region based on a RandomGenerator seeded by the passed
 	 * in seed and selected via the {@link TestRegionId#getRandomRegionId}
+	 * </ul>
+	 * </ul>
 	 */
 	public static RegionsPluginData getStandardRegionsPluginData(List<PersonId> people, long seed) {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
@@ -330,8 +362,10 @@ public class PersonPropertiesTestPluginFactory {
 	 * Returns a standardized StochasticsPluginData that is minimally adequate for
 	 * testing the PersonPropertiesPlugin
 	 * <li>The resulting StochasticsPluginData will include:
+	 * <ul>
 	 * <li>a seed based on the nextLong of a RandomGenerator seeded from the
 	 * passed in seed
+	 * </ul>
 	 */
 	public static StochasticsPluginData getStandardStochasticsPluginData(long seed) {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
