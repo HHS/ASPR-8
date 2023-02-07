@@ -234,7 +234,6 @@ public class AT_ResourcesTestPluginFactory {
 		long seed = 4570318399157617579L;
 		RegionsPluginData regionsPluginData = ResourcesTestPluginFactory.getStandardRegionsPluginData(people,
 				seed);
-		assertNotNull(regionsPluginData);
 
 		Set<TestRegionId> expectedRegionIds = EnumSet.allOf(TestRegionId.class);
 		assertFalse(expectedRegionIds.isEmpty());
