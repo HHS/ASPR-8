@@ -458,7 +458,7 @@ public class AT_TestPluginData {
 														.addTestDataManagerPlan("dm", testDataManagerPlan2)//
 														.addTestDataManager("dm", supplier1)//
 														.build();
-		assertNotEquals(testPluginData1, testPluginData5);
+		assertEquals(testPluginData1, testPluginData5);
 
 		// with different data manager suppliers
 		TestPluginData testPluginData6 = TestPluginData	.builder()//
