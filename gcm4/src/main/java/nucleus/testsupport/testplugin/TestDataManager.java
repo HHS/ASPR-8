@@ -40,11 +40,7 @@ public class TestDataManager extends DataManager {
 
 		List<TestDataManagerPlan> testDataManagerPlans = testPlanDataManager.getTestDataManagerPlans(alias);
 		for (final TestDataManagerPlan testDataManagerPlan : testDataManagerPlans) {
-			if (testDataManagerPlan.getKey() != null) {
-				dataManagerContext.addKeyedPlan(testDataManagerPlan::executeAction, testDataManagerPlan.getScheduledTime(), testDataManagerPlan.getKey());
-			} else {
-				dataManagerContext.addPlan(testDataManagerPlan::executeAction, testDataManagerPlan.getScheduledTime());
-			}
+			dataManagerContext.addPlan(testDataManagerPlan::executeAction, testDataManagerPlan.getScheduledTime());
 		}
 	}
 }
