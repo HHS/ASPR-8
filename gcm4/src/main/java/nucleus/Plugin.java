@@ -180,4 +180,42 @@ public final class Plugin {
 	public final Optional<Consumer<PluginContext>> getInitializer() {
 		return Optional.ofNullable(data.initializer);
 	}
+	
+	/**
+	 * Implementation consistent with equals()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((data == null) ? 0 : data.hashCode());
+		return result;
+	}
+
+	/**
+	 * Two Plugins are equal if and only if their plugin ids, plugin
+	 * dependencies and plugin datas are equal. INITIALIZERS ARE NOT COMPARED.
+	 * 
+	 * Initialization behavior can only be confirmed by executing the plugin via
+	 * a simulation instance.
+	 * 
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!(obj instanceof Plugin)) {
+			return false;
+		}
+		Plugin other = (Plugin) obj;
+		if (data == null) {
+			if (other.data != null) {
+				return false;
+			}
+		} else if (!data.equals(other.data)) {
+			return false;
+		}
+		return true;
+	}
 }
