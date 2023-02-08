@@ -12,7 +12,6 @@ import util.errors.ContractException;
 public enum StochasticsError implements ContractError {
 	NULL_SEED("Null seed value"),//
 	NULL_RANDOM_NUMBER_GENERATOR("Null random number generator"),//
-	DUPLICATE_RANDOM_NUMBER_GENERATOR_ID("Duplicate random number generator id"),//
 	NULL_RANDOM_NUMBER_GENERATOR_ID("Null random number generator id"),//
 	NULL_STOCHASTICS_PLUGIN_DATA("null stochastics plugin data")
 	;

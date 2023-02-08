@@ -1,6 +1,5 @@
 package nucleus.testsupport.testplugin;
 
-import java.util.Optional;
 import java.util.function.Consumer;
 
 import nucleus.ActorContext;
@@ -12,20 +11,7 @@ import util.errors.ContractException;
  */
 public class TestActorPlan {
 
-	/*
-	 * Key value generator for plans
-	 */
-	private static int masterKey;
-
-	private static synchronized int getNextKey() {
-		return masterKey++;
-	}
-
 	private final double scheduledTime;
-
-	private final Object key;
-
-	private final boolean releaseKey;
 
 	private boolean executed;
 
@@ -41,7 +27,7 @@ public class TestActorPlan {
 	 *             <li>{@linkplain TestError#NULL_PLAN} if the plan is null</li>
 	 * 
 	 */
-	public TestActorPlan(final double scheduledTime, Consumer<ActorContext> plan, boolean assignKey) {
+	public TestActorPlan(final double scheduledTime, Consumer<ActorContext> plan) {
 		if (scheduledTime < 0) {
 			throw new ContractException(TestError.NEGATIVE_PLANNING_TIME);
 		}
@@ -52,19 +38,10 @@ public class TestActorPlan {
 
 		this.scheduledTime = scheduledTime;
 
-		this.key = getNextKey();
-
-		releaseKey = assignKey;
-
 		this.plan = plan;
 	}
 
-	/**
-	 * Constructs an actor action plan. A key value will be generated.
-	 */
-	public TestActorPlan(final double scheduledTime, Consumer<ActorContext> action) {
-		this(scheduledTime, action, true);
-	}
+	
 
 	/**
 	 * Boilerplate implementation of hashCode consistent with equals()
@@ -73,13 +50,7 @@ public class TestActorPlan {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + (executed ? 1231 : 1237);
-		if (releaseKey) {
-			result = prime * result + ((key == null) ? 0 : key.hashCode());
-		} else {
-			result = prime * result;
-		}
-		result = prime * result + (releaseKey ? 1231 : 1237);
+		result = prime * result + (executed ? 1231 : 1237);		
 		long temp;
 		temp = Double.doubleToLongBits(scheduledTime);
 		result = prime * result + (int) (temp ^ (temp >>> 32));
@@ -88,7 +59,7 @@ public class TestActorPlan {
 
 	/**
 	 * TestActorPlans are equal if and only they return the same values for
-	 * 1)getKey(), 2)executed() and 3)getScheduledTime()This limited sense of
+	 * 1)executed() and 2)getScheduledTime()This limited sense of
 	 * equality is present simply to provide some reasonable evidence that the
 	 * plugin data cloning method is working correctly for the test plugin data.
 	 */
@@ -104,20 +75,7 @@ public class TestActorPlan {
 		if (executed != other.executed) {
 			return false;
 		}
-
-		if (releaseKey != other.releaseKey) {
-			return false;
-		}
-		if (releaseKey) {
-			if (key == null) {
-				if (other.key != null) {
-					return false;
-				}
-			} else if (!key.equals(other.key)) {
-				return false;
-			}
-		}
-
+		
 		if (Double.doubleToLongBits(scheduledTime) != Double.doubleToLongBits(other.scheduledTime)) {
 			return false;
 		}
@@ -128,9 +86,7 @@ public class TestActorPlan {
 	 * Constructs an test actor plan from another test actor plan.
 	 */
 	public TestActorPlan(TestActorPlan testActorPlan) {
-		scheduledTime = testActorPlan.scheduledTime;
-		key = testActorPlan.key;
-		releaseKey = testActorPlan.releaseKey;
+		scheduledTime = testActorPlan.scheduledTime;		
 		executed = testActorPlan.executed;
 		plan = testActorPlan.plan;
 	}
@@ -152,16 +108,6 @@ public class TestActorPlan {
 		} finally {
 			executed = true;
 		}
-	}
-
-	/**
-	 * Returns the key, possibly empty, associated with this action plan
-	 */
-	public Optional<Object> getKey() {
-		if (releaseKey) {
-			return Optional.of(key);
-		}
-		return Optional.empty();
 	}
 
 	/**
