@@ -3,16 +3,14 @@ package plugins.globalproperties.actors;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import nucleus.ActorContext;
-import nucleus.EventFilter;
+import nucleus.ReportContext;
 import plugins.globalproperties.datamanagers.GlobalPropertiesDataManager;
 import plugins.globalproperties.events.GlobalPropertyDefinitionEvent;
 import plugins.globalproperties.events.GlobalPropertyUpdateEvent;
 import plugins.globalproperties.support.GlobalPropertyId;
-import plugins.reports.support.Report;
 import plugins.reports.support.ReportError;
 import plugins.reports.support.ReportHeader;
-import plugins.reports.support.ReportId;
+import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportItem;
 import plugins.util.properties.PropertyError;
 import util.errors.ContractException;
@@ -30,8 +28,8 @@ import util.errors.ContractException;
  *
  *
  */
-public final class GlobalPropertyReport implements Report {
-	
+public final class GlobalPropertyReport {
+
 	/**
 	 * Returns a new Builder instance
 	 */
@@ -51,8 +49,8 @@ public final class GlobalPropertyReport implements Report {
 		}
 
 		private void validate() {
-			if (data.reportId == null) {
-				throw new ContractException(ReportError.NULL_REPORT_ID);
+			if (data.reportLabel == null) {
+				throw new ContractException(ReportError.NULL_REPORT_LABEL);
 			}
 		}
 
@@ -60,8 +58,8 @@ public final class GlobalPropertyReport implements Report {
 		 * Returns the global property report from the collected data
 		 * 
 		 * @throws ContractException
-		 *             <li>{@linkplain ReportError#NULL_REPORT_ID} if the report
-		 *             id was not set</li>
+		 *             <li>{@linkplain ReportError#NULL_REPORT_LABEL} if the report
+		 *             label was not set</li>
 		 */
 		public GlobalPropertyReport build() {
 			try {
@@ -119,17 +117,17 @@ public final class GlobalPropertyReport implements Report {
 		}
 
 		/**
-		 * Sets the report id. Defaults to null.
+		 * Sets the report label. Defaults to null.
 		 * 
 		 * @throws ContractException
-		 *             <li>{@linkplain ReportError#NULL_REPORT_ID} if the report
-		 *             id is null</li>
+		 *             <li>{@linkplain ReportError#NULL_REPORT_LABEL} if the report
+		 *             label is null</li>
 		 */
-		public Builder setReportId(ReportId reportId) {
-			if (reportId == null) {
-				throw new ContractException(ReportError.NULL_REPORT_ID);
+		public Builder setReportLabel(ReportLabel reportLabel) {
+			if (reportLabel == null) {
+				throw new ContractException(ReportError.NULL_REPORT_LABEL);
 			}
-			data.reportId = reportId;
+			data.reportLabel = reportLabel;
 			return this;
 		}
 
@@ -147,7 +145,7 @@ public final class GlobalPropertyReport implements Report {
 	private static class Data {
 		private final Set<GlobalPropertyId> includedPropertyIds = new LinkedHashSet<>();
 		private final Set<GlobalPropertyId> excludedPropertyIds = new LinkedHashSet<>();
-		private ReportId reportId;
+		private ReportLabel reportLabel;
 		private boolean includeNewPropertyIds;
 		private boolean includeAllExtantPropertyIds;
 		private final ReportHeader reportHeader = ReportHeader	.builder()//
@@ -163,7 +161,7 @@ public final class GlobalPropertyReport implements Report {
 		this.data = data;
 	}
 
-	private void handleGlobalPropertyDefinitionEvent(final ActorContext actorContext, final GlobalPropertyDefinitionEvent globalPropertyDefinitionEvent) {
+	private void handleGlobalPropertyDefinitionEvent(final ReportContext reportContext, final GlobalPropertyDefinitionEvent globalPropertyDefinitionEvent) {
 		final GlobalPropertyId globalPropertyId = globalPropertyDefinitionEvent.globalPropertyId();
 		/*
 		 * If the property id is explicitly excluded, then ignore it
@@ -179,23 +177,23 @@ public final class GlobalPropertyReport implements Report {
 		}
 
 		if (included) {
-			writeProperty(actorContext, globalPropertyId, globalPropertyDefinitionEvent.initialPropertyValue());
+			writeProperty(reportContext, globalPropertyId, globalPropertyDefinitionEvent.initialPropertyValue());
 		}
 	}
 
-	private void handleGlobalPropertyUpdateEvent(final ActorContext actorContext, final GlobalPropertyUpdateEvent globalPropertyUpdateEvent) {
+	private void handleGlobalPropertyUpdateEvent(final ReportContext reportContext, final GlobalPropertyUpdateEvent globalPropertyUpdateEvent) {
 		final GlobalPropertyId globalPropertyId = globalPropertyUpdateEvent.globalPropertyId();
 		if (data.includedPropertyIds.contains(globalPropertyId)) {
-			writeProperty(actorContext, globalPropertyId, globalPropertyUpdateEvent.currentPropertyValue());
+			writeProperty(reportContext, globalPropertyId, globalPropertyUpdateEvent.currentPropertyValue());
 		}
 	}
 
 	/**
 	 * Initialization of the report.
 	 */
-	public void init(final ActorContext actorContext) {
+	public void init(final ReportContext reportContext) {
 
-		final GlobalPropertiesDataManager globalPropertiesDataManager = actorContext.getDataManager(GlobalPropertiesDataManager.class);
+		final GlobalPropertiesDataManager globalPropertiesDataManager = reportContext.getDataManager(GlobalPropertiesDataManager.class);
 
 		/*
 		 * if the client has selected all extant properties, then correct the
@@ -217,8 +215,8 @@ public final class GlobalPropertyReport implements Report {
 		 * We now subscribe to all update and definition events without any
 		 * filtering
 		 */
-		actorContext.subscribe(EventFilter.builder(GlobalPropertyUpdateEvent.class).build(), this::handleGlobalPropertyUpdateEvent);
-		actorContext.subscribe(EventFilter.builder(GlobalPropertyDefinitionEvent.class).build(), this::handleGlobalPropertyDefinitionEvent);
+		reportContext.subscribe(GlobalPropertyUpdateEvent.class, this::handleGlobalPropertyUpdateEvent);
+		reportContext.subscribe(GlobalPropertyDefinitionEvent.class, this::handleGlobalPropertyDefinitionEvent);
 
 		/*
 		 * We initialize the reporting with the current state of each global
@@ -226,19 +224,19 @@ public final class GlobalPropertyReport implements Report {
 		 */
 		for (final GlobalPropertyId globalPropertyId : data.includedPropertyIds) {
 			final Object globalPropertyValue = globalPropertiesDataManager.getGlobalPropertyValue(globalPropertyId);
-			writeProperty(actorContext, globalPropertyId, globalPropertyValue);
+			writeProperty(reportContext, globalPropertyId, globalPropertyValue);
 		}
 
 	}
 
-	private void writeProperty(final ActorContext actorContext, final GlobalPropertyId globalPropertyId, final Object globalPropertyValue) {
+	private void writeProperty(final ReportContext reportContext, final GlobalPropertyId globalPropertyId, final Object globalPropertyValue) {
 		final ReportItem.Builder reportItemBuilder = ReportItem.builder();
 		reportItemBuilder.setReportHeader(data.reportHeader);
-		reportItemBuilder.setReportId(data.reportId);
-		reportItemBuilder.addValue(actorContext.getTime());
+		reportItemBuilder.setReportLabel(data.reportLabel);
+		reportItemBuilder.addValue(reportContext.getTime());
 		reportItemBuilder.addValue(globalPropertyId.toString());
 		reportItemBuilder.addValue(globalPropertyValue);
-		actorContext.releaseOutput(reportItemBuilder.build());
+		reportContext.releaseOutput(reportItemBuilder.build());
 	}
 
 }

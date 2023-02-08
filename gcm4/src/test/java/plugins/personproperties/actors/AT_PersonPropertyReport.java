@@ -10,9 +10,9 @@ import nucleus.ActorContext;
 import plugins.personproperties.support.PersonPropertyId;
 import plugins.personproperties.testsupport.TestPersonPropertyId;
 import plugins.reports.support.ReportError;
-import plugins.reports.support.ReportId;
+import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportPeriod;
-import plugins.reports.support.SimpleReportId;
+import plugins.reports.support.SimpleReportLabel;
 import plugins.util.properties.PropertyError;
 import tools.annotations.UnitTag;
 import tools.annotations.UnitTestMethod;
@@ -39,52 +39,52 @@ public class AT_PersonPropertyReport {
 	public void testBuild() {
 		PersonPropertyReport.Builder builder = PersonPropertyReport.builder();
 
-		builder.setReportId(new SimpleReportId(1000));
+		builder.setReportLabel(new SimpleReportLabel(1000));
 		builder.setReportPeriod(ReportPeriod.DAILY);
 
 		PersonPropertyReport report = builder.build();
 
 		assertNotNull(report);
 
-		// precondition: null report id
+		// precondition: null report label
 		ContractException contractException = assertThrows(ContractException.class, () -> {
 			PersonPropertyReport.builder().setReportPeriod(ReportPeriod.DAILY).build();
 		});
-		assertEquals(ReportError.NULL_REPORT_ID, contractException.getErrorType());
+		assertEquals(ReportError.NULL_REPORT_LABEL, contractException.getErrorType());
 
 		// precondition: null report period
 		contractException = assertThrows(ContractException.class, () -> {
-			PersonPropertyReport.builder().setReportId(new SimpleReportId(1000)).build();
+			PersonPropertyReport.builder().setReportLabel(new SimpleReportLabel(1000)).build();
 		});
 		assertEquals(ReportError.NULL_REPORT_PERIOD, contractException.getErrorType());
 	}
 
 	@Test
-	@UnitTestMethod(target = PersonPropertyReport.Builder.class, name = "setReportId", args = { ReportId.class })
-	public void testSetReportId() {
+	@UnitTestMethod(target = PersonPropertyReport.Builder.class, name = "setReportLabel", args = { ReportLabel.class })
+	public void testSetReportLabel() {
 		PersonPropertyReport.Builder builder = PersonPropertyReport.builder();
-		ReportId reportId = new SimpleReportId(1000);
-		builder.setReportId(reportId);
+		ReportLabel reportLabel = new SimpleReportLabel(1000);
+		builder.setReportLabel(reportLabel);
 		builder.setReportPeriod(ReportPeriod.DAILY);
 
 		PersonPropertyReport report = builder.build();
 
 		assertNotNull(report);
 
-		// precondition: report id is null
+		// precondition: report label is null
 		ContractException contractException = assertThrows(ContractException.class, () -> {
-			PersonPropertyReport.builder().setReportId(null);
+			PersonPropertyReport.builder().setReportLabel(null);
 		});
-		assertEquals(ReportError.NULL_REPORT_ID, contractException.getErrorType());
+		assertEquals(ReportError.NULL_REPORT_LABEL, contractException.getErrorType());
 	}
 
 	@Test
 	@UnitTestMethod(target = PersonPropertyReport.Builder.class, name = "setReportPeriod", args = { ReportPeriod.class })
 	public void testSetReportPeriod() {
 		PersonPropertyReport.Builder builder = PersonPropertyReport.builder();
-		ReportId reportId = new SimpleReportId(1000);
+		ReportLabel reportLabel = new SimpleReportLabel(1000);
 		ReportPeriod reportPeriod = ReportPeriod.DAILY;
-		builder.setReportId(reportId);
+		builder.setReportLabel(reportLabel);
 		builder.setReportPeriod(reportPeriod);
 
 		PersonPropertyReport report = builder.build();
@@ -108,9 +108,9 @@ public class AT_PersonPropertyReport {
 	@UnitTestMethod(target = PersonPropertyReport.Builder.class, name = "includePersonProperty", args = { PersonPropertyId.class })
 	public void testIncludePersonProperty() {
 		PersonPropertyReport.Builder builder = PersonPropertyReport.builder();
-		ReportId reportId = new SimpleReportId(1000);
+		ReportLabel reportLabel = new SimpleReportLabel(1000);
 		ReportPeriod reportPeriod = ReportPeriod.DAILY;
-		builder.setReportId(reportId);
+		builder.setReportLabel(reportLabel);
 		builder.setReportPeriod(reportPeriod);
 		builder.includePersonProperty(TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK);
 
@@ -129,9 +129,9 @@ public class AT_PersonPropertyReport {
 	@UnitTestMethod(target = PersonPropertyReport.Builder.class, name = "excludePersonProperty", args = { PersonPropertyId.class })
 	public void testExcludePersonProperty() {
 		PersonPropertyReport.Builder builder = PersonPropertyReport.builder();
-		ReportId reportId = new SimpleReportId(1000);
+		ReportLabel reportLabel = new SimpleReportLabel(1000);
 		ReportPeriod reportPeriod = ReportPeriod.DAILY;
-		builder.setReportId(reportId);
+		builder.setReportLabel(reportLabel);
 		builder.setReportPeriod(reportPeriod);
 		builder.excludePersonProperty(TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK);
 

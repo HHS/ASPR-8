@@ -6,9 +6,9 @@ import java.util.List;
 
 import org.apache.commons.math3.util.Pair;
 
-import lesson.plugins.model.GlobalProperty;
 import lesson.plugins.model.ModelPlugin;
-import lesson.plugins.model.ModelReportId;
+import lesson.plugins.model.ModelReportLabel;
+import lesson.plugins.model.support.GlobalProperty;
 import nucleus.Dimension;
 import nucleus.Experiment;
 import nucleus.Plugin;
@@ -98,7 +98,7 @@ public final class Example_13 {
 				ReportsPluginData	.builder()//
 									.addReport(() -> {
 										return GlobalPropertyReport	.builder()//
-																	.setReportId(ModelReportId.GLOBAL_PROPERTY_REPORT)//
+																	.setReportLabel(ModelReportLabel.GLOBAL_PROPERTY_REPORT)//
 																	.includeAllExtantPropertyIds(true)//
 																	.includeNewPropertyIds(true)//
 																	.build()::init;
@@ -109,7 +109,7 @@ public final class Example_13 {
 
 		NIOReportItemHandler nioReportItemHandler = //
 				NIOReportItemHandler.builder()//
-									.addReport(ModelReportId.GLOBAL_PROPERTY_REPORT, //
+									.addReport(ModelReportLabel.GLOBAL_PROPERTY_REPORT, //
 											Paths.get("C:\\temp\\gcm\\global property report.xls"))//
 									.build();
 

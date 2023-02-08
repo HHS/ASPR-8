@@ -1,5 +1,6 @@
 package lesson.plugins.model;
 
+import lesson.plugins.model.actors.GammaActor;
 import nucleus.Plugin;
 import plugins.reports.ReportsPluginId;
 

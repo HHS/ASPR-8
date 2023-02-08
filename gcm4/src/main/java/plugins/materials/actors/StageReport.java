@@ -3,8 +3,7 @@ package plugins.materials.actors;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import nucleus.ActorContext;
-import nucleus.EventFilter;
+import nucleus.ReportContext;
 import plugins.materials.datamangers.MaterialsDataManager;
 import plugins.materials.events.StageAdditionEvent;
 import plugins.materials.events.StageImminentRemovalEvent;
@@ -12,9 +11,8 @@ import plugins.materials.events.StageMaterialsProducerUpdateEvent;
 import plugins.materials.events.StageOfferUpdateEvent;
 import plugins.materials.support.MaterialsProducerId;
 import plugins.materials.support.StageId;
-import plugins.reports.support.Report;
 import plugins.reports.support.ReportHeader;
-import plugins.reports.support.ReportId;
+import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportItem;
 
 /**
@@ -41,11 +39,11 @@ import plugins.reports.support.ReportItem;
  *
  *
  */
-public final class StageReport implements Report {
-	private final ReportId reportId;
+public final class StageReport {
+	private final ReportLabel reportLabel;
 
-	public StageReport(ReportId reportId) {
-		this.reportId = reportId;
+	public StageReport(ReportLabel reportLabel) {
+		this.reportLabel = reportLabel;
 	}
 
 	private static class StageRecord {
@@ -94,7 +92,7 @@ public final class StageReport implements Report {
 		return reportHeader;
 	}
 
-	private void handleStageAdditionEvent(ActorContext actorContext, StageAdditionEvent stageAdditionEvent) {
+	private void handleStageAdditionEvent(ReportContext reportContext, StageAdditionEvent stageAdditionEvent) {
 
 		StageRecord stageRecord = new StageRecord();
 		stageRecord.stageId = stageAdditionEvent.stageId();
@@ -102,54 +100,54 @@ public final class StageReport implements Report {
 		stageRecord.materialsProducerId = materialsDataManager.getStageProducer(stageRecord.stageId);
 		stageRecord.lastAction = Action.CREATED;
 		stageRecords.put(stageRecord.stageId, stageRecord);
-		writeReportItem(actorContext, stageRecord);
+		writeReportItem(reportContext, stageRecord);
 	}
 
-	private void handleStageImminentRemovalEvent(ActorContext actorContext, StageImminentRemovalEvent stageImminentRemovalEvent) {
+	private void handleStageImminentRemovalEvent(ReportContext reportContext, StageImminentRemovalEvent stageImminentRemovalEvent) {
 		StageId stageId = stageImminentRemovalEvent.stageId();
 		StageRecord stageRecord = stageRecords.remove(stageId);
 		stageRecord.lastAction = Action.DESTROYED;
-		writeReportItem(actorContext, stageRecord);
+		writeReportItem(reportContext, stageRecord);
 	}
 
-	private void handleStageOfferUpdateEvent(ActorContext actorContext, StageOfferUpdateEvent stageOfferUpdateEvent) {
+	private void handleStageOfferUpdateEvent(ReportContext reportContext, StageOfferUpdateEvent stageOfferUpdateEvent) {
 		StageId stageId = stageOfferUpdateEvent.stageId();
 		StageRecord stageRecord = stageRecords.get(stageId);
 		stageRecord.isOffered = stageOfferUpdateEvent.currentOfferState();
 		stageRecord.lastAction = Action.OFFERED;
-		writeReportItem(actorContext, stageRecord);
+		writeReportItem(reportContext, stageRecord);
 	}
 
-	private void handleStageMaterialsProducerUpdateEvent(ActorContext actorContext, StageMaterialsProducerUpdateEvent stageMaterialsProducerUpdateEvent) {
+	private void handleStageMaterialsProducerUpdateEvent(ReportContext reportContext, StageMaterialsProducerUpdateEvent stageMaterialsProducerUpdateEvent) {
 		StageId stageId = stageMaterialsProducerUpdateEvent.stageId();
 		StageRecord stageRecord = stageRecords.get(stageId);
 		stageRecord.materialsProducerId = stageMaterialsProducerUpdateEvent.currentMaterialsProducerId();
 		stageRecord.lastAction = Action.TRANSFERRED;
-		writeReportItem(actorContext, stageRecord);
+		writeReportItem(reportContext, stageRecord);
 	}
 
-	private void writeReportItem(ActorContext actorContext, final StageRecord stageRecord) {
+	private void writeReportItem(ReportContext reportContext, final StageRecord stageRecord) {
 		final ReportItem.Builder reportItemBuilder = ReportItem.builder();
 		reportItemBuilder.setReportHeader(getReportHeader());
-		reportItemBuilder.setReportId(reportId);
-		reportItemBuilder.addValue(actorContext.getTime());
+		reportItemBuilder.setReportLabel(reportLabel);
+		reportItemBuilder.addValue(reportContext.getTime());
 		reportItemBuilder.addValue(stageRecord.stageId);
 		reportItemBuilder.addValue(stageRecord.materialsProducerId.toString());
 		reportItemBuilder.addValue(stageRecord.lastAction.displayName);
 		reportItemBuilder.addValue(stageRecord.isOffered);
-		actorContext.releaseOutput(reportItemBuilder.build());
+		reportContext.releaseOutput(reportItemBuilder.build());
 	}
 
 	private MaterialsDataManager materialsDataManager;
 
-	public void init(final ActorContext actorContext) {
+	public void init(final ReportContext reportContext) {
 
-		actorContext.subscribe(EventFilter.builder(StageOfferUpdateEvent.class).build(), this::handleStageOfferUpdateEvent);
-		actorContext.subscribe(EventFilter.builder(StageAdditionEvent.class).build(), this::handleStageAdditionEvent);
-		actorContext.subscribe(EventFilter.builder(StageImminentRemovalEvent.class).build(), this::handleStageImminentRemovalEvent);
-		actorContext.subscribe(EventFilter.builder(StageMaterialsProducerUpdateEvent.class).build(), this::handleStageMaterialsProducerUpdateEvent);
+		reportContext.subscribe(StageOfferUpdateEvent.class, this::handleStageOfferUpdateEvent);
+		reportContext.subscribe(StageAdditionEvent.class, this::handleStageAdditionEvent);
+		reportContext.subscribe(StageImminentRemovalEvent.class, this::handleStageImminentRemovalEvent);
+		reportContext.subscribe(StageMaterialsProducerUpdateEvent.class, this::handleStageMaterialsProducerUpdateEvent);
 
-		materialsDataManager = actorContext.getDataManager(MaterialsDataManager.class);
+		materialsDataManager = reportContext.getDataManager(MaterialsDataManager.class);
 
 		for (MaterialsProducerId materialsProducerId : materialsDataManager.getMaterialsProducerIds()) {
 			for (StageId stageId : materialsDataManager.getStages(materialsProducerId)) {
@@ -161,7 +159,7 @@ public final class StageReport implements Report {
 				stageRecord.lastAction = Action.CREATED;
 				stageRecords.put(stageRecord.stageId, stageRecord);
 
-				writeReportItem(actorContext, stageRecord);
+				writeReportItem(reportContext, stageRecord);
 			}
 		}
 	}

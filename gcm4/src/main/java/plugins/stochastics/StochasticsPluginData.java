@@ -106,13 +106,10 @@ public final class StochasticsPluginData implements PluginData {
 		 * @throws ContractException
 		 *             <li>{@linkplain StochasticsError#NULL_RANDOM_NUMBER_GENERATOR_ID}
 		 *             if the id is null</li>
-		 *             <li>{@linkplain StochasticsError#DUPLICATE_RANDOM_NUMBER_GENERATOR_ID}
-		 *             if the id was previously added</li>
 		 */
 		public Builder addRandomGeneratorId(RandomNumberGeneratorId randomNumberGeneratorId) {
 			ensureDataMutability();
 			validateRandomNumberGeneratorIdNotNull(randomNumberGeneratorId);
-			validateRandomNumberGeneratorIdDoesNotExist(data, randomNumberGeneratorId);
 			data.randomNumberGeneratorIds.add(randomNumberGeneratorId);
 			return this;
 		}
@@ -131,13 +128,6 @@ public final class StochasticsPluginData implements PluginData {
 	private static void validateRandomNumberGeneratorIdNotNull(final Object value) {
 		if (value == null) {
 			throw new ContractException(StochasticsError.NULL_RANDOM_NUMBER_GENERATOR_ID);
-		}
-	}
-
-	private static void validateRandomNumberGeneratorIdDoesNotExist(final Data data, final RandomNumberGeneratorId randomNumberGeneratorId) {
-
-		if (data.randomNumberGeneratorIds.contains(randomNumberGeneratorId)) {
-			throw new ContractException(StochasticsError.DUPLICATE_RANDOM_NUMBER_GENERATOR_ID, randomNumberGeneratorId);
 		}
 	}
 

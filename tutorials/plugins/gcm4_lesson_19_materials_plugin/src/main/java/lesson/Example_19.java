@@ -7,15 +7,15 @@ import java.util.stream.IntStream;
 import org.apache.commons.math3.random.RandomGenerator;
 
 import lesson.plugins.model.ModelPlugin;
-import lesson.plugins.model.actors.reports.DiseaseStateReport;
-import lesson.plugins.model.actors.reports.VaccineProductionReport;
-import lesson.plugins.model.actors.reports.VaccineReport;
+import lesson.plugins.model.reports.DiseaseStateReport;
+import lesson.plugins.model.reports.VaccineProductionReport;
+import lesson.plugins.model.reports.VaccineReport;
 import lesson.plugins.model.support.DiseaseState;
 import lesson.plugins.model.support.GlobalProperty;
 import lesson.plugins.model.support.GroupType;
 import lesson.plugins.model.support.Material;
 import lesson.plugins.model.support.MaterialsProducer;
-import lesson.plugins.model.support.ModelReportId;
+import lesson.plugins.model.support.ModelReportLabel;
 import lesson.plugins.model.support.PersonProperty;
 import lesson.plugins.model.support.Region;
 import lesson.plugins.model.support.Resource;
@@ -247,15 +247,15 @@ public final class Example_19 {
 
 		final ReportsPluginData reportsPluginData = //
 				ReportsPluginData	.builder()//
-									.addReport(() -> new DiseaseStateReport(ModelReportId.DISEASE_STATE_REPORT, ReportPeriod.END_OF_SIMULATION)::init)//
+									.addReport(() -> new DiseaseStateReport(ModelReportLabel.DISEASE_STATE_REPORT, ReportPeriod.END_OF_SIMULATION)::init)//
 									.addReport(() -> PersonPropertyReport	.builder()//
-																			.setReportId(ModelReportId.PERSON_PROPERTY_REPORT)//
+																			.setReportLabel(ModelReportLabel.PERSON_PROPERTY_REPORT)//
 																			.setReportPeriod(ReportPeriod.DAILY)//
 																			.includePersonProperty(PersonProperty.VACCINATED)//
 																			.includePersonProperty(PersonProperty.VACCINE_SCHEDULED)//
 																			.build()::init)//
-									.addReport(() -> new VaccineReport(ModelReportId.VACCINE_REPORT, ReportPeriod.DAILY)::init)//
-									.addReport(() -> new VaccineProductionReport(ModelReportId.VACCINE_PRODUCTION_REPORT, ReportPeriod.DAILY)::init)//
+									.addReport(() -> new VaccineReport(ModelReportLabel.VACCINE_REPORT, ReportPeriod.DAILY)::init)//
+									.addReport(() -> new VaccineProductionReport(ModelReportLabel.VACCINE_PRODUCTION_REPORT, ReportPeriod.DAILY)::init)//
 									
 
 									.build();
@@ -265,10 +265,10 @@ public final class Example_19 {
 
 	private NIOReportItemHandler getNIOReportItemHandler() {
 		return NIOReportItemHandler	.builder()//
-									.addReport(ModelReportId.DISEASE_STATE_REPORT, Paths.get("c:\\temp\\gcm\\disease_state_report.xls"))//
-									.addReport(ModelReportId.PERSON_PROPERTY_REPORT, Paths.get("c:\\temp\\gcm\\person_property_report.xls"))//
-									.addReport(ModelReportId.VACCINE_REPORT, Paths.get("c:\\temp\\gcm\\vaccine_report.xls"))//
-									.addReport(ModelReportId.VACCINE_PRODUCTION_REPORT, Paths.get("c:\\temp\\gcm\\vaccine_production_report.xls"))//									
+									.addReport(ModelReportLabel.DISEASE_STATE_REPORT, Paths.get("c:\\temp\\gcm\\disease_state_report.xls"))//
+									.addReport(ModelReportLabel.PERSON_PROPERTY_REPORT, Paths.get("c:\\temp\\gcm\\person_property_report.xls"))//
+									.addReport(ModelReportLabel.VACCINE_REPORT, Paths.get("c:\\temp\\gcm\\vaccine_report.xls"))//
+									.addReport(ModelReportLabel.VACCINE_PRODUCTION_REPORT, Paths.get("c:\\temp\\gcm\\vaccine_production_report.xls"))//									
 									.build();
 	}
 

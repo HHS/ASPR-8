@@ -170,4 +170,13 @@ public enum TestPersonPropertyId implements PersonPropertyId {
 		return new PersonPropertyId() {
 		};
 	}
+
+	private TestPersonPropertyId next;
+
+	public TestPersonPropertyId next() {
+		if (next == null) {
+			next = TestPersonPropertyId.values()[(ordinal() + 1) % TestPersonPropertyId.values().length];
+		}
+		return next;
+	}
 }

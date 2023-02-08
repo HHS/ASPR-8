@@ -55,8 +55,8 @@ public final class ReportItem {
 				throw new ContractException(ReportError.NULL_REPORT_HEADER);
 			}
 
-			if (scaffold.reportId == null) {
-				throw new ContractException(ReportError.NULL_REPORT_ID);
+			if (scaffold.reportLabel == null) {
+				throw new ContractException(ReportError.NULL_REPORT_LABEL);
 			}
 
 		}
@@ -67,7 +67,7 @@ public final class ReportItem {
 		 * 
 		 * @throws ContractException
 		 *             <li>{@linkplain ReportError#NULL_REPORT_HEADER} if the collected report header is null</li>
-		 *             <li>{@linkplain ReportError#NULL_REPORT_ID} if the collected report id is null</li>
+		 *             <li>{@linkplain ReportError#NULL_REPORT_LABEL} if the collected report label is null</li>
 		 * 
 		 */
 		public ReportItem build() {
@@ -96,39 +96,39 @@ public final class ReportItem {
 		 * Sets the report type for this {@link ReportItem}. The report type
 		 * should be the class type of the report that authors the report item.
 		 */
-		public Builder setReportId(ReportId reportId) {
-			if (reportId == null) {
-				throw new ContractException(ReportError.NULL_REPORT_ID);
+		public Builder setReportLabel(ReportLabel reportLabel) {
+			if (reportLabel == null) {
+				throw new ContractException(ReportError.NULL_REPORT_LABEL);
 			}
-			scaffold.reportId = reportId;
+			scaffold.reportLabel = reportLabel;
 			return this;
 		}
 
 	}
 
 	private static class Scaffold {
-		private ReportId reportId;
+		private ReportLabel reportLabel;
 		private ReportHeader reportHeader;
 		private final List<String> values = new ArrayList<>();
 	}
 
-	private final ReportId reportId;
+	private final ReportLabel reportLabel;
 
 	private final List<String> values;
 
 	private final ReportHeader reportHeader;
 
 	private ReportItem(final Scaffold scaffold) {
-		reportId = scaffold.reportId;
+		reportLabel = scaffold.reportLabel;
 		reportHeader = scaffold.reportHeader;
 		values = scaffold.values;
 	}
 
 	/**
-	 * Returns the report id for this report item
+	 * Returns the report label for this report item
 	 */
-	public ReportId getReportId() {
-		return reportId;
+	public ReportLabel getReportLabel() {
+		return reportLabel;
 	}
 
 	/**
@@ -169,14 +169,21 @@ public final class ReportItem {
 	@Override
 	public String toString() {
 		StringBuilder builder2 = new StringBuilder();
-		builder2.append("ReportItem [reportId=");
-		builder2.append(reportId);
+		builder2.append("ReportItem [reportLabel=");
+		builder2.append(reportLabel);
 		builder2.append(", reportHeader=");
 		builder2.append(reportHeader);
 		builder2.append(", values=");
 		builder2.append(values);
 		builder2.append("]");
 		return builder2.toString();
+	}
+	
+	/**
+	 * Returns the values in the form [value[0], value[1], ... ,value[N-1]]
+	 */
+	public String toValueString() {
+		return values.toString();	
 	}
 
 	/**
@@ -187,7 +194,7 @@ public final class ReportItem {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((reportHeader == null) ? 0 : reportHeader.hashCode());
-		result = prime * result + ((reportId == null) ? 0 : reportId.hashCode());
+		result = prime * result + ((reportLabel == null) ? 0 : reportLabel.hashCode());
 		result = prime * result + ((values == null) ? 0 : values.hashCode());
 		return result;
 	}
@@ -212,11 +219,11 @@ public final class ReportItem {
 		} else if (!reportHeader.equals(other.reportHeader)) {
 			return false;
 		}
-		if (reportId == null) {
-			if (other.reportId != null) {
+		if (reportLabel == null) {
+			if (other.reportLabel != null) {
 				return false;
 			}
-		} else if (!reportId.equals(other.reportId)) {
+		} else if (!reportLabel.equals(other.reportLabel)) {
 			return false;
 		}
 		if (values == null) {
