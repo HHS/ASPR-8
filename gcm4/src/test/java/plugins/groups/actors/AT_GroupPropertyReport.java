@@ -28,10 +28,10 @@ import plugins.groups.testsupport.TestAuxiliaryGroupTypeId;
 import plugins.groups.testsupport.TestGroupPropertyId;
 import plugins.groups.testsupport.TestGroupTypeId;
 import plugins.reports.support.ReportHeader;
-import plugins.reports.support.ReportId;
+import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportItem;
 import plugins.reports.support.ReportPeriod;
-import plugins.reports.support.SimpleReportId;
+import plugins.reports.support.SimpleReportLabel;
 import plugins.reports.testsupport.ReportsTestPluginFactory;
 import plugins.util.properties.PropertyDefinition;
 import tools.annotations.UnitTestMethod;
@@ -103,12 +103,12 @@ public class AT_GroupPropertyReport {
 	}
 
 	@Test
-	@UnitTestMethod(target = GroupPropertyReport.Builder.class, name = "setReportId", args = { ReportId.class })
-	public void testSetReportId() {
+	@UnitTestMethod(target = GroupPropertyReport.Builder.class, name = "setReportLabel", args = { ReportLabel.class })
+	public void testSetReportLabel() {
 		// test covered by the consumers-based tests in this class
 
 		// precondition tests:
-		assertThrows(RuntimeException.class, () -> GroupPropertyReport.builder().setReportId(null));
+		assertThrows(RuntimeException.class, () -> GroupPropertyReport.builder().setReportLabel(null));
 	}
 
 	@Test
@@ -279,7 +279,7 @@ public class AT_GroupPropertyReport {
 
 		// build the report
 		GroupPropertyReport.Builder builder = GroupPropertyReport.builder();
-		builder.setReportId(REPORT_ID);
+		builder.setReportLabel(REPORT_LABEL);
 		builder.includeNewProperties(includeNewProperties);
 		builder.setReportPeriod(ReportPeriod.HOURLY);
 		builder.addProperty(TestGroupTypeId.GROUP_TYPE_1,
@@ -525,7 +525,7 @@ public class AT_GroupPropertyReport {
 
 		// build the report with all properties selected
 		GroupPropertyReport.Builder builder = GroupPropertyReport.builder();
-		builder.setReportId(REPORT_ID);
+		builder.setReportLabel(REPORT_LABEL);
 		builder.setReportPeriod(ReportPeriod.DAILY);
 
 		for (TestGroupPropertyId testGroupPropertyId : TestGroupPropertyId.values()) {
@@ -551,7 +551,7 @@ public class AT_GroupPropertyReport {
 
 	private static ReportItem getReportItem(ReportPeriod reportPeriod, Object... values) {
 		ReportItem.Builder builder = ReportItem.builder();
-		builder.setReportId(REPORT_ID);
+		builder.setReportLabel(REPORT_LABEL);
 
 		switch (reportPeriod) {
 			case DAILY:
@@ -572,7 +572,7 @@ public class AT_GroupPropertyReport {
 		return builder.build();
 	}
 
-	private static final ReportId REPORT_ID = new SimpleReportId("group property report");
+	private static final ReportLabel REPORT_LABEL = new SimpleReportLabel("group property report");
 
 	private static final ReportHeader REPORT_DAILY_HEADER = ReportHeader.builder().add("day").add("group_type")
 			.add("property").add("value").add("group_count").build();

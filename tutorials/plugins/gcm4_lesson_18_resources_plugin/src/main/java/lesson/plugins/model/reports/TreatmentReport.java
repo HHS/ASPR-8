@@ -9,7 +9,7 @@ import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonId;
 import plugins.personproperties.datamanagers.PersonPropertiesDataManager;
 import plugins.reports.support.ReportHeader;
-import plugins.reports.support.ReportId;
+import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportItem;
 import util.wrappers.MultiKey;
 import util.wrappers.MutableInteger;
@@ -21,10 +21,10 @@ import util.wrappers.MutableInteger;
  *
  */
 public final class TreatmentReport {
-	private final ReportId reportId;
+	private final ReportLabel reportLabel;
 
-	public TreatmentReport(ReportId reportId) {
-		this.reportId = reportId;
+	public TreatmentReport(ReportLabel reportLabel) {
+		this.reportLabel = reportLabel;
 	}
 
 	public void init(ReportContext reportContext) {
@@ -89,7 +89,7 @@ public final class TreatmentReport {
 			boolean deadInHome = multiKey.getKey(5);
 
 			reportItemBuilder.setReportHeader(reportHeader);
-			reportItemBuilder.setReportId(reportId);
+			reportItemBuilder.setReportLabel(reportLabel);
 			reportItemBuilder.addValue(immune);
 			reportItemBuilder.addValue(infected);
 			reportItemBuilder.addValue(treatedWithAntiviral);

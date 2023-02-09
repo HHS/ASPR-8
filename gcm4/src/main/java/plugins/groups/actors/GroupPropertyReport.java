@@ -19,7 +19,7 @@ import plugins.groups.support.GroupTypeId;
 import plugins.reports.support.PeriodicReport;
 import plugins.reports.support.ReportError;
 import plugins.reports.support.ReportHeader;
-import plugins.reports.support.ReportId;
+import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportItem;
 import plugins.reports.support.ReportPeriod;
 import plugins.util.properties.PropertyDefinition;
@@ -53,7 +53,7 @@ public final class GroupPropertyReport extends PeriodicReport {
 		private ReportPeriod reportPeriod = ReportPeriod.DAILY;
 		private final Map<GroupTypeId, Set<GroupPropertyId>> clientPropertyMap = new LinkedHashMap<>();
 		private final Set<GroupTypeId> allProperties = new LinkedHashSet<>();
-		private ReportId reportId;
+		private ReportLabel reportLabel;
 		private boolean includeNewProperties;
 	}
 
@@ -103,16 +103,16 @@ public final class GroupPropertyReport extends PeriodicReport {
 		 * Sets the report period for this report
 		 * 
 		 * @throws ContractException
-		 *             <li>{@linkplain ReportError#NULL_REPORT_ID} if the report
-		 *             period is null</li>
+		 *             <li>{@linkplain ReportError#NULL_REPORT_LABEL} if the report
+		 *             label is null</li>
 		 * 
 		 */
-		public Builder setReportId(ReportId reportId) {
-			if (reportId == null) {
-				throw new ContractException(ReportError.NULL_REPORT_ID);
+		public Builder setReportLabel(ReportLabel reportLabel) {
+			if (reportLabel == null) {
+				throw new ContractException(ReportError.NULL_REPORT_LABEL);
 			}
 
-			scaffold.reportId = reportId;
+			scaffold.reportLabel = reportLabel;
 			return this;
 		}
 
@@ -170,7 +170,7 @@ public final class GroupPropertyReport extends PeriodicReport {
 	private final Scaffold scaffold;
 
 	private GroupPropertyReport(Scaffold scaffold) {
-		super(scaffold.reportId, scaffold.reportPeriod);
+		super(scaffold.reportLabel, scaffold.reportPeriod);
 		this.scaffold = scaffold;
 	}
 
@@ -227,7 +227,7 @@ public final class GroupPropertyReport extends PeriodicReport {
 					if (counter.count > 0) {
 						final int personCount = counter.count;
 						reportItemBuilder.setReportHeader(getReportHeader());
-						reportItemBuilder.setReportId(getReportId());
+						reportItemBuilder.setReportLabel(getReportLabel());
 
 						fillTimeFields(reportItemBuilder);
 						reportItemBuilder.addValue(groupTypeId.toString());

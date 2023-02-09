@@ -7,7 +7,7 @@ import java.util.stream.IntStream;
 import org.apache.commons.math3.random.RandomGenerator;
 
 import lesson.plugins.model.ModelPlugin;
-import lesson.plugins.model.ModelReportId;
+import lesson.plugins.model.ModelReportLabel;
 import lesson.plugins.model.reports.ContagionReport;
 import lesson.plugins.model.reports.DiseaseStateReport;
 import lesson.plugins.model.support.DiseaseState;
@@ -54,14 +54,14 @@ public final class Example_17 {
 
 		ReportsPluginData reportsPluginData = //
 				ReportsPluginData	.builder()//
-									.addReport(() -> new GroupPopulationReport(ModelReportId.GROUP_POPULATON, ReportPeriod.END_OF_SIMULATION)::init)//
+									.addReport(() -> new GroupPopulationReport(ModelReportLabel.GROUP_POPULATON, ReportPeriod.END_OF_SIMULATION)::init)//
 									.addReport(() -> PersonPropertyReport	.builder()//
-																			.setReportId(ModelReportId.PERSON_PROPERTY)//
+																			.setReportLabel(ModelReportLabel.PERSON_PROPERTY)//
 																			.setReportPeriod(ReportPeriod.DAILY)//
 																			.includePersonProperty(PersonProperty.DISEASE_STATE)//
 																			.build()::init)//
-									.addReport(() -> new DiseaseStateReport(ModelReportId.DISEASE_STATE, ReportPeriod.END_OF_SIMULATION)::init)//
-									.addReport(() -> new ContagionReport(ModelReportId.CONTAGION)::init)//
+									.addReport(() -> new DiseaseStateReport(ModelReportLabel.DISEASE_STATE, ReportPeriod.END_OF_SIMULATION)::init)//
+									.addReport(() -> new ContagionReport(ModelReportLabel.CONTAGION)::init)//
 									.build();
 
 		return ReportsPlugin.getReportsPlugin(reportsPluginData);
@@ -69,10 +69,10 @@ public final class Example_17 {
 
 	private NIOReportItemHandler getNIOReportItemHandler() {
 		return NIOReportItemHandler	.builder()//
-									.addReport(ModelReportId.GROUP_POPULATON, Paths.get("c:\\temp\\gcm\\group_population_report.xls"))//
-									.addReport(ModelReportId.PERSON_PROPERTY, Paths.get("c:\\temp\\gcm\\person_property_report.xls"))//
-									.addReport(ModelReportId.DISEASE_STATE, Paths.get("c:\\temp\\gcm\\disease_state_report.xls"))//
-									.addReport(ModelReportId.CONTAGION, Paths.get("c:\\temp\\gcm\\contagion_report.xls"))//
+									.addReport(ModelReportLabel.GROUP_POPULATON, Paths.get("c:\\temp\\gcm\\group_population_report.xls"))//
+									.addReport(ModelReportLabel.PERSON_PROPERTY, Paths.get("c:\\temp\\gcm\\person_property_report.xls"))//
+									.addReport(ModelReportLabel.DISEASE_STATE, Paths.get("c:\\temp\\gcm\\disease_state_report.xls"))//
+									.addReport(ModelReportLabel.CONTAGION, Paths.get("c:\\temp\\gcm\\contagion_report.xls"))//
 									.build();
 	}
 

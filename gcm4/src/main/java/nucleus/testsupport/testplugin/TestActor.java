@@ -34,14 +34,10 @@ public final class TestActor {
 	 */
 	public void init(ActorContext actorContext) {
 		TestPlanDataManager testPlanDataManager = actorContext.getDataManager(TestPlanDataManager.class);
-		
+
 		List<TestActorPlan> testActorPlans = testPlanDataManager.getTestActorPlans(alias);
 		for (final TestActorPlan testActorPlan : testActorPlans) {
-			if (testActorPlan.getKey() != null) {
-				actorContext.addKeyedPlan(testActorPlan::executeAction, testActorPlan.getScheduledTime(), testActorPlan.getKey());
-			} else {
-				actorContext.addPlan(testActorPlan::executeAction, testActorPlan.getScheduledTime());
-			}
+			actorContext.addPlan(testActorPlan::executeAction, testActorPlan.getScheduledTime());
 		}
 	}
 
