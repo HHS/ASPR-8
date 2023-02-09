@@ -36,6 +36,10 @@ public class TestSimulation {
 	 *                           successfully</li>
 	 */
 	public static void executeSimulation(List<Plugin> pluginsToAdd, TestSimulationOutputConsumer outputConsumer) {
+		if (outputConsumer == null) {
+			throw new ContractException(NucleusError.NULL_OUTPUT_HANDLER,
+					"Output consumer was not set. Either set it or call the other version of this method that doesn't take a outputConsumer as a parameter.");
+		}
 		_executeSimulation(pluginsToAdd, outputConsumer);
 	}
 
