@@ -14,15 +14,15 @@ import org.junit.jupiter.api.Test;
 
 import nucleus.ActorContext;
 import nucleus.Plugin;
+import nucleus.ReportContext;
 import nucleus.testsupport.testplugin.TestActorPlan;
-import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestSimulation;
 import nucleus.testsupport.testplugin.TestSimulationOutputConsumer;
 import plugins.materials.datamangers.MaterialsDataManager;
 import plugins.materials.support.MaterialsProducerId;
 import plugins.materials.support.StageId;
-import plugins.materials.testsupport.MaterialsActionSupport;
+import plugins.materials.testsupport.MaterialsTestPluginFactory;
 import plugins.materials.testsupport.TestMaterialsProducerId;
 import plugins.reports.support.ReportHeader;
 import plugins.reports.support.ReportLabel;
@@ -75,7 +75,7 @@ public final class AT_StageReport {
 	}
 
 	@Test
-	@UnitTestMethod(target = StageReport.class, name = "init", args = { ActorContext.class }, tags = {
+	@UnitTestMethod(target = StageReport.class, name = "init", args = { ReportContext.class }, tags = {
 			UnitTag.INCOMPLETE })
 	public void testInit() {
 		/*
@@ -194,12 +194,11 @@ public final class AT_StageReport {
 		}
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
 		TestSimulationOutputConsumer outputConsumer = new TestSimulationOutputConsumer();
 
-		List<Plugin> pluginsToAdd = MaterialsActionSupport.setUpPluginsForTest(542686524159732447L);
-		pluginsToAdd.add(testPlugin);
+		List<Plugin> pluginsToAdd = MaterialsTestPluginFactory.factory(0, 0, 0, 542686524159732447L, testPluginData)
+				.getPlugins();
 		pluginsToAdd.add(ReportsTestPluginFactory.getPluginFromReport(new StageReport(REPORT_LABEL)::init));
 
 		TestSimulation.executeSimulation(pluginsToAdd, outputConsumer);

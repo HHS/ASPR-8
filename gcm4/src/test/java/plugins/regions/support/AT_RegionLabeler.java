@@ -14,11 +14,10 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import nucleus.Event;
-import nucleus.Plugin;
 import nucleus.SimulationContext;
 import nucleus.testsupport.testplugin.TestActorPlan;
-import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
+import nucleus.testsupport.testplugin.TestSimulation;
 import plugins.partitions.support.LabelerSensitivity;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonConstructionData;
@@ -26,7 +25,7 @@ import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
 import plugins.regions.datamanagers.RegionsDataManager;
 import plugins.regions.events.PersonRegionUpdateEvent;
-import plugins.regions.testsupport.RegionsActionSupport;
+import plugins.regions.testsupport.RegionsTestPluginFactory;
 import plugins.regions.testsupport.TestRegionId;
 import plugins.stochastics.StochasticsDataManager;
 import plugins.util.properties.TimeTrackingPolicy;
@@ -125,8 +124,7 @@ public class AT_RegionLabeler {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
-		RegionsActionSupport.testConsumers(0, 4893773537497436066L, TimeTrackingPolicy.DO_NOT_TRACK_TIME, testPlugin);
+		TestSimulation.executeSimulation(RegionsTestPluginFactory.factory(0, 4893773537497436066L, TimeTrackingPolicy.DO_NOT_TRACK_TIME, testPluginData).getPlugins());
 
 	}
 
@@ -164,7 +162,7 @@ public class AT_RegionLabeler {
 	@UnitTestMethod(target = RegionLabeler.class,name = "getPastLabel", args = { SimulationContext.class, Event.class })
 	public void testGetPastLabel() {
 
-		RegionsActionSupport.testConsumer(30, 349819763474394472L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
+		TestSimulation.executeSimulation(RegionsTestPluginFactory.factory(30, 349819763474394472L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
@@ -190,6 +188,6 @@ public class AT_RegionLabeler {
 				assertEquals(expectedLabel, actualLabel);
 			}
 
-		});
+		}).getPlugins());
 	}
 }

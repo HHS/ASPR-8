@@ -61,7 +61,6 @@ import plugins.util.properties.TimeTrackingPolicy;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
-import util.random.RandomGeneratorProvider;
 import util.wrappers.MultiKey;
 import util.wrappers.MutableDouble;
 import util.wrappers.MutableInteger;
@@ -2348,7 +2347,6 @@ public class AT_GroupsDataManager {
 	@UnitTestMethod(target = GroupsDataManager.class, name = "init", args = { DataManagerContext.class })
 	public void testGroupDataManagerInitialization() {
 		long seed = 7212690164088198082L;
-		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
 
 		int initialPopulation = 30;
 		double expectedGroupsPerPerson = 3;
@@ -2363,7 +2361,7 @@ public class AT_GroupsDataManager {
 		int membershipCount = (int) FastMath.round(initialPopulation * expectedGroupsPerPerson);
 		int groupCount = (int) FastMath.round(membershipCount / expectedPeoplePerGroup);
 
-		GroupsPluginData groupsPluginData = GroupsTestPluginFactory.getStandardGroupsPluginData(groupCount, membershipCount, people, randomGenerator);
+		GroupsPluginData groupsPluginData = GroupsTestPluginFactory.getStandardGroupsPluginData(groupCount, membershipCount, people, seed);
 
 		// add the action plugin
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();

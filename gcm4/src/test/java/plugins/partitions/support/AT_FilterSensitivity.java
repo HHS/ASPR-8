@@ -10,7 +10,8 @@ import org.junit.jupiter.api.Test;
 
 import nucleus.Event;
 import nucleus.SimulationContext;
-import plugins.partitions.testsupport.PartitionsActionSupport;
+import nucleus.testsupport.testplugin.TestSimulation;
+import plugins.partitions.testsupport.PartitionsTestPluginFactory;
 import plugins.people.support.PersonId;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
@@ -49,7 +50,7 @@ public class AT_FilterSensitivity {
 	@Test
 	@UnitTestMethod(target = FilterSensitivity.class,name = "requiresRefresh", args = { SimulationContext.class, Event.class })
 	public void testRequiresRefresh() {
-		PartitionsActionSupport.testConsumer(10, 8678712526990350206L, (context)->{
+		TestSimulation.executeSimulation(PartitionsTestPluginFactory.factory(10, 8678712526990350206L, (context)->{
 			FilterSensitivity<Event> filterSensitivity = new FilterSensitivity<>(Event.class, (c, e) -> Optional.empty());
 			Optional<PersonId> optional = filterSensitivity.requiresRefresh(context, new Event() {
 			});
@@ -61,7 +62,7 @@ public class AT_FilterSensitivity {
 			});
 			assertTrue(optional.isPresent());
 			assertEquals(personId, optional.get());			
-		});
+		}).getPlugins());
 
 	}
 
