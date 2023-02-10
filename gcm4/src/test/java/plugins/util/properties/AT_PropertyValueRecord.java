@@ -5,12 +5,11 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.Test;
 
-import nucleus.Plugin;
 import nucleus.SimulationContext;
-import nucleus.testsupport.testplugin.TestActionSupport;
 import nucleus.testsupport.testplugin.TestActorPlan;
-import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
+import nucleus.testsupport.testplugin.TestPluginFactory;
+import nucleus.testsupport.testplugin.TestSimulation;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 
@@ -39,8 +38,7 @@ public class AT_PropertyValueRecord {
 		}));
 
 		TestPluginData testPluginData = pluginDataBuilder.build();
-		Plugin plugin = TestPlugin.getTestPlugin(testPluginData);
-		TestActionSupport.testConsumers(plugin);
+		TestSimulation.executeSimulation(TestPluginFactory.factory(testPluginData).getPlugins());
 	}
 
 	/**
@@ -66,8 +64,7 @@ public class AT_PropertyValueRecord {
 		}));
 
 		TestPluginData testPluginData = pluginDataBuilder.build();
-		Plugin plugin = TestPlugin.getTestPlugin(testPluginData);
-		TestActionSupport.testConsumers(plugin);
+		TestSimulation.executeSimulation(TestPluginFactory.factory(testPluginData).getPlugins());
 	}
 
 	@Test
@@ -89,19 +86,18 @@ public class AT_PropertyValueRecord {
 		}));
 
 		TestPluginData testPluginData = pluginDataBuilder.build();
-		Plugin plugin = TestPlugin.getTestPlugin(testPluginData);
-		TestActionSupport.testConsumers(plugin);
+		TestSimulation.executeSimulation(TestPluginFactory.factory(testPluginData).getPlugins());
 
 	}
 
 	@Test
 	@UnitTestConstructor(target = PropertyValueRecord.class, args = { SimulationContext.class })
 	public void testConstructor() {
-		TestActionSupport.testConsumer((c) -> {
+		TestSimulation.executeSimulation(TestPluginFactory.factory((c) -> {
 			PropertyValueRecord propertyValueRecord = new PropertyValueRecord(c);
 			assertNotNull(propertyValueRecord);
 			assertEquals(0, propertyValueRecord.getAssignmentTime());
-		});
+		}).getPlugins());
 
 	}
 

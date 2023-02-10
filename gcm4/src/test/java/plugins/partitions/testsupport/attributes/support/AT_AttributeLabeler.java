@@ -13,13 +13,12 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import nucleus.Event;
-import nucleus.Plugin;
 import nucleus.SimulationContext;
 import nucleus.testsupport.testplugin.TestActorPlan;
-import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
+import nucleus.testsupport.testplugin.TestSimulation;
 import plugins.partitions.support.LabelerSensitivity;
-import plugins.partitions.testsupport.PartitionsActionSupport;
+import plugins.partitions.testsupport.PartitionsTestPluginFactory;
 import plugins.partitions.testsupport.attributes.AttributesDataManager;
 import plugins.partitions.testsupport.attributes.events.AttributeUpdateEvent;
 import plugins.people.datamanagers.PeopleDataManager;
@@ -121,8 +120,7 @@ public final class AT_AttributeLabeler {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
-		PartitionsActionSupport.testConsumers(10, 4676319446289433016L, testPlugin);
+		TestSimulation.executeSimulation(PartitionsTestPluginFactory.factory(10, 4676319446289433016L, testPluginData).getPlugins());
 
 	}
 
@@ -167,8 +165,7 @@ public final class AT_AttributeLabeler {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
-		PartitionsActionSupport.testConsumers(10, 4161680035971681080L, testPlugin);
+		TestSimulation.executeSimulation(PartitionsTestPluginFactory.factory(10, 4161680035971681080L, testPluginData).getPlugins());
 	}
 
 	@Test

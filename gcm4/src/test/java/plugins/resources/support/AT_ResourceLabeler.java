@@ -15,11 +15,10 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import nucleus.Event;
-import nucleus.Plugin;
 import nucleus.SimulationContext;
 import nucleus.testsupport.testplugin.TestActorPlan;
-import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
+import nucleus.testsupport.testplugin.TestSimulation;
 import plugins.partitions.support.LabelerSensitivity;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonError;
@@ -28,7 +27,7 @@ import plugins.regions.datamanagers.RegionsDataManager;
 import plugins.regions.support.RegionId;
 import plugins.resources.datamanagers.ResourcesDataManager;
 import plugins.resources.events.PersonResourceUpdateEvent;
-import plugins.resources.testsupport.ResourcesActionSupport;
+import plugins.resources.testsupport.ResourcesTestPluginFactory;
 import plugins.resources.testsupport.TestResourceId;
 import plugins.stochastics.StochasticsDataManager;
 import tools.annotations.UnitTestConstructor;
@@ -155,8 +154,7 @@ public final class AT_ResourceLabeler {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
-		ResourcesActionSupport.testConsumers(10, 7394122902151816457L, testPlugin);
+		TestSimulation.executeSimulation(ResourcesTestPluginFactory.factory(10, 7394122902151816457L, testPluginData).getPlugins());
 
 	}
 
@@ -171,7 +169,7 @@ public final class AT_ResourceLabeler {
 	@Test
 	@UnitTestMethod(target = ResourceLabeler.class, name = "getPastLabel", args = { SimulationContext.class, Event.class })
 	public void testGetPastLabel() {
-		ResourcesActionSupport.testConsumer(10, 6601261985382450295L, (c) -> {
+		TestSimulation.executeSimulation(ResourcesTestPluginFactory.factory(10, 6601261985382450295L, (c) -> {
 
 			final PersonId personId = new PersonId(45);
 			final ResourceId resourceId = TestResourceId.RESOURCE_4;
@@ -191,7 +189,7 @@ public final class AT_ResourceLabeler {
 				Object actualLabel = resourceLabeler.getPastLabel(c, personResourceUpdateEvent);
 				assertEquals(expectedLabel, actualLabel);
 			}
-		});
+		}).getPlugins());
 
 	}
 

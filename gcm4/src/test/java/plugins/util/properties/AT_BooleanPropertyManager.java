@@ -14,13 +14,12 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import nucleus.DataManagerContext;
-import nucleus.Plugin;
 import nucleus.SimulationContext;
-import nucleus.testsupport.testplugin.TestActionSupport;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestDataManager;
-import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
+import nucleus.testsupport.testplugin.TestPluginFactory;
+import nucleus.testsupport.testplugin.TestSimulation;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
@@ -39,7 +38,7 @@ public class AT_BooleanPropertyManager {
 	@Test
 	@UnitTestMethod(target = BooleanPropertyManager.class, name = "getPropertyValue", args = { int.class })
 	public void testGetPropertyValue() {
-		TestActionSupport.testConsumer((c) -> {
+		TestSimulation.executeSimulation(TestPluginFactory.factory((c) -> {
 			RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(4879223247393954289L);
 
 			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(false).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
@@ -76,7 +75,7 @@ public class AT_BooleanPropertyManager {
 			// precondition tests
 			ContractException contractException = assertThrows(ContractException.class, () -> booleanPropertyManager.getPropertyValue(-1));
 			assertEquals(PropertyError.NEGATIVE_INDEX, contractException.getErrorType());
-		});
+		}).getPlugins());
 
 	}
 
@@ -119,29 +118,28 @@ public class AT_BooleanPropertyManager {
 
 		// build and run the simulation
 		TestPluginData testPluginData = pluginDataBuilder.build();
-		Plugin plugin = TestPlugin.getTestPlugin(testPluginData);
-		TestActionSupport.testConsumers(plugin);
+		TestSimulation.executeSimulation(TestPluginFactory.factory(testPluginData).getPlugins());
 
 		// precondition tests:
-		TestActionSupport.testConsumer((c) -> {
+		TestSimulation.executeSimulation(TestPluginFactory.factory((c) -> {
 			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(false).build();
 			BooleanPropertyManager booleanPropertyManager = new BooleanPropertyManager(c, propertyDefinition, 0);
 			ContractException contractException = assertThrows(ContractException.class, () -> booleanPropertyManager.getPropertyTime(0));
 			assertEquals(PropertyError.TIME_TRACKING_OFF, contractException.getErrorType());
-		});
+		}).getPlugins());
 
-		TestActionSupport.testConsumer((c) -> {
+		TestSimulation.executeSimulation(TestPluginFactory.factory((c) -> {
 			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(false).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
 			BooleanPropertyManager booleanPropertyManager = new BooleanPropertyManager(c, propertyDefinition, 0);
 			ContractException contractException = assertThrows(ContractException.class, () -> booleanPropertyManager.getPropertyTime(-1));
 			assertEquals(PropertyError.NEGATIVE_INDEX, contractException.getErrorType());
-		});
+		}).getPlugins());
 	}
 
 	@Test
 	@UnitTestMethod(target = BooleanPropertyManager.class, name = "setPropertyValue", args = { int.class, Object.class })
 	public void testSetPropertyValue() {
-		TestActionSupport.testConsumer((c) -> {
+		TestSimulation.executeSimulation(TestPluginFactory.factory((c) -> {
 			RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(4827517950755837724L);
 
 			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(false).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
@@ -178,13 +176,13 @@ public class AT_BooleanPropertyManager {
 			// precondition tests
 			ContractException contractException = assertThrows(ContractException.class, () -> booleanPropertyManager.setPropertyValue(-1, false));
 			assertEquals(PropertyError.NEGATIVE_INDEX, contractException.getErrorType());
-		});
+		}).getPlugins());
 	}
 
 	@Test
 	@UnitTestMethod(target = BooleanPropertyManager.class, name = "removeId", args = { int.class })
 	public void testRemoveId() {
-		TestActionSupport.testConsumer((c) -> {
+		TestSimulation.executeSimulation(TestPluginFactory.factory((c) -> {
 
 			// we will first test the manager with an initial value of false
 			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(false).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
@@ -232,13 +230,13 @@ public class AT_BooleanPropertyManager {
 
 			ContractException contractException = assertThrows(ContractException.class, () -> bpm.removeId(-1));
 			assertEquals(PropertyError.NEGATIVE_INDEX, contractException.getErrorType());
-		});
+		}).getPlugins());
 	}
 
 	@Test
 	@UnitTestConstructor(target = BooleanPropertyManager.class, args = { SimulationContext.class, PropertyDefinition.class, int.class })
 	public void testConstructor() {
-		TestActionSupport.testConsumer((c) -> {
+		TestSimulation.executeSimulation(TestPluginFactory.factory((c) -> {
 
 			PropertyDefinition goodPropertyDefinition = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(false).build();
 			PropertyDefinition badPropertyDefinition = PropertyDefinition.builder().setType(Double.class).setDefaultValue(2.3).build();
@@ -259,13 +257,13 @@ public class AT_BooleanPropertyManager {
 
 			BooleanPropertyManager booleanPropertyManager = new BooleanPropertyManager(c, goodPropertyDefinition, 0);
 			assertNotNull(booleanPropertyManager);
-		});
+		}).getPlugins());
 	}
 
 	@Test
 	@UnitTestMethod(target = BooleanPropertyManager.class, name = "incrementCapacity", args = { int.class })
 	public void testIncrementCapacity() {
-		TestActionSupport.testConsumer((c) -> {
+		TestSimulation.executeSimulation(TestPluginFactory.factory((c) -> {
 
 			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(false).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
 
@@ -274,7 +272,7 @@ public class AT_BooleanPropertyManager {
 			// precondition tests
 			ContractException contractException = assertThrows(ContractException.class, () -> booleanPropertyManager.incrementCapacity(-1));
 			assertEquals(PropertyError.NEGATIVE_CAPACITY_INCREMENT, contractException.getErrorType());
-		});
+		}).getPlugins());
 	}
 
 }

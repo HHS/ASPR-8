@@ -13,7 +13,8 @@ import org.junit.jupiter.api.Test;
 
 import nucleus.Event;
 import nucleus.SimulationContext;
-import plugins.partitions.testsupport.PartitionsActionSupport;
+import nucleus.testsupport.testplugin.TestSimulation;
+import plugins.partitions.testsupport.PartitionsTestPluginFactory;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonId;
 import tools.annotations.UnitTestMethod;
@@ -59,7 +60,7 @@ public class AT_Filter {
 	@Test
 	@UnitTestMethod(target = Filter.class, name = "and", args = { Filter.class })
 	public void testAnd() {
-		PartitionsActionSupport.testConsumer(100, 254308828477050611L, (c) -> {
+		TestSimulation.executeSimulation(PartitionsTestPluginFactory.factory(100, 254308828477050611L, (c) -> {
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			/*
 			 * Show that there are enough people in the simulation to make a
@@ -107,7 +108,7 @@ public class AT_Filter {
 			// if the filter is null
 			ContractException contractException = assertThrows(ContractException.class, () -> Filter.allPeople().and(null));
 			assertEquals(PartitionError.NULL_FILTER, contractException.getErrorType());
-		});
+		}).getPlugins());
 
 	}
 
@@ -117,7 +118,7 @@ public class AT_Filter {
 	@Test
 	@UnitTestMethod(target = Filter.class, name = "or", args = { Filter.class })
 	public void testOr() {
-		PartitionsActionSupport.testConsumer(100, 921279696119043098L, (c) -> {
+		TestSimulation.executeSimulation(PartitionsTestPluginFactory.factory(100, 921279696119043098L, (c) -> {
 
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 
@@ -169,7 +170,7 @@ public class AT_Filter {
 			ContractException contractException = assertThrows(ContractException.class, () -> Filter.allPeople().or(null));
 			assertEquals(PartitionError.NULL_FILTER, contractException.getErrorType());
 
-		});
+		}).getPlugins());
 
 	}
 
@@ -179,7 +180,7 @@ public class AT_Filter {
 	@Test
 	@UnitTestMethod(target = Filter.class, name = "negate", args = {})
 	public void testNegate() {
-		PartitionsActionSupport.testConsumer(100, 4038710674336002107L, (c) -> {
+		TestSimulation.executeSimulation(PartitionsTestPluginFactory.factory(100, 4038710674336002107L, (c) -> {
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			/*
 			 * Show that there are enough people in the simulation to make a
@@ -199,7 +200,7 @@ public class AT_Filter {
 			}
 
 			assertEquals(filter.getFilterSensitivities().size(), 0);
-		});
+		}).getPlugins());
 	}
 
 	/**
@@ -208,7 +209,7 @@ public class AT_Filter {
 	@Test
 	@UnitTestMethod(target = Filter.class, name = "allPeople", args = {})
 	public void testAllPeople() {
-		PartitionsActionSupport.testConsumer(30, 847391904888351863L, (c) -> {
+		TestSimulation.executeSimulation(PartitionsTestPluginFactory.factory(30, 847391904888351863L, (c) -> {
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			// show that the test is valid
 			assertTrue(peopleDataManager.getPopulationCount() > 0);
@@ -219,7 +220,7 @@ public class AT_Filter {
 				assertTrue(filter.evaluate(c, personId));
 			}
 			assertEquals(filter.getFilterSensitivities().size(), 0);
-		});
+		}).getPlugins());
 
 	}
 
@@ -229,7 +230,7 @@ public class AT_Filter {
 	@Test
 	@UnitTestMethod(target = Filter.class, name = "noPeople", args = {})
 	public void testNoPeople() {
-		PartitionsActionSupport.testConsumer(100, 6400633994679307999L, (c) -> {
+		TestSimulation.executeSimulation(PartitionsTestPluginFactory.factory(100, 6400633994679307999L, (c) -> {
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			assertEquals(100, peopleDataManager.getPopulationCount());
 
@@ -240,7 +241,7 @@ public class AT_Filter {
 			}
 
 			assertEquals(filter.getFilterSensitivities().size(), 0);
-		});
+		}).getPlugins());
 
 	}
 }

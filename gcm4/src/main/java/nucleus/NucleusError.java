@@ -26,6 +26,7 @@ public enum NucleusError implements ContractError {
 	DUPLICATE_LABELER_ID_IN_EVENT_LABELER("Duplicate labeler id in labeler"),
 	DUPLICATE_PLAN_KEY("There is an existing plan currently scheduled with the same key"),
 	DUPLICATE_PLUGIN("There are two or more plugins with the same id"),
+	EMPTY_PLUGIN_LIST("The list of plugins provided was empty"),
 	INCOMPATIBLE_SCEANARIO_PROGRESS("The scenario progress file is incompatible with the current experiment"),
 	LABLER_GENERATED_LABEL_WITH_INCORRECT_EVENT_CLASS("Event labler generated a label with an incorrect event class"),
 	LABLER_GENERATED_LABEL_WITH_INCORRECT_ID("Event labler generated a label with an incorrect event labeler id"),
