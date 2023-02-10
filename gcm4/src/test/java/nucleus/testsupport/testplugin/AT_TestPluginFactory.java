@@ -15,7 +15,7 @@ import nucleus.ActorContext;
 import nucleus.NucleusError;
 import nucleus.Plugin;
 import plugins.globalproperties.testsupport.GlobalPropertiesTestPluginFactory;
-import tools.annotations.UnitTestMethod;
+import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.wrappers.MutableBoolean;
 

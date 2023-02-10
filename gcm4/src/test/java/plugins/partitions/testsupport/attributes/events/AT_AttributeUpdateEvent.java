@@ -7,8 +7,8 @@ import org.junit.jupiter.api.Test;
 import plugins.partitions.testsupport.attributes.support.AttributeId;
 import plugins.partitions.testsupport.attributes.support.TestAttributeId;
 import plugins.people.support.PersonId;
-import tools.annotations.UnitTestConstructor;
-import tools.annotations.UnitTestMethod;
+import util.annotations.UnitTestConstructor;
+import util.annotations.UnitTestMethod;
 
 public class AT_AttributeUpdateEvent {
 

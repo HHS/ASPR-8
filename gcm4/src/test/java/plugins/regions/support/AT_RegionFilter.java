@@ -21,8 +21,8 @@ import plugins.regions.events.PersonRegionUpdateEvent;
 import plugins.regions.testsupport.RegionsTestPluginFactory;
 import plugins.regions.testsupport.TestRegionId;
 import plugins.util.properties.TimeTrackingPolicy;
-import tools.annotations.UnitTestConstructor;
-import tools.annotations.UnitTestMethod;
+import util.annotations.UnitTestConstructor;
+import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 
 public class AT_RegionFilter {

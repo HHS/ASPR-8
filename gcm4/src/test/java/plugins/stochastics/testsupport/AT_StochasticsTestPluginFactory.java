@@ -27,7 +27,7 @@ import plugins.stochastics.StochasticsPluginData;
 import plugins.stochastics.StochasticsPluginId;
 import plugins.stochastics.support.RandomNumberGeneratorId;
 import plugins.stochastics.support.StochasticsError;
-import tools.annotations.UnitTestMethod;
+import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.wrappers.MutableBoolean;
 

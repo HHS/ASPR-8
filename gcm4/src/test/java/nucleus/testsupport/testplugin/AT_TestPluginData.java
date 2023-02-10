@@ -19,7 +19,7 @@ import org.junit.jupiter.api.Test;
 
 import nucleus.PluginId;
 import nucleus.SimplePluginId;
-import tools.annotations.UnitTestMethod;
+import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.random.RandomGeneratorProvider;
 

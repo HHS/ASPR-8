@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
-import tools.annotations.UnitTestMethod;
+import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 
 public final class AT_PeoplePluginData {

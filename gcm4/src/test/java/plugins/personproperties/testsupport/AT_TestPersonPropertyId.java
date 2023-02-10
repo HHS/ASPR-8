@@ -18,7 +18,7 @@ import org.junit.jupiter.api.Test;
 
 import plugins.personproperties.support.PersonPropertyId;
 import plugins.util.properties.PropertyDefinition;
-import tools.annotations.UnitTestMethod;
+import util.annotations.UnitTestMethod;
 import util.random.RandomGeneratorProvider;
 import util.wrappers.MutableInteger;
 

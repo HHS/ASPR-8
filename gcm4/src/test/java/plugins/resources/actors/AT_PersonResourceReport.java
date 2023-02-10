@@ -6,9 +6,9 @@ import nucleus.ReportContext;
 import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportPeriod;
 import plugins.resources.support.ResourceId;
-import tools.annotations.UnitTag;
-import tools.annotations.UnitTestConstructor;
-import tools.annotations.UnitTestMethod;
+import util.annotations.UnitTag;
+import util.annotations.UnitTestConstructor;
+import util.annotations.UnitTestMethod;
 
 public class AT_PersonResourceReport {
 

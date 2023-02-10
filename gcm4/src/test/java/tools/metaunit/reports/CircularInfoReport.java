@@ -8,8 +8,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import tools.metaunit.MetaInfoContainer;
-import tools.metaunit.MetaInfoGenerator;
+import tools.metaunit.CircularInfoContainer;
+import tools.metaunit.CircularInfoGenerator;
 import tools.metaunit.warnings.ConstructorWarning;
 import tools.metaunit.warnings.FieldWarning;
 import tools.metaunit.warnings.MethodWarning;
@@ -27,7 +27,7 @@ import util.annotations.UnitTestMethod;
  *
  *
  */
-public class MetaInfoReport {
+public class CircularInfoReport {
 
 	public static void main(final String[] args) {
 
@@ -36,18 +36,18 @@ public class MetaInfoReport {
 
 		// Should point to src/test/java
 		final Path testPath = Paths.get(args[1]);
-		MetaInfoContainer metaInfoContainer = MetaInfoGenerator	.builder()//
+		CircularInfoContainer circularInfoContainer = CircularInfoGenerator	.builder()//
 																.setSourcePath(sourcePath)//
 																.setTestPath(testPath)//
 																.build()//
 																.execute();//
 
-		reportWarnings(metaInfoContainer);
-		reportTags(metaInfoContainer);
+		reportWarnings(circularInfoContainer);
+		reportTags(circularInfoContainer);
 
 	}
 
-	private MetaInfoReport() {
+	private CircularInfoReport() {
 	}
 
 	private static String getFieldString(UnitTestField unitTestField) {
@@ -63,12 +63,12 @@ public class MetaInfoReport {
 		return "Constructor: " + unitTestConstructor.target().getCanonicalName() + "." + Arrays.toString(unitTestConstructor.args());
 	}
 
-	private static void reportTags(MetaInfoContainer metaInfoContainer) {
+	private static void reportTags(CircularInfoContainer circularInfoContainer) {
 		Map<UnitTag, Map<Class<?>, List<String>>> taggedAnnotations = new LinkedHashMap<>();
 		for (UnitTag unitTag : UnitTag.values()) {
 			taggedAnnotations.put(unitTag, new LinkedHashMap<>());
 		}
-		for (UnitTestField unitTestField : metaInfoContainer.getUnitTestFields()) {
+		for (UnitTestField unitTestField : circularInfoContainer.getUnitTestFields()) {
 			Class<?> target = unitTestField.target();
 			String fieldString = getFieldString(unitTestField);
 			for (UnitTag unitTag : unitTestField.tags()) {
@@ -81,7 +81,7 @@ public class MetaInfoReport {
 				list.add(fieldString);
 			}
 		}
-		for (UnitTestMethod unitTestMethod : metaInfoContainer.getUnitTestMethods()) {
+		for (UnitTestMethod unitTestMethod : circularInfoContainer.getUnitTestMethods()) {
 			Class<?> target = unitTestMethod.target();
 			String fieldString = getMethodString(unitTestMethod);
 			for (UnitTag unitTag : unitTestMethod.tags()) {
@@ -94,7 +94,7 @@ public class MetaInfoReport {
 				list.add(fieldString);
 			}
 		}
-		for (UnitTestConstructor unitTestConstructor : metaInfoContainer.getUnitTestConstructors()) {
+		for (UnitTestConstructor unitTestConstructor : circularInfoContainer.getUnitTestConstructors()) {
 			Class<?> target = unitTestConstructor.target();
 			String fieldString = getConstructorString(unitTestConstructor);
 			for (UnitTag unitTag : unitTestConstructor.tags()) {
@@ -123,24 +123,24 @@ public class MetaInfoReport {
 
 	}
 
-	private static void reportWarnings(MetaInfoContainer metaInfoContainer) {
+	private static void reportWarnings(CircularInfoContainer circularInfoContainer) {
 
 		Map<WarningType, List<String>> warningMap = new LinkedHashMap<>();
 		for (WarningType warningType : WarningType.values()) {
 			warningMap.put(warningType, new ArrayList<>());
 		}
 
-		for (FieldWarning fieldWarning : metaInfoContainer.getFieldWarnings()) {
+		for (FieldWarning fieldWarning : circularInfoContainer.getFieldWarnings()) {
 			List<String> list = warningMap.get(fieldWarning.getWarningType());
 			list.add(fieldWarning.getField().getDeclaringClass().getSimpleName() + "\t" + fieldWarning.getField().toString() + " " + fieldWarning.getDetails());
 		}
 
-		for (MethodWarning methodWarning : metaInfoContainer.getMethodWarnings()) {
+		for (MethodWarning methodWarning : circularInfoContainer.getMethodWarnings()) {
 			List<String> list = warningMap.get(methodWarning.getWarningType());
 			list.add(methodWarning.getMethod().getDeclaringClass().getSimpleName() + "\t" + methodWarning.getMethod().toString() + " " + methodWarning.getDetails());
 		}
 
-		for (ConstructorWarning constructorWarning : metaInfoContainer.getConstructorWarnings()) {
+		for (ConstructorWarning constructorWarning : circularInfoContainer.getConstructorWarnings()) {
 			List<String> list = warningMap.get(constructorWarning.getWarningType());
 			list.add(constructorWarning.getConstructor().getDeclaringClass().getSimpleName() + "\t" + constructorWarning.getConstructor().toString() + " " + constructorWarning.getDetails());
 		}
@@ -165,7 +165,7 @@ public class MetaInfoReport {
 			}
 		}
 
-		List<String> generalWarnings = metaInfoContainer.getGeneralWarnings();
+		List<String> generalWarnings = circularInfoContainer.getGeneralWarnings();
 		if (!generalWarnings.isEmpty()) {
 			System.out.println("(" + generalWarnings.size() + ")" + "General warnings");
 		}

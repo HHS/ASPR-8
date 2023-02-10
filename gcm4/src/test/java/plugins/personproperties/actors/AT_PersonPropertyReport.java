@@ -14,8 +14,8 @@ import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportPeriod;
 import plugins.reports.support.SimpleReportLabel;
 import plugins.util.properties.PropertyError;
-import tools.annotations.UnitTag;
-import tools.annotations.UnitTestMethod;
+import util.annotations.UnitTag;
+import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 
 public class AT_PersonPropertyReport {

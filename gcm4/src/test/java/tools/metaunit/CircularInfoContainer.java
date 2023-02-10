@@ -10,7 +10,7 @@ import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestField;
 import util.annotations.UnitTestMethod;
 
-public final class MetaInfoContainer {
+public final class CircularInfoContainer {
 	private static class Data {
 		private List<ConstructorWarning> constructorWarnings = new ArrayList<>();
 		private List<MethodWarning> methodWarnings = new ArrayList<>();
@@ -32,9 +32,9 @@ public final class MetaInfoContainer {
 
 		private Data data = new Data();
 
-		public MetaInfoContainer build() {
+		public CircularInfoContainer build() {
 			try {
-				return new MetaInfoContainer(data);
+				return new CircularInfoContainer(data);
 			} finally {
 				data = new Data();
 			}
@@ -144,7 +144,7 @@ public final class MetaInfoContainer {
 
 	private final Data data;
 
-	private MetaInfoContainer(Data data) {
+	private CircularInfoContainer(Data data) {
 		this.data = data;
 	}
 

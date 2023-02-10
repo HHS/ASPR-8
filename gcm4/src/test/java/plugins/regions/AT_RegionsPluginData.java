@@ -26,8 +26,8 @@ import plugins.regions.testsupport.TestRegionPropertyId;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
 import plugins.util.properties.TimeTrackingPolicy;
-import tools.annotations.UnitTag;
-import tools.annotations.UnitTestMethod;
+import util.annotations.UnitTag;
+import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.random.RandomGeneratorProvider;
 

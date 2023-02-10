@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 
 import nucleus.NucleusError;
 import nucleus.Plugin;
-import tools.annotations.UnitTestMethod;
+import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.wrappers.MutableBoolean;
 

@@ -34,7 +34,7 @@ import plugins.reports.support.ReportPeriod;
 import plugins.reports.support.SimpleReportLabel;
 import plugins.reports.testsupport.ReportsTestPluginFactory;
 import plugins.util.properties.PropertyDefinition;
-import tools.annotations.UnitTestMethod;
+import util.annotations.UnitTestMethod;
 
 public class AT_GroupPropertyReport {
 

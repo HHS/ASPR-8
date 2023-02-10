@@ -17,13 +17,13 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
-import tools.annotations.UnitTestConstructor;
-import tools.annotations.UnitTestField;
-import tools.annotations.UnitTestMethod;
 import tools.metaunit.warnings.ConstructorWarning;
 import tools.metaunit.warnings.FieldWarning;
 import tools.metaunit.warnings.MethodWarning;
 import tools.metaunit.warnings.WarningType;
+import util.annotations.UnitTestConstructor;
+import util.annotations.UnitTestField;
+import util.annotations.UnitTestMethod;
 
 /**
  * A utility class for generating various warnings on the coverage deficiencies

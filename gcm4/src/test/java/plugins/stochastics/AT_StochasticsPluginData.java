@@ -15,7 +15,7 @@ import nucleus.PluginDataBuilder;
 import plugins.stochastics.support.RandomNumberGeneratorId;
 import plugins.stochastics.support.StochasticsError;
 import plugins.stochastics.testsupport.TestRandomGeneratorId;
-import tools.annotations.UnitTestMethod;
+import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.random.RandomGeneratorProvider;
 

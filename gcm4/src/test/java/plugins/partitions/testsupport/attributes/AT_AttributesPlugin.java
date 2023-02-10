@@ -24,7 +24,7 @@ import plugins.people.PeoplePluginData;
 import plugins.people.PeoplePluginId;
 import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.StochasticsPluginData;
-import tools.annotations.UnitTestMethod;
+import util.annotations.UnitTestMethod;
 
 public class AT_AttributesPlugin {
 

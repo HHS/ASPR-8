@@ -11,8 +11,8 @@ import plugins.resources.support.ResourcePropertyId;
 import plugins.resources.testsupport.TestResourceId;
 import plugins.resources.testsupport.TestResourcePropertyId;
 import plugins.util.properties.PropertyError;
-import tools.annotations.UnitTestConstructor;
-import tools.annotations.UnitTestMethod;
+import util.annotations.UnitTestConstructor;
+import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 
 public class AT_ResourcePropertyDefinitionEvent {
