@@ -6,7 +6,13 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.IntStream;
 
 import org.apache.commons.math3.random.RandomGenerator;
@@ -43,6 +49,7 @@ import plugins.util.properties.TimeTrackingPolicy;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
+import util.random.RandomGeneratorProvider;
 import util.wrappers.MultiKey;
 import util.wrappers.MutableInteger;
 
@@ -870,7 +877,8 @@ public final class AT_PersonPropertyDataManager {
 					personPropertiesDataManager.definePersonProperty(propertyDefinitionInitialization);
 
 					// show that the definition was added
-					PropertyDefinition actualPropertyDefinition = personPropertiesDataManager.getPersonPropertyDefinition(auxPropertyId);
+					PropertyDefinition actualPropertyDefinition = personPropertiesDataManager
+							.getPersonPropertyDefinition(auxPropertyId);
 					assertEquals(expectedPropertyDefinition, actualPropertyDefinition);
 
 					// show that the property has the correct initial value
@@ -943,7 +951,8 @@ public final class AT_PersonPropertyDataManager {
 					personPropertiesDataManager.definePersonProperty(propertyDefinitionInitialization);
 
 					// show that the definition was added
-					PropertyDefinition actualPropertyDefinition = personPropertiesDataManager.getPersonPropertyDefinition(auxPropertyId);
+					PropertyDefinition actualPropertyDefinition = personPropertiesDataManager
+							.getPersonPropertyDefinition(auxPropertyId);
 					assertEquals(expectedPropertyDefinition, actualPropertyDefinition);
 
 					// show that the property has the correct initial value
@@ -1327,7 +1336,8 @@ public final class AT_PersonPropertyDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(target = PersonPropertiesDataManager.class, name = "getEventFilterForPersonPropertyUpdateEvent", args = { PersonPropertyId.class, Object.class, boolean.class })
+	@UnitTestMethod(target = PersonPropertiesDataManager.class, name = "getEventFilterForPersonPropertyUpdateEvent", args = {
+			PersonPropertyId.class, Object.class, boolean.class })
 	public void testGetEventFilterForPersonPropertyUpdateEvent_propertyId_object() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8796864982253772625L);
@@ -1350,14 +1360,14 @@ public final class AT_PersonPropertyDataManager {
 
 			// generate 50 random values
 			ArrayList<Object> allValues = new ArrayList<>();
-			for (int i=0; i < 50; i++) {
+			for (int i = 0; i < 50; i++) {
 				Object value = testPersonPropertyId.getRandomPropertyValue(randomGenerator);
 				allValues.add(value);
 			}
 
 			// pick out unique values to subscribe to
 			ArrayList<Object> chosenValues = new ArrayList<>();
-			for (int i=0; i < 50; i += 2) {
+			for (int i = 0; i < 50; i += 2) {
 				Object value = allValues.get(i);
 				if (chosenValues.contains(value)) {
 					chosenValues.add(allValues.get(i));
@@ -1366,17 +1376,23 @@ public final class AT_PersonPropertyDataManager {
 
 			pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
 				// subscribe to every chosen value
-				PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
-				for (int i=0; i < chosenValues.size(); i ++) {
-					EventFilter<PersonPropertyUpdateEvent> eventFilter = personPropertiesDataManager.getEventFilterForPersonPropertyUpdateEvent(testPersonPropertyId, chosenValues.get(i), true);
+				PersonPropertiesDataManager personPropertiesDataManager = c
+						.getDataManager(PersonPropertiesDataManager.class);
+				for (int i = 0; i < chosenValues.size(); i++) {
+					EventFilter<PersonPropertyUpdateEvent> eventFilter = personPropertiesDataManager
+							.getEventFilterForPersonPropertyUpdateEvent(testPersonPropertyId, chosenValues.get(i),
+									true);
 					c.subscribe(eventFilter, (c2, e) -> {
-						MultiKey multiKey = new MultiKey(c.getTime(), e.personId(), e.personPropertyId(), e.getCurrentPropertyValue());
+						MultiKey multiKey = new MultiKey(c.getTime(), e.personId(), e.personPropertyId(),
+								e.getCurrentPropertyValue());
 						actualObservations.add(multiKey);
 					});
 
-					eventFilter = personPropertiesDataManager.getEventFilterForPersonPropertyUpdateEvent(testPersonPropertyId, chosenValues.get(i), false);
+					eventFilter = personPropertiesDataManager.getEventFilterForPersonPropertyUpdateEvent(
+							testPersonPropertyId, chosenValues.get(i), false);
 					c.subscribe(eventFilter, (c2, e) -> {
-						MultiKey multiKey = new MultiKey(c.getTime(), e.personId(), e.personPropertyId(), e.getPreviousPropertyValue());
+						MultiKey multiKey = new MultiKey(c.getTime(), e.personId(), e.personPropertyId(),
+								e.getPreviousPropertyValue());
 						actualObservations.add(multiKey);
 					});
 				}
@@ -1384,7 +1400,8 @@ public final class AT_PersonPropertyDataManager {
 
 			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
 				// set a bunch of random values
-				PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
+				PersonPropertiesDataManager personPropertiesDataManager = c
+						.getDataManager(PersonPropertiesDataManager.class);
 				PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 				for (PersonId personId : peopleDataManager.getPeople()) {
 					int index = randomGenerator.nextInt(49);
@@ -1405,60 +1422,69 @@ public final class AT_PersonPropertyDataManager {
 
 		// run the sim with 50 people
 		TestPluginData testPluginData = pluginBuilder.build();
-		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
-
-		PersonPropertiesActionSupport.testConsumers(50, 7298392363960886874L, testPlugin);
+		TestSimulation.executeSimulation(
+				PersonPropertiesTestPluginFactory.factory(50, 7298392363960886874L, testPluginData).getPlugins());
 
 		// precondition tests
 
 		// precondition test: if the person property id is null
-		PersonPropertiesActionSupport.testConsumer(10, 7212207259440375049L, (c) -> {
-			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
+		TestSimulation.executeSimulation(PersonPropertiesTestPluginFactory.factory(50, 7212207259440375049L, (c) -> {
+			PersonPropertiesDataManager personPropertiesDataManager = c
+					.getDataManager(PersonPropertiesDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class,
 					() -> personPropertiesDataManager.getEventFilterForPersonPropertyUpdateEvent(null, 1, true));
 			assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
-		});
+		}).getPlugins());
 
-		PersonPropertiesActionSupport.testConsumer(10, 7212207259440375049L, (c) -> {
-			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
+		TestSimulation.executeSimulation(PersonPropertiesTestPluginFactory.factory(50, 7212207259440375049L, (c) -> {
+			PersonPropertiesDataManager personPropertiesDataManager = c
+					.getDataManager(PersonPropertiesDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class,
 					() -> personPropertiesDataManager.getEventFilterForPersonPropertyUpdateEvent(null, 1, false));
 			assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
-		});
+		}).getPlugins());
 
 		// precondition test: if the person property id is not known
-		PersonPropertiesActionSupport.testConsumer(10, 7580223995144844140L, (c) -> {
+		TestSimulation.executeSimulation(PersonPropertiesTestPluginFactory.factory(50, 7580223995144844140L, (c) -> {
 			PersonPropertyId unknownPropertyId = TestPersonPropertyId.getUnknownPersonPropertyId();
-			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
+			PersonPropertiesDataManager personPropertiesDataManager = c
+					.getDataManager(PersonPropertiesDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class,
-					() -> personPropertiesDataManager.getEventFilterForPersonPropertyUpdateEvent(unknownPropertyId, 1, true));
+					() -> personPropertiesDataManager.getEventFilterForPersonPropertyUpdateEvent(unknownPropertyId, 1,
+							true));
 			assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
-		});
+		}).getPlugins());
 
-		PersonPropertiesActionSupport.testConsumer(10, 7580223995144844140L, (c) -> {
+		TestSimulation.executeSimulation(PersonPropertiesTestPluginFactory.factory(50, 7580223995144844140L, (c) -> {
 			PersonPropertyId unknownPropertyId = TestPersonPropertyId.getUnknownPersonPropertyId();
-			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
+			PersonPropertiesDataManager personPropertiesDataManager = c
+					.getDataManager(PersonPropertiesDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class,
-					() -> personPropertiesDataManager.getEventFilterForPersonPropertyUpdateEvent(unknownPropertyId, 1, false));
+					() -> personPropertiesDataManager.getEventFilterForPersonPropertyUpdateEvent(unknownPropertyId, 1,
+							false));
 			assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
-		});
+		}).getPlugins());
 
 		// precondition test: if the property value is null
-		PersonPropertiesActionSupport.testConsumer(10, 451632169807459388L, (c) -> {
+		TestSimulation.executeSimulation(PersonPropertiesTestPluginFactory.factory(50, 451632169807459388L, (c) -> {
 			TestPersonPropertyId testPersonPropertyId = TestPersonPropertyId.PERSON_PROPERTY_5_INTEGER_MUTABLE_TRACK;
-			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
+			PersonPropertiesDataManager personPropertiesDataManager = c
+					.getDataManager(PersonPropertiesDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class,
-					() -> personPropertiesDataManager.getEventFilterForPersonPropertyUpdateEvent(testPersonPropertyId, null, true));
+					() -> personPropertiesDataManager.getEventFilterForPersonPropertyUpdateEvent(testPersonPropertyId,
+							null, true));
 			assertEquals(PropertyError.NULL_PROPERTY_VALUE, contractException.getErrorType());
-		});
+		}).getPlugins());
 
-		PersonPropertiesActionSupport.testConsumer(10, 451632169807459388L, (c) -> {
+		TestSimulation.executeSimulation(PersonPropertiesTestPluginFactory.factory(50, 451632169807459388L, (c) -> {
 			TestPersonPropertyId testPersonPropertyId = TestPersonPropertyId.PERSON_PROPERTY_5_INTEGER_MUTABLE_TRACK;
-			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
+			PersonPropertiesDataManager personPropertiesDataManager = c
+					.getDataManager(PersonPropertiesDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class,
-					() -> personPropertiesDataManager.getEventFilterForPersonPropertyUpdateEvent(testPersonPropertyId, null, false));
+					() -> personPropertiesDataManager.getEventFilterForPersonPropertyUpdateEvent(testPersonPropertyId,
+							null, false));
 			assertEquals(PropertyError.NULL_PROPERTY_VALUE, contractException.getErrorType());
-		});
+		}).getPlugins());
 	}
 
 	@Test
