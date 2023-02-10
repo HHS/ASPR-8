@@ -61,7 +61,7 @@ public class AT_SimpleReportLabel {
 	@Test
 	@UnitTestMethod(target = SimpleReportLabel.class, name = "equals", args = { Object.class }, tags = UnitTag.INCOMPLETE)
 	public void testEquals() {
-		Object value = 2;
+		
 		SimpleReportLabel id_1 = new SimpleReportLabel(2);
 		SimpleReportLabel id_2 = new SimpleReportLabel(5);
 		SimpleReportLabel id_3 = new SimpleReportLabel(2);
