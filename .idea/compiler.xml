@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="gcm4_lesson_16_person_properties_plugin" />
+        <module name="gcm4_lesson_11_stochastics_plugin" />
+        <module name="gcm4_lesson_03_actors" />
+        <module name="gcm4_lesson_01_hello_world" />
+        <module name="gcm4_lesson_13_global_properties_plugin" />
+        <module name="gcm4_lesson_02_plugins" />
+        <module name="gcm4_lesson_14_people_plugin" />
+        <module name="gcm4_lesson_05_events" />
+        <module name="gcm4_lesson_04_data_managers" />
+        <module name="gcm4_report_refactor" />
+        <module name="gcm4" />
+        <module name="gcm4_lesson_18_resources_plugin" />
+        <module name="gcm4_lesson_15_regions_plugin" />
+        <module name="gcm4_lesson_12_reports_plugin" />
+        <module name="gcm4_lesson_19_materials_plugin" />
+        <module name="gcm4_lesson_08_plugin_data" />
+        <module name="gcm4_lesson_10_output" />
+        <module name="gcm4_lesson_07_plugin_dependency_graph" />
+        <module name="gcm4_lesson_09_experiments" />
+        <module name="gcm4_lesson_17_groups_plugin" />
+        <module name="gcm4_lesson_06_plugin_dependencies" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="gcm4" target="17" />
+      <module name="gcm4_lesson_01_hello_world" target="17" />
+      <module name="gcm4_lesson_02_plugins" target="17" />
+      <module name="gcm4_lesson_03_actors" target="17" />
+      <module name="gcm4_lesson_04_data_managers" target="17" />
+      <module name="gcm4_lesson_05_events" target="17" />
+      <module name="gcm4_lesson_06_plugin_dependencies" target="17" />
+      <module name="gcm4_lesson_07_plugin_dependency_graph" target="17" />
+      <module name="gcm4_lesson_08_plugin_data" target="17" />
+      <module name="gcm4_lesson_09_experiments" target="17" />
+      <module name="gcm4_lesson_10_output" target="17" />
+      <module name="gcm4_lesson_11_stochastics_plugin" target="17" />
+      <module name="gcm4_lesson_12_reports_plugin" target="17" />
+      <module name="gcm4_lesson_13_global_properties_plugin" target="17" />
+      <module name="gcm4_lesson_14_people_plugin" target="17" />
+      <module name="gcm4_lesson_15_regions_plugin" target="17" />
+      <module name="gcm4_lesson_16_person_properties_plugin" target="17" />
+      <module name="gcm4_lesson_17_groups_plugin" target="17" />
+      <module name="gcm4_lesson_18_resources_plugin" target="17" />
+      <module name="gcm4_lesson_19_materials_plugin" target="17" />
+      <module name="gcm4_report_refactor" target="17" />
+    </bytecodeTargetLevel>
+  </component>
+</project>
