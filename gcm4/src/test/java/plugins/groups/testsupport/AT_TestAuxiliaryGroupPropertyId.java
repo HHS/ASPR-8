@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test;
 
 import plugins.groups.support.GroupPropertyId;
 import plugins.util.properties.PropertyDefinition;
-import tools.annotations.UnitTestMethod;
+import util.annotations.UnitTestMethod;
 import util.random.RandomGeneratorProvider;
 
 public class AT_TestAuxiliaryGroupPropertyId {

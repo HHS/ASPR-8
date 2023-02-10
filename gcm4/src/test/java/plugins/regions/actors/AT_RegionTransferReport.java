@@ -39,9 +39,9 @@ import plugins.reports.testsupport.ReportsTestPluginFactory;
 import plugins.stochastics.StochasticsDataManager;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.TimeTrackingPolicy;
-import tools.annotations.UnitTag;
-import tools.annotations.UnitTestConstructor;
-import tools.annotations.UnitTestMethod;
+import util.annotations.UnitTag;
+import util.annotations.UnitTestConstructor;
+import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 
 public class AT_RegionTransferReport {

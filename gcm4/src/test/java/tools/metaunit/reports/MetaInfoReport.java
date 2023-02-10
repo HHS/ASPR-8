@@ -8,16 +8,16 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import tools.annotations.UnitTag;
-import tools.annotations.UnitTestConstructor;
-import tools.annotations.UnitTestField;
-import tools.annotations.UnitTestMethod;
 import tools.metaunit.MetaInfoContainer;
 import tools.metaunit.MetaInfoGenerator;
 import tools.metaunit.warnings.ConstructorWarning;
 import tools.metaunit.warnings.FieldWarning;
 import tools.metaunit.warnings.MethodWarning;
 import tools.metaunit.warnings.WarningType;
+import util.annotations.UnitTag;
+import util.annotations.UnitTestConstructor;
+import util.annotations.UnitTestField;
+import util.annotations.UnitTestMethod;
 
 /**
  * A script covering the details of the GCM Test Plan. It produces a console

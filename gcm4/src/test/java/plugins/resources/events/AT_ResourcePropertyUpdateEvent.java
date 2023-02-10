@@ -4,8 +4,8 @@ import org.junit.jupiter.api.Test;
 
 import plugins.resources.support.ResourceId;
 import plugins.resources.support.ResourcePropertyId;
-import tools.annotations.UnitTestConstructor;
-import tools.annotations.UnitTestMethod;
+import util.annotations.UnitTestConstructor;
+import util.annotations.UnitTestMethod;
 
 public class AT_ResourcePropertyUpdateEvent {
 

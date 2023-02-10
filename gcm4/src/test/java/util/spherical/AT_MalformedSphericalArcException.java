@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.junit.jupiter.api.Test;
 
-import tools.annotations.UnitTestConstructor;
+import util.annotations.UnitTestConstructor;
 
 public class AT_MalformedSphericalArcException {
 	@Test

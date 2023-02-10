@@ -15,7 +15,7 @@ import plugins.partitions.testsupport.attributes.support.AttributeDefinition;
 import plugins.partitions.testsupport.attributes.support.AttributeError;
 import plugins.partitions.testsupport.attributes.support.AttributeId;
 import plugins.partitions.testsupport.attributes.support.TestAttributeId;
-import tools.annotations.UnitTestMethod;
+import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 
 public class AT_AttributesPluginData {

@@ -4,8 +4,8 @@ import org.junit.jupiter.api.Test;
 
 import plugins.regions.support.RegionId;
 import plugins.regions.support.RegionPropertyId;
-import tools.annotations.UnitTestConstructor;
-import tools.annotations.UnitTestMethod;
+import util.annotations.UnitTestConstructor;
+import util.annotations.UnitTestMethod;
 
 public class AT_RegionPropertyUpdateEvent {
 

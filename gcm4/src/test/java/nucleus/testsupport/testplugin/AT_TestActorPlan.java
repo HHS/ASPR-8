@@ -11,8 +11,8 @@ import java.util.function.Consumer;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import tools.annotations.UnitTestConstructor;
-import tools.annotations.UnitTestMethod;
+import util.annotations.UnitTestConstructor;
+import util.annotations.UnitTestMethod;
 import util.random.RandomGeneratorProvider;
 
 public class AT_TestActorPlan {

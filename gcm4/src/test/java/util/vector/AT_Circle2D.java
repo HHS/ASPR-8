@@ -4,9 +4,9 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import tools.annotations.UnitTag;
-import tools.annotations.UnitTestConstructor;
-import tools.annotations.UnitTestMethod;
+import util.annotations.UnitTag;
+import util.annotations.UnitTestConstructor;
+import util.annotations.UnitTestMethod;
 import util.vector.Circle2D.SolutionAlgorithm;
 
 public class AT_Circle2D {

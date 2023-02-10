@@ -3,12 +3,12 @@ package tools.metaunit;
 import java.util.ArrayList;
 import java.util.List;
 
-import tools.annotations.UnitTestConstructor;
-import tools.annotations.UnitTestField;
-import tools.annotations.UnitTestMethod;
 import tools.metaunit.warnings.ConstructorWarning;
 import tools.metaunit.warnings.FieldWarning;
 import tools.metaunit.warnings.MethodWarning;
+import util.annotations.UnitTestConstructor;
+import util.annotations.UnitTestField;
+import util.annotations.UnitTestMethod;
 
 public final class MetaInfoContainer {
 	private static class Data {

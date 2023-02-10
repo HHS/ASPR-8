@@ -31,8 +31,8 @@ import plugins.reports.support.SimpleReportLabel;
 import plugins.reports.testsupport.ReportsTestPluginFactory;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
-import tools.annotations.UnitTag;
-import tools.annotations.UnitTestMethod;
+import util.annotations.UnitTag;
+import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 
 public class AT_GlobalPropertyReport {

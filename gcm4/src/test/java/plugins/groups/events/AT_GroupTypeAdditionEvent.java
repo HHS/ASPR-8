@@ -3,8 +3,8 @@ package plugins.groups.events;
 import org.junit.jupiter.api.Test;
 
 import plugins.groups.support.GroupTypeId;
-import tools.annotations.UnitTestConstructor;
-import tools.annotations.UnitTestMethod;
+import util.annotations.UnitTestConstructor;
+import util.annotations.UnitTestMethod;
 
 public class AT_GroupTypeAdditionEvent {
 

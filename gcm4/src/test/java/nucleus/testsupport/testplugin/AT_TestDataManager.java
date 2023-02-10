@@ -12,9 +12,9 @@ import org.junit.jupiter.api.Test;
 import nucleus.DataManagerContext;
 import nucleus.Experiment;
 import nucleus.Plugin;
-import tools.annotations.UnitTag;
-import tools.annotations.UnitTestConstructor;
-import tools.annotations.UnitTestMethod;
+import util.annotations.UnitTag;
+import util.annotations.UnitTestConstructor;
+import util.annotations.UnitTestMethod;
 import util.wrappers.MultiKey;
 
 public class AT_TestDataManager {

@@ -7,8 +7,8 @@ import org.junit.jupiter.api.Test;
 import plugins.people.support.PersonId;
 import plugins.personproperties.support.PersonPropertyId;
 import plugins.personproperties.testsupport.TestPersonPropertyId;
-import tools.annotations.UnitTestConstructor;
-import tools.annotations.UnitTestMethod;
+import util.annotations.UnitTestConstructor;
+import util.annotations.UnitTestMethod;
 
 public class AT_PersonPropertyUpdateEvent {
 

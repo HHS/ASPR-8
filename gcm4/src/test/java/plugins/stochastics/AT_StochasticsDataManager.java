@@ -19,8 +19,8 @@ import plugins.stochastics.support.RandomNumberGeneratorId;
 import plugins.stochastics.support.StochasticsError;
 import plugins.stochastics.testsupport.StochasticsTestPluginFactory;
 import plugins.stochastics.testsupport.TestRandomGeneratorId;
-import tools.annotations.UnitTestConstructor;
-import tools.annotations.UnitTestMethod;
+import util.annotations.UnitTestConstructor;
+import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 
 public class AT_StochasticsDataManager {

@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import plugins.people.support.PersonId;
 import plugins.stochastics.support.RandomNumberGeneratorId;
 import plugins.stochastics.testsupport.TestRandomGeneratorId;
-import tools.annotations.UnitTestMethod;
+import util.annotations.UnitTestMethod;
 
 public class AT_GroupSampler {
 
