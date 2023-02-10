@@ -4,23 +4,18 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 
-import nucleus.ActorContext;
 import nucleus.Plugin;
+import nucleus.ReportContext;
 import nucleus.testsupport.testplugin.TestActorPlan;
-import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestSimulation;
 import nucleus.testsupport.testplugin.TestSimulationOutputConsumer;
-import plugins.people.PeoplePlugin;
-import plugins.people.PeoplePluginData;
-import plugins.regions.RegionsPlugin;
 import plugins.regions.RegionsPluginData;
 import plugins.regions.datamanagers.RegionsDataManager;
 import plugins.regions.support.RegionConstructionData;
@@ -29,12 +24,14 @@ import plugins.regions.support.RegionPropertyDefinitionInitialization;
 import plugins.regions.support.RegionPropertyId;
 import plugins.regions.support.SimpleRegionId;
 import plugins.regions.support.SimpleRegionPropertyId;
+import plugins.regions.testsupport.RegionsTestPluginFactory;
 import plugins.reports.support.ReportHeader;
 import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportItem;
 import plugins.reports.support.SimpleReportLabel;
 import plugins.reports.testsupport.ReportsTestPluginFactory;
 import plugins.util.properties.PropertyDefinition;
+import plugins.util.properties.TimeTrackingPolicy;
 import tools.annotations.UnitTag;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
@@ -64,11 +61,11 @@ public class AT_RegionPropertyReport {
 	}
 
 	@Test
-	@UnitTestMethod(target = RegionPropertyReport.class, name = "init", args = { ActorContext.class }, tags = {
+	@UnitTestMethod(target = RegionPropertyReport.class, name = "init", args = { ReportContext.class }, tags = {
 			UnitTag.INCOMPLETE })
 	public void testInit() {
 
-		List<Plugin> pluginsToAdd = new ArrayList<>();
+		
 		/*
 		 * We will add three regions, one agent and the region property report
 		 * to the engine. The regions will have a few properties and the agent
@@ -113,9 +110,8 @@ public class AT_RegionPropertyReport {
 		regionBuilder.defineRegionProperty(prop_policy, propertyDefinition);
 
 		RegionPropertyId prop_vaccine = new SimpleRegionPropertyId("prop_vaccine");
+		RegionsPluginData regionsPluginData = regionBuilder.build();
 
-		pluginsToAdd.add(RegionsPlugin.getRegionsPlugin(regionBuilder.build()));
-		pluginsToAdd.add(PeoplePlugin.getPeoplePlugin(PeoplePluginData.builder().build()));
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
 		// create an agent and have it assign various region properties at
@@ -215,11 +211,9 @@ public class AT_RegionPropertyReport {
 		expectedReportItems.put(getReportItem(3.0, regionD, prop_length, 45.0), 1);
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
 		TestSimulationOutputConsumer outputConsumer = new TestSimulationOutputConsumer();
-
-		pluginsToAdd.add(testPlugin);
+		List<Plugin> pluginsToAdd = RegionsTestPluginFactory.factory(0, 3656508960291338287L, TimeTrackingPolicy.TRACK_TIME, testPluginData).setRegionsPluginData(regionsPluginData).getPlugins();
 		pluginsToAdd.add(ReportsTestPluginFactory.getPluginFromReport(new RegionPropertyReport(REPORT_LABEL)::init));
 
 		TestSimulation.executeSimulation(pluginsToAdd, outputConsumer);

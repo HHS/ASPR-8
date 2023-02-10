@@ -18,6 +18,7 @@ public enum AttributeError implements ContractError {
 	NULL_ATTRIBUTE_DEFINITION("Null attribute definition"),//
 	NULL_ATTRIBUTE_VALUE("Null attribute value"),//	
 	NULL_ATTRIBUTE_TYPE("Null attribute type"),//
+	NULL_ATTRIBUTES_PLUGIN_DATA("null attributes plugin data"),
 	INCOMPATIBLE_DEFAULT_VALUE("Incompatible default value"),
 	NULL_DEFAULT_VALUE("Null default value"),
 	UNKNOWN_ATTRIBUTE_ID("Unknown attribute id"),//

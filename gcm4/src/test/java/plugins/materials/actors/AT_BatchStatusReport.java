@@ -18,8 +18,8 @@ import org.junit.jupiter.api.Test;
 
 import nucleus.ActorContext;
 import nucleus.Plugin;
+import nucleus.ReportContext;
 import nucleus.testsupport.testplugin.TestActorPlan;
-import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestSimulation;
 import nucleus.testsupport.testplugin.TestSimulationOutputConsumer;
@@ -30,7 +30,7 @@ import plugins.materials.support.BatchPropertyId;
 import plugins.materials.support.MaterialId;
 import plugins.materials.support.MaterialsProducerId;
 import plugins.materials.support.StageId;
-import plugins.materials.testsupport.MaterialsActionSupport;
+import plugins.materials.testsupport.MaterialsTestPluginFactory;
 import plugins.materials.testsupport.TestBatchConstructionInfo;
 import plugins.materials.testsupport.TestBatchPropertyId;
 import plugins.materials.testsupport.TestMaterialId;
@@ -94,7 +94,7 @@ public final class AT_BatchStatusReport {
 	}
 
 	@Test
-	@UnitTestMethod(target = BatchStatusReport.class, name = "init", args = { ActorContext.class }, tags = {
+	@UnitTestMethod(target = BatchStatusReport.class, name = "init", args = { ReportContext.class }, tags = {
 			UnitTag.INCOMPLETE })
 	public void testInit() {
 
@@ -233,13 +233,12 @@ public final class AT_BatchStatusReport {
 		}
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
 		TestSimulationOutputConsumer outputConsumer = new TestSimulationOutputConsumer();
-		List<Plugin> pluginsToAdd = MaterialsActionSupport.setUpPluginsForTest(2819236410498978100L);
-		pluginsToAdd.add(testPlugin);
+		List<Plugin> pluginsToAdd = MaterialsTestPluginFactory.factory(0, 0, 0, 2819236410498978100L, testPluginData)
+				.getPlugins();
 		pluginsToAdd.add(ReportsTestPluginFactory.getPluginFromReport(new BatchStatusReport(REPORT_LABEL)::init));
-		
+
 		TestSimulation.executeSimulation(pluginsToAdd, outputConsumer);
 
 		assertTrue(outputConsumer.isComplete());

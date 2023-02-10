@@ -2,7 +2,7 @@ package plugins.resources.actors;
 
 import org.junit.jupiter.api.Test;
 
-import nucleus.ActorContext;
+import nucleus.ReportContext;
 import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportPeriod;
 import plugins.resources.support.ResourceId;
@@ -19,7 +19,7 @@ public class AT_PersonResourceReport {
 	}
 
 	@Test
-	@UnitTestMethod(target = PersonResourceReport.class, name = "init", args = { ActorContext.class }, tags = UnitTag.INCOMPLETE)
+	@UnitTestMethod(target = PersonResourceReport.class, name = "init", args = { ReportContext.class }, tags = UnitTag.INCOMPLETE)
 	public void testInit() {
 		// test incomplete
 	}

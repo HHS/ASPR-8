@@ -10,13 +10,12 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import nucleus.DataManagerContext;
-import nucleus.Plugin;
 import nucleus.SimulationContext;
-import nucleus.testsupport.testplugin.TestActionSupport;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestDataManager;
-import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
+import nucleus.testsupport.testplugin.TestPluginFactory;
+import nucleus.testsupport.testplugin.TestSimulation;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
@@ -47,7 +46,7 @@ public class AT_AbstractIndexedPropertyManager {
 	@Test
 	@UnitTestConstructor(target = AbstractIndexedPropertyManager.class,args = { SimulationContext.class, PropertyDefinition.class, int.class })
 	public void testConstructor() {
-		TestActionSupport.testConsumer((c) -> {
+		TestSimulation.executeSimulation(TestPluginFactory.factory((c) -> {
 
 			PropertyDefinition goodPropertyDefinition = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(false).build();
 
@@ -61,13 +60,13 @@ public class AT_AbstractIndexedPropertyManager {
 
 			SimplePropertyManager simplePropertyManager = new SimplePropertyManager(c, goodPropertyDefinition, 0);
 			assertNotNull(simplePropertyManager);
-		});
+		}).getPlugins());
 	}
 
 	@Test
 	@UnitTestMethod(target = AbstractIndexedPropertyManager.class,name = "setPropertyValue", args = { int.class, Object.class })
 	public void testSetPropertyValue() {
-		TestActionSupport.testConsumer((c) -> {
+		TestSimulation.executeSimulation(TestPluginFactory.factory((c) -> {
 
 			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(false).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
 
@@ -75,7 +74,7 @@ public class AT_AbstractIndexedPropertyManager {
 			SimplePropertyManager simplePropertyManager = new SimplePropertyManager(c, propertyDefinition, 0);
 			ContractException contractException = assertThrows(ContractException.class, () -> simplePropertyManager.setPropertyValue(-1, false));
 			assertEquals(PropertyError.NEGATIVE_INDEX, contractException.getErrorType());
-		});
+		}).getPlugins());
 	}
 
 	/*
@@ -118,44 +117,43 @@ public class AT_AbstractIndexedPropertyManager {
 
 		// build and run the simulation
 		TestPluginData testPluginData = pluginDataBuilder.build();
-		Plugin plugin = TestPlugin.getTestPlugin(testPluginData);
-		TestActionSupport.testConsumers(plugin);
+		TestSimulation.executeSimulation(TestPluginFactory.factory(testPluginData).getPlugins());
 
 		// precondition test: if time tracking is no engaged
-		TestActionSupport.testConsumer((c) -> {
+		TestSimulation.executeSimulation(TestPluginFactory.factory((c) -> {
 			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(false).build();
 			SimplePropertyManager spm = new SimplePropertyManager(c, propertyDefinition, 0);
 			ContractException contractException = assertThrows(ContractException.class, () -> spm.getPropertyTime(0));
 			assertEquals(PropertyError.TIME_TRACKING_OFF, contractException.getErrorType());
-		});
+		}).getPlugins());
 
 		// precondition test: if a property time is retrieved for a negative
 		// index
-		TestActionSupport.testConsumer((c) -> {
+		TestSimulation.executeSimulation(TestPluginFactory.factory((c) -> {
 			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(false).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
 			SimplePropertyManager spm = new SimplePropertyManager(c, propertyDefinition, 0);
 			ContractException contractException = assertThrows(ContractException.class, () -> spm.getPropertyTime(-1));
 			assertEquals(PropertyError.NEGATIVE_INDEX, contractException.getErrorType());
-		});
+		}).getPlugins());
 	}
 
 	@Test
 	@UnitTestMethod(target = AbstractIndexedPropertyManager.class,name = "removeId", args = { int.class })
 	public void testRemoveId() {
-		TestActionSupport.testConsumer((c) -> {
+		TestSimulation.executeSimulation(TestPluginFactory.factory((c) -> {
 			// precondition tests
 			PropertyDefinition def = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(true).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
 			SimplePropertyManager spm = new SimplePropertyManager(c, def, 0);
 
 			ContractException contractException = assertThrows(ContractException.class, () -> spm.removeId(-1));
 			assertEquals(PropertyError.NEGATIVE_INDEX, contractException.getErrorType());
-		});
+		}).getPlugins());
 	}
 
 	@Test
 	@UnitTestMethod(target = AbstractIndexedPropertyManager.class,name = "incrementCapacity", args = { int.class })
 	public void testIncrementCapacity() {
-		TestActionSupport.testConsumer((c) -> {
+		TestSimulation.executeSimulation(TestPluginFactory.factory((c) -> {
 
 			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(false).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
 
@@ -164,6 +162,6 @@ public class AT_AbstractIndexedPropertyManager {
 			// precondition tests
 			ContractException contractException = assertThrows(ContractException.class, () -> simplePropertyManager.incrementCapacity(-1));
 			assertEquals(PropertyError.NEGATIVE_CAPACITY_INCREMENT, contractException.getErrorType());
-		});
+		}).getPlugins());
 	}
 }

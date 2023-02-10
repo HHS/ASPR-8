@@ -17,7 +17,8 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.util.FastMath;
 
 import nucleus.SimulationContext;
-import plugins.partitions.testsupport.PartitionsActionSupport;
+import nucleus.testsupport.testplugin.TestSimulation;
+import plugins.partitions.testsupport.PartitionsTestPluginFactory;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonId;
 import plugins.stochastics.StochasticsDataManager;
@@ -31,7 +32,7 @@ public class PeopleContainerTester {
 
 
 	public static void testGetPeople(Function<SimulationContext, PeopleContainer> provider, long seed) {
-		PartitionsActionSupport.testConsumer(100, seed, (c) -> {
+		TestSimulation.executeSimulation(PartitionsTestPluginFactory.factory(100, seed, (c) -> {
 
 			// get the people container to test
 			PeopleContainer peopleContainer = provider.apply(c);
@@ -78,12 +79,12 @@ public class PeopleContainerTester {
 			assertEquals(expectedPeople.size(), peopleList.size());
 			assertEquals(new LinkedHashSet<>(expectedPeople), new LinkedHashSet<>(peopleList));
 
-		});
+		}).getPlugins());
 
 	}
 
 	public static void testSafeAdd(Function<SimulationContext, PeopleContainer> provider, long seed) {
-		PartitionsActionSupport.testConsumer(100, seed, (c) -> {
+		TestSimulation.executeSimulation(PartitionsTestPluginFactory.factory(100, seed, (c) -> {
 
 			// get the people container to test
 			PeopleContainer peopleContainer = provider.apply(c);
@@ -122,11 +123,11 @@ public class PeopleContainerTester {
 			assertEquals(expectedPeople.size(), peopleList.size());
 			assertEquals(new LinkedHashSet<>(expectedPeople), new LinkedHashSet<>(peopleList));
 
-		});
+		}).getPlugins());
 	}
 
 	public static void testUnsafeAdd(Function<SimulationContext, PeopleContainer> provider, long seed) {
-		PartitionsActionSupport.testConsumer(100, seed, (c) -> {
+		TestSimulation.executeSimulation(PartitionsTestPluginFactory.factory(100, seed, (c) -> {
 
 			// get the people container to test
 			PeopleContainer peopleContainer = provider.apply(c);
@@ -159,11 +160,11 @@ public class PeopleContainerTester {
 				assertTrue(peopleContainer.contains(personId));
 			}
 
-		});
+		}).getPlugins());
 	}
 
 	public static void testRemove(Function<SimulationContext, PeopleContainer> provider, long seed) {
-		PartitionsActionSupport.testConsumer(100, seed, (c) -> {
+		TestSimulation.executeSimulation(PartitionsTestPluginFactory.factory(100, seed, (c) -> {
 
 			// get the people container to test
 			PeopleContainer peopleContainer = provider.apply(c);
@@ -203,11 +204,11 @@ public class PeopleContainerTester {
 				assertFalse(peopleContainer.contains(personId));
 			}
 
-		});
+		}).getPlugins());
 	}
 
 	public static void testSize(Function<SimulationContext, PeopleContainer> provider, long seed) {
-		PartitionsActionSupport.testConsumer(100, seed, (c) -> {
+		TestSimulation.executeSimulation(PartitionsTestPluginFactory.factory(100, seed, (c) -> {
 
 			// get the people container to test
 			PeopleContainer peopleContainer = provider.apply(c);
@@ -246,11 +247,11 @@ public class PeopleContainerTester {
 				assertEquals(expectedSize, peopleContainer.size());
 			}
 
-		});
+		}).getPlugins());
 	}
 
 	public static void testContains(Function<SimulationContext, PeopleContainer> provider, long seed) {
-		PartitionsActionSupport.testConsumer(100, seed, (c) -> {
+		TestSimulation.executeSimulation(PartitionsTestPluginFactory.factory(100, seed, (c) -> {
 
 			// get the people container to test
 			PeopleContainer peopleContainer = provider.apply(c);
@@ -294,11 +295,11 @@ public class PeopleContainerTester {
 				assertFalse(peopleContainer.contains(personId));
 			}
 
-		});
+		}).getPlugins());
 	}
 
 	public static void testGetRandomPersonId(Function<SimulationContext, PeopleContainer> provider, long seed) {
-		PartitionsActionSupport.testConsumer(100, seed, (c) -> {
+		TestSimulation.executeSimulation(PartitionsTestPluginFactory.factory(100, seed, (c) -> {
 
 			// get the people container to test
 			PeopleContainer peopleContainer = provider.apply(c);
@@ -359,6 +360,6 @@ public class PeopleContainerTester {
 				assertTrue(expectedPeopleSet.contains(randomPersonId));
 			}
 
-		});
+		}).getPlugins());
 	}
 }
