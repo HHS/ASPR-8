@@ -877,8 +877,7 @@ public final class AT_PersonPropertyDataManager {
 					personPropertiesDataManager.definePersonProperty(propertyDefinitionInitialization);
 
 					// show that the definition was added
-					PropertyDefinition actualPropertyDefinition = personPropertiesDataManager
-							.getPersonPropertyDefinition(auxPropertyId);
+					PropertyDefinition actualPropertyDefinition = personPropertiesDataManager.getPersonPropertyDefinition(auxPropertyId);
 					assertEquals(expectedPropertyDefinition, actualPropertyDefinition);
 
 					// show that the property has the correct initial value
@@ -951,8 +950,7 @@ public final class AT_PersonPropertyDataManager {
 					personPropertiesDataManager.definePersonProperty(propertyDefinitionInitialization);
 
 					// show that the definition was added
-					PropertyDefinition actualPropertyDefinition = personPropertiesDataManager
-							.getPersonPropertyDefinition(auxPropertyId);
+					PropertyDefinition actualPropertyDefinition = personPropertiesDataManager.getPersonPropertyDefinition(auxPropertyId);
 					assertEquals(expectedPropertyDefinition, actualPropertyDefinition);
 
 					// show that the property has the correct initial value
