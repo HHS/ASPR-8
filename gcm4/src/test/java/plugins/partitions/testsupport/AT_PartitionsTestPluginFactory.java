@@ -23,7 +23,6 @@ import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestPluginId;
 import nucleus.testsupport.testplugin.TestSimulation;
-import plugins.materials.MaterialsPluginId;
 import plugins.partitions.PartitionsPlugin;
 import plugins.partitions.PartitionsPluginId;
 import plugins.partitions.support.PartitionError;
@@ -157,8 +156,7 @@ public class AT_PartitionsTestPluginFactory {
 	@UnitTestMethod(target = PartitionsTestPluginFactory.Factory.class, name = "setPartitionsPlugin", args = {
 			Plugin.class })
 	public void testSetPartitionsPlugin() {
-		Plugin partitionsPlugin = PartitionsPlugin.getPartitionsPlugin(AttributesPluginId.PLUGIN_ID,
-				MaterialsPluginId.PLUGIN_ID);
+		Plugin partitionsPlugin = PartitionsPlugin.getPartitionsPlugin(AttributesPluginId.PLUGIN_ID);
 
 		List<Plugin> plugins = PartitionsTestPluginFactory.factory(0, 0, t -> {
 		}).setPartitionsPlugin(partitionsPlugin).getPlugins();
