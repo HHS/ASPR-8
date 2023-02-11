@@ -1,4 +1,4 @@
-package tools.dependencyanalysis.classgraph.reports;
+package tools.meta.classdependency.classgraph.reports;
 
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -6,8 +6,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import tools.dependencyanalysis.classgraph.support.ClassDependencyScan;
-import tools.dependencyanalysis.classgraph.support.JavaDependency;
+import tools.meta.classdependency.classgraph.support.ClassDependencyScan;
+import tools.meta.classdependency.classgraph.support.JavaDependency;
 import util.graph.Graph;
 import util.graph.GraphDepthEvaluator;
 import util.graph.Graphs;

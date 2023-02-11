@@ -1,13 +1,13 @@
-package tools.dependencyanalysis.classgraph.reports;
+package tools.meta.classdependency.classgraph.reports;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import tools.dependencyanalysis.classgraph.support.ClassDependencyScan;
-import tools.dependencyanalysis.classgraph.support.JavaDependency;
-import tools.dependencyanalysis.classgraph.support.JavaRef;
+import tools.meta.classdependency.classgraph.support.ClassDependencyScan;
+import tools.meta.classdependency.classgraph.support.JavaDependency;
+import tools.meta.classdependency.classgraph.support.JavaRef;
 
 public final class WildCardReport {
 	private WildCardReport() {

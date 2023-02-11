@@ -1,13 +1,13 @@
-package tools.metaunit.reports;
+package tools.meta.unittestcoverage.reports;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import tools.metaunit.MetaInfoContainer;
-import tools.metaunit.MetaInfoGenerator;
-import tools.metaunit.warnings.ConstructorWarning;
-import tools.metaunit.warnings.FieldWarning;
-import tools.metaunit.warnings.MethodWarning;
+import tools.meta.unittestcoverage.MetaInfoContainer;
+import tools.meta.unittestcoverage.MetaInfoGenerator;
+import tools.meta.unittestcoverage.warnings.ConstructorWarning;
+import tools.meta.unittestcoverage.warnings.FieldWarning;
+import tools.meta.unittestcoverage.warnings.MethodWarning;
 
 public final class StatusReport {
 	private StatusReport() {

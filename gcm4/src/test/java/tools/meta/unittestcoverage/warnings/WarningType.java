@@ -1,4 +1,4 @@
-package tools.metaunit.warnings;
+package tools.meta.unittestcoverage.warnings;
 
 public enum WarningType {
 

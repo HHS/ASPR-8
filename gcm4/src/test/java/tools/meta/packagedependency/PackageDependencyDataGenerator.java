@@ -1,4 +1,4 @@
-package tools.metaunit;
+package tools.meta.packagedependency;
 
 import java.io.File;
 import java.io.IOException;
@@ -7,58 +7,20 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
-import nucleus.Plugin;
-import nucleus.PluginId;
-import plugins.globalproperties.GlobalPropertiesPlugin;
-import plugins.globalproperties.GlobalPropertiesPluginData;
-import plugins.globalproperties.GlobalPropertiesPluginId;
-import plugins.groups.GroupsPlugin;
-import plugins.groups.GroupsPluginData;
-import plugins.groups.GroupsPluginId;
-import plugins.materials.MaterialsPlugin;
-import plugins.materials.MaterialsPluginData;
-import plugins.materials.MaterialsPluginId;
-import plugins.partitions.PartitionsPlugin;
-import plugins.partitions.PartitionsPluginId;
-import plugins.people.PeoplePlugin;
-import plugins.people.PeoplePluginData;
-import plugins.people.PeoplePluginId;
-import plugins.personproperties.PersonPropertiesPlugin;
-import plugins.personproperties.PersonPropertiesPluginData;
-import plugins.personproperties.PersonPropertiesPluginId;
-import plugins.regions.RegionsPlugin;
-import plugins.regions.RegionsPluginData;
-import plugins.regions.RegionsPluginId;
-import plugins.reports.ReportsPlugin;
-import plugins.reports.ReportsPluginData;
-import plugins.reports.ReportsPluginId;
-import plugins.resources.ResourcesPlugin;
-import plugins.resources.ResourcesPluginData;
-import plugins.resources.ResourcesPluginId;
-import plugins.stochastics.StochasticsPlugin;
-import plugins.stochastics.StochasticsPluginData;
-import plugins.stochastics.StochasticsPluginId;
-import util.graph.Graph;
-import util.graph.GraphDepthEvaluator;
-import util.graph.Graphs;
+import tools.meta.packagedependency.PackageDependencyData.PackageDependencyDetails;
+import tools.meta.packagedependency.PackageDependencyData.PackageRef;
 import util.graph.MutableGraph;
-import util.path.MapPathSolver;
 
 /**
- * A utility class for generating various warnings on the coverage deficiencies
- * of the the unit test suite.
- *
- *
+ * An utility class for generating a {@linkplain PackageDependencyData} that
+ * contains an analysis of the package level java dependencies.
+ * 
  */
-public class CircularInfoGenerator {
+public class PackageDependencyDataGenerator {
 
 	private static boolean isJavaFile(Path file) {
 		return Files.isRegularFile(file) && file.toString().endsWith(".java");
@@ -84,13 +46,9 @@ public class CircularInfoGenerator {
 		Set<Class<?>> classes = new LinkedHashSet<>();
 	}
 
-	private MutableGraph<Node, Edge> packageDependencyGraph = new MutableGraph<>();
-
-	private CircularInfoContainer.Builder warningContainerBuilder = CircularInfoContainer.builder();
-
 	private Node getImportNode(String line) {
 
-		for (Node node : packageDependencyGraph.getNodes()) {
+		for (Node node : data.packageDependencyGraph.getNodes()) {
 			if (line.startsWith(node.name)) {
 				return node;
 			}
@@ -98,9 +56,9 @@ public class CircularInfoGenerator {
 		return null;
 	}
 
-	private void probeFile(Path file) throws IOException {
+	private void probeFile(Path dir, Path file) throws IOException {
 
-		Class<?> c = getClassFromFile(data.sourcePath, file);
+		Class<?> c = getClassFromFile(dir, file);
 		List<String> lines = Files.readAllLines(file);
 
 		Node originNode = null;
@@ -111,16 +69,20 @@ public class CircularInfoGenerator {
 			if (!packageRead) {
 				String trim = line.trim();
 				if (trim.contains("package")) {
+					packageRead = true;
 					trim = line.substring(7, trim.length()).trim();
 					Node node = getImportNode(trim);
 					if (node != null) {
-						originNode = node;
-						packageRead = true;
+						originNode = node;						
 					}
 				}
 			} else {
 				String trim = line.trim();
 				if (trim.startsWith("import ")) {
+					if (trim.contains("*")) {
+						data.packageDependencyInfoBuilder.addWildCardClass(c);
+					}
+
 					trim = line.substring(6, trim.length()).trim();
 					Node node = getImportNode(trim);
 					if (node != null) {
@@ -131,21 +93,26 @@ public class CircularInfoGenerator {
 		}
 
 		if (originNode == null) {
-			throw new RuntimeException("cannot find origin node for " + c.getCanonicalName());
-		}
-
-		destinationNodes.remove(originNode);
-
-		for (Node node : destinationNodes) {
-			List<Edge> edges = packageDependencyGraph.getEdges(originNode, node);
-			Edge edge;
-			if (edges.isEmpty()) {
-				edge = new Edge();
-				packageDependencyGraph.addEdge(edge, originNode, node);
+			if (packageRead) {
+				data.packageDependencyInfoBuilder.addUncoveredClass(c);
 			} else {
-				edge = edges.get(0);
+				data.packageDependencyInfoBuilder.addPackagelessClass(c);
 			}
-			edge.classes.add(c);
+		} else {
+
+			destinationNodes.remove(originNode);
+
+			for (Node node : destinationNodes) {
+				List<Edge> edges = data.packageDependencyGraph.getEdges(originNode, node);
+				Edge edge;
+				if (edges.isEmpty()) {
+					edge = new Edge();
+					data.packageDependencyGraph.addEdge(edge, originNode, node);
+				} else {
+					edge = edges.get(0);
+				}
+				edge.classes.add(c);
+			}
 		}
 
 	}
@@ -192,21 +159,28 @@ public class CircularInfoGenerator {
 	}
 
 	private final class SourceFileVisitor extends SimpleFileVisitor<Path> {
+		private Path dir;
+
+		private SourceFileVisitor(Path dir) {
+			this.dir = dir;
+		}
+
 		@Override
 		public FileVisitResult visitFile(final Path file, final BasicFileAttributes attr) throws IOException {
 			if (isJavaFile(file)) {
-				probeFile(file);
+				probeFile(dir, file);
 			}
 			return FileVisitResult.CONTINUE;
 		}
 	}
 
-	private final Data data;
+	private Data data;
 
 	private static class Data {
-		private Path sourcePath;
-
-		private Path testPath;
+		private Set<Path> directories = new LinkedHashSet<>();
+		private Set<String> packageNames = new LinkedHashSet<>();
+		private MutableGraph<Node, Edge> packageDependencyGraph = new MutableGraph<>();
+		private PackageDependencyData.Builder packageDependencyInfoBuilder = PackageDependencyData.builder();
 	}
 
 	public final static Builder builder() {
@@ -219,10 +193,10 @@ public class CircularInfoGenerator {
 
 		private Data data = new Data();
 
-		public CircularInfoGenerator build() {
+		public PackageDependencyDataGenerator build() {
 			try {
 				validate();
-				return new CircularInfoGenerator(data);
+				return new PackageDependencyDataGenerator(data);
 			} finally {
 				data = new Data();
 			}
@@ -232,229 +206,93 @@ public class CircularInfoGenerator {
 
 		}
 
-		public Builder setSourcePath(Path sourcePath) {
-			data.sourcePath = sourcePath;
+		/**
+		 * Adds a source code directory to analyze
+		 * 
+		 * @throws NullPointerException
+		 *             if the path is null
+		 * @throws IllegalArgumentException
+		 *             if the path is not a directory
+		 * 
+		 * 
+		 */
+		public Builder addDirectory(Path directory) {
+			if (directory == null) {
+				throw new NullPointerException();
+			}
+			if (!Files.isDirectory(directory)) {
+				throw new IllegalArgumentException(directory + " is not a valid directory");
+			}
+
+			data.directories.add(directory);
 			return this;
 		}
 
-		public Builder setTestPath(Path testPath) {
-			data.testPath = testPath;
+		/**
+		 * Adds a packageName prefix that will be used to group source files
+		 * into a single node in the analysis
+		 */
+		public Builder addPackageName(String packageName) {
+			data.packageNames.add(packageName);
 			return this;
 		}
 
 	}
 
-	private CircularInfoGenerator(Data data) {
+	private PackageDependencyDataGenerator(Data data) {
 		this.data = data;
-		packageDependencyGraph.addNode(new Node("util"));
-		packageDependencyGraph.addNode(new Node("nucleus"));
-		packageDependencyGraph.addNode(new Node("plugins.globalproperties"));
-		packageDependencyGraph.addNode(new Node("plugins.groups"));
-		packageDependencyGraph.addNode(new Node("plugins.materials"));
-		packageDependencyGraph.addNode(new Node("plugins.partitions"));
-		packageDependencyGraph.addNode(new Node("plugins.people"));
-		packageDependencyGraph.addNode(new Node("plugins.personproperties"));
-		packageDependencyGraph.addNode(new Node("plugins.regions"));
-		packageDependencyGraph.addNode(new Node("plugins.reports"));
-		packageDependencyGraph.addNode(new Node("plugins.resources"));
-		packageDependencyGraph.addNode(new Node("plugins.stochastics"));
-		packageDependencyGraph.addNode(new Node("plugins.util"));
-		packageDependencyGraph.addNode(new Node("tools"));
+
 	}
 
-	private void loadSourceClasses() {
+	private void loadClasses() {
 
-		final SourceFileVisitor sourceFileVisitor = new SourceFileVisitor();
 		try {
-			Files.walkFileTree(data.sourcePath, sourceFileVisitor);
-			Files.walkFileTree(data.testPath, sourceFileVisitor);
+			for (Path path : data.directories) {
+				final SourceFileVisitor sourceFileVisitor = new SourceFileVisitor(path);
+				Files.walkFileTree(path, sourceFileVisitor);
+			}
 		} catch (final IOException e) {
 			throw new RuntimeException(e);
 		}
 
 	}
 
-	private void addToGraph(MutableGraph<PluginId, Object> mutableGraph, Plugin plugin) {
-
-		PluginId origin = plugin.getPluginId();
-		mutableGraph.addNode(origin);
-		for (PluginId destination : plugin.getPluginDependencies()) {
-			mutableGraph.addEdge(new Object(), origin, destination);
+	private void loadNodes() {
+		for (String packageName : data.packageNames) {
+			data.packageDependencyGraph.addNode(new Node(packageName));
 		}
 	}
 
-	private Graph<Node, Edge> getPluginDependencyGraph() {
-		// create a graph of the plugin dependencies
-		MutableGraph<PluginId, Object> pluginDependencyGraph = new MutableGraph<>();
+	public PackageDependencyData execute() {
 
-		addToGraph(pluginDependencyGraph, GlobalPropertiesPlugin.getGlobalPropertiesPlugin(GlobalPropertiesPluginData.builder().build()));
-		addToGraph(pluginDependencyGraph, GroupsPlugin.getGroupPlugin(GroupsPluginData.builder().build()));
-		addToGraph(pluginDependencyGraph, MaterialsPlugin.getMaterialsPlugin(MaterialsPluginData.builder().build()));
-		addToGraph(pluginDependencyGraph, PartitionsPlugin.getPartitionsPlugin());
-		addToGraph(pluginDependencyGraph, PeoplePlugin.getPeoplePlugin(PeoplePluginData.builder().build()));
-		addToGraph(pluginDependencyGraph, PersonPropertiesPlugin.getPersonPropertyPlugin(PersonPropertiesPluginData.builder().build()));
-		addToGraph(pluginDependencyGraph, RegionsPlugin.getRegionsPlugin(RegionsPluginData.builder().build()));
-		addToGraph(pluginDependencyGraph, ReportsPlugin.getReportsPlugin(ReportsPluginData.builder().build()));
-		addToGraph(pluginDependencyGraph, ResourcesPlugin.getResourcesPlugin(ResourcesPluginData.builder().build()));
-		addToGraph(pluginDependencyGraph, StochasticsPlugin.getStochasticsPlugin(StochasticsPluginData.builder().setSeed(0L).build()));
+		try {
+			loadNodes();
+			loadClasses();
 
-		// build a map to help convert the map above into the type of graph we
-		// need
-		Map<PluginId, Node> map = new LinkedHashMap<>();
-		map.put(GlobalPropertiesPluginId.PLUGIN_ID, new Node("plugins.globalproperties"));
-		map.put(GroupsPluginId.PLUGIN_ID, new Node("plugins.groups"));
-		map.put(MaterialsPluginId.PLUGIN_ID, new Node("plugins.materials"));
-		map.put(PartitionsPluginId.PLUGIN_ID, new Node("plugins.partitions"));
-		map.put(PeoplePluginId.PLUGIN_ID, new Node("plugins.people"));
-		map.put(PersonPropertiesPluginId.PLUGIN_ID, new Node("plugins.personproperties"));
-		map.put(RegionsPluginId.PLUGIN_ID, new Node("plugins.regions"));
-		map.put(ReportsPluginId.PLUGIN_ID, new Node("plugins.reports"));
-		map.put(ResourcesPluginId.PLUGIN_ID, new Node("plugins.resources"));
-		map.put(StochasticsPluginId.PLUGIN_ID, new Node("plugins.stochastics"));
+			MutableGraph<PackageRef, PackageDependencyDetails> m = new MutableGraph<>();
 
-		/*
-		 * Make sure that the map above maps each plugin to a node that is
-		 * contained in the package dependency map. Note that this should be a
-		 * subset of those nodes.
-		 */
-		for (PluginId pluginId : map.keySet()) {
-			Node node = map.get(pluginId);
-			if (!packageDependencyGraph.containsNode(node)) {
-				throw new RuntimeException("map contains unknown node for " + pluginId);
+			for (Node node : data.packageDependencyGraph.getNodes()) {
+				m.addNode(new PackageRef(node.name));
 			}
-		}
-
-		MutableGraph<Node, Edge> mutableResult = new MutableGraph<>();
-
-		for (Object o : pluginDependencyGraph.getEdges()) {
-			PluginId originPluginId = pluginDependencyGraph.getOriginNode(o);
-			PluginId destinationPluginId = pluginDependencyGraph.getDestinationNode(o);
-
-			Node originNode = map.get(originPluginId);
-			Node destinationNode = map.get(destinationPluginId);
-
-			mutableResult.addEdge(new Edge(), originNode, destinationNode);
-		}
-
-		Graph<Node, Edge> result = mutableResult.toGraph();
-		Optional<GraphDepthEvaluator<Node>> optional = GraphDepthEvaluator.getGraphDepthEvaluator(result);
-		if (!optional.isPresent()) {
-			throw new RuntimeException("the plugin dependencies are circular");
-		}
-		return result;
-	}
-
-	public CircularInfoContainer execute() {
-
-		loadSourceClasses();
-
-		for (Edge edge : packageDependencyGraph.getEdges()) {
-			Node originNode = packageDependencyGraph.getOriginNode(edge);
-			Node destinationNode = packageDependencyGraph.getDestinationNode(edge);
-			System.out.println(originNode.name + "->" + destinationNode.name);
-			for (Class<?> c : edge.classes) {
-				System.out.println("\t" + c.getSimpleName());
-			}
-		}
-
-		System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
-
-		Optional<GraphDepthEvaluator<Node>> optional = GraphDepthEvaluator.getGraphDepthEvaluator(packageDependencyGraph.toGraph());
-
-		if (!optional.isPresent()) {
-			/*
-			 * Explain in detail why there is a circular dependency
-			 */
-
-			Graph<Node, Edge> g = packageDependencyGraph.toGraph();
-
-			g = Graphs.getSourceSinkReducedGraph(g);
-			g = Graphs.getEdgeReducedGraph(g);
-			g = Graphs.getSourceSinkReducedGraph(g);
-
-			List<Graph<Node, Edge>> cutGraphs = Graphs.cutGraph(g);
-			StringBuilder sb = new StringBuilder();
-			String lineSeparator = System.getProperty("line.separator");
-			sb.append(lineSeparator);
-			boolean firstCutGraph = true;
-
-			for (Graph<Node, Edge> cutGraph : cutGraphs) {
-				// cutGraph = Graphs.getSourceSinkReducedGraph(cutGraph);
-				if (firstCutGraph) {
-					firstCutGraph = false;
-				} else {
-					sb.append(lineSeparator);
-				}
-				sb.append("Dependency group: ");
-				sb.append(lineSeparator);
-				Set<Node> nodes = cutGraph.getNodes().stream().collect(Collectors.toCollection(LinkedHashSet::new));
-
-				for (Node node : nodes) {
-					sb.append("\t");
-					sb.append(node);
-					sb.append(" requires:");
-					sb.append(lineSeparator);
-					for (Edge edge : cutGraph.getOutboundEdges(node)) {
-						Node dependencyNode = cutGraph.getDestinationNode(edge);
-						if (nodes.contains(dependencyNode)) {
-							sb.append("\t");
-							sb.append("\t");
-							sb.append(dependencyNode);
-							sb.append(lineSeparator);
-						}
-					}
-				}
+			for (Edge edge : data.packageDependencyGraph.getEdges()) {
+				Node originNode = data.packageDependencyGraph.getOriginNode(edge);
+				Node destinationNode = data.packageDependencyGraph.getDestinationNode(edge);
+				m.addEdge(new PackageDependencyDetails(edge.classes), new PackageRef(originNode.name), new PackageRef(destinationNode.name));
 			}
 
-			System.out.println(sb);
-		}
+			data.packageDependencyInfoBuilder.setGraph(m.toGraph());
 
-		System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
-
-		Graph<Node, Edge> pluginDependencyGraph = getPluginDependencyGraph();
-
-		for (Edge edge : pluginDependencyGraph.getEdges()) {
-			Node originNode = pluginDependencyGraph.getOriginNode(edge);
-			Node destinationNode = pluginDependencyGraph.getDestinationNode(edge);
-			System.out.println(originNode + "---->" + destinationNode);
-		}
-
-		MapPathSolver<Node, Edge> mapPathSolver = new MapPathSolver<>(pluginDependencyGraph, (e) -> 1, (a, b) -> 0);
-
-		for (Edge edge : packageDependencyGraph.getEdges()) {
-			Node originNode = packageDependencyGraph.getOriginNode(edge);
-			Node destinationNode = packageDependencyGraph.getDestinationNode(edge);
-
-//			if (originNode.name.equals("plugins.partitions")) {
-//				if (destinationNode.name.equals("plugins.materials")) {
-//					System.out.println("weeeeeeeeeeeeeeee");
-//					
-//					for (Node node : pluginDependencyGraph.getNodes()) {
-//						if (node.name.equals(originNode.name)) {
-//							System.out.println("found the origin node " + pluginDependencyGraph.containsNode(originNode));
-//
-//						}
-//						if (node.name.equals(destinationNode.name)) {
-//							System.out.println("found the destination node " + pluginDependencyGraph.containsNode(destinationNode));
-//
-//						}
-//					}
-//					System.out.println(pluginDependencyGraph.containsNode(originNode));
-//					System.out.println(pluginDependencyGraph.containsNode(originNode));
-//					System.out.println(pluginDependencyGraph.containsNode(originNode) && pluginDependencyGraph.containsEdge(destinationNode));
-//
-//				}
-//			}
-
-			if (pluginDependencyGraph.containsNode(originNode) && pluginDependencyGraph.containsNode(destinationNode)) {
-				Optional<util.path.Path<Edge>> optionalPath = mapPathSolver.getPath(originNode, destinationNode);
-				if (optionalPath.isEmpty()) {
-					System.out.println("The package dependency of " + originNode + "->" + destinationNode + " violates the plugin dependency graph");
-				}
+			for (Path path : data.directories) {
+				data.packageDependencyInfoBuilder.addCoveredDirectory(path);
 			}
-		}
+			for (String packageName : data.packageNames) {
+				data.packageDependencyInfoBuilder.addCoveredPackageName(packageName);
+			}
 
-		return warningContainerBuilder.build();
+			return data.packageDependencyInfoBuilder.build();
+		} finally {
+			data = new Data();
+		}
 
 	}
 

@@ -1,4 +1,4 @@
-package tools.dependencyanalysis.dependency;
+package tools.meta.classdependency.dependency;
 
 import java.io.IOException;
 import java.nio.file.Files;

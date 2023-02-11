@@ -1,11 +1,11 @@
-package tools.metaunit;
+package tools.meta.unittestcoverage;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import tools.metaunit.warnings.ConstructorWarning;
-import tools.metaunit.warnings.FieldWarning;
-import tools.metaunit.warnings.MethodWarning;
+import tools.meta.unittestcoverage.warnings.ConstructorWarning;
+import tools.meta.unittestcoverage.warnings.FieldWarning;
+import tools.meta.unittestcoverage.warnings.MethodWarning;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestField;
 import util.annotations.UnitTestMethod;

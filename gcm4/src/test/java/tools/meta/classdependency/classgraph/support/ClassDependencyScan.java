@@ -1,4 +1,4 @@
-package tools.dependencyanalysis.classgraph.support;
+package tools.meta.classdependency.classgraph.support;
 
 import java.util.LinkedHashSet;
 import java.util.Set;

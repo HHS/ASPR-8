@@ -1,4 +1,4 @@
-package tools.metaunit.reports;
+package tools.meta.unittestcoverage.reports;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -8,12 +8,12 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import tools.metaunit.MetaInfoContainer;
-import tools.metaunit.MetaInfoGenerator;
-import tools.metaunit.warnings.ConstructorWarning;
-import tools.metaunit.warnings.FieldWarning;
-import tools.metaunit.warnings.MethodWarning;
-import tools.metaunit.warnings.WarningType;
+import tools.meta.unittestcoverage.MetaInfoContainer;
+import tools.meta.unittestcoverage.MetaInfoGenerator;
+import tools.meta.unittestcoverage.warnings.ConstructorWarning;
+import tools.meta.unittestcoverage.warnings.FieldWarning;
+import tools.meta.unittestcoverage.warnings.MethodWarning;
+import tools.meta.unittestcoverage.warnings.WarningType;
 import util.annotations.UnitTag;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestField;
