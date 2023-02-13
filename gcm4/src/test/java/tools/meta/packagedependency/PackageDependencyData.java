@@ -67,41 +67,14 @@ public final class PackageDependencyData {
 	}
 
 	public final static class PackageDependencyDetails {
-		private final Set<Class<?>> classes;
+		private final Set<String> classes;
 
-		public PackageDependencyDetails(Set<Class<?>> classes) {
+		public PackageDependencyDetails(Set<String> classes) {
 			this.classes = new LinkedHashSet<>(classes);
 		}
 
-		public Set<Class<?>> getClasses() {
+		public Set<String> getClasses() {
 			return new LinkedHashSet<>(classes);
-		}
-
-		@Override
-		public int hashCode() {
-			final int prime = 31;
-			int result = 1;
-			result = prime * result + ((classes == null) ? 0 : classes.hashCode());
-			return result;
-		}
-
-		@Override
-		public boolean equals(Object obj) {
-			if (this == obj) {
-				return true;
-			}
-			if (!(obj instanceof PackageDependencyDetails)) {
-				return false;
-			}
-			PackageDependencyDetails other = (PackageDependencyDetails) obj;
-			if (classes == null) {
-				if (other.classes != null) {
-					return false;
-				}
-			} else if (!classes.equals(other.classes)) {
-				return false;
-			}
-			return true;
 		}
 
 		@Override
@@ -117,11 +90,12 @@ public final class PackageDependencyData {
 
 	private static class Data {
 		private Graph<PackageRef, PackageDependencyDetails> graph = new MutableGraph<PackageRef, PackageDependencyDetails>().toGraph();
-		private Set<Class<?>> wildCardClasses = new LinkedHashSet<>();
-		private Set<Class<?>> packagelessClasses = new LinkedHashSet<>();
-		private Set<Class<?>> uncoveredClasses = new LinkedHashSet<>();
-		private Set<Path> directories = new LinkedHashSet<>();
-		private Set<String> packageNames = new LinkedHashSet<>();
+		private Set<String> wildCardClasses = new LinkedHashSet<>();
+		private Set<String> packagelessClasses = new LinkedHashSet<>();
+		private Set<String> uncoveredClasses = new LinkedHashSet<>();
+		private Set<Path> inputDirectories = new LinkedHashSet<>();
+		private Set<String> inputPackageNames = new LinkedHashSet<>();
+		private Set<String> packageNamesFound = new LinkedHashSet<>();
 	}
 
 	public final static Builder builder() {
@@ -165,7 +139,7 @@ public final class PackageDependencyData {
 		 * @throws NullPointerException
 		 *             <li>if the wildcard class is null</li>
 		 */
-		public Builder addWildCardClass(Class<?> wildcardClass) {
+		public Builder addWildCardClass(String wildcardClass) {
 			if (wildcardClass == null) {
 				throw new NullPointerException("wildcard class is null");
 			}
@@ -181,7 +155,7 @@ public final class PackageDependencyData {
 		 * @throws NullPointerException
 		 *             <li>if the wildcard class is null</li>
 		 */
-		public Builder addPackagelessClass(Class<?> packagelessClass) {
+		public Builder addPackagelessClass(String packagelessClass) {
 			if (packagelessClass == null) {
 				throw new NullPointerException("packageless class is null");
 			}
@@ -199,7 +173,7 @@ public final class PackageDependencyData {
 		 * @throws NullPointerException
 		 *             <li>if the wildcard class is null</li>
 		 */
-		public Builder addUncoveredClass(Class<?> uncoveredClass) {
+		public Builder addUncoveredClass(String uncoveredClass) {
 			if (uncoveredClass == null) {
 				throw new NullPointerException("uncovered class is null");
 			}
@@ -208,34 +182,50 @@ public final class PackageDependencyData {
 		}
 
 		/**
-		 * Adds a covered directory.
+		 * Adds an input directory.
 		 * 
 		 * 
 		 * @throws NullPointerException
 		 *             <li>if the directory is null</li>
 		 */
-		public Builder addCoveredDirectory(Path directory) {
+		public Builder addInputDirectory(Path directory) {
 			if (directory == null) {
 				throw new NullPointerException("directory is null");
 			}
-			data.directories.add(directory);
+			data.inputDirectories.add(directory);
 			return this;
 		}
 
 		/**
-		 * Adds a covered directory.
+		 * Adds an input package name.
 		 * 
 		 * 
 		 * @throws NullPointerException
 		 *             <li>if the package name is null</li>
 		 */
-		public Builder addCoveredPackageName(String packageName) {
+		public Builder addInputPackageName(String packageName) {
 			if (packageName == null) {
 				throw new NullPointerException("package name is null");
 			}
-			data.packageNames.add(packageName);
+			data.inputPackageNames.add(packageName);
 			return this;
 		}
+		
+		/**
+		 * Adds a found package name.
+		 * 
+		 * 
+		 * @throws NullPointerException
+		 *             <li>if the package name is null</li>
+		 */
+		public Builder addFoundPackageName(String packageName) {
+			if (packageName == null) {
+				throw new NullPointerException("package name is null");
+			}
+			data.packageNamesFound.add(packageName);
+			return this;
+		}
+	
 
 	}
 
@@ -249,24 +239,28 @@ public final class PackageDependencyData {
 		return data.graph;
 	}
 
-	public Set<Class<?>> getWildcardClasses() {
+	public Set<String> getWildcardClasses() {
 		return new LinkedHashSet<>(data.wildCardClasses);
 	}
 
-	public Set<Class<?>> getPackagelessClasses() {
+	public Set<String> getPackagelessClasses() {
 		return new LinkedHashSet<>(data.packagelessClasses);
 	}
 
-	public Set<Class<?>> getUncoveredClasses() {
+	public Set<String> getUncoveredClasses() {
 		return new LinkedHashSet<>(data.uncoveredClasses);
 	}
 
 	public Set<Path> getCoveredDirectories() {
-		return new LinkedHashSet<>(data.directories);
+		return new LinkedHashSet<>(data.inputDirectories);
 	}
 
 	public Set<String> getCoveredPackageNames() {
-		return new LinkedHashSet<>(data.packageNames);
+		return new LinkedHashSet<>(data.inputPackageNames);
 	}
-
+	
+	public Set<String> getPackageNamesFound() {
+		return new LinkedHashSet<>(data.packageNamesFound);
+	}
+	
 }
