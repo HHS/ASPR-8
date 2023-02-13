@@ -54,8 +54,7 @@ import util.graph.MutableGraph;
 import util.path.MapPathSolver;
 
 /**
- * A utility class for generating various warnings on the coverage deficiencies
- * of the the unit test suite.
+ * 
  *
  *
  */
