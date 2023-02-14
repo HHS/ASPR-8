@@ -1340,9 +1340,9 @@ public final class AT_PersonPropertyDataManager {
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
 
-		int setTime = 0;
+		int planTime = 0;
 
-		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(setTime++, (c) -> {
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(planTime++, (c) -> {
 			// set a bunch of random values
 			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
@@ -1353,7 +1353,7 @@ public final class AT_PersonPropertyDataManager {
 			}
 		}));
 
-		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(setTime++, (c) -> {
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(planTime++, (c) -> {
 			// subscribe to every chosen value
 			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
 			for (int i = 0; i < chosenValues.size(); i++) {
@@ -1366,7 +1366,7 @@ public final class AT_PersonPropertyDataManager {
 			}
 		}));
 
-		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(setTime++, (c) -> {
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(planTime++, (c) -> {
 			// set a bunch of random values
 			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
@@ -1383,7 +1383,7 @@ public final class AT_PersonPropertyDataManager {
 		}));
 
 		// show that we only get the subscribed events
-		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(setTime++, (c) -> {
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(planTime++, (c) -> {
 			assertTrue(expectedObservations.size() >= sourceValues.size()/4);
 			assertEquals(expectedObservations, actualObservations);
 		}));
@@ -1400,9 +1400,9 @@ public final class AT_PersonPropertyDataManager {
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
 
-		int setTime = 0;
+		int planTime = 0;
 
-		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(setTime++, (c) -> {
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(planTime++, (c) -> {
 			// subscribe to every chosen value
 			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
 			for (int i = 0; i < chosenValues.size(); i++) {
@@ -1415,7 +1415,7 @@ public final class AT_PersonPropertyDataManager {
 			}
 		}));
 
-		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(setTime++, (c) -> {
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(planTime++, (c) -> {
 			// set a bunch of random values
 			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
@@ -1430,7 +1430,7 @@ public final class AT_PersonPropertyDataManager {
 		}));
 
 		// show that we only get the subscribed events
-		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(setTime++, (c) -> {
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(planTime++, (c) -> {
 			assertTrue(expectedObservations.size() >= sourceValues.size()/4);
 			assertEquals(expectedObservations, actualObservations);
 		}));
