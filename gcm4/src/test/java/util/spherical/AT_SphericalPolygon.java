@@ -14,8 +14,8 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.util.FastMath;
 import org.junit.jupiter.api.Test;
 
-import tools.annotations.UnitTag;
-import tools.annotations.UnitTestMethod;
+import util.annotations.UnitTag;
+import util.annotations.UnitTestMethod;
 import util.earth.Earth;
 import util.earth.LatLon;
 import util.random.RandomGeneratorProvider;

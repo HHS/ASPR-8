@@ -12,7 +12,7 @@ import nucleus.Plugin;
 import nucleus.PluginId;
 import plugins.people.PeoplePluginId;
 import plugins.stochastics.StochasticsPluginId;
-import tools.annotations.UnitTestMethod;
+import util.annotations.UnitTestMethod;
 
 public final class AT_PartitionsPlugin {
 

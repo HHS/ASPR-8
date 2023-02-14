@@ -3,8 +3,8 @@ package plugins.materials.events;
 import org.junit.jupiter.api.Test;
 
 import plugins.materials.support.BatchId;
-import tools.annotations.UnitTestConstructor;
-import tools.annotations.UnitTestMethod;
+import util.annotations.UnitTestConstructor;
+import util.annotations.UnitTestMethod;
 
 public class AT_BatchAdditionEvent {
 

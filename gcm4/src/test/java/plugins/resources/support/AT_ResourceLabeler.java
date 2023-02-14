@@ -30,8 +30,8 @@ import plugins.resources.events.PersonResourceUpdateEvent;
 import plugins.resources.testsupport.ResourcesTestPluginFactory;
 import plugins.resources.testsupport.TestResourceId;
 import plugins.stochastics.StochasticsDataManager;
-import tools.annotations.UnitTestConstructor;
-import tools.annotations.UnitTestMethod;
+import util.annotations.UnitTestConstructor;
+import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 
 public final class AT_ResourceLabeler {

@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 
 import plugins.partitions.testsupport.attributes.support.AttributeLabeler;
 import plugins.partitions.testsupport.attributes.support.TestAttributeId;
-import tools.annotations.UnitTestMethod;
+import util.annotations.UnitTestMethod;
 
 public class AT_Partition {
 

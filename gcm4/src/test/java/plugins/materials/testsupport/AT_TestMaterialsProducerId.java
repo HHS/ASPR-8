@@ -8,7 +8,7 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import plugins.materials.support.MaterialsProducerId;
-import tools.annotations.UnitTestMethod;
+import util.annotations.UnitTestMethod;
 import util.random.RandomGeneratorProvider;
 
 public class AT_TestMaterialsProducerId {

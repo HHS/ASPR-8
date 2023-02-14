@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 import plugins.regions.support.RegionError;
 import plugins.regions.support.RegionId;
 import plugins.regions.support.SimpleRegionId;
-import tools.annotations.UnitTestMethod;
+import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.random.RandomGeneratorProvider;
 

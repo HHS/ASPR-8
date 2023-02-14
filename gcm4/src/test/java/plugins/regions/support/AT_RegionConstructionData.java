@@ -13,7 +13,7 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import plugins.util.properties.PropertyError;
-import tools.annotations.UnitTestMethod;
+import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.random.RandomGeneratorProvider;
 

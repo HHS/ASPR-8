@@ -18,7 +18,7 @@ import plugins.resources.support.ResourceError;
 import plugins.resources.support.ResourceId;
 import plugins.resources.testsupport.TestResourceId;
 import plugins.util.properties.PropertyError;
-import tools.annotations.UnitTestMethod;
+import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.random.RandomGeneratorProvider;
 

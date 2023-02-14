@@ -11,11 +11,11 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
-import plugins.globalproperties.support.SimpleGlobalPropertyId;
-import tools.annotations.UnitTag;
-import tools.annotations.UnitTestConstructor;
-import tools.annotations.UnitTestMethod;
+import util.annotations.UnitTag;
+import util.annotations.UnitTestConstructor;
+import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
+import util.wrappers.MutableInteger;
 
 public class AT_SimpleReportLabel {
 
@@ -61,7 +61,7 @@ public class AT_SimpleReportLabel {
 	@Test
 	@UnitTestMethod(target = SimpleReportLabel.class, name = "equals", args = { Object.class }, tags = UnitTag.INCOMPLETE)
 	public void testEquals() {
-		Object value = 2;
+		
 		SimpleReportLabel id_1 = new SimpleReportLabel(2);
 		SimpleReportLabel id_2 = new SimpleReportLabel(5);
 		SimpleReportLabel id_3 = new SimpleReportLabel(2);
@@ -69,7 +69,7 @@ public class AT_SimpleReportLabel {
 		SimpleReportLabel id_5 = new SimpleReportLabel("A");
 		SimpleReportLabel id_6 = new SimpleReportLabel("B");
 		SimpleReportLabel id_7 = new SimpleReportLabel("A");
-		SimpleGlobalPropertyId simpleGlobalPropertyId = new SimpleGlobalPropertyId(value);
+		MutableInteger simpleGlobalPropertyId = new MutableInteger(2);
 
 		// should return false if the object is not a SimpleReportLabel
 		assertNotEquals(id_1, simpleGlobalPropertyId);

@@ -27,8 +27,8 @@ import plugins.resources.testsupport.ResourcesTestPluginFactory;
 import plugins.resources.testsupport.TestResourceId;
 import plugins.resources.testsupport.TestResourcePropertyId;
 import plugins.util.properties.PropertyDefinition;
-import tools.annotations.UnitTestConstructor;
-import tools.annotations.UnitTestMethod;
+import util.annotations.UnitTestConstructor;
+import util.annotations.UnitTestMethod;
 
 public class AT_ResourcePropertyReport {
 

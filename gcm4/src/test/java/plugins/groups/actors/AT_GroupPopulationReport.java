@@ -32,8 +32,8 @@ import plugins.reports.support.ReportItem;
 import plugins.reports.support.ReportPeriod;
 import plugins.reports.support.SimpleReportLabel;
 import plugins.reports.testsupport.ReportsTestPluginFactory;
-import tools.annotations.UnitTestConstructor;
-import tools.annotations.UnitTestMethod;
+import util.annotations.UnitTestConstructor;
+import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 
 public class AT_GroupPopulationReport {

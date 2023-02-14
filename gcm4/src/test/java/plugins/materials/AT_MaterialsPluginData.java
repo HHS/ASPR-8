@@ -37,7 +37,7 @@ import plugins.resources.testsupport.TestResourceId;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
 import plugins.util.properties.TimeTrackingPolicy;
-import tools.annotations.UnitTestMethod;
+import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.random.RandomGeneratorProvider;
 import util.wrappers.MultiKey;

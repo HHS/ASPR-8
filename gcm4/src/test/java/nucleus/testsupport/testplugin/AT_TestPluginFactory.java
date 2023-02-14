@@ -14,8 +14,7 @@ import org.junit.jupiter.api.Test;
 import nucleus.ActorContext;
 import nucleus.NucleusError;
 import nucleus.Plugin;
-import plugins.globalproperties.testsupport.GlobalPropertiesTestPluginFactory;
-import tools.annotations.UnitTestMethod;
+import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.wrappers.MutableBoolean;
 
@@ -32,7 +31,7 @@ public class AT_TestPluginFactory {
 		// precondition: consumer is null
 		Consumer<ActorContext> nullConsumer = null;
 		ContractException contractException = assertThrows(ContractException.class,
-				() -> GlobalPropertiesTestPluginFactory.factory(nullConsumer));
+				() -> TestPluginFactory.factory(nullConsumer));
 		assertEquals(NucleusError.NULL_ACTOR_CONTEXT_CONSUMER, contractException.getErrorType());
 	}
 
@@ -50,7 +49,7 @@ public class AT_TestPluginFactory {
 		// precondition: testPluginData is null
 		TestPluginData nullTestPluginData = null;
 		ContractException contractException = assertThrows(ContractException.class,
-				() -> GlobalPropertiesTestPluginFactory.factory(nullTestPluginData));
+				() -> TestPluginFactory.factory(nullTestPluginData));
 		assertEquals(NucleusError.NULL_PLUGIN_DATA, contractException.getErrorType());
 
 	}

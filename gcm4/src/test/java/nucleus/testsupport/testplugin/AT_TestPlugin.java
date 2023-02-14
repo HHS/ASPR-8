@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 import nucleus.Plugin;
 import nucleus.PluginData;
 import nucleus.Simulation;
-import tools.annotations.UnitTestMethod;
+import util.annotations.UnitTestMethod;
 import util.wrappers.MutableBoolean;
 
 public class AT_TestPlugin {

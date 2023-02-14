@@ -10,8 +10,8 @@ import nucleus.SimulationContext;
 import plugins.partitions.support.PartitionError;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonId;
-import tools.annotations.UnitTestConstructor;
-import tools.annotations.UnitTestMethod;
+import util.annotations.UnitTestConstructor;
+import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 
 

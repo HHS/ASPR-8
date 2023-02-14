@@ -10,8 +10,8 @@ import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestPluginFactory;
 import nucleus.testsupport.testplugin.TestSimulation;
-import tools.annotations.UnitTestConstructor;
-import tools.annotations.UnitTestMethod;
+import util.annotations.UnitTestConstructor;
+import util.annotations.UnitTestMethod;
 
 public class AT_PropertyValueRecord {
 

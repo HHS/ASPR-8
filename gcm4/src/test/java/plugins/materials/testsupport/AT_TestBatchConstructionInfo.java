@@ -11,7 +11,7 @@ import plugins.materials.support.BatchConstructionInfo;
 import plugins.materials.support.MaterialId;
 import plugins.materials.support.MaterialsError;
 import plugins.materials.support.MaterialsProducerId;
-import tools.annotations.UnitTestMethod;
+import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.random.RandomGeneratorProvider;
 

@@ -24,8 +24,8 @@ import plugins.partitions.testsupport.attributes.events.AttributeUpdateEvent;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
-import tools.annotations.UnitTestConstructor;
-import tools.annotations.UnitTestMethod;
+import util.annotations.UnitTestConstructor;
+import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.random.RandomGeneratorProvider;
 

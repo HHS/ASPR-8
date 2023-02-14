@@ -12,7 +12,7 @@ import nucleus.Plugin;
 import nucleus.PluginId;
 import plugins.regions.RegionsPluginId;
 import plugins.resources.ResourcesPluginId;
-import tools.annotations.UnitTestMethod;
+import util.annotations.UnitTestMethod;
 
 public class AT_MaterialsPlugin {
 

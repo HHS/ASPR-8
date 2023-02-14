@@ -30,9 +30,9 @@ import plugins.reports.support.ReportItem;
 import plugins.reports.support.SimpleReportLabel;
 import plugins.reports.testsupport.ReportsTestPluginFactory;
 import plugins.stochastics.StochasticsDataManager;
-import tools.annotations.UnitTag;
-import tools.annotations.UnitTestConstructor;
-import tools.annotations.UnitTestMethod;
+import util.annotations.UnitTag;
+import util.annotations.UnitTestConstructor;
+import util.annotations.UnitTestMethod;
 import util.random.RandomGeneratorProvider;
 
 public final class AT_StageReport {

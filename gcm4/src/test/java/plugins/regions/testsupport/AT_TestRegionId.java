@@ -14,7 +14,7 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import plugins.regions.support.RegionId;
-import tools.annotations.UnitTestMethod;
+import util.annotations.UnitTestMethod;
 import util.random.RandomGeneratorProvider;
 import util.wrappers.MutableInteger;
 

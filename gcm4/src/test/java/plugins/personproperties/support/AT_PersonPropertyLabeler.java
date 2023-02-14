@@ -25,8 +25,8 @@ import plugins.personproperties.events.PersonPropertyUpdateEvent;
 import plugins.personproperties.testsupport.PersonPropertiesTestPluginFactory;
 import plugins.personproperties.testsupport.TestPersonPropertyId;
 import plugins.stochastics.StochasticsDataManager;
-import tools.annotations.UnitTestConstructor;
-import tools.annotations.UnitTestMethod;
+import util.annotations.UnitTestConstructor;
+import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 
 public class AT_PersonPropertyLabeler {

@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 import nucleus.ReportContext;
 import plugins.reports.support.ReportLabel;
 import plugins.reports.support.SimpleReportLabel;
-import tools.annotations.UnitTestMethod;
+import util.annotations.UnitTestMethod;
 
 public class AT_ReportsPluginData {
 
