@@ -180,7 +180,7 @@ public final class AT_GlobalPropertiesDataManager {
 		TestSimulation.executeSimulation(GlobalPropertiesTestPluginFactory.factory(testPluginData).getPlugins());
 
 		// show that the observations were correct
-		assertTrue(expectedObservations.size() > 0);
+		assertEquals(3,expectedObservations.size());
 		assertEquals(expectedObservations.size(), actualObservations.size());
 		assertEquals(new LinkedHashSet<>(expectedObservations), new LinkedHashSet<>(actualObservations));
 
@@ -515,7 +515,7 @@ public final class AT_GlobalPropertiesDataManager {
 		 * equal
 		 */
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(4, (c) -> {
-			assertTrue(expectedObservations.size() > 0);
+			assertEquals(3,expectedObservations.size());
 			assertEquals(expectedObservations, actualObservations);
 		}));
 
@@ -568,7 +568,7 @@ public final class AT_GlobalPropertiesDataManager {
 		 * equal
 		 */
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(4, (c) -> {
-			assertTrue(expectedObservations.size() > 0);
+			assertEquals(3,expectedObservations.size());
 			assertEquals(expectedObservations, actualObservations);
 		}));
 
@@ -637,7 +637,7 @@ public final class AT_GlobalPropertiesDataManager {
 		 * equal
 		 */
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(4, (c) -> {
-			assertTrue(expectedObservations.size() > 0);
+			assertEquals(6,expectedObservations.size());
 			assertEquals(expectedObservations, actualObservations);
 		}));
 

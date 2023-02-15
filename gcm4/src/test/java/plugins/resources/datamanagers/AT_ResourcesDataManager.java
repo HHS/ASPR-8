@@ -1081,8 +1081,8 @@ public final class AT_ResourcesDataManager {
 		}));
 
 		// have the observer verify the observations were correct
-		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(3, (c) -> {
-			assertTrue(expectedObservations.size() > 0);
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(3, (c) -> {			
+			assertEquals(2,expectedObservations.size());
 			assertEquals(expectedObservations, actualObservations);
 		}));
 
@@ -3671,7 +3671,7 @@ public final class AT_ResourcesDataManager {
 
 		// have the observer verify the observations were correct
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(3, (c) -> {
-			assertTrue(expectedObservations.size() > 0);
+			assertEquals(2,expectedObservations.size());
 			assertEquals(expectedObservations, actualObservations);
 		}));
 
