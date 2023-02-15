@@ -372,7 +372,7 @@ public class AT_MaterialsDataManager {
 
 		// have the observer show that the observations are correct
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(actionTime++, (c) -> {
-			assertTrue(expectedObservations.size() > 0);
+			assertEquals(10* TestMaterialsProducerId.values().length,expectedObservations.size());
 			assertEquals(expectedObservations, actualObservations);
 		}));
 
@@ -758,7 +758,7 @@ public class AT_MaterialsDataManager {
 
 		// have the observer show that the correct observations were generated
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(actionTime++, (c) -> {
-			assertTrue(expectedObservations.size() > 0);
+			assertTrue(expectedObservations.size() >= 100);
 			assertEquals(expectedObservations, actualObservations);
 		}));
 

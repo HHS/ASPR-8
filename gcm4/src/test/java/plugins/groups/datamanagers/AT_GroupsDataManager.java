@@ -389,7 +389,7 @@ public class AT_GroupsDataManager {
 
 		// show that the group creations were observed
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(3, (c) -> {
-			assertTrue(expectedObservations.size() > 0);
+			assertEquals(3,expectedObservations.size());
 			assertEquals(expectedObservations, actualObservations);
 		}));
 		TestPluginData testPluginData = pluginBuilder.build();
@@ -2667,6 +2667,8 @@ public class AT_GroupsDataManager {
 		Set<TestGroupTypeId> selectedGroupTypes = new LinkedHashSet<>();
 		selectedGroupTypes.add(TestGroupTypeId.GROUP_TYPE_1);
 		selectedGroupTypes.add(TestGroupTypeId.GROUP_TYPE_2);
+		
+		
 
 		// have the observer subscribe to group creation for the selected groups
 		// types
@@ -2762,7 +2764,7 @@ public class AT_GroupsDataManager {
 
 		// show that the group creations were observed
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(3, (c) -> {
-			assertTrue(expectedObservations.size() > 0);
+			assertEquals(100,expectedObservations.size());
 			assertEquals(expectedObservations, actualObservations);
 		}));
 		TestPluginData testPluginData = pluginBuilder.build();
