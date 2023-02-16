@@ -6,7 +6,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -15,7 +14,6 @@ import net.jcip.annotations.GuardedBy;
 import net.jcip.annotations.ThreadSafe;
 import nucleus.ExperimentContext;
 import nucleus.ScenarioStatus;
-import util.wrappers.MutableBoolean;
 
 /**
  * A thread-safe utility that supports tab delimited text based files that have
@@ -59,16 +57,16 @@ public final class LineWriter {
 
 		this.useExperimentColumns = displayExperimentColumnsInReports;
 
-		boolean previouslyExists = experimentContext.getScenarios(ScenarioStatus.PREVIOUSLY_SUCCEEDED).isEmpty();
+		boolean loadedWithPreviousData = !experimentContext.getScenarios(ScenarioStatus.PREVIOUSLY_SUCCEEDED).isEmpty();
 
-		if (!previouslyExists) {
-			init1(path, experimentContext);
+		if (loadedWithPreviousData) {
+			initializeWithPreviousContent(path, experimentContext);
 		} else {
-			init2(path);
+			initializeWithNoPreviousContent(path);
 		}
 	}
 
-	private void init1(Path path, ExperimentContext experimentContext) {
+	private void initializeWithPreviousContent(Path path, ExperimentContext experimentContext) {
 
 		try {
 
@@ -142,7 +140,7 @@ public final class LineWriter {
 		}
 	}
 
-	private void init2(Path path) {
+	private void initializeWithNoPreviousContent(Path path) {
 
 		try {
 			/*
