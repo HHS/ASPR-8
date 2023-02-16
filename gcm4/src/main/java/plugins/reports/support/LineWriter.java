@@ -1,9 +1,6 @@
 package plugins.reports.support;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.nio.charset.CharsetEncoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -12,11 +9,13 @@ import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import net.jcip.annotations.GuardedBy;
 import net.jcip.annotations.ThreadSafe;
 import nucleus.ExperimentContext;
 import nucleus.ScenarioStatus;
+import util.wrappers.MutableBoolean;
 
 /**
  * A thread-safe utility that supports tab delimited text based files that have
@@ -34,7 +33,7 @@ public final class LineWriter {
 	private final boolean useExperimentColumns;
 	private static final String lineSeparator = System.getProperty("line.separator");
 	private final Object headerLock = new Object();
-	private final BufferedWriter writer;
+	private BufferedWriter writer;
 
 	@GuardedBy(value = "headerLock")
 	private boolean headerWritten;
@@ -49,7 +48,10 @@ public final class LineWriter {
 	 * not exist, then its parent directory must exist.
 	 * 
 	 * @throws RuntimeException
-	 *             <li>if an {@link IOException} is thrown</li>
+	 *             <li>if an {@link IOException} is thrown during file initialization</li>
+	 *             <li>if the simulation run is continuing from a progress log and
+	 *             the path is not a regular file (path does not exist) during
+	 *             file initialization</li>
 	 * 
 	 */
 
@@ -57,24 +59,104 @@ public final class LineWriter {
 
 		this.useExperimentColumns = displayExperimentColumnsInReports;
 
+		boolean previouslyExists = experimentContext.getScenarios(ScenarioStatus.PREVIOUSLY_SUCCEEDED).isEmpty();
+
+		if (previouslyExists) {
+			init1(path, experimentContext);
+		} else {
+			init2(path);
+		}
+
+//		try {
+//
+//			List<String> outputLines = new ArrayList<>();
+//			String headerLine = null;
+//
+//			/*
+//			 * If the file is readable then we accept only those lines that
+//			 * correspond to a previously executed scenario
+//			 */
+//			if (Files.isRegularFile(path)) {
+//				List<String> inputLines = Files.readAllLines(path);
+//				boolean header = true;
+//				for (String line : inputLines) {
+//					if (!header) {
+//						String[] fields = line.split("\t");
+//						/*
+//						 * It is possible that the last line of a file was only
+//						 * partially written because neither the writter's close
+//						 * or flush was called during an abrupt shutdown. We
+//						 * expect that such cases will not correspond to
+//						 * successfully completed simulation execution, but must
+//						 * ensure that the parsing of the scenario and
+//						 * replication ids can still be performed
+//						 */
+//						if (fields.length > 1) {
+//							int scenarioId = Integer.parseInt(fields[0]);
+//							Optional<ScenarioStatus> optional = experimentContext.getScenarioStatus(scenarioId);
+//							if (optional.isPresent() && optional.get().equals(ScenarioStatus.PREVIOUSLY_SUCCEEDED)) {
+//								outputLines.add(line);
+//							}
+//						}
+//					} else {
+//						headerLine = line;
+//						header = false;
+//					}
+//				}
+//			}
+//
+//			/*
+//			 * Remove the old file and write to the file the header and any
+//			 * retained lines from the previous execution.
+//			 */
+//			Files.deleteIfExists(path);
+//			CharsetEncoder encoder = StandardCharsets.UTF_8.newEncoder();
+//			OutputStream out = Files.newOutputStream(path, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+//			writer = new BufferedWriter(new OutputStreamWriter(out, encoder));
+//
+//			if (!outputLines.isEmpty()) {
+//				writer.write(headerLine);
+//				writer.newLine();
+//				headerWritten = true;
+//			}
+//
+//			for (String line : outputLines) {
+//				writer.write(line);
+//				writer.newLine();
+//			}
+//
+//		} catch (IOException e) {
+//			throw new RuntimeException(e);
+//		}
+	}
+
+	private void init1(Path path, ExperimentContext experimentContext) {
+
 		try {
 
-			List<String> outputLines = new ArrayList<>();
-			String headerLine = null;
+			/*
+			 * Remove the old file and write to the file the header and any
+			 * retained lines from the previous execution.
+			 */
+			Path tempPath = path.resolve("C:\\Users\\varnerbf\\Documents\\ASPR\\ASPR-8\\tutorials\\plugins\\gcm4_report_refactor\\output\\progresslog.txt");
+			Files.deleteIfExists(tempPath);
+			CharsetEncoder encoder = StandardCharsets.UTF_8.newEncoder();
+			OutputStream out = Files.newOutputStream(tempPath, StandardOpenOption.CREATE);
+			writer = new BufferedWriter(new OutputStreamWriter(out, encoder));
 
 			/*
 			 * If the file is readable then we accept only those lines that
 			 * correspond to a previously executed scenario
 			 */
 			if (Files.isRegularFile(path)) {
-				List<String> inputLines = Files.readAllLines(path);
-				boolean header = true;
-				for (String line : inputLines) {
-					if (!header) {
+				Stream<String> lines = Files.lines(path);
+				boolean[] header = new boolean[] {true};
+				lines.forEach((line) -> {
+					if (!header[0]) {
 						String[] fields = line.split("\t");
 						/*
 						 * It is possible that the last line of a file was only
-						 * partially written because neither the writter's close
+						 * partially written because neither the writer's close
 						 * or flush was called during an abrupt shutdown. We
 						 * expect that such cases will not correspond to
 						 * successfully completed simulation execution, but must
@@ -85,35 +167,57 @@ public final class LineWriter {
 							int scenarioId = Integer.parseInt(fields[0]);
 							Optional<ScenarioStatus> optional = experimentContext.getScenarioStatus(scenarioId);
 							if (optional.isPresent() && optional.get().equals(ScenarioStatus.PREVIOUSLY_SUCCEEDED)) {
-								outputLines.add(line);
+								try {
+									writer.write(line);
+									writer.newLine();
+								} catch (IOException e) {
+									throw new RuntimeException(e);
+								}
 							}
 						}
 					} else {
-						headerLine = line;
-						header = false;
+						try {
+							writer.write(line);
+							writer.newLine();
+							headerWritten = true;
+							header[0] = false;
+						} catch (IOException e) {
+							throw new RuntimeException(e);
+						}
 					}
-				}
+				});
+				lines.close();
+			} else {
+				throw new RuntimeException("Non-regular file at: " + path);
 			}
 
+			writer.close();
+
+			tempPath.toFile().renameTo(path.toFile());
+
+			encoder = StandardCharsets.UTF_8.newEncoder();
+			out = Files.newOutputStream(path, StandardOpenOption.APPEND);
+			writer = new BufferedWriter(new OutputStreamWriter(out, encoder));
+
+//			Files.createTempFile(); //???
+
+
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	private void init2(Path path) {
+
+		try {
 			/*
 			 * Remove the old file and write to the file the header and any
 			 * retained lines from the previous execution.
 			 */
 			Files.deleteIfExists(path);
 			CharsetEncoder encoder = StandardCharsets.UTF_8.newEncoder();
-			OutputStream out = Files.newOutputStream(path, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+			OutputStream out = Files.newOutputStream(path, StandardOpenOption.CREATE);
 			writer = new BufferedWriter(new OutputStreamWriter(out, encoder));
-
-			if (!outputLines.isEmpty()) {
-				writer.write(headerLine);
-				writer.newLine();
-				headerWritten = true;
-			}
-
-			for (String line : outputLines) {
-				writer.write(line);
-				writer.newLine();
-			}
 
 		} catch (IOException e) {
 			throw new RuntimeException(e);

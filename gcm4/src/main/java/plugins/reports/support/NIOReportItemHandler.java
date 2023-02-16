@@ -162,6 +162,12 @@ public final class NIOReportItemHandler implements Consumer<ExperimentContext>{
 	 * of each file is complete for each closed scenario</li>
 	 * <li>Experiment Close : closes all file writers</li>
 	 * </ul>
+	 *
+	 * @throws RuntimeException
+	 *             <li>if an {@link IOException} is thrown during file initialization</li>
+	 *             <li>if the simulation run is continuing from a progress log and
+	 *             the path is not a regular file (path does not exist) during
+	 *             file initialization</li>
 	 */
 	@Override
 	public void accept(ExperimentContext experimentContext) {
