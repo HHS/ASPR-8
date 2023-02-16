@@ -289,7 +289,7 @@ public final class Example_18 {
 					.addDimension(getAntiviralDosesPerPersonDimension())//
 					.addDimension(getHospitalStayDurationDimension())//
 
-					.setContinueFromProgressLog(true)
+					.setContinueFromProgressLog(false)
 					.addExperimentContextConsumer(ExperimentStatusConsole.builder().build())
 					.setExperimentProgressLog(Paths.get("C:\\Users\\varnerbf\\Documents\\ASPR\\ASPR-8\\tutorials\\plugins\\gcm4_report_refactor\\output\\progresslog.txt"))
 
