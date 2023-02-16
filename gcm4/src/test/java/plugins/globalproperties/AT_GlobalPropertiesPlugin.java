@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import nucleus.Plugin;
 import nucleus.PluginId;
-import tools.annotations.UnitTestMethod;
+import util.annotations.UnitTestMethod;
 
 public class AT_GlobalPropertiesPlugin {
 

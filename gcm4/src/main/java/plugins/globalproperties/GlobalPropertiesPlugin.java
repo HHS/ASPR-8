@@ -1,8 +1,8 @@
 package plugins.globalproperties;
 
 import nucleus.Plugin;
-import plugins.globalproperties.actors.GlobalPropertyReport;
 import plugins.globalproperties.datamanagers.GlobalPropertiesDataManager;
+import plugins.globalproperties.reports.GlobalPropertyReport;
 
 /**
  * A plugin providing a global property data manager to the simulation.

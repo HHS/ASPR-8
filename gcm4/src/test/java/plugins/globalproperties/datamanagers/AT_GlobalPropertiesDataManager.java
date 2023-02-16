@@ -19,15 +19,9 @@ import org.junit.jupiter.api.Test;
 
 import nucleus.DataManagerContext;
 import nucleus.EventFilter;
-import nucleus.Plugin;
-import nucleus.Simulation;
-import nucleus.testsupport.testplugin.ScenarioPlanCompletionObserver;
 import nucleus.testsupport.testplugin.TestActorPlan;
-import nucleus.testsupport.testplugin.TestError;
-import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestSimulation;
-import plugins.globalproperties.GlobalPropertiesPlugin;
 import plugins.globalproperties.GlobalPropertiesPluginData;
 import plugins.globalproperties.events.GlobalPropertyDefinitionEvent;
 import plugins.globalproperties.events.GlobalPropertyUpdateEvent;
@@ -40,8 +34,8 @@ import plugins.globalproperties.testsupport.TestAuxiliaryGlobalPropertyId;
 import plugins.globalproperties.testsupport.TestGlobalPropertyId;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
-import tools.annotations.UnitTestConstructor;
-import tools.annotations.UnitTestMethod;
+import util.annotations.UnitTestConstructor;
+import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.random.RandomGeneratorProvider;
 import util.wrappers.MultiKey;
@@ -78,7 +72,6 @@ public final class AT_GlobalPropertiesDataManager {
 		expectedPropertyValues.put(TestGlobalPropertyId.GLOBAL_PROPERTY_2_INTEGER_MUTABLE, 456);
 
 		GlobalPropertiesPluginData globalPropertiesPluginData = globalsPluginBuilder.build();
-		Plugin globalsPlugin = GlobalPropertiesPlugin.getGlobalPropertiesPlugin(globalPropertiesPluginData);
 
 		/*
 		 * show that the Global Plugin Data is reflected in the initial state of
@@ -104,19 +97,8 @@ public final class AT_GlobalPropertiesDataManager {
 		}));
 
 		TestPluginData testPluginData = testPluginDataBuilder.build();
-		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
-		ScenarioPlanCompletionObserver scenarioPlanCompletionObserver = new ScenarioPlanCompletionObserver();
-		Simulation	.builder()//
-					.addPlugin(globalsPlugin)//
-					.setOutputConsumer(scenarioPlanCompletionObserver::handleOutput).addPlugin(testPlugin)//
-					.build()//
-					.execute();//
-
-		// show that all actions were executed
-		if (!scenarioPlanCompletionObserver.allPlansExecuted()) {
-			throw new ContractException(TestError.TEST_EXECUTION_FAILURE);
-		}
+		TestSimulation.executeSimulation(GlobalPropertiesTestPluginFactory.factory(testPluginData).setGlobalPropertiesPluginData(globalPropertiesPluginData).getPlugins());
 
 	}
 
@@ -198,7 +180,7 @@ public final class AT_GlobalPropertiesDataManager {
 		TestSimulation.executeSimulation(GlobalPropertiesTestPluginFactory.factory(testPluginData).getPlugins());
 
 		// show that the observations were correct
-		assertTrue(expectedObservations.size() > 0);
+		assertEquals(3,expectedObservations.size());
 		assertEquals(expectedObservations.size(), actualObservations.size());
 		assertEquals(new LinkedHashSet<>(expectedObservations), new LinkedHashSet<>(actualObservations));
 
@@ -533,7 +515,7 @@ public final class AT_GlobalPropertiesDataManager {
 		 * equal
 		 */
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(4, (c) -> {
-			assertTrue(expectedObservations.size() > 0);
+			assertEquals(3,expectedObservations.size());
 			assertEquals(expectedObservations, actualObservations);
 		}));
 
@@ -586,7 +568,7 @@ public final class AT_GlobalPropertiesDataManager {
 		 * equal
 		 */
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(4, (c) -> {
-			assertTrue(expectedObservations.size() > 0);
+			assertEquals(3,expectedObservations.size());
 			assertEquals(expectedObservations, actualObservations);
 		}));
 
@@ -655,7 +637,7 @@ public final class AT_GlobalPropertiesDataManager {
 		 * equal
 		 */
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(4, (c) -> {
-			assertTrue(expectedObservations.size() > 0);
+			assertEquals(6,expectedObservations.size());
 			assertEquals(expectedObservations, actualObservations);
 		}));
 

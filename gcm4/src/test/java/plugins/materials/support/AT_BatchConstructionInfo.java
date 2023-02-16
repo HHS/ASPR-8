@@ -15,7 +15,7 @@ import plugins.materials.testsupport.TestBatchPropertyId;
 import plugins.materials.testsupport.TestMaterialId;
 import plugins.materials.testsupport.TestMaterialsProducerId;
 import plugins.util.properties.PropertyError;
-import tools.annotations.UnitTestMethod;
+import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.random.RandomGeneratorProvider;
 

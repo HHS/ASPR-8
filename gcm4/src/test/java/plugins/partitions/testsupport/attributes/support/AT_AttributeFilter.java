@@ -20,12 +20,13 @@ import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestError;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
+import nucleus.testsupport.testplugin.TestSimulation;
 import plugins.partitions.PartitionsPlugin;
 import plugins.partitions.support.Equality;
 import plugins.partitions.support.Filter;
 import plugins.partitions.support.FilterSensitivity;
 import plugins.partitions.support.PartitionError;
-import plugins.partitions.testsupport.PartitionsActionSupport;
+import plugins.partitions.testsupport.PartitionsTestPluginFactory;
 import plugins.partitions.testsupport.attributes.AttributesDataManager;
 import plugins.partitions.testsupport.attributes.AttributesPlugin;
 import plugins.partitions.testsupport.attributes.AttributesPluginData;
@@ -37,8 +38,8 @@ import plugins.people.support.PersonId;
 import plugins.stochastics.StochasticsDataManager;
 import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.StochasticsPluginData;
-import tools.annotations.UnitTestConstructor;
-import tools.annotations.UnitTestMethod;
+import util.annotations.UnitTestConstructor;
+import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 
 public final class AT_AttributeFilter {
@@ -164,7 +165,7 @@ public final class AT_AttributeFilter {
 	@Test
 	@UnitTestMethod(target = AttributeFilter.class, name = "evaluate", args = { SimulationContext.class, PersonId.class })
 	public void testEvaluate() {
-		PartitionsActionSupport.testConsumer(100, 2853953940626718331L, (c) -> {
+		TestSimulation.executeSimulation(PartitionsTestPluginFactory.factory(100, 2853953940626718331L, (c) -> {
 			Filter filter = new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, true);
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
@@ -179,25 +180,25 @@ public final class AT_AttributeFilter {
 				assertEquals(expected, actual);
 			}
 
-		});
+		}).getPlugins());
 
 		/* precondition: if the context is null */
-		PartitionsActionSupport.testConsumer(100, 1011872226453537614L, (c) -> {
+		TestSimulation.executeSimulation(PartitionsTestPluginFactory.factory(100, 1011872226453537614L, (c) -> {
 			Filter filter = new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, true);
 			assertThrows(RuntimeException.class, () -> filter.evaluate(null, new PersonId(0)));
-		});
+		}).getPlugins());
 
 		/* precondition: if the person id is null */
-		PartitionsActionSupport.testConsumer(100, 6858667758520667469L, (c) -> {
+		TestSimulation.executeSimulation(PartitionsTestPluginFactory.factory(100, 6858667758520667469L, (c) -> {
 			Filter filter = new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, true);
 			assertThrows(RuntimeException.class, () -> filter.evaluate(c, null));
-		});
+		}).getPlugins());
 
 		/* precondition: if the person id is unknown */
-		PartitionsActionSupport.testConsumer(100, 9106972672436024633L, (c) -> {
+		TestSimulation.executeSimulation(PartitionsTestPluginFactory.factory(100, 9106972672436024633L, (c) -> {
 			Filter filter = new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, true);
 			assertThrows(RuntimeException.class, () -> filter.evaluate(c, new PersonId(123412342)));
-		});
+		}).getPlugins());
 
 	}
 
@@ -205,7 +206,7 @@ public final class AT_AttributeFilter {
 	@UnitTestMethod(target = AttributeFilter.class, name = "getFilterSensitivities", args = {})
 	public void testGetFilterSensitivities() {
 
-		PartitionsActionSupport.testConsumer(100, 3455263917994200075L, (c) -> {
+		TestSimulation.executeSimulation(PartitionsTestPluginFactory.factory(100, 3455263917994200075L, (c) -> {
 
 			// create an attribute filter
 			Filter filter = new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, false);
@@ -243,7 +244,7 @@ public final class AT_AttributeFilter {
 
 			assertFalse(filterSensitivity.requiresRefresh(c, attributeUpdateEvent).isPresent());
 
-		});
+		}).getPlugins());
 
 	}
 

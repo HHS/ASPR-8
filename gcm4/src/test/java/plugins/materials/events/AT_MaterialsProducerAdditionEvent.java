@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 import plugins.materials.support.MaterialsError;
 import plugins.materials.support.MaterialsProducerId;
 import plugins.materials.testsupport.TestMaterialsProducerId;
-import tools.annotations.UnitTestMethod;
+import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.random.RandomGeneratorProvider;
 

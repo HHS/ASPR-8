@@ -17,8 +17,8 @@ import org.apache.commons.math3.util.FastMath;
 import org.apache.commons.math3.util.Pair;
 import org.junit.jupiter.api.Test;
 
-import tools.annotations.UnitTag;
-import tools.annotations.UnitTestMethod;
+import util.annotations.UnitTag;
+import util.annotations.UnitTestMethod;
 import util.earth.Earth;
 import util.earth.LatLon;
 import util.earth.LatLonAlt;

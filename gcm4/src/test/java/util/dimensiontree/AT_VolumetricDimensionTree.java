@@ -13,8 +13,8 @@ import java.util.stream.Collectors;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import tools.annotations.UnitTag;
-import tools.annotations.UnitTestMethod;
+import util.annotations.UnitTag;
+import util.annotations.UnitTestMethod;
 import util.random.RandomGeneratorProvider;
 import util.vector.Vector2D;
 

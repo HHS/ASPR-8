@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 
 import nucleus.NucleusError;
 import nucleus.SimulationContext;
+import nucleus.testsupport.testplugin.TestSimulation;
 import plugins.partitions.support.Equality;
 import plugins.partitions.support.Filter;
 import plugins.partitions.support.FilterSensitivity;
@@ -20,12 +21,12 @@ import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
 import plugins.personproperties.datamanagers.PersonPropertiesDataManager;
 import plugins.personproperties.events.PersonPropertyUpdateEvent;
-import plugins.personproperties.testsupport.PersonPropertiesActionSupport;
+import plugins.personproperties.testsupport.PersonPropertiesTestPluginFactory;
 import plugins.personproperties.testsupport.TestPersonPropertyId;
 import plugins.stochastics.StochasticsDataManager;
 import plugins.util.properties.PropertyError;
-import tools.annotations.UnitTestConstructor;
-import tools.annotations.UnitTestMethod;
+import util.annotations.UnitTestConstructor;
+import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 
 public class AT_PropertyFilter {
@@ -40,7 +41,7 @@ public class AT_PropertyFilter {
 	@UnitTestMethod(target = PropertyFilter.class, name = "validate", args = { SimulationContext.class })
 	public void testValidate() {
 
-		PersonPropertiesActionSupport.testConsumer(100, 7889475921077680704L, (c) -> {
+		TestSimulation.executeSimulation(PersonPropertiesTestPluginFactory.factory(100, 7889475921077680704L, (c) -> {
 			final Filter filter = new PropertyFilter(TestPersonPropertyId.PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK, Equality.EQUAL, 12);
 			assertNotNull(filter);
 
@@ -57,7 +58,7 @@ public class AT_PropertyFilter {
 					() -> new PropertyFilter(TestPersonPropertyId.PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK, Equality.EQUAL, "bad value").validate(c));
 			assertEquals(PropertyError.INCOMPATIBLE_VALUE, contractException.getErrorType());
 
-		});
+		}).getPlugins());
 
 	}
 
@@ -82,7 +83,7 @@ public class AT_PropertyFilter {
 	@UnitTestMethod(target = PropertyFilter.class, name = "evaluate", args = { SimulationContext.class, PersonId.class })
 	public void testEvaluate() {
 
-		PersonPropertiesActionSupport.testConsumer(100, 9037413907425227057L, (c) -> {
+		TestSimulation.executeSimulation(PersonPropertiesTestPluginFactory.factory(100, 9037413907425227057L, (c) -> {
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
@@ -115,7 +116,7 @@ public class AT_PropertyFilter {
 			/* precondition: if the person id is unknown */
 			contractException = assertThrows(ContractException.class, () -> filter.evaluate(c, new PersonId(123412342)));
 			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
-		});
+		}).getPlugins());
 	}
 
 	@Test

@@ -10,8 +10,8 @@ import plugins.resources.support.ResourceId;
 import plugins.resources.testsupport.TestResourceId;
 import plugins.util.properties.PropertyError;
 import plugins.util.properties.TimeTrackingPolicy;
-import tools.annotations.UnitTestConstructor;
-import tools.annotations.UnitTestMethod;
+import util.annotations.UnitTestConstructor;
+import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 
 public class AT_ResourceIdAdditionEvent {

@@ -8,9 +8,9 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.util.FastMath;
 import org.junit.jupiter.api.Test;
 
-import tools.annotations.UnitTestConstructor;
-import tools.annotations.UnitTestField;
-import tools.annotations.UnitTestMethod;
+import util.annotations.UnitTestConstructor;
+import util.annotations.UnitTestField;
+import util.annotations.UnitTestMethod;
 import util.random.RandomGeneratorProvider;
 
 

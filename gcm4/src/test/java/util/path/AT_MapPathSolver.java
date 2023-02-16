@@ -11,8 +11,8 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 
-import tools.annotations.UnitTestConstructor;
-import tools.annotations.UnitTestMethod;
+import util.annotations.UnitTestConstructor;
+import util.annotations.UnitTestMethod;
 import util.graph.Graph;
 import util.path.Paths.EdgeCostEvaluator;
 import util.path.Paths.TravelCostEvaluator;

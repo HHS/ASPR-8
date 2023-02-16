@@ -14,11 +14,10 @@ import org.junit.jupiter.api.Test;
 
 import nucleus.DataManagerContext;
 import nucleus.EventFilter;
-import nucleus.Plugin;
 import nucleus.testsupport.testplugin.TestActorPlan;
-import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
-import plugins.partitions.testsupport.PartitionsActionSupport;
+import nucleus.testsupport.testplugin.TestSimulation;
+import plugins.partitions.testsupport.PartitionsTestPluginFactory;
 import plugins.partitions.testsupport.attributes.events.AttributeUpdateEvent;
 import plugins.partitions.testsupport.attributes.support.AttributeDefinition;
 import plugins.partitions.testsupport.attributes.support.AttributeError;
@@ -28,8 +27,8 @@ import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
 import plugins.stochastics.StochasticsDataManager;
-import tools.annotations.UnitTestConstructor;
-import tools.annotations.UnitTestMethod;
+import util.annotations.UnitTestConstructor;
+import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.wrappers.MultiKey;
 
@@ -38,7 +37,7 @@ public class AT_AttributesDataManager {
 	@Test
 	@UnitTestMethod(target = AttributesDataManager.class,name = "init", args = { DataManagerContext.class })
 	public void testAttributesDataViewInitialization() {
-		PartitionsActionSupport.testConsumer(0, 5241628071704306523L, (c) -> {
+		TestSimulation.executeSimulation(PartitionsTestPluginFactory.factory(0, 5241628071704306523L, (c) -> {
 			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
 
 			assertEquals(EnumSet.allOf(TestAttributeId.class), attributesDataManager.getAttributeIds());
@@ -46,7 +45,7 @@ public class AT_AttributesDataManager {
 			for (TestAttributeId testAttributeId : TestAttributeId.values()) {
 				assertEquals(testAttributeId.getAttributeDefinition(), attributesDataManager.getAttributeDefinition(testAttributeId));
 			}
-		});
+		}).getPlugins());
 	}
 
 	
@@ -92,9 +91,8 @@ public class AT_AttributesDataManager {
 		}));
 
 		TestPluginData testPluginData = pluginDataBuilder.build();
-		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
-		PartitionsActionSupport.testConsumers(expectedPersonIds.size(), 4599936503626031739L, testPlugin);
+		TestSimulation.executeSimulation(PartitionsTestPluginFactory.factory(expectedPersonIds.size(), 4599936503626031739L, testPluginData).getPlugins());
 
 		// show that the correct observations were made;
 		assertEquals(expectedPersonIds, peopleObserved);
@@ -111,7 +109,7 @@ public class AT_AttributesDataManager {
 	@Test
 	@UnitTestMethod(target = AttributesDataManager.class,name = "attributeExists", args = { AttributeId.class })
 	public void testAttributeExists() {
-		PartitionsActionSupport.testConsumer(100, 6136319242032948471L, (c) -> {
+		TestSimulation.executeSimulation(PartitionsTestPluginFactory.factory(100, 6136319242032948471L, (c) -> {
 			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
 
 			for (TestAttributeId testAttributeId : TestAttributeId.values()) {
@@ -121,14 +119,14 @@ public class AT_AttributesDataManager {
 			assertFalse(attributesDataManager.attributeExists(TestAttributeId.getUnknownAttributeId()));
 
 			assertFalse(attributesDataManager.attributeExists(null));
-		});
+		}).getPlugins());
 	}
 
 	@Test
 	@UnitTestMethod(target = AttributesDataManager.class,name = "getAttributeDefinition", args = { AttributeId.class })
 	public void testGetAttributeDefinition() {
 
-		PartitionsActionSupport.testConsumer(100, 7056826773207732206L, (c) -> {
+		TestSimulation.executeSimulation(PartitionsTestPluginFactory.factory(100, 7056826773207732206L, (c) -> {
 
 			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
 
@@ -147,23 +145,23 @@ public class AT_AttributesDataManager {
 			// if the attribute id unknown
 			contractException = assertThrows(ContractException.class, () -> attributesDataManager.getAttributeDefinition(TestAttributeId.getUnknownAttributeId()));
 			assertEquals(AttributeError.UNKNOWN_ATTRIBUTE_ID, contractException.getErrorType());
-		});
+		}).getPlugins());
 	}
 
 	@Test
 	@UnitTestMethod(target = AttributesDataManager.class,name = "getAttributeIds", args = {})
 	public void testGetAttributeIds() {
-		PartitionsActionSupport.testConsumer(100, 3922883805893258744L, (c) -> {
+		TestSimulation.executeSimulation(PartitionsTestPluginFactory.factory(100, 3922883805893258744L, (c) -> {
 			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
 			assertEquals(EnumSet.allOf(TestAttributeId.class), attributesDataManager.getAttributeIds());
-		});
+		}).getPlugins());
 	}
 
 	@Test
 	@UnitTestMethod(target = AttributesDataManager.class,name = "getAttributeValue", args = { PersonId.class, AttributeId.class })
 	public void testGetAttributeValue() {
 
-		PartitionsActionSupport.testConsumer(100, 6311231823303553715L, (c) -> {
+		TestSimulation.executeSimulation(PartitionsTestPluginFactory.factory(100, 6311231823303553715L, (c) -> {
 
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
@@ -209,9 +207,9 @@ public class AT_AttributesDataManager {
 
 			}
 
-		});
+		}).getPlugins());
 
-		PartitionsActionSupport.testConsumer(100, 1745090937470588460L, (c) -> {
+		TestSimulation.executeSimulation(PartitionsTestPluginFactory.factory(100, 1745090937470588460L, (c) -> {
 			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
 
 			PersonId goodPersonId = new PersonId(0);
@@ -220,9 +218,9 @@ public class AT_AttributesDataManager {
 			ContractException contractException = assertThrows(ContractException.class, () -> attributesDataManager.getAttributeValue(goodPersonId, null));
 			assertEquals(AttributeError.NULL_ATTRIBUTE_ID, contractException.getErrorType());
 
-		});
+		}).getPlugins());
 
-		PartitionsActionSupport.testConsumer(100, 6116294452862148843L, (c) -> {
+		TestSimulation.executeSimulation(PartitionsTestPluginFactory.factory(100, 6116294452862148843L, (c) -> {
 			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
 
 			PersonId goodPersonId = new PersonId(0);
@@ -232,9 +230,9 @@ public class AT_AttributesDataManager {
 			ContractException contractException = assertThrows(ContractException.class, () -> attributesDataManager.getAttributeValue(goodPersonId, badAttributeId));
 			assertEquals(AttributeError.UNKNOWN_ATTRIBUTE_ID, contractException.getErrorType());
 
-		});
+		}).getPlugins());
 
-		PartitionsActionSupport.testConsumer(100, 5272912205692835718L, (c) -> {
+		TestSimulation.executeSimulation(PartitionsTestPluginFactory.factory(100, 5272912205692835718L, (c) -> {
 			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
 
 			AttributeId goodAttributeId = TestAttributeId.BOOLEAN_0;
@@ -243,9 +241,9 @@ public class AT_AttributesDataManager {
 			ContractException contractException = assertThrows(ContractException.class, () -> attributesDataManager.getAttributeValue(null, goodAttributeId));
 			assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
 
-		});
+		}).getPlugins());
 
-		PartitionsActionSupport.testConsumer(100, 4650301398849685719L, (c) -> {
+		TestSimulation.executeSimulation(PartitionsTestPluginFactory.factory(100, 4650301398849685719L, (c) -> {
 			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
 			PersonId badPersonId = new PersonId(10000000);
 			AttributeId goodAttributeId = TestAttributeId.BOOLEAN_0;
@@ -253,7 +251,7 @@ public class AT_AttributesDataManager {
 			ContractException contractException = assertThrows(ContractException.class, () -> attributesDataManager.getAttributeValue(badPersonId, goodAttributeId));
 			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
 
-		});
+		}).getPlugins());
 
 	}
 
@@ -308,26 +306,25 @@ public class AT_AttributesDataManager {
 		}
 
 		TestPluginData testPluginData = pluginDataBuilder.build();
-		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
-		PartitionsActionSupport.testConsumers(10, 6745924247452865860L, testPlugin);
+		TestSimulation.executeSimulation(PartitionsTestPluginFactory.factory(10, 6745924247452865860L, testPluginData).getPlugins());
 
 		// show that the correct observations were made;
 		assertEquals(expectedObservations, actualObservations);
 
 		// precondition test: if the attribute id is null
-		PartitionsActionSupport.testConsumer(10, 947664382516123630L, (c) -> {
+		TestSimulation.executeSimulation(PartitionsTestPluginFactory.factory(10, 947664382516123630L, (c) -> {
 			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> attributesDataManager.getEventFilterForAttributeUpdateEvent(null));
 			assertEquals(AttributeError.NULL_ATTRIBUTE_ID, contractException.getErrorType());
-		});
+		}).getPlugins());
 
 		// precondition test: if the attribute id is not known
-		PartitionsActionSupport.testConsumer(10, 1819497399235641135L, (c) -> {
+		TestSimulation.executeSimulation(PartitionsTestPluginFactory.factory(10, 1819497399235641135L, (c) -> {
 			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> attributesDataManager.getEventFilterForAttributeUpdateEvent(TestAttributeId.getUnknownAttributeId()));
 			assertEquals(AttributeError.UNKNOWN_ATTRIBUTE_ID, contractException.getErrorType());
-		});
+		}).getPlugins());
 
 	}
 
@@ -373,9 +370,8 @@ public class AT_AttributesDataManager {
 		}
 
 		TestPluginData testPluginData = pluginDataBuilder.build();
-		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
-		PartitionsActionSupport.testConsumers(10, 6920537014398191296L, testPlugin);
+		TestSimulation.executeSimulation(PartitionsTestPluginFactory.factory(10, 6920537014398191296L, testPluginData).getPlugins());
 
 		// show that the correct observations were made;
 		assertEquals(expectedObservations, actualObservations);

@@ -7,8 +7,8 @@ import org.junit.jupiter.api.Test;
 
 import plugins.materials.support.MaterialsProducerPropertyId;
 import plugins.util.properties.PropertyError;
-import tools.annotations.UnitTestConstructor;
-import tools.annotations.UnitTestMethod;
+import util.annotations.UnitTestConstructor;
+import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 
 public class AT_MaterialsProducerPropertyDefinitionEvent {

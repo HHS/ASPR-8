@@ -12,15 +12,14 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import nucleus.DataManagerContext;
-import nucleus.Plugin;
 import nucleus.SimulationContext;
-import nucleus.testsupport.testplugin.TestActionSupport;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestDataManager;
-import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
-import tools.annotations.UnitTestConstructor;
-import tools.annotations.UnitTestMethod;
+import nucleus.testsupport.testplugin.TestPluginFactory;
+import nucleus.testsupport.testplugin.TestSimulation;
+import util.annotations.UnitTestConstructor;
+import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.random.RandomGeneratorProvider;
 
@@ -38,7 +37,7 @@ public class AT_FloatPropertyManager {
 	@UnitTestMethod(target = FloatPropertyManager.class,name = "getPropertyValue", args = { int.class })
 	public void testGetPropertyValue() {
 
-		TestActionSupport.testConsumer((c) -> {
+		TestSimulation.executeSimulation(TestPluginFactory.factory((c) -> {
 			RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8486538414190886901L);
 
 			float defaultValue = 423.645F;
@@ -76,7 +75,7 @@ public class AT_FloatPropertyManager {
 			// precondition tests
 			ContractException contractException = assertThrows(ContractException.class, () -> floatPropertyManager.getPropertyValue(-1));
 			assertEquals(PropertyError.NEGATIVE_INDEX, contractException.getErrorType());
-		});
+		}).getPlugins());
 	}
 
 	/*
@@ -118,31 +117,30 @@ public class AT_FloatPropertyManager {
 
 		// build and run the simulation
 		TestPluginData testPluginData = pluginDataBuilder.build();
-		Plugin plugin = TestPlugin.getTestPlugin(testPluginData);
-		TestActionSupport.testConsumers(plugin);
+		TestSimulation.executeSimulation(TestPluginFactory.factory(testPluginData).getPlugins());
 
 		// precondition test: if time tracking is not engaged
-		TestActionSupport.testConsumer((c) -> {
+		TestSimulation.executeSimulation(TestPluginFactory.factory((c) -> {
 			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Float.class).setDefaultValue(2.2F).build();
 			FloatPropertyManager fpm = new FloatPropertyManager(c, propertyDefinition, 0);
 			ContractException contractException = assertThrows(ContractException.class, () -> fpm.getPropertyTime(0));
 			assertEquals(PropertyError.TIME_TRACKING_OFF, contractException.getErrorType());
-		});
+		}).getPlugins());
 
 		// precondition test: if a property time is retrieved for a negative
 		// index
-		TestActionSupport.testConsumer((c) -> {
+		TestSimulation.executeSimulation(TestPluginFactory.factory((c) -> {
 			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Float.class).setDefaultValue(2.2F).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
 			FloatPropertyManager fpm = new FloatPropertyManager(c, propertyDefinition, 0);
 			ContractException contractException = assertThrows(ContractException.class, () -> fpm.getPropertyTime(-1));
 			assertEquals(PropertyError.NEGATIVE_INDEX, contractException.getErrorType());
-		});
+		}).getPlugins());
 	}
 
 	@Test
 	@UnitTestMethod(target = FloatPropertyManager.class,name = "setPropertyValue", args = { int.class, Object.class })
 	public void testSetPropertyValue() {
-		TestActionSupport.testConsumer((c) -> {
+		TestSimulation.executeSimulation(TestPluginFactory.factory((c) -> {
 			RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6087185710247012204L);
 
 			float defaultValue = 423.645F;
@@ -180,14 +178,14 @@ public class AT_FloatPropertyManager {
 			// precondition tests
 			ContractException contractException = assertThrows(ContractException.class, () -> floatPropertyManager.setPropertyValue(-1, 3.4F));
 			assertEquals(PropertyError.NEGATIVE_INDEX, contractException.getErrorType());
-		});
+		}).getPlugins());
 	}
 
 	@Test
 	@UnitTestMethod(target = FloatPropertyManager.class,name = "removeId", args = { int.class })
 	public void testRemoveId() {
 
-		TestActionSupport.testConsumer((c) -> {
+		TestSimulation.executeSimulation(TestPluginFactory.factory((c) -> {
 			/*
 			 * Should have no effect on the value that is stored for the sake of
 			 * efficiency.
@@ -240,13 +238,13 @@ public class AT_FloatPropertyManager {
 
 			ContractException contractException = assertThrows(ContractException.class, () -> fpm.removeId(-1));
 			assertEquals(PropertyError.NEGATIVE_INDEX, contractException.getErrorType());
-		});
+		}).getPlugins());
 	}
 
 	@Test
 	@UnitTestConstructor(target = FloatPropertyManager.class,args = { SimulationContext.class, PropertyDefinition.class, int.class })
 	public void testConstructor() {
-		TestActionSupport.testConsumer((c) -> {
+		TestSimulation.executeSimulation(TestPluginFactory.factory((c) -> {
 
 			PropertyDefinition goodPropertyDefinition = PropertyDefinition.builder().setType(Float.class).setDefaultValue(2.3F).build();
 			PropertyDefinition badPropertyDefinition = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(false).build();
@@ -265,13 +263,13 @@ public class AT_FloatPropertyManager {
 
 			FloatPropertyManager doublePropertyManager = new FloatPropertyManager(c, goodPropertyDefinition, 0);
 			assertNotNull(doublePropertyManager);
-		});
+		}).getPlugins());
 	}
 
 	@Test
 	@UnitTestMethod(target = FloatPropertyManager.class,name = "incrementCapacity", args = { int.class })
 	public void testIncrementCapacity() {
-		TestActionSupport.testConsumer((c) -> {
+		TestSimulation.executeSimulation(TestPluginFactory.factory((c) -> {
 
 			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Float.class).setDefaultValue(234.42F).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
 
@@ -280,7 +278,7 @@ public class AT_FloatPropertyManager {
 			// precondition tests
 			ContractException contractException = assertThrows(ContractException.class, () -> floatPropertyManager.incrementCapacity(-1));
 			assertEquals(PropertyError.NEGATIVE_CAPACITY_INCREMENT, contractException.getErrorType());
-		});
+		}).getPlugins());
 	}
 
 }

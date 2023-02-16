@@ -11,8 +11,8 @@ import org.junit.jupiter.api.Test;
 
 import nucleus.Event;
 import plugins.people.support.PersonId;
-import tools.annotations.UnitTestConstructor;
-import tools.annotations.UnitTestMethod;
+import util.annotations.UnitTestConstructor;
+import util.annotations.UnitTestMethod;
 
 public final class AT_LabelerSensitivity {
 

@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 
-import tools.annotations.UnitTestMethod;
+import util.annotations.UnitTestMethod;
 import util.graph.Graphs.GraphConnectedness;
 import util.graph.Graphs.GraphCyclisity;
 

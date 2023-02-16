@@ -34,7 +34,7 @@ import plugins.people.PeoplePlugin;
 import plugins.people.PeoplePluginData;
 import plugins.personproperties.PersonPropertiesPlugin;
 import plugins.personproperties.PersonPropertiesPluginData;
-import plugins.personproperties.actors.PersonPropertyReport;
+import plugins.personproperties.reports.PersonPropertyReport;
 import plugins.regions.RegionsPlugin;
 import plugins.regions.RegionsPluginData;
 import plugins.reports.ReportsPlugin;

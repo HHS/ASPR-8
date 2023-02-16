@@ -10,7 +10,6 @@ import java.util.List;
 import org.apache.commons.math3.util.FastMath;
 import org.junit.jupiter.api.Test;
 
-import nucleus.ActorContext;
 import nucleus.Plugin;
 import nucleus.ReportContext;
 import nucleus.Simulation;
@@ -19,8 +18,8 @@ import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
 import plugins.reports.ReportsPlugin;
 import plugins.reports.ReportsPluginData;
-import tools.annotations.UnitTestConstructor;
-import tools.annotations.UnitTestMethod;
+import util.annotations.UnitTestConstructor;
+import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.wrappers.MutableDouble;
 import util.wrappers.MutableInteger;
@@ -182,7 +181,7 @@ public class AT_PeriodicReport {
 	}
 
 	@Test
-	@UnitTestMethod(target = PeriodicReport.class, name = "init", args = { ActorContext.class })
+	@UnitTestMethod(target = PeriodicReport.class, name = "init", args = { ReportContext.class })
 	public void testAddTimeFieldHeaders() {
 
 		ReportHeader.Builder reportHeaderBuilder = ReportHeader.builder();
@@ -213,7 +212,7 @@ public class AT_PeriodicReport {
 	}
 
 	@Test
-	@UnitTestMethod(target = PeriodicReport.class, name = "init", args = { ActorContext.class })
+	@UnitTestMethod(target = PeriodicReport.class, name = "init", args = { ReportContext.class })
 	public void testFillTimeFields_Daily() {
 		double simulationEndTime = 10.6;
 
@@ -249,7 +248,7 @@ public class AT_PeriodicReport {
 	}
 
 	@Test
-	@UnitTestMethod(target = PeriodicReport.class, name = "init", args = { ActorContext.class })
+	@UnitTestMethod(target = PeriodicReport.class, name = "init", args = { ReportContext.class })
 	public void testFillTimeFields_Hourly() {
 		double simulationEndTime = 3.6;
 
@@ -285,7 +284,7 @@ public class AT_PeriodicReport {
 	}
 
 	@Test
-	@UnitTestMethod(target = PeriodicReport.class, name = "init", args = { ActorContext.class })
+	@UnitTestMethod(target = PeriodicReport.class, name = "init", args = { ReportContext.class })
 	public void testFillTimeFields_EndOfSimulation() {
 		double simulationEndTime = 3.6;
 
@@ -327,7 +326,7 @@ public class AT_PeriodicReport {
 	}
 
 	@Test
-	@UnitTestMethod(target = PeriodicReport.class, name = "init", args = { ActorContext.class })
+	@UnitTestMethod(target = PeriodicReport.class, name = "init", args = { ReportContext.class })
 	public void testInit() {
 
 		for (ReportPeriod reportPeriod : ReportPeriod.values()) {

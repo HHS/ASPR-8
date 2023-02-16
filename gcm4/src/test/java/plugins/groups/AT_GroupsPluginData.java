@@ -31,7 +31,7 @@ import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
-import tools.annotations.UnitTestMethod;
+import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.random.RandomGeneratorProvider;
 import util.wrappers.MultiKey;

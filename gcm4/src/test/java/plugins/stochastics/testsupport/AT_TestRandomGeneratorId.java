@@ -10,7 +10,7 @@ import java.util.Set;
 import org.junit.jupiter.api.Test;
 
 import plugins.stochastics.support.RandomNumberGeneratorId;
-import tools.annotations.UnitTestMethod;
+import util.annotations.UnitTestMethod;
 
 public class AT_TestRandomGeneratorId {
 

@@ -19,6 +19,7 @@ public enum PersonError implements ContractError {
 	UNKNOWN_PERSON_ID("Unknown person id"),
 	DUPLICATE_PERSON_ID("Duplicate person addition"),
 	NON_ONE_TO_ONE_MAPPING("Mapping of initial data person ids to simulation person is not one-to-one"),
+	NULL_PEOPLE_PLUGIN_DATA("null people plugin data"),
 
 	NULL_SUGGESTED_POPULATION_SIZE("Scenario identifier is null"),
 	NEGATIVE_SUGGGESTED_POPULATION("Suggested population size is negative"),
