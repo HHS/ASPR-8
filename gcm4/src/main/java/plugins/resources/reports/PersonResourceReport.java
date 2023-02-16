@@ -1,4 +1,4 @@
-package plugins.resources.actors;
+package plugins.resources.reports;
 
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -16,8 +16,8 @@ import plugins.regions.events.RegionAdditionEvent;
 import plugins.regions.support.RegionId;
 import plugins.reports.support.PeriodicReport;
 import plugins.reports.support.ReportHeader;
-import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportItem;
+import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportPeriod;
 import plugins.resources.datamanagers.ResourcesDataManager;
 import plugins.resources.events.PersonResourceUpdateEvent;

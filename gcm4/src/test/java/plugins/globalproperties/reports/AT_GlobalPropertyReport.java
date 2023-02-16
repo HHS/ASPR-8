@@ -1,4 +1,4 @@
-package plugins.globalproperties.actors;
+package plugins.globalproperties.reports;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -11,8 +11,8 @@ import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 
-import nucleus.ReportContext;
 import nucleus.Plugin;
+import nucleus.ReportContext;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestSimulation;
@@ -25,8 +25,8 @@ import plugins.globalproperties.support.SimpleGlobalPropertyId;
 import plugins.globalproperties.testsupport.GlobalPropertiesTestPluginFactory;
 import plugins.reports.support.ReportError;
 import plugins.reports.support.ReportHeader;
-import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportItem;
+import plugins.reports.support.ReportLabel;
 import plugins.reports.support.SimpleReportLabel;
 import plugins.reports.testsupport.ReportsTestPluginFactory;
 import plugins.util.properties.PropertyDefinition;

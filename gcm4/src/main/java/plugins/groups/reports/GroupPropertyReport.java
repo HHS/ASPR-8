@@ -1,4 +1,4 @@
-package plugins.groups.actors;
+package plugins.groups.reports;
 
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -19,8 +19,8 @@ import plugins.groups.support.GroupTypeId;
 import plugins.reports.support.PeriodicReport;
 import plugins.reports.support.ReportError;
 import plugins.reports.support.ReportHeader;
-import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportItem;
+import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportPeriod;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;

@@ -1,4 +1,4 @@
-package plugins.materials.actors;
+package plugins.materials.reports;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -25,8 +25,8 @@ import plugins.materials.support.StageId;
 import plugins.materials.testsupport.MaterialsTestPluginFactory;
 import plugins.materials.testsupport.TestMaterialsProducerId;
 import plugins.reports.support.ReportHeader;
-import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportItem;
+import plugins.reports.support.ReportLabel;
 import plugins.reports.support.SimpleReportLabel;
 import plugins.reports.testsupport.ReportsTestPluginFactory;
 import plugins.stochastics.StochasticsDataManager;

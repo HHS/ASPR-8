@@ -1,9 +1,9 @@
-package plugins.resources.actors;
+package plugins.resources.reports;
 
 import nucleus.ReportContext;
 import plugins.reports.support.ReportHeader;
-import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportItem;
+import plugins.reports.support.ReportLabel;
 import plugins.resources.datamanagers.ResourcesDataManager;
 import plugins.resources.events.ResourcePropertyDefinitionEvent;
 import plugins.resources.events.ResourcePropertyUpdateEvent;

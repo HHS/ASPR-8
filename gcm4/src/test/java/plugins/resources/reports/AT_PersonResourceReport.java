@@ -1,4 +1,4 @@
-package plugins.resources.actors;
+package plugins.resources.reports;
 
 import org.junit.jupiter.api.Test;
 

@@ -1,4 +1,4 @@
-package plugins.materials.actors;
+package plugins.materials.reports;
 
 import nucleus.ReportContext;
 import plugins.materials.datamangers.MaterialsDataManager;
@@ -6,8 +6,8 @@ import plugins.materials.events.MaterialsProducerAdditionEvent;
 import plugins.materials.events.MaterialsProducerResourceUpdateEvent;
 import plugins.materials.support.MaterialsProducerId;
 import plugins.reports.support.ReportHeader;
-import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportItem;
+import plugins.reports.support.ReportLabel;
 import plugins.resources.datamanagers.ResourcesDataManager;
 import plugins.resources.events.ResourceIdAdditionEvent;
 import plugins.resources.support.ResourceId;

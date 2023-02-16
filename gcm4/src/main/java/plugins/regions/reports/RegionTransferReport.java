@@ -1,4 +1,4 @@
-package plugins.regions.actors;
+package plugins.regions.reports;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -12,8 +12,8 @@ import plugins.regions.events.PersonRegionUpdateEvent;
 import plugins.regions.support.RegionId;
 import plugins.reports.support.PeriodicReport;
 import plugins.reports.support.ReportHeader;
-import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportItem;
+import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportPeriod;
 import util.wrappers.MultiKey;
 import util.wrappers.MutableInteger;

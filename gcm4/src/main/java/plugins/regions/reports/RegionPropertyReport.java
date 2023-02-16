@@ -1,4 +1,4 @@
-package plugins.regions.actors;
+package plugins.regions.reports;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -11,8 +11,8 @@ import plugins.regions.events.RegionPropertyUpdateEvent;
 import plugins.regions.support.RegionId;
 import plugins.regions.support.RegionPropertyId;
 import plugins.reports.support.ReportHeader;
-import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportItem;
+import plugins.reports.support.ReportLabel;
 import plugins.util.properties.PropertyError;
 import util.errors.ContractException;
 

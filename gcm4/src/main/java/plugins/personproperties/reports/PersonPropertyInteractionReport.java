@@ -1,4 +1,4 @@
-package plugins.personproperties.actors;
+package plugins.personproperties.reports;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -21,8 +21,8 @@ import plugins.regions.events.PersonRegionUpdateEvent;
 import plugins.regions.support.RegionId;
 import plugins.reports.support.PeriodicReport;
 import plugins.reports.support.ReportHeader;
-import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportItem;
+import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportPeriod;
 
 /**

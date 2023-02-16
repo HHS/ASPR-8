@@ -1,4 +1,4 @@
-package plugins.globalproperties.actors;
+package plugins.globalproperties.reports;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -10,8 +10,8 @@ import plugins.globalproperties.events.GlobalPropertyUpdateEvent;
 import plugins.globalproperties.support.GlobalPropertyId;
 import plugins.reports.support.ReportError;
 import plugins.reports.support.ReportHeader;
-import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportItem;
+import plugins.reports.support.ReportLabel;
 import plugins.util.properties.PropertyError;
 import util.errors.ContractException;
 

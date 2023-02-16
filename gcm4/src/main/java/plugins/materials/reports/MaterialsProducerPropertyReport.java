@@ -1,4 +1,4 @@
-package plugins.materials.actors;
+package plugins.materials.reports;
 
 import nucleus.ReportContext;
 import plugins.materials.datamangers.MaterialsDataManager;
@@ -7,8 +7,8 @@ import plugins.materials.events.MaterialsProducerPropertyUpdateEvent;
 import plugins.materials.support.MaterialsProducerId;
 import plugins.materials.support.MaterialsProducerPropertyId;
 import plugins.reports.support.ReportHeader;
-import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportItem;
+import plugins.reports.support.ReportLabel;
 
 /**
  * A Report that displays assigned materials producer property values over time.

@@ -34,7 +34,7 @@ import plugins.reports.support.NIOReportItemHandler;
 import plugins.reports.support.ReportPeriod;
 import plugins.resources.ResourcesPlugin;
 import plugins.resources.ResourcesPluginData;
-import plugins.resources.actors.PersonResourceReport;
+import plugins.resources.reports.PersonResourceReport;
 import plugins.resources.support.ResourceId;
 import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.StochasticsPluginData;

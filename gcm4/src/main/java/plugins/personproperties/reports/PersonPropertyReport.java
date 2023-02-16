@@ -1,4 +1,4 @@
-package plugins.personproperties.actors;
+package plugins.personproperties.reports;
 
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -20,8 +20,8 @@ import plugins.regions.support.RegionId;
 import plugins.reports.support.PeriodicReport;
 import plugins.reports.support.ReportError;
 import plugins.reports.support.ReportHeader;
-import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportItem;
+import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportPeriod;
 import plugins.util.properties.PropertyError;
 import util.errors.ContractException;

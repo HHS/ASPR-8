@@ -15,7 +15,7 @@ import nucleus.Plugin;
 import plugins.globalproperties.GlobalPropertiesPlugin;
 import plugins.globalproperties.GlobalPropertiesPluginData;
 import plugins.globalproperties.GlobalPropertiesPluginData.Builder;
-import plugins.globalproperties.actors.GlobalPropertyReport;
+import plugins.globalproperties.reports.GlobalPropertyReport;
 import plugins.reports.ReportsPlugin;
 import plugins.reports.ReportsPluginData;
 import plugins.reports.support.NIOReportItemHandler;

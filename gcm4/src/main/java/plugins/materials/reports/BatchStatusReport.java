@@ -1,4 +1,4 @@
-package plugins.materials.actors;
+package plugins.materials.reports;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -19,8 +19,8 @@ import plugins.materials.support.MaterialId;
 import plugins.materials.support.MaterialsProducerId;
 import plugins.materials.support.StageId;
 import plugins.reports.support.ReportHeader;
-import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportItem;
+import plugins.reports.support.ReportLabel;
 
 /**
  * A Report that displays the state of batches over time. The batch properties
