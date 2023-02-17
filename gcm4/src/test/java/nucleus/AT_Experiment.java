@@ -318,7 +318,7 @@ public class AT_Experiment {
 
 		// add two dimensions that will cause the experiment to execute 40
 		// simulation instances
-		Dimension.Builder dimBuilder = Dimension.builder().addMetaDatum("Alpha");//
+		Dimension.Builder dimBuilder = Dimension.builder().addMetaDatum("alpha");//
 		IntStream.range(0, 5).forEach((i) -> {
 			dimBuilder.addLevel((context) -> {
 				List<String> result = new ArrayList<>();
@@ -337,7 +337,7 @@ public class AT_Experiment {
 			});
 		});
 
-		Dimension dimension2 = dimBuilder.build();
+		Dimension dimension2 = dimBuilder.addMetaDatum("beta").build();
 
 		/*
 		 * Create a thread safe set to record the thread ids that are used by

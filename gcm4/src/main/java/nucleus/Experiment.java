@@ -472,7 +472,10 @@ public final class Experiment {
 		 * the functions mutate the plugin builders and return meta data.
 		 */
 		int modulus = 1;
-		for (final Dimension dimension : data.dimensions) {
+		for (int i = 0; i < data.dimensions.size(); i++) {
+			Dimension dimension = data.dimensions.get(i);
+			int metaDataSize = dimension.getMetaDataSize();
+
 			/*
 			 * Determine for the dimension the level within the dimension that
 			 * corresponds to the scenario id
@@ -485,7 +488,13 @@ public final class Experiment {
 
 			// apply the function that will update the plugin builders and
 			// return the meta data for this function
-			scenarioMetaData.addAll(levelFunction.apply(dimensionContext));
+
+			List<String> list = levelFunction.apply(dimensionContext);
+			if (list.size() != metaDataSize) {
+				throw new ContractException(NucleusError.DIMENSION_LABEL_MISMATCH,
+						"dimension " + i + " has meta data: " + dimension.getMetaData() + " that does not match scenario labels: " + list + " at level " + level);
+			}
+			scenarioMetaData.addAll(list);
 
 		}
 

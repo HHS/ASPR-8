@@ -87,6 +87,10 @@ public final class Dimension {
 	public List<String> getMetaData() {
 		return new ArrayList<>(data.metaData);
 	}
+	
+	public int getMetaDataSize() {
+		return data.metaData.size();
+	}
 
 	/**
 	 * Returns the number of levels in this dimension

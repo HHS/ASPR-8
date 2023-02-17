@@ -18,6 +18,7 @@ public enum NucleusError implements ContractError {
 	CIRCULAR_PLUGIN_DEPENDENCIES("Circular plugin dependencies were found"),
 	DATA_MANAGER_DUPLICATE_INITIALIZATION("Data manager was already initialized"),
 	DATA_MANAGER_INITIALIZATION_FAILURE("Data manager base class was not properly initialized, be sure to call super()"),
+	DIMENSION_LABEL_MISMATCH("The number of scenario labels provided by a dimension level do not match the number of labels in the dimension's meta data"),
 	DUPLICATE_DATA_MANAGER_TYPE("Duplicate data manager type"),
 	DUPLICATE_DATA_VIEW_TYPE("Duplicate data view type"),
 	DUPLICATE_EVENT_SUBSCRIPTION("An event subscription duplicates an existing event subscription"),
