@@ -3,7 +3,6 @@ package plugins.reports.support;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import java.nio.file.Path;
 
@@ -12,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import nucleus.ExperimentContext;
 import util.annotations.UnitTag;
 import util.annotations.UnitTestMethod;
+import util.errors.ContractException;
 
 public class AT_NIOReportItemHandler {
 
