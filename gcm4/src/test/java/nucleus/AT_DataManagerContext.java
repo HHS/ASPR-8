@@ -724,8 +724,8 @@ public class AT_DataManagerContext {
 	}
 
 	@Test
-	@UnitTestMethod(target = DataManagerContext.class, name = "releaseEvent", args = { Event.class })
-	public void testReleaseEvent() {
+	@UnitTestMethod(target = DataManagerContext.class, name = "releaseObservationEvent", args = { Event.class })
+	public void testReleaseObservationEvent() {
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
 		MutableBoolean eventResolved = new MutableBoolean();
