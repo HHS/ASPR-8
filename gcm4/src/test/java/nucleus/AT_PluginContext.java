@@ -33,7 +33,7 @@ public class AT_PluginContext {
 	private static class TestDataManager2 extends TestDataManager {
 
 		@Override
-		protected void init(final DataManagerContext dataManagerContext) {
+		public void init(final DataManagerContext dataManagerContext) {
 			super.init(dataManagerContext);
 		}
 	}
@@ -41,7 +41,7 @@ public class AT_PluginContext {
 	private static class TestDataManager3 extends TestDataManager {
 
 		@Override
-		protected void init(final DataManagerContext dataManagerContext) {
+		public void init(final DataManagerContext dataManagerContext) {
 			super.init(dataManagerContext);
 		}
 	}

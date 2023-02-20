@@ -2313,7 +2313,7 @@ public class AT_RegionsDataManager {
 	
 	private static class PassThroughDataManager extends TestDataManager{
 		private DataManagerContext dataManagerContext;
-		protected void init(DataManagerContext dataManagerContext) {
+		public void init(DataManagerContext dataManagerContext) {
 			super.init(dataManagerContext);
 			this.dataManagerContext = dataManagerContext;
 		}

@@ -85,7 +85,7 @@ public class AT_DoublePropertyManager {
 		protected DoublePropertyManager doublePropertyManager;
 
 		@Override
-		protected void init(DataManagerContext dataManagerContext) {
+		public void init(DataManagerContext dataManagerContext) {
 			super.init(dataManagerContext);
 			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Double.class).setDefaultValue(342.4234).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
 			doublePropertyManager = new DoublePropertyManager(dataManagerContext, propertyDefinition, 0);

@@ -152,7 +152,7 @@ public final class PersonPropertiesDataManager extends DataManager {
 	}
 
 	@Override
-	protected void init(DataManagerContext dataManagerContext) {
+	public void init(DataManagerContext dataManagerContext) {
 		super.init(dataManagerContext);
 		this.dataManagerContext = dataManagerContext;
 
