@@ -87,7 +87,7 @@ public class AT_BooleanPropertyManager {
 		protected BooleanPropertyManager booleanPropertyManager;
 
 		@Override
-		protected void init(DataManagerContext dataManagerContext) {
+		public void init(DataManagerContext dataManagerContext) {
 			super.init(dataManagerContext);
 			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(false).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
 			booleanPropertyManager = new BooleanPropertyManager(dataManagerContext, propertyDefinition, 0);
