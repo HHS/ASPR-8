@@ -85,7 +85,7 @@ public class AT_AbstractIndexedPropertyManager {
 		public SimplePropertyManager simplePropertyManager;
 
 		@Override
-		protected void init(DataManagerContext dataManagerContext) {
+		public void init(DataManagerContext dataManagerContext) {
 			super.init(dataManagerContext);
 			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(false).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
 			simplePropertyManager = new SimplePropertyManager(dataManagerContext, propertyDefinition, 0);

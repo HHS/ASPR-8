@@ -743,7 +743,7 @@ public final class ResourcesDataManager extends DataManager {
 	 * 
 	 */
 	@Override
-	protected void init(final DataManagerContext dataManagerContext) {
+	public void init(final DataManagerContext dataManagerContext) {
 		super.init(dataManagerContext);
 		if (dataManagerContext == null) {
 			throw new ContractException(NucleusError.NULL_SIMULATION_CONTEXT);

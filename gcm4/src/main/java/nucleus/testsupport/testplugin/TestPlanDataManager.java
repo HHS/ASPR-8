@@ -43,7 +43,7 @@ public class TestPlanDataManager extends DataManager {
 	 * there was at least one plan and all plans were executed.
 	 */
 	@Override
-	protected void init(DataManagerContext dataManagerContext) {
+	public void init(DataManagerContext dataManagerContext) {
 		super.init(dataManagerContext);
 		dataManagerContext.subscribeToSimulationClose(this::sendActionCompletionReport);
 	}

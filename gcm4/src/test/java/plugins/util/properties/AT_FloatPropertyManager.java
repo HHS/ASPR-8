@@ -86,7 +86,7 @@ public class AT_FloatPropertyManager {
 		public FloatPropertyManager floatPropertyManager;
 
 		@Override
-		protected void init(DataManagerContext dataManagerContext) {
+		public void init(DataManagerContext dataManagerContext) {
 			super.init(dataManagerContext);
 			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Float.class).setDefaultValue(342.4234F).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
 			floatPropertyManager = new FloatPropertyManager(dataManagerContext, propertyDefinition, 0);
