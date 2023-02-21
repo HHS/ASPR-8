@@ -23,7 +23,50 @@ public final class Plugin {
 		private PluginId pluginId;
 		private Set<PluginId> pluginDependencies = new LinkedHashSet<>();
 		private Set<PluginData> pluginDatas = new LinkedHashSet<>();
-		private Consumer<PluginContext> initializer;		
+		private Consumer<PluginContext> initializer;
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + ((pluginDatas == null) ? 0 : pluginDatas.hashCode());
+			result = prime * result + ((pluginDependencies == null) ? 0 : pluginDependencies.hashCode());
+			result = prime * result + ((pluginId == null) ? 0 : pluginId.hashCode());
+			return result;
+		}
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (!(obj instanceof Data)) {
+				return false;
+			}
+			Data other = (Data) obj;
+			if (pluginDatas == null) {
+				if (other.pluginDatas != null) {
+					return false;
+				}
+			} else if (!pluginDatas.equals(other.pluginDatas)) {
+				return false;
+			}
+			if (pluginDependencies == null) {
+				if (other.pluginDependencies != null) {
+					return false;
+				}
+			} else if (!pluginDependencies.equals(other.pluginDependencies)) {
+				return false;
+			}
+			if (pluginId == null) {
+				if (other.pluginId != null) {
+					return false;
+				}
+			} else if (!pluginId.equals(other.pluginId)) {
+				return false;
+			}
+			return true;
+		}	
+		
+		
 	}
 
 	/**
