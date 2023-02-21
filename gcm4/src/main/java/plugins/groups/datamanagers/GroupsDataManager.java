@@ -1425,7 +1425,7 @@ public final class GroupsDataManager extends DataManager {
 		dataManagerContext.releaseMutationEvent(new GroupRemovalMutationEvent(groupId));
 	}
 
-	public void handleGroupRemovalMutationEvent(DataManagerContext dataManagerContext, GroupRemovalMutationEvent groupRemovalMutationEvent) {
+	private void handleGroupRemovalMutationEvent(DataManagerContext dataManagerContext, GroupRemovalMutationEvent groupRemovalMutationEvent) {
 		GroupId groupId = groupRemovalMutationEvent.groupId();
 		validateGroupExists(groupId);
 
