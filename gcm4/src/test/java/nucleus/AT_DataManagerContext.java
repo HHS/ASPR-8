@@ -724,8 +724,8 @@ public class AT_DataManagerContext {
 	}
 
 	@Test
-	@UnitTestMethod(target = DataManagerContext.class, name = "releaseEvent", args = { Event.class })
-	public void testReleaseEvent() {
+	@UnitTestMethod(target = DataManagerContext.class, name = "releaseObservationEvent", args = { Event.class })
+	public void testReleaseObservationEvent() {
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
 		MutableBoolean eventResolved = new MutableBoolean();
@@ -763,6 +763,62 @@ public class AT_DataManagerContext {
 
 		// show that event actually resolved
 		assertTrue(eventResolved.getValue());
+
+	}
+
+	@Test
+	@UnitTestMethod(target = DataManagerContext.class, name = "releaseMutationEvent", args = { Event.class })
+	public void testReleaseMutationEvent() {
+		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
+
+		MutableBoolean eventResolved = new MutableBoolean();
+
+		// Have the data manager subscribe to test event and then set the
+		// eventResolved to true
+		pluginDataBuilder.addTestDataManager("dm", () -> new TestDataManager1());
+		pluginDataBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(0, (c) -> {
+			c.subscribe(TestEvent1.class, (c2, e) -> {
+				eventResolved.setValue(true);
+			});
+		}));
+
+		// have the data manager release the mutation event
+		pluginDataBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(1, (context) -> {
+			context.releaseMutationEvent(new TestEvent1());
+		}));
+
+		// have the data manager show the event was handled
+		pluginDataBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(2, (context) -> {
+			assertTrue(eventResolved.getValue());
+		}));
+
+		// build the plugin
+		TestPluginData testPluginData = pluginDataBuilder.build();
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+
+		// run the simulation
+		Simulation	.builder()//
+					.addPlugin(testPlugin)//
+					.build()//
+					.execute();//
+		
+
+		// precondition test: if the event is null
+		pluginDataBuilder.addTestDataManager("dm", () -> new TestDataManager1());
+		pluginDataBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(1, (context) -> {
+			ContractException contractException = assertThrows(ContractException.class, () -> context.releaseObservationEvent(null));
+			assertEquals(NucleusError.NULL_EVENT, contractException.getErrorType());
+		}));
+
+		// build the plugin
+		testPluginData = pluginDataBuilder.build();
+		testPlugin = TestPlugin.getTestPlugin(testPluginData);
+
+		// run the simulation
+		Simulation	.builder()//
+					.addPlugin(testPlugin)//
+					.build()//
+					.execute();//
 
 	}
 
@@ -978,7 +1034,6 @@ public class AT_DataManagerContext {
 		assertFalse(plan5.executed());
 
 	}
-
 
 	private void combinedSubscriptionTest() {
 

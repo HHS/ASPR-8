@@ -144,4 +144,16 @@ public class AT_TestPersonPropertyId implements PersonPropertyId {
 		assertEquals(expectedValues.size(), setOfExpectedValues.size());
 		assertEquals(actualValues.size(), setOfActualValues.size());
 	}
+	
+	@Test
+	@UnitTestMethod(target = TestPersonPropertyId.class, name = "next", args = {})
+	public void testNext() {
+		for (TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.values()) {
+			int index = testPersonPropertyId.ordinal();
+			index += 1;
+			index %= TestPersonPropertyId.values().length;
+			TestPersonPropertyId expectedNextTestPersonPropertyId = TestPersonPropertyId.values()[index];
+			assertEquals(expectedNextTestPersonPropertyId, testPersonPropertyId.next());
+		}
+	}
 }
