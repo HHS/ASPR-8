@@ -55,9 +55,16 @@ public final class LineWriter {
 
 	public LineWriter(final ExperimentContext experimentContext, final Path path, final boolean displayExperimentColumnsInReports) {
 
+		if (Files.exists(path)) {
+			if (Files.isRegularFile(path)) {
+				throw new RuntimeException("Non-regular file at: " + path);
+			}
+		}
+
 		this.useExperimentColumns = displayExperimentColumnsInReports;
 
 		boolean loadedWithPreviousData = !experimentContext.getScenarios(ScenarioStatus.PREVIOUSLY_SUCCEEDED).isEmpty();
+		loadedWithPreviousData &= Files.exists(path);
 
 		if (loadedWithPreviousData) {
 			initializeWithPreviousContent(path, experimentContext);
@@ -84,7 +91,6 @@ public final class LineWriter {
 			 * If the file is readable then we accept only those lines that
 			 * correspond to a previously executed scenario
 			 */
-			if (Files.isRegularFile(path)) {
 				Stream<String> lines = Files.lines(path);
 				boolean[] header = new boolean[] {true};
 				lines.forEach((line) -> {
@@ -123,9 +129,6 @@ public final class LineWriter {
 					}
 				});
 				lines.close();
-			} else {
-				throw new RuntimeException("Non-regular file at: " + path);
-			}
 
 			writer.close();
 

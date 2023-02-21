@@ -2,11 +2,13 @@ package plugins.reports.support;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import java.nio.charset.CharsetEncoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,9 +26,7 @@ public final class MT_NIOReportItemHandler {
 		COMMENT("-c"), //
 		HELP("-help"), //
 		DIRECTORY("-d"), //
-		TEST_1("-t1"), //
-		TEST_2("-t2"), //
-		TEST_3("-t3"), //
+		TEST("-t"), //
 		;
 
 		private final String commandString;
@@ -74,11 +74,14 @@ public final class MT_NIOReportItemHandler {
 		System.out.println("\t" + "\t" + "progress log written");
 		System.out.println("\t" + "\t" + "no progress log read");
 		System.out.println("\t" + "\t" + "no experiment columns");
-//		System.out.println("\t" + "Test 4:");
-//		System.out.println("\t" + "\t" + "progress log written");
-//		System.out.println("\t" + "\t" + "progress log read");
-//		System.out.println("\t" + "\t" + "use experiment columns");
-
+		System.out.println("\t" + "Test 4:");
+		System.out.println("\t" + "\t" + "progress log written");
+		System.out.println("\t" + "\t" + "progress log read");
+		System.out.println("\t" + "\t" + "use experiment columns");
+		System.out.println("\t" + "Test 5:");
+		System.out.println("\t" + "\t" + "no progress log written");
+		System.out.println("\t" + "\t" + "progress log read");
+		System.out.println("\t" + "\t" + "use experiment columns");
 	}
 
 	private static class CommandBlock {
@@ -92,9 +95,11 @@ public final class MT_NIOReportItemHandler {
 	}
 
 	private final Path basePath;
+	private Integer testToRun;
 	
-	private MT_NIOReportItemHandler(Path dirPath) {
+	private MT_NIOReportItemHandler(Path dirPath, Integer testToRun) {
 		this.basePath = dirPath;
+		this.testToRun = testToRun;
 	}
 	
 	public static void main(String[] args) throws IOException {
@@ -122,7 +127,6 @@ public final class MT_NIOReportItemHandler {
 		}
 
 		boolean helpCommandPresent = false;
-		boolean directorySpecified = false;
 		Path basePath = null;
 		List<Integer> testsToRun = new ArrayList<>();
 
@@ -138,6 +142,13 @@ public final class MT_NIOReportItemHandler {
 					}
 					break;
 				case DIRECTORY:
+					if (commandBlock.arguments.size() != 1) {
+						if (commandBlock.arguments.isEmpty()) {
+							throw new RuntimeException("requires a directory");
+						} else {
+							throw new RuntimeException("too many directories listed");
+						}
+					}
 					String directoryName = commandBlock.arguments.get(0);
 					basePath = Paths.get(directoryName);
 					if (!basePath.toFile().exists()) {
@@ -146,32 +157,41 @@ public final class MT_NIOReportItemHandler {
 					if (!basePath.toFile().isDirectory()) {
 						throw new RuntimeException("base directory is not a directory");
 					}
-					directorySpecified = true;
 					break;
-				case TEST_1:
-					testsToRun.add(1);
-					break;
-				case TEST_2:
-					testsToRun.add(2);
-					break;
-				case TEST_3:
-					testsToRun.add(3);
+				case TEST:
+					if (commandBlock.arguments.size() != 1) {
+						if (commandBlock.arguments.isEmpty()) {
+							throw new RuntimeException("requires a test number");
+						} else {
+							throw new RuntimeException("too many test numbers listed");
+						}
+					}
+					try {
+						int testIndex = Integer.parseInt(commandBlock.arguments.get(0));
+						testsToRun.add(testIndex);
+					} catch (NumberFormatException e) {
+						throw new RuntimeException("test index needs to be a integer", e);
+					}
 					break;
 				default:
 					throw new RuntimeException("unknown command " + commandBlock.command);
-
 			}
 		}
 
-
-		if (commandBlocks.size() == 0 || helpCommandPresent || !directorySpecified) {
+		if (helpCommandPresent) {
 			printInstructions();
 			return;
-		} else if (helpCommandPresent) {
-			printInstructions();
 		}
 
-		new MT_NIOReportItemHandler(basePath).execute(testsToRun);
+		if (testsToRun.isEmpty()) {
+			throw new RuntimeException("requires exactly 1 test id");
+		}
+
+		if (testsToRun.size() > 1) {
+			throw new RuntimeException("cannot run multiple tests at the same time");
+		}
+
+		new MT_NIOReportItemHandler(basePath, testsToRun.get(0)).execute();
 	}
 
 	private void recursiveDelete(File file) throws IOException {
@@ -192,41 +212,45 @@ public final class MT_NIOReportItemHandler {
 
 	private void createDirectory(Path path) throws IOException {
 		recursiveDelete(path.toFile());
-
-		// investigate how to use the file attributes here
 		Files.createDirectory(path);
 
 	}
 
-	private void execute(List<Integer> testsToRun) throws IOException {
-
-		for (Integer testNumber : testsToRun) {
-			switch (testNumber) {
-				case 1:
-					Path subPath = basePath.resolve("test1");
-					createDirectory(subPath);
-					test1(subPath);
-					break;
-				case 2:
-					subPath = basePath.resolve("test2");
-					createDirectory(subPath);
-					test2(subPath);
-					break;
-				case 3:
-					subPath = basePath.resolve("test3");
-					createDirectory(subPath);
-					test3(subPath);
-					break;
-				case 4:
-					subPath = basePath.resolve("test4");
-					createDirectory(subPath);
-					test4(subPath);
-					break;
-				default:
-					throw new RuntimeException("unknown test number: " + testNumber);
+	private void execute() throws IOException {
+		switch (testToRun) {
+			case 1:
+				Path subPath = basePath.resolve("test1");
+				createDirectory(subPath);
+				printExpected(1);
+				test1(subPath);
+				break;
+			case 2:
+				subPath = basePath.resolve("test2");
+				createDirectory(subPath);
+				printExpected(2);
+				test2(subPath);
+				break;
+			case 3:
+				subPath = basePath.resolve("test3");
+				createDirectory(subPath);
+				printExpected(3);
+				test3(subPath);
+				break;
+			case 4:
+				subPath = basePath.resolve("test4");
+				createDirectory(subPath);
+				printExpected(4);
+				test4(subPath);
+				break;
+			case 5:
+				subPath = basePath.resolve("test5");
+				createDirectory(subPath);
+				printExpected(5);
+				test5(subPath);
+				break;
+			default:
+				throw new RuntimeException("unknown test number: " + testToRun);
 			}
-
-		}
 	}
 
 	/*
@@ -319,9 +343,6 @@ public final class MT_NIOReportItemHandler {
 	 * 
 	 * write three reports
 	 * 
-	 * expected observations : 
-	 * 
-	 * 
 	 */
 	private void test2(Path subPath) {
 		ReportLabel reportLabel = new SimpleReportLabel("report label");
@@ -402,11 +423,8 @@ public final class MT_NIOReportItemHandler {
 	 * 
 	 * write three reports
 	 * 
-	 * expected observations : 
-	 * 
-	 * 
 	 */
-	private void test3(Path subPath) {		
+	private void test3(Path subPath) {
 		
 		ReportLabel reportLabel = new SimpleReportLabel("report label");
 
@@ -492,11 +510,36 @@ public final class MT_NIOReportItemHandler {
 	 *
 	 * write three reports
 	 *
-	 * expected observations :
-	 *
-	 *
 	 */
-	private void test4(Path subPath) {
+	private void test4(Path subPath) throws IOException {
+
+		CharsetEncoder encoder = StandardCharsets.UTF_8.newEncoder();
+		OutputStream out = Files.newOutputStream(subPath.resolve("progresslog.txt"), StandardOpenOption.CREATE);
+		BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(out, encoder));
+
+		writer.write("scenario");
+		writer.write("\t");
+		writer.write("xxx");
+		writer.write("\t");
+		writer.write("xyz");
+		writer.newLine();
+
+		writer.write("0");
+		writer.write("\t");
+		writer.write("a");
+		writer.write("\t");
+		writer.write("x");
+		writer.newLine();
+
+		writer.write("1");
+		writer.write("\t");
+		writer.write("b");
+		writer.write("\t");
+		writer.write("x");
+		writer.newLine();
+
+		writer.close();
+
 
 		ReportLabel reportLabel = new SimpleReportLabel("report label");
 
@@ -569,10 +612,89 @@ public final class MT_NIOReportItemHandler {
 				.addDimension(dimension2)//
 				.addExperimentContextConsumer(nioReportItemHandler)//
 				.setExperimentProgressLog(subPath.resolve("progresslog.txt"))//
-				.setContinueFromProgressLog(false)//
+				.setContinueFromProgressLog(true)//
 				.addExperimentContextConsumer(experimentStatusConsole)//
 				.build()//
 				.execute();
+
+	}
+
+	/*
+	 * write progress log
+	 *
+	 * no progress log read
+	 *
+	 * write three reports
+	 *
+	 * use experiment columns
+	 *
+	 */
+	private void test5(Path subPath) {
+
+		ReportLabel reportLabel = new SimpleReportLabel("report label");
+
+		ReportHeader.Builder reportHeaderBuilder = ReportHeader.builder();
+		reportHeaderBuilder.add("alpha");
+		reportHeaderBuilder.add("beta");
+		ReportHeader reportHeader = reportHeaderBuilder.build();
+
+		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
+
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
+
+			for (int i = 0; i < 10; i++) {
+				ReportItem.Builder reportItemBuilder = ReportItem.builder();
+				reportItemBuilder.setReportHeader(reportHeader);
+				reportItemBuilder.setReportLabel(reportLabel);
+				reportItemBuilder.addValue(i);
+				reportItemBuilder.addValue("value " + i);
+				ReportItem reportItem = reportItemBuilder.build();
+				c.releaseOutput(reportItem);
+			}
+		}));
+
+		Dimension.Builder dimensionBuilder = Dimension.builder();
+		dimensionBuilder.addMetaDatum("xxx");
+		dimensionBuilder.addLevel((c) -> {
+			List<String> result = new ArrayList<>();
+			result.add("a");
+			return result;
+		});
+		dimensionBuilder.addLevel((c) -> {
+			List<String> result = new ArrayList<>();
+			result.add("b");
+			return result;
+		});
+		Dimension dimension1 = dimensionBuilder.build();
+
+		dimensionBuilder.addMetaDatum("xyz");
+		dimensionBuilder.addLevel((c) -> {
+			List<String> result = new ArrayList<>();
+			result.add("x");
+			return result;
+		});
+		dimensionBuilder.addLevel((c) -> {
+			List<String> result = new ArrayList<>();
+			result.add("y");
+			return result;
+		});
+		dimensionBuilder.addLevel((c) -> {
+			List<String> result = new ArrayList<>();
+			result.add("z");
+			return result;
+		});
+		Dimension dimension2 = dimensionBuilder.build();
+
+		NIOReportItemHandler nioReportItemHandler = //
+				NIOReportItemHandler.builder()//
+						.addReport(reportLabel, subPath.resolve("report1.txt"))//
+						.build();
+
+		TestPluginData testPluginData = pluginDataBuilder.build();
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+
+
+		ExperimentStatusConsole experimentStatusConsole = ExperimentStatusConsole.builder().build();
 
 		Experiment	.builder()//
 				.addPlugin(testPlugin)//
@@ -584,6 +706,74 @@ public final class MT_NIOReportItemHandler {
 				.addExperimentContextConsumer(experimentStatusConsole)//
 				.build()//
 				.execute();
+
+	}
+
+	private void printExpected(Integer testNum) {
+
+		switch (testNum) {
+			case 1:
+				System.out.println("expected observations: ");
+				System.out.println("\t" + "a folder named 'test1' should appear in the specified directory");
+				System.out.println("\t" + "a file named 'report1.txt' should be in the folder");
+				System.out.println("\t" + "the header of the text file should have the following columns: ");
+				System.out.println("\t" + "\t" + "scenario");
+				System.out.println("\t" + "\t" + "xxx");
+				System.out.println("\t" + "\t" + "xyz");
+				System.out.println("\t" + "\t" + "alpha");
+				System.out.println("\t" + "\t" + "beta");
+				break;
+			case 2:
+				System.out.println("expected observations: ");
+				System.out.println("\t" + "a folder named 'test2' should appear in the specified directory");
+				System.out.println("\t" + "a file named 'report1.txt' should be in the folder");
+				System.out.println("\t" + "the header of the text file should have the following columns: ");
+				System.out.println("\t" + "\t" + "scenario");
+				System.out.println("\t" + "\t" + "alpha");
+				System.out.println("\t" + "\t" + "beta");
+				break;
+			case 3:
+				System.out.println("expected observations: ");
+				System.out.println("\t" + "a folder named 'test3' should appear in the specified directory");
+				System.out.println("\t" + "a file named 'report1.txt' should be in the folder");
+				System.out.println("\t" + "the header of the text file should have the following columns: ");
+				System.out.println("\t" + "\t" + "scenario");
+				System.out.println("\t" + "\t" + "xxx");
+				System.out.println("\t" + "\t" + "xyz");
+				System.out.println("\t" + "\t" + "alpha");
+				System.out.println("\t" + "\t" + "beta");
+				System.out.println("\t" + "another file named 'progresslog.txt' should be in the folder");
+				System.out.println("\t" + "the header of the text file should have the following columns: ");
+				System.out.println("\t" + "\t" + "scenario");
+				System.out.println("\t" + "\t" + "xxx");
+				System.out.println("\t" + "\t" + "xyz");
+				break;
+			case 4:
+				System.out.println("expected observations: ");
+				System.out.println("\t" + "after all 6 scenarios are completed, the compiler should show 2");
+				System.out.println("\t" + "values. You should have PREVIOUSLY_SUCCEEDED and SUCCEEDED values");
+				System.out.println("\t" + "whose sum should total up to 6.");
+				System.out.println("\t" + "a folder named 'test4' should appear in the specified directory");
+				System.out.println("\t" + "a file named 'report1.txt' should be in the folder");
+				System.out.println("\t" + "the header of the text file should have the following columns: ");
+				System.out.println("\t" + "\t" + "scenario");
+				System.out.println("\t" + "\t" + "xxx");
+				System.out.println("\t" + "\t" + "xyz");
+				System.out.println("\t" + "\t" + "alpha");
+				System.out.println("\t" + "\t" + "beta");
+				System.out.println("\t" + "another file named 'progresslog.txt' should be in the folder");
+				System.out.println("\t" + "the header of the text file should have the following columns: ");
+				System.out.println("\t" + "\t" + "scenario");
+				System.out.println("\t" + "\t" + "xxx");
+				System.out.println("\t" + "\t" + "xyz");
+				break;
+			case 5:
+				System.out.println("expected observations: ");
+				System.out.println("\t" + "after running test 5, you should recieve an exception with the following message:");
+				System.out.println("\t" + "Exception in thread \"main\" util.errors.ContractException: The scenario progress file does not exist,");
+				System.out.println("\t" + "but is required when continuation from progress file is chosen");
+				break;
+		}
 
 	}
 
