@@ -24,9 +24,11 @@ public class AT_TestPlanDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(target = TestPlanDataManager.class, name = "init", args = { DataManagerContext.class }, tags = { UnitTag.LOCAL_PROXY })
+	@UnitTestMethod(target = TestPlanDataManager.class, name = "init", args = { DataManagerContext.class }, tags = { UnitTag.INCOMPLETE})
 	public void testInit() {
-		// covered by other tests
+		
+		
+		// test needs to demonstrate that the TestPlanDataManager releases the TestScenarioReport at the end of the simulation
 	}
 
 	@Test

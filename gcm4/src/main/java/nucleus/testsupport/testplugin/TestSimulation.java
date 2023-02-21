@@ -1,5 +1,6 @@
 package nucleus.testsupport.testplugin;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import nucleus.NucleusError;
@@ -57,6 +58,22 @@ public class TestSimulation {
 		_executeSimulation(pluginsToAdd, new TestSimulationOutputConsumer());
 	}
 
+	/**
+	 * Executes a simulation instance
+	 * 
+	 * @throws ContractException
+	 *        
+	 *             <li>{@linkplain NucleusError#NULL_PLUGIN} if the plugin is
+	 *             null</li>
+	 *             <li>{@linkplain TestError#TEST_EXECUTION_FAILURE} if the
+	 *             simulation does not complete successfully</li>
+	 */
+	public static void executeSimulation(Plugin plugin) {
+		List<Plugin> pluginsToAdd = new ArrayList<>();
+		pluginsToAdd.add(plugin);
+		_executeSimulation(pluginsToAdd, new TestSimulationOutputConsumer());
+	}
+
 	private static void _executeSimulation(List<Plugin> pluginsToAdd, TestSimulationOutputConsumer outputConsumer) {
 		if (outputConsumer == null) {
 			throw new ContractException(NucleusError.NULL_OUTPUT_HANDLER,
@@ -86,5 +103,5 @@ public class TestSimulation {
 		if (!outputConsumer.isComplete()) {
 			throw new ContractException(TestError.TEST_EXECUTION_FAILURE);
 		}
-	}	
+	}
 }
