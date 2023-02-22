@@ -155,7 +155,8 @@ public final class NIOReportItemHandler implements Consumer<ExperimentContext>{
 	 * Initializes this report item handler. It subscribes to the following
 	 * experiment level events:
 	 * <ul>
-	 * <li>Experiment Open : reads and initializes all report files</li>
+	 * <li>Experiment Open : reads and initializes all report files.</li>
+	 * <li>all content that doesn't correspond to a previously fully executed scenario is removed.</li>
 	 * <li>Simulation Output : directs report items to the appropriate file
 	 * writer</li>
 	 * <li>Simulation Close : ensures all files are flushed so that the content

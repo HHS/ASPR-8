@@ -46,42 +46,42 @@ public final class MT_NIOReportItemHandler {
 	}
 
 	private static void printInstructions() {
-		System.out.println("Usage: ");
-		System.out.println("\t" + "Any number or order of the following commands are legal:");
-		System.out.println("\t" + "\t" + "-c followed by any number arguments to ignore");
-		System.out.println("\t" + "\t" + "-d followed by a directory name");
-		System.out.println("\t" + "\t" + "-t1 to run the first test case");
-		System.out.println("\t" + "\t" + "-t2 to run the second test case");
-		System.out.println("\t" + "\t" + "-t3 to run the third test case");
-		System.out.println("\t" + "\t" + "-help for instructions");
-		System.out.println();
-		System.out.println("Example: ");
-		System.out.println("\t" + "-d c:\\temp\\src\\main\\java c:\\temp\\src\\test\\java");
-		System.out.println("\t" + "-t1");
-		System.out.println("\t" + "-t2");
-		System.out.println("\t" + "-c geo");
-		System.out.println();
-		System.out.println("Test Cases: ");
-		System.out.println("\t" + "Test 1:");
-		System.out.println("\t" + "\t" + "no progress log written");
-		System.out.println("\t" + "\t" + "no progress log read");
-		System.out.println("\t" + "\t" + "use experiment columns");
-		System.out.println("\t" + "Test 2:");
-		System.out.println("\t" + "\t" + "no progress log written");
-		System.out.println("\t" + "\t" + "no progress log read");
-		System.out.println("\t" + "\t" + "no experiment columns");
-		System.out.println("\t" + "Test 3:");
-		System.out.println("\t" + "\t" + "progress log written");
-		System.out.println("\t" + "\t" + "no progress log read");
-		System.out.println("\t" + "\t" + "no experiment columns");
-		System.out.println("\t" + "Test 4:");
-		System.out.println("\t" + "\t" + "progress log written");
-		System.out.println("\t" + "\t" + "progress log read");
-		System.out.println("\t" + "\t" + "use experiment columns");
-		System.out.println("\t" + "Test 5:");
-		System.out.println("\t" + "\t" + "no progress log written");
-		System.out.println("\t" + "\t" + "progress log read");
-		System.out.println("\t" + "\t" + "use experiment columns");
+
+		StringBuilder sb = new StringBuilder();
+
+		sb.append("Usage: " + "\n");
+		sb.append("\t" + "Any number or order of the following commands are legal:" + "\n");
+		sb.append("\t" + "\t" + "-c followed by any number arguments to ignore" + "\n");
+		sb.append("\t" + "\t" + "-d followed by a directory name" + "\n");
+		sb.append("\t" + "\t" + "-t followed by a test case number" + "\n");
+		sb.append("\t" + "\t" + "-help for instructions" + "\n");
+		sb.append("Example: " + "\n");
+		sb.append("\t" + "-d c:\\temp\\src\\main\\java c:\\temp\\src\\test\\java" + "\n");
+		sb.append("\t" + "-t 1" + "\n");
+		sb.append("\t" + "-c testing" + "\n");
+		sb.append("Test Cases: " + "\n");
+		sb.append("\t" + "Test 1:" + "\n");
+		sb.append("\t" + "\t" + "no progress log written" + "\n");
+		sb.append("\t" + "\t" + "no progress log read" + "\n");
+		sb.append("\t" + "\t" + "use experiment columns" + "\n");
+		sb.append("\t" + "Test 2:" + "\n");
+		sb.append("\t" + "\t" + "no progress log written" + "\n");
+		sb.append("\t" + "\t" + "no progress log read" + "\n");
+		sb.append("\t" + "\t" + "no experiment columns" + "\n");
+		sb.append("\t" + "Test 3:" + "\n");
+		sb.append("\t" + "\t" + "progress log written" + "\n");
+		sb.append("\t" + "\t" + "no progress log read" + "\n");
+		sb.append("\t" + "\t" + "no experiment columns" + "\n");
+		sb.append("\t" + "Test 4:" + "\n");
+		sb.append("\t" + "\t" + "progress log written" + "\n");
+		sb.append("\t" + "\t" + "progress log read" + "\n");
+		sb.append("\t" + "\t" + "use experiment columns" + "\n");
+		sb.append("\t" + "Test 5:" + "\n");
+		sb.append("\t" + "\t" + "no progress log written" + "\n");
+		sb.append("\t" + "\t" + "progress log read" + "\n");
+		sb.append("\t" + "\t" + "use experiment columns" + "\n");
+
+		System.out.println(sb);
 	}
 
 	private static class CommandBlock {
@@ -711,70 +711,74 @@ public final class MT_NIOReportItemHandler {
 
 	private void printExpected(Integer testNum) {
 
+		StringBuilder sb = new StringBuilder();
+
+
 		switch (testNum) {
 			case 1:
-				System.out.println("expected observations: ");
-				System.out.println("\t" + "a folder named 'test1' should appear in the specified directory");
-				System.out.println("\t" + "a file named 'report1.txt' should be in the folder");
-				System.out.println("\t" + "the header of the text file should have the following columns: ");
-				System.out.println("\t" + "\t" + "scenario");
-				System.out.println("\t" + "\t" + "xxx");
-				System.out.println("\t" + "\t" + "xyz");
-				System.out.println("\t" + "\t" + "alpha");
-				System.out.println("\t" + "\t" + "beta");
+				sb.append("expected observations: " + "\n");
+				sb.append("\t" + "a folder named 'test1' should appear in the specified directory" + "\n");
+				sb.append("\t" + "a file named 'report1.txt' should be in the folder" + "\n");
+				sb.append("\t" + "the header of the text file should have the following columns: " + "\n");
+				sb.append("\t" + "\t" + "scenario" + "\n");
+				sb.append("\t" + "\t" + "xxx" + "\n");
+				sb.append("\t" + "\t" + "xyz" + "\n");
+				sb.append("\t" + "\t" + "alpha" + "\n");
+				sb.append("\t" + "\t" + "beta" + "\n");
 				break;
 			case 2:
-				System.out.println("expected observations: ");
-				System.out.println("\t" + "a folder named 'test2' should appear in the specified directory");
-				System.out.println("\t" + "a file named 'report1.txt' should be in the folder");
-				System.out.println("\t" + "the header of the text file should have the following columns: ");
-				System.out.println("\t" + "\t" + "scenario");
-				System.out.println("\t" + "\t" + "alpha");
-				System.out.println("\t" + "\t" + "beta");
+				sb.append("expected observations: " + "\n");
+				sb.append("\t" + "a folder named 'test2' should appear in the specified directory" + "\n");
+				sb.append("\t" + "a file named 'report1.txt' should be in the folder" + "\n");
+				sb.append("\t" + "the header of the text file should have the following columns: " + "\n");
+				sb.append("\t" + "\t" + "scenario" + "\n");
+				sb.append("\t" + "\t" + "alpha" + "\n");
+				sb.append("\t" + "\t" + "beta" + "\n");
 				break;
 			case 3:
-				System.out.println("expected observations: ");
-				System.out.println("\t" + "a folder named 'test3' should appear in the specified directory");
-				System.out.println("\t" + "a file named 'report1.txt' should be in the folder");
-				System.out.println("\t" + "the header of the text file should have the following columns: ");
-				System.out.println("\t" + "\t" + "scenario");
-				System.out.println("\t" + "\t" + "xxx");
-				System.out.println("\t" + "\t" + "xyz");
-				System.out.println("\t" + "\t" + "alpha");
-				System.out.println("\t" + "\t" + "beta");
-				System.out.println("\t" + "another file named 'progresslog.txt' should be in the folder");
-				System.out.println("\t" + "the header of the text file should have the following columns: ");
-				System.out.println("\t" + "\t" + "scenario");
-				System.out.println("\t" + "\t" + "xxx");
-				System.out.println("\t" + "\t" + "xyz");
+				sb.append("expected observations: " + "\n");
+				sb.append("\t" + "a folder named 'test3' should appear in the specified directory" + "\n");
+				sb.append("\t" + "a file named 'report1.txt' should be in the folder" + "\n");
+				sb.append("\t" + "the header of the text file should have the following columns: " + "\n");
+				sb.append("\t" + "\t" + "scenario" + "\n");
+				sb.append("\t" + "\t" + "xxx" + "\n");
+				sb.append("\t" + "\t" + "xyz" + "\n");
+				sb.append("\t" + "\t" + "alpha" + "\n");
+				sb.append("\t" + "\t" + "beta" + "\n");
+				sb.append("\t" + "another file named 'progresslog.txt' should be in the folder" + "\n");
+				sb.append("\t" + "the header of the text file should have the following columns: " + "\n");
+				sb.append("\t" + "\t" + "scenario" + "\n");
+				sb.append("\t" + "\t" + "xxx" + "\n");
+				sb.append("\t" + "\t" + "xyz" + "\n");
 				break;
 			case 4:
-				System.out.println("expected observations: ");
-				System.out.println("\t" + "after all 6 scenarios are completed, the compiler should show 2");
-				System.out.println("\t" + "values. You should have PREVIOUSLY_SUCCEEDED and SUCCEEDED values");
-				System.out.println("\t" + "whose sum should total up to 6.");
-				System.out.println("\t" + "a folder named 'test4' should appear in the specified directory");
-				System.out.println("\t" + "a file named 'report1.txt' should be in the folder");
-				System.out.println("\t" + "the header of the text file should have the following columns: ");
-				System.out.println("\t" + "\t" + "scenario");
-				System.out.println("\t" + "\t" + "xxx");
-				System.out.println("\t" + "\t" + "xyz");
-				System.out.println("\t" + "\t" + "alpha");
-				System.out.println("\t" + "\t" + "beta");
-				System.out.println("\t" + "another file named 'progresslog.txt' should be in the folder");
-				System.out.println("\t" + "the header of the text file should have the following columns: ");
-				System.out.println("\t" + "\t" + "scenario");
-				System.out.println("\t" + "\t" + "xxx");
-				System.out.println("\t" + "\t" + "xyz");
+				sb.append("expected observations: " + "\n");
+				sb.append("\t" + "after all 6 scenarios are completed, the compiler should show 2" + "\n");
+				sb.append("\t" + "values. You should have PREVIOUSLY_SUCCEEDED and SUCCEEDED values" + "\n");
+				sb.append("\t" + "whose sum should total up to 6." + "\n");
+				sb.append("\t" + "a folder named 'test4' should appear in the specified directory" + "\n");
+				sb.append("\t" + "a file named 'report1.txt' should be in the folder" + "\n");
+				sb.append("\t" + "the header of the text file should have the following columns: " + "\n");
+				sb.append("\t" + "\t" + "scenario" + "\n");
+				sb.append("\t" + "\t" + "xxx" + "\n");
+				sb.append("\t" + "\t" + "xyz" + "\n");
+				sb.append("\t" + "\t" + "alpha" + "\n");
+				sb.append("\t" + "\t" + "beta" + "\n");
+				sb.append("\t" + "another file named 'progresslog.txt' should be in the folder" + "\n");
+				sb.append("\t" + "the header of the text file should have the following columns: " + "\n");
+				sb.append("\t" + "\t" + "scenario" + "\n");
+				sb.append("\t" + "\t" + "xxx" + "\n");
+				sb.append("\t" + "\t" + "xyz" + "\n");
 				break;
 			case 5:
-				System.out.println("expected observations: ");
-				System.out.println("\t" + "after running test 5, you should recieve an exception with the following message:");
-				System.out.println("\t" + "Exception in thread \"main\" util.errors.ContractException: The scenario progress file does not exist,");
-				System.out.println("\t" + "but is required when continuation from progress file is chosen");
+				sb.append("expected observations: " + "\n");
+				sb.append("\t" + "after running test 5, you should recieve an exception with the following message:" + "\n");
+				sb.append("\t" + "Exception in thread \"main\" util.errors.ContractException: The scenario progress file does not exist," + "\n");
+				sb.append("\t" + "but is required when continuation from progress file is chosen" + "\n");
 				break;
 		}
 
+		System.out.println(sb);
 	}
 
 }

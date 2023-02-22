@@ -73,6 +73,9 @@ public final class LineWriter {
 		}
 	}
 
+	/*
+	* The path must correspond to an existing regular file.
+	 */
 	private void initializeWithPreviousContent(Path path, ExperimentContext experimentContext) {
 
 		try {
@@ -86,49 +89,44 @@ public final class LineWriter {
 			CharsetEncoder encoder = StandardCharsets.UTF_8.newEncoder();
 			OutputStream out = Files.newOutputStream(tempPath, StandardOpenOption.CREATE);
 			writer = new BufferedWriter(new OutputStreamWriter(out, encoder));
-
-			/*
-			 * If the file is readable then we accept only those lines that
-			 * correspond to a previously executed scenario
-			 */
-				Stream<String> lines = Files.lines(path);
-				boolean[] header = new boolean[] {true};
-				lines.forEach((line) -> {
-					if (!header[0]) {
-						String[] fields = line.split("\t");
-						/*
-						 * It is possible that the last line of a file was only
-						 * partially written because neither the writer's close
-						 * or flush was called during an abrupt shutdown. We
-						 * expect that such cases will not correspond to
-						 * successfully completed simulation execution, but must
-						 * ensure that the parsing of the scenario and
-						 * replication ids can still be performed
-						 */
-						if (fields.length > 1) {
-							int scenarioId = Integer.parseInt(fields[0]);
-							Optional<ScenarioStatus> optional = experimentContext.getScenarioStatus(scenarioId);
-							if (optional.isPresent() && optional.get().equals(ScenarioStatus.PREVIOUSLY_SUCCEEDED)) {
-								try {
-									writer.write(line);
-									writer.newLine();
-								} catch (IOException e) {
-									throw new RuntimeException(e);
-								}
+			Stream<String> lines = Files.lines(path);
+			boolean[] header = new boolean[] {true};
+			lines.forEach((line) -> {
+				if (!header[0]) {
+					String[] fields = line.split("\t");
+					/*
+					 * It is possible that the last line of a file was only
+					 * partially written because neither the writer's close
+					 * or flush was called during an abrupt shutdown. We
+					 * expect that such cases will not correspond to
+					 * successfully completed simulation execution, but must
+					 * ensure that the parsing of the scenario and
+					 * replication ids can still be performed
+					 */
+					if (fields.length > 1) {
+						int scenarioId = Integer.parseInt(fields[0]);
+						Optional<ScenarioStatus> optional = experimentContext.getScenarioStatus(scenarioId);
+						if (optional.isPresent() && optional.get().equals(ScenarioStatus.PREVIOUSLY_SUCCEEDED)) {
+							try {
+								writer.write(line);
+								writer.newLine();
+							} catch (IOException e) {
+								throw new RuntimeException(e);
 							}
 						}
-					} else {
-						try {
-							writer.write(line);
-							writer.newLine();
-							headerWritten = true;
-							header[0] = false;
-						} catch (IOException e) {
-							throw new RuntimeException(e);
-						}
 					}
-				});
-				lines.close();
+				} else {
+					try {
+						writer.write(line);
+						writer.newLine();
+						headerWritten = true;
+						header[0] = false;
+					} catch (IOException e) {
+						throw new RuntimeException(e);
+					}
+				}
+			});
+			lines.close();
 
 			writer.close();
 
