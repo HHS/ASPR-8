@@ -52,6 +52,10 @@ public class TestPlugin {
 		for (Object alias : testPluginData.getTestActorAliases()) {
 			pluginContext.addActor(new TestActor(alias)::init);
 		}
+		
+		for (Object alias : testPluginData.getTestReportAliases()) {
+			pluginContext.addReport(new TestReport(alias)::init);
+		}
 
 	}
 

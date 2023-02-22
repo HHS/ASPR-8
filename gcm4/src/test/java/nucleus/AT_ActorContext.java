@@ -16,18 +16,17 @@ import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 
-import nucleus.testsupport.testplugin.ScenarioPlanCompletionObserver;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestDataManager;
 import nucleus.testsupport.testplugin.TestDataManagerPlan;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestScenarioReport;
+import nucleus.testsupport.testplugin.TestSimulation;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.wrappers.MultiKey;
 import util.wrappers.MutableBoolean;
-
 
 public class AT_ActorContext {
 
@@ -149,22 +148,11 @@ public class AT_ActorContext {
 			assertFalse(context.actorExists(new ActorId(1)));
 			assertFalse(context.actorExists(new ActorId(2)));
 		}));
-
-		// build the plugin
 		TestPluginData testPluginData = pluginDataBuilder.build();
-		ScenarioPlanCompletionObserver scenarioPlanCompletionObserver = new ScenarioPlanCompletionObserver();
-
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
-		// run the simulation
-		Simulation	.builder()//
-					.setOutputConsumer(scenarioPlanCompletionObserver::handleOutput)//
-					.addPlugin(testPlugin)//
-					.build()//
-					.execute();//
+		TestSimulation.executeSimulation(testPlugin);
 
-		// show that the action plans got executed
-		assertTrue(scenarioPlanCompletionObserver.allPlansExecuted());
 	}
 
 	@Test
@@ -185,11 +173,7 @@ public class AT_ActorContext {
 		TestPluginData testPluginData = pluginDataBuilder.build();
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
-		// run the simulation
-		Simulation	.builder()//
-					.addPlugin(testPlugin)//
-					.build()//
-					.execute();//
+		TestSimulation.executeSimulation(testPlugin);
 
 		// show that the action plans got executed
 		assertTrue(actorWasAdded.getValue());
@@ -244,18 +228,11 @@ public class AT_ActorContext {
 
 		// build the plugin
 		TestPluginData testPluginData = pluginDataBuilder.build();
-		ScenarioPlanCompletionObserver scenarioPlanCompletionObserver = new ScenarioPlanCompletionObserver();
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
 		// run the simulation
-		Simulation	.builder()//
-					.setOutputConsumer(scenarioPlanCompletionObserver::handleOutput)//
-					.addPlugin(testPlugin)//
-					.build()//
-					.execute();//
+		TestSimulation.executeSimulation(testPlugin);
 
-		// show that the action plans got executed
-		assertTrue(scenarioPlanCompletionObserver.allPlansExecuted());
 	}
 
 	@Test
@@ -523,17 +500,8 @@ public class AT_ActorContext {
 		// build the plugin
 		TestPluginData testPluginData = pluginDataBuilder.build();
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
-		ScenarioPlanCompletionObserver scenarioPlanCompletionObserver = new ScenarioPlanCompletionObserver();
 
-		// run the simulation
-		Simulation	.builder()//
-					.setOutputConsumer(scenarioPlanCompletionObserver::handleOutput)//
-					.addPlugin(testPlugin)//
-					.build()//
-					.execute();//
-
-		// show that all action plans were executed
-		assertTrue(scenarioPlanCompletionObserver.allPlansExecuted());
+		TestSimulation.executeSimulation(testPlugin);
 
 		// show that the number of actor ids matches the number of actor aliases
 		assertEquals(3, observedActorIds.size());
@@ -564,17 +532,7 @@ public class AT_ActorContext {
 		TestPluginData testPluginData = pluginDataBuilder.build();
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
-		ScenarioPlanCompletionObserver scenarioPlanCompletionObserver = new ScenarioPlanCompletionObserver();
-
-		// execute the engine
-		Simulation	.builder()//
-					.setOutputConsumer(scenarioPlanCompletionObserver::handleOutput)//
-					.addPlugin(testPlugin)//
-					.build()//
-					.execute();//
-
-		// show that the action was executed
-		assertTrue(scenarioPlanCompletionObserver.allPlansExecuted());
+		TestSimulation.executeSimulation(testPlugin);
 
 		// Precondition test 1
 		pluginDataBuilder.addTestDataManager("dm3A", () -> new TestDataManager3A());
@@ -589,17 +547,8 @@ public class AT_ActorContext {
 		// build the action plugin
 		testPluginData = pluginDataBuilder.build();
 		testPlugin = TestPlugin.getTestPlugin(testPluginData);
-		scenarioPlanCompletionObserver = new ScenarioPlanCompletionObserver();
 
-		// execute the engine
-		Simulation	.builder()//
-					.setOutputConsumer(scenarioPlanCompletionObserver::handleOutput)//
-					.addPlugin(testPlugin)//
-					.build()//
-					.execute();//
-
-		// show that the action was executed
-		assertTrue(scenarioPlanCompletionObserver.allPlansExecuted());
+		TestSimulation.executeSimulation(testPlugin);
 
 		// Precondition test 2
 		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
@@ -610,17 +559,9 @@ public class AT_ActorContext {
 		// build the action plugin
 		testPluginData = pluginDataBuilder.build();
 		testPlugin = TestPlugin.getTestPlugin(testPluginData);
-		scenarioPlanCompletionObserver = new ScenarioPlanCompletionObserver();
 
-		// execute the engine
-		Simulation	.builder()//
-					.setOutputConsumer(scenarioPlanCompletionObserver::handleOutput)//
-					.addPlugin(testPlugin)//
-					.build()//
-					.execute();//
+		TestSimulation.executeSimulation(testPlugin);
 
-		// show that the action was executed
-		assertTrue(scenarioPlanCompletionObserver.allPlansExecuted());
 	}
 
 	/**
@@ -653,17 +594,10 @@ public class AT_ActorContext {
 		// build the plugin
 		TestPluginData testPluginData = pluginDataBuilder.build();
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
-		ScenarioPlanCompletionObserver scenarioPlanCompletionObserver = new ScenarioPlanCompletionObserver();
 
 		// run the simulation
-		Simulation	.builder()//
-					.setOutputConsumer(scenarioPlanCompletionObserver::handleOutput)//
-					.addPlugin(testPlugin)//
-					.build()//
-					.execute();//
+		TestSimulation.executeSimulation(testPlugin);
 
-		// show that the action plans got executed
-		assertTrue(scenarioPlanCompletionObserver.allPlansExecuted());
 	}
 
 	/**
@@ -698,17 +632,8 @@ public class AT_ActorContext {
 		TestPluginData testPluginData = pluginDataBuilder.build();
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
-		ScenarioPlanCompletionObserver scenarioPlanCompletionObserver = new ScenarioPlanCompletionObserver();
-
 		// run the simulation
-		Simulation	.builder()//
-					.setOutputConsumer(scenarioPlanCompletionObserver::handleOutput)//
-					.addPlugin(testPlugin)//
-					.build()//
-					.execute();//
-
-		// show that the action plans got executed
-		assertTrue(scenarioPlanCompletionObserver.allPlansExecuted());
+		TestSimulation.executeSimulation(testPlugin);
 	}
 
 	/**
@@ -745,16 +670,8 @@ public class AT_ActorContext {
 		TestPluginData testPluginData = pluginDataBuilder.build();
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
-		ScenarioPlanCompletionObserver scenarioPlanCompletionObserver = new ScenarioPlanCompletionObserver();
 		// run the simulation
-		Simulation	.builder()//
-					.setOutputConsumer(scenarioPlanCompletionObserver::handleOutput)//
-					.addPlugin(testPlugin)//
-					.build()//
-					.execute();//
-
-		// show that the action plans got executed
-		assertTrue(scenarioPlanCompletionObserver.allPlansExecuted());
+		TestSimulation.executeSimulation(testPlugin);
 	}
 
 	@Test
@@ -789,17 +706,8 @@ public class AT_ActorContext {
 		TestPluginData testPluginData = pluginDataBuilder.build();
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
-		ScenarioPlanCompletionObserver scenarioPlanCompletionObserver = new ScenarioPlanCompletionObserver();
-
 		// execute the engine
-		Simulation	.builder()//
-					.setOutputConsumer(scenarioPlanCompletionObserver::handleOutput)//
-					.addPlugin(testPlugin)//
-					.build()//
-					.execute();//
-
-		// show that the action was executed
-		assertTrue(scenarioPlanCompletionObserver.allPlansExecuted());
+		TestSimulation.executeSimulation(testPlugin);
 	}
 
 	/**
@@ -941,17 +849,10 @@ public class AT_ActorContext {
 		TestPluginData testPluginData = pluginDataBuilder.build();
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
-		ScenarioPlanCompletionObserver scenarioPlanCompletionObserver = new ScenarioPlanCompletionObserver();
+		
 
 		// build and execute the engine
-		Simulation	.builder()//
-					.setOutputConsumer(scenarioPlanCompletionObserver::handleOutput)//
-					.addPlugin(testPlugin)//
-					.build()//
-					.execute();//
-
-		// show that the actions were executed
-		assertTrue(scenarioPlanCompletionObserver.allPlansExecuted());
+		TestSimulation.executeSimulation(testPlugin);
 
 	}
 
@@ -994,17 +895,10 @@ public class AT_ActorContext {
 		// build the plugin
 		TestPluginData testPluginData = pluginDataBuilder.build();
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
-		ScenarioPlanCompletionObserver scenarioPlanCompletionObserver = new ScenarioPlanCompletionObserver();
+		
 
 		// run the simulation
-		Simulation	.builder()//
-					.setOutputConsumer(scenarioPlanCompletionObserver::handleOutput)//
-					.addPlugin(testPlugin)//
-					.build()//
-					.execute();//
-
-		// show that the action plans got executed
-		assertTrue(scenarioPlanCompletionObserver.allPlansExecuted());
+		TestSimulation.executeSimulation(testPlugin);
 
 		// show that the remove plan was not executed
 		assertFalse(removedPlanHasExecuted.getValue());
@@ -1111,17 +1005,10 @@ public class AT_ActorContext {
 		TestPluginData testPluginData = pluginDataBuilder.build();
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
-		ScenarioPlanCompletionObserver scenarioPlanCompletionObserver = new ScenarioPlanCompletionObserver();
+		
 
 		// run the simulation
-		Simulation	.builder()//
-					.setOutputConsumer(scenarioPlanCompletionObserver::handleOutput)//
-					.addPlugin(testPlugin)//
-					.build()//
-					.execute();//
-
-		// show that all plans got executed
-		assertTrue(scenarioPlanCompletionObserver.allPlansExecuted());
+		TestSimulation.executeSimulation(testPlugin);
 
 		// show that all and only the observations corresponding to the
 		// subscribed event label were delivered to the subscriber actor
@@ -1222,17 +1109,10 @@ public class AT_ActorContext {
 		TestPluginData testPluginData = pluginDataBuilder.build();
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
-		ScenarioPlanCompletionObserver scenarioPlanCompletionObserver = new ScenarioPlanCompletionObserver();
+		
 
 		// run the simulation
-		Simulation	.builder()//
-					.setOutputConsumer(scenarioPlanCompletionObserver::handleOutput)//
-					.addPlugin(testPlugin)//
-					.build()//
-					.execute();//
-
-		// show that all action plans were executed
-		assertTrue(scenarioPlanCompletionObserver.allPlansExecuted());
+		TestSimulation.executeSimulation(testPlugin);
 
 		// show that all and only the observations corresponding to the
 		// subscribed event label were delivered to the actors
