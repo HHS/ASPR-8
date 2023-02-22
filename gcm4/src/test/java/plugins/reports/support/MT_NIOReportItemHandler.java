@@ -1,8 +1,10 @@
 package plugins.reports.support;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.nio.charset.CharsetEncoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -10,7 +12,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import nucleus.Dimension;
 import nucleus.Experiment;
@@ -27,21 +31,34 @@ public final class MT_NIOReportItemHandler {
 		HELP("-help"), //
 		DIRECTORY("-d"), //
 		TEST("-t"), //
+		UNKNOWN("-")//
 		;
 
-		private final String commandString;
+		private String commandString;
 
 		private Command(String commandString) {
 			this.commandString = commandString;
 		}
 
 		public static Command getCommand(String value) {
+			Command result = null;
+
 			for (Command command : Command.values()) {
-				if (command.commandString.equals(value)) {
-					return command;
+				if (command != UNKNOWN) {
+					if (command.commandString.equals(value)) {
+						result = command;
+					}
 				}
 			}
-			return null;
+
+			if (result == null) {
+				if (value.startsWith("-")) {
+					result = UNKNOWN;
+					result.commandString = value;
+				}
+			}
+
+			return result;
 		}
 	}
 
@@ -96,102 +113,121 @@ public final class MT_NIOReportItemHandler {
 
 	private final Path basePath;
 	private Integer testToRun;
-	
+
 	private MT_NIOReportItemHandler(Path dirPath, Integer testToRun) {
 		this.basePath = dirPath;
 		this.testToRun = testToRun;
 	}
-	
+
 	public static void main(String[] args) throws IOException {
 
-		List<CommandBlock> commandBlocks = new ArrayList<>();
-
-		assertNotNull(args);
-
-		CommandBlock currentCommandBlock = null;
+		Map<Command,List<CommandBlock>> commandBlocks = new LinkedHashMap<>();
+		for(Command command : Command.values()) {
+			commandBlocks.put(command, new ArrayList<>());
+		}
+		CommandBlock currentCommandBlock = new CommandBlock(Command.UNKNOWN);
+		commandBlocks.get(currentCommandBlock.command).add(currentCommandBlock);
+		
 		for (String arg : args) {
 			Command command = Command.getCommand(arg);
 			if (command != null) {
 				currentCommandBlock = new CommandBlock(command);
-				commandBlocks.add(currentCommandBlock);
+				commandBlocks.get(command).add(currentCommandBlock);
 			} else {
-				if (arg.startsWith("-")) {
-					throw new IllegalArgumentException(arg + " is not a valid command");
-				}
-				if (currentCommandBlock != null) {
-					currentCommandBlock.arguments.add(arg);
-				} else {
-					throw new IllegalArgumentException(arg + " is not a valid command");
-				}
+				currentCommandBlock.arguments.add(arg);
 			}
 		}
 
-		boolean helpCommandPresent = false;
+		
 		Path basePath = null;
-		List<Integer> testsToRun = new ArrayList<>();
-
-		for (CommandBlock commandBlock : commandBlocks) {
-			switch (commandBlock.command) {
-				case COMMENT:
-					// do nothing
-					break;
-				case HELP:
-					helpCommandPresent = true;
-					if(!commandBlock.arguments.isEmpty()) {
-						throw new IllegalArgumentException(commandBlock.command.name()+" cannot accept arguments");
-					}
-					break;
-				case DIRECTORY:
-					if (commandBlock.arguments.size() != 1) {
-						if (commandBlock.arguments.isEmpty()) {
-							throw new RuntimeException("requires a directory");
-						} else {
-							throw new RuntimeException("too many directories listed");
-						}
-					}
-					String directoryName = commandBlock.arguments.get(0);
-					basePath = Paths.get(directoryName);
-					if (!basePath.toFile().exists()) {
-						throw new RuntimeException("base directory does not exist");
-					}
-					if (!basePath.toFile().isDirectory()) {
-						throw new RuntimeException("base directory is not a directory");
-					}
-					break;
-				case TEST:
-					if (commandBlock.arguments.size() != 1) {
-						if (commandBlock.arguments.isEmpty()) {
-							throw new RuntimeException("requires a test number");
-						} else {
-							throw new RuntimeException("too many test numbers listed");
-						}
-					}
-					try {
-						int testIndex = Integer.parseInt(commandBlock.arguments.get(0));
-						testsToRun.add(testIndex);
-					} catch (NumberFormatException e) {
-						throw new RuntimeException("test index needs to be a integer", e);
-					}
-					break;
-				default:
-					throw new RuntimeException("unknown command " + commandBlock.command);
-			}
-		}
-
-		if (helpCommandPresent) {
+		int testIndex = 0;
+		
+		//HELP
+		int directoryCount = commandBlocks.get(Command.DIRECTORY).size();
+		int testCount = commandBlocks.get(Command.TEST).size();
+		
+		if(directoryCount==0 && testCount==0) {
 			printInstructions();
 			return;
 		}
-
-		if (testsToRun.isEmpty()) {
-			throw new RuntimeException("requires exactly 1 test id");
+		
+		List<CommandBlock> blocks = commandBlocks.get(Command.HELP);
+		if(!blocks.isEmpty()) {
+			printInstructions();
+			return;
 		}
-
-		if (testsToRun.size() > 1) {
-			throw new RuntimeException("cannot run multiple tests at the same time");
+		
+		//DIRECTORY
+		blocks = commandBlocks.get(Command.DIRECTORY);
+		if(blocks.isEmpty()) {
+			throw new RuntimeException("requires a directory");
 		}
+		
+		if(blocks.size()>1) {
+			throw new RuntimeException("too many directories listed");
+		}
+		
+		CommandBlock commandBlock = blocks.get(0);
+		if(commandBlock.arguments.isEmpty()) {
+			throw new RuntimeException("requires a directory");
+		}
+		
+		if(commandBlock.arguments.size()>1) {
+			throw new RuntimeException("too many directories listed");
+		}		
+		
+		String directoryName = commandBlock.arguments.get(0);
+		basePath = Paths.get(directoryName);
+		if (!basePath.toFile().exists()) {
+			throw new RuntimeException("base directory does not exist");
+		}
+		if (!basePath.toFile().isDirectory()) {
+			throw new RuntimeException("base directory is not a directory");
+		}
+		
+		//TEST
+		
+		blocks = commandBlocks.get(Command.TEST);
+		if(blocks.isEmpty()) {
+			throw new RuntimeException("requires a test command");
+		}
+		
+		if(blocks.size()>1) {
+			throw new RuntimeException("too many test commands");
+		}
+		
+		commandBlock = blocks.get(0);
+		if(commandBlock.arguments.isEmpty()) {
+			throw new RuntimeException("requires exactly one test number");
+		}
+		
+		if(commandBlock.arguments.size()>1) {
+			throw new RuntimeException("requires exactly one test number");
+		}		
+		try {
+			testIndex = Integer.parseInt(commandBlock.arguments.get(0));			
+		} catch (NumberFormatException e) {
+			throw new RuntimeException("test index needs to be a integer", e);
+		}
+		
+		if(testIndex<1||testIndex>5) {
+			throw new RuntimeException("test index out of bounds");
+		}
+		
+		//UNKNOWN
+		blocks = commandBlocks.get(Command.UNKNOWN);
+		if(blocks.size()>1) {			
+			//stringbuiler up the command strings for the unknown commands
+			throw new RuntimeException("encounted an unknown command");
+		}else {
+			commandBlock = blocks.get(0);
+			if(!commandBlock.arguments.isEmpty()) {
+				throw new RuntimeException("encounted an unknown command");
+			}
+		}
+		
 
-		new MT_NIOReportItemHandler(basePath, testsToRun.get(0)).execute();
+		new MT_NIOReportItemHandler(basePath, testIndex).execute();
 	}
 
 	private void recursiveDelete(File file) throws IOException {
@@ -218,39 +254,39 @@ public final class MT_NIOReportItemHandler {
 
 	private void execute() throws IOException {
 		switch (testToRun) {
-			case 1:
-				Path subPath = basePath.resolve("test1");
-				createDirectory(subPath);
-				printExpected(1);
-				test1(subPath);
-				break;
-			case 2:
-				subPath = basePath.resolve("test2");
-				createDirectory(subPath);
-				printExpected(2);
-				test2(subPath);
-				break;
-			case 3:
-				subPath = basePath.resolve("test3");
-				createDirectory(subPath);
-				printExpected(3);
-				test3(subPath);
-				break;
-			case 4:
-				subPath = basePath.resolve("test4");
-				createDirectory(subPath);
-				printExpected(4);
-				test4(subPath);
-				break;
-			case 5:
-				subPath = basePath.resolve("test5");
-				createDirectory(subPath);
-				printExpected(5);
-				test5(subPath);
-				break;
-			default:
-				throw new RuntimeException("unknown test number: " + testToRun);
-			}
+		case 1:
+			Path subPath = basePath.resolve("test1");
+			createDirectory(subPath);
+			printExpected(1);
+			test1(subPath);
+			break;
+		case 2:
+			subPath = basePath.resolve("test2");
+			createDirectory(subPath);
+			printExpected(2);
+			test2(subPath);
+			break;
+		case 3:
+			subPath = basePath.resolve("test3");
+			createDirectory(subPath);
+			printExpected(3);
+			test3(subPath);
+			break;
+		case 4:
+			subPath = basePath.resolve("test4");
+			createDirectory(subPath);
+			printExpected(4);
+			test4(subPath);
+			break;
+		case 5:
+			subPath = basePath.resolve("test5");
+			createDirectory(subPath);
+			printExpected(5);
+			test5(subPath);
+			break;
+		default:
+			throw new RuntimeException("unknown test number: " + testToRun);
+		}
 	}
 
 	/*
@@ -334,6 +370,7 @@ public final class MT_NIOReportItemHandler {
 					.execute();
 
 	}
+
 	/*
 	 * no progress log written
 	 * 
@@ -416,6 +453,7 @@ public final class MT_NIOReportItemHandler {
 					.build()//
 					.execute();
 	}
+
 	/*
 	 * write progress log
 	 * 
@@ -425,7 +463,7 @@ public final class MT_NIOReportItemHandler {
 	 * 
 	 */
 	private void test3(Path subPath) {
-		
+
 		ReportLabel reportLabel = new SimpleReportLabel("report label");
 
 		ReportHeader.Builder reportHeaderBuilder = ReportHeader.builder();
@@ -487,8 +525,7 @@ public final class MT_NIOReportItemHandler {
 
 		TestPluginData testPluginData = pluginDataBuilder.build();
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
-		
-		
+
 		ExperimentStatusConsole experimentStatusConsole = ExperimentStatusConsole.builder().build();
 
 		Experiment	.builder()//
@@ -539,7 +576,6 @@ public final class MT_NIOReportItemHandler {
 		writer.newLine();
 
 		writer.close();
-
 
 		ReportLabel reportLabel = new SimpleReportLabel("report label");
 
@@ -597,25 +633,24 @@ public final class MT_NIOReportItemHandler {
 
 		NIOReportItemHandler nioReportItemHandler = //
 				NIOReportItemHandler.builder()//
-						.addReport(reportLabel, subPath.resolve("report1.txt"))//
-						.build();
+									.addReport(reportLabel, subPath.resolve("report1.txt"))//
+									.build();
 
 		TestPluginData testPluginData = pluginDataBuilder.build();
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
-
 		ExperimentStatusConsole experimentStatusConsole = ExperimentStatusConsole.builder().build();
 
 		Experiment	.builder()//
-				.addPlugin(testPlugin)//
-				.addDimension(dimension1)//
-				.addDimension(dimension2)//
-				.addExperimentContextConsumer(nioReportItemHandler)//
-				.setExperimentProgressLog(subPath.resolve("progresslog.txt"))//
-				.setContinueFromProgressLog(true)//
-				.addExperimentContextConsumer(experimentStatusConsole)//
-				.build()//
-				.execute();
+					.addPlugin(testPlugin)//
+					.addDimension(dimension1)//
+					.addDimension(dimension2)//
+					.addExperimentContextConsumer(nioReportItemHandler)//
+					.setExperimentProgressLog(subPath.resolve("progresslog.txt"))//
+					.setContinueFromProgressLog(true)//
+					.addExperimentContextConsumer(experimentStatusConsole)//
+					.build()//
+					.execute();
 
 	}
 
@@ -687,25 +722,24 @@ public final class MT_NIOReportItemHandler {
 
 		NIOReportItemHandler nioReportItemHandler = //
 				NIOReportItemHandler.builder()//
-						.addReport(reportLabel, subPath.resolve("report1.txt"))//
-						.build();
+									.addReport(reportLabel, subPath.resolve("report1.txt"))//
+									.build();
 
 		TestPluginData testPluginData = pluginDataBuilder.build();
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
-
 		ExperimentStatusConsole experimentStatusConsole = ExperimentStatusConsole.builder().build();
 
 		Experiment	.builder()//
-				.addPlugin(testPlugin)//
-				.addDimension(dimension1)//
-				.addDimension(dimension2)//
-				.addExperimentContextConsumer(nioReportItemHandler)//
-				.setExperimentProgressLog(subPath.resolve("progresslog.txt"))//
-				.setContinueFromProgressLog(true)//
-				.addExperimentContextConsumer(experimentStatusConsole)//
-				.build()//
-				.execute();
+					.addPlugin(testPlugin)//
+					.addDimension(dimension1)//
+					.addDimension(dimension2)//
+					.addExperimentContextConsumer(nioReportItemHandler)//
+					.setExperimentProgressLog(subPath.resolve("progresslog.txt"))//
+					.setContinueFromProgressLog(true)//
+					.addExperimentContextConsumer(experimentStatusConsole)//
+					.build()//
+					.execute();
 
 	}
 
@@ -713,69 +747,68 @@ public final class MT_NIOReportItemHandler {
 
 		StringBuilder sb = new StringBuilder();
 
-
 		switch (testNum) {
-			case 1:
-				sb.append("expected observations: " + "\n");
-				sb.append("\t" + "a folder named 'test1' should appear in the specified directory" + "\n");
-				sb.append("\t" + "a file named 'report1.txt' should be in the folder" + "\n");
-				sb.append("\t" + "the header of the text file should have the following columns: " + "\n");
-				sb.append("\t" + "\t" + "scenario" + "\n");
-				sb.append("\t" + "\t" + "xxx" + "\n");
-				sb.append("\t" + "\t" + "xyz" + "\n");
-				sb.append("\t" + "\t" + "alpha" + "\n");
-				sb.append("\t" + "\t" + "beta" + "\n");
-				break;
-			case 2:
-				sb.append("expected observations: " + "\n");
-				sb.append("\t" + "a folder named 'test2' should appear in the specified directory" + "\n");
-				sb.append("\t" + "a file named 'report1.txt' should be in the folder" + "\n");
-				sb.append("\t" + "the header of the text file should have the following columns: " + "\n");
-				sb.append("\t" + "\t" + "scenario" + "\n");
-				sb.append("\t" + "\t" + "alpha" + "\n");
-				sb.append("\t" + "\t" + "beta" + "\n");
-				break;
-			case 3:
-				sb.append("expected observations: " + "\n");
-				sb.append("\t" + "a folder named 'test3' should appear in the specified directory" + "\n");
-				sb.append("\t" + "a file named 'report1.txt' should be in the folder" + "\n");
-				sb.append("\t" + "the header of the text file should have the following columns: " + "\n");
-				sb.append("\t" + "\t" + "scenario" + "\n");
-				sb.append("\t" + "\t" + "xxx" + "\n");
-				sb.append("\t" + "\t" + "xyz" + "\n");
-				sb.append("\t" + "\t" + "alpha" + "\n");
-				sb.append("\t" + "\t" + "beta" + "\n");
-				sb.append("\t" + "another file named 'progresslog.txt' should be in the folder" + "\n");
-				sb.append("\t" + "the header of the text file should have the following columns: " + "\n");
-				sb.append("\t" + "\t" + "scenario" + "\n");
-				sb.append("\t" + "\t" + "xxx" + "\n");
-				sb.append("\t" + "\t" + "xyz" + "\n");
-				break;
-			case 4:
-				sb.append("expected observations: " + "\n");
-				sb.append("\t" + "after all 6 scenarios are completed, the compiler should show 2" + "\n");
-				sb.append("\t" + "values. You should have PREVIOUSLY_SUCCEEDED and SUCCEEDED values" + "\n");
-				sb.append("\t" + "whose sum should total up to 6." + "\n");
-				sb.append("\t" + "a folder named 'test4' should appear in the specified directory" + "\n");
-				sb.append("\t" + "a file named 'report1.txt' should be in the folder" + "\n");
-				sb.append("\t" + "the header of the text file should have the following columns: " + "\n");
-				sb.append("\t" + "\t" + "scenario" + "\n");
-				sb.append("\t" + "\t" + "xxx" + "\n");
-				sb.append("\t" + "\t" + "xyz" + "\n");
-				sb.append("\t" + "\t" + "alpha" + "\n");
-				sb.append("\t" + "\t" + "beta" + "\n");
-				sb.append("\t" + "another file named 'progresslog.txt' should be in the folder" + "\n");
-				sb.append("\t" + "the header of the text file should have the following columns: " + "\n");
-				sb.append("\t" + "\t" + "scenario" + "\n");
-				sb.append("\t" + "\t" + "xxx" + "\n");
-				sb.append("\t" + "\t" + "xyz" + "\n");
-				break;
-			case 5:
-				sb.append("expected observations: " + "\n");
-				sb.append("\t" + "after running test 5, you should recieve an exception with the following message:" + "\n");
-				sb.append("\t" + "Exception in thread \"main\" util.errors.ContractException: The scenario progress file does not exist," + "\n");
-				sb.append("\t" + "but is required when continuation from progress file is chosen" + "\n");
-				break;
+		case 1:
+			sb.append("expected observations: " + "\n");
+			sb.append("\t" + "a folder named 'test1' should appear in the specified directory" + "\n");
+			sb.append("\t" + "a file named 'report1.txt' should be in the folder" + "\n");
+			sb.append("\t" + "the header of the text file should have the following columns: " + "\n");
+			sb.append("\t" + "\t" + "scenario" + "\n");
+			sb.append("\t" + "\t" + "xxx" + "\n");
+			sb.append("\t" + "\t" + "xyz" + "\n");
+			sb.append("\t" + "\t" + "alpha" + "\n");
+			sb.append("\t" + "\t" + "beta" + "\n");
+			break;
+		case 2:
+			sb.append("expected observations: " + "\n");
+			sb.append("\t" + "a folder named 'test2' should appear in the specified directory" + "\n");
+			sb.append("\t" + "a file named 'report1.txt' should be in the folder" + "\n");
+			sb.append("\t" + "the header of the text file should have the following columns: " + "\n");
+			sb.append("\t" + "\t" + "scenario" + "\n");
+			sb.append("\t" + "\t" + "alpha" + "\n");
+			sb.append("\t" + "\t" + "beta" + "\n");
+			break;
+		case 3:
+			sb.append("expected observations: " + "\n");
+			sb.append("\t" + "a folder named 'test3' should appear in the specified directory" + "\n");
+			sb.append("\t" + "a file named 'report1.txt' should be in the folder" + "\n");
+			sb.append("\t" + "the header of the text file should have the following columns: " + "\n");
+			sb.append("\t" + "\t" + "scenario" + "\n");
+			sb.append("\t" + "\t" + "xxx" + "\n");
+			sb.append("\t" + "\t" + "xyz" + "\n");
+			sb.append("\t" + "\t" + "alpha" + "\n");
+			sb.append("\t" + "\t" + "beta" + "\n");
+			sb.append("\t" + "another file named 'progresslog.txt' should be in the folder" + "\n");
+			sb.append("\t" + "the header of the text file should have the following columns: " + "\n");
+			sb.append("\t" + "\t" + "scenario" + "\n");
+			sb.append("\t" + "\t" + "xxx" + "\n");
+			sb.append("\t" + "\t" + "xyz" + "\n");
+			break;
+		case 4:
+			sb.append("expected observations: " + "\n");
+			sb.append("\t" + "after all 6 scenarios are completed, the compiler should show 2" + "\n");
+			sb.append("\t" + "values. You should have PREVIOUSLY_SUCCEEDED and SUCCEEDED values" + "\n");
+			sb.append("\t" + "whose sum should total up to 6." + "\n");
+			sb.append("\t" + "a folder named 'test4' should appear in the specified directory" + "\n");
+			sb.append("\t" + "a file named 'report1.txt' should be in the folder" + "\n");
+			sb.append("\t" + "the header of the text file should have the following columns: " + "\n");
+			sb.append("\t" + "\t" + "scenario" + "\n");
+			sb.append("\t" + "\t" + "xxx" + "\n");
+			sb.append("\t" + "\t" + "xyz" + "\n");
+			sb.append("\t" + "\t" + "alpha" + "\n");
+			sb.append("\t" + "\t" + "beta" + "\n");
+			sb.append("\t" + "another file named 'progresslog.txt' should be in the folder" + "\n");
+			sb.append("\t" + "the header of the text file should have the following columns: " + "\n");
+			sb.append("\t" + "\t" + "scenario" + "\n");
+			sb.append("\t" + "\t" + "xxx" + "\n");
+			sb.append("\t" + "\t" + "xyz" + "\n");
+			break;
+		case 5:
+			sb.append("expected observations: " + "\n");
+			sb.append("\t" + "after running test 5, you should recieve an exception with the following message:" + "\n");
+			sb.append("\t" + "Exception in thread \"main\" util.errors.ContractException: The scenario progress file does not exist," + "\n");
+			sb.append("\t" + "but is required when continuation from progress file is chosen" + "\n");
+			break;
 		}
 
 		System.out.println(sb);
