@@ -34,7 +34,7 @@ public class TestSimulation {
 	 *             <li>{@linkplain TestError#TEST_EXECUTION_FAILURE} if the
 	 *             simulation does not complete successfully</li>
 	 */
-	public static void executeSimulation(List<Plugin> pluginsToAdd, TestSimulationOutputConsumer outputConsumer) {
+	public static void executeSimulation(List<Plugin> pluginsToAdd, TestOutputConsumer outputConsumer) {
 		if (outputConsumer == null) {
 			throw new ContractException(NucleusError.NULL_OUTPUT_HANDLER,
 					"Output consumer was not set. Either set it or call the other version of this method that doesn't take a outputConsumer as a parameter.");
@@ -56,7 +56,7 @@ public class TestSimulation {
 	 *             simulation does not complete successfully</li>
 	 */
 	public static void executeSimulation(List<Plugin> pluginsToAdd) {
-		_executeSimulation(pluginsToAdd, new TestSimulationOutputConsumer());
+		_executeSimulation(pluginsToAdd, new TestOutputConsumer());
 	}
 
 	/**
@@ -72,10 +72,10 @@ public class TestSimulation {
 	public static void executeSimulation(Plugin plugin) {
 		List<Plugin> pluginsToAdd = new ArrayList<>();
 		pluginsToAdd.add(plugin);
-		_executeSimulation(pluginsToAdd, new TestSimulationOutputConsumer());
+		_executeSimulation(pluginsToAdd, new TestOutputConsumer());
 	}
 
-	private static void _executeSimulation(List<Plugin> pluginsToAdd, TestSimulationOutputConsumer outputConsumer) {
+	private static void _executeSimulation(List<Plugin> pluginsToAdd, TestOutputConsumer outputConsumer) {
 		if (outputConsumer == null) {
 			throw new ContractException(NucleusError.NULL_OUTPUT_HANDLER,
 					"Output consumer was not set. Either set it or call the other version of this method that doesn't take a outputConsumer as a parameter.");

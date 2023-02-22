@@ -15,7 +15,7 @@ import nucleus.ReportContext;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestSimulation;
-import nucleus.testsupport.testplugin.TestSimulationOutputConsumer;
+import nucleus.testsupport.testplugin.TestOutputConsumer;
 import plugins.globalproperties.GlobalPropertiesPluginData;
 import plugins.globalproperties.datamanagers.GlobalPropertiesDataManager;
 import plugins.globalproperties.support.GlobalPropertyId;
@@ -170,7 +170,7 @@ public class AT_GlobalPropertyReport {
 		expectedReportItems.put(getReportItem(3.0, globalPropertyId_3, true), 1);
 		expectedReportItems.put(getReportItem(3.0, globalPropertyId_5, 199.16), 1);
 
-		TestSimulationOutputConsumer outputConsumer = new TestSimulationOutputConsumer();
+		TestOutputConsumer outputConsumer = new TestOutputConsumer();
 
 		List<Plugin> plugins = GlobalPropertiesTestPluginFactory.factory(testPluginData).setGlobalPropertiesPluginData(globalPropertiesPluginData).getPlugins();
 		plugins.add(ReportsTestPluginFactory.getPluginFromReport(globalPropertyReport::init));

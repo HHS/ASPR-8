@@ -13,11 +13,11 @@ import util.wrappers.MutableInteger;
  * A Testing utility class that will consume simulation output and includes a
  * method to retrieve output items by class type
  */
-public class TestSimulationOutputConsumer implements Consumer<Object> {
+public class TestOutputConsumer implements Consumer<Object> {
 	private List<Object> outputItems;
 
 
-	public TestSimulationOutputConsumer() {
+	public TestOutputConsumer() {
 		this.outputItems = new ArrayList<>();
 	}
 

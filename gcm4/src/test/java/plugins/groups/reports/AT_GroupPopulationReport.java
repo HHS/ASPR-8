@@ -15,7 +15,7 @@ import nucleus.ReportContext;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestSimulation;
-import nucleus.testsupport.testplugin.TestSimulationOutputConsumer;
+import nucleus.testsupport.testplugin.TestOutputConsumer;
 import plugins.groups.GroupsPluginData;
 import plugins.groups.datamanagers.GroupsDataManager;
 import plugins.groups.support.GroupId;
@@ -160,7 +160,7 @@ public class AT_GroupPopulationReport {
 				.put(getReportItem(ReportPeriod.HOURLY, 1, 6, TestAuxiliaryGroupTypeId.GROUP_AUX_TYPE_1, 4, 1), 1);
 
 		GroupPopulationReport report = new GroupPopulationReport(REPORT_LABEL, ReportPeriod.HOURLY);
-		TestSimulationOutputConsumer outputConsumer = new TestSimulationOutputConsumer();
+		TestOutputConsumer outputConsumer = new TestOutputConsumer();
 
 		List<Plugin> plugins = getPlugins(testPluginData, 5524610980534223950L);
 		plugins.add(ReportsTestPluginFactory.getPluginFromReport(report::init));
@@ -267,7 +267,7 @@ public class AT_GroupPopulationReport {
 		expectedReportItems.put(getReportItem(ReportPeriod.DAILY, 5, TestGroupTypeId.GROUP_TYPE_2, 3, 1), 1);
 
 		GroupPopulationReport report = new GroupPopulationReport(REPORT_LABEL, ReportPeriod.DAILY);
-		TestSimulationOutputConsumer outputConsumer = new TestSimulationOutputConsumer();
+		TestOutputConsumer outputConsumer = new TestOutputConsumer();
 
 		List<Plugin> plugins = getPlugins(testPluginData, 4023600052052959521L);
 		plugins.add(ReportsTestPluginFactory.getPluginFromReport(report::init));
@@ -340,7 +340,7 @@ public class AT_GroupPopulationReport {
 		GroupPopulationReport report = new GroupPopulationReport(REPORT_LABEL, ReportPeriod.END_OF_SIMULATION);
 		List<Plugin> plugins = getPlugins(testPluginData, 6092832510476200219L);
 		plugins.add(ReportsTestPluginFactory.getPluginFromReport(report::init));
-		TestSimulationOutputConsumer outputConsumer = new TestSimulationOutputConsumer();
+		TestOutputConsumer outputConsumer = new TestOutputConsumer();
 		TestSimulation.executeSimulation(plugins, outputConsumer);
 
 		assertEquals(expectedReportItems, outputConsumer.getOutputItems(ReportItem.class));

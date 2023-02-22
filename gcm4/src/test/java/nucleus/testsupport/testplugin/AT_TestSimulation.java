@@ -47,10 +47,10 @@ public class AT_TestSimulation {
 	}
 
 	@Test
-	@UnitTestMethod(target = TestSimulation.class, name = "executeSimulation", args = { List.class, TestSimulationOutputConsumer.class })
+	@UnitTestMethod(target = TestSimulation.class, name = "executeSimulation", args = { List.class, TestOutputConsumer.class })
 	public void testExecuteSimulation_OutputConsumer() {
 		MutableBoolean executed = new MutableBoolean();
-		TestSimulationOutputConsumer outputConsumer = new TestSimulationOutputConsumer();
+		TestOutputConsumer outputConsumer = new TestOutputConsumer();
 		TestPluginData testPluginData = TestPluginData.builder().addTestActorPlan("actor", new TestActorPlan(0, c -> executed.setValue(true))).build();
 		List<Plugin> plugins = Arrays.asList(TestPlugin.getTestPlugin(testPluginData));
 		assertDoesNotThrow(() -> TestSimulation.executeSimulation(plugins, outputConsumer));

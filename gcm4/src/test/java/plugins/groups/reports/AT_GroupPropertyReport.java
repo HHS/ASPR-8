@@ -15,7 +15,7 @@ import nucleus.ReportContext;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestSimulation;
-import nucleus.testsupport.testplugin.TestSimulationOutputConsumer;
+import nucleus.testsupport.testplugin.TestOutputConsumer;
 import plugins.groups.datamanagers.GroupsDataManager;
 import plugins.groups.support.GroupId;
 import plugins.groups.support.GroupPropertyDefinitionInitialization;
@@ -289,7 +289,7 @@ public class AT_GroupPropertyReport {
 		List<Plugin> plugins = GroupsTestPluginFactory.factory(0, 0, 0, 6092832510476200219L, testPluginData).getPlugins();
 		plugins.add(ReportsTestPluginFactory.getPluginFromReport(groupPropertyReport::init));
 
-		TestSimulationOutputConsumer outputConsumer = new TestSimulationOutputConsumer();
+		TestOutputConsumer outputConsumer = new TestOutputConsumer();
 		TestSimulation.executeSimulation(plugins, outputConsumer);
 
 		
@@ -532,7 +532,7 @@ public class AT_GroupPropertyReport {
 		}
 		GroupPropertyReport groupPropertyReport = builder.build();
 
-		TestSimulationOutputConsumer outputConsumer = new TestSimulationOutputConsumer();
+		TestOutputConsumer outputConsumer = new TestOutputConsumer();
 
 		List<Plugin> plugins = GroupsTestPluginFactory.factory(0, 0, 0, 6092832510476200219L, testPluginData).getPlugins();
 

@@ -19,15 +19,15 @@ import util.wrappers.MutableInteger;
 public class AT_TestSimulationOutputConsumer {
 
 	@Test
-	@UnitTestConstructor(target = TestSimulationOutputConsumer.class, args = {})
+	@UnitTestConstructor(target = TestOutputConsumer.class, args = {})
 	public void testConstructor() {
-		assertNotNull(new TestSimulationOutputConsumer());
+		assertNotNull(new TestOutputConsumer());
 	}
 
 	@Test
-	@UnitTestMethod(target = TestSimulationOutputConsumer.class, name = "accept", args = { Object.class })
+	@UnitTestMethod(target = TestOutputConsumer.class, name = "accept", args = { Object.class })
 	public void testAccept() {
-		TestSimulationOutputConsumer outputConsumer = new TestSimulationOutputConsumer();
+		TestOutputConsumer outputConsumer = new TestOutputConsumer();
 
 		outputConsumer.accept(true);
 		outputConsumer.accept(false);
@@ -50,9 +50,9 @@ public class AT_TestSimulationOutputConsumer {
 	}
 
 	@Test
-	@UnitTestMethod(target = TestSimulationOutputConsumer.class, name = "getOutputItems", args = { Class.class })
+	@UnitTestMethod(target = TestOutputConsumer.class, name = "getOutputItems", args = { Class.class })
 	public void testGetOutputItems() {
-		TestSimulationOutputConsumer outputConsumer = new TestSimulationOutputConsumer();
+		TestOutputConsumer outputConsumer = new TestOutputConsumer();
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7830499412883085962L);
 
