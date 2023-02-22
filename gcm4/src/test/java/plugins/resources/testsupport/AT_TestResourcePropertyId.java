@@ -137,5 +137,17 @@ public class AT_TestResourcePropertyId {
 			}
 		}
 	}
+	
+	@Test
+	@UnitTestMethod(target = TestResourcePropertyId.class, name = "next", args = {})
+	public void testNext() {
+		for (TestResourcePropertyId testResourcePropertyId : TestResourcePropertyId.values()) {
+			int index = testResourcePropertyId.ordinal();
+			index += 1;
+			index %= TestResourcePropertyId.values().length;
+			TestResourcePropertyId expectedNextTestResourcePropertyId = TestResourcePropertyId.values()[index];
+			assertEquals(expectedNextTestResourcePropertyId, testResourcePropertyId.next());
+		}
+	}
 
 }

@@ -12,6 +12,7 @@ import util.errors.ContractException;
 public enum TestError implements ContractError {
 	DUPLICATE_TEST_SCENARIO_REPORTS("Duplicate test scenario reports"),
 	NULL_ALIAS("Null alias value"),
+	NULL_OUTPUT_ITEM("Null released output item"),
 	NULL_PLUGIN_ID("Null plugin id"),
 	NULL_DATA_MANAGER_SUPPLIER("Null data manager supplier"),
 	NEGATIVE_PLANNING_TIME("Negative test planning time"),

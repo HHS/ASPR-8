@@ -3,7 +3,6 @@ package plugins.regions.reports;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -18,7 +17,7 @@ import nucleus.ReportContext;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestSimulation;
-import nucleus.testsupport.testplugin.TestSimulationOutputConsumer;
+import nucleus.testsupport.testplugin.TestOutputConsumer;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonConstructionData;
 import plugins.people.support.PersonId;
@@ -163,28 +162,14 @@ public class AT_RegionTransferReport {
 
 		TestPluginData testPluginData = pluginBuilder.build();
 
-		TestSimulationOutputConsumer outputConsumer = new TestSimulationOutputConsumer();
+		TestOutputConsumer outputConsumer = new TestOutputConsumer();
 		List<Plugin> pluginsToAdd = RegionsTestPluginFactory.factory(0, 3054641152904904632L, TimeTrackingPolicy.TRACK_TIME, testPluginData).setRegionsPluginData(regionsPluginData).getPlugins();
 		pluginsToAdd.add(ReportsTestPluginFactory.getPluginFromReport(new RegionTransferReport(REPORT_LABEL, ReportPeriod.DAILY)::init));
 
 		TestSimulation.executeSimulation(pluginsToAdd, outputConsumer);
 
-		assertTrue(outputConsumer.isComplete());
+		
 		Map<ReportItem, Integer> actualReportItems = outputConsumer.getOutputItems(ReportItem.class);
-
-		// for (ReportItem reportItem : expectedReportItems.keySet()) {
-		// System.out.println(reportItem.getValue(0) + "\t" +
-		// reportItem.getValue(1) + "\t" + reportItem.getValue(2) + "\t" +
-		// reportItem.getValue(3));
-		//
-		// }
-		// System.out.println();
-		// for (ReportItem reportItem : actualReportItems.keySet()) {
-		//
-		// System.out.println(reportItem.getValue(0) + "\t" +
-		// reportItem.getValue(1) + "\t" + reportItem.getValue(2) + "\t" +
-		// reportItem.getValue(3));
-		// }
 
 		assertEquals(expectedReportItems, actualReportItems);
 

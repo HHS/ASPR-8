@@ -3,7 +3,6 @@ package plugins.groups.reports;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -16,7 +15,7 @@ import nucleus.ReportContext;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestSimulation;
-import nucleus.testsupport.testplugin.TestSimulationOutputConsumer;
+import nucleus.testsupport.testplugin.TestOutputConsumer;
 import plugins.groups.datamanagers.GroupsDataManager;
 import plugins.groups.support.GroupId;
 import plugins.groups.support.GroupPropertyDefinitionInitialization;
@@ -290,10 +289,10 @@ public class AT_GroupPropertyReport {
 		List<Plugin> plugins = GroupsTestPluginFactory.factory(0, 0, 0, 6092832510476200219L, testPluginData).getPlugins();
 		plugins.add(ReportsTestPluginFactory.getPluginFromReport(groupPropertyReport::init));
 
-		TestSimulationOutputConsumer outputConsumer = new TestSimulationOutputConsumer();
+		TestOutputConsumer outputConsumer = new TestOutputConsumer();
 		TestSimulation.executeSimulation(plugins, outputConsumer);
 
-		assertTrue(outputConsumer.isComplete());
+		
 		assertEquals(expectedReportItems, outputConsumer.getOutputItems(ReportItem.class));
 	}
 
@@ -533,7 +532,7 @@ public class AT_GroupPropertyReport {
 		}
 		GroupPropertyReport groupPropertyReport = builder.build();
 
-		TestSimulationOutputConsumer outputConsumer = new TestSimulationOutputConsumer();
+		TestOutputConsumer outputConsumer = new TestOutputConsumer();
 
 		List<Plugin> plugins = GroupsTestPluginFactory.factory(0, 0, 0, 6092832510476200219L, testPluginData).getPlugins();
 
@@ -541,7 +540,7 @@ public class AT_GroupPropertyReport {
 
 		TestSimulation.executeSimulation(plugins, outputConsumer);
 
-		assertTrue(outputConsumer.isComplete());
+		
 		
 		Map<ReportItem, Integer> actualReportItems = outputConsumer.getOutputItems(ReportItem.class);
 		

@@ -1,16 +1,15 @@
 package nucleus.testsupport.testplugin;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
-import java.util.Optional;
+import java.util.List;
 import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
 import nucleus.ActorContext;
-import nucleus.Experiment;
 import nucleus.Plugin;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
@@ -57,21 +56,13 @@ public class AT_TestActor {
 		TestPluginData testPluginData = pluginDataBuilder.build();
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
-		ExperimentPlanCompletionObserver experimentPlanCompletionObserver = new ExperimentPlanCompletionObserver();
+		//execute the simulation
+		List<Plugin> plugins = new ArrayList<>();
+		plugins.add(testPlugin);
+		
+		TestSimulation.executeSimulation(plugins);
+		
 
-		// build and execute the engine
-		Experiment	.builder()//
-					.addExperimentContextConsumer(experimentPlanCompletionObserver::init)//
-					.addPlugin(testPlugin)//
-					.build()//
-					.execute();//
-
-		// show that all actions executed
-		Optional<TestScenarioReport> optional = experimentPlanCompletionObserver.getActionCompletionReport(0);
-		assertTrue(optional.isPresent(), "Scenario did not complete");
-
-		TestScenarioReport testScenarioReport = optional.get();
-		assertTrue(testScenarioReport.isComplete(), "Some planned action were not executed");
 
 		// show that the actors executed the expected actions
 		assertEquals(expectedObservations, actualObservations);

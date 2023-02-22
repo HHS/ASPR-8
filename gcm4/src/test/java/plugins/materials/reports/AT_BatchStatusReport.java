@@ -2,7 +2,6 @@ package plugins.materials.reports;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -22,7 +21,7 @@ import nucleus.ReportContext;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestSimulation;
-import nucleus.testsupport.testplugin.TestSimulationOutputConsumer;
+import nucleus.testsupport.testplugin.TestOutputConsumer;
 import plugins.materials.datamangers.MaterialsDataManager;
 import plugins.materials.support.BatchConstructionInfo;
 import plugins.materials.support.BatchId;
@@ -234,14 +233,14 @@ public final class AT_BatchStatusReport {
 
 		TestPluginData testPluginData = pluginBuilder.build();
 
-		TestSimulationOutputConsumer outputConsumer = new TestSimulationOutputConsumer();
+		TestOutputConsumer outputConsumer = new TestOutputConsumer();
 		List<Plugin> pluginsToAdd = MaterialsTestPluginFactory.factory(0, 0, 0, 2819236410498978100L, testPluginData)
 				.getPlugins();
 		pluginsToAdd.add(ReportsTestPluginFactory.getPluginFromReport(new BatchStatusReport(REPORT_LABEL)::init));
 
 		TestSimulation.executeSimulation(pluginsToAdd, outputConsumer);
 
-		assertTrue(outputConsumer.isComplete());
+		
 		assertEquals(expectedReportItems, outputConsumer.getOutputItems(ReportItem.class));
 	}
 

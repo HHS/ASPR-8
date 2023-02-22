@@ -2,7 +2,6 @@ package plugins.materials.reports;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -20,7 +19,7 @@ import nucleus.ReportContext;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestSimulation;
-import nucleus.testsupport.testplugin.TestSimulationOutputConsumer;
+import nucleus.testsupport.testplugin.TestOutputConsumer;
 import plugins.materials.datamangers.MaterialsDataManager;
 import plugins.materials.support.MaterialsProducerConstructionData;
 import plugins.materials.support.MaterialsProducerId;
@@ -160,7 +159,7 @@ public final class AT_MaterialsProducerResourceReport {
 
 		TestPluginData testPluginData = pluginBuilder.build();
 
-		TestSimulationOutputConsumer outputConsumer = new TestSimulationOutputConsumer();
+		TestOutputConsumer outputConsumer = new TestOutputConsumer();
 
 		List<Plugin> pluginsToAdd = MaterialsTestPluginFactory.factory(0, 0, 0, 6081341958178733565L, testPluginData)
 				.getPlugins();
@@ -168,7 +167,6 @@ public final class AT_MaterialsProducerResourceReport {
 
 		TestSimulation.executeSimulation(pluginsToAdd, outputConsumer);
 
-		assertTrue(outputConsumer.isComplete());
 		assertEquals(expectedReportItems, outputConsumer.getOutputItems(ReportItem.class));
 	}
 

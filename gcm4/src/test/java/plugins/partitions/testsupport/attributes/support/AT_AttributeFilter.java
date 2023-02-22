@@ -6,18 +6,16 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import nucleus.Plugin;
-import nucleus.Simulation;
-import nucleus.Simulation.Builder;
 import nucleus.SimulationContext;
-import nucleus.testsupport.testplugin.ScenarioPlanCompletionObserver;
 import nucleus.testsupport.testplugin.TestActorPlan;
-import nucleus.testsupport.testplugin.TestError;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestSimulation;
@@ -90,7 +88,7 @@ public final class AT_AttributeFilter {
 	public void testValidate() {
 		int initialPopulation = 100;
 
-		final Builder builder = Simulation.builder();
+		List<Plugin> plugins = new ArrayList<>();
 		// define some person attributes
 		final AttributesPluginData.Builder attributesBuilder = AttributesPluginData.builder();
 		for (final TestAttributeId testAttributeId : TestAttributeId.values()) {
@@ -101,7 +99,7 @@ public final class AT_AttributeFilter {
 
 		Plugin attributesPlugin = AttributesPlugin.getAttributesPlugin(attributesBuilder.build());
 
-		builder.addPlugin(attributesPlugin);
+		plugins.add(attributesPlugin);
 
 		final PeoplePluginData.Builder peopleBuilder = PeoplePluginData.builder();
 		for (int i = 0; i < initialPopulation; i++) {
@@ -110,11 +108,11 @@ public final class AT_AttributeFilter {
 
 		PeoplePluginData peoplePluginData = peopleBuilder.build();
 		Plugin peoplePlugin = PeoplePlugin.getPeoplePlugin(peoplePluginData);
-		builder.addPlugin(peoplePlugin);
+		plugins.add(peoplePlugin);
 
-		builder.addPlugin(StochasticsPlugin.getStochasticsPlugin(StochasticsPluginData.builder().setSeed(7698506335486677498L).build()));
+		plugins.add(StochasticsPlugin.getStochasticsPlugin(StochasticsPluginData.builder().setSeed(7698506335486677498L).build()));
 
-		builder.addPlugin(PartitionsPlugin.getPartitionsPlugin());
+		plugins.add(PartitionsPlugin.getPartitionsPlugin());
 
 		// and add the action plugin to the engine
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
@@ -146,19 +144,11 @@ public final class AT_AttributeFilter {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		builder.addPlugin(TestPlugin.getTestPlugin(testPluginData));
+		plugins.add(TestPlugin.getTestPlugin(testPluginData));
+		
+		TestSimulation.executeSimulation(plugins);
 
-		// build and execute the engine
-		ScenarioPlanCompletionObserver scenarioPlanCompletionObserver = new ScenarioPlanCompletionObserver();
-		builder//
-				.setOutputConsumer(scenarioPlanCompletionObserver::handleOutput)//
-				.build()//
-				.execute();
-
-		// show that all actions were executed
-		if (!scenarioPlanCompletionObserver.allPlansExecuted()) {
-			throw new ContractException(TestError.TEST_EXECUTION_FAILURE);
-		}
+		
 
 	}
 

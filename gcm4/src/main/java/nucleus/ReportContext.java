@@ -17,6 +17,10 @@ import util.errors.ContractException;
  */
 
 public final class ReportContext {
+	
+	public ReportId getReportId() {
+		return simulation.focalReportId;
+	}
 
 	private final Simulation simulation;
 

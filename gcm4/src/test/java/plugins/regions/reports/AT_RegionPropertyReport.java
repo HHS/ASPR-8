@@ -2,7 +2,6 @@ package plugins.regions.reports;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -15,7 +14,7 @@ import nucleus.ReportContext;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestSimulation;
-import nucleus.testsupport.testplugin.TestSimulationOutputConsumer;
+import nucleus.testsupport.testplugin.TestOutputConsumer;
 import plugins.regions.RegionsPluginData;
 import plugins.regions.datamanagers.RegionsDataManager;
 import plugins.regions.support.RegionConstructionData;
@@ -212,13 +211,13 @@ public class AT_RegionPropertyReport {
 
 		TestPluginData testPluginData = pluginBuilder.build();
 
-		TestSimulationOutputConsumer outputConsumer = new TestSimulationOutputConsumer();
+		TestOutputConsumer outputConsumer = new TestOutputConsumer();
 		List<Plugin> pluginsToAdd = RegionsTestPluginFactory.factory(0, 3656508960291338287L, TimeTrackingPolicy.TRACK_TIME, testPluginData).setRegionsPluginData(regionsPluginData).getPlugins();
 		pluginsToAdd.add(ReportsTestPluginFactory.getPluginFromReport(new RegionPropertyReport(REPORT_LABEL)::init));
 
 		TestSimulation.executeSimulation(pluginsToAdd, outputConsumer);
 
-		assertTrue(outputConsumer.isComplete());
+		
 		assertEquals(expectedReportItems, outputConsumer.getOutputItems(ReportItem.class));
 	}
 

@@ -4,7 +4,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.junit.jupiter.api.Test;
@@ -12,12 +14,11 @@ import org.junit.jupiter.api.Test;
 import nucleus.Plugin;
 import nucleus.PluginData;
 import nucleus.PluginId;
-import nucleus.Simulation;
-import nucleus.testsupport.testplugin.ScenarioPlanCompletionObserver;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestPluginData.Builder;
+import nucleus.testsupport.testplugin.TestSimulation;
 import plugins.partitions.PartitionsPlugin;
 import plugins.people.PeoplePlugin;
 import plugins.people.PeoplePluginData;
@@ -64,19 +65,15 @@ public class AT_AttributesPlugin {
 
 		TestPluginData testPluginData = testPluginDataBuilder.build();
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
-
-		ScenarioPlanCompletionObserver scenarioPlanCompletionObserver = new ScenarioPlanCompletionObserver();
-
-		Simulation	.builder()//
-					.setOutputConsumer(scenarioPlanCompletionObserver::handleOutput)//
-					.addPlugin(StochasticsPlugin.getStochasticsPlugin(StochasticsPluginData.builder().setSeed(435346454564566L).build()))//
-					.addPlugin(PeoplePlugin.getPeoplePlugin(PeoplePluginData.builder().build()))//
-					.addPlugin(PartitionsPlugin.getPartitionsPlugin()).addPlugin(attributesPlugin)//
-					.addPlugin(testPlugin)//
-					.build()//
-					.execute();//
-
-		assertTrue(scenarioPlanCompletionObserver.allPlansExecuted());
+		
+		List<Plugin> plugins = new ArrayList<>();
+		plugins.add(testPlugin);
+		plugins.add(StochasticsPlugin.getStochasticsPlugin(StochasticsPluginData.builder().setSeed(435346454564566L).build()));
+		plugins.add(PeoplePlugin.getPeoplePlugin(PeoplePluginData.builder().build()));
+		plugins.add(PartitionsPlugin.getPartitionsPlugin());
+		plugins.add(attributesPlugin);
+		
+		TestSimulation.executeSimulation(plugins);
 
 	}
 
