@@ -3,7 +3,6 @@ package plugins.materials.reports;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -148,7 +147,7 @@ public final class AT_MaterialsProducerPropertyReport {
 
 		TestSimulation.executeSimulation(pluginsToAdd, outputConsumer);
 		
-		assertTrue(outputConsumer.isComplete());
+		
 		Map<ReportItem, Integer> acutualReportItems = outputConsumer.getOutputItems(ReportItem.class);
 		assertEquals(expectedReportItems, acutualReportItems);
 	}

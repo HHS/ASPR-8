@@ -1,7 +1,6 @@
 package plugins.resources.reports;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -197,7 +196,7 @@ public class AT_ResourcePropertyReport {
 		
 		TestSimulation.executeSimulation(pluginsToAdd, outputConsumer);
 
-		assertTrue(outputConsumer.isComplete());
+		
 		assertEquals(expectedReportItems, outputConsumer.getOutputItems(ReportItem.class));
 	}
 

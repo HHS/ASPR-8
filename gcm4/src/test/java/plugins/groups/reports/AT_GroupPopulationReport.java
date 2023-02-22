@@ -3,7 +3,6 @@ package plugins.groups.reports;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -167,8 +166,7 @@ public class AT_GroupPopulationReport {
 		plugins.add(ReportsTestPluginFactory.getPluginFromReport(report::init));
 
 		TestSimulation.executeSimulation(plugins, outputConsumer);
-
-		assertTrue(outputConsumer.isComplete());
+		
 		assertEquals(expectedReportItems, outputConsumer.getOutputItems(ReportItem.class));
 
 	}
@@ -276,7 +274,6 @@ public class AT_GroupPopulationReport {
 
 		TestSimulation.executeSimulation(plugins, outputConsumer);
 
-		assertTrue(outputConsumer.isComplete());
 		assertEquals(expectedReportItems, outputConsumer.getOutputItems(ReportItem.class));
 	}
 
@@ -346,7 +343,6 @@ public class AT_GroupPopulationReport {
 		TestSimulationOutputConsumer outputConsumer = new TestSimulationOutputConsumer();
 		TestSimulation.executeSimulation(plugins, outputConsumer);
 
-		assertTrue(outputConsumer.isComplete());
 		assertEquals(expectedReportItems, outputConsumer.getOutputItems(ReportItem.class));
 	}
 

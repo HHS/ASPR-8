@@ -55,7 +55,7 @@ public class AT_TestSimulation {
 		List<Plugin> plugins = Arrays.asList(TestPlugin.getTestPlugin(testPluginData));
 		assertDoesNotThrow(() -> TestSimulation.executeSimulation(plugins, outputConsumer));
 		assertTrue(executed.getValue());
-		assertTrue(outputConsumer.isComplete());
+		
 
 		// precondition: list of plugins is null
 		ContractException contractException = assertThrows(ContractException.class, () -> TestSimulation.executeSimulation(null, outputConsumer));

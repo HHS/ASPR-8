@@ -2,6 +2,7 @@ package nucleus.testsupport.testplugin;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import nucleus.NucleusError;
 import nucleus.Plugin;
@@ -62,7 +63,7 @@ public class TestSimulation {
 	 * Executes a simulation instance
 	 * 
 	 * @throws ContractException
-	 *        
+	 * 
 	 *             <li>{@linkplain NucleusError#NULL_PLUGIN} if the plugin is
 	 *             null</li>
 	 *             <li>{@linkplain TestError#TEST_EXECUTION_FAILURE} if the
@@ -100,7 +101,21 @@ public class TestSimulation {
 		builder.setOutputConsumer(outputConsumer).build().execute();
 
 		// show that all actions were executed
-		if (!outputConsumer.isComplete()) {
+		Map<TestScenarioReport, Integer> outputItems = outputConsumer.getOutputItems(TestScenarioReport.class);
+		boolean complete = false;
+
+		if (outputItems.size() > 1) {
+			throw new ContractException(TestError.DUPLICATE_TEST_SCENARIO_REPORTS);
+		}
+
+		TestScenarioReport testScenarioReport = outputItems.keySet().iterator().next();
+		Integer count = outputItems.get(testScenarioReport);
+		if (count > 1) {
+			throw new ContractException(TestError.DUPLICATE_TEST_SCENARIO_REPORTS);
+		}
+		complete = testScenarioReport.isComplete();
+
+		if (!complete) {
 			throw new ContractException(TestError.TEST_EXECUTION_FAILURE);
 		}
 	}

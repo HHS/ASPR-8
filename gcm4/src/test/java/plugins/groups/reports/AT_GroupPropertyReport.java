@@ -3,7 +3,6 @@ package plugins.groups.reports;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -293,7 +292,7 @@ public class AT_GroupPropertyReport {
 		TestSimulationOutputConsumer outputConsumer = new TestSimulationOutputConsumer();
 		TestSimulation.executeSimulation(plugins, outputConsumer);
 
-		assertTrue(outputConsumer.isComplete());
+		
 		assertEquals(expectedReportItems, outputConsumer.getOutputItems(ReportItem.class));
 	}
 
@@ -541,7 +540,7 @@ public class AT_GroupPropertyReport {
 
 		TestSimulation.executeSimulation(plugins, outputConsumer);
 
-		assertTrue(outputConsumer.isComplete());
+		
 		
 		Map<ReportItem, Integer> actualReportItems = outputConsumer.getOutputItems(ReportItem.class);
 		

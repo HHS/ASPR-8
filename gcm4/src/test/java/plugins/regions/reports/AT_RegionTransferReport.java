@@ -3,7 +3,6 @@ package plugins.regions.reports;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -169,22 +168,8 @@ public class AT_RegionTransferReport {
 
 		TestSimulation.executeSimulation(pluginsToAdd, outputConsumer);
 
-		assertTrue(outputConsumer.isComplete());
+		
 		Map<ReportItem, Integer> actualReportItems = outputConsumer.getOutputItems(ReportItem.class);
-
-		// for (ReportItem reportItem : expectedReportItems.keySet()) {
-		// System.out.println(reportItem.getValue(0) + "\t" +
-		// reportItem.getValue(1) + "\t" + reportItem.getValue(2) + "\t" +
-		// reportItem.getValue(3));
-		//
-		// }
-		// System.out.println();
-		// for (ReportItem reportItem : actualReportItems.keySet()) {
-		//
-		// System.out.println(reportItem.getValue(0) + "\t" +
-		// reportItem.getValue(1) + "\t" + reportItem.getValue(2) + "\t" +
-		// reportItem.getValue(3));
-		// }
 
 		assertEquals(expectedReportItems, actualReportItems);
 

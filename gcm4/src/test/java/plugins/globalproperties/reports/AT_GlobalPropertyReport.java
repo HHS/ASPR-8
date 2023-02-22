@@ -3,7 +3,6 @@ package plugins.globalproperties.reports;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -177,7 +176,6 @@ public class AT_GlobalPropertyReport {
 		plugins.add(ReportsTestPluginFactory.getPluginFromReport(globalPropertyReport::init));
 		TestSimulation.executeSimulation(plugins, outputConsumer);
 
-		assertTrue(outputConsumer.isComplete());
 		assertEquals(expectedReportItems, outputConsumer.getOutputItems(ReportItem.class));
 
 	}
