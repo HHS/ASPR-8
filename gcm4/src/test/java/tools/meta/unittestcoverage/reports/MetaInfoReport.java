@@ -111,7 +111,12 @@ public class MetaInfoReport {
 		for (UnitTag unitTag : taggedAnnotations.keySet()) {
 			Map<Class<?>, List<String>> map = taggedAnnotations.get(unitTag);
 			if (!map.isEmpty()) {
-				System.out.println("Tag = " + unitTag);
+				int count = 0;
+				for (Class<?> target : map.keySet()) {
+					List<String> list = map.get(target);
+					count += list.size();
+				}
+				System.out.println("Tag = " + unitTag+"("+count+")");
 				for (Class<?> target : map.keySet()) {
 					List<String> list = map.get(target);
 					for (String annotationString : list) {

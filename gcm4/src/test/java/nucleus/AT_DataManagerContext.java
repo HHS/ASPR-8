@@ -959,8 +959,9 @@ public class AT_DataManagerContext {
 		assertFalse(plan5.executed());
 
 	}
-
-	private void combinedSubscriptionTest() {
+	@Test
+	@UnitTestMethod(target = DataManagerContext.class, name = "subscribe", args = { Class.class, BiConsumer.class })
+	public void testSubscribe() {
 
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
@@ -1016,20 +1017,6 @@ public class AT_DataManagerContext {
 		assertTrue(observed.getValue());
 
 	}
-
-	@Test
-	@UnitTestMethod(target = DataManagerContext.class, name = "subscribe", args = { Class.class, BiConsumer.class })
-	public void testSubscribe() {
-		combinedSubscriptionTest();
-	}
-
-	// @Test
-	// @UnitTestMethod(target = DataManagerContext.class,name =
-	// "subscribeToEventPostPhase", args = { Class.class,
-	// BiConsumer.class })
-	// public void testSubscribeToEventPostPhase() {
-	// combinedSubscriptionTest();
-	// }
 
 	@Test
 	@UnitTestMethod(target = DataManagerContext.class, name = "unsubscribe", args = { Class.class })
