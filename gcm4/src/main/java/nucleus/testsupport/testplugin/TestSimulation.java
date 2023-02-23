@@ -46,6 +46,28 @@ public class TestSimulation {
 	 * Executes a simulation instance
 	 * 
 	 * @throws ContractException
+	 *             <li>{@linkplain NucleusError#NULL_OUTPUT_HANDLER} if
+	 *             outputConsumer is null</li>            
+	 *             <li>{@linkplain NucleusError#NULL_PLUGIN} if  the plugin is null</li>
+	 *             <li>{@linkplain TestError#TEST_EXECUTION_FAILURE} if the
+	 *             simulation does not complete successfully</li>
+	 */
+	public static void executeSimulation(Plugin plugin, TestOutputConsumer outputConsumer) {
+		if (outputConsumer == null) {
+			throw new ContractException(NucleusError.NULL_OUTPUT_HANDLER,
+					"Output consumer was not set. Either set it or call the other version of this method that doesn't take a outputConsumer as a parameter.");
+		}
+		
+		List<Plugin> pluginsToAdd = new ArrayList<>();
+		pluginsToAdd.add(plugin);
+		
+		_executeSimulation(pluginsToAdd, outputConsumer);
+	}
+	
+	/**
+	 * Executes a simulation instance
+	 * 
+	 * @throws ContractException
 	 *             <li>{@linkplain NucleusError#NULL_PLUGIN} if pluginsToAdd is
 	 *             null</li>
 	 *             <li>{@linkplain NucleusError#EMPTY_PLUGIN_LIST} if

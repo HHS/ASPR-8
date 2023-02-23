@@ -58,7 +58,8 @@ public class AT_TestSimulation {
 		
 
 		// precondition: list of plugins is null
-		ContractException contractException = assertThrows(ContractException.class, () -> TestSimulation.executeSimulation(null, outputConsumer));
+		List<Plugin> nullPluginList = null;
+		ContractException contractException = assertThrows(ContractException.class, () -> TestSimulation.executeSimulation(nullPluginList, outputConsumer));
 		assertEquals(NucleusError.NULL_PLUGIN, contractException.getErrorType());
 
 		// precondition: list of plugins is empty
