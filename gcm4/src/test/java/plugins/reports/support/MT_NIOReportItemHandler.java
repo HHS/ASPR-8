@@ -67,36 +67,32 @@ public final class MT_NIOReportItemHandler {
 		StringBuilder sb = new StringBuilder();
 
 		sb.append("Usage: " + "\n");
-		sb.append("\t" + "Any number or order of the following commands are legal:" + "\n");
+		sb.append("\t" + "Any order of the following commands are legal:" + "\n");
 		sb.append("\t" + "\t" + "-c followed by any number arguments to ignore" + "\n");
 		sb.append("\t" + "\t" + "-d followed by a directory name" + "\n");
 		sb.append("\t" + "\t" + "-t followed by a test case number" + "\n");
 		sb.append("\t" + "\t" + "-help for instructions" + "\n");
+		sb.append("\t" + "Exactly one directory name and exactly one test case number is required.");
 		sb.append("Example: " + "\n");
 		sb.append("\t" + "-d c:\\temp\\src\\main\\java c:\\temp\\src\\test\\java" + "\n");
 		sb.append("\t" + "-t 1" + "\n");
 		sb.append("\t" + "-c testing" + "\n");
 		sb.append("Test Cases: " + "\n");
 		sb.append("\t" + "Test 1:" + "\n");
-		sb.append("\t" + "\t" + "no progress log written" + "\n");
-		sb.append("\t" + "\t" + "no progress log read" + "\n");
-		sb.append("\t" + "\t" + "use experiment columns" + "\n");
+		sb.append("\t" + "\t" + "No progress log will be written, no progress log will be read, and " + "\n");
+		sb.append("\t" + "\t" + "the experiment columns will be used." + "\n");
 		sb.append("\t" + "Test 2:" + "\n");
-		sb.append("\t" + "\t" + "no progress log written" + "\n");
-		sb.append("\t" + "\t" + "no progress log read" + "\n");
-		sb.append("\t" + "\t" + "no experiment columns" + "\n");
+		sb.append("\t" + "\t" + "No progress log will be written, no progress log will be read, and " + "\n");
+		sb.append("\t" + "\t" + "no experiment columns will be used." + "\n");
 		sb.append("\t" + "Test 3:" + "\n");
-		sb.append("\t" + "\t" + "progress log written" + "\n");
-		sb.append("\t" + "\t" + "no progress log read" + "\n");
-		sb.append("\t" + "\t" + "no experiment columns" + "\n");
+		sb.append("\t" + "\t" + "A progress log will be written, the progress log won't be read, and " + "\n");
+		sb.append("\t" + "\t" + "no experiment columns will be used" + "\n");
 		sb.append("\t" + "Test 4:" + "\n");
-		sb.append("\t" + "\t" + "progress log written" + "\n");
-		sb.append("\t" + "\t" + "progress log read" + "\n");
-		sb.append("\t" + "\t" + "use experiment columns" + "\n");
+		sb.append("\t" + "\t" + "A progress log will be written, the progress log will be read, and " + "\n");
+		sb.append("\t" + "\t" + "the experiment columns will be used" + "\n");
 		sb.append("\t" + "Test 5:" + "\n");
-		sb.append("\t" + "\t" + "no progress log written" + "\n");
-		sb.append("\t" + "\t" + "progress log read" + "\n");
-		sb.append("\t" + "\t" + "use experiment columns" + "\n");
+		sb.append("\t" + "\t" + "No progress log will be written, an attempt at reading a non-existent progress log " + "\n");
+		sb.append("\t" + "\t" + "will be made, and the experiment columns will be used" + "\n");
 
 		System.out.println(sb);
 	}
@@ -137,7 +133,6 @@ public final class MT_NIOReportItemHandler {
 				currentCommandBlock.arguments.add(arg);
 			}
 		}
-
 		
 		Path basePath = null;
 		int testIndex = 0;
@@ -160,20 +155,20 @@ public final class MT_NIOReportItemHandler {
 		//DIRECTORY
 		blocks = commandBlocks.get(Command.DIRECTORY);
 		if(blocks.isEmpty()) {
-			throw new RuntimeException("requires a directory");
+			throw new RuntimeException("requires a directory command -d");
 		}
 		
 		if(blocks.size()>1) {
-			throw new RuntimeException("too many directories listed");
+			throw new RuntimeException("too many directory commands -d");
 		}
 		
 		CommandBlock commandBlock = blocks.get(0);
 		if(commandBlock.arguments.isEmpty()) {
-			throw new RuntimeException("requires a directory");
+			throw new RuntimeException("requires exactly one directory for -d");
 		}
 		
 		if(commandBlock.arguments.size()>1) {
-			throw new RuntimeException("too many directories listed");
+			throw new RuntimeException("too many directories listed for -d");
 		}		
 		
 		String directoryName = commandBlock.arguments.get(0);
@@ -189,20 +184,20 @@ public final class MT_NIOReportItemHandler {
 		
 		blocks = commandBlocks.get(Command.TEST);
 		if(blocks.isEmpty()) {
-			throw new RuntimeException("requires a test command");
+			throw new RuntimeException("requires a test command -t");
 		}
 		
 		if(blocks.size()>1) {
-			throw new RuntimeException("too many test commands");
+			throw new RuntimeException("too many test commands -t");
 		}
 		
 		commandBlock = blocks.get(0);
 		if(commandBlock.arguments.isEmpty()) {
-			throw new RuntimeException("requires exactly one test number");
+			throw new RuntimeException("requires exactly one test number for -t");
 		}
 		
 		if(commandBlock.arguments.size()>1) {
-			throw new RuntimeException("requires exactly one test number");
+			throw new RuntimeException("too many test numbers listed for -t");
 		}		
 		try {
 			testIndex = Integer.parseInt(commandBlock.arguments.get(0));			
@@ -216,16 +211,22 @@ public final class MT_NIOReportItemHandler {
 		
 		//UNKNOWN
 		blocks = commandBlocks.get(Command.UNKNOWN);
-		if(blocks.size()>1) {			
-			//stringbuiler up the command strings for the unknown commands
-			throw new RuntimeException("encounted an unknown command");
-		}else {
-			commandBlock = blocks.get(0);
-			if(!commandBlock.arguments.isEmpty()) {
-				throw new RuntimeException("encounted an unknown command");
+
+		if(blocks.size()>1) {
+			StringBuilder sb = new StringBuilder();
+			String unknownCommand = commandBlocks.get(Command.UNKNOWN).get(0).command.commandString;
+			if(!currentCommandBlock.arguments.isEmpty()) {
+				String unknownCommandArgs = currentCommandBlock.arguments.get(0);
+				sb.append("encountered an unknown command: ");
+				sb.append(unknownCommand);
+				sb.append(" ");
+				sb.append(unknownCommandArgs);
+			} else {
+				sb.append("encountered an unknown command: ");
+				sb.append(unknownCommand);
 			}
+			throw new RuntimeException(sb.toString());
 		}
-		
 
 		new MT_NIOReportItemHandler(basePath, testIndex).execute();
 	}
@@ -655,9 +656,9 @@ public final class MT_NIOReportItemHandler {
 	}
 
 	/*
-	 * write progress log
+	 * no progress log written
 	 *
-	 * no progress log read
+	 * progress log read
 	 *
 	 * write three reports
 	 *
@@ -749,10 +750,11 @@ public final class MT_NIOReportItemHandler {
 
 		switch (testNum) {
 		case 1:
-			sb.append("expected observations: " + "\n");
-			sb.append("\t" + "a folder named 'test1' should appear in the specified directory" + "\n");
-			sb.append("\t" + "a file named 'report1.txt' should be in the folder" + "\n");
-			sb.append("\t" + "the header of the text file should have the following columns: " + "\n");
+			sb.append("This test is meant to prove that when we run a simulation, we can generate a basic report with experiment columns." + "\n");
+			sb.append("Expected Observations: " + "\n");
+			sb.append("\t" + "A folder named 'test1' should appear in the specified directory." + "\n");
+			sb.append("\t" + "A file named 'report1.txt' should be in the 'test1' folder." + "\n");
+			sb.append("\t" + "The header of the text file should have the following columns: " + "\n");
 			sb.append("\t" + "\t" + "scenario" + "\n");
 			sb.append("\t" + "\t" + "xxx" + "\n");
 			sb.append("\t" + "\t" + "xyz" + "\n");
@@ -760,52 +762,59 @@ public final class MT_NIOReportItemHandler {
 			sb.append("\t" + "\t" + "beta" + "\n");
 			break;
 		case 2:
-			sb.append("expected observations: " + "\n");
-			sb.append("\t" + "a folder named 'test2' should appear in the specified directory" + "\n");
-			sb.append("\t" + "a file named 'report1.txt' should be in the folder" + "\n");
-			sb.append("\t" + "the header of the text file should have the following columns: " + "\n");
+			sb.append("This test is meant to prove that when we run a simulation, we can generate a basic report without experiment columns." + "\n");
+			sb.append("Expected Observations: " + "\n");
+			sb.append("\t" + "A folder named 'test2' should appear in the specified directory." + "\n");
+			sb.append("\t" + "A file named 'report1.txt' should be in the 'test2' folder." + "\n");
+			sb.append("\t" + "The header of the text file should have the following columns: " + "\n");
 			sb.append("\t" + "\t" + "scenario" + "\n");
 			sb.append("\t" + "\t" + "alpha" + "\n");
 			sb.append("\t" + "\t" + "beta" + "\n");
 			break;
 		case 3:
-			sb.append("expected observations: " + "\n");
-			sb.append("\t" + "a folder named 'test3' should appear in the specified directory" + "\n");
-			sb.append("\t" + "a file named 'report1.txt' should be in the folder" + "\n");
-			sb.append("\t" + "the header of the text file should have the following columns: " + "\n");
+			sb.append("This test is meant to prove that when we run a simulation, we can generate a basic report as well as a progress log." + "\n");
+			sb.append("Expected observations: " + "\n");
+			sb.append("\t" + "After all 6 scenarios are completed, the compiler should show 1" + "\n");
+			sb.append("\t" + "value. You should observe a SUCCEEDED value of 6." + "\n");
+			sb.append("\t" + "A folder named 'test3' should appear in the specified directory." + "\n");
+			sb.append("\t" + "A file named 'report1.txt' should be in the 'test3' folder." + "\n");
+			sb.append("\t" + "The header of the text file should have the following columns.: " + "\n");
 			sb.append("\t" + "\t" + "scenario" + "\n");
 			sb.append("\t" + "\t" + "xxx" + "\n");
 			sb.append("\t" + "\t" + "xyz" + "\n");
 			sb.append("\t" + "\t" + "alpha" + "\n");
 			sb.append("\t" + "\t" + "beta" + "\n");
-			sb.append("\t" + "another file named 'progresslog.txt' should be in the folder" + "\n");
-			sb.append("\t" + "the header of the text file should have the following columns: " + "\n");
+			sb.append("\t" + "Another file named 'progresslog.txt' should be in the folder." + "\n");
+			sb.append("\t" + "The header of the progress log file should have the following columns: " + "\n");
 			sb.append("\t" + "\t" + "scenario" + "\n");
 			sb.append("\t" + "\t" + "xxx" + "\n");
 			sb.append("\t" + "\t" + "xyz" + "\n");
 			break;
 		case 4:
-			sb.append("expected observations: " + "\n");
-			sb.append("\t" + "after all 6 scenarios are completed, the compiler should show 2" + "\n");
-			sb.append("\t" + "values. You should have PREVIOUSLY_SUCCEEDED and SUCCEEDED values" + "\n");
+			sb.append("This test is meant to prove that when a simulation run is interrupted, we can complete the simulation using the progress log." + "\n");
+			sb.append("Expected observations: " + "\n");
+			sb.append("\t" + "After all 6 scenarios are completed, the compiler should show 2" + "\n");
+			sb.append("\t" + "values. You should observe PREVIOUSLY_SUCCEEDED and SUCCEEDED values" + "\n");
 			sb.append("\t" + "whose sum should total up to 6." + "\n");
-			sb.append("\t" + "a folder named 'test4' should appear in the specified directory" + "\n");
-			sb.append("\t" + "a file named 'report1.txt' should be in the folder" + "\n");
-			sb.append("\t" + "the header of the text file should have the following columns: " + "\n");
+			sb.append("\t" + "A folder named 'test4' should appear in the specified directory." + "\n");
+			sb.append("\t" + "A file named 'report1.txt' should be in the 'test4' folder." + "\n");
+			sb.append("\t" + "The header of the text file should have the following columns: " + "\n");
 			sb.append("\t" + "\t" + "scenario" + "\n");
 			sb.append("\t" + "\t" + "xxx" + "\n");
 			sb.append("\t" + "\t" + "xyz" + "\n");
 			sb.append("\t" + "\t" + "alpha" + "\n");
 			sb.append("\t" + "\t" + "beta" + "\n");
-			sb.append("\t" + "another file named 'progresslog.txt' should be in the folder" + "\n");
-			sb.append("\t" + "the header of the text file should have the following columns: " + "\n");
+			sb.append("\t" + "Another file named 'progresslog.txt' should be in the folder." + "\n");
+			sb.append("\t" + "The header of the progress log file should have the following columns: " + "\n");
 			sb.append("\t" + "\t" + "scenario" + "\n");
 			sb.append("\t" + "\t" + "xxx" + "\n");
 			sb.append("\t" + "\t" + "xyz" + "\n");
 			break;
 		case 5:
-			sb.append("expected observations: " + "\n");
-			sb.append("\t" + "after running test 5, you should recieve an exception with the following message:" + "\n");
+			sb.append("This test is meant to prove that when attempting to complete a simulation using a non existing progress log, " + "\n");
+			sb.append("that the proper contract exception is thrown." + "\n");
+			sb.append("Expected observations: " + "\n");
+			sb.append("\t" + "After running test 5, you should receive an exception with the following message: " + "\n");
 			sb.append("\t" + "Exception in thread \"main\" util.errors.ContractException: The scenario progress file does not exist," + "\n");
 			sb.append("\t" + "but is required when continuation from progress file is chosen" + "\n");
 			break;
