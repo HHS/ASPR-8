@@ -362,11 +362,14 @@ public final class MT_NIOReportItemHandler {
 		TestPluginData testPluginData = pluginDataBuilder.build();
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
+		ExperimentStatusConsole experimentStatusConsole = ExperimentStatusConsole.builder().build();
+
 		Experiment	.builder()//
 					.addPlugin(testPlugin)//
 					.addDimension(dimension1)//
 					.addDimension(dimension2)//
 					.addExperimentContextConsumer(nioReportItemHandler)//
+					.addExperimentContextConsumer(experimentStatusConsole)//
 					.build()//
 					.execute();
 
@@ -446,11 +449,14 @@ public final class MT_NIOReportItemHandler {
 		TestPluginData testPluginData = pluginDataBuilder.build();
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
+		ExperimentStatusConsole experimentStatusConsole = ExperimentStatusConsole.builder().build();
+
 		Experiment	.builder()//
 					.addPlugin(testPlugin)//
 					.addDimension(dimension1)//
 					.addDimension(dimension2)//
 					.addExperimentContextConsumer(nioReportItemHandler)//
+					.addExperimentContextConsumer(experimentStatusConsole)//
 					.build()//
 					.execute();
 	}
@@ -752,6 +758,8 @@ public final class MT_NIOReportItemHandler {
 		case 1:
 			sb.append("This test is meant to prove that when we run a simulation, we can generate a basic report with experiment columns." + "\n");
 			sb.append("Expected Observations: " + "\n");
+			sb.append("\t" + "After all 6 scenarios are completed, the console should show 1" + "\n");
+			sb.append("\t" + "value. You should observe a SUCCEEDED value of 6." + "\n");
 			sb.append("\t" + "A folder named 'test1' should appear in the specified directory." + "\n");
 			sb.append("\t" + "A file named 'report1.txt' should be in the 'test1' folder." + "\n");
 			sb.append("\t" + "The header of the text file should have the following columns: " + "\n");
@@ -760,21 +768,25 @@ public final class MT_NIOReportItemHandler {
 			sb.append("\t" + "\t" + "xyz" + "\n");
 			sb.append("\t" + "\t" + "alpha" + "\n");
 			sb.append("\t" + "\t" + "beta" + "\n");
+			sb.append("__________________________________________________________________________________" + "\n");
 			break;
 		case 2:
 			sb.append("This test is meant to prove that when we run a simulation, we can generate a basic report without experiment columns." + "\n");
 			sb.append("Expected Observations: " + "\n");
+			sb.append("\t" + "After all 6 scenarios are completed, the console should show 1" + "\n");
+			sb.append("\t" + "value. You should observe a SUCCEEDED value of 6." + "\n");
 			sb.append("\t" + "A folder named 'test2' should appear in the specified directory." + "\n");
 			sb.append("\t" + "A file named 'report1.txt' should be in the 'test2' folder." + "\n");
 			sb.append("\t" + "The header of the text file should have the following columns: " + "\n");
 			sb.append("\t" + "\t" + "scenario" + "\n");
 			sb.append("\t" + "\t" + "alpha" + "\n");
 			sb.append("\t" + "\t" + "beta" + "\n");
+			sb.append("__________________________________________________________________________________" + "\n");
 			break;
 		case 3:
 			sb.append("This test is meant to prove that when we run a simulation, we can generate a basic report as well as a progress log." + "\n");
 			sb.append("Expected observations: " + "\n");
-			sb.append("\t" + "After all 6 scenarios are completed, the compiler should show 1" + "\n");
+			sb.append("\t" + "After all 6 scenarios are completed, the console should show 1" + "\n");
 			sb.append("\t" + "value. You should observe a SUCCEEDED value of 6." + "\n");
 			sb.append("\t" + "A folder named 'test3' should appear in the specified directory." + "\n");
 			sb.append("\t" + "A file named 'report1.txt' should be in the 'test3' folder." + "\n");
@@ -789,11 +801,12 @@ public final class MT_NIOReportItemHandler {
 			sb.append("\t" + "\t" + "scenario" + "\n");
 			sb.append("\t" + "\t" + "xxx" + "\n");
 			sb.append("\t" + "\t" + "xyz" + "\n");
+			sb.append("__________________________________________________________________________________" + "\n");
 			break;
 		case 4:
 			sb.append("This test is meant to prove that when a simulation run is interrupted, we can complete the simulation using the progress log." + "\n");
 			sb.append("Expected observations: " + "\n");
-			sb.append("\t" + "After all 6 scenarios are completed, the compiler should show 2" + "\n");
+			sb.append("\t" + "After all 6 scenarios are completed, the console should show 2" + "\n");
 			sb.append("\t" + "values. You should observe PREVIOUSLY_SUCCEEDED and SUCCEEDED values" + "\n");
 			sb.append("\t" + "whose sum should total up to 6." + "\n");
 			sb.append("\t" + "A folder named 'test4' should appear in the specified directory." + "\n");
@@ -809,6 +822,7 @@ public final class MT_NIOReportItemHandler {
 			sb.append("\t" + "\t" + "scenario" + "\n");
 			sb.append("\t" + "\t" + "xxx" + "\n");
 			sb.append("\t" + "\t" + "xyz" + "\n");
+			sb.append("__________________________________________________________________________________" + "\n");
 			break;
 		case 5:
 			sb.append("This test is meant to prove that when attempting to complete a simulation using a non existing progress log, " + "\n");
@@ -817,6 +831,7 @@ public final class MT_NIOReportItemHandler {
 			sb.append("\t" + "After running test 5, you should receive an exception with the following message: " + "\n");
 			sb.append("\t" + "Exception in thread \"main\" util.errors.ContractException: The scenario progress file does not exist," + "\n");
 			sb.append("\t" + "but is required when continuation from progress file is chosen" + "\n");
+			sb.append("__________________________________________________________________________________" + "\n");
 			break;
 		}
 
