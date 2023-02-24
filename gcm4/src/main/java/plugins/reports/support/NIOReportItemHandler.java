@@ -1,6 +1,7 @@
 package plugins.reports.support;
 
 import java.nio.file.Path;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -97,11 +98,18 @@ public final class NIOReportItemHandler implements Consumer<ExperimentContext>{
 			data.displayExperimentColumnsInReports = displayExperimentColumnsInReports;
 			return this;
 		}
+
+		public Builder setDelimiter(String delimiter) {
+			data.delimiter = delimiter;
+			return this;
+		}
 	}
 
 	private static class Data {
+		private String delimiter = "\t";
 		private final Map<ReportLabel, Path> reportMap = new LinkedHashMap<>();
 		private boolean displayExperimentColumnsInReports = DEFAULT_DISPLAY_EXPERIMENT_COLUMNS;
+
 	}
 
 	private final static boolean DEFAULT_DISPLAY_EXPERIMENT_COLUMNS = true;
@@ -110,10 +118,13 @@ public final class NIOReportItemHandler implements Consumer<ExperimentContext>{
 
 	private final Map<ReportLabel, Path> reportMap;
 
+	private String delimiter = "\t";
+
 	private final boolean displayExperimentColumnsInReports;
 
-	private NIOReportItemHandler(final Data data) {
 
+	private NIOReportItemHandler(final Data data) {
+		delimiter = data.delimiter;
 		reportMap = data.reportMap;
 		displayExperimentColumnsInReports = data.displayExperimentColumnsInReports;
 	}
@@ -134,7 +145,7 @@ public final class NIOReportItemHandler implements Consumer<ExperimentContext>{
 		}
 	}
 
-	private void handleOuput(ExperimentContext experimentContext, Integer scenarioId, ReportItem reportItem) {
+	private void handleOutput(ExperimentContext experimentContext, Integer scenarioId, ReportItem reportItem) {
 		final LineWriter lineWriter = lineWriterMap.get(reportItem.getReportLabel());
 		if (lineWriter != null) {
 			lineWriter.write(experimentContext, scenarioId, reportItem);
@@ -145,7 +156,7 @@ public final class NIOReportItemHandler implements Consumer<ExperimentContext>{
 		synchronized (lineWriterMap) {
 			for (final ReportLabel reportLabel : reportMap.keySet()) {
 				final Path path = reportMap.get(reportLabel);
-				final LineWriter lineWriter = new LineWriter(experimentContext, path, displayExperimentColumnsInReports);
+				final LineWriter lineWriter = new LineWriter(experimentContext, path, displayExperimentColumnsInReports, delimiter);
 				lineWriterMap.put(reportLabel, lineWriter);
 			}
 		}
@@ -175,7 +186,7 @@ public final class NIOReportItemHandler implements Consumer<ExperimentContext>{
 		experimentContext.subscribeToExperimentOpen(this::openExperiment);
 		experimentContext.subscribeToExperimentClose(this::closeExperiment);
 		experimentContext.subscribeToSimulationClose(this::closeSimulation);
-		experimentContext.subscribeToOutput(ReportItem.class, this::handleOuput);		
+		experimentContext.subscribeToOutput(ReportItem.class, this::handleOutput);
 	}
 
 }

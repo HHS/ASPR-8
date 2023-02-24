@@ -80,7 +80,7 @@ public final class MT_NIOReportItemHandler {
 		sb.append("Test Cases: " + "\n");
 		sb.append("\t" + "Test 1:" + "\n");
 		sb.append("\t" + "\t" + "No progress log will be written, no progress log will be read, and " + "\n");
-		sb.append("\t" + "\t" + "the experiment columns will be used." + "\n");
+		sb.append("\t" + "\t" + "the experiment columns will be used. For this test, a custom delimiter is also set." + "\n");
 		sb.append("\t" + "Test 2:" + "\n");
 		sb.append("\t" + "\t" + "No progress log will be written, no progress log will be read, and " + "\n");
 		sb.append("\t" + "\t" + "no experiment columns will be used." + "\n");
@@ -296,6 +296,8 @@ public final class MT_NIOReportItemHandler {
 	 * no progress log read
 	 *
 	 * use experiment columns
+	 *
+	 * delimiter set
 	 * 
 	 * write three reports
 	 */
@@ -357,6 +359,7 @@ public final class MT_NIOReportItemHandler {
 		NIOReportItemHandler nioReportItemHandler = //
 				NIOReportItemHandler.builder()//
 									.addReport(reportLabel, subPath.resolve("report1.txt"))//
+									.setDelimiter(",")
 									.build();
 
 		TestPluginData testPluginData = pluginDataBuilder.build();
@@ -762,13 +765,14 @@ public final class MT_NIOReportItemHandler {
 			sb.append("\t" + "value. You should observe a SUCCEEDED value of 6." + "\n");
 			sb.append("\t" + "A folder named 'test1' should appear in the specified directory." + "\n");
 			sb.append("\t" + "A file named 'report1.txt' should be in the 'test1' folder." + "\n");
+			sb.append("\t" + "The file's data should be comma separated." + "\n");
 			sb.append("\t" + "The header of the text file should have the following columns: " + "\n");
 			sb.append("\t" + "\t" + "scenario" + "\n");
 			sb.append("\t" + "\t" + "xxx" + "\n");
 			sb.append("\t" + "\t" + "xyz" + "\n");
 			sb.append("\t" + "\t" + "alpha" + "\n");
 			sb.append("\t" + "\t" + "beta" + "\n");
-			sb.append("__________________________________________________________________________________" + "\n");
+			sb.append("------------------------------ CONSOLE OUTPUT ------------------------------" + "\n");
 			break;
 		case 2:
 			sb.append("This test is meant to prove that when we run a simulation, we can generate a basic report without experiment columns." + "\n");
@@ -777,11 +781,12 @@ public final class MT_NIOReportItemHandler {
 			sb.append("\t" + "value. You should observe a SUCCEEDED value of 6." + "\n");
 			sb.append("\t" + "A folder named 'test2' should appear in the specified directory." + "\n");
 			sb.append("\t" + "A file named 'report1.txt' should be in the 'test2' folder." + "\n");
+			sb.append("\t" + "The file's data should be tab separated." + "\n");
 			sb.append("\t" + "The header of the text file should have the following columns: " + "\n");
 			sb.append("\t" + "\t" + "scenario" + "\n");
 			sb.append("\t" + "\t" + "alpha" + "\n");
 			sb.append("\t" + "\t" + "beta" + "\n");
-			sb.append("__________________________________________________________________________________" + "\n");
+			sb.append("------------------------------ CONSOLE OUTPUT ------------------------------" + "\n");
 			break;
 		case 3:
 			sb.append("This test is meant to prove that when we run a simulation, we can generate a basic report as well as a progress log." + "\n");
@@ -790,6 +795,7 @@ public final class MT_NIOReportItemHandler {
 			sb.append("\t" + "value. You should observe a SUCCEEDED value of 6." + "\n");
 			sb.append("\t" + "A folder named 'test3' should appear in the specified directory." + "\n");
 			sb.append("\t" + "A file named 'report1.txt' should be in the 'test3' folder." + "\n");
+			sb.append("\t" + "The file's data should be tab separated." + "\n");
 			sb.append("\t" + "The header of the text file should have the following columns.: " + "\n");
 			sb.append("\t" + "\t" + "scenario" + "\n");
 			sb.append("\t" + "\t" + "xxx" + "\n");
@@ -801,7 +807,7 @@ public final class MT_NIOReportItemHandler {
 			sb.append("\t" + "\t" + "scenario" + "\n");
 			sb.append("\t" + "\t" + "xxx" + "\n");
 			sb.append("\t" + "\t" + "xyz" + "\n");
-			sb.append("__________________________________________________________________________________" + "\n");
+			sb.append("------------------------------ CONSOLE OUTPUT ------------------------------" + "\n");
 			break;
 		case 4:
 			sb.append("This test is meant to prove that when a simulation run is interrupted, we can complete the simulation using the progress log." + "\n");
@@ -811,6 +817,7 @@ public final class MT_NIOReportItemHandler {
 			sb.append("\t" + "whose sum should total up to 6." + "\n");
 			sb.append("\t" + "A folder named 'test4' should appear in the specified directory." + "\n");
 			sb.append("\t" + "A file named 'report1.txt' should be in the 'test4' folder." + "\n");
+			sb.append("\t" + "The file's data should be tab separated." + "\n");
 			sb.append("\t" + "The header of the text file should have the following columns: " + "\n");
 			sb.append("\t" + "\t" + "scenario" + "\n");
 			sb.append("\t" + "\t" + "xxx" + "\n");
@@ -822,7 +829,7 @@ public final class MT_NIOReportItemHandler {
 			sb.append("\t" + "\t" + "scenario" + "\n");
 			sb.append("\t" + "\t" + "xxx" + "\n");
 			sb.append("\t" + "\t" + "xyz" + "\n");
-			sb.append("__________________________________________________________________________________" + "\n");
+			sb.append("------------------------------ CONSOLE OUTPUT ------------------------------" + "\n");
 			break;
 		case 5:
 			sb.append("This test is meant to prove that when attempting to complete a simulation using a non existing progress log, " + "\n");
@@ -831,7 +838,7 @@ public final class MT_NIOReportItemHandler {
 			sb.append("\t" + "After running test 5, you should receive an exception with the following message: " + "\n");
 			sb.append("\t" + "Exception in thread \"main\" util.errors.ContractException: The scenario progress file does not exist," + "\n");
 			sb.append("\t" + "but is required when continuation from progress file is chosen" + "\n");
-			sb.append("__________________________________________________________________________________" + "\n");
+			sb.append("------------------------------ CONSOLE OUTPUT ------------------------------" + "\n");
 			break;
 		}
 
