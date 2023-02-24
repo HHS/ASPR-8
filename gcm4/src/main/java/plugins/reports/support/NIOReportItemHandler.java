@@ -155,13 +155,20 @@ public final class NIOReportItemHandler implements Consumer<ExperimentContext>{
 	 * Initializes this report item handler. It subscribes to the following
 	 * experiment level events:
 	 * <ul>
-	 * <li>Experiment Open : reads and initializes all report files</li>
+	 * <li>Experiment Open : reads and initializes all report files.</li>
+	 * <li>all content that doesn't correspond to a previously fully executed scenario is removed.</li>
 	 * <li>Simulation Output : directs report items to the appropriate file
 	 * writer</li>
 	 * <li>Simulation Close : ensures all files are flushed so that the content
 	 * of each file is complete for each closed scenario</li>
 	 * <li>Experiment Close : closes all file writers</li>
 	 * </ul>
+	 *
+	 * @throws RuntimeException
+	 *             <li>if an {@link IOException} is thrown during file initialization</li>
+	 *             <li>if the simulation run is continuing from a progress log and
+	 *             the path is not a regular file (path does not exist) during
+	 *             file initialization</li>
 	 */
 	@Override
 	public void accept(ExperimentContext experimentContext) {

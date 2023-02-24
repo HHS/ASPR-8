@@ -1,189 +1,841 @@
 package plugins.reports.support;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.fail;
-
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.nio.charset.CharsetEncoder;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
-import java.util.stream.IntStream;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 import nucleus.Dimension;
 import nucleus.Experiment;
-import nucleus.ExperimentContext;
-import util.annotations.UnitTag;
-import util.annotations.UnitTestMethod;
-import util.errors.ContractException;
+import nucleus.ExperimentStatusConsole;
+import nucleus.Plugin;
+import nucleus.testsupport.testplugin.TestActorPlan;
+import nucleus.testsupport.testplugin.TestPlugin;
+import nucleus.testsupport.testplugin.TestPluginData;
 
-public class MT_NIOReportItemHandler {
+public final class MT_NIOReportItemHandler {
 
-	private static enum ReportLabels implements ReportLabel {
-		ALPHA("ALPHA.txt"), BETA("BETA.txt"),;
+	private static enum Command {
+		COMMENT("-c"), //
+		HELP("-help"), //
+		DIRECTORY("-d"), //
+		TEST("-t"), //
+		UNKNOWN("-")//
+		;
 
-		private final String fileName;
+		private String commandString;
 
-		private ReportLabels(String fileName) {
-			this.fileName = fileName;
+		private Command(String commandString) {
+			this.commandString = commandString;
 		}
 
-		public String getFileName() {
-			return this.fileName;
+		public static Command getCommand(String value) {
+			Command result = null;
+
+			for (Command command : Command.values()) {
+				if (command != UNKNOWN) {
+					if (command.commandString.equals(value)) {
+						result = command;
+					}
+				}
+			}
+
+			if (result == null) {
+				if (value.startsWith("-")) {
+					result = UNKNOWN;
+					result.commandString = value;
+				}
+			}
+
+			return result;
 		}
 	}
 
-	private final Path dirPath;
+	private static void printInstructions() {
 
-	private MT_NIOReportItemHandler(Path dirPath) {
-		this.dirPath = dirPath;
+		StringBuilder sb = new StringBuilder();
+
+		sb.append("Usage: " + "\n");
+		sb.append("\t" + "Any order of the following commands are legal:" + "\n");
+		sb.append("\t" + "\t" + "-c followed by any number arguments to ignore" + "\n");
+		sb.append("\t" + "\t" + "-d followed by a directory name" + "\n");
+		sb.append("\t" + "\t" + "-t followed by a test case number" + "\n");
+		sb.append("\t" + "\t" + "-help for instructions" + "\n");
+		sb.append("\t" + "Exactly one directory name and exactly one test case number are required.");
+		sb.append("Example: " + "\n");
+		sb.append("\t" + "-d c:\\temp\\src\\main\\java c:\\temp\\src\\test\\java" + "\n");
+		sb.append("\t" + "-t 1" + "\n");
+		sb.append("\t" + "-c testing" + "\n");
+		sb.append("Test Cases: " + "\n");
+		sb.append("\t" + "Test 1:" + "\n");
+		sb.append("\t" + "\t" + "No progress log will be written, no progress log will be read, and " + "\n");
+		sb.append("\t" + "\t" + "the experiment columns will be used." + "\n");
+		sb.append("\t" + "Test 2:" + "\n");
+		sb.append("\t" + "\t" + "No progress log will be written, no progress log will be read, and " + "\n");
+		sb.append("\t" + "\t" + "no experiment columns will be used." + "\n");
+		sb.append("\t" + "Test 3:" + "\n");
+		sb.append("\t" + "\t" + "A progress log will be written, the progress log won't be read, and " + "\n");
+		sb.append("\t" + "\t" + "no experiment columns will be used" + "\n");
+		sb.append("\t" + "Test 4:" + "\n");
+		sb.append("\t" + "\t" + "A progress log will be written, the progress log will be read, and " + "\n");
+		sb.append("\t" + "\t" + "the experiment columns will be used" + "\n");
+		sb.append("\t" + "Test 5:" + "\n");
+		sb.append("\t" + "\t" + "No progress log will be written, an attempt at reading a non-existent progress log " + "\n");
+		sb.append("\t" + "\t" + "will be made, and the experiment columns will be used" + "\n");
+
+		System.out.println(sb);
 	}
 
-	private Dimension getDimension() {
-		final Dimension.Builder dimensionBuilder = Dimension.builder();//
-		IntStream.range(0, 10).forEach((i) -> {
-			dimensionBuilder.addLevel((context) -> {
-				final ArrayList<String> result = new ArrayList<>();
-				result.add("x_" + Integer.toString(i));
-				return result;
-			});//
+	private static class CommandBlock {
+		private final Command command;
+		private final List<String> arguments = new ArrayList<>();
+
+		public CommandBlock(Command command) {
+			this.command = command;
+		}
+
+	}
+
+	private final Path basePath;
+	private Integer testToRun;
+
+	private MT_NIOReportItemHandler(Path dirPath, Integer testToRun) {
+		this.basePath = dirPath;
+		this.testToRun = testToRun;
+	}
+
+	public static void main(String[] args) throws IOException {
+
+		Map<Command,List<CommandBlock>> commandBlocks = new LinkedHashMap<>();
+		for(Command command : Command.values()) {
+			commandBlocks.put(command, new ArrayList<>());
+		}
+		CommandBlock currentCommandBlock = new CommandBlock(Command.UNKNOWN);
+		commandBlocks.get(currentCommandBlock.command).add(currentCommandBlock);
+		
+		for (String arg : args) {
+			Command command = Command.getCommand(arg);
+			if (command != null) {
+				currentCommandBlock = new CommandBlock(command);
+				commandBlocks.get(command).add(currentCommandBlock);
+			} else {
+				currentCommandBlock.arguments.add(arg);
+			}
+		}
+		
+		Path basePath = null;
+		int testIndex = 0;
+		
+		//HELP
+		int directoryCount = commandBlocks.get(Command.DIRECTORY).size();
+		int testCount = commandBlocks.get(Command.TEST).size();
+		
+		if(directoryCount==0 && testCount==0) {
+			printInstructions();
+			return;
+		}
+		
+		List<CommandBlock> blocks = commandBlocks.get(Command.HELP);
+		if(!blocks.isEmpty()) {
+			printInstructions();
+			return;
+		}
+		
+		//DIRECTORY
+		blocks = commandBlocks.get(Command.DIRECTORY);
+		if(blocks.isEmpty()) {
+			throw new RuntimeException("requires a directory command -d");
+		}
+		
+		if(blocks.size()>1) {
+			throw new RuntimeException("too many directory commands -d");
+		}
+		
+		CommandBlock commandBlock = blocks.get(0);
+		if(commandBlock.arguments.isEmpty()) {
+			throw new RuntimeException("requires exactly one directory for -d");
+		}
+		
+		if(commandBlock.arguments.size()>1) {
+			throw new RuntimeException("too many directories listed for -d");
+		}		
+		
+		String directoryName = commandBlock.arguments.get(0);
+		basePath = Paths.get(directoryName);
+		if (!basePath.toFile().exists()) {
+			throw new RuntimeException("base directory does not exist");
+		}
+		if (!basePath.toFile().isDirectory()) {
+			throw new RuntimeException("base directory is not a directory");
+		}
+		
+		//TEST
+		
+		blocks = commandBlocks.get(Command.TEST);
+		if(blocks.isEmpty()) {
+			throw new RuntimeException("requires a test command -t");
+		}
+		
+		if(blocks.size()>1) {
+			throw new RuntimeException("too many test commands -t");
+		}
+		
+		commandBlock = blocks.get(0);
+		if(commandBlock.arguments.isEmpty()) {
+			throw new RuntimeException("requires exactly one test number for -t");
+		}
+		
+		if(commandBlock.arguments.size()>1) {
+			throw new RuntimeException("too many test numbers listed for -t");
+		}		
+		try {
+			testIndex = Integer.parseInt(commandBlock.arguments.get(0));			
+		} catch (NumberFormatException e) {
+			throw new RuntimeException("test index needs to be a integer", e);
+		}
+		
+		if(testIndex<1||testIndex>5) {
+			throw new RuntimeException("test index out of bounds");
+		}
+		
+		//UNKNOWN
+		blocks = commandBlocks.get(Command.UNKNOWN);
+
+		if(blocks.size()>1) {
+			StringBuilder sb = new StringBuilder();
+			String unknownCommand = commandBlocks.get(Command.UNKNOWN).get(0).command.commandString;
+			if(!currentCommandBlock.arguments.isEmpty()) {
+				String unknownCommandArgs = currentCommandBlock.arguments.get(0);
+				sb.append("encountered an unknown command: ");
+				sb.append(unknownCommand);
+				sb.append(" ");
+				sb.append(unknownCommandArgs);
+			} else {
+				sb.append("encountered an unknown command: ");
+				sb.append(unknownCommand);
+			}
+			throw new RuntimeException(sb.toString());
+		}
+
+		new MT_NIOReportItemHandler(basePath, testIndex).execute();
+	}
+
+	private void recursiveDelete(File file) throws IOException {
+		if (file.exists()) {
+			if (file.isDirectory()) {
+				File[] entries = file.listFiles();
+				if (entries != null) {
+					for (File entry : entries) {
+						recursiveDelete(entry);
+					}
+				}
+			}
+			if (!file.delete()) {
+				throw new IOException("Failed to delete " + file);
+			}
+		}
+	}
+
+	private void createDirectory(Path path) throws IOException {
+		recursiveDelete(path.toFile());
+		Files.createDirectory(path);
+
+	}
+
+	private void execute() throws IOException {
+		switch (testToRun) {
+		case 1:
+			Path subPath = basePath.resolve("test1");
+			createDirectory(subPath);
+			printExpected(1);
+			test1(subPath);
+			break;
+		case 2:
+			subPath = basePath.resolve("test2");
+			createDirectory(subPath);
+			printExpected(2);
+			test2(subPath);
+			break;
+		case 3:
+			subPath = basePath.resolve("test3");
+			createDirectory(subPath);
+			printExpected(3);
+			test3(subPath);
+			break;
+		case 4:
+			subPath = basePath.resolve("test4");
+			createDirectory(subPath);
+			printExpected(4);
+			test4(subPath);
+			break;
+		case 5:
+			subPath = basePath.resolve("test5");
+			createDirectory(subPath);
+			printExpected(5);
+			test5(subPath);
+			break;
+		default:
+			throw new RuntimeException("unknown test number: " + testToRun);
+		}
+	}
+
+	/*
+	 * no progress log written
+	 * 
+	 * no progress log read
+	 *
+	 * use experiment columns
+	 * 
+	 * write three reports
+	 */
+	private void test1(Path subPath) {
+		ReportLabel reportLabel = new SimpleReportLabel("report label");
+
+		ReportHeader.Builder reportHeaderBuilder = ReportHeader.builder();
+		reportHeaderBuilder.add("alpha");
+		reportHeaderBuilder.add("beta");
+		ReportHeader reportHeader = reportHeaderBuilder.build();
+
+		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
+
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
+
+			for (int i = 0; i < 10; i++) {
+				ReportItem.Builder reportItemBuilder = ReportItem.builder();
+				reportItemBuilder.setReportHeader(reportHeader);
+				reportItemBuilder.setReportLabel(reportLabel);
+				reportItemBuilder.addValue(i);
+				reportItemBuilder.addValue("value " + i);
+				ReportItem reportItem = reportItemBuilder.build();
+				c.releaseOutput(reportItem);
+			}
+		}));
+
+		Dimension.Builder dimensionBuilder = Dimension.builder();
+		dimensionBuilder.addMetaDatum("xxx");
+		dimensionBuilder.addLevel((c) -> {
+			List<String> result = new ArrayList<>();
+			result.add("a");
+			return result;
 		});
-		dimensionBuilder.addMetaDatum("header");//
-		return dimensionBuilder.build();
-	}
+		dimensionBuilder.addLevel((c) -> {
+			List<String> result = new ArrayList<>();
+			result.add("b");
+			return result;
+		});
+		Dimension dimension1 = dimensionBuilder.build();
 
-	public static void main(String[] args) {
+		dimensionBuilder.addMetaDatum("xyz");
+		dimensionBuilder.addLevel((c) -> {
+			List<String> result = new ArrayList<>();
+			result.add("x");
+			return result;
+		});
+		dimensionBuilder.addLevel((c) -> {
+			List<String> result = new ArrayList<>();
+			result.add("y");
+			return result;
+		});
+		dimensionBuilder.addLevel((c) -> {
+			List<String> result = new ArrayList<>();
+			result.add("z");
+			return result;
+		});
+		Dimension dimension2 = dimensionBuilder.build();
 
-		assertNotNull(args);
-		assertEquals(args.length, 1);
-		Path dirPath = Paths.get(args[0]);
-		new MT_NIOReportItemHandler(dirPath).execute();
-	}
+		NIOReportItemHandler nioReportItemHandler = //
+				NIOReportItemHandler.builder()//
+									.addReport(reportLabel, subPath.resolve("report1.txt"))//
+									.build();
 
-	private void execute() {
-		// testBuilder();
-		// testAccept();
-		// testBuild();
-		// testAddReport();
-		// testSetDisplayExperimentColumnsInReports();
-		// testAcceptWithProgressLog();
-	}
+		TestPluginData testPluginData = pluginDataBuilder.build();
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
-	private NIOReportItemHandler getNIOReportItemHandler() {
+		ExperimentStatusConsole experimentStatusConsole = ExperimentStatusConsole.builder().build();
 
-		NIOReportItemHandler.Builder builder = NIOReportItemHandler.builder();
-		for (ReportLabels reportLabels : ReportLabels.values()) {
-			builder.addReport(reportLabels, dirPath.resolve(reportLabels.getFileName()));
-		}
-		// builder.setDisplayExperimentColumnsInReports(false);
-		return builder.build();
-	}
-
-	@UnitTestMethod(target = NIOReportItemHandler.Builder.class, name = "build", args = {})
-	private void testBuild() {
-		NIOReportItemHandler.Builder builder = NIOReportItemHandler.builder();
-		ReportLabel reportLabel1 = new SimpleReportLabel("testReportLabel1");
-		ReportLabel reportLabel2 = new SimpleReportLabel("testReportLabel2");
-		final Path path1 = Path.of("example_path1");
-		final Path path2 = Path.of("example_path2");
-
-		// show that a path collision error happens when 2 reports have the same
-		// path
-		builder.addReport(reportLabel1, path1);
-		builder.addReport(reportLabel2, path1);
-
-		ContractException contractException = assertThrows(ContractException.class, () -> builder.build());
-		assertEquals(contractException.getErrorType(), ReportError.PATH_COLLISION);
-
-		// show that what is built is not null
-		builder.addReport(reportLabel1, path1);
-		builder.addReport(reportLabel2, path2);
-
-		assertNotNull(builder.build());
-
-	}
-
-	@UnitTestMethod(target = NIOReportItemHandler.Builder.class, name = "addReport", args = { ReportLabel.class, Path.class })
-	private void testAddReport() {
-		NIOReportItemHandler.Builder builder = NIOReportItemHandler.builder();
-		ReportLabel reportLabel = new SimpleReportLabel("testReportLabel");
-		final Path path1 = Path.of("example_path3");
-
-		// null report label check
-		ContractException pathContractException = assertThrows(ContractException.class, () -> builder.addReport(null, path1));
-		assertEquals(pathContractException.getErrorType(), ReportError.NULL_REPORT_LABEL);
-
-		// null report path check
-		ContractException idContractException = assertThrows(ContractException.class, () -> builder.addReport(reportLabel, null));
-		assertEquals(idContractException.getErrorType(), ReportError.NULL_REPORT_PATH);
-
-	}
-
-	@UnitTestMethod(target = NIOReportItemHandler.Builder.class, name = "setDisplayExperimentColumnsInReports", args = { boolean.class }, tags = { UnitTag.INCOMPLETE })
-	private void testSetDisplayExperimentColumnsInReports() {
-		NIOReportItemHandler.Builder builder = NIOReportItemHandler.builder();
-		final boolean displayExperimentColumnsInReports = true;
-
-		assertNotNull(builder.setDisplayExperimentColumnsInReports(displayExperimentColumnsInReports));
-
-		fail("experiment columns still appear when set to false");
-
-	}
-
-	@UnitTestMethod(target = NIOReportItemHandler.class, name = "builder", args = {})
-	private void testBuilder() {
-		assertNotNull(getNIOReportItemHandler());
-	}
-
-	@UnitTestMethod(target = NIOReportItemHandler.class, name = "accept", args = { ExperimentContext.class })
-	private void testAccept() {
-		/*
-		 * Procedure:
-		 * 
-		 * Select an existing directory that is empty
-		 * 
-		 * Run this method
-		 * 
-		 * Observe that each ENUM element has a corresponding empty file
-		 * 
-		 * Edit each file and put something in it
-		 * 
-		 * Run this method again
-		 * 
-		 * Observe that each file is now empty
-		 * 
-		 */
 		Experiment	.builder()//
-					.addExperimentContextConsumer(getNIOReportItemHandler())//
+					.addPlugin(testPlugin)//
+					.addDimension(dimension1)//
+					.addDimension(dimension2)//
+					.addExperimentContextConsumer(nioReportItemHandler)//
+					.addExperimentContextConsumer(experimentStatusConsole)//
+					.build()//
+					.execute();
+
+	}
+
+	/*
+	 * no progress log written
+	 * 
+	 * no progress log read
+	 *
+	 * no experiment columns
+	 * 
+	 * write three reports
+	 * 
+	 */
+	private void test2(Path subPath) {
+		ReportLabel reportLabel = new SimpleReportLabel("report label");
+
+		ReportHeader.Builder reportHeaderBuilder = ReportHeader.builder();
+		reportHeaderBuilder.add("alpha");
+		reportHeaderBuilder.add("beta");
+		ReportHeader reportHeader = reportHeaderBuilder.build();
+
+		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
+
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
+
+			for (int i = 0; i < 10; i++) {
+				ReportItem.Builder reportItemBuilder = ReportItem.builder();
+				reportItemBuilder.setReportHeader(reportHeader);
+				reportItemBuilder.setReportLabel(reportLabel);
+				reportItemBuilder.addValue(i);
+				reportItemBuilder.addValue("value " + i);
+				ReportItem reportItem = reportItemBuilder.build();
+				c.releaseOutput(reportItem);
+			}
+		}));
+
+		Dimension.Builder dimensionBuilder = Dimension.builder();
+		dimensionBuilder.addMetaDatum("xxx");
+		dimensionBuilder.addLevel((c) -> {
+			List<String> result = new ArrayList<>();
+			result.add("a");
+			return result;
+		});
+		dimensionBuilder.addLevel((c) -> {
+			List<String> result = new ArrayList<>();
+			result.add("b");
+			return result;
+		});
+		Dimension dimension1 = dimensionBuilder.build();
+
+		dimensionBuilder.addMetaDatum("xyz");
+		dimensionBuilder.addLevel((c) -> {
+			List<String> result = new ArrayList<>();
+			result.add("x");
+			return result;
+		});
+		dimensionBuilder.addLevel((c) -> {
+			List<String> result = new ArrayList<>();
+			result.add("y");
+			return result;
+		});
+		dimensionBuilder.addLevel((c) -> {
+			List<String> result = new ArrayList<>();
+			result.add("z");
+			return result;
+		});
+		Dimension dimension2 = dimensionBuilder.build();
+
+		NIOReportItemHandler nioReportItemHandler = //
+				NIOReportItemHandler.builder()//
+									.addReport(reportLabel, subPath.resolve("report1.txt"))//
+									.setDisplayExperimentColumnsInReports(false)//
+									.build();
+
+		TestPluginData testPluginData = pluginDataBuilder.build();
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+
+		ExperimentStatusConsole experimentStatusConsole = ExperimentStatusConsole.builder().build();
+
+		Experiment	.builder()//
+					.addPlugin(testPlugin)//
+					.addDimension(dimension1)//
+					.addDimension(dimension2)//
+					.addExperimentContextConsumer(nioReportItemHandler)//
+					.addExperimentContextConsumer(experimentStatusConsole)//
 					.build()//
 					.execute();
 	}
 
-	@UnitTestMethod(target = NIOReportItemHandler.class, name = "accept", args = { ExperimentContext.class })
-	private void testAcceptWithProgressLog() {
-		/*
-		 * Procedure:
-		 * 
-		 * Copy files from src/test/resources/nioreportitemhandlermanualtesting
-		 * into a local directory
-		 * 
-		 * Observe that the alpha and beta contain lines that aren't scenarios
-		 * in the progress log
-		 * 
-		 * Run this method
-		 * 
-		 * Observe tha the scenarios not included in the progress log have been
-		 * removed from alpha and beta
-		 * 
-		 * Observe that the executable terminated with an exit code of 0
-		 * 
-		 */
+	/*
+	 * write progress log
+	 * 
+	 * do not read progress log
+	 * 
+	 * write three reports
+	 * 
+	 */
+	private void test3(Path subPath) {
+
+		ReportLabel reportLabel = new SimpleReportLabel("report label");
+
+		ReportHeader.Builder reportHeaderBuilder = ReportHeader.builder();
+		reportHeaderBuilder.add("alpha");
+		reportHeaderBuilder.add("beta");
+		ReportHeader reportHeader = reportHeaderBuilder.build();
+
+		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
+
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
+
+			for (int i = 0; i < 10; i++) {
+				ReportItem.Builder reportItemBuilder = ReportItem.builder();
+				reportItemBuilder.setReportHeader(reportHeader);
+				reportItemBuilder.setReportLabel(reportLabel);
+				reportItemBuilder.addValue(i);
+				reportItemBuilder.addValue("value " + i);
+				ReportItem reportItem = reportItemBuilder.build();
+				c.releaseOutput(reportItem);
+			}
+		}));
+
+		Dimension.Builder dimensionBuilder = Dimension.builder();
+		dimensionBuilder.addMetaDatum("xxx");
+		dimensionBuilder.addLevel((c) -> {
+			List<String> result = new ArrayList<>();
+			result.add("a");
+			return result;
+		});
+		dimensionBuilder.addLevel((c) -> {
+			List<String> result = new ArrayList<>();
+			result.add("b");
+			return result;
+		});
+		Dimension dimension1 = dimensionBuilder.build();
+
+		dimensionBuilder.addMetaDatum("xyz");
+		dimensionBuilder.addLevel((c) -> {
+			List<String> result = new ArrayList<>();
+			result.add("x");
+			return result;
+		});
+		dimensionBuilder.addLevel((c) -> {
+			List<String> result = new ArrayList<>();
+			result.add("y");
+			return result;
+		});
+		dimensionBuilder.addLevel((c) -> {
+			List<String> result = new ArrayList<>();
+			result.add("z");
+			return result;
+		});
+		Dimension dimension2 = dimensionBuilder.build();
+
+		NIOReportItemHandler nioReportItemHandler = //
+				NIOReportItemHandler.builder()//
+									.addReport(reportLabel, subPath.resolve("report1.txt"))//
+									.build();
+
+		TestPluginData testPluginData = pluginDataBuilder.build();
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+
+		ExperimentStatusConsole experimentStatusConsole = ExperimentStatusConsole.builder().build();
+
 		Experiment	.builder()//
-					.addExperimentContextConsumer(getNIOReportItemHandler())//
+					.addPlugin(testPlugin)//
+					.addDimension(dimension1)//
+					.addDimension(dimension2)//
+					.addExperimentContextConsumer(nioReportItemHandler)//
+					.setExperimentProgressLog(subPath.resolve("progresslog.txt"))//
+					.setContinueFromProgressLog(false)//
+					.addExperimentContextConsumer(experimentStatusConsole)//
+					.build()//
+					.execute();
+	}
+
+	/*
+	 * write progress log
+	 *
+	 * read progress log
+	 *
+	 * write three reports
+	 *
+	 */
+	private void test4(Path subPath) throws IOException {
+
+		CharsetEncoder encoder = StandardCharsets.UTF_8.newEncoder();
+		OutputStream out = Files.newOutputStream(subPath.resolve("progresslog.txt"), StandardOpenOption.CREATE);
+		BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(out, encoder));
+
+		writer.write("scenario");
+		writer.write("\t");
+		writer.write("xxx");
+		writer.write("\t");
+		writer.write("xyz");
+		writer.newLine();
+
+		writer.write("0");
+		writer.write("\t");
+		writer.write("a");
+		writer.write("\t");
+		writer.write("x");
+		writer.newLine();
+
+		writer.write("1");
+		writer.write("\t");
+		writer.write("b");
+		writer.write("\t");
+		writer.write("x");
+		writer.newLine();
+
+		writer.close();
+
+		ReportLabel reportLabel = new SimpleReportLabel("report label");
+
+		ReportHeader.Builder reportHeaderBuilder = ReportHeader.builder();
+		reportHeaderBuilder.add("alpha");
+		reportHeaderBuilder.add("beta");
+		ReportHeader reportHeader = reportHeaderBuilder.build();
+
+		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
+
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
+
+			for (int i = 0; i < 10; i++) {
+				ReportItem.Builder reportItemBuilder = ReportItem.builder();
+				reportItemBuilder.setReportHeader(reportHeader);
+				reportItemBuilder.setReportLabel(reportLabel);
+				reportItemBuilder.addValue(i);
+				reportItemBuilder.addValue("value " + i);
+				ReportItem reportItem = reportItemBuilder.build();
+				c.releaseOutput(reportItem);
+			}
+		}));
+
+		Dimension.Builder dimensionBuilder = Dimension.builder();
+		dimensionBuilder.addMetaDatum("xxx");
+		dimensionBuilder.addLevel((c) -> {
+			List<String> result = new ArrayList<>();
+			result.add("a");
+			return result;
+		});
+		dimensionBuilder.addLevel((c) -> {
+			List<String> result = new ArrayList<>();
+			result.add("b");
+			return result;
+		});
+		Dimension dimension1 = dimensionBuilder.build();
+
+		dimensionBuilder.addMetaDatum("xyz");
+		dimensionBuilder.addLevel((c) -> {
+			List<String> result = new ArrayList<>();
+			result.add("x");
+			return result;
+		});
+		dimensionBuilder.addLevel((c) -> {
+			List<String> result = new ArrayList<>();
+			result.add("y");
+			return result;
+		});
+		dimensionBuilder.addLevel((c) -> {
+			List<String> result = new ArrayList<>();
+			result.add("z");
+			return result;
+		});
+		Dimension dimension2 = dimensionBuilder.build();
+
+		NIOReportItemHandler nioReportItemHandler = //
+				NIOReportItemHandler.builder()//
+									.addReport(reportLabel, subPath.resolve("report1.txt"))//
+									.build();
+
+		TestPluginData testPluginData = pluginDataBuilder.build();
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+
+		ExperimentStatusConsole experimentStatusConsole = ExperimentStatusConsole.builder().build();
+
+		Experiment	.builder()//
+					.addPlugin(testPlugin)//
+					.addDimension(dimension1)//
+					.addDimension(dimension2)//
+					.addExperimentContextConsumer(nioReportItemHandler)//
+					.setExperimentProgressLog(subPath.resolve("progresslog.txt"))//
 					.setContinueFromProgressLog(true)//
-					.setExperimentProgressLog(dirPath.resolve("ProgressLog.txt"))//
-					.addDimension(getDimension())//
+					.addExperimentContextConsumer(experimentStatusConsole)//
 					.build()//
 					.execute();
+
 	}
+
+	/*
+	 * no progress log written
+	 *
+	 * progress log read
+	 *
+	 * write three reports
+	 *
+	 * use experiment columns
+	 *
+	 */
+	private void test5(Path subPath) {
+
+		ReportLabel reportLabel = new SimpleReportLabel("report label");
+
+		ReportHeader.Builder reportHeaderBuilder = ReportHeader.builder();
+		reportHeaderBuilder.add("alpha");
+		reportHeaderBuilder.add("beta");
+		ReportHeader reportHeader = reportHeaderBuilder.build();
+
+		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
+
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
+
+			for (int i = 0; i < 10; i++) {
+				ReportItem.Builder reportItemBuilder = ReportItem.builder();
+				reportItemBuilder.setReportHeader(reportHeader);
+				reportItemBuilder.setReportLabel(reportLabel);
+				reportItemBuilder.addValue(i);
+				reportItemBuilder.addValue("value " + i);
+				ReportItem reportItem = reportItemBuilder.build();
+				c.releaseOutput(reportItem);
+			}
+		}));
+
+		Dimension.Builder dimensionBuilder = Dimension.builder();
+		dimensionBuilder.addMetaDatum("xxx");
+		dimensionBuilder.addLevel((c) -> {
+			List<String> result = new ArrayList<>();
+			result.add("a");
+			return result;
+		});
+		dimensionBuilder.addLevel((c) -> {
+			List<String> result = new ArrayList<>();
+			result.add("b");
+			return result;
+		});
+		Dimension dimension1 = dimensionBuilder.build();
+
+		dimensionBuilder.addMetaDatum("xyz");
+		dimensionBuilder.addLevel((c) -> {
+			List<String> result = new ArrayList<>();
+			result.add("x");
+			return result;
+		});
+		dimensionBuilder.addLevel((c) -> {
+			List<String> result = new ArrayList<>();
+			result.add("y");
+			return result;
+		});
+		dimensionBuilder.addLevel((c) -> {
+			List<String> result = new ArrayList<>();
+			result.add("z");
+			return result;
+		});
+		Dimension dimension2 = dimensionBuilder.build();
+
+		NIOReportItemHandler nioReportItemHandler = //
+				NIOReportItemHandler.builder()//
+									.addReport(reportLabel, subPath.resolve("report1.txt"))//
+									.build();
+
+		TestPluginData testPluginData = pluginDataBuilder.build();
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+
+		ExperimentStatusConsole experimentStatusConsole = ExperimentStatusConsole.builder().build();
+
+		Experiment	.builder()//
+					.addPlugin(testPlugin)//
+					.addDimension(dimension1)//
+					.addDimension(dimension2)//
+					.addExperimentContextConsumer(nioReportItemHandler)//
+					.setExperimentProgressLog(subPath.resolve("progresslog.txt"))//
+					.setContinueFromProgressLog(true)//
+					.addExperimentContextConsumer(experimentStatusConsole)//
+					.build()//
+					.execute();
+
+	}
+
+	private void printExpected(Integer testNum) {
+
+		StringBuilder sb = new StringBuilder();
+
+		switch (testNum) {
+		case 1:
+			sb.append("This test is meant to prove that when we run a simulation, we can generate a basic report with experiment columns." + "\n");
+			sb.append("Expected Observations: " + "\n");
+			sb.append("\t" + "After all 6 scenarios are completed, the console should show 1" + "\n");
+			sb.append("\t" + "value. You should observe a SUCCEEDED value of 6." + "\n");
+			sb.append("\t" + "A folder named 'test1' should appear in the specified directory." + "\n");
+			sb.append("\t" + "A file named 'report1.txt' should be in the 'test1' folder." + "\n");
+			sb.append("\t" + "The header of the text file should have the following columns: " + "\n");
+			sb.append("\t" + "\t" + "scenario" + "\n");
+			sb.append("\t" + "\t" + "xxx" + "\n");
+			sb.append("\t" + "\t" + "xyz" + "\n");
+			sb.append("\t" + "\t" + "alpha" + "\n");
+			sb.append("\t" + "\t" + "beta" + "\n");
+			sb.append("__________________________________________________________________________________" + "\n");
+			break;
+		case 2:
+			sb.append("This test is meant to prove that when we run a simulation, we can generate a basic report without experiment columns." + "\n");
+			sb.append("Expected Observations: " + "\n");
+			sb.append("\t" + "After all 6 scenarios are completed, the console should show 1" + "\n");
+			sb.append("\t" + "value. You should observe a SUCCEEDED value of 6." + "\n");
+			sb.append("\t" + "A folder named 'test2' should appear in the specified directory." + "\n");
+			sb.append("\t" + "A file named 'report1.txt' should be in the 'test2' folder." + "\n");
+			sb.append("\t" + "The header of the text file should have the following columns: " + "\n");
+			sb.append("\t" + "\t" + "scenario" + "\n");
+			sb.append("\t" + "\t" + "alpha" + "\n");
+			sb.append("\t" + "\t" + "beta" + "\n");
+			sb.append("__________________________________________________________________________________" + "\n");
+			break;
+		case 3:
+			sb.append("This test is meant to prove that when we run a simulation, we can generate a basic report as well as a progress log." + "\n");
+			sb.append("Expected observations: " + "\n");
+			sb.append("\t" + "After all 6 scenarios are completed, the console should show 1" + "\n");
+			sb.append("\t" + "value. You should observe a SUCCEEDED value of 6." + "\n");
+			sb.append("\t" + "A folder named 'test3' should appear in the specified directory." + "\n");
+			sb.append("\t" + "A file named 'report1.txt' should be in the 'test3' folder." + "\n");
+			sb.append("\t" + "The header of the text file should have the following columns.: " + "\n");
+			sb.append("\t" + "\t" + "scenario" + "\n");
+			sb.append("\t" + "\t" + "xxx" + "\n");
+			sb.append("\t" + "\t" + "xyz" + "\n");
+			sb.append("\t" + "\t" + "alpha" + "\n");
+			sb.append("\t" + "\t" + "beta" + "\n");
+			sb.append("\t" + "Another file named 'progresslog.txt' should be in the folder." + "\n");
+			sb.append("\t" + "The header of the progress log file should have the following columns: " + "\n");
+			sb.append("\t" + "\t" + "scenario" + "\n");
+			sb.append("\t" + "\t" + "xxx" + "\n");
+			sb.append("\t" + "\t" + "xyz" + "\n");
+			sb.append("__________________________________________________________________________________" + "\n");
+			break;
+		case 4:
+			sb.append("This test is meant to prove that when a simulation run is interrupted, we can complete the simulation using the progress log." + "\n");
+			sb.append("Expected observations: " + "\n");
+			sb.append("\t" + "After all 6 scenarios are completed, the console should show 2" + "\n");
+			sb.append("\t" + "values. You should observe PREVIOUSLY_SUCCEEDED and SUCCEEDED values" + "\n");
+			sb.append("\t" + "whose sum should total up to 6." + "\n");
+			sb.append("\t" + "A folder named 'test4' should appear in the specified directory." + "\n");
+			sb.append("\t" + "A file named 'report1.txt' should be in the 'test4' folder." + "\n");
+			sb.append("\t" + "The header of the text file should have the following columns: " + "\n");
+			sb.append("\t" + "\t" + "scenario" + "\n");
+			sb.append("\t" + "\t" + "xxx" + "\n");
+			sb.append("\t" + "\t" + "xyz" + "\n");
+			sb.append("\t" + "\t" + "alpha" + "\n");
+			sb.append("\t" + "\t" + "beta" + "\n");
+			sb.append("\t" + "Another file named 'progresslog.txt' should be in the folder." + "\n");
+			sb.append("\t" + "The header of the progress log file should have the following columns: " + "\n");
+			sb.append("\t" + "\t" + "scenario" + "\n");
+			sb.append("\t" + "\t" + "xxx" + "\n");
+			sb.append("\t" + "\t" + "xyz" + "\n");
+			sb.append("__________________________________________________________________________________" + "\n");
+			break;
+		case 5:
+			sb.append("This test is meant to prove that when attempting to complete a simulation using a non existing progress log, " + "\n");
+			sb.append("that the proper contract exception is thrown." + "\n");
+			sb.append("Expected observations: " + "\n");
+			sb.append("\t" + "After running test 5, you should receive an exception with the following message: " + "\n");
+			sb.append("\t" + "Exception in thread \"main\" util.errors.ContractException: The scenario progress file does not exist," + "\n");
+			sb.append("\t" + "but is required when continuation from progress file is chosen" + "\n");
+			sb.append("__________________________________________________________________________________" + "\n");
+			break;
+		}
+
+		System.out.println(sb);
+	}
+
 }
