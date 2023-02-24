@@ -42,6 +42,7 @@ public class StochasticsTranslator implements ITranslator {
         }
 
         public StochasticsTranslator build() {
+            this.data.commonTranslator = this.commonTranslatorBuilder.build();
             return new StochasticsTranslator(this.data);
         }
 
