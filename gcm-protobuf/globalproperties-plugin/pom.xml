@@ -9,9 +9,17 @@
         <version>${revision}</version>
     </parent>
 
-    <artifactId>stochastics-plugin</artifactId>
-    <name>gcm-protobuf :: stochastics-plugin</name>
+    <artifactId>globalproperties-plugin</artifactId>
+    <name>gcm-protobuf :: globalproperties-plugin</name>
     <packaging>jar</packaging>
+
+    <dependencies>
+        <dependency>
+            <groupId>gov.hhs.aspr.gcm.gcm-protobuf</groupId>
+            <artifactId>common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
 
     <build>
         <plugins>
@@ -42,7 +50,7 @@
                                     <type>jar</type>
                                     <overWrite>true</overWrite>
                                     <outputDirectory>${project.basedir}/target/main/proto</outputDirectory>
-                                    <includes>google/protobuf/descriptor.proto</includes>
+                                    <includes>google/protobuf/*.proto</includes>
                                 </artifactItem>
                             </artifactItems>
                         </configuration>
@@ -63,6 +71,8 @@
                 <configuration>
                     <protocArtifact>
                         com.google.protobuf:protoc:${protoc.version}:exe:${os.detected.classifier}</protocArtifact>
+                    <protoSourceRoot>${protobuf.source.dir}/gov/hhs/aspr8/gcm/globalproperties</protoSourceRoot>
+                    <additionalProtoPathElements>${protobuf.source.dir}/gov/hhs/aspr8/gcm/common</additionalProtoPathElements>
                 </configuration>
             </plugin>
             <plugin>
@@ -83,6 +93,12 @@
                                     <excludes>
                                         <exclude>**/junk/**</exclude>
                                     </excludes>
+                                </resource>
+                                <resource>
+                                    <directory>${protobuf.source.dir}</directory>
+                                    <includes>
+                                        <include>gov/hhs/aspr8/gcm/globalproperties/*.proto</include>
+                                    </includes>
                                 </resource>
                             </resources>
                         </configuration>

@@ -9,11 +9,20 @@
         <version>${revision}</version>
     </parent>
 
-    <artifactId>stochastics-plugin</artifactId>
-    <name>gcm-protobuf :: stochastics-plugin</name>
+    <artifactId>common</artifactId>
+    <name>gcm-protobuf :: common</name>
     <packaging>jar</packaging>
 
     <build>
+        <!-- Include core protos in the bundle as resources -->
+    <!-- <resources>
+        <resource>
+          <directory>${protobuf.source.dir}</directory>
+          <includes>
+            <include>gov/hhs/aspr8/gcm/common/*.proto</include>
+          </includes>
+        </resource>
+      </resources> -->
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -42,7 +51,7 @@
                                     <type>jar</type>
                                     <overWrite>true</overWrite>
                                     <outputDirectory>${project.basedir}/target/main/proto</outputDirectory>
-                                    <includes>google/protobuf/descriptor.proto</includes>
+                                    <includes>google/protobuf/*.proto</includes>
                                 </artifactItem>
                             </artifactItems>
                         </configuration>
@@ -61,8 +70,8 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <protocArtifact>
-                        com.google.protobuf:protoc:${protoc.version}:exe:${os.detected.classifier}</protocArtifact>
+                    <protocArtifact>com.google.protobuf:protoc:${protoc.version}:exe:${os.detected.classifier}</protocArtifact>
+                    <protoSourceRoot>${protobuf.source.dir}/gov/hhs/aspr8/gcm/common</protoSourceRoot>
                 </configuration>
             </plugin>
             <plugin>
@@ -84,6 +93,12 @@
                                         <exclude>**/junk/**</exclude>
                                     </excludes>
                                 </resource>
+                                <resource>
+                                    <directory>${protobuf.source.dir}</directory>
+                                    <includes>
+                                      <include>gov/hhs/aspr8/gcm/common/*.proto</include>
+                                    </includes>
+                                  </resource>
                             </resources>
                         </configuration>
                     </execution>

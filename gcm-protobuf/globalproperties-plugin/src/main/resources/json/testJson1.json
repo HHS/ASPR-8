@@ -1,0 +1,53 @@
+{
+   "globalPropertyDefinitinions": [
+      {
+         "propertyId": {
+            "@type": "/google.protobuf.StringValue",
+            "value": "TestPropertyId1"
+         },
+         "propertyDefinition": {
+            "defaultValue": {
+               "@type": "/google.protobuf.Int32Value",
+               "value": 50
+            },
+            "timeTrackingPolicy": "TRACK_TIME"
+         }
+      },
+      {
+         "propertyId": {
+            "@type": "/google.protobuf.StringValue",
+            "value": "TestPropertyId2"
+         },
+         "propertyDefinition": {
+            "defaultValue": {
+               "@type": "/google.protobuf.DoubleValue",
+               "value": 5000.0
+            },
+            "timeTrackingPolicy": "TRACK_TIME",
+            "propertyValuesAreMutable": false
+         }
+      },
+      {
+         "propertyId": {
+            "@type": "/google.protobuf.StringValue",
+            "value": "TestPropertyId3"
+         },
+         "propertyDefinition": {
+            "type": "java.lang.String",
+            "propertyValuesAreMutable": true
+         }
+      }
+   ],
+   "globalPropertyValues": [
+      {
+         "propertyId": {
+            "@type": "/google.protobuf.StringValue",
+            "value": "TestPropertyId3"
+         },
+         "propertyValue": {
+            "@type": "/google.protobuf.StringValue",
+            "value": "TestValue"
+         }
+      }
+   ]
+}

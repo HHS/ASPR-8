@@ -156,13 +156,37 @@ public class App {
         return target;
     }
 
+    // public <T extends Message> GlobalPropertiesPluginData getGlobalPropertiesPluginDataFromInput(List<Class<T>> messageTypes) {
+
+    // }
+    // private input thats defined in a proto file thats been read in via input data
+    // public GlobalPropertiesPluginData getGlobalPropertiesPluginDataFromInput() {
+    //     // IF AND ONLY IF ALL PROPERTY VALUES ARE PRIMITIVE TYPES
+    //     PropertyValue value;
+
+    //     // The Contract says: if it is a primitive type, we will return the Sim Plugin Data
+    //     // If it is "any" type, we will throw an error because we do not know what type of data it is supposed to be
+    //     // call the method that has the message type as a paramater
+
+    //     if(value.getValueCase().compareTo(ValueCase.ANYVALUE)) {
+            
+    //     }
+    // }
+
+
+
+
+
+
+
+
     public static void main(String[] args) {
         App myapp = new App();
 
         try {
-            // myapp.test1LayerMerge();
+            myapp.test1LayerMerge();
             // myapp.test2LayerMerge();
-            myapp.test3LayerMerge();
+            // myapp.test3LayerMerge();
 
             // should throw
             // myapp.testSettingUnknownValue();
