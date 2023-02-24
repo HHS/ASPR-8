@@ -3,6 +3,7 @@ package common;
 import java.io.InputStreamReader;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -85,8 +86,15 @@ public class CommonTranslator implements ITranslator {
         }
 
         private void populate(Message message) {
-            this.data.descriptorMap.put(message.getDescriptorForType(), message);
-            for (FieldDescriptor fieldDescriptor : message.getAllFields().keySet()) {
+            this.data.descriptorMap.putIfAbsent(message.getDescriptorForType(), message);
+
+            Set<FieldDescriptor> fieldDescriptors = message.getAllFields().keySet();
+
+            if (fieldDescriptors.isEmpty()) {
+                return;
+            }
+
+            for (FieldDescriptor fieldDescriptor : fieldDescriptors) {
                 if (fieldDescriptor.getJavaType() == JavaType.MESSAGE) {
                     Message subMessage = (Message) message.getField(fieldDescriptor);
                     if (!(subMessage.getDescriptorForType() == Any.getDescriptor())) {
@@ -142,56 +150,37 @@ public class CommonTranslator implements ITranslator {
         return null;
     }
 
-    private Object getPrimitiveObj(Object obj, JavaType javaType) {
-        switch (javaType) {
-            case BOOLEAN:
-                return (boolean) obj;
-            case DOUBLE:
-                return (double) obj;
-            case FLOAT:
-                return (float) obj;
-            case INT:
-                return (int) obj;
-            case LONG:
-                return (long) obj;
-            case STRING:
-                return (String) obj;
-            case BYTE_STRING:
-            case ENUM:
-            case MESSAGE:
-            default:
-                throw new RuntimeException("Non primitive type, how did this happen?");
-        }
-    }
-
     private Object getValueFromAny(Any anyValue) {
 
+        String typeUrl = anyValue.getTypeUrl();
+
+        Message message;
+        Class<? extends Message> classRef;
+
         try {
-            String typeUrl = anyValue.getTypeUrl();
+            message = this.data.descriptorMap.get(this.data.registry.getDescriptorForTypeUrl(typeUrl));
+        } catch (InvalidProtocolBufferException e) {
+            throw new RuntimeException("No corresponding message definition was found for: " + typeUrl);
+        }
 
-            Message message = this.data.descriptorMap.get(this.data.registry.getDescriptorForTypeUrl(typeUrl));
-
-            if (message == null) {
-                throw new RuntimeException("No corresponding message definition was found for: " + typeUrl);
-            }
-
-            Message unpackedMessage = anyValue.unpack(message.getClass());
+        classRef = message.getClass();
+        try {
+            Message unpackedMessage = anyValue.unpack(classRef);
             Descriptor unpackedMessageDescriptor = unpackedMessage.getDescriptorForType();
             // check if it is a primitive type and return that value
             if (getPrimitiveDescriptors().keySet().contains(unpackedMessageDescriptor)) {
-                for (FieldDescriptor field : unpackedMessage.getAllFields().keySet()) {
-                    if (field.getName().equals("value")) {
-                        return getPrimitiveObj(unpackedMessage.getField(field), field.getJavaType());
-                    }
-                }
+                // wrapper messages have a singular field assigned to value 1
+                FieldDescriptor primitiveFieldDescriptor = unpackedMessage.getDescriptorForType().findFieldByNumber(1);
+                return unpackedMessage.getField(primitiveFieldDescriptor);
             }
 
+            // TODO: require a callback to convert into a non message object
             // otherwise return the message as is
             return unpackedMessage;
 
         } catch (InvalidProtocolBufferException e) {
             e.printStackTrace();
-            throw new RuntimeException("Unable To unpack any type to given class.");
+            throw new RuntimeException("Unable To unpack any type to given class: " + classRef.getName());
         }
     }
 
