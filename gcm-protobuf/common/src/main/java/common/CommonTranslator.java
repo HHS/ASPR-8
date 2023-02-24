@@ -74,7 +74,7 @@ public class CommonTranslator implements ITranslator {
 
         public CommonTranslator build() {
             this.data.registry = TypeRegistry.newBuilder().add(this.data.descriptorMap.keySet()).build();
-            this.data.jsonParser = JsonFormat.parser().usingTypeRegistry(this.data.registry);
+            this.data.jsonParser = JsonFormat.parser().ignoringUnknownFields().usingTypeRegistry(this.data.registry);
             this.data.jsonPrinter = JsonFormat.printer().includingDefaultValueFields()
                     .usingTypeRegistry(this.data.registry);
             return new CommonTranslator(this.data);
