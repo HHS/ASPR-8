@@ -79,6 +79,50 @@ public class AT_TestPlanDataManager {
 			assertEquals(expectedPlans, actualPlans);
 		}
 	}
+	
+	
+	@Test
+	@UnitTestMethod(target = TestPlanDataManager.class, name = "getTestReportPlans", args = { Object.class })
+	public void testGetTestReportPlans() {
+		// create a few TestRepoertPlan items associated with two aliases
+		Map<String, Set<TestReportPlan>> expectedTestReportPlans = new LinkedHashMap<>();
+		Set<TestReportPlan> testReportPlans = new LinkedHashSet<>();
+		expectedTestReportPlans.put("actor1", testReportPlans);
+
+		testReportPlans.add(new TestReportPlan(1, (c) -> {
+		}));
+		testReportPlans.add(new TestReportPlan(2, (c) -> {
+		}));
+		testReportPlans.add(new TestReportPlan(3, (c) -> {
+		}));
+
+		testReportPlans = new LinkedHashSet<>();
+		expectedTestReportPlans.put("actor2", testReportPlans);
+		testReportPlans.add(new TestReportPlan(4, (c) -> {
+		}));
+		testReportPlans.add(new TestReportPlan(5, (c) -> {
+		}));
+
+		// Build the plugin data from the items above
+		TestPluginData.Builder builder = TestPluginData.builder();
+
+		for (String alias : expectedTestReportPlans.keySet()) {
+			testReportPlans = expectedTestReportPlans.get(alias);
+			for (TestReportPlan testReportPlan : testReportPlans) {
+				builder.addTestReportPlan(alias, testReportPlan);
+			}
+		}
+
+		TestPluginData testPluginData = builder.build();
+		TestPlanDataManager testPlanDataManager = new TestPlanDataManager(testPluginData);
+
+		// show that the plans associated with each actors are correct
+		for (String alias : expectedTestReportPlans.keySet()) {
+			Set<TestReportPlan> expectedPlans = expectedTestReportPlans.get(alias);
+			Set<TestReportPlan> actualPlans = new LinkedHashSet<>(testPlanDataManager.getTestReportPlans(alias));
+			assertEquals(expectedPlans, actualPlans);
+		}
+	}
 
 	@Test
 	@UnitTestMethod(target = TestPlanDataManager.class, name = "getTestDataManagerPlans", args = { Object.class })
