@@ -3,6 +3,7 @@ package common;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import com.google.gson.JsonObject;
 import com.google.protobuf.Any;
 import com.google.protobuf.BoolValue;
 import com.google.protobuf.BytesValue;
@@ -26,7 +27,7 @@ import com.google.protobuf.util.JsonFormat.Printer;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.TimeTrackingPolicy;
 
-public class CommonTranslator {
+public class CommonTranslator implements ITranslator {
     private static Map<Descriptor, Message> getPrimitiveDescriptors() {
         Map<Descriptor, Message> map = new LinkedHashMap<>();
 
@@ -95,6 +96,39 @@ public class CommonTranslator {
 
     public static Builder builder() {
         return new Builder(new Data());
+    }
+
+    public Parser getJsonParser() {
+        return this.data.jsonParser;
+    }
+
+    public Printer getJsonPrinter() {
+        return this.data.jsonPrinter;
+    }
+
+    public CommonTranslator getCommonTranslator() {
+        return this;
+    }
+
+    public void printJson(Message message) {
+        try {
+            System.out.println(this.data.jsonPrinter.print(message));
+        } catch (InvalidProtocolBufferException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T extends Message, U extends Message.Builder> T parseJson(JsonObject inputJson, U builder) {
+        JsonObject jsonObject = inputJson.deepCopy();
+        
+        try {
+            this.data.jsonParser.merge(jsonObject.toString(), builder);
+            return (T) builder.build();
+        } catch (InvalidProtocolBufferException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     private Object getPrimitiveObj(Object obj, JavaType javaType) {
@@ -213,4 +247,6 @@ public class CommonTranslator {
     public static Any getInputTypeFromObject(Object value, MessageBuilderCB cb) {
         return Any.pack(cb.makeMessage(value));
     }
+
+    
 }

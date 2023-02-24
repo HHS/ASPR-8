@@ -1,6 +1,12 @@
 package com.example;
 
+import com.google.gson.JsonObject;
+import com.google.protobuf.Message;
+import com.google.protobuf.util.JsonFormat.Parser;
+import com.google.protobuf.util.JsonFormat.Printer;
+
 import common.CommonTranslator;
+import common.ITranslator;
 import common.PropertyDefinitionMap;
 import common.PropertyValueMap;
 import plugins.globalproperties.GlobalPropertiesPluginData;
@@ -9,7 +15,7 @@ import plugins.globalproperties.support.GlobalPropertyId;
 import plugins.globalproperties.support.SimpleGlobalPropertyId;
 import plugins.util.properties.PropertyDefinition;
 
-public class GlobalPropertiesTranslator {
+public class GlobalPropertiesTranslator implements ITranslator {
 
     private Data data;
 
@@ -45,6 +51,26 @@ public class GlobalPropertiesTranslator {
 
     public static Builder builder() {
         return new Builder(new Data());
+    }
+
+    public Parser getJsonParser() {
+        return this.data.commonTranslator.getJsonParser();
+    }
+
+    public Printer getJsonPrinter() {
+        return this.data.commonTranslator.getJsonPrinter();
+    }
+
+    public void printJson(Message message) {
+        this.data.commonTranslator.printJson(message);
+    }
+
+    public <T extends Message, U extends Message.Builder> T parseJson(JsonObject inputJson, U builder) {
+        return this.data.commonTranslator.parseJson(inputJson, builder);
+    }
+
+    public CommonTranslator getCommonTranslator() {
+        return this.data.commonTranslator;
     }
 
     public GlobalPropertiesPluginData convertInputToPluginData(GlobalPropertiesPluginDataInput input) {
