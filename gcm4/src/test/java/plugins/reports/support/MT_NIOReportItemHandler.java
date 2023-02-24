@@ -72,7 +72,7 @@ public final class MT_NIOReportItemHandler {
 		sb.append("\t" + "\t" + "-d followed by a directory name" + "\n");
 		sb.append("\t" + "\t" + "-t followed by a test case number" + "\n");
 		sb.append("\t" + "\t" + "-help for instructions" + "\n");
-		sb.append("\t" + "Exactly one directory name and exactly one test case number is required.");
+		sb.append("\t" + "Exactly one directory name and exactly one test case number are required.");
 		sb.append("Example: " + "\n");
 		sb.append("\t" + "-d c:\\temp\\src\\main\\java c:\\temp\\src\\test\\java" + "\n");
 		sb.append("\t" + "-t 1" + "\n");
