@@ -58,11 +58,6 @@
                 <version>${junit-jupiter-engine.version}</version>
                 <scope>test</scope>
             </dependency>
-            <dependency>
-                <groupId>gov.hhs.aspr.gcm.gcm-protobuf</groupId>
-                <artifactId>protos</artifactId>
-                <version>${gcm.proto.version}</version>
-            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -89,13 +84,10 @@
             <artifactId>junit-jupiter-api</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>gov.hhs.aspr.gcm.gcm-protobuf</groupId>
-            <artifactId>protos</artifactId>
-        </dependency>
     </dependencies>
 
     <modules>
+        <module>proto</module>
         <module>common</module>
         <module>stochastics-plugin</module>
         <module>globalproperties-plugin</module>

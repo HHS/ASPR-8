@@ -30,6 +30,7 @@
                     <execution>
                         <?m2e execute onConfiguration?>
                         <id>unpack-protos</id>
+                        <phase>generate-sources</phase>
                         <goals>
                             <goal>unpack</goal>
                         </goals>
@@ -37,7 +38,7 @@
                             <artifactItems>
                                 <artifactItem>
                                     <groupId>gov.hhs.aspr.gcm.gcm-protobuf</groupId>
-                                    <artifactId>proto</artifactId>
+                                    <artifactId>protos</artifactId>
                                     <version>${gcm.proto.version}</version>
                                     <overWrite>true</overWrite>
                                     <outputDirectory>${project.build.outputDirectory}</outputDirectory>
@@ -53,7 +54,6 @@
                 <artifactId>protobuf-maven-plugin</artifactId>
                 <executions>
                     <execution>
-                        <phase>process-sources</phase>
                         <goals>
                             <goal>compile</goal>
                             <goal>test-compile</goal>

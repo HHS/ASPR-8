@@ -13,6 +13,14 @@
     <name>gcm-protobuf :: stochastics-plugin</name>
     <packaging>jar</packaging>
 
+    <dependencies>
+        <dependency>
+            <groupId>gov.hhs.aspr.gcm.gcm-protobuf</groupId>
+            <artifactId>common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
+
     <build>
         <plugins>
             <plugin>
@@ -28,21 +36,21 @@
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>foo</id>
-                        <phase>process-resources</phase>
+                        <?m2e execute onConfiguration?>
+                        <id>unpack-protos</id>
+                        <phase>generate-sources</phase>
                         <goals>
                             <goal>unpack</goal>
                         </goals>
                         <configuration>
                             <artifactItems>
                                 <artifactItem>
-                                    <groupId>com.google.protobuf</groupId>
-                                    <artifactId>protobuf-java</artifactId>
-                                    <version>${protoc.version}</version>
-                                    <type>jar</type>
+                                    <groupId>gov.hhs.aspr.gcm.gcm-protobuf</groupId>
+                                    <artifactId>protos</artifactId>
+                                    <version>${gcm.proto.version}</version>
                                     <overWrite>true</overWrite>
-                                    <outputDirectory>${project.basedir}/target/main/proto</outputDirectory>
-                                    <includes>google/protobuf/descriptor.proto</includes>
+                                    <outputDirectory>${project.build.outputDirectory}</outputDirectory>
+                                    <includes>**/*.proto</includes>
                                 </artifactItem>
                             </artifactItems>
                         </configuration>
@@ -63,6 +71,11 @@
                 <configuration>
                     <protocArtifact>
                         com.google.protobuf:protoc:${protoc.version}:exe:${os.detected.classifier}</protocArtifact>
+                    <protoSourceRoot>
+                        ${project.build.outputDirectory}/gov/hhs/aspr8/gcm/stochastics</protoSourceRoot>
+                    <additionalProtoPathElements>
+                        ${project.build.outputDirectory}/gov/hhs/aspr8/gcm/common</additionalProtoPathElements>
+                        <attachProtoSources>false</attachProtoSources>
                 </configuration>
             </plugin>
             <plugin>
@@ -78,7 +91,7 @@
                         <configuration>
                             <resources>
                                 <resource>
-                                    <directory>${project.basedir}/src/json</directory>
+                                    <directory>${project.basedir}/src/resources/json</directory>
                                     <targetPath>json</targetPath>
                                     <excludes>
                                         <exclude>**/junk/**</exclude>
@@ -94,7 +107,7 @@
                         </goals>
                         <configuration>
                             <sources>
-                                <source>${project.build.directory}/generated-sources/java</source>
+                                <source>${project.build.directory}/generated-sources/protobuf/java</source>
                             </sources>
                         </configuration>
                     </execution>
