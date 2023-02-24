@@ -9,6 +9,7 @@ public interface ITranslator {
     Parser getJsonParser();
     Printer getJsonPrinter();
     void printJson(Message message);
+    <T extends Message, U extends Message.Builder> T parseJson(String inputFileName, U builder);
     <T extends Message, U extends Message.Builder> T parseJson(JsonObject inputJson, U builder);
     CommonTranslator getCommonTranslator();
 }

@@ -65,6 +65,10 @@ public class GlobalPropertiesTranslator implements ITranslator {
         this.data.commonTranslator.printJson(message);
     }
 
+    public <T extends Message, U extends Message.Builder> T parseJson(String inputFileName, U builder) {
+        return this.data.commonTranslator.parseJson(inputFileName, builder);
+    }
+    
     public <T extends Message, U extends Message.Builder> T parseJson(JsonObject inputJson, U builder) {
         return this.data.commonTranslator.parseJson(inputJson, builder);
     }

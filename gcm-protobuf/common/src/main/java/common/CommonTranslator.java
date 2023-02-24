@@ -1,9 +1,12 @@
 package common;
 
+import java.io.InputStreamReader;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.stream.JsonReader;
 import com.google.protobuf.Any;
 import com.google.protobuf.BoolValue;
 import com.google.protobuf.BytesValue;
@@ -118,10 +121,18 @@ public class CommonTranslator implements ITranslator {
         }
     }
 
+    public <T extends Message, U extends Message.Builder> T parseJson(String inputFileName, U builder) {
+        JsonReader jsonReader = new JsonReader(
+                new InputStreamReader(this.getClass().getResourceAsStream(inputFileName)));
+        JsonObject jsonObject = JsonParser.parseReader(jsonReader).getAsJsonObject();
+
+        return parseJson(jsonObject, builder);
+    }
+
     @SuppressWarnings("unchecked")
     public <T extends Message, U extends Message.Builder> T parseJson(JsonObject inputJson, U builder) {
         JsonObject jsonObject = inputJson.deepCopy();
-        
+
         try {
             this.data.jsonParser.merge(jsonObject.toString(), builder);
             return (T) builder.build();
@@ -248,5 +259,4 @@ public class CommonTranslator implements ITranslator {
         return Any.pack(cb.makeMessage(value));
     }
 
-    
 }

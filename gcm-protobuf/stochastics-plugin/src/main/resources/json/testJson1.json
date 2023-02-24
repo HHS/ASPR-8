@@ -1,41 +1,17 @@
 {
-   "geoSpatials": {
-      "vaccine1": {
-         "1": {
-            "location": {
-               "x": 1,
-               "y": 1,
-               "z": 1
-            },
-            "direction": 1
-         },
-         "2": {
-            "location": {
-               "x": 2,
-               "y": 2,
-               "z": 2
-            },
-            "direction": 2
-         },
-         "3": {
-            "location": {
-               "x": 3,
-               "y": 3,
-               "z": 3
-            },
-            "direction": 3
-         },
-         "4": {
-            "location": {
-               "x": 4,
-               "y": 4,
-               "z": 4
-            },
-            "direction": 4
-         }
+   "seed": "524805676405822016",
+   "randomNumberGeneratorIds": [
+      {
+         "@type": "/google.protobuf.StringValue",
+         "value": "TestGenerator1"
+      },
+      {
+         "@type": "/google.protobuf.StringValue",
+         "value": "TestGenerator2"
+      },
+      {
+         "@type": "/google.protobuf.StringValue",
+         "value": "TestGenerator3"
       }
-   },
-   "experiment" :{
-      
-   }
+   ]
 }
