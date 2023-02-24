@@ -36,21 +36,20 @@
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>unpack</id>
-                        <phase>process-resources</phase>
+                        <?m2e execute onConfiguration?>
+                        <id>unpack-protos</id>
                         <goals>
                             <goal>unpack</goal>
                         </goals>
                         <configuration>
                             <artifactItems>
                                 <artifactItem>
-                                    <groupId>com.google.protobuf</groupId>
-                                    <artifactId>protobuf-java</artifactId>
-                                    <version>${protoc.version}</version>
-                                    <type>jar</type>
+                                    <groupId>gov.hhs.aspr.gcm.gcm-protobuf</groupId>
+                                    <artifactId>common</artifactId>
+                                    <version>${project.version}</version>
                                     <overWrite>true</overWrite>
-                                    <outputDirectory>${project.basedir}/target/main/proto</outputDirectory>
-                                    <includes>google/protobuf/*.proto</includes>
+                                    <outputDirectory>${project.build.outputDirectory}</outputDirectory>
+                                    <includes>**/*.proto</includes>
                                 </artifactItem>
                             </artifactItems>
                         </configuration>
@@ -62,6 +61,7 @@
                 <artifactId>protobuf-maven-plugin</artifactId>
                 <executions>
                     <execution>
+                        <phase>process-sources</phase>
                         <goals>
                             <goal>compile</goal>
                             <goal>test-compile</goal>
@@ -71,8 +71,11 @@
                 <configuration>
                     <protocArtifact>
                         com.google.protobuf:protoc:${protoc.version}:exe:${os.detected.classifier}</protocArtifact>
-                    <protoSourceRoot>${protobuf.source.dir}/gov/hhs/aspr8/gcm/globalproperties</protoSourceRoot>
-                    <additionalProtoPathElements>${protobuf.source.dir}/gov/hhs/aspr8/gcm/common</additionalProtoPathElements>
+                    <protoSourceRoot>
+                        ${project.build.outputDirectory}/gov/hhs/aspr8/gcm/globalproperties</protoSourceRoot>
+                    <additionalProtoPathElements>
+                        ${project.build.outputDirectory}/gov/hhs/aspr8/gcm/common</additionalProtoPathElements>
+                    <attachProtoSources>false</attachProtoSources>
                 </configuration>
             </plugin>
             <plugin>
@@ -94,12 +97,6 @@
                                         <exclude>**/junk/**</exclude>
                                     </excludes>
                                 </resource>
-                                <resource>
-                                    <directory>${protobuf.source.dir}</directory>
-                                    <includes>
-                                        <include>gov/hhs/aspr8/gcm/globalproperties/*.proto</include>
-                                    </includes>
-                                </resource>
                             </resources>
                         </configuration>
                     </execution>
@@ -110,7 +107,7 @@
                         </goals>
                         <configuration>
                             <sources>
-                                <source>${project.build.directory}/generated-sources/java</source>
+                                <source>${project.build.directory}/generated-sources/protobuf/java</source>
                             </sources>
                         </configuration>
                     </execution>

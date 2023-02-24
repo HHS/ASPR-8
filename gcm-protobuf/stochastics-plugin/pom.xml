@@ -28,7 +28,7 @@
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>unpack</id>
+                        <id>foo</id>
                         <phase>process-resources</phase>
                         <goals>
                             <goal>unpack</goal>

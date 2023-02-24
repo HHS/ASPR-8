@@ -22,6 +22,7 @@
         <protobuf.version>3.21.12</protobuf.version>
         <protoc.version>3.21.12</protoc.version>
         <gcm.version>4.0.0-SNAPSHOT</gcm.version>
+        <gcm.proto.version>1.0.0-SNAPSHOT</gcm.proto.version>
         <protobuf.basedir>${project.basedir}/..</protobuf.basedir>
         <protobuf.source.dir>${protobuf.basedir}/src</protobuf.source.dir>
         <generated.sources.dir>${project.build.directory}/generated-sources</generated.sources.dir>
@@ -57,6 +58,11 @@
                 <version>${junit-jupiter-engine.version}</version>
                 <scope>test</scope>
             </dependency>
+            <dependency>
+                <groupId>gov.hhs.aspr.gcm.gcm-protobuf</groupId>
+                <artifactId>protos</artifactId>
+                <version>${gcm.proto.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -82,6 +88,10 @@
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>gov.hhs.aspr.gcm.gcm-protobuf</groupId>
+            <artifactId>protos</artifactId>
         </dependency>
     </dependencies>
 

@@ -14,15 +14,6 @@
     <packaging>jar</packaging>
 
     <build>
-        <!-- Include core protos in the bundle as resources -->
-    <!-- <resources>
-        <resource>
-          <directory>${protobuf.source.dir}</directory>
-          <includes>
-            <include>gov/hhs/aspr8/gcm/common/*.proto</include>
-          </includes>
-        </resource>
-      </resources> -->
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -37,21 +28,20 @@
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>unpack</id>
-                        <phase>process-resources</phase>
+                        <?m2e execute onConfiguration?>
+                        <id>unpack-protos</id>
                         <goals>
                             <goal>unpack</goal>
                         </goals>
                         <configuration>
                             <artifactItems>
                                 <artifactItem>
-                                    <groupId>com.google.protobuf</groupId>
-                                    <artifactId>protobuf-java</artifactId>
-                                    <version>${protoc.version}</version>
-                                    <type>jar</type>
+                                    <groupId>gov.hhs.aspr.gcm.gcm-protobuf</groupId>
+                                    <artifactId>proto</artifactId>
+                                    <version>${gcm.proto.version}</version>
                                     <overWrite>true</overWrite>
-                                    <outputDirectory>${project.basedir}/target/main/proto</outputDirectory>
-                                    <includes>google/protobuf/*.proto</includes>
+                                    <outputDirectory>${project.build.outputDirectory}</outputDirectory>
+                                    <includes>**/*.proto</includes>
                                 </artifactItem>
                             </artifactItems>
                         </configuration>
@@ -63,6 +53,7 @@
                 <artifactId>protobuf-maven-plugin</artifactId>
                 <executions>
                     <execution>
+                        <phase>process-sources</phase>
                         <goals>
                             <goal>compile</goal>
                             <goal>test-compile</goal>
@@ -70,8 +61,10 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <protocArtifact>com.google.protobuf:protoc:${protoc.version}:exe:${os.detected.classifier}</protocArtifact>
-                    <protoSourceRoot>${protobuf.source.dir}/gov/hhs/aspr8/gcm/common</protoSourceRoot>
+                    <protocArtifact>
+                        com.google.protobuf:protoc:${protoc.version}:exe:${os.detected.classifier}</protocArtifact>
+                    <protoSourceRoot>${project.build.outputDirectory}/gov/hhs/aspr8/gcm/common</protoSourceRoot>
+                    <attachProtoSources>false</attachProtoSources>
                 </configuration>
             </plugin>
             <plugin>
@@ -87,18 +80,12 @@
                         <configuration>
                             <resources>
                                 <resource>
-                                    <directory>${project.basedir}/src/json</directory>
+                                    <directory>${project.basedir}/src/main/resrouces</directory>
                                     <targetPath>json</targetPath>
                                     <excludes>
                                         <exclude>**/junk/**</exclude>
                                     </excludes>
                                 </resource>
-                                <resource>
-                                    <directory>${protobuf.source.dir}</directory>
-                                    <includes>
-                                      <include>gov/hhs/aspr8/gcm/common/*.proto</include>
-                                    </includes>
-                                  </resource>
                             </resources>
                         </configuration>
                     </execution>
@@ -109,7 +96,7 @@
                         </goals>
                         <configuration>
                             <sources>
-                                <source>${project.build.directory}/generated-sources/java</source>
+                                <source>${project.build.directory}/generated-sources/protobuf/java</source>
                             </sources>
                         </configuration>
                     </execution>
