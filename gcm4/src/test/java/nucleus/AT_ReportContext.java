@@ -23,7 +23,6 @@ import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestReportPlan;
 import nucleus.testsupport.testplugin.TestSimulation;
-import util.annotations.UnitTag;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.wrappers.MutableBoolean;
@@ -245,7 +244,7 @@ public class AT_ReportContext {
 	}
 
 	@Test
-	@UnitTestMethod(target = ReportContext.class, name = "getDataManager", args = { Class.class }, tags = { UnitTag.INCOMPLETE })
+	@UnitTestMethod(target = ReportContext.class, name = "getDataManager", args = { Class.class })
 	public void testGetDataManager() {
 		// create the test plugin data builder
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
@@ -307,7 +306,7 @@ public class AT_ReportContext {
 	}
 
 	@Test
-	@UnitTestMethod(target = ReportContext.class, name = "getPlan", args = { Object.class }, tags = { UnitTag.INCOMPLETE })
+	@UnitTestMethod(target = ReportContext.class, name = "getPlan", args = { Object.class })
 	public void testGetPlan() {
 		/*
 		 * Have a test report show that a plan added with a key can be retrieved
@@ -326,7 +325,7 @@ public class AT_ReportContext {
 	}
 
 	@Test
-	@UnitTestMethod(target = ReportContext.class, name = "getPlanKeys", args = {}, tags = { UnitTag.INCOMPLETE })
+	@UnitTestMethod(target = ReportContext.class, name = "getPlanKeys", args = {})
 	public void testGetPlanKeys() {
 
 		// There are no precondition tests
@@ -348,7 +347,7 @@ public class AT_ReportContext {
 	}
 
 	@Test
-	@UnitTestMethod(target = ReportContext.class, name = "getPlanTime", args = { Object.class }, tags = { UnitTag.INCOMPLETE })
+	@UnitTestMethod(target = ReportContext.class, name = "getPlanTime", args = { Object.class })
 	public void testGetPlanTime() {
 		testConsumer((context) -> {
 			Object key = new Object();
@@ -367,7 +366,7 @@ public class AT_ReportContext {
 	}
 
 	@Test
-	@UnitTestMethod(target = ReportContext.class, name = "getReportId", args = {}, tags = { UnitTag.INCOMPLETE })
+	@UnitTestMethod(target = ReportContext.class, name = "getReportId", args = {})
 	public void testGetReportId() {
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
@@ -418,7 +417,7 @@ public class AT_ReportContext {
 	}
 
 	@Test
-	@UnitTestMethod(target = ReportContext.class, name = "getTime", args = {}, tags = { UnitTag.INCOMPLETE })
+	@UnitTestMethod(target = ReportContext.class, name = "getTime", args = {})
 	public void testGetTime() {
 		Set<Double> planTimes = new LinkedHashSet<>();
 
@@ -443,7 +442,7 @@ public class AT_ReportContext {
 	}
 
 	@Test
-	@UnitTestMethod(target = ReportContext.class, name = "releaseOutput", args = { Object.class }, tags = { UnitTag.INCOMPLETE })
+	@UnitTestMethod(target = ReportContext.class, name = "releaseOutput", args = { Object.class })
 	public void testReleaseOutput() {
 		// begin building the action plugin
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
@@ -487,7 +486,7 @@ public class AT_ReportContext {
 	}
 
 	@Test
-	@UnitTestMethod(target = ReportContext.class, name = "removePlan", args = { Object.class }, tags = { UnitTag.INCOMPLETE })
+	@UnitTestMethod(target = ReportContext.class, name = "removePlan", args = { Object.class })
 	public void testRemovePlan() {
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
@@ -537,7 +536,7 @@ public class AT_ReportContext {
 	}
 
 	@Test
-	@UnitTestMethod(target = ReportContext.class, name = "subscribe", args = { Class.class, BiConsumer.class }, tags = { UnitTag.INCOMPLETE })
+	@UnitTestMethod(target = ReportContext.class, name = "subscribe", args = { Class.class, BiConsumer.class })
 	public void testSubscribe() {
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
@@ -596,7 +595,7 @@ public class AT_ReportContext {
 	}
 
 	@Test
-	@UnitTestMethod(target = ReportContext.class, name = "subscribeToSimulationClose", args = { Consumer.class }, tags = { UnitTag.INCOMPLETE })
+	@UnitTestMethod(target = ReportContext.class, name = "subscribeToSimulationClose", args = { Consumer.class })
 	public void testSubscribeToSimulationClose() {
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
@@ -629,7 +628,7 @@ public class AT_ReportContext {
 	}
 
 	@Test
-	@UnitTestMethod(target = ReportContext.class, name = "unsubscribe", args = { Class.class }, tags = { UnitTag.INCOMPLETE })
+	@UnitTestMethod(target = ReportContext.class, name = "unsubscribe", args = { Class.class })
 	public void testUnsubscribe() {
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
