@@ -31,25 +31,35 @@ public class GlobalPropertiesTranslator implements ITranslator {
         private CommonTranslator commonTranslator;
 
         private Data() {
-            this.commonTranslator = addDescriptorsForTranslator(CommonTranslator.builder()).build();
         }
     }
 
     public static class Builder implements ITranslatorBuilder {
         private Data data;
+        private CommonTranslator.Builder commonTranslatorBuilder = CommonTranslator.builder();
 
         private Builder(Data data) {
             this.data = data;
+            addDescriptorsForTranslator(this.commonTranslatorBuilder);
         }
 
         public GlobalPropertiesTranslator build() {
+            this.data.commonTranslator = this.commonTranslatorBuilder.build();
             return new GlobalPropertiesTranslator(this.data);
         }
 
-        public Builder addDescriptor(Message message) {
-            CommonTranslator commonTranslator = addDescriptorsForTranslator(CommonTranslator.builder()).addDescriptor(message).build();
-            this.data.commonTranslator = commonTranslator;
+        public Builder setIgnoringUnknownFields(boolean ignoringUnknownFields) {
+            this.commonTranslatorBuilder.setIgnoringUnknownFields(ignoringUnknownFields);
+            return this;
+        }
 
+        public Builder setIncludingDefaultValueFields(boolean includingDefaultValueFields) {
+            this.commonTranslatorBuilder.setIncludingDefaultValueFields(includingDefaultValueFields);
+            return this;
+        }
+
+        public Builder addDescriptor(Message message) {
+            this.commonTranslatorBuilder.addDescriptor(message);
             return this;
         }
     }
@@ -58,12 +68,10 @@ public class GlobalPropertiesTranslator implements ITranslator {
         return Arrays.asList(GlobalPropertiesPluginDataInput.getDefaultInstance());
     }
 
-    private static CommonTranslator.Builder addDescriptorsForTranslator(CommonTranslator.Builder builder) {
-        for(Message message : getDescriptorsForTranslator()) {
+    private static void addDescriptorsForTranslator(CommonTranslator.Builder builder) {
+        for (Message message : getDescriptorsForTranslator()) {
             builder.addDescriptor(message);
         }
-
-        return builder;
     }
 
     public static Builder builder() {

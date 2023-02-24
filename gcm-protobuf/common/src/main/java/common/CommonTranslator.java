@@ -59,6 +59,8 @@ public class CommonTranslator implements ITranslator {
         private TypeRegistry registry;
         private Parser jsonParser;
         private Printer jsonPrinter;
+        private boolean ignoringUnknownFields = true;
+        private boolean includingDefaultValueFields = true;
 
         private Data() {
             this.descriptorMap.putAll(getPrimitiveDescriptors());
@@ -74,10 +76,30 @@ public class CommonTranslator implements ITranslator {
 
         public CommonTranslator build() {
             this.data.registry = TypeRegistry.newBuilder().add(this.data.descriptorMap.keySet()).build();
-            this.data.jsonParser = JsonFormat.parser().ignoringUnknownFields().usingTypeRegistry(this.data.registry);
-            this.data.jsonPrinter = JsonFormat.printer().includingDefaultValueFields()
-                    .usingTypeRegistry(this.data.registry);
+
+            Parser parser = JsonFormat.parser().usingTypeRegistry(this.data.registry);
+            if (this.data.ignoringUnknownFields) {
+                parser = parser.ignoringUnknownFields();
+            }
+            this.data.jsonParser = parser;
+
+            Printer printer = JsonFormat.printer().usingTypeRegistry(this.data.registry);
+            if (this.data.includingDefaultValueFields) {
+                printer = printer.includingDefaultValueFields();
+            }
+            this.data.jsonPrinter = printer;
+
             return new CommonTranslator(this.data);
+        }
+
+        public Builder setIgnoringUnknownFields(boolean ignoringUnknownFields) {
+            this.data.ignoringUnknownFields = ignoringUnknownFields;
+            return this;
+        }
+
+        public Builder setIncludingDefaultValueFields(boolean includingDefaultValueFields) {
+            this.data.includingDefaultValueFields = includingDefaultValueFields;
+            return this;
         }
 
         public Builder addDescriptor(Message message) {
