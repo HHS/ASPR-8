@@ -1,5 +1,8 @@
 package com.example;
 
+import java.util.Arrays;
+import java.util.List;
+
 import com.google.gson.JsonObject;
 import com.google.protobuf.Any;
 import com.google.protobuf.Message;
@@ -8,6 +11,7 @@ import com.google.protobuf.util.JsonFormat.Printer;
 
 import common.CommonTranslator;
 import common.ITranslator;
+import common.ITranslatorBuilder;
 import plugins.stochastics.StochasticsPluginData;
 import plugins.stochastics.StochasticsPluginDataInput;
 import plugins.stochastics.support.RandomNumberGeneratorId;
@@ -25,12 +29,11 @@ public class StochasticsTranslator implements ITranslator {
         private CommonTranslator commonTranslator;
 
         private Data() {
-            this.commonTranslator = CommonTranslator.builder()
-                    .addDescriptor(StochasticsPluginDataInput.getDefaultInstance()).build();
+            this.commonTranslator = addDescriptorsForTranslator(CommonTranslator.builder()).build();
         }
     }
 
-    public static class Builder {
+    public static class Builder implements ITranslatorBuilder {
         private Data data;
 
         private Builder(Data data) {
@@ -41,10 +44,24 @@ public class StochasticsTranslator implements ITranslator {
             return new StochasticsTranslator(this.data);
         }
 
-        public Builder setCommonTranslator(CommonTranslator commonTranslator) {
+        public Builder addDescriptor(Message message) {
+            CommonTranslator commonTranslator = addDescriptorsForTranslator(CommonTranslator.builder()).addDescriptor(message).build();
             this.data.commonTranslator = commonTranslator;
+
             return this;
         }
+    }
+
+    private static List<Message> getDescriptorsForTranslator() {
+        return Arrays.asList(StochasticsPluginDataInput.getDefaultInstance());
+    }
+
+    private static CommonTranslator.Builder addDescriptorsForTranslator(CommonTranslator.Builder builder) {
+        for(Message message : getDescriptorsForTranslator()) {
+            builder.addDescriptor(message);
+        }
+
+        return builder;
     }
 
     public static Builder builder() {

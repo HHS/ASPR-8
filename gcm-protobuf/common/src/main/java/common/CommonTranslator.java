@@ -65,7 +65,7 @@ public class CommonTranslator implements ITranslator {
         }
     }
 
-    public static class Builder {
+    public static class Builder implements ITranslatorBuilder {
         private Data data;
 
         private Builder(Data data) {

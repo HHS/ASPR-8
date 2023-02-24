@@ -1,5 +1,8 @@
 package com.example;
 
+import java.util.Arrays;
+import java.util.List;
+
 import com.google.gson.JsonObject;
 import com.google.protobuf.Message;
 import com.google.protobuf.util.JsonFormat.Parser;
@@ -7,6 +10,7 @@ import com.google.protobuf.util.JsonFormat.Printer;
 
 import common.CommonTranslator;
 import common.ITranslator;
+import common.ITranslatorBuilder;
 import common.PropertyDefinitionMap;
 import common.PropertyValueMap;
 import plugins.globalproperties.GlobalPropertiesPluginData;
@@ -27,12 +31,11 @@ public class GlobalPropertiesTranslator implements ITranslator {
         private CommonTranslator commonTranslator;
 
         private Data() {
-            this.commonTranslator = CommonTranslator.builder()
-                    .addDescriptor(GlobalPropertiesPluginDataInput.getDefaultInstance()).build();
+            this.commonTranslator = addDescriptorsForTranslator(CommonTranslator.builder()).build();
         }
     }
 
-    public static class Builder {
+    public static class Builder implements ITranslatorBuilder {
         private Data data;
 
         private Builder(Data data) {
@@ -43,10 +46,24 @@ public class GlobalPropertiesTranslator implements ITranslator {
             return new GlobalPropertiesTranslator(this.data);
         }
 
-        public Builder setCommonTranslator(CommonTranslator commonTranslator) {
+        public Builder addDescriptor(Message message) {
+            CommonTranslator commonTranslator = addDescriptorsForTranslator(CommonTranslator.builder()).addDescriptor(message).build();
             this.data.commonTranslator = commonTranslator;
+
             return this;
         }
+    }
+
+    private static List<Message> getDescriptorsForTranslator() {
+        return Arrays.asList(GlobalPropertiesPluginDataInput.getDefaultInstance());
+    }
+
+    private static CommonTranslator.Builder addDescriptorsForTranslator(CommonTranslator.Builder builder) {
+        for(Message message : getDescriptorsForTranslator()) {
+            builder.addDescriptor(message);
+        }
+
+        return builder;
     }
 
     public static Builder builder() {
@@ -68,7 +85,7 @@ public class GlobalPropertiesTranslator implements ITranslator {
     public <T extends Message, U extends Message.Builder> T parseJson(String inputFileName, U builder) {
         return this.data.commonTranslator.parseJson(inputFileName, builder);
     }
-    
+
     public <T extends Message, U extends Message.Builder> T parseJson(JsonObject inputJson, U builder) {
         return this.data.commonTranslator.parseJson(inputJson, builder);
     }
