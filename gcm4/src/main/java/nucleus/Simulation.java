@@ -126,6 +126,23 @@ public class Simulation {
 		}
 
 		/**
+		 * Set the simulation time. Defaults to the current date and a start
+		 * time of zero.
+		 * 
+		 * @throws ContractException
+		 *             <li>{@link NucleusError#NULL_SIMULATION_TIME} if the
+		 *             simulation time is null
+		 * 
+		 */
+		public Builder setSimulationTime(SimulationTime simulationTime) {
+			if (simulationTime == null) {
+				throw new ContractException(NucleusError.NULL_SIMULATION_TIME);
+			}
+			data.simulationTime = simulationTime;
+			return this;
+		}
+
+		/**
 		 * Adds a plugin initializer to this builder for inclusion in the
 		 * simulation
 		 * 
@@ -167,6 +184,7 @@ public class Simulation {
 	private static class Data {
 		private List<Plugin> plugins = new ArrayList<>();
 		private Consumer<Object> outputConsumer;
+		private SimulationTime simulationTime = SimulationTime.builder().build();
 	}
 
 	/**
@@ -622,6 +640,8 @@ public class Simulation {
 			throw new ContractException(NucleusError.REPEATED_EXECUTION);
 		}
 		started = true;
+		
+		time = data.simulationTime.getStartTime();
 
 		// set the output consumer
 		outputConsumer = data.outputConsumer;
@@ -1141,8 +1161,8 @@ public class Simulation {
 		if (event == null) {
 			throw new ContractException(NucleusError.NULL_EVENT);
 		}
-		
-		if(!dataManagerQueueActive) {
+
+		if (!dataManagerQueueActive) {
 			throw new ContractException(NucleusError.OBSERVATION_EVENT_IMPROPER_RELEASE);
 		}
 
@@ -1181,7 +1201,7 @@ public class Simulation {
 		if (event == null) {
 			throw new ContractException(NucleusError.NULL_EVENT);
 		}
-		
+
 		if (focalReportId != null) {
 			throw new ContractException(NucleusError.REPORT_ATTEMPTING_MUTATION, focalReportId);
 		}
