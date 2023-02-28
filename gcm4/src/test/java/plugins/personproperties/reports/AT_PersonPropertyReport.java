@@ -4,19 +4,33 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import nucleus.Plugin;
+import nucleus.testsupport.testplugin.TestActorPlan;
+import nucleus.testsupport.testplugin.TestOutputConsumer;
+import nucleus.testsupport.testplugin.TestPluginData;
+import nucleus.testsupport.testplugin.TestSimulation;
+import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import nucleus.ReportContext;
+import plugins.people.datamanagers.PeopleDataManager;
+import plugins.people.support.PersonId;
+import plugins.personproperties.datamanagers.PersonPropertiesDataManager;
 import plugins.personproperties.support.PersonPropertyId;
+import plugins.personproperties.testsupport.PersonPropertiesTestPluginFactory;
 import plugins.personproperties.testsupport.TestPersonPropertyId;
-import plugins.reports.support.ReportError;
-import plugins.reports.support.ReportLabel;
-import plugins.reports.support.ReportPeriod;
-import plugins.reports.support.SimpleReportLabel;
+import plugins.reports.ReportsPlugin;
+import plugins.reports.ReportsPluginData;
+import plugins.reports.support.*;
+import plugins.stochastics.StochasticsDataManager;
+import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
 import util.annotations.UnitTag;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
+
+import java.util.List;
+import java.util.Map;
 
 public class AT_PersonPropertyReport {
 
@@ -62,14 +76,33 @@ public class AT_PersonPropertyReport {
 	@Test
 	@UnitTestMethod(target = PersonPropertyReport.Builder.class, name = "setReportLabel", args = { ReportLabel.class })
 	public void testSetReportLabel() {
-		PersonPropertyReport.Builder builder = PersonPropertyReport.builder();
+		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
+
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) ->{
+			// provides an empty task so that the TestSimulation.execute does not throw an exception
+		}));
+
 		ReportLabel reportLabel = new SimpleReportLabel(1000);
-		builder.setReportLabel(reportLabel);
-		builder.setReportPeriod(ReportPeriod.DAILY);
+		TestPluginData testPluginData = pluginDataBuilder.build();
+		PersonPropertiesTestPluginFactory.Factory factory = PersonPropertiesTestPluginFactory.factory(30, 1174198461656549476L, testPluginData);
+		List<Plugin> plugins = factory.getPlugins();
+		ReportsPluginData reportsPluginData = ReportsPluginData.builder().addReport(()->{
+			PersonPropertyReport.Builder builder = PersonPropertyReport.builder();
+			builder.setReportLabel(reportLabel);
+			builder.setReportPeriod(ReportPeriod.DAILY);
+			builder.setDefaultInclusion(true);
+			return builder.build()::init;
+		}).build();
+		Plugin reportsPlugin = ReportsPlugin.getReportsPlugin(reportsPluginData);
+		plugins.add(reportsPlugin);
+		TestOutputConsumer testOutputConsumer = new TestOutputConsumer();
+		TestSimulation.executeSimulation(plugins, testOutputConsumer);
 
-		PersonPropertyReport report = builder.build();
-
-		assertNotNull(report);
+		Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItems(ReportItem.class);
+		for (ReportItem reportItem : outputItems.keySet()) {
+			assertEquals(reportItem.getReportLabel(), reportLabel);
+		}
+		// add case for excluded id
 
 		// precondition: report label is null
 		ContractException contractException = assertThrows(ContractException.class, () -> {
