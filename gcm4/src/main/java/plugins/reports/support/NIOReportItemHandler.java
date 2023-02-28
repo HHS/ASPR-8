@@ -99,6 +99,9 @@ public final class NIOReportItemHandler implements Consumer<ExperimentContext>{
 			return this;
 		}
 
+		/**
+		 * Sets the delimiter for an experiment.
+		 */
 		public Builder setDelimiter(String delimiter) {
 			data.delimiter = delimiter;
 			return this;
@@ -118,7 +121,7 @@ public final class NIOReportItemHandler implements Consumer<ExperimentContext>{
 
 	private final Map<ReportLabel, Path> reportMap;
 
-	private String delimiter = "\t";
+	private final String delimiter;
 
 	private final boolean displayExperimentColumnsInReports;
 
@@ -166,8 +169,8 @@ public final class NIOReportItemHandler implements Consumer<ExperimentContext>{
 	 * Initializes this report item handler. It subscribes to the following
 	 * experiment level events:
 	 * <ul>
-	 * <li>Experiment Open : reads and initializes all report files.</li>
-	 * <li>all content that doesn't correspond to a previously fully executed scenario is removed.</li>
+	 * <li>Experiment Open : Reads and initializes all report files.
+	 * All content that doesn't correspond to a previously fully executed scenario is removed.</li>
 	 * <li>Simulation Output : directs report items to the appropriate file
 	 * writer</li>
 	 * <li>Simulation Close : ensures all files are flushed so that the content
