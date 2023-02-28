@@ -32,7 +32,7 @@ public final class LineWriter {
 	private static final String lineSeparator = System.getProperty("line.separator");
 	private final Object headerLock = new Object();
 	private BufferedWriter writer;
-	private String delimiter;
+	private final String delimiter;
 
 	@GuardedBy(value = "headerLock")
 	private boolean headerWritten;
@@ -57,7 +57,7 @@ public final class LineWriter {
 	public LineWriter(final ExperimentContext experimentContext, final Path path, final boolean displayExperimentColumnsInReports, String delimiter) {
 
 		if (Files.exists(path)) {
-			if (Files.isRegularFile(path)) {
+			if (!Files.isRegularFile(path)) {
 				throw new RuntimeException("Non-regular file at: " + path);
 			}
 		}
