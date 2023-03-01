@@ -3,6 +3,14 @@ package common;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.protobuf.Descriptors.Descriptor;
+
+import base.AbstractTranslator;
+import testsupport.simobjects.TestMessageSimObject;
+import testsupport.translators.Layer1Translator;
+import testsupport.translators.TestMessageTranslator;
+
+import com.google.protobuf.Message;
 
 public class App {
 
@@ -29,24 +37,24 @@ public class App {
         return target;
     }
 
-
     public static void main(String[] args) {
-        
-        CommonTranslator commonTranslator = CommonTranslator.builder().addDescriptor(TestMessage.getDefaultInstance()).build();
+
+        Translator commonTranslator = CommonTranslator.builder().addCustomTranslator(new TestMessageTranslator())
+                .addCustomTranslator(new Layer1Translator())
+                .build();
 
         PropertyValueMap map = commonTranslator.parseJson("/json/testJson1.json", PropertyValueMap.newBuilder());
 
-
-        Object key = commonTranslator.getObjectFromInput(map.getPropertyId());
-        Object value = commonTranslator.getObjectFromInput(map.getPropertyValue());
+        Object key = commonTranslator.getObjectFromAny(map.getPropertyId());
+        Object value = commonTranslator.getObjectFromAny(map.getPropertyValue());
 
         commonTranslator.printJson(map);
 
-        if(Integer.class.isAssignableFrom(key.getClass())) {
-            System.out.println("key is int");
+        if (TestMessageSimObject.class.isAssignableFrom(key.getClass())) {
+            System.out.println("key is Test Message Actual");
         }
 
-        if(String.class.isAssignableFrom(value.getClass())) {
+        if (String.class.isAssignableFrom(value.getClass())) {
             System.out.println("value is String");
         }
 

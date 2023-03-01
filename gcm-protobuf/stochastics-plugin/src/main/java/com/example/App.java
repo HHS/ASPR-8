@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import common.Translator;
 import plugins.stochastics.StochasticsPluginData;
 import plugins.stochastics.StochasticsPluginDataInput;
 import plugins.stochastics.support.RandomNumberGeneratorId;
@@ -35,19 +36,20 @@ public class App {
 
     public static void main(String[] args) {
 
-        StochasticsTranslator stochasticsTranslator = StochasticsTranslator.builder().build();
+        Translator stochasticsTranslator = StochasticsTranslator.builder().build();
 
+        StochasticsPluginDataInput stochasticsPluginDataInput = stochasticsTranslator.parseJson("/json/testJson1.json",
+                StochasticsPluginDataInput.newBuilder());
 
-        StochasticsPluginDataInput stochasticsPluginDataInput = stochasticsTranslator.parseJson("/json/testJson1.json", StochasticsPluginDataInput.newBuilder());
-        
-        StochasticsPluginData stochasticsPluginData = stochasticsTranslator.convertInputToPluginData(stochasticsPluginDataInput);
+        StochasticsPluginData stochasticsPluginData = (StochasticsPluginData) stochasticsTranslator
+                .convertInputObject(stochasticsPluginDataInput);
 
         stochasticsTranslator.printJson(stochasticsPluginDataInput);
 
         System.out.println(stochasticsPluginData.getSeed());
         System.out.println(stochasticsPluginData.getSeed() == 524805676405822016L);
 
-        for(RandomNumberGeneratorId randomNumberGeneratorId : stochasticsPluginData.getRandomNumberGeneratorIds()) {
+        for (RandomNumberGeneratorId randomNumberGeneratorId : stochasticsPluginData.getRandomNumberGeneratorIds()) {
             System.out.println(randomNumberGeneratorId);
         }
     }

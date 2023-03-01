@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import common.Translator;
 import plugins.globalproperties.GlobalPropertiesPluginData;
 import plugins.globalproperties.GlobalPropertiesPluginDataInput;
 import plugins.globalproperties.support.GlobalPropertyId;
@@ -35,11 +36,11 @@ public class App {
     }
 
     public static void main(String[] args) {
-        GlobalPropertiesTranslator translator = GlobalPropertiesTranslator.builder().build();
+        Translator translator = GlobalPropertiesTranslator.builder().build();
 
         GlobalPropertiesPluginDataInput inputData = translator.parseJson("/json/testJson1.json",
                 GlobalPropertiesPluginDataInput.newBuilder());
-        GlobalPropertiesPluginData pluginData = translator.convertInputToPluginData(inputData);
+        GlobalPropertiesPluginData pluginData = (GlobalPropertiesPluginData) translator.convertInputObject(inputData);
 
         translator.printJson(inputData);
 
