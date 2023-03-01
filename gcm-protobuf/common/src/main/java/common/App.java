@@ -3,14 +3,10 @@ package common;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.protobuf.Descriptors.Descriptor;
 
-import base.AbstractTranslator;
 import testsupport.simobjects.TestMessageSimObject;
 import testsupport.translators.Layer1Translator;
 import testsupport.translators.TestMessageTranslator;
-
-import com.google.protobuf.Message;
 
 public class App {
 
