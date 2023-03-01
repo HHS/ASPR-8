@@ -205,7 +205,7 @@ public final class MT_NIOReportItemHandler {
 			throw new RuntimeException("test index needs to be a integer", e);
 		}
 		
-		if(testIndex<1||testIndex>5) {
+		if(testIndex<1||testIndex>6) {
 			throw new RuntimeException("test index out of bounds");
 		}
 		
@@ -284,6 +284,13 @@ public final class MT_NIOReportItemHandler {
 			createDirectory(subPath);
 			printExpected(5);
 			test5(subPath);
+			break;
+		case 6:
+			subPath = basePath.resolve("test6");
+			createDirectory(subPath);
+			printExpected(6);
+			test1(subPath);
+			test1(subPath);
 			break;
 		default:
 			throw new RuntimeException("unknown test number: " + testToRun);
@@ -839,6 +846,24 @@ public final class MT_NIOReportItemHandler {
 			sb.append("\t" + "Exception in thread \"main\" util.errors.ContractException: The scenario progress file does not exist," + "\n");
 			sb.append("\t" + "but is required when continuation from progress file is chosen" + "\n");
 			sb.append("------------------------------ CONSOLE OUTPUT ------------------------------" + "\n");
+			break;
+		case 6:
+			sb.append("This test is meant to prove that when we can run a simulation multiple times without encountering an exception." + "\n");
+			sb.append("Expected Observations: " + "\n");
+			sb.append("\t" + "After the first 6 scenarios are completed, the console should show 1" + "\n");
+			sb.append("\t" + "value. You should observe a SUCCEEDED value of 6." + "\n");
+			sb.append("\t" + "The 6 scenarios should run a second time and the same SUCCEEDED value should appear." + "\n");
+			sb.append("\t" + "A folder named 'test6' should appear in the specified directory." + "\n");
+			sb.append("\t" + "A file named 'report1.txt' should be in the 'test6' folder." + "\n");
+			sb.append("\t" + "The file's data should be comma separated." + "\n");
+			sb.append("\t" + "The header of the text file should have the following columns: " + "\n");
+			sb.append("\t" + "\t" + "scenario" + "\n");
+			sb.append("\t" + "\t" + "xxx" + "\n");
+			sb.append("\t" + "\t" + "xyz" + "\n");
+			sb.append("\t" + "\t" + "alpha" + "\n");
+			sb.append("\t" + "\t" + "beta" + "\n");
+			sb.append("------------------------------ CONSOLE OUTPUT ------------------------------" + "\n");
+
 			break;
 		}
 
