@@ -55,7 +55,7 @@ public final class PersonPropertyReport extends PeriodicReport {
 		private ReportPeriod reportPeriod;
 		private Set<PersonPropertyId> includedProperties = new LinkedHashSet<>();
 		private Set<PersonPropertyId> excludedProperties = new LinkedHashSet<>();
-		private boolean defaultInclusionPolicy;
+		private boolean defaultInclusionPolicy = true;
 	}
 
 	/**
@@ -87,7 +87,7 @@ public final class PersonPropertyReport extends PeriodicReport {
 		/**
 		 * Sets the default policy for inclusion of person properties in the
 		 * report. This policy is used when a person property has not been
-		 * explicitly included or excluded. Defaulted to false.
+		 * explicitly included or excluded. Defaulted to true.
 		 */
 		public Builder setDefaultInclusion(boolean include) {
 			data.defaultInclusionPolicy = include;
