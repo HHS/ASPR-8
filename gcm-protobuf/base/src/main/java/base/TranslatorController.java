@@ -1,13 +1,18 @@
 package base;
 
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.google.protobuf.Message;
 
+import nucleus.PluginData;
+
 public class TranslatorController {
     private final Data data;
     private MasterTranslator masterTranslator;
+    private final List<PluginData> pluginDatas = new ArrayList<>();
+    private final List<Object> objects = new ArrayList<>();
 
     private TranslatorController(Data data) {
         this.data = data;
@@ -51,6 +56,14 @@ public class TranslatorController {
         this.data.masterTranslatorBuilder.addCustomTranslator(translator);
     }
 
+    public <U extends Message.Builder> void parsePluginDataInput(Reader reader, U builder) {
+        this.pluginDatas.add(this.masterTranslator.parseJson(reader, builder));
+    }
+
+    public <U extends Message.Builder> void parseJson(Reader reader, U builder) {
+        this.objects.add(this.masterTranslator.parseJson(reader, builder));
+    }
+
     // temporary pass through method
     public MasterTranslator getMasterTranslator() {
         if (this.masterTranslator == null) {
@@ -60,7 +73,7 @@ public class TranslatorController {
         return this.masterTranslator;
     }
 
-    public void loadInput() {
+    public TranslatorController loadInput() {
 
         TranslatorContext translatorContext = new TranslatorContext(this);
 
@@ -71,5 +84,25 @@ public class TranslatorController {
         this.masterTranslator = this.data.masterTranslatorBuilder.build();
 
         this.masterTranslator.init();
+
+        for (PluginBundle pluginBundle : this.data.pluginBundles) {
+            if (!pluginBundle.isDependency()) {
+                if (pluginBundle.hasPluginData()) {
+                    pluginBundle.readPluginDataInput(translatorContext);
+                } else {
+                    pluginBundle.readJson(translatorContext);
+                }
+            }
+        }
+
+        return this;
+    }
+
+    public List<PluginData> getPluginDatas() {
+        return this.pluginDatas;
+    }
+
+    public List<Object> getObjects() {
+        return this.objects;
     }
 }

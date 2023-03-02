@@ -5,7 +5,7 @@ import com.google.protobuf.Message;
 public interface ITranslator {
     void init(MasterTranslator translator);
 
-    Object convert(Message message);
+    <T> T convert(Message message);
 
-    Message convert(Object obj);
+    <T> T convert(Object obj);
 }

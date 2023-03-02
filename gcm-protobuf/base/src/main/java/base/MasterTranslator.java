@@ -4,6 +4,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Reader;
 import java.nio.file.Paths;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -28,6 +29,7 @@ import base.translators.PrimitiveTranslators;
 public class MasterTranslator {
 
     protected final Data data;
+    private boolean debug = true;
 
     protected MasterTranslator(Data data) {
         this.data = data;
@@ -147,7 +149,12 @@ public class MasterTranslator {
         }
     }
 
-    public <T extends Message, U extends Message.Builder> T parseJson(String inputFileName, U builder) {
+    public <T, U extends Message.Builder> T parseJson(Reader reader, U builder) {
+        JsonObject jsonObject = JsonParser.parseReader(new JsonReader(reader)).getAsJsonObject();
+        return parseJson(jsonObject, builder);
+    }
+
+    public <T, U extends Message.Builder> T parseJson(String inputFileName, U builder) {
         InputStream in = null;
         try {
             in = new FileInputStream(Paths.get(inputFileName).toFile());
@@ -161,13 +168,15 @@ public class MasterTranslator {
         return parseJson(jsonObject, builder);
     }
 
-    @SuppressWarnings("unchecked")
-    public <T extends Message, U extends Message.Builder> T parseJson(JsonObject inputJson, U builder) {
+    public <T, U extends Message.Builder> T parseJson(JsonObject inputJson, U builder) {
         JsonObject jsonObject = inputJson.deepCopy();
 
         try {
             this.data.jsonParser.merge(jsonObject.toString(), builder);
-            return (T) builder.build();
+            if(this.debug) {
+                printJson(builder.build());
+            }
+            return convertInputObject(builder.build());
         } catch (InvalidProtocolBufferException e) {
             e.printStackTrace();
         }
@@ -208,7 +217,7 @@ public class MasterTranslator {
         }
     }
 
-    public Object convertInputObject(Message inputObject) {
+    public <T> T convertInputObject(Message inputObject) {
         // check if there is a translation method avaiable
         if (this.data.descriptorToTranslatorMap.containsKey(inputObject.getDescriptorForType())) {
             return this.data.descriptorToTranslatorMap.get(inputObject.getDescriptorForType()).convert(inputObject);

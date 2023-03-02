@@ -1,12 +1,14 @@
 package plugins.stochastics;
 
+import java.util.List;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import base.MasterTranslator;
 import base.TranslatorController;
-import common.translators.PropertiesPluginBundle;
+import common.PropertiesPluginBundle;
+import nucleus.PluginData;
 import plugins.stochastics.support.RandomNumberGeneratorId;
 
 public class App {
@@ -37,22 +39,15 @@ public class App {
     public static void main(String[] args) {
 
         TranslatorController translatorController = TranslatorController.builder()
-                .addBundle(new StochasticsPluginBundle())
+                .addBundle(new StochasticsPluginBundle(
+                        "C:\\Dev\\CDC\\ASPR-8\\gcm-protobuf\\stochastics-plugin\\src\\main\\resources\\json\\testJson1.json",
+                        StochasticsPluginDataInput.getDefaultInstance()))
                 .addBundle(new PropertiesPluginBundle())
                 .build();
 
-        translatorController.loadInput();
+        List<PluginData> pluginDatas = translatorController.loadInput().getPluginDatas();
 
-        MasterTranslator masterTranslator = translatorController.getMasterTranslator();
-
-        StochasticsPluginDataInput inputData = masterTranslator.parseJson(
-                "C:\\Dev\\CDC\\ASPR-8\\gcm-protobuf\\stochastics-plugin\\src\\main\\resources\\json\\testJson1.json",
-                StochasticsPluginDataInput.newBuilder());
-
-        StochasticsPluginData stochasticsPluginData = (StochasticsPluginData) masterTranslator
-                .convertInputObject(inputData);
-
-        masterTranslator.printJson(inputData);
+        StochasticsPluginData stochasticsPluginData = (StochasticsPluginData) pluginDatas.get(0);
 
         System.out.println(stochasticsPluginData.getSeed());
         System.out.println(stochasticsPluginData.getSeed() == 524805676405822016L);

@@ -19,7 +19,7 @@ public abstract class AbstractTranslator<I extends Message, S> implements ITrans
     }
 
     @SuppressWarnings("unchecked")
-    public Object convert(Message message) {
+    public S convert(Message message) {
         checkInit();
         if (message.getDescriptorForType() != this.getDescriptorForInputObject()) {
             throw new RuntimeException("Message is not a " + this.getDescriptorForInputObject().getName());
@@ -29,7 +29,7 @@ public abstract class AbstractTranslator<I extends Message, S> implements ITrans
     }
 
     @SuppressWarnings("unchecked")
-    public Message convert(Object obj) {
+    public I convert(Object obj) {
         checkInit();
 
         if (!(this.getSimObjectClass().isAssignableFrom(obj.getClass()))) {

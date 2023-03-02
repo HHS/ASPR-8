@@ -1,14 +1,16 @@
 package common;
 
+import java.util.List;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import base.MasterTranslator;
 import base.TranslatorController;
-import common.translators.PropertiesPluginBundle;
+import testsupport.simobjects.PropertyValueMapSimObject;
 import testsupport.simobjects.TestMessageSimObject;
 import testsupport.translators.Layer1Translator;
+import testsupport.translators.PropertyValueMapTranslator;
 import testsupport.translators.TestMessageTranslator;
 
 public class App {
@@ -39,34 +41,28 @@ public class App {
     public static void main(String[] args) {
 
         TranslatorController translatorController = TranslatorController.builder()
-                .addBundle(new PropertiesPluginBundle())
+                .addBundle(new PropertiesPluginBundle(
+                        "C:\\Dev\\CDC\\ASPR-8\\gcm-protobuf\\base\\src\\main\\resources\\json\\testJson1.json",
+                        PropertyValueMap.getDefaultInstance()))
                 .addCustomTranslator(new TestMessageTranslator())
                 .addCustomTranslator(new Layer1Translator())
+                .addCustomTranslator(new PropertyValueMapTranslator())
                 .build();
 
-        translatorController.loadInput();
+        List<Object> objects = translatorController.loadInput().getObjects();
 
-        MasterTranslator masterTranslator = translatorController.getMasterTranslator();
+        PropertyValueMapSimObject map = (PropertyValueMapSimObject) objects.get(0);
 
-        PropertyValueMap map = masterTranslator.parseJson(
-                "C:\\Dev\\CDC\\ASPR-8\\gcm-protobuf\\base\\src\\main\\resources\\json\\testJson1.json",
-                PropertyValueMap.newBuilder());
-
-        Object key = masterTranslator.getObjectFromAny(map.getPropertyId());
-        Object value = masterTranslator.getObjectFromAny(map.getPropertyValue());
-
-        masterTranslator.printJson(map);
-
-        if (TestMessageSimObject.class.isAssignableFrom(key.getClass())) {
+        if (TestMessageSimObject.class.isAssignableFrom(map.getKey().getClass())) {
             System.out.println("key is Test Message Actual");
         }
 
-        if (String.class.isAssignableFrom(value.getClass())) {
+        if (String.class.isAssignableFrom(map.getValue().getClass())) {
             System.out.println("value is String");
         }
 
-        System.out.println(key.toString());
-        System.out.println(value.toString());
+        System.out.println(map.getKey().toString());
+        System.out.println(map.getValue().toString());
 
     }
 }
