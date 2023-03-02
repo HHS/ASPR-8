@@ -2,6 +2,7 @@ package common;
 
 import com.google.protobuf.Message;
 
+import base.ParserContext;
 import base.PluginBundle;
 import base.TranslatorContext;
 import common.translators.PropertyDefinitionTranslator;
@@ -22,14 +23,12 @@ public class PropertiesPluginBundle extends PluginBundle {
         translatorContext.addTranslator(new PropertyDefinitionTranslator());
     }
 
-    public void readPluginDataInput(TranslatorContext translatorContext) {
+    public void readPluginDataInput(ParserContext parserContext) {
         throw new RuntimeException("Properties Plugin Bundle does not have a PluginDataInput type to parse.");
     }
 
-    public void readJson(TranslatorContext translatorContext) {
-        if (!this.isDependency) {
-            translatorContext.parseJson(this.reader, this.pluginDataMessage.newBuilderForType());
-        }
+    public void readJson(ParserContext parserContext) {
+        parserContext.parseJson(this.reader, this.pluginDataMessage.newBuilderForType());
     }
 
 }

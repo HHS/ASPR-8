@@ -85,12 +85,14 @@ public class TranslatorController {
 
         this.masterTranslator.init();
 
+        ParserContext parserContext = new ParserContext(this);
+
         for (PluginBundle pluginBundle : this.data.pluginBundles) {
             if (!pluginBundle.isDependency()) {
                 if (pluginBundle.hasPluginData()) {
-                    pluginBundle.readPluginDataInput(translatorContext);
+                    pluginBundle.readPluginDataInput(parserContext);
                 } else {
-                    pluginBundle.readJson(translatorContext);
+                    pluginBundle.readJson(parserContext);
                 }
             }
         }

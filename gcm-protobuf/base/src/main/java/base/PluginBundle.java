@@ -28,9 +28,9 @@ public abstract class PluginBundle {
 
     public abstract void init(TranslatorContext translatorContext);
 
-    public abstract void readPluginDataInput(TranslatorContext translatorContext);
+    public abstract void readPluginDataInput(ParserContext parserContext);
 
-    public abstract void readJson(TranslatorContext translatorContext);
+    public abstract void readJson(ParserContext parserContext);
 
     public boolean hasPluginData() {
         return this.hasPluginData;
