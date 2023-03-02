@@ -2,10 +2,8 @@ package base;
 
 import com.google.protobuf.Message;
 
-import common.Translator;
-
 public interface ITranslator {
-    void init(Translator translator);
+    void init(MasterTranslator translator);
 
     Object convert(Message message);
 

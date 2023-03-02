@@ -4,6 +4,9 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import base.MasterTranslator;
+import base.TranslatorController;
+import common.translators.PropertiesPluginBundle;
 import testsupport.simobjects.TestMessageSimObject;
 import testsupport.translators.Layer1Translator;
 import testsupport.translators.TestMessageTranslator;
@@ -35,16 +38,24 @@ public class App {
 
     public static void main(String[] args) {
 
-        Translator commonTranslator = CommonTranslator.builder().addCustomTranslator(new TestMessageTranslator())
+        TranslatorController translatorController = TranslatorController.builder()
+                .addBundle(new PropertiesPluginBundle())
+                .addCustomTranslator(new TestMessageTranslator())
                 .addCustomTranslator(new Layer1Translator())
                 .build();
 
-        PropertyValueMap map = commonTranslator.parseJson("/json/testJson1.json", PropertyValueMap.newBuilder());
+        translatorController.loadInput();
 
-        Object key = commonTranslator.getObjectFromAny(map.getPropertyId());
-        Object value = commonTranslator.getObjectFromAny(map.getPropertyValue());
+        MasterTranslator masterTranslator = translatorController.getMasterTranslator();
 
-        commonTranslator.printJson(map);
+        PropertyValueMap map = masterTranslator.parseJson(
+                "C:\\Dev\\CDC\\ASPR-8\\gcm-protobuf\\base\\src\\main\\resources\\json\\testJson1.json",
+                PropertyValueMap.newBuilder());
+
+        Object key = masterTranslator.getObjectFromAny(map.getPropertyId());
+        Object value = masterTranslator.getObjectFromAny(map.getPropertyValue());
+
+        masterTranslator.printJson(map);
 
         if (TestMessageSimObject.class.isAssignableFrom(key.getClass())) {
             System.out.println("key is Test Message Actual");

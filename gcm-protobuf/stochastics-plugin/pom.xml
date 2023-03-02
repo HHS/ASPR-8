@@ -16,8 +16,8 @@
     <dependencies>
         <dependency>
             <groupId>gov.hhs.aspr.gcm.gcm-protobuf</groupId>
-            <artifactId>common</artifactId>
-            <version>${project.version}</version>
+            <artifactId>base</artifactId>
+            <version>${revision}</version>
         </dependency>
     </dependencies>
 

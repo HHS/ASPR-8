@@ -1,4 +1,4 @@
-package com.example;
+package plugins.stochastics.translators;
 
 import com.google.protobuf.Any;
 import com.google.protobuf.Descriptors.Descriptor;

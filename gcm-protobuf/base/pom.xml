@@ -9,8 +9,8 @@
         <version>${revision}</version>
     </parent>
 
-    <artifactId>common</artifactId>
-    <name>gcm-protobuf :: common</name>
+    <artifactId>base</artifactId>
+    <name>gcm-protobuf :: base</name>
     <packaging>jar</packaging>
 
     <build>

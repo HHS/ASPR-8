@@ -10,5 +10,6 @@
    "propertyValue": {
       "@type": "/google.protobuf.StringValue",
       "value": "50"
-   }
+   },
+   "wombat": 0
 }

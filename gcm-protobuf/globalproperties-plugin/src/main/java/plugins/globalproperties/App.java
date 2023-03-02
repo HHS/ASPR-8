@@ -1,12 +1,12 @@
-package com.example;
+package plugins.globalproperties;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import common.Translator;
-import plugins.globalproperties.GlobalPropertiesPluginData;
-import plugins.globalproperties.GlobalPropertiesPluginDataInput;
+import base.MasterTranslator;
+import base.TranslatorController;
+import common.translators.PropertiesPluginBundle;
 import plugins.globalproperties.support.GlobalPropertyId;
 import plugins.util.properties.PropertyDefinition;
 
@@ -36,13 +36,22 @@ public class App {
     }
 
     public static void main(String[] args) {
-        Translator translator = GlobalPropertiesTranslator.builder().build();
+        TranslatorController translatorController = TranslatorController.builder()
+                .addBundle(new GlobalPropertiesPluginBundle())
+                .addBundle(new PropertiesPluginBundle())
+                .build();
 
-        GlobalPropertiesPluginDataInput inputData = translator.parseJson("/json/testJson1.json",
+        translatorController.loadInput();
+
+        MasterTranslator masterTranslator = translatorController.getMasterTranslator();
+
+        GlobalPropertiesPluginDataInput inputData = masterTranslator.parseJson(
+                "C:\\Dev\\CDC\\ASPR-8\\gcm-protobuf\\globalproperties-plugin\\src\\main\\resources\\json\\testJson1.json",
                 GlobalPropertiesPluginDataInput.newBuilder());
-        GlobalPropertiesPluginData pluginData = (GlobalPropertiesPluginData) translator.convertInputObject(inputData);
 
-        translator.printJson(inputData);
+        GlobalPropertiesPluginData pluginData = (GlobalPropertiesPluginData) masterTranslator.convertInputObject(inputData);
+
+        masterTranslator.printJson(inputData);
 
         System.out.println(pluginData.getGlobalPropertyIds());
         for (GlobalPropertyId id : pluginData.getGlobalPropertyIds()) {

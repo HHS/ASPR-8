@@ -3,13 +3,11 @@ package base;
 import com.google.protobuf.Message;
 import com.google.protobuf.Descriptors.Descriptor;
 
-import common.Translator;
-
 public abstract class AbstractTranslator<I extends Message, S> implements ITranslator {
-    protected Translator translator;
+    protected MasterTranslator translator;
     private boolean initialized = false;
 
-    public void init(Translator translator) {
+    public void init(MasterTranslator translator) {
         this.translator = translator;
         this.initialized = true;
     }

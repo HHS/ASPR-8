@@ -1,6 +1,10 @@
-package common;
+package base;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.file.Paths;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
@@ -19,18 +23,14 @@ import com.google.protobuf.util.JsonFormat;
 import com.google.protobuf.util.JsonFormat.Parser;
 import com.google.protobuf.util.JsonFormat.Printer;
 
-import base.AbstractTranslator;
-import base.ITranslator;
 import base.translators.PrimitiveTranslators;
 
-public class Translator {
+public class MasterTranslator {
 
     protected final Data data;
 
-    protected Translator(Data data) {
+    protected MasterTranslator(Data data) {
         this.data = data;
-        this.data.descriptorToTranslatorMap.values().forEach((translator) -> translator.init(this));
-        this.data.objectToTranslatorMap.values().forEach((translator) -> translator.init(this));
     }
 
     protected static class Data {
@@ -57,7 +57,7 @@ public class Translator {
             this.data = data;
         }
 
-        public Translator build() {
+        public MasterTranslator build() {
             this.data.registry = TypeRegistry.newBuilder().add(this.data.descriptorMap.keySet()).build();
 
             Parser parser = JsonFormat.parser().usingTypeRegistry(this.data.registry);
@@ -72,7 +72,7 @@ public class Translator {
             }
             this.data.jsonPrinter = printer;
 
-            return new Translator(this.data);
+            return new MasterTranslator(this.data);
         }
 
         public Builder setIgnoringUnknownFields(boolean ignoringUnknownFields) {
@@ -122,6 +122,11 @@ public class Translator {
         return new Builder(new Data());
     }
 
+    public void init() {
+        this.data.descriptorToTranslatorMap.values().forEach((translator) -> translator.init(this));
+        this.data.objectToTranslatorMap.values().forEach((translator) -> translator.init(this));
+    }
+
     public Parser getJsonParser() {
         return this.data.jsonParser;
     }
@@ -130,7 +135,7 @@ public class Translator {
         return this.data.jsonPrinter;
     }
 
-    public Translator getCommonTranslator() {
+    public MasterTranslator getCommonTranslator() {
         return this;
     }
 
@@ -143,8 +148,14 @@ public class Translator {
     }
 
     public <T extends Message, U extends Message.Builder> T parseJson(String inputFileName, U builder) {
+        InputStream in = null;
+        try {
+            in = new FileInputStream(Paths.get(inputFileName).toFile());
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
         JsonReader jsonReader = new JsonReader(
-                new InputStreamReader(this.getClass().getResourceAsStream(inputFileName)));
+                new InputStreamReader(in));
         JsonObject jsonObject = JsonParser.parseReader(jsonReader).getAsJsonObject();
 
         return parseJson(jsonObject, builder);
@@ -171,7 +182,18 @@ public class Translator {
         Class<? extends Message> classRef;
 
         try {
-            message = this.data.descriptorMap.get(this.data.registry.getDescriptorForTypeUrl(typeUrl));
+            Descriptor messageDescriptor = this.data.registry.getDescriptorForTypeUrl(typeUrl);
+            message = this.data.descriptorMap.get(messageDescriptor);
+            if (message == null) {
+                throw new RuntimeException("No default instance was provided for: " + messageDescriptor.getName()
+                        + ". This occurs when the above message type is defined in the same file as another message type who's descriptor is added to this Translator, "
+                        + "but who's own descriptor is not explicitly added to this Translator. "
+                        + "For example, if you had a proto file with two message definitions- "
+                        + "Wombat and Cat and you added the descriptor for Cat to this Translator, "
+                        + "the json parser for this Translator will internally also add the descriptor for Wombat, "
+                        + "so the parser knows about Wombat, which allows the type to be properly parsed, "
+                        + "but this Translator does not, thus resulting in a null message here.");
+            }
         } catch (InvalidProtocolBufferException e) {
             throw new RuntimeException("No corresponding message definition was found for: " + typeUrl);
         }
@@ -185,14 +207,15 @@ public class Translator {
             throw new RuntimeException("Unable To unpack any type to given class: " + classRef.getName());
         }
     }
-    
+
     public Object convertInputObject(Message inputObject) {
         // check if there is a translation method avaiable
         if (this.data.descriptorToTranslatorMap.containsKey(inputObject.getDescriptorForType())) {
             return this.data.descriptorToTranslatorMap.get(inputObject.getDescriptorForType()).convert(inputObject);
         }
         throw new RuntimeException(
-                "No conversion translator was provided for message type: " + inputObject.getDescriptorForType().getName());
+                "No conversion translator was provided for message type: "
+                        + inputObject.getDescriptorForType().getName());
     }
 
     public Message convertSimObject(Object simObject) {
