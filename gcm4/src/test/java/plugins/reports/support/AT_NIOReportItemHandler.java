@@ -57,6 +57,12 @@ public class AT_NIOReportItemHandler {
 	}
 
 	@Test
+	@UnitTestMethod(target = NIOReportItemHandler.Builder.class, name = "setDelimiter", args = {String.class}, tags = UnitTag.MANUAL)
+	public void testSetDelimiter() {
+		// covered by test 6 in manual test
+	}
+
+	@Test
 	@UnitTestMethod(target = NIOReportItemHandler.Builder.class, name = "setDisplayExperimentColumnsInReports", args = { boolean.class }, tags = { UnitTag.MANUAL })
 	public void testSetDisplayExperimentColumnsInReports() {
 		NIOReportItemHandler.Builder builder = NIOReportItemHandler.builder();
