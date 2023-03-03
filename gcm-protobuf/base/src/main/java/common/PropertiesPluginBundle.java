@@ -2,15 +2,17 @@ package common;
 
 import com.google.protobuf.Message;
 
-import base.ParserContext;
+import base.ReaderContext;
 import base.PluginBundle;
 import base.TranslatorContext;
+import base.WriterContext;
 import common.translators.PropertyDefinitionTranslator;
+import nucleus.PluginData;
 
 public class PropertiesPluginBundle extends PluginBundle {
 
-    public PropertiesPluginBundle(String inputFileName, Message pluginDataMessage) {
-        super(inputFileName, pluginDataMessage);
+    public PropertiesPluginBundle(String inputFileName, String outputFileName, Message pluginDataMessage) {
+        super(inputFileName, outputFileName, pluginDataMessage);
         this.hasPluginData = false;
     }
 
@@ -23,12 +25,20 @@ public class PropertiesPluginBundle extends PluginBundle {
         translatorContext.addTranslator(new PropertyDefinitionTranslator());
     }
 
-    public void readPluginDataInput(ParserContext parserContext) {
+    public void readPluginDataInput(ReaderContext parserContext) {
         throw new RuntimeException("Properties Plugin Bundle does not have a PluginDataInput type to parse.");
     }
 
-    public void readJson(ParserContext parserContext) {
-        parserContext.parseJson(this.reader, this.pluginDataMessage.newBuilderForType());
+    public void readJson(ReaderContext parserContext) {
+        parserContext.readJson(this.reader, this.pluginDataMessage.newBuilderForType(), this);
+    }
+
+    public void writePluginDataOutput(WriterContext writerContext, PluginData pluginData) {
+        throw new RuntimeException("Properties Plugin Bundle does not have a PluginDataInput type to write.");
+    }
+
+    public void writeJson(WriterContext writerContext, Object simObject) {
+        writerContext.writeJson(writer, simObject);
     }
 
 }

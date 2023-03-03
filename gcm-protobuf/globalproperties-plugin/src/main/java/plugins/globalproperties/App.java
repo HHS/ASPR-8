@@ -41,6 +41,7 @@ public class App {
         TranslatorController translatorController = TranslatorController.builder()
                 .addBundle(new GlobalPropertiesPluginBundle(
                         "C:\\Dev\\CDC\\ASPR-8\\gcm-protobuf\\globalproperties-plugin\\src\\main\\resources\\json\\testJson1.json",
+                        "C:\\Dev\\CDC\\ASPR-8\\gcm-protobuf\\globalproperties-plugin\\src\\main\\resources\\json\\output\\testJson1Output.json",
                         GlobalPropertiesPluginDataInput.getDefaultInstance()))
                 .addBundle(new PropertiesPluginBundle())
                 .build();
@@ -57,5 +58,7 @@ public class App {
             System.out.println(value);
 
         }
+
+        translatorController.writeOutput();
     }
 }

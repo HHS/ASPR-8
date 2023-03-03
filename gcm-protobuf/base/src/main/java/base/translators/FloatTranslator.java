@@ -29,7 +29,7 @@ public class FloatTranslator extends AbstractTranslator<FloatValue, Float> {
 
     @Override
     public Class<Float> getSimObjectClass() {
-        return float.class;
+        return Float.class;
     }
 
     @Override

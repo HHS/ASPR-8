@@ -1,8 +1,11 @@
 package base;
 
 import java.io.Reader;
+import java.io.Writer;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.google.protobuf.Message;
 
@@ -13,6 +16,7 @@ public class TranslatorController {
     private MasterTranslator masterTranslator;
     private final List<PluginData> pluginDatas = new ArrayList<>();
     private final List<Object> objects = new ArrayList<>();
+    private final Map<Class<?>, PluginBundle> simObjectClassToPluginBundleMap = new LinkedHashMap<>();
 
     private TranslatorController(Data data) {
         this.data = data;
@@ -33,6 +37,10 @@ public class TranslatorController {
             this.data = data;
         }
 
+        public TranslatorController build() {
+            return new TranslatorController(this.data);
+        }
+
         public Builder addBundle(PluginBundle pluginBundle) {
             this.data.pluginBundles.add(pluginBundle);
             return this;
@@ -43,9 +51,16 @@ public class TranslatorController {
             return this;
         }
 
-        public TranslatorController build() {
-            return new TranslatorController(this.data);
+        public Builder setIgnoringUnknownFields(boolean ignoringUnknownFields) {
+            this.data.masterTranslatorBuilder.setIgnoringUnknownFields(ignoringUnknownFields);
+            return this;
         }
+
+        public Builder setIncludingDefaultValueFields(boolean includingDefaultValueFields) {
+            this.data.masterTranslatorBuilder.setIncludingDefaultValueFields(includingDefaultValueFields);
+            return this;
+        }
+
     }
 
     public static Builder builder() {
@@ -56,12 +71,27 @@ public class TranslatorController {
         this.data.masterTranslatorBuilder.addCustomTranslator(translator);
     }
 
-    public <U extends Message.Builder> void parsePluginDataInput(Reader reader, U builder) {
-        this.pluginDatas.add(this.masterTranslator.parseJson(reader, builder));
+    protected <U extends Message.Builder> void readPluginDataInput(Reader reader, U builder,
+            PluginBundle pluginBundle) {
+        PluginData pluginData = this.masterTranslator.readJson(reader, builder);
+
+        this.pluginDatas.add(pluginData);
+        this.simObjectClassToPluginBundleMap.put(pluginData.getClass(), pluginBundle);
     }
 
-    public <U extends Message.Builder> void parseJson(Reader reader, U builder) {
-        this.objects.add(this.masterTranslator.parseJson(reader, builder));
+    protected <U extends Message.Builder> void readJson(Reader reader, U builder, PluginBundle pluginBundle) {
+        Object simObject = this.masterTranslator.readJson(reader, builder);
+
+        this.objects.add(simObject);
+        this.simObjectClassToPluginBundleMap.put(simObject.getClass(), pluginBundle);
+    }
+
+    protected <T extends PluginData> void writePluginDataInput(Writer writer, T pluginData) {
+        this.masterTranslator.printJson(writer, pluginData);
+    }
+
+    protected void writeJson(Writer writer, Object simObject) {
+        this.masterTranslator.printJson(writer, simObject);
     }
 
     // temporary pass through method
@@ -85,7 +115,7 @@ public class TranslatorController {
 
         this.masterTranslator.init();
 
-        ParserContext parserContext = new ParserContext(this);
+        ReaderContext parserContext = new ReaderContext(this);
 
         for (PluginBundle pluginBundle : this.data.pluginBundles) {
             if (!pluginBundle.isDependency()) {
@@ -98,6 +128,20 @@ public class TranslatorController {
         }
 
         return this;
+    }
+
+    public void writeOutput() {
+        WriterContext writerContext = new WriterContext(this);
+
+        for (PluginData pluginData : this.pluginDatas) {
+            PluginBundle pluginBundle = this.simObjectClassToPluginBundleMap.get(pluginData.getClass());
+            pluginBundle.writePluginDataOutput(writerContext, pluginData);
+        }
+
+        for (Object simObject : this.objects) {
+            PluginBundle pluginBundle = this.simObjectClassToPluginBundleMap.get(simObject.getClass());
+            pluginBundle.writeJson(writerContext, simObject);
+        }
     }
 
     public List<PluginData> getPluginDatas() {

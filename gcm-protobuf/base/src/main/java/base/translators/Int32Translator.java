@@ -29,7 +29,7 @@ public class Int32Translator extends AbstractTranslator<Int32Value, Integer> {
 
     @Override
     public Class<Integer> getSimObjectClass() {
-        return int.class;
+        return Integer.class;
     }
 
     @Override

@@ -29,7 +29,7 @@ public class Int64Translator extends AbstractTranslator<Int64Value, Long> {
 
     @Override
     public Class<Long> getSimObjectClass() {
-        return long.class;
+        return Long.class;
     }
 
     @Override

@@ -2,9 +2,11 @@ package base;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.io.Writer;
 import java.nio.file.Paths;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -25,6 +27,7 @@ import com.google.protobuf.util.JsonFormat.Parser;
 import com.google.protobuf.util.JsonFormat.Printer;
 
 import base.translators.PrimitiveTranslators;
+import nucleus.PluginData;
 
 public class MasterTranslator {
 
@@ -43,7 +46,7 @@ public class MasterTranslator {
         protected Parser jsonParser;
         protected Printer jsonPrinter;
         protected boolean ignoringUnknownFields = true;
-        protected boolean includingDefaultValueFields = true;
+        protected boolean includingDefaultValueFields = false;
 
         protected Data() {
             this.descriptorMap.putAll(PrimitiveTranslators.getPrimitiveDescriptorToMessageMap());
@@ -73,6 +76,7 @@ public class MasterTranslator {
                 printer = printer.includingDefaultValueFields();
             }
             this.data.jsonPrinter = printer;
+            
 
             return new MasterTranslator(this.data);
         }
@@ -137,11 +141,26 @@ public class MasterTranslator {
         return this.data.jsonPrinter;
     }
 
-    public MasterTranslator getCommonTranslator() {
-        return this;
+    public <T extends PluginData, U extends Message> void printJson(Writer writer, T pluginData) {
+        U message = convertSimObject(pluginData);
+        writeJson(writer, message);
     }
 
-    public void printJson(Message message) {
+    public <U extends Message> void printJson(Writer writer, Object simObject) {
+        U message = convertSimObject(simObject);
+        writeJson(writer, message);
+    }
+
+    private <U extends Message> void writeJson(Writer writer, U message) {
+        try {
+            writer.write(this.data.jsonPrinter.print(message));
+            writer.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void printJsonToConsole(Message message) {
         try {
             System.out.println(this.data.jsonPrinter.print(message));
         } catch (InvalidProtocolBufferException e) {
@@ -149,12 +168,12 @@ public class MasterTranslator {
         }
     }
 
-    public <T, U extends Message.Builder> T parseJson(Reader reader, U builder) {
+    public <T, U extends Message.Builder> T readJson(Reader reader, U builder) {
         JsonObject jsonObject = JsonParser.parseReader(new JsonReader(reader)).getAsJsonObject();
         return parseJson(jsonObject, builder);
     }
 
-    public <T, U extends Message.Builder> T parseJson(String inputFileName, U builder) {
+    public <T, U extends Message.Builder> T readJson(String inputFileName, U builder) {
         InputStream in = null;
         try {
             in = new FileInputStream(Paths.get(inputFileName).toFile());
@@ -168,19 +187,23 @@ public class MasterTranslator {
         return parseJson(jsonObject, builder);
     }
 
-    public <T, U extends Message.Builder> T parseJson(JsonObject inputJson, U builder) {
+    private <T, U extends Message.Builder> T parseJson(JsonObject inputJson, U builder) {
         JsonObject jsonObject = inputJson.deepCopy();
 
         try {
             this.data.jsonParser.merge(jsonObject.toString(), builder);
-            if(this.debug) {
-                printJson(builder.build());
+            if (this.debug) {
+                printJsonToConsole(builder.build());
             }
             return convertInputObject(builder.build());
         } catch (InvalidProtocolBufferException e) {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public Any getAnyFromObject(Object object) {
+        return Any.pack(convertSimObject(object));
     }
 
     public Object getObjectFromAny(Any anyValue) {
@@ -227,7 +250,7 @@ public class MasterTranslator {
                         + inputObject.getDescriptorForType().getName());
     }
 
-    public Message convertSimObject(Object simObject) {
+    public <T> T convertSimObject(Object simObject) {
         if (this.data.objectToTranslatorMap.containsKey(simObject.getClass())) {
             return this.data.objectToTranslatorMap.get(simObject.getClass()).convert(simObject);
         }

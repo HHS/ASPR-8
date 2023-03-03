@@ -19,8 +19,12 @@ public class PropertyValueMapTranslator extends AbstractTranslator<PropertyValue
 
     @Override
     protected PropertyValueMap convertSimObject(PropertyValueMapSimObject simObject) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'convertSimObject'");
+        PropertyValueMap.Builder builder = PropertyValueMap.newBuilder();
+
+        builder.setPropertyId(this.translator.getAnyFromObject(simObject.getKey()));
+        builder.setPropertyValue(this.translator.getAnyFromObject(simObject.getValue()));
+
+        return builder.build();
     }
 
     @Override

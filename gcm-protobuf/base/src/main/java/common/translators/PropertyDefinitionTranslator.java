@@ -4,6 +4,7 @@ import com.google.protobuf.Descriptors.Descriptor;
 
 import base.AbstractTranslator;
 import common.PropertyDefinitionInput;
+import common.TimeTrackingPolicyInput;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.TimeTrackingPolicy;
 
@@ -37,8 +38,16 @@ public class PropertyDefinitionTranslator extends AbstractTranslator<PropertyDef
 
     @Override
     protected PropertyDefinitionInput convertSimObject(PropertyDefinition simObject) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'convertSimObject'");
+        PropertyDefinitionInput.Builder builder = PropertyDefinitionInput.newBuilder();
+        if (simObject.getDefaultValue().isPresent()) {
+            builder.setDefaultValue(this.translator.getAnyFromObject(simObject.getDefaultValue().get()));
+        } else {
+            builder.setType(simObject.getType().getName());
+        }
+        builder.setPropertyValuesAreMutable(simObject.propertyValuesAreMutable())
+                .setTimeTrackingPolicy(TimeTrackingPolicyInput.valueOf(simObject.getTimeTrackingPolicy().toString()));
+
+        return builder.build();
     }
 
     @Override

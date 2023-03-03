@@ -29,7 +29,7 @@ public class BooleanTranslator extends AbstractTranslator<BoolValue, Boolean> {
 
     @Override
     public Class<Boolean> getSimObjectClass() {
-        return boolean.class;
+        return Boolean.class;
     }
 
     @Override

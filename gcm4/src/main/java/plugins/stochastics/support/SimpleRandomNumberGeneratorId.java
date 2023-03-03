@@ -12,6 +12,10 @@ public class SimpleRandomNumberGeneratorId implements RandomNumberGeneratorId {
         this.value = value;
     }
 
+    public Object getValue() {
+        return this.value;
+    }
+
     /**
      * Standard implementation
      */

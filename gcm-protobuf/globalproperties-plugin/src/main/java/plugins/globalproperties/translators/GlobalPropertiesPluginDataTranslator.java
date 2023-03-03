@@ -1,8 +1,13 @@
 package plugins.globalproperties.translators;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.google.protobuf.Any;
 import com.google.protobuf.Descriptors.Descriptor;
 
 import base.AbstractTranslator;
+import common.PropertyDefinitionInput;
 import common.PropertyDefinitionMap;
 import common.PropertyValueMap;
 import plugins.globalproperties.GlobalPropertiesPluginData;
@@ -40,8 +45,36 @@ public class GlobalPropertiesPluginDataTranslator
 
     @Override
     protected GlobalPropertiesPluginDataInput convertSimObject(GlobalPropertiesPluginData simObject) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'convertSimObject'");
+        GlobalPropertiesPluginDataInput.Builder builder = GlobalPropertiesPluginDataInput.newBuilder();
+
+        List<PropertyDefinitionMap> propertyDefinitions = new ArrayList<>();
+        List<PropertyValueMap> propertyValues = new ArrayList<>();
+
+        for (GlobalPropertyId propertyId : simObject.getGlobalPropertyIds()) {
+            SimpleGlobalPropertyId globalPropertyId = (SimpleGlobalPropertyId) propertyId;
+            PropertyDefinition propertyDefinition = simObject.getGlobalPropertyDefinition(propertyId);
+            Object value = simObject.getGlobalPropertyValue(propertyId);
+
+            PropertyDefinitionMap.Builder propertyDefBuilder = PropertyDefinitionMap.newBuilder();
+            PropertyValueMap.Builder propertyValueBuilder = PropertyValueMap.newBuilder();
+
+            Any anyPropId = this.translator.getAnyFromObject(globalPropertyId.getValue());
+            PropertyDefinitionInput propertyDefinitionInput = this.translator.convertSimObject(propertyDefinition);
+
+            if (propertyDefinition.getDefaultValue().isEmpty()) {
+                Any anyValue = this.translator.getAnyFromObject(value);
+                propertyValueBuilder.setPropertyId(anyPropId).setPropertyValue(anyValue);
+                propertyValues.add(propertyValueBuilder.build());
+            }
+
+            propertyDefBuilder.setPropertyId(anyPropId).setPropertyDefinition(propertyDefinitionInput);
+
+            propertyDefinitions.add(propertyDefBuilder.build());
+        }
+
+        builder.addAllGlobalPropertyDefinitinions(propertyDefinitions).addAllGlobalPropertyValues(propertyValues);
+
+        return builder.build();
     }
 
     @Override

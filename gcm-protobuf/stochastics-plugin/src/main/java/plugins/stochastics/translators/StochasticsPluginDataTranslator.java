@@ -1,5 +1,8 @@
 package plugins.stochastics.translators;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.google.protobuf.Any;
 import com.google.protobuf.Descriptors.Descriptor;
 
@@ -29,8 +32,21 @@ public class StochasticsPluginDataTranslator
 
     @Override
     protected StochasticsPluginDataInput convertSimObject(StochasticsPluginData simObject) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'convertSimObject'");
+        StochasticsPluginDataInput.Builder builder = StochasticsPluginDataInput.newBuilder();
+
+        builder.setSeed(simObject.getSeed());
+
+        List<Any> randomNumberGeneratorIds = new ArrayList<>();
+
+        for (RandomNumberGeneratorId randomNumberGeneratorId : simObject.getRandomNumberGeneratorIds()) {
+            SimpleRandomNumberGeneratorId simpleRandomNumberGeneratorId = (SimpleRandomNumberGeneratorId) randomNumberGeneratorId;
+            Any anyId = this.translator.getAnyFromObject(simpleRandomNumberGeneratorId.getValue());
+            randomNumberGeneratorIds.add(anyId);
+        }
+
+        builder.addAllRandomNumberGeneratorIds(randomNumberGeneratorIds);
+
+        return builder.build();
     }
 
     @Override

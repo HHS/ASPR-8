@@ -29,7 +29,7 @@ public class UInt64Translator extends AbstractTranslator<UInt64Value, Long> {
 
     @Override
     public Class<Long> getSimObjectClass() {
-        return long.class;
+        return Long.class;
     }
 
     @Override

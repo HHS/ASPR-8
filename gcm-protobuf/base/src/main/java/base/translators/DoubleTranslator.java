@@ -29,7 +29,7 @@ public class DoubleTranslator extends AbstractTranslator<DoubleValue, Double> {
 
     @Override
     public Class<Double> getSimObjectClass() {
-        return double.class;
+        return Double.class;
     }
 
     @Override

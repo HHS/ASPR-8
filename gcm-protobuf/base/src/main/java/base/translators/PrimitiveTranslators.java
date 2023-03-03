@@ -52,11 +52,10 @@ public class PrimitiveTranslators {
     public static Map<Class<?>, ITranslator> getPrimitiveObjectToTranslatorMap() {
         Map<Class<?>, ITranslator> map = new LinkedHashMap<>();
 
+        // no java version of unsigned int nor unsigned long
         map.put(BOOLEAN_TRANSLATOR.getSimObjectClass(), BOOLEAN_TRANSLATOR);
         map.put(INT32_TRANSLATOR.getSimObjectClass(), INT32_TRANSLATOR);
-        map.put(UINT32_TRANSLATOR.getSimObjectClass(), UINT32_TRANSLATOR);
         map.put(INT64_TRANSLATOR.getSimObjectClass(), INT64_TRANSLATOR);
-        map.put(UINT64_TRANSLATOR.getSimObjectClass(), UINT64_TRANSLATOR);
         map.put(STRING_TRANSLATOR.getSimObjectClass(), STRING_TRANSLATOR);
         map.put(FLOAT_TRANSLATOR.getSimObjectClass(), FLOAT_TRANSLATOR);
         map.put(DOUBLE_TRANSLATOR.getSimObjectClass(), DOUBLE_TRANSLATOR);

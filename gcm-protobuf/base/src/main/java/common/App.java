@@ -43,6 +43,7 @@ public class App {
         TranslatorController translatorController = TranslatorController.builder()
                 .addBundle(new PropertiesPluginBundle(
                         "C:\\Dev\\CDC\\ASPR-8\\gcm-protobuf\\base\\src\\main\\resources\\json\\testJson1.json",
+                        "C:\\Dev\\CDC\\ASPR-8\\gcm-protobuf\\base\\src\\main\\resources\\json\\output\\testJson1Output.json",
                         PropertyValueMap.getDefaultInstance()))
                 .addCustomTranslator(new TestMessageTranslator())
                 .addCustomTranslator(new Layer1Translator())
@@ -63,6 +64,8 @@ public class App {
 
         System.out.println(map.getKey().toString());
         System.out.println(map.getValue().toString());
+
+        translatorController.writeOutput();
 
     }
 }
