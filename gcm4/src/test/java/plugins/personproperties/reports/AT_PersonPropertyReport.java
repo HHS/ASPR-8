@@ -111,6 +111,20 @@ public class AT_PersonPropertyReport {
 	@Test
 	@UnitTestMethod(target = PersonPropertyReport.Builder.class, name = "setReportPeriod", args = { ReportPeriod.class })
 	public void testSetReportPeriod() {
+
+		// post conditional testing for Hourly, Daily, and End Of Simulation report periods
+		testSetReportPeriod_Hourly();
+		testSetReportPeriod_Daily();
+		testSetReportPeriod_EndOfSim();
+
+		// precondition: report period is null
+		ContractException contractException = assertThrows(ContractException.class, () -> {
+			PersonPropertyReport.builder().setReportPeriod(null);
+		});
+		assertEquals(ReportError.NULL_REPORT_PERIOD, contractException.getErrorType());
+	}
+
+	private void testSetReportPeriod_Hourly() {
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
 		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) ->{
@@ -138,15 +152,77 @@ public class AT_PersonPropertyReport {
 		// show that the report periods are what we expect for each report item
 		Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItems(ReportItem.class);
 		for (ReportItem reportItem : outputItems.keySet()) {
+			assertEquals(reportItem.getReportHeader().getHeaderStrings().get(0), "day");
 			assertEquals(reportItem.getReportHeader().getHeaderStrings().get(1), "hour");
 		}
-
-		// precondition: report period is null
-		ContractException contractException = assertThrows(ContractException.class, () -> {
-			PersonPropertyReport.builder().setReportPeriod(null);
-		});
-		assertEquals(ReportError.NULL_REPORT_PERIOD, contractException.getErrorType());
 	}
+
+	private void testSetReportPeriod_Daily() {
+		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
+
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) ->{
+			// provides an empty task so that the TestSimulation.execute does not throw an exception
+		}));
+
+		ReportLabel reportLabel = new SimpleReportLabel(1000);
+		ReportPeriod hourlyReportPeriod = ReportPeriod.DAILY;
+		TestPluginData testPluginData = pluginDataBuilder.build();
+		PersonPropertiesTestPluginFactory.Factory factory = PersonPropertiesTestPluginFactory.factory(30, 1174198461656549476L, testPluginData);
+		List<Plugin> plugins = factory.getPlugins();
+
+		// set the report period
+		ReportsPluginData reportsPluginData = ReportsPluginData.builder().addReport(()->{
+			PersonPropertyReport.Builder builder = PersonPropertyReport.builder();
+			builder.setReportLabel(reportLabel);
+			builder.setReportPeriod(hourlyReportPeriod);
+			return builder.build()::init;
+		}).build();
+		Plugin reportsPlugin = ReportsPlugin.getReportsPlugin(reportsPluginData);
+		plugins.add(reportsPlugin);
+		TestOutputConsumer testOutputConsumer = new TestOutputConsumer();
+		TestSimulation.executeSimulation(plugins, testOutputConsumer);
+
+		// show that the report periods are what we expect for each report item
+		Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItems(ReportItem.class);
+		for (ReportItem reportItem : outputItems.keySet()) {
+			assertEquals(reportItem.getReportHeader().getHeaderStrings().get(0), "day");
+			assertFalse(reportItem.getReportHeader().getHeaderStrings().contains("hour"));
+		}
+	}
+
+	private void testSetReportPeriod_EndOfSim() {
+		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
+
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) ->{
+			// provides an empty task so that the TestSimulation.execute does not throw an exception
+		}));
+
+		ReportLabel reportLabel = new SimpleReportLabel(1000);
+		ReportPeriod hourlyReportPeriod = ReportPeriod.END_OF_SIMULATION;
+		TestPluginData testPluginData = pluginDataBuilder.build();
+		PersonPropertiesTestPluginFactory.Factory factory = PersonPropertiesTestPluginFactory.factory(30, 1174198461656549476L, testPluginData);
+		List<Plugin> plugins = factory.getPlugins();
+
+		// set the report period
+		ReportsPluginData reportsPluginData = ReportsPluginData.builder().addReport(()->{
+			PersonPropertyReport.Builder builder = PersonPropertyReport.builder();
+			builder.setReportLabel(reportLabel);
+			builder.setReportPeriod(hourlyReportPeriod);
+			return builder.build()::init;
+		}).build();
+		Plugin reportsPlugin = ReportsPlugin.getReportsPlugin(reportsPluginData);
+		plugins.add(reportsPlugin);
+		TestOutputConsumer testOutputConsumer = new TestOutputConsumer();
+		TestSimulation.executeSimulation(plugins, testOutputConsumer);
+
+		// show that the report periods are what we expect for each report item
+		Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItems(ReportItem.class);
+		for (ReportItem reportItem : outputItems.keySet()) {
+			assertFalse(reportItem.getReportHeader().getHeaderStrings().contains("day"));
+			assertFalse(reportItem.getReportHeader().getHeaderStrings().contains("hour"));
+		}
+	}
+
 
 	@Test
 	@UnitTestMethod(target = PersonPropertyReport.Builder.class, name = "setDefaultInclusion", args = { boolean.class })
