@@ -32,6 +32,7 @@ public final class LineWriter {
 	private static final String lineSeparator = System.getProperty("line.separator");
 	private final Object headerLock = new Object();
 	private BufferedWriter writer;
+	private final String delimiter;
 
 	@GuardedBy(value = "headerLock")
 	private boolean headerWritten;
@@ -53,14 +54,15 @@ public final class LineWriter {
 	 * 
 	 */
 
-	public LineWriter(final ExperimentContext experimentContext, final Path path, final boolean displayExperimentColumnsInReports) {
+	public LineWriter(final ExperimentContext experimentContext, final Path path, final boolean displayExperimentColumnsInReports, String delimiter) {
 
 		if (Files.exists(path)) {
-			if (Files.isRegularFile(path)) {
+			if (!Files.isRegularFile(path)) {
 				throw new RuntimeException("Non-regular file at: " + path);
 			}
 		}
 
+		this.delimiter = delimiter;
 		this.useExperimentColumns = displayExperimentColumnsInReports;
 
 		boolean loadedWithPreviousData = !experimentContext.getScenarios(ScenarioStatus.PREVIOUSLY_SUCCEEDED).isEmpty();
@@ -93,7 +95,7 @@ public final class LineWriter {
 			boolean[] header = new boolean[] {true};
 			lines.forEach((line) -> {
 				if (!header[0]) {
-					String[] fields = line.split("\t");
+					String[] fields = line.split(delimiter);
 					/*
 					 * It is possible that the last line of a file was only
 					 * partially written because neither the writer's close
@@ -190,14 +192,14 @@ public final class LineWriter {
 
 					if (useExperimentColumns) {
 						for (String item : experimentContext.getExperimentMetaData()) {
-							sb.append("\t");
+							sb.append(delimiter);
 							sb.append(item);
 						}
 					}
 
 					final List<String> headerStrings = reportItem.getReportHeader().getHeaderStrings();
 					for (final String headerString : headerStrings) {
-						sb.append("\t");
+						sb.append(delimiter);
 						sb.append(headerString);
 					}
 
@@ -213,13 +215,13 @@ public final class LineWriter {
 			if (useExperimentColumns) {
 				List<String> metaData = experimentContext.getScenarioMetaData(scenarioId).get();
 				for (String item : metaData) {
-					sb.append("\t");
+					sb.append(delimiter);
 					sb.append(item);
 				}
 			}
 
 			for (int i = 0; i < reportItem.size(); i++) {
-				sb.append("\t");
+				sb.append(delimiter);
 				sb.append(reportItem.getValue(i));
 			}
 			sb.append(lineSeparator);
