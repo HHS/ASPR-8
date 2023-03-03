@@ -349,6 +349,23 @@ public class AT_PersonPropertyReport {
 			}
 		}));
 
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
+
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
+
+			for (PersonId personId : peopleDataManager.getPeople()) {
+				for (TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.values()) {
+					if (testPersonPropertyId.getPropertyDefinition().propertyValuesAreMutable()) {
+						Object personProperty = testPersonPropertyId.getRandomPropertyValue(randomGenerator);
+						personPropertiesDataManager.setPersonPropertyValue(personId, testPersonPropertyId, personProperty);
+					}
+				}
+			}
+		}));
+
 		ReportLabel reportLabel = new SimpleReportLabel(1000);
 		ReportPeriod hourlyReportPeriod = ReportPeriod.HOURLY;
 		TestPluginData testPluginData = pluginDataBuilder.build();
@@ -369,13 +386,13 @@ public class AT_PersonPropertyReport {
 		TestOutputConsumer testOutputConsumer = new TestOutputConsumer();
 		TestSimulation.executeSimulation(plugins, testOutputConsumer);
 
-		// show that our report items include the chosen property id
+		// show that our report items do not include the chosen property id
 		Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItems(ReportItem.class);
 		Set<String> outputPropertyStrings = new LinkedHashSet<>();
 		for (ReportItem reportItem : outputItems.keySet()) {
 			outputPropertyStrings.add(reportItem.getValue(3));
 		}
-		assertTrue(!outputPropertyStrings.contains(testPersonPropertyId.toString()));
+		assertFalse(outputPropertyStrings.contains(testPersonPropertyId.toString()));
 
 		// precondition: person property id is null
 		ContractException contractException = assertThrows(ContractException.class, () -> {
