@@ -23,8 +23,7 @@
                "@type": "/google.protobuf.DoubleValue",
                "value": 5000.0
             },
-            "timeTrackingPolicy": "TRACK_TIME",
-            "propertyValuesAreMutable": false
+            "timeTrackingPolicy": "TRACK_TIME"
          }
       },
       {
