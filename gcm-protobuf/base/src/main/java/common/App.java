@@ -40,17 +40,18 @@ public class App {
 
     public static void main(String[] args) {
 
+        String inputFileName = "C:\\Dev\\CDC\\ASPR-8\\gcm-protobuf\\base\\src\\main\\resources\\json\\testJson1.json";
+        String outputFileName = "C:\\Dev\\CDC\\ASPR-8\\gcm-protobuf\\base\\src\\main\\resources\\json\\output\\testJson1Output.json";
+
         TranslatorController translatorController = TranslatorController.builder()
-                .addBundle(new PropertiesPluginBundle(
-                        "C:\\Dev\\CDC\\ASPR-8\\gcm-protobuf\\base\\src\\main\\resources\\json\\testJson1.json",
-                        "C:\\Dev\\CDC\\ASPR-8\\gcm-protobuf\\base\\src\\main\\resources\\json\\output\\testJson1Output.json",
+                .addBundle(PropertiesPluginBundle.getPluginBundle(inputFileName, outputFileName,
                         PropertyValueMap.getDefaultInstance()))
                 .addCustomTranslator(new TestMessageTranslator())
                 .addCustomTranslator(new Layer1Translator())
                 .addCustomTranslator(new PropertyValueMapTranslator())
                 .build();
 
-        List<Object> objects = translatorController.loadInput().getObjects();
+        List<Object> objects = translatorController.readInput().getObjects();
 
         PropertyValueMapSimObject map = (PropertyValueMapSimObject) objects.get(0);
 

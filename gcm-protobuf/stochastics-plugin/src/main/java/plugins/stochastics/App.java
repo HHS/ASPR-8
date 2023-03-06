@@ -7,7 +7,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import base.TranslatorController;
-import common.PropertiesPluginBundle;
+import common.PropertiesPluginBundleOld;
 import nucleus.PluginData;
 import plugins.stochastics.support.RandomNumberGeneratorId;
 
@@ -43,7 +43,7 @@ public class App {
                         "C:\\Dev\\CDC\\ASPR-8\\gcm-protobuf\\stochastics-plugin\\src\\main\\resources\\json\\testJson1.json",
                         "C:\\Dev\\CDC\\ASPR-8\\gcm-protobuf\\stochastics-plugin\\src\\main\\resources\\json\\output\\testJson1Output.json",
                         StochasticsPluginDataInput.getDefaultInstance()))
-                .addBundle(new PropertiesPluginBundle())
+                .addBundle(new PropertiesPluginBundleOld())
                 .build();
 
         List<PluginData> pluginDatas = translatorController.loadInput().getPluginDatas();

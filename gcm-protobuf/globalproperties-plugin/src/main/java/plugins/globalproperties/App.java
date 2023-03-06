@@ -7,7 +7,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import base.TranslatorController;
-import common.PropertiesPluginBundle;
+import common.PropertiesPluginBundleOld;
 import nucleus.PluginData;
 import plugins.globalproperties.support.GlobalPropertyId;
 import plugins.util.properties.PropertyDefinition;
@@ -43,7 +43,7 @@ public class App {
                         "C:\\Dev\\CDC\\ASPR-8\\gcm-protobuf\\globalproperties-plugin\\src\\main\\resources\\json\\testJson1.json",
                         "C:\\Dev\\CDC\\ASPR-8\\gcm-protobuf\\globalproperties-plugin\\src\\main\\resources\\json\\output\\testJson1Output.json",
                         GlobalPropertiesPluginDataInput.getDefaultInstance()))
-                .addBundle(new PropertiesPluginBundle())
+                .addBundle(new PropertiesPluginBundleOld())
                 .build();
 
         List<PluginData> pluginDatas = translatorController.loadInput().getPluginDatas();

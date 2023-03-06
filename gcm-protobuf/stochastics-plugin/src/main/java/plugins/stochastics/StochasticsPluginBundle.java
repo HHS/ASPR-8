@@ -3,13 +3,13 @@ package plugins.stochastics;
 import com.google.protobuf.Message;
 
 import base.ReaderContext;
-import base.PluginBundle;
+import base.PluginBundleOld;
 import base.TranslatorContext;
 import base.WriterContext;
 import nucleus.PluginData;
 import plugins.stochastics.translators.StochasticsPluginDataTranslator;
 
-public class StochasticsPluginBundle extends PluginBundle {
+public class StochasticsPluginBundle extends PluginBundleOld {
 
     public StochasticsPluginBundle(String inputFileName, String outputFilename, Message pluginDataMessage) {
         super(inputFileName, outputFilename, pluginDataMessage);

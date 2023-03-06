@@ -17,6 +17,7 @@ public class TranslatorController {
     private final List<PluginData> pluginDatas = new ArrayList<>();
     private final List<Object> objects = new ArrayList<>();
     private final Map<Class<?>, PluginBundle> simObjectClassToPluginBundleMap = new LinkedHashMap<>();
+    private PluginBundleOld focalBundleOld = null;
     private PluginBundle focalBundle = null;
 
     private TranslatorController(Data data) {
@@ -25,6 +26,7 @@ public class TranslatorController {
 
     private static class Data {
         private MasterTranslator.Builder masterTranslatorBuilder = MasterTranslator.builder();
+        private final List<PluginBundleOld> pluginBundlesOld = new ArrayList<>();
         private final List<PluginBundle> pluginBundles = new ArrayList<>();
 
         private Data() {
@@ -40,6 +42,11 @@ public class TranslatorController {
 
         public TranslatorController build() {
             return new TranslatorController(this.data);
+        }
+
+        public Builder addBundleOld(PluginBundleOld pluginBundle) {
+            this.data.pluginBundlesOld.add(pluginBundle);
+            return this;
         }
 
         public Builder addBundle(PluginBundle pluginBundle) {
@@ -103,14 +110,46 @@ public class TranslatorController {
         return this.masterTranslator;
     }
 
-    public TranslatorController loadInput() {
-
+    public TranslatorController readInput() {
         TranslatorContext translatorContext = new TranslatorContext(this);
 
         for (PluginBundle pluginBundle : this.data.pluginBundles) {
             this.focalBundle = pluginBundle;
-            pluginBundle.init(translatorContext);
+            pluginBundle.getInitializer().accept(translatorContext);
             this.focalBundle = null;
+        }
+
+        this.masterTranslator = this.data.masterTranslatorBuilder.build();
+
+        this.masterTranslator.init();
+
+        ReaderContext readerContext = new ReaderContext(this);
+
+        for (PluginBundle pluginBundle : this.data.pluginBundles) {
+            this.focalBundle = pluginBundle;
+            if (!pluginBundle.hasInput())
+                continue;
+            if (pluginBundle.inputIsPluginData()) {
+                pluginBundle.readPluginDataInput(readerContext);
+                continue;
+            }
+            pluginBundle.readInput(readerContext);
+
+            this.focalBundle = null;
+        }
+
+        return this;
+    }
+
+    @Deprecated
+    public TranslatorController loadInput() {
+
+        TranslatorContext translatorContext = new TranslatorContext(this);
+
+        for (PluginBundleOld pluginBundle : this.data.pluginBundlesOld) {
+            this.focalBundleOld = pluginBundle;
+            pluginBundle.init(translatorContext);
+            this.focalBundleOld = null;
         }
 
         this.masterTranslator = this.data.masterTranslatorBuilder.build();
@@ -119,8 +158,8 @@ public class TranslatorController {
 
         ReaderContext parserContext = new ReaderContext(this);
 
-        for (PluginBundle pluginBundle : this.data.pluginBundles) {
-            this.focalBundle = pluginBundle;
+        for (PluginBundleOld pluginBundle : this.data.pluginBundlesOld) {
+            this.focalBundleOld = pluginBundle;
             if (!pluginBundle.isDependency()) {
                 if (pluginBundle.hasPluginData()) {
                     pluginBundle.readPluginDataInput(parserContext);
@@ -128,7 +167,7 @@ public class TranslatorController {
                     pluginBundle.readJson(parserContext);
                 }
             }
-            this.focalBundle = null;
+            this.focalBundleOld = null;
         }
 
         return this;
@@ -144,7 +183,7 @@ public class TranslatorController {
 
         for (Object simObject : this.objects) {
             PluginBundle pluginBundle = this.simObjectClassToPluginBundleMap.get(simObject.getClass());
-            pluginBundle.writeJson(writerContext, simObject);
+            pluginBundle.writeOutput(writerContext, simObject);
         }
     }
 

@@ -3,13 +3,13 @@ package plugins.globalproperties;
 import com.google.protobuf.Message;
 
 import base.ReaderContext;
-import base.PluginBundle;
+import base.PluginBundleOld;
 import base.TranslatorContext;
 import base.WriterContext;
 import nucleus.PluginData;
 import plugins.globalproperties.translators.GlobalPropertiesPluginDataTranslator;
 
-public class GlobalPropertiesPluginBundle extends PluginBundle {
+public class GlobalPropertiesPluginBundle extends PluginBundleOld {
 
     public GlobalPropertiesPluginBundle(String inputFileName, String outputFilename, Message pluginDataMessage) {
         super(inputFileName, outputFilename, pluginDataMessage);
