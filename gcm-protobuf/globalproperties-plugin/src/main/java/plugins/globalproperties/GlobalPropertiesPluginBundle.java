@@ -24,7 +24,7 @@ public class GlobalPropertiesPluginBundle extends PluginBundle {
     }
 
     public void readPluginDataInput(ReaderContext parserContext) {
-        parserContext.readPluginDataInput(this.reader, this.pluginDataMessage.newBuilderForType(), this);
+        parserContext.readPluginDataInput(this.reader, this.pluginDataMessage.newBuilderForType());
     }
 
     public void readJson(ReaderContext parserContext) {

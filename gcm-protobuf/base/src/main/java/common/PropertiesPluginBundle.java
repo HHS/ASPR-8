@@ -30,7 +30,7 @@ public class PropertiesPluginBundle extends PluginBundle {
     }
 
     public void readJson(ReaderContext parserContext) {
-        parserContext.readJson(this.reader, this.pluginDataMessage.newBuilderForType(), this);
+        parserContext.readJson(this.reader, this.pluginDataMessage.newBuilderForType());
     }
 
     public void writePluginDataOutput(WriterContext writerContext, PluginData pluginData) {
