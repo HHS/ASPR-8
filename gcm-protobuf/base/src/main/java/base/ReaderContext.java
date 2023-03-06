@@ -11,11 +11,11 @@ public class ReaderContext {
         this.translatorController = translatorController;
     }
 
-    public <U extends Message.Builder> void readPluginDataInput(Reader reader, U builder, PluginBundle pluginBundle) {
-        this.translatorController.readPluginDataInput(reader, builder, pluginBundle);
+    public <U extends Message.Builder> void readPluginDataInput(Reader reader, U builder) {
+        this.translatorController.readPluginDataInput(reader, builder);
     }
 
-    public <U extends Message.Builder> void readJson(Reader reader, U builder, PluginBundle pluginBundle) {
-        this.translatorController.readJson(reader, builder, pluginBundle);
+    public <U extends Message.Builder> void readJson(Reader reader, U builder) {
+        this.translatorController.readJson(reader, builder);
     }
 }

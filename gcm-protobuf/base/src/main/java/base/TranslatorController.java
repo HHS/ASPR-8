@@ -17,6 +17,7 @@ public class TranslatorController {
     private final List<PluginData> pluginDatas = new ArrayList<>();
     private final List<Object> objects = new ArrayList<>();
     private final Map<Class<?>, PluginBundle> simObjectClassToPluginBundleMap = new LinkedHashMap<>();
+    private PluginBundle focalBundle = null;
 
     private TranslatorController(Data data) {
         this.data = data;
@@ -71,19 +72,18 @@ public class TranslatorController {
         this.data.masterTranslatorBuilder.addCustomTranslator(translator);
     }
 
-    protected <U extends Message.Builder> void readPluginDataInput(Reader reader, U builder,
-            PluginBundle pluginBundle) {
+    protected <U extends Message.Builder> void readPluginDataInput(Reader reader, U builder) {
         PluginData pluginData = this.masterTranslator.readJson(reader, builder);
 
         this.pluginDatas.add(pluginData);
-        this.simObjectClassToPluginBundleMap.put(pluginData.getClass(), pluginBundle);
+        this.simObjectClassToPluginBundleMap.put(pluginData.getClass(), focalBundle);
     }
 
-    protected <U extends Message.Builder> void readJson(Reader reader, U builder, PluginBundle pluginBundle) {
+    protected <U extends Message.Builder> void readJson(Reader reader, U builder) {
         Object simObject = this.masterTranslator.readJson(reader, builder);
 
         this.objects.add(simObject);
-        this.simObjectClassToPluginBundleMap.put(simObject.getClass(), pluginBundle);
+        this.simObjectClassToPluginBundleMap.put(simObject.getClass(), focalBundle);
     }
 
     protected <T extends PluginData> void writePluginDataInput(Writer writer, T pluginData) {
@@ -108,7 +108,9 @@ public class TranslatorController {
         TranslatorContext translatorContext = new TranslatorContext(this);
 
         for (PluginBundle pluginBundle : this.data.pluginBundles) {
+            this.focalBundle = pluginBundle;
             pluginBundle.init(translatorContext);
+            this.focalBundle = null;
         }
 
         this.masterTranslator = this.data.masterTranslatorBuilder.build();
@@ -118,6 +120,7 @@ public class TranslatorController {
         ReaderContext parserContext = new ReaderContext(this);
 
         for (PluginBundle pluginBundle : this.data.pluginBundles) {
+            this.focalBundle = pluginBundle;
             if (!pluginBundle.isDependency()) {
                 if (pluginBundle.hasPluginData()) {
                     pluginBundle.readPluginDataInput(parserContext);
@@ -125,6 +128,7 @@ public class TranslatorController {
                     pluginBundle.readJson(parserContext);
                 }
             }
+            this.focalBundle = null;
         }
 
         return this;
