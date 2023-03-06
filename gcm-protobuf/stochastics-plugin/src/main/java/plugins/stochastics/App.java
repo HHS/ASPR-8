@@ -39,11 +39,11 @@ public class App {
     public static void main(String[] args) {
 
         TranslatorController translatorController = TranslatorController.builder()
-                .addBundle(new StochasticsPluginBundle(
+                .addBundleOld(new StochasticsPluginBundle(
                         "C:\\Dev\\CDC\\ASPR-8\\gcm-protobuf\\stochastics-plugin\\src\\main\\resources\\json\\testJson1.json",
                         "C:\\Dev\\CDC\\ASPR-8\\gcm-protobuf\\stochastics-plugin\\src\\main\\resources\\json\\output\\testJson1Output.json",
                         StochasticsPluginDataInput.getDefaultInstance()))
-                .addBundle(new PropertiesPluginBundleOld())
+                .addBundleOld(new PropertiesPluginBundleOld())
                 .build();
 
         List<PluginData> pluginDatas = translatorController.loadInput().getPluginDatas();
