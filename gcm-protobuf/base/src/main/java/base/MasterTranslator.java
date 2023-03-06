@@ -76,7 +76,6 @@ public class MasterTranslator {
                 printer = printer.includingDefaultValueFields();
             }
             this.data.jsonPrinter = printer;
-            
 
             return new MasterTranslator(this.data);
         }
@@ -156,7 +155,7 @@ public class MasterTranslator {
             writer.write(this.data.jsonPrinter.print(message));
             writer.flush();
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 
@@ -164,7 +163,7 @@ public class MasterTranslator {
         try {
             System.out.println(this.data.jsonPrinter.print(message));
         } catch (InvalidProtocolBufferException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 
@@ -178,7 +177,7 @@ public class MasterTranslator {
         try {
             in = new FileInputStream(Paths.get(inputFileName).toFile());
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
         JsonReader jsonReader = new JsonReader(
                 new InputStreamReader(in));
@@ -197,9 +196,8 @@ public class MasterTranslator {
             }
             return convertInputObject(builder.build());
         } catch (InvalidProtocolBufferException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
-        return null;
     }
 
     public Any getAnyFromObject(Object object) {
@@ -227,7 +225,7 @@ public class MasterTranslator {
                         + "but this Translator does not, thus resulting in a null message here.");
             }
         } catch (InvalidProtocolBufferException e) {
-            throw new RuntimeException("No corresponding message definition was found for: " + typeUrl);
+            throw new RuntimeException("No corresponding message definition was found for: " + typeUrl, e);
         }
 
         classRef = message.getClass();
@@ -235,8 +233,7 @@ public class MasterTranslator {
             Message unpackedMessage = anyValue.unpack(classRef);
             return convertInputObject(unpackedMessage);
         } catch (InvalidProtocolBufferException e) {
-            e.printStackTrace();
-            throw new RuntimeException("Unable To unpack any type to given class: " + classRef.getName());
+            throw new RuntimeException("Unable To unpack any type to given class: " + classRef.getName(), e);
         }
     }
 
