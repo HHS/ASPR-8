@@ -140,6 +140,7 @@ public final class PluginBundle {
             throw new RuntimeException(
                     "The input data for this bundle is not plugin data, and should be read via the readInput() method.");
         }
+        readerContext.readPluginDataInput(this.data.reader, this.data.inputObjectType.newBuilderForType());
     }
 
     public void writeOutput(WriterContext writerContext, Object simObject) {
