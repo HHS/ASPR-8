@@ -8,7 +8,6 @@ import com.google.gson.JsonObject;
 
 import base.TranslatorController;
 import common.PropertiesPluginBundle;
-import common.PropertiesPluginBundleOld;
 import nucleus.PluginData;
 import plugins.stochastics.support.RandomNumberGeneratorId;
 

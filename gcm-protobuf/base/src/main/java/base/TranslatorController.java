@@ -17,7 +17,6 @@ public class TranslatorController {
     private final List<PluginData> pluginDatas = new ArrayList<>();
     private final List<Object> objects = new ArrayList<>();
     private final Map<Class<?>, PluginBundle> simObjectClassToPluginBundleMap = new LinkedHashMap<>();
-    private PluginBundleOld focalBundleOld = null;
     private PluginBundle focalBundle = null;
 
     private TranslatorController(Data data) {
@@ -136,38 +135,6 @@ public class TranslatorController {
             pluginBundle.readInput(readerContext);
 
             this.focalBundle = null;
-        }
-
-        return this;
-    }
-
-    @Deprecated
-    public TranslatorController loadInput() {
-
-        TranslatorContext translatorContext = new TranslatorContext(this);
-
-        for (PluginBundleOld pluginBundle : this.data.pluginBundlesOld) {
-            this.focalBundleOld = pluginBundle;
-            pluginBundle.init(translatorContext);
-            this.focalBundleOld = null;
-        }
-
-        this.masterTranslator = this.data.masterTranslatorBuilder.build();
-
-        this.masterTranslator.init();
-
-        ReaderContext parserContext = new ReaderContext(this);
-
-        for (PluginBundleOld pluginBundle : this.data.pluginBundlesOld) {
-            this.focalBundleOld = pluginBundle;
-            if (!pluginBundle.isDependency()) {
-                if (pluginBundle.hasPluginData()) {
-                    pluginBundle.readPluginDataInput(parserContext);
-                } else {
-                    pluginBundle.readJson(parserContext);
-                }
-            }
-            this.focalBundleOld = null;
         }
 
         return this;
