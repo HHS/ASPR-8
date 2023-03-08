@@ -1,4 +1,4 @@
-package plugins.globalproperties.translators;
+package gov.hhs.aspr8.gcm.gcmprotobuf.globalproperties.translators;
 
 import java.util.ArrayList;
 import java.util.List;

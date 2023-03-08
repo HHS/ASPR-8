@@ -1,4 +1,4 @@
-package plugins.globalproperties;
+package gov.hhs.aspr8.gcm.gcmprotobuf.globalproperties;
 
 import gov.hhs.aspr8.gcm.gcmprotobuf.core.PluginBundleId;
 

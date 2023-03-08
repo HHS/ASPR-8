@@ -1,4 +1,4 @@
-package plugins.globalproperties;
+package gov.hhs.aspr8.gcm.gcmprotobuf.globalproperties;
 
 import java.util.List;
 
@@ -8,6 +8,7 @@ import com.google.gson.JsonObject;
 
 import gov.hhs.aspr8.gcm.gcmprotobuf.core.TranslatorController;
 import nucleus.PluginData;
+import plugins.globalproperties.GlobalPropertiesPluginData;
 import plugins.globalproperties.support.GlobalPropertyId;
 import plugins.properties.PropertiesPluginBundle;
 import plugins.util.properties.PropertyDefinition;

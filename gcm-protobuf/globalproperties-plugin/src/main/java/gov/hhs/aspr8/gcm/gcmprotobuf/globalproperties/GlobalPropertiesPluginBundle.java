@@ -1,7 +1,8 @@
-package plugins.globalproperties;
+package gov.hhs.aspr8.gcm.gcmprotobuf.globalproperties;
 
 import gov.hhs.aspr8.gcm.gcmprotobuf.core.PluginBundle;
-import plugins.globalproperties.translators.GlobalPropertiesPluginDataTranslator;
+import gov.hhs.aspr8.gcm.gcmprotobuf.globalproperties.translators.GlobalPropertiesPluginDataTranslator;
+import plugins.globalproperties.GlobalPropertiesPluginDataInput;
 import plugins.properties.PropertiesPluginBundleId;
 
 public class GlobalPropertiesPluginBundle {
