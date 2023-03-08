@@ -45,7 +45,8 @@ public class App {
         TranslatorController translatorController = TranslatorController.builder()
                 .addBundle(GlobalPropertiesPluginBundle.getPluginBundle(inputFileName, outputFileName))
                 .addBundle(PropertiesPluginBundle.getPluginBundle())
-                .build();
+                .build()
+                .init();
 
         List<PluginData> pluginDatas = translatorController.readInput().getPluginDatas();
 

@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
 import java.nio.file.Paths;
+import java.util.LinkedHashSet;
+import java.util.Set;
 import java.util.function.Consumer;
 
 import com.google.protobuf.Message;
@@ -21,6 +23,7 @@ public final class PluginBundle {
     }
 
     private static class Data {
+        private PluginBundleId pluginBundleId;
         private Reader reader;
         private Writer writer;
         private Message inputObjectType;
@@ -29,6 +32,7 @@ public final class PluginBundle {
         private boolean inputIsPluginData = true;
         private boolean outputIsPluginData = true;
         private Consumer<TranslatorContext> initializer;
+        private final Set<PluginBundleId> dependencies = new LinkedHashSet<>();
 
         private Data() {
 
@@ -49,7 +53,17 @@ public final class PluginBundle {
 
         public PluginBundle build() {
 
+            if (this.data.pluginBundleId == null) {
+                throw new RuntimeException("No PluginBundleId was set for this PluginBundle");
+            }
+
             return new PluginBundle(data);
+        }
+
+        public Builder setPluginBundleId(PluginBundleId pluginBundleId) {
+            this.data.pluginBundleId = pluginBundleId;
+
+            return this;
         }
 
         public Builder setInputFileName(String inputFileName) {
@@ -96,6 +110,12 @@ public final class PluginBundle {
 
             return this;
         }
+
+        public Builder addDependency(PluginBundleId dependency) {
+            this.data.dependencies.add(dependency);
+
+            return this;
+        }
     }
 
     public Consumer<TranslatorContext> getInitializer() {
@@ -116,6 +136,14 @@ public final class PluginBundle {
 
     public boolean hasOutput() {
         return this.data.hasOutput;
+    }
+
+    public PluginBundleId getPluginBundleId() {
+        return this.data.pluginBundleId;
+    }
+
+    public Set<PluginBundleId> getPluginBundleDependencies() {
+        return this.data.dependencies;
     }
 
     public void readInput(ReaderContext readerContext) {

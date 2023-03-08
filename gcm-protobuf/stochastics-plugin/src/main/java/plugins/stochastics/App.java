@@ -43,8 +43,8 @@ public class App {
 
         TranslatorController translatorController = TranslatorController.builder()
                 .addBundle(StochasticsPluginBundle.getPluginBundle(inputFileName, outputFileName))
-                .addBundle(PropertiesPluginBundle.getPluginBundle())
-                .build();
+                .build()
+                .init();
 
         List<PluginData> pluginDatas = translatorController.readInput().getPluginDatas();
 

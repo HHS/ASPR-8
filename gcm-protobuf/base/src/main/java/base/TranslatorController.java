@@ -4,12 +4,20 @@ import java.io.Reader;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.google.protobuf.Message;
 
 import nucleus.PluginData;
+import util.graph.Graph;
+import util.graph.GraphDepthEvaluator;
+import util.graph.Graphs;
+import util.graph.MutableGraph;
 
 public class TranslatorController {
     private final Data data;
@@ -18,6 +26,7 @@ public class TranslatorController {
     private final List<Object> objects = new ArrayList<>();
     private final Map<Class<?>, PluginBundle> simObjectClassToPluginBundleMap = new LinkedHashMap<>();
     private PluginBundle focalBundle = null;
+    private PluginBundleId focalPluginBundleId = null;
 
     private TranslatorController(Data data) {
         this.data = data;
@@ -25,7 +34,6 @@ public class TranslatorController {
 
     private static class Data {
         private MasterTranslator.Builder masterTranslatorBuilder = MasterTranslator.builder();
-        private final List<PluginBundleOld> pluginBundlesOld = new ArrayList<>();
         private final List<PluginBundle> pluginBundles = new ArrayList<>();
 
         private Data() {
@@ -41,11 +49,6 @@ public class TranslatorController {
 
         public TranslatorController build() {
             return new TranslatorController(this.data);
-        }
-
-        public Builder addBundleOld(PluginBundleOld pluginBundle) {
-            this.data.pluginBundlesOld.add(pluginBundle);
-            return this;
         }
 
         public Builder addBundle(PluginBundle pluginBundle) {
@@ -109,10 +112,19 @@ public class TranslatorController {
         return this.masterTranslator;
     }
 
-    public TranslatorController readInput() {
+    private void validateMasterTranslator() {
+        if (this.masterTranslator == null || !this.masterTranslator.isInitialized()) {
+            throw new RuntimeException(
+                    "Trying to call readInput() or writeInput() before calling init on the TranslatorController.");
+        }
+    }
+
+    public TranslatorController init() {
         TranslatorContext translatorContext = new TranslatorContext(this);
 
-        for (PluginBundle pluginBundle : this.data.pluginBundles) {
+        List<PluginBundle> orderedBundles = this.getOrderedPluginBundles();
+
+        for (PluginBundle pluginBundle : orderedBundles) {
             this.focalBundle = pluginBundle;
             pluginBundle.getInitializer().accept(translatorContext);
             this.focalBundle = null;
@@ -121,6 +133,12 @@ public class TranslatorController {
         this.masterTranslator = this.data.masterTranslatorBuilder.build();
 
         this.masterTranslator.init();
+
+        return this;
+    }
+
+    public TranslatorController readInput() {
+        validateMasterTranslator();
 
         ReaderContext readerContext = new ReaderContext(this);
 
@@ -141,6 +159,8 @@ public class TranslatorController {
     }
 
     public void writeOutput() {
+        validateMasterTranslator();
+
         WriterContext writerContext = new WriterContext(this);
 
         for (PluginData pluginData : this.pluginDatas) {
@@ -160,5 +180,132 @@ public class TranslatorController {
 
     public List<Object> getObjects() {
         return this.objects;
+    }
+
+    private List<PluginBundle> getOrderedPluginBundles() {
+
+        MutableGraph<PluginBundleId, Object> mutableGraph = new MutableGraph<>();
+
+        Map<PluginBundleId, PluginBundle> pluginBundleMap = new LinkedHashMap<>();
+
+        /*
+         * Add the nodes to the graph, check for duplicate ids, build the
+         * mapping from plugin id back to plugin
+         */
+        for (PluginBundle pluginBundle : this.data.pluginBundles) {
+            focalPluginBundleId = pluginBundle.getPluginBundleId();
+            pluginBundleMap.put(focalPluginBundleId, pluginBundle);
+            // ensure that there are no duplicate plugins
+            if (mutableGraph.containsNode(focalPluginBundleId)) {
+                // throw new ContractException(NucleusError.DUPLICATE_PLUGIN, focalPluginId);
+                throw new RuntimeException("Duplicate PluginBundle");
+            }
+            mutableGraph.addNode(focalPluginBundleId);
+            focalPluginBundleId = null;
+        }
+
+        // Add the edges to the graph
+        for (PluginBundle pluginBundle : this.data.pluginBundles) {
+            focalPluginBundleId = pluginBundle.getPluginBundleId();
+            for (PluginBundleId pluginBundleId : pluginBundle.getPluginBundleDependencies()) {
+                mutableGraph.addEdge(new Object(), focalPluginBundleId, pluginBundleId);
+            }
+            focalPluginBundleId = null;
+        }
+
+        /*
+         * Check for missing plugins from the plugin dependencies that were
+         * collected from the known plugins.
+         */
+        for (PluginBundleId pluginBundleId : mutableGraph.getNodes()) {
+            if (!pluginBundleMap.containsKey(pluginBundleId)) {
+                List<Object> inboundEdges = mutableGraph.getInboundEdges(pluginBundleId);
+                StringBuilder sb = new StringBuilder();
+                sb.append("cannot locate instance of ");
+                sb.append(pluginBundleId);
+                sb.append(" needed for ");
+                boolean first = true;
+                for (Object edge : inboundEdges) {
+                    if (first) {
+                        first = false;
+                    } else {
+                        sb.append(", ");
+                    }
+                    PluginBundleId dependentPluginBundleId = mutableGraph.getOriginNode(edge);
+                    sb.append(dependentPluginBundleId);
+                }
+                // throw new ContractException(NucleusError.MISSING_PLUGIN, sb.toString());
+                throw new RuntimeException("Missing Plugin Bundle: " + sb.toString());
+            }
+        }
+
+        /*
+         * Determine whether the graph is acyclic and generate a graph depth
+         * evaluator for the graph so that we can determine the order of
+         * initialization.
+         */
+        Optional<GraphDepthEvaluator<PluginBundleId>> optional = GraphDepthEvaluator
+                .getGraphDepthEvaluator(mutableGraph.toGraph());
+
+        if (!optional.isPresent()) {
+            /*
+             * Explain in detail why there is a circular dependency
+             */
+
+            Graph<PluginBundleId, Object> g = mutableGraph.toGraph();
+
+            g = Graphs.getSourceSinkReducedGraph(g);
+            g = Graphs.getEdgeReducedGraph(g);
+            g = Graphs.getSourceSinkReducedGraph(g);
+
+            List<Graph<PluginBundleId, Object>> cutGraphs = Graphs.cutGraph(g);
+            StringBuilder sb = new StringBuilder();
+            String lineSeparator = System.getProperty("line.separator");
+            sb.append(lineSeparator);
+            boolean firstCutGraph = true;
+
+            for (Graph<PluginBundleId, Object> cutGraph : cutGraphs) {
+                if (firstCutGraph) {
+                    firstCutGraph = false;
+                } else {
+                    sb.append(lineSeparator);
+                }
+                sb.append("Dependency group: ");
+                sb.append(lineSeparator);
+                Set<PluginBundleId> nodes = cutGraph.getNodes().stream()
+                        .collect(Collectors.toCollection(LinkedHashSet::new));
+
+                for (PluginBundleId node : nodes) {
+                    sb.append("\t");
+                    sb.append(node);
+                    sb.append(" requires:");
+                    sb.append(lineSeparator);
+                    for (Object edge : cutGraph.getInboundEdges(node)) {
+                        PluginBundleId dependencyNode = cutGraph.getOriginNode(edge);
+                        if (nodes.contains(dependencyNode)) {
+                            sb.append("\t");
+                            sb.append("\t");
+                            sb.append(dependencyNode);
+                            sb.append(lineSeparator);
+                        }
+                    }
+                }
+            }
+            // throw new ContractException(NucleusError.CIRCULAR_PLUGIN_DEPENDENCIES,
+            // sb.toString());
+            throw new RuntimeException("Circular plugin bundle dependencies");
+        }
+
+        // the graph is acyclic, so the depth evaluator is present
+        GraphDepthEvaluator<PluginBundleId> graphDepthEvaluator = optional.get();
+
+        List<PluginBundleId> orderedPluginIds = graphDepthEvaluator.getNodesInRankOrder();
+
+        List<PluginBundle> orderedPlugins = new ArrayList<>();
+        for (PluginBundleId pluginId : orderedPluginIds) {
+            orderedPlugins.add(pluginBundleMap.get(pluginId));
+        }
+
+        return orderedPlugins;
     }
 }

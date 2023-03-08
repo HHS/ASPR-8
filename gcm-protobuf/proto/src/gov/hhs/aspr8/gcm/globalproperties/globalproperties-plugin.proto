@@ -8,7 +8,7 @@ import "common.proto";
 
 
 message GlobalPropertiesPluginDataInput {
-    repeated PropertyDefinitionMap globalPropertyDefinitinions = 1;
-    repeated PropertyValueMap globalPropertyValues = 2;
+    repeated PropertyDefinitionMapInput globalPropertyDefinitinions = 1;
+    repeated PropertyValueMapInput globalPropertyValues = 2;
 }
 

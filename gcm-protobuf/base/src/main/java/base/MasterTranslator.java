@@ -31,24 +31,25 @@ import nucleus.PluginData;
 
 public class MasterTranslator {
 
-    protected final Data data;
+    private final Data data;
     private boolean debug = true;
+    private boolean isInitialized = false;
 
-    protected MasterTranslator(Data data) {
+    private MasterTranslator(Data data) {
         this.data = data;
     }
 
-    protected static class Data {
-        protected final Map<Descriptor, Message> descriptorMap = new LinkedHashMap<>();
-        protected final Map<Descriptor, ITranslator> descriptorToTranslatorMap = new LinkedHashMap<>();
-        protected final Map<Class<?>, ITranslator> objectToTranslatorMap = new LinkedHashMap<>();
-        protected TypeRegistry registry;
-        protected Parser jsonParser;
-        protected Printer jsonPrinter;
-        protected boolean ignoringUnknownFields = true;
-        protected boolean includingDefaultValueFields = false;
+    private static class Data {
+        private final Map<Descriptor, Message> descriptorMap = new LinkedHashMap<>();
+        private final Map<Descriptor, ITranslator> descriptorToTranslatorMap = new LinkedHashMap<>();
+        private final Map<Class<?>, ITranslator> objectToTranslatorMap = new LinkedHashMap<>();
+        private TypeRegistry registry;
+        private Parser jsonParser;
+        private Printer jsonPrinter;
+        private boolean ignoringUnknownFields = true;
+        private boolean includingDefaultValueFields = false;
 
-        protected Data() {
+        private Data() {
             this.descriptorMap.putAll(PrimitiveTranslators.getPrimitiveDescriptorToMessageMap());
             this.descriptorToTranslatorMap.putAll(PrimitiveTranslators.getPrimitiveDescriptorToTranslatorMap());
             this.objectToTranslatorMap.putAll(PrimitiveTranslators.getPrimitiveObjectToTranslatorMap());
@@ -56,9 +57,9 @@ public class MasterTranslator {
     }
 
     public static class Builder {
-        protected Data data;
+        private Data data;
 
-        protected Builder(Data data) {
+        private Builder(Data data) {
             this.data = data;
         }
 
@@ -130,6 +131,12 @@ public class MasterTranslator {
     public void init() {
         this.data.descriptorToTranslatorMap.values().forEach((translator) -> translator.init(this));
         this.data.objectToTranslatorMap.values().forEach((translator) -> translator.init(this));
+
+        this.isInitialized = true;
+    }
+
+    public boolean isInitialized() {
+        return this.isInitialized;
     }
 
     public Parser getJsonParser() {

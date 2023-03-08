@@ -3,13 +3,13 @@ package plugins.globalproperties.translators;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.protobuf.Any;
 import com.google.protobuf.Descriptors.Descriptor;
 
 import base.AbstractTranslator;
-import common.PropertyDefinitionInput;
-import common.PropertyDefinitionMap;
-import common.PropertyValueMap;
+import common.PropertyDefinitionMapInput;
+import common.PropertyValueMapInput;
+import common.simobjects.PropertyDefinitionMap;
+import common.simobjects.PropertyValueMap;
 import plugins.globalproperties.GlobalPropertiesPluginData;
 import plugins.globalproperties.GlobalPropertiesPluginDataInput;
 import plugins.globalproperties.support.GlobalPropertyId;
@@ -23,19 +23,21 @@ public class GlobalPropertiesPluginDataTranslator
     protected GlobalPropertiesPluginData convertInputObject(GlobalPropertiesPluginDataInput inputObject) {
         GlobalPropertiesPluginData.Builder builder = GlobalPropertiesPluginData.builder();
 
-        for (PropertyDefinitionMap propertyDefinitionMap : inputObject.getGlobalPropertyDefinitinionsList()) {
-            GlobalPropertyId propertyId = new SimpleGlobalPropertyId(
-                    this.translator.getObjectFromAny(propertyDefinitionMap.getPropertyId()));
-            PropertyDefinition propertyDefinition = (PropertyDefinition) this.translator
-                    .convertInputObject(propertyDefinitionMap.getPropertyDefinition());
+        for (PropertyDefinitionMapInput propertyDefinitionMapInput : inputObject.getGlobalPropertyDefinitinionsList()) {
+
+            PropertyDefinitionMap propertyDefinitionMap = this.translator
+                    .convertInputObject(propertyDefinitionMapInput);
+            GlobalPropertyId propertyId = new SimpleGlobalPropertyId(propertyDefinitionMap.getPropertyId());
+            PropertyDefinition propertyDefinition = propertyDefinitionMap.getPropertyDefinition();
 
             builder.defineGlobalProperty(propertyId, propertyDefinition);
         }
 
-        for (PropertyValueMap propertyValueMap : inputObject.getGlobalPropertyValuesList()) {
-            GlobalPropertyId propertyId = new SimpleGlobalPropertyId(
-                    this.translator.getObjectFromAny(propertyValueMap.getPropertyId()));
-            Object value = this.translator.getObjectFromAny(propertyValueMap.getPropertyValue());
+        for (PropertyValueMapInput propertyValueMapInput : inputObject.getGlobalPropertyValuesList()) {
+
+            PropertyValueMap propertyValueMap = this.translator.convertInputObject(propertyValueMapInput);
+            GlobalPropertyId propertyId = new SimpleGlobalPropertyId(propertyValueMap.getPropertyId());
+            Object value = propertyValueMap.getPropertyValue();
 
             builder.setGlobalPropertyValue(propertyId, value);
         }
@@ -47,29 +49,31 @@ public class GlobalPropertiesPluginDataTranslator
     protected GlobalPropertiesPluginDataInput convertSimObject(GlobalPropertiesPluginData simObject) {
         GlobalPropertiesPluginDataInput.Builder builder = GlobalPropertiesPluginDataInput.newBuilder();
 
-        List<PropertyDefinitionMap> propertyDefinitions = new ArrayList<>();
-        List<PropertyValueMap> propertyValues = new ArrayList<>();
+        List<PropertyDefinitionMapInput> propertyDefinitions = new ArrayList<>();
+        List<PropertyValueMapInput> propertyValues = new ArrayList<>();
 
         for (GlobalPropertyId propertyId : simObject.getGlobalPropertyIds()) {
             SimpleGlobalPropertyId globalPropertyId = (SimpleGlobalPropertyId) propertyId;
             PropertyDefinition propertyDefinition = simObject.getGlobalPropertyDefinition(propertyId);
-            Object value = simObject.getGlobalPropertyValue(propertyId);
+            Object propertyValue = simObject.getGlobalPropertyValue(propertyId);
 
-            PropertyDefinitionMap.Builder propertyDefBuilder = PropertyDefinitionMap.newBuilder();
-            PropertyValueMap.Builder propertyValueBuilder = PropertyValueMap.newBuilder();
+            PropertyDefinitionMap propertyDefinitionMap = new PropertyDefinitionMap();
 
-            Any anyPropId = this.translator.getAnyFromObject(globalPropertyId.getValue());
-            PropertyDefinitionInput propertyDefinitionInput = this.translator.convertSimObject(propertyDefinition);
+            propertyDefinitionMap.setPropertyId(globalPropertyId.getValue());
+            propertyDefinitionMap.setPropertyDefinition(propertyDefinition);
+
+            propertyDefinitions.add(this.translator
+                    .convertSimObject(propertyDefinitionMap));
 
             if (propertyDefinition.getDefaultValue().isEmpty()) {
-                Any anyValue = this.translator.getAnyFromObject(value);
-                propertyValueBuilder.setPropertyId(anyPropId).setPropertyValue(anyValue);
-                propertyValues.add(propertyValueBuilder.build());
+                PropertyValueMap propertyValueMap = new PropertyValueMap();
+
+                propertyValueMap.setPropertyId(globalPropertyId.getValue());
+                propertyValueMap.setPropertyValue(propertyValue);
+
+                propertyValues.add(this.translator.convertSimObject(propertyValueMap));
             }
 
-            propertyDefBuilder.setPropertyId(anyPropId).setPropertyDefinition(propertyDefinitionInput);
-
-            propertyDefinitions.add(propertyDefBuilder.build());
         }
 
         builder.addAllGlobalPropertyDefinitinions(propertyDefinitions).addAllGlobalPropertyValues(propertyValues);

@@ -7,10 +7,10 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import base.TranslatorController;
-import testsupport.simobjects.PropertyValueMapSimObject;
+import common.simobjects.PropertyValueMap;
+import common.translators.PropertyValueMapTranslator;
 import testsupport.simobjects.TestMessageSimObject;
 import testsupport.translators.Layer1Translator;
-import testsupport.translators.PropertyValueMapTranslator;
 import testsupport.translators.TestMessageTranslator;
 
 public class App {
@@ -45,7 +45,7 @@ public class App {
 
         TranslatorController translatorController = TranslatorController.builder()
                 .addBundle(PropertiesPluginBundle.getPluginBundle(inputFileName, outputFileName,
-                        PropertyValueMap.getDefaultInstance()))
+                        PropertyValueMapInput.getDefaultInstance()))
                 .addCustomTranslator(new TestMessageTranslator())
                 .addCustomTranslator(new Layer1Translator())
                 .addCustomTranslator(new PropertyValueMapTranslator())
@@ -53,18 +53,18 @@ public class App {
 
         List<Object> objects = translatorController.readInput().getObjects();
 
-        PropertyValueMapSimObject map = (PropertyValueMapSimObject) objects.get(0);
+        PropertyValueMap map = (PropertyValueMap) objects.get(0);
 
-        if (TestMessageSimObject.class.isAssignableFrom(map.getKey().getClass())) {
+        if (TestMessageSimObject.class.isAssignableFrom(map.getPropertyId().getClass())) {
             System.out.println("key is Test Message Actual");
         }
 
-        if (String.class.isAssignableFrom(map.getValue().getClass())) {
+        if (String.class.isAssignableFrom(map.getPropertyValue().getClass())) {
             System.out.println("value is String");
         }
 
-        System.out.println(map.getKey().toString());
-        System.out.println(map.getValue().toString());
+        System.out.println(map.getPropertyId().toString());
+        System.out.println(map.getPropertyValue().toString());
 
         translatorController.writeOutput();
 
