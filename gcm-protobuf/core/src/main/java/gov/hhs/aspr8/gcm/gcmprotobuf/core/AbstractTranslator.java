@@ -1,4 +1,4 @@
-package core;
+package gov.hhs.aspr8.gcm.gcmprotobuf.core;
 
 import com.google.protobuf.Message;
 import com.google.protobuf.Descriptors.Descriptor;

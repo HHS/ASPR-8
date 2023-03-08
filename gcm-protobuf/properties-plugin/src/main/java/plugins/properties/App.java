@@ -6,7 +6,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import core.TranslatorController;
+import gov.hhs.aspr8.gcm.gcmprotobuf.core.TranslatorController;
 import plugins.properties.input.PropertyValueMapInput;
 import plugins.properties.simobjects.PropertyValueMap;
 import plugins.properties.testsupport.simobjects.TestMessageSimObject;

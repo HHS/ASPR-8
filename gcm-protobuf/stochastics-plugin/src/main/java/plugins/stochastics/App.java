@@ -6,7 +6,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import core.TranslatorController;
+import gov.hhs.aspr8.gcm.gcmprotobuf.core.TranslatorController;
 import nucleus.PluginData;
 import plugins.stochastics.support.RandomNumberGeneratorId;
 

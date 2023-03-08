@@ -1,6 +1,6 @@
 package plugins.stochastics;
 
-import core.PluginBundle;
+import gov.hhs.aspr8.gcm.gcmprotobuf.core.PluginBundle;
 import plugins.stochastics.translators.StochasticsPluginDataTranslator;
 
 public class StochasticsPluginBundle {

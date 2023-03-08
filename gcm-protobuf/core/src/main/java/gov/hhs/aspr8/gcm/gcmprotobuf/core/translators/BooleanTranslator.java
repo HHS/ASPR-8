@@ -1,9 +1,9 @@
-package core.translators;
+package gov.hhs.aspr8.gcm.gcmprotobuf.core.translators;
 
 import com.google.protobuf.BoolValue;
 import com.google.protobuf.Descriptors.Descriptor;
 
-import core.AbstractTranslator;
+import gov.hhs.aspr8.gcm.gcmprotobuf.core.AbstractTranslator;
 
 public class BooleanTranslator extends AbstractTranslator<BoolValue, Boolean> {
 

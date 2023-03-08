@@ -2,7 +2,7 @@ package plugins.properties.testsupport.translators;
 
 import com.google.protobuf.Descriptors.Descriptor;
 
-import core.AbstractTranslator;
+import gov.hhs.aspr8.gcm.gcmprotobuf.core.AbstractTranslator;
 import plugins.properties.input.testsupport.Layer1;
 import plugins.properties.input.testsupport.TestMessage;
 import plugins.properties.testsupport.simobjects.Layer1SimObject;

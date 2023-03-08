@@ -1,4 +1,4 @@
-package core;
+package gov.hhs.aspr8.gcm.gcmprotobuf.core;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -26,7 +26,7 @@ import com.google.protobuf.util.JsonFormat;
 import com.google.protobuf.util.JsonFormat.Parser;
 import com.google.protobuf.util.JsonFormat.Printer;
 
-import core.translators.PrimitiveTranslators;
+import gov.hhs.aspr8.gcm.gcmprotobuf.core.translators.PrimitiveTranslators;
 import nucleus.PluginData;
 
 public class MasterTranslator {

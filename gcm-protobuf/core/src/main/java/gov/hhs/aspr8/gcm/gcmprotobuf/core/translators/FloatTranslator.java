@@ -1,9 +1,10 @@
-package core.translators;
+package gov.hhs.aspr8.gcm.gcmprotobuf.core.translators;
 
 import com.google.protobuf.Descriptors.Descriptor;
-import com.google.protobuf.FloatValue;
 
-import core.AbstractTranslator;
+import gov.hhs.aspr8.gcm.gcmprotobuf.core.AbstractTranslator;
+
+import com.google.protobuf.FloatValue;
 
 public class FloatTranslator extends AbstractTranslator<FloatValue, Float> {
 

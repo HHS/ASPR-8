@@ -2,7 +2,7 @@ package plugins.properties.translators;
 
 import com.google.protobuf.Descriptors.Descriptor;
 
-import core.AbstractTranslator;
+import gov.hhs.aspr8.gcm.gcmprotobuf.core.AbstractTranslator;
 import plugins.properties.input.PropertyDefinitionInput;
 import plugins.properties.input.PropertyDefinitionMapInput;
 import plugins.properties.simobjects.PropertyDefinitionMap;

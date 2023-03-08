@@ -2,7 +2,7 @@ package plugins.properties;
 
 import com.google.protobuf.Message;
 
-import core.PluginBundle;
+import gov.hhs.aspr8.gcm.gcmprotobuf.core.PluginBundle;
 import plugins.properties.translators.PropertyDefinitionMapTranslator;
 import plugins.properties.translators.PropertyDefinitionTranslator;
 import plugins.properties.translators.PropertyValueMapTranslator;

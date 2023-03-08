@@ -1,4 +1,4 @@
-package core;
+package gov.hhs.aspr8.gcm.gcmprotobuf.core;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;

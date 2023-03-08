@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.google.protobuf.Descriptors.Descriptor;
 
-import core.AbstractTranslator;
+import gov.hhs.aspr8.gcm.gcmprotobuf.core.AbstractTranslator;
 import plugins.globalproperties.GlobalPropertiesPluginData;
 import plugins.globalproperties.GlobalPropertiesPluginDataInput;
 import plugins.globalproperties.support.GlobalPropertyId;

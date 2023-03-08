@@ -1,4 +1,4 @@
-package core;
+package gov.hhs.aspr8.gcm.gcmprotobuf.core;
 
 public interface PluginBundleId {
 	/**

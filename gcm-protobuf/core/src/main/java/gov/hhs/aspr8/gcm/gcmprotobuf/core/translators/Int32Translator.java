@@ -1,9 +1,10 @@
-package core.translators;
+package gov.hhs.aspr8.gcm.gcmprotobuf.core.translators;
 
 import com.google.protobuf.Descriptors.Descriptor;
-import com.google.protobuf.Int32Value;
 
-import core.AbstractTranslator;
+import gov.hhs.aspr8.gcm.gcmprotobuf.core.AbstractTranslator;
+
+import com.google.protobuf.Int32Value;
 
 public class Int32Translator extends AbstractTranslator<Int32Value, Integer> {
 

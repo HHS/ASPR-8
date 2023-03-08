@@ -1,12 +1,13 @@
-package core.translators;
+package gov.hhs.aspr8.gcm.gcmprotobuf.core.translators;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import com.google.protobuf.Descriptors.Descriptor;
-import com.google.protobuf.Message;
 
-import core.ITranslator;
+import gov.hhs.aspr8.gcm.gcmprotobuf.core.ITranslator;
+
+import com.google.protobuf.Message;
 
 public class PrimitiveTranslators {
 
