@@ -1,4 +1,4 @@
-package plugins.stochastics;
+package gov.hhs.aspr8.gcm.gcmprotobuf.stochastics;
 
 import gov.hhs.aspr8.gcm.gcmprotobuf.core.PluginBundleId;
 

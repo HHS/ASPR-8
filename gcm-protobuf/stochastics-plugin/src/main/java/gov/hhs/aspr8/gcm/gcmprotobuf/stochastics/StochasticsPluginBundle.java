@@ -1,7 +1,8 @@
-package plugins.stochastics;
+package gov.hhs.aspr8.gcm.gcmprotobuf.stochastics;
 
 import gov.hhs.aspr8.gcm.gcmprotobuf.core.PluginBundle;
-import plugins.stochastics.translators.StochasticsPluginDataTranslator;
+import gov.hhs.aspr8.gcm.gcmprotobuf.stochastics.translators.StochasticsPluginDataTranslator;
+import plugins.stochastics.StochasticsPluginDataInput;
 
 public class StochasticsPluginBundle {
     public static PluginBundle getPluginBundle(String inputFileName, String outputFileName) {

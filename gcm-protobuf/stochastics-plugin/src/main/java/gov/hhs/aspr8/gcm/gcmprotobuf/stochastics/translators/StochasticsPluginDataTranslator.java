@@ -1,4 +1,4 @@
-package plugins.stochastics.translators;
+package gov.hhs.aspr8.gcm.gcmprotobuf.stochastics.translators;
 
 import java.util.ArrayList;
 import java.util.List;

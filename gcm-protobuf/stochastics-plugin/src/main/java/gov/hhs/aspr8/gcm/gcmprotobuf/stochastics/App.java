@@ -1,4 +1,4 @@
-package plugins.stochastics;
+package gov.hhs.aspr8.gcm.gcmprotobuf.stochastics;
 
 import java.util.List;
 
@@ -8,6 +8,7 @@ import com.google.gson.JsonObject;
 
 import gov.hhs.aspr8.gcm.gcmprotobuf.core.TranslatorController;
 import nucleus.PluginData;
+import plugins.stochastics.StochasticsPluginData;
 import plugins.stochastics.support.RandomNumberGeneratorId;
 
 public class App {
