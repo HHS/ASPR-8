@@ -2,7 +2,7 @@ package plugins.properties.translators;
 
 import com.google.protobuf.Descriptors.Descriptor;
 
-import base.AbstractTranslator;
+import core.AbstractTranslator;
 import plugins.properties.input.PropertyDefinitionInput;
 import plugins.properties.input.TimeTrackingPolicyInput;
 import plugins.util.properties.PropertyDefinition;

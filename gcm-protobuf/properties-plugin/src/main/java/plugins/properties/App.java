@@ -6,13 +6,12 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import base.TranslatorController;
+import core.TranslatorController;
 import plugins.properties.input.PropertyValueMapInput;
 import plugins.properties.simobjects.PropertyValueMap;
 import plugins.properties.testsupport.simobjects.TestMessageSimObject;
 import plugins.properties.testsupport.translators.Layer1Translator;
 import plugins.properties.testsupport.translators.TestMessageTranslator;
-import plugins.properties.translators.PropertyValueMapTranslator;
 
 public class App {
 

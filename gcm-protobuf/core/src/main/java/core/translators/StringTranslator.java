@@ -1,9 +1,9 @@
-package base.translators;
+package core.translators;
 
 import com.google.protobuf.Descriptors.Descriptor;
 import com.google.protobuf.StringValue;
 
-import base.AbstractTranslator;
+import core.AbstractTranslator;
 
 public class StringTranslator extends AbstractTranslator<StringValue, String> {
 

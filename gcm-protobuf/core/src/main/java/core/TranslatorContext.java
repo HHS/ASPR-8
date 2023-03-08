@@ -1,4 +1,4 @@
-package base;
+package core;
 
 import com.google.protobuf.Message;
 

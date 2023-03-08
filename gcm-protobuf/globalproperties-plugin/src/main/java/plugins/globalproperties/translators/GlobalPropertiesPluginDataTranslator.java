@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.google.protobuf.Descriptors.Descriptor;
 
-import base.AbstractTranslator;
+import core.AbstractTranslator;
 import plugins.globalproperties.GlobalPropertiesPluginData;
 import plugins.globalproperties.GlobalPropertiesPluginDataInput;
 import plugins.globalproperties.support.GlobalPropertyId;

@@ -6,7 +6,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import base.TranslatorController;
+import core.TranslatorController;
 import nucleus.PluginData;
 import plugins.globalproperties.support.GlobalPropertyId;
 import plugins.properties.PropertiesPluginBundle;

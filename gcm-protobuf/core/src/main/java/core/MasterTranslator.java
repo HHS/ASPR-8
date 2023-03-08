@@ -1,4 +1,4 @@
-package base;
+package core;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -26,7 +26,7 @@ import com.google.protobuf.util.JsonFormat;
 import com.google.protobuf.util.JsonFormat.Parser;
 import com.google.protobuf.util.JsonFormat.Printer;
 
-import base.translators.PrimitiveTranslators;
+import core.translators.PrimitiveTranslators;
 import nucleus.PluginData;
 
 public class MasterTranslator {

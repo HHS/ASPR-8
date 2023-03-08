@@ -1,4 +1,4 @@
-package base.translators;
+package core.translators;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -6,7 +6,7 @@ import java.util.Map;
 import com.google.protobuf.Descriptors.Descriptor;
 import com.google.protobuf.Message;
 
-import base.ITranslator;
+import core.ITranslator;
 
 public class PrimitiveTranslators {
 
@@ -22,7 +22,8 @@ public class PrimitiveTranslators {
     public static Map<Descriptor, Message> getPrimitiveDescriptorToMessageMap() {
         Map<Descriptor, Message> map = new LinkedHashMap<>();
 
-        map.put(BOOLEAN_TRANSLATOR.getDescriptorForInputObject(), BOOLEAN_TRANSLATOR.getDefaultInstanceForInputObject());
+        map.put(BOOLEAN_TRANSLATOR.getDescriptorForInputObject(),
+                BOOLEAN_TRANSLATOR.getDefaultInstanceForInputObject());
         map.put(INT32_TRANSLATOR.getDescriptorForInputObject(), INT32_TRANSLATOR.getDefaultInstanceForInputObject());
         map.put(UINT32_TRANSLATOR.getDescriptorForInputObject(), UINT32_TRANSLATOR.getDefaultInstanceForInputObject());
         map.put(INT64_TRANSLATOR.getDescriptorForInputObject(), INT64_TRANSLATOR.getDefaultInstanceForInputObject());

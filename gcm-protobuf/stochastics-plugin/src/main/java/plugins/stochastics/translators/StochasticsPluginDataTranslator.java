@@ -6,7 +6,7 @@ import java.util.List;
 import com.google.protobuf.Any;
 import com.google.protobuf.Descriptors.Descriptor;
 
-import base.AbstractTranslator;
+import core.AbstractTranslator;
 import plugins.stochastics.StochasticsPluginData;
 import plugins.stochastics.StochasticsPluginDataInput;
 import plugins.stochastics.support.RandomNumberGeneratorId;

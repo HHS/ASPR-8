@@ -1,9 +1,9 @@
-package base.translators;
+package core.translators;
 
 import com.google.protobuf.BoolValue;
 import com.google.protobuf.Descriptors.Descriptor;
 
-import base.AbstractTranslator;
+import core.AbstractTranslator;
 
 public class BooleanTranslator extends AbstractTranslator<BoolValue, Boolean> {
 

@@ -1,6 +1,6 @@
 package plugins.globalproperties;
 
-import base.PluginBundle;
+import core.PluginBundle;
 import plugins.globalproperties.translators.GlobalPropertiesPluginDataTranslator;
 import plugins.properties.PropertiesPluginBundleId;
 

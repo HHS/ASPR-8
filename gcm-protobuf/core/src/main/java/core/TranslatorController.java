@@ -1,4 +1,4 @@
-package base;
+package core;
 
 import java.io.Reader;
 import java.io.Writer;

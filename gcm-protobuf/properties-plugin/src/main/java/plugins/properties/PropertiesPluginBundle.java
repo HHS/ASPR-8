@@ -2,7 +2,7 @@ package plugins.properties;
 
 import com.google.protobuf.Message;
 
-import base.PluginBundle;
+import core.PluginBundle;
 import plugins.properties.translators.PropertyDefinitionMapTranslator;
 import plugins.properties.translators.PropertyDefinitionTranslator;
 import plugins.properties.translators.PropertyValueMapTranslator;

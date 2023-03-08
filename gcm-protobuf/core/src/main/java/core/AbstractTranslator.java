@@ -1,4 +1,4 @@
-package base;
+package core;
 
 import com.google.protobuf.Message;
 import com.google.protobuf.Descriptors.Descriptor;
@@ -35,7 +35,7 @@ public abstract class AbstractTranslator<I extends Message, S> implements ITrans
         if (!(this.getSimObjectClass().isAssignableFrom(obj.getClass()))) {
             throw new RuntimeException("Object is not a " + this.getSimObjectClass().getName());
         }
-        
+
         return this.convertSimObject((S) obj);
     }
 

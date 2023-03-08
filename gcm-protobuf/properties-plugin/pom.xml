@@ -16,7 +16,7 @@
     <dependencies>
         <dependency>
             <groupId>gov.hhs.aspr.gcm.gcm-protobuf</groupId>
-            <artifactId>base</artifactId>
+            <artifactId>core</artifactId>
             <version>${revision}</version>
         </dependency>
     </dependencies>

@@ -1,6 +1,6 @@
 package plugins.stochastics;
 
-import base.PluginBundle;
+import core.PluginBundle;
 import plugins.stochastics.translators.StochasticsPluginDataTranslator;
 
 public class StochasticsPluginBundle {

@@ -1,9 +1,9 @@
-package base.translators;
+package core.translators;
 
 import com.google.protobuf.Descriptors.Descriptor;
 import com.google.protobuf.UInt64Value;
 
-import base.AbstractTranslator;
+import core.AbstractTranslator;
 
 public class UInt64Translator extends AbstractTranslator<UInt64Value, Long> {
 

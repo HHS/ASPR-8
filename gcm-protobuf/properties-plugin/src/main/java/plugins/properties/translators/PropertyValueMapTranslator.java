@@ -2,7 +2,7 @@ package plugins.properties.translators;
 
 import com.google.protobuf.Descriptors.Descriptor;
 
-import base.AbstractTranslator;
+import core.AbstractTranslator;
 import plugins.properties.input.PropertyValueMapInput;
 import plugins.properties.simobjects.PropertyValueMap;
 
