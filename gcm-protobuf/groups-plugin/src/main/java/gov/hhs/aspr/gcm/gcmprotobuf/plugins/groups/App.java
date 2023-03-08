@@ -1,5 +1,6 @@
 package gov.hhs.aspr.gcm.gcmprotobuf.plugins.groups;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.LinkedHashSet;
@@ -58,8 +59,8 @@ public class App {
 
     public static void main(String[] args) {
 
-        String inputFileName = "C:\\Dev\\CDC\\ASPR-8\\gcm-protobuf\\groups-plugin\\src\\main\\resources\\json\\testJson1.json";
-        String outputFileName = "C:\\Dev\\CDC\\ASPR-8\\gcm-protobuf\\groups-plugin\\src\\main\\resources\\json\\output\\testJson1Output.json";
+        String inputFileName = "./groups-plugin/src/main/resources/json/testJson1.json";
+        String outputFileName = "./groups-plugin/src/main/resources/json/output/testJson1Output.json";
 
         TranslatorController translatorController = TranslatorController.builder()
                 .addBundle(GroupsPluginBundle.getPluginBundle(inputFileName, outputFileName))

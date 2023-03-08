@@ -40,8 +40,8 @@ public class App {
 
     public static void main(String[] args) {
 
-        String inputFileName = "C:\\Dev\\CDC\\ASPR-8\\gcm-protobuf\\globalproperties-plugin\\src\\main\\resources\\json\\testJson1.json";
-        String outputFileName = "C:\\Dev\\CDC\\ASPR-8\\gcm-protobuf\\globalproperties-plugin\\src\\main\\resources\\json\\output\\testJson1Output.json";
+        String inputFileName = "./globalproperties-plugin/src/main/resources/json/testJson1.json";
+        String outputFileName = "./globalproperties-plugin/src/main/resources/json/output/testJson1Output.json";
 
         TranslatorController translatorController = TranslatorController.builder()
                 .addBundle(GlobalPropertiesPluginBundle.getPluginBundle(inputFileName, outputFileName))
