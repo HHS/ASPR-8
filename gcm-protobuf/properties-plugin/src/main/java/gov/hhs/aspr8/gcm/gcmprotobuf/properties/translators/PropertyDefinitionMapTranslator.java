@@ -1,11 +1,11 @@
-package plugins.properties.translators;
+package gov.hhs.aspr8.gcm.gcmprotobuf.properties.translators;
 
 import com.google.protobuf.Descriptors.Descriptor;
 
 import gov.hhs.aspr8.gcm.gcmprotobuf.core.AbstractTranslator;
+import gov.hhs.aspr8.gcm.gcmprotobuf.properties.simobjects.PropertyDefinitionMap;
 import plugins.properties.input.PropertyDefinitionInput;
 import plugins.properties.input.PropertyDefinitionMapInput;
-import plugins.properties.simobjects.PropertyDefinitionMap;
 
 public class PropertyDefinitionMapTranslator
         extends AbstractTranslator<PropertyDefinitionMapInput, PropertyDefinitionMap> {

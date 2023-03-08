@@ -6,14 +6,14 @@ import java.util.List;
 import com.google.protobuf.Descriptors.Descriptor;
 
 import gov.hhs.aspr8.gcm.gcmprotobuf.core.AbstractTranslator;
+import gov.hhs.aspr8.gcm.gcmprotobuf.properties.simobjects.PropertyDefinitionMap;
+import gov.hhs.aspr8.gcm.gcmprotobuf.properties.simobjects.PropertyValueMap;
 import plugins.globalproperties.GlobalPropertiesPluginData;
 import plugins.globalproperties.GlobalPropertiesPluginDataInput;
 import plugins.globalproperties.support.GlobalPropertyId;
 import plugins.globalproperties.support.SimpleGlobalPropertyId;
 import plugins.properties.input.PropertyDefinitionMapInput;
 import plugins.properties.input.PropertyValueMapInput;
-import plugins.properties.simobjects.PropertyDefinitionMap;
-import plugins.properties.simobjects.PropertyValueMap;
 import plugins.util.properties.PropertyDefinition;
 
 public class GlobalPropertiesPluginDataTranslator

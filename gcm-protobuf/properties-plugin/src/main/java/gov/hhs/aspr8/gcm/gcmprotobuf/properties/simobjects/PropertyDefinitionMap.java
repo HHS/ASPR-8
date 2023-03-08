@@ -1,4 +1,4 @@
-package plugins.properties.simobjects;
+package gov.hhs.aspr8.gcm.gcmprotobuf.properties.simobjects;
 
 import plugins.util.properties.PropertyDefinition;
 

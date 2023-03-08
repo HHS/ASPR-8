@@ -1,10 +1,10 @@
-package plugins.properties.translators;
+package gov.hhs.aspr8.gcm.gcmprotobuf.properties.translators;
 
 import com.google.protobuf.Descriptors.Descriptor;
 
 import gov.hhs.aspr8.gcm.gcmprotobuf.core.AbstractTranslator;
+import gov.hhs.aspr8.gcm.gcmprotobuf.properties.simobjects.PropertyValueMap;
 import plugins.properties.input.PropertyValueMapInput;
-import plugins.properties.simobjects.PropertyValueMap;
 
 public class PropertyValueMapTranslator extends AbstractTranslator<PropertyValueMapInput, PropertyValueMap> {
 

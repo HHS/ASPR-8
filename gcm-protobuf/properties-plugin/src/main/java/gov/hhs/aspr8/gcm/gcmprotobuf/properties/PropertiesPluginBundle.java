@@ -1,11 +1,11 @@
-package plugins.properties;
+package gov.hhs.aspr8.gcm.gcmprotobuf.properties;
 
 import com.google.protobuf.Message;
 
 import gov.hhs.aspr8.gcm.gcmprotobuf.core.PluginBundle;
-import plugins.properties.translators.PropertyDefinitionMapTranslator;
-import plugins.properties.translators.PropertyDefinitionTranslator;
-import plugins.properties.translators.PropertyValueMapTranslator;
+import gov.hhs.aspr8.gcm.gcmprotobuf.properties.translators.PropertyDefinitionMapTranslator;
+import gov.hhs.aspr8.gcm.gcmprotobuf.properties.translators.PropertyDefinitionTranslator;
+import gov.hhs.aspr8.gcm.gcmprotobuf.properties.translators.PropertyValueMapTranslator;
 
 public class PropertiesPluginBundle {
 

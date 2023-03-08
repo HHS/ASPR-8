@@ -1,4 +1,4 @@
-package plugins.properties.testsupport.simobjects;
+package gov.hhs.aspr8.gcm.gcmprotobuf.properties.testsupport.simobjects;
 
 public class TestMessageSimObject {
     private Layer1SimObject layer1;

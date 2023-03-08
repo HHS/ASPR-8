@@ -7,10 +7,10 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import gov.hhs.aspr8.gcm.gcmprotobuf.core.TranslatorController;
+import gov.hhs.aspr8.gcm.gcmprotobuf.properties.PropertiesPluginBundle;
 import nucleus.PluginData;
 import plugins.globalproperties.GlobalPropertiesPluginData;
 import plugins.globalproperties.support.GlobalPropertyId;
-import plugins.properties.PropertiesPluginBundle;
 import plugins.util.properties.PropertyDefinition;
 
 public class App {

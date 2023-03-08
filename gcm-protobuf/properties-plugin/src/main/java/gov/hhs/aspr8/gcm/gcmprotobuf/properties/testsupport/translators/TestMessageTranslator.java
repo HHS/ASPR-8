@@ -1,12 +1,12 @@
-package plugins.properties.testsupport.translators;
+package gov.hhs.aspr8.gcm.gcmprotobuf.properties.testsupport.translators;
 
 import com.google.protobuf.Descriptors.Descriptor;
 
 import gov.hhs.aspr8.gcm.gcmprotobuf.core.AbstractTranslator;
+import gov.hhs.aspr8.gcm.gcmprotobuf.properties.testsupport.simobjects.Layer1SimObject;
+import gov.hhs.aspr8.gcm.gcmprotobuf.properties.testsupport.simobjects.TestMessageSimObject;
 import plugins.properties.input.testsupport.Layer1;
 import plugins.properties.input.testsupport.TestMessage;
-import plugins.properties.testsupport.simobjects.Layer1SimObject;
-import plugins.properties.testsupport.simobjects.TestMessageSimObject;
 
 public class TestMessageTranslator extends AbstractTranslator<TestMessage, TestMessageSimObject> {
 

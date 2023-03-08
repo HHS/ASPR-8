@@ -1,4 +1,4 @@
-package plugins.properties;
+package gov.hhs.aspr8.gcm.gcmprotobuf.properties;
 
 import java.util.List;
 
@@ -7,11 +7,11 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import gov.hhs.aspr8.gcm.gcmprotobuf.core.TranslatorController;
+import gov.hhs.aspr8.gcm.gcmprotobuf.properties.simobjects.PropertyValueMap;
+import gov.hhs.aspr8.gcm.gcmprotobuf.properties.testsupport.simobjects.TestMessageSimObject;
+import gov.hhs.aspr8.gcm.gcmprotobuf.properties.testsupport.translators.Layer1Translator;
+import gov.hhs.aspr8.gcm.gcmprotobuf.properties.testsupport.translators.TestMessageTranslator;
 import plugins.properties.input.PropertyValueMapInput;
-import plugins.properties.simobjects.PropertyValueMap;
-import plugins.properties.testsupport.simobjects.TestMessageSimObject;
-import plugins.properties.testsupport.translators.Layer1Translator;
-import plugins.properties.testsupport.translators.TestMessageTranslator;
 
 public class App {
 

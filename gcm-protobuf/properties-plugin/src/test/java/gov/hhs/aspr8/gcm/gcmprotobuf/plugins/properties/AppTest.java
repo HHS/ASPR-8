@@ -1,4 +1,4 @@
-package com.example;
+package gov.hhs.aspr8.gcm.gcmprotobuf.plugins.properties;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 

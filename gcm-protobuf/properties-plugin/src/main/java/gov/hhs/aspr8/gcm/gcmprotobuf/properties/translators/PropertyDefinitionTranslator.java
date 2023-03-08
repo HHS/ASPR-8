@@ -1,4 +1,4 @@
-package plugins.properties.translators;
+package gov.hhs.aspr8.gcm.gcmprotobuf.properties.translators;
 
 import com.google.protobuf.Descriptors.Descriptor;
 
