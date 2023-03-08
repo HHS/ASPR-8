@@ -1,4 +1,4 @@
-package testsupport.simobjects;
+package plugins.properties.testsupport.simobjects;
 
 public class TestMessageSimObject {
     private Layer1SimObject layer1;

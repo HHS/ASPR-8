@@ -1,10 +1,10 @@
-package common.translators;
+package plugins.properties.translators;
 
 import com.google.protobuf.Descriptors.Descriptor;
 
 import base.AbstractTranslator;
-import common.PropertyValueMapInput;
-import common.simobjects.PropertyValueMap;
+import plugins.properties.input.PropertyValueMapInput;
+import plugins.properties.simobjects.PropertyValueMap;
 
 public class PropertyValueMapTranslator extends AbstractTranslator<PropertyValueMapInput, PropertyValueMap> {
 

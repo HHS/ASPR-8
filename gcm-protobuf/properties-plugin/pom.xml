@@ -9,8 +9,8 @@
         <version>${revision}</version>
     </parent>
 
-    <artifactId>stochastics-plugin</artifactId>
-    <name>gcm-protobuf :: stochastics-plugin</name>
+    <artifactId>properties-plugin</artifactId>
+    <name>gcm-protobuf :: properties-plugin</name>
     <packaging>jar</packaging>
 
     <dependencies>
@@ -72,9 +72,8 @@
                     <protocArtifact>
                         com.google.protobuf:protoc:${protoc.version}:exe:${os.detected.classifier}</protocArtifact>
                     <protoSourceRoot>
-                        ${project.build.outputDirectory}/gov/hhs/aspr8/gcm/stochastics</protoSourceRoot>
-                    <attachProtoSources>
-                        false</attachProtoSources>
+                        ${project.build.outputDirectory}/gov/hhs/aspr8/gcm/properties</protoSourceRoot>
+                    <attachProtoSources>false</attachProtoSources>
                 </configuration>
             </plugin>
             <plugin>

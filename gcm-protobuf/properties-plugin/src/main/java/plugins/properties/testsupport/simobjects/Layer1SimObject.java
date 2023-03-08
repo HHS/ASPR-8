@@ -1,4 +1,4 @@
-package testsupport.simobjects;
+package plugins.properties.testsupport.simobjects;
 
 public class Layer1SimObject {
     private double x;

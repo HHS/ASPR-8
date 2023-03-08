@@ -7,9 +7,9 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import base.TranslatorController;
-import common.PropertiesPluginBundle;
 import nucleus.PluginData;
 import plugins.globalproperties.support.GlobalPropertyId;
+import plugins.properties.PropertiesPluginBundle;
 import plugins.util.properties.PropertyDefinition;
 
 public class App {

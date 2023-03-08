@@ -33,9 +33,11 @@
                                 <resource>
                                     <directory>${project.basedir}/src</directory>
                                     <includes>
-                                        <include>gov/hhs/aspr8/gcm/common/*.proto</include>
-                                        <include>gov/hhs/aspr8/gcm/globalproperties/*.proto</include>
-                                        <include>gov/hhs/aspr8/gcm/stochastics/*.proto</include>
+                                        <include>gov/hhs/aspr8/gcm/properties/*.proto</include>
+                                        <include>
+                                            gov/hhs/aspr8/gcm/globalproperties/*.proto</include>
+                                        <include>
+                                            gov/hhs/aspr8/gcm/stochastics/*.proto</include>
                                     </includes>
                                 </resource>
                             </resources>

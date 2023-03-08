@@ -1,8 +1,8 @@
 package plugins.globalproperties;
 
 import base.PluginBundle;
-import common.PropertiesPluginBundleId;
 import plugins.globalproperties.translators.GlobalPropertiesPluginDataTranslator;
+import plugins.properties.PropertiesPluginBundleId;
 
 public class GlobalPropertiesPluginBundle {
     public static PluginBundle getPluginBundle(String inputFileName, String outputFileName) {

@@ -1,4 +1,4 @@
-package common.simobjects;
+package plugins.properties.simobjects;
 
 public class PropertyValueMap {
     Object propertyId;

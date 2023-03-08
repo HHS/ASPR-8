@@ -16,7 +16,7 @@
     <dependencies>
         <dependency>
             <groupId>gov.hhs.aspr.gcm.gcm-protobuf</groupId>
-            <artifactId>base</artifactId>
+            <artifactId>properties-plugin</artifactId>
             <version>${revision}</version>
         </dependency>
     </dependencies>
@@ -74,8 +74,9 @@
                     <protoSourceRoot>
                         ${project.build.outputDirectory}/gov/hhs/aspr8/gcm/globalproperties</protoSourceRoot>
                     <additionalProtoPathElements>
-                        ${project.build.outputDirectory}/gov/hhs/aspr8/gcm/common</additionalProtoPathElements>
-                    <attachProtoSources>false</attachProtoSources>
+                        ${project.build.outputDirectory}/gov/hhs/aspr8/gcm/properties</additionalProtoPathElements>
+                    <attachProtoSources>
+                        false</attachProtoSources>
                 </configuration>
             </plugin>
             <plugin>

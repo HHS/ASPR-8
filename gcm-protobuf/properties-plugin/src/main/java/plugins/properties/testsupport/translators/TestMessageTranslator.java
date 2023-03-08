@@ -1,12 +1,12 @@
-package testsupport.translators;
+package plugins.properties.testsupport.translators;
 
 import com.google.protobuf.Descriptors.Descriptor;
 
 import base.AbstractTranslator;
-import common.Layer1;
-import common.TestMessage;
-import testsupport.simobjects.Layer1SimObject;
-import testsupport.simobjects.TestMessageSimObject;
+import plugins.properties.input.testsupport.Layer1;
+import plugins.properties.input.testsupport.TestMessage;
+import plugins.properties.testsupport.simobjects.Layer1SimObject;
+import plugins.properties.testsupport.simobjects.TestMessageSimObject;
 
 public class TestMessageTranslator extends AbstractTranslator<TestMessage, TestMessageSimObject> {
 
@@ -21,11 +21,11 @@ public class TestMessageTranslator extends AbstractTranslator<TestMessage, TestM
 
     @Override
     protected TestMessage convertSimObject(TestMessageSimObject simObject) {
-       Layer1 layer1 = (Layer1) this.translator.convertSimObject(simObject.getLayer1());
+        Layer1 layer1 = (Layer1) this.translator.convertSimObject(simObject.getLayer1());
 
-       TestMessage testMessage = TestMessage.newBuilder().setLayer1(layer1).build();
+        TestMessage testMessage = TestMessage.newBuilder().setLayer1(layer1).build();
 
-       return testMessage;
+        return testMessage;
     }
 
     @Override
@@ -47,5 +47,5 @@ public class TestMessageTranslator extends AbstractTranslator<TestMessage, TestM
     public Class<TestMessage> getInputObjectClass() {
         return TestMessage.class;
     }
-    
+
 }

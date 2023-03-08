@@ -1,4 +1,4 @@
-package common.simobjects;
+package plugins.properties.simobjects;
 
 import plugins.util.properties.PropertyDefinition;
 

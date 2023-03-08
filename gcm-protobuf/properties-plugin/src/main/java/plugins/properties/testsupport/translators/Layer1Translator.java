@@ -1,10 +1,10 @@
-package testsupport.translators;
+package plugins.properties.testsupport.translators;
 
 import com.google.protobuf.Descriptors.Descriptor;
 
 import base.AbstractTranslator;
-import common.Layer1;
-import testsupport.simobjects.Layer1SimObject;
+import plugins.properties.input.testsupport.Layer1;
+import plugins.properties.testsupport.simobjects.Layer1SimObject;
 
 public class Layer1Translator extends AbstractTranslator<Layer1, Layer1SimObject> {
 

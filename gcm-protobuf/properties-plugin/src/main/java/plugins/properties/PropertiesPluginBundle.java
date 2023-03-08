@@ -1,11 +1,11 @@
-package common;
+package plugins.properties;
 
 import com.google.protobuf.Message;
 
 import base.PluginBundle;
-import common.translators.PropertyDefinitionMapTranslator;
-import common.translators.PropertyDefinitionTranslator;
-import common.translators.PropertyValueMapTranslator;
+import plugins.properties.translators.PropertyDefinitionMapTranslator;
+import plugins.properties.translators.PropertyDefinitionTranslator;
+import plugins.properties.translators.PropertyValueMapTranslator;
 
 public class PropertiesPluginBundle {
 

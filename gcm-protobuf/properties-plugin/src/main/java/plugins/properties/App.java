@@ -1,4 +1,4 @@
-package common;
+package plugins.properties;
 
 import java.util.List;
 
@@ -7,11 +7,12 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import base.TranslatorController;
-import common.simobjects.PropertyValueMap;
-import common.translators.PropertyValueMapTranslator;
-import testsupport.simobjects.TestMessageSimObject;
-import testsupport.translators.Layer1Translator;
-import testsupport.translators.TestMessageTranslator;
+import plugins.properties.input.PropertyValueMapInput;
+import plugins.properties.simobjects.PropertyValueMap;
+import plugins.properties.testsupport.simobjects.TestMessageSimObject;
+import plugins.properties.testsupport.translators.Layer1Translator;
+import plugins.properties.testsupport.translators.TestMessageTranslator;
+import plugins.properties.translators.PropertyValueMapTranslator;
 
 public class App {
 
@@ -48,8 +49,8 @@ public class App {
                         PropertyValueMapInput.getDefaultInstance()))
                 .addCustomTranslator(new TestMessageTranslator())
                 .addCustomTranslator(new Layer1Translator())
-                .addCustomTranslator(new PropertyValueMapTranslator())
-                .build();
+                .build()
+                .init();
 
         List<Object> objects = translatorController.readInput().getObjects();
 

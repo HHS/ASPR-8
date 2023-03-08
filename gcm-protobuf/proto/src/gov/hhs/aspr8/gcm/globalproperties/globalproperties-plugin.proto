@@ -4,11 +4,10 @@ package gov.hhs.aspr8.gcm;
 option java_multiple_files = true;
 option java_package = "plugins.globalproperties";
 
-import "common.proto";
+import "properties.proto";
 
 
 message GlobalPropertiesPluginDataInput {
     repeated PropertyDefinitionMapInput globalPropertyDefinitinions = 1;
     repeated PropertyValueMapInput globalPropertyValues = 2;
 }
-

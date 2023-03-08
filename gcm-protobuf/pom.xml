@@ -89,6 +89,7 @@
     <modules>
         <module>proto</module>
         <module>base</module>
+        <module>properties-plugin</module>
         <module>stochastics-plugin</module>
         <module>globalproperties-plugin</module>
     </modules>

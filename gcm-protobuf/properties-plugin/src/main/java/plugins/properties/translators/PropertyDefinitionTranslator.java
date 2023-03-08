@@ -1,10 +1,10 @@
-package common.translators;
+package plugins.properties.translators;
 
 import com.google.protobuf.Descriptors.Descriptor;
 
 import base.AbstractTranslator;
-import common.PropertyDefinitionInput;
-import common.TimeTrackingPolicyInput;
+import plugins.properties.input.PropertyDefinitionInput;
+import plugins.properties.input.TimeTrackingPolicyInput;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.TimeTrackingPolicy;
 
