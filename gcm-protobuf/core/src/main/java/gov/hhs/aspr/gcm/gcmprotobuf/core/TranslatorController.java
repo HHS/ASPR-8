@@ -12,6 +12,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.google.protobuf.Message;
+import com.google.protobuf.Descriptors.FieldDescriptor;
 
 import nucleus.PluginData;
 import util.graph.Graph;
@@ -79,20 +80,24 @@ public class TranslatorController {
 
     protected <I extends Message, S> void addTranslator(AbstractTranslator<I, S> translator) {
         this.data.masterTranslatorBuilder.addCustomTranslator(translator);
+
+        this.simObjectClassToPluginBundleMap.put(translator.getSimObjectClass(), this.focalBundle);
+    }
+
+    protected void addFieldToIncludeDefaultValue(FieldDescriptor fieldDescriptor) {
+        this.data.masterTranslatorBuilder.addFieldToIncludeDefaultValue(fieldDescriptor);
     }
 
     protected <U extends Message.Builder> void readPluginDataInput(Reader reader, U builder) {
         PluginData pluginData = this.masterTranslator.readJson(reader, builder);
 
         this.pluginDatas.add(pluginData);
-        this.simObjectClassToPluginBundleMap.put(pluginData.getClass(), focalBundle);
     }
 
     protected <U extends Message.Builder> void readJson(Reader reader, U builder) {
         Object simObject = this.masterTranslator.readJson(reader, builder);
 
         this.objects.add(simObject);
-        this.simObjectClassToPluginBundleMap.put(simObject.getClass(), focalBundle);
     }
 
     protected <T extends PluginData> void writePluginDataInput(Writer writer, T pluginData) {
@@ -172,6 +177,23 @@ public class TranslatorController {
             PluginBundle pluginBundle = this.simObjectClassToPluginBundleMap.get(simObject.getClass());
             pluginBundle.writeOutput(writerContext, simObject);
         }
+    }
+
+    public void writeOutput(List<PluginData> pluginDatas) {
+        for (PluginData pluginData : pluginDatas) {
+            writeOutput(pluginData);
+        }
+    }
+
+    public void writeOutput(PluginData pluginData) {
+        validateMasterTranslator();
+
+        WriterContext writerContext = new WriterContext(this);
+
+        PluginBundle pluginBundle = this.simObjectClassToPluginBundleMap.get(pluginData.getClass());
+        this.focalBundle = pluginBundle;
+        pluginBundle.writePluginDataOutput(writerContext, pluginData);
+        this.focalBundle = null;
     }
 
     public List<PluginData> getPluginDatas() {

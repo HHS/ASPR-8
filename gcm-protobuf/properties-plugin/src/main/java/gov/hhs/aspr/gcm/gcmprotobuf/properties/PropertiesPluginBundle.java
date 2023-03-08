@@ -15,7 +15,7 @@ public class PropertiesPluginBundle {
         return builder;
     }
 
-    private static PluginBundle.Builder addConstants(PluginBundle.Builder builder) {
+    private static PluginBundle.Builder setConstants(PluginBundle.Builder builder) {
         builder.setInitializer((translatorContext) -> {
             translatorContext.addTranslator(new PropertyDefinitionTranslator());
             translatorContext.addTranslator(new PropertyDefinitionMapTranslator());
@@ -29,29 +29,22 @@ public class PropertiesPluginBundle {
     }
 
     public static PluginBundle getPluginBundle(String inputFileName, String outputFileName, Message inputType) {
-        PluginBundle.Builder builder = PluginBundle.builder()
+
+        return addMessageInput(setConstants(PluginBundle.builder()), inputType)
                 .setInputFileName(inputFileName)
-                .setOutputFileName(outputFileName);
-
-        addMessageInput(builder, inputType);
-        addConstants(builder);
-
-        return builder.build();
+                .setOutputFileName(outputFileName)
+                .build();
 
     }
 
     public static PluginBundle getPluginBundle(Message inputType) {
-        PluginBundle.Builder builder = PluginBundle.builder();
-
-        addMessageInput(builder, inputType);
-        addConstants(builder);
-
-        return builder.build();
+        return addMessageInput(setConstants(PluginBundle.builder()), inputType)
+                .build();
 
     }
 
     public static PluginBundle getPluginBundle() {
-        return addConstants(PluginBundle.builder()).build();
+        return setConstants(PluginBundle.builder()).build();
 
     }
 }

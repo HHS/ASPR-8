@@ -1,0 +1,50 @@
+syntax = "proto3";
+package gov.hhs.aspr.gcm;
+
+option java_multiple_files = true;
+option java_package = "plugins.groups.input";
+
+
+import "properties-plugin.proto";
+import "people-plugin.proto";
+import "google/protobuf/any.proto";
+
+message GroupIdInput {
+    int32 groupId = 1;
+}
+
+message GroupTypeIdInput {
+    google.protobuf.Any groupTypeId = 1;
+}
+
+message GroupPropertyIdInput {
+    google.protobuf.Any groupPropertyId = 1;
+}
+
+message GroupMembershipInput {
+    PersonIdInput personId = 1;
+    repeated GroupIdInput groupIds = 2;
+}
+
+message GroupPropertyDefinitionMapInput {
+    GroupTypeIdInput groupTypeId = 1;
+    repeated PropertyDefinitionMapInput propertyDefinitions = 2;
+}
+
+message GroupPropertyValueMapInput {
+   GroupIdInput groupId = 1;
+   PropertyValueMapInput propertyValueMap = 2;
+}
+
+message GroupInput {
+    GroupIdInput groupId = 1;
+    GroupTypeIdInput groupTypeId = 2;
+}
+
+message GroupsPluginDataInput {
+    repeated GroupTypeIdInput groupTypeIds = 1;
+    repeated GroupInput groups = 2;
+    repeated GroupMembershipInput groupMemberships = 3;
+    repeated GroupPropertyDefinitionMapInput groupPropertyDefinitions = 4;
+    repeated GroupPropertyValueMapInput groupPropertyValues = 5;
+}

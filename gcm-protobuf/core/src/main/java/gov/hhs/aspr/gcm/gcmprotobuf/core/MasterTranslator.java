@@ -9,6 +9,7 @@ import java.io.Reader;
 import java.io.Writer;
 import java.nio.file.Paths;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -43,6 +44,7 @@ public class MasterTranslator {
         private final Map<Descriptor, Message> descriptorMap = new LinkedHashMap<>();
         private final Map<Descriptor, ITranslator> descriptorToTranslatorMap = new LinkedHashMap<>();
         private final Map<Class<?>, ITranslator> objectToTranslatorMap = new LinkedHashMap<>();
+        private final Set<FieldDescriptor> defaultValueFieldsToPrint = new LinkedHashSet<>();
         private TypeRegistry registry;
         private Parser jsonParser;
         private Printer jsonPrinter;
@@ -72,7 +74,7 @@ public class MasterTranslator {
             }
             this.data.jsonParser = parser;
 
-            Printer printer = JsonFormat.printer().usingTypeRegistry(this.data.registry);
+            Printer printer = JsonFormat.printer().usingTypeRegistry(this.data.registry).includingDefaultValueFields(this.data.defaultValueFieldsToPrint);
             if (this.data.includingDefaultValueFields) {
                 printer = printer.includingDefaultValueFields();
             }
@@ -88,6 +90,12 @@ public class MasterTranslator {
 
         public Builder setIncludingDefaultValueFields(boolean includingDefaultValueFields) {
             this.data.includingDefaultValueFields = includingDefaultValueFields;
+            return this;
+        }
+
+        public Builder addFieldToIncludeDefaultValue(FieldDescriptor fieldDescriptor) {
+            this.data.defaultValueFieldsToPrint.add(fieldDescriptor);
+
             return this;
         }
 
