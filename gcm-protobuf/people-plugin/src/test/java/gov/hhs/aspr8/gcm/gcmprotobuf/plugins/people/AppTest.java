@@ -1,4 +1,4 @@
-package gov.hhs.aspr8.gcm.gcmprotobuf.plugins.stochastics;
+package gov.hhs.aspr8.gcm.gcmprotobuf.plugins.people;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
