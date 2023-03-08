@@ -36,7 +36,7 @@
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
                     <execution>
-                        <?m2e execute onConfiguration?>
+                        <?m2e ignore?>
                         <id>unpack-protos</id>
                         <phase>generate-sources</phase>
                         <goals>
@@ -45,11 +45,13 @@
                         <configuration>
                             <artifactItems>
                                 <artifactItem>
-                                    <groupId>gov.hhs.aspr.gcm.gcm-protobuf</groupId>
+                                    <groupId>
+                                        gov.hhs.aspr.gcm.gcm-protobuf</groupId>
                                     <artifactId>protos</artifactId>
                                     <version>${gcm.proto.version}</version>
                                     <overWrite>true</overWrite>
-                                    <outputDirectory>${project.build.outputDirectory}</outputDirectory>
+                                    <outputDirectory>
+                                        ${project.build.outputDirectory}</outputDirectory>
                                     <includes>**/*.proto</includes>
                                 </artifactItem>
                             </artifactItems>
@@ -92,10 +94,12 @@
                         <configuration>
                             <resources>
                                 <resource>
-                                    <directory>${project.basedir}/src/resources/json</directory>
+                                    <directory>
+                                        ${project.basedir}/src/resources/json</directory>
                                     <targetPath>json</targetPath>
                                     <excludes>
-                                        <exclude>**/junk/**</exclude>
+                                        <exclude>
+                                            **/junk/**</exclude>
                                     </excludes>
                                 </resource>
                             </resources>
@@ -108,11 +112,39 @@
                         </goals>
                         <configuration>
                             <sources>
-                                <source>${project.build.directory}/generated-sources/protobuf/java</source>
+                                <source>
+                                    ${project.build.directory}/generated-sources/protobuf/java</source>
                             </sources>
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.google.code.maven-replacer-plugin</groupId>
+                <artifactId>maven-replacer-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>replace</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <includes>
+                        <include>target/generated-sources/**/*.java</include>
+                    </includes>
+                    <regex>true</regex>
+                    <regexFlags>
+                        <regexFlag>MULTILINE</regexFlag>
+                    </regexFlags>
+                    <replacements>
+                        <replacement>
+                            <token>^(@SuppressWarnings\(.*?\)\s+)?public final class</token>
+                            <value>@SuppressWarnings("all") public final class</value>
+                        </replacement>
+                    </replacements>
+                </configuration>
             </plugin>
         </plugins>
     </build>

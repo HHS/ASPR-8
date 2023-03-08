@@ -127,6 +127,11 @@
                     <artifactId>build-helper-maven-plugin</artifactId>
                     <version>3.3.0</version>
                 </plugin>
+                <plugin>
+                    <groupId>com.google.code.maven-replacer-plugin</groupId>
+                    <artifactId>maven-replacer-plugin</artifactId>
+                    <version>1.3.2</version>
+                </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
