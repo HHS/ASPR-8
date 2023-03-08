@@ -74,9 +74,9 @@
                     <protocArtifact>
                         com.google.protobuf:protoc:${protoc.version}:exe:${os.detected.classifier}</protocArtifact>
                     <protoSourceRoot>
-                        ${project.build.outputDirectory}/gov/hhs/aspr8/gcm/globalproperties</protoSourceRoot>
+                        ${project.build.outputDirectory}/gov/hhs/aspr/gcm/globalproperties</protoSourceRoot>
                     <additionalProtoPathElements>
-                        ${project.build.outputDirectory}/gov/hhs/aspr8/gcm/properties</additionalProtoPathElements>
+                        ${project.build.outputDirectory}/gov/hhs/aspr/gcm/properties</additionalProtoPathElements>
                     <attachProtoSources>
                         false</attachProtoSources>
                 </configuration>

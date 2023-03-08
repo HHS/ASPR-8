@@ -1,0 +1,14 @@
+syntax = "proto3";
+package gov.hhs.aspr.gcm;
+
+option java_multiple_files = true;
+option java_package = "plugins.stochastics.input";
+
+import "google/protobuf/any.proto";
+
+
+message StochasticsPluginDataInput {
+    int64 seed = 1;
+    repeated google.protobuf.Any randomNumberGeneratorIds = 2;
+}
+

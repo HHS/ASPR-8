@@ -75,7 +75,7 @@
                     <protocArtifact>
                         com.google.protobuf:protoc:${protoc.version}:exe:${os.detected.classifier}</protocArtifact>
                     <protoSourceRoot>
-                        ${project.build.outputDirectory}/gov/hhs/aspr8/gcm/people</protoSourceRoot>
+                        ${project.build.outputDirectory}/gov/hhs/aspr/gcm/people</protoSourceRoot>
                     <attachProtoSources>
                         false</attachProtoSources>
                 </configuration>

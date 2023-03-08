@@ -33,12 +33,13 @@
                                 <resource>
                                     <directory>${project.basedir}/src</directory>
                                     <includes>
-                                        <include>gov/hhs/aspr8/gcm/properties/*.proto</include>
-                                        <include>gov/hhs/aspr8/gcm/people/*.proto</include>
+                                        <include>gov/hhs/aspr/gcm/properties/*.proto</include>
+                                        <include>gov/hhs/aspr/gcm/people/*.proto</include>
+                                        <include>gov/hhs/aspr/gcm/groups/*.proto</include>
                                         <include>
-                                            gov/hhs/aspr8/gcm/globalproperties/*.proto</include>
+                                            gov/hhs/aspr/gcm/globalproperties/*.proto</include>
                                         <include>
-                                            gov/hhs/aspr8/gcm/stochastics/*.proto</include>
+                                            gov/hhs/aspr/gcm/stochastics/*.proto</include>
                                     </includes>
                                 </resource>
                             </resources>

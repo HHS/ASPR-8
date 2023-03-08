@@ -91,6 +91,7 @@
         <module>core</module>
         <module>properties-plugin</module>
         <module>people-plugin</module>
+        <module>groups-plugin</module>
         <module>stochastics-plugin</module>
         <module>globalproperties-plugin</module>
     </modules>

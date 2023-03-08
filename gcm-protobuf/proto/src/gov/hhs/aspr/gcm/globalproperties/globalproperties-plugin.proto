@@ -1,0 +1,13 @@
+syntax = "proto3";
+package gov.hhs.aspr.gcm;
+
+option java_multiple_files = true;
+option java_package = "plugins.globalproperties.input";
+
+import "properties-plugin.proto";
+
+
+message GlobalPropertiesPluginDataInput {
+    repeated PropertyDefinitionMapInput globalPropertyDefinitinions = 1;
+    repeated PropertyValueMapInput globalPropertyValues = 2;
+}

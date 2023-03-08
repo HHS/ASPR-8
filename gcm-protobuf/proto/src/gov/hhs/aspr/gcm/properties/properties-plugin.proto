@@ -1,0 +1,29 @@
+syntax = "proto3";
+package gov.hhs.aspr.gcm;
+
+option java_multiple_files = true;
+option java_package = "plugins.properties.input";
+
+import "google/protobuf/any.proto";
+
+message PropertyValueMapInput {
+  google.protobuf.Any propertyId = 1;
+  google.protobuf.Any propertyValue = 2;
+}
+
+message PropertyDefinitionMapInput {
+  google.protobuf.Any propertyId = 1;
+  PropertyDefinitionInput propertyDefinition = 2;
+}
+
+enum TimeTrackingPolicyInput {
+  DO_NOT_TRACK_TIME = 0;
+  TRACK_TIME = 1;
+}
+
+message PropertyDefinitionInput {
+  string type = 1;
+  bool propertyValuesAreMutable = 2;
+  optional google.protobuf.Any defaultValue = 3;
+  TimeTrackingPolicyInput timeTrackingPolicy = 4;
+}

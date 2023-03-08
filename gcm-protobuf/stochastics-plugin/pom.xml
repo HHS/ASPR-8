@@ -75,7 +75,7 @@
                     <protocArtifact>
                         com.google.protobuf:protoc:${protoc.version}:exe:${os.detected.classifier}</protocArtifact>
                     <protoSourceRoot>
-                        ${project.build.outputDirectory}/gov/hhs/aspr8/gcm/stochastics</protoSourceRoot>
+                        ${project.build.outputDirectory}/gov/hhs/aspr/gcm/stochastics</protoSourceRoot>
                     <attachProtoSources>
                         false</attachProtoSources>
                 </configuration>
