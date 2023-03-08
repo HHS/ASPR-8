@@ -1,0 +1,14 @@
+syntax = "proto3";
+package gov.hhs.aspr8.gcm;
+
+option java_multiple_files = true;
+option java_package = "plugins.people.input";
+
+
+message PersonIdInput {
+    int32 id = 1;
+}
+
+message PeoplePluginDataInput {
+    repeated PersonIdInput personIds = 1;
+}
