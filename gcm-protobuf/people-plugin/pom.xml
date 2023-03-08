@@ -85,26 +85,6 @@
                 <artifactId>build-helper-maven-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>add-resource</id>
-                        <phase>generate-resources</phase>
-                        <goals>
-                            <goal>add-resource</goal>
-                        </goals>
-                        <configuration>
-                            <resources>
-                                <resource>
-                                    <directory>
-                                        ${project.basedir}/src/resources/json</directory>
-                                    <targetPath>json</targetPath>
-                                    <excludes>
-                                        <exclude>
-                                            **/junk/**</exclude>
-                                    </excludes>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                    <execution>
                         <phase>generate-sources</phase>
                         <goals>
                             <goal>add-source</goal>
