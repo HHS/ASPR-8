@@ -1,6 +1,5 @@
 package gov.hhs.aspr.gcm.gcmprotobuf.plugins.groups;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.LinkedHashSet;

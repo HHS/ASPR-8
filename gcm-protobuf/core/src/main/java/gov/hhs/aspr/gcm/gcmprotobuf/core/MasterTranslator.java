@@ -74,7 +74,12 @@ public class MasterTranslator {
             }
             this.data.jsonParser = parser;
 
-            Printer printer = JsonFormat.printer().usingTypeRegistry(this.data.registry).includingDefaultValueFields(this.data.defaultValueFieldsToPrint);
+            Printer printer = JsonFormat.printer().usingTypeRegistry(this.data.registry);
+            
+            if(!this.data.defaultValueFieldsToPrint.isEmpty()) {
+                printer = printer.includingDefaultValueFields(this.data.defaultValueFieldsToPrint);
+            }
+            
             if (this.data.includingDefaultValueFields) {
                 printer = printer.includingDefaultValueFields();
             }

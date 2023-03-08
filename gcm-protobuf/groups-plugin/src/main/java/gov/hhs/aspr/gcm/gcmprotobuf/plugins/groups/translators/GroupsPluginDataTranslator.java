@@ -30,18 +30,6 @@ import plugins.util.properties.PropertyDefinition;
 
 public class GroupsPluginDataTranslator extends AbstractTranslator<GroupsPluginDataInput, GroupsPluginData> {
 
-    private class SimpleGroupPropertyId implements GroupPropertyId {
-        Object value;
-
-        private SimpleGroupPropertyId(Object value) {
-            this.value = value;
-        }
-
-        private Object getValue() {
-            return this.value;
-        }
-    }
-
     @Override
     protected GroupsPluginData convertInputObject(GroupsPluginDataInput inputObject) {
         GroupsPluginData.Builder builder = GroupsPluginData.builder();
@@ -79,7 +67,7 @@ public class GroupsPluginDataTranslator extends AbstractTranslator<GroupsPluginD
         // add group property values
         for (GroupPropertyValueMapInput groupPropertyValueMapInput : inputObject.getGroupPropertyValuesList()) {
             GroupId groupId = this.translator.convertInputObject(groupPropertyValueMapInput.getGroupId());
-            for(PropertyValueMapInput propertyValueMapInput : groupPropertyValueMapInput.getPropertyValueMapList()) {
+            for (PropertyValueMapInput propertyValueMapInput : groupPropertyValueMapInput.getPropertyValueMapList()) {
                 PropertyValueMap propertyValueMap = this.translator.convertInputObject(propertyValueMapInput);
 
                 GroupPropertyId groupPropertyId = (GroupPropertyId) propertyValueMap.getPropertyId();

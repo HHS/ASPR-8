@@ -4,7 +4,6 @@ import gov.hhs.aspr.gcm.gcmprotobuf.core.PluginBundle;
 import gov.hhs.aspr.gcm.gcmprotobuf.people.PeoplePluginBundleId;
 import gov.hhs.aspr.gcm.gcmprotobuf.plugins.groups.translators.GroupIdTranslator;
 import gov.hhs.aspr.gcm.gcmprotobuf.plugins.groups.translators.GroupTranslator;
-import gov.hhs.aspr.gcm.gcmprotobuf.plugins.groups.translators.GroupTypeIdTranslator;
 import gov.hhs.aspr.gcm.gcmprotobuf.plugins.groups.translators.GroupsPluginDataTranslator;
 import gov.hhs.aspr.gcm.gcmprotobuf.plugins.groups.translators.TestGroupPropertyIdTranslator;
 import gov.hhs.aspr.gcm.gcmprotobuf.plugins.groups.translators.TestGroupTypeIdTranslator;
