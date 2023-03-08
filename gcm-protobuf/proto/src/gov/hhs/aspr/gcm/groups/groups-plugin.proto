@@ -33,7 +33,7 @@ message GroupPropertyDefinitionMapInput {
 
 message GroupPropertyValueMapInput {
    GroupIdInput groupId = 1;
-   PropertyValueMapInput propertyValueMap = 2;
+   repeated PropertyValueMapInput propertyValueMap = 2;
 }
 
 message GroupInput {

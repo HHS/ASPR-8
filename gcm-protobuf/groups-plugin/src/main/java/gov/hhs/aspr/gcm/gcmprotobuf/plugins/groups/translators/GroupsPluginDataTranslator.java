@@ -79,13 +79,15 @@ public class GroupsPluginDataTranslator extends AbstractTranslator<GroupsPluginD
         // add group property values
         for (GroupPropertyValueMapInput groupPropertyValueMapInput : inputObject.getGroupPropertyValuesList()) {
             GroupId groupId = this.translator.convertInputObject(groupPropertyValueMapInput.getGroupId());
-            PropertyValueMap propertyValueMap = this.translator
-                    .convertInputObject(groupPropertyValueMapInput.getPropertyValueMap());
+            for(PropertyValueMapInput propertyValueMapInput : groupPropertyValueMapInput.getPropertyValueMapList()) {
+                PropertyValueMap propertyValueMap = this.translator.convertInputObject(propertyValueMapInput);
 
-            GroupPropertyId groupPropertyId = (GroupPropertyId) propertyValueMap.getPropertyId();
-            Object propertyValue = propertyValueMap.getPropertyValue();
+                GroupPropertyId groupPropertyId = (GroupPropertyId) propertyValueMap.getPropertyId();
+                Object propertyValue = propertyValueMap.getPropertyValue();
 
-            builder.setGroupPropertyValue(groupId, groupPropertyId, propertyValue);
+                builder.setGroupPropertyValue(groupId, groupPropertyId, propertyValue);
+            }
+
         }
 
         // add people to groups
@@ -163,7 +165,7 @@ public class GroupsPluginDataTranslator extends AbstractTranslator<GroupsPluginD
                 propertyValueMap.setPropertyId(groupPropertyId);
                 propertyValueMap.setPropertyValue(propertyValue);
 
-                groupPropValMapBuilder.setPropertyValueMap(
+                groupPropValMapBuilder.addPropertyValueMap(
                         (PropertyValueMapInput) this.translator.convertSimObject(propertyValueMap));
             }
 
