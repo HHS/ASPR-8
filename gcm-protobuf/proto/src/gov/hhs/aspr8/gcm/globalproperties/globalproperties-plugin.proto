@@ -2,9 +2,9 @@ syntax = "proto3";
 package gov.hhs.aspr8.gcm;
 
 option java_multiple_files = true;
-option java_package = "plugins.globalproperties";
+option java_package = "plugins.globalproperties.input";
 
-import "properties.proto";
+import "properties-plugin.proto";
 
 
 message GlobalPropertiesPluginDataInput {

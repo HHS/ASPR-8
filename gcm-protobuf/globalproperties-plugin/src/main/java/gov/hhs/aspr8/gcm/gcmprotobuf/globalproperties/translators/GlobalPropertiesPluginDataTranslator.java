@@ -9,7 +9,7 @@ import gov.hhs.aspr8.gcm.gcmprotobuf.core.AbstractTranslator;
 import gov.hhs.aspr8.gcm.gcmprotobuf.properties.simobjects.PropertyDefinitionMap;
 import gov.hhs.aspr8.gcm.gcmprotobuf.properties.simobjects.PropertyValueMap;
 import plugins.globalproperties.GlobalPropertiesPluginData;
-import plugins.globalproperties.GlobalPropertiesPluginDataInput;
+import plugins.globalproperties.input.GlobalPropertiesPluginDataInput;
 import plugins.globalproperties.support.GlobalPropertyId;
 import plugins.globalproperties.support.SimpleGlobalPropertyId;
 import plugins.properties.input.PropertyDefinitionMapInput;

@@ -131,7 +131,7 @@
                 </executions>
                 <configuration>
                     <includes>
-                        <include>${project.build.directory}/generated-sources/**/*.java</include>
+                        <include>target/generated-sources/**/*.java</include>
                     </includes>
                     <regex>true</regex>
                     <regexFlags>

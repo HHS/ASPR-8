@@ -8,7 +8,7 @@ import com.google.protobuf.Descriptors.Descriptor;
 
 import gov.hhs.aspr8.gcm.gcmprotobuf.core.AbstractTranslator;
 import plugins.stochastics.StochasticsPluginData;
-import plugins.stochastics.StochasticsPluginDataInput;
+import plugins.stochastics.input.StochasticsPluginDataInput;
 import plugins.stochastics.support.RandomNumberGeneratorId;
 import plugins.stochastics.support.SimpleRandomNumberGeneratorId;
 

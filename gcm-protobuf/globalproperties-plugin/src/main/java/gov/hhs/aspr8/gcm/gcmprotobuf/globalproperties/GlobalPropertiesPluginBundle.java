@@ -3,7 +3,7 @@ package gov.hhs.aspr8.gcm.gcmprotobuf.globalproperties;
 import gov.hhs.aspr8.gcm.gcmprotobuf.core.PluginBundle;
 import gov.hhs.aspr8.gcm.gcmprotobuf.globalproperties.translators.GlobalPropertiesPluginDataTranslator;
 import gov.hhs.aspr8.gcm.gcmprotobuf.properties.PropertiesPluginBundleId;
-import plugins.globalproperties.GlobalPropertiesPluginDataInput;
+import plugins.globalproperties.input.GlobalPropertiesPluginDataInput;
 
 public class GlobalPropertiesPluginBundle {
     public static PluginBundle getPluginBundle(String inputFileName, String outputFileName) {

@@ -2,7 +2,7 @@ syntax = "proto3";
 package gov.hhs.aspr8.gcm;
 
 option java_multiple_files = true;
-option java_package = "plugins.stochastics";
+option java_package = "plugins.stochastics.input";
 
 import "google/protobuf/any.proto";
 
