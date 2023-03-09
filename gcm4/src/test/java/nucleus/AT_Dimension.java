@@ -44,6 +44,28 @@ public class AT_Dimension {
 		testGetMetaDataValues("B", "B", "Z");
 		testGetMetaDataValues("A", "B", "C", "A");
 	}
+	
+	private void testGetMetaDataSizeValue(String... values) {		
+		Dimension.Builder builder = Dimension.builder();
+		for (String value : values) {
+			builder.addMetaDatum(value);
+		}
+		Dimension dimension = builder.build();
+		List<String> actualMetaData = dimension.getMetaData();
+		assertEquals(values.length, actualMetaData.size());
+	}
+	
+	@Test
+	@UnitTestMethod(target = Dimension.class, name = "getMetaDataSize", args = {})
+	public void testGetMetatDataSize() {
+		// test several numbers and duplications of meta data
+		testGetMetaDataSizeValue();
+		testGetMetaDataSizeValue("A");
+		testGetMetaDataSizeValue("B", "A");
+		testGetMetaDataSizeValue("B", "B", "Z");
+		testGetMetaDataSizeValue("A", "B", "C", "A");
+	}
+
 
 	@Test
 	@UnitTestMethod(target = Dimension.class, name = "getLevel", args = { int.class })

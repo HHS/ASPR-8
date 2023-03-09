@@ -126,6 +126,23 @@ public class Simulation {
 		}
 
 		/**
+		 * Set the simulation time. Defaults to the current date and a start
+		 * time of zero.
+		 * 
+		 * @throws ContractException
+		 *             <li>{@link NucleusError#NULL_SIMULATION_TIME} if the
+		 *             simulation time is null
+		 * 
+		 */
+		public Builder setSimulationTime(SimulationTime simulationTime) {
+			if (simulationTime == null) {
+				throw new ContractException(NucleusError.NULL_SIMULATION_TIME);
+			}
+			data.simulationTime = simulationTime;
+			return this;
+		}
+
+		/**
 		 * Adds a plugin initializer to this builder for inclusion in the
 		 * simulation
 		 * 
@@ -161,12 +178,14 @@ public class Simulation {
 	 * IS CRITICAL TO THE FUNCTION OF THE SIMULATION!
 	 */
 	private static enum Planner {
-		DATA_MANAGER, ACTOR, REPORT
+		DATA_MANAGER, ACTOR, REPORT;
+
 	}
 
 	private static class Data {
 		private List<Plugin> plugins = new ArrayList<>();
 		private Consumer<Object> outputConsumer;
+		private SimulationTime simulationTime = SimulationTime.builder().build();
 	}
 
 	/**
@@ -182,7 +201,9 @@ public class Simulation {
 		public int compare(final PlanRec plannedEvent1, final PlanRec plannedEvent2) {
 			int result = Double.compare(plannedEvent1.time, plannedEvent2.time);
 			if (result == 0) {
+
 				result = plannedEvent1.planner.compareTo(plannedEvent2.planner);
+
 				if (result == 0) {
 					result = Long.compare(plannedEvent1.arrivalId, plannedEvent2.arrivalId);
 				}
@@ -192,7 +213,7 @@ public class Simulation {
 	};
 
 	// planning
-	private long masterPlanningArrivalId;
+	private long masterPlanningArrivalId;	
 	protected double time;
 	private boolean processEvents = true;
 	private int activePlanCount;
@@ -622,6 +643,8 @@ public class Simulation {
 			throw new ContractException(NucleusError.REPEATED_EXECUTION);
 		}
 		started = true;
+		
+		time = data.simulationTime.getStartTime();
 
 		// set the output consumer
 		outputConsumer = data.outputConsumer;
@@ -676,6 +699,7 @@ public class Simulation {
 			}
 		}
 
+		//execute the data manager queue -- this will in turn execute the report queue
 		executeDataManagerQueue();
 
 		for (DataManager dataManager : dataManagerToDataManagerIdMap.keySet()) {
@@ -683,7 +707,7 @@ public class Simulation {
 				throw new ContractException(NucleusError.DATA_MANAGER_INITIALIZATION_FAILURE, dataManager.getClass().getSimpleName());
 			}
 		}
-
+			
 		// initialize the actors by flushing the actor queue
 		executeActorQueue();
 
@@ -1141,8 +1165,8 @@ public class Simulation {
 		if (event == null) {
 			throw new ContractException(NucleusError.NULL_EVENT);
 		}
-		
-		if(!dataManagerQueueActive) {
+
+		if (!dataManagerQueueActive) {
 			throw new ContractException(NucleusError.OBSERVATION_EVENT_IMPROPER_RELEASE);
 		}
 
@@ -1181,7 +1205,7 @@ public class Simulation {
 		if (event == null) {
 			throw new ContractException(NucleusError.NULL_EVENT);
 		}
-		
+
 		if (focalReportId != null) {
 			throw new ContractException(NucleusError.REPORT_ATTEMPTING_MUTATION, focalReportId);
 		}
@@ -1203,22 +1227,6 @@ public class Simulation {
 		executeDataManagerQueue();
 	}
 
-	private void addReport(Consumer<ReportContext> consumer) {
-
-		if (consumer == null) {
-			throw new ContractException(NucleusError.NULL_REPORT_CONTEXT_CONSUMER);
-		}
-
-		ReportId reportId = new ReportId(reportIds.size());
-		reportIds.add(reportId);
-
-		final ReportContentRec reportContentRec = new ReportContentRec();
-		reportContentRec.reportId = reportId;
-		reportContentRec.reportPlan = consumer;
-		reportQueue.add(reportContentRec);
-
-	}
-
 	protected ActorId addActor(Consumer<ActorContext> consumer) {
 
 		if (consumer == null) {
@@ -1232,6 +1240,7 @@ public class Simulation {
 		actorContentRec.actorId = result;
 		actorContentRec.plan = consumer;
 		actorQueue.add(actorContentRec);
+
 		return result;
 	}
 
@@ -1248,7 +1257,19 @@ public class Simulation {
 		if (focalPluginId == null) {
 			throw new ContractException(NucleusError.PLUGIN_INITIALIZATION_CLOSED);
 		}
-		addReport(consumer);
+
+		if (consumer == null) {
+			throw new ContractException(NucleusError.NULL_REPORT_CONTEXT_CONSUMER);
+		}
+
+		ReportId reportId = new ReportId(reportIds.size());
+		reportIds.add(reportId);
+
+		final ReportContentRec reportContentRec = new ReportContentRec();
+		reportContentRec.reportId = reportId;
+		reportContentRec.reportPlan = consumer;
+		reportQueue.add(reportContentRec);
+
 	}
 
 	protected void removeActor(final ActorId actorId) {

@@ -95,7 +95,7 @@ public final class PersonPropertiesDataManager extends DataManager {
 		dataManagerContext.releaseMutationEvent(new PersonPropertyDefinitionMutationEvent(propertyDefinitionInitialization));
 	}
 
-	public void handlePersonPropertyDefinitionMutationEvent(DataManagerContext dataManagerContext, PersonPropertyDefinitionMutationEvent personPropertyDefinitionMutationEvent) {
+	private void handlePersonPropertyDefinitionMutationEvent(DataManagerContext dataManagerContext, PersonPropertyDefinitionMutationEvent personPropertyDefinitionMutationEvent) {
 		PersonPropertyDefinitionInitialization propertyDefinitionInitialization = personPropertyDefinitionMutationEvent.propertyDefinitionInitialization();
 		validatePropertyDefinitionInitializationNotNull(propertyDefinitionInitialization);
 		PersonPropertyId personPropertyId = propertyDefinitionInitialization.getPersonPropertyId();
@@ -152,7 +152,7 @@ public final class PersonPropertiesDataManager extends DataManager {
 	}
 
 	@Override
-	protected void init(DataManagerContext dataManagerContext) {
+	public void init(DataManagerContext dataManagerContext) {
 		super.init(dataManagerContext);
 		this.dataManagerContext = dataManagerContext;
 

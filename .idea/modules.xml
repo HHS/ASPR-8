@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/ASPR-8.iml" filepath="$PROJECT_DIR$/.idea/ASPR-8.iml" />
+      <module fileurl="file://$PROJECT_DIR$/gcm4/gcm4.iml" filepath="$PROJECT_DIR$/gcm4/gcm4.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tutorials/lessons/gcm4_lesson_01_hello_world/gcm4_lesson_01_hello_world.iml" filepath="$PROJECT_DIR$/tutorials/lessons/gcm4_lesson_01_hello_world/gcm4_lesson_01_hello_world.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tutorials/lessons/gcm4_lesson_02_plugins/gcm4_lesson_02_plugins.iml" filepath="$PROJECT_DIR$/tutorials/lessons/gcm4_lesson_02_plugins/gcm4_lesson_02_plugins.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tutorials/lessons/gcm4_lesson_03_actors/gcm4_lesson_03_actors.iml" filepath="$PROJECT_DIR$/tutorials/lessons/gcm4_lesson_03_actors/gcm4_lesson_03_actors.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tutorials/lessons/gcm4_lesson_04_data_managers/gcm4_lesson_04_data_managers.iml" filepath="$PROJECT_DIR$/tutorials/lessons/gcm4_lesson_04_data_managers/gcm4_lesson_04_data_managers.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tutorials/lessons/gcm4_lesson_05_events/gcm4_lesson_05_events.iml" filepath="$PROJECT_DIR$/tutorials/lessons/gcm4_lesson_05_events/gcm4_lesson_05_events.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tutorials/lessons/gcm4_lesson_06_plugin_dependencies/gcm4_lesson_06_plugin_dependencies.iml" filepath="$PROJECT_DIR$/tutorials/lessons/gcm4_lesson_06_plugin_dependencies/gcm4_lesson_06_plugin_dependencies.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tutorials/lessons/gcm4_lesson_07_plugin_dependency_graph/gcm4_lesson_07_plugin_dependency_graph.iml" filepath="$PROJECT_DIR$/tutorials/lessons/gcm4_lesson_07_plugin_dependency_graph/gcm4_lesson_07_plugin_dependency_graph.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tutorials/lessons/gcm4_lesson_08_plugin_data/gcm4_lesson_08_plugin_data.iml" filepath="$PROJECT_DIR$/tutorials/lessons/gcm4_lesson_08_plugin_data/gcm4_lesson_08_plugin_data.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tutorials/lessons/gcm4_lesson_09_experiments/gcm4_lesson_09_experiments.iml" filepath="$PROJECT_DIR$/tutorials/lessons/gcm4_lesson_09_experiments/gcm4_lesson_09_experiments.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tutorials/lessons/gcm4_lesson_10_output/gcm4_lesson_10_output.iml" filepath="$PROJECT_DIR$/tutorials/lessons/gcm4_lesson_10_output/gcm4_lesson_10_output.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tutorials/plugins/gcm4_lesson_11_stochastics_plugin/gcm4_lesson_11_stochastics_plugin.iml" filepath="$PROJECT_DIR$/tutorials/plugins/gcm4_lesson_11_stochastics_plugin/gcm4_lesson_11_stochastics_plugin.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tutorials/plugins/gcm4_lesson_12_reports_plugin/gcm4_lesson_12_reports_plugin.iml" filepath="$PROJECT_DIR$/tutorials/plugins/gcm4_lesson_12_reports_plugin/gcm4_lesson_12_reports_plugin.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tutorials/plugins/gcm4_lesson_13_global_properties_plugin/gcm4_lesson_13_global_properties_plugin.iml" filepath="$PROJECT_DIR$/tutorials/plugins/gcm4_lesson_13_global_properties_plugin/gcm4_lesson_13_global_properties_plugin.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tutorials/plugins/gcm4_lesson_14_people_plugin/gcm4_lesson_14_people_plugin.iml" filepath="$PROJECT_DIR$/tutorials/plugins/gcm4_lesson_14_people_plugin/gcm4_lesson_14_people_plugin.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tutorials/plugins/gcm4_lesson_15_regions_plugin/gcm4_lesson_15_regions_plugin.iml" filepath="$PROJECT_DIR$/tutorials/plugins/gcm4_lesson_15_regions_plugin/gcm4_lesson_15_regions_plugin.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tutorials/plugins/gcm4_lesson_16_person_properties_plugin/gcm4_lesson_16_person_properties_plugin.iml" filepath="$PROJECT_DIR$/tutorials/plugins/gcm4_lesson_16_person_properties_plugin/gcm4_lesson_16_person_properties_plugin.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tutorials/plugins/gcm4_lesson_17_groups_plugin/gcm4_lesson_17_groups_plugin.iml" filepath="$PROJECT_DIR$/tutorials/plugins/gcm4_lesson_17_groups_plugin/gcm4_lesson_17_groups_plugin.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tutorials/plugins/gcm4_lesson_18_resources_plugin/gcm4_lesson_18_resources_plugin.iml" filepath="$PROJECT_DIR$/tutorials/plugins/gcm4_lesson_18_resources_plugin/gcm4_lesson_18_resources_plugin.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tutorials/plugins/gcm4_lesson_19_materials_plugin/gcm4_lesson_19_materials_plugin.iml" filepath="$PROJECT_DIR$/tutorials/plugins/gcm4_lesson_19_materials_plugin/gcm4_lesson_19_materials_plugin.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tutorials/plugins/gcm4_report_refactor/gcm4_report_refactor.iml" filepath="$PROJECT_DIR$/tutorials/plugins/gcm4_report_refactor/gcm4_report_refactor.iml" />
+    </modules>
+  </component>
+</project>

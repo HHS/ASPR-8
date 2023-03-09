@@ -1,6 +1,7 @@
 package plugins.reports.support;
 
 import java.nio.file.Path;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -97,11 +98,21 @@ public final class NIOReportItemHandler implements Consumer<ExperimentContext>{
 			data.displayExperimentColumnsInReports = displayExperimentColumnsInReports;
 			return this;
 		}
+
+		/**
+		 * Sets the delimiter for an experiment.
+		 */
+		public Builder setDelimiter(String delimiter) {
+			data.delimiter = delimiter;
+			return this;
+		}
 	}
 
 	private static class Data {
+		private String delimiter = "\t";
 		private final Map<ReportLabel, Path> reportMap = new LinkedHashMap<>();
 		private boolean displayExperimentColumnsInReports = DEFAULT_DISPLAY_EXPERIMENT_COLUMNS;
+
 	}
 
 	private final static boolean DEFAULT_DISPLAY_EXPERIMENT_COLUMNS = true;
@@ -110,10 +121,13 @@ public final class NIOReportItemHandler implements Consumer<ExperimentContext>{
 
 	private final Map<ReportLabel, Path> reportMap;
 
+	private final String delimiter;
+
 	private final boolean displayExperimentColumnsInReports;
 
-	private NIOReportItemHandler(final Data data) {
 
+	private NIOReportItemHandler(final Data data) {
+		delimiter = data.delimiter;
 		reportMap = data.reportMap;
 		displayExperimentColumnsInReports = data.displayExperimentColumnsInReports;
 	}
@@ -134,7 +148,7 @@ public final class NIOReportItemHandler implements Consumer<ExperimentContext>{
 		}
 	}
 
-	private void handleOuput(ExperimentContext experimentContext, Integer scenarioId, ReportItem reportItem) {
+	private void handleOutput(ExperimentContext experimentContext, Integer scenarioId, ReportItem reportItem) {
 		final LineWriter lineWriter = lineWriterMap.get(reportItem.getReportLabel());
 		if (lineWriter != null) {
 			lineWriter.write(experimentContext, scenarioId, reportItem);
@@ -145,7 +159,7 @@ public final class NIOReportItemHandler implements Consumer<ExperimentContext>{
 		synchronized (lineWriterMap) {
 			for (final ReportLabel reportLabel : reportMap.keySet()) {
 				final Path path = reportMap.get(reportLabel);
-				final LineWriter lineWriter = new LineWriter(experimentContext, path, displayExperimentColumnsInReports);
+				final LineWriter lineWriter = new LineWriter(experimentContext, path, displayExperimentColumnsInReports, delimiter);
 				lineWriterMap.put(reportLabel, lineWriter);
 			}
 		}
@@ -155,20 +169,27 @@ public final class NIOReportItemHandler implements Consumer<ExperimentContext>{
 	 * Initializes this report item handler. It subscribes to the following
 	 * experiment level events:
 	 * <ul>
-	 * <li>Experiment Open : reads and initializes all report files</li>
+	 * <li>Experiment Open : Reads and initializes all report files.
+	 * All content that doesn't correspond to a previously fully executed scenario is removed.</li>
 	 * <li>Simulation Output : directs report items to the appropriate file
 	 * writer</li>
 	 * <li>Simulation Close : ensures all files are flushed so that the content
 	 * of each file is complete for each closed scenario</li>
 	 * <li>Experiment Close : closes all file writers</li>
 	 * </ul>
+	 *
+	 * @throws RuntimeException
+	 *             <li>if an {@link IOException} is thrown during file initialization</li>
+	 *             <li>if the simulation run is continuing from a progress log and
+	 *             the path is not a regular file (path does not exist) during
+	 *             file initialization</li>
 	 */
 	@Override
 	public void accept(ExperimentContext experimentContext) {
 		experimentContext.subscribeToExperimentOpen(this::openExperiment);
 		experimentContext.subscribeToExperimentClose(this::closeExperiment);
 		experimentContext.subscribeToSimulationClose(this::closeSimulation);
-		experimentContext.subscribeToOutput(ReportItem.class, this::handleOuput);		
+		experimentContext.subscribeToOutput(ReportItem.class, this::handleOutput);
 	}
 
 }

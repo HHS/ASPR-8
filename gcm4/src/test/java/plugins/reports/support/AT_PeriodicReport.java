@@ -5,17 +5,22 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.math3.util.FastMath;
 import org.junit.jupiter.api.Test;
 
-import nucleus.ReportContext;
 import nucleus.Plugin;
+import nucleus.ReportContext;
 import nucleus.Simulation;
 import nucleus.testsupport.testplugin.TestActorPlan;
+import nucleus.testsupport.testplugin.TestOutputConsumer;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
+import nucleus.testsupport.testplugin.TestSimulation;
 import plugins.reports.ReportsPlugin;
 import plugins.reports.ReportsPluginData;
 import util.annotations.UnitTestConstructor;
@@ -66,10 +71,13 @@ public class AT_PeriodicReport {
 			ReportItem reportItem = reportItemBuilder.setReportLabel(getReportLabel()).setReportHeader(reportHeader).build();
 
 			int dayValue = (int) FastMath.ceil(reportContext.getTime());
-			dayValue--;
+						
 			String expectedTimeString = Integer.toString(dayValue);
+			
 			String actualTimeString = reportItem.getValue(0);
+			
 			assertEquals(expectedTimeString, actualTimeString);
+			reportContext.releaseOutput(reportItem);
 
 		}
 
@@ -103,12 +111,9 @@ public class AT_PeriodicReport {
 
 			ReportItem reportItem = reportItemBuilder.setReportLabel(getReportLabel()).setReportHeader(reportHeader).build();
 			double time = reportContext.getTime();
-			double hourScaledTime = time * 24;
-			double closestHourTime = FastMath.floor(time * 24);
-			int hour = (int) closestHourTime;
-			if (hourScaledTime - closestHourTime < 0.01) {
-				hour--;
-			}
+			
+			
+			int hour = (int) FastMath.ceil(time * 24);
 			int expectedDay = hour / 24;
 			int expectedHour = hour % 24;
 			String expectedHourTimeString = Integer.toString(expectedHour);
@@ -117,6 +122,8 @@ public class AT_PeriodicReport {
 			String actualHourTimeString = reportItem.getValue(1);
 			assertEquals(expectedDayTimeString, actualDayTimeString);
 			assertEquals(expectedHourTimeString, actualHourTimeString);
+			
+			reportContext.releaseOutput(reportItem);
 		}
 
 	}
@@ -216,7 +223,7 @@ public class AT_PeriodicReport {
 	public void testFillTimeFields_Daily() {
 		double simulationEndTime = 10.6;
 
-		Simulation.Builder builder = Simulation.builder();
+		List<Plugin> plugins = new ArrayList<>();
 
 		ReportLabel reportLabel = new SimpleReportLabel("report");
 		DailyTestReport dailyTestReport = new DailyTestReport(reportLabel, ReportPeriod.DAILY);
@@ -225,7 +232,7 @@ public class AT_PeriodicReport {
 		}).build();
 
 		// add the reports plugin
-		builder.addPlugin(ReportsPlugin.getReportsPlugin(reportsInitialData));
+		plugins.add(ReportsPlugin.getReportsPlugin(reportsInitialData));
 
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
@@ -236,14 +243,28 @@ public class AT_PeriodicReport {
 
 		TestPluginData testPluginData = pluginBuilder.build();
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
-		builder.addPlugin(testPlugin);
+		plugins.add(testPlugin);
 
 		// build and execute the simulation
-		builder.build().execute();
+		
+		TestOutputConsumer testOutputConsumer = new TestOutputConsumer();
+		TestSimulation.executeSimulation(plugins,testOutputConsumer);
 
-		// show that the daily test report actually executed its tests
-		int expectedFlushExecutionCount = (int) FastMath.ceil(simulationEndTime);
-		assertEquals(expectedFlushExecutionCount, dailyTestReport.testCounter.getValue());
+		
+		int maxDay = (int)FastMath.ceil(simulationEndTime);
+		Set<Integer> expectedDays = new LinkedHashSet<>();
+		for(int i = 0;i<=maxDay;i++) {
+			expectedDays.add(i);
+		}
+		
+		
+		Set<Integer> actualDays = new LinkedHashSet<>();		
+		Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItems(ReportItem.class);
+		for(ReportItem reportItem : outputItems.keySet()) {
+			assertEquals(1,outputItems.get(reportItem));
+			actualDays.add(Integer.parseInt(reportItem.getValue(0)));
+		}
+		assertEquals(expectedDays, actualDays);
 
 	}
 
@@ -252,7 +273,7 @@ public class AT_PeriodicReport {
 	public void testFillTimeFields_Hourly() {
 		double simulationEndTime = 3.6;
 
-		Simulation.Builder builder = Simulation.builder();
+		List<Plugin> plugins = new ArrayList<>();
 
 		ReportLabel reportLabel = new SimpleReportLabel("report");
 		HourlyTestReport hourlyTestReport = new HourlyTestReport(reportLabel, ReportPeriod.HOURLY);
@@ -262,7 +283,7 @@ public class AT_PeriodicReport {
 		Plugin reportPlugin = ReportsPlugin.getReportsPlugin(reportsInitialData);
 
 		// add the reports plugin
-		builder.addPlugin(reportPlugin);
+		plugins.add(reportPlugin);
 
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
@@ -272,14 +293,32 @@ public class AT_PeriodicReport {
 
 		TestPluginData testPluginData = pluginBuilder.build();
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
-		builder.addPlugin(testPlugin);
+		plugins.add(testPlugin);
 
 		// build and execute the engine
-		builder.build().execute();
+		TestOutputConsumer testOutputConsumer = new TestOutputConsumer();
+		TestSimulation.executeSimulation(plugins,testOutputConsumer);
+		
 
-		// show that the hourly test report actually executed its tests
-		int expectedFlushExecutionCount = (int) FastMath.ceil(24 * simulationEndTime);
-		assertEquals(expectedFlushExecutionCount, hourlyTestReport.testCounter.getValue());
+		//hours 0 through 3d 15h inclusive
+		Set<Integer> expectedHours = new LinkedHashSet<>();
+		for(int i = 0;i<88;i++) {
+			expectedHours.add(i);
+		}
+		
+		Set<Integer> actualHours = new LinkedHashSet<>();
+		Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItems(ReportItem.class);
+		for(ReportItem reportItem : outputItems.keySet()) {
+			Integer count = outputItems.get(reportItem);
+			assertEquals(1, count);
+			int hour = Integer.parseInt(reportItem.getValue(0));
+			hour*=24;
+			hour+=Integer.parseInt(reportItem.getValue(1));
+			actualHours.add(hour);			
+		}
+		
+		assertEquals(expectedHours, actualHours);
+		
 
 	}
 
@@ -373,7 +412,7 @@ public class AT_PeriodicReport {
 			switch (reportPeriod) {
 			case DAILY:
 				int lastDay = (int) simulationEndTime;
-				for (int i = 1; i <= lastDay; i++) {
+				for (int i = 0; i <= lastDay; i++) {
 					double time = i;
 					expectedTimes.add(time);
 				}
@@ -386,7 +425,7 @@ public class AT_PeriodicReport {
 			case HOURLY:
 
 				int lastHour = (int) (simulationEndTime * 24);
-				for (int i = 1; i <= lastHour; i++) {
+				for (int i = 0; i <= lastHour; i++) {
 					double time = i;
 					time /= 24;
 					expectedTimes.add(time);

@@ -193,7 +193,7 @@ public final class PeopleDataManager extends DataManager {
 	 *
 	 */
 	@Override
-	protected void init(final DataManagerContext dataManagerContext) {
+	public void init(final DataManagerContext dataManagerContext) {
 		super.init(dataManagerContext);
 		this.dataManagerContext = dataManagerContext;
 

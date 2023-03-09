@@ -1,11 +1,8 @@
 package nucleus.testsupport.testplugin;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -21,104 +18,100 @@ import util.wrappers.MutableInteger;
 
 public class AT_TestSimulationOutputConsumer {
 
-    @Test
-    @UnitTestConstructor(target = TestSimulationOutputConsumer.class, args = {})
-    public void testConstructor() {
-        assertNotNull(new TestSimulationOutputConsumer());
-    }
+	@Test
+	@UnitTestConstructor(target = TestOutputConsumer.class, args = {})
+	public void testConstructor() {
+		assertNotNull(new TestOutputConsumer());
+	}
 
-    @Test
-    @UnitTestMethod(target = TestSimulationOutputConsumer.class, name = "accept", args = { Object.class })
-    public void testAccept() {
-        TestSimulationOutputConsumer outputConsumer = new TestSimulationOutputConsumer();
+	@Test
+	@UnitTestMethod(target = TestOutputConsumer.class, name = "accept", args = { Object.class })
+	public void testAccept() {
+		TestOutputConsumer outputConsumer = new TestOutputConsumer();
 
-        assertDoesNotThrow(() -> outputConsumer.accept(true));
-        assertDoesNotThrow(() -> outputConsumer.accept(new TestScenarioReport(true)));
-        ContractException contractException = assertThrows(ContractException.class,
-                () -> outputConsumer.accept(new TestScenarioReport(true)));
-        assertEquals(TestError.DUPLICATE_TEST_SCENARIO_REPORTS, contractException.getErrorType());
+		outputConsumer.accept(true);
+		outputConsumer.accept(false);
+		outputConsumer.accept(true);
+		outputConsumer.accept(false);
+		outputConsumer.accept(true);
+		
+		Map<Boolean, Integer> expectedOutput = new LinkedHashMap<>();
+		expectedOutput.put(true, 3);
+		expectedOutput.put(false, 2);
+		
 
-        assertEquals(1, outputConsumer.getOutputItems(Boolean.class).size());
-        assertEquals(1, outputConsumer.getOutputItems(TestScenarioReport.class).size());
-        assertTrue(outputConsumer.isComplete());
-    }
+		ContractException contractException = assertThrows(ContractException.class, () -> outputConsumer.accept(null));
+		assertEquals(TestError.NULL_OUTPUT_ITEM, contractException.getErrorType());
 
-    @Test
-    @UnitTestMethod(target = TestSimulationOutputConsumer.class, name = "getOutputItems", args = { Class.class })
-    public void testGetOutputItems() {
-        TestSimulationOutputConsumer outputConsumer = new TestSimulationOutputConsumer();
+		Map<Boolean, Integer> actualOutput = outputConsumer.getOutputItems(Boolean.class);
+		assertEquals(expectedOutput, actualOutput);
 
-        RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7830499412883085962L);
 
-        Map<Integer, MutableInteger> expectedIntValuesM = new LinkedHashMap<>();
-        Map<Double, MutableInteger> expectedDoubleValuesM = new LinkedHashMap<>();
-        Map<Float, MutableInteger> expectedFloatValuesM = new LinkedHashMap<>();
-        Map<Long, MutableInteger> expectedLongValuesM = new LinkedHashMap<>();
+	}
 
-        for (int i = 0; i < 100; i++) {
-            boolean shouldAdd = randomGenerator.nextBoolean();
+	@Test
+	@UnitTestMethod(target = TestOutputConsumer.class, name = "getOutputItems", args = { Class.class })
+	public void testGetOutputItems() {
+		TestOutputConsumer outputConsumer = new TestOutputConsumer();
 
-            if (shouldAdd) {
-                int intVal = randomGenerator.nextInt(100);
-                double doubleVal = randomGenerator.nextDouble() * 100;
-                float floatVal = randomGenerator.nextFloat() * 100;
-                long longVal = randomGenerator.nextLong();
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7830499412883085962L);
 
-                outputConsumer.accept(intVal);
-                outputConsumer.accept(doubleVal);
-                outputConsumer.accept(floatVal);
-                outputConsumer.accept(longVal);
+		Map<Integer, MutableInteger> expectedIntValuesM = new LinkedHashMap<>();
+		Map<Double, MutableInteger> expectedDoubleValuesM = new LinkedHashMap<>();
+		Map<Float, MutableInteger> expectedFloatValuesM = new LinkedHashMap<>();
+		Map<Long, MutableInteger> expectedLongValuesM = new LinkedHashMap<>();
 
-                expectedIntValuesM.putIfAbsent(intVal, new MutableInteger());
-                expectedDoubleValuesM.putIfAbsent(doubleVal, new MutableInteger());
-                expectedFloatValuesM.putIfAbsent(floatVal, new MutableInteger());
-                expectedLongValuesM.putIfAbsent(longVal, new MutableInteger());
+		for (int i = 0; i < 100; i++) {
+			boolean shouldAdd = randomGenerator.nextBoolean();
 
-                expectedIntValuesM.get(intVal).increment();
-                expectedDoubleValuesM.get(doubleVal).increment();
-                expectedFloatValuesM.get(floatVal).increment();
-                expectedLongValuesM.get(longVal).increment();
-            }
-        }
+			if (shouldAdd) {
+				int intVal = randomGenerator.nextInt(100);
+				double doubleVal = randomGenerator.nextDouble() * 100;
+				float floatVal = randomGenerator.nextFloat() * 100;
+				long longVal = randomGenerator.nextLong();
 
-        Map<Integer, Integer> expectedIntValues = new LinkedHashMap<>();
-        Map<Double, Integer> expectedDoubleValues = new LinkedHashMap<>();
-        Map<Float, Integer> expectedFloatValues = new LinkedHashMap<>();
-        Map<Long, Integer> expectedLongValues = new LinkedHashMap<>();
+				outputConsumer.accept(intVal);
+				outputConsumer.accept(doubleVal);
+				outputConsumer.accept(floatVal);
+				outputConsumer.accept(longVal);
 
-        for (Integer i : expectedIntValuesM.keySet()) {
-            expectedIntValues.put(i, expectedIntValuesM.get(i).getValue());
-        }
+				expectedIntValuesM.putIfAbsent(intVal, new MutableInteger());
+				expectedDoubleValuesM.putIfAbsent(doubleVal, new MutableInteger());
+				expectedFloatValuesM.putIfAbsent(floatVal, new MutableInteger());
+				expectedLongValuesM.putIfAbsent(longVal, new MutableInteger());
 
-        for (Double i : expectedDoubleValuesM.keySet()) {
-            expectedDoubleValues.put(i, expectedDoubleValuesM.get(i).getValue());
-        }
+				expectedIntValuesM.get(intVal).increment();
+				expectedDoubleValuesM.get(doubleVal).increment();
+				expectedFloatValuesM.get(floatVal).increment();
+				expectedLongValuesM.get(longVal).increment();
+			}
+		}
 
-        for (Float i : expectedFloatValuesM.keySet()) {
-            expectedFloatValues.put(i, expectedFloatValuesM.get(i).getValue());
-        }
+		Map<Integer, Integer> expectedIntValues = new LinkedHashMap<>();
+		Map<Double, Integer> expectedDoubleValues = new LinkedHashMap<>();
+		Map<Float, Integer> expectedFloatValues = new LinkedHashMap<>();
+		Map<Long, Integer> expectedLongValues = new LinkedHashMap<>();
 
-        for (Long i : expectedLongValuesM.keySet()) {
-            expectedLongValues.put(i, expectedLongValuesM.get(i).getValue());
-        }
+		for (Integer i : expectedIntValuesM.keySet()) {
+			expectedIntValues.put(i, expectedIntValuesM.get(i).getValue());
+		}
 
-        assertEquals(expectedIntValues, outputConsumer.getOutputItems(Integer.class));
-        assertEquals(expectedDoubleValues, outputConsumer.getOutputItems(Double.class));
-        assertEquals(expectedFloatValues, outputConsumer.getOutputItems(Float.class));
-        assertEquals(expectedLongValues, outputConsumer.getOutputItems(Long.class));
-    }
+		for (Double i : expectedDoubleValuesM.keySet()) {
+			expectedDoubleValues.put(i, expectedDoubleValuesM.get(i).getValue());
+		}
 
-    @Test
-    @UnitTestMethod(target = TestSimulationOutputConsumer.class, name = "isComplete", args = {})
-    public void testIsComplete() {
-        TestSimulationOutputConsumer outputConsumer = new TestSimulationOutputConsumer();
+		for (Float i : expectedFloatValuesM.keySet()) {
+			expectedFloatValues.put(i, expectedFloatValuesM.get(i).getValue());
+		}
 
-        assertFalse(outputConsumer.isComplete());
+		for (Long i : expectedLongValuesM.keySet()) {
+			expectedLongValues.put(i, expectedLongValuesM.get(i).getValue());
+		}
 
-        outputConsumer.accept(new TestScenarioReport(false));
-        assertFalse(outputConsumer.isComplete());
+		assertEquals(expectedIntValues, outputConsumer.getOutputItems(Integer.class));
+		assertEquals(expectedDoubleValues, outputConsumer.getOutputItems(Double.class));
+		assertEquals(expectedFloatValues, outputConsumer.getOutputItems(Float.class));
+		assertEquals(expectedLongValues, outputConsumer.getOutputItems(Long.class));
+	}
 
-        outputConsumer.accept(new TestScenarioReport(true));
-        assertTrue(outputConsumer.isComplete());
-    }
 }

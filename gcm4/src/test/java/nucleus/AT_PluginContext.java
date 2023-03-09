@@ -33,7 +33,7 @@ public class AT_PluginContext {
 	private static class TestDataManager2 extends TestDataManager {
 
 		@Override
-		protected void init(final DataManagerContext dataManagerContext) {
+		public void init(final DataManagerContext dataManagerContext) {
 			super.init(dataManagerContext);
 		}
 	}
@@ -41,7 +41,7 @@ public class AT_PluginContext {
 	private static class TestDataManager3 extends TestDataManager {
 
 		@Override
-		protected void init(final DataManagerContext dataManagerContext) {
+		public void init(final DataManagerContext dataManagerContext) {
 			super.init(dataManagerContext);
 		}
 	}
@@ -204,5 +204,44 @@ public class AT_PluginContext {
 		assertTrue(assertionsExecuted.getValue());
 
 	}
+	
+	
+	@Test
+	@UnitTestMethod(target = PluginContext.class, name = "addReport", args = { Consumer.class })
+	public void testAddReport() {
+
+		/*
+		 * Create a plugin initializer that will add a few reports. Each report
+		 * will signal when it has initialized and the initializer will record
+		 * that signal.
+		 */
+		Set<ReportId> addedReports = new LinkedHashSet<>();
+		int numberOfReportsToAdd = 5;
+
+		/*
+		 * Create a plugin that has its initializer add 5 actors. Each actor
+		 * will retrieve its own actor id and record them
+		 */
+		Plugin plugin = Plugin	.builder()//
+								.setPluginId(new SimplePluginId("plugin id"))//
+								.setInitializer((c) -> {
+									for (int i = 0; i < numberOfReportsToAdd; i++) {
+										c.addReport((c2) -> {
+											addedReports.add(c2.getReportId());
+										});
+									}
+								})//
+								.build();//
+
+		// build and execute the simulation
+		Simulation	.builder()//
+					.addPlugin(plugin)//
+					.build()//
+					.execute();//
+
+		// show that the correct number of actors were added to the simulation
+		assertEquals(numberOfReportsToAdd, addedReports.size());
+	}
+
 
 }

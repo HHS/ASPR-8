@@ -39,8 +39,7 @@ public final class VaccineReport extends PeriodicReport {
 
 	private PeopleDataManager peopleDataManager;
 
-	public void init(ReportContext reportContext) {
-		super.init(reportContext);
+	protected void prepare(ReportContext reportContext) {
 		vaccinationDataManager = reportContext.getDataManager(VaccinationDataManager.class);
 		peopleDataManager = reportContext.getDataManager(PeopleDataManager.class);
 	}

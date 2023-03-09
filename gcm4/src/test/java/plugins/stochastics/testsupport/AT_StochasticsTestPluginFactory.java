@@ -50,7 +50,7 @@ public class AT_StochasticsTestPluginFactory {
 	}
 
 	@Test
-	@UnitTestMethod(target = StochasticsTestPluginFactory.class, name = "testConsumers", args = { long.class,
+	@UnitTestMethod(target = StochasticsTestPluginFactory.class, name = "factory", args = { long.class,
 			TestPluginData.class })
 	public void testFactory_TestPluginData() {
 		MutableBoolean executed = new MutableBoolean();

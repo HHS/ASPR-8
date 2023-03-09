@@ -25,13 +25,13 @@ public final class ReportId {
 	}
 
 	/**
-	 * Returns string of the form "ReportId[X]" where the value of the actor id
+	 * Returns string of the form "ReportId [X]" where the value of the actor id
 	 * is X
 	 */
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("ReportIs [id=");
+		builder.append("ReportId [id=");
 		builder.append(id);
 		builder.append("]");
 		return builder.toString();

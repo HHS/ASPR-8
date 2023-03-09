@@ -169,6 +169,20 @@ public final class AT_ReportItem {
 	}
 
 	@Test
+	@UnitTestMethod(target = ReportItem.class,name = "toValueString", args = {})
+	public void testToValueString() {
+		ReportHeader reportHeader = ReportHeader.builder().build();
+		SimpleReportLabel reportLabel = new SimpleReportLabel("report");
+
+		ReportItem reportItem = ReportItem.builder().setReportHeader(reportHeader).setReportLabel(reportLabel).addValue("A").addValue("B").build();
+
+		String expectedValue = "[A, B]";
+		String actualValue = reportItem.toValueString();
+		
+		assertEquals(expectedValue, actualValue);
+	}	
+	
+	@Test
 	@UnitTestMethod(target = ReportItem.class,name = "hashCode", args = {})
 	public void testHashCode() {
 

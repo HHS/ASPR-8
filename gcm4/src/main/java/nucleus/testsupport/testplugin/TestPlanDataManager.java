@@ -17,6 +17,8 @@ import nucleus.DataManagerContext;
 
 public class TestPlanDataManager extends DataManager {
 
+	private final Map<Object, List<TestReportPlan>> reportActionPlanMap = new LinkedHashMap<>();
+	
 	private final Map<Object, List<TestActorPlan>> actorActionPlanMap = new LinkedHashMap<>();
 
 	private final Map<Object, List<TestDataManagerPlan>> dataManagerActionPlanMap = new LinkedHashMap<>();
@@ -29,6 +31,11 @@ public class TestPlanDataManager extends DataManager {
 		for (Object alias : testPluginData.getTestActorAliases()) {
 			List<TestActorPlan> testActorPlans = testPluginData.getTestActorPlans(alias);
 			actorActionPlanMap.put(alias, testActorPlans);
+		}
+		
+		for (Object alias : testPluginData.getTestReportAliases()) {
+			List<TestReportPlan> testReportPlans = testPluginData.getTestReportPlans(alias);
+			reportActionPlanMap.put(alias, testReportPlans);
 		}
 
 		for (Object alias : testPluginData.getTestDataManagerAliases()) {
@@ -43,7 +50,7 @@ public class TestPlanDataManager extends DataManager {
 	 * there was at least one plan and all plans were executed.
 	 */
 	@Override
-	protected void init(DataManagerContext dataManagerContext) {
+	public void init(DataManagerContext dataManagerContext) {
 		super.init(dataManagerContext);
 		dataManagerContext.subscribeToSimulationClose(this::sendActionCompletionReport);
 	}
@@ -54,6 +61,18 @@ public class TestPlanDataManager extends DataManager {
 	public List<TestActorPlan> getTestActorPlans(Object alias) {
 		List<TestActorPlan> result = new ArrayList<>();
 		List<TestActorPlan> list = actorActionPlanMap.get(alias);
+		if (list != null) {
+			result.addAll(list);
+		}
+		return result;
+	}
+	
+	/**
+	 * Returns all plans associated with the given report alias
+	 */
+	public List<TestReportPlan> getTestReportPlans(Object alias) {
+		List<TestReportPlan> result = new ArrayList<>();
+		List<TestReportPlan> list = reportActionPlanMap.get(alias);
 		if (list != null) {
 			result.addAll(list);
 		}
@@ -73,7 +92,7 @@ public class TestPlanDataManager extends DataManager {
 		return result;
 	}
 
-	/**
+	/*
 	 * Return true if and only if all actions that are stored in this action
 	 * data view have been executed. Indicates that all injected behaviors in a
 	 * unit test were actually executed. RETURNS FALSE IF THERE WERE NO ACTIONS
@@ -90,6 +109,15 @@ public class TestPlanDataManager extends DataManager {
 			for (TestActorPlan testActorPlan : actorActionPlanMap.get(alias)) {
 				planCount++;
 				if (!testActorPlan.executed()) {
+					return false;
+				}
+			}
+		}
+		
+		for (Object alias : reportActionPlanMap.keySet()) {
+			for (TestReportPlan testReportPlan : reportActionPlanMap.get(alias)) {
+				planCount++;
+				if (!testReportPlan.executed()) {
 					return false;
 				}
 			}

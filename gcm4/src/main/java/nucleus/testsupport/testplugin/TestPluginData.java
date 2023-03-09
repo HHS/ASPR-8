@@ -40,6 +40,17 @@ public class TestPluginData implements PluginData {
 					newPlans.add(newPlan);
 				}
 			}
+			
+			for (Object alias : data.testReportPlanMap.keySet()) {
+				List<TestReportPlan> oldPlans = data.testReportPlanMap.get(alias);
+				List<TestReportPlan> newPlans = new ArrayList<>();
+				testReportPlanMap.put(alias, newPlans);
+				for (TestReportPlan oldPlan : oldPlans) {
+					TestReportPlan newPlan = new TestReportPlan(oldPlan);
+					newPlans.add(newPlan);
+				}
+			}
+
 
 			testDataManagerSuppliers.putAll(data.testDataManagerSuppliers);
 
@@ -54,11 +65,7 @@ public class TestPluginData implements PluginData {
 			}
 
 		}
-
 		
-
-		
-
 		@Override
 		public int hashCode() {
 			final int prime = 31;
@@ -67,6 +74,7 @@ public class TestPluginData implements PluginData {
 			result = prime * result + ((testActorPlanMap == null) ? 0 : testActorPlanMap.hashCode());
 			result = prime * result + ((testDataManagerPlanMap == null) ? 0 : testDataManagerPlanMap.hashCode());
 			result = prime * result + ((testDataManagerSuppliers == null) ? 0 : testDataManagerSuppliers.hashCode());
+			result = prime * result + ((testReportPlanMap == null) ? 0 : testReportPlanMap.hashCode());
 			return result;
 		}
 
@@ -107,6 +115,13 @@ public class TestPluginData implements PluginData {
 			} else if (!testDataManagerSuppliers.equals(other.testDataManagerSuppliers)) {
 				return false;
 			}
+			if (testReportPlanMap == null) {
+				if (other.testReportPlanMap != null) {
+					return false;
+				}
+			} else if (!testReportPlanMap.equals(other.testReportPlanMap)) {
+				return false;
+			}
 			return true;
 		}
 
@@ -114,9 +129,10 @@ public class TestPluginData implements PluginData {
 
 
 
-		/*
-		 * Map of action plans key by actor aliases
-		 */
+
+
+		private final Map<Object, List<TestReportPlan>> testReportPlanMap = new LinkedHashMap<>();
+		
 		private final Map<Object, List<TestActorPlan>> testActorPlanMap = new LinkedHashMap<>();
 
 		private Map<Object, Supplier<TestDataManager>> testDataManagerSuppliers = new LinkedHashMap<>();
@@ -191,6 +207,37 @@ public class TestPluginData implements PluginData {
 			}
 
 			list.add(testActorPlan);
+
+			return this;
+
+		}
+		
+		/**
+		 * Adds an report action plan associated with the alias
+		 * 
+		 * @throws ContractException
+		 *             <li>{@linkplain TestError#NULL_ALIAS} if the alias is
+		 *             null</li>
+		 *             <li>{@linkplain TestError#NULL_PLAN}if the actor action
+		 *             plan is null</li>
+		 */
+		public Builder addTestReportPlan(final Object alias, TestReportPlan testReportPlan) {
+			if (alias == null) {
+				throw new ContractException(TestError.NULL_ALIAS);
+			}
+
+			if (testReportPlan == null) {
+				throw new ContractException(TestError.NULL_PLAN);
+			}
+
+			List<TestReportPlan> list = data.testReportPlanMap.get(alias);
+
+			if (list == null) {
+				list = new ArrayList<>();
+				data.testReportPlanMap.put(alias, list);
+			}
+
+			list.add(testReportPlan);
 
 			return this;
 
@@ -277,6 +324,13 @@ public class TestPluginData implements PluginData {
 	public List<Object> getTestActorAliases() {
 		return new ArrayList<>(data.testActorPlanMap.keySet());
 	}
+	
+	/**
+	 * Returns a list of the test report aliases
+	 */
+	public List<Object> getTestReportAliases() {
+		return new ArrayList<>(data.testReportPlanMap.keySet());
+	}
 
 	/**
 	 * Returns the test actor plans associated with the actor alias
@@ -284,6 +338,18 @@ public class TestPluginData implements PluginData {
 	public List<TestActorPlan> getTestActorPlans(Object alias) {
 		List<TestActorPlan> result = new ArrayList<>();
 		List<TestActorPlan> list = data.testActorPlanMap.get(alias);
+		if (list != null) {
+			result.addAll(list);
+		}
+		return result;
+	}
+	
+	/**
+	 * Returns the test report plans associated with the report alias
+	 */
+	public List<TestReportPlan> getTestReportPlans(Object alias) {
+		List<TestReportPlan> result = new ArrayList<>();
+		List<TestReportPlan> list = data.testReportPlanMap.get(alias);
 		if (list != null) {
 			result.addAll(list);
 		}
