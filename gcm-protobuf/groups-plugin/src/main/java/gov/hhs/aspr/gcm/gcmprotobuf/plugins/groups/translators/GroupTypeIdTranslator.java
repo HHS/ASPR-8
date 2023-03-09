@@ -10,7 +10,7 @@ public class GroupTypeIdTranslator extends AbstractTranslator<GroupTypeIdInput, 
 
     @Override
     protected GroupTypeId convertInputObject(GroupTypeIdInput inputObject) {
-        return (GroupTypeId) this.translator.getObjectFromAny(inputObject.getGroupTypeId());
+        return this.translator.getObjectFromAny(inputObject.getGroupTypeId(), GroupTypeId.class);
     }
 
     @Override

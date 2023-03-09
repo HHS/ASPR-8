@@ -248,24 +248,41 @@ public class MasterTranslator {
     }
 
     public Any getAnyFromObject(Object object) {
-        if(Enum.class.isAssignableFrom(object.getClass())) {
+        if (Enum.class.isAssignableFrom(object.getClass())) {
             ProtocolMessageEnum messageEnum = convertSimObject(object);
             EnumValueDescriptor enumValueDescriptor = messageEnum.getValueDescriptor();
 
-            WrapperEnumValue wrapperEnumValue = WrapperEnumValue.newBuilder().setValue(enumValueDescriptor.getName()).setEnumTypeUrl(messageEnum.getDescriptorForType().getFullName()).build();
+            WrapperEnumValue wrapperEnumValue = WrapperEnumValue.newBuilder().setValue(enumValueDescriptor.getName())
+                    .setEnumTypeUrl(messageEnum.getDescriptorForType().getFullName()).build();
 
             return Any.pack(wrapperEnumValue);
         }
         return Any.pack(convertSimObject(object));
     }
 
-    public Object getObjectFromAny(Any anyValue, Class<?> superClass) {
-        Object object = convertInputObject(getMessageFromAny(anyValue), superClass);
+    public <T> T getObjectFromAny(Any anyValue, Class<?> superClass) {
+        Message anyMessage = getMessageFromAny(anyValue);
 
-        return object;
+        if (anyMessage.getDescriptorForType() == WrapperEnumValue.getDescriptor()) {
+            WrapperEnumValue enumValue = (WrapperEnumValue) anyMessage;
+
+            String typeUrl = enumValue.getEnumTypeUrl();
+            String value = enumValue.getValue();
+
+            if (this.data.typeUrlToEnumDescriptor.containsKey(typeUrl)) {
+                EnumDescriptor enumDescriptor = this.data.typeUrlToEnumDescriptor.get(typeUrl);
+                if (this.data.enumDescriptorMap.containsKey(enumDescriptor)) {
+                    ProtocolMessageEnum messageEnum = this.data.enumDescriptorMap.get(enumDescriptor)
+                            .getFromString(value);
+                    return convertInputEnum(messageEnum, superClass);
+                }
+            }
+        }
+
+        return convertInputObject(anyMessage, superClass);
     }
 
-    public Object getObjectFromAny(Any anyValue) {
+    public <T> T getObjectFromAny(Any anyValue) {
         Message anyMessage = getMessageFromAny(anyValue);
 
         if (anyMessage.getDescriptorForType() == WrapperEnumValue.getDescriptor()) {
@@ -317,6 +334,27 @@ public class MasterTranslator {
         } catch (InvalidProtocolBufferException e) {
             throw new RuntimeException("Unable To unpack any type to given class: " + classRef.getName(), e);
         }
+    }
+
+    public <T, U> T convertInputEnum(ProtocolMessageEnum inputEnum, Class<U> superClass) {
+        T convertedEnum = convertInputEnum(inputEnum);
+
+        U superEnum;
+        try {
+            // we want to make sure that the resulting object can be casted to the super
+            // class
+            // But we still want to return the actual class so that the reference does not
+            // get changed.
+            superEnum = superClass.cast(convertedEnum);
+        } catch (ClassCastException e) {
+            throw new RuntimeException("Unable to cast:" + convertedEnum.getClass() + " to: " + superClass, e);
+        }
+
+        if (superEnum == null) {
+            throw new RuntimeException("Unable to cast:" + convertedEnum.getClass() + " to: " + superClass);
+        }
+
+        return convertedEnum;
     }
 
     public <T> T convertInputEnum(ProtocolMessageEnum inputEnum) {

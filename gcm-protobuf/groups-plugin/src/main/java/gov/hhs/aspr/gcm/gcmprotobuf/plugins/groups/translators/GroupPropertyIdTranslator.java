@@ -10,7 +10,7 @@ public class GroupPropertyIdTranslator extends AbstractTranslator<GroupPropertyI
 
     @Override
     protected GroupPropertyId convertInputObject(GroupPropertyIdInput inputObject) {
-        return (GroupPropertyId) this.translator.getObjectFromAny(inputObject.getGroupPropertyId());
+        return this.translator.getObjectFromAny(inputObject.getGroupPropertyId(), getSimObjectClass());
     }
 
     @Override
