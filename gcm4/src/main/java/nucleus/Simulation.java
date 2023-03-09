@@ -178,7 +178,8 @@ public class Simulation {
 	 * IS CRITICAL TO THE FUNCTION OF THE SIMULATION!
 	 */
 	private static enum Planner {
-		DATA_MANAGER, ACTOR, REPORT
+		DATA_MANAGER, ACTOR, REPORT;
+
 	}
 
 	private static class Data {
@@ -200,7 +201,9 @@ public class Simulation {
 		public int compare(final PlanRec plannedEvent1, final PlanRec plannedEvent2) {
 			int result = Double.compare(plannedEvent1.time, plannedEvent2.time);
 			if (result == 0) {
+
 				result = plannedEvent1.planner.compareTo(plannedEvent2.planner);
+
 				if (result == 0) {
 					result = Long.compare(plannedEvent1.arrivalId, plannedEvent2.arrivalId);
 				}
@@ -210,7 +213,7 @@ public class Simulation {
 	};
 
 	// planning
-	private long masterPlanningArrivalId;
+	private long masterPlanningArrivalId;	
 	protected double time;
 	private boolean processEvents = true;
 	private int activePlanCount;
@@ -696,6 +699,7 @@ public class Simulation {
 			}
 		}
 
+		//execute the data manager queue -- this will in turn execute the report queue
 		executeDataManagerQueue();
 
 		for (DataManager dataManager : dataManagerToDataManagerIdMap.keySet()) {
@@ -703,7 +707,7 @@ public class Simulation {
 				throw new ContractException(NucleusError.DATA_MANAGER_INITIALIZATION_FAILURE, dataManager.getClass().getSimpleName());
 			}
 		}
-
+			
 		// initialize the actors by flushing the actor queue
 		executeActorQueue();
 
@@ -1223,22 +1227,6 @@ public class Simulation {
 		executeDataManagerQueue();
 	}
 
-	private void addReport(Consumer<ReportContext> consumer) {
-
-		if (consumer == null) {
-			throw new ContractException(NucleusError.NULL_REPORT_CONTEXT_CONSUMER);
-		}
-
-		ReportId reportId = new ReportId(reportIds.size());
-		reportIds.add(reportId);
-
-		final ReportContentRec reportContentRec = new ReportContentRec();
-		reportContentRec.reportId = reportId;
-		reportContentRec.reportPlan = consumer;
-		reportQueue.add(reportContentRec);
-
-	}
-
 	protected ActorId addActor(Consumer<ActorContext> consumer) {
 
 		if (consumer == null) {
@@ -1252,6 +1240,7 @@ public class Simulation {
 		actorContentRec.actorId = result;
 		actorContentRec.plan = consumer;
 		actorQueue.add(actorContentRec);
+
 		return result;
 	}
 
@@ -1268,7 +1257,19 @@ public class Simulation {
 		if (focalPluginId == null) {
 			throw new ContractException(NucleusError.PLUGIN_INITIALIZATION_CLOSED);
 		}
-		addReport(consumer);
+
+		if (consumer == null) {
+			throw new ContractException(NucleusError.NULL_REPORT_CONTEXT_CONSUMER);
+		}
+
+		ReportId reportId = new ReportId(reportIds.size());
+		reportIds.add(reportId);
+
+		final ReportContentRec reportContentRec = new ReportContentRec();
+		reportContentRec.reportId = reportId;
+		reportContentRec.reportPlan = consumer;
+		reportQueue.add(reportContentRec);
+
 	}
 
 	protected void removeActor(final ActorId actorId) {

@@ -123,17 +123,16 @@ public class HourlyVaccineReport extends PeriodicReport {
 
 	}
 
-	public void init(ReportContext reportContext) {
-		super.init(reportContext);
+	protected void prepare(ReportContext reportContext) {
 
 		/*
 		 * Subscribe to all the relevant events
 		 */
 
-		subscribe(VaccinationEvent.class, this::handleVaccinationEvent);
-		subscribe(FamilyAdditionEvent.class, this::handleFamilyAdditionEvent);
-		subscribe(FamilyMemberShipAdditionEvent.class, this::handleFamilyMemberShipAdditionEvent);
-		subscribe(PersonAdditionEvent.class, this::handlePersonAdditionEvent);
+		reportContext.subscribe(VaccinationEvent.class, this::handleVaccinationEvent);
+		reportContext.subscribe(FamilyAdditionEvent.class, this::handleFamilyAdditionEvent);
+		reportContext.subscribe(FamilyMemberShipAdditionEvent.class, this::handleFamilyMemberShipAdditionEvent);
+		reportContext.subscribe(PersonAdditionEvent.class, this::handlePersonAdditionEvent);
 
 		/*
 		 * Some of the events may have already occurred before we initialize

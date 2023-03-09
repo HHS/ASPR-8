@@ -320,26 +320,25 @@ public final class PersonPropertyReport extends PeriodicReport {
 	private PeopleDataManager peopleDataManager;
 
 	@Override
-	public void init(final ReportContext reportContext) {
-		super.init(reportContext);
+	protected void prepare(final ReportContext reportContext) {
 
 		regionsDataManager = reportContext.getDataManager(RegionsDataManager.class);
 		personPropertiesDataManager = reportContext.getDataManager(PersonPropertiesDataManager.class);
 		peopleDataManager = reportContext.getDataManager(PeopleDataManager.class);
 
-		subscribe(PersonAdditionEvent.class, this::handlePersonAdditionEvent);
-		subscribe(PersonImminentRemovalEvent.class, this::handlePersonImminentRemovalEvent);
-		subscribe(PersonRegionUpdateEvent.class, this::handlePersonRegionUpdateEvent);
+		reportContext.subscribe(PersonAdditionEvent.class, this::handlePersonAdditionEvent);
+		reportContext.subscribe(PersonImminentRemovalEvent.class, this::handlePersonImminentRemovalEvent);
+		reportContext.subscribe(PersonRegionUpdateEvent.class, this::handlePersonRegionUpdateEvent);
 
 		includedPersonPropertyIds.addAll(data.includedProperties);
 		excludedPersonPropertyIds.addAll(data.excludedProperties);
 		if (data.defaultInclusionPolicy) {
 			includedPersonPropertyIds.addAll(personPropertiesDataManager.getPersonPropertyIds());
 			includedPersonPropertyIds.removeAll(excludedPersonPropertyIds);
-			subscribe(PersonPropertyDefinitionEvent.class, this::handlePersonPropertyDefinitionEvent);
+			reportContext.subscribe(PersonPropertyDefinitionEvent.class, this::handlePersonPropertyDefinitionEvent);
 		}
 
-		subscribe(PersonPropertyUpdateEvent.class, this::handlePersonPropertyUpdateEvent);
+		reportContext.subscribe(PersonPropertyUpdateEvent.class, this::handlePersonPropertyUpdateEvent);
 
 		for (PersonId personId : peopleDataManager.getPeople()) {
 			final RegionId regionId = regionsDataManager.getPersonRegion(personId);

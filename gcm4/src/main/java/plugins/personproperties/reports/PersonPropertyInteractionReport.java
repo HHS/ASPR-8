@@ -229,16 +229,15 @@ public final class PersonPropertyInteractionReport extends PeriodicReport {
 	private PersonPropertiesDataManager personPropertiesDataManager;
 
 	@Override
-	public void init(final ReportContext reportContext) {
-		super.init(reportContext);
+	protected void prepare(final ReportContext reportContext) {
 
 		personPropertiesDataManager = reportContext.getDataManager(PersonPropertiesDataManager.class);
 		peopleDataManager = reportContext.getDataManager(PeopleDataManager.class);
 		regionsDataManager = reportContext.getDataManager(RegionsDataManager.class);
 
-		subscribe(PersonAdditionEvent.class, this::handlePersonAdditionEvent);
-		subscribe(PersonImminentRemovalEvent.class, this::handlePersonImminentRemovalEvent);
-		subscribe(PersonRegionUpdateEvent.class, this::handlePersonRegionUpdateEvent);
+		reportContext.subscribe(PersonAdditionEvent.class, this::handlePersonAdditionEvent);
+		reportContext.subscribe(PersonImminentRemovalEvent.class, this::handlePersonImminentRemovalEvent);
+		reportContext.subscribe(PersonRegionUpdateEvent.class, this::handlePersonRegionUpdateEvent);
 
 		/*
 		 * if the client did not choose any properties, then we assume that all
@@ -261,8 +260,8 @@ public final class PersonPropertyInteractionReport extends PeriodicReport {
 			}
 		}
 
-		subscribe(PersonPropertyUpdateEvent.class, this::handlePersonPropertyUpdateEvent);
-		subscribe(PersonPropertyDefinitionEvent.class, this::handlePersonPropertyDefinitionEvent);
+		reportContext.subscribe(PersonPropertyUpdateEvent.class, this::handlePersonPropertyUpdateEvent);
+		reportContext.subscribe(PersonPropertyDefinitionEvent.class, this::handlePersonPropertyDefinitionEvent);
 
 		for (PersonId personId : peopleDataManager.getPeople()) {
 			final Object regionId = regionsDataManager.getPersonRegion(personId);

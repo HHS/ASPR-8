@@ -263,8 +263,8 @@ public final class GroupPropertyReport extends PeriodicReport {
 	private GroupsDataManager groupsDataManager;
 
 	@Override
-	public void init(final ReportContext reportContext) {
-		super.init(reportContext);
+	protected void prepare(final ReportContext reportContext) {
+		
 
 		groupsDataManager = reportContext.getDataManager(GroupsDataManager.class);
 
@@ -289,12 +289,12 @@ public final class GroupPropertyReport extends PeriodicReport {
 		}
 
 		// determine the subscriptions for group addition
-		subscribe(GroupAdditionEvent.class, this::handleGroupAdditionEvent);
+		reportContext.subscribe(GroupAdditionEvent.class, this::handleGroupAdditionEvent);
 
 		// determine the subscriptions for group removal observations
-		subscribe(GroupImminentRemovalEvent.class, this::handleGroupImminentRemovalEvent);
+		reportContext.subscribe(GroupImminentRemovalEvent.class, this::handleGroupImminentRemovalEvent);
 
-		subscribe(GroupPropertyUpdateEvent.class, this::handleGroupPropertyUpdateEvent);
+		reportContext.subscribe(GroupPropertyUpdateEvent.class, this::handleGroupPropertyUpdateEvent);
 
 		/*
 		 * Fill the top layers of the groupTypeMap. We do not yet know the set
@@ -324,8 +324,8 @@ public final class GroupPropertyReport extends PeriodicReport {
 		}
 
 		if (scaffold.includeNewProperties) {
-			subscribe(GroupTypeAdditionEvent.class, this::handleGroupTypeAdditionEvent);
-			subscribe(GroupPropertyDefinitionEvent.class, this::handleGroupPropertyDefinitionEvent);
+			reportContext.subscribe(GroupTypeAdditionEvent.class, this::handleGroupTypeAdditionEvent);
+			reportContext.subscribe(GroupPropertyDefinitionEvent.class, this::handleGroupPropertyDefinitionEvent);
 		}
 
 	}
