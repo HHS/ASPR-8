@@ -107,8 +107,7 @@ public final class GroupPopulationReport extends PeriodicReport {
 	private GroupsDataManager groupsDataManager;
 
 	@Override
-	public void init(ReportContext reportContext) {
-		super.init(reportContext);
+	protected void prepare(ReportContext reportContext) {		
 		groupsDataManager = reportContext.getDataManager(GroupsDataManager.class);
 	}
 

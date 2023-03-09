@@ -44,13 +44,11 @@ public class AT_GroupPopulationReport {
 		assertNotNull(new GroupPopulationReport(REPORT_LABEL, ReportPeriod.HOURLY));
 
 		// precondition: report period is null
-		ContractException contractException = assertThrows(ContractException.class,
-				() -> new GroupPopulationReport(REPORT_LABEL, null));
+		ContractException contractException = assertThrows(ContractException.class, () -> new GroupPopulationReport(REPORT_LABEL, null));
 		assertEquals(ReportError.NULL_REPORT_PERIOD, contractException.getErrorType());
 
 		// precondition: report label is null
-		contractException = assertThrows(ContractException.class,
-				() -> new GroupPopulationReport(null, ReportPeriod.HOURLY));
+		contractException = assertThrows(ContractException.class, () -> new GroupPopulationReport(null, ReportPeriod.HOURLY));
 		assertEquals(ReportError.NULL_REPORT_LABEL, contractException.getErrorType());
 	}
 
@@ -126,38 +124,47 @@ public class AT_GroupPopulationReport {
 		TestPluginData testPluginData = pluginBuilder.build();
 
 		// place the initial data into the expected output consumer
-		Map<ReportItem, Integer> expectedReportItems = new LinkedHashMap<>();
+		TestOutputConsumer expectedConsumer = new TestOutputConsumer();
 
-		for (int hour = 0; hour < 24; hour++) {
-			expectedReportItems.put(getReportItem(ReportPeriod.HOURLY, 0, hour, TestGroupTypeId.GROUP_TYPE_1, 3, 2), 1);
-			expectedReportItems.put(getReportItem(ReportPeriod.HOURLY, 0, hour, TestGroupTypeId.GROUP_TYPE_2, 3, 1), 1);
-			expectedReportItems.put(getReportItem(ReportPeriod.HOURLY, 0, hour, TestGroupTypeId.GROUP_TYPE_3, 0, 1), 1);
+
+        expectedConsumer.accept(getReportItem(ReportPeriod.HOURLY, 0, 0, TestGroupTypeId.GROUP_TYPE_1, 3, 1));
+        expectedConsumer.accept(getReportItem(ReportPeriod.HOURLY, 0, 0, TestGroupTypeId.GROUP_TYPE_2, 3, 1));
+        expectedConsumer.accept(getReportItem(ReportPeriod.HOURLY, 0, 0, TestGroupTypeId.GROUP_TYPE_3, 0, 1));
+		
+		for (int hour = 1; hour < 24; hour++) {
+			expectedConsumer.accept(getReportItem(ReportPeriod.HOURLY, 0, hour, TestGroupTypeId.GROUP_TYPE_1, 3, 2));
+			expectedConsumer.accept(getReportItem(ReportPeriod.HOURLY, 0, hour, TestGroupTypeId.GROUP_TYPE_2, 3, 1));
+			expectedConsumer.accept(getReportItem(ReportPeriod.HOURLY, 0, hour, TestGroupTypeId.GROUP_TYPE_3, 0, 1));
 		}
-		expectedReportItems.put(getReportItem(ReportPeriod.HOURLY, 1, 0, TestGroupTypeId.GROUP_TYPE_1, 3, 2), 1);
-		expectedReportItems.put(getReportItem(ReportPeriod.HOURLY, 1, 0, TestGroupTypeId.GROUP_TYPE_2, 3, 1), 1);
-		expectedReportItems.put(getReportItem(ReportPeriod.HOURLY, 1, 0, TestGroupTypeId.GROUP_TYPE_3, 0, 1), 1);
 
-		expectedReportItems.put(getReportItem(ReportPeriod.HOURLY, 1, 1, TestGroupTypeId.GROUP_TYPE_1, 2, 1), 1);
-		expectedReportItems.put(getReportItem(ReportPeriod.HOURLY, 1, 1, TestGroupTypeId.GROUP_TYPE_2, 3, 1), 1);
-		expectedReportItems.put(getReportItem(ReportPeriod.HOURLY, 1, 1, TestGroupTypeId.GROUP_TYPE_3, 0, 1), 1);
+		expectedConsumer.accept(getReportItem(ReportPeriod.HOURLY, 1, 0, TestGroupTypeId.GROUP_TYPE_1, 3, 2));
+		expectedConsumer.accept(getReportItem(ReportPeriod.HOURLY, 1, 0, TestGroupTypeId.GROUP_TYPE_2, 3, 1));
+		expectedConsumer.accept(getReportItem(ReportPeriod.HOURLY, 1, 0, TestGroupTypeId.GROUP_TYPE_3, 0, 1));
+		
+		expectedConsumer.accept(getReportItem(ReportPeriod.HOURLY, 1, 1, TestGroupTypeId.GROUP_TYPE_1, 3, 2));
+		expectedConsumer.accept(getReportItem(ReportPeriod.HOURLY, 1, 1, TestGroupTypeId.GROUP_TYPE_2, 3, 1));
+		expectedConsumer.accept(getReportItem(ReportPeriod.HOURLY, 1, 1, TestGroupTypeId.GROUP_TYPE_3, 0, 1));
 
-		expectedReportItems.put(getReportItem(ReportPeriod.HOURLY, 1, 2, TestGroupTypeId.GROUP_TYPE_1, 2, 1), 1);
-		expectedReportItems.put(getReportItem(ReportPeriod.HOURLY, 1, 2, TestGroupTypeId.GROUP_TYPE_2, 3, 1), 1);
+		expectedConsumer.accept(getReportItem(ReportPeriod.HOURLY, 1, 2, TestGroupTypeId.GROUP_TYPE_1, 2, 1));
+		expectedConsumer.accept(getReportItem(ReportPeriod.HOURLY, 1, 2, TestGroupTypeId.GROUP_TYPE_2, 3, 1));
+		expectedConsumer.accept(getReportItem(ReportPeriod.HOURLY, 1, 2, TestGroupTypeId.GROUP_TYPE_3, 0, 1));
 
-		expectedReportItems.put(getReportItem(ReportPeriod.HOURLY, 1, 3, TestGroupTypeId.GROUP_TYPE_1, 2, 1), 1);
-		expectedReportItems.put(getReportItem(ReportPeriod.HOURLY, 1, 3, TestGroupTypeId.GROUP_TYPE_2, 3, 1), 1);
+		expectedConsumer.accept(getReportItem(ReportPeriod.HOURLY, 1, 3, TestGroupTypeId.GROUP_TYPE_1, 2, 1));
+		expectedConsumer.accept(getReportItem(ReportPeriod.HOURLY, 1, 3, TestGroupTypeId.GROUP_TYPE_2, 3, 1));
 
-		expectedReportItems.put(getReportItem(ReportPeriod.HOURLY, 1, 4, TestGroupTypeId.GROUP_TYPE_1, 2, 1), 1);
-		expectedReportItems.put(getReportItem(ReportPeriod.HOURLY, 1, 4, TestGroupTypeId.GROUP_TYPE_2, 3, 1), 1);
+		expectedConsumer.accept(getReportItem(ReportPeriod.HOURLY, 1, 4, TestGroupTypeId.GROUP_TYPE_1, 2, 1));
+		expectedConsumer.accept(getReportItem(ReportPeriod.HOURLY, 1, 4, TestGroupTypeId.GROUP_TYPE_2, 3, 1));
 
-		expectedReportItems.put(getReportItem(ReportPeriod.HOURLY, 1, 5, TestGroupTypeId.GROUP_TYPE_1, 5, 2), 1);
-		expectedReportItems.put(getReportItem(ReportPeriod.HOURLY, 1, 5, TestGroupTypeId.GROUP_TYPE_2, 3, 1), 1);
+		expectedConsumer.accept(getReportItem(ReportPeriod.HOURLY, 1, 5, TestGroupTypeId.GROUP_TYPE_1, 2, 1));
+		expectedConsumer.accept(getReportItem(ReportPeriod.HOURLY, 1, 5, TestGroupTypeId.GROUP_TYPE_2, 3, 1));
 
-		expectedReportItems.put(getReportItem(ReportPeriod.HOURLY, 1, 6, TestGroupTypeId.GROUP_TYPE_1, 5, 2), 1);
-		expectedReportItems.put(getReportItem(ReportPeriod.HOURLY, 1, 6, TestGroupTypeId.GROUP_TYPE_2, 3, 1), 1);
+		expectedConsumer.accept(getReportItem(ReportPeriod.HOURLY, 1, 6, TestGroupTypeId.GROUP_TYPE_1, 5, 2));
+		expectedConsumer.accept(getReportItem(ReportPeriod.HOURLY, 1, 6, TestGroupTypeId.GROUP_TYPE_2, 3, 1));
 
-		expectedReportItems
-				.put(getReportItem(ReportPeriod.HOURLY, 1, 6, TestAuxiliaryGroupTypeId.GROUP_AUX_TYPE_1, 4, 1), 1);
+		expectedConsumer.accept(getReportItem(ReportPeriod.HOURLY, 1, 7, TestGroupTypeId.GROUP_TYPE_1, 5, 2));
+		expectedConsumer.accept(getReportItem(ReportPeriod.HOURLY, 1, 7, TestGroupTypeId.GROUP_TYPE_2, 3, 1));
+
+		expectedConsumer.accept(getReportItem(ReportPeriod.HOURLY, 1, 7, TestAuxiliaryGroupTypeId.GROUP_AUX_TYPE_1, 4, 1));
 
 		GroupPopulationReport report = new GroupPopulationReport(REPORT_LABEL, ReportPeriod.HOURLY);
 		TestOutputConsumer outputConsumer = new TestOutputConsumer();
@@ -166,8 +173,15 @@ public class AT_GroupPopulationReport {
 		plugins.add(ReportsTestPluginFactory.getPluginFromReport(report::init));
 
 		TestSimulation.executeSimulation(plugins, outputConsumer);
+
 		
-		assertEquals(expectedReportItems, outputConsumer.getOutputItems(ReportItem.class));
+		
+		Map<ReportItem, Integer> expectedReportItems = expectedConsumer.getOutputItems(ReportItem.class);
+		Map<ReportItem, Integer> actualReportItems = outputConsumer.getOutputItems(ReportItem.class);
+		
+		
+		
+		assertEquals(expectedReportItems, actualReportItems);
 
 	}
 
@@ -242,29 +256,35 @@ public class AT_GroupPopulationReport {
 		TestPluginData testPluginData = pluginBuilder.build();
 
 		// create a container to hold expected results
-		Map<ReportItem, Integer> expectedReportItems = new LinkedHashMap<>();
+		TestOutputConsumer expectedConsumer = new TestOutputConsumer();
 
 		// place the initial data into the expected output consumer
+		
+		
+		expectedConsumer.accept(getReportItem(ReportPeriod.DAILY, 0, TestGroupTypeId.GROUP_TYPE_1, 3, 1));
+		expectedConsumer.accept(getReportItem(ReportPeriod.DAILY, 0, TestGroupTypeId.GROUP_TYPE_2, 3, 1));
+		expectedConsumer.accept(getReportItem(ReportPeriod.DAILY, 0, TestGroupTypeId.GROUP_TYPE_3, 0, 1));
+		
 
-		expectedReportItems.put(getReportItem(ReportPeriod.DAILY, 0, TestGroupTypeId.GROUP_TYPE_1, 3, 2), 1);
-		expectedReportItems.put(getReportItem(ReportPeriod.DAILY, 0, TestGroupTypeId.GROUP_TYPE_2, 3, 1), 1);
-		expectedReportItems.put(getReportItem(ReportPeriod.DAILY, 0, TestGroupTypeId.GROUP_TYPE_3, 0, 1), 1);
+		expectedConsumer.accept(getReportItem(ReportPeriod.DAILY, 1, TestGroupTypeId.GROUP_TYPE_1, 3, 2));
+		expectedConsumer.accept(getReportItem(ReportPeriod.DAILY, 1, TestGroupTypeId.GROUP_TYPE_2, 3, 1));
+		expectedConsumer.accept(getReportItem(ReportPeriod.DAILY, 1, TestGroupTypeId.GROUP_TYPE_3, 0, 1));
 
-		expectedReportItems.put(getReportItem(ReportPeriod.DAILY, 1, TestGroupTypeId.GROUP_TYPE_1, 2, 1), 1);
-		expectedReportItems.put(getReportItem(ReportPeriod.DAILY, 1, TestGroupTypeId.GROUP_TYPE_2, 3, 1), 1);
-		expectedReportItems.put(getReportItem(ReportPeriod.DAILY, 1, TestGroupTypeId.GROUP_TYPE_3, 0, 1), 1);
+		expectedConsumer.accept(getReportItem(ReportPeriod.DAILY, 2, TestGroupTypeId.GROUP_TYPE_1, 2, 1));
+		expectedConsumer.accept(getReportItem(ReportPeriod.DAILY, 2, TestGroupTypeId.GROUP_TYPE_2, 3, 1));
+		expectedConsumer.accept(getReportItem(ReportPeriod.DAILY, 2, TestGroupTypeId.GROUP_TYPE_3, 0, 1));
 
-		expectedReportItems.put(getReportItem(ReportPeriod.DAILY, 2, TestGroupTypeId.GROUP_TYPE_1, 2, 1), 1);
-		expectedReportItems.put(getReportItem(ReportPeriod.DAILY, 2, TestGroupTypeId.GROUP_TYPE_2, 3, 1), 1);
+		expectedConsumer.accept(getReportItem(ReportPeriod.DAILY, 3, TestGroupTypeId.GROUP_TYPE_1, 2, 1));
+		expectedConsumer.accept(getReportItem(ReportPeriod.DAILY, 3, TestGroupTypeId.GROUP_TYPE_2, 3, 1));
 
-		expectedReportItems.put(getReportItem(ReportPeriod.DAILY, 3, TestGroupTypeId.GROUP_TYPE_1, 2, 1), 1);
-		expectedReportItems.put(getReportItem(ReportPeriod.DAILY, 3, TestGroupTypeId.GROUP_TYPE_2, 3, 1), 1);
+		expectedConsumer.accept(getReportItem(ReportPeriod.DAILY, 4, TestGroupTypeId.GROUP_TYPE_1, 2, 1));
+		expectedConsumer.accept(getReportItem(ReportPeriod.DAILY, 4, TestGroupTypeId.GROUP_TYPE_2, 3, 1));
 
-		expectedReportItems.put(getReportItem(ReportPeriod.DAILY, 4, TestGroupTypeId.GROUP_TYPE_1, 2, 1), 1);
-		expectedReportItems.put(getReportItem(ReportPeriod.DAILY, 4, TestGroupTypeId.GROUP_TYPE_2, 3, 1), 1);
+		expectedConsumer.accept(getReportItem(ReportPeriod.DAILY, 5, TestGroupTypeId.GROUP_TYPE_1, 2, 1));
+		expectedConsumer.accept(getReportItem(ReportPeriod.DAILY, 5, TestGroupTypeId.GROUP_TYPE_2, 3, 1));
 
-		expectedReportItems.put(getReportItem(ReportPeriod.DAILY, 5, TestGroupTypeId.GROUP_TYPE_1, 5, 2), 1);
-		expectedReportItems.put(getReportItem(ReportPeriod.DAILY, 5, TestGroupTypeId.GROUP_TYPE_2, 3, 1), 1);
+		expectedConsumer.accept(getReportItem(ReportPeriod.DAILY, 6, TestGroupTypeId.GROUP_TYPE_1, 5, 2));
+		expectedConsumer.accept(getReportItem(ReportPeriod.DAILY, 6, TestGroupTypeId.GROUP_TYPE_2, 3, 1));
 
 		GroupPopulationReport report = new GroupPopulationReport(REPORT_LABEL, ReportPeriod.DAILY);
 		TestOutputConsumer outputConsumer = new TestOutputConsumer();
@@ -274,7 +294,13 @@ public class AT_GroupPopulationReport {
 
 		TestSimulation.executeSimulation(plugins, outputConsumer);
 
-		assertEquals(expectedReportItems, outputConsumer.getOutputItems(ReportItem.class));
+		Map<ReportItem, Integer> expectedReportItems = expectedConsumer.getOutputItems(ReportItem.class);
+		Map<ReportItem, Integer> actualReportItems = outputConsumer.getOutputItems(ReportItem.class);
+		
+		
+
+		
+		assertEquals(expectedReportItems, actualReportItems);
 	}
 
 	@Test
@@ -348,7 +374,6 @@ public class AT_GroupPopulationReport {
 
 	private List<Plugin> getPlugins(TestPluginData testPluginData, long seed) {
 
-		
 		// add the group plugin
 		GroupsPluginData.Builder groupBuilder = GroupsPluginData.builder();
 		// add group types
@@ -357,16 +382,15 @@ public class AT_GroupPopulationReport {
 		}
 		// define group properties
 		for (TestGroupPropertyId testGroupPropertyId : TestGroupPropertyId.values()) {
-			groupBuilder.defineGroupProperty(testGroupPropertyId.getTestGroupTypeId(), testGroupPropertyId,
-			testGroupPropertyId.getPropertyDefinition());
+			groupBuilder.defineGroupProperty(testGroupPropertyId.getTestGroupTypeId(), testGroupPropertyId, testGroupPropertyId.getPropertyDefinition());
 		}
-		
+
 		groupBuilder.addGroup(new GroupId(0), TestGroupTypeId.GROUP_TYPE_1);
 		groupBuilder.addGroup(new GroupId(1), TestGroupTypeId.GROUP_TYPE_2);
 		groupBuilder.addGroup(new GroupId(2), TestGroupTypeId.GROUP_TYPE_3);
 
 		// add a few of the people to the groups
-		
+
 		groupBuilder.addPersonToGroup(new GroupId(0), new PersonId(0));
 		groupBuilder.addPersonToGroup(new GroupId(0), new PersonId(1));
 		groupBuilder.addPersonToGroup(new GroupId(0), new PersonId(2));
@@ -377,7 +401,7 @@ public class AT_GroupPopulationReport {
 		GroupsPluginData groupsPluginData = groupBuilder.build();
 
 		List<Plugin> plugins = GroupsTestPluginFactory.factory(10, 0, 3, seed, testPluginData).setGroupsPluginData(groupsPluginData).getPlugins();
-		
+
 		return plugins;
 	}
 
@@ -386,17 +410,17 @@ public class AT_GroupPopulationReport {
 		builder.setReportLabel(REPORT_LABEL);
 
 		switch (reportPeriod) {
-			case DAILY:
-				builder.setReportHeader(REPORT_DAILY_HEADER);
-				break;
-			case END_OF_SIMULATION:
-				builder.setReportHeader(REPORT_EOS_HEADER);
-				break;
-			case HOURLY:
-				builder.setReportHeader(REPORT_HOURLY_HEADER);
-				break;
-			default:
-				throw new RuntimeException("unhandled case " + reportPeriod);
+		case DAILY:
+			builder.setReportHeader(REPORT_DAILY_HEADER);
+			break;
+		case END_OF_SIMULATION:
+			builder.setReportHeader(REPORT_EOS_HEADER);
+			break;
+		case HOURLY:
+			builder.setReportHeader(REPORT_HOURLY_HEADER);
+			break;
+		default:
+			throw new RuntimeException("unhandled case " + reportPeriod);
 
 		}
 
@@ -408,10 +432,7 @@ public class AT_GroupPopulationReport {
 
 	private static final ReportLabel REPORT_LABEL = new SimpleReportLabel("group population property report");
 
-	private static final ReportHeader REPORT_DAILY_HEADER = ReportHeader.builder().add("day").add("group_type")
-			.add("person_count").add("group_count").build();
-	private static final ReportHeader REPORT_HOURLY_HEADER = ReportHeader.builder().add("day").add("hour")
-			.add("group_type").add("person_count").add("group_count").build();
-	private static final ReportHeader REPORT_EOS_HEADER = ReportHeader.builder().add("group_type").add("person_count")
-			.add("group_count").build();
+	private static final ReportHeader REPORT_DAILY_HEADER = ReportHeader.builder().add("day").add("group_type").add("person_count").add("group_count").build();
+	private static final ReportHeader REPORT_HOURLY_HEADER = ReportHeader.builder().add("day").add("hour").add("group_type").add("person_count").add("group_count").build();
+	private static final ReportHeader REPORT_EOS_HEADER = ReportHeader.builder().add("group_type").add("person_count").add("group_count").build();
 }

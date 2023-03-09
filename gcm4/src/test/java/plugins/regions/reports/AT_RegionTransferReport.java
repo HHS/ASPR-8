@@ -65,7 +65,7 @@ public class AT_RegionTransferReport {
 	@Test
 	@UnitTestMethod(target = RegionTransferReport.class, name = "init", args = { ReportContext.class }, tags = { UnitTag.INCOMPLETE })
 	public void testInit() {
-
+		TestOutputConsumer expectedConsumer = new TestOutputConsumer();
 		/*
 		 * TEST IS INCOMPLETE
 		 * 
@@ -98,7 +98,7 @@ public class AT_RegionTransferReport {
 		/*
 		 * Collect the expected report items. Note that order does not matter. *
 		 */
-		Map<ReportItem, Integer> expectedReportItems = new LinkedHashMap<>();
+		
 		final int numPeople = 100;
 		// create an actor to add people to the simulation
 		// This will test adding people to a region, which on the report will
@@ -111,10 +111,11 @@ public class AT_RegionTransferReport {
 				PersonConstructionData personConstructionData = PersonConstructionData.builder().add(regionIds[i % 4]).build();
 				peopleDataManager.addPerson(personConstructionData);
 			}
-			expectedReportItems.put(getReportItem(0, regionA, regionA, 25), 1);
-			expectedReportItems.put(getReportItem(0, regionB, regionB, 25), 1);
-			expectedReportItems.put(getReportItem(0, regionC, regionC, 25), 1);
-			expectedReportItems.put(getReportItem(0, regionD, regionD, 25), 1);
+			
+			expectedConsumer.accept(getReportItem(1, regionA, regionA, 25));
+			expectedConsumer.accept(getReportItem(1, regionB, regionB, 25));
+			expectedConsumer.accept(getReportItem(1, regionC, regionC, 25));
+			expectedConsumer.accept(getReportItem(1, regionD, regionD, 25));
 		}));
 
 		// create an actor to move people from one region to another
@@ -149,7 +150,7 @@ public class AT_RegionTransferReport {
 				RegionId destRegionId = regionTransfer.getSecond();
 				int numTransfers = transfermap.get(regionTransfer);
 
-				expectedReportItems.put(getReportItem(1, sourceRegionId, destRegionId, numTransfers), 1);
+				expectedConsumer.accept(getReportItem(2, sourceRegionId, destRegionId, numTransfers));
 			}
 		}));
 
@@ -162,15 +163,17 @@ public class AT_RegionTransferReport {
 
 		TestPluginData testPluginData = pluginBuilder.build();
 
-		TestOutputConsumer outputConsumer = new TestOutputConsumer();
+		TestOutputConsumer actualConsumer = new TestOutputConsumer();
 		List<Plugin> pluginsToAdd = RegionsTestPluginFactory.factory(0, 3054641152904904632L, TimeTrackingPolicy.TRACK_TIME, testPluginData).setRegionsPluginData(regionsPluginData).getPlugins();
 		pluginsToAdd.add(ReportsTestPluginFactory.getPluginFromReport(new RegionTransferReport(REPORT_LABEL, ReportPeriod.DAILY)::init));
 
-		TestSimulation.executeSimulation(pluginsToAdd, outputConsumer);
+		TestSimulation.executeSimulation(pluginsToAdd, actualConsumer);
 
 		
-		Map<ReportItem, Integer> actualReportItems = outputConsumer.getOutputItems(ReportItem.class);
+		Map<ReportItem, Integer> expectedReportItems = expectedConsumer.getOutputItems(ReportItem.class);
+		Map<ReportItem, Integer> actualReportItems = actualConsumer.getOutputItems(ReportItem.class);
 
+		
 		assertEquals(expectedReportItems, actualReportItems);
 
 		// precondition: Actor context is null

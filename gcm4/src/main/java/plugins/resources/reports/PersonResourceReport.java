@@ -251,16 +251,15 @@ public final class PersonResourceReport extends PeriodicReport {
 	 * 
 	 */
 	@Override
-	public void init(final ReportContext reportContext) {
-		super.init(reportContext);
+	protected void prepare(final ReportContext reportContext) {
 		resourcesDataManager = reportContext.getDataManager(ResourcesDataManager.class);
 		PeopleDataManager peopleDataManager = reportContext.getDataManager(PeopleDataManager.class);
 		regionsDataManager = reportContext.getDataManager(RegionsDataManager.class);
 
-		subscribe(PersonAdditionEvent.class, this::handlePersonAdditionEvent);
-		subscribe(PersonImminentRemovalEvent.class, this::handlePersonImminentRemovalEvent);
-		subscribe(PersonRegionUpdateEvent.class, this::handlePersonRegionUpdateEvent);
-		subscribe(RegionAdditionEvent.class, this::handleRegionAdditionEvent);
+		reportContext.subscribe(PersonAdditionEvent.class, this::handlePersonAdditionEvent);
+		reportContext.subscribe(PersonImminentRemovalEvent.class, this::handlePersonImminentRemovalEvent);
+		reportContext.subscribe(PersonRegionUpdateEvent.class, this::handlePersonRegionUpdateEvent);
+		reportContext.subscribe(RegionAdditionEvent.class, this::handleRegionAdditionEvent);
 
 		/*
 		 * If no resources were selected, then assume that all are desired.
@@ -279,8 +278,8 @@ public final class PersonResourceReport extends PeriodicReport {
 			}
 		}
 
-		subscribe(PersonResourceUpdateEvent.class, this::handlePersonResourceUpdateEvent);
-		subscribe(ResourceIdAdditionEvent.class, this::handleResourceIdAdditionEvent);
+		reportContext.subscribe(PersonResourceUpdateEvent.class, this::handlePersonResourceUpdateEvent);
+		reportContext.subscribe(ResourceIdAdditionEvent.class, this::handleResourceIdAdditionEvent);
 
 		/*
 		 * Build the tuple map to empty sets of people in preparation for people

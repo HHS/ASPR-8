@@ -1,9 +1,5 @@
 package plugins.reports.support;
 
-import java.util.function.BiConsumer;
-
-import nucleus.Event;
-import nucleus.NucleusError;
 import nucleus.ReportContext;
 import util.errors.ContractException;
 
@@ -13,14 +9,9 @@ import util.errors.ContractException;
  * a regular cycle, invoking the flush method and allowing descendant
  * implementors to release collected data. This report registers via the context
  * to be alerted when the simulation terminates and will perform a final flush
- * invocation. This can result in the duplication of time values for last data
- * released.
- *
- *
+ * invocation if the report was not already flushed at that time.
  */
-public abstract class PeriodicReport  {
-
-	private ReportContext reportContext;
+public abstract class PeriodicReport {
 
 	/**
 	 * Creates the periodic report from the given report period
@@ -40,10 +31,7 @@ public abstract class PeriodicReport  {
 		this.reportLabel = reportLabel;
 	}
 
-	/*
-	 * Assume a daily report period and let it be overridden
-	 */
-	private ReportPeriod reportPeriod = ReportPeriod.DAILY;
+	private ReportPeriod reportPeriod;
 
 	private ReportLabel reportLabel;
 
@@ -105,7 +93,7 @@ public abstract class PeriodicReport  {
 			break;
 		case HOURLY:
 			reportItemBuilder.addValue(reportingDay);
-			reportItemBuilder.addValue(reportingHour % 24);
+			reportItemBuilder.addValue(reportingHour);
 			break;
 		default:
 			throw new RuntimeException("unknown report period " + reportPeriod);
@@ -122,24 +110,34 @@ public abstract class PeriodicReport  {
 	 *             <li>if the report context is null</li>
 	 * 
 	 */
-	public void init(ReportContext reportContext) {
+	public final void init(ReportContext reportContext) {
 
 		if (reportContext == null) {
 			throw new ContractException(ReportError.NULL_CONTEXT);
 		}
-		this.reportContext = reportContext;
 
 		reportContext.subscribeToSimulationClose(this::close);
 
+		reportingDay = (int) reportContext.getTime();
+		reportingHour = (int) (24 * (reportContext.getTime() - reportingDay));
+
+		prepare(reportContext);
 		if (reportPeriod != ReportPeriod.END_OF_SIMULATION) {
-			setNextPlanTime();
-			reportContext.addPlan(this::executePlan, nextPlanTime);
+			flush(reportContext);
+			incrementReportingTimeFields();
+			reportContext.addPlan(this::executePlan, getNextPlanTime());
 		}
+	}
+
+	/**
+	 * Called by the init() to allow descendant report classes to initialize.
+	 * The init() will invoke a flush() command after the prepare()
+	 */
+	protected void prepare(ReportContext reportContext) {
 	}
 
 	private void close(final ReportContext reportContext) {
 		if (lastFlushTime == null || reportContext.getTime() > lastFlushTime) {
-			lastFlushTime = reportContext.getTime();
 			flush(reportContext);
 		}
 	}
@@ -151,49 +149,22 @@ public abstract class PeriodicReport  {
 	 */
 	protected abstract void flush(final ReportContext reportContext);
 
-	private double nextPlanTime;
 	private Double lastFlushTime;
 
-	private void setNextPlanTime() {
+	private double getNextPlanTime() {
 		switch (reportPeriod) {
 		case DAILY:
-			nextPlanTime = (reportingDay + 1);
-			break;
+			return reportingDay;
+
 		case HOURLY:
-			nextPlanTime = reportingDay + (double) (reportingHour + 1) / 24;
-			break;
+			return reportingDay + (double) (reportingHour) / 24;
+
 		default:
 			throw new RuntimeException("unhandled report period " + reportPeriod);
 		}
 	}
 
-	/**
-	 * Returns a wrapped version of the given consumer that will ensure proper
-	 * flushing when events are received at the same time as a flushing plan,
-	 * but happen to execute before the plan. Descendant implementors of
-	 * PeriodicReport should use this wrapper when subscribing to events.
-	 */
-	private <T extends Event> BiConsumer<ReportContext, T> getFlushingConsumer(BiConsumer<ReportContext, T> eventConsumer) {
-		return (c, t) -> {
-			if (c.getTime() >= nextPlanTime) {
-				if (this.reportPeriod != ReportPeriod.END_OF_SIMULATION) {
-					if (lastFlushTime == null || c.getTime() > lastFlushTime) {
-						lastFlushTime = c.getTime();
-						flush(c);
-					}
-				}
-			}
-			eventConsumer.accept(c, t);
-		};
-	}
-
-	private void executePlan(final ReportContext reportContext) {
-		
-		if (lastFlushTime == null || reportContext.getTime() > lastFlushTime) {
-			lastFlushTime = reportContext.getTime();
-			flush(reportContext);
-		}
-
+	private void incrementReportingTimeFields() {
 		switch (reportPeriod) {
 		case DAILY:
 			reportingDay++;
@@ -205,30 +176,18 @@ public abstract class PeriodicReport  {
 				reportingDay++;
 			}
 			break;
+		case END_OF_SIMULATION:
+			// do nothing
+			break;
 		default:
 			throw new RuntimeException("unhandled report period " + reportPeriod);
 		}
-
-		setNextPlanTime();
-		reportContext.addPlan(this::executePlan, nextPlanTime);
-
 	}
 
-	/**
-	 * Subscribes the report to the given event filter via the actor context
-	 * while enforcing the flushing of report items as needed. Events of the
-	 * type T are processed by the event filter. If the event passes the filter
-	 * the event will be consumed by the supplied event consumer.
-	 * 
-	 * 
-	 * @throws ContractException
-	 *             <li>{@link NucleusError#NULL_EVENT_FILTER} if the event
-	 *             filter is null
-	 *             <li>{@link NucleusError#NULL_EVENT_CONSUMER} if the event
-	 *             consumer is null
-	 */
-	protected final <T extends Event> void subscribe(Class<T> eventClass, BiConsumer<ReportContext, T> eventConsumer) {
-		reportContext.subscribe(eventClass, getFlushingConsumer(eventConsumer));
+	private void executePlan(final ReportContext reportContext) {
+		lastFlushTime = reportContext.getTime();
+		flush(reportContext);
+		incrementReportingTimeFields();
+		reportContext.addPlan(this::executePlan, getNextPlanTime());
 	}
-
 }

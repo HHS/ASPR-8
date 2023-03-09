@@ -60,9 +60,6 @@ public final class DiseaseStateReport extends PeriodicReport {
 		return reportHeader;
 	}
 
-	@Override
-	public void init(final ReportContext reportContext) {
-		super.init(reportContext);
-	}
+	
 
 }

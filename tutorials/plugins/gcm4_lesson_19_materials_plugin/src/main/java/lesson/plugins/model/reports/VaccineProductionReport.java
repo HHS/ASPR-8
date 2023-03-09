@@ -44,8 +44,7 @@ public final class VaccineProductionReport extends PeriodicReport {
 	}
 
 	@Override
-	public void init(ReportContext reportContext) {
-		super.init(reportContext);
+	protected void prepare(ReportContext reportContext) {
 
 		materialsDataManager = reportContext.getDataManager(MaterialsDataManager.class);
 		resourcesDataManager = reportContext.getDataManager(ResourcesDataManager.class);
