@@ -1,16 +1,12 @@
 package gov.hhs.aspr.gcm.gcmprotobuf.stochastics.translators;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.google.protobuf.Any;
 import com.google.protobuf.Descriptors.Descriptor;
 
 import gov.hhs.aspr.gcm.gcmprotobuf.core.AbstractTranslator;
 import plugins.stochastics.StochasticsPluginData;
+import plugins.stochastics.input.RandomNumberGeneratorIdInput;
 import plugins.stochastics.input.StochasticsPluginDataInput;
 import plugins.stochastics.support.RandomNumberGeneratorId;
-import plugins.stochastics.support.SimpleRandomNumberGeneratorId;
 
 public class StochasticsPluginDataTranslator
         extends AbstractTranslator<StochasticsPluginDataInput, StochasticsPluginData> {
@@ -21,9 +17,8 @@ public class StochasticsPluginDataTranslator
 
         builder.setSeed(inputObject.getSeed());
 
-        for (Any randomGenIdInput : inputObject.getRandomNumberGeneratorIdsList()) {
-            Object randomGenId = this.translator.getObjectFromAny(randomGenIdInput);
-            RandomNumberGeneratorId generatorId = new SimpleRandomNumberGeneratorId(randomGenId);
+        for (RandomNumberGeneratorIdInput randomGenIdInput : inputObject.getRandomNumberGeneratorIdsList()) {
+            RandomNumberGeneratorId generatorId = this.translator.convertInputObject(randomGenIdInput);
             builder.addRandomGeneratorId(generatorId);
         }
 
@@ -36,15 +31,11 @@ public class StochasticsPluginDataTranslator
 
         builder.setSeed(simObject.getSeed());
 
-        List<Any> randomNumberGeneratorIds = new ArrayList<>();
-
         for (RandomNumberGeneratorId randomNumberGeneratorId : simObject.getRandomNumberGeneratorIds()) {
-            SimpleRandomNumberGeneratorId simpleRandomNumberGeneratorId = (SimpleRandomNumberGeneratorId) randomNumberGeneratorId;
-            Any anyId = this.translator.getAnyFromObject(simpleRandomNumberGeneratorId.getValue());
-            randomNumberGeneratorIds.add(anyId);
+            RandomNumberGeneratorIdInput randomNumberGeneratorIdInput = this.translator
+                    .convertSimObject(randomNumberGeneratorId, RandomNumberGeneratorId.class);
+            builder.addRandomNumberGeneratorIds(randomNumberGeneratorIdInput);
         }
-
-        builder.addAllRandomNumberGeneratorIds(randomNumberGeneratorIds);
 
         return builder.build();
     }

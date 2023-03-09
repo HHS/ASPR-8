@@ -6,9 +6,23 @@ option java_package = "plugins.stochastics.input";
 
 import "google/protobuf/any.proto";
 
+message RandomNumberGeneratorIdInput {
+    google.protobuf.Any randomNumberGeneratorId = 1;
+}
+
+enum TestRandomGeneratorIdInput {
+    DASHER = 0;
+    DANCER = 1;
+    PRANCER = 2;
+    VIXEN = 3;
+    COMET = 4;
+    CUPID = 5;
+    DONNER = 6;
+    BLITZEN = 7;
+}
 
 message StochasticsPluginDataInput {
     int64 seed = 1;
-    repeated google.protobuf.Any randomNumberGeneratorIds = 2;
+    repeated RandomNumberGeneratorIdInput randomNumberGeneratorIds = 2;
 }
 

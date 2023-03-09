@@ -1,6 +1,7 @@
 package gov.hhs.aspr.gcm.gcmprotobuf.stochastics;
 
 import gov.hhs.aspr.gcm.gcmprotobuf.core.PluginBundle;
+import gov.hhs.aspr.gcm.gcmprotobuf.stochastics.translators.RandomGeneratorIdTranslator;
 import gov.hhs.aspr.gcm.gcmprotobuf.stochastics.translators.StochasticsPluginDataTranslator;
 import plugins.stochastics.input.StochasticsPluginDataInput;
 
@@ -13,6 +14,7 @@ public class StochasticsPluginBundle {
                 .setInputObjectType(StochasticsPluginDataInput.getDefaultInstance())
                 .setInitializer((translatorContext) -> {
                     translatorContext.addTranslator(new StochasticsPluginDataTranslator());
+                    translatorContext.addTranslator(new RandomGeneratorIdTranslator());
                 })
                 .build();
     }

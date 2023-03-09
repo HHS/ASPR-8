@@ -1,15 +1,19 @@
 package gov.hhs.aspr.gcm.gcmprotobuf.stochastics;
 
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import gov.hhs.aspr.gcm.gcmprotobuf.core.TranslatorController;
+import gov.hhs.aspr.gcm.gcmprotobuf.stochastics.translators.TestRandomGeneratorIdTranslator;
 import nucleus.PluginData;
 import plugins.stochastics.StochasticsPluginData;
 import plugins.stochastics.support.RandomNumberGeneratorId;
+import plugins.stochastics.testsupport.TestRandomGeneratorId;
 
 public class App {
 
@@ -36,13 +40,40 @@ public class App {
         return target;
     }
 
+    private static boolean printNotSame() {
+        System.out.println("Datas are not the same");
+        return false;
+    }
+
+    private static void checkSame(StochasticsPluginData actualPluginData) {
+
+        boolean isSame = true;
+
+        if(actualPluginData.getSeed() != 524805676405822016L) {
+            isSame = printNotSame();
+        }
+
+        Set<TestRandomGeneratorId> expectedRandomGeneratorIds = EnumSet.allOf(TestRandomGeneratorId.class);
+        // assertFalse(expectedRandomGeneratorIds.isEmpty());
+
+        Set<RandomNumberGeneratorId> actualsGeneratorIds = actualPluginData.getRandomNumberGeneratorIds();
+
+        if(!expectedRandomGeneratorIds.equals(actualsGeneratorIds)) {
+            isSame = printNotSame();
+        }
+
+        if (isSame) {
+            System.out.println("Datas are the same");
+        }
+    }
     public static void main(String[] args) {
 
-        String inputFileName = "./stochastics-plugin/src/main/resources/json/testJson1.json";
-        String outputFileName = "./stochastics-plugin/src/main/resources/json/output/testJson1Output.json";
+        String inputFileName = "./stochastics-plugin/src/main/resources/json/testJson2.json";
+        String outputFileName = "./stochastics-plugin/src/main/resources/json/output/testJson2Output.json";
 
         TranslatorController translatorController = TranslatorController.builder()
                 .addBundle(StochasticsPluginBundle.getPluginBundle(inputFileName, outputFileName))
+                .addTranslator(new TestRandomGeneratorIdTranslator())
                 .build()
                 .init();
 
@@ -50,12 +81,7 @@ public class App {
 
         StochasticsPluginData stochasticsPluginData = (StochasticsPluginData) pluginDatas.get(0);
 
-        System.out.println(stochasticsPluginData.getSeed());
-        System.out.println(stochasticsPluginData.getSeed() == 524805676405822016L);
-
-        for (RandomNumberGeneratorId randomNumberGeneratorId : stochasticsPluginData.getRandomNumberGeneratorIds()) {
-            System.out.println(randomNumberGeneratorId);
-        }
+        checkSame(stochasticsPluginData);
 
         translatorController.writeOutput();
     }

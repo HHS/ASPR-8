@@ -1,10 +1,52 @@
 {
-    "vaccine1": {
-        "1": {
-            "location": {
-                "x": 2
-            },
-            "direction": 4
-        }
-    }
-}
+    "seed": "524805676405822016",
+    "randomNumberGeneratorIds": [{
+      "randomNumberGeneratorId": {
+        "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
+        "enumTypeUrl": "gov.hhs.aspr.gcm.TestRandomGeneratorIdInput",
+        "value": "DASHER"
+      }
+    }, {
+      "randomNumberGeneratorId": {
+        "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
+        "enumTypeUrl": "gov.hhs.aspr.gcm.TestRandomGeneratorIdInput",
+        "value": "DANCER"
+      }
+    }, {
+      "randomNumberGeneratorId": {
+        "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
+        "enumTypeUrl": "gov.hhs.aspr.gcm.TestRandomGeneratorIdInput",
+        "value": "PRANCER"
+      }
+    }, {
+      "randomNumberGeneratorId": {
+        "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
+        "enumTypeUrl": "gov.hhs.aspr.gcm.TestRandomGeneratorIdInput",
+        "value": "VIXEN"
+      }
+    }, {
+      "randomNumberGeneratorId": {
+        "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
+        "enumTypeUrl": "gov.hhs.aspr.gcm.TestRandomGeneratorIdInput",
+        "value": "COMET"
+      }
+    }, {
+      "randomNumberGeneratorId": {
+        "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
+        "enumTypeUrl": "gov.hhs.aspr.gcm.TestRandomGeneratorIdInput",
+        "value": "CUPID"
+      }
+    }, {
+      "randomNumberGeneratorId": {
+        "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
+        "enumTypeUrl": "gov.hhs.aspr.gcm.TestRandomGeneratorIdInput",
+        "value": "DONNER"
+      }
+    }, {
+      "randomNumberGeneratorId": {
+        "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
+        "enumTypeUrl": "gov.hhs.aspr.gcm.TestRandomGeneratorIdInput",
+        "value": "BLITZEN"
+      }
+    }]
+  }
