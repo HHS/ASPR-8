@@ -1,33 +1,40 @@
 package gov.hhs.aspr.gcm.gcmprotobuf.plugins.groups.translators;
 
-import com.google.protobuf.Descriptors.Descriptor;
+import com.google.protobuf.Descriptors.EnumDescriptor;
+import com.google.protobuf.ProtocolMessageEnum;
 
-import gov.hhs.aspr.gcm.gcmprotobuf.core.AbstractTranslator;
-import plugins.groups.input.GroupPropertyIdInput;
+import gov.hhs.aspr.gcm.gcmprotobuf.core.AbstractEnumTranslator;
+import plugins.groups.input.TestGroupPropertyIdInput;
 import plugins.groups.testsupport.TestGroupPropertyId;
 
-public class TestGroupPropertyIdTranslator extends AbstractTranslator<GroupPropertyIdInput, TestGroupPropertyId> {
+public class TestGroupPropertyIdTranslator
+        extends AbstractEnumTranslator<TestGroupPropertyIdInput, TestGroupPropertyId> {
 
     @Override
-    protected TestGroupPropertyId convertInputObject(GroupPropertyIdInput inputObject) {
-        return TestGroupPropertyId
-                .valueOf(this.translator.getObjectFromAny(inputObject.getGroupPropertyId()).toString());
+    protected TestGroupPropertyId convertInputObject(TestGroupPropertyIdInput inputObject) {
+        return TestGroupPropertyId.valueOf(inputObject.name());
     }
 
     @Override
-    protected GroupPropertyIdInput convertSimObject(TestGroupPropertyId simObject) {
-        return GroupPropertyIdInput.newBuilder().setGroupPropertyId(this.translator.getAnyFromObject(simObject.name()))
-                .build();
+    protected TestGroupPropertyIdInput convertSimObject(TestGroupPropertyId simObject) {
+        return TestGroupPropertyIdInput.valueOf(simObject.name());
     }
 
     @Override
-    public Descriptor getDescriptorForInputObject() {
-        return GroupPropertyIdInput.getDescriptor();
+    public EnumDescriptor getDescriptorForInputObject() {
+        return TestGroupPropertyIdInput.getDescriptor();
     }
 
     @Override
-    public GroupPropertyIdInput getDefaultInstanceForInputObject() {
-        return GroupPropertyIdInput.getDefaultInstance();
+    public EnumInstance getEnumInstance() {
+        return new EnumInstance() {
+
+            @Override
+            public ProtocolMessageEnum getFromString(String string) {
+                return TestGroupPropertyIdInput.valueOf(string);
+            }
+
+        };
     }
 
     @Override
@@ -36,8 +43,8 @@ public class TestGroupPropertyIdTranslator extends AbstractTranslator<GroupPrope
     }
 
     @Override
-    public Class<GroupPropertyIdInput> getInputObjectClass() {
-        return GroupPropertyIdInput.class;
+    public Class<TestGroupPropertyIdInput> getInputObjectClass() {
+        return TestGroupPropertyIdInput.class;
     }
 
 }

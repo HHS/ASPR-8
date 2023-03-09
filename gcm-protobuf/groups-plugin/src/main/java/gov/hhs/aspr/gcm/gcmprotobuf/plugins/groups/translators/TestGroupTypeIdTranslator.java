@@ -1,31 +1,39 @@
 package gov.hhs.aspr.gcm.gcmprotobuf.plugins.groups.translators;
 
-import com.google.protobuf.Descriptors.Descriptor;
+import com.google.protobuf.Descriptors.EnumDescriptor;
+import com.google.protobuf.ProtocolMessageEnum;
 
-import gov.hhs.aspr.gcm.gcmprotobuf.core.AbstractTranslator;
-import plugins.groups.input.GroupTypeIdInput;
+import gov.hhs.aspr.gcm.gcmprotobuf.core.AbstractEnumTranslator;
+import plugins.groups.input.TestGroupTypeIdInput;
 import plugins.groups.testsupport.TestGroupTypeId;
 
-public class TestGroupTypeIdTranslator extends AbstractTranslator<GroupTypeIdInput, TestGroupTypeId> {
+public class TestGroupTypeIdTranslator extends AbstractEnumTranslator<TestGroupTypeIdInput, TestGroupTypeId> {
 
     @Override
-    protected TestGroupTypeId convertInputObject(GroupTypeIdInput inputObject) {
-        return TestGroupTypeId.valueOf(this.translator.getObjectFromAny(inputObject.getGroupTypeId()).toString());
+    protected TestGroupTypeId convertInputObject(TestGroupTypeIdInput inputObject) {
+        return TestGroupTypeId.valueOf(inputObject.name());
     }
 
     @Override
-    protected GroupTypeIdInput convertSimObject(TestGroupTypeId simObject) {
-        return GroupTypeIdInput.newBuilder().setGroupTypeId(this.translator.getAnyFromObject(simObject.name())).build();
+    protected TestGroupTypeIdInput convertSimObject(TestGroupTypeId simObject) {
+        return TestGroupTypeIdInput.valueOf(simObject.name());
     }
 
     @Override
-    public Descriptor getDescriptorForInputObject() {
-        return GroupTypeIdInput.getDescriptor();
+    public EnumDescriptor getDescriptorForInputObject() {
+        return TestGroupTypeIdInput.getDescriptor();
     }
 
     @Override
-    public GroupTypeIdInput getDefaultInstanceForInputObject() {
-        return GroupTypeIdInput.getDefaultInstance();
+    public EnumInstance getEnumInstance() {
+        return new EnumInstance() {
+
+            @Override
+            public ProtocolMessageEnum getFromString(String string) {
+                return TestGroupTypeIdInput.valueOf(string);
+            }
+            
+        };
     }
 
     @Override
@@ -34,8 +42,8 @@ public class TestGroupTypeIdTranslator extends AbstractTranslator<GroupTypeIdInp
     }
 
     @Override
-    public Class<GroupTypeIdInput> getInputObjectClass() {
-        return GroupTypeIdInput.class;
+    public Class<TestGroupTypeIdInput> getInputObjectClass() {
+        return TestGroupTypeIdInput.class;
     }
 
 }

@@ -1,10 +1,10 @@
 package gov.hhs.aspr.gcm.gcmprotobuf.core;
 
+import com.google.protobuf.Descriptors.EnumDescriptor;
 import com.google.protobuf.Message;
 import com.google.protobuf.ProtocolMessageEnum;
-import com.google.protobuf.Descriptors.Descriptor;
 
-public abstract class AbstractTranslator<I extends Message, S> implements ITranslator {
+public abstract class AbstractEnumTranslator<I extends ProtocolMessageEnum, S> implements ITranslator {
     protected MasterTranslator translator;
     private boolean initialized = false;
 
@@ -13,44 +13,48 @@ public abstract class AbstractTranslator<I extends Message, S> implements ITrans
         this.initialized = true;
     }
 
+    public interface EnumInstance {
+        ProtocolMessageEnum getFromString(String string);
+    }
+
     protected void checkInit() {
         if (!this.initialized) {
             throw new RuntimeException("Translator not initialized. Did you forget to call init()?");
         }
     }
 
-    @SuppressWarnings("unchecked")
-    public S convert(Message message) {
-        checkInit();
-        if (message.getDescriptorForType() != this.getDescriptorForInputObject()) {
-            throw new RuntimeException("Message is not a " + this.getDescriptorForInputObject().getName());
-        }
-
-        return this.convertInputObject((I) message);
+    public <T> T convert(Message message) {
+        throw new RuntimeException("Tried to convert an message on a enummessage translator");
     }
-
+    
     @SuppressWarnings("unchecked")
     public I convert(Object obj) {
         checkInit();
-
+        
         if (!(this.getSimObjectClass().isAssignableFrom(obj.getClass()))) {
             throw new RuntimeException("Object is not a " + this.getSimObjectClass().getName());
         }
-
+        
         return this.convertSimObject((S) obj);
     }
+    
+    @SuppressWarnings("unchecked")
+    public S convert(ProtocolMessageEnum protocolMessageEnum) {
+        checkInit();
+        if (protocolMessageEnum.getDescriptorForType() != this.getDescriptorForInputObject()) {
+            throw new RuntimeException("Message is not a " + this.getDescriptorForInputObject().getName());
+        }
 
-    public <T> T convert(ProtocolMessageEnum protocolMessageEnum) {
-        throw new RuntimeException("Tried to convert an enummessage on a message translator");
+        return this.convertInputObject((I) protocolMessageEnum);
     }
 
     protected abstract S convertInputObject(I inputObject);
 
     protected abstract I convertSimObject(S simObject);
 
-    public abstract Descriptor getDescriptorForInputObject();
+    public abstract EnumDescriptor getDescriptorForInputObject();
 
-    public abstract I getDefaultInstanceForInputObject();
+    public abstract EnumInstance getEnumInstance();
 
     public abstract Class<S> getSimObjectClass();
 

@@ -7,28 +7,16 @@ import plugins.groups.input.GroupTypeIdInput;
 import plugins.groups.support.GroupTypeId;
 
 public class GroupTypeIdTranslator extends AbstractTranslator<GroupTypeIdInput, GroupTypeId> {
-    public class SimpleGroupTypeId implements GroupTypeId {
-        Object value;
-
-        public SimpleGroupTypeId(Object value) {
-            this.value = value;
-        }
-
-        public Object getValue() {
-            return this.value;
-        }
-    }
 
     @Override
     protected GroupTypeId convertInputObject(GroupTypeIdInput inputObject) {
-        return new SimpleGroupTypeId(this.translator.getObjectFromAny(inputObject.getGroupTypeId()));
+        return (GroupTypeId) this.translator.getObjectFromAny(inputObject.getGroupTypeId());
     }
 
     @Override
     protected GroupTypeIdInput convertSimObject(GroupTypeId simObject) {
-        SimpleGroupTypeId simpleGroupTypeId = (SimpleGroupTypeId) simObject;
         return GroupTypeIdInput.newBuilder()
-                .setGroupTypeId(this.translator.getAnyFromObject(simpleGroupTypeId.getValue())).build();
+                .setGroupTypeId(this.translator.getAnyFromObject(simObject)).build();
     }
 
     @Override

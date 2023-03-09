@@ -46,8 +46,8 @@ public class App {
         TranslatorController translatorController = TranslatorController.builder()
                 .addBundle(PropertiesPluginBundle.getPluginBundle(inputFileName, outputFileName,
                         PropertyValueMapInput.getDefaultInstance()))
-                .addCustomTranslator(new TestMessageTranslator())
-                .addCustomTranslator(new Layer1Translator())
+                .addTranslator(new TestMessageTranslator())
+                .addTranslator(new Layer1Translator())
                 .build()
                 .init();
 

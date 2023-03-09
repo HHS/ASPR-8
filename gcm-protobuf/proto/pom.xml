@@ -34,8 +34,11 @@
                                     <directory>${project.basedir}/src</directory>
                                     <includes>
                                         <include>gov/hhs/aspr/gcm/properties/*.proto</include>
-                                        <include>gov/hhs/aspr/gcm/people/*.proto</include>
-                                        <include>gov/hhs/aspr/gcm/groups/*.proto</include>
+                                        <include>gov/hhs/aspr/gcm/core/*.proto</include>
+                                        <include>
+                                            gov/hhs/aspr/gcm/people/*.proto</include>
+                                        <include>
+                                            gov/hhs/aspr/gcm/groups/*.proto</include>
                                         <include>
                                             gov/hhs/aspr/gcm/globalproperties/*.proto</include>
                                         <include>

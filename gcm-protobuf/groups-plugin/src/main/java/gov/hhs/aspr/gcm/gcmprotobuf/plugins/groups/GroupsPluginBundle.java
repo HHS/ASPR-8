@@ -3,7 +3,9 @@ package gov.hhs.aspr.gcm.gcmprotobuf.plugins.groups;
 import gov.hhs.aspr.gcm.gcmprotobuf.core.PluginBundle;
 import gov.hhs.aspr.gcm.gcmprotobuf.people.PeoplePluginBundleId;
 import gov.hhs.aspr.gcm.gcmprotobuf.plugins.groups.translators.GroupIdTranslator;
+import gov.hhs.aspr.gcm.gcmprotobuf.plugins.groups.translators.GroupPropertyIdTranslator;
 import gov.hhs.aspr.gcm.gcmprotobuf.plugins.groups.translators.GroupTranslator;
+import gov.hhs.aspr.gcm.gcmprotobuf.plugins.groups.translators.GroupTypeIdTranslator;
 import gov.hhs.aspr.gcm.gcmprotobuf.plugins.groups.translators.GroupsPluginDataTranslator;
 import gov.hhs.aspr.gcm.gcmprotobuf.plugins.groups.translators.TestGroupPropertyIdTranslator;
 import gov.hhs.aspr.gcm.gcmprotobuf.plugins.groups.translators.TestGroupTypeIdTranslator;
@@ -27,7 +29,8 @@ public class GroupsPluginBundle {
                 .setInitializer((translatorContext) -> {
                     translatorContext.addTranslator(new GroupsPluginDataTranslator());
                     translatorContext.addTranslator(new GroupIdTranslator());
-                    // translatorContext.addTranslator(new GroupTypeIdTranslator());
+                    translatorContext.addTranslator(new GroupTypeIdTranslator());
+                    translatorContext.addTranslator(new GroupPropertyIdTranslator());
                     translatorContext.addTranslator(new GroupTranslator());
                     translatorContext.addTranslator(new TestGroupPropertyIdTranslator());
                     translatorContext.addTranslator(new TestGroupTypeIdTranslator());

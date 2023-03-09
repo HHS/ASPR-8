@@ -7,6 +7,7 @@ import gov.hhs.aspr.gcm.gcmprotobuf.plugins.groups.simobjects.Group;
 import plugins.groups.input.GroupIdInput;
 import plugins.groups.input.GroupInput;
 import plugins.groups.input.GroupTypeIdInput;
+import plugins.groups.support.GroupTypeId;
 
 public class GroupTranslator extends AbstractTranslator<GroupInput, Group> {
 
@@ -25,7 +26,8 @@ public class GroupTranslator extends AbstractTranslator<GroupInput, Group> {
         GroupInput.Builder builder = GroupInput.newBuilder();
 
         builder.setGroupId((GroupIdInput) this.translator.convertSimObject(simObject.getGroupId()))
-                .setGroupTypeId((GroupTypeIdInput) this.translator.convertSimObject(simObject.getGroupTypeId()));
+                .setGroupTypeId((GroupTypeIdInput) this.translator.convertSimObject(simObject.getGroupTypeId(), 
+                        GroupTypeId.class));
 
         return builder.build();
     }

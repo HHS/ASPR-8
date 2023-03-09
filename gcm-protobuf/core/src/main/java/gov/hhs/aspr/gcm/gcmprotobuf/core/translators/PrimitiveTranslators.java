@@ -6,6 +6,7 @@ import java.util.Map;
 import com.google.protobuf.Descriptors.Descriptor;
 
 import gov.hhs.aspr.gcm.gcmprotobuf.core.ITranslator;
+import gov.hhs.aspr.gcm.gcmprotobuf.core.input.WrapperEnumValue;
 
 import com.google.protobuf.Message;
 
@@ -23,8 +24,7 @@ public class PrimitiveTranslators {
     public static Map<Descriptor, Message> getPrimitiveDescriptorToMessageMap() {
         Map<Descriptor, Message> map = new LinkedHashMap<>();
 
-        map.put(BOOLEAN_TRANSLATOR.getDescriptorForInputObject(),
-                BOOLEAN_TRANSLATOR.getDefaultInstanceForInputObject());
+        map.put(BOOLEAN_TRANSLATOR.getDescriptorForInputObject(),BOOLEAN_TRANSLATOR.getDefaultInstanceForInputObject());
         map.put(INT32_TRANSLATOR.getDescriptorForInputObject(), INT32_TRANSLATOR.getDefaultInstanceForInputObject());
         map.put(UINT32_TRANSLATOR.getDescriptorForInputObject(), UINT32_TRANSLATOR.getDefaultInstanceForInputObject());
         map.put(INT64_TRANSLATOR.getDescriptorForInputObject(), INT64_TRANSLATOR.getDefaultInstanceForInputObject());
@@ -32,26 +32,27 @@ public class PrimitiveTranslators {
         map.put(STRING_TRANSLATOR.getDescriptorForInputObject(), STRING_TRANSLATOR.getDefaultInstanceForInputObject());
         map.put(FLOAT_TRANSLATOR.getDescriptorForInputObject(), FLOAT_TRANSLATOR.getDefaultInstanceForInputObject());
         map.put(DOUBLE_TRANSLATOR.getDescriptorForInputObject(), DOUBLE_TRANSLATOR.getDefaultInstanceForInputObject());
+        map.put(WrapperEnumValue.getDescriptor(), WrapperEnumValue.getDefaultInstance());
 
         return map;
     }
 
-    public static Map<Descriptor, ITranslator> getPrimitiveDescriptorToTranslatorMap() {
-        Map<Descriptor, ITranslator> map = new LinkedHashMap<>();
+    public static Map<Class<?>, ITranslator> getPrimitiveInputTranslatorMap() {
+        Map<Class<?>, ITranslator> map = new LinkedHashMap<>();
 
-        map.put(BOOLEAN_TRANSLATOR.getDescriptorForInputObject(), BOOLEAN_TRANSLATOR);
-        map.put(INT32_TRANSLATOR.getDescriptorForInputObject(), INT32_TRANSLATOR);
-        map.put(UINT32_TRANSLATOR.getDescriptorForInputObject(), UINT32_TRANSLATOR);
-        map.put(INT64_TRANSLATOR.getDescriptorForInputObject(), INT64_TRANSLATOR);
-        map.put(UINT64_TRANSLATOR.getDescriptorForInputObject(), UINT64_TRANSLATOR);
-        map.put(STRING_TRANSLATOR.getDescriptorForInputObject(), STRING_TRANSLATOR);
-        map.put(FLOAT_TRANSLATOR.getDescriptorForInputObject(), FLOAT_TRANSLATOR);
-        map.put(DOUBLE_TRANSLATOR.getDescriptorForInputObject(), DOUBLE_TRANSLATOR);
+        map.put(BOOLEAN_TRANSLATOR.getInputObjectClass(), BOOLEAN_TRANSLATOR);
+        map.put(INT32_TRANSLATOR.getInputObjectClass(), INT32_TRANSLATOR);
+        map.put(UINT32_TRANSLATOR.getInputObjectClass(), UINT32_TRANSLATOR);
+        map.put(INT64_TRANSLATOR.getInputObjectClass(), INT64_TRANSLATOR);
+        map.put(UINT64_TRANSLATOR.getInputObjectClass(), UINT64_TRANSLATOR);
+        map.put(STRING_TRANSLATOR.getInputObjectClass(), STRING_TRANSLATOR);
+        map.put(FLOAT_TRANSLATOR.getInputObjectClass(), FLOAT_TRANSLATOR);
+        map.put(DOUBLE_TRANSLATOR.getInputObjectClass(), DOUBLE_TRANSLATOR);
 
         return map;
     }
 
-    public static Map<Class<?>, ITranslator> getPrimitiveObjectToTranslatorMap() {
+    public static Map<Class<?>, ITranslator> getPrimitiveObjectTranslatorMap() {
         Map<Class<?>, ITranslator> map = new LinkedHashMap<>();
 
         // no java version of unsigned int nor unsigned long

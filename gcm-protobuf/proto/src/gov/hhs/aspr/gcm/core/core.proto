@@ -1,0 +1,13 @@
+syntax = "proto3";
+package gov.hhs.aspr.gcm;
+
+option java_multiple_files = true;
+option java_package = "gov.hhs.aspr.gcm.gcmprotobuf.core.input";
+
+
+import "google/protobuf/any.proto";
+
+message WrapperEnumValue {
+    string enumTypeUrl = 1;
+    string value = 2;
+}

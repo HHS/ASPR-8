@@ -1,6 +1,7 @@
 package gov.hhs.aspr.gcm.gcmprotobuf.core;
 
 import com.google.protobuf.Message;
+import com.google.protobuf.ProtocolMessageEnum;
 import com.google.protobuf.Descriptors.FieldDescriptor;
 
 public class TranslatorContext {
@@ -12,6 +13,10 @@ public class TranslatorContext {
     }
 
     public <I extends Message, S> void addTranslator(AbstractTranslator<I, S> translator) {
+        this.translatorController.addTranslator(translator);
+    }
+
+    public <I extends ProtocolMessageEnum, S> void addTranslator(AbstractEnumTranslator<I, S> translator) {
         this.translatorController.addTranslator(translator);
     }
 

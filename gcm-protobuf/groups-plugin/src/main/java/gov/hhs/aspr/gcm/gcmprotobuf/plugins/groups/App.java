@@ -20,6 +20,7 @@ import plugins.groups.GroupsPluginData;
 import plugins.groups.support.GroupId;
 import plugins.groups.support.GroupPropertyValue;
 import plugins.groups.support.GroupTypeId;
+import plugins.groups.testsupport.GroupsTestPluginFactory;
 import plugins.groups.testsupport.TestGroupPropertyId;
 import plugins.groups.testsupport.TestGroupTypeId;
 import plugins.people.support.PersonId;
@@ -56,22 +57,7 @@ public class App {
         return false;
     }
 
-    public static void main(String[] args) {
-
-        String inputFileName = "./groups-plugin/src/main/resources/json/testJson1.json";
-        String outputFileName = "./groups-plugin/src/main/resources/json/output/testJson1Output.json";
-
-        TranslatorController translatorController = TranslatorController.builder()
-                .addBundle(GroupsPluginBundle.getPluginBundle(inputFileName, outputFileName))
-                .addBundle(PropertiesPluginBundle.getPluginBundle())
-                .addBundle(PeoplePluginBundle.getPluginBundle())
-                .build()
-                .init();
-
-        List<PluginData> pluginDatas = translatorController.readInput().getPluginDatas();
-
-        GroupsPluginData actualPluginData = (GroupsPluginData) pluginDatas.get(0);
-
+    private static void checkSame(GroupsPluginData actualPluginData) {
         boolean isSame = true;
 
         List<PersonId> people = new ArrayList<>();
@@ -172,9 +158,37 @@ public class App {
             isSame = printNotSame();
         }
 
-        if(isSame) {
+        if (isSame) {
             System.out.println("Datas are the same");
         }
+    }
+
+    public static void main(String[] args) {
+
+        String inputFileName = "./groups-plugin/src/main/resources/json/testJson2.json";
+        String outputFileName = "./groups-plugin/src/main/resources/json/output/testJson2Output.json";
+
+        TranslatorController translatorController = TranslatorController.builder()
+                .addBundle(GroupsPluginBundle.getPluginBundle(inputFileName, outputFileName))
+                .addBundle(PropertiesPluginBundle.getPluginBundle())
+                .addBundle(PeoplePluginBundle.getPluginBundle())
+                .build()
+                .init();
+
+        List<PluginData> pluginDatas = translatorController.readInput().getPluginDatas();
+
+        GroupsPluginData actualPluginData = (GroupsPluginData) pluginDatas.get(0);
+
+        List<PersonId> people = new ArrayList<>();
+
+        for (int i = 0; i < 100; i++) {
+            people.add(new PersonId(i));
+        }
+
+        checkSame(actualPluginData);
+
+        // translatorController.writeOutput(GroupsTestPluginFactory.getStandardGroupsPluginData(5, 100, people, 
+        //         524805676405822016L));
 
         translatorController.writeOutput();
     }

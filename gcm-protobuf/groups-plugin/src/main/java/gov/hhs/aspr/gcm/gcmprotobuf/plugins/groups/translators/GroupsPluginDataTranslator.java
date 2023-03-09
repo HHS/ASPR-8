@@ -97,7 +97,7 @@ public class GroupsPluginDataTranslator extends AbstractTranslator<GroupsPluginD
 
         // add group type ids
         for (GroupTypeId groupTypeId : simObject.getGroupTypeIds()) {
-            GroupTypeIdInput groupTypeIdInput = this.translator.convertSimObject(groupTypeId);
+            GroupTypeIdInput groupTypeIdInput = this.translator.convertSimObject(groupTypeId, GroupTypeId.class);
             builder.addGroupTypeIds(groupTypeIdInput);
         }
 
@@ -118,7 +118,7 @@ public class GroupsPluginDataTranslator extends AbstractTranslator<GroupsPluginD
                     .newBuilder();
 
             groupPropDefMapInputBuilder
-                    .setGroupTypeId((GroupTypeIdInput) this.translator.convertSimObject(groupTypeId));
+                    .setGroupTypeId((GroupTypeIdInput) this.translator.convertSimObject(groupTypeId, GroupTypeId.class));
 
             Set<GroupPropertyId> groupPropertyIds = simObject.getGroupPropertyIds(groupTypeId);
 
@@ -129,7 +129,7 @@ public class GroupsPluginDataTranslator extends AbstractTranslator<GroupsPluginD
                 PropertyDefinitionMapInput propertyDefInput = PropertyDefinitionMapInput.newBuilder()
                         .setPropertyDefinition(
                                 (PropertyDefinitionInput) this.translator.convertSimObject(propertyDefinition))
-                        .setPropertyId(this.translator.getAnyFromObject(groupPropertyId))
+                        .setPropertyId(this.translator.getAnyFromObject(groupPropertyId, GroupPropertyId.class))
                         .build();
 
                 groupPropDefMapInputBuilder.addPropertyDefinitions(propertyDefInput);

@@ -12,6 +12,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.google.protobuf.Message;
+import com.google.protobuf.ProtocolMessageEnum;
 import com.google.protobuf.Descriptors.FieldDescriptor;
 
 import nucleus.PluginData;
@@ -57,8 +58,8 @@ public class TranslatorController {
             return this;
         }
 
-        public <I extends Message, S> Builder addCustomTranslator(AbstractTranslator<I, S> customTranslator) {
-            this.data.masterTranslatorBuilder.addCustomTranslator(customTranslator);
+        public <I extends Message, S> Builder addTranslator(AbstractTranslator<I, S> translator) {
+            this.data.masterTranslatorBuilder.addTranslator(translator);
             return this;
         }
 
@@ -79,7 +80,13 @@ public class TranslatorController {
     }
 
     protected <I extends Message, S> void addTranslator(AbstractTranslator<I, S> translator) {
-        this.data.masterTranslatorBuilder.addCustomTranslator(translator);
+        this.data.masterTranslatorBuilder.addTranslator(translator);
+
+        this.simObjectClassToPluginBundleMap.put(translator.getSimObjectClass(), this.focalBundle);
+    }
+
+    protected <I extends ProtocolMessageEnum, S> void addTranslator(AbstractEnumTranslator<I, S> translator) {
+        this.data.masterTranslatorBuilder.addTranslator(translator);
 
         this.simObjectClassToPluginBundleMap.put(translator.getSimObjectClass(), this.focalBundle);
     }
