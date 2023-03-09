@@ -63,6 +63,11 @@ public class TranslatorController {
             return this;
         }
 
+        public <I extends ProtocolMessageEnum, S> Builder addTranslator(AbstractEnumTranslator<I, S> translator) {
+            this.data.masterTranslatorBuilder.addTranslator(translator);
+            return this;
+        }
+
         public Builder setIgnoringUnknownFields(boolean ignoringUnknownFields) {
             this.data.masterTranslatorBuilder.setIgnoringUnknownFields(ignoringUnknownFields);
             return this;

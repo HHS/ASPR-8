@@ -14,13 +14,15 @@ import com.google.gson.JsonObject;
 
 import gov.hhs.aspr.gcm.gcmprotobuf.core.TranslatorController;
 import gov.hhs.aspr.gcm.gcmprotobuf.people.PeoplePluginBundle;
+import gov.hhs.aspr.gcm.gcmprotobuf.plugins.groups.translators.SimpleGroupTypeIdTranslator;
+import gov.hhs.aspr.gcm.gcmprotobuf.plugins.groups.translators.TestGroupPropertyIdTranslator;
+import gov.hhs.aspr.gcm.gcmprotobuf.plugins.groups.translators.TestGroupTypeIdTranslator;
 import gov.hhs.aspr.gcm.gcmprotobuf.properties.PropertiesPluginBundle;
 import nucleus.PluginData;
 import plugins.groups.GroupsPluginData;
 import plugins.groups.support.GroupId;
 import plugins.groups.support.GroupPropertyValue;
 import plugins.groups.support.GroupTypeId;
-import plugins.groups.testsupport.GroupsTestPluginFactory;
 import plugins.groups.testsupport.TestGroupPropertyId;
 import plugins.groups.testsupport.TestGroupTypeId;
 import plugins.people.support.PersonId;
@@ -172,6 +174,9 @@ public class App {
                 .addBundle(GroupsPluginBundle.getPluginBundle(inputFileName, outputFileName))
                 .addBundle(PropertiesPluginBundle.getPluginBundle())
                 .addBundle(PeoplePluginBundle.getPluginBundle())
+                .addTranslator(new TestGroupTypeIdTranslator())
+                .addTranslator(new TestGroupPropertyIdTranslator())
+                .addTranslator(new SimpleGroupTypeIdTranslator())
                 .build()
                 .init();
 
