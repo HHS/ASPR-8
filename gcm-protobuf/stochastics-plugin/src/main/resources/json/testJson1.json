@@ -1,0 +1,13 @@
+{
+  "seed": "524805676405822016",
+  "randomNumberGeneratorIds": [{
+    "@type": "type.googleapis.com/google.protobuf.StringValue",
+    "value": "TestGenerator1"
+  }, {
+    "@type": "type.googleapis.com/google.protobuf.StringValue",
+    "value": "TestGenerator2"
+  }, {
+    "@type": "type.googleapis.com/google.protobuf.StringValue",
+    "value": "TestGenerator3"
+  }]
+}

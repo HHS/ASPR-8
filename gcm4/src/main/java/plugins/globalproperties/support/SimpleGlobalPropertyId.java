@@ -24,6 +24,10 @@ public final class SimpleGlobalPropertyId implements GlobalPropertyId {
 		this.value = value;
 	}
 
+	public Object getValue() {
+		return this.value;
+	}
+
 	/**
 	 * Standard implementation
 	 */

@@ -1,0 +1,10 @@
+{
+    "vaccine1": {
+        "1": {
+            "location": {
+                "x": 2
+            },
+            "direction": 4
+        }
+    }
+}
