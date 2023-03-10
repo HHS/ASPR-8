@@ -10,12 +10,12 @@ public class PersonIdTranslator extends AbstractTranslator<PersonIdInput, Person
 
     @Override
     protected PersonId convertInputObject(PersonIdInput inputObject) {
-        return new PersonId(inputObject.getPersonId());
+        return new PersonId(inputObject.getId());
     }
 
     @Override
     protected PersonIdInput convertSimObject(PersonId simObject) {
-        return PersonIdInput.newBuilder().setPersonId(simObject.getValue()).build();
+        return PersonIdInput.newBuilder().setId(simObject.getValue()).build();
     }
 
     @Override

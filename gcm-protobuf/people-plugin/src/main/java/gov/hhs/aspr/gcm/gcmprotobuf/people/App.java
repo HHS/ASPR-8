@@ -76,8 +76,8 @@ public class App {
 
     public static void main(String[] args) {
 
-        String inputFileName = "./people-plugin/src/main/resources/json/testJson2.json";
-        String outputFileName = "./people-plugin/src/main/resources/json/output/testJson2Output.json";
+        String inputFileName = "./people-plugin/src/main/resources/json/input.json";
+        String outputFileName = "./people-plugin/src/main/resources/json/output/output.json";
 
         TranslatorController translatorController = TranslatorController.builder()
                 .addBundle(PeoplePluginBundle.getPluginBundle(inputFileName, outputFileName))
