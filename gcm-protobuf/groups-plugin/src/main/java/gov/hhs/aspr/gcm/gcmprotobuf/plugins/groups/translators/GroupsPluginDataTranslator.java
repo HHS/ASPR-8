@@ -6,9 +6,6 @@ import java.util.Set;
 import com.google.protobuf.Descriptors.Descriptor;
 
 import gov.hhs.aspr.gcm.gcmprotobuf.core.AbstractTranslator;
-import gov.hhs.aspr.gcm.gcmprotobuf.plugins.groups.simobjects.Group;
-import gov.hhs.aspr.gcm.gcmprotobuf.properties.simobjects.PropertyDefinitionMap;
-import gov.hhs.aspr.gcm.gcmprotobuf.properties.simobjects.PropertyValueMap;
 import plugins.groups.GroupsPluginData;
 import plugins.groups.input.GroupIdInput;
 import plugins.groups.input.GroupInput;
@@ -55,11 +52,11 @@ public class GroupsPluginDataTranslator extends AbstractTranslator<GroupsPluginD
                     .convertInputObject(groupPropertyDefinitionMapInput.getGroupTypeId());
             for (PropertyDefinitionMapInput propertyDefinitionMapInput : groupPropertyDefinitionMapInput
                     .getPropertyDefinitionsList()) {
-                PropertyDefinitionMap propertyDefinitionMap = this.translator
-                        .convertInputObject(propertyDefinitionMapInput);
 
-                GroupPropertyId groupPropertyId = (GroupPropertyId) propertyDefinitionMap.getPropertyId();
-                PropertyDefinition propertyDefinition = propertyDefinitionMap.getPropertyDefinition();
+                GroupPropertyId groupPropertyId = this.translator
+                        .getObjectFromAny(propertyDefinitionMapInput.getPropertyId(), GroupPropertyId.class);
+                PropertyDefinition propertyDefinition = this.translator
+                        .convertInputObject(propertyDefinitionMapInput.getPropertyDefinition());
                 builder.defineGroupProperty(groupTypeId, groupPropertyId, propertyDefinition);
             }
         }
@@ -68,10 +65,10 @@ public class GroupsPluginDataTranslator extends AbstractTranslator<GroupsPluginD
         for (GroupPropertyValueMapInput groupPropertyValueMapInput : inputObject.getGroupPropertyValuesList()) {
             GroupId groupId = this.translator.convertInputObject(groupPropertyValueMapInput.getGroupId());
             for (PropertyValueMapInput propertyValueMapInput : groupPropertyValueMapInput.getPropertyValueMapList()) {
-                PropertyValueMap propertyValueMap = this.translator.convertInputObject(propertyValueMapInput);
 
-                GroupPropertyId groupPropertyId = (GroupPropertyId) propertyValueMap.getPropertyId();
-                Object propertyValue = propertyValueMap.getPropertyValue();
+                GroupPropertyId groupPropertyId = this.translator
+                        .getObjectFromAny(propertyValueMapInput.getPropertyId(), GroupPropertyId.class);
+                Object propertyValue = this.translator.getObjectFromAny(propertyValueMapInput.getPropertyValue());
 
                 builder.setGroupPropertyValue(groupId, groupPropertyId, propertyValue);
             }
@@ -103,12 +100,17 @@ public class GroupsPluginDataTranslator extends AbstractTranslator<GroupsPluginD
 
         // add groups
         for (GroupId groupId : simObject.getGroupIds()) {
-            Group group = new Group();
 
-            group.setGroupId(groupId);
-            group.setGroupTypeId(simObject.getGroupTypeId(groupId));
+            GroupIdInput groupIdInput = this.translator.convertSimObject(groupId);
+            GroupTypeIdInput groupTypeIdInput = this.translator.convertSimObject(simObject.getGroupTypeId(groupId),
+                    GroupTypeId.class);
 
-            builder.addGroups((GroupInput) this.translator.convertSimObject(group));
+            GroupInput groupInput = GroupInput.newBuilder()
+                    .setGroupId(groupIdInput)
+                    .setGroupTypeId(groupTypeIdInput)
+                    .build();
+
+            builder.addGroups(groupInput);
         }
 
         // add group type property definitions
@@ -117,8 +119,8 @@ public class GroupsPluginDataTranslator extends AbstractTranslator<GroupsPluginD
             GroupPropertyDefinitionMapInput.Builder groupPropDefMapInputBuilder = GroupPropertyDefinitionMapInput
                     .newBuilder();
 
-            groupPropDefMapInputBuilder
-                    .setGroupTypeId((GroupTypeIdInput) this.translator.convertSimObject(groupTypeId, GroupTypeId.class));
+            GroupTypeIdInput groupTypeIdInput = this.translator.convertSimObject(groupTypeId, GroupTypeId.class);
+            groupPropDefMapInputBuilder.setGroupTypeId(groupTypeIdInput);
 
             Set<GroupPropertyId> groupPropertyIds = simObject.getGroupPropertyIds(groupTypeId);
 
@@ -126,10 +128,12 @@ public class GroupsPluginDataTranslator extends AbstractTranslator<GroupsPluginD
                 PropertyDefinition propertyDefinition = simObject.getGroupPropertyDefinition(groupTypeId,
                         groupPropertyId);
 
+                PropertyDefinitionInput propertyDefinitionInput = this.translator.convertSimObject(propertyDefinition);
+
                 PropertyDefinitionMapInput propertyDefInput = PropertyDefinitionMapInput.newBuilder()
-                        .setPropertyDefinition(
-                                (PropertyDefinitionInput) this.translator.convertSimObject(propertyDefinition))
-                        .setPropertyId(this.translator.getAnyFromObject(groupPropertyId, GroupPropertyId.class))
+                        .setPropertyDefinition(propertyDefinitionInput)
+                        .setPropertyId(this.translator.getAnyFromObject(groupPropertyId,
+                                GroupPropertyId.class))
                         .build();
 
                 groupPropDefMapInputBuilder.addPropertyDefinitions(propertyDefInput);
@@ -141,20 +145,21 @@ public class GroupsPluginDataTranslator extends AbstractTranslator<GroupsPluginD
         for (GroupId groupId : simObject.getGroupIds()) {
             GroupPropertyValueMapInput.Builder groupPropValMapBuilder = GroupPropertyValueMapInput.newBuilder();
 
-            groupPropValMapBuilder.setGroupId((GroupIdInput) this.translator.convertSimObject(groupId));
+            GroupIdInput groupIdInput = this.translator.convertSimObject(groupId);
+            groupPropValMapBuilder.setGroupId(groupIdInput);
 
             List<GroupPropertyValue> groupPropertyValues = simObject.getGroupPropertyValues(groupId);
 
             for (GroupPropertyValue groupPropertyValue : groupPropertyValues) {
-                GroupPropertyId groupPropertyId = groupPropertyValue.groupPropertyId();
                 Object propertyValue = groupPropertyValue.value();
 
-                PropertyValueMap propertyValueMap = new PropertyValueMap();
-                propertyValueMap.setPropertyId(groupPropertyId);
-                propertyValueMap.setPropertyValue(propertyValue);
+                PropertyValueMapInput propertyValueMapInput = PropertyValueMapInput.newBuilder()
+                        .setPropertyValue(this.translator.getAnyFromObject(propertyValue))
+                        .setPropertyId(this.translator.getAnyFromObject(groupPropertyValue.groupPropertyId(),
+                                GroupPropertyId.class))
+                        .build();
 
-                groupPropValMapBuilder.addPropertyValueMap(
-                        (PropertyValueMapInput) this.translator.convertSimObject(propertyValueMap));
+                groupPropValMapBuilder.addPropertyValueMap(propertyValueMapInput);
             }
 
             builder.addGroupPropertyValues(groupPropValMapBuilder.build());
