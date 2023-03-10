@@ -42,8 +42,8 @@ public class App {
 
     public static void main(String[] args) {
 
-        String inputFileName = "./properties-plugin/src/main/resources/json/testJson1.json";
-        String outputFileName = "./properties-plugin/src/main/resources/json/output/testJson1Output.json";
+        String inputFileName = "./properties-plugin/src/main/resources/json/input.json";
+        String outputFileName = "./properties-plugin/src/main/resources/json/output/output.json";
 
         TranslatorController translatorController = TranslatorController.builder()
                 .addBundle(PropertiesPluginBundle.getPluginBundle(inputFileName, outputFileName,
