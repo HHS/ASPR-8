@@ -10,12 +10,12 @@ public class GlobalPropertyIdTranslator extends AbstractTranslator<GlobalPropert
 
     @Override
     protected GlobalPropertyId convertInputObject(GlobalPropertyIdInput inputObject) {
-        return this.translator.getObjectFromAny(inputObject.getGlobalPropertyId(), getSimObjectClass());
+        return this.translator.getObjectFromAny(inputObject.getId(), getSimObjectClass());
     }
 
     @Override
     protected GlobalPropertyIdInput convertSimObject(GlobalPropertyId simObject) {
-        return GlobalPropertyIdInput.newBuilder().setGlobalPropertyId(this.translator.getAnyFromObject(simObject))
+        return GlobalPropertyIdInput.newBuilder().setId(this.translator.getAnyFromObject(simObject))
                 .build();
     }
 

@@ -8,7 +8,7 @@ import "properties-plugin.proto";
 import "google/protobuf/any.proto";
 
 message GlobalPropertyIdInput {
-    google.protobuf.Any globalPropertyId = 1;
+    google.protobuf.Any id = 1;
 }
 
 enum TestGlobalPropertyIdInput {
