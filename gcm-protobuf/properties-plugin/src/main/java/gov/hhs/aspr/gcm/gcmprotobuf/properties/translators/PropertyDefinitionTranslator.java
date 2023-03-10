@@ -4,9 +4,7 @@ import com.google.protobuf.Descriptors.Descriptor;
 
 import gov.hhs.aspr.gcm.gcmprotobuf.core.AbstractTranslator;
 import plugins.properties.input.PropertyDefinitionInput;
-import plugins.properties.input.TimeTrackingPolicyInput;
 import plugins.util.properties.PropertyDefinition;
-import plugins.util.properties.TimeTrackingPolicy;
 
 public class PropertyDefinitionTranslator extends AbstractTranslator<PropertyDefinitionInput, PropertyDefinition> {
 
@@ -15,7 +13,7 @@ public class PropertyDefinitionTranslator extends AbstractTranslator<PropertyDef
         PropertyDefinition.Builder builder = PropertyDefinition.builder();
 
         builder.setPropertyValueMutability(inputObject.getPropertyValuesAreMutable());
-        builder.setTimeTrackingPolicy(TimeTrackingPolicy.valueOf(inputObject.getTimeTrackingPolicy().toString()));
+        builder.setTimeTrackingPolicy(this.translator.convertInputEnum(inputObject.getTimeTrackingPolicy()));
 
         if (inputObject.hasDefaultValue()) {
             Object defaultValue = this.translator.getObjectFromAny(inputObject.getDefaultValue());
@@ -45,7 +43,7 @@ public class PropertyDefinitionTranslator extends AbstractTranslator<PropertyDef
             builder.setType(simObject.getType().getName());
         }
         builder.setPropertyValuesAreMutable(simObject.propertyValuesAreMutable())
-                .setTimeTrackingPolicy(TimeTrackingPolicyInput.valueOf(simObject.getTimeTrackingPolicy().toString()));
+                .setTimeTrackingPolicy(this.translator.convertSimObject(simObject.getTimeTrackingPolicy()));
 
         return builder.build();
     }
