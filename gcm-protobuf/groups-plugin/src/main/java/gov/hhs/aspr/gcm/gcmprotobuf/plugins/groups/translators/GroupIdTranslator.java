@@ -10,12 +10,12 @@ public class GroupIdTranslator extends AbstractTranslator<GroupIdInput, GroupId>
 
     @Override
     protected GroupId convertInputObject(GroupIdInput inputObject) {
-        return new GroupId(inputObject.getGroupId());
+        return new GroupId(inputObject.getId());
     }
 
     @Override
     protected GroupIdInput convertSimObject(GroupId simObject) {
-        return GroupIdInput.newBuilder().setGroupId(simObject.getValue()).build();
+        return GroupIdInput.newBuilder().setId(simObject.getValue()).build();
     }
 
     @Override

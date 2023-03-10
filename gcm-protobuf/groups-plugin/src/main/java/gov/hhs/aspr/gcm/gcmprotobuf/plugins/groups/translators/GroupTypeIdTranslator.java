@@ -10,13 +10,13 @@ public class GroupTypeIdTranslator extends AbstractTranslator<GroupTypeIdInput, 
 
     @Override
     protected GroupTypeId convertInputObject(GroupTypeIdInput inputObject) {
-        return this.translator.getObjectFromAny(inputObject.getGroupTypeId(), GroupTypeId.class);
+        return this.translator.getObjectFromAny(inputObject.getId(), GroupTypeId.class);
     }
 
     @Override
     protected GroupTypeIdInput convertSimObject(GroupTypeId simObject) {
         return GroupTypeIdInput.newBuilder()
-                .setGroupTypeId(this.translator.getAnyFromObject(simObject)).build();
+                .setId(this.translator.getAnyFromObject(simObject)).build();
     }
 
     @Override

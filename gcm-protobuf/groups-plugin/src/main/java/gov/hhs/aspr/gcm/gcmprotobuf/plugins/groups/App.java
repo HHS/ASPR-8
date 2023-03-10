@@ -167,8 +167,8 @@ public class App {
 
     public static void main(String[] args) {
 
-        String inputFileName = "./groups-plugin/src/main/resources/json/testJson2.json";
-        String outputFileName = "./groups-plugin/src/main/resources/json/output/testJson2Output.json";
+        String inputFileName = "./groups-plugin/src/main/resources/json/input.json";
+        String outputFileName = "./groups-plugin/src/main/resources/json/output/output.json";
 
         TranslatorController translatorController = TranslatorController.builder()
                 .addBundle(GroupsPluginBundle.getPluginBundle(inputFileName, outputFileName))
