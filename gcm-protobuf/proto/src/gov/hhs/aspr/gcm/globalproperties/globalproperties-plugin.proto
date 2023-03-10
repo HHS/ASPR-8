@@ -5,7 +5,11 @@ option java_multiple_files = true;
 option java_package = "plugins.globalproperties.input";
 
 import "properties-plugin.proto";
+import "google/protobuf/any.proto";
 
+message GlobalPropertyIdInput {
+    google.protobuf.Any globalPropertyId = 1;
+}
 
 message GlobalPropertiesPluginDataInput {
     repeated PropertyDefinitionMapInput globalPropertyDefinitinions = 1;
