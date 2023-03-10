@@ -222,7 +222,7 @@ public final class PersonPropertyReport extends PeriodicReport {
 				final Map<Object, Counter> personPropertyValueMap = propertyIdMap.get(personPropertyId);
 				for (final Object personPropertyValue : personPropertyValueMap.keySet()) {
 					final Counter counter = personPropertyValueMap.get(personPropertyValue);
-					//if (counter.count > 0) {
+					if (counter.count > 0) {
 						final int personCount = counter.count;
 						reportItemBuilder.setReportHeader(getReportHeader());
 						reportItemBuilder.setReportLabel(getReportLabel());
@@ -234,7 +234,7 @@ public final class PersonPropertyReport extends PeriodicReport {
 						reportItemBuilder.addValue(personCount);
 
 						reportContext.releaseOutput(reportItemBuilder.build());
-					//}
+					}
 				}
 			}
 

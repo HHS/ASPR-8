@@ -1,36 +1,57 @@
 package plugins.personproperties.reports;
 
-import nucleus.Plugin;
-import nucleus.testsupport.testplugin.TestActorPlan;
-import nucleus.testsupport.testplugin.TestOutputConsumer;
-import nucleus.testsupport.testplugin.TestPluginData;
-import nucleus.testsupport.testplugin.TestSimulation;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
+import nucleus.Plugin;
 import nucleus.ReportContext;
+import nucleus.testsupport.testplugin.TestActorPlan;
+import nucleus.testsupport.testplugin.TestOutputConsumer;
+import nucleus.testsupport.testplugin.TestPlugin;
+import nucleus.testsupport.testplugin.TestPluginData;
+import nucleus.testsupport.testplugin.TestSimulation;
+import plugins.people.PeoplePlugin;
+import plugins.people.PeoplePluginData;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonId;
+import plugins.personproperties.PersonPropertiesPlugin;
+import plugins.personproperties.PersonPropertiesPluginData;
 import plugins.personproperties.datamanagers.PersonPropertiesDataManager;
 import plugins.personproperties.support.PersonPropertyDefinitionInitialization;
 import plugins.personproperties.support.PersonPropertyId;
 import plugins.personproperties.testsupport.PersonPropertiesTestPluginFactory;
 import plugins.personproperties.testsupport.TestPersonPropertyId;
-import plugins.regions.datamanagers.RegionsDataManager;
+import plugins.regions.RegionsPlugin;
+import plugins.regions.RegionsPluginData;
+import plugins.regions.testsupport.TestRegionId;
 import plugins.reports.ReportsPlugin;
 import plugins.reports.ReportsPluginData;
-import plugins.reports.support.*;
+import plugins.reports.support.ReportError;
+import plugins.reports.support.ReportHeader;
+import plugins.reports.support.ReportItem;
+import plugins.reports.support.ReportLabel;
+import plugins.reports.support.ReportPeriod;
+import plugins.reports.support.SimpleReportLabel;
 import plugins.stochastics.StochasticsDataManager;
+import plugins.stochastics.StochasticsPlugin;
+import plugins.stochastics.StochasticsPluginData;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
 import util.annotations.UnitTag;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
-
-import java.util.*;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class AT_PersonPropertyReport {
 
@@ -45,100 +66,143 @@ public class AT_PersonPropertyReport {
 	@Test
 	@UnitTestMethod(target = PersonPropertyReport.class, name = "init", args = { ReportContext.class }, tags = { UnitTag.INCOMPLETE })
 	public void testInit() {
+
+		List<Plugin> plugins = new ArrayList<>();
+		PersonPropertyId unknownIdToExclude = new PersonPropertyId() {
+			@Override
+			public String toString() {
+				return "unknownIdToExclude";
+			}
+		};
+		PersonPropertyId unknownIdToInclude = new PersonPropertyId() {
+			@Override
+			public String toString() {
+				return "unknownIdToInclude";
+			}
+		};
+
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
-		PersonPropertyId unknownIdToExclude = TestPersonPropertyId.getUnknownPersonPropertyId();
-		PersonPropertyId unknownIdToInclude = TestPersonPropertyId.getUnknownPersonPropertyId();
-		TestOutputConsumer expectedOutputConsumer = new TestOutputConsumer();
-
+		// have the actor add a new person property definitions
 		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
 			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
 			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(1).build();
 
-			PersonPropertyDefinitionInitialization personPropertyDefinitionInitialization = PersonPropertyDefinitionInitialization.builder()
-					.setPersonPropertyId(unknownIdToExclude)
-					.setPropertyDefinition(propertyDefinition)
-					.build();
+			PersonPropertyDefinitionInitialization personPropertyDefinitionInitialization = PersonPropertyDefinitionInitialization	.builder().setPersonPropertyId(unknownIdToExclude)
+																																	.setPropertyDefinition(propertyDefinition).build();
 			personPropertiesDataManager.definePersonProperty(personPropertyDefinitionInitialization);
-		}));
 
-		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
-			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
-			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
-			PropertyDefinition propertyDefinition2 = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(false).build();
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
-			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
-			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
-
-			PersonPropertyDefinitionInitialization personPropertyDefinitionInitialization2 = PersonPropertyDefinitionInitialization.builder()
-					.setPersonPropertyId(unknownIdToInclude)
-					.setPropertyDefinition(propertyDefinition2)
-					.build();
+			propertyDefinition = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(false).build();
+			PersonPropertyDefinitionInitialization personPropertyDefinitionInitialization2 = PersonPropertyDefinitionInitialization	.builder().setPersonPropertyId(unknownIdToInclude)
+																																	.setPropertyDefinition(propertyDefinition).build();
 			personPropertiesDataManager.definePersonProperty(personPropertyDefinitionInitialization2);
 
-			Set<TestPersonPropertyId> randomPropertyIds = new LinkedHashSet<>();
-			randomPropertyIds.add(TestPersonPropertyId.getRandomPersonPropertyId(randomGenerator));
-			randomPropertyIds.add(TestPersonPropertyId.getRandomPersonPropertyId(randomGenerator));
-			randomPropertyIds.add(TestPersonPropertyId.getRandomPersonPropertyId(randomGenerator));
-
-			for (TestPersonPropertyId testPersonPropertyId : randomPropertyIds) {
-				if (testPersonPropertyId.getPropertyDefinition().propertyValuesAreMutable()) {
-					Object personProperty = testPersonPropertyId.getRandomPropertyValue(randomGenerator);
-					PersonId randomPerson = peopleDataManager.getPeople().get(randomGenerator.nextInt(10));
-					personPropertiesDataManager.setPersonPropertyValue(randomPerson, testPersonPropertyId, personProperty);
-					expectedOutputConsumer.accept(getReportItem(ReportPeriod.DAILY,
-							regionsDataManager.getPersonRegion(randomPerson),
-							randomPerson, testPersonPropertyId, personProperty));
-				}
-			}
 		}));
 
-		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(2, (c) -> {
-			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+		// have the actor set a few person property values
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0.4, (c) -> {
 			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
-			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
-			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
-
-			Set<TestPersonPropertyId> randomPropertyIds = new LinkedHashSet<>();
-			randomPropertyIds.add(TestPersonPropertyId.getRandomPersonPropertyId(randomGenerator));
-			randomPropertyIds.add(TestPersonPropertyId.getRandomPersonPropertyId(randomGenerator));
-			randomPropertyIds.add(TestPersonPropertyId.getRandomPersonPropertyId(randomGenerator));
-
-			for (TestPersonPropertyId testPersonPropertyId : randomPropertyIds) {
-				if (testPersonPropertyId.getPropertyDefinition().propertyValuesAreMutable()) {
-					Object personProperty = testPersonPropertyId.getRandomPropertyValue(randomGenerator);
-					PersonId randomPerson = peopleDataManager.getPeople().get(randomGenerator.nextInt(10));
-					personPropertiesDataManager.setPersonPropertyValue(randomPerson, testPersonPropertyId, personProperty);
-					expectedOutputConsumer.accept(getReportItem(ReportPeriod.DAILY,
-							regionsDataManager.getPersonRegion(randomPerson),
-							randomPerson, testPersonPropertyId, personProperty));
-				}
-			}
+			personPropertiesDataManager.setPersonPropertyValue(new PersonId(7), TestPersonPropertyId.PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK, 35);
+			personPropertiesDataManager.setPersonPropertyValue(new PersonId(7), TestPersonPropertyId.PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK, 40);
+			personPropertiesDataManager.setPersonPropertyValue(new PersonId(8), TestPersonPropertyId.PERSON_PROPERTY_3_DOUBLE_MUTABLE_NO_TRACK, 2.75);
 		}));
 
-		ReportLabel reportLabel = new SimpleReportLabel(1000);
+		// have the actor set a few person property values
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0.7, (c) -> {
+			
+			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
+			personPropertiesDataManager.setPersonPropertyValue(new PersonId(7), TestPersonPropertyId.PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK, 35);
+			personPropertiesDataManager.setPersonPropertyValue(new PersonId(7), TestPersonPropertyId.PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK, 40);
+			personPropertiesDataManager.setPersonPropertyValue(new PersonId(8), TestPersonPropertyId.PERSON_PROPERTY_3_DOUBLE_MUTABLE_NO_TRACK, 2.75);
+		}));
+
+		ReportLabel reportLabel = new SimpleReportLabel("report label");
 		ReportPeriod hourlyReportPeriod = ReportPeriod.DAILY;
 		TestPluginData testPluginData = pluginDataBuilder.build();
-		PersonPropertiesTestPluginFactory.Factory factory = PersonPropertiesTestPluginFactory.factory(10, 1174198461656549476L, testPluginData);
-		List<Plugin> plugins = factory.getPlugins();
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+		plugins.add(testPlugin);
 
-		ReportsPluginData reportsPluginData = ReportsPluginData.builder().addReport(()->{
+		int populationSize = 30;
+
+		PeoplePluginData.Builder peopleBuilder = PeoplePluginData.builder();
+
+		for (int i = 0; i < populationSize; i++) {
+			peopleBuilder.addPersonId(new PersonId(i));
+		}
+		PeoplePluginData peoplePluginData = peopleBuilder.build();
+		Plugin peoplePlugin = PeoplePlugin.getPeoplePlugin(peoplePluginData);
+		plugins.add(peoplePlugin);
+
+		// add the first three TestPersonPropertyId values and their definitions
+		PersonPropertiesPluginData.Builder personPropertyBuilder = PersonPropertiesPluginData.builder();
+		Set<TestPersonPropertyId> basePropertyIds = new LinkedHashSet<>();
+		basePropertyIds.add(TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK);
+		basePropertyIds.add(TestPersonPropertyId.PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK);
+		basePropertyIds.add(TestPersonPropertyId.PERSON_PROPERTY_3_DOUBLE_MUTABLE_NO_TRACK);
+		for (TestPersonPropertyId testPersonPropertyId : basePropertyIds) {
+			personPropertyBuilder.definePersonProperty(testPersonPropertyId, testPersonPropertyId.getPropertyDefinition());
+		}
+		PersonPropertiesPluginData personPropertiesPluginData = personPropertyBuilder.build();
+		Plugin personPropertyPlugin = PersonPropertiesPlugin.getPersonPropertyPlugin(personPropertiesPluginData);
+		plugins.add(personPropertyPlugin);
+
+		/*
+		 * Add two region - even people in region 1 and odd people in region 2
+		 */
+		RegionsPluginData.Builder regionBuilder = RegionsPluginData.builder();
+
+		regionBuilder.addRegion(TestRegionId.REGION_1);
+		regionBuilder.addRegion(TestRegionId.REGION_2);
+		for (int i = 0; i < populationSize; i++) {
+			PersonId personId = new PersonId(i);
+			if (i % 2 == 0) {
+				regionBuilder.setPersonRegion(personId, TestRegionId.REGION_1);
+			} else {
+				regionBuilder.setPersonRegion(personId, TestRegionId.REGION_2);
+			}
+		}
+		RegionsPluginData regionsPluginData = regionBuilder.build();
+		Plugin regionsPlugin = RegionsPlugin.getRegionsPlugin(regionsPluginData);
+		plugins.add(regionsPlugin);
+
+		
+		//add the report
+		ReportsPluginData reportsPluginData = ReportsPluginData.builder().addReport(() -> {
 			PersonPropertyReport.Builder builder = PersonPropertyReport.builder();
 			builder.setReportLabel(reportLabel);
 			builder.setReportPeriod(hourlyReportPeriod);
 			builder.setDefaultInclusion(true);
+			builder.excludePersonProperty(TestPersonPropertyId.PERSON_PROPERTY_3_DOUBLE_MUTABLE_NO_TRACK);
+			builder.excludePersonProperty(unknownIdToExclude);
+
 			return builder.build()::init;
 		}).build();
 		Plugin reportsPlugin = ReportsPlugin.getReportsPlugin(reportsPluginData);
 		plugins.add(reportsPlugin);
+
+		
+		//execute the simulation and gather the report items 
 		TestOutputConsumer testOutputConsumer = new TestOutputConsumer();
 		TestSimulation.executeSimulation(plugins, testOutputConsumer);
+
+		//build the expected report items
+		TestOutputConsumer expectedOutputConsumer = new TestOutputConsumer();
+		
+
+		//compare the expected and actual report items
+		
 		Map<ReportItem, Integer> expectedReportItems = expectedOutputConsumer.getOutputItems(ReportItem.class);
 		Map<ReportItem, Integer> actualReportItems = testOutputConsumer.getOutputItems(ReportItem.class);
-//		System.out.println(expectedReportItems.keySet());
-//		System.out.println(testOutputConsumer.getOutputItems(ReportItem.class));
-		assertEquals(expectedOutputConsumer.getOutputItems(ReportItem.class), testOutputConsumer.getOutputItems(ReportItem.class));
+
+		for (ReportItem reportItem : actualReportItems.keySet()) {
+			System.out.println(reportItem.toValueString());
+		}
+		
+		
+
+		// System.out.println(expectedReportItems.keySet());
+		// System.out.println(testOutputConsumer.getOutputItems(ReportItem.class));
+		assertEquals(expectedReportItems, actualReportItems);
 
 	}
 
@@ -172,15 +236,16 @@ public class AT_PersonPropertyReport {
 	public void testSetReportLabel() {
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
-		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) ->{
-			// provides an empty task so that the TestSimulation.execute does not throw an exception
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
+			// provides an empty task so that the TestSimulation.execute does
+			// not throw an exception
 		}));
 
 		ReportLabel reportLabel = new SimpleReportLabel(1000);
 		TestPluginData testPluginData = pluginDataBuilder.build();
 		PersonPropertiesTestPluginFactory.Factory factory = PersonPropertiesTestPluginFactory.factory(30, 1174198461656549476L, testPluginData);
 		List<Plugin> plugins = factory.getPlugins();
-		ReportsPluginData reportsPluginData = ReportsPluginData.builder().addReport(()->{
+		ReportsPluginData reportsPluginData = ReportsPluginData.builder().addReport(() -> {
 			PersonPropertyReport.Builder builder = PersonPropertyReport.builder();
 			builder.setReportLabel(reportLabel);
 			builder.setReportPeriod(ReportPeriod.DAILY);
@@ -208,7 +273,8 @@ public class AT_PersonPropertyReport {
 	@UnitTestMethod(target = PersonPropertyReport.Builder.class, name = "setReportPeriod", args = { ReportPeriod.class })
 	public void testSetReportPeriod() {
 
-		// post conditional testing for Hourly, Daily, and End Of Simulation report periods
+		// post conditional testing for Hourly, Daily, and End Of Simulation
+		// report periods
 		testSetReportPeriod_Hourly();
 		testSetReportPeriod_Daily();
 		testSetReportPeriod_EndOfSim();
@@ -223,8 +289,9 @@ public class AT_PersonPropertyReport {
 	private void testSetReportPeriod_Hourly() {
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
-		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) ->{
-			// provides an empty task so that the TestSimulation.execute does not throw an exception
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
+			// provides an empty task so that the TestSimulation.execute does
+			// not throw an exception
 		}));
 
 		ReportLabel reportLabel = new SimpleReportLabel(1000);
@@ -234,7 +301,7 @@ public class AT_PersonPropertyReport {
 		List<Plugin> plugins = factory.getPlugins();
 
 		// set the report period
-		ReportsPluginData reportsPluginData = ReportsPluginData.builder().addReport(()->{
+		ReportsPluginData reportsPluginData = ReportsPluginData.builder().addReport(() -> {
 			PersonPropertyReport.Builder builder = PersonPropertyReport.builder();
 			builder.setReportLabel(reportLabel);
 			builder.setReportPeriod(hourlyReportPeriod);
@@ -256,8 +323,9 @@ public class AT_PersonPropertyReport {
 	private void testSetReportPeriod_Daily() {
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
-		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) ->{
-			// provides an empty task so that the TestSimulation.execute does not throw an exception
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
+			// provides an empty task so that the TestSimulation.execute does
+			// not throw an exception
 		}));
 
 		ReportLabel reportLabel = new SimpleReportLabel(1000);
@@ -267,7 +335,7 @@ public class AT_PersonPropertyReport {
 		List<Plugin> plugins = factory.getPlugins();
 
 		// set the report period
-		ReportsPluginData reportsPluginData = ReportsPluginData.builder().addReport(()->{
+		ReportsPluginData reportsPluginData = ReportsPluginData.builder().addReport(() -> {
 			PersonPropertyReport.Builder builder = PersonPropertyReport.builder();
 			builder.setReportLabel(reportLabel);
 			builder.setReportPeriod(hourlyReportPeriod);
@@ -290,8 +358,9 @@ public class AT_PersonPropertyReport {
 	private void testSetReportPeriod_EndOfSim() {
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
-		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) ->{
-			// provides an empty task so that the TestSimulation.execute does not throw an exception
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
+			// provides an empty task so that the TestSimulation.execute does
+			// not throw an exception
 		}));
 
 		ReportLabel reportLabel = new SimpleReportLabel(1000);
@@ -301,7 +370,7 @@ public class AT_PersonPropertyReport {
 		List<Plugin> plugins = factory.getPlugins();
 
 		// set the report period
-		ReportsPluginData reportsPluginData = ReportsPluginData.builder().addReport(()->{
+		ReportsPluginData reportsPluginData = ReportsPluginData.builder().addReport(() -> {
 			PersonPropertyReport.Builder builder = PersonPropertyReport.builder();
 			builder.setReportLabel(reportLabel);
 			builder.setReportPeriod(hourlyReportPeriod);
@@ -320,7 +389,6 @@ public class AT_PersonPropertyReport {
 		}
 	}
 
-
 	@Test
 	@UnitTestMethod(target = PersonPropertyReport.Builder.class, name = "setDefaultInclusion", args = { boolean.class })
 	public void testSetDefaultInclusion() {
@@ -333,7 +401,7 @@ public class AT_PersonPropertyReport {
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
 		// create a test actor plan where we set several person property values
-		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) ->{
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
@@ -355,16 +423,15 @@ public class AT_PersonPropertyReport {
 			PersonPropertyId unknownPersonPropertyId = TestPersonPropertyId.getUnknownPersonPropertyId();
 
 			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(1).build();
-			PersonPropertyDefinitionInitialization personPropertyDefinitionInitialization = PersonPropertyDefinitionInitialization.builder()
-					.setPersonPropertyId(unknownPersonPropertyId)
-					.setPropertyDefinition(propertyDefinition)
-					.build();
+			PersonPropertyDefinitionInitialization personPropertyDefinitionInitialization = PersonPropertyDefinitionInitialization	.builder().setPersonPropertyId(unknownPersonPropertyId)
+																																	.setPropertyDefinition(propertyDefinition).build();
 
 			personPropertiesDataManager.definePersonProperty(personPropertyDefinitionInitialization);
 		}));
 
 		// Adding an empty plan at time two to ignore periodic reports bug
-		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(2, (c) -> {}));
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(2, (c) -> {
+		}));
 
 		ReportLabel reportLabel = new SimpleReportLabel(1000);
 		ReportPeriod hourlyReportPeriod = ReportPeriod.HOURLY;
@@ -373,7 +440,7 @@ public class AT_PersonPropertyReport {
 		List<Plugin> plugins = factory.getPlugins();
 
 		// set the default inclusion to false
-		ReportsPluginData reportsPluginData = ReportsPluginData.builder().addReport(()->{
+		ReportsPluginData reportsPluginData = ReportsPluginData.builder().addReport(() -> {
 			PersonPropertyReport.Builder builder = PersonPropertyReport.builder();
 			builder.setReportLabel(reportLabel);
 			builder.setReportPeriod(hourlyReportPeriod);
@@ -393,7 +460,7 @@ public class AT_PersonPropertyReport {
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
 		// create a test actor plan where we set several person property values
-		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) ->{
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
@@ -417,10 +484,8 @@ public class AT_PersonPropertyReport {
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(1).build();
 
-			PersonPropertyDefinitionInitialization personPropertyDefinitionInitialization = PersonPropertyDefinitionInitialization.builder()
-					.setPersonPropertyId(unknownPersonPropertyId)
-					.setPropertyDefinition(propertyDefinition)
-					.build();
+			PersonPropertyDefinitionInitialization personPropertyDefinitionInitialization = PersonPropertyDefinitionInitialization	.builder().setPersonPropertyId(unknownPersonPropertyId)
+																																	.setPropertyDefinition(propertyDefinition).build();
 			personPropertiesDataManager.definePersonProperty(personPropertyDefinitionInitialization);
 
 			PersonId personId = peopleDataManager.getPeople().get(0);
@@ -428,7 +493,8 @@ public class AT_PersonPropertyReport {
 		}));
 
 		// Adding an empty plan at time two to ignore periodic reports bug
-		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(2, (c) -> {}));
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(2, (c) -> {
+		}));
 
 		ReportLabel reportLabel = new SimpleReportLabel(1000);
 		ReportPeriod hourlyReportPeriod = ReportPeriod.HOURLY;
@@ -437,7 +503,7 @@ public class AT_PersonPropertyReport {
 		List<Plugin> plugins = factory.getPlugins();
 
 		// set the default inclusion to false
-		ReportsPluginData reportsPluginData = ReportsPluginData.builder().addReport(()->{
+		ReportsPluginData reportsPluginData = ReportsPluginData.builder().addReport(() -> {
 			PersonPropertyReport.Builder builder = PersonPropertyReport.builder();
 			builder.setReportLabel(reportLabel);
 			builder.setReportPeriod(hourlyReportPeriod);
@@ -465,7 +531,7 @@ public class AT_PersonPropertyReport {
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
 		// create a test actor plan where we set several person property values
-		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) ->{
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
@@ -489,17 +555,16 @@ public class AT_PersonPropertyReport {
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(1).build();
 
-			PersonPropertyDefinitionInitialization personPropertyDefinitionInitialization = PersonPropertyDefinitionInitialization.builder()
-					.setPersonPropertyId(unknownPersonPropertyId)
-					.setPropertyDefinition(propertyDefinition)
-					.build();
+			PersonPropertyDefinitionInitialization personPropertyDefinitionInitialization = PersonPropertyDefinitionInitialization	.builder().setPersonPropertyId(unknownPersonPropertyId)
+																																	.setPropertyDefinition(propertyDefinition).build();
 			personPropertiesDataManager.definePersonProperty(personPropertyDefinitionInitialization);
 			PersonId personId = peopleDataManager.getPeople().get(0);
 			personPropertiesDataManager.setPersonPropertyValue(personId, unknownPersonPropertyId, 2);
 		}));
 
 		// Adding an empty plan at time two to ignore periodic reports bug
-		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(2, (c) -> {}));
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(2, (c) -> {
+		}));
 
 		ReportLabel reportLabel = new SimpleReportLabel(1000);
 		ReportPeriod hourlyReportPeriod = ReportPeriod.HOURLY;
@@ -508,7 +573,7 @@ public class AT_PersonPropertyReport {
 		List<Plugin> plugins = factory.getPlugins();
 
 		// set the default inclusion to false
-		ReportsPluginData reportsPluginData = ReportsPluginData.builder().addReport(()->{
+		ReportsPluginData reportsPluginData = ReportsPluginData.builder().addReport(() -> {
 			PersonPropertyReport.Builder builder = PersonPropertyReport.builder();
 			builder.setReportLabel(reportLabel);
 			builder.setReportPeriod(hourlyReportPeriod);
@@ -537,7 +602,7 @@ public class AT_PersonPropertyReport {
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
 		// create a test actor plan where we set several person property values
-		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) ->{
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
@@ -560,10 +625,8 @@ public class AT_PersonPropertyReport {
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(1).build();
 
-			PersonPropertyDefinitionInitialization personPropertyDefinitionInitialization = PersonPropertyDefinitionInitialization.builder()
-					.setPersonPropertyId(unknownPersonPropertyId)
-					.setPropertyDefinition(propertyDefinition)
-					.build();
+			PersonPropertyDefinitionInitialization personPropertyDefinitionInitialization = PersonPropertyDefinitionInitialization	.builder().setPersonPropertyId(unknownPersonPropertyId)
+																																	.setPropertyDefinition(propertyDefinition).build();
 			personPropertiesDataManager.definePersonProperty(personPropertyDefinitionInitialization);
 
 			PersonId personId = peopleDataManager.getPeople().get(0);
@@ -571,7 +634,8 @@ public class AT_PersonPropertyReport {
 		}));
 
 		// Adding an empty plan at time two to ignore periodic reports bug
-		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(2, (c) -> {}));
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(2, (c) -> {
+		}));
 
 		ReportLabel reportLabel = new SimpleReportLabel(1000);
 		ReportPeriod hourlyReportPeriod = ReportPeriod.HOURLY;
@@ -581,7 +645,7 @@ public class AT_PersonPropertyReport {
 		TestPersonPropertyId testPersonPropertyId = TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK;
 
 		// tell the builder to include a specific person property id
-		ReportsPluginData reportsPluginData = ReportsPluginData.builder().addReport(()->{
+		ReportsPluginData reportsPluginData = ReportsPluginData.builder().addReport(() -> {
 			PersonPropertyReport.Builder builder = PersonPropertyReport.builder();
 			builder.setReportLabel(reportLabel);
 			builder.setReportPeriod(hourlyReportPeriod);
@@ -617,7 +681,7 @@ public class AT_PersonPropertyReport {
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
 		// create a test actor plan where we set several person property values
-		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) ->{
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
@@ -640,10 +704,8 @@ public class AT_PersonPropertyReport {
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(1).build();
 
-			PersonPropertyDefinitionInitialization personPropertyDefinitionInitialization = PersonPropertyDefinitionInitialization.builder()
-					.setPersonPropertyId(unknownPersonPropertyId)
-					.setPropertyDefinition(propertyDefinition)
-					.build();
+			PersonPropertyDefinitionInitialization personPropertyDefinitionInitialization = PersonPropertyDefinitionInitialization	.builder().setPersonPropertyId(unknownPersonPropertyId)
+																																	.setPropertyDefinition(propertyDefinition).build();
 			personPropertiesDataManager.definePersonProperty(personPropertyDefinitionInitialization);
 
 			PersonId personId = peopleDataManager.getPeople().get(0);
@@ -651,7 +713,8 @@ public class AT_PersonPropertyReport {
 		}));
 
 		// Adding an empty plan at time two to ignore periodic reports bug
-		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(2, (c) -> {}));
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(2, (c) -> {
+		}));
 
 		ReportLabel reportLabel = new SimpleReportLabel(1000);
 		ReportPeriod hourlyReportPeriod = ReportPeriod.HOURLY;
@@ -661,7 +724,7 @@ public class AT_PersonPropertyReport {
 		TestPersonPropertyId testPersonPropertyId = TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK;
 
 		// tell the builder to exclude a specific person property id
-		ReportsPluginData reportsPluginData = ReportsPluginData.builder().addReport(()->{
+		ReportsPluginData reportsPluginData = ReportsPluginData.builder().addReport(() -> {
 			PersonPropertyReport.Builder builder = PersonPropertyReport.builder();
 			builder.setReportLabel(reportLabel);
 			builder.setReportPeriod(hourlyReportPeriod);
@@ -694,15 +757,15 @@ public class AT_PersonPropertyReport {
 		builder.setReportLabel(REPORT_LABEL);
 
 		switch (reportPeriod) {
-			case DAILY:
-				builder.setReportHeader(REPORT_DAILY_HEADER);
-				break;
-			case HOURLY:
-				builder.setReportHeader(REPORT_HOURLY_HEADER);
-				break;
-			case END_OF_SIMULATION:// fall through
-			default:
-				throw new RuntimeException("unhandled case " + reportPeriod);
+		case DAILY:
+			builder.setReportHeader(REPORT_DAILY_HEADER);
+			break;
+		case HOURLY:
+			builder.setReportHeader(REPORT_HOURLY_HEADER);
+			break;
+		case END_OF_SIMULATION:// fall through
+		default:
+			throw new RuntimeException("unhandled case " + reportPeriod);
 
 		}
 
@@ -714,9 +777,6 @@ public class AT_PersonPropertyReport {
 
 	private static final ReportLabel REPORT_LABEL = new SimpleReportLabel(1000);
 
-	private static final ReportHeader REPORT_HOURLY_HEADER = ReportHeader.builder().add("day").add("hour")
-			.add("region").add("property").add("value").add("person_count").build();
-	private static final ReportHeader REPORT_DAILY_HEADER = ReportHeader.builder().add("day").add("region")
-			.add("property").add("value").add("person_count").build();
+	private static final ReportHeader REPORT_HOURLY_HEADER = ReportHeader.builder().add("day").add("hour").add("region").add("property").add("value").add("person_count").build();
+	private static final ReportHeader REPORT_DAILY_HEADER = ReportHeader.builder().add("day").add("region").add("property").add("value").add("person_count").build();
 }
-
