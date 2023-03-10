@@ -1,13 +1,8 @@
 package gov.hhs.aspr.gcm.gcmprotobuf.core;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.Writer;
-import java.nio.file.Paths;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -215,20 +210,6 @@ public class MasterTranslator {
         return parseJson(jsonObject, builder);
     }
 
-    public <T, U extends Message.Builder> T readJson(String inputFileName, U builder) {
-        InputStream in = null;
-        try {
-            in = new FileInputStream(Paths.get(inputFileName).toFile());
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-        JsonReader jsonReader = new JsonReader(
-                new InputStreamReader(in));
-        JsonObject jsonObject = JsonParser.parseReader(jsonReader).getAsJsonObject();
-
-        return parseJson(jsonObject, builder);
-    }
-
     private <T, U extends Message.Builder> T parseJson(JsonObject inputJson, U builder) {
         JsonObject jsonObject = inputJson.deepCopy();
 
@@ -244,39 +225,29 @@ public class MasterTranslator {
     }
 
     public Any getAnyFromObject(Object object, Class<?> superClass) {
-        return Any.pack(convertSimObject(object, superClass));
+        if (Enum.class.isAssignableFrom(object.getClass())) {
+            superClassCastCheck(object, superClass);
+            return packMessage(getWrapperEnum(object));
+        }
+        return packMessage(convertSimObject(object, superClass));
     }
 
     public Any getAnyFromObject(Object object) {
         if (Enum.class.isAssignableFrom(object.getClass())) {
-            ProtocolMessageEnum messageEnum = convertSimObject(object);
-            EnumValueDescriptor enumValueDescriptor = messageEnum.getValueDescriptor();
-
-            WrapperEnumValue wrapperEnumValue = WrapperEnumValue.newBuilder().setValue(enumValueDescriptor.getName())
-                    .setEnumTypeUrl(messageEnum.getDescriptorForType().getFullName()).build();
-
-            return Any.pack(wrapperEnumValue);
+            return packMessage(getWrapperEnum(object));
         }
-        return Any.pack(convertSimObject(object));
+        return packMessage(convertSimObject(object));
+    }
+
+    public Any packMessage(Message messageToPack) {
+        return Any.pack(messageToPack);
     }
 
     public <T> T getObjectFromAny(Any anyValue, Class<?> superClass) {
         Message anyMessage = getMessageFromAny(anyValue);
 
         if (anyMessage.getDescriptorForType() == WrapperEnumValue.getDescriptor()) {
-            WrapperEnumValue enumValue = (WrapperEnumValue) anyMessage;
-
-            String typeUrl = enumValue.getEnumTypeUrl();
-            String value = enumValue.getValue();
-
-            if (this.data.typeUrlToEnumDescriptor.containsKey(typeUrl)) {
-                EnumDescriptor enumDescriptor = this.data.typeUrlToEnumDescriptor.get(typeUrl);
-                if (this.data.enumDescriptorMap.containsKey(enumDescriptor)) {
-                    ProtocolMessageEnum messageEnum = this.data.enumDescriptorMap.get(enumDescriptor)
-                            .getFromString(value);
-                    return convertInputEnum(messageEnum, superClass);
-                }
-            }
+            return convertInputEnum(getEnumFromMessage((WrapperEnumValue) anyMessage), superClass);
         }
 
         return convertInputObject(anyMessage, superClass);
@@ -286,21 +257,34 @@ public class MasterTranslator {
         Message anyMessage = getMessageFromAny(anyValue);
 
         if (anyMessage.getDescriptorForType() == WrapperEnumValue.getDescriptor()) {
-            WrapperEnumValue enumValue = (WrapperEnumValue) anyMessage;
-
-            String typeUrl = enumValue.getEnumTypeUrl();
-            String value = enumValue.getValue();
-
-            if (this.data.typeUrlToEnumDescriptor.containsKey(typeUrl)) {
-                EnumDescriptor enumDescriptor = this.data.typeUrlToEnumDescriptor.get(typeUrl);
-                if (this.data.enumDescriptorMap.containsKey(enumDescriptor)) {
-                    ProtocolMessageEnum messageEnum = this.data.enumDescriptorMap.get(enumDescriptor)
-                            .getFromString(value);
-                    return convertInputEnum(messageEnum);
-                }
-            }
+            return convertInputEnum(getEnumFromMessage((WrapperEnumValue) anyMessage));
         }
         return convertInputObject(anyMessage);
+    }
+
+    private Message getWrapperEnum(Object object) {
+        ProtocolMessageEnum messageEnum = convertSimObject(object);
+        EnumValueDescriptor enumValueDescriptor = messageEnum.getValueDescriptor();
+
+        WrapperEnumValue wrapperEnumValue = WrapperEnumValue.newBuilder().setValue(enumValueDescriptor.getName())
+                .setEnumTypeUrl(messageEnum.getDescriptorForType().getFullName()).build();
+
+        return wrapperEnumValue;
+    }
+
+    private ProtocolMessageEnum getEnumFromMessage(WrapperEnumValue enumValue) {
+        String typeUrl = enumValue.getEnumTypeUrl();
+        String value = enumValue.getValue();
+
+        if (this.data.typeUrlToEnumDescriptor.containsKey(typeUrl)) {
+            EnumDescriptor enumDescriptor = this.data.typeUrlToEnumDescriptor.get(typeUrl);
+            if (this.data.enumDescriptorMap.containsKey(enumDescriptor)) {
+                return this.data.enumDescriptorMap.get(enumDescriptor)
+                        .getFromString(value);
+            }
+        }
+
+        throw new RuntimeException("Unable to find corrsponding Enum type for: " + typeUrl);
     }
 
     private Message getMessageFromAny(Any anyValue) {
@@ -339,96 +323,64 @@ public class MasterTranslator {
     public <T, U> T convertInputEnum(ProtocolMessageEnum inputEnum, Class<U> superClass) {
         T convertedEnum = convertInputEnum(inputEnum);
 
-        U superEnum;
-        try {
-            // we want to make sure that the resulting object can be casted to the super
-            // class
-            // But we still want to return the actual class so that the reference does not
-            // get changed.
-            superEnum = superClass.cast(convertedEnum);
-        } catch (ClassCastException e) {
-            throw new RuntimeException("Unable to cast:" + convertedEnum.getClass() + " to: " + superClass, e);
-        }
-
-        if (superEnum == null) {
-            throw new RuntimeException("Unable to cast:" + convertedEnum.getClass() + " to: " + superClass);
-        }
+        // verify translated object can be casted to the super class
+        superClassCastCheck(convertedEnum, superClass);
 
         return convertedEnum;
     }
 
     public <T> T convertInputEnum(ProtocolMessageEnum inputEnum) {
-        if (this.data.classToTranslatorMap.containsKey(inputEnum.getClass())) {
-            return this.data.classToTranslatorMap.get(inputEnum.getClass()).convert(inputEnum);
-        }
-        throw new RuntimeException(
-                "No conversion translator was provided for message type: "
-                        + inputEnum.getDescriptorForType().getName());
+        return getTranslatorForClass(inputEnum.getClass()).convert(inputEnum);
     }
 
     public <T, U> T convertInputObject(Message inputObject, Class<U> superClass) {
 
         T convertInputObject = convertInputObject(inputObject);
-        // check if there is a translation method avaiable
 
-        U superSimObject;
-        try {
-            // we want to make sure that the resulting object can be casted to the super
-            // class
-            // But we still want to return the actual class so that the reference does not
-            // get changed.
-            superSimObject = superClass.cast(convertInputObject);
-        } catch (ClassCastException e) {
-            throw new RuntimeException("Unable to cast:" + convertInputObject.getClass() + " to: " + superClass, e);
-        }
-
-        if (superSimObject == null) {
-            throw new RuntimeException("Unable to cast:" + convertInputObject.getClass() + " to: " + superClass);
-        }
+        // verify translated object can be casted to the super class
+        superClassCastCheck(convertInputObject, superClass);
 
         return convertInputObject;
-
     }
 
     public <T> T convertInputObject(Message inputObject) {
-        // check if there is a translation method avaiable
-        if (this.data.classToTranslatorMap.containsKey(inputObject.getClass())) {
-            return this.data.classToTranslatorMap.get(inputObject.getClass()).convert(inputObject);
-        }
-        throw new RuntimeException(
-                "No conversion translator was provided for message type: "
-                        + inputObject.getDescriptorForType().getName());
+        return getTranslatorForClass(inputObject.getClass()).convert(inputObject);
     }
 
     public <T, U> T convertSimObject(Object simObject, Class<U> superClass) {
 
-        U superSimObject;
+        superClassCastCheck(simObject, superClass);
 
-        try {
-            // this cast ensures that the object is translated using the upper most marker
-            // class, rather than the actual class
-            superSimObject = superClass.cast(simObject);
-        } catch (ClassCastException e) {
-            throw new RuntimeException("Unable to cast:" + simObject.getClass() + " to: " + superClass, e);
-        }
-
-        if (superSimObject == null) {
-            throw new RuntimeException("Unable to cast:" + simObject.getClass() + " to: " + superClass);
-        }
-
-        if (this.data.classToTranslatorMap.containsKey(superClass)) {
-            return this.data.classToTranslatorMap.get(superClass).convert(simObject);
-        }
-        throw new RuntimeException(
-                "No conversion translator was provided for message type: " + superClass.getName());
+        return getTranslatorForClass(superClass).convert(simObject);
     }
 
     public <T> T convertSimObject(Object simObject) {
-        if (this.data.classToTranslatorMap.containsKey(simObject.getClass())) {
-            return this.data.classToTranslatorMap.get(simObject.getClass()).convert(simObject);
+        return getTranslatorForClass(simObject.getClass()).convert(simObject);
+    }
+
+    private <T> void superClassCastCheck(Object object, Class<T> superClass) {
+        validateObjectNotNull(object);
+
+        try {
+            // verify object can be casted to the super class
+            superClass.cast(object);
+        } catch (ClassCastException e) {
+            throw new RuntimeException("Unable to cast:" + object.getClass() + " to: " + superClass, e);
+        }
+    }
+
+    private void validateObjectNotNull(Object object) {
+        if (object == null) {
+            throw new RuntimeException("Object is null");
+        }
+    }
+
+    private ITranslator getTranslatorForClass(Class<?> classRef) {
+        if (this.data.classToTranslatorMap.containsKey(classRef)) {
+            return this.data.classToTranslatorMap.get(classRef);
         }
         throw new RuntimeException(
-                "No conversion translator was provided for message type: " + simObject.getClass().getName());
+                "No conversion translator was provided for message type: " + classRef.getName());
     }
 
     public Builder getCloneBuilder() {
