@@ -1,0 +1,35 @@
+syntax = "proto3";
+package gov.hhs.aspr.gcm;
+
+option java_multiple_files = true;
+option java_package = "plugins.regions.input";
+
+import "properties-plugin.proto";
+import "people-plugin.proto";
+import "google/protobuf/any.proto";
+
+message RegionIdInput {
+    google.protobuf.Any id = 1;
+}
+
+message RegionPropertyIdInput {
+    google.protobuf.Any id = 1;
+}
+
+message RegionMembershipInput {
+    PersonIdInput personId = 1;
+    RegionIdInput regionId = 2;
+}
+
+message RegionPropertyValueMapInput {
+   RegionIdInput regionId = 1;
+   repeated PropertyValueMapInput propertyValueMap = 2;
+}
+
+message RegionsPluginDataInput {
+    repeated RegionIdInput regionIds = 1;
+    repeated PropertyDefinitionMapInput regionPropertyDefinitions = 2;
+    repeated RegionPropertyValueMapInput regionPropertyValues = 3;
+    repeated RegionMembershipInput personRegions = 4;
+    TimeTrackingPolicyInput regionArrivalTimeTrackingPolicy = 5;
+}
