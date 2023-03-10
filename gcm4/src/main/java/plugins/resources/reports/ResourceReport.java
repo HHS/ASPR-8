@@ -308,17 +308,16 @@ public final class ResourceReport extends PeriodicReport {
 	 * 
 	 */
 	@Override
-	public void init(final ReportContext reportContext) {
-		super.init(reportContext);
+	protected void prepare(final ReportContext reportContext) {
 		resourcesDataManager = reportContext.getDataManager(ResourcesDataManager.class);
 		PeopleDataManager peopleDataManager = reportContext.getDataManager(PeopleDataManager.class);
 		RegionsDataManager regionsDataManager = reportContext.getDataManager(RegionsDataManager.class);
 
-		subscribe(PersonAdditionEvent.class, this::handlePersonAdditionEvent);
-		subscribe(PersonImminentRemovalEvent.class, this::handlePersonImminentRemovalEvent);
-		subscribe(PersonRegionUpdateEvent.class, this::handlePersonRegionUpdateEvent);
-		subscribe(RegionResourceUpdateEvent.class, this::handleRegionResourceUpdateEvent);
-		subscribe(RegionAdditionEvent.class, this::handleRegionAdditionEvent);
+		reportContext.subscribe(PersonAdditionEvent.class, this::handlePersonAdditionEvent);
+		reportContext.subscribe(PersonImminentRemovalEvent.class, this::handlePersonImminentRemovalEvent);
+		reportContext.subscribe(PersonRegionUpdateEvent.class, this::handlePersonRegionUpdateEvent);
+		reportContext.subscribe(RegionResourceUpdateEvent.class, this::handleRegionResourceUpdateEvent);
+		reportContext.subscribe(RegionAdditionEvent.class, this::handleRegionAdditionEvent);
 
 		if (resourceIds.size() == 0) {
 			resourceIds.addAll(resourcesDataManager.getResourceIds());
@@ -333,10 +332,10 @@ public final class ResourceReport extends PeriodicReport {
 			}
 		}
 
-		subscribe(PersonResourceUpdateEvent.class, this::handlePersonResourceUpdateEvent);
+		reportContext.subscribe(PersonResourceUpdateEvent.class, this::handlePersonResourceUpdateEvent);
 		subscribedToAllResources = true;
 
-		subscribe(ResourceIdAdditionEvent.class, this::handleResourceIdAdditionEvent);
+		reportContext.subscribe(ResourceIdAdditionEvent.class, this::handleResourceIdAdditionEvent);
 
 		/*
 		 * Filling the region map with empty counters

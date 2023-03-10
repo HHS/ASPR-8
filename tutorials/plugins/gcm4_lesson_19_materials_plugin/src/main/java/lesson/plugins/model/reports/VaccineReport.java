@@ -45,9 +45,6 @@ public final class VaccineReport extends PeriodicReport {
 		return reportHeader;
 	}
 
-	@Override
-	public void init(final ReportContext reportContext) {
-		super.init(reportContext);
-	}
+	
 
 }
