@@ -4,7 +4,6 @@ import gov.hhs.aspr.gcm.gcmprotobuf.core.PluginBundle;
 import gov.hhs.aspr.gcm.gcmprotobuf.people.PeoplePluginBundleId;
 import gov.hhs.aspr.gcm.gcmprotobuf.plugins.groups.translators.GroupIdTranslator;
 import gov.hhs.aspr.gcm.gcmprotobuf.plugins.groups.translators.GroupPropertyIdTranslator;
-import gov.hhs.aspr.gcm.gcmprotobuf.plugins.groups.translators.GroupTranslator;
 import gov.hhs.aspr.gcm.gcmprotobuf.plugins.groups.translators.GroupTypeIdTranslator;
 import gov.hhs.aspr.gcm.gcmprotobuf.plugins.groups.translators.GroupsPluginDataTranslator;
 import gov.hhs.aspr.gcm.gcmprotobuf.properties.PropertiesPluginBundleId;
@@ -29,7 +28,6 @@ public class GroupsPluginBundle {
                     translatorContext.addTranslator(new GroupIdTranslator());
                     translatorContext.addTranslator(new GroupTypeIdTranslator());
                     translatorContext.addTranslator(new GroupPropertyIdTranslator());
-                    translatorContext.addTranslator(new GroupTranslator());
 
                     translatorContext
                             .addFieldToIncludeDefaultValue(GroupIdInput.getDescriptor().findFieldByName("groupId"));
