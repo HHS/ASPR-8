@@ -3,9 +3,8 @@ package gov.hhs.aspr.gcm.gcmprotobuf.properties;
 import com.google.protobuf.Message;
 
 import gov.hhs.aspr.gcm.gcmprotobuf.core.PluginBundle;
-import gov.hhs.aspr.gcm.gcmprotobuf.properties.translators.PropertyDefinitionMapTranslator;
 import gov.hhs.aspr.gcm.gcmprotobuf.properties.translators.PropertyDefinitionTranslator;
-import gov.hhs.aspr.gcm.gcmprotobuf.properties.translators.PropertyValueMapTranslator;
+import gov.hhs.aspr.gcm.gcmprotobuf.properties.translators.TimeTrackingPolicyTranslator;
 
 public class PropertiesPluginBundle {
 
@@ -18,8 +17,7 @@ public class PropertiesPluginBundle {
     private static PluginBundle.Builder setConstants(PluginBundle.Builder builder) {
         builder.setInitializer((translatorContext) -> {
             translatorContext.addTranslator(new PropertyDefinitionTranslator());
-            translatorContext.addTranslator(new PropertyDefinitionMapTranslator());
-            translatorContext.addTranslator(new PropertyValueMapTranslator());
+            translatorContext.addTranslator(new TimeTrackingPolicyTranslator());
         })
                 .setInputIsPluginData(false)
                 .setOutputIsPluginData(false)

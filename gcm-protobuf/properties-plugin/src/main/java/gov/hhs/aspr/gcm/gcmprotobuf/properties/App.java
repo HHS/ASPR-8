@@ -11,6 +11,8 @@ import gov.hhs.aspr.gcm.gcmprotobuf.properties.simobjects.PropertyValueMap;
 import gov.hhs.aspr.gcm.gcmprotobuf.properties.testsupport.simobjects.TestMessageSimObject;
 import gov.hhs.aspr.gcm.gcmprotobuf.properties.testsupport.translators.Layer1Translator;
 import gov.hhs.aspr.gcm.gcmprotobuf.properties.testsupport.translators.TestMessageTranslator;
+import gov.hhs.aspr.gcm.gcmprotobuf.properties.translators.PropertyDefinitionMapTranslator;
+import gov.hhs.aspr.gcm.gcmprotobuf.properties.translators.PropertyValueMapTranslator;
 import plugins.properties.input.PropertyValueMapInput;
 
 public class App {
@@ -48,6 +50,8 @@ public class App {
                         PropertyValueMapInput.getDefaultInstance()))
                 .addTranslator(new TestMessageTranslator())
                 .addTranslator(new Layer1Translator())
+                .addTranslator(new PropertyValueMapTranslator())
+                .addTranslator(new PropertyDefinitionMapTranslator())
                 .build()
                 .init();
 
