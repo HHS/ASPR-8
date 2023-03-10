@@ -10,13 +10,13 @@ public class RandomGeneratorIdTranslator extends AbstractTranslator<RandomNumber
 
     @Override
     protected RandomNumberGeneratorId convertInputObject(RandomNumberGeneratorIdInput inputObject) {
-        return this.translator.getObjectFromAny(inputObject.getRandomNumberGeneratorId(), getSimObjectClass());
+        return this.translator.getObjectFromAny(inputObject.getId(), getSimObjectClass());
     }
 
     @Override
     protected RandomNumberGeneratorIdInput convertSimObject(RandomNumberGeneratorId simObject) {
         return RandomNumberGeneratorIdInput.newBuilder()
-                .setRandomNumberGeneratorId(this.translator.getAnyFromObject(simObject)).build();
+                .setId(this.translator.getAnyFromObject(simObject)).build();
     }
 
     @Override

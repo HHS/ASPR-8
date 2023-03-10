@@ -1,52 +1,61 @@
 {
-    "seed": "524805676405822016",
-    "randomNumberGeneratorIds": [{
-      "randomNumberGeneratorId": {
+  "seed": "524805676405822016",
+  "randomNumberGeneratorIds": [
+    {
+      "id": {
         "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
         "enumTypeUrl": "gov.hhs.aspr.gcm.TestRandomGeneratorIdInput",
         "value": "DASHER"
       }
-    }, {
-      "randomNumberGeneratorId": {
+    },
+    {
+      "id": {
         "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
         "enumTypeUrl": "gov.hhs.aspr.gcm.TestRandomGeneratorIdInput",
         "value": "DANCER"
       }
-    }, {
-      "randomNumberGeneratorId": {
+    },
+    {
+      "id": {
         "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
         "enumTypeUrl": "gov.hhs.aspr.gcm.TestRandomGeneratorIdInput",
         "value": "PRANCER"
       }
-    }, {
-      "randomNumberGeneratorId": {
+    },
+    {
+      "id": {
         "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
         "enumTypeUrl": "gov.hhs.aspr.gcm.TestRandomGeneratorIdInput",
         "value": "VIXEN"
       }
-    }, {
-      "randomNumberGeneratorId": {
+    },
+    {
+      "id": {
         "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
         "enumTypeUrl": "gov.hhs.aspr.gcm.TestRandomGeneratorIdInput",
         "value": "COMET"
       }
-    }, {
-      "randomNumberGeneratorId": {
+    },
+    {
+      "id": {
         "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
         "enumTypeUrl": "gov.hhs.aspr.gcm.TestRandomGeneratorIdInput",
         "value": "CUPID"
       }
-    }, {
-      "randomNumberGeneratorId": {
+    },
+    {
+      "id": {
         "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
         "enumTypeUrl": "gov.hhs.aspr.gcm.TestRandomGeneratorIdInput",
         "value": "DONNER"
       }
-    }, {
-      "randomNumberGeneratorId": {
+    },
+    {
+      "id": {
         "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
         "enumTypeUrl": "gov.hhs.aspr.gcm.TestRandomGeneratorIdInput",
         "value": "BLITZEN"
       }
-    }]
-  }
+    }
+  ]
+}

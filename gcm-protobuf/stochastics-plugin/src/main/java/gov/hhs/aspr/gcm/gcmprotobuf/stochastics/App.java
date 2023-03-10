@@ -68,8 +68,8 @@ public class App {
     }
     public static void main(String[] args) {
 
-        String inputFileName = "./stochastics-plugin/src/main/resources/json/testJson2.json";
-        String outputFileName = "./stochastics-plugin/src/main/resources/json/output/testJson2Output.json";
+        String inputFileName = "./stochastics-plugin/src/main/resources/json/input.json";
+        String outputFileName = "./stochastics-plugin/src/main/resources/json/output/output.json";
 
         TranslatorController translatorController = TranslatorController.builder()
                 .addBundle(StochasticsPluginBundle.getPluginBundle(inputFileName, outputFileName))
