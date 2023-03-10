@@ -12,10 +12,10 @@ public class WriterContext {
     }
 
     public <T extends PluginData> void writePluginDataOutput(Writer writer, T pluginData) {
-        this.translatorController.writePluginDataInput(writer, pluginData);
+        this.translatorController.writePluginDataOutput(writer, pluginData);
     }
 
-    public void writeJson(Writer writer, Object simObject) {
-        this.translatorController.writeJson(writer, simObject);
+    public void writeOutput(Writer writer, Object simObject) {
+        this.translatorController.writeOutput(writer, simObject);
     }
 }

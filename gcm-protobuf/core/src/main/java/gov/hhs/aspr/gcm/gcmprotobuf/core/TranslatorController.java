@@ -103,20 +103,22 @@ public class TranslatorController {
     protected <U extends Message.Builder> void readPluginDataInput(Reader reader, U builder) {
         PluginData pluginData = this.masterTranslator.readJson(reader, builder);
 
+        this.simObjectClassToPluginBundleMap.putIfAbsent(pluginData.getClass(), this.focalBundle);
         this.pluginDatas.add(pluginData);
     }
 
     protected <U extends Message.Builder> void readJson(Reader reader, U builder) {
         Object simObject = this.masterTranslator.readJson(reader, builder);
 
+        this.simObjectClassToPluginBundleMap.putIfAbsent(simObject.getClass(), this.focalBundle);
         this.objects.add(simObject);
     }
 
-    protected <T extends PluginData> void writePluginDataInput(Writer writer, T pluginData) {
+    protected <T extends PluginData> void writePluginDataOutput(Writer writer, T pluginData) {
         this.masterTranslator.printJson(writer, pluginData);
     }
 
-    protected void writeJson(Writer writer, Object simObject) {
+    protected void writeOutput(Writer writer, Object simObject) {
         this.masterTranslator.printJson(writer, simObject);
     }
 

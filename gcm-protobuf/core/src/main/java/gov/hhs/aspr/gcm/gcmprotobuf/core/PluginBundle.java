@@ -180,7 +180,7 @@ public final class PluginBundle {
                     "The output data for this bundle is a plugin data, and should be written via the writePluginDataOutput() method.");
         }
 
-        writerContext.writeJson(this.data.writer, simObject);
+        writerContext.writeOutput(this.data.writer, simObject);
     }
 
     public <T extends PluginData> void writePluginDataOutput(WriterContext writerContext, T pluginData) {
