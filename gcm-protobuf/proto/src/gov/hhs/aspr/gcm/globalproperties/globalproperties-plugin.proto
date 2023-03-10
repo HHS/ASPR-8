@@ -11,6 +11,15 @@ message GlobalPropertyIdInput {
     google.protobuf.Any globalPropertyId = 1;
 }
 
+enum TestGlobalPropertyIdInput {
+    GLOBAL_PROPERTY_1_BOOLEAN_MUTABLE = 0;
+    GLOBAL_PROPERTY_2_INTEGER_MUTABLE = 1;
+    GLOBAL_PROPERTY_3_DOUBLE_MUTABLE = 2;
+    GLOBAL_PROPERTY_4_BOOLEAN_IMMUTABLE = 3;
+    GLOBAL_PROPERTY_5_INTEGER_IMMUTABLE = 4;
+    GLOBAL_PROPERTY_6_DOUBLE_IMMUTABLE = 5;
+}
+
 message GlobalPropertiesPluginDataInput {
     repeated PropertyDefinitionMapInput globalPropertyDefinitinions = 1;
     repeated PropertyValueMapInput globalPropertyValues = 2;
