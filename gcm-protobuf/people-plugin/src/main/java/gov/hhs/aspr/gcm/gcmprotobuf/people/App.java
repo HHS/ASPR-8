@@ -1,5 +1,6 @@
 package gov.hhs.aspr.gcm.gcmprotobuf.people;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gson.JsonArray;
@@ -36,10 +37,47 @@ public class App {
         return target;
     }
 
+    private static boolean printNotSame() {
+        System.out.println("PluginDatas not same");
+        return false;
+    }
+
+    private static void checkSame(PeoplePluginData actualPluginData) {
+        boolean isSame = true;
+
+        if (actualPluginData.getPersonIds().size() > 100) {
+            isSame = printNotSame();
+        }
+
+        List<PersonId> expectedPersonIds = new ArrayList<>();
+        for (int i = 0; i < 100; i++) {
+            if (i % 2 == 0)
+                expectedPersonIds.add(new PersonId(i));
+            else
+                expectedPersonIds.add(null);
+        }
+
+        for (int i = 0; i < actualPluginData.getPersonIds().size(); i++) {
+            PersonId actualPersonId = actualPluginData.getPersonIds().get(i);
+            PersonId expectedPersonid = expectedPersonIds.get(i);
+
+            if (expectedPersonid == null) {
+                if (actualPersonId != null)
+                    isSame = printNotSame();
+            } else if (!expectedPersonid.equals(actualPersonId)) {
+                isSame = printNotSame();
+            }
+        }
+
+        if (isSame) {
+            System.out.println("PluginDatas are the same");
+        }
+    }
+
     public static void main(String[] args) {
 
-        String inputFileName = "./people-plugin/src/main/resources/json/testJson1.json";
-        String outputFileName = "./people-plugin/src/main/resources/json/output/testJson1Output.json";
+        String inputFileName = "./people-plugin/src/main/resources/json/testJson2.json";
+        String outputFileName = "./people-plugin/src/main/resources/json/output/testJson2Output.json";
 
         TranslatorController translatorController = TranslatorController.builder()
                 .addBundle(PeoplePluginBundle.getPluginBundle(inputFileName, outputFileName))
@@ -49,10 +87,7 @@ public class App {
         List<PluginData> pluginDatas = translatorController.readInput().getPluginDatas();
         PeoplePluginData peoplePluginData = (PeoplePluginData) pluginDatas.get(0);
 
-        for (PersonId personId : peoplePluginData.getPersonIds()) {
-            if (personId != null)
-                System.out.println(personId.getValue());
-        }
+        checkSame(peoplePluginData);
 
         translatorController.writeOutput();
     }
