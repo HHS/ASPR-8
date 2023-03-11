@@ -153,4 +153,9 @@ public final class StochasticsPluginData implements PluginData {
 		return data.seed;
 	}
 
+	@Override
+	public PluginDataBuilder getEmptyBuilder() {
+		return new Builder(new Data());
+	}
+
 }

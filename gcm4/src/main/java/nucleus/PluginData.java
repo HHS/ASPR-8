@@ -28,4 +28,10 @@ public interface PluginData {
 	 * generate a copy of the current plugin.
 	 */
 	public PluginDataBuilder getCloneBuilder();
+
+	/**
+	 * Returns a PluginDataBuilder that can build the plugin data. The returned
+	 * builder should be initialized as empty.
+	 */
+	public PluginDataBuilder getEmptyBuilder();
 }

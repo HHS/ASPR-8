@@ -441,6 +441,11 @@ public class RegionsPluginData implements PluginData {
 		return Optional.empty();
 	}
 
+	@Override
+	public PluginDataBuilder getEmptyBuilder() {
+		return new Builder(new Data());
+	}
+
 	
 
 }

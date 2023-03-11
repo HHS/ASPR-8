@@ -1159,4 +1159,9 @@ public final class MaterialsPluginData implements PluginData {
 	public PluginDataBuilder getCloneBuilder() {
 		return new Builder(data);
 	}
+
+	@Override
+	public PluginDataBuilder getEmptyBuilder() {
+		return new Builder(new Data());
+	}
 }

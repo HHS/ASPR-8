@@ -41,6 +41,32 @@ public final class DataManagerContext implements SimulationContext {
 	}
 
 	/**
+	 * Registers the given consumer to be executed at the end of the simulation.
+	 * Activity associated with the consumer should be limited to querying data
+	 * state and releasing output.
+	 * 
+	 * @throws ContractException
+	 *             <li>{@link NucleusError#NULL_DATA_MANAGER_CONTEXT_CONSUMER}
+	 *             if the consumer is null</li>
+	 */
+	public void subscribeToSimulationClose(Consumer<DataManagerContext> consumer) {
+		simulation.subscribeDataManagerToSimulationClose(dataManagerId, consumer);
+	}
+
+	/**
+	 * Registers the given consumer to be executed when the state of the
+	 * simulation needs to be reflected into plugins that are released to
+	 * output.
+	 * 
+	 * @throws ContractException
+	 *             <li>{@link NucleusError#NULL_DATA_MANAGER_STATE_CONTEXT_CONSUMER}
+	 *             if the consumer is null</li>
+	 */
+	public void subscribeToSimulationState(BiConsumer<DataManagerContext, SimulationStateContext> consumer) {
+		simulation.subscribeDataManagerToSimulationState(dataManagerId, consumer);
+	}
+
+	/**
 	 * Schedules a plan that will be executed at the given time. The plan is
 	 * associated with the given key and can be canceled or retrieved via this
 	 * key. Keys must be unique to the actor doing the planning, but can be
@@ -209,19 +235,6 @@ public final class DataManagerContext implements SimulationContext {
 	 */
 	public boolean subscribersExist(Class<? extends Event> eventClass) {
 		return simulation.subscribersExistForEvent(eventClass);
-	}
-
-	/**
-	 * Registers the given consumer to be executed at the end of the simulation.
-	 * Activity associated with the consumer should be limited to querying data
-	 * state and releasing output.
-	 * 
-	 * @throws ContractException
-	 *             <li>{@link NucleusError#NULL_DATA_MANAGER_CONTEXT_CONSUMER}
-	 *             if the consumer is null</li>
-	 */
-	public void subscribeToSimulationClose(Consumer<DataManagerContext> consumer) {
-		simulation.subscribeDataManagerToSimulationClose(dataManagerId, consumer);
 	}
 
 	/**
