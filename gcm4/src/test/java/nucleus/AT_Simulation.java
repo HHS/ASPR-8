@@ -57,11 +57,21 @@ public class AT_Simulation {
 		public PluginDataBuilder getCloneBuilder() {
 			throw new UnsupportedOperationException();
 		}
+
+		@Override
+		public PluginDataBuilder getEmptyBuilder() {
+			throw new UnsupportedOperationException();
+		}
 	}
 
 	private static class PluginData2 implements PluginData {
 		@Override
 		public PluginDataBuilder getCloneBuilder() {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public PluginDataBuilder getEmptyBuilder() {
 			throw new UnsupportedOperationException();
 		}
 	}

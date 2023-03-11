@@ -310,7 +310,6 @@ public class PersonPropertiesPluginData implements PluginData {
 
 	@Override
 	public PluginDataBuilder getCloneBuilder() {
-
 		return new Builder(data);
 	}
 
@@ -350,6 +349,11 @@ public class PersonPropertiesPluginData implements PluginData {
 			return data.emptyList;
 		}
 		return Collections.unmodifiableList(list);
+	}
+
+	@Override
+	public PluginDataBuilder getEmptyBuilder() {
+		return new Builder(new Data());
 	}
 
 }

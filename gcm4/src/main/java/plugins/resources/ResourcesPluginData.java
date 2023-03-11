@@ -739,4 +739,9 @@ public final class ResourcesPluginData implements PluginData {
 		return data.personCount;
 	}
 
+	@Override
+	public PluginDataBuilder getEmptyBuilder() {
+		return new Builder(new Data());
+	}
+
 }

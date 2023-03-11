@@ -430,4 +430,9 @@ public class TestPluginData implements PluginData {
 		return true;
 	}
 
+	@Override
+	public PluginDataBuilder getEmptyBuilder() {
+		return new Builder(new Data());
+	}
+
 }

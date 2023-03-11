@@ -126,6 +126,14 @@ public class Simulation {
 		}
 
 		/**
+		 * Sets the output consumer for the simulation. Tolerates null.
+		 */
+		public Builder produceSimulationStateOnHalt(boolean produceSimulationStateOnHalt) {
+			data.produceSimulationStateOnHalt = produceSimulationStateOnHalt;
+			return this;
+		}
+
+		/**
 		 * Set the simulation time. Defaults to the current date and a start
 		 * time of zero.
 		 * 
@@ -183,6 +191,7 @@ public class Simulation {
 	}
 
 	private static class Data {
+		private boolean produceSimulationStateOnHalt;
 		private List<Plugin> plugins = new ArrayList<>();
 		private Consumer<Object> outputConsumer;
 		private SimulationTime simulationTime = SimulationTime.builder().build();
@@ -213,7 +222,7 @@ public class Simulation {
 	};
 
 	// planning
-	private long masterPlanningArrivalId;	
+	private long masterPlanningArrivalId;
 	protected double time;
 	private boolean processEvents = true;
 	private int activePlanCount;
@@ -643,7 +652,7 @@ public class Simulation {
 			throw new ContractException(NucleusError.REPEATED_EXECUTION);
 		}
 		started = true;
-		
+
 		time = data.simulationTime.getStartTime();
 
 		// set the output consumer
@@ -699,7 +708,8 @@ public class Simulation {
 			}
 		}
 
-		//execute the data manager queue -- this will in turn execute the report queue
+		// execute the data manager queue -- this will in turn execute the
+		// report queue
 		executeDataManagerQueue();
 
 		for (DataManager dataManager : dataManagerToDataManagerIdMap.keySet()) {
@@ -707,7 +717,7 @@ public class Simulation {
 				throw new ContractException(NucleusError.DATA_MANAGER_INITIALIZATION_FAILURE, dataManager.getClass().getSimpleName());
 			}
 		}
-			
+
 		// initialize the actors by flushing the actor queue
 		executeActorQueue();
 
@@ -789,6 +799,13 @@ public class Simulation {
 			focalReportId = null;
 		}
 
+		if (data.produceSimulationStateOnHalt) {
+			for (Plugin plugin : data.plugins) {
+				for (PluginData pluginData : plugin.getPluginDatas()) {
+					pluginData.getEmptyBuilder();
+				}
+			}
+		}
 	}
 
 	private void executeActorQueue() {
