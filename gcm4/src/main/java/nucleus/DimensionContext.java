@@ -110,15 +110,4 @@ public final class DimensionContext {
 		}
 	}
 
-	/**
-	 * Returns the set of items stored in this container.
-	 */
-	public Set<PluginDataBuilder> getContents() {
-		Set<PluginDataBuilder> result = new LinkedHashSet<>();
-		for (PluginDataBuilder pluginDataBuilder : baseMap.values()) {
-			result.add(pluginDataBuilder);
-		}
-		return result;
-	}
-
 }

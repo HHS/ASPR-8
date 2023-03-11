@@ -441,25 +441,19 @@ public final class Experiment {
 		}
 	}
 
-
 	private List<Plugin> getNewPluginInstancesFromScenarioId(final int scenarioId) {
-		/*
-		 * Build the type map of the clone plugin data builders from the plugins
-		 * supplied to the dimensions of the experiment
-		 */
 
 		final DimensionContext.Builder contextBuilder = DimensionContext.builder();
 
 		/*
-		 * Set up a map that will allow us to associate each data builder with
-		 * the plugin that should own that data
+		 * Set up a map that will allow us to associate with each plugin the new
+		 * plugin data data builder instances associated with that plugin
 		 */
 		Map<Plugin, List<PluginDataBuilder>> map = new LinkedHashMap<>();
-		
 
 		for (final Plugin plugin : data.plugins) {
 			List<PluginDataBuilder> list = new ArrayList<>();
-			map.put(plugin,list);
+			map.put(plugin, list);
 			for (final PluginData pluginData : plugin.getPluginDatas()) {
 				PluginDataBuilder pluginDataBuilder = pluginData.getCloneBuilder();
 				list.add(pluginDataBuilder);
@@ -509,10 +503,10 @@ public final class Experiment {
 		/*
 		 * Rebuild the plugins.
 		 */
-		
+
 		final List<Plugin> result = new ArrayList<>();
-		
-		for(Plugin plugin : map.keySet()) {
+
+		for (Plugin plugin : map.keySet()) {
 			Plugin.Builder pluginBuilder = Plugin.builder();
 			pluginBuilder.setPluginId(plugin.getPluginId());
 
