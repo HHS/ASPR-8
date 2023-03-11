@@ -35,13 +35,11 @@ public final class DataManagerContext implements SimulationContext {
 	 * 
 	 * 
 	 */
-	
-	
 
 	public void addPlan(final Consumer<DataManagerContext> plan, final double planTime) {
 		simulation.addDataManagerPlan(dataManagerId, plan, planTime, true, null);
 	}
-	
+
 	/**
 	 * Registers the given consumer to be executed at the end of the simulation.
 	 * Activity associated with the consumer should be limited to querying data
@@ -53,6 +51,19 @@ public final class DataManagerContext implements SimulationContext {
 	 */
 	public void subscribeToSimulationClose(Consumer<DataManagerContext> consumer) {
 		simulation.subscribeDataManagerToSimulationClose(dataManagerId, consumer);
+	}
+
+	/**
+	 * Registers the given consumer to be executed when the state of the
+	 * simulation needs to be reflected into plugins that are released to
+	 * output.
+	 * 
+	 * @throws ContractException
+	 *             <li>{@link NucleusError#NULL_DATA_MANAGER_STATE_CONTEXT_CONSUMER}
+	 *             if the consumer is null</li>
+	 */
+	public void subscribeToSimulationState(BiConsumer<DataManagerContext, SimulationStateContext> consumer) {
+		simulation.subscribeDataManagerToSimulationState(dataManagerId, consumer);
 	}
 
 	/**

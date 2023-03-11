@@ -126,9 +126,11 @@ public class Simulation {
 		}
 
 		/**
-		 * Sets the output consumer for the simulation. Tolerates null.
+		 * If true and an output consumer is also assigned then the simulation
+		 * will produce plugins and a SimulationTime that reflect the final
+		 * state of the simulation. Defaults to false.
 		 */
-		public Builder produceSimulationStateOnHalt(boolean produceSimulationStateOnHalt) {
+		public Builder setProduceSimulationStateOnHalt(boolean produceSimulationStateOnHalt) {
 			data.produceSimulationStateOnHalt = produceSimulationStateOnHalt;
 			return this;
 		}
@@ -234,6 +236,8 @@ public class Simulation {
 	private final Map<ActorId, Consumer<ActorContext>> simulationCloseActorCallbacks = new LinkedHashMap<>();
 
 	private final Map<DataManagerId, Consumer<DataManagerContext>> simulationCloseDataManagerCallbacks = new LinkedHashMap<>();
+
+	private final Map<DataManagerId, BiConsumer<DataManagerContext, SimulationStateContext>> simulationStateDataManagerCallbacks = new LinkedHashMap<>();
 
 	private boolean started;
 
@@ -669,6 +673,7 @@ public class Simulation {
 			for (PluginData pluginData : plugin.getPluginDatas()) {
 				basePluginDataMap.put(pluginData.getClass(), pluginData);
 			}
+			focalPluginId = null;
 		}
 
 		// Have each plugin contribute data managers reports and actors
@@ -774,6 +779,8 @@ public class Simulation {
 			}
 		}
 
+		processEvents = false;
+
 		// signal to the data managers that the simulation is closing
 		for (DataManagerId dataManagerId : simulationCloseDataManagerCallbacks.keySet()) {
 			DataManagerContext dataManagerContext = dataManagerIdToDataManagerContextMap.get(dataManagerId);
@@ -799,13 +806,64 @@ public class Simulation {
 			focalReportId = null;
 		}
 
-		if (data.produceSimulationStateOnHalt) {
-			for (Plugin plugin : data.plugins) {
-				for (PluginData pluginData : plugin.getPluginDatas()) {
-					pluginData.getEmptyBuilder();
-				}
+		// gather the simulation state and report it to output
+		if (data.produceSimulationStateOnHalt && outputConsumer != null) {
+			produceSimulationStateAsOutput();
+		}
+	}
+
+	private void produceSimulationStateAsOutput() {
+		// gather the plugins
+
+		Map<Plugin, List<PluginDataBuilder>> map = new LinkedHashMap<>();
+
+		SimulationStateContext.Builder simulationStateContextBuilder = SimulationStateContext.builder();
+		for (Plugin plugin : data.plugins) {
+			List<PluginDataBuilder> list = new ArrayList<>();
+			map.put(plugin, list);
+			for (PluginData pluginData : plugin.getPluginDatas()) {
+				PluginDataBuilder emptyBuilder = pluginData.getEmptyBuilder();
+				list.add(emptyBuilder);
+				simulationStateContextBuilder.add(emptyBuilder);
 			}
 		}
+		SimulationStateContext simulationStateContext = simulationStateContextBuilder.build();
+
+		// pass the simulation state context to all concerned parties
+
+		// signal to the data managers that the simulation is closing
+		for (DataManagerId dataManagerId : simulationStateDataManagerCallbacks.keySet()) {
+			DataManagerContext dataManagerContext = dataManagerIdToDataManagerContextMap.get(dataManagerId);
+			BiConsumer<DataManagerContext, SimulationStateContext> dataManagerStateCallback = simulationStateDataManagerCallbacks.get(dataManagerId);
+			dataManagerStateCallback.accept(dataManagerContext, simulationStateContext);
+		}
+
+		// build up the output plugins and release them as output
+		for (Plugin plugin : map.keySet()) {
+			Plugin.Builder pluginBuilder = Plugin.builder();
+			pluginBuilder.setPluginId(plugin.getPluginId());
+
+			Optional<Consumer<PluginContext>> optionalInitializer = plugin.getInitializer();
+			if (optionalInitializer.isPresent()) {
+				pluginBuilder.setInitializer(optionalInitializer.get());
+			}
+
+			for (PluginId pluginId : plugin.getPluginDependencies()) {
+				pluginBuilder.addPluginDependency(pluginId);
+			}
+
+			List<PluginDataBuilder> pluginDataBuilders = map.get(plugin);
+			for (PluginDataBuilder pluginDataBuilder : pluginDataBuilders) {
+				pluginBuilder.addPluginData(pluginDataBuilder.build());
+			}
+			outputConsumer.accept(pluginBuilder.build());
+		}
+
+		SimulationTime.Builder simulationTimeBuilder = SimulationTime.builder();
+		simulationTimeBuilder.setBaseDate(data.simulationTime.getBaseDate());
+		simulationTimeBuilder.setStartTime(time);
+		outputConsumer.accept(simulationTimeBuilder.build());
+
 	}
 
 	private void executeActorQueue() {
@@ -1071,6 +1129,13 @@ public class Simulation {
 		simulationCloseDataManagerCallbacks.put(dataManagerId, consumer);
 	}
 
+	protected void subscribeDataManagerToSimulationState(DataManagerId dataManagerId, BiConsumer<DataManagerContext, SimulationStateContext> consumer) {
+		if (consumer == null) {
+			throw new ContractException(NucleusError.NULL_DATA_MANAGER_STATE_CONTEXT_CONSUMER);
+		}
+		simulationStateDataManagerCallbacks.put(dataManagerId, consumer);
+	}
+
 	@SuppressWarnings("unchecked")
 	protected <T extends Event> void subscribeDataManagerToEvent(DataManagerId dataManagerId, Class<T> eventClass, BiConsumer<DataManagerContext, T> eventConsumer) {
 
@@ -1225,6 +1290,10 @@ public class Simulation {
 
 		if (focalReportId != null) {
 			throw new ContractException(NucleusError.REPORT_ATTEMPTING_MUTATION, focalReportId);
+		}
+
+		if (!processEvents) {
+			throw new ContractException(NucleusError.DATA_MANAGER_ATTEMPTING_MUTATION);
 		}
 
 		// queue the event handling by data managers
