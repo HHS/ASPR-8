@@ -16,6 +16,10 @@ public final class SimpleRegionId implements RegionId {
 		this.value = value;
 	}
 
+	public Object getValue() {
+		return this.value;
+	}
+	
 	/**
 	 * Standard implementation
 	 */

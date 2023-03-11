@@ -9,13 +9,29 @@
         <version>${revision}</version>
     </parent>
 
-    <groupId>gov.hhs.aspr.gcm.gcm-protobuf</groupId>
     <artifactId>regions-plugin</artifactId>
     <packaging>jar</packaging>
-
     <name>gcm-protobuf :: regions-plugin</name>
 
-
+    <dependencies>
+        <dependency>
+            <groupId>gov.hhs.aspr.gcm.gcm-protobuf</groupId>
+            <artifactId>properties-plugin</artifactId>
+            <version>${revision}</version>
+        </dependency>
+        <dependency>
+            <groupId>gov.hhs.aspr.gcm.gcm-protobuf</groupId>
+            <artifactId>people-plugin</artifactId>
+            <version>${revision}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>gov.hhs.aspr.gcm.gcm-protobuf</groupId>
+                    <artifactId>core</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+    </dependencies>
+    
     <build>
         <plugins>
             <plugin>
@@ -40,11 +56,14 @@
                         <configuration>
                             <artifactItems>
                                 <artifactItem>
-                                    <groupId>gov.hhs.aspr.gcm.gcm-protobuf</groupId>
+                                    <groupId>
+                                        gov.hhs.aspr.gcm.gcm-protobuf</groupId>
                                     <artifactId>protos</artifactId>
-                                    <version>${gcm.proto.version}</version>
+                                    <version>
+                                        ${gcm.proto.version}</version>
                                     <overWrite>true</overWrite>
-                                    <outputDirectory>${project.build.outputDirectory}</outputDirectory>
+                                    <outputDirectory>
+                                        ${project.build.outputDirectory}</outputDirectory>
                                     <includes>**/*.proto</includes>
                                 </artifactItem>
                             </artifactItems>
@@ -64,8 +83,10 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <protocArtifact>com.google.protobuf:protoc:${protoc.version}:exe:${os.detected.classifier}</protocArtifact>
-                    <protoSourceRoot>${project.build.outputDirectory}/gov/hhs/aspr/gcm/regions</protoSourceRoot>
+                    <protocArtifact>
+                        com.google.protobuf:protoc:${protoc.version}:exe:${os.detected.classifier}</protocArtifact>
+                    <protoSourceRoot>
+                        ${project.build.outputDirectory}/gov/hhs/aspr/gcm/regions</protoSourceRoot>
                     <additionalProtoPathElements>
                         <additionalProtoPathElement>
                             ${project.build.outputDirectory}/gov/hhs/aspr/gcm/properties</additionalProtoPathElement>
@@ -107,15 +128,18 @@
                 </executions>
                 <configuration>
                     <includes>
-                        <include>target/generated-sources/**/*.java</include>
+                        <include>
+                            target/generated-sources/**/*.java</include>
                     </includes>
-                    <regex>true</regex>
+                    <regex>
+                        true</regex>
                     <regexFlags>
                         <regexFlag>MULTILINE</regexFlag>
                     </regexFlags>
                     <replacements>
                         <replacement>
-                            <token>^(@SuppressWarnings\(.*?\)\s+)?public final class</token>
+                            <token>^(@SuppressWarnings\(.*?\)\s+)?public
+                                final class</token>
                             <value>@SuppressWarnings("all") public final class</value>
                         </replacement>
                     </replacements>

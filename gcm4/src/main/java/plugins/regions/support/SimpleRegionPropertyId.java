@@ -15,6 +15,11 @@ public final class SimpleRegionPropertyId implements RegionPropertyId {
 		}
 		this.value = value;
 	}
+
+	public Object getValue() {
+		return this.value;
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;

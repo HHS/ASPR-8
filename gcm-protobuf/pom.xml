@@ -94,6 +94,7 @@
         <module>groups-plugin</module>
         <module>stochastics-plugin</module>
         <module>globalproperties-plugin</module>
+        <module>regions-plugin</module>
     </modules>
 
     <build>
