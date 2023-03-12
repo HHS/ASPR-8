@@ -15,6 +15,7 @@ import nucleus.DataManagerContext;
 import nucleus.Event;
 import nucleus.EventFilter;
 import nucleus.IdentifiableFunctionMap;
+import nucleus.SimulationStateContext;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.events.PersonImminentAdditionEvent;
 import plugins.people.events.PersonRemovalEvent;
@@ -743,9 +744,43 @@ public final class RegionsDataManager extends DataManager {
 		dataManagerContext.subscribe(PersonImminentAdditionEvent.class, this::handlePersonImminentAdditionEvent);
 		dataManagerContext.subscribe(PersonRemovalEvent.class, this::handlePersonRemovalEvent);
 		dataManagerContext.subscribe(RegionAdditionMutationEvent.class, this::handleRegionAdditionMutationEvent);
-		dataManagerContext.subscribe(RegionPropertyDefinitionMutationEvent.class, this::handleRegionPropertyDefinitionMutationEvent);	
+		dataManagerContext.subscribe(RegionPropertyDefinitionMutationEvent.class, this::handleRegionPropertyDefinitionMutationEvent);
 		dataManagerContext.subscribe(PersonRegionUpdateMutationEvent.class, this::handlePersonRegionUpdateMutationEvent);
 		dataManagerContext.subscribe(RegionPropertyUpdateMutationEvent.class, this::handleRegionPropertyUpdateMutationEvent);
+
+		dataManagerContext.subscribeToSimulationState(this::recordSimulationState);
+	}
+
+	private void recordSimulationState(DataManagerContext dataManagerContext, SimulationStateContext simulationStateContext) {
+
+		RegionsPluginData.Builder builder = simulationStateContext.get(RegionsPluginData.Builder.class);
+
+		for (RegionId regionId : regionPopulationRecordMap.keySet()) {
+			builder.addRegion(regionId);
+		}
+
+		for (RegionPropertyId regionPropertyId : regionPropertyDefinitions.keySet()) {
+			PropertyDefinition propertyDefinition = regionPropertyDefinitions.get(regionPropertyId);
+			builder.defineRegionProperty(regionPropertyId, propertyDefinition);
+			for (RegionId regionId : regionPopulationRecordMap.keySet()) {
+				Map<RegionPropertyId, PropertyValueRecord> map = regionPropertyMap.get(regionId);
+				PropertyValueRecord propertyValueRecord = map.get(regionPropertyId);
+				if (propertyValueRecord != null) {
+					builder.setRegionPropertyValue(regionId, regionPropertyId, propertyValueRecord.getValue());
+				} else {
+					builder.setRegionPropertyValue(regionId, regionPropertyId, propertyDefinition.getDefaultValue().get());
+				}
+			}
+		}
+
+		for (PersonId personId : peopleDataManager.getPeople()) {
+			final int r = regionValues.getValueAsInt(personId.getValue());
+			RegionId regionId = indexToRegionMap.get(r);
+			builder.setPersonRegion(personId, regionId);
+		}
+
+		builder.setPersonRegionArrivalTracking(regionArrivalTrackingPolicy);
+
 	}
 
 	/**

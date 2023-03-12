@@ -19,6 +19,7 @@ import nucleus.EventFilter;
 import nucleus.IdentifiableFunctionMap;
 import nucleus.NucleusError;
 import nucleus.SimulationContext;
+import nucleus.SimulationStateContext;
 import plugins.materials.MaterialsPluginData;
 import plugins.materials.events.BatchAdditionEvent;
 import plugins.materials.events.BatchAmountUpdateEvent;
@@ -376,6 +377,70 @@ public final class MaterialsDataManager extends DataManager {
 			}
 		}
 		dataManagerContext.subscribe(ResourceIdAdditionEvent.class, this::handleResourceIdAdditionEvent);
+		dataManagerContext.subscribeToSimulationState(this::recordSimulationState);
+	}
+
+	private void recordSimulationState(DataManagerContext dataManagerContext, SimulationStateContext simulationStateContext) {
+		MaterialsPluginData.Builder builder = simulationStateContext.get(MaterialsPluginData.Builder.class);
+
+		Set<MaterialsProducerPropertyId> materialsProducerPropertyIds = getMaterialsProducerPropertyIds();
+
+		for (MaterialsProducerId materialsProducerId : getMaterialsProducerIds()) {
+			builder.addMaterialsProducerId(materialsProducerId);
+			for (MaterialsProducerPropertyId materialsProducerPropertyId : materialsProducerPropertyIds) {
+				Object propertyValue = getMaterialsProducerPropertyValue(materialsProducerId, materialsProducerPropertyId);
+				builder.setMaterialsProducerPropertyValue(materialsProducerId, materialsProducerPropertyId, propertyValue);
+			}
+
+			final MaterialsProducerRecord materialsProducerRecord = materialsProducerMap.get(materialsProducerId);
+			for (ResourceId resourId : materialsProducerRecord.materialProducerResources.keySet()) {
+				ComponentResourceRecord componentResourceRecord = materialsProducerRecord.materialProducerResources.get(resourId);
+				builder.setMaterialsProducerResourceLevel(materialsProducerId, resourId, componentResourceRecord.getAmount());
+			}
+
+		}
+
+		for (MaterialsProducerPropertyId materialsProducerPropertyId : materialsProducerPropertyIds) {
+			PropertyDefinition propertyDefinition = getMaterialsProducerPropertyDefinition(materialsProducerPropertyId);
+			builder.defineMaterialsProducerProperty(materialsProducerPropertyId, propertyDefinition);
+		}
+
+		for (MaterialId materialId : getMaterialIds()) {
+			builder.addMaterial(materialId);
+			for (BatchPropertyId batchPropertyId : getBatchPropertyIds(materialId)) {
+				PropertyDefinition propertyDefinition = getBatchPropertyDefinition(materialId, batchPropertyId);
+				builder.defineBatchProperty(materialId, batchPropertyId, propertyDefinition);
+			}
+		}
+		for (MaterialsProducerId materialsProducerId : getMaterialsProducerIds()) {
+			for (StageId stageId : getStages(materialsProducerId)) {
+				boolean offered = isStageOffered(stageId);
+				builder.addStage(stageId, offered, materialsProducerId);
+
+				for (BatchId batchId : getStageBatches(stageId)) {
+					MaterialId batchMaterial = getBatchMaterial(batchId);
+					double batchAmount = getBatchAmount(batchId);
+					builder.addBatch(batchId, batchMaterial, batchAmount, materialsProducerId);
+					builder.addBatchToStage(stageId, batchId);
+
+					for (BatchPropertyId batchPropertyId : getBatchPropertyIds(batchMaterial)) {
+						Object propertyValue = getBatchPropertyValue(batchId, batchPropertyId);
+						builder.setBatchPropertyValue(batchId, batchPropertyId, propertyValue);
+					}
+				}
+
+			}
+			for (BatchId batchId : getInventoryBatches(materialsProducerId)) {
+				MaterialId batchMaterial = getBatchMaterial(batchId);
+				double batchAmount = getBatchAmount(batchId);
+				builder.addBatch(batchId, batchMaterial, batchAmount, materialsProducerId);
+				for (BatchPropertyId batchPropertyId : getBatchPropertyIds(batchMaterial)) {
+					Object propertyValue = getBatchPropertyValue(batchId, batchPropertyId);
+					builder.setBatchPropertyValue(batchId, batchPropertyId, propertyValue);
+				}
+			}
+		}
+
 	}
 
 	private void handleResourceIdAdditionEvent(DataManagerContext dataManagerContext, ResourceIdAdditionEvent resourceIdAdditionEvent) {

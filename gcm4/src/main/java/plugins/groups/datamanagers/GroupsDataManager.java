@@ -21,6 +21,7 @@ import nucleus.EventFilter;
 import nucleus.IdentifiableFunctionMap;
 import nucleus.NucleusError;
 import nucleus.SimulationContext;
+import nucleus.SimulationStateContext;
 import plugins.groups.GroupsPluginData;
 import plugins.groups.events.GroupAdditionEvent;
 import plugins.groups.events.GroupImminentRemovalEvent;
@@ -222,6 +223,63 @@ public final class GroupsDataManager extends DataManager {
 		loadGroupPropertyValues();
 
 		dataManagerContext.subscribe(PersonRemovalEvent.class, this::handlePersonRemovalEvent);
+		dataManagerContext.subscribeToSimulationState(this::recordSimulationState);
+	}
+
+	private void recordSimulationState(DataManagerContext dataManagerContext, SimulationStateContext simulationStateContext) {
+		GroupsPluginData.Builder builder = simulationStateContext.get(GroupsPluginData.Builder.class);
+
+		for (final GroupTypeId groupTypeId : typesToIndexesMap.keySet()) {
+			builder.addGroupTypeId(groupTypeId);
+		}
+
+		for (GroupTypeId groupTypeId : groupPropertyDefinitions.keySet()) {
+			Map<GroupPropertyId, PropertyDefinition> map = groupPropertyDefinitions.get(groupTypeId);
+			for (GroupPropertyId groupPropertyId : map.keySet()) {
+				PropertyDefinition propertyDefinition = map.get(groupPropertyId);
+				builder.defineGroupProperty(groupTypeId, groupPropertyId, propertyDefinition);
+			}
+		}
+
+		for (final GroupTypeId groupTypeId : typesToIndexesMap.keySet()) {
+			Integer typeIndex = typesToIndexesMap.get(groupTypeId);
+			final List<GroupId> groups = typesToGroupsMap.getValue(typeIndex);
+			if (groups != null) {
+				for (GroupId groupId : groups) {
+					builder.addGroup(groupId, groupTypeId);
+				}
+			}
+		}
+
+		for (final GroupTypeId groupTypeId : typesToIndexesMap.keySet()) {
+			Integer typeIndex = typesToIndexesMap.get(groupTypeId);
+			final List<GroupId> groups = typesToGroupsMap.getValue(typeIndex);
+			if (groups != null) {
+				for (GroupId groupId : groups) {
+					List<PersonId> people = groupsToPeopleMap.getValue(groupId.getValue());
+					if (people != null) {
+						for (PersonId personId : people) {
+							builder.addPersonToGroup(groupId, personId);
+						}
+					}
+				}
+			}
+		}
+		
+		for (final GroupTypeId groupTypeId : typesToIndexesMap.keySet()) {
+			Integer typeIndex = typesToIndexesMap.get(groupTypeId);
+			final List<GroupId> groups = typesToGroupsMap.getValue(typeIndex);
+			if (groups != null) {
+				Map<GroupPropertyId, IndexedPropertyManager> map = groupPropertyManagerMap.get(groupTypeId);
+				for (GroupPropertyId groupPropertyId : map.keySet()) {
+					IndexedPropertyManager indexedPropertyManager = map.get(groupPropertyId);
+					for (GroupId groupId : groups) {
+						Object propertyValue = indexedPropertyManager.getPropertyValue(groupId.getValue());	
+						builder.setGroupPropertyValue(groupId, groupPropertyId, propertyValue);
+					}
+				}
+			}
+		}
 
 	}
 
@@ -658,7 +716,6 @@ public final class GroupsDataManager extends DataManager {
 			indexedPropertyManager.setPropertyValue(groupId.getValue(), groupPropertyValue);
 		}
 
-		
 	}
 
 	private void validatePropertyMutability(final PropertyDefinition propertyDefinition) {
