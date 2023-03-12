@@ -2,10 +2,8 @@ package nucleus;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import util.errors.ContractException;
 
@@ -108,17 +106,6 @@ public final class DimensionContext {
 			map.put(t.getClass(), t);
 			return this;
 		}
-	}
-
-	/**
-	 * Returns the set of items stored in this container.
-	 */
-	public Set<PluginDataBuilder> getContents() {
-		Set<PluginDataBuilder> result = new LinkedHashSet<>();
-		for (PluginDataBuilder pluginDataBuilder : baseMap.values()) {
-			result.add(pluginDataBuilder);
-		}
-		return result;
 	}
 
 }

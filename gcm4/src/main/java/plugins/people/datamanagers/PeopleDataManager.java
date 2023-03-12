@@ -9,6 +9,7 @@ import nucleus.DataManagerContext;
 import nucleus.Event;
 import nucleus.EventFilter;
 import nucleus.NucleusError;
+import nucleus.SimulationStateContext;
 import plugins.people.PeoplePluginData;
 import plugins.people.events.PersonAdditionEvent;
 import plugins.people.events.PersonImminentAdditionEvent;
@@ -209,6 +210,19 @@ public final class PeopleDataManager extends DataManager {
 		}
 		globalPopulationRecord.projectedPopulationCount = personIds.size();
 		globalPopulationRecord.assignmentTime = dataManagerContext.getTime();
+		dataManagerContext.subscribeToSimulationState(this::recordSimulationState);
+	}
+
+	private void recordSimulationState(DataManagerContext dataManagerContext, SimulationStateContext simulationStateContext) {
+		PeoplePluginData.Builder builder = simulationStateContext.get(PeoplePluginData.Builder.class);
+
+		for (final PersonId personId : personIds) {
+			if (personId != null) {
+				builder.addPersonId(personId);
+			}
+		}
+		
+
 	}
 
 	/**
