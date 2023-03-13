@@ -1,0 +1,34 @@
+{
+    "l2_1": {
+        "location": {
+            "x": 1,
+            "y": 1,
+            "z": 1
+        },
+        "direction": 1
+    },
+    "l2_2": {
+        "location": {
+            "x": 5
+        },
+        "direction": 7
+    },
+    "l2_Unknown": {
+        "location": {
+            "x": 5
+        },
+        "direction": 7,
+        "w": "This will throw an error unless ignoreUnkownFields() is called"
+    },
+    "l1_1": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+    },
+    "l1_2": {
+        "z": 10
+    },
+    "l1_Unknown": {
+        "w": "This will throw an error unless ignoreUnkownFields() is called"
+    }
+}

@@ -660,6 +660,15 @@ public final class GroupsPluginData implements PluginData {
 		return Collections.unmodifiableList(list);
 	}
 
+	/**
+	 * Returns the unmodifiable list of group memberships
+	 * 
+	 * 
+	 */
+	public List<List<GroupId>> getGroupMemberships() {
+		return Collections.unmodifiableList(data.groupMemberships);
+	}
+
 	private static void validatePersonId(PersonId personId) {
 		if (personId == null) {
 			throw new ContractException(PersonError.NULL_PERSON_ID);
@@ -677,6 +686,11 @@ public final class GroupsPluginData implements PluginData {
 	@Override
 	public PluginDataBuilder getCloneBuilder() {
 		return new Builder(data);
+	}
+
+	@Override
+	public PluginDataBuilder getEmptyBuilder() {
+		return new Builder(new Data());
 	}
 
 }

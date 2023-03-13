@@ -95,4 +95,9 @@ import nucleus.PluginDataBuilder;
 		return new Builder(data);
 	}
 
+	@Override
+	public PluginDataBuilder getEmptyBuilder() {
+		return new Builder(new Data());
+	}
+
  }

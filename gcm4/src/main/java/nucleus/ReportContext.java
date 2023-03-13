@@ -134,6 +134,20 @@ public final class ReportContext {
 	public <T extends Event> void subscribe(Class<T> eventClass, BiConsumer<ReportContext, T> eventConsumer) {
 		simulation.subscribeReportToEvent(eventClass, eventConsumer);
 	}
+	
+	
+	/**
+	 * Registers the given consumer to be executed when the state of the
+	 * simulation needs to be reflected into plugins that are released to
+	 * output.
+	 * 
+	 * @throws ContractException
+	 *             <li>{@link NucleusError#NULL_REPORT_STATE_CONTEXT_CONSUMER}
+	 *             if the consumer is null</li>
+	 */
+	public void subscribeToSimulationState(BiConsumer<ReportContext, SimulationStateContext> consumer) {
+		simulation.subscribeReportToSimulationState(consumer);
+	}
 
 	/**
 	 * Unsubscribes the report from events of the given type for all phases of

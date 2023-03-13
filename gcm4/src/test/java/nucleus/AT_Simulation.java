@@ -5,20 +5,23 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.time.LocalDate;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 
 import org.junit.jupiter.api.Test;
 
 import nucleus.testsupport.testplugin.TestActorPlan;
+import nucleus.testsupport.testplugin.TestOutputConsumer;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
 import util.annotations.UnitTag;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.wrappers.MutableBoolean;
-
+import util.wrappers.MutableInteger;
 
 public class AT_Simulation {
 
@@ -57,11 +60,21 @@ public class AT_Simulation {
 		public PluginDataBuilder getCloneBuilder() {
 			throw new UnsupportedOperationException();
 		}
+
+		@Override
+		public PluginDataBuilder getEmptyBuilder() {
+			throw new UnsupportedOperationException();
+		}
 	}
 
 	private static class PluginData2 implements PluginData {
 		@Override
 		public PluginDataBuilder getCloneBuilder() {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public PluginDataBuilder getEmptyBuilder() {
 			throw new UnsupportedOperationException();
 		}
 	}
@@ -178,6 +191,188 @@ public class AT_Simulation {
 
 		// show that the first local output consumer did not receive any values
 		assertTrue(localOutputConsumer3.receivedItems.isEmpty());
+
+	}
+
+	
+	//support class for testSetProduceSimulationStateOnHalt() test method
+	private static class AlphaPluginDataBuilder implements PluginDataBuilder {
+		private AlphaPluginData alphaPluginData = new AlphaPluginData();
+
+		@Override
+		public AlphaPluginData build() {
+			try {
+				return alphaPluginData;
+			} finally {
+				alphaPluginData = new AlphaPluginData();
+			}
+		}
+
+		public AlphaPluginDataBuilder setX(int x) {
+			alphaPluginData.x = x;
+			return this;
+		}
+
+	}
+	//support class for testSetProduceSimulationStateOnHalt() test method
+	private static class AlphaPluginData implements PluginData {
+		private int x;
+
+		@Override
+		public PluginDataBuilder getCloneBuilder() {
+			AlphaPluginDataBuilder result = new AlphaPluginDataBuilder();
+			result.setX(x);
+			return result;
+		}
+
+		@Override
+		public PluginDataBuilder getEmptyBuilder() {
+			AlphaPluginDataBuilder result = new AlphaPluginDataBuilder();
+			return result;
+		}
+
+		public int getX() {
+			return x;
+		}
+	}
+	//support class for testSetProduceSimulationStateOnHalt() test method
+	private static class AlphaDataManager extends DataManager {
+		private int x;
+
+		public AlphaDataManager(AlphaPluginData alphaPluginData) {
+			x = alphaPluginData.getX();
+		}
+
+		@Override
+		public void init(DataManagerContext dataManagerContext) {
+			super.init(dataManagerContext);
+			dataManagerContext.subscribeToSimulationState((c1, c2) -> {
+				AlphaPluginDataBuilder alphaPluginDataBuilder = c2.get(AlphaPluginDataBuilder.class);
+				alphaPluginDataBuilder.setX(x);
+			});
+		}
+
+		public void setX(int x) {
+
+			this.x = x;
+		}
+
+	}
+	//support for testSetProduceSimulationStateOnHalt() test method
+	private static final PluginId ALPHA_PLUGIN_ID = new SimplePluginId("Alpha Plugin Id");
+	
+	//support for testSetProduceSimulationStateOnHalt() test method
+	private static Plugin getAlphaPlugin(AlphaPluginData alphaPluginData) {
+		return Plugin	.builder()//
+						.setPluginId(ALPHA_PLUGIN_ID)//
+						.addPluginData(alphaPluginData)//
+						.setInitializer(c -> {
+							AlphaPluginData pluginData = c.getPluginData(AlphaPluginData.class);
+							c.addDataManager(new AlphaDataManager(pluginData));
+						}).build();//
+	}
+
+	@Test
+	@UnitTestMethod(target = Simulation.Builder.class, name = "setProduceSimulationStateOnHalt", args = { boolean.class })
+	public void testSetProduceSimulationStateOnHalt() {
+
+		AlphaPluginData alphaPluginData = new AlphaPluginDataBuilder().setX(10).build();
+		Plugin alphaPlugin = getAlphaPlugin(alphaPluginData);
+
+		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+
+		MutableInteger rollingXValue = new MutableInteger();
+
+		// have actor set the value of x a few times
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
+			AlphaDataManager alphaDataManager = c.getDataManager(AlphaDataManager.class);
+			rollingXValue.setValue(55);
+			alphaDataManager.setX(rollingXValue.getValue());
+
+		}));
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(2, (c) -> {
+			AlphaDataManager alphaDataManager = c.getDataManager(AlphaDataManager.class);
+			rollingXValue.setValue(12);
+			alphaDataManager.setX(rollingXValue.getValue());
+		}));
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(3, (c) -> {
+			AlphaDataManager alphaDataManager = c.getDataManager(AlphaDataManager.class);
+			rollingXValue.setValue(87);
+			alphaDataManager.setX(rollingXValue.getValue());
+		}));
+
+		TestPluginData testPluginData = pluginBuilder.build();
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+
+		TestOutputConsumer testOutputConsumer = new TestOutputConsumer();
+		LocalDate localDate = LocalDate.of(2023, 03, 11);
+		SimulationTime startingSimulationTime = SimulationTime.builder().setBaseDate(localDate).build();
+
+		// run the simulation
+		Simulation	.builder()//
+					.addPlugin(alphaPlugin)//
+					.addPlugin(testPlugin)//
+					.setSimulationTime(startingSimulationTime)//
+					.setOutputConsumer(testOutputConsumer)//
+					.setProduceSimulationStateOnHalt(true)//
+					.build()//
+					.execute();//
+
+		// show that the simulation time data is correct
+		Map<SimulationTime, Integer> simulationTimeItems = testOutputConsumer.getOutputItems(SimulationTime.class);
+		assertEquals(1, simulationTimeItems.size());
+		SimulationTime simulationTime = simulationTimeItems.keySet().iterator().next();
+		Integer count = simulationTimeItems.get(simulationTime);
+		assertEquals(1, count);
+		assertEquals(localDate, simulationTime.getBaseDate());
+		assertEquals(3, simulationTime.getStartTime());
+
+		// show that there are two plugins and that the AlphaPluginData contains
+		// the last value of x
+		Map<Plugin, Integer> pluginItems = testOutputConsumer.getOutputItems(Plugin.class);
+		assertEquals(2, pluginItems.size());
+		AlphaPluginData outputAlphaPluginData = null;
+		for (Plugin plugin : pluginItems.keySet()) {
+			assertEquals(1, pluginItems.get(plugin));
+			if (plugin.getPluginId().equals(ALPHA_PLUGIN_ID)) {
+				Set<PluginData> pluginDatas = plugin.getPluginDatas();
+				assertEquals(1, pluginDatas.size());
+				PluginData pluginData = pluginDatas.iterator().next();
+				assertTrue(pluginData instanceof AlphaPluginData);
+				outputAlphaPluginData = (AlphaPluginData) pluginData;
+			}
+		}
+		assertNotNull(outputAlphaPluginData);
+		assertEquals(rollingXValue.getValue(), outputAlphaPluginData.getX());
+
+		// show that if we explicitly set the production to false that nothing
+		// is produced
+		testOutputConsumer = new TestOutputConsumer();
+		Simulation	.builder()//
+					.addPlugin(alphaPlugin)//
+					.addPlugin(testPlugin)//
+					.setSimulationTime(startingSimulationTime)//
+					.setOutputConsumer(testOutputConsumer)//
+					.setProduceSimulationStateOnHalt(false)//
+					.build()//
+					.execute();//
+
+		assertTrue(testOutputConsumer.getOutputItems(SimulationTime.class).isEmpty());
+		assertTrue(testOutputConsumer.getOutputItems(Plugin.class).isEmpty());
+
+		// show that if we do not set the production to false that nothing
+		// is produced
+		testOutputConsumer = new TestOutputConsumer();
+		Simulation	.builder()//
+					.addPlugin(alphaPlugin)//
+					.addPlugin(testPlugin)//
+					.setSimulationTime(startingSimulationTime)//
+					.setOutputConsumer(testOutputConsumer)//					
+					.build()//
+					.execute();//
+
+		assertTrue(testOutputConsumer.getOutputItems(SimulationTime.class).isEmpty());
+		assertTrue(testOutputConsumer.getOutputItems(Plugin.class).isEmpty());
 
 	}
 

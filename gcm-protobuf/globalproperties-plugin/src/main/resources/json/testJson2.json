@@ -1,0 +1,84 @@
+{
+    "globalPropertyDefinitinions": [{
+      "propertyId": {
+        "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
+        "enumTypeUrl": "gov.hhs.aspr.gcm.TestGlobalPropertyIdInput",
+        "value": "GLOBAL_PROPERTY_1_BOOLEAN_MUTABLE"
+      },
+      "propertyDefinition": {
+        "propertyValuesAreMutable": true,
+        "defaultValue": {
+          "@type": "type.googleapis.com/google.protobuf.BoolValue",
+          "value": false
+        },
+        "timeTrackingPolicy": "TRACK_TIME"
+      }
+    }, {
+      "propertyId": {
+        "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
+        "enumTypeUrl": "gov.hhs.aspr.gcm.TestGlobalPropertyIdInput",
+        "value": "GLOBAL_PROPERTY_2_INTEGER_MUTABLE"
+      },
+      "propertyDefinition": {
+        "propertyValuesAreMutable": true,
+        "defaultValue": {
+          "@type": "type.googleapis.com/google.protobuf.Int32Value",
+          "value": 0
+        },
+        "timeTrackingPolicy": "TRACK_TIME"
+      }
+    }, {
+      "propertyId": {
+        "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
+        "enumTypeUrl": "gov.hhs.aspr.gcm.TestGlobalPropertyIdInput",
+        "value": "GLOBAL_PROPERTY_3_DOUBLE_MUTABLE"
+      },
+      "propertyDefinition": {
+        "propertyValuesAreMutable": true,
+        "defaultValue": {
+          "@type": "type.googleapis.com/google.protobuf.DoubleValue",
+          "value": 0.0
+        },
+        "timeTrackingPolicy": "TRACK_TIME"
+      }
+    }, {
+      "propertyId": {
+        "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
+        "enumTypeUrl": "gov.hhs.aspr.gcm.TestGlobalPropertyIdInput",
+        "value": "GLOBAL_PROPERTY_4_BOOLEAN_IMMUTABLE"
+      },
+      "propertyDefinition": {
+        "defaultValue": {
+          "@type": "type.googleapis.com/google.protobuf.BoolValue",
+          "value": false
+        },
+        "timeTrackingPolicy": "TRACK_TIME"
+      }
+    }, {
+      "propertyId": {
+        "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
+        "enumTypeUrl": "gov.hhs.aspr.gcm.TestGlobalPropertyIdInput",
+        "value": "GLOBAL_PROPERTY_5_INTEGER_IMMUTABLE"
+      },
+      "propertyDefinition": {
+        "defaultValue": {
+          "@type": "type.googleapis.com/google.protobuf.Int32Value",
+          "value": 0
+        },
+        "timeTrackingPolicy": "TRACK_TIME"
+      }
+    }, {
+      "propertyId": {
+        "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
+        "enumTypeUrl": "gov.hhs.aspr.gcm.TestGlobalPropertyIdInput",
+        "value": "GLOBAL_PROPERTY_6_DOUBLE_IMMUTABLE"
+      },
+      "propertyDefinition": {
+        "defaultValue": {
+          "@type": "type.googleapis.com/google.protobuf.DoubleValue",
+          "value": 0.0
+        },
+        "timeTrackingPolicy": "TRACK_TIME"
+      }
+    }]
+  }

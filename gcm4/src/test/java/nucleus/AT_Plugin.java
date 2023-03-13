@@ -27,6 +27,11 @@ public class AT_Plugin {
 			return null;
 		}
 
+		@Override
+		public PluginDataBuilder getEmptyBuilder() {			
+			return null;
+		}
+
 	}
 
 	private static final class YPluginData implements PluginData {
@@ -62,6 +67,11 @@ public class AT_Plugin {
 				return false;
 			}
 			return true;
+		}
+
+		@Override
+		public PluginDataBuilder getEmptyBuilder() {			
+			return null;
 		}
 
 	}
