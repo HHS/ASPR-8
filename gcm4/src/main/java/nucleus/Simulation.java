@@ -238,6 +238,8 @@ public class Simulation {
 	private final Map<DataManagerId, Consumer<DataManagerContext>> simulationCloseDataManagerCallbacks = new LinkedHashMap<>();
 
 	private final Map<DataManagerId, BiConsumer<DataManagerContext, SimulationStateContext>> simulationStateDataManagerCallbacks = new LinkedHashMap<>();
+	private final Map<ReportId, BiConsumer<ReportContext, SimulationStateContext>> simulationStateReportCallbacks = new LinkedHashMap<>();
+	private final Map<ActorId, BiConsumer<ActorContext, SimulationStateContext>> simulationStateActorCallbacks = new LinkedHashMap<>();
 
 	private boolean started;
 
@@ -831,11 +833,19 @@ public class Simulation {
 
 		// pass the simulation state context to all concerned parties
 
-		// signal to the data managers that the simulation is closing
+		// signal to the data managers that the simulation is recording state
 		for (DataManagerId dataManagerId : simulationStateDataManagerCallbacks.keySet()) {
 			DataManagerContext dataManagerContext = dataManagerIdToDataManagerContextMap.get(dataManagerId);
 			BiConsumer<DataManagerContext, SimulationStateContext> dataManagerStateCallback = simulationStateDataManagerCallbacks.get(dataManagerId);
 			dataManagerStateCallback.accept(dataManagerContext, simulationStateContext);
+		}
+
+		// signal to the reports that the simulation is recording state
+		for (ReportId reportId : simulationStateReportCallbacks.keySet()) {
+			focalReportId = reportId;
+			BiConsumer<ReportContext,SimulationStateContext > reportCallBack = simulationStateReportCallbacks.get(reportId);
+			reportCallBack.accept(reportContext, simulationStateContext);
+			focalReportId = null;
 		}
 
 		// build up the output plugins and release them as output
@@ -1127,6 +1137,13 @@ public class Simulation {
 			throw new ContractException(NucleusError.NULL_DATA_MANAGER_CONTEXT_CONSUMER);
 		}
 		simulationCloseDataManagerCallbacks.put(dataManagerId, consumer);
+	}
+	
+	protected void subscribeReportToSimulationState(BiConsumer<ReportContext,SimulationStateContext> consumer) {
+		if (consumer == null) {
+			throw new ContractException(NucleusError.NULL_REPORT_STATE_CONTEXT_CONSUMER);
+		}
+		simulationStateReportCallbacks.put(focalReportId, consumer);
 	}
 
 	protected void subscribeDataManagerToSimulationState(DataManagerId dataManagerId, BiConsumer<DataManagerContext, SimulationStateContext> consumer) {

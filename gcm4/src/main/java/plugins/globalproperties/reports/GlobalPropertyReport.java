@@ -226,8 +226,12 @@ public final class GlobalPropertyReport {
 			final Object globalPropertyValue = globalPropertiesDataManager.getGlobalPropertyValue(globalPropertyId);
 			writeProperty(reportContext, globalPropertyId, globalPropertyValue);
 		}
+		
+		
 
 	}
+	
+	
 
 	private void writeProperty(final ReportContext reportContext, final GlobalPropertyId globalPropertyId, final Object globalPropertyValue) {
 		final ReportItem.Builder reportItemBuilder = ReportItem.builder();
