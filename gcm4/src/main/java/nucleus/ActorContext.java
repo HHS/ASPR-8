@@ -39,6 +39,19 @@ public final class ActorContext implements SimulationContext {
 	}
 
 	/**
+	 * Registers the given consumer to be executed when the state of the
+	 * simulation needs to be reflected into plugins that are released to
+	 * output.
+	 * 
+	 * @throws ContractException
+	 *             <li>{@link NucleusError#NULL_REPORT_STATE_CONTEXT_CONSUMER}
+	 *             if the consumer is null</li>
+	 */
+	public void subscribeToSimulationState(BiConsumer<ActorContext, SimulationStateContext> consumer) {
+		simulation.subscribeActorToSimulationState(consumer);
+	}
+	
+	/**
 	 * Schedules a plan that will be executed at the given time.
 	 * 
 	 * @throws ContractException

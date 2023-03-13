@@ -839,6 +839,15 @@ public class Simulation {
 			BiConsumer<DataManagerContext, SimulationStateContext> dataManagerStateCallback = simulationStateDataManagerCallbacks.get(dataManagerId);
 			dataManagerStateCallback.accept(dataManagerContext, simulationStateContext);
 		}
+		
+		// signal to the actors that the simulation is recording state
+		for (ActorId actorId : simulationStateActorCallbacks.keySet()) {
+			focalActorId = actorId;
+			BiConsumer<ActorContext,SimulationStateContext > actorCallBack = simulationStateActorCallbacks.get(actorId);
+			actorCallBack.accept(actorContext, simulationStateContext);
+			focalActorId = null;
+		}
+
 
 		// signal to the reports that the simulation is recording state
 		for (ReportId reportId : simulationStateReportCallbacks.keySet()) {
@@ -847,6 +856,8 @@ public class Simulation {
 			reportCallBack.accept(reportContext, simulationStateContext);
 			focalReportId = null;
 		}
+		
+		
 
 		// build up the output plugins and release them as output
 		for (Plugin plugin : map.keySet()) {
@@ -1146,6 +1157,14 @@ public class Simulation {
 		simulationStateReportCallbacks.put(focalReportId, consumer);
 	}
 
+	protected void subscribeActorToSimulationState(BiConsumer<ActorContext,SimulationStateContext> consumer) {
+		if (consumer == null) {
+			throw new ContractException(NucleusError.NULL_ACTOR_STATE_CONTEXT_CONSUMER);
+		}
+		simulationStateActorCallbacks.put(focalActorId, consumer);
+	}
+
+	
 	protected void subscribeDataManagerToSimulationState(DataManagerId dataManagerId, BiConsumer<DataManagerContext, SimulationStateContext> consumer) {
 		if (consumer == null) {
 			throw new ContractException(NucleusError.NULL_DATA_MANAGER_STATE_CONTEXT_CONSUMER);
