@@ -15,9 +15,9 @@ import util.errors.ContractException;
  *
  * 
  */
-public final class DimensionContext {
+public final class SimulationStateContext {
 
-	private DimensionContext() {
+	private SimulationStateContext() {
 	}
 
 	private Map<Class<?>, PluginDataBuilder> baseMap = new LinkedHashMap<>();
@@ -83,9 +83,9 @@ public final class DimensionContext {
 		 * Returns the DimensionContext instance composed from the
 		 * inputs to this builder.
 		 */
-		public DimensionContext build() {
+		public SimulationStateContext build() {
 			try {
-				DimensionContext result = new DimensionContext();
+				SimulationStateContext result = new SimulationStateContext();
 				result.baseMap = map;
 				return result;
 			} finally {
@@ -107,5 +107,7 @@ public final class DimensionContext {
 			return this;
 		}
 	}
+
+	
 
 }

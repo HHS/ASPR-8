@@ -128,12 +128,22 @@ public class AT_PluginContext {
 			throw new UnsupportedOperationException();
 		}
 
+		@Override
+		public PluginDataBuilder getEmptyBuilder() {
+			throw new UnsupportedOperationException();
+		}
+
 	}
 
 	private static class PluginData2 implements PluginData {
 
 		@Override
 		public PluginDataBuilder getCloneBuilder() {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public PluginDataBuilder getEmptyBuilder() {
 			throw new UnsupportedOperationException();
 		}
 
@@ -144,11 +154,21 @@ public class AT_PluginContext {
 		public PluginDataBuilder getCloneBuilder() {
 			throw new UnsupportedOperationException();
 		}
+
+		@Override
+		public PluginDataBuilder getEmptyBuilder() {
+			throw new UnsupportedOperationException();
+		}
 	}
 
 	private static class PluginData4 implements PluginData {
 		@Override
 		public PluginDataBuilder getCloneBuilder() {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public PluginDataBuilder getEmptyBuilder() {
 			throw new UnsupportedOperationException();
 		}
 	}

@@ -15,6 +15,7 @@ import nucleus.EventFilter;
 import nucleus.IdentifiableFunctionMap;
 import nucleus.NucleusError;
 import nucleus.SimulationContext;
+import nucleus.SimulationStateContext;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.events.PersonImminentAdditionEvent;
 import plugins.people.events.PersonRemovalEvent;
@@ -415,7 +416,6 @@ public final class ResourcesDataManager extends DataManager {
 		for (final ResourceId resourceId : personResourceValues.keySet()) {
 			result.add((T) resourceId);
 		}
-		personResourceValues.keySet();
 		return result;
 	}
 
@@ -858,8 +858,46 @@ public final class ResourcesDataManager extends DataManager {
 		dataManagerContext.subscribe(PersonToRegionResourceTransferMutationEvent.class, this::handlePersonToRegionResourceTransferMutationEvent);
 		dataManagerContext.subscribe(RegionToPersonResourceTransferMutationEvent.class, this::handleRegionToPersonResourceTransferMutationEvent);
 
+		dataManagerContext.subscribeToSimulationState(this::recordSimulationState);
+	}
+
+	private void recordSimulationState(DataManagerContext dataManagerContext, SimulationStateContext simulationStateContext) {
+		ResourcesPluginData.Builder builder = simulationStateContext.get(ResourcesPluginData.Builder.class);
+
+		for (final ResourceId resourceId : personResourceValues.keySet()) {
+			builder.addResource(resourceId);
+			builder.setResourceTimeTracking(resourceId, resourceTimeTrackingPolicies.get(resourceId));
+			Map<ResourcePropertyId, PropertyDefinition> map = resourcePropertyDefinitions.get(resourceId);
+			for(ResourcePropertyId resourcePropertyId : map.keySet()) {
+				PropertyDefinition propertyDefinition = map.get(resourcePropertyId);
+				builder.defineResourceProperty(resourceId, resourcePropertyId, propertyDefinition);
+			}
+		}
+
+		for (RegionId regionId : regionsDataManager.getRegionIds()) {
+			Map<ResourceId, RegionResourceRecord> map = regionResources.get(regionId);
+			for (ResourceId resourceId : map.keySet()) {
+				RegionResourceRecord regionResourceRecord = map.get(resourceId);
+				builder.setRegionResourceLevel(regionId, resourceId, regionResourceRecord.getAmount());
+			}
+		}
+
+		for (PersonId personId : peopleDataManager.getPeople()) {
+			for (final ResourceId resourceId : personResourceValues.keySet()) {
+				long resourceLevel = personResourceValues.get(resourceId).getValueAsLong(personId.getValue());
+				builder.setPersonResourceLevel(personId, resourceId, resourceLevel);
+			}
+		}
 		
-		
+		for(ResourceId resourceId : resourcePropertyMap.keySet()) {
+			Map<ResourcePropertyId, PropertyValueRecord> map = resourcePropertyMap.get(resourceId);
+			for(ResourcePropertyId resourcePropertyId : map.keySet()) {
+				PropertyValueRecord propertyValueRecord = map.get(resourcePropertyId);
+				Object value = propertyValueRecord.getValue();
+				builder.setResourcePropertyValue(resourceId, resourcePropertyId, value);
+			}
+		}
+
 	}
 
 	private void handleRegionAdditionEvent(DataManagerContext dataManagerContext, RegionAdditionEvent regionAdditionEvent) {
@@ -1354,8 +1392,9 @@ public final class ResourcesDataManager extends DataManager {
 		}
 
 	}
-	
-	private static record RegionToPersonResourceTransferMutationEvent(ResourceId resourceId, PersonId personId, long amount) implements Event{}
+
+	private static record RegionToPersonResourceTransferMutationEvent(ResourceId resourceId, PersonId personId, long amount) implements Event {
+	}
 
 	/**
 	 * Transfers an amount of resource to a person from the person's current
@@ -1386,9 +1425,9 @@ public final class ResourcesDataManager extends DataManager {
 	 *
 	 */
 	public void transferResourceToPersonFromRegion(ResourceId resourceId, PersonId personId, long amount) {
-		dataManagerContext.releaseMutationEvent(
-		new RegionToPersonResourceTransferMutationEvent(resourceId, personId, amount));
+		dataManagerContext.releaseMutationEvent(new RegionToPersonResourceTransferMutationEvent(resourceId, personId, amount));
 	}
+
 	private void handleRegionToPersonResourceTransferMutationEvent(DataManagerContext dataManagerContext, RegionToPersonResourceTransferMutationEvent regionToPersonResourceTransferMutationEvent) {
 		ResourceId resourceId = regionToPersonResourceTransferMutationEvent.resourceId();
 		PersonId personId = regionToPersonResourceTransferMutationEvent.personId();

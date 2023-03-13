@@ -16,6 +16,7 @@ import nucleus.Event;
 import nucleus.EventFilter;
 import nucleus.IdentifiableFunctionMap;
 import nucleus.SimulationContext;
+import nucleus.SimulationStateContext;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.events.PersonImminentAdditionEvent;
 import plugins.people.events.PersonRemovalEvent;
@@ -218,6 +219,25 @@ public final class PersonPropertiesDataManager extends DataManager {
 		}
 		dataManagerContext.subscribe(PersonImminentAdditionEvent.class, this::handlePersonImminentAdditionEvent);
 		dataManagerContext.subscribe(PersonRemovalEvent.class, this::handlePersonImminentRemovalEvent);
+
+		dataManagerContext.subscribeToSimulationState(this::recordSimulationState);
+	}
+
+	private void recordSimulationState(DataManagerContext dataManagerContext, SimulationStateContext simulationStateContext) {
+		PersonPropertiesPluginData.Builder builder = simulationStateContext.get(PersonPropertiesPluginData.Builder.class);
+
+		List<PersonId> people = peopleDataManager.getPeople();
+
+		for (PersonPropertyId personPropertyId : personPropertyDefinitions.keySet()) {
+			PropertyDefinition personPropertyDefinition = personPropertyDefinitions.get(personPropertyId);
+			builder.definePersonProperty(personPropertyId, personPropertyDefinition);
+			IndexedPropertyManager indexedPropertyManager = personPropertyManagerMap.get(personPropertyId);
+			for (PersonId personId : people) {
+				Object propertyValue = indexedPropertyManager.getPropertyValue(personId.getValue());
+				builder.setPersonPropertyValue(personId, personPropertyId, propertyValue);
+			}
+		}
+
 	}
 
 	private final Map<PersonPropertyId, PropertyDefinition> personPropertyDefinitions = new LinkedHashMap<>();
@@ -699,9 +719,7 @@ public final class PersonPropertiesDataManager extends DataManager {
 									.put(EventFunctionId.PERSON_PROPERTY_ID, e -> e.personPropertyId())//
 									.put(EventFunctionId.REGION_ID, e -> regionsDataManager.getPersonRegion(e.personId()))//
 									.put(EventFunctionId.PERSON_ID, e -> e.personId())//
-									.put(EventFunctionId.CURRENT_VALUE, e -> e.currentPropertyValue())
-									.put(EventFunctionId.PREVIOUS_VALUE, e -> e.previousPropertyValue())
-									.build();//
+									.put(EventFunctionId.CURRENT_VALUE, e -> e.currentPropertyValue()).put(EventFunctionId.PREVIOUS_VALUE, e -> e.previousPropertyValue()).build();//
 
 	/**
 	 * Returns an event filter used to subscribe to
@@ -717,9 +735,9 @@ public final class PersonPropertiesDataManager extends DataManager {
 	 * and property value.
 	 *
 	 * @throws ContractException
-	 * 			   <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the person
-	 *			   property id is null</li>
-	 *			   <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if the
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the person
+	 *             property id is null</li>
+	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if the
 	 *             person property id is not known</li>
 	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE} if the
 	 *             person property value is null</li>
@@ -729,10 +747,8 @@ public final class PersonPropertiesDataManager extends DataManager {
 		validatePersonPropertyId(personPropertyId);
 		validatePersonPropertyValueNotNull(propertyValue);
 		EventFunctionId propertyValueEnum = useCurrentValue ? EventFunctionId.CURRENT_VALUE : EventFunctionId.PREVIOUS_VALUE;
-		return EventFilter.builder(PersonPropertyUpdateEvent.class)
-				.addFunctionValuePair(functionMap.get(EventFunctionId.PERSON_PROPERTY_ID), personPropertyId)//
-				.addFunctionValuePair(functionMap.get(propertyValueEnum), propertyValue)
-				.build();
+		return EventFilter	.builder(PersonPropertyUpdateEvent.class).addFunctionValuePair(functionMap.get(EventFunctionId.PERSON_PROPERTY_ID), personPropertyId)//
+							.addFunctionValuePair(functionMap.get(propertyValueEnum), propertyValue).build();
 	}
 
 	/**

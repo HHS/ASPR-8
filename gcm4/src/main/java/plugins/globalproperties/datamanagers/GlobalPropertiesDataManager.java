@@ -11,6 +11,7 @@ import nucleus.DataManagerContext;
 import nucleus.Event;
 import nucleus.EventFilter;
 import nucleus.IdentifiableFunctionMap;
+import nucleus.SimulationStateContext;
 import plugins.globalproperties.GlobalPropertiesPluginData;
 import plugins.globalproperties.events.GlobalPropertyDefinitionEvent;
 import plugins.globalproperties.events.GlobalPropertyUpdateEvent;
@@ -147,11 +148,11 @@ public final class GlobalPropertiesDataManager extends DataManager {
 	 */
 	public void setGlobalPropertyValue(GlobalPropertyId globalPropertyId, Object globalPropertyValue) {
 
-		dataManagerContext.releaseMutationEvent(new GlobalPropertyUpdateMutationEvent(globalPropertyId,globalPropertyValue));
-		
+		dataManagerContext.releaseMutationEvent(new GlobalPropertyUpdateMutationEvent(globalPropertyId, globalPropertyValue));
+
 	}
 
-	private void handleGlobalPropertyUpdateMutationEvent(DataManagerContext dataManagerContext,GlobalPropertyUpdateMutationEvent globalPropertyUpdateMutationEvent) {
+	private void handleGlobalPropertyUpdateMutationEvent(DataManagerContext dataManagerContext, GlobalPropertyUpdateMutationEvent globalPropertyUpdateMutationEvent) {
 		GlobalPropertyId globalPropertyId = globalPropertyUpdateMutationEvent.globalPropertyId();
 		Object globalPropertyValue = globalPropertyUpdateMutationEvent.globalPropertyValue();
 		validateGlobalPropertyId(globalPropertyId);
@@ -163,7 +164,7 @@ public final class GlobalPropertiesDataManager extends DataManager {
 		globalPropertyMap.get(globalPropertyId).setPropertyValue(globalPropertyValue);
 		if (dataManagerContext.subscribersExist(GlobalPropertyUpdateEvent.class)) {
 			dataManagerContext.releaseObservationEvent(new GlobalPropertyUpdateEvent(globalPropertyId, oldPropertyValue, globalPropertyValue));
-		}		
+		}
 	}
 
 	/**
@@ -182,7 +183,6 @@ public final class GlobalPropertiesDataManager extends DataManager {
 
 		dataManagerContext.subscribe(GlobalPropertyInitializationMutationEvent.class, this::handleGlobalPropertyInitializationMutationEvent);
 		dataManagerContext.subscribe(GlobalPropertyUpdateMutationEvent.class, this::handleGlobalPropertyUpdateMutationEvent);
-		
 
 		for (GlobalPropertyId globalPropertyId : globalPropertiesPluginData.getGlobalPropertyIds()) {
 			PropertyDefinition globalPropertyDefinition = globalPropertiesPluginData.getGlobalPropertyDefinition(globalPropertyId);
@@ -194,6 +194,18 @@ public final class GlobalPropertiesDataManager extends DataManager {
 			globalPropertyDefinitions.put(globalPropertyId, globalPropertyDefinition);
 		}
 
+		dataManagerContext.subscribeToSimulationState(this::recordSimulationState);
+
+	}
+
+	private void recordSimulationState(DataManagerContext dataManagerContext, SimulationStateContext simulationStateContext) {
+		GlobalPropertiesPluginData.Builder builder = simulationStateContext.get(GlobalPropertiesPluginData.Builder.class);
+		for (GlobalPropertyId globalPropertyId : globalPropertyDefinitions.keySet()) {
+			PropertyDefinition propertyDefinition = globalPropertyDefinitions.get(globalPropertyId);
+			builder.defineGlobalProperty(globalPropertyId, propertyDefinition);
+			Object value = globalPropertyMap.get(globalPropertyId).getValue();
+			builder.setGlobalPropertyValue(globalPropertyId, value);
+		}		
 	}
 
 	private static record GlobalPropertyInitializationMutationEvent(GlobalPropertyInitialization globalPropertyInitialization) implements Event {

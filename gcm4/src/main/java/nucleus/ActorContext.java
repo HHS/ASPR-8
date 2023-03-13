@@ -23,7 +23,34 @@ public final class ActorContext implements SimulationContext {
 	protected ActorContext(Simulation simulation) {
 		this.simulation = simulation;
 	}
+	
+	/**
+	 * Registers the given consumer to be executed at the end of the simulation.
+	 * Activity associated with the consumer should be limited to querying data
+	 * state and releasing output.
+	 * 
+	 * @throws ContractException
+	 *             <li>{@link NucleusError#NULL_ACTOR_CONTEXT_CONSUMER} if the
+	 *             consumer is null</li>
+	 */
+	
+	public void subscribeToSimulationClose(Consumer<ActorContext> consumer) {
+		simulation.subscribeActorToSimulationClose(consumer);
+	}
 
+	/**
+	 * Registers the given consumer to be executed when the state of the
+	 * simulation needs to be reflected into plugins that are released to
+	 * output.
+	 * 
+	 * @throws ContractException
+	 *             <li>{@link NucleusError#NULL_REPORT_STATE_CONTEXT_CONSUMER}
+	 *             if the consumer is null</li>
+	 */
+	public void subscribeToSimulationState(BiConsumer<ActorContext, SimulationStateContext> consumer) {
+		simulation.subscribeActorToSimulationState(consumer);
+	}
+	
 	/**
 	 * Schedules a plan that will be executed at the given time.
 	 * 
@@ -183,19 +210,7 @@ public final class ActorContext implements SimulationContext {
 	public <T extends Event> void unsubscribe(EventFilter<T> eventFilter) {
 		simulation.unsubscribeActorFromEventByFilter(eventFilter);
 	}
-	/**
-	 * Registers the given consumer to be executed at the end of the simulation.
-	 * Activity associated with the consumer should be limited to querying data
-	 * state and releasing output.
-	 * 
-	 * @throws ContractException
-	 *             <li>{@link NucleusError#NULL_ACTOR_CONTEXT_CONSUMER} if the
-	 *             consumer is null</li>
-	 */
 	
-	public void subscribeToSimulationClose(Consumer<ActorContext> consumer) {
-		simulation.subscribeActorToSimulationClose(consumer);
-	}
 	
 	@Override
 	public boolean actorExists(final ActorId actorId) {
