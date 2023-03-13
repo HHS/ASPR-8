@@ -442,23 +442,21 @@ public final class Experiment {
 	}
 
 	private List<Plugin> getNewPluginInstancesFromScenarioId(final int scenarioId) {
-		/*
-		 * Build the type map of the clone plugin data builders from the plugins
-		 * supplied to the dimensions of the experiment
-		 */
 
 		final DimensionContext.Builder contextBuilder = DimensionContext.builder();
 
 		/*
-		 * Set up a map that will allow us to associate each data builder with
-		 * the plugin that should own that data
+		 * Set up a map that will allow us to associate with each plugin the new
+		 * plugin data data builder instances associated with that plugin
 		 */
-		Map<PluginDataBuilder, PluginId> pluginBuilderToPluginIdMap = new LinkedHashMap<>();
+		Map<Plugin, List<PluginDataBuilder>> map = new LinkedHashMap<>();
 
 		for (final Plugin plugin : data.plugins) {
+			List<PluginDataBuilder> list = new ArrayList<>();
+			map.put(plugin, list);
 			for (final PluginData pluginData : plugin.getPluginDatas()) {
 				PluginDataBuilder pluginDataBuilder = pluginData.getCloneBuilder();
-				pluginBuilderToPluginIdMap.put(pluginDataBuilder, plugin.getPluginId());
+				list.add(pluginDataBuilder);
 				contextBuilder.add(pluginDataBuilder);
 			}
 		}
@@ -506,38 +504,26 @@ public final class Experiment {
 		 * Rebuild the plugins.
 		 */
 
-		// First, copy each plugin, excluding the plugin data items.
-		Map<PluginId, Plugin.Builder> dumptyMap = new LinkedHashMap<>();
-		for (final Plugin plugin : data.plugins) {
+		final List<Plugin> result = new ArrayList<>();
+
+		for (Plugin plugin : map.keySet()) {
 			Plugin.Builder pluginBuilder = Plugin.builder();
-			dumptyMap.put(plugin.getPluginId(), pluginBuilder);
 			pluginBuilder.setPluginId(plugin.getPluginId());
-			for (PluginId pluginId : plugin.getPluginDependencies()) {
-				pluginBuilder.addPluginDependency(pluginId);
-			}
+
 			Optional<Consumer<PluginContext>> optionalInitializer = plugin.getInitializer();
 			if (optionalInitializer.isPresent()) {
 				pluginBuilder.setInitializer(optionalInitializer.get());
 			}
-		}
 
-		// Get the plugin data builders and create the new plugin datas,
-		// associating each with the correct plugin. The plugin datas should be
-		// added in the order that they were in in the original plugins
-		for (final PluginDataBuilder pluginDataBuilder : dimensionContext.getContents()) {
-			final PluginData pluginData = pluginDataBuilder.build();
-			PluginId pluginId = pluginBuilderToPluginIdMap.get(pluginDataBuilder);
-			Plugin.Builder pluginBuilder = dumptyMap.get(pluginId);
-			pluginBuilder.addPluginData(pluginData);
-		}
+			for (PluginId pluginId : plugin.getPluginDependencies()) {
+				pluginBuilder.addPluginDependency(pluginId);
+			}
 
-		/*
-		 * Construct the new plugins from the plugin builders
-		 */
-		final List<Plugin> result = new ArrayList<>();
-
-		for (Plugin.Builder plugingBuilder : dumptyMap.values()) {
-			result.add(plugingBuilder.build());
+			List<PluginDataBuilder> pluginDataBuilders = map.get(plugin);
+			for (PluginDataBuilder pluginDataBuilder : pluginDataBuilders) {
+				pluginBuilder.addPluginData(pluginDataBuilder.build());
+			}
+			result.add(pluginBuilder.build());
 		}
 
 		return result;

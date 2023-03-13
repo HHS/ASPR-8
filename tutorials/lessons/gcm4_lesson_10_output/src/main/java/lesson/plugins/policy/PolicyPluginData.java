@@ -83,4 +83,9 @@ public final class PolicyPluginData implements PluginData {
 		return new Builder(data);
 	}
 
+	@Override
+	public PluginDataBuilder getEmptyBuilder() {
+		return new Builder(new Data());
+	}
+
 }

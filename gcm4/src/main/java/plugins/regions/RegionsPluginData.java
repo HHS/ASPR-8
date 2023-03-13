@@ -450,4 +450,9 @@ public class RegionsPluginData implements PluginData {
 		return (List<T>) Collections.unmodifiableList(data.personRegions);
 	}
 
+	@Override
+	public PluginDataBuilder getEmptyBuilder() {
+		return new Builder(new Data());
+	}
+
 }

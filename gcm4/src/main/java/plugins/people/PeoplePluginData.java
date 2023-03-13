@@ -119,4 +119,9 @@ public final class PeoplePluginData implements PluginData {
 			throw new ContractException(PersonError.NULL_PERSON_ID);
 		}		
 	}
+
+	@Override
+	public PluginDataBuilder getEmptyBuilder() {
+		return new Builder(new Data());
+	}
 }

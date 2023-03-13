@@ -1,5 +1,6 @@
 package nucleus;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -53,11 +54,11 @@ public class AT_DimesionContext {
 		PluginDataBuilder p4 = new PluginDataBuilder2();
 
 		DimensionContext dimensionContext = DimensionContext.builder()//
-																					.add(p1)//
-																					.add(p2)//
-																					.add(p3)//
-																					.add(p4)//
-																					.build();
+															.add(p1)//
+															.add(p2)//
+															.add(p3)//
+															.add(p4)//
+															.build();
 
 		PluginDataBuilder p = dimensionContext.get(PluginDataBuilder1.class);
 		assertEquals(p3, p);
@@ -81,32 +82,7 @@ public class AT_DimesionContext {
 
 	}
 
-	@Test
-	@UnitTestMethod(target = DimensionContext.class, name = "getContents", args = {})
-	public void testGetContents() {
-		PluginDataBuilder p1 = new PluginDataBuilder1();
-
-		PluginDataBuilder p2 = new PluginDataBuilder2();
-
-		PluginDataBuilder p3 = new PluginDataBuilder1();
-
-		PluginDataBuilder p4 = new PluginDataBuilder2();
-
-		Set<PluginDataBuilder> expectedContents = new LinkedHashSet<>();
-		expectedContents.add(p3);
-		expectedContents.add(p4);
-
-		DimensionContext dimensionContext = DimensionContext.builder()//
-																					.add(p1)//
-																					.add(p2)//
-																					.add(p3)//
-																					.add(p4)//
-																					.build();
-		Set<PluginDataBuilder> actualContents = dimensionContext.getContents();
-
-		assertEquals(expectedContents, actualContents);
-
-	}
+	
 
 	@Test
 	@UnitTestMethod(target = DimensionContext.Builder.class, name = "add", args = { PluginDataBuilder.class })
@@ -120,7 +96,9 @@ public class AT_DimesionContext {
 		expectedContents.add(p2);
 
 		DimensionContext dimensionContext = DimensionContext.builder().add(p1).add(p2).build();
-		Set<PluginDataBuilder> actualContents = dimensionContext.getContents();
+		Set<PluginDataBuilder> actualContents = new LinkedHashSet<>();
+		assertDoesNotThrow(() -> actualContents.add(dimensionContext.get(PluginDataBuilder1.class)));
+		assertDoesNotThrow(() -> actualContents.add(dimensionContext.get(PluginDataBuilder2.class)));
 
 		assertEquals(expectedContents, actualContents);
 
@@ -141,7 +119,10 @@ public class AT_DimesionContext {
 		expectedContents.add(p2);
 
 		DimensionContext dimensionContext = DimensionContext.builder().add(p1).add(p2).build();
-		Set<PluginDataBuilder> actualContents = dimensionContext.getContents();
+
+		Set<PluginDataBuilder> actualContents = new LinkedHashSet<>();
+		assertDoesNotThrow(() -> actualContents.add(dimensionContext.get(PluginDataBuilder1.class)));
+		assertDoesNotThrow(() -> actualContents.add(dimensionContext.get(PluginDataBuilder2.class)));
 
 		assertEquals(expectedContents, actualContents);
 

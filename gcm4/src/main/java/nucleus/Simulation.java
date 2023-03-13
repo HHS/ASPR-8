@@ -126,6 +126,16 @@ public class Simulation {
 		}
 
 		/**
+		 * If true and an output consumer is also assigned then the simulation
+		 * will produce plugins and a SimulationTime that reflect the final
+		 * state of the simulation. Defaults to false.
+		 */
+		public Builder setProduceSimulationStateOnHalt(boolean produceSimulationStateOnHalt) {
+			data.produceSimulationStateOnHalt = produceSimulationStateOnHalt;
+			return this;
+		}
+
+		/**
 		 * Set the simulation time. Defaults to the current date and a start
 		 * time of zero.
 		 * 
@@ -183,6 +193,7 @@ public class Simulation {
 	}
 
 	private static class Data {
+		private boolean produceSimulationStateOnHalt;
 		private List<Plugin> plugins = new ArrayList<>();
 		private Consumer<Object> outputConsumer;
 		private SimulationTime simulationTime = SimulationTime.builder().build();
@@ -213,7 +224,7 @@ public class Simulation {
 	};
 
 	// planning
-	private long masterPlanningArrivalId;	
+	private long masterPlanningArrivalId;
 	protected double time;
 	private boolean processEvents = true;
 	private int activePlanCount;
@@ -225,6 +236,10 @@ public class Simulation {
 	private final Map<ActorId, Consumer<ActorContext>> simulationCloseActorCallbacks = new LinkedHashMap<>();
 
 	private final Map<DataManagerId, Consumer<DataManagerContext>> simulationCloseDataManagerCallbacks = new LinkedHashMap<>();
+
+	private final Map<DataManagerId, BiConsumer<DataManagerContext, SimulationStateContext>> simulationStateDataManagerCallbacks = new LinkedHashMap<>();
+	private final Map<ReportId, BiConsumer<ReportContext, SimulationStateContext>> simulationStateReportCallbacks = new LinkedHashMap<>();
+	private final Map<ActorId, BiConsumer<ActorContext, SimulationStateContext>> simulationStateActorCallbacks = new LinkedHashMap<>();
 
 	private boolean started;
 
@@ -643,7 +658,7 @@ public class Simulation {
 			throw new ContractException(NucleusError.REPEATED_EXECUTION);
 		}
 		started = true;
-		
+
 		time = data.simulationTime.getStartTime();
 
 		// set the output consumer
@@ -660,6 +675,7 @@ public class Simulation {
 			for (PluginData pluginData : plugin.getPluginDatas()) {
 				basePluginDataMap.put(pluginData.getClass(), pluginData);
 			}
+			focalPluginId = null;
 		}
 
 		// Have each plugin contribute data managers reports and actors
@@ -699,7 +715,8 @@ public class Simulation {
 			}
 		}
 
-		//execute the data manager queue -- this will in turn execute the report queue
+		// execute the data manager queue -- this will in turn execute the
+		// report queue
 		executeDataManagerQueue();
 
 		for (DataManager dataManager : dataManagerToDataManagerIdMap.keySet()) {
@@ -707,7 +724,7 @@ public class Simulation {
 				throw new ContractException(NucleusError.DATA_MANAGER_INITIALIZATION_FAILURE, dataManager.getClass().getSimpleName());
 			}
 		}
-			
+
 		// initialize the actors by flushing the actor queue
 		executeActorQueue();
 
@@ -764,6 +781,8 @@ public class Simulation {
 			}
 		}
 
+		processEvents = false;
+
 		// signal to the data managers that the simulation is closing
 		for (DataManagerId dataManagerId : simulationCloseDataManagerCallbacks.keySet()) {
 			DataManagerContext dataManagerContext = dataManagerIdToDataManagerContextMap.get(dataManagerId);
@@ -788,6 +807,83 @@ public class Simulation {
 			simulationCloseCallback.accept(reportContext);
 			focalReportId = null;
 		}
+
+		// gather the simulation state and report it to output
+		if (data.produceSimulationStateOnHalt && outputConsumer != null) {
+			produceSimulationStateAsOutput();
+		}
+	}
+
+	private void produceSimulationStateAsOutput() {
+		// gather the plugins
+
+		Map<Plugin, List<PluginDataBuilder>> map = new LinkedHashMap<>();
+
+		SimulationStateContext.Builder simulationStateContextBuilder = SimulationStateContext.builder();
+		for (Plugin plugin : data.plugins) {
+			List<PluginDataBuilder> list = new ArrayList<>();
+			map.put(plugin, list);
+			for (PluginData pluginData : plugin.getPluginDatas()) {
+				PluginDataBuilder emptyBuilder = pluginData.getEmptyBuilder();
+				list.add(emptyBuilder);
+				simulationStateContextBuilder.add(emptyBuilder);
+			}
+		}
+		SimulationStateContext simulationStateContext = simulationStateContextBuilder.build();
+
+		// pass the simulation state context to all concerned parties
+
+		// signal to the data managers that the simulation is recording state
+		for (DataManagerId dataManagerId : simulationStateDataManagerCallbacks.keySet()) {
+			DataManagerContext dataManagerContext = dataManagerIdToDataManagerContextMap.get(dataManagerId);
+			BiConsumer<DataManagerContext, SimulationStateContext> dataManagerStateCallback = simulationStateDataManagerCallbacks.get(dataManagerId);
+			dataManagerStateCallback.accept(dataManagerContext, simulationStateContext);
+		}
+		
+		// signal to the actors that the simulation is recording state
+		for (ActorId actorId : simulationStateActorCallbacks.keySet()) {
+			focalActorId = actorId;
+			BiConsumer<ActorContext,SimulationStateContext > actorCallBack = simulationStateActorCallbacks.get(actorId);
+			actorCallBack.accept(actorContext, simulationStateContext);
+			focalActorId = null;
+		}
+
+
+		// signal to the reports that the simulation is recording state
+		for (ReportId reportId : simulationStateReportCallbacks.keySet()) {
+			focalReportId = reportId;
+			BiConsumer<ReportContext,SimulationStateContext > reportCallBack = simulationStateReportCallbacks.get(reportId);
+			reportCallBack.accept(reportContext, simulationStateContext);
+			focalReportId = null;
+		}
+		
+		
+
+		// build up the output plugins and release them as output
+		for (Plugin plugin : map.keySet()) {
+			Plugin.Builder pluginBuilder = Plugin.builder();
+			pluginBuilder.setPluginId(plugin.getPluginId());
+
+			Optional<Consumer<PluginContext>> optionalInitializer = plugin.getInitializer();
+			if (optionalInitializer.isPresent()) {
+				pluginBuilder.setInitializer(optionalInitializer.get());
+			}
+
+			for (PluginId pluginId : plugin.getPluginDependencies()) {
+				pluginBuilder.addPluginDependency(pluginId);
+			}
+
+			List<PluginDataBuilder> pluginDataBuilders = map.get(plugin);
+			for (PluginDataBuilder pluginDataBuilder : pluginDataBuilders) {
+				pluginBuilder.addPluginData(pluginDataBuilder.build());
+			}
+			outputConsumer.accept(pluginBuilder.build());
+		}
+
+		SimulationTime.Builder simulationTimeBuilder = SimulationTime.builder();
+		simulationTimeBuilder.setBaseDate(data.simulationTime.getBaseDate());
+		simulationTimeBuilder.setStartTime(time);
+		outputConsumer.accept(simulationTimeBuilder.build());
 
 	}
 
@@ -1053,6 +1149,28 @@ public class Simulation {
 		}
 		simulationCloseDataManagerCallbacks.put(dataManagerId, consumer);
 	}
+	
+	protected void subscribeReportToSimulationState(BiConsumer<ReportContext,SimulationStateContext> consumer) {
+		if (consumer == null) {
+			throw new ContractException(NucleusError.NULL_REPORT_STATE_CONTEXT_CONSUMER);
+		}
+		simulationStateReportCallbacks.put(focalReportId, consumer);
+	}
+
+	protected void subscribeActorToSimulationState(BiConsumer<ActorContext,SimulationStateContext> consumer) {
+		if (consumer == null) {
+			throw new ContractException(NucleusError.NULL_ACTOR_STATE_CONTEXT_CONSUMER);
+		}
+		simulationStateActorCallbacks.put(focalActorId, consumer);
+	}
+
+	
+	protected void subscribeDataManagerToSimulationState(DataManagerId dataManagerId, BiConsumer<DataManagerContext, SimulationStateContext> consumer) {
+		if (consumer == null) {
+			throw new ContractException(NucleusError.NULL_DATA_MANAGER_STATE_CONTEXT_CONSUMER);
+		}
+		simulationStateDataManagerCallbacks.put(dataManagerId, consumer);
+	}
 
 	@SuppressWarnings("unchecked")
 	protected <T extends Event> void subscribeDataManagerToEvent(DataManagerId dataManagerId, Class<T> eventClass, BiConsumer<DataManagerContext, T> eventConsumer) {
@@ -1208,6 +1326,10 @@ public class Simulation {
 
 		if (focalReportId != null) {
 			throw new ContractException(NucleusError.REPORT_ATTEMPTING_MUTATION, focalReportId);
+		}
+
+		if (!processEvents) {
+			throw new ContractException(NucleusError.DATA_MANAGER_ATTEMPTING_MUTATION);
 		}
 
 		// queue the event handling by data managers

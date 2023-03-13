@@ -8,6 +8,8 @@ import java.util.Set;
 import org.apache.commons.math3.random.RandomGenerator;
 
 import nucleus.DataManager;
+import nucleus.DataManagerContext;
+import nucleus.SimulationStateContext;
 import plugins.stochastics.support.RandomNumberGeneratorId;
 import plugins.stochastics.support.StochasticsError;
 import util.errors.ContractException;
@@ -132,5 +134,20 @@ public final class StochasticsDataManager extends DataManager {
 			rng.setSeed(seedForId);
 		}
 
+	}
+	@Override
+	public void init(DataManagerContext dataManagerContext) {
+		super.init(dataManagerContext);
+		dataManagerContext.subscribeToSimulationState(this::recordSimulationState);
+	}
+	
+	private void recordSimulationState(DataManagerContext dataManagerContext, SimulationStateContext simulationStateContext) {
+		StochasticsPluginData.Builder builder = simulationStateContext.get(StochasticsPluginData.Builder.class);
+				
+		for (RandomNumberGeneratorId randomNumberGeneratorId : randomGeneratorMap.keySet()) {
+			builder.addRandomGeneratorId(randomNumberGeneratorId);			
+		}		
+		
+		builder.setSeed(randomGenerator.nextLong());	
 	}
 }
