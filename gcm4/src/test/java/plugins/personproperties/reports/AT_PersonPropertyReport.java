@@ -45,8 +45,6 @@ import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportPeriod;
 import plugins.reports.support.SimpleReportLabel;
 import plugins.stochastics.StochasticsDataManager;
-import plugins.stochastics.StochasticsPlugin;
-import plugins.stochastics.StochasticsPluginData;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
 import util.annotations.UnitTag;
@@ -120,6 +118,7 @@ public class AT_PersonPropertyReport {
 		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(1.2, (c) -> {
 			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
 			personPropertiesDataManager.setPersonPropertyValue(new PersonId(8), unknownIdToInclude, true);
+			personPropertiesDataManager.setPersonPropertyValue(new PersonId(17), unknownIdToExclude, 134);
 			personPropertiesDataManager.setPersonPropertyValue(new PersonId(9), TestPersonPropertyId.PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK, 17);
 			personPropertiesDataManager.setPersonPropertyValue(new PersonId(10), TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK, true);
 		}));
@@ -134,6 +133,15 @@ public class AT_PersonPropertyReport {
 			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
 			personPropertiesDataManager.setPersonPropertyValue(new PersonId(9), TestPersonPropertyId.PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK, 30);
 			personPropertiesDataManager.setPersonPropertyValue(new PersonId(10), TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK, true);
+		}));
+
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(2.5, (c) -> {
+			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
+			personPropertiesDataManager.setPersonPropertyValue(new PersonId(4), TestPersonPropertyId.PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK, 12);
+			personPropertiesDataManager.setPersonPropertyValue(new PersonId(6), TestPersonPropertyId.PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK, 12);
+			personPropertiesDataManager.setPersonPropertyValue(new PersonId(6), unknownIdToInclude, true);
+			personPropertiesDataManager.setPersonPropertyValue(new PersonId(6), unknownIdToExclude, 99);
+			personPropertiesDataManager.setPersonPropertyValue(new PersonId(11), unknownIdToInclude, true);
 		}));
 
 		ReportLabel reportLabel = new SimpleReportLabel("report label");
@@ -236,23 +244,24 @@ public class AT_PersonPropertyReport {
 		expectedOutputConsumer.accept(getReportItem(ReportPeriod.DAILY, 2, TestRegionId.REGION_2, unknownIdToInclude, false, 15));
 
 		// expected report at time 3
-		
+		expectedOutputConsumer.accept(getReportItem(ReportPeriod.DAILY, 3, TestRegionId.REGION_1, TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK, false, 14));
+		expectedOutputConsumer.accept(getReportItem(ReportPeriod.DAILY, 3, TestRegionId.REGION_1, TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK, true, 1));
+		expectedOutputConsumer.accept(getReportItem(ReportPeriod.DAILY, 3, TestRegionId.REGION_1, TestPersonPropertyId.PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK, 0, 13));
+		expectedOutputConsumer.accept(getReportItem(ReportPeriod.DAILY, 3, TestRegionId.REGION_1, TestPersonPropertyId.PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK, 12, 2));
+		expectedOutputConsumer.accept(getReportItem(ReportPeriod.DAILY, 3, TestRegionId.REGION_1, unknownIdToInclude, false, 13));
+		expectedOutputConsumer.accept(getReportItem(ReportPeriod.DAILY, 3, TestRegionId.REGION_1, unknownIdToInclude, true, 2));
+		expectedOutputConsumer.accept(getReportItem(ReportPeriod.DAILY, 3, TestRegionId.REGION_2, TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK, false, 15));
+		expectedOutputConsumer.accept(getReportItem(ReportPeriod.DAILY, 3, TestRegionId.REGION_2, TestPersonPropertyId.PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK, 0, 13));
+		expectedOutputConsumer.accept(getReportItem(ReportPeriod.DAILY, 3, TestRegionId.REGION_2, TestPersonPropertyId.PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK, 40, 1));
+		expectedOutputConsumer.accept(getReportItem(ReportPeriod.DAILY, 3, TestRegionId.REGION_2, TestPersonPropertyId.PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK, 30, 1));
+		expectedOutputConsumer.accept(getReportItem(ReportPeriod.DAILY, 3, TestRegionId.REGION_2, unknownIdToInclude, false, 14));
+		expectedOutputConsumer.accept(getReportItem(ReportPeriod.DAILY, 3, TestRegionId.REGION_2, unknownIdToInclude, true, 1));
+
 
 		//compare the expected and actual report items
-		
 		Map<ReportItem, Integer> expectedReportItems = expectedOutputConsumer.getOutputItems(ReportItem.class);
 		Map<ReportItem, Integer> actualReportItems = testOutputConsumer.getOutputItems(ReportItem.class);
-
-		for (ReportItem reportItem : actualReportItems.keySet()) {
-			System.out.println(reportItem.toValueString());
-		}
-		
-		
-
-		// System.out.println(expectedReportItems.keySet());
-		// System.out.println(testOutputConsumer.getOutputItems(ReportItem.class));
-//		assertEquals(expectedReportItems, actualReportItems);
-
+		assertEquals(expectedReportItems, actualReportItems);
 	}
 
 	@Test
@@ -398,7 +407,6 @@ public class AT_PersonPropertyReport {
 		// show that the report periods are what we expect for each report item
 		Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItems(ReportItem.class);
 		for (ReportItem reportItem : outputItems.keySet()) {
-			System.out.println(reportItem);
 			assertEquals(reportItem.getReportHeader().getHeaderStrings().get(0), "day");
 			assertFalse(reportItem.getReportHeader().getHeaderStrings().contains("hour"));
 		}
@@ -478,10 +486,6 @@ public class AT_PersonPropertyReport {
 			personPropertiesDataManager.definePersonProperty(personPropertyDefinitionInitialization);
 		}));
 
-		// Adding an empty plan at time two to ignore periodic reports bug
-		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(2, (c) -> {
-		}));
-
 		ReportLabel reportLabel = new SimpleReportLabel(1000);
 		ReportPeriod hourlyReportPeriod = ReportPeriod.HOURLY;
 		TestPluginData testPluginData = pluginDataBuilder.build();
@@ -539,10 +543,6 @@ public class AT_PersonPropertyReport {
 
 			PersonId personId = peopleDataManager.getPeople().get(0);
 			personPropertiesDataManager.setPersonPropertyValue(personId, unknownPersonPropertyId, 2);
-		}));
-
-		// Adding an empty plan at time two to ignore periodic reports bug
-		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(2, (c) -> {
 		}));
 
 		ReportLabel reportLabel = new SimpleReportLabel(1000);
@@ -611,10 +611,6 @@ public class AT_PersonPropertyReport {
 			personPropertiesDataManager.setPersonPropertyValue(personId, unknownPersonPropertyId, 2);
 		}));
 
-		// Adding an empty plan at time two to ignore periodic reports bug
-		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(2, (c) -> {
-		}));
-
 		ReportLabel reportLabel = new SimpleReportLabel(1000);
 		ReportPeriod hourlyReportPeriod = ReportPeriod.HOURLY;
 		TestPluginData testPluginData = pluginDataBuilder.build();
@@ -680,10 +676,6 @@ public class AT_PersonPropertyReport {
 
 			PersonId personId = peopleDataManager.getPeople().get(0);
 			personPropertiesDataManager.setPersonPropertyValue(personId, unknownPersonPropertyId, 2);
-		}));
-
-		// Adding an empty plan at time two to ignore periodic reports bug
-		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(2, (c) -> {
 		}));
 
 		ReportLabel reportLabel = new SimpleReportLabel(1000);
@@ -761,10 +753,6 @@ public class AT_PersonPropertyReport {
 			personPropertiesDataManager.setPersonPropertyValue(personId, unknownPersonPropertyId, 2);
 		}));
 
-		// Adding an empty plan at time two to ignore periodic reports bug
-		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(2, (c) -> {
-		}));
-
 		ReportLabel reportLabel = new SimpleReportLabel(1000);
 		ReportPeriod hourlyReportPeriod = ReportPeriod.HOURLY;
 		TestPluginData testPluginData = pluginDataBuilder.build();
@@ -792,7 +780,7 @@ public class AT_PersonPropertyReport {
 			outputPropertyStrings.add(reportItem.getValue(3));
 		}
 		assertFalse(outputPropertyStrings.contains(testPersonPropertyId.toString()));
-		assertFalse(outputPropertyStrings.contains(unknownPersonPropertyId.toString()));
+		assertTrue(outputPropertyStrings.contains(unknownPersonPropertyId.toString()));
 
 		// precondition: person property id is null
 		ContractException contractException = assertThrows(ContractException.class, () -> {
@@ -824,7 +812,7 @@ public class AT_PersonPropertyReport {
 		return builder.build();
 	}
 
-	private static final ReportLabel REPORT_LABEL = new SimpleReportLabel(1000);
+	private static final ReportLabel REPORT_LABEL = new SimpleReportLabel("report label");
 
 	private static final ReportHeader REPORT_HOURLY_HEADER = ReportHeader.builder().add("day").add("hour").add("region").add("property").add("value").add("person_count").build();
 	private static final ReportHeader REPORT_DAILY_HEADER = ReportHeader.builder().add("day").add("region").add("property").add("value").add("person_count").build();
