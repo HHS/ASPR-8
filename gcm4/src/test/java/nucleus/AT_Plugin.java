@@ -24,12 +24,12 @@ public class AT_Plugin {
 
 		@Override
 		public PluginDataBuilder getCloneBuilder() {
-			return null;
+			throw new UnsupportedOperationException();
 		}
 
 		@Override
 		public PluginDataBuilder getEmptyBuilder() {			
-			return null;
+			throw new UnsupportedOperationException();
 		}
 
 	}
@@ -43,7 +43,7 @@ public class AT_Plugin {
 
 		@Override
 		public PluginDataBuilder getCloneBuilder() {
-			return null;
+			throw new UnsupportedOperationException();
 		}
 
 		@Override
@@ -71,7 +71,7 @@ public class AT_Plugin {
 
 		@Override
 		public PluginDataBuilder getEmptyBuilder() {			
-			return null;
+			throw new UnsupportedOperationException();
 		}
 
 	}

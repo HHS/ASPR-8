@@ -33,7 +33,7 @@ public class AT_GlobalPropertiesPluginData {
 		GlobalPropertiesPluginData globalInitialData = GlobalPropertiesPluginData.builder().build();
 		assertNotNull(globalInitialData);
 
-		GlobalPropertiesPluginData.Builder builder = GlobalPropertiesPluginData.builder();
+		
 		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(34).build();
 		GlobalPropertyId globalPropertyId1 = new SimpleGlobalPropertyId("id 1");
 		GlobalPropertyId globalPropertyId2 = new SimpleGlobalPropertyId("id 2");
@@ -42,9 +42,12 @@ public class AT_GlobalPropertiesPluginData {
 		 * precondition test: if a global property value was associated with a
 		 * global property id that was not defined
 		 */
-		builder.defineGlobalProperty(globalPropertyId1, propertyDefinition);
-		builder.setGlobalPropertyValue(globalPropertyId2, 67);
-		ContractException contractException = assertThrows(ContractException.class, () -> builder.build());
+
+		ContractException contractException = assertThrows(ContractException.class, () -> {
+			GlobalPropertiesPluginData	.builder()//
+										.defineGlobalProperty(globalPropertyId1, propertyDefinition).setGlobalPropertyValue(globalPropertyId2, 67)//
+										.build();
+		});
 		assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
 
 		/*
@@ -52,18 +55,24 @@ public class AT_GlobalPropertiesPluginData {
 		 * global property id that is incompatible with the corresponding
 		 * property definition.
 		 */
-		builder.defineGlobalProperty(globalPropertyId1, propertyDefinition);
-		builder.setGlobalPropertyValue(globalPropertyId1, "bad value");
-		contractException = assertThrows(ContractException.class, () -> builder.build());
+
+		contractException = assertThrows(ContractException.class, () -> {
+			GlobalPropertiesPluginData	.builder()//
+										.defineGlobalProperty(globalPropertyId1, propertyDefinition)//
+										.setGlobalPropertyValue(globalPropertyId1, "bad value")//
+										.build();
+		});
 		assertEquals(PropertyError.INCOMPATIBLE_VALUE, contractException.getErrorType());
 
 		/*
 		 * precondition test: if a global property definition has no default
 		 * value and there is also no corresponding property value assignment.
 		 */
-		propertyDefinition = PropertyDefinition.builder().setType(Integer.class).build();
-		builder.defineGlobalProperty(globalPropertyId1, propertyDefinition);
-		contractException = assertThrows(ContractException.class, () -> builder.build());
+		contractException = assertThrows(ContractException.class, () -> {			
+			GlobalPropertiesPluginData	.builder()//
+			.defineGlobalProperty(globalPropertyId1, PropertyDefinition.builder().setType(Integer.class).build())//			
+			.build();
+		});
 		assertEquals(PropertyError.INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT, contractException.getErrorType());
 
 	}

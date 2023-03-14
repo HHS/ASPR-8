@@ -18,7 +18,11 @@ public class AttributesPluginData implements PluginData {
 
 	private static class Data {
 		private Map<AttributeId, AttributeDefinition> attributeDefinitions = new LinkedHashMap<>();
-		public Data() {}
+		private boolean locked;
+
+		public Data() {
+		}
+
 		public Data(Data data) {
 			attributeDefinitions = new LinkedHashMap<>(data.attributeDefinitions);
 		}
@@ -28,30 +32,32 @@ public class AttributesPluginData implements PluginData {
 		return new Builder(new Data());
 	}
 
-	public static class Builder implements PluginDataBuilder{
+	public static class Builder implements PluginDataBuilder {
 		private Data data = new Data();
-		private boolean dataIsMutable;
-		
+
 		private Builder(Data data) {
 			this.data = data;
 		}
 
 		private void ensureDataMutability() {
-			if(!dataIsMutable) {
+			if (data.locked) {
 				data = new Data(data);
-				dataIsMutable = true;
+				data.locked = false;
 			}
 		}
-		
+
+		private void ensureImmutability() {
+			if (!data.locked) {
+				data.locked = true;
+			}
+		}
+
 		/**
 		 * Returns the {@linkplain AttributesPluginData} from the collected data
 		 */
 		public AttributesPluginData build() {
-			try {
-				return new AttributesPluginData(data);
-			} finally {
-				data = new Data();
-			}
+			ensureImmutability();
+			return new AttributesPluginData(data);
 		}
 
 		/**
@@ -134,13 +140,13 @@ public class AttributesPluginData implements PluginData {
 
 	@Override
 	public PluginDataBuilder getCloneBuilder() {
-		
+
 		return new Builder(data);
 	}
 
 	@Override
 	public PluginDataBuilder getEmptyBuilder() {
-		return new Builder(new Data());
+		return builder();
 	}
 
 }

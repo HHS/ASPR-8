@@ -40,10 +40,12 @@ public final class StochasticsPluginData implements PluginData {
 		public Data(Data data) {
 			this.seed = data.seed;
 			randomNumberGeneratorIds.addAll(data.randomNumberGeneratorIds);
+			locked = data.locked;
 		}
 
 		private Long seed;
 		private Set<RandomNumberGeneratorId> randomNumberGeneratorIds = new LinkedHashSet<>();
+		private boolean locked;
 	}
 
 	/**
@@ -61,12 +63,16 @@ public final class StochasticsPluginData implements PluginData {
 	public static class Builder implements PluginDataBuilder {
 		private Data data;
 
-		private boolean dataIsMutable;
-
 		private void ensureDataMutability() {
-			if (!dataIsMutable) {
+			if (data.locked) {
 				data = new Data(data);
-				dataIsMutable = true;
+				data.locked = false;
+			}
+		}
+
+		private void ensureImmutability() {
+			if (!data.locked) {
+				data.locked = true;
 			}
 		}
 
@@ -75,8 +81,7 @@ public final class StochasticsPluginData implements PluginData {
 
 		}
 
-		private void validate() {
-			
+		private void validateData() {
 			if (data.seed == null) {
 				throw new ContractException(StochasticsError.NULL_SEED);
 			}
@@ -92,12 +97,11 @@ public final class StochasticsPluginData implements PluginData {
 		 * 
 		 */
 		public StochasticsPluginData build() {
-			try {
-				validate();
-				return new StochasticsPluginData(data);
-			} finally {
-				data = new Data();
+			if (!data.locked) {
+				validateData();
 			}
+			ensureImmutability();
+			return new StochasticsPluginData(data);
 		}
 
 		/**
@@ -155,7 +159,7 @@ public final class StochasticsPluginData implements PluginData {
 
 	@Override
 	public PluginDataBuilder getEmptyBuilder() {
-		return new Builder(new Data());
+		return builder();
 	}
 
 }

@@ -30,6 +30,8 @@ public class TestPluginData implements PluginData {
 		}
 
 		private Data(Data data) {
+			
+
 
 			for (Object alias : data.testActorPlanMap.keySet()) {
 				List<TestActorPlan> oldPlans = data.testActorPlanMap.get(alias);
@@ -40,7 +42,7 @@ public class TestPluginData implements PluginData {
 					newPlans.add(newPlan);
 				}
 			}
-			
+
 			for (Object alias : data.testReportPlanMap.keySet()) {
 				List<TestReportPlan> oldPlans = data.testReportPlanMap.get(alias);
 				List<TestReportPlan> newPlans = new ArrayList<>();
@@ -63,9 +65,11 @@ public class TestPluginData implements PluginData {
 					newPlans.add(newPlan);
 				}
 			}
+			
+			this.pluginDependencies.addAll(data.pluginDependencies);
 
 		}
-		
+
 		@Override
 		public int hashCode() {
 			final int prime = 31;
@@ -125,14 +129,8 @@ public class TestPluginData implements PluginData {
 			return true;
 		}
 
-
-
-
-
-
-
 		private final Map<Object, List<TestReportPlan>> testReportPlanMap = new LinkedHashMap<>();
-		
+
 		private final Map<Object, List<TestActorPlan>> testActorPlanMap = new LinkedHashMap<>();
 
 		private Map<Object, Supplier<TestDataManager>> testDataManagerSuppliers = new LinkedHashMap<>();
@@ -164,12 +162,9 @@ public class TestPluginData implements PluginData {
 
 		@Override
 		public TestPluginData build() {
-			try {
-				validate();
-				return new TestPluginData(data);
-			} finally {
-				data = new Data();
-			}
+			validate();
+			//return new TestPluginData(new Data(data));
+			return new TestPluginData(data);
 		}
 
 		private void validate() {
@@ -211,7 +206,7 @@ public class TestPluginData implements PluginData {
 			return this;
 
 		}
-		
+
 		/**
 		 * Adds an report action plan associated with the alias
 		 * 
@@ -324,7 +319,7 @@ public class TestPluginData implements PluginData {
 	public List<Object> getTestActorAliases() {
 		return new ArrayList<>(data.testActorPlanMap.keySet());
 	}
-	
+
 	/**
 	 * Returns a list of the test report aliases
 	 */
@@ -343,7 +338,7 @@ public class TestPluginData implements PluginData {
 		}
 		return result;
 	}
-	
+
 	/**
 	 * Returns the test report plans associated with the report alias
 	 */
@@ -355,7 +350,7 @@ public class TestPluginData implements PluginData {
 		}
 		return result;
 	}
-	
+
 	/**
 	 * Returns the plugin dependencies
 	 */
@@ -432,7 +427,7 @@ public class TestPluginData implements PluginData {
 
 	@Override
 	public PluginDataBuilder getEmptyBuilder() {
-		return new Builder(new Data());
+		return builder();
 	}
 
 }
