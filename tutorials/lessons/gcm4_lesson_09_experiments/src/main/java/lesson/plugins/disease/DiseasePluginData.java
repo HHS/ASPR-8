@@ -27,7 +27,7 @@ public final class DiseasePluginData implements PluginData {
 
 	public static class Builder implements PluginDataBuilder {
 		private Data data;
-		private boolean dataIsMutable;
+		
 
 		private Builder(final Data data) {
 			this.data = data;
@@ -35,34 +35,20 @@ public final class DiseasePluginData implements PluginData {
 
 		@Override
 		public DiseasePluginData build() {
-			try {
-				return new DiseasePluginData(data);
-			} finally {
-				data = new Data();
-			}
-		}
-
-		private void ensureDataMutability() {
-			if (!dataIsMutable) {
-				data = new Data(data);
-				dataIsMutable = true;
-			}
+			return new DiseasePluginData(new Data(data));
 		}
 
 		public Builder setAsymptomaticDays(final double asymptomaticDays) {
-			ensureDataMutability();
 			data.asymptomaticDays = asymptomaticDays;
 			return this;
 		}
 
 		public Builder setR0(final double r0) {
-			ensureDataMutability();
 			data.r0 = r0;
 			return this;
 		}
 
 		public Builder setSymptomaticDays(final double symptomaticDays) {
-			ensureDataMutability();
 			data.symptomaticDays = symptomaticDays;
 			return this;
 		}
@@ -93,7 +79,7 @@ public final class DiseasePluginData implements PluginData {
 
 	@Override
 	public PluginDataBuilder getCloneBuilder() {
-		return new Builder(data);
+		return new Builder(new Data(data));
 	}
 
 	@Override

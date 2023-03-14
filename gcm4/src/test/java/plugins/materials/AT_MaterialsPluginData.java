@@ -678,6 +678,7 @@ public class AT_MaterialsPluginData {
 		PropertyDefinition propertyDefinition = testBatchPropertyId.getPropertyDefinition();
 
 		// show that replaced values persist
+		builder = MaterialsPluginData.builder();
 		TestBatchPropertyId testBatchPropertyId2 = TestBatchPropertyId.BATCH_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK;
 		PropertyDefinition propertyDefinition2 = testBatchPropertyId2.getPropertyDefinition();
 		builder.addMaterial(testMaterialId);
@@ -727,6 +728,7 @@ public class AT_MaterialsPluginData {
 		// idempotency tests
 
 		// show that replaced values persist
+		builder = MaterialsPluginData.builder();
 		PropertyDefinition propertyDefinition2 = testMaterialsProducerPropertyId.getPropertyDefinition();
 		builder.defineMaterialsProducerProperty(testMaterialsProducerPropertyId, propertyDefinition).defineMaterialsProducerProperty(testMaterialsProducerPropertyId, propertyDefinition2);
 		materialsInitialData = builder.build();
@@ -804,7 +806,7 @@ public class AT_MaterialsPluginData {
 		}
 
 		// idempotency test (replacement)
-
+		builder = MaterialsPluginData.builder();
 		for (TestMaterialId testMaterialId : TestMaterialId.values()) {
 			builder.addMaterial(testMaterialId);
 		}
@@ -912,7 +914,7 @@ public class AT_MaterialsPluginData {
 		}
 
 		// idempotency test(replacement)
-
+		builder = MaterialsPluginData.builder();
 		for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId.values()) {
 			builder.defineMaterialsProducerProperty(testMaterialsProducerPropertyId, testMaterialsProducerPropertyId.getPropertyDefinition());
 		}
@@ -1006,7 +1008,7 @@ public class AT_MaterialsPluginData {
 		// idempotency test (replacement)
 
 		expectedResourceLevels = new LinkedHashMap<>();
-
+		builder = MaterialsPluginData.builder();
 		for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
 			builder.addMaterialsProducerId(testMaterialsProducerId);
 			for (TestResourceId testResourceId : TestResourceId.values()) {
@@ -1735,14 +1737,16 @@ public class AT_MaterialsPluginData {
 	@UnitTestMethod(target = MaterialsPluginData.class, name = "getResourceIds", args = {})
 	public void testGetResourceIds() {
 
-		MaterialsPluginData.Builder builder = MaterialsPluginData.builder();
+		
 
-		MaterialsPluginData materialsInitialData = builder.build();//
+		MaterialsPluginData materialsInitialData = MaterialsPluginData.builder().build();//
 
 		assertTrue(materialsInitialData.getResourceIds().isEmpty());
 
 		TestMaterialsProducerId testMaterialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_1;
 		long amount = 45L;
+		
+		MaterialsPluginData.Builder builder = MaterialsPluginData.builder();
 		for (TestResourceId testResourceId : TestResourceId.values()) {
 			builder.setMaterialsProducerResourceLevel(testMaterialsProducerId, testResourceId, amount++);
 			testMaterialsProducerId = testMaterialsProducerId.next();

@@ -59,6 +59,8 @@ public final class ResourcesPluginData implements PluginData {
 
 		private final Map<ResourceId, TimeTrackingPolicy> resourceTimeTrackingPolicies;
 
+		private boolean locked;
+
 		public Data() {
 			resourcePropertyDefinitions = new LinkedHashMap<>();
 			resourcePropertyValues = new LinkedHashMap<>();
@@ -107,6 +109,8 @@ public final class ResourcesPluginData implements PluginData {
 			}
 
 			resourceTimeTrackingPolicies = new LinkedHashMap<>(data.resourceTimeTrackingPolicies);
+
+			locked = data.locked;
 
 		}
 
@@ -187,12 +191,16 @@ public final class ResourcesPluginData implements PluginData {
 	public static class Builder implements PluginDataBuilder {
 		private Data data;
 
-		private boolean dataIsMutable;
-
 		private void ensureDataMutability() {
-			if (!dataIsMutable) {
+			if (data.locked) {
 				data = new Data(data);
-				dataIsMutable = true;
+				data.locked = false;
+			}
+		}
+
+		private void ensureImmutability() {
+			if (!data.locked) {
+				data.locked = true;
 			}
 		}
 
@@ -244,19 +252,11 @@ public final class ResourcesPluginData implements PluginData {
 		 * 
 		 */
 		public ResourcesPluginData build() {
-			try {
-				for (final ResourceId resourceId : data.resourceIds) {
-					final TimeTrackingPolicy timeTrackingPolicy = data.resourceTimeTrackingPolicies.get(resourceId);
-					if (timeTrackingPolicy == null) {
-						dataIsMutable = true;
-						data.resourceTimeTrackingPolicies.put(resourceId, TimeTrackingPolicy.DO_NOT_TRACK_TIME);
-					}
-				}
+			if (!data.locked) {
 				validateData();
-				return new ResourcesPluginData(data);
-			} finally {
-				data = new Data();
 			}
+			ensureImmutability();
+			return new ResourcesPluginData(data);
 		}
 
 		/**
@@ -271,6 +271,9 @@ public final class ResourcesPluginData implements PluginData {
 			ensureDataMutability();
 			validateResourceIdNotNull(resourceId);
 			data.resourceIds.add(resourceId);
+			if (!data.resourceTimeTrackingPolicies.containsKey(resourceId)) {
+				data.resourceTimeTrackingPolicies.put(resourceId, TimeTrackingPolicy.DO_NOT_TRACK_TIME);
+			}
 			return this;
 		}
 
@@ -449,10 +452,6 @@ public final class ResourcesPluginData implements PluginData {
 		}
 
 		private void validateData() {
-
-			if (!dataIsMutable) {
-				return;
-			}
 
 			for (ResourceId resourceId : data.resourceTimeTrackingPolicies.keySet()) {
 				if (!data.resourceIds.contains(resourceId)) {
@@ -738,7 +737,7 @@ public final class ResourcesPluginData implements PluginData {
 
 	@Override
 	public PluginDataBuilder getEmptyBuilder() {
-		return new Builder(new Data());
+		return builder();
 	}
 
 }

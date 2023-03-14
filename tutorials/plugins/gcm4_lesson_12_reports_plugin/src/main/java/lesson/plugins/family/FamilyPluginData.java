@@ -11,9 +11,7 @@ public final class FamilyPluginData implements PluginData {
 
 		private int familyCount;
 
-		private int maxFamilySize;		
-		
-				
+		private int maxFamilySize;
 
 		private Data() {
 		}
@@ -26,7 +24,6 @@ public final class FamilyPluginData implements PluginData {
 
 	public static class Builder implements PluginDataBuilder {
 		private Data data;
-		private boolean dataIsMutable;
 
 		private Builder(final Data data) {
 			this.data = data;
@@ -34,18 +31,7 @@ public final class FamilyPluginData implements PluginData {
 
 		@Override
 		public FamilyPluginData build() {
-			try {
-				return new FamilyPluginData(data);
-			} finally {
-				data = new Data();
-			}
-		}
-
-		private void ensureDataMutability() {
-			if (!dataIsMutable) {
-				data = new Data(data);
-				dataIsMutable = true;
-			}
+			return new FamilyPluginData(new Data(data));
 		}
 
 		/**
@@ -58,7 +44,6 @@ public final class FamilyPluginData implements PluginData {
 			if (familyCount < 0) {
 				throw new IllegalArgumentException("negative family count");
 			}
-			ensureDataMutability();
 			data.familyCount = familyCount;
 			return this;
 		}
@@ -73,7 +58,6 @@ public final class FamilyPluginData implements PluginData {
 			if (maxFamilySize < 0) {
 				throw new IllegalArgumentException("negative max family count");
 			}
-			ensureDataMutability();
 			data.maxFamilySize = maxFamilySize;
 			return this;
 		}
@@ -100,7 +84,7 @@ public final class FamilyPluginData implements PluginData {
 
 	@Override
 	public PluginDataBuilder getCloneBuilder() {
-		return new Builder(data);
+		return new Builder(new Data(data));
 	}
 
 	@Override

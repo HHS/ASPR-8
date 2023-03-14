@@ -54,6 +54,7 @@ public final class GroupsPluginData implements PluginData {
 		private final Set<GroupTypeId> groupTypeIds;
 		private final List<GroupId> emptyGroupList;
 		private int personCount;
+		private boolean locked;
 
 		private List<GroupSpecification> groupSpecifications;
 		private List<GroupPropertyValue> emptyGroupPropertyValues;
@@ -106,6 +107,7 @@ public final class GroupsPluginData implements PluginData {
 				groupMemberships.add(newList);
 			}
 
+			locked = data.locked;
 		}
 
 	}
@@ -154,7 +156,6 @@ public final class GroupsPluginData implements PluginData {
 
 	}
 
-
 	/**
 	 * Builder class for GroupInitialData
 	 * 
@@ -163,12 +164,17 @@ public final class GroupsPluginData implements PluginData {
 	public static class Builder implements PluginDataBuilder {
 
 		private Data data;
-		boolean dataIsMutable;
 
 		private void ensureDataMutability() {
-			if (!dataIsMutable) {
+			if (data.locked) {
 				data = new Data(data);
-				dataIsMutable = true;
+				data.locked = false;
+			}
+		}
+
+		private void ensureImmutability() {
+			if (!data.locked) {
+				data.locked = true;
 			}
 		}
 
@@ -184,8 +190,8 @@ public final class GroupsPluginData implements PluginData {
 		 * 
 		 * 
 		 * 
-		 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_TYPE_ID}</li>
-		 *             if a group was added with a group type id that was not
+		 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_TYPE_ID}</li> if
+		 *             a group was added with a group type id that was not
 		 *             defined
 		 * 
 		 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_TYPE_ID}</li> if
@@ -215,17 +221,15 @@ public final class GroupsPluginData implements PluginData {
 		 * 
 		 */
 		public GroupsPluginData build() {
-			try {
-				validate();
-				return new GroupsPluginData(data);
-			} finally {
-				data = new Data();
+			if (!data.locked) {
+				validateData();
 			}
+			ensureImmutability();
+			return new GroupsPluginData(data);
 		}
-
+		
 		/**
-		 * Adds a person to a group
-		 * Duplicate inputs override previous inputs
+		 * Adds a person to a group Duplicate inputs override previous inputs
 		 * 
 		 * @throws ContractException
 		 * 
@@ -260,8 +264,7 @@ public final class GroupsPluginData implements PluginData {
 		}
 
 		/**
-		 * Adds a group type id
-		 * Duplicate inputs override previous inputs
+		 * Adds a group type id Duplicate inputs override previous inputs
 		 * 
 		 * @throws ContractException
 		 * 
@@ -277,8 +280,8 @@ public final class GroupsPluginData implements PluginData {
 		}
 
 		/**
-		 * Adds a group with the given group type
-		 * Duplicate inputs override previous inputs
+		 * Adds a group with the given group type Duplicate inputs override
+		 * previous inputs
 		 * 
 		 * @throws ContractException
 		 *             <li>{@linkplain GroupError#NULL_GROUP_ID}</li> if the
@@ -308,8 +311,7 @@ public final class GroupsPluginData implements PluginData {
 		}
 
 		/**
-		 * Defines a group property
-		 * Duplicate inputs override previous inputs
+		 * Defines a group property Duplicate inputs override previous inputs
 		 * 
 		 * @throws ContractException
 		 *             <li>{@linkplain GroupError#NULL_GROUP_TYPE_ID}</li> if
@@ -339,8 +341,8 @@ public final class GroupsPluginData implements PluginData {
 
 		/**
 		 * Sets the group property value that overrides the default value of the
-		 * corresponding property definition
-		 * Duplicate inputs override previous inputs
+		 * corresponding property definition Duplicate inputs override previous
+		 * inputs
 		 * 
 		 * @throws ContractException
 		 * 
@@ -393,11 +395,7 @@ public final class GroupsPluginData implements PluginData {
 			return this;
 		}
 
-		private void validate() {
-
-			if (!dataIsMutable) {
-				return;
-			}
+		private void validateData() {
 
 			for (List<GroupId> groupIds : data.groupMemberships) {
 				if (groupIds != null) {
@@ -690,7 +688,7 @@ public final class GroupsPluginData implements PluginData {
 
 	@Override
 	public PluginDataBuilder getEmptyBuilder() {
-		return new Builder(new Data());
+		return builder();
 	}
 
 }

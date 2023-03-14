@@ -33,15 +33,14 @@ public final class GlobalPropertiesPluginData implements PluginData {
 	 */
 	public static class Builder implements PluginDataBuilder {
 		private Data data;
-		private boolean dataIsMutable;
 
 		private Builder(Data data) {
 			this.data = data;
 		}
 
 		/**
-		 * Returns the {@link GlobalPropertiesPluginData} from the collected information
-		 * supplied to this builder. Clears the builder's state.
+		 * Returns the {@link GlobalPropertiesPluginData} from the collected
+		 * information supplied to this builder. Clears the builder's state.
 		 * 
 		 * @throws ContractException
 		 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}</li>
@@ -59,17 +58,15 @@ public final class GlobalPropertiesPluginData implements PluginData {
 		 * 
 		 */
 		public GlobalPropertiesPluginData build() {
-			try {
-				validateData();
-				return new GlobalPropertiesPluginData(data);
-			} finally {
-				data = new Data();
-			}
+			if (!data.locked) {
+				validateData();	
+			}			
+			ensureImmutability();
+			return new GlobalPropertiesPluginData(data);
 		}
 
 		/**
-		 * Defines a global property
-		 * Duplicate inputs override previous inputs.
+		 * Defines a global property Duplicate inputs override previous inputs.
 		 * 
 		 * @throws ContractException
 		 * 
@@ -91,16 +88,22 @@ public final class GlobalPropertiesPluginData implements PluginData {
 		}
 
 		private void ensureDataMutability() {
-			if (!dataIsMutable) {
+			if (data.locked) {
 				data = new Data(data);
-				dataIsMutable = true;
+				data.locked = false;
+			}
+		}
+
+		private void ensureImmutability() {
+			if (!data.locked) {
+				data.locked = true;
 			}
 		}
 
 		/**
 		 * Sets the global property value that overrides the default value of
-		 * the corresponding property definition.
-		 * Duplicate inputs override previous inputs.
+		 * the corresponding property definition. Duplicate inputs override
+		 * previous inputs.
 		 * 
 		 * @throws ContractException
 		 * 
@@ -121,9 +124,7 @@ public final class GlobalPropertiesPluginData implements PluginData {
 		}
 
 		private void validateData() {
-			if (!dataIsMutable) {
-				return;
-			}
+			
 			for (final GlobalPropertyId globalPropertyId : data.globalPropertyValues.keySet()) {
 				if (!data.globalPropertyDefinitions.containsKey(globalPropertyId)) {
 					throw new ContractException(PropertyError.UNKNOWN_PROPERTY_ID, globalPropertyId);
@@ -162,12 +163,15 @@ public final class GlobalPropertiesPluginData implements PluginData {
 
 		private final Map<GlobalPropertyId, Object> globalPropertyValues = new LinkedHashMap<>();
 
+		private boolean locked;
+
 		private Data() {
 		}
 
 		private Data(Data data) {
 			globalPropertyDefinitions.putAll(data.globalPropertyDefinitions);
 			globalPropertyValues.putAll(data.globalPropertyValues);
+			locked = data.locked;
 		}
 	}
 
@@ -268,7 +272,7 @@ public final class GlobalPropertiesPluginData implements PluginData {
 
 	@Override
 	public PluginDataBuilder getEmptyBuilder() {
-		return new Builder(new Data());
+		return builder();
 	}
 
 }

@@ -315,6 +315,7 @@ public class AT_RegionsDataManager {
 		TestSimulation.executeSimulation(RegionsTestPluginFactory.factory(0, 2278422620232176214L, TimeTrackingPolicy.TRACK_TIME, testPluginData).getPlugins());
 
 		// precondition test: if region arrival times are not being tracked
+		pluginBuilder = TestPluginData.builder();
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
