@@ -63,9 +63,9 @@ public final class Example_16 {
 	private NIOReportItemHandler getNIOReportItemHandler() {
 		return NIOReportItemHandler	.builder()//
 									.addReport(ModelReportLabel.PERSON_PROPERTY_REPORT, //
-											Paths.get("C:\\temp\\gcm\\person_property_report.xls"))//
+											Paths.get("C:\\Users\\varnerbf\\Documents\\TestReports"))//
 									.addReport(ModelReportLabel.VACCINATION, //
-											Paths.get("C:\\temp\\gcm\\vaccine_report.xls"))//
+											Paths.get("C:\\Users\\varnerbf\\Documents\\TestReports\\1"))//
 									.build();
 	}
 
