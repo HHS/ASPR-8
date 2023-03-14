@@ -41,6 +41,7 @@
                                         <include>gov/hhs/aspr/gcm/groups/*.proto</include>
                                         <include>gov/hhs/aspr/gcm/regions/*.proto</include>
                                         <include>gov/hhs/aspr/gcm/personproperties/*.proto</include>
+                                        <include>gov/hhs/aspr/gcm/resources/*.proto</include>
                                     </includes>
                                 </resource>
                             </resources>

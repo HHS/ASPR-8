@@ -1,0 +1,78 @@
+syntax = "proto3";
+package gov.hhs.aspr.gcm;
+
+option java_multiple_files = true;
+option java_package = "plugins.resources.input";
+
+import "regions-plugin.proto";
+import "people-plugin.proto";
+import "properties-plugin.proto";
+import "google/protobuf/any.proto";
+
+message ResourceIdInput {
+    google.protobuf.Any id = 1;
+}
+
+enum TestResourceIdInput {
+    RESOURCE_1 = 0;
+    RESOURCE_2 = 1;
+    RESOURCE_3 = 2;
+    RESOURCE_4 = 3;
+    RESOURCE_5 = 4;
+}
+
+message ResourcePropertyIdInput {
+    google.protobuf.Any id = 1;
+}
+
+enum TestResourcePropertyIdInput {
+    ResourceProperty_1_1_BOOLEAN_MUTABLE = 0;
+    ResourceProperty_1_2_INTEGER_MUTABLE = 1;
+    ResourceProperty_1_3_DOUBLE_MUTABLE = 2;
+    ResourceProperty_2_1_BOOLEAN_MUTABLE = 3;
+    ResourceProperty_2_2_INTEGER_MUTABLE = 4;
+    ResourceProperty_3_1_BOOLEAN_MUTABLE = 5;
+    ResourceProperty_3_2_STRING_MUTABLE = 6;
+    ResourceProperty_4_1_BOOLEAN_MUTABLE = 7;
+    ResourceProperty_5_1_INTEGER_IMMUTABLE = 8;
+    ResourceProperty_5_1_DOUBLE_IMMUTABLE = 9;
+}
+
+message ResourceInitializationInput {
+    ResourceIdInput resourceId = 1;
+    int64 amount = 2;
+}
+
+message ResourcePropertyDefinitionMapInput {
+    ResourceIdInput resourceId = 1;
+    PropertyDefinitionMapInput resourcePropertyDefinitionMap = 2;
+}
+
+message ResourcePropertyValueMapInput {
+    ResourceIdInput resourceId = 1;
+    PropertyValueMapInput resourcePropertyValueMap = 2;
+}
+
+message PersonResourceLevelsInput {
+    PersonIdInput personId = 1;
+    repeated ResourceInitializationInput resourceLevels = 2;
+}
+
+message RegionResourceLevelsInput {
+    RegionIdInput regionId = 1;
+    repeated ResourceInitializationInput resourceLevels = 2;
+}
+
+message ResourceTimeTrackingPolicyMapInput {
+    ResourceIdInput resourceId = 1;
+    TimeTrackingPolicyInput timeTrackingPolicy = 2;
+}
+
+message ResourcesPluginDataInput {
+    repeated ResourceIdInput resourceIds = 1;
+    repeated ResourcePropertyDefinitionMapInput resourcePropertyDefinitions = 2;
+    repeated ResourcePropertyValueMapInput resourcePropertyValues = 3;
+    repeated PersonResourceLevelsInput personResourceLevels = 4;
+    repeated RegionResourceLevelsInput regionResourceLevels = 5;
+    repeated ResourceTimeTrackingPolicyMapInput resourceTimeTrackingPolicies = 6;
+}

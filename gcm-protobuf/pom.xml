@@ -96,6 +96,7 @@
         <module>globalproperties-plugin</module>
         <module>regions-plugin</module>
         <module>personproperties-plugin</module>
+        <module>resources-plugin</module>
     </modules>
 
     <build>
