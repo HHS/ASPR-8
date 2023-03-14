@@ -166,13 +166,14 @@ public class GroupsPluginDataTranslator extends AbstractTranslator<GroupsPluginD
         }
 
         // add people
-        for (int i = 0; i < simObject.getGroupMemberships().size(); i++) {
-            List<GroupId> groupIds = simObject.getGroupMemberships().get(i);
+        for (int i = 0; i < simObject.getPersonCount(); i++) {
+            PersonId personId = new PersonId(i);
+            List<GroupId> groupIds = simObject.getGroupsForPerson(personId);
 
-            if (groupIds != null) {
+            if (!groupIds.isEmpty()) {
                 GroupMembershipInput.Builder groupMembershipBuilder = GroupMembershipInput.newBuilder();
 
-                PersonIdInput personIdInput = this.translator.convertSimObject(new PersonId(i));
+                PersonIdInput personIdInput = this.translator.convertSimObject(personId);
                 groupMembershipBuilder.setPersonId(personIdInput);
 
                 for (GroupId groupId : groupIds) {

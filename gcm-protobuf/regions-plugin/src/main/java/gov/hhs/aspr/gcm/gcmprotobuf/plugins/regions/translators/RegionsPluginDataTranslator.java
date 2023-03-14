@@ -115,12 +115,13 @@ public class RegionsPluginDataTranslator extends AbstractTranslator<RegionsPlugi
             }
         }
 
-        for (int i = 0; i < simObject.getPersonRegions().size(); i++) {
-            RegionId regionId = simObject.getPersonRegions().get(i);
-
-            if (regionId != null) {
+        for (int i = 0; i < simObject.getPersonCount(); i++) {
+            PersonId personId = new PersonId(i);
+            
+            if (simObject.getPersonRegion(personId).isPresent()) {
+                RegionId regionId = simObject.getPersonRegion(personId).get();
                 RegionMembershipInput.Builder regionMembershipBuilder = RegionMembershipInput.newBuilder();
-                PersonIdInput personIdInput = this.translator.convertSimObject(new PersonId(i));
+                PersonIdInput personIdInput = this.translator.convertSimObject(personId);
                 RegionIdInput regionIdInput = this.translator.convertSimObject(regionId, RegionId.class);
                 regionMembershipBuilder.setPersonId(personIdInput).setRegionId(regionIdInput);
 

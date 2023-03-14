@@ -67,16 +67,14 @@ public class PersonPropertiesPluginDataTranslator
             builder.addPersonPropertyDefinitions(propertyDefinitionMapInput);
         }
 
-        List<List<PersonPropertyInitialization>> personPropertiesValues = simObject.getPersonPropertyValues();
-        for (int i = 0; i < personPropertiesValues.size(); i++) {
-            if (personPropertiesValues.get(i) != null) {
-                List<PersonPropertyInitialization> propertyValues = personPropertiesValues.get(i);
-
+        for (int i = 0; i < simObject.getPersonCount(); i++) {
+            List<PersonPropertyInitialization> personPropertiesValues = simObject.getPropertyValues(i);
+            if (!personPropertiesValues.isEmpty()) {
                 PersonIdInput personIdInput = this.translator.convertSimObject(new PersonId(i));
                 PersonPropertyValueMapInput.Builder personPropertyValueMapBuilder = PersonPropertyValueMapInput
                         .newBuilder().setPersonId(personIdInput);
 
-                for (PersonPropertyInitialization personPropertyInitialization : propertyValues) {
+                for (PersonPropertyInitialization personPropertyInitialization : personPropertiesValues) {
                     PropertyValueMapInput propertyValueMapInput = PropertyValueMapInput.newBuilder()
                             .setPropertyValue(this.translator.getAnyFromObject(
                                     personPropertyInitialization.getValue()))

@@ -138,8 +138,7 @@
                     </regexFlags>
                     <replacements>
                         <replacement>
-                            <token>^(@SuppressWarnings\(.*?\)\s+)?public
-                                final class</token>
+                            <token>^(@SuppressWarnings\(.*?\)\s+)?public final class</token>
                             <value>@SuppressWarnings("all") public final class</value>
                         </replacement>
                     </replacements>

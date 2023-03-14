@@ -441,15 +441,6 @@ public class RegionsPluginData implements PluginData {
 		return Optional.empty();
 	}
 
-	/**
-	 * Returns the list of person regions
-	 * 
-	 */
-	@SuppressWarnings("unchecked")
-	public <T extends RegionId> List<T> getPersonRegions() {
-		return (List<T>) Collections.unmodifiableList(data.personRegions);
-	}
-
 	@Override
 	public PluginDataBuilder getEmptyBuilder() {
 		return new Builder(new Data());
