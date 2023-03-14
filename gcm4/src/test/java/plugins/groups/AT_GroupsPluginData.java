@@ -52,9 +52,9 @@ public class AT_GroupsPluginData {
 		assertNotNull(GroupsPluginData.builder().build());
 
 		// show that the builder clears its state on build invocation
-		GroupsPluginData.Builder groupsPluginDataBuilder = GroupsPluginData.builder();
+		
 
-		GroupsPluginData groupInitialData = groupsPluginDataBuilder //
+		GroupsPluginData groupInitialData = GroupsPluginData.builder() //
 																	.addPersonToGroup(new GroupId(0), new PersonId(0))//
 																	.addGroupTypeId(TestGroupTypeId.GROUP_TYPE_1)//
 																	.addGroup(new GroupId(0), TestGroupTypeId.GROUP_TYPE_1)//
@@ -66,7 +66,7 @@ public class AT_GroupsPluginData {
 		assertFalse(groupInitialData.getGroupIds().isEmpty());
 		assertFalse(groupInitialData.getGroupTypeIds().isEmpty());
 
-		groupInitialData = groupsPluginDataBuilder.build();
+		groupInitialData = GroupsPluginData.builder().build();
 		assertTrue(groupInitialData.getGroupIds().isEmpty());
 		assertTrue(groupInitialData.getGroupTypeIds().isEmpty());
 

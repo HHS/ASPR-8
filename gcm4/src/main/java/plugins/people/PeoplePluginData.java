@@ -21,12 +21,14 @@ import util.errors.ContractException;
 public final class PeoplePluginData implements PluginData {
 	private static class Data {
 		private List<PersonId> personIds = new ArrayList<>();
+		private boolean locked;
 
 		public Data() {
 		}
 
 		public Data(Data data) {
 			this.personIds.addAll(data.personIds);
+			locked = data.locked;
 		}
 	}
 
@@ -44,12 +46,18 @@ public final class PeoplePluginData implements PluginData {
 	 */
 	public static class Builder implements PluginDataBuilder {
 		private Data data;
-		private boolean dataIsMutable;
+		
 
 		private void ensureDataMutability() {
-			if (!dataIsMutable) {
+			if (data.locked) {
 				data = new Data(data);
-				dataIsMutable = true;
+				data.locked = false;
+			}
+		}
+
+		private void ensureImmutability() {
+			if (!data.locked) {
+				data.locked = true;
 			}
 		}
 
@@ -63,13 +71,10 @@ public final class PeoplePluginData implements PluginData {
 		 * by this builder.
 		 */
 		public PeoplePluginData build() {
-			try {
-				return new PeoplePluginData(data);
-			} finally {
-				data = new Data();
-			}
+			ensureImmutability();			
+			return new PeoplePluginData(data);			
 		}
-
+		
 		/**
 		 * Adds a person.
 		 * Duplicate inputs override previous inputs
@@ -122,6 +127,6 @@ public final class PeoplePluginData implements PluginData {
 
 	@Override
 	public PluginDataBuilder getEmptyBuilder() {
-		return new Builder(new Data());
+		return builder();
 	}
 }

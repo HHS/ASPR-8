@@ -24,7 +24,6 @@ public final class PolicyPluginData implements PluginData {
 
 	public static class Builder implements PluginDataBuilder {
 		private Data data;
-		private boolean dataIsMutable;
 
 		private Builder(final Data data) {
 			this.data = data;
@@ -33,27 +32,19 @@ public final class PolicyPluginData implements PluginData {
 		@Override
 		public PolicyPluginData build() {
 			try {
-				return new PolicyPluginData(data);
+				return new PolicyPluginData(new Data(data));
 			} finally {
 				data = new Data();
 			}
 		}
 
-		private void ensureDataMutability() {
-			if (!dataIsMutable) {
-				data = new Data(data);
-				dataIsMutable = true;
-			}
-		}
 
 		public Builder setSchoolClosingInfectionRate(double schoolClosingInfectionRate) {
-			ensureDataMutability();
 			data.schoolClosingInfectionRate = schoolClosingInfectionRate;
 			return this;
 		}
 
 		public Builder setDistributeVaccineLocally(boolean distributeVaccineLocally) {
-			ensureDataMutability();
 			data.distributeVaccineLocally = distributeVaccineLocally;
 			return this;
 		}
@@ -80,7 +71,7 @@ public final class PolicyPluginData implements PluginData {
 
 	@Override
 	public PluginDataBuilder getCloneBuilder() {
-		return new Builder(data);
+		return new Builder(new Data(data));
 	}
 
 	@Override

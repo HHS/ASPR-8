@@ -46,8 +46,8 @@ public final class AT_ResourcesPluginData {
 	@Test
 	@UnitTestMethod(target = ResourcesPluginData.Builder.class, name = "build", args = {})
 	public void testBuild() {
-		ResourcesPluginData.Builder builder = ResourcesPluginData.builder();
-		assertNotNull(builder.build());
+
+		assertNotNull(ResourcesPluginData.builder().build());
 
 		// precondition tests
 
@@ -55,9 +55,10 @@ public final class AT_ResourcesPluginData {
 		 * if a resource tracking policy was collected for a resource that was
 		 * not added
 		 */
+
 		ContractException contractException = assertThrows(ContractException.class, () -> //
-		builder	.setResourceTimeTracking(TestResourceId.RESOURCE_1, TestResourceId.RESOURCE_1.getTimeTrackingPolicy())//
-				.build());//
+		ResourcesPluginData	.builder().setResourceTimeTracking(TestResourceId.RESOURCE_1, TestResourceId.RESOURCE_1.getTimeTrackingPolicy())//
+							.build());//
 		assertEquals(ResourceError.UNKNOWN_RESOURCE_ID, contractException.getErrorType());
 
 		/*
@@ -68,7 +69,7 @@ public final class AT_ResourcesPluginData {
 			ResourceId resourceId = TestResourceId.RESOURCE_1;
 			ResourcePropertyId resourcePropertyId = TestResourcePropertyId.ResourceProperty_1_1_BOOLEAN_MUTABLE;
 			PropertyDefinition propertyDefinition = TestResourcePropertyId.ResourceProperty_1_1_BOOLEAN_MUTABLE.getPropertyDefinition();
-			builder.defineResourceProperty(resourceId, resourcePropertyId, propertyDefinition).build();
+			ResourcesPluginData.builder().defineResourceProperty(resourceId, resourcePropertyId, propertyDefinition).build();
 		});//
 		assertEquals(ResourceError.UNKNOWN_RESOURCE_ID, contractException.getErrorType());
 
@@ -80,7 +81,7 @@ public final class AT_ResourcesPluginData {
 			ResourceId resourceId = TestResourceId.RESOURCE_1;
 			ResourcePropertyId resourcePropertyId = TestResourcePropertyId.ResourceProperty_1_1_BOOLEAN_MUTABLE;
 			Boolean value = false;
-			builder.setResourcePropertyValue(resourceId, resourcePropertyId, value).build();
+			ResourcesPluginData.builder().setResourcePropertyValue(resourceId, resourcePropertyId, value).build();
 		});//
 		assertEquals(ResourceError.UNKNOWN_RESOURCE_ID, contractException.getErrorType());
 
@@ -92,9 +93,10 @@ public final class AT_ResourcesPluginData {
 			ResourceId resourceId = TestResourceId.RESOURCE_1;
 			ResourcePropertyId resourcePropertyId = TestResourcePropertyId.ResourceProperty_1_1_BOOLEAN_MUTABLE;
 			Boolean value = false;
-			builder.addResource(resourceId);
-			builder.setResourcePropertyValue(resourceId, resourcePropertyId, value);
-			builder.build();
+			ResourcesPluginData	.builder()//
+								.addResource(resourceId)//
+								.setResourcePropertyValue(resourceId, resourcePropertyId, value)//
+								.build();//
 		});//
 		assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
 
@@ -108,10 +110,11 @@ public final class AT_ResourcesPluginData {
 			ResourcePropertyId resourcePropertyId = TestResourcePropertyId.ResourceProperty_1_1_BOOLEAN_MUTABLE;
 			PropertyDefinition propertyDefinition = TestResourcePropertyId.ResourceProperty_1_1_BOOLEAN_MUTABLE.getPropertyDefinition();
 			Integer value = 5;
-			builder.addResource(resourceId);
-			builder.defineResourceProperty(resourceId, resourcePropertyId, propertyDefinition);
-			builder.setResourcePropertyValue(resourceId, resourcePropertyId, value);
-			builder.build();
+			ResourcesPluginData	.builder()//
+								.addResource(resourceId)//
+								.defineResourceProperty(resourceId, resourcePropertyId, propertyDefinition)//
+								.setResourcePropertyValue(resourceId, resourcePropertyId, value)//
+								.build();
 		});//
 		assertEquals(PropertyError.INCOMPATIBLE_VALUE, contractException.getErrorType());
 
@@ -123,9 +126,10 @@ public final class AT_ResourcesPluginData {
 			ResourceId resourceId = TestResourceId.RESOURCE_1;
 			ResourcePropertyId resourcePropertyId = TestResourcePropertyId.ResourceProperty_1_1_BOOLEAN_MUTABLE;
 			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Boolean.class).build();
-			builder.addResource(resourceId);
-			builder.defineResourceProperty(resourceId, resourcePropertyId, propertyDefinition);
-			builder.build();
+			ResourcesPluginData	.builder()//
+								.addResource(resourceId)//
+								.defineResourceProperty(resourceId, resourcePropertyId, propertyDefinition)//
+								.build();
 		});//
 		assertEquals(PropertyError.INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT, contractException.getErrorType());
 		/*
@@ -135,7 +139,7 @@ public final class AT_ResourcesPluginData {
 		contractException = assertThrows(ContractException.class, () -> {
 			ResourceId resourceId = TestResourceId.RESOURCE_1;
 			Long value = 566L;
-			builder.setPersonResourceLevel(new PersonId(0), resourceId, value).build();
+			ResourcesPluginData.builder().setPersonResourceLevel(new PersonId(0), resourceId, value).build();
 		});//
 		assertEquals(ResourceError.UNKNOWN_RESOURCE_ID, contractException.getErrorType());
 
@@ -146,7 +150,7 @@ public final class AT_ResourcesPluginData {
 		contractException = assertThrows(ContractException.class, () -> {
 			ResourceId resourceId = TestResourceId.RESOURCE_1;
 			Long value = 566L;
-			builder.setRegionResourceLevel(TestRegionId.REGION_1, resourceId, value).build();
+			ResourcesPluginData.builder().setRegionResourceLevel(TestRegionId.REGION_1, resourceId, value).build();
 		});//
 		assertEquals(ResourceError.UNKNOWN_RESOURCE_ID, contractException.getErrorType());
 
@@ -159,7 +163,7 @@ public final class AT_ResourcesPluginData {
 		ResourcesPluginData.Builder builder = ResourcesPluginData.builder();
 		Set<ResourceId> expectedResourceIds = new LinkedHashSet<>();
 		for (TestResourceId testResourceId : TestResourceId.values()) {
-			
+
 			// replacing data to show that the value persists
 			builder.addResource(testResourceId);
 			// adding duplicate data to show that the value persists
@@ -441,7 +445,6 @@ public final class AT_ResourcesPluginData {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(9113503089361379130L);
 
-		
 		Map<ResourceId, TimeTrackingPolicy> expectedValues = new LinkedHashMap<>();
 
 		ResourcesPluginData.Builder builder = ResourcesPluginData.builder();

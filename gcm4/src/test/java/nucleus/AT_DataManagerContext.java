@@ -20,6 +20,7 @@ import org.junit.jupiter.api.Test;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestDataManager;
 import nucleus.testsupport.testplugin.TestDataManagerPlan;
+import nucleus.testsupport.testplugin.TestOutputConsumer;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestScenarioReport;
@@ -913,50 +914,59 @@ public class AT_DataManagerContext {
 
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
-		// there are no precondition tests
+		
+		Set<Integer> expectedValues = new LinkedHashSet<>();
+		expectedValues.add(1);
+		expectedValues.add(2);
+		expectedValues.add(3);
+		
+		Set<Integer> actualValues = new LinkedHashSet<>();
+		
 
 		pluginDataBuilder.addTestDataManager("dm", () -> new TestDataManager1());
 
 		// have the test agent execute several tasks, with one of the tasks
 		// halting the simulation
-		TestDataManagerPlan plan1 = new TestDataManagerPlan(1, (context) -> {
-		});
-		pluginDataBuilder.addTestDataManagerPlan("dm", plan1);
+		
+		pluginDataBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(1, (context) -> {
+			actualValues.add(1);
+		}));
 
-		TestDataManagerPlan plan2 = new TestDataManagerPlan(2, (context) -> {
-		});
-		pluginDataBuilder.addTestDataManagerPlan("dm", plan2);
+		pluginDataBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(2, (context) -> {
+			actualValues.add(2);
+		}));
 
-		TestDataManagerPlan plan3 = new TestDataManagerPlan(3, (context) -> {
+		pluginDataBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(3, (context) -> {
+			actualValues.add(3);
 			context.halt();
-		});
-		pluginDataBuilder.addTestDataManagerPlan("dm", plan3);
+		}));
 
-		TestDataManagerPlan plan4 = new TestDataManagerPlan(4, (context) -> {
-		});
-		pluginDataBuilder.addTestDataManagerPlan("dm", plan4);
+		
+		pluginDataBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(4, (context) -> {
+			actualValues.add(4);
+		}));
 
-		TestDataManagerPlan plan5 = new TestDataManagerPlan(5, (context) -> {
-		});
-		pluginDataBuilder.addTestDataManagerPlan("dm", plan5);
+		pluginDataBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(5, (context) -> {
+			actualValues.add(5);
+		}));
 
 		// build the plugin
 		TestPluginData testPluginData = pluginDataBuilder.build();
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
+		
+		TestOutputConsumer testOutputConsumer = new TestOutputConsumer();
 		// run the simulation
 		Simulation	.builder()//
 					.addPlugin(testPlugin)//
+					.setOutputConsumer(testOutputConsumer)
 					.build()//
 					.execute();//
 
 		// show that the plans that were scheduled after the halt did not
 		// execute
-		assertTrue(plan1.executed());
-		assertTrue(plan2.executed());
-		assertTrue(plan3.executed());
-		assertFalse(plan4.executed());
-		assertFalse(plan5.executed());
+		assertEquals(expectedValues, actualValues);			
+		
 
 	}
 	@Test

@@ -718,30 +718,35 @@ public class AT_ActorContext {
 	public void testHalt() {
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
-		// there are no precondition tests
+		Set<Integer> expectedValues = new LinkedHashSet<>();
+		expectedValues.add(1);
+		expectedValues.add(2);
+		expectedValues.add(3);
+		
+		Set<Integer> actualValues = new LinkedHashSet<>();
 
 		// have the test agent execute several tasks, with one of the tasks
 		// halting the simulation
-		TestActorPlan actionPlan1 = new TestActorPlan(1, (context) -> {
-		});
-		pluginDataBuilder.addTestActorPlan("actor", actionPlan1);
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(1, (context) -> {
+			actualValues.add(1);
+		}));
 
-		TestActorPlan actionPlan2 = new TestActorPlan(2, (context) -> {
-		});
-		pluginDataBuilder.addTestActorPlan("actor", actionPlan2);
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(2, (context) -> {
+			actualValues.add(2);
+		}));
 
-		TestActorPlan actionPlan3 = new TestActorPlan(3, (context) -> {
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(3, (context) -> {
+			actualValues.add(3);
 			context.halt();
-		});
-		pluginDataBuilder.addTestActorPlan("actor", actionPlan3);
+		}));
 
-		TestActorPlan actionPlan4 = new TestActorPlan(4, (context) -> {
-		});
-		pluginDataBuilder.addTestActorPlan("actor", actionPlan4);
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(4, (context) -> {
+			actualValues.add(4);
+		}));
 
-		TestActorPlan actionPlan5 = new TestActorPlan(5, (context) -> {
-		});
-		pluginDataBuilder.addTestActorPlan("actor", actionPlan5);
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(5, (context) -> {
+			actualValues.add(5);
+		}));
 
 		// build the plugin
 		TestPluginData testPluginData = pluginDataBuilder.build();
@@ -755,11 +760,7 @@ public class AT_ActorContext {
 
 		// show that the plans that were scheduled after the halt did not
 		// execute
-		assertTrue(actionPlan1.executed());
-		assertTrue(actionPlan2.executed());
-		assertTrue(actionPlan3.executed());
-		assertFalse(actionPlan4.executed());
-		assertFalse(actionPlan5.executed());
+		assertEquals(expectedValues, actualValues);
 
 	}
 

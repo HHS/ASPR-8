@@ -40,6 +40,8 @@ public class PersonPropertiesPluginData implements PluginData {
 
 		private List<PersonPropertyInitialization> emptyList = Collections.unmodifiableList(new ArrayList<>());
 
+		private boolean locked;
+
 		private Data() {
 		}
 
@@ -49,6 +51,7 @@ public class PersonPropertiesPluginData implements PluginData {
 				List<PersonPropertyInitialization> newList = new ArrayList<>(list);
 				personPropertyValues.add(newList);
 			}
+			locked = data.locked;
 		}
 	}
 
@@ -66,12 +69,17 @@ public class PersonPropertiesPluginData implements PluginData {
 	 */
 	public static class Builder implements PluginDataBuilder {
 		private Data data;
-		private boolean dataIsMutable;
 
 		private void ensureDataMutability() {
-			if (!dataIsMutable) {
+			if (data.locked) {
 				data = new Data(data);
-				dataIsMutable = true;
+				data.locked = false;
+			}
+		}
+
+		private void ensureImmutability() {
+			if (!data.locked) {
+				data.locked = true;
 			}
 		}
 
@@ -99,17 +107,16 @@ public class PersonPropertiesPluginData implements PluginData {
 		 * 
 		 */
 		public PersonPropertiesPluginData build() {
-			try {
+			if (!data.locked) {
 				validateData();
-				return new PersonPropertiesPluginData(data);
-			} finally {
-				data = new Data();
 			}
+			ensureImmutability();
+			return new PersonPropertiesPluginData(data);
 		}
 
 		/**
-		 * Defines a person property definition.
-		 * Duplicate inputs override previous inputs.
+		 * Defines a person property definition. Duplicate inputs override
+		 * previous inputs.
 		 * 
 		 * @throws ContractException
 		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
@@ -127,16 +134,16 @@ public class PersonPropertiesPluginData implements PluginData {
 		}
 
 		/**
-		 * Sets the person's property value.
-		 * Duplicate inputs override previous inputs.
+		 * Sets the person's property value. Duplicate inputs override previous
+		 * inputs.
 		 * 
 		 * @throws ContractException
 		 *             <li>{@linkplain PersonError#NULL_PERSON_ID} if the person
 		 *             id is null</li>
 		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
 		 *             person property id is null</li>
-		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE}
-		 *             if the person property value is null</li>
+		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE} if the
+		 *             person property value is null</li>
 		 */
 		public Builder setPersonPropertyValue(final PersonId personId, final PersonPropertyId personPropertyId, final Object personPropertyValue) {
 			ensureDataMutability();
@@ -176,9 +183,6 @@ public class PersonPropertiesPluginData implements PluginData {
 		}
 
 		private void validateData() {
-			if(!dataIsMutable) {
-				return;
-			}
 
 			for (List<PersonPropertyInitialization> list : data.personPropertyValues) {
 				if (list != null) {
@@ -353,7 +357,7 @@ public class PersonPropertiesPluginData implements PluginData {
 
 	@Override
 	public PluginDataBuilder getEmptyBuilder() {
-		return new Builder(new Data());
+		return builder();
 	}
 
 }
