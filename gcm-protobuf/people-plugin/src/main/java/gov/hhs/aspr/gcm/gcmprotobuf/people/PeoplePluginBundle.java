@@ -15,7 +15,7 @@ public class PeoplePluginBundle {
                     translatorContext.addTranslator(new PeoplePluginDataTranslator());
                     translatorContext.addTranslator(new PersonIdTranslator());
 
-                    translatorContext.addFieldToIncludeDefaultValue(PersonIdInput.getDescriptor().findFieldByName("personId"));
+                    translatorContext.addFieldToIncludeDefaultValue(PersonIdInput.getDescriptor().findFieldByName("id"));
                 });
 
         return builder;

@@ -1,17 +1,17 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="http://maven.apache.org/POM/4.0.0"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
     <parent>
-        <artifactId>gcm-protobuf</artifactId>
         <groupId>gov.hhs.aspr.gcm.gcm-protobuf</groupId>
+        <artifactId>gcm-protobuf</artifactId>
         <version>${revision}</version>
     </parent>
 
-    <artifactId>regions-plugin</artifactId>
+    <artifactId>personproperties-plugin</artifactId>
+    <name>gcm-protobuf :: personproperties-plugin</name>
     <packaging>jar</packaging>
-    <name>gcm-protobuf :: regions-plugin</name>
 
     <dependencies>
         <dependency>
@@ -86,7 +86,7 @@
                     <protocArtifact>
                         com.google.protobuf:protoc:${protoc.version}:exe:${os.detected.classifier}</protocArtifact>
                     <protoSourceRoot>
-                        ${project.build.outputDirectory}/gov/hhs/aspr/gcm/regions</protoSourceRoot>
+                        ${project.build.outputDirectory}/gov/hhs/aspr/gcm/personproperties</protoSourceRoot>
                     <additionalProtoPathElements>
                         <additionalProtoPathElement>
                             ${project.build.outputDirectory}/gov/hhs/aspr/gcm/properties</additionalProtoPathElement>
@@ -138,7 +138,8 @@
                     </regexFlags>
                     <replacements>
                         <replacement>
-                            <token>^(@SuppressWarnings\(.*?\)\s+)?public final class</token>
+                            <token>^(@SuppressWarnings\(.*?\)\s+)?public
+                                final class</token>
                             <value>@SuppressWarnings("all") public final class</value>
                         </replacement>
                     </replacements>
@@ -146,4 +147,5 @@
             </plugin>
         </plugins>
     </build>
+
 </project>

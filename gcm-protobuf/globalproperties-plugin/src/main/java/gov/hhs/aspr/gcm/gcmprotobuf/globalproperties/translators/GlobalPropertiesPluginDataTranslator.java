@@ -31,7 +31,7 @@ public class GlobalPropertiesPluginDataTranslator
 
             GlobalPropertyId propertyId = this.translator.getObjectFromAny(propertyValueMapInput.getPropertyId(),
                     GlobalPropertyId.class);
-            Object value = this.translator.getAnyFromObject(propertyValueMapInput.getPropertyValue());
+            Object value = this.translator.getObjectFromAny(propertyValueMapInput.getPropertyValue());
 
             builder.setGlobalPropertyValue(propertyId, value);
         }

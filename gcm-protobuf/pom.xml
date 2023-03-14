@@ -95,6 +95,7 @@
         <module>stochastics-plugin</module>
         <module>globalproperties-plugin</module>
         <module>regions-plugin</module>
+        <module>personproperties-plugin</module>
     </modules>
 
     <build>

@@ -351,6 +351,14 @@ public class PersonPropertiesPluginData implements PluginData {
 		return Collections.unmodifiableList(list);
 	}
 
+	/**
+	 * Returns the list of all person property values
+	 * 
+	 */
+	public List<List<PersonPropertyInitialization>> getPersonPropertyValues() {
+		return Collections.unmodifiableList(this.data.personPropertyValues);
+	}
+
 	@Override
 	public PluginDataBuilder getEmptyBuilder() {
 		return new Builder(new Data());

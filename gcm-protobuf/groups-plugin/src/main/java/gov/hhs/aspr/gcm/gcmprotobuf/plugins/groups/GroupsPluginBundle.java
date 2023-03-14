@@ -30,7 +30,7 @@ public class GroupsPluginBundle {
                     translatorContext.addTranslator(new GroupPropertyIdTranslator());
 
                     translatorContext
-                            .addFieldToIncludeDefaultValue(GroupIdInput.getDescriptor().findFieldByName("groupId"));
+                            .addFieldToIncludeDefaultValue(GroupIdInput.getDescriptor().findFieldByName("id"));
                 })
                 .build();
     }
