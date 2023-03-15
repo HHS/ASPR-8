@@ -56,14 +56,11 @@
                         <configuration>
                             <artifactItems>
                                 <artifactItem>
-                                    <groupId>
-                                        gov.hhs.aspr.gcm.gcm-protobuf</groupId>
+                                    <groupId>gov.hhs.aspr.gcm.gcm-protobuf</groupId>
                                     <artifactId>protos</artifactId>
-                                    <version>
-                                        ${gcm.proto.version}</version>
+                                    <version>${gcm.proto.version}</version>
                                     <overWrite>true</overWrite>
-                                    <outputDirectory>
-                                        ${project.build.outputDirectory}</outputDirectory>
+                                    <outputDirectory>${project.build.outputDirectory}</outputDirectory>
                                     <includes>**/*.proto</includes>
                                 </artifactItem>
                             </artifactItems>
@@ -83,18 +80,13 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <protocArtifact>
-                        com.google.protobuf:protoc:${protoc.version}:exe:${os.detected.classifier}</protocArtifact>
-                    <protoSourceRoot>
-                        ${project.build.outputDirectory}/gov/hhs/aspr/gcm/regions</protoSourceRoot>
+                    <protocArtifact>com.google.protobuf:protoc:${protoc.version}:exe:${os.detected.classifier}</protocArtifact>
+                    <protoSourceRoot>${project.build.outputDirectory}/gov/hhs/aspr/gcm/regions</protoSourceRoot>
                     <additionalProtoPathElements>
-                        <additionalProtoPathElement>
-                            ${project.build.outputDirectory}/gov/hhs/aspr/gcm/properties</additionalProtoPathElement>
-                        <additionalProtoPathElement>
-                            ${project.build.outputDirectory}/gov/hhs/aspr/gcm/people</additionalProtoPathElement>
+                        <additionalProtoPathElement>${project.build.outputDirectory}/gov/hhs/aspr/gcm/properties</additionalProtoPathElement>
+                        <additionalProtoPathElement>${project.build.outputDirectory}/gov/hhs/aspr/gcm/people</additionalProtoPathElement>
                     </additionalProtoPathElements>
-                    <attachProtoSources>
-                        false</attachProtoSources>
+                    <attachProtoSources>false</attachProtoSources>
                 </configuration>
             </plugin>
             <plugin>
@@ -108,8 +100,7 @@
                         </goals>
                         <configuration>
                             <sources>
-                                <source>
-                                    ${project.build.directory}/generated-sources/protobuf/java</source>
+                                <source>${project.build.directory}/generated-sources/protobuf/java</source>
                             </sources>
                         </configuration>
                     </execution>
@@ -128,11 +119,9 @@
                 </executions>
                 <configuration>
                     <includes>
-                        <include>
-                            target/generated-sources/**/*.java</include>
+                        <include>target/generated-sources/**/*.java</include>
                     </includes>
-                    <regex>
-                        true</regex>
+                    <regex>true</regex>
                     <regexFlags>
                         <regexFlag>MULTILINE</regexFlag>
                     </regexFlags>

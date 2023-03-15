@@ -22,24 +22,20 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>
-                    org.apache.maven.plugins</groupId>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
             </plugin>
             <plugin>
-                <groupId>
-                    org.apache.maven.plugins</groupId>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
             </plugin>
             <plugin>
-                <groupId>
-                    org.apache.maven.plugins</groupId>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
                     <execution>
                         <?m2e ignore?>
-                        <id>
-                            unpack-protos</id>
+                        <id>unpack-protos</id>
                         <phase>generate-sources</phase>
                         <goals>
                             <goal>unpack</goal>
@@ -47,14 +43,11 @@
                         <configuration>
                             <artifactItems>
                                 <artifactItem>
-                                    <groupId>
-                                        gov.hhs.aspr.gcm.gcm-protobuf</groupId>
+                                    <groupId>gov.hhs.aspr.gcm.gcm-protobuf</groupId>
                                     <artifactId>protos</artifactId>
-                                    <version>
-                                        ${gcm.proto.version}</version>
+                                    <version>${gcm.proto.version}</version>
                                     <overWrite>true</overWrite>
-                                    <outputDirectory>
-                                        ${project.build.outputDirectory}</outputDirectory>
+                                    <outputDirectory>${project.build.outputDirectory}</outputDirectory>
                                     <includes>**/*.proto</includes>
                                 </artifactItem>
                             </artifactItems>
@@ -63,63 +56,50 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>
-                    org.xolstice.maven.plugins</groupId>
+                <groupId>org.xolstice.maven.plugins</groupId>
                 <artifactId>protobuf-maven-plugin</artifactId>
                 <executions>
                     <execution>
                         <goals>
                             <goal>compile</goal>
-                            <goal>
-                                test-compile</goal>
+                            <goal>test-compile</goal>
                         </goals>
                     </execution>
                 </executions>
                 <configuration>
-                    <protocArtifact>
-                        com.google.protobuf:protoc:${protoc.version}:exe:${os.detected.classifier}</protocArtifact>
-                    <protoSourceRoot>
-                        ${project.build.outputDirectory}/gov/hhs/aspr/gcm/resources</protoSourceRoot>
+                    <protocArtifact>com.google.protobuf:protoc:${protoc.version}:exe:${os.detected.classifier}</protocArtifact>
+                    <protoSourceRoot>${project.build.outputDirectory}/gov/hhs/aspr/gcm/resources</protoSourceRoot>
                     <additionalProtoPathElements>
-                        <additionalProtoPathElement>
-                            ${project.build.outputDirectory}/gov/hhs/aspr/gcm/properties</additionalProtoPathElement>
-                        <additionalProtoPathElement>
-                            ${project.build.outputDirectory}/gov/hhs/aspr/gcm/people</additionalProtoPathElement>
-                            <additionalProtoPathElement>
-                            ${project.build.outputDirectory}/gov/hhs/aspr/gcm/regions</additionalProtoPathElement>
+                        <additionalProtoPathElement>${project.build.outputDirectory}/gov/hhs/aspr/gcm/properties</additionalProtoPathElement>
+                        <additionalProtoPathElement>${project.build.outputDirectory}/gov/hhs/aspr/gcm/people</additionalProtoPathElement>
+                        <additionalProtoPathElement>${project.build.outputDirectory}/gov/hhs/aspr/gcm/regions</additionalProtoPathElement>
                     </additionalProtoPathElements>
-                    <attachProtoSources>
-                        false</attachProtoSources>
+                    <attachProtoSources>false</attachProtoSources>
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>
-                    org.codehaus.mojo</groupId>
+                <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
                 <executions>
                     <execution>
-                        <phase>
-                            generate-sources</phase>
+                        <phase>generate-sources</phase>
                         <goals>
                             <goal>add-source</goal>
                         </goals>
                         <configuration>
                             <sources>
-                                <source>
-                                    ${project.build.directory}/generated-sources/protobuf/java</source>
+                                <source>${project.build.directory}/generated-sources/protobuf/java</source>
                             </sources>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
             <plugin>
-                <groupId>
-                    com.google.code.maven-replacer-plugin</groupId>
+                <groupId>com.google.code.maven-replacer-plugin</groupId>
                 <artifactId>maven-replacer-plugin</artifactId>
                 <executions>
                     <execution>
-                        <phase>
-                            prepare-package</phase>
+                        <phase>prepare-package</phase>
                         <goals>
                             <goal>replace</goal>
                         </goals>
@@ -127,11 +107,9 @@
                 </executions>
                 <configuration>
                     <includes>
-                        <include>
-                            target/generated-sources/**/*.java</include>
+                        <include>target/generated-sources/**/*.java</include>
                     </includes>
-                    <regex>
-                        true</regex>
+                    <regex>true</regex>
                     <regexFlags>
                         <regexFlag>MULTILINE</regexFlag>
                     </regexFlags>

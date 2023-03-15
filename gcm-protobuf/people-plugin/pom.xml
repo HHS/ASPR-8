@@ -45,14 +45,11 @@
                         <configuration>
                             <artifactItems>
                                 <artifactItem>
-                                    <groupId>
-                                        gov.hhs.aspr.gcm.gcm-protobuf</groupId>
+                                    <groupId>gov.hhs.aspr.gcm.gcm-protobuf</groupId>
                                     <artifactId>protos</artifactId>
-                                    <version>
-                                        ${gcm.proto.version}</version>
+                                    <version>${gcm.proto.version}</version>
                                     <overWrite>true</overWrite>
-                                    <outputDirectory>
-                                        ${project.build.outputDirectory}</outputDirectory>
+                                    <outputDirectory>${project.build.outputDirectory}</outputDirectory>
                                     <includes>**/*.proto</includes>
                                 </artifactItem>
                             </artifactItems>
@@ -72,12 +69,9 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <protocArtifact>
-                        com.google.protobuf:protoc:${protoc.version}:exe:${os.detected.classifier}</protocArtifact>
-                    <protoSourceRoot>
-                        ${project.build.outputDirectory}/gov/hhs/aspr/gcm/people</protoSourceRoot>
-                    <attachProtoSources>
-                        false</attachProtoSources>
+                    <protocArtifact>com.google.protobuf:protoc:${protoc.version}:exe:${os.detected.classifier}</protocArtifact>
+                    <protoSourceRoot>${project.build.outputDirectory}/gov/hhs/aspr/gcm/people</protoSourceRoot>
+                    <attachProtoSources>false</attachProtoSources>
                 </configuration>
             </plugin>
             <plugin>
@@ -91,8 +85,7 @@
                         </goals>
                         <configuration>
                             <sources>
-                                <source>
-                                    ${project.build.directory}/generated-sources/protobuf/java</source>
+                                <source>${project.build.directory}/generated-sources/protobuf/java</source>
                             </sources>
                         </configuration>
                     </execution>
