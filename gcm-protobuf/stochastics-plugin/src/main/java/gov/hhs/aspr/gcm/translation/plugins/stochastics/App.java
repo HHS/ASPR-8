@@ -72,7 +72,7 @@ public class App {
         String outputFileName = "./stochastics-plugin/src/main/resources/json/output/output.json";
 
         TranslatorController translatorController = TranslatorController.builder()
-                .addBundle(StochasticsTranslator.getTranslator(inputFileName, outputFileName))
+                .addTranslator(StochasticsTranslator.getTranslator(inputFileName, outputFileName))
                 .addTranslatorSpec(new TestRandomGeneratorIdTranslator())
                 .build()
                 .init();

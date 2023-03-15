@@ -21,7 +21,7 @@ public class MaterialsTranslator {
 
     private static Translator.Builder getBaseTranslator() {
         return Translator.builder()
-                .setPluginBundleId(MaterialsTranslatorId.TRANSLATOR_ID)
+                .setTranslatorId(MaterialsTranslatorId.TRANSLATOR_ID)
                 .setInputObjectType(MaterialsPluginDataInput.getDefaultInstance())
                 .addDependency(PropertiesTranslatorId.TRANSLATOR_ID)
                 .addDependency(ResourcesTranslatorId.TRANSLATOR_ID)

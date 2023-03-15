@@ -18,7 +18,7 @@ public class RegionsTranslatorModule {
 
     private static Translator.Builder getBaseModule() {
         return Translator.builder()
-                .setPluginBundleId(RegionsTranslatorModuleId.TRANSLATOR_ID)
+                .setTranslatorId(RegionsTranslatorModuleId.TRANSLATOR_ID)
                 .addDependency(PeopleTranslatorId.TRANSLATOR_ID)
                 .addDependency(PropertiesTranslatorId.TRANSLATOR_ID)
                 .setInitializer((translatorContext) -> {

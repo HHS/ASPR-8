@@ -179,11 +179,11 @@ public class App {
         String outputFileName = "./materials-plugin/src/main/resources/json/output/output.json";
 
         TranslatorController translatorController = TranslatorController.builder()
-                .addBundle(MaterialsTranslator.getTranslator(inputFileName, outputFileName))
-                .addBundle(PropertiesTranslator.getTranslator())
-                .addBundle(ResourcesTranslator.getTranslator())
-                .addBundle(RegionsTranslatorModule.getTranslatorModule())
-                .addBundle(PeopleTranslator.getTranslator())
+                .addTranslator(MaterialsTranslator.getTranslator(inputFileName, outputFileName))
+                .addTranslator(PropertiesTranslator.getTranslator())
+                .addTranslator(ResourcesTranslator.getTranslator())
+                .addTranslator(RegionsTranslatorModule.getTranslatorModule())
+                .addTranslator(PeopleTranslator.getTranslator())
                 .addTranslatorSpec(new TestResourceIdTranslator())
                 .addTranslatorSpec(new TestBatchPropertyIdTranslator())
                 .addTranslatorSpec(new TestMaterialIdTranslator())

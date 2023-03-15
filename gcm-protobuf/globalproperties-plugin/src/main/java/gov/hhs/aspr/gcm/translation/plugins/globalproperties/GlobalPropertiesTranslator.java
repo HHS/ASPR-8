@@ -13,7 +13,7 @@ public class GlobalPropertiesTranslator {
 
     private static Translator.Builder getBaseTranslator() {
         return Translator.builder()
-                .setPluginBundleId(GlobalPropertiesTranslatorId.TRANSLATOR_ID)
+                .setTranslatorId(GlobalPropertiesTranslatorId.TRANSLATOR_ID)
                 .addDependency(PropertiesTranslatorId.TRANSLATOR_ID)
                 .setInputObjectType(GlobalPropertiesPluginDataInput.getDefaultInstance())
                 .setInitializer((translatorContext) -> {

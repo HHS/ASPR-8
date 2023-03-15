@@ -16,7 +16,7 @@ public class GroupsTranslator {
 
     private static Translator.Builder getBaseTranslator() {
         return Translator.builder()
-                .setPluginBundleId(GroupsTranslatorId.TRANSLATOR_ID)
+                .setTranslatorId(GroupsTranslatorId.TRANSLATOR_ID)
                 .setInputObjectType(GroupsPluginDataInput.getDefaultInstance())
                 .addDependency(PropertiesTranslatorId.TRANSLATOR_ID)
                 .addDependency(PeopleTranslatorId.TRANSLATOR_ID)

@@ -13,7 +13,7 @@ public class StochasticsTranslator {
 
     private static Translator.Builder getBaseTranslator() {
         return Translator.builder()
-                .setPluginBundleId(StochasticsPluginBundleId.PLUGIN_BUNDLE_ID)
+                .setTranslatorId(StochasticsPluginBundleId.PLUGIN_BUNDLE_ID)
                 .setInputObjectType(StochasticsPluginDataInput.getDefaultInstance())
                 .setInitializer((translatorContext) -> {
                     translatorContext.addTranslatorSpec(new StochasticsPluginDataTranslator());

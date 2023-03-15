@@ -171,9 +171,9 @@ public class App {
         String outputFileName = "./groups-plugin/src/main/resources/json/output/output.json";
 
         TranslatorController translatorController = TranslatorController.builder()
-                .addBundle(GroupsTranslator.getTranslator(inputFileName, outputFileName))
-                .addBundle(PropertiesTranslator.getTranslator())
-                .addBundle(PeopleTranslator.getTranslator())
+                .addTranslator(GroupsTranslator.getTranslator(inputFileName, outputFileName))
+                .addTranslator(PropertiesTranslator.getTranslator())
+                .addTranslator(PeopleTranslator.getTranslator())
                 .addTranslatorSpec(new TestGroupTypeIdTranslator())
                 .addTranslatorSpec(new TestGroupPropertyIdTranslator())
                 .addTranslatorSpec(new SimpleGroupTypeIdTranslator())

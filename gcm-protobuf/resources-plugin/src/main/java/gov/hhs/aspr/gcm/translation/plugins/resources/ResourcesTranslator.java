@@ -17,7 +17,7 @@ public class ResourcesTranslator {
 
     private static Translator.Builder getBaseTranslator() {
         return Translator.builder()
-                .setPluginBundleId(ResourcesTranslatorId.TRANSLATOR_ID)
+                .setTranslatorId(ResourcesTranslatorId.TRANSLATOR_ID)
                 .addDependency(PeopleTranslatorId.TRANSLATOR_ID)
                 .addDependency(PropertiesTranslatorId.TRANSLATOR_ID)
                 .addDependency(RegionsTranslatorModuleId.TRANSLATOR_ID)

@@ -135,9 +135,9 @@ public class App {
         String outputFileName = "./regions-plugin/src/main/resources/json/output/output.json";
 
         TranslatorController translatorController = TranslatorController.builder()
-                .addBundle(RegionsTranslatorModule.getTranslatorModule(inputFileName, outputFileName))
-                .addBundle(PropertiesTranslator.getTranslator())
-                .addBundle(PeopleTranslator.getTranslator())
+                .addTranslator(RegionsTranslatorModule.getTranslatorModule(inputFileName, outputFileName))
+                .addTranslator(PropertiesTranslator.getTranslator())
+                .addTranslator(PeopleTranslator.getTranslator())
                 .addTranslatorSpec(new TestRegionIdTranslator())
                 .addTranslatorSpec(new TestRegionPropertyIdTranslator())
                 .build()

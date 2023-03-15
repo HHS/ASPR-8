@@ -181,10 +181,10 @@ public class App {
         String outputFileName = "./resources-plugin/src/main/resources/json/output/output.json";
 
         TranslatorController translatorController = TranslatorController.builder()
-                .addBundle(ResourcesTranslator.getTranslator(inputFileName, outputFileName))
-                .addBundle(PropertiesTranslator.getTranslator())
-                .addBundle(PeopleTranslator.getTranslator())
-                .addBundle(RegionsTranslatorModule.getTranslatorModule())
+                .addTranslator(ResourcesTranslator.getTranslator(inputFileName, outputFileName))
+                .addTranslator(PropertiesTranslator.getTranslator())
+                .addTranslator(PeopleTranslator.getTranslator())
+                .addTranslator(RegionsTranslatorModule.getTranslatorModule())
                 .addTranslatorSpec(new TestResourceIdTranslator())
                 .addTranslatorSpec(new TestResourcePropertyIdTranslator())
                 .addTranslatorSpec(new TestRegionIdTranslator())

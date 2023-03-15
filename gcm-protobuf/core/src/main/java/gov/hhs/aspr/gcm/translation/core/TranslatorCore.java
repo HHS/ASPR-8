@@ -44,8 +44,8 @@ public class TranslatorCore {
         private final Map<Descriptor, Message> descriptorMap = new LinkedHashMap<>();
         private final Map<EnumDescriptor, EnumInstance> enumDescriptorMap = new LinkedHashMap<>();
         private final Map<String, EnumDescriptor> typeUrlToEnumDescriptor = new LinkedHashMap<>();
-        private final Map<Class<?>, ITranslatorSpec> classToTranslatorMap = new LinkedHashMap<>();
-        private final Set<ITranslatorSpec> translators = new LinkedHashSet<>();
+        private final Map<Class<?>, ITranslatorSpec> classToTranslatorSpecMap = new LinkedHashMap<>();
+        private final Set<ITranslatorSpec> translatorSpecs = new LinkedHashSet<>();
         private final Set<FieldDescriptor> defaultValueFieldsToPrint = new LinkedHashSet<>();
         private TypeRegistry registry;
         private Parser jsonParser;
@@ -55,9 +55,9 @@ public class TranslatorCore {
 
         private Data() {
             this.descriptorMap.putAll(PrimitiveTranslatorSpecs.getPrimitiveDescriptorToMessageMap());
-            this.classToTranslatorMap.putAll(PrimitiveTranslatorSpecs.getPrimitiveInputTranslatorSpecMap());
-            this.classToTranslatorMap.putAll(PrimitiveTranslatorSpecs.getPrimitiveObjectTranslatorSpecMap());
-            this.translators.addAll(PrimitiveTranslatorSpecs.getPrimitiveObjectTranslatorSpecMap().values());
+            this.classToTranslatorSpecMap.putAll(PrimitiveTranslatorSpecs.getPrimitiveInputTranslatorSpecMap());
+            this.classToTranslatorSpecMap.putAll(PrimitiveTranslatorSpecs.getPrimitiveObjectTranslatorSpecMap());
+            this.translatorSpecs.addAll(PrimitiveTranslatorSpecs.getPrimitiveObjectTranslatorSpecMap().values());
         }
     }
 
@@ -112,27 +112,27 @@ public class TranslatorCore {
             return this;
         }
 
-        public <I extends ProtocolMessageEnum, S> Builder addTranslatorSpec(AEnumTranslatorSpec<I, S> translator) {
-            this.data.classToTranslatorMap.putIfAbsent(translator.getInputObjectClass(),
-                    translator);
-            this.data.classToTranslatorMap.putIfAbsent(translator.getSimObjectClass(), translator);
+        public <I extends ProtocolMessageEnum, S> Builder addTranslatorSpec(AEnumTranslatorSpec<I, S> translatorSpec) {
+            this.data.classToTranslatorSpecMap.putIfAbsent(translatorSpec.getInputObjectClass(),
+                    translatorSpec);
+            this.data.classToTranslatorSpecMap.putIfAbsent(translatorSpec.getSimObjectClass(), translatorSpec);
 
-            EnumDescriptor enumDescriptor = translator.getDescriptorForInputObject();
+            EnumDescriptor enumDescriptor = translatorSpec.getDescriptorForInputObject();
 
-            this.data.enumDescriptorMap.putIfAbsent(enumDescriptor, translator.getEnumInstance());
+            this.data.enumDescriptorMap.putIfAbsent(enumDescriptor, translatorSpec.getEnumInstance());
             this.data.typeUrlToEnumDescriptor.putIfAbsent(enumDescriptor.getFullName(), enumDescriptor);
 
-            this.data.translators.add(translator);
+            this.data.translatorSpecs.add(translatorSpec);
             return this;
         }
 
-        public <I extends Message, S> Builder addTranslatorSpec(AObjectTranslatorSpec<I, S> translator) {
-            this.data.classToTranslatorMap.putIfAbsent(translator.getInputObjectClass(),
-                    translator);
-            this.data.classToTranslatorMap.putIfAbsent(translator.getSimObjectClass(), translator);
+        public <I extends Message, S> Builder addTranslatorSpec(AObjectTranslatorSpec<I, S> translatorSpec) {
+            this.data.classToTranslatorSpecMap.putIfAbsent(translatorSpec.getInputObjectClass(),
+                    translatorSpec);
+            this.data.classToTranslatorSpecMap.putIfAbsent(translatorSpec.getSimObjectClass(), translatorSpec);
 
-            this.data.translators.add(translator);
-            populate(translator.getDefaultInstanceForInputObject());
+            this.data.translatorSpecs.add(translatorSpec);
+            populate(translatorSpec.getDefaultInstanceForInputObject());
             return this;
         }
 
@@ -161,7 +161,7 @@ public class TranslatorCore {
     }
 
     public void init() {
-        this.data.translators.forEach((translator) -> translator.init(this));
+        this.data.translatorSpecs.forEach((translatorSpec) -> translatorSpec.init(this));
 
         this.isInitialized = true;
     }
@@ -178,12 +178,12 @@ public class TranslatorCore {
         return this.data.jsonPrinter;
     }
 
-    public <T extends PluginData, U extends Message> void printJson(Writer writer, T pluginData) {
+    public <T extends PluginData, U extends Message> void writeJson(Writer writer, T pluginData) {
         U message = convertSimObject(pluginData);
         writeJson(writer, message);
     }
 
-    public <U extends Message> void printJson(Writer writer, Object simObject) {
+    public <U extends Message> void writeJson(Writer writer, Object simObject) {
         U message = convertSimObject(simObject);
         writeJson(writer, message);
     }
@@ -299,13 +299,13 @@ public class TranslatorCore {
             message = this.data.descriptorMap.get(messageDescriptor);
             if (message == null) {
                 throw new RuntimeException("No default instance was provided for: " + messageDescriptor.getName()
-                        + ". This occurs when the above message type is defined in the same file as another message type who's descriptor is added to this Translator, "
-                        + "but who's own descriptor is not explicitly added to this Translator. "
+                        + ". This occurs when the above message type is defined in the same file as another message type who's descriptor is added to the CoreTranslator, "
+                        + "but who's own descriptor is not explicitly added to the CoreTranslator. "
                         + "For example, if you had a proto file with two message definitions- "
-                        + "Wombat and Cat and you added the descriptor for Cat to this Translator, "
-                        + "the json parser for this Translator will internally also add the descriptor for Wombat, "
+                        + "Wombat and Cat and you added the descriptor for Cat to the CoreTranslator, "
+                        + "the json parser for the CoreTranslator will internally also add the descriptor for Wombat, "
                         + "so the parser knows about Wombat, which allows the type to be properly parsed, "
-                        + "but this Translator does not, thus resulting in a null message here.");
+                        + "but the CoreTranslator does not, thus resulting in a null message here.");
             }
         } catch (InvalidProtocolBufferException e) {
             throw new RuntimeException("No corresponding message definition was found for: " + typeUrl, e);
@@ -376,11 +376,11 @@ public class TranslatorCore {
     }
 
     private ITranslatorSpec getTranslatorForClass(Class<?> classRef) {
-        if (this.data.classToTranslatorMap.containsKey(classRef)) {
-            return this.data.classToTranslatorMap.get(classRef);
+        if (this.data.classToTranslatorSpecMap.containsKey(classRef)) {
+            return this.data.classToTranslatorSpecMap.get(classRef);
         }
         throw new RuntimeException(
-                "No conversion translator was provided for message type: " + classRef.getName());
+                "No TranslatorSpec was provided for message type: " + classRef.getName());
     }
 
     public Builder getCloneBuilder() {
