@@ -3,7 +3,7 @@ package gov.hhs.aspr.gcm.translation.plugins.materials.translators;
 import com.google.protobuf.Descriptors.Descriptor;
 
 import gov.hhs.aspr.gcm.translation.core.AbstractTranslator;
-import plugins.materials.input.MaterialIdInput;
+import gov.hhs.aspr.gcm.translation.plugins.materials.input.MaterialIdInput;
 import plugins.materials.support.MaterialId;
 
 

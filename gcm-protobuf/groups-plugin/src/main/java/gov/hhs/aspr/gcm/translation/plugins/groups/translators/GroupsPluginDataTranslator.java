@@ -7,22 +7,22 @@ import com.google.protobuf.Descriptors.Descriptor;
 
 import gov.hhs.aspr.gcm.translation.core.AbstractTranslator;
 import plugins.groups.GroupsPluginData;
-import plugins.groups.input.GroupIdInput;
-import plugins.groups.input.GroupInput;
-import plugins.groups.input.GroupMembershipInput;
-import plugins.groups.input.GroupPropertyDefinitionMapInput;
-import plugins.groups.input.GroupPropertyValueMapInput;
-import plugins.groups.input.GroupTypeIdInput;
-import plugins.groups.input.GroupsPluginDataInput;
+import gov.hhs.aspr.gcm.translation.plugins.groups.input.GroupIdInput;
+import gov.hhs.aspr.gcm.translation.plugins.groups.input.GroupInput;
+import gov.hhs.aspr.gcm.translation.plugins.groups.input.GroupMembershipInput;
+import gov.hhs.aspr.gcm.translation.plugins.groups.input.GroupPropertyDefinitionMapInput;
+import gov.hhs.aspr.gcm.translation.plugins.groups.input.GroupPropertyValueMapInput;
+import gov.hhs.aspr.gcm.translation.plugins.groups.input.GroupTypeIdInput;
+import gov.hhs.aspr.gcm.translation.plugins.groups.input.GroupsPluginDataInput;
 import plugins.groups.support.GroupId;
 import plugins.groups.support.GroupPropertyId;
 import plugins.groups.support.GroupPropertyValue;
 import plugins.groups.support.GroupTypeId;
-import plugins.people.input.PersonIdInput;
+import gov.hhs.aspr.gcm.translation.plugins.people.input.PersonIdInput;
 import plugins.people.support.PersonId;
-import plugins.properties.input.PropertyDefinitionInput;
-import plugins.properties.input.PropertyDefinitionMapInput;
-import plugins.properties.input.PropertyValueMapInput;
+import gov.hhs.aspr.gcm.translation.plugins.properties.input.PropertyDefinitionInput;
+import gov.hhs.aspr.gcm.translation.plugins.properties.input.PropertyDefinitionMapInput;
+import gov.hhs.aspr.gcm.translation.plugins.properties.input.PropertyValueMapInput;
 import plugins.util.properties.PropertyDefinition;
 
 public class GroupsPluginDataTranslator extends AbstractTranslator<GroupsPluginDataInput, GroupsPluginData> {

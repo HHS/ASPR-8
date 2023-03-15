@@ -13,7 +13,7 @@ import gov.hhs.aspr.gcm.translation.plugins.properties.testsupport.translators.L
 import gov.hhs.aspr.gcm.translation.plugins.properties.testsupport.translators.TestMessageTranslator;
 import gov.hhs.aspr.gcm.translation.plugins.properties.translators.PropertyDefinitionMapTranslator;
 import gov.hhs.aspr.gcm.translation.plugins.properties.translators.PropertyValueMapTranslator;
-import plugins.properties.input.PropertyValueMapInput;
+import gov.hhs.aspr.gcm.translation.plugins.properties.input.PropertyValueMapInput;
 
 public class App {
 

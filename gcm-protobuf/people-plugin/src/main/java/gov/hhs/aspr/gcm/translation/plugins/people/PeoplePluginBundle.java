@@ -3,8 +3,8 @@ package gov.hhs.aspr.gcm.translation.plugins.people;
 import gov.hhs.aspr.gcm.translation.core.PluginBundle;
 import gov.hhs.aspr.gcm.translation.plugins.people.translators.PeoplePluginDataTranslator;
 import gov.hhs.aspr.gcm.translation.plugins.people.translators.PersonIdTranslator;
-import plugins.people.input.PeoplePluginDataInput;
-import plugins.people.input.PersonIdInput;
+import gov.hhs.aspr.gcm.translation.plugins.people.input.PeoplePluginDataInput;
+import gov.hhs.aspr.gcm.translation.plugins.people.input.PersonIdInput;
 
 public class PeoplePluginBundle {
 

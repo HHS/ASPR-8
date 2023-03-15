@@ -2,7 +2,7 @@ syntax = "proto3";
 package gov.hhs.aspr.gcm;
 
 option java_multiple_files = true;
-option java_package = "plugins.personproperties.input";
+option java_package = "gov.hhs.aspr.gcm.translation.plugins.personproperties.input";
 
 import "properties-plugin.proto";
 import "people-plugin.proto";

@@ -6,7 +6,7 @@ import gov.hhs.aspr.gcm.translation.core.AbstractEnumTranslator;
 
 import com.google.protobuf.ProtocolMessageEnum;
 
-import plugins.groups.input.TestGroupTypeIdInput;
+import gov.hhs.aspr.gcm.translation.plugins.groups.input.TestGroupTypeIdInput;
 import plugins.groups.testsupport.TestGroupTypeId;
 
 public class TestGroupTypeIdTranslator extends AbstractEnumTranslator<TestGroupTypeIdInput, TestGroupTypeId> {

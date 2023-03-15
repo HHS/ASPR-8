@@ -7,8 +7,8 @@ import gov.hhs.aspr.gcm.translation.plugins.groups.translators.GroupTypeIdTransl
 import gov.hhs.aspr.gcm.translation.plugins.groups.translators.GroupsPluginDataTranslator;
 import gov.hhs.aspr.gcm.translation.plugins.people.PeoplePluginBundleId;
 import gov.hhs.aspr.gcm.translation.plugins.properties.PropertiesPluginBundleId;
-import plugins.groups.input.GroupIdInput;
-import plugins.groups.input.GroupsPluginDataInput;
+import gov.hhs.aspr.gcm.translation.plugins.groups.input.GroupIdInput;
+import gov.hhs.aspr.gcm.translation.plugins.groups.input.GroupsPluginDataInput;
 
 public class GroupsPluginBundle {
     private GroupsPluginBundle() {

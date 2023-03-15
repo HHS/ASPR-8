@@ -6,7 +6,7 @@ import gov.hhs.aspr.gcm.translation.core.AbstractEnumTranslator;
 
 import com.google.protobuf.ProtocolMessageEnum;
 
-import plugins.materials.input.TestMaterialsProducerIdInput;
+import gov.hhs.aspr.gcm.translation.plugins.materials.input.TestMaterialsProducerIdInput;
 import plugins.materials.testsupport.TestMaterialsProducerId;
 
 public class TestMaterialsProducerIdTranslator

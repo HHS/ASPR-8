@@ -3,7 +3,7 @@ package gov.hhs.aspr.gcm.translation.plugins.resources.translators;
 import com.google.protobuf.Descriptors.Descriptor;
 
 import gov.hhs.aspr.gcm.translation.core.AbstractTranslator;
-import plugins.resources.input.ResourcePropertyIdInput;
+import gov.hhs.aspr.gcm.translation.plugins.resources.input.ResourcePropertyIdInput;
 import plugins.resources.support.ResourcePropertyId;
 
 public class ResourcePropertyIdTranslator extends AbstractTranslator<ResourcePropertyIdInput, ResourcePropertyId> {

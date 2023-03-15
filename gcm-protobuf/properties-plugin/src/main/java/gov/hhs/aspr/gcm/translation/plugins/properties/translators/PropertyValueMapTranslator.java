@@ -4,7 +4,7 @@ import com.google.protobuf.Descriptors.Descriptor;
 
 import gov.hhs.aspr.gcm.translation.core.AbstractTranslator;
 import gov.hhs.aspr.gcm.translation.plugins.properties.simobjects.PropertyValueMap;
-import plugins.properties.input.PropertyValueMapInput;
+import gov.hhs.aspr.gcm.translation.plugins.properties.input.PropertyValueMapInput;
 
 public class PropertyValueMapTranslator extends AbstractTranslator<PropertyValueMapInput, PropertyValueMap> {
 

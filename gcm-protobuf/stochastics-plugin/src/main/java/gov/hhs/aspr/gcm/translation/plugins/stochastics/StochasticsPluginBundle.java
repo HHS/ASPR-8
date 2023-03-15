@@ -3,7 +3,7 @@ package gov.hhs.aspr.gcm.translation.plugins.stochastics;
 import gov.hhs.aspr.gcm.translation.core.PluginBundle;
 import gov.hhs.aspr.gcm.translation.plugins.stochastics.translators.RandomGeneratorIdTranslator;
 import gov.hhs.aspr.gcm.translation.plugins.stochastics.translators.StochasticsPluginDataTranslator;
-import plugins.stochastics.input.StochasticsPluginDataInput;
+import gov.hhs.aspr.gcm.translation.plugins.stochastics.input.StochasticsPluginDataInput;
 
 public class StochasticsPluginBundle {
     public static PluginBundle getPluginBundle(String inputFileName, String outputFileName) {

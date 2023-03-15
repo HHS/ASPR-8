@@ -4,7 +4,7 @@ import com.google.protobuf.Descriptors.Descriptor;
 
 import gov.hhs.aspr.gcm.translation.core.AbstractTranslator;
 import gov.hhs.aspr.gcm.translation.plugins.groups.simobjects.SimpleGroupTypeId;
-import plugins.groups.input.SimpleGroupTypeIdInput;
+import gov.hhs.aspr.gcm.translation.plugins.groups.input.SimpleGroupTypeIdInput;
 
 public class SimpleGroupTypeIdTranslator extends AbstractTranslator<SimpleGroupTypeIdInput, SimpleGroupTypeId> {
 

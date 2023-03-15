@@ -3,8 +3,8 @@ package gov.hhs.aspr.gcm.translation.plugins.properties.testsupport.translators;
 import com.google.protobuf.Descriptors.Descriptor;
 
 import gov.hhs.aspr.gcm.translation.core.AbstractTranslator;
+import gov.hhs.aspr.gcm.translation.plugins.properties.testsupport.input.Layer1;
 import gov.hhs.aspr.gcm.translation.plugins.properties.testsupport.simobjects.Layer1SimObject;
-import plugins.properties.input.testsupport.Layer1;
 
 public class Layer1Translator extends AbstractTranslator<Layer1, Layer1SimObject> {
 

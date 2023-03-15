@@ -6,7 +6,7 @@ import gov.hhs.aspr.gcm.translation.core.AbstractEnumTranslator;
 
 import com.google.protobuf.ProtocolMessageEnum;
 
-import plugins.stochastics.input.TestRandomGeneratorIdInput;
+import gov.hhs.aspr.gcm.translation.plugins.stochastics.input.TestRandomGeneratorIdInput;
 import plugins.stochastics.testsupport.TestRandomGeneratorId;
 
 public class TestRandomGeneratorIdTranslator

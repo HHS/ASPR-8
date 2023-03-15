@@ -2,7 +2,7 @@ syntax = "proto3";
 package gov.hhs.aspr.gcm;
 
 option java_multiple_files = true;
-option java_package = "plugins.properties.input.testsupport";
+option java_package = "gov.hhs.aspr.gcm.translation.plugins.properties.testsupport.input";
 
 message Layer1 {
   double x = 1;

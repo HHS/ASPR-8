@@ -8,7 +8,7 @@ import gov.hhs.aspr.gcm.translation.plugins.resources.translators.ResourceIdTran
 import gov.hhs.aspr.gcm.translation.plugins.resources.translators.ResourceInitializationTranslator;
 import gov.hhs.aspr.gcm.translation.plugins.resources.translators.ResourcePropertyIdTranslator;
 import gov.hhs.aspr.gcm.translation.plugins.resources.translators.ResourcesPluginDataTranslator;
-import plugins.resources.input.ResourcesPluginDataInput;
+import gov.hhs.aspr.gcm.translation.plugins.resources.input.ResourcesPluginDataInput;
 
 public class ResourcesPluginBundle {
     private static PluginBundle.Builder setConstants() {

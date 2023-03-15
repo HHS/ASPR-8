@@ -3,7 +3,7 @@ package gov.hhs.aspr.gcm.translation.plugins.globalproperties.translators;
 import com.google.protobuf.Descriptors.Descriptor;
 
 import gov.hhs.aspr.gcm.translation.core.AbstractTranslator;
-import plugins.globalproperties.input.GlobalPropertyIdInput;
+import gov.hhs.aspr.gcm.translation.plugins.globalproperties.input.GlobalPropertyIdInput;
 import plugins.globalproperties.support.GlobalPropertyId;
 
 public class GlobalPropertyIdTranslator extends AbstractTranslator<GlobalPropertyIdInput, GlobalPropertyId> {

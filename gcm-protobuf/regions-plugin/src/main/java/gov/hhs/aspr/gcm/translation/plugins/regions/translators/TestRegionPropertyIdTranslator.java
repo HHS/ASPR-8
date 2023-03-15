@@ -6,7 +6,7 @@ import gov.hhs.aspr.gcm.translation.core.AbstractEnumTranslator;
 
 import com.google.protobuf.ProtocolMessageEnum;
 
-import plugins.regions.input.TestRegionPropertyIdInput;
+import gov.hhs.aspr.gcm.translation.plugins.regions.input.TestRegionPropertyIdInput;
 import plugins.regions.testsupport.TestRegionPropertyId;
 
 public class TestRegionPropertyIdTranslator extends AbstractEnumTranslator<TestRegionPropertyIdInput, TestRegionPropertyId> {

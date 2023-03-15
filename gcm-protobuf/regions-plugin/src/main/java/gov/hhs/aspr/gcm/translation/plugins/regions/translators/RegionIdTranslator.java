@@ -3,7 +3,7 @@ package gov.hhs.aspr.gcm.translation.plugins.regions.translators;
 import com.google.protobuf.Descriptors.Descriptor;
 
 import gov.hhs.aspr.gcm.translation.core.AbstractTranslator;
-import plugins.regions.input.RegionIdInput;
+import gov.hhs.aspr.gcm.translation.plugins.regions.input.RegionIdInput;
 import plugins.regions.support.RegionId;
 
 public class RegionIdTranslator extends AbstractTranslator<RegionIdInput, RegionId> {

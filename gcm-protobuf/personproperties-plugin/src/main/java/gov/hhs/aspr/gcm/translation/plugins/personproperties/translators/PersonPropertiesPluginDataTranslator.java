@@ -5,16 +5,16 @@ import java.util.List;
 import com.google.protobuf.Descriptors.Descriptor;
 
 import gov.hhs.aspr.gcm.translation.core.AbstractTranslator;
-import plugins.people.input.PersonIdInput;
+import gov.hhs.aspr.gcm.translation.plugins.people.input.PersonIdInput;
 import plugins.people.support.PersonId;
 import plugins.personproperties.PersonPropertiesPluginData;
-import plugins.personproperties.input.PersonPropertiesPluginDataInput;
-import plugins.personproperties.input.PersonPropertyValueMapInput;
+import gov.hhs.aspr.gcm.translation.plugins.personproperties.input.PersonPropertiesPluginDataInput;
+import gov.hhs.aspr.gcm.translation.plugins.personproperties.input.PersonPropertyValueMapInput;
 import plugins.personproperties.support.PersonPropertyId;
 import plugins.personproperties.support.PersonPropertyInitialization;
-import plugins.properties.input.PropertyDefinitionInput;
-import plugins.properties.input.PropertyDefinitionMapInput;
-import plugins.properties.input.PropertyValueMapInput;
+import gov.hhs.aspr.gcm.translation.plugins.properties.input.PropertyDefinitionInput;
+import gov.hhs.aspr.gcm.translation.plugins.properties.input.PropertyDefinitionMapInput;
+import gov.hhs.aspr.gcm.translation.plugins.properties.input.PropertyValueMapInput;
 import plugins.util.properties.PropertyDefinition;
 
 public class PersonPropertiesPluginDataTranslator

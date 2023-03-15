@@ -3,7 +3,7 @@ package gov.hhs.aspr.gcm.translation.plugins.groups.translators;
 import com.google.protobuf.Descriptors.Descriptor;
 
 import gov.hhs.aspr.gcm.translation.core.AbstractTranslator;
-import plugins.groups.input.GroupTypeIdInput;
+import gov.hhs.aspr.gcm.translation.plugins.groups.input.GroupTypeIdInput;
 import plugins.groups.support.GroupTypeId;
 
 public class GroupTypeIdTranslator extends AbstractTranslator<GroupTypeIdInput, GroupTypeId> {

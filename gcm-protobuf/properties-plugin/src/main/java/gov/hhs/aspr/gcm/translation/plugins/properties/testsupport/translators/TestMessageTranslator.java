@@ -3,10 +3,10 @@ package gov.hhs.aspr.gcm.translation.plugins.properties.testsupport.translators;
 import com.google.protobuf.Descriptors.Descriptor;
 
 import gov.hhs.aspr.gcm.translation.core.AbstractTranslator;
+import gov.hhs.aspr.gcm.translation.plugins.properties.testsupport.input.Layer1;
+import gov.hhs.aspr.gcm.translation.plugins.properties.testsupport.input.TestMessage;
 import gov.hhs.aspr.gcm.translation.plugins.properties.testsupport.simobjects.Layer1SimObject;
 import gov.hhs.aspr.gcm.translation.plugins.properties.testsupport.simobjects.TestMessageSimObject;
-import plugins.properties.input.testsupport.Layer1;
-import plugins.properties.input.testsupport.TestMessage;
 
 public class TestMessageTranslator extends AbstractTranslator<TestMessage, TestMessageSimObject> {
 

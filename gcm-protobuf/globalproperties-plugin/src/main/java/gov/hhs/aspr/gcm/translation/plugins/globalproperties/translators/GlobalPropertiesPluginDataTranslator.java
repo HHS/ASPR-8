@@ -4,11 +4,11 @@ import com.google.protobuf.Descriptors.Descriptor;
 
 import gov.hhs.aspr.gcm.translation.core.AbstractTranslator;
 import plugins.globalproperties.GlobalPropertiesPluginData;
-import plugins.globalproperties.input.GlobalPropertiesPluginDataInput;
+import gov.hhs.aspr.gcm.translation.plugins.globalproperties.input.GlobalPropertiesPluginDataInput;
 import plugins.globalproperties.support.GlobalPropertyId;
-import plugins.properties.input.PropertyDefinitionInput;
-import plugins.properties.input.PropertyDefinitionMapInput;
-import plugins.properties.input.PropertyValueMapInput;
+import gov.hhs.aspr.gcm.translation.plugins.properties.input.PropertyDefinitionInput;
+import gov.hhs.aspr.gcm.translation.plugins.properties.input.PropertyDefinitionMapInput;
+import gov.hhs.aspr.gcm.translation.plugins.properties.input.PropertyValueMapInput;
 import plugins.util.properties.PropertyDefinition;
 
 public class GlobalPropertiesPluginDataTranslator

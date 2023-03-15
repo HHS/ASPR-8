@@ -4,7 +4,7 @@ import gov.hhs.aspr.gcm.translation.core.PluginBundle;
 import gov.hhs.aspr.gcm.translation.plugins.globalproperties.translators.GlobalPropertiesPluginDataTranslator;
 import gov.hhs.aspr.gcm.translation.plugins.globalproperties.translators.GlobalPropertyIdTranslator;
 import gov.hhs.aspr.gcm.translation.plugins.properties.PropertiesPluginBundleId;
-import plugins.globalproperties.input.GlobalPropertiesPluginDataInput;
+import gov.hhs.aspr.gcm.translation.plugins.globalproperties.input.GlobalPropertiesPluginDataInput;
 
 public class GlobalPropertiesPluginBundle {
     public static PluginBundle getPluginBundle(String inputFileName, String outputFileName) {

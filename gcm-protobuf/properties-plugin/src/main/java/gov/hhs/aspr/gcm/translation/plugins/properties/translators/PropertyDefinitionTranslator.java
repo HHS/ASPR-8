@@ -3,7 +3,7 @@ package gov.hhs.aspr.gcm.translation.plugins.properties.translators;
 import com.google.protobuf.Descriptors.Descriptor;
 
 import gov.hhs.aspr.gcm.translation.core.AbstractTranslator;
-import plugins.properties.input.PropertyDefinitionInput;
+import gov.hhs.aspr.gcm.translation.plugins.properties.input.PropertyDefinitionInput;
 import plugins.util.properties.PropertyDefinition;
 
 public class PropertyDefinitionTranslator extends AbstractTranslator<PropertyDefinitionInput, PropertyDefinition> {

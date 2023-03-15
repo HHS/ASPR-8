@@ -10,9 +10,9 @@ import gov.hhs.aspr.gcm.translation.plugins.materials.translators.MaterialsProdu
 import gov.hhs.aspr.gcm.translation.plugins.materials.translators.StageIdTranslator;
 import gov.hhs.aspr.gcm.translation.plugins.properties.PropertiesPluginBundleId;
 import gov.hhs.aspr.gcm.translation.plugins.resources.ResourcesPluginBundleId;
-import plugins.materials.input.BatchIdInput;
-import plugins.materials.input.MaterialsPluginDataInput;
-import plugins.materials.input.StageIdInput;
+import gov.hhs.aspr.gcm.translation.plugins.materials.input.BatchIdInput;
+import gov.hhs.aspr.gcm.translation.plugins.materials.input.MaterialsPluginDataInput;
+import gov.hhs.aspr.gcm.translation.plugins.materials.input.StageIdInput;
 
 public class MaterialsPluginBundle {
     private MaterialsPluginBundle() {

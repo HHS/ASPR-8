@@ -4,8 +4,8 @@ import com.google.protobuf.Descriptors.Descriptor;
 
 import gov.hhs.aspr.gcm.translation.core.AbstractTranslator;
 import plugins.stochastics.StochasticsPluginData;
-import plugins.stochastics.input.RandomNumberGeneratorIdInput;
-import plugins.stochastics.input.StochasticsPluginDataInput;
+import gov.hhs.aspr.gcm.translation.plugins.stochastics.input.RandomNumberGeneratorIdInput;
+import gov.hhs.aspr.gcm.translation.plugins.stochastics.input.StochasticsPluginDataInput;
 import plugins.stochastics.support.RandomNumberGeneratorId;
 
 public class StochasticsPluginDataTranslator

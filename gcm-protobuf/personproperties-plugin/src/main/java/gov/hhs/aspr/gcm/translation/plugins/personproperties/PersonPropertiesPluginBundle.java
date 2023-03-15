@@ -5,7 +5,7 @@ import gov.hhs.aspr.gcm.translation.plugins.people.PeoplePluginBundleId;
 import gov.hhs.aspr.gcm.translation.plugins.personproperties.translators.PersonPropertiesPluginDataTranslator;
 import gov.hhs.aspr.gcm.translation.plugins.personproperties.translators.PersonPropertyIdTranslator;
 import gov.hhs.aspr.gcm.translation.plugins.properties.PropertiesPluginBundleId;
-import plugins.personproperties.input.PersonPropertiesPluginDataInput;
+import gov.hhs.aspr.gcm.translation.plugins.personproperties.input.PersonPropertiesPluginDataInput;
 
 public class PersonPropertiesPluginBundle {
     public static PluginBundle getPluginBundle(String inputFileName, String outputFileName) {

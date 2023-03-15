@@ -4,8 +4,8 @@ import com.google.protobuf.Descriptors.Descriptor;
 
 import gov.hhs.aspr.gcm.translation.core.AbstractTranslator;
 import plugins.people.PeoplePluginData;
-import plugins.people.input.PeoplePluginDataInput;
-import plugins.people.input.PersonIdInput;
+import gov.hhs.aspr.gcm.translation.plugins.people.input.PeoplePluginDataInput;
+import gov.hhs.aspr.gcm.translation.plugins.people.input.PersonIdInput;
 import plugins.people.support.PersonId;
 
 public class PeoplePluginDataTranslator

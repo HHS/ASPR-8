@@ -8,7 +8,7 @@ import gov.hhs.aspr.gcm.translation.plugins.regions.translators.RegionPropertyId
 import gov.hhs.aspr.gcm.translation.plugins.regions.translators.RegionsPluginDataTranslator;
 import gov.hhs.aspr.gcm.translation.plugins.regions.translators.SimpleRegionIdTranslator;
 import gov.hhs.aspr.gcm.translation.plugins.regions.translators.SimpleRegionPropertyIdTranslator;
-import plugins.regions.input.RegionsPluginDataInput;
+import gov.hhs.aspr.gcm.translation.plugins.regions.input.RegionsPluginDataInput;
 
 public class RegionsPluginBundle {
 

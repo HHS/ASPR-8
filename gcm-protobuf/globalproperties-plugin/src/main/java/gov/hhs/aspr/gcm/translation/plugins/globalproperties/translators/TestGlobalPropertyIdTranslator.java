@@ -6,7 +6,7 @@ import gov.hhs.aspr.gcm.translation.core.AbstractEnumTranslator;
 
 import com.google.protobuf.ProtocolMessageEnum;
 
-import plugins.globalproperties.input.TestGlobalPropertyIdInput;
+import gov.hhs.aspr.gcm.translation.plugins.globalproperties.input.TestGlobalPropertyIdInput;
 import plugins.globalproperties.testsupport.TestGlobalPropertyId;
 
 public class TestGlobalPropertyIdTranslator

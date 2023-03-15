@@ -3,7 +3,7 @@ package gov.hhs.aspr.gcm.translation.plugins.personproperties.translators;
 import com.google.protobuf.Descriptors.Descriptor;
 
 import gov.hhs.aspr.gcm.translation.core.AbstractTranslator;
-import plugins.personproperties.input.PersonPropertyIdInput;
+import gov.hhs.aspr.gcm.translation.plugins.personproperties.input.PersonPropertyIdInput;
 import plugins.personproperties.support.PersonPropertyId;
 
 public class PersonPropertyIdTranslator extends AbstractTranslator<PersonPropertyIdInput, PersonPropertyId> {

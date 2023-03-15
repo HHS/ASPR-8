@@ -3,7 +3,7 @@ package gov.hhs.aspr.gcm.translation.plugins.regions.translators;
 import com.google.protobuf.Descriptors.Descriptor;
 
 import gov.hhs.aspr.gcm.translation.core.AbstractTranslator;
-import plugins.regions.input.SimpleRegionPropertyIdInput;
+import gov.hhs.aspr.gcm.translation.plugins.regions.input.SimpleRegionPropertyIdInput;
 import plugins.regions.support.SimpleRegionPropertyId;
 
 public class SimpleRegionPropertyIdTranslator extends AbstractTranslator<SimpleRegionPropertyIdInput, SimpleRegionPropertyId> {
