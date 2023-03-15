@@ -1,4 +1,4 @@
-package gov.hhs.aspr.gcm.translation.core.translators;
+package gov.hhs.aspr.gcm.translation.core.translatorSpecs;
 
 import java.util.LinkedHashMap;
 import java.util.Map;

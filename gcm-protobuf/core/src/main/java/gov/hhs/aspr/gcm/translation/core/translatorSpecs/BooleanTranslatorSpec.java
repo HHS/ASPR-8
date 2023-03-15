@@ -1,4 +1,4 @@
-package gov.hhs.aspr.gcm.translation.core.translators;
+package gov.hhs.aspr.gcm.translation.core.translatorSpecs;
 
 import com.google.protobuf.BoolValue;
 import com.google.protobuf.Descriptors.Descriptor;
