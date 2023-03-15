@@ -18,13 +18,8 @@ import plugins.regions.datamanagers.RegionsDataManager;
 import plugins.regions.events.PersonRegionUpdateEvent;
 import plugins.regions.support.RegionId;
 import plugins.reports.support.PeriodicReport;
-import plugins.reports.support.ReportError;
 import plugins.reports.support.ReportHeader;
 import plugins.reports.support.ReportItem;
-import plugins.reports.support.ReportLabel;
-import plugins.reports.support.ReportPeriod;
-import plugins.util.properties.PropertyError;
-import util.errors.ContractException;
 
 /**
  * A periodic Report that displays the number of people exhibiting a particular
@@ -46,123 +41,14 @@ import util.errors.ContractException;
  *
  */
 public final class PersonPropertyReport extends PeriodicReport {
-
-	/*
-	 * Data class for collecting the inputs to the report
-	 */
-	private static class Data {
-		private ReportLabel reportLabel;
-		private ReportPeriod reportPeriod;
-		private Set<PersonPropertyId> includedProperties = new LinkedHashSet<>();
-		private Set<PersonPropertyId> excludedProperties = new LinkedHashSet<>();
-		private boolean defaultInclusionPolicy = true;
-	}
-
-	/**
-	 * Returns a new instance of the builder class
-	 */
-	public static Builder builder() {
-		return new Builder();
-	}
-
-	/**
-	 * Builder class for the report
-	 * 
-	 *
-	 */
-	public final static class Builder {
-		private Builder() {
-		}
-
-		private Data data = new Data();
-
-		public PersonPropertyReport build() {
-			try {
-				return new PersonPropertyReport(data);
-			} finally {
-				data = new Data();
-			}
-		}
-
-		/**
-		 * Sets the default policy for inclusion of person properties in the
-		 * report. This policy is used when a person property has not been
-		 * explicitly included or excluded. Defaulted to true.
-		 */
-		public Builder setDefaultInclusion(boolean include) {
-			data.defaultInclusionPolicy = include;
-			return this;
-		}
-
-		/**
-		 * Selects the given person property id to be included in the report.
-		 * 
-		 * @throws ContractException
-		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
-		 *             person property id is null</li>
-		 */
-		public Builder includePersonProperty(PersonPropertyId personPropertyId) {
-			if (personPropertyId == null) {
-				throw new ContractException(PropertyError.NULL_PROPERTY_ID);
-			}
-			data.includedProperties.add(personPropertyId);
-			data.excludedProperties.remove(personPropertyId);
-			return this;
-		}
-
-		/**
-		 * Selects the given person property id to be excluded from the report
-		 * 
-		 * @throws ContractException
-		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
-		 *             person property id is null</li>
-		 */
-		public Builder excludePersonProperty(PersonPropertyId personPropertyId) {
-			if (personPropertyId == null) {
-				throw new ContractException(PropertyError.NULL_PROPERTY_ID);
-			}
-			data.includedProperties.remove(personPropertyId);
-			data.excludedProperties.add(personPropertyId);
-			return this;
-		}
-
-		/**
-		 * Sets the report label
-		 * 
-		 * @throws ContractException
-		 *             <li>{@linkplain ReportError#NULL_REPORT_LABEL} if the report
-		 *             label is null</li>
-		 */
-		public Builder setReportLabel(ReportLabel reportLabel) {
-			if (reportLabel == null) {
-				throw new ContractException(ReportError.NULL_REPORT_LABEL);
-			}
-			data.reportLabel = reportLabel;
-			return this;
-		}
-
-		/**
-		 * Sets the report period id
-		 * 
-		 * @throws ContractException
-		 *             <li>{@linkplain ReportError#NULL_REPORT_PERIOD} if the
-		 *             report period is null</li>
-		 */
-		public Builder setReportPeriod(ReportPeriod reportPeriod) {
-			if (reportPeriod == null) {
-				throw new ContractException(ReportError.NULL_REPORT_PERIOD);
-			}
-			data.reportPeriod = reportPeriod;
-			return this;
-		}
-
-	}
-
-	private final Data data;
-
-	private PersonPropertyReport(Data data) {
-		super(data.reportLabel, data.reportPeriod);
-		this.data = data;
+	
+	private final boolean includeNewProperties;
+	
+	public PersonPropertyReport(PersonPropertyReportPluginData personPropertyReportPluginData) {		
+		super(personPropertyReportPluginData.getReportLabel(), personPropertyReportPluginData.getReportPeriod());
+		includedPersonPropertyIds.addAll(personPropertyReportPluginData.getIncludedProperties());
+		excludedPersonPropertyIds.addAll(personPropertyReportPluginData.getExcludedProperties());
+		includeNewProperties = personPropertyReportPluginData.getDefaultInclusionPolicy();
 	}
 
 	/*
@@ -330,9 +216,8 @@ public final class PersonPropertyReport extends PeriodicReport {
 		reportContext.subscribe(PersonImminentRemovalEvent.class, this::handlePersonImminentRemovalEvent);
 		reportContext.subscribe(PersonRegionUpdateEvent.class, this::handlePersonRegionUpdateEvent);
 
-		includedPersonPropertyIds.addAll(data.includedProperties);
-		excludedPersonPropertyIds.addAll(data.excludedProperties);
-		if (data.defaultInclusionPolicy) {
+		
+		if (includeNewProperties) {
 			includedPersonPropertyIds.addAll(personPropertiesDataManager.getPersonPropertyIds());
 			includedPersonPropertyIds.removeAll(excludedPersonPropertyIds);
 			reportContext.subscribe(PersonPropertyDefinitionEvent.class, this::handlePersonPropertyDefinitionEvent);

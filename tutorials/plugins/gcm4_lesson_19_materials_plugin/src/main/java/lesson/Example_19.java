@@ -35,6 +35,7 @@ import plugins.people.PeoplePluginData;
 import plugins.personproperties.PersonPropertiesPlugin;
 import plugins.personproperties.PersonPropertiesPluginData;
 import plugins.personproperties.reports.PersonPropertyReport;
+import plugins.personproperties.reports.PersonPropertyReportPluginData;
 import plugins.regions.RegionsPlugin;
 import plugins.regions.RegionsPluginData;
 import plugins.reports.ReportsPlugin;
@@ -70,7 +71,7 @@ public final class Example_19 {
 					.addPlugin(getReportsPlugin())//
 					.addPlugin(getStochasticsPlugin())//
 					.addPlugin(getRegionsPlugin())//
-					.addPlugin(getPeoplePlugin())//					
+					.addPlugin(getPeoplePlugin())//
 					.addPlugin(getGroupsPlugin())//
 					.addPlugin(ModelPlugin.getModelPlugin())//
 
@@ -248,15 +249,18 @@ public final class Example_19 {
 		final ReportsPluginData reportsPluginData = //
 				ReportsPluginData	.builder()//
 									.addReport(() -> new DiseaseStateReport(ModelReportLabel.DISEASE_STATE_REPORT, ReportPeriod.END_OF_SIMULATION)::init)//
-									.addReport(() -> PersonPropertyReport	.builder()//
-																			.setReportLabel(ModelReportLabel.PERSON_PROPERTY_REPORT)//
-																			.setReportPeriod(ReportPeriod.DAILY)//
-																			.includePersonProperty(PersonProperty.VACCINATED)//
-																			.includePersonProperty(PersonProperty.VACCINE_SCHEDULED)//
-																			.build()::init)//
+									.addReport(() -> {
+										PersonPropertyReportPluginData personPropertyReportPluginData = //
+												PersonPropertyReportPluginData	.builder()//
+																				.setReportLabel(ModelReportLabel.PERSON_PROPERTY_REPORT)//
+																				.setReportPeriod(ReportPeriod.DAILY)//
+																				.includePersonProperty(PersonProperty.VACCINATED)//
+																				.includePersonProperty(PersonProperty.VACCINE_SCHEDULED)//
+																				.build();
+										return new PersonPropertyReport(personPropertyReportPluginData)::init;
+									})//
 									.addReport(() -> new VaccineReport(ModelReportLabel.VACCINE_REPORT, ReportPeriod.DAILY)::init)//
 									.addReport(() -> new VaccineProductionReport(ModelReportLabel.VACCINE_PRODUCTION_REPORT, ReportPeriod.DAILY)::init)//
-									
 
 									.build();
 
@@ -268,7 +272,7 @@ public final class Example_19 {
 									.addReport(ModelReportLabel.DISEASE_STATE_REPORT, Paths.get("c:\\temp\\gcm\\disease_state_report.xls"))//
 									.addReport(ModelReportLabel.PERSON_PROPERTY_REPORT, Paths.get("c:\\temp\\gcm\\person_property_report.xls"))//
 									.addReport(ModelReportLabel.VACCINE_REPORT, Paths.get("c:\\temp\\gcm\\vaccine_report.xls"))//
-									.addReport(ModelReportLabel.VACCINE_PRODUCTION_REPORT, Paths.get("c:\\temp\\gcm\\vaccine_production_report.xls"))//									
+									.addReport(ModelReportLabel.VACCINE_PRODUCTION_REPORT, Paths.get("c:\\temp\\gcm\\vaccine_production_report.xls"))//
 									.build();
 	}
 

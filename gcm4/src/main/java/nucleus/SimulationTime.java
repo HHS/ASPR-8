@@ -19,6 +19,17 @@ public class SimulationTime {
 	private static class Data {
 		private double startTime = 0;
 		private LocalDate baseDate = LocalDate.now();
+		@Override
+		public String toString() {
+			StringBuilder builder = new StringBuilder();
+			builder.append("Data [startTime=");
+			builder.append(startTime);
+			builder.append(", baseDate=");
+			builder.append(baseDate);
+			builder.append("]");
+			return builder.toString();
+		}
+		
 	}
 
 	private final Data data;
@@ -95,5 +106,16 @@ public class SimulationTime {
 	public LocalDate getBaseDate() {
 		return data.baseDate;
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder2 = new StringBuilder();
+		builder2.append("SimulationTime [data=");
+		builder2.append(data);
+		builder2.append("]");
+		return builder2.toString();
+	}
+	
+	
 
 }
