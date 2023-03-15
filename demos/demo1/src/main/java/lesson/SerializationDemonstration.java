@@ -3,6 +3,7 @@ package lesson;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.IntStream;
 
 import org.apache.commons.math3.random.RandomGenerator;
@@ -16,6 +17,7 @@ import lesson.plugins.model.reports.VaccineReport;
 import nucleus.Dimension;
 import nucleus.Experiment;
 import nucleus.Plugin;
+import nucleus.SimulationStateCollector;
 import plugins.globalproperties.GlobalPropertiesPlugin;
 import plugins.globalproperties.GlobalPropertiesPluginData;
 import plugins.globalproperties.GlobalPropertiesPluginData.Builder;
@@ -265,13 +267,17 @@ public final class SerializationDemonstration {
 					.addExperimentContextConsumer(nioReportItemHandler)//
 					
 					.setProduceSimulationStateOnHalt(true)//
-					.addExperimentContextConsumer(new Serializer(outputDirectory))
+					.addExperimentContextConsumer(new SimulationStateCollector(this::handleSimulationStateCollection))
 					
 					.setThreadCount(8)//
 					.build()//
 					.execute();//
 
 	}
+	private void handleSimulationStateCollection(Integer scenarioId, List<Object> output) {
+		
+	}
+	
 
 	public static void main(String[] args) {
 		Path outputDirectory = Paths.get(args[0]);
