@@ -6,7 +6,7 @@ import gov.hhs.aspr.gcm.translation.core.AObjectTranslatorSpec;
 
 import com.google.protobuf.DoubleValue;
 
-public class DoubleTranslator extends AObjectTranslatorSpec<DoubleValue, Double> {
+public class DoubleTranslatorSpec extends AObjectTranslatorSpec<DoubleValue, Double> {
 
     @Override
     protected Double convertInputObject(DoubleValue inputObject) {

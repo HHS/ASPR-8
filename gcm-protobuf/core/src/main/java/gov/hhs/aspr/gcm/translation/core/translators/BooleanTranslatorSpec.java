@@ -5,7 +5,7 @@ import com.google.protobuf.Descriptors.Descriptor;
 
 import gov.hhs.aspr.gcm.translation.core.AObjectTranslatorSpec;
 
-public class BooleanTranslator extends AObjectTranslatorSpec<BoolValue, Boolean> {
+public class BooleanTranslatorSpec extends AObjectTranslatorSpec<BoolValue, Boolean> {
 
     @Override
     protected Boolean convertInputObject(BoolValue inputObject) {

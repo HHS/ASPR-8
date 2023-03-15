@@ -6,7 +6,7 @@ import gov.hhs.aspr.gcm.translation.core.AObjectTranslatorSpec;
 
 import com.google.protobuf.Int64Value;
 
-public class Int64Translator extends AObjectTranslatorSpec<Int64Value, Long> {
+public class Int64TranslatorSpec extends AObjectTranslatorSpec<Int64Value, Long> {
 
     @Override
     protected Long convertInputObject(Int64Value inputObject) {

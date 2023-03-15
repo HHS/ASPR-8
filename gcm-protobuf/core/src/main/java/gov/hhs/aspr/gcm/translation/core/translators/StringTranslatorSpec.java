@@ -6,7 +6,7 @@ import gov.hhs.aspr.gcm.translation.core.AObjectTranslatorSpec;
 
 import com.google.protobuf.StringValue;
 
-public class StringTranslator extends AObjectTranslatorSpec<StringValue, String> {
+public class StringTranslatorSpec extends AObjectTranslatorSpec<StringValue, String> {
 
     @Override
     protected String convertInputObject(StringValue inputObject) {

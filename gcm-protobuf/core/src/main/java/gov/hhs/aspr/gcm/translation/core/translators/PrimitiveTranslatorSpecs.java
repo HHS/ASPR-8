@@ -10,16 +10,16 @@ import gov.hhs.aspr.gcm.translation.core.input.WrapperEnumValue;
 
 import com.google.protobuf.Message;
 
-public class PrimitiveTranslators {
+public class PrimitiveTranslatorSpecs {
 
-    public final static BooleanTranslator BOOLEAN_TRANSLATOR = new BooleanTranslator();
-    public final static Int32Translator INT32_TRANSLATOR = new Int32Translator();
-    public final static UInt32Translator UINT32_TRANSLATOR = new UInt32Translator();
-    public final static Int64Translator INT64_TRANSLATOR = new Int64Translator();
-    public final static UInt64Translator UINT64_TRANSLATOR = new UInt64Translator();
-    public final static StringTranslator STRING_TRANSLATOR = new StringTranslator();
-    public final static FloatTranslator FLOAT_TRANSLATOR = new FloatTranslator();
-    public final static DoubleTranslator DOUBLE_TRANSLATOR = new DoubleTranslator();
+    public final static BooleanTranslatorSpec BOOLEAN_TRANSLATOR = new BooleanTranslatorSpec();
+    public final static Int32TranslatorSpec INT32_TRANSLATOR = new Int32TranslatorSpec();
+    public final static UInt32TranslatorSpec UINT32_TRANSLATOR = new UInt32TranslatorSpec();
+    public final static Int64TranslatorSpec INT64_TRANSLATOR = new Int64TranslatorSpec();
+    public final static UInt64TranslatorSpec UINT64_TRANSLATOR = new UInt64TranslatorSpec();
+    public final static StringTranslatorSpec STRING_TRANSLATOR = new StringTranslatorSpec();
+    public final static FloatTranslatorSpec FLOAT_TRANSLATOR = new FloatTranslatorSpec();
+    public final static DoubleTranslatorSpec DOUBLE_TRANSLATOR = new DoubleTranslatorSpec();
 
     public static Map<Descriptor, Message> getPrimitiveDescriptorToMessageMap() {
         Map<Descriptor, Message> map = new LinkedHashMap<>();
@@ -37,7 +37,7 @@ public class PrimitiveTranslators {
         return map;
     }
 
-    public static Map<Class<?>, ITranslatorSpec> getPrimitiveInputTranslatorMap() {
+    public static Map<Class<?>, ITranslatorSpec> getPrimitiveInputTranslatorSpecMap() {
         Map<Class<?>, ITranslatorSpec> map = new LinkedHashMap<>();
 
         map.put(BOOLEAN_TRANSLATOR.getInputObjectClass(), BOOLEAN_TRANSLATOR);
@@ -52,7 +52,7 @@ public class PrimitiveTranslators {
         return map;
     }
 
-    public static Map<Class<?>, ITranslatorSpec> getPrimitiveObjectTranslatorMap() {
+    public static Map<Class<?>, ITranslatorSpec> getPrimitiveObjectTranslatorSpecMap() {
         Map<Class<?>, ITranslatorSpec> map = new LinkedHashMap<>();
 
         // no java version of unsigned int nor unsigned long

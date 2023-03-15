@@ -6,7 +6,7 @@ import gov.hhs.aspr.gcm.translation.core.AObjectTranslatorSpec;
 
 import com.google.protobuf.Int32Value;
 
-public class Int32Translator extends AObjectTranslatorSpec<Int32Value, Integer> {
+public class Int32TranslatorSpec extends AObjectTranslatorSpec<Int32Value, Integer> {
 
     @Override
     protected Integer convertInputObject(Int32Value inputObject) {

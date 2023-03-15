@@ -27,7 +27,7 @@ import com.google.protobuf.util.JsonFormat.Printer;
 
 import gov.hhs.aspr.gcm.translation.core.AEnumTranslatorSpec.EnumInstance;
 import gov.hhs.aspr.gcm.translation.core.input.WrapperEnumValue;
-import gov.hhs.aspr.gcm.translation.core.translators.PrimitiveTranslators;
+import gov.hhs.aspr.gcm.translation.core.translators.PrimitiveTranslatorSpecs;
 import nucleus.PluginData;
 
 public class TranslatorCore {
@@ -54,10 +54,10 @@ public class TranslatorCore {
         private boolean includingDefaultValueFields = false;
 
         private Data() {
-            this.descriptorMap.putAll(PrimitiveTranslators.getPrimitiveDescriptorToMessageMap());
-            this.classToTranslatorMap.putAll(PrimitiveTranslators.getPrimitiveInputTranslatorMap());
-            this.classToTranslatorMap.putAll(PrimitiveTranslators.getPrimitiveObjectTranslatorMap());
-            this.translators.addAll(PrimitiveTranslators.getPrimitiveObjectTranslatorMap().values());
+            this.descriptorMap.putAll(PrimitiveTranslatorSpecs.getPrimitiveDescriptorToMessageMap());
+            this.classToTranslatorMap.putAll(PrimitiveTranslatorSpecs.getPrimitiveInputTranslatorSpecMap());
+            this.classToTranslatorMap.putAll(PrimitiveTranslatorSpecs.getPrimitiveObjectTranslatorSpecMap());
+            this.translators.addAll(PrimitiveTranslatorSpecs.getPrimitiveObjectTranslatorSpecMap().values());
         }
     }
 
