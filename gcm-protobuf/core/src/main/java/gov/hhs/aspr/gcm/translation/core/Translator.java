@@ -156,7 +156,7 @@ public final class Translator {
                     "The input data for this bundle is a plugin data, and should be read via the readPluginDataInput() method.");
         }
 
-        readerContext.readJson(this.data.reader, this.data.inputObjectType.newBuilderForType());
+        readerContext.readJsonInput(this.data.reader, this.data.inputObjectType.newBuilderForType());
     }
 
     public void readPluginDataInput(ReaderContext readerContext) {
@@ -180,7 +180,7 @@ public final class Translator {
                     "The output data for this bundle is a plugin data, and should be written via the writePluginDataOutput() method.");
         }
 
-        writerContext.writeOutput(this.data.writer, simObject);
+        writerContext.writeJsonOutput(this.data.writer, simObject);
     }
 
     public <T extends PluginData> void writePluginDataOutput(WriterContext writerContext, T pluginData) {

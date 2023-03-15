@@ -107,7 +107,7 @@ public class TranslatorController {
         this.pluginDatas.add(pluginData);
     }
 
-    protected <U extends Message.Builder> void readJson(Reader reader, U builder) {
+    protected <U extends Message.Builder> void readJsonInput(Reader reader, U builder) {
         Object simObject = this.translatorCore.readJson(reader, builder);
 
         this.simObjectClassToPluginBundleMap.putIfAbsent(simObject.getClass(), this.focalBundle);
@@ -118,7 +118,7 @@ public class TranslatorController {
         this.translatorCore.printJson(writer, pluginData);
     }
 
-    protected void writeOutput(Writer writer, Object simObject) {
+    protected void writeJsonOutput(Writer writer, Object simObject) {
         this.translatorCore.printJson(writer, simObject);
     }
 

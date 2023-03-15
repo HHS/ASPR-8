@@ -15,7 +15,7 @@ public class WriterContext {
         this.translatorController.writePluginDataOutput(writer, pluginData);
     }
 
-    public void writeOutput(Writer writer, Object simObject) {
-        this.translatorController.writeOutput(writer, simObject);
+    public void writeJsonOutput(Writer writer, Object simObject) {
+        this.translatorController.writeJsonOutput(writer, simObject);
     }
 }

@@ -15,7 +15,7 @@ public class ReaderContext {
         this.translatorController.readPluginDataInput(reader, builder);
     }
 
-    public <U extends Message.Builder> void readJson(Reader reader, U builder) {
-        this.translatorController.readJson(reader, builder);
+    public <U extends Message.Builder> void readJsonInput(Reader reader, U builder) {
+        this.translatorController.readJsonInput(reader, builder);
     }
 }
