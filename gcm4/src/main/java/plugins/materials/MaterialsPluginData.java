@@ -54,12 +54,17 @@ public final class MaterialsPluginData implements PluginData {
 	 */
 	public static class Builder implements PluginDataBuilder {
 		private Data data;
-		private boolean dataIsMutable;
 
 		private void ensureDataMutability() {
-			if (!dataIsMutable) {
+			if (data.locked) {
 				data = new Data(data);
-				dataIsMutable = true;
+				data.locked = false;
+			}
+		}
+
+		private void ensureImmutability() {
+			if (!data.locked) {
+				data.locked = true;
 			}
 		}
 
@@ -68,8 +73,7 @@ public final class MaterialsPluginData implements PluginData {
 		}
 
 		/**
-		 * Adds the batch.
-		 * Duplicate inputs override previous inputs.
+		 * Adds the batch. Duplicate inputs override previous inputs.
 		 *
 		 * @throws ContractException
 		 *             <li>{@linkplain MaterialsError#NULL_BATCH_ID} if the
@@ -97,8 +101,7 @@ public final class MaterialsPluginData implements PluginData {
 		}
 
 		/**
-		 * Adds a batch to stage.
-		 * Duplicate inputs override previous inputs.
+		 * Adds a batch to stage. Duplicate inputs override previous inputs.
 		 *
 		 * @throws ContractException
 		 *             <li>{@linkplain MaterialsError#NULL_BATCH_ID} if the
@@ -123,8 +126,7 @@ public final class MaterialsPluginData implements PluginData {
 		}
 
 		/**
-		 * Adds a batch to stage.
-		 * Duplicate inputs override previous inputs.
+		 * Adds a batch to stage. Duplicate inputs override previous inputs.
 		 *
 		 * @throws ContractException
 		 *             <li>{@linkplain MaterialsError#NULL_MATERIAL_ID} if the
@@ -139,8 +141,7 @@ public final class MaterialsPluginData implements PluginData {
 		}
 
 		/**
-		 * Adds a batch to stage.
-		 * Duplicate inputs override previous inputs.
+		 * Adds a batch to stage. Duplicate inputs override previous inputs.
 		 *
 		 * @throws ContractException
 		 *             <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID}
@@ -155,8 +156,7 @@ public final class MaterialsPluginData implements PluginData {
 		}
 
 		/**
-		 * Adds a batch to stage.
-		 * Duplicate inputs override previous inputs.
+		 * Adds a batch to stage. Duplicate inputs override previous inputs.
 		 *
 		 * @throws ContractException
 		 *             <li>{@linkplain MaterialsError#NULL_STAGE_ID} if the
@@ -175,7 +175,7 @@ public final class MaterialsPluginData implements PluginData {
 		}
 
 		/**
-		 * Builds the MaterialsPluginData from the collected inputs 
+		 * Builds the MaterialsPluginData from the collected inputs
 		 *
 		 * @throws ContractException
 		 *             <li>{@linkplain MaterialsError#UNKNOWN_MATERIAL_ID} if a
@@ -190,77 +190,76 @@ public final class MaterialsPluginData implements PluginData {
 		 *             <li>{@linkplain MaterialsError#UNKNOWN_MATERIALS_PRODUCER_ID}
 		 *             if a materials property value is associated with a
 		 *             materials producer id that was not properly added</li>
-		 *             
+		 * 
 		 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if a
 		 *             materials property value is associated with a materials
 		 *             producer property id that was not properly defined</li>
-		 *             
+		 * 
 		 *             <li>{@linkplain PropertyError#INCOMPATIBLE_VALUE} if a
 		 *             materials property value is associated with a value that
 		 *             is not compatible with the corresponding property
 		 *             definition</li>
-		 *             
+		 * 
 		 *             <li>{@linkplain PropertyError#INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT}
 		 *             if a materials property is defined without a default
 		 *             value and there is not an assigned property value for
 		 *             each added materials producer</li>
-		 *             
+		 * 
 		 *             <li>{@linkplain MaterialsError#UNKNOWN_MATERIALS_PRODUCER_ID}
 		 *             if a materials resource level is set for a material
 		 *             producer id that was not properly added</li>
-		 *             
+		 * 
 		 *             <li>{@linkplain MaterialsError#UNKNOWN_MATERIAL_ID} if a
 		 *             batch is associated with at material that was not
 		 *             properly added</li>
-		 *             
+		 * 
 		 *             <li>{@linkplain MaterialsError#UNKNOWN_MATERIALS_PRODUCER_ID}
 		 *             if a batch is associated with at material producer that
 		 *             was not properly added</li>
-		 *             
+		 * 
 		 *             <li>{@linkplain MaterialsError#UNKNOWN_BATCH_ID} if a
 		 *             batch property is associated with batch id that was not
 		 *             properly added</li>
-		 *             
+		 * 
 		 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if a
 		 *             batch property is associated with batch property id that
 		 *             was not properly defined</li>
-		 *             
+		 * 
 		 *             <li>{@linkplain PropertyError#INCOMPATIBLE_VALUE} if a
 		 *             batch property value is incompatible with the
 		 *             corresponding property definition</li>
-		 *             
+		 * 
 		 *             <li>{@linkplain MaterialsError#UNKNOWN_MATERIALS_PRODUCER_ID}
 		 *             if a stage is associated with a materials producer id
 		 *             that was not properly added</li>
-		 *             
+		 * 
 		 *             <li>{@linkplain MaterialsError#UNKNOWN_STAGE_ID} if a
 		 *             batch is associated with a stage id that was not properly
 		 *             added</li>
-		 *             
+		 * 
 		 *             <li>{@linkplain MaterialsError#UNKNOWN_BATCH_ID} if a
 		 *             stage is associated with a batch id that was not properly
 		 *             added</li>
-		 *             
+		 * 
 		 *             <li>{@linkplain MaterialsError#BATCH_ALREADY_STAGED} if a
 		 *             batch is associated with more than one stage</li>
-		 *             
+		 * 
 		 *             <li>{@linkplain MaterialsError#BATCH_STAGED_TO_DIFFERENT_OWNER}
 		 *             if a batch is associated with a stage that is not owned
 		 *             by the same materials producer as the batch</li>
 		 */
 
 		public MaterialsPluginData build() {
-			try {
+			if (!data.locked) {
 				validateData();
-				return new MaterialsPluginData(data);
-			} finally {
-				data = new Data();
 			}
+			ensureImmutability();
+			return new MaterialsPluginData(data);
+
 		}
 
 		/**
-		 * Adds a batch to stage.
-		 * Duplicate inputs override previous inputs.
+		 * Adds a batch to stage. Duplicate inputs override previous inputs.
 		 *
 		 * @throws ContractException
 		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
@@ -286,8 +285,7 @@ public final class MaterialsPluginData implements PluginData {
 		}
 
 		/**
-		 * Adds a batch to stage.
-		 * Duplicate inputs override previous inputs.
+		 * Adds a batch to stage. Duplicate inputs override previous inputs.
 		 *
 		 * @throws ContractException
 		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
@@ -305,8 +303,8 @@ public final class MaterialsPluginData implements PluginData {
 		}
 
 		/**
-		 * Set the batch property value.
-		 * Duplicate inputs override previous inputs.
+		 * Set the batch property value. Duplicate inputs override previous
+		 * inputs.
 		 *
 		 * @throws ContractException
 		 *             <li>{@linkplain MaterialsError#NULL_BATCH_ID} if the
@@ -332,8 +330,8 @@ public final class MaterialsPluginData implements PluginData {
 		}
 
 		/**
-		 * Set the materials producer property value.
-		 * Duplicate inputs override previous inputs.
+		 * Set the materials producer property value. Duplicate inputs override
+		 * previous inputs.
 		 *
 		 * @throws ContractException
 		 *             <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID}
@@ -360,8 +358,8 @@ public final class MaterialsPluginData implements PluginData {
 		}
 
 		/**
-		 * Set the materials producer resource value.
-		 * Duplicate inputs override previous inputs.
+		 * Set the materials producer resource value. Duplicate inputs override
+		 * previous inputs.
 		 *
 		 * @throws ContractException
 		 *             <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID}
@@ -388,9 +386,7 @@ public final class MaterialsPluginData implements PluginData {
 
 		private void validateData() {
 
-			if (!dataIsMutable) {
-				return;
-			}
+			
 
 			for (final MaterialId materialId : data.batchPropertyDefinitions.keySet()) {
 				if (!data.materialIds.contains(materialId)) {
@@ -518,8 +514,8 @@ public final class MaterialsPluginData implements PluginData {
 				for (int i = 0; i < checkArray.length; i++) {
 					checkArray[i] = false;
 				}
-				
-				//fill the check array
+
+				// fill the check array
 				final Map<BatchPropertyId, Object> propMap = data.batchPropertyValues.get(batchId);
 				if (propMap != null) {
 					for (final BatchPropertyId batchPropertyId : propMap.keySet()) {
@@ -529,7 +525,7 @@ public final class MaterialsPluginData implements PluginData {
 						}
 					}
 				}
-				//show the check array contains no false values
+				// show the check array contains no false values
 				for (int i = 0; i < checkArray.length; i++) {
 					if (!checkArray[i]) {
 						throw new ContractException(PropertyError.INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT);
@@ -628,6 +624,8 @@ public final class MaterialsPluginData implements PluginData {
 
 		private final Map<BatchId, StageId> batchStages;
 
+		private boolean locked;
+
 		public Data() {
 			materialsProducerIds = new LinkedHashSet<>();
 
@@ -724,6 +722,8 @@ public final class MaterialsPluginData implements PluginData {
 			batchStages = new LinkedHashMap<>(data.batchStages);
 
 			emptyBatchPropertyValues = Collections.unmodifiableMap(new LinkedHashMap<>());
+
+			locked = data.locked;
 		}
 
 	}
@@ -1162,6 +1162,6 @@ public final class MaterialsPluginData implements PluginData {
 
 	@Override
 	public PluginDataBuilder getEmptyBuilder() {
-		return new Builder(new Data());
+		return builder();
 	}
 }

@@ -24,6 +24,7 @@ import plugins.people.PeoplePluginData;
 import plugins.personproperties.PersonPropertiesPlugin;
 import plugins.personproperties.PersonPropertiesPluginData;
 import plugins.personproperties.reports.PersonPropertyReport;
+import plugins.personproperties.reports.PersonPropertyReportPluginData;
 import plugins.regions.RegionsPlugin;
 import plugins.regions.RegionsPluginData;
 import plugins.reports.ReportsPlugin;
@@ -46,11 +47,12 @@ public final class Example_16 {
 		ReportsPluginData reportsPluginData = //
 				ReportsPluginData	.builder()//
 									.addReport(() -> {
-										return PersonPropertyReport	.builder()//
+									 PersonPropertyReportPluginData personPropertyReportPluginData = PersonPropertyReportPluginData	.builder()//
 																	.setReportLabel(ModelReportLabel.PERSON_PROPERTY_REPORT)//
 																	.setReportPeriod(ReportPeriod.END_OF_SIMULATION)//
 																	.setDefaultInclusion(true)//
-																	.build()::init;//
+																	.build();//
+									 return new PersonPropertyReport(personPropertyReportPluginData)::init;
 									})//
 									.addReport(() -> {
 										return new VaccineReport(ModelReportLabel.VACCINATION)::init;
@@ -63,9 +65,9 @@ public final class Example_16 {
 	private NIOReportItemHandler getNIOReportItemHandler() {
 		return NIOReportItemHandler	.builder()//
 									.addReport(ModelReportLabel.PERSON_PROPERTY_REPORT, //
-											Paths.get("C:\\temp\\gcm\\person_property_report.xls"))//
+											Paths.get("c:\\temp\\gcm\\person_property_report.xls"))//
 									.addReport(ModelReportLabel.VACCINATION, //
-											Paths.get("C:\\temp\\gcm\\vaccine_report.xls"))//
+											Paths.get("c:\\temp\\gcm\\vaccination_report.xls"))//
 									.build();
 	}
 

@@ -232,12 +232,10 @@ public class AT_RegionsPluginData {
 	@Test
 	@UnitTestMethod(target = RegionsPluginData.class, name = "getPersonRegionArrivalTrackingPolicy", args = {})
 	public void testGetPersonRegionArrivalTrackingPolicy() {
-
-		RegionsPluginData.Builder builder = RegionsPluginData.builder();
-
 		for (TimeTrackingPolicy timeTrackingPolicy : TimeTrackingPolicy.values()) {
-			builder.setPersonRegionArrivalTracking(timeTrackingPolicy);
-			RegionsPluginData regionsPluginData = builder.build();
+			RegionsPluginData regionsPluginData = RegionsPluginData	.builder()//
+																	.setPersonRegionArrivalTracking(timeTrackingPolicy)//
+																	.build();//
 			assertEquals(timeTrackingPolicy, regionsPluginData.getPersonRegionArrivalTrackingPolicy());
 		}
 	}
@@ -245,9 +243,9 @@ public class AT_RegionsPluginData {
 	@Test
 	@UnitTestMethod(target = RegionsPluginData.Builder.class, name = "build", args = {})
 	public void testBuild() {
-		RegionsPluginData.Builder builder = RegionsPluginData.builder();
+
 		// show the builder does not return null
-		assertNotNull(builder.build());
+		assertNotNull(RegionsPluginData.builder().build());
 
 		// precondition tests
 
@@ -257,18 +255,23 @@ public class AT_RegionsPluginData {
 		 */
 		RegionPropertyId regionPropertyId = TestRegionPropertyId.REGION_PROPERTY_1_BOOLEAN_MUTABLE;
 		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setDefaultValue(0).setType(Integer.class).build();
-		builder.defineRegionProperty(regionPropertyId, propertyDefinition);
-		builder.setRegionPropertyValue(TestRegionId.REGION_1, regionPropertyId, 5);
-		ContractException contractException = assertThrows(ContractException.class, () -> builder.build());
+		ContractException contractException = assertThrows(ContractException.class, () -> {
+			RegionsPluginData	.builder().defineRegionProperty(regionPropertyId, propertyDefinition)//
+								.setRegionPropertyValue(TestRegionId.REGION_1, regionPropertyId, 5)//
+								.build();
+		});
 		assertEquals(RegionError.UNKNOWN_REGION_ID, contractException.getErrorType());
 
 		/*
 		 * if a region property value was associated with a region property id
 		 * that was not defined
 		 */
-		builder.addRegion(TestRegionId.REGION_1);
-		builder.setRegionPropertyValue(TestRegionId.REGION_1, regionPropertyId, 5);
-		contractException = assertThrows(ContractException.class, () -> builder.build());
+		contractException = assertThrows(ContractException.class, () -> {
+			RegionsPluginData	.builder()//
+								.addRegion(TestRegionId.REGION_1)//
+								.setRegionPropertyValue(TestRegionId.REGION_1, regionPropertyId, 5)//
+								.build();
+		});
 		assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
 
 		/*
@@ -276,20 +279,28 @@ public class AT_RegionsPluginData {
 		 * property id that is incompatible with the corresponding property
 		 * definition.
 		 */
-		builder.addRegion(TestRegionId.REGION_1);
-		builder.defineRegionProperty(regionPropertyId, propertyDefinition);
-		builder.setRegionPropertyValue(TestRegionId.REGION_1, regionPropertyId, "invalid value");
-		contractException = assertThrows(ContractException.class, () -> builder.build());
+		contractException = assertThrows(ContractException.class, () -> {
+			RegionsPluginData	.builder()//
+								.addRegion(TestRegionId.REGION_1)//
+								.defineRegionProperty(regionPropertyId, propertyDefinition)//
+								.setRegionPropertyValue(TestRegionId.REGION_1, regionPropertyId, "invalid value")//
+								.build();//
+		});
 		assertEquals(PropertyError.INCOMPATIBLE_VALUE, contractException.getErrorType());
 
 		/*
 		 * if a region property definition does not have a default value and
 		 * there are no property values added to replace that default.
 		 */
-		builder.addRegion(TestRegionId.REGION_1);
-		propertyDefinition = PropertyDefinition.builder().setType(Double.class).build();
-		builder.defineRegionProperty(regionPropertyId, propertyDefinition);
-		contractException = assertThrows(ContractException.class, () -> builder.build());
+
+		contractException = assertThrows(ContractException.class, () -> {
+			PropertyDefinition def = PropertyDefinition.builder().setType(Double.class).build();
+
+			RegionsPluginData	.builder()//
+								.addRegion(TestRegionId.REGION_1)//
+								.defineRegionProperty(regionPropertyId, def)//
+								.build();//
+		});
 		assertEquals(PropertyError.INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT, contractException.getErrorType());
 	}
 

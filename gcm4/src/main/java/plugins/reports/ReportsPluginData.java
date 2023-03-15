@@ -13,7 +13,8 @@ import plugins.reports.support.ReportError;
 import util.errors.ContractException;
 
 /**
- * An immutable container of the initial state of report actors. It contains: <BR>
+ * An immutable container of the initial state of report actors. It contains:
+ * <BR>
  * <ul>
  * <li>report labels</li>
  * <li>suppliers of consumers of {@linkplain ReportContext} for report
@@ -28,12 +29,14 @@ public final class ReportsPluginData implements PluginData {
 	private static class Data {
 		private Set<Supplier<Consumer<ReportContext>>> reports = new LinkedHashSet<>();
 
+		private boolean locked;
+
 		public Data() {
 		}
 
 		public Data(Data data) {
-			//this.reports.addAll(data.reports);
 			this.reports.addAll(data.reports);
+			locked = data.locked;
 		}
 	}
 
@@ -43,16 +46,20 @@ public final class ReportsPluginData implements PluginData {
 
 	public final static class Builder implements PluginDataBuilder {
 		private Data data;
-		
-		private boolean dataIsMutable;
-		
+
 		private void ensureDataMutability() {
-			if(!dataIsMutable) {
+			if (data.locked) {
 				data = new Data(data);
-				dataIsMutable = true;
+				data.locked = false;
 			}
 		}
-		
+
+		private void ensureImmutability() {
+			if (!data.locked) {
+				data.locked = true;
+			}
+		}
+
 		private Builder(Data data) {
 			this.data = data;
 		}
@@ -62,11 +69,8 @@ public final class ReportsPluginData implements PluginData {
 		 * this builder. Clears the state of the builder.
 		 */
 		public ReportsPluginData build() {
-			try {
-				return new ReportsPluginData(data);
-			} finally {
-				data = new Data();
-			}
+			ensureImmutability();
+			return new ReportsPluginData(data);
 		}
 
 		/**
@@ -95,12 +99,12 @@ public final class ReportsPluginData implements PluginData {
 	}
 
 	/**
-	 * Returns the Consumers of ReportContext 
-	 *             
+	 * Returns the Consumers of ReportContext
+	 * 
 	 */
 	public Set<Consumer<ReportContext>> getReports() {
-		Set<Consumer<ReportContext>> result=  new LinkedHashSet<>();
-		for(Supplier<Consumer<ReportContext>> supplier : data.reports) {
+		Set<Consumer<ReportContext>> result = new LinkedHashSet<>();
+		for (Supplier<Consumer<ReportContext>> supplier : data.reports) {
 			result.add(supplier.get());
 		}
 		return result;
@@ -113,7 +117,7 @@ public final class ReportsPluginData implements PluginData {
 
 	@Override
 	public PluginDataBuilder getEmptyBuilder() {
-		return new Builder(new Data());
+		return builder();
 	}
 
 }

@@ -815,6 +815,7 @@ public class Simulation {
 	}
 
 	private void produceSimulationStateAsOutput() {
+		
 		// gather the plugins
 
 		Map<Plugin, List<PluginDataBuilder>> map = new LinkedHashMap<>();
@@ -877,7 +878,9 @@ public class Simulation {
 			for (PluginDataBuilder pluginDataBuilder : pluginDataBuilders) {
 				pluginBuilder.addPluginData(pluginDataBuilder.build());
 			}
+			
 			outputConsumer.accept(pluginBuilder.build());
+			
 		}
 
 		SimulationTime.Builder simulationTimeBuilder = SimulationTime.builder();

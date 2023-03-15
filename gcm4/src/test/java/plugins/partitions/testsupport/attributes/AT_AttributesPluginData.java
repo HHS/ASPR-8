@@ -48,16 +48,19 @@ public class AT_AttributesPluginData {
 		// precondition tests
 
 		// if the attribute id is null
-		ContractException contractException = assertThrows(ContractException.class, () -> builder.defineAttribute(null, TestAttributeId.BOOLEAN_0.getAttributeDefinition()));
+		ContractException contractException = assertThrows(ContractException.class, () -> AttributesPluginData.builder().defineAttribute(null, TestAttributeId.BOOLEAN_0.getAttributeDefinition()));
 		assertEquals(AttributeError.NULL_ATTRIBUTE_ID, contractException.getErrorType());
 
 		// if the attribute definition is null
-		contractException = assertThrows(ContractException.class, () -> builder.defineAttribute(TestAttributeId.BOOLEAN_0, null));
+		contractException = assertThrows(ContractException.class, () -> AttributesPluginData.builder().defineAttribute(TestAttributeId.BOOLEAN_0, null));
 		assertEquals(AttributeError.NULL_ATTRIBUTE_DEFINITION, contractException.getErrorType());
 
 		// if the attribute id was previously added
-		builder.defineAttribute(TestAttributeId.BOOLEAN_0, TestAttributeId.BOOLEAN_0.getAttributeDefinition());
-		contractException = assertThrows(ContractException.class, () -> builder.defineAttribute(TestAttributeId.BOOLEAN_0, TestAttributeId.BOOLEAN_0.getAttributeDefinition()));
+		contractException = assertThrows(ContractException.class, () -> {
+			AttributesPluginData.builder()//
+								.defineAttribute(TestAttributeId.BOOLEAN_0, TestAttributeId.BOOLEAN_0.getAttributeDefinition())
+								.defineAttribute(TestAttributeId.BOOLEAN_0, TestAttributeId.BOOLEAN_0.getAttributeDefinition());
+		});
 		assertEquals(AttributeError.DUPLICATE_ATTRIBUTE_DEFINITION, contractException.getErrorType());
 	}
 

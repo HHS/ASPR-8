@@ -76,6 +76,10 @@ public abstract class PeriodicReport {
 	protected final ReportLabel getReportLabel() {
 		return reportLabel;
 	}
+	
+	protected final ReportPeriod getReportPeriod() {
+		return reportPeriod;
+	}
 
 	/**
 	 * Places the current reporting day and report hour on the report as

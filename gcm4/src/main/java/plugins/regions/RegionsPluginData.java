@@ -47,12 +47,14 @@ public class RegionsPluginData implements PluginData {
 
 		private final Set<RegionId> regionIds = new LinkedHashSet<>();
 
-		private TimeTrackingPolicy regionArrivalTimeTrackingPolicy;
+		private TimeTrackingPolicy regionArrivalTimeTrackingPolicy = TimeTrackingPolicy.DO_NOT_TRACK_TIME;
 
 		private final Map<RegionId, Map<RegionPropertyId, Object>> regionPropertyValues = new LinkedHashMap<>();
 		private final Map<RegionPropertyId, Object> emptyRegionPropertyMap = Collections.unmodifiableMap(new LinkedHashMap<>());
 
 		private final List<RegionId> personRegions = new ArrayList<>();
+
+		private boolean locked;
 
 		public Data() {
 		}
@@ -67,6 +69,7 @@ public class RegionsPluginData implements PluginData {
 			}
 			personRegions.addAll(data.personRegions);
 
+			locked = data.locked;
 		}
 	}
 
@@ -117,12 +120,17 @@ public class RegionsPluginData implements PluginData {
 
 	public static class Builder implements PluginDataBuilder {
 		private Data data;
-		private boolean dataIsMutable;
 
 		private void ensureDataMutability() {
-			if (!dataIsMutable) {
+			if (data.locked) {
 				data = new Data(data);
-				dataIsMutable = true;
+				data.locked = false;
+			}
+		}
+
+		private void ensureImmutability() {
+			if (!data.locked) {
+				data.locked = true;
 			}
 		}
 
@@ -157,16 +165,12 @@ public class RegionsPluginData implements PluginData {
 		 * 
 		 */
 		public RegionsPluginData build() {
-			try {
-				if (data.regionArrivalTimeTrackingPolicy == null) {
-					dataIsMutable = true;
-					data.regionArrivalTimeTrackingPolicy = TimeTrackingPolicy.DO_NOT_TRACK_TIME;
-				}
+			if (!data.locked) {				
 				validateData();
-				return new RegionsPluginData(data);
-			} finally {
-				data = new Data();
 			}
+			ensureImmutability();
+			return new RegionsPluginData(data);
+
 		}
 
 		/**
@@ -178,8 +182,8 @@ public class RegionsPluginData implements PluginData {
 		 *             <li>{@linkplain RegionError#NULL_REGION_ID}</li>if the
 		 *             region id is null
 		 * 
-		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID}
-		 *             </li>if the region property id is null
+		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID}</li>if
+		 *             the region property id is null
 		 * 
 		 */
 		public Builder setRegionPropertyValue(final RegionId regionId, final RegionPropertyId regionPropertyId, final Object regionPropertyValue) {
@@ -255,8 +259,8 @@ public class RegionsPluginData implements PluginData {
 		 * 
 		 * @throws ContractException
 		 * 
-		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID}</li>
-		 *             if the region property id is null
+		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID}</li> if
+		 *             the region property id is null
 		 * 
 		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION}
 		 *             </li> if the property definition is null
@@ -271,10 +275,6 @@ public class RegionsPluginData implements PluginData {
 		}
 
 		private void validateData() {
-
-			if (!dataIsMutable) {
-				return;
-			}
 
 			for (RegionId regionId : data.personRegions) {
 				if (regionId != null) {
@@ -340,10 +340,10 @@ public class RegionsPluginData implements PluginData {
 	 * 
 	 * @throws ContractException
 	 * 
-	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID}</li> if
-	 *             the region property id is null
-	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}</li>
-	 *             if the region property id is known
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID}</li> if the
+	 *             region property id is null
+	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}</li> if
+	 *             the region property id is known
 	 */
 	public PropertyDefinition getRegionPropertyDefinition(final RegionPropertyId regionPropertyId) {
 		validateRegionPropertyIdNotNull(regionPropertyId);
@@ -373,15 +373,15 @@ public class RegionsPluginData implements PluginData {
 	 *             <li>{@linkplain RegionError#NULL_REGION_ID}</li> if the
 	 *             region id is null
 	 *             <li>{@linkplain RegionError#UNKNOWN_REGION_ID}</li> if the
-	 *             region id is unknown	             
+	 *             region id is unknown
 	 */
 	public Map<RegionPropertyId, Object> getRegionPropertyValues(final RegionId regionId) {
 		validateRegionExists(data, regionId);
 		final Map<RegionPropertyId, Object> map = data.regionPropertyValues.get(regionId);
-		if(map == null) {
+		if (map == null) {
 			return data.emptyRegionPropertyMap;
 		}
-		return Collections.unmodifiableMap(map);		
+		return Collections.unmodifiableMap(map);
 	}
 
 	/**
@@ -411,7 +411,7 @@ public class RegionsPluginData implements PluginData {
 		if (personId == null) {
 			throw new ContractException(PersonError.NULL_PERSON_ID);
 		}
-		
+
 	}
 
 	/**
@@ -428,7 +428,7 @@ public class RegionsPluginData implements PluginData {
 	 * 
 	 *             <li>{@linkplain PersonError#NULL_PERSON_ID}</li> if the
 	 *             person id is null
-	 *           
+	 * 
 	 */
 	@SuppressWarnings("unchecked")
 	public <T extends RegionId> Optional<T> getPersonRegion(final PersonId personId) {
@@ -436,14 +436,14 @@ public class RegionsPluginData implements PluginData {
 
 		int personIndex = personId.getValue();
 		if (personIndex < data.personRegions.size()) {
-			return Optional.ofNullable((T)data.personRegions.get(personIndex));
+			return Optional.ofNullable((T) data.personRegions.get(personIndex));
 		}
 		return Optional.empty();
 	}
 
 	@Override
 	public PluginDataBuilder getEmptyBuilder() {
-		return new Builder(new Data());
+		return builder();
 	}
 
 }
