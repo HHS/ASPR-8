@@ -4,28 +4,28 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <artifactId>gcm-protobuf</artifactId>
-        <groupId>gov.hhs.aspr.gcm.gcm-protobuf</groupId>
+        <groupId>gov.hhs.aspr.gcm.translation</groupId>
+        <artifactId>protobuf</artifactId>
         <version>${revision}</version>
     </parent>
 
-    <artifactId>regions-plugin</artifactId>
+    <artifactId>regions-plugin-translator</artifactId>
     <packaging>jar</packaging>
-    <name>gcm-protobuf :: regions-plugin</name>
+    <name>gcm-translation :: protobuf :: regions-plugin-translator</name>
 
     <dependencies>
         <dependency>
-            <groupId>gov.hhs.aspr.gcm.gcm-protobuf</groupId>
-            <artifactId>properties-plugin</artifactId>
+            <groupId>gov.hhs.aspr.gcm.translation</groupId>
+            <artifactId>properties-plugin-translator</artifactId>
             <version>${revision}</version>
         </dependency>
         <dependency>
-            <groupId>gov.hhs.aspr.gcm.gcm-protobuf</groupId>
-            <artifactId>people-plugin</artifactId>
+            <groupId>gov.hhs.aspr.gcm.translation</groupId>
+            <artifactId>people-plugin-translator</artifactId>
             <version>${revision}</version>
             <exclusions>
                 <exclusion>
-                    <groupId>gov.hhs.aspr.gcm.gcm-protobuf</groupId>
+                    <groupId>gov.hhs.aspr.gcm.translation</groupId>
                     <artifactId>core</artifactId>
                 </exclusion>
             </exclusions>
@@ -56,8 +56,8 @@
                         <configuration>
                             <artifactItems>
                                 <artifactItem>
-                                    <groupId>gov.hhs.aspr.gcm.gcm-protobuf</groupId>
-                                    <artifactId>protos</artifactId>
+                                    <groupId>gov.hhs.aspr.gcm.translation</groupId>
+                                    <artifactId>proto-definitions</artifactId>
                                     <version>${gcm.proto.version}</version>
                                     <overWrite>true</overWrite>
                                     <outputDirectory>${project.build.outputDirectory}</outputDirectory>

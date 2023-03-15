@@ -4,18 +4,18 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>gov.hhs.aspr.gcm.gcm-protobuf</groupId>
-        <artifactId>gcm-protobuf</artifactId>
+        <groupId>gov.hhs.aspr.gcm.translation</groupId>
+        <artifactId>protobuf</artifactId>
         <version>${revision}</version>
     </parent>
 
-    <artifactId>people-plugin</artifactId>
-    <name>gcm-protobuf :: people-plugin</name>
+    <artifactId>people-plugin-translator</artifactId>
+    <name>gcm-translation :: protobuf :: people-plugin-translator</name>
     <packaging>jar</packaging>
 
     <dependencies>
         <dependency>
-            <groupId>gov.hhs.aspr.gcm.gcm-protobuf</groupId>
+            <groupId>gov.hhs.aspr.gcm.translation</groupId>
             <artifactId>core</artifactId>
             <version>${revision}</version>
         </dependency>
@@ -45,8 +45,8 @@
                         <configuration>
                             <artifactItems>
                                 <artifactItem>
-                                    <groupId>gov.hhs.aspr.gcm.gcm-protobuf</groupId>
-                                    <artifactId>protos</artifactId>
+                                    <groupId>gov.hhs.aspr.gcm.translation</groupId>
+                                    <artifactId>proto-definitions</artifactId>
                                     <version>${gcm.proto.version}</version>
                                     <overWrite>true</overWrite>
                                     <outputDirectory>${project.build.outputDirectory}</outputDirectory>

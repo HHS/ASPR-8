@@ -4,13 +4,13 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>gov.hhs.aspr.gcm.gcm-protobuf</groupId>
-        <artifactId>gcm-protobuf</artifactId>
+        <groupId>gov.hhs.aspr.gcm.translation</groupId>
+        <artifactId>protobuf</artifactId>
         <version>${revision}</version>
     </parent>
 
     <artifactId>core</artifactId>
-    <name>gcm-protobuf :: core</name>
+    <name>gcm-translation :: protobuf :: core</name>
     <packaging>jar</packaging>
 
     <build>
@@ -37,13 +37,11 @@
                         <configuration>
                             <artifactItems>
                                 <artifactItem>
-                                    <groupId>
-                                        gov.hhs.aspr.gcm.gcm-protobuf</groupId>
-                                    <artifactId>protos</artifactId>
+                                    <groupId>gov.hhs.aspr.gcm.translation</groupId>
+                                    <artifactId>proto-definitions</artifactId>
                                     <version>${gcm.proto.version}</version>
                                     <overWrite>true</overWrite>
-                                    <outputDirectory>
-                                        ${project.build.outputDirectory}</outputDirectory>
+                                    <outputDirectory>${project.build.outputDirectory}</outputDirectory>
                                     <includes>**/*.proto</includes>
                                 </artifactItem>
                             </artifactItems>
@@ -63,12 +61,9 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <protocArtifact>
-                        com.google.protobuf:protoc:${protoc.version}:exe:${os.detected.classifier}</protocArtifact>
-                    <protoSourceRoot>
-                        ${project.build.outputDirectory}/gov/hhs/aspr/gcm/core</protoSourceRoot>
-                    <attachProtoSources>
-                        false</attachProtoSources>
+                    <protocArtifact> com.google.protobuf:protoc:${protoc.version}:exe:${os.detected.classifier}</protocArtifact>
+                    <protoSourceRoot> ${project.build.outputDirectory}/gov/hhs/aspr/gcm/core</protoSourceRoot>
+                    <attachProtoSources> false</attachProtoSources>
                 </configuration>
             </plugin>
             <plugin>
@@ -82,8 +77,7 @@
                         </goals>
                         <configuration>
                             <sources>
-                                <source>
-                                    ${project.build.directory}/generated-sources/protobuf/java</source>
+                                <source> ${project.build.directory}/generated-sources/protobuf/java</source>
                             </sources>
                         </configuration>
                     </execution>

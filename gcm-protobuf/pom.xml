@@ -3,11 +3,11 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>gov.hhs.aspr.gcm.gcm-protobuf</groupId>
-    <artifactId>gcm-protobuf</artifactId>
+    <groupId>gov.hhs.aspr.gcm.translation</groupId>
+    <artifactId>protobuf</artifactId>
     <version>${revision}</version>
     <packaging>pom</packaging>
-    <name>gcm-protobuf</name>
+    <name>gcm-translation :: protobuf</name>
 
     <properties>
         <revision>1.0.0-SNAPSHOT</revision>
