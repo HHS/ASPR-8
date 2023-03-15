@@ -2,14 +2,18 @@ package plugins.personproperties.reports;
 
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import nucleus.DataManagerContext;
 import nucleus.ReportContext;
+import nucleus.SimulationStateContext;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.events.PersonAdditionEvent;
 import plugins.people.events.PersonImminentRemovalEvent;
 import plugins.people.support.PersonId;
+import plugins.personproperties.PersonPropertiesPluginData;
 import plugins.personproperties.datamanagers.PersonPropertiesDataManager;
 import plugins.personproperties.events.PersonPropertyDefinitionEvent;
 import plugins.personproperties.events.PersonPropertyUpdateEvent;
@@ -20,6 +24,8 @@ import plugins.regions.support.RegionId;
 import plugins.reports.support.PeriodicReport;
 import plugins.reports.support.ReportHeader;
 import plugins.reports.support.ReportItem;
+import plugins.util.properties.IndexedPropertyManager;
+import plugins.util.properties.PropertyDefinition;
 
 /**
  * A periodic Report that displays the number of people exhibiting a particular
@@ -41,10 +47,10 @@ import plugins.reports.support.ReportItem;
  *
  */
 public final class PersonPropertyReport extends PeriodicReport {
-	
+
 	private final boolean includeNewProperties;
-	
-	public PersonPropertyReport(PersonPropertyReportPluginData personPropertyReportPluginData) {		
+
+	public PersonPropertyReport(PersonPropertyReportPluginData personPropertyReportPluginData) {
 		super(personPropertyReportPluginData.getReportLabel(), personPropertyReportPluginData.getReportPeriod());
 		includedPersonPropertyIds.addAll(personPropertyReportPluginData.getIncludedProperties());
 		excludedPersonPropertyIds.addAll(personPropertyReportPluginData.getExcludedProperties());
@@ -215,8 +221,8 @@ public final class PersonPropertyReport extends PeriodicReport {
 		reportContext.subscribe(PersonAdditionEvent.class, this::handlePersonAdditionEvent);
 		reportContext.subscribe(PersonImminentRemovalEvent.class, this::handlePersonImminentRemovalEvent);
 		reportContext.subscribe(PersonRegionUpdateEvent.class, this::handlePersonRegionUpdateEvent);
+		// reportContext.subscribeToSimulationState(this::recordSimulationState);
 
-		
 		if (includeNewProperties) {
 			includedPersonPropertyIds.addAll(personPropertiesDataManager.getPersonPropertyIds());
 			includedPersonPropertyIds.removeAll(excludedPersonPropertyIds);
@@ -234,6 +240,19 @@ public final class PersonPropertyReport extends PeriodicReport {
 				}
 			}
 		}
+	}
+
+	private void recordSimulationState(ReportContext reportContext, SimulationStateContext simulationStateContext) {
+		PersonPropertyReportPluginData.Builder builder = simulationStateContext.get(PersonPropertyReportPluginData.Builder.class);
+		builder.setDefaultInclusion(includeNewProperties);
+		builder.setReportLabel(getReportLabel());
+		builder.setReportPeriod(getReportPeriod());
+		for (PersonPropertyId personPropertyId : includedPersonPropertyIds) {
+			builder.includePersonProperty(personPropertyId);
+		}
+		for (PersonPropertyId personPropertyId : excludedPersonPropertyIds) {
+			builder.excludePersonProperty(personPropertyId);
+		}		
 	}
 
 	private void handlePersonPropertyDefinitionEvent(ReportContext actorContext, PersonPropertyDefinitionEvent personPropertyDefinitionEvent) {
