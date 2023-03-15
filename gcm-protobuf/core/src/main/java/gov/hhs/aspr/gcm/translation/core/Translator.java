@@ -7,7 +7,9 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
 import java.nio.file.Paths;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 
@@ -24,9 +26,8 @@ public final class Translator {
 
     private static class Data {
         private TranslatorId translatorId;
-        private Reader reader;
-        private Writer writer;
-        private Message inputObjectType;
+        private final Map<Reader, Message> readers = new LinkedHashMap<>();
+        private final Map<Class<?>, Writer> writers = new LinkedHashMap<>();
         private boolean hasInput = false;
         private boolean hasOutput = false;
         private boolean inputIsPluginData = true;
@@ -66,9 +67,9 @@ public final class Translator {
             return this;
         }
 
-        public Builder setInputFileName(String inputFileName) {
+        public Builder addInputFile(String inputFileName, Message inputMessageType) {
             try {
-                this.data.reader = new FileReader(Paths.get(inputFileName).toFile());
+                this.data.readers.put(new FileReader(Paths.get(inputFileName).toFile()), inputMessageType);
             } catch (FileNotFoundException e) {
                 throw new RuntimeException("Failed to create Reader", e);
             }
@@ -77,19 +78,14 @@ public final class Translator {
             return this;
         }
 
-        public Builder setOutputFileName(String outputFileName) {
+        public Builder addOutputFile(String outputFileName, Class<?> simObjectClass) {
             try {
-                this.data.writer = new FileWriter(Paths.get(outputFileName).toFile());
+                this.data.writers.put(simObjectClass, new FileWriter(Paths.get(outputFileName).toFile()));
             } catch (IOException e) {
                 throw new RuntimeException("Failed to create Writer", e);
             }
 
             this.data.hasOutput = true;
-            return this;
-        }
-
-        public Builder setInputObjectType(Message message) {
-            this.data.inputObjectType = message;
             return this;
         }
 
@@ -154,7 +150,12 @@ public final class Translator {
                     "The input data for this translator is a plugin data, and should be read via the readPluginDataInput() method.");
         }
 
-        readerContext.readJsonInput(this.data.reader, this.data.inputObjectType.newBuilderForType());
+        Set<Reader> readers = this.data.readers.keySet();
+
+        for (Reader reader : readers) {
+            readerContext.readJsonInput(reader, this.data.readers.get(reader).newBuilderForType());
+        }
+
     }
 
     public void readPluginDataInput(ReaderContext readerContext) {
@@ -164,7 +165,16 @@ public final class Translator {
             throw new RuntimeException(
                     "The input data for this translator is not plugin data, and should be read via the readJsonInput() method.");
         }
-        readerContext.readPluginDataInput(this.data.reader, this.data.inputObjectType.newBuilderForType());
+        Set<Reader> readers = this.data.readers.keySet();
+
+        if(readers.size() > 1) {
+            throw new RuntimeException(
+                    "There should be at most 1 plugin data file for a given translator.");
+        }
+
+        for (Reader reader : readers) {
+            readerContext.readJsonInput(reader, this.data.readers.get(reader).newBuilderForType());
+        }
     }
 
     public void writeJsonOutput(WriterContext writerContext, Object simObject) {
@@ -175,7 +185,11 @@ public final class Translator {
                     "The output data for this translator is a plugin data, and should be written via the writePluginDataOutput() method.");
         }
 
-        writerContext.writeJsonOutput(this.data.writer, simObject);
+        if(!this.data.writers.containsKey(simObject.getClass())) {
+            throw new RuntimeException("No writer exists for type: " + simObject.getClass().getName());
+        }
+
+        writerContext.writeJsonOutput(this.data.writers.get(simObject.getClass()), simObject);
     }
 
     public <T extends PluginData> void writePluginDataOutput(WriterContext writerContext, T pluginData) {
@@ -186,7 +200,11 @@ public final class Translator {
                     "The output data for this translator is not a plugin data, and should be written via the writeOutput() method.");
         }
 
-        writerContext.writePluginDataOutput(this.data.writer, pluginData);
+        if(!this.data.writers.containsKey(pluginData.getClass())) {
+            throw new RuntimeException("No writer exists for type: " + pluginData.getClass().getName());
+        }
+
+        writerContext.writePluginDataOutput(this.data.writers.get(pluginData.getClass()), pluginData);
     }
 
     private void validateHasInput() {

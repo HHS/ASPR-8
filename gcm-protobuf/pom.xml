@@ -85,6 +85,7 @@
     <modules>
         <module>proto</module>
         <module>core</module>
+        <module>nucleus</module>
         <module>properties-plugin</module>
         <module>people-plugin</module>
         <module>groups-plugin</module>

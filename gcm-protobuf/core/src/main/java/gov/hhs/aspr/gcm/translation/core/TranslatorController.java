@@ -193,13 +193,31 @@ public class TranslatorController {
         }
     }
 
-    public void writeOutput(List<PluginData> pluginDatas) {
-        for (PluginData pluginData : pluginDatas) {
-            writeOutput(pluginData);
+    public <T> void writeObjectOutput(List<T> objects) {
+        for (Object object : objects) {
+            writeObjectOutput(object);
         }
     }
 
-    public void writeOutput(PluginData pluginData) {
+    public void writeObjectOutput(Object object) {
+        validateCoreTranslator();
+
+        WriterContext writerContext = new WriterContext(this);
+
+        Translator translator = this.simObjectClassToTranslatorMap.get(object.getClass());
+        this.focalTranslator = translator;
+        translator.writeJsonOutput(writerContext, object);
+        this.focalTranslator = null;
+    }
+    
+
+    public void writePluginDataOutput(List<PluginData> pluginDatas) {
+        for (PluginData pluginData : pluginDatas) {
+            writePluginDataOutput(pluginData);
+        }
+    }
+
+    public void writePluginDataOutput(PluginData pluginData) {
         validateCoreTranslator();
 
         WriterContext writerContext = new WriterContext(this);

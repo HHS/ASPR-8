@@ -3,21 +3,21 @@ package gov.hhs.aspr.gcm.translation.plugins.people;
 import gov.hhs.aspr.gcm.translation.core.Translator;
 import gov.hhs.aspr.gcm.translation.plugins.people.input.PeoplePluginDataInput;
 import gov.hhs.aspr.gcm.translation.plugins.people.input.PersonIdInput;
-import gov.hhs.aspr.gcm.translation.plugins.people.translatorSpecs.PeoplePluginDataTranslator;
-import gov.hhs.aspr.gcm.translation.plugins.people.translatorSpecs.PersonIdTranslator;
+import gov.hhs.aspr.gcm.translation.plugins.people.translatorSpecs.PeoplePluginDataTranslatorSpec;
+import gov.hhs.aspr.gcm.translation.plugins.people.translatorSpecs.PersonIdTranslatorSpec;
+import plugins.people.PeoplePluginData;
 
 public class PeopleTranslator {
 
     private PeopleTranslator() {
     }
 
-    private static Translator.Builder getBaseTranslator() {
+    private static Translator.Builder getBaseTranslatorBuilder() {
         return Translator.builder()
                 .setTranslatorId(PeopleTranslatorId.TRANSLATOR_ID)
-                .setInputObjectType(PeoplePluginDataInput.getDefaultInstance())
                 .setInitializer((translatorContext) -> {
-                    translatorContext.addTranslatorSpec(new PeoplePluginDataTranslator());
-                    translatorContext.addTranslatorSpec(new PersonIdTranslator());
+                    translatorContext.addTranslatorSpec(new PeoplePluginDataTranslatorSpec());
+                    translatorContext.addTranslatorSpec(new PersonIdTranslatorSpec());
 
                     translatorContext
                             .addFieldToIncludeDefaultValue(PersonIdInput.getDescriptor().findFieldByName("id"));
@@ -26,13 +26,13 @@ public class PeopleTranslator {
     }
 
     public static Translator getTranslator(String inputFileName, String outputFileName) {
-        return getBaseTranslator()
-                .setInputFileName(inputFileName)
-                .setOutputFileName(outputFileName)
+        return getBaseTranslatorBuilder()
+                .addInputFile(inputFileName, PeoplePluginDataInput.getDefaultInstance())
+                .addOutputFile(outputFileName, PeoplePluginData.class)
                 .build();
     }
 
     public static Translator getTranslator() {
-        return getBaseTranslator().build();
+        return getBaseTranslatorBuilder().build();
     }
 }

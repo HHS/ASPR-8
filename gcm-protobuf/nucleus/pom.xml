@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <artifactId>protobuf</artifactId>
+        <groupId>gov.hhs.aspr.gcm.translation</groupId>
+        <version>${revision}</version>
+    </parent>
+
+    <packaging>jar</packaging>
+    <artifactId>nucleus-translator</artifactId>
+    <name>gcm-translation :: protobuf :: nucleus-translator</name>
+
+
+    <dependencies>
+        <dependency>
+            <groupId>gov.hhs.aspr.gcm.translation</groupId>
+            <artifactId>core</artifactId>
+            <version>${revision}</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <?m2e ignore?>
+                        <id>unpack-protos</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>gov.hhs.aspr.gcm.translation</groupId>
+                                    <artifactId>proto-definitions</artifactId>
+                                    <version>${proto-definitions.version}</version>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${project.build.outputDirectory}</outputDirectory>
+                                    <includes>**/*.proto</includes>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.xolstice.maven.plugins</groupId>
+                <artifactId>protobuf-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compile</goal>
+                            <goal>test-compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <protocArtifact>com.google.protobuf:protoc:${protoc.version}:exe:${os.detected.classifier}</protocArtifact>
+                    <protoSourceRoot>${project.build.outputDirectory}/gov/hhs/aspr/gcm/nucleus</protoSourceRoot>
+                    <additionalProtoPathElements>
+                        <additionalProtoPathElement>${project.build.outputDirectory}/gov/hhs/aspr/gcm/core</additionalProtoPathElement>
+                    </additionalProtoPathElements>
+                    <attachProtoSources>false</attachProtoSources>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>${project.build.directory}/generated-sources/protobuf/java</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.google.code.maven-replacer-plugin</groupId>
+                <artifactId>maven-replacer-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>replace</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <includes>
+                        <include>target/generated-sources/**/*.java</include>
+                    </includes>
+                    <regex>true</regex>
+                    <regexFlags>
+                        <regexFlag>MULTILINE</regexFlag>
+                    </regexFlags>
+                    <replacements>
+                        <replacement>
+                            <token>^(@SuppressWarnings\(.*?\)\s+)?public final class</token>
+                            <value>@SuppressWarnings("all") public final class</value>
+                        </replacement>
+                    </replacements>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
