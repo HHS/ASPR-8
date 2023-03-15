@@ -13,9 +13,9 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import gov.hhs.aspr.gcm.translation.core.TranslatorController;
-import gov.hhs.aspr.gcm.translation.plugins.groups.translatorSpecs.SimpleGroupTypeIdTranslator;
-import gov.hhs.aspr.gcm.translation.plugins.groups.translatorSpecs.TestGroupPropertyIdTranslator;
-import gov.hhs.aspr.gcm.translation.plugins.groups.translatorSpecs.TestGroupTypeIdTranslator;
+import gov.hhs.aspr.gcm.translation.plugins.groups.translatorSpecs.SimpleGroupTypeIdTranslatorSpec;
+import gov.hhs.aspr.gcm.translation.plugins.groups.translatorSpecs.TestGroupPropertyIdTranslatorSpec;
+import gov.hhs.aspr.gcm.translation.plugins.groups.translatorSpecs.TestGroupTypeIdTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.plugins.people.PeopleTranslator;
 import gov.hhs.aspr.gcm.translation.plugins.properties.PropertiesTranslator;
 import nucleus.PluginData;
@@ -174,9 +174,9 @@ public class App {
                 .addTranslator(GroupsTranslator.getTranslator(inputFileName, outputFileName))
                 .addTranslator(PropertiesTranslator.getTranslator())
                 .addTranslator(PeopleTranslator.getTranslator())
-                .addTranslatorSpec(new TestGroupTypeIdTranslator())
-                .addTranslatorSpec(new TestGroupPropertyIdTranslator())
-                .addTranslatorSpec(new SimpleGroupTypeIdTranslator())
+                .addTranslatorSpec(new TestGroupTypeIdTranslatorSpec())
+                .addTranslatorSpec(new TestGroupPropertyIdTranslatorSpec())
+                .addTranslatorSpec(new SimpleGroupTypeIdTranslatorSpec())
                 .build()
                 .init();
 

@@ -1,10 +1,8 @@
 package gov.hhs.aspr.gcm.translation.plugins.properties;
 
-import com.google.protobuf.Message;
-
 import gov.hhs.aspr.gcm.translation.core.Translator;
-import gov.hhs.aspr.gcm.translation.plugins.properties.translatorSpecs.PropertyDefinitionTranslator;
-import gov.hhs.aspr.gcm.translation.plugins.properties.translatorSpecs.TimeTrackingPolicyTranslator;
+import gov.hhs.aspr.gcm.translation.plugins.properties.translatorSpecs.PropertyDefinitionTranslatorSpec;
+import gov.hhs.aspr.gcm.translation.plugins.properties.translatorSpecs.TimeTrackingPolicyTranslatorSpec;
 
 public class PropertiesTranslator {
 
@@ -12,11 +10,11 @@ public class PropertiesTranslator {
 
     }
 
-    private static Translator.Builder getBaseTranslator() {
+    public static Translator.Builder getBaseTranslatorBuilder() {
         return Translator.builder()
                 .setInitializer((translatorContext) -> {
-                    translatorContext.addTranslatorSpec(new PropertyDefinitionTranslator());
-                    translatorContext.addTranslatorSpec(new TimeTrackingPolicyTranslator());
+                    translatorContext.addTranslatorSpec(new PropertyDefinitionTranslatorSpec());
+                    translatorContext.addTranslatorSpec(new TimeTrackingPolicyTranslatorSpec());
                 })
                 .setInputIsPluginData(false)
                 .setOutputIsPluginData(false)
@@ -24,25 +22,8 @@ public class PropertiesTranslator {
 
     }
 
-    public static Translator getTranslator(String inputFileName, String outputFileName, Message inputType) {
-
-        return getBaseTranslator()
-                .setInputObjectType(inputType)
-                .setInputFileName(inputFileName)
-                .setOutputFileName(outputFileName)
-                .build();
-
-    }
-
-    public static Translator getTranslator(Message inputType) {
-        return getBaseTranslator()
-                .setInputObjectType(inputType)
-                .build();
-
-    }
-
     public static Translator getTranslator() {
-        return getBaseTranslator().build();
+        return getBaseTranslatorBuilder().build();
 
     }
 }

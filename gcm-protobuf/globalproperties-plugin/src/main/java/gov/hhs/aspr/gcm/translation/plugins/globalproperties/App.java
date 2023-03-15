@@ -9,7 +9,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import gov.hhs.aspr.gcm.translation.core.TranslatorController;
-import gov.hhs.aspr.gcm.translation.plugins.globalproperties.translatorSpecs.TestGlobalPropertyIdTranslator;
+import gov.hhs.aspr.gcm.translation.plugins.globalproperties.translatorSpecs.TestGlobalPropertyIdTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.plugins.properties.PropertiesTranslator;
 import nucleus.PluginData;
 import plugins.globalproperties.GlobalPropertiesPluginData;
@@ -79,7 +79,7 @@ public class App {
         TranslatorController translatorController = TranslatorController.builder()
                 .addTranslator(GlobalPropertiesTranslator.getTranslator(inputFileName, outputFileName))
                 .addTranslator(PropertiesTranslator.getTranslator())
-                .addTranslatorSpec(new TestGlobalPropertyIdTranslator())
+                .addTranslatorSpec(new TestGlobalPropertyIdTranslatorSpec())
                 .build()
                 .init();
 

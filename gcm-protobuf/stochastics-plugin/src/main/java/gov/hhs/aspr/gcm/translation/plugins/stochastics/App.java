@@ -9,7 +9,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import gov.hhs.aspr.gcm.translation.core.TranslatorController;
-import gov.hhs.aspr.gcm.translation.plugins.stochastics.translatorSpecs.TestRandomGeneratorIdTranslator;
+import gov.hhs.aspr.gcm.translation.plugins.stochastics.translatorSpecs.TestRandomGeneratorIdTranslatorSpec;
 import nucleus.PluginData;
 import plugins.stochastics.StochasticsPluginData;
 import plugins.stochastics.support.RandomNumberGeneratorId;
@@ -73,7 +73,7 @@ public class App {
 
         TranslatorController translatorController = TranslatorController.builder()
                 .addTranslator(StochasticsTranslator.getTranslator(inputFileName, outputFileName))
-                .addTranslatorSpec(new TestRandomGeneratorIdTranslator())
+                .addTranslatorSpec(new TestRandomGeneratorIdTranslatorSpec())
                 .build()
                 .init();
 

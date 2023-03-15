@@ -15,10 +15,10 @@ import com.google.gson.JsonObject;
 import gov.hhs.aspr.gcm.translation.core.TranslatorController;
 import gov.hhs.aspr.gcm.translation.plugins.people.PeopleTranslator;
 import gov.hhs.aspr.gcm.translation.plugins.properties.PropertiesTranslator;
-import gov.hhs.aspr.gcm.translation.plugins.regions.RegionsTranslatorModule;
-import gov.hhs.aspr.gcm.translation.plugins.regions.translatorSpecs.TestRegionIdTranslator;
-import gov.hhs.aspr.gcm.translation.plugins.resources.translatorSpecs.TestResourceIdTranslator;
-import gov.hhs.aspr.gcm.translation.plugins.resources.translatorSpecs.TestResourcePropertyIdTranslator;
+import gov.hhs.aspr.gcm.translation.plugins.regions.RegionsTranslator;
+import gov.hhs.aspr.gcm.translation.plugins.regions.translatorSpecs.TestRegionIdTranslatorSpec;
+import gov.hhs.aspr.gcm.translation.plugins.resources.translatorSpecs.TestResourceIdTranslatorSpec;
+import gov.hhs.aspr.gcm.translation.plugins.resources.translatorSpecs.TestResourcePropertyIdTranslatorSpec;
 import nucleus.PluginData;
 import plugins.people.support.PersonId;
 import plugins.regions.support.RegionId;
@@ -184,10 +184,10 @@ public class App {
                 .addTranslator(ResourcesTranslator.getTranslator(inputFileName, outputFileName))
                 .addTranslator(PropertiesTranslator.getTranslator())
                 .addTranslator(PeopleTranslator.getTranslator())
-                .addTranslator(RegionsTranslatorModule.getTranslatorModule())
-                .addTranslatorSpec(new TestResourceIdTranslator())
-                .addTranslatorSpec(new TestResourcePropertyIdTranslator())
-                .addTranslatorSpec(new TestRegionIdTranslator())
+                .addTranslator(RegionsTranslator.getTranslatorModule())
+                .addTranslatorSpec(new TestResourceIdTranslatorSpec())
+                .addTranslatorSpec(new TestResourcePropertyIdTranslatorSpec())
+                .addTranslatorSpec(new TestRegionIdTranslatorSpec())
                 .build()
                 .init();
 

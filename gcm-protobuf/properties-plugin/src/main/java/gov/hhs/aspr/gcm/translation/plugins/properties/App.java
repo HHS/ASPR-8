@@ -9,10 +9,10 @@ import com.google.gson.JsonObject;
 import gov.hhs.aspr.gcm.translation.core.TranslatorController;
 import gov.hhs.aspr.gcm.translation.plugins.properties.simobjects.PropertyValueMap;
 import gov.hhs.aspr.gcm.translation.plugins.properties.testsupport.simobjects.TestMessageSimObject;
-import gov.hhs.aspr.gcm.translation.plugins.properties.testsupport.translatorSpecs.Layer1Translator;
-import gov.hhs.aspr.gcm.translation.plugins.properties.testsupport.translatorSpecs.TestMessageTranslator;
-import gov.hhs.aspr.gcm.translation.plugins.properties.translatorSpecs.PropertyDefinitionMapTranslator;
-import gov.hhs.aspr.gcm.translation.plugins.properties.translatorSpecs.PropertyValueMapTranslator;
+import gov.hhs.aspr.gcm.translation.plugins.properties.testsupport.translatorSpecs.Layer1TranslatorSpec;
+import gov.hhs.aspr.gcm.translation.plugins.properties.testsupport.translatorSpecs.TestMessageTranslatorSpec;
+import gov.hhs.aspr.gcm.translation.plugins.properties.translatorSpecs.PropertyDefinitionMapTranslatorSpec;
+import gov.hhs.aspr.gcm.translation.plugins.properties.translatorSpecs.PropertyValueMapTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.plugins.properties.input.PropertyValueMapInput;
 
 public class App {
@@ -46,12 +46,13 @@ public class App {
         String outputFileName = "./properties-plugin/src/main/resources/json/output/output.json";
 
         TranslatorController translatorController = TranslatorController.builder()
-                .addTranslator(PropertiesTranslator.getTranslator(inputFileName, outputFileName,
-                        PropertyValueMapInput.getDefaultInstance()))
-                .addTranslatorSpec(new TestMessageTranslator())
-                .addTranslatorSpec(new Layer1Translator())
-                .addTranslatorSpec(new PropertyValueMapTranslator())
-                .addTranslatorSpec(new PropertyDefinitionMapTranslator())
+                .addTranslator(PropertiesTranslator.getBaseTranslatorBuilder()
+                        .addInputFile(inputFileName, PropertyValueMapInput.getDefaultInstance())
+                        .addOutputFile(outputFileName, PropertyValueMap.class).build())
+                .addTranslatorSpec(new TestMessageTranslatorSpec())
+                .addTranslatorSpec(new Layer1TranslatorSpec())
+                .addTranslatorSpec(new PropertyValueMapTranslatorSpec())
+                .addTranslatorSpec(new PropertyDefinitionMapTranslatorSpec())
                 .build()
                 .init();
 

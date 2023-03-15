@@ -2,8 +2,9 @@ package gov.hhs.aspr.gcm.translation.plugins.stochastics;
 
 import gov.hhs.aspr.gcm.translation.core.Translator;
 import gov.hhs.aspr.gcm.translation.plugins.stochastics.input.StochasticsPluginDataInput;
-import gov.hhs.aspr.gcm.translation.plugins.stochastics.translatorSpecs.RandomGeneratorIdTranslator;
-import gov.hhs.aspr.gcm.translation.plugins.stochastics.translatorSpecs.StochasticsPluginDataTranslator;
+import gov.hhs.aspr.gcm.translation.plugins.stochastics.translatorSpecs.RandomGeneratorIdTranslatorSpec;
+import gov.hhs.aspr.gcm.translation.plugins.stochastics.translatorSpecs.StochasticsPluginDataTranslatorSpec;
+import plugins.stochastics.StochasticsPluginData;
 
 public class StochasticsTranslator {
 
@@ -11,25 +12,24 @@ public class StochasticsTranslator {
 
     }
 
-    private static Translator.Builder getBaseTranslator() {
+    private static Translator.Builder getBaseTranslatorBuilder() {
         return Translator.builder()
-                .setTranslatorId(StochasticsPluginBundleId.PLUGIN_BUNDLE_ID)
-                .setInputObjectType(StochasticsPluginDataInput.getDefaultInstance())
+                .setTranslatorId(StochasticsTranslatorId.PLUGIN_BUNDLE_ID)
                 .setInitializer((translatorContext) -> {
-                    translatorContext.addTranslatorSpec(new StochasticsPluginDataTranslator());
-                    translatorContext.addTranslatorSpec(new RandomGeneratorIdTranslator());
+                    translatorContext.addTranslatorSpec(new StochasticsPluginDataTranslatorSpec());
+                    translatorContext.addTranslatorSpec(new RandomGeneratorIdTranslatorSpec());
                 });
 
     }
 
     public static Translator getTranslator(String inputFileName, String outputFileName) {
-        return getBaseTranslator()
-                .setInputFileName(inputFileName)
-                .setOutputFileName(outputFileName)
+        return getBaseTranslatorBuilder()
+                .addInputFile(inputFileName, StochasticsPluginDataInput.getDefaultInstance())
+                .addOutputFile(outputFileName, StochasticsPluginData.class)
                 .build();
     }
 
     public static Translator getTranslator() {
-        return getBaseTranslator().build();
+        return getBaseTranslatorBuilder().build();
     }
 }

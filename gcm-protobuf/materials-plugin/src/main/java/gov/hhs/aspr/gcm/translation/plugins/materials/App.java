@@ -15,15 +15,15 @@ import java.util.Set;
 import org.apache.commons.math3.random.RandomGenerator;
 
 import gov.hhs.aspr.gcm.translation.core.TranslatorController;
-import gov.hhs.aspr.gcm.translation.plugins.materials.translatorSpecs.TestBatchPropertyIdTranslator;
-import gov.hhs.aspr.gcm.translation.plugins.materials.translatorSpecs.TestMaterialIdTranslator;
-import gov.hhs.aspr.gcm.translation.plugins.materials.translatorSpecs.TestMaterialsProducerIdTranslator;
-import gov.hhs.aspr.gcm.translation.plugins.materials.translatorSpecs.TestMaterialsProducerPropertyIdTranslator;
+import gov.hhs.aspr.gcm.translation.plugins.materials.translatorSpecs.TestBatchPropertyIdTranslatorSpec;
+import gov.hhs.aspr.gcm.translation.plugins.materials.translatorSpecs.TestMaterialIdTranslatorSpec;
+import gov.hhs.aspr.gcm.translation.plugins.materials.translatorSpecs.TestMaterialsProducerIdTranslatorSpec;
+import gov.hhs.aspr.gcm.translation.plugins.materials.translatorSpecs.TestMaterialsProducerPropertyIdTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.plugins.people.PeopleTranslator;
 import gov.hhs.aspr.gcm.translation.plugins.properties.PropertiesTranslator;
-import gov.hhs.aspr.gcm.translation.plugins.regions.RegionsTranslatorModule;
+import gov.hhs.aspr.gcm.translation.plugins.regions.RegionsTranslator;
 import gov.hhs.aspr.gcm.translation.plugins.resources.ResourcesTranslator;
-import gov.hhs.aspr.gcm.translation.plugins.resources.translatorSpecs.TestResourceIdTranslator;
+import gov.hhs.aspr.gcm.translation.plugins.resources.translatorSpecs.TestResourceIdTranslatorSpec;
 import nucleus.PluginData;
 import plugins.materials.MaterialsPluginData;
 import plugins.materials.support.BatchId;
@@ -182,13 +182,13 @@ public class App {
                 .addTranslator(MaterialsTranslator.getTranslator(inputFileName, outputFileName))
                 .addTranslator(PropertiesTranslator.getTranslator())
                 .addTranslator(ResourcesTranslator.getTranslator())
-                .addTranslator(RegionsTranslatorModule.getTranslatorModule())
+                .addTranslator(RegionsTranslator.getTranslatorModule())
                 .addTranslator(PeopleTranslator.getTranslator())
-                .addTranslatorSpec(new TestResourceIdTranslator())
-                .addTranslatorSpec(new TestBatchPropertyIdTranslator())
-                .addTranslatorSpec(new TestMaterialIdTranslator())
-                .addTranslatorSpec(new TestMaterialsProducerIdTranslator())
-                .addTranslatorSpec(new TestMaterialsProducerPropertyIdTranslator())
+                .addTranslatorSpec(new TestResourceIdTranslatorSpec())
+                .addTranslatorSpec(new TestBatchPropertyIdTranslatorSpec())
+                .addTranslatorSpec(new TestMaterialIdTranslatorSpec())
+                .addTranslatorSpec(new TestMaterialsProducerIdTranslatorSpec())
+                .addTranslatorSpec(new TestMaterialsProducerPropertyIdTranslatorSpec())
                 .build()
                 .init();
 
