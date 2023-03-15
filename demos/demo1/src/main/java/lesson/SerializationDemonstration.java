@@ -1,5 +1,6 @@
 package lesson;
 
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.stream.IntStream;
@@ -36,9 +37,12 @@ import plugins.stochastics.StochasticsPluginData;
 import plugins.util.properties.PropertyDefinition;
 import util.random.RandomGeneratorProvider;
 
-public final class Example_16 {
-
-	private Example_16() {
+public final class SerializationDemonstration {
+	
+	private final Path outputDirectory;
+	
+	private SerializationDemonstration(Path outputDirectory) {
+		this.outputDirectory = outputDirectory;
 	}
 
 	private RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(524055747550937602L);
@@ -65,9 +69,9 @@ public final class Example_16 {
 	private NIOReportItemHandler getNIOReportItemHandler() {
 		return NIOReportItemHandler	.builder()//
 									.addReport(ModelReportLabel.PERSON_PROPERTY_REPORT, //
-											Paths.get("c:\\temp\\gcm\\person_property_report.xls"))//
+											outputDirectory.resolve("person_property_report.xls"))//
 									.addReport(ModelReportLabel.VACCINATION, //
-											Paths.get("c:\\temp\\gcm\\vaccination_report.xls"))//
+											outputDirectory.resolve("vaccination_report.xls"))//											
 									.build();
 	}
 
@@ -259,6 +263,10 @@ public final class Example_16 {
 					.addDimension(getEducationSuccessRatedimension())//
 					.addDimension(getVaccineRefusalProbabilityDimension())//
 					.addExperimentContextConsumer(nioReportItemHandler)//
+					
+					.setProduceSimulationStateOnHalt(true)//
+					.addExperimentContextConsumer(new Serializer())
+					
 					.setThreadCount(8)//
 					.build()//
 					.execute();//
@@ -266,7 +274,10 @@ public final class Example_16 {
 	}
 
 	public static void main(String[] args) {
-		new Example_16().execute();
+		Path outputDirectory = Paths.get(args[0]);
+		new SerializationDemonstration(outputDirectory).execute();
 	}
+	
+	
 
 }
