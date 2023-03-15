@@ -1,6 +1,6 @@
 package gov.hhs.aspr.gcm.translation.plugins.people;
 
-import gov.hhs.aspr.gcm.translation.core.TranslatorModule;
+import gov.hhs.aspr.gcm.translation.core.Translator;
 import gov.hhs.aspr.gcm.translation.plugins.people.translators.PeoplePluginDataTranslator;
 import gov.hhs.aspr.gcm.translation.plugins.people.translators.PersonIdTranslator;
 import gov.hhs.aspr.gcm.translation.plugins.people.input.PeoplePluginDataInput;
@@ -11,8 +11,8 @@ public class PeopleTranslatorModule {
     private PeopleTranslatorModule() {
     }
 
-    private static TranslatorModule.Builder getBaseModule() {
-        return TranslatorModule.builder()
+    private static Translator.Builder getBaseModule() {
+        return Translator.builder()
                 .setPluginBundleId(PeopleTranslatorModuleId.TRANSLATOR_MODULE_ID)
                 .setInputObjectType(PeoplePluginDataInput.getDefaultInstance())
                 .setInitializer((translatorContext) -> {
@@ -25,14 +25,14 @@ public class PeopleTranslatorModule {
 
     }
 
-    public static TranslatorModule getTranslatorModule(String inputFileName, String outputFileName) {
+    public static Translator getTranslatorModule(String inputFileName, String outputFileName) {
         return getBaseModule()
                 .setInputFileName(inputFileName)
                 .setOutputFileName(outputFileName)
                 .build();
     }
 
-    public static TranslatorModule getTranslatorModule() {
+    public static Translator getTranslatorModule() {
         return getBaseModule().build();
     }
 }

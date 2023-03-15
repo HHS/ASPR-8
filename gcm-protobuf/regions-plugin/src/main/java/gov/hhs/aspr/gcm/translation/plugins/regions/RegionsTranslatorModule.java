@@ -1,6 +1,6 @@
 package gov.hhs.aspr.gcm.translation.plugins.regions;
 
-import gov.hhs.aspr.gcm.translation.core.TranslatorModule;
+import gov.hhs.aspr.gcm.translation.core.Translator;
 import gov.hhs.aspr.gcm.translation.plugins.people.PeopleTranslatorModuleId;
 import gov.hhs.aspr.gcm.translation.plugins.properties.PropertiesTranslatorModuleId;
 import gov.hhs.aspr.gcm.translation.plugins.regions.translators.RegionIdTranslator;
@@ -16,8 +16,8 @@ public class RegionsTranslatorModule {
 
     }
 
-    private static TranslatorModule.Builder getBaseModule() {
-        return TranslatorModule.builder()
+    private static Translator.Builder getBaseModule() {
+        return Translator.builder()
                 .setPluginBundleId(RegionsTranslatorModuleId.TRANSLATOR_MODULE_ID)
                 .addDependency(PeopleTranslatorModuleId.TRANSLATOR_MODULE_ID)
                 .addDependency(PropertiesTranslatorModuleId.TRANSLATOR_MODULE_ID)
@@ -31,14 +31,14 @@ public class RegionsTranslatorModule {
                 .setInputObjectType(RegionsPluginDataInput.getDefaultInstance());
     }
 
-    public static TranslatorModule getTranslatorModule(String inputFileName, String outputFileName) {
+    public static Translator getTranslatorModule(String inputFileName, String outputFileName) {
         return getBaseModule()
                 .setInputFileName(inputFileName)
                 .setOutputFileName(outputFileName)
                 .build();
     }
 
-    public static TranslatorModule getTranslatorModule() {
+    public static Translator getTranslatorModule() {
         return getBaseModule().build();
     }
 }

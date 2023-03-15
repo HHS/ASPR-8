@@ -25,7 +25,7 @@ import com.google.protobuf.util.JsonFormat;
 import com.google.protobuf.util.JsonFormat.Parser;
 import com.google.protobuf.util.JsonFormat.Printer;
 
-import gov.hhs.aspr.gcm.translation.core.EnumTranslator.EnumInstance;
+import gov.hhs.aspr.gcm.translation.core.AEnumTranslatorSpec.EnumInstance;
 import gov.hhs.aspr.gcm.translation.core.input.WrapperEnumValue;
 import gov.hhs.aspr.gcm.translation.core.translators.PrimitiveTranslators;
 import nucleus.PluginData;
@@ -44,8 +44,8 @@ public class TranslatorCore {
         private final Map<Descriptor, Message> descriptorMap = new LinkedHashMap<>();
         private final Map<EnumDescriptor, EnumInstance> enumDescriptorMap = new LinkedHashMap<>();
         private final Map<String, EnumDescriptor> typeUrlToEnumDescriptor = new LinkedHashMap<>();
-        private final Map<Class<?>, ITranslator> classToTranslatorMap = new LinkedHashMap<>();
-        private final Set<ITranslator> translators = new LinkedHashSet<>();
+        private final Map<Class<?>, ITranslatorSpec> classToTranslatorMap = new LinkedHashMap<>();
+        private final Set<ITranslatorSpec> translators = new LinkedHashSet<>();
         private final Set<FieldDescriptor> defaultValueFieldsToPrint = new LinkedHashSet<>();
         private TypeRegistry registry;
         private Parser jsonParser;
@@ -112,7 +112,7 @@ public class TranslatorCore {
             return this;
         }
 
-        public <I extends ProtocolMessageEnum, S> Builder addTranslator(EnumTranslator<I, S> translator) {
+        public <I extends ProtocolMessageEnum, S> Builder addTranslatorSpec(AEnumTranslatorSpec<I, S> translator) {
             this.data.classToTranslatorMap.putIfAbsent(translator.getInputObjectClass(),
                     translator);
             this.data.classToTranslatorMap.putIfAbsent(translator.getSimObjectClass(), translator);
@@ -126,7 +126,7 @@ public class TranslatorCore {
             return this;
         }
 
-        public <I extends Message, S> Builder addTranslator(ObjectTranslator<I, S> translator) {
+        public <I extends Message, S> Builder addTranslatorSpec(AObjectTranslatorSpec<I, S> translator) {
             this.data.classToTranslatorMap.putIfAbsent(translator.getInputObjectClass(),
                     translator);
             this.data.classToTranslatorMap.putIfAbsent(translator.getSimObjectClass(), translator);
@@ -375,7 +375,7 @@ public class TranslatorCore {
         }
     }
 
-    private ITranslator getTranslatorForClass(Class<?> classRef) {
+    private ITranslatorSpec getTranslatorForClass(Class<?> classRef) {
         if (this.data.classToTranslatorMap.containsKey(classRef)) {
             return this.data.classToTranslatorMap.get(classRef);
         }

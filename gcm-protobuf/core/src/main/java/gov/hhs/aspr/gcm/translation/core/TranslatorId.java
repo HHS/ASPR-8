@@ -1,6 +1,6 @@
 package gov.hhs.aspr.gcm.translation.core;
 
-public interface TranslatorModuleId {
+public interface TranslatorId {
 	/**
 	 * Implementationn consistent with equals()
 	 */

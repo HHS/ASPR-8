@@ -3,7 +3,7 @@ package gov.hhs.aspr.gcm.translation.core;
 import com.google.protobuf.Message;
 import com.google.protobuf.ProtocolMessageEnum;
 
-public interface ITranslator {
+public interface ITranslatorSpec {
     void init(TranslatorCore translator);
 
     <T> T convert(Message message);

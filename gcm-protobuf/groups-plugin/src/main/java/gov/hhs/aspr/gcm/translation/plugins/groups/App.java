@@ -174,9 +174,9 @@ public class App {
                 .addBundle(GroupsTranslatorModule.getTranslatorModule(inputFileName, outputFileName))
                 .addBundle(PropertiesTranslatorModule.getTranslatorModule())
                 .addBundle(PeopleTranslatorModule.getTranslatorModule())
-                .addTranslator(new TestGroupTypeIdTranslator())
-                .addTranslator(new TestGroupPropertyIdTranslator())
-                .addTranslator(new SimpleGroupTypeIdTranslator())
+                .addTranslatorSpec(new TestGroupTypeIdTranslator())
+                .addTranslatorSpec(new TestGroupPropertyIdTranslator())
+                .addTranslatorSpec(new SimpleGroupTypeIdTranslator())
                 .build()
                 .init();
 

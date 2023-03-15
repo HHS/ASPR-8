@@ -48,10 +48,10 @@ public class App {
         TranslatorController translatorController = TranslatorController.builder()
                 .addBundle(PropertiesTranslatorModule.getTranslatorModule(inputFileName, outputFileName,
                         PropertyValueMapInput.getDefaultInstance()))
-                .addTranslator(new TestMessageTranslator())
-                .addTranslator(new Layer1Translator())
-                .addTranslator(new PropertyValueMapTranslator())
-                .addTranslator(new PropertyDefinitionMapTranslator())
+                .addTranslatorSpec(new TestMessageTranslator())
+                .addTranslatorSpec(new Layer1Translator())
+                .addTranslatorSpec(new PropertyValueMapTranslator())
+                .addTranslatorSpec(new PropertyDefinitionMapTranslator())
                 .build()
                 .init();
 

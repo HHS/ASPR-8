@@ -73,7 +73,7 @@ public class App {
 
         TranslatorController translatorController = TranslatorController.builder()
                 .addBundle(StochasticsTranslatorModule.getTranslatorModule(inputFileName, outputFileName))
-                .addTranslator(new TestRandomGeneratorIdTranslator())
+                .addTranslatorSpec(new TestRandomGeneratorIdTranslator())
                 .build()
                 .init();
 

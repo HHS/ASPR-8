@@ -2,12 +2,12 @@ package gov.hhs.aspr.gcm.translation.plugins.materials.translators;
 
 import com.google.protobuf.Descriptors.Descriptor;
 
-import gov.hhs.aspr.gcm.translation.core.ObjectTranslator;
+import gov.hhs.aspr.gcm.translation.core.AObjectTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.plugins.materials.input.BatchIdInput;
 import plugins.materials.support.BatchId;
 
 
-public class BatchIdTranslator extends ObjectTranslator<BatchIdInput, BatchId> {
+public class BatchIdTranslator extends AObjectTranslatorSpec<BatchIdInput, BatchId> {
 
     @Override
     protected BatchId convertInputObject(BatchIdInput inputObject) {

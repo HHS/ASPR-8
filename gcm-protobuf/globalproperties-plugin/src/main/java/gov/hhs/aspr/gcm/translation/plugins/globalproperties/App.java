@@ -79,7 +79,7 @@ public class App {
         TranslatorController translatorController = TranslatorController.builder()
                 .addBundle(GlobalPropertiesTranslatorModule.getTranslatorModule(inputFileName, outputFileName))
                 .addBundle(PropertiesTranslatorModule.getTranslatorModule())
-                .addTranslator(new TestGlobalPropertyIdTranslator())
+                .addTranslatorSpec(new TestGlobalPropertyIdTranslator())
                 .build()
                 .init();
 

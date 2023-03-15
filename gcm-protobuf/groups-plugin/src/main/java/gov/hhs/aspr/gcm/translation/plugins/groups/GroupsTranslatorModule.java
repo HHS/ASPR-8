@@ -1,6 +1,6 @@
 package gov.hhs.aspr.gcm.translation.plugins.groups;
 
-import gov.hhs.aspr.gcm.translation.core.TranslatorModule;
+import gov.hhs.aspr.gcm.translation.core.Translator;
 import gov.hhs.aspr.gcm.translation.plugins.groups.translators.GroupIdTranslator;
 import gov.hhs.aspr.gcm.translation.plugins.groups.translators.GroupPropertyIdTranslator;
 import gov.hhs.aspr.gcm.translation.plugins.groups.translators.GroupTypeIdTranslator;
@@ -14,8 +14,8 @@ public class GroupsTranslatorModule {
     private GroupsTranslatorModule() {
     }
 
-    private static TranslatorModule.Builder getBaseModule() {
-        return TranslatorModule.builder()
+    private static Translator.Builder getBaseModule() {
+        return Translator.builder()
                 .setPluginBundleId(GroupsTranslatorModuleId.TRANSLATOR_MODULE_ID)
                 .setInputObjectType(GroupsPluginDataInput.getDefaultInstance())
                 .addDependency(PropertiesTranslatorModuleId.TRANSLATOR_MODULE_ID)
@@ -31,14 +31,14 @@ public class GroupsTranslatorModule {
                 });
     }
 
-    public static TranslatorModule getTranslatorModule(String inputFileName, String outputFileName) {
+    public static Translator getTranslatorModule(String inputFileName, String outputFileName) {
         return getBaseModule()
                 .setInputFileName(inputFileName)
                 .setOutputFileName(outputFileName)
                 .build();
     }
 
-    public static TranslatorModule getTranslatorModule() {
+    public static Translator getTranslatorModule() {
         return getBaseModule().build();
     }
 }

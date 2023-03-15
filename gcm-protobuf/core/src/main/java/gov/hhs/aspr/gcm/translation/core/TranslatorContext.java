@@ -12,12 +12,12 @@ public class TranslatorContext {
         this.translatorController = translatorController;
     }
 
-    public <I extends Message, S> void addTranslator(ObjectTranslator<I, S> translator) {
-        this.translatorController.addTranslator(translator);
+    public <I extends Message, S> void addTranslator(AObjectTranslatorSpec<I, S> translatorSpec) {
+        this.translatorController.addTranslatorSpec(translatorSpec);
     }
 
-    public <I extends ProtocolMessageEnum, S> void addTranslator(EnumTranslator<I, S> translator) {
-        this.translatorController.addTranslator(translator);
+    public <I extends ProtocolMessageEnum, S> void addTranslator(AEnumTranslatorSpec<I, S> translatorSpec) {
+        this.translatorController.addTranslatorSpec(translatorSpec);
     }
 
     public void addFieldToIncludeDefaultValue(FieldDescriptor fieldDescriptor) {

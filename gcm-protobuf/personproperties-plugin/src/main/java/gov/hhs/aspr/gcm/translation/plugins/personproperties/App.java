@@ -128,7 +128,7 @@ public class App {
                 .addBundle(PersonPropertiesTranslatorModule.getTranslatorModule(inputFileName, outputFileName))
                 .addBundle(PropertiesTranslatorModule.getTranslatorModule())
                 .addBundle(PeopleTranslatorModule.getTranslatorModule())
-                .addTranslator(new TestPersonPropertyIdTranslator())
+                .addTranslatorSpec(new TestPersonPropertyIdTranslator())
                 .build()
                 .init();
 

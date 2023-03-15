@@ -5,7 +5,7 @@ import java.util.Map;
 
 import com.google.protobuf.Descriptors.Descriptor;
 
-import gov.hhs.aspr.gcm.translation.core.ITranslator;
+import gov.hhs.aspr.gcm.translation.core.ITranslatorSpec;
 import gov.hhs.aspr.gcm.translation.core.input.WrapperEnumValue;
 
 import com.google.protobuf.Message;
@@ -37,8 +37,8 @@ public class PrimitiveTranslators {
         return map;
     }
 
-    public static Map<Class<?>, ITranslator> getPrimitiveInputTranslatorMap() {
-        Map<Class<?>, ITranslator> map = new LinkedHashMap<>();
+    public static Map<Class<?>, ITranslatorSpec> getPrimitiveInputTranslatorMap() {
+        Map<Class<?>, ITranslatorSpec> map = new LinkedHashMap<>();
 
         map.put(BOOLEAN_TRANSLATOR.getInputObjectClass(), BOOLEAN_TRANSLATOR);
         map.put(INT32_TRANSLATOR.getInputObjectClass(), INT32_TRANSLATOR);
@@ -52,8 +52,8 @@ public class PrimitiveTranslators {
         return map;
     }
 
-    public static Map<Class<?>, ITranslator> getPrimitiveObjectTranslatorMap() {
-        Map<Class<?>, ITranslator> map = new LinkedHashMap<>();
+    public static Map<Class<?>, ITranslatorSpec> getPrimitiveObjectTranslatorMap() {
+        Map<Class<?>, ITranslatorSpec> map = new LinkedHashMap<>();
 
         // no java version of unsigned int nor unsigned long
         map.put(BOOLEAN_TRANSLATOR.getSimObjectClass(), BOOLEAN_TRANSLATOR);

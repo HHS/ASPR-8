@@ -185,9 +185,9 @@ public class App {
                 .addBundle(PropertiesTranslatorModule.getTranslatorModule())
                 .addBundle(PeopleTranslatorModule.getTranslatorModule())
                 .addBundle(RegionsTranslatorModule.getTranslatorModule())
-                .addTranslator(new TestResourceIdTranslator())
-                .addTranslator(new TestResourcePropertyIdTranslator())
-                .addTranslator(new TestRegionIdTranslator())
+                .addTranslatorSpec(new TestResourceIdTranslator())
+                .addTranslatorSpec(new TestResourcePropertyIdTranslator())
+                .addTranslatorSpec(new TestRegionIdTranslator())
                 .build()
                 .init();
 

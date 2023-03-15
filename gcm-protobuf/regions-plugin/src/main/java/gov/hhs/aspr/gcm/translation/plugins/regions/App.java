@@ -138,8 +138,8 @@ public class App {
                 .addBundle(RegionsTranslatorModule.getTranslatorModule(inputFileName, outputFileName))
                 .addBundle(PropertiesTranslatorModule.getTranslatorModule())
                 .addBundle(PeopleTranslatorModule.getTranslatorModule())
-                .addTranslator(new TestRegionIdTranslator())
-                .addTranslator(new TestRegionPropertyIdTranslator())
+                .addTranslatorSpec(new TestRegionIdTranslator())
+                .addTranslatorSpec(new TestRegionPropertyIdTranslator())
                 .build()
                 .init();
 

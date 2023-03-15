@@ -2,11 +2,11 @@ package gov.hhs.aspr.gcm.translation.plugins.groups.translators;
 
 import com.google.protobuf.Descriptors.Descriptor;
 
-import gov.hhs.aspr.gcm.translation.core.ObjectTranslator;
+import gov.hhs.aspr.gcm.translation.core.AObjectTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.plugins.groups.input.GroupTypeIdInput;
 import plugins.groups.support.GroupTypeId;
 
-public class GroupTypeIdTranslator extends ObjectTranslator<GroupTypeIdInput, GroupTypeId> {
+public class GroupTypeIdTranslator extends AObjectTranslatorSpec<GroupTypeIdInput, GroupTypeId> {
 
     @Override
     protected GroupTypeId convertInputObject(GroupTypeIdInput inputObject) {

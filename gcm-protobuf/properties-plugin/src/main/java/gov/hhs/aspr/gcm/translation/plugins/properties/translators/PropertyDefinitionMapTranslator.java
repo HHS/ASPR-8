@@ -2,13 +2,13 @@ package gov.hhs.aspr.gcm.translation.plugins.properties.translators;
 
 import com.google.protobuf.Descriptors.Descriptor;
 
-import gov.hhs.aspr.gcm.translation.core.ObjectTranslator;
+import gov.hhs.aspr.gcm.translation.core.AObjectTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.plugins.properties.simobjects.PropertyDefinitionMap;
 import gov.hhs.aspr.gcm.translation.plugins.properties.input.PropertyDefinitionInput;
 import gov.hhs.aspr.gcm.translation.plugins.properties.input.PropertyDefinitionMapInput;
 
 public class PropertyDefinitionMapTranslator
-        extends ObjectTranslator<PropertyDefinitionMapInput, PropertyDefinitionMap> {
+        extends AObjectTranslatorSpec<PropertyDefinitionMapInput, PropertyDefinitionMap> {
 
     @Override
     protected PropertyDefinitionMap convertInputObject(PropertyDefinitionMapInput inputObject) {

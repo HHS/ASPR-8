@@ -184,11 +184,11 @@ public class App {
                 .addBundle(ResourcesTranslatorModule.getTranslatorModule())
                 .addBundle(RegionsTranslatorModule.getTranslatorModule())
                 .addBundle(PeopleTranslatorModule.getTranslatorModule())
-                .addTranslator(new TestResourceIdTranslator())
-                .addTranslator(new TestBatchPropertyIdTranslator())
-                .addTranslator(new TestMaterialIdTranslator())
-                .addTranslator(new TestMaterialsProducerIdTranslator())
-                .addTranslator(new TestMaterialsProducerPropertyIdTranslator())
+                .addTranslatorSpec(new TestResourceIdTranslator())
+                .addTranslatorSpec(new TestBatchPropertyIdTranslator())
+                .addTranslatorSpec(new TestMaterialIdTranslator())
+                .addTranslatorSpec(new TestMaterialsProducerIdTranslator())
+                .addTranslatorSpec(new TestMaterialsProducerPropertyIdTranslator())
                 .build()
                 .init();
 

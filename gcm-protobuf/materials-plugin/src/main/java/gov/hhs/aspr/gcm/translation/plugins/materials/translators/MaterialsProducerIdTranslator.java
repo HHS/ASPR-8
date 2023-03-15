@@ -2,12 +2,12 @@ package gov.hhs.aspr.gcm.translation.plugins.materials.translators;
 
 import com.google.protobuf.Descriptors.Descriptor;
 
-import gov.hhs.aspr.gcm.translation.core.ObjectTranslator;
+import gov.hhs.aspr.gcm.translation.core.AObjectTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.plugins.materials.input.MaterialsProducerIdInput;
 import plugins.materials.support.MaterialsProducerId;
 
 
-public class MaterialsProducerIdTranslator extends ObjectTranslator<MaterialsProducerIdInput, MaterialsProducerId> {
+public class MaterialsProducerIdTranslator extends AObjectTranslatorSpec<MaterialsProducerIdInput, MaterialsProducerId> {
 
     @Override
     protected MaterialsProducerId convertInputObject(MaterialsProducerIdInput inputObject) {

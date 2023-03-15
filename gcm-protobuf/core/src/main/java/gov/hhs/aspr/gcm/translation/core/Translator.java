@@ -15,15 +15,15 @@ import com.google.protobuf.Message;
 
 import nucleus.PluginData;
 
-public final class TranslatorModule {
+public final class Translator {
     private Data data;
 
-    private TranslatorModule(Data data) {
+    private Translator(Data data) {
         this.data = data;
     }
 
     private static class Data {
-        private TranslatorModuleId pluginBundleId;
+        private TranslatorId pluginBundleId;
         private Reader reader;
         private Writer writer;
         private Message inputObjectType;
@@ -32,7 +32,7 @@ public final class TranslatorModule {
         private boolean inputIsPluginData = true;
         private boolean outputIsPluginData = true;
         private Consumer<TranslatorContext> initializer;
-        private final Set<TranslatorModuleId> dependencies = new LinkedHashSet<>();
+        private final Set<TranslatorId> dependencies = new LinkedHashSet<>();
 
         private Data() {
 
@@ -51,16 +51,16 @@ public final class TranslatorModule {
             this.data = data;
         }
 
-        public TranslatorModule build() {
+        public Translator build() {
 
             if (this.data.pluginBundleId == null) {
                 throw new RuntimeException("No PluginBundleId was set for this PluginBundle");
             }
 
-            return new TranslatorModule(data);
+            return new Translator(data);
         }
 
-        public Builder setPluginBundleId(TranslatorModuleId pluginBundleId) {
+        public Builder setPluginBundleId(TranslatorId pluginBundleId) {
             this.data.pluginBundleId = pluginBundleId;
 
             return this;
@@ -111,7 +111,7 @@ public final class TranslatorModule {
             return this;
         }
 
-        public Builder addDependency(TranslatorModuleId dependency) {
+        public Builder addDependency(TranslatorId dependency) {
             this.data.dependencies.add(dependency);
 
             return this;
@@ -138,11 +138,11 @@ public final class TranslatorModule {
         return this.data.hasOutput;
     }
 
-    public TranslatorModuleId getPluginBundleId() {
+    public TranslatorId getPluginBundleId() {
         return this.data.pluginBundleId;
     }
 
-    public Set<TranslatorModuleId> getPluginBundleDependencies() {
+    public Set<TranslatorId> getPluginBundleDependencies() {
         return this.data.dependencies;
     }
 

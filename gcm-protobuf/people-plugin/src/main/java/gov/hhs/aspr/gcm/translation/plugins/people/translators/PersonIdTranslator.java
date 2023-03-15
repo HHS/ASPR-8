@@ -2,11 +2,11 @@ package gov.hhs.aspr.gcm.translation.plugins.people.translators;
 
 import com.google.protobuf.Descriptors.Descriptor;
 
-import gov.hhs.aspr.gcm.translation.core.ObjectTranslator;
+import gov.hhs.aspr.gcm.translation.core.AObjectTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.plugins.people.input.PersonIdInput;
 import plugins.people.support.PersonId;
 
-public class PersonIdTranslator extends ObjectTranslator<PersonIdInput, PersonId> {
+public class PersonIdTranslator extends AObjectTranslatorSpec<PersonIdInput, PersonId> {
 
     @Override
     protected PersonId convertInputObject(PersonIdInput inputObject) {
