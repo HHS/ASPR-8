@@ -11,21 +11,30 @@ import gov.hhs.aspr.gcm.gcmprotobuf.properties.PropertiesPluginBundleId;
 import plugins.resources.input.ResourcesPluginDataInput;
 
 public class ResourcesPluginBundle {
-    public static PluginBundle getPluginBundle(String inputFileName, String outputFileName) {
+    private static PluginBundle.Builder setConstants() {
         return PluginBundle.builder()
-        .setInputFileName(inputFileName)
-        .setOutputFileName(outputFileName)
-        .setPluginBundleId(ResourcesPluginBundleId.PLUGIN_BUNDLE_ID)
-        .addDependency(PeoplePluginBundleId.PLUGIN_BUNDLE_ID)
-        .addDependency(PropertiesPluginBundleId.PLUGIN_BUNDLE_ID)
-        .addDependency(RegionsPluginBundleId.PLUGIN_BUNDLE_ID)
-        .setInitializer((translatorContext) -> {
-            translatorContext.addTranslator(new ResourcesPluginDataTranslator());
-            translatorContext.addTranslator(new ResourceIdTranslator());
-            translatorContext.addTranslator(new ResourcePropertyIdTranslator());
-            translatorContext.addTranslator(new ResourceInitializationTranslator());
-        })
-        .setInputObjectType(ResourcesPluginDataInput.getDefaultInstance())
-        .build();
+                .setPluginBundleId(ResourcesPluginBundleId.PLUGIN_BUNDLE_ID)
+                .addDependency(PeoplePluginBundleId.PLUGIN_BUNDLE_ID)
+                .addDependency(PropertiesPluginBundleId.PLUGIN_BUNDLE_ID)
+                .addDependency(RegionsPluginBundleId.PLUGIN_BUNDLE_ID)
+                .setInitializer((translatorContext) -> {
+                    translatorContext.addTranslator(new ResourcesPluginDataTranslator());
+                    translatorContext.addTranslator(new ResourceIdTranslator());
+                    translatorContext.addTranslator(new ResourcePropertyIdTranslator());
+                    translatorContext.addTranslator(new ResourceInitializationTranslator());
+                })
+                .setInputObjectType(ResourcesPluginDataInput.getDefaultInstance());
+    }
+
+    public static PluginBundle getPluginBundle(String inputFileName, String outputFileName) {
+        return setConstants()
+                .setInputFileName(inputFileName)
+                .setOutputFileName(outputFileName)
+
+                .build();
+    }
+
+    public static PluginBundle getPluginBundle() {
+        return setConstants().build();
     }
 }
