@@ -5,8 +5,8 @@ import java.util.Map;
 
 import com.google.protobuf.Descriptors.Descriptor;
 
-import gov.hhs.aspr.gcm.gcmprotobuf.core.input.WrapperEnumValue;
 import gov.hhs.aspr.gcm.translation.core.ITranslator;
+import gov.hhs.aspr.gcm.translation.core.input.WrapperEnumValue;
 
 import com.google.protobuf.Message;
 
