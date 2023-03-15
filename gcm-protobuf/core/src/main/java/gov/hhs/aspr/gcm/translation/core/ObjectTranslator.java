@@ -4,7 +4,7 @@ import com.google.protobuf.Message;
 import com.google.protobuf.ProtocolMessageEnum;
 import com.google.protobuf.Descriptors.Descriptor;
 
-public abstract class Translator<I extends Message, S> implements ITranslator {
+public abstract class ObjectTranslator<I extends Message, S> implements ITranslator {
     protected TranslatorCore translator;
     private boolean initialized = false;
 
@@ -41,7 +41,7 @@ public abstract class Translator<I extends Message, S> implements ITranslator {
     }
 
     public <T> T convert(ProtocolMessageEnum protocolMessageEnum) {
-        throw new RuntimeException("Tried to convert an enummessage on a message translator");
+        throw new RuntimeException("Tried to convert an enum on a object translator");
     }
 
     protected abstract S convertInputObject(I inputObject);

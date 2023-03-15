@@ -13,9 +13,9 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import gov.hhs.aspr.gcm.translation.core.TranslatorController;
-import gov.hhs.aspr.gcm.translation.plugins.people.PeoplePluginBundle;
+import gov.hhs.aspr.gcm.translation.plugins.people.PeopleTranslatorModule;
 import gov.hhs.aspr.gcm.translation.plugins.personproperties.translators.TestPersonPropertyIdTranslator;
-import gov.hhs.aspr.gcm.translation.plugins.properties.PropertiesPluginBundle;
+import gov.hhs.aspr.gcm.translation.plugins.properties.PropertiesTranslatorModule;
 import nucleus.PluginData;
 import plugins.people.support.PersonId;
 import plugins.personproperties.PersonPropertiesPluginData;
@@ -125,9 +125,9 @@ public class App {
         String outputFileName = "./personproperties-plugin/src/main/resources/json/output/output.json";
 
         TranslatorController translatorController = TranslatorController.builder()
-                .addBundle(PersonPropertiesPluginBundle.getPluginBundle(inputFileName, outputFileName))
-                .addBundle(PropertiesPluginBundle.getPluginBundle())
-                .addBundle(PeoplePluginBundle.getPluginBundle())
+                .addBundle(PersonPropertiesTranslatorModule.getTranslatorModule(inputFileName, outputFileName))
+                .addBundle(PropertiesTranslatorModule.getTranslatorModule())
+                .addBundle(PeopleTranslatorModule.getTranslatorModule())
                 .addTranslator(new TestPersonPropertyIdTranslator())
                 .build()
                 .init();

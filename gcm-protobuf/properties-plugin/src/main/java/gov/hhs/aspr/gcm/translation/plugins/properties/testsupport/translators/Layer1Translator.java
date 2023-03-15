@@ -2,11 +2,11 @@ package gov.hhs.aspr.gcm.translation.plugins.properties.testsupport.translators;
 
 import com.google.protobuf.Descriptors.Descriptor;
 
-import gov.hhs.aspr.gcm.translation.core.Translator;
+import gov.hhs.aspr.gcm.translation.core.ObjectTranslator;
 import gov.hhs.aspr.gcm.translation.plugins.properties.testsupport.input.Layer1;
 import gov.hhs.aspr.gcm.translation.plugins.properties.testsupport.simobjects.Layer1SimObject;
 
-public class Layer1Translator extends Translator<Layer1, Layer1SimObject> {
+public class Layer1Translator extends ObjectTranslator<Layer1, Layer1SimObject> {
 
     @Override
     protected Layer1SimObject convertInputObject(Layer1 inputObject) {

@@ -126,7 +126,7 @@ public class TranslatorCore {
             return this;
         }
 
-        public <I extends Message, S> Builder addTranslator(Translator<I, S> translator) {
+        public <I extends Message, S> Builder addTranslator(ObjectTranslator<I, S> translator) {
             this.data.classToTranslatorMap.putIfAbsent(translator.getInputObjectClass(),
                     translator);
             this.data.classToTranslatorMap.putIfAbsent(translator.getSimObjectClass(), translator);

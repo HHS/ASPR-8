@@ -46,7 +46,7 @@ public class App {
         String outputFileName = "./properties-plugin/src/main/resources/json/output/output.json";
 
         TranslatorController translatorController = TranslatorController.builder()
-                .addBundle(PropertiesPluginBundle.getPluginBundle(inputFileName, outputFileName,
+                .addBundle(PropertiesTranslatorModule.getTranslatorModule(inputFileName, outputFileName,
                         PropertyValueMapInput.getDefaultInstance()))
                 .addTranslator(new TestMessageTranslator())
                 .addTranslator(new Layer1Translator())

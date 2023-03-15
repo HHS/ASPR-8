@@ -80,7 +80,7 @@ public class App {
         String outputFileName = "./people-plugin/src/main/resources/json/output/output.json";
 
         TranslatorController translatorController = TranslatorController.builder()
-                .addBundle(PeoplePluginBundle.getPluginBundle(inputFileName, outputFileName))
+                .addBundle(PeopleTranslatorModule.getTranslatorModule(inputFileName, outputFileName))
                 .build()
                 .init();
 

@@ -3,9 +3,9 @@ package gov.hhs.aspr.gcm.translation.core.translators;
 import com.google.protobuf.BoolValue;
 import com.google.protobuf.Descriptors.Descriptor;
 
-import gov.hhs.aspr.gcm.translation.core.Translator;
+import gov.hhs.aspr.gcm.translation.core.ObjectTranslator;
 
-public class BooleanTranslator extends Translator<BoolValue, Boolean> {
+public class BooleanTranslator extends ObjectTranslator<BoolValue, Boolean> {
 
     @Override
     protected Boolean convertInputObject(BoolValue inputObject) {

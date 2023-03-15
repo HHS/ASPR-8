@@ -2,11 +2,11 @@ package gov.hhs.aspr.gcm.translation.core.translators;
 
 import com.google.protobuf.Descriptors.Descriptor;
 
-import gov.hhs.aspr.gcm.translation.core.Translator;
+import gov.hhs.aspr.gcm.translation.core.ObjectTranslator;
 
 import com.google.protobuf.DoubleValue;
 
-public class DoubleTranslator extends Translator<DoubleValue, Double> {
+public class DoubleTranslator extends ObjectTranslator<DoubleValue, Double> {
 
     @Override
     protected Double convertInputObject(DoubleValue inputObject) {

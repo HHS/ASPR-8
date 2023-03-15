@@ -1,8 +1,8 @@
 package gov.hhs.aspr.gcm.translation.plugins.regions;
 
 import gov.hhs.aspr.gcm.translation.core.TranslatorModule;
-import gov.hhs.aspr.gcm.translation.plugins.people.PeoplePluginBundleId;
-import gov.hhs.aspr.gcm.translation.plugins.properties.PropertiesPluginBundleId;
+import gov.hhs.aspr.gcm.translation.plugins.people.PeopleTranslatorModuleId;
+import gov.hhs.aspr.gcm.translation.plugins.properties.PropertiesTranslatorModuleId;
 import gov.hhs.aspr.gcm.translation.plugins.regions.translators.RegionIdTranslator;
 import gov.hhs.aspr.gcm.translation.plugins.regions.translators.RegionPropertyIdTranslator;
 import gov.hhs.aspr.gcm.translation.plugins.regions.translators.RegionsPluginDataTranslator;
@@ -10,13 +10,17 @@ import gov.hhs.aspr.gcm.translation.plugins.regions.translators.SimpleRegionIdTr
 import gov.hhs.aspr.gcm.translation.plugins.regions.translators.SimpleRegionPropertyIdTranslator;
 import gov.hhs.aspr.gcm.translation.plugins.regions.input.RegionsPluginDataInput;
 
-public class RegionsPluginBundle {
+public class RegionsTranslatorModule {
 
-    private static TranslatorModule.Builder setConstants(TranslatorModule.Builder builder) {
-        return builder
-                .setPluginBundleId(RegionsPluginBundleId.PLUGIN_BUNDLE_ID)
-                .addDependency(PeoplePluginBundleId.PLUGIN_BUNDLE_ID)
-                .addDependency(PropertiesPluginBundleId.PLUGIN_BUNDLE_ID)
+    private RegionsTranslatorModule() {
+
+    }
+
+    private static TranslatorModule.Builder getBaseModule() {
+        return TranslatorModule.builder()
+                .setPluginBundleId(RegionsTranslatorModuleId.TRANSLATOR_MODULE_ID)
+                .addDependency(PeopleTranslatorModuleId.TRANSLATOR_MODULE_ID)
+                .addDependency(PropertiesTranslatorModuleId.TRANSLATOR_MODULE_ID)
                 .setInitializer((translatorContext) -> {
                     translatorContext.addTranslator(new RegionsPluginDataTranslator());
                     translatorContext.addTranslator(new RegionIdTranslator());
@@ -27,14 +31,14 @@ public class RegionsPluginBundle {
                 .setInputObjectType(RegionsPluginDataInput.getDefaultInstance());
     }
 
-    public static TranslatorModule getPluginBundle(String inputFileName, String outputFileName) {
-        return setConstants(TranslatorModule.builder())
+    public static TranslatorModule getTranslatorModule(String inputFileName, String outputFileName) {
+        return getBaseModule()
                 .setInputFileName(inputFileName)
                 .setOutputFileName(outputFileName)
                 .build();
     }
 
-    public static TranslatorModule getPluginBundle() {
-        return setConstants(TranslatorModule.builder()).build();
+    public static TranslatorModule getTranslatorModule() {
+        return getBaseModule().build();
     }
 }

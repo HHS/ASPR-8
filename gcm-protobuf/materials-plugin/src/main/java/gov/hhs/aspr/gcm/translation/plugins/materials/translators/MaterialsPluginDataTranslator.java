@@ -2,7 +2,7 @@ package gov.hhs.aspr.gcm.translation.plugins.materials.translators;
 
 import com.google.protobuf.Descriptors.Descriptor;
 
-import gov.hhs.aspr.gcm.translation.core.Translator;
+import gov.hhs.aspr.gcm.translation.core.ObjectTranslator;
 import plugins.materials.MaterialsPluginData;
 import gov.hhs.aspr.gcm.translation.plugins.materials.input.BatchIdInput;
 import gov.hhs.aspr.gcm.translation.plugins.materials.input.BatchMapInput;
@@ -28,7 +28,7 @@ import gov.hhs.aspr.gcm.translation.plugins.resources.input.ResourceInitializati
 import plugins.resources.support.ResourceId;
 import plugins.util.properties.PropertyDefinition;
 
-public class MaterialsPluginDataTranslator extends Translator<MaterialsPluginDataInput, MaterialsPluginData> {
+public class MaterialsPluginDataTranslator extends ObjectTranslator<MaterialsPluginDataInput, MaterialsPluginData> {
 
     @Override
     protected MaterialsPluginData convertInputObject(MaterialsPluginDataInput inputObject) {

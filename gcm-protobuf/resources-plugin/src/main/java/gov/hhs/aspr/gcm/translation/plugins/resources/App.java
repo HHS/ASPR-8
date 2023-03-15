@@ -13,9 +13,9 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import gov.hhs.aspr.gcm.translation.core.TranslatorController;
-import gov.hhs.aspr.gcm.translation.plugins.people.PeoplePluginBundle;
-import gov.hhs.aspr.gcm.translation.plugins.properties.PropertiesPluginBundle;
-import gov.hhs.aspr.gcm.translation.plugins.regions.RegionsPluginBundle;
+import gov.hhs.aspr.gcm.translation.plugins.people.PeopleTranslatorModule;
+import gov.hhs.aspr.gcm.translation.plugins.properties.PropertiesTranslatorModule;
+import gov.hhs.aspr.gcm.translation.plugins.regions.RegionsTranslatorModule;
 import gov.hhs.aspr.gcm.translation.plugins.regions.translators.TestRegionIdTranslator;
 import gov.hhs.aspr.gcm.translation.plugins.resources.translators.TestResourceIdTranslator;
 import gov.hhs.aspr.gcm.translation.plugins.resources.translators.TestResourcePropertyIdTranslator;
@@ -181,10 +181,10 @@ public class App {
         String outputFileName = "./resources-plugin/src/main/resources/json/output/output.json";
 
         TranslatorController translatorController = TranslatorController.builder()
-                .addBundle(ResourcesPluginBundle.getPluginBundle(inputFileName, outputFileName))
-                .addBundle(PropertiesPluginBundle.getPluginBundle())
-                .addBundle(PeoplePluginBundle.getPluginBundle())
-                .addBundle(RegionsPluginBundle.getPluginBundle())
+                .addBundle(ResourcesTranslatorModule.getTranslatorModule(inputFileName, outputFileName))
+                .addBundle(PropertiesTranslatorModule.getTranslatorModule())
+                .addBundle(PeopleTranslatorModule.getTranslatorModule())
+                .addBundle(RegionsTranslatorModule.getTranslatorModule())
                 .addTranslator(new TestResourceIdTranslator())
                 .addTranslator(new TestResourcePropertyIdTranslator())
                 .addTranslator(new TestRegionIdTranslator())

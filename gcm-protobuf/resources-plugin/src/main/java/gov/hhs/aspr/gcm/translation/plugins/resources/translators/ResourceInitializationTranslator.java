@@ -2,14 +2,14 @@ package gov.hhs.aspr.gcm.translation.plugins.resources.translators;
 
 import com.google.protobuf.Descriptors.Descriptor;
 
-import gov.hhs.aspr.gcm.translation.core.Translator;
+import gov.hhs.aspr.gcm.translation.core.ObjectTranslator;
 import gov.hhs.aspr.gcm.translation.plugins.resources.input.ResourceIdInput;
 import gov.hhs.aspr.gcm.translation.plugins.resources.input.ResourceInitializationInput;
 import plugins.resources.support.ResourceId;
 import plugins.resources.support.ResourceInitialization;
 
 public class ResourceInitializationTranslator
-        extends Translator<ResourceInitializationInput, ResourceInitialization> {
+        extends ObjectTranslator<ResourceInitializationInput, ResourceInitialization> {
 
     @Override
     protected ResourceInitialization convertInputObject(ResourceInitializationInput inputObject) {

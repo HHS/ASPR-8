@@ -19,10 +19,10 @@ import gov.hhs.aspr.gcm.translation.plugins.materials.translators.TestBatchPrope
 import gov.hhs.aspr.gcm.translation.plugins.materials.translators.TestMaterialIdTranslator;
 import gov.hhs.aspr.gcm.translation.plugins.materials.translators.TestMaterialsProducerIdTranslator;
 import gov.hhs.aspr.gcm.translation.plugins.materials.translators.TestMaterialsProducerPropertyIdTranslator;
-import gov.hhs.aspr.gcm.translation.plugins.people.PeoplePluginBundle;
-import gov.hhs.aspr.gcm.translation.plugins.properties.PropertiesPluginBundle;
-import gov.hhs.aspr.gcm.translation.plugins.regions.RegionsPluginBundle;
-import gov.hhs.aspr.gcm.translation.plugins.resources.ResourcesPluginBundle;
+import gov.hhs.aspr.gcm.translation.plugins.people.PeopleTranslatorModule;
+import gov.hhs.aspr.gcm.translation.plugins.properties.PropertiesTranslatorModule;
+import gov.hhs.aspr.gcm.translation.plugins.regions.RegionsTranslatorModule;
+import gov.hhs.aspr.gcm.translation.plugins.resources.ResourcesTranslatorModule;
 import gov.hhs.aspr.gcm.translation.plugins.resources.translators.TestResourceIdTranslator;
 import nucleus.PluginData;
 import plugins.materials.MaterialsPluginData;
@@ -179,11 +179,11 @@ public class App {
         String outputFileName = "./materials-plugin/src/main/resources/json/output/output.json";
 
         TranslatorController translatorController = TranslatorController.builder()
-                .addBundle(MaterialsPluginTranslator.getPluginBundle(inputFileName, outputFileName))
-                .addBundle(PropertiesPluginBundle.getPluginBundle())
-                .addBundle(ResourcesPluginBundle.getPluginBundle())
-                .addBundle(RegionsPluginBundle.getPluginBundle())
-                .addBundle(PeoplePluginBundle.getPluginBundle())
+                .addBundle(MaterialsTranslatorModule.getTranslatorModule(inputFileName, outputFileName))
+                .addBundle(PropertiesTranslatorModule.getTranslatorModule())
+                .addBundle(ResourcesTranslatorModule.getTranslatorModule())
+                .addBundle(RegionsTranslatorModule.getTranslatorModule())
+                .addBundle(PeopleTranslatorModule.getTranslatorModule())
                 .addTranslator(new TestResourceIdTranslator())
                 .addTranslator(new TestBatchPropertyIdTranslator())
                 .addTranslator(new TestMaterialIdTranslator())

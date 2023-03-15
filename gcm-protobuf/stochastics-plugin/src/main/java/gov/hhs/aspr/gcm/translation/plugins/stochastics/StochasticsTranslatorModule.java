@@ -5,17 +5,31 @@ import gov.hhs.aspr.gcm.translation.plugins.stochastics.translators.RandomGenera
 import gov.hhs.aspr.gcm.translation.plugins.stochastics.translators.StochasticsPluginDataTranslator;
 import gov.hhs.aspr.gcm.translation.plugins.stochastics.input.StochasticsPluginDataInput;
 
-public class StochasticsPluginBundle {
-    public static TranslatorModule getPluginBundle(String inputFileName, String outputFileName) {
+public class StochasticsTranslatorModule {
+
+    private StochasticsTranslatorModule() {
+
+    }
+
+    private static TranslatorModule.Builder getBaseModule() {
         return TranslatorModule.builder()
                 .setPluginBundleId(StochasticsPluginBundleId.PLUGIN_BUNDLE_ID)
-                .setInputFileName(inputFileName)
-                .setOutputFileName(outputFileName)
                 .setInputObjectType(StochasticsPluginDataInput.getDefaultInstance())
                 .setInitializer((translatorContext) -> {
                     translatorContext.addTranslator(new StochasticsPluginDataTranslator());
                     translatorContext.addTranslator(new RandomGeneratorIdTranslator());
-                })
+                });
+
+    }
+
+    public static TranslatorModule getTranslatorModule(String inputFileName, String outputFileName) {
+        return getBaseModule()
+                .setInputFileName(inputFileName)
+                .setOutputFileName(outputFileName)
                 .build();
+    }
+
+    public static TranslatorModule getTranslatorModule() {
+        return getBaseModule().build();
     }
 }

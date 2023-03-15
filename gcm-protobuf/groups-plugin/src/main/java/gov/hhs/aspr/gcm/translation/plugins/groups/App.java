@@ -16,8 +16,8 @@ import gov.hhs.aspr.gcm.translation.core.TranslatorController;
 import gov.hhs.aspr.gcm.translation.plugins.groups.translators.SimpleGroupTypeIdTranslator;
 import gov.hhs.aspr.gcm.translation.plugins.groups.translators.TestGroupPropertyIdTranslator;
 import gov.hhs.aspr.gcm.translation.plugins.groups.translators.TestGroupTypeIdTranslator;
-import gov.hhs.aspr.gcm.translation.plugins.people.PeoplePluginBundle;
-import gov.hhs.aspr.gcm.translation.plugins.properties.PropertiesPluginBundle;
+import gov.hhs.aspr.gcm.translation.plugins.people.PeopleTranslatorModule;
+import gov.hhs.aspr.gcm.translation.plugins.properties.PropertiesTranslatorModule;
 import nucleus.PluginData;
 import plugins.groups.GroupsPluginData;
 import plugins.groups.support.GroupId;
@@ -171,9 +171,9 @@ public class App {
         String outputFileName = "./groups-plugin/src/main/resources/json/output/output.json";
 
         TranslatorController translatorController = TranslatorController.builder()
-                .addBundle(GroupsPluginTranslator.getPluginBundle(inputFileName, outputFileName))
-                .addBundle(PropertiesPluginBundle.getPluginBundle())
-                .addBundle(PeoplePluginBundle.getPluginBundle())
+                .addBundle(GroupsTranslatorModule.getTranslatorModule(inputFileName, outputFileName))
+                .addBundle(PropertiesTranslatorModule.getTranslatorModule())
+                .addBundle(PeopleTranslatorModule.getTranslatorModule())
                 .addTranslator(new TestGroupTypeIdTranslator())
                 .addTranslator(new TestGroupPropertyIdTranslator())
                 .addTranslator(new SimpleGroupTypeIdTranslator())

@@ -6,29 +6,33 @@ import gov.hhs.aspr.gcm.translation.plugins.people.translators.PersonIdTranslato
 import gov.hhs.aspr.gcm.translation.plugins.people.input.PeoplePluginDataInput;
 import gov.hhs.aspr.gcm.translation.plugins.people.input.PersonIdInput;
 
-public class PeoplePluginBundle {
+public class PeopleTranslatorModule {
 
-    private static TranslatorModule.Builder setConstants(TranslatorModule.Builder builder) {
-        builder.setPluginBundleId(PeoplePluginBundleId.PLUGIN_BUNDLE_ID)
+    private PeopleTranslatorModule() {
+    }
+
+    private static TranslatorModule.Builder getBaseModule() {
+        return TranslatorModule.builder()
+                .setPluginBundleId(PeopleTranslatorModuleId.TRANSLATOR_MODULE_ID)
                 .setInputObjectType(PeoplePluginDataInput.getDefaultInstance())
                 .setInitializer((translatorContext) -> {
                     translatorContext.addTranslator(new PeoplePluginDataTranslator());
                     translatorContext.addTranslator(new PersonIdTranslator());
 
-                    translatorContext.addFieldToIncludeDefaultValue(PersonIdInput.getDescriptor().findFieldByName("id"));
+                    translatorContext
+                            .addFieldToIncludeDefaultValue(PersonIdInput.getDescriptor().findFieldByName("id"));
                 });
 
-        return builder;
     }
 
-    public static TranslatorModule getPluginBundle(String inputFileName, String outputFileName) {
-        return setConstants(TranslatorModule.builder())
+    public static TranslatorModule getTranslatorModule(String inputFileName, String outputFileName) {
+        return getBaseModule()
                 .setInputFileName(inputFileName)
                 .setOutputFileName(outputFileName)
                 .build();
     }
 
-    public static TranslatorModule getPluginBundle() {
-        return setConstants(TranslatorModule.builder()).build();
+    public static TranslatorModule getTranslatorModule() {
+        return getBaseModule().build();
     }
 }

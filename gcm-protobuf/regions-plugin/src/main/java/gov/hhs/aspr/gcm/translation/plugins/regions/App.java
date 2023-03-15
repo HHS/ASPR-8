@@ -12,8 +12,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import gov.hhs.aspr.gcm.translation.core.TranslatorController;
-import gov.hhs.aspr.gcm.translation.plugins.people.PeoplePluginBundle;
-import gov.hhs.aspr.gcm.translation.plugins.properties.PropertiesPluginBundle;
+import gov.hhs.aspr.gcm.translation.plugins.people.PeopleTranslatorModule;
+import gov.hhs.aspr.gcm.translation.plugins.properties.PropertiesTranslatorModule;
 import gov.hhs.aspr.gcm.translation.plugins.regions.translators.TestRegionIdTranslator;
 import gov.hhs.aspr.gcm.translation.plugins.regions.translators.TestRegionPropertyIdTranslator;
 import nucleus.PluginData;
@@ -135,9 +135,9 @@ public class App {
         String outputFileName = "./regions-plugin/src/main/resources/json/output/output.json";
 
         TranslatorController translatorController = TranslatorController.builder()
-                .addBundle(RegionsPluginBundle.getPluginBundle(inputFileName, outputFileName))
-                .addBundle(PropertiesPluginBundle.getPluginBundle())
-                .addBundle(PeoplePluginBundle.getPluginBundle())
+                .addBundle(RegionsTranslatorModule.getTranslatorModule(inputFileName, outputFileName))
+                .addBundle(PropertiesTranslatorModule.getTranslatorModule())
+                .addBundle(PeopleTranslatorModule.getTranslatorModule())
                 .addTranslator(new TestRegionIdTranslator())
                 .addTranslator(new TestRegionPropertyIdTranslator())
                 .build()

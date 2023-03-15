@@ -8,25 +8,23 @@ import gov.hhs.aspr.gcm.translation.plugins.materials.translators.MaterialsPlugi
 import gov.hhs.aspr.gcm.translation.plugins.materials.translators.MaterialsProducerIdTranslator;
 import gov.hhs.aspr.gcm.translation.plugins.materials.translators.MaterialsProducerPropertyIdTranslator;
 import gov.hhs.aspr.gcm.translation.plugins.materials.translators.StageIdTranslator;
-import gov.hhs.aspr.gcm.translation.plugins.properties.PropertiesPluginBundleId;
-import gov.hhs.aspr.gcm.translation.plugins.resources.ResourcesPluginBundleId;
+import gov.hhs.aspr.gcm.translation.plugins.properties.PropertiesTranslatorModuleId;
+import gov.hhs.aspr.gcm.translation.plugins.resources.ResourcesTranslatorModuleId;
 import gov.hhs.aspr.gcm.translation.plugins.materials.input.BatchIdInput;
 import gov.hhs.aspr.gcm.translation.plugins.materials.input.MaterialsPluginDataInput;
 import gov.hhs.aspr.gcm.translation.plugins.materials.input.StageIdInput;
 
-public class MaterialsPluginTranslator {
-    private MaterialsPluginTranslator() {
+public class MaterialsTranslatorModule {
+    private MaterialsTranslatorModule() {
 
     }
 
-    public static TranslatorModule getPluginBundle(String inputFileName, String outputFileName) {
+    private static TranslatorModule.Builder getBaseModule() {
         return TranslatorModule.builder()
-                .setPluginBundleId(MaterialsPluginTranslatorId.PLUGIN_BUNDLE_ID)
-                .setInputFileName(inputFileName)
-                .setOutputFileName(outputFileName)
+                .setPluginBundleId(MaterialsTranslatorModuleId.TRANSLATOR_MODULE_ID)
                 .setInputObjectType(MaterialsPluginDataInput.getDefaultInstance())
-                .addDependency(PropertiesPluginBundleId.PLUGIN_BUNDLE_ID)
-                .addDependency(ResourcesPluginBundleId.PLUGIN_BUNDLE_ID)
+                .addDependency(PropertiesTranslatorModuleId.TRANSLATOR_MODULE_ID)
+                .addDependency(ResourcesTranslatorModuleId.TRANSLATOR_MODULE_ID)
                 .setInitializer((translatorContext) -> {
                     translatorContext.addTranslator(new MaterialsPluginDataTranslator());
                     translatorContext.addTranslator(new MaterialIdTranslator());
@@ -40,7 +38,18 @@ public class MaterialsPluginTranslator {
                             .addFieldToIncludeDefaultValue(BatchIdInput.getDescriptor().findFieldByName("id"));
                     translatorContext
                             .addFieldToIncludeDefaultValue(StageIdInput.getDescriptor().findFieldByName("id"));
-                })
+                });
+
+    }
+
+    public static TranslatorModule getTranslatorModule(String inputFileName, String outputFileName) {
+        return getBaseModule()
+                .setInputFileName(inputFileName)
+                .setOutputFileName(outputFileName)
                 .build();
+    }
+
+    public static TranslatorModule getTranslatorModule() {
+        return getBaseModule().build();
     }
 }

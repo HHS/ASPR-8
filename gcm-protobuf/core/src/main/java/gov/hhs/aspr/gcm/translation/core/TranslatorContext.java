@@ -12,7 +12,7 @@ public class TranslatorContext {
         this.translatorController = translatorController;
     }
 
-    public <I extends Message, S> void addTranslator(Translator<I, S> translator) {
+    public <I extends Message, S> void addTranslator(ObjectTranslator<I, S> translator) {
         this.translatorController.addTranslator(translator);
     }
 

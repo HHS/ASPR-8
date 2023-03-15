@@ -23,7 +23,7 @@ import util.graph.MutableGraph;
 
 public class TranslatorController {
     private final Data data;
-    private TranslatorCore masterTranslator;
+    private TranslatorCore translatorCore;
     private final List<PluginData> pluginDatas = new ArrayList<>();
     private final List<Object> objects = new ArrayList<>();
     private final Map<Class<?>, TranslatorModule> simObjectClassToPluginBundleMap = new LinkedHashMap<>();
@@ -35,7 +35,7 @@ public class TranslatorController {
     }
 
     private static class Data {
-        private TranslatorCore.Builder masterTranslatorBuilder = TranslatorCore.builder();
+        private TranslatorCore.Builder translatorCoreBuilder = TranslatorCore.builder();
         private final List<TranslatorModule> pluginBundles = new ArrayList<>();
 
         private Data() {
@@ -58,23 +58,23 @@ public class TranslatorController {
             return this;
         }
 
-        public <I extends Message, S> Builder addTranslator(Translator<I, S> translator) {
-            this.data.masterTranslatorBuilder.addTranslator(translator);
+        public <I extends Message, S> Builder addTranslator(ObjectTranslator<I, S> translator) {
+            this.data.translatorCoreBuilder.addTranslator(translator);
             return this;
         }
 
         public <I extends ProtocolMessageEnum, S> Builder addTranslator(EnumTranslator<I, S> translator) {
-            this.data.masterTranslatorBuilder.addTranslator(translator);
+            this.data.translatorCoreBuilder.addTranslator(translator);
             return this;
         }
 
         public Builder setIgnoringUnknownFields(boolean ignoringUnknownFields) {
-            this.data.masterTranslatorBuilder.setIgnoringUnknownFields(ignoringUnknownFields);
+            this.data.translatorCoreBuilder.setIgnoringUnknownFields(ignoringUnknownFields);
             return this;
         }
 
         public Builder setIncludingDefaultValueFields(boolean includingDefaultValueFields) {
-            this.data.masterTranslatorBuilder.setIncludingDefaultValueFields(includingDefaultValueFields);
+            this.data.translatorCoreBuilder.setIncludingDefaultValueFields(includingDefaultValueFields);
             return this;
         }
 
@@ -84,55 +84,55 @@ public class TranslatorController {
         return new Builder(new Data());
     }
 
-    protected <I extends Message, S> void addTranslator(Translator<I, S> translator) {
-        this.data.masterTranslatorBuilder.addTranslator(translator);
+    protected <I extends Message, S> void addTranslator(ObjectTranslator<I, S> translator) {
+        this.data.translatorCoreBuilder.addTranslator(translator);
 
         this.simObjectClassToPluginBundleMap.put(translator.getSimObjectClass(), this.focalBundle);
     }
 
     protected <I extends ProtocolMessageEnum, S> void addTranslator(EnumTranslator<I, S> translator) {
-        this.data.masterTranslatorBuilder.addTranslator(translator);
+        this.data.translatorCoreBuilder.addTranslator(translator);
 
         this.simObjectClassToPluginBundleMap.put(translator.getSimObjectClass(), this.focalBundle);
     }
 
     protected void addFieldToIncludeDefaultValue(FieldDescriptor fieldDescriptor) {
-        this.data.masterTranslatorBuilder.addFieldToIncludeDefaultValue(fieldDescriptor);
+        this.data.translatorCoreBuilder.addFieldToIncludeDefaultValue(fieldDescriptor);
     }
 
     protected <U extends Message.Builder> void readPluginDataInput(Reader reader, U builder) {
-        PluginData pluginData = this.masterTranslator.readJson(reader, builder);
+        PluginData pluginData = this.translatorCore.readJson(reader, builder);
 
         this.simObjectClassToPluginBundleMap.putIfAbsent(pluginData.getClass(), this.focalBundle);
         this.pluginDatas.add(pluginData);
     }
 
     protected <U extends Message.Builder> void readJson(Reader reader, U builder) {
-        Object simObject = this.masterTranslator.readJson(reader, builder);
+        Object simObject = this.translatorCore.readJson(reader, builder);
 
         this.simObjectClassToPluginBundleMap.putIfAbsent(simObject.getClass(), this.focalBundle);
         this.objects.add(simObject);
     }
 
     protected <T extends PluginData> void writePluginDataOutput(Writer writer, T pluginData) {
-        this.masterTranslator.printJson(writer, pluginData);
+        this.translatorCore.printJson(writer, pluginData);
     }
 
     protected void writeOutput(Writer writer, Object simObject) {
-        this.masterTranslator.printJson(writer, simObject);
+        this.translatorCore.printJson(writer, simObject);
     }
 
     // temporary pass through method
-    public TranslatorCore getMasterTranslator() {
-        if (this.masterTranslator == null) {
+    public TranslatorCore getTranslatorCore() {
+        if (this.translatorCore == null) {
             throw new RuntimeException("master translator is null");
         }
 
-        return this.masterTranslator;
+        return this.translatorCore;
     }
 
     private void validateMasterTranslator() {
-        if (this.masterTranslator == null || !this.masterTranslator.isInitialized()) {
+        if (this.translatorCore == null || !this.translatorCore.isInitialized()) {
             throw new RuntimeException(
                     "Trying to call readInput() or writeInput() before calling init on the TranslatorController.");
         }
@@ -149,9 +149,9 @@ public class TranslatorController {
             this.focalBundle = null;
         }
 
-        this.masterTranslator = this.data.masterTranslatorBuilder.build();
+        this.translatorCore = this.data.translatorCoreBuilder.build();
 
-        this.masterTranslator.init();
+        this.translatorCore.init();
 
         return this;
     }
