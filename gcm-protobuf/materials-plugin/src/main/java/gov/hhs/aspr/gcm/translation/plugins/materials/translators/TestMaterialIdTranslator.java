@@ -2,7 +2,7 @@ package gov.hhs.aspr.gcm.translation.plugins.materials.translators;
 
 import com.google.protobuf.Descriptors.EnumDescriptor;
 
-import gov.hhs.aspr.gcm.translation.core.AbstractEnumTranslator;
+import gov.hhs.aspr.gcm.translation.core.EnumTranslator;
 
 import com.google.protobuf.ProtocolMessageEnum;
 
@@ -10,7 +10,7 @@ import gov.hhs.aspr.gcm.translation.plugins.materials.input.TestMaterialIdInput;
 import plugins.materials.testsupport.TestMaterialId;
 
 public class TestMaterialIdTranslator
-        extends AbstractEnumTranslator<TestMaterialIdInput, TestMaterialId> {
+        extends EnumTranslator<TestMaterialIdInput, TestMaterialId> {
 
     @Override
     protected TestMaterialId convertInputObject(TestMaterialIdInput inputObject) {

@@ -2,14 +2,14 @@ package gov.hhs.aspr.gcm.translation.plugins.properties.translators;
 
 import com.google.protobuf.Descriptors.EnumDescriptor;
 
-import gov.hhs.aspr.gcm.translation.core.AbstractEnumTranslator;
+import gov.hhs.aspr.gcm.translation.core.EnumTranslator;
 
 import com.google.protobuf.ProtocolMessageEnum;
 
 import gov.hhs.aspr.gcm.translation.plugins.properties.input.TimeTrackingPolicyInput;
 import plugins.util.properties.TimeTrackingPolicy;
 
-public class TimeTrackingPolicyTranslator extends AbstractEnumTranslator<TimeTrackingPolicyInput, TimeTrackingPolicy> {
+public class TimeTrackingPolicyTranslator extends EnumTranslator<TimeTrackingPolicyInput, TimeTrackingPolicy> {
 
     @Override
     protected TimeTrackingPolicy convertInputObject(TimeTrackingPolicyInput inputObject) {

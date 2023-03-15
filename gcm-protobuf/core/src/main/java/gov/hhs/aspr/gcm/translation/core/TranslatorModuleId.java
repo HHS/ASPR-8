@@ -1,6 +1,6 @@
 package gov.hhs.aspr.gcm.translation.core;
 
-public interface PluginBundleId {
+public interface TranslatorModuleId {
 	/**
 	 * Implementationn consistent with equals()
 	 */

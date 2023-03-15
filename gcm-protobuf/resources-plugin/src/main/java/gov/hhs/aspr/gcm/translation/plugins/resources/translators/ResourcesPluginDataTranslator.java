@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.google.protobuf.Descriptors.Descriptor;
 
-import gov.hhs.aspr.gcm.translation.core.AbstractTranslator;
+import gov.hhs.aspr.gcm.translation.core.Translator;
 import gov.hhs.aspr.gcm.translation.plugins.people.input.PersonIdInput;
 import plugins.people.support.PersonId;
 import gov.hhs.aspr.gcm.translation.plugins.properties.input.PropertyDefinitionInput;
@@ -28,7 +28,7 @@ import plugins.resources.support.ResourcePropertyId;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.TimeTrackingPolicy;
 
-public class ResourcesPluginDataTranslator extends AbstractTranslator<ResourcesPluginDataInput, ResourcesPluginData> {
+public class ResourcesPluginDataTranslator extends Translator<ResourcesPluginDataInput, ResourcesPluginData> {
 
     @Override
     protected ResourcesPluginData convertInputObject(ResourcesPluginDataInput inputObject) {

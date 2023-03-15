@@ -25,18 +25,18 @@ import com.google.protobuf.util.JsonFormat;
 import com.google.protobuf.util.JsonFormat.Parser;
 import com.google.protobuf.util.JsonFormat.Printer;
 
-import gov.hhs.aspr.gcm.translation.core.AbstractEnumTranslator.EnumInstance;
+import gov.hhs.aspr.gcm.translation.core.EnumTranslator.EnumInstance;
 import gov.hhs.aspr.gcm.translation.core.input.WrapperEnumValue;
 import gov.hhs.aspr.gcm.translation.core.translators.PrimitiveTranslators;
 import nucleus.PluginData;
 
-public class MasterTranslator {
+public class TranslatorCore {
 
     private final Data data;
     private boolean debug = true;
     private boolean isInitialized = false;
 
-    private MasterTranslator(Data data) {
+    private TranslatorCore(Data data) {
         this.data = data;
     }
 
@@ -68,7 +68,7 @@ public class MasterTranslator {
             this.data = data;
         }
 
-        public MasterTranslator build() {
+        public TranslatorCore build() {
             this.data.registry = TypeRegistry.newBuilder().add(this.data.descriptorMap.keySet()).build();
 
             Parser parser = JsonFormat.parser().usingTypeRegistry(this.data.registry);
@@ -88,7 +88,7 @@ public class MasterTranslator {
             }
             this.data.jsonPrinter = printer;
 
-            return new MasterTranslator(this.data);
+            return new TranslatorCore(this.data);
         }
 
         public Builder setIgnoringUnknownFields(boolean ignoringUnknownFields) {
@@ -112,7 +112,7 @@ public class MasterTranslator {
             return this;
         }
 
-        public <I extends ProtocolMessageEnum, S> Builder addTranslator(AbstractEnumTranslator<I, S> translator) {
+        public <I extends ProtocolMessageEnum, S> Builder addTranslator(EnumTranslator<I, S> translator) {
             this.data.classToTranslatorMap.putIfAbsent(translator.getInputObjectClass(),
                     translator);
             this.data.classToTranslatorMap.putIfAbsent(translator.getSimObjectClass(), translator);
@@ -126,7 +126,7 @@ public class MasterTranslator {
             return this;
         }
 
-        public <I extends Message, S> Builder addTranslator(AbstractTranslator<I, S> translator) {
+        public <I extends Message, S> Builder addTranslator(Translator<I, S> translator) {
             this.data.classToTranslatorMap.putIfAbsent(translator.getInputObjectClass(),
                     translator);
             this.data.classToTranslatorMap.putIfAbsent(translator.getSimObjectClass(), translator);

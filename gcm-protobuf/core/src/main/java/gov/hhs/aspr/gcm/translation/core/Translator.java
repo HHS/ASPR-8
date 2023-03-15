@@ -4,11 +4,11 @@ import com.google.protobuf.Message;
 import com.google.protobuf.ProtocolMessageEnum;
 import com.google.protobuf.Descriptors.Descriptor;
 
-public abstract class AbstractTranslator<I extends Message, S> implements ITranslator {
-    protected MasterTranslator translator;
+public abstract class Translator<I extends Message, S> implements ITranslator {
+    protected TranslatorCore translator;
     private boolean initialized = false;
 
-    public void init(MasterTranslator translator) {
+    public void init(TranslatorCore translator) {
         this.translator = translator;
         this.initialized = true;
     }

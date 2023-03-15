@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.google.protobuf.Descriptors.Descriptor;
 
-import gov.hhs.aspr.gcm.translation.core.AbstractTranslator;
+import gov.hhs.aspr.gcm.translation.core.Translator;
 import gov.hhs.aspr.gcm.translation.plugins.people.input.PersonIdInput;
 import plugins.people.support.PersonId;
 import plugins.personproperties.PersonPropertiesPluginData;
@@ -18,7 +18,7 @@ import gov.hhs.aspr.gcm.translation.plugins.properties.input.PropertyValueMapInp
 import plugins.util.properties.PropertyDefinition;
 
 public class PersonPropertiesPluginDataTranslator
-        extends AbstractTranslator<PersonPropertiesPluginDataInput, PersonPropertiesPluginData> {
+        extends Translator<PersonPropertiesPluginDataInput, PersonPropertiesPluginData> {
 
     @Override
     protected PersonPropertiesPluginData convertInputObject(PersonPropertiesPluginDataInput inputObject) {

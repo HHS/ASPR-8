@@ -1,6 +1,6 @@
 package gov.hhs.aspr.gcm.translation.plugins.materials;
 
-import gov.hhs.aspr.gcm.translation.core.PluginBundle;
+import gov.hhs.aspr.gcm.translation.core.TranslatorModule;
 import gov.hhs.aspr.gcm.translation.plugins.materials.translators.BatchIdTranslator;
 import gov.hhs.aspr.gcm.translation.plugins.materials.translators.BatchPropertyIdTranslator;
 import gov.hhs.aspr.gcm.translation.plugins.materials.translators.MaterialIdTranslator;
@@ -14,14 +14,14 @@ import gov.hhs.aspr.gcm.translation.plugins.materials.input.BatchIdInput;
 import gov.hhs.aspr.gcm.translation.plugins.materials.input.MaterialsPluginDataInput;
 import gov.hhs.aspr.gcm.translation.plugins.materials.input.StageIdInput;
 
-public class MaterialsPluginBundle {
-    private MaterialsPluginBundle() {
+public class MaterialsPluginTranslator {
+    private MaterialsPluginTranslator() {
 
     }
 
-    public static PluginBundle getPluginBundle(String inputFileName, String outputFileName) {
-        return PluginBundle.builder()
-                .setPluginBundleId(MaterialsPluginBundleId.PLUGIN_BUNDLE_ID)
+    public static TranslatorModule getPluginBundle(String inputFileName, String outputFileName) {
+        return TranslatorModule.builder()
+                .setPluginBundleId(MaterialsPluginTranslatorId.PLUGIN_BUNDLE_ID)
                 .setInputFileName(inputFileName)
                 .setOutputFileName(outputFileName)
                 .setInputObjectType(MaterialsPluginDataInput.getDefaultInstance())

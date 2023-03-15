@@ -2,14 +2,14 @@ package gov.hhs.aspr.gcm.translation.plugins.groups.translators;
 
 import com.google.protobuf.Descriptors.EnumDescriptor;
 
-import gov.hhs.aspr.gcm.translation.core.AbstractEnumTranslator;
+import gov.hhs.aspr.gcm.translation.core.EnumTranslator;
 
 import com.google.protobuf.ProtocolMessageEnum;
 
 import gov.hhs.aspr.gcm.translation.plugins.groups.input.TestGroupTypeIdInput;
 import plugins.groups.testsupport.TestGroupTypeId;
 
-public class TestGroupTypeIdTranslator extends AbstractEnumTranslator<TestGroupTypeIdInput, TestGroupTypeId> {
+public class TestGroupTypeIdTranslator extends EnumTranslator<TestGroupTypeIdInput, TestGroupTypeId> {
 
     @Override
     protected TestGroupTypeId convertInputObject(TestGroupTypeIdInput inputObject) {

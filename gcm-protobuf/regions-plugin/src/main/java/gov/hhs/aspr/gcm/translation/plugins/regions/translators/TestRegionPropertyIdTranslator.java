@@ -2,14 +2,14 @@ package gov.hhs.aspr.gcm.translation.plugins.regions.translators;
 
 import com.google.protobuf.Descriptors.EnumDescriptor;
 
-import gov.hhs.aspr.gcm.translation.core.AbstractEnumTranslator;
+import gov.hhs.aspr.gcm.translation.core.EnumTranslator;
 
 import com.google.protobuf.ProtocolMessageEnum;
 
 import gov.hhs.aspr.gcm.translation.plugins.regions.input.TestRegionPropertyIdInput;
 import plugins.regions.testsupport.TestRegionPropertyId;
 
-public class TestRegionPropertyIdTranslator extends AbstractEnumTranslator<TestRegionPropertyIdInput, TestRegionPropertyId> {
+public class TestRegionPropertyIdTranslator extends EnumTranslator<TestRegionPropertyIdInput, TestRegionPropertyId> {
 
     @Override
     protected TestRegionPropertyId convertInputObject(TestRegionPropertyIdInput inputObject) {

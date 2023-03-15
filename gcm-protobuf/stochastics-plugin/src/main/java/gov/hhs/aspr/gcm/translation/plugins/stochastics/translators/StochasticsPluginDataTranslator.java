@@ -2,14 +2,14 @@ package gov.hhs.aspr.gcm.translation.plugins.stochastics.translators;
 
 import com.google.protobuf.Descriptors.Descriptor;
 
-import gov.hhs.aspr.gcm.translation.core.AbstractTranslator;
+import gov.hhs.aspr.gcm.translation.core.Translator;
 import plugins.stochastics.StochasticsPluginData;
 import gov.hhs.aspr.gcm.translation.plugins.stochastics.input.RandomNumberGeneratorIdInput;
 import gov.hhs.aspr.gcm.translation.plugins.stochastics.input.StochasticsPluginDataInput;
 import plugins.stochastics.support.RandomNumberGeneratorId;
 
 public class StochasticsPluginDataTranslator
-        extends AbstractTranslator<StochasticsPluginDataInput, StochasticsPluginData> {
+        extends Translator<StochasticsPluginDataInput, StochasticsPluginData> {
 
     @Override
     protected StochasticsPluginData convertInputObject(StochasticsPluginDataInput inputObject) {

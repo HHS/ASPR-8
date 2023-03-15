@@ -77,7 +77,7 @@ public class App {
         String outputFileName = "./globalproperties-plugin/src/main/resources/json/output/output.json";
 
         TranslatorController translatorController = TranslatorController.builder()
-                .addBundle(GlobalPropertiesPluginBundle.getPluginBundle(inputFileName, outputFileName))
+                .addBundle(GlobalPropertiesTranslator.getPluginBundle(inputFileName, outputFileName))
                 .addBundle(PropertiesPluginBundle.getPluginBundle())
                 .addTranslator(new TestGlobalPropertyIdTranslator())
                 .build()

@@ -12,11 +12,11 @@ public class TranslatorContext {
         this.translatorController = translatorController;
     }
 
-    public <I extends Message, S> void addTranslator(AbstractTranslator<I, S> translator) {
+    public <I extends Message, S> void addTranslator(Translator<I, S> translator) {
         this.translatorController.addTranslator(translator);
     }
 
-    public <I extends ProtocolMessageEnum, S> void addTranslator(AbstractEnumTranslator<I, S> translator) {
+    public <I extends ProtocolMessageEnum, S> void addTranslator(EnumTranslator<I, S> translator) {
         this.translatorController.addTranslator(translator);
     }
 

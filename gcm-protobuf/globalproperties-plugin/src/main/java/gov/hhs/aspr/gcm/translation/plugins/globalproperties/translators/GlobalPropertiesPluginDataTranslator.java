@@ -2,7 +2,7 @@ package gov.hhs.aspr.gcm.translation.plugins.globalproperties.translators;
 
 import com.google.protobuf.Descriptors.Descriptor;
 
-import gov.hhs.aspr.gcm.translation.core.AbstractTranslator;
+import gov.hhs.aspr.gcm.translation.core.Translator;
 import plugins.globalproperties.GlobalPropertiesPluginData;
 import gov.hhs.aspr.gcm.translation.plugins.globalproperties.input.GlobalPropertiesPluginDataInput;
 import plugins.globalproperties.support.GlobalPropertyId;
@@ -12,7 +12,7 @@ import gov.hhs.aspr.gcm.translation.plugins.properties.input.PropertyValueMapInp
 import plugins.util.properties.PropertyDefinition;
 
 public class GlobalPropertiesPluginDataTranslator
-        extends AbstractTranslator<GlobalPropertiesPluginDataInput, GlobalPropertiesPluginData> {
+        extends Translator<GlobalPropertiesPluginDataInput, GlobalPropertiesPluginData> {
 
     @Override
     protected GlobalPropertiesPluginData convertInputObject(GlobalPropertiesPluginDataInput inputObject) {

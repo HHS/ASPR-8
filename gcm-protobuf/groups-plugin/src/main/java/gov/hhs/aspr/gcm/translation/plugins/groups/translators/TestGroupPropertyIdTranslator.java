@@ -2,7 +2,7 @@ package gov.hhs.aspr.gcm.translation.plugins.groups.translators;
 
 import com.google.protobuf.Descriptors.EnumDescriptor;
 
-import gov.hhs.aspr.gcm.translation.core.AbstractEnumTranslator;
+import gov.hhs.aspr.gcm.translation.core.EnumTranslator;
 
 import com.google.protobuf.ProtocolMessageEnum;
 
@@ -10,7 +10,7 @@ import gov.hhs.aspr.gcm.translation.plugins.groups.input.TestGroupPropertyIdInpu
 import plugins.groups.testsupport.TestGroupPropertyId;
 
 public class TestGroupPropertyIdTranslator
-        extends AbstractEnumTranslator<TestGroupPropertyIdInput, TestGroupPropertyId> {
+        extends EnumTranslator<TestGroupPropertyIdInput, TestGroupPropertyId> {
 
     @Override
     protected TestGroupPropertyId convertInputObject(TestGroupPropertyIdInput inputObject) {

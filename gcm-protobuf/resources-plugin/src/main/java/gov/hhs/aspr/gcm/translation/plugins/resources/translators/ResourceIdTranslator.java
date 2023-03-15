@@ -2,11 +2,11 @@ package gov.hhs.aspr.gcm.translation.plugins.resources.translators;
 
 import com.google.protobuf.Descriptors.Descriptor;
 
-import gov.hhs.aspr.gcm.translation.core.AbstractTranslator;
+import gov.hhs.aspr.gcm.translation.core.Translator;
 import gov.hhs.aspr.gcm.translation.plugins.resources.input.ResourceIdInput;
 import plugins.resources.support.ResourceId;
 
-public class ResourceIdTranslator extends AbstractTranslator<ResourceIdInput, ResourceId> {
+public class ResourceIdTranslator extends Translator<ResourceIdInput, ResourceId> {
 
     @Override
     protected ResourceId convertInputObject(ResourceIdInput inputObject) {

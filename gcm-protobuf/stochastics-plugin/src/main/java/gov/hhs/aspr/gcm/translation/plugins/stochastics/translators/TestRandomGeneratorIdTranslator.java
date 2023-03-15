@@ -2,7 +2,7 @@ package gov.hhs.aspr.gcm.translation.plugins.stochastics.translators;
 
 import com.google.protobuf.Descriptors.EnumDescriptor;
 
-import gov.hhs.aspr.gcm.translation.core.AbstractEnumTranslator;
+import gov.hhs.aspr.gcm.translation.core.EnumTranslator;
 
 import com.google.protobuf.ProtocolMessageEnum;
 
@@ -10,7 +10,7 @@ import gov.hhs.aspr.gcm.translation.plugins.stochastics.input.TestRandomGenerato
 import plugins.stochastics.testsupport.TestRandomGeneratorId;
 
 public class TestRandomGeneratorIdTranslator
-        extends AbstractEnumTranslator<TestRandomGeneratorIdInput, TestRandomGeneratorId> {
+        extends EnumTranslator<TestRandomGeneratorIdInput, TestRandomGeneratorId> {
 
     @Override
     protected TestRandomGeneratorId convertInputObject(TestRandomGeneratorIdInput inputObject) {

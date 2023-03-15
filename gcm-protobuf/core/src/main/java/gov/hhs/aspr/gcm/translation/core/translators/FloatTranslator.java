@@ -2,11 +2,11 @@ package gov.hhs.aspr.gcm.translation.core.translators;
 
 import com.google.protobuf.Descriptors.Descriptor;
 
-import gov.hhs.aspr.gcm.translation.core.AbstractTranslator;
+import gov.hhs.aspr.gcm.translation.core.Translator;
 
 import com.google.protobuf.FloatValue;
 
-public class FloatTranslator extends AbstractTranslator<FloatValue, Float> {
+public class FloatTranslator extends Translator<FloatValue, Float> {
 
     @Override
     protected Float convertInputObject(FloatValue inputObject) {

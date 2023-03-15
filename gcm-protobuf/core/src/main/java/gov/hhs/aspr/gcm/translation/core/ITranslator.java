@@ -4,7 +4,7 @@ import com.google.protobuf.Message;
 import com.google.protobuf.ProtocolMessageEnum;
 
 public interface ITranslator {
-    void init(MasterTranslator translator);
+    void init(TranslatorCore translator);
 
     <T> T convert(Message message);
 

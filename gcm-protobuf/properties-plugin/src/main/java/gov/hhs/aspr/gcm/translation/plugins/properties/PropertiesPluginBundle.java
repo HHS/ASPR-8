@@ -2,19 +2,19 @@ package gov.hhs.aspr.gcm.translation.plugins.properties;
 
 import com.google.protobuf.Message;
 
-import gov.hhs.aspr.gcm.translation.core.PluginBundle;
+import gov.hhs.aspr.gcm.translation.core.TranslatorModule;
 import gov.hhs.aspr.gcm.translation.plugins.properties.translators.PropertyDefinitionTranslator;
 import gov.hhs.aspr.gcm.translation.plugins.properties.translators.TimeTrackingPolicyTranslator;
 
 public class PropertiesPluginBundle {
 
-    private static PluginBundle.Builder addMessageInput(PluginBundle.Builder builder, Message inputType) {
+    private static TranslatorModule.Builder addMessageInput(TranslatorModule.Builder builder, Message inputType) {
         builder.setInputObjectType(inputType);
 
         return builder;
     }
 
-    private static PluginBundle.Builder setConstants(PluginBundle.Builder builder) {
+    private static TranslatorModule.Builder setConstants(TranslatorModule.Builder builder) {
         builder.setInitializer((translatorContext) -> {
             translatorContext.addTranslator(new PropertyDefinitionTranslator());
             translatorContext.addTranslator(new TimeTrackingPolicyTranslator());
@@ -26,23 +26,23 @@ public class PropertiesPluginBundle {
         return builder;
     }
 
-    public static PluginBundle getPluginBundle(String inputFileName, String outputFileName, Message inputType) {
+    public static TranslatorModule getPluginBundle(String inputFileName, String outputFileName, Message inputType) {
 
-        return addMessageInput(setConstants(PluginBundle.builder()), inputType)
+        return addMessageInput(setConstants(TranslatorModule.builder()), inputType)
                 .setInputFileName(inputFileName)
                 .setOutputFileName(outputFileName)
                 .build();
 
     }
 
-    public static PluginBundle getPluginBundle(Message inputType) {
-        return addMessageInput(setConstants(PluginBundle.builder()), inputType)
+    public static TranslatorModule getPluginBundle(Message inputType) {
+        return addMessageInput(setConstants(TranslatorModule.builder()), inputType)
                 .build();
 
     }
 
-    public static PluginBundle getPluginBundle() {
-        return setConstants(PluginBundle.builder()).build();
+    public static TranslatorModule getPluginBundle() {
+        return setConstants(TranslatorModule.builder()).build();
 
     }
 }

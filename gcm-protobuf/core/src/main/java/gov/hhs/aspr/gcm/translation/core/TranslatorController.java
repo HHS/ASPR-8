@@ -23,20 +23,20 @@ import util.graph.MutableGraph;
 
 public class TranslatorController {
     private final Data data;
-    private MasterTranslator masterTranslator;
+    private TranslatorCore masterTranslator;
     private final List<PluginData> pluginDatas = new ArrayList<>();
     private final List<Object> objects = new ArrayList<>();
-    private final Map<Class<?>, PluginBundle> simObjectClassToPluginBundleMap = new LinkedHashMap<>();
-    private PluginBundle focalBundle = null;
-    private PluginBundleId focalPluginBundleId = null;
+    private final Map<Class<?>, TranslatorModule> simObjectClassToPluginBundleMap = new LinkedHashMap<>();
+    private TranslatorModule focalBundle = null;
+    private TranslatorModuleId focalPluginBundleId = null;
 
     private TranslatorController(Data data) {
         this.data = data;
     }
 
     private static class Data {
-        private MasterTranslator.Builder masterTranslatorBuilder = MasterTranslator.builder();
-        private final List<PluginBundle> pluginBundles = new ArrayList<>();
+        private TranslatorCore.Builder masterTranslatorBuilder = TranslatorCore.builder();
+        private final List<TranslatorModule> pluginBundles = new ArrayList<>();
 
         private Data() {
         }
@@ -53,17 +53,17 @@ public class TranslatorController {
             return new TranslatorController(this.data);
         }
 
-        public Builder addBundle(PluginBundle pluginBundle) {
+        public Builder addBundle(TranslatorModule pluginBundle) {
             this.data.pluginBundles.add(pluginBundle);
             return this;
         }
 
-        public <I extends Message, S> Builder addTranslator(AbstractTranslator<I, S> translator) {
+        public <I extends Message, S> Builder addTranslator(Translator<I, S> translator) {
             this.data.masterTranslatorBuilder.addTranslator(translator);
             return this;
         }
 
-        public <I extends ProtocolMessageEnum, S> Builder addTranslator(AbstractEnumTranslator<I, S> translator) {
+        public <I extends ProtocolMessageEnum, S> Builder addTranslator(EnumTranslator<I, S> translator) {
             this.data.masterTranslatorBuilder.addTranslator(translator);
             return this;
         }
@@ -84,13 +84,13 @@ public class TranslatorController {
         return new Builder(new Data());
     }
 
-    protected <I extends Message, S> void addTranslator(AbstractTranslator<I, S> translator) {
+    protected <I extends Message, S> void addTranslator(Translator<I, S> translator) {
         this.data.masterTranslatorBuilder.addTranslator(translator);
 
         this.simObjectClassToPluginBundleMap.put(translator.getSimObjectClass(), this.focalBundle);
     }
 
-    protected <I extends ProtocolMessageEnum, S> void addTranslator(AbstractEnumTranslator<I, S> translator) {
+    protected <I extends ProtocolMessageEnum, S> void addTranslator(EnumTranslator<I, S> translator) {
         this.data.masterTranslatorBuilder.addTranslator(translator);
 
         this.simObjectClassToPluginBundleMap.put(translator.getSimObjectClass(), this.focalBundle);
@@ -123,7 +123,7 @@ public class TranslatorController {
     }
 
     // temporary pass through method
-    public MasterTranslator getMasterTranslator() {
+    public TranslatorCore getMasterTranslator() {
         if (this.masterTranslator == null) {
             throw new RuntimeException("master translator is null");
         }
@@ -141,9 +141,9 @@ public class TranslatorController {
     public TranslatorController init() {
         TranslatorContext translatorContext = new TranslatorContext(this);
 
-        List<PluginBundle> orderedBundles = this.getOrderedPluginBundles();
+        List<TranslatorModule> orderedBundles = this.getOrderedPluginBundles();
 
-        for (PluginBundle pluginBundle : orderedBundles) {
+        for (TranslatorModule pluginBundle : orderedBundles) {
             this.focalBundle = pluginBundle;
             pluginBundle.getInitializer().accept(translatorContext);
             this.focalBundle = null;
@@ -161,7 +161,7 @@ public class TranslatorController {
 
         ReaderContext readerContext = new ReaderContext(this);
 
-        for (PluginBundle pluginBundle : this.data.pluginBundles) {
+        for (TranslatorModule pluginBundle : this.data.pluginBundles) {
             this.focalBundle = pluginBundle;
             if (!pluginBundle.hasInput())
                 continue;
@@ -183,12 +183,12 @@ public class TranslatorController {
         WriterContext writerContext = new WriterContext(this);
 
         for (PluginData pluginData : this.pluginDatas) {
-            PluginBundle pluginBundle = this.simObjectClassToPluginBundleMap.get(pluginData.getClass());
+            TranslatorModule pluginBundle = this.simObjectClassToPluginBundleMap.get(pluginData.getClass());
             pluginBundle.writePluginDataOutput(writerContext, pluginData);
         }
 
         for (Object simObject : this.objects) {
-            PluginBundle pluginBundle = this.simObjectClassToPluginBundleMap.get(simObject.getClass());
+            TranslatorModule pluginBundle = this.simObjectClassToPluginBundleMap.get(simObject.getClass());
             pluginBundle.writeOutput(writerContext, simObject);
         }
     }
@@ -204,7 +204,7 @@ public class TranslatorController {
 
         WriterContext writerContext = new WriterContext(this);
 
-        PluginBundle pluginBundle = this.simObjectClassToPluginBundleMap.get(pluginData.getClass());
+        TranslatorModule pluginBundle = this.simObjectClassToPluginBundleMap.get(pluginData.getClass());
         this.focalBundle = pluginBundle;
         pluginBundle.writePluginDataOutput(writerContext, pluginData);
         this.focalBundle = null;
@@ -218,17 +218,17 @@ public class TranslatorController {
         return this.objects;
     }
 
-    private List<PluginBundle> getOrderedPluginBundles() {
+    private List<TranslatorModule> getOrderedPluginBundles() {
 
-        MutableGraph<PluginBundleId, Object> mutableGraph = new MutableGraph<>();
+        MutableGraph<TranslatorModuleId, Object> mutableGraph = new MutableGraph<>();
 
-        Map<PluginBundleId, PluginBundle> pluginBundleMap = new LinkedHashMap<>();
+        Map<TranslatorModuleId, TranslatorModule> pluginBundleMap = new LinkedHashMap<>();
 
         /*
          * Add the nodes to the graph, check for duplicate ids, build the
          * mapping from plugin id back to plugin
          */
-        for (PluginBundle pluginBundle : this.data.pluginBundles) {
+        for (TranslatorModule pluginBundle : this.data.pluginBundles) {
             focalPluginBundleId = pluginBundle.getPluginBundleId();
             pluginBundleMap.put(focalPluginBundleId, pluginBundle);
             // ensure that there are no duplicate plugins
@@ -241,9 +241,9 @@ public class TranslatorController {
         }
 
         // Add the edges to the graph
-        for (PluginBundle pluginBundle : this.data.pluginBundles) {
+        for (TranslatorModule pluginBundle : this.data.pluginBundles) {
             focalPluginBundleId = pluginBundle.getPluginBundleId();
-            for (PluginBundleId pluginBundleId : pluginBundle.getPluginBundleDependencies()) {
+            for (TranslatorModuleId pluginBundleId : pluginBundle.getPluginBundleDependencies()) {
                 mutableGraph.addEdge(new Object(), focalPluginBundleId, pluginBundleId);
             }
             focalPluginBundleId = null;
@@ -253,7 +253,7 @@ public class TranslatorController {
          * Check for missing plugins from the plugin dependencies that were
          * collected from the known plugins.
          */
-        for (PluginBundleId pluginBundleId : mutableGraph.getNodes()) {
+        for (TranslatorModuleId pluginBundleId : mutableGraph.getNodes()) {
             if (!pluginBundleMap.containsKey(pluginBundleId)) {
                 List<Object> inboundEdges = mutableGraph.getInboundEdges(pluginBundleId);
                 StringBuilder sb = new StringBuilder();
@@ -267,7 +267,7 @@ public class TranslatorController {
                     } else {
                         sb.append(", ");
                     }
-                    PluginBundleId dependentPluginBundleId = mutableGraph.getOriginNode(edge);
+                    TranslatorModuleId dependentPluginBundleId = mutableGraph.getOriginNode(edge);
                     sb.append(dependentPluginBundleId);
                 }
                 // throw new ContractException(NucleusError.MISSING_PLUGIN, sb.toString());
@@ -280,7 +280,7 @@ public class TranslatorController {
          * evaluator for the graph so that we can determine the order of
          * initialization.
          */
-        Optional<GraphDepthEvaluator<PluginBundleId>> optional = GraphDepthEvaluator
+        Optional<GraphDepthEvaluator<TranslatorModuleId>> optional = GraphDepthEvaluator
                 .getGraphDepthEvaluator(mutableGraph.toGraph());
 
         if (!optional.isPresent()) {
@@ -288,19 +288,19 @@ public class TranslatorController {
              * Explain in detail why there is a circular dependency
              */
 
-            Graph<PluginBundleId, Object> g = mutableGraph.toGraph();
+            Graph<TranslatorModuleId, Object> g = mutableGraph.toGraph();
 
             g = Graphs.getSourceSinkReducedGraph(g);
             g = Graphs.getEdgeReducedGraph(g);
             g = Graphs.getSourceSinkReducedGraph(g);
 
-            List<Graph<PluginBundleId, Object>> cutGraphs = Graphs.cutGraph(g);
+            List<Graph<TranslatorModuleId, Object>> cutGraphs = Graphs.cutGraph(g);
             StringBuilder sb = new StringBuilder();
             String lineSeparator = System.getProperty("line.separator");
             sb.append(lineSeparator);
             boolean firstCutGraph = true;
 
-            for (Graph<PluginBundleId, Object> cutGraph : cutGraphs) {
+            for (Graph<TranslatorModuleId, Object> cutGraph : cutGraphs) {
                 if (firstCutGraph) {
                     firstCutGraph = false;
                 } else {
@@ -308,16 +308,16 @@ public class TranslatorController {
                 }
                 sb.append("Dependency group: ");
                 sb.append(lineSeparator);
-                Set<PluginBundleId> nodes = cutGraph.getNodes().stream()
+                Set<TranslatorModuleId> nodes = cutGraph.getNodes().stream()
                         .collect(Collectors.toCollection(LinkedHashSet::new));
 
-                for (PluginBundleId node : nodes) {
+                for (TranslatorModuleId node : nodes) {
                     sb.append("\t");
                     sb.append(node);
                     sb.append(" requires:");
                     sb.append(lineSeparator);
                     for (Object edge : cutGraph.getInboundEdges(node)) {
-                        PluginBundleId dependencyNode = cutGraph.getOriginNode(edge);
+                        TranslatorModuleId dependencyNode = cutGraph.getOriginNode(edge);
                         if (nodes.contains(dependencyNode)) {
                             sb.append("\t");
                             sb.append("\t");
@@ -333,12 +333,12 @@ public class TranslatorController {
         }
 
         // the graph is acyclic, so the depth evaluator is present
-        GraphDepthEvaluator<PluginBundleId> graphDepthEvaluator = optional.get();
+        GraphDepthEvaluator<TranslatorModuleId> graphDepthEvaluator = optional.get();
 
-        List<PluginBundleId> orderedPluginIds = graphDepthEvaluator.getNodesInRankOrder();
+        List<TranslatorModuleId> orderedPluginIds = graphDepthEvaluator.getNodesInRankOrder();
 
-        List<PluginBundle> orderedPlugins = new ArrayList<>();
-        for (PluginBundleId pluginId : orderedPluginIds) {
+        List<TranslatorModule> orderedPlugins = new ArrayList<>();
+        for (TranslatorModuleId pluginId : orderedPluginIds) {
             orderedPlugins.add(pluginBundleMap.get(pluginId));
         }
 

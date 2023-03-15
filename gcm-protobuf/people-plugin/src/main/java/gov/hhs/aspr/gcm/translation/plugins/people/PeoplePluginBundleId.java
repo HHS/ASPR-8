@@ -1,9 +1,9 @@
 package gov.hhs.aspr.gcm.translation.plugins.people;
 
-import gov.hhs.aspr.gcm.translation.core.PluginBundleId;
+import gov.hhs.aspr.gcm.translation.core.TranslatorModuleId;
 
-public final class PeoplePluginBundleId implements PluginBundleId {
-    public final static PluginBundleId PLUGIN_BUNDLE_ID = new PeoplePluginBundleId();
+public final class PeoplePluginBundleId implements TranslatorModuleId {
+    public final static TranslatorModuleId PLUGIN_BUNDLE_ID = new PeoplePluginBundleId();
 
     private PeoplePluginBundleId() {
     }

@@ -2,11 +2,11 @@ package gov.hhs.aspr.gcm.translation.plugins.groups.translators;
 
 import com.google.protobuf.Descriptors.Descriptor;
 
-import gov.hhs.aspr.gcm.translation.core.AbstractTranslator;
+import gov.hhs.aspr.gcm.translation.core.Translator;
 import gov.hhs.aspr.gcm.translation.plugins.groups.simobjects.SimpleGroupTypeId;
 import gov.hhs.aspr.gcm.translation.plugins.groups.input.SimpleGroupTypeIdInput;
 
-public class SimpleGroupTypeIdTranslator extends AbstractTranslator<SimpleGroupTypeIdInput, SimpleGroupTypeId> {
+public class SimpleGroupTypeIdTranslator extends Translator<SimpleGroupTypeIdInput, SimpleGroupTypeId> {
 
     @Override
     protected SimpleGroupTypeId convertInputObject(SimpleGroupTypeIdInput inputObject) {

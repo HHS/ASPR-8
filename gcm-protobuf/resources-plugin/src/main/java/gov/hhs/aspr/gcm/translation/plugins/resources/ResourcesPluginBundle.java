@@ -1,6 +1,6 @@
 package gov.hhs.aspr.gcm.translation.plugins.resources;
 
-import gov.hhs.aspr.gcm.translation.core.PluginBundle;
+import gov.hhs.aspr.gcm.translation.core.TranslatorModule;
 import gov.hhs.aspr.gcm.translation.plugins.people.PeoplePluginBundleId;
 import gov.hhs.aspr.gcm.translation.plugins.properties.PropertiesPluginBundleId;
 import gov.hhs.aspr.gcm.translation.plugins.regions.RegionsPluginBundleId;
@@ -11,8 +11,8 @@ import gov.hhs.aspr.gcm.translation.plugins.resources.translators.ResourcesPlugi
 import gov.hhs.aspr.gcm.translation.plugins.resources.input.ResourcesPluginDataInput;
 
 public class ResourcesPluginBundle {
-    private static PluginBundle.Builder setConstants() {
-        return PluginBundle.builder()
+    private static TranslatorModule.Builder setConstants() {
+        return TranslatorModule.builder()
                 .setPluginBundleId(ResourcesPluginBundleId.PLUGIN_BUNDLE_ID)
                 .addDependency(PeoplePluginBundleId.PLUGIN_BUNDLE_ID)
                 .addDependency(PropertiesPluginBundleId.PLUGIN_BUNDLE_ID)
@@ -26,7 +26,7 @@ public class ResourcesPluginBundle {
                 .setInputObjectType(ResourcesPluginDataInput.getDefaultInstance());
     }
 
-    public static PluginBundle getPluginBundle(String inputFileName, String outputFileName) {
+    public static TranslatorModule getPluginBundle(String inputFileName, String outputFileName) {
         return setConstants()
                 .setInputFileName(inputFileName)
                 .setOutputFileName(outputFileName)
@@ -34,7 +34,7 @@ public class ResourcesPluginBundle {
                 .build();
     }
 
-    public static PluginBundle getPluginBundle() {
+    public static TranslatorModule getPluginBundle() {
         return setConstants().build();
     }
 }

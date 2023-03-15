@@ -179,7 +179,7 @@ public class App {
         String outputFileName = "./materials-plugin/src/main/resources/json/output/output.json";
 
         TranslatorController translatorController = TranslatorController.builder()
-                .addBundle(MaterialsPluginBundle.getPluginBundle(inputFileName, outputFileName))
+                .addBundle(MaterialsPluginTranslator.getPluginBundle(inputFileName, outputFileName))
                 .addBundle(PropertiesPluginBundle.getPluginBundle())
                 .addBundle(ResourcesPluginBundle.getPluginBundle())
                 .addBundle(RegionsPluginBundle.getPluginBundle())

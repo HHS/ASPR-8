@@ -2,12 +2,12 @@ package gov.hhs.aspr.gcm.translation.plugins.materials.translators;
 
 import com.google.protobuf.Descriptors.Descriptor;
 
-import gov.hhs.aspr.gcm.translation.core.AbstractTranslator;
+import gov.hhs.aspr.gcm.translation.core.Translator;
 import gov.hhs.aspr.gcm.translation.plugins.materials.input.StageIdInput;
 import plugins.materials.support.StageId;
 
 
-public class StageIdTranslator extends AbstractTranslator<StageIdInput, StageId> {
+public class StageIdTranslator extends Translator<StageIdInput, StageId> {
 
     @Override
     protected StageId convertInputObject(StageIdInput inputObject) {

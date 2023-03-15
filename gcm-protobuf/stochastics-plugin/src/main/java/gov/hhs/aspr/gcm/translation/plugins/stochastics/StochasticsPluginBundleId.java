@@ -1,9 +1,9 @@
 package gov.hhs.aspr.gcm.translation.plugins.stochastics;
 
-import gov.hhs.aspr.gcm.translation.core.PluginBundleId;
+import gov.hhs.aspr.gcm.translation.core.TranslatorModuleId;
 
-public final class StochasticsPluginBundleId implements PluginBundleId {
-    public final static PluginBundleId PLUGIN_BUNDLE_ID = new StochasticsPluginBundleId();
+public final class StochasticsPluginBundleId implements TranslatorModuleId {
+    public final static TranslatorModuleId PLUGIN_BUNDLE_ID = new StochasticsPluginBundleId();
 
     private StochasticsPluginBundleId() {
     }

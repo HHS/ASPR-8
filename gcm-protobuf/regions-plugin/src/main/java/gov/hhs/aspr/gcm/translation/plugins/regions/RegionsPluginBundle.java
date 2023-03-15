@@ -1,6 +1,6 @@
 package gov.hhs.aspr.gcm.translation.plugins.regions;
 
-import gov.hhs.aspr.gcm.translation.core.PluginBundle;
+import gov.hhs.aspr.gcm.translation.core.TranslatorModule;
 import gov.hhs.aspr.gcm.translation.plugins.people.PeoplePluginBundleId;
 import gov.hhs.aspr.gcm.translation.plugins.properties.PropertiesPluginBundleId;
 import gov.hhs.aspr.gcm.translation.plugins.regions.translators.RegionIdTranslator;
@@ -12,7 +12,7 @@ import gov.hhs.aspr.gcm.translation.plugins.regions.input.RegionsPluginDataInput
 
 public class RegionsPluginBundle {
 
-    private static PluginBundle.Builder setConstants(PluginBundle.Builder builder) {
+    private static TranslatorModule.Builder setConstants(TranslatorModule.Builder builder) {
         return builder
                 .setPluginBundleId(RegionsPluginBundleId.PLUGIN_BUNDLE_ID)
                 .addDependency(PeoplePluginBundleId.PLUGIN_BUNDLE_ID)
@@ -27,14 +27,14 @@ public class RegionsPluginBundle {
                 .setInputObjectType(RegionsPluginDataInput.getDefaultInstance());
     }
 
-    public static PluginBundle getPluginBundle(String inputFileName, String outputFileName) {
-        return setConstants(PluginBundle.builder())
+    public static TranslatorModule getPluginBundle(String inputFileName, String outputFileName) {
+        return setConstants(TranslatorModule.builder())
                 .setInputFileName(inputFileName)
                 .setOutputFileName(outputFileName)
                 .build();
     }
 
-    public static PluginBundle getPluginBundle() {
-        return setConstants(PluginBundle.builder()).build();
+    public static TranslatorModule getPluginBundle() {
+        return setConstants(TranslatorModule.builder()).build();
     }
 }

@@ -2,11 +2,11 @@ package gov.hhs.aspr.gcm.translation.plugins.regions.translators;
 
 import com.google.protobuf.Descriptors.Descriptor;
 
-import gov.hhs.aspr.gcm.translation.core.AbstractTranslator;
+import gov.hhs.aspr.gcm.translation.core.Translator;
 import gov.hhs.aspr.gcm.translation.plugins.regions.input.RegionIdInput;
 import plugins.regions.support.RegionId;
 
-public class RegionIdTranslator extends AbstractTranslator<RegionIdInput, RegionId> {
+public class RegionIdTranslator extends Translator<RegionIdInput, RegionId> {
 
     @Override
     protected RegionId convertInputObject(RegionIdInput inputObject) {

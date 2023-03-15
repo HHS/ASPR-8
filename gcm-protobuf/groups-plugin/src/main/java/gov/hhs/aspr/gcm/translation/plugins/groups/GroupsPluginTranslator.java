@@ -1,6 +1,6 @@
 package gov.hhs.aspr.gcm.translation.plugins.groups;
 
-import gov.hhs.aspr.gcm.translation.core.PluginBundle;
+import gov.hhs.aspr.gcm.translation.core.TranslatorModule;
 import gov.hhs.aspr.gcm.translation.plugins.groups.translators.GroupIdTranslator;
 import gov.hhs.aspr.gcm.translation.plugins.groups.translators.GroupPropertyIdTranslator;
 import gov.hhs.aspr.gcm.translation.plugins.groups.translators.GroupTypeIdTranslator;
@@ -10,14 +10,14 @@ import gov.hhs.aspr.gcm.translation.plugins.properties.PropertiesPluginBundleId;
 import gov.hhs.aspr.gcm.translation.plugins.groups.input.GroupIdInput;
 import gov.hhs.aspr.gcm.translation.plugins.groups.input.GroupsPluginDataInput;
 
-public class GroupsPluginBundle {
-    private GroupsPluginBundle() {
+public class GroupsPluginTranslator {
+    private GroupsPluginTranslator() {
 
     }
 
-    public static PluginBundle getPluginBundle(String inputFileName, String outputFileName) {
-        return PluginBundle.builder()
-                .setPluginBundleId(GroupsPluginBundleId.PLUGIN_BUNDLE_ID)
+    public static TranslatorModule getPluginBundle(String inputFileName, String outputFileName) {
+        return TranslatorModule.builder()
+                .setPluginBundleId(GroupsPluginTranslatorId.PLUGIN_BUNDLE_ID)
                 .setInputFileName(inputFileName)
                 .setOutputFileName(outputFileName)
                 .setInputObjectType(GroupsPluginDataInput.getDefaultInstance())

@@ -5,7 +5,7 @@ import java.util.Set;
 
 import com.google.protobuf.Descriptors.Descriptor;
 
-import gov.hhs.aspr.gcm.translation.core.AbstractTranslator;
+import gov.hhs.aspr.gcm.translation.core.Translator;
 import plugins.groups.GroupsPluginData;
 import gov.hhs.aspr.gcm.translation.plugins.groups.input.GroupIdInput;
 import gov.hhs.aspr.gcm.translation.plugins.groups.input.GroupInput;
@@ -25,7 +25,7 @@ import gov.hhs.aspr.gcm.translation.plugins.properties.input.PropertyDefinitionM
 import gov.hhs.aspr.gcm.translation.plugins.properties.input.PropertyValueMapInput;
 import plugins.util.properties.PropertyDefinition;
 
-public class GroupsPluginDataTranslator extends AbstractTranslator<GroupsPluginDataInput, GroupsPluginData> {
+public class GroupsPluginDataTranslator extends Translator<GroupsPluginDataInput, GroupsPluginData> {
 
     @Override
     protected GroupsPluginData convertInputObject(GroupsPluginDataInput inputObject) {
