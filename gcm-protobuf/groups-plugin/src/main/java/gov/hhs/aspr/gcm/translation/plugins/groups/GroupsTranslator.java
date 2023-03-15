@@ -10,16 +10,16 @@ import gov.hhs.aspr.gcm.translation.plugins.properties.PropertiesTranslatorModul
 import gov.hhs.aspr.gcm.translation.plugins.groups.input.GroupIdInput;
 import gov.hhs.aspr.gcm.translation.plugins.groups.input.GroupsPluginDataInput;
 
-public class GroupsTranslatorModule {
-    private GroupsTranslatorModule() {
+public class GroupsTranslator {
+    private GroupsTranslator() {
     }
 
-    private static Translator.Builder getBaseModule() {
+    private static Translator.Builder getBaseTranslator() {
         return Translator.builder()
-                .setPluginBundleId(GroupsTranslatorModuleId.TRANSLATOR_MODULE_ID)
+                .setPluginBundleId(GroupsTranslatorId.TRANSLATOR_ID)
                 .setInputObjectType(GroupsPluginDataInput.getDefaultInstance())
-                .addDependency(PropertiesTranslatorModuleId.TRANSLATOR_MODULE_ID)
-                .addDependency(PeopleTranslatorModuleId.TRANSLATOR_MODULE_ID)
+                .addDependency(PropertiesTranslatorModuleId.TRANSLATOR_ID)
+                .addDependency(PeopleTranslatorModuleId.TRANSLATOR_ID)
                 .setInitializer((translatorContext) -> {
                     translatorContext.addTranslator(new GroupsPluginDataTranslator());
                     translatorContext.addTranslator(new GroupIdTranslator());
@@ -31,14 +31,14 @@ public class GroupsTranslatorModule {
                 });
     }
 
-    public static Translator getTranslatorModule(String inputFileName, String outputFileName) {
-        return getBaseModule()
+    public static Translator getTranslator(String inputFileName, String outputFileName) {
+        return getBaseTranslator()
                 .setInputFileName(inputFileName)
                 .setOutputFileName(outputFileName)
                 .build();
     }
 
-    public static Translator getTranslatorModule() {
-        return getBaseModule().build();
+    public static Translator getTranslator() {
+        return getBaseTranslator().build();
     }
 }

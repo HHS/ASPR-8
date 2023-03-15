@@ -1,4 +1,4 @@
-package gov.hhs.aspr.gcm.translation.plugins.globalproperties.translators;
+package gov.hhs.aspr.gcm.translation.plugins.globalproperties.translatorSpecs;
 
 import com.google.protobuf.Descriptors.EnumDescriptor;
 

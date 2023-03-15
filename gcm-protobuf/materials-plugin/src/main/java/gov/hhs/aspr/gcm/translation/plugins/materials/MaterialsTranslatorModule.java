@@ -21,10 +21,10 @@ public class MaterialsTranslatorModule {
 
     private static Translator.Builder getBaseModule() {
         return Translator.builder()
-                .setPluginBundleId(MaterialsTranslatorModuleId.TRANSLATOR_MODULE_ID)
+                .setPluginBundleId(MaterialsTranslatorModuleId.TRANSLATOR_ID)
                 .setInputObjectType(MaterialsPluginDataInput.getDefaultInstance())
-                .addDependency(PropertiesTranslatorModuleId.TRANSLATOR_MODULE_ID)
-                .addDependency(ResourcesTranslatorModuleId.TRANSLATOR_MODULE_ID)
+                .addDependency(PropertiesTranslatorModuleId.TRANSLATOR_ID)
+                .addDependency(ResourcesTranslatorModuleId.TRANSLATOR_ID)
                 .setInitializer((translatorContext) -> {
                     translatorContext.addTranslator(new MaterialsPluginDataTranslator());
                     translatorContext.addTranslator(new MaterialIdTranslator());

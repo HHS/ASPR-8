@@ -17,10 +17,10 @@ public class ResourcesTranslatorModule {
 
     private static Translator.Builder getBaseModule() {
         return Translator.builder()
-                .setPluginBundleId(ResourcesTranslatorModuleId.TRANSLATOR_MODULE_ID)
-                .addDependency(PeopleTranslatorModuleId.TRANSLATOR_MODULE_ID)
-                .addDependency(PropertiesTranslatorModuleId.TRANSLATOR_MODULE_ID)
-                .addDependency(RegionsTranslatorModuleId.TRANSLATOR_MODULE_ID)
+                .setPluginBundleId(ResourcesTranslatorModuleId.TRANSLATOR_ID)
+                .addDependency(PeopleTranslatorModuleId.TRANSLATOR_ID)
+                .addDependency(PropertiesTranslatorModuleId.TRANSLATOR_ID)
+                .addDependency(RegionsTranslatorModuleId.TRANSLATOR_ID)
                 .setInitializer((translatorContext) -> {
                     translatorContext.addTranslator(new ResourcesPluginDataTranslator());
                     translatorContext.addTranslator(new ResourceIdTranslator());

@@ -13,9 +13,9 @@ public class PersonPropertiesTranslatorModule {
 
     private static Translator.Builder getBaseModule() {
         return Translator.builder()
-                .setPluginBundleId(PersonPropertiesTranslatorModuleId.TRANSLATOR_MODULE_ID)
-                .addDependency(PropertiesTranslatorModuleId.TRANSLATOR_MODULE_ID)
-                .addDependency(PeopleTranslatorModuleId.TRANSLATOR_MODULE_ID)
+                .setPluginBundleId(PersonPropertiesTranslatorModuleId.TRANSLATOR_ID)
+                .addDependency(PropertiesTranslatorModuleId.TRANSLATOR_ID)
+                .addDependency(PeopleTranslatorModuleId.TRANSLATOR_ID)
                 .setInputObjectType(PersonPropertiesPluginDataInput.getDefaultInstance())
                 .setInitializer((translatorContext) -> {
                     translatorContext.addTranslator(new PersonPropertiesPluginDataTranslator());

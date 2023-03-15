@@ -20,7 +20,7 @@ public class PropertiesTranslatorModule {
                 })
                 .setInputIsPluginData(false)
                 .setOutputIsPluginData(false)
-                .setPluginBundleId(PropertiesTranslatorModuleId.TRANSLATOR_MODULE_ID);
+                .setPluginBundleId(PropertiesTranslatorModuleId.TRANSLATOR_ID);
 
     }
 

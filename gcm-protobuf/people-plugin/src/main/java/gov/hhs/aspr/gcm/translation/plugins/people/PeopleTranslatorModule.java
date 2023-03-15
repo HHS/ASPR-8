@@ -13,7 +13,7 @@ public class PeopleTranslatorModule {
 
     private static Translator.Builder getBaseModule() {
         return Translator.builder()
-                .setPluginBundleId(PeopleTranslatorModuleId.TRANSLATOR_MODULE_ID)
+                .setPluginBundleId(PeopleTranslatorModuleId.TRANSLATOR_ID)
                 .setInputObjectType(PeoplePluginDataInput.getDefaultInstance())
                 .setInitializer((translatorContext) -> {
                     translatorContext.addTranslator(new PeoplePluginDataTranslator());
