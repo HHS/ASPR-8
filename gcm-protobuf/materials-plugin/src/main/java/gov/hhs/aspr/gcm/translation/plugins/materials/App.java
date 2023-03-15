@@ -20,10 +20,10 @@ import gov.hhs.aspr.gcm.translation.plugins.materials.translatorSpecs.TestMateri
 import gov.hhs.aspr.gcm.translation.plugins.materials.translatorSpecs.TestMaterialsProducerIdTranslator;
 import gov.hhs.aspr.gcm.translation.plugins.materials.translatorSpecs.TestMaterialsProducerPropertyIdTranslator;
 import gov.hhs.aspr.gcm.translation.plugins.people.PeopleTranslator;
-import gov.hhs.aspr.gcm.translation.plugins.properties.PropertiesTranslatorModule;
+import gov.hhs.aspr.gcm.translation.plugins.properties.PropertiesTranslator;
 import gov.hhs.aspr.gcm.translation.plugins.regions.RegionsTranslatorModule;
-import gov.hhs.aspr.gcm.translation.plugins.resources.ResourcesTranslatorModule;
-import gov.hhs.aspr.gcm.translation.plugins.resources.translators.TestResourceIdTranslator;
+import gov.hhs.aspr.gcm.translation.plugins.resources.ResourcesTranslator;
+import gov.hhs.aspr.gcm.translation.plugins.resources.translatorSpecs.TestResourceIdTranslator;
 import nucleus.PluginData;
 import plugins.materials.MaterialsPluginData;
 import plugins.materials.support.BatchId;
@@ -180,8 +180,8 @@ public class App {
 
         TranslatorController translatorController = TranslatorController.builder()
                 .addBundle(MaterialsTranslator.getTranslator(inputFileName, outputFileName))
-                .addBundle(PropertiesTranslatorModule.getTranslatorModule())
-                .addBundle(ResourcesTranslatorModule.getTranslatorModule())
+                .addBundle(PropertiesTranslator.getTranslator())
+                .addBundle(ResourcesTranslator.getTranslator())
                 .addBundle(RegionsTranslatorModule.getTranslatorModule())
                 .addBundle(PeopleTranslator.getTranslator())
                 .addTranslatorSpec(new TestResourceIdTranslator())

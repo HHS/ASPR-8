@@ -2,7 +2,7 @@ package gov.hhs.aspr.gcm.translation.plugins.groups;
 
 import gov.hhs.aspr.gcm.translation.core.Translator;
 import gov.hhs.aspr.gcm.translation.plugins.people.PeopleTranslatorId;
-import gov.hhs.aspr.gcm.translation.plugins.properties.PropertiesTranslatorModuleId;
+import gov.hhs.aspr.gcm.translation.plugins.properties.PropertiesTranslatorId;
 import gov.hhs.aspr.gcm.translation.plugins.groups.input.GroupIdInput;
 import gov.hhs.aspr.gcm.translation.plugins.groups.input.GroupsPluginDataInput;
 import gov.hhs.aspr.gcm.translation.plugins.groups.translatorSpecs.GroupIdTranslator;
@@ -18,7 +18,7 @@ public class GroupsTranslator {
         return Translator.builder()
                 .setPluginBundleId(GroupsTranslatorId.TRANSLATOR_ID)
                 .setInputObjectType(GroupsPluginDataInput.getDefaultInstance())
-                .addDependency(PropertiesTranslatorModuleId.TRANSLATOR_ID)
+                .addDependency(PropertiesTranslatorId.TRANSLATOR_ID)
                 .addDependency(PeopleTranslatorId.TRANSLATOR_ID)
                 .setInitializer((translatorContext) -> {
                     translatorContext.addTranslatorSpec(new GroupsPluginDataTranslator());

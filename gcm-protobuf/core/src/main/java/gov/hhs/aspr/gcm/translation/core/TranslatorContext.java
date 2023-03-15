@@ -16,7 +16,7 @@ public class TranslatorContext {
         this.translatorController.addTranslatorSpec(translatorSpec);
     }
 
-    public <I extends ProtocolMessageEnum, S> void addTranslator(AEnumTranslatorSpec<I, S> translatorSpec) {
+    public <I extends ProtocolMessageEnum, S> void addTranslatorSpec(AEnumTranslatorSpec<I, S> translatorSpec) {
         this.translatorController.addTranslatorSpec(translatorSpec);
     }
 

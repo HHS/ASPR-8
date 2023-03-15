@@ -10,7 +10,7 @@ import com.google.gson.JsonObject;
 
 import gov.hhs.aspr.gcm.translation.core.TranslatorController;
 import gov.hhs.aspr.gcm.translation.plugins.globalproperties.translatorSpecs.TestGlobalPropertyIdTranslator;
-import gov.hhs.aspr.gcm.translation.plugins.properties.PropertiesTranslatorModule;
+import gov.hhs.aspr.gcm.translation.plugins.properties.PropertiesTranslator;
 import nucleus.PluginData;
 import plugins.globalproperties.GlobalPropertiesPluginData;
 import plugins.globalproperties.support.GlobalPropertyId;
@@ -78,7 +78,7 @@ public class App {
 
         TranslatorController translatorController = TranslatorController.builder()
                 .addBundle(GlobalPropertiesTranslator.getTranslator(inputFileName, outputFileName))
-                .addBundle(PropertiesTranslatorModule.getTranslatorModule())
+                .addBundle(PropertiesTranslator.getTranslator())
                 .addTranslatorSpec(new TestGlobalPropertyIdTranslator())
                 .build()
                 .init();

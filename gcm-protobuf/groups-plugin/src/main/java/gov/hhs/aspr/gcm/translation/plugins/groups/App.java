@@ -17,7 +17,7 @@ import gov.hhs.aspr.gcm.translation.plugins.groups.translatorSpecs.SimpleGroupTy
 import gov.hhs.aspr.gcm.translation.plugins.groups.translatorSpecs.TestGroupPropertyIdTranslator;
 import gov.hhs.aspr.gcm.translation.plugins.groups.translatorSpecs.TestGroupTypeIdTranslator;
 import gov.hhs.aspr.gcm.translation.plugins.people.PeopleTranslator;
-import gov.hhs.aspr.gcm.translation.plugins.properties.PropertiesTranslatorModule;
+import gov.hhs.aspr.gcm.translation.plugins.properties.PropertiesTranslator;
 import nucleus.PluginData;
 import plugins.groups.GroupsPluginData;
 import plugins.groups.support.GroupId;
@@ -172,7 +172,7 @@ public class App {
 
         TranslatorController translatorController = TranslatorController.builder()
                 .addBundle(GroupsTranslator.getTranslator(inputFileName, outputFileName))
-                .addBundle(PropertiesTranslatorModule.getTranslatorModule())
+                .addBundle(PropertiesTranslator.getTranslator())
                 .addBundle(PeopleTranslator.getTranslator())
                 .addTranslatorSpec(new TestGroupTypeIdTranslator())
                 .addTranslatorSpec(new TestGroupPropertyIdTranslator())

@@ -2,13 +2,13 @@ package gov.hhs.aspr.gcm.translation.plugins.regions;
 
 import gov.hhs.aspr.gcm.translation.core.Translator;
 import gov.hhs.aspr.gcm.translation.plugins.people.PeopleTranslatorId;
-import gov.hhs.aspr.gcm.translation.plugins.properties.PropertiesTranslatorModuleId;
-import gov.hhs.aspr.gcm.translation.plugins.regions.translators.RegionIdTranslator;
-import gov.hhs.aspr.gcm.translation.plugins.regions.translators.RegionPropertyIdTranslator;
-import gov.hhs.aspr.gcm.translation.plugins.regions.translators.RegionsPluginDataTranslator;
-import gov.hhs.aspr.gcm.translation.plugins.regions.translators.SimpleRegionIdTranslator;
-import gov.hhs.aspr.gcm.translation.plugins.regions.translators.SimpleRegionPropertyIdTranslator;
+import gov.hhs.aspr.gcm.translation.plugins.properties.PropertiesTranslatorId;
 import gov.hhs.aspr.gcm.translation.plugins.regions.input.RegionsPluginDataInput;
+import gov.hhs.aspr.gcm.translation.plugins.regions.translatorSpecs.RegionIdTranslator;
+import gov.hhs.aspr.gcm.translation.plugins.regions.translatorSpecs.RegionPropertyIdTranslator;
+import gov.hhs.aspr.gcm.translation.plugins.regions.translatorSpecs.RegionsPluginDataTranslator;
+import gov.hhs.aspr.gcm.translation.plugins.regions.translatorSpecs.SimpleRegionIdTranslator;
+import gov.hhs.aspr.gcm.translation.plugins.regions.translatorSpecs.SimpleRegionPropertyIdTranslator;
 
 public class RegionsTranslatorModule {
 
@@ -20,7 +20,7 @@ public class RegionsTranslatorModule {
         return Translator.builder()
                 .setPluginBundleId(RegionsTranslatorModuleId.TRANSLATOR_ID)
                 .addDependency(PeopleTranslatorId.TRANSLATOR_ID)
-                .addDependency(PropertiesTranslatorModuleId.TRANSLATOR_ID)
+                .addDependency(PropertiesTranslatorId.TRANSLATOR_ID)
                 .setInitializer((translatorContext) -> {
                     translatorContext.addTranslatorSpec(new RegionsPluginDataTranslator());
                     translatorContext.addTranslatorSpec(new RegionIdTranslator());

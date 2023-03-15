@@ -1,8 +1,8 @@
 package gov.hhs.aspr.gcm.translation.plugins.materials;
 
 import gov.hhs.aspr.gcm.translation.core.Translator;
-import gov.hhs.aspr.gcm.translation.plugins.properties.PropertiesTranslatorModuleId;
-import gov.hhs.aspr.gcm.translation.plugins.resources.ResourcesTranslatorModuleId;
+import gov.hhs.aspr.gcm.translation.plugins.properties.PropertiesTranslatorId;
+import gov.hhs.aspr.gcm.translation.plugins.resources.ResourcesTranslatorId;
 import gov.hhs.aspr.gcm.translation.plugins.materials.input.BatchIdInput;
 import gov.hhs.aspr.gcm.translation.plugins.materials.input.MaterialsPluginDataInput;
 import gov.hhs.aspr.gcm.translation.plugins.materials.input.StageIdInput;
@@ -23,8 +23,8 @@ public class MaterialsTranslator {
         return Translator.builder()
                 .setPluginBundleId(MaterialsTranslatorId.TRANSLATOR_ID)
                 .setInputObjectType(MaterialsPluginDataInput.getDefaultInstance())
-                .addDependency(PropertiesTranslatorModuleId.TRANSLATOR_ID)
-                .addDependency(ResourcesTranslatorModuleId.TRANSLATOR_ID)
+                .addDependency(PropertiesTranslatorId.TRANSLATOR_ID)
+                .addDependency(ResourcesTranslatorId.TRANSLATOR_ID)
                 .setInitializer((translatorContext) -> {
                     translatorContext.addTranslatorSpec(new MaterialsPluginDataTranslator());
                     translatorContext.addTranslatorSpec(new MaterialIdTranslator());

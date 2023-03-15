@@ -15,7 +15,7 @@ import com.google.gson.JsonObject;
 import gov.hhs.aspr.gcm.translation.core.TranslatorController;
 import gov.hhs.aspr.gcm.translation.plugins.people.PeopleTranslator;
 import gov.hhs.aspr.gcm.translation.plugins.personproperties.translatorSpecs.TestPersonPropertyIdTranslator;
-import gov.hhs.aspr.gcm.translation.plugins.properties.PropertiesTranslatorModule;
+import gov.hhs.aspr.gcm.translation.plugins.properties.PropertiesTranslator;
 import nucleus.PluginData;
 import plugins.people.support.PersonId;
 import plugins.personproperties.PersonPropertiesPluginData;
@@ -126,7 +126,7 @@ public class App {
 
         TranslatorController translatorController = TranslatorController.builder()
                 .addBundle(PersonPropertiesTranslator.getTranslator(inputFileName, outputFileName))
-                .addBundle(PropertiesTranslatorModule.getTranslatorModule())
+                .addBundle(PropertiesTranslator.getTranslator())
                 .addBundle(PeopleTranslator.getTranslator())
                 .addTranslatorSpec(new TestPersonPropertyIdTranslator())
                 .build()

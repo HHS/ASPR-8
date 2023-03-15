@@ -9,10 +9,10 @@ import com.google.gson.JsonObject;
 import gov.hhs.aspr.gcm.translation.core.TranslatorController;
 import gov.hhs.aspr.gcm.translation.plugins.properties.simobjects.PropertyValueMap;
 import gov.hhs.aspr.gcm.translation.plugins.properties.testsupport.simobjects.TestMessageSimObject;
-import gov.hhs.aspr.gcm.translation.plugins.properties.testsupport.translators.Layer1Translator;
-import gov.hhs.aspr.gcm.translation.plugins.properties.testsupport.translators.TestMessageTranslator;
-import gov.hhs.aspr.gcm.translation.plugins.properties.translators.PropertyDefinitionMapTranslator;
-import gov.hhs.aspr.gcm.translation.plugins.properties.translators.PropertyValueMapTranslator;
+import gov.hhs.aspr.gcm.translation.plugins.properties.testsupport.translatorSpecs.Layer1Translator;
+import gov.hhs.aspr.gcm.translation.plugins.properties.testsupport.translatorSpecs.TestMessageTranslator;
+import gov.hhs.aspr.gcm.translation.plugins.properties.translatorSpecs.PropertyDefinitionMapTranslator;
+import gov.hhs.aspr.gcm.translation.plugins.properties.translatorSpecs.PropertyValueMapTranslator;
 import gov.hhs.aspr.gcm.translation.plugins.properties.input.PropertyValueMapInput;
 
 public class App {
@@ -46,7 +46,7 @@ public class App {
         String outputFileName = "./properties-plugin/src/main/resources/json/output/output.json";
 
         TranslatorController translatorController = TranslatorController.builder()
-                .addBundle(PropertiesTranslatorModule.getTranslatorModule(inputFileName, outputFileName,
+                .addBundle(PropertiesTranslator.getTranslator(inputFileName, outputFileName,
                         PropertyValueMapInput.getDefaultInstance()))
                 .addTranslatorSpec(new TestMessageTranslator())
                 .addTranslatorSpec(new Layer1Translator())
