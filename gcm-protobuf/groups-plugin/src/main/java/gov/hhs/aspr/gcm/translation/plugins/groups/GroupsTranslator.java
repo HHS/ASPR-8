@@ -1,14 +1,14 @@
 package gov.hhs.aspr.gcm.translation.plugins.groups;
 
 import gov.hhs.aspr.gcm.translation.core.Translator;
-import gov.hhs.aspr.gcm.translation.plugins.groups.translators.GroupIdTranslator;
-import gov.hhs.aspr.gcm.translation.plugins.groups.translators.GroupPropertyIdTranslator;
-import gov.hhs.aspr.gcm.translation.plugins.groups.translators.GroupTypeIdTranslator;
-import gov.hhs.aspr.gcm.translation.plugins.groups.translators.GroupsPluginDataTranslator;
-import gov.hhs.aspr.gcm.translation.plugins.people.PeopleTranslatorModuleId;
+import gov.hhs.aspr.gcm.translation.plugins.people.PeopleTranslatorId;
 import gov.hhs.aspr.gcm.translation.plugins.properties.PropertiesTranslatorModuleId;
 import gov.hhs.aspr.gcm.translation.plugins.groups.input.GroupIdInput;
 import gov.hhs.aspr.gcm.translation.plugins.groups.input.GroupsPluginDataInput;
+import gov.hhs.aspr.gcm.translation.plugins.groups.translatorSpecs.GroupIdTranslator;
+import gov.hhs.aspr.gcm.translation.plugins.groups.translatorSpecs.GroupPropertyIdTranslator;
+import gov.hhs.aspr.gcm.translation.plugins.groups.translatorSpecs.GroupTypeIdTranslator;
+import gov.hhs.aspr.gcm.translation.plugins.groups.translatorSpecs.GroupsPluginDataTranslator;
 
 public class GroupsTranslator {
     private GroupsTranslator() {
@@ -19,12 +19,12 @@ public class GroupsTranslator {
                 .setPluginBundleId(GroupsTranslatorId.TRANSLATOR_ID)
                 .setInputObjectType(GroupsPluginDataInput.getDefaultInstance())
                 .addDependency(PropertiesTranslatorModuleId.TRANSLATOR_ID)
-                .addDependency(PeopleTranslatorModuleId.TRANSLATOR_ID)
+                .addDependency(PeopleTranslatorId.TRANSLATOR_ID)
                 .setInitializer((translatorContext) -> {
-                    translatorContext.addTranslator(new GroupsPluginDataTranslator());
-                    translatorContext.addTranslator(new GroupIdTranslator());
-                    translatorContext.addTranslator(new GroupTypeIdTranslator());
-                    translatorContext.addTranslator(new GroupPropertyIdTranslator());
+                    translatorContext.addTranslatorSpec(new GroupsPluginDataTranslator());
+                    translatorContext.addTranslatorSpec(new GroupIdTranslator());
+                    translatorContext.addTranslatorSpec(new GroupTypeIdTranslator());
+                    translatorContext.addTranslatorSpec(new GroupPropertyIdTranslator());
 
                     translatorContext
                             .addFieldToIncludeDefaultValue(GroupIdInput.getDescriptor().findFieldByName("id"));

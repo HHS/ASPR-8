@@ -13,10 +13,10 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import gov.hhs.aspr.gcm.translation.core.TranslatorController;
-import gov.hhs.aspr.gcm.translation.plugins.groups.translators.SimpleGroupTypeIdTranslator;
-import gov.hhs.aspr.gcm.translation.plugins.groups.translators.TestGroupPropertyIdTranslator;
-import gov.hhs.aspr.gcm.translation.plugins.groups.translators.TestGroupTypeIdTranslator;
-import gov.hhs.aspr.gcm.translation.plugins.people.PeopleTranslatorModule;
+import gov.hhs.aspr.gcm.translation.plugins.groups.translatorSpecs.SimpleGroupTypeIdTranslator;
+import gov.hhs.aspr.gcm.translation.plugins.groups.translatorSpecs.TestGroupPropertyIdTranslator;
+import gov.hhs.aspr.gcm.translation.plugins.groups.translatorSpecs.TestGroupTypeIdTranslator;
+import gov.hhs.aspr.gcm.translation.plugins.people.PeopleTranslator;
 import gov.hhs.aspr.gcm.translation.plugins.properties.PropertiesTranslatorModule;
 import nucleus.PluginData;
 import plugins.groups.GroupsPluginData;
@@ -173,7 +173,7 @@ public class App {
         TranslatorController translatorController = TranslatorController.builder()
                 .addBundle(GroupsTranslator.getTranslator(inputFileName, outputFileName))
                 .addBundle(PropertiesTranslatorModule.getTranslatorModule())
-                .addBundle(PeopleTranslatorModule.getTranslatorModule())
+                .addBundle(PeopleTranslator.getTranslator())
                 .addTranslatorSpec(new TestGroupTypeIdTranslator())
                 .addTranslatorSpec(new TestGroupPropertyIdTranslator())
                 .addTranslatorSpec(new SimpleGroupTypeIdTranslator())

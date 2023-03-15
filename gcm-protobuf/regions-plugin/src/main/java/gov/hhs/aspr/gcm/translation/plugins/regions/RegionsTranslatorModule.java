@@ -1,7 +1,7 @@
 package gov.hhs.aspr.gcm.translation.plugins.regions;
 
 import gov.hhs.aspr.gcm.translation.core.Translator;
-import gov.hhs.aspr.gcm.translation.plugins.people.PeopleTranslatorModuleId;
+import gov.hhs.aspr.gcm.translation.plugins.people.PeopleTranslatorId;
 import gov.hhs.aspr.gcm.translation.plugins.properties.PropertiesTranslatorModuleId;
 import gov.hhs.aspr.gcm.translation.plugins.regions.translators.RegionIdTranslator;
 import gov.hhs.aspr.gcm.translation.plugins.regions.translators.RegionPropertyIdTranslator;
@@ -19,14 +19,14 @@ public class RegionsTranslatorModule {
     private static Translator.Builder getBaseModule() {
         return Translator.builder()
                 .setPluginBundleId(RegionsTranslatorModuleId.TRANSLATOR_ID)
-                .addDependency(PeopleTranslatorModuleId.TRANSLATOR_ID)
+                .addDependency(PeopleTranslatorId.TRANSLATOR_ID)
                 .addDependency(PropertiesTranslatorModuleId.TRANSLATOR_ID)
                 .setInitializer((translatorContext) -> {
-                    translatorContext.addTranslator(new RegionsPluginDataTranslator());
-                    translatorContext.addTranslator(new RegionIdTranslator());
-                    translatorContext.addTranslator(new RegionPropertyIdTranslator());
-                    translatorContext.addTranslator(new SimpleRegionIdTranslator());
-                    translatorContext.addTranslator(new SimpleRegionPropertyIdTranslator());
+                    translatorContext.addTranslatorSpec(new RegionsPluginDataTranslator());
+                    translatorContext.addTranslatorSpec(new RegionIdTranslator());
+                    translatorContext.addTranslatorSpec(new RegionPropertyIdTranslator());
+                    translatorContext.addTranslatorSpec(new SimpleRegionIdTranslator());
+                    translatorContext.addTranslatorSpec(new SimpleRegionPropertyIdTranslator());
                 })
                 .setInputObjectType(RegionsPluginDataInput.getDefaultInstance());
     }

@@ -13,7 +13,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import gov.hhs.aspr.gcm.translation.core.TranslatorController;
-import gov.hhs.aspr.gcm.translation.plugins.people.PeopleTranslatorModule;
+import gov.hhs.aspr.gcm.translation.plugins.people.PeopleTranslator;
 import gov.hhs.aspr.gcm.translation.plugins.properties.PropertiesTranslatorModule;
 import gov.hhs.aspr.gcm.translation.plugins.regions.RegionsTranslatorModule;
 import gov.hhs.aspr.gcm.translation.plugins.regions.translators.TestRegionIdTranslator;
@@ -183,7 +183,7 @@ public class App {
         TranslatorController translatorController = TranslatorController.builder()
                 .addBundle(ResourcesTranslatorModule.getTranslatorModule(inputFileName, outputFileName))
                 .addBundle(PropertiesTranslatorModule.getTranslatorModule())
-                .addBundle(PeopleTranslatorModule.getTranslatorModule())
+                .addBundle(PeopleTranslator.getTranslator())
                 .addBundle(RegionsTranslatorModule.getTranslatorModule())
                 .addTranslatorSpec(new TestResourceIdTranslator())
                 .addTranslatorSpec(new TestResourcePropertyIdTranslator())

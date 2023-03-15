@@ -12,7 +12,7 @@ public class TranslatorContext {
         this.translatorController = translatorController;
     }
 
-    public <I extends Message, S> void addTranslator(AObjectTranslatorSpec<I, S> translatorSpec) {
+    public <I extends Message, S> void addTranslatorSpec(AObjectTranslatorSpec<I, S> translatorSpec) {
         this.translatorController.addTranslatorSpec(translatorSpec);
     }
 

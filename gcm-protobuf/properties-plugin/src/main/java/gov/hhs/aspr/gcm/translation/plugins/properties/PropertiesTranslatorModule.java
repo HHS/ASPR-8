@@ -15,7 +15,7 @@ public class PropertiesTranslatorModule {
     private static Translator.Builder getBaseModule() {
         return Translator.builder()
                 .setInitializer((translatorContext) -> {
-                    translatorContext.addTranslator(new PropertyDefinitionTranslator());
+                    translatorContext.addTranslatorSpec(new PropertyDefinitionTranslator());
                     translatorContext.addTranslator(new TimeTrackingPolicyTranslator());
                 })
                 .setInputIsPluginData(false)

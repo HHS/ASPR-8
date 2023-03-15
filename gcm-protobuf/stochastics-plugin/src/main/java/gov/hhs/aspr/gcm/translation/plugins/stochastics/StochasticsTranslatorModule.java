@@ -16,8 +16,8 @@ public class StochasticsTranslatorModule {
                 .setPluginBundleId(StochasticsPluginBundleId.PLUGIN_BUNDLE_ID)
                 .setInputObjectType(StochasticsPluginDataInput.getDefaultInstance())
                 .setInitializer((translatorContext) -> {
-                    translatorContext.addTranslator(new StochasticsPluginDataTranslator());
-                    translatorContext.addTranslator(new RandomGeneratorIdTranslator());
+                    translatorContext.addTranslatorSpec(new StochasticsPluginDataTranslator());
+                    translatorContext.addTranslatorSpec(new RandomGeneratorIdTranslator());
                 });
 
     }

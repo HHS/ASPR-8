@@ -17,8 +17,8 @@ public class GlobalPropertiesTranslator {
                 .addDependency(PropertiesTranslatorModuleId.TRANSLATOR_ID)
                 .setInputObjectType(GlobalPropertiesPluginDataInput.getDefaultInstance())
                 .setInitializer((translatorContext) -> {
-                    translatorContext.addTranslator(new GlobalPropertiesPluginDataTranslator());
-                    translatorContext.addTranslator(new GlobalPropertyIdTranslator());
+                    translatorContext.addTranslatorSpec(new GlobalPropertiesPluginDataTranslator());
+                    translatorContext.addTranslatorSpec(new GlobalPropertyIdTranslator());
                 });
     }
 
