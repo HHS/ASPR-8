@@ -265,7 +265,7 @@ public final class SerializationDemonstration {
 					.addExperimentContextConsumer(nioReportItemHandler)//
 					
 					.setProduceSimulationStateOnHalt(true)//
-					.addExperimentContextConsumer(new Serializer())
+					.addExperimentContextConsumer(new Serializer(outputDirectory))
 					
 					.setThreadCount(8)//
 					.build()//
