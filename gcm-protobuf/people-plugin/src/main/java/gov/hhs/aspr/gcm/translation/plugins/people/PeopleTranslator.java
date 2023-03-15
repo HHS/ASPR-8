@@ -12,7 +12,7 @@ public class PeopleTranslator {
     private PeopleTranslator() {
     }
 
-    private static Translator.Builder getBaseTranslatorBuilder() {
+    public static Translator.Builder getBaseTranslatorBuilder() {
         return Translator.builder()
                 .setTranslatorId(PeopleTranslatorId.TRANSLATOR_ID)
                 .setInitializer((translatorContext) -> {

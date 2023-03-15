@@ -15,7 +15,7 @@ public class GroupsTranslator {
     private GroupsTranslator() {
     }
 
-    private static Translator.Builder getBaseTranslatorBuilder() {
+    public static Translator.Builder getBaseTranslatorBuilder() {
         return Translator.builder()
                 .setTranslatorId(GroupsTranslatorId.TRANSLATOR_ID)
                 .addDependency(PropertiesTranslatorId.TRANSLATOR_ID)

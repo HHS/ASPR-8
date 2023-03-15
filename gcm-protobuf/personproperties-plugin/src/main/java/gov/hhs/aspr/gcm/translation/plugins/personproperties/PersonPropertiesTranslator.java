@@ -12,7 +12,7 @@ public class PersonPropertiesTranslator {
     private PersonPropertiesTranslator() {
     }
 
-    private static Translator.Builder getBaseTranslatorBuilder() {
+    public static Translator.Builder getBaseTranslatorBuilder() {
         return Translator.builder()
                 .setTranslatorId(PersonPropertiesTranslatorId.TRANSLATOR_ID)
                 .addDependency(PropertiesTranslatorId.TRANSLATOR_ID)

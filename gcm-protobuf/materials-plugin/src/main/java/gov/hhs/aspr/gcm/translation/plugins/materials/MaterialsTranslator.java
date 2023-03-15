@@ -20,7 +20,7 @@ public class MaterialsTranslator {
 
     }
 
-    private static Translator.Builder getBaseTranslatorBuilder() {
+    public static Translator.Builder getBaseTranslatorBuilder() {
         return Translator.builder()
                 .setTranslatorId(MaterialsTranslatorId.TRANSLATOR_ID)
                 .addDependency(PropertiesTranslatorId.TRANSLATOR_ID)

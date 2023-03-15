@@ -17,7 +17,7 @@ public class RegionsTranslator {
 
     }
 
-    private static Translator.Builder getBaseTranslatorBuilder() {
+    public static Translator.Builder getBaseTranslatorBuilder() {
         return Translator.builder()
                 .setTranslatorId(RegionsTranslatorId.TRANSLATOR_ID)
                 .addDependency(PeopleTranslatorId.TRANSLATOR_ID)
@@ -31,7 +31,7 @@ public class RegionsTranslator {
                 });
     }
 
-    public static Translator getTranslatorModule(String inputFileName, String outputFileName) {
+    public static Translator getTranslator(String inputFileName, String outputFileName) {
         return getBaseTranslatorBuilder()
                 .addInputFile(inputFileName, RegionsPluginDataInput.getDefaultInstance())
                 .addOutputFile(outputFileName, RegionsPluginData.class)
