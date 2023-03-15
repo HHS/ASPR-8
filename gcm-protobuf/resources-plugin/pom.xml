@@ -45,7 +45,7 @@
                                 <artifactItem>
                                     <groupId>gov.hhs.aspr.gcm.translation</groupId>
                                     <artifactId>proto-definitions</artifactId>
-                                    <version>${gcm.proto.version}</version>
+                                    <version>${proto-definitions.version}</version>
                                     <overWrite>true</overWrite>
                                     <outputDirectory>${project.build.outputDirectory}</outputDirectory>
                                     <includes>**/*.proto</includes>
