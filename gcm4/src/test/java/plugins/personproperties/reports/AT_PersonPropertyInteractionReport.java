@@ -4,6 +4,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 import org.junit.jupiter.api.Test;
 
 import nucleus.ReportContext;
@@ -25,18 +28,34 @@ public class AT_PersonPropertyInteractionReport {
 	public void testConstructor() {
 		ReportLabel reportLabel = new SimpleReportLabel(1000);
 		ReportPeriod reportPeriod = ReportPeriod.DAILY;
-		PersonPropertyId[] personPropertyIds = { TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK, TestPersonPropertyId.PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK };
+		Set<PersonPropertyId> expectedPersonPropertyIds = new LinkedHashSet<>();
+		expectedPersonPropertyIds.add(TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK);
+		expectedPersonPropertyIds.add(TestPersonPropertyId.PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK);
 
-		PersonPropertyInteractionReport report = new PersonPropertyInteractionReport(reportLabel, reportPeriod, personPropertyIds);
+		PersonPropertyInteractionReportPluginData.Builder builder = PersonPropertyInteractionReportPluginData.builder(); 
+		builder.setReportLabel(reportLabel);
+		builder.setReportPeriod(reportPeriod);
+		for(PersonPropertyId personPropertyId : expectedPersonPropertyIds) {
+			builder.addPersonPropertyId(personPropertyId);
+		}
+		
+		PersonPropertyInteractionReportPluginData personPropertyInteractionReportPluginData = builder.build();
+		PersonPropertyInteractionReport report = new PersonPropertyInteractionReport(personPropertyInteractionReportPluginData);
 
 		assertNotNull(report);
 
 		// precondition: report label is null
-		ContractException contractException = assertThrows(ContractException.class, () -> new PersonPropertyInteractionReport(null, reportPeriod, personPropertyIds));
+		ContractException contractException = assertThrows(ContractException.class, () -> {
+			PersonPropertyInteractionReportPluginData pluginData = PersonPropertyInteractionReportPluginData.builder().setReportPeriod(reportPeriod).build();
+		    new PersonPropertyInteractionReport(pluginData);
+		});
 		assertEquals(ReportError.NULL_REPORT_LABEL, contractException.getErrorType());
 
 		// precondition: report period is null
-		contractException = assertThrows(ContractException.class, () -> new PersonPropertyInteractionReport(reportLabel, null, personPropertyIds));
+		contractException = assertThrows(ContractException.class, () -> {
+			PersonPropertyInteractionReportPluginData pluginData = PersonPropertyInteractionReportPluginData.builder().setReportLabel(reportLabel).build();
+		    new PersonPropertyInteractionReport(pluginData);
+		});
 		assertEquals(ReportError.NULL_REPORT_PERIOD, contractException.getErrorType());
 	}
 

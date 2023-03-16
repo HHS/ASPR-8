@@ -18,7 +18,7 @@ public final class ResourcesPlugin {
 						.addPluginDependency(PeoplePluginId.PLUGIN_ID)//
 						.addPluginDependency(RegionsPluginId.PLUGIN_ID)//
 						.setInitializer((c) -> {
-							ResourcesPluginData pluginData = c.getPluginData(ResourcesPluginData.class);
+							ResourcesPluginData pluginData = c.getPluginData(ResourcesPluginData.class).get();
 							c.addDataManager(new ResourcesDataManager(pluginData));
 						})//
 						.build();

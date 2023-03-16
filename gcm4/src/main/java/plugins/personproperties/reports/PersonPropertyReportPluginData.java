@@ -3,6 +3,7 @@ package plugins.personproperties.reports;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import net.jcip.annotations.ThreadSafe;
 import nucleus.PluginData;
 import nucleus.PluginDataBuilder;
 import plugins.personproperties.support.PersonPropertyId;
@@ -15,6 +16,7 @@ import util.errors.ContractException;
 /**
  * A PluginData class supporting PersonPropertyReport construction.
  */
+@ThreadSafe
 public final class PersonPropertyReportPluginData implements PluginData {
 
 	/*

@@ -22,7 +22,7 @@ public final class GroupsPlugin {
 						.addPluginDependency(PeoplePluginId.PLUGIN_ID)//
 						.addPluginDependency(StochasticsPluginId.PLUGIN_ID)//
 						.setInitializer((c) -> {
-							GroupsPluginData pluginData = c.getPluginData(GroupsPluginData.class);
+							GroupsPluginData pluginData = c.getPluginData(GroupsPluginData.class).get();
 							c.addDataManager(new GroupsDataManager(pluginData));
 						})//
 						.build();

@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Set;
 
 import nucleus.ReportContext;
+import nucleus.SimulationStateContext;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.events.PersonAdditionEvent;
 import plugins.people.events.PersonImminentRemovalEvent;
@@ -22,8 +23,6 @@ import plugins.regions.support.RegionId;
 import plugins.reports.support.PeriodicReport;
 import plugins.reports.support.ReportHeader;
 import plugins.reports.support.ReportItem;
-import plugins.reports.support.ReportLabel;
-import plugins.reports.support.ReportPeriod;
 
 /**
  * A periodic Report that displays the number of people exhibiting a tuple of
@@ -44,9 +43,9 @@ import plugins.reports.support.ReportPeriod;
  */
 public final class PersonPropertyInteractionReport extends PeriodicReport {
 
-	public PersonPropertyInteractionReport(ReportLabel reportLabel, ReportPeriod reportPeriod, PersonPropertyId... personPropertyIds) {
-		super(reportLabel, reportPeriod);
-		for (PersonPropertyId personPropertyId : personPropertyIds) {
+	public PersonPropertyInteractionReport(PersonPropertyInteractionReportPluginData personPropertyInteractionReportPluginData) {
+		super(personPropertyInteractionReportPluginData.getReportLabel(), personPropertyInteractionReportPluginData.getReportPeriod());
+		for (PersonPropertyId personPropertyId : personPropertyInteractionReportPluginData.getPersonPropertyIds()) {
 			propertyIds.add(personPropertyId);
 		}
 	}
@@ -238,7 +237,7 @@ public final class PersonPropertyInteractionReport extends PeriodicReport {
 		reportContext.subscribe(PersonAdditionEvent.class, this::handlePersonAdditionEvent);
 		reportContext.subscribe(PersonImminentRemovalEvent.class, this::handlePersonImminentRemovalEvent);
 		reportContext.subscribe(PersonRegionUpdateEvent.class, this::handlePersonRegionUpdateEvent);
-
+		reportContext.subscribeToSimulationState(this::recordSimulationState);
 		/*
 		 * if the client did not choose any properties, then we assume that all
 		 * properties are selected
@@ -267,6 +266,15 @@ public final class PersonPropertyInteractionReport extends PeriodicReport {
 			final Object regionId = regionsDataManager.getPersonRegion(personId);
 			increment(regionId, personId);
 		}
+	}
+
+	private void recordSimulationState(ReportContext reportContext, SimulationStateContext simulationStateContext) {
+		PersonPropertyInteractionReportPluginData.Builder builder = simulationStateContext.get(PersonPropertyInteractionReportPluginData.Builder.class);
+		for (PersonPropertyId personPropertyId : propertyIds) {
+			builder.addPersonPropertyId(personPropertyId);
+		}
+		builder.setReportLabel(getReportLabel());
+		builder.setReportPeriod(getReportPeriod());
 	}
 
 	private void handlePersonPropertyDefinitionEvent(ReportContext reportContext, PersonPropertyDefinitionEvent personPropertyDefinitionEvent) {

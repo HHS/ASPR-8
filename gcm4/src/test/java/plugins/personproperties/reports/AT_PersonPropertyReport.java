@@ -177,7 +177,7 @@ public class AT_PersonPropertyReport {
 			personPropertyBuilder.definePersonProperty(testPersonPropertyId, testPersonPropertyId.getPropertyDefinition());
 		}
 		PersonPropertiesPluginData personPropertiesPluginData = personPropertyBuilder.build();
-		Plugin personPropertyPlugin = PersonPropertiesPlugin.getPersonPropertyPlugin(personPropertiesPluginData);
+		Plugin personPropertyPlugin = PersonPropertiesPlugin.builder().setPersonPropertiesPluginData(personPropertiesPluginData).getPersonPropertyPlugin();
 		plugins.add(personPropertyPlugin);
 
 		/*

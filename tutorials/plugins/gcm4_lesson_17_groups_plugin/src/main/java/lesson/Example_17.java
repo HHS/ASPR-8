@@ -31,7 +31,6 @@ import plugins.people.PeoplePlugin;
 import plugins.people.PeoplePluginData;
 import plugins.personproperties.PersonPropertiesPlugin;
 import plugins.personproperties.PersonPropertiesPluginData;
-import plugins.personproperties.reports.PersonPropertyReport;
 import plugins.personproperties.reports.PersonPropertyReportPluginData;
 import plugins.regions.RegionsPlugin;
 import plugins.regions.RegionsPluginData;
@@ -56,14 +55,6 @@ public final class Example_17 {
 		ReportsPluginData reportsPluginData = //
 				ReportsPluginData	.builder()//
 									.addReport(() -> new GroupPopulationReport(ModelReportLabel.GROUP_POPULATON, ReportPeriod.END_OF_SIMULATION)::init)//
-									.addReport(() -> {
-										PersonPropertyReportPluginData personPropertyReportPluginData = PersonPropertyReportPluginData	.builder()//
-																			.setReportLabel(ModelReportLabel.PERSON_PROPERTY)//
-																			.setReportPeriod(ReportPeriod.DAILY)//
-																			.includePersonProperty(PersonProperty.DISEASE_STATE)//
-																			.build();
-										return new PersonPropertyReport(personPropertyReportPluginData)::init;
-										})//
 									.addReport(() -> new DiseaseStateReport(ModelReportLabel.DISEASE_STATE, ReportPeriod.END_OF_SIMULATION)::init)//
 									.addReport(() -> new ContagionReport(ModelReportLabel.CONTAGION)::init)//
 									.build();
@@ -141,7 +132,16 @@ public final class Example_17 {
 
 		PersonPropertiesPluginData personPropertiesPluginData = builder.build();
 
-		return PersonPropertiesPlugin.getPersonPropertyPlugin(personPropertiesPluginData);
+		PersonPropertyReportPluginData personPropertyReportPluginData = PersonPropertyReportPluginData	.builder()//
+																										.setReportLabel(ModelReportLabel.PERSON_PROPERTY)//
+																										.setReportPeriod(ReportPeriod.DAILY)//
+																										.includePersonProperty(PersonProperty.DISEASE_STATE)//
+																										.build();
+
+		return PersonPropertiesPlugin.builder()//
+				.setPersonPropertiesPluginData(personPropertiesPluginData)//
+				.setPersonPropertyReportPluginData(personPropertyReportPluginData)//
+				.getPersonPropertyPlugin();
 	}
 
 	private Plugin getGlobalPropertiesPlugin() {

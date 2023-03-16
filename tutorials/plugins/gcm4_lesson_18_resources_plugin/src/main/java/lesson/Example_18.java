@@ -137,7 +137,7 @@ public final class Example_18 {
 		
 		PersonPropertiesPluginData personPropertiesPluginData = builder.build();
 
-		return PersonPropertiesPlugin.getPersonPropertyPlugin(personPropertiesPluginData);
+		return PersonPropertiesPlugin.builder().setPersonPropertiesPluginData(personPropertiesPluginData).getPersonPropertyPlugin();
 	}
 
 	private Plugin getGlobalPropertiesPlugin() {
