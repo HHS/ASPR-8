@@ -33,7 +33,7 @@ import nucleus.PluginData;
 public class TranslatorCore {
 
     private final Data data;
-    private boolean debug = true;
+    private boolean debug = false;
     private boolean isInitialized = false;
 
     private TranslatorCore(Data data) {

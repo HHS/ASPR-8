@@ -9,7 +9,7 @@ public class NucleusTranslator {
 
     }
 
-    public static Translator.Builder getBaseTranslatorBuilder() {
+    public static Translator.Builder builder() {
         return Translator.builder()
                 .setTranslatorId(NucleusTranslatorId.TRANSLATOR_ID)
                 .setInitializer((translatorContext) -> {
@@ -25,6 +25,6 @@ public class NucleusTranslator {
     }
 
     public static Translator getTranslator() {
-        return getBaseTranslatorBuilder().build();
+        return builder().build();
     }
 }

@@ -13,7 +13,7 @@ public class App {
         String outputFileName = "./nucleus/src/main/resources/json/output/simulationTimeOutput.json";
 
         TranslatorController translatorController = TranslatorController.builder()
-                .addTranslator(NucleusTranslator.getBaseTranslatorBuilder()
+                .addTranslator(NucleusTranslator.builder()
                         .addInputFile(inputFileName, SimulationTimeInput.getDefaultInstance())
                         .addOutputFile(outputFileName, SimulationTime.class).build())
                 .build()

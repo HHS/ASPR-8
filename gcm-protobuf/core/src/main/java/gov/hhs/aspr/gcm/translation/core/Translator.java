@@ -13,6 +13,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 
+import org.apache.commons.math3.util.Pair;
+
 import com.google.protobuf.Message;
 
 import nucleus.PluginData;
@@ -27,7 +29,7 @@ public final class Translator {
     private static class Data {
         private TranslatorId translatorId;
         private final Map<Reader, Message> readers = new LinkedHashMap<>();
-        private final Map<Class<?>, Writer> writers = new LinkedHashMap<>();
+        private final Map<Pair<Class<?>, Integer>, Writer> writers = new LinkedHashMap<>();
         private boolean hasInput = false;
         private boolean hasOutput = false;
         private boolean inputIsPluginData = true;
@@ -78,9 +80,28 @@ public final class Translator {
             return this;
         }
 
-        public Builder addOutputFile(String outputFileName, Class<?> simObjectClass) {
+        public Builder addOutputFile(String outputFileName, Class<?> classRef, Integer scenarioId) {
+            Pair<Class<?>, Integer> key = new Pair<>(classRef, scenarioId);
+            if(this.data.writers.containsKey(key)) {
+                throw new RuntimeException("Attempted to overwrite an existing output file.");
+            }
             try {
-                this.data.writers.put(simObjectClass, new FileWriter(Paths.get(outputFileName).toFile()));
+                this.data.writers.put(key, new FileWriter(Paths.get(outputFileName).toFile()));
+            } catch (IOException e) {
+                throw new RuntimeException("Failed to create Writer", e);
+            }
+
+            this.data.hasOutput = true;
+            return this;
+        }
+
+        public Builder addOutputFile(String outputFileName, Class<?> classRef) {
+            Pair<Class<?>, Integer> key = new Pair<>(classRef, 0);
+            if(this.data.writers.containsKey(key)) {
+                throw new RuntimeException("Attempted to overwrite an existing output file.");
+            }
+            try {
+                this.data.writers.put(key, new FileWriter(Paths.get(outputFileName).toFile()));
             } catch (IOException e) {
                 throw new RuntimeException("Failed to create Writer", e);
             }
@@ -173,7 +194,7 @@ public final class Translator {
         }
 
         for (Reader reader : readers) {
-            readerContext.readJsonInput(reader, this.data.readers.get(reader).newBuilderForType());
+            readerContext.readPluginDataInput(reader, this.data.readers.get(reader).newBuilderForType());
         }
     }
 
@@ -185,11 +206,12 @@ public final class Translator {
                     "The output data for this translator is a plugin data, and should be written via the writePluginDataOutput() method.");
         }
 
-        if(!this.data.writers.containsKey(simObject.getClass())) {
-            throw new RuntimeException("No writer exists for type: " + simObject.getClass().getName());
+        Pair<Class<?>, Integer> key = new Pair<>(simObject.getClass(), writerContext.getScenarioId());
+        if(!this.data.writers.containsKey(key)) {
+            throw new RuntimeException("No writer exists for type: " + simObject.getClass() + " and scenario : " + writerContext.getScenarioId());
         }
 
-        writerContext.writeJsonOutput(this.data.writers.get(simObject.getClass()), simObject);
+        writerContext.writeJsonOutput(this.data.writers.get(key), simObject);
     }
 
     public <T extends PluginData> void writePluginDataOutput(WriterContext writerContext, T pluginData) {
@@ -200,11 +222,12 @@ public final class Translator {
                     "The output data for this translator is not a plugin data, and should be written via the writeOutput() method.");
         }
 
-        if(!this.data.writers.containsKey(pluginData.getClass())) {
-            throw new RuntimeException("No writer exists for type: " + pluginData.getClass().getName());
+        Pair<Class<?>, Integer> key = new Pair<>(pluginData.getClass(), writerContext.getScenarioId());
+        if(!this.data.writers.containsKey(key)) {
+            throw new RuntimeException("No writer exists for type: " + pluginData.getClass() + " and scenario : " + writerContext.getScenarioId());
         }
 
-        writerContext.writePluginDataOutput(this.data.writers.get(pluginData.getClass()), pluginData);
+        writerContext.writePluginDataOutput(this.data.writers.get(key), pluginData);
     }
 
     private void validateHasInput() {

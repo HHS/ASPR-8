@@ -10,7 +10,7 @@ public class PropertiesTranslator {
 
     }
 
-    public static Translator.Builder getBaseTranslatorBuilder() {
+    public static Translator.Builder builder() {
         return Translator.builder()
                 .setTranslatorId(PropertiesTranslatorId.TRANSLATOR_ID)
                 .setInputIsPluginData(false)
@@ -23,7 +23,7 @@ public class PropertiesTranslator {
     }
 
     public static Translator getTranslator() {
-        return getBaseTranslatorBuilder().build();
+        return builder().build();
 
     }
 }
