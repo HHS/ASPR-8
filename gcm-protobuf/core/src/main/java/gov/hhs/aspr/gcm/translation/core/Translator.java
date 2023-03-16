@@ -57,7 +57,7 @@ public final class Translator {
         public Translator build() {
 
             if (this.data.translatorId == null) {
-                throw new RuntimeException("No PluginBundleId was set for this PluginBundle");
+                throw new RuntimeException("No TranslatorId was set for this Translator");
             }
 
             return new Translator(data);
