@@ -20,7 +20,7 @@ import com.google.protobuf.Message;
 import nucleus.PluginData;
 
 public final class Translator {
-    private Data data;
+    private final Data data;
 
     private Translator(Data data) {
         this.data = data;

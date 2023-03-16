@@ -54,6 +54,7 @@ import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.StochasticsPluginData;
 import plugins.util.properties.PropertyDefinition;
 import util.random.RandomGeneratorProvider;
+import util.time.Stopwatch;
 
 public final class SerializationDemonstration {
 
@@ -74,7 +75,7 @@ public final class SerializationDemonstration {
 		this.readingTranslatorController = TranslatorController
 				.builder()
 				.addTranslator(
-						PersonPropertiesTranslator.getTranslatorR("./src/main/resources/personPropertiesInput.json"))
+						PersonPropertiesTranslator.getTranslator())
 				.addTranslator(PropertiesTranslator.getTranslator())
 				.addTranslator(PeopleTranslator.getTranslatorR("./src/main/resources/peopleInput.json"))
 				.addTranslator(RegionsTranslator.getTranslatorR("./src/main/resources/regionsInput.json"))
@@ -276,7 +277,15 @@ public final class SerializationDemonstration {
 		 */
 		Plugin stochasticsPlugin = getStochasticsPlugin();
 
-		List<PluginData> pluginDatas = this.readingTranslatorController.readInput().getPluginDatas();
+		Stopwatch stopwatch = new Stopwatch();
+
+		stopwatch.start();
+
+		List<PluginData> pluginDatas = this.readingTranslatorController.readInputParrallel().getPluginDatas();
+
+		stopwatch.stop();
+
+		System.out.println(stopwatch.getElapsedMilliSeconds());
 
 		for (PluginData pluginData : pluginDatas) {
 			if (pluginData instanceof PeoplePluginData) {

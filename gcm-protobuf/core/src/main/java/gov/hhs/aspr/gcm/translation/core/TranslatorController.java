@@ -3,6 +3,7 @@ package gov.hhs.aspr.gcm.translation.core;
 import java.io.Reader;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -24,8 +25,8 @@ import util.graph.MutableGraph;
 public class TranslatorController {
     private final Data data;
     private TranslatorCore translatorCore;
-    private final List<PluginData> pluginDatas = new ArrayList<>();
-    private final List<Object> objects = new ArrayList<>();
+    private final List<PluginData> pluginDatas = Collections.synchronizedList(new ArrayList<>());
+    private final List<Object> objects = Collections.synchronizedList(new ArrayList<>());
     private final Map<Class<?>, Translator> simObjectClassToTranslatorMap = new LinkedHashMap<>();
     private Translator focalTranslator = null;
     private TranslatorId focalTranslatorId = null;
@@ -50,7 +51,10 @@ public class TranslatorController {
         }
 
         public TranslatorController build() {
-            return new TranslatorController(this.data);
+            TranslatorController translatorController = new TranslatorController(this.data);
+
+            translatorController.init();
+            return translatorController;
         }
 
         public Builder addTranslator(Translator translator) {
@@ -103,14 +107,12 @@ public class TranslatorController {
     protected <U extends Message.Builder> void readPluginDataInput(Reader reader, U builder) {
         PluginData pluginData = this.translatorCore.readJson(reader, builder);
 
-        this.simObjectClassToTranslatorMap.putIfAbsent(pluginData.getClass(), this.focalTranslator);
         this.pluginDatas.add(pluginData);
     }
 
     protected <U extends Message.Builder> void readJsonInput(Reader reader, U builder) {
         Object simObject = this.translatorCore.readJson(reader, builder);
 
-        this.simObjectClassToTranslatorMap.putIfAbsent(simObject.getClass(), this.focalTranslator);
         this.objects.add(simObject);
     }
 
@@ -138,7 +140,7 @@ public class TranslatorController {
         }
     }
 
-    public TranslatorController init() {
+    private TranslatorController init() {
         TranslatorContext translatorContext = new TranslatorContext(this);
 
         List<Translator> orderedTranslators = this.getOrderedTranslators();
@@ -156,13 +158,30 @@ public class TranslatorController {
         return this;
     }
 
+    public TranslatorController readInputParrallel() {
+        validateCoreTranslator();
+
+        ReaderContext readerContext = new ReaderContext(this);
+
+        this.data.translators.parallelStream().forEach((translator) -> {
+            if (translator.hasInput()) {
+                if (translator.inputIsPluginData()) {
+                    translator.readPluginDataInput(readerContext);
+                } else {
+                    translator.readJsonInput(readerContext);
+                }
+            }
+
+        });
+        return this;
+    }
+
     public TranslatorController readInput() {
         validateCoreTranslator();
 
         ReaderContext readerContext = new ReaderContext(this);
 
         for (Translator translator : this.data.translators) {
-            this.focalTranslator = translator;
             if (!translator.hasInput())
                 continue;
             if (translator.inputIsPluginData()) {
@@ -170,8 +189,6 @@ public class TranslatorController {
                 continue;
             }
             translator.readJsonInput(readerContext);
-
-            this.focalTranslator = null;
         }
 
         return this;
@@ -205,7 +222,7 @@ public class TranslatorController {
         WriterContext writerContext = new WriterContext(this);
 
         Translator translator = this.simObjectClassToTranslatorMap.get(object.getClass());
-        if(translator == null) {
+        if (translator == null) {
             System.out.println("translator was null for: " + object.getClass());
             return;
         }
@@ -218,13 +235,13 @@ public class TranslatorController {
         WriterContext writerContext = new WriterContext(this, scenarioId);
 
         Translator translator = this.simObjectClassToTranslatorMap.get(object.getClass());
-        if(translator == null) {
+        if (translator == null) {
             System.out.println("translator was null for: " + object.getClass());
             return;
         }
         translator.writeJsonOutput(writerContext, object);
     }
-    
+
     public void writePluginDataOutput(List<PluginData> pluginDatas) {
         for (PluginData pluginData : pluginDatas) {
             writePluginDataOutput(pluginData);
@@ -237,7 +254,7 @@ public class TranslatorController {
         WriterContext writerContext = new WriterContext(this);
 
         Translator translator = this.simObjectClassToTranslatorMap.get(pluginData.getClass());
-        if(translator == null) {
+        if (translator == null) {
             System.out.println("translator was null for: " + pluginData.getClass());
             return;
         }
@@ -250,7 +267,7 @@ public class TranslatorController {
         WriterContext writerContext = new WriterContext(this, scenarioId);
 
         Translator translator = this.simObjectClassToTranslatorMap.get(pluginData.getClass());
-        if(translator == null) {
+        if (translator == null) {
             System.out.println("translator was null for: " + pluginData.getClass());
             return;
         }
