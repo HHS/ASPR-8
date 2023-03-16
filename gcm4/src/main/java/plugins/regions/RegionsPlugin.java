@@ -16,7 +16,7 @@ public final class RegionsPlugin {
 						.setPluginId(RegionsPluginId.PLUGIN_ID)//
 						.addPluginDependency(PeoplePluginId.PLUGIN_ID)//
 						.setInitializer((c) -> {
-							RegionsPluginData pluginData = c.getPluginData(RegionsPluginData.class);
+							RegionsPluginData pluginData = c.getPluginData(RegionsPluginData.class).get();
 							c.addDataManager(new RegionsDataManager(pluginData));
 						})//
 						.build();

@@ -42,7 +42,7 @@ public class ReportsPlugin {
 						.addPluginData(reportsPluginData)//
 						.setPluginId(ReportsPluginId.PLUGIN_ID)//
 						.setInitializer((c) -> {
-							ReportsPluginData pluginData = c.getPluginData(ReportsPluginData.class);
+							ReportsPluginData pluginData = c.getPluginData(ReportsPluginData.class).get();
 							for (Consumer<ReportContext> consumer : pluginData.getReports()) {
 								c.addReport(consumer);
 							}

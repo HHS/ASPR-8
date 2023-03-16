@@ -20,7 +20,7 @@ public class AT_PersonPropertiesPlugin {
 	@UnitTestMethod(target = PersonPropertiesPlugin.class, name = "getPersonPropertyPlugin", args = { PersonPropertiesPluginData.class })
 	public void testGetPersonPropertyPlugin() {
 		PersonPropertiesPluginData personPropertiesPluginData = PersonPropertiesPluginData.builder().build();
-		Plugin personPropertiesPlugin = PersonPropertiesPlugin.getPersonPropertyPlugin(personPropertiesPluginData);
+		Plugin personPropertiesPlugin = PersonPropertiesPlugin.builder().setPersonPropertiesPluginData(personPropertiesPluginData).getPersonPropertyPlugin();
 
 		assertEquals(1, personPropertiesPlugin.getPluginDatas().size());
 		assertTrue(personPropertiesPlugin.getPluginDatas().contains(personPropertiesPluginData));

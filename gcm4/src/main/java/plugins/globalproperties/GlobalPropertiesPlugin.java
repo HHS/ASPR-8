@@ -47,7 +47,7 @@ public final class GlobalPropertiesPlugin {
 		return Plugin	.builder()//
 						.addPluginData(globalPropertiesPluginData)//
 						.setInitializer((c) -> {
-							GlobalPropertiesPluginData data = c.getPluginData(GlobalPropertiesPluginData.class);
+							GlobalPropertiesPluginData data = c.getPluginData(GlobalPropertiesPluginData.class).get();
 							c.addDataManager(new GlobalPropertiesDataManager(data));							
 						})//
 						.setPluginId(GlobalPropertiesPluginId.PLUGIN_ID)//

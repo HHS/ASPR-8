@@ -14,7 +14,7 @@ public final class PolicyPlugin {
 						.addPluginData(policyPluginData)//
 						.setPluginId(PolicyPluginId.PLUGIN_ID)//						
 						.setInitializer((c) -> {
-							PolicyPluginData pluginData = c.getPluginData(PolicyPluginData.class);
+							PolicyPluginData pluginData = c.getPluginData(PolicyPluginData.class).get();
 							c.addDataManager(new PolicyDataManager(pluginData));
 						})//
 						.build();

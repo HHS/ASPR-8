@@ -15,7 +15,7 @@ public class FamilyPlugin {
 						.setPluginId(FamilyPluginId.PLUGIN_ID)//
 						.addPluginDependency(PersonPluginId.PLUGIN_ID)//
 						.setInitializer((c) -> {
-							FamilyPluginData pluginData = c.getPluginData(FamilyPluginData.class);
+							FamilyPluginData pluginData = c.getPluginData(FamilyPluginData.class).get();
 							c.addDataManager(new FamilyDataManager(pluginData));
 						})//
 						.build();

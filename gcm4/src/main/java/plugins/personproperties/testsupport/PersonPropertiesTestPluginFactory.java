@@ -98,8 +98,9 @@ public class PersonPropertiesTestPluginFactory {
 		public List<Plugin> getPlugins() {
 			List<Plugin> pluginsToAdd = new ArrayList<>();
 
-			Plugin personPropertiesPlugin = PersonPropertiesPlugin
-					.getPersonPropertyPlugin(this.data.personPropertiesPluginData);
+			Plugin personPropertiesPlugin =			
+			PersonPropertiesPlugin.builder().setPersonPropertiesPluginData(data.personPropertiesPluginData).getPersonPropertyPlugin();
+			
 
 			Plugin peoplePlugin = PeoplePlugin.getPeoplePlugin(this.data.peoplePluginData);
 

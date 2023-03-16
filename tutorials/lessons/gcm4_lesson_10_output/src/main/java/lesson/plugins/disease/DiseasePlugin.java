@@ -14,7 +14,7 @@ public final class DiseasePlugin {
 						.addPluginData(diseasePluginData)//
 						.setPluginId(DiseasePluginId.PLUGIN_ID)//						
 						.setInitializer((c) -> {
-							DiseasePluginData pluginData = c.getPluginData(DiseasePluginData.class);
+							DiseasePluginData pluginData = c.getPluginData(DiseasePluginData.class).get();
 							c.addDataManager(new DiseaseDataManager(pluginData));
 						})//
 						.build();
