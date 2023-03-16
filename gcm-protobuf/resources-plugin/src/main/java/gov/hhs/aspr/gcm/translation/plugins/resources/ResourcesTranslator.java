@@ -16,7 +16,7 @@ public class ResourcesTranslator {
 
     }
 
-    public static Translator.Builder getBaseTranslatorBuilder() {
+    public static Translator.Builder builder() {
         return Translator.builder()
                 .setTranslatorId(ResourcesTranslatorId.TRANSLATOR_ID)
                 .addDependency(PeopleTranslatorId.TRANSLATOR_ID)
@@ -30,15 +30,26 @@ public class ResourcesTranslator {
                 });
     }
 
-    public static Translator getTranslator(String inputFileName, String outputFileName) {
-        return getBaseTranslatorBuilder()
+    public static Translator getTranslatorRW(String inputFileName, String outputFileName) {
+        return builder()
                 .addInputFile(inputFileName, ResourcesPluginDataInput.getDefaultInstance())
                 .addOutputFile(outputFileName, ResourcesPluginData.class)
+                .build();
+    }
 
+    public static Translator getTranslatorR(String inputFileName) {
+        return builder()
+                .addInputFile(inputFileName, ResourcesPluginDataInput.getDefaultInstance())
+                .build();
+    }
+
+    public static Translator getTranslatorW(String outputFileName) {
+        return builder()
+                .addOutputFile(outputFileName, ResourcesPluginData.class)
                 .build();
     }
 
     public static Translator getTranslator() {
-        return getBaseTranslatorBuilder().build();
+        return builder().build();
     }
 }

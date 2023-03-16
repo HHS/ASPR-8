@@ -12,13 +12,13 @@ public class PropertiesTranslator {
 
     public static Translator.Builder getBaseTranslatorBuilder() {
         return Translator.builder()
+                .setTranslatorId(PropertiesTranslatorId.TRANSLATOR_ID)
+                .setInputIsPluginData(false)
+                .setOutputIsPluginData(false)
                 .setInitializer((translatorContext) -> {
                     translatorContext.addTranslatorSpec(new PropertyDefinitionTranslatorSpec());
                     translatorContext.addTranslatorSpec(new TimeTrackingPolicyTranslatorSpec());
-                })
-                .setInputIsPluginData(false)
-                .setOutputIsPluginData(false)
-                .setTranslatorId(PropertiesTranslatorId.TRANSLATOR_ID);
+                });
 
     }
 

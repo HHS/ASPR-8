@@ -12,7 +12,7 @@ public class PersonPropertiesTranslator {
     private PersonPropertiesTranslator() {
     }
 
-    public static Translator.Builder getBaseTranslatorBuilder() {
+    public static Translator.Builder builder() {
         return Translator.builder()
                 .setTranslatorId(PersonPropertiesTranslatorId.TRANSLATOR_ID)
                 .addDependency(PropertiesTranslatorId.TRANSLATOR_ID)
@@ -24,14 +24,26 @@ public class PersonPropertiesTranslator {
 
     }
 
-    public static Translator getTranslator(String inputFileName, String outputFileName) {
-        return getBaseTranslatorBuilder()
+    public static Translator getTranslatorRW(String inputFileName, String outputFileName) {
+        return builder()
                 .addInputFile(inputFileName, PersonPropertiesPluginDataInput.getDefaultInstance())
                 .addOutputFile(outputFileName, PersonPropertiesPluginData.class)
                 .build();
     }
 
+    public static Translator getTranslatorR(String inputFileName) {
+        return builder()
+                .addInputFile(inputFileName, PersonPropertiesPluginDataInput.getDefaultInstance())
+                .build();
+    }
+
+    public static Translator getTranslatorW(String outputFileName) {
+        return builder()
+                .addOutputFile(outputFileName, PersonPropertiesPluginData.class)
+                .build();
+    }
+
     public static Translator getTranslator() {
-        return getBaseTranslatorBuilder().build();
+        return builder().build();
     }
 }

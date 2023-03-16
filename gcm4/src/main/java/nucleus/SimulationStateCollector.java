@@ -8,17 +8,19 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 public class SimulationStateCollector implements Consumer<ExperimentContext>{
-	private final BiConsumer<Integer, List<Object>> consumer;
+	private final BiConsumer<Integer, List<Object>> outputConsumer;
+	private final Consumer<ExperimentContext> experimentOpenConsumer;
 	
 	private final Map<Integer, List<Object>> observedOutputObjects = new LinkedHashMap<>(); 
 	
-	public SimulationStateCollector(BiConsumer<Integer, List<Object>> consumer) {
-		this.consumer = consumer;		
+	public SimulationStateCollector(BiConsumer<Integer, List<Object>> outputConsumer, Consumer<ExperimentContext> experimentOpenConsumer) {
+		this.outputConsumer = outputConsumer;
+		this.experimentOpenConsumer = experimentOpenConsumer;	
 	}
 	
 	@Override
 	public synchronized void accept(ExperimentContext experimentContext) {
-		
+		experimentContext.subscribeToExperimentOpen(this.experimentOpenConsumer);
 		experimentContext.subscribeToOutput(Plugin.class, this::handlePluginOuput);
 		experimentContext.subscribeToOutput(SimulationTime.class, this::handleSimulationTimeOuput);
 		experimentContext.subscribeToSimulationClose(this::handleSimulationClose);
@@ -27,7 +29,7 @@ public class SimulationStateCollector implements Consumer<ExperimentContext>{
 	private synchronized void handleSimulationClose(ExperimentContext experimentContext, Integer scenarioId) {
 		List<Object> list = observedOutputObjects.remove(scenarioId);
 		if(list != null) {
-			consumer.accept(scenarioId, list);
+			outputConsumer.accept(scenarioId, list);
 		}
 	}
 	

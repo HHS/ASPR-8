@@ -12,7 +12,7 @@ public class StochasticsTranslator {
 
     }
 
-    public static Translator.Builder getBaseTranslatorBuilder() {
+    public static Translator.Builder builder() {
         return Translator.builder()
                 .setTranslatorId(StochasticsTranslatorId.PLUGIN_BUNDLE_ID)
                 .setInitializer((translatorContext) -> {
@@ -22,14 +22,26 @@ public class StochasticsTranslator {
 
     }
 
-    public static Translator getTranslator(String inputFileName, String outputFileName) {
-        return getBaseTranslatorBuilder()
+    public static Translator getTranslatorRW(String inputFileName, String outputFileName) {
+        return builder()
                 .addInputFile(inputFileName, StochasticsPluginDataInput.getDefaultInstance())
                 .addOutputFile(outputFileName, StochasticsPluginData.class)
                 .build();
     }
 
+    public static Translator getTranslatorR(String inputFileName) {
+        return builder()
+                .addInputFile(inputFileName, StochasticsPluginDataInput.getDefaultInstance())
+                .build();
+    }
+
+    public static Translator getTranslatorW(String outputFileName) {
+        return builder()
+                .addOutputFile(outputFileName, StochasticsPluginData.class)
+                .build();
+    }
+
     public static Translator getTranslator() {
-        return getBaseTranslatorBuilder().build();
+        return builder().build();
     }
 }

@@ -20,7 +20,7 @@ public class MaterialsTranslator {
 
     }
 
-    public static Translator.Builder getBaseTranslatorBuilder() {
+    public static Translator.Builder builder() {
         return Translator.builder()
                 .setTranslatorId(MaterialsTranslatorId.TRANSLATOR_ID)
                 .addDependency(PropertiesTranslatorId.TRANSLATOR_ID)
@@ -42,14 +42,26 @@ public class MaterialsTranslator {
 
     }
 
-    public static Translator getTranslator(String inputFileName, String outputFileName) {
-        return getBaseTranslatorBuilder()
+    public static Translator getTranslatorRW(String inputFileName, String outputFileName) {
+        return builder()
                 .addInputFile(inputFileName, MaterialsPluginDataInput.getDefaultInstance())
                 .addOutputFile(outputFileName, MaterialsPluginData.class)
                 .build();
     }
 
+    public static Translator getTranslatorR(String inputFileName) {
+        return builder()
+                .addInputFile(inputFileName, MaterialsPluginDataInput.getDefaultInstance())
+                .build();
+    }
+
+    public static Translator getTranslatorW(String outputFileName) {
+        return builder()
+                .addOutputFile(outputFileName, MaterialsPluginData.class)
+                .build();
+    }
+
     public static Translator getTranslator() {
-        return getBaseTranslatorBuilder().build();
+        return builder().build();
     }
 }

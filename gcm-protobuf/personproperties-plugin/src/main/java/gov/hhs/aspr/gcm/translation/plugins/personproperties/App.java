@@ -125,7 +125,7 @@ public class App {
         String outputFileName = "./personproperties-plugin/src/main/resources/json/output/output.json";
 
         TranslatorController translatorController = TranslatorController.builder()
-                .addTranslator(PersonPropertiesTranslator.getTranslator(inputFileName, outputFileName))
+                .addTranslator(PersonPropertiesTranslator.getTranslatorRW(inputFileName, outputFileName))
                 .addTranslator(PropertiesTranslator.getTranslator())
                 .addTranslator(PeopleTranslator.getTranslator())
                 .addTranslatorSpec(new TestPersonPropertyIdTranslatorSpec())

@@ -11,9 +11,9 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.google.protobuf.Descriptors.FieldDescriptor;
 import com.google.protobuf.Message;
 import com.google.protobuf.ProtocolMessageEnum;
-import com.google.protobuf.Descriptors.FieldDescriptor;
 
 import nucleus.PluginData;
 import util.graph.Graph;
@@ -205,12 +205,13 @@ public class TranslatorController {
         WriterContext writerContext = new WriterContext(this);
 
         Translator translator = this.simObjectClassToTranslatorMap.get(object.getClass());
-        this.focalTranslator = translator;
+        if(translator == null) {
+            System.out.println("translator was null for: " + object.getClass());
+            return;
+        }
         translator.writeJsonOutput(writerContext, object);
-        this.focalTranslator = null;
     }
     
-
     public void writePluginDataOutput(List<PluginData> pluginDatas) {
         for (PluginData pluginData : pluginDatas) {
             writePluginDataOutput(pluginData);
@@ -223,9 +224,11 @@ public class TranslatorController {
         WriterContext writerContext = new WriterContext(this);
 
         Translator translator = this.simObjectClassToTranslatorMap.get(pluginData.getClass());
-        this.focalTranslator = translator;
+        if(translator == null) {
+            System.out.println("translator was null for: " + pluginData.getClass());
+            return;
+        }
         translator.writePluginDataOutput(writerContext, pluginData);
-        this.focalTranslator = null;
     }
 
     public List<PluginData> getPluginDatas() {
