@@ -2,12 +2,12 @@ syntax = "proto3";
 package gov.hhs.aspr.gcm;
 
 option java_multiple_files = true;
-option java_package = "plugins.stochastics.input";
+option java_package = "gov.hhs.aspr.gcm.translation.plugins.stochastics.input";
 
 import "google/protobuf/any.proto";
 
 message RandomNumberGeneratorIdInput {
-    google.protobuf.Any randomNumberGeneratorId = 1;
+    google.protobuf.Any id = 1;
 }
 
 enum TestRandomGeneratorIdInput {

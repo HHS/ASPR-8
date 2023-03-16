@@ -12,19 +12,34 @@
 
 
 	<!-- Artifact -->
-	<groupId>gov.hhs.aspr</groupId>
+	<groupId>gov.hhs.aspr.gcm.demo</groupId>
 	<artifactId>demo1</artifactId>
 	<version>4.0.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<name>serialization demo</name>
 	<description>Demonstrate serialization integration with simulation</description>
 
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <maven-surefire-plugin.version>3.0.0-M5</maven-surefire-plugin.version>
+        <maven-failsafe-plugin.version>3.0.0-M5</maven-failsafe-plugin.version>
+        <maven-jar-plugin.version>3.2.0</maven-jar-plugin.version>
+        <junit-jupiter-engine.version>5.8.2</junit-jupiter-engine.version>
+        <protoc>protoc</protoc>
+        <protobuf.version>3.21.12</protobuf.version>
+        <protoc.version>3.21.12</protoc.version>
+        <gcm.version>4.0.0-SNAPSHOT</gcm.version>
+		<gcm.proto-definitions.version>1.0.0-SNAPSHOT</gcm.proto-definitions.version>
+	</properties>
+
 	<!-- Dependencies -->
 	<dependencies>
 		<dependency>
 			<groupId>gov.hhs.aspr</groupId>
 			<artifactId>gcm4</artifactId>
-			<version>4.0.0-SNAPSHOT</version>
+			<version>${gcm.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
@@ -37,15 +52,60 @@
 			<version>1.0</version>
 		</dependency>
 		<dependency>
+            <groupId>com.google.protobuf</groupId>
+            <artifactId>protobuf-java</artifactId>
+			<version>${protobuf.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.protobuf</groupId>
+            <artifactId>protobuf-java-util</artifactId>
+			<version>${protobuf.version}</version>
+        </dependency>
+		 <dependency>
+			<groupId>gov.hhs.aspr.gcm.translation</groupId>
+			<artifactId>core</artifactId>
+			<version>${gcm.proto-definitions.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>gov.hhs.aspr.gcm.translation</groupId>
+			<artifactId>nucleus-translator</artifactId>
+			<version>${gcm.proto-definitions.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>gov.hhs.aspr.gcm.translation</groupId>
+			<artifactId>regions-plugin-translator</artifactId>
+			<version>${gcm.proto-definitions.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>gov.hhs.aspr.gcm.translation</groupId>
+			<artifactId>people-plugin-translator</artifactId>
+			<version>${gcm.proto-definitions.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>gov.hhs.aspr.gcm.translation</groupId>
+			<artifactId>stochastics-plugin-translator</artifactId>
+			<version>${gcm.proto-definitions.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>gov.hhs.aspr.gcm.translation</groupId>
+			<artifactId>globalproperties-plugin-translator</artifactId>
+			<version>${gcm.proto-definitions.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>gov.hhs.aspr.gcm.translation</groupId>
+			<artifactId>personproperties-plugin-translator</artifactId>
+			<version>${gcm.proto-definitions.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter-api</artifactId>
-			<version>5.7.0</version>
+			<version>${junit-jupiter-engine.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter-engine</artifactId>
-			<version>5.7.0</version>
+			<version>${junit-jupiter-engine.version}</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
@@ -63,13 +123,17 @@
 	<build>
 		<plugins>
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.8.1</version>
-				<configuration>
-					<source>17</source>
-					<target>17</target>
-				</configuration>
+				<groupId>kr.motd.maven</groupId>
+				<artifactId>os-maven-plugin</artifactId>
+				<version>1.7.0</version>
+				<executions>
+                    <execution>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>detect</goal>
+                        </goals>
+                    </execution>
+                </executions>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -88,19 +152,75 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>3.0.0-M5</version>
-				<configuration>
-
-					<includes>
-						<include>*.java</include>
-					</includes>
-					<!-- <excludes> -->
-					<!-- <exclude>AT_EnvironmentImpl_01.java</exclude> -->
-					<!-- <exclude>AT_EnvironmentImpl_02.java</exclude> -->
-					<!-- </excludes> -->
-
-					<excludedGroups>manual</excludedGroups>
-				</configuration>
+				<version>${maven-surefire-plugin.version}</version>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-failsafe-plugin</artifactId>
+				<version>${maven-failsafe-plugin.version}</version>
+			</plugin>
+			<plugin>
+				<groupId>org.xolstice.maven.plugins</groupId>
+				<artifactId>protobuf-maven-plugin</artifactId>
+				<version>0.6.1</version>
+				<executions>
+                    <execution>
+                        <goals>
+                            <goal>compile</goal>
+                            <goal>test-compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <protocArtifact>com.google.protobuf:protoc:${protoc.version}:exe:${os.detected.classifier}</protocArtifact>
+                    <protoSourceRoot>${project.basedir}/src/main/proto</protoSourceRoot>
+                </configuration>
+			</plugin>
+			<plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+				<version>3.3.0</version>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>${project.build.directory}/generated-sources/protobuf/java</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+			<plugin>
+				<groupId>com.google.code.maven-replacer-plugin</groupId>
+				<artifactId>maven-replacer-plugin</artifactId>
+				<version>1.3.2</version>
+				<executions>
+                    <execution>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>replace</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <includes>
+                        <include>target/generated-sources/**/*.java</include>
+                    </includes>
+                    <regex>true</regex>
+                    <regexFlags>
+                        <regexFlag>MULTILINE</regexFlag>
+                    </regexFlags>
+                    <replacements>
+                        <replacement>
+                            <token>^(@SuppressWarnings\(.*?\)\s+)?public final class</token>
+                            <value>@SuppressWarnings("all") public final class</value>
+                        </replacement>
+                    </replacements>
+                </configuration>
 			</plugin>
 		</plugins>
 	</build>

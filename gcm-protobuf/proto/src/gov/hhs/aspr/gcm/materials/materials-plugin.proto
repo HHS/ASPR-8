@@ -1,0 +1,110 @@
+syntax = "proto3";
+package gov.hhs.aspr.gcm;
+
+option java_multiple_files = true;
+option java_package = "gov.hhs.aspr.gcm.translation.plugins.materials.input";
+
+import "resources-plugin.proto";
+import "properties-plugin.proto";
+import "google/protobuf/any.proto";
+
+message MaterialIdInput {
+    google.protobuf.Any id = 1;
+}
+
+message MaterialsProducerIdInput {
+    google.protobuf.Any id = 1;
+}
+
+message MaterialsProducerPropertyIdInput {
+    google.protobuf.Any id = 1;
+}
+
+message MaterialsProducerPropertyValueMapInput {
+    MaterialsProducerIdInput materialsProducerId = 1;
+    repeated PropertyValueMapInput propertyValues = 2;
+}
+
+message MaterialsProducerResourceLevelMapInput {
+    MaterialsProducerIdInput materialsProducerId = 1;
+    repeated ResourceInitializationInput resourceLevels = 2;
+}
+
+message BatchIdInput {
+    int32 id = 1;
+}
+
+message BatchPropertyIdInput {
+    google.protobuf.Any id = 1;
+}
+
+message BatchPropertyDefinitionMapInput {
+    MaterialIdInput materialId = 1;
+    repeated PropertyDefinitionMapInput propertyDefinitions = 2;
+}
+
+message BatchMapInput {
+    BatchIdInput batchId = 1;
+    MaterialIdInput materialId = 2;
+    double amount = 3;
+    MaterialsProducerIdInput materialsProducerId = 4;
+    repeated PropertyValueMapInput propertyValues = 5;
+}
+
+message StageIdInput {
+    int32 id = 1;
+}
+
+message StageMapInput {
+    StageIdInput stageId = 1;
+    bool offered = 2;
+    MaterialsProducerIdInput materialsProducerId = 3;
+    repeated BatchIdInput batchesInStage = 4;
+}
+
+message MaterialsPluginDataInput {
+    repeated MaterialIdInput materialIds = 1;
+    repeated MaterialsProducerIdInput materialsProducerIds = 2;
+    repeated BatchPropertyDefinitionMapInput batchPropertyDefinitions = 3;
+    repeated PropertyDefinitionMapInput materialsProducerPropertyDefinitions = 4;
+    repeated MaterialsProducerPropertyValueMapInput materialsProducerPropertyValues = 5;
+    repeated MaterialsProducerResourceLevelMapInput materialsProducerResourceLevels = 6;
+    repeated BatchMapInput batchIds = 7;
+    repeated StageMapInput stageIds = 8;
+}
+
+enum TestBatchPropertyIdInput {
+    BATCH_PROPERTY_1_1_BOOLEAN_IMMUTABLE_NO_TRACK = 0;
+    BATCH_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK = 1;
+    BATCH_PROPERTY_1_3_DOUBLE_MUTABLE_NO_TRACK = 2;
+    BATCH_PROPERTY_2_1_BOOLEAN_MUTABLE_TRACK = 3;
+    BATCH_PROPERTY_2_2_INTEGER_IMMUTABLE_TRACK = 4;
+    BATCH_PROPERTY_2_3_DOUBLE_MUTABLE_TRACK = 5;
+    BATCH_PROPERTY_3_1_BOOLEAN_MUTABLE_NO_TRACK = 6;
+    BATCH_PROPERTY_3_2_INTEGER_MUTABLE_NO_TRACK = 7;
+    BATCH_PROPERTY_3_3_DOUBLE_IMMUTABLE_NO_TRACK = 8;
+}
+
+enum TestMaterialIdInput {
+    MATERIAL_1 = 0;
+    MATERIAL_2 = 1;
+    MATERIAL_3 = 2;
+}
+
+enum TestMaterialsProducerIdInput {
+    MATERIALS_PRODUCER_1 = 0;
+    MATERIALS_PRODUCER_2 = 1;
+    MATERIALS_PRODUCER_3 = 2;
+}
+
+enum TestMaterialsProducerPropertyIdInput {
+    MATERIALS_PRODUCER_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK = 0;
+    MATERIALS_PRODUCER_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK = 1;
+    MATERIALS_PRODUCER_PROPERTY_3_DOUBLE_MUTABLE_NO_TRACK = 2;
+    MATERIALS_PRODUCER_PROPERTY_4_BOOLEAN_MUTABLE_TRACK = 3;
+    MATERIALS_PRODUCER_PROPERTY_5_INTEGER_MUTABLE_TRACK = 4;
+    MATERIALS_PRODUCER_PROPERTY_6_DOUBLE_MUTABLE_TRACK = 5;
+    MATERIALS_PRODUCER_PROPERTY_7_BOOLEAN_IMMUTABLE_NO_TRACK = 6;
+    MATERIALS_PRODUCER_PROPERTY_8_INTEGER_IMMUTABLE_NO_TRACK = 7;
+    MATERIALS_PRODUCER_PROPERTY_9_DOUBLE_IMMUTABLE_NO_TRACK = 8;
+}

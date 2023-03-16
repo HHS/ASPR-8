@@ -2,7 +2,7 @@ syntax = "proto3";
 package gov.hhs.aspr.gcm;
 
 option java_multiple_files = true;
-option java_package = "plugins.groups.input";
+option java_package = "gov.hhs.aspr.gcm.translation.plugins.groups.input";
 
 
 import "properties-plugin.proto";
@@ -10,7 +10,7 @@ import "people-plugin.proto";
 import "google/protobuf/any.proto";
 
 message GroupIdInput {
-    int32 groupId = 1;
+    int32 id = 1;
 }
 
 message SimpleGroupTypeIdInput {
@@ -35,11 +35,11 @@ enum TestGroupPropertyIdInput {
     GROUP_PROPERTY_3_3_DOUBLE_IMMUTABLE_NO_TRACK = 8;
 }
 message GroupTypeIdInput {
-    google.protobuf.Any groupTypeId = 1;
+    google.protobuf.Any id = 1;
 }
 
 message GroupPropertyIdInput {
-    google.protobuf.Any groupPropertyId = 1;
+    google.protobuf.Any id = 1;
 }
 
 message GroupMembershipInput {

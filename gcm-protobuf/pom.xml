@@ -3,11 +3,11 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>gov.hhs.aspr.gcm.gcm-protobuf</groupId>
-    <artifactId>gcm-protobuf</artifactId>
+    <groupId>gov.hhs.aspr.gcm.translation</groupId>
+    <artifactId>protobuf</artifactId>
     <version>${revision}</version>
     <packaging>pom</packaging>
-    <name>gcm-protobuf</name>
+    <name>gcm-translation :: protobuf</name>
 
     <properties>
         <revision>1.0.0-SNAPSHOT</revision>
@@ -22,7 +22,7 @@
         <protobuf.version>3.21.12</protobuf.version>
         <protoc.version>3.21.12</protoc.version>
         <gcm.version>4.0.0-SNAPSHOT</gcm.version>
-        <gcm.proto.version>1.0.0-SNAPSHOT</gcm.proto.version>
+        <proto-definitions.version>1.0.0-SNAPSHOT</proto-definitions.version>
         <protobuf.basedir>${project.basedir}/..</protobuf.basedir>
         <protobuf.source.dir>${protobuf.basedir}/src</protobuf.source.dir>
         <generated.sources.dir>${project.build.directory}/generated-sources</generated.sources.dir>
@@ -50,13 +50,11 @@
                 <groupId>org.junit.jupiter</groupId>
                 <artifactId>junit-jupiter-engine</artifactId>
                 <version>${junit-jupiter-engine.version}</version>
-                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.junit.jupiter</groupId>
                 <artifactId>junit-jupiter-api</artifactId>
                 <version>${junit-jupiter-engine.version}</version>
-                <scope>test</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -77,23 +75,26 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 
     <modules>
         <module>proto</module>
         <module>core</module>
+        <module>nucleus</module>
         <module>properties-plugin</module>
         <module>people-plugin</module>
         <module>groups-plugin</module>
         <module>stochastics-plugin</module>
         <module>globalproperties-plugin</module>
+        <module>regions-plugin</module>
+        <module>personproperties-plugin</module>
+        <module>resources-plugin</module>
+        <module>materials-plugin</module>
     </modules>
 
     <build>
@@ -120,6 +121,11 @@
                     <version>3.1.1</version>
                 </plugin>
                 <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <version>3.2.1</version>
+                </plugin>
+                <plugin>
                     <groupId>org.xolstice.maven.plugins</groupId>
                     <artifactId>protobuf-maven-plugin</artifactId>
                     <version>0.6.1</version>
@@ -134,6 +140,11 @@
                     <artifactId>maven-replacer-plugin</artifactId>
                     <version>1.3.2</version>
                 </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>flatten-maven-plugin</artifactId>
+                    <version>1.3.0</version>
+                </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
@@ -145,6 +156,42 @@
                         <phase>initialize</phase>
                         <goals>
                             <goal>detect</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>flatten-maven-plugin</artifactId>
+                <configuration> </configuration>
+                <executions>
+                    <!-- enable flattening -->
+                    <execution>
+                        <id>flatten</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>flatten</goal>
+                        </goals>
+                    </execution>
+                    <!-- ensure proper cleanup -->
+                    <execution>
+                        <id>flatten.clean</id>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>clean</goal>
                         </goals>
                     </execution>
                 </executions>

@@ -1,0 +1,61 @@
+syntax = "proto3";
+package gov.hhs.aspr.gcm;
+
+option java_multiple_files = true;
+option java_package = "gov.hhs.aspr.gcm.translation.plugins.regions.input";
+
+import "properties-plugin.proto";
+import "people-plugin.proto";
+import "google/protobuf/any.proto";
+
+message RegionIdInput {
+    google.protobuf.Any id = 1;
+}
+
+message RegionPropertyIdInput {
+    google.protobuf.Any id = 1;
+}
+
+message RegionMembershipInput {
+    PersonIdInput personId = 1;
+    RegionIdInput regionId = 2;
+}
+
+message RegionPropertyValueMapInput {
+   RegionIdInput regionId = 1;
+   repeated PropertyValueMapInput propertyValueMap = 2;
+}
+
+message RegionsPluginDataInput {
+    repeated RegionIdInput regionIds = 1;
+    repeated PropertyDefinitionMapInput regionPropertyDefinitions = 2;
+    repeated RegionPropertyValueMapInput regionPropertyValues = 3;
+    repeated RegionMembershipInput personRegions = 4;
+    TimeTrackingPolicyInput regionArrivalTimeTrackingPolicy = 5;
+}
+
+message SimpleRegionIdInput {
+    google.protobuf.Any value = 1;
+}
+
+message SimpleRegionPropertyIdInput {
+    google.protobuf.Any value = 1;
+}
+
+enum TestRegionIdInput {
+    REGION_1 = 0;
+    REGION_2 = 1;
+    REGION_3 = 2;
+    REGION_4 = 3;
+    REGION_5 = 4;
+    REGION_6 = 5;
+}
+
+enum TestRegionPropertyIdInput {
+    REGION_PROPERTY_1_BOOLEAN_MUTABLE = 0;
+    REGION_PROPERTY_2_INTEGER_MUTABLE = 1;
+    REGION_PROPERTY_3_DOUBLE_MUTABLE = 2;
+    REGION_PROPERTY_4_BOOLEAN_IMMUTABLE = 3;
+    REGION_PROPERTY_5_INTEGER_IMMUTABLE = 4;
+    REGION_PROPERTY_6_DOUBLE_IMMUTABLE = 5;
+}

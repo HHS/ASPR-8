@@ -1,0 +1,99 @@
+{
+    "globalPropertyDefinitinions": [{
+      "propertyId": {
+        "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
+        "enumTypeUrl": "gov.hhs.aspr.gcm.GlobalPropertyInput",
+        "value": "IMMUNITY_START_TIME"
+      },
+      "propertyDefinition": {
+        "defaultValue": {
+          "@type": "type.googleapis.com/google.protobuf.DoubleValue",
+          "value": 0.0
+        }
+      }
+    }, {
+      "propertyId": {
+        "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
+        "enumTypeUrl": "gov.hhs.aspr.gcm.GlobalPropertyInput",
+        "value": "VACCINE_ATTEMPT_INTERVAL"
+      },
+      "propertyDefinition": {
+        "defaultValue": {
+          "@type": "type.googleapis.com/google.protobuf.DoubleValue",
+          "value": 0.0
+        }
+      }
+    }, {
+      "propertyId": {
+        "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
+        "enumTypeUrl": "gov.hhs.aspr.gcm.GlobalPropertyInput",
+        "value": "EDUCATION_ATTEMPT_INTERVAL"
+      },
+      "propertyDefinition": {
+        "defaultValue": {
+          "@type": "type.googleapis.com/google.protobuf.DoubleValue",
+          "value": 0.0
+        }
+      }
+    }, {
+      "propertyId": {
+        "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
+        "enumTypeUrl": "gov.hhs.aspr.gcm.GlobalPropertyInput",
+        "value": "EDUCATION_SUCCESS_RATE"
+      },
+      "propertyDefinition": {
+        "defaultValue": {
+          "@type": "type.googleapis.com/google.protobuf.DoubleValue",
+          "value": 0.0
+        }
+      }
+    }, {
+      "propertyId": {
+        "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
+        "enumTypeUrl": "gov.hhs.aspr.gcm.GlobalPropertyInput",
+        "value": "VACCINE_REFUSAL_PROBABILITY"
+      },
+      "propertyDefinition": {
+        "defaultValue": {
+          "@type": "type.googleapis.com/google.protobuf.DoubleValue",
+          "value": 0.0
+        }
+      }
+    }, {
+      "propertyId": {
+        "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
+        "enumTypeUrl": "gov.hhs.aspr.gcm.GlobalPropertyInput",
+        "value": "IMMUNITY_PROBABILITY"
+      },
+      "propertyDefinition": {
+        "defaultValue": {
+          "@type": "type.googleapis.com/google.protobuf.DoubleValue",
+          "value": 0.0
+        }
+      }
+    }, {
+      "propertyId": {
+        "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
+        "enumTypeUrl": "gov.hhs.aspr.gcm.GlobalPropertyInput",
+        "value": "SIMULATION_DURATION"
+      },
+      "propertyDefinition": {
+        "defaultValue": {
+          "@type": "type.googleapis.com/google.protobuf.DoubleValue",
+          "value": 365.0
+        }
+      }
+    }, {
+      "propertyId": {
+        "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
+        "enumTypeUrl": "gov.hhs.aspr.gcm.GlobalPropertyInput",
+        "value": "POPULATION_SIZE"
+      },
+      "propertyDefinition": {
+        "defaultValue": {
+          "@type": "type.googleapis.com/google.protobuf.Int32Value",
+          "value": 1000
+        }
+      }
+    }]
+  }

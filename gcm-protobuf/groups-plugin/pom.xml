@@ -2,28 +2,28 @@
 <project>
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <artifactId>gcm-protobuf</artifactId>
-        <groupId>gov.hhs.aspr.gcm.gcm-protobuf</groupId>
+        <groupId>gov.hhs.aspr.gcm.translation</groupId>
+        <artifactId>protobuf</artifactId>
         <version>${revision}</version>
     </parent>
 
     <packaging>jar</packaging>
-    <artifactId>groups-plugin</artifactId>
-    <name>gcm-protobuf :: groups-plugin</name>
+    <artifactId>groups-plugin-translator</artifactId>
+    <name>gcm-translation :: protobuf :: groups-plugin-translator</name>
 
     <dependencies>
         <dependency>
-            <groupId>gov.hhs.aspr.gcm.gcm-protobuf</groupId>
-            <artifactId>properties-plugin</artifactId>
+            <groupId>gov.hhs.aspr.gcm.translation</groupId>
+            <artifactId>properties-plugin-translator</artifactId>
             <version>${revision}</version>
         </dependency>
         <dependency>
-            <groupId>gov.hhs.aspr.gcm.gcm-protobuf</groupId>
-            <artifactId>people-plugin</artifactId>
+            <groupId>gov.hhs.aspr.gcm.translation</groupId>
+            <artifactId>people-plugin-translator</artifactId>
             <version>${revision}</version>
             <exclusions>
                 <exclusion>
-                    <groupId>gov.hhs.aspr.gcm.gcm-protobuf</groupId>
+                    <groupId>gov.hhs.aspr.gcm.translation</groupId>
                     <artifactId>core</artifactId>
                 </exclusion>
             </exclusions>
@@ -54,13 +54,11 @@
                         <configuration>
                             <artifactItems>
                                 <artifactItem>
-                                    <groupId>
-                                        gov.hhs.aspr.gcm.gcm-protobuf</groupId>
-                                    <artifactId>protos</artifactId>
-                                    <version>${gcm.proto.version}</version>
+                                    <groupId>gov.hhs.aspr.gcm.translation</groupId>
+                                    <artifactId>proto-definitions</artifactId>
+                                    <version>${proto-definitions.version}</version>
                                     <overWrite>true</overWrite>
-                                    <outputDirectory>
-                                        ${project.build.outputDirectory}</outputDirectory>
+                                    <outputDirectory>${project.build.outputDirectory}</outputDirectory>
                                     <includes>**/*.proto</includes>
                                 </artifactItem>
                             </artifactItems>
@@ -80,18 +78,13 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <protocArtifact>
-                        com.google.protobuf:protoc:${protoc.version}:exe:${os.detected.classifier}</protocArtifact>
-                    <protoSourceRoot>
-                        ${project.build.outputDirectory}/gov/hhs/aspr/gcm/groups</protoSourceRoot>
+                    <protocArtifact>com.google.protobuf:protoc:${protoc.version}:exe:${os.detected.classifier}</protocArtifact>
+                    <protoSourceRoot>${project.build.outputDirectory}/gov/hhs/aspr/gcm/groups</protoSourceRoot>
                     <additionalProtoPathElements>
-                        <additionalProtoPathElement>
-                            ${project.build.outputDirectory}/gov/hhs/aspr/gcm/properties</additionalProtoPathElement>
-                        <additionalProtoPathElement>
-                            ${project.build.outputDirectory}/gov/hhs/aspr/gcm/people</additionalProtoPathElement>
+                        <additionalProtoPathElement>${project.build.outputDirectory}/gov/hhs/aspr/gcm/properties</additionalProtoPathElement>
+                        <additionalProtoPathElement>${project.build.outputDirectory}/gov/hhs/aspr/gcm/people</additionalProtoPathElement>
                     </additionalProtoPathElements>
-                    <attachProtoSources>
-                        false</attachProtoSources>
+                    <attachProtoSources>false</attachProtoSources>
                 </configuration>
             </plugin>
             <plugin>
@@ -105,8 +98,7 @@
                         </goals>
                         <configuration>
                             <sources>
-                                <source>
-                                    ${project.build.directory}/generated-sources/protobuf/java</source>
+                                <source>${project.build.directory}/generated-sources/protobuf/java</source>
                             </sources>
                         </configuration>
                     </execution>
