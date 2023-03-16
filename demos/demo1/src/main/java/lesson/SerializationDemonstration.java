@@ -57,6 +57,13 @@ import util.random.RandomGeneratorProvider;
 
 public final class SerializationDemonstration {
 
+	private final String personPropertiesFileName = "personPropertiesOutput.json";
+	private final String globalPropertiesFileName = "globalPropertiesOutput.json";
+	private final String regionsFileName = "regionsOutput.json";
+	private final String peopleFileName = "peopleOutput.json";
+	private final String stochasticsFileName = "stochasticsOutput.json";
+	private final String simTimeFileName = "simTimeOutput.json";
+
 	private final Path outputDirectory;
 	private TranslatorController writingTranslatorController;
 	private TranslatorController readingTranslatorController;
@@ -71,7 +78,8 @@ public final class SerializationDemonstration {
 				.addTranslator(PropertiesTranslator.getTranslator())
 				.addTranslator(PeopleTranslator.getTranslatorR("./src/main/resources/peopleInput.json"))
 				.addTranslator(RegionsTranslator.getTranslatorR("./src/main/resources/regionsInput.json"))
-				.addTranslator(GlobalPropertiesTranslator.getTranslatorR("./src/main/resources/globalPropertiesInput.json"))
+				.addTranslator(
+						GlobalPropertiesTranslator.getTranslatorR("./src/main/resources/globalPropertiesInput.json"))
 				.addTranslatorSpec(new PersonPropertyTranslatorSpec())
 				.addTranslatorSpec(new GlobalPropertyTranslatorSpec())
 				.addTranslatorSpec(new RegionTranslatorSpec())
@@ -246,22 +254,27 @@ public final class SerializationDemonstration {
 		/*
 		 * Create the people plugin filled with 1000 people
 		 */
-		Plugin peoplePlugin = null;
+		Plugin peoplePlugin = getPeoplePlugin();
 
 		// Create the person properties plugin
-		Plugin personPropertiesPlugin = null;
+		Plugin personPropertiesPlugin = getPersonPropertiesPlugin();
 
 		/*
 		 * Create the region plugin 5 regions, each having a lat and lon and
 		 * assign the people to random regions.
 		 * 
 		 */
-		Plugin regionsPlugin = null;
+		Plugin regionsPlugin = getRegionsPlugin();
 
-				/*
+		/*
 		 * Create the global properties plugin
 		 */
-		Plugin globalPropertiesPlugin = null;
+		Plugin globalPropertiesPlugin = getGlobalPropertiesPlugin();
+
+		/*
+		 * create the stochastics plugin
+		 */
+		Plugin stochasticsPlugin = getStochasticsPlugin();
 
 		List<PluginData> pluginDatas = this.readingTranslatorController.readInput().getPluginDatas();
 
@@ -281,25 +294,24 @@ public final class SerializationDemonstration {
 				continue;
 			}
 
-			if(pluginData instanceof GlobalPropertiesPluginData) {
-				globalPropertiesPlugin = GlobalPropertiesPlugin.getGlobalPropertiesPlugin((GlobalPropertiesPluginData) pluginData);
+			if (pluginData instanceof GlobalPropertiesPluginData) {
+				globalPropertiesPlugin = GlobalPropertiesPlugin
+						.getGlobalPropertiesPlugin((GlobalPropertiesPluginData) pluginData);
+				continue;
+			}
+
+			if (pluginData instanceof StochasticsPluginData) {
+				stochasticsPlugin = StochasticsPlugin.getStochasticsPlugin((StochasticsPluginData) pluginData);
 				continue;
 			}
 
 		}
-
-
 
 		/*
 		 * Create the reports
 		 */
 		Plugin reportsPlugin = getReportsPlugin();
 		NIOReportItemHandler nioReportItemHandler = getNIOReportItemHandler();
-
-		/*
-		 * create the stochastics plugin
-		 */
-		Plugin stochasticsPlugin = getStochasticsPlugin();
 
 		Plugin modelPlugin = ModelPlugin.getModelPlugin();
 
@@ -319,8 +331,8 @@ public final class SerializationDemonstration {
 
 				.addDimension(getImmunityStartTimeDimension())//
 				.addDimension(getImmunityProbabilityDimension())//
-				.addDimension(getVaccineAttemptIntervalDimension())//
-				.addDimension(getEducationAttemptIntervalDimension())//
+				// .addDimension(getVaccineAttemptIntervalDimension())//
+				// .addDimension(getEducationAttemptIntervalDimension())//
 				// .addDimension(getEducationSuccessRatedimension())//
 				// .addDimension(getVaccineRefusalProbabilityDimension())//
 				.addExperimentContextConsumer(nioReportItemHandler)//
@@ -334,13 +346,6 @@ public final class SerializationDemonstration {
 				.execute();//
 
 	}
-
-	private final String personPropertiesFileName = "personPropertiesOutput.json";
-	private final String globalPropertiesFileName = "globalPropertiesOutput.json";
-	private final String regionsFileName = "regionsOutput.json";
-	private final String peopleFileName = "peopleOutput.json";
-	private final String stochasticsFileName = "stochasticsOutput.json";
-	private final String simTimeFileName = "simTimeOutput.json";
 
 	private void handleExperiementOpen(ExperimentContext experimentContext) {
 
@@ -364,10 +369,10 @@ public final class SerializationDemonstration {
 			Path stochasticsPath = Paths.get(outputDir.getAbsolutePath()).resolve(stochasticsFileName);
 			Path simTimePath = Paths.get(outputDir.getAbsolutePath()).resolve(simTimeFileName);
 
-			personPropertiesTranslator.addOutputFile(personPropertiesPath.toString(), PersonPropertiesPluginData.class,
-					i);
-			globalPropertiesTranslator.addOutputFile(globalPropertiesPath.toString(), GlobalPropertiesPluginData.class,
-					i);
+			personPropertiesTranslator
+					.addOutputFile(personPropertiesPath.toString(), PersonPropertiesPluginData.class, i);
+			globalPropertiesTranslator
+					.addOutputFile(globalPropertiesPath.toString(), GlobalPropertiesPluginData.class, i);
 			regionsTranslator.addOutputFile(regionsPath.toString(), RegionsPluginData.class, i);
 			peopleTranslator.addOutputFile(peoplePath.toString(), PeoplePluginData.class, i);
 			stochasticsTranslator.addOutputFile(stochasticsPath.toString(), StochasticsPluginData.class, i);
@@ -393,9 +398,6 @@ public final class SerializationDemonstration {
 	}
 
 	private void handleSimulationStateCollection(Integer scenarioId, List<Object> output) {
-		// File outputDir = this.outputDirectory.resolve("scenario" +
-		// scenarioId).toFile();
-		// outputDir.mkdir();
 
 		System.out.println(scenarioId);
 
