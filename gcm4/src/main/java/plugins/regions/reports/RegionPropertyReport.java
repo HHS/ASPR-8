@@ -35,15 +35,15 @@ public final class RegionPropertyReport {
 
 	private static class Data {
 		private ReportLabel reportLabel;
-		private Set<RegionPropertyId> includedProperties = new LinkedHashSet<>();
-		private Set<RegionPropertyId> excludedProperties = new LinkedHashSet<>();
+		private Set<RegionPropertyId> includedRegionPropertyIds = new LinkedHashSet<>();
+		private Set<RegionPropertyId> excludedRegionPropertyIds = new LinkedHashSet<>();
 		private boolean defaultInclusionPolicy = true;
 	}
 
 	/**
 	 * Returns a new instance of the builder class
 	 */
-	private static Builder builder() {
+	public static Builder builder() {
 		return new Builder();
 	}
 
@@ -87,8 +87,8 @@ public final class RegionPropertyReport {
 			if (regionPropertyId == null) {
 				throw new ContractException(RegionError.NULL_REGION_ID);
 			}
-			data.includedProperties.add(regionPropertyId);
-			data.excludedProperties.remove(regionPropertyId);
+			data.includedRegionPropertyIds.add(regionPropertyId);
+			data.excludedRegionPropertyIds.remove(regionPropertyId);
 			return this;
 		}
 
@@ -103,8 +103,8 @@ public final class RegionPropertyReport {
 			if (regionPropertyId == null) {
 				throw new ContractException(RegionError.NULL_REGION_ID);
 			}
-			data.includedProperties.remove(regionPropertyId);
-			data.excludedProperties.add(regionPropertyId);
+			data.includedRegionPropertyIds.remove(regionPropertyId);
+			data.excludedRegionPropertyIds.add(regionPropertyId);
 			return this;
 		}
 
@@ -126,8 +126,6 @@ public final class RegionPropertyReport {
 
 	private ReportHeader reportHeader;
 
-	private final Set<RegionPropertyId> includedRegionPropertyIds = new LinkedHashSet<>();
-	private final Set<RegionPropertyId> excludedRegionPropertyIds = new LinkedHashSet<>();
 	private final Data data;
 
 	private ReportHeader getReportHeader() {
@@ -146,17 +144,14 @@ public final class RegionPropertyReport {
 		RegionId regionId = regionPropertyUpdateEvent.regionId();
 		RegionPropertyId regionPropertyId = regionPropertyUpdateEvent.regionPropertyId();
 		Object propertyValue = regionPropertyUpdateEvent.currentPropertyValue();
-		if (includedRegionPropertyIds.contains(regionPropertyId)) {
+		if (data.includedRegionPropertyIds.contains(regionPropertyId)) {
 			writeProperty(reportContext, regionId, regionPropertyId, propertyValue);
 		}
 	}
 
-	private final ReportLabel reportLabel;
-
 	private RegionsDataManager regionsDataManager;
 
 	private RegionPropertyReport(Data data) {
-		this.reportLabel = data.reportLabel;
 		this.data = data;
 	}
 
@@ -177,26 +172,19 @@ public final class RegionPropertyReport {
 		 * If no region properties were specified, then assume all are wanted
 		 */
 		if (data.defaultInclusionPolicy) {
-			includedRegionPropertyIds.addAll(regionsDataManager.getRegionPropertyIds());
-		}
-
-		/*
-		 * Ensure that every client supplied property identifier is valid
-		 */
-		final Set<RegionPropertyId> validPropertyIds = regionsDataManager.getRegionPropertyIds();
-		for (final RegionPropertyId regionPropertyId : includedRegionPropertyIds) {
-			if (!validPropertyIds.contains(regionPropertyId)) {
-				throw new ContractException(PropertyError.UNKNOWN_PROPERTY_ID, regionPropertyId);
-			}
+			data.includedRegionPropertyIds.addAll(regionsDataManager.getRegionPropertyIds());
+			data.includedRegionPropertyIds.removeAll(data.excludedRegionPropertyIds);
+			reportContext.subscribe(RegionPropertyDefinitionEvent.class, this::handleRegionPropertyDefinitionEvent);
 		}
 
 		reportContext.subscribe(RegionPropertyUpdateEvent.class, this::handleRegionPropertyUpdateEvent);
-		reportContext.subscribe(RegionPropertyDefinitionEvent.class, this::handleRegionPropertyDefinitionEvent);
 
 		for (final RegionId regionId : regionsDataManager.getRegionIds()) {
-			for (final RegionPropertyId regionPropertyId : includedRegionPropertyIds) {
-				Object propertyValue = regionsDataManager.getRegionPropertyValue(regionId, regionPropertyId);
-				writeProperty(reportContext, regionId, regionPropertyId, propertyValue);
+			for (final RegionPropertyId regionPropertyId : data.includedRegionPropertyIds) {
+				if (regionsDataManager.regionPropertyIdExists(regionPropertyId)) {
+					Object propertyValue = regionsDataManager.getRegionPropertyValue(regionId, regionPropertyId);
+					writeProperty(reportContext, regionId, regionPropertyId, propertyValue);
+				}
 			}
 		}
 
@@ -206,9 +194,11 @@ public final class RegionPropertyReport {
 	private void handleRegionAdditionEvent(ReportContext reportContext, RegionAdditionEvent regionAdditionEvent) {
 		RegionId regionId = regionAdditionEvent.getRegionId();
 
-		for (final RegionPropertyId regionPropertyId : includedRegionPropertyIds) {
-			Object propertyValue = regionsDataManager.getRegionPropertyValue(regionId, regionPropertyId);
-			writeProperty(reportContext, regionId, regionPropertyId, propertyValue);
+		for (final RegionPropertyId regionPropertyId : data.includedRegionPropertyIds) {
+			if (regionsDataManager.regionPropertyIdExists(regionPropertyId)) {
+				Object propertyValue = regionsDataManager.getRegionPropertyValue(regionId, regionPropertyId);
+				writeProperty(reportContext, regionId, regionPropertyId, propertyValue);
+			}
 		}
 
 	}
@@ -217,12 +207,10 @@ public final class RegionPropertyReport {
 
 		RegionsDataManager regionsDataManager = reportContext.getDataManager(RegionsDataManager.class);
 		RegionPropertyId regionPropertyId = regionPropertyDefinitionEvent.regionPropertyId();
-		if (!includedRegionPropertyIds.contains(regionPropertyId)) {
-			includedRegionPropertyIds.add(regionPropertyId);
-			for (final RegionId regionId : regionsDataManager.getRegionIds()) {
-				Object propertyValue = regionsDataManager.getRegionPropertyValue(regionId, regionPropertyId);
-				writeProperty(reportContext, regionId, regionPropertyId, propertyValue);
-			}
+		data.includedRegionPropertyIds.add(regionPropertyId);
+		for (final RegionId regionId : regionsDataManager.getRegionIds()) {
+			Object propertyValue = regionsDataManager.getRegionPropertyValue(regionId, regionPropertyId);
+			writeProperty(reportContext, regionId, regionPropertyId, propertyValue);
 		}
 	}
 
@@ -230,7 +218,7 @@ public final class RegionPropertyReport {
 
 		final ReportItem.Builder reportItemBuilder = ReportItem.builder();
 		reportItemBuilder.setReportHeader(getReportHeader());
-		reportItemBuilder.setReportLabel(reportLabel);
+		reportItemBuilder.setReportLabel(data.reportLabel);
 
 		reportItemBuilder.addValue(reportContext.getTime());
 		reportItemBuilder.addValue(regionId.toString());
