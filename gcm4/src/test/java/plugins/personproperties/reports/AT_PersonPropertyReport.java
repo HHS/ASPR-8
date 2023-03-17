@@ -35,8 +35,8 @@ import plugins.personproperties.testsupport.TestPersonPropertyId;
 import plugins.regions.RegionsPlugin;
 import plugins.regions.RegionsPluginData;
 import plugins.regions.testsupport.TestRegionId;
-import plugins.reports.ReportsPlugin;
-import plugins.reports.ReportsPluginData;
+//import plugins.reports.ReportsPlugin;
+//import plugins.reports.ReportsPluginData;
 import plugins.reports.support.ReportHeader;
 import plugins.reports.support.ReportItem;
 import plugins.reports.support.ReportLabel;
@@ -177,7 +177,20 @@ public class AT_PersonPropertyReport {
 			personPropertyBuilder.definePersonProperty(testPersonPropertyId, testPersonPropertyId.getPropertyDefinition());
 		}
 		PersonPropertiesPluginData personPropertiesPluginData = personPropertyBuilder.build();
-		Plugin personPropertyPlugin = PersonPropertiesPlugin.builder().setPersonPropertiesPluginData(personPropertiesPluginData).getPersonPropertyPlugin();
+		
+		PersonPropertyReportPluginData.Builder builder = PersonPropertyReportPluginData.builder();
+		builder.setReportLabel(reportLabel);
+		builder.setReportPeriod(hourlyReportPeriod);
+		builder.setDefaultInclusion(true);
+		builder.excludePersonProperty(TestPersonPropertyId.PERSON_PROPERTY_3_DOUBLE_MUTABLE_NO_TRACK);
+		builder.excludePersonProperty(unknownIdToExclude);
+		PersonPropertyReportPluginData personPropertyReportPluginData = builder.build();
+		
+		Plugin personPropertyPlugin = PersonPropertiesPlugin.builder()//
+				.setPersonPropertiesPluginData(personPropertiesPluginData)//
+				.setPersonPropertyReportPluginData(personPropertyReportPluginData)//
+				.getPersonPropertyPlugin();
+		
 		plugins.add(personPropertyPlugin);
 
 		/*
@@ -198,20 +211,6 @@ public class AT_PersonPropertyReport {
 		RegionsPluginData regionsPluginData = regionBuilder.build();
 		Plugin regionsPlugin = RegionsPlugin.getRegionsPlugin(regionsPluginData);
 		plugins.add(regionsPlugin);
-
-		// add the report
-		ReportsPluginData reportsPluginData = ReportsPluginData.builder().addReport(() -> {
-			PersonPropertyReportPluginData.Builder builder = PersonPropertyReportPluginData.builder();
-			builder.setReportLabel(reportLabel);
-			builder.setReportPeriod(hourlyReportPeriod);
-			builder.setDefaultInclusion(true);
-			builder.excludePersonProperty(TestPersonPropertyId.PERSON_PROPERTY_3_DOUBLE_MUTABLE_NO_TRACK);
-			builder.excludePersonProperty(unknownIdToExclude);
-
-			return new PersonPropertyReport(builder.build())::init;
-		}).build();
-		Plugin reportsPlugin = ReportsPlugin.getReportsPlugin(reportsPluginData);
-		plugins.add(reportsPlugin);
 
 		// execute the simulation and gather the report items
 		TestOutputConsumer testOutputConsumer = new TestOutputConsumer();
@@ -283,17 +282,19 @@ public class AT_PersonPropertyReport {
 		}));
 
 		ReportLabel reportLabel = new SimpleReportLabel(1000);
+		
+		PersonPropertyReportPluginData.Builder builder = PersonPropertyReportPluginData.builder();
+		builder.setReportLabel(reportLabel);
+		builder.setReportPeriod(ReportPeriod.DAILY);
+		PersonPropertyReportPluginData personPropertyReportPluginData = builder.build();
+		
 		TestPluginData testPluginData = pluginDataBuilder.build();
-		PersonPropertiesTestPluginFactory.Factory factory = PersonPropertiesTestPluginFactory.factory(30, 1174198461656549476L, testPluginData);
+		PersonPropertiesTestPluginFactory.Factory factory = PersonPropertiesTestPluginFactory//
+				.factory(30, 1174198461656549476L, testPluginData)//
+				.setPersonPropertyReportPluginData(personPropertyReportPluginData);//
+		
 		List<Plugin> plugins = factory.getPlugins();
-		ReportsPluginData reportsPluginData = ReportsPluginData.builder().addReport(() -> {
-			PersonPropertyReportPluginData.Builder builder = PersonPropertyReportPluginData.builder();
-			builder.setReportLabel(reportLabel);
-			builder.setReportPeriod(ReportPeriod.DAILY);
-			return new PersonPropertyReport(builder.build())::init;
-		}).build();
-		Plugin reportsPlugin = ReportsPlugin.getReportsPlugin(reportsPluginData);
-		plugins.add(reportsPlugin);
+
 		TestOutputConsumer testOutputConsumer = new TestOutputConsumer();
 		TestSimulation.executeSimulation(plugins, testOutputConsumer);
 
@@ -317,7 +318,7 @@ public class AT_PersonPropertyReport {
 	private void testInit_ReportHeader(ReportPeriod reportPeriod) {
 		/*
 		 * This test shows that the report produces report items with the
-		 * correct report labels.
+		 * correct report headers.
 		 */
 
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
@@ -328,17 +329,21 @@ public class AT_PersonPropertyReport {
 		}));
 
 		ReportLabel reportLabel = new SimpleReportLabel(1000);
+		
+		PersonPropertyReportPluginData.Builder builder = PersonPropertyReportPluginData.builder();
+		builder.setReportLabel(reportLabel);
+		builder.setReportPeriod(reportPeriod);
+		PersonPropertyReportPluginData personPropertyReportPluginData = builder.build();
+		
 		TestPluginData testPluginData = pluginDataBuilder.build();
-		PersonPropertiesTestPluginFactory.Factory factory = PersonPropertiesTestPluginFactory.factory(30, 1174198461656549476L, testPluginData);
+		PersonPropertiesTestPluginFactory.Factory factory = //
+				PersonPropertiesTestPluginFactory//				
+				.factory(30, 1174198461656549476L, testPluginData)//
+				.setPersonPropertyReportPluginData(personPropertyReportPluginData);
 		List<Plugin> plugins = factory.getPlugins();
-		ReportsPluginData reportsPluginData = ReportsPluginData.builder().addReport(() -> {
-			PersonPropertyReportPluginData.Builder builder = PersonPropertyReportPluginData.builder();
-			builder.setReportLabel(reportLabel);
-			builder.setReportPeriod(reportPeriod);
-			return new PersonPropertyReport(builder.build())::init;
-		}).build();
-		Plugin reportsPlugin = ReportsPlugin.getReportsPlugin(reportsPluginData);
-		plugins.add(reportsPlugin);
+		
+			
+		
 		TestOutputConsumer testOutputConsumer = new TestOutputConsumer();
 		TestSimulation.executeSimulation(plugins, testOutputConsumer);
 
@@ -393,19 +398,20 @@ public class AT_PersonPropertyReport {
 
 		ReportLabel reportLabel = new SimpleReportLabel(1000);
 		ReportPeriod hourlyReportPeriod = ReportPeriod.HOURLY;
+		
+		PersonPropertyReportPluginData.Builder builder = PersonPropertyReportPluginData.builder();
+		builder.setReportLabel(reportLabel);
+		builder.setReportPeriod(hourlyReportPeriod);
+		PersonPropertyReportPluginData personPropertyReportPluginData = builder.build();
+		
 		TestPluginData testPluginData = pluginDataBuilder.build();
-		PersonPropertiesTestPluginFactory.Factory factory = PersonPropertiesTestPluginFactory.factory(30, 1174198461656549476L, testPluginData);
+		PersonPropertiesTestPluginFactory.Factory factory = //
+				PersonPropertiesTestPluginFactory//				
+				.factory(30, 1174198461656549476L, testPluginData)
+				.setPersonPropertyReportPluginData(personPropertyReportPluginData);
+		
 		List<Plugin> plugins = factory.getPlugins();
-
-		// set the report period
-		ReportsPluginData reportsPluginData = ReportsPluginData.builder().addReport(() -> {
-			PersonPropertyReportPluginData.Builder builder = PersonPropertyReportPluginData.builder();
-			builder.setReportLabel(reportLabel);
-			builder.setReportPeriod(hourlyReportPeriod);
-			return new PersonPropertyReport(builder.build())::init;
-		}).build();
-		Plugin reportsPlugin = ReportsPlugin.getReportsPlugin(reportsPluginData);
-		plugins.add(reportsPlugin);
+		
 		TestOutputConsumer testOutputConsumer = new TestOutputConsumer();
 		TestSimulation.executeSimulation(plugins, testOutputConsumer);
 
@@ -428,19 +434,20 @@ public class AT_PersonPropertyReport {
 
 		ReportLabel reportLabel = new SimpleReportLabel(1000);
 		ReportPeriod hourlyReportPeriod = ReportPeriod.DAILY;
+		
+		PersonPropertyReportPluginData.Builder builder = PersonPropertyReportPluginData.builder();
+		builder.setReportLabel(reportLabel);
+		builder.setReportPeriod(hourlyReportPeriod);
+		PersonPropertyReportPluginData personPropertyReportPluginData = builder.build();
+		
 		TestPluginData testPluginData = pluginDataBuilder.build();
-		PersonPropertiesTestPluginFactory.Factory factory = PersonPropertiesTestPluginFactory.factory(30, 1174198461656549476L, testPluginData);
+		PersonPropertiesTestPluginFactory.Factory factory = //
+				PersonPropertiesTestPluginFactory//
+				.factory(30, 1174198461656549476L, testPluginData)
+				.setPersonPropertyReportPluginData(personPropertyReportPluginData);
+		
 		List<Plugin> plugins = factory.getPlugins();
-
-		// set the report period
-		ReportsPluginData reportsPluginData = ReportsPluginData.builder().addReport(() -> {
-			PersonPropertyReportPluginData.Builder builder = PersonPropertyReportPluginData.builder();
-			builder.setReportLabel(reportLabel);
-			builder.setReportPeriod(hourlyReportPeriod);
-			return new PersonPropertyReport(builder.build())::init;
-		}).build();
-		Plugin reportsPlugin = ReportsPlugin.getReportsPlugin(reportsPluginData);
-		plugins.add(reportsPlugin);
+				
 		TestOutputConsumer testOutputConsumer = new TestOutputConsumer();
 		TestSimulation.executeSimulation(plugins, testOutputConsumer);
 
@@ -463,19 +470,20 @@ public class AT_PersonPropertyReport {
 
 		ReportLabel reportLabel = new SimpleReportLabel(1000);
 		ReportPeriod hourlyReportPeriod = ReportPeriod.END_OF_SIMULATION;
-		TestPluginData testPluginData = pluginDataBuilder.build();
-		PersonPropertiesTestPluginFactory.Factory factory = PersonPropertiesTestPluginFactory.factory(30, 1174198461656549476L, testPluginData);
-		List<Plugin> plugins = factory.getPlugins();
+		
+		PersonPropertyReportPluginData.Builder builder = PersonPropertyReportPluginData.builder();
+		builder.setReportLabel(reportLabel);
+		builder.setReportPeriod(hourlyReportPeriod);
+		PersonPropertyReportPluginData personPropertyReportPluginData = builder.build();
 
-		// set the report period
-		ReportsPluginData reportsPluginData = ReportsPluginData.builder().addReport(() -> {
-			PersonPropertyReportPluginData.Builder builder = PersonPropertyReportPluginData.builder();
-			builder.setReportLabel(reportLabel);
-			builder.setReportPeriod(hourlyReportPeriod);
-			return new PersonPropertyReport(builder.build())::init;
-		}).build();
-		Plugin reportsPlugin = ReportsPlugin.getReportsPlugin(reportsPluginData);
-		plugins.add(reportsPlugin);
+		TestPluginData testPluginData = pluginDataBuilder.build();
+		PersonPropertiesTestPluginFactory.Factory factory = //
+				PersonPropertiesTestPluginFactory//
+				.factory(30, 1174198461656549476L, testPluginData)
+				.setPersonPropertyReportPluginData(personPropertyReportPluginData);
+		
+		List<Plugin> plugins = factory.getPlugins();
+		
 		TestOutputConsumer testOutputConsumer = new TestOutputConsumer();
 		TestSimulation.executeSimulation(plugins, testOutputConsumer);
 
@@ -536,20 +544,21 @@ public class AT_PersonPropertyReport {
 
 		ReportLabel reportLabel = new SimpleReportLabel(1000);
 		ReportPeriod hourlyReportPeriod = ReportPeriod.HOURLY;
+		
+		PersonPropertyReportPluginData.Builder builder = PersonPropertyReportPluginData.builder();
+		builder.setReportLabel(reportLabel);
+		builder.setReportPeriod(hourlyReportPeriod);
+		builder.setDefaultInclusion(false);
+		PersonPropertyReportPluginData personPropertyReportPluginData = builder.build();
+		
 		TestPluginData testPluginData = pluginDataBuilder.build();
-		PersonPropertiesTestPluginFactory.Factory factory = PersonPropertiesTestPluginFactory.factory(30, 1174198461656549476L, testPluginData);
+		PersonPropertiesTestPluginFactory.Factory factory = //
+				PersonPropertiesTestPluginFactory//
+				.factory(30, 1174198461656549476L, testPluginData)//
+				.setPersonPropertyReportPluginData(personPropertyReportPluginData);
+		
 		List<Plugin> plugins = factory.getPlugins();
 
-		// set the default inclusion to false
-		ReportsPluginData reportsPluginData = ReportsPluginData.builder().addReport(() -> {
-			PersonPropertyReportPluginData.Builder builder = PersonPropertyReportPluginData.builder();
-			builder.setReportLabel(reportLabel);
-			builder.setReportPeriod(hourlyReportPeriod);
-			builder.setDefaultInclusion(false);
-			return new PersonPropertyReport(builder.build())::init;
-		}).build();
-		Plugin reportsPlugin = ReportsPlugin.getReportsPlugin(reportsPluginData);
-		plugins.add(reportsPlugin);
 		TestOutputConsumer testOutputConsumer = new TestOutputConsumer();
 		TestSimulation.executeSimulation(plugins, testOutputConsumer);
 
@@ -595,20 +604,26 @@ public class AT_PersonPropertyReport {
 
 		ReportLabel reportLabel = new SimpleReportLabel(1000);
 		ReportPeriod hourlyReportPeriod = ReportPeriod.HOURLY;
+		
+		PersonPropertyReportPluginData.Builder builder = PersonPropertyReportPluginData.builder();
+		builder.setReportLabel(reportLabel);
+		builder.setReportPeriod(hourlyReportPeriod);
+		builder.setDefaultInclusion(true);
+		PersonPropertyReportPluginData personPropertyReportPluginData = builder.build();
+
+		
 		TestPluginData testPluginData = pluginDataBuilder.build();
-		PersonPropertiesTestPluginFactory.Factory factory = PersonPropertiesTestPluginFactory.factory(30, 1174198461656549476L, testPluginData);
+		PersonPropertiesTestPluginFactory.Factory factory = //
+				PersonPropertiesTestPluginFactory//
+				.factory(30, 1174198461656549476L, testPluginData)
+				.setPersonPropertyReportPluginData(personPropertyReportPluginData);
+		
 		List<Plugin> plugins = factory.getPlugins();
 
 		// set the default inclusion to false
-		ReportsPluginData reportsPluginData = ReportsPluginData.builder().addReport(() -> {
-			PersonPropertyReportPluginData.Builder builder = PersonPropertyReportPluginData.builder();
-			builder.setReportLabel(reportLabel);
-			builder.setReportPeriod(hourlyReportPeriod);
-			builder.setDefaultInclusion(true);
-			return new PersonPropertyReport(builder.build())::init;
-		}).build();
-		Plugin reportsPlugin = ReportsPlugin.getReportsPlugin(reportsPluginData);
-		plugins.add(reportsPlugin);
+		
+		
+		
 		TestOutputConsumer testOutputConsumer = new TestOutputConsumer();
 		TestSimulation.executeSimulation(plugins, testOutputConsumer);
 
@@ -662,19 +677,25 @@ public class AT_PersonPropertyReport {
 
 		ReportLabel reportLabel = new SimpleReportLabel(1000);
 		ReportPeriod hourlyReportPeriod = ReportPeriod.HOURLY;
+		
+		PersonPropertyReportPluginData.Builder builder = PersonPropertyReportPluginData.builder();
+		builder.setReportLabel(reportLabel);
+		builder.setReportPeriod(hourlyReportPeriod);
+		PersonPropertyReportPluginData personPropertyReportPluginData = builder.build();
+		
 		TestPluginData testPluginData = pluginDataBuilder.build();
-		PersonPropertiesTestPluginFactory.Factory factory = PersonPropertiesTestPluginFactory.factory(30, 1174198461656549476L, testPluginData);
+		PersonPropertiesTestPluginFactory.Factory factory = //
+				PersonPropertiesTestPluginFactory//
+				.factory(30, 1174198461656549476L, testPluginData)
+				.setPersonPropertyReportPluginData(personPropertyReportPluginData);
+		
 		List<Plugin> plugins = factory.getPlugins();
 
 		// set the default inclusion to false
-		ReportsPluginData reportsPluginData = ReportsPluginData.builder().addReport(() -> {
-			PersonPropertyReportPluginData.Builder builder = PersonPropertyReportPluginData.builder();
-			builder.setReportLabel(reportLabel);
-			builder.setReportPeriod(hourlyReportPeriod);
-			return new PersonPropertyReport(builder.build())::init;
-		}).build();
-		Plugin reportsPlugin = ReportsPlugin.getReportsPlugin(reportsPluginData);
-		plugins.add(reportsPlugin);
+		
+			
+		
+		
 		TestOutputConsumer testOutputConsumer = new TestOutputConsumer();
 		TestSimulation.executeSimulation(plugins, testOutputConsumer);
 
@@ -737,23 +758,29 @@ public class AT_PersonPropertyReport {
 
 		ReportLabel reportLabel = new SimpleReportLabel(1000);
 		ReportPeriod hourlyReportPeriod = ReportPeriod.HOURLY;
-		TestPluginData testPluginData = pluginDataBuilder.build();
-		PersonPropertiesTestPluginFactory.Factory factory = PersonPropertiesTestPluginFactory.factory(30, 1174198461656549476L, testPluginData);
-		List<Plugin> plugins = factory.getPlugins();
 		TestPersonPropertyId testPersonPropertyId = TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK;
+		
+		PersonPropertyReportPluginData.Builder builder = PersonPropertyReportPluginData.builder();
+		builder.setReportLabel(reportLabel);
+		builder.setReportPeriod(hourlyReportPeriod);
+		builder.setDefaultInclusion(false);
+		builder.includePersonProperty(testPersonPropertyId);
+		builder.includePersonProperty(unknownPersonPropertyId);
+		PersonPropertyReportPluginData personPropertyReportPluginData = builder.build();
+
+		
+		TestPluginData testPluginData = pluginDataBuilder.build();
+		PersonPropertiesTestPluginFactory.Factory factory = //
+				PersonPropertiesTestPluginFactory//
+				.factory(30, 1174198461656549476L, testPluginData)
+				.setPersonPropertyReportPluginData(personPropertyReportPluginData);
+		
+		List<Plugin> plugins = factory.getPlugins();
+		
 
 		// tell the builder to include a specific person property id
-		ReportsPluginData reportsPluginData = ReportsPluginData.builder().addReport(() -> {
-			PersonPropertyReportPluginData.Builder builder = PersonPropertyReportPluginData.builder();
-			builder.setReportLabel(reportLabel);
-			builder.setReportPeriod(hourlyReportPeriod);
-			builder.setDefaultInclusion(false);
-			builder.includePersonProperty(testPersonPropertyId);
-			builder.includePersonProperty(unknownPersonPropertyId);
-			return new PersonPropertyReport(builder.build())::init;
-		}).build();
-		Plugin reportsPlugin = ReportsPlugin.getReportsPlugin(reportsPluginData);
-		plugins.add(reportsPlugin);
+		
+		
 		TestOutputConsumer testOutputConsumer = new TestOutputConsumer();
 		TestSimulation.executeSimulation(plugins, testOutputConsumer);
 
@@ -814,21 +841,25 @@ public class AT_PersonPropertyReport {
 
 		ReportLabel reportLabel = new SimpleReportLabel(1000);
 		ReportPeriod hourlyReportPeriod = ReportPeriod.HOURLY;
-		TestPluginData testPluginData = pluginDataBuilder.build();
-		PersonPropertiesTestPluginFactory.Factory factory = PersonPropertiesTestPluginFactory.factory(30, 1174198461656549476L, testPluginData);
-		List<Plugin> plugins = factory.getPlugins();
 		TestPersonPropertyId testPersonPropertyId = TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK;
+		
+		PersonPropertyReportPluginData.Builder builder = PersonPropertyReportPluginData.builder();
+		builder.setReportLabel(reportLabel);
+		builder.setReportPeriod(hourlyReportPeriod);
+		builder.excludePersonProperty(testPersonPropertyId);
+		PersonPropertyReportPluginData personPropertyReportPluginData = builder.build();
+		
+		TestPluginData testPluginData = pluginDataBuilder.build();
+		PersonPropertiesTestPluginFactory.Factory factory = //
+				PersonPropertiesTestPluginFactory//
+				.factory(30, 1174198461656549476L, testPluginData)
+				.setPersonPropertyReportPluginData(personPropertyReportPluginData);
+		
+		List<Plugin> plugins = factory.getPlugins();
+		
 
 		// tell the builder to exclude a specific person property id
-		ReportsPluginData reportsPluginData = ReportsPluginData.builder().addReport(() -> {
-			PersonPropertyReportPluginData.Builder builder = PersonPropertyReportPluginData.builder();
-			builder.setReportLabel(reportLabel);
-			builder.setReportPeriod(hourlyReportPeriod);
-			builder.excludePersonProperty(testPersonPropertyId);
-			return new PersonPropertyReport(builder.build())::init;
-		}).build();
-		Plugin reportsPlugin = ReportsPlugin.getReportsPlugin(reportsPluginData);
-		plugins.add(reportsPlugin);
+		
 		TestOutputConsumer testOutputConsumer = new TestOutputConsumer();
 		TestSimulation.executeSimulation(plugins, testOutputConsumer);
 

@@ -1,0 +1,61 @@
+{
+  "seed": "524805676405822016",
+  "randomNumberGeneratorIds": [
+    {
+      "id": {
+        "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
+        "enumTypeUrl": "gov.hhs.aspr.gcm.TestRandomGeneratorIdInput",
+        "value": "DASHER"
+      }
+    },
+    {
+      "id": {
+        "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
+        "enumTypeUrl": "gov.hhs.aspr.gcm.TestRandomGeneratorIdInput",
+        "value": "DANCER"
+      }
+    },
+    {
+      "id": {
+        "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
+        "enumTypeUrl": "gov.hhs.aspr.gcm.TestRandomGeneratorIdInput",
+        "value": "PRANCER"
+      }
+    },
+    {
+      "id": {
+        "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
+        "enumTypeUrl": "gov.hhs.aspr.gcm.TestRandomGeneratorIdInput",
+        "value": "VIXEN"
+      }
+    },
+    {
+      "id": {
+        "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
+        "enumTypeUrl": "gov.hhs.aspr.gcm.TestRandomGeneratorIdInput",
+        "value": "COMET"
+      }
+    },
+    {
+      "id": {
+        "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
+        "enumTypeUrl": "gov.hhs.aspr.gcm.TestRandomGeneratorIdInput",
+        "value": "CUPID"
+      }
+    },
+    {
+      "id": {
+        "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
+        "enumTypeUrl": "gov.hhs.aspr.gcm.TestRandomGeneratorIdInput",
+        "value": "DONNER"
+      }
+    },
+    {
+      "id": {
+        "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
+        "enumTypeUrl": "gov.hhs.aspr.gcm.TestRandomGeneratorIdInput",
+        "value": "BLITZEN"
+      }
+    }
+  ]
+}

@@ -7,12 +7,11 @@ import nucleus.ReportContext;
 import plugins.globalproperties.datamanagers.GlobalPropertiesDataManager;
 import plugins.globalproperties.events.GlobalPropertyDefinitionEvent;
 import plugins.globalproperties.events.GlobalPropertyUpdateEvent;
+import plugins.globalproperties.support.GlobalPropertiesError;
 import plugins.globalproperties.support.GlobalPropertyId;
-import plugins.reports.support.ReportError;
 import plugins.reports.support.ReportHeader;
 import plugins.reports.support.ReportItem;
 import plugins.reports.support.ReportLabel;
-import plugins.util.properties.PropertyError;
 import util.errors.ContractException;
 
 /**
@@ -30,160 +29,49 @@ import util.errors.ContractException;
  */
 public final class GlobalPropertyReport {
 
-	/**
-	 * Returns a new Builder instance
-	 */
-	public static Builder builder() {
-		return new Builder();
-	}
+	private final Set<GlobalPropertyId> includedPropertyIds = new LinkedHashSet<>();
+	private final Set<GlobalPropertyId> excludedPropertyIds = new LinkedHashSet<>();
+	private final ReportLabel reportLabel;
+	private final boolean includeNewPropertyIds;
+
+	private final ReportHeader reportHeader = ReportHeader	.builder()//
+															.add("time")//
+															.add("property")//
+															.add("value")//
+															.build();//
 
 	/**
-	 * Builder class for the global property report
-	 *
-	 *
+	 * 
+	 * @throws ContractException
+	 *             <li>{@linkplain GlobalPropertiesError#NULL_GLOBAL_PROPERTY_REPORT_PLUGIN_DATA}
+	 *             if the plugin data is null</li>
+	 * 
 	 */
-	public final static class Builder {
-		private Data data = new Data();
 
-		private Builder() {
+	public GlobalPropertyReport(GlobalPropertyReportPluginData globalPropertyReportPluginData) {
+
+		if (globalPropertyReportPluginData == null) {
+			throw new ContractException(GlobalPropertiesError.NULL_GLOBAL_PROPERTY_REPORT_PLUGIN_DATA);
 		}
 
-		private void validate() {
-			if (data.reportLabel == null) {
-				throw new ContractException(ReportError.NULL_REPORT_LABEL);
-			}
-		}
-
-		/**
-		 * Returns the global property report from the collected data
-		 * 
-		 * @throws ContractException
-		 *             <li>{@linkplain ReportError#NULL_REPORT_LABEL} if the report
-		 *             label was not set</li>
-		 */
-		public GlobalPropertyReport build() {
-			try {
-				validate();
-				return new GlobalPropertyReport(data);
-			} finally {
-				data = new Data();
-			}
-		}
-
-		/**
-		 * Includes a global property in this report. These property ids do not
-		 * have to be valid id values that exist in the simulation.
-		 * 
-		 * @throws ContractException
-		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
-		 *             global property id is null</li>
-		 */
-		public Builder includePropertyId(GlobalPropertyId globalPropertyId) {
-			if (globalPropertyId == null) {
-				throw new ContractException(PropertyError.NULL_PROPERTY_ID);
-			}
-			data.includedPropertyIds.add(globalPropertyId);
-			data.excludedPropertyIds.remove(globalPropertyId);
-			return this;
-		}
-
-		/**
-		 * Includes all extant global property ids at the initialization of this
-		 * report, excepting those that have been explicitly excluded. Defaults
-		 * to false.
-		 * 
-		 */
-		public Builder includeAllExtantPropertyIds(boolean includeAllExtantPropertyIds) {
-			data.includeAllExtantPropertyIds = includeAllExtantPropertyIds;
-			return this;
-		}
-
-		/**
-		 * Excludes a global property from this report. These property ids do
-		 * not have to be valid id values that exist in the simulation.
-		 * 
-		 * @throws ContractException
-		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
-		 *             global property id is null</li>
-		 * 
-		 */
-		public Builder excludePropertyId(GlobalPropertyId globalPropertyId) {
-			if (globalPropertyId == null) {
-				throw new ContractException(PropertyError.NULL_PROPERTY_ID);
-			}
-			data.includedPropertyIds.remove(globalPropertyId);
-			data.excludedPropertyIds.add(globalPropertyId);
-			return this;
-		}
-
-		/**
-		 * Sets the report label. Defaults to null.
-		 * 
-		 * @throws ContractException
-		 *             <li>{@linkplain ReportError#NULL_REPORT_LABEL} if the report
-		 *             label is null</li>
-		 */
-		public Builder setReportLabel(ReportLabel reportLabel) {
-			if (reportLabel == null) {
-				throw new ContractException(ReportError.NULL_REPORT_LABEL);
-			}
-			data.reportLabel = reportLabel;
-			return this;
-		}
-
-		/**
-		 * Forces the inclusion of new properties that are not already selected
-		 * for exclusion. Defaults to false.
-		 */
-		public Builder includeNewPropertyIds(boolean includeNewPropertyIds) {
-			data.includeNewPropertyIds = includeNewPropertyIds;
-			return this;
-		}
-
-	}
-
-	private static class Data {
-		private final Set<GlobalPropertyId> includedPropertyIds = new LinkedHashSet<>();
-		private final Set<GlobalPropertyId> excludedPropertyIds = new LinkedHashSet<>();
-		private ReportLabel reportLabel;
-		private boolean includeNewPropertyIds;
-		private boolean includeAllExtantPropertyIds;
-		private final ReportHeader reportHeader = ReportHeader	.builder()//
-																.add("time")//
-																.add("property")//
-																.add("value")//
-																.build();//
-	}
-
-	private final Data data;
-
-	private GlobalPropertyReport(final Data data) {
-		this.data = data;
+		reportLabel = globalPropertyReportPluginData.getReportLabel();
+		includedPropertyIds.addAll(globalPropertyReportPluginData.getIncludedProperties());
+		excludedPropertyIds.addAll(globalPropertyReportPluginData.getExcludedProperties());
+		includeNewPropertyIds = globalPropertyReportPluginData.getDefaultInclusionPolicy();
 	}
 
 	private void handleGlobalPropertyDefinitionEvent(final ReportContext reportContext, final GlobalPropertyDefinitionEvent globalPropertyDefinitionEvent) {
 		final GlobalPropertyId globalPropertyId = globalPropertyDefinitionEvent.globalPropertyId();
-		/*
-		 * If the property id is explicitly excluded, then ignore it
-		 */
-		if (data.excludedPropertyIds.contains(globalPropertyId)) {
-			return;
-		}
-
-		boolean included = data.includedPropertyIds.contains(globalPropertyId);
-		if (!included && data.includeNewPropertyIds) {
-			data.includedPropertyIds.add(globalPropertyId);
-			included = true;
-		}
-
-		if (included) {
+		if (!excludedPropertyIds.contains(globalPropertyId)) {
+			includedPropertyIds.add(globalPropertyId);
 			writeProperty(reportContext, globalPropertyId, globalPropertyDefinitionEvent.initialPropertyValue());
+
 		}
 	}
 
 	private void handleGlobalPropertyUpdateEvent(final ReportContext reportContext, final GlobalPropertyUpdateEvent globalPropertyUpdateEvent) {
 		final GlobalPropertyId globalPropertyId = globalPropertyUpdateEvent.globalPropertyId();
-		if (data.includedPropertyIds.contains(globalPropertyId)) {
+		if (includedPropertyIds.contains(globalPropertyId)) {
 			writeProperty(reportContext, globalPropertyId, globalPropertyUpdateEvent.currentPropertyValue());
 		}
 	}
@@ -199,16 +87,10 @@ public final class GlobalPropertyReport {
 		 * if the client has selected all extant properties, then correct the
 		 * data's included property ids
 		 */
-		if (data.includeAllExtantPropertyIds) {
-			data.includedPropertyIds.addAll(globalPropertiesDataManager.getGlobalPropertyIds());
-		}
-
-		/*
-		 * if there are no property ids selected and we will not be including
-		 * new added ids, then there is no point in subscribing
-		 */
-		if (data.includedPropertyIds.isEmpty() && !data.includeNewPropertyIds) {
-			return;
+		if (includeNewPropertyIds) {
+			includedPropertyIds.addAll(globalPropertiesDataManager.getGlobalPropertyIds());
+			includedPropertyIds.removeAll(excludedPropertyIds);
+			reportContext.subscribe(GlobalPropertyDefinitionEvent.class, this::handleGlobalPropertyDefinitionEvent);
 		}
 
 		/*
@@ -216,27 +98,25 @@ public final class GlobalPropertyReport {
 		 * filtering
 		 */
 		reportContext.subscribe(GlobalPropertyUpdateEvent.class, this::handleGlobalPropertyUpdateEvent);
-		reportContext.subscribe(GlobalPropertyDefinitionEvent.class, this::handleGlobalPropertyDefinitionEvent);
 
 		/*
 		 * We initialize the reporting with the current state of each global
 		 * property
 		 */
-		for (final GlobalPropertyId globalPropertyId : data.includedPropertyIds) {
-			final Object globalPropertyValue = globalPropertiesDataManager.getGlobalPropertyValue(globalPropertyId);
-			writeProperty(reportContext, globalPropertyId, globalPropertyValue);
+		for (final GlobalPropertyId globalPropertyId : includedPropertyIds) {
+
+			if (globalPropertiesDataManager.globalPropertyIdExists(globalPropertyId)) {
+				final Object globalPropertyValue = globalPropertiesDataManager.getGlobalPropertyValue(globalPropertyId);
+				writeProperty(reportContext, globalPropertyId, globalPropertyValue);
+			}
 		}
-		
-		
 
 	}
-	
-	
 
 	private void writeProperty(final ReportContext reportContext, final GlobalPropertyId globalPropertyId, final Object globalPropertyValue) {
 		final ReportItem.Builder reportItemBuilder = ReportItem.builder();
-		reportItemBuilder.setReportHeader(data.reportHeader);
-		reportItemBuilder.setReportLabel(data.reportLabel);
+		reportItemBuilder.setReportHeader(reportHeader);
+		reportItemBuilder.setReportLabel(reportLabel);
 		reportItemBuilder.addValue(reportContext.getTime());
 		reportItemBuilder.addValue(globalPropertyId.toString());
 		reportItemBuilder.addValue(globalPropertyValue);

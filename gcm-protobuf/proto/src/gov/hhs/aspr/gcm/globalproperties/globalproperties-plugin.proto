@@ -2,13 +2,13 @@ syntax = "proto3";
 package gov.hhs.aspr.gcm;
 
 option java_multiple_files = true;
-option java_package = "plugins.globalproperties.input";
+option java_package = "gov.hhs.aspr.gcm.translation.plugins.globalproperties.input";
 
 import "properties-plugin.proto";
 import "google/protobuf/any.proto";
 
 message GlobalPropertyIdInput {
-    google.protobuf.Any globalPropertyId = 1;
+    google.protobuf.Any id = 1;
 }
 
 enum TestGlobalPropertyIdInput {

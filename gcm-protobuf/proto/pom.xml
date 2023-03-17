@@ -3,10 +3,10 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>gov.hhs.aspr.gcm.gcm-protobuf</groupId>
-    <artifactId>protos</artifactId>
+    <groupId>gov.hhs.aspr.gcm.translation</groupId>
+    <artifactId>proto-definitions</artifactId>
     <version>1.0.0-SNAPSHOT</version>
-    <name>gcm-protobuf :: protos</name>
+    <name>gcm-translation :: protobuf :: proto-definitions</name>
     <packaging>jar</packaging>
 
     <properties>
@@ -33,16 +33,17 @@
                                 <resource>
                                     <directory>${project.basedir}/src</directory>
                                     <includes>
-                                        <include>gov/hhs/aspr/gcm/properties/*.proto</include>
                                         <include>gov/hhs/aspr/gcm/core/*.proto</include>
-                                        <include>
-                                            gov/hhs/aspr/gcm/people/*.proto</include>
-                                        <include>
-                                            gov/hhs/aspr/gcm/groups/*.proto</include>
-                                        <include>
-                                            gov/hhs/aspr/gcm/globalproperties/*.proto</include>
-                                        <include>
-                                            gov/hhs/aspr/gcm/stochastics/*.proto</include>
+                                        <include>gov/hhs/aspr/gcm/nucleus/*.proto</include>
+                                        <include>gov/hhs/aspr/gcm/properties/*.proto</include>
+                                        <include>gov/hhs/aspr/gcm/stochastics/*.proto</include>
+                                        <include>gov/hhs/aspr/gcm/globalproperties/*.proto</include>
+                                        <include>gov/hhs/aspr/gcm/people/*.proto</include>
+                                        <include>gov/hhs/aspr/gcm/groups/*.proto</include>
+                                        <include>gov/hhs/aspr/gcm/regions/*.proto</include>
+                                        <include>gov/hhs/aspr/gcm/personproperties/*.proto</include>
+                                        <include>gov/hhs/aspr/gcm/resources/*.proto</include>
+                                        <include>gov/hhs/aspr/gcm/materials/*.proto</include>
                                     </includes>
                                 </resource>
                             </resources>

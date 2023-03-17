@@ -1,0 +1,12 @@
+syntax = "proto3";
+package gov.hhs.aspr.gcm;
+
+option java_multiple_files = true;
+option java_package = "gov.hhs.aspr.gcm.translation.nucleus.input";
+
+import "date.proto";
+
+message SimulationTimeInput {
+    double startTime = 1;
+    optional google.type.Date baseDate = 2;
+}

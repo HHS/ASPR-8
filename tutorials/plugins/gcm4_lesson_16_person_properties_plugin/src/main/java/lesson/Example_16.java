@@ -106,10 +106,10 @@ public final class Example_16 {
 																										.setDefaultInclusion(true)//
 																										.build();//
 
-		return PersonPropertiesPlugin.builder()//
-				.setPersonPropertiesPluginData(personPropertiesPluginData)//
-				.setPersonPropertyReportPluginData(personPropertyReportPluginData)//
-				.getPersonPropertyPlugin();
+		return PersonPropertiesPlugin	.builder()//
+										.setPersonPropertiesPluginData(personPropertiesPluginData)//
+										.setPersonPropertyReportPluginData(personPropertyReportPluginData)//
+										.getPersonPropertyPlugin();
 	}
 
 	private Plugin getStochasticsPlugin() {
@@ -201,7 +201,8 @@ public final class Example_16 {
 
 		GlobalPropertiesPluginData globalPropertiesPluginData = builder.build();
 
-		return GlobalPropertiesPlugin.getGlobalPropertiesPlugin(globalPropertiesPluginData);
+		return GlobalPropertiesPlugin.builder().setGlobalPropertiesPluginData(globalPropertiesPluginData).getGlobalPropertiesPlugin();
+
 	}
 
 	private void execute() {

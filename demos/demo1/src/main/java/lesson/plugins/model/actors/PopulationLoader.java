@@ -53,8 +53,15 @@ public class PopulationLoader {
 		List<RegionId> regionIds = new ArrayList<>(regionsDataManager.getRegionIds());
 
 		int populationSize = globalPropertiesDataManager.getGlobalPropertyValue(GlobalProperty.POPULATION_SIZE);
+		
+		populationSize-= peopleDataManager.getPopulationCount();
+
+		populationSize += 10;
+
 		double refusalProbability = globalPropertiesDataManager
 				.getGlobalPropertyValue(GlobalProperty.VACCINE_REFUSAL_PROBABILITY);
+		
+				boolean isImmuneIsValidProp = personPropertiesDataManager.personPropertyIdExists(PersonProperty.IS_IMMUNE);
 
 		Builder personConstructionDataBuilder = PersonConstructionData.builder();
 		for (int i = 0; i < populationSize; i++) {
@@ -65,6 +72,12 @@ public class PopulationLoader {
 			PersonPropertyInitialization personPropertyInitialization = 
 					new PersonPropertyInitialization(PersonProperty.REFUSES_VACCINE, refusesVaccine);
 			personConstructionDataBuilder.add(personPropertyInitialization);
+
+			if(isImmuneIsValidProp) {
+				double immunity_probabilty = globalPropertiesDataManager.getGlobalPropertyValue(GlobalProperty.IMMUNITY_PROBABILITY);
+				boolean isImmune = randomGenerator.nextDouble() < immunity_probabilty;
+				personConstructionDataBuilder.add(new PersonPropertyInitialization(PersonProperty.IS_IMMUNE, isImmune));
+			}
 			PersonConstructionData personConstructionData = personConstructionDataBuilder.build();
 			peopleDataManager.addPerson(personConstructionData);
 		}
@@ -72,8 +85,10 @@ public class PopulationLoader {
 		double simulationDuration = globalPropertiesDataManager.getGlobalPropertyValue(GlobalProperty.SIMULATION_DURATION);
 		actorContext.addPlan((c) -> c.halt(), simulationDuration);
 
-		double immunityStartTime = globalPropertiesDataManager.getGlobalPropertyValue(GlobalProperty.IMMUNITY_START_TIME);
-		actorContext.addPlan((c) -> addImmunityProperty(), immunityStartTime);
+		if(!isImmuneIsValidProp) {
+			double immunityStartTime = globalPropertiesDataManager.getGlobalPropertyValue(GlobalProperty.IMMUNITY_START_TIME);
+			actorContext.addPlan((c) -> addImmunityProperty(), immunityStartTime);
+		}
 	}
 	
 }
