@@ -23,7 +23,7 @@ public class AT_GlobalPropertiesPlugin {
 		 */
 
 		GlobalPropertiesPluginData globalPropertiesPluginData = GlobalPropertiesPluginData.builder().build();
-		Plugin globalsPlugin = GlobalPropertiesPlugin.getGlobalPropertiesPlugin(globalPropertiesPluginData);
+		Plugin globalsPlugin = GlobalPropertiesPlugin.builder().setGlobalPropertiesPluginData(globalPropertiesPluginData).getGlobalPropertiesPlugin();
 
 		assertTrue(globalsPlugin.getPluginDatas().contains(globalPropertiesPluginData));
 		assertEquals(GlobalPropertiesPluginId.PLUGIN_ID, globalsPlugin.getPluginId());

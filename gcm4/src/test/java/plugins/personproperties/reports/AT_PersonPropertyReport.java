@@ -318,7 +318,7 @@ public class AT_PersonPropertyReport {
 	private void testInit_ReportHeader(ReportPeriod reportPeriod) {
 		/*
 		 * This test shows that the report produces report items with the
-		 * correct report labels.
+		 * correct report headers.
 		 */
 
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();

@@ -15,9 +15,7 @@ import nucleus.Plugin;
 import plugins.globalproperties.GlobalPropertiesPlugin;
 import plugins.globalproperties.GlobalPropertiesPluginData;
 import plugins.globalproperties.GlobalPropertiesPluginData.Builder;
-import plugins.globalproperties.reports.GlobalPropertyReport;
-import plugins.reports.ReportsPlugin;
-import plugins.reports.ReportsPluginData;
+import plugins.globalproperties.reports.GlobalPropertyReportPluginData;
 import plugins.reports.support.NIOReportItemHandler;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.TimeTrackingPolicy;
@@ -90,22 +88,23 @@ public final class Example_13 {
 	public static void main(String[] args) {
 
 		GlobalPropertiesPluginData globalPropertiesPluginData = getGlobalPropertiesPluginData();
-		Plugin globalPropertiesPlugin = GlobalPropertiesPlugin.getGlobalPropertiesPlugin(globalPropertiesPluginData);
+		
+		
+		GlobalPropertyReportPluginData globalPropertyReportPluginData = GlobalPropertyReportPluginData	.builder()//
+				.setReportLabel(ModelReportLabel.GLOBAL_PROPERTY_REPORT)//				
+				.setDefaultInclusion(true)//
+				.build();
+		
+		Plugin globalPropertiesPlugin = GlobalPropertiesPlugin. builder()
+				.setGlobalPropertiesPluginData(globalPropertiesPluginData)
+				.setGlobalPropertyReportPluginData(globalPropertyReportPluginData)
+				.getGlobalPropertiesPlugin();
 
 		Plugin modelPlugin = ModelPlugin.getModelPlugin();
 
-		ReportsPluginData reportsPluginData = //
-				ReportsPluginData	.builder()//
-									.addReport(() -> {
-										return GlobalPropertyReport	.builder()//
-																	.setReportLabel(ModelReportLabel.GLOBAL_PROPERTY_REPORT)//
-																	.includeAllExtantPropertyIds(true)//
-																	.includeNewPropertyIds(true)//
-																	.build()::init;
-									})//
-									.build();
+		
 
-		Plugin reportsPlugin = ReportsPlugin.getReportsPlugin(reportsPluginData);
+		
 
 		NIOReportItemHandler nioReportItemHandler = //
 				NIOReportItemHandler.builder()//
@@ -117,8 +116,7 @@ public final class Example_13 {
 
 		Experiment	.builder()//
 					.addPlugin(globalPropertiesPlugin)//
-					.addPlugin(modelPlugin)//
-					.addPlugin(reportsPlugin)//
+					.addPlugin(modelPlugin)//					
 					.addExperimentContextConsumer(nioReportItemHandler)//
 					.addDimension(alphaBetaDimension)//
 					.build()//
