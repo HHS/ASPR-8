@@ -14,19 +14,18 @@ import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestSimulation;
 import plugins.globalproperties.GlobalPropertiesPlugin;
 import plugins.globalproperties.GlobalPropertiesPluginData;
+import plugins.globalproperties.reports.GlobalPropertyReportPluginData;
 import plugins.globalproperties.support.GlobalPropertiesError;
 import util.errors.ContractException;
 
 /**
  * A static test support class for the {@linkplain GlobalPropertiesPlugin}.
- * Provides
- * convenience
- * methods for obtaining standarized PluginData for the listed Plugin.
+ * Provides convenience methods for obtaining standarized PluginData for the
+ * listed Plugin.
  * 
  * <p>
  * Also contains factory methods to obtain a list of plugins that is the minimal
- * set needed to adequately test this Plugin that can be
- * utilized with
+ * set needed to adequately test this Plugin that can be utilized with
  * </p>
  * 
  * <li>{@link TestSimulation#executeSimulation}
@@ -38,6 +37,7 @@ public final class GlobalPropertiesTestPluginFactory {
 
 	private static class Data {
 		private GlobalPropertiesPluginData globalPropertiesPluginData;
+		private GlobalPropertyReportPluginData globalPropertyReportPluginData;
 		private TestPluginData testPluginData;
 
 		private Data(TestPluginData testPluginData) {
@@ -58,8 +58,8 @@ public final class GlobalPropertiesTestPluginFactory {
 		}
 
 		/**
-		 * Returns a list of plugins containing a GlobalProperties and a Test Plugin
-		 * built from the contributed PluginDatas.
+		 * Returns a list of plugins containing a GlobalProperties and a Test
+		 * Plugin built from the contributed PluginDatas.
 		 * 
 		 * <li>GlobalPropertiesPlugin is defaulted to one formed from
 		 * {@link GlobalPropertiesTestPluginFactory#getStandardGlobalPropertiesPluginData}
@@ -68,25 +68,31 @@ public final class GlobalPropertiesTestPluginFactory {
 		 */
 		public List<Plugin> getPlugins() {
 			List<Plugin> pluginsToAdd = new ArrayList<>();
-			Plugin globalPropertiesPlugin = GlobalPropertiesPlugin
-					.getGlobalPropertiesPlugin(this.data.globalPropertiesPluginData);
 
-			Plugin testPlugin = TestPlugin.getTestPlugin(this.data.testPluginData);
+			GlobalPropertiesPlugin.Builder builder = GlobalPropertiesPlugin.builder();
 
+			builder.setGlobalPropertiesPluginData(this.data.globalPropertiesPluginData);
+			if(this.data.globalPropertyReportPluginData != null) {
+				builder.setGlobalPropertyReportPluginData(this.data.globalPropertyReportPluginData);
+			}
+			
+			Plugin globalPropertiesPlugin = builder.getGlobalPropertiesPlugin();
 			pluginsToAdd.add(globalPropertiesPlugin);
+			
+			Plugin testPlugin = TestPlugin.getTestPlugin(this.data.testPluginData);
 			pluginsToAdd.add(testPlugin);
 
 			return pluginsToAdd;
 		}
 
 		/**
-		 * Sets the {@link GlobalPropertiesPluginData} in this Factory.
-		 * This explicit instance of pluginData will be used to create a
+		 * Sets the {@link GlobalPropertiesPluginData} in this Factory. This
+		 * explicit instance of pluginData will be used to create a
 		 * GlobalPropertiesPlugin
 		 * 
 		 * @throws ContractExecption
-		 *                           {@linkplain GlobalPropertiesError#NULL_GLOBAL_PLUGIN_DATA}
-		 *                           if the passed in pluginData is null
+		 *             {@linkplain GlobalPropertiesError#NULL_GLOBAL_PLUGIN_DATA}
+		 *             if the passed in pluginData is null
 		 */
 		public Factory setGlobalPropertiesPluginData(GlobalPropertiesPluginData globalPropertiesPluginData) {
 			if (globalPropertiesPluginData == null) {
@@ -95,14 +101,32 @@ public final class GlobalPropertiesTestPluginFactory {
 			this.data.globalPropertiesPluginData = globalPropertiesPluginData;
 			return this;
 		}
+
+		/**
+		 * Sets the {@link GlobalPropertyReportPluginData} in this Factory. This
+		 * explicit instance of pluginData will be used to create a
+		 * GlobalPropertiesPlugin
+		 * 
+		 * @throws ContractExecption
+		 *             {@linkplain GlobalPropertiesError#NULL_GLOBAL_PROPERTY_REPORT_PLUGIN_DATA}
+		 *             if the passed in pluginData is null
+		 */
+		public Factory setGlobalPropertyReportPluginData(GlobalPropertyReportPluginData globalPropertyReportPluginData) {
+			if (globalPropertyReportPluginData == null) {
+				throw new ContractException(GlobalPropertiesError.NULL_GLOBAL_PROPERTY_REPORT_PLUGIN_DATA);
+			}
+			this.data.globalPropertyReportPluginData = globalPropertyReportPluginData;
+			return this;
+		}
+
 	}
 
 	/**
-	 * Returns a Factory that facilitates the creation of a minimal set of plugins
-	 * needed to adequately test the {@link GlobalPropertiesPlugin} by generating:
+	 * Returns a Factory that facilitates the creation of a minimal set of
+	 * plugins needed to adequately test the {@link GlobalPropertiesPlugin} by
+	 * generating:
 	 * <ul>
-	 * <li>
-	 * {@link GlobalPropertiesPluginData}
+	 * <li>{@link GlobalPropertiesPluginData}
 	 * </ul>
 	 * <li>either directly (by default) via
 	 * <ul>
@@ -110,15 +134,13 @@ public final class GlobalPropertiesTestPluginFactory {
 	 * </ul>
 	 * <li>or explicitly set via
 	 * <ul>
-	 * <li>
-	 * {@link Factory#setGlobalPropertiesPluginData}
+	 * <li>{@link Factory#setGlobalPropertiesPluginData}
 	 * </ul>
-	 * <li>via the
-	 * {@link Factory#getPlugins()} method.
+	 * <li>via the {@link Factory#getPlugins()} method.
 	 * 
 	 * @throws ContractExecption
-	 *                           {@linkplain NucleusError#NULL_PLUGIN_DATA}
-	 *                           if testPluginData is null
+	 *             {@linkplain NucleusError#NULL_PLUGIN_DATA} if testPluginData
+	 *             is null
 	 */
 	public static Factory factory(TestPluginData testPluginData) {
 		if (testPluginData == null) {
@@ -128,11 +150,11 @@ public final class GlobalPropertiesTestPluginFactory {
 	}
 
 	/**
-	 * Returns a Factory that facilitates the creation of a minimal set of plugins
-	 * needed to adequately test the {@link GlobalPropertiesPlugin} by generating:
+	 * Returns a Factory that facilitates the creation of a minimal set of
+	 * plugins needed to adequately test the {@link GlobalPropertiesPlugin} by
+	 * generating:
 	 * <ul>
-	 * <li>
-	 * {@link GlobalPropertiesPluginData}
+	 * <li>{@link GlobalPropertiesPluginData}
 	 * </ul>
 	 * <li>either directly (by default) via
 	 * <ul>
@@ -140,15 +162,13 @@ public final class GlobalPropertiesTestPluginFactory {
 	 * </ul>
 	 * <li>or explicitly set via
 	 * <ul>
-	 * <li>
-	 * {@link Factory#setGlobalPropertiesPluginData}
+	 * <li>{@link Factory#setGlobalPropertiesPluginData}
 	 * </ul>
-	 * <li>via the
-	 * {@link Factory#getPlugins()} method.
+	 * <li>via the {@link Factory#getPlugins()} method.
 	 * 
 	 * @throws ContractExecption
-	 *                           {@linkplain NucleusError#NULL_ACTOR_CONTEXT_CONSUMER}
-	 *                           if consumer is null
+	 *             {@linkplain NucleusError#NULL_ACTOR_CONTEXT_CONSUMER} if
+	 *             consumer is null
 	 */
 	public static Factory factory(Consumer<ActorContext> consumer) {
 		if (consumer == null) {
@@ -161,8 +181,8 @@ public final class GlobalPropertiesTestPluginFactory {
 	}
 
 	/**
-	 * Returns a Standardized GlobalPropertiesPluginData that is minimally adequate
-	 * for testing the GlobalPropertiesPlugin
+	 * Returns a Standardized GlobalPropertiesPluginData that is minimally
+	 * adequate for testing the GlobalPropertiesPlugin
 	 * <li>The resulting GlobalPropertiesPluginData will include:
 	 * <ul>
 	 * <li>Every GlobalPropertyId included in {@link TestGlobalPropertyId}
@@ -174,8 +194,7 @@ public final class GlobalPropertiesTestPluginFactory {
 	public static GlobalPropertiesPluginData getStandardGlobalPropertiesPluginData() {
 		GlobalPropertiesPluginData.Builder globalsPluginBuilder = GlobalPropertiesPluginData.builder();
 		for (TestGlobalPropertyId testGlobalPropertyId : TestGlobalPropertyId.values()) {
-			globalsPluginBuilder.defineGlobalProperty(testGlobalPropertyId,
-					testGlobalPropertyId.getPropertyDefinition());
+			globalsPluginBuilder.defineGlobalProperty(testGlobalPropertyId, testGlobalPropertyId.getPropertyDefinition());
 		}
 
 		return globalsPluginBuilder.build();
