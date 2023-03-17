@@ -161,17 +161,7 @@ public class AT_PluginContext {
 		}
 	}
 
-	private static class PluginData4 implements PluginData {
-		@Override
-		public PluginDataBuilder getCloneBuilder() {
-			throw new UnsupportedOperationException();
-		}
-
-		@Override
-		public PluginDataBuilder getEmptyBuilder() {
-			throw new UnsupportedOperationException();
-		}
-	}
+	
 
 	@Test
 	@UnitTestMethod(target = PluginContext.class, name = "getPluginData", args = { Class.class })
@@ -195,12 +185,6 @@ public class AT_PluginContext {
 									});
 
 									assertEquals(NucleusError.AMBIGUOUS_PLUGIN_DATA_CLASS, contractException.getErrorType());
-
-									contractException = assertThrows(ContractException.class, () -> {
-										c.getPluginData(PluginData4.class);
-									});
-
-									assertEquals(NucleusError.UNKNOWN_PLUGIN_DATA_CLASS, contractException.getErrorType());
 
 									contractException = assertThrows(ContractException.class, () -> {
 										c.getPluginData(null);

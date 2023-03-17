@@ -36,7 +36,7 @@ public class TestPlugin {
 			throw new ContractException(NucleusError.NULL_PLUGIN_CONTEXT);
 		}
 
-		TestPluginData testPluginData = pluginContext.getPluginData(TestPluginData.class);
+		TestPluginData testPluginData = pluginContext.getPluginData(TestPluginData.class).get();
 
 		TestPlanDataManager testPlanDataManager = new TestPlanDataManager(testPluginData);
 		pluginContext.addDataManager(testPlanDataManager);

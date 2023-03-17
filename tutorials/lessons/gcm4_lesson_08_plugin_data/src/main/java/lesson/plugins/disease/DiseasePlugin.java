@@ -14,7 +14,7 @@ import nucleus.Plugin;
 						.addPluginData(diseasePluginData)//
 						.setPluginId(DiseasePluginId.PLUGIN_ID)//						
 						.setInitializer((pluginContext) -> {
-							DiseasePluginData pluginData = pluginContext.getPluginData(DiseasePluginData.class);
+							DiseasePluginData pluginData = pluginContext.getPluginData(DiseasePluginData.class).get();
 							pluginContext.addDataManager(new DiseaseDataManager(pluginData));
 						})//
 						.build();

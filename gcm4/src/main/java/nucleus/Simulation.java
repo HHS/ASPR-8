@@ -276,7 +276,7 @@ public class Simulation {
 
 	@SuppressWarnings("unchecked")
 
-	protected <T extends PluginData> T getPluginData(Class<T> pluginDataClass) {
+	protected <T extends PluginData> Optional<T> getPluginData(Class<T> pluginDataClass) {
 		if (pluginDataClass == null) {
 			throw new ContractException(NucleusError.NULL_PLUGIN_DATA_CLASS);
 		}
@@ -297,11 +297,9 @@ public class Simulation {
 				workingPluginDataMap.put(pluginDataClass, pluginData);
 			}
 		}
-		if (pluginData == null) {
-			throw new ContractException(NucleusError.UNKNOWN_PLUGIN_DATA_CLASS);
-		}
+		T result = (T)pluginData;
 
-		return (T) pluginData;
+		return Optional.ofNullable(result);
 	}
 
 	protected void addDataManagerForPlugin(DataManager dataManager) {
@@ -815,6 +813,7 @@ public class Simulation {
 	}
 
 	private void produceSimulationStateAsOutput() {
+		
 		// gather the plugins
 
 		Map<Plugin, List<PluginDataBuilder>> map = new LinkedHashMap<>();
@@ -877,7 +876,9 @@ public class Simulation {
 			for (PluginDataBuilder pluginDataBuilder : pluginDataBuilders) {
 				pluginBuilder.addPluginData(pluginDataBuilder.build());
 			}
+			
 			outputConsumer.accept(pluginBuilder.build());
+			
 		}
 
 		SimulationTime.Builder simulationTimeBuilder = SimulationTime.builder();

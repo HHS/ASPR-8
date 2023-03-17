@@ -1,5 +1,6 @@
 package nucleus;
 
+import java.util.Optional;
 import java.util.function.Consumer;
 
 import util.errors.ContractException;
@@ -75,11 +76,10 @@ public final class PluginContext {
 	 *             more than one plugin data object matches the class
 	 *             reference</li>
 	 * 
-	 *             <li>{@linkplain NucleusError#UNKNOWN_PLUGIN_DATA_CLASS} if no
-	 *             plugin data object matches the class reference</li> 
+	 *             
 	 * 
 	 */
-	public <T extends PluginData> T getPluginData(Class<T> pluginDataClass) {
+	public <T extends PluginData> Optional<T> getPluginData(Class<T> pluginDataClass) {
 		return simulation.getPluginData(pluginDataClass);
 	}
 }

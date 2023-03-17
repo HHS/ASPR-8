@@ -22,7 +22,7 @@ public final class MaterialsPlugin {
 						.addPluginDependency(RegionsPluginId.PLUGIN_ID)//
 						.addPluginDependency(ResourcesPluginId.PLUGIN_ID)//
 						.setInitializer((c) -> {
-							MaterialsPluginData pluginData = c.getPluginData(MaterialsPluginData.class);
+							MaterialsPluginData pluginData = c.getPluginData(MaterialsPluginData.class).get();
 							c.addDataManager(new MaterialsDataManager(pluginData));						
 						}).build();
 

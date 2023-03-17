@@ -2,7 +2,6 @@ package plugins.personproperties.reports;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -38,7 +37,6 @@ import plugins.regions.RegionsPluginData;
 import plugins.regions.testsupport.TestRegionId;
 import plugins.reports.ReportsPlugin;
 import plugins.reports.ReportsPluginData;
-import plugins.reports.support.ReportError;
 import plugins.reports.support.ReportHeader;
 import plugins.reports.support.ReportItem;
 import plugins.reports.support.ReportLabel;
@@ -46,24 +44,34 @@ import plugins.reports.support.ReportPeriod;
 import plugins.reports.support.SimpleReportLabel;
 import plugins.stochastics.StochasticsDataManager;
 import plugins.util.properties.PropertyDefinition;
-import plugins.util.properties.PropertyError;
 import util.annotations.UnitTag;
+import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
-import util.errors.ContractException;
 
 public class AT_PersonPropertyReport {
-
 	@Test
-	@UnitTestMethod(target = PersonPropertyReport.class, name = "builder", args = {})
-	public void testBuilder() {
-		PersonPropertyReport.Builder builder = PersonPropertyReport.builder();
+	@UnitTestConstructor(target = PersonPropertyReport.class, args = { PersonPropertyReportPluginData.class }, tags = {})
+	public void testConstructor() {
+		// construction is covered by the other tests
 
-		assertNotNull(builder);
+		/*
+		 * Due to this being a periodic report with a super constructor, it is
+		 * not possible for the report to throw a Contract exception when given
+		 * a null PersonPropertyReportPluginData.
+		 */
+
+		// precondition test: if the PersonPropertyReportPluginData is null
+		assertThrows(NullPointerException.class, () -> new PersonPropertyReport(null));
 	}
 
 	@Test
-	@UnitTestMethod(target = PersonPropertyReport.class, name = "init", args = { ReportContext.class }, tags = { UnitTag.INCOMPLETE })
-	public void testInit() {
+	@UnitTestMethod(target = PersonPropertyReport.class, name = "init", args = { ReportContext.class }, tags = {})
+	public void testInit_Content() {
+
+		/*
+		 * This test covers only the general content of the report by exercising
+		 * a variety of person property changes over time.
+		 */
 
 		List<Plugin> plugins = new ArrayList<>();
 		PersonPropertyId unknownIdToExclude = new PersonPropertyId() {
@@ -86,15 +94,13 @@ public class AT_PersonPropertyReport {
 			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
 			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(1).build();
 
-			PersonPropertyDefinitionInitialization personPropertyDefinitionInitialization = PersonPropertyDefinitionInitialization
-					.builder().setPersonPropertyId(unknownIdToExclude)
-					.setPropertyDefinition(propertyDefinition).build();
+			PersonPropertyDefinitionInitialization personPropertyDefinitionInitialization = PersonPropertyDefinitionInitialization	.builder().setPersonPropertyId(unknownIdToExclude)
+																																	.setPropertyDefinition(propertyDefinition).build();
 			personPropertiesDataManager.definePersonProperty(personPropertyDefinitionInitialization);
 
 			propertyDefinition = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(false).build();
-			PersonPropertyDefinitionInitialization personPropertyDefinitionInitialization2 = PersonPropertyDefinitionInitialization
-					.builder().setPersonPropertyId(unknownIdToInclude)
-					.setPropertyDefinition(propertyDefinition).build();
+			PersonPropertyDefinitionInitialization personPropertyDefinitionInitialization2 = PersonPropertyDefinitionInitialization	.builder().setPersonPropertyId(unknownIdToInclude)
+																																	.setPropertyDefinition(propertyDefinition).build();
 			personPropertiesDataManager.definePersonProperty(personPropertyDefinitionInitialization2);
 
 		}));
@@ -171,7 +177,7 @@ public class AT_PersonPropertyReport {
 			personPropertyBuilder.definePersonProperty(testPersonPropertyId, testPersonPropertyId.getPropertyDefinition());
 		}
 		PersonPropertiesPluginData personPropertiesPluginData = personPropertyBuilder.build();
-		Plugin personPropertyPlugin = PersonPropertiesPlugin.getPersonPropertyPlugin(personPropertiesPluginData);
+		Plugin personPropertyPlugin = PersonPropertiesPlugin.builder().setPersonPropertiesPluginData(personPropertiesPluginData).getPersonPropertyPlugin();
 		plugins.add(personPropertyPlugin);
 
 		/*
@@ -193,27 +199,25 @@ public class AT_PersonPropertyReport {
 		Plugin regionsPlugin = RegionsPlugin.getRegionsPlugin(regionsPluginData);
 		plugins.add(regionsPlugin);
 
-		
-		//add the report
+		// add the report
 		ReportsPluginData reportsPluginData = ReportsPluginData.builder().addReport(() -> {
-			PersonPropertyReport.Builder builder = PersonPropertyReport.builder();
+			PersonPropertyReportPluginData.Builder builder = PersonPropertyReportPluginData.builder();
 			builder.setReportLabel(reportLabel);
 			builder.setReportPeriod(hourlyReportPeriod);
 			builder.setDefaultInclusion(true);
 			builder.excludePersonProperty(TestPersonPropertyId.PERSON_PROPERTY_3_DOUBLE_MUTABLE_NO_TRACK);
 			builder.excludePersonProperty(unknownIdToExclude);
 
-			return builder.build()::init;
+			return new PersonPropertyReport(builder.build())::init;
 		}).build();
 		Plugin reportsPlugin = ReportsPlugin.getReportsPlugin(reportsPluginData);
 		plugins.add(reportsPlugin);
 
-		
-		//execute the simulation and gather the report items 
+		// execute the simulation and gather the report items
 		TestOutputConsumer testOutputConsumer = new TestOutputConsumer();
 		TestSimulation.executeSimulation(plugins, testOutputConsumer);
 
-		//build the expected report items
+		// build the expected report items
 		TestOutputConsumer expectedOutputConsumer = new TestOutputConsumer();
 
 		// expected report at time 0
@@ -257,41 +261,20 @@ public class AT_PersonPropertyReport {
 		expectedOutputConsumer.accept(getReportItem(ReportPeriod.DAILY, 3, TestRegionId.REGION_2, unknownIdToInclude, false, 14));
 		expectedOutputConsumer.accept(getReportItem(ReportPeriod.DAILY, 3, TestRegionId.REGION_2, unknownIdToInclude, true, 1));
 
-
-		//compare the expected and actual report items
+		// compare the expected and actual report items
 		Map<ReportItem, Integer> expectedReportItems = expectedOutputConsumer.getOutputItems(ReportItem.class);
 		Map<ReportItem, Integer> actualReportItems = testOutputConsumer.getOutputItems(ReportItem.class);
 		assertEquals(expectedReportItems, actualReportItems);
 	}
 
 	@Test
-	@UnitTestMethod(target = PersonPropertyReport.Builder.class, name = "build", args = {})
-	public void testBuild() {
-		PersonPropertyReport.Builder builder = PersonPropertyReport.builder();
+	@UnitTestMethod(target = PersonPropertyReport.class, name = "init", args = { ReportContext.class }, tags = { UnitTag.INCOMPLETE })
+	public void testInit_ReportLabel() {
+		/*
+		 * This test shows that the report produces report items with the
+		 * correct report labels.
+		 */
 
-		builder.setReportLabel(new SimpleReportLabel(1000));
-		builder.setReportPeriod(ReportPeriod.DAILY);
-
-		PersonPropertyReport report = builder.build();
-
-		assertNotNull(report);
-
-		// precondition: null report label
-		ContractException contractException = assertThrows(ContractException.class, () -> {
-			PersonPropertyReport.builder().setReportPeriod(ReportPeriod.DAILY).build();
-		});
-		assertEquals(ReportError.NULL_REPORT_LABEL, contractException.getErrorType());
-
-		// precondition: null report period
-		contractException = assertThrows(ContractException.class, () -> {
-			PersonPropertyReport.builder().setReportLabel(new SimpleReportLabel(1000)).build();
-		});
-		assertEquals(ReportError.NULL_REPORT_PERIOD, contractException.getErrorType());
-	}
-
-	@Test
-	@UnitTestMethod(target = PersonPropertyReport.Builder.class, name = "setReportLabel", args = { ReportLabel.class })
-	public void testSetReportLabel() {
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
 		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
@@ -304,10 +287,10 @@ public class AT_PersonPropertyReport {
 		PersonPropertiesTestPluginFactory.Factory factory = PersonPropertiesTestPluginFactory.factory(30, 1174198461656549476L, testPluginData);
 		List<Plugin> plugins = factory.getPlugins();
 		ReportsPluginData reportsPluginData = ReportsPluginData.builder().addReport(() -> {
-			PersonPropertyReport.Builder builder = PersonPropertyReport.builder();
+			PersonPropertyReportPluginData.Builder builder = PersonPropertyReportPluginData.builder();
 			builder.setReportLabel(reportLabel);
 			builder.setReportPeriod(ReportPeriod.DAILY);
-			return builder.build()::init;
+			return new PersonPropertyReport(builder.build())::init;
 		}).build();
 		Plugin reportsPlugin = ReportsPlugin.getReportsPlugin(reportsPluginData);
 		plugins.add(reportsPlugin);
@@ -316,32 +299,88 @@ public class AT_PersonPropertyReport {
 
 		// show that the report labels are what we expect for each report item
 		Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItems(ReportItem.class);
+		assertFalse(outputItems.isEmpty());
 		for (ReportItem reportItem : outputItems.keySet()) {
 			assertEquals(reportItem.getReportLabel(), reportLabel);
 		}
 
-		// precondition: report label is null
-		ContractException contractException = assertThrows(ContractException.class, () -> {
-			PersonPropertyReport.builder().setReportLabel(null);
-		});
-		assertEquals(ReportError.NULL_REPORT_LABEL, contractException.getErrorType());
+	}
+	
+	@Test
+	@UnitTestMethod(target = PersonPropertyReport.class, name = "init", args = { ReportContext.class }, tags = { UnitTag.INCOMPLETE })
+	public void testInit_ReportHeader() {
+		for(ReportPeriod reportPeriod : ReportPeriod.values()) {
+			testInit_ReportHeader(reportPeriod);
+		}
+	}
+	
+	private void testInit_ReportHeader(ReportPeriod reportPeriod) {
+		/*
+		 * This test shows that the report produces report items with the
+		 * correct report labels.
+		 */
+
+		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
+
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
+			// provides an empty task so that the TestSimulation.execute does
+			// not throw an exception
+		}));
+
+		ReportLabel reportLabel = new SimpleReportLabel(1000);
+		TestPluginData testPluginData = pluginDataBuilder.build();
+		PersonPropertiesTestPluginFactory.Factory factory = PersonPropertiesTestPluginFactory.factory(30, 1174198461656549476L, testPluginData);
+		List<Plugin> plugins = factory.getPlugins();
+		ReportsPluginData reportsPluginData = ReportsPluginData.builder().addReport(() -> {
+			PersonPropertyReportPluginData.Builder builder = PersonPropertyReportPluginData.builder();
+			builder.setReportLabel(reportLabel);
+			builder.setReportPeriod(reportPeriod);
+			return new PersonPropertyReport(builder.build())::init;
+		}).build();
+		Plugin reportsPlugin = ReportsPlugin.getReportsPlugin(reportsPluginData);
+		plugins.add(reportsPlugin);
+		TestOutputConsumer testOutputConsumer = new TestOutputConsumer();
+		TestSimulation.executeSimulation(plugins, testOutputConsumer);
+
+		// show that the report labels are what we expect for each report item
+		Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItems(ReportItem.class);
+		assertFalse(outputItems.isEmpty());
+		
+		ReportHeader expectedReportHeader;
+		switch(reportPeriod) {
+		case DAILY:
+			expectedReportHeader = REPORT_DAILY_HEADER;
+			break;
+		case END_OF_SIMULATION:
+			expectedReportHeader = REPORT_END_OF_SIMULATION_HEADER;
+			break;
+		case HOURLY:
+			expectedReportHeader = REPORT_HOURLY_HEADER;
+			break;
+		default:
+			throw new RuntimeException("unhandled case "+reportPeriod);
+		
+		}
+		
+		for (ReportItem reportItem : outputItems.keySet()) {
+			assertEquals(expectedReportHeader,reportItem.getReportHeader());
+		}
+
 	}
 
 	@Test
-	@UnitTestMethod(target = PersonPropertyReport.Builder.class, name = "setReportPeriod", args = { ReportPeriod.class })
-	public void testSetReportPeriod() {
+	@UnitTestMethod(target = PersonPropertyReport.class, name = "init", args = { ReportContext.class }, tags = { UnitTag.INCOMPLETE })
+	public void testInit_ReportPeriod() {
+		/*
+		 * This test shows that the report produces report items with the
+		 * correct report periods.
+		 */
 
 		// post conditional testing for Hourly, Daily, and End Of Simulation
 		// report periods
 		testSetReportPeriod_Hourly();
 		testSetReportPeriod_Daily();
 		testSetReportPeriod_EndOfSim();
-
-		// precondition: report period is null
-		ContractException contractException = assertThrows(ContractException.class, () -> {
-			PersonPropertyReport.builder().setReportPeriod(null);
-		});
-		assertEquals(ReportError.NULL_REPORT_PERIOD, contractException.getErrorType());
 	}
 
 	private void testSetReportPeriod_Hourly() {
@@ -360,10 +399,10 @@ public class AT_PersonPropertyReport {
 
 		// set the report period
 		ReportsPluginData reportsPluginData = ReportsPluginData.builder().addReport(() -> {
-			PersonPropertyReport.Builder builder = PersonPropertyReport.builder();
+			PersonPropertyReportPluginData.Builder builder = PersonPropertyReportPluginData.builder();
 			builder.setReportLabel(reportLabel);
 			builder.setReportPeriod(hourlyReportPeriod);
-			return builder.build()::init;
+			return new PersonPropertyReport(builder.build())::init;
 		}).build();
 		Plugin reportsPlugin = ReportsPlugin.getReportsPlugin(reportsPluginData);
 		plugins.add(reportsPlugin);
@@ -372,6 +411,7 @@ public class AT_PersonPropertyReport {
 
 		// show that the report periods are what we expect for each report item
 		Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItems(ReportItem.class);
+		assertFalse(outputItems.isEmpty());
 		for (ReportItem reportItem : outputItems.keySet()) {
 			assertEquals(reportItem.getReportHeader().getHeaderStrings().get(0), "day");
 			assertEquals(reportItem.getReportHeader().getHeaderStrings().get(1), "hour");
@@ -394,10 +434,10 @@ public class AT_PersonPropertyReport {
 
 		// set the report period
 		ReportsPluginData reportsPluginData = ReportsPluginData.builder().addReport(() -> {
-			PersonPropertyReport.Builder builder = PersonPropertyReport.builder();
+			PersonPropertyReportPluginData.Builder builder = PersonPropertyReportPluginData.builder();
 			builder.setReportLabel(reportLabel);
 			builder.setReportPeriod(hourlyReportPeriod);
-			return builder.build()::init;
+			return new PersonPropertyReport(builder.build())::init;
 		}).build();
 		Plugin reportsPlugin = ReportsPlugin.getReportsPlugin(reportsPluginData);
 		plugins.add(reportsPlugin);
@@ -406,6 +446,7 @@ public class AT_PersonPropertyReport {
 
 		// show that the report periods are what we expect for each report item
 		Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItems(ReportItem.class);
+		assertFalse(outputItems.isEmpty());
 		for (ReportItem reportItem : outputItems.keySet()) {
 			assertEquals(reportItem.getReportHeader().getHeaderStrings().get(0), "day");
 			assertFalse(reportItem.getReportHeader().getHeaderStrings().contains("hour"));
@@ -428,10 +469,10 @@ public class AT_PersonPropertyReport {
 
 		// set the report period
 		ReportsPluginData reportsPluginData = ReportsPluginData.builder().addReport(() -> {
-			PersonPropertyReport.Builder builder = PersonPropertyReport.builder();
+			PersonPropertyReportPluginData.Builder builder = PersonPropertyReportPluginData.builder();
 			builder.setReportLabel(reportLabel);
 			builder.setReportPeriod(hourlyReportPeriod);
-			return builder.build()::init;
+			return new PersonPropertyReport(builder.build())::init;
 		}).build();
 		Plugin reportsPlugin = ReportsPlugin.getReportsPlugin(reportsPluginData);
 		plugins.add(reportsPlugin);
@@ -440,6 +481,7 @@ public class AT_PersonPropertyReport {
 
 		// show that the report periods are what we expect for each report item
 		Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItems(ReportItem.class);
+		assertFalse(outputItems.isEmpty());
 		for (ReportItem reportItem : outputItems.keySet()) {
 			assertFalse(reportItem.getReportHeader().getHeaderStrings().contains("day"));
 			assertFalse(reportItem.getReportHeader().getHeaderStrings().contains("hour"));
@@ -447,8 +489,14 @@ public class AT_PersonPropertyReport {
 	}
 
 	@Test
-	@UnitTestMethod(target = PersonPropertyReport.Builder.class, name = "setDefaultInclusion", args = { boolean.class })
-	public void testSetDefaultInclusion() {
+	@UnitTestMethod(target = PersonPropertyReport.class, name = "init", args = { ReportContext.class }, tags = {})
+	public void testInit_DefaultInclusion() {
+		/*
+		 * This test shows that the report produces report items with the
+		 * correct selected properties as a function of the default property
+		 * inclusion policy
+		 */
+
 		testSetDefaultInclusion_False();
 		testSetDefaultInclusion_True();
 		testSetDefaultInclusion_Unset();
@@ -494,18 +542,18 @@ public class AT_PersonPropertyReport {
 
 		// set the default inclusion to false
 		ReportsPluginData reportsPluginData = ReportsPluginData.builder().addReport(() -> {
-			PersonPropertyReport.Builder builder = PersonPropertyReport.builder();
+			PersonPropertyReportPluginData.Builder builder = PersonPropertyReportPluginData.builder();
 			builder.setReportLabel(reportLabel);
 			builder.setReportPeriod(hourlyReportPeriod);
 			builder.setDefaultInclusion(false);
-			return builder.build()::init;
+			return new PersonPropertyReport(builder.build())::init;
 		}).build();
 		Plugin reportsPlugin = ReportsPlugin.getReportsPlugin(reportsPluginData);
 		plugins.add(reportsPlugin);
 		TestOutputConsumer testOutputConsumer = new TestOutputConsumer();
 		TestSimulation.executeSimulation(plugins, testOutputConsumer);
 
-		Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItems(ReportItem.class);
+		Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItems(ReportItem.class);		
 		assertTrue(outputItems.isEmpty());
 	}
 
@@ -553,11 +601,11 @@ public class AT_PersonPropertyReport {
 
 		// set the default inclusion to false
 		ReportsPluginData reportsPluginData = ReportsPluginData.builder().addReport(() -> {
-			PersonPropertyReport.Builder builder = PersonPropertyReport.builder();
+			PersonPropertyReportPluginData.Builder builder = PersonPropertyReportPluginData.builder();
 			builder.setReportLabel(reportLabel);
 			builder.setReportPeriod(hourlyReportPeriod);
 			builder.setDefaultInclusion(true);
-			return builder.build()::init;
+			return new PersonPropertyReport(builder.build())::init;
 		}).build();
 		Plugin reportsPlugin = ReportsPlugin.getReportsPlugin(reportsPluginData);
 		plugins.add(reportsPlugin);
@@ -566,6 +614,7 @@ public class AT_PersonPropertyReport {
 
 		// show that whe find the expected person property ids
 		Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItems(ReportItem.class);
+		assertFalse(outputItems.isEmpty());
 		Set<String> outputPropertyStrings = new LinkedHashSet<>();
 		for (ReportItem reportItem : outputItems.keySet()) {
 			outputPropertyStrings.add(reportItem.getValue(3));
@@ -619,10 +668,10 @@ public class AT_PersonPropertyReport {
 
 		// set the default inclusion to false
 		ReportsPluginData reportsPluginData = ReportsPluginData.builder().addReport(() -> {
-			PersonPropertyReport.Builder builder = PersonPropertyReport.builder();
+			PersonPropertyReportPluginData.Builder builder = PersonPropertyReportPluginData.builder();
 			builder.setReportLabel(reportLabel);
 			builder.setReportPeriod(hourlyReportPeriod);
-			return builder.build()::init;
+			return new PersonPropertyReport(builder.build())::init;
 		}).build();
 		Plugin reportsPlugin = ReportsPlugin.getReportsPlugin(reportsPluginData);
 		plugins.add(reportsPlugin);
@@ -631,6 +680,7 @@ public class AT_PersonPropertyReport {
 
 		// show that when the default inclusion is unset, it defaults to true
 		Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItems(ReportItem.class);
+		assertFalse(outputItems.isEmpty());
 		Set<String> outputPropertyStrings = new LinkedHashSet<>();
 		for (ReportItem reportItem : outputItems.keySet()) {
 			outputPropertyStrings.add(reportItem.getValue(3));
@@ -642,8 +692,15 @@ public class AT_PersonPropertyReport {
 	}
 
 	@Test
-	@UnitTestMethod(target = PersonPropertyReport.Builder.class, name = "includePersonProperty", args = { PersonPropertyId.class })
-	public void testIncludePersonProperty() {
+	@UnitTestMethod(target = PersonPropertyReport.class, name = "init", args = { ReportContext.class }, tags = {})
+	public void testInit_IncludePersonProperty() {
+
+		/*
+		 * This test shows that the report produces report items with the
+		 * correct selected properties as a function of the explicitly included
+		 * properties
+		 */
+
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
 		// create a test actor plan where we set several person property values
@@ -687,13 +744,13 @@ public class AT_PersonPropertyReport {
 
 		// tell the builder to include a specific person property id
 		ReportsPluginData reportsPluginData = ReportsPluginData.builder().addReport(() -> {
-			PersonPropertyReport.Builder builder = PersonPropertyReport.builder();
+			PersonPropertyReportPluginData.Builder builder = PersonPropertyReportPluginData.builder();
 			builder.setReportLabel(reportLabel);
 			builder.setReportPeriod(hourlyReportPeriod);
 			builder.setDefaultInclusion(false);
 			builder.includePersonProperty(testPersonPropertyId);
 			builder.includePersonProperty(unknownPersonPropertyId);
-			return builder.build()::init;
+			return new PersonPropertyReport(builder.build())::init;
 		}).build();
 		Plugin reportsPlugin = ReportsPlugin.getReportsPlugin(reportsPluginData);
 		plugins.add(reportsPlugin);
@@ -702,6 +759,7 @@ public class AT_PersonPropertyReport {
 
 		// show that our report items include the chosen property id
 		Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItems(ReportItem.class);
+		assertFalse(outputItems.isEmpty());
 		Set<String> outputPropertyStrings = new LinkedHashSet<>();
 		for (ReportItem reportItem : outputItems.keySet()) {
 			outputPropertyStrings.add(reportItem.getValue(3));
@@ -709,16 +767,17 @@ public class AT_PersonPropertyReport {
 		assertTrue(outputPropertyStrings.contains(testPersonPropertyId.toString()));
 		assertTrue(outputPropertyStrings.contains(unknownPersonPropertyId.toString()));
 
-		// precondition: person property id is null
-		ContractException contractException = assertThrows(ContractException.class, () -> {
-			PersonPropertyReport.builder().includePersonProperty(null);
-		});
-		assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
 	}
 
 	@Test
-	@UnitTestMethod(target = PersonPropertyReport.Builder.class, name = "excludePersonProperty", args = { PersonPropertyId.class })
-	public void testExcludePersonProperty() {
+	@UnitTestMethod(target = PersonPropertyReport.class, name = "init", args = { ReportContext.class }, tags = {})
+	public void testInit_ExcludePersonProperty() {
+		/*
+		 * This test shows that the report produces report items with the
+		 * correct selected properties as a function of the explicitly excluded
+		 * properties
+		 */
+
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
 		// create a test actor plan where we set several person property values
@@ -762,11 +821,11 @@ public class AT_PersonPropertyReport {
 
 		// tell the builder to exclude a specific person property id
 		ReportsPluginData reportsPluginData = ReportsPluginData.builder().addReport(() -> {
-			PersonPropertyReport.Builder builder = PersonPropertyReport.builder();
+			PersonPropertyReportPluginData.Builder builder = PersonPropertyReportPluginData.builder();
 			builder.setReportLabel(reportLabel);
 			builder.setReportPeriod(hourlyReportPeriod);
 			builder.excludePersonProperty(testPersonPropertyId);
-			return builder.build()::init;
+			return new PersonPropertyReport(builder.build())::init;
 		}).build();
 		Plugin reportsPlugin = ReportsPlugin.getReportsPlugin(reportsPluginData);
 		plugins.add(reportsPlugin);
@@ -775,18 +834,13 @@ public class AT_PersonPropertyReport {
 
 		// show that our report items do not include the chosen property id
 		Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItems(ReportItem.class);
+		assertFalse(outputItems.isEmpty());
 		Set<String> outputPropertyStrings = new LinkedHashSet<>();
 		for (ReportItem reportItem : outputItems.keySet()) {
 			outputPropertyStrings.add(reportItem.getValue(3));
 		}
 		assertFalse(outputPropertyStrings.contains(testPersonPropertyId.toString()));
 		assertTrue(outputPropertyStrings.contains(unknownPersonPropertyId.toString()));
-
-		// precondition: person property id is null
-		ContractException contractException = assertThrows(ContractException.class, () -> {
-			PersonPropertyReport.builder().excludePersonProperty(null);
-		});
-		assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
 	}
 
 	private static ReportItem getReportItem(ReportPeriod reportPeriod, Object... values) {
@@ -816,4 +870,5 @@ public class AT_PersonPropertyReport {
 
 	private static final ReportHeader REPORT_HOURLY_HEADER = ReportHeader.builder().add("day").add("hour").add("region").add("property").add("value").add("person_count").build();
 	private static final ReportHeader REPORT_DAILY_HEADER = ReportHeader.builder().add("day").add("region").add("property").add("value").add("person_count").build();
+	private static final ReportHeader REPORT_END_OF_SIMULATION_HEADER = ReportHeader.builder().add("region").add("property").add("value").add("person_count").build();
 }

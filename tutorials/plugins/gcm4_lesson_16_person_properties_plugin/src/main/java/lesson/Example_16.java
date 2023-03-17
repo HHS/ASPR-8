@@ -23,7 +23,7 @@ import plugins.people.PeoplePlugin;
 import plugins.people.PeoplePluginData;
 import plugins.personproperties.PersonPropertiesPlugin;
 import plugins.personproperties.PersonPropertiesPluginData;
-import plugins.personproperties.reports.PersonPropertyReport;
+import plugins.personproperties.reports.PersonPropertyReportPluginData;
 import plugins.regions.RegionsPlugin;
 import plugins.regions.RegionsPluginData;
 import plugins.reports.ReportsPlugin;
@@ -45,13 +45,7 @@ public final class Example_16 {
 	private Plugin getReportsPlugin() {
 		ReportsPluginData reportsPluginData = //
 				ReportsPluginData	.builder()//
-									.addReport(() -> {
-										return PersonPropertyReport	.builder()//
-																	.setReportLabel(ModelReportLabel.PERSON_PROPERTY_REPORT)//
-																	.setReportPeriod(ReportPeriod.END_OF_SIMULATION)//
-																	.setDefaultInclusion(true)//
-																	.build()::init;//
-									})//
+
 									.addReport(() -> {
 										return new VaccineReport(ModelReportLabel.VACCINATION)::init;
 									})//
@@ -63,9 +57,9 @@ public final class Example_16 {
 	private NIOReportItemHandler getNIOReportItemHandler() {
 		return NIOReportItemHandler	.builder()//
 									.addReport(ModelReportLabel.PERSON_PROPERTY_REPORT, //
-											Paths.get("C:\\Users\\varnerbf\\Documents\\TestReports"))//
+											Paths.get("c:\\temp\\gcm\\person_property_report.xls"))//
 									.addReport(ModelReportLabel.VACCINATION, //
-											Paths.get("C:\\Users\\varnerbf\\Documents\\TestReports\\1"))//
+											Paths.get("c:\\temp\\gcm\\vaccination_report.xls"))//
 									.build();
 	}
 
@@ -92,9 +86,9 @@ public final class Example_16 {
 																	.build();
 		builder.definePersonProperty(PersonProperty.EDUCATION_ATTEMPTS, propertyDefinition);
 		builder.definePersonProperty(PersonProperty.VACCINE_ATTEMPTS, propertyDefinition);
-		
+
 		propertyDefinition = PropertyDefinition	.builder()//
-												.setType(Boolean.class)//												
+												.setType(Boolean.class)//
 												.build();
 		builder.definePersonProperty(PersonProperty.REFUSES_VACCINE, propertyDefinition);
 
@@ -105,7 +99,17 @@ public final class Example_16 {
 		builder.definePersonProperty(PersonProperty.VACCINATED, propertyDefinition);
 
 		PersonPropertiesPluginData personPropertiesPluginData = builder.build();
-		return PersonPropertiesPlugin.getPersonPropertyPlugin(personPropertiesPluginData);
+
+		PersonPropertyReportPluginData personPropertyReportPluginData = PersonPropertyReportPluginData	.builder()//
+																										.setReportLabel(ModelReportLabel.PERSON_PROPERTY_REPORT)//
+																										.setReportPeriod(ReportPeriod.END_OF_SIMULATION)//
+																										.setDefaultInclusion(true)//
+																										.build();//
+
+		return PersonPropertiesPlugin.builder()//
+				.setPersonPropertiesPluginData(personPropertiesPluginData)//
+				.setPersonPropertyReportPluginData(personPropertyReportPluginData)//
+				.getPersonPropertyPlugin();
 	}
 
 	private Plugin getStochasticsPlugin() {
@@ -142,9 +146,9 @@ public final class Example_16 {
 		double[] values = new double[] { 120.0, 180.0 };
 		return getGlobalPropertyDimension(GlobalProperty.IMMUNITY_START_TIME, "immunity_start_time", values);
 	}
-	
+
 	private Dimension getImmunityProbabilityDimension() {
-		double[] values = new double[] { 0.0, 0.1 , 0.2 };
+		double[] values = new double[] { 0.0, 0.1, 0.2 };
 		return getGlobalPropertyDimension(GlobalProperty.IMMUNITY_PROBABILITY, "immunity_probabilty", values);
 	}
 
@@ -180,7 +184,6 @@ public final class Example_16 {
 		builder.defineGlobalProperty(GlobalProperty.VACCINE_REFUSAL_PROBABILITY, propertyDefinition);
 		builder.defineGlobalProperty(GlobalProperty.IMMUNITY_PROBABILITY, propertyDefinition);
 
-		
 		propertyDefinition = PropertyDefinition	.builder()//
 												.setType(Double.class)//
 												.setDefaultValue(365.0)//

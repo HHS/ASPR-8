@@ -267,7 +267,7 @@ public class AT_Simulation {
 						.setPluginId(ALPHA_PLUGIN_ID)//
 						.addPluginData(alphaPluginData)//
 						.setInitializer(c -> {
-							AlphaPluginData pluginData = c.getPluginData(AlphaPluginData.class);
+							AlphaPluginData pluginData = c.getPluginData(AlphaPluginData.class).get();
 							c.addDataManager(new AlphaDataManager(pluginData));
 						}).build();//
 	}
