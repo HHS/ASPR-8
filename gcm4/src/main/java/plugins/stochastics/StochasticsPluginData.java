@@ -8,6 +8,7 @@ import nucleus.PluginData;
 import nucleus.PluginDataBuilder;
 import plugins.stochastics.support.RandomNumberGeneratorId;
 import plugins.stochastics.support.StochasticsError;
+import plugins.stochastics.support.Well44497bSeed;
 import util.errors.ContractException;
 
 /**
@@ -44,6 +45,7 @@ public final class StochasticsPluginData implements PluginData {
 		}
 
 		private Long seed;
+		private Well44497bSeed wellSeed;
 		private Set<RandomNumberGeneratorId> randomNumberGeneratorIds = new LinkedHashSet<>();
 		private boolean locked;
 	}
@@ -126,6 +128,15 @@ public final class StochasticsPluginData implements PluginData {
 			data.seed = seed;
 			return this;
 		}
+		
+		/**
+		 * Sets the seed value.
+		 */
+		public Builder setSeed(Well44497bSeed wellSeed) {
+			ensureDataMutability();
+			data.wellSeed = wellSeed;
+			return this;
+		}
 
 	}
 
@@ -155,6 +166,10 @@ public final class StochasticsPluginData implements PluginData {
 	 */
 	public long getSeed() {
 		return data.seed;
+	}
+	
+	public Well44497bSeed getWellSeed() {
+		return data.wellSeed;
 	}
 
 	@Override
