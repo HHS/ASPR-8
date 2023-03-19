@@ -3,6 +3,7 @@ package plugins.stochastics.support;
 import java.util.Arrays;
 
 import net.jcip.annotations.ThreadSafe;
+import util.errors.ContractException;
 
 @ThreadSafe
 public class Well44497bSeed {
@@ -45,6 +46,22 @@ public class Well44497bSeed {
 			}
 			return true;
 		}
+		@Override
+		public String toString() {
+			StringBuilder builder = new StringBuilder();
+			builder.append("Data [simple=");
+			builder.append(simple);
+			builder.append(", seed=");
+			builder.append(seed);
+			builder.append(", index=");
+			builder.append(index);
+			builder.append(", vArray=");
+			builder.append(Arrays.toString(vArray));
+			builder.append("]");
+			return builder.toString();
+		}
+		
+		
 		
 	}
 
@@ -74,6 +91,12 @@ public class Well44497bSeed {
 
 		public Builder setInternals(int index, int[] vArray) {
 			if (vArray != null) {
+				if(vArray.length != 1391) {
+					throw new ContractException(StochasticsError.ILLEGAL_SEED_ININITIAL_STATE);
+				}
+				if(index<0||index>1390) {
+					throw new ContractException(StochasticsError.ILLEGAL_SEED_ININITIAL_STATE);
+				}
 				data.simple = false;
 				data.index = index;
 				data.vArray = Arrays.copyOf(vArray, vArray.length);
@@ -135,4 +158,15 @@ public class Well44497bSeed {
 		}
 		return true;
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder2 = new StringBuilder();
+		builder2.append("Well44497bSeed [data=");
+		builder2.append(data);
+		builder2.append("]");
+		return builder2.toString();
+	}
+	
+	
 }

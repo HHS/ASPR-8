@@ -39,12 +39,12 @@ public final class StochasticsPluginData implements PluginData {
 		}
 
 		public Data(Data data) {
-			this.seed = data.seed;
+			this.wellSeed = data.wellSeed;
 			randomNumberGeneratorIds.addAll(data.randomNumberGeneratorIds);
 			locked = data.locked;
 		}
 
-		private Long seed;
+//		private Long seed;
 		private Well44497bSeed wellSeed;
 		private Set<RandomNumberGeneratorId> randomNumberGeneratorIds = new LinkedHashSet<>();
 		private boolean locked;
@@ -84,7 +84,7 @@ public final class StochasticsPluginData implements PluginData {
 		}
 
 		private void validateData() {
-			if (data.seed == null) {
+			if (data.wellSeed == null) {
 				throw new ContractException(StochasticsError.NULL_SEED);
 			}
 		}
@@ -125,7 +125,7 @@ public final class StochasticsPluginData implements PluginData {
 		 */
 		public Builder setSeed(long seed) {
 			ensureDataMutability();
-			data.seed = seed;
+			data.wellSeed = Well44497bSeed.builder().setSeed(seed).build();
 			return this;
 		}
 		
@@ -165,7 +165,7 @@ public final class StochasticsPluginData implements PluginData {
 	 * Returns the base seed.
 	 */
 	public long getSeed() {
-		return data.seed;
+		return data.wellSeed.getSeed();
 	}
 	
 	public Well44497bSeed getWellSeed() {
