@@ -1,23 +1,18 @@
-package plugins.personproperties.reports;
-
-import java.util.LinkedHashSet;
-import java.util.Set;
+package plugins.groups.reports;
 
 import net.jcip.annotations.ThreadSafe;
 import nucleus.PluginData;
 import nucleus.PluginDataBuilder;
-import plugins.personproperties.support.PersonPropertyId;
 import plugins.reports.support.ReportError;
 import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportPeriod;
-import plugins.util.properties.PropertyError;
 import util.errors.ContractException;
 
 /**
- * A PluginData class supporting PersonPropertyReport construction.
+ * A PluginData class supporting GroupPopulationReport construction.
  */
 @ThreadSafe
-public final class PersonPropertyReportPluginData implements PluginData {
+public final class GroupPopulationReportPluginData implements PluginData {
 
 	/*
 	 * Data class for collecting the inputs to the report
@@ -25,9 +20,7 @@ public final class PersonPropertyReportPluginData implements PluginData {
 	private static class Data {
 		private ReportLabel reportLabel;
 		private ReportPeriod reportPeriod;
-		private Set<PersonPropertyId> includedProperties = new LinkedHashSet<>();
-		private Set<PersonPropertyId> excludedProperties = new LinkedHashSet<>();
-		private boolean defaultInclusionPolicy = true;
+		
 
 		private boolean locked;
 
@@ -35,11 +28,9 @@ public final class PersonPropertyReportPluginData implements PluginData {
 		}
 
 		private Data(Data data) {
-			reportLabel = data.reportLabel;
+			reportLabel = data.reportLabel;			
 			reportPeriod = data.reportPeriod;
-			includedProperties.addAll(data.includedProperties);
-			excludedProperties.addAll(data.excludedProperties);
-			defaultInclusionPolicy = data.defaultInclusionPolicy;
+			
 			locked = data.locked;
 		}
 
@@ -47,9 +38,6 @@ public final class PersonPropertyReportPluginData implements PluginData {
 		public int hashCode() {
 			final int prime = 31;
 			int result = 1;
-			result = prime * result + (defaultInclusionPolicy ? 1231 : 1237);
-			result = prime * result + ((excludedProperties == null) ? 0 : excludedProperties.hashCode());
-			result = prime * result + ((includedProperties == null) ? 0 : includedProperties.hashCode());
 			result = prime * result + ((reportLabel == null) ? 0 : reportLabel.hashCode());
 			result = prime * result + ((reportPeriod == null) ? 0 : reportPeriod.hashCode());
 			return result;
@@ -64,23 +52,6 @@ public final class PersonPropertyReportPluginData implements PluginData {
 				return false;
 			}
 			Data other = (Data) obj;
-			if (defaultInclusionPolicy != other.defaultInclusionPolicy) {
-				return false;
-			}
-			if (excludedProperties == null) {
-				if (other.excludedProperties != null) {
-					return false;
-				}
-			} else if (!excludedProperties.equals(other.excludedProperties)) {
-				return false;
-			}
-			if (includedProperties == null) {
-				if (other.includedProperties != null) {
-					return false;
-				}
-			} else if (!includedProperties.equals(other.includedProperties)) {
-				return false;
-			}
 			if (reportLabel == null) {
 				if (other.reportLabel != null) {
 					return false;
@@ -93,7 +64,6 @@ public final class PersonPropertyReportPluginData implements PluginData {
 			}
 			return true;
 		}
-		
 		
 	}
 
@@ -130,10 +100,10 @@ public final class PersonPropertyReportPluginData implements PluginData {
 		private void validateData() {
 			if (data.reportLabel == null) {
 				throw new ContractException(ReportError.NULL_REPORT_LABEL);
-			}
+			}	
 			if (data.reportPeriod == null) {
 				throw new ContractException(ReportError.NULL_REPORT_PERIOD);
-			}
+			}	
 		}
 
 		private Data data;
@@ -150,59 +120,14 @@ public final class PersonPropertyReportPluginData implements PluginData {
 		 * 
 		 * 
 		 */
-		public PersonPropertyReportPluginData build() {
+		public GroupPopulationReportPluginData build() {
 
 			if (!data.locked) {
 				validateData();
 			}
 			ensureImmutability();
-			return new PersonPropertyReportPluginData(data);
+			return new GroupPopulationReportPluginData(data);
 
-		}
-
-		/**
-		 * Sets the default policy for inclusion of person properties in the
-		 * report. This policy is used when a person property has not been
-		 * explicitly included or excluded. Defaulted to true.
-		 */
-		public Builder setDefaultInclusion(boolean include) {
-			ensureDataMutability();
-			data.defaultInclusionPolicy = include;
-			return this;
-		}
-
-		/**
-		 * Selects the given person property id to be included in the report.
-		 * 
-		 * @throws ContractException
-		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
-		 *             person property id is null</li>
-		 */
-		public Builder includePersonProperty(PersonPropertyId personPropertyId) {
-			ensureDataMutability();
-			if (personPropertyId == null) {
-				throw new ContractException(PropertyError.NULL_PROPERTY_ID);
-			}
-			data.includedProperties.add(personPropertyId);
-			data.excludedProperties.remove(personPropertyId);
-			return this;
-		}
-
-		/**
-		 * Selects the given person property id to be excluded from the report
-		 * 
-		 * @throws ContractException
-		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
-		 *             person property id is null</li>
-		 */
-		public Builder excludePersonProperty(PersonPropertyId personPropertyId) {
-			ensureDataMutability();
-			if (personPropertyId == null) {
-				throw new ContractException(PropertyError.NULL_PROPERTY_ID);
-			}
-			data.includedProperties.remove(personPropertyId);
-			data.excludedProperties.add(personPropertyId);
-			return this;
 		}
 
 		/**
@@ -220,7 +145,8 @@ public final class PersonPropertyReportPluginData implements PluginData {
 			data.reportLabel = reportLabel;
 			return this;
 		}
-
+		
+		
 		/**
 		 * Sets the report period id
 		 * 
@@ -236,12 +162,11 @@ public final class PersonPropertyReportPluginData implements PluginData {
 			data.reportPeriod = reportPeriod;
 			return this;
 		}
-
 	}
 
 	private final Data data;
 
-	private PersonPropertyReportPluginData(Data data) {
+	private GroupPopulationReportPluginData(Data data) {
 		this.data = data;
 	}
 
@@ -258,22 +183,11 @@ public final class PersonPropertyReportPluginData implements PluginData {
 	public ReportLabel getReportLabel() {
 		return data.reportLabel;
 	}
-
+	
 	public ReportPeriod getReportPeriod() {
 		return data.reportPeriod;
 	}
-
-	public Set<PersonPropertyId> getIncludedProperties() {
-		return new LinkedHashSet<>(data.includedProperties);
-	}
-
-	public Set<PersonPropertyId> getExcludedProperties() {
-		return new LinkedHashSet<>(data.excludedProperties);
-	}
-
-	public boolean getDefaultInclusionPolicy() {
-		return data.defaultInclusionPolicy;
-	}
+	
 
 	@Override
 	public int hashCode() {
@@ -288,10 +202,10 @@ public final class PersonPropertyReportPluginData implements PluginData {
 		if (this == obj) {
 			return true;
 		}
-		if (!(obj instanceof PersonPropertyReportPluginData)) {
+		if (!(obj instanceof GroupPopulationReportPluginData)) {
 			return false;
 		}
-		PersonPropertyReportPluginData other = (PersonPropertyReportPluginData) obj;
+		GroupPopulationReportPluginData other = (GroupPopulationReportPluginData) obj;
 		if (data == null) {
 			if (other.data != null) {
 				return false;
@@ -301,7 +215,4 @@ public final class PersonPropertyReportPluginData implements PluginData {
 		}
 		return true;
 	}
-	
-	
-
 }

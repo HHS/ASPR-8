@@ -21,7 +21,7 @@ public class AT_GroupsPlugin {
 	public void testGetGroupPlugin() {
 
 		GroupsPluginData groupsPluginData = GroupsPluginData.builder().build();
-		Plugin groupPlugin = GroupsPlugin.getGroupPlugin(groupsPluginData);
+		Plugin groupPlugin = GroupsPlugin.builder().setGroupsPluginData(groupsPluginData).getGroupsPlugin();
 
 		assertEquals(1, groupPlugin.getPluginDatas().size());
 		assertTrue(groupPlugin.getPluginDatas().contains(groupsPluginData));

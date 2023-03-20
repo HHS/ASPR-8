@@ -168,7 +168,7 @@ public final class Example_19 {
 			builder.addGroupTypeId(groupType);
 		}
 		final GroupsPluginData groupsPluginData = builder.build();
-		return GroupsPlugin.getGroupPlugin(groupsPluginData);
+		return GroupsPlugin.builder().setGroupsPluginData(groupsPluginData).getGroupsPlugin();
 	}
 
 	private Dimension getIntialInfectionsDimension() {

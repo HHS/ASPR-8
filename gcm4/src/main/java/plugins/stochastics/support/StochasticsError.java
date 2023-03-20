@@ -13,7 +13,8 @@ public enum StochasticsError implements ContractError {
 	NULL_SEED("Null seed value"),//
 	NULL_RANDOM_NUMBER_GENERATOR("Null random number generator"),//
 	NULL_RANDOM_NUMBER_GENERATOR_ID("Null random number generator id"),//
-	NULL_STOCHASTICS_PLUGIN_DATA("null stochastics plugin data")
+	NULL_STOCHASTICS_PLUGIN_DATA("null stochastics plugin data"),
+	ILLEGAL_SEED_ININITIAL_STATE("Illegal seed initial state"),
 	;
 
 	private final String description;

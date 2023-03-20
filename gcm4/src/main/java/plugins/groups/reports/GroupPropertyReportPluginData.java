@@ -1,12 +1,16 @@
-package plugins.personproperties.reports;
+package plugins.groups.reports;
 
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
 
 import net.jcip.annotations.ThreadSafe;
 import nucleus.PluginData;
 import nucleus.PluginDataBuilder;
-import plugins.personproperties.support.PersonPropertyId;
+import plugins.groups.support.GroupError;
+import plugins.groups.support.GroupPropertyId;
+import plugins.groups.support.GroupTypeId;
 import plugins.reports.support.ReportError;
 import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportPeriod;
@@ -14,10 +18,10 @@ import plugins.util.properties.PropertyError;
 import util.errors.ContractException;
 
 /**
- * A PluginData class supporting PersonPropertyReport construction.
+ * A PluginData class supporting GroupPropertyReport construction.
  */
 @ThreadSafe
-public final class PersonPropertyReportPluginData implements PluginData {
+public final class GroupPropertyReportPluginData implements PluginData {
 
 	/*
 	 * Data class for collecting the inputs to the report
@@ -25,8 +29,8 @@ public final class PersonPropertyReportPluginData implements PluginData {
 	private static class Data {
 		private ReportLabel reportLabel;
 		private ReportPeriod reportPeriod;
-		private Set<PersonPropertyId> includedProperties = new LinkedHashSet<>();
-		private Set<PersonPropertyId> excludedProperties = new LinkedHashSet<>();
+		private Map<GroupTypeId, Set<GroupPropertyId>> includedProperties = new LinkedHashMap<>();
+		private Map<GroupTypeId, Set<GroupPropertyId>> excludedProperties = new LinkedHashMap<>();
 		private boolean defaultInclusionPolicy = true;
 
 		private boolean locked;
@@ -37,8 +41,16 @@ public final class PersonPropertyReportPluginData implements PluginData {
 		private Data(Data data) {
 			reportLabel = data.reportLabel;
 			reportPeriod = data.reportPeriod;
-			includedProperties.addAll(data.includedProperties);
-			excludedProperties.addAll(data.excludedProperties);
+			for (GroupTypeId groupTypeId : data.includedProperties.keySet()) {
+				Set<GroupPropertyId> set = data.includedProperties.get(groupTypeId);
+				Set<GroupPropertyId> newSet = new LinkedHashSet<>(set);
+				includedProperties.put(groupTypeId, newSet);
+			}
+			for (GroupTypeId groupTypeId : data.excludedProperties.keySet()) {
+				Set<GroupPropertyId> set = data.excludedProperties.get(groupTypeId);
+				Set<GroupPropertyId> newSet = new LinkedHashSet<>(set);
+				excludedProperties.put(groupTypeId, newSet);
+			}
 			defaultInclusionPolicy = data.defaultInclusionPolicy;
 			locked = data.locked;
 		}
@@ -50,6 +62,7 @@ public final class PersonPropertyReportPluginData implements PluginData {
 			result = prime * result + (defaultInclusionPolicy ? 1231 : 1237);
 			result = prime * result + ((excludedProperties == null) ? 0 : excludedProperties.hashCode());
 			result = prime * result + ((includedProperties == null) ? 0 : includedProperties.hashCode());
+			result = prime * result + (locked ? 1231 : 1237);
 			result = prime * result + ((reportLabel == null) ? 0 : reportLabel.hashCode());
 			result = prime * result + ((reportPeriod == null) ? 0 : reportPeriod.hashCode());
 			return result;
@@ -81,6 +94,9 @@ public final class PersonPropertyReportPluginData implements PluginData {
 			} else if (!includedProperties.equals(other.includedProperties)) {
 				return false;
 			}
+			if (locked != other.locked) {
+				return false;
+			}
 			if (reportLabel == null) {
 				if (other.reportLabel != null) {
 					return false;
@@ -93,8 +109,7 @@ public final class PersonPropertyReportPluginData implements PluginData {
 			}
 			return true;
 		}
-		
-		
+
 	}
 
 	/**
@@ -139,7 +154,7 @@ public final class PersonPropertyReportPluginData implements PluginData {
 		private Data data;
 
 		/**
-		 * Returns a PersonPropertyReportPluginData created from the collected
+		 * Returns a GroupPropertyReportPluginData created from the collected
 		 * inputs
 		 * 
 		 * @throws ContractException
@@ -150,19 +165,19 @@ public final class PersonPropertyReportPluginData implements PluginData {
 		 * 
 		 * 
 		 */
-		public PersonPropertyReportPluginData build() {
+		public GroupPropertyReportPluginData build() {
 
 			if (!data.locked) {
 				validateData();
 			}
 			ensureImmutability();
-			return new PersonPropertyReportPluginData(data);
+			return new GroupPropertyReportPluginData(data);
 
 		}
 
 		/**
-		 * Sets the default policy for inclusion of person properties in the
-		 * report. This policy is used when a person property has not been
+		 * Sets the default policy for inclusion of group properties in the
+		 * report. This policy is used when a group property has not been
 		 * explicitly included or excluded. Defaulted to true.
 		 */
 		public Builder setDefaultInclusion(boolean include) {
@@ -172,36 +187,62 @@ public final class PersonPropertyReportPluginData implements PluginData {
 		}
 
 		/**
-		 * Selects the given person property id to be included in the report.
+		 * Selects the given group property id to be included in the report.
 		 * 
 		 * @throws ContractException
 		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
-		 *             person property id is null</li>
+		 *             group property id is null</li>
+		 *             <li>{@linkplain GroupError#NULL_GROUP_TYPE_ID} if the
+		 *             group type id is null</li>
 		 */
-		public Builder includePersonProperty(PersonPropertyId personPropertyId) {
+		public Builder includeGroupProperty(GroupTypeId groupTypeId, GroupPropertyId groupPropertyId) {
 			ensureDataMutability();
-			if (personPropertyId == null) {
+			if (groupTypeId == null) {
+				throw new ContractException(GroupError.NULL_GROUP_TYPE_ID);
+			}
+			if (groupPropertyId == null) {
 				throw new ContractException(PropertyError.NULL_PROPERTY_ID);
 			}
-			data.includedProperties.add(personPropertyId);
-			data.excludedProperties.remove(personPropertyId);
+			Set<GroupPropertyId> set = data.includedProperties.get(groupTypeId);
+			if (set == null) {
+				set = new LinkedHashSet<>();
+				data.includedProperties.put(groupTypeId, set);
+			}
+			set.add(groupPropertyId);
+			set = data.excludedProperties.get(groupTypeId);
+			if (set != null) {
+				set.remove(groupPropertyId);
+			}
 			return this;
 		}
 
 		/**
-		 * Selects the given person property id to be excluded from the report
+		 * Selects the given group property id to be excluded from the report
 		 * 
 		 * @throws ContractException
 		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
-		 *             person property id is null</li>
+		 *             group property id is null</li>
+		 *             <li>{@linkplain GroupError#NULL_GROUP_TYPE_ID} if the
+		 *             group type id is null</li>
 		 */
-		public Builder excludePersonProperty(PersonPropertyId personPropertyId) {
+		public Builder excludeGroupProperty(GroupTypeId groupTypeId, GroupPropertyId groupPropertyId) {
 			ensureDataMutability();
-			if (personPropertyId == null) {
+			if (groupPropertyId == null) {
 				throw new ContractException(PropertyError.NULL_PROPERTY_ID);
 			}
-			data.includedProperties.remove(personPropertyId);
-			data.excludedProperties.add(personPropertyId);
+			if (groupTypeId == null) {
+				throw new ContractException(GroupError.NULL_GROUP_TYPE_ID);
+			}
+			Set<GroupPropertyId> set = data.excludedProperties.get(groupTypeId);
+			if (set == null) {
+				set = new LinkedHashSet<>();
+				data.excludedProperties.put(groupTypeId, set);
+			}
+			set.add(groupPropertyId);
+			set = data.includedProperties.get(groupTypeId);
+			if (set != null) {
+				set.remove(groupPropertyId);
+			}
 			return this;
 		}
 
@@ -241,7 +282,7 @@ public final class PersonPropertyReportPluginData implements PluginData {
 
 	private final Data data;
 
-	private PersonPropertyReportPluginData(Data data) {
+	private GroupPropertyReportPluginData(Data data) {
 		this.data = data;
 	}
 
@@ -263,12 +304,56 @@ public final class PersonPropertyReportPluginData implements PluginData {
 		return data.reportPeriod;
 	}
 
-	public Set<PersonPropertyId> getIncludedProperties() {
-		return new LinkedHashSet<>(data.includedProperties);
+	/**
+	 * Returns the included group property values for the given group type id
+	 * 
+	 * @throws ContractException
+	 *             <li>{@linkplain GroupError#NULL_GROUP_TYPE_ID} if the
+	 *             group type id is null</li>
+	 */
+	public Set<GroupPropertyId> getIncludedProperties(GroupTypeId groupTypeId) {
+		if (groupTypeId == null) {
+			throw new ContractException(GroupError.NULL_GROUP_TYPE_ID);
+		}
+		Set<GroupPropertyId> result = new LinkedHashSet<>();
+		Set<GroupPropertyId> set = data.includedProperties.get(groupTypeId);
+		if (set != null) {
+			result.addAll(set);
+		}
+		return result;
+	}
+	
+	/**
+	 * Returns the included group property values for the given group type id
+	 * 
+	 * @throws ContractException
+	 *             <li>{@linkplain PropertyError#NULL_GROUP_TYPE_ID} if the
+	 *             group type id is null</li>
+	 */
+	public Set<GroupTypeId> getGroupTypeIds() {
+		Set<GroupTypeId> result = new LinkedHashSet<>();
+		result.addAll(data.includedProperties.keySet());
+		result.addAll(data.excludedProperties.keySet());
+		return result;
 	}
 
-	public Set<PersonPropertyId> getExcludedProperties() {
-		return new LinkedHashSet<>(data.excludedProperties);
+	/**
+	 * Returns the excluded group property values for the given group type id
+	 * 
+	 * @throws ContractException
+	 *             <li>{@linkplain GroupError#NULL_GROUP_TYPE_ID} if the
+	 *             group type id is null</li>
+	 */
+	public Set<GroupPropertyId> getExcludedProperties(GroupTypeId groupTypeId) {
+		if (groupTypeId == null) {
+			throw new ContractException(GroupError.NULL_GROUP_TYPE_ID);
+		}
+		Set<GroupPropertyId> result = new LinkedHashSet<>();
+		Set<GroupPropertyId> set = data.excludedProperties.get(groupTypeId);
+		if (set != null) {
+			result.addAll(set);
+		}
+		return result;
 	}
 
 	public boolean getDefaultInclusionPolicy() {
@@ -288,10 +373,10 @@ public final class PersonPropertyReportPluginData implements PluginData {
 		if (this == obj) {
 			return true;
 		}
-		if (!(obj instanceof PersonPropertyReportPluginData)) {
+		if (!(obj instanceof GroupPropertyReportPluginData)) {
 			return false;
 		}
-		PersonPropertyReportPluginData other = (PersonPropertyReportPluginData) obj;
+		GroupPropertyReportPluginData other = (GroupPropertyReportPluginData) obj;
 		if (data == null) {
 			if (other.data != null) {
 				return false;
@@ -301,7 +386,5 @@ public final class PersonPropertyReportPluginData implements PluginData {
 		}
 		return true;
 	}
-	
-	
 
 }
