@@ -264,8 +264,8 @@ public class AT_GroupsTestPluginFactory {
 		assertEquals(initialPopulation, groupsPluginData.getPersonCount());
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
-		for (GroupId groupId : groupsPluginData.getGroupIds()) {
-			TestGroupTypeId expectedGroupTypeId = TestGroupTypeId.getRandomGroupTypeId(randomGenerator);
+		TestGroupTypeId expectedGroupTypeId = TestGroupTypeId.GROUP_TYPE_1;
+		for (GroupId groupId : groupsPluginData.getGroupIds()) {			
 			GroupTypeId actualGroupTypeId = groupsPluginData.getGroupTypeId(groupId);
 			assertEquals(expectedGroupTypeId, actualGroupTypeId);
 
@@ -282,6 +282,7 @@ public class AT_GroupsTestPluginFactory {
 				assertEquals(expectedGroupPropertyValues.get(i),
 						groupsPluginData.getGroupPropertyValues(groupId).get(i));
 			}
+			expectedGroupTypeId = expectedGroupTypeId.next();
 		}
 
 		Set<MultiKey> groupMemeberships = new LinkedHashSet<>();

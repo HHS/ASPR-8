@@ -179,4 +179,13 @@ public enum TestGroupPropertyId implements GroupPropertyId {
 		index %= TestGroupPropertyId.values().length;
 		return TestGroupPropertyId.values()[index];
 	}
+	
+	/**
+	 * Returns a randomly selected TestGroupPropertyId.
+	 * 
+	 */
+	public static TestGroupPropertyId getRandomTestGroupPropertyId(final RandomGenerator randomGenerator) {
+		int index = randomGenerator.nextInt(TestGroupPropertyId.values().length);
+		return TestGroupPropertyId.values()[index];
+	}
 }

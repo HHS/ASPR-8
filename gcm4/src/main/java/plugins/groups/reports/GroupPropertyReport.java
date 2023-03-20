@@ -2,6 +2,7 @@ package plugins.groups.reports;
 
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -11,20 +12,12 @@ import plugins.groups.events.GroupAdditionEvent;
 import plugins.groups.events.GroupImminentRemovalEvent;
 import plugins.groups.events.GroupPropertyDefinitionEvent;
 import plugins.groups.events.GroupPropertyUpdateEvent;
-import plugins.groups.events.GroupTypeAdditionEvent;
-import plugins.groups.support.GroupError;
 import plugins.groups.support.GroupId;
 import plugins.groups.support.GroupPropertyId;
 import plugins.groups.support.GroupTypeId;
 import plugins.reports.support.PeriodicReport;
-import plugins.reports.support.ReportError;
 import plugins.reports.support.ReportHeader;
 import plugins.reports.support.ReportItem;
-import plugins.reports.support.ReportLabel;
-import plugins.reports.support.ReportPeriod;
-import plugins.util.properties.PropertyDefinition;
-import plugins.util.properties.PropertyError;
-import util.errors.ContractException;
 
 /**
  * A periodic Report that displays the number of groups having particular values
@@ -49,140 +42,19 @@ import util.errors.ContractException;
  */
 public final class GroupPropertyReport extends PeriodicReport {
 
-	private static class Scaffold {
-		private ReportPeriod reportPeriod = ReportPeriod.DAILY;
-		private final Map<GroupTypeId, Set<GroupPropertyId>> clientPropertyMap = new LinkedHashMap<>();
-		private final Set<GroupTypeId> allProperties = new LinkedHashSet<>();
-		private ReportLabel reportLabel;
-		private boolean includeNewProperties;
-	}
+	public GroupPropertyReport(GroupPropertyReportPluginData groupPropertyReportPluginData) {
+		super(groupPropertyReportPluginData.getReportLabel(), groupPropertyReportPluginData.getReportPeriod());
 
-	public static Builder builder() {
-		return new Builder();
-	}
-
-	public static class Builder {
-		private Scaffold scaffold = new Scaffold();
-
-		private Builder() {
+		for (GroupTypeId groupTypeId : groupPropertyReportPluginData.getGroupTypeIds()) {
+			includedProperties.put(groupTypeId, new LinkedHashSet<>(groupPropertyReportPluginData.getIncludedProperties(groupTypeId)));
+			excludedProperties.put(groupTypeId, new LinkedHashSet<>(groupPropertyReportPluginData.getExcludedProperties(groupTypeId)));
 		}
-
-		/**
-		 * Returns the GroupPropertyReport instance
-		 */
-		public GroupPropertyReport build() {
-			try {
-
-				return new GroupPropertyReport(scaffold);
-			} finally {
-				scaffold = new Scaffold();
-			}
-		}
-
-		/**
-		 * Sets the report period for this report
-		 * 
-		 * @throws ContractException
-		 *             <li>{@linkplain ReportError#NULL_REPORT_PERIOD} if the
-		 *             report period is null</li>
-		 *             <li>if the report period END_OF_SIMULATION</li>
-		 */
-		public Builder setReportPeriod(ReportPeriod reportPeriod) {
-			if (reportPeriod == null) {
-				throw new ContractException(ReportError.NULL_REPORT_PERIOD);
-			}
-
-			if (reportPeriod == ReportPeriod.END_OF_SIMULATION) {
-				throw new ContractException(ReportError.UNSUPPORTED_REPORT_PERIOD, ReportPeriod.END_OF_SIMULATION);
-			}
-			scaffold.reportPeriod = reportPeriod;
-			return this;
-		}
-
-		/**
-		 * Sets the report period for this report
-		 * 
-		 * @throws ContractException
-		 *             <li>{@linkplain ReportError#NULL_REPORT_LABEL} if the report
-		 *             label is null</li>
-		 * 
-		 */
-		public Builder setReportLabel(ReportLabel reportLabel) {
-			if (reportLabel == null) {
-				throw new ContractException(ReportError.NULL_REPORT_LABEL);
-			}
-
-			scaffold.reportLabel = reportLabel;
-			return this;
-		}
-
-		/**
-		 * Adds all properties for the given group type id
-		 * 
-		 * @throws ContractException
-		 *             <li>{@linkplain GroupError#NULL_GROUP_TYPE_ID} if the
-		 *             group type id is null</li>
-		 */
-		public Builder addAllProperties(GroupTypeId groupTypeId) {
-			if (groupTypeId == null) {
-				throw new ContractException(GroupError.NULL_GROUP_TYPE_ID);
-			}
-			scaffold.allProperties.add(groupTypeId);
-			return this;
-		}
-
-		/**
-		 * Properties that are newly added to the simulation will be covered by
-		 * the report
-		 */
-		public Builder includeNewProperties(boolean includeNewProperties) {
-			scaffold.includeNewProperties = includeNewProperties;
-			return this;
-		}
-
-		/**
-		 * Adds all properties for the given group type id
-		 * 
-		 * @throws ContractException
-		 *             <li>{@linkplain GroupError#NULL_GROUP_TYPE_ID} if the
-		 *             group type id is null</li>
-		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
-		 *             group property id is null</li>
-		 */
-		public Builder addProperty(GroupTypeId groupTypeId, GroupPropertyId groupPropertyId) {
-			if (groupTypeId == null) {
-				throw new ContractException(GroupError.NULL_GROUP_TYPE_ID);
-			}
-			if (groupPropertyId == null) {
-				throw new ContractException(PropertyError.NULL_PROPERTY_ID);
-			}
-			Set<GroupPropertyId> set = scaffold.clientPropertyMap.get(groupTypeId);
-			if (set == null) {
-				set = new LinkedHashSet<>();
-				scaffold.clientPropertyMap.put(groupTypeId, set);
-			}
-			set.add(groupPropertyId);
-			return this;
-		}
-
-	}
-
-	private final Scaffold scaffold;
-
-	private GroupPropertyReport(Scaffold scaffold) {
-		super(scaffold.reportLabel, scaffold.reportPeriod);
-		this.scaffold = scaffold;
+		includeNewProperties = groupPropertyReportPluginData.getDefaultInclusionPolicy();
 	}
 
 	private static class Counter {
 		int count;
 	}
-
-	/*
-	 * The set of (GroupTypeId,GroupPropertyId) pairs collected from the
-	 * GroupPropertyReportSettings supplied during initialization
-	 */
-	private final Map<GroupTypeId, Set<GroupPropertyId>> clientPropertyMap = new LinkedHashMap<>();
 
 	/*
 	 * For each (GroupTypeId,GroupPropertyId,property value) triplet, count the
@@ -243,11 +115,20 @@ public final class GroupPropertyReport extends PeriodicReport {
 	}
 
 	private Counter getCounter(final GroupTypeId groupTypeId, final GroupPropertyId groupPropertyId, final Object groupPropertyValue) {
-		final Map<Object, Counter> propertyValueMap = groupTypeMap.get(groupTypeId).get(groupPropertyId);
-		Counter counter = propertyValueMap.get(groupPropertyValue);
+		Map<GroupPropertyId, Map<Object, Counter>> map1 = groupTypeMap.get(groupTypeId);
+		if (map1 == null) {
+			map1 = new LinkedHashMap<>();
+			groupTypeMap.put(groupTypeId, map1);
+		}
+		Map<Object, Counter> map2 = map1.get(groupPropertyId);
+		if (map2 == null) {
+			map2 = new LinkedHashMap<>();
+			map1.put(groupPropertyId, map2);
+		}
+		Counter counter = map2.get(groupPropertyValue);
 		if (counter == null) {
 			counter = new Counter();
-			propertyValueMap.put(groupPropertyValue, counter);
+			map2.put(groupPropertyValue, counter);
 		}
 		return counter;
 	}
@@ -262,178 +143,155 @@ public final class GroupPropertyReport extends PeriodicReport {
 
 	private GroupsDataManager groupsDataManager;
 
+	private final Map<GroupTypeId, Set<GroupPropertyId>> includedProperties = new LinkedHashMap<>();
+	private final Map<GroupTypeId, Set<GroupPropertyId>> excludedProperties = new LinkedHashMap<>();
+	private final boolean includeNewProperties;
+
 	@Override
 	protected void prepare(final ReportContext reportContext) {
-		
 
 		groupsDataManager = reportContext.getDataManager(GroupsDataManager.class);
 
-		// transfer all VALID property id selections from the scaffold
-		Set<GroupTypeId> groupTypeIds = groupsDataManager.getGroupTypeIds();
-		for (GroupTypeId groupTypeId : groupTypeIds) {
-			Set<GroupPropertyId> groupPropertyIds = new LinkedHashSet<>();
-			if (scaffold.allProperties.contains(groupTypeId)) {
-				groupPropertyIds.addAll(groupsDataManager.getGroupPropertyIds(groupTypeId));
-			} else {
-				Set<GroupPropertyId> selectedPropertyIds = scaffold.clientPropertyMap.get(groupTypeId);
-				if (selectedPropertyIds != null) {
-					Set<GroupPropertyId> allPropertyIds = groupsDataManager.getGroupPropertyIds(groupTypeId);
-					for (GroupPropertyId groupPropertyId : allPropertyIds) {
-						if (selectedPropertyIds.contains(groupPropertyId)) {
-							groupPropertyIds.add(groupPropertyId);
-						}
-					}
-				}
-			}
-			clientPropertyMap.put(groupTypeId, groupPropertyIds);
-		}
-
-		// determine the subscriptions for group addition
+		// subscribe to events
 		reportContext.subscribe(GroupAdditionEvent.class, this::handleGroupAdditionEvent);
-
-		// determine the subscriptions for group removal observations
 		reportContext.subscribe(GroupImminentRemovalEvent.class, this::handleGroupImminentRemovalEvent);
-
 		reportContext.subscribe(GroupPropertyUpdateEvent.class, this::handleGroupPropertyUpdateEvent);
+		reportContext.subscribe(GroupPropertyDefinitionEvent.class, this::handleGroupPropertyDefinitionEvent);
 
 		/*
-		 * Fill the top layers of the groupTypeMap. We do not yet know the set
-		 * of property values, so we leave that layer empty.
+		 * if we are supposed to add new properties, then we will add all the
+		 * existing properties that are not explicitly excluded
+		 */
+		if (includeNewProperties) {
+
+			for (GroupTypeId groupTypeId : groupsDataManager.getGroupTypeIds()) {
+				Set<GroupPropertyId> inclusionSet = includedProperties.get(groupTypeId);
+				if (inclusionSet == null) {
+					inclusionSet = new LinkedHashSet<>();
+					includedProperties.put(groupTypeId, inclusionSet);
+				}
+				inclusionSet.addAll(groupsDataManager.getGroupPropertyIds(groupTypeId));
+
+				Set<GroupPropertyId> exclusionSet = excludedProperties.get(groupTypeId);
+				if (exclusionSet != null) {
+					inclusionSet.removeAll(exclusionSet);
+				}
+
+			}
+		}
+		/*
+		 * Initialize the buckets containing what we will report, careful to
+		 * only add buckets for group properties that both currently exist and
+		 * are included in this report.
 		 *
 		 */
 
-		for (GroupTypeId groupTypeId : clientPropertyMap.keySet()) {
-			final Map<GroupPropertyId, Map<Object, Counter>> propertyIdMap = new LinkedHashMap<>();
-			groupTypeMap.put(groupTypeId, propertyIdMap);
-			Set<GroupPropertyId> groupPropertyIds = clientPropertyMap.get(groupTypeId);
-			for (final GroupPropertyId groupPropertyId : groupPropertyIds) {
-				final Map<Object, Counter> propertyValueMap = new LinkedHashMap<>();
-				propertyIdMap.put(groupPropertyId, propertyValueMap);
-			}
-		}
-
-		// group addition
 		for (GroupId groupId : groupsDataManager.getGroupIds()) {
-			final GroupTypeId groupTypeId = groupsDataManager.getGroupType(groupId);
-			if (clientPropertyMap.containsKey(groupTypeId)) {
-				for (final GroupPropertyId groupPropertyId : clientPropertyMap.get(groupTypeId)) {
-					final Object groupPropertyValue = groupsDataManager.getGroupPropertyValue(groupId, groupPropertyId);
-					increment(groupTypeId, groupPropertyId, groupPropertyValue);
+			GroupTypeId groupType = groupsDataManager.getGroupType(groupId);
+			if (includedProperties.containsKey(groupType)) {
+				Set<GroupPropertyId> includedSet = includedProperties.get(groupType);
+				for (GroupPropertyId groupPropertyId : groupsDataManager.getGroupPropertyIds(groupType)) {
+					if (includedSet.contains(groupPropertyId)) {
+						Object groupPropertyValue = groupsDataManager.getGroupPropertyValue(groupId, groupPropertyId);
+						increment(groupType, groupPropertyId, groupPropertyValue);
+					}
 				}
 			}
 		}
-
-		if (scaffold.includeNewProperties) {
-			reportContext.subscribe(GroupTypeAdditionEvent.class, this::handleGroupTypeAdditionEvent);
-			reportContext.subscribe(GroupPropertyDefinitionEvent.class, this::handleGroupPropertyDefinitionEvent);
-		}
-
-	}
-
-	private void handleGroupTypeAdditionEvent(ReportContext reportContext, GroupTypeAdditionEvent groupTypeAdditionEvent) {
-		GroupTypeId groupTypeId = groupTypeAdditionEvent.groupTypeId();
-
-		/*
-		 * update the client property map for the future addition of property
-		 * ids associated with the new group type
-		 */
-		clientPropertyMap.put(groupTypeId, new LinkedHashSet<>());
-
-		groupTypeMap.put(groupTypeId, new LinkedHashMap<>());
 
 	}
 
 	private void handleGroupPropertyDefinitionEvent(ReportContext reportContext, GroupPropertyDefinitionEvent groupPropertyDefinitionEvent) {
-		// should we get the default value and integrate that in for all
-		// existing groups of that type?
 
 		GroupTypeId groupTypeId = groupPropertyDefinitionEvent.groupTypeId();
 		GroupPropertyId groupPropertyId = groupPropertyDefinitionEvent.groupPropertyId();
 
-		// if the group type was not previously added, then we are done
-		Set<GroupPropertyId> groupPropertyIds = clientPropertyMap.get(groupTypeId);
-		if (groupPropertyIds == null) {
-			return;
+		// if the property is explicitly excluded, then we are done
+		Set<GroupPropertyId> excludedGroupPropertyIds = excludedProperties.get(groupTypeId);
+		if (excludedGroupPropertyIds != null) {
+			if (excludedGroupPropertyIds.contains(groupPropertyId)) {
+				return;
+			}
 		}
-		// if the group property id was previously added, then we are done
-		if (groupPropertyIds.contains(groupPropertyId)) {
-			return;
+
+		
+		if (includeNewProperties) {
+			// add the property to the included properties if it is missing
+			Set<GroupPropertyId> includedGroupPropertyIds = includedProperties.get(groupTypeId);
+			if (includedGroupPropertyIds == null) {
+				includedGroupPropertyIds = new LinkedHashSet<>();
+				includedProperties.put(groupTypeId, includedGroupPropertyIds);
+			}
+			includedGroupPropertyIds.add(groupPropertyId);
+		} else {
+			// if we are not accepting all new properties, then the property must be
+			// an explicitly included property
+			Set<GroupPropertyId> set = includedProperties.get(groupTypeId);
+			if (set == null) {
+				return;
+			}
+			if (!set.contains(groupPropertyId)) {
+				return;
+			}
 		}
-		groupPropertyIds.add(groupPropertyId);
+		
 
-		/*
-		 * initialize the group type map with the initial counter of the number
-		 * of groups having the default value associated with the new property
-		 * id
-		 */
+		List<GroupId> groups = groupsDataManager.getGroupsForGroupType(groupPropertyDefinitionEvent.groupTypeId());
 
-		// build the needed structure into the groupTypeMap
-		Map<GroupPropertyId, Map<Object, Counter>> map = groupTypeMap.get(groupTypeId);
-		Map<Object, Counter> counterMap = new LinkedHashMap<>();
-		map.put(groupPropertyId, counterMap);
-
-		// determine how many groups of the given group type there are
-		int groupCountForGroupType = groupsDataManager.getGroupCountForGroupType(groupTypeId);
-
-		/*
-		 * Rather than asking for the current value of the property for each
-		 * group, we will assign the default value. We do this since there may
-		 * be property value updates already performed and we want to reflect
-		 * the expected conditions immediately after the property was added.
-		 * 
-		 */
-		PropertyDefinition groupPropertyDefinition = groupsDataManager.getGroupPropertyDefinition(groupTypeId, groupPropertyId);
-		Object defaultValue = groupPropertyDefinition.getDefaultValue().get();
-		// create the counter with the number of groups
-		Counter counter = new Counter();
-		counter.count = groupCountForGroupType;
-
-		// all groups will have the default value initially.
-		counterMap.put(defaultValue, counter);
+		for (GroupId groupId : groups) {
+			Object groupPropertyValue = groupsDataManager.getGroupPropertyValue(groupId, groupPropertyId);
+			increment(groupTypeId, groupPropertyId, groupPropertyValue);
+		}
 
 	}
 
 	private void handleGroupPropertyUpdateEvent(ReportContext reportContext, GroupPropertyUpdateEvent groupPropertyUpdateEvent) {
 		GroupId groupId = groupPropertyUpdateEvent.groupId();
+		GroupTypeId groupTypeId = groupsDataManager.getGroupType(groupId);
+		GroupPropertyId groupPropertyId = groupPropertyUpdateEvent.groupPropertyId();
 
-		final GroupTypeId groupTypeId = groupsDataManager.getGroupType(groupId);
-		if (clientPropertyMap.containsKey(groupTypeId)) {
-
-			GroupPropertyId groupPropertyId = groupPropertyUpdateEvent.groupPropertyId();
-			Object previousPropertyValue = groupPropertyUpdateEvent.previousPropertyValue();
-			Object currentPropertyValue = groupPropertyUpdateEvent.currentPropertyValue();
-
-			if (clientPropertyMap.get(groupTypeId).contains(groupPropertyId)) {
-
-				increment(groupTypeId, groupPropertyId, currentPropertyValue);
-				decrement(groupTypeId, groupPropertyId, previousPropertyValue);
-			}
+		Set<GroupPropertyId> set = includedProperties.get(groupTypeId);
+		if (set == null) {
+			return;
 		}
+		if (!set.contains(groupPropertyId)) {
+			return;
+		}
+
+		Object previousPropertyValue = groupPropertyUpdateEvent.previousPropertyValue();
+		Object currentPropertyValue = groupPropertyUpdateEvent.currentPropertyValue();
+
+		increment(groupTypeId, groupPropertyId, currentPropertyValue);
+		decrement(groupTypeId, groupPropertyId, previousPropertyValue);
 
 	}
 
 	private void handleGroupAdditionEvent(ReportContext reportContext, GroupAdditionEvent groupAdditionEvent) {
 		GroupId groupId = groupAdditionEvent.groupId();
 		final GroupTypeId groupTypeId = groupsDataManager.getGroupType(groupId);
-		if (clientPropertyMap.containsKey(groupTypeId)) {
-			for (final GroupPropertyId groupPropertyId : clientPropertyMap.get(groupTypeId)) {
-				final Object groupPropertyValue = groupsDataManager.getGroupPropertyValue(groupId, groupPropertyId);
-				increment(groupTypeId, groupPropertyId, groupPropertyValue);
-			}
+
+		Set<GroupPropertyId> set = includedProperties.get(groupTypeId);
+		if (set == null) {
+			return;
 		}
+		for (GroupPropertyId groupPropertyId : set) {
+			final Object groupPropertyValue = groupsDataManager.getGroupPropertyValue(groupId, groupPropertyId);
+			increment(groupTypeId, groupPropertyId, groupPropertyValue);
+		}
+
 	}
 
 	private void handleGroupImminentRemovalEvent(ReportContext reportContext, GroupImminentRemovalEvent groupImminentRemovalEvent) {
 		GroupId groupId = groupImminentRemovalEvent.groupId();
 		final GroupTypeId groupTypeId = groupsDataManager.getGroupType(groupId);
-		if (clientPropertyMap.containsKey(groupTypeId)) {
-			Set<GroupPropertyId> groupPropertyIds = groupsDataManager.getGroupPropertyIds(groupTypeId);
-			for (final GroupPropertyId groupPropertyId : groupPropertyIds) {
-				if (clientPropertyMap.get(groupTypeId).contains(groupPropertyId)) {
-					final Object groupPropertyValue = groupsDataManager.getGroupPropertyValue(groupId, groupPropertyId);
-					decrement(groupTypeId, groupPropertyId, groupPropertyValue);
-				}
-			}
+
+		Set<GroupPropertyId> set = includedProperties.get(groupTypeId);
+		if (set == null) {
+			return;
+		}
+		for (GroupPropertyId groupPropertyId : set) {
+			final Object groupPropertyValue = groupsDataManager.getGroupPropertyValue(groupId, groupPropertyId);
+			decrement(groupTypeId, groupPropertyId, groupPropertyValue);
 		}
 	}
 }
