@@ -288,7 +288,7 @@ public class PluginDependencyInfoGenerator {
 		MutableGraph<PluginId, Object> pluginDependencyGraph = new MutableGraph<>();
 
 		addToGraph(pluginDependencyGraph, GlobalPropertiesPlugin.builder().setGlobalPropertiesPluginData(GlobalPropertiesPluginData.builder().build()).getGlobalPropertiesPlugin());
-		addToGraph(pluginDependencyGraph, GroupsPlugin.getGroupPlugin(GroupsPluginData.builder().build()));
+		addToGraph(pluginDependencyGraph, GroupsPlugin.builder().setGroupsPluginData(GroupsPluginData.builder().build()).getGroupsPlugin());
 		addToGraph(pluginDependencyGraph, MaterialsPlugin.getMaterialsPlugin(MaterialsPluginData.builder().build()));
 		addToGraph(pluginDependencyGraph, PartitionsPlugin.getPartitionsPlugin());
 		addToGraph(pluginDependencyGraph, PeoplePlugin.getPeoplePlugin(PeoplePluginData.builder().build()));

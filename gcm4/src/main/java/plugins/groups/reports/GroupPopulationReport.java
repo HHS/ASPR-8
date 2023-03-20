@@ -10,8 +10,6 @@ import plugins.groups.support.GroupTypeId;
 import plugins.reports.support.PeriodicReport;
 import plugins.reports.support.ReportHeader;
 import plugins.reports.support.ReportItem;
-import plugins.reports.support.ReportLabel;
-import plugins.reports.support.ReportPeriod;
 
 /**
  * A periodic Report that displays the number of groups having a particular
@@ -29,8 +27,8 @@ import plugins.reports.support.ReportPeriod;
  */
 public final class GroupPopulationReport extends PeriodicReport {
 
-	public GroupPopulationReport(ReportLabel reportLabel,ReportPeriod reportPeriod) {
-		super(reportLabel,reportPeriod);
+	public GroupPopulationReport(GroupPopulationReportPluginData groupPopulationReportPluginData) {
+		super(groupPopulationReportPluginData.getReportLabel(),groupPopulationReportPluginData.getReportPeriod());
 	}
 
 	/*

@@ -136,7 +136,7 @@ public class AT_PersonPropertyReportPluginData {
 		ReportLabel reportLabel = new SimpleReportLabel("report label");
 		ReportPeriod reportPeriod = ReportPeriod.DAILY;
 
-		// show the default is non-inclusion
+		
 		PersonPropertyReportPluginData personPropertyReportPluginData = //
 				PersonPropertyReportPluginData	.builder()//
 												.setReportPeriod(reportPeriod)//

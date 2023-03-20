@@ -19,6 +19,8 @@ import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestSimulation;
 import plugins.groups.GroupsPlugin;
 import plugins.groups.GroupsPluginData;
+import plugins.groups.reports.GroupPopulationReportPluginData;
+import plugins.groups.reports.GroupPropertyReportPluginData;
 import plugins.groups.support.GroupError;
 import plugins.groups.support.GroupId;
 import plugins.people.PeoplePlugin;
@@ -51,6 +53,8 @@ public final class GroupsTestPluginFactory {
 	}
 
 	private static class Data {
+		private GroupPopulationReportPluginData groupPopulationReportPluginData;
+		private GroupPropertyReportPluginData groupPropertyReportPluginData; 
 		private GroupsPluginData groupsPluginData;
 		private PeoplePluginData peoplePluginData;
 		private StochasticsPluginData stochasticsPluginData;
@@ -98,7 +102,16 @@ public final class GroupsTestPluginFactory {
 		 */
 		public List<Plugin> getPlugins() {
 			List<Plugin> pluginsToAdd = new ArrayList<>();
-			Plugin groupPlugin = GroupsPlugin.getGroupPlugin(this.data.groupsPluginData);
+			GroupsPlugin.Builder groupsPluginBuilder = GroupsPlugin.builder();
+			groupsPluginBuilder.setGroupsPluginData(this.data.groupsPluginData);
+			if(data.groupPopulationReportPluginData != null) {
+				groupsPluginBuilder.setGroupPopulationReportPluginData(data.groupPopulationReportPluginData);	
+			}
+			if(data.groupPropertyReportPluginData != null) {
+				groupsPluginBuilder.setGroupPropertyReportPluginData(data.groupPropertyReportPluginData);	
+			}
+			
+			Plugin groupPlugin = groupsPluginBuilder.getGroupsPlugin();
 
 			Plugin peoplePlugin = PeoplePlugin.getPeoplePlugin(this.data.peoplePluginData);
 
@@ -130,6 +143,40 @@ public final class GroupsTestPluginFactory {
 			this.data.groupsPluginData = groupsPluginData;
 			return this;
 		}
+		
+		/**
+		 * Sets the {@link GroupPopulationReportPluginData} in this Factory.
+		 * This explicit instance of pluginData will be used to create a
+		 * GroupsPlugin
+		 * 
+		 * @throws ContractExecption
+		 *                           {@linkplain GroupError#NULL_GROUP_POPULATION_REPORT_PLUGIN_DATA}
+		 *                           if the passed in pluginData is null
+		 */
+		public Factory setGroupPopulationReportPluginData(GroupPopulationReportPluginData groupPopulationReportPluginData) {
+			if (groupPopulationReportPluginData == null) {
+				throw new ContractException(GroupError.NULL_GROUP_POPULATION_REPORT_PLUGIN_DATA);
+			}
+			this.data.groupPopulationReportPluginData = groupPopulationReportPluginData;
+			return this;
+		}
+		/**
+		 * Sets the {@link GroupPopulationReportPluginData} in this Factory.
+		 * This explicit instance of pluginData will be used to create a
+		 * GroupsPlugin
+		 * 
+		 * @throws ContractExecption
+		 *                           {@linkplain GroupError#NULL_GROUP_PROPERTY_REPORT_PLUGIN_DATA}
+		 *                           if the passed in pluginData is null
+		 */
+		public Factory setGroupPropertyReportPluginData(GroupPropertyReportPluginData groupPropertyReportPluginData) {
+			if (groupPropertyReportPluginData == null) {
+				throw new ContractException(GroupError.NULL_GROUP_PROPERTY_REPORT_PLUGIN_DATA);
+			}
+			this.data.groupPropertyReportPluginData = groupPropertyReportPluginData;
+			return this;
+		}
+		
 
 		/**
 		 * Sets the {@link PeoplePluginData} in this Factory.
@@ -287,15 +334,17 @@ public final class GroupsTestPluginFactory {
 		}
 
 		List<GroupId> groups = new ArrayList<>();
+		
+		TestGroupTypeId testGroupTypeId = TestGroupTypeId.GROUP_TYPE_1;
 		for (int i = 0; i < groupCount; i++) {
 			GroupId groupId = new GroupId(i);
 			groups.add(groupId);
-			TestGroupTypeId groupTypeId = TestGroupTypeId.getRandomGroupTypeId(randomGenerator);
-			groupBuilder.addGroup(groupId, groupTypeId);
-			for (TestGroupPropertyId testGroupPropertyId : TestGroupPropertyId.getTestGroupPropertyIds(groupTypeId)) {
+			groupBuilder.addGroup(groupId, testGroupTypeId);
+			for (TestGroupPropertyId testGroupPropertyId : TestGroupPropertyId.getTestGroupPropertyIds(testGroupTypeId)) {
 				groupBuilder.setGroupPropertyValue(groupId, testGroupPropertyId,
 						testGroupPropertyId.getRandomPropertyValue(randomGenerator));
 			}
+			testGroupTypeId = testGroupTypeId.next();
 		}
 
 		Set<MultiKey> groupMemeberships = new LinkedHashSet<>();
