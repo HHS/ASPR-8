@@ -269,7 +269,6 @@ public final class PersonPropertyReport extends PeriodicReport {
 
 	@Override
 	protected void prepare(final ReportContext reportContext) {
-
 		regionsDataManager = reportContext.getDataManager(RegionsDataManager.class);
 		personPropertiesDataManager = reportContext.getDataManager(PersonPropertiesDataManager.class);
 		peopleDataManager = reportContext.getDataManager(PeopleDataManager.class);

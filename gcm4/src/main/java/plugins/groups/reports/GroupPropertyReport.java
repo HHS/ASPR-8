@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Set;
 
 import nucleus.ReportContext;
+import nucleus.SimulationStateContext;
 import plugins.groups.datamanagers.GroupsDataManager;
 import plugins.groups.events.GroupAdditionEvent;
 import plugins.groups.events.GroupImminentRemovalEvent;
@@ -240,6 +241,7 @@ public final class GroupPropertyReport extends PeriodicReport {
 		reportContext.subscribe(GroupImminentRemovalEvent.class, this::handleGroupImminentRemovalEvent);
 		reportContext.subscribe(GroupPropertyUpdateEvent.class, this::handleGroupPropertyUpdateEvent);
 		reportContext.subscribe(GroupPropertyDefinitionEvent.class, this::handleGroupPropertyDefinitionEvent);
+		reportContext.subscribeToSimulationState(this::recordSimulationState);
 
 		// update the current properties from the existing properties found in
 		// the data manager
@@ -262,6 +264,27 @@ public final class GroupPropertyReport extends PeriodicReport {
 				}
 			}
 		}
+	}
+	
+	
+	private void recordSimulationState(ReportContext reportContext, SimulationStateContext simulationStateContext) {
+		GroupPropertyReportPluginData.Builder builder = simulationStateContext.get(GroupPropertyReportPluginData.Builder.class);
+		builder.setReportLabel(getReportLabel());
+		builder.setReportPeriod(getReportPeriod());
+		builder.setDefaultInclusion(includeNewProperties);
+		
+		for(GroupTypeId groupTypeId :includedProperties.keySet()) {			
+			for(GroupPropertyId  groupPropertyId : includedProperties.get(groupTypeId)) {
+				builder.includeGroupProperty(groupTypeId, groupPropertyId);
+			}
+		}
+		
+		for(GroupTypeId groupTypeId :excludedProperties.keySet()) {			
+			for(GroupPropertyId  groupPropertyId : excludedProperties.get(groupTypeId)) {
+				builder.excludeGroupProperty(groupTypeId, groupPropertyId);
+			}
+		}
+		
 	}
 
 	private void handleGroupPropertyDefinitionEvent(ReportContext reportContext, GroupPropertyDefinitionEvent groupPropertyDefinitionEvent) {

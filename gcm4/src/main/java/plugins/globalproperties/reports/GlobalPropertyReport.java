@@ -4,6 +4,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import nucleus.ReportContext;
+import nucleus.SimulationStateContext;
 import plugins.globalproperties.datamanagers.GlobalPropertiesDataManager;
 import plugins.globalproperties.events.GlobalPropertyDefinitionEvent;
 import plugins.globalproperties.events.GlobalPropertyUpdateEvent;
@@ -123,14 +124,14 @@ public final class GlobalPropertyReport {
 
 	private void handleGlobalPropertyDefinitionEvent(final ReportContext reportContext, final GlobalPropertyDefinitionEvent globalPropertyDefinitionEvent) {
 		final GlobalPropertyId globalPropertyId = globalPropertyDefinitionEvent.globalPropertyId();
-		if (addToCurrentProperties(globalPropertyId)) {			
+		if (addToCurrentProperties(globalPropertyId)) {
 			writeProperty(reportContext, globalPropertyId, globalPropertyDefinitionEvent.initialPropertyValue());
 		}
 	}
 
 	private void handleGlobalPropertyUpdateEvent(final ReportContext reportContext, final GlobalPropertyUpdateEvent globalPropertyUpdateEvent) {
 		final GlobalPropertyId globalPropertyId = globalPropertyUpdateEvent.globalPropertyId();
-		if(isCurrentProperty(globalPropertyId)) {		
+		if (isCurrentProperty(globalPropertyId)) {
 			writeProperty(reportContext, globalPropertyId, globalPropertyUpdateEvent.currentPropertyValue());
 		}
 	}
@@ -144,6 +145,7 @@ public final class GlobalPropertyReport {
 
 		reportContext.subscribe(GlobalPropertyDefinitionEvent.class, this::handleGlobalPropertyDefinitionEvent);
 		reportContext.subscribe(GlobalPropertyUpdateEvent.class, this::handleGlobalPropertyUpdateEvent);
+		reportContext.subscribeToSimulationState(this::recordSimulationState);
 
 		for (GlobalPropertyId globalPropertyId : globalPropertiesDataManager.getGlobalPropertyIds()) {
 			addToCurrentProperties(globalPropertyId);
@@ -158,6 +160,18 @@ public final class GlobalPropertyReport {
 			writeProperty(reportContext, globalPropertyId, globalPropertyValue);
 		}
 
+	}
+
+	private void recordSimulationState(ReportContext reportContext, SimulationStateContext simulationStateContext) {
+		GlobalPropertyReportPluginData.Builder builder = simulationStateContext.get(GlobalPropertyReportPluginData.Builder.class);
+		builder.setReportLabel(reportLabel);
+		for (GlobalPropertyId globalPropertyId : includedPropertyIds) {
+			builder.includeGlobalPropertyId(globalPropertyId);
+		}
+		for (GlobalPropertyId globalPropertyId : excludedPropertyIds) {
+			builder.excludeGlobalPropertyId(globalPropertyId);
+		}
+		builder.setDefaultInclusion(includeNewPropertyIds);
 	}
 
 	private void writeProperty(final ReportContext reportContext, final GlobalPropertyId globalPropertyId, final Object globalPropertyValue) {
