@@ -245,8 +245,7 @@ public final class GroupPropertyReport extends PeriodicReport {
 		// the data manager
 		for (GroupTypeId groupTypeId : groupsDataManager.getGroupTypeIds()) {
 			for (GroupPropertyId groupPropertyId : groupsDataManager.getGroupPropertyIds(groupTypeId)) {				
-				addToCurrentProperties(groupTypeId, groupPropertyId);
-				System.out.println("Added "+groupTypeId+" "+groupPropertyId+" to current properties");
+				addToCurrentProperties(groupTypeId, groupPropertyId);				
 			}
 		}
 

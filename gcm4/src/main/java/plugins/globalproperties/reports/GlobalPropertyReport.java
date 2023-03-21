@@ -30,6 +30,7 @@ import util.errors.ContractException;
 public final class GlobalPropertyReport {
 
 	private final Set<GlobalPropertyId> includedPropertyIds = new LinkedHashSet<>();
+	private final Set<GlobalPropertyId> currentProperties = new LinkedHashSet<>();
 	private final Set<GlobalPropertyId> excludedPropertyIds = new LinkedHashSet<>();
 	private final ReportLabel reportLabel;
 	private final boolean includeNewPropertyIds;
@@ -39,6 +40,66 @@ public final class GlobalPropertyReport {
 															.add("property")//
 															.add("value")//
 															.build();//
+
+	private boolean isCurrentProperty(GlobalPropertyId globalPropertyId) {
+		return currentProperties.contains(globalPropertyId);
+	}
+
+	private boolean addToCurrentProperties(GlobalPropertyId globalPropertyId) {
+
+		// There are eight possibilities:
+
+		/*
+		 * P -- the default inclusion policy
+		 * 
+		 * I -- the property is explicitly included
+		 * 
+		 * X -- the property is explicitly excluded
+		 * 
+		 * C -- the property should be on the current properties
+		 * 
+		 * 
+		 * P I X C Table
+		 * 
+		 * TRUE TRUE FALSE TRUE
+		 * 
+		 * TRUE FALSE FALSE TRUE
+		 * 
+		 * FALSE TRUE FALSE TRUE
+		 * 
+		 * FALSE FALSE FALSE FALSE
+		 * 
+		 * TRUE TRUE TRUE FALSE -- not possible
+		 * 
+		 * TRUE FALSE TRUE FALSE
+		 * 
+		 * FALSE TRUE TRUE FALSE -- not possible
+		 * 
+		 * FALSE FALSE TRUE FALSE
+		 * 
+		 * 
+		 * Two of the cases above are contradictory since a property cannot be
+		 * both explicitly included and explicitly excluded
+		 * 
+		 */
+
+		// if X is true then we don't add the property
+		if (excludedPropertyIds.contains(globalPropertyId)) {
+			return false;
+		}
+
+		// if both P and I are false we don't add the property
+		boolean included = includedPropertyIds.contains(globalPropertyId);
+
+		if (!included && !includeNewPropertyIds) {
+			return false;
+		}
+
+		// we have failed to reject the property
+		currentProperties.add(globalPropertyId);
+
+		return true;
+	}
 
 	/**
 	 * 
@@ -62,16 +123,14 @@ public final class GlobalPropertyReport {
 
 	private void handleGlobalPropertyDefinitionEvent(final ReportContext reportContext, final GlobalPropertyDefinitionEvent globalPropertyDefinitionEvent) {
 		final GlobalPropertyId globalPropertyId = globalPropertyDefinitionEvent.globalPropertyId();
-		if (!excludedPropertyIds.contains(globalPropertyId)) {
-			includedPropertyIds.add(globalPropertyId);
+		if (addToCurrentProperties(globalPropertyId)) {			
 			writeProperty(reportContext, globalPropertyId, globalPropertyDefinitionEvent.initialPropertyValue());
-
 		}
 	}
 
 	private void handleGlobalPropertyUpdateEvent(final ReportContext reportContext, final GlobalPropertyUpdateEvent globalPropertyUpdateEvent) {
 		final GlobalPropertyId globalPropertyId = globalPropertyUpdateEvent.globalPropertyId();
-		if (includedPropertyIds.contains(globalPropertyId)) {
+		if(isCurrentProperty(globalPropertyId)) {		
 			writeProperty(reportContext, globalPropertyId, globalPropertyUpdateEvent.currentPropertyValue());
 		}
 	}
@@ -83,32 +142,20 @@ public final class GlobalPropertyReport {
 
 		final GlobalPropertiesDataManager globalPropertiesDataManager = reportContext.getDataManager(GlobalPropertiesDataManager.class);
 
-		/*
-		 * if the client has selected all extant properties, then correct the
-		 * data's included property ids
-		 */
-		if (includeNewPropertyIds) {
-			includedPropertyIds.addAll(globalPropertiesDataManager.getGlobalPropertyIds());
-			includedPropertyIds.removeAll(excludedPropertyIds);
-			reportContext.subscribe(GlobalPropertyDefinitionEvent.class, this::handleGlobalPropertyDefinitionEvent);
-		}
-
-		/*
-		 * We now subscribe to all update and definition events without any
-		 * filtering
-		 */
+		reportContext.subscribe(GlobalPropertyDefinitionEvent.class, this::handleGlobalPropertyDefinitionEvent);
 		reportContext.subscribe(GlobalPropertyUpdateEvent.class, this::handleGlobalPropertyUpdateEvent);
+
+		for (GlobalPropertyId globalPropertyId : globalPropertiesDataManager.getGlobalPropertyIds()) {
+			addToCurrentProperties(globalPropertyId);
+		}
 
 		/*
 		 * We initialize the reporting with the current state of each global
 		 * property
 		 */
-		for (final GlobalPropertyId globalPropertyId : includedPropertyIds) {
-
-			if (globalPropertiesDataManager.globalPropertyIdExists(globalPropertyId)) {
-				final Object globalPropertyValue = globalPropertiesDataManager.getGlobalPropertyValue(globalPropertyId);
-				writeProperty(reportContext, globalPropertyId, globalPropertyValue);
-			}
+		for (final GlobalPropertyId globalPropertyId : currentProperties) {
+			final Object globalPropertyValue = globalPropertiesDataManager.getGlobalPropertyValue(globalPropertyId);
+			writeProperty(reportContext, globalPropertyId, globalPropertyValue);
 		}
 
 	}
