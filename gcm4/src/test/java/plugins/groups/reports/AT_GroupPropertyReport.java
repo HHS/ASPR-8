@@ -771,7 +771,6 @@ public class AT_GroupPropertyReport {
 		Map<ReportItem, Integer> actualReportItems = outputConsumer.getOutputItems(ReportItem.class);
 
 		assertEquals(expectedReportItems, actualReportItems);
-
 	}
 
 	private static ReportItem getReportItem(ReportPeriod reportPeriod, Object... values) {
