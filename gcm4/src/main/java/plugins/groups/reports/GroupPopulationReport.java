@@ -4,6 +4,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import nucleus.ReportContext;
+import nucleus.SimulationStateContext;
 import plugins.groups.datamanagers.GroupsDataManager;
 import plugins.groups.support.GroupId;
 import plugins.groups.support.GroupTypeId;
@@ -107,6 +108,14 @@ public final class GroupPopulationReport extends PeriodicReport {
 	@Override
 	protected void prepare(ReportContext reportContext) {		
 		groupsDataManager = reportContext.getDataManager(GroupsDataManager.class);
+		reportContext.subscribeToSimulationState(this::recordSimulationState);
+	}
+	
+	
+	private void recordSimulationState(ReportContext reportContext, SimulationStateContext simulationStateContext) {
+		GroupPopulationReportPluginData.Builder builder = simulationStateContext.get(GroupPopulationReportPluginData.Builder.class);
+		builder.setReportLabel(getReportLabel());
+		builder.setReportPeriod(getReportPeriod());	
 	}
 
 }
