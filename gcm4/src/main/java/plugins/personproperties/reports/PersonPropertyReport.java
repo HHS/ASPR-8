@@ -65,6 +65,7 @@ public final class PersonPropertyReport extends PeriodicReport {
 	 * report. They are set during init()
 	 */
 	private final Set<PersonPropertyId> includedPersonPropertyIds = new LinkedHashSet<>();
+	private final Set<PersonPropertyId> currentProperties = new LinkedHashSet<>();
 	private final Set<PersonPropertyId> excludedPersonPropertyIds = new LinkedHashSet<>();
 
 	/*
@@ -155,7 +156,7 @@ public final class PersonPropertyReport extends PeriodicReport {
 	private void handlePersonAdditionEvent(ReportContext reportContext, PersonAdditionEvent personAdditionEvent) {
 		PersonId personId = personAdditionEvent.personId();
 		final RegionId regionId = regionsDataManager.getPersonRegion(personId);
-		for (final PersonPropertyId personPropertyId : includedPersonPropertyIds) {
+		for (final PersonPropertyId personPropertyId : currentProperties) {
 			final Object personPropertyValue = personPropertiesDataManager.getPersonPropertyValue(personId, personPropertyId);
 			increment(regionId, personPropertyId, personPropertyValue);
 		}
@@ -163,7 +164,7 @@ public final class PersonPropertyReport extends PeriodicReport {
 
 	private void handlePersonPropertyUpdateEvent(ReportContext reportContext, PersonPropertyUpdateEvent personPropertyUpdateEvent) {
 		PersonPropertyId personPropertyId = personPropertyUpdateEvent.personPropertyId();
-		if (includedPersonPropertyIds.contains(personPropertyId)) {
+		if (isCurrentProperty(personPropertyId)) {
 			PersonId personId = personPropertyUpdateEvent.personId();
 			Object previousPropertyValue = personPropertyUpdateEvent.previousPropertyValue();
 			final RegionId regionId = regionsDataManager.getPersonRegion(personId);
@@ -176,7 +177,7 @@ public final class PersonPropertyReport extends PeriodicReport {
 	private void handlePersonImminentRemovalEvent(ReportContext reportContext, PersonImminentRemovalEvent personImminentRemovalEvent) {
 		PersonId personId = personImminentRemovalEvent.personId();
 		RegionId regionId = regionsDataManager.getPersonRegion(personId);
-		for (PersonPropertyId personPropertyId : includedPersonPropertyIds) {
+		for (PersonPropertyId personPropertyId : currentProperties) {
 			final Object personPropertyValue = personPropertiesDataManager.getPersonPropertyValue(personId, personPropertyId);
 			decrement(regionId, personPropertyId, personPropertyValue);
 		}
@@ -186,7 +187,7 @@ public final class PersonPropertyReport extends PeriodicReport {
 		PersonId personId = personRegionUpdateEvent.personId();
 		RegionId previousRegionId = personRegionUpdateEvent.previousRegionId();
 		RegionId regionId = personRegionUpdateEvent.currentRegionId();
-		for (final PersonPropertyId personPropertyId : includedPersonPropertyIds) {
+		for (final PersonPropertyId personPropertyId : currentProperties) {
 			final Object personPropertyValue = personPropertiesDataManager.getPersonPropertyValue(personId, personPropertyId);
 			increment(regionId, personPropertyId, personPropertyValue);
 			decrement(previousRegionId, personPropertyId, personPropertyValue);
@@ -206,6 +207,66 @@ public final class PersonPropertyReport extends PeriodicReport {
 
 	private PeopleDataManager peopleDataManager;
 
+	private boolean isCurrentProperty(PersonPropertyId personPropertyId) {
+		return currentProperties.contains(personPropertyId);
+	}
+
+	private boolean addToCurrentProperties(PersonPropertyId personPropertyId) {
+
+		// There are eight possibilities:
+
+		/*
+		 * P -- the default inclusion policy
+		 * 
+		 * I -- the property is explicitly included
+		 * 
+		 * X -- the property is explicitly excluded
+		 * 
+		 * C -- the property should be on the current properties
+		 * 
+		 * 
+		 * P I X C Table
+		 * 
+		 * TRUE TRUE FALSE TRUE
+		 * 
+		 * TRUE FALSE FALSE TRUE
+		 * 
+		 * FALSE TRUE FALSE TRUE
+		 * 
+		 * FALSE FALSE FALSE FALSE
+		 * 
+		 * TRUE TRUE TRUE FALSE -- not possible
+		 * 
+		 * TRUE FALSE TRUE FALSE
+		 * 
+		 * FALSE TRUE TRUE FALSE -- not possible
+		 * 
+		 * FALSE FALSE TRUE FALSE
+		 * 
+		 * 
+		 * Two of the cases above are contradictory since a property cannot be
+		 * both explicitly included and explicitly excluded
+		 * 
+		 */
+
+		// if X is true then we don't add the property
+		if (excludedPersonPropertyIds.contains(personPropertyId)) {
+			return false;
+		}
+
+		// if both P and I are false we don't add the property
+		boolean included = includedPersonPropertyIds.contains(personPropertyId);
+
+		if (!included && !includeNewProperties) {
+			return false;
+		}
+
+		// we have failed to reject the property
+		currentProperties.add(personPropertyId);
+
+		return true;
+	}
+
 	@Override
 	protected void prepare(final ReportContext reportContext) {
 
@@ -217,22 +278,18 @@ public final class PersonPropertyReport extends PeriodicReport {
 		reportContext.subscribe(PersonImminentRemovalEvent.class, this::handlePersonImminentRemovalEvent);
 		reportContext.subscribe(PersonRegionUpdateEvent.class, this::handlePersonRegionUpdateEvent);
 		reportContext.subscribeToSimulationState(this::recordSimulationState);
-
-		if (includeNewProperties) {
-			includedPersonPropertyIds.addAll(personPropertiesDataManager.getPersonPropertyIds());
-			includedPersonPropertyIds.removeAll(excludedPersonPropertyIds);
-			reportContext.subscribe(PersonPropertyDefinitionEvent.class, this::handlePersonPropertyDefinitionEvent);
-		}
-
+		reportContext.subscribe(PersonPropertyDefinitionEvent.class, this::handlePersonPropertyDefinitionEvent);
 		reportContext.subscribe(PersonPropertyUpdateEvent.class, this::handlePersonPropertyUpdateEvent);
+
+		for (PersonPropertyId personPropertyId : personPropertiesDataManager.getPersonPropertyIds()) {
+			addToCurrentProperties(personPropertyId);
+		}
 
 		for (PersonId personId : peopleDataManager.getPeople()) {
 			final RegionId regionId = regionsDataManager.getPersonRegion(personId);
-			for (final PersonPropertyId personPropertyId : includedPersonPropertyIds) {
-				if (personPropertiesDataManager.personPropertyIdExists(personPropertyId)) {
-					final Object personPropertyValue = personPropertiesDataManager.getPersonPropertyValue(personId, personPropertyId);
-					increment(regionId, personPropertyId, personPropertyValue);
-				}
+			for (final PersonPropertyId personPropertyId : currentProperties) {
+				final Object personPropertyValue = personPropertiesDataManager.getPersonPropertyValue(personId, personPropertyId);
+				increment(regionId, personPropertyId, personPropertyValue);
 			}
 		}
 	}
@@ -247,13 +304,12 @@ public final class PersonPropertyReport extends PeriodicReport {
 		}
 		for (PersonPropertyId personPropertyId : excludedPersonPropertyIds) {
 			builder.excludePersonProperty(personPropertyId);
-		}		
+		}
 	}
 
 	private void handlePersonPropertyDefinitionEvent(ReportContext actorContext, PersonPropertyDefinitionEvent personPropertyDefinitionEvent) {
 		PersonPropertyId personPropertyId = personPropertyDefinitionEvent.personPropertyId();
-		if (!excludedPersonPropertyIds.contains(personPropertyId)) {
-			includedPersonPropertyIds.add(personPropertyId);
+		if (addToCurrentProperties(personPropertyId)) {			
 			for (PersonId personId : peopleDataManager.getPeople()) {
 				final RegionId regionId = regionsDataManager.getPersonRegion(personId);
 				final Object personPropertyValue = personPropertiesDataManager.getPersonPropertyValue(personId, personPropertyId);
