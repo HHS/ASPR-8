@@ -129,8 +129,7 @@ public class App {
                 .addTranslator(PropertiesTranslator.getTranslator())
                 .addTranslator(PeopleTranslator.getTranslator())
                 .addTranslatorSpec(new TestPersonPropertyIdTranslatorSpec())
-                .build()
-                .init();
+                .build();
 
         List<PluginData> pluginDatas = translatorController.readInput().getPluginDatas();
 

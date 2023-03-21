@@ -140,8 +140,7 @@ public class App {
                 .addTranslator(PeopleTranslator.getTranslator())
                 .addTranslatorSpec(new TestRegionIdTranslatorSpec())
                 .addTranslatorSpec(new TestRegionPropertyIdTranslatorSpec())
-                .build()
-                .init();
+                .build();
 
         List<PluginData> pluginDatas = translatorController.readInput().getPluginDatas();
 

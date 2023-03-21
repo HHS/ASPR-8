@@ -16,8 +16,7 @@ public class App {
                 .addTranslator(NucleusTranslator.builder()
                         .addInputFile(inputFileName, SimulationTimeInput.getDefaultInstance())
                         .addOutputFile(outputFileName, SimulationTime.class).build())
-                .build()
-                .init();
+                .build();
 
         List<Object> objects = translatorController.readInput().getObjects();
 

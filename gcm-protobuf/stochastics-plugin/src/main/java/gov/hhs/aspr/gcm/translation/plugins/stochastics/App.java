@@ -74,8 +74,7 @@ public class App {
         TranslatorController translatorController = TranslatorController.builder()
                 .addTranslator(StochasticsTranslator.getTranslatorRW(inputFileName, outputFileName))
                 .addTranslatorSpec(new TestRandomGeneratorIdTranslatorSpec())
-                .build()
-                .init();
+                .build();
 
         List<PluginData> pluginDatas = translatorController.readInput().getPluginDatas();
 

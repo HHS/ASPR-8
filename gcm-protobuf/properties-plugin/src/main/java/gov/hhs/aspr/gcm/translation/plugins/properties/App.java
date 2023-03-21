@@ -53,8 +53,7 @@ public class App {
                 .addTranslatorSpec(new Layer1TranslatorSpec())
                 .addTranslatorSpec(new PropertyValueMapTranslatorSpec())
                 .addTranslatorSpec(new PropertyDefinitionMapTranslatorSpec())
-                .build()
-                .init();
+                .build();
 
         List<Object> objects = translatorController.readInput().getObjects();
 

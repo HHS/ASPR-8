@@ -81,8 +81,7 @@ public class App {
 
         TranslatorController translatorController = TranslatorController.builder()
                 .addTranslator(PeopleTranslator.getTranslatorRW(inputFileName, outputFileName))
-                .build()
-                .init();
+                .build();
 
         List<PluginData> pluginDatas = translatorController.readInput().getPluginDatas();
         PeoplePluginData peoplePluginData = (PeoplePluginData) pluginDatas.get(0);

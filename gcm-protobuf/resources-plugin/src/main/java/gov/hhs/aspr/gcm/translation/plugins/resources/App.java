@@ -188,8 +188,7 @@ public class App {
                 .addTranslatorSpec(new TestResourceIdTranslatorSpec())
                 .addTranslatorSpec(new TestResourcePropertyIdTranslatorSpec())
                 .addTranslatorSpec(new TestRegionIdTranslatorSpec())
-                .build()
-                .init();
+                .build();
 
         List<PluginData> pluginDatas = translatorController.readInput().getPluginDatas();
 

@@ -177,8 +177,7 @@ public class App {
                 .addTranslatorSpec(new TestGroupTypeIdTranslatorSpec())
                 .addTranslatorSpec(new TestGroupPropertyIdTranslatorSpec())
                 .addTranslatorSpec(new SimpleGroupTypeIdTranslatorSpec())
-                .build()
-                .init();
+                .build();
 
         List<PluginData> pluginDatas = translatorController.readInput().getPluginDatas();
 

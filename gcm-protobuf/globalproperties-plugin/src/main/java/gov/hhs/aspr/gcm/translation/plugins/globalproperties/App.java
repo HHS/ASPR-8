@@ -80,8 +80,7 @@ public class App {
                 .addTranslator(GlobalPropertiesTranslator.getTranslatorRW(inputFileName, outputFileName))
                 .addTranslator(PropertiesTranslator.getTranslator())
                 .addTranslatorSpec(new TestGlobalPropertyIdTranslatorSpec())
-                .build()
-                .init();
+                .build();
 
         List<PluginData> pluginDatas = translatorController.readInput().getPluginDatas();
 

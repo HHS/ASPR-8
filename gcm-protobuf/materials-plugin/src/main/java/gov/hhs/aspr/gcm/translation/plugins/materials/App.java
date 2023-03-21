@@ -189,8 +189,7 @@ public class App {
                 .addTranslatorSpec(new TestMaterialIdTranslatorSpec())
                 .addTranslatorSpec(new TestMaterialsProducerIdTranslatorSpec())
                 .addTranslatorSpec(new TestMaterialsProducerPropertyIdTranslatorSpec())
-                .build()
-                .init();
+                .build();
 
         List<PluginData> pluginDatas = translatorController.readInput().getPluginDatas();
 
