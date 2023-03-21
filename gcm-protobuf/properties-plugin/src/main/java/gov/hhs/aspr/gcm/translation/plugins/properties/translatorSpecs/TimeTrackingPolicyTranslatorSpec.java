@@ -1,15 +1,11 @@
 package gov.hhs.aspr.gcm.translation.plugins.properties.translatorSpecs;
 
-import com.google.protobuf.Descriptors.EnumDescriptor;
-
-import gov.hhs.aspr.gcm.translation.core.AEnumTranslatorSpec;
-
-import com.google.protobuf.ProtocolMessageEnum;
-
+import gov.hhs.aspr.gcm.translation.core.AObjectTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.plugins.properties.input.TimeTrackingPolicyInput;
 import plugins.util.properties.TimeTrackingPolicy;
 
-public class TimeTrackingPolicyTranslatorSpec extends AEnumTranslatorSpec<TimeTrackingPolicyInput, TimeTrackingPolicy> {
+public class TimeTrackingPolicyTranslatorSpec
+        extends AObjectTranslatorSpec<TimeTrackingPolicyInput, TimeTrackingPolicy> {
 
     @Override
     protected TimeTrackingPolicy convertInputObject(TimeTrackingPolicyInput inputObject) {
@@ -17,29 +13,17 @@ public class TimeTrackingPolicyTranslatorSpec extends AEnumTranslatorSpec<TimeTr
     }
 
     @Override
-    protected TimeTrackingPolicyInput convertSimObject(TimeTrackingPolicy simObject) {
+    protected TimeTrackingPolicyInput convertAppObject(TimeTrackingPolicy simObject) {
         return TimeTrackingPolicyInput.valueOf(simObject.name());
     }
 
     @Override
-    public EnumDescriptor getDescriptorForInputObject() {
-        return TimeTrackingPolicyInput.getDescriptor();
+    public TimeTrackingPolicyInput getDefaultInstanceForInputObject() {
+        return TimeTrackingPolicyInput.forNumber(0);
     }
 
     @Override
-    public EnumInstance getEnumInstance() {
-        return new EnumInstance() {
-
-            @Override
-            public ProtocolMessageEnum getFromString(String string) {
-                return TimeTrackingPolicyInput.valueOf(string);
-            }
-
-        };
-    }
-
-    @Override
-    public Class<TimeTrackingPolicy> getSimObjectClass() {
+    public Class<TimeTrackingPolicy> getAppObjectClass() {
         return TimeTrackingPolicy.class;
     }
 

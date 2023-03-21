@@ -1,16 +1,11 @@
 package gov.hhs.aspr.gcm.translation.plugins.personproperties.translatorSpecs;
 
-import com.google.protobuf.Descriptors.EnumDescriptor;
-
-import gov.hhs.aspr.gcm.translation.core.AEnumTranslatorSpec;
-
-import com.google.protobuf.ProtocolMessageEnum;
-
+import gov.hhs.aspr.gcm.translation.core.AObjectTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.plugins.personproperties.input.TestPersonPropertyIdInput;
 import plugins.personproperties.testsupport.TestPersonPropertyId;
 
 public class TestPersonPropertyIdTranslatorSpec
-        extends AEnumTranslatorSpec<TestPersonPropertyIdInput, TestPersonPropertyId> {
+        extends AObjectTranslatorSpec<TestPersonPropertyIdInput, TestPersonPropertyId> {
 
     @Override
     protected TestPersonPropertyId convertInputObject(TestPersonPropertyIdInput inputObject) {
@@ -18,29 +13,17 @@ public class TestPersonPropertyIdTranslatorSpec
     }
 
     @Override
-    protected TestPersonPropertyIdInput convertSimObject(TestPersonPropertyId simObject) {
+    protected TestPersonPropertyIdInput convertAppObject(TestPersonPropertyId simObject) {
         return TestPersonPropertyIdInput.valueOf(simObject.name());
     }
 
     @Override
-    public EnumDescriptor getDescriptorForInputObject() {
-        return TestPersonPropertyIdInput.getDescriptor();
+    public TestPersonPropertyIdInput getDefaultInstanceForInputObject() {
+        return TestPersonPropertyIdInput.forNumber(0);
     }
 
     @Override
-    public EnumInstance getEnumInstance() {
-        return new EnumInstance() {
-
-            @Override
-            public ProtocolMessageEnum getFromString(String string) {
-                return TestPersonPropertyIdInput.valueOf(string);
-            }
-
-        };
-    }
-
-    @Override
-    public Class<TestPersonPropertyId> getSimObjectClass() {
+    public Class<TestPersonPropertyId> getAppObjectClass() {
         return TestPersonPropertyId.class;
     }
 

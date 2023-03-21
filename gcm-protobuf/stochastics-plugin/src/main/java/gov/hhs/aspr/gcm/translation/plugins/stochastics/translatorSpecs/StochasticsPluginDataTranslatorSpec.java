@@ -1,11 +1,9 @@
 package gov.hhs.aspr.gcm.translation.plugins.stochastics.translatorSpecs;
 
-import com.google.protobuf.Descriptors.Descriptor;
-
 import gov.hhs.aspr.gcm.translation.core.AObjectTranslatorSpec;
-import plugins.stochastics.StochasticsPluginData;
 import gov.hhs.aspr.gcm.translation.plugins.stochastics.input.RandomNumberGeneratorIdInput;
 import gov.hhs.aspr.gcm.translation.plugins.stochastics.input.StochasticsPluginDataInput;
+import plugins.stochastics.StochasticsPluginData;
 import plugins.stochastics.support.RandomNumberGeneratorId;
 
 public class StochasticsPluginDataTranslatorSpec
@@ -26,7 +24,7 @@ public class StochasticsPluginDataTranslatorSpec
     }
 
     @Override
-    protected StochasticsPluginDataInput convertSimObject(StochasticsPluginData simObject) {
+    protected StochasticsPluginDataInput convertAppObject(StochasticsPluginData simObject) {
         StochasticsPluginDataInput.Builder builder = StochasticsPluginDataInput.newBuilder();
 
         builder.setSeed(simObject.getSeed());
@@ -41,17 +39,12 @@ public class StochasticsPluginDataTranslatorSpec
     }
 
     @Override
-    public Descriptor getDescriptorForInputObject() {
-        return StochasticsPluginDataInput.getDescriptor();
-    }
-
-    @Override
     public StochasticsPluginDataInput getDefaultInstanceForInputObject() {
         return StochasticsPluginDataInput.getDefaultInstance();
     }
 
     @Override
-    public Class<StochasticsPluginData> getSimObjectClass() {
+    public Class<StochasticsPluginData> getAppObjectClass() {
         return StochasticsPluginData.class;
     }
 

@@ -1,14 +1,12 @@
 package gov.hhs.aspr.gcm.translation.plugins.globalproperties.translatorSpecs;
 
-import com.google.protobuf.Descriptors.Descriptor;
-
 import gov.hhs.aspr.gcm.translation.core.AObjectTranslatorSpec;
-import plugins.globalproperties.GlobalPropertiesPluginData;
 import gov.hhs.aspr.gcm.translation.plugins.globalproperties.input.GlobalPropertiesPluginDataInput;
-import plugins.globalproperties.support.GlobalPropertyId;
 import gov.hhs.aspr.gcm.translation.plugins.properties.input.PropertyDefinitionInput;
 import gov.hhs.aspr.gcm.translation.plugins.properties.input.PropertyDefinitionMapInput;
 import gov.hhs.aspr.gcm.translation.plugins.properties.input.PropertyValueMapInput;
+import plugins.globalproperties.GlobalPropertiesPluginData;
+import plugins.globalproperties.support.GlobalPropertyId;
 import plugins.util.properties.PropertyDefinition;
 
 public class GlobalPropertiesPluginDataTranslatorSpec
@@ -40,7 +38,7 @@ public class GlobalPropertiesPluginDataTranslatorSpec
     }
 
     @Override
-    protected GlobalPropertiesPluginDataInput convertSimObject(GlobalPropertiesPluginData simObject) {
+    protected GlobalPropertiesPluginDataInput convertAppObject(GlobalPropertiesPluginData simObject) {
         GlobalPropertiesPluginDataInput.Builder builder = GlobalPropertiesPluginDataInput.newBuilder();
 
         for (GlobalPropertyId propertyId : simObject.getGlobalPropertyIds()) {
@@ -73,17 +71,12 @@ public class GlobalPropertiesPluginDataTranslatorSpec
     }
 
     @Override
-    public Descriptor getDescriptorForInputObject() {
-        return GlobalPropertiesPluginDataInput.getDescriptor();
-    }
-
-    @Override
     public GlobalPropertiesPluginDataInput getDefaultInstanceForInputObject() {
         return GlobalPropertiesPluginDataInput.getDefaultInstance();
     }
 
     @Override
-    public Class<GlobalPropertiesPluginData> getSimObjectClass() {
+    public Class<GlobalPropertiesPluginData> getAppObjectClass() {
         return GlobalPropertiesPluginData.class;
     }
 

@@ -15,14 +15,11 @@ public class BatchIdTranslatorSpec extends AObjectTranslatorSpec<BatchIdInput, B
     }
 
     @Override
-    protected BatchIdInput convertSimObject(BatchId simObject) {
+    protected BatchIdInput convertAppObject(BatchId simObject) {
         return BatchIdInput.newBuilder().setId(simObject.getValue()).build();
     }
 
-    @Override
-    public Descriptor getDescriptorForInputObject() {
-        return BatchIdInput.getDescriptor();
-    }
+
 
     @Override
     public BatchIdInput getDefaultInstanceForInputObject() {
@@ -30,7 +27,7 @@ public class BatchIdTranslatorSpec extends AObjectTranslatorSpec<BatchIdInput, B
     }
 
     @Override
-    public Class<BatchId> getSimObjectClass() {
+    public Class<BatchId> getAppObjectClass() {
         return BatchId.class;
     }
 

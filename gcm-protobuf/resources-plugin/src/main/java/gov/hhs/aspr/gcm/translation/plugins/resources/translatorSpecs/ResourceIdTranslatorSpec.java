@@ -1,7 +1,5 @@
 package gov.hhs.aspr.gcm.translation.plugins.resources.translatorSpecs;
 
-import com.google.protobuf.Descriptors.Descriptor;
-
 import gov.hhs.aspr.gcm.translation.core.AObjectTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.plugins.resources.input.ResourceIdInput;
 import plugins.resources.support.ResourceId;
@@ -10,32 +8,27 @@ public class ResourceIdTranslatorSpec extends AObjectTranslatorSpec<ResourceIdIn
 
     @Override
     protected ResourceId convertInputObject(ResourceIdInput inputObject) {
-       return this.translator.getObjectFromAny(inputObject.getId(), getSimObjectClass());
+        return this.translator.getObjectFromAny(inputObject.getId(), getAppObjectClass());
     }
 
     @Override
-    protected ResourceIdInput convertSimObject(ResourceId simObject) {
+    protected ResourceIdInput convertAppObject(ResourceId simObject) {
         return ResourceIdInput.newBuilder().setId(this.translator.getAnyFromObject(simObject)).build();
     }
 
     @Override
-    public Descriptor getDescriptorForInputObject() {
-        return ResourceIdInput.getDescriptor();
-    }
-
-    @Override
     public ResourceIdInput getDefaultInstanceForInputObject() {
-       return ResourceIdInput.getDefaultInstance();
+        return ResourceIdInput.getDefaultInstance();
     }
 
     @Override
-    public Class<ResourceId> getSimObjectClass() {
+    public Class<ResourceId> getAppObjectClass() {
         return ResourceId.class;
     }
 
     @Override
     public Class<ResourceIdInput> getInputObjectClass() {
-       return ResourceIdInput.class;
+        return ResourceIdInput.class;
     }
-    
+
 }

@@ -1,42 +1,34 @@
 package gov.hhs.aspr.gcm.translation.plugins.materials.translatorSpecs;
 
-import com.google.protobuf.Descriptors.Descriptor;
-
 import gov.hhs.aspr.gcm.translation.core.AObjectTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.plugins.materials.input.BatchPropertyIdInput;
 import plugins.materials.support.BatchPropertyId;
-
 
 public class BatchPropertyIdTranslatorSpec extends AObjectTranslatorSpec<BatchPropertyIdInput, BatchPropertyId> {
 
     @Override
     protected BatchPropertyId convertInputObject(BatchPropertyIdInput inputObject) {
-       return this.translator.getObjectFromAny(inputObject.getId(), getSimObjectClass());
+        return this.translator.getObjectFromAny(inputObject.getId(), getAppObjectClass());
     }
 
     @Override
-    protected BatchPropertyIdInput convertSimObject(BatchPropertyId simObject) {
+    protected BatchPropertyIdInput convertAppObject(BatchPropertyId simObject) {
         return BatchPropertyIdInput.newBuilder().setId(this.translator.getAnyFromObject(simObject)).build();
     }
 
     @Override
-    public Descriptor getDescriptorForInputObject() {
-        return BatchPropertyIdInput.getDescriptor();
-    }
-
-    @Override
     public BatchPropertyIdInput getDefaultInstanceForInputObject() {
-       return BatchPropertyIdInput.getDefaultInstance();
+        return BatchPropertyIdInput.getDefaultInstance();
     }
 
     @Override
-    public Class<BatchPropertyId> getSimObjectClass() {
+    public Class<BatchPropertyId> getAppObjectClass() {
         return BatchPropertyId.class;
     }
 
     @Override
     public Class<BatchPropertyIdInput> getInputObjectClass() {
-       return BatchPropertyIdInput.class;
+        return BatchPropertyIdInput.class;
     }
-    
+
 }

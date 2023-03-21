@@ -1,11 +1,8 @@
 package gov.hhs.aspr.gcm.translation.plugins.materials.translatorSpecs;
 
-import com.google.protobuf.Descriptors.Descriptor;
-
 import gov.hhs.aspr.gcm.translation.core.AObjectTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.plugins.materials.input.StageIdInput;
 import plugins.materials.support.StageId;
-
 
 public class StageIdTranslatorSpec extends AObjectTranslatorSpec<StageIdInput, StageId> {
 
@@ -15,13 +12,8 @@ public class StageIdTranslatorSpec extends AObjectTranslatorSpec<StageIdInput, S
     }
 
     @Override
-    protected StageIdInput convertSimObject(StageId simObject) {
+    protected StageIdInput convertAppObject(StageId simObject) {
         return StageIdInput.newBuilder().setId(simObject.getValue()).build();
-    }
-
-    @Override
-    public Descriptor getDescriptorForInputObject() {
-        return StageIdInput.getDescriptor();
     }
 
     @Override
@@ -30,7 +22,7 @@ public class StageIdTranslatorSpec extends AObjectTranslatorSpec<StageIdInput, S
     }
 
     @Override
-    public Class<StageId> getSimObjectClass() {
+    public Class<StageId> getAppObjectClass() {
         return StageId.class;
     }
 

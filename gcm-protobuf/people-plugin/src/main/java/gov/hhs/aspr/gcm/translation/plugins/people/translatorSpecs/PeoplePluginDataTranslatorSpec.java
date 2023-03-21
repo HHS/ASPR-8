@@ -1,11 +1,9 @@
 package gov.hhs.aspr.gcm.translation.plugins.people.translatorSpecs;
 
-import com.google.protobuf.Descriptors.Descriptor;
-
 import gov.hhs.aspr.gcm.translation.core.AObjectTranslatorSpec;
-import plugins.people.PeoplePluginData;
 import gov.hhs.aspr.gcm.translation.plugins.people.input.PeoplePluginDataInput;
 import gov.hhs.aspr.gcm.translation.plugins.people.input.PersonIdInput;
+import plugins.people.PeoplePluginData;
 import plugins.people.support.PersonId;
 
 public class PeoplePluginDataTranslatorSpec
@@ -24,7 +22,7 @@ public class PeoplePluginDataTranslatorSpec
     }
 
     @Override
-    protected PeoplePluginDataInput convertSimObject(PeoplePluginData simObject) {
+    protected PeoplePluginDataInput convertAppObject(PeoplePluginData simObject) {
         PeoplePluginDataInput.Builder builder = PeoplePluginDataInput.newBuilder();
 
         for (PersonId personId : simObject.getPersonIds()) {
@@ -38,17 +36,12 @@ public class PeoplePluginDataTranslatorSpec
     }
 
     @Override
-    public Descriptor getDescriptorForInputObject() {
-        return PeoplePluginDataInput.getDescriptor();
-    }
-
-    @Override
     public PeoplePluginDataInput getDefaultInstanceForInputObject() {
         return PeoplePluginDataInput.getDefaultInstance();
     }
 
     @Override
-    public Class<PeoplePluginData> getSimObjectClass() {
+    public Class<PeoplePluginData> getAppObjectClass() {
         return PeoplePluginData.class;
     }
 

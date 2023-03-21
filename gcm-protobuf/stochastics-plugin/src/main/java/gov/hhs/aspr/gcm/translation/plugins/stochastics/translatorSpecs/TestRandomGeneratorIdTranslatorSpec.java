@@ -1,16 +1,11 @@
 package gov.hhs.aspr.gcm.translation.plugins.stochastics.translatorSpecs;
 
-import com.google.protobuf.Descriptors.EnumDescriptor;
-
-import gov.hhs.aspr.gcm.translation.core.AEnumTranslatorSpec;
-
-import com.google.protobuf.ProtocolMessageEnum;
-
+import gov.hhs.aspr.gcm.translation.core.AObjectTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.plugins.stochastics.input.TestRandomGeneratorIdInput;
 import plugins.stochastics.testsupport.TestRandomGeneratorId;
 
 public class TestRandomGeneratorIdTranslatorSpec
-        extends AEnumTranslatorSpec<TestRandomGeneratorIdInput, TestRandomGeneratorId> {
+        extends AObjectTranslatorSpec<TestRandomGeneratorIdInput, TestRandomGeneratorId> {
 
     @Override
     protected TestRandomGeneratorId convertInputObject(TestRandomGeneratorIdInput inputObject) {
@@ -18,29 +13,17 @@ public class TestRandomGeneratorIdTranslatorSpec
     }
 
     @Override
-    protected TestRandomGeneratorIdInput convertSimObject(TestRandomGeneratorId simObject) {
+    protected TestRandomGeneratorIdInput convertAppObject(TestRandomGeneratorId simObject) {
         return TestRandomGeneratorIdInput.valueOf(simObject.name());
     }
 
     @Override
-    public EnumDescriptor getDescriptorForInputObject() {
-        return TestRandomGeneratorIdInput.getDescriptor();
+    public TestRandomGeneratorIdInput getDefaultInstanceForInputObject() {
+        return TestRandomGeneratorIdInput.forNumber(0);
     }
 
     @Override
-    public EnumInstance getEnumInstance() {
-        return new EnumInstance() {
-
-            @Override
-            public ProtocolMessageEnum getFromString(String string) {
-                return TestRandomGeneratorIdInput.valueOf(string);
-            }
-
-        };
-    }
-
-    @Override
-    public Class<TestRandomGeneratorId> getSimObjectClass() {
+    public Class<TestRandomGeneratorId> getAppObjectClass() {
         return TestRandomGeneratorId.class;
     }
 

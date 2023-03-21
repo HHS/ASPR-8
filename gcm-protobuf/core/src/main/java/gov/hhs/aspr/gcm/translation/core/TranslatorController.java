@@ -14,7 +14,6 @@ import java.util.stream.Collectors;
 
 import com.google.protobuf.Descriptors.FieldDescriptor;
 import com.google.protobuf.Message;
-import com.google.protobuf.ProtocolMessageEnum;
 
 import nucleus.PluginData;
 import util.graph.Graph;
@@ -27,7 +26,7 @@ public class TranslatorController {
     private TranslatorCore translatorCore;
     private final List<PluginData> pluginDatas = Collections.synchronizedList(new ArrayList<>());
     private final List<Object> objects = Collections.synchronizedList(new ArrayList<>());
-    private final Map<Class<?>, Translator> simObjectClassToTranslatorMap = new LinkedHashMap<>();
+    private final Map<Class<?>, Translator> appObjectClassToTranslatorMap = new LinkedHashMap<>();
     private Translator focalTranslator = null;
     private TranslatorId focalTranslatorId = null;
 
@@ -62,12 +61,7 @@ public class TranslatorController {
             return this;
         }
 
-        public <I extends Message, S> Builder addTranslatorSpec(AObjectTranslatorSpec<I, S> translatorSpec) {
-            this.data.translatorCoreBuilder.addTranslatorSpec(translatorSpec);
-            return this;
-        }
-
-        public <I extends ProtocolMessageEnum, S> Builder addTranslatorSpec(AEnumTranslatorSpec<I, S> translatorSpec) {
+        public <I, S> Builder addTranslatorSpec(AObjectTranslatorSpec<I, S> translatorSpec) {
             this.data.translatorCoreBuilder.addTranslatorSpec(translatorSpec);
             return this;
         }
@@ -88,16 +82,10 @@ public class TranslatorController {
         return new Builder(new Data());
     }
 
-    protected <I extends Message, S> void addTranslatorSpec(AObjectTranslatorSpec<I, S> translatorSpec) {
+    protected <I, S> void addTranslatorSpec(AObjectTranslatorSpec<I, S> translatorSpec) {
         this.data.translatorCoreBuilder.addTranslatorSpec(translatorSpec);
 
-        this.simObjectClassToTranslatorMap.put(translatorSpec.getSimObjectClass(), this.focalTranslator);
-    }
-
-    protected <I extends ProtocolMessageEnum, S> void addTranslatorSpec(AEnumTranslatorSpec<I, S> translatorSpec) {
-        this.data.translatorCoreBuilder.addTranslatorSpec(translatorSpec);
-
-        this.simObjectClassToTranslatorMap.put(translatorSpec.getSimObjectClass(), this.focalTranslator);
+        this.appObjectClassToTranslatorMap.put(translatorSpec.getAppObjectClass(), this.focalTranslator);
     }
 
     protected void addFieldToIncludeDefaultValue(FieldDescriptor fieldDescriptor) {
@@ -200,12 +188,12 @@ public class TranslatorController {
         WriterContext writerContext = new WriterContext(this);
 
         for (PluginData pluginData : this.pluginDatas) {
-            Translator translator = this.simObjectClassToTranslatorMap.get(pluginData.getClass());
+            Translator translator = this.appObjectClassToTranslatorMap.get(pluginData.getClass());
             translator.writePluginDataOutput(writerContext, pluginData);
         }
 
         for (Object simObject : this.objects) {
-            Translator translator = this.simObjectClassToTranslatorMap.get(simObject.getClass());
+            Translator translator = this.appObjectClassToTranslatorMap.get(simObject.getClass());
             translator.writeJsonOutput(writerContext, simObject);
         }
     }
@@ -221,7 +209,7 @@ public class TranslatorController {
 
         WriterContext writerContext = new WriterContext(this);
 
-        Translator translator = this.simObjectClassToTranslatorMap.get(object.getClass());
+        Translator translator = this.appObjectClassToTranslatorMap.get(object.getClass());
         if (translator == null) {
             System.out.println("translator was null for: " + object.getClass());
             return;
@@ -234,7 +222,7 @@ public class TranslatorController {
 
         WriterContext writerContext = new WriterContext(this, scenarioId);
 
-        Translator translator = this.simObjectClassToTranslatorMap.get(object.getClass());
+        Translator translator = this.appObjectClassToTranslatorMap.get(object.getClass());
         if (translator == null) {
             System.out.println("translator was null for: " + object.getClass());
             return;
@@ -253,7 +241,7 @@ public class TranslatorController {
 
         WriterContext writerContext = new WriterContext(this);
 
-        Translator translator = this.simObjectClassToTranslatorMap.get(pluginData.getClass());
+        Translator translator = this.appObjectClassToTranslatorMap.get(pluginData.getClass());
         if (translator == null) {
             System.out.println("translator was null for: " + pluginData.getClass());
             return;
@@ -266,7 +254,7 @@ public class TranslatorController {
 
         WriterContext writerContext = new WriterContext(this, scenarioId);
 
-        Translator translator = this.simObjectClassToTranslatorMap.get(pluginData.getClass());
+        Translator translator = this.appObjectClassToTranslatorMap.get(pluginData.getClass());
         if (translator == null) {
             System.out.println("translator was null for: " + pluginData.getClass());
             return;

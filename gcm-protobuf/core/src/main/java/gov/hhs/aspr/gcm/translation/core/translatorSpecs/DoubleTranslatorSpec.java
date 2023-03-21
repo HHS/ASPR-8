@@ -1,10 +1,8 @@
 package gov.hhs.aspr.gcm.translation.core.translatorSpecs;
 
-import com.google.protobuf.Descriptors.Descriptor;
+import com.google.protobuf.DoubleValue;
 
 import gov.hhs.aspr.gcm.translation.core.AObjectTranslatorSpec;
-
-import com.google.protobuf.DoubleValue;
 
 public class DoubleTranslatorSpec extends AObjectTranslatorSpec<DoubleValue, Double> {
 
@@ -14,13 +12,8 @@ public class DoubleTranslatorSpec extends AObjectTranslatorSpec<DoubleValue, Dou
     }
 
     @Override
-    protected DoubleValue convertSimObject(Double simObject) {
+    protected DoubleValue convertAppObject(Double simObject) {
         return DoubleValue.of(simObject);
-    }
-
-    @Override
-    public Descriptor getDescriptorForInputObject() {
-        return DoubleValue.getDescriptor();
     }
 
     @Override
@@ -29,7 +22,7 @@ public class DoubleTranslatorSpec extends AObjectTranslatorSpec<DoubleValue, Dou
     }
 
     @Override
-    public Class<Double> getSimObjectClass() {
+    public Class<Double> getAppObjectClass() {
         return Double.class;
     }
 

@@ -1,11 +1,9 @@
 package gov.hhs.aspr.gcm.translation.plugins.properties.translatorSpecs;
 
-import com.google.protobuf.Descriptors.Descriptor;
-
 import gov.hhs.aspr.gcm.translation.core.AObjectTranslatorSpec;
-import gov.hhs.aspr.gcm.translation.plugins.properties.simobjects.PropertyDefinitionMap;
 import gov.hhs.aspr.gcm.translation.plugins.properties.input.PropertyDefinitionInput;
 import gov.hhs.aspr.gcm.translation.plugins.properties.input.PropertyDefinitionMapInput;
+import gov.hhs.aspr.gcm.translation.plugins.properties.simobjects.PropertyDefinitionMap;
 
 public class PropertyDefinitionMapTranslatorSpec
         extends AObjectTranslatorSpec<PropertyDefinitionMapInput, PropertyDefinitionMap> {
@@ -22,7 +20,7 @@ public class PropertyDefinitionMapTranslatorSpec
     }
 
     @Override
-    protected PropertyDefinitionMapInput convertSimObject(PropertyDefinitionMap simObject) {
+    protected PropertyDefinitionMapInput convertAppObject(PropertyDefinitionMap simObject) {
         PropertyDefinitionMapInput.Builder builder = PropertyDefinitionMapInput.newBuilder();
 
         builder.setPropertyId(this.translator.getAnyFromObject(simObject.getPropertyId()));
@@ -34,17 +32,12 @@ public class PropertyDefinitionMapTranslatorSpec
     }
 
     @Override
-    public Descriptor getDescriptorForInputObject() {
-        return PropertyDefinitionMapInput.getDescriptor();
-    }
-
-    @Override
     public PropertyDefinitionMapInput getDefaultInstanceForInputObject() {
         return PropertyDefinitionMapInput.getDefaultInstance();
     }
 
     @Override
-    public Class<PropertyDefinitionMap> getSimObjectClass() {
+    public Class<PropertyDefinitionMap> getAppObjectClass() {
         return PropertyDefinitionMap.class;
     }
 

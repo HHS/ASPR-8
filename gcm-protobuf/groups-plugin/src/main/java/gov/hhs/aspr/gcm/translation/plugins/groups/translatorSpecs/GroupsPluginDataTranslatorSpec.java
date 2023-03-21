@@ -3,10 +3,7 @@ package gov.hhs.aspr.gcm.translation.plugins.groups.translatorSpecs;
 import java.util.List;
 import java.util.Set;
 
-import com.google.protobuf.Descriptors.Descriptor;
-
 import gov.hhs.aspr.gcm.translation.core.AObjectTranslatorSpec;
-import plugins.groups.GroupsPluginData;
 import gov.hhs.aspr.gcm.translation.plugins.groups.input.GroupIdInput;
 import gov.hhs.aspr.gcm.translation.plugins.groups.input.GroupInput;
 import gov.hhs.aspr.gcm.translation.plugins.groups.input.GroupMembershipInput;
@@ -14,15 +11,16 @@ import gov.hhs.aspr.gcm.translation.plugins.groups.input.GroupPropertyDefinition
 import gov.hhs.aspr.gcm.translation.plugins.groups.input.GroupPropertyValueMapInput;
 import gov.hhs.aspr.gcm.translation.plugins.groups.input.GroupTypeIdInput;
 import gov.hhs.aspr.gcm.translation.plugins.groups.input.GroupsPluginDataInput;
+import gov.hhs.aspr.gcm.translation.plugins.people.input.PersonIdInput;
+import gov.hhs.aspr.gcm.translation.plugins.properties.input.PropertyDefinitionInput;
+import gov.hhs.aspr.gcm.translation.plugins.properties.input.PropertyDefinitionMapInput;
+import gov.hhs.aspr.gcm.translation.plugins.properties.input.PropertyValueMapInput;
+import plugins.groups.GroupsPluginData;
 import plugins.groups.support.GroupId;
 import plugins.groups.support.GroupPropertyId;
 import plugins.groups.support.GroupPropertyValue;
 import plugins.groups.support.GroupTypeId;
-import gov.hhs.aspr.gcm.translation.plugins.people.input.PersonIdInput;
 import plugins.people.support.PersonId;
-import gov.hhs.aspr.gcm.translation.plugins.properties.input.PropertyDefinitionInput;
-import gov.hhs.aspr.gcm.translation.plugins.properties.input.PropertyDefinitionMapInput;
-import gov.hhs.aspr.gcm.translation.plugins.properties.input.PropertyValueMapInput;
 import plugins.util.properties.PropertyDefinition;
 
 public class GroupsPluginDataTranslatorSpec extends AObjectTranslatorSpec<GroupsPluginDataInput, GroupsPluginData> {
@@ -89,7 +87,7 @@ public class GroupsPluginDataTranslatorSpec extends AObjectTranslatorSpec<Groups
     }
 
     @Override
-    protected GroupsPluginDataInput convertSimObject(GroupsPluginData simObject) {
+    protected GroupsPluginDataInput convertAppObject(GroupsPluginData simObject) {
         GroupsPluginDataInput.Builder builder = GroupsPluginDataInput.newBuilder();
 
         // add group type ids
@@ -188,17 +186,12 @@ public class GroupsPluginDataTranslatorSpec extends AObjectTranslatorSpec<Groups
     }
 
     @Override
-    public Descriptor getDescriptorForInputObject() {
-        return GroupsPluginDataInput.getDescriptor();
-    }
-
-    @Override
     public GroupsPluginDataInput getDefaultInstanceForInputObject() {
         return GroupsPluginDataInput.getDefaultInstance();
     }
 
     @Override
-    public Class<GroupsPluginData> getSimObjectClass() {
+    public Class<GroupsPluginData> getAppObjectClass() {
         return GroupsPluginData.class;
     }
 

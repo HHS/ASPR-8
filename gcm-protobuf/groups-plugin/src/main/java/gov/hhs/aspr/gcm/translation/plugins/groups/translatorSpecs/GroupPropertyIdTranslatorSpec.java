@@ -1,7 +1,5 @@
 package gov.hhs.aspr.gcm.translation.plugins.groups.translatorSpecs;
 
-import com.google.protobuf.Descriptors.Descriptor;
-
 import gov.hhs.aspr.gcm.translation.core.AObjectTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.plugins.groups.input.GroupPropertyIdInput;
 import plugins.groups.support.GroupPropertyId;
@@ -10,18 +8,13 @@ public class GroupPropertyIdTranslatorSpec extends AObjectTranslatorSpec<GroupPr
 
     @Override
     protected GroupPropertyId convertInputObject(GroupPropertyIdInput inputObject) {
-        return this.translator.getObjectFromAny(inputObject.getId(), getSimObjectClass());
+        return this.translator.getObjectFromAny(inputObject.getId(), getAppObjectClass());
     }
 
     @Override
-    protected GroupPropertyIdInput convertSimObject(GroupPropertyId simObject) {
+    protected GroupPropertyIdInput convertAppObject(GroupPropertyId simObject) {
         return GroupPropertyIdInput.newBuilder()
                 .setId(this.translator.getAnyFromObject(simObject)).build();
-    }
-
-    @Override
-    public Descriptor getDescriptorForInputObject() {
-        return GroupPropertyIdInput.getDescriptor();
     }
 
     @Override
@@ -30,7 +23,7 @@ public class GroupPropertyIdTranslatorSpec extends AObjectTranslatorSpec<GroupPr
     }
 
     @Override
-    public Class<GroupPropertyId> getSimObjectClass() {
+    public Class<GroupPropertyId> getAppObjectClass() {
         return GroupPropertyId.class;
     }
 

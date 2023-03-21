@@ -1,7 +1,5 @@
 package gov.hhs.aspr.gcm.translation.plugins.properties.translatorSpecs;
 
-import com.google.protobuf.Descriptors.Descriptor;
-
 import gov.hhs.aspr.gcm.translation.core.AObjectTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.plugins.properties.input.PropertyDefinitionInput;
 import plugins.util.properties.PropertyDefinition;
@@ -35,7 +33,7 @@ public class PropertyDefinitionTranslatorSpec extends AObjectTranslatorSpec<Prop
     }
 
     @Override
-    protected PropertyDefinitionInput convertSimObject(PropertyDefinition simObject) {
+    protected PropertyDefinitionInput convertAppObject(PropertyDefinition simObject) {
         PropertyDefinitionInput.Builder builder = PropertyDefinitionInput.newBuilder();
         if (simObject.getDefaultValue().isPresent()) {
             builder.setDefaultValue(this.translator.getAnyFromObject(simObject.getDefaultValue().get()));
@@ -49,17 +47,12 @@ public class PropertyDefinitionTranslatorSpec extends AObjectTranslatorSpec<Prop
     }
 
     @Override
-    public Descriptor getDescriptorForInputObject() {
-        return PropertyDefinitionInput.getDescriptor();
-    }
-
-    @Override
     public PropertyDefinitionInput getDefaultInstanceForInputObject() {
         return PropertyDefinitionInput.getDefaultInstance();
     }
 
     @Override
-    public Class<PropertyDefinition> getSimObjectClass() {
+    public Class<PropertyDefinition> getAppObjectClass() {
         return PropertyDefinition.class;
     }
 

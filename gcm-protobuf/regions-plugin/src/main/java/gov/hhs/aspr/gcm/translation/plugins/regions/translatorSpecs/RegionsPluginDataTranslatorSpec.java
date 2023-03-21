@@ -1,7 +1,5 @@
 package gov.hhs.aspr.gcm.translation.plugins.regions.translatorSpecs;
 
-import com.google.protobuf.Descriptors.Descriptor;
-
 import gov.hhs.aspr.gcm.translation.core.AObjectTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.plugins.people.input.PersonIdInput;
 import plugins.people.support.PersonId;
@@ -71,7 +69,7 @@ public class RegionsPluginDataTranslatorSpec extends AObjectTranslatorSpec<Regio
     }
 
     @Override
-    protected RegionsPluginDataInput convertSimObject(RegionsPluginData simObject) {
+    protected RegionsPluginDataInput convertAppObject(RegionsPluginData simObject) {
         RegionsPluginDataInput.Builder builder = RegionsPluginDataInput.newBuilder();
 
         // add regions
@@ -117,7 +115,7 @@ public class RegionsPluginDataTranslatorSpec extends AObjectTranslatorSpec<Regio
 
         for (int i = 0; i < simObject.getPersonCount(); i++) {
             PersonId personId = new PersonId(i);
-            
+
             if (simObject.getPersonRegion(personId).isPresent()) {
                 RegionId regionId = simObject.getPersonRegion(personId).get();
                 RegionMembershipInput.Builder regionMembershipBuilder = RegionMembershipInput.newBuilder();
@@ -139,17 +137,12 @@ public class RegionsPluginDataTranslatorSpec extends AObjectTranslatorSpec<Regio
     }
 
     @Override
-    public Descriptor getDescriptorForInputObject() {
-        return RegionsPluginDataInput.getDescriptor();
-    }
-
-    @Override
     public RegionsPluginDataInput getDefaultInstanceForInputObject() {
         return RegionsPluginDataInput.getDefaultInstance();
     }
 
     @Override
-    public Class<RegionsPluginData> getSimObjectClass() {
+    public Class<RegionsPluginData> getAppObjectClass() {
         return RegionsPluginData.class;
     }
 

@@ -1,15 +1,11 @@
 package gov.hhs.aspr.gcm.translation.plugins.regions.translatorSpecs;
 
-import com.google.protobuf.Descriptors.EnumDescriptor;
-
-import gov.hhs.aspr.gcm.translation.core.AEnumTranslatorSpec;
-
-import com.google.protobuf.ProtocolMessageEnum;
-
+import gov.hhs.aspr.gcm.translation.core.AObjectTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.plugins.regions.input.TestRegionPropertyIdInput;
 import plugins.regions.testsupport.TestRegionPropertyId;
 
-public class TestRegionPropertyIdTranslatorSpec extends AEnumTranslatorSpec<TestRegionPropertyIdInput, TestRegionPropertyId> {
+public class TestRegionPropertyIdTranslatorSpec
+        extends AObjectTranslatorSpec<TestRegionPropertyIdInput, TestRegionPropertyId> {
 
     @Override
     protected TestRegionPropertyId convertInputObject(TestRegionPropertyIdInput inputObject) {
@@ -17,29 +13,17 @@ public class TestRegionPropertyIdTranslatorSpec extends AEnumTranslatorSpec<Test
     }
 
     @Override
-    protected TestRegionPropertyIdInput convertSimObject(TestRegionPropertyId simObject) {
+    protected TestRegionPropertyIdInput convertAppObject(TestRegionPropertyId simObject) {
         return TestRegionPropertyIdInput.valueOf(simObject.name());
     }
 
     @Override
-    public EnumDescriptor getDescriptorForInputObject() {
-        return TestRegionPropertyIdInput.getDescriptor();
+    public TestRegionPropertyIdInput getDefaultInstanceForInputObject() {
+        return TestRegionPropertyIdInput.forNumber(0);
     }
 
     @Override
-    public EnumInstance getEnumInstance() {
-        return new EnumInstance() {
-
-            @Override
-            public ProtocolMessageEnum getFromString(String string) {
-                return TestRegionPropertyIdInput.valueOf(string);
-            }
-
-        };
-    }
-
-    @Override
-    public Class<TestRegionPropertyId> getSimObjectClass() {
+    public Class<TestRegionPropertyId> getAppObjectClass() {
         return TestRegionPropertyId.class;
     }
 

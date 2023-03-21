@@ -1,16 +1,11 @@
 package gov.hhs.aspr.gcm.translation.plugins.materials.translatorSpecs;
 
-import com.google.protobuf.Descriptors.EnumDescriptor;
-
-import gov.hhs.aspr.gcm.translation.core.AEnumTranslatorSpec;
-
-import com.google.protobuf.ProtocolMessageEnum;
-
+import gov.hhs.aspr.gcm.translation.core.AObjectTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.plugins.materials.input.TestMaterialsProducerPropertyIdInput;
 import plugins.materials.testsupport.TestMaterialsProducerPropertyId;
 
 public class TestMaterialsProducerPropertyIdTranslatorSpec
-        extends AEnumTranslatorSpec<TestMaterialsProducerPropertyIdInput, TestMaterialsProducerPropertyId> {
+        extends AObjectTranslatorSpec<TestMaterialsProducerPropertyIdInput, TestMaterialsProducerPropertyId> {
 
     @Override
     protected TestMaterialsProducerPropertyId convertInputObject(TestMaterialsProducerPropertyIdInput inputObject) {
@@ -18,29 +13,17 @@ public class TestMaterialsProducerPropertyIdTranslatorSpec
     }
 
     @Override
-    protected TestMaterialsProducerPropertyIdInput convertSimObject(TestMaterialsProducerPropertyId simObject) {
+    protected TestMaterialsProducerPropertyIdInput convertAppObject(TestMaterialsProducerPropertyId simObject) {
         return TestMaterialsProducerPropertyIdInput.valueOf(simObject.name());
     }
 
     @Override
-    public EnumDescriptor getDescriptorForInputObject() {
-        return TestMaterialsProducerPropertyIdInput.getDescriptor();
+    public TestMaterialsProducerPropertyIdInput getDefaultInstanceForInputObject() {
+        return TestMaterialsProducerPropertyIdInput.forNumber(0);
     }
 
     @Override
-    public EnumInstance getEnumInstance() {
-        return new EnumInstance() {
-
-            @Override
-            public ProtocolMessageEnum getFromString(String string) {
-                return TestMaterialsProducerPropertyIdInput.valueOf(string);
-            }
-
-        };
-    }
-
-    @Override
-    public Class<TestMaterialsProducerPropertyId> getSimObjectClass() {
+    public Class<TestMaterialsProducerPropertyId> getAppObjectClass() {
         return TestMaterialsProducerPropertyId.class;
     }
 

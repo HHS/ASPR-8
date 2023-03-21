@@ -1,10 +1,8 @@
 package gov.hhs.aspr.gcm.translation.core.translatorSpecs;
 
-import com.google.protobuf.Descriptors.Descriptor;
+import com.google.protobuf.FloatValue;
 
 import gov.hhs.aspr.gcm.translation.core.AObjectTranslatorSpec;
-
-import com.google.protobuf.FloatValue;
 
 public class FloatTranslatorSpec extends AObjectTranslatorSpec<FloatValue, Float> {
 
@@ -14,13 +12,8 @@ public class FloatTranslatorSpec extends AObjectTranslatorSpec<FloatValue, Float
     }
 
     @Override
-    protected FloatValue convertSimObject(Float simObject) {
+    protected FloatValue convertAppObject(Float simObject) {
         return FloatValue.of(simObject);
-    }
-
-    @Override
-    public Descriptor getDescriptorForInputObject() {
-        return FloatValue.getDescriptor();
     }
 
     @Override
@@ -29,7 +22,7 @@ public class FloatTranslatorSpec extends AObjectTranslatorSpec<FloatValue, Float
     }
 
     @Override
-    public Class<Float> getSimObjectClass() {
+    public Class<Float> getAppObjectClass() {
         return Float.class;
     }
 

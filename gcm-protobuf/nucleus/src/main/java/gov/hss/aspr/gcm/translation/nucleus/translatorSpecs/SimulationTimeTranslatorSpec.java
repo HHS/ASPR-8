@@ -2,7 +2,6 @@ package gov.hss.aspr.gcm.translation.nucleus.translatorSpecs;
 
 import java.time.LocalDate;
 
-import com.google.protobuf.Descriptors.Descriptor;
 import com.google.type.Date;
 
 import gov.hhs.aspr.gcm.translation.core.AObjectTranslatorSpec;
@@ -25,7 +24,7 @@ public class SimulationTimeTranslatorSpec extends AObjectTranslatorSpec<Simulati
     }
 
     @Override
-    protected SimulationTimeInput convertSimObject(SimulationTime simObject) {
+    protected SimulationTimeInput convertAppObject(SimulationTime simObject) {
         SimulationTimeInput.Builder builder = SimulationTimeInput.newBuilder();
 
         builder.setStartTime(simObject.getStartTime());
@@ -37,17 +36,12 @@ public class SimulationTimeTranslatorSpec extends AObjectTranslatorSpec<Simulati
     }
 
     @Override
-    public Descriptor getDescriptorForInputObject() {
-        return SimulationTimeInput.getDescriptor();
-    }
-
-    @Override
     public SimulationTimeInput getDefaultInstanceForInputObject() {
         return SimulationTimeInput.getDefaultInstance();
     }
 
     @Override
-    public Class<SimulationTime> getSimObjectClass() {
+    public Class<SimulationTime> getAppObjectClass() {
         return SimulationTime.class;
     }
 

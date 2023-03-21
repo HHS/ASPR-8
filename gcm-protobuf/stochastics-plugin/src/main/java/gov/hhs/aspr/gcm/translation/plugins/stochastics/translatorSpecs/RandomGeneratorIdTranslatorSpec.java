@@ -1,27 +1,21 @@
 package gov.hhs.aspr.gcm.translation.plugins.stochastics.translatorSpecs;
 
-import com.google.protobuf.Descriptors.Descriptor;
-
 import gov.hhs.aspr.gcm.translation.core.AObjectTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.plugins.stochastics.input.RandomNumberGeneratorIdInput;
 import plugins.stochastics.support.RandomNumberGeneratorId;
 
-public class RandomGeneratorIdTranslatorSpec extends AObjectTranslatorSpec<RandomNumberGeneratorIdInput, RandomNumberGeneratorId> {
+public class RandomGeneratorIdTranslatorSpec
+        extends AObjectTranslatorSpec<RandomNumberGeneratorIdInput, RandomNumberGeneratorId> {
 
     @Override
     protected RandomNumberGeneratorId convertInputObject(RandomNumberGeneratorIdInput inputObject) {
-        return this.translator.getObjectFromAny(inputObject.getId(), getSimObjectClass());
+        return this.translator.getObjectFromAny(inputObject.getId(), getAppObjectClass());
     }
 
     @Override
-    protected RandomNumberGeneratorIdInput convertSimObject(RandomNumberGeneratorId simObject) {
+    protected RandomNumberGeneratorIdInput convertAppObject(RandomNumberGeneratorId simObject) {
         return RandomNumberGeneratorIdInput.newBuilder()
                 .setId(this.translator.getAnyFromObject(simObject)).build();
-    }
-
-    @Override
-    public Descriptor getDescriptorForInputObject() {
-        return RandomNumberGeneratorIdInput.getDescriptor();
     }
 
     @Override
@@ -30,7 +24,7 @@ public class RandomGeneratorIdTranslatorSpec extends AObjectTranslatorSpec<Rando
     }
 
     @Override
-    public Class<RandomNumberGeneratorId> getSimObjectClass() {
+    public Class<RandomNumberGeneratorId> getAppObjectClass() {
         return RandomNumberGeneratorId.class;
     }
 

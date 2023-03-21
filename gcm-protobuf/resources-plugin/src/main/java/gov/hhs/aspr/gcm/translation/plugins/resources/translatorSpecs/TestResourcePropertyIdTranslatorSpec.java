@@ -1,16 +1,11 @@
 package gov.hhs.aspr.gcm.translation.plugins.resources.translatorSpecs;
 
-import com.google.protobuf.Descriptors.EnumDescriptor;
-
-import gov.hhs.aspr.gcm.translation.core.AEnumTranslatorSpec;
-
-import com.google.protobuf.ProtocolMessageEnum;
-
+import gov.hhs.aspr.gcm.translation.core.AObjectTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.plugins.resources.input.TestResourcePropertyIdInput;
 import plugins.resources.testsupport.TestResourcePropertyId;
 
-
-public class TestResourcePropertyIdTranslatorSpec extends AEnumTranslatorSpec<TestResourcePropertyIdInput, TestResourcePropertyId> {
+public class TestResourcePropertyIdTranslatorSpec
+        extends AObjectTranslatorSpec<TestResourcePropertyIdInput, TestResourcePropertyId> {
 
     @Override
     protected TestResourcePropertyId convertInputObject(TestResourcePropertyIdInput inputObject) {
@@ -18,29 +13,17 @@ public class TestResourcePropertyIdTranslatorSpec extends AEnumTranslatorSpec<Te
     }
 
     @Override
-    protected TestResourcePropertyIdInput convertSimObject(TestResourcePropertyId simObject) {
+    protected TestResourcePropertyIdInput convertAppObject(TestResourcePropertyId simObject) {
         return TestResourcePropertyIdInput.valueOf(simObject.name());
     }
 
     @Override
-    public EnumDescriptor getDescriptorForInputObject() {
-        return TestResourcePropertyIdInput.getDescriptor();
+    public TestResourcePropertyIdInput getDefaultInstanceForInputObject() {
+        return TestResourcePropertyIdInput.forNumber(0);
     }
 
     @Override
-    public EnumInstance getEnumInstance() {
-        return new EnumInstance() {
-
-            @Override
-            public ProtocolMessageEnum getFromString(String string) {
-                return TestResourcePropertyIdInput.valueOf(string);
-            }
-
-        };
-    }
-
-    @Override
-    public Class<TestResourcePropertyId> getSimObjectClass() {
+    public Class<TestResourcePropertyId> getAppObjectClass() {
         return TestResourcePropertyId.class;
     }
 

@@ -1,7 +1,6 @@
 package gov.hhs.aspr.gcm.translation.core.translatorSpecs;
 
 import com.google.protobuf.BoolValue;
-import com.google.protobuf.Descriptors.Descriptor;
 
 import gov.hhs.aspr.gcm.translation.core.AObjectTranslatorSpec;
 
@@ -13,13 +12,8 @@ public class BooleanTranslatorSpec extends AObjectTranslatorSpec<BoolValue, Bool
     }
 
     @Override
-    protected BoolValue convertSimObject(Boolean simObject) {
+    protected BoolValue convertAppObject(Boolean simObject) {
         return BoolValue.of(simObject);
-    }
-
-    @Override
-    public Descriptor getDescriptorForInputObject() {
-        return BoolValue.getDescriptor();
     }
 
     @Override
@@ -28,7 +22,7 @@ public class BooleanTranslatorSpec extends AObjectTranslatorSpec<BoolValue, Bool
     }
 
     @Override
-    public Class<Boolean> getSimObjectClass() {
+    public Class<Boolean> getAppObjectClass() {
         return Boolean.class;
     }
 

@@ -2,19 +2,17 @@ package gov.hhs.aspr.gcm.translation.plugins.personproperties.translatorSpecs;
 
 import java.util.List;
 
-import com.google.protobuf.Descriptors.Descriptor;
-
 import gov.hhs.aspr.gcm.translation.core.AObjectTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.plugins.people.input.PersonIdInput;
-import plugins.people.support.PersonId;
-import plugins.personproperties.PersonPropertiesPluginData;
 import gov.hhs.aspr.gcm.translation.plugins.personproperties.input.PersonPropertiesPluginDataInput;
 import gov.hhs.aspr.gcm.translation.plugins.personproperties.input.PersonPropertyValueMapInput;
-import plugins.personproperties.support.PersonPropertyId;
-import plugins.personproperties.support.PersonPropertyInitialization;
 import gov.hhs.aspr.gcm.translation.plugins.properties.input.PropertyDefinitionInput;
 import gov.hhs.aspr.gcm.translation.plugins.properties.input.PropertyDefinitionMapInput;
 import gov.hhs.aspr.gcm.translation.plugins.properties.input.PropertyValueMapInput;
+import plugins.people.support.PersonId;
+import plugins.personproperties.PersonPropertiesPluginData;
+import plugins.personproperties.support.PersonPropertyId;
+import plugins.personproperties.support.PersonPropertyInitialization;
 import plugins.util.properties.PropertyDefinition;
 
 public class PersonPropertiesPluginDataTranslatorSpec
@@ -50,7 +48,7 @@ public class PersonPropertiesPluginDataTranslatorSpec
     }
 
     @Override
-    protected PersonPropertiesPluginDataInput convertSimObject(PersonPropertiesPluginData simObject) {
+    protected PersonPropertiesPluginDataInput convertAppObject(PersonPropertiesPluginData simObject) {
         PersonPropertiesPluginDataInput.Builder builder = PersonPropertiesPluginDataInput.newBuilder();
 
         for (PersonPropertyId propertyId : simObject.getPersonPropertyIds()) {
@@ -94,17 +92,12 @@ public class PersonPropertiesPluginDataTranslatorSpec
     }
 
     @Override
-    public Descriptor getDescriptorForInputObject() {
-        return PersonPropertiesPluginDataInput.getDescriptor();
-    }
-
-    @Override
     public PersonPropertiesPluginDataInput getDefaultInstanceForInputObject() {
         return PersonPropertiesPluginDataInput.getDefaultInstance();
     }
 
     @Override
-    public Class<PersonPropertiesPluginData> getSimObjectClass() {
+    public Class<PersonPropertiesPluginData> getAppObjectClass() {
         return PersonPropertiesPluginData.class;
     }
 

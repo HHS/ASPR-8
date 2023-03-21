@@ -1,16 +1,11 @@
 package gov.hhs.aspr.gcm.translation.plugins.materials.translatorSpecs;
 
-import com.google.protobuf.Descriptors.EnumDescriptor;
-
-import gov.hhs.aspr.gcm.translation.core.AEnumTranslatorSpec;
-
-import com.google.protobuf.ProtocolMessageEnum;
-
+import gov.hhs.aspr.gcm.translation.core.AObjectTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.plugins.materials.input.TestMaterialIdInput;
 import plugins.materials.testsupport.TestMaterialId;
 
 public class TestMaterialIdTranslatorSpec
-        extends AEnumTranslatorSpec<TestMaterialIdInput, TestMaterialId> {
+        extends AObjectTranslatorSpec<TestMaterialIdInput, TestMaterialId> {
 
     @Override
     protected TestMaterialId convertInputObject(TestMaterialIdInput inputObject) {
@@ -18,29 +13,17 @@ public class TestMaterialIdTranslatorSpec
     }
 
     @Override
-    protected TestMaterialIdInput convertSimObject(TestMaterialId simObject) {
+    protected TestMaterialIdInput convertAppObject(TestMaterialId simObject) {
         return TestMaterialIdInput.valueOf(simObject.name());
     }
 
     @Override
-    public EnumDescriptor getDescriptorForInputObject() {
-        return TestMaterialIdInput.getDescriptor();
+    public TestMaterialIdInput getDefaultInstanceForInputObject() {
+        return TestMaterialIdInput.forNumber(0);
     }
 
     @Override
-    public EnumInstance getEnumInstance() {
-        return new EnumInstance() {
-
-            @Override
-            public ProtocolMessageEnum getFromString(String string) {
-                return TestMaterialIdInput.valueOf(string);
-            }
-
-        };
-    }
-
-    @Override
-    public Class<TestMaterialId> getSimObjectClass() {
+    public Class<TestMaterialId> getAppObjectClass() {
         return TestMaterialId.class;
     }
 

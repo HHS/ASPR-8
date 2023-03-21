@@ -1,7 +1,5 @@
 package gov.hhs.aspr.gcm.translation.plugins.globalproperties.translatorSpecs;
 
-import com.google.protobuf.Descriptors.Descriptor;
-
 import gov.hhs.aspr.gcm.translation.core.AObjectTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.plugins.globalproperties.input.GlobalPropertyIdInput;
 import plugins.globalproperties.support.GlobalPropertyId;
@@ -10,18 +8,13 @@ public class GlobalPropertyIdTranslatorSpec extends AObjectTranslatorSpec<Global
 
     @Override
     protected GlobalPropertyId convertInputObject(GlobalPropertyIdInput inputObject) {
-        return this.translator.getObjectFromAny(inputObject.getId(), getSimObjectClass());
+        return this.translator.getObjectFromAny(inputObject.getId(), getAppObjectClass());
     }
 
     @Override
-    protected GlobalPropertyIdInput convertSimObject(GlobalPropertyId simObject) {
+    protected GlobalPropertyIdInput convertAppObject(GlobalPropertyId simObject) {
         return GlobalPropertyIdInput.newBuilder().setId(this.translator.getAnyFromObject(simObject))
                 .build();
-    }
-
-    @Override
-    public Descriptor getDescriptorForInputObject() {
-        return GlobalPropertyIdInput.getDescriptor();
     }
 
     @Override
@@ -30,7 +23,7 @@ public class GlobalPropertyIdTranslatorSpec extends AObjectTranslatorSpec<Global
     }
 
     @Override
-    public Class<GlobalPropertyId> getSimObjectClass() {
+    public Class<GlobalPropertyId> getAppObjectClass() {
         return GlobalPropertyId.class;
     }
 

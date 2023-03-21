@@ -1,7 +1,5 @@
 package gov.hhs.aspr.gcm.translation.plugins.personproperties.translatorSpecs;
 
-import com.google.protobuf.Descriptors.Descriptor;
-
 import gov.hhs.aspr.gcm.translation.core.AObjectTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.plugins.personproperties.input.PersonPropertyIdInput;
 import plugins.personproperties.support.PersonPropertyId;
@@ -10,18 +8,13 @@ public class PersonPropertyIdTranslatorSpec extends AObjectTranslatorSpec<Person
 
     @Override
     protected PersonPropertyId convertInputObject(PersonPropertyIdInput inputObject) {
-        return this.translator.getObjectFromAny(inputObject.getId(), getSimObjectClass());
+        return this.translator.getObjectFromAny(inputObject.getId(), getAppObjectClass());
     }
 
     @Override
-    protected PersonPropertyIdInput convertSimObject(PersonPropertyId simObject) {
+    protected PersonPropertyIdInput convertAppObject(PersonPropertyId simObject) {
         return PersonPropertyIdInput.newBuilder().setId(this.translator.getAnyFromObject(simObject))
                 .build();
-    }
-
-    @Override
-    public Descriptor getDescriptorForInputObject() {
-        return PersonPropertyIdInput.getDescriptor();
     }
 
     @Override
@@ -30,7 +23,7 @@ public class PersonPropertyIdTranslatorSpec extends AObjectTranslatorSpec<Person
     }
 
     @Override
-    public Class<PersonPropertyId> getSimObjectClass() {
+    public Class<PersonPropertyId> getAppObjectClass() {
         return PersonPropertyId.class;
     }
 

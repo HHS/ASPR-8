@@ -1,7 +1,5 @@
 package gov.hhs.aspr.gcm.translation.plugins.resources.translatorSpecs;
 
-import com.google.protobuf.Descriptors.Descriptor;
-
 import gov.hhs.aspr.gcm.translation.core.AObjectTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.plugins.resources.input.ResourceIdInput;
 import gov.hhs.aspr.gcm.translation.plugins.resources.input.ResourceInitializationInput;
@@ -19,15 +17,10 @@ public class ResourceInitializationTranslatorSpec
     }
 
     @Override
-    protected ResourceInitializationInput convertSimObject(ResourceInitialization simObject) {
+    protected ResourceInitializationInput convertAppObject(ResourceInitialization simObject) {
         ResourceIdInput resourceIdInput = this.translator.convertSimObject(simObject.getResourceId(), ResourceId.class);
         return ResourceInitializationInput.newBuilder().setAmount(simObject.getAmount()).setResourceId(
                 resourceIdInput).build();
-    }
-
-    @Override
-    public Descriptor getDescriptorForInputObject() {
-        return ResourceInitializationInput.getDescriptor();
     }
 
     @Override
@@ -36,7 +29,7 @@ public class ResourceInitializationTranslatorSpec
     }
 
     @Override
-    public Class<ResourceInitialization> getSimObjectClass() {
+    public Class<ResourceInitialization> getAppObjectClass() {
         return ResourceInitialization.class;
     }
 

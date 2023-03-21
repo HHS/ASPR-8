@@ -1,7 +1,5 @@
 package gov.hhs.aspr.gcm.translation.plugins.properties.testsupport.translatorSpecs;
 
-import com.google.protobuf.Descriptors.Descriptor;
-
 import gov.hhs.aspr.gcm.translation.core.AObjectTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.plugins.properties.testsupport.input.Layer1;
 import gov.hhs.aspr.gcm.translation.plugins.properties.testsupport.simobjects.Layer1SimObject;
@@ -20,13 +18,8 @@ public class Layer1TranslatorSpec extends AObjectTranslatorSpec<Layer1, Layer1Si
     }
 
     @Override
-    protected Layer1 convertSimObject(Layer1SimObject simObject) {
+    protected Layer1 convertAppObject(Layer1SimObject simObject) {
         return Layer1.newBuilder().setX(simObject.getX()).setY(simObject.getY()).setZ(simObject.getZ()).build();
-    }
-
-    @Override
-    public Descriptor getDescriptorForInputObject() {
-        return Layer1.getDescriptor();
     }
 
     @Override
@@ -35,7 +28,7 @@ public class Layer1TranslatorSpec extends AObjectTranslatorSpec<Layer1, Layer1Si
     }
 
     @Override
-    public Class<Layer1SimObject> getSimObjectClass() {
+    public Class<Layer1SimObject> getAppObjectClass() {
         return Layer1SimObject.class;
     }
 

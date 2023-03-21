@@ -3,6 +3,7 @@ package gov.hhs.aspr.gcm.translation.core;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
+import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -12,9 +13,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
 import com.google.protobuf.Any;
-import com.google.protobuf.Descriptors.Descriptor;
-import com.google.protobuf.Descriptors.EnumDescriptor;
-import com.google.protobuf.Descriptors.EnumValueDescriptor;
 import com.google.protobuf.Descriptors.FieldDescriptor;
 import com.google.protobuf.Descriptors.FieldDescriptor.JavaType;
 import com.google.protobuf.InvalidProtocolBufferException;
@@ -25,7 +23,6 @@ import com.google.protobuf.util.JsonFormat;
 import com.google.protobuf.util.JsonFormat.Parser;
 import com.google.protobuf.util.JsonFormat.Printer;
 
-import gov.hhs.aspr.gcm.translation.core.AEnumTranslatorSpec.EnumInstance;
 import gov.hhs.aspr.gcm.translation.core.input.WrapperEnumValue;
 import gov.hhs.aspr.gcm.translation.core.translatorSpecs.PrimitiveTranslatorSpecs;
 import nucleus.PluginData;
@@ -41,9 +38,8 @@ public class TranslatorCore {
     }
 
     private static class Data {
-        private final Map<Descriptor, Message> descriptorMap = new LinkedHashMap<>();
-        private final Map<EnumDescriptor, EnumInstance> enumDescriptorMap = new LinkedHashMap<>();
-        private final Map<String, EnumDescriptor> typeUrlToEnumDescriptor = new LinkedHashMap<>();
+        private final Map<String, Message> descriptorMap = new LinkedHashMap<>();
+        private final Map<String, ProtocolMessageEnum> typeUrlToEnumMap = new LinkedHashMap<>();
         private final Map<Class<?>, ITranslatorSpec> classToTranslatorSpecMap = new LinkedHashMap<>();
         private final Set<ITranslatorSpec> translatorSpecs = new LinkedHashSet<>();
         private final Set<FieldDescriptor> defaultValueFieldsToPrint = new LinkedHashSet<>();
@@ -54,7 +50,7 @@ public class TranslatorCore {
         private boolean includingDefaultValueFields = false;
 
         private Data() {
-            this.descriptorMap.putAll(PrimitiveTranslatorSpecs.getPrimitiveDescriptorToMessageMap());
+            this.descriptorMap.putAll(PrimitiveTranslatorSpecs.getPrimitiveTypeUrlToMessageMap());
             this.classToTranslatorSpecMap.putAll(PrimitiveTranslatorSpecs.getPrimitiveInputTranslatorSpecMap());
             this.classToTranslatorSpecMap.putAll(PrimitiveTranslatorSpecs.getPrimitiveObjectTranslatorSpecMap());
             this.translatorSpecs.addAll(PrimitiveTranslatorSpecs.getPrimitiveObjectTranslatorSpecMap().values());
@@ -69,7 +65,13 @@ public class TranslatorCore {
         }
 
         public TranslatorCore build() {
-            this.data.registry = TypeRegistry.newBuilder().add(this.data.descriptorMap.keySet()).build();
+            TypeRegistry.Builder typeRegistryBuilder = TypeRegistry.newBuilder();
+
+            this.data.descriptorMap.values().forEach((message) -> {
+                typeRegistryBuilder.add(message.getDescriptorForType());
+            });
+
+            this.data.registry = typeRegistryBuilder.build();
 
             Parser parser = JsonFormat.parser().usingTypeRegistry(this.data.registry);
             if (this.data.ignoringUnknownFields) {
@@ -112,32 +114,49 @@ public class TranslatorCore {
             return this;
         }
 
-        public <I extends ProtocolMessageEnum, S> Builder addTranslatorSpec(AEnumTranslatorSpec<I, S> translatorSpec) {
+        // public <I extends ProtocolMessageEnum, S> Builder
+        // addTranslatorSpec(AEnumTranslatorSpec<I, S> translatorSpec) {
+        // this.data.classToTranslatorSpecMap.putIfAbsent(translatorSpec.getInputObjectClass(),
+        // translatorSpec);
+        // this.data.classToTranslatorSpecMap.putIfAbsent(translatorSpec.getAppObjectClass(),
+        // translatorSpec);
+
+        // EnumDescriptor enumDescriptor = translatorSpec.getDescriptorForInputObject();
+
+        // this.data.enumDescriptorMap.putIfAbsent(enumDescriptor,
+        // translatorSpec.getDefaultInstance());
+        // this.data.typeUrlToEnumDescriptor.putIfAbsent(enumDescriptor.getFullName(),
+        // enumDescriptor);
+
+        // this.data.translatorSpecs.add(translatorSpec);
+        // return this;
+        // }
+
+        public <I, S> Builder addTranslatorSpec(AObjectTranslatorSpec<I, S> translatorSpec) {
             this.data.classToTranslatorSpecMap.putIfAbsent(translatorSpec.getInputObjectClass(),
                     translatorSpec);
-            this.data.classToTranslatorSpecMap.putIfAbsent(translatorSpec.getSimObjectClass(), translatorSpec);
-
-            EnumDescriptor enumDescriptor = translatorSpec.getDescriptorForInputObject();
-
-            this.data.enumDescriptorMap.putIfAbsent(enumDescriptor, translatorSpec.getEnumInstance());
-            this.data.typeUrlToEnumDescriptor.putIfAbsent(enumDescriptor.getFullName(), enumDescriptor);
+            this.data.classToTranslatorSpecMap.putIfAbsent(translatorSpec.getAppObjectClass(), translatorSpec);
 
             this.data.translatorSpecs.add(translatorSpec);
-            return this;
-        }
 
-        public <I extends Message, S> Builder addTranslatorSpec(AObjectTranslatorSpec<I, S> translatorSpec) {
-            this.data.classToTranslatorSpecMap.putIfAbsent(translatorSpec.getInputObjectClass(),
-                    translatorSpec);
-            this.data.classToTranslatorSpecMap.putIfAbsent(translatorSpec.getSimObjectClass(), translatorSpec);
+            if (translatorSpec.getDefaultInstanceForInputObject() instanceof Message) {
+                populate((Message) translatorSpec.getDefaultInstanceForInputObject());
+                return this;
+            }
 
-            this.data.translatorSpecs.add(translatorSpec);
-            populate(translatorSpec.getDefaultInstanceForInputObject());
+            if (translatorSpec.getDefaultInstanceForInputObject() instanceof ProtocolMessageEnum) {
+                ProtocolMessageEnum messageEnum = (ProtocolMessageEnum) translatorSpec
+                        .getDefaultInstanceForInputObject();
+                this.data.typeUrlToEnumMap.putIfAbsent(messageEnum.getDescriptorForType().getFullName(), messageEnum);
+                return this;
+            }
+
             return this;
+
         }
 
         private void populate(Message message) {
-            this.data.descriptorMap.putIfAbsent(message.getDescriptorForType(), message);
+            this.data.descriptorMap.putIfAbsent(message.getDescriptorForType().getFullName(), message);
 
             Set<FieldDescriptor> fieldDescriptors = message.getAllFields().keySet();
 
@@ -264,9 +283,9 @@ public class TranslatorCore {
 
     private Message getWrapperEnum(Object object) {
         ProtocolMessageEnum messageEnum = convertSimObject(object);
-        EnumValueDescriptor enumValueDescriptor = messageEnum.getValueDescriptor();
 
-        WrapperEnumValue wrapperEnumValue = WrapperEnumValue.newBuilder().setValue(enumValueDescriptor.getName())
+        WrapperEnumValue wrapperEnumValue = WrapperEnumValue.newBuilder()
+                .setValue(messageEnum.getValueDescriptor().getName())
                 .setEnumTypeUrl(messageEnum.getDescriptorForType().getFullName()).build();
 
         return wrapperEnumValue;
@@ -276,12 +295,18 @@ public class TranslatorCore {
         String typeUrl = enumValue.getEnumTypeUrl();
         String value = enumValue.getValue();
 
-        if (this.data.typeUrlToEnumDescriptor.containsKey(typeUrl)) {
-            EnumDescriptor enumDescriptor = this.data.typeUrlToEnumDescriptor.get(typeUrl);
-            if (this.data.enumDescriptorMap.containsKey(enumDescriptor)) {
-                return this.data.enumDescriptorMap.get(enumDescriptor)
-                        .getFromString(value);
+        if (this.data.typeUrlToEnumMap.containsKey(typeUrl)) {
+
+            ProtocolMessageEnum defaultInstance = this.data.typeUrlToEnumMap.get(typeUrl);
+            Class<? extends ProtocolMessageEnum> classRef = defaultInstance.getClass();
+
+            try {
+                return (ProtocolMessageEnum) classRef.getMethod("valueOf", String.class).invoke(null, value);
+            } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException
+                    | NoSuchMethodException | SecurityException e) {
+                throw new RuntimeException(e);
             }
+
         }
 
         throw new RuntimeException("Unable to find corrsponding Enum type for: " + typeUrl);
@@ -289,26 +314,21 @@ public class TranslatorCore {
 
     private Message getMessageFromAny(Any anyValue) {
 
-        String typeUrl = anyValue.getTypeUrl();
+        String fullTypeUrl = anyValue.getTypeUrl();
+        String[] parts = fullTypeUrl.split("/");
 
+        if (parts.length > 2) {
+            throw new RuntimeException("Malformed type url");
+        }
+
+        String typeUrl = parts[1];
         Message message;
         Class<? extends Message> classRef;
 
-        try {
-            Descriptor messageDescriptor = this.data.registry.getDescriptorForTypeUrl(typeUrl);
-            message = this.data.descriptorMap.get(messageDescriptor);
-            if (message == null) {
-                throw new RuntimeException("No default instance was provided for: " + messageDescriptor.getName()
-                        + ". This occurs when the above message type is defined in the same file as another message type who's descriptor is added to the CoreTranslator, "
-                        + "but who's own descriptor is not explicitly added to the CoreTranslator. "
-                        + "For example, if you had a proto file with two message definitions- "
-                        + "Wombat and Cat and you added the descriptor for Cat to the CoreTranslator, "
-                        + "the json parser for the CoreTranslator will internally also add the descriptor for Wombat, "
-                        + "so the parser knows about Wombat, which allows the type to be properly parsed, "
-                        + "but the CoreTranslator does not, thus resulting in a null message here.");
-            }
-        } catch (InvalidProtocolBufferException e) {
-            throw new RuntimeException("No corresponding message definition was found for: " + typeUrl, e);
+        message = this.data.descriptorMap.get(typeUrl);
+
+        if (message == null) {
+            throw new RuntimeException("No default instance was provided for: " + typeUrl);
         }
 
         classRef = message.getClass();

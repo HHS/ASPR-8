@@ -1,10 +1,8 @@
 package gov.hhs.aspr.gcm.translation.core.translatorSpecs;
 
-import com.google.protobuf.Descriptors.Descriptor;
+import com.google.protobuf.Int64Value;
 
 import gov.hhs.aspr.gcm.translation.core.AObjectTranslatorSpec;
-
-import com.google.protobuf.Int64Value;
 
 public class Int64TranslatorSpec extends AObjectTranslatorSpec<Int64Value, Long> {
 
@@ -14,13 +12,8 @@ public class Int64TranslatorSpec extends AObjectTranslatorSpec<Int64Value, Long>
     }
 
     @Override
-    protected Int64Value convertSimObject(Long simObject) {
+    protected Int64Value convertAppObject(Long simObject) {
         return Int64Value.of(simObject);
-    }
-
-    @Override
-    public Descriptor getDescriptorForInputObject() {
-        return Int64Value.getDescriptor();
     }
 
     @Override
@@ -29,7 +22,7 @@ public class Int64TranslatorSpec extends AObjectTranslatorSpec<Int64Value, Long>
     }
 
     @Override
-    public Class<Long> getSimObjectClass() {
+    public Class<Long> getAppObjectClass() {
         return Long.class;
     }
 
