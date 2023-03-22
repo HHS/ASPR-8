@@ -1,14 +1,20 @@
 package gov.hss.aspr.gcm.translation.protobuf.nucleus;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import java.time.LocalDate;
 import java.util.List;
+
+import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.gcm.translation.protobuf.nucleus.input.SimulationTimeInput;
 import gov.hhs.aspr.gcm.translation.protobuf.core.TranslatorController;
 import nucleus.SimulationTime;
 
-public class App {
+public class AppTest {
 
-    public static void main(String[] args) {
+    @Test
+    public void testSimulationTimeTranslator(String[] args) {
         String inputFileName = "./nucleus/src/main/resources/json/simulationTimeInput.json";
         String outputFileName = "./nucleus/src/main/resources/json/output/simulationTimeOutput.json";
 
@@ -20,10 +26,12 @@ public class App {
 
         List<Object> objects = translatorController.readInput().getObjects();
 
-        SimulationTime simTime = (SimulationTime) objects.get(0);
+        SimulationTime actualSimulationTime = (SimulationTime) objects.get(0);
 
+        SimulationTime exptectedSimulationTime = SimulationTime.builder().setBaseDate(LocalDate.of(2023, 3, 15))
+                .setStartTime(0.0).build();
 
-        System.out.println(simTime);
+        assertEquals(exptectedSimulationTime, actualSimulationTime);
 
         translatorController.writeOutput();
     }
