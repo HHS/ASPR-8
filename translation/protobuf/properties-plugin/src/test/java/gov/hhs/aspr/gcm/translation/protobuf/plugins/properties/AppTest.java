@@ -2,6 +2,7 @@ package gov.hhs.aspr.gcm.translation.protobuf.plugins.properties;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.nio.file.Path;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -14,18 +15,24 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.testsupport.simo
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.testsupport.translatorSpecs.Layer1TranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.testsupport.translatorSpecs.TestMessageTranslatorSpec;
 
-public class App {
+public class AppTest {
 
     @Test
     public void testPropertyValueMapTranslator() {
 
-        String inputFileName = "./properties-plugin/src/main/resources/json/input.json";
-        String outputFileName = "./properties-plugin/src/main/resources/json/output/output.json";
+        Path basePath = Path.of("").toAbsolutePath();
+
+        if (!basePath.endsWith("properties-plugin")) {
+            basePath = basePath.resolve("properties-plugin");
+        }
+
+        Path inputFilePath = basePath.resolve("src/main/resources/json/input.json");
+        Path outputFilePath = basePath.resolve("src/main/resources/json/output/output.json");
 
         TranslatorController translatorController = TranslatorController.builder()
                 .addTranslator(PropertiesTranslator.builder()
-                        .addInputFile(inputFileName, PropertyValueMapInput.getDefaultInstance())
-                        .addOutputFile(outputFileName, PropertyValueMap.class).build())
+                        .addInputFile(inputFilePath.toString(), PropertyValueMapInput.getDefaultInstance())
+                        .addOutputFile(outputFilePath.toString(), PropertyValueMap.class).build())
                 .addTranslatorSpec(new TestMessageTranslatorSpec())
                 .addTranslatorSpec(new Layer1TranslatorSpec())
                 .build();

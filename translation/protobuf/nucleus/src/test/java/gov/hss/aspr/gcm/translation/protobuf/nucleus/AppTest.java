@@ -2,6 +2,7 @@ package gov.hss.aspr.gcm.translation.protobuf.nucleus;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -14,14 +15,23 @@ import nucleus.SimulationTime;
 public class AppTest {
 
     @Test
-    public void testSimulationTimeTranslator(String[] args) {
-        String inputFileName = "./nucleus/src/main/resources/json/simulationTimeInput.json";
-        String outputFileName = "./nucleus/src/main/resources/json/output/simulationTimeOutput.json";
+    public void testSimulationTimeTranslator() {
+        Path basePath = Path.of("").toAbsolutePath();
+
+        if (!basePath.endsWith("nucleus")) {
+            basePath = basePath.resolve("nucleus");
+        }
+
+        Path inputFilePath = basePath.resolve("src/main/resources/json/simulationTimeInput.json");
+        Path outputFilePath = basePath.resolve("src/main/resources/json/output/simulationTimeOutput.json");
+
+
+        System.out.println("Working Directory = " + System.getProperty("user.dir"));
 
         TranslatorController translatorController = TranslatorController.builder()
                 .addTranslator(NucleusTranslator.builder()
-                        .addInputFile(inputFileName, SimulationTimeInput.getDefaultInstance())
-                        .addOutputFile(outputFileName, SimulationTime.class).build())
+                        .addInputFile(inputFilePath.toString(), SimulationTimeInput.getDefaultInstance())
+                        .addOutputFile(outputFilePath.toString(), SimulationTime.class).build())
                 .build();
 
         List<Object> objects = translatorController.readInput().getObjects();
@@ -31,7 +41,8 @@ public class AppTest {
         SimulationTime exptectedSimulationTime = SimulationTime.builder().setBaseDate(LocalDate.of(2023, 3, 15))
                 .setStartTime(0.0).build();
 
-        assertEquals(exptectedSimulationTime, actualSimulationTime);
+        assertEquals(exptectedSimulationTime.getBaseDate(), actualSimulationTime.getBaseDate());
+        assertEquals(exptectedSimulationTime.getStartTime(), actualSimulationTime.getStartTime());
 
         translatorController.writeOutput();
     }

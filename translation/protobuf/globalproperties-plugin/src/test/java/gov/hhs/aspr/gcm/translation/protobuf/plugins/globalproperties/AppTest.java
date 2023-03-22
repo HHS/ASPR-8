@@ -2,6 +2,7 @@ package gov.hhs.aspr.gcm.translation.protobuf.plugins.globalproperties;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.nio.file.Path;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
@@ -21,11 +22,17 @@ public class AppTest {
 
     @Test
     public void testGlobalPropertiesTranslator() {
-        String inputFileName = "./globalproperties-plugin/src/main/resources/json/input.json";
-        String outputFileName = "./globalproperties-plugin/src/main/resources/json/output/output.json";
+
+        Path basePath = Path.of("").toAbsolutePath();
+
+        if (!basePath.endsWith("globalproperties-plugin")) {
+            basePath = basePath.resolve("globalproperties-plugin");
+        }
+        Path inputFilePath = basePath.resolve("src/main/resources/json/input.json");
+        Path outputFilePath = basePath.resolve("src/main/resources/json/output/output.json");
 
         TranslatorController translatorController = TranslatorController.builder()
-                .addTranslator(GlobalPropertiesTranslator.getTranslatorRW(inputFileName, outputFileName))
+                .addTranslator(GlobalPropertiesTranslator.getTranslatorRW(inputFilePath.toString(), outputFilePath.toString()))
                 .addTranslator(PropertiesTranslator.getTranslator())
                 .addTranslatorSpec(new TestGlobalPropertyIdTranslatorSpec())
                 .build();

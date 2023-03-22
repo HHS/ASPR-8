@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
@@ -33,12 +34,17 @@ public class AppTest {
 
     @Test
     public void testResourcesTranslator() {
+        Path basePath = Path.of("").toAbsolutePath();
 
-        String inputFileName = "./resources-plugin/src/main/resources/json/input.json";
-        String outputFileName = "./resources-plugin/src/main/resources/json/output/output.json";
+        if (!basePath.endsWith("resources-plugin")) {
+            basePath = basePath.resolve("resources-plugin");
+        }
+
+        Path inputFilePath = basePath.resolve("src/main/resources/json/input.json");
+        Path outputFilePath = basePath.resolve("src/main/resources/json/output/output.json");
 
         TranslatorController translatorController = TranslatorController.builder()
-                .addTranslator(ResourcesTranslator.getTranslatorRW(inputFileName, outputFileName))
+                .addTranslator(ResourcesTranslator.getTranslatorRW(inputFilePath.toString(), outputFilePath.toString()))
                 .addTranslator(PropertiesTranslator.getTranslator())
                 .addTranslator(PeopleTranslator.getTranslator())
                 .addTranslator(RegionsTranslator.getTranslatorModule())

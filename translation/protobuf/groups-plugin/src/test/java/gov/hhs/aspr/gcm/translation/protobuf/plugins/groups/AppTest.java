@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.LinkedHashSet;
@@ -34,13 +35,19 @@ import util.wrappers.MultiKey;
 public class AppTest {
 
     @Test
-    public void testGroupsPluginTranslator() {
+    public void testGroupsTranslator() {
 
-        String inputFileName = "./groups-plugin/src/main/resources/json/input.json";
-        String outputFileName = "./groups-plugin/src/main/resources/json/output/output.json";
+        Path basePath = Path.of("").toAbsolutePath();
+
+        if (!basePath.endsWith("groups-plugin")) {
+            basePath = basePath.resolve("groups-plugin");
+        }
+
+        Path inputFilePath = basePath.resolve("src/main/resources/json/input.json");
+        Path outputFilePath = basePath.resolve("src/main/resources/json/output/output.json");
 
         TranslatorController translatorController = TranslatorController.builder()
-                .addTranslator(GroupsTranslator.getTranslatorRW(inputFileName, outputFileName))
+                .addTranslator(GroupsTranslator.getTranslatorRW(inputFilePath.toString(), outputFilePath.toString()))
                 .addTranslator(PropertiesTranslator.getTranslator())
                 .addTranslator(PeopleTranslator.getTranslator())
                 .addTranslatorSpec(new TestGroupTypeIdTranslatorSpec())

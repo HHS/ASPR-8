@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
@@ -31,13 +32,18 @@ import util.random.RandomGeneratorProvider;
 public class AppTest {
 
     @Test
-    public void testregionsTranslator() {
+    public void testRegionsTranslator() {
+        Path basePath = Path.of("").toAbsolutePath();
 
-        String inputFileName = "./regions-plugin/src/main/resources/json/input.json";
-        String outputFileName = "./regions-plugin/src/main/resources/json/output/output.json";
+        if (!basePath.endsWith("regions-plugin")) {
+            basePath = basePath.resolve("regions-plugin");
+        }
+
+        Path inputFilePath = basePath.resolve("src/main/resources/json/input.json");
+        Path outputFilePath = basePath.resolve("src/main/resources/json/output/output.json");
 
         TranslatorController translatorController = TranslatorController.builder()
-                .addTranslator(RegionsTranslator.getTranslatorRW(inputFileName, outputFileName))
+                .addTranslator(RegionsTranslator.getTranslatorRW(inputFilePath.toString(), outputFilePath.toString()))
                 .addTranslator(PropertiesTranslator.getTranslator())
                 .addTranslator(PeopleTranslator.getTranslator())
                 .addTranslatorSpec(new TestRegionIdTranslatorSpec())

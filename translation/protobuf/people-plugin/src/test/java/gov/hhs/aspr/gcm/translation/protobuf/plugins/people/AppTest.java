@@ -2,6 +2,7 @@ package gov.hhs.aspr.gcm.translation.protobuf.plugins.people;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,12 +17,17 @@ public class AppTest {
 
     @Test
     public void testPeopleTranslator() {
+        Path basePath = Path.of("").toAbsolutePath();
 
-        String inputFileName = "./people-plugin/src/main/resources/json/input.json";
-        String outputFileName = "./people-plugin/src/main/resources/json/output/output.json";
+        if (!basePath.endsWith("people-plugin")) {
+            basePath = basePath.resolve("people-plugin");
+        }
+
+        Path inputFilePath = basePath.resolve("src/main/resources/json/input.json");
+        Path outputFilePath = basePath.resolve("src/main/resources/json/output/output.json");
 
         TranslatorController translatorController = TranslatorController.builder()
-                .addTranslator(PeopleTranslator.getTranslatorRW(inputFileName, outputFileName))
+                .addTranslator(PeopleTranslator.getTranslatorRW(inputFilePath.toString(), outputFilePath.toString()))
                 .build();
 
         List<PluginData> pluginDatas = translatorController.readInput().getPluginDatas();

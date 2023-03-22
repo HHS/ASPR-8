@@ -3,6 +3,7 @@ package gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
@@ -29,12 +30,18 @@ public class AppTest {
 
     @Test
     public void testPersonPropertiesTranslator() {
+        Path basePath = Path.of("").toAbsolutePath();
 
-        String inputFileName = "./personproperties-plugin/src/main/resources/json/input.json";
-        String outputFileName = "./personproperties-plugin/src/main/resources/json/output/output.json";
+        if (!basePath.endsWith("personproperties-plugin")) {
+            basePath = basePath.resolve("personproperties-plugin");
+        }
+
+        Path inputFilePath = basePath.resolve("src/main/resources/json/input.json");
+        Path outputFilePath = basePath.resolve("src/main/resources/json/output/output.json");
 
         TranslatorController translatorController = TranslatorController.builder()
-                .addTranslator(PersonPropertiesTranslator.getTranslatorRW(inputFileName, outputFileName))
+                .addTranslator(
+                        PersonPropertiesTranslator.getTranslatorRW(inputFilePath.toString(), outputFilePath.toString()))
                 .addTranslator(PropertiesTranslator.getTranslator())
                 .addTranslator(PeopleTranslator.getTranslator())
                 .addTranslatorSpec(new TestPersonPropertyIdTranslatorSpec())
