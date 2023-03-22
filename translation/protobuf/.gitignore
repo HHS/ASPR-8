@@ -327,6 +327,6 @@ Temporary Items
 **/target/*
 proto/outDir/*
 **/output/*.json
-**/.flattened-pom.xml
+.flattened-pom.xml
 **/.gitignore
 .vscode
