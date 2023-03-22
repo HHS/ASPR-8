@@ -329,3 +329,4 @@ proto/outDir/*
 **/output/*.json
 **/.flattened-pom.xml
 **/.gitignore
+.vscode
