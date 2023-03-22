@@ -24,9 +24,7 @@ public final class PersonResourceReportPluginData implements PluginData {
 	 */
 	private static class Data {
 		private ReportLabel reportLabel;
-		private ReportPeriod reportPeriod;
-		private boolean reportPeopleWithoutResources;
-		private boolean reportZeroPopulations;
+		private ReportPeriod reportPeriod;		
 		
 		private Set<ResourceId> includedResourceIds = new LinkedHashSet<>();
 		private Set<ResourceId> excludedResourceIds = new LinkedHashSet<>();
@@ -40,8 +38,6 @@ public final class PersonResourceReportPluginData implements PluginData {
 		private Data(Data data) {
 			reportLabel = data.reportLabel;
 			reportPeriod = data.reportPeriod;
-			reportPeopleWithoutResources = data.reportPeopleWithoutResources;
-			reportZeroPopulations = data.reportZeroPopulations;
 			includedResourceIds.addAll(data.includedResourceIds);
 			excludedResourceIds.addAll(data.excludedResourceIds);
 			defaultInclusionPolicy = data.defaultInclusionPolicy;
@@ -56,9 +52,7 @@ public final class PersonResourceReportPluginData implements PluginData {
 			result = prime * result + ((excludedResourceIds == null) ? 0 : excludedResourceIds.hashCode());
 			result = prime * result + ((includedResourceIds == null) ? 0 : includedResourceIds.hashCode());
 			result = prime * result + ((reportLabel == null) ? 0 : reportLabel.hashCode());
-			result = prime * result + (reportPeopleWithoutResources ? 1231 : 1237);
 			result = prime * result + ((reportPeriod == null) ? 0 : reportPeriod.hashCode());
-			result = prime * result + (reportZeroPopulations ? 1231 : 1237);
 			return result;
 		}
 
@@ -94,16 +88,10 @@ public final class PersonResourceReportPluginData implements PluginData {
 				}
 			} else if (!reportLabel.equals(other.reportLabel)) {
 				return false;
-			}
-			if (reportPeopleWithoutResources != other.reportPeopleWithoutResources) {
-				return false;
-			}
+			}			
 			if (reportPeriod != other.reportPeriod) {
 				return false;
-			}
-			if (reportZeroPopulations != other.reportZeroPopulations) {
-				return false;
-			}
+			}			
 			return true;
 		}
 	}
@@ -182,23 +170,7 @@ public final class PersonResourceReportPluginData implements PluginData {
 			return this;
 		}
 		
-		/**
-		 * Sets the policy for reporting people without resources. Defaulted to false.
-		 */
-		public Builder setReportPeopleWithoutResources(boolean reportPeopleWithoutResources) {
-			ensureDataMutability();
-			data.reportPeopleWithoutResources = reportPeopleWithoutResources;
-			return this;
-		}
 		
-		/**
-		 * Sets the policy for reporting resources without assigned people. Defaulted to false.
-		 */
-		public Builder setReportZeroPopulations(boolean reportZeroPopulations) {
-			ensureDataMutability();
-			data.reportZeroPopulations = reportZeroPopulations;
-			return this;
-		}
 
 		/**
 		 * Selects the given resource id to be included in the report.
@@ -302,13 +274,6 @@ public final class PersonResourceReportPluginData implements PluginData {
 
 	public boolean getDefaultInclusionPolicy() {
 		return data.defaultInclusionPolicy;
-	}
-	
-	public boolean getReportPeopleWithoutResources() {
-		return data.reportPeopleWithoutResources;
-	}
-	public boolean getReportZeroPopulations() {
-		return data.reportZeroPopulations;
 	}
 
 	@Override

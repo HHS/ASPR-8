@@ -21,7 +21,7 @@ public class AT_ResourcesPlugin {
 	public void testGetResourcesPlugin() {
 
 		ResourcesPluginData resourcesPluginData = ResourcesPluginData.builder().build();
-		Plugin resourcesPlugin = ResourcesPlugin.getResourcesPlugin(resourcesPluginData);
+		Plugin resourcesPlugin = ResourcesPlugin.builder().setResourcesPluginData(resourcesPluginData).getResourcesPlugin();
 
 		assertEquals(1, resourcesPlugin.getPluginDatas().size());
 		assertTrue(resourcesPlugin.getPluginDatas().contains(resourcesPluginData));

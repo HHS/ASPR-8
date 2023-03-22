@@ -17,7 +17,7 @@ import plugins.resources.support.ResourcePropertyId;
  *
  * Fields
  *
- * Time -- the time in days when the global resource was set
+ * Time -- the time in days when the resource property was set
  *
  * Resource -- the resource identifier
  *

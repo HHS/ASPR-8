@@ -99,68 +99,6 @@ public class AT_PersonResourceReportPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = PersonResourceReportPluginData.Builder.class, name = "setReportPeopleWithoutResources(boolean)", args = { boolean.class })
-	public void testSetReportPeopleWithoutResources() {
-		ReportLabel reportLabel = new SimpleReportLabel("report label");
-		ReportPeriod reportPeriod = ReportPeriod.DAILY;
-
-		// show the default value is false
-		PersonResourceReportPluginData personResourceReportPluginData = //
-				PersonResourceReportPluginData	.builder()//
-												.setReportPeriod(reportPeriod)//
-												.setReportLabel(reportLabel)//
-												.build();
-		assertEquals(false, personResourceReportPluginData.getReportPeopleWithoutResources());
-
-		personResourceReportPluginData = //
-				PersonResourceReportPluginData	.builder()//
-												.setReportPeriod(reportPeriod)//
-												.setReportLabel(reportLabel)//
-												.setReportPeopleWithoutResources(true)//
-												.build();
-		assertEquals(true, personResourceReportPluginData.getReportPeopleWithoutResources());
-
-		personResourceReportPluginData = //
-				PersonResourceReportPluginData	.builder()//
-												.setReportPeriod(reportPeriod)//
-												.setReportLabel(reportLabel)//
-												.setReportPeopleWithoutResources(false)//
-												.build();
-		assertEquals(false, personResourceReportPluginData.getReportPeopleWithoutResources());
-	}
-
-	@Test
-	@UnitTestMethod(target = PersonResourceReportPluginData.Builder.class, name = "setReportZeroPopulations(boolean)", args = { boolean.class })
-	public void testSetReportZeroPopulations() {
-		ReportLabel reportLabel = new SimpleReportLabel("report label");
-		ReportPeriod reportPeriod = ReportPeriod.DAILY;
-
-		// show the default value is false
-		PersonResourceReportPluginData personResourceReportPluginData = //
-				PersonResourceReportPluginData	.builder()//
-												.setReportPeriod(reportPeriod)//
-												.setReportLabel(reportLabel)//
-												.build();
-		assertEquals(false, personResourceReportPluginData.getReportZeroPopulations());
-
-		personResourceReportPluginData = //
-				PersonResourceReportPluginData	.builder()//
-												.setReportPeriod(reportPeriod)//
-												.setReportLabel(reportLabel)//
-												.setReportZeroPopulations(true)//
-												.build();
-		assertEquals(true, personResourceReportPluginData.getReportZeroPopulations());
-
-		personResourceReportPluginData = //
-				PersonResourceReportPluginData	.builder()//
-												.setReportPeriod(reportPeriod)//
-												.setReportLabel(reportLabel)//
-												.setReportZeroPopulations(false)//
-												.build();
-		assertEquals(false, personResourceReportPluginData.getReportZeroPopulations());
-	}
-
-	@Test
 	@UnitTestMethod(target = PersonResourceReportPluginData.Builder.class, name = "setDefaultInclusion", args = { boolean.class })
 	public void testSetDefaultInclusion() {
 		ReportLabel reportLabel = new SimpleReportLabel("report label");
@@ -487,8 +425,6 @@ public class AT_PersonResourceReportPluginData {
 				PersonResourceReportPluginData	.builder()//
 												.setReportPeriod(reportPeriod)//
 												.setReportLabel(reportLabel)//
-												.setReportPeopleWithoutResources(true)//
-												.setReportZeroPopulations(true)//
 												.includeResourceId(TestResourceId.RESOURCE_1).excludeResourceId(TestResourceId.RESOURCE_2)//
 												.setDefaultInclusion(false)//
 												.build();
@@ -553,9 +489,6 @@ public class AT_PersonResourceReportPluginData {
 				}
 			}
 
-			builder.setReportPeopleWithoutResources(randomGenerator.nextBoolean());
-			builder.setReportZeroPopulations(randomGenerator.nextBoolean());
-
 			builder.setDefaultInclusion(randomGenerator.nextBoolean()).build();
 
 			PersonResourceReportPluginData personResourceReportPluginData = builder.build();
@@ -589,14 +522,6 @@ public class AT_PersonResourceReportPluginData {
 			builder1.setReportPeriod(reportPeriod);
 			builder2.setReportPeriod(reportPeriod);
 
-			boolean reportPeopleWithoutResources = randomGenerator.nextBoolean();
-			builder1.setReportPeopleWithoutResources(reportPeopleWithoutResources);//
-			builder2.setReportPeopleWithoutResources(reportPeopleWithoutResources);//
-
-			boolean reportZeroPopulations = randomGenerator.nextBoolean();
-			builder1.setReportZeroPopulations(reportZeroPopulations);//
-			builder2.setReportZeroPopulations(reportZeroPopulations);
-
 			for (int j = 0; j < 10; j++) {
 				TestResourceId testResourceId = TestResourceId.getRandomResourceId(randomGenerator);
 				if (randomGenerator.nextBoolean()) {
@@ -623,20 +548,6 @@ public class AT_PersonResourceReportPluginData {
 			personResourceReportPluginData2 = //
 					personResourceReportPluginData1	.getCloneBuilder()//
 													.setDefaultInclusion(!defaultInclusion)//
-													.build();
-			assertNotEquals(personResourceReportPluginData2, personResourceReportPluginData1);
-
-			// change the reportPeopleWithoutResources
-			personResourceReportPluginData2 = //
-					personResourceReportPluginData1	.getCloneBuilder()//
-													.setReportPeopleWithoutResources(!reportPeopleWithoutResources)//
-													.build();
-			assertNotEquals(personResourceReportPluginData2, personResourceReportPluginData1);
-
-			// change the reportZeroPopulations
-			personResourceReportPluginData2 = //
-					personResourceReportPluginData1	.getCloneBuilder()//
-													.setReportZeroPopulations(!reportZeroPopulations)//
 													.build();
 			assertNotEquals(personResourceReportPluginData2, personResourceReportPluginData1);
 
@@ -715,14 +626,6 @@ public class AT_PersonResourceReportPluginData {
 			boolean defaultInclusion = randomGenerator.nextBoolean();
 			builder1.setDefaultInclusion(defaultInclusion).build();
 			builder2.setDefaultInclusion(defaultInclusion).build();
-
-			boolean reportPeopleWithoutResources = randomGenerator.nextBoolean();
-			builder1.setReportPeopleWithoutResources(reportPeopleWithoutResources);//
-			builder2.setReportPeopleWithoutResources(reportPeopleWithoutResources);//
-
-			boolean reportZeroPopulations = randomGenerator.nextBoolean();
-			builder1.setReportZeroPopulations(reportZeroPopulations);//
-			builder2.setReportZeroPopulations(reportZeroPopulations);
 
 			PersonResourceReportPluginData personResourceReportPluginData1 = builder1.build();
 			PersonResourceReportPluginData personResourceReportPluginData2 = builder2.build();
