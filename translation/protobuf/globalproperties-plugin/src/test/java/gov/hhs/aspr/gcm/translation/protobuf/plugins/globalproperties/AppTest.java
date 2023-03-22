@@ -19,24 +19,6 @@ import plugins.util.properties.PropertyDefinition;
 
 public class AppTest {
 
-    private static void checkSame(GlobalPropertiesPluginData actualPluginData) {
-
-        Set<TestGlobalPropertyId> expectedPropertyIds = EnumSet.allOf(TestGlobalPropertyId.class);
-
-        Set<GlobalPropertyId> actualGlobalPropertyIds = actualPluginData.getGlobalPropertyIds();
-        assertEquals(expectedPropertyIds, actualGlobalPropertyIds);
-
-        for (TestGlobalPropertyId testGlobalPropertyId : TestGlobalPropertyId.values()) {
-            PropertyDefinition expectedPropertyDefinition = testGlobalPropertyId.getPropertyDefinition();
-            PropertyDefinition actualPropertyDefinition = actualPluginData
-                    .getGlobalPropertyDefinition(testGlobalPropertyId);
-
-            assertEquals(expectedPropertyDefinition, actualPropertyDefinition);
-
-        }
-
-    }
-
     @Test
     public void testGlobalPropertiesTranslator() {
         String inputFileName = "./globalproperties-plugin/src/main/resources/json/input.json";
@@ -52,7 +34,19 @@ public class AppTest {
 
         GlobalPropertiesPluginData actualPluginData = (GlobalPropertiesPluginData) pluginDatas.get(0);
 
-        checkSame(actualPluginData);
+        Set<TestGlobalPropertyId> expectedPropertyIds = EnumSet.allOf(TestGlobalPropertyId.class);
+
+        Set<GlobalPropertyId> actualGlobalPropertyIds = actualPluginData.getGlobalPropertyIds();
+        assertEquals(expectedPropertyIds, actualGlobalPropertyIds);
+
+        for (TestGlobalPropertyId testGlobalPropertyId : TestGlobalPropertyId.values()) {
+            PropertyDefinition expectedPropertyDefinition = testGlobalPropertyId.getPropertyDefinition();
+            PropertyDefinition actualPropertyDefinition = actualPluginData
+                    .getGlobalPropertyDefinition(testGlobalPropertyId);
+
+            assertEquals(expectedPropertyDefinition, actualPropertyDefinition);
+
+        }
 
         translatorController.writeOutput();
     }
