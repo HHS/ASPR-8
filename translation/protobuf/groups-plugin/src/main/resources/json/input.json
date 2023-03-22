@@ -2,22 +2,22 @@
   "groupTypeIds": [
     {
       "id": {
-        "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-        "enumTypeUrl": "gov.hhs.aspr.gcm.TestGroupTypeIdInput",
+        "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+        "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestGroupTypeIdInput",
         "value": "GROUP_TYPE_1"
       }
     },
     {
       "id": {
-        "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-        "enumTypeUrl": "gov.hhs.aspr.gcm.TestGroupTypeIdInput",
+        "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+        "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestGroupTypeIdInput",
         "value": "GROUP_TYPE_2"
       }
     },
     {
       "id": {
-        "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-        "enumTypeUrl": "gov.hhs.aspr.gcm.TestGroupTypeIdInput",
+        "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+        "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestGroupTypeIdInput",
         "value": "GROUP_TYPE_3"
       }
     }
@@ -29,8 +29,8 @@
       },
       "groupTypeId": {
         "id": {
-          "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-          "enumTypeUrl": "gov.hhs.aspr.gcm.TestGroupTypeIdInput",
+          "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+          "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestGroupTypeIdInput",
           "value": "GROUP_TYPE_3"
         }
       }
@@ -41,8 +41,8 @@
       },
       "groupTypeId": {
         "id": {
-          "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-          "enumTypeUrl": "gov.hhs.aspr.gcm.TestGroupTypeIdInput",
+          "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+          "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestGroupTypeIdInput",
           "value": "GROUP_TYPE_3"
         }
       }
@@ -53,8 +53,8 @@
       },
       "groupTypeId": {
         "id": {
-          "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-          "enumTypeUrl": "gov.hhs.aspr.gcm.TestGroupTypeIdInput",
+          "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+          "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestGroupTypeIdInput",
           "value": "GROUP_TYPE_1"
         }
       }
@@ -65,8 +65,8 @@
       },
       "groupTypeId": {
         "id": {
-          "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-          "enumTypeUrl": "gov.hhs.aspr.gcm.TestGroupTypeIdInput",
+          "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+          "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestGroupTypeIdInput",
           "value": "GROUP_TYPE_1"
         }
       }
@@ -77,8 +77,8 @@
       },
       "groupTypeId": {
         "id": {
-          "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-          "enumTypeUrl": "gov.hhs.aspr.gcm.TestGroupTypeIdInput",
+          "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+          "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestGroupTypeIdInput",
           "value": "GROUP_TYPE_2"
         }
       }
@@ -880,18 +880,18 @@
     {
       "groupTypeId": {
         "id": {
-          "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-          "enumTypeUrl": "gov.hhs.aspr.gcm.TestGroupTypeIdInput",
+          "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+          "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestGroupTypeIdInput",
           "value": "GROUP_TYPE_1"
         }
       },
       "propertyDefinitions": [
         {
           "propertyId": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.GroupPropertyIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.GroupPropertyIdInput",
             "id": {
-              "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-              "enumTypeUrl": "gov.hhs.aspr.gcm.TestGroupPropertyIdInput",
+              "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+              "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestGroupPropertyIdInput",
               "value": "GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK"
             }
           },
@@ -905,10 +905,10 @@
         },
         {
           "propertyId": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.GroupPropertyIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.GroupPropertyIdInput",
             "id": {
-              "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-              "enumTypeUrl": "gov.hhs.aspr.gcm.TestGroupPropertyIdInput",
+              "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+              "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestGroupPropertyIdInput",
               "value": "GROUP_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK"
             }
           },
@@ -922,10 +922,10 @@
         },
         {
           "propertyId": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.GroupPropertyIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.GroupPropertyIdInput",
             "id": {
-              "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-              "enumTypeUrl": "gov.hhs.aspr.gcm.TestGroupPropertyIdInput",
+              "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+              "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestGroupPropertyIdInput",
               "value": "GROUP_PROPERTY_1_3_DOUBLE_MUTABLE_NO_TRACK"
             }
           },
@@ -942,18 +942,18 @@
     {
       "groupTypeId": {
         "id": {
-          "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-          "enumTypeUrl": "gov.hhs.aspr.gcm.TestGroupTypeIdInput",
+          "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+          "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestGroupTypeIdInput",
           "value": "GROUP_TYPE_2"
         }
       },
       "propertyDefinitions": [
         {
           "propertyId": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.GroupPropertyIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.GroupPropertyIdInput",
             "id": {
-              "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-              "enumTypeUrl": "gov.hhs.aspr.gcm.TestGroupPropertyIdInput",
+              "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+              "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestGroupPropertyIdInput",
               "value": "GROUP_PROPERTY_2_1_BOOLEAN_MUTABLE_TRACK"
             }
           },
@@ -968,10 +968,10 @@
         },
         {
           "propertyId": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.GroupPropertyIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.GroupPropertyIdInput",
             "id": {
-              "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-              "enumTypeUrl": "gov.hhs.aspr.gcm.TestGroupPropertyIdInput",
+              "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+              "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestGroupPropertyIdInput",
               "value": "GROUP_PROPERTY_2_2_INTEGER_MUTABLE_TRACK"
             }
           },
@@ -986,10 +986,10 @@
         },
         {
           "propertyId": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.GroupPropertyIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.GroupPropertyIdInput",
             "id": {
-              "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-              "enumTypeUrl": "gov.hhs.aspr.gcm.TestGroupPropertyIdInput",
+              "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+              "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestGroupPropertyIdInput",
               "value": "GROUP_PROPERTY_2_3_DOUBLE_MUTABLE_TRACK"
             }
           },
@@ -1007,18 +1007,18 @@
     {
       "groupTypeId": {
         "id": {
-          "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-          "enumTypeUrl": "gov.hhs.aspr.gcm.TestGroupTypeIdInput",
+          "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+          "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestGroupTypeIdInput",
           "value": "GROUP_TYPE_3"
         }
       },
       "propertyDefinitions": [
         {
           "propertyId": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.GroupPropertyIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.GroupPropertyIdInput",
             "id": {
-              "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-              "enumTypeUrl": "gov.hhs.aspr.gcm.TestGroupPropertyIdInput",
+              "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+              "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestGroupPropertyIdInput",
               "value": "GROUP_PROPERTY_3_1_BOOLEAN_IMMUTABLE_NO_TRACK"
             }
           },
@@ -1031,10 +1031,10 @@
         },
         {
           "propertyId": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.GroupPropertyIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.GroupPropertyIdInput",
             "id": {
-              "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-              "enumTypeUrl": "gov.hhs.aspr.gcm.TestGroupPropertyIdInput",
+              "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+              "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestGroupPropertyIdInput",
               "value": "GROUP_PROPERTY_3_2_INTEGER_IMMUTABLE_NO_TRACK"
             }
           },
@@ -1047,10 +1047,10 @@
         },
         {
           "propertyId": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.GroupPropertyIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.GroupPropertyIdInput",
             "id": {
-              "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-              "enumTypeUrl": "gov.hhs.aspr.gcm.TestGroupPropertyIdInput",
+              "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+              "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestGroupPropertyIdInput",
               "value": "GROUP_PROPERTY_3_3_DOUBLE_IMMUTABLE_NO_TRACK"
             }
           },
@@ -1072,8 +1072,8 @@
       "propertyValueMap": [
         {
           "propertyId": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestGroupPropertyIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestGroupPropertyIdInput",
             "value": "GROUP_PROPERTY_3_1_BOOLEAN_IMMUTABLE_NO_TRACK"
           },
           "propertyValue": {
@@ -1083,8 +1083,8 @@
         },
         {
           "propertyId": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestGroupPropertyIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestGroupPropertyIdInput",
             "value": "GROUP_PROPERTY_3_2_INTEGER_IMMUTABLE_NO_TRACK"
           },
           "propertyValue": {
@@ -1094,8 +1094,8 @@
         },
         {
           "propertyId": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestGroupPropertyIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestGroupPropertyIdInput",
             "value": "GROUP_PROPERTY_3_3_DOUBLE_IMMUTABLE_NO_TRACK"
           },
           "propertyValue": {
@@ -1112,8 +1112,8 @@
       "propertyValueMap": [
         {
           "propertyId": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestGroupPropertyIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestGroupPropertyIdInput",
             "value": "GROUP_PROPERTY_3_1_BOOLEAN_IMMUTABLE_NO_TRACK"
           },
           "propertyValue": {
@@ -1123,8 +1123,8 @@
         },
         {
           "propertyId": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestGroupPropertyIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestGroupPropertyIdInput",
             "value": "GROUP_PROPERTY_3_2_INTEGER_IMMUTABLE_NO_TRACK"
           },
           "propertyValue": {
@@ -1134,8 +1134,8 @@
         },
         {
           "propertyId": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestGroupPropertyIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestGroupPropertyIdInput",
             "value": "GROUP_PROPERTY_3_3_DOUBLE_IMMUTABLE_NO_TRACK"
           },
           "propertyValue": {
@@ -1152,8 +1152,8 @@
       "propertyValueMap": [
         {
           "propertyId": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestGroupPropertyIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestGroupPropertyIdInput",
             "value": "GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK"
           },
           "propertyValue": {
@@ -1163,8 +1163,8 @@
         },
         {
           "propertyId": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestGroupPropertyIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestGroupPropertyIdInput",
             "value": "GROUP_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK"
           },
           "propertyValue": {
@@ -1174,8 +1174,8 @@
         },
         {
           "propertyId": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestGroupPropertyIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestGroupPropertyIdInput",
             "value": "GROUP_PROPERTY_1_3_DOUBLE_MUTABLE_NO_TRACK"
           },
           "propertyValue": {
@@ -1192,8 +1192,8 @@
       "propertyValueMap": [
         {
           "propertyId": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestGroupPropertyIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestGroupPropertyIdInput",
             "value": "GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK"
           },
           "propertyValue": {
@@ -1203,8 +1203,8 @@
         },
         {
           "propertyId": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestGroupPropertyIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestGroupPropertyIdInput",
             "value": "GROUP_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK"
           },
           "propertyValue": {
@@ -1214,8 +1214,8 @@
         },
         {
           "propertyId": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestGroupPropertyIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestGroupPropertyIdInput",
             "value": "GROUP_PROPERTY_1_3_DOUBLE_MUTABLE_NO_TRACK"
           },
           "propertyValue": {
@@ -1232,8 +1232,8 @@
       "propertyValueMap": [
         {
           "propertyId": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestGroupPropertyIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestGroupPropertyIdInput",
             "value": "GROUP_PROPERTY_2_1_BOOLEAN_MUTABLE_TRACK"
           },
           "propertyValue": {
@@ -1243,8 +1243,8 @@
         },
         {
           "propertyId": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestGroupPropertyIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestGroupPropertyIdInput",
             "value": "GROUP_PROPERTY_2_2_INTEGER_MUTABLE_TRACK"
           },
           "propertyValue": {
@@ -1254,8 +1254,8 @@
         },
         {
           "propertyId": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestGroupPropertyIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestGroupPropertyIdInput",
             "value": "GROUP_PROPERTY_2_3_DOUBLE_MUTABLE_TRACK"
           },
           "propertyValue": {
