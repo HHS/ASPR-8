@@ -1,7 +1,9 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.properties;
 
 import gov.hhs.aspr.gcm.translation.protobuf.core.Translator;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.translatorSpecs.PropertyDefinitionMapTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.translatorSpecs.PropertyDefinitionTranslatorSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.translatorSpecs.PropertyValueMapTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.translatorSpecs.TimeTrackingPolicyTranslatorSpec;
 
 public class PropertiesTranslator {
@@ -18,6 +20,8 @@ public class PropertiesTranslator {
                 .setInitializer((translatorContext) -> {
                     translatorContext.addTranslatorSpec(new PropertyDefinitionTranslatorSpec());
                     translatorContext.addTranslatorSpec(new TimeTrackingPolicyTranslatorSpec());
+                    translatorContext.addTranslatorSpec(new PropertyValueMapTranslatorSpec());
+                    translatorContext.addTranslatorSpec(new PropertyDefinitionMapTranslatorSpec());
                 });
 
     }
