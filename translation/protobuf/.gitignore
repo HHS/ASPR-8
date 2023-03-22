@@ -325,6 +325,6 @@ Temporary Items
 
 # Begin project specific ignore
 **/target/*
-**/.gitignore
 proto/outDir/*
 **/output/*.json
+**/.flattened-pom.xml
