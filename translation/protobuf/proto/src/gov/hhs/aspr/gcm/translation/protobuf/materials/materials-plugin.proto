@@ -1,8 +1,8 @@
 syntax = "proto3";
-package gov.hhs.aspr.gcm;
+package gov.hhs.aspr.gcm.translation.protobuf;
 
 option java_multiple_files = true;
-option java_package = "gov.hhs.aspr.gcm.translation.plugins.materials.input";
+option java_package = "gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.input";
 
 import "resources-plugin.proto";
 import "properties-plugin.proto";

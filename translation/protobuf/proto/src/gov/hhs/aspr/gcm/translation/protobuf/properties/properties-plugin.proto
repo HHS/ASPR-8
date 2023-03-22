@@ -1,8 +1,8 @@
 syntax = "proto3";
-package gov.hhs.aspr.gcm;
+package gov.hhs.aspr.gcm.translation.protobuf;
 
 option java_multiple_files = true;
-option java_package = "gov.hhs.aspr.gcm.translation.plugins.properties.input";
+option java_package = "gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.input";
 
 import "google/protobuf/any.proto";
 
