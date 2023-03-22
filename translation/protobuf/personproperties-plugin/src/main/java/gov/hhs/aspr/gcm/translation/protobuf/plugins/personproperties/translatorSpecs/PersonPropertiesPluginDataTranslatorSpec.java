@@ -2,12 +2,12 @@ package gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.translato
 
 import java.util.List;
 
-import gov.hhs.aspr.gcm.translation.plugins.people.input.PersonIdInput;
-import gov.hhs.aspr.gcm.translation.plugins.personproperties.input.PersonPropertiesPluginDataInput;
-import gov.hhs.aspr.gcm.translation.plugins.personproperties.input.PersonPropertyValueMapInput;
-import gov.hhs.aspr.gcm.translation.plugins.properties.input.PropertyDefinitionInput;
-import gov.hhs.aspr.gcm.translation.plugins.properties.input.PropertyDefinitionMapInput;
-import gov.hhs.aspr.gcm.translation.plugins.properties.input.PropertyValueMapInput;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.input.PersonIdInput;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.input.PersonPropertiesPluginDataInput;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.input.PersonPropertyValueMapInput;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.input.PropertyDefinitionInput;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.input.PropertyDefinitionMapInput;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.input.PropertyValueMapInput;
 import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractTranslatorSpec;
 import plugins.people.support.PersonId;
 import plugins.personproperties.PersonPropertiesPluginData;

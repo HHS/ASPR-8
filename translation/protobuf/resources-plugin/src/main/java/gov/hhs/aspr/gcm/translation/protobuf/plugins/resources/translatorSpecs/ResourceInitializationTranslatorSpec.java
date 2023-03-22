@@ -1,7 +1,7 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.translatorSpecs;
 
-import gov.hhs.aspr.gcm.translation.plugins.resources.input.ResourceIdInput;
-import gov.hhs.aspr.gcm.translation.plugins.resources.input.ResourceInitializationInput;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.input.ResourceIdInput;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.input.ResourceInitializationInput;
 import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractTranslatorSpec;
 import plugins.resources.support.ResourceId;
 import plugins.resources.support.ResourceInitialization;

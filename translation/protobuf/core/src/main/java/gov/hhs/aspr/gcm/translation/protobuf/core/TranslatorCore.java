@@ -23,7 +23,7 @@ import com.google.protobuf.util.JsonFormat;
 import com.google.protobuf.util.JsonFormat.Parser;
 import com.google.protobuf.util.JsonFormat.Printer;
 
-import gov.hhs.aspr.gcm.translation.core.input.WrapperEnumValue;
+import gov.hhs.aspr.gcm.translation.protobuf.core.input.WrapperEnumValue;
 import gov.hhs.aspr.gcm.translation.protobuf.core.translatorSpecs.PrimitiveTranslatorSpecs;
 import nucleus.PluginData;
 

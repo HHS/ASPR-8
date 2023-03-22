@@ -1,6 +1,6 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.translatorSpecs;
 
-import gov.hhs.aspr.gcm.translation.plugins.properties.input.PropertyValueMapInput;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.input.PropertyValueMapInput;
 import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.simobjects.PropertyValueMap;
 

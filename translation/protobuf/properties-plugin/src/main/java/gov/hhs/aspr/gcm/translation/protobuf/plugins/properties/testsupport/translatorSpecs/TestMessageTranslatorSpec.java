@@ -1,7 +1,7 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.testsupport.translatorSpecs;
 
-import gov.hhs.aspr.gcm.translation.plugins.properties.testsupport.input.Layer1;
-import gov.hhs.aspr.gcm.translation.plugins.properties.testsupport.input.TestMessage;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.testsupport.input.Layer1;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.testsupport.input.TestMessage;
 import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.testsupport.simobjects.Layer1SimObject;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.testsupport.simobjects.TestMessageSimObject;

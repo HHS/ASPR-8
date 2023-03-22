@@ -1,6 +1,6 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.translatorSpecs;
 
-import gov.hhs.aspr.gcm.translation.plugins.materials.input.StageIdInput;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.input.StageIdInput;
 import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractTranslatorSpec;
 import plugins.materials.support.StageId;
 

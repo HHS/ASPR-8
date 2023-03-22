@@ -1,7 +1,7 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.people;
 
-import gov.hhs.aspr.gcm.translation.plugins.people.input.PeoplePluginDataInput;
-import gov.hhs.aspr.gcm.translation.plugins.people.input.PersonIdInput;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.input.PeoplePluginDataInput;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.input.PersonIdInput;
 import gov.hhs.aspr.gcm.translation.protobuf.core.Translator;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.translatorSpecs.PeoplePluginDataTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.translatorSpecs.PersonIdTranslatorSpec;

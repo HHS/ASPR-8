@@ -1,6 +1,6 @@
 package gov.hss.aspr.gcm.translation.protobuf.nucleus;
 
-import gov.hhs.aspr.gcm.translation.nucleus.input.SimulationTimeInput;
+import gov.hhs.aspr.gcm.translation.protobuf.nucleus.input.SimulationTimeInput;
 import gov.hhs.aspr.gcm.translation.protobuf.core.Translator;
 import gov.hss.aspr.gcm.translation.protobuf.nucleus.translatorSpecs.SimulationTimeTranslatorSpec;
 

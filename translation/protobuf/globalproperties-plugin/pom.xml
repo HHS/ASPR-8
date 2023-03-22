@@ -16,8 +16,15 @@
     <dependencies>
         <dependency>
             <groupId>gov.hhs.aspr.gcm.translation.protobuf</groupId>
+            <artifactId>core</artifactId>
+            <version>${revision}</version>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>gov.hhs.aspr.gcm.translation.protobuf</groupId>
             <artifactId>properties-plugin-translator</artifactId>
             <version>${revision}</version>
+            <optional>true</optional>
         </dependency>
     </dependencies>
 
@@ -70,8 +77,8 @@
                 </executions>
                 <configuration>
                     <protocArtifact>com.google.protobuf:protoc:${protoc.version}:exe:${os.detected.classifier}</protocArtifact>
-                    <protoSourceRoot>${project.build.outputDirectory}/gov/hhs/aspr/gcm/globalproperties</protoSourceRoot>
-                    <additionalProtoPathElements>${project.build.outputDirectory}/gov/hhs/aspr/gcm/properties</additionalProtoPathElements>
+                    <protoSourceRoot>${project.build.outputDirectory}/gov/hhs/aspr/gcm/translation/protobuf/globalproperties</protoSourceRoot>
+                    <additionalProtoPathElements>${project.build.outputDirectory}/gov/hhs/aspr/gcm/translation/protobuf/properties</additionalProtoPathElements>
                     <attachProtoSources>false</attachProtoSources>
                 </configuration>
             </plugin>

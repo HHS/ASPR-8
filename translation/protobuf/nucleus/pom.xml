@@ -11,12 +11,12 @@
     <artifactId>nucleus-translator</artifactId>
     <name>gcm.translation :: protobuf :: nucleus-translator</name>
 
-
     <dependencies>
         <dependency>
             <groupId>gov.hhs.aspr.gcm.translation.protobuf</groupId>
             <artifactId>core</artifactId>
             <version>${revision}</version>
+            <optional>true</optional>
         </dependency>
     </dependencies>
 
@@ -69,9 +69,9 @@
                 </executions>
                 <configuration>
                     <protocArtifact>com.google.protobuf:protoc:${protoc.version}:exe:${os.detected.classifier}</protocArtifact>
-                    <protoSourceRoot>${project.build.outputDirectory}/gov/hhs/aspr/gcm/nucleus</protoSourceRoot>
+                    <protoSourceRoot>${project.build.outputDirectory}/gov/hhs/aspr/gcm/translation/protobuf/nucleus</protoSourceRoot>
                     <additionalProtoPathElements>
-                        <additionalProtoPathElement>${project.build.outputDirectory}/gov/hhs/aspr/gcm/core</additionalProtoPathElement>
+                        <additionalProtoPathElement>${project.build.outputDirectory}/gov/hhs/aspr/gcm/translation/protobuf/core</additionalProtoPathElement>
                     </additionalProtoPathElements>
                     <attachProtoSources>false</attachProtoSources>
                 </configuration>

@@ -1,6 +1,6 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.resources;
 
-import gov.hhs.aspr.gcm.translation.plugins.resources.input.ResourcesPluginDataInput;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.input.ResourcesPluginDataInput;
 import gov.hhs.aspr.gcm.translation.protobuf.core.Translator;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.PeopleTranslatorId;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.PropertiesTranslatorId;

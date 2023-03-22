@@ -8,8 +8,8 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.translatorSpecs.Grou
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.PeopleTranslatorId;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.PropertiesTranslatorId;
 import plugins.groups.GroupsPluginData;
-import gov.hhs.aspr.gcm.translation.plugins.groups.input.GroupIdInput;
-import gov.hhs.aspr.gcm.translation.plugins.groups.input.GroupsPluginDataInput;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.input.GroupIdInput;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.input.GroupsPluginDataInput;
 
 public class GroupsTranslator {
     private GroupsTranslator() {

@@ -1,16 +1,16 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.translatorSpecs;
 
-import gov.hhs.aspr.gcm.translation.plugins.people.input.PersonIdInput;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.input.PersonIdInput;
 import plugins.people.support.PersonId;
-import gov.hhs.aspr.gcm.translation.plugins.properties.input.PropertyDefinitionInput;
-import gov.hhs.aspr.gcm.translation.plugins.properties.input.PropertyDefinitionMapInput;
-import gov.hhs.aspr.gcm.translation.plugins.properties.input.PropertyValueMapInput;
-import gov.hhs.aspr.gcm.translation.plugins.properties.input.TimeTrackingPolicyInput;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.input.PropertyDefinitionInput;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.input.PropertyDefinitionMapInput;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.input.PropertyValueMapInput;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.input.TimeTrackingPolicyInput;
 import plugins.regions.RegionsPluginData;
-import gov.hhs.aspr.gcm.translation.plugins.regions.input.RegionIdInput;
-import gov.hhs.aspr.gcm.translation.plugins.regions.input.RegionMembershipInput;
-import gov.hhs.aspr.gcm.translation.plugins.regions.input.RegionPropertyValueMapInput;
-import gov.hhs.aspr.gcm.translation.plugins.regions.input.RegionsPluginDataInput;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.input.RegionIdInput;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.input.RegionMembershipInput;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.input.RegionPropertyValueMapInput;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.input.RegionsPluginDataInput;
 import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractTranslatorSpec;
 import plugins.regions.support.RegionId;
 import plugins.regions.support.RegionPropertyId;

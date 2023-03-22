@@ -2,7 +2,7 @@ package gov.hss.aspr.gcm.translation.protobuf.nucleus;
 
 import java.util.List;
 
-import gov.hhs.aspr.gcm.translation.nucleus.input.SimulationTimeInput;
+import gov.hhs.aspr.gcm.translation.protobuf.nucleus.input.SimulationTimeInput;
 import gov.hhs.aspr.gcm.translation.protobuf.core.TranslatorController;
 import nucleus.SimulationTime;
 

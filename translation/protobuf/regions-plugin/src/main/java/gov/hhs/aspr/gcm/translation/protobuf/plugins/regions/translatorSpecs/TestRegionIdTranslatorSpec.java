@@ -1,6 +1,6 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.translatorSpecs;
 
-import gov.hhs.aspr.gcm.translation.plugins.regions.input.TestRegionIdInput;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.input.TestRegionIdInput;
 import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractTranslatorSpec;
 import plugins.regions.testsupport.TestRegionId;
 

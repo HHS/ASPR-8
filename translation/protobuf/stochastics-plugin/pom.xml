@@ -18,6 +18,7 @@
             <groupId>gov.hhs.aspr.gcm.translation.protobuf</groupId>
             <artifactId>core</artifactId>
             <version>${revision}</version>
+            <optional>true</optional>
         </dependency>
     </dependencies>
 
@@ -70,7 +71,7 @@
                 </executions>
                 <configuration>
                     <protocArtifact>com.google.protobuf:protoc:${protoc.version}:exe:${os.detected.classifier}</protocArtifact>
-                    <protoSourceRoot>${project.build.outputDirectory}/gov/hhs/aspr/gcm/stochastics</protoSourceRoot>
+                    <protoSourceRoot>${project.build.outputDirectory}/gov/hhs/aspr/gcm/translation/protobuf/stochastics</protoSourceRoot>
                     <attachProtoSources>false</attachProtoSources>
                 </configuration>
             </plugin>

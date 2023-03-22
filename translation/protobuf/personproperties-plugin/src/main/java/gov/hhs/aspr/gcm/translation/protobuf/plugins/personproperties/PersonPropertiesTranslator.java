@@ -6,7 +6,7 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.translator
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.translatorSpecs.PersonPropertyIdTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.PropertiesTranslatorId;
 import plugins.personproperties.PersonPropertiesPluginData;
-import gov.hhs.aspr.gcm.translation.plugins.personproperties.input.PersonPropertiesPluginDataInput;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.input.PersonPropertiesPluginDataInput;
 
 public class PersonPropertiesTranslator {
     private PersonPropertiesTranslator() {

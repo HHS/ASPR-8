@@ -1,6 +1,6 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.translatorSpecs;
 
-import gov.hhs.aspr.gcm.translation.plugins.personproperties.input.PersonPropertyIdInput;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.input.PersonPropertyIdInput;
 import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractTranslatorSpec;
 import plugins.personproperties.support.PersonPropertyId;
 

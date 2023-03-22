@@ -1,6 +1,6 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.translatorSpecs;
 
-import gov.hhs.aspr.gcm.translation.plugins.groups.input.SimpleGroupTypeIdInput;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.input.SimpleGroupTypeIdInput;
 import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.simobjects.SimpleGroupTypeId;
 

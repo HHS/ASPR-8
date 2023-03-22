@@ -13,7 +13,7 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.testsupport.tran
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.testsupport.translatorSpecs.TestMessageTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.translatorSpecs.PropertyDefinitionMapTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.translatorSpecs.PropertyValueMapTranslatorSpec;
-import gov.hhs.aspr.gcm.translation.plugins.properties.input.PropertyValueMapInput;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.input.PropertyValueMapInput;
 
 public class App {
 

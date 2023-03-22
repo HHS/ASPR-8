@@ -1,9 +1,9 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.globalproperties.translatorSpecs;
 
-import gov.hhs.aspr.gcm.translation.plugins.globalproperties.input.GlobalPropertiesPluginDataInput;
-import gov.hhs.aspr.gcm.translation.plugins.properties.input.PropertyDefinitionInput;
-import gov.hhs.aspr.gcm.translation.plugins.properties.input.PropertyDefinitionMapInput;
-import gov.hhs.aspr.gcm.translation.plugins.properties.input.PropertyValueMapInput;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.globalproperties.input.GlobalPropertiesPluginDataInput;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.input.PropertyDefinitionInput;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.input.PropertyDefinitionMapInput;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.input.PropertyValueMapInput;
 import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractTranslatorSpec;
 import plugins.globalproperties.GlobalPropertiesPluginData;
 import plugins.globalproperties.support.GlobalPropertyId;

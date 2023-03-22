@@ -5,7 +5,7 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.globalproperties.translator
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.globalproperties.translatorSpecs.GlobalPropertyIdTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.PropertiesTranslatorId;
 import plugins.globalproperties.GlobalPropertiesPluginData;
-import gov.hhs.aspr.gcm.translation.plugins.globalproperties.input.GlobalPropertiesPluginDataInput;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.globalproperties.input.GlobalPropertiesPluginDataInput;
 
 public class GlobalPropertiesTranslator {
 

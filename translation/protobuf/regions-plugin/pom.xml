@@ -16,19 +16,21 @@
     <dependencies>
         <dependency>
             <groupId>gov.hhs.aspr.gcm.translation.protobuf</groupId>
+            <artifactId>core</artifactId>
+            <version>${revision}</version>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>gov.hhs.aspr.gcm.translation.protobuf</groupId>
             <artifactId>properties-plugin-translator</artifactId>
             <version>${revision}</version>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>gov.hhs.aspr.gcm.translation.protobuf</groupId>
             <artifactId>people-plugin-translator</artifactId>
             <version>${revision}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>gov.hhs.aspr.gcm.translation.protobuf</groupId>
-                    <artifactId>core</artifactId>
-                </exclusion>
-            </exclusions>
+            <optional>true</optional>
         </dependency>
     </dependencies>
 
@@ -81,10 +83,10 @@
                 </executions>
                 <configuration>
                     <protocArtifact>com.google.protobuf:protoc:${protoc.version}:exe:${os.detected.classifier}</protocArtifact>
-                    <protoSourceRoot>${project.build.outputDirectory}/gov/hhs/aspr/gcm/regions</protoSourceRoot>
+                    <protoSourceRoot>${project.build.outputDirectory}/gov/hhs/aspr/gcm/translation/protobuf/regions</protoSourceRoot>
                     <additionalProtoPathElements>
-                        <additionalProtoPathElement>${project.build.outputDirectory}/gov/hhs/aspr/gcm/properties</additionalProtoPathElement>
-                        <additionalProtoPathElement>${project.build.outputDirectory}/gov/hhs/aspr/gcm/people</additionalProtoPathElement>
+                        <additionalProtoPathElement>${project.build.outputDirectory}/gov/hhs/aspr/gcm/translation/protobuf/properties</additionalProtoPathElement>
+                        <additionalProtoPathElement>${project.build.outputDirectory}/gov/hhs/aspr/gcm/translation/protobuf/people</additionalProtoPathElement>
                     </additionalProtoPathElements>
                     <attachProtoSources>false</attachProtoSources>
                 </configuration>

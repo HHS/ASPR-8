@@ -1,6 +1,6 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.stochastics.translatorSpecs;
 
-import gov.hhs.aspr.gcm.translation.plugins.stochastics.input.TestRandomGeneratorIdInput;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.stochastics.input.TestRandomGeneratorIdInput;
 import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractTranslatorSpec;
 import plugins.stochastics.testsupport.TestRandomGeneratorId;
 

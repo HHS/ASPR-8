@@ -1,6 +1,6 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.translatorSpecs;
 
-import gov.hhs.aspr.gcm.translation.plugins.resources.input.TestResourceIdInput;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.input.TestResourceIdInput;
 import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractTranslatorSpec;
 import plugins.resources.testsupport.TestResourceId;
 

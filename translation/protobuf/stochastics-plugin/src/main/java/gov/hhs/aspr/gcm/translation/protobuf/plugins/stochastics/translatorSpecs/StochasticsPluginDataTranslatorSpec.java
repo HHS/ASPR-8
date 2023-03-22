@@ -1,7 +1,7 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.stochastics.translatorSpecs;
 
-import gov.hhs.aspr.gcm.translation.plugins.stochastics.input.RandomNumberGeneratorIdInput;
-import gov.hhs.aspr.gcm.translation.plugins.stochastics.input.StochasticsPluginDataInput;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.stochastics.input.RandomNumberGeneratorIdInput;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.stochastics.input.StochasticsPluginDataInput;
 import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractTranslatorSpec;
 import plugins.stochastics.StochasticsPluginData;
 import plugins.stochastics.support.RandomNumberGeneratorId;

@@ -11,9 +11,9 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.translatorSpecs.S
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.PropertiesTranslatorId;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.ResourcesTranslatorId;
 import plugins.materials.MaterialsPluginData;
-import gov.hhs.aspr.gcm.translation.plugins.materials.input.BatchIdInput;
-import gov.hhs.aspr.gcm.translation.plugins.materials.input.MaterialsPluginDataInput;
-import gov.hhs.aspr.gcm.translation.plugins.materials.input.StageIdInput;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.input.BatchIdInput;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.input.MaterialsPluginDataInput;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.input.StageIdInput;
 
 public class MaterialsTranslator {
     private MaterialsTranslator() {

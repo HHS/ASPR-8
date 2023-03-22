@@ -62,7 +62,7 @@
                 </executions>
                 <configuration>
                     <protocArtifact>com.google.protobuf:protoc:${protoc.version}:exe:${os.detected.classifier}</protocArtifact>
-                    <protoSourceRoot>${project.build.outputDirectory}/gov/hhs/aspr/gcm/core</protoSourceRoot>
+                    <protoSourceRoot>${project.build.outputDirectory}/gov/hhs/aspr/gcm/translation/protobuf/core</protoSourceRoot>
                     <attachProtoSources>false</attachProtoSources>
                 </configuration>
             </plugin>
