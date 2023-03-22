@@ -1,6 +1,6 @@
 package lesson.translatorSpecs;
 
-import gov.hhs.aspr.gcm.translation.core.AbstractTranslatorSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractTranslatorSpec;
 import lesson.input.GlobalPropertyInput;
 import lesson.plugins.model.GlobalProperty;
 

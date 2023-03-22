@@ -63,37 +63,7 @@
         </dependency>
 		 <dependency>
 			<groupId>gov.hhs.aspr.gcm.translation.protobuf</groupId>
-			<artifactId>core</artifactId>
-			<version>${gcm.proto-definitions.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>gov.hhs.aspr.gcm.translation.protobuf</groupId>
-			<artifactId>nucleus-translator</artifactId>
-			<version>${gcm.proto-definitions.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>gov.hhs.aspr.gcm.translation.protobuf</groupId>
-			<artifactId>regions-plugin-translator</artifactId>
-			<version>${gcm.proto-definitions.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>gov.hhs.aspr.gcm.translation.protobuf</groupId>
-			<artifactId>people-plugin-translator</artifactId>
-			<version>${gcm.proto-definitions.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>gov.hhs.aspr.gcm.translation.protobuf</groupId>
-			<artifactId>stochastics-plugin-translator</artifactId>
-			<version>${gcm.proto-definitions.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>gov.hhs.aspr.gcm.translation.protobuf</groupId>
-			<artifactId>globalproperties-plugin-translator</artifactId>
-			<version>${gcm.proto-definitions.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>gov.hhs.aspr.gcm.translation.protobuf</groupId>
-			<artifactId>personproperties-plugin-translator</artifactId>
+			<artifactId>plugin-translators-all</artifactId>
 			<version>${gcm.proto-definitions.version}</version>
 		</dependency>
 		<dependency>
