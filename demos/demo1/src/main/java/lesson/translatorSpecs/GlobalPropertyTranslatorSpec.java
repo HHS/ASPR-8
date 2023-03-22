@@ -1,13 +1,10 @@
 package lesson.translatorSpecs;
 
-import com.google.protobuf.Descriptors.EnumDescriptor;
-import com.google.protobuf.ProtocolMessageEnum;
-
-import gov.hhs.aspr.gcm.translation.core.AEnumTranslatorSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractTranslatorSpec;
 import lesson.input.GlobalPropertyInput;
 import lesson.plugins.model.GlobalProperty;
 
-public class GlobalPropertyTranslatorSpec extends AEnumTranslatorSpec<GlobalPropertyInput, GlobalProperty> {
+public class GlobalPropertyTranslatorSpec extends AbstractTranslatorSpec<GlobalPropertyInput, GlobalProperty> {
 
     @Override
     protected GlobalProperty convertInputObject(GlobalPropertyInput inputObject) {
@@ -15,25 +12,13 @@ public class GlobalPropertyTranslatorSpec extends AEnumTranslatorSpec<GlobalProp
     }
 
     @Override
-    protected GlobalPropertyInput convertSimObject(GlobalProperty simObject) {
+    protected GlobalPropertyInput convertAppObject(GlobalProperty simObject) {
         return GlobalPropertyInput.valueOf(simObject.name());
     }
 
     @Override
-    public EnumDescriptor getDescriptorForInputObject() {
-        return GlobalPropertyInput.getDescriptor();
-    }
-
-    @Override
-    public EnumInstance getEnumInstance() {
-        return new EnumInstance() {
-
-            @Override
-            public ProtocolMessageEnum getFromString(String arg0) {
-                return GlobalPropertyInput.valueOf(arg0);
-            }
-
-        };
+    public GlobalPropertyInput getDefaultInstanceForInputObject() {
+        return GlobalPropertyInput.forNumber(0);
     }
 
     @Override
@@ -42,7 +27,7 @@ public class GlobalPropertyTranslatorSpec extends AEnumTranslatorSpec<GlobalProp
     }
 
     @Override
-    public Class<GlobalProperty> getSimObjectClass() {
+    public Class<GlobalProperty> getAppObjectClass() {
         return GlobalProperty.class;
     }
 

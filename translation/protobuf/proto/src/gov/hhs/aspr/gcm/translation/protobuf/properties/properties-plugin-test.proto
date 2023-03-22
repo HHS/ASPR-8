@@ -1,0 +1,15 @@
+syntax = "proto3";
+package gov.hhs.aspr.gcm.translation.protobuf;
+
+option java_multiple_files = true;
+option java_package = "gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.testsupport.input";
+
+message Layer1 {
+  double x = 1;
+  double y = 2;
+  double z = 3;
+}
+
+message TestMessage {
+  Layer1 layer1 = 1;
+}
