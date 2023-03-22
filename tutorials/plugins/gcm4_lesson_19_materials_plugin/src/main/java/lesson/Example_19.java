@@ -282,7 +282,7 @@ public final class Example_19 {
 			builder.addResource(resourcId);
 		}
 		final ResourcesPluginData resourcesPluginData = builder.build();
-		return ResourcesPlugin.getResourcesPlugin(resourcesPluginData);
+		return ResourcesPlugin.builder().setResourcesPluginData(resourcesPluginData).getResourcesPlugin();
 	}
 
 	private Plugin getStochasticsPlugin() {

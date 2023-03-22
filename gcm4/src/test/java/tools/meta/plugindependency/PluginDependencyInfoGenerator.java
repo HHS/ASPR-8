@@ -296,7 +296,7 @@ public class PluginDependencyInfoGenerator {
 		
 		addToGraph(pluginDependencyGraph, RegionsPlugin.getRegionsPlugin(RegionsPluginData.builder().build()));
 		addToGraph(pluginDependencyGraph, ReportsPlugin.getReportsPlugin(ReportsPluginData.builder().build()));
-		addToGraph(pluginDependencyGraph, ResourcesPlugin.getResourcesPlugin(ResourcesPluginData.builder().build()));
+		addToGraph(pluginDependencyGraph, ResourcesPlugin.builder().setResourcesPluginData(ResourcesPluginData.builder().build()).getResourcesPlugin());
 		addToGraph(pluginDependencyGraph, StochasticsPlugin.getStochasticsPlugin(StochasticsPluginData.builder().setSeed(0L).build()));
 
 		// build a map to help convert the map above into the type of graph we

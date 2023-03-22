@@ -80,7 +80,7 @@ public final class Example_18 {
 			builder.addResource(resourcId);
 		}
 		ResourcesPluginData resourcesPluginData = builder.build();
-		return ResourcesPlugin.getResourcesPlugin(resourcesPluginData);
+		return ResourcesPlugin.builder().setResourcesPluginData(resourcesPluginData).getResourcesPlugin();
 	}
 
 	private NIOReportItemHandler getNIOReportItemHandler() {
