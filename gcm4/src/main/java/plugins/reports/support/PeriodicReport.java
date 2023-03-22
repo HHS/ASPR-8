@@ -17,7 +17,8 @@ public abstract class PeriodicReport {
 	 * Creates the periodic report from the given report period
 	 * 
 	 * @throws ContractException
-	 *             <li>if the report period is null</li>
+	 *             <li>{@linkplain ReportError#NULL_REPORT_PERIOD} if the report period is null</li>
+	 *             <li>{@linkplain ReportError.NULL_REPORT_LABEL} if the report period is null</li>
 	 */
 	public PeriodicReport(ReportLabel reportLabel, ReportPeriod reportPeriod) {
 		if (reportPeriod == null) {

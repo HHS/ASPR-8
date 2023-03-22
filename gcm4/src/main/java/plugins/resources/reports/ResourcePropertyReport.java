@@ -1,6 +1,7 @@
 package plugins.resources.reports;
 
 import nucleus.ReportContext;
+import nucleus.SimulationStateContext;
 import plugins.reports.support.ReportHeader;
 import plugins.reports.support.ReportItem;
 import plugins.reports.support.ReportLabel;
@@ -29,8 +30,8 @@ import plugins.resources.support.ResourcePropertyId;
 public final class ResourcePropertyReport {
 	private final ReportLabel reportLabel;
 
-	public ResourcePropertyReport(ReportLabel reportLabel) {
-		this.reportLabel = reportLabel;
+	public ResourcePropertyReport(ResourcePropertyReportPluginData resourcePropertyReportPluginData) {
+		this.reportLabel = resourcePropertyReportPluginData.getReportLabel();
 	}
 
 	private ReportHeader reportHeader;
@@ -58,6 +59,7 @@ public final class ResourcePropertyReport {
 
 		reportContext.subscribe(ResourcePropertyUpdateEvent.class, this::handleResourcePropertyUpdateEvent);
 		reportContext.subscribe(ResourcePropertyDefinitionEvent.class, this::handleResourcePropertyAdditionEvent);
+		reportContext.subscribeToSimulationState(this::recordSimulationState);
 
 		ResourcesDataManager resourcesDataManager = reportContext.getDataManager(ResourcesDataManager.class);
 		for (final ResourceId resourceId : resourcesDataManager.getResourceIds()) {
@@ -66,6 +68,11 @@ public final class ResourcePropertyReport {
 				writeProperty(reportContext, resourceId, resourcePropertyId, resourcePropertyValue);
 			}
 		}
+	}
+	
+	private void recordSimulationState(ReportContext reportContext, SimulationStateContext simulationStateContext) {
+		ResourcePropertyReportPluginData.Builder builder = simulationStateContext.get(ResourcePropertyReportPluginData.Builder.class);
+		builder.setReportLabel(reportLabel);
 	}
 
 	private void handleResourcePropertyAdditionEvent(ReportContext reportContext, ResourcePropertyDefinitionEvent resourcePropertyDefinitionEvent) {

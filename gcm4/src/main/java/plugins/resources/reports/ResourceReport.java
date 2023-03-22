@@ -1,12 +1,12 @@
 package plugins.resources.reports;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.List;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
 import nucleus.ReportContext;
+import nucleus.SimulationStateContext;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.events.PersonAdditionEvent;
 import plugins.people.events.PersonImminentRemovalEvent;
@@ -18,8 +18,6 @@ import plugins.regions.support.RegionId;
 import plugins.reports.support.PeriodicReport;
 import plugins.reports.support.ReportHeader;
 import plugins.reports.support.ReportItem;
-import plugins.reports.support.ReportLabel;
-import plugins.reports.support.ReportPeriod;
 import plugins.resources.datamanagers.ResourcesDataManager;
 import plugins.resources.events.PersonResourceUpdateEvent;
 import plugins.resources.events.RegionResourceUpdateEvent;
@@ -90,12 +88,17 @@ import util.errors.ContractException;
  *
  */
 public final class ResourceReport extends PeriodicReport {
+	private final boolean includeNewResourceIds;
 
-	public ResourceReport(ReportLabel reportLabel, ReportPeriod reportPeriod, ResourceId... resourceIds) {
-		super(reportLabel, reportPeriod);
-		for (ResourceId resourceId : resourceIds) {
-			this.resourceIds.add(resourceId);
-		}
+	private final Set<ResourceId> includedResourceIds = new LinkedHashSet<>();
+	private final Set<ResourceId> currentResourceIds = new LinkedHashSet<>();
+	private final Set<ResourceId> excludedResourceIds = new LinkedHashSet<>();
+
+	public ResourceReport(ResourceReportPluginData resourceReportPluginData) {
+		super(resourceReportPluginData.getReportLabel(), resourceReportPluginData.getReportPeriod());
+		this.includedResourceIds.addAll(resourceReportPluginData.getIncludedResourceIds());
+		this.excludedResourceIds.addAll(resourceReportPluginData.getExcludedResourceIds());
+		this.includeNewResourceIds = resourceReportPluginData.getDefaultInclusionPolicy();
 
 	}
 
@@ -130,13 +133,6 @@ public final class ResourceReport extends PeriodicReport {
 			itemCount = 0;
 		}
 	}
-
-	/*
-	 * The resource covered by this report. Determined in the init() method.
-	 */
-	private final List<ResourceId> resourceIds = new ArrayList<>();
-
-	private boolean subscribedToAllResources;
 
 	/*
 	 * The mapping of (Region, Resource, Activity) tuples to counters that
@@ -195,7 +191,7 @@ public final class ResourceReport extends PeriodicReport {
 	private void handlePersonAdditionEvent(ReportContext reportContext, PersonAdditionEvent personAdditionEvent) {
 		PersonId personId = personAdditionEvent.personId();
 		final RegionId regionId = regionsDataManager.getPersonRegion(personId);
-		for (final ResourceId resourceId : resourceIds) {
+		for (final ResourceId resourceId : currentResourceIds) {
 			final long personResourceLevel = resourcesDataManager.getPersonResourceLevel(resourceId, personId);
 			if (personResourceLevel > 0) {
 				increment(regionId, resourceId, Activity.PERSON_ARRIVAL, personResourceLevel);
@@ -208,7 +204,7 @@ public final class ResourceReport extends PeriodicReport {
 		PersonId personId = personImminentRemovalEvent.personId();
 		RegionId regionId = regionsDataManager.getPersonRegion(personId);
 
-		for (ResourceId resourceId : resourceIds) {
+		for (ResourceId resourceId : currentResourceIds) {
 			final Long personResourceLevel = resourcesDataManager.getPersonResourceLevel(resourceId, personId);
 			if (personResourceLevel > 0) {
 				increment(regionId, resourceId, Activity.PERSON_DEPARTURE, personResourceLevel);
@@ -222,17 +218,17 @@ public final class ResourceReport extends PeriodicReport {
 		final ResourceId resourceId = personResourceUpdateEvent.resourceId();
 		final long previousLevel = personResourceUpdateEvent.previousResourceLevel();
 		final long currentLevel = personResourceUpdateEvent.currentResourceLevel();
-		if (!resourceIds.contains(resourceId)) {
-			return;
-		}
-		long amount = currentLevel - previousLevel;
-		if (amount > 0) {
-			final RegionId regionId = regionsDataManager.getPersonRegion(personId);
-			increment(regionId, resourceId, Activity.PERSON_RESOURCE_ADDITION, amount);
-		} else {
-			amount = -amount;
-			final RegionId regionId = regionsDataManager.getPersonRegion(personId);
-			increment(regionId, resourceId, Activity.REMOVE_RESOURCE_FROM_PERSON, amount);
+		if (isCurrentProperty(resourceId)) {
+
+			long amount = currentLevel - previousLevel;
+			if (amount > 0) {
+				final RegionId regionId = regionsDataManager.getPersonRegion(personId);
+				increment(regionId, resourceId, Activity.PERSON_RESOURCE_ADDITION, amount);
+			} else {
+				amount = -amount;
+				final RegionId regionId = regionsDataManager.getPersonRegion(personId);
+				increment(regionId, resourceId, Activity.REMOVE_RESOURCE_FROM_PERSON, amount);
+			}
 		}
 	}
 
@@ -241,7 +237,7 @@ public final class ResourceReport extends PeriodicReport {
 		RegionId previousRegionId = personRegionUpdateEvent.previousRegionId();
 		RegionId currentRegionId = personRegionUpdateEvent.currentRegionId();
 
-		for (final ResourceId resourceId : resourceIds) {
+		for (final ResourceId resourceId : currentResourceIds) {
 			final long personResourceLevel = resourcesDataManager.getPersonResourceLevel(resourceId, personId);
 			if (personResourceLevel > 0) {
 				increment(currentRegionId, resourceId, Activity.PERSON_REGION_ARRIVAL, personResourceLevel);
@@ -251,19 +247,16 @@ public final class ResourceReport extends PeriodicReport {
 	}
 
 	private void handleResourceIdAdditionEvent(ReportContext reportContext, ResourceIdAdditionEvent resourceIdAdditionEvent) {
+		ResourceId resourceId = resourceIdAdditionEvent.resourceId();
 
-		if (subscribedToAllResources) {
-			ResourceId resourceId = resourceIdAdditionEvent.resourceId();
-			if (resourceId != null && !resourceIds.contains(resourceId)) {
-				resourceIds.add(resourceId);
-				for (RegionId regionId : regionMap.keySet()) {
-					Map<ResourceId, Map<Activity, Counter>> map = regionMap.get(regionId);
-					Map<Activity, Counter> activityMap = new LinkedHashMap<>();
-					for (Activity activity : Activity.values()) {
-						activityMap.put(activity, new Counter());
-					}
-					map.put(resourceId, activityMap);
+		if (addToCurrentResourceIds(resourceId)) {
+			for (RegionId regionId : regionMap.keySet()) {
+				Map<ResourceId, Map<Activity, Counter>> map = regionMap.get(regionId);
+				Map<Activity, Counter> activityMap = new LinkedHashMap<>();
+				for (Activity activity : Activity.values()) {
+					activityMap.put(activity, new Counter());
 				}
+				map.put(resourceId, activityMap);
 			}
 		}
 	}
@@ -271,18 +264,17 @@ public final class ResourceReport extends PeriodicReport {
 	private void handleRegionResourceUpdateEvent(ReportContext reportContext, RegionResourceUpdateEvent regionResourceUpdateEvent) {
 
 		ResourceId resourceId = regionResourceUpdateEvent.resourceId();
-		if (!resourceIds.contains(resourceId)) {
-			return;
-		}
-		RegionId regionId = regionResourceUpdateEvent.regionId();
-		long previousResourceLevel = regionResourceUpdateEvent.previousResourceLevel();
-		long currentResourceLevel = regionResourceUpdateEvent.currentResourceLevel();
-		long amount = currentResourceLevel - previousResourceLevel;
-		if (amount > 0) {
-			increment(regionId, resourceId, Activity.REGION_RESOURCE_ADDITION, amount);
-		} else {
-			amount = -amount;
-			increment(regionId, resourceId, Activity.REGION_RESOURCE_REMOVAL, amount);
+		if (isCurrentProperty(resourceId)) {
+			RegionId regionId = regionResourceUpdateEvent.regionId();
+			long previousResourceLevel = regionResourceUpdateEvent.previousResourceLevel();
+			long currentResourceLevel = regionResourceUpdateEvent.currentResourceLevel();
+			long amount = currentResourceLevel - previousResourceLevel;
+			if (amount > 0) {
+				increment(regionId, resourceId, Activity.REGION_RESOURCE_ADDITION, amount);
+			} else {
+				amount = -amount;
+				increment(regionId, resourceId, Activity.REGION_RESOURCE_REMOVAL, amount);
+			}
 		}
 	}
 
@@ -299,6 +291,66 @@ public final class ResourceReport extends PeriodicReport {
 
 	private RegionsDataManager regionsDataManager;
 	private ResourcesDataManager resourcesDataManager;
+
+	private boolean isCurrentProperty(ResourceId resourceId) {
+		return currentResourceIds.contains(resourceId);
+	}
+
+	private boolean addToCurrentResourceIds(ResourceId resourceId) {
+
+		// There are eight possibilities:
+
+		/*
+		 * P -- the default inclusion policy
+		 * 
+		 * I -- the property is explicitly included
+		 * 
+		 * X -- the property is explicitly excluded
+		 * 
+		 * C -- the property should be on the current properties
+		 * 
+		 * 
+		 * P I X C Table
+		 * 
+		 * TRUE TRUE FALSE TRUE
+		 * 
+		 * TRUE FALSE FALSE TRUE
+		 * 
+		 * FALSE TRUE FALSE TRUE
+		 * 
+		 * FALSE FALSE FALSE FALSE
+		 * 
+		 * TRUE TRUE TRUE FALSE -- not possible
+		 * 
+		 * TRUE FALSE TRUE FALSE
+		 * 
+		 * FALSE TRUE TRUE FALSE -- not possible
+		 * 
+		 * FALSE FALSE TRUE FALSE
+		 * 
+		 * 
+		 * Two of the cases above are contradictory since a property cannot be
+		 * both explicitly included and explicitly excluded
+		 * 
+		 */
+
+		// if X is true then we don't add the property
+		if (excludedResourceIds.contains(resourceId)) {
+			return false;
+		}
+
+		// if both P and I are false we don't add the property
+		boolean included = includedResourceIds.contains(resourceId);
+
+		if (!included && !includeNewResourceIds) {
+			return false;
+		}
+
+		// we have failed to reject the property
+		currentResourceIds.add(resourceId);
+
+		return true;
+	}
 
 	/**
 	 * @throws ContractException
@@ -318,24 +370,13 @@ public final class ResourceReport extends PeriodicReport {
 		reportContext.subscribe(PersonRegionUpdateEvent.class, this::handlePersonRegionUpdateEvent);
 		reportContext.subscribe(RegionResourceUpdateEvent.class, this::handleRegionResourceUpdateEvent);
 		reportContext.subscribe(RegionAdditionEvent.class, this::handleRegionAdditionEvent);
-
-		if (resourceIds.size() == 0) {
-			resourceIds.addAll(resourcesDataManager.getResourceIds());
-		}
-		/*
-		 * Ensure that every client supplied resource identifier is valid
-		 */
-		final Set<ResourceId> validResourceIds = resourcesDataManager.getResourceIds();
-		for (final ResourceId resourceId : resourceIds) {
-			if (!validResourceIds.contains(resourceId)) {
-				throw new ContractException(ResourceError.UNKNOWN_RESOURCE_ID, resourceId);
-			}
-		}
-
 		reportContext.subscribe(PersonResourceUpdateEvent.class, this::handlePersonResourceUpdateEvent);
-		subscribedToAllResources = true;
-
 		reportContext.subscribe(ResourceIdAdditionEvent.class, this::handleResourceIdAdditionEvent);
+		reportContext.subscribeToSimulationState(this::recordSimulationState);
+
+		for (final ResourceId resourceId : resourcesDataManager.getResourceIds()) {
+			addToCurrentResourceIds(resourceId);
+		}
 
 		/*
 		 * Filling the region map with empty counters
@@ -343,7 +384,7 @@ public final class ResourceReport extends PeriodicReport {
 		for (final RegionId regionId : regionsDataManager.getRegionIds()) {
 			final Map<ResourceId, Map<Activity, Counter>> resourceMap = new LinkedHashMap<>();
 			regionMap.put(regionId, resourceMap);
-			for (final ResourceId resourceId : resourceIds) {
+			for (final ResourceId resourceId : currentResourceIds) {
 				final Map<Activity, Counter> activityMap = new LinkedHashMap<>();
 				resourceMap.put(resourceId, activityMap);
 				for (final Activity activity : Activity.values()) {
@@ -356,7 +397,7 @@ public final class ResourceReport extends PeriodicReport {
 		for (PersonId personId : peopleDataManager.getPeople()) {
 			final RegionId regionId = regionsDataManager.getPersonRegion(personId);
 
-			for (final ResourceId resourceId : resourceIds) {
+			for (final ResourceId resourceId : currentResourceIds) {
 				final long personResourceLevel = resourcesDataManager.getPersonResourceLevel(resourceId, personId);
 				if (personResourceLevel > 0) {
 					increment(regionId, resourceId, Activity.PERSON_ARRIVAL, personResourceLevel);
@@ -365,13 +406,25 @@ public final class ResourceReport extends PeriodicReport {
 		}
 
 		for (RegionId regionId : regionsDataManager.getRegionIds()) {
-			for (ResourceId resourceId : resourcesDataManager.getResourceIds()) {
+			for (ResourceId resourceId : currentResourceIds) {
 				long regionResourceLevel = resourcesDataManager.getRegionResourceLevel(regionId, resourceId);
-				if (resourceIds.contains(resourceId)) {
-					increment(regionId, resourceId, Activity.REGION_RESOURCE_ADDITION, regionResourceLevel);
-				}
+				increment(regionId, resourceId, Activity.REGION_RESOURCE_ADDITION, regionResourceLevel);
 			}
 		}
+	}
+	
+	
+	private void recordSimulationState(ReportContext reportContext, SimulationStateContext simulationStateContext) {
+		ResourceReportPluginData.Builder builder = simulationStateContext.get(ResourceReportPluginData.Builder.class);
+		for (ResourceId resourceId : includedResourceIds) {
+			builder.includeResourceId(resourceId);
+		}
+		for (ResourceId resourceId : excludedResourceIds) {
+			builder.excludeResourceId(resourceId);
+		}
+		builder.setDefaultInclusion(includeNewResourceIds);
+		builder.setReportLabel(getReportLabel());
+		builder.setReportPeriod(getReportPeriod());
 	}
 
 	private void handleRegionAdditionEvent(ReportContext reportContext, RegionAdditionEvent regionAdditionEvent) {
@@ -379,7 +432,7 @@ public final class ResourceReport extends PeriodicReport {
 
 		final Map<ResourceId, Map<Activity, Counter>> resourceMap = new LinkedHashMap<>();
 		regionMap.put(regionId, resourceMap);
-		for (final ResourceId resourceId : resourceIds) {
+		for (final ResourceId resourceId : currentResourceIds) {
 			final Map<Activity, Counter> activityMap = new LinkedHashMap<>();
 			resourceMap.put(resourceId, activityMap);
 			for (final Activity activity : Activity.values()) {
