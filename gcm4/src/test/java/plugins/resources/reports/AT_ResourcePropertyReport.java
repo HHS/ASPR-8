@@ -192,7 +192,7 @@ public class AT_ResourcePropertyReport {
 		TestOutputConsumer outputConsumer = new TestOutputConsumer();
 
 		List<Plugin> pluginsToAdd = ResourcesTestPluginFactory.factory(initialPopulation, 8914112012010329946L, testPluginData).getPlugins();
-		pluginsToAdd.add(ReportsTestPluginFactory.getPluginFromReport(new ResourcePropertyReport(REPORT_LABEL)::init));
+		pluginsToAdd.add(ReportsTestPluginFactory.getPluginFromReport(new ResourcePropertyReport(ResourcePropertyReportPluginData.builder().setReportLabel(REPORT_LABEL).build())::init));
 		
 		TestSimulation.executeSimulation(pluginsToAdd, outputConsumer);
 

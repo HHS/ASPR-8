@@ -35,6 +35,7 @@ import plugins.reports.support.ReportPeriod;
 import plugins.resources.ResourcesPlugin;
 import plugins.resources.ResourcesPluginData;
 import plugins.resources.reports.PersonResourceReport;
+import plugins.resources.reports.PersonResourceReportPluginData;
 import plugins.resources.support.ResourceId;
 import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.StochasticsPluginData;
@@ -50,12 +51,17 @@ public final class Example_18 {
 	private RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(9032703880551658180L);
 
 	private Plugin getReportsPlugin() {
+		
+		
+		
+		
 		ReportsPluginData reportsPluginData = //
 				ReportsPluginData	.builder()//
-									.addReport(() -> new PersonResourceReport(ModelReportLabel.PERSON_RESOURCE_REPORT, //
-											ReportPeriod.END_OF_SIMULATION, //
-											true, //
-											true)//
+									.addReport(() -> new PersonResourceReport( PersonResourceReportPluginData//
+											.builder()//
+											.setReportLabel(ModelReportLabel.PERSON_RESOURCE_REPORT)//
+											.setReportPeriod(ReportPeriod.END_OF_SIMULATION)//
+											.build())//
 									::init)//
 
 									.addReport(() -> new TreatmentReport(ModelReportLabel.TREATMENT_REPORT)::init)//
