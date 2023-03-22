@@ -1,11 +1,11 @@
 package gov.hhs.aspr.gcm.translation.plugins.globalproperties.translatorSpecs;
 
-import gov.hhs.aspr.gcm.translation.core.AObjectTranslatorSpec;
+import gov.hhs.aspr.gcm.translation.core.AbstractTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.plugins.globalproperties.input.TestGlobalPropertyIdInput;
 import plugins.globalproperties.testsupport.TestGlobalPropertyId;
 
 public class TestGlobalPropertyIdTranslatorSpec
-        extends AObjectTranslatorSpec<TestGlobalPropertyIdInput, TestGlobalPropertyId> {
+        extends AbstractTranslatorSpec<TestGlobalPropertyIdInput, TestGlobalPropertyId> {
 
     @Override
     protected TestGlobalPropertyId convertInputObject(TestGlobalPropertyIdInput inputObject) {

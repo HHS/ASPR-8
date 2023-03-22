@@ -1,10 +1,10 @@
 package gov.hhs.aspr.gcm.translation.plugins.materials.translatorSpecs;
 
-import gov.hhs.aspr.gcm.translation.core.AObjectTranslatorSpec;
+import gov.hhs.aspr.gcm.translation.core.AbstractTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.plugins.materials.input.StageIdInput;
 import plugins.materials.support.StageId;
 
-public class StageIdTranslatorSpec extends AObjectTranslatorSpec<StageIdInput, StageId> {
+public class StageIdTranslatorSpec extends AbstractTranslatorSpec<StageIdInput, StageId> {
 
     @Override
     protected StageId convertInputObject(StageIdInput inputObject) {

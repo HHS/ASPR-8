@@ -1,10 +1,10 @@
 package gov.hhs.aspr.gcm.translation.plugins.groups.translatorSpecs;
 
-import gov.hhs.aspr.gcm.translation.core.AObjectTranslatorSpec;
+import gov.hhs.aspr.gcm.translation.core.AbstractTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.plugins.groups.input.SimpleGroupTypeIdInput;
 import gov.hhs.aspr.gcm.translation.plugins.groups.simobjects.SimpleGroupTypeId;
 
-public class SimpleGroupTypeIdTranslatorSpec extends AObjectTranslatorSpec<SimpleGroupTypeIdInput, SimpleGroupTypeId> {
+public class SimpleGroupTypeIdTranslatorSpec extends AbstractTranslatorSpec<SimpleGroupTypeIdInput, SimpleGroupTypeId> {
 
     @Override
     protected SimpleGroupTypeId convertInputObject(SimpleGroupTypeIdInput inputObject) {

@@ -2,7 +2,7 @@ package gov.hhs.aspr.gcm.translation.plugins.personproperties.translatorSpecs;
 
 import java.util.List;
 
-import gov.hhs.aspr.gcm.translation.core.AObjectTranslatorSpec;
+import gov.hhs.aspr.gcm.translation.core.AbstractTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.plugins.people.input.PersonIdInput;
 import gov.hhs.aspr.gcm.translation.plugins.personproperties.input.PersonPropertiesPluginDataInput;
 import gov.hhs.aspr.gcm.translation.plugins.personproperties.input.PersonPropertyValueMapInput;
@@ -16,7 +16,7 @@ import plugins.personproperties.support.PersonPropertyInitialization;
 import plugins.util.properties.PropertyDefinition;
 
 public class PersonPropertiesPluginDataTranslatorSpec
-        extends AObjectTranslatorSpec<PersonPropertiesPluginDataInput, PersonPropertiesPluginData> {
+        extends AbstractTranslatorSpec<PersonPropertiesPluginDataInput, PersonPropertiesPluginData> {
 
     @Override
     protected PersonPropertiesPluginData convertInputObject(PersonPropertiesPluginDataInput inputObject) {

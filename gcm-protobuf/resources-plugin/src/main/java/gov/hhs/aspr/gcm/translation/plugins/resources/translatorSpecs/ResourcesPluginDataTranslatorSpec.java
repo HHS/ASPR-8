@@ -2,7 +2,7 @@ package gov.hhs.aspr.gcm.translation.plugins.resources.translatorSpecs;
 
 import java.util.List;
 
-import gov.hhs.aspr.gcm.translation.core.AObjectTranslatorSpec;
+import gov.hhs.aspr.gcm.translation.core.AbstractTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.plugins.people.input.PersonIdInput;
 import gov.hhs.aspr.gcm.translation.plugins.properties.input.PropertyDefinitionInput;
 import gov.hhs.aspr.gcm.translation.plugins.properties.input.PropertyDefinitionMapInput;
@@ -27,7 +27,7 @@ import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.TimeTrackingPolicy;
 
 public class ResourcesPluginDataTranslatorSpec
-                extends AObjectTranslatorSpec<ResourcesPluginDataInput, ResourcesPluginData> {
+                extends AbstractTranslatorSpec<ResourcesPluginDataInput, ResourcesPluginData> {
 
         @Override
         protected ResourcesPluginData convertInputObject(ResourcesPluginDataInput inputObject) {

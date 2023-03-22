@@ -1,10 +1,10 @@
 package gov.hhs.aspr.gcm.translation.plugins.materials.translatorSpecs;
 
-import gov.hhs.aspr.gcm.translation.core.AObjectTranslatorSpec;
+import gov.hhs.aspr.gcm.translation.core.AbstractTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.plugins.materials.input.BatchPropertyIdInput;
 import plugins.materials.support.BatchPropertyId;
 
-public class BatchPropertyIdTranslatorSpec extends AObjectTranslatorSpec<BatchPropertyIdInput, BatchPropertyId> {
+public class BatchPropertyIdTranslatorSpec extends AbstractTranslatorSpec<BatchPropertyIdInput, BatchPropertyId> {
 
     @Override
     protected BatchPropertyId convertInputObject(BatchPropertyIdInput inputObject) {

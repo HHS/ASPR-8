@@ -4,11 +4,11 @@ import java.time.LocalDate;
 
 import com.google.type.Date;
 
-import gov.hhs.aspr.gcm.translation.core.AObjectTranslatorSpec;
+import gov.hhs.aspr.gcm.translation.core.AbstractTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.nucleus.input.SimulationTimeInput;
 import nucleus.SimulationTime;
 
-public class SimulationTimeTranslatorSpec extends AObjectTranslatorSpec<SimulationTimeInput, SimulationTime> {
+public class SimulationTimeTranslatorSpec extends AbstractTranslatorSpec<SimulationTimeInput, SimulationTime> {
 
     @Override
     protected SimulationTime convertInputObject(SimulationTimeInput inputObject) {

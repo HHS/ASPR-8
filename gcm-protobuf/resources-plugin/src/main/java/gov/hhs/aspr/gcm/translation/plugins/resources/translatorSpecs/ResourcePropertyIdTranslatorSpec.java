@@ -1,11 +1,11 @@
 package gov.hhs.aspr.gcm.translation.plugins.resources.translatorSpecs;
 
-import gov.hhs.aspr.gcm.translation.core.AObjectTranslatorSpec;
+import gov.hhs.aspr.gcm.translation.core.AbstractTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.plugins.resources.input.ResourcePropertyIdInput;
 import plugins.resources.support.ResourcePropertyId;
 
 public class ResourcePropertyIdTranslatorSpec
-        extends AObjectTranslatorSpec<ResourcePropertyIdInput, ResourcePropertyId> {
+        extends AbstractTranslatorSpec<ResourcePropertyIdInput, ResourcePropertyId> {
 
     @Override
     protected ResourcePropertyId convertInputObject(ResourcePropertyIdInput inputObject) {

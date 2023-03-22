@@ -61,7 +61,7 @@ public class TranslatorController {
             return this;
         }
 
-        public <I, S> Builder addTranslatorSpec(AObjectTranslatorSpec<I, S> translatorSpec) {
+        public <I, S> Builder addTranslatorSpec(AbstractTranslatorSpec<I, S> translatorSpec) {
             this.data.translatorCoreBuilder.addTranslatorSpec(translatorSpec);
             return this;
         }
@@ -82,7 +82,7 @@ public class TranslatorController {
         return new Builder(new Data());
     }
 
-    protected <I, S> void addTranslatorSpec(AObjectTranslatorSpec<I, S> translatorSpec) {
+    protected <I, S> void addTranslatorSpec(AbstractTranslatorSpec<I, S> translatorSpec) {
         this.data.translatorCoreBuilder.addTranslatorSpec(translatorSpec);
 
         this.appObjectClassToTranslatorMap.put(translatorSpec.getAppObjectClass(), this.focalTranslator);

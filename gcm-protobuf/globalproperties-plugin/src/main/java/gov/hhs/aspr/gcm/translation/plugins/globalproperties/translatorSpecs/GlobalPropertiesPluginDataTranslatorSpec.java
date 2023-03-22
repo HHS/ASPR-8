@@ -1,6 +1,6 @@
 package gov.hhs.aspr.gcm.translation.plugins.globalproperties.translatorSpecs;
 
-import gov.hhs.aspr.gcm.translation.core.AObjectTranslatorSpec;
+import gov.hhs.aspr.gcm.translation.core.AbstractTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.plugins.globalproperties.input.GlobalPropertiesPluginDataInput;
 import gov.hhs.aspr.gcm.translation.plugins.properties.input.PropertyDefinitionInput;
 import gov.hhs.aspr.gcm.translation.plugins.properties.input.PropertyDefinitionMapInput;
@@ -10,7 +10,7 @@ import plugins.globalproperties.support.GlobalPropertyId;
 import plugins.util.properties.PropertyDefinition;
 
 public class GlobalPropertiesPluginDataTranslatorSpec
-        extends AObjectTranslatorSpec<GlobalPropertiesPluginDataInput, GlobalPropertiesPluginData> {
+        extends AbstractTranslatorSpec<GlobalPropertiesPluginDataInput, GlobalPropertiesPluginData> {
 
     @Override
     protected GlobalPropertiesPluginData convertInputObject(GlobalPropertiesPluginDataInput inputObject) {

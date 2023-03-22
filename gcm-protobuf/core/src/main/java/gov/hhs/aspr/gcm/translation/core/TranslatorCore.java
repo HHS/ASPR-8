@@ -114,25 +114,7 @@ public class TranslatorCore {
             return this;
         }
 
-        // public <I extends ProtocolMessageEnum, S> Builder
-        // addTranslatorSpec(AEnumTranslatorSpec<I, S> translatorSpec) {
-        // this.data.classToTranslatorSpecMap.putIfAbsent(translatorSpec.getInputObjectClass(),
-        // translatorSpec);
-        // this.data.classToTranslatorSpecMap.putIfAbsent(translatorSpec.getAppObjectClass(),
-        // translatorSpec);
-
-        // EnumDescriptor enumDescriptor = translatorSpec.getDescriptorForInputObject();
-
-        // this.data.enumDescriptorMap.putIfAbsent(enumDescriptor,
-        // translatorSpec.getDefaultInstance());
-        // this.data.typeUrlToEnumDescriptor.putIfAbsent(enumDescriptor.getFullName(),
-        // enumDescriptor);
-
-        // this.data.translatorSpecs.add(translatorSpec);
-        // return this;
-        // }
-
-        public <I, S> Builder addTranslatorSpec(AObjectTranslatorSpec<I, S> translatorSpec) {
+        public <I, S> Builder addTranslatorSpec(AbstractTranslatorSpec<I, S> translatorSpec) {
             this.data.classToTranslatorSpecMap.putIfAbsent(translatorSpec.getInputObjectClass(),
                     translatorSpec);
             this.data.classToTranslatorSpecMap.putIfAbsent(translatorSpec.getAppObjectClass(), translatorSpec);

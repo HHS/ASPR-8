@@ -3,7 +3,7 @@ package gov.hhs.aspr.gcm.translation.plugins.groups.translatorSpecs;
 import java.util.List;
 import java.util.Set;
 
-import gov.hhs.aspr.gcm.translation.core.AObjectTranslatorSpec;
+import gov.hhs.aspr.gcm.translation.core.AbstractTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.plugins.groups.input.GroupIdInput;
 import gov.hhs.aspr.gcm.translation.plugins.groups.input.GroupInput;
 import gov.hhs.aspr.gcm.translation.plugins.groups.input.GroupMembershipInput;
@@ -23,7 +23,7 @@ import plugins.groups.support.GroupTypeId;
 import plugins.people.support.PersonId;
 import plugins.util.properties.PropertyDefinition;
 
-public class GroupsPluginDataTranslatorSpec extends AObjectTranslatorSpec<GroupsPluginDataInput, GroupsPluginData> {
+public class GroupsPluginDataTranslatorSpec extends AbstractTranslatorSpec<GroupsPluginDataInput, GroupsPluginData> {
 
     @Override
     protected GroupsPluginData convertInputObject(GroupsPluginDataInput inputObject) {

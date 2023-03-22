@@ -1,10 +1,10 @@
 package gov.hhs.aspr.gcm.translation.plugins.groups.translatorSpecs;
 
-import gov.hhs.aspr.gcm.translation.core.AObjectTranslatorSpec;
+import gov.hhs.aspr.gcm.translation.core.AbstractTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.plugins.groups.input.GroupPropertyIdInput;
 import plugins.groups.support.GroupPropertyId;
 
-public class GroupPropertyIdTranslatorSpec extends AObjectTranslatorSpec<GroupPropertyIdInput, GroupPropertyId> {
+public class GroupPropertyIdTranslatorSpec extends AbstractTranslatorSpec<GroupPropertyIdInput, GroupPropertyId> {
 
     @Override
     protected GroupPropertyId convertInputObject(GroupPropertyIdInput inputObject) {

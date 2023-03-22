@@ -1,12 +1,12 @@
 package gov.hhs.aspr.gcm.translation.plugins.properties.translatorSpecs;
 
-import gov.hhs.aspr.gcm.translation.core.AObjectTranslatorSpec;
+import gov.hhs.aspr.gcm.translation.core.AbstractTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.plugins.properties.input.PropertyDefinitionInput;
 import gov.hhs.aspr.gcm.translation.plugins.properties.input.PropertyDefinitionMapInput;
 import gov.hhs.aspr.gcm.translation.plugins.properties.simobjects.PropertyDefinitionMap;
 
 public class PropertyDefinitionMapTranslatorSpec
-        extends AObjectTranslatorSpec<PropertyDefinitionMapInput, PropertyDefinitionMap> {
+        extends AbstractTranslatorSpec<PropertyDefinitionMapInput, PropertyDefinitionMap> {
 
     @Override
     protected PropertyDefinitionMap convertInputObject(PropertyDefinitionMapInput inputObject) {

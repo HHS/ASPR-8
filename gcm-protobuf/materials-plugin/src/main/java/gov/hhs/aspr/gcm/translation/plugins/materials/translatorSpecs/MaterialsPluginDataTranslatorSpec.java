@@ -1,6 +1,6 @@
 package gov.hhs.aspr.gcm.translation.plugins.materials.translatorSpecs;
 
-import gov.hhs.aspr.gcm.translation.core.AObjectTranslatorSpec;
+import gov.hhs.aspr.gcm.translation.core.AbstractTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.plugins.materials.input.BatchIdInput;
 import gov.hhs.aspr.gcm.translation.plugins.materials.input.BatchMapInput;
 import gov.hhs.aspr.gcm.translation.plugins.materials.input.BatchPropertyDefinitionMapInput;
@@ -27,7 +27,7 @@ import plugins.resources.support.ResourceId;
 import plugins.util.properties.PropertyDefinition;
 
 public class MaterialsPluginDataTranslatorSpec
-                extends AObjectTranslatorSpec<MaterialsPluginDataInput, MaterialsPluginData> {
+                extends AbstractTranslatorSpec<MaterialsPluginDataInput, MaterialsPluginData> {
 
         @Override
         protected MaterialsPluginData convertInputObject(MaterialsPluginDataInput inputObject) {

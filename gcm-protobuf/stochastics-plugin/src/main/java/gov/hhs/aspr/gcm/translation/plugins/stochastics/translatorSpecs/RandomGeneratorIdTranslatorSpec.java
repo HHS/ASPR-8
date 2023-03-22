@@ -1,11 +1,11 @@
 package gov.hhs.aspr.gcm.translation.plugins.stochastics.translatorSpecs;
 
-import gov.hhs.aspr.gcm.translation.core.AObjectTranslatorSpec;
+import gov.hhs.aspr.gcm.translation.core.AbstractTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.plugins.stochastics.input.RandomNumberGeneratorIdInput;
 import plugins.stochastics.support.RandomNumberGeneratorId;
 
 public class RandomGeneratorIdTranslatorSpec
-        extends AObjectTranslatorSpec<RandomNumberGeneratorIdInput, RandomNumberGeneratorId> {
+        extends AbstractTranslatorSpec<RandomNumberGeneratorIdInput, RandomNumberGeneratorId> {
 
     @Override
     protected RandomNumberGeneratorId convertInputObject(RandomNumberGeneratorIdInput inputObject) {

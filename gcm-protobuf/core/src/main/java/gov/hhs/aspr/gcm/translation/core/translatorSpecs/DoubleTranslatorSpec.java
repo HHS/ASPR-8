@@ -2,9 +2,9 @@ package gov.hhs.aspr.gcm.translation.core.translatorSpecs;
 
 import com.google.protobuf.DoubleValue;
 
-import gov.hhs.aspr.gcm.translation.core.AObjectTranslatorSpec;
+import gov.hhs.aspr.gcm.translation.core.AbstractTranslatorSpec;
 
-public class DoubleTranslatorSpec extends AObjectTranslatorSpec<DoubleValue, Double> {
+public class DoubleTranslatorSpec extends AbstractTranslatorSpec<DoubleValue, Double> {
 
     @Override
     protected Double convertInputObject(DoubleValue inputObject) {

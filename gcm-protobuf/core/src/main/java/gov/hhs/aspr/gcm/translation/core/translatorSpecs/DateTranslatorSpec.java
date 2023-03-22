@@ -4,9 +4,9 @@ import java.time.LocalDate;
 
 import com.google.type.Date;
 
-import gov.hhs.aspr.gcm.translation.core.AObjectTranslatorSpec;
+import gov.hhs.aspr.gcm.translation.core.AbstractTranslatorSpec;
 
-public class DateTranslatorSpec extends AObjectTranslatorSpec<Date, LocalDate> {
+public class DateTranslatorSpec extends AbstractTranslatorSpec<Date, LocalDate> {
 
     @Override
     protected LocalDate convertInputObject(Date inputObject) {

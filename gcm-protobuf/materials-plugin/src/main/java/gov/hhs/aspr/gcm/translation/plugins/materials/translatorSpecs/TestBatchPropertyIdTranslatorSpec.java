@@ -1,11 +1,11 @@
 package gov.hhs.aspr.gcm.translation.plugins.materials.translatorSpecs;
 
-import gov.hhs.aspr.gcm.translation.core.AObjectTranslatorSpec;
+import gov.hhs.aspr.gcm.translation.core.AbstractTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.plugins.materials.input.TestBatchPropertyIdInput;
 import plugins.materials.testsupport.TestBatchPropertyId;
 
 public class TestBatchPropertyIdTranslatorSpec
-        extends AObjectTranslatorSpec<TestBatchPropertyIdInput, TestBatchPropertyId> {
+        extends AbstractTranslatorSpec<TestBatchPropertyIdInput, TestBatchPropertyId> {
 
     @Override
     protected TestBatchPropertyId convertInputObject(TestBatchPropertyIdInput inputObject) {

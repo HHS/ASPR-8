@@ -1,13 +1,13 @@
 package gov.hhs.aspr.gcm.translation.plugins.people.translatorSpecs;
 
-import gov.hhs.aspr.gcm.translation.core.AObjectTranslatorSpec;
+import gov.hhs.aspr.gcm.translation.core.AbstractTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.plugins.people.input.PeoplePluginDataInput;
 import gov.hhs.aspr.gcm.translation.plugins.people.input.PersonIdInput;
 import plugins.people.PeoplePluginData;
 import plugins.people.support.PersonId;
 
 public class PeoplePluginDataTranslatorSpec
-        extends AObjectTranslatorSpec<PeoplePluginDataInput, PeoplePluginData> {
+        extends AbstractTranslatorSpec<PeoplePluginDataInput, PeoplePluginData> {
 
     @Override
     protected PeoplePluginData convertInputObject(PeoplePluginDataInput inputObject) {

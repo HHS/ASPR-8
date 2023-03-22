@@ -1,6 +1,6 @@
 package gov.hhs.aspr.gcm.translation.core;
 
-public abstract class AObjectTranslatorSpec<I, S> implements ITranslatorSpec {
+public abstract class AbstractTranslatorSpec<I, S> implements ITranslatorSpec {
     protected TranslatorCore translator;
     private boolean initialized = false;
 

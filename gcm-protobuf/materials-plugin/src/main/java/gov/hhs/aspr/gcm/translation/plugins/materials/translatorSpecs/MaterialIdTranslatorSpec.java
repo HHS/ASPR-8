@@ -1,10 +1,10 @@
 package gov.hhs.aspr.gcm.translation.plugins.materials.translatorSpecs;
 
-import gov.hhs.aspr.gcm.translation.core.AObjectTranslatorSpec;
+import gov.hhs.aspr.gcm.translation.core.AbstractTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.plugins.materials.input.MaterialIdInput;
 import plugins.materials.support.MaterialId;
 
-public class MaterialIdTranslatorSpec extends AObjectTranslatorSpec<MaterialIdInput, MaterialId> {
+public class MaterialIdTranslatorSpec extends AbstractTranslatorSpec<MaterialIdInput, MaterialId> {
 
     @Override
     protected MaterialId convertInputObject(MaterialIdInput inputObject) {

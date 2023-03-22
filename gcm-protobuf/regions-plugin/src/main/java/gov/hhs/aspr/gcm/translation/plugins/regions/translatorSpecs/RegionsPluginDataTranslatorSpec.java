@@ -1,6 +1,6 @@
 package gov.hhs.aspr.gcm.translation.plugins.regions.translatorSpecs;
 
-import gov.hhs.aspr.gcm.translation.core.AObjectTranslatorSpec;
+import gov.hhs.aspr.gcm.translation.core.AbstractTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.plugins.people.input.PersonIdInput;
 import plugins.people.support.PersonId;
 import gov.hhs.aspr.gcm.translation.plugins.properties.input.PropertyDefinitionInput;
@@ -17,7 +17,7 @@ import plugins.regions.support.RegionPropertyId;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.TimeTrackingPolicy;
 
-public class RegionsPluginDataTranslatorSpec extends AObjectTranslatorSpec<RegionsPluginDataInput, RegionsPluginData> {
+public class RegionsPluginDataTranslatorSpec extends AbstractTranslatorSpec<RegionsPluginDataInput, RegionsPluginData> {
 
     @Override
     protected RegionsPluginData convertInputObject(RegionsPluginDataInput inputObject) {

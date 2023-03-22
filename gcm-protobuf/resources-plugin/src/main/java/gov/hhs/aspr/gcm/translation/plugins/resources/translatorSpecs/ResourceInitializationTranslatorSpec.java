@@ -1,13 +1,13 @@
 package gov.hhs.aspr.gcm.translation.plugins.resources.translatorSpecs;
 
-import gov.hhs.aspr.gcm.translation.core.AObjectTranslatorSpec;
+import gov.hhs.aspr.gcm.translation.core.AbstractTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.plugins.resources.input.ResourceIdInput;
 import gov.hhs.aspr.gcm.translation.plugins.resources.input.ResourceInitializationInput;
 import plugins.resources.support.ResourceId;
 import plugins.resources.support.ResourceInitialization;
 
 public class ResourceInitializationTranslatorSpec
-        extends AObjectTranslatorSpec<ResourceInitializationInput, ResourceInitialization> {
+        extends AbstractTranslatorSpec<ResourceInitializationInput, ResourceInitialization> {
 
     @Override
     protected ResourceInitialization convertInputObject(ResourceInitializationInput inputObject) {

@@ -1,13 +1,13 @@
 package gov.hhs.aspr.gcm.translation.plugins.stochastics.translatorSpecs;
 
-import gov.hhs.aspr.gcm.translation.core.AObjectTranslatorSpec;
+import gov.hhs.aspr.gcm.translation.core.AbstractTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.plugins.stochastics.input.RandomNumberGeneratorIdInput;
 import gov.hhs.aspr.gcm.translation.plugins.stochastics.input.StochasticsPluginDataInput;
 import plugins.stochastics.StochasticsPluginData;
 import plugins.stochastics.support.RandomNumberGeneratorId;
 
 public class StochasticsPluginDataTranslatorSpec
-        extends AObjectTranslatorSpec<StochasticsPluginDataInput, StochasticsPluginData> {
+        extends AbstractTranslatorSpec<StochasticsPluginDataInput, StochasticsPluginData> {
 
     @Override
     protected StochasticsPluginData convertInputObject(StochasticsPluginDataInput inputObject) {

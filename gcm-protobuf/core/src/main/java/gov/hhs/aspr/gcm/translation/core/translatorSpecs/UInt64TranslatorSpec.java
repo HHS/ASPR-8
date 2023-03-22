@@ -2,9 +2,9 @@ package gov.hhs.aspr.gcm.translation.core.translatorSpecs;
 
 import com.google.protobuf.UInt64Value;
 
-import gov.hhs.aspr.gcm.translation.core.AObjectTranslatorSpec;
+import gov.hhs.aspr.gcm.translation.core.AbstractTranslatorSpec;
 
-public class UInt64TranslatorSpec extends AObjectTranslatorSpec<UInt64Value, Long> {
+public class UInt64TranslatorSpec extends AbstractTranslatorSpec<UInt64Value, Long> {
 
     @Override
     protected Long convertInputObject(UInt64Value inputObject) {

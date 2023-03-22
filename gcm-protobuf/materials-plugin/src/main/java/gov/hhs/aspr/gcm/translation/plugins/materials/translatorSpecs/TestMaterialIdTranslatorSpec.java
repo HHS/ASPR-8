@@ -1,11 +1,11 @@
 package gov.hhs.aspr.gcm.translation.plugins.materials.translatorSpecs;
 
-import gov.hhs.aspr.gcm.translation.core.AObjectTranslatorSpec;
+import gov.hhs.aspr.gcm.translation.core.AbstractTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.plugins.materials.input.TestMaterialIdInput;
 import plugins.materials.testsupport.TestMaterialId;
 
 public class TestMaterialIdTranslatorSpec
-        extends AObjectTranslatorSpec<TestMaterialIdInput, TestMaterialId> {
+        extends AbstractTranslatorSpec<TestMaterialIdInput, TestMaterialId> {
 
     @Override
     protected TestMaterialId convertInputObject(TestMaterialIdInput inputObject) {

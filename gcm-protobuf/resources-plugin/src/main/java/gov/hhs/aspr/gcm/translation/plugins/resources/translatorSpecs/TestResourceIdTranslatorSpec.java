@@ -1,10 +1,10 @@
 package gov.hhs.aspr.gcm.translation.plugins.resources.translatorSpecs;
 
-import gov.hhs.aspr.gcm.translation.core.AObjectTranslatorSpec;
+import gov.hhs.aspr.gcm.translation.core.AbstractTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.plugins.resources.input.TestResourceIdInput;
 import plugins.resources.testsupport.TestResourceId;
 
-public class TestResourceIdTranslatorSpec extends AObjectTranslatorSpec<TestResourceIdInput, TestResourceId> {
+public class TestResourceIdTranslatorSpec extends AbstractTranslatorSpec<TestResourceIdInput, TestResourceId> {
 
     @Override
     protected TestResourceId convertInputObject(TestResourceIdInput inputObject) {
