@@ -84,7 +84,7 @@ public final class SerializationDemonstration {
 				.addTranslatorSpec(new PersonPropertyTranslatorSpec())
 				.addTranslatorSpec(new GlobalPropertyTranslatorSpec())
 				.addTranslatorSpec(new RegionTranslatorSpec())
-				.build().init();
+				.build();
 	}
 
 	private RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(524055747550937602L);
@@ -154,7 +154,8 @@ public final class SerializationDemonstration {
 		builder.definePersonProperty(PersonProperty.VACCINATED, propertyDefinition);
 
 		PersonPropertiesPluginData personPropertiesPluginData = builder.build();
-		return PersonPropertiesPlugin.getPersonPropertyPlugin(personPropertiesPluginData);
+		return PersonPropertiesPlugin.builder().setPersonPropertiesPluginData(personPropertiesPluginData)
+				.getPersonPropertyPlugin();
 	}
 
 	private Plugin getStochasticsPlugin() {
@@ -248,7 +249,8 @@ public final class SerializationDemonstration {
 
 		GlobalPropertiesPluginData globalPropertiesPluginData = builder.build();
 
-		return GlobalPropertiesPlugin.getGlobalPropertiesPlugin(globalPropertiesPluginData);
+		return GlobalPropertiesPlugin.builder().setGlobalPropertiesPluginData(globalPropertiesPluginData)
+				.getGlobalPropertiesPlugin();
 	}
 
 	private void execute() {
@@ -293,8 +295,9 @@ public final class SerializationDemonstration {
 				continue;
 			}
 			if (pluginData instanceof PersonPropertiesPluginData) {
-				personPropertiesPlugin = PersonPropertiesPlugin
-						.getPersonPropertyPlugin((PersonPropertiesPluginData) pluginData);
+				personPropertiesPlugin = PersonPropertiesPlugin.builder()
+						.setPersonPropertiesPluginData((PersonPropertiesPluginData) pluginData)
+						.getPersonPropertyPlugin();
 				continue;
 			}
 
@@ -304,8 +307,9 @@ public final class SerializationDemonstration {
 			}
 
 			if (pluginData instanceof GlobalPropertiesPluginData) {
-				globalPropertiesPlugin = GlobalPropertiesPlugin
-						.getGlobalPropertiesPlugin((GlobalPropertiesPluginData) pluginData);
+				globalPropertiesPlugin = GlobalPropertiesPlugin.builder()
+						.setGlobalPropertiesPluginData((GlobalPropertiesPluginData) pluginData)
+						.getGlobalPropertiesPlugin();
 				continue;
 			}
 
@@ -402,8 +406,6 @@ public final class SerializationDemonstration {
 				.addTranslatorSpec(new RegionTranslatorSpec());
 
 		this.writingTranslatorController = translatorControllerBuilder.build();
-
-		this.writingTranslatorController.init();
 	}
 
 	private void handleSimulationStateCollection(Integer scenarioId, List<Object> output) {

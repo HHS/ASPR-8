@@ -1,13 +1,10 @@
 package lesson.translatorSpecs;
 
-import com.google.protobuf.Descriptors.EnumDescriptor;
-import com.google.protobuf.ProtocolMessageEnum;
-
-import gov.hhs.aspr.gcm.translation.core.AEnumTranslatorSpec;
+import gov.hhs.aspr.gcm.translation.core.AbstractTranslatorSpec;
 import lesson.input.PersonPropertyInput;
 import lesson.plugins.model.PersonProperty;
 
-public class PersonPropertyTranslatorSpec extends AEnumTranslatorSpec<PersonPropertyInput, PersonProperty> {
+public class PersonPropertyTranslatorSpec extends AbstractTranslatorSpec<PersonPropertyInput, PersonProperty> {
 
     @Override
     protected PersonProperty convertInputObject(PersonPropertyInput inputObject) {
@@ -15,25 +12,13 @@ public class PersonPropertyTranslatorSpec extends AEnumTranslatorSpec<PersonProp
     }
 
     @Override
-    protected PersonPropertyInput convertSimObject(PersonProperty simObject) {
+    protected PersonPropertyInput convertAppObject(PersonProperty simObject) {
         return PersonPropertyInput.valueOf(simObject.name());
     }
 
     @Override
-    public EnumDescriptor getDescriptorForInputObject() {
-        return PersonPropertyInput.getDescriptor();
-    }
-
-    @Override
-    public EnumInstance getEnumInstance() {
-        return new EnumInstance() {
-
-            @Override
-            public ProtocolMessageEnum getFromString(String arg0) {
-                return PersonPropertyInput.valueOf(arg0);
-            }
-
-        };
+    public PersonPropertyInput getDefaultInstanceForInputObject() {
+        return PersonPropertyInput.forNumber(0);
     }
 
     @Override
@@ -42,9 +27,8 @@ public class PersonPropertyTranslatorSpec extends AEnumTranslatorSpec<PersonProp
     }
 
     @Override
-    public Class<PersonProperty> getSimObjectClass() {
-        return 
-        PersonProperty.class;
+    public Class<PersonProperty> getAppObjectClass() {
+        return PersonProperty.class;
     }
 
 }
