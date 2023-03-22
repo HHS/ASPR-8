@@ -18,20 +18,25 @@ public class AppTest {
     public void testSimulationTimeTranslator() {
         Path basePath = Path.of("").toAbsolutePath();
 
-        if (!basePath.endsWith("nucleus")) {
-            basePath = basePath.resolve("nucleus");
+        if (!basePath.endsWith("nucleus-translator")) {
+            basePath = basePath.resolve("nucleus-translator");
         }
 
-        Path inputFilePath = basePath.resolve("src/main/resources/json/simulationTimeInput.json");
-        Path outputFilePath = basePath.resolve("src/main/resources/json/output/simulationTimeOutput.json");
+        Path inputFilePath = basePath.resolve("src/main/resources/json");
+        Path outputFilePath = basePath.resolve("src/main/resources/json/output");
+        
+        outputFilePath.toFile().mkdir();
+
+        String inputFileName = "simulationTimeInput.json";
+        String outputFileName = "simulationTimeOutput.json";
 
 
         System.out.println("Working Directory = " + System.getProperty("user.dir"));
 
         TranslatorController translatorController = TranslatorController.builder()
                 .addTranslator(NucleusTranslator.builder()
-                        .addInputFile(inputFilePath.toString(), SimulationTimeInput.getDefaultInstance())
-                        .addOutputFile(outputFilePath.toString(), SimulationTime.class).build())
+                        .addInputFile(inputFilePath.resolve(inputFileName).toString(), SimulationTimeInput.getDefaultInstance())
+                        .addOutputFile(outputFilePath.resolve(outputFileName).toString(), SimulationTime.class).build())
                 .build();
 
         List<Object> objects = translatorController.readInput().getObjects();

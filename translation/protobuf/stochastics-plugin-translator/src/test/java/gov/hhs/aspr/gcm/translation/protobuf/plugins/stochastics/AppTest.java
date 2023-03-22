@@ -24,16 +24,21 @@ public class AppTest {
 
         Path basePath = Path.of("").toAbsolutePath();
 
-        if (!basePath.endsWith("stochastics-plugin")) {
-            basePath = basePath.resolve("stochastics-plugin");
+        if (!basePath.endsWith("stochastics-plugin-translator")) {
+            basePath = basePath.resolve("stochastics-plugin-translator");
         }
 
-        Path inputFilePath = basePath.resolve("src/main/resources/json/input.json");
-        Path outputFilePath = basePath.resolve("src/main/resources/json/output/output.json");
+        Path inputFilePath = basePath.resolve("src/main/resources/json");
+        Path outputFilePath = basePath.resolve("src/main/resources/json/output");
+        
+        outputFilePath.toFile().mkdir();
+
+        String inputFileName = "input.json";
+        String outputFileName = "output.json";
 
         TranslatorController translatorController = TranslatorController.builder()
                 .addTranslator(
-                        StochasticsTranslator.getTranslatorRW(inputFilePath.toString(), outputFilePath.toString()))
+                        StochasticsTranslator.getTranslatorRW(inputFilePath.resolve(inputFileName).toString(), outputFilePath.resolve(outputFileName).toString()))
                 .addTranslatorSpec(new TestRandomGeneratorIdTranslatorSpec())
                 .build();
 

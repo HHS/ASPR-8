@@ -32,16 +32,21 @@ public class AppTest {
     public void testPersonPropertiesTranslator() {
         Path basePath = Path.of("").toAbsolutePath();
 
-        if (!basePath.endsWith("personproperties-plugin")) {
-            basePath = basePath.resolve("personproperties-plugin");
+        if (!basePath.endsWith("personproperties-plugin-translator")) {
+            basePath = basePath.resolve("personproperties-plugin-translator");
         }
 
-        Path inputFilePath = basePath.resolve("src/main/resources/json/input.json");
-        Path outputFilePath = basePath.resolve("src/main/resources/json/output/output.json");
+        Path inputFilePath = basePath.resolve("src/main/resources/json");
+        Path outputFilePath = basePath.resolve("src/main/resources/json/output");
+        
+        outputFilePath.toFile().mkdir();
+
+        String inputFileName = "input.json";
+        String outputFileName = "output.json";
 
         TranslatorController translatorController = TranslatorController.builder()
                 .addTranslator(
-                        PersonPropertiesTranslator.getTranslatorRW(inputFilePath.toString(), outputFilePath.toString()))
+                        PersonPropertiesTranslator.getTranslatorRW(inputFilePath.resolve(inputFileName).toString(), outputFilePath.resolve(outputFileName).toString()))
                 .addTranslator(PropertiesTranslator.getTranslator())
                 .addTranslator(PeopleTranslator.getTranslator())
                 .addTranslatorSpec(new TestPersonPropertyIdTranslatorSpec())

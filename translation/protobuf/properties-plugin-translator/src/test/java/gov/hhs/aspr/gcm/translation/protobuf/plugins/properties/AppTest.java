@@ -22,17 +22,22 @@ public class AppTest {
 
         Path basePath = Path.of("").toAbsolutePath();
 
-        if (!basePath.endsWith("properties-plugin")) {
-            basePath = basePath.resolve("properties-plugin");
+        if (!basePath.endsWith("properties-plugin-translator")) {
+            basePath = basePath.resolve("properties-plugin-translator");
         }
 
-        Path inputFilePath = basePath.resolve("src/main/resources/json/input.json");
-        Path outputFilePath = basePath.resolve("src/main/resources/json/output/output.json");
+        Path inputFilePath = basePath.resolve("src/main/resources/json");
+        Path outputFilePath = basePath.resolve("src/main/resources/json/output");
+        
+        outputFilePath.toFile().mkdir();
+
+        String inputFileName = "input.json";
+        String outputFileName = "output.json";
 
         TranslatorController translatorController = TranslatorController.builder()
                 .addTranslator(PropertiesTranslator.builder()
-                        .addInputFile(inputFilePath.toString(), PropertyValueMapInput.getDefaultInstance())
-                        .addOutputFile(outputFilePath.toString(), PropertyValueMap.class).build())
+                        .addInputFile(inputFilePath.resolve(inputFileName).toString(), PropertyValueMapInput.getDefaultInstance())
+                        .addOutputFile(outputFilePath.resolve(outputFileName).toString(), PropertyValueMap.class).build())
                 .addTranslatorSpec(new TestMessageTranslatorSpec())
                 .addTranslatorSpec(new Layer1TranslatorSpec())
                 .build();
