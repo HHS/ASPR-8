@@ -35,8 +35,6 @@ public abstract class AbstractTranslatorSpec<I, S> implements ITranslatorSpec {
 
     protected abstract I convertAppObject(S simObject);
 
-    // public abstract Descriptor getDescriptorForInputObject();
-
     public abstract I getDefaultInstanceForInputObject();
 
     public abstract Class<S> getAppObjectClass();
