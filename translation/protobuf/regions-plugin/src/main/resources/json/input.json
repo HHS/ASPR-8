@@ -2,43 +2,43 @@
     "regionIds": [
       {
         "id": {
-          "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-          "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+          "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+          "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
           "value": "REGION_1"
         }
       },
       {
         "id": {
-          "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-          "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+          "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+          "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
           "value": "REGION_2"
         }
       },
       {
         "id": {
-          "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-          "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+          "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+          "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
           "value": "REGION_3"
         }
       },
       {
         "id": {
-          "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-          "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+          "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+          "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
           "value": "REGION_4"
         }
       },
       {
         "id": {
-          "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-          "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+          "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+          "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
           "value": "REGION_5"
         }
       },
       {
         "id": {
-          "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-          "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+          "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+          "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
           "value": "REGION_6"
         }
       }
@@ -46,8 +46,8 @@
     "regionPropertyDefinitions": [
       {
         "propertyId": {
-          "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-          "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionPropertyIdInput",
+          "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+          "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionPropertyIdInput",
           "value": "REGION_PROPERTY_1_BOOLEAN_MUTABLE"
         },
         "propertyDefinition": {
@@ -61,8 +61,8 @@
       },
       {
         "propertyId": {
-          "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-          "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionPropertyIdInput",
+          "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+          "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionPropertyIdInput",
           "value": "REGION_PROPERTY_2_INTEGER_MUTABLE"
         },
         "propertyDefinition": {
@@ -73,8 +73,8 @@
       },
       {
         "propertyId": {
-          "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-          "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionPropertyIdInput",
+          "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+          "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionPropertyIdInput",
           "value": "REGION_PROPERTY_3_DOUBLE_MUTABLE"
         },
         "propertyDefinition": {
@@ -88,8 +88,8 @@
       },
       {
         "propertyId": {
-          "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-          "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionPropertyIdInput",
+          "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+          "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionPropertyIdInput",
           "value": "REGION_PROPERTY_4_BOOLEAN_IMMUTABLE"
         },
         "propertyDefinition": {
@@ -102,8 +102,8 @@
       },
       {
         "propertyId": {
-          "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-          "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionPropertyIdInput",
+          "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+          "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionPropertyIdInput",
           "value": "REGION_PROPERTY_5_INTEGER_IMMUTABLE"
         },
         "propertyDefinition": {
@@ -116,8 +116,8 @@
       },
       {
         "propertyId": {
-          "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-          "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionPropertyIdInput",
+          "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+          "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionPropertyIdInput",
           "value": "REGION_PROPERTY_6_DOUBLE_IMMUTABLE"
         },
         "propertyDefinition": {
@@ -133,16 +133,16 @@
       {
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_1"
           }
         },
         "propertyValueMap": [
           {
             "propertyId": {
-              "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-              "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionPropertyIdInput",
+              "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+              "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionPropertyIdInput",
               "value": "REGION_PROPERTY_2_INTEGER_MUTABLE"
             },
             "propertyValue": {
@@ -155,16 +155,16 @@
       {
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_2"
           }
         },
         "propertyValueMap": [
           {
             "propertyId": {
-              "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-              "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionPropertyIdInput",
+              "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+              "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionPropertyIdInput",
               "value": "REGION_PROPERTY_2_INTEGER_MUTABLE"
             },
             "propertyValue": {
@@ -177,16 +177,16 @@
       {
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_3"
           }
         },
         "propertyValueMap": [
           {
             "propertyId": {
-              "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-              "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionPropertyIdInput",
+              "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+              "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionPropertyIdInput",
               "value": "REGION_PROPERTY_2_INTEGER_MUTABLE"
             },
             "propertyValue": {
@@ -199,16 +199,16 @@
       {
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_4"
           }
         },
         "propertyValueMap": [
           {
             "propertyId": {
-              "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-              "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionPropertyIdInput",
+              "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+              "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionPropertyIdInput",
               "value": "REGION_PROPERTY_2_INTEGER_MUTABLE"
             },
             "propertyValue": {
@@ -221,16 +221,16 @@
       {
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_5"
           }
         },
         "propertyValueMap": [
           {
             "propertyId": {
-              "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-              "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionPropertyIdInput",
+              "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+              "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionPropertyIdInput",
               "value": "REGION_PROPERTY_2_INTEGER_MUTABLE"
             },
             "propertyValue": {
@@ -243,16 +243,16 @@
       {
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_6"
           }
         },
         "propertyValueMap": [
           {
             "propertyId": {
-              "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-              "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionPropertyIdInput",
+              "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+              "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionPropertyIdInput",
               "value": "REGION_PROPERTY_2_INTEGER_MUTABLE"
             },
             "propertyValue": {
@@ -268,8 +268,8 @@
         "personId": {},
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_1"
           }
         }
@@ -280,8 +280,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_2"
           }
         }
@@ -292,8 +292,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_3"
           }
         }
@@ -304,8 +304,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_4"
           }
         }
@@ -316,8 +316,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_5"
           }
         }
@@ -328,8 +328,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_6"
           }
         }
@@ -340,8 +340,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_1"
           }
         }
@@ -352,8 +352,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_2"
           }
         }
@@ -364,8 +364,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_3"
           }
         }
@@ -376,8 +376,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_4"
           }
         }
@@ -388,8 +388,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_5"
           }
         }
@@ -400,8 +400,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_6"
           }
         }
@@ -412,8 +412,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_1"
           }
         }
@@ -424,8 +424,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_2"
           }
         }
@@ -436,8 +436,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_3"
           }
         }
@@ -448,8 +448,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_4"
           }
         }
@@ -460,8 +460,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_5"
           }
         }
@@ -472,8 +472,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_6"
           }
         }
@@ -484,8 +484,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_1"
           }
         }
@@ -496,8 +496,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_2"
           }
         }
@@ -508,8 +508,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_3"
           }
         }
@@ -520,8 +520,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_4"
           }
         }
@@ -532,8 +532,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_5"
           }
         }
@@ -544,8 +544,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_6"
           }
         }
@@ -556,8 +556,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_1"
           }
         }
@@ -568,8 +568,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_2"
           }
         }
@@ -580,8 +580,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_3"
           }
         }
@@ -592,8 +592,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_4"
           }
         }
@@ -604,8 +604,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_5"
           }
         }
@@ -616,8 +616,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_6"
           }
         }
@@ -628,8 +628,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_1"
           }
         }
@@ -640,8 +640,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_2"
           }
         }
@@ -652,8 +652,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_3"
           }
         }
@@ -664,8 +664,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_4"
           }
         }
@@ -676,8 +676,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_5"
           }
         }
@@ -688,8 +688,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_6"
           }
         }
@@ -700,8 +700,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_1"
           }
         }
@@ -712,8 +712,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_2"
           }
         }
@@ -724,8 +724,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_3"
           }
         }
@@ -736,8 +736,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_4"
           }
         }
@@ -748,8 +748,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_5"
           }
         }
@@ -760,8 +760,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_6"
           }
         }
@@ -772,8 +772,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_1"
           }
         }
@@ -784,8 +784,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_2"
           }
         }
@@ -796,8 +796,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_3"
           }
         }
@@ -808,8 +808,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_4"
           }
         }
@@ -820,8 +820,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_5"
           }
         }
@@ -832,8 +832,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_6"
           }
         }
@@ -844,8 +844,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_1"
           }
         }
@@ -856,8 +856,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_2"
           }
         }
@@ -868,8 +868,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_3"
           }
         }
@@ -880,8 +880,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_4"
           }
         }
@@ -892,8 +892,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_5"
           }
         }
@@ -904,8 +904,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_6"
           }
         }
@@ -916,8 +916,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_1"
           }
         }
@@ -928,8 +928,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_2"
           }
         }
@@ -940,8 +940,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_3"
           }
         }
@@ -952,8 +952,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_4"
           }
         }
@@ -964,8 +964,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_5"
           }
         }
@@ -976,8 +976,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_6"
           }
         }
@@ -988,8 +988,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_1"
           }
         }
@@ -1000,8 +1000,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_2"
           }
         }
@@ -1012,8 +1012,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_3"
           }
         }
@@ -1024,8 +1024,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_4"
           }
         }
@@ -1036,8 +1036,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_5"
           }
         }
@@ -1048,8 +1048,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_6"
           }
         }
@@ -1060,8 +1060,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_1"
           }
         }
@@ -1072,8 +1072,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_2"
           }
         }
@@ -1084,8 +1084,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_3"
           }
         }
@@ -1096,8 +1096,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_4"
           }
         }
@@ -1108,8 +1108,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_5"
           }
         }
@@ -1120,8 +1120,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_6"
           }
         }
@@ -1132,8 +1132,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_1"
           }
         }
@@ -1144,8 +1144,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_2"
           }
         }
@@ -1156,8 +1156,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_3"
           }
         }
@@ -1168,8 +1168,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_4"
           }
         }
@@ -1180,8 +1180,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_5"
           }
         }
@@ -1192,8 +1192,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_6"
           }
         }
@@ -1204,8 +1204,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_1"
           }
         }
@@ -1216,8 +1216,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_2"
           }
         }
@@ -1228,8 +1228,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_3"
           }
         }
@@ -1240,8 +1240,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_4"
           }
         }
@@ -1252,8 +1252,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_5"
           }
         }
@@ -1264,8 +1264,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_6"
           }
         }
@@ -1276,8 +1276,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_1"
           }
         }
@@ -1288,8 +1288,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_2"
           }
         }
@@ -1300,8 +1300,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_3"
           }
         }
@@ -1312,8 +1312,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_4"
           }
         }
@@ -1324,8 +1324,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_5"
           }
         }
@@ -1336,8 +1336,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_6"
           }
         }
@@ -1348,8 +1348,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_1"
           }
         }
@@ -1360,8 +1360,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_2"
           }
         }
@@ -1372,8 +1372,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_3"
           }
         }
@@ -1384,8 +1384,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_4"
           }
         }
@@ -1396,8 +1396,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_5"
           }
         }
@@ -1408,8 +1408,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_6"
           }
         }
@@ -1420,8 +1420,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_1"
           }
         }
@@ -1432,8 +1432,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_2"
           }
         }
@@ -1444,8 +1444,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_3"
           }
         }
@@ -1456,8 +1456,8 @@
         },
         "regionId": {
           "id": {
-            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.WrapperEnumValue",
-            "enumTypeUrl": "gov.hhs.aspr.gcm.TestRegionIdInput",
+            "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+            "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestRegionIdInput",
             "value": "REGION_4"
           }
         }
