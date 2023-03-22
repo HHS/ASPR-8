@@ -2,18 +2,18 @@
 <project>
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>gov.hhs.aspr.gcm.translation</groupId>
-        <artifactId>protobuf</artifactId>
+        <groupId>gov.hhs.aspr.gcm.translation.protobuf</groupId>
+        <artifactId>protobuf-parent</artifactId>
         <version>${revision}</version>
     </parent>
 
     <artifactId>resources-plugin-translator</artifactId>
     <packaging>jar</packaging>
-    <name>gcm-translation :: protobuf :: resources-plugin-translator</name>
+    <name>gcm.translation :: protobuf :: resources-plugin-translator</name>
 
     <dependencies>
         <dependency>
-            <groupId>gov.hhs.aspr.gcm.translation</groupId>
+            <groupId>gov.hhs.aspr.gcm.translation.protobuf</groupId>
             <artifactId>regions-plugin-translator</artifactId>
             <version>${revision}</version>
         </dependency>
@@ -43,7 +43,7 @@
                         <configuration>
                             <artifactItems>
                                 <artifactItem>
-                                    <groupId>gov.hhs.aspr.gcm.translation</groupId>
+                                    <groupId>gov.hhs.aspr.gcm.translation.protobuf</groupId>
                                     <artifactId>proto-definitions</artifactId>
                                     <version>${proto-definitions.version}</version>
                                     <overWrite>true</overWrite>
