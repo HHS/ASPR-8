@@ -13,6 +13,7 @@ import java.util.Random;
 import java.util.Set;
 
 import org.apache.commons.math3.random.RandomGenerator;
+import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.gcm.translation.protobuf.core.TranslatorController;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.translatorSpecs.TestBatchPropertyIdTranslatorSpec;
@@ -32,7 +33,6 @@ import plugins.materials.support.MaterialId;
 import plugins.materials.support.MaterialsProducerId;
 import plugins.materials.support.MaterialsProducerPropertyId;
 import plugins.materials.support.StageId;
-import plugins.materials.testsupport.MaterialsTestPluginFactory;
 import plugins.materials.testsupport.TestBatchPropertyId;
 import plugins.materials.testsupport.TestMaterialId;
 import plugins.materials.testsupport.TestMaterialsProducerId;
@@ -40,18 +40,37 @@ import plugins.materials.testsupport.TestMaterialsProducerPropertyId;
 import plugins.util.properties.PropertyDefinition;
 import util.random.RandomGeneratorProvider;
 
-public class App {
-    
-    private static void checkSame(MaterialsPluginData actualPluginData) {
-        int numBatches = 50;
+public class AppTest {
+
+	@Test
+	public void testMaterialsTranslator() {
+		String inputFileName = "./materials-plugin/src/main/resources/json/input.json";
+		String outputFileName = "./materials-plugin/src/main/resources/json/output/output.json";
+
+		TranslatorController translatorController = TranslatorController.builder()
+				.addTranslator(MaterialsTranslator.getTranslatorRW(inputFileName, outputFileName))
+				.addTranslator(PropertiesTranslator.getTranslator())
+				.addTranslator(ResourcesTranslator.getTranslator())
+				.addTranslator(RegionsTranslator.getTranslatorModule())
+				.addTranslator(PeopleTranslator.getTranslator())
+				.addTranslatorSpec(new TestResourceIdTranslatorSpec())
+				.addTranslatorSpec(new TestBatchPropertyIdTranslatorSpec())
+				.addTranslatorSpec(new TestMaterialIdTranslatorSpec())
+				.addTranslatorSpec(new TestMaterialsProducerIdTranslatorSpec())
+				.addTranslatorSpec(new TestMaterialsProducerPropertyIdTranslatorSpec())
+				.build();
+
+		List<PluginData> pluginDatas = translatorController.readInput().getPluginDatas();
+
+		MaterialsPluginData materialsPluginData = (MaterialsPluginData) pluginDatas.get(0);
+
+		int numBatches = 50;
 		int numStages = 10;
 		int numBatchesInStage = 30;
 		long seed = 524805676405822016L;
 
-		MaterialsPluginData materialsPluginData = MaterialsTestPluginFactory.getStandardMaterialsPluginData(numBatches,
-				numStages, numBatchesInStage, seed);
-
 		Set<TestMaterialId> expectedMaterialIds = EnumSet.allOf(TestMaterialId.class);
+		assertFalse(expectedMaterialIds.isEmpty());
 
 		Set<MaterialId> actualMaterialIds = materialsPluginData.getMaterialIds();
 		assertEquals(expectedMaterialIds, actualMaterialIds);
@@ -172,38 +191,7 @@ public class App {
 			}
 		}
 
-		System.out.println("Datas are the same.");
-    }
-    public static void main(String[] args) {
-        String inputFileName = "./materials-plugin/src/main/resources/json/input.json";
-        String outputFileName = "./materials-plugin/src/main/resources/json/output/output.json";
+		translatorController.writeOutput();
+	}
 
-        TranslatorController translatorController = TranslatorController.builder()
-                .addTranslator(MaterialsTranslator.getTranslatorRW(inputFileName, outputFileName))
-                .addTranslator(PropertiesTranslator.getTranslator())
-                .addTranslator(ResourcesTranslator.getTranslator())
-                .addTranslator(RegionsTranslator.getTranslatorModule())
-                .addTranslator(PeopleTranslator.getTranslator())
-                .addTranslatorSpec(new TestResourceIdTranslatorSpec())
-                .addTranslatorSpec(new TestBatchPropertyIdTranslatorSpec())
-                .addTranslatorSpec(new TestMaterialIdTranslatorSpec())
-                .addTranslatorSpec(new TestMaterialsProducerIdTranslatorSpec())
-                .addTranslatorSpec(new TestMaterialsProducerPropertyIdTranslatorSpec())
-                .build();
-
-        List<PluginData> pluginDatas = translatorController.readInput().getPluginDatas();
-
-        MaterialsPluginData actualPluginData = (MaterialsPluginData) pluginDatas.get(0);
-
-        // List<PersonId> people = new ArrayList<>();
-
-        // for (int i = 0; i < 100; i++) {
-        //     people.add(new PersonId(i));
-        // }
-
-        checkSame(actualPluginData);
-
-        translatorController.writeOutput();
-    }
-    
 }
