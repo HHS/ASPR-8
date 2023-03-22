@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Set;
 
 import nucleus.ReportContext;
+import nucleus.SimulationStateContext;
 import plugins.groups.datamanagers.GroupsDataManager;
 import plugins.groups.events.GroupAdditionEvent;
 import plugins.groups.events.GroupImminentRemovalEvent;
@@ -114,6 +115,11 @@ public final class GroupPropertyReport extends PeriodicReport {
 		}
 	}
 
+	/*
+	 * Returns the counter corresponding to the given group type, group property
+	 * id and group property value. Adds the counter if it does not already
+	 * exist
+	 */
 	private Counter getCounter(final GroupTypeId groupTypeId, final GroupPropertyId groupPropertyId, final Object groupPropertyValue) {
 		Map<GroupPropertyId, Map<Object, Counter>> map1 = groupTypeMap.get(groupTypeId);
 		if (map1 == null) {
@@ -144,8 +150,86 @@ public final class GroupPropertyReport extends PeriodicReport {
 	private GroupsDataManager groupsDataManager;
 
 	private final Map<GroupTypeId, Set<GroupPropertyId>> includedProperties = new LinkedHashMap<>();
+	private final Map<GroupTypeId, Set<GroupPropertyId>> currentProperties = new LinkedHashMap<>();
 	private final Map<GroupTypeId, Set<GroupPropertyId>> excludedProperties = new LinkedHashMap<>();
 	private final boolean includeNewProperties;
+
+	private boolean isCurrentProperty(GroupTypeId groupTypeId, GroupPropertyId groupPropertyId) {
+		boolean result = false;
+		Set<GroupPropertyId> set = currentProperties.get(groupTypeId);
+		if (set != null) {
+			result = set.contains(groupPropertyId);
+		}
+		return result;
+	}
+
+	private boolean addToCurrentProperties(GroupTypeId groupTypeId, GroupPropertyId groupPropertyId) {
+
+		// There are eight possibilities:
+
+		/*
+		 * P -- the default inclusion policy
+		 * 
+		 * I -- the property is explicitly included
+		 * 
+		 * X -- the property is explicitly excluded
+		 * 
+		 * C -- the property should be on the current properties
+		 * 
+		 * 
+		 * P I X C Table
+		 * 
+		 * TRUE TRUE FALSE TRUE
+		 * 
+		 * TRUE FALSE FALSE TRUE
+		 * 
+		 * FALSE TRUE FALSE TRUE
+		 * 
+		 * FALSE FALSE FALSE FALSE
+		 * 
+		 * TRUE TRUE TRUE FALSE -- not possible
+		 * 
+		 * TRUE FALSE TRUE FALSE
+		 * 
+		 * FALSE TRUE TRUE FALSE -- not possible
+		 * 
+		 * FALSE FALSE TRUE FALSE
+		 * 
+		 * 
+		 * Two of the cases above are contradictory since a property cannot be
+		 * both explicitly included and explicitly excluded
+		 * 
+		 */
+
+		// if X is true then we don't add the property
+		Set<GroupPropertyId> set = excludedProperties.get(groupTypeId);
+		if (set != null) {
+			if (set.contains(groupPropertyId)) {
+				return false;
+			}
+		}
+
+		// if both P and I are false we don't add the property
+		boolean included = false;
+		set = includedProperties.get(groupTypeId);
+		if (set != null) {
+			included = set.contains(groupPropertyId);
+		}
+
+		if (!included && !includeNewProperties) {
+			return false;
+		}
+
+		// we have failed to reject the property
+		set = currentProperties.get(groupTypeId);
+		if (set == null) {
+			set = new LinkedHashSet<>();
+			currentProperties.put(groupTypeId, set);
+		}
+		set.add(groupPropertyId);
+
+		return true;
+	}
 
 	@Override
 	protected void prepare(final ReportContext reportContext) {
@@ -157,141 +241,104 @@ public final class GroupPropertyReport extends PeriodicReport {
 		reportContext.subscribe(GroupImminentRemovalEvent.class, this::handleGroupImminentRemovalEvent);
 		reportContext.subscribe(GroupPropertyUpdateEvent.class, this::handleGroupPropertyUpdateEvent);
 		reportContext.subscribe(GroupPropertyDefinitionEvent.class, this::handleGroupPropertyDefinitionEvent);
+		reportContext.subscribeToSimulationState(this::recordSimulationState);
 
-		/*
-		 * if we are supposed to add new properties, then we will add all the
-		 * existing properties that are not explicitly excluded
-		 */
-		if (includeNewProperties) {
-
-			for (GroupTypeId groupTypeId : groupsDataManager.getGroupTypeIds()) {
-				Set<GroupPropertyId> inclusionSet = includedProperties.get(groupTypeId);
-				if (inclusionSet == null) {
-					inclusionSet = new LinkedHashSet<>();
-					includedProperties.put(groupTypeId, inclusionSet);
-				}
-				inclusionSet.addAll(groupsDataManager.getGroupPropertyIds(groupTypeId));
-
-				Set<GroupPropertyId> exclusionSet = excludedProperties.get(groupTypeId);
-				if (exclusionSet != null) {
-					inclusionSet.removeAll(exclusionSet);
-				}
-
+		// update the current properties from the existing properties found in
+		// the data manager
+		for (GroupTypeId groupTypeId : groupsDataManager.getGroupTypeIds()) {
+			for (GroupPropertyId groupPropertyId : groupsDataManager.getGroupPropertyIds(groupTypeId)) {				
+				addToCurrentProperties(groupTypeId, groupPropertyId);				
 			}
 		}
+
 		/*
-		 * Initialize the buckets containing what we will report, careful to
-		 * only add buckets for group properties that both currently exist and
-		 * are included in this report.
+		 * Initialize the buckets containing what we will report
 		 *
 		 */
-
 		for (GroupId groupId : groupsDataManager.getGroupIds()) {
 			GroupTypeId groupType = groupsDataManager.getGroupType(groupId);
-			if (includedProperties.containsKey(groupType)) {
-				Set<GroupPropertyId> includedSet = includedProperties.get(groupType);
-				for (GroupPropertyId groupPropertyId : groupsDataManager.getGroupPropertyIds(groupType)) {
-					if (includedSet.contains(groupPropertyId)) {
-						Object groupPropertyValue = groupsDataManager.getGroupPropertyValue(groupId, groupPropertyId);
-						increment(groupType, groupPropertyId, groupPropertyValue);
-					}
+			if (currentProperties.containsKey(groupType)) {
+				for (GroupPropertyId groupPropertyId : currentProperties.get(groupType)) {
+					Object groupPropertyValue = groupsDataManager.getGroupPropertyValue(groupId, groupPropertyId);
+					increment(groupType, groupPropertyId, groupPropertyValue);
 				}
 			}
 		}
-
+	}
+	
+	
+	private void recordSimulationState(ReportContext reportContext, SimulationStateContext simulationStateContext) {
+		GroupPropertyReportPluginData.Builder builder = simulationStateContext.get(GroupPropertyReportPluginData.Builder.class);
+		builder.setReportLabel(getReportLabel());
+		builder.setReportPeriod(getReportPeriod());
+		builder.setDefaultInclusion(includeNewProperties);
+		
+		for(GroupTypeId groupTypeId :includedProperties.keySet()) {			
+			for(GroupPropertyId  groupPropertyId : includedProperties.get(groupTypeId)) {
+				builder.includeGroupProperty(groupTypeId, groupPropertyId);
+			}
+		}
+		
+		for(GroupTypeId groupTypeId :excludedProperties.keySet()) {			
+			for(GroupPropertyId  groupPropertyId : excludedProperties.get(groupTypeId)) {
+				builder.excludeGroupProperty(groupTypeId, groupPropertyId);
+			}
+		}
+		
 	}
 
 	private void handleGroupPropertyDefinitionEvent(ReportContext reportContext, GroupPropertyDefinitionEvent groupPropertyDefinitionEvent) {
 
-		GroupTypeId groupTypeId = groupPropertyDefinitionEvent.groupTypeId();
-		GroupPropertyId groupPropertyId = groupPropertyDefinitionEvent.groupPropertyId();
+		final GroupTypeId groupTypeId = groupPropertyDefinitionEvent.groupTypeId();
+		final GroupPropertyId groupPropertyId = groupPropertyDefinitionEvent.groupPropertyId();
+		final boolean added = addToCurrentProperties(groupTypeId, groupPropertyId);
 
-		// if the property is explicitly excluded, then we are done
-		Set<GroupPropertyId> excludedGroupPropertyIds = excludedProperties.get(groupTypeId);
-		if (excludedGroupPropertyIds != null) {
-			if (excludedGroupPropertyIds.contains(groupPropertyId)) {
-				return;
+		if (added) {
+			List<GroupId> groups = groupsDataManager.getGroupsForGroupType(groupPropertyDefinitionEvent.groupTypeId());
+			for (GroupId groupId : groups) {
+				Object groupPropertyValue = groupsDataManager.getGroupPropertyValue(groupId, groupPropertyId);
+				increment(groupTypeId, groupPropertyId, groupPropertyValue);
 			}
 		}
-
-		
-		if (includeNewProperties) {
-			// add the property to the included properties if it is missing
-			Set<GroupPropertyId> includedGroupPropertyIds = includedProperties.get(groupTypeId);
-			if (includedGroupPropertyIds == null) {
-				includedGroupPropertyIds = new LinkedHashSet<>();
-				includedProperties.put(groupTypeId, includedGroupPropertyIds);
-			}
-			includedGroupPropertyIds.add(groupPropertyId);
-		} else {
-			// if we are not accepting all new properties, then the property must be
-			// an explicitly included property
-			Set<GroupPropertyId> set = includedProperties.get(groupTypeId);
-			if (set == null) {
-				return;
-			}
-			if (!set.contains(groupPropertyId)) {
-				return;
-			}
-		}
-		
-
-		List<GroupId> groups = groupsDataManager.getGroupsForGroupType(groupPropertyDefinitionEvent.groupTypeId());
-
-		for (GroupId groupId : groups) {
-			Object groupPropertyValue = groupsDataManager.getGroupPropertyValue(groupId, groupPropertyId);
-			increment(groupTypeId, groupPropertyId, groupPropertyValue);
-		}
-
 	}
 
 	private void handleGroupPropertyUpdateEvent(ReportContext reportContext, GroupPropertyUpdateEvent groupPropertyUpdateEvent) {
-		GroupId groupId = groupPropertyUpdateEvent.groupId();
-		GroupTypeId groupTypeId = groupsDataManager.getGroupType(groupId);
-		GroupPropertyId groupPropertyId = groupPropertyUpdateEvent.groupPropertyId();
 
-		Set<GroupPropertyId> set = includedProperties.get(groupTypeId);
-		if (set == null) {
-			return;
+		final GroupId groupId = groupPropertyUpdateEvent.groupId();
+		final GroupTypeId groupTypeId = groupsDataManager.getGroupType(groupId);
+		final GroupPropertyId groupPropertyId = groupPropertyUpdateEvent.groupPropertyId();
+
+		if (isCurrentProperty(groupTypeId, groupPropertyId)) {
+			Object previousPropertyValue = groupPropertyUpdateEvent.previousPropertyValue();
+			Object currentPropertyValue = groupPropertyUpdateEvent.currentPropertyValue();
+			increment(groupTypeId, groupPropertyId, currentPropertyValue);
+			decrement(groupTypeId, groupPropertyId, previousPropertyValue);
 		}
-		if (!set.contains(groupPropertyId)) {
-			return;
-		}
-
-		Object previousPropertyValue = groupPropertyUpdateEvent.previousPropertyValue();
-		Object currentPropertyValue = groupPropertyUpdateEvent.currentPropertyValue();
-
-		increment(groupTypeId, groupPropertyId, currentPropertyValue);
-		decrement(groupTypeId, groupPropertyId, previousPropertyValue);
-
 	}
 
 	private void handleGroupAdditionEvent(ReportContext reportContext, GroupAdditionEvent groupAdditionEvent) {
-		GroupId groupId = groupAdditionEvent.groupId();
+		final GroupId groupId = groupAdditionEvent.groupId();
 		final GroupTypeId groupTypeId = groupsDataManager.getGroupType(groupId);
 
-		Set<GroupPropertyId> set = includedProperties.get(groupTypeId);
-		if (set == null) {
-			return;
+		Set<GroupPropertyId> groupPropertyIds = currentProperties.get(groupTypeId);
+		if (groupPropertyIds != null) {
+			for (GroupPropertyId groupPropertyId : groupPropertyIds) {
+				final Object groupPropertyValue = groupsDataManager.getGroupPropertyValue(groupId, groupPropertyId);
+				increment(groupTypeId, groupPropertyId, groupPropertyValue);
+			}
 		}
-		for (GroupPropertyId groupPropertyId : set) {
-			final Object groupPropertyValue = groupsDataManager.getGroupPropertyValue(groupId, groupPropertyId);
-			increment(groupTypeId, groupPropertyId, groupPropertyValue);
-		}
-
 	}
 
 	private void handleGroupImminentRemovalEvent(ReportContext reportContext, GroupImminentRemovalEvent groupImminentRemovalEvent) {
-		GroupId groupId = groupImminentRemovalEvent.groupId();
+		final GroupId groupId = groupImminentRemovalEvent.groupId();
 		final GroupTypeId groupTypeId = groupsDataManager.getGroupType(groupId);
 
-		Set<GroupPropertyId> set = includedProperties.get(groupTypeId);
-		if (set == null) {
-			return;
-		}
-		for (GroupPropertyId groupPropertyId : set) {
-			final Object groupPropertyValue = groupsDataManager.getGroupPropertyValue(groupId, groupPropertyId);
-			decrement(groupTypeId, groupPropertyId, groupPropertyValue);
+		Set<GroupPropertyId> groupPropertyIds = currentProperties.get(groupTypeId);
+		if (groupPropertyIds != null) {
+			for (GroupPropertyId groupPropertyId : groupPropertyIds) {
+				final Object groupPropertyValue = groupsDataManager.getGroupPropertyValue(groupId, groupPropertyId);
+				decrement(groupTypeId, groupPropertyId, groupPropertyValue);
+			}
 		}
 	}
 }
