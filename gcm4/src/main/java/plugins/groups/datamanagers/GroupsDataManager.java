@@ -438,8 +438,8 @@ public final class GroupsDataManager extends DataManager {
 
 		/*
 		 * Validate the contained property value assignments. We do not have to
-		 * validate the values since they are guaranteed to be consistent with the
-		 * property definition by contract.
+		 * validate the values since they are guaranteed to be consistent with
+		 * the property definition by contract.
 		 */
 		for (Pair<GroupId, Object> pair : groupPropertyDefinitionInitialization.getPropertyValues()) {
 			GroupId groupId = pair.getFirst();
@@ -777,7 +777,29 @@ public final class GroupsDataManager extends DataManager {
 		validateGroupConstructionInfoNotNull(groupConstructionInfo);
 		final GroupTypeId groupTypeId = groupConstructionInfo.getGroupTypeId();
 		validateGroupTypeId(groupConstructionInfo.getGroupTypeId());
+
+		// validate the property value assignments included in the event
+		final Map<GroupPropertyId, Object> propertyValues = groupConstructionInfo.getPropertyValues();
+		for (final GroupPropertyId groupPropertyId : propertyValues.keySet()) {
+			validateGroupPropertyId(groupTypeId, groupPropertyId);
+			final PropertyDefinition propertyDefinition = groupPropertyDefinitions.get(groupTypeId).get(groupPropertyId);
+			final Object groupPropertyValue = propertyValues.get(groupPropertyId);
+			validateGroupPropertyValueNotNull(groupPropertyValue);
+			validateValueCompatibility(groupPropertyId, propertyDefinition, groupPropertyValue);
+		}
+
+		/*
+		 * If there are properties without default values, then the event must
+		 * include value assignments for those properties.
+		 */
 		boolean checkPropertyCoverage = !nonDefaultBearingPropertyIds.get(groupTypeId).isEmpty();
+		if (checkPropertyCoverage) {
+			clearNonDefaultChecks(groupTypeId);
+			for (final GroupPropertyId groupPropertyId : propertyValues.keySet()) {
+				markAssigned(groupTypeId, groupPropertyId);
+			}
+			verifyNonDefaultChecks(groupTypeId);
+		}
 
 		final Integer typeIndex = typesToIndexesMap.get(groupTypeId);
 		List<GroupId> groups = typesToGroupsMap.getValue(typeIndex);
@@ -785,36 +807,14 @@ public final class GroupsDataManager extends DataManager {
 			groups = new ArrayList<>();
 			typesToGroupsMap.setValue(typeIndex, groups);
 		}
-
 		groups.add(groupId);
 		groupsToTypesMap.setIntValue(groupId.getValue(), typeIndex);
 
-		final Map<GroupPropertyId, Object> propertyValues = groupConstructionInfo.getPropertyValues();
-		if (checkPropertyCoverage) {
-			clearNonDefaultChecks(groupTypeId);
-			for (final GroupPropertyId groupPropertyId : propertyValues.keySet()) {
-				validateGroupPropertyId(groupTypeId, groupPropertyId);
-				markAssigned(groupTypeId, groupPropertyId);
-				final PropertyDefinition propertyDefinition = groupPropertyDefinitions.get(groupTypeId).get(groupPropertyId);
-				final Object groupPropertyValue = propertyValues.get(groupPropertyId);
-				validateGroupPropertyValueNotNull(groupPropertyValue);
-				validateValueCompatibility(groupPropertyId, propertyDefinition, groupPropertyValue);
-				final Map<GroupPropertyId, IndexedPropertyManager> map = groupPropertyManagerMap.get(groupTypeId);
-				final IndexedPropertyManager indexedPropertyManager = map.get(groupPropertyId);
-				indexedPropertyManager.setPropertyValue(groupId.getValue(), groupPropertyValue);
-			}
-			verifyNonDefaultChecks(groupTypeId);
-		} else {
-			for (final GroupPropertyId groupPropertyId : propertyValues.keySet()) {
-				validateGroupPropertyId(groupTypeId, groupPropertyId);
-				final PropertyDefinition propertyDefinition = groupPropertyDefinitions.get(groupTypeId).get(groupPropertyId);
-				final Object groupPropertyValue = propertyValues.get(groupPropertyId);
-				validateGroupPropertyValueNotNull(groupPropertyValue);
-				validateValueCompatibility(groupPropertyId, propertyDefinition, groupPropertyValue);
-				final Map<GroupPropertyId, IndexedPropertyManager> map = groupPropertyManagerMap.get(groupTypeId);
-				final IndexedPropertyManager indexedPropertyManager = map.get(groupPropertyId);
-				indexedPropertyManager.setPropertyValue(groupId.getValue(), groupPropertyValue);
-			}
+		for (final GroupPropertyId groupPropertyId : propertyValues.keySet()) {
+			final Object groupPropertyValue = propertyValues.get(groupPropertyId);
+			final Map<GroupPropertyId, IndexedPropertyManager> map = groupPropertyManagerMap.get(groupTypeId);
+			final IndexedPropertyManager indexedPropertyManager = map.get(groupPropertyId);
+			indexedPropertyManager.setPropertyValue(groupId.getValue(), groupPropertyValue);
 		}
 
 		if (dataManagerContext.subscribersExist(GroupAdditionEvent.class)) {
