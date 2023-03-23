@@ -48,18 +48,13 @@ public class AT_RegionTransferReport {
 	@Test
 	@UnitTestConstructor(target = RegionTransferReport.class, args = { ReportLabel.class, ReportPeriod.class })
 	public void testConstructor() {
-		RegionTransferReport regionTransferReport = new RegionTransferReport(REPORT_LABEL, ReportPeriod.DAILY);
+		RegionTransferReport regionTransferReport = new RegionTransferReport(RegionTransferReportPluginData.builder().setReportLabel(REPORT_LABEL).setReportPeriod(ReportPeriod.DAILY).build());
 
 		// Show not null
 		assertNotNull(regionTransferReport);
 
 		// precondition: null report period
-		ContractException contractException = assertThrows(ContractException.class, () -> new RegionTransferReport(REPORT_LABEL, null));
-		assertEquals(ReportError.NULL_REPORT_PERIOD, contractException.getErrorType());
-
-		// precondition: null report label
-		contractException = assertThrows(ContractException.class, () -> new RegionTransferReport(null, ReportPeriod.DAILY));
-		assertEquals(ReportError.NULL_REPORT_LABEL, contractException.getErrorType());
+		assertThrows(NullPointerException.class, () -> new RegionTransferReport(null));
 	}
 
 	@Test
@@ -72,8 +67,6 @@ public class AT_RegionTransferReport {
 		 * This test has to force times to be non integer values and include a
 		 * last task to for proper flushing in the report
 		 */
-
-		
 
 		RegionsPluginData.Builder regionBuilder = RegionsPluginData.builder();
 
@@ -98,7 +91,7 @@ public class AT_RegionTransferReport {
 		/*
 		 * Collect the expected report items. Note that order does not matter. *
 		 */
-		
+
 		final int numPeople = 100;
 		// create an actor to add people to the simulation
 		// This will test adding people to a region, which on the report will
@@ -111,7 +104,7 @@ public class AT_RegionTransferReport {
 				PersonConstructionData personConstructionData = PersonConstructionData.builder().add(regionIds[i % 4]).build();
 				peopleDataManager.addPerson(personConstructionData);
 			}
-			
+
 			expectedConsumer.accept(getReportItem(1, regionA, regionA, 25));
 			expectedConsumer.accept(getReportItem(1, regionB, regionB, 25));
 			expectedConsumer.accept(getReportItem(1, regionC, regionC, 25));
@@ -165,20 +158,22 @@ public class AT_RegionTransferReport {
 
 		TestOutputConsumer actualConsumer = new TestOutputConsumer();
 		List<Plugin> pluginsToAdd = RegionsTestPluginFactory.factory(0, 3054641152904904632L, TimeTrackingPolicy.TRACK_TIME, testPluginData).setRegionsPluginData(regionsPluginData).getPlugins();
-		pluginsToAdd.add(ReportsTestPluginFactory.getPluginFromReport(new RegionTransferReport(REPORT_LABEL, ReportPeriod.DAILY)::init));
+
+		RegionTransferReportPluginData regionTransferReportPluginData = RegionTransferReportPluginData.builder().setReportLabel(REPORT_LABEL).setReportPeriod(ReportPeriod.DAILY).build();
+		RegionTransferReport regionTransferReport = new RegionTransferReport(regionTransferReportPluginData);
+		Plugin pluginFromReport = ReportsTestPluginFactory.getPluginFromReport(regionTransferReport::init);
+		pluginsToAdd.add(pluginFromReport);
 
 		TestSimulation.executeSimulation(pluginsToAdd, actualConsumer);
 
-		
 		Map<ReportItem, Integer> expectedReportItems = expectedConsumer.getOutputItems(ReportItem.class);
 		Map<ReportItem, Integer> actualReportItems = actualConsumer.getOutputItems(ReportItem.class);
 
-		
 		assertEquals(expectedReportItems, actualReportItems);
 
 		// precondition: Actor context is null
 		ContractException contractException = assertThrows(ContractException.class, () -> {
-			new RegionTransferReport(REPORT_LABEL, ReportPeriod.DAILY).init(null);
+			new RegionTransferReport(RegionTransferReportPluginData.builder().setReportLabel(REPORT_LABEL).setReportPeriod(ReportPeriod.DAILY).build()).init(null);
 		});
 		assertEquals(ReportError.NULL_CONTEXT, contractException.getErrorType());
 	}

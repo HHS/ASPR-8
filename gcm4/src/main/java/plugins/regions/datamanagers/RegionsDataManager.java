@@ -192,7 +192,7 @@ public final class RegionsDataManager extends DataManager {
 	 *             region that has not had a value assigned</li>
 	 *
 	 */
-	public void addRegion(final RegionConstructionData regionConstructionData) {
+	public void addRegion(final RegionConstructionData regionConstructionData) {		
 		dataManagerContext.releaseMutationEvent(new RegionAdditionMutationEvent(regionConstructionData));
 	}
 
@@ -201,49 +201,42 @@ public final class RegionsDataManager extends DataManager {
 		validateRegionConstructionDataNotNull(regionConstructionData);
 		RegionId regionId = regionConstructionData.getRegionId();
 		validateNewRegionId(regionId);
-
-		regionPopulationRecordMap.put(regionId, new PopulationRecord());
-		regionToIndexMap.put(regionId, regionToIndexMap.size() + 1);
-		indexToRegionMap.add(regionId);
-
-		final Map<RegionPropertyId, PropertyValueRecord> map = new LinkedHashMap<>();
-		regionPropertyMap.put(regionId, map);
-
-		boolean checkPropertyCoverage = !nonDefaultBearingPropertyIds.isEmpty();
 		Map<RegionPropertyId, Object> regionPropertyValues = regionConstructionData.getRegionPropertyValues();
 
-		if (checkPropertyCoverage) {
+		if (!nonDefaultBearingPropertyIds.isEmpty()) {
 			clearNonDefaultChecks();
 			for (RegionPropertyId regionPropertyId : regionPropertyValues.keySet()) {
 				validateRegionPropertyId(regionPropertyId);
 				markAssigned(regionPropertyId);
 				Object regionPropertyValue = regionPropertyValues.get(regionPropertyId);
-				final PropertyDefinition propertyDefinition = regionPropertyDefinitions.get(regionPropertyId);
-				;
+				final PropertyDefinition propertyDefinition = regionPropertyDefinitions.get(regionPropertyId);				
 				validateValueCompatibility(regionPropertyId, propertyDefinition, regionPropertyValue);
-				PropertyValueRecord propertyValueRecord = map.get(regionPropertyId);
-				if (propertyValueRecord == null) {
-					propertyValueRecord = new PropertyValueRecord(dataManagerContext);
-					map.put(regionPropertyId, propertyValueRecord);
-				}
-				propertyValueRecord.setPropertyValue(regionPropertyValue);
 			}
 			verifyNonDefaultChecks();
-
-		} else {
+		}else {			
 			for (RegionPropertyId regionPropertyId : regionPropertyValues.keySet()) {
-				validateRegionPropertyId(regionPropertyId);
+				validateRegionPropertyId(regionPropertyId);				
 				Object regionPropertyValue = regionPropertyValues.get(regionPropertyId);
-				final PropertyDefinition propertyDefinition = regionPropertyDefinitions.get(regionPropertyId);
-				;
+				final PropertyDefinition propertyDefinition = regionPropertyDefinitions.get(regionPropertyId);				
 				validateValueCompatibility(regionPropertyId, propertyDefinition, regionPropertyValue);
-				PropertyValueRecord propertyValueRecord = map.get(regionPropertyId);
-				if (propertyValueRecord == null) {
-					propertyValueRecord = new PropertyValueRecord(dataManagerContext);
-					map.put(regionPropertyId, propertyValueRecord);
-				}
-				propertyValueRecord.setPropertyValue(regionPropertyValue);
+			}			
+		}		
+		
+		regionPopulationRecordMap.put(regionId, new PopulationRecord());
+		regionToIndexMap.put(regionId, regionToIndexMap.size() + 1);
+		indexToRegionMap.add(regionId);
+
+		final Map<RegionPropertyId, PropertyValueRecord> map = new LinkedHashMap<>();
+		regionPropertyMap.put(regionId, map);		
+
+		for (RegionPropertyId regionPropertyId : regionPropertyValues.keySet()) {
+			Object regionPropertyValue = regionPropertyValues.get(regionPropertyId);							
+			PropertyValueRecord propertyValueRecord = map.get(regionPropertyId);
+			if (propertyValueRecord == null) {
+				propertyValueRecord = new PropertyValueRecord(dataManagerContext);
+				map.put(regionPropertyId, propertyValueRecord);
 			}
+			propertyValueRecord.setPropertyValue(regionPropertyValue);
 		}
 
 		if (dataManagerContext.subscribersExist(RegionAdditionEvent.class)) {
@@ -287,53 +280,44 @@ public final class RegionsDataManager extends DataManager {
 		final PropertyDefinition propertyDefinition = regionPropertyDefinitionInitialization.getPropertyDefinition();
 		validateNewRegionPropertyId(regionPropertyId);
 		validateNewPropertyDefinition(propertyDefinition);
-		regionPropertyDefinitionTimes.put(regionPropertyId, dataManagerContext.getTime());
-		regionPropertyIds.add(regionPropertyId);
-		regionPropertyDefinitions.put(regionPropertyId, propertyDefinition);
-
+		
 		final boolean checkAllRegionsHaveValues = propertyDefinition.getDefaultValue().isEmpty();
 
-		if (checkAllRegionsHaveValues) {
-			addNonDefaultProperty(regionPropertyId);
+		if (checkAllRegionsHaveValues) {			
 			final Map<RegionId, Boolean> coverageSet = new LinkedHashMap<>();
 			for (final RegionId regionId : regionPropertyMap.keySet()) {
 				coverageSet.put(regionId, false);
 			}
-
 			for (final Pair<RegionId, Object> pair : regionPropertyDefinitionInitialization.getPropertyValues()) {
 				final RegionId regionId = pair.getFirst();
 				coverageSet.put(regionId, true);
-				/*
-				 * we do not have to validate the value since it is guaranteed
-				 * to be consistent with the property definition by contract.
-				 */
-				final Object value = pair.getSecond();
-				Map<RegionPropertyId, PropertyValueRecord> map = regionPropertyMap.get(regionId);
-				PropertyValueRecord propertyValueRecord = new PropertyValueRecord(dataManagerContext);
-				map.put(regionPropertyId, propertyValueRecord);
-				propertyValueRecord.setPropertyValue(value);
-
 			}
 			for (final RegionId regionId : coverageSet.keySet()) {
 				if (!coverageSet.get(regionId)) {
 					throw new ContractException(PropertyError.INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT);
 				}
 			}
-		} else {
-			for (final Pair<RegionId, Object> pair : regionPropertyDefinitionInitialization.getPropertyValues()) {
-				final RegionId regionId = pair.getFirst();
+		}
+			
+		if (checkAllRegionsHaveValues) {
+			addNonDefaultProperty(regionPropertyId);
+		}
+		regionPropertyDefinitionTimes.put(regionPropertyId, dataManagerContext.getTime());
+		regionPropertyIds.add(regionPropertyId);
+		regionPropertyDefinitions.put(regionPropertyId, propertyDefinition);
+		
+		for (final Pair<RegionId, Object> pair : regionPropertyDefinitionInitialization.getPropertyValues()) {
+			final RegionId regionId = pair.getFirst();
 
-				/*
-				 * we do not have to validate the value since it is guaranteed
-				 * to be consistent with the property definition by contract.
-				 */
-				final Object value = pair.getSecond();
-				Map<RegionPropertyId, PropertyValueRecord> map = regionPropertyMap.get(regionId);
-				PropertyValueRecord propertyValueRecord = new PropertyValueRecord(dataManagerContext);
-				map.put(regionPropertyId, propertyValueRecord);
-				propertyValueRecord.setPropertyValue(value);
-
-			}
+			/*
+			 * we do not have to validate the value since it is guaranteed
+			 * to be consistent with the property definition by contract.
+			 */
+			final Object value = pair.getSecond();
+			Map<RegionPropertyId, PropertyValueRecord> map = regionPropertyMap.get(regionId);
+			PropertyValueRecord propertyValueRecord = new PropertyValueRecord(dataManagerContext);
+			map.put(regionPropertyId, propertyValueRecord);
+			propertyValueRecord.setPropertyValue(value);
 
 		}
 
@@ -754,32 +738,60 @@ public final class RegionsDataManager extends DataManager {
 	private void recordSimulationState(DataManagerContext dataManagerContext, SimulationStateContext simulationStateContext) {
 
 		RegionsPluginData.Builder builder = simulationStateContext.get(RegionsPluginData.Builder.class);
-
-		for (RegionId regionId : regionPopulationRecordMap.keySet()) {
-			builder.addRegion(regionId);
+		
+		Set<RegionId> regionIds = getRegionIds();
+		for (RegionId regionId : regionIds) {
+			builder.addRegion(regionId);			
 		}
-
-		for (RegionPropertyId regionPropertyId : regionPropertyDefinitions.keySet()) {
-			PropertyDefinition propertyDefinition = regionPropertyDefinitions.get(regionPropertyId);
-			builder.defineRegionProperty(regionPropertyId, propertyDefinition);
-			for (RegionId regionId : regionPopulationRecordMap.keySet()) {
-				Map<RegionPropertyId, PropertyValueRecord> map = regionPropertyMap.get(regionId);
-				PropertyValueRecord propertyValueRecord = map.get(regionPropertyId);
-				if (propertyValueRecord != null) {
-					builder.setRegionPropertyValue(regionId, regionPropertyId, propertyValueRecord.getValue());
-				} else {
-					builder.setRegionPropertyValue(regionId, regionPropertyId, propertyDefinition.getDefaultValue().get());
-				}
+		
+		for(RegionPropertyId regionPropertyId : getRegionPropertyIds()) {
+			PropertyDefinition regionPropertyDefinition = getRegionPropertyDefinition(regionPropertyId);
+			builder.defineRegionProperty(regionPropertyId, regionPropertyDefinition);
+			for(RegionId regionId : regionIds) {
+				Object regionPropertyValue = getRegionPropertyValue(regionId, regionPropertyId);
+				builder.setRegionPropertyValue(regionId, regionPropertyId, regionPropertyValue);
 			}
 		}
-
-		for (PersonId personId : peopleDataManager.getPeople()) {
-			final int r = regionValues.getValueAsInt(personId.getValue());
-			RegionId regionId = indexToRegionMap.get(r);
+		
+		for(PersonId personId : peopleDataManager.getPeople()) {
+			RegionId regionId = getPersonRegion(personId);
 			builder.setPersonRegion(personId, regionId);
 		}
+		
+		builder.setPersonRegionArrivalTracking(getPersonRegionArrivalTrackingPolicy());
+		
+		
 
-		builder.setPersonRegionArrivalTracking(regionArrivalTrackingPolicy);
+		// for (RegionId regionId : regionPopulationRecordMap.keySet()) {
+		// builder.addRegion(regionId);
+		// }
+		//
+		// for (RegionPropertyId regionPropertyId :
+		// regionPropertyDefinitions.keySet()) {
+		// PropertyDefinition propertyDefinition =
+		// regionPropertyDefinitions.get(regionPropertyId);
+		// builder.defineRegionProperty(regionPropertyId, propertyDefinition);
+		// for (RegionId regionId : regionPopulationRecordMap.keySet()) {
+		// Map<RegionPropertyId, PropertyValueRecord> map =
+		// regionPropertyMap.get(regionId);
+		// PropertyValueRecord propertyValueRecord = map.get(regionPropertyId);
+		// if (propertyValueRecord != null) {
+		// builder.setRegionPropertyValue(regionId, regionPropertyId,
+		// propertyValueRecord.getValue());
+		// } else {
+		// builder.setRegionPropertyValue(regionId, regionPropertyId,
+		// propertyDefinition.getDefaultValue().get());
+		// }
+		// }
+		// }
+		//
+		// for (PersonId personId : peopleDataManager.getPeople()) {
+		// final int r = regionValues.getValueAsInt(personId.getValue());
+		// RegionId regionId = indexToRegionMap.get(r);
+		// builder.setPersonRegion(personId, regionId);
+		// }
+		//
+		// builder.setPersonRegionArrivalTracking(regionArrivalTrackingPolicy);
 
 	}
 

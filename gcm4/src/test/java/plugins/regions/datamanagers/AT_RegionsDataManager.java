@@ -1483,9 +1483,7 @@ public class AT_RegionsDataManager {
 			assertEquals(PropertyError.INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT, contractException.getErrorType());
 		}).getPlugins());;
 
-		// * <li>{@linkplain
-		// PropertyError#INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT}
-		// * </li>
+		
 
 	}
 
@@ -1607,7 +1605,9 @@ public class AT_RegionsDataManager {
 
 		RegionsPluginData regionsPluginData = regionPluginBuilder.build();
 
-		TestSimulation.executeSimulation(RegionsTestPluginFactory.factory(0, seed, TimeTrackingPolicy.TRACK_TIME, testPluginData).setRegionsPluginData(regionsPluginData).getPlugins());
+		TestSimulation.executeSimulation(RegionsTestPluginFactory.factory(0, seed, TimeTrackingPolicy.TRACK_TIME, testPluginData)//
+				.setRegionsPluginData(regionsPluginData)//
+				.getPlugins());
 
 
 

@@ -20,7 +20,7 @@ public class AT_MaterialsPlugin {
 	@UnitTestMethod(target = MaterialsPlugin.class, name = "getMaterialsPlugin", args = { MaterialsPluginData.class })
 	public void testGetMaterialsPlugin() {
 		MaterialsPluginData materialsPluginData = MaterialsPluginData.builder().build();
-		Plugin materialsPlugin = MaterialsPlugin.getMaterialsPlugin(materialsPluginData);
+		Plugin materialsPlugin = MaterialsPlugin.builder().setMaterialsPluginData(materialsPluginData).getMaterialsPlugin();
 
 		assertEquals(1, materialsPlugin.getPluginDatas().size());
 		assertTrue(materialsPlugin.getPluginDatas().contains(materialsPluginData));

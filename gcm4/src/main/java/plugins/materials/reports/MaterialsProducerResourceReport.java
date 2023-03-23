@@ -1,6 +1,7 @@
 package plugins.materials.reports;
 
 import nucleus.ReportContext;
+import nucleus.SimulationStateContext;
 import plugins.materials.datamangers.MaterialsDataManager;
 import plugins.materials.events.MaterialsProducerAdditionEvent;
 import plugins.materials.events.MaterialsProducerResourceUpdateEvent;
@@ -33,8 +34,8 @@ import plugins.resources.support.ResourceId;
 public final class MaterialsProducerResourceReport {
 	private final ReportLabel reportLabel;
 
-	public MaterialsProducerResourceReport(ReportLabel reportLabel) {
-		this.reportLabel = reportLabel;
+	public MaterialsProducerResourceReport(MaterialsProducerResourceReportPluginData materialsProducerResourceReportPluginData) {
+		this.reportLabel = materialsProducerResourceReportPluginData.getReportLabel();
 	}
 
 	private static enum Action {
@@ -113,6 +114,7 @@ public final class MaterialsProducerResourceReport {
 		reportContext.subscribe(MaterialsProducerResourceUpdateEvent.class, this::handleMaterialsProducerResourceUpdateEvent);
 		reportContext.subscribe(ResourceIdAdditionEvent.class, this::handleResourceIdAdditionEvent);
 		reportContext.subscribe(MaterialsProducerAdditionEvent.class, this::handleMaterialsProducerAdditionEvent);
+		reportContext.subscribeToSimulationState(this::recordSimulationState);
 
 		ResourcesDataManager resourcesDataManager = reportContext.getDataManager(ResourcesDataManager.class);
 		MaterialsDataManager materialsDataManager = reportContext.getDataManager(MaterialsDataManager.class);
@@ -122,6 +124,11 @@ public final class MaterialsProducerResourceReport {
 				writeReportItem(reportContext, resourceId, materialsProducerId, Action.ADDED, materialsProducerResourceLevel);
 			}
 		}
+	}
+	
+	private void recordSimulationState(ReportContext reportContext, SimulationStateContext simulationStateContext) {
+		MaterialsProducerResourceReportPluginData.Builder builder = simulationStateContext.get(MaterialsProducerResourceReportPluginData.Builder.class);
+		builder.setReportLabel(reportLabel);
 	}
 
 	private void handleMaterialsProducerAdditionEvent(ReportContext reportContext, MaterialsProducerAdditionEvent materialsProducerAdditionEvent) {

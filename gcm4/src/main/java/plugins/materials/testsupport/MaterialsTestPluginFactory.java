@@ -19,6 +19,10 @@ import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestSimulation;
 import plugins.materials.MaterialsPlugin;
 import plugins.materials.MaterialsPluginData;
+import plugins.materials.reports.BatchStatusReportPluginData;
+import plugins.materials.reports.MaterialsProducerPropertyReportPluginData;
+import plugins.materials.reports.MaterialsProducerResourceReportPluginData;
+import plugins.materials.reports.StageReportPluginData;
 import plugins.materials.support.BatchId;
 import plugins.materials.support.MaterialsError;
 import plugins.materials.support.StageId;
@@ -61,6 +65,10 @@ public class MaterialsTestPluginFactory {
 
 	private static class Data {
 		private MaterialsPluginData materialsPluginData;
+		private BatchStatusReportPluginData batchStatusReportPluginData;
+		private MaterialsProducerPropertyReportPluginData materialsProducerPropertyReportPluginData;
+		private MaterialsProducerResourceReportPluginData materialsProducerResourceReportPluginData;
+		private StageReportPluginData stageReportPluginData;		
 		private ResourcesPluginData resourcesPluginData;
 		private RegionsPluginData regionsPluginData;
 		private PeoplePluginData peoplePluginData;
@@ -111,7 +119,24 @@ public class MaterialsTestPluginFactory {
 		public List<Plugin> getPlugins() {
 			List<Plugin> pluginsToAdd = new ArrayList<>();
 
-			Plugin materialsPlugin = MaterialsPlugin.getMaterialsPlugin(this.data.materialsPluginData);
+			MaterialsPlugin.Builder materialsPluginBuilder = MaterialsPlugin.builder();
+			
+			materialsPluginBuilder.setMaterialsPluginData(this.data.materialsPluginData);
+			
+			if(data.batchStatusReportPluginData != null) {
+				materialsPluginBuilder.setBatchStatusReportPluginData(this.data.batchStatusReportPluginData);
+			}
+			if(data.materialsProducerPropertyReportPluginData != null) {
+				materialsPluginBuilder.setMaterialsProducerPropertyReportPluginData(this.data.materialsProducerPropertyReportPluginData);
+			}
+			if(data.materialsProducerResourceReportPluginData != null) {
+				materialsPluginBuilder.setMaterialsProducerResourceReportPluginData(this.data.materialsProducerResourceReportPluginData);
+			}
+			if(data.stageReportPluginData != null) {
+				materialsPluginBuilder.setStageReportPluginData(this.data.stageReportPluginData);
+			}
+					
+			Plugin materialsPlugin = materialsPluginBuilder.getMaterialsPlugin();
 
 			Plugin resourcesPlugin = ResourcesPlugin.builder().setResourcesPluginData(this.data.resourcesPluginData).getResourcesPlugin();
 
@@ -147,6 +172,74 @@ public class MaterialsTestPluginFactory {
 				throw new ContractException(MaterialsError.NULL_MATERIALS_PLUGIN_DATA);
 			}
 			this.data.materialsPluginData = materialsPluginData;
+			return this;
+		}
+		
+		/**
+		 * Sets the {@link BatchStatusReportPluginData} in this Factory.
+		 * This explicit instance of pluginData will be used to create a
+		 * MaterialsPlugin
+		 * 
+		 * @throws ContractExecption
+		 *                           {@linkplain MaterialsError#NULL_MATERIALS_PLUGIN_DATA}
+		 *                           if the passed in pluginData is null
+		 */
+		public Factory setBatchStatusReportPluginData(BatchStatusReportPluginData batchStatusReportPluginData) {
+			if (batchStatusReportPluginData == null) {
+				throw new ContractException(MaterialsError.NULL_BATCH_STATUS_REPORT_PLUGIN_DATA);
+			}
+			this.data.batchStatusReportPluginData = batchStatusReportPluginData;
+			return this;
+		}
+		
+		/**
+		 * Sets the {@link MaterialsProducerPropertyReportPluginData} in this Factory.
+		 * This explicit instance of pluginData will be used to create a
+		 * MaterialsPlugin
+		 * 
+		 * @throws ContractExecption
+		 *                           {@linkplain MaterialsError#NULL_MATERIALS_PLUGIN_DATA}
+		 *                           if the passed in pluginData is null
+		 */
+		public Factory setMaterialsProducerPropertyReportPluginData(MaterialsProducerPropertyReportPluginData materialsProducerPropertyReportPluginData) {
+			if (materialsProducerPropertyReportPluginData == null) {
+				throw new ContractException(MaterialsError.NULL_MATERIALS_PRODUCER_PROPERTY_REPORT_PLUGIN_DATA);
+			}
+			this.data.materialsProducerPropertyReportPluginData = materialsProducerPropertyReportPluginData;
+			return this;
+		}
+		
+		/**
+		 * Sets the {@link MaterialsProducerResourceReportPluginData} in this Factory.
+		 * This explicit instance of pluginData will be used to create a
+		 * MaterialsPlugin
+		 * 
+		 * @throws ContractExecption
+		 *                           {@linkplain MaterialsError#NULL_MATERIALS_PLUGIN_DATA}
+		 *                           if the passed in pluginData is null
+		 */
+		public Factory setMaterialsProducerResourceReportPluginData(MaterialsProducerResourceReportPluginData materialsProducerResourceReportPluginData) {
+			if (materialsProducerResourceReportPluginData == null) {
+				throw new ContractException(MaterialsError.NULL_MATERIALS_PRODUCER_RESOURCE_REPORT_PLUGIN_DATA);
+			}
+			this.data.materialsProducerResourceReportPluginData = materialsProducerResourceReportPluginData;
+			return this;
+		}
+		
+		/**
+		 * Sets the {@link MaterialsProducerResourceReportPluginData} in this Factory.
+		 * This explicit instance of pluginData will be used to create a
+		 * MaterialsPlugin
+		 * 
+		 * @throws ContractExecption
+		 *                           {@linkplain MaterialsError#NULL_MATERIALS_PLUGIN_DATA}
+		 *                           if the passed in pluginData is null
+		 */
+		public Factory setStageReportPluginData(StageReportPluginData stageReportPluginData) {
+			if (stageReportPluginData == null) {
+				throw new ContractException(MaterialsError.NULL_STAGE_REPORT_PLUGIN_DATA);
+			}
+			this.data.stageReportPluginData = stageReportPluginData;
 			return this;
 		}
 

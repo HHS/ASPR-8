@@ -594,10 +594,15 @@ public final class ResourcesDataManager extends DataManager {
 	@SuppressWarnings("unchecked")
 	public <T extends ResourcePropertyId> Set<T> getResourcePropertyIds(final ResourceId resourceId) {
 		validateResourceId(resourceId);
+		Set<T> result;
 		final Map<ResourcePropertyId, PropertyDefinition> defMap = resourcePropertyDefinitions.get(resourceId);
-		final Set<T> result = new LinkedHashSet<>(defMap.keySet().size());
-		for (final ResourcePropertyId resourcePropertyId : defMap.keySet()) {
-			result.add((T) resourcePropertyId);
+		if (defMap != null) {
+			result = new LinkedHashSet<>(defMap.keySet().size());
+			for (final ResourcePropertyId resourcePropertyId : defMap.keySet()) {
+				result.add((T) resourcePropertyId);
+			}
+		}else {
+			result = new LinkedHashSet<>();
 		}
 		return result;
 	}
@@ -863,40 +868,71 @@ public final class ResourcesDataManager extends DataManager {
 
 	private void recordSimulationState(DataManagerContext dataManagerContext, SimulationStateContext simulationStateContext) {
 		ResourcesPluginData.Builder builder = simulationStateContext.get(ResourcesPluginData.Builder.class);
+		Set<RegionId> regionIds = regionsDataManager.getRegionIds();
+		List<PersonId> people = peopleDataManager.getPeople();
 
-		for (final ResourceId resourceId : personResourceValues.keySet()) {
+		for (ResourceId resourceId : getResourceIds()) {
 			builder.addResource(resourceId);
-			builder.setResourceTimeTracking(resourceId, resourceTimeTrackingPolicies.get(resourceId));
-			Map<ResourcePropertyId, PropertyDefinition> map = resourcePropertyDefinitions.get(resourceId);
-			for(ResourcePropertyId resourcePropertyId : map.keySet()) {
-				PropertyDefinition propertyDefinition = map.get(resourcePropertyId);
+			for (ResourcePropertyId resourcePropertyId : getResourcePropertyIds(resourceId)) {
+				PropertyDefinition propertyDefinition = getResourcePropertyDefinition(resourceId, resourcePropertyId);
 				builder.defineResourceProperty(resourceId, resourcePropertyId, propertyDefinition);
+				Object propertyValue = getResourcePropertyValue(resourceId, resourcePropertyId);
+				builder.setResourcePropertyValue(resourceId, resourcePropertyId, propertyValue);
 			}
+			for (RegionId regionId : regionIds) {
+				long regionResourceLevel = getRegionResourceLevel(regionId, resourceId);
+				builder.setRegionResourceLevel(regionId, resourceId, regionResourceLevel);
+			}
+			for (PersonId personId : people) {
+				long personResourceLevel = getPersonResourceLevel(resourceId, personId);
+				builder.setPersonResourceLevel(personId, resourceId, personResourceLevel);
+			}
+			TimeTrackingPolicy timeTrackingPolicy = getPersonResourceTimeTrackingPolicy(resourceId);
+			builder.setResourceTimeTracking(resourceId, timeTrackingPolicy);
 		}
 
-		for (RegionId regionId : regionsDataManager.getRegionIds()) {
-			Map<ResourceId, RegionResourceRecord> map = regionResources.get(regionId);
-			for (ResourceId resourceId : map.keySet()) {
-				RegionResourceRecord regionResourceRecord = map.get(resourceId);
-				builder.setRegionResourceLevel(regionId, resourceId, regionResourceRecord.getAmount());
-			}
-		}
-
-		for (PersonId personId : peopleDataManager.getPeople()) {
-			for (final ResourceId resourceId : personResourceValues.keySet()) {
-				long resourceLevel = personResourceValues.get(resourceId).getValueAsLong(personId.getValue());
-				builder.setPersonResourceLevel(personId, resourceId, resourceLevel);
-			}
-		}
-		
-		for(ResourceId resourceId : resourcePropertyMap.keySet()) {
-			Map<ResourcePropertyId, PropertyValueRecord> map = resourcePropertyMap.get(resourceId);
-			for(ResourcePropertyId resourcePropertyId : map.keySet()) {
-				PropertyValueRecord propertyValueRecord = map.get(resourcePropertyId);
-				Object value = propertyValueRecord.getValue();
-				builder.setResourcePropertyValue(resourceId, resourcePropertyId, value);
-			}
-		}
+		// for (final ResourceId resourceId : personResourceValues.keySet()) {
+		// builder.addResource(resourceId);
+		// builder.setResourceTimeTracking(resourceId,
+		// resourceTimeTrackingPolicies.get(resourceId));
+		// Map<ResourcePropertyId, PropertyDefinition> map =
+		// resourcePropertyDefinitions.get(resourceId);
+		// for (ResourcePropertyId resourcePropertyId : map.keySet()) {
+		// PropertyDefinition propertyDefinition = map.get(resourcePropertyId);
+		// builder.defineResourceProperty(resourceId, resourcePropertyId,
+		// propertyDefinition);
+		// }
+		// }
+		//
+		// for (RegionId regionId : regionsDataManager.getRegionIds()) {
+		// Map<ResourceId, RegionResourceRecord> map =
+		// regionResources.get(regionId);
+		// for (ResourceId resourceId : map.keySet()) {
+		// RegionResourceRecord regionResourceRecord = map.get(resourceId);
+		// builder.setRegionResourceLevel(regionId, resourceId,
+		// regionResourceRecord.getAmount());
+		// }
+		// }
+		//
+		// for (PersonId personId : peopleDataManager.getPeople()) {
+		// for (final ResourceId resourceId : personResourceValues.keySet()) {
+		// long resourceLevel =
+		// personResourceValues.get(resourceId).getValueAsLong(personId.getValue());
+		// builder.setPersonResourceLevel(personId, resourceId, resourceLevel);
+		// }
+		// }
+		//
+		// for (ResourceId resourceId : resourcePropertyMap.keySet()) {
+		// Map<ResourcePropertyId, PropertyValueRecord> map =
+		// resourcePropertyMap.get(resourceId);
+		// for (ResourcePropertyId resourcePropertyId : map.keySet()) {
+		// PropertyValueRecord propertyValueRecord =
+		// map.get(resourcePropertyId);
+		// Object value = propertyValueRecord.getValue();
+		// builder.setResourcePropertyValue(resourceId, resourcePropertyId,
+		// value);
+		// }
+		// }
 
 	}
 

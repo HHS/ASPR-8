@@ -4,6 +4,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import nucleus.ReportContext;
+import nucleus.SimulationStateContext;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.events.PersonAdditionEvent;
 import plugins.people.support.PersonId;
@@ -13,8 +14,6 @@ import plugins.regions.support.RegionId;
 import plugins.reports.support.PeriodicReport;
 import plugins.reports.support.ReportHeader;
 import plugins.reports.support.ReportItem;
-import plugins.reports.support.ReportLabel;
-import plugins.reports.support.ReportPeriod;
 import util.wrappers.MultiKey;
 import util.wrappers.MutableInteger;
 
@@ -39,8 +38,8 @@ import util.wrappers.MutableInteger;
  */
 public final class RegionTransferReport extends PeriodicReport {
 
-	public RegionTransferReport(ReportLabel reportLabel, ReportPeriod reportPeriod) {
-		super(reportLabel, reportPeriod);
+	public RegionTransferReport(RegionTransferReportPluginData regionTransferReportPluginData) {
+		super(regionTransferReportPluginData.getReportLabel(), regionTransferReportPluginData.getReportPeriod());
 	}
 
 	/*
@@ -125,12 +124,19 @@ public final class RegionTransferReport extends PeriodicReport {
 		
 		reportContext.subscribe(PersonAdditionEvent.class, this::handlePersonAdditionEvent);
 		reportContext.subscribe(PersonRegionUpdateEvent.class, this::handlePersonRegionUpdateEvent);
-
+		reportContext.subscribeToSimulationState(this::recordSimulationState);
 
 		for (PersonId personId : peopleDataManager.getPeople()) {
 			final RegionId regionId = regionsDataManager.getPersonRegion(personId);
 			increment(regionId, regionId);
 		}
+	}
+	
+	private void recordSimulationState(ReportContext reportContext, SimulationStateContext simulationStateContext) {
+		RegionTransferReportPluginData.Builder builder = simulationStateContext.get(RegionTransferReportPluginData.Builder.class);
+		builder.setReportLabel(getReportLabel());
+		builder.setReportPeriod(getReportPeriod());
+		
 	}
 
 }
