@@ -64,7 +64,7 @@ public final class AT_MaterialsProducerResourceReport {
 	@Test
 	@UnitTestConstructor(target = MaterialsProducerResourceReport.class, args = { ReportLabel.class })
 	public void testConstructor() {
-		MaterialsProducerResourceReport report = new MaterialsProducerResourceReport(REPORT_LABEL);
+		MaterialsProducerResourceReport report = new MaterialsProducerResourceReport(MaterialsProducerResourceReportPluginData.builder().setReportLabel(REPORT_LABEL).build());
 		assertNotNull(report);
 	}
 
@@ -163,7 +163,7 @@ public final class AT_MaterialsProducerResourceReport {
 
 		List<Plugin> pluginsToAdd = MaterialsTestPluginFactory.factory(0, 0, 0, 6081341958178733565L, testPluginData)
 				.getPlugins();
-		pluginsToAdd.add(ReportsTestPluginFactory.getPluginFromReport(new MaterialsProducerResourceReport(REPORT_LABEL)::init));
+		pluginsToAdd.add(ReportsTestPluginFactory.getPluginFromReport(new MaterialsProducerResourceReport(MaterialsProducerResourceReportPluginData.builder().setReportLabel(REPORT_LABEL).build())::init));
 
 		TestSimulation.executeSimulation(pluginsToAdd, outputConsumer);
 

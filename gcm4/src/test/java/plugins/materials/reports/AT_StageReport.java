@@ -69,7 +69,7 @@ public final class AT_StageReport {
 	@Test
 	@UnitTestConstructor(target = StageReport.class, args = { ReportLabel.class })
 	public void testConstructor() {
-		StageReport report = new StageReport(REPORT_LABEL);
+		StageReport report = new StageReport(StageReportPluginData.builder().setReportLabel(REPORT_LABEL).build());
 		assertNotNull(report);
 	}
 
@@ -198,7 +198,7 @@ public final class AT_StageReport {
 
 		List<Plugin> pluginsToAdd = MaterialsTestPluginFactory.factory(0, 0, 0, 542686524159732447L, testPluginData)
 				.getPlugins();
-		pluginsToAdd.add(ReportsTestPluginFactory.getPluginFromReport(new StageReport(REPORT_LABEL)::init));
+		pluginsToAdd.add(ReportsTestPluginFactory.getPluginFromReport(new StageReport(StageReportPluginData.builder().setReportLabel(REPORT_LABEL).build())::init));
 
 		TestSimulation.executeSimulation(pluginsToAdd, outputConsumer);
 

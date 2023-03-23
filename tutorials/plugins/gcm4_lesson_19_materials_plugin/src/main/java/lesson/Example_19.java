@@ -185,7 +185,7 @@ public final class Example_19 {
 			builder.addMaterial(material);
 		}
 		final MaterialsPluginData materialsPluginData = builder.build();
-		return MaterialsPlugin.getMaterialsPlugin(materialsPluginData);
+		return MaterialsPlugin.builder().setMaterialsPluginData(materialsPluginData).getMaterialsPlugin();
 	}
 
 	private Plugin getPeoplePlugin() {

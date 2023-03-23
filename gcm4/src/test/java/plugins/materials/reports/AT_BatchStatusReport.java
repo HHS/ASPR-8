@@ -87,7 +87,7 @@ public final class AT_BatchStatusReport {
 	@Test
 	@UnitTestConstructor(target = BatchStatusReport.class, args = { ReportLabel.class })
 	public void testConstructor() {
-		BatchStatusReport report = new BatchStatusReport(REPORT_LABEL);
+		BatchStatusReport report = new BatchStatusReport(BatchStatusReportPluginData.builder().setReportLabel(REPORT_LABEL).build());
 
 		assertNotNull(report);
 	}
@@ -236,7 +236,7 @@ public final class AT_BatchStatusReport {
 		TestOutputConsumer outputConsumer = new TestOutputConsumer();
 		List<Plugin> pluginsToAdd = MaterialsTestPluginFactory.factory(0, 0, 0, 2819236410498978100L, testPluginData)
 				.getPlugins();
-		pluginsToAdd.add(ReportsTestPluginFactory.getPluginFromReport(new BatchStatusReport(REPORT_LABEL)::init));
+		pluginsToAdd.add(ReportsTestPluginFactory.getPluginFromReport(new BatchStatusReport(BatchStatusReportPluginData.builder().setReportLabel(REPORT_LABEL).build())::init));
 
 		TestSimulation.executeSimulation(pluginsToAdd, outputConsumer);
 

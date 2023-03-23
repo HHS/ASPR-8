@@ -4,6 +4,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import nucleus.ReportContext;
+import nucleus.SimulationStateContext;
 import plugins.materials.datamangers.MaterialsDataManager;
 import plugins.materials.events.StageAdditionEvent;
 import plugins.materials.events.StageImminentRemovalEvent;
@@ -42,8 +43,8 @@ import plugins.reports.support.ReportLabel;
 public final class StageReport {
 	private final ReportLabel reportLabel;
 
-	public StageReport(ReportLabel reportLabel) {
-		this.reportLabel = reportLabel;
+	public StageReport(StageReportPluginData stageReportPluginData) {
+		this.reportLabel = stageReportPluginData.getReportLabel();
 	}
 
 	private static class StageRecord {
@@ -146,6 +147,7 @@ public final class StageReport {
 		reportContext.subscribe(StageAdditionEvent.class, this::handleStageAdditionEvent);
 		reportContext.subscribe(StageImminentRemovalEvent.class, this::handleStageImminentRemovalEvent);
 		reportContext.subscribe(StageMaterialsProducerUpdateEvent.class, this::handleStageMaterialsProducerUpdateEvent);
+		reportContext.subscribeToSimulationState(this::recordSimulationState);
 
 		materialsDataManager = reportContext.getDataManager(MaterialsDataManager.class);
 
@@ -162,6 +164,11 @@ public final class StageReport {
 				writeReportItem(reportContext, stageRecord);
 			}
 		}
+	}
+	
+	private void recordSimulationState(ReportContext reportContext, SimulationStateContext simulationStateContext) {
+		StageReportPluginData.Builder builder = simulationStateContext.get(StageReportPluginData.Builder.class);
+		builder.setReportLabel(reportLabel);
 	}
 
 }

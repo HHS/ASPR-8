@@ -1,6 +1,7 @@
 package plugins.materials.reports;
 
 import nucleus.ReportContext;
+import nucleus.SimulationStateContext;
 import plugins.materials.datamangers.MaterialsDataManager;
 import plugins.materials.events.MaterialsProducerAdditionEvent;
 import plugins.materials.events.MaterialsProducerPropertyUpdateEvent;
@@ -30,8 +31,8 @@ public final class MaterialsProducerPropertyReport {
 
 	private final ReportLabel reportLabel;
 
-	public MaterialsProducerPropertyReport(ReportLabel reportLabel) {
-		this.reportLabel = reportLabel;
+	public MaterialsProducerPropertyReport(MaterialsProducerPropertyReportPluginData materialsProducerPropertyReportPluginData) {
+		this.reportLabel = materialsProducerPropertyReportPluginData.getReportLabel();
 	}
 
 	private ReportHeader reportHeader;
@@ -59,6 +60,7 @@ public final class MaterialsProducerPropertyReport {
 
 		reportContext.subscribe(MaterialsProducerPropertyUpdateEvent.class, this::handleMaterialsProducerPropertyUpdateEvent);
 		reportContext.subscribe(MaterialsProducerAdditionEvent.class, this::handleMaterialsProducerAdditionEvent);
+		reportContext.subscribeToSimulationState(this::recordSimulationState);
 
 		MaterialsDataManager materialsDataManager = reportContext.getDataManager(MaterialsDataManager.class);
 
@@ -68,6 +70,11 @@ public final class MaterialsProducerPropertyReport {
 				writeProperty(reportContext, materialsProducerId, materialsProducerPropertyId, materialsProducerPropertyValue);
 			}
 		}
+	}
+	
+	private void recordSimulationState(ReportContext reportContext, SimulationStateContext simulationStateContext) {
+		MaterialsProducerPropertyReportPluginData.Builder builder = simulationStateContext.get(MaterialsProducerPropertyReportPluginData.Builder.class);
+		builder.setReportLabel(reportLabel);
 	}
 
 	private void handleMaterialsProducerAdditionEvent(ReportContext reportContext, MaterialsProducerAdditionEvent materialsProducerAdditionEvent) {

@@ -111,7 +111,7 @@ public class MaterialsTestPluginFactory {
 		public List<Plugin> getPlugins() {
 			List<Plugin> pluginsToAdd = new ArrayList<>();
 
-			Plugin materialsPlugin = MaterialsPlugin.getMaterialsPlugin(this.data.materialsPluginData);
+			Plugin materialsPlugin = MaterialsPlugin.builder().setMaterialsPluginData(this.data.materialsPluginData).getMaterialsPlugin();
 
 			Plugin resourcesPlugin = ResourcesPlugin.builder().setResourcesPluginData(this.data.resourcesPluginData).getResourcesPlugin();
 

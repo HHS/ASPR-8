@@ -6,6 +6,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import nucleus.ReportContext;
+import nucleus.SimulationStateContext;
 import plugins.materials.datamangers.MaterialsDataManager;
 import plugins.materials.events.BatchAdditionEvent;
 import plugins.materials.events.BatchAmountUpdateEvent;
@@ -63,8 +64,8 @@ public final class BatchStatusReport {
 
 	private final ReportLabel reportLabel;
 
-	public BatchStatusReport(ReportLabel reportLabel) {
-		this.reportLabel = reportLabel;
+	public BatchStatusReport(BatchStatusReportPluginData batchStatusReportPluginData) {
+		this.reportLabel = batchStatusReportPluginData.getReportLabel();
 	}
 
 	private Map<BatchId, BatchRecord> batchRecords = new LinkedHashMap<>();
@@ -217,6 +218,7 @@ public final class BatchStatusReport {
 		reportContext.subscribe(BatchPropertyUpdateEvent.class, this::handleBatchPropertyUpdateEvent);
 		reportContext.subscribe(StageMembershipAdditionEvent.class, this::handleStageMembershipAdditionEvent);
 		reportContext.subscribe(StageMembershipRemovalEvent.class, this::handleStageMembershipRemovalEvent);
+		reportContext.subscribeToSimulationState(this::recordSimulationState);
 
 		materialsDataManager = reportContext.getDataManager(MaterialsDataManager.class);
 
@@ -237,5 +239,11 @@ public final class BatchStatusReport {
 			}
 		}
 	}
+	
+	private void recordSimulationState(ReportContext reportContext, SimulationStateContext simulationStateContext) {
+		BatchStatusReportPluginData.Builder builder = simulationStateContext.get(BatchStatusReportPluginData.Builder.class);
+		builder.setReportLabel(reportLabel);
+	}
+
 
 }
