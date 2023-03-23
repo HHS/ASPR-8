@@ -632,12 +632,17 @@ public final class MaterialsDataManager extends DataManager {
 		validateMaterialsProducerPropertyIdIsUnknown(materialsProducerPropertyId);
 		boolean checkAllProducersHaveValues = propertyDefinition.getDefaultValue().isEmpty();
 
-		materialsProducerPropertyDefinitions.put(materialsProducerPropertyId, propertyDefinition);
-		materialsProducerPropertyCreationTimes.put(materialsProducerPropertyId, dataManagerContext.getTime());
-		materialsProducerPropertyIds.add(materialsProducerPropertyId);
+		// validate the producer property value assignments
+		for (Pair<MaterialsProducerId, Object> pair : materialsProducerPropertyDefinitionInitialization.getPropertyValues()) {
+			MaterialsProducerId materialsProducerId = pair.getFirst();
+			validateMaterialsProducerId(materialsProducerId);
+		}
 
+		/*
+		 * If the property definition does not have a default value then we need
+		 * to have a property assignment for each producer
+		 */
 		if (checkAllProducersHaveValues) {
-			addNonDefaultProducerProperty(materialsProducerPropertyId);
 
 			final Map<MaterialsProducerId, Boolean> coverageSet = new LinkedHashMap<>();
 			for (final MaterialsProducerId materialsProducerId : materialsProducerMap.keySet()) {
@@ -647,35 +652,33 @@ public final class MaterialsDataManager extends DataManager {
 			for (Pair<MaterialsProducerId, Object> pair : materialsProducerPropertyDefinitionInitialization.getPropertyValues()) {
 				MaterialsProducerId materialsProducerId = pair.getFirst();
 				coverageSet.put(materialsProducerId, true);
-				/*
-				 * we do not have to validate the value since it is guaranteed
-				 * to be consistent with the property definition by contract.
-				 */
-				Object value = pair.getSecond();
-				Map<MaterialsProducerPropertyId, PropertyValueRecord> propertyMap = materialsProducerPropertyMap.get(materialsProducerId);
-				PropertyValueRecord propertyValueRecord = new PropertyValueRecord(dataManagerContext);
-				propertyValueRecord.setPropertyValue(value);
-				propertyMap.put(materialsProducerPropertyId, propertyValueRecord);
 			}
 			for (MaterialsProducerId materialsProducerId : coverageSet.keySet()) {
 				if (!coverageSet.get(materialsProducerId)) {
 					throw new ContractException(PropertyError.INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT);
 				}
 			}
-		} else {
-			for (Pair<MaterialsProducerId, Object> pair : materialsProducerPropertyDefinitionInitialization.getPropertyValues()) {
-				MaterialsProducerId materialsProducerId = pair.getFirst();
-				/*
-				 * we do not have to validate the value since it is guaranteed
-				 * to be consistent with the property definition by contract.
-				 */
-				Object value = pair.getSecond();
-				Map<MaterialsProducerPropertyId, PropertyValueRecord> propertyMap = materialsProducerPropertyMap.get(materialsProducerId);
-				PropertyValueRecord propertyValueRecord = new PropertyValueRecord(dataManagerContext);
-				propertyValueRecord.setPropertyValue(value);
-				propertyMap.put(materialsProducerPropertyId, propertyValueRecord);
-			}
+		}
 
+		materialsProducerPropertyDefinitions.put(materialsProducerPropertyId, propertyDefinition);
+		materialsProducerPropertyCreationTimes.put(materialsProducerPropertyId, dataManagerContext.getTime());
+		materialsProducerPropertyIds.add(materialsProducerPropertyId);
+
+		if (checkAllProducersHaveValues) {
+			addNonDefaultProducerProperty(materialsProducerPropertyId);
+		}
+
+		for (Pair<MaterialsProducerId, Object> pair : materialsProducerPropertyDefinitionInitialization.getPropertyValues()) {
+			MaterialsProducerId materialsProducerId = pair.getFirst();
+			/*
+			 * we do not have to validate the value since it is guaranteed to be
+			 * consistent with the property definition by contract.
+			 */
+			Object value = pair.getSecond();
+			Map<MaterialsProducerPropertyId, PropertyValueRecord> propertyMap = materialsProducerPropertyMap.get(materialsProducerId);
+			PropertyValueRecord propertyValueRecord = new PropertyValueRecord(dataManagerContext);
+			propertyValueRecord.setPropertyValue(value);
+			propertyMap.put(materialsProducerPropertyId, propertyValueRecord);
 		}
 
 		if (dataManagerContext.subscribersExist(MaterialsProducerPropertyDefinitionEvent.class)) {
@@ -721,29 +724,31 @@ public final class MaterialsDataManager extends DataManager {
 		batchPropertyDefinitions.get(materialId).put(batchPropertyId, propertyDefinition);
 		batchPropertyDefinitionTimes.get(materialId).put(batchPropertyId, dataManagerContext.getTime());
 
+		// validate the <batchid, property> value assignments
+		for (Pair<BatchId, Object> pair : batchPropertyDefinitionInitialization.getPropertyValues()) {
+			/*
+			 * We know that the batch id and value are non-null and that the
+			 * value is compatible with the property definition
+			 */
+			BatchId batchId = pair.getFirst();
+			validateBatchId(batchId);
+			MaterialId batchMaterialId = batchRecords.get(batchId).materialId;
+			if (!materialId.equals(batchMaterialId)) {
+				throw new ContractException(MaterialsError.MATERIAL_TYPE_MISMATCH);
+			}
+		}
+
 		boolean checkAllBatchesHaveValues = propertyDefinition.getDefaultValue().isEmpty();
 
+		/*
+		 * if the property definition does not have a default value then every
+		 * batch will need a property value assignment
+		 */
 		if (checkAllBatchesHaveValues) {
-			addNonDefaultBatchProperty(materialId, batchPropertyId);
 			BitSet coverageSet = new BitSet(batchRecords.size());
 
 			for (Pair<BatchId, Object> pair : batchPropertyDefinitionInitialization.getPropertyValues()) {
-				/*
-				 * We know that the batch id and value are non-null and that the
-				 * value is compatible with the property definition
-				 */
 				BatchId batchId = pair.getFirst();
-				validateBatchId(batchId);
-				MaterialId batchMaterialId = batchRecords.get(batchId).materialId;
-				if (!materialId.equals(batchMaterialId)) {
-					throw new ContractException(MaterialsError.MATERIAL_TYPE_MISMATCH);
-				}
-				Object value = pair.getSecond();
-				validateBatchId(batchId);
-				Map<BatchPropertyId, PropertyValueRecord> map = batchPropertyMap.get(batchId);
-				PropertyValueRecord propertyValueRecord = new PropertyValueRecord(dataManagerContext);
-				propertyValueRecord.setPropertyValue(value);
-				map.put(batchPropertyId, propertyValueRecord);
 				coverageSet.set(batchId.getValue());
 			}
 
@@ -755,29 +760,20 @@ public final class MaterialsDataManager extends DataManager {
 					}
 				}
 			}
+		}
 
-		} else {
-
-			for (Pair<BatchId, Object> pair : batchPropertyDefinitionInitialization.getPropertyValues()) {
-				/*
-				 * We know that the batch id and value are non-null and that the
-				 * value is compatible with the property definition
-				 */
-				BatchId batchId = pair.getFirst();
-				validateBatchId(batchId);
-				MaterialId batchMaterialId = batchRecords.get(batchId).materialId;
-				if (!materialId.equals(batchMaterialId)) {
-					throw new ContractException(MaterialsError.MATERIAL_TYPE_MISMATCH);
-				}
-				Object value = pair.getSecond();
-				validateBatchId(batchId);
-				Map<BatchPropertyId, PropertyValueRecord> map = batchPropertyMap.get(batchId);
-				PropertyValueRecord propertyValueRecord = new PropertyValueRecord(dataManagerContext);
-				propertyValueRecord.setPropertyValue(value);
-				map.put(batchPropertyId, propertyValueRecord);
-
-			}
-
+		// if the property definition does not define a default value
+		if (checkAllBatchesHaveValues) {
+			addNonDefaultBatchProperty(materialId, batchPropertyId);
+		}
+		// integrate the batch property value assignments
+		for (Pair<BatchId, Object> pair : batchPropertyDefinitionInitialization.getPropertyValues()) {
+			BatchId batchId = pair.getFirst();
+			Object value = pair.getSecond();
+			Map<BatchPropertyId, PropertyValueRecord> map = batchPropertyMap.get(batchId);
+			PropertyValueRecord propertyValueRecord = new PropertyValueRecord(dataManagerContext);
+			propertyValueRecord.setPropertyValue(value);
+			map.put(batchPropertyId, propertyValueRecord);
 		}
 
 		if (dataManagerContext.subscribersExist(BatchPropertyDefinitionEvent.class)) {
@@ -1136,8 +1132,31 @@ public final class MaterialsDataManager extends DataManager {
 	private void handleMaterialsProducerAdditionMutationEvent(DataManagerContext dataManagerContext, MaterialsProducerAdditionMutationEvent materialsProducerAdditionMutationEvent) {
 		MaterialsProducerConstructionData materialsProducerConstructionData = materialsProducerAdditionMutationEvent.materialsProducerConstructionData();
 
+		// validate the new producer id
 		MaterialsProducerId materialsProducerId = materialsProducerConstructionData.getMaterialsProducerId();
 		validateNewMaterialsProducerId(materialsProducerId);
+
+		// validate the included property value assignments
+		Map<MaterialsProducerPropertyId, Object> materialsProducerPropertyValues = materialsProducerConstructionData.getMaterialsProducerPropertyValues();
+		for (MaterialsProducerPropertyId materialsProducerPropertyId : materialsProducerPropertyValues.keySet()) {
+			validateMaterialsProducerPropertyId(materialsProducerPropertyId);
+			Object propertyValue = materialsProducerPropertyValues.get(materialsProducerPropertyId);
+			final PropertyDefinition propertyDefinition = materialsProducerPropertyDefinitions.get(materialsProducerPropertyId);
+			validateValueCompatibility(materialsProducerPropertyId, propertyDefinition, propertyValue);
+		}
+
+		/*
+		 * if any of the property definitions don't have a default value, then
+		 * the event must include those assignments
+		 */
+		boolean checkPropertyCoverage = !nonDefaultBearingProducerPropertyIds.isEmpty();
+		if (checkPropertyCoverage) {
+			clearNonDefaultProducerChecks();
+			for (MaterialsProducerPropertyId materialsProducerPropertyId : materialsProducerPropertyValues.keySet()) {
+				markProducerPropertyAssigned(materialsProducerPropertyId);
+			}
+			verifyNonDefaultChecksForProducers();
+		}
 
 		// integrate the new producer into the resources
 		final MaterialsProducerRecord materialsProducerRecord = new MaterialsProducerRecord();
@@ -1148,36 +1167,14 @@ public final class MaterialsDataManager extends DataManager {
 		materialsProducerMap.put(materialsProducerId, materialsProducerRecord);
 
 		// integrate the new producer into the property values
-
-		boolean checkPropertyCoverage = !nonDefaultBearingProducerPropertyIds.isEmpty();
-		Map<MaterialsProducerPropertyId, Object> materialsProducerPropertyValues = materialsProducerConstructionData.getMaterialsProducerPropertyValues();
 		Map<MaterialsProducerPropertyId, PropertyValueRecord> propertyValueMap = new LinkedHashMap<>();
 		materialsProducerPropertyMap.put(materialsProducerId, propertyValueMap);
-		// PropertyValueRecord propertyValueRecord =
-		// materialsProducerPropertyMap.get(materialsProducerId).get(materialsProducerPropertyId);
-		if (checkPropertyCoverage) {
-			clearNonDefaultProducerChecks();
-			for (MaterialsProducerPropertyId materialsProducerPropertyId : materialsProducerPropertyValues.keySet()) {
-				validateMaterialsProducerPropertyId(materialsProducerPropertyId);
-				markProducerPropertyAssigned(materialsProducerPropertyId);
-				Object propertyValue = materialsProducerPropertyValues.get(materialsProducerPropertyId);
-				final PropertyDefinition propertyDefinition = materialsProducerPropertyDefinitions.get(materialsProducerPropertyId);
-				validateValueCompatibility(materialsProducerPropertyId, propertyDefinition, propertyValue);
-				PropertyValueRecord propertyValueRecord = new PropertyValueRecord(dataManagerContext);
-				propertyValueRecord.setPropertyValue(propertyValue);
-				propertyValueMap.put(materialsProducerPropertyId, propertyValueRecord);
-			}
-			verifyNonDefaultChecksForProducers();
-		} else {
-			for (MaterialsProducerPropertyId materialsProducerPropertyId : materialsProducerPropertyValues.keySet()) {
-				validateMaterialsProducerPropertyId(materialsProducerPropertyId);
-				Object propertyValue = materialsProducerPropertyValues.get(materialsProducerPropertyId);
-				final PropertyDefinition propertyDefinition = materialsProducerPropertyDefinitions.get(materialsProducerPropertyId);
-				validateValueCompatibility(materialsProducerPropertyId, propertyDefinition, propertyValue);
-				PropertyValueRecord propertyValueRecord = new PropertyValueRecord(dataManagerContext);
-				propertyValueRecord.setPropertyValue(propertyValue);
-				propertyValueMap.put(materialsProducerPropertyId, propertyValueRecord);
-			}
+
+		for (MaterialsProducerPropertyId materialsProducerPropertyId : materialsProducerPropertyValues.keySet()) {
+			Object propertyValue = materialsProducerPropertyValues.get(materialsProducerPropertyId);			
+			PropertyValueRecord propertyValueRecord = new PropertyValueRecord(dataManagerContext);
+			propertyValueRecord.setPropertyValue(propertyValue);
+			propertyValueMap.put(materialsProducerPropertyId, propertyValueRecord);
 		}
 
 		Map<ResourceId, Long> resourceLevels = materialsProducerConstructionData.getResourceLevels();
@@ -1562,6 +1559,25 @@ public final class MaterialsDataManager extends DataManager {
 		validateMaterialId(materialId);
 		final double amount = batchConstructionInfo.getAmount();
 
+		final Map<BatchPropertyId, Object> propertyValues = batchConstructionInfo.getPropertyValues();
+		boolean checkPropertyCoverage = !nonDefaultBearingBatchPropertyIds.get(materialId).isEmpty();
+
+		for (final BatchPropertyId batchPropertyId : propertyValues.keySet()) {
+			validateBatchPropertyId(materialId, batchPropertyId);
+			final Object batchPropertyValue = propertyValues.get(batchPropertyId);
+			final PropertyDefinition propertyDefinition = batchPropertyDefinitions.get(materialId).get(batchPropertyId);
+			validateBatchPropertyValueNotNull(batchPropertyValue);
+			validateValueCompatibility(batchPropertyId, propertyDefinition, batchPropertyValue);
+		}
+
+		if (checkPropertyCoverage) {
+			clearNonDefaultBatchChecks(materialId);
+			for (final BatchPropertyId batchPropertyId : propertyValues.keySet()) {
+				markBatchPropertyAssigned(materialId, batchPropertyId);
+			}
+			verifyNonDefaultBatchChecks(materialId);
+		}
+
 		final MaterialsProducerRecord materialsProducerRecord = materialsProducerMap.get(materialsProducerId);
 		final BatchRecord batchRecord = new BatchRecord(batchId);
 		batchRecord.amount = amount;
@@ -1571,40 +1587,14 @@ public final class MaterialsDataManager extends DataManager {
 		materialsProducerRecord.inventory.add(batchRecord);
 		batchRecords.put(batchRecord.batchId, batchRecord);
 
-		boolean checkPropertyCoverage = !nonDefaultBearingBatchPropertyIds.get(materialId).isEmpty();
-
 		final Map<BatchPropertyId, PropertyValueRecord> map = new LinkedHashMap<>();
 		batchPropertyMap.put(batchRecord.batchId, map);
 
-		if (checkPropertyCoverage) {
-			clearNonDefaultBatchChecks(materialId);
-
-			final Map<BatchPropertyId, Object> propertyValues = batchConstructionInfo.getPropertyValues();
-			for (final BatchPropertyId batchPropertyId : propertyValues.keySet()) {
-				validateBatchPropertyId(materialId, batchPropertyId);
-				markBatchPropertyAssigned(materialId, batchPropertyId);
-				final Object batchPropertyValue = propertyValues.get(batchPropertyId);
-				final PropertyDefinition propertyDefinition = batchPropertyDefinitions.get(materialId).get(batchPropertyId);
-				validateBatchPropertyValueNotNull(batchPropertyValue);
-				validateValueCompatibility(batchPropertyId, propertyDefinition, batchPropertyValue);
-				final PropertyValueRecord propertyValueRecord = new PropertyValueRecord(dataManagerContext);
-				propertyValueRecord.setPropertyValue(batchPropertyValue);
-				map.put(batchPropertyId, propertyValueRecord);
-			}
-
-			verifyNonDefaultBatchChecks(materialId);
-		} else {
-			final Map<BatchPropertyId, Object> propertyValues = batchConstructionInfo.getPropertyValues();
-			for (final BatchPropertyId batchPropertyId : propertyValues.keySet()) {
-				validateBatchPropertyId(materialId, batchPropertyId);
-				final Object batchPropertyValue = propertyValues.get(batchPropertyId);
-				final PropertyDefinition propertyDefinition = batchPropertyDefinitions.get(materialId).get(batchPropertyId);
-				validateBatchPropertyValueNotNull(batchPropertyValue);
-				validateValueCompatibility(batchPropertyId, propertyDefinition, batchPropertyValue);
-				final PropertyValueRecord propertyValueRecord = new PropertyValueRecord(dataManagerContext);
-				propertyValueRecord.setPropertyValue(batchPropertyValue);
-				map.put(batchPropertyId, propertyValueRecord);
-			}
+		for (final BatchPropertyId batchPropertyId : propertyValues.keySet()) {
+			final Object batchPropertyValue = propertyValues.get(batchPropertyId);
+			final PropertyValueRecord propertyValueRecord = new PropertyValueRecord(dataManagerContext);
+			propertyValueRecord.setPropertyValue(batchPropertyValue);
+			map.put(batchPropertyId, propertyValueRecord);
 		}
 
 		if (dataManagerContext.subscribersExist(BatchAdditionEvent.class)) {
