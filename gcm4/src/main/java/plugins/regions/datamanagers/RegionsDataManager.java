@@ -202,25 +202,20 @@ public final class RegionsDataManager extends DataManager {
 		RegionId regionId = regionConstructionData.getRegionId();
 		validateNewRegionId(regionId);
 		Map<RegionPropertyId, Object> regionPropertyValues = regionConstructionData.getRegionPropertyValues();
-
+		for (RegionPropertyId regionPropertyId : regionPropertyValues.keySet()) {
+			validateRegionPropertyId(regionPropertyId);				
+			Object regionPropertyValue = regionPropertyValues.get(regionPropertyId);
+			final PropertyDefinition propertyDefinition = regionPropertyDefinitions.get(regionPropertyId);				
+			validateValueCompatibility(regionPropertyId, propertyDefinition, regionPropertyValue);
+		}	
+		
 		if (!nonDefaultBearingPropertyIds.isEmpty()) {
 			clearNonDefaultChecks();
 			for (RegionPropertyId regionPropertyId : regionPropertyValues.keySet()) {
-				validateRegionPropertyId(regionPropertyId);
 				markAssigned(regionPropertyId);
-				Object regionPropertyValue = regionPropertyValues.get(regionPropertyId);
-				final PropertyDefinition propertyDefinition = regionPropertyDefinitions.get(regionPropertyId);				
-				validateValueCompatibility(regionPropertyId, propertyDefinition, regionPropertyValue);
 			}
 			verifyNonDefaultChecks();
-		}else {			
-			for (RegionPropertyId regionPropertyId : regionPropertyValues.keySet()) {
-				validateRegionPropertyId(regionPropertyId);				
-				Object regionPropertyValue = regionPropertyValues.get(regionPropertyId);
-				final PropertyDefinition propertyDefinition = regionPropertyDefinitions.get(regionPropertyId);				
-				validateValueCompatibility(regionPropertyId, propertyDefinition, regionPropertyValue);
-			}			
-		}		
+		}	
 		
 		regionPopulationRecordMap.put(regionId, new PopulationRecord());
 		regionToIndexMap.put(regionId, regionToIndexMap.size() + 1);

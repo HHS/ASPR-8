@@ -105,10 +105,11 @@ public final class PersonPropertiesDataManager extends DataManager {
 		validatePersonPropertyIdIsUnknown(personPropertyId);
 		boolean checkAllPeopleHaveValues = propertyDefinition.getDefaultValue().isEmpty();
 
-		personPropertyDefinitions.put(personPropertyId, propertyDefinition);
-		final IndexedPropertyManager propertyManager = getIndexedPropertyManager(dataManagerContext, propertyDefinition, 0);
-		personPropertyManagerMap.put(personPropertyId, propertyManager);
-
+		for (Pair<PersonId, Object> pair : propertyDefinitionInitialization.getPropertyValues()) {			
+			PersonId personId = pair.getFirst();
+			validatePersonExists(personId);
+		}
+		
 		if (checkAllPeopleHaveValues) {
 			addNonDefaultProperty(personPropertyId);
 			int idLimit = peopleDataManager.getPersonIdLimit();
@@ -117,13 +118,7 @@ public final class PersonPropertiesDataManager extends DataManager {
 			for (Pair<PersonId, Object> pair : propertyDefinitionInitialization.getPropertyValues()) {
 				PersonId personId = pair.getFirst();
 				int pId = personId.getValue();
-				coverageSet.set(pId);
-				/*
-				 * we do not have to validate the value since it is guaranteed
-				 * to be consistent with the property definition by contract.
-				 */
-				Object value = pair.getSecond();
-				propertyManager.setPropertyValue(pId, value);
+				coverageSet.set(pId);				
 			}
 			for (int i = 0; i < idLimit; i++) {
 				if (peopleDataManager.personIndexExists(i)) {
@@ -133,17 +128,21 @@ public final class PersonPropertiesDataManager extends DataManager {
 					}
 				}
 			}
-		} else {
-			for (Pair<PersonId, Object> pair : propertyDefinitionInitialization.getPropertyValues()) {
-				PersonId personId = pair.getFirst();
-				int pId = personId.getValue();
-				/*
-				 * we do not have to validate the value since it is guaranteed
-				 * to be consistent with the property definition by contract.
-				 */
-				Object value = pair.getSecond();
-				propertyManager.setPropertyValue(pId, value);
-			}
+		}
+		
+		personPropertyDefinitions.put(personPropertyId, propertyDefinition);
+		final IndexedPropertyManager propertyManager = getIndexedPropertyManager(dataManagerContext, propertyDefinition, 0);
+		personPropertyManagerMap.put(personPropertyId, propertyManager);
+		
+		for (Pair<PersonId, Object> pair : propertyDefinitionInitialization.getPropertyValues()) {
+			PersonId personId = pair.getFirst();
+			int pId = personId.getValue();
+			/*
+			 * we do not have to validate the value since it is guaranteed
+			 * to be consistent with the property definition by contract.
+			 */
+			Object value = pair.getSecond();
+			propertyManager.setPropertyValue(pId, value);
 		}
 
 		if (dataManagerContext.subscribersExist(PersonPropertyDefinitionEvent.class)) {
@@ -612,33 +611,31 @@ public final class PersonPropertiesDataManager extends DataManager {
 
 		List<PersonPropertyInitialization> personPropertyAssignments = personConstructionData.getValues(PersonPropertyInitialization.class);
 
-		if (nonDefaultBearingPropertyIds.isEmpty()) {
-			for (final PersonPropertyInitialization personPropertyAssignment : personPropertyAssignments) {
-				PersonPropertyId personPropertyId = personPropertyAssignment.getPersonPropertyId();
-				final Object personPropertyValue = personPropertyAssignment.getValue();
-				validatePersonPropertyId(personPropertyId);
-				validatePersonPropertyValueNotNull(personPropertyValue);
-				final PropertyDefinition propertyDefinition = personPropertyDefinitions.get(personPropertyId);
-				validateValueCompatibility(personPropertyId, propertyDefinition, personPropertyValue);
-				int pId = personId.getValue();
-				IndexedPropertyManager propertyManager = personPropertyManagerMap.get(personPropertyId);
-				propertyManager.setPropertyValue(pId, personPropertyValue);
-			}
-		} else {
+		
+		for (final PersonPropertyInitialization personPropertyAssignment : personPropertyAssignments) {
+			PersonPropertyId personPropertyId = personPropertyAssignment.getPersonPropertyId();
+			final Object personPropertyValue = personPropertyAssignment.getValue();
+			validatePersonPropertyId(personPropertyId);
+			validatePersonPropertyValueNotNull(personPropertyValue);
+			final PropertyDefinition propertyDefinition = personPropertyDefinitions.get(personPropertyId);
+			validateValueCompatibility(personPropertyId, propertyDefinition, personPropertyValue);			
+		}
+		
+		if (!nonDefaultBearingPropertyIds.isEmpty()) {
 			clearNonDefaultChecks();
 			for (final PersonPropertyInitialization personPropertyAssignment : personPropertyAssignments) {
 				PersonPropertyId personPropertyId = personPropertyAssignment.getPersonPropertyId();
 				markAssigned(personPropertyId);
-				final Object personPropertyValue = personPropertyAssignment.getValue();
-				validatePersonPropertyId(personPropertyId);
-				validatePersonPropertyValueNotNull(personPropertyValue);
-				final PropertyDefinition propertyDefinition = personPropertyDefinitions.get(personPropertyId);
-				validateValueCompatibility(personPropertyId, propertyDefinition, personPropertyValue);
-				int pId = personId.getValue();
-				IndexedPropertyManager propertyManager = personPropertyManagerMap.get(personPropertyId);
-				propertyManager.setPropertyValue(pId, personPropertyValue);
 			}
 			verifyNonDefaultChecks();
+		}
+		
+		for (final PersonPropertyInitialization personPropertyAssignment : personPropertyAssignments) {
+			PersonPropertyId personPropertyId = personPropertyAssignment.getPersonPropertyId();
+			final Object personPropertyValue = personPropertyAssignment.getValue();
+			int pId = personId.getValue();
+			IndexedPropertyManager propertyManager = personPropertyManagerMap.get(personPropertyId);
+			propertyManager.setPropertyValue(pId, personPropertyValue);
 		}
 
 	}
