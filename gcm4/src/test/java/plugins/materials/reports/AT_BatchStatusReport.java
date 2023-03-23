@@ -16,12 +16,11 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import nucleus.ActorContext;
-import nucleus.Plugin;
 import nucleus.ReportContext;
 import nucleus.testsupport.testplugin.TestActorPlan;
+import nucleus.testsupport.testplugin.TestOutputConsumer;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestSimulation;
-import nucleus.testsupport.testplugin.TestOutputConsumer;
 import plugins.materials.datamangers.MaterialsDataManager;
 import plugins.materials.support.BatchConstructionInfo;
 import plugins.materials.support.BatchId;
@@ -30,6 +29,7 @@ import plugins.materials.support.MaterialId;
 import plugins.materials.support.MaterialsProducerId;
 import plugins.materials.support.StageId;
 import plugins.materials.testsupport.MaterialsTestPluginFactory;
+import plugins.materials.testsupport.MaterialsTestPluginFactory.Factory;
 import plugins.materials.testsupport.TestBatchConstructionInfo;
 import plugins.materials.testsupport.TestBatchPropertyId;
 import plugins.materials.testsupport.TestMaterialId;
@@ -39,7 +39,6 @@ import plugins.reports.support.ReportItem;
 import plugins.reports.support.ReportItem.Builder;
 import plugins.reports.support.ReportLabel;
 import plugins.reports.support.SimpleReportLabel;
-import plugins.reports.testsupport.ReportsTestPluginFactory;
 import plugins.stochastics.StochasticsDataManager;
 import util.annotations.UnitTag;
 import util.annotations.UnitTestConstructor;
@@ -234,11 +233,11 @@ public final class AT_BatchStatusReport {
 		TestPluginData testPluginData = pluginBuilder.build();
 
 		TestOutputConsumer outputConsumer = new TestOutputConsumer();
-		List<Plugin> pluginsToAdd = MaterialsTestPluginFactory.factory(0, 0, 0, 2819236410498978100L, testPluginData)
-				.getPlugins();
-		pluginsToAdd.add(ReportsTestPluginFactory.getPluginFromReport(new BatchStatusReport(BatchStatusReportPluginData.builder().setReportLabel(REPORT_LABEL).build())::init));
+		Factory factory = MaterialsTestPluginFactory//
+				.factory(0, 0, 0, 2819236410498978100L, testPluginData)
+				.setBatchStatusReportPluginData(BatchStatusReportPluginData.builder().setReportLabel(REPORT_LABEL).build());
 
-		TestSimulation.executeSimulation(pluginsToAdd, outputConsumer);
+		TestSimulation.executeSimulation(factory.getPlugins(), outputConsumer);
 
 		
 		assertEquals(expectedReportItems, outputConsumer.getOutputItems(ReportItem.class));

@@ -1607,7 +1607,9 @@ public class AT_RegionsDataManager {
 
 		RegionsPluginData regionsPluginData = regionPluginBuilder.build();
 
-		TestSimulation.executeSimulation(RegionsTestPluginFactory.factory(0, seed, TimeTrackingPolicy.TRACK_TIME, testPluginData).setRegionsPluginData(regionsPluginData).getPlugins());
+		TestSimulation.executeSimulation(RegionsTestPluginFactory.factory(0, seed, TimeTrackingPolicy.TRACK_TIME, testPluginData)//
+				.setRegionsPluginData(regionsPluginData)//
+				.getPlugins());
 
 
 

@@ -280,7 +280,6 @@ public final class GroupsDataManager extends DataManager {
 				}
 			}
 		}
-
 	}
 
 	private void loadGroupPropertyDefinitions() {

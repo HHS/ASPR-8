@@ -13,17 +13,17 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import nucleus.ActorContext;
-import nucleus.Plugin;
 import nucleus.ReportContext;
 import nucleus.testsupport.testplugin.TestActorPlan;
+import nucleus.testsupport.testplugin.TestOutputConsumer;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestSimulation;
-import nucleus.testsupport.testplugin.TestOutputConsumer;
 import plugins.materials.datamangers.MaterialsDataManager;
 import plugins.materials.support.MaterialsProducerConstructionData;
 import plugins.materials.support.MaterialsProducerId;
 import plugins.materials.support.MaterialsProducerPropertyId;
 import plugins.materials.testsupport.MaterialsTestPluginFactory;
+import plugins.materials.testsupport.MaterialsTestPluginFactory.Factory;
 import plugins.materials.testsupport.TestMaterialsProducerId;
 import plugins.materials.testsupport.TestMaterialsProducerPropertyId;
 import plugins.reports.support.ReportHeader;
@@ -31,7 +31,6 @@ import plugins.reports.support.ReportItem;
 import plugins.reports.support.ReportItem.Builder;
 import plugins.reports.support.ReportLabel;
 import plugins.reports.support.SimpleReportLabel;
-import plugins.reports.testsupport.ReportsTestPluginFactory;
 import plugins.stochastics.StochasticsDataManager;
 import util.annotations.UnitTag;
 import util.annotations.UnitTestConstructor;
@@ -140,11 +139,9 @@ public final class AT_MaterialsProducerPropertyReport {
 
 		TestOutputConsumer outputConsumer = new TestOutputConsumer();
 
-		List<Plugin> pluginsToAdd = MaterialsTestPluginFactory.factory(0, 0, 0, 8759226038479000135L, testPluginData)
-				.getPlugins();
-		pluginsToAdd.add(ReportsTestPluginFactory.getPluginFromReport(new MaterialsProducerPropertyReport(MaterialsProducerPropertyReportPluginData.builder().setReportLabel(REPORT_LABEL).build())::init));
-
-		TestSimulation.executeSimulation(pluginsToAdd, outputConsumer);
+		Factory factory = MaterialsTestPluginFactory.factory(0, 0, 0, 8759226038479000135L, testPluginData);
+		factory.setMaterialsProducerPropertyReportPluginData(MaterialsProducerPropertyReportPluginData.builder().setReportLabel(REPORT_LABEL).build());
+		TestSimulation.executeSimulation(factory.getPlugins(), outputConsumer);
 		
 		
 		Map<ReportItem, Integer> acutualReportItems = outputConsumer.getOutputItems(ReportItem.class);

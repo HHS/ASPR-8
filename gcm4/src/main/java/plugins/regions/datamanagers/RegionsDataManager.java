@@ -192,7 +192,7 @@ public final class RegionsDataManager extends DataManager {
 	 *             region that has not had a value assigned</li>
 	 *
 	 */
-	public void addRegion(final RegionConstructionData regionConstructionData) {
+	public void addRegion(final RegionConstructionData regionConstructionData) {		
 		dataManagerContext.releaseMutationEvent(new RegionAdditionMutationEvent(regionConstructionData));
 	}
 
@@ -560,6 +560,10 @@ public final class RegionsDataManager extends DataManager {
 		 * definition will have a default value.
 		 */
 		PropertyDefinition propertyDefinition = regionPropertyDefinitions.get(regionPropertyId);
+		Optional<Object> optional = propertyDefinition.getDefaultValue();
+		if(optional.isEmpty()) {
+			System.out.println("cannot find default value for "+ regionPropertyId);
+		}
 		return (T) propertyDefinition.getDefaultValue().get();
 	}
 
@@ -754,32 +758,60 @@ public final class RegionsDataManager extends DataManager {
 	private void recordSimulationState(DataManagerContext dataManagerContext, SimulationStateContext simulationStateContext) {
 
 		RegionsPluginData.Builder builder = simulationStateContext.get(RegionsPluginData.Builder.class);
-
-		for (RegionId regionId : regionPopulationRecordMap.keySet()) {
-			builder.addRegion(regionId);
+		
+		Set<RegionId> regionIds = getRegionIds();
+		for (RegionId regionId : regionIds) {
+			builder.addRegion(regionId);			
 		}
-
-		for (RegionPropertyId regionPropertyId : regionPropertyDefinitions.keySet()) {
-			PropertyDefinition propertyDefinition = regionPropertyDefinitions.get(regionPropertyId);
-			builder.defineRegionProperty(regionPropertyId, propertyDefinition);
-			for (RegionId regionId : regionPopulationRecordMap.keySet()) {
-				Map<RegionPropertyId, PropertyValueRecord> map = regionPropertyMap.get(regionId);
-				PropertyValueRecord propertyValueRecord = map.get(regionPropertyId);
-				if (propertyValueRecord != null) {
-					builder.setRegionPropertyValue(regionId, regionPropertyId, propertyValueRecord.getValue());
-				} else {
-					builder.setRegionPropertyValue(regionId, regionPropertyId, propertyDefinition.getDefaultValue().get());
-				}
+		
+		for(RegionPropertyId regionPropertyId : getRegionPropertyIds()) {
+			PropertyDefinition regionPropertyDefinition = getRegionPropertyDefinition(regionPropertyId);
+			builder.defineRegionProperty(regionPropertyId, regionPropertyDefinition);
+			for(RegionId regionId : regionIds) {
+				Object regionPropertyValue = getRegionPropertyValue(regionId, regionPropertyId);
+				builder.setRegionPropertyValue(regionId, regionPropertyId, regionPropertyValue);
 			}
 		}
-
-		for (PersonId personId : peopleDataManager.getPeople()) {
-			final int r = regionValues.getValueAsInt(personId.getValue());
-			RegionId regionId = indexToRegionMap.get(r);
+		
+		for(PersonId personId : peopleDataManager.getPeople()) {
+			RegionId regionId = getPersonRegion(personId);
 			builder.setPersonRegion(personId, regionId);
 		}
+		
+		builder.setPersonRegionArrivalTracking(getPersonRegionArrivalTrackingPolicy());
+		
+		
 
-		builder.setPersonRegionArrivalTracking(regionArrivalTrackingPolicy);
+		// for (RegionId regionId : regionPopulationRecordMap.keySet()) {
+		// builder.addRegion(regionId);
+		// }
+		//
+		// for (RegionPropertyId regionPropertyId :
+		// regionPropertyDefinitions.keySet()) {
+		// PropertyDefinition propertyDefinition =
+		// regionPropertyDefinitions.get(regionPropertyId);
+		// builder.defineRegionProperty(regionPropertyId, propertyDefinition);
+		// for (RegionId regionId : regionPopulationRecordMap.keySet()) {
+		// Map<RegionPropertyId, PropertyValueRecord> map =
+		// regionPropertyMap.get(regionId);
+		// PropertyValueRecord propertyValueRecord = map.get(regionPropertyId);
+		// if (propertyValueRecord != null) {
+		// builder.setRegionPropertyValue(regionId, regionPropertyId,
+		// propertyValueRecord.getValue());
+		// } else {
+		// builder.setRegionPropertyValue(regionId, regionPropertyId,
+		// propertyDefinition.getDefaultValue().get());
+		// }
+		// }
+		// }
+		//
+		// for (PersonId personId : peopleDataManager.getPeople()) {
+		// final int r = regionValues.getValueAsInt(personId.getValue());
+		// RegionId regionId = indexToRegionMap.get(r);
+		// builder.setPersonRegion(personId, regionId);
+		// }
+		//
+		// builder.setPersonRegionArrivalTracking(regionArrivalTrackingPolicy);
 
 	}
 
