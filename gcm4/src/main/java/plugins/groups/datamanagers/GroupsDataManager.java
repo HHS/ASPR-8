@@ -265,7 +265,7 @@ public final class GroupsDataManager extends DataManager {
 				}
 			}
 		}
-		
+
 		for (final GroupTypeId groupTypeId : typesToIndexesMap.keySet()) {
 			Integer typeIndex = typesToIndexesMap.get(groupTypeId);
 			final List<GroupId> groups = typesToGroupsMap.getValue(typeIndex);
@@ -274,7 +274,7 @@ public final class GroupsDataManager extends DataManager {
 				for (GroupPropertyId groupPropertyId : map.keySet()) {
 					IndexedPropertyManager indexedPropertyManager = map.get(groupPropertyId);
 					for (GroupId groupId : groups) {
-						Object propertyValue = indexedPropertyManager.getPropertyValue(groupId.getValue());	
+						Object propertyValue = indexedPropertyManager.getPropertyValue(groupId.getValue());
 						builder.setGroupPropertyValue(groupId, groupPropertyId, propertyValue);
 					}
 				}
@@ -434,29 +434,32 @@ public final class GroupsDataManager extends DataManager {
 		validateNewGroupPropertyId(groupTypeId, groupPropertyId);
 		validatePropertyDefinitionNotNull(propertyDefinition);
 
+		int requiredGroupTypeIndex = typesToIndexesMap.get(groupTypeId);
+
+		/*
+		 * Validate the contained property value assignments. We do not have to
+		 * validate the values since they are guaranteed to be consistent with the
+		 * property definition by contract.
+		 */
+		for (Pair<GroupId, Object> pair : groupPropertyDefinitionInitialization.getPropertyValues()) {
+			GroupId groupId = pair.getFirst();
+			int gId = groupId.getValue();
+			int groupTypeIndex = groupsToTypesMap.getValueAsInt(gId);
+
+			if (groupTypeIndex < 0) {
+				throw new ContractException(GroupError.UNKNOWN_GROUP_ID, groupId);
+			}
+			if (groupTypeIndex != requiredGroupTypeIndex) {
+				throw new ContractException(GroupError.INCORRECT_GROUP_TYPE_ID, groupId + " is not of type " + groupTypeId);
+			}
+		}
 		/*
 		 * Determine whether we will need to check that every group of the given
 		 * type has been assigned a value because the property definition does
 		 * not contain a default value.
 		 */
 		boolean checkAllGroupsHaveValues = propertyDefinition.getDefaultValue().isEmpty();
-
-		Map<GroupPropertyId, IndexedPropertyManager> managerMap = groupPropertyManagerMap.get(groupTypeId);
-		IndexedPropertyManager indexedPropertyManager = getIndexedPropertyManager(dataManagerContext, propertyDefinition, 0);
-		managerMap.put(groupPropertyId, indexedPropertyManager);
-
-		Map<GroupPropertyId, PropertyDefinition> map = groupPropertyDefinitions.get(groupTypeId);
-		map.put(groupPropertyId, propertyDefinition);
-		int requiredGroupTypeIndex = typesToIndexesMap.get(groupTypeId);
-
 		if (checkAllGroupsHaveValues) {
-			/*
-			 * update internal tracking mechanisms for properties not having
-			 * default values
-			 */
-			nonDefaultBearingPropertyIds.get(groupTypeId).put(groupPropertyId, nonDefaultBearingPropertyIds.size());
-			nonDefaultChecks.put(groupTypeId, new boolean[nonDefaultBearingPropertyIds.size()]);
-
 			/*
 			 * create a bit set for tracking which groups received a property
 			 * value
@@ -471,22 +474,7 @@ public final class GroupsDataManager extends DataManager {
 			for (Pair<GroupId, Object> pair : groupPropertyDefinitionInitialization.getPropertyValues()) {
 				GroupId groupId = pair.getFirst();
 				int gId = groupId.getValue();
-				int groupTypeIndex = groupsToTypesMap.getValueAsInt(gId);
-
-				if (groupTypeIndex < 0) {
-					throw new ContractException(GroupError.UNKNOWN_GROUP_ID, groupId);
-				}
-				if (groupTypeIndex != requiredGroupTypeIndex) {
-					throw new ContractException(GroupError.INCORRECT_GROUP_TYPE_ID, groupId + " is not of type " + groupTypeId);
-				}
-
 				coverageSet.set(gId);
-				Object value = pair.getSecond();
-				/*
-				 * we do not have to validate the value since it is guaranteed
-				 * to be consistent with the property definition by contract.
-				 */
-				indexedPropertyManager.setPropertyValue(gId, value);
 			}
 
 			/*
@@ -502,25 +490,29 @@ public final class GroupsDataManager extends DataManager {
 					}
 				}
 			}
-		} else {
-			for (Pair<GroupId, Object> pair : groupPropertyDefinitionInitialization.getPropertyValues()) {
-				GroupId groupId = pair.getFirst();
-				int gId = groupId.getValue();
-				int groupTypeIndex = groupsToTypesMap.getValueAsInt(gId);
+		}
 
-				if (groupTypeIndex < 0) {
-					throw new ContractException(GroupError.UNKNOWN_GROUP_ID, groupId);
-				}
-				if (groupTypeIndex != requiredGroupTypeIndex) {
-					throw new ContractException(GroupError.INCORRECT_GROUP_TYPE_ID, groupId + " is not of type " + groupTypeId);
-				}
-				/*
-				 * we do not have to validate the value since it is guaranteed
-				 * to be consistent with the property definition by contract.
-				 */
-				Object value = pair.getSecond();
-				indexedPropertyManager.setPropertyValue(gId, value);
-			}
+		// integrate the new group property id and definition
+		Map<GroupPropertyId, IndexedPropertyManager> managerMap = groupPropertyManagerMap.get(groupTypeId);
+		IndexedPropertyManager indexedPropertyManager = getIndexedPropertyManager(dataManagerContext, propertyDefinition, 0);
+		managerMap.put(groupPropertyId, indexedPropertyManager);
+		Map<GroupPropertyId, PropertyDefinition> map = groupPropertyDefinitions.get(groupTypeId);
+		map.put(groupPropertyId, propertyDefinition);
+
+		/*
+		 * update internal tracking mechanisms for properties not having default
+		 * values
+		 */
+		if (checkAllGroupsHaveValues) {
+			nonDefaultBearingPropertyIds.get(groupTypeId).put(groupPropertyId, nonDefaultBearingPropertyIds.size());
+			nonDefaultChecks.put(groupTypeId, new boolean[nonDefaultBearingPropertyIds.size()]);
+		}
+
+		for (Pair<GroupId, Object> pair : groupPropertyDefinitionInitialization.getPropertyValues()) {
+			GroupId groupId = pair.getFirst();
+			int gId = groupId.getValue();
+			Object value = pair.getSecond();
+			indexedPropertyManager.setPropertyValue(gId, value);
 		}
 
 		if (dataManagerContext.subscribersExist(GroupPropertyDefinitionEvent.class)) {
