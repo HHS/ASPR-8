@@ -93,23 +93,6 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>flatten-maven-plugin</artifactId>
-                <executions>
-                    <!-- enable flattening -->
-                    <execution>
-                        <id>flatten</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>flatten</goal>
-                        </goals>
-                        <configuration>
-                            <updatePomFile>true</updatePomFile>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
         </plugins>
     </build>
 

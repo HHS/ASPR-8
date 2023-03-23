@@ -187,6 +187,9 @@
                         <goals>
                             <goal>flatten</goal>
                         </goals>
+                        <configuration>
+                            <updatePomFile>true</updatePomFile>
+                        </configuration>
                     </execution>
                     <!-- ensure proper cleanup -->
                     <execution>
