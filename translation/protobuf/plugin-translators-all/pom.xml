@@ -10,7 +10,7 @@
     </parent>
 
     <artifactId>plugin-translators-all</artifactId>
-    <packaging>jar</packaging>
+    <packaging>pom</packaging>
     <name>gcm.translation :: protobuf :: plugin-translators-all</name>
 
     <dependencies>
@@ -89,6 +89,23 @@
                             <descriptors>
                                 <descriptor>assembly.xml</descriptor>
                             </descriptors>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>flatten-maven-plugin</artifactId>
+                <executions>
+                    <!-- enable flattening -->
+                    <execution>
+                        <id>flatten</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>flatten</goal>
+                        </goals>
+                        <configuration>
+                            <updatePomFile>true</updatePomFile>
                         </configuration>
                     </execution>
                 </executions>

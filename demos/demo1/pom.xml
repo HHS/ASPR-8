@@ -31,7 +31,7 @@
         <protobuf.version>3.21.12</protobuf.version>
         <protoc.version>3.21.12</protoc.version>
         <gcm.version>4.0.0-SNAPSHOT</gcm.version>
-		<gcm.proto-definitions.version>1.0.0-SNAPSHOT</gcm.proto-definitions.version>
+		<gcm.proto-definitions.version>1.0.0</gcm.proto-definitions.version>
 	</properties>
 
 	<!-- Dependencies -->
