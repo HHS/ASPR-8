@@ -48,15 +48,20 @@ public class AppTest {
 
 		Path basePath = Path.of("").toAbsolutePath();
 
-		if (!basePath.endsWith("materials-plugin")) {
-			basePath = basePath.resolve("materials-plugin");
+		if (!basePath.endsWith("materials-plugin-translator")) {
+			basePath = basePath.resolve("materials-plugin-translator");
 		}
 
-		Path inputFilePath = basePath.resolve("src/main/resources/json/input.json");
-		Path outputFilePath = basePath.resolve("src/main/resources/json/output/output.json");
+		Path inputFilePath = basePath.resolve("src/main/resources/json");
+        Path outputFilePath = basePath.resolve("src/main/resources/json/output");
+        
+        outputFilePath.toFile().mkdir();
+
+        String inputFileName = "input.json";
+        String outputFileName = "output.json";
 
 		TranslatorController translatorController = TranslatorController.builder()
-				.addTranslator(MaterialsTranslator.getTranslatorRW(inputFilePath.toString(), outputFilePath.toString()))
+				.addTranslator(MaterialsTranslator.getTranslatorRW(inputFilePath.resolve(inputFileName).toString(), outputFilePath.resolve(outputFileName).toString()))
 				.addTranslator(PropertiesTranslator.getTranslator())
 				.addTranslator(ResourcesTranslator.getTranslator())
 				.addTranslator(RegionsTranslator.getTranslatorModule())

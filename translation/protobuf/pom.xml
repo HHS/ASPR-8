@@ -179,7 +179,6 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>flatten-maven-plugin</artifactId>
-                <configuration> </configuration>
                 <executions>
                     <!-- enable flattening -->
                     <execution>
@@ -188,6 +187,9 @@
                         <goals>
                             <goal>flatten</goal>
                         </goals>
+                        <configuration>
+                            <updatePomFile>true</updatePomFile>
+                        </configuration>
                     </execution>
                     <!-- ensure proper cleanup -->
                     <execution>

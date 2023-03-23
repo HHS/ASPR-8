@@ -19,15 +19,20 @@ public class AppTest {
     public void testPeopleTranslator() {
         Path basePath = Path.of("").toAbsolutePath();
 
-        if (!basePath.endsWith("people-plugin")) {
-            basePath = basePath.resolve("people-plugin");
+        if (!basePath.endsWith("people-plugin-translator")) {
+            basePath = basePath.resolve("people-plugin-translator");
         }
 
-        Path inputFilePath = basePath.resolve("src/main/resources/json/input.json");
-        Path outputFilePath = basePath.resolve("src/main/resources/json/output/output.json");
+        Path inputFilePath = basePath.resolve("src/main/resources/json");
+        Path outputFilePath = basePath.resolve("src/main/resources/json/output");
+        
+        outputFilePath.toFile().mkdir();
+
+        String inputFileName = "input.json";
+        String outputFileName = "output.json";
 
         TranslatorController translatorController = TranslatorController.builder()
-                .addTranslator(PeopleTranslator.getTranslatorRW(inputFilePath.toString(), outputFilePath.toString()))
+                .addTranslator(PeopleTranslator.getTranslatorRW(inputFilePath.resolve(inputFileName).toString(), outputFilePath.resolve(outputFileName).toString()))
                 .build();
 
         List<PluginData> pluginDatas = translatorController.readInput().getPluginDatas();

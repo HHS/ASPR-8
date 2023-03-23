@@ -25,14 +25,20 @@ public class AppTest {
 
         Path basePath = Path.of("").toAbsolutePath();
 
-        if (!basePath.endsWith("globalproperties-plugin")) {
-            basePath = basePath.resolve("globalproperties-plugin");
+        if (!basePath.endsWith("globalproperties-plugin-translator")) {
+            basePath = basePath.resolve("globalproperties-plugin-translator");
         }
-        Path inputFilePath = basePath.resolve("src/main/resources/json/input.json");
-        Path outputFilePath = basePath.resolve("src/main/resources/json/output/output.json");
+        Path inputFilePath = basePath.resolve("src/main/resources/json");
+        Path outputFilePath = basePath.resolve("src/main/resources/json/output");
+        
+        outputFilePath.toFile().mkdir();
+
+        String inputFileName = "input.json";
+        String outputFileName = "output.json";
+
 
         TranslatorController translatorController = TranslatorController.builder()
-                .addTranslator(GlobalPropertiesTranslator.getTranslatorRW(inputFilePath.toString(), outputFilePath.toString()))
+                .addTranslator(GlobalPropertiesTranslator.getTranslatorRW(inputFilePath.resolve(inputFileName).toString(), outputFilePath.resolve(outputFileName).toString()))
                 .addTranslator(PropertiesTranslator.getTranslator())
                 .addTranslatorSpec(new TestGlobalPropertyIdTranslatorSpec())
                 .build();

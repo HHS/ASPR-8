@@ -10,7 +10,7 @@
     </parent>
 
     <artifactId>plugin-translators-all</artifactId>
-    <packaging>jar</packaging>
+    <packaging>pom</packaging>
     <name>gcm.translation :: protobuf :: plugin-translators-all</name>
 
     <dependencies>

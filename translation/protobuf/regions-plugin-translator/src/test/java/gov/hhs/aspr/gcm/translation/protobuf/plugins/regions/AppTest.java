@@ -35,15 +35,20 @@ public class AppTest {
     public void testRegionsTranslator() {
         Path basePath = Path.of("").toAbsolutePath();
 
-        if (!basePath.endsWith("regions-plugin")) {
-            basePath = basePath.resolve("regions-plugin");
+        if (!basePath.endsWith("regions-plugin-translator")) {
+            basePath = basePath.resolve("regions-plugin-translator");
         }
 
-        Path inputFilePath = basePath.resolve("src/main/resources/json/input.json");
-        Path outputFilePath = basePath.resolve("src/main/resources/json/output/output.json");
+        Path inputFilePath = basePath.resolve("src/main/resources/json");
+        Path outputFilePath = basePath.resolve("src/main/resources/json/output");
+        
+        outputFilePath.toFile().mkdir();
+
+        String inputFileName = "input.json";
+        String outputFileName = "output.json";
 
         TranslatorController translatorController = TranslatorController.builder()
-                .addTranslator(RegionsTranslator.getTranslatorRW(inputFilePath.toString(), outputFilePath.toString()))
+                .addTranslator(RegionsTranslator.getTranslatorRW(inputFilePath.resolve(inputFileName).toString(), outputFilePath.resolve(outputFileName).toString()))
                 .addTranslator(PropertiesTranslator.getTranslator())
                 .addTranslator(PeopleTranslator.getTranslator())
                 .addTranslatorSpec(new TestRegionIdTranslatorSpec())
