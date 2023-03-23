@@ -280,53 +280,44 @@ public final class RegionsDataManager extends DataManager {
 		final PropertyDefinition propertyDefinition = regionPropertyDefinitionInitialization.getPropertyDefinition();
 		validateNewRegionPropertyId(regionPropertyId);
 		validateNewPropertyDefinition(propertyDefinition);
-		regionPropertyDefinitionTimes.put(regionPropertyId, dataManagerContext.getTime());
-		regionPropertyIds.add(regionPropertyId);
-		regionPropertyDefinitions.put(regionPropertyId, propertyDefinition);
-
+		
 		final boolean checkAllRegionsHaveValues = propertyDefinition.getDefaultValue().isEmpty();
 
-		if (checkAllRegionsHaveValues) {
-			addNonDefaultProperty(regionPropertyId);
+		if (checkAllRegionsHaveValues) {			
 			final Map<RegionId, Boolean> coverageSet = new LinkedHashMap<>();
 			for (final RegionId regionId : regionPropertyMap.keySet()) {
 				coverageSet.put(regionId, false);
 			}
-
 			for (final Pair<RegionId, Object> pair : regionPropertyDefinitionInitialization.getPropertyValues()) {
 				final RegionId regionId = pair.getFirst();
 				coverageSet.put(regionId, true);
-				/*
-				 * we do not have to validate the value since it is guaranteed
-				 * to be consistent with the property definition by contract.
-				 */
-				final Object value = pair.getSecond();
-				Map<RegionPropertyId, PropertyValueRecord> map = regionPropertyMap.get(regionId);
-				PropertyValueRecord propertyValueRecord = new PropertyValueRecord(dataManagerContext);
-				map.put(regionPropertyId, propertyValueRecord);
-				propertyValueRecord.setPropertyValue(value);
-
 			}
 			for (final RegionId regionId : coverageSet.keySet()) {
 				if (!coverageSet.get(regionId)) {
 					throw new ContractException(PropertyError.INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT);
 				}
 			}
-		} else {
-			for (final Pair<RegionId, Object> pair : regionPropertyDefinitionInitialization.getPropertyValues()) {
-				final RegionId regionId = pair.getFirst();
+		}
+			
+		if (checkAllRegionsHaveValues) {
+			addNonDefaultProperty(regionPropertyId);
+		}
+		regionPropertyDefinitionTimes.put(regionPropertyId, dataManagerContext.getTime());
+		regionPropertyIds.add(regionPropertyId);
+		regionPropertyDefinitions.put(regionPropertyId, propertyDefinition);
+		
+		for (final Pair<RegionId, Object> pair : regionPropertyDefinitionInitialization.getPropertyValues()) {
+			final RegionId regionId = pair.getFirst();
 
-				/*
-				 * we do not have to validate the value since it is guaranteed
-				 * to be consistent with the property definition by contract.
-				 */
-				final Object value = pair.getSecond();
-				Map<RegionPropertyId, PropertyValueRecord> map = regionPropertyMap.get(regionId);
-				PropertyValueRecord propertyValueRecord = new PropertyValueRecord(dataManagerContext);
-				map.put(regionPropertyId, propertyValueRecord);
-				propertyValueRecord.setPropertyValue(value);
-
-			}
+			/*
+			 * we do not have to validate the value since it is guaranteed
+			 * to be consistent with the property definition by contract.
+			 */
+			final Object value = pair.getSecond();
+			Map<RegionPropertyId, PropertyValueRecord> map = regionPropertyMap.get(regionId);
+			PropertyValueRecord propertyValueRecord = new PropertyValueRecord(dataManagerContext);
+			map.put(regionPropertyId, propertyValueRecord);
+			propertyValueRecord.setPropertyValue(value);
 
 		}
 
