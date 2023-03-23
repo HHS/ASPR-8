@@ -201,49 +201,42 @@ public final class RegionsDataManager extends DataManager {
 		validateRegionConstructionDataNotNull(regionConstructionData);
 		RegionId regionId = regionConstructionData.getRegionId();
 		validateNewRegionId(regionId);
-
-		regionPopulationRecordMap.put(regionId, new PopulationRecord());
-		regionToIndexMap.put(regionId, regionToIndexMap.size() + 1);
-		indexToRegionMap.add(regionId);
-
-		final Map<RegionPropertyId, PropertyValueRecord> map = new LinkedHashMap<>();
-		regionPropertyMap.put(regionId, map);
-
-		boolean checkPropertyCoverage = !nonDefaultBearingPropertyIds.isEmpty();
 		Map<RegionPropertyId, Object> regionPropertyValues = regionConstructionData.getRegionPropertyValues();
 
-		if (checkPropertyCoverage) {
+		if (!nonDefaultBearingPropertyIds.isEmpty()) {
 			clearNonDefaultChecks();
 			for (RegionPropertyId regionPropertyId : regionPropertyValues.keySet()) {
 				validateRegionPropertyId(regionPropertyId);
 				markAssigned(regionPropertyId);
 				Object regionPropertyValue = regionPropertyValues.get(regionPropertyId);
-				final PropertyDefinition propertyDefinition = regionPropertyDefinitions.get(regionPropertyId);
-				;
+				final PropertyDefinition propertyDefinition = regionPropertyDefinitions.get(regionPropertyId);				
 				validateValueCompatibility(regionPropertyId, propertyDefinition, regionPropertyValue);
-				PropertyValueRecord propertyValueRecord = map.get(regionPropertyId);
-				if (propertyValueRecord == null) {
-					propertyValueRecord = new PropertyValueRecord(dataManagerContext);
-					map.put(regionPropertyId, propertyValueRecord);
-				}
-				propertyValueRecord.setPropertyValue(regionPropertyValue);
 			}
 			verifyNonDefaultChecks();
-
-		} else {
+		}else {			
 			for (RegionPropertyId regionPropertyId : regionPropertyValues.keySet()) {
-				validateRegionPropertyId(regionPropertyId);
+				validateRegionPropertyId(regionPropertyId);				
 				Object regionPropertyValue = regionPropertyValues.get(regionPropertyId);
-				final PropertyDefinition propertyDefinition = regionPropertyDefinitions.get(regionPropertyId);
-				;
+				final PropertyDefinition propertyDefinition = regionPropertyDefinitions.get(regionPropertyId);				
 				validateValueCompatibility(regionPropertyId, propertyDefinition, regionPropertyValue);
-				PropertyValueRecord propertyValueRecord = map.get(regionPropertyId);
-				if (propertyValueRecord == null) {
-					propertyValueRecord = new PropertyValueRecord(dataManagerContext);
-					map.put(regionPropertyId, propertyValueRecord);
-				}
-				propertyValueRecord.setPropertyValue(regionPropertyValue);
+			}			
+		}		
+		
+		regionPopulationRecordMap.put(regionId, new PopulationRecord());
+		regionToIndexMap.put(regionId, regionToIndexMap.size() + 1);
+		indexToRegionMap.add(regionId);
+
+		final Map<RegionPropertyId, PropertyValueRecord> map = new LinkedHashMap<>();
+		regionPropertyMap.put(regionId, map);		
+
+		for (RegionPropertyId regionPropertyId : regionPropertyValues.keySet()) {
+			Object regionPropertyValue = regionPropertyValues.get(regionPropertyId);							
+			PropertyValueRecord propertyValueRecord = map.get(regionPropertyId);
+			if (propertyValueRecord == null) {
+				propertyValueRecord = new PropertyValueRecord(dataManagerContext);
+				map.put(regionPropertyId, propertyValueRecord);
 			}
+			propertyValueRecord.setPropertyValue(regionPropertyValue);
 		}
 
 		if (dataManagerContext.subscribersExist(RegionAdditionEvent.class)) {
@@ -560,10 +553,6 @@ public final class RegionsDataManager extends DataManager {
 		 * definition will have a default value.
 		 */
 		PropertyDefinition propertyDefinition = regionPropertyDefinitions.get(regionPropertyId);
-		Optional<Object> optional = propertyDefinition.getDefaultValue();
-		if(optional.isEmpty()) {
-			System.out.println("cannot find default value for "+ regionPropertyId);
-		}
 		return (T) propertyDefinition.getDefaultValue().get();
 	}
 

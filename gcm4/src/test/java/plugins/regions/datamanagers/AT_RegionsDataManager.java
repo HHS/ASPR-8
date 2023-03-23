@@ -1483,9 +1483,7 @@ public class AT_RegionsDataManager {
 			assertEquals(PropertyError.INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT, contractException.getErrorType());
 		}).getPlugins());;
 
-		// * <li>{@linkplain
-		// PropertyError#INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT}
-		// * </li>
+		
 
 	}
 
