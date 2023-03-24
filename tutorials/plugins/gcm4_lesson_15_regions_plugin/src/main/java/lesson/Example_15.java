@@ -12,7 +12,6 @@ import lesson.plugins.model.ModelReportLabel;
 import lesson.plugins.model.Region;
 import lesson.plugins.model.RegionProperty;
 import lesson.plugins.vaccine.VaccinePlugin;
-import lesson.plugins.vaccine.reports.VaccineReport;
 import nucleus.Dimension;
 import nucleus.Experiment;
 import nucleus.Plugin;
@@ -57,11 +56,7 @@ public final class Example_15 {
 																				.build()//
 										)::init;//
 									})//
-									.addReport(() -> {
-										return new VaccineReport(ModelReportLabel.VACCINATION, //
-												ReportPeriod.END_OF_SIMULATION, //
-												6)::init;
-									})//
+									
 									.build();
 
 		return ReportsPlugin.getReportsPlugin(reportsPluginData);

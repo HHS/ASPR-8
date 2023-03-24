@@ -27,6 +27,7 @@ public enum MaterialsError implements ContractError {
 	NEGATIVE_MATERIAL_AMOUNT("Material amount is negative"),	
 	NON_FINITE_MATERIAL_AMOUNT("Material amount is not finite"),	
 	NULL_BATCH_CONSTRUCTION_INFO("Null batch construction info"),
+	NULL_STAGE_CONVERSION_INFO("Null stage conversion info"),
 	NULL_BATCH_ID("Null batch id"),
 	NULL_MATERIAL_ID("Null material id"),
 	NULL_MATERIALS_PLUGIN_DATA("Null materials initial data"),

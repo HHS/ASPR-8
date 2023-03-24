@@ -9,19 +9,14 @@ import org.apache.commons.math3.random.RandomGenerator;
 
 import lesson.plugins.model.ModelPlugin;
 import lesson.plugins.model.ModelReportLabel;
-import lesson.plugins.model.reports.PopulationTraceReport;
 import lesson.plugins.vaccine.VaccinePlugin;
-import lesson.plugins.vaccine.reports.VaccineReport;
 import nucleus.Dimension;
 import nucleus.Experiment;
 import nucleus.Plugin;
 import plugins.people.PeoplePlugin;
 import plugins.people.PeoplePluginData;
 import plugins.people.support.PersonId;
-import plugins.reports.ReportsPlugin;
-import plugins.reports.ReportsPluginData;
 import plugins.reports.support.NIOReportItemHandler;
-import plugins.reports.support.ReportPeriod;
 import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.StochasticsPluginData;
 import util.random.RandomGeneratorProvider;
@@ -64,18 +59,8 @@ public final class Example_14 {
 
 	public static void main(String[] args) {
 
-		// create and manage reports
-		ReportsPluginData reportsPluginData = //
-				ReportsPluginData	.builder()//
-									.addReport(() -> {
-										return new PopulationTraceReport(ModelReportLabel.POPULATION_TRACE)::init;
-									})//
-									.addReport(() -> {
-										return new VaccineReport(ModelReportLabel.VACCINATION, ReportPeriod.DAILY, 6)::init;
-									})//
-									.build();
-
-		Plugin reportsPlugin = ReportsPlugin.getReportsPlugin(reportsPluginData);
+		// reports
+		
 
 		NIOReportItemHandler nioReportItemHandler = //
 				NIOReportItemHandler.builder()//
@@ -110,7 +95,6 @@ public final class Example_14 {
 					.addPlugin(peoplePlugin)//
 					.addPlugin(stochasticsPlugin)//
 					.addPlugin(vaccinePlugin)//
-					.addPlugin(reportsPlugin)//
 					.addExperimentContextConsumer(nioReportItemHandler)//
 					.addDimension(stochasticsDimension)//
 					.build()//

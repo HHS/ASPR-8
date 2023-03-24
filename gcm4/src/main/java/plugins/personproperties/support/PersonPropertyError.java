@@ -16,6 +16,7 @@ public enum PersonPropertyError implements ContractError {
 	NULL_PERSON_PROPERTY_DATA_MANAGER("Null person property data manager"), //
 	UNKNOWN_PERSON_ID("Unknown person id"), //
 	PROPERTY_ASSIGNMENT_TIME_NOT_TRACKED("Property assignment time not actively tracked"),//
+	PROPERTY_ASSIGNMENT_FOR_NON_ADDED_PERSON("Property assignment for non added person"),
 	;
 
 	private final String description;

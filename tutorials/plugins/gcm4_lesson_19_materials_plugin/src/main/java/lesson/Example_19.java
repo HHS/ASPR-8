@@ -7,9 +7,6 @@ import java.util.stream.IntStream;
 import org.apache.commons.math3.random.RandomGenerator;
 
 import lesson.plugins.model.ModelPlugin;
-import lesson.plugins.model.reports.DiseaseStateReport;
-import lesson.plugins.model.reports.VaccineProductionReport;
-import lesson.plugins.model.reports.VaccineReport;
 import lesson.plugins.model.support.DiseaseState;
 import lesson.plugins.model.support.GlobalProperty;
 import lesson.plugins.model.support.GroupType;
@@ -37,8 +34,6 @@ import plugins.personproperties.PersonPropertiesPluginData;
 import plugins.personproperties.reports.PersonPropertyReportPluginData;
 import plugins.regions.RegionsPlugin;
 import plugins.regions.RegionsPluginData;
-import plugins.reports.ReportsPlugin;
-import plugins.reports.ReportsPluginData;
 import plugins.reports.support.NIOReportItemHandler;
 import plugins.reports.support.ReportPeriod;
 import plugins.resources.ResourcesPlugin;
@@ -66,8 +61,7 @@ public final class Example_19 {
 					.addPlugin(getMaterialsPlugin())//
 					.addPlugin(getResourcesPlugin())//
 					.addPlugin(getGlobalPropertiesPlugin())//
-					.addPlugin(getPersonPropertiesPlugin())//
-					.addPlugin(getReportsPlugin())//
+					.addPlugin(getPersonPropertiesPlugin())//					
 					.addPlugin(getStochasticsPlugin())//
 					.addPlugin(getRegionsPlugin())//
 					.addPlugin(getPeoplePlugin())//
@@ -254,19 +248,7 @@ public final class Example_19 {
 		return RegionsPlugin.getRegionsPlugin(regionsPluginData);
 	}
 
-	private Plugin getReportsPlugin() {
-
-		final ReportsPluginData reportsPluginData = //
-				ReportsPluginData	.builder()//
-									.addReport(() -> new DiseaseStateReport(ModelReportLabel.DISEASE_STATE_REPORT, ReportPeriod.END_OF_SIMULATION)::init)//
-									.addReport(() -> new VaccineReport(ModelReportLabel.VACCINE_REPORT, ReportPeriod.DAILY)::init)//
-									.addReport(() -> new VaccineProductionReport(ModelReportLabel.VACCINE_PRODUCTION_REPORT, ReportPeriod.DAILY)::init)//
-
-									.build();
-
-		return ReportsPlugin.getReportsPlugin(reportsPluginData);
-	}
-
+	
 	private NIOReportItemHandler getNIOReportItemHandler() {
 		return NIOReportItemHandler	.builder()//
 									.addReport(ModelReportLabel.DISEASE_STATE_REPORT, Paths.get("c:\\temp\\gcm\\disease_state_report.xls"))//

@@ -8,8 +8,6 @@ import org.apache.commons.math3.random.RandomGenerator;
 
 import lesson.plugins.model.ModelPlugin;
 import lesson.plugins.model.ModelReportLabel;
-import lesson.plugins.model.reports.ContagionReport;
-import lesson.plugins.model.reports.DiseaseStateReport;
 import lesson.plugins.model.support.DiseaseState;
 import lesson.plugins.model.support.GlobalProperty;
 import lesson.plugins.model.support.GroupProperty;
@@ -34,8 +32,6 @@ import plugins.personproperties.PersonPropertiesPluginData;
 import plugins.personproperties.reports.PersonPropertyReportPluginData;
 import plugins.regions.RegionsPlugin;
 import plugins.regions.RegionsPluginData;
-import plugins.reports.ReportsPlugin;
-import plugins.reports.ReportsPluginData;
 import plugins.reports.support.NIOReportItemHandler;
 import plugins.reports.support.ReportPeriod;
 import plugins.stochastics.StochasticsPlugin;
@@ -50,18 +46,7 @@ public final class Example_17 {
 
 	private RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(9032703880551658180L);
 
-	private Plugin getReportsPlugin() {
-
-		ReportsPluginData reportsPluginData = //
-				ReportsPluginData	.builder()//
-
-									.addReport(() -> new DiseaseStateReport(ModelReportLabel.DISEASE_STATE, ReportPeriod.END_OF_SIMULATION)::init)//
-									.addReport(() -> new ContagionReport(ModelReportLabel.CONTAGION)::init)//
-									.build();
-
-		return ReportsPlugin.getReportsPlugin(reportsPluginData);
-	}
-
+	
 	private NIOReportItemHandler getNIOReportItemHandler() {
 		return NIOReportItemHandler	.builder()//
 									.addReport(ModelReportLabel.GROUP_POPULATON, Paths.get("c:\\temp\\gcm\\group_population_report.xls"))//
@@ -230,8 +215,7 @@ public final class Example_17 {
 		Experiment	.builder()
 
 					.addPlugin(getGlobalPropertiesPlugin())//
-					.addPlugin(getPersonPropertiesPlugin())//
-					.addPlugin(getReportsPlugin())//
+					.addPlugin(getPersonPropertiesPlugin())//					
 					.addPlugin(getRegionsPlugin())//
 					.addPlugin(getPeoplePlugin())//
 					.addPlugin(getGroupsPlugin())//

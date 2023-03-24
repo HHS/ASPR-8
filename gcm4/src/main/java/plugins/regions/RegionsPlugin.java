@@ -18,6 +18,8 @@ public final class RegionsPlugin {
 						.setInitializer((c) -> {
 							RegionsPluginData pluginData = c.getPluginData(RegionsPluginData.class).get();
 							c.addDataManager(new RegionsDataManager(pluginData));
+							
+							
 						})//
 						.build();
 

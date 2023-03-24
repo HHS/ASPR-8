@@ -12,9 +12,6 @@ import lesson.plugins.model.ModelReportLabel;
 import lesson.plugins.model.PersonProperty;
 import lesson.plugins.model.Region;
 import lesson.plugins.model.Resource;
-import lesson.plugins.model.reports.DeathReport;
-import lesson.plugins.model.reports.QuestionnaireReport;
-import lesson.plugins.model.reports.TreatmentReport;
 import nucleus.Dimension;
 import nucleus.Experiment;
 import nucleus.Plugin;
@@ -28,13 +25,10 @@ import plugins.personproperties.PersonPropertiesPlugin;
 import plugins.personproperties.PersonPropertiesPluginData;
 import plugins.regions.RegionsPlugin;
 import plugins.regions.RegionsPluginData;
-import plugins.reports.ReportsPlugin;
-import plugins.reports.ReportsPluginData;
 import plugins.reports.support.NIOReportItemHandler;
 import plugins.reports.support.ReportPeriod;
 import plugins.resources.ResourcesPlugin;
 import plugins.resources.ResourcesPluginData;
-import plugins.resources.reports.PersonResourceReport;
 import plugins.resources.reports.PersonResourceReportPluginData;
 import plugins.resources.support.ResourceId;
 import plugins.stochastics.StochasticsPlugin;
@@ -50,29 +44,7 @@ public final class Example_18 {
 
 	private RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(9032703880551658180L);
 
-	private Plugin getReportsPlugin() {
-		
-		
-		
-		
-		ReportsPluginData reportsPluginData = //
-				ReportsPluginData	.builder()//
-									.addReport(() -> new PersonResourceReport( PersonResourceReportPluginData//
-											.builder()//
-											.setReportLabel(ModelReportLabel.PERSON_RESOURCE_REPORT)//
-											.setReportPeriod(ReportPeriod.END_OF_SIMULATION)//
-											.build())//
-									::init)//
-
-									.addReport(() -> new TreatmentReport(ModelReportLabel.TREATMENT_REPORT)::init)//
-									.addReport(() -> new DeathReport(ModelReportLabel.DEATH_REPORT)::init)//
-									.addReport(() -> new QuestionnaireReport(ModelReportLabel.QUESTIONNAIRE_REPORT)::init)//
-									
-
-									.build();
-
-		return ReportsPlugin.getReportsPlugin(reportsPluginData);
-	}
+	
 
 	private Plugin getResourcesPlugin() {
 		ResourcesPluginData.Builder builder = ResourcesPluginData.builder();
@@ -80,7 +52,17 @@ public final class Example_18 {
 			builder.addResource(resourcId);
 		}
 		ResourcesPluginData resourcesPluginData = builder.build();
-		return ResourcesPlugin.builder().setResourcesPluginData(resourcesPluginData).getResourcesPlugin();
+		
+		PersonResourceReportPluginData personResourceReportPluginData = PersonResourceReportPluginData//
+				.builder()//
+				.setReportLabel(ModelReportLabel.PERSON_RESOURCE_REPORT)//
+				.setReportPeriod(ReportPeriod.END_OF_SIMULATION)//
+				.build();
+		
+		return ResourcesPlugin.builder()//
+				.setResourcesPluginData(resourcesPluginData)//
+				.setPersonResourceReportPluginData(personResourceReportPluginData)//
+				.getResourcesPlugin();//
 	}
 
 	private NIOReportItemHandler getNIOReportItemHandler() {
@@ -278,8 +260,7 @@ public final class Example_18 {
 
 					.addPlugin(getResourcesPlugin())//
 					.addPlugin(getGlobalPropertiesPlugin())//
-					.addPlugin(getPersonPropertiesPlugin())//
-					.addPlugin(getReportsPlugin())//
+					.addPlugin(getPersonPropertiesPlugin())//					
 					.addPlugin(getRegionsPlugin())//
 					.addPlugin(getPeoplePlugin())//
 					.addPlugin(getStochasticsPlugin())//
