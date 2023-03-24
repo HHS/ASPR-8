@@ -16,6 +16,7 @@ public class ResourceLoader {
 	 * Allocate antiviral doses and hospital beds uniformly to all regions.
 	 */
 	
+	/*start code_ref=resources_resource_loader_init*/
 	public void init(ActorContext actorContext) {
 		
 		RegionsDataManager regionsDataManager = 
@@ -49,5 +50,6 @@ public class ResourceLoader {
 				.addResourceToRegion(Resource.HOSPITAL_BED, regionId, bedCountPerRegion);
 		}
 	}
+	/*end*/
 
 }

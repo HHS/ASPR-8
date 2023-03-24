@@ -44,26 +44,26 @@ public final class Example_18 {
 
 	private RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(9032703880551658180L);
 
-	
-
+	/* start code_ref=resources_getResourcesPlugin */
 	private Plugin getResourcesPlugin() {
 		ResourcesPluginData.Builder builder = ResourcesPluginData.builder();
 		for (ResourceId resourcId : Resource.values()) {
 			builder.addResource(resourcId);
 		}
 		ResourcesPluginData resourcesPluginData = builder.build();
-		
+
 		PersonResourceReportPluginData personResourceReportPluginData = PersonResourceReportPluginData//
-				.builder()//
-				.setReportLabel(ModelReportLabel.PERSON_RESOURCE_REPORT)//
-				.setReportPeriod(ReportPeriod.END_OF_SIMULATION)//
-				.build();
-		
-		return ResourcesPlugin.builder()//
-				.setResourcesPluginData(resourcesPluginData)//
-				.setPersonResourceReportPluginData(personResourceReportPluginData)//
-				.getResourcesPlugin();//
+																										.builder()//
+																										.setReportLabel(ModelReportLabel.PERSON_RESOURCE_REPORT)//
+																										.setReportPeriod(ReportPeriod.END_OF_SIMULATION)//
+																										.build();
+
+		return ResourcesPlugin	.builder()//
+								.setResourcesPluginData(resourcesPluginData)//
+								.setPersonResourceReportPluginData(personResourceReportPluginData)//
+								.getResourcesPlugin();//
 	}
+	/* end */
 
 	private NIOReportItemHandler getNIOReportItemHandler() {
 		return NIOReportItemHandler	.builder()//
@@ -97,7 +97,7 @@ public final class Example_18 {
 
 		return StochasticsPlugin.getStochasticsPlugin(stochasticsPluginData);
 	}
-
+	/*start code_ref=resources_getPersonPropertiesPlugin*/	
 	private Plugin getPersonPropertiesPlugin() {
 
 		PersonPropertiesPluginData.Builder builder = PersonPropertiesPluginData.builder();
@@ -107,27 +107,27 @@ public final class Example_18 {
 																	.setDefaultValue(false)//
 																	.build();
 
-
 		builder.definePersonProperty(PersonProperty.IMMUNE, propertyDefinition);//
 		builder.definePersonProperty(PersonProperty.INFECTED, propertyDefinition);//
 		builder.definePersonProperty(PersonProperty.HOSPITALIZED, propertyDefinition);//
 		builder.definePersonProperty(PersonProperty.TREATED_WITH_ANTIVIRAL, propertyDefinition);//
 		builder.definePersonProperty(PersonProperty.DEAD_IN_HOME, propertyDefinition);//
 		builder.definePersonProperty(PersonProperty.DEAD_IN_HOSPITAL, propertyDefinition);//
-		
-		
+
 		propertyDefinition = PropertyDefinition	.builder()//
-				.setType(Boolean.class)//
-				.setDefaultValue(false)//
-				.setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME)//
-				.build();		
+												.setType(Boolean.class)//
+												.setDefaultValue(false)//
+												.setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME)//
+												.build();
 		builder.definePersonProperty(PersonProperty.RECEIVED_QUESTIONNAIRE, propertyDefinition);//
-		
+
 		PersonPropertiesPluginData personPropertiesPluginData = builder.build();
 
 		return PersonPropertiesPlugin.builder().setPersonPropertiesPluginData(personPropertiesPluginData).getPersonPropertyPlugin();
 	}
+	/*end*/
 
+	/* start code_ref=resources_getGlobalPropertiesPlugin */
 	private Plugin getGlobalPropertiesPlugin() {
 		Builder builder = GlobalPropertiesPluginData.builder();//
 
@@ -160,6 +160,7 @@ public final class Example_18 {
 
 		return GlobalPropertiesPlugin.builder().setGlobalPropertiesPluginData(globalPropertiesPluginData).getGlobalPropertiesPlugin();
 	}
+	/* end */
 
 	private Dimension getGlobalPropertyDimension(GlobalPropertyId globalPropertyId, String header, double[] values) {
 		Dimension.Builder dimensionBuilder = Dimension.builder();//
@@ -253,14 +254,14 @@ public final class Example_18 {
 		return getGlobalPropertyDimension(GlobalProperty.SUSCEPTIBLE_POPULATION_PROPORTION, "susceptible_population_proportion", values);
 	}
 
+	/* start code_ref=resources_execute */
 	private void execute() {
 
-		
 		Experiment	.builder()
 
 					.addPlugin(getResourcesPlugin())//
 					.addPlugin(getGlobalPropertiesPlugin())//
-					.addPlugin(getPersonPropertiesPlugin())//					
+					.addPlugin(getPersonPropertiesPlugin())//
 					.addPlugin(getRegionsPlugin())//
 					.addPlugin(getPeoplePlugin())//
 					.addPlugin(getStochasticsPlugin())//
@@ -279,12 +280,13 @@ public final class Example_18 {
 					.setThreadCount(8)//
 					.build()//
 					.execute();//
-		
-
 	}
+	/* end */
 
+	/* start code_ref=resources_main */
 	public static void main(String[] args) {
 		new Example_18().execute();
 	}
+	/* end */
 
 }

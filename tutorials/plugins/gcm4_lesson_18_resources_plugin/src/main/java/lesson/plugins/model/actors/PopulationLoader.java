@@ -61,7 +61,7 @@ public class PopulationLoader {
 		return defaultRegionId;
 	}
 
-	
+	/*start code_ref=resources_population_loader_init*/
 	public void init(ActorContext actorContext) {
 
 		StochasticsDataManager stochasticsDataManager = 
@@ -103,4 +103,5 @@ public class PopulationLoader {
 			peopleDataManager.addPerson(personConstructionData);
 		}
 	}
+	/*end*/
 }
