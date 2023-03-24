@@ -5,6 +5,9 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.translatorSpecs.Grou
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.translatorSpecs.GroupPropertyIdTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.translatorSpecs.GroupTypeIdTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.translatorSpecs.GroupsPluginDataTranslatorSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.translatorSpecs.SimpleGroupTypeIdTranslatorSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.translatorSpecs.TestGroupPropertyIdTranslatorSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.translatorSpecs.TestGroupTypeIdTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.PeopleTranslatorId;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.PropertiesTranslatorId;
 import plugins.groups.GroupsPluginData;
@@ -25,6 +28,9 @@ public class GroupsTranslator {
                     translatorContext.addTranslatorSpec(new GroupIdTranslatorSpec());
                     translatorContext.addTranslatorSpec(new GroupTypeIdTranslatorSpec());
                     translatorContext.addTranslatorSpec(new GroupPropertyIdTranslatorSpec());
+                    translatorContext.addTranslatorSpec(new TestGroupTypeIdTranslatorSpec());
+                    translatorContext.addTranslatorSpec(new TestGroupPropertyIdTranslatorSpec());
+                    translatorContext.addTranslatorSpec(new SimpleGroupTypeIdTranslatorSpec());
 
                     translatorContext
                             .addFieldToIncludeDefaultValue(GroupIdInput.getDescriptor().findFieldByName("id"));
