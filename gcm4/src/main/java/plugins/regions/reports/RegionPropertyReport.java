@@ -4,15 +4,15 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import nucleus.ReportContext;
+import nucleus.SimulationStateContext;
 import plugins.regions.datamanagers.RegionsDataManager;
 import plugins.regions.events.RegionAdditionEvent;
 import plugins.regions.events.RegionPropertyDefinitionEvent;
 import plugins.regions.events.RegionPropertyUpdateEvent;
+import plugins.regions.support.RegionError;
 import plugins.regions.support.RegionId;
 import plugins.regions.support.RegionPropertyId;
-import plugins.reports.support.ReportHeader;
-import plugins.reports.support.ReportItem;
-import plugins.reports.support.ReportLabel;
+import plugins.reports.support.*;
 import plugins.util.properties.PropertyError;
 import util.errors.ContractException;
 
@@ -34,43 +34,124 @@ import util.errors.ContractException;
  */
 public final class RegionPropertyReport {
 
-	private ReportHeader reportHeader;
+	private final Set<RegionPropertyId> includedPropertyIds = new LinkedHashSet<>();
+	private final Set<RegionPropertyId> currentProperties = new LinkedHashSet<>();
+	private final Set<RegionPropertyId> excludedPropertyIds = new LinkedHashSet<>();
+	private final ReportLabel reportLabel;
+	private final boolean includeNewPropertyIds;
 
-	/*
-	 * The constrained set of person properties that will be used in this
-	 * report. They are set during init()
-	 */
-	private final Set<RegionPropertyId> regionPropertyIds = new LinkedHashSet<>();
+	private final ReportHeader reportHeader = ReportHeader	.builder()//
+															.add("Time")//
+															.add("Region")//
+															.add("Property")//
+															.add("Value")//
+															.build();//
 
-	private ReportHeader getReportHeader() {
-		if (reportHeader == null) {
-			reportHeader = ReportHeader	.builder()//
-										.add("Time")//
-										.add("Region")//
-										.add("Property")//
-										.add("Value")//
-										.build();//
+	private boolean isCurrentProperty(RegionPropertyId regionPropertyId) {
+		return currentProperties.contains(regionPropertyId);
+	}
+
+	private boolean addToCurrentProperties(RegionPropertyId regionPropertyId) {
+
+		// There are eight possibilities:
+
+		/*
+		 * P -- the default inclusion policy
+		 *
+		 * I -- the property is explicitly included
+		 *
+		 * X -- the property is explicitly excluded
+		 *
+		 * C -- the property should be on the current properties
+		 *
+		 *
+		 * P I X C Table
+		 *
+		 * TRUE TRUE FALSE TRUE
+		 *
+		 * TRUE FALSE FALSE TRUE
+		 *
+		 * FALSE TRUE FALSE TRUE
+		 *
+		 * FALSE FALSE FALSE FALSE
+		 *
+		 * TRUE TRUE TRUE FALSE -- not possible
+		 *
+		 * TRUE FALSE TRUE FALSE
+		 *
+		 * FALSE TRUE TRUE FALSE -- not possible
+		 *
+		 * FALSE FALSE TRUE FALSE
+		 *
+		 *
+		 * Two of the cases above are contradictory since a property cannot be
+		 * both explicitly included and explicitly excluded
+		 *
+		 */
+
+		// if X is true then we don't add the property
+		if (excludedPropertyIds.contains(regionPropertyId)) {
+			return false;
 		}
-		return reportHeader;
+
+		// if both P and I are false we don't add the property
+		boolean included = includedPropertyIds.contains(regionPropertyId);
+
+		if (!included && !includeNewPropertyIds) {
+			return false;
+		}
+
+		// we have failed to reject the property
+		currentProperties.add(regionPropertyId);
+
+		return true;
+	}
+
+	/**
+	 *
+	 * @throws ContractException
+	 *             <li>{@linkplain RegionError#NULL_REGION_PROPERTY_REPORT_PLUGIN_DATA}
+	 *             if the plugin data is null</li>
+	 *
+	 */
+	public RegionPropertyReport(RegionPropertyReportPluginData regionPropertyReportPluginData) {
+		if (regionPropertyReportPluginData == null) {
+			throw new ContractException(RegionError.NULL_REGION_PROPERTY_REPORT_PLUGIN_DATA);
+		}
+
+		reportLabel = regionPropertyReportPluginData.getReportLabel();
+		includedPropertyIds.addAll(regionPropertyReportPluginData.getIncludedProperties());
+		excludedPropertyIds.addAll(regionPropertyReportPluginData.getExcludedProperties());
+		includeNewPropertyIds = regionPropertyReportPluginData.getDefaultInclusionPolicy();
 	}
 
 	private void handleRegionPropertyUpdateEvent(ReportContext reportContext, RegionPropertyUpdateEvent regionPropertyUpdateEvent) {
-		RegionId regionId = regionPropertyUpdateEvent.regionId();
 		RegionPropertyId regionPropertyId = regionPropertyUpdateEvent.regionPropertyId();
-		Object propertyValue = regionPropertyUpdateEvent.currentPropertyValue();
-		if (regionPropertyIds.contains(regionPropertyId)) {
+		if (isCurrentProperty(regionPropertyId)) {
+			RegionId regionId = regionPropertyUpdateEvent.regionId();
+			Object propertyValue = regionPropertyUpdateEvent.currentPropertyValue();
 			writeProperty(reportContext, regionId, regionPropertyId, propertyValue);
 		}
 	}
 
-	private final ReportLabel reportLabel;
+	private void handleRegionAdditionEvent(ReportContext reportContext, RegionAdditionEvent regionAdditionEvent) {
+		RegionsDataManager regionsDataManager = reportContext.getDataManager(RegionsDataManager.class);
+		RegionId regionId = regionAdditionEvent.getRegionId();
 
-	private RegionsDataManager regionsDataManager;
+		for (final RegionPropertyId regionPropertyId : currentProperties) {
+			Object propertyValue = regionsDataManager.getRegionPropertyValue(regionId, regionPropertyId);
+			writeProperty(reportContext, regionId, regionPropertyId, propertyValue);
+		}
+	}
 
-	public RegionPropertyReport(ReportLabel reportLabel, RegionPropertyId... regionPropertyIds) {
-		this.reportLabel = reportLabel;
-		for (RegionPropertyId regionPropertyId : regionPropertyIds) {
-			this.regionPropertyIds.add(regionPropertyId);
+	private void handleRegionPropertyDefinitionEvent(ReportContext reportContext, RegionPropertyDefinitionEvent regionPropertyDefinitionEvent) {
+		RegionsDataManager regionsDataManager = reportContext.getDataManager(RegionsDataManager.class);
+		RegionPropertyId regionPropertyId = regionPropertyDefinitionEvent.regionPropertyId();
+		if (addToCurrentProperties(regionPropertyId)) {
+			for (final RegionId regionId : regionsDataManager.getRegionIds()) {
+				Object propertyValue = regionsDataManager.getRegionPropertyValue(regionId, regionPropertyId);
+				writeProperty(reportContext, regionId, regionPropertyId, propertyValue);
+			}
 		}
 	}
 
@@ -85,65 +166,41 @@ public final class RegionPropertyReport {
 	 *             region property id used in the constructor is unknown</li>
 	 */
 	public void init(final ReportContext reportContext) {
-		regionsDataManager = reportContext.getDataManager(RegionsDataManager.class);
+		final RegionsDataManager regionsDataManager = reportContext.getDataManager(RegionsDataManager.class);
 
-		/*
-		 * If no region properties were specified, then assume all are wanted
-		 */
-		if (regionPropertyIds.size() == 0) {
-			regionPropertyIds.addAll(regionsDataManager.getRegionPropertyIds());
-		}
-
-		/*
-		 * Ensure that every client supplied property identifier is valid
-		 */
-		final Set<RegionPropertyId> validPropertyIds = regionsDataManager.getRegionPropertyIds();
-		for (final RegionPropertyId regionPropertyId : regionPropertyIds) {
-			if (!validPropertyIds.contains(regionPropertyId)) {
-				throw new ContractException(PropertyError.UNKNOWN_PROPERTY_ID, regionPropertyId);
-			}
-		}
-
-		reportContext.subscribe(RegionPropertyUpdateEvent.class, this::handleRegionPropertyUpdateEvent);
 		reportContext.subscribe(RegionPropertyDefinitionEvent.class, this::handleRegionPropertyDefinitionEvent);
-
-		for (final RegionId regionId : regionsDataManager.getRegionIds()) {
-			for (final RegionPropertyId regionPropertyId : regionPropertyIds) {
-				Object propertyValue = regionsDataManager.getRegionPropertyValue(regionId, regionPropertyId);
-				writeProperty(reportContext, regionId, regionPropertyId, propertyValue);
-			}
-		}
-
+		reportContext.subscribe(RegionPropertyUpdateEvent.class, this::handleRegionPropertyUpdateEvent);
 		reportContext.subscribe(RegionAdditionEvent.class, this::handleRegionAdditionEvent);
-	}
+		reportContext.subscribeToSimulationState(this::recordSimulationState);
 
-	private void handleRegionAdditionEvent(ReportContext reportContext, RegionAdditionEvent regionAdditionEvent) {
-		RegionId regionId = regionAdditionEvent.getRegionId();
-
-		for (final RegionPropertyId regionPropertyId : regionPropertyIds) {
-			Object propertyValue = regionsDataManager.getRegionPropertyValue(regionId, regionPropertyId);
-			writeProperty(reportContext, regionId, regionPropertyId, propertyValue);
+		for (RegionPropertyId regionPropertyId : regionsDataManager.getRegionPropertyIds()) {
+			addToCurrentProperties(regionPropertyId);
 		}
 
-	}
-
-	private void handleRegionPropertyDefinitionEvent(ReportContext reportContext, RegionPropertyDefinitionEvent regionPropertyDefinitionEvent) {
-
-		RegionsDataManager regionsDataManager = reportContext.getDataManager(RegionsDataManager.class);
-		RegionPropertyId regionPropertyId = regionPropertyDefinitionEvent.regionPropertyId();
-		if (!regionPropertyIds.contains(regionPropertyId)) {
-			regionPropertyIds.add(regionPropertyId);
-			for (final RegionId regionId : regionsDataManager.getRegionIds()) {
-				Object propertyValue = regionsDataManager.getRegionPropertyValue(regionId, regionPropertyId);
-				writeProperty(reportContext, regionId, regionPropertyId, propertyValue);
+		for (RegionId regionId : regionsDataManager.getRegionIds()) {
+			for (final RegionPropertyId regionPropertyId : currentProperties) {
+				final Object regionPropertyValue = regionsDataManager.getRegionPropertyValue(regionId, regionPropertyId);
+				writeProperty(reportContext, regionId, regionPropertyId, regionPropertyValue);
 			}
 		}
+	}
+
+	private void recordSimulationState(ReportContext reportContext, SimulationStateContext simulationStateContext) {
+		RegionPropertyReportPluginData.Builder builder = simulationStateContext.get(RegionPropertyReportPluginData.Builder.class);
+		builder.setReportLabel(reportLabel);
+		for (RegionPropertyId regionPropertyId : includedPropertyIds) {
+			builder.includeRegionPropertyId(regionPropertyId);
+		}
+		for (RegionPropertyId regionPropertyId : excludedPropertyIds) {
+			builder.excludeRegionPropertyId(regionPropertyId);
+		}
+		builder.setDefaultInclusion(includeNewPropertyIds);
 	}
 
 	private void writeProperty(ReportContext reportContext, final RegionId regionId, final RegionPropertyId regionPropertyId, final Object regionPropertyValue) {
 
 		final ReportItem.Builder reportItemBuilder = ReportItem.builder();
-		reportItemBuilder.setReportHeader(getReportHeader());
+		reportItemBuilder.setReportHeader(reportHeader);
 		reportItemBuilder.setReportLabel(reportLabel);
 
 		reportItemBuilder.addValue(reportContext.getTime());

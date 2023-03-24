@@ -21,6 +21,7 @@ public enum RegionError implements ContractError {
 	NULL_TIME_TRACKING_POLICY("Null time tracking policy"),
 	REGION_ARRIVAL_TIMES_NOT_TRACKED("Person region arrival times not actively tracked"),
 	UNKNOWN_REGION_ID("Unknown region id"),
+	NULL_REGION_PROPERTY_REPORT_PLUGIN_DATA("Null region property report plugin data"),
 	;
 	
 
