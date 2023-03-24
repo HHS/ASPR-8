@@ -2,6 +2,7 @@ package gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties;
 
 import gov.hhs.aspr.gcm.translation.protobuf.core.Translator;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.PeopleTranslatorId;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.translatorSpecs.PersonPropertyReportPluginDataTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.translatorSpecs.PersonPropertiesPluginDataTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.translatorSpecs.PersonPropertyIdTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.PropertiesTranslatorId;
@@ -18,8 +19,9 @@ public class PersonPropertiesTranslator {
                 .addDependency(PropertiesTranslatorId.TRANSLATOR_ID)
                 .addDependency(PeopleTranslatorId.TRANSLATOR_ID)
                 .setInitializer((translatorContext) -> {
-                    translatorContext.addTranslatorSpec(new PersonPropertiesPluginDataTranslatorSpec());
                     translatorContext.addTranslatorSpec(new PersonPropertyIdTranslatorSpec());
+                    translatorContext.addTranslatorSpec(new PersonPropertiesPluginDataTranslatorSpec());
+                    translatorContext.addTranslatorSpec(new PersonPropertyReportPluginDataTranslatorSpec());
                 });
 
     }

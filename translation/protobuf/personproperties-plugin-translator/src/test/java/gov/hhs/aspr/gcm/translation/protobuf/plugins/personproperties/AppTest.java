@@ -2,10 +2,12 @@ package gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -13,16 +15,24 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.util.Pair;
 import org.junit.jupiter.api.Test;
 
+import gov.hhs.aspr.gcm.translation.protobuf.core.Translator;
 import gov.hhs.aspr.gcm.translation.protobuf.core.TranslatorController;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.PeopleTranslator;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.input.PersonPropertiesPluginDataInput;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.reports.input.PersonPropertyReportPluginDataInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.translatorSpecs.TestPersonPropertyIdTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.PropertiesTranslator;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.ReportsTranslator;
 import nucleus.PluginData;
 import plugins.people.support.PersonId;
 import plugins.personproperties.PersonPropertiesPluginData;
+import plugins.personproperties.reports.PersonPropertyReportPluginData;
 import plugins.personproperties.support.PersonPropertyId;
 import plugins.personproperties.support.PersonPropertyInitialization;
 import plugins.personproperties.testsupport.TestPersonPropertyId;
+import plugins.reports.support.ReportLabel;
+import plugins.reports.support.ReportPeriod;
+import plugins.reports.support.SimpleReportLabel;
 import plugins.util.properties.PropertyDefinition;
 import util.random.RandomGeneratorProvider;
 
@@ -38,17 +48,30 @@ public class AppTest {
 
         Path inputFilePath = basePath.resolve("src/main/resources/json");
         Path outputFilePath = basePath.resolve("src/main/resources/json/output");
-        
+
         outputFilePath.toFile().mkdir();
 
-        String inputFileName = "input.json";
-        String outputFileName = "output.json";
+        String pluginDataInputFileName = "pluginDataInput.json";
+        String pluginDataOutputFileName = "pluginDataOutput.json";
+
+        String personPropertyReportPluginDataInputFileName = "personPropertyReportPluginDataInput.json";
+        String personPropertyReportPluginDataOutputFileName = "personPropertyReportPluginDataOutput.json";
+
+        Translator personPropertiesTranslator = PersonPropertiesTranslator
+                .builder()
+                .addInputFile(inputFilePath.resolve(pluginDataInputFileName).toString(),
+                        PersonPropertiesPluginDataInput.getDefaultInstance())
+                .addOutputFile(outputFilePath.resolve(pluginDataOutputFileName).toString(),
+                        PersonPropertiesPluginData.class)
+                .addOutputFile(outputFilePath.resolve(personPropertyReportPluginDataOutputFileName).toString(),
+                        PersonPropertyReportPluginData.class)
+                .build();
 
         TranslatorController translatorController = TranslatorController.builder()
-                .addTranslator(
-                        PersonPropertiesTranslator.getTranslatorRW(inputFilePath.resolve(inputFileName).toString(), outputFilePath.resolve(outputFileName).toString()))
+                .addTranslator(personPropertiesTranslator)
                 .addTranslator(PropertiesTranslator.getTranslator())
                 .addTranslator(PeopleTranslator.getTranslator())
+                .addTranslator(ReportsTranslator.getTranslator())
                 .addTranslatorSpec(new TestPersonPropertyIdTranslatorSpec())
                 .build();
 
@@ -105,5 +128,23 @@ public class AppTest {
         }
 
         translatorController.writeOutput();
+
+        ReportLabel reportLabel = new SimpleReportLabel("report label");
+        ReportPeriod reportPeriod = ReportPeriod.DAILY;
+
+        PersonPropertyReportPluginData.Builder personPropertyReportPluginDataBuilder = //
+                PersonPropertyReportPluginData.builder()//
+                        .setReportPeriod(reportPeriod)//
+                        .setReportLabel(reportLabel);//
+
+        for (PersonPropertyId personPropertyId : expectedPersonPropertyIds) {
+            if (randomGenerator.nextBoolean()) {
+                personPropertyReportPluginDataBuilder.includePersonProperty(personPropertyId);
+            } else {
+                personPropertyReportPluginDataBuilder.excludePersonProperty(personPropertyId);
+            }
+        }
+
+        translatorController.writePluginDataOutput(personPropertyReportPluginDataBuilder.build());
     }
 }
