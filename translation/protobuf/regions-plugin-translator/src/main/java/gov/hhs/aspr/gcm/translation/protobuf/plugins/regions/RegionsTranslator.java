@@ -9,6 +9,8 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.translatorSpecs.Reg
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.translatorSpecs.RegionsPluginDataTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.translatorSpecs.SimpleRegionIdTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.translatorSpecs.SimpleRegionPropertyIdTranslatorSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.translatorSpecs.TestRegionIdTranslatorSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.translatorSpecs.TestRegionPropertyIdTranslatorSpec;
 import plugins.regions.RegionsPluginData;
 
 public class RegionsTranslator {
@@ -28,6 +30,8 @@ public class RegionsTranslator {
                     translatorContext.addTranslatorSpec(new RegionPropertyIdTranslatorSpec());
                     translatorContext.addTranslatorSpec(new SimpleRegionIdTranslatorSpec());
                     translatorContext.addTranslatorSpec(new SimpleRegionPropertyIdTranslatorSpec());
+                    translatorContext.addTranslatorSpec(new TestRegionIdTranslatorSpec());
+                    translatorContext.addTranslatorSpec(new TestRegionPropertyIdTranslatorSpec());
                 });
     }
 

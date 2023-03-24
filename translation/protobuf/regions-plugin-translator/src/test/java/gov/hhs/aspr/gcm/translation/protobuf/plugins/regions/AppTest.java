@@ -16,8 +16,6 @@ import org.junit.jupiter.api.Test;
 import gov.hhs.aspr.gcm.translation.protobuf.core.TranslatorController;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.PeopleTranslator;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.PropertiesTranslator;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.translatorSpecs.TestRegionIdTranslatorSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.translatorSpecs.TestRegionPropertyIdTranslatorSpec;
 import nucleus.PluginData;
 import plugins.people.support.PersonId;
 import plugins.regions.RegionsPluginData;
@@ -51,8 +49,6 @@ public class AppTest {
                 .addTranslator(RegionsTranslator.getTranslatorRW(inputFilePath.resolve(inputFileName).toString(), outputFilePath.resolve(outputFileName).toString()))
                 .addTranslator(PropertiesTranslator.getTranslator())
                 .addTranslator(PeopleTranslator.getTranslator())
-                .addTranslatorSpec(new TestRegionIdTranslatorSpec())
-                .addTranslatorSpec(new TestRegionPropertyIdTranslatorSpec())
                 .build();
 
         List<PluginData> pluginDatas = translatorController.readInput().getPluginDatas();
