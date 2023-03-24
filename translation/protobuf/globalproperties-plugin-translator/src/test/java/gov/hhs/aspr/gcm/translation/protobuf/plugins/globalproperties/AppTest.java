@@ -10,7 +10,6 @@ import java.util.Set;
 import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.gcm.translation.protobuf.core.TranslatorController;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.globalproperties.translatorSpecs.TestGlobalPropertyIdTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.PropertiesTranslator;
 import nucleus.PluginData;
 import plugins.globalproperties.GlobalPropertiesPluginData;
@@ -40,7 +39,6 @@ public class AppTest {
         TranslatorController translatorController = TranslatorController.builder()
                 .addTranslator(GlobalPropertiesTranslator.getTranslatorRW(inputFilePath.resolve(inputFileName).toString(), outputFilePath.resolve(outputFileName).toString()))
                 .addTranslator(PropertiesTranslator.getTranslator())
-                .addTranslatorSpec(new TestGlobalPropertyIdTranslatorSpec())
                 .build();
 
         List<PluginData> pluginDatas = translatorController.readInput().getPluginDatas();

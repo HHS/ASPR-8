@@ -3,6 +3,7 @@ package gov.hhs.aspr.gcm.translation.protobuf.plugins.globalproperties;
 import gov.hhs.aspr.gcm.translation.protobuf.core.Translator;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.globalproperties.translatorSpecs.GlobalPropertiesPluginDataTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.globalproperties.translatorSpecs.GlobalPropertyIdTranslatorSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.globalproperties.translatorSpecs.TestGlobalPropertyIdTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.PropertiesTranslatorId;
 import plugins.globalproperties.GlobalPropertiesPluginData;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.globalproperties.input.GlobalPropertiesPluginDataInput;
@@ -19,6 +20,7 @@ public class GlobalPropertiesTranslator {
                 .setInitializer((translatorContext) -> {
                     translatorContext.addTranslatorSpec(new GlobalPropertiesPluginDataTranslatorSpec());
                     translatorContext.addTranslatorSpec(new GlobalPropertyIdTranslatorSpec());
+                    translatorContext.addTranslatorSpec(new TestGlobalPropertyIdTranslatorSpec());
                 });
     }
 
