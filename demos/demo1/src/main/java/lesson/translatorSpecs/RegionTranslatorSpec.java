@@ -1,20 +1,18 @@
 package lesson.translatorSpecs;
 
-import com.google.protobuf.Descriptors.Descriptor;
-
-import gov.hhs.aspr.gcm.translation.core.AObjectTranslatorSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractTranslatorSpec;
 import lesson.input.RegionInput;
 import lesson.plugins.model.Region;
 
-public class RegionTranslatorSpec extends AObjectTranslatorSpec<RegionInput, Region> {
+public class RegionTranslatorSpec extends AbstractTranslatorSpec<RegionInput, Region> {
 
     @Override
     protected Region convertInputObject(RegionInput inputObject) {
-      return new Region(inputObject.getId());
+        return new Region(inputObject.getId());
     }
 
     @Override
-    protected RegionInput convertSimObject(Region simObject) {
+    protected RegionInput convertAppObject(Region simObject) {
         return RegionInput.newBuilder().setId(simObject.getValue()).build();
     }
 
@@ -24,20 +22,13 @@ public class RegionTranslatorSpec extends AObjectTranslatorSpec<RegionInput, Reg
     }
 
     @Override
-    public Descriptor getDescriptorForInputObject() {
-       return RegionInput.getDescriptor();
-    }
-
-    @Override
     public Class<RegionInput> getInputObjectClass() {
         return RegionInput.class;
     }
 
     @Override
-    public Class<Region> getSimObjectClass() {
+    public Class<Region> getAppObjectClass() {
         return Region.class;
     }
-
-    
 
 }

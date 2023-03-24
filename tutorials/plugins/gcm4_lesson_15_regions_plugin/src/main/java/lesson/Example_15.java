@@ -12,7 +12,6 @@ import lesson.plugins.model.ModelReportLabel;
 import lesson.plugins.model.Region;
 import lesson.plugins.model.RegionProperty;
 import lesson.plugins.vaccine.VaccinePlugin;
-import lesson.plugins.vaccine.reports.VaccineReport;
 import nucleus.Dimension;
 import nucleus.Experiment;
 import nucleus.Plugin;
@@ -23,6 +22,7 @@ import plugins.regions.RegionsPlugin;
 import plugins.regions.RegionsPluginData;
 import plugins.regions.reports.RegionPropertyReport;
 import plugins.regions.reports.RegionTransferReport;
+import plugins.regions.reports.RegionTransferReportPluginData;
 import plugins.reports.ReportsPlugin;
 import plugins.reports.ReportsPluginData;
 import plugins.reports.support.NIOReportItemHandler;
@@ -41,28 +41,22 @@ public final class Example_15 {
 	private List<Region> initialRegions = new ArrayList<>();
 	private RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(524055747550937602L);
 
-	
-
 	private Plugin getReportsPlugin() {
 		ReportsPluginData reportsPluginData = //
 				ReportsPluginData	.builder()//
 									.addReport(() -> {
-										return new RegionPropertyReport(
-												ModelReportLabel.REGION_PROPERTY_REPORT)//
-												::init;
+										return new RegionPropertyReport(ModelReportLabel.REGION_PROPERTY_REPORT)//
+										::init;
 									})//
 									.addReport(() -> {
-										return new RegionTransferReport(
-												ModelReportLabel.REGION_TRANSFER_REPORT,//
-												ReportPeriod.END_OF_SIMULATION)//
-												::init;
+										return new RegionTransferReport(//
+												RegionTransferReportPluginData	.builder()//
+																				.setReportLabel(ModelReportLabel.REGION_TRANSFER_REPORT)//
+																				.setReportPeriod(ReportPeriod.END_OF_SIMULATION)//
+																				.build()//
+										)::init;//
 									})//
-									.addReport(() -> {
-										return new VaccineReport(
-												ModelReportLabel.VACCINATION,//
-												ReportPeriod.END_OF_SIMULATION,//
-												6)::init;
-									})//
+									
 									.build();
 
 		return ReportsPlugin.getReportsPlugin(reportsPluginData);
@@ -127,11 +121,11 @@ public final class Example_15 {
 	}
 
 	private Plugin getStochasticsPlugin() {
-		StochasticsPluginData stochasticsPluginData = StochasticsPluginData.builder()//
-				.setSeed(randomGenerator.nextLong()).build();
+		StochasticsPluginData stochasticsPluginData = StochasticsPluginData	.builder()//
+																			.setSeed(randomGenerator.nextLong()).build();
 		return StochasticsPlugin.getStochasticsPlugin(stochasticsPluginData);
 	}
-	
+
 	private Dimension getStochasticsDimension(int replicationCount, long seed) {
 		Dimension.Builder builder = Dimension.builder();//
 
@@ -144,8 +138,7 @@ public final class Example_15 {
 
 		IntStream.range(0, seedValues.size()).forEach((i) -> {
 			builder.addLevel((context) -> {
-				StochasticsPluginData.Builder stochasticsPluginDataBuilder = 
-						context.get(StochasticsPluginData.Builder.class);
+				StochasticsPluginData.Builder stochasticsPluginDataBuilder = context.get(StochasticsPluginData.Builder.class);
 				long seedValue = seedValues.get(i);
 				stochasticsPluginDataBuilder.setSeed(seedValue);
 

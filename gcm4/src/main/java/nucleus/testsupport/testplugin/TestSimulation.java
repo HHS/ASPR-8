@@ -120,7 +120,10 @@ public class TestSimulation {
 		}
 
 		// build and execute the engine
-		builder.setOutputConsumer(outputConsumer).build().execute();
+		builder//
+		.setProduceSimulationStateOnHalt(false)//
+		.setOutputConsumer(outputConsumer)//
+		.build().execute();
 
 		// show that all actions were executed
 		Map<TestScenarioReport, Integer> outputItems = outputConsumer.getOutputItems(TestScenarioReport.class);

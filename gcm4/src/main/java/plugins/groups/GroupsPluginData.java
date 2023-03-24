@@ -227,7 +227,7 @@ public final class GroupsPluginData implements PluginData {
 			ensureImmutability();
 			return new GroupsPluginData(data);
 		}
-		
+
 		/**
 		 * Adds a person to a group Duplicate inputs override previous inputs
 		 * 
@@ -413,12 +413,14 @@ public final class GroupsPluginData implements PluginData {
 			}
 
 			for (GroupSpecification groupSpecification : data.groupSpecifications) {
-				GroupTypeId groupTypeId = groupSpecification.groupTypeId;
-				if (groupTypeId == null) {
-					throw new ContractException(GroupError.UNKNOWN_GROUP_ID, "A group property contains the unknown group " + groupSpecification.groupId);
-				}
-				if (!data.groupTypeIds.contains(groupTypeId)) {
-					throw new ContractException(GroupError.UNKNOWN_GROUP_TYPE_ID, groupSpecification.groupId + " has unknown group type " + groupTypeId);
+				if (groupSpecification != null) {
+					GroupTypeId groupTypeId = groupSpecification.groupTypeId;
+					if (groupTypeId == null) {
+						throw new ContractException(GroupError.UNKNOWN_GROUP_ID, "A group property contains the unknown group " + groupSpecification.groupId);
+					}
+					if (!data.groupTypeIds.contains(groupTypeId)) {
+						throw new ContractException(GroupError.UNKNOWN_GROUP_TYPE_ID, groupSpecification.groupId + " has unknown group type " + groupTypeId);
+					}
 				}
 			}
 
@@ -429,18 +431,20 @@ public final class GroupsPluginData implements PluginData {
 			}
 
 			for (GroupSpecification groupSpecification : data.groupSpecifications) {
-				GroupTypeId groupTypeId = groupSpecification.groupTypeId;
-				Map<GroupPropertyId, PropertyDefinition> propDefMap = data.groupPropertyDefinitions.get(groupTypeId);
-				if (groupSpecification.groupPropertyValues != null) {
-					for (GroupPropertyValue groupPropertyValue : groupSpecification.groupPropertyValues) {
-						GroupPropertyId groupPropertyId = groupPropertyValue.groupPropertyId();
-						PropertyDefinition propertyDefinition = propDefMap.get(groupPropertyId);
-						if (propertyDefinition == null) {
-							throw new ContractException(PropertyError.UNKNOWN_PROPERTY_ID, groupPropertyId + " under group type " + groupTypeId);
-						}
-						Object propertyValue = groupPropertyValue.value();
-						if (!propertyDefinition.getType().isAssignableFrom(propertyValue.getClass())) {
-							throw new ContractException(PropertyError.INCOMPATIBLE_VALUE, groupSpecification.groupId + ": " + groupPropertyId + ": " + propertyValue);
+				if (groupSpecification != null) {
+					GroupTypeId groupTypeId = groupSpecification.groupTypeId;
+					Map<GroupPropertyId, PropertyDefinition> propDefMap = data.groupPropertyDefinitions.get(groupTypeId);
+					if (groupSpecification.groupPropertyValues != null) {
+						for (GroupPropertyValue groupPropertyValue : groupSpecification.groupPropertyValues) {
+							GroupPropertyId groupPropertyId = groupPropertyValue.groupPropertyId();
+							PropertyDefinition propertyDefinition = propDefMap.get(groupPropertyId);
+							if (propertyDefinition == null) {
+								throw new ContractException(PropertyError.UNKNOWN_PROPERTY_ID, groupPropertyId + " under group type " + groupTypeId);
+							}
+							Object propertyValue = groupPropertyValue.value();
+							if (!propertyDefinition.getType().isAssignableFrom(propertyValue.getClass())) {
+								throw new ContractException(PropertyError.INCOMPATIBLE_VALUE, groupSpecification.groupId + ": " + groupPropertyId + ": " + propertyValue);
+							}
 						}
 					}
 				}
@@ -474,18 +478,20 @@ public final class GroupsPluginData implements PluginData {
 			 * unique property id
 			 */
 			for (GroupSpecification groupSpecification : data.groupSpecifications) {
-				Set<GroupPropertyId> set = propertyDefsWithoutDefaults.get(groupSpecification.groupTypeId);
-				if (set.size() > 0) {
-					int coverageCount = 0;
-					if (groupSpecification.groupPropertyValues != null) {
-						for (GroupPropertyValue groupPropertyValue : groupSpecification.groupPropertyValues) {
-							if (set.contains(groupPropertyValue.groupPropertyId())) {
-								coverageCount++;
+				if (groupSpecification != null) {
+					Set<GroupPropertyId> set = propertyDefsWithoutDefaults.get(groupSpecification.groupTypeId);
+					if (set.size() > 0) {
+						int coverageCount = 0;
+						if (groupSpecification.groupPropertyValues != null) {
+							for (GroupPropertyValue groupPropertyValue : groupSpecification.groupPropertyValues) {
+								if (set.contains(groupPropertyValue.groupPropertyId())) {
+									coverageCount++;
+								}
 							}
 						}
-					}
-					if (coverageCount != set.size()) {
-						throw new ContractException(PropertyError.INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT);
+						if (coverageCount != set.size()) {
+							throw new ContractException(PropertyError.INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT);
+						}
 					}
 				}
 			}

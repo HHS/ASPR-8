@@ -24,6 +24,9 @@ import plugins.regions.support.RegionError;
 import plugins.regions.testsupport.TestRegionId;
 import plugins.resources.ResourcesPlugin;
 import plugins.resources.ResourcesPluginData;
+import plugins.resources.reports.PersonResourceReportPluginData;
+import plugins.resources.reports.ResourcePropertyReportPluginData;
+import plugins.resources.reports.ResourceReportPluginData;
 import plugins.resources.support.ResourceError;
 import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.StochasticsPluginData;
@@ -34,13 +37,12 @@ import util.random.RandomGeneratorProvider;
 
 /**
  * A static test support class for the {@linkplain ResourcesPlugin}. Provides
- * convenience
- * methods for obtaining standarized PluginData for the listed Plugin.
+ * convenience methods for obtaining standarized PluginData for the listed
+ * Plugin.
  * 
  * <p>
  * Also contains factory methods to obtain a list of plugins that is the minimal
- * set needed to adequately test this Plugin that can be
- * utilized with
+ * set needed to adequately test this Plugin that can be utilized with
  * </p>
  * 
  * <li>{@link TestSimulation#executeSimulation}
@@ -52,6 +54,10 @@ public class ResourcesTestPluginFactory {
 
 	private static class Data {
 		private ResourcesPluginData resourcesPluginData;
+		private PersonResourceReportPluginData personResourceReportPluginData;
+		private ResourcePropertyReportPluginData resourcePropertyReportPluginData;
+		private ResourceReportPluginData resourceReportPluginData;
+
 		private RegionsPluginData regionsPluginData;
 		private PeoplePluginData peoplePluginData;
 		private StochasticsPluginData stochasticsPluginData;
@@ -94,8 +100,13 @@ public class ResourcesTestPluginFactory {
 		 */
 		public List<Plugin> getPlugins() {
 			List<Plugin> pluginsToAdd = new ArrayList<>();
-
-			Plugin resourcesPlugin = ResourcesPlugin.getResourcesPlugin(this.data.resourcesPluginData);
+			Plugin resourcesPlugin = //
+					ResourcesPlugin	.builder()//
+									.setResourcesPluginData(this.data.resourcesPluginData)//
+									.setPersonResourceReportPluginData(data.personResourceReportPluginData)//
+									.setResourcePropertyReportPluginData(data.resourcePropertyReportPluginData)//
+									.setResourceReportPluginData(data.resourceReportPluginData)//
+									.getResourcesPlugin();//
 
 			Plugin peoplePlugin = PeoplePlugin.getPeoplePlugin(this.data.peoplePluginData);
 
@@ -115,13 +126,12 @@ public class ResourcesTestPluginFactory {
 		}
 
 		/**
-		 * Sets the {@link ResourcesPluginData} in this Factory.
-		 * This explicit instance of pluginData will be used to create a
-		 * ResourcesPlugin
+		 * Sets the {@link ResourcesPluginData} in this Factory. This explicit
+		 * instance of pluginData will be used to create a ResourcesPlugin
 		 * 
 		 * @throws ContractExecption
-		 *                           {@linkplain ResourceError#NULL_RESOURCE_PLUGIN_DATA}
-		 *                           if the passed in pluginData is null
+		 *             {@linkplain ResourceError#NULL_RESOURCE_PLUGIN_DATA} if
+		 *             the passed in pluginData is null
 		 */
 		public Factory setResourcesPluginData(ResourcesPluginData resourcesPluginData) {
 			if (resourcesPluginData == null) {
@@ -130,15 +140,63 @@ public class ResourcesTestPluginFactory {
 			this.data.resourcesPluginData = resourcesPluginData;
 			return this;
 		}
-
+		
 		/**
-		 * Sets the {@link PeoplePluginData} in this Factory.
-		 * This explicit instance of pluginData will be used to create a
-		 * PeoplePlugin
+		 * Sets the {@link PersonResourceReportPluginData} in this Factory. This explicit
+		 * instance of pluginData will be used to create a ResourcesPlugin
 		 * 
 		 * @throws ContractExecption
-		 *                           {@linkplain PersonError#NULL_PEOPLE_PLUGIN_DATA}
-		 *                           if the passed in pluginData is null
+		 *             {@linkplain ResourceError#NULL_RESOURCE_PLUGIN_DATA} if
+		 *             the passed in pluginData is null
+		 */
+		public Factory setPersonResourceReportPluginData(PersonResourceReportPluginData personResourceReportPluginData) {
+			if (personResourceReportPluginData == null) {
+				throw new ContractException(ResourceError.NULL_PERSON_RESOURCE_REPORT_PLUGIN_DATA);
+			}
+			this.data.personResourceReportPluginData = personResourceReportPluginData;
+			return this;			
+		}
+		
+		/**
+		 * Sets the {@link ResourcePropertyReportPluginData} in this Factory. This explicit
+		 * instance of pluginData will be used to create a ResourcesPlugin
+		 * 
+		 * @throws ContractExecption
+		 *             {@linkplain ResourceError#NULL_RESOURCE_PLUGIN_DATA} if
+		 *             the passed in pluginData is null
+		 */
+		public Factory setResourcePropertyReportPluginData(ResourcePropertyReportPluginData resourcePropertyReportPluginData) {
+			if (resourcePropertyReportPluginData == null) {
+				throw new ContractException(ResourceError.NULL_RESOURCE_PROPERTY_REPORT_PLUGIN_DATA);
+			}
+			this.data.resourcePropertyReportPluginData = resourcePropertyReportPluginData;
+			return this;	
+		}		
+		/**
+		 * Sets the {@link ResourceReportPluginData} in this Factory. This explicit
+		 * instance of pluginData will be used to create a ResourcesPlugin
+		 * 
+		 * @throws ContractExecption
+		 *             {@linkplain ResourceError#NULL_RESOURCE_PLUGIN_DATA} if
+		 *             the passed in pluginData is null
+		 */
+		public Factory setResourceReportPluginData(ResourceReportPluginData resourceReportPluginData) {
+			if (resourceReportPluginData == null) {
+				throw new ContractException(ResourceError.NULL_RESOURCE_REPORT_PLUGIN_DATA);
+			}
+			this.data.resourceReportPluginData = resourceReportPluginData;
+			return this;
+		}
+		
+		
+
+		/**
+		 * Sets the {@link PeoplePluginData} in this Factory. This explicit
+		 * instance of pluginData will be used to create a PeoplePlugin
+		 * 
+		 * @throws ContractExecption
+		 *             {@linkplain PersonError#NULL_PEOPLE_PLUGIN_DATA} if the
+		 *             passed in pluginData is null
 		 */
 		public Factory setPeoplePluginData(PeoplePluginData peoplePluginData) {
 			if (peoplePluginData == null) {
@@ -149,13 +207,12 @@ public class ResourcesTestPluginFactory {
 		}
 
 		/**
-		 * Sets the {@link RegionsPluginData} in this Factory.
-		 * This explicit instance of pluginData will be used to create a
-		 * RegionsPlugin
+		 * Sets the {@link RegionsPluginData} in this Factory. This explicit
+		 * instance of pluginData will be used to create a RegionsPlugin
 		 * 
 		 * @throws ContractExecption
-		 *                           {@linkplain RegionError#NULL_REGION_PLUGIN_DATA}
-		 *                           if the passed in pluginData is null
+		 *             {@linkplain RegionError#NULL_REGION_PLUGIN_DATA} if the
+		 *             passed in pluginData is null
 		 */
 		public Factory setRegionsPluginData(RegionsPluginData regionsPluginData) {
 			if (regionsPluginData == null) {
@@ -166,13 +223,12 @@ public class ResourcesTestPluginFactory {
 		}
 
 		/**
-		 * Sets the {@link StochasticsPluginData} in this Factory.
-		 * This explicit instance of pluginData will be used to create a
-		 * StochasticsPlugin
+		 * Sets the {@link StochasticsPluginData} in this Factory. This explicit
+		 * instance of pluginData will be used to create a StochasticsPlugin
 		 * 
 		 * @throws ContractExecption
-		 *                           {@linkplain StochasticsError#NULL_STOCHASTICS_PLUGIN_DATA}
-		 *                           if the passed in pluginData is null
+		 *             {@linkplain StochasticsError#NULL_STOCHASTICS_PLUGIN_DATA}
+		 *             if the passed in pluginData is null
 		 */
 		public Factory setStochasticsPluginData(StochasticsPluginData stochasticsPluginData) {
 			if (stochasticsPluginData == null) {
@@ -185,8 +241,9 @@ public class ResourcesTestPluginFactory {
 	}
 
 	/**
-	 * Creates a Factory that facilitates the creation of a minimal set of plugins
-	 * needed to adequately test the {@link ResourcesPlugin} by generating:
+	 * Creates a Factory that facilitates the creation of a minimal set of
+	 * plugins needed to adequately test the {@link ResourcesPlugin} by
+	 * generating:
 	 * <ul>
 	 * <li>{@link ResourcesPluginData}
 	 * <li>{@link RegionsPluginData}
@@ -207,12 +264,11 @@ public class ResourcesTestPluginFactory {
 	 * <li>{@link Factory#setRegionsPluginData},
 	 * <li>{@link Factory#setStochasticsPluginData}
 	 * </ul>
-	 * <li>via the
-	 * {@link Factory#getPlugins()} method.
+	 * <li>via the {@link Factory#getPlugins()} method.
 	 * 
 	 * @throws ContractExecption
-	 *                           {@linkplain NucleusError#NULL_PLUGIN_DATA}
-	 *                           if testPluginData is null
+	 *             {@linkplain NucleusError#NULL_PLUGIN_DATA} if testPluginData
+	 *             is null
 	 */
 	public static Factory factory(int initialPopulation, long seed, TestPluginData testPluginData) {
 		if (testPluginData == null) {
@@ -222,8 +278,9 @@ public class ResourcesTestPluginFactory {
 	}
 
 	/**
-	 * Creates a Factory that facilitates the creation of a minimal set of plugins
-	 * needed to adequately test the {@link ResourcesPlugin} by generating:
+	 * Creates a Factory that facilitates the creation of a minimal set of
+	 * plugins needed to adequately test the {@link ResourcesPlugin} by
+	 * generating:
 	 * <ul>
 	 * <li>{@link ResourcesPluginData}
 	 * <li>{@link RegionsPluginData}
@@ -244,12 +301,11 @@ public class ResourcesTestPluginFactory {
 	 * <li>{@link Factory#setRegionsPluginData},
 	 * <li>{@link Factory#setStochasticsPluginData}
 	 * </ul>
-	 * <li>via the
-	 * {@link Factory#getPlugins()} method.
+	 * <li>via the {@link Factory#getPlugins()} method.
 	 * 
 	 * @throws ContractExecption
-	 *                           {@linkplain NucleusError#NULL_ACTOR_CONTEXT_CONSUMER}
-	 *                           if consumer is null
+	 *             {@linkplain NucleusError#NULL_ACTOR_CONTEXT_CONSUMER} if
+	 *             consumer is null
 	 */
 	public static Factory factory(int initialPopulation, long seed, Consumer<ActorContext> consumer) {
 		if (consumer == null) {
@@ -286,9 +342,8 @@ public class ResourcesTestPluginFactory {
 	 * <li>Every RegionId included in {@link TestRegionId}
 	 * <li>Every person passed in via people.
 	 * <ul>
-	 * <li>Each person will be assigned a random
-	 * region based
-	 * on the passed in seed
+	 * <li>Each person will be assigned a random region based on the passed in
+	 * seed
 	 * </ul>
 	 * </ul>
 	 */
@@ -315,15 +370,13 @@ public class ResourcesTestPluginFactory {
 	 * <ul>
 	 * <li>Every ResourceId included in {@link TestResourceId}
 	 * <ul>
-	 * <li>along with the
-	 * defined timeTrackingPolicy for each
+	 * <li>along with the defined timeTrackingPolicy for each
 	 * </ul>
-	 * <li>Every ResourcePropertyId included in {@link TestResourcePropertyId} along
-	 * with the defined propertyDefinition for each.
+	 * <li>Every ResourcePropertyId included in {@link TestResourcePropertyId}
+	 * along with the defined propertyDefinition for each.
 	 * <ul>
-	 * <li>Each Resource will have a
-	 * random property value assigned based on a RandomGenerator that is created
-	 * with the passed in seed
+	 * <li>Each Resource will have a random property value assigned based on a
+	 * RandomGenerator that is created with the passed in seed
 	 * </ul>
 	 * </ul>
 	 */
@@ -349,8 +402,8 @@ public class ResourcesTestPluginFactory {
 	}
 
 	/**
-	 * Returns a standardized StochasticsPluginData that is minimally adequate for
-	 * testing the ResourcesPlugin
+	 * Returns a standardized StochasticsPluginData that is minimally adequate
+	 * for testing the ResourcesPlugin
 	 * <li>The resulting StochasticsPluginData will include:
 	 * <ul>
 	 * <li>a seed based on the nextLong of a RandomGenerator seeded from the
@@ -359,8 +412,7 @@ public class ResourcesTestPluginFactory {
 	 */
 	public static StochasticsPluginData getStandardStochasticsPluginData(long seed) {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
-		return StochasticsPluginData.builder()
-				.setSeed(randomGenerator.nextLong()).build();
+		return StochasticsPluginData.builder().setSeed(randomGenerator.nextLong()).build();
 	}
 
 }

@@ -15,14 +15,13 @@ import org.junit.jupiter.api.Test;
 
 import nucleus.Plugin;
 import nucleus.ReportContext;
+import nucleus.SimplePluginId;
 import nucleus.Simulation;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestOutputConsumer;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestSimulation;
-import plugins.reports.ReportsPlugin;
-import plugins.reports.ReportsPluginData;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
@@ -71,11 +70,11 @@ public class AT_PeriodicReport {
 			ReportItem reportItem = reportItemBuilder.setReportLabel(getReportLabel()).setReportHeader(reportHeader).build();
 
 			int dayValue = (int) FastMath.ceil(reportContext.getTime());
-						
+
 			String expectedTimeString = Integer.toString(dayValue);
-			
+
 			String actualTimeString = reportItem.getValue(0);
-			
+
 			assertEquals(expectedTimeString, actualTimeString);
 			reportContext.releaseOutput(reportItem);
 
@@ -87,7 +86,7 @@ public class AT_PeriodicReport {
 	 * Used to test the fillTimeFields() method when the period is
 	 * ReportPeriod.HOURLY
 	 */
-	private static class HourlyTestReport extends PeriodicReport{
+	private static class HourlyTestReport extends PeriodicReport {
 
 		private MutableInteger testCounter = new MutableInteger();
 
@@ -111,8 +110,7 @@ public class AT_PeriodicReport {
 
 			ReportItem reportItem = reportItemBuilder.setReportLabel(getReportLabel()).setReportHeader(reportHeader).build();
 			double time = reportContext.getTime();
-			
-			
+
 			int hour = (int) FastMath.ceil(time * 24);
 			int expectedDay = hour / 24;
 			int expectedHour = hour % 24;
@@ -122,7 +120,7 @@ public class AT_PeriodicReport {
 			String actualHourTimeString = reportItem.getValue(1);
 			assertEquals(expectedDayTimeString, actualDayTimeString);
 			assertEquals(expectedHourTimeString, actualHourTimeString);
-			
+
 			reportContext.releaseOutput(reportItem);
 		}
 
@@ -227,12 +225,15 @@ public class AT_PeriodicReport {
 
 		ReportLabel reportLabel = new SimpleReportLabel("report");
 		DailyTestReport dailyTestReport = new DailyTestReport(reportLabel, ReportPeriod.DAILY);
-		ReportsPluginData reportsInitialData = ReportsPluginData.builder().addReport(() -> {
-			return dailyTestReport::init;
-		}).build();
+
+		plugins.add(Plugin	.builder()//
+							.setPluginId(new SimplePluginId("anonymous plugin"))//
+							.setInitializer((pc) -> {
+								pc.addReport(dailyTestReport::init);
+							})//
+							.build());
 
 		// add the reports plugin
-		plugins.add(ReportsPlugin.getReportsPlugin(reportsInitialData));
 
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
@@ -246,22 +247,20 @@ public class AT_PeriodicReport {
 		plugins.add(testPlugin);
 
 		// build and execute the simulation
-		
-		TestOutputConsumer testOutputConsumer = new TestOutputConsumer();
-		TestSimulation.executeSimulation(plugins,testOutputConsumer);
 
-		
-		int maxDay = (int)FastMath.ceil(simulationEndTime);
+		TestOutputConsumer testOutputConsumer = new TestOutputConsumer();
+		TestSimulation.executeSimulation(plugins, testOutputConsumer);
+
+		int maxDay = (int) FastMath.ceil(simulationEndTime);
 		Set<Integer> expectedDays = new LinkedHashSet<>();
-		for(int i = 0;i<=maxDay;i++) {
+		for (int i = 0; i <= maxDay; i++) {
 			expectedDays.add(i);
 		}
-		
-		
-		Set<Integer> actualDays = new LinkedHashSet<>();		
+
+		Set<Integer> actualDays = new LinkedHashSet<>();
 		Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItems(ReportItem.class);
-		for(ReportItem reportItem : outputItems.keySet()) {
-			assertEquals(1,outputItems.get(reportItem));
+		for (ReportItem reportItem : outputItems.keySet()) {
+			assertEquals(1, outputItems.get(reportItem));
 			actualDays.add(Integer.parseInt(reportItem.getValue(0)));
 		}
 		assertEquals(expectedDays, actualDays);
@@ -277,13 +276,13 @@ public class AT_PeriodicReport {
 
 		ReportLabel reportLabel = new SimpleReportLabel("report");
 		HourlyTestReport hourlyTestReport = new HourlyTestReport(reportLabel, ReportPeriod.HOURLY);
-		ReportsPluginData reportsInitialData = ReportsPluginData.builder().addReport(() -> {
-			return hourlyTestReport::init;
-		}).build();
-		Plugin reportPlugin = ReportsPlugin.getReportsPlugin(reportsInitialData);
 
-		// add the reports plugin
-		plugins.add(reportPlugin);
+		plugins.add(Plugin	.builder()//
+				.setPluginId(new SimplePluginId("anonymous plugin"))//
+				.setInitializer((pc) -> {
+					pc.addReport(hourlyTestReport::init);
+				})//
+				.build());
 
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
@@ -297,28 +296,26 @@ public class AT_PeriodicReport {
 
 		// build and execute the engine
 		TestOutputConsumer testOutputConsumer = new TestOutputConsumer();
-		TestSimulation.executeSimulation(plugins,testOutputConsumer);
-		
+		TestSimulation.executeSimulation(plugins, testOutputConsumer);
 
-		//hours 0 through 3d 15h inclusive
+		// hours 0 through 3d 15h inclusive
 		Set<Integer> expectedHours = new LinkedHashSet<>();
-		for(int i = 0;i<88;i++) {
+		for (int i = 0; i < 88; i++) {
 			expectedHours.add(i);
 		}
-		
+
 		Set<Integer> actualHours = new LinkedHashSet<>();
 		Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItems(ReportItem.class);
-		for(ReportItem reportItem : outputItems.keySet()) {
+		for (ReportItem reportItem : outputItems.keySet()) {
 			Integer count = outputItems.get(reportItem);
 			assertEquals(1, count);
 			int hour = Integer.parseInt(reportItem.getValue(0));
-			hour*=24;
-			hour+=Integer.parseInt(reportItem.getValue(1));
-			actualHours.add(hour);			
+			hour *= 24;
+			hour += Integer.parseInt(reportItem.getValue(1));
+			actualHours.add(hour);
 		}
-		
+
 		assertEquals(expectedHours, actualHours);
-		
 
 	}
 
@@ -331,14 +328,13 @@ public class AT_PeriodicReport {
 
 		ReportLabel reportLabel = new SimpleReportLabel("report");
 		EndOfSimulationTestReport endOfSimulationTestReport = new EndOfSimulationTestReport(reportLabel, ReportPeriod.END_OF_SIMULATION);
-		ReportsPluginData reportsInitialData = ReportsPluginData.builder().addReport(() -> {
-			return endOfSimulationTestReport::init;
-		}).build();
+		builder.addPlugin(Plugin	.builder()//
+				.setPluginId(new SimplePluginId("anonymous plugin"))//
+				.setInitializer((pc) -> {
+					pc.addReport(endOfSimulationTestReport::init);
+				})//
+				.build());
 
-		Plugin reportPlugin = ReportsPlugin.getReportsPlugin(reportsInitialData);
-
-		// add the reports plugin
-		builder.addPlugin(reportPlugin);
 
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
@@ -376,13 +372,14 @@ public class AT_PeriodicReport {
 
 			ReportLabel reportLabel = new SimpleReportLabel("report");
 			InitTestReport initTestReport = new InitTestReport(reportLabel, reportPeriod);
-			ReportsPluginData reportsInitialData = ReportsPluginData.builder().addReport(() -> {
-				return initTestReport::init;
-			}).build();
-
-			// add the reports plugin
-			Plugin reportPlugin = ReportsPlugin.getReportsPlugin(reportsInitialData);
-			builder.addPlugin(reportPlugin);
+			
+			builder.addPlugin(Plugin	.builder()//
+					.setPluginId(new SimplePluginId("anonymous plugin"))//
+					.setInitializer((pc) -> {
+						pc.addReport(initTestReport::init);
+					})//
+					.build());
+			
 
 			TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 

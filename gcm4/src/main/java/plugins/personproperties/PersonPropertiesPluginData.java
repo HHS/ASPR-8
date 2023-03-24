@@ -1,6 +1,7 @@
 package plugins.personproperties;
 
 import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -13,6 +14,7 @@ import nucleus.PluginData;
 import nucleus.PluginDataBuilder;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
+import plugins.personproperties.support.PersonPropertyError;
 import plugins.personproperties.support.PersonPropertyId;
 import plugins.personproperties.support.PersonPropertyInitialization;
 import plugins.util.properties.PropertyDefinition;
@@ -40,13 +42,26 @@ public class PersonPropertiesPluginData implements PluginData {
 
 		private List<PersonPropertyInitialization> emptyList = Collections.unmodifiableList(new ArrayList<>());
 
+		private BitSet people = new BitSet();
+		private int maxPersonIndex = -1;
+
 		private boolean locked;
 
 		private Data() {
 		}
 
 		private Data(Data data) {
+
 			personPropertyDefinitions.putAll(data.personPropertyDefinitions);
+			people = new BitSet();
+			maxPersonIndex = data.maxPersonIndex;
+			if (maxPersonIndex >= 0) {
+				for (int i = 0; i < maxPersonIndex; i++) {
+					if (data.people.get(i)) {
+						people.set(i);
+					}
+				}
+			}
 			for (List<PersonPropertyInitialization> list : data.personPropertyValues) {
 				List<PersonPropertyInitialization> newList = new ArrayList<>(list);
 				personPropertyValues.add(newList);
@@ -105,6 +120,13 @@ public class PersonPropertiesPluginData implements PluginData {
 		 *             property id where the associated property definition does
 		 *             not contain a default value</li>
 		 * 
+		 *             <li>{@linkplain PropertyError#PROPERTY_ASSIGNMENT_FOR_NON_ADDED_PERSON}
+		 *             if a person who is not explicitly added via addPerson()
+		 *             is assigned property values</li>
+		 * 
+		 * 
+		 * 
+		 * 
 		 */
 		public PersonPropertiesPluginData build() {
 			if (!data.locked) {
@@ -130,6 +152,16 @@ public class PersonPropertiesPluginData implements PluginData {
 			validatePersonPropertyIdNotNull(personPropertyId);
 			validatePersonPropertyDefinitionNotNull(propertyDefinition);
 			data.personPropertyDefinitions.put(personPropertyId, propertyDefinition);
+			return this;
+		}
+
+		public Builder addPerson(PersonId personId) {
+			validatePersonId(personId);
+			int personIndex = personId.getValue();
+			data.people.set(personIndex);
+			if (data.maxPersonIndex < personIndex) {
+				data.maxPersonIndex = personIndex;
+			}
 			return this;
 		}
 
@@ -216,6 +248,17 @@ public class PersonPropertiesPluginData implements PluginData {
 
 			for (int i = 0; i < data.personPropertyValues.size(); i++) {
 				List<PersonPropertyInitialization> list = data.personPropertyValues.get(i);
+
+				boolean personExists = data.people.get(i);
+
+				if (!personExists) {
+					if (list == null) {
+						continue;
+					} else {
+						throw new ContractException(PersonPropertyError.PROPERTY_ASSIGNMENT_FOR_NON_ADDED_PERSON);
+					}
+				}
+
 				for (int j = 0; j < nonDefaultChecks.length; j++) {
 					nonDefaultChecks[j] = false;
 				}
@@ -330,20 +373,38 @@ public class PersonPropertiesPluginData implements PluginData {
 	}
 
 	/**
-	 * Returns the set of {@link PersonId} ids collected by the builder
+	 * Returns the highest person index contain in this plugin data. Returns -1
+	 * if there are no people contained.
 	 */
-	public int getPersonCount() {
-		return data.personPropertyValues.size();
+	public int getMaxPersonIndex() {
+		return data.maxPersonIndex;
 	}
 
 	/**
-	 * Returns the property values for the given {@link PersonId}
+	 * Returns true if and only if the person index corresponds to a know person
+	 */
+	public boolean personExists(int personIndex) {
+		if (personIndex < 0) {
+			return false;
+		}
+		if (personIndex > data.maxPersonIndex) {
+			return false;
+		}
+		return data.people.get(personIndex);
+	}
+
+	/**
+	 * Returns the property values for the given {@link PersonId} as an
+	 * unmodifiable list.
 	 *
+	 * @throws ContractException
+	 *             <li>{@linkplain PersonPropertyError#UNKNOWN_PERSON_ID} if the
+	 *             person is not known (does not exist) to this plugin data</li>
 	 *
 	 */
 	public List<PersonPropertyInitialization> getPropertyValues(int personIndex) {
-		if (personIndex < 0) {
-			return data.emptyList;
+		if (!personExists(personIndex)) {
+			throw new ContractException(PersonPropertyError.UNKNOWN_PERSON_ID);
 		}
 		if (personIndex >= data.personPropertyValues.size()) {
 			return data.emptyList;

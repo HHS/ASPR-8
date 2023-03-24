@@ -7,20 +7,14 @@ import java.util.List;
 
 import lesson.plugins.family.FamilyPlugin;
 import lesson.plugins.family.FamilyPluginData;
-import lesson.plugins.model.ModelPlugin;
 import lesson.plugins.model.ModelLabel;
+import lesson.plugins.model.ModelPlugin;
 import lesson.plugins.person.PersonPlugin;
 import lesson.plugins.vaccine.VaccinePlugin;
-import lesson.plugins.vaccine.reports.FamilyVaccineReport;
-import lesson.plugins.vaccine.reports.HourlyVaccineReport;
-import lesson.plugins.vaccine.reports.StatelessVaccineReport;
 import nucleus.Dimension;
 import nucleus.Experiment;
 import nucleus.Plugin;
-import plugins.reports.ReportsPlugin;
-import plugins.reports.ReportsPluginData;
 import plugins.reports.support.NIOReportItemHandler;
-import plugins.reports.support.ReportPeriod;
 import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.StochasticsPluginData;
 
@@ -77,12 +71,6 @@ public final class Example_12 {
 															.build();
 		Plugin familyPlugin = FamilyPlugin.getFamilyPlugin(familyPluginData);		
 		
-		ReportsPluginData reportsPluginData = ReportsPluginData.builder()//
-				.addReport(()->new FamilyVaccineReport(ModelLabel.FAMILY_VACCINE_REPORT)::init)//
-				.addReport(()->new HourlyVaccineReport(ModelLabel.HOURLY_VACCINE_REPORT, ReportPeriod.HOURLY)::init)//
-				.addReport(()->new StatelessVaccineReport(ModelLabel.STATELESS_VACCINE_REPORT, ReportPeriod.HOURLY)::init)//
-				.build();
-		Plugin reportPlugin = ReportsPlugin.getReportsPlugin(reportsPluginData);
 		
 		Path outputDirectory = Paths.get("C:\\temp\\gcm");		
 		
@@ -101,7 +89,6 @@ public final class Example_12 {
 					.addPlugin(personPlugin)//
 					.addPlugin(modelPlugin)//
 					.addPlugin(stochasticsPlugin)//
-					.addPlugin(reportPlugin)//
 					.addDimension(familySizeDimension)//
 					.addExperimentContextConsumer(nioReportItemHandler)//					
 					.build()//

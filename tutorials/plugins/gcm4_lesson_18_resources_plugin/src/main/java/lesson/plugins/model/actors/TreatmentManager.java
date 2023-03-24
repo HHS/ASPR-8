@@ -38,7 +38,7 @@ public class TreatmentManager {
 	 * entering the hospital. If the treatment was successful then mark the
 	 * person as immune. Otherwise, mark the person as a hospital death.
 	 */
-	
+	/* start code_ref=resources_treatment_manager_assessHospitalization */
 	private void assessHospitalization(PersonId personId) {
 		
 		boolean treatedWithAntiViral = personPropertiesDataManager
@@ -59,6 +59,7 @@ public class TreatmentManager {
 		resourcesDataManager.
 			transferResourceFromPersonToRegion(Resource.HOSPITAL_BED, personId, 1L);
 	}
+	/*end*/
 
 	/*
 	 * Try to allocate a hospital bed to the person. If the bed is
@@ -66,6 +67,7 @@ public class TreatmentManager {
 	 * Otherwise, mark the person as a home death.
 	 */
 
+	/*start code_ref=resources_treatment_manager_hospitalizePerson*/	
 	private void hospitalizePerson(PersonId personId) {
 		RegionId regionId = regionsDataManager.getPersonRegion(personId);
 		
@@ -89,13 +91,14 @@ public class TreatmentManager {
 				.setPersonPropertyValue(personId, PersonProperty.DEAD_IN_HOME, true);
 		}
 	}
+	/*end*/
 	
 	/*
 	 * Expend the antiviral resource from the person. If the antiviral
 	 * succeeded, then mark the person as immune. Otherwise, hospitalize the
 	 * person immediately
 	 */
-	
+	/*start code_ref=resources_treatment_manager_assessAntiviralTreatment*/
 	private void assessAntiviralTreatment(PersonId personId) {
 		
 		resourcesDataManager.removeResourceFromPerson(Resource.ANTI_VIRAL_MED, personId, 1L);
@@ -105,6 +108,7 @@ public class TreatmentManager {
 			hospitalizePerson(personId);
 		}
 	}
+	/*end*/
 
 	/*
 	 * Try to allocate one dose of the antiviral drug to the person. If the
@@ -112,7 +116,7 @@ public class TreatmentManager {
 	 * the necessary waiting period. Otherwise, hospitalize the person
 	 * immediately.
 	 */
-	
+	/*start code_ref=resources_treatment_manager_treatWithAntiviral*/
 	private void treatWithAntiviral(PersonId personId) {
 		
 		RegionId regionId = regionsDataManager.getPersonRegion(personId);
@@ -133,7 +137,9 @@ public class TreatmentManager {
 			hospitalizePerson(personId);
 		}
 	}
+	/*end*/
 	
+	/*start code_ref=resources_treatment_manager_init*/
 	public void init(ActorContext actorContext) {	
 		this.actorContext = actorContext;
 		regionsDataManager = actorContext.getDataManager(RegionsDataManager.class);
@@ -172,5 +178,6 @@ public class TreatmentManager {
 				actorContext.addPlan((c) -> treatWithAntiviral(personId), symptomOnsetTime);			
 		}
 	}
+	/*end*/
 	
 }

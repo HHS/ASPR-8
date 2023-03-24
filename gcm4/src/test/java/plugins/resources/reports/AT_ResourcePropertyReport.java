@@ -3,26 +3,24 @@ package plugins.resources.reports;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 
-import nucleus.Plugin;
 import nucleus.ReportContext;
 import nucleus.testsupport.testplugin.TestActorPlan;
+import nucleus.testsupport.testplugin.TestOutputConsumer;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestSimulation;
-import nucleus.testsupport.testplugin.TestOutputConsumer;
 import plugins.reports.support.ReportHeader;
 import plugins.reports.support.ReportItem;
 import plugins.reports.support.ReportLabel;
 import plugins.reports.support.SimpleReportLabel;
-import plugins.reports.testsupport.ReportsTestPluginFactory;
 import plugins.resources.datamanagers.ResourcesDataManager;
 import plugins.resources.support.ResourcePropertyId;
 import plugins.resources.support.ResourcePropertyInitialization;
 import plugins.resources.testsupport.ResourcesTestPluginFactory;
+import plugins.resources.testsupport.ResourcesTestPluginFactory.Factory;
 import plugins.resources.testsupport.TestResourceId;
 import plugins.resources.testsupport.TestResourcePropertyId;
 import plugins.util.properties.PropertyDefinition;
@@ -191,10 +189,12 @@ public class AT_ResourcePropertyReport {
 
 		TestOutputConsumer outputConsumer = new TestOutputConsumer();
 
-		List<Plugin> pluginsToAdd = ResourcesTestPluginFactory.factory(initialPopulation, 8914112012010329946L, testPluginData).getPlugins();
-		pluginsToAdd.add(ReportsTestPluginFactory.getPluginFromReport(new ResourcePropertyReport(ResourcePropertyReportPluginData.builder().setReportLabel(REPORT_LABEL).build())::init));
+		 
+		Factory factory = ResourcesTestPluginFactory.factory(initialPopulation, 8914112012010329946L, testPluginData);
+		ResourcePropertyReportPluginData resourcePropertyReportPluginData = ResourcePropertyReportPluginData.builder().setReportLabel(REPORT_LABEL).build();
+		factory.setResourcePropertyReportPluginData(resourcePropertyReportPluginData);
 		
-		TestSimulation.executeSimulation(pluginsToAdd, outputConsumer);
+		TestSimulation.executeSimulation(factory.getPlugins(), outputConsumer);
 
 		
 		assertEquals(expectedReportItems, outputConsumer.getOutputItems(ReportItem.class));

@@ -14,12 +14,11 @@ import org.apache.commons.math3.util.FastMath;
 import org.junit.jupiter.api.Test;
 
 import nucleus.ActorContext;
-import nucleus.Plugin;
 import nucleus.ReportContext;
 import nucleus.testsupport.testplugin.TestActorPlan;
+import nucleus.testsupport.testplugin.TestOutputConsumer;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestSimulation;
-import nucleus.testsupport.testplugin.TestOutputConsumer;
 import plugins.materials.datamangers.MaterialsDataManager;
 import plugins.materials.support.MaterialsProducerConstructionData;
 import plugins.materials.support.MaterialsProducerId;
@@ -33,7 +32,6 @@ import plugins.reports.support.ReportItem;
 import plugins.reports.support.ReportItem.Builder;
 import plugins.reports.support.ReportLabel;
 import plugins.reports.support.SimpleReportLabel;
-import plugins.reports.testsupport.ReportsTestPluginFactory;
 import plugins.resources.datamanagers.ResourcesDataManager;
 import plugins.resources.support.ResourceId;
 import plugins.resources.testsupport.TestResourceId;
@@ -64,7 +62,7 @@ public final class AT_MaterialsProducerResourceReport {
 	@Test
 	@UnitTestConstructor(target = MaterialsProducerResourceReport.class, args = { ReportLabel.class })
 	public void testConstructor() {
-		MaterialsProducerResourceReport report = new MaterialsProducerResourceReport(REPORT_LABEL);
+		MaterialsProducerResourceReport report = new MaterialsProducerResourceReport(MaterialsProducerResourceReportPluginData.builder().setReportLabel(REPORT_LABEL).build());
 		assertNotNull(report);
 	}
 
@@ -161,11 +159,11 @@ public final class AT_MaterialsProducerResourceReport {
 
 		TestOutputConsumer outputConsumer = new TestOutputConsumer();
 
-		List<Plugin> pluginsToAdd = MaterialsTestPluginFactory.factory(0, 0, 0, 6081341958178733565L, testPluginData)
-				.getPlugins();
-		pluginsToAdd.add(ReportsTestPluginFactory.getPluginFromReport(new MaterialsProducerResourceReport(REPORT_LABEL)::init));
-
-		TestSimulation.executeSimulation(pluginsToAdd, outputConsumer);
+		MaterialsTestPluginFactory.Factory factory = MaterialsTestPluginFactory.factory(0, 0, 0, 6081341958178733565L, testPluginData);
+		MaterialsProducerResourceReportPluginData materialsProducerResourceReportPluginData = MaterialsProducerResourceReportPluginData.builder().setReportLabel(REPORT_LABEL).build();
+		factory.setMaterialsProducerResourceReportPluginData(materialsProducerResourceReportPluginData);
+		
+		TestSimulation.executeSimulation(factory.getPlugins(), outputConsumer);
 
 		assertEquals(expectedReportItems, outputConsumer.getOutputItems(ReportItem.class));
 	}

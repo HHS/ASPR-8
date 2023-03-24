@@ -9,15 +9,15 @@ import java.util.stream.IntStream;
 
 import org.apache.commons.math3.random.RandomGenerator;
 
-import gov.hhs.aspr.gcm.translation.core.Translator;
-import gov.hhs.aspr.gcm.translation.core.TranslatorController;
-import gov.hhs.aspr.gcm.translation.plugins.globalproperties.GlobalPropertiesTranslator;
-import gov.hhs.aspr.gcm.translation.plugins.people.PeopleTranslator;
-import gov.hhs.aspr.gcm.translation.plugins.personproperties.PersonPropertiesTranslator;
-import gov.hhs.aspr.gcm.translation.plugins.properties.PropertiesTranslator;
-import gov.hhs.aspr.gcm.translation.plugins.regions.RegionsTranslator;
-import gov.hhs.aspr.gcm.translation.plugins.stochastics.StochasticsTranslator;
-import gov.hss.aspr.gcm.translation.nucleus.NucleusTranslator;
+import gov.hhs.aspr.gcm.translation.protobuf.core.Translator;
+import gov.hhs.aspr.gcm.translation.protobuf.core.TranslatorController;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.globalproperties.GlobalPropertiesTranslator;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.PeopleTranslator;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.PersonPropertiesTranslator;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.PropertiesTranslator;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.RegionsTranslator;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.stochastics.StochasticsTranslator;
+import gov.hss.aspr.gcm.translation.protobuf.nucleus.NucleusTranslator;
 import lesson.plugins.model.GlobalProperty;
 import lesson.plugins.model.ModelPlugin;
 import lesson.plugins.model.ModelReportLabel;
@@ -42,14 +42,11 @@ import plugins.people.PeoplePlugin;
 import plugins.people.PeoplePluginData;
 import plugins.personproperties.PersonPropertiesPlugin;
 import plugins.personproperties.PersonPropertiesPluginData;
-import plugins.personproperties.reports.PersonPropertyReport;
-import plugins.personproperties.reports.PersonPropertyReportPluginData;
 import plugins.regions.RegionsPlugin;
 import plugins.regions.RegionsPluginData;
 import plugins.reports.ReportsPlugin;
 import plugins.reports.ReportsPluginData;
 import plugins.reports.support.NIOReportItemHandler;
-import plugins.reports.support.ReportPeriod;
 import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.StochasticsPluginData;
 import plugins.util.properties.PropertyDefinition;
@@ -84,7 +81,7 @@ public final class SerializationDemonstration {
 				.addTranslatorSpec(new PersonPropertyTranslatorSpec())
 				.addTranslatorSpec(new GlobalPropertyTranslatorSpec())
 				.addTranslatorSpec(new RegionTranslatorSpec())
-				.build().init();
+				.build();
 	}
 
 	private RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(524055747550937602L);
@@ -92,15 +89,6 @@ public final class SerializationDemonstration {
 	private Plugin getReportsPlugin() {
 		ReportsPluginData reportsPluginData = //
 				ReportsPluginData.builder()//
-						.addReport(() -> {
-							PersonPropertyReportPluginData personPropertyReportPluginData = PersonPropertyReportPluginData
-									.builder()//
-									.setReportLabel(ModelReportLabel.PERSON_PROPERTY_REPORT)//
-									.setReportPeriod(ReportPeriod.END_OF_SIMULATION)//
-									.setDefaultInclusion(true)//
-									.build();//
-							return new PersonPropertyReport(personPropertyReportPluginData)::init;
-						})//
 						.addReport(() -> {
 							return new VaccineReport(ModelReportLabel.VACCINATION)::init;
 						})//
@@ -154,7 +142,8 @@ public final class SerializationDemonstration {
 		builder.definePersonProperty(PersonProperty.VACCINATED, propertyDefinition);
 
 		PersonPropertiesPluginData personPropertiesPluginData = builder.build();
-		return PersonPropertiesPlugin.getPersonPropertyPlugin(personPropertiesPluginData);
+		return PersonPropertiesPlugin.builder().setPersonPropertiesPluginData(personPropertiesPluginData)
+				.getPersonPropertyPlugin();
 	}
 
 	private Plugin getStochasticsPlugin() {
@@ -248,7 +237,8 @@ public final class SerializationDemonstration {
 
 		GlobalPropertiesPluginData globalPropertiesPluginData = builder.build();
 
-		return GlobalPropertiesPlugin.getGlobalPropertiesPlugin(globalPropertiesPluginData);
+		return GlobalPropertiesPlugin.builder().setGlobalPropertiesPluginData(globalPropertiesPluginData)
+				.getGlobalPropertiesPlugin();
 	}
 
 	private void execute() {
@@ -293,8 +283,9 @@ public final class SerializationDemonstration {
 				continue;
 			}
 			if (pluginData instanceof PersonPropertiesPluginData) {
-				personPropertiesPlugin = PersonPropertiesPlugin
-						.getPersonPropertyPlugin((PersonPropertiesPluginData) pluginData);
+				personPropertiesPlugin = PersonPropertiesPlugin.builder()
+						.setPersonPropertiesPluginData((PersonPropertiesPluginData) pluginData)
+						.getPersonPropertyPlugin();
 				continue;
 			}
 
@@ -304,8 +295,9 @@ public final class SerializationDemonstration {
 			}
 
 			if (pluginData instanceof GlobalPropertiesPluginData) {
-				globalPropertiesPlugin = GlobalPropertiesPlugin
-						.getGlobalPropertiesPlugin((GlobalPropertiesPluginData) pluginData);
+				globalPropertiesPlugin = GlobalPropertiesPlugin.builder()
+						.setGlobalPropertiesPluginData((GlobalPropertiesPluginData) pluginData)
+						.getGlobalPropertiesPlugin();
 				continue;
 			}
 
@@ -402,8 +394,6 @@ public final class SerializationDemonstration {
 				.addTranslatorSpec(new RegionTranslatorSpec());
 
 		this.writingTranslatorController = translatorControllerBuilder.build();
-
-		this.writingTranslatorController.init();
 	}
 
 	private void handleSimulationStateCollection(Integer scenarioId, List<Object> output) {

@@ -1274,23 +1274,23 @@ public class AT_RegionsDataManager {
 			}
 
 		}).getPlugins());;
-
-		// precondition check: if no region data was included in the event
+		
+		ContractException contractException = assertThrows(ContractException.class, ()->{
 		TestSimulation.executeSimulation(RegionsTestPluginFactory.factory(0, 7737810808059858455L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			PersonConstructionData personConstructionData = PersonConstructionData.builder().build();
-			ContractException contractException = assertThrows(ContractException.class, () -> peopleDataManager.addPerson(personConstructionData));
-			assertEquals(RegionError.NULL_REGION_ID, contractException.getErrorType());
-		}).getPlugins());;
+			peopleDataManager.addPerson(personConstructionData);	
+		}).getPlugins());});
+		assertEquals(RegionError.NULL_REGION_ID, contractException.getErrorType());
 
 		// precondition check: if the region in the event is unknown
+		contractException = assertThrows(ContractException.class, ()->{
 		TestSimulation.executeSimulation(RegionsTestPluginFactory.factory(0, 2879410509293373914L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			PersonConstructionData personConstructionData = PersonConstructionData.builder().add(TestRegionId.getUnknownRegionId()).build();
-			ContractException contractException = assertThrows(ContractException.class, () -> peopleDataManager.addPerson(personConstructionData));
-			assertEquals(RegionError.UNKNOWN_REGION_ID, contractException.getErrorType());
-		}).getPlugins());;
-
+			peopleDataManager.addPerson(personConstructionData);			
+		}).getPlugins());});
+		assertEquals(RegionError.UNKNOWN_REGION_ID, contractException.getErrorType());
 		// precondition check: if the person id does not exist
 		/*
 		 * Note : it is not possible to force the PersonDataManager to release
@@ -1302,14 +1302,15 @@ public class AT_RegionsDataManager {
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
 			PersonConstructionData personConstructionData = PersonConstructionData.builder().add(TestRegionId.REGION_1).build();
 			PersonImminentAdditionEvent personImminentAdditionEvent = new PersonImminentAdditionEvent(new PersonId(10000), personConstructionData);
-
 			PassThroughDataManager passThroughDataManager = c.getDataManager(PassThroughDataManager.class);
-			ContractException contractException = assertThrows(ContractException.class,()->passThroughDataManager.passThrough(personImminentAdditionEvent));			
-			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
+			passThroughDataManager.passThrough(personImminentAdditionEvent);			
 		}));
 
-		TestPluginData testPluginData = pluginBuilder.build();
-		TestSimulation.executeSimulation(RegionsTestPluginFactory.factory(0, 5311711819224332248L, TimeTrackingPolicy.TRACK_TIME, testPluginData).getPlugins());
+		TestPluginData testPluginData1 = pluginBuilder.build();
+		contractException = assertThrows(ContractException.class, ()->{
+		TestSimulation.executeSimulation(RegionsTestPluginFactory.factory(0, 5311711819224332248L, TimeTrackingPolicy.TRACK_TIME, testPluginData1).getPlugins());
+		});
+		assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
 
 		// precondition check: if the person was previously added
 		/*
@@ -1325,15 +1326,18 @@ public class AT_RegionsDataManager {
 
 			PersonImminentAdditionEvent personImminentAdditionEvent = new PersonImminentAdditionEvent(personId, personConstructionData);
 			PassThroughDataManager passThroughDataManager = c.getDataManager(PassThroughDataManager.class);
-			ContractException contractException = assertThrows(ContractException.class,()->passThroughDataManager.passThrough(personImminentAdditionEvent));
-			assertEquals(RegionError.DUPLICATE_PERSON_ADDITION, contractException.getErrorType());
+			passThroughDataManager.passThrough(personImminentAdditionEvent);
+			
 		}));
 
 		
 		
 		pluginBuilder.addPluginDependency(PeoplePluginId.PLUGIN_ID);
-		testPluginData = pluginBuilder.build();
-		TestSimulation.executeSimulation(RegionsTestPluginFactory.factory(0, 5824136557013438265L, TimeTrackingPolicy.TRACK_TIME, testPluginData).getPlugins());
+		TestPluginData testPluginData2 = pluginBuilder.build();
+		contractException = assertThrows(ContractException.class, ()->{
+		TestSimulation.executeSimulation(RegionsTestPluginFactory.factory(0, 5824136557013438265L, TimeTrackingPolicy.TRACK_TIME, testPluginData2).getPlugins());
+		});
+		assertEquals(RegionError.DUPLICATE_PERSON_ADDITION, contractException.getErrorType());
 
 	}
 
@@ -1483,9 +1487,7 @@ public class AT_RegionsDataManager {
 			assertEquals(PropertyError.INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT, contractException.getErrorType());
 		}).getPlugins());;
 
-		// * <li>{@linkplain
-		// PropertyError#INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT}
-		// * </li>
+		
 
 	}
 
@@ -1607,7 +1609,9 @@ public class AT_RegionsDataManager {
 
 		RegionsPluginData regionsPluginData = regionPluginBuilder.build();
 
-		TestSimulation.executeSimulation(RegionsTestPluginFactory.factory(0, seed, TimeTrackingPolicy.TRACK_TIME, testPluginData).setRegionsPluginData(regionsPluginData).getPlugins());
+		TestSimulation.executeSimulation(RegionsTestPluginFactory.factory(0, seed, TimeTrackingPolicy.TRACK_TIME, testPluginData)//
+				.setRegionsPluginData(regionsPluginData)//
+				.getPlugins());
 
 
 
