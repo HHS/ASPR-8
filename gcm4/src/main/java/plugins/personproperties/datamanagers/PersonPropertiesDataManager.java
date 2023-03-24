@@ -105,11 +105,11 @@ public final class PersonPropertiesDataManager extends DataManager {
 		validatePersonPropertyIdIsUnknown(personPropertyId);
 		boolean checkAllPeopleHaveValues = propertyDefinition.getDefaultValue().isEmpty();
 
-		for (Pair<PersonId, Object> pair : propertyDefinitionInitialization.getPropertyValues()) {			
+		for (Pair<PersonId, Object> pair : propertyDefinitionInitialization.getPropertyValues()) {
 			PersonId personId = pair.getFirst();
 			validatePersonExists(personId);
 		}
-		
+
 		if (checkAllPeopleHaveValues) {
 			addNonDefaultProperty(personPropertyId);
 			int idLimit = peopleDataManager.getPersonIdLimit();
@@ -118,7 +118,7 @@ public final class PersonPropertiesDataManager extends DataManager {
 			for (Pair<PersonId, Object> pair : propertyDefinitionInitialization.getPropertyValues()) {
 				PersonId personId = pair.getFirst();
 				int pId = personId.getValue();
-				coverageSet.set(pId);				
+				coverageSet.set(pId);
 			}
 			for (int i = 0; i < idLimit; i++) {
 				if (peopleDataManager.personIndexExists(i)) {
@@ -129,17 +129,17 @@ public final class PersonPropertiesDataManager extends DataManager {
 				}
 			}
 		}
-		
+
 		personPropertyDefinitions.put(personPropertyId, propertyDefinition);
 		final IndexedPropertyManager propertyManager = getIndexedPropertyManager(dataManagerContext, propertyDefinition, 0);
 		personPropertyManagerMap.put(personPropertyId, propertyManager);
-		
+
 		for (Pair<PersonId, Object> pair : propertyDefinitionInitialization.getPropertyValues()) {
 			PersonId personId = pair.getFirst();
 			int pId = personId.getValue();
 			/*
-			 * we do not have to validate the value since it is guaranteed
-			 * to be consistent with the property definition by contract.
+			 * we do not have to validate the value since it is guaranteed to be
+			 * consistent with the property definition by contract.
 			 */
 			Object value = pair.getSecond();
 			propertyManager.setPropertyValue(pId, value);
@@ -176,43 +176,49 @@ public final class PersonPropertiesDataManager extends DataManager {
 
 		nonDefaultChecks = new boolean[nonDefaultBearingPropertyIds.size()];
 
-		int personCount = personPropertiesPluginData.getPersonCount();
+		int maxPersonIndex = personPropertiesPluginData.getMaxPersonIndex();
 
 		if (nonDefaultBearingPropertyIds.isEmpty()) {
-			for (int personIndex = 0; personIndex < personCount; personIndex++) {
+			for (int personIndex = 0; personIndex <= maxPersonIndex; personIndex++) {
+				if (personPropertiesPluginData.personExists(personIndex)) {
+					List<PersonPropertyInitialization> propertyValues = personPropertiesPluginData.getPropertyValues(personIndex);
 
-				List<PersonPropertyInitialization> propertyValues = personPropertiesPluginData.getPropertyValues(personIndex);
+					if (!propertyValues.isEmpty() && !peopleDataManager.personIndexExists(personIndex)) {
+						throw new ContractException(PersonError.UNKNOWN_PERSON_ID);
+					}
 
-				if (!propertyValues.isEmpty() && !peopleDataManager.personIndexExists(personIndex)) {
-					throw new ContractException(PersonError.UNKNOWN_PERSON_ID);
-				}
-
-				for (PersonPropertyInitialization personPropertyInitialization : propertyValues) {
-					Object personPropertyValue = personPropertyInitialization.getValue();
-					PersonPropertyId personPropertyId = personPropertyInitialization.getPersonPropertyId();
-					IndexedPropertyManager propertyManager = personPropertyManagerMap.get(personPropertyId);
-					propertyManager.setPropertyValue(personIndex, personPropertyValue);
+					for (PersonPropertyInitialization personPropertyInitialization : propertyValues) {
+						Object personPropertyValue = personPropertyInitialization.getValue();
+						PersonPropertyId personPropertyId = personPropertyInitialization.getPersonPropertyId();
+						IndexedPropertyManager propertyManager = personPropertyManagerMap.get(personPropertyId);
+						propertyManager.setPropertyValue(personIndex, personPropertyValue);
+					}
 				}
 			}
 
 		} else {
-			for (int personIndex = 0; personIndex < personCount; personIndex++) {
+			for (int personIndex = 0; personIndex <= maxPersonIndex; personIndex++) {
 
-				List<PersonPropertyInitialization> propertyValues = personPropertiesPluginData.getPropertyValues(personIndex);
+				if (personPropertiesPluginData.personExists(personIndex)) {
 
-				if (!propertyValues.isEmpty() && !peopleDataManager.personIndexExists(personIndex)) {
-					throw new ContractException(PersonError.UNKNOWN_PERSON_ID);
+					List<PersonPropertyInitialization> propertyValues = personPropertiesPluginData.getPropertyValues(personIndex);
+
+					if (!propertyValues.isEmpty() && !peopleDataManager.personIndexExists(personIndex)) {
+						throw new ContractException(PersonError.UNKNOWN_PERSON_ID);
+					}
+
+					clearNonDefaultChecks();
+					for (PersonPropertyInitialization personPropertyInitialization : propertyValues) {
+						Object personPropertyValue = personPropertyInitialization.getValue();
+						PersonPropertyId personPropertyId = personPropertyInitialization.getPersonPropertyId();
+						markAssigned(personPropertyId);
+						IndexedPropertyManager propertyManager = personPropertyManagerMap.get(personPropertyId);
+						propertyManager.setPropertyValue(personIndex, personPropertyValue);
+					}
+					verifyNonDefaultChecks();
+
 				}
 
-				clearNonDefaultChecks();
-				for (PersonPropertyInitialization personPropertyInitialization : propertyValues) {
-					Object personPropertyValue = personPropertyInitialization.getValue();
-					PersonPropertyId personPropertyId = personPropertyInitialization.getPersonPropertyId();
-					markAssigned(personPropertyId);
-					IndexedPropertyManager propertyManager = personPropertyManagerMap.get(personPropertyId);
-					propertyManager.setPropertyValue(personIndex, personPropertyValue);
-				}
-				verifyNonDefaultChecks();
 			}
 
 		}
@@ -226,7 +232,9 @@ public final class PersonPropertiesDataManager extends DataManager {
 		PersonPropertiesPluginData.Builder builder = simulationStateContext.get(PersonPropertiesPluginData.Builder.class);
 
 		List<PersonId> people = peopleDataManager.getPeople();
-
+		for (PersonId personId : people) {
+			builder.addPerson(personId);
+		}
 		for (PersonPropertyId personPropertyId : personPropertyDefinitions.keySet()) {
 			PropertyDefinition personPropertyDefinition = personPropertyDefinitions.get(personPropertyId);
 			builder.definePersonProperty(personPropertyId, personPropertyDefinition);
@@ -611,16 +619,15 @@ public final class PersonPropertiesDataManager extends DataManager {
 
 		List<PersonPropertyInitialization> personPropertyAssignments = personConstructionData.getValues(PersonPropertyInitialization.class);
 
-		
 		for (final PersonPropertyInitialization personPropertyAssignment : personPropertyAssignments) {
 			PersonPropertyId personPropertyId = personPropertyAssignment.getPersonPropertyId();
 			final Object personPropertyValue = personPropertyAssignment.getValue();
 			validatePersonPropertyId(personPropertyId);
 			validatePersonPropertyValueNotNull(personPropertyValue);
 			final PropertyDefinition propertyDefinition = personPropertyDefinitions.get(personPropertyId);
-			validateValueCompatibility(personPropertyId, propertyDefinition, personPropertyValue);			
+			validateValueCompatibility(personPropertyId, propertyDefinition, personPropertyValue);
 		}
-		
+
 		if (!nonDefaultBearingPropertyIds.isEmpty()) {
 			clearNonDefaultChecks();
 			for (final PersonPropertyInitialization personPropertyAssignment : personPropertyAssignments) {
@@ -629,7 +636,7 @@ public final class PersonPropertiesDataManager extends DataManager {
 			}
 			verifyNonDefaultChecks();
 		}
-		
+
 		for (final PersonPropertyInitialization personPropertyAssignment : personPropertyAssignments) {
 			PersonPropertyId personPropertyId = personPropertyAssignment.getPersonPropertyId();
 			final Object personPropertyValue = personPropertyAssignment.getValue();

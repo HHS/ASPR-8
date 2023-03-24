@@ -11,7 +11,6 @@ import lesson.plugins.model.ModelPlugin;
 import lesson.plugins.model.ModelReportLabel;
 import lesson.plugins.model.PersonProperty;
 import lesson.plugins.model.Region;
-import lesson.plugins.model.reports.VaccineReport;
 import nucleus.Dimension;
 import nucleus.Experiment;
 import nucleus.Plugin;
@@ -26,8 +25,6 @@ import plugins.personproperties.PersonPropertiesPluginData;
 import plugins.personproperties.reports.PersonPropertyReportPluginData;
 import plugins.regions.RegionsPlugin;
 import plugins.regions.RegionsPluginData;
-import plugins.reports.ReportsPlugin;
-import plugins.reports.ReportsPluginData;
 import plugins.reports.support.NIOReportItemHandler;
 import plugins.reports.support.ReportPeriod;
 import plugins.stochastics.StochasticsPlugin;
@@ -41,18 +38,6 @@ public final class Example_16 {
 	}
 
 	private RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(524055747550937602L);
-
-	private Plugin getReportsPlugin() {
-		ReportsPluginData reportsPluginData = //
-				ReportsPluginData	.builder()//
-
-									.addReport(() -> {
-										return new VaccineReport(ModelReportLabel.VACCINATION)::init;
-									})//
-									.build();
-
-		return ReportsPlugin.getReportsPlugin(reportsPluginData);
-	}
 
 	private NIOReportItemHandler getNIOReportItemHandler() {
 		return NIOReportItemHandler	.builder()//
@@ -215,7 +200,7 @@ public final class Example_16 {
 		/*
 		 * Create the reports
 		 */
-		Plugin reportsPlugin = getReportsPlugin();
+		
 		NIOReportItemHandler nioReportItemHandler = getNIOReportItemHandler();
 
 		/*
@@ -252,7 +237,7 @@ public final class Example_16 {
 					.addPlugin(regionsPlugin)//
 					.addPlugin(peoplePlugin)//
 					.addPlugin(stochasticsPlugin)//
-					.addPlugin(reportsPlugin)//
+					
 
 					.addDimension(getImmunityStartTimeDimension())//
 					.addDimension(getImmunityProbabilityDimension())//

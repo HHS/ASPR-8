@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.math3.random.RandomGenerator;
+import org.apache.commons.math3.util.FastMath;
 import org.junit.jupiter.api.Test;
 
 import nucleus.PluginData;
@@ -46,6 +47,7 @@ public class AT_PersonPropertyPluginData {
 		 */
 		ContractException contractException = assertThrows(ContractException.class, //
 				() -> PersonPropertiesPluginData.builder()//
+				.addPerson(new PersonId(0))
 												.setPersonPropertyValue(new PersonId(0), TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK, true)//
 												.build());//
 		assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
@@ -60,6 +62,7 @@ public class AT_PersonPropertyPluginData {
 					PropertyDefinition propertyDefinition = testPersonPropertyId.getPropertyDefinition();
 					PersonPropertiesPluginData	.builder()//
 												.definePersonProperty(testPersonPropertyId, propertyDefinition)//
+												.addPerson(new PersonId(0))
 												.setPersonPropertyValue(new PersonId(0), TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK, 45)//
 												.build();//
 				});//
@@ -83,6 +86,7 @@ public class AT_PersonPropertyPluginData {
 					PersonPropertiesPluginData	.builder()//
 												.definePersonProperty(prop1, def1)//
 												.definePersonProperty(prop2, def2)//
+												.addPerson(new PersonId(0))//
 												.setPersonPropertyValue(new PersonId(0), prop1, false).build();//
 				});//
 		assertEquals(PropertyError.INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT, contractException.getErrorType());
@@ -208,6 +212,7 @@ public class AT_PersonPropertyPluginData {
 		int personCount = 100;
 		for (int i = 0; i < personCount; i++) {
 			PersonId personId = new PersonId(i);
+			pluginBuilder.addPerson(personId);
 			for (TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.values()) {
 				boolean hasDefault = testPersonPropertyId.getPropertyDefinition().getDefaultValue().isPresent();
 				if (!hasDefault || randomGenerator.nextBoolean()) {
@@ -238,11 +243,11 @@ public class AT_PersonPropertyPluginData {
 		}
 
 		// show that the two plugin datas have the same people
-		int expectedPersonCount = personPropertiesPluginData.getPersonCount();
-		int actualPersonCount = clonePersonPropertiesPluginData.getPersonCount();
+		int expectedPersonCount = personPropertiesPluginData.getMaxPersonIndex();
+		int actualPersonCount = clonePersonPropertiesPluginData.getMaxPersonIndex();
 		assertEquals(expectedPersonCount, actualPersonCount);
 
-		for (int personIndex = 0; personIndex < personPropertiesPluginData.getPersonCount(); personIndex++) {
+		for (int personIndex = 0; personIndex < personPropertiesPluginData.getMaxPersonIndex(); personIndex++) {
 			List<PersonPropertyInitialization> expectedPropertyValues = personPropertiesPluginData.getPropertyValues(personIndex);
 			List<PersonPropertyInitialization> actualPropertyValues = clonePersonPropertiesPluginData.getPropertyValues(personIndex);
 			assertEquals(expectedPropertyValues, actualPropertyValues);
@@ -273,6 +278,7 @@ public class AT_PersonPropertyPluginData {
 			List<PersonPropertyInitialization> list = new ArrayList<>();
 			expectedPropertyValues.add(list);
 			PersonId personId = new PersonId(i);
+			personPropertyBuilder.addPerson(personId);
 			int propertyCount = randomGenerator.nextInt(3);
 			for (int j = 0; j < propertyCount; j++) {
 				TestPersonPropertyId testPersonPropertyId = TestPersonPropertyId.getRandomPersonPropertyId(randomGenerator);
@@ -368,8 +374,8 @@ public class AT_PersonPropertyPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = PersonPropertiesPluginData.class, name = "getPersonCount", args = {})
-	public void testGetPersonCount() {
+	@UnitTestMethod(target = PersonPropertiesPluginData.class, name = "getMaxPersonIndex", args = {})
+	public void testGetMaxPersonIndex() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(3422619272027560361L);
 
 		// create a builder
@@ -383,15 +389,14 @@ public class AT_PersonPropertyPluginData {
 		}
 
 		int personCount = 50;
-		int expectedPersonCount = 0;
+		int expectedMaxPersonIndex = -1;
 		for (int i = 0; i < personCount; i++) {
-
+			
 			if (randomGenerator.nextBoolean()) {
 				PersonId personId = new PersonId(i);
-				int propertyCount = randomGenerator.nextInt(5);
-				if (propertyCount > 0) {
-					expectedPersonCount = i + 1;
-				}
+				personPropertyBuilder.addPerson(personId);
+				expectedMaxPersonIndex = FastMath.max(expectedMaxPersonIndex, i);
+				int propertyCount = randomGenerator.nextInt(5);				
 				for (int j = 0; j < propertyCount; j++) {
 					TestPersonPropertyId testPersonPropertyId = propertiesWithDefaultValues.get(randomGenerator.nextInt(propertiesWithDefaultValues.size()));
 					Object value = testPersonPropertyId.getRandomPropertyValue(randomGenerator);
@@ -406,9 +411,9 @@ public class AT_PersonPropertyPluginData {
 		/*
 		 * Show that the personCount matches expectations
 		 */
-		int actualPersonCount = personPropertyInitialData.getPersonCount();
+		int actualMaxPersonIndex = personPropertyInitialData.getMaxPersonIndex();
 
-		assertEquals(expectedPersonCount, actualPersonCount);
+		assertEquals(expectedMaxPersonIndex, actualMaxPersonIndex);
 
 	}
 
