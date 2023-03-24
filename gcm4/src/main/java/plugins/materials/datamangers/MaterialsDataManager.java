@@ -47,6 +47,7 @@ import plugins.materials.support.MaterialsProducerConstructionData;
 import plugins.materials.support.MaterialsProducerId;
 import plugins.materials.support.MaterialsProducerPropertyDefinitionInitialization;
 import plugins.materials.support.MaterialsProducerPropertyId;
+import plugins.materials.support.StageConversionInfo;
 import plugins.materials.support.StageId;
 import plugins.regions.datamanagers.RegionsDataManager;
 import plugins.regions.support.RegionError;
@@ -381,6 +382,7 @@ public final class MaterialsDataManager extends DataManager {
 	}
 
 	private void recordSimulationState(DataManagerContext dataManagerContext, SimulationStateContext simulationStateContext) {
+		
 		MaterialsPluginData.Builder builder = simulationStateContext.get(MaterialsPluginData.Builder.class);
 
 		Set<MaterialsProducerPropertyId> materialsProducerPropertyIds = getMaterialsProducerPropertyIds();
@@ -424,7 +426,7 @@ public final class MaterialsDataManager extends DataManager {
 					builder.addBatchToStage(stageId, batchId);
 
 					for (BatchPropertyId batchPropertyId : getBatchPropertyIds(batchMaterial)) {
-						Object propertyValue = getBatchPropertyValue(batchId, batchPropertyId);
+						Object propertyValue = getBatchPropertyValue(batchId, batchPropertyId);						
 						builder.setBatchPropertyValue(batchId, batchPropertyId, propertyValue);
 					}
 				}
@@ -435,7 +437,7 @@ public final class MaterialsDataManager extends DataManager {
 				double batchAmount = getBatchAmount(batchId);
 				builder.addBatch(batchId, batchMaterial, batchAmount, materialsProducerId);
 				for (BatchPropertyId batchPropertyId : getBatchPropertyIds(batchMaterial)) {
-					Object propertyValue = getBatchPropertyValue(batchId, batchPropertyId);
+					Object propertyValue = getBatchPropertyValue(batchId, batchPropertyId);					
 					builder.setBatchPropertyValue(batchId, batchPropertyId, propertyValue);
 				}
 			}
@@ -1630,6 +1632,12 @@ public final class MaterialsDataManager extends DataManager {
 			throw new ContractException(MaterialsError.NULL_BATCH_CONSTRUCTION_INFO);
 		}
 	}
+	
+	private void validateStageConversionInfoNotNull(final StageConversionInfo stageConversionInfo) {
+		if (stageConversionInfo == null) {
+			throw new ContractException(MaterialsError.NULL_STAGE_CONVERSION_INFO);
+		}
+	}
 
 	private static record BatchMaterialTransferMutionEvent(BatchId sourceBatchId, BatchId destinationBatchId, double amount) implements Event {
 	}
@@ -2415,7 +2423,7 @@ public final class MaterialsDataManager extends DataManager {
 
 	}
 
-	private static record ConvertStageToBatchMutationEvent(StageId stageId, BatchId batchId, MaterialId materialId, double amount) implements Event {
+	private static record ConvertStageToBatchMutationEvent(StageConversionInfo stageConversionInfo, BatchId batchId) implements Event {
 	}
 
 	/**
@@ -2430,34 +2438,47 @@ public final class MaterialsDataManager extends DataManager {
 	 *
 	 * 
 	 * 
-	 *             <li>{@linkplain MaterialsError#NULL_MATERIAL_ID} if the
-	 *             material id is null</li>
 	 *             <li>{@linkplain MaterialsError#UNKNOWN_MATERIAL_ID} if the
 	 *             material id is unknown</li>
-	 *             <li>{@linkplain MaterialsError#NULL_STAGE_ID} if the stage id
-	 *             is null</li>
+	 *             
 	 *             <li>{@linkplain MaterialsError#UNKNOWN_STAGE_ID} if stage id
 	 *             is unknown</li>
+	 *             
 	 *             <li>{@linkplain MaterialsError#OFFERED_STAGE_UNALTERABLE} if
 	 *             the stage is offered</li>
-	 *             <li>{@linkplain MaterialsError#NON_FINITE_MATERIAL_AMOUNT} if
-	 *             the material amount is not finite</li>
-	 *             <li>{@linkplain MaterialsError#NEGATIVE_MATERIAL_AMOUNT} if
-	 *             the material amount is negative</li>
+	 *             
+	 *             <li>{@linkplain MaterialsError#NULL_STAGE_CONVERSION_INFO}
+	 *             if the stage conversion info in the event is null</li>
+	 * 
+	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if the
+	 *             batch construction info contains an unknown batch property
+	 *             id</li>
+	 * 
+	 *             <li>{@linkplain PropertyError#INCOMPATIBLE_VALUE} if the
+	 *             batch construction info contains a batch property value that
+	 *             is incompatible with the corresponding property def</li>
+	 * 
+	 *             <li>{@linkplain PropertyError#INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT}
+	 *             if the batch construction does not contain a batch property
+	 *             value assignment for a batch property that does not have a
+	 *             default value</li>             
+	 *             
 	 * 
 	 * 
 	 */
-	public BatchId convertStageToBatch(StageId stageId, MaterialId materialId, double amount) {
+	public BatchId convertStageToBatch(StageConversionInfo stageConversionInfo) {
 		BatchId batchId = new BatchId(nextBatchRecordId++);
-		dataManagerContext.releaseMutationEvent(new ConvertStageToBatchMutationEvent(stageId, batchId, materialId, amount));
+		dataManagerContext.releaseMutationEvent(new ConvertStageToBatchMutationEvent(stageConversionInfo, batchId));
 		return batchId;
 	}
 
 	private void handleConvertStageToBatchMutationEvent(DataManagerContext dataManagerContext, ConvertStageToBatchMutationEvent convertStageToBatchMutationEvent) {
-		MaterialId materialId = convertStageToBatchMutationEvent.materialId();
+		StageConversionInfo stageConversionInfo = convertStageToBatchMutationEvent.stageConversionInfo;
+		validateStageConversionInfoNotNull(stageConversionInfo);
+		MaterialId materialId = stageConversionInfo.getMaterialId();
 		BatchId batchId = convertStageToBatchMutationEvent.batchId();
-		StageId stageId = convertStageToBatchMutationEvent.stageId();
-		double amount = convertStageToBatchMutationEvent.amount();
+		StageId stageId = stageConversionInfo.getStageId();
+		double amount = stageConversionInfo.getAmount();
 
 		validateMaterialId(materialId);
 		validateStageId(stageId);
@@ -2465,6 +2486,25 @@ public final class MaterialsDataManager extends DataManager {
 		final MaterialsProducerId materialsProducerId = stageRecord.materialsProducerRecord.materialProducerId;
 		validateStageIsNotOffered(stageId);
 		validateNonnegativeFiniteMaterialAmount(amount);
+		
+		final Map<BatchPropertyId, Object> propertyValues = stageConversionInfo.getPropertyValues();
+		boolean checkPropertyCoverage = !nonDefaultBearingBatchPropertyIds.get(materialId).isEmpty();
+
+		for (final BatchPropertyId batchPropertyId : propertyValues.keySet()) {
+			validateBatchPropertyId(materialId, batchPropertyId);
+			final Object batchPropertyValue = propertyValues.get(batchPropertyId);
+			final PropertyDefinition propertyDefinition = batchPropertyDefinitions.get(materialId).get(batchPropertyId);
+			validateBatchPropertyValueNotNull(batchPropertyValue);
+			validateValueCompatibility(batchPropertyId, propertyDefinition, batchPropertyValue);
+		}
+
+		if (checkPropertyCoverage) {
+			clearNonDefaultBatchChecks(materialId);
+			for (final BatchPropertyId batchPropertyId : propertyValues.keySet()) {
+				markBatchPropertyAssigned(materialId, batchPropertyId);
+			}
+			verifyNonDefaultBatchChecks(materialId);
+		}
 
 		// add the new batch
 		final MaterialsProducerRecord materialsProducerRecord = materialsProducerMap.get(materialsProducerId);
@@ -2477,12 +2517,11 @@ public final class MaterialsDataManager extends DataManager {
 		materialsProducerRecord.inventory.add(newBatchRecord);
 		batchRecords.put(newBatchRecord.batchId, newBatchRecord);
 
-		final Map<BatchPropertyId, PropertyValueRecord> map = new LinkedHashMap<>();
-		final Set<BatchPropertyId> batchPropertyIds = batchPropertyIdMap.get(materialId);
-		for (final BatchPropertyId batchPropertyId : batchPropertyIds) {
-			final PropertyDefinition propertyDefinition = getBatchPropertyDefinition(materialId, batchPropertyId);
-			final PropertyValueRecord propertyValueRecord = new PropertyValueRecord(dataManagerContext);
-			propertyValueRecord.setPropertyValue(propertyDefinition.getDefaultValue());
+		final Map<BatchPropertyId, PropertyValueRecord> map = new LinkedHashMap<>();		
+		for (final BatchPropertyId batchPropertyId : propertyValues.keySet()) {
+			Object propertyValue = propertyValues.get(batchPropertyId);
+			final PropertyValueRecord propertyValueRecord = new PropertyValueRecord(dataManagerContext);			
+			propertyValueRecord.setPropertyValue(propertyValue);
 			map.put(batchPropertyId, propertyValueRecord);
 		}
 		batchPropertyMap.put(newBatchRecord.batchId, map);

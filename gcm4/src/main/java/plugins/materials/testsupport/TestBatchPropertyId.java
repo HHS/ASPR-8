@@ -31,7 +31,7 @@ public enum TestBatchPropertyId implements BatchPropertyId {
 			TestMaterialId.MATERIAL_1, //
 			PropertyDefinition	.builder()//
 								.setType(Integer.class)//
-								//.setDefaultValue(0)//no default value
+								// .setDefaultValue(0)//no default value
 								.setPropertyValueMutability(true)//
 								.setTimeTrackingPolicy(TimeTrackingPolicy.DO_NOT_TRACK_TIME)//
 								.build() //
@@ -40,7 +40,7 @@ public enum TestBatchPropertyId implements BatchPropertyId {
 			TestMaterialId.MATERIAL_1, //
 			PropertyDefinition	.builder()//
 								.setType(Double.class)//
-								//.setDefaultValue(0.0)//no default
+								// .setDefaultValue(0.0)//no default
 								.setPropertyValueMutability(true)//
 								.setTimeTrackingPolicy(TimeTrackingPolicy.DO_NOT_TRACK_TIME)//
 								.build() //
@@ -167,6 +167,34 @@ public enum TestBatchPropertyId implements BatchPropertyId {
 	}
 
 	/**
+	 * Returns a TestBatchPropertyId that is associated with the given material
+	 * id and whose associated property definition is marked as mutable.
+	 */
+	public Object getRandomBatchPropertyValue(RandomGenerator randomGenerator) {
+		switch (this) {
+		case BATCH_PROPERTY_1_1_BOOLEAN_IMMUTABLE_NO_TRACK:
+		case BATCH_PROPERTY_2_1_BOOLEAN_MUTABLE_TRACK:
+		case BATCH_PROPERTY_3_1_BOOLEAN_MUTABLE_NO_TRACK:
+			return randomGenerator.nextBoolean();
+
+		case BATCH_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK:
+		case BATCH_PROPERTY_2_2_INTEGER_IMMUTABLE_TRACK:
+		case BATCH_PROPERTY_3_2_INTEGER_MUTABLE_NO_TRACK:
+			return randomGenerator.nextInt();
+
+		case BATCH_PROPERTY_1_3_DOUBLE_MUTABLE_NO_TRACK:
+		case BATCH_PROPERTY_2_3_DOUBLE_MUTABLE_TRACK:
+		case BATCH_PROPERTY_3_3_DOUBLE_IMMUTABLE_NO_TRACK:
+			return randomGenerator.nextDouble();
+
+		default:
+			throw new RuntimeException("unhandled case " + this);
+
+		}
+
+	}
+
+	/**
 	 * Returns a randomly selected value that is compatible with this member's
 	 * associated property definition.
 	 * 
@@ -192,7 +220,7 @@ public enum TestBatchPropertyId implements BatchPropertyId {
 		case BATCH_PROPERTY_3_3_DOUBLE_IMMUTABLE_NO_TRACK:
 			return randomGenerator.nextDouble();
 		default:
-			
+
 			throw new RuntimeException("unhandled case: " + this);
 
 		}
