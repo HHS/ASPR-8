@@ -8,8 +8,13 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.translatorSpecs.M
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.translatorSpecs.MaterialsProducerIdTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.translatorSpecs.MaterialsProducerPropertyIdTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.translatorSpecs.StageIdTranslatorSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.translatorSpecs.TestBatchPropertyIdTranslatorSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.translatorSpecs.TestMaterialIdTranslatorSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.translatorSpecs.TestMaterialsProducerIdTranslatorSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.translatorSpecs.TestMaterialsProducerPropertyIdTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.PropertiesTranslatorId;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.ResourcesTranslatorId;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.translatorSpecs.TestResourceIdTranslatorSpec;
 import plugins.materials.MaterialsPluginData;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.input.BatchIdInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.input.MaterialsPluginDataInput;
@@ -33,6 +38,11 @@ public class MaterialsTranslator {
                     translatorContext.addTranslatorSpec(new BatchIdTranslatorSpec());
                     translatorContext.addTranslatorSpec(new StageIdTranslatorSpec());
                     translatorContext.addTranslatorSpec(new BatchPropertyIdTranslatorSpec());
+                    translatorContext.addTranslatorSpec(new TestResourceIdTranslatorSpec());
+                    translatorContext.addTranslatorSpec(new TestBatchPropertyIdTranslatorSpec());
+                    translatorContext.addTranslatorSpec(new TestMaterialIdTranslatorSpec());
+                    translatorContext.addTranslatorSpec(new TestMaterialsProducerIdTranslatorSpec());
+                    translatorContext.addTranslatorSpec(new TestMaterialsProducerPropertyIdTranslatorSpec());
 
                     translatorContext
                             .addFieldToIncludeDefaultValue(BatchIdInput.getDescriptor().findFieldByName("id"));

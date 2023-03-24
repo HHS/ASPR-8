@@ -17,15 +17,10 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.gcm.translation.protobuf.core.TranslatorController;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.translatorSpecs.TestBatchPropertyIdTranslatorSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.translatorSpecs.TestMaterialIdTranslatorSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.translatorSpecs.TestMaterialsProducerIdTranslatorSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.translatorSpecs.TestMaterialsProducerPropertyIdTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.PeopleTranslator;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.PropertiesTranslator;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.RegionsTranslator;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.ResourcesTranslator;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.translatorSpecs.TestResourceIdTranslatorSpec;
 import nucleus.PluginData;
 import plugins.materials.MaterialsPluginData;
 import plugins.materials.support.BatchId;
@@ -66,11 +61,7 @@ public class AppTest {
 				.addTranslator(ResourcesTranslator.getTranslator())
 				.addTranslator(RegionsTranslator.getTranslatorModule())
 				.addTranslator(PeopleTranslator.getTranslator())
-				.addTranslatorSpec(new TestResourceIdTranslatorSpec())
-				.addTranslatorSpec(new TestBatchPropertyIdTranslatorSpec())
-				.addTranslatorSpec(new TestMaterialIdTranslatorSpec())
-				.addTranslatorSpec(new TestMaterialsProducerIdTranslatorSpec())
-				.addTranslatorSpec(new TestMaterialsProducerPropertyIdTranslatorSpec())
+
 				.build();
 
 		List<PluginData> pluginDatas = translatorController.readInput().getPluginDatas();
