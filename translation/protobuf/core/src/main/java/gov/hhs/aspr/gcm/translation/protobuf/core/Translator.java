@@ -188,11 +188,6 @@ public final class Translator {
         }
         Set<Reader> readers = this.data.readers.keySet();
 
-        if(readers.size() > 1) {
-            throw new RuntimeException(
-                    "There should be at most 1 plugin data file for a given translator.");
-        }
-
         for (Reader reader : readers) {
             readerContext.readPluginDataInput(reader, this.data.readers.get(reader).newBuilderForType());
         }

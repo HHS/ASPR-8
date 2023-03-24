@@ -17,6 +17,7 @@ import gov.hhs.aspr.gcm.translation.protobuf.core.Translator;
 import gov.hhs.aspr.gcm.translation.protobuf.core.TranslatorController;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.PeopleTranslator;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.input.PersonPropertiesPluginDataInput;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.reports.input.PersonPropertyReportPluginDataInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.PropertiesTranslator;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.ReportsTranslator;
 import nucleus.PluginData;
@@ -59,6 +60,8 @@ public class AppTest {
                         PersonPropertiesPluginDataInput.getDefaultInstance())
                 .addOutputFile(outputFilePath.resolve(pluginDataOutputFileName).toString(),
                         PersonPropertiesPluginData.class)
+                .addInputFile(inputFilePath.resolve(personPropertyReportPluginDataInputFileName).toString(),
+                        PersonPropertyReportPluginDataInput.getDefaultInstance())
                 .addOutputFile(outputFilePath.resolve(personPropertyReportPluginDataOutputFileName).toString(),
                         PersonPropertyReportPluginData.class)
                 .build();
@@ -73,6 +76,8 @@ public class AppTest {
         List<PluginData> pluginDatas = translatorController.readInput().getPluginDatas();
 
         PersonPropertiesPluginData personPropertiesPluginData = (PersonPropertiesPluginData) pluginDatas.get(0);
+        PersonPropertyReportPluginData personPropertyReportPluginData = (PersonPropertyReportPluginData) pluginDatas
+                .get(1);
 
         long seed = 4684903523797799712L;
         int initialPoptulation = 100;
@@ -122,8 +127,6 @@ public class AppTest {
 
         }
 
-        translatorController.writeOutput();
-
         ReportLabel reportLabel = new SimpleReportLabel("report label");
         ReportPeriod reportPeriod = ReportPeriod.DAILY;
 
@@ -140,6 +143,19 @@ public class AppTest {
             }
         }
 
-        translatorController.writePluginDataOutput(personPropertyReportPluginDataBuilder.build());
+        PersonPropertyReportPluginData expectedPluginData = personPropertyReportPluginDataBuilder.build();
+
+        assertEquals(reportLabel, personPropertyReportPluginData.getReportLabel());
+        assertEquals(reportPeriod, personPropertyReportPluginData.getReportPeriod());
+
+        assertEquals(expectedPluginData.getDefaultInclusionPolicy(),
+                personPropertyReportPluginData.getDefaultInclusionPolicy());
+
+        assertEquals(expectedPluginData.getIncludedProperties(),
+                personPropertyReportPluginData.getIncludedProperties());
+        assertEquals(expectedPluginData.getExcludedProperties(),
+                personPropertyReportPluginData.getExcludedProperties());
+
+        translatorController.writeOutput();
     }
 }
