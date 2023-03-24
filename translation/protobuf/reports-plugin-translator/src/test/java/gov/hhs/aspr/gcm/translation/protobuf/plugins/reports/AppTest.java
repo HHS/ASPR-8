@@ -1,4 +1,4 @@
-package gov.hhs.aspr.gcm.translation.protobuf.plugins.properties;
+package gov.hhs.aspr.gcm.translation.protobuf.plugins.reports;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -8,7 +8,6 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.gcm.translation.protobuf.core.TranslatorController;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.ReportsTranslator;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.input.ReportLabelInput;
 import plugins.reports.support.ReportLabel;
 import plugins.reports.support.SimpleReportLabel;
@@ -29,21 +28,24 @@ public class AppTest {
         
         outputFilePath.toFile().mkdir();
 
-        String inputFileName = "input.json";
-        String outputFileName = "output.json";
+        String reportLabelInputFileName = "reportLabelInput.json";
+        String reportLabelOutputFileName = "reportLabelOutput.json";
 
         TranslatorController translatorController = TranslatorController.builder()
                 .addTranslator(ReportsTranslator.builder()
-                        .addInputFile(inputFilePath.resolve(inputFileName).toString(), ReportLabelInput.getDefaultInstance())
-                        .addOutputFile(outputFilePath.resolve(outputFileName).toString(), ReportLabel.class)
+                        .addInputFile(inputFilePath.resolve(reportLabelInputFileName).toString(), ReportLabelInput.getDefaultInstance())
+                        .addOutputFile(outputFilePath.resolve(reportLabelOutputFileName).toString(), ReportLabel.class)
                         .build())
                 .build();
 
-        // List<Object> objects = translatorController.readInput().getObjects();
+        List<Object> objects = translatorController.readInput().getObjects();
 
-        // ReportLabel label = (ReportLabel) objects.get(0);
+        ReportLabel label = (ReportLabel) objects.get(0);
 
-        // translatorController.writeObjectOutput(new SimpleReportLabel("TestReportLabel"));
+
+        assertEquals(new SimpleReportLabel("report label"), label);
+
+        translatorController.writeOutput();
 
     }
 }

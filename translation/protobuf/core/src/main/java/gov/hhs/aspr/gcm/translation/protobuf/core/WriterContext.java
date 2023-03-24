@@ -26,6 +26,10 @@ public class WriterContext {
         this.translatorController.writeJsonOutput(writer, simObject);
     }
 
+    public void writeJsonOutput(Writer writer, Object simObject, Class<?> superClass) {
+        this.translatorController.writeJsonOutput(writer, simObject, superClass);
+    }
+
     public Integer getScenarioId() {
         return this.scenarioId;
     }

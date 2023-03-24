@@ -184,6 +184,11 @@ public class TranslatorCore {
         writeJson(writer, message);
     }
 
+    public <U extends Message> void writeJson(Writer writer, Object simObject, Class<?> superClass) {
+        U message = convertSimObject(simObject, superClass);
+        writeJson(writer, message);
+    }
+
     public <U extends Message> void writeJson(Writer writer, Object simObject) {
         U message = convertSimObject(simObject);
         writeJson(writer, message);
