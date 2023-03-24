@@ -39,7 +39,30 @@ public class TestSimulation {
 			throw new ContractException(NucleusError.NULL_OUTPUT_HANDLER,
 					"Output consumer was not set. Either set it or call the other version of this method that doesn't take a outputConsumer as a parameter.");
 		}
-		_executeSimulation(pluginsToAdd, outputConsumer);
+		_executeSimulation(pluginsToAdd, outputConsumer,false);
+	}
+	
+	/**
+	 * Executes a simulation instance
+	 * 
+	 * @throws ContractException
+	 *             <li>{@linkplain NucleusError#NULL_OUTPUT_HANDLER} if
+	 *             outputConsumer is null</li>
+	 *             <li>{@linkplain NucleusError#NULL_PLUGIN} if pluginsToAdd is
+	 *             null</li>
+	 *             <li>{@linkplain NucleusError#EMPTY_PLUGIN_LIST} if
+	 *             pluginsToAdd is an empty list</li>
+	 *             <li>{@linkplain NucleusError#NULL_PLUGIN} if pluginsToAdd
+	 *             contains a null plugin</li>
+	 *             <li>{@linkplain TestError#TEST_EXECUTION_FAILURE} if the
+	 *             simulation does not complete successfully</li>
+	 */
+	public static void executeSimulation(List<Plugin> pluginsToAdd, TestOutputConsumer outputConsumer,  boolean produceSimulationState) {
+		if (outputConsumer == null) {
+			throw new ContractException(NucleusError.NULL_OUTPUT_HANDLER,
+					"Output consumer was not set. Either set it or call the other version of this method that doesn't take a outputConsumer as a parameter.");
+		}
+		_executeSimulation(pluginsToAdd, outputConsumer,produceSimulationState);
 	}
 
 	/**
@@ -61,7 +84,7 @@ public class TestSimulation {
 		List<Plugin> pluginsToAdd = new ArrayList<>();
 		pluginsToAdd.add(plugin);
 		
-		_executeSimulation(pluginsToAdd, outputConsumer);
+		_executeSimulation(pluginsToAdd, outputConsumer,false);
 	}
 	
 	/**
@@ -78,7 +101,7 @@ public class TestSimulation {
 	 *             simulation does not complete successfully</li>
 	 */
 	public static void executeSimulation(List<Plugin> pluginsToAdd) {
-		_executeSimulation(pluginsToAdd, new TestOutputConsumer());
+		_executeSimulation(pluginsToAdd, new TestOutputConsumer(),false);
 	}
 
 	/**
@@ -94,10 +117,10 @@ public class TestSimulation {
 	public static void executeSimulation(Plugin plugin) {
 		List<Plugin> pluginsToAdd = new ArrayList<>();
 		pluginsToAdd.add(plugin);
-		_executeSimulation(pluginsToAdd, new TestOutputConsumer());
+		_executeSimulation(pluginsToAdd, new TestOutputConsumer(),false);
 	}
 
-	private static void _executeSimulation(List<Plugin> pluginsToAdd, TestOutputConsumer outputConsumer) {
+	private static void _executeSimulation(List<Plugin> pluginsToAdd, TestOutputConsumer outputConsumer, boolean produceSimulationState) {
 		if (outputConsumer == null) {
 			throw new ContractException(NucleusError.NULL_OUTPUT_HANDLER,
 					"Output consumer was not set. Either set it or call the other version of this method that doesn't take a outputConsumer as a parameter.");
@@ -121,7 +144,7 @@ public class TestSimulation {
 
 		// build and execute the engine
 		builder//
-		.setProduceSimulationStateOnHalt(false)//
+		.setProduceSimulationStateOnHalt(produceSimulationState)//
 		.setOutputConsumer(outputConsumer)//
 		.build().execute();
 

@@ -110,7 +110,7 @@ public class PersonPropertiesTestPluginFactory {
 
 			Plugin peoplePlugin = PeoplePlugin.getPeoplePlugin(this.data.peoplePluginData);
 
-			Plugin regionsPlugin = RegionsPlugin.getRegionsPlugin(this.data.regionsPluginData);
+			Plugin regionsPlugin = RegionsPlugin.builder().setRegionsPluginData(this.data.regionsPluginData).getRegionsPlugin();
 
 			Plugin stochasticPlugin = StochasticsPlugin.getStochasticsPlugin(this.data.stochasticsPluginData);
 

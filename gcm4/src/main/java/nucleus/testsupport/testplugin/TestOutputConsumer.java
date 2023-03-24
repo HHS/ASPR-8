@@ -4,8 +4,11 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Consumer;
 
+import nucleus.Plugin;
+import nucleus.PluginData;
 import util.errors.ContractException;
 import util.wrappers.MutableInteger;
 
@@ -72,6 +75,20 @@ public class TestOutputConsumer implements Consumer<Object> {
 		}
 
 		return retMap;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public <T extends PluginData> Optional<T> getPluginData(Class<T> classRef) {
+
+		Map<Plugin, Integer> outputItems = getOutputItems(Plugin.class);
+		for (Plugin plugin : outputItems.keySet()) {
+			for (PluginData pluginData : plugin.getPluginDatas()) {
+				if (pluginData.getClass() == classRef) {
+					return Optional.of((T) pluginData);
+				}
+			}
+		}
+		return Optional.empty();
 	}
 
 	

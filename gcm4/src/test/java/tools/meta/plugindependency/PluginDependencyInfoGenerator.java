@@ -294,7 +294,7 @@ public class PluginDependencyInfoGenerator {
 		addToGraph(pluginDependencyGraph, PeoplePlugin.getPeoplePlugin(PeoplePluginData.builder().build()));
 		addToGraph(pluginDependencyGraph, PersonPropertiesPlugin.builder().setPersonPropertiesPluginData(PersonPropertiesPluginData.builder().build()).getPersonPropertyPlugin());
 		
-		addToGraph(pluginDependencyGraph, RegionsPlugin.getRegionsPlugin(RegionsPluginData.builder().build()));
+		addToGraph(pluginDependencyGraph, RegionsPlugin.builder().setRegionsPluginData(RegionsPluginData.builder().build()).getRegionsPlugin());
 		addToGraph(pluginDependencyGraph, ReportsPlugin.getReportsPlugin(ReportsPluginData.builder().build()));
 		addToGraph(pluginDependencyGraph, ResourcesPlugin.builder().setResourcesPluginData(ResourcesPluginData.builder().build()).getResourcesPlugin());
 		addToGraph(pluginDependencyGraph, StochasticsPlugin.getStochasticsPlugin(StochasticsPluginData.builder().setSeed(0L).build()));
