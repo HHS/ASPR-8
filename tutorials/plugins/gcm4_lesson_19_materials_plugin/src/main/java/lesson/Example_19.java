@@ -245,7 +245,7 @@ public final class Example_19 {
 			regionsPluginDataBuilder.addRegion(new Region(i));
 		}
 		final RegionsPluginData regionsPluginData = regionsPluginDataBuilder.build();
-		return RegionsPlugin.getRegionsPlugin(regionsPluginData);
+		return RegionsPlugin.builder().setRegionsPluginData(regionsPluginData).getRegionsPlugin();
 	}
 
 	

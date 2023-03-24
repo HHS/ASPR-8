@@ -20,11 +20,8 @@ import plugins.people.PeoplePluginData;
 import plugins.people.support.PersonId;
 import plugins.regions.RegionsPlugin;
 import plugins.regions.RegionsPluginData;
-import plugins.regions.reports.RegionPropertyReport;
-import plugins.regions.reports.RegionTransferReport;
+import plugins.regions.reports.RegionPropertyReportPluginData;
 import plugins.regions.reports.RegionTransferReportPluginData;
-import plugins.reports.ReportsPlugin;
-import plugins.reports.ReportsPluginData;
 import plugins.reports.support.NIOReportItemHandler;
 import plugins.reports.support.ReportPeriod;
 import plugins.stochastics.StochasticsPlugin;
@@ -41,26 +38,6 @@ public final class Example_15 {
 	private List<Region> initialRegions = new ArrayList<>();
 	private RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(524055747550937602L);
 
-	private Plugin getReportsPlugin() {
-		ReportsPluginData reportsPluginData = //
-				ReportsPluginData	.builder()//
-									.addReport(() -> {
-										return new RegionPropertyReport(ModelReportLabel.REGION_PROPERTY_REPORT)//
-										::init;
-									})//
-									.addReport(() -> {
-										return new RegionTransferReport(//
-												RegionTransferReportPluginData	.builder()//
-																				.setReportLabel(ModelReportLabel.REGION_TRANSFER_REPORT)//
-																				.setReportPeriod(ReportPeriod.END_OF_SIMULATION)//
-																				.build()//
-										)::init;//
-									})//
-									
-									.build();
-
-		return ReportsPlugin.getReportsPlugin(reportsPluginData);
-	}
 
 	private NIOReportItemHandler getNIOReportItemHandler() {
 		return NIOReportItemHandler	.builder()//
@@ -108,7 +85,24 @@ public final class Example_15 {
 		}
 
 		RegionsPluginData regionsPluginData = regionsPluginDataBuilder.build();
-		return RegionsPlugin.getRegionsPlugin(regionsPluginData);
+			
+		
+		RegionPropertyReportPluginData regionPropertyReportPluginData = //
+				RegionPropertyReportPluginData.builder()//
+				.setReportLabel(ModelReportLabel.REGION_PROPERTY_REPORT)//
+				.build();
+		
+		RegionTransferReportPluginData regionTransferReportPluginData = RegionTransferReportPluginData	.builder()//
+		.setReportLabel(ModelReportLabel.REGION_TRANSFER_REPORT)//
+		.setReportPeriod(ReportPeriod.END_OF_SIMULATION)//
+		.build();//
+		
+		
+		return RegionsPlugin.builder()//
+				.setRegionsPluginData(regionsPluginData)//
+				.setRegionPropertyReportPluginData(regionPropertyReportPluginData)//
+				.setRegionTransferReportPluginData(regionTransferReportPluginData)//
+				.getRegionsPlugin();
 	}
 
 	private void initializePeopleAndRegions() {
@@ -165,7 +159,7 @@ public final class Example_15 {
 		/*
 		 * Create the reports
 		 */
-		Plugin reportsPlugin = getReportsPlugin();
+		
 		NIOReportItemHandler nioReportItemHandler = getNIOReportItemHandler();
 
 		/*
@@ -202,8 +196,7 @@ public final class Example_15 {
 					.addPlugin(regionsPlugin)//
 					.addPlugin(peoplePlugin)//
 					.addPlugin(stochasticsPlugin)//
-					.addPlugin(vaccinePlugin)//
-					.addPlugin(reportsPlugin)//
+					.addPlugin(vaccinePlugin)//					
 					.addExperimentContextConsumer(nioReportItemHandler)//
 					.addDimension(stochasticsDimension)//
 					.build()//

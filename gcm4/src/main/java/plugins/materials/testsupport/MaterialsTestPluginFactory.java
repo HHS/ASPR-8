@@ -140,7 +140,7 @@ public class MaterialsTestPluginFactory {
 
 			Plugin resourcesPlugin = ResourcesPlugin.builder().setResourcesPluginData(this.data.resourcesPluginData).getResourcesPlugin();
 
-			Plugin regionsPlugin = RegionsPlugin.getRegionsPlugin(this.data.regionsPluginData);
+			Plugin regionsPlugin = RegionsPlugin.builder().setRegionsPluginData(this.data.regionsPluginData).getRegionsPlugin();
 
 			Plugin peoplePlugin = PeoplePlugin.getPeoplePlugin(this.data.peoplePluginData);
 

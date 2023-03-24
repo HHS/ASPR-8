@@ -209,7 +209,7 @@ public class AT_PersonPropertyReport {
 			}
 		}
 		RegionsPluginData regionsPluginData = regionBuilder.build();
-		Plugin regionsPlugin = RegionsPlugin.getRegionsPlugin(regionsPluginData);
+		Plugin regionsPlugin = RegionsPlugin.builder().setRegionsPluginData(regionsPluginData).getRegionsPlugin();
 		plugins.add(regionsPlugin);
 
 		// execute the simulation and gather the report items

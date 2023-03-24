@@ -191,7 +191,7 @@ public final class Example_17 {
 			regionsPluginDataBuilder.addRegion(new Region(i));
 		}
 		RegionsPluginData regionsPluginData = regionsPluginDataBuilder.build();
-		return RegionsPlugin.getRegionsPlugin(regionsPluginData);
+		return RegionsPlugin.builder().setRegionsPluginData(regionsPluginData).getRegionsPlugin();
 	}
 
 	private Dimension getGlobalPropertyDimension(GlobalPropertyId globalPropertyId, String header, double[] values) {
