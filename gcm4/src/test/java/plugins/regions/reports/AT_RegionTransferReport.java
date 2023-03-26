@@ -154,8 +154,6 @@ public class AT_RegionTransferReport {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-
-		TestOutputConsumer actualConsumer = new TestOutputConsumer();
 		
 		RegionTransferReportPluginData regionTransferReportPluginData = RegionTransferReportPluginData.builder().setReportLabel(REPORT_LABEL).setReportPeriod(ReportPeriod.DAILY).build();
 		
@@ -163,7 +161,10 @@ public class AT_RegionTransferReport {
 				.factory(0, 3054641152904904632L, TimeTrackingPolicy.TRACK_TIME, testPluginData).setRegionsPluginData(regionsPluginData)//
 				.setRegionTransferReportPluginData(regionTransferReportPluginData);
 
-		TestSimulation.executeSimulation(factory.getPlugins(), actualConsumer);
+		TestOutputConsumer actualConsumer = TestSimulation	.builder()//
+				.addPlugins(factory.getPlugins())//
+				.build()//
+				.execute();
 
 		Map<ReportItem, Integer> expectedReportItems = expectedConsumer.getOutputItems(ReportItem.class);
 		Map<ReportItem, Integer> actualReportItems = actualConsumer.getOutputItems(ReportItem.class);

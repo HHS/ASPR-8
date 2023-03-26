@@ -2,12 +2,10 @@ package plugins.groups.reports;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.util.List;
 import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 
-import nucleus.Plugin;
 import nucleus.ReportContext;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestOutputConsumer;
@@ -17,6 +15,7 @@ import plugins.groups.GroupsPluginData;
 import plugins.groups.datamanagers.GroupsDataManager;
 import plugins.groups.support.GroupId;
 import plugins.groups.testsupport.GroupsTestPluginFactory;
+import plugins.groups.testsupport.GroupsTestPluginFactory.Factory;
 import plugins.groups.testsupport.TestAuxiliaryGroupTypeId;
 import plugins.groups.testsupport.TestGroupPropertyId;
 import plugins.groups.testsupport.TestGroupTypeId;
@@ -158,15 +157,17 @@ public class AT_GroupPopulationReport {
 		GroupPopulationReportPluginData groupPopulationReportPluginData = GroupPopulationReportPluginData.builder().setReportLabel(REPORT_LABEL).setReportPeriod(ReportPeriod.HOURLY).build(); // (REPORT_LABEL,
 																																																// ReportPeriod.HOURLY);
 
-		List<Plugin> plugins = GroupsTestPluginFactory	.factory(10, 0, 3, 5524610980534223950L, testPluginData)//
-														.setGroupsPluginData(getGroupsPluginData())//
-														.setGroupPopulationReportPluginData(groupPopulationReportPluginData).getPlugins();
+		Factory factory = GroupsTestPluginFactory	.factory(10, 0, 3, 5524610980534223950L, testPluginData)//
+													.setGroupsPluginData(getGroupsPluginData())//
+													.setGroupPopulationReportPluginData(groupPopulationReportPluginData);
 
-		TestOutputConsumer outputConsumer = new TestOutputConsumer();
-		TestSimulation.executeSimulation(plugins, outputConsumer);
+		TestOutputConsumer testOutputConsumer = TestSimulation	.builder()//
+																.addPlugins(factory.getPlugins())//
+																.build()//
+																.execute();
 
 		Map<ReportItem, Integer> expectedReportItems = expectedConsumer.getOutputItems(ReportItem.class);
-		Map<ReportItem, Integer> actualReportItems = outputConsumer.getOutputItems(ReportItem.class);
+		Map<ReportItem, Integer> actualReportItems = testOutputConsumer.getOutputItems(ReportItem.class);
 
 		assertEquals(expectedReportItems, actualReportItems);
 
@@ -274,15 +275,17 @@ public class AT_GroupPopulationReport {
 		GroupPopulationReportPluginData groupPopulationReportPluginData = GroupPopulationReportPluginData.builder().setReportLabel(REPORT_LABEL).setReportPeriod(ReportPeriod.DAILY).build(); // (REPORT_LABEL,
 																																																// ReportPeriod.HOURLY);
 
-		List<Plugin> plugins = GroupsTestPluginFactory	.factory(10, 0, 3, 4023600052052959521L, testPluginData)//
-														.setGroupsPluginData(getGroupsPluginData())//
-														.setGroupPopulationReportPluginData(groupPopulationReportPluginData).getPlugins();
+		Factory factory = GroupsTestPluginFactory	.factory(10, 0, 3, 4023600052052959521L, testPluginData)//
+													.setGroupsPluginData(getGroupsPluginData())//
+													.setGroupPopulationReportPluginData(groupPopulationReportPluginData);
 
-		TestOutputConsumer outputConsumer = new TestOutputConsumer();
-		TestSimulation.executeSimulation(plugins, outputConsumer);
+		TestOutputConsumer testOutputConsumer = TestSimulation	.builder()//
+																.addPlugins(factory.getPlugins())//
+																.build()//
+																.execute();
 
 		Map<ReportItem, Integer> expectedReportItems = expectedConsumer.getOutputItems(ReportItem.class);
-		Map<ReportItem, Integer> actualReportItems = outputConsumer.getOutputItems(ReportItem.class);
+		Map<ReportItem, Integer> actualReportItems = testOutputConsumer.getOutputItems(ReportItem.class);
 
 		assertEquals(expectedReportItems, actualReportItems);
 
@@ -349,18 +352,20 @@ public class AT_GroupPopulationReport {
 		expectedConsumer.accept(getReportItem(ReportPeriod.END_OF_SIMULATION, TestGroupTypeId.GROUP_TYPE_1, 5, 2));
 		expectedConsumer.accept(getReportItem(ReportPeriod.END_OF_SIMULATION, TestGroupTypeId.GROUP_TYPE_2, 3, 1));
 
-		GroupPopulationReportPluginData groupPopulationReportPluginData = GroupPopulationReportPluginData.builder().setReportLabel(REPORT_LABEL).setReportPeriod(ReportPeriod.END_OF_SIMULATION).build(); 
+		GroupPopulationReportPluginData groupPopulationReportPluginData = GroupPopulationReportPluginData	.builder().setReportLabel(REPORT_LABEL).setReportPeriod(ReportPeriod.END_OF_SIMULATION)
+																											.build();
 
+		Factory factory = GroupsTestPluginFactory	.factory(10, 0, 3, 6092832510476200219L, testPluginData)//
+													.setGroupsPluginData(getGroupsPluginData())//
+													.setGroupPopulationReportPluginData(groupPopulationReportPluginData);
 
-		List<Plugin> plugins = GroupsTestPluginFactory	.factory(10, 0, 3, 6092832510476200219L, testPluginData)//
-														.setGroupsPluginData(getGroupsPluginData())//
-														.setGroupPopulationReportPluginData(groupPopulationReportPluginData).getPlugins();
-
-		TestOutputConsumer outputConsumer = new TestOutputConsumer();
-		TestSimulation.executeSimulation(plugins, outputConsumer);
+		TestOutputConsumer testOutputConsumer = TestSimulation	.builder()//
+																.addPlugins(factory.getPlugins())//
+																.build()//
+																.execute();
 
 		Map<ReportItem, Integer> expectedReportItems = expectedConsumer.getOutputItems(ReportItem.class);
-		Map<ReportItem, Integer> actualReportItems = outputConsumer.getOutputItems(ReportItem.class);
+		Map<ReportItem, Integer> actualReportItems = testOutputConsumer.getOutputItems(ReportItem.class);
 
 		assertEquals(expectedReportItems, actualReportItems);
 	}

@@ -248,8 +248,11 @@ public class AT_PeriodicReport {
 
 		// build and execute the simulation
 
-		TestOutputConsumer testOutputConsumer = new TestOutputConsumer();
-		TestSimulation.executeSimulation(plugins, testOutputConsumer);
+		
+		TestOutputConsumer testOutputConsumer = TestSimulation	.builder()//
+				.addPlugins(plugins)//
+				.build()//
+				.execute();
 
 		int maxDay = (int) FastMath.ceil(simulationEndTime);
 		Set<Integer> expectedDays = new LinkedHashSet<>();
@@ -295,8 +298,10 @@ public class AT_PeriodicReport {
 		plugins.add(testPlugin);
 
 		// build and execute the engine
-		TestOutputConsumer testOutputConsumer = new TestOutputConsumer();
-		TestSimulation.executeSimulation(plugins, testOutputConsumer);
+		TestOutputConsumer testOutputConsumer = TestSimulation	.builder()//
+				.addPlugins(plugins)//
+				.build()//
+				.execute();
 
 		// hours 0 through 3d 15h inclusive
 		Set<Integer> expectedHours = new LinkedHashSet<>();

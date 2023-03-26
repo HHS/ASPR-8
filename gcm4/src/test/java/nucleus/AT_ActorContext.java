@@ -151,7 +151,7 @@ public class AT_ActorContext {
 		TestPluginData testPluginData = pluginDataBuilder.build();
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
-		TestSimulation.executeSimulation(testPlugin);
+		TestSimulation.builder().addPlugin(testPlugin).build().execute();
 
 	}
 
@@ -173,7 +173,7 @@ public class AT_ActorContext {
 		TestPluginData testPluginData = pluginDataBuilder.build();
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
-		TestSimulation.executeSimulation(testPlugin);
+		TestSimulation.builder().addPlugin(testPlugin).build().execute();
 
 		// show that the action plans got executed
 		assertTrue(actorWasAdded.getValue());
@@ -231,7 +231,7 @@ public class AT_ActorContext {
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
 		// run the simulation
-		TestSimulation.executeSimulation(testPlugin);
+		TestSimulation.builder().addPlugin(testPlugin).build().execute();
 
 	}
 
@@ -501,7 +501,7 @@ public class AT_ActorContext {
 		TestPluginData testPluginData = pluginDataBuilder.build();
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
-		TestSimulation.executeSimulation(testPlugin);
+		TestSimulation.builder().addPlugin(testPlugin).build().execute();
 
 		// show that the number of actor ids matches the number of actor aliases
 		assertEquals(3, observedActorIds.size());
@@ -532,7 +532,7 @@ public class AT_ActorContext {
 		TestPluginData testPluginData = pluginDataBuilder.build();
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
-		TestSimulation.executeSimulation(testPlugin);
+		TestSimulation.builder().addPlugin(testPlugin).build().execute();
 
 		// Precondition test 1
 		pluginDataBuilder.addTestDataManager("dm3A", () -> new TestDataManager3A());
@@ -548,7 +548,7 @@ public class AT_ActorContext {
 		testPluginData = pluginDataBuilder.build();
 		testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
-		TestSimulation.executeSimulation(testPlugin);
+		TestSimulation.builder().addPlugin(testPlugin).build().execute();
 
 		// Precondition test 2
 		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
@@ -560,7 +560,7 @@ public class AT_ActorContext {
 		testPluginData = pluginDataBuilder.build();
 		testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
-		TestSimulation.executeSimulation(testPlugin);
+		TestSimulation.builder().addPlugin(testPlugin).build().execute();
 
 	}
 
@@ -596,7 +596,7 @@ public class AT_ActorContext {
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
 		// run the simulation
-		TestSimulation.executeSimulation(testPlugin);
+		TestSimulation.builder().addPlugin(testPlugin).build().execute();
 
 	}
 
@@ -633,7 +633,7 @@ public class AT_ActorContext {
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
 		// run the simulation
-		TestSimulation.executeSimulation(testPlugin);
+		TestSimulation.builder().addPlugin(testPlugin).build().execute();
 	}
 
 	/**
@@ -671,7 +671,7 @@ public class AT_ActorContext {
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
 		// run the simulation
-		TestSimulation.executeSimulation(testPlugin);
+		TestSimulation.builder().addPlugin(testPlugin).build().execute();
 	}
 
 	@Test
@@ -707,7 +707,7 @@ public class AT_ActorContext {
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
 		// execute the engine
-		TestSimulation.executeSimulation(testPlugin);
+		TestSimulation.builder().addPlugin(testPlugin).build().execute();
 	}
 
 	/**
@@ -853,7 +853,7 @@ public class AT_ActorContext {
 		
 
 		// build and execute the engine
-		TestSimulation.executeSimulation(testPlugin);
+		TestSimulation.builder().addPlugin(testPlugin).build().execute();
 
 	}
 
@@ -899,7 +899,7 @@ public class AT_ActorContext {
 		
 
 		// run the simulation
-		TestSimulation.executeSimulation(testPlugin);
+		TestSimulation.builder().addPlugin(testPlugin).build().execute();
 
 		// show that the remove plan was not executed
 		assertFalse(removedPlanHasExecuted.getValue());
@@ -1009,7 +1009,7 @@ public class AT_ActorContext {
 		
 
 		// run the simulation
-		TestSimulation.executeSimulation(testPlugin);
+		TestSimulation.builder().addPlugin(testPlugin).build().execute();
 
 		// show that all and only the observations corresponding to the
 		// subscribed event label were delivered to the subscriber actor
@@ -1113,7 +1113,7 @@ public class AT_ActorContext {
 		
 
 		// run the simulation
-		TestSimulation.executeSimulation(testPlugin);
+		TestSimulation.builder().addPlugin(testPlugin).build().execute();
 
 		// show that all and only the observations corresponding to the
 		// subscribed event label were delivered to the actors

@@ -6,14 +6,12 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import nucleus.Plugin;
 import nucleus.ReportContext;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestOutputConsumer;
@@ -162,7 +160,6 @@ public class AT_RegionPropertyReport {
 		 */
 		TestOutputConsumer expectedOutputConsumer = new TestOutputConsumer();
 
-		
 		expectedOutputConsumer.accept(getReportItem(0.0, regionA, regionPropertyId_1, 3));
 		expectedOutputConsumer.accept(getReportItem(0.0, regionA, regionPropertyId_2, 6.78));
 		expectedOutputConsumer.accept(getReportItem(0.0, regionA, regionPropertyId_3, true));
@@ -189,19 +186,18 @@ public class AT_RegionPropertyReport {
 		expectedOutputConsumer.accept(getReportItem(3.0, regionA, regionPropertyId_5, 199.16));
 		expectedOutputConsumer.accept(getReportItem(3.0, regionB, regionPropertyId_5, 199.16));
 		expectedOutputConsumer.accept(getReportItem(3.0, regionC, regionPropertyId_5, 199.16));
-		
 
-		TestOutputConsumer outputConsumer = new TestOutputConsumer();
+		Factory factory = RegionsTestPluginFactory	.factory(0, 3558607823596502222L, TimeTrackingPolicy.TRACK_TIME, testPluginData)//
+													.setRegionsPluginData(regionsPluginData)//
+													.setRegionPropertyReportPluginData(regionPropertyReportPluginData);//
 
-		List<Plugin> plugins = RegionsTestPluginFactory	.factory(0, 3558607823596502222L, TimeTrackingPolicy.TRACK_TIME, testPluginData)//
-														.setRegionsPluginData(regionsPluginData)//
-														.setRegionPropertyReportPluginData(regionPropertyReportPluginData)//
-														.getPlugins();//
-
-		TestSimulation.executeSimulation(plugins, outputConsumer);
+		TestOutputConsumer testOutputConsumer = TestSimulation	.builder()//
+																.addPlugins(factory.getPlugins())//
+																.build()//
+																.execute();
 
 		Map<ReportItem, Integer> expectedReportItems = expectedOutputConsumer.getOutputItems(ReportItem.class);
-		Map<ReportItem, Integer> actualReportItems = outputConsumer.getOutputItems(ReportItem.class);
+		Map<ReportItem, Integer> actualReportItems = testOutputConsumer.getOutputItems(ReportItem.class);
 
 		assertEquals(expectedReportItems, actualReportItems);
 
@@ -276,8 +272,10 @@ public class AT_RegionPropertyReport {
 
 		// tell the builder to include a specific region property id
 
-		TestOutputConsumer testOutputConsumer = new TestOutputConsumer();
-		TestSimulation.executeSimulation(factory.getPlugins(), testOutputConsumer);
+		TestOutputConsumer testOutputConsumer = TestSimulation	.builder()//
+																.addPlugins(factory.getPlugins())//
+																.build()//
+																.execute();
 
 		// show that our report items include the chosen property id
 		Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItems(ReportItem.class);
@@ -340,11 +338,11 @@ public class AT_RegionPropertyReport {
 														})//
 														.setRegionPropertyReportPluginData(regionPropertyReportPluginData);//
 
-			// create an output consumer to gather the report items
-			TestOutputConsumer testOutputConsumer = new TestOutputConsumer();
-
 			// execute the simulation
-			TestSimulation.executeSimulation(factory.getPlugins(), testOutputConsumer);
+			TestOutputConsumer testOutputConsumer = TestSimulation	.builder()//
+																	.addPlugins(factory.getPlugins())//
+																	.build()//
+																	.execute();
 
 			// gather from the report items the property ids that were actually
 			// included in the report
@@ -395,9 +393,10 @@ public class AT_RegionPropertyReport {
 													})//
 													.setRegionPropertyReportPluginData(regionPropertyReportPluginData);//
 
-		TestOutputConsumer testOutputConsumer = new TestOutputConsumer();
-
-		TestSimulation.executeSimulation(factory.getPlugins(), testOutputConsumer);
+		TestOutputConsumer testOutputConsumer = TestSimulation	.builder()//
+																.addPlugins(factory.getPlugins())//
+																.build()//
+																.execute();
 
 		// show that the report labels are what we expect for each report item
 		Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItems(ReportItem.class);
@@ -468,8 +467,10 @@ public class AT_RegionPropertyReport {
 
 		// tell the builder to include a specific region property id
 
-		TestOutputConsumer testOutputConsumer = new TestOutputConsumer();
-		TestSimulation.executeSimulation(factory.getPlugins(), testOutputConsumer);
+		TestOutputConsumer testOutputConsumer = TestSimulation	.builder()//
+																.addPlugins(factory.getPlugins())//
+																.build()//
+																.execute();
 
 		// show that our report items exclude the chosen property id
 		Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItems(ReportItem.class);
@@ -504,9 +505,10 @@ public class AT_RegionPropertyReport {
 													})//
 													.setRegionPropertyReportPluginData(regionPropertyReportPluginData);//
 
-		TestOutputConsumer testOutputConsumer = new TestOutputConsumer();
-
-		TestSimulation.executeSimulation(factory.getPlugins(), testOutputConsumer);
+		TestOutputConsumer testOutputConsumer = TestSimulation	.builder()//
+																.addPlugins(factory.getPlugins())//
+																.build()//
+																.execute();
 
 		// show that the report labels are what we expect for each report item
 		Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItems(ReportItem.class);

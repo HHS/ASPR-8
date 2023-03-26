@@ -213,8 +213,11 @@ public class AT_PersonPropertyReport {
 		plugins.add(regionsPlugin);
 
 		// execute the simulation and gather the report items
-		TestOutputConsumer testOutputConsumer = new TestOutputConsumer();
-		TestSimulation.executeSimulation(plugins, testOutputConsumer);
+		
+		TestOutputConsumer testOutputConsumer = TestSimulation	.builder()//
+				.addPlugins(plugins)//
+				.build()//
+				.execute();
 
 		// build the expected report items
 		TestOutputConsumer expectedOutputConsumer = new TestOutputConsumer();
@@ -295,9 +298,10 @@ public class AT_PersonPropertyReport {
 		
 		List<Plugin> plugins = factory.getPlugins();
 
-		TestOutputConsumer testOutputConsumer = new TestOutputConsumer();
-		TestSimulation.executeSimulation(plugins, testOutputConsumer);
-
+		TestOutputConsumer testOutputConsumer = TestSimulation	.builder()//
+				.addPlugins(plugins)//
+				.build()//
+				.execute();
 		// show that the report labels are what we expect for each report item
 		Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItems(ReportItem.class);
 		assertFalse(outputItems.isEmpty());
@@ -344,8 +348,10 @@ public class AT_PersonPropertyReport {
 		
 			
 		
-		TestOutputConsumer testOutputConsumer = new TestOutputConsumer();
-		TestSimulation.executeSimulation(plugins, testOutputConsumer);
+		TestOutputConsumer testOutputConsumer = TestSimulation	.builder()//
+				.addPlugins(plugins)//
+				.build()//
+				.execute();
 
 		// show that the report labels are what we expect for each report item
 		Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItems(ReportItem.class);
@@ -410,10 +416,11 @@ public class AT_PersonPropertyReport {
 				.factory(30, 1174198461656549476L, testPluginData)
 				.setPersonPropertyReportPluginData(personPropertyReportPluginData);
 		
-		List<Plugin> plugins = factory.getPlugins();
 		
-		TestOutputConsumer testOutputConsumer = new TestOutputConsumer();
-		TestSimulation.executeSimulation(plugins, testOutputConsumer);
+		TestOutputConsumer testOutputConsumer = TestSimulation	.builder()//
+				.addPlugins(factory.getPlugins())//
+				.build()//
+				.execute();
 
 		// show that the report periods are what we expect for each report item
 		Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItems(ReportItem.class);
@@ -446,10 +453,12 @@ public class AT_PersonPropertyReport {
 				.factory(30, 1174198461656549476L, testPluginData)
 				.setPersonPropertyReportPluginData(personPropertyReportPluginData);
 		
-		List<Plugin> plugins = factory.getPlugins();
+		
 				
-		TestOutputConsumer testOutputConsumer = new TestOutputConsumer();
-		TestSimulation.executeSimulation(plugins, testOutputConsumer);
+		TestOutputConsumer testOutputConsumer = TestSimulation	.builder()//
+				.addPlugins(factory.getPlugins())//
+				.build()//
+				.execute();
 
 		// show that the report periods are what we expect for each report item
 		Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItems(ReportItem.class);
@@ -482,10 +491,11 @@ public class AT_PersonPropertyReport {
 				.factory(30, 1174198461656549476L, testPluginData)
 				.setPersonPropertyReportPluginData(personPropertyReportPluginData);
 		
-		List<Plugin> plugins = factory.getPlugins();
 		
-		TestOutputConsumer testOutputConsumer = new TestOutputConsumer();
-		TestSimulation.executeSimulation(plugins, testOutputConsumer);
+		TestOutputConsumer testOutputConsumer = TestSimulation	.builder()//
+				.addPlugins(factory.getPlugins())//
+				.build()//
+				.execute();
 
 		// show that the report periods are what we expect for each report item
 		Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItems(ReportItem.class);
@@ -559,9 +569,10 @@ public class AT_PersonPropertyReport {
 		
 		List<Plugin> plugins = factory.getPlugins();
 
-		TestOutputConsumer testOutputConsumer = new TestOutputConsumer();
-		TestSimulation.executeSimulation(plugins, testOutputConsumer);
-
+		TestOutputConsumer testOutputConsumer = TestSimulation	.builder()//
+				.addPlugins(plugins)//
+				.build()//
+				.execute();
 		Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItems(ReportItem.class);		
 		assertTrue(outputItems.isEmpty());
 	}
@@ -624,8 +635,10 @@ public class AT_PersonPropertyReport {
 		
 		
 		
-		TestOutputConsumer testOutputConsumer = new TestOutputConsumer();
-		TestSimulation.executeSimulation(plugins, testOutputConsumer);
+		TestOutputConsumer testOutputConsumer = TestSimulation	.builder()//
+				.addPlugins(plugins)//
+				.build()//
+				.execute();
 
 		// show that whe find the expected person property ids
 		Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItems(ReportItem.class);
@@ -696,8 +709,10 @@ public class AT_PersonPropertyReport {
 			
 		
 		
-		TestOutputConsumer testOutputConsumer = new TestOutputConsumer();
-		TestSimulation.executeSimulation(plugins, testOutputConsumer);
+		TestOutputConsumer testOutputConsumer = TestSimulation	.builder()//
+				.addPlugins(plugins)//
+				.build()//
+				.execute();
 
 		// show that when the default inclusion is unset, it defaults to true
 		Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItems(ReportItem.class);
@@ -775,14 +790,10 @@ public class AT_PersonPropertyReport {
 				.factory(30, 1174198461656549476L, testPluginData)
 				.setPersonPropertyReportPluginData(personPropertyReportPluginData);
 		
-		List<Plugin> plugins = factory.getPlugins();
-		
-
-		// tell the builder to include a specific person property id
-		
-		
-		TestOutputConsumer testOutputConsumer = new TestOutputConsumer();
-		TestSimulation.executeSimulation(plugins, testOutputConsumer);
+		TestOutputConsumer testOutputConsumer = TestSimulation	.builder()//
+				.addPlugins(factory.getPlugins())//
+				.build()//
+				.execute();
 
 		// show that our report items include the chosen property id
 		Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItems(ReportItem.class);
@@ -857,11 +868,11 @@ public class AT_PersonPropertyReport {
 		
 		List<Plugin> plugins = factory.getPlugins();
 		
+		TestOutputConsumer testOutputConsumer = TestSimulation	.builder()//
+				.addPlugins(plugins)//
+				.build()//
+				.execute();
 
-		// tell the builder to exclude a specific person property id
-		
-		TestOutputConsumer testOutputConsumer = new TestOutputConsumer();
-		TestSimulation.executeSimulation(plugins, testOutputConsumer);
 
 		// show that our report items do not include the chosen property id
 		Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItems(ReportItem.class);
