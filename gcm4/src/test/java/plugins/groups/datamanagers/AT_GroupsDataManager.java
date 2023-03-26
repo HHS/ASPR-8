@@ -16,12 +16,14 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
+import java.util.function.Consumer;
 
 import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.util.FastMath;
 import org.apache.commons.math3.util.Pair;
 import org.junit.jupiter.api.Test;
 
+import nucleus.ActorContext;
 import nucleus.DataManagerContext;
 import nucleus.EventFilter;
 import nucleus.Plugin;
@@ -106,22 +108,30 @@ public class AT_GroupsDataManager {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
+		Factory factory = GroupsTestPluginFactory.factory(30, 3, 5, 8204685090168544876L, testPluginData);
 
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 3, 5, 8204685090168544876L, testPluginData).getPlugins());
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 		// precondition test: if the group id is null
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 3, 5, 1164752712088660908L, (c) -> {
-			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.removeGroup(null));
-			assertEquals(GroupError.NULL_GROUP_ID, contractException.getErrorType());
-		}).getPlugins());
+		ContractException contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = GroupsTestPluginFactory.factory(30, 3, 5, 1164752712088660908L, (c) -> {
+				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+				groupsDataManager.removeGroup(null);
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(GroupError.NULL_GROUP_ID, contractException.getErrorType());
 
 		// precondition test: if the group id is unknown
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 3, 5, 6321229743136171684L, (c) -> {
-			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.removeGroup(new GroupId(100000)));
-			assertEquals(GroupError.UNKNOWN_GROUP_ID, contractException.getErrorType());
-		}).getPlugins());
+		contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = GroupsTestPluginFactory.factory(30, 3, 5, 6321229743136171684L, (c) -> {
+				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+				groupsDataManager.removeGroup(new GroupId(100000));
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(GroupError.UNKNOWN_GROUP_ID, contractException.getErrorType());
+
 	}
 
 	@Test
@@ -175,53 +185,69 @@ public class AT_GroupsDataManager {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
+		Factory factory = GroupsTestPluginFactory.factory(30, 3, 10, 2733223420384068616L, testPluginData);
 
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 3, 10, 2733223420384068616L, testPluginData).getPlugins());
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 		/* precondition test: if the person id is null */
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 3, 10, 667206327628089405L, (c) -> {
-			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-			GroupId groupId = groupsDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_1);
-			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.removePersonFromGroup(null, groupId));
-			assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
-		}).getPlugins());
+		ContractException contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = GroupsTestPluginFactory.factory(30, 3, 10, 667206327628089405L, (c) -> {
+				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+				GroupId groupId = groupsDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_1);
+				groupsDataManager.removePersonFromGroup(null, groupId);
+
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
 
 		/* precondition test: if the person id is unknown */
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 3, 10, 283038490401536931L, (c) -> {
-			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-			GroupId groupId = groupsDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_1);
-			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.removePersonFromGroup(new PersonId(10000), groupId));
-			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
-		}).getPlugins());
+		contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = GroupsTestPluginFactory.factory(30, 3, 10, 283038490401536931L, (c) -> {
+				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+				GroupId groupId = groupsDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_1);
+				groupsDataManager.removePersonFromGroup(new PersonId(10000), groupId);
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
 
 		/* precondition test: if the group id is null */
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 3, 10, 6913106996750459497L, (c) -> {
-			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
-			PersonId personId = peopleDataManager.addPerson(PersonConstructionData.builder().build());
-			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.removePersonFromGroup(personId, null));
-			assertEquals(GroupError.NULL_GROUP_ID, contractException.getErrorType());
-		}).getPlugins());
+		contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = GroupsTestPluginFactory.factory(30, 3, 10, 6913106996750459497L, (c) -> {
+				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+				PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+				PersonId personId = peopleDataManager.addPerson(PersonConstructionData.builder().build());
+				groupsDataManager.removePersonFromGroup(personId, null);
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(GroupError.NULL_GROUP_ID, contractException.getErrorType());
 
 		/* precondition test: if the group id is unknown */
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 3, 10, 4632472396816795419L, (c) -> {
-			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
-			PersonId personId = peopleDataManager.addPerson(PersonConstructionData.builder().build());
-			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.removePersonFromGroup(personId, new GroupId(10000)));
-			assertEquals(GroupError.UNKNOWN_GROUP_ID, contractException.getErrorType());
-		}).getPlugins());
+		contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = GroupsTestPluginFactory.factory(30, 3, 10, 4632472396816795419L, (c) -> {
+				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+				PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+				PersonId personId = peopleDataManager.addPerson(PersonConstructionData.builder().build());
+				groupsDataManager.removePersonFromGroup(personId, new GroupId(10000));
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(GroupError.UNKNOWN_GROUP_ID, contractException.getErrorType());
 
 		/* precondition test: if the person is not a member of the group */
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 3, 10, 8295961559327801013L, (c) -> {
-			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
-			GroupId groupId = groupsDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_1);
-			PersonId personId = peopleDataManager.addPerson(PersonConstructionData.builder().build());
-			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.removePersonFromGroup(personId, groupId));
-			assertEquals(GroupError.NON_GROUP_MEMBERSHIP, contractException.getErrorType());
-		}).getPlugins());
-
+		contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = GroupsTestPluginFactory.factory(30, 3, 10, 8295961559327801013L, (c) -> {
+				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+				PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+				GroupId groupId = groupsDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_1);
+				PersonId personId = peopleDataManager.addPerson(PersonConstructionData.builder().build());
+				groupsDataManager.removePersonFromGroup(personId, groupId);
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(GroupError.NON_GROUP_MEMBERSHIP, contractException.getErrorType());
 	}
 
 	private static enum ExcludedPersonType {
@@ -357,7 +383,6 @@ public class AT_GroupsDataManager {
 		});
 		assertEquals(PropertyError.INCOMPATIBLE_VALUE, contractException.getErrorType());
 
-
 	}
 
 	@Test
@@ -400,7 +425,7 @@ public class AT_GroupsDataManager {
 		}));
 		TestPluginData testPluginData = pluginBuilder.build();
 		Factory factory = GroupsTestPluginFactory.factory(30, 4.0, 10.0, 8137195527612056024L, testPluginData);
-		
+
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 		// precondition tests
@@ -409,24 +434,23 @@ public class AT_GroupsDataManager {
 				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
 				GroupTypeId groupTypeId = null;
 				groupsDataManager.addGroup(groupTypeId);
-				
+
 			});
 			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
 		});
 		assertEquals(GroupError.NULL_GROUP_TYPE_ID, contractException.getErrorType());
-		
 
 		// precondition tests
 		contractException = assertThrows(ContractException.class, () -> {
 			Factory factory2 = GroupsTestPluginFactory.factory(30, 4.0, 10.0, 5229546252018518751L, (c) -> {
 				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
 				groupsDataManager.addGroup(TestGroupTypeId.getUnknownGroupTypeId());
-				
+
 			});
 			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
 		});
 		assertEquals(GroupError.UNKNOWN_GROUP_TYPE_ID, contractException.getErrorType());
-		
+
 	}
 
 	@Test
@@ -488,7 +512,7 @@ public class AT_GroupsDataManager {
 			Factory factory2 = GroupsTestPluginFactory.factory(30, 3, 10, 2886293572900391101L, (c) -> {
 				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
 				GroupId groupId = groupsDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_1);
-				groupsDataManager.addPersonToGroup(null, groupId);			
+				groupsDataManager.addPersonToGroup(null, groupId);
 			});
 			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
 		});
@@ -499,12 +523,11 @@ public class AT_GroupsDataManager {
 			Factory factory2 = GroupsTestPluginFactory.factory(30, 3, 10, 5604775963632692909L, (c) -> {
 				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
 				GroupId groupId = groupsDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_1);
-				groupsDataManager.addPersonToGroup(new PersonId(10000), groupId);				
+				groupsDataManager.addPersonToGroup(new PersonId(10000), groupId);
 			});
 			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
 		});
 		assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
-		
 
 		// precondition tests: if the group id is null
 		contractException = assertThrows(ContractException.class, () -> {
@@ -512,12 +535,11 @@ public class AT_GroupsDataManager {
 				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
 				PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 				PersonId personId = peopleDataManager.addPerson(PersonConstructionData.builder().build());
-				groupsDataManager.addPersonToGroup(personId, null);			
+				groupsDataManager.addPersonToGroup(personId, null);
 			});
 			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
 		});
 		assertEquals(GroupError.NULL_GROUP_ID, contractException.getErrorType());
-		
 
 		// precondition tests: if the group id is unknown
 		contractException = assertThrows(ContractException.class, () -> {
@@ -525,7 +547,7 @@ public class AT_GroupsDataManager {
 				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
 				PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 				PersonId personId = peopleDataManager.addPerson(PersonConstructionData.builder().build());
-				groupsDataManager.addPersonToGroup(personId, new GroupId(10000));			
+				groupsDataManager.addPersonToGroup(personId, new GroupId(10000));
 			});
 			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
 		});
@@ -539,7 +561,7 @@ public class AT_GroupsDataManager {
 				GroupId groupId = groupsDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_1);
 				PersonId personId = peopleDataManager.addPerson(PersonConstructionData.builder().build());
 				groupsDataManager.addPersonToGroup(personId, groupId);
-				groupsDataManager.addPersonToGroup(personId, groupId);			
+				groupsDataManager.addPersonToGroup(personId, groupId);
 			});
 			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
 		});
@@ -577,14 +599,15 @@ public class AT_GroupsDataManager {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 3, 5, 2946647177720026906L, testPluginData).getPlugins());
+		Factory factory = GroupsTestPluginFactory.factory(30, 3, 5, 2946647177720026906L, testPluginData);
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
 	@Test
 	@UnitTestMethod(target = GroupsDataManager.class, name = "sampleGroup", args = { GroupId.class, GroupSampler.class })
 	public void testSampleGroup() {
 
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 3, 5, 9211292135944399530L, (c) -> {
+		Consumer<ActorContext> consumer = (c) -> {
 			// establish data views and the lists to groups and people in the
 			// simulation
 			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
@@ -699,36 +722,50 @@ public class AT_GroupsDataManager {
 				}
 			}
 
-		}).getPlugins());
+		};
+		Factory factory = GroupsTestPluginFactory.factory(30, 3, 5, 9211292135944399530L, consumer);
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 		/* precondition test: if the group id is null */
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 3, 5, 5080244401642933835L, (c) -> {
-			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.sampleGroup(null, GroupSampler.builder().build()));
-			assertEquals(GroupError.NULL_GROUP_ID, contractException.getErrorType());
-		}).getPlugins());
+		ContractException contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = GroupsTestPluginFactory.factory(30, 3, 5, 5080244401642933835L, (c) -> {
+				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+				groupsDataManager.sampleGroup(null, GroupSampler.builder().build());
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(GroupError.NULL_GROUP_ID, contractException.getErrorType());
 
 		/* precondition test: if the group id is unknown */
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 3, 5, 8782123343145389682L, (c) -> {
-			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.sampleGroup(new GroupId(1000000), GroupSampler.builder().build()));
-			assertEquals(GroupError.UNKNOWN_GROUP_ID, contractException.getErrorType());
-		}).getPlugins());
+		contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = GroupsTestPluginFactory.factory(30, 3, 5, 8782123343145389682L, (c) -> {
+				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+				groupsDataManager.sampleGroup(new GroupId(1000000), GroupSampler.builder().build());
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(GroupError.UNKNOWN_GROUP_ID, contractException.getErrorType());
 
 		/* precondition test: if the group sampler is null */
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 3, 5, 4175298436277522063L, (c) -> {
-			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.sampleGroup(new GroupId(0), null));
-			assertEquals(GroupError.NULL_GROUP_SAMPLER, contractException.getErrorType());
-		}).getPlugins());
+		contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = GroupsTestPluginFactory.factory(30, 3, 5, 4175298436277522063L, (c) -> {
+				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+				groupsDataManager.sampleGroup(new GroupId(0), null);
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(GroupError.NULL_GROUP_SAMPLER, contractException.getErrorType());
 
 		/* precondition test: if the group sampler is null */
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 3, 5, 7404840971962130072L, (c) -> {
-			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-			ContractException contractException = assertThrows(ContractException.class,
-					() -> groupsDataManager.sampleGroup(new GroupId(0), GroupSampler.builder().setExcludedPersonId(new PersonId(1000000)).build()));
-			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
-		}).getPlugins());
+		contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = GroupsTestPluginFactory.factory(30, 3, 5, 7404840971962130072L, (c) -> {
+				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+				groupsDataManager.sampleGroup(new GroupId(0), GroupSampler.builder().setExcludedPersonId(new PersonId(1000000)).build());
+			});
+
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
 
 	}
 
@@ -855,7 +892,7 @@ public class AT_GroupsDataManager {
 	@UnitTestMethod(target = GroupsDataManager.class, name = "getGroupCountForGroupType", args = { GroupTypeId.class })
 	public void testGetGroupCountForGroupType() {
 
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(300, 3, 5, 2910747162784803859L, (c) -> {
+		Factory factory = GroupsTestPluginFactory.factory(300, 3, 5, 2910747162784803859L, (c) -> {
 
 			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
 			List<GroupId> groupIds = groupsDataManager.getGroupIds();
@@ -879,29 +916,35 @@ public class AT_GroupsDataManager {
 			// show that expectation were met
 			assertEquals(expectedCounts, actualCounts);
 
-		}).getPlugins());
+		});
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 		/* precondition test: if the group type is null */
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(300, 3, 5, 8342387507356594823L, (c) -> {
-			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.getGroupCountForGroupType(null));
-			assertEquals(GroupError.NULL_GROUP_TYPE_ID, contractException.getErrorType());
-		}).getPlugins());
+		ContractException contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = GroupsTestPluginFactory.factory(300, 3, 5, 8342387507356594823L, (c) -> {
+				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+				groupsDataManager.getGroupCountForGroupType(null);
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(GroupError.NULL_GROUP_TYPE_ID, contractException.getErrorType());
 
 		/* precondition test: if the group type is unknown */
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(300, 3, 5, 4573510051341354320L, (c) -> {
-			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.getGroupCountForGroupType(TestGroupTypeId.getUnknownGroupTypeId()));
-			assertEquals(GroupError.UNKNOWN_GROUP_TYPE_ID, contractException.getErrorType());
-		}).getPlugins());
-
+		contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = GroupsTestPluginFactory.factory(300, 3, 5, 4573510051341354320L, (c) -> {
+				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+				groupsDataManager.getGroupCountForGroupType(TestGroupTypeId.getUnknownGroupTypeId());
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(GroupError.UNKNOWN_GROUP_TYPE_ID, contractException.getErrorType());
 	}
 
 	@Test
 	@UnitTestMethod(target = GroupsDataManager.class, name = "getGroupCountForGroupTypeAndPerson", args = { GroupTypeId.class, PersonId.class })
 	public void testGetGroupCountForGroupTypeAndPerson() {
 
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(100, 0, 5, 6434309925268726988L, (c) -> {
+		Factory factory = GroupsTestPluginFactory.factory(100, 0, 5, 6434309925268726988L, (c) -> {
 
 			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
 			List<GroupId> groupIds = groupsDataManager.getGroupIds();
@@ -955,21 +998,29 @@ public class AT_GroupsDataManager {
 					assertEquals(expectedGroupCount, actualGroupCount);
 				}
 			}
-		}).getPlugins());
+		});
+
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 		/* precondition test: if the group id is null */
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(100, 0, 5, 3966867633401336210L, (c) -> {
-			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.getPeopleForGroupType(null));
-			assertEquals(GroupError.NULL_GROUP_TYPE_ID, contractException.getErrorType());
-		}).getPlugins());
+		ContractException contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = GroupsTestPluginFactory.factory(100, 0, 5, 3966867633401336210L, (c) -> {
+				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+				groupsDataManager.getPeopleForGroupType(null);
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(GroupError.NULL_GROUP_TYPE_ID, contractException.getErrorType());
 
 		/* precondition test: if the group id is unknown */
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(100, 0, 5, 4582534442214781870L, (c) -> {
-			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.getPeopleForGroupType(TestGroupTypeId.getUnknownGroupTypeId()));
-			assertEquals(GroupError.UNKNOWN_GROUP_TYPE_ID, contractException.getErrorType());
-		}).getPlugins());
+		contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = GroupsTestPluginFactory.factory(100, 0, 5, 4582534442214781870L, (c) -> {
+				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+				groupsDataManager.getPeopleForGroupType(TestGroupTypeId.getUnknownGroupTypeId());
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(GroupError.UNKNOWN_GROUP_TYPE_ID, contractException.getErrorType());
 
 	}
 
@@ -977,7 +1028,7 @@ public class AT_GroupsDataManager {
 	@UnitTestMethod(target = GroupsDataManager.class, name = "getGroupCountForPerson", args = { PersonId.class })
 	public void testGetGroupCountForPerson() {
 
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(300, 3, 5, 6371809280692201768L, (c) -> {
+		Factory factory = GroupsTestPluginFactory.factory(300, 3, 5, 6371809280692201768L, (c) -> {
 
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			List<PersonId> people = peopleDataManager.getPeople();
@@ -1009,29 +1060,37 @@ public class AT_GroupsDataManager {
 				assertEquals(expectedValue, actualValue);
 			}
 
-		}).getPlugins());
+		});
+
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 		/* precondition test: if the person id is null */
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(300, 3, 5, 3920152432964044129L, (c) -> {
-			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.getGroupCountForPerson(null));
-			assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
-		}).getPlugins());
+		ContractException contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = GroupsTestPluginFactory.factory(300, 3, 5, 3920152432964044129L, (c) -> {
+				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+				groupsDataManager.getGroupCountForPerson(null);
+
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
 
 		/* precondition test: if the person id is unknown */
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(300, 3, 5, 6739633613106510243L, (c) -> {
-			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.getGroupCountForPerson(new PersonId(10000)));
-			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
-		}).getPlugins());
-
+		contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = GroupsTestPluginFactory.factory(300, 3, 5, 6739633613106510243L, (c) -> {
+				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+				groupsDataManager.getGroupCountForPerson(new PersonId(10000));
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
 	}
 
 	@Test
 	@UnitTestMethod(target = GroupsDataManager.class, name = "getGroupIds", args = {})
 	public void testGetGroupIds() {
 
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(10, 0, 5, 6455798573295403809L, (c) -> {
+		Factory factory = GroupsTestPluginFactory.factory(10, 0, 5, 6455798573295403809L, (c) -> {
 
 			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
 
@@ -1055,7 +1114,9 @@ public class AT_GroupsDataManager {
 			assertEquals(expectedGroupIds.size(), actualGroupIds.size());
 			assertEquals(expectedGroupIds, new LinkedHashSet<>(actualGroupIds));
 
-		}).getPlugins());
+		});
+
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 	}
 
@@ -1063,7 +1124,7 @@ public class AT_GroupsDataManager {
 	@UnitTestMethod(target = GroupsDataManager.class, name = "getGroupPropertyDefinition", args = { GroupTypeId.class, GroupPropertyId.class })
 	public void testGetGroupPropertyDefinition() {
 
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(10, 0, 5, 4462836951642761957L, (c) -> {
+		Factory factory = GroupsTestPluginFactory.factory(10, 0, 5, 4462836951642761957L, (c) -> {
 
 			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
 
@@ -1101,46 +1162,62 @@ public class AT_GroupsDataManager {
 					() -> groupsDataManager.getGroupPropertyDefinition(TestGroupTypeId.GROUP_TYPE_1, TestGroupPropertyId.GROUP_PROPERTY_2_1_BOOLEAN_MUTABLE_TRACK));
 			assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
 
-		}).getPlugins());
+		});
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 		/* precondition test: if the group type id is null */
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(10, 0, 5, 5959643517439959298L, (c) -> {
-			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-			ContractException contractException = assertThrows(ContractException.class,
-					() -> groupsDataManager.getGroupPropertyDefinition(null, TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK));
-			assertEquals(GroupError.NULL_GROUP_TYPE_ID, contractException.getErrorType());
-		}).getPlugins());
+		ContractException contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = GroupsTestPluginFactory.factory(10, 0, 5, 5959643517439959298L, (c) -> {
+				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+				groupsDataManager.getGroupPropertyDefinition(null, TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK);
+			});
+
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+
+		});
+		assertEquals(GroupError.NULL_GROUP_TYPE_ID, contractException.getErrorType());
 
 		/* precondition test: if the group type id is unknown */
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(10, 0, 5, 9138791522018557245L, (c) -> {
-			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-			ContractException contractException = assertThrows(ContractException.class,
-					() -> groupsDataManager.getGroupPropertyDefinition(TestGroupTypeId.getUnknownGroupTypeId(), TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK));
-			assertEquals(GroupError.UNKNOWN_GROUP_TYPE_ID, contractException.getErrorType());
-		}).getPlugins());
+		contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = GroupsTestPluginFactory.factory(10, 0, 5, 9138791522018557245L, (c) -> {
+				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+				groupsDataManager.getGroupPropertyDefinition(TestGroupTypeId.getUnknownGroupTypeId(), TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK);
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(GroupError.UNKNOWN_GROUP_TYPE_ID, contractException.getErrorType());
 
 		/* precondition test: if the group property id is null */
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(10, 0, 5, 9138791522018557245L, (c) -> {
-			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.getGroupPropertyDefinition(TestGroupTypeId.GROUP_TYPE_1, null));
-			assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
-		}).getPlugins());
+		contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = GroupsTestPluginFactory.factory(10, 0, 5, 9138791522018557245L, (c) -> {
+				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+				groupsDataManager.getGroupPropertyDefinition(TestGroupTypeId.GROUP_TYPE_1, null);
+			});
+
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
 
 		/* precondition test: if the group property id is unknown */
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(10, 0, 5, 9138791522018557245L, (c) -> {
-			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-			ContractException contractException = assertThrows(ContractException.class,
-					() -> groupsDataManager.getGroupPropertyDefinition(TestGroupTypeId.GROUP_TYPE_1, TestGroupPropertyId.getUnknownGroupPropertyId()));
-			assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
-		}).getPlugins());
+		contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = GroupsTestPluginFactory.factory(10, 0, 5, 9138791522018557245L, (c) -> {
+				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+				groupsDataManager.getGroupPropertyDefinition(TestGroupTypeId.GROUP_TYPE_1, TestGroupPropertyId.getUnknownGroupPropertyId());
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
 
 		/* precondition tests: if the group property id is unknown */
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(10, 0, 5, 9138791522018557245L, (c) -> {
-			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-			ContractException contractException = assertThrows(ContractException.class,
-					() -> groupsDataManager.getGroupPropertyDefinition(TestGroupTypeId.GROUP_TYPE_1, TestGroupPropertyId.GROUP_PROPERTY_2_1_BOOLEAN_MUTABLE_TRACK));
-			assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
-		}).getPlugins());
+		contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = GroupsTestPluginFactory.factory(10, 0, 5, 9138791522018557245L, (c) -> {
+				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+				groupsDataManager.getGroupPropertyDefinition(TestGroupTypeId.GROUP_TYPE_1, TestGroupPropertyId.GROUP_PROPERTY_2_1_BOOLEAN_MUTABLE_TRACK);
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
+
 	}
 
 	@Test
@@ -2509,21 +2586,20 @@ public class AT_GroupsDataManager {
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 		// precondition test: if the group type id is already present
-		ContractException contractException = assertThrows(ContractException.class, () ->{
+		ContractException contractException = assertThrows(ContractException.class, () -> {
 			Factory factory2 = GroupsTestPluginFactory.factory(100, 3, 10, 6531281946960607184L, (c) -> {
 				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-				groupsDataManager.addGroupType(TestGroupTypeId.GROUP_TYPE_1);				
+				groupsDataManager.addGroupType(TestGroupTypeId.GROUP_TYPE_1);
 			});
 			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
 		});
 		assertEquals(GroupError.DUPLICATE_GROUP_TYPE, contractException.getErrorType());
 
-
 		// precondition test: if the group type id is null
-		contractException = assertThrows(ContractException.class, () ->{
+		contractException = assertThrows(ContractException.class, () -> {
 			Factory factory2 = GroupsTestPluginFactory.factory(100, 3, 10, 2160259964191783423L, (c) -> {
 				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-				groupsDataManager.addGroupType(null);			
+				groupsDataManager.addGroupType(null);
 			});
 			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
 		});
@@ -2576,122 +2652,134 @@ public class AT_GroupsDataManager {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
+		Factory factory = GroupsTestPluginFactory.factory(100, 3, 10, 7089101878335134553L, testPluginData);
 
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(100, 3, 10, 7089101878335134553L, testPluginData).getPlugins());
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 		// precondition test: if the group type id is unknown
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(100, 3, 10, 8347881582083929312L, (c) -> {
-			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-			GroupTypeId groupTypeId = TestAuxiliaryGroupTypeId.GROUP_AUX_TYPE_1;
-			GroupPropertyId groupPropertyId = TestAuxiliaryGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK;
-			PropertyDefinition propertyDefinition = TestAuxiliaryGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK.getPropertyDefinition();
-			GroupPropertyDefinitionInitialization groupPropertyDefinitionInitialization = //
-					GroupPropertyDefinitionInitialization	.builder()//
-															.setGroupTypeId(groupTypeId)//
-															.setPropertyId(groupPropertyId)//
-															.setPropertyDefinition(propertyDefinition)//
-															.build();
-			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.defineGroupProperty(groupPropertyDefinitionInitialization));
-			assertEquals(GroupError.UNKNOWN_GROUP_TYPE_ID, contractException.getErrorType());
-		}).getPlugins());
+		ContractException contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = GroupsTestPluginFactory.factory(100, 3, 10, 8347881582083929312L, (c) -> {
+				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+				GroupTypeId groupTypeId = TestAuxiliaryGroupTypeId.GROUP_AUX_TYPE_1;
+				GroupPropertyId groupPropertyId = TestAuxiliaryGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK;
+				PropertyDefinition propertyDefinition = TestAuxiliaryGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK.getPropertyDefinition();
+				GroupPropertyDefinitionInitialization groupPropertyDefinitionInitialization = //
+						GroupPropertyDefinitionInitialization	.builder()//
+																.setGroupTypeId(groupTypeId)//
+																.setPropertyId(groupPropertyId)//
+																.setPropertyDefinition(propertyDefinition)//
+																.build();
+				groupsDataManager.defineGroupProperty(groupPropertyDefinitionInitialization);
+
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(GroupError.UNKNOWN_GROUP_TYPE_ID, contractException.getErrorType());
 
 		// precondition test: if the group property id is already known
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(100, 3, 10, 3203453010151124575L, (c) -> {
+		contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = GroupsTestPluginFactory.factory(100, 3, 10, 3203453010151124575L, (c) -> {
 
-			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-			GroupTypeId groupTypeId = TestAuxiliaryGroupTypeId.GROUP_AUX_TYPE_1;
-			groupsDataManager.addGroupType(groupTypeId);
-			GroupPropertyId groupPropertyId = TestAuxiliaryGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK;
-			PropertyDefinition propertyDefinition = TestAuxiliaryGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK.getPropertyDefinition();
-			GroupPropertyDefinitionInitialization groupPropertyDefinitionInitialization = //
-					GroupPropertyDefinitionInitialization	.builder()//
-															.setGroupTypeId(groupTypeId)//
-															.setPropertyId(groupPropertyId)//
-															.setPropertyDefinition(propertyDefinition)//
-															.build();
+				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+				GroupTypeId groupTypeId = TestAuxiliaryGroupTypeId.GROUP_AUX_TYPE_1;
+				groupsDataManager.addGroupType(groupTypeId);
+				GroupPropertyId groupPropertyId = TestAuxiliaryGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK;
+				PropertyDefinition propertyDefinition = TestAuxiliaryGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK.getPropertyDefinition();
+				GroupPropertyDefinitionInitialization groupPropertyDefinitionInitialization = //
+						GroupPropertyDefinitionInitialization	.builder()//
+																.setGroupTypeId(groupTypeId)//
+																.setPropertyId(groupPropertyId)//
+																.setPropertyDefinition(propertyDefinition)//
+																.build();
 
-			groupsDataManager.defineGroupProperty(groupPropertyDefinitionInitialization);
-
-			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.defineGroupProperty(groupPropertyDefinitionInitialization));
-			assertEquals(PropertyError.DUPLICATE_PROPERTY_DEFINITION, contractException.getErrorType());
-
-		}).getPlugins());
+				groupsDataManager.defineGroupProperty(groupPropertyDefinitionInitialization);
+				groupsDataManager.defineGroupProperty(groupPropertyDefinitionInitialization);
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(PropertyError.DUPLICATE_PROPERTY_DEFINITION, contractException.getErrorType());
 
 		/*
 		 * precondition test: if the groupPropertyDefinitionInitialization
 		 * contains a property assignment for a group that does not exist.
 		 */
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(0, 3, 10, 1757700723640970863L, (c) -> {
+		contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = GroupsTestPluginFactory.factory(0, 3, 10, 1757700723640970863L, (c) -> {
 
-			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-			GroupTypeId groupTypeId = TestAuxiliaryGroupTypeId.GROUP_AUX_TYPE_1;
-			groupsDataManager.addGroupType(groupTypeId);
-			GroupPropertyId groupPropertyId = TestAuxiliaryGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK;
-			PropertyDefinition propertyDefinition = TestAuxiliaryGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK.getPropertyDefinition();
-			GroupPropertyDefinitionInitialization groupPropertyDefinitionInitialization = //
-					GroupPropertyDefinitionInitialization	.builder()//
-															.setGroupTypeId(groupTypeId)//
-															.setPropertyId(groupPropertyId)//
-															.setPropertyDefinition(propertyDefinition)//
-															.addPropertyValue(new GroupId(0), true)//
-															.build();
+				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+				GroupTypeId groupTypeId = TestAuxiliaryGroupTypeId.GROUP_AUX_TYPE_1;
+				groupsDataManager.addGroupType(groupTypeId);
+				GroupPropertyId groupPropertyId = TestAuxiliaryGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK;
+				PropertyDefinition propertyDefinition = TestAuxiliaryGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK.getPropertyDefinition();
+				GroupPropertyDefinitionInitialization groupPropertyDefinitionInitialization = //
+						GroupPropertyDefinitionInitialization	.builder()//
+																.setGroupTypeId(groupTypeId)//
+																.setPropertyId(groupPropertyId)//
+																.setPropertyDefinition(propertyDefinition)//
+																.addPropertyValue(new GroupId(0), true)//
+																.build();
+				groupsDataManager.defineGroupProperty(groupPropertyDefinitionInitialization);
+			});
 
-			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.defineGroupProperty(groupPropertyDefinitionInitialization));
-			assertEquals(GroupError.UNKNOWN_GROUP_ID, contractException.getErrorType());
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
 
-		}).getPlugins());
+		});
+		assertEquals(GroupError.UNKNOWN_GROUP_ID, contractException.getErrorType());
 
 		/*
 		 * if the groupPropertyDefinitionInitialization contains a property
 		 * assignment for a group that is not of the correct group type.
 		 */
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(100, 3, 10, 8541542687515887761L, (c) -> {
+		contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = GroupsTestPluginFactory.factory(100, 3, 10, 8541542687515887761L, (c) -> {
 
-			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-			groupsDataManager.addGroupType(TestAuxiliaryGroupTypeId.GROUP_AUX_TYPE_2);
-			GroupId groupId = groupsDataManager.addGroup(TestAuxiliaryGroupTypeId.GROUP_AUX_TYPE_2);
-			GroupTypeId groupTypeId = TestAuxiliaryGroupTypeId.GROUP_AUX_TYPE_1;
-			groupsDataManager.addGroupType(groupTypeId);
-			GroupPropertyId groupPropertyId = TestAuxiliaryGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK;
-			PropertyDefinition propertyDefinition = TestAuxiliaryGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK.getPropertyDefinition();
-			GroupPropertyDefinitionInitialization groupPropertyDefinitionInitialization = //
-					GroupPropertyDefinitionInitialization	.builder()//
-															.setGroupTypeId(groupTypeId)//
-															.setPropertyId(groupPropertyId)//
-															.setPropertyDefinition(propertyDefinition)//
-															.addPropertyValue(groupId, true)//
-															.build();
+				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+				groupsDataManager.addGroupType(TestAuxiliaryGroupTypeId.GROUP_AUX_TYPE_2);
+				GroupId groupId = groupsDataManager.addGroup(TestAuxiliaryGroupTypeId.GROUP_AUX_TYPE_2);
+				GroupTypeId groupTypeId = TestAuxiliaryGroupTypeId.GROUP_AUX_TYPE_1;
+				groupsDataManager.addGroupType(groupTypeId);
+				GroupPropertyId groupPropertyId = TestAuxiliaryGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK;
+				PropertyDefinition propertyDefinition = TestAuxiliaryGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK.getPropertyDefinition();
+				GroupPropertyDefinitionInitialization groupPropertyDefinitionInitialization = //
+						GroupPropertyDefinitionInitialization	.builder()//
+																.setGroupTypeId(groupTypeId)//
+																.setPropertyId(groupPropertyId)//
+																.setPropertyDefinition(propertyDefinition)//
+																.addPropertyValue(groupId, true)//
+																.build();
+				groupsDataManager.defineGroupProperty(groupPropertyDefinitionInitialization);
+			});
 
-			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.defineGroupProperty(groupPropertyDefinitionInitialization));
-			assertEquals(GroupError.INCORRECT_GROUP_TYPE_ID, contractException.getErrorType());
-
-		}).getPlugins());
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(GroupError.INCORRECT_GROUP_TYPE_ID, contractException.getErrorType());
 
 		/*
 		 * precondition test: if the groupPropertyDefinitionInitialization does
 		 * not contain property value assignments for every extant group when
 		 * the property definition does not contain a default value
 		 */
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(0, 3, 10, 244590355339669479L, (c) -> {
+		contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = GroupsTestPluginFactory.factory(0, 3, 10, 244590355339669479L, (c) -> {
 
-			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-			GroupTypeId groupTypeId = TestAuxiliaryGroupTypeId.GROUP_AUX_TYPE_1;
-			groupsDataManager.addGroupType(groupTypeId);
-			groupsDataManager.addGroup(TestAuxiliaryGroupTypeId.GROUP_AUX_TYPE_1);
+				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+				GroupTypeId groupTypeId = TestAuxiliaryGroupTypeId.GROUP_AUX_TYPE_1;
+				groupsDataManager.addGroupType(groupTypeId);
+				groupsDataManager.addGroup(TestAuxiliaryGroupTypeId.GROUP_AUX_TYPE_1);
+				GroupPropertyId groupPropertyId = TestAuxiliaryGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK;
+				PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Boolean.class).build();
+				GroupPropertyDefinitionInitialization groupPropertyDefinitionInitialization = //
+						GroupPropertyDefinitionInitialization	.builder()//
+																.setGroupTypeId(groupTypeId)//
+																.setPropertyId(groupPropertyId)//
+																.setPropertyDefinition(propertyDefinition)//
+																.build();
+				groupsDataManager.defineGroupProperty(groupPropertyDefinitionInitialization);
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(PropertyError.INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT, contractException.getErrorType());
 
-			GroupPropertyId groupPropertyId = TestAuxiliaryGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK;
-			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Boolean.class).build();
-			GroupPropertyDefinitionInitialization groupPropertyDefinitionInitialization = //
-					GroupPropertyDefinitionInitialization	.builder()//
-															.setGroupTypeId(groupTypeId)//
-															.setPropertyId(groupPropertyId)//
-															.setPropertyDefinition(propertyDefinition)//
-															.build();
-
-			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.defineGroupProperty(groupPropertyDefinitionInitialization));
-			assertEquals(PropertyError.INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT, contractException.getErrorType());
-
-		}).getPlugins());
 	}
 
 	@Test
@@ -2743,24 +2831,30 @@ public class AT_GroupsDataManager {
 			assertEquals(expectedObservations, actualObservations);
 		}));
 		TestPluginData testPluginData = pluginBuilder.build();
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 4.0, 10.0, 5589772229734037226L, testPluginData).getPlugins());
+		Factory factory = GroupsTestPluginFactory.factory(30, 4.0, 10.0, 5589772229734037226L, testPluginData);
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 		// precondition test: if the group type id is null
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 4.0, 10.0, 7641347481169234356L, (c) -> {
-			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-			GroupTypeId groupTypeId = null;
-			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.getEventFilterForGroupAdditionEvent(groupTypeId));
-			assertEquals(GroupError.NULL_GROUP_TYPE_ID, contractException.getErrorType());
-		}).getPlugins());
+		ContractException contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = GroupsTestPluginFactory.factory(30, 4.0, 10.0, 7641347481169234356L, (c) -> {
+				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+				GroupTypeId groupTypeId = null;
+				groupsDataManager.getEventFilterForGroupAdditionEvent(groupTypeId);
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(GroupError.NULL_GROUP_TYPE_ID, contractException.getErrorType());
 
 		// precondition tests: if the group type id is not known
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 4.0, 10.0, 5165611005555046251L, (c) -> {
-			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-			GroupTypeId groupTypeId = TestGroupTypeId.getUnknownGroupTypeId();
-			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.getEventFilterForGroupAdditionEvent(groupTypeId));
-			assertEquals(GroupError.UNKNOWN_GROUP_TYPE_ID, contractException.getErrorType());
-		}).getPlugins());
-
+		contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = GroupsTestPluginFactory.factory(30, 4.0, 10.0, 5165611005555046251L, (c) -> {
+				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+				GroupTypeId groupTypeId = TestGroupTypeId.getUnknownGroupTypeId();
+				groupsDataManager.getEventFilterForGroupAdditionEvent(groupTypeId);
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(GroupError.UNKNOWN_GROUP_TYPE_ID, contractException.getErrorType());
 	}
 
 	@Test
@@ -2806,23 +2900,30 @@ public class AT_GroupsDataManager {
 			assertEquals(expectedObservations, actualObservations);
 		}));
 		TestPluginData testPluginData = pluginBuilder.build();
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 4.0, 10.0, 4873414306435646846L, testPluginData).getPlugins());
+		Factory factory = GroupsTestPluginFactory.factory(30, 4.0, 10.0, 4873414306435646846L, testPluginData);
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 		// precondition test: if the group type id is null
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 4.0, 10.0, 1195149554612948377L, (c) -> {
-			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-			GroupTypeId groupTypeId = null;
-			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.getEventFilterForGroupAdditionEvent(groupTypeId));
-			assertEquals(GroupError.NULL_GROUP_TYPE_ID, contractException.getErrorType());
-		}).getPlugins());
+		ContractException contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = GroupsTestPluginFactory.factory(30, 4.0, 10.0, 1195149554612948377L, (c) -> {
+				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+				GroupTypeId groupTypeId = null;
+				groupsDataManager.getEventFilterForGroupAdditionEvent(groupTypeId);
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(GroupError.NULL_GROUP_TYPE_ID, contractException.getErrorType());
 
 		// precondition tests: if the group type id is not known
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 4.0, 10.0, 4200302716872534102L, (c) -> {
-			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-			GroupTypeId groupTypeId = TestGroupTypeId.getUnknownGroupTypeId();
-			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.getEventFilterForGroupAdditionEvent(groupTypeId));
-			assertEquals(GroupError.UNKNOWN_GROUP_TYPE_ID, contractException.getErrorType());
-		}).getPlugins());
+		contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = GroupsTestPluginFactory.factory(30, 4.0, 10.0, 4200302716872534102L, (c) -> {
+				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+				GroupTypeId groupTypeId = TestGroupTypeId.getUnknownGroupTypeId();
+				groupsDataManager.getEventFilterForGroupAdditionEvent(groupTypeId);
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(GroupError.UNKNOWN_GROUP_TYPE_ID, contractException.getErrorType());
 
 	}
 
@@ -2879,24 +2980,30 @@ public class AT_GroupsDataManager {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 3, 5, 5220753097952239863L, testPluginData).getPlugins());
+		Factory factory = GroupsTestPluginFactory.factory(30, 3, 5, 5220753097952239863L, testPluginData);
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 		// precondition test: if the group type id is null
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 3, 5, 9054394261904590543L, (c) -> {
-			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-			GroupTypeId groupTypeId = null;
-			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.getEventFilterForGroupImminentRemovalEvent(groupTypeId));
-			assertEquals(GroupError.NULL_GROUP_TYPE_ID, contractException.getErrorType());
-		}).getPlugins());
+		ContractException contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = GroupsTestPluginFactory.factory(30, 3, 5, 9054394261904590543L, (c) -> {
+				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+				GroupTypeId groupTypeId = null;
+				groupsDataManager.getEventFilterForGroupImminentRemovalEvent(groupTypeId);
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(GroupError.NULL_GROUP_TYPE_ID, contractException.getErrorType());
 
 		// precondition test: if the group type id is unknown
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 3, 5, 1762165471886047056L, (c) -> {
-			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-			GroupTypeId groupTypeId = TestGroupTypeId.getUnknownGroupTypeId();
-			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.getEventFilterForGroupImminentRemovalEvent(groupTypeId));
-			assertEquals(GroupError.UNKNOWN_GROUP_TYPE_ID, contractException.getErrorType());
-		}).getPlugins());
+		contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = GroupsTestPluginFactory.factory(30, 3, 5, 1762165471886047056L, (c) -> {
+				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+				GroupTypeId groupTypeId = TestGroupTypeId.getUnknownGroupTypeId();
+				groupsDataManager.getEventFilterForGroupImminentRemovalEvent(groupTypeId);
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(GroupError.UNKNOWN_GROUP_TYPE_ID, contractException.getErrorType());
 
 	}
 
@@ -2961,24 +3068,30 @@ public class AT_GroupsDataManager {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 3, 5, 8387884383247064182L, testPluginData).getPlugins());
+		Factory factory = GroupsTestPluginFactory.factory(30, 3, 5, 8387884383247064182L, testPluginData);
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 		// precondition test: if the group id is null
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 3, 5, 4632329546403944029L, (c) -> {
-			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-			GroupId groupId = null;
-			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.getEventFilterForGroupImminentRemovalEvent(groupId));
-			assertEquals(GroupError.NULL_GROUP_ID, contractException.getErrorType());
-		}).getPlugins());
+		ContractException contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = GroupsTestPluginFactory.factory(30, 3, 5, 4632329546403944029L, (c) -> {
+				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+				GroupId groupId = null;
+				groupsDataManager.getEventFilterForGroupImminentRemovalEvent(groupId);
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(GroupError.NULL_GROUP_ID, contractException.getErrorType());
 
 		// precondition test: if the group id is unknown
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 3, 5, 6422007986358180059L, (c) -> {
-			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-			GroupId groupId = new GroupId(100000);
-			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.getEventFilterForGroupImminentRemovalEvent(groupId));
-			assertEquals(GroupError.UNKNOWN_GROUP_ID, contractException.getErrorType());
-		}).getPlugins());
+		contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = GroupsTestPluginFactory.factory(30, 3, 5, 6422007986358180059L, (c) -> {
+				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+				GroupId groupId = new GroupId(100000);
+				groupsDataManager.getEventFilterForGroupImminentRemovalEvent(groupId);
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(GroupError.UNKNOWN_GROUP_ID, contractException.getErrorType());
 
 	}
 
@@ -3034,8 +3147,9 @@ public class AT_GroupsDataManager {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
+		Factory factory = GroupsTestPluginFactory.factory(30, 3, 5, 5769859947365341767L, testPluginData);
 
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 3, 5, 5769859947365341767L, testPluginData).getPlugins());
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
 	@Test
@@ -3115,23 +3229,31 @@ public class AT_GroupsDataManager {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(0, 3, 10, 4356365020352320873L, testPluginData).getPlugins());
+		Factory factory = GroupsTestPluginFactory.factory(0, 3, 10, 4356365020352320873L, testPluginData);
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 		// precondition tests: if the group id is null
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 3, 10, 3554135401743252689L, (c) -> {
-			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-			GroupId groupId = null;
-			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.getEventFilterForGroupMembershipAdditionEvent(groupId));
-			assertEquals(GroupError.NULL_GROUP_ID, contractException.getErrorType());
-		}).getPlugins());
+		ContractException contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = GroupsTestPluginFactory.factory(30, 3, 10, 3554135401743252689L, (c) -> {
+				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+				GroupId groupId = null;
+				groupsDataManager.getEventFilterForGroupMembershipAdditionEvent(groupId);
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(GroupError.NULL_GROUP_ID, contractException.getErrorType());
 
 		// precondition tests: if the group id is unknown
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 3, 10, 7801862262246131770L, (c) -> {
-			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-			GroupId groupId = new GroupId(1000000);
-			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.getEventFilterForGroupMembershipAdditionEvent(groupId));
-			assertEquals(GroupError.UNKNOWN_GROUP_ID, contractException.getErrorType());
-		}).getPlugins());
+		contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = GroupsTestPluginFactory.factory(30, 3, 10, 7801862262246131770L, (c) -> {
+				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+				GroupId groupId = new GroupId(1000000);
+				groupsDataManager.getEventFilterForGroupMembershipAdditionEvent(groupId);
+			});
+
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(GroupError.UNKNOWN_GROUP_ID, contractException.getErrorType());
 
 	}
 
@@ -3214,43 +3336,58 @@ public class AT_GroupsDataManager {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(0, 3, 10, 4356365020352320873L, testPluginData).getPlugins());
+		Factory factory = GroupsTestPluginFactory.factory(0, 3, 10, 4356365020352320873L, testPluginData);
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 		// precondition tests: if the group id is null
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 3, 10, 3554135401743252689L, (c) -> {
-			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-			GroupId groupId = null;
-			PersonId personId = new PersonId(0);
-			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.getEventFilterForGroupMembershipAdditionEvent(groupId, personId));
-			assertEquals(GroupError.NULL_GROUP_ID, contractException.getErrorType());
-		}).getPlugins());
+		ContractException contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = GroupsTestPluginFactory.factory(30, 3, 10, 3554135401743252689L, (c) -> {
+				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+				GroupId groupId = null;
+				PersonId personId = new PersonId(0);
+				groupsDataManager.getEventFilterForGroupMembershipAdditionEvent(groupId, personId);
+			});
+
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(GroupError.NULL_GROUP_ID, contractException.getErrorType());
 
 		// precondition tests: if the group id is unknown
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 3, 10, 7801862262246131770L, (c) -> {
-			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-			GroupId groupId = new GroupId(1000000);
-			PersonId personId = new PersonId(0);
-			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.getEventFilterForGroupMembershipAdditionEvent(groupId, personId));
-			assertEquals(GroupError.UNKNOWN_GROUP_ID, contractException.getErrorType());
-		}).getPlugins());
+		contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = GroupsTestPluginFactory.factory(30, 3, 10, 7801862262246131770L, (c) -> {
+				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+				GroupId groupId = new GroupId(1000000);
+				PersonId personId = new PersonId(0);
+				groupsDataManager.getEventFilterForGroupMembershipAdditionEvent(groupId, personId);
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(GroupError.UNKNOWN_GROUP_ID, contractException.getErrorType());
 
 		// precondition tests: if the person id is null
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 3, 10, 3554135401743252689L, (c) -> {
-			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-			GroupId groupId = new GroupId(0);
-			PersonId personId = null;
-			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.getEventFilterForGroupMembershipAdditionEvent(groupId, personId));
-			assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
-		}).getPlugins());
+		contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = GroupsTestPluginFactory.factory(30, 3, 10, 3554135401743252689L, (c) -> {
+				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+				GroupId groupId = new GroupId(0);
+				PersonId personId = null;
+				groupsDataManager.getEventFilterForGroupMembershipAdditionEvent(groupId, personId);
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
 
 		// precondition tests: if the person id is unknown
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 3, 10, 3554135401743252689L, (c) -> {
-			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-			GroupId groupId = new GroupId(0);
-			PersonId personId = new PersonId(1000000);
-			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.getEventFilterForGroupMembershipAdditionEvent(groupId, personId));
-			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
-		}).getPlugins());
+		contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = GroupsTestPluginFactory.factory(30, 3, 10, 3554135401743252689L, (c) -> {
+				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+				GroupId groupId = new GroupId(0);
+				PersonId personId = new PersonId(1000000);
+				groupsDataManager.getEventFilterForGroupMembershipAdditionEvent(groupId, personId);
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
+
 	}
 
 	@Test
@@ -3312,23 +3449,30 @@ public class AT_GroupsDataManager {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(0, 3, 10, 8388981611967284165L, testPluginData).getPlugins());
+		Factory factory = GroupsTestPluginFactory.factory(0, 3, 10, 8388981611967284165L, testPluginData);
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 		// precondition tests: if the group type id is null
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 3, 10, 8821737193954784979L, (c) -> {
-			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-			GroupTypeId groupTypeId = null;
-			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.getEventFilterForGroupMembershipAdditionEvent(groupTypeId));
-			assertEquals(GroupError.NULL_GROUP_TYPE_ID, contractException.getErrorType());
-		}).getPlugins());
+		ContractException contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = GroupsTestPluginFactory.factory(30, 3, 10, 8821737193954784979L, (c) -> {
+				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+				GroupTypeId groupTypeId = null;
+				groupsDataManager.getEventFilterForGroupMembershipAdditionEvent(groupTypeId);
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(GroupError.NULL_GROUP_TYPE_ID, contractException.getErrorType());
 
 		// precondition tests: if the group type id is unknown
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 3, 10, 8185554283901963798L, (c) -> {
-			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-			GroupTypeId groupTypeId = TestGroupTypeId.getUnknownGroupTypeId();
-			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.getEventFilterForGroupMembershipAdditionEvent(groupTypeId));
-			assertEquals(GroupError.UNKNOWN_GROUP_TYPE_ID, contractException.getErrorType());
-		}).getPlugins());
+		contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = GroupsTestPluginFactory.factory(30, 3, 10, 8185554283901963798L, (c) -> {
+				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+				GroupTypeId groupTypeId = TestGroupTypeId.getUnknownGroupTypeId();
+				groupsDataManager.getEventFilterForGroupMembershipAdditionEvent(groupTypeId);
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(GroupError.UNKNOWN_GROUP_TYPE_ID, contractException.getErrorType());
 
 	}
 
@@ -3416,43 +3560,56 @@ public class AT_GroupsDataManager {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(0, 3, 10, 4289325374116700754L, testPluginData).getPlugins());
+		Factory factory = GroupsTestPluginFactory.factory(0, 3, 10, 4289325374116700754L, testPluginData);
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 		// precondition tests: if the group type id is null
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 3, 10, 8053944455114188764L, (c) -> {
-			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-			GroupTypeId groupTypeId = null;
-			PersonId personId = new PersonId(0);
-			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.getEventFilterForGroupMembershipAdditionEvent(groupTypeId, personId));
-			assertEquals(GroupError.NULL_GROUP_TYPE_ID, contractException.getErrorType());
-		}).getPlugins());
+		ContractException contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = GroupsTestPluginFactory.factory(30, 3, 10, 8053944455114188764L, (c) -> {
+				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+				GroupTypeId groupTypeId = null;
+				PersonId personId = new PersonId(0);
+				groupsDataManager.getEventFilterForGroupMembershipAdditionEvent(groupTypeId, personId);
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(GroupError.NULL_GROUP_TYPE_ID, contractException.getErrorType());
 
 		// precondition tests: if the group id type is unknown
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 3, 10, 2656849630874291785L, (c) -> {
-			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-			GroupTypeId groupTypeId = TestGroupTypeId.getUnknownGroupTypeId();
-			PersonId personId = new PersonId(0);
-			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.getEventFilterForGroupMembershipAdditionEvent(groupTypeId, personId));
-			assertEquals(GroupError.UNKNOWN_GROUP_TYPE_ID, contractException.getErrorType());
-		}).getPlugins());
+		contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = GroupsTestPluginFactory.factory(30, 3, 10, 2656849630874291785L, (c) -> {
+				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+				GroupTypeId groupTypeId = TestGroupTypeId.getUnknownGroupTypeId();
+				PersonId personId = new PersonId(0);
+				groupsDataManager.getEventFilterForGroupMembershipAdditionEvent(groupTypeId, personId);
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(GroupError.UNKNOWN_GROUP_TYPE_ID, contractException.getErrorType());
 
 		// precondition tests: if the person id is null
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 3, 10, 4303859622582466624L, (c) -> {
-			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-			GroupId groupId = new GroupId(0);
-			PersonId personId = null;
-			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.getEventFilterForGroupMembershipAdditionEvent(groupId, personId));
-			assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
-		}).getPlugins());
+		contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = GroupsTestPluginFactory.factory(30, 3, 10, 4303859622582466624L, (c) -> {
+				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+				GroupId groupId = new GroupId(0);
+				PersonId personId = null;
+				groupsDataManager.getEventFilterForGroupMembershipAdditionEvent(groupId, personId);
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
 
 		// precondition tests: if the person id is unknown
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 3, 10, 763446688943355921L, (c) -> {
-			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-			GroupId groupId = new GroupId(0);
-			PersonId personId = new PersonId(1000000);
-			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.getEventFilterForGroupMembershipAdditionEvent(groupId, personId));
-			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
-		}).getPlugins());
+		contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = GroupsTestPluginFactory.factory(30, 3, 10, 763446688943355921L, (c) -> {
+				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+				GroupId groupId = new GroupId(0);
+				PersonId personId = new PersonId(1000000);
+				groupsDataManager.getEventFilterForGroupMembershipAdditionEvent(groupId, personId);
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
 
 	}
 
@@ -3532,24 +3689,30 @@ public class AT_GroupsDataManager {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(0, 3, 10, 7894583767324913975L, testPluginData).getPlugins());
+		Factory factory = GroupsTestPluginFactory.factory(0, 3, 10, 7894583767324913975L, testPluginData);
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 		// precondition tests: if the person id is null
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 3, 10, 8185554283901963798L, (c) -> {
-			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-			PersonId personId = null;
-			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.getEventFilterForGroupMembershipAdditionEvent(personId));
-			assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
-		}).getPlugins());
+		ContractException contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = GroupsTestPluginFactory.factory(30, 3, 10, 8185554283901963798L, (c) -> {
+				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+				PersonId personId = null;
+				groupsDataManager.getEventFilterForGroupMembershipAdditionEvent(personId);
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
 
 		// precondition tests: if the person id is unknown
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 3, 10, 8821737193954784979L, (c) -> {
-			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-			PersonId personId = new PersonId(1000000);
-			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.getEventFilterForGroupMembershipAdditionEvent(personId));
-			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
-		}).getPlugins());
-
+		contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = GroupsTestPluginFactory.factory(30, 3, 10, 8821737193954784979L, (c) -> {
+				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+				PersonId personId = new PersonId(1000000);
+				groupsDataManager.getEventFilterForGroupMembershipAdditionEvent(personId);
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
 	}
 
 	@Test
@@ -3597,7 +3760,8 @@ public class AT_GroupsDataManager {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(0, 3, 10, 8388981611967284165L, testPluginData).getPlugins());
+		Factory factory = GroupsTestPluginFactory.factory(0, 3, 10, 8388981611967284165L, testPluginData);
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
 	@Test
@@ -3678,24 +3842,30 @@ public class AT_GroupsDataManager {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(0, 3, 10, 1408892559376906541L, testPluginData).getPlugins());
+		Factory factory = GroupsTestPluginFactory.factory(0, 3, 10, 1408892559376906541L, testPluginData);
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 		// precondition tests: if the group id is null
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 3, 10, 7647888786891229419L, (c) -> {
-			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-			GroupId groupId = null;
-			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.getEventFilterForGroupMembershipRemovalEvent(groupId));
-			assertEquals(GroupError.NULL_GROUP_ID, contractException.getErrorType());
-		}).getPlugins());
+		ContractException contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = GroupsTestPluginFactory.factory(30, 3, 10, 7647888786891229419L, (c) -> {
+				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+				GroupId groupId = null;
+				groupsDataManager.getEventFilterForGroupMembershipRemovalEvent(groupId);
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(GroupError.NULL_GROUP_ID, contractException.getErrorType());
 
 		// precondition tests: if the group id is unknown
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 3, 10, 4061098775259808370L, (c) -> {
-			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-			GroupId groupId = new GroupId(1000000);
-			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.getEventFilterForGroupMembershipRemovalEvent(groupId));
-			assertEquals(GroupError.UNKNOWN_GROUP_ID, contractException.getErrorType());
-		}).getPlugins());
-
+		contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = GroupsTestPluginFactory.factory(30, 3, 10, 4061098775259808370L, (c) -> {
+				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+				GroupId groupId = new GroupId(1000000);
+				groupsDataManager.getEventFilterForGroupMembershipRemovalEvent(groupId);
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(GroupError.UNKNOWN_GROUP_ID, contractException.getErrorType());
 	}
 
 	@Test
@@ -3777,43 +3947,57 @@ public class AT_GroupsDataManager {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(0, 3, 10, 850494789248046062L, testPluginData).getPlugins());
+
+		Factory factory = GroupsTestPluginFactory.factory(0, 3, 10, 850494789248046062L, testPluginData);
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 		// precondition tests: if the group id is null
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 3, 10, 3817909950120643137L, (c) -> {
-			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-			GroupId groupId = null;
-			PersonId personId = new PersonId(0);
-			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.getEventFilterForGroupMembershipRemovalEvent(groupId, personId));
-			assertEquals(GroupError.NULL_GROUP_ID, contractException.getErrorType());
-		}).getPlugins());
+		ContractException contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = GroupsTestPluginFactory.factory(30, 3, 10, 3817909950120643137L, (c) -> {
+				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+				GroupId groupId = null;
+				PersonId personId = new PersonId(0);
+				groupsDataManager.getEventFilterForGroupMembershipRemovalEvent(groupId, personId);
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(GroupError.NULL_GROUP_ID, contractException.getErrorType());
 
 		// precondition tests: if the group id is unknown
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 3, 10, 1158315623391808977L, (c) -> {
-			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-			GroupId groupId = new GroupId(1000000);
-			PersonId personId = new PersonId(0);
-			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.getEventFilterForGroupMembershipRemovalEvent(groupId, personId));
-			assertEquals(GroupError.UNKNOWN_GROUP_ID, contractException.getErrorType());
-		}).getPlugins());
+		contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = GroupsTestPluginFactory.factory(30, 3, 10, 1158315623391808977L, (c) -> {
+				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+				GroupId groupId = new GroupId(1000000);
+				PersonId personId = new PersonId(0);
+				groupsDataManager.getEventFilterForGroupMembershipRemovalEvent(groupId, personId);
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(GroupError.UNKNOWN_GROUP_ID, contractException.getErrorType());
 
 		// precondition tests: if the person id is null
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 3, 10, 7381815331080809057L, (c) -> {
-			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-			GroupId groupId = new GroupId(0);
-			PersonId personId = null;
-			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.getEventFilterForGroupMembershipRemovalEvent(groupId, personId));
-			assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
-		}).getPlugins());
+		contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = GroupsTestPluginFactory.factory(30, 3, 10, 7381815331080809057L, (c) -> {
+				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+				GroupId groupId = new GroupId(0);
+				PersonId personId = null;
+				groupsDataManager.getEventFilterForGroupMembershipRemovalEvent(groupId, personId);
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
 
 		// precondition tests: if the person id is unknown
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 3, 10, 730725479830632841L, (c) -> {
-			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-			GroupId groupId = new GroupId(0);
-			PersonId personId = new PersonId(1000000);
-			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.getEventFilterForGroupMembershipRemovalEvent(groupId, personId));
-			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
-		}).getPlugins());
+		contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = GroupsTestPluginFactory.factory(30, 3, 10, 730725479830632841L, (c) -> {
+				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+				GroupId groupId = new GroupId(0);
+				PersonId personId = new PersonId(1000000);
+				groupsDataManager.getEventFilterForGroupMembershipRemovalEvent(groupId, personId);
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
 	}
 
 	@Test
@@ -3876,23 +4060,31 @@ public class AT_GroupsDataManager {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(0, 3, 10, 5729813629540803760L, testPluginData).getPlugins());
+
+		Factory factory = GroupsTestPluginFactory.factory(0, 3, 10, 5729813629540803760L, testPluginData);
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 		// precondition tests: if the group type id is null
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 3, 10, 1847985412434537556L, (c) -> {
-			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-			GroupTypeId groupTypeId = null;
-			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.getEventFilterForGroupMembershipRemovalEvent(groupTypeId));
-			assertEquals(GroupError.NULL_GROUP_TYPE_ID, contractException.getErrorType());
-		}).getPlugins());
+		ContractException contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = GroupsTestPluginFactory.factory(30, 3, 10, 1847985412434537556L, (c) -> {
+				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+				GroupTypeId groupTypeId = null;
+				groupsDataManager.getEventFilterForGroupMembershipRemovalEvent(groupTypeId);
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(GroupError.NULL_GROUP_TYPE_ID, contractException.getErrorType());
 
 		// precondition tests: if the group type id is unknown
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 3, 10, 7066368881974432975L, (c) -> {
-			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-			GroupTypeId groupTypeId = TestGroupTypeId.getUnknownGroupTypeId();
-			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.getEventFilterForGroupMembershipRemovalEvent(groupTypeId));
-			assertEquals(GroupError.UNKNOWN_GROUP_TYPE_ID, contractException.getErrorType());
-		}).getPlugins());
+		contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = GroupsTestPluginFactory.factory(30, 3, 10, 7066368881974432975L, (c) -> {
+				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+				GroupTypeId groupTypeId = TestGroupTypeId.getUnknownGroupTypeId();
+				groupsDataManager.getEventFilterForGroupMembershipRemovalEvent(groupTypeId);
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(GroupError.UNKNOWN_GROUP_TYPE_ID, contractException.getErrorType());
 
 	}
 
@@ -3980,43 +4172,56 @@ public class AT_GroupsDataManager {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(0, 3, 10, 4777272524165165597L, testPluginData).getPlugins());
+		Factory factory = GroupsTestPluginFactory.factory(0, 3, 10, 4777272524165165597L, testPluginData);
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 		// precondition tests: if the group type id is null
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 3, 10, 5144779074591935394L, (c) -> {
-			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-			GroupTypeId groupTypeId = null;
-			PersonId personId = new PersonId(0);
-			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.getEventFilterForGroupMembershipRemovalEvent(groupTypeId, personId));
-			assertEquals(GroupError.NULL_GROUP_TYPE_ID, contractException.getErrorType());
-		}).getPlugins());
+		ContractException contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = GroupsTestPluginFactory.factory(30, 3, 10, 5144779074591935394L, (c) -> {
+				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+				GroupTypeId groupTypeId = null;
+				PersonId personId = new PersonId(0);
+				groupsDataManager.getEventFilterForGroupMembershipRemovalEvent(groupTypeId, personId);
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(GroupError.NULL_GROUP_TYPE_ID, contractException.getErrorType());
 
 		// precondition tests: if the group id type is unknown
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 3, 10, 4113468214758049896L, (c) -> {
-			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-			GroupTypeId groupTypeId = TestGroupTypeId.getUnknownGroupTypeId();
-			PersonId personId = new PersonId(0);
-			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.getEventFilterForGroupMembershipRemovalEvent(groupTypeId, personId));
-			assertEquals(GroupError.UNKNOWN_GROUP_TYPE_ID, contractException.getErrorType());
-		}).getPlugins());
+		contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = GroupsTestPluginFactory.factory(30, 3, 10, 4113468214758049896L, (c) -> {
+				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+				GroupTypeId groupTypeId = TestGroupTypeId.getUnknownGroupTypeId();
+				PersonId personId = new PersonId(0);
+				groupsDataManager.getEventFilterForGroupMembershipRemovalEvent(groupTypeId, personId);
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(GroupError.UNKNOWN_GROUP_TYPE_ID, contractException.getErrorType());
 
 		// precondition tests: if the person id is null
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 3, 10, 8361722504062590493L, (c) -> {
-			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-			GroupId groupId = new GroupId(0);
-			PersonId personId = null;
-			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.getEventFilterForGroupMembershipRemovalEvent(groupId, personId));
-			assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
-		}).getPlugins());
+		contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = GroupsTestPluginFactory.factory(30, 3, 10, 8361722504062590493L, (c) -> {
+				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+				GroupId groupId = new GroupId(0);
+				PersonId personId = null;
+				groupsDataManager.getEventFilterForGroupMembershipRemovalEvent(groupId, personId);
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
 
 		// precondition tests: if the person id is unknown
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 3, 10, 6049511004252974580L, (c) -> {
-			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-			GroupId groupId = new GroupId(0);
-			PersonId personId = new PersonId(1000000);
-			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.getEventFilterForGroupMembershipRemovalEvent(groupId, personId));
-			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
-		}).getPlugins());
+		contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = GroupsTestPluginFactory.factory(30, 3, 10, 6049511004252974580L, (c) -> {
+				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+				GroupId groupId = new GroupId(0);
+				PersonId personId = new PersonId(1000000);
+				groupsDataManager.getEventFilterForGroupMembershipRemovalEvent(groupId, personId);
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
 
 	}
 
@@ -4097,23 +4302,31 @@ public class AT_GroupsDataManager {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(0, 3, 10, 4102753717872340366L, testPluginData).getPlugins());
+
+		Factory factory = GroupsTestPluginFactory.factory(0, 3, 10, 4102753717872340366L, testPluginData);
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 		// precondition tests: if the person id is null
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 3, 10, 3402841194395285411L, (c) -> {
-			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-			PersonId personId = null;
-			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.getEventFilterForGroupMembershipRemovalEvent(personId));
-			assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
-		}).getPlugins());
+		ContractException contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = GroupsTestPluginFactory.factory(30, 3, 10, 3402841194395285411L, (c) -> {
+				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+				PersonId personId = null;
+				groupsDataManager.getEventFilterForGroupMembershipRemovalEvent(personId);
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
 
 		// precondition tests: if the person id is unknown
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 3, 10, 7511275143655411369L, (c) -> {
-			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-			PersonId personId = new PersonId(1000000);
-			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.getEventFilterForGroupMembershipRemovalEvent(personId));
-			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
-		}).getPlugins());
+		contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = GroupsTestPluginFactory.factory(30, 3, 10, 7511275143655411369L, (c) -> {
+				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+				PersonId personId = new PersonId(1000000);
+				groupsDataManager.getEventFilterForGroupMembershipRemovalEvent(personId);
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
 
 	}
 
@@ -4163,7 +4376,10 @@ public class AT_GroupsDataManager {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(0, 3, 10, 617923429956310846L, testPluginData).getPlugins());
+
+		Factory factory = GroupsTestPluginFactory.factory(0, 3, 10, 617923429956310846L, testPluginData);
+
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
 	@Test
@@ -4231,23 +4447,30 @@ public class AT_GroupsDataManager {
 			assertEquals(expectedObservations, actualObservations);
 		}));
 		TestPluginData testPluginData = pluginBuilder.build();
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(100, 3, 5, 5968311683269278335L, testPluginData).getPlugins());
+		Factory factory = GroupsTestPluginFactory.factory(100, 3, 5, 5968311683269278335L, testPluginData);
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 		// precondition test: if the group id is null
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(100, 3, 5, 862611649140739209L, (c) -> {
-			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-			GroupId groupId = null;
-			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.getEventFilterForGroupPropertyUpdateEvent(groupId));
-			assertEquals(GroupError.NULL_GROUP_ID, contractException.getErrorType());
-		}).getPlugins());
+		ContractException contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = GroupsTestPluginFactory.factory(100, 3, 5, 862611649140739209L, (c) -> {
+				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+				GroupId groupId = null;
+				groupsDataManager.getEventFilterForGroupPropertyUpdateEvent(groupId);
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(GroupError.NULL_GROUP_ID, contractException.getErrorType());
 
 		// precondition test: if the group id is unknown
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(100, 3, 5, 4350585872528673625L, (c) -> {
-			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-			GroupId groupId = new GroupId(10000000);
-			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.getEventFilterForGroupPropertyUpdateEvent(groupId));
-			assertEquals(GroupError.UNKNOWN_GROUP_ID, contractException.getErrorType());
-		}).getPlugins());
+		contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = GroupsTestPluginFactory.factory(100, 3, 5, 4350585872528673625L, (c) -> {
+				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+				GroupId groupId = new GroupId(10000000);
+				groupsDataManager.getEventFilterForGroupPropertyUpdateEvent(groupId);
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(GroupError.UNKNOWN_GROUP_ID, contractException.getErrorType());
 
 	}
 
@@ -4331,43 +4554,59 @@ public class AT_GroupsDataManager {
 			assertEquals(expectedObservations, actualObservations);
 		}));
 		TestPluginData testPluginData = pluginBuilder.build();
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(100, 3, 5, 4475568313075757118L, testPluginData).getPlugins());
+		Factory factory = GroupsTestPluginFactory.factory(100, 3, 5, 4475568313075757118L, testPluginData);
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 		// precondition test: if the group property id is null
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(100, 3, 5, 7069545924217450784L, (c) -> {
-			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-			GroupId groupId = new GroupId(0);
-			GroupPropertyId groupPropertyId = null;
-			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.getEventFilterForGroupPropertyUpdateEvent(groupPropertyId, groupId));
-			assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
-		}).getPlugins());
+		ContractException contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = GroupsTestPluginFactory.factory(100, 3, 5, 7069545924217450784L, (c) -> {
+				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+				GroupId groupId = new GroupId(0);
+				GroupPropertyId groupPropertyId = null;
+				groupsDataManager.getEventFilterForGroupPropertyUpdateEvent(groupPropertyId, groupId);
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
 
 		// precondition test: if the group property id is unknown
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(100, 3, 5, 7612521001250321841L, (c) -> {
-			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-			GroupId groupId = new GroupId(0);
-			GroupPropertyId groupPropertyId = TestGroupPropertyId.getUnknownGroupPropertyId();
-			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.getEventFilterForGroupPropertyUpdateEvent(groupPropertyId, groupId));
-			assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
-		}).getPlugins());
+		contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = GroupsTestPluginFactory.factory(100, 3, 5, 7612521001250321841L, (c) -> {
+				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+				GroupId groupId = new GroupId(0);
+				GroupPropertyId groupPropertyId = TestGroupPropertyId.getUnknownGroupPropertyId();
+				groupsDataManager.getEventFilterForGroupPropertyUpdateEvent(groupPropertyId, groupId);
+			});
+
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
+
 		// precondition test: if the group id is null
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(100, 3, 5, 6231606808502548902L, (c) -> {
-			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-			GroupId groupId = null;
-			GroupPropertyId groupPropertyId = TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK;
-			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.getEventFilterForGroupPropertyUpdateEvent(groupPropertyId, groupId));
-			assertEquals(GroupError.NULL_GROUP_ID, contractException.getErrorType());
-		}).getPlugins());
+		contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = GroupsTestPluginFactory.factory(100, 3, 5, 6231606808502548902L, (c) -> {
+				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+				GroupId groupId = null;
+				GroupPropertyId groupPropertyId = TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK;
+				groupsDataManager.getEventFilterForGroupPropertyUpdateEvent(groupPropertyId, groupId);
+
+			});
+
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(GroupError.NULL_GROUP_ID, contractException.getErrorType());
 
 		// precondition test: if the group id is unknown
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(100, 3, 5, 7604482353903847440L, (c) -> {
-			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-			GroupId groupId = new GroupId(10000000);
-			GroupPropertyId groupPropertyId = TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK;
-			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.getEventFilterForGroupPropertyUpdateEvent(groupPropertyId, groupId));
-			assertEquals(GroupError.UNKNOWN_GROUP_ID, contractException.getErrorType());
-		}).getPlugins());
-
+		contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = GroupsTestPluginFactory.factory(100, 3, 5, 7604482353903847440L, (c) -> {
+				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+				GroupId groupId = new GroupId(10000000);
+				GroupPropertyId groupPropertyId = TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK;
+				groupsDataManager.getEventFilterForGroupPropertyUpdateEvent(groupPropertyId, groupId);
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(GroupError.UNKNOWN_GROUP_ID, contractException.getErrorType());
 	}
 
 	@Test
@@ -4424,23 +4663,31 @@ public class AT_GroupsDataManager {
 			assertEquals(expectedObservations, actualObservations);
 		}));
 		TestPluginData testPluginData = pluginBuilder.build();
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(100, 3, 5, 7860201282796014649L, testPluginData).getPlugins());
+
+		Factory factory = GroupsTestPluginFactory.factory(100, 3, 5, 7860201282796014649L, testPluginData);
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 		// precondition test: if the group type id is null
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(100, 3, 5, 3217133270896467859L, (c) -> {
-			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-			GroupTypeId groupTypeId = null;
-			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.getEventFilterForGroupPropertyUpdateEvent(groupTypeId));
-			assertEquals(GroupError.NULL_GROUP_TYPE_ID, contractException.getErrorType());
-		}).getPlugins());
+		ContractException contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = GroupsTestPluginFactory.factory(100, 3, 5, 3217133270896467859L, (c) -> {
+				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+				GroupTypeId groupTypeId = null;
+				groupsDataManager.getEventFilterForGroupPropertyUpdateEvent(groupTypeId);
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(GroupError.NULL_GROUP_TYPE_ID, contractException.getErrorType());
 
 		// precondition test: if the group type id is unknown
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(100, 3, 5, 289438765224007761L, (c) -> {
-			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-			GroupTypeId groupTypeId = TestGroupTypeId.getUnknownGroupTypeId();
-			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.getEventFilterForGroupPropertyUpdateEvent(groupTypeId));
-			assertEquals(GroupError.UNKNOWN_GROUP_TYPE_ID, contractException.getErrorType());
-		}).getPlugins());
+		contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = GroupsTestPluginFactory.factory(100, 3, 5, 289438765224007761L, (c) -> {
+				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+				GroupTypeId groupTypeId = TestGroupTypeId.getUnknownGroupTypeId();
+				groupsDataManager.getEventFilterForGroupPropertyUpdateEvent(groupTypeId);
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(GroupError.UNKNOWN_GROUP_TYPE_ID, contractException.getErrorType());
 	}
 
 	@Test
@@ -4504,42 +4751,58 @@ public class AT_GroupsDataManager {
 			assertEquals(expectedObservations, actualObservations);
 		}));
 		TestPluginData testPluginData = pluginBuilder.build();
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(100, 3, 5, 806128103582088681L, testPluginData).getPlugins());
+
+		Factory factory = GroupsTestPluginFactory.factory(100, 3, 5, 806128103582088681L, testPluginData);
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 		// precondition test: if the group property id is null
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(100, 3, 5, 3969612657033464070L, (c) -> {
-			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-			GroupTypeId groupTypeId = TestGroupTypeId.GROUP_TYPE_1;
-			GroupPropertyId groupPropertyId = null;
-			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.getEventFilterForGroupPropertyUpdateEvent(groupPropertyId, groupTypeId));
-			assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
-		}).getPlugins());
+		ContractException contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = GroupsTestPluginFactory.factory(100, 3, 5, 3969612657033464070L, (c) -> {
+				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+				GroupTypeId groupTypeId = TestGroupTypeId.GROUP_TYPE_1;
+				GroupPropertyId groupPropertyId = null;
+				groupsDataManager.getEventFilterForGroupPropertyUpdateEvent(groupPropertyId, groupTypeId);
+			});
+
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
 
 		// precondition test: if the group property id is unknown
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(100, 3, 5, 2325782745323432023L, (c) -> {
-			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-			GroupTypeId groupTypeId = TestGroupTypeId.GROUP_TYPE_1;
-			GroupPropertyId groupPropertyId = TestGroupPropertyId.getUnknownGroupPropertyId();
-			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.getEventFilterForGroupPropertyUpdateEvent(groupPropertyId, groupTypeId));
-			assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
-		}).getPlugins());
+		contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = GroupsTestPluginFactory.factory(100, 3, 5, 2325782745323432023L, (c) -> {
+				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+				GroupTypeId groupTypeId = TestGroupTypeId.GROUP_TYPE_1;
+				GroupPropertyId groupPropertyId = TestGroupPropertyId.getUnknownGroupPropertyId();
+				groupsDataManager.getEventFilterForGroupPropertyUpdateEvent(groupPropertyId, groupTypeId);
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
+
 		// precondition test: if the group type id is null
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(100, 3, 5, 1401012088879526006L, (c) -> {
-			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-			GroupTypeId groupTypeId = null;
-			GroupPropertyId groupPropertyId = TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK;
-			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.getEventFilterForGroupPropertyUpdateEvent(groupPropertyId, groupTypeId));
-			assertEquals(GroupError.NULL_GROUP_TYPE_ID, contractException.getErrorType());
-		}).getPlugins());
+		contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = GroupsTestPluginFactory.factory(100, 3, 5, 1401012088879526006L, (c) -> {
+				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+				GroupTypeId groupTypeId = null;
+				GroupPropertyId groupPropertyId = TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK;
+				groupsDataManager.getEventFilterForGroupPropertyUpdateEvent(groupPropertyId, groupTypeId);
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(GroupError.NULL_GROUP_TYPE_ID, contractException.getErrorType());
 
 		// precondition test: if the group id is unknown
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(100, 3, 5, 7868034517160861554L, (c) -> {
-			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-			GroupTypeId groupTypeId = TestGroupTypeId.getUnknownGroupTypeId();
-			GroupPropertyId groupPropertyId = TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK;
-			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.getEventFilterForGroupPropertyUpdateEvent(groupPropertyId, groupTypeId));
-			assertEquals(GroupError.UNKNOWN_GROUP_TYPE_ID, contractException.getErrorType());
-		}).getPlugins());
+		contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = GroupsTestPluginFactory.factory(100, 3, 5, 7868034517160861554L, (c) -> {
+				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+				GroupTypeId groupTypeId = TestGroupTypeId.getUnknownGroupTypeId();
+				GroupPropertyId groupPropertyId = TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK;
+				groupsDataManager.getEventFilterForGroupPropertyUpdateEvent(groupPropertyId, groupTypeId);
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(GroupError.UNKNOWN_GROUP_TYPE_ID, contractException.getErrorType());
 	}
 
 	@Test
@@ -4589,8 +4852,8 @@ public class AT_GroupsDataManager {
 			assertEquals(expectedObservations, actualObservations);
 		}));
 		TestPluginData testPluginData = pluginBuilder.build();
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(100, 3, 5, 2633645086420948220L, testPluginData).getPlugins());
-
+		Factory factory = GroupsTestPluginFactory.factory(100, 3, 5, 2633645086420948220L, testPluginData);
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
 	@Test
@@ -4641,7 +4904,9 @@ public class AT_GroupsDataManager {
 
 		TestPluginData testPluginData = pluginBuilder.build();
 
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(100, 3, 10, 2918652330043276295L, testPluginData).getPlugins());
+		Factory factory = GroupsTestPluginFactory.factory(100, 3, 10, 2918652330043276295L, testPluginData);
+
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 	}
 
@@ -4677,7 +4942,8 @@ public class AT_GroupsDataManager {
 
 		TestPluginData testPluginData = pluginBuilder.build();
 
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(100, 3, 10, 7349170569580375646L, testPluginData).getPlugins());
+		Factory factory = GroupsTestPluginFactory.factory(100, 3, 10, 7349170569580375646L, testPluginData);
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
 }

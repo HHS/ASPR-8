@@ -18,6 +18,7 @@ import plugins.groups.datamanagers.GroupsDataManager;
 import plugins.groups.events.GroupMembershipAdditionEvent;
 import plugins.groups.events.GroupMembershipRemovalEvent;
 import plugins.groups.testsupport.GroupsTestPluginFactory;
+import plugins.groups.testsupport.GroupsTestPluginFactory.Factory;
 import plugins.groups.testsupport.TestGroupTypeId;
 import plugins.partitions.support.Equality;
 import plugins.partitions.support.Filter;
@@ -41,7 +42,7 @@ public class AT_GroupsForPersonFilter {
 	@Test
 	@UnitTestMethod(target = GroupsForPersonFilter.class, name = "validate", args = { SimulationContext.class })
 	public void testValidate() {
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(100, 3, 10, 5329703278551588697L, (c) -> {
+		Factory factory = GroupsTestPluginFactory.factory(100, 3, 10, 5329703278551588697L, (c) -> {
 			// precondition tests
 
 			// if the equality operator is null
@@ -49,13 +50,15 @@ public class AT_GroupsForPersonFilter {
 					() -> new GroupsForPersonFilter(null, 5).validate(c));
 			assertEquals(PartitionError.NULL_EQUALITY_OPERATOR, contractException.getErrorType());
 
-		}).getPlugins());
+		});
+		
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
 	@Test
 	@UnitTestMethod(target = GroupsForPersonFilter.class, name = "getFilterSensitivities", args = {})
 	public void testGetFilterSensitivities() {
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(100, 3, 10, 8314387061888020596L, (c) -> {
+		Factory factory = GroupsTestPluginFactory.factory(100, 3, 10, 8314387061888020596L, (c) -> {
 			Filter filter = new GroupsForPersonFilter(Equality.EQUAL, 5);
 
 			Set<Class<?>> expected = new LinkedHashSet<>();
@@ -73,7 +76,9 @@ public class AT_GroupsForPersonFilter {
 			}
 			assertEquals(expected, actual);
 
-		}).getPlugins());
+		});
+		
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
 	@Test
@@ -81,7 +86,7 @@ public class AT_GroupsForPersonFilter {
 			PersonId.class })
 	public void testEvaluate() {
 
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(100, 0, 10, 6164158277278234559L, (c) -> {
+		Factory factory = GroupsTestPluginFactory.factory(100, 0, 10, 6164158277278234559L, (c) -> {
 			RandomGenerator randomGenerator = c.getDataManager(StochasticsDataManager.class).getRandomGenerator();
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
@@ -134,7 +139,8 @@ public class AT_GroupsForPersonFilter {
 			/* precondition: if the person id is unknown */
 			assertThrows(RuntimeException.class, () -> filter.evaluate(c, new PersonId(123412342)));
 
-		}).getPlugins());
+		});
 
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 }
