@@ -137,14 +137,17 @@ public final class AT_MaterialsProducerPropertyReport {
 
 		TestPluginData testPluginData = pluginBuilder.build();
 
-		TestOutputConsumer outputConsumer = new TestOutputConsumer();
+
 
 		Factory factory = MaterialsTestPluginFactory.factory(0, 0, 0, 8759226038479000135L, testPluginData);
 		factory.setMaterialsProducerPropertyReportPluginData(MaterialsProducerPropertyReportPluginData.builder().setReportLabel(REPORT_LABEL).build());
-		TestSimulation.executeSimulation(factory.getPlugins(), outputConsumer);
 		
+		TestOutputConsumer testOutputConsumer = TestSimulation	.builder()//
+				.addPlugins(factory.getPlugins())//
+				.build()//
+				.execute();
 		
-		Map<ReportItem, Integer> acutualReportItems = outputConsumer.getOutputItems(ReportItem.class);
+		Map<ReportItem, Integer> acutualReportItems = testOutputConsumer.getOutputItems(ReportItem.class);
 		assertEquals(expectedReportItems, acutualReportItems);
 	}
 

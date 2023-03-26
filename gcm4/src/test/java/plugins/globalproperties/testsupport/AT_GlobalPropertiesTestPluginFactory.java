@@ -28,6 +28,7 @@ import plugins.globalproperties.GlobalPropertiesPluginId;
 import plugins.globalproperties.support.GlobalPropertiesError;
 import plugins.globalproperties.support.GlobalPropertyId;
 import plugins.globalproperties.support.SimpleGlobalPropertyId;
+import plugins.globalproperties.testsupport.GlobalPropertiesTestPluginFactory.Factory;
 import plugins.util.properties.PropertyDefinition;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
@@ -39,9 +40,9 @@ public class AT_GlobalPropertiesTestPluginFactory {
 	@UnitTestMethod(target = GlobalPropertiesTestPluginFactory.class, name = "factory", args = { Consumer.class })
 	public void testFactory_Consumer() {
 		MutableBoolean executed = new MutableBoolean();
-		TestSimulation
-				.executeSimulation(
-						GlobalPropertiesTestPluginFactory.factory(c -> executed.setValue(true)).getPlugins());
+		Factory factory = GlobalPropertiesTestPluginFactory.factory(c -> executed.setValue(true));
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
+		
 		assertTrue(executed.getValue());
 
 		// precondition: consumer is null
@@ -58,8 +59,8 @@ public class AT_GlobalPropertiesTestPluginFactory {
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, c -> executed.setValue(true)));
 		TestPluginData testPluginData = pluginBuilder.build();
-
-		TestSimulation.executeSimulation(GlobalPropertiesTestPluginFactory.factory(testPluginData).getPlugins());
+		Factory factory = GlobalPropertiesTestPluginFactory.factory(testPluginData);
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 		assertTrue(executed.getValue());
 
 		// precondition: testPluginData is null

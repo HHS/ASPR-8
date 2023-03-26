@@ -7,7 +7,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -30,6 +29,7 @@ import plugins.globalproperties.support.GlobalPropertyId;
 import plugins.globalproperties.support.GlobalPropertyInitialization;
 import plugins.globalproperties.support.SimpleGlobalPropertyId;
 import plugins.globalproperties.testsupport.GlobalPropertiesTestPluginFactory;
+import plugins.globalproperties.testsupport.GlobalPropertiesTestPluginFactory.Factory;
 import plugins.globalproperties.testsupport.TestGlobalPropertyId;
 import plugins.reports.support.ReportHeader;
 import plugins.reports.support.ReportItem;
@@ -171,14 +171,11 @@ public class AT_GlobalPropertyReport {
 		expectedReportItems.put(getReportItem(3.0, globalPropertyId_3, true), 1);
 		expectedReportItems.put(getReportItem(3.0, globalPropertyId_5, 199.16), 1);
 
-		TestOutputConsumer outputConsumer = new TestOutputConsumer();
+		Factory factory = GlobalPropertiesTestPluginFactory	.factory(testPluginData)//
+															.setGlobalPropertiesPluginData(globalPropertiesPluginData)//
+															.setGlobalPropertyReportPluginData(globalPropertyReportPluginData);//
 
-		List<Plugin> plugins = GlobalPropertiesTestPluginFactory.factory(testPluginData)//
-																.setGlobalPropertiesPluginData(globalPropertiesPluginData)//
-																.setGlobalPropertyReportPluginData(globalPropertyReportPluginData)//
-																.getPlugins();//
-
-		TestSimulation.executeSimulation(plugins, outputConsumer);
+		TestOutputConsumer outputConsumer = TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 		assertEquals(expectedReportItems, outputConsumer.getOutputItems(ReportItem.class));
 
@@ -252,15 +249,15 @@ public class AT_GlobalPropertyReport {
 													.factory(testPluginData)//
 													.setGlobalPropertyReportPluginData(globalPropertyReportPluginData);
 
-		List<Plugin> plugins = factory.getPlugins();
 		StochasticsPluginData stochasticsPluginData = StochasticsPluginData.builder().setSeed(4059891083116386869L).build();
 		Plugin stochasticsPlugin = StochasticsPlugin.getStochasticsPlugin(stochasticsPluginData);
-		plugins.add(stochasticsPlugin);
 
 		// tell the builder to include a specific global property id
-
-		TestOutputConsumer testOutputConsumer = new TestOutputConsumer();
-		TestSimulation.executeSimulation(plugins, testOutputConsumer);
+		TestOutputConsumer testOutputConsumer = TestSimulation	.builder()//
+																.addPlugins(factory.getPlugins())//
+																.addPlugin(stochasticsPlugin)//
+																.build()//
+																.execute();
 
 		// show that our report items include the chosen property id
 		Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItems(ReportItem.class);
@@ -455,15 +452,15 @@ public class AT_GlobalPropertyReport {
 													.factory(testPluginData)//
 													.setGlobalPropertyReportPluginData(globalPropertyReportPluginData);
 
-		List<Plugin> plugins = factory.getPlugins();
 		StochasticsPluginData stochasticsPluginData = StochasticsPluginData.builder().setSeed(4059891083116386869L).build();
 		Plugin stochasticsPlugin = StochasticsPlugin.getStochasticsPlugin(stochasticsPluginData);
-		plugins.add(stochasticsPlugin);
 
 		// tell the builder to include a specific global property id
-
-		TestOutputConsumer testOutputConsumer = new TestOutputConsumer();
-		TestSimulation.executeSimulation(plugins, testOutputConsumer);
+		TestOutputConsumer testOutputConsumer = TestSimulation	.builder()//
+																.addPlugins(factory.getPlugins())//
+																.addPlugin(stochasticsPlugin)//
+																.build()//
+																.execute();
 
 		// show that our report items exclude the chosen property id
 		Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItems(ReportItem.class);
@@ -632,16 +629,16 @@ public class AT_GlobalPropertyReport {
 		expectedReportItems.put(getReportItem(3.0, globalPropertyId_3, true), 1);
 		expectedReportItems.put(getReportItem(3.0, globalPropertyId_5, 199.16), 1);
 
-		TestOutputConsumer outputConsumer = new TestOutputConsumer();
+		Factory factory = GlobalPropertiesTestPluginFactory	.factory(testPluginData)//
+															.setGlobalPropertiesPluginData(globalPropertiesPluginData)//
+															.setGlobalPropertyReportPluginData(globalPropertyReportPluginData);//
 
-		List<Plugin> plugins = GlobalPropertiesTestPluginFactory.factory(testPluginData)//
-																.setGlobalPropertiesPluginData(globalPropertiesPluginData)//
-																.setGlobalPropertyReportPluginData(globalPropertyReportPluginData)//
-																.getPlugins();//
+		TestOutputConsumer testOutputConsumer = TestSimulation	.builder()//
+																.addPlugins(factory.getPlugins())//
+																.build()//
+																.execute();
 
-		TestSimulation.executeSimulation(plugins, outputConsumer);
-
-		assertEquals(expectedReportItems, outputConsumer.getOutputItems(ReportItem.class));
+		assertEquals(expectedReportItems, testOutputConsumer.getOutputItems(ReportItem.class));
 
 	}
 
@@ -744,14 +741,14 @@ public class AT_GlobalPropertyReport {
 		 * Collect the expected report items. Note that order does not matter. *
 		 */
 
-		TestOutputConsumer outputConsumer = new TestOutputConsumer();
+		Factory factory = GlobalPropertiesTestPluginFactory	.factory(testPluginData)//
+															.setGlobalPropertiesPluginData(globalPropertiesPluginData)//
+															.setGlobalPropertyReportPluginData(globalPropertyReportPluginData);//
 
-		List<Plugin> plugins = GlobalPropertiesTestPluginFactory.factory(testPluginData)//
-																.setGlobalPropertiesPluginData(globalPropertiesPluginData)//
-																.setGlobalPropertyReportPluginData(globalPropertyReportPluginData)//
-																.getPlugins();//
-
-		TestSimulation.executeSimulation(plugins, outputConsumer, true);
+		TestOutputConsumer outputConsumer = TestSimulation	.builder()//
+															.addPlugins(factory.getPlugins())//
+															.setProduceSimulationStateOnHalt(true).build()//
+															.execute();
 
 		// show that the GlobalPropertyReportPluginData produced by the
 		// simulation is equal to the one used to form the report
@@ -760,8 +757,6 @@ public class AT_GlobalPropertyReport {
 		GlobalPropertyReportPluginData globalPropertyReportPluginData2 = optional.get();
 		assertEquals(globalPropertyReportPluginData, globalPropertyReportPluginData2);
 	}
-
-	
 
 	private static final ReportLabel REPORT_LABEL = new SimpleReportLabel("global property report");
 

@@ -19,6 +19,7 @@ import org.junit.jupiter.api.Test;
 
 import nucleus.DataManagerContext;
 import nucleus.EventFilter;
+import nucleus.Plugin;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestSimulation;
@@ -30,6 +31,7 @@ import plugins.globalproperties.support.GlobalPropertyId;
 import plugins.globalproperties.support.GlobalPropertyInitialization;
 import plugins.globalproperties.support.SimpleGlobalPropertyId;
 import plugins.globalproperties.testsupport.GlobalPropertiesTestPluginFactory;
+import plugins.globalproperties.testsupport.GlobalPropertiesTestPluginFactory.Factory;
 import plugins.globalproperties.testsupport.TestAuxiliaryGlobalPropertyId;
 import plugins.globalproperties.testsupport.TestGlobalPropertyId;
 import plugins.util.properties.PropertyDefinition;
@@ -40,21 +42,20 @@ import util.errors.ContractException;
 import util.random.RandomGeneratorProvider;
 import util.wrappers.MultiKey;
 
-
 public final class AT_GlobalPropertiesDataManager {
 
 	/////////////////////////////////
 	// from the resolver
 	////////////////////
 	@Test
-	@UnitTestConstructor(target = GlobalPropertiesDataManager.class,args = { GlobalPropertiesPluginData.class })
+	@UnitTestConstructor(target = GlobalPropertiesDataManager.class, args = { GlobalPropertiesPluginData.class })
 	public void testConstructor() {
 		ContractException contractException = assertThrows(ContractException.class, () -> new GlobalPropertiesDataManager(null));
 		assertEquals(GlobalPropertiesError.NULL_GLOBAL_PLUGIN_DATA, contractException.getErrorType());
 	}
 
 	@Test
-	@UnitTestMethod(target = GlobalPropertiesDataManager.class,name = "init", args = { DataManagerContext.class })
+	@UnitTestMethod(target = GlobalPropertiesDataManager.class, name = "init", args = { DataManagerContext.class })
 	public void testInit() {
 
 		Map<GlobalPropertyId, Object> expectedPropertyValues = new LinkedHashMap<>();
@@ -97,8 +98,8 @@ public final class AT_GlobalPropertiesDataManager {
 		}));
 
 		TestPluginData testPluginData = testPluginDataBuilder.build();
-
-		TestSimulation.executeSimulation(GlobalPropertiesTestPluginFactory.factory(testPluginData).setGlobalPropertiesPluginData(globalPropertiesPluginData).getPlugins());
+		Factory factory = GlobalPropertiesTestPluginFactory.factory(testPluginData).setGlobalPropertiesPluginData(globalPropertiesPluginData);
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 	}
 
@@ -107,10 +108,10 @@ public final class AT_GlobalPropertiesDataManager {
 	////////////////////////////////
 
 	@Test
-	@UnitTestMethod(target = GlobalPropertiesDataManager.class,name = "globalPropertyIdExists", args = { GlobalPropertyId.class })
+	@UnitTestMethod(target = GlobalPropertiesDataManager.class, name = "globalPropertyIdExists", args = { GlobalPropertyId.class })
 	public void testGlobalPropertyIdExists() {
 
-		TestSimulation.executeSimulation(GlobalPropertiesTestPluginFactory.factory((c) -> {
+		Factory factory = GlobalPropertiesTestPluginFactory.factory((c) -> {
 			GlobalPropertiesDataManager globalPropertiesDataManager = c.getDataManager(GlobalPropertiesDataManager.class);
 			for (TestGlobalPropertyId testGlobalPropertyId : TestGlobalPropertyId.values()) {
 				assertTrue(globalPropertiesDataManager.globalPropertyIdExists(testGlobalPropertyId));
@@ -121,14 +122,13 @@ public final class AT_GlobalPropertiesDataManager {
 
 			// show that an unknown global property id will return false
 			assertFalse(globalPropertiesDataManager.globalPropertyIdExists(new SimpleGlobalPropertyId("bad prop")));
-		}).getPlugins());
-
+		});
+		
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
-	
-
 	@Test
-	@UnitTestMethod(target = GlobalPropertiesDataManager.class,name = "setGlobalPropertyValue", args = { GlobalPropertyId.class, Object.class })
+	@UnitTestMethod(target = GlobalPropertiesDataManager.class, name = "setGlobalPropertyValue", args = { GlobalPropertyId.class, Object.class })
 	public void testSetGlobalPropertyValue() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7837412421821851663L);
@@ -177,62 +177,78 @@ public final class AT_GlobalPropertiesDataManager {
 		}));
 
 		TestPluginData testPluginData = pluginDataBuilder.build();
-		TestSimulation.executeSimulation(GlobalPropertiesTestPluginFactory.factory(testPluginData).getPlugins());
+		Factory factory = GlobalPropertiesTestPluginFactory.factory(testPluginData);
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 		// show that the observations were correct
-		assertEquals(3,expectedObservations.size());
+		assertEquals(3, expectedObservations.size());
 		assertEquals(expectedObservations.size(), actualObservations.size());
 		assertEquals(new LinkedHashSet<>(expectedObservations), new LinkedHashSet<>(actualObservations));
 
 		// precondition test: if the global property id is null
-		TestSimulation.executeSimulation(GlobalPropertiesTestPluginFactory.factory((c) -> {
-			GlobalPropertiesDataManager globalPropertiesDataManager = c.getDataManager(GlobalPropertiesDataManager.class);
-			ContractException contractException = assertThrows(ContractException.class, () -> globalPropertiesDataManager.setGlobalPropertyValue(null, 15));
-			assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
-		}).getPlugins());
-
+		ContractException contractException = assertThrows(ContractException.class, () ->{
+			Factory factory2 = GlobalPropertiesTestPluginFactory.factory((c) -> {
+				GlobalPropertiesDataManager globalPropertiesDataManager = c.getDataManager(GlobalPropertiesDataManager.class);
+				globalPropertiesDataManager.setGlobalPropertyValue(null, 15);
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
+		
+		
 		// if the global property id is unknown
-		TestSimulation.executeSimulation(GlobalPropertiesTestPluginFactory.factory((c) -> {
-			GlobalPropertiesDataManager globalPropertiesDataManager = c.getDataManager(GlobalPropertiesDataManager.class);
-			ContractException contractException = assertThrows(ContractException.class,
-					() -> globalPropertiesDataManager.setGlobalPropertyValue(TestGlobalPropertyId.getUnknownGlobalPropertyId(), 15));
-			assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
-		}).getPlugins());
+		contractException = assertThrows(ContractException.class, () ->{
+			Factory factory2 = GlobalPropertiesTestPluginFactory.factory((c) -> {
+				GlobalPropertiesDataManager globalPropertiesDataManager = c.getDataManager(GlobalPropertiesDataManager.class);
+				globalPropertiesDataManager.setGlobalPropertyValue(TestGlobalPropertyId.getUnknownGlobalPropertyId(), 15);
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
 
 		// if the property value is null
-		TestSimulation.executeSimulation(GlobalPropertiesTestPluginFactory.factory((c) -> {
-			GlobalPropertiesDataManager globalPropertiesDataManager = c.getDataManager(GlobalPropertiesDataManager.class);
-			ContractException contractException = assertThrows(ContractException.class,
-					() -> globalPropertiesDataManager.setGlobalPropertyValue(TestGlobalPropertyId.GLOBAL_PROPERTY_1_BOOLEAN_MUTABLE, null));
-			assertEquals(PropertyError.NULL_PROPERTY_VALUE, contractException.getErrorType());
-		}).getPlugins());
+		contractException = assertThrows(ContractException.class, () ->{
+			Factory factory2 = GlobalPropertiesTestPluginFactory.factory((c) -> {
+				GlobalPropertiesDataManager globalPropertiesDataManager = c.getDataManager(GlobalPropertiesDataManager.class);
+				globalPropertiesDataManager.setGlobalPropertyValue(TestGlobalPropertyId.GLOBAL_PROPERTY_1_BOOLEAN_MUTABLE, null);
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(PropertyError.NULL_PROPERTY_VALUE, contractException.getErrorType());
+		
 
 		// if the global property definition indicates the property is not
 		// mutable
-		TestSimulation.executeSimulation(GlobalPropertiesTestPluginFactory.factory((c) -> {
-			GlobalPropertiesDataManager globalPropertiesDataManager = c.getDataManager(GlobalPropertiesDataManager.class);
-			ContractException contractException = assertThrows(ContractException.class,
-					() -> globalPropertiesDataManager.setGlobalPropertyValue(TestGlobalPropertyId.GLOBAL_PROPERTY_5_INTEGER_IMMUTABLE, 55));
-			assertEquals(PropertyError.IMMUTABLE_VALUE, contractException.getErrorType());
-		}).getPlugins());
+		contractException = assertThrows(ContractException.class, () ->{
+			Factory factory2 = GlobalPropertiesTestPluginFactory.factory((c) -> {
+				GlobalPropertiesDataManager globalPropertiesDataManager = c.getDataManager(GlobalPropertiesDataManager.class);
+				globalPropertiesDataManager.setGlobalPropertyValue(TestGlobalPropertyId.GLOBAL_PROPERTY_5_INTEGER_IMMUTABLE, 55);
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(PropertyError.IMMUTABLE_VALUE, contractException.getErrorType());
+
+		
 
 		// if the property value is incompatible with the property definition
-		TestSimulation.executeSimulation(GlobalPropertiesTestPluginFactory.factory((c) -> {
-			GlobalPropertiesDataManager globalPropertiesDataManager = c.getDataManager(GlobalPropertiesDataManager.class);
-			ContractException contractException = assertThrows(ContractException.class,
-					() -> globalPropertiesDataManager.setGlobalPropertyValue(TestGlobalPropertyId.GLOBAL_PROPERTY_2_INTEGER_MUTABLE, "value"));
-			assertEquals(PropertyError.INCOMPATIBLE_VALUE, contractException.getErrorType());
-		}).getPlugins());
+		contractException = assertThrows(ContractException.class, () ->{
+			Factory factory2 = GlobalPropertiesTestPluginFactory.factory((c) -> {
+				GlobalPropertiesDataManager globalPropertiesDataManager = c.getDataManager(GlobalPropertiesDataManager.class);
+				globalPropertiesDataManager.setGlobalPropertyValue(TestGlobalPropertyId.GLOBAL_PROPERTY_2_INTEGER_MUTABLE, "value");
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(PropertyError.INCOMPATIBLE_VALUE, contractException.getErrorType());
 
 	}
 
 	@Test
-	@UnitTestMethod(target = GlobalPropertiesDataManager.class,name = "getGlobalPropertyValue", args = { GlobalPropertyId.class })
+	@UnitTestMethod(target = GlobalPropertiesDataManager.class, name = "getGlobalPropertyValue", args = { GlobalPropertyId.class })
 	public void testGetGlobalPropertyValue() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(1059537118783693383L);
 
 		// show that values can be retrieved
-		TestSimulation.executeSimulation(GlobalPropertiesTestPluginFactory.factory((c) -> {
+		Factory factory = GlobalPropertiesTestPluginFactory.factory((c) -> {
 			GlobalPropertiesDataManager globalPropertiesDataManager = c.getDataManager(GlobalPropertiesDataManager.class);
 
 			for (TestGlobalPropertyId testGlobalPropertyId : TestGlobalPropertyId.values()) {
@@ -244,26 +260,33 @@ public final class AT_GlobalPropertiesDataManager {
 					assertEquals(expectedValue, actualValue);
 				}
 			}
-		}).getPlugins());
+		});
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 		// precondition test : if the property id is null
-		TestSimulation.executeSimulation(GlobalPropertiesTestPluginFactory.factory((c) -> {
-			GlobalPropertiesDataManager globalPropertiesDataManager = c.getDataManager(GlobalPropertiesDataManager.class);
-			ContractException contractException = assertThrows(ContractException.class, () -> globalPropertiesDataManager.getGlobalPropertyValue(null));
-			assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
-		}).getPlugins());
+		ContractException contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = GlobalPropertiesTestPluginFactory.factory((c) -> {
+				GlobalPropertiesDataManager globalPropertiesDataManager = c.getDataManager(GlobalPropertiesDataManager.class);
+				globalPropertiesDataManager.getGlobalPropertyValue(null);
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
 
 		// precondition test : if the property id is unknown
-		TestSimulation.executeSimulation(GlobalPropertiesTestPluginFactory.factory((c) -> {
-			GlobalPropertiesDataManager globalPropertiesDataManager = c.getDataManager(GlobalPropertiesDataManager.class);
-			ContractException contractException = assertThrows(ContractException.class, () -> globalPropertiesDataManager.getGlobalPropertyValue(TestGlobalPropertyId.getUnknownGlobalPropertyId()));
-			assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
-		}).getPlugins());
+		contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = GlobalPropertiesTestPluginFactory.factory((c) -> {
+				GlobalPropertiesDataManager globalPropertiesDataManager = c.getDataManager(GlobalPropertiesDataManager.class);
+				globalPropertiesDataManager.getGlobalPropertyValue(TestGlobalPropertyId.getUnknownGlobalPropertyId());
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
 
 	}
 
 	@Test
-	@UnitTestMethod(target = GlobalPropertiesDataManager.class,name = "getGlobalPropertyTime", args = { GlobalPropertyId.class })
+	@UnitTestMethod(target = GlobalPropertiesDataManager.class, name = "getGlobalPropertyTime", args = { GlobalPropertyId.class })
 	public void testGetGlobalPropertyTime() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(5323616867741088481L);
@@ -281,25 +304,36 @@ public final class AT_GlobalPropertiesDataManager {
 			}));
 		});
 		TestPluginData testPluginData = pluginDataBuilder.build();
-		TestSimulation.executeSimulation(GlobalPropertiesTestPluginFactory.factory(testPluginData).getPlugins());
 
-		TestSimulation.executeSimulation(GlobalPropertiesTestPluginFactory.factory((c) -> {
-			GlobalPropertiesDataManager globalPropertiesDataManager = c.getDataManager(GlobalPropertiesDataManager.class);
-			ContractException contractException = assertThrows(ContractException.class, () -> globalPropertiesDataManager.getGlobalPropertyTime(null));
-			assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
-		}).getPlugins());
+		Factory factory = GlobalPropertiesTestPluginFactory.factory(testPluginData);
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
-		TestSimulation.executeSimulation(GlobalPropertiesTestPluginFactory.factory((c) -> {
-			GlobalPropertiesDataManager globalPropertiesDataManager = c.getDataManager(GlobalPropertiesDataManager.class);
-			ContractException contractException = assertThrows(ContractException.class, () -> globalPropertiesDataManager.getGlobalPropertyTime(TestGlobalPropertyId.getUnknownGlobalPropertyId()));
-			assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
-		}).getPlugins());
+		ContractException contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = GlobalPropertiesTestPluginFactory.factory((c) -> {
+				GlobalPropertiesDataManager globalPropertiesDataManager = c.getDataManager(GlobalPropertiesDataManager.class);
+				globalPropertiesDataManager.getGlobalPropertyTime(null);
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
+
+		contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = GlobalPropertiesTestPluginFactory.factory((c) -> {
+				GlobalPropertiesDataManager globalPropertiesDataManager = c.getDataManager(GlobalPropertiesDataManager.class);
+				globalPropertiesDataManager.getGlobalPropertyTime(TestGlobalPropertyId.getUnknownGlobalPropertyId());
+
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
+
 	}
 
 	@Test
-	@UnitTestMethod(target = GlobalPropertiesDataManager.class,name = "getGlobalPropertyIds", args = {})
+	@UnitTestMethod(target = GlobalPropertiesDataManager.class, name = "getGlobalPropertyIds", args = {})
 	public void testGetGlobalPropertyIds() {
-		TestSimulation.executeSimulation(GlobalPropertiesTestPluginFactory.factory((c) -> {
+
+		Factory factory = GlobalPropertiesTestPluginFactory.factory((c) -> {
 			GlobalPropertiesDataManager globalPropertiesDataManager = c.getDataManager(GlobalPropertiesDataManager.class);
 
 			Set<GlobalPropertyId> expectedGlobalPropertyIds = new LinkedHashSet<>();
@@ -307,43 +341,48 @@ public final class AT_GlobalPropertiesDataManager {
 				expectedGlobalPropertyIds.add(testGlobalPropertyId);
 			}
 			assertEquals(expectedGlobalPropertyIds, globalPropertiesDataManager.getGlobalPropertyIds());
-		}).getPlugins());
+		});
+
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
 	@Test
-	@UnitTestMethod(target = GlobalPropertiesDataManager.class,name = "getGlobalPropertyDefinition", args = { GlobalPropertyId.class })
+	@UnitTestMethod(target = GlobalPropertiesDataManager.class, name = "getGlobalPropertyDefinition", args = { GlobalPropertyId.class })
 	public void testGetGlobalPropertyDefinition() {
-
-		TestSimulation.executeSimulation(GlobalPropertiesTestPluginFactory.factory((c) -> {
+		Factory factory = GlobalPropertiesTestPluginFactory.factory((c) -> {
 			GlobalPropertiesDataManager globalPropertiesDataManager = c.getDataManager(GlobalPropertiesDataManager.class);
 
 			for (TestGlobalPropertyId testGlobalPropertyId : TestGlobalPropertyId.values()) {
 				assertEquals(testGlobalPropertyId.getPropertyDefinition(), globalPropertiesDataManager.getGlobalPropertyDefinition(testGlobalPropertyId));
 			}
+		});
 
-		}).getPlugins());
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 		// precondition : if the global property id is null
-		TestSimulation.executeSimulation(GlobalPropertiesTestPluginFactory.factory((c) -> {
-			GlobalPropertiesDataManager globalPropertiesDataManager = c.getDataManager(GlobalPropertiesDataManager.class);
-			ContractException contractException = assertThrows(ContractException.class, () -> globalPropertiesDataManager.getGlobalPropertyDefinition(null));
-			assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
-
-		}).getPlugins());
+		ContractException contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = GlobalPropertiesTestPluginFactory.factory((c) -> {
+				GlobalPropertiesDataManager globalPropertiesDataManager = c.getDataManager(GlobalPropertiesDataManager.class);
+				globalPropertiesDataManager.getGlobalPropertyDefinition(null);
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
 
 		// precondition : if the global property id is unknown
-		TestSimulation.executeSimulation(GlobalPropertiesTestPluginFactory.factory((c) -> {
-			GlobalPropertiesDataManager globalPropertiesDataManager = c.getDataManager(GlobalPropertiesDataManager.class);
-			ContractException contractException = assertThrows(ContractException.class,
-					() -> globalPropertiesDataManager.getGlobalPropertyDefinition(TestGlobalPropertyId.getUnknownGlobalPropertyId()));
-			assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
-
-		}).getPlugins());
+		contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = GlobalPropertiesTestPluginFactory.factory((c) -> {
+				GlobalPropertiesDataManager globalPropertiesDataManager = c.getDataManager(GlobalPropertiesDataManager.class);
+				globalPropertiesDataManager.getGlobalPropertyDefinition(TestGlobalPropertyId.getUnknownGlobalPropertyId());
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
 
 	}
 
 	@Test
-	@UnitTestMethod(target = GlobalPropertiesDataManager.class,name = "defineGlobalProperty", args = { GlobalPropertyInitialization.class })
+	@UnitTestMethod(target = GlobalPropertiesDataManager.class, name = "defineGlobalProperty", args = { GlobalPropertyInitialization.class })
 	public void testDefineGlobalProperty() {
 
 		Set<MultiKey> expectedObservations = new LinkedHashSet<>();
@@ -405,29 +444,36 @@ public final class AT_GlobalPropertiesDataManager {
 		}));
 
 		TestPluginData testPluginData = pluginDataBuilder.build();
-		TestSimulation.executeSimulation(GlobalPropertiesTestPluginFactory.factory(testPluginData).getPlugins());
+		List<Plugin> plugins = GlobalPropertiesTestPluginFactory.factory(testPluginData).getPlugins();
+		TestSimulation.builder().addPlugins(plugins).build().execute();
 
 		// precondition test: if the global property initialization is null
-		TestSimulation.executeSimulation(GlobalPropertiesTestPluginFactory.factory((c) -> {
-			GlobalPropertiesDataManager globalPropertiesDataManager = c.getDataManager(GlobalPropertiesDataManager.class);
-			ContractException contractException = assertThrows(ContractException.class, () -> globalPropertiesDataManager.defineGlobalProperty(null));
-			assertEquals(GlobalPropertiesError.NULL_GLOBAL_PROPERTY_INITIALIZATION, contractException.getErrorType());
-		}).getPlugins());
+		ContractException contractException = assertThrows(ContractException.class, () -> {
+			Factory factory = GlobalPropertiesTestPluginFactory.factory((c) -> {
+				GlobalPropertiesDataManager globalPropertiesDataManager = c.getDataManager(GlobalPropertiesDataManager.class);
+				globalPropertiesDataManager.defineGlobalProperty(null);
+			});
+			TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
+		});
+		assertEquals(GlobalPropertiesError.NULL_GLOBAL_PROPERTY_INITIALIZATION, contractException.getErrorType());
 
 		// precondition test: if the global property already exists
-		TestSimulation.executeSimulation(GlobalPropertiesTestPluginFactory.factory((c) -> {
-			GlobalPropertiesDataManager globalPropertiesDataManager = c.getDataManager(GlobalPropertiesDataManager.class);
-			GlobalPropertyId globalPropertyId = TestGlobalPropertyId.GLOBAL_PROPERTY_1_BOOLEAN_MUTABLE;
-			PropertyDefinition propertyDefinition = TestGlobalPropertyId.GLOBAL_PROPERTY_1_BOOLEAN_MUTABLE.getPropertyDefinition();
-			GlobalPropertyInitialization globalPropertyInitialization = //
-					GlobalPropertyInitialization.builder()//
-												.setGlobalPropertyId(globalPropertyId)//
-												.setPropertyDefinition(propertyDefinition)//
-												.build();
+		contractException = assertThrows(ContractException.class, () -> {
 
-			ContractException contractException = assertThrows(ContractException.class, () -> globalPropertiesDataManager.defineGlobalProperty(globalPropertyInitialization));
-			assertEquals(PropertyError.DUPLICATE_PROPERTY_DEFINITION, contractException.getErrorType());
-		}).getPlugins());
+			Factory factory = GlobalPropertiesTestPluginFactory.factory((c) -> {
+				GlobalPropertiesDataManager globalPropertiesDataManager = c.getDataManager(GlobalPropertiesDataManager.class);
+				GlobalPropertyId globalPropertyId = TestGlobalPropertyId.GLOBAL_PROPERTY_1_BOOLEAN_MUTABLE;
+				PropertyDefinition propertyDefinition = TestGlobalPropertyId.GLOBAL_PROPERTY_1_BOOLEAN_MUTABLE.getPropertyDefinition();
+				GlobalPropertyInitialization globalPropertyInitialization = //
+						GlobalPropertyInitialization.builder()//
+													.setGlobalPropertyId(globalPropertyId)//
+													.setPropertyDefinition(propertyDefinition)//
+													.build();
+				globalPropertiesDataManager.defineGlobalProperty(globalPropertyInitialization);
+			});
+			TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
+		});
+		assertEquals(PropertyError.DUPLICATE_PROPERTY_DEFINITION, contractException.getErrorType());
 
 	}
 
@@ -464,7 +510,7 @@ public final class AT_GlobalPropertiesDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(target = GlobalPropertiesDataManager.class,name = "getEventFilterForGlobalPropertyDefinitionEvent", args = {})
+	@UnitTestMethod(target = GlobalPropertiesDataManager.class, name = "getEventFilterForGlobalPropertyDefinitionEvent", args = {})
 	public void testGetEventFilterForGlobalPropertyDefinitionEvent() {
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
@@ -515,17 +561,19 @@ public final class AT_GlobalPropertiesDataManager {
 		 * equal
 		 */
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(4, (c) -> {
-			assertEquals(3,expectedObservations.size());
+			assertEquals(3, expectedObservations.size());
 			assertEquals(expectedObservations, actualObservations);
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		TestSimulation.executeSimulation(GlobalPropertiesTestPluginFactory.factory(testPluginData).getPlugins());
+		Factory factory = GlobalPropertiesTestPluginFactory.factory(testPluginData);
+
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 	}
 
 	@Test
-	@UnitTestMethod(target = GlobalPropertiesDataManager.class,name = "getEventFilterForGlobalPropertyUpdateEvent", args = {})
+	@UnitTestMethod(target = GlobalPropertiesDataManager.class, name = "getEventFilterForGlobalPropertyUpdateEvent", args = {})
 	public void testGetEventFilterForGlobalPropertyUpdateEvent() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(5410948605660305794L);
@@ -568,17 +616,18 @@ public final class AT_GlobalPropertiesDataManager {
 		 * equal
 		 */
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(4, (c) -> {
-			assertEquals(3,expectedObservations.size());
+			assertEquals(3, expectedObservations.size());
 			assertEquals(expectedObservations, actualObservations);
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		TestSimulation.executeSimulation(GlobalPropertiesTestPluginFactory.factory(testPluginData).getPlugins());
+		Factory factory = GlobalPropertiesTestPluginFactory.factory(testPluginData);
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 	}
 
 	@Test
-	@UnitTestMethod(target = GlobalPropertiesDataManager.class,name = "getEventFilterForGlobalPropertyUpdateEvent", args = { GlobalPropertyId.class })
+	@UnitTestMethod(target = GlobalPropertiesDataManager.class, name = "getEventFilterForGlobalPropertyUpdateEvent", args = { GlobalPropertyId.class })
 	public void testGetEventFilterForGlobalPropertyUpdateEvent_property() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(2014699212749132531L);
@@ -637,28 +686,35 @@ public final class AT_GlobalPropertiesDataManager {
 		 * equal
 		 */
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(4, (c) -> {
-			assertEquals(6,expectedObservations.size());
+			assertEquals(6, expectedObservations.size());
 			assertEquals(expectedObservations, actualObservations);
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		TestSimulation.executeSimulation(GlobalPropertiesTestPluginFactory.factory(testPluginData).getPlugins());
+		Factory factory = GlobalPropertiesTestPluginFactory.factory(testPluginData);
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 		// precondition test: if the global property id is null
-		TestSimulation.executeSimulation(GlobalPropertiesTestPluginFactory.factory((c) -> {
-			GlobalPropertiesDataManager globalPropertiesDataManager = c.getDataManager(GlobalPropertiesDataManager.class);
-			GlobalPropertyId globalPropertyId = null;
-			ContractException contractException = assertThrows(ContractException.class, () -> globalPropertiesDataManager.setGlobalPropertyValue(globalPropertyId, new Object()));
-			assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
-		}).getPlugins());
+		ContractException contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = GlobalPropertiesTestPluginFactory.factory((c) -> {
+				GlobalPropertiesDataManager globalPropertiesDataManager = c.getDataManager(GlobalPropertiesDataManager.class);
+				GlobalPropertyId globalPropertyId = null;
+				globalPropertiesDataManager.setGlobalPropertyValue(globalPropertyId, new Object());
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
 
 		// precondition test: if the global property id is not known
-		TestSimulation.executeSimulation(GlobalPropertiesTestPluginFactory.factory((c) -> {
-			GlobalPropertiesDataManager globalPropertiesDataManager = c.getDataManager(GlobalPropertiesDataManager.class);
-			GlobalPropertyId globalPropertyId = TestGlobalPropertyId.getUnknownGlobalPropertyId();
-			ContractException contractException = assertThrows(ContractException.class, () -> globalPropertiesDataManager.setGlobalPropertyValue(globalPropertyId, new Object()));
-			assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
-		}).getPlugins());
+		contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = GlobalPropertiesTestPluginFactory.factory((c) -> {
+				GlobalPropertiesDataManager globalPropertiesDataManager = c.getDataManager(GlobalPropertiesDataManager.class);
+				GlobalPropertyId globalPropertyId = TestGlobalPropertyId.getUnknownGlobalPropertyId();
+				globalPropertiesDataManager.setGlobalPropertyValue(globalPropertyId, new Object());
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
 	}
 
 }

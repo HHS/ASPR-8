@@ -38,7 +38,6 @@ import plugins.regions.RegionsPlugin;
 import plugins.regions.RegionsPluginData;
 import plugins.regions.RegionsPluginId;
 import plugins.reports.ReportsPlugin;
-import plugins.reports.ReportsPluginData;
 import plugins.reports.ReportsPluginId;
 import plugins.resources.ResourcesPlugin;
 import plugins.resources.ResourcesPluginData;
@@ -295,7 +294,7 @@ public class PluginDependencyInfoGenerator {
 		addToGraph(pluginDependencyGraph, PersonPropertiesPlugin.builder().setPersonPropertiesPluginData(PersonPropertiesPluginData.builder().build()).getPersonPropertyPlugin());
 		
 		addToGraph(pluginDependencyGraph, RegionsPlugin.builder().setRegionsPluginData(RegionsPluginData.builder().build()).getRegionsPlugin());
-		addToGraph(pluginDependencyGraph, ReportsPlugin.getReportsPlugin(ReportsPluginData.builder().build()));
+		addToGraph(pluginDependencyGraph, ReportsPlugin.getReportsPlugin());
 		addToGraph(pluginDependencyGraph, ResourcesPlugin.builder().setResourcesPluginData(ResourcesPluginData.builder().build()).getResourcesPlugin());
 		addToGraph(pluginDependencyGraph, StochasticsPlugin.getStochasticsPlugin(StochasticsPluginData.builder().setSeed(0L).build()));
 

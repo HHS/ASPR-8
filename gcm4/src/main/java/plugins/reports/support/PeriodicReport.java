@@ -125,6 +125,9 @@ public abstract class PeriodicReport {
 
 		reportingDay = (int) reportContext.getTime();
 		reportingHour = (int) (24 * (reportContext.getTime() - reportingDay));
+		if(reportingHour>23) {
+			reportingHour = 23;
+		}
 
 		prepare(reportContext);
 		if (reportPeriod != ReportPeriod.END_OF_SIMULATION) {

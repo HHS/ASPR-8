@@ -169,7 +169,7 @@ public class AT_ReportContext {
 		TestPluginData testPluginData = pluginDataBuilder.build();
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
-		TestSimulation.executeSimulation(testPlugin);
+		TestSimulation.builder().addPlugin(testPlugin).build().execute();
 
 	}
 
@@ -270,7 +270,7 @@ public class AT_ReportContext {
 		TestPluginData testPluginData = pluginDataBuilder.build();
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
-		TestSimulation.executeSimulation(testPlugin);
+		TestSimulation.builder().addPlugin(testPlugin).build().execute();
 
 		// precondition test : if the class reference is ambiguous
 		pluginDataBuilder.addTestDataManager("dm3A", () -> new TestDataManager3A());
@@ -289,7 +289,7 @@ public class AT_ReportContext {
 		testPluginData = pluginDataBuilder.build();
 		testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
-		TestSimulation.executeSimulation(testPlugin);
+		TestSimulation.builder().addPlugin(testPlugin).build().execute();
 
 		// Precondition test 2
 		pluginDataBuilder.addTestReportPlan("report", new TestReportPlan(0, (c) -> {
@@ -302,7 +302,7 @@ public class AT_ReportContext {
 		testPluginData = pluginDataBuilder.build();
 		testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
-		TestSimulation.executeSimulation(testPlugin);
+		TestSimulation.builder().addPlugin(testPlugin).build().execute();
 	}
 
 	@Test
@@ -413,7 +413,7 @@ public class AT_ReportContext {
 		TestPluginData testPluginData = pluginDataBuilder.build();
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
-		TestSimulation.executeSimulation(testPlugin);
+		TestSimulation.builder().addPlugin(testPlugin).build().execute();
 	}
 
 	@Test
@@ -472,8 +472,7 @@ public class AT_ReportContext {
 		 * Add an output consumer that will place the output into the
 		 * actualOutput set above and then execute the simulation
 		 */
-		TestOutputConsumer testOutputConsumer = new TestOutputConsumer();
-		TestSimulation.executeSimulation(testPlugin, testOutputConsumer);
+		TestOutputConsumer testOutputConsumer = TestSimulation.builder().addPlugin(testPlugin).build().execute();
 
 		Map<Object, Integer> outputItems = testOutputConsumer.getOutputItems(Object.class);
 		for (Object key : outputItems.keySet()) {
@@ -525,7 +524,7 @@ public class AT_ReportContext {
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
 		// run the simulation
-		TestSimulation.executeSimulation(testPlugin);
+		TestSimulation.builder().addPlugin(testPlugin).build().execute();
 
 		// show that the remove plan was not executed
 		assertFalse(removedPlanHasExecuted.getValue());
@@ -568,7 +567,7 @@ public class AT_ReportContext {
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
 		// build and execute the engine
-		TestSimulation.executeSimulation(testPlugin);
+		TestSimulation.builder().addPlugin(testPlugin).build().execute();
 
 		// precondition test: if the event class is null
 		ContractException contractException = assertThrows(ContractException.class, () -> testConsumer((c) -> {
@@ -620,7 +619,7 @@ public class AT_ReportContext {
 		TestPluginData testPluginData = pluginDataBuilder.build();
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
-		TestSimulation.executeSimulation(testPlugin);
+		TestSimulation.builder().addPlugin(testPlugin).build().execute();
 
 		// show that the subscription to simulation close was successful
 		assertTrue(simCloseEventHandled.getValue());
@@ -695,7 +694,7 @@ public class AT_ReportContext {
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
 		// build and execute the engine
-		TestSimulation.executeSimulation(testPlugin);
+		TestSimulation.builder().addPlugin(testPlugin).build().execute();
 
 		// precondition test: if the event class reference is null
 		ContractException contractException = assertThrows(ContractException.class, () -> testConsumer((c) -> {

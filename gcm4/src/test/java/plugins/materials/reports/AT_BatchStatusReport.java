@@ -232,15 +232,16 @@ public final class AT_BatchStatusReport {
 
 		TestPluginData testPluginData = pluginBuilder.build();
 
-		TestOutputConsumer outputConsumer = new TestOutputConsumer();
 		Factory factory = MaterialsTestPluginFactory//
 				.factory(0, 0, 0, 2819236410498978100L, testPluginData)
 				.setBatchStatusReportPluginData(BatchStatusReportPluginData.builder().setReportLabel(REPORT_LABEL).build());
 
-		TestSimulation.executeSimulation(factory.getPlugins(), outputConsumer);
-
+		TestOutputConsumer testOutputConsumer = TestSimulation	.builder()//
+				.addPlugins(factory.getPlugins())//
+				.build()//
+				.execute();
 		
-		assertEquals(expectedReportItems, outputConsumer.getOutputItems(ReportItem.class));
+		assertEquals(expectedReportItems, testOutputConsumer.getOutputItems(ReportItem.class));
 	}
 
 	private static ReportItem getReportItem(List<Object> values) {

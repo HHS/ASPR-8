@@ -12,12 +12,11 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.util.Pair;
 import org.junit.jupiter.api.Test;
 
-import nucleus.Plugin;
 import nucleus.ReportContext;
 import nucleus.testsupport.testplugin.TestActorPlan;
+import nucleus.testsupport.testplugin.TestOutputConsumer;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestSimulation;
-import nucleus.testsupport.testplugin.TestOutputConsumer;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonConstructionData;
 import plugins.people.support.PersonId;
@@ -28,13 +27,13 @@ import plugins.regions.support.RegionPropertyId;
 import plugins.regions.support.SimpleRegionId;
 import plugins.regions.support.SimpleRegionPropertyId;
 import plugins.regions.testsupport.RegionsTestPluginFactory;
+import plugins.regions.testsupport.RegionsTestPluginFactory.Factory;
 import plugins.reports.support.ReportError;
 import plugins.reports.support.ReportHeader;
 import plugins.reports.support.ReportItem;
 import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportPeriod;
 import plugins.reports.support.SimpleReportLabel;
-import plugins.reports.testsupport.ReportsTestPluginFactory;
 import plugins.stochastics.StochasticsDataManager;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.TimeTrackingPolicy;
@@ -155,16 +154,17 @@ public class AT_RegionTransferReport {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-
-		TestOutputConsumer actualConsumer = new TestOutputConsumer();
-		List<Plugin> pluginsToAdd = RegionsTestPluginFactory.factory(0, 3054641152904904632L, TimeTrackingPolicy.TRACK_TIME, testPluginData).setRegionsPluginData(regionsPluginData).getPlugins();
-
+		
 		RegionTransferReportPluginData regionTransferReportPluginData = RegionTransferReportPluginData.builder().setReportLabel(REPORT_LABEL).setReportPeriod(ReportPeriod.DAILY).build();
-		RegionTransferReport regionTransferReport = new RegionTransferReport(regionTransferReportPluginData);
-		Plugin pluginFromReport = ReportsTestPluginFactory.getPluginFromReport(regionTransferReport::init);
-		pluginsToAdd.add(pluginFromReport);
+		
+		Factory factory = RegionsTestPluginFactory//
+				.factory(0, 3054641152904904632L, TimeTrackingPolicy.TRACK_TIME, testPluginData).setRegionsPluginData(regionsPluginData)//
+				.setRegionTransferReportPluginData(regionTransferReportPluginData);
 
-		TestSimulation.executeSimulation(pluginsToAdd, actualConsumer);
+		TestOutputConsumer actualConsumer = TestSimulation	.builder()//
+				.addPlugins(factory.getPlugins())//
+				.build()//
+				.execute();
 
 		Map<ReportItem, Integer> expectedReportItems = expectedConsumer.getOutputItems(ReportItem.class);
 		Map<ReportItem, Integer> actualReportItems = actualConsumer.getOutputItems(ReportItem.class);

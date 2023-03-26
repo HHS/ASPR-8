@@ -153,7 +153,7 @@ public class Simulation {
 		}
 
 		/**
-		 * Adds a plugin initializer to this builder for inclusion in the
+		 * Adds a plugin to this builder for inclusion in the
 		 * simulation
 		 * 
 		 * @throws ContractException

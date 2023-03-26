@@ -157,15 +157,17 @@ public final class AT_MaterialsProducerResourceReport {
 
 		TestPluginData testPluginData = pluginBuilder.build();
 
-		TestOutputConsumer outputConsumer = new TestOutputConsumer();
 
 		MaterialsTestPluginFactory.Factory factory = MaterialsTestPluginFactory.factory(0, 0, 0, 6081341958178733565L, testPluginData);
 		MaterialsProducerResourceReportPluginData materialsProducerResourceReportPluginData = MaterialsProducerResourceReportPluginData.builder().setReportLabel(REPORT_LABEL).build();
 		factory.setMaterialsProducerResourceReportPluginData(materialsProducerResourceReportPluginData);
 		
-		TestSimulation.executeSimulation(factory.getPlugins(), outputConsumer);
+		TestOutputConsumer testOutputConsumer = TestSimulation	.builder()//
+				.addPlugins(factory.getPlugins())//
+				.build()//
+				.execute();
 
-		assertEquals(expectedReportItems, outputConsumer.getOutputItems(ReportItem.class));
+		assertEquals(expectedReportItems, testOutputConsumer.getOutputItems(ReportItem.class));
 	}
 
 	private static ReportItem getReportItem(Object... values) {

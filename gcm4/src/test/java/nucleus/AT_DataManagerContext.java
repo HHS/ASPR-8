@@ -67,7 +67,7 @@ public class AT_DataManagerContext {
 		
 
 		// execute the engine
-		TestSimulation.executeSimulation(testPlugin);
+		TestSimulation.builder().addPlugin(testPlugin).build().execute();
 
 	}
 
@@ -188,7 +188,7 @@ public class AT_DataManagerContext {
 		
 
 		// execute the engine
-		TestSimulation.executeSimulation(testPlugin);
+		TestSimulation.builder().addPlugin(testPlugin).build().execute();
 
 		// Precondition test 1
 
@@ -207,7 +207,7 @@ public class AT_DataManagerContext {
 
 
 		// execute the engine
-		TestSimulation.executeSimulation(testPlugin);
+		TestSimulation.builder().addPlugin(testPlugin).build().execute();
 
 		// Precondition test 2
 
@@ -225,7 +225,7 @@ public class AT_DataManagerContext {
 
 
 		// execute the engine
-		TestSimulation.executeSimulation(testPlugin);
+		TestSimulation.builder().addPlugin(testPlugin).build().execute();
 
 
 	}
@@ -505,7 +505,7 @@ public class AT_DataManagerContext {
 		
 
 		// run the simulation
-		TestSimulation.executeSimulation(testPlugin);
+		TestSimulation.builder().addPlugin(testPlugin).build().execute();
 
 	}
 
@@ -540,7 +540,7 @@ public class AT_DataManagerContext {
 		
 
 		// run the simulation
-		TestSimulation.executeSimulation(testPlugin);
+		TestSimulation.builder().addPlugin(testPlugin).build().execute();
 
 	}
 
@@ -579,7 +579,7 @@ public class AT_DataManagerContext {
 		
 		
 		// run the simulation
-		TestSimulation.executeSimulation(testPlugin);
+		TestSimulation.builder().addPlugin(testPlugin).build().execute();
 
 	}
 
@@ -623,7 +623,7 @@ public class AT_DataManagerContext {
 		
 
 		// run the simulation
-		TestSimulation.executeSimulation(testPlugin);
+		TestSimulation.builder().addPlugin(testPlugin).build().execute();
 		
 		// show that the remove plan was not executed
 		assertFalse(removedPlanHasExecuted.getValue());
@@ -661,7 +661,7 @@ public class AT_DataManagerContext {
 		
 
 		// run the simulation
-		TestSimulation.executeSimulation(testPlugin);
+		TestSimulation.builder().addPlugin(testPlugin).build().execute();
 	}
 
 	@Test
@@ -823,7 +823,7 @@ public class AT_DataManagerContext {
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
 		// run the simulation
-		TestSimulation.executeSimulation(testPlugin);
+		TestSimulation.builder().addPlugin(testPlugin).build().execute();
 
 
 	}
@@ -905,7 +905,7 @@ public class AT_DataManagerContext {
 		
 
 		// build and execute the engine
-		TestSimulation.executeSimulation(testPlugin);
+		TestSimulation.builder().addPlugin(testPlugin).build().execute();
 	}
 
 	@Test
@@ -1099,7 +1099,7 @@ public class AT_DataManagerContext {
 		
 
 		// build and execute the engine
-		TestSimulation.executeSimulation(testPlugin);
+		TestSimulation.builder().addPlugin(testPlugin).build().execute();
 	}
 
 	@Test
@@ -1180,7 +1180,7 @@ public class AT_DataManagerContext {
 		
 
 		// build and execute the engine
-		TestSimulation.executeSimulation(testPlugin);
+		TestSimulation.builder().addPlugin(testPlugin).build().execute();
 	}
 
 	private static class ActorObservingDataManager extends TestDataManager {
@@ -1240,7 +1240,7 @@ public class AT_DataManagerContext {
 		
 
 		// run the simulation
-		TestSimulation.executeSimulation(testPlugin);
+		TestSimulation.builder().addPlugin(testPlugin).build().execute();
 
 		// show that the number of actor ids matches the number of actor aliases
 		assertEquals(expectedPairs, observedPairs);

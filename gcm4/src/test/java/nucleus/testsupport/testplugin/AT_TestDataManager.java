@@ -70,7 +70,7 @@ public class AT_TestDataManager {
 		List<Plugin> plugins = new ArrayList<>();
 		plugins.add(testPlugin);
 		
-		TestSimulation.executeSimulation(plugins);
+		TestSimulation.builder().addPlugins(plugins).build().execute();
 		
 		// show that the actors executed the expected actions
 		assertEquals(expectedObservations, actualObservations);

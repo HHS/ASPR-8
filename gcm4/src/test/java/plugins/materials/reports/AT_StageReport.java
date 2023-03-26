@@ -193,16 +193,20 @@ public final class AT_StageReport {
 
 		TestPluginData testPluginData = pluginBuilder.build();
 
-		TestOutputConsumer outputConsumer = new TestOutputConsumer();
+		
 
 		Factory factory = MaterialsTestPluginFactory//
 				.factory(0, 0, 0, 542686524159732447L, testPluginData)
 				.setStageReportPluginData(StageReportPluginData.builder().setReportLabel(REPORT_LABEL).build());//
 
-		TestSimulation.executeSimulation(factory.getPlugins(), outputConsumer);
+		
+		TestOutputConsumer testOutputConsumer = TestSimulation	.builder()//
+				.addPlugins(factory.getPlugins())//
+				.build()//
+				.execute();
 
 		
-		assertEquals(expectedReportItems, outputConsumer.getOutputItems(ReportItem.class));
+		assertEquals(expectedReportItems, testOutputConsumer.getOutputItems(ReportItem.class));
 	}
 
 	private static final ReportLabel REPORT_LABEL = new SimpleReportLabel("report");

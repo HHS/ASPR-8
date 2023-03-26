@@ -15,6 +15,7 @@ import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestDataManager;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestPluginFactory;
+import nucleus.testsupport.testplugin.TestPluginFactory.Factory;
 import nucleus.testsupport.testplugin.TestSimulation;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
@@ -46,7 +47,9 @@ public class AT_AbstractIndexedPropertyManager {
 	@Test
 	@UnitTestConstructor(target = AbstractIndexedPropertyManager.class,args = { SimulationContext.class, PropertyDefinition.class, int.class })
 	public void testConstructor() {
-		TestSimulation.executeSimulation(TestPluginFactory.factory((c) -> {
+		
+		
+		Factory factory = TestPluginFactory.factory((c) -> {
 
 			PropertyDefinition goodPropertyDefinition = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(false).build();
 
@@ -60,7 +63,9 @@ public class AT_AbstractIndexedPropertyManager {
 
 			SimplePropertyManager simplePropertyManager = new SimplePropertyManager(c, goodPropertyDefinition, 0);
 			assertNotNull(simplePropertyManager);
-		}).getPlugins());
+		});
+		
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
 	@Test
