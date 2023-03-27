@@ -54,16 +54,11 @@ public final class DataManagerContext implements SimulationContext {
 	}
 
 	/**
-	 * Registers the given consumer to be executed when the state of the
-	 * simulation needs to be reflected into plugins that are released to
-	 * output.
-	 * 
-	 * @throws ContractException
-	 *             <li>{@link NucleusError#NULL_DATA_MANAGER_STATE_CONTEXT_CONSUMER}
-	 *             if the consumer is null</li>
+	 * Returns true if and only if the data managers should output their state
+	 * as a plugin data instances at the end of the simulation.
 	 */
-	public void subscribeToSimulationState(BiConsumer<DataManagerContext, SimulationStateContext> consumer) {
-		simulation.subscribeDataManagerToSimulationState(dataManagerId, consumer);
+	public boolean produceSimulationStateOnHalt() {
+		return simulation.produceSimulationStateOnHalt();
 	}
 
 	/**

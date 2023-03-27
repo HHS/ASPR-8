@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.Set;
 
 import nucleus.ReportContext;
-import nucleus.SimulationStateContext;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.events.PersonAdditionEvent;
 import plugins.people.events.PersonImminentRemovalEvent;
@@ -237,7 +236,9 @@ public final class PersonPropertyInteractionReport extends PeriodicReport {
 		reportContext.subscribe(PersonAdditionEvent.class, this::handlePersonAdditionEvent);
 		reportContext.subscribe(PersonImminentRemovalEvent.class, this::handlePersonImminentRemovalEvent);
 		reportContext.subscribe(PersonRegionUpdateEvent.class, this::handlePersonRegionUpdateEvent);
-		reportContext.subscribeToSimulationState(this::recordSimulationState);
+		if (reportContext.produceSimulationStateOnHalt()) {
+			reportContext.subscribeToSimulationClose(this::recordSimulationState);
+		}
 		/*
 		 * if the client did not choose any properties, then we assume that all
 		 * properties are selected
@@ -268,13 +269,14 @@ public final class PersonPropertyInteractionReport extends PeriodicReport {
 		}
 	}
 
-	private void recordSimulationState(ReportContext reportContext, SimulationStateContext simulationStateContext) {
-		PersonPropertyInteractionReportPluginData.Builder builder = simulationStateContext.get(PersonPropertyInteractionReportPluginData.Builder.class);
+	private void recordSimulationState(ReportContext reportContext) {
+		PersonPropertyInteractionReportPluginData.Builder builder = PersonPropertyInteractionReportPluginData.builder();
 		for (PersonPropertyId personPropertyId : propertyIds) {
 			builder.addPersonPropertyId(personPropertyId);
 		}
 		builder.setReportLabel(getReportLabel());
 		builder.setReportPeriod(getReportPeriod());
+		reportContext.releaseOutput(builder.build());
 	}
 
 	private void handlePersonPropertyDefinitionEvent(ReportContext reportContext, PersonPropertyDefinitionEvent personPropertyDefinitionEvent) {

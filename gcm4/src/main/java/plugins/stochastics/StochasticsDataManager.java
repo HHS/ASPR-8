@@ -9,7 +9,6 @@ import org.apache.commons.math3.random.RandomGenerator;
 
 import nucleus.DataManager;
 import nucleus.DataManagerContext;
-import nucleus.SimulationStateContext;
 import plugins.stochastics.support.CopyableWell44497b;
 import plugins.stochastics.support.RandomNumberGeneratorId;
 import plugins.stochastics.support.StochasticsError;
@@ -140,16 +139,19 @@ public final class StochasticsDataManager extends DataManager {
 	@Override
 	public void init(DataManagerContext dataManagerContext) {
 		super.init(dataManagerContext);
-		dataManagerContext.subscribeToSimulationState(this::recordSimulationState);
+		if (dataManagerContext.produceSimulationStateOnHalt()) {
+			dataManagerContext.subscribeToSimulationClose(this::recordSimulationState);
+		}
 	}
 
-	private void recordSimulationState(DataManagerContext dataManagerContext, SimulationStateContext simulationStateContext) {
-		StochasticsPluginData.Builder builder = simulationStateContext.get(StochasticsPluginData.Builder.class);
+	private void recordSimulationState(DataManagerContext dataManagerContext) {
+		StochasticsPluginData.Builder builder = StochasticsPluginData.builder();
 
 		for (RandomNumberGeneratorId randomNumberGeneratorId : randomGeneratorMap.keySet()) {
 			builder.addRandomGeneratorId(randomNumberGeneratorId);
 		}
 
 		builder.setSeed(randomGenerator.nextLong());
+		dataManagerContext.releaseOutput(builder.build());
 	}
 }

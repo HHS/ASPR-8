@@ -4,7 +4,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import nucleus.ReportContext;
-import nucleus.SimulationStateContext;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.events.PersonAdditionEvent;
 import plugins.people.support.PersonId;
@@ -67,7 +66,7 @@ public final class RegionTransferReport extends PeriodicReport {
 	}
 
 	@Override
-	protected void flush(ReportContext reportContext) {		
+	protected void flush(ReportContext reportContext) {
 
 		final ReportItem.Builder reportItemBuilder = ReportItem.builder();
 
@@ -87,7 +86,6 @@ public final class RegionTransferReport extends PeriodicReport {
 		baseMap.clear();
 
 	}
-
 
 	private void handlePersonAdditionEvent(ReportContext ReportContext, PersonAdditionEvent personAdditionEvent) {
 		PersonId personId = personAdditionEvent.personId();
@@ -121,22 +119,23 @@ public final class RegionTransferReport extends PeriodicReport {
 		PeopleDataManager peopleDataManager = reportContext.getDataManager(PeopleDataManager.class);
 		regionsDataManager = reportContext.getDataManager(RegionsDataManager.class);
 
-		
 		reportContext.subscribe(PersonAdditionEvent.class, this::handlePersonAdditionEvent);
 		reportContext.subscribe(PersonRegionUpdateEvent.class, this::handlePersonRegionUpdateEvent);
-		reportContext.subscribeToSimulationState(this::recordSimulationState);
+		if (reportContext.produceSimulationStateOnHalt()) {
+			reportContext.subscribeToSimulationClose(this::recordSimulationState);
+		}
 
 		for (PersonId personId : peopleDataManager.getPeople()) {
 			final RegionId regionId = regionsDataManager.getPersonRegion(personId);
 			increment(regionId, regionId);
 		}
 	}
-	
-	private void recordSimulationState(ReportContext reportContext, SimulationStateContext simulationStateContext) {
-		RegionTransferReportPluginData.Builder builder = simulationStateContext.get(RegionTransferReportPluginData.Builder.class);
+
+	private void recordSimulationState(ReportContext reportContext) {
+		RegionTransferReportPluginData.Builder builder = RegionTransferReportPluginData.builder();
 		builder.setReportLabel(getReportLabel());
 		builder.setReportPeriod(getReportPeriod());
-		
+		reportContext.releaseOutput(builder.build());
 	}
 
 }
