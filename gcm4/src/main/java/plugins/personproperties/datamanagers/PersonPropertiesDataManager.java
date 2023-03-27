@@ -16,7 +16,6 @@ import nucleus.Event;
 import nucleus.EventFilter;
 import nucleus.IdentifiableFunctionMap;
 import nucleus.SimulationContext;
-import nucleus.SimulationStateContext;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.events.PersonImminentAdditionEvent;
 import plugins.people.events.PersonRemovalEvent;
@@ -225,11 +224,13 @@ public final class PersonPropertiesDataManager extends DataManager {
 		dataManagerContext.subscribe(PersonImminentAdditionEvent.class, this::handlePersonImminentAdditionEvent);
 		dataManagerContext.subscribe(PersonRemovalEvent.class, this::handlePersonImminentRemovalEvent);
 
-		dataManagerContext.subscribeToSimulationState(this::recordSimulationState);
+		if (dataManagerContext.produceSimulationStateOnHalt()) {
+			dataManagerContext.subscribeToSimulationClose(this::recordSimulationState);
+		}
 	}
 
-	private void recordSimulationState(DataManagerContext dataManagerContext, SimulationStateContext simulationStateContext) {
-		PersonPropertiesPluginData.Builder builder = simulationStateContext.get(PersonPropertiesPluginData.Builder.class);
+	private void recordSimulationState(DataManagerContext dataManagerContext) {
+		PersonPropertiesPluginData.Builder builder = PersonPropertiesPluginData.builder();
 
 		List<PersonId> people = peopleDataManager.getPeople();
 		for (PersonId personId : people) {
@@ -244,6 +245,8 @@ public final class PersonPropertiesDataManager extends DataManager {
 				builder.setPersonPropertyValue(personId, personPropertyId, propertyValue);
 			}
 		}
+
+		dataManagerContext.releaseOutput(builder.build());
 
 	}
 

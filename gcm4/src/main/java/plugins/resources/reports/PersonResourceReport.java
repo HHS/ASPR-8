@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.Set;
 
 import nucleus.ReportContext;
-import nucleus.SimulationStateContext;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.events.PersonAdditionEvent;
 import plugins.people.events.PersonImminentRemovalEvent;
@@ -273,7 +272,10 @@ public final class PersonResourceReport extends PeriodicReport {
 		reportContext.subscribe(RegionAdditionEvent.class, this::handleRegionAdditionEvent);
 		reportContext.subscribe(PersonResourceUpdateEvent.class, this::handlePersonResourceUpdateEvent);
 		reportContext.subscribe(ResourceIdAdditionEvent.class, this::handleResourceIdAdditionEvent);
-		reportContext.subscribeToSimulationState(this::recordSimulationState);
+
+		if (reportContext.produceSimulationStateOnHalt()) {
+			reportContext.subscribeToSimulationClose(this::recordSimulationState);
+		}
 
 		for (final ResourceId resourceId : resourcesDataManager.getResourceIds()) {
 			addToCurrentResourceIds(resourceId);
@@ -295,8 +297,8 @@ public final class PersonResourceReport extends PeriodicReport {
 
 	}
 
-	private void recordSimulationState(ReportContext reportContext, SimulationStateContext simulationStateContext) {
-		PersonResourceReportPluginData.Builder builder = simulationStateContext.get(PersonResourceReportPluginData.Builder.class);
+	private void recordSimulationState(ReportContext reportContext) {
+		PersonResourceReportPluginData.Builder builder = PersonResourceReportPluginData.builder();
 		for (ResourceId resourceId : includedResourceIds) {
 			builder.includeResourceId(resourceId);
 		}
@@ -306,7 +308,7 @@ public final class PersonResourceReport extends PeriodicReport {
 		builder.setDefaultInclusion(includeNewResourceIds);
 		builder.setReportLabel(getReportLabel());
 		builder.setReportPeriod(getReportPeriod());
-
+		reportContext.releaseOutput(builder.build());
 	}
 
 	private void handleRegionAdditionEvent(ReportContext reportContext, RegionAdditionEvent regionAdditionEvent) {
@@ -329,10 +331,10 @@ public final class PersonResourceReport extends PeriodicReport {
 		if (addToCurrentResourceIds(resourceId)) {
 			for (PersonId personId : peopleDataManager.getPeople()) {
 				long personResourceLevel = resourcesDataManager.getPersonResourceLevel(resourceId, personId);
-				if(personResourceLevel>0) {
+				if (personResourceLevel > 0) {
 					RegionId regionId = regionsDataManager.getPersonRegion(personId);
 					inc(regionId, resourceId);
-				}				
+				}
 			}
 		}
 	}

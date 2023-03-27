@@ -85,6 +85,16 @@ public final class ReportContext {
 	public <T extends Consumer<ReportContext>> Optional<T> getPlan(final Object key) {
 		return (Optional<T>) simulation.getReportPlan(key);
 	}
+	
+	
+	/**
+	 * Returns true if and only if the reports should output their state
+	 * as a plugin data instances at the end of the simulation.
+	 */
+	public boolean produceSimulationStateOnHalt() {
+		return simulation.produceSimulationStateOnHalt();
+	}
+
 
 	/**
 	 * Returns the scheduled execution time for the plan associated with the
@@ -136,18 +146,7 @@ public final class ReportContext {
 	}
 	
 	
-	/**
-	 * Registers the given consumer to be executed when the state of the
-	 * simulation needs to be reflected into plugins that are released to
-	 * output.
-	 * 
-	 * @throws ContractException
-	 *             <li>{@link NucleusError#NULL_REPORT_STATE_CONTEXT_CONSUMER}
-	 *             if the consumer is null</li>
-	 */
-	public void subscribeToSimulationState(BiConsumer<ReportContext, SimulationStateContext> consumer) {
-		simulation.subscribeReportToSimulationState(consumer);
-	}
+	
 
 	/**
 	 * Unsubscribes the report from events of the given type for all phases of

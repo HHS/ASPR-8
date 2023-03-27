@@ -11,7 +11,6 @@ import nucleus.DataManagerContext;
 import nucleus.Event;
 import nucleus.EventFilter;
 import nucleus.IdentifiableFunctionMap;
-import nucleus.SimulationStateContext;
 import plugins.globalproperties.GlobalPropertiesPluginData;
 import plugins.globalproperties.events.GlobalPropertyDefinitionEvent;
 import plugins.globalproperties.events.GlobalPropertyUpdateEvent;
@@ -194,18 +193,21 @@ public final class GlobalPropertiesDataManager extends DataManager {
 			globalPropertyDefinitions.put(globalPropertyId, globalPropertyDefinition);
 		}
 
-		dataManagerContext.subscribeToSimulationState(this::recordSimulationState);
+		if (dataManagerContext.produceSimulationStateOnHalt()) {
+			dataManagerContext.subscribeToSimulationClose(this::recordSimulationState);
+		}
 
 	}
 
-	private void recordSimulationState(DataManagerContext dataManagerContext, SimulationStateContext simulationStateContext) {
-		GlobalPropertiesPluginData.Builder builder = simulationStateContext.get(GlobalPropertiesPluginData.Builder.class);
+	private void recordSimulationState(DataManagerContext dataManagerContext) {
+		GlobalPropertiesPluginData.Builder builder = GlobalPropertiesPluginData.builder();
 		for (GlobalPropertyId globalPropertyId : globalPropertyDefinitions.keySet()) {
 			PropertyDefinition propertyDefinition = globalPropertyDefinitions.get(globalPropertyId);
 			builder.defineGlobalProperty(globalPropertyId, propertyDefinition);
 			Object value = globalPropertyMap.get(globalPropertyId).getValue();
 			builder.setGlobalPropertyValue(globalPropertyId, value);
-		}		
+		}
+		dataManagerContext.releaseOutput(builder.build());
 	}
 
 	private static record GlobalPropertyInitializationMutationEvent(GlobalPropertyInitialization globalPropertyInitialization) implements Event {
