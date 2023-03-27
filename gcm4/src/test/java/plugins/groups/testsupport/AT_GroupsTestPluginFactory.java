@@ -34,6 +34,7 @@ import plugins.groups.support.GroupError;
 import plugins.groups.support.GroupId;
 import plugins.groups.support.GroupPropertyValue;
 import plugins.groups.support.GroupTypeId;
+import plugins.groups.testsupport.GroupsTestPluginFactory.Factory;
 import plugins.people.PeoplePluginData;
 import plugins.people.PeoplePluginId;
 import plugins.people.support.PersonError;
@@ -57,8 +58,9 @@ public class AT_GroupsTestPluginFactory {
 			double.class, long.class, Consumer.class })
 	public void testFactory_Consumer() {
 		MutableBoolean executed = new MutableBoolean();
-		TestSimulation.executeSimulation(GroupsTestPluginFactory
-				.factory(100, 3, 5, 3765548905828391577L, c -> executed.setValue(true)).getPlugins());
+		Factory factory = GroupsTestPluginFactory.factory(100, 3, 5, 3765548905828391577L, c -> executed.setValue(true));
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
+		
 		assertTrue(executed.getValue());
 
 		// precondition: consumer is null
@@ -77,8 +79,9 @@ public class AT_GroupsTestPluginFactory {
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, c -> executed.setValue(true)));
 		TestPluginData testPluginData = pluginBuilder.build();
 
-		TestSimulation.executeSimulation(
-				GroupsTestPluginFactory.factory(100, 3, 5, 1937810385546394605L, testPluginData).getPlugins());
+		Factory factory = GroupsTestPluginFactory.factory(100, 3, 5, 1937810385546394605L, testPluginData);		
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
+		
 		assertTrue(executed.getValue());
 
 		// precondition: testPluginData is null

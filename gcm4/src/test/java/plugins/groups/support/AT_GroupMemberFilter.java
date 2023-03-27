@@ -19,6 +19,7 @@ import plugins.groups.datamanagers.GroupsDataManager;
 import plugins.groups.events.GroupMembershipAdditionEvent;
 import plugins.groups.events.GroupMembershipRemovalEvent;
 import plugins.groups.testsupport.GroupsTestPluginFactory;
+import plugins.groups.testsupport.GroupsTestPluginFactory.Factory;
 import plugins.groups.testsupport.TestGroupTypeId;
 import plugins.partitions.support.Filter;
 import plugins.partitions.support.FilterSensitivity;
@@ -35,8 +36,7 @@ public class AT_GroupMemberFilter {
 	@Test
 	@UnitTestConstructor(target = GroupMemberFilter.class, args = { GroupId.class })
 	public void testConstructor() {
-
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(100, 3, 10, 8499169041100865476L, (c) -> {
+		Factory factory = GroupsTestPluginFactory.factory(100, 3, 10, 8499169041100865476L, (c) -> {
 			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
 			List<GroupId> groupIds = groupsDataManager.getGroupIds();
 			assertFalse(groupIds.isEmpty());
@@ -49,14 +49,16 @@ public class AT_GroupMemberFilter {
 			ContractException contractException = assertThrows(ContractException.class,
 					() -> new GroupMemberFilter(null).validate(c));
 			assertEquals(GroupError.NULL_GROUP_ID, contractException.getErrorType());
-		}).getPlugins());
+		});
+		
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
 	@Test
 	@UnitTestMethod(target = GroupMemberFilter.class, name = "getFilterSensitivities", args = {})
 	public void testGetFilterSensitivities() {
 
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(100, 3, 10, 7283631979607042406L, (c) -> {
+		Factory factory = GroupsTestPluginFactory.factory(100, 3, 10, 7283631979607042406L, (c) -> {
 			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
 
 			GroupId groupId = groupsDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_1);
@@ -78,7 +80,9 @@ public class AT_GroupMemberFilter {
 			}
 			assertEquals(expected, actual);
 
-		}).getPlugins());
+		});
+		
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 	}
 
@@ -87,7 +91,7 @@ public class AT_GroupMemberFilter {
 			PersonId.class })
 	public void testEvaluate() {
 
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(100, 3, 10, 6248106595116941770L, (c) -> {
+		Factory factory = GroupsTestPluginFactory.factory(100, 3, 10, 6248106595116941770L, (c) -> {
 			RandomGenerator randomGenerator = c.getDataManager(StochasticsDataManager.class).getRandomGenerator();
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
@@ -114,14 +118,16 @@ public class AT_GroupMemberFilter {
 			contractException = assertThrows(ContractException.class,
 					() -> filter.evaluate(c, new PersonId(123412342)));
 			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
-		}).getPlugins());
+		});
+		
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
 	@Test
 	@UnitTestMethod(target = GroupMemberFilter.class, name = "validate", args = { SimulationContext.class })
 	public void testValidate() {
 
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(100, 3, 10, 8525809821136960274L, (c) -> {
+		Factory factory = GroupsTestPluginFactory.factory(100, 3, 10, 8525809821136960274L, (c) -> {
 			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
 			GroupId groupId = groupsDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_3);
 			Filter filter = new GroupMemberFilter(groupId);
@@ -134,6 +140,8 @@ public class AT_GroupMemberFilter {
 					() -> new GroupMemberFilter(null).validate(c));
 			assertEquals(GroupError.NULL_GROUP_ID, contractException.getErrorType());
 
-		}).getPlugins());
+		});
+		
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 }

@@ -9,11 +9,13 @@ import static org.junit.jupiter.api.Assertions.fail;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
+import nucleus.ActorContext;
 import nucleus.Event;
 import nucleus.SimulationContext;
 import nucleus.testsupport.testplugin.TestSimulation;
@@ -21,6 +23,7 @@ import plugins.groups.datamanagers.GroupsDataManager;
 import plugins.groups.events.GroupMembershipAdditionEvent;
 import plugins.groups.events.GroupMembershipRemovalEvent;
 import plugins.groups.testsupport.GroupsTestPluginFactory;
+import plugins.groups.testsupport.GroupsTestPluginFactory.Factory;
 import plugins.groups.testsupport.TestGroupTypeId;
 import plugins.partitions.support.LabelerSensitivity;
 import plugins.people.datamanagers.PeopleDataManager;
@@ -58,8 +61,7 @@ public final class AT_GroupLabeler {
 				groupMembershipAdditionEventSensitivityFound = true;
 				PersonId personId = new PersonId(45253);
 
-				Optional<PersonId> optional = labelerSensitivity
-						.getPersonId(new GroupMembershipAdditionEvent(personId, new GroupId(56)));
+				Optional<PersonId> optional = labelerSensitivity.getPersonId(new GroupMembershipAdditionEvent(personId, new GroupId(56)));
 				assertTrue(optional.isPresent());
 				PersonId actualPersonId = optional.get();
 				assertEquals(personId, actualPersonId);
@@ -68,8 +70,7 @@ public final class AT_GroupLabeler {
 				groupMembershipRemovalEventSensitivityFound = true;
 				PersonId personId = new PersonId(45253);
 
-				Optional<PersonId> optional = labelerSensitivity
-						.getPersonId(new GroupMembershipRemovalEvent(personId, new GroupId(56)));
+				Optional<PersonId> optional = labelerSensitivity.getPersonId(new GroupMembershipRemovalEvent(personId, new GroupId(56)));
 				assertTrue(optional.isPresent());
 				PersonId actualPersonId = optional.get();
 				assertEquals(personId, actualPersonId);
@@ -89,7 +90,7 @@ public final class AT_GroupLabeler {
 	@UnitTestMethod(target = GroupLabeler.class, name = "getLabel", args = { SimulationContext.class, PersonId.class })
 	public void testGetLabel() {
 
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 3, 5, 5880749882920317232L, (c) -> {
+		Consumer<ActorContext> consumer = (c) -> {
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
 
@@ -107,8 +108,7 @@ public final class AT_GroupLabeler {
 			for (PersonId personId : peopleDataManager.getPeople()) {
 				GroupTypeCountMap.Builder builder = GroupTypeCountMap.builder();
 				for (GroupTypeId groupTypeId : groupsDataManager.getGroupTypeIds()) {
-					builder.setCount(groupTypeId,
-							groupsDataManager.getGroupCountForGroupTypeAndPerson(groupTypeId, personId));
+					builder.setCount(groupTypeId, groupsDataManager.getGroupCountForGroupTypeAndPerson(groupTypeId, personId));
 				}
 				GroupTypeCountMap groupTypeCountMap = builder.build();
 				Object expectedLabel = func.apply(groupTypeCountMap);
@@ -119,16 +119,18 @@ public final class AT_GroupLabeler {
 			// precondition tests
 
 			// if the person id is null
-			ContractException contractException = assertThrows(ContractException.class,
-					() -> groupLabeler.getLabel(c, null));
+			ContractException contractException = assertThrows(ContractException.class, () -> groupLabeler.getLabel(c, null));
 			assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
 
 			// if the person id is unknown
-			contractException = assertThrows(ContractException.class,
-					() -> groupLabeler.getLabel(c, new PersonId(100000)));
+			contractException = assertThrows(ContractException.class, () -> groupLabeler.getLabel(c, new PersonId(100000)));
 			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
 
-		}).getPlugins());
+		};
+
+		Factory factory = GroupsTestPluginFactory.factory(30, 3, 5, 5880749882920317232L, consumer);
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
+
 	}
 
 	@Test
@@ -142,7 +144,7 @@ public final class AT_GroupLabeler {
 	@UnitTestMethod(target = GroupLabeler.class, name = "getPastLabel", args = { SimulationContext.class, Event.class })
 	public void testGetPastLabel() {
 
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 3, 5, 8478102896119863988L, (c) -> {
+		Consumer<ActorContext> consumer = (c) -> {
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
@@ -217,15 +219,18 @@ public final class AT_GroupLabeler {
 			GroupId groupId = groupsDataManager.getGroupIds().get(0);
 
 			// precondition: person id is null
-			ContractException contractException = assertThrows(ContractException.class,
-					() -> groupLabeler.getPastLabel(c, new GroupMembershipAdditionEvent(null, groupId)));
+			ContractException contractException = assertThrows(ContractException.class, () -> groupLabeler.getPastLabel(c, new GroupMembershipAdditionEvent(null, groupId)));
 			assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
 
 			// precondition: person id is unknown
-			contractException = assertThrows(ContractException.class, () -> groupLabeler.getPastLabel(c,
-					new GroupMembershipAdditionEvent(new PersonId(100000), groupId)));
+			contractException = assertThrows(ContractException.class, () -> groupLabeler.getPastLabel(c, new GroupMembershipAdditionEvent(new PersonId(100000), groupId)));
 			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
 
-		}).getPlugins());
+		};
+		
+		
+		Factory factory = GroupsTestPluginFactory.factory(30, 3, 5, 8478102896119863988L,consumer);
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
+
 	}
 }
