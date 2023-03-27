@@ -1,8 +1,10 @@
 package plugins.groups.reports;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Map;
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 
@@ -397,6 +399,59 @@ public class AT_GroupPopulationReport {
 		groupBuilder.addPersonToGroup(new GroupId(1), new PersonId(2));
 		groupBuilder.addPersonToGroup(new GroupId(1), new PersonId(3));
 		return groupBuilder.build();
+	}
+
+	@Test
+	@UnitTestConstructor(target = GroupPopulationReport.class, args = { ReportLabel.class, ReportPeriod.class })
+	public void testInit() {
+
+		// add the action plugin
+		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+
+		// have the agent add a new group of type 1 with three people
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
+			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+			GroupId groupId = groupsDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_1);
+			assertEquals(3, groupId.getValue());
+			groupsDataManager.addPersonToGroup(new PersonId(4), groupId);
+			groupsDataManager.addPersonToGroup(new PersonId(5), groupId);
+			groupsDataManager.addPersonToGroup(new PersonId(6), groupId);
+		}));
+
+		// have the agent add a new group of type 1 with three people
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
+			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+			groupsDataManager.removeGroup(new GroupId(2));
+		}));
+
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(2, (c) -> {
+			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+			groupsDataManager.addPersonToGroup(new PersonId(7), new GroupId(3));
+			groupsDataManager.addPersonToGroup(new PersonId(8), new GroupId(3));
+			groupsDataManager.addPersonToGroup(new PersonId(9), new GroupId(3));
+		}));
+
+		GroupPopulationReportPluginData groupPopulationReportPluginData = GroupPopulationReportPluginData
+				.builder()
+				.setReportLabel(REPORT_LABEL)
+				.setReportPeriod(ReportPeriod.HOURLY)
+				.build();
+
+		TestPluginData testPluginData = pluginBuilder.build();
+
+		Factory factory = GroupsTestPluginFactory	.factory(10, 0, 3, 4023600052052959521L, testPluginData)//
+				.setGroupsPluginData(getGroupsPluginData())//
+				.setGroupPopulationReportPluginData(groupPopulationReportPluginData);
+
+		TestOutputConsumer testOutputConsumer = TestSimulation	.builder()//
+				.addPlugins(factory.getPlugins())//
+				.build()//
+				.execute();
+
+		Optional<GroupPopulationReportPluginData> optional = testOutputConsumer.getPluginData(GroupPopulationReportPluginData.class);
+		assertTrue(optional.isPresent());
+		GroupPopulationReportPluginData groupPopulationReportPluginData2 = optional.get();
+		assertEquals(groupPopulationReportPluginData, groupPopulationReportPluginData2);
 	}
 
 	private static ReportItem getReportItem(ReportPeriod reportPeriod, Object... values) {
