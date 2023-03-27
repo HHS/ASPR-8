@@ -19,7 +19,6 @@ import nucleus.EventFilter;
 import nucleus.IdentifiableFunctionMap;
 import nucleus.NucleusError;
 import nucleus.SimulationContext;
-import nucleus.SimulationStateContext;
 import plugins.materials.MaterialsPluginData;
 import plugins.materials.events.BatchAdditionEvent;
 import plugins.materials.events.BatchAmountUpdateEvent;
@@ -378,12 +377,14 @@ public final class MaterialsDataManager extends DataManager {
 			}
 		}
 		dataManagerContext.subscribe(ResourceIdAdditionEvent.class, this::handleResourceIdAdditionEvent);
-		dataManagerContext.subscribeToSimulationState(this::recordSimulationState);
+		if (dataManagerContext.produceSimulationStateOnHalt()) {
+			dataManagerContext.subscribeToSimulationClose(this::recordSimulationState);
+		}
 	}
 
-	private void recordSimulationState(DataManagerContext dataManagerContext, SimulationStateContext simulationStateContext) {
-		
-		MaterialsPluginData.Builder builder = simulationStateContext.get(MaterialsPluginData.Builder.class);
+	private void recordSimulationState(DataManagerContext dataManagerContext) {
+
+		MaterialsPluginData.Builder builder = MaterialsPluginData.builder();
 
 		Set<MaterialsProducerPropertyId> materialsProducerPropertyIds = getMaterialsProducerPropertyIds();
 
@@ -426,7 +427,7 @@ public final class MaterialsDataManager extends DataManager {
 					builder.addBatchToStage(stageId, batchId);
 
 					for (BatchPropertyId batchPropertyId : getBatchPropertyIds(batchMaterial)) {
-						Object propertyValue = getBatchPropertyValue(batchId, batchPropertyId);						
+						Object propertyValue = getBatchPropertyValue(batchId, batchPropertyId);
 						builder.setBatchPropertyValue(batchId, batchPropertyId, propertyValue);
 					}
 				}
@@ -437,11 +438,13 @@ public final class MaterialsDataManager extends DataManager {
 				double batchAmount = getBatchAmount(batchId);
 				builder.addBatch(batchId, batchMaterial, batchAmount, materialsProducerId);
 				for (BatchPropertyId batchPropertyId : getBatchPropertyIds(batchMaterial)) {
-					Object propertyValue = getBatchPropertyValue(batchId, batchPropertyId);					
+					Object propertyValue = getBatchPropertyValue(batchId, batchPropertyId);
 					builder.setBatchPropertyValue(batchId, batchPropertyId, propertyValue);
 				}
 			}
 		}
+
+		dataManagerContext.releaseOutput(builder.build());
 
 	}
 
@@ -1173,7 +1176,7 @@ public final class MaterialsDataManager extends DataManager {
 		materialsProducerPropertyMap.put(materialsProducerId, propertyValueMap);
 
 		for (MaterialsProducerPropertyId materialsProducerPropertyId : materialsProducerPropertyValues.keySet()) {
-			Object propertyValue = materialsProducerPropertyValues.get(materialsProducerPropertyId);			
+			Object propertyValue = materialsProducerPropertyValues.get(materialsProducerPropertyId);
 			PropertyValueRecord propertyValueRecord = new PropertyValueRecord(dataManagerContext);
 			propertyValueRecord.setPropertyValue(propertyValue);
 			propertyValueMap.put(materialsProducerPropertyId, propertyValueRecord);
@@ -1632,7 +1635,7 @@ public final class MaterialsDataManager extends DataManager {
 			throw new ContractException(MaterialsError.NULL_BATCH_CONSTRUCTION_INFO);
 		}
 	}
-	
+
 	private void validateStageConversionInfoNotNull(final StageConversionInfo stageConversionInfo) {
 		if (stageConversionInfo == null) {
 			throw new ContractException(MaterialsError.NULL_STAGE_CONVERSION_INFO);
@@ -2440,15 +2443,15 @@ public final class MaterialsDataManager extends DataManager {
 	 * 
 	 *             <li>{@linkplain MaterialsError#UNKNOWN_MATERIAL_ID} if the
 	 *             material id is unknown</li>
-	 *             
+	 * 
 	 *             <li>{@linkplain MaterialsError#UNKNOWN_STAGE_ID} if stage id
 	 *             is unknown</li>
-	 *             
+	 * 
 	 *             <li>{@linkplain MaterialsError#OFFERED_STAGE_UNALTERABLE} if
 	 *             the stage is offered</li>
-	 *             
-	 *             <li>{@linkplain MaterialsError#NULL_STAGE_CONVERSION_INFO}
-	 *             if the stage conversion info in the event is null</li>
+	 * 
+	 *             <li>{@linkplain MaterialsError#NULL_STAGE_CONVERSION_INFO} if
+	 *             the stage conversion info in the event is null</li>
 	 * 
 	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if the
 	 *             batch construction info contains an unknown batch property
@@ -2461,8 +2464,8 @@ public final class MaterialsDataManager extends DataManager {
 	 *             <li>{@linkplain PropertyError#INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT}
 	 *             if the batch construction does not contain a batch property
 	 *             value assignment for a batch property that does not have a
-	 *             default value</li>             
-	 *             
+	 *             default value</li>
+	 * 
 	 * 
 	 * 
 	 */
@@ -2486,7 +2489,7 @@ public final class MaterialsDataManager extends DataManager {
 		final MaterialsProducerId materialsProducerId = stageRecord.materialsProducerRecord.materialProducerId;
 		validateStageIsNotOffered(stageId);
 		validateNonnegativeFiniteMaterialAmount(amount);
-		
+
 		final Map<BatchPropertyId, Object> propertyValues = stageConversionInfo.getPropertyValues();
 		boolean checkPropertyCoverage = !nonDefaultBearingBatchPropertyIds.get(materialId).isEmpty();
 
@@ -2517,10 +2520,10 @@ public final class MaterialsDataManager extends DataManager {
 		materialsProducerRecord.inventory.add(newBatchRecord);
 		batchRecords.put(newBatchRecord.batchId, newBatchRecord);
 
-		final Map<BatchPropertyId, PropertyValueRecord> map = new LinkedHashMap<>();		
+		final Map<BatchPropertyId, PropertyValueRecord> map = new LinkedHashMap<>();
 		for (final BatchPropertyId batchPropertyId : propertyValues.keySet()) {
 			Object propertyValue = propertyValues.get(batchPropertyId);
-			final PropertyValueRecord propertyValueRecord = new PropertyValueRecord(dataManagerContext);			
+			final PropertyValueRecord propertyValueRecord = new PropertyValueRecord(dataManagerContext);
 			propertyValueRecord.setPropertyValue(propertyValue);
 			map.put(batchPropertyId, propertyValueRecord);
 		}

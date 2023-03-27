@@ -15,7 +15,6 @@ import nucleus.EventFilter;
 import nucleus.IdentifiableFunctionMap;
 import nucleus.NucleusError;
 import nucleus.SimulationContext;
-import nucleus.SimulationStateContext;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.events.PersonImminentAdditionEvent;
 import plugins.people.events.PersonRemovalEvent;
@@ -601,7 +600,7 @@ public final class ResourcesDataManager extends DataManager {
 			for (final ResourcePropertyId resourcePropertyId : defMap.keySet()) {
 				result.add((T) resourcePropertyId);
 			}
-		}else {
+		} else {
 			result = new LinkedHashSet<>();
 		}
 		return result;
@@ -863,11 +862,13 @@ public final class ResourcesDataManager extends DataManager {
 		dataManagerContext.subscribe(PersonToRegionResourceTransferMutationEvent.class, this::handlePersonToRegionResourceTransferMutationEvent);
 		dataManagerContext.subscribe(RegionToPersonResourceTransferMutationEvent.class, this::handleRegionToPersonResourceTransferMutationEvent);
 
-		dataManagerContext.subscribeToSimulationState(this::recordSimulationState);
+		if (dataManagerContext.produceSimulationStateOnHalt()) {
+			dataManagerContext.subscribeToSimulationClose(this::recordSimulationState);
+		}
 	}
 
-	private void recordSimulationState(DataManagerContext dataManagerContext, SimulationStateContext simulationStateContext) {
-		ResourcesPluginData.Builder builder = simulationStateContext.get(ResourcesPluginData.Builder.class);
+	private void recordSimulationState(DataManagerContext dataManagerContext) {
+		ResourcesPluginData.Builder builder = ResourcesPluginData.builder();
 		Set<RegionId> regionIds = regionsDataManager.getRegionIds();
 		List<PersonId> people = peopleDataManager.getPeople();
 
@@ -890,6 +891,8 @@ public final class ResourcesDataManager extends DataManager {
 			TimeTrackingPolicy timeTrackingPolicy = getPersonResourceTimeTrackingPolicy(resourceId);
 			builder.setResourceTimeTracking(resourceId, timeTrackingPolicy);
 		}
+		
+		dataManagerContext.releaseOutput(builder.build());
 
 		// for (final ResourceId resourceId : personResourceValues.keySet()) {
 		// builder.addResource(resourceId);

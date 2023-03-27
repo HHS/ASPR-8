@@ -246,9 +246,8 @@ public class AT_Simulation {
 		@Override
 		public void init(DataManagerContext dataManagerContext) {
 			super.init(dataManagerContext);
-			dataManagerContext.subscribeToSimulationState((c1, c2) -> {
-				AlphaPluginDataBuilder alphaPluginDataBuilder = c2.get(AlphaPluginDataBuilder.class);
-				alphaPluginDataBuilder.setX(x);
+			dataManagerContext.subscribeToSimulationClose((c) -> {
+				c.releaseOutput(new AlphaPluginDataBuilder().setX(x).build());
 			});
 		}
 
@@ -315,6 +314,7 @@ public class AT_Simulation {
 					.setSimulationTime(startingSimulationTime)//
 					.setOutputConsumer(testOutputConsumer)//
 					.setProduceSimulationStateOnHalt(true)//
+					.setSimulationHaltTime(20)//
 					.build()//
 					.execute();//
 
@@ -329,20 +329,10 @@ public class AT_Simulation {
 
 		// show that there are two plugins and that the AlphaPluginData contains
 		// the last value of x
-		Map<Plugin, Integer> pluginItems = testOutputConsumer.getOutputItems(Plugin.class);
-		assertEquals(2, pluginItems.size());
-		AlphaPluginData outputAlphaPluginData = null;
-		for (Plugin plugin : pluginItems.keySet()) {
-			assertEquals(1, pluginItems.get(plugin));
-			if (plugin.getPluginId().equals(ALPHA_PLUGIN_ID)) {
-				Set<PluginData> pluginDatas = plugin.getPluginDatas();
-				assertEquals(1, pluginDatas.size());
-				PluginData pluginData = pluginDatas.iterator().next();
-				assertTrue(pluginData instanceof AlphaPluginData);
-				outputAlphaPluginData = (AlphaPluginData) pluginData;
-			}
-		}
-		assertNotNull(outputAlphaPluginData);
+		Map<AlphaPluginData, Integer> pluginDataItems = testOutputConsumer.getOutputItems(AlphaPluginData.class);
+		
+		assertEquals(1, pluginDataItems.size());
+		AlphaPluginData outputAlphaPluginData = pluginDataItems.keySet().iterator().next();
 		assertEquals(rollingXValue.getValue(), outputAlphaPluginData.getX());
 
 		// show that if we explicitly set the production to false that nothing

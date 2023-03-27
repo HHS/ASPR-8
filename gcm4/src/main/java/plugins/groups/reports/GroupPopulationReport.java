@@ -4,7 +4,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import nucleus.ReportContext;
-import nucleus.SimulationStateContext;
 import plugins.groups.datamanagers.GroupsDataManager;
 import plugins.groups.support.GroupId;
 import plugins.groups.support.GroupTypeId;
@@ -29,7 +28,7 @@ import plugins.reports.support.ReportItem;
 public final class GroupPopulationReport extends PeriodicReport {
 
 	public GroupPopulationReport(GroupPopulationReportPluginData groupPopulationReportPluginData) {
-		super(groupPopulationReportPluginData.getReportLabel(),groupPopulationReportPluginData.getReportPeriod());
+		super(groupPopulationReportPluginData.getReportLabel(), groupPopulationReportPluginData.getReportPeriod());
 	}
 
 	/*
@@ -106,16 +105,18 @@ public final class GroupPopulationReport extends PeriodicReport {
 	private GroupsDataManager groupsDataManager;
 
 	@Override
-	protected void prepare(ReportContext reportContext) {		
+	protected void prepare(ReportContext reportContext) {
 		groupsDataManager = reportContext.getDataManager(GroupsDataManager.class);
-		reportContext.subscribeToSimulationState(this::recordSimulationState);
+		if (reportContext.produceSimulationStateOnHalt()) {
+			reportContext.subscribeToSimulationClose(this::recordSimulationState);
+		}
 	}
-	
-	
-	private void recordSimulationState(ReportContext reportContext, SimulationStateContext simulationStateContext) {
-		GroupPopulationReportPluginData.Builder builder = simulationStateContext.get(GroupPopulationReportPluginData.Builder.class);
+
+	private void recordSimulationState(ReportContext reportContext) {
+		GroupPopulationReportPluginData.Builder builder = GroupPopulationReportPluginData.builder();
 		builder.setReportLabel(getReportLabel());
-		builder.setReportPeriod(getReportPeriod());	
+		builder.setReportPeriod(getReportPeriod());
+		reportContext.releaseOutput(builder.build());
 	}
 
 }
