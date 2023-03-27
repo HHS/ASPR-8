@@ -1,9 +1,6 @@
 package plugins.reports;
 
-import java.util.function.Consumer;
-
 import nucleus.Plugin;
-import nucleus.ReportContext;
 
 /**
  * A plugin providing a report actors to the simulation.
@@ -27,26 +24,15 @@ public class ReportsPlugin {
 	 * </P>
 	 * 
 	 * <P>
-	 * Provides no data mangers:
-	 * </P>
-	 * 
-	 * <P>
-	 * Provides report actors based on content in the
-	 * {@linkplain ReportsPluginData}
+	 * Provides no actors, reports or data mangers:
 	 * </P>
 	 * 
 	 */
 
-	public static Plugin getReportsPlugin(ReportsPluginData reportsPluginData) {
-		return Plugin	.builder()//
-						.addPluginData(reportsPluginData)//
+	public static Plugin getReportsPlugin() {
+		return Plugin	.builder()//						
 						.setPluginId(ReportsPluginId.PLUGIN_ID)//
-						.setInitializer((c) -> {
-							ReportsPluginData pluginData = c.getPluginData(ReportsPluginData.class).get();
-							for (Consumer<ReportContext> consumer : pluginData.getReports()) {
-								c.addReport(consumer);
-							}
-						}).build();//
+						.build();//
 	}
 
 }

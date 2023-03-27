@@ -37,6 +37,7 @@ import plugins.materials.support.MaterialsError;
 import plugins.materials.support.MaterialsProducerId;
 import plugins.materials.support.MaterialsProducerPropertyId;
 import plugins.materials.support.StageId;
+import plugins.materials.testsupport.MaterialsTestPluginFactory.Factory;
 import plugins.people.PeoplePluginData;
 import plugins.people.PeoplePluginId;
 import plugins.people.support.PersonError;
@@ -71,8 +72,9 @@ public class AT_MaterialsTestPluginFactory {
 			int.class, long.class, Consumer.class })
 	public void testFactory_Consumer() {
 		MutableBoolean executed = new MutableBoolean();
-		TestSimulation.executeSimulation(MaterialsTestPluginFactory
-				.factory(0, 0, 0, 3328026739613106739L, c -> executed.setValue(true)).getPlugins());
+		Factory factory = MaterialsTestPluginFactory.factory(0, 0, 0, 3328026739613106739L, c -> executed.setValue(true));
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
+		
 		assertTrue(executed.getValue());
 
 		// precondition: consumer is null
@@ -91,8 +93,10 @@ public class AT_MaterialsTestPluginFactory {
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, c -> executed.setValue(true)));
 		TestPluginData testPluginData = pluginBuilder.build();
 
-		TestSimulation.executeSimulation(
-				MaterialsTestPluginFactory.factory(0, 0, 0, 7995349318419680542L, testPluginData).getPlugins());
+		
+		Factory factory = MaterialsTestPluginFactory.factory(0, 0, 0, 7995349318419680542L, testPluginData);
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
+		
 		assertTrue(executed.getValue());
 
 		// precondition: testPluginData is null

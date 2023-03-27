@@ -103,8 +103,10 @@ public class AT_GroupPropertyReport {
 										.setGroupPropertyReportPluginData(groupPropertyReportPluginData);
 
 		// execute the simulation with an output consumer
-		TestOutputConsumer testOutputConsumer = new TestOutputConsumer();
-		TestSimulation.executeSimulation(factory.getPlugins(), testOutputConsumer);
+		TestOutputConsumer testOutputConsumer = TestSimulation	.builder()//
+																.addPlugins(factory.getPlugins())//
+																.build()//
+																.execute();
 
 		// show that the report items have the chosen property ids
 		Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItems(ReportItem.class);
@@ -211,8 +213,10 @@ public class AT_GroupPropertyReport {
 										.setGroupPropertyReportPluginData(groupPropertyReportPluginData);
 
 		// execute the simulation with an output consumer
-		TestOutputConsumer testOutputConsumer = new TestOutputConsumer();
-		TestSimulation.executeSimulation(factory.getPlugins(), testOutputConsumer);
+		TestOutputConsumer testOutputConsumer = TestSimulation	.builder()//
+																.addPlugins(factory.getPlugins())//
+																.build()//
+																.execute();
 
 		// show that the report items have the chosen property ids
 		Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItems(ReportItem.class);
@@ -291,11 +295,10 @@ public class AT_GroupPropertyReport {
 											.factory(30, 3.0, 10.0, 274849177891016889L, testPluginData)//
 											.setGroupPropertyReportPluginData(groupPropertyReportPluginData);
 
-			// create an output consumer to gather the report items
-			TestOutputConsumer testOutputConsumer = new TestOutputConsumer();
-
-			// execute the simulation
-			TestSimulation.executeSimulation(factory.getPlugins(), testOutputConsumer);
+			TestOutputConsumer testOutputConsumer = TestSimulation	.builder()//
+																	.addPlugins(factory.getPlugins())//
+																	.build()//
+																	.execute();
 
 			// gather from the report items the property ids that were actually
 			// included in the report
@@ -382,9 +385,10 @@ public class AT_GroupPropertyReport {
 											.setGroupPropertyReportPluginData(groupPropertyReportPluginData);
 
 			// execute the simulation with an output consumer
-			TestOutputConsumer testOutputConsumer = new TestOutputConsumer();
-			TestSimulation.executeSimulation(factory.getPlugins(), testOutputConsumer);
-
+			TestOutputConsumer testOutputConsumer = TestSimulation	.builder()//
+																	.addPlugins(factory.getPlugins())//
+																	.build()//
+																	.execute();
 			// show that the report items have the chosen property ids
 			Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItems(ReportItem.class);
 
@@ -448,9 +452,10 @@ public class AT_GroupPropertyReport {
 											.setGroupPropertyReportPluginData(groupPropertyReportPluginData);
 
 			// execute the simulation with an output consumer
-			TestOutputConsumer testOutputConsumer = new TestOutputConsumer();
-			TestSimulation.executeSimulation(factory.getPlugins(), testOutputConsumer);
-
+			TestOutputConsumer testOutputConsumer = TestSimulation	.builder()//
+																	.addPlugins(factory.getPlugins())//
+																	.build()//
+																	.execute();
 			// show that the report items have the chosen property ids
 			Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItems(ReportItem.class);
 			assertFalse(outputItems.isEmpty());
@@ -581,21 +586,23 @@ public class AT_GroupPropertyReport {
 		builder.setReportLabel(REPORT_LABEL);
 		builder.setDefaultInclusion(includeNewProperties);
 		builder.setReportPeriod(ReportPeriod.HOURLY);
-		for(TestGroupPropertyId testGroupPropertyId : TestGroupPropertyId.values()) {
+		for (TestGroupPropertyId testGroupPropertyId : TestGroupPropertyId.values()) {
 			builder.excludeGroupProperty(testGroupPropertyId.getTestGroupTypeId(), testGroupPropertyId);
-		}		
+		}
 		builder.includeGroupProperty(TestGroupTypeId.GROUP_TYPE_1, TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK);
 		builder.includeGroupProperty(TestGroupTypeId.GROUP_TYPE_2, TestGroupPropertyId.GROUP_PROPERTY_2_2_INTEGER_MUTABLE_TRACK);
-		
+
 		GroupPropertyReportPluginData groupPropertyReportPluginData = builder.build();
 
 		Factory factory = GroupsTestPluginFactory.factory(0, 0, 0, 6092832510476200219L, testPluginData).setGroupPropertyReportPluginData(groupPropertyReportPluginData);
 
-		TestOutputConsumer outputConsumer = new TestOutputConsumer();
-		TestSimulation.executeSimulation(factory.getPlugins(), outputConsumer);
+		TestOutputConsumer testOutputConsumer = TestSimulation	.builder()//
+																.addPlugins(factory.getPlugins())//
+																.build()//
+																.execute();
 
 		Map<ReportItem, Integer> expectedReportItems = expectedOutputConsumer.getOutputItems(ReportItem.class);
-		Map<ReportItem, Integer> actualReportItems = outputConsumer.getOutputItems(ReportItem.class);
+		Map<ReportItem, Integer> actualReportItems = testOutputConsumer.getOutputItems(ReportItem.class);
 		assertEquals(expectedReportItems, actualReportItems);
 
 	}
@@ -763,12 +770,13 @@ public class AT_GroupPropertyReport {
 
 		Factory factory = GroupsTestPluginFactory.factory(0, 0, 0, 6092832510476200219L, testPluginData).setGroupPropertyReportPluginData(groupPropertyReportPluginData);
 
-		TestOutputConsumer outputConsumer = new TestOutputConsumer();
-
-		TestSimulation.executeSimulation(factory.getPlugins(), outputConsumer);
+		TestOutputConsumer testOutputConsumer = TestSimulation	.builder()//
+																.addPlugins(factory.getPlugins())//
+																.build()//
+																.execute();
 
 		Map<ReportItem, Integer> expectedReportItems = expectedOutputConsumer.getOutputItems(ReportItem.class);
-		Map<ReportItem, Integer> actualReportItems = outputConsumer.getOutputItems(ReportItem.class);
+		Map<ReportItem, Integer> actualReportItems = testOutputConsumer.getOutputItems(ReportItem.class);
 
 		assertEquals(expectedReportItems, actualReportItems);
 	}
@@ -829,8 +837,10 @@ public class AT_GroupPropertyReport {
 											.setGroupPropertyReportPluginData(groupPropertyReportPluginData);
 
 			// execute the simulation with an output consumer
-			TestOutputConsumer testOutputConsumer = new TestOutputConsumer();
-			TestSimulation.executeSimulation(factory.getPlugins(), testOutputConsumer);
+			TestOutputConsumer testOutputConsumer = TestSimulation	.builder()//
+																	.addPlugins(factory.getPlugins())//
+																	.build()//
+																	.execute();
 
 			// show that the report items have the chosen property ids
 			Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItems(ReportItem.class);
@@ -853,7 +863,7 @@ public class AT_GroupPropertyReport {
 			}
 		}
 	}
-	
+
 	private static final ReportLabel REPORT_LABEL = new SimpleReportLabel("group property report");
 
 	private static final ReportHeader REPORT_DAILY_HEADER = ReportHeader.builder().add("day").add("group_type").add("property").add("value").add("group_count").build();

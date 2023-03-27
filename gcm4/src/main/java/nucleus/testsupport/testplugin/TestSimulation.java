@@ -1,13 +1,14 @@
 package nucleus.testsupport.testplugin;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
 import nucleus.NucleusError;
 import nucleus.Plugin;
 import nucleus.Simulation;
-import nucleus.Simulation.Builder;
+import nucleus.SimulationTime;
 import util.errors.ContractException;
 
 /**
@@ -16,117 +17,153 @@ import util.errors.ContractException;
  */
 public class TestSimulation {
 
-	private TestSimulation() {
+	private static class Data {
+		private boolean produceSimulationStateOnHalt;
+		private List<Plugin> plugins = new ArrayList<>();
+		private TestOutputConsumer testOutputConsumer = new TestOutputConsumer();
+		private SimulationTime simulationTime = SimulationTime.builder().build();
 	}
 
-	/**
-	 * Executes a simulation instance
-	 * 
-	 * @throws ContractException
-	 *             <li>{@linkplain NucleusError#NULL_OUTPUT_HANDLER} if
-	 *             outputConsumer is null</li>
-	 *             <li>{@linkplain NucleusError#NULL_PLUGIN} if pluginsToAdd is
-	 *             null</li>
-	 *             <li>{@linkplain NucleusError#EMPTY_PLUGIN_LIST} if
-	 *             pluginsToAdd is an empty list</li>
-	 *             <li>{@linkplain NucleusError#NULL_PLUGIN} if pluginsToAdd
-	 *             contains a null plugin</li>
-	 *             <li>{@linkplain TestError#TEST_EXECUTION_FAILURE} if the
-	 *             simulation does not complete successfully</li>
-	 */
-	public static void executeSimulation(List<Plugin> pluginsToAdd, TestOutputConsumer outputConsumer) {
-		if (outputConsumer == null) {
-			throw new ContractException(NucleusError.NULL_OUTPUT_HANDLER,
-					"Output consumer was not set. Either set it or call the other version of this method that doesn't take a outputConsumer as a parameter.");
-		}
-		_executeSimulation(pluginsToAdd, outputConsumer);
-	}
-
-	/**
-	 * Executes a simulation instance
-	 * 
-	 * @throws ContractException
-	 *             <li>{@linkplain NucleusError#NULL_OUTPUT_HANDLER} if
-	 *             outputConsumer is null</li>            
-	 *             <li>{@linkplain NucleusError#NULL_PLUGIN} if  the plugin is null</li>
-	 *             <li>{@linkplain TestError#TEST_EXECUTION_FAILURE} if the
-	 *             simulation does not complete successfully</li>
-	 */
-	public static void executeSimulation(Plugin plugin, TestOutputConsumer outputConsumer) {
-		if (outputConsumer == null) {
-			throw new ContractException(NucleusError.NULL_OUTPUT_HANDLER,
-					"Output consumer was not set. Either set it or call the other version of this method that doesn't take a outputConsumer as a parameter.");
-		}
-		
-		List<Plugin> pluginsToAdd = new ArrayList<>();
-		pluginsToAdd.add(plugin);
-		
-		_executeSimulation(pluginsToAdd, outputConsumer);
+	public static Builder builder() {
+		return new Builder();
 	}
 	
+	public static class Builder {
+
+		private Data data = new Data();
+
+		private Builder() {
+
+		}
+
+		/**
+		 * If true and an output consumer is also assigned then the simulation
+		 * will produce plugins and a SimulationTime that reflect the final
+		 * state of the simulation. Defaults to false.
+		 */
+		public Builder setProduceSimulationStateOnHalt(boolean produceSimulationStateOnHalt) {
+			data.produceSimulationStateOnHalt = produceSimulationStateOnHalt;
+			return this;
+		}
+
+		/**
+		 * Set the simulation time. Defaults to the current date and a start
+		 * time of zero.
+		 * 
+		 * @throws ContractException
+		 *             <li>{@link NucleusError#NULL_SIMULATION_TIME} if the
+		 *             simulation time is null
+		 * 
+		 */
+		public Builder setSimulationTime(SimulationTime simulationTime) {
+			if (simulationTime == null) {
+				throw new ContractException(NucleusError.NULL_SIMULATION_TIME);
+			}
+			data.simulationTime = simulationTime;
+			return this;
+		}
+
+		/**
+		 * Adds a plugin to this builder for inclusion in the test simulation
+		 * 
+		 * @throws ContractException
+		 *             <li>{@link NucleusError#NULL_PLUGINS} if the plugin
+		 *             collection is null
+		 *             <li>{@link NucleusError#NULL_PLUGIN} if the plugin
+		 *             collection contains a null null plugin
+		 * 
+		 */
+
+		public Builder addPlugin(Plugin plugin) {
+			if (plugin == null) {
+				throw new ContractException(NucleusError.NULL_PLUGIN);
+			}
+			data.plugins.add(plugin);
+			return this;
+		}
+
+		/**
+		 * Add a plugin initializer to this builder for inclusion in the
+		 * simulation
+		 * 
+		 * @throws ContractException
+		 *             <li>{@link NucleusError#NULL_PLUGIN} if the plugin is
+		 *             null
+		 * 
+		 */
+
+		public Builder addPlugins(Collection<Plugin> plugins) {
+			if (plugins == null) {
+				throw new ContractException(NucleusError.NULL_PLUGINS);
+			}
+			for (Plugin plugin : plugins) {
+				if (plugin == null) {
+					throw new ContractException(NucleusError.NULL_PLUGIN);
+				}
+				data.plugins.add(plugin);
+			}
+			return this;
+		}
+
+		/**
+		 * Returns an Engine instance that is initialized with the plugins and
+		 * output consumer collected by this builder.
+		 */
+		public TestSimulation build() {
+			try {
+				return new TestSimulation(data);
+			} finally {
+				data = new Data();
+			}
+		}
+	}
+
+	private final Data data;
+
+	private TestSimulation(Data data) {
+		this.data = data;
+	}
+
+	
+
 	/**
 	 * Executes a simulation instance
 	 * 
 	 * @throws ContractException
 	 *             <li>{@linkplain NucleusError#NULL_PLUGIN} if pluginsToAdd is
 	 *             null</li>
-	 *             <li>{@linkplain NucleusError#EMPTY_PLUGIN_LIST} if
-	 *             pluginsToAdd is an empty list</li>
 	 *             <li>{@linkplain NucleusError#NULL_PLUGIN} if pluginsToAdd
 	 *             contains a null plugin</li>
 	 *             <li>{@linkplain TestError#TEST_EXECUTION_FAILURE} if the
 	 *             simulation does not complete successfully</li>
 	 */
 	public static void executeSimulation(List<Plugin> pluginsToAdd) {
-		_executeSimulation(pluginsToAdd, new TestOutputConsumer());
+		builder().addPlugins(pluginsToAdd).build().execute();		
 	}
 
-	/**
-	 * Executes a simulation instance
-	 * 
-	 * @throws ContractException
-	 * 
-	 *             <li>{@linkplain NucleusError#NULL_PLUGIN} if the plugin is
-	 *             null</li>
-	 *             <li>{@linkplain TestError#TEST_EXECUTION_FAILURE} if the
-	 *             simulation does not complete successfully</li>
-	 */
-	public static void executeSimulation(Plugin plugin) {
-		List<Plugin> pluginsToAdd = new ArrayList<>();
-		pluginsToAdd.add(plugin);
-		_executeSimulation(pluginsToAdd, new TestOutputConsumer());
-	}
+	
 
-	private static void _executeSimulation(List<Plugin> pluginsToAdd, TestOutputConsumer outputConsumer) {
-		if (outputConsumer == null) {
-			throw new ContractException(NucleusError.NULL_OUTPUT_HANDLER,
-					"Output consumer was not set. Either set it or call the other version of this method that doesn't take a outputConsumer as a parameter.");
-		}
-		if (pluginsToAdd == null) {
-			throw new ContractException(NucleusError.NULL_PLUGIN);
-		}
-		if (pluginsToAdd.isEmpty()) {
-			throw new ContractException(NucleusError.EMPTY_PLUGIN_LIST);
-		}
-		for (Plugin plugin : pluginsToAdd) {
-			if (plugin == null) {
-				throw new ContractException(NucleusError.NULL_PLUGIN);
-			}
-		}
-		Builder builder = Simulation.builder();
+	public TestOutputConsumer execute() {
+		// List<Plugin> pluginsToAdd, TestOutputConsumer outputConsumer, boolean
+		// produceSimulationState
+		
+		
+		Simulation.Builder builder = Simulation.builder();
 
-		for (Plugin plugin : pluginsToAdd) {
+		for (Plugin plugin : data.plugins) {
 			builder.addPlugin(plugin);
 		}
 
 		// build and execute the engine
 		builder//
-		.setProduceSimulationStateOnHalt(false)//
-		.setOutputConsumer(outputConsumer)//
-		.build().execute();
+				.setProduceSimulationStateOnHalt(data.produceSimulationStateOnHalt)//
+				.setOutputConsumer(data.testOutputConsumer)//
+				.setSimulationTime(data.simulationTime)//
+				.build()
+				.execute();
 
 		// show that all actions were executed
-		Map<TestScenarioReport, Integer> outputItems = outputConsumer.getOutputItems(TestScenarioReport.class);
+		Map<TestScenarioReport, Integer> outputItems = data.testOutputConsumer.getOutputItems(TestScenarioReport.class);
 		boolean complete = false;
 
 		if (outputItems.size() > 1) {
@@ -143,5 +180,6 @@ public class TestSimulation {
 		if (!complete) {
 			throw new ContractException(TestError.TEST_EXECUTION_FAILURE);
 		}
+		return data.testOutputConsumer;
 	}
 }

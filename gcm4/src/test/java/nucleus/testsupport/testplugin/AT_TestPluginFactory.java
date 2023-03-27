@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import nucleus.ActorContext;
 import nucleus.NucleusError;
 import nucleus.Plugin;
+import nucleus.testsupport.testplugin.TestPluginFactory.Factory;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.wrappers.MutableBoolean;
@@ -24,8 +25,8 @@ public class AT_TestPluginFactory {
 	@UnitTestMethod(target = TestPluginFactory.class, name = "factory", args = { Consumer.class })
 	public void testFactory_Consumer() {
 		MutableBoolean executed = new MutableBoolean();
-		TestSimulation
-				.executeSimulation(TestPluginFactory.factory(c -> executed.setValue(true)).getPlugins());
+		Factory factory = TestPluginFactory.factory(c -> executed.setValue(true));
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 		assertTrue(executed.getValue());
 
 		// precondition: consumer is null
@@ -42,8 +43,8 @@ public class AT_TestPluginFactory {
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, c -> executed.setValue(true)));
 		TestPluginData testPluginData = pluginBuilder.build();
-
-		TestSimulation.executeSimulation(TestPluginFactory.factory(testPluginData).getPlugins());
+		Factory factory = TestPluginFactory.factory(testPluginData);		
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 		assertTrue(executed.getValue());
 
 		// precondition: testPluginData is null

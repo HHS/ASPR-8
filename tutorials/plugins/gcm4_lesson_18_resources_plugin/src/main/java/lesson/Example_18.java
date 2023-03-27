@@ -86,7 +86,7 @@ public final class Example_18 {
 			regionsPluginDataBuilder.addRegion(new Region(i));
 		}
 		RegionsPluginData regionsPluginData = regionsPluginDataBuilder.build();
-		return RegionsPlugin.getRegionsPlugin(regionsPluginData);
+		return RegionsPlugin.builder().setRegionsPluginData(regionsPluginData).getRegionsPlugin();
 	}
 
 	private Plugin getStochasticsPlugin() {

@@ -20,6 +20,8 @@ import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
 import plugins.regions.RegionsPlugin;
 import plugins.regions.RegionsPluginData;
+import plugins.regions.reports.RegionPropertyReportPluginData;
+import plugins.regions.reports.RegionTransferReportPluginData;
 import plugins.regions.support.RegionError;
 import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.StochasticsPluginData;
@@ -31,13 +33,12 @@ import util.random.RandomGeneratorProvider;
 
 /**
  * A static test support class for the {@linkplain RegionsPlugin}. Provides
- * convenience
- * methods for obtaining standarized PluginData for the listed Plugin.
+ * convenience methods for obtaining standarized PluginData for the listed
+ * Plugin.
  * 
  * <p>
  * Also contains factory methods to obtain a list of plugins that is the minimal
- * set needed to adequately test this Plugin that can be
- * utilized with
+ * set needed to adequately test this Plugin that can be utilized with
  * </p>
  * 
  * <li>{@link TestSimulation#executeSimulation}
@@ -49,17 +50,17 @@ public final class RegionsTestPluginFactory {
 	}
 
 	private static class Data {
+		private RegionPropertyReportPluginData regionPropertyReportPluginData;
+		private RegionTransferReportPluginData regionTransferReportPluginData;
 		private RegionsPluginData regionsPluginData;
 		private PeoplePluginData peoplePluginData;
 		private StochasticsPluginData stochasticsPluginData;
 		private TestPluginData testPluginData;
 
-		private Data(int initialPopulation, TimeTrackingPolicy timeTrackingPolicy, long seed,
-				TestPluginData testPluginData) {
+		private Data(int initialPopulation, TimeTrackingPolicy timeTrackingPolicy, long seed, TestPluginData testPluginData) {
 
 			this.peoplePluginData = getStandardPeoplePluginData(initialPopulation);
-			this.regionsPluginData = getStandardRegionsPluginData(this.peoplePluginData.getPersonIds(),
-					timeTrackingPolicy, seed);
+			this.regionsPluginData = getStandardRegionsPluginData(this.peoplePluginData.getPersonIds(), timeTrackingPolicy, seed);
 			this.stochasticsPluginData = getStandardStochasticsPluginData(seed);
 			this.testPluginData = testPluginData;
 		}
@@ -77,8 +78,8 @@ public final class RegionsTestPluginFactory {
 		}
 
 		/**
-		 * Returns a list of plugins containing a People, Regions, Stochastics and Test
-		 * Plugin built from the contributed PluginDatas.
+		 * Returns a list of plugins containing a People, Regions, Stochastics
+		 * and Test Plugin built from the contributed PluginDatas.
 		 * 
 		 * {@link RegionsTestPluginFactory#getStandardRegionsPluginData}
 		 * <li>PeoplePlugin is defaulted to one formed from
@@ -93,7 +94,11 @@ public final class RegionsTestPluginFactory {
 
 			Plugin peoplePlugin = PeoplePlugin.getPeoplePlugin(this.data.peoplePluginData);
 
-			Plugin regionsPlugin = RegionsPlugin.getRegionsPlugin(this.data.regionsPluginData);
+			Plugin regionsPlugin = RegionsPlugin.builder()//
+												.setRegionsPluginData(this.data.regionsPluginData)//
+												.setRegionPropertyReportPluginData(this.data.regionPropertyReportPluginData)//
+												.setRegionTransferReportPluginData(this.data.regionTransferReportPluginData)//
+												.getRegionsPlugin();
 
 			Plugin stochasticPlugin = StochasticsPlugin.getStochasticsPlugin(this.data.stochasticsPluginData);
 
@@ -108,13 +113,12 @@ public final class RegionsTestPluginFactory {
 		}
 
 		/**
-		 * Sets the {@link PeoplePluginData} in this Factory.
-		 * This explicit instance of pluginData will be used to create a
-		 * PeoplePlugin
+		 * Sets the {@link PeoplePluginData} in this Factory. This explicit
+		 * instance of pluginData will be used to create a PeoplePlugin
 		 * 
 		 * @throws ContractExecption
-		 *                           {@linkplain PersonError#NULL_PEOPLE_PLUGIN_DATA}
-		 *                           if the passed in pluginData is null
+		 *             {@linkplain PersonError#NULL_PEOPLE_PLUGIN_DATA} if the
+		 *             passed in pluginData is null
 		 */
 		public Factory setPeoplePluginData(PeoplePluginData peoplePluginData) {
 			if (peoplePluginData == null) {
@@ -125,13 +129,44 @@ public final class RegionsTestPluginFactory {
 		}
 
 		/**
-		 * Sets the {@link RegionsPluginData} in this Factory.
-		 * This explicit instance of pluginData will be used to create a
-		 * RegionsPlugin
+		 * Sets the {@link RegionPropertyReportPluginData} in this Factory. This
+		 * explicit instance of pluginData will be used to create a PeoplePlugin
 		 * 
 		 * @throws ContractExecption
-		 *                           {@linkplain RegionError#NULL_REGION_PLUGIN_DATA}
-		 *                           if the passed in pluginData is null
+		 *             {@linkplain RegionError#NULL_REGION_PROPERTY_REPORT_PLUGIN_DATA}
+		 *             if the passed in pluginData is null
+		 */
+		public Factory setRegionPropertyReportPluginData(RegionPropertyReportPluginData regionPropertyReportPluginData) {
+			if (regionPropertyReportPluginData == null) {
+				throw new ContractException(RegionError.NULL_REGION_PROPERTY_REPORT_PLUGIN_DATA);
+			}
+			this.data.regionPropertyReportPluginData = regionPropertyReportPluginData;
+			return this;
+		}
+
+		/**
+		 * Sets the {@link RegionTransferReportPluginData} in this Factory. This
+		 * explicit instance of pluginData will be used to create a PeoplePlugin
+		 * 
+		 * @throws ContractExecption
+		 *             {@linkplain RegionError#NULL_REGION_TRANSFER_REPORT_PLUGIN_DATA}
+		 *             if the passed in pluginData is null
+		 */
+		public Factory setRegionTransferReportPluginData(RegionTransferReportPluginData regionTransferReportPluginData) {
+			if (regionTransferReportPluginData == null) {
+				throw new ContractException(RegionError.NULL_REGION_TRANSFER_REPORT_PLUGIN_DATA);
+			}
+			this.data.regionTransferReportPluginData = regionTransferReportPluginData;
+			return this;
+		}
+
+		/**
+		 * Sets the {@link RegionsPluginData} in this Factory. This explicit
+		 * instance of pluginData will be used to create a RegionsPlugin
+		 * 
+		 * @throws ContractExecption
+		 *             {@linkplain RegionError#NULL_REGION_PLUGIN_DATA} if the
+		 *             passed in pluginData is null
 		 */
 		public Factory setRegionsPluginData(RegionsPluginData regionsPluginData) {
 			if (regionsPluginData == null) {
@@ -142,13 +177,12 @@ public final class RegionsTestPluginFactory {
 		}
 
 		/**
-		 * Sets the {@link StochasticsPluginData} in this Factory.
-		 * This explicit instance of pluginData will be used to create a
-		 * StochasticsPlugin
+		 * Sets the {@link StochasticsPluginData} in this Factory. This explicit
+		 * instance of pluginData will be used to create a StochasticsPlugin
 		 * 
 		 * @throws ContractExecption
-		 *                           {@linkplain StochasticsError#NULL_STOCHASTICS_PLUGIN_DATA}
-		 *                           if the passed in pluginData is null
+		 *             {@linkplain StochasticsError#NULL_STOCHASTICS_PLUGIN_DATA}
+		 *             if the passed in pluginData is null
 		 */
 		public Factory setStochasticsPluginData(StochasticsPluginData stochasticsPluginData) {
 			if (stochasticsPluginData == null) {
@@ -161,8 +195,9 @@ public final class RegionsTestPluginFactory {
 	}
 
 	/**
-	 * Creates a Factory that facilitates the creation of a minimal set of plugins
-	 * needed to adequately test the {@link RegionsPlugin} by generating:
+	 * Creates a Factory that facilitates the creation of a minimal set of
+	 * plugins needed to adequately test the {@link RegionsPlugin} by
+	 * generating:
 	 * <ul>
 	 * <li>{@link RegionsPluginData}
 	 * <li>{@link PeoplePluginData}
@@ -180,15 +215,13 @@ public final class RegionsTestPluginFactory {
 	 * <li>{@link Factory#setRegionsPluginData},
 	 * <li>{@link Factory#setStochasticsPluginData}
 	 * </ul>
-	 * <li>via the
-	 * {@link Factory#getPlugins()} method.
+	 * <li>via the {@link Factory#getPlugins()} method.
 	 * 
 	 * @throws ContractExecption
-	 *                           {@linkplain NucleusError#NULL_PLUGIN_DATA}
-	 *                           if testPluginData is null
+	 *             {@linkplain NucleusError#NULL_PLUGIN_DATA} if testPluginData
+	 *             is null
 	 */
-	public static Factory factory(int initialPopulation, long seed, TimeTrackingPolicy timeTrackingPolicy,
-			TestPluginData testPluginData) {
+	public static Factory factory(int initialPopulation, long seed, TimeTrackingPolicy timeTrackingPolicy, TestPluginData testPluginData) {
 		if (testPluginData == null) {
 			throw new ContractException(NucleusError.NULL_PLUGIN_DATA);
 		}
@@ -198,8 +231,9 @@ public final class RegionsTestPluginFactory {
 	}
 
 	/**
-	 * Creates a Factory that facilitates the creation of a minimal set of plugins
-	 * needed to adequately test the {@link RegionsPlugin} by generating:
+	 * Creates a Factory that facilitates the creation of a minimal set of
+	 * plugins needed to adequately test the {@link RegionsPlugin} by
+	 * generating:
 	 * <ul>
 	 * <li>{@link RegionsPluginData}
 	 * <li>{@link PeoplePluginData}
@@ -217,15 +251,13 @@ public final class RegionsTestPluginFactory {
 	 * <li>{@link Factory#setRegionsPluginData},
 	 * <li>{@link Factory#setStochasticsPluginData}
 	 * </ul>
-	 * <li>via the
-	 * {@link Factory#getPlugins()} method.
+	 * <li>via the {@link Factory#getPlugins()} method.
 	 * 
 	 * @throws ContractExecption
-	 *                           {@linkplain NucleusError#NULL_ACTOR_CONTEXT_CONSUMER}
-	 *                           if consumer is null
+	 *             {@linkplain NucleusError#NULL_ACTOR_CONTEXT_CONSUMER} if
+	 *             consumer is null
 	 */
-	public static Factory factory(int initialPopulation, long seed, TimeTrackingPolicy timeTrackingPolicy,
-			Consumer<ActorContext> consumer) {
+	public static Factory factory(int initialPopulation, long seed, TimeTrackingPolicy timeTrackingPolicy, Consumer<ActorContext> consumer) {
 		if (consumer == null) {
 			throw new ContractException(NucleusError.NULL_ACTOR_CONTEXT_CONSUMER);
 		}
@@ -244,23 +276,21 @@ public final class RegionsTestPluginFactory {
 	 * <li>Every RegionId in {@link TestRegionId}
 	 * <li>Every RegionPropertyId in {@link TestRegionPropertyId}
 	 * <ul>
-	 * <li>along with the
-	 * propertyDefinition for each.
+	 * <li>along with the propertyDefinition for each.
 	 * <li>If the propertyDefinition has a default value, that value is used.
-	 * Otherwise a randomPropertyValue is set using a RandomGenerator seeded by the
-	 * passed in seed via {@link TestRegionPropertyId#getRandomPropertyValue}
+	 * Otherwise a randomPropertyValue is set using a RandomGenerator seeded by
+	 * the passed in seed via
+	 * {@link TestRegionPropertyId#getRandomPropertyValue}
 	 * </ul>
 	 * <li>the passed in timeTrackingPolicy
-	 * <li>Every person in the passed in list will be added to
-	 * a RegionId
+	 * <li>Every person in the passed in list will be added to a RegionId
 	 * <ul>
-	 * <li>starting with RegionId_1 and looping through all possible
-	 * RegionIds in {@link TestRegionId}
+	 * <li>starting with RegionId_1 and looping through all possible RegionIds
+	 * in {@link TestRegionId}
 	 * </ul>
 	 * </ul>
 	 */
-	public static RegionsPluginData getStandardRegionsPluginData(List<PersonId> people,
-			TimeTrackingPolicy timeTrackingPolicy, long seed) {
+	public static RegionsPluginData getStandardRegionsPluginData(List<PersonId> people, TimeTrackingPolicy timeTrackingPolicy, long seed) {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
 
 		RegionsPluginData.Builder regionPluginBuilder = RegionsPluginData.builder();
@@ -273,8 +303,7 @@ public final class RegionsTestPluginFactory {
 			regionPluginBuilder.defineRegionProperty(testRegionPropertyId, propertyDefinition);
 			if (propertyDefinition.getDefaultValue().isEmpty()) {
 				for (TestRegionId regionId : TestRegionId.values()) {
-					regionPluginBuilder.setRegionPropertyValue(regionId, testRegionPropertyId,
-							testRegionPropertyId.getRandomPropertyValue(randomGenerator));
+					regionPluginBuilder.setRegionPropertyValue(regionId, testRegionPropertyId, testRegionPropertyId.getRandomPropertyValue(randomGenerator));
 				}
 			}
 
@@ -310,8 +339,8 @@ public final class RegionsTestPluginFactory {
 	}
 
 	/**
-	 * Returns a standardized StochasticsPluginData that is minimally adequate for
-	 * testing the RegionsPlugin
+	 * Returns a standardized StochasticsPluginData that is minimally adequate
+	 * for testing the RegionsPlugin
 	 * <li>The resulting StochasticsPluginData will include:
 	 * <ul>
 	 * <li>a seed based on the nextLong of a RandomGenerator seeded from the
@@ -320,7 +349,6 @@ public final class RegionsTestPluginFactory {
 	 */
 	public static StochasticsPluginData getStandardStochasticsPluginData(long seed) {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
-		return StochasticsPluginData.builder()
-				.setSeed(randomGenerator.nextLong()).build();
+		return StochasticsPluginData.builder().setSeed(randomGenerator.nextLong()).build();
 	}
 }

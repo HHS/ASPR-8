@@ -62,7 +62,7 @@ public class AT_TestReport {
 		List<Plugin> plugins = new ArrayList<>();
 		plugins.add(testPlugin);
 		
-		TestSimulation.executeSimulation(plugins);
+		TestSimulation.builder().addPlugins(plugins).build().execute();
 		
 
 

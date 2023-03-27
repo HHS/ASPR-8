@@ -187,17 +187,19 @@ public class AT_ResourcePropertyReport {
 				TestAuxiliaryResourcePropertyId.AUX_RESOURCE_PROPERTY_2_INTEGER_MUTABLE, 137), 1);
 
 
-		TestOutputConsumer outputConsumer = new TestOutputConsumer();
 
 		 
 		Factory factory = ResourcesTestPluginFactory.factory(initialPopulation, 8914112012010329946L, testPluginData);
 		ResourcePropertyReportPluginData resourcePropertyReportPluginData = ResourcePropertyReportPluginData.builder().setReportLabel(REPORT_LABEL).build();
 		factory.setResourcePropertyReportPluginData(resourcePropertyReportPluginData);
 		
-		TestSimulation.executeSimulation(factory.getPlugins(), outputConsumer);
+		TestOutputConsumer testOutputConsumer = TestSimulation	.builder()//
+				.addPlugins(factory.getPlugins())//
+				.build()//
+				.execute();
 
 		
-		assertEquals(expectedReportItems, outputConsumer.getOutputItems(ReportItem.class));
+		assertEquals(expectedReportItems, testOutputConsumer.getOutputItems(ReportItem.class));
 	}
 
 	private static ReportItem getReportItem(Object... values) {
