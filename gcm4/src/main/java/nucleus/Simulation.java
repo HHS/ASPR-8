@@ -261,7 +261,9 @@ public class Simulation {
 	// planning
 	private long masterPlanningArrivalId;
 	protected double time;
-	private boolean processEvents = true;
+	double simulationHaltTime;
+	boolean forcedHaltPresent;
+	private boolean eventProcessingAllowed;
 	private int activePlanCount;
 	private final PriorityQueue<PlanRec> planningQueue = new PriorityQueue<>(futureComparable);
 
@@ -272,15 +274,14 @@ public class Simulation {
 
 	private final Map<DataManagerId, List<Consumer<DataManagerContext>>> simulationCloseDataManagerCallbacks = new LinkedHashMap<>();
 
-
 	private boolean started;
 
 	private PluginContext pluginContext;
 
 	private PluginId focalPluginId;
 
-	private final Map<Class<?>, PluginData> basePluginDataMap = new LinkedHashMap<>();
-	private final Map<Class<?>, PluginData> workingPluginDataMap = new LinkedHashMap<>();
+	private final Map<Class<?>, List<PluginData>> basePluginDataMap = new LinkedHashMap<>();
+	private final Map<Class<?>, List<PluginData>> workingPluginDataMap = new LinkedHashMap<>();
 
 	private final Data data;
 
@@ -307,31 +308,59 @@ public class Simulation {
 	}
 
 	@SuppressWarnings("unchecked")
-
 	protected <T extends PluginData> Optional<T> getPluginData(Class<T> pluginDataClass) {
 		if (pluginDataClass == null) {
 			throw new ContractException(NucleusError.NULL_PLUGIN_DATA_CLASS);
 		}
 
-		PluginData pluginData = workingPluginDataMap.get(pluginDataClass);
-		if (pluginData == null) {
-			List<Class<?>> candidates = new ArrayList<>();
+		PluginData result = null;
+
+		List<PluginData> pluginDatas = workingPluginDataMap.get(pluginDataClass);
+		if (pluginDatas == null) {
+
+			pluginDatas = new ArrayList<>();
+
 			for (Class<?> c : basePluginDataMap.keySet()) {
 				if (pluginDataClass.isAssignableFrom(c)) {
-					candidates.add(c);
+					pluginDatas.addAll(basePluginDataMap.get(c));
 				}
 			}
-			if (candidates.size() > 1) {
-				throw new ContractException(NucleusError.AMBIGUOUS_PLUGIN_DATA_CLASS);
-			}
-			if (candidates.size() == 1) {
-				pluginData = basePluginDataMap.get(candidates.get(0));
-				workingPluginDataMap.put(pluginDataClass, pluginData);
-			}
+			workingPluginDataMap.put(pluginDataClass, pluginDatas);
 		}
-		T result = (T) pluginData;
+		if (pluginDatas.size() > 1) {
+			throw new ContractException(NucleusError.AMBIGUOUS_PLUGIN_DATA_CLASS);
+		}
+		if (pluginDatas.size() == 1) {
+			result = pluginDatas.get(0);
+		}
 
-		return Optional.ofNullable(result);
+		return Optional.ofNullable((T) result);
+	}
+
+	@SuppressWarnings("unchecked")
+	protected <T extends PluginData> List<T> getPluginDatas(Class<T> pluginDataClass) {
+		if (pluginDataClass == null) {
+			throw new ContractException(NucleusError.NULL_PLUGIN_DATA_CLASS);
+		}
+
+		List<PluginData> pluginDatas = workingPluginDataMap.get(pluginDataClass);
+		if (pluginDatas == null) {
+
+			pluginDatas = new ArrayList<>();
+
+			for (Class<?> c : basePluginDataMap.keySet()) {
+				if (pluginDataClass.isAssignableFrom(c)) {
+					pluginDatas.addAll(basePluginDataMap.get(c));
+				}
+			}
+			workingPluginDataMap.put(pluginDataClass, pluginDatas);
+
+		}
+		List<T> result = new ArrayList<>();
+		for (PluginData pluginData : pluginDatas) {
+			result.add((T) pluginData);
+		}
+		return result;
 	}
 
 	protected void addDataManagerForPlugin(DataManager dataManager) {
@@ -650,7 +679,7 @@ public class Simulation {
 
 		return orderedPlugins;
 	}
-	
+
 	protected boolean produceSimulationStateOnHalt() {
 		return data.produceSimulationStateOnHalt;
 	}
@@ -707,7 +736,12 @@ public class Simulation {
 		for (Plugin plugin : orderedPlugins) {
 			focalPluginId = plugin.getPluginId();
 			for (PluginData pluginData : plugin.getPluginDatas()) {
-				basePluginDataMap.put(pluginData.getClass(), pluginData);
+				List<PluginData> pluginDatas = basePluginDataMap.get(pluginData.getClass());
+				if (pluginDatas == null) {
+					pluginDatas = new ArrayList<>();
+					basePluginDataMap.put(pluginData.getClass(), pluginDatas);
+				}
+				pluginDatas.add(pluginData);
 			}
 			focalPluginId = null;
 		}
@@ -731,9 +765,6 @@ public class Simulation {
 			PluginId pluginId1 = dataManagerIdToPluginIdMap.get(dataManagerId1);
 			for (DataManagerId dataManagerId2 : dataManagerIdToPluginIdMap.keySet()) {
 				PluginId pluginId2 = dataManagerIdToPluginIdMap.get(dataManagerId2);
-				// Optional<Path<Object>> optionalPath =
-				// Paths.getPath(pluginDependencyGraph, pluginId1, pluginId2,
-				// (e) -> 1, (a, b) -> 0);
 				Optional<Path<Object>> optionalPath = mapPathSolver.getPath(pluginId1, pluginId2);
 				if (optionalPath.isPresent()) {
 					dataManagerAccessPermissions[dataManagerId1.getValue()][dataManagerId2.getValue()] = true;
@@ -748,7 +779,7 @@ public class Simulation {
 				}
 			}
 		}
-
+		eventProcessingAllowed = true;
 		// execute the data manager queue -- this will in turn execute the
 		// report queue
 		executeDataManagerQueue();
@@ -762,9 +793,20 @@ public class Simulation {
 		// initialize the actors by flushing the actor queue
 		executeActorQueue();
 
+		simulationHaltTime = data.simulationHaltTime;
+		forcedHaltPresent = simulationHaltTime >= 0;
+
 		// start the planning-based portion of the simulation where time flows
-		while (processEvents && (activePlanCount > 0)) {
+		while (activePlanCount > 0) {
+			if (forcedHaltPresent) {
+				if (planningQueue.peek().time > simulationHaltTime) {
+					time = simulationHaltTime;
+					break;
+				}
+			}
+
 			final PlanRec planRec = planningQueue.poll();
+
 			time = planRec.time;
 			if (planRec.isActive) {
 				activePlanCount--;
@@ -814,16 +856,14 @@ public class Simulation {
 				throw new RuntimeException("unhandled planner type " + planRec.planner);
 			}
 		}
-		
-		
 
-		processEvents = false;
+		eventProcessingAllowed = false;
 
 		// signal to the data managers that the simulation is closing
 		for (DataManagerId dataManagerId : simulationCloseDataManagerCallbacks.keySet()) {
 			DataManagerContext dataManagerContext = dataManagerIdToDataManagerContextMap.get(dataManagerId);
-			for(Consumer<DataManagerContext> dataManagerCloseCallback : simulationCloseDataManagerCallbacks.get(dataManagerId)) {
-				dataManagerCloseCallback.accept(dataManagerContext);	
+			for (Consumer<DataManagerContext> dataManagerCloseCallback : simulationCloseDataManagerCallbacks.get(dataManagerId)) {
+				dataManagerCloseCallback.accept(dataManagerContext);
 			}
 		}
 
@@ -831,33 +871,32 @@ public class Simulation {
 		for (ActorId actorId : simulationCloseActorCallbacks.keySet()) {
 			if (actorIds.get(actorId.getValue()) != null) {
 				focalActorId = actorId;
-				for(Consumer<ActorContext> simulationCloseCallback : simulationCloseActorCallbacks.get(actorId)) {
-					simulationCloseCallback.accept(actorContext);						
+				for (Consumer<ActorContext> simulationCloseCallback : simulationCloseActorCallbacks.get(actorId)) {
+					simulationCloseCallback.accept(actorContext);
 				}
 				focalActorId = null;
-				
+
 			}
 		}
 
 		// signal to the reports that the simulation is closing
 		for (ReportId reportId : simulationCloseReportCallbacks.keySet()) {
 			focalReportId = reportId;
-			for(Consumer<ReportContext> simulationCloseCallback : simulationCloseReportCallbacks.get(reportId)) {
-				simulationCloseCallback.accept(reportContext);	
-			}			
+			for (Consumer<ReportContext> simulationCloseCallback : simulationCloseReportCallbacks.get(reportId)) {
+				simulationCloseCallback.accept(reportContext);
+			}
 			focalReportId = null;
 		}
-		
-		if(data.produceSimulationStateOnHalt && outputConsumer!=null) {
+
+		if (data.produceSimulationStateOnHalt && outputConsumer != null) {
 			SimulationTime.Builder simulationTimeBuilder = SimulationTime.builder();
 			simulationTimeBuilder.setBaseDate(data.simulationTime.getBaseDate());
 			simulationTimeBuilder.setStartTime(time);
 			outputConsumer.accept(simulationTimeBuilder.build());
 		}
-	
+
 	}
 
-	
 	private void executeActorQueue() {
 		while (!actorQueue.isEmpty()) {
 			final ActorContentRec actorContentRec = actorQueue.pollFirst();
@@ -1030,8 +1069,9 @@ public class Simulation {
 	}
 
 	protected void halt() {
-		if (processEvents) {
-			processEvents = false;
+		if (!data.produceSimulationStateOnHalt) {
+			simulationHaltTime = time;
+			forcedHaltPresent = true;
 		}
 	}
 
@@ -1105,7 +1145,7 @@ public class Simulation {
 			throw new ContractException(NucleusError.NULL_REPORT_CONTEXT_CONSUMER);
 		}
 		List<Consumer<ReportContext>> list = simulationCloseReportCallbacks.get(focalReportId);
-		if(list == null) {
+		if (list == null) {
 			list = new ArrayList<>();
 			simulationCloseReportCallbacks.put(focalReportId, list);
 		}
@@ -1117,11 +1157,11 @@ public class Simulation {
 			throw new ContractException(NucleusError.NULL_ACTOR_CONTEXT_CONSUMER);
 		}
 		List<Consumer<ActorContext>> list = simulationCloseActorCallbacks.get(focalActorId);
-		if(list == null) {
+		if (list == null) {
 			list = new ArrayList<>();
 			simulationCloseActorCallbacks.put(focalActorId, list);
 		}
-		list.add(consumer);		
+		list.add(consumer);
 	}
 
 	protected void subscribeDataManagerToSimulationClose(DataManagerId dataManagerId, Consumer<DataManagerContext> consumer) {
@@ -1129,13 +1169,12 @@ public class Simulation {
 			throw new ContractException(NucleusError.NULL_DATA_MANAGER_CONTEXT_CONSUMER);
 		}
 		List<Consumer<DataManagerContext>> list = simulationCloseDataManagerCallbacks.get(dataManagerId);
-		if(list == null) {
+		if (list == null) {
 			list = new ArrayList<>();
 			simulationCloseDataManagerCallbacks.put(dataManagerId, list);
 		}
-		list.add(consumer);		
+		list.add(consumer);
 	}
-	
 
 	@SuppressWarnings("unchecked")
 	protected <T extends Event> void subscribeDataManagerToEvent(DataManagerId dataManagerId, Class<T> eventClass, BiConsumer<DataManagerContext, T> eventConsumer) {
@@ -1293,7 +1332,7 @@ public class Simulation {
 			throw new ContractException(NucleusError.REPORT_ATTEMPTING_MUTATION, focalReportId);
 		}
 
-		if (!processEvents) {
+		if (!eventProcessingAllowed) {
 			throw new ContractException(NucleusError.DATA_MANAGER_ATTEMPTING_MUTATION);
 		}
 
