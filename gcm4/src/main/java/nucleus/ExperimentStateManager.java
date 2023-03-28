@@ -115,7 +115,7 @@ public final class ExperimentStateManager {
 		ScenarioRecord scenarioRecord = scenarioRecords.get(scenarioId);
 
 		if (scenarioRecord == null) {
-			throw new ContractException(NucleusError.UNKNOWN_SCENARIO_ID);
+			throw new ContractException(NucleusError.UNKNOWN_SCENARIO_ID, scenarioId);
 		}
 
 		scenarioRecord.scenarioStatus = ScenarioStatus.SUCCEDED;
@@ -298,6 +298,7 @@ public final class ExperimentStateManager {
 		private List<String> experimentMetaData = new ArrayList<>();
 		private List<Consumer<ExperimentContext>> contextConsumers = new ArrayList<>();
 		private boolean continueFromProgressLog;
+		private Set<Integer> explicitScenarioIds = new LinkedHashSet<>();
 	}
 
 	/**
@@ -343,6 +344,14 @@ public final class ExperimentStateManager {
 		 */
 		public Builder setScenarioProgressLogFile(Path progressLogFile) {
 			data.progressLogFile = progressLogFile;
+			return this;
+		}
+
+		/**
+		 * Marks the scenario to be explicitly run.  All other scenarios will be ignored.
+		 */
+		public Builder addExplicitScenarioId(Integer scenarioId) {
+			data.explicitScenarioIds.add(scenarioId);
 			return this;
 		}
 
@@ -408,11 +417,61 @@ public final class ExperimentStateManager {
 	private void init() {
 		experimentContext = new ExperimentContext(this);
 
+		// validate the explicit scenario ids
+		for (int id : data.explicitScenarioIds) {
+			if ((id < 0) || (id >= data.scenarioCount)) {
+				throw new ContractException(NucleusError.UNKNOWN_SCENARIO_ID, id);
+			}
+		}
+
 		for (int i = 0; i < data.scenarioCount; i++) {
 			ScenarioRecord scenarioRecord = new ScenarioRecord();
 			scenarioRecord.scenarioStatus = ScenarioStatus.READY;
 			scenarioRecords.put(i, scenarioRecord);
 		}
+
+		/*
+		 * Mark any READY scenarios that were previously executed as
+		 * PREVIOUSLY_SUCCEEDED
+		 */
+		if (data.continueFromProgressLog) {
+			readProgressFile();
+		}
+
+		/*
+		 * If there are any explicit scenario ids, adjust the status of the
+		 * sceanrios
+		 */
+		if (!data.explicitScenarioIds.isEmpty()) {
+			/*
+			 * Force the explicit scenarios to READY. Explicitly selected
+			 * scenarios must be executed.
+			 */
+			for (int id : data.explicitScenarioIds) {
+				ScenarioRecord scenarioRecord = scenarioRecords.get(id);
+				scenarioRecord.scenarioStatus = ScenarioStatus.READY;
+			}
+
+			/*
+			 * Any remaining scenarios that are currently marked READY are now
+			 * marked SKIPPED
+			 */
+			for (int id = 0; id < data.scenarioCount; id++) {
+				ScenarioRecord scenarioRecord = scenarioRecords.get(id);
+				if (scenarioRecord.scenarioStatus == ScenarioStatus.READY) {
+					if (!data.explicitScenarioIds.contains(id)) {
+						scenarioRecord.scenarioStatus = ScenarioStatus.SKIPPED;
+					}
+				}
+			}
+		}
+
+		/*
+		 * refresh the progress file as needed -- some of the
+		 * PREVIOUSLY_SUCCEEDED may have been marked as READY since explicitly
+		 * included scenarios are always run
+		 */
+		writeProgressFile();
 
 	}
 
@@ -630,10 +689,10 @@ public final class ExperimentStateManager {
 		}
 		experimentStatus = ExperimentStatus.OPENED;
 
-		if (data.continueFromProgressLog) {
-			readProgressFile();
-		}
-		writeProgressFile();
+		// if (data.continueFromProgressLog) {
+		// readProgressFile();
+		// }
+		// writeProgressFile();
 
 		// handshake with the consumers
 		for (Consumer<ExperimentContext> consumer : data.contextConsumers) {
