@@ -118,7 +118,7 @@ public class AT_GlobalPropertyReportPluginData {
 																						.setReportLabel(reportLabel);//
 
 		for (GlobalPropertyId globalPropertyId : expectedGlobalPropertyIds) {
-			builder.includeGlobalPropertyId(globalPropertyId);
+			builder.includeGlobalProperty(globalPropertyId);
 		}
 
 		personPropertyReportPluginData = builder.build();
@@ -135,8 +135,8 @@ public class AT_GlobalPropertyReportPluginData {
 												.setReportLabel(reportLabel);//
 
 		for (GlobalPropertyId globalPropertyId : expectedGlobalPropertyIds) {
-			builder.excludeGlobalPropertyId(globalPropertyId);
-			builder.includeGlobalPropertyId(globalPropertyId);
+			builder.excludeGlobalProperty(globalPropertyId);
+			builder.includeGlobalProperty(globalPropertyId);
 		}
 
 		personPropertyReportPluginData = builder.build();
@@ -144,7 +144,7 @@ public class AT_GlobalPropertyReportPluginData {
 
 		// precondition: if the person property id is null
 		ContractException contractException = assertThrows(ContractException.class, () -> {
-			GlobalPropertyReportPluginData.builder().includeGlobalPropertyId(null);
+			GlobalPropertyReportPluginData.builder().includeGlobalProperty(null);
 		});
 		assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
 	}
@@ -172,7 +172,7 @@ public class AT_GlobalPropertyReportPluginData {
 																						.setReportLabel(reportLabel);//
 
 		for (GlobalPropertyId globalPropertyId : expectedGlobalPropertyIds) {
-			builder.excludeGlobalPropertyId(globalPropertyId);
+			builder.excludeGlobalProperty(globalPropertyId);
 		}
 
 		personPropertyReportPluginData = builder.build();
@@ -189,8 +189,8 @@ public class AT_GlobalPropertyReportPluginData {
 												.setReportLabel(reportLabel);//
 
 		for (GlobalPropertyId globalPropertyId : expectedGlobalPropertyIds) {
-			builder.includeGlobalPropertyId(globalPropertyId);
-			builder.excludeGlobalPropertyId(globalPropertyId);
+			builder.includeGlobalProperty(globalPropertyId);
+			builder.excludeGlobalProperty(globalPropertyId);
 		}
 
 		personPropertyReportPluginData = builder.build();
@@ -198,7 +198,7 @@ public class AT_GlobalPropertyReportPluginData {
 
 		// precondition: if the person property id is null
 		ContractException contractException = assertThrows(ContractException.class, () -> {
-			GlobalPropertyReportPluginData.builder().excludeGlobalPropertyId(null);
+			GlobalPropertyReportPluginData.builder().excludeGlobalProperty(null);
 		});
 		assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
 	}
@@ -243,7 +243,7 @@ public class AT_GlobalPropertyReportPluginData {
 																						.setReportLabel(reportLabel);//
 
 		for (GlobalPropertyId globalPropertyId : expectedGlobalPropertyIds) {
-			builder.includeGlobalPropertyId(globalPropertyId);
+			builder.includeGlobalProperty(globalPropertyId);
 		}
 
 		personPropertyReportPluginData = builder.build();
@@ -260,8 +260,8 @@ public class AT_GlobalPropertyReportPluginData {
 												.setReportLabel(reportLabel);//
 
 		for (GlobalPropertyId globalPropertyId : expectedGlobalPropertyIds) {
-			builder.excludeGlobalPropertyId(globalPropertyId);
-			builder.includeGlobalPropertyId(globalPropertyId);
+			builder.excludeGlobalProperty(globalPropertyId);
+			builder.includeGlobalProperty(globalPropertyId);
 		}
 
 		personPropertyReportPluginData = builder.build();
@@ -292,7 +292,7 @@ public class AT_GlobalPropertyReportPluginData {
 																						.setReportLabel(reportLabel);//
 
 		for (GlobalPropertyId globalPropertyId : expectedGlobalPropertyIds) {
-			builder.excludeGlobalPropertyId(globalPropertyId);
+			builder.excludeGlobalProperty(globalPropertyId);
 		}
 
 		globalPropertyReportPluginData = builder.build();
@@ -310,8 +310,8 @@ public class AT_GlobalPropertyReportPluginData {
 												.setReportLabel(reportLabel);//
 
 		for (GlobalPropertyId globalPropertyId : expectedGlobalPropertyIds) {
-			builder.includeGlobalPropertyId(globalPropertyId);
-			builder.excludeGlobalPropertyId(globalPropertyId);
+			builder.includeGlobalProperty(globalPropertyId);
+			builder.excludeGlobalProperty(globalPropertyId);
 		}
 
 		globalPropertyReportPluginData = builder.build();
@@ -356,8 +356,8 @@ public class AT_GlobalPropertyReportPluginData {
 		GlobalPropertyReportPluginData filledGlobalPropertyReportPluginData = //
 				GlobalPropertyReportPluginData	.builder()//
 												.setReportLabel(reportLabel)//
-												.includeGlobalPropertyId(TestGlobalPropertyId.GLOBAL_PROPERTY_1_BOOLEAN_MUTABLE)
-												.excludeGlobalPropertyId(TestGlobalPropertyId.GLOBAL_PROPERTY_2_INTEGER_MUTABLE).setDefaultInclusion(false).build();
+												.includeGlobalProperty(TestGlobalPropertyId.GLOBAL_PROPERTY_1_BOOLEAN_MUTABLE)
+												.excludeGlobalProperty(TestGlobalPropertyId.GLOBAL_PROPERTY_2_INTEGER_MUTABLE).setDefaultInclusion(false).build();
 
 		// show that the empty builder is indeed empty
 
@@ -403,9 +403,9 @@ public class AT_GlobalPropertyReportPluginData {
 			for (int j = 0; j < 10; j++) {
 				TestGlobalPropertyId testGlobalPropertyId = TestGlobalPropertyId.getRandomGlobalPropertyId(randomGenerator);
 				if (randomGenerator.nextBoolean()) {
-					builder.includeGlobalPropertyId(testGlobalPropertyId);
+					builder.includeGlobalProperty(testGlobalPropertyId);
 				} else {
-					builder.excludeGlobalPropertyId(testGlobalPropertyId);
+					builder.excludeGlobalProperty(testGlobalPropertyId);
 				}
 			}
 
@@ -441,11 +441,11 @@ public class AT_GlobalPropertyReportPluginData {
 			for (int j = 0; j < 10; j++) {
 				TestGlobalPropertyId testGlobalPropertyId = TestGlobalPropertyId.getRandomGlobalPropertyId(randomGenerator);
 				if (randomGenerator.nextBoolean()) {
-					builder1.includeGlobalPropertyId(testGlobalPropertyId);
-					builder2.includeGlobalPropertyId(testGlobalPropertyId);
+					builder1.includeGlobalProperty(testGlobalPropertyId);
+					builder2.includeGlobalProperty(testGlobalPropertyId);
 				} else {
-					builder1.excludeGlobalPropertyId(testGlobalPropertyId);
-					builder2.excludeGlobalPropertyId(testGlobalPropertyId);
+					builder1.excludeGlobalProperty(testGlobalPropertyId);
+					builder2.excludeGlobalProperty(testGlobalPropertyId);
 				}
 			}
 
@@ -480,7 +480,7 @@ public class AT_GlobalPropertyReportPluginData {
 				GlobalPropertyId globalPropertyId = globalPropertyReportPluginData1.getIncludedProperties().iterator().next();
 				globalPropertyReportPluginData2 = //
 						globalPropertyReportPluginData1	.getCloneBuilder()//
-														.excludeGlobalPropertyId(globalPropertyId)//
+														.excludeGlobalProperty(globalPropertyId)//
 														.build();
 				assertNotEquals(globalPropertyReportPluginData2, globalPropertyReportPluginData1);
 			}
@@ -489,7 +489,7 @@ public class AT_GlobalPropertyReportPluginData {
 				GlobalPropertyId globalPropertyId = globalPropertyReportPluginData1.getExcludedProperties().iterator().next();
 				globalPropertyReportPluginData2 = //
 						globalPropertyReportPluginData1	.getCloneBuilder()//
-														.includeGlobalPropertyId(globalPropertyId)//
+														.includeGlobalProperty(globalPropertyId)//
 														.build();
 				assertNotEquals(globalPropertyReportPluginData2, globalPropertyReportPluginData1);
 			}
@@ -517,11 +517,11 @@ public class AT_GlobalPropertyReportPluginData {
 			for (int j = 0; j < 10; j++) {
 				TestGlobalPropertyId testGlobalPropertyId = TestGlobalPropertyId.getRandomGlobalPropertyId(randomGenerator);
 				if (randomGenerator.nextBoolean()) {
-					builder1.includeGlobalPropertyId(testGlobalPropertyId);
-					builder2.includeGlobalPropertyId(testGlobalPropertyId);
+					builder1.includeGlobalProperty(testGlobalPropertyId);
+					builder2.includeGlobalProperty(testGlobalPropertyId);
 				} else {
-					builder1.excludeGlobalPropertyId(testGlobalPropertyId);
-					builder2.excludeGlobalPropertyId(testGlobalPropertyId);
+					builder1.excludeGlobalProperty(testGlobalPropertyId);
+					builder2.excludeGlobalProperty(testGlobalPropertyId);
 				}
 			}
 

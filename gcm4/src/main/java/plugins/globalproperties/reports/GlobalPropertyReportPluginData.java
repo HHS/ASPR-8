@@ -168,7 +168,7 @@ public final class GlobalPropertyReportPluginData implements PluginData {
 		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
 		 *             person property id is null</li>
 		 */
-		public Builder includeGlobalPropertyId(GlobalPropertyId globalPropertyId) {
+		public Builder includeGlobalProperty(GlobalPropertyId globalPropertyId) {
 			ensureDataMutability();
 			if (globalPropertyId == null) {
 				throw new ContractException(PropertyError.NULL_PROPERTY_ID);
@@ -185,7 +185,7 @@ public final class GlobalPropertyReportPluginData implements PluginData {
 		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
 		 *             person property id is null</li>
 		 */
-		public Builder excludeGlobalPropertyId(GlobalPropertyId globalPropertyId) {
+		public Builder excludeGlobalProperty(GlobalPropertyId globalPropertyId) {
 			ensureDataMutability();
 			if (globalPropertyId == null) {
 				throw new ContractException(PropertyError.NULL_PROPERTY_ID);
