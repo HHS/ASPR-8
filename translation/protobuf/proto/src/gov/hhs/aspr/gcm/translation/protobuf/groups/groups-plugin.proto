@@ -7,6 +7,7 @@ option java_package = "gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.inpu
 
 import "properties-plugin.proto";
 import "people-plugin.proto";
+import "reports-plugin.proto";
 import "google/protobuf/any.proto";
 
 message GroupIdInput {
@@ -68,4 +69,17 @@ message GroupsPluginDataInput {
     repeated GroupMembershipInput groupMemberships = 3;
     repeated GroupPropertyDefinitionMapInput groupPropertyDefinitions = 4;
     repeated GroupPropertyValueMapInput groupPropertyValues = 5;
+}
+
+message GroupPopulationReportPluginDataInput {
+    ReportLabelInput reportLabel = 1;
+    ReportPeriodInput reportPeriod = 2;
+}
+
+message GroupPropertyReportPluginDataInput {
+    ReportLabelInput reportLabel = 1;
+    ReportPeriodInput reportPeriod = 2;
+    repeated GroupPropertyIdInput includedProperties = 3;
+    repeated GroupPropertyIdInput excludedProperties = 4;
+    bool defaultInclusionPolicy = 5;
 }

@@ -6,6 +6,7 @@ option java_package = "gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.i
 
 import "resources-plugin.proto";
 import "properties-plugin.proto";
+import "reports-plugin.proto";
 import "google/protobuf/any.proto";
 
 message MaterialIdInput {
@@ -107,4 +108,20 @@ enum TestMaterialsProducerPropertyIdInput {
     MATERIALS_PRODUCER_PROPERTY_7_BOOLEAN_IMMUTABLE_NO_TRACK = 6;
     MATERIALS_PRODUCER_PROPERTY_8_INTEGER_IMMUTABLE_NO_TRACK = 7;
     MATERIALS_PRODUCER_PROPERTY_9_DOUBLE_IMMUTABLE_NO_TRACK = 8;
+}
+
+message BatchStatusReportPluginDataInput {
+    ReportLabelInput reportLabel = 1;
+}
+
+message MaterialsProducerPropertyReportPluginDataInput {
+    ReportLabelInput reportLabel = 1;
+}
+
+message MaterialsProducerResourceReportPluginDataInput {
+    ReportLabelInput reportLabel = 1;
+}
+
+message StageReportPluginDataInput {
+    ReportLabelInput reportLabel = 1;
 }
