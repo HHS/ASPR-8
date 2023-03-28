@@ -13,7 +13,7 @@ import plugins.util.properties.PropertyError;
 import util.errors.ContractException;
 
 /**
- * A PluginData class supporting PersonPropertyReport construction.
+ * A PluginData class supporting GlobalPropertyReport construction.
  */
 @ThreadSafe
 public final class GlobalPropertyReportPluginData implements PluginData {
