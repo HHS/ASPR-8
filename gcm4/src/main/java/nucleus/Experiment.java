@@ -3,9 +3,11 @@ package nucleus;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutorCompletionService;
@@ -51,6 +53,15 @@ public final class Experiment {
 			if (dimension.size() > 0) {
 				data.dimensions.add(dimension);
 			}
+			return this;
+		}
+
+		/**
+		 * Marks the scenario to be explicitly run. All other scenarios will be
+		 * ignored.
+		 */
+		public Builder addExplicitScenarioId(Integer scenarioId) {
+			data.explicitScenarioIds.add(scenarioId);
 			return this;
 		}
 
@@ -131,7 +142,7 @@ public final class Experiment {
 
 		/**
 		 * If true, the simulations will produce plugins and a SimulationTime
-		 * that reflect the final state of the simulation. Defaults to false. 
+		 * that reflect the final state of the simulation. Defaults to false.
 		 */
 		public Builder setProduceSimulationStateOnHalt(boolean produceSimulationStateOnHalt) {
 			data.produceSimulationStateOnHalt = produceSimulationStateOnHalt;
@@ -165,6 +176,7 @@ public final class Experiment {
 		private boolean haltOnException = true;
 		private Path experimentProgressLogPath;
 		private boolean continueFromProgressLog;
+		private Set<Integer> explicitScenarioIds = new LinkedHashSet<>();
 	}
 
 	/*
@@ -196,13 +208,8 @@ public final class Experiment {
 		/*
 		 * All construction arguments are thread safe implementations.
 		 */
-		private SimulationCallable(
-				final Integer scenarioId, 
-				final ExperimentStateManager experimentStateManager, 
-				final List<Plugin> plugins,
-				final boolean produceSimulationStateOnHalt
-				) {
-		
+		private SimulationCallable(final Integer scenarioId, final ExperimentStateManager experimentStateManager, final List<Plugin> plugins, final boolean produceSimulationStateOnHalt) {
+
 			this.scenarioId = scenarioId;
 			this.experimentStateManager = experimentStateManager;
 			this.plugins = new ArrayList<>(plugins);
@@ -288,6 +295,9 @@ public final class Experiment {
 		// subscribe to experiment level events
 		for (final Consumer<ExperimentContext> consumer : data.experimentContextConsumers) {
 			builder.addExperimentContextConsumer(consumer);
+		}
+		for (Integer scenarioId : data.explicitScenarioIds) {
+			builder.addExplicitScenarioId(scenarioId);
 		}
 
 		experimentStateManager = builder.build();
@@ -431,7 +441,7 @@ public final class Experiment {
 			}
 
 			simBuilder.setProduceSimulationStateOnHalt(data.produceSimulationStateOnHalt);
-			
+
 			// direct output from the simulation to the subscribed consumers
 			simBuilder.setOutputConsumer(experimentStateManager.getOutputConsumer(scenarioId));
 
