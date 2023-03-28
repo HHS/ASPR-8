@@ -402,6 +402,7 @@ public class AT_GroupPopulationReport {
 	@Test
 	@UnitTestConstructor(target = GroupPopulationReport.class, args = { ReportLabel.class, ReportPeriod.class })
 	public void testInit_State() {
+		// Test with producing simulation
 
 		// add the action plugin
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
@@ -453,6 +454,8 @@ public class AT_GroupPopulationReport {
 		assertEquals(1, outputItems.size());
 		GroupPopulationReportPluginData groupPopulationReportPluginData2 = outputItems.keySet().iterator().next();
 		assertEquals(groupPopulationReportPluginData, groupPopulationReportPluginData2);
+
+		// Test without producing simulation
 
 		// add the action plugin
 		pluginBuilder = TestPluginData.builder();
