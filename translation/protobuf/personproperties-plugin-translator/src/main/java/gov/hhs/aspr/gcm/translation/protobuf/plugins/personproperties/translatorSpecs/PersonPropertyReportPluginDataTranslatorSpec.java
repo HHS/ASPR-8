@@ -2,7 +2,7 @@ package gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.translato
 
 import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.input.PersonPropertyIdInput;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.reports.input.PersonPropertyReportPluginDataInput;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.input.PersonPropertyReportPluginDataInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.input.ReportLabelInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.input.ReportPeriodInput;
 import plugins.personproperties.reports.PersonPropertyReportPluginData;
