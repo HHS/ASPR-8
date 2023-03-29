@@ -298,10 +298,10 @@ public final class PersonResourceReport extends PeriodicReport {
 	private void recordSimulationState(ReportContext reportContext, SimulationStateContext simulationStateContext) {
 		PersonResourceReportPluginData.Builder builder = simulationStateContext.get(PersonResourceReportPluginData.Builder.class);
 		for (ResourceId resourceId : includedResourceIds) {
-			builder.includeResourceId(resourceId);
+			builder.includeResource(resourceId);
 		}
 		for (ResourceId resourceId : excludedResourceIds) {
-			builder.excludeResourceId(resourceId);
+			builder.excludeResource(resourceId);
 		}
 		builder.setDefaultInclusion(includeNewResourceIds);
 		builder.setReportLabel(getReportLabel());
