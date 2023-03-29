@@ -4,6 +4,7 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.stochastics.input.Stochasti
 import gov.hhs.aspr.gcm.translation.protobuf.core.Translator;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.stochastics.translatorSpecs.RandomGeneratorIdTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.stochastics.translatorSpecs.StochasticsPluginDataTranslatorSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.stochastics.translatorSpecs.TestRandomGeneratorIdTranslatorSpec;
 import plugins.stochastics.StochasticsPluginData;
 
 public class StochasticsTranslator {
@@ -18,6 +19,7 @@ public class StochasticsTranslator {
                 .setInitializer((translatorContext) -> {
                     translatorContext.addTranslatorSpec(new StochasticsPluginDataTranslatorSpec());
                     translatorContext.addTranslatorSpec(new RandomGeneratorIdTranslatorSpec());
+                    translatorContext.addTranslatorSpec(new TestRandomGeneratorIdTranslatorSpec());
                 });
 
     }

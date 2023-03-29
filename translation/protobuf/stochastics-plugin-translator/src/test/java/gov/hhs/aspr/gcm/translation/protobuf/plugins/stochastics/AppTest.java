@@ -11,7 +11,6 @@ import java.util.Set;
 import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.gcm.translation.protobuf.core.TranslatorController;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.stochastics.translatorSpecs.TestRandomGeneratorIdTranslatorSpec;
 import nucleus.PluginData;
 import plugins.stochastics.StochasticsPluginData;
 import plugins.stochastics.support.RandomNumberGeneratorId;
@@ -39,7 +38,6 @@ public class AppTest {
         TranslatorController translatorController = TranslatorController.builder()
                 .addTranslator(
                         StochasticsTranslator.getTranslatorRW(inputFilePath.resolve(inputFileName).toString(), outputFilePath.resolve(outputFileName).toString()))
-                .addTranslatorSpec(new TestRandomGeneratorIdTranslatorSpec())
                 .build();
 
         List<PluginData> pluginDatas = translatorController.readInput().getPluginDatas();
