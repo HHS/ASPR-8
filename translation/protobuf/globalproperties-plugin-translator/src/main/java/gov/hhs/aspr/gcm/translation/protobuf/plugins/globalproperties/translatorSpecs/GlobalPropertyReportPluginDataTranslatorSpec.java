@@ -20,16 +20,16 @@ public class GlobalPropertyReportPluginDataTranslatorSpec
 
         builder.setDefaultInclusion(inputObject.getDefaultInclusionPolicy());
 
-        for (GlobalPropertyIdInput GlobalPropertyIdInput : inputObject.getIncludedPropertiesList()) {
-            GlobalPropertyId GlobalPropertyId = this.translator.convertInputObject(GlobalPropertyIdInput,
+        for (GlobalPropertyIdInput globalPropertyIdInput : inputObject.getIncludedPropertiesList()) {
+            GlobalPropertyId globalPropertyId = this.translator.convertInputObject(globalPropertyIdInput,
                     GlobalPropertyId.class);
-            builder.includeGlobalProperty(GlobalPropertyId);
+            builder.includeGlobalProperty(globalPropertyId);
         }
 
-        for (GlobalPropertyIdInput GlobalPropertyIdInput : inputObject.getExcludedPropertiesList()) {
-            GlobalPropertyId GlobalPropertyId = this.translator.convertInputObject(GlobalPropertyIdInput,
+        for (GlobalPropertyIdInput globalPropertyIdInput : inputObject.getExcludedPropertiesList()) {
+            GlobalPropertyId globalPropertyId = this.translator.convertInputObject(globalPropertyIdInput,
                     GlobalPropertyId.class);
-            builder.excludeGlobalProperty(GlobalPropertyId);
+            builder.excludeGlobalProperty(globalPropertyId);
         }
 
         return builder.build();
@@ -46,16 +46,16 @@ public class GlobalPropertyReportPluginDataTranslatorSpec
                 .setDefaultInclusionPolicy(simObject.getDefaultInclusionPolicy())
                 .setReportLabel(reportLabelInput);
 
-        for (GlobalPropertyId GlobalPropertyId : simObject.getIncludedProperties()) {
-            GlobalPropertyIdInput GlobalPropertyIdInput = this.translator.convertSimObject(GlobalPropertyId,
+        for (GlobalPropertyId globalPropertyId : simObject.getIncludedProperties()) {
+            GlobalPropertyIdInput globalPropertyIdInput = this.translator.convertSimObject(globalPropertyId,
                     GlobalPropertyId.class);
-            builder.addIncludedProperties(GlobalPropertyIdInput);
+            builder.addIncludedProperties(globalPropertyIdInput);
         }
 
-        for (GlobalPropertyId GlobalPropertyId : simObject.getExcludedProperties()) {
-            GlobalPropertyIdInput GlobalPropertyIdInput = this.translator.convertSimObject(GlobalPropertyId,
+        for (GlobalPropertyId globalPropertyId : simObject.getExcludedProperties()) {
+            GlobalPropertyIdInput globalPropertyIdInput = this.translator.convertSimObject(globalPropertyId,
                     GlobalPropertyId.class);
-            builder.addExcludedProperties(GlobalPropertyIdInput);
+            builder.addExcludedProperties(globalPropertyIdInput);
         }
 
         return builder.build();
