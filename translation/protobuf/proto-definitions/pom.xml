@@ -5,7 +5,7 @@
 
     <groupId>gov.hhs.aspr.gcm.translation.protobuf</groupId>
     <artifactId>proto-definitions</artifactId>
-    <version>1.1.0-SNAPSHOT</version>
+    <version>1.1.0</version>
     <name>gcm.translation :: protobuf :: proto-definitions</name>
     <packaging>jar</packaging>
 
