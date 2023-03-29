@@ -26,6 +26,7 @@ import plugins.people.support.PersonId;
 import plugins.regions.datamanagers.RegionsDataManager;
 import plugins.regions.events.PersonRegionUpdateEvent;
 import plugins.regions.testsupport.RegionsTestPluginFactory;
+import plugins.regions.testsupport.RegionsTestPluginFactory.Factory;
 import plugins.regions.testsupport.TestRegionId;
 import plugins.stochastics.StochasticsDataManager;
 import plugins.util.properties.TimeTrackingPolicy;
@@ -124,7 +125,8 @@ public class AT_RegionLabeler {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		TestSimulation.executeSimulation(RegionsTestPluginFactory.factory(0, 4893773537497436066L, TimeTrackingPolicy.DO_NOT_TRACK_TIME, testPluginData).getPlugins());
+		Factory factory = RegionsTestPluginFactory.factory(0, 4893773537497436066L, TimeTrackingPolicy.DO_NOT_TRACK_TIME, testPluginData);
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 	}
 
@@ -162,7 +164,7 @@ public class AT_RegionLabeler {
 	@UnitTestMethod(target = RegionLabeler.class,name = "getPastLabel", args = { SimulationContext.class, Event.class })
 	public void testGetPastLabel() {
 
-		TestSimulation.executeSimulation(RegionsTestPluginFactory.factory(30, 349819763474394472L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
+		Factory factory = RegionsTestPluginFactory.factory(30, 349819763474394472L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
@@ -188,6 +190,7 @@ public class AT_RegionLabeler {
 				assertEquals(expectedLabel, actualLabel);
 			}
 
-		}).getPlugins());
+		});
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 }

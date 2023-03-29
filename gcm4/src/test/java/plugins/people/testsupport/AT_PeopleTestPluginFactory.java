@@ -25,6 +25,7 @@ import plugins.people.PeoplePluginData;
 import plugins.people.PeoplePluginId;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
+import plugins.people.testsupport.PeopleTestPluginFactory.Factory;
 import plugins.stochastics.StochasticsPluginData;
 import plugins.stochastics.StochasticsPluginId;
 import plugins.stochastics.support.StochasticsError;
@@ -40,8 +41,9 @@ public class AT_PeopleTestPluginFactory {
 	@UnitTestMethod(target = PeopleTestPluginFactory.class, name = "factory", args = { long.class, Consumer.class })
 	public void testFactory_Consumer() {
 		MutableBoolean executed = new MutableBoolean();
-		TestSimulation.executeSimulation(PeopleTestPluginFactory
-				.factory(6489240163414718858L, c -> executed.setValue(true)).getPlugins());
+		Factory factory = PeopleTestPluginFactory
+				.factory(6489240163414718858L, c -> executed.setValue(true));
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 		assertTrue(executed.getValue());
 
 		// precondition: consumer is null
@@ -60,8 +62,9 @@ public class AT_PeopleTestPluginFactory {
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, c -> executed.setValue(true)));
 		TestPluginData testPluginData = pluginBuilder.build();
 
-		TestSimulation.executeSimulation(
-				PeopleTestPluginFactory.factory(3745668053390022091L, testPluginData).getPlugins());
+
+		Factory factory = PeopleTestPluginFactory.factory(3745668053390022091L, testPluginData);
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 		assertTrue(executed.getValue());
 
 		// precondition: testPluginData is null

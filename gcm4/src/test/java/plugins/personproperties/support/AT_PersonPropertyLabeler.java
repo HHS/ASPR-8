@@ -23,6 +23,7 @@ import plugins.people.support.PersonId;
 import plugins.personproperties.datamanagers.PersonPropertiesDataManager;
 import plugins.personproperties.events.PersonPropertyUpdateEvent;
 import plugins.personproperties.testsupport.PersonPropertiesTestPluginFactory;
+import plugins.personproperties.testsupport.PersonPropertiesTestPluginFactory.Factory;
 import plugins.personproperties.testsupport.TestPersonPropertyId;
 import plugins.stochastics.StochasticsDataManager;
 import util.annotations.UnitTestConstructor;
@@ -91,7 +92,7 @@ public class AT_PersonPropertyLabeler {
 		 * for each person that is consistent with the function passed to the
 		 * person property labeler.
 		 */
-		TestSimulation.executeSimulation(PersonPropertiesTestPluginFactory.factory(10, 6445109933336671672L, (c) -> {
+		Factory factory = PersonPropertiesTestPluginFactory.factory(10, 6445109933336671672L, (c) -> {
 			// establish data views
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
@@ -152,7 +153,9 @@ public class AT_PersonPropertyLabeler {
 			// if the person id is null
 			contractException = assertThrows(ContractException.class, () -> personPropertyLabeler.getLabel(c, null));
 			assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
-		}).getPlugins());
+		});
+		
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
 	@Test
@@ -166,7 +169,7 @@ public class AT_PersonPropertyLabeler {
 	@Test
 	@UnitTestMethod(target = PersonPropertyLabeler.class, name = "getPastLabel", args = { SimulationContext.class, Event.class })
 	public void testGetPastLabel() {
-		TestSimulation.executeSimulation(PersonPropertiesTestPluginFactory.factory(10, 770141763380713425L, (c) -> {
+		Factory factory = PersonPropertiesTestPluginFactory.factory(10, 770141763380713425L, (c) -> {
 			// establish data views
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
@@ -218,7 +221,8 @@ public class AT_PersonPropertyLabeler {
 				assertEquals(expectedLabel, actualLabel);
 
 			}
-		}).getPlugins());
+		});
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
 }

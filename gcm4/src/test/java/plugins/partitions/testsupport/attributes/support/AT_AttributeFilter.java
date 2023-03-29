@@ -147,9 +147,7 @@ public final class AT_AttributeFilter {
 		TestPluginData testPluginData = pluginBuilder.build();
 		plugins.add(TestPlugin.getTestPlugin(testPluginData));
 		
-		TestSimulation.executeSimulation(plugins);
-
-		
+		TestSimulation.builder().addPlugins(plugins).build().execute();
 
 	}
 
@@ -208,7 +206,7 @@ public final class AT_AttributeFilter {
 	@UnitTestMethod(target = AttributeFilter.class, name = "getFilterSensitivities", args = {})
 	public void testGetFilterSensitivities() {
 
-		TestSimulation.executeSimulation(PartitionsTestPluginFactory.factory(100, 3455263917994200075L, (c) -> {
+		Factory factory = PartitionsTestPluginFactory.factory(100, 3455263917994200075L, (c) -> {
 
 			// create an attribute filter
 			Filter filter = new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, false);
@@ -246,8 +244,8 @@ public final class AT_AttributeFilter {
 
 			assertFalse(filterSensitivity.requiresRefresh(c, attributeUpdateEvent).isPresent());
 
-		}).getPlugins());
-
+		});
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
 }

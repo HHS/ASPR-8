@@ -35,6 +35,7 @@ import plugins.personproperties.PersonPropertiesPluginId;
 import plugins.personproperties.support.PersonPropertyError;
 import plugins.personproperties.support.PersonPropertyId;
 import plugins.personproperties.support.PersonPropertyInitialization;
+import plugins.personproperties.testsupport.PersonPropertiesTestPluginFactory.Factory;
 import plugins.regions.RegionsPluginData;
 import plugins.regions.RegionsPluginId;
 import plugins.regions.support.RegionError;
@@ -59,8 +60,8 @@ public class AT_PersonPropertiesTestPluginFactory {
 			Consumer.class })
 	public void testFactory_Consumer() {
 		MutableBoolean executed = new MutableBoolean();
-		TestSimulation.executeSimulation(PersonPropertiesTestPluginFactory
-				.factory(100, 4135374341935235561L, c -> executed.setValue(true)).getPlugins());
+		Factory factory = PersonPropertiesTestPluginFactory.factory(100, 4135374341935235561L, c -> executed.setValue(true));
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 		assertTrue(executed.getValue());
 
 		// precondition: consumer is null
@@ -78,9 +79,10 @@ public class AT_PersonPropertiesTestPluginFactory {
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, c -> executed.setValue(true)));
 		TestPluginData testPluginData = pluginBuilder.build();
-
-		TestSimulation.executeSimulation(
-				PersonPropertiesTestPluginFactory.factory(100, 92376779979686632L, testPluginData).getPlugins());
+		
+		Factory factory = PersonPropertiesTestPluginFactory.factory(100, 92376779979686632L, testPluginData);
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
+		
 		assertTrue(executed.getValue());
 
 		// precondition: testPluginData is null

@@ -19,6 +19,7 @@ import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestSimulation;
 import plugins.partitions.support.LabelerSensitivity;
 import plugins.partitions.testsupport.PartitionsTestPluginFactory;
+import plugins.partitions.testsupport.PartitionsTestPluginFactory.Factory;
 import plugins.partitions.testsupport.attributes.AttributesDataManager;
 import plugins.partitions.testsupport.attributes.events.AttributeUpdateEvent;
 import plugins.people.datamanagers.PeopleDataManager;
@@ -120,7 +121,9 @@ public final class AT_AttributeLabeler {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		TestSimulation.executeSimulation(PartitionsTestPluginFactory.factory(10, 4676319446289433016L, testPluginData).getPlugins());
+		
+		Factory factory = PartitionsTestPluginFactory.factory(10, 4676319446289433016L, testPluginData);
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 	}
 
@@ -165,7 +168,8 @@ public final class AT_AttributeLabeler {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		TestSimulation.executeSimulation(PartitionsTestPluginFactory.factory(10, 4161680035971681080L, testPluginData).getPlugins());
+		Factory factory = PartitionsTestPluginFactory.factory(10, 4161680035971681080L, testPluginData);
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
 	@Test
