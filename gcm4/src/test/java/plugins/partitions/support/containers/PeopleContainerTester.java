@@ -19,6 +19,7 @@ import org.apache.commons.math3.util.FastMath;
 import nucleus.SimulationContext;
 import nucleus.testsupport.testplugin.TestSimulation;
 import plugins.partitions.testsupport.PartitionsTestPluginFactory;
+import plugins.partitions.testsupport.PartitionsTestPluginFactory.Factory;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonId;
 import plugins.stochastics.StochasticsDataManager;
@@ -32,7 +33,7 @@ public class PeopleContainerTester {
 
 
 	public static void testGetPeople(Function<SimulationContext, PeopleContainer> provider, long seed) {
-		TestSimulation.executeSimulation(PartitionsTestPluginFactory.factory(100, seed, (c) -> {
+		Factory factory = PartitionsTestPluginFactory.factory(100, seed, (c) -> {
 
 			// get the people container to test
 			PeopleContainer peopleContainer = provider.apply(c);
@@ -79,12 +80,13 @@ public class PeopleContainerTester {
 			assertEquals(expectedPeople.size(), peopleList.size());
 			assertEquals(new LinkedHashSet<>(expectedPeople), new LinkedHashSet<>(peopleList));
 
-		}).getPlugins());
+		});
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 	}
 
 	public static void testSafeAdd(Function<SimulationContext, PeopleContainer> provider, long seed) {
-		TestSimulation.executeSimulation(PartitionsTestPluginFactory.factory(100, seed, (c) -> {
+		Factory factory = PartitionsTestPluginFactory.factory(100, seed, (c) -> {
 
 			// get the people container to test
 			PeopleContainer peopleContainer = provider.apply(c);
@@ -123,11 +125,12 @@ public class PeopleContainerTester {
 			assertEquals(expectedPeople.size(), peopleList.size());
 			assertEquals(new LinkedHashSet<>(expectedPeople), new LinkedHashSet<>(peopleList));
 
-		}).getPlugins());
+		});
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
 	public static void testUnsafeAdd(Function<SimulationContext, PeopleContainer> provider, long seed) {
-		TestSimulation.executeSimulation(PartitionsTestPluginFactory.factory(100, seed, (c) -> {
+		Factory factory = PartitionsTestPluginFactory.factory(100, seed, (c) -> {
 
 			// get the people container to test
 			PeopleContainer peopleContainer = provider.apply(c);
@@ -160,11 +163,12 @@ public class PeopleContainerTester {
 				assertTrue(peopleContainer.contains(personId));
 			}
 
-		}).getPlugins());
+		});
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
 	public static void testRemove(Function<SimulationContext, PeopleContainer> provider, long seed) {
-		TestSimulation.executeSimulation(PartitionsTestPluginFactory.factory(100, seed, (c) -> {
+		Factory factory = PartitionsTestPluginFactory.factory(100, seed, (c) -> {
 
 			// get the people container to test
 			PeopleContainer peopleContainer = provider.apply(c);
@@ -204,11 +208,12 @@ public class PeopleContainerTester {
 				assertFalse(peopleContainer.contains(personId));
 			}
 
-		}).getPlugins());
+		});
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
 	public static void testSize(Function<SimulationContext, PeopleContainer> provider, long seed) {
-		TestSimulation.executeSimulation(PartitionsTestPluginFactory.factory(100, seed, (c) -> {
+		Factory factory = PartitionsTestPluginFactory.factory(100, seed, (c) -> {
 
 			// get the people container to test
 			PeopleContainer peopleContainer = provider.apply(c);
@@ -247,11 +252,12 @@ public class PeopleContainerTester {
 				assertEquals(expectedSize, peopleContainer.size());
 			}
 
-		}).getPlugins());
+		});
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
 	public static void testContains(Function<SimulationContext, PeopleContainer> provider, long seed) {
-		TestSimulation.executeSimulation(PartitionsTestPluginFactory.factory(100, seed, (c) -> {
+		Factory factory = PartitionsTestPluginFactory.factory(100, seed, (c) -> {
 
 			// get the people container to test
 			PeopleContainer peopleContainer = provider.apply(c);
@@ -295,11 +301,12 @@ public class PeopleContainerTester {
 				assertFalse(peopleContainer.contains(personId));
 			}
 
-		}).getPlugins());
+		});
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
 	public static void testGetRandomPersonId(Function<SimulationContext, PeopleContainer> provider, long seed) {
-		TestSimulation.executeSimulation(PartitionsTestPluginFactory.factory(100, seed, (c) -> {
+		Factory factory = PartitionsTestPluginFactory.factory(100, seed, (c) -> {
 
 			// get the people container to test
 			PeopleContainer peopleContainer = provider.apply(c);
@@ -360,6 +367,7 @@ public class PeopleContainerTester {
 				assertTrue(expectedPeopleSet.contains(randomPersonId));
 			}
 
-		}).getPlugins());
+		});
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 }

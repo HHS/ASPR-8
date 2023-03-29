@@ -36,6 +36,7 @@ import plugins.partitions.support.Partition;
 import plugins.partitions.support.PartitionError;
 import plugins.partitions.support.PartitionSampler;
 import plugins.partitions.testsupport.PartitionsTestPluginFactory;
+import plugins.partitions.testsupport.PartitionsTestPluginFactory.Factory;
 import plugins.partitions.testsupport.attributes.AttributesDataManager;
 import plugins.partitions.testsupport.attributes.support.AttributeFilter;
 import plugins.partitions.testsupport.attributes.support.AttributeLabeler;
@@ -245,7 +246,7 @@ public final class AT_PartitionsDataManager {
 		// and their attributes to show that the partition resolver maintains
 		// the partition.
 
-		TestSimulation.executeSimulation(PartitionsTestPluginFactory.factory(1000, 5127268948453841557L, (c) -> {
+		Factory factory = PartitionsTestPluginFactory.factory(1000, 5127268948453841557L, (c) -> {
 			// get the partition data view
 			final PartitionsDataManager partitionsDataManager = c.getDataManager(PartitionsDataManager.class);
 
@@ -312,38 +313,45 @@ public final class AT_PartitionsDataManager {
 			 */
 			showPartitionIsCorrect(c, expectedPartitionStructure, key);
 
-		}).getPlugins());
-
+		});
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
+		
+		
 		// if the key is already allocated to another population partition
-		TestSimulation.executeSimulation(PartitionsTestPluginFactory.factory(0, 1137046131619466337L, (c) -> {
-
-			PartitionsDataManager partitionsDataManager = c.getDataManager(PartitionsDataManager.class);
-			Object key = new Object();
-
-			partitionsDataManager.addPartition(Partition.builder().build(), key);
-			ContractException contractException = assertThrows(ContractException.class, () -> partitionsDataManager.addPartition(Partition.builder().build(), key));
-			assertEquals(PartitionError.DUPLICATE_PARTITION, contractException.getErrorType());
-
-		}).getPlugins());
+		ContractException contractException = assertThrows(ContractException.class, () ->{
+			Factory factory2 = PartitionsTestPluginFactory.factory(0, 1137046131619466337L, (c) -> {
+				PartitionsDataManager partitionsDataManager = c.getDataManager(PartitionsDataManager.class);
+				Object key = new Object();
+				partitionsDataManager.addPartition(Partition.builder().build(), key);
+				partitionsDataManager.addPartition(Partition.builder().build(), key);
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(PartitionError.DUPLICATE_PARTITION, contractException.getErrorType());
+		
 
 		// precondition: if the partition is null
-		TestSimulation.executeSimulation(PartitionsTestPluginFactory.factory(0, 7407325994321033161L, (c) -> {
-
-			PartitionsDataManager partitionsDataManager = new PartitionsDataManager();
-			Object key = new Object();
-
-			ContractException contractException = assertThrows(ContractException.class, () -> partitionsDataManager.addPartition(null, key));
-			assertEquals(PartitionError.NULL_PARTITION, contractException.getErrorType());
-
-		}).getPlugins());;
+		contractException = assertThrows(ContractException.class, () ->{
+			Factory factory2 = PartitionsTestPluginFactory.factory(0, 7407325994321033161L, (c) -> {
+				PartitionsDataManager partitionsDataManager = new PartitionsDataManager();
+				Object key = new Object();
+				partitionsDataManager.addPartition(null, key);
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(PartitionError.NULL_PARTITION, contractException.getErrorType());
+		
 
 		// precondition: if the key is null
-		TestSimulation.executeSimulation(PartitionsTestPluginFactory.factory(0, 530075900162852558L, (c) -> {
-			PartitionsDataManager partitionsDataManager = new PartitionsDataManager();
-			ContractException contractException = assertThrows(ContractException.class, () -> partitionsDataManager.addPartition(Partition.builder().build(), null));
-			assertEquals(PartitionError.NULL_PARTITION_KEY, contractException.getErrorType());
-
-		}).getPlugins());;
+		contractException = assertThrows(ContractException.class, () ->{
+			Factory factory2 = PartitionsTestPluginFactory.factory(0, 530075900162852558L, (c) -> {
+				PartitionsDataManager partitionsDataManager = new PartitionsDataManager();
+				partitionsDataManager.addPartition(Partition.builder().build(), null);
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(PartitionError.NULL_PARTITION_KEY, contractException.getErrorType());
+		
 
 	}
 
@@ -351,7 +359,7 @@ public final class AT_PartitionsDataManager {
 	@UnitTestMethod(target = PartitionsDataManager.class, name = "removePartition", args = { Object.class })
 	public void testRemovePartition() {
 
-		TestSimulation.executeSimulation(PartitionsTestPluginFactory.factory(0, 5767679585616452606L, (c) -> {
+		Factory factory = PartitionsTestPluginFactory.factory(0, 5767679585616452606L, (c) -> {
 
 			PartitionsDataManager partitionsDataManager = c.getDataManager(PartitionsDataManager.class);
 			Object key = new Object();
@@ -369,14 +377,15 @@ public final class AT_PartitionsDataManager {
 			partitionsDataManager.removePartition(key);
 			assertFalse(partitionsDataManager.partitionExists(key));
 
-		}).getPlugins());;
+		});
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
 	@Test
 	@UnitTestMethod(target = PartitionsDataManager.class, name = "partitionExists", args = { Object.class })
 	public void testPartitionExists() {
 
-		TestSimulation.executeSimulation(PartitionsTestPluginFactory.factory(0, 1968926333881399732L, (c) -> {
+		Factory factory = PartitionsTestPluginFactory.factory(0, 1968926333881399732L, (c) -> {
 			PartitionsDataManager partitionsDataManager = c.getDataManager(PartitionsDataManager.class);
 
 			// create containers to hold known and unknown keys
@@ -411,14 +420,15 @@ public final class AT_PartitionsDataManager {
 			// show that the null key has no partition
 			assertFalse(partitionsDataManager.partitionExists(null));
 
-		}).getPlugins());;
+		});
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
 	@Test
 	@UnitTestMethod(target = PartitionsDataManager.class, name = "contains", args = { PersonId.class, Object.class })
 	public void testContains() {
 
-		TestSimulation.executeSimulation(PartitionsTestPluginFactory.factory(100, 607630153604184177L, (c) -> {
+		Factory factory = PartitionsTestPluginFactory.factory(100, 607630153604184177L, (c) -> {
 			PartitionsDataManager partitionsDataManager = c.getDataManager(PartitionsDataManager.class);
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
@@ -453,14 +463,15 @@ public final class AT_PartitionsDataManager {
 				assertEquals(expectPersonInPartition, actualPersonInPartition);
 			}
 
-		}).getPlugins());;
+		});
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
 	@Test
 	@UnitTestMethod(target = PartitionsDataManager.class, name = "contains", args = { PersonId.class, LabelSet.class, Object.class })
 	public void testContains_LabelSet() {
 
-		TestSimulation.executeSimulation(PartitionsTestPluginFactory.factory(100, 7338572401998066291L, (c) -> {
+		Factory factory = PartitionsTestPluginFactory.factory(100, 7338572401998066291L, (c) -> {
 			PartitionsDataManager partitionsDataManager = c.getDataManager(PartitionsDataManager.class);
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
@@ -595,7 +606,8 @@ public final class AT_PartitionsDataManager {
 			contractException = assertThrows(ContractException.class, () -> partitionsDataManager.contains(personId, badLabelSet, key));
 			assertEquals(PartitionError.INCOMPATIBLE_LABEL_SET, contractException.getErrorType());
 
-		}).getPlugins());;
+		});
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
 	@Test
@@ -603,7 +615,7 @@ public final class AT_PartitionsDataManager {
 	public void testGetPeople() {
 
 		// initialized with 100 people
-		TestSimulation.executeSimulation(PartitionsTestPluginFactory.factory(100, 6033209037401060593L, (c) -> {
+		Factory factory = PartitionsTestPluginFactory.factory(100, 6033209037401060593L, (c) -> {
 
 			// establish data views
 			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
@@ -649,14 +661,15 @@ public final class AT_PartitionsDataManager {
 			// show that there were the expected people
 			assertEquals(expectedPeople, actualPeople);
 
-		}).getPlugins());;
+		});
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
 	@Test
 	@UnitTestMethod(target = PartitionsDataManager.class, name = "getPeople", args = { Object.class, LabelSet.class })
 	public void testGetPeople_LabelSet() {
 		// initialized with 100 people
-		TestSimulation.executeSimulation(PartitionsTestPluginFactory.factory(100, 7761046492495930843L, (c) -> {
+		Factory factory = PartitionsTestPluginFactory.factory(100, 7761046492495930843L, (c) -> {
 
 			// establish data views
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
@@ -739,14 +752,15 @@ public final class AT_PartitionsDataManager {
 				assertEquals(expectedPeople, actualPeople);
 			}
 
-		}).getPlugins());;
+		});
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
 	@Test
 	@UnitTestMethod(target = PartitionsDataManager.class, name = "getPeopleCountMap", args = { Object.class, LabelSet.class })
 	public void testGetPeopleCountMap() {
 		// initialized with 1000 people
-		TestSimulation.executeSimulation(PartitionsTestPluginFactory.factory(1000, 3993911184725585603L, (c) -> {
+		Factory factory = PartitionsTestPluginFactory.factory(1000, 3993911184725585603L, (c) -> {
 
 			// establish data views
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
@@ -938,7 +952,8 @@ public final class AT_PartitionsDataManager {
 					assertEquals(expectedCountMap, actualCountMap);
 				}
 			}
-		}).getPlugins());;
+		});
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 	}
 
@@ -947,7 +962,7 @@ public final class AT_PartitionsDataManager {
 	public void getPersonCount() {
 
 		// initialized with 100 people
-		TestSimulation.executeSimulation(PartitionsTestPluginFactory.factory(100, 1559429415782871174L, (c) -> {
+		Factory factory = PartitionsTestPluginFactory.factory(100, 1559429415782871174L, (c) -> {
 
 			// establish data views
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
@@ -990,7 +1005,8 @@ public final class AT_PartitionsDataManager {
 			// show that there were the expected people
 			assertEquals(expectedPeopleCount, actualCount);
 
-		}).getPlugins());;
+		});
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 	}
 
@@ -998,7 +1014,7 @@ public final class AT_PartitionsDataManager {
 	@UnitTestMethod(target = PartitionsDataManager.class, name = "getPersonCount", args = { Object.class, LabelSet.class })
 	public void testGetPersonCount_LabelSet() {
 		// initialized with 100 people
-		TestSimulation.executeSimulation(PartitionsTestPluginFactory.factory(100, 3217787540697556531L, (c) -> {
+		Factory factory = PartitionsTestPluginFactory.factory(100, 3217787540697556531L, (c) -> {
 
 			// establish data views
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
@@ -1073,7 +1089,8 @@ public final class AT_PartitionsDataManager {
 				assertEquals(expectedPeopleCount.getValue(), actualPersonCount);
 			}
 
-		}).getPlugins());;
+		});
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 	}
 
@@ -1165,7 +1182,7 @@ public final class AT_PartitionsDataManager {
 
 	private void executeSamplingTest(long seed, Boolean useFilter, ExcludedPersonType excludedPersonType, Boolean useWeightingFunction, Integer int_0_label_value, String double_0_label_value) {
 
-		TestSimulation.executeSimulation(PartitionsTestPluginFactory.factory(1000, seed, (c) -> {
+		Factory factory = PartitionsTestPluginFactory.factory(1000, seed, (c) -> {
 
 			// remember to test with general and COMET to show they get
 			// different results?
@@ -1388,132 +1405,122 @@ public final class AT_PartitionsDataManager {
 				}
 			}
 
-		}).getPlugins());;
+		});
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 	}
 
 	@Test
 	@UnitTestMethod(target = PartitionsDataManager.class, name = "samplePartition", args = { Object.class, PartitionSampler.class })
 	public void testSamplePartition_PreconditionChecks() {
-
 		// precondition: if the key is null
-		TestSimulation.executeSimulation(PartitionsTestPluginFactory.factory(10, 8368182028203057994L, (c) -> {
-			PartitionsDataManager partitionsDataManager = c.getDataManager(PartitionsDataManager.class);
-
-			Object key = new Object();
-			Partition partition = Partition.builder().setFilter(Filter.allPeople()).build();
-			partitionsDataManager.addPartition(partition, key);
-
-			PartitionSampler partitionSampler = PartitionSampler.builder().build();
-
-			// first we show that the values we will be using are valid
-			assertNotNull(partitionsDataManager.samplePartition(key, partitionSampler));
-
-			ContractException contractException = assertThrows(ContractException.class, () -> partitionsDataManager.samplePartition(null, partitionSampler));
-			assertEquals(PartitionError.NULL_PARTITION_KEY, contractException.getErrorType());
-
-		}).getPlugins());
+		ContractException contractException = assertThrows(ContractException.class, () -> {
+			Factory factory = PartitionsTestPluginFactory.factory(10, 8368182028203057994L, (c) -> {
+				PartitionsDataManager partitionsDataManager = c.getDataManager(PartitionsDataManager.class);
+				Object key = new Object();
+				Partition partition = Partition.builder().setFilter(Filter.allPeople()).build();
+				partitionsDataManager.addPartition(partition, key);
+				PartitionSampler partitionSampler = PartitionSampler.builder().build();
+				// first we show that the values we will be using are valid
+				assertNotNull(partitionsDataManager.samplePartition(key, partitionSampler));
+				partitionsDataManager.samplePartition(null, partitionSampler);
+			});
+			TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
+		});
+		assertEquals(PartitionError.NULL_PARTITION_KEY, contractException.getErrorType());
 
 		// precondition: if the key is unknown
-		TestSimulation.executeSimulation(PartitionsTestPluginFactory.factory(10, 2301450217287059237L, (c) -> {
-			PartitionsDataManager partitionsDataManager = c.getDataManager(PartitionsDataManager.class);
+		contractException = assertThrows(ContractException.class, () -> {
+			Factory factory = PartitionsTestPluginFactory.factory(10, 2301450217287059237L, (c) -> {
+				PartitionsDataManager partitionsDataManager = c.getDataManager(PartitionsDataManager.class);
+				Object key = new Object();
+				Partition partition = Partition.builder().setFilter(Filter.allPeople()).build();
+				partitionsDataManager.addPartition(partition, key);
+				PartitionSampler partitionSampler = PartitionSampler.builder().build();
+				Object unknownKey = new Object();
+				// first we show that the values we will be using are valid
+				assertNotNull(partitionsDataManager.samplePartition(key, partitionSampler));
+				partitionsDataManager.samplePartition(unknownKey, partitionSampler);
+			});
+			TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
+		});
+		assertEquals(PartitionError.UNKNOWN_POPULATION_PARTITION_KEY, contractException.getErrorType());
 
-			Object key = new Object();
-			Partition partition = Partition.builder().setFilter(Filter.allPeople()).build();
-			partitionsDataManager.addPartition(partition, key);
-
-			PartitionSampler partitionSampler = PartitionSampler.builder().build();
-
-			Object unknownKey = new Object();
-
-			// first we show that the values we will be using are valid
-			assertNotNull(partitionsDataManager.samplePartition(key, partitionSampler));
-
-			ContractException contractException = assertThrows(ContractException.class, () -> partitionsDataManager.samplePartition(unknownKey, partitionSampler));
-			assertEquals(PartitionError.UNKNOWN_POPULATION_PARTITION_KEY, contractException.getErrorType());
-
-		}).getPlugins());
-
-		TestSimulation.executeSimulation(PartitionsTestPluginFactory.factory(10, 8837909864261179707L, (c) -> {
-			PartitionsDataManager partitionsDataManager = c.getDataManager(PartitionsDataManager.class);
-
-			Object key = new Object();
-			Partition partition = Partition.builder().setFilter(Filter.allPeople()).build();
-			partitionsDataManager.addPartition(partition, key);
-
-			PartitionSampler partitionSampler = PartitionSampler.builder().build();
-
-			// first we show that the values we will be using are valid
-			assertNotNull(partitionsDataManager.samplePartition(key, partitionSampler));
-
-			// if the partition sampler is null
-			ContractException contractException = assertThrows(ContractException.class, () -> partitionsDataManager.samplePartition(key, null));
-			assertEquals(PartitionError.NULL_PARTITION_SAMPLER, contractException.getErrorType());
-
-		}).getPlugins());
+		contractException = assertThrows(ContractException.class, () -> {
+			Factory factory = PartitionsTestPluginFactory.factory(10, 8837909864261179707L, (c) -> {
+				PartitionsDataManager partitionsDataManager = c.getDataManager(PartitionsDataManager.class);
+				Object key = new Object();
+				Partition partition = Partition.builder().setFilter(Filter.allPeople()).build();
+				partitionsDataManager.addPartition(partition, key);
+				PartitionSampler partitionSampler = PartitionSampler.builder().build();
+				// first we show that the values we will be using are valid
+				assertNotNull(partitionsDataManager.samplePartition(key, partitionSampler));
+				// if the partition sampler is null
+				partitionsDataManager.samplePartition(key, null);
+			});
+			TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
+		});
+		assertEquals(PartitionError.NULL_PARTITION_SAMPLER, contractException.getErrorType());
+		
 
 		/*
 		 * precondition: if the partition sampler has a label set containing
 		 * dimensions not present in the population partition
 		 */
-		TestSimulation.executeSimulation(PartitionsTestPluginFactory.factory(10, 1697817005173536231L, (c) -> {
-			PartitionsDataManager partitionsDataManager = c.getDataManager(PartitionsDataManager.class);
-
-			Object key = new Object();
-			Partition partition = Partition.builder().setFilter(Filter.allPeople()).build();
-			partitionsDataManager.addPartition(partition, key);
-
-			PartitionSampler partitionSampler = PartitionSampler.builder().build();
-
-			LabelSet labelSet = LabelSet.builder().setLabel(TestAttributeId.INT_0, 15).build();
-			PartitionSampler partitionSamplerWithBadDimension = PartitionSampler.builder().setLabelSet(labelSet).build();
-
-			// first we show that the values we will be using are valid
-			assertNotNull(partitionsDataManager.samplePartition(key, partitionSampler));
-
-			ContractException contractException = assertThrows(ContractException.class, () -> partitionsDataManager.samplePartition(key, partitionSamplerWithBadDimension));
-			assertEquals(PartitionError.INCOMPATIBLE_LABEL_SET, contractException.getErrorType());
-
-		}).getPlugins());
+		contractException = assertThrows(ContractException.class, () -> {
+			Factory factory = PartitionsTestPluginFactory.factory(10, 1697817005173536231L, (c) -> {
+				PartitionsDataManager partitionsDataManager = c.getDataManager(PartitionsDataManager.class);
+				Object key = new Object();
+				Partition partition = Partition.builder().setFilter(Filter.allPeople()).build();
+				partitionsDataManager.addPartition(partition, key);
+				PartitionSampler partitionSampler = PartitionSampler.builder().build();
+				LabelSet labelSet = LabelSet.builder().setLabel(TestAttributeId.INT_0, 15).build();
+				PartitionSampler partitionSamplerWithBadDimension = PartitionSampler.builder().setLabelSet(labelSet).build();
+				// first we show that the values we will be using are valid
+				assertNotNull(partitionsDataManager.samplePartition(key, partitionSampler));
+				partitionsDataManager.samplePartition(key, partitionSamplerWithBadDimension);
+			});
+			TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
+		});
+		assertEquals(PartitionError.INCOMPATIBLE_LABEL_SET, contractException.getErrorType());
+		
+		
 
 		/*
 		 * precondition: if the partition sampler has an excluded person that
 		 * does not exist
 		 */
-		TestSimulation.executeSimulation(PartitionsTestPluginFactory.factory(10, 624346712512051803L, (c) -> {
-			PartitionsDataManager partitionsDataManager = c.getDataManager(PartitionsDataManager.class);
-
-			Object key = new Object();
-			Partition partition = Partition.builder().setFilter(Filter.allPeople()).build();
-			partitionsDataManager.addPartition(partition, key);
-
-			PartitionSampler partitionSampler = PartitionSampler.builder().build();
-
-			PartitionSampler partitionSamplerWithUnknownExcludedPerson = PartitionSampler.builder().setExcludedPerson(new PersonId(10000)).build();
-
-			// first we show that the values we will be using are valid
-			assertNotNull(partitionsDataManager.samplePartition(key, partitionSampler));
-
-			ContractException contractException = assertThrows(ContractException.class, () -> partitionsDataManager.samplePartition(key, partitionSamplerWithUnknownExcludedPerson));
-			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
-
-		}).getPlugins());
-
+		contractException = assertThrows(ContractException.class, () -> {
+			Factory factory = PartitionsTestPluginFactory.factory(10, 624346712512051803L, (c) -> {
+				PartitionsDataManager partitionsDataManager = c.getDataManager(PartitionsDataManager.class);
+				Object key = new Object();
+				Partition partition = Partition.builder().setFilter(Filter.allPeople()).build();
+				partitionsDataManager.addPartition(partition, key);
+				PartitionSampler partitionSampler = PartitionSampler.builder().build();
+				PartitionSampler partitionSamplerWithUnknownExcludedPerson = PartitionSampler.builder().setExcludedPerson(new PersonId(10000)).build();
+				// first we show that the values we will be using are valid
+				assertNotNull(partitionsDataManager.samplePartition(key, partitionSampler));
+				partitionsDataManager.samplePartition(key, partitionSamplerWithUnknownExcludedPerson);
+			});
+			TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
+		});
+		assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
 	}
 
 	@Test
 	@UnitTestMethod(target = PartitionsDataManager.class, name = "init", args = { DataManagerContext.class })
 	public void testPartitionDataManagerInitialization() {
-		TestSimulation.executeSimulation(PartitionsTestPluginFactory.factory(0, 2954766214498605129L, (c) -> {
+		Factory factory = PartitionsTestPluginFactory.factory(0, 2954766214498605129L, (c) -> {
 			PartitionsDataManager dataManager = c.getDataManager(PartitionsDataManager.class);
 			assertNotNull(dataManager);
-		}).getPlugins());
+		});
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
 	@Test
 	@UnitTestMethod(target = PartitionsDataManager.class, name = "init", args = { DataManagerContext.class })
 	public void testPersonAdditionEvent() {
-		TestSimulation.executeSimulation(PartitionsTestPluginFactory.factory(100, 6964380012813498875L, (c) -> {
+		Factory factory = PartitionsTestPluginFactory.factory(100, 6964380012813498875L, (c) -> {
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			PartitionsDataManager partitionsDataManager = c.getDataManager(PartitionsDataManager.class);
 
@@ -1544,7 +1551,8 @@ public final class AT_PartitionsDataManager {
 			// show that the person is a member of partition 2
 			assertTrue(partitionsDataManager.contains(personId, key2));
 
-		}).getPlugins());
+		});
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
 	@Test
@@ -1676,7 +1684,8 @@ public final class AT_PartitionsDataManager {
 
 		// build and add the action plugin to the engine
 		TestPluginData testPluginData = pluginBuilder.build();
-		TestSimulation.executeSimulation(PartitionsTestPluginFactory.factory(100, 6406306513403641718L, testPluginData).getPlugins());
+		Factory factory = PartitionsTestPluginFactory.factory(100, 6406306513403641718L, testPluginData);
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
 }
