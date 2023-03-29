@@ -76,10 +76,15 @@ message GroupPopulationReportPluginDataInput {
     ReportPeriodInput reportPeriod = 2;
 }
 
+message GroupPropertyReportPropertyMap {
+    GroupTypeIdInput groupTypeId = 1;
+    repeated GroupPropertyIdInput groupProperties = 2;
+}
+
 message GroupPropertyReportPluginDataInput {
     ReportLabelInput reportLabel = 1;
     ReportPeriodInput reportPeriod = 2;
-    repeated GroupPropertyIdInput includedProperties = 3;
-    repeated GroupPropertyIdInput excludedProperties = 4;
+    repeated GroupPropertyReportPropertyMap includedProperties = 3;
+    repeated GroupPropertyReportPropertyMap excludedProperties = 4;
     bool defaultInclusionPolicy = 5;
 }
