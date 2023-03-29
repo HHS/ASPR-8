@@ -24,6 +24,7 @@ import nucleus.Event;
 import nucleus.SimulationContext;
 import nucleus.testsupport.testplugin.TestSimulation;
 import plugins.partitions.testsupport.PartitionsTestPluginFactory;
+import plugins.partitions.testsupport.PartitionsTestPluginFactory.Factory;
 import plugins.partitions.testsupport.attributes.AttributesDataManager;
 import plugins.partitions.testsupport.attributes.events.AttributeUpdateEvent;
 import plugins.partitions.testsupport.attributes.support.AttributeFilter;
@@ -42,7 +43,7 @@ public class AT_PopulationPartitionImpl {
 	@Test
 	@UnitTestConstructor(target = PopulationPartitionImpl.class,args = { SimulationContext.class, Partition.class })
 	public void testConstructor() {
-		TestSimulation.executeSimulation(PartitionsTestPluginFactory.factory(100, 2997202170895856110L, (c) -> {
+		Factory factory = PartitionsTestPluginFactory.factory(100, 2997202170895856110L, (c) -> {
 			// establish data view
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
@@ -79,7 +80,8 @@ public class AT_PopulationPartitionImpl {
 			// if the partition is null
 			assertThrows(RuntimeException.class, () -> new PopulationPartitionImpl(c, null));
 
-		}).getPlugins());
+		});
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 	}
 
@@ -87,7 +89,7 @@ public class AT_PopulationPartitionImpl {
 	@UnitTestMethod(target = PopulationPartitionImpl.class,name = "attemptPersonAddition", args = { PersonId.class })
 	public void testAttemptPersonAddition() {
 
-		TestSimulation.executeSimulation(PartitionsTestPluginFactory.factory(100, 3063819509780972206L, (c) -> {
+		Factory factory = PartitionsTestPluginFactory.factory(100, 3063819509780972206L, (c) -> {
 			// establish data views
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
@@ -119,14 +121,15 @@ public class AT_PopulationPartitionImpl {
 				 */
 				assertEquals(attributeValue, populationPartition.contains(personId));
 			}
-		}).getPlugins());
+		});
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
 	@Test
 	@UnitTestMethod(target = PopulationPartitionImpl.class,name = "attemptPersonRemoval", args = { PersonId.class })
 	public void testAttemptPersonRemoval() {
 
-		TestSimulation.executeSimulation(PartitionsTestPluginFactory.factory(100, 4856457716960397685L, (c) -> {
+		Factory factory = PartitionsTestPluginFactory.factory(100, 4856457716960397685L, (c) -> {
 			// establish data views
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
@@ -170,13 +173,14 @@ public class AT_PopulationPartitionImpl {
 				// show that the person was removed
 				assertFalse(populationPartition.contains(personId));
 			}
-		}).getPlugins());
+		});
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
 	@Test
 	@UnitTestMethod(target = PopulationPartitionImpl.class,name = "handleEvent", args = { Event.class })
 	public void testHandleEvent() {
-		TestSimulation.executeSimulation(PartitionsTestPluginFactory.factory(100, 8982209428616460818L, (c) -> {
+		Factory factory = PartitionsTestPluginFactory.factory(100, 8982209428616460818L, (c) -> {
 			// establish data views
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
@@ -218,14 +222,15 @@ public class AT_PopulationPartitionImpl {
 				}				
 			}
 
-		}).getPlugins());
+		});
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
 	@Test
 	@UnitTestMethod(target = PopulationPartitionImpl.class,name = "validateLabelSetInfo", args = { LabelSet.class })
 	public void testValidateLabelSetInfo() {
 
-		TestSimulation.executeSimulation(PartitionsTestPluginFactory.factory(100, 4662203440339012044L, (c) -> {
+		Factory factory = PartitionsTestPluginFactory.factory(100, 4662203440339012044L, (c) -> {
 			/*
 			 * Create the population partition filtering on attribute BOOLEAN_0
 			 * = true
@@ -244,13 +249,14 @@ public class AT_PopulationPartitionImpl {
 			labelSet = LabelSet.builder().setLabel(TestAttributeId.INT_1, 2).build();
 			assertFalse(populationPartition.validateLabelSetInfo(labelSet));
 
-		}).getPlugins());
+		});
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
 	@Test
 	@UnitTestMethod(target = PopulationPartitionImpl.class,name = "getPeopleCount", args = {})
 	public void testGetPeopleCount() {
-		TestSimulation.executeSimulation(PartitionsTestPluginFactory.factory(100, 9050139615348413060L, (c) -> {
+		Factory factory = PartitionsTestPluginFactory.factory(100, 9050139615348413060L, (c) -> {
 			// establish data views
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
@@ -294,7 +300,8 @@ public class AT_PopulationPartitionImpl {
 				populationPartition.handleEvent(new AttributeUpdateEvent(personId, TestAttributeId.BOOLEAN_0, true, false));
 				assertEquals(expectedPeopleCount, populationPartition.getPeopleCount());
 			}
-		}).getPlugins());
+		});
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
 	private static Function<Object, Object> INT_0_LABELFUNCTION = (value) -> {
@@ -407,7 +414,7 @@ public class AT_PopulationPartitionImpl {
 	@Test
 	@UnitTestMethod(target = PopulationPartitionImpl.class,name = "getPeopleCount", args = { LabelSet.class })
 	public void testGetPeopleCount_LabelSet() {
-		TestSimulation.executeSimulation(PartitionsTestPluginFactory.factory(1000, 8522399796145249846L, (c) -> {
+		Factory factory = PartitionsTestPluginFactory.factory(1000, 8522399796145249846L, (c) -> {
 
 			// Randomize the attribute values for all people
 			assignRandomAttributes(c);
@@ -445,13 +452,14 @@ public class AT_PopulationPartitionImpl {
 				assertEquals(expectedPeople.size(), actualPeople.size());
 			}
 
-		}).getPlugins());
+		});
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
 	@Test
 	@UnitTestMethod(target = PopulationPartitionImpl.class,name = "getPeopleCountMap", args = { LabelSet.class })
 	public void testGetPeopleCountMap() {
-		TestSimulation.executeSimulation(PartitionsTestPluginFactory.factory(1000, 4793886153660135719L, (c) -> {
+		Factory factory = PartitionsTestPluginFactory.factory(1000, 4793886153660135719L, (c) -> {
 
 			// Randomize the attribute values for all people
 			assignRandomAttributes(c);
@@ -534,14 +542,15 @@ public class AT_PopulationPartitionImpl {
 				assertEquals(expectedPeopleCountMap, actualPeopleCountMap);
 			}
 
-		}).getPlugins());
+		});
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 	}
 
 	@Test
 	@UnitTestMethod(target = PopulationPartitionImpl.class,name = "contains", args = { PersonId.class })
 	public void testContains() {
-		TestSimulation.executeSimulation(PartitionsTestPluginFactory.factory(100, 2652052463264971998L, (c) -> {
+		Factory factory = PartitionsTestPluginFactory.factory(100, 2652052463264971998L, (c) -> {
 			// establish data views
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
@@ -580,13 +589,14 @@ public class AT_PopulationPartitionImpl {
 				//System.out.println(personId+" : "+ populationPartition.contains(personId));
 				assertEquals(expectedPeople.contains(personId), populationPartition.contains(personId));
 			}
-		}).getPlugins());
+		});
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
 	@Test
 	@UnitTestMethod(target = PopulationPartitionImpl.class,name = "contains", args = { PersonId.class, LabelSet.class })
 	public void testContains_LabelSet() {
-		TestSimulation.executeSimulation(PartitionsTestPluginFactory.factory(1000, 827063967966581841L, (c) -> {
+		Factory factory = PartitionsTestPluginFactory.factory(1000, 827063967966581841L, (c) -> {
 
 			// Randomize the attribute values for all people
 			assignRandomAttributes(c);
@@ -629,13 +639,14 @@ public class AT_PopulationPartitionImpl {
 				}
 			}
 
-		}).getPlugins());
+		});
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
 	@Test
 	@UnitTestMethod(target = PopulationPartitionImpl.class,name = "getPeople", args = { LabelSet.class })
 	public void testGetPeople_LabelSet() {
-		TestSimulation.executeSimulation(PartitionsTestPluginFactory.factory(1000, 1040083420377037302L, (c) -> {
+		Factory factory = PartitionsTestPluginFactory.factory(1000, 1040083420377037302L, (c) -> {
 
 			// Randomize the attribute values for all people
 			assignRandomAttributes(c);
@@ -674,13 +685,14 @@ public class AT_PopulationPartitionImpl {
 				assertEquals(expectedPeople, new LinkedHashSet<>(actualPeople));
 			}
 
-		}).getPlugins());
+		});
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
 	@Test
 	@UnitTestMethod(target = PopulationPartitionImpl.class,name = "getPeople", args = {})
 	public void testGetPeople() {
-		TestSimulation.executeSimulation(PartitionsTestPluginFactory.factory(100, 4597503339659285165L, (c) -> {
+		Factory factory = PartitionsTestPluginFactory.factory(100, 4597503339659285165L, (c) -> {
 			// establish data views
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
@@ -714,7 +726,8 @@ public class AT_PopulationPartitionImpl {
 			assertEquals(expectedPeople.size(), populationPartition.getPeople().size());
 			assertEquals(expectedPeople, new LinkedHashSet<>(populationPartition.getPeople()));
 
-		}).getPlugins());
+		});
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
 	private static enum ExcludedPersonType {
@@ -804,7 +817,7 @@ public class AT_PopulationPartitionImpl {
 
 	private void executeSamplingTest(long seed, Boolean useFilter, ExcludedPersonType excludedPersonType, Boolean useWeightingFunction, Integer int_0_label_value, String double_0_label_value) {
 
-		TestSimulation.executeSimulation(PartitionsTestPluginFactory.factory(1000, seed, (c) -> {
+		Factory factory = PartitionsTestPluginFactory.factory(1000, seed, (c) -> {
 
 			// remember to test with general and COMET to show they get
 			// different results?
@@ -1025,7 +1038,8 @@ public class AT_PopulationPartitionImpl {
 				}
 			}
 
-		}).getPlugins());
+		});
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 	}
 }

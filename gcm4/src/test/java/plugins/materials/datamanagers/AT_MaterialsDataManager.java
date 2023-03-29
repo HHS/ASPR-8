@@ -4401,148 +4401,176 @@ public class AT_MaterialsDataManager {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		TestSimulation.executeSimulation(MaterialsTestPluginFactory.factory(0, 0, 0, 2289322490697828226L, testPluginData).getPlugins());
+		Factory factory = MaterialsTestPluginFactory.factory(0, 0, 0, 2289322490697828226L, testPluginData);
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 		/* precondition test: if the resource id is null */
-		TestSimulation.executeSimulation(MaterialsTestPluginFactory.factory(0, 0, 0, 1367796071113751106L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
-			MaterialsProducerId materialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_2;
-			ResourceId resourceId = TestResourceId.RESOURCE_3;
-			RegionId regionId = TestRegionId.REGION_4;
-			long amountToTransfer = 45L;
-			StageId stageId = materialsDataManager.addStage(materialsProducerId);
-			materialsDataManager.convertStageToResource(stageId, resourceId, amountToTransfer);
-			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.transferResourceToRegion(materialsProducerId, null, regionId, amountToTransfer));
-			assertEquals(ResourceError.NULL_RESOURCE_ID, contractException.getErrorType());
-		}).getPlugins());
+		ContractException contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = MaterialsTestPluginFactory.factory(0, 0, 0, 1367796071113751106L, (c) -> {
+				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+				MaterialsProducerId materialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_2;
+				ResourceId resourceId = TestResourceId.RESOURCE_3;
+				RegionId regionId = TestRegionId.REGION_4;
+				long amountToTransfer = 45L;
+				StageId stageId = materialsDataManager.addStage(materialsProducerId);
+				materialsDataManager.convertStageToResource(stageId, resourceId, amountToTransfer);
+				materialsDataManager.transferResourceToRegion(materialsProducerId, null, regionId, amountToTransfer);			
+			});	
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(ResourceError.NULL_RESOURCE_ID, contractException.getErrorType());
+		
 
 		/* precondition test: if the resource id is unknown */
-		TestSimulation.executeSimulation(MaterialsTestPluginFactory.factory(0, 0, 0, 8014590590926533288L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
-			MaterialsProducerId materialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_2;
-			ResourceId resourceId = TestResourceId.RESOURCE_3;
-			RegionId regionId = TestRegionId.REGION_4;
-			long amountToTransfer = 45L;
-			StageId stageId = materialsDataManager.addStage(materialsProducerId);
-			materialsDataManager.convertStageToResource(stageId, resourceId, amountToTransfer);
-			ContractException contractException = assertThrows(ContractException.class,
-					() -> materialsDataManager.transferResourceToRegion(materialsProducerId, TestResourceId.getUnknownResourceId(), regionId, amountToTransfer));
-			assertEquals(ResourceError.UNKNOWN_RESOURCE_ID, contractException.getErrorType());
-		}).getPlugins());
+		contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = MaterialsTestPluginFactory.factory(0, 0, 0, 8014590590926533288L, (c) -> {
+				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+				MaterialsProducerId materialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_2;
+				ResourceId resourceId = TestResourceId.RESOURCE_3;
+				RegionId regionId = TestRegionId.REGION_4;
+				long amountToTransfer = 45L;
+				StageId stageId = materialsDataManager.addStage(materialsProducerId);
+				materialsDataManager.convertStageToResource(stageId, resourceId, amountToTransfer);
+				materialsDataManager.transferResourceToRegion(materialsProducerId, TestResourceId.getUnknownResourceId(), regionId, amountToTransfer);			
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(ResourceError.UNKNOWN_RESOURCE_ID, contractException.getErrorType());
 
 		/* precondition test: if the region id is null */
-		TestSimulation.executeSimulation(MaterialsTestPluginFactory.factory(0, 0, 0, 4865873025074936636L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
-			MaterialsProducerId materialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_2;
-			ResourceId resourceId = TestResourceId.RESOURCE_3;
-			long amountToTransfer = 45L;
-			StageId stageId = materialsDataManager.addStage(materialsProducerId);
-			materialsDataManager.convertStageToResource(stageId, resourceId, amountToTransfer);
-			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.transferResourceToRegion(materialsProducerId, resourceId, null, amountToTransfer));
-			assertEquals(RegionError.NULL_REGION_ID, contractException.getErrorType());
-		}).getPlugins());
+		contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = MaterialsTestPluginFactory.factory(0, 0, 0, 4865873025074936636L, (c) -> {
+				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+				MaterialsProducerId materialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_2;
+				ResourceId resourceId = TestResourceId.RESOURCE_3;
+				long amountToTransfer = 45L;
+				StageId stageId = materialsDataManager.addStage(materialsProducerId);
+				materialsDataManager.convertStageToResource(stageId, resourceId, amountToTransfer);
+				materialsDataManager.transferResourceToRegion(materialsProducerId, resourceId, null, amountToTransfer);			
+			});		
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(RegionError.NULL_REGION_ID, contractException.getErrorType());
 
 		/* precondition test: if the region id is unknown */
-		TestSimulation.executeSimulation(MaterialsTestPluginFactory.factory(0, 0, 0, 4472671173642659805L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
-			MaterialsProducerId materialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_2;
-			ResourceId resourceId = TestResourceId.RESOURCE_3;
-			long amountToTransfer = 45L;
-			StageId stageId = materialsDataManager.addStage(materialsProducerId);
-			materialsDataManager.convertStageToResource(stageId, resourceId, amountToTransfer);
-			ContractException contractException = assertThrows(ContractException.class,
-					() -> materialsDataManager.transferResourceToRegion(materialsProducerId, resourceId, TestRegionId.getUnknownRegionId(), amountToTransfer));
-			assertEquals(RegionError.UNKNOWN_REGION_ID, contractException.getErrorType());
-		}).getPlugins());
+		contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = MaterialsTestPluginFactory.factory(0, 0, 0, 4472671173642659805L, (c) -> {
+				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+				MaterialsProducerId materialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_2;
+				ResourceId resourceId = TestResourceId.RESOURCE_3;
+				long amountToTransfer = 45L;
+				StageId stageId = materialsDataManager.addStage(materialsProducerId);
+				materialsDataManager.convertStageToResource(stageId, resourceId, amountToTransfer);
+				materialsDataManager.transferResourceToRegion(materialsProducerId, resourceId, TestRegionId.getUnknownRegionId(), amountToTransfer);			
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();			
+		});
+		assertEquals(RegionError.UNKNOWN_REGION_ID, contractException.getErrorType());
 
 		/* precondition test: if the materials producer id is null */
-		TestSimulation.executeSimulation(MaterialsTestPluginFactory.factory(0, 0, 0, 6956131170154399460L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
-			MaterialsProducerId materialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_2;
-			ResourceId resourceId = TestResourceId.RESOURCE_3;
-			RegionId regionId = TestRegionId.REGION_4;
-			long amountToTransfer = 45L;
-			StageId stageId = materialsDataManager.addStage(materialsProducerId);
-			materialsDataManager.convertStageToResource(stageId, resourceId, amountToTransfer);
-			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.transferResourceToRegion(null, resourceId, regionId, amountToTransfer));
-			assertEquals(MaterialsError.NULL_MATERIALS_PRODUCER_ID, contractException.getErrorType());
-		}).getPlugins());
+
+		contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = MaterialsTestPluginFactory.factory(0, 0, 0, 6956131170154399460L, (c) -> {
+				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+				MaterialsProducerId materialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_2;
+				ResourceId resourceId = TestResourceId.RESOURCE_3;
+				RegionId regionId = TestRegionId.REGION_4;
+				long amountToTransfer = 45L;
+				StageId stageId = materialsDataManager.addStage(materialsProducerId);
+				materialsDataManager.convertStageToResource(stageId, resourceId, amountToTransfer);
+				materialsDataManager.transferResourceToRegion(null, resourceId, regionId, amountToTransfer);			
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(MaterialsError.NULL_MATERIALS_PRODUCER_ID, contractException.getErrorType());
 
 		/* precondition test: if the materials producer id is unknown */
-		TestSimulation.executeSimulation(MaterialsTestPluginFactory.factory(0, 0, 0, 1760306489660703762L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
-			MaterialsProducerId materialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_2;
-			ResourceId resourceId = TestResourceId.RESOURCE_3;
-			RegionId regionId = TestRegionId.REGION_4;
-			long amountToTransfer = 45L;
-			StageId stageId = materialsDataManager.addStage(materialsProducerId);
-			materialsDataManager.convertStageToResource(stageId, resourceId, amountToTransfer);
-			ContractException contractException = assertThrows(ContractException.class,
-					() -> materialsDataManager.transferResourceToRegion(TestMaterialsProducerId.getUnknownMaterialsProducerId(), resourceId, regionId, amountToTransfer));
-			assertEquals(MaterialsError.UNKNOWN_MATERIALS_PRODUCER_ID, contractException.getErrorType());
-		}).getPlugins());
+		contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = MaterialsTestPluginFactory.factory(0, 0, 0, 1760306489660703762L, (c) -> {
+				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+				MaterialsProducerId materialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_2;
+				ResourceId resourceId = TestResourceId.RESOURCE_3;
+				RegionId regionId = TestRegionId.REGION_4;
+				long amountToTransfer = 45L;
+				StageId stageId = materialsDataManager.addStage(materialsProducerId);
+				materialsDataManager.convertStageToResource(stageId, resourceId, amountToTransfer);
+				materialsDataManager.transferResourceToRegion(TestMaterialsProducerId.getUnknownMaterialsProducerId(), resourceId, regionId, amountToTransfer);			
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(MaterialsError.UNKNOWN_MATERIALS_PRODUCER_ID, contractException.getErrorType());
 
 		/* precondition test: if the materials amount is negative */
-		TestSimulation.executeSimulation(MaterialsTestPluginFactory.factory(0, 0, 0, 2214714534579989103L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
-			MaterialsProducerId materialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_2;
-			ResourceId resourceId = TestResourceId.RESOURCE_3;
-			RegionId regionId = TestRegionId.REGION_4;
-			long amountToTransfer = 45L;
-			StageId stageId = materialsDataManager.addStage(materialsProducerId);
-			materialsDataManager.convertStageToResource(stageId, resourceId, amountToTransfer);
-			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.transferResourceToRegion(materialsProducerId, resourceId, regionId, -1L));
-			assertEquals(ResourceError.NEGATIVE_RESOURCE_AMOUNT, contractException.getErrorType());
-		}).getPlugins());
+		contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = MaterialsTestPluginFactory.factory(0, 0, 0, 2214714534579989103L, (c) -> {
+				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+				MaterialsProducerId materialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_2;
+				ResourceId resourceId = TestResourceId.RESOURCE_3;
+				RegionId regionId = TestRegionId.REGION_4;
+				long amountToTransfer = 45L;
+				StageId stageId = materialsDataManager.addStage(materialsProducerId);
+				materialsDataManager.convertStageToResource(stageId, resourceId, amountToTransfer);
+				materialsDataManager.transferResourceToRegion(materialsProducerId, resourceId, regionId, -1L);			
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(ResourceError.NEGATIVE_RESOURCE_AMOUNT, contractException.getErrorType());
+		
+		
 
 		/*
 		 * precondition test: if the materials amount exceeds the resource level
 		 * of the materials producer
 		 */
-		TestSimulation.executeSimulation(MaterialsTestPluginFactory.factory(0, 0, 0, 8260344965557977221L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
-			MaterialsProducerId materialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_2;
-			ResourceId resourceId = TestResourceId.RESOURCE_3;
-			RegionId regionId = TestRegionId.REGION_4;
-			long amountToTransfer = 45L;
-			StageId stageId = materialsDataManager.addStage(materialsProducerId);
-			materialsDataManager.convertStageToResource(stageId, resourceId, amountToTransfer);
-			ContractException contractException = assertThrows(ContractException.class,
-					() -> materialsDataManager.transferResourceToRegion(materialsProducerId, resourceId, regionId, amountToTransfer * 2));
-			assertEquals(ResourceError.INSUFFICIENT_RESOURCES_AVAILABLE, contractException.getErrorType());
-		}).getPlugins());
+		contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = MaterialsTestPluginFactory.factory(0, 0, 0, 8260344965557977221L, (c) -> {
+				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+				MaterialsProducerId materialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_2;
+				ResourceId resourceId = TestResourceId.RESOURCE_3;
+				RegionId regionId = TestRegionId.REGION_4;
+				long amountToTransfer = 45L;
+				StageId stageId = materialsDataManager.addStage(materialsProducerId);
+				materialsDataManager.convertStageToResource(stageId, resourceId, amountToTransfer);
+				materialsDataManager.transferResourceToRegion(materialsProducerId, resourceId, regionId, amountToTransfer * 2);			
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(ResourceError.INSUFFICIENT_RESOURCES_AVAILABLE, contractException.getErrorType());
 
 		/*
 		 * precondition test: if the materials amount would cause an overflow of
 		 * the regions resource level
 		 */
-		TestSimulation.executeSimulation(MaterialsTestPluginFactory.factory(0, 0, 0, 4416313459810970424L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
-			MaterialsProducerId materialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_2;
-			ResourceId resourceId = TestResourceId.RESOURCE_3;
-			RegionId regionId = TestRegionId.REGION_4;
-			long amountToTransfer = 45L;
-			StageId stageId = materialsDataManager.addStage(materialsProducerId);
-			materialsDataManager.convertStageToResource(stageId, resourceId, amountToTransfer);
-			materialsDataManager.transferResourceToRegion(materialsProducerId, resourceId, regionId, amountToTransfer);
+		contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = MaterialsTestPluginFactory.factory(0, 0, 0, 4416313459810970424L, (c) -> {
+				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+				MaterialsProducerId materialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_2;
+				ResourceId resourceId = TestResourceId.RESOURCE_3;
+				RegionId regionId = TestRegionId.REGION_4;
+				long amountToTransfer = 45L;
+				StageId stageId = materialsDataManager.addStage(materialsProducerId);
+				materialsDataManager.convertStageToResource(stageId, resourceId, amountToTransfer);
+				materialsDataManager.transferResourceToRegion(materialsProducerId, resourceId, regionId, amountToTransfer);
 
-			/*
-			 * There is currently some of the resource present, so we will add
-			 * half of the max value of long two times in a row. That will cause
-			 * the region to overflow while keeping the producer from doing so
-			 * 
-			 */
-			long hugeAmount = Long.MAX_VALUE / 2;
-			stageId = materialsDataManager.addStage(materialsProducerId);
-			materialsDataManager.convertStageToResource(stageId, resourceId, hugeAmount);
-			materialsDataManager.transferResourceToRegion(materialsProducerId, resourceId, regionId, hugeAmount);
+				/*
+				 * There is currently some of the resource present, so we will add
+				 * half of the max value of long two times in a row. That will cause
+				 * the region to overflow while keeping the producer from doing so
+				 * 
+				 */
+				long hugeAmount = Long.MAX_VALUE / 2;
+				stageId = materialsDataManager.addStage(materialsProducerId);
+				materialsDataManager.convertStageToResource(stageId, resourceId, hugeAmount);
+				materialsDataManager.transferResourceToRegion(materialsProducerId, resourceId, regionId, hugeAmount);
 
-			stageId = materialsDataManager.addStage(materialsProducerId);
-			materialsDataManager.convertStageToResource(stageId, resourceId, hugeAmount);
-			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.transferResourceToRegion(materialsProducerId, resourceId, regionId, hugeAmount));
-			assertEquals(ResourceError.RESOURCE_ARITHMETIC_EXCEPTION, contractException.getErrorType());
-
-		}).getPlugins());
+				stageId = materialsDataManager.addStage(materialsProducerId);
+				materialsDataManager.convertStageToResource(stageId, resourceId, hugeAmount);
+				materialsDataManager.transferResourceToRegion(materialsProducerId, resourceId, regionId, hugeAmount);			
+				
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(ResourceError.RESOURCE_ARITHMETIC_EXCEPTION, contractException.getErrorType());
 
 	}
 
