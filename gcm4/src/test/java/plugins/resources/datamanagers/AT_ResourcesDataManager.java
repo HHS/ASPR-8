@@ -42,6 +42,7 @@ import plugins.resources.support.ResourceInitialization;
 import plugins.resources.support.ResourcePropertyId;
 import plugins.resources.support.ResourcePropertyInitialization;
 import plugins.resources.testsupport.ResourcesTestPluginFactory;
+import plugins.resources.testsupport.ResourcesTestPluginFactory.Factory;
 import plugins.resources.testsupport.TestResourceId;
 import plugins.resources.testsupport.TestResourcePropertyId;
 import plugins.stochastics.StochasticsDataManager;
@@ -90,7 +91,8 @@ public final class AT_ResourcesDataManager {
 
 		// Have the actor show that the person does not exist and there are no
 		// resources for that person. This is done at the same time as the
-		// person removal, but due to ordering will executeSimulation after the person is
+		// person removal, but due to ordering will executeSimulation after the
+		// person is
 		// fully eliminated
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
 			PersonId personId = mutablePersonId.getValue();
@@ -164,11 +166,12 @@ public final class AT_ResourcesDataManager {
 	@Test
 	@UnitTestMethod(target = ResourcesDataManager.class, name = "expandCapacity", args = { int.class })
 	public void testExpandCapacity() {
-		TestSimulation.executeSimulation(ResourcesTestPluginFactory.factory(100, 9107703044214388523L, (c) -> {
+		Factory factory = ResourcesTestPluginFactory.factory(100, 9107703044214388523L, (c) -> {
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> resourcesDataManager.expandCapacity(-1));
 			assertEquals(PersonError.NEGATIVE_GROWTH_PROJECTION, contractException.getErrorType());
-		}).getPlugins());
+		});
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
 	@Test
@@ -1081,19 +1084,19 @@ public final class AT_ResourcesDataManager {
 		}));
 
 		// have the observer verify the observations were correct
-		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(3, (c) -> {			
-			assertEquals(2,expectedObservations.size());
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(3, (c) -> {
+			assertEquals(2, expectedObservations.size());
 			assertEquals(expectedObservations, actualObservations);
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		TestSimulation.executeSimulation(ResourcesTestPluginFactory.factory(5, 4535415202634885293L, testPluginData).getPlugins());
+		Factory factory = ResourcesTestPluginFactory.factory(5, 4535415202634885293L, testPluginData);
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 		/* precondition test: if the resource id is unknown */
-		TestSimulation.executeSimulation(ResourcesTestPluginFactory.factory(5, 6361316703720629700L, (c) -> {
-			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
-
-			ContractException contractException = assertThrows(ContractException.class, () -> {
+		ContractException contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = ResourcesTestPluginFactory.factory(5, 6361316703720629700L, (c) -> {
+				ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 				PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(1).build();
 				ResourcePropertyInitialization resourcePropertyInitialization = //
 						ResourcePropertyInitialization	.builder()//
@@ -1104,13 +1107,14 @@ public final class AT_ResourcesDataManager {
 				resourcesDataManager.defineResourceProperty(resourcePropertyInitialization);
 			});
 
-			assertEquals(ResourceError.UNKNOWN_RESOURCE_ID, contractException.getErrorType());
-		}).getPlugins());
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(ResourceError.UNKNOWN_RESOURCE_ID, contractException.getErrorType());
 
 		/* precondition test: if the resource property is already defined */
-		TestSimulation.executeSimulation(ResourcesTestPluginFactory.factory(5, 3114198987897928160L, (c) -> {
-			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
-			ContractException contractException = assertThrows(ContractException.class, () -> {
+		contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = ResourcesTestPluginFactory.factory(5, 3114198987897928160L, (c) -> {
+				ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 				PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(1).build();
 				ResourcePropertyInitialization resourcePropertyInitialization = //
 						ResourcePropertyInitialization	.builder()//
@@ -1119,10 +1123,10 @@ public final class AT_ResourcesDataManager {
 														.setResourcePropertyId(TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE)//
 														.build();
 				resourcesDataManager.defineResourceProperty(resourcePropertyInitialization);
-
 			});
-			assertEquals(PropertyError.DUPLICATE_PROPERTY_DEFINITION, contractException.getErrorType());
-		}).getPlugins());
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(PropertyError.DUPLICATE_PROPERTY_DEFINITION, contractException.getErrorType());
 
 	}
 
@@ -1170,28 +1174,38 @@ public final class AT_ResourcesDataManager {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		TestSimulation.executeSimulation(ResourcesTestPluginFactory.factory(5, 3128266603988900429L, testPluginData).getPlugins());
+		Factory factory = ResourcesTestPluginFactory.factory(5, 3128266603988900429L, testPluginData);
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 		// precondition test: if the resource id is null
-		TestSimulation.executeSimulation(ResourcesTestPluginFactory.factory(5, 3016555021220987436L, (c) -> {
-			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
-			ContractException contractException = assertThrows(ContractException.class, () -> resourcesDataManager.addResourceId(null, TimeTrackingPolicy.DO_NOT_TRACK_TIME));
-			assertEquals(ResourceError.NULL_RESOURCE_ID, contractException.getErrorType());
-		}).getPlugins());
+		ContractException contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = ResourcesTestPluginFactory.factory(5, 3016555021220987436L, (c) -> {
+				ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+				resourcesDataManager.addResourceId(null, TimeTrackingPolicy.DO_NOT_TRACK_TIME);
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(ResourceError.NULL_RESOURCE_ID, contractException.getErrorType());
 
 		// precondition test: if the resource type is already present
-		TestSimulation.executeSimulation(ResourcesTestPluginFactory.factory(5, 9097839209339012193L, (c) -> {
-			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
-			ContractException contractException = assertThrows(ContractException.class, () -> resourcesDataManager.addResourceId(TestResourceId.RESOURCE_1, TimeTrackingPolicy.DO_NOT_TRACK_TIME));
-			assertEquals(ResourceError.DUPLICATE_RESOURCE_ID, contractException.getErrorType());
-		}).getPlugins());
+		contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = ResourcesTestPluginFactory.factory(5, 9097839209339012193L, (c) -> {
+				ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+				resourcesDataManager.addResourceId(TestResourceId.RESOURCE_1, TimeTrackingPolicy.DO_NOT_TRACK_TIME);
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(ResourceError.DUPLICATE_RESOURCE_ID, contractException.getErrorType());
 
 		// precondition test: if the time tracking policy is null
-		TestSimulation.executeSimulation(ResourcesTestPluginFactory.factory(5, 5786650172226277505L, (c) -> {
-			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
-			ContractException contractException = assertThrows(ContractException.class, () -> resourcesDataManager.addResourceId(TestResourceId.getUnknownResourceId(), null));
-			assertEquals(PropertyError.NULL_TIME_TRACKING_POLICY, contractException.getErrorType());
-		}).getPlugins());
+		contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = ResourcesTestPluginFactory.factory(5, 5786650172226277505L, (c) -> {
+				ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+				resourcesDataManager.addResourceId(TestResourceId.getUnknownResourceId(), null);
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(PropertyError.NULL_TIME_TRACKING_POLICY, contractException.getErrorType());
 
 	}
 
@@ -2391,63 +2405,82 @@ public final class AT_ResourcesDataManager {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		TestSimulation.executeSimulation(ResourcesTestPluginFactory.factory(0, 2273638431976256278L, testPluginData).getPlugins());
+		Factory factory = ResourcesTestPluginFactory.factory(0, 2273638431976256278L, testPluginData);
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 		/* precondition test: if the region id is null */
-		TestSimulation.executeSimulation(ResourcesTestPluginFactory.factory(0, 6097938300290796293L, (c) -> {
-			ResourceId resourceId = TestResourceId.RESOURCE_1;
-			long amount = 10;
-			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
-			ContractException contractException = assertThrows(ContractException.class, () -> resourcesDataManager.addResourceToRegion(resourceId, null, amount));
-			assertEquals(RegionError.NULL_REGION_ID, contractException.getErrorType());
-		}).getPlugins());
+		ContractException contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = ResourcesTestPluginFactory.factory(0, 6097938300290796293L, (c) -> {
+				ResourceId resourceId = TestResourceId.RESOURCE_1;
+				long amount = 10;
+				ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+				resourcesDataManager.addResourceToRegion(resourceId, null, amount);
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(RegionError.NULL_REGION_ID, contractException.getErrorType());
 
 		/* precondition test: if the region id is unknown */
-		TestSimulation.executeSimulation(ResourcesTestPluginFactory.factory(0, 1284607529543124944L, (c) -> {
-			ResourceId resourceId = TestResourceId.RESOURCE_1;
-			long amount = 10;
-			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
-			ContractException contractException = assertThrows(ContractException.class, () -> resourcesDataManager.addResourceToRegion(resourceId, TestRegionId.getUnknownRegionId(), amount));
-			assertEquals(RegionError.UNKNOWN_REGION_ID, contractException.getErrorType());
-		}).getPlugins());
+		contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = ResourcesTestPluginFactory.factory(0, 1284607529543124944L, (c) -> {
+				ResourceId resourceId = TestResourceId.RESOURCE_1;
+				long amount = 10;
+				ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+				resourcesDataManager.addResourceToRegion(resourceId, TestRegionId.getUnknownRegionId(), amount);
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(RegionError.UNKNOWN_REGION_ID, contractException.getErrorType());
 
 		/* precondition test: if the resource id is null */
-		TestSimulation.executeSimulation(ResourcesTestPluginFactory.factory(0, 5929063621703486118L, (c) -> {
-			RegionId regionId = TestRegionId.REGION_1;
-			long amount = 10;
-			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
-			ContractException contractException = assertThrows(ContractException.class, () -> resourcesDataManager.addResourceToRegion(null, regionId, amount));
-			assertEquals(ResourceError.NULL_RESOURCE_ID, contractException.getErrorType());
-		}).getPlugins());
+		contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = ResourcesTestPluginFactory.factory(0, 5929063621703486118L, (c) -> {
+				RegionId regionId = TestRegionId.REGION_1;
+				long amount = 10;
+				ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+				resourcesDataManager.addResourceToRegion(null, regionId, amount);
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(ResourceError.NULL_RESOURCE_ID, contractException.getErrorType());
 
 		/* precondition test: if the resource id is unknown */
-		TestSimulation.executeSimulation(ResourcesTestPluginFactory.factory(0, 1240045272882068003L, (c) -> {
-			RegionId regionId = TestRegionId.REGION_1;
-			long amount = 10;
-			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
-			ContractException contractException = assertThrows(ContractException.class, () -> resourcesDataManager.addResourceToRegion(TestResourceId.getUnknownResourceId(), regionId, amount));
-			assertEquals(ResourceError.UNKNOWN_RESOURCE_ID, contractException.getErrorType());
-		}).getPlugins());
+		contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = ResourcesTestPluginFactory.factory(0, 1240045272882068003L, (c) -> {
+				RegionId regionId = TestRegionId.REGION_1;
+				long amount = 10;
+				ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+				resourcesDataManager.addResourceToRegion(TestResourceId.getUnknownResourceId(), regionId, amount);
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(ResourceError.UNKNOWN_RESOURCE_ID, contractException.getErrorType());
 
 		/* precondition test: if the amount is negative */
-		TestSimulation.executeSimulation(ResourcesTestPluginFactory.factory(0, 2192023733930104434L, (c) -> {
-			ResourceId resourceId = TestResourceId.RESOURCE_1;
-			RegionId regionId = TestRegionId.REGION_1;
-			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
-			ContractException contractException = assertThrows(ContractException.class, () -> resourcesDataManager.addResourceToRegion(resourceId, regionId, -1));
-			assertEquals(ResourceError.NEGATIVE_RESOURCE_AMOUNT, contractException.getErrorType());
-		}).getPlugins());
+		contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = ResourcesTestPluginFactory.factory(0, 2192023733930104434L, (c) -> {
+				ResourceId resourceId = TestResourceId.RESOURCE_1;
+				RegionId regionId = TestRegionId.REGION_1;
+				ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+				resourcesDataManager.addResourceToRegion(resourceId, regionId, -1);
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(ResourceError.NEGATIVE_RESOURCE_AMOUNT, contractException.getErrorType());
 
 		/* precondition test: if the addition results in an overflow */
-		TestSimulation.executeSimulation(ResourcesTestPluginFactory.factory(0, 4518775448744653729L, (c) -> {
-			ResourceId resourceId = TestResourceId.RESOURCE_1;
-			RegionId regionId = TestRegionId.REGION_1;
-			long amount = 10;
-			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
-			resourcesDataManager.addResourceToRegion(resourceId, regionId, amount);
-			ContractException contractException = assertThrows(ContractException.class, () -> resourcesDataManager.addResourceToRegion(resourceId, regionId, Long.MAX_VALUE));
-			assertEquals(ResourceError.RESOURCE_ARITHMETIC_EXCEPTION, contractException.getErrorType());
-		}).getPlugins());
+		contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = ResourcesTestPluginFactory.factory(0, 4518775448744653729L, (c) -> {
+				ResourceId resourceId = TestResourceId.RESOURCE_1;
+				RegionId regionId = TestRegionId.REGION_1;
+				long amount = 10;
+				ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+				resourcesDataManager.addResourceToRegion(resourceId, regionId, amount);
+				resourcesDataManager.addResourceToRegion(resourceId, regionId, Long.MAX_VALUE);
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(ResourceError.RESOURCE_ARITHMETIC_EXCEPTION, contractException.getErrorType());
 
 	}
 
@@ -2819,21 +2852,28 @@ public final class AT_ResourcesDataManager {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		TestSimulation.executeSimulation(ResourcesTestPluginFactory.factory(30, 4043641365602447479L, testPluginData).getPlugins());
+		Factory factory = ResourcesTestPluginFactory.factory(30, 4043641365602447479L, testPluginData);
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 		/* precondition test: if the resource id is null */
-		TestSimulation.executeSimulation(ResourcesTestPluginFactory.factory(30, 5107085853667531414L, (c) -> {
-			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
-			ContractException contractException = assertThrows(ContractException.class, () -> resourcesDataManager.getEventFilterForPersonResourceUpdateEvent(null));
-			assertEquals(ResourceError.NULL_RESOURCE_ID, contractException.getErrorType());
-		}).getPlugins());
+		ContractException contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = ResourcesTestPluginFactory.factory(30, 5107085853667531414L, (c) -> {
+				ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+				resourcesDataManager.getEventFilterForPersonResourceUpdateEvent(null);
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(ResourceError.NULL_RESOURCE_ID, contractException.getErrorType());
 
 		/* precondition test: if the resource id is unknown */
-		TestSimulation.executeSimulation(ResourcesTestPluginFactory.factory(30, 5551635264070855342L, (c) -> {
-			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
-			ContractException contractException = assertThrows(ContractException.class, () -> resourcesDataManager.getEventFilterForPersonResourceUpdateEvent(TestResourceId.getUnknownResourceId()));
-			assertEquals(ResourceError.UNKNOWN_RESOURCE_ID, contractException.getErrorType());
-		}).getPlugins());
+		contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = ResourcesTestPluginFactory.factory(30, 5551635264070855342L, (c) -> {
+				ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+				resourcesDataManager.getEventFilterForPersonResourceUpdateEvent(TestResourceId.getUnknownResourceId());
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(ResourceError.UNKNOWN_RESOURCE_ID, contractException.getErrorType());
 
 	}
 
@@ -2926,39 +2966,50 @@ public final class AT_ResourcesDataManager {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		TestSimulation.executeSimulation(ResourcesTestPluginFactory.factory(30, 3776094770483573425L, testPluginData).getPlugins());
+		Factory factory = ResourcesTestPluginFactory.factory(30, 3776094770483573425L, testPluginData);
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 		/* precondition test: if the resource id is null */
-		TestSimulation.executeSimulation(ResourcesTestPluginFactory.factory(30, 8909938597230752836L, (c) -> {
-			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
-			ContractException contractException = assertThrows(ContractException.class, () -> resourcesDataManager.getEventFilterForPersonResourceUpdateEvent(null, new PersonId(0)));
-			assertEquals(ResourceError.NULL_RESOURCE_ID, contractException.getErrorType());
-		}).getPlugins());
+		ContractException contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = ResourcesTestPluginFactory.factory(30, 8909938597230752836L, (c) -> {
+				ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+				resourcesDataManager.getEventFilterForPersonResourceUpdateEvent(null, new PersonId(0));
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(ResourceError.NULL_RESOURCE_ID, contractException.getErrorType());
 
 		/* precondition test: if the resource id is unknown */
-		TestSimulation.executeSimulation(ResourcesTestPluginFactory.factory(30, 4146350189128134907L, (c) -> {
-			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
-			ContractException contractException = assertThrows(ContractException.class,
-					() -> resourcesDataManager.getEventFilterForPersonResourceUpdateEvent(TestResourceId.getUnknownResourceId(), new PersonId(0)));
-			assertEquals(ResourceError.UNKNOWN_RESOURCE_ID, contractException.getErrorType());
-		}).getPlugins());
+		contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = ResourcesTestPluginFactory.factory(30, 4146350189128134907L, (c) -> {
+				ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+				resourcesDataManager.getEventFilterForPersonResourceUpdateEvent(TestResourceId.getUnknownResourceId(), new PersonId(0));
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(ResourceError.UNKNOWN_RESOURCE_ID, contractException.getErrorType());
 
 		/* precondition test: if the person id is null */
-		TestSimulation.executeSimulation(ResourcesTestPluginFactory.factory(30, 8356399638914398643L, (c) -> {
-			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
-			PersonId nullPersonId = null;
-			ContractException contractException = assertThrows(ContractException.class, () -> resourcesDataManager.getEventFilterForPersonResourceUpdateEvent(TestResourceId.RESOURCE_1, nullPersonId));
-			assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
-		}).getPlugins());
+		contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = ResourcesTestPluginFactory.factory(30, 8356399638914398643L, (c) -> {
+				ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+				PersonId nullPersonId = null;
+				resourcesDataManager.getEventFilterForPersonResourceUpdateEvent(TestResourceId.RESOURCE_1, nullPersonId);
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
 
 		/* precondition test: if the person id is unknown */
-		TestSimulation.executeSimulation(ResourcesTestPluginFactory.factory(30, 3890936504108305392L, (c) -> {
-			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
-			PersonId unknownPersonId = new PersonId(100000);
-			ContractException contractException = assertThrows(ContractException.class,
-					() -> resourcesDataManager.getEventFilterForPersonResourceUpdateEvent(TestResourceId.RESOURCE_1, unknownPersonId));
-			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
-		}).getPlugins());
+		contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = ResourcesTestPluginFactory.factory(30, 3890936504108305392L, (c) -> {
+				ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+				PersonId unknownPersonId = new PersonId(100000);
+				resourcesDataManager.getEventFilterForPersonResourceUpdateEvent(TestResourceId.RESOURCE_1, unknownPersonId);
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
 
 	}
 
@@ -3050,39 +3101,50 @@ public final class AT_ResourcesDataManager {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		TestSimulation.executeSimulation(ResourcesTestPluginFactory.factory(30, 1727074366899837142L, testPluginData).getPlugins());
+		Factory factory = ResourcesTestPluginFactory.factory(30, 1727074366899837142L, testPluginData);
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 		/* precondition test: if the resource id is null */
-		TestSimulation.executeSimulation(ResourcesTestPluginFactory.factory(30, 7693743966390586978L, (c) -> {
-			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
-			ContractException contractException = assertThrows(ContractException.class, () -> resourcesDataManager.getEventFilterForPersonResourceUpdateEvent(null, new PersonId(0)));
-			assertEquals(ResourceError.NULL_RESOURCE_ID, contractException.getErrorType());
-		}).getPlugins());
+		ContractException contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = ResourcesTestPluginFactory.factory(30, 7693743966390586978L, (c) -> {
+				ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+				resourcesDataManager.getEventFilterForPersonResourceUpdateEvent(null, new PersonId(0));
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(ResourceError.NULL_RESOURCE_ID, contractException.getErrorType());
 
 		/* precondition test: if the resource id is unknown */
-		TestSimulation.executeSimulation(ResourcesTestPluginFactory.factory(30, 693173450564289263L, (c) -> {
-			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
-			ContractException contractException = assertThrows(ContractException.class,
-					() -> resourcesDataManager.getEventFilterForPersonResourceUpdateEvent(TestResourceId.getUnknownResourceId(), new PersonId(0)));
-			assertEquals(ResourceError.UNKNOWN_RESOURCE_ID, contractException.getErrorType());
-		}).getPlugins());
+		contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = ResourcesTestPluginFactory.factory(30, 693173450564289263L, (c) -> {
+				ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+				resourcesDataManager.getEventFilterForPersonResourceUpdateEvent(TestResourceId.getUnknownResourceId(), new PersonId(0));
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(ResourceError.UNKNOWN_RESOURCE_ID, contractException.getErrorType());
 
 		/* precondition test: if the region id is null */
-		TestSimulation.executeSimulation(ResourcesTestPluginFactory.factory(30, 9201364062172125070L, (c) -> {
-			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
-			RegionId nullRegionId = null;
-			ContractException contractException = assertThrows(ContractException.class, () -> resourcesDataManager.getEventFilterForPersonResourceUpdateEvent(TestResourceId.RESOURCE_1, nullRegionId));
-			assertEquals(RegionError.NULL_REGION_ID, contractException.getErrorType());
-		}).getPlugins());
+		contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = ResourcesTestPluginFactory.factory(30, 9201364062172125070L, (c) -> {
+				ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+				RegionId nullRegionId = null;
+				resourcesDataManager.getEventFilterForPersonResourceUpdateEvent(TestResourceId.RESOURCE_1, nullRegionId);
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(RegionError.NULL_REGION_ID, contractException.getErrorType());
 
 		/* precondition test: if the region id is unknown */
-		TestSimulation.executeSimulation(ResourcesTestPluginFactory.factory(30, 5569918148190340272L, (c) -> {
-			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
-			RegionId unknownRegionId = TestRegionId.getUnknownRegionId();
-			ContractException contractException = assertThrows(ContractException.class,
-					() -> resourcesDataManager.getEventFilterForPersonResourceUpdateEvent(TestResourceId.RESOURCE_1, unknownRegionId));
-			assertEquals(RegionError.UNKNOWN_REGION_ID, contractException.getErrorType());
-		}).getPlugins());
+		contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = ResourcesTestPluginFactory.factory(30, 5569918148190340272L, (c) -> {
+				ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+				RegionId unknownRegionId = TestRegionId.getUnknownRegionId();
+				resourcesDataManager.getEventFilterForPersonResourceUpdateEvent(TestResourceId.RESOURCE_1, unknownRegionId);
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(RegionError.UNKNOWN_REGION_ID, contractException.getErrorType());
 
 	}
 
@@ -3159,7 +3221,8 @@ public final class AT_ResourcesDataManager {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		TestSimulation.executeSimulation(ResourcesTestPluginFactory.factory(30, 1345117947886682832L, testPluginData).getPlugins());
+		Factory factory = ResourcesTestPluginFactory.factory(30, 1345117947886682832L, testPluginData);
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 	}
 
@@ -3226,23 +3289,31 @@ public final class AT_ResourcesDataManager {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		TestSimulation.executeSimulation(ResourcesTestPluginFactory.factory(0, 2870952108296201475L, testPluginData).getPlugins());
+		Factory factory = ResourcesTestPluginFactory.factory(0, 2870952108296201475L, testPluginData);
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 		/* precondition test: if the resource id is null */
-		TestSimulation.executeSimulation(ResourcesTestPluginFactory.factory(0, 9101711257710159283L, (c) -> {
-			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
-			ResourceId nullResourceId = null;
-			ContractException contractException = assertThrows(ContractException.class, () -> resourcesDataManager.getEventFilterForRegionResourceUpdateEvent(nullResourceId));
-			assertEquals(ResourceError.NULL_RESOURCE_ID, contractException.getErrorType());
-		}).getPlugins());
+		ContractException contractException = assertThrows(ContractException.class, () ->{
+			Factory factory2 = ResourcesTestPluginFactory.factory(0, 9101711257710159283L, (c) -> {
+				ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+				ResourceId nullResourceId = null;
+				resourcesDataManager.getEventFilterForRegionResourceUpdateEvent(nullResourceId);			
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(ResourceError.NULL_RESOURCE_ID, contractException.getErrorType());
+		
 
 		/* precondition test: if the resource id is unknown */
-		TestSimulation.executeSimulation(ResourcesTestPluginFactory.factory(0, 4216397684435821705L, (c) -> {
-			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
-			ResourceId unknownResourceId = TestResourceId.getUnknownResourceId();
-			ContractException contractException = assertThrows(ContractException.class, () -> resourcesDataManager.getEventFilterForRegionResourceUpdateEvent(unknownResourceId));
-			assertEquals(ResourceError.UNKNOWN_RESOURCE_ID, contractException.getErrorType());
-		}).getPlugins());
+		contractException = assertThrows(ContractException.class, () ->{
+			Factory factory2 = ResourcesTestPluginFactory.factory(0, 4216397684435821705L, (c) -> {
+				ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+				ResourceId unknownResourceId = TestResourceId.getUnknownResourceId();
+				resourcesDataManager.getEventFilterForRegionResourceUpdateEvent(unknownResourceId);			
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(ResourceError.UNKNOWN_RESOURCE_ID, contractException.getErrorType());
 	}
 
 	@Test
@@ -3313,23 +3384,30 @@ public final class AT_ResourcesDataManager {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		TestSimulation.executeSimulation(ResourcesTestPluginFactory.factory(0, 9022862258230350395L, testPluginData).getPlugins());
+		Factory factory = ResourcesTestPluginFactory.factory(0, 9022862258230350395L, testPluginData);
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 		/* precondition test: if the resource id is null */
-		TestSimulation.executeSimulation(ResourcesTestPluginFactory.factory(0, 217976606974469406L, (c) -> {
-			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
-			ResourceId nullResourceId = null;
-			ContractException contractException = assertThrows(ContractException.class, () -> resourcesDataManager.getEventFilterForRegionResourceUpdateEvent(nullResourceId));
-			assertEquals(ResourceError.NULL_RESOURCE_ID, contractException.getErrorType());
-		}).getPlugins());
+		ContractException contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = ResourcesTestPluginFactory.factory(0, 217976606974469406L, (c) -> {
+				ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+				ResourceId nullResourceId = null;
+				resourcesDataManager.getEventFilterForRegionResourceUpdateEvent(nullResourceId);
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(ResourceError.NULL_RESOURCE_ID, contractException.getErrorType());
 
 		/* precondition test: if the resource id is unknown */
-		TestSimulation.executeSimulation(ResourcesTestPluginFactory.factory(0, 8125399461811894989L, (c) -> {
-			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
-			ResourceId unknownResourceId = TestResourceId.getUnknownResourceId();
-			ContractException contractException = assertThrows(ContractException.class, () -> resourcesDataManager.getEventFilterForRegionResourceUpdateEvent(unknownResourceId));
-			assertEquals(ResourceError.UNKNOWN_RESOURCE_ID, contractException.getErrorType());
-		}).getPlugins());
+		contractException = assertThrows(ContractException.class, () -> {
+			Factory factory2 = ResourcesTestPluginFactory.factory(0, 8125399461811894989L, (c) -> {
+				ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+				ResourceId unknownResourceId = TestResourceId.getUnknownResourceId();
+				resourcesDataManager.getEventFilterForRegionResourceUpdateEvent(unknownResourceId);
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(ResourceError.UNKNOWN_RESOURCE_ID, contractException.getErrorType());
 
 	}
 
@@ -3386,8 +3464,8 @@ public final class AT_ResourcesDataManager {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		TestSimulation.executeSimulation(ResourcesTestPluginFactory.factory(0, 4130610902285408287L, testPluginData).getPlugins());
-
+		Factory factory = ResourcesTestPluginFactory.factory(0, 4130610902285408287L, testPluginData);
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
 	@Test
@@ -3460,55 +3538,73 @@ public final class AT_ResourcesDataManager {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		TestSimulation.executeSimulation(ResourcesTestPluginFactory.factory(0, 4039871222190675923L, testPluginData).getPlugins());
+		Factory factory = ResourcesTestPluginFactory.factory(0, 4039871222190675923L, testPluginData);
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 		/* precondition test: if the resource id is null */
-		TestSimulation.executeSimulation(ResourcesTestPluginFactory.factory(0, 7664472869248061620L, (c) -> {
-			ResourceId resourceId = null;
-			ResourcePropertyId resourcePropertyId = TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE;
-			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
-			ContractException contractException = assertThrows(ContractException.class, () -> resourcesDataManager.getEventFilterForResourcePropertyUpdateEvent(resourceId, resourcePropertyId));
-			assertEquals(ResourceError.NULL_RESOURCE_ID, contractException.getErrorType());
-		}).getPlugins());
+		ContractException contractException = assertThrows(ContractException.class, () ->{
+			Factory factory2 = ResourcesTestPluginFactory.factory(0, 7664472869248061620L, (c) -> {
+				ResourceId resourceId = null;
+				ResourcePropertyId resourcePropertyId = TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE;
+				ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+				resourcesDataManager.getEventFilterForResourcePropertyUpdateEvent(resourceId, resourcePropertyId);
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(ResourceError.NULL_RESOURCE_ID, contractException.getErrorType());
 
 		/* precondition test: if the resource id is unknown */
-		TestSimulation.executeSimulation(ResourcesTestPluginFactory.factory(0, 2475328515664171695L, (c) -> {
-			ResourceId resourceId = TestResourceId.getUnknownResourceId();
-			ResourcePropertyId resourcePropertyId = TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE;
-			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
-			ContractException contractException = assertThrows(ContractException.class, () -> resourcesDataManager.getEventFilterForResourcePropertyUpdateEvent(resourceId, resourcePropertyId));
-			assertEquals(ResourceError.UNKNOWN_RESOURCE_ID, contractException.getErrorType());
-		}).getPlugins());
+		contractException = assertThrows(ContractException.class, () ->{
+			Factory factory2 = ResourcesTestPluginFactory.factory(0, 2475328515664171695L, (c) -> {
+				ResourceId resourceId = TestResourceId.getUnknownResourceId();
+				ResourcePropertyId resourcePropertyId = TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE;
+				ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+				resourcesDataManager.getEventFilterForResourcePropertyUpdateEvent(resourceId, resourcePropertyId);			
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(ResourceError.UNKNOWN_RESOURCE_ID, contractException.getErrorType());
 
 		/* precondition test: if the resource property id is null */
-		TestSimulation.executeSimulation(ResourcesTestPluginFactory.factory(0, 7416000716392694948L, (c) -> {
-			ResourceId resourceId = TestResourceId.RESOURCE_1;
-			ResourcePropertyId resourcePropertyId = null;
-			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
-			ContractException contractException = assertThrows(ContractException.class, () -> resourcesDataManager.getEventFilterForResourcePropertyUpdateEvent(resourceId, resourcePropertyId));
-			assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
-		}).getPlugins());
+		contractException = assertThrows(ContractException.class, () ->{
+			Factory factory2 = ResourcesTestPluginFactory.factory(0, 7416000716392694948L, (c) -> {
+				ResourceId resourceId = TestResourceId.RESOURCE_1;
+				ResourcePropertyId resourcePropertyId = null;
+				ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+				resourcesDataManager.getEventFilterForResourcePropertyUpdateEvent(resourceId, resourcePropertyId);			
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
+		
 
 		/* precondition test: if the resource property id is unknown */
-		TestSimulation.executeSimulation(ResourcesTestPluginFactory.factory(0, 697790634696788239L, (c) -> {
-			ResourceId resourceId = TestResourceId.RESOURCE_1;
-			ResourcePropertyId resourcePropertyId = TestResourcePropertyId.getUnknownResourcePropertyId();
-			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
-			ContractException contractException = assertThrows(ContractException.class, () -> resourcesDataManager.getEventFilterForResourcePropertyUpdateEvent(resourceId, resourcePropertyId));
-			assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
-		}).getPlugins());
+		contractException = assertThrows(ContractException.class, () ->{
+			Factory factory2 = ResourcesTestPluginFactory.factory(0, 697790634696788239L, (c) -> {
+				ResourceId resourceId = TestResourceId.RESOURCE_1;
+				ResourcePropertyId resourcePropertyId = TestResourcePropertyId.getUnknownResourcePropertyId();
+				ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+				resourcesDataManager.getEventFilterForResourcePropertyUpdateEvent(resourceId, resourcePropertyId);			
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
+		
 
 		/*
 		 * precondition test: if the resource property id is unknown -- in this
 		 * case it is linked to a different resource
 		 */
-		TestSimulation.executeSimulation(ResourcesTestPluginFactory.factory(0, 107265130769422979L, (c) -> {
-			ResourceId resourceId = TestResourceId.RESOURCE_1;
-			ResourcePropertyId resourcePropertyId = TestResourcePropertyId.ResourceProperty_2_1_BOOLEAN_MUTABLE;
-			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
-			ContractException contractException = assertThrows(ContractException.class, () -> resourcesDataManager.getEventFilterForResourcePropertyUpdateEvent(resourceId, resourcePropertyId));
-			assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
-		}).getPlugins());
+		contractException = assertThrows(ContractException.class, () ->{
+			Factory factory2 = ResourcesTestPluginFactory.factory(0, 107265130769422979L, (c) -> {
+				ResourceId resourceId = TestResourceId.RESOURCE_1;
+				ResourcePropertyId resourcePropertyId = TestResourcePropertyId.ResourceProperty_2_1_BOOLEAN_MUTABLE;
+				ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+				resourcesDataManager.getEventFilterForResourcePropertyUpdateEvent(resourceId, resourcePropertyId);			
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
 
 	}
 
@@ -3567,7 +3663,8 @@ public final class AT_ResourcesDataManager {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		TestSimulation.executeSimulation(ResourcesTestPluginFactory.factory(0, 4428711217570070234L, testPluginData).getPlugins());
+		Factory factory = ResourcesTestPluginFactory.factory(0, 4428711217570070234L, testPluginData);
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 	}
 
@@ -3614,7 +3711,8 @@ public final class AT_ResourcesDataManager {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		TestSimulation.executeSimulation(ResourcesTestPluginFactory.factory(5, 6169797168816977272L, testPluginData).getPlugins());
+		Factory factory = ResourcesTestPluginFactory.factory(5, 6169797168816977272L, testPluginData);
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
 	@Test
@@ -3671,12 +3769,13 @@ public final class AT_ResourcesDataManager {
 
 		// have the observer verify the observations were correct
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(3, (c) -> {
-			assertEquals(2,expectedObservations.size());
+			assertEquals(2, expectedObservations.size());
 			assertEquals(expectedObservations, actualObservations);
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		TestSimulation.executeSimulation(ResourcesTestPluginFactory.factory(5, 1942435631952524244L, testPluginData).getPlugins());
+		Factory factory = ResourcesTestPluginFactory.factory(5, 1942435631952524244L, testPluginData);
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 	}
 }

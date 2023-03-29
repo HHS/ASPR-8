@@ -26,6 +26,7 @@ import nucleus.testsupport.testplugin.TestSimulation;
 import plugins.partitions.PartitionsPlugin;
 import plugins.partitions.PartitionsPluginId;
 import plugins.partitions.support.PartitionError;
+import plugins.partitions.testsupport.PartitionsTestPluginFactory.Factory;
 import plugins.partitions.testsupport.attributes.AttributesPluginData;
 import plugins.partitions.testsupport.attributes.AttributesPluginId;
 import plugins.partitions.testsupport.attributes.support.AttributeError;
@@ -51,8 +52,8 @@ public class AT_PartitionsTestPluginFactory {
 			Consumer.class })
 	public void testFtestFactory_Consumeractory1() {
 		MutableBoolean executed = new MutableBoolean();
-		TestSimulation.executeSimulation(PartitionsTestPluginFactory
-				.factory(100, 9029198675932589278L, c -> executed.setValue(true)).getPlugins());
+		Factory factory = PartitionsTestPluginFactory.factory(100, 9029198675932589278L, c -> executed.setValue(true));
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 		assertTrue(executed.getValue());
 
 		// precondition: consumer is null
@@ -71,8 +72,10 @@ public class AT_PartitionsTestPluginFactory {
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, c -> executed.setValue(true)));
 		TestPluginData testPluginData = pluginBuilder.build();
 
-		TestSimulation.executeSimulation(
-				PartitionsTestPluginFactory.factory(100, 2990359774692004249L, testPluginData).getPlugins());
+		
+		Factory factory = PartitionsTestPluginFactory.factory(100, 2990359774692004249L, testPluginData);
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
+		
 		assertTrue(executed.getValue());
 
 		// precondition: testPluginData is null
