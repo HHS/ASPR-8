@@ -15,7 +15,7 @@ public class PersonPropertiesTranslator {
     private PersonPropertiesTranslator() {
     }
 
-    public static Translator.Builder builder() {
+    public static Translator.Builder builder(boolean withReport) {
         return Translator.builder()
                 .setTranslatorId(PersonPropertiesTranslatorId.TRANSLATOR_ID)
                 .addDependency(PropertiesTranslatorId.TRANSLATOR_ID)
@@ -23,11 +23,19 @@ public class PersonPropertiesTranslator {
                 .setInitializer((translatorContext) -> {
                     translatorContext.addTranslatorSpec(new PersonPropertyIdTranslatorSpec());
                     translatorContext.addTranslatorSpec(new PersonPropertiesPluginDataTranslatorSpec());
-                    translatorContext.addTranslatorSpec(new PersonPropertyReportPluginDataTranslatorSpec());
-                    translatorContext.addTranslatorSpec(new PersonPropertyInteractionReportPluginDataTranslatorSpec());
                     translatorContext.addTranslatorSpec(new TestPersonPropertyIdTranslatorSpec());
+
+                    if (withReport) {
+                        translatorContext.addTranslatorSpec(new PersonPropertyReportPluginDataTranslatorSpec());
+                        translatorContext
+                                .addTranslatorSpec(new PersonPropertyInteractionReportPluginDataTranslatorSpec());
+                    }
                 });
 
+    }
+
+    public static Translator.Builder builder() {
+        return builder(false);
     }
 
     public static Translator getTranslatorRW(String inputFileName, String outputFileName) {

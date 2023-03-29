@@ -4,7 +4,7 @@
       "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.SimpleReportLabelInput",
       "value": {
         "@type": "type.googleapis.com/google.protobuf.StringValue",
-        "value": "report label"
+        "value": "interaction report label"
       }
     }
   },
@@ -19,19 +19,13 @@
     "id": {
       "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
       "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestPersonPropertyIdInput",
-      "value": "PERSON_PROPERTY_3_DOUBLE_MUTABLE_NO_TRACK"
-    }
-  }, {
-    "id": {
-      "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
-      "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestPersonPropertyIdInput",
-      "value": "PERSON_PROPERTY_4_BOOLEAN_MUTABLE_TRACK"
-    }
-  }, {
-    "id": {
-      "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
-      "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestPersonPropertyIdInput",
       "value": "PERSON_PROPERTY_5_INTEGER_MUTABLE_TRACK"
+    }
+  }, {
+    "id": {
+      "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+      "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestPersonPropertyIdInput",
+      "value": "PERSON_PROPERTY_6_DOUBLE_MUTABLE_TRACK"
     }
   }, {
     "id": {
