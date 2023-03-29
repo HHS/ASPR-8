@@ -9,7 +9,7 @@ public class Plan2Test {
 											.setArrivalId(52345234534L)//
 											.setPlanData(456)//
 											.setTime(13.67)//
-											.setCallbackConsumer((i) -> {
+											.setCallbackConsumer((c) -> {
 												System.out.println("okay");
 											})//
 											.build();//
