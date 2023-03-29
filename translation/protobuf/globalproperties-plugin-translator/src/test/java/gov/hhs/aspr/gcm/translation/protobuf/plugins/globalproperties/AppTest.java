@@ -47,7 +47,6 @@ public class AppTest {
                         GlobalPropertiesTranslator.getTranslatorRW(inputFilePath.resolve(inputFileName).toString(),
                                 outputFilePath.resolve(outputFileName).toString()))
                 .addTranslator(PropertiesTranslator.getTranslator())
-                .addTranslator(ReportsTranslator.getTranslator())
                 .build();
 
         List<PluginData> pluginDatas = translatorController.readInput().getPluginDatas();
@@ -88,7 +87,7 @@ public class AppTest {
         String outputFileName = "propertyReportOutput.json";
 
         TranslatorController translatorController = TranslatorController.builder()
-                .addTranslator(GlobalPropertiesTranslator.builder()
+                .addTranslator(GlobalPropertiesTranslator.builder(true)
                         .addInputFile(inputFilePath.resolve(inputFileName).toString(),
                                 GlobalPropertyReportPluginDataInput.getDefaultInstance())
                         .addOutputFile(outputFilePath.resolve(outputFileName).toString(),

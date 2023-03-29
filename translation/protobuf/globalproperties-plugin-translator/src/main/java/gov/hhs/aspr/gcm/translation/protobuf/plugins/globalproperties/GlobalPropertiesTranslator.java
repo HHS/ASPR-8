@@ -15,17 +15,28 @@ public class GlobalPropertiesTranslator {
     private GlobalPropertiesTranslator() {
     }
 
-    public static Translator.Builder builder() {
-        return Translator.builder()
+    public static Translator.Builder builder(boolean withReport) {
+        Translator.Builder builder = Translator.builder()
                 .setTranslatorId(GlobalPropertiesTranslatorId.TRANSLATOR_ID)
                 .addDependency(PropertiesTranslatorId.TRANSLATOR_ID)
-                .addDependency(ReportsTranslatorId.TRANSLATOR_ID)
+
                 .setInitializer((translatorContext) -> {
                     translatorContext.addTranslatorSpec(new GlobalPropertiesPluginDataTranslatorSpec());
                     translatorContext.addTranslatorSpec(new GlobalPropertyIdTranslatorSpec());
                     translatorContext.addTranslatorSpec(new TestGlobalPropertyIdTranslatorSpec());
-                    translatorContext.addTranslatorSpec(new GlobalPropertyReportPluginDataTranslatorSpec());
+                    if (withReport) {
+                        translatorContext.addTranslatorSpec(new GlobalPropertyReportPluginDataTranslatorSpec());
+                    }
                 });
+
+        if (withReport) {
+            builder.addDependency(ReportsTranslatorId.TRANSLATOR_ID);
+        }
+        return builder;
+    }
+
+    public static Translator.Builder builder() {
+        return builder(false);
     }
 
     public static Translator getTranslatorRW(String inputFileName, String outputFileName) {
