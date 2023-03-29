@@ -457,43 +457,6 @@ public class AT_GroupPopulationReport {
 
 		// Test without producing simulation
 
-		// add the action plugin
-		pluginBuilder = TestPluginData.builder();
-
-		// have the agent add a new group of type 1 with three people
-		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
-			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-			GroupId groupId = groupsDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_1);
-			assertEquals(3, groupId.getValue());
-			groupsDataManager.addPersonToGroup(new PersonId(4), groupId);
-			groupsDataManager.addPersonToGroup(new PersonId(5), groupId);
-			groupsDataManager.addPersonToGroup(new PersonId(6), groupId);
-		}));
-
-		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
-			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-			groupsDataManager.removeGroup(new GroupId(2));
-		}));
-
-		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(2, (c) -> {
-			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-			groupsDataManager.addPersonToGroup(new PersonId(7), new GroupId(3));
-			groupsDataManager.addPersonToGroup(new PersonId(8), new GroupId(3));
-			groupsDataManager.addPersonToGroup(new PersonId(9), new GroupId(3));
-		}));
-
-		groupPopulationReportPluginData = GroupPopulationReportPluginData
-				.builder()
-				.setReportLabel(REPORT_LABEL)
-				.setReportPeriod(ReportPeriod.HOURLY)
-				.build();
-
-		testPluginData = pluginBuilder.build();
-
-		factory = GroupsTestPluginFactory	.factory(10, 0, 3, 4023600052052959521L, testPluginData)//
-				.setGroupsPluginData(getGroupsPluginData())//
-				.setGroupPopulationReportPluginData(groupPopulationReportPluginData);
-
 		testOutputConsumer = TestSimulation	.builder()//
 				.addPlugins(factory.getPlugins())//
 				.setProduceSimulationStateOnHalt(false)//
