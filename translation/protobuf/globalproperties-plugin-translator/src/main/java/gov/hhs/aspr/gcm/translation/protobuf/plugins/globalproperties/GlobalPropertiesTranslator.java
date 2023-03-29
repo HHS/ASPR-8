@@ -3,8 +3,10 @@ package gov.hhs.aspr.gcm.translation.protobuf.plugins.globalproperties;
 import gov.hhs.aspr.gcm.translation.protobuf.core.Translator;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.globalproperties.translatorSpecs.GlobalPropertiesPluginDataTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.globalproperties.translatorSpecs.GlobalPropertyIdTranslatorSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.globalproperties.translatorSpecs.GlobalPropertyReportPluginDataTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.globalproperties.translatorSpecs.TestGlobalPropertyIdTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.PropertiesTranslatorId;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.ReportsTranslatorId;
 import plugins.globalproperties.GlobalPropertiesPluginData;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.globalproperties.input.GlobalPropertiesPluginDataInput;
 
@@ -17,10 +19,12 @@ public class GlobalPropertiesTranslator {
         return Translator.builder()
                 .setTranslatorId(GlobalPropertiesTranslatorId.TRANSLATOR_ID)
                 .addDependency(PropertiesTranslatorId.TRANSLATOR_ID)
+                .addDependency(ReportsTranslatorId.TRANSLATOR_ID)
                 .setInitializer((translatorContext) -> {
                     translatorContext.addTranslatorSpec(new GlobalPropertiesPluginDataTranslatorSpec());
                     translatorContext.addTranslatorSpec(new GlobalPropertyIdTranslatorSpec());
                     translatorContext.addTranslatorSpec(new TestGlobalPropertyIdTranslatorSpec());
+                    translatorContext.addTranslatorSpec(new GlobalPropertyReportPluginDataTranslatorSpec());
                 });
     }
 
