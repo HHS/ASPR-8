@@ -86,7 +86,7 @@
     </dependencies>
 
     <modules>
-        <module>proto</module>
+        <module>proto-definitions</module>
         <module>core</module>
         <module>nucleus-translator</module>
         <module>properties-plugin-translator</module>
