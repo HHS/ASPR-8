@@ -136,6 +136,19 @@ public class Simulation {
 		}
 
 		/**
+		 * Sets the halt time for the simulation. Defaults to -1, which is
+		 * equivalent to not halting. If the simulation has been instructed to
+		 * produce its state at halt, then the halt time must be set to a
+		 * positive value. Setting this to a non-negative value that is less
+		 * than the simulation time used to start the simulation will result in
+		 * an exception.
+		 */
+		public Builder setSimulationHaltTime(double simulationHaltTime) {
+			data.simulationHaltTime = simulationHaltTime;
+			return this;
+		}
+
+		/**
 		 * Set the simulation time. Defaults to the current date and a start
 		 * time of zero.
 		 * 
@@ -153,8 +166,7 @@ public class Simulation {
 		}
 
 		/**
-		 * Adds a plugin to this builder for inclusion in the
-		 * simulation
+		 * Adds a plugin to this builder for inclusion in the simulation
 		 * 
 		 * @throws ContractException
 		 *             <li>{@link NucleusError#NULL_PLUGIN} if the plugin is
@@ -170,12 +182,34 @@ public class Simulation {
 			return this;
 		}
 
+		private void validate() {
+			if (data.produceSimulationStateOnHalt) {
+				if (data.simulationHaltTime < 0) {
+					throw new ContractException(NucleusError.MISSING_SIM_HALT_TIME);
+				}
+			}
+			if (data.simulationHaltTime >= 0) {
+				if (data.simulationHaltTime < data.simulationTime.getStartTime()) {
+					throw new ContractException(NucleusError.SIM_HALT_TIME_TOO_EARLY);
+				}
+			}
+		}
+
 		/**
 		 * Returns an Engine instance that is initialized with the plugins and
 		 * output consumer collected by this builder.
+		 * 
+		 * @throws ContractException
+		 *             <li>{@linkplain NucleusError#SIM_HALT_TIME_TOO_EARLY} If
+		 *             the simulation halt time is non-negative and less than
+		 *             the start time of the simulation</li>
+		 *             <li>{@linkplain NucleusError#MISSING_SIM_HALT_TIME} If
+		 *             simulation state is being recorded and the simulation
+		 *             halt time is not set.</li>
 		 */
 		public Simulation build() {
 			try {
+				validate();
 				return new Simulation(data);
 			} finally {
 				data = new Data();
@@ -193,6 +227,7 @@ public class Simulation {
 	}
 
 	private static class Data {
+		private double simulationHaltTime = -1;
 		private boolean produceSimulationStateOnHalt;
 		private List<Plugin> plugins = new ArrayList<>();
 		private Consumer<Object> outputConsumer;
@@ -226,20 +261,18 @@ public class Simulation {
 	// planning
 	private long masterPlanningArrivalId;
 	protected double time;
-	private boolean processEvents = true;
+	double simulationHaltTime;
+	boolean forcedHaltPresent;
+	private boolean eventProcessingAllowed;
 	private int activePlanCount;
 	private final PriorityQueue<PlanRec> planningQueue = new PriorityQueue<>(futureComparable);
 
 	// actors
-	private final Map<ReportId, Consumer<ReportContext>> simulationCloseReportCallbacks = new LinkedHashMap<>();
+	private final Map<ReportId, List<Consumer<ReportContext>>> simulationCloseReportCallbacks = new LinkedHashMap<>();
 
-	private final Map<ActorId, Consumer<ActorContext>> simulationCloseActorCallbacks = new LinkedHashMap<>();
+	private final Map<ActorId, List<Consumer<ActorContext>>> simulationCloseActorCallbacks = new LinkedHashMap<>();
 
-	private final Map<DataManagerId, Consumer<DataManagerContext>> simulationCloseDataManagerCallbacks = new LinkedHashMap<>();
-
-	private final Map<DataManagerId, BiConsumer<DataManagerContext, SimulationStateContext>> simulationStateDataManagerCallbacks = new LinkedHashMap<>();
-	private final Map<ReportId, BiConsumer<ReportContext, SimulationStateContext>> simulationStateReportCallbacks = new LinkedHashMap<>();
-	private final Map<ActorId, BiConsumer<ActorContext, SimulationStateContext>> simulationStateActorCallbacks = new LinkedHashMap<>();
+	private final Map<DataManagerId, List<Consumer<DataManagerContext>>> simulationCloseDataManagerCallbacks = new LinkedHashMap<>();
 
 	private boolean started;
 
@@ -247,8 +280,8 @@ public class Simulation {
 
 	private PluginId focalPluginId;
 
-	private final Map<Class<?>, PluginData> basePluginDataMap = new LinkedHashMap<>();
-	private final Map<Class<?>, PluginData> workingPluginDataMap = new LinkedHashMap<>();
+	private final Map<Class<?>, List<PluginData>> basePluginDataMap = new LinkedHashMap<>();
+	private final Map<Class<?>, List<PluginData>> workingPluginDataMap = new LinkedHashMap<>();
 
 	private final Data data;
 
@@ -275,31 +308,59 @@ public class Simulation {
 	}
 
 	@SuppressWarnings("unchecked")
-
 	protected <T extends PluginData> Optional<T> getPluginData(Class<T> pluginDataClass) {
 		if (pluginDataClass == null) {
 			throw new ContractException(NucleusError.NULL_PLUGIN_DATA_CLASS);
 		}
 
-		PluginData pluginData = workingPluginDataMap.get(pluginDataClass);
-		if (pluginData == null) {
-			List<Class<?>> candidates = new ArrayList<>();
+		PluginData result = null;
+
+		List<PluginData> pluginDatas = workingPluginDataMap.get(pluginDataClass);
+		if (pluginDatas == null) {
+
+			pluginDatas = new ArrayList<>();
+
 			for (Class<?> c : basePluginDataMap.keySet()) {
 				if (pluginDataClass.isAssignableFrom(c)) {
-					candidates.add(c);
+					pluginDatas.addAll(basePluginDataMap.get(c));
 				}
 			}
-			if (candidates.size() > 1) {
-				throw new ContractException(NucleusError.AMBIGUOUS_PLUGIN_DATA_CLASS);
-			}
-			if (candidates.size() == 1) {
-				pluginData = basePluginDataMap.get(candidates.get(0));
-				workingPluginDataMap.put(pluginDataClass, pluginData);
-			}
+			workingPluginDataMap.put(pluginDataClass, pluginDatas);
 		}
-		T result = (T)pluginData;
+		if (pluginDatas.size() > 1) {
+			throw new ContractException(NucleusError.AMBIGUOUS_PLUGIN_DATA_CLASS);
+		}
+		if (pluginDatas.size() == 1) {
+			result = pluginDatas.get(0);
+		}
 
-		return Optional.ofNullable(result);
+		return Optional.ofNullable((T) result);
+	}
+
+	@SuppressWarnings("unchecked")
+	protected <T extends PluginData> List<T> getPluginDatas(Class<T> pluginDataClass) {
+		if (pluginDataClass == null) {
+			throw new ContractException(NucleusError.NULL_PLUGIN_DATA_CLASS);
+		}
+
+		List<PluginData> pluginDatas = workingPluginDataMap.get(pluginDataClass);
+		if (pluginDatas == null) {
+
+			pluginDatas = new ArrayList<>();
+
+			for (Class<?> c : basePluginDataMap.keySet()) {
+				if (pluginDataClass.isAssignableFrom(c)) {
+					pluginDatas.addAll(basePluginDataMap.get(c));
+				}
+			}
+			workingPluginDataMap.put(pluginDataClass, pluginDatas);
+
+		}
+		List<T> result = new ArrayList<>();
+		for (PluginData pluginData : pluginDatas) {
+			result.add((T) pluginData);
+		}
+		return result;
 	}
 
 	protected void addDataManagerForPlugin(DataManager dataManager) {
@@ -619,6 +680,10 @@ public class Simulation {
 		return orderedPlugins;
 	}
 
+	protected boolean produceSimulationStateOnHalt() {
+		return data.produceSimulationStateOnHalt;
+	}
+
 	/**
 	 * Executes this Simulation instance. Contributed plugin initializers are
 	 * accessed in the order of their addition to the builder. Actors and data
@@ -671,7 +736,12 @@ public class Simulation {
 		for (Plugin plugin : orderedPlugins) {
 			focalPluginId = plugin.getPluginId();
 			for (PluginData pluginData : plugin.getPluginDatas()) {
-				basePluginDataMap.put(pluginData.getClass(), pluginData);
+				List<PluginData> pluginDatas = basePluginDataMap.get(pluginData.getClass());
+				if (pluginDatas == null) {
+					pluginDatas = new ArrayList<>();
+					basePluginDataMap.put(pluginData.getClass(), pluginDatas);
+				}
+				pluginDatas.add(pluginData);
 			}
 			focalPluginId = null;
 		}
@@ -695,9 +765,6 @@ public class Simulation {
 			PluginId pluginId1 = dataManagerIdToPluginIdMap.get(dataManagerId1);
 			for (DataManagerId dataManagerId2 : dataManagerIdToPluginIdMap.keySet()) {
 				PluginId pluginId2 = dataManagerIdToPluginIdMap.get(dataManagerId2);
-				// Optional<Path<Object>> optionalPath =
-				// Paths.getPath(pluginDependencyGraph, pluginId1, pluginId2,
-				// (e) -> 1, (a, b) -> 0);
 				Optional<Path<Object>> optionalPath = mapPathSolver.getPath(pluginId1, pluginId2);
 				if (optionalPath.isPresent()) {
 					dataManagerAccessPermissions[dataManagerId1.getValue()][dataManagerId2.getValue()] = true;
@@ -712,7 +779,7 @@ public class Simulation {
 				}
 			}
 		}
-
+		eventProcessingAllowed = true;
 		// execute the data manager queue -- this will in turn execute the
 		// report queue
 		executeDataManagerQueue();
@@ -726,9 +793,20 @@ public class Simulation {
 		// initialize the actors by flushing the actor queue
 		executeActorQueue();
 
+		simulationHaltTime = data.simulationHaltTime;
+		forcedHaltPresent = simulationHaltTime >= 0;
+
 		// start the planning-based portion of the simulation where time flows
-		while (processEvents && (activePlanCount > 0)) {
+		while (activePlanCount > 0) {
+			if (forcedHaltPresent) {
+				if (planningQueue.peek().time > simulationHaltTime) {
+					time = simulationHaltTime;
+					break;
+				}
+			}
+
 			final PlanRec planRec = planningQueue.poll();
+
 			time = planRec.time;
 			if (planRec.isActive) {
 				activePlanCount--;
@@ -779,112 +857,43 @@ public class Simulation {
 			}
 		}
 
-		processEvents = false;
+		eventProcessingAllowed = false;
 
 		// signal to the data managers that the simulation is closing
 		for (DataManagerId dataManagerId : simulationCloseDataManagerCallbacks.keySet()) {
 			DataManagerContext dataManagerContext = dataManagerIdToDataManagerContextMap.get(dataManagerId);
-			Consumer<DataManagerContext> dataManagerCloseCallback = simulationCloseDataManagerCallbacks.get(dataManagerId);
-			dataManagerCloseCallback.accept(dataManagerContext);
+			for (Consumer<DataManagerContext> dataManagerCloseCallback : simulationCloseDataManagerCallbacks.get(dataManagerId)) {
+				dataManagerCloseCallback.accept(dataManagerContext);
+			}
 		}
 
 		// signal to the actors that the simulation is closing
 		for (ActorId actorId : simulationCloseActorCallbacks.keySet()) {
 			if (actorIds.get(actorId.getValue()) != null) {
 				focalActorId = actorId;
-				Consumer<ActorContext> simulationCloseCallback = simulationCloseActorCallbacks.get(actorId);
-				simulationCloseCallback.accept(actorContext);
+				for (Consumer<ActorContext> simulationCloseCallback : simulationCloseActorCallbacks.get(actorId)) {
+					simulationCloseCallback.accept(actorContext);
+				}
 				focalActorId = null;
+
 			}
 		}
 
 		// signal to the reports that the simulation is closing
 		for (ReportId reportId : simulationCloseReportCallbacks.keySet()) {
 			focalReportId = reportId;
-			Consumer<ReportContext> simulationCloseCallback = simulationCloseReportCallbacks.get(reportId);
-			simulationCloseCallback.accept(reportContext);
+			for (Consumer<ReportContext> simulationCloseCallback : simulationCloseReportCallbacks.get(reportId)) {
+				simulationCloseCallback.accept(reportContext);
+			}
 			focalReportId = null;
 		}
 
-		// gather the simulation state and report it to output
 		if (data.produceSimulationStateOnHalt && outputConsumer != null) {
-			produceSimulationStateAsOutput();
+			SimulationTime.Builder simulationTimeBuilder = SimulationTime.builder();
+			simulationTimeBuilder.setBaseDate(data.simulationTime.getBaseDate());
+			simulationTimeBuilder.setStartTime(time);
+			outputConsumer.accept(simulationTimeBuilder.build());
 		}
-	}
-
-	private void produceSimulationStateAsOutput() {
-		
-		// gather the plugins
-
-		Map<Plugin, List<PluginDataBuilder>> map = new LinkedHashMap<>();
-
-		SimulationStateContext.Builder simulationStateContextBuilder = SimulationStateContext.builder();
-		for (Plugin plugin : data.plugins) {
-			List<PluginDataBuilder> list = new ArrayList<>();
-			map.put(plugin, list);
-			for (PluginData pluginData : plugin.getPluginDatas()) {
-				PluginDataBuilder emptyBuilder = pluginData.getEmptyBuilder();
-				list.add(emptyBuilder);
-				simulationStateContextBuilder.add(emptyBuilder);
-			}
-		}
-		SimulationStateContext simulationStateContext = simulationStateContextBuilder.build();
-
-		// pass the simulation state context to all concerned parties
-
-		// signal to the data managers that the simulation is recording state
-		for (DataManagerId dataManagerId : simulationStateDataManagerCallbacks.keySet()) {
-			DataManagerContext dataManagerContext = dataManagerIdToDataManagerContextMap.get(dataManagerId);
-			BiConsumer<DataManagerContext, SimulationStateContext> dataManagerStateCallback = simulationStateDataManagerCallbacks.get(dataManagerId);
-			dataManagerStateCallback.accept(dataManagerContext, simulationStateContext);
-		}
-		
-		// signal to the actors that the simulation is recording state
-		for (ActorId actorId : simulationStateActorCallbacks.keySet()) {
-			focalActorId = actorId;
-			BiConsumer<ActorContext,SimulationStateContext > actorCallBack = simulationStateActorCallbacks.get(actorId);
-			actorCallBack.accept(actorContext, simulationStateContext);
-			focalActorId = null;
-		}
-
-
-		// signal to the reports that the simulation is recording state
-		for (ReportId reportId : simulationStateReportCallbacks.keySet()) {
-			focalReportId = reportId;
-			BiConsumer<ReportContext,SimulationStateContext > reportCallBack = simulationStateReportCallbacks.get(reportId);
-			reportCallBack.accept(reportContext, simulationStateContext);
-			focalReportId = null;
-		}
-		
-		
-
-		// build up the output plugins and release them as output
-		for (Plugin plugin : map.keySet()) {
-			Plugin.Builder pluginBuilder = Plugin.builder();
-			pluginBuilder.setPluginId(plugin.getPluginId());
-
-			Optional<Consumer<PluginContext>> optionalInitializer = plugin.getInitializer();
-			if (optionalInitializer.isPresent()) {
-				pluginBuilder.setInitializer(optionalInitializer.get());
-			}
-
-			for (PluginId pluginId : plugin.getPluginDependencies()) {
-				pluginBuilder.addPluginDependency(pluginId);
-			}
-
-			List<PluginDataBuilder> pluginDataBuilders = map.get(plugin);
-			for (PluginDataBuilder pluginDataBuilder : pluginDataBuilders) {
-				pluginBuilder.addPluginData(pluginDataBuilder.build());
-			}
-			
-			outputConsumer.accept(pluginBuilder.build());
-			
-		}
-
-		SimulationTime.Builder simulationTimeBuilder = SimulationTime.builder();
-		simulationTimeBuilder.setBaseDate(data.simulationTime.getBaseDate());
-		simulationTimeBuilder.setStartTime(time);
-		outputConsumer.accept(simulationTimeBuilder.build());
 
 	}
 
@@ -1060,8 +1069,9 @@ public class Simulation {
 	}
 
 	protected void halt() {
-		if (processEvents) {
-			processEvents = false;
+		if (!data.produceSimulationStateOnHalt) {
+			simulationHaltTime = time;
+			forcedHaltPresent = true;
 		}
 	}
 
@@ -1134,43 +1144,36 @@ public class Simulation {
 		if (consumer == null) {
 			throw new ContractException(NucleusError.NULL_REPORT_CONTEXT_CONSUMER);
 		}
-		simulationCloseReportCallbacks.put(focalReportId, consumer);
+		List<Consumer<ReportContext>> list = simulationCloseReportCallbacks.get(focalReportId);
+		if (list == null) {
+			list = new ArrayList<>();
+			simulationCloseReportCallbacks.put(focalReportId, list);
+		}
+		list.add(consumer);
 	}
 
 	protected void subscribeActorToSimulationClose(Consumer<ActorContext> consumer) {
 		if (consumer == null) {
 			throw new ContractException(NucleusError.NULL_ACTOR_CONTEXT_CONSUMER);
 		}
-		simulationCloseActorCallbacks.put(focalActorId, consumer);
+		List<Consumer<ActorContext>> list = simulationCloseActorCallbacks.get(focalActorId);
+		if (list == null) {
+			list = new ArrayList<>();
+			simulationCloseActorCallbacks.put(focalActorId, list);
+		}
+		list.add(consumer);
 	}
 
 	protected void subscribeDataManagerToSimulationClose(DataManagerId dataManagerId, Consumer<DataManagerContext> consumer) {
 		if (consumer == null) {
 			throw new ContractException(NucleusError.NULL_DATA_MANAGER_CONTEXT_CONSUMER);
 		}
-		simulationCloseDataManagerCallbacks.put(dataManagerId, consumer);
-	}
-	
-	protected void subscribeReportToSimulationState(BiConsumer<ReportContext,SimulationStateContext> consumer) {
-		if (consumer == null) {
-			throw new ContractException(NucleusError.NULL_REPORT_STATE_CONTEXT_CONSUMER);
+		List<Consumer<DataManagerContext>> list = simulationCloseDataManagerCallbacks.get(dataManagerId);
+		if (list == null) {
+			list = new ArrayList<>();
+			simulationCloseDataManagerCallbacks.put(dataManagerId, list);
 		}
-		simulationStateReportCallbacks.put(focalReportId, consumer);
-	}
-
-	protected void subscribeActorToSimulationState(BiConsumer<ActorContext,SimulationStateContext> consumer) {
-		if (consumer == null) {
-			throw new ContractException(NucleusError.NULL_ACTOR_STATE_CONTEXT_CONSUMER);
-		}
-		simulationStateActorCallbacks.put(focalActorId, consumer);
-	}
-
-	
-	protected void subscribeDataManagerToSimulationState(DataManagerId dataManagerId, BiConsumer<DataManagerContext, SimulationStateContext> consumer) {
-		if (consumer == null) {
-			throw new ContractException(NucleusError.NULL_DATA_MANAGER_STATE_CONTEXT_CONSUMER);
-		}
-		simulationStateDataManagerCallbacks.put(dataManagerId, consumer);
+		list.add(consumer);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -1329,7 +1332,7 @@ public class Simulation {
 			throw new ContractException(NucleusError.REPORT_ATTEMPTING_MUTATION, focalReportId);
 		}
 
-		if (!processEvents) {
+		if (!eventProcessingAllowed) {
 			throw new ContractException(NucleusError.DATA_MANAGER_ATTEMPTING_MUTATION);
 		}
 

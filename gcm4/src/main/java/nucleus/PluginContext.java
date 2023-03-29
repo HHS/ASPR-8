@@ -1,5 +1,6 @@
 package nucleus;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 
@@ -82,4 +83,19 @@ public final class PluginContext {
 	public <T extends PluginData> Optional<T> getPluginData(Class<T> pluginDataClass) {
 		return simulation.getPluginData(pluginDataClass);
 	}
+	
+	/**
+	 * Returns the plugin data objects associated with the given class reference
+	 * 
+	 * @throws ContractException
+	 * 
+	 *             <li>{@linkplain NucleusError#NULL_PLUGIN_DATA_CLASS} if
+	 *             the class reference is null</li>
+	 * 
+	 */
+	public <T extends PluginData> List<T> getPluginDatas(Class<T> pluginDataClass) {
+		return simulation.getPluginDatas(pluginDataClass);
+	}
+	
+	
 }

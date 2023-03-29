@@ -4,7 +4,6 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import nucleus.ReportContext;
-import nucleus.SimulationStateContext;
 import plugins.regions.datamanagers.RegionsDataManager;
 import plugins.regions.events.RegionAdditionEvent;
 import plugins.regions.events.RegionPropertyDefinitionEvent;
@@ -12,7 +11,9 @@ import plugins.regions.events.RegionPropertyUpdateEvent;
 import plugins.regions.support.RegionError;
 import plugins.regions.support.RegionId;
 import plugins.regions.support.RegionPropertyId;
-import plugins.reports.support.*;
+import plugins.reports.support.ReportHeader;
+import plugins.reports.support.ReportItem;
+import plugins.reports.support.ReportLabel;
 import plugins.util.properties.PropertyError;
 import util.errors.ContractException;
 
@@ -171,7 +172,9 @@ public final class RegionPropertyReport {
 		reportContext.subscribe(RegionPropertyDefinitionEvent.class, this::handleRegionPropertyDefinitionEvent);
 		reportContext.subscribe(RegionPropertyUpdateEvent.class, this::handleRegionPropertyUpdateEvent);
 		reportContext.subscribe(RegionAdditionEvent.class, this::handleRegionAdditionEvent);
-		reportContext.subscribeToSimulationState(this::recordSimulationState);
+		if (reportContext.produceSimulationStateOnHalt()) {
+			reportContext.subscribeToSimulationClose(this::recordSimulationState);
+		}
 
 		for (RegionPropertyId regionPropertyId : regionsDataManager.getRegionPropertyIds()) {
 			addToCurrentProperties(regionPropertyId);
@@ -185,8 +188,8 @@ public final class RegionPropertyReport {
 		}
 	}
 
-	private void recordSimulationState(ReportContext reportContext, SimulationStateContext simulationStateContext) {
-		RegionPropertyReportPluginData.Builder builder = simulationStateContext.get(RegionPropertyReportPluginData.Builder.class);
+	private void recordSimulationState(ReportContext reportContext) {
+		RegionPropertyReportPluginData.Builder builder = RegionPropertyReportPluginData.builder();
 		builder.setReportLabel(reportLabel);
 		for (RegionPropertyId regionPropertyId : includedPropertyIds) {
 			builder.includeRegionProperty(regionPropertyId);
@@ -195,6 +198,8 @@ public final class RegionPropertyReport {
 			builder.excludeRegionProperty(regionPropertyId);
 		}
 		builder.setDefaultInclusion(includeNewPropertyIds);
+		
+		reportContext.releaseOutput(builder.build());
 	}
 
 	private void writeProperty(ReportContext reportContext, final RegionId regionId, final RegionPropertyId regionPropertyId, final Object regionPropertyValue) {

@@ -15,7 +15,6 @@ import nucleus.DataManagerContext;
 import nucleus.Event;
 import nucleus.EventFilter;
 import nucleus.IdentifiableFunctionMap;
-import nucleus.SimulationStateContext;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.events.PersonImminentAdditionEvent;
 import plugins.people.events.PersonRemovalEvent;
@@ -192,7 +191,7 @@ public final class RegionsDataManager extends DataManager {
 	 *             region that has not had a value assigned</li>
 	 *
 	 */
-	public void addRegion(final RegionConstructionData regionConstructionData) {		
+	public void addRegion(final RegionConstructionData regionConstructionData) {
 		dataManagerContext.releaseMutationEvent(new RegionAdditionMutationEvent(regionConstructionData));
 	}
 
@@ -203,29 +202,29 @@ public final class RegionsDataManager extends DataManager {
 		validateNewRegionId(regionId);
 		Map<RegionPropertyId, Object> regionPropertyValues = regionConstructionData.getRegionPropertyValues();
 		for (RegionPropertyId regionPropertyId : regionPropertyValues.keySet()) {
-			validateRegionPropertyId(regionPropertyId);				
+			validateRegionPropertyId(regionPropertyId);
 			Object regionPropertyValue = regionPropertyValues.get(regionPropertyId);
-			final PropertyDefinition propertyDefinition = regionPropertyDefinitions.get(regionPropertyId);				
+			final PropertyDefinition propertyDefinition = regionPropertyDefinitions.get(regionPropertyId);
 			validateValueCompatibility(regionPropertyId, propertyDefinition, regionPropertyValue);
-		}	
-		
+		}
+
 		if (!nonDefaultBearingPropertyIds.isEmpty()) {
 			clearNonDefaultChecks();
 			for (RegionPropertyId regionPropertyId : regionPropertyValues.keySet()) {
 				markAssigned(regionPropertyId);
 			}
 			verifyNonDefaultChecks();
-		}	
-		
+		}
+
 		regionPopulationRecordMap.put(regionId, new PopulationRecord());
 		regionToIndexMap.put(regionId, regionToIndexMap.size() + 1);
 		indexToRegionMap.add(regionId);
 
 		final Map<RegionPropertyId, PropertyValueRecord> map = new LinkedHashMap<>();
-		regionPropertyMap.put(regionId, map);		
+		regionPropertyMap.put(regionId, map);
 
 		for (RegionPropertyId regionPropertyId : regionPropertyValues.keySet()) {
-			Object regionPropertyValue = regionPropertyValues.get(regionPropertyId);							
+			Object regionPropertyValue = regionPropertyValues.get(regionPropertyId);
 			PropertyValueRecord propertyValueRecord = map.get(regionPropertyId);
 			if (propertyValueRecord == null) {
 				propertyValueRecord = new PropertyValueRecord(dataManagerContext);
@@ -275,10 +274,10 @@ public final class RegionsDataManager extends DataManager {
 		final PropertyDefinition propertyDefinition = regionPropertyDefinitionInitialization.getPropertyDefinition();
 		validateNewRegionPropertyId(regionPropertyId);
 		validateNewPropertyDefinition(propertyDefinition);
-		
+
 		final boolean checkAllRegionsHaveValues = propertyDefinition.getDefaultValue().isEmpty();
 
-		if (checkAllRegionsHaveValues) {			
+		if (checkAllRegionsHaveValues) {
 			final Map<RegionId, Boolean> coverageSet = new LinkedHashMap<>();
 			for (final RegionId regionId : regionPropertyMap.keySet()) {
 				coverageSet.put(regionId, false);
@@ -293,20 +292,20 @@ public final class RegionsDataManager extends DataManager {
 				}
 			}
 		}
-			
+
 		if (checkAllRegionsHaveValues) {
 			addNonDefaultProperty(regionPropertyId);
 		}
 		regionPropertyDefinitionTimes.put(regionPropertyId, dataManagerContext.getTime());
 		regionPropertyIds.add(regionPropertyId);
 		regionPropertyDefinitions.put(regionPropertyId, propertyDefinition);
-		
+
 		for (final Pair<RegionId, Object> pair : regionPropertyDefinitionInitialization.getPropertyValues()) {
 			final RegionId regionId = pair.getFirst();
 
 			/*
-			 * we do not have to validate the value since it is guaranteed
-			 * to be consistent with the property definition by contract.
+			 * we do not have to validate the value since it is guaranteed to be
+			 * consistent with the property definition by contract.
 			 */
 			final Object value = pair.getSecond();
 			Map<RegionPropertyId, PropertyValueRecord> map = regionPropertyMap.get(regionId);
@@ -727,35 +726,37 @@ public final class RegionsDataManager extends DataManager {
 		dataManagerContext.subscribe(PersonRegionUpdateMutationEvent.class, this::handlePersonRegionUpdateMutationEvent);
 		dataManagerContext.subscribe(RegionPropertyUpdateMutationEvent.class, this::handleRegionPropertyUpdateMutationEvent);
 
-		dataManagerContext.subscribeToSimulationState(this::recordSimulationState);
+		if (dataManagerContext.produceSimulationStateOnHalt()) {
+			dataManagerContext.subscribeToSimulationClose(this::recordSimulationState);
+		}
 	}
 
-	private void recordSimulationState(DataManagerContext dataManagerContext, SimulationStateContext simulationStateContext) {
+	private void recordSimulationState(DataManagerContext dataManagerContext) {
 
-		RegionsPluginData.Builder builder = simulationStateContext.get(RegionsPluginData.Builder.class);
-		
+		RegionsPluginData.Builder builder = RegionsPluginData.builder();
+
 		Set<RegionId> regionIds = getRegionIds();
 		for (RegionId regionId : regionIds) {
-			builder.addRegion(regionId);			
+			builder.addRegion(regionId);
 		}
-		
-		for(RegionPropertyId regionPropertyId : getRegionPropertyIds()) {
+
+		for (RegionPropertyId regionPropertyId : getRegionPropertyIds()) {
 			PropertyDefinition regionPropertyDefinition = getRegionPropertyDefinition(regionPropertyId);
 			builder.defineRegionProperty(regionPropertyId, regionPropertyDefinition);
-			for(RegionId regionId : regionIds) {
+			for (RegionId regionId : regionIds) {
 				Object regionPropertyValue = getRegionPropertyValue(regionId, regionPropertyId);
 				builder.setRegionPropertyValue(regionId, regionPropertyId, regionPropertyValue);
 			}
 		}
-		
-		for(PersonId personId : peopleDataManager.getPeople()) {
+
+		for (PersonId personId : peopleDataManager.getPeople()) {
 			RegionId regionId = getPersonRegion(personId);
 			builder.setPersonRegion(personId, regionId);
 		}
-		
+
 		builder.setPersonRegionArrivalTracking(getPersonRegionArrivalTrackingPolicy());
 		
-		
+		dataManagerContext.releaseOutput(builder.build());
 
 		// for (RegionId regionId : regionPopulationRecordMap.keySet()) {
 		// builder.addRegion(regionId);

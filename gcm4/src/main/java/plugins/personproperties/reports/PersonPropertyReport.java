@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.Set;
 
 import nucleus.ReportContext;
-import nucleus.SimulationStateContext;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.events.PersonAdditionEvent;
 import plugins.people.events.PersonImminentRemovalEvent;
@@ -276,7 +275,9 @@ public final class PersonPropertyReport extends PeriodicReport {
 		reportContext.subscribe(PersonAdditionEvent.class, this::handlePersonAdditionEvent);
 		reportContext.subscribe(PersonImminentRemovalEvent.class, this::handlePersonImminentRemovalEvent);
 		reportContext.subscribe(PersonRegionUpdateEvent.class, this::handlePersonRegionUpdateEvent);
-		reportContext.subscribeToSimulationState(this::recordSimulationState);
+		if (reportContext.produceSimulationStateOnHalt()) {
+			reportContext.subscribeToSimulationClose(this::recordSimulationState);
+		}
 		reportContext.subscribe(PersonPropertyDefinitionEvent.class, this::handlePersonPropertyDefinitionEvent);
 		reportContext.subscribe(PersonPropertyUpdateEvent.class, this::handlePersonPropertyUpdateEvent);
 
@@ -293,8 +294,8 @@ public final class PersonPropertyReport extends PeriodicReport {
 		}
 	}
 
-	private void recordSimulationState(ReportContext reportContext, SimulationStateContext simulationStateContext) {
-		PersonPropertyReportPluginData.Builder builder = simulationStateContext.get(PersonPropertyReportPluginData.Builder.class);
+	private void recordSimulationState(ReportContext reportContext) {
+		PersonPropertyReportPluginData.Builder builder = PersonPropertyReportPluginData.builder();
 		builder.setDefaultInclusion(includeNewProperties);
 		builder.setReportLabel(getReportLabel());
 		builder.setReportPeriod(getReportPeriod());
@@ -304,11 +305,12 @@ public final class PersonPropertyReport extends PeriodicReport {
 		for (PersonPropertyId personPropertyId : excludedPersonPropertyIds) {
 			builder.excludePersonProperty(personPropertyId);
 		}
+		reportContext.releaseOutput(builder.build());
 	}
 
 	private void handlePersonPropertyDefinitionEvent(ReportContext actorContext, PersonPropertyDefinitionEvent personPropertyDefinitionEvent) {
 		PersonPropertyId personPropertyId = personPropertyDefinitionEvent.personPropertyId();
-		if (addToCurrentProperties(personPropertyId)) {			
+		if (addToCurrentProperties(personPropertyId)) {
 			for (PersonId personId : peopleDataManager.getPeople()) {
 				final RegionId regionId = regionsDataManager.getPersonRegion(personId);
 				final Object personPropertyValue = personPropertiesDataManager.getPersonPropertyValue(personId, personPropertyId);

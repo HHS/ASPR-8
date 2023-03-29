@@ -8,7 +8,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 
 import org.apache.commons.math3.random.RandomGenerator;
@@ -747,14 +746,16 @@ public class AT_GlobalPropertyReport {
 
 		TestOutputConsumer outputConsumer = TestSimulation	.builder()//
 															.addPlugins(factory.getPlugins())//
-															.setProduceSimulationStateOnHalt(true).build()//
+															.setProduceSimulationStateOnHalt(true)//
+															.setSimulationHaltTime(20)//
+															.build()//
 															.execute();
 
 		// show that the GlobalPropertyReportPluginData produced by the
 		// simulation is equal to the one used to form the report
-		Optional<GlobalPropertyReportPluginData> optional = outputConsumer.getPluginData(GlobalPropertyReportPluginData.class);
-		assertTrue(optional.isPresent());
-		GlobalPropertyReportPluginData globalPropertyReportPluginData2 = optional.get();
+		Map<GlobalPropertyReportPluginData, Integer> outputItems = outputConsumer.getOutputItems(GlobalPropertyReportPluginData.class);
+		assertEquals(1,outputItems.size());
+		GlobalPropertyReportPluginData globalPropertyReportPluginData2 = outputItems.keySet().iterator().next();
 		assertEquals(globalPropertyReportPluginData, globalPropertyReportPluginData2);
 	}
 

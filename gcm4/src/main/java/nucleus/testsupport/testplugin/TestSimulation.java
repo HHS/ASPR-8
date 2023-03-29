@@ -18,6 +18,7 @@ import util.errors.ContractException;
 public class TestSimulation {
 
 	private static class Data {
+		private double simulationHaltTime = -1;
 		private boolean produceSimulationStateOnHalt;
 		private List<Plugin> plugins = new ArrayList<>();
 		private TestOutputConsumer testOutputConsumer = new TestOutputConsumer();
@@ -27,7 +28,7 @@ public class TestSimulation {
 	public static Builder builder() {
 		return new Builder();
 	}
-	
+
 	public static class Builder {
 
 		private Data data = new Data();
@@ -43,6 +44,14 @@ public class TestSimulation {
 		 */
 		public Builder setProduceSimulationStateOnHalt(boolean produceSimulationStateOnHalt) {
 			data.produceSimulationStateOnHalt = produceSimulationStateOnHalt;
+			return this;
+		}
+
+		/**
+		 * Set the simulation halt time.
+		 */
+		public Builder setSimulationHaltTime(double simulationHaltTime) {
+			data.simulationHaltTime = simulationHaltTime;
 			return this;
 		}
 
@@ -124,8 +133,6 @@ public class TestSimulation {
 		this.data = data;
 	}
 
-	
-
 	/**
 	 * Executes a simulation instance
 	 * 
@@ -138,16 +145,13 @@ public class TestSimulation {
 	 *             simulation does not complete successfully</li>
 	 */
 	public static void executeSimulation(List<Plugin> pluginsToAdd) {
-		builder().addPlugins(pluginsToAdd).build().execute();		
+		builder().addPlugins(pluginsToAdd).build().execute();
 	}
-
-	
 
 	public TestOutputConsumer execute() {
 		// List<Plugin> pluginsToAdd, TestOutputConsumer outputConsumer, boolean
 		// produceSimulationState
-		
-		
+
 		Simulation.Builder builder = Simulation.builder();
 
 		for (Plugin plugin : data.plugins) {
@@ -159,8 +163,8 @@ public class TestSimulation {
 				.setProduceSimulationStateOnHalt(data.produceSimulationStateOnHalt)//
 				.setOutputConsumer(data.testOutputConsumer)//
 				.setSimulationTime(data.simulationTime)//
-				.build()
-				.execute();
+				.setSimulationHaltTime(data.simulationHaltTime)//
+				.build().execute();
 
 		// show that all actions were executed
 		Map<TestScenarioReport, Integer> outputItems = data.testOutputConsumer.getOutputItems(TestScenarioReport.class);

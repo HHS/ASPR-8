@@ -1,7 +1,6 @@
 package plugins.materials.reports;
 
 import nucleus.ReportContext;
-import nucleus.SimulationStateContext;
 import plugins.materials.datamangers.MaterialsDataManager;
 import plugins.materials.events.MaterialsProducerAdditionEvent;
 import plugins.materials.events.MaterialsProducerResourceUpdateEvent;
@@ -114,7 +113,9 @@ public final class MaterialsProducerResourceReport {
 		reportContext.subscribe(MaterialsProducerResourceUpdateEvent.class, this::handleMaterialsProducerResourceUpdateEvent);
 		reportContext.subscribe(ResourceIdAdditionEvent.class, this::handleResourceIdAdditionEvent);
 		reportContext.subscribe(MaterialsProducerAdditionEvent.class, this::handleMaterialsProducerAdditionEvent);
-		reportContext.subscribeToSimulationState(this::recordSimulationState);
+		if (reportContext.produceSimulationStateOnHalt()) {
+			reportContext.subscribeToSimulationClose(this::recordSimulationState);
+		}
 
 		ResourcesDataManager resourcesDataManager = reportContext.getDataManager(ResourcesDataManager.class);
 		MaterialsDataManager materialsDataManager = reportContext.getDataManager(MaterialsDataManager.class);
@@ -125,10 +126,11 @@ public final class MaterialsProducerResourceReport {
 			}
 		}
 	}
-	
-	private void recordSimulationState(ReportContext reportContext, SimulationStateContext simulationStateContext) {
-		MaterialsProducerResourceReportPluginData.Builder builder = simulationStateContext.get(MaterialsProducerResourceReportPluginData.Builder.class);
+
+	private void recordSimulationState(ReportContext reportContext) {
+		MaterialsProducerResourceReportPluginData.Builder builder = MaterialsProducerResourceReportPluginData.builder();
 		builder.setReportLabel(reportLabel);
+		reportContext.releaseOutput(builder.build());
 	}
 
 	private void handleMaterialsProducerAdditionEvent(ReportContext reportContext, MaterialsProducerAdditionEvent materialsProducerAdditionEvent) {

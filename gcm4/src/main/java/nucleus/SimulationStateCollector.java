@@ -21,7 +21,7 @@ public class SimulationStateCollector implements Consumer<ExperimentContext>{
 	@Override
 	public synchronized void accept(ExperimentContext experimentContext) {
 		experimentContext.subscribeToExperimentOpen(this.experimentOpenConsumer);
-		experimentContext.subscribeToOutput(Plugin.class, this::handlePluginOuput);
+		experimentContext.subscribeToOutput(PluginData.class, this::handlePluginDataOuput);
 		experimentContext.subscribeToOutput(SimulationTime.class, this::handleSimulationTimeOuput);
 		experimentContext.subscribeToSimulationClose(this::handleSimulationClose);
 	}
@@ -33,13 +33,13 @@ public class SimulationStateCollector implements Consumer<ExperimentContext>{
 		}
 	}
 	
-	private synchronized void handlePluginOuput(ExperimentContext experimentContext, Integer scenarioId, Plugin plugin) {
+	private synchronized void handlePluginDataOuput(ExperimentContext experimentContext, Integer scenarioId, PluginData pluginData) {
 		List<Object> list = observedOutputObjects.get(scenarioId);
 		if(list == null) {
 			list = new ArrayList<>();
 			observedOutputObjects.put(scenarioId, list);
 		}
-		list.addAll(plugin.getPluginDatas());
+		list.add(pluginData);
 	}
 	private synchronized void handleSimulationTimeOuput(ExperimentContext experimentContext, Integer scenarioId, SimulationTime simulationTime) {
 		List<Object> list = observedOutputObjects.get(scenarioId);

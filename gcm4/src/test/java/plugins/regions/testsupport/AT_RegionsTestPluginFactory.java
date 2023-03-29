@@ -34,6 +34,7 @@ import plugins.regions.RegionsPluginId;
 import plugins.regions.support.RegionError;
 import plugins.regions.support.RegionId;
 import plugins.regions.support.RegionPropertyId;
+import plugins.regions.testsupport.RegionsTestPluginFactory.Factory;
 import plugins.stochastics.StochasticsPluginData;
 import plugins.stochastics.StochasticsPluginId;
 import plugins.stochastics.support.StochasticsError;
@@ -52,9 +53,10 @@ public class AT_RegionsTestPluginFactory {
 			TimeTrackingPolicy.class, Consumer.class })
 	public void testFactory_Consumer() {
 		MutableBoolean executed = new MutableBoolean();
-		TestSimulation.executeSimulation(RegionsTestPluginFactory
-				.factory(100, 5785172948650781925L, TimeTrackingPolicy.TRACK_TIME, c -> executed.setValue(true))
-				.getPlugins());
+		Factory factory = RegionsTestPluginFactory
+				.factory(100, 5785172948650781925L, TimeTrackingPolicy.TRACK_TIME, c -> executed.setValue(true));
+				
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 		assertTrue(executed.getValue());
 
 		// precondition: consumer is null
@@ -73,8 +75,9 @@ public class AT_RegionsTestPluginFactory {
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, c -> executed.setValue(true)));
 		TestPluginData testPluginData = pluginBuilder.build();
 
-		TestSimulation.executeSimulation(RegionsTestPluginFactory
-				.factory(100, 5166994853007999229L, TimeTrackingPolicy.TRACK_TIME, testPluginData).getPlugins());
+		Factory factory = RegionsTestPluginFactory
+				.factory(100, 5166994853007999229L, TimeTrackingPolicy.TRACK_TIME, testPluginData);
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 		assertTrue(executed.getValue());
 		// precondition: testPluginData is null
 		TestPluginData nullTestPluginData = null;

@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.Set;
 
 import nucleus.ReportContext;
-import nucleus.SimulationStateContext;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.events.PersonAdditionEvent;
 import plugins.people.events.PersonImminentRemovalEvent;
@@ -372,7 +371,9 @@ public final class ResourceReport extends PeriodicReport {
 		reportContext.subscribe(RegionAdditionEvent.class, this::handleRegionAdditionEvent);
 		reportContext.subscribe(PersonResourceUpdateEvent.class, this::handlePersonResourceUpdateEvent);
 		reportContext.subscribe(ResourceIdAdditionEvent.class, this::handleResourceIdAdditionEvent);
-		reportContext.subscribeToSimulationState(this::recordSimulationState);
+		if (reportContext.produceSimulationStateOnHalt()) {
+			reportContext.subscribeToSimulationClose(this::recordSimulationState);
+		}
 
 		for (final ResourceId resourceId : resourcesDataManager.getResourceIds()) {
 			addToCurrentResourceIds(resourceId);
@@ -412,10 +413,9 @@ public final class ResourceReport extends PeriodicReport {
 			}
 		}
 	}
-	
-	
-	private void recordSimulationState(ReportContext reportContext, SimulationStateContext simulationStateContext) {
-		ResourceReportPluginData.Builder builder = simulationStateContext.get(ResourceReportPluginData.Builder.class);
+
+	private void recordSimulationState(ReportContext reportContext) {
+		ResourceReportPluginData.Builder builder = ResourceReportPluginData.builder();
 		for (ResourceId resourceId : includedResourceIds) {
 			builder.includeResource(resourceId);
 		}
@@ -425,6 +425,7 @@ public final class ResourceReport extends PeriodicReport {
 		builder.setDefaultInclusion(includeNewResourceIds);
 		builder.setReportLabel(getReportLabel());
 		builder.setReportPeriod(getReportPeriod());
+		reportContext.releaseOutput(builder.build());
 	}
 
 	private void handleRegionAdditionEvent(ReportContext reportContext, RegionAdditionEvent regionAdditionEvent) {

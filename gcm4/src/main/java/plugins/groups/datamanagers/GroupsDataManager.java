@@ -21,7 +21,6 @@ import nucleus.EventFilter;
 import nucleus.IdentifiableFunctionMap;
 import nucleus.NucleusError;
 import nucleus.SimulationContext;
-import nucleus.SimulationStateContext;
 import plugins.groups.GroupsPluginData;
 import plugins.groups.events.GroupAdditionEvent;
 import plugins.groups.events.GroupImminentRemovalEvent;
@@ -223,11 +222,13 @@ public final class GroupsDataManager extends DataManager {
 		loadGroupPropertyValues();
 
 		dataManagerContext.subscribe(PersonRemovalEvent.class, this::handlePersonRemovalEvent);
-		dataManagerContext.subscribeToSimulationState(this::recordSimulationState);
+		if (dataManagerContext.produceSimulationStateOnHalt()) {
+			dataManagerContext.subscribeToSimulationClose(this::recordSimulationState);
+		}
 	}
 
-	private void recordSimulationState(DataManagerContext dataManagerContext, SimulationStateContext simulationStateContext) {
-		GroupsPluginData.Builder builder = simulationStateContext.get(GroupsPluginData.Builder.class);
+	private void recordSimulationState(DataManagerContext dataManagerContext) {
+		GroupsPluginData.Builder builder = GroupsPluginData.builder();
 
 		for (final GroupTypeId groupTypeId : typesToIndexesMap.keySet()) {
 			builder.addGroupTypeId(groupTypeId);
@@ -280,6 +281,8 @@ public final class GroupsDataManager extends DataManager {
 				}
 			}
 		}
+
+		dataManagerContext.releaseOutput(builder.build());
 	}
 
 	private void loadGroupPropertyDefinitions() {

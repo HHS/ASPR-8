@@ -25,6 +25,7 @@ import plugins.partitions.support.Filter;
 import plugins.partitions.support.FilterSensitivity;
 import plugins.partitions.support.PartitionError;
 import plugins.partitions.testsupport.PartitionsTestPluginFactory;
+import plugins.partitions.testsupport.PartitionsTestPluginFactory.Factory;
 import plugins.partitions.testsupport.attributes.AttributesDataManager;
 import plugins.partitions.testsupport.attributes.AttributesPlugin;
 import plugins.partitions.testsupport.attributes.AttributesPluginData;
@@ -146,16 +147,14 @@ public final class AT_AttributeFilter {
 		TestPluginData testPluginData = pluginBuilder.build();
 		plugins.add(TestPlugin.getTestPlugin(testPluginData));
 		
-		TestSimulation.executeSimulation(plugins);
-
-		
+		TestSimulation.builder().addPlugins(plugins).build().execute();
 
 	}
 
 	@Test
 	@UnitTestMethod(target = AttributeFilter.class, name = "evaluate", args = { SimulationContext.class, PersonId.class })
 	public void testEvaluate() {
-		TestSimulation.executeSimulation(PartitionsTestPluginFactory.factory(100, 2853953940626718331L, (c) -> {
+		Factory factory = PartitionsTestPluginFactory.factory(100, 2853953940626718331L, (c) -> {
 			Filter filter = new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, true);
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
@@ -170,25 +169,36 @@ public final class AT_AttributeFilter {
 				assertEquals(expected, actual);
 			}
 
-		}).getPlugins());
+		});
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 		/* precondition: if the context is null */
-		TestSimulation.executeSimulation(PartitionsTestPluginFactory.factory(100, 1011872226453537614L, (c) -> {
-			Filter filter = new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, true);
-			assertThrows(RuntimeException.class, () -> filter.evaluate(null, new PersonId(0)));
-		}).getPlugins());
+		assertThrows(RuntimeException.class, () ->{
+			Factory factory2 = PartitionsTestPluginFactory.factory(100, 1011872226453537614L, (c) -> {
+				Filter filter = new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, true);
+				filter.evaluate(null, new PersonId(0));
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
 
 		/* precondition: if the person id is null */
-		TestSimulation.executeSimulation(PartitionsTestPluginFactory.factory(100, 6858667758520667469L, (c) -> {
-			Filter filter = new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, true);
-			assertThrows(RuntimeException.class, () -> filter.evaluate(c, null));
-		}).getPlugins());
+		assertThrows(RuntimeException.class, () ->{
+			Factory factory2 = PartitionsTestPluginFactory.factory(100, 6858667758520667469L, (c) -> {
+				Filter filter = new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, true);
+				filter.evaluate(c, null);
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		
 
 		/* precondition: if the person id is unknown */
-		TestSimulation.executeSimulation(PartitionsTestPluginFactory.factory(100, 9106972672436024633L, (c) -> {
-			Filter filter = new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, true);
-			assertThrows(RuntimeException.class, () -> filter.evaluate(c, new PersonId(123412342)));
-		}).getPlugins());
+		assertThrows(RuntimeException.class, () ->{
+			Factory factory2 = PartitionsTestPluginFactory.factory(100, 9106972672436024633L, (c) -> {
+				Filter filter = new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, true);
+				filter.evaluate(c, new PersonId(123412342));
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
 
 	}
 
@@ -196,7 +206,7 @@ public final class AT_AttributeFilter {
 	@UnitTestMethod(target = AttributeFilter.class, name = "getFilterSensitivities", args = {})
 	public void testGetFilterSensitivities() {
 
-		TestSimulation.executeSimulation(PartitionsTestPluginFactory.factory(100, 3455263917994200075L, (c) -> {
+		Factory factory = PartitionsTestPluginFactory.factory(100, 3455263917994200075L, (c) -> {
 
 			// create an attribute filter
 			Filter filter = new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, false);
@@ -234,8 +244,8 @@ public final class AT_AttributeFilter {
 
 			assertFalse(filterSensitivity.requiresRefresh(c, attributeUpdateEvent).isPresent());
 
-		}).getPlugins());
-
+		});
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
 }

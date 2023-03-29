@@ -19,6 +19,7 @@ import plugins.people.support.PersonId;
 import plugins.regions.datamanagers.RegionsDataManager;
 import plugins.regions.events.PersonRegionUpdateEvent;
 import plugins.regions.testsupport.RegionsTestPluginFactory;
+import plugins.regions.testsupport.RegionsTestPluginFactory.Factory;
 import plugins.regions.testsupport.TestRegionId;
 import plugins.util.properties.TimeTrackingPolicy;
 import util.annotations.UnitTestConstructor;
@@ -30,7 +31,7 @@ public class AT_RegionFilter {
 	@Test
 	@UnitTestConstructor(target = RegionFilter.class, args = { RegionId[].class })
 	public void testConstructorWithArray() {
-		TestSimulation.executeSimulation(RegionsTestPluginFactory.factory(100, 4602637405159227338L, TimeTrackingPolicy.DO_NOT_TRACK_TIME, (c) -> {
+		Factory factory = RegionsTestPluginFactory.factory(100, 4602637405159227338L, TimeTrackingPolicy.DO_NOT_TRACK_TIME, (c) -> {
 
 			/* precondition: if the set is null */
 			Set<RegionId> regionIds = null;
@@ -45,14 +46,15 @@ public class AT_RegionFilter {
 			contractException = assertThrows(ContractException.class, () -> new RegionFilter(null, TestRegionId.REGION_1).validate(c));
 			assertEquals(RegionError.NULL_REGION_ID, contractException.getErrorType());
 
-		}).getPlugins());
+		});
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 	}
 
 	@Test
 	@UnitTestConstructor(target = RegionFilter.class, args = { Set.class })
 	public void testConstructorWithSet() {
-		TestSimulation.executeSimulation(RegionsTestPluginFactory.factory(100, 4602637405159227338L, TimeTrackingPolicy.DO_NOT_TRACK_TIME, (c) -> {
+		Factory factory = RegionsTestPluginFactory.factory(100, 4602637405159227338L, TimeTrackingPolicy.DO_NOT_TRACK_TIME, (c) -> {
 
 			/* precondition: if the set is null */
 			Set<RegionId> regionIds = null;
@@ -67,14 +69,15 @@ public class AT_RegionFilter {
 			contractException = assertThrows(ContractException.class, () -> new RegionFilter(null, TestRegionId.REGION_1).validate(c));
 			assertEquals(RegionError.NULL_REGION_ID, contractException.getErrorType());
 
-		}).getPlugins());
+		});
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 	}
 
 	@Test
 	@UnitTestMethod(target = RegionFilter.class, name = "getFilterSensitivities", args = {})
 	public void testGetFilterSensitivities() {
-		TestSimulation.executeSimulation(RegionsTestPluginFactory.factory(100, 2916119612012950359L, TimeTrackingPolicy.DO_NOT_TRACK_TIME, (c) -> {
+		Factory factory = RegionsTestPluginFactory.factory(100, 2916119612012950359L, TimeTrackingPolicy.DO_NOT_TRACK_TIME, (c) -> {
 
 			Filter filter = new RegionFilter(TestRegionId.REGION_1);
 
@@ -84,13 +87,14 @@ public class AT_RegionFilter {
 
 			FilterSensitivity<?> filterSensitivity = filterSensitivities.iterator().next();
 			assertEquals(PersonRegionUpdateEvent.class, filterSensitivity.getEventClass());
-		}).getPlugins());
+		});
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
 	@Test
 	@UnitTestMethod(target = RegionFilter.class, name = "evaluate", args = { SimulationContext.class, PersonId.class })
 	public void testEvaluate() {
-		TestSimulation.executeSimulation(RegionsTestPluginFactory.factory(100, 28072097989345652L, TimeTrackingPolicy.DO_NOT_TRACK_TIME, (c) -> {
+		Factory factory = RegionsTestPluginFactory.factory(100, 28072097989345652L, TimeTrackingPolicy.DO_NOT_TRACK_TIME, (c) -> {
 
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
@@ -112,7 +116,8 @@ public class AT_RegionFilter {
 			/* precondition: if the person id is unknown */
 			assertThrows(RuntimeException.class, () -> filter.evaluate(c, new PersonId(123412342)));
 
-		}).getPlugins());
+		});
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 	}
 
@@ -129,7 +134,7 @@ public class AT_RegionFilter {
 	@Test
 	@UnitTestMethod(target = RegionFilter.class, name = "validate", args = { SimulationContext.class })
 	public void testValidate() {
-		TestSimulation.executeSimulation(RegionsTestPluginFactory.factory(100, 28072097989345652L, TimeTrackingPolicy.DO_NOT_TRACK_TIME, (c) -> {
+		Factory factory = RegionsTestPluginFactory.factory(100, 28072097989345652L, TimeTrackingPolicy.DO_NOT_TRACK_TIME, (c) -> {
 			Filter filter = new RegionFilter(TestRegionId.REGION_1, TestRegionId.REGION_2);
 
 			assertDoesNotThrow(() -> filter.validate(c));
@@ -148,6 +153,7 @@ public class AT_RegionFilter {
 			Filter badFilter2 = new RegionFilter(TestRegionId.getUnknownRegionId());
 			contractException = assertThrows(ContractException.class, () -> badFilter2.validate(c));
 			assertEquals(RegionError.UNKNOWN_REGION_ID, contractException.getErrorType());
-		}).getPlugins());
+		});
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 }

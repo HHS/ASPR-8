@@ -28,6 +28,7 @@ import plugins.people.support.PersonConstructionData;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
 import plugins.people.testsupport.PeopleTestPluginFactory;
+import plugins.people.testsupport.PeopleTestPluginFactory.Factory;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
@@ -85,8 +86,8 @@ public final class AT_PeopleDataManager {
 		}));
 		TestPluginData testPluginData = pluginBuilder.build();
 
-		TestSimulation.executeSimulation(PeopleTestPluginFactory.factory(6970812715559334185L, testPluginData)
-				.setPeoplePluginData(peoplePluginData).getPlugins());
+		Factory factory = PeopleTestPluginFactory.factory(6970812715559334185L, testPluginData).setPeoplePluginData(peoplePluginData);
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 	}
 
@@ -94,7 +95,7 @@ public final class AT_PeopleDataManager {
 	@UnitTestMethod(target = PeopleDataManager.class, name = "personIndexExists", args = { int.class })
 	public void testPersonIndexExists() {
 
-		TestSimulation.executeSimulation(PeopleTestPluginFactory.factory(3328026739613106739L, (c) -> {
+		Factory factory = PeopleTestPluginFactory.factory(3328026739613106739L, (c) -> {
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 
 			// initially there are no people despite the initial size
@@ -115,14 +116,15 @@ public final class AT_PeopleDataManager {
 				assertFalse(peopleDataManager.personIndexExists(i));
 			}
 
-		}).getPlugins());
+		});
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 	}
 
 	@Test
 	@UnitTestMethod(target = PeopleDataManager.class, name = "getPersonIdLimit", args = {})
 	public void testGetPersonIdLimit() {
-		TestSimulation.executeSimulation(PeopleTestPluginFactory.factory(2489565009155477444L, (c) -> {
+		Factory factory = PeopleTestPluginFactory.factory(2489565009155477444L, (c) -> {
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			/*
 			 * Initially there are no people despite the initial size, so we
@@ -136,14 +138,15 @@ public final class AT_PeopleDataManager {
 				assertEquals(personId.getValue() + 1, peopleDataManager.getPersonIdLimit());
 			}
 
-		}).getPlugins());
+		});
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 	}
 
 	@Test
 	@UnitTestMethod(target = PeopleDataManager.class, name = "getBoxedPersonId", args = { int.class })
 	public void testGetBoxedPersonId() {
-		TestSimulation.executeSimulation(PeopleTestPluginFactory.factory(7973222351020835580L, (c) -> {
+		Factory factory = PeopleTestPluginFactory.factory(7973222351020835580L, (c) -> {
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			// show that the boxed person id is correct
 			for (int i = 0; i < 10; i++) {
@@ -157,8 +160,8 @@ public final class AT_PeopleDataManager {
 				PersonId boxedPersonId = optional.get();
 				assertEquals(personId, boxedPersonId);
 			}
-		}).getPlugins());
-
+		});
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
 	@Test
@@ -204,9 +207,9 @@ public final class AT_PeopleDataManager {
 
 		TestPluginData testPluginData = pluginDataBuilder.build();
 
-		TestSimulation
-				.executeSimulation(PeopleTestPluginFactory.factory(3010391631885520624L, testPluginData).getPlugins());
+		Factory factory = PeopleTestPluginFactory.factory(3010391631885520624L, testPluginData);
 
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 		// show that the expected and actual observations match
 		assertEquals(expectedPersonIds, observedPersonIds);
 		assertEquals(expectedPersonIds, observedImminentPersonIds);
@@ -216,7 +219,7 @@ public final class AT_PeopleDataManager {
 	@UnitTestMethod(target = PeopleDataManager.class, name = "personExists", args = { PersonId.class })
 	public void testPersonExists() {
 
-		TestSimulation.executeSimulation(PeopleTestPluginFactory.factory(8692409871861590014L, (c) -> {
+		Factory factory = PeopleTestPluginFactory.factory(8692409871861590014L, (c) -> {
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 
 			for (int i = 0; i < 10; i++) {
@@ -233,7 +236,8 @@ public final class AT_PeopleDataManager {
 				assertFalse(peopleDataManager.personExists(new PersonId(i)));
 			}
 
-		}).getPlugins());
+		});
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 	}
 
@@ -283,8 +287,8 @@ public final class AT_PeopleDataManager {
 
 		TestPluginData testPluginData = pluginBuilder.build();
 
-		TestSimulation
-				.executeSimulation(PeopleTestPluginFactory.factory(6955438283727605404L, testPluginData).getPlugins());
+		Factory factory = PeopleTestPluginFactory.factory(6955438283727605404L, testPluginData);
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
 	@Test
@@ -342,9 +346,8 @@ public final class AT_PeopleDataManager {
 		}));
 		TestPluginData testPluginData = pluginDataBuilder.build();
 
-		TestSimulation
-				.executeSimulation(PeopleTestPluginFactory.factory(8330481544200634026L, testPluginData).getPlugins());
-
+		Factory factory = PeopleTestPluginFactory.factory(8330481544200634026L, testPluginData);
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 		// show that the observed removals match the expected removals
 		assertEquals(expectedRemovals, observedRemovals);
 		assertEquals(expectedRemovals, observedImminentRemovals);
@@ -359,13 +362,14 @@ public final class AT_PeopleDataManager {
 	@Test
 	@UnitTestMethod(target = PeopleDataManager.class, name = "expandCapacity", args = { int.class })
 	public void testExpandCapacity() {
-		TestSimulation.executeSimulation(PeopleTestPluginFactory.factory(2579559197218306247L, (c) -> {
+		Factory factory = PeopleTestPluginFactory.factory(2579559197218306247L, (c) -> {
 			// show that a negative growth causes an exception
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class,
 					() -> peopleDataManager.expandCapacity(-1));
 			assertEquals(PersonError.NEGATIVE_GROWTH_PROJECTION, contractException.getErrorType());
-		}).getPlugins());
+		});
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 		// use manual tests for non-negative growth
 	}
@@ -374,7 +378,7 @@ public final class AT_PeopleDataManager {
 	@UnitTestMethod(target = PeopleDataManager.class, name = "getPopulationCount", args = {})
 	public void testGetPopulationCount() {
 
-		TestSimulation.executeSimulation(PeopleTestPluginFactory.factory(8471595108422434117L, (c) -> {
+		Factory factory = PeopleTestPluginFactory.factory(8471595108422434117L, (c) -> {
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			// show the population count grows as we add people
 			for (int i = 0; i < 10; i++) {
@@ -382,7 +386,8 @@ public final class AT_PeopleDataManager {
 				peopleDataManager.addPerson(PersonConstructionData.builder().build());
 				assertEquals(i + 1, peopleDataManager.getPopulationCount());
 			}
-		}).getPlugins());
+		});
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 	}
 
@@ -390,7 +395,7 @@ public final class AT_PeopleDataManager {
 	@UnitTestMethod(target = PeopleDataManager.class, name = "getProjectedPopulationCount", args = {})
 	public void testGetProjectedPopulationCount() {
 
-		TestSimulation.executeSimulation(PeopleTestPluginFactory.factory(1779635024257337287L, (c) -> {
+		Factory factory = PeopleTestPluginFactory.factory(1779635024257337287L, (c) -> {
 
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 
@@ -426,7 +431,8 @@ public final class AT_PeopleDataManager {
 
 			peopleDataManager.expandCapacity(100);
 			assertEquals(310, peopleDataManager.getProjectedPopulationCount());
-		}).getPlugins());
+		});
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
 	@Test
@@ -469,8 +475,8 @@ public final class AT_PeopleDataManager {
 
 		TestPluginData testPluginData = pluginBuilder.build();
 
-		TestSimulation
-				.executeSimulation(PeopleTestPluginFactory.factory(544849633773456332L, testPluginData).getPlugins());
+		Factory factory = PeopleTestPluginFactory.factory(544849633773456332L, testPluginData);
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
 	@Test
@@ -505,9 +511,8 @@ public final class AT_PeopleDataManager {
 
 		TestPluginData testPluginData = pluginDataBuilder.build();
 
-		TestSimulation
-				.executeSimulation(PeopleTestPluginFactory.factory(1359354206586648087L, testPluginData).getPlugins());
-
+		Factory factory = PeopleTestPluginFactory.factory(1359354206586648087L, testPluginData);
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
 	@Test
@@ -554,8 +559,8 @@ public final class AT_PeopleDataManager {
 
 		TestPluginData testPluginData = pluginDataBuilder.build();
 
-		TestSimulation
-				.executeSimulation(PeopleTestPluginFactory.factory(3387041999627132151L, testPluginData).getPlugins());
+		Factory factory = PeopleTestPluginFactory.factory(3387041999627132151L, testPluginData);
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 	}
 
