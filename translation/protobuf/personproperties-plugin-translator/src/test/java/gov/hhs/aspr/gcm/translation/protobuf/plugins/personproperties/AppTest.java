@@ -50,14 +50,13 @@ public class AppTest {
 
         outputFilePath.toFile().mkdir();
 
-        String pluginDataInputFileName = "pluginDataInput.json";
-        String pluginDataOutputFileName = "pluginDataOutput.json";
+        String fileName = "pluginData.json";
 
         Translator personPropertiesTranslator = PersonPropertiesTranslator
                 .builder()
-                .addInputFile(inputFilePath.resolve(pluginDataInputFileName).toString(),
+                .addInputFile(inputFilePath.resolve(fileName).toString(),
                         PersonPropertiesPluginDataInput.getDefaultInstance())
-                .addOutputFile(outputFilePath.resolve(pluginDataOutputFileName).toString(),
+                .addOutputFile(outputFilePath.resolve(fileName).toString(),
                         PersonPropertiesPluginData.class)
                 .build();
 

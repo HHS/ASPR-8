@@ -31,13 +31,12 @@ public class AppTest {
         
         outputFilePath.toFile().mkdir();
 
-        String inputFileName = "input.json";
-        String outputFileName = "output.json";
+        String fileName = "data.json";
 
         TranslatorController translatorController = TranslatorController.builder()
                 .addTranslator(PropertiesTranslator.builder()
-                        .addInputFile(inputFilePath.resolve(inputFileName).toString(), PropertyValueMapInput.getDefaultInstance())
-                        .addOutputFile(outputFilePath.resolve(outputFileName).toString(), PropertyValueMap.class).build())
+                        .addInputFile(inputFilePath.resolve(fileName).toString(), PropertyValueMapInput.getDefaultInstance())
+                        .addOutputFile(outputFilePath.resolve(fileName).toString(), PropertyValueMap.class).build())
                 .addTranslatorSpec(new TestMessageTranslatorSpec())
                 .addTranslatorSpec(new Layer1TranslatorSpec())
                 .build();

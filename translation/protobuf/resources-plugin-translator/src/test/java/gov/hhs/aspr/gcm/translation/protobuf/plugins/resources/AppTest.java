@@ -52,12 +52,11 @@ public class AppTest {
 
         outputFilePath.toFile().mkdir();
 
-        String inputFileName = "input.json";
-        String outputFileName = "output.json";
+        String fileName = "pluginData.json";
 
         TranslatorController translatorController = TranslatorController.builder()
-                .addTranslator(ResourcesTranslator.getTranslatorRW(inputFilePath.resolve(inputFileName).toString(),
-                        outputFilePath.resolve(outputFileName).toString()))
+                .addTranslator(ResourcesTranslator.getTranslatorRW(inputFilePath.resolve(fileName).toString(),
+                        outputFilePath.resolve(fileName).toString()))
                 .addTranslator(PropertiesTranslator.getTranslator())
                 .addTranslator(PeopleTranslator.getTranslator())
                 .addTranslator(RegionsTranslator.getTranslatorModule())

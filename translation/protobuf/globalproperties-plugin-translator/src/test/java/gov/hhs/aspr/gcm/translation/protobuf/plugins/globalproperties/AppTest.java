@@ -39,13 +39,12 @@ public class AppTest {
 
         outputFilePath.toFile().mkdir();
 
-        String inputFileName = "input.json";
-        String outputFileName = "output.json";
+        String fileName = "pluginData.json";
 
         TranslatorController translatorController = TranslatorController.builder()
                 .addTranslator(
-                        GlobalPropertiesTranslator.getTranslatorRW(inputFilePath.resolve(inputFileName).toString(),
-                                outputFilePath.resolve(outputFileName).toString()))
+                        GlobalPropertiesTranslator.getTranslatorRW(inputFilePath.resolve(fileName).toString(),
+                                outputFilePath.resolve(fileName).toString()))
                 .addTranslator(PropertiesTranslator.getTranslator())
                 .build();
 
@@ -83,14 +82,13 @@ public class AppTest {
 
         outputFilePath.toFile().mkdir();
 
-        String inputFileName = "propertyReportInput.json";
-        String outputFileName = "propertyReportOutput.json";
+        String fileName = "propertyReport.json";
 
         TranslatorController translatorController = TranslatorController.builder()
                 .addTranslator(GlobalPropertiesTranslator.builder(true)
-                        .addInputFile(inputFilePath.resolve(inputFileName).toString(),
+                        .addInputFile(inputFilePath.resolve(fileName).toString(),
                                 GlobalPropertyReportPluginDataInput.getDefaultInstance())
-                        .addOutputFile(outputFilePath.resolve(outputFileName).toString(),
+                        .addOutputFile(outputFilePath.resolve(fileName).toString(),
                                 GlobalPropertyReportPluginData.class)
                         .build())
                 .addTranslator(PropertiesTranslator.getTranslator())

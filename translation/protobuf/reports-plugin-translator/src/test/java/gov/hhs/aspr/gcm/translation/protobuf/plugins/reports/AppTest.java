@@ -15,7 +15,7 @@ import plugins.reports.support.SimpleReportLabel;
 public class AppTest {
 
     @Test
-    public void testPropertyValueMapTranslator() {
+    public void testReportLabelTranslatorSpec() {
 
         Path basePath = Path.of("").toAbsolutePath();
 
@@ -28,13 +28,12 @@ public class AppTest {
         
         outputFilePath.toFile().mkdir();
 
-        String reportLabelInputFileName = "reportLabelInput.json";
-        String reportLabelOutputFileName = "reportLabelOutput.json";
+        String fileName = "reportLabel.json";
 
         TranslatorController translatorController = TranslatorController.builder()
                 .addTranslator(ReportsTranslator.builder()
-                        .addInputFile(inputFilePath.resolve(reportLabelInputFileName).toString(), ReportLabelInput.getDefaultInstance())
-                        .addOutputFile(outputFilePath.resolve(reportLabelOutputFileName).toString(), ReportLabel.class)
+                        .addInputFile(inputFilePath.resolve(fileName).toString(), ReportLabelInput.getDefaultInstance())
+                        .addOutputFile(outputFilePath.resolve(fileName).toString(), ReportLabel.class)
                         .build())
                 .build();
 
