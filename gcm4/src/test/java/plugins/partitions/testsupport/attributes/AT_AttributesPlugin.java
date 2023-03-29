@@ -73,7 +73,8 @@ public class AT_AttributesPlugin {
 		plugins.add(PartitionsPlugin.getPartitionsPlugin());
 		plugins.add(attributesPlugin);
 		
-		TestSimulation.executeSimulation(plugins);
+		TestSimulation.builder().addPlugins(plugins).build().execute();
+		
 
 	}
 
