@@ -189,10 +189,10 @@ public final class RegionPropertyReport {
 		RegionPropertyReportPluginData.Builder builder = simulationStateContext.get(RegionPropertyReportPluginData.Builder.class);
 		builder.setReportLabel(reportLabel);
 		for (RegionPropertyId regionPropertyId : includedPropertyIds) {
-			builder.includeRegionPropertyId(regionPropertyId);
+			builder.includeRegionProperty(regionPropertyId);
 		}
 		for (RegionPropertyId regionPropertyId : excludedPropertyIds) {
-			builder.excludeRegionPropertyId(regionPropertyId);
+			builder.excludeRegionProperty(regionPropertyId);
 		}
 		builder.setDefaultInclusion(includeNewPropertyIds);
 	}
