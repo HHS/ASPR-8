@@ -96,32 +96,19 @@ public class AT_PersonPropertyPluginData {
 					TestPersonPropertyId prop1 = TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK;
 					PropertyDefinition def1 = prop1.getPropertyDefinition();
 
-					// this property has no associated default value
-					TestPersonPropertyId prop2 = TestPersonPropertyId.PERSON_PROPERTY_9_DOUBLE_IMMUTABLE_NO_TRACK;
-					PropertyDefinition def2 = prop2.getPropertyDefinition();
-
-					PersonPropertiesPluginData.Builder builder =
-
-							PersonPropertiesPluginData.builder();//
-					builder	.definePersonProperty(prop1, def1)//
-							.definePersonProperty(prop2, def2);//
+					PersonPropertiesPluginData.Builder builder = PersonPropertiesPluginData.builder();//
+					builder.definePersonProperty(prop1, def1);//
 
 					for (int i = 0; i < 10; i++) {
 						if (i % 2 == 0) {
 							builder.addPerson(new PersonId(i));//
 						}
 						builder.setPersonPropertyValue(new PersonId(i), prop1, false);//
-						builder.setPersonPropertyValue(new PersonId(i), prop2, 2.556);//
 					}
 					builder.build();
 
 				});//
 		assertEquals(PersonPropertyError.PROPERTY_ASSIGNMENT_FOR_NON_ADDED_PERSON, contractException.getErrorType());
-
-		// * <li>{@linkplain
-		// PropertyError#PROPERTY_ASSIGNMENT_FOR_NON_ADDED_PERSON}
-		// * if a person who is not explicitly added via addPerson()
-		// * is assigned property values</li>
 	}
 
 	@Test

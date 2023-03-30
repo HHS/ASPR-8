@@ -174,8 +174,8 @@ public class PersonPropertiesPluginData implements PluginData {
 		 *             id is null</li>
 		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
 		 *             person property id is null</li>
-		 *             <li>{@linkplain PersonPropertyError#NULL_PROPERTY_VALUE} if the
-		 *             person property value is null</li>
+		 *             <li>{@linkplain PersonPropertyError#NULL_PROPERTY_VALUE}
+		 *             if the person property value is null</li>
 		 */
 		public Builder setPersonPropertyValue(final PersonId personId, final PersonPropertyId personPropertyId, final Object personPropertyValue) {
 			ensureDataMutability();
@@ -240,6 +240,19 @@ public class PersonPropertiesPluginData implements PluginData {
 					nonDefaultBearingPropertyIds.put(personPropertyId, nonDefaultBearingPropertyIds.size());
 				}
 			}
+
+			for (int i = 0; i < data.personPropertyValues.size(); i++) {
+				List<PersonPropertyInitialization> list = data.personPropertyValues.get(i);
+
+				boolean personExists = data.people.get(i);
+
+				if (!personExists) {
+					if (list != null) {
+						throw new ContractException(PersonPropertyError.PROPERTY_ASSIGNMENT_FOR_NON_ADDED_PERSON);
+					}
+				}
+			}
+
 			if (nonDefaultBearingPropertyIds.isEmpty()) {
 				return;
 			}
@@ -248,16 +261,6 @@ public class PersonPropertiesPluginData implements PluginData {
 
 			for (int i = 0; i < data.personPropertyValues.size(); i++) {
 				List<PersonPropertyInitialization> list = data.personPropertyValues.get(i);
-
-				boolean personExists = data.people.get(i);
-
-				if (!personExists) {
-					if (list == null) {
-						continue;
-					} else {
-						throw new ContractException(PersonPropertyError.PROPERTY_ASSIGNMENT_FOR_NON_ADDED_PERSON);
-					}
-				}
 
 				for (int j = 0; j < nonDefaultChecks.length; j++) {
 					nonDefaultChecks[j] = false;
