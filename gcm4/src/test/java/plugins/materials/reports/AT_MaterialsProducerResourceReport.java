@@ -67,8 +67,7 @@ public final class AT_MaterialsProducerResourceReport {
 	}
 
 	@Test
-	@UnitTestMethod(target = MaterialsProducerResourceReport.class, name = "init", args = {
-			ReportContext.class }, tags = { UnitTag.INCOMPLETE })
+	@UnitTestMethod(target = MaterialsProducerResourceReport.class, name = "init", args = {ReportContext.class }, tags = { UnitTag.INCOMPLETE })
 	public void testInit() {
 		Map<ReportItem, Integer> expectedReportItems = new LinkedHashMap<>();
 
@@ -168,6 +167,108 @@ public final class AT_MaterialsProducerResourceReport {
 				.execute();
 
 		assertEquals(expectedReportItems, testOutputConsumer.getOutputItems(ReportItem.class));
+	}
+
+	@Test
+	@UnitTestMethod(target = MaterialsProducerResourceReport.class, name = "init", args = {ReportContext.class })
+	public void testInit_State() {
+		// Test with producing simulation state
+
+		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+
+		MaterialsProducerId newMaterialsProducerId = TestMaterialsProducerId.getUnknownMaterialsProducerId();
+
+		double actionTime = 0;
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(actionTime++, (c) -> {
+			ResourceId newResourceId = TestResourceId.getUnknownResourceId();
+			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+			resourcesDataManager.addResourceId(newResourceId, TimeTrackingPolicy.TRACK_TIME);
+		}));
+
+		// add a new materials producer just before time 20
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(19.5, (c) -> {
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+			MaterialsProducerConstructionData.Builder builder = //
+					MaterialsProducerConstructionData.builder()//
+							.setMaterialsProducerId(newMaterialsProducerId);//
+			for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId
+					.getPropertiesWithoutDefaultValues()) {
+				Object randomPropertyValue = testMaterialsProducerPropertyId.getRandomPropertyValue(randomGenerator);
+				builder.setMaterialsProducerPropertyValue(testMaterialsProducerPropertyId, randomPropertyValue);
+			}
+
+			MaterialsProducerConstructionData materialsProducerConstructionData = builder.build();
+
+			materialsDataManager.addMaterialsProducer(materialsProducerConstructionData);
+		}));
+
+		for (int i = 0; i < 100; i++) {
+
+			// set a resource value
+			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(actionTime++, (c) -> {
+				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+				List<MaterialsProducerId> mats = new ArrayList<>(materialsDataManager.getMaterialsProducerIds());
+
+				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
+				RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
+				MaterialsProducerId materialsProducerId = mats.get(randomGenerator.nextInt(mats.size()));
+				ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+				List<ResourceId> resourceIds = new ArrayList<>(resourcesDataManager.getResourceIds());
+				Random random = new Random(randomGenerator.nextLong());
+
+				ResourceId resourceId = resourceIds.get(random.nextInt(resourceIds.size()));
+
+				if (randomGenerator.nextBoolean()) {
+					long amount = randomGenerator.nextInt(100) + 1;
+					StageId stageId = materialsDataManager.addStage(materialsProducerId);
+					materialsDataManager.convertStageToResource(stageId, resourceId, amount);
+				} else {
+					long resourceLevel = materialsDataManager.getMaterialsProducerResourceLevel(materialsProducerId,
+							resourceId);
+					if (resourceLevel > 0) {
+						long amount = randomGenerator.nextInt((int) resourceLevel) + 1;
+						TestRegionId testRegionId = TestRegionId.getRandomRegionId(randomGenerator);
+						materialsDataManager.transferResourceToRegion(materialsProducerId, resourceId, testRegionId,
+								amount);
+					}
+				}
+			}));
+		}
+
+		TestPluginData testPluginData = pluginBuilder.build();
+		MaterialsProducerResourceReportPluginData materialsProducerResourceReportPluginData = MaterialsProducerResourceReportPluginData
+				.builder()
+				.setReportLabel(REPORT_LABEL)
+				.build();
+
+		MaterialsTestPluginFactory.Factory factory = MaterialsTestPluginFactory.factory(0, 0, 0, 6081341958178733565L, testPluginData);
+		factory.setMaterialsProducerResourceReportPluginData(materialsProducerResourceReportPluginData);
+
+		TestOutputConsumer testOutputConsumer = TestSimulation	.builder()//
+				.addPlugins(factory.getPlugins())//
+				.setProduceSimulationStateOnHalt(true)//
+				.setSimulationHaltTime(150)//
+				.build()//
+				.execute();
+
+		Map<MaterialsProducerResourceReportPluginData, Integer> outputItems = testOutputConsumer.getOutputItems(MaterialsProducerResourceReportPluginData.class);
+		assertEquals(1, outputItems.size());
+		MaterialsProducerResourceReportPluginData materialsProducerResourceReportPluginData2 = outputItems.keySet().iterator().next();
+		assertEquals(materialsProducerResourceReportPluginData, materialsProducerResourceReportPluginData2);
+
+		// Test without producing simulation state
+
+		testOutputConsumer = TestSimulation	.builder()//
+				.addPlugins(factory.getPlugins())//
+				.setProduceSimulationStateOnHalt(false)//
+				.setSimulationHaltTime(150)//
+				.build()//
+				.execute();
+
+		outputItems = testOutputConsumer.getOutputItems(MaterialsProducerResourceReportPluginData.class);
+		assertEquals(0, outputItems.size());
 	}
 
 	private static ReportItem getReportItem(Object... values) {
