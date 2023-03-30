@@ -265,7 +265,7 @@ public final class AT_BatchStatusReport {
 					double amount = randomGenerator.nextDouble();
 					BatchConstructionInfo batchConstructionInfo = TestBatchConstructionInfo
 							.getBatchConstructionInfo(testMaterialsProducerId, materialId, amount, randomGenerator);
-					BatchId batchId = materialsDataManager.addBatch(batchConstructionInfo);
+					materialsDataManager.addBatch(batchConstructionInfo);
 				}
 			}));
 
