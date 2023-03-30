@@ -658,7 +658,6 @@ public class AT_GroupPropertyReport {
 			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
 			groupsDataManager.removeGroup(new GroupId(0));
 			groupsDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_2);
-
 		}));
 
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(2.5, (c) -> {
@@ -862,6 +861,97 @@ public class AT_GroupPropertyReport {
 				}
 			}
 		}
+	}
+
+	@Test
+	@UnitTestMethod(target = GroupPropertyReport.class, name = "init", args = { ReportContext.class })
+	public void testInit_State() {
+		// Test with producing simulation
+
+		// add the action plugin
+		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+
+		// have the agent add new groups and set property values
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
+			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+
+			GroupId groupId = groupsDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_1);
+			assertEquals(0, groupId.getValue());
+
+			groupId = groupsDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_2);
+			assertEquals(1, groupId.getValue());
+
+			groupId = groupsDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_3);
+			assertEquals(2, groupId.getValue());
+
+			groupId = groupsDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_1);
+			assertEquals(3, groupId.getValue());
+
+			groupsDataManager.setGroupPropertyValue(new GroupId(3), TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK, true);
+
+			groupsDataManager.setGroupPropertyValue(new GroupId(3), TestGroupPropertyId.GROUP_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK, 45);
+
+			groupsDataManager.setGroupPropertyValue(new GroupId(3), TestGroupPropertyId.GROUP_PROPERTY_1_3_DOUBLE_MUTABLE_NO_TRACK, 16.5);
+		}));
+
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
+			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+			groupsDataManager.removeGroup(new GroupId(0));
+			groupsDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_2);
+		}));
+
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(2.5, (c) -> {
+			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+			groupsDataManager.setGroupPropertyValue(new GroupId(1), TestGroupPropertyId.GROUP_PROPERTY_2_2_INTEGER_MUTABLE_TRACK, 17);
+			groupsDataManager.setGroupPropertyValue(new GroupId(4), TestGroupPropertyId.GROUP_PROPERTY_2_3_DOUBLE_MUTABLE_TRACK, 800.0);
+
+		}));
+
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(5.7, (c) -> {
+			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+			groupsDataManager.setGroupPropertyValue(new GroupId(1), TestGroupPropertyId.GROUP_PROPERTY_2_1_BOOLEAN_MUTABLE_TRACK, false);
+			groupsDataManager.setGroupPropertyValue(new GroupId(4), TestGroupPropertyId.GROUP_PROPERTY_2_2_INTEGER_MUTABLE_TRACK, 65);
+		}));
+
+		TestPluginData testPluginData = pluginBuilder.build();
+
+		// build the report with all properties selected
+		GroupPropertyReportPluginData.Builder builder = GroupPropertyReportPluginData.builder();
+		builder.setReportLabel(REPORT_LABEL)
+				.setReportPeriod(ReportPeriod.DAILY)
+				.setDefaultInclusion(true)
+				.excludeGroupProperty(TestGroupTypeId.GROUP_TYPE_2, TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK)
+				.includeGroupProperty(TestGroupTypeId.GROUP_TYPE_2, TestGroupPropertyId.GROUP_PROPERTY_2_2_INTEGER_MUTABLE_TRACK);
+
+		GroupPropertyReportPluginData groupPropertyReportPluginData = builder.build();
+
+		Factory factory = GroupsTestPluginFactory.factory(0, 0, 0, 6092832510476200219L, testPluginData).setGroupPropertyReportPluginData(groupPropertyReportPluginData);
+
+		TestOutputConsumer testOutputConsumer = TestSimulation	.builder()//
+				.addPlugins(factory.getPlugins())//
+				.setProduceSimulationStateOnHalt(true)//
+				.setSimulationHaltTime(20)//
+				.build()//
+				.execute();
+
+		// show that the plugin data persists after simulation
+		Map<GroupPropertyReportPluginData, Integer> outputItems = testOutputConsumer.getOutputItems(GroupPropertyReportPluginData.class);
+		assertEquals(1, outputItems.size());
+		GroupPropertyReportPluginData groupPropertyReportPluginData2 = outputItems.keySet().iterator().next();
+		assertEquals(groupPropertyReportPluginData, groupPropertyReportPluginData2);
+
+		// Test without producing simulation
+
+		testOutputConsumer = TestSimulation	.builder()//
+				.addPlugins(factory.getPlugins())//
+				.setProduceSimulationStateOnHalt(false)//
+				.setSimulationHaltTime(20)//
+				.build()//
+				.execute();
+
+		// show that when the simulation state is not being produced, there is no output plugin data+
+		outputItems = testOutputConsumer.getOutputItems(GroupPropertyReportPluginData.class);
+		assertEquals(0, outputItems.size());
 	}
 
 	private static final ReportLabel REPORT_LABEL = new SimpleReportLabel("group property report");
