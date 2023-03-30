@@ -112,6 +112,10 @@ public class TranslatorController {
         this.translatorCore.writeJson(writer, simObject);
     }
 
+    protected void writeJsonOutput(Writer writer, Object simObject, Class<?> superClass) {
+        this.translatorCore.writeJson(writer, simObject, superClass);
+    }
+
     // temporary pass through method
     public TranslatorCore getTranslatorCore() {
         if (this.translatorCore == null) {

@@ -27,16 +27,12 @@ public class AppTest {
         
         outputFilePath.toFile().mkdir();
 
-        String inputFileName = "simulationTimeInput.json";
-        String outputFileName = "simulationTimeOutput.json";
-
-
-        System.out.println("Working Directory = " + System.getProperty("user.dir"));
+        String fileName = "simulationTime.json";
 
         TranslatorController translatorController = TranslatorController.builder()
                 .addTranslator(NucleusTranslator.builder()
-                        .addInputFile(inputFilePath.resolve(inputFileName).toString(), SimulationTimeInput.getDefaultInstance())
-                        .addOutputFile(outputFilePath.resolve(outputFileName).toString(), SimulationTime.class).build())
+                        .addInputFile(inputFilePath.resolve(fileName).toString(), SimulationTimeInput.getDefaultInstance())
+                        .addOutputFile(outputFilePath.resolve(fileName).toString(), SimulationTime.class).build())
                 .build();
 
         List<Object> objects = translatorController.readInput().getObjects();

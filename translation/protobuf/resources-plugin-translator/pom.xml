@@ -36,6 +36,12 @@
             <version>${revision}</version>
             <optional>true</optional>
         </dependency>
+        <dependency>
+            <groupId>gov.hhs.aspr.gcm.translation.protobuf</groupId>
+            <artifactId>reports-plugin-translator</artifactId>
+            <version>${revision}</version>
+            <optional>true</optional>
+        </dependency>
     </dependencies>
 
     <build>
@@ -92,6 +98,7 @@
                         <additionalProtoPathElement>${project.build.outputDirectory}/gov/hhs/aspr/gcm/translation/protobuf/properties</additionalProtoPathElement>
                         <additionalProtoPathElement>${project.build.outputDirectory}/gov/hhs/aspr/gcm/translation/protobuf/people</additionalProtoPathElement>
                         <additionalProtoPathElement>${project.build.outputDirectory}/gov/hhs/aspr/gcm/translation/protobuf/regions</additionalProtoPathElement>
+                        <additionalProtoPathElement>${project.build.outputDirectory}/gov/hhs/aspr/gcm/translation/protobuf/reports</additionalProtoPathElement>
                     </additionalProtoPathElements>
                     <attachProtoSources>false</attachProtoSources>
                 </configuration>

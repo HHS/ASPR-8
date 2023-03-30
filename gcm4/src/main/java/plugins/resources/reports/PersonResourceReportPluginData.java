@@ -179,7 +179,7 @@ public final class PersonResourceReportPluginData implements PluginData {
 		 *             <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if the
 		 *             resource id is null</li>
 		 */
-		public Builder includeResourceId(ResourceId resourceId) {
+		public Builder includeResource(ResourceId resourceId) {
 			ensureDataMutability();
 			if (resourceId == null) {
 				throw new ContractException(ResourceError.NULL_RESOURCE_ID);
@@ -196,7 +196,7 @@ public final class PersonResourceReportPluginData implements PluginData {
 		 *             <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if the
 		 *             resource id is null</li>
 		 */
-		public Builder excludeResourceId(ResourceId resourceId) {
+		public Builder excludeResource(ResourceId resourceId) {
 			ensureDataMutability();
 			if (resourceId == null) {
 				throw new ContractException(ResourceError.NULL_RESOURCE_ID);

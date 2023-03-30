@@ -69,6 +69,11 @@
             <artifactId>materials-plugin-translator</artifactId>
             <version>${revision}</version>
         </dependency>
+        <dependency>
+            <groupId>gov.hhs.aspr.gcm.translation.protobuf</groupId>
+            <artifactId>reports-plugin-translator</artifactId>
+            <version>${revision}</version>
+        </dependency>
     </dependencies>
 
     <build>
