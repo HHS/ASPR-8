@@ -63,6 +63,7 @@ public class Simulation {
 //		private PlanData planData;
 //		private Object key;
 		
+		private Plan<?> plan;
 		
 		private Planner planner;
 		private long arrivalId;
@@ -414,50 +415,69 @@ public class Simulation {
 
 	}
 
-	protected void addActorPlan(final Consumer<ActorContext> plan, final double time, final boolean isActivePlan, final Object key) {
+	protected void addActorPlan(Plan<ActorContext> plan
+//			final Consumer<ActorContext> consumer,
+//			final double time,
+//			final boolean isActivePlan,
+//			final Object key
+			) {
+		
+		
+		
 
 		validatePlanTime(time);
-		validateActorPlan(plan);
+		validateActorPlan(plan.getCallbackConsumer());
 
 		final PlanRec planRec = new PlanRec();
-		planRec.isActive = isActivePlan;
+		planRec.plan = plan;
+		planRec.isActive = plan.isActive();
 		planRec.arrivalId = masterPlanningArrivalId++;
 		planRec.planner = Planner.ACTOR;
-		planRec.time = FastMath.max(time, this.time);
-		planRec.actorPlan = plan;
-		planRec.key = key;
+		planRec.time = FastMath.max(plan.getTime(), this.time);
+		planRec.actorPlan = plan.getCallbackConsumer();
+		planRec.key = plan.getKey();
 
 		Map<Object, PlanRec> map;
 
 		planRec.actorId = focalActorId;
 
-		if (key != null) {
+		if (planRec.key != null) {
 			map = actorPlanMap.get(focalActorId);
 			if (map == null) {
 				map = new LinkedHashMap<>();
 				actorPlanMap.put(focalActorId, map);
 			}
-			map.put(key, planRec);
+			map.put(planRec.key, planRec);
 		}
 
-		if (isActivePlan) {
+		if (planRec.isActive) {
 			activePlanCount++;
 		}
 		planningQueue.add(planRec);
 
 	}
 
-	protected void addReportPlan(final Consumer<ReportContext> plan, final double time, final Object key) {
+	protected void addReportPlan(final Consumer<ReportContext> consumer, final double time, final Object key) {
 
 		validatePlanTime(time);
-		validateReportPlan(plan);
+		validateReportPlan(consumer);
+		
+		Plan<ReportContext> plan = Plan.builder(ReportContext.class)//
+				.setActive(false)//
+				.setCallbackConsumer(consumer)//
+				.setKey(key)//
+				.setPlanData(null)//
+				.setPriority(-1)//
+				.setTime(time)//
+				.build();//
 
 		final PlanRec planRec = new PlanRec();
+		planRec.plan = plan;
 		planRec.isActive = false;
 		planRec.arrivalId = masterPlanningArrivalId++;
 		planRec.planner = Planner.REPORT;
 		planRec.time = FastMath.max(time, this.time);
-		planRec.reportPlan = plan;
+		planRec.reportPlan = consumer;
 		planRec.key = key;
 
 		Map<Object, PlanRec> map;
@@ -477,17 +497,30 @@ public class Simulation {
 
 	}
 
-	protected void addDataManagerPlan(DataManagerId dataManagerId, final Consumer<DataManagerContext> plan, final double time, final boolean isActivePlan, final Object key) {
+	protected void addDataManagerPlan(DataManagerId dataManagerId, final Consumer<DataManagerContext> consumer, final double time, final boolean isActivePlan, final Object key) {
 
-		validateDataManagerPlan(plan);
+		
+		
+		validateDataManagerPlan(consumer);
 		validatePlanTime(time);
+		
+		Plan<DataManagerContext> plan = Plan.builder(DataManagerContext.class)//
+				.setActive(isActivePlan)//
+				.setCallbackConsumer(consumer)//
+				.setKey(key)//
+				.setPlanData(null)//
+				.setPriority(-1)//
+				.setTime(time)//
+				.build();//
+		
 
 		final PlanRec planRec = new PlanRec();
+		planRec.plan = plan;
 		planRec.isActive = isActivePlan;
 		planRec.arrivalId = masterPlanningArrivalId++;
 		planRec.planner = Planner.DATA_MANAGER;
 		planRec.time = FastMath.max(time, this.time);
-		planRec.dataManagerPlan = plan;
+		planRec.dataManagerPlan = consumer;
 		planRec.key = key;
 
 		Map<Object, PlanRec> map;

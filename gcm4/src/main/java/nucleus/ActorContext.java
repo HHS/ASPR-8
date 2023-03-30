@@ -51,8 +51,16 @@ public final class ActorContext implements SimulationContext {
 	 * 
 	 */
 	
-	public void addPlan(final Consumer<ActorContext> plan, final double planTime) {
-		simulation.addActorPlan(plan, planTime, true, null);
+	public void addPlan(final Consumer<ActorContext> consumer, final double planTime) {
+		Plan<ActorContext> plan = Plan.builder(ActorContext.class)//
+				.setActive(true)//
+				.setCallbackConsumer(consumer)//
+				.setKey(null)//
+				.setPlanData(null)//
+				.setPriority(-1)//
+				.setTime(planTime)//
+				.build();//
+		simulation.addActorPlan(plan);
 	}
 	/**
 	 * Schedules a plan that will be executed at the given time. The plan is
@@ -72,10 +80,20 @@ public final class ActorContext implements SimulationContext {
 	 *             scheduled for a time in the past
 	 * 
 	 */	
-	public void addKeyedPlan(final Consumer<ActorContext> plan, final double planTime, final Object key) {
+	public void addKeyedPlan(final Consumer<ActorContext> consumer, final double planTime, final Object key) {
 		simulation.validatePlanKeyNotNull(key);
 		simulation.validateActorPlanKeyNotDuplicate(key);
-		simulation.addActorPlan(plan, planTime, true, key);
+		
+		Plan<ActorContext> plan = Plan.builder(ActorContext.class)//
+				.setActive(true)//
+				.setCallbackConsumer(consumer)//
+				.setKey(key)//
+				.setPlanData(null)//
+				.setPriority(-1)//
+				.setTime(planTime)//
+				.build();//
+		
+		simulation.addActorPlan(plan);
 	}
 
 	/**
@@ -92,8 +110,16 @@ public final class ActorContext implements SimulationContext {
 	 * 
 	 * 
 	 */
-	public void addPassivePlan(final Consumer<ActorContext> plan, final double planTime) {
-		simulation.addActorPlan(plan, planTime, false, null);
+	public void addPassivePlan(final Consumer<ActorContext> consumer, final double planTime) {
+		Plan<ActorContext> plan = Plan.builder(ActorContext.class)//
+				.setActive(false)//
+				.setCallbackConsumer(consumer)//
+				.setKey(null)//
+				.setPlanData(null)//
+				.setPriority(-1)//
+				.setTime(planTime)//
+				.build();//
+		simulation.addActorPlan(plan);
 	}
 	/**
 	 * Schedules a plan that will be executed at the given time. The plan is
@@ -115,10 +141,20 @@ public final class ActorContext implements SimulationContext {
 	 *             scheduled for a time in the past
 	 * 
 	 */	
-	public void addPassiveKeyedPlan(final Consumer<ActorContext> plan, final double planTime, final Object key) {
+	public void addPassiveKeyedPlan(final Consumer<ActorContext> consumer, final double planTime, final Object key) {
 		simulation.validatePlanKeyNotNull(key);
 		simulation.validateActorPlanKeyNotDuplicate(key);
-		simulation.addActorPlan(plan, planTime, false, key);
+		
+		Plan<ActorContext> plan = Plan.builder(ActorContext.class)//
+				.setActive(false)//
+				.setCallbackConsumer(consumer)//
+				.setKey(key)//
+				.setPlanData(null)//
+				.setPriority(-1)//
+				.setTime(planTime)//
+				.build();//
+		
+		simulation.addActorPlan(plan);
 	}
 	/**
 	 * Retrieves a plan stored for the given key.

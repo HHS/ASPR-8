@@ -425,8 +425,7 @@ public class AT_ActorContext {
 			ContractException contractException = assertThrows(ContractException.class, () -> context.addPlan(null, scheduledTime));
 			assertEquals(NucleusError.NULL_PLAN, contractException.getErrorType());
 
-			contractException = assertThrows(ContractException.class, () -> context.addPlan((c) -> {
-			}, 0));
+			contractException = assertThrows(ContractException.class, () -> context.addPlan((c) -> {}, 0));
 			assertEquals(NucleusError.PAST_PLANNING_TIME, contractException.getErrorType());
 
 		}));
