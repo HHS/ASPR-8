@@ -16,7 +16,6 @@ public interface SimulationContext {
 	 */
 	public void releaseOutput(Object output);
 
-
 	/**
 	 * 
 	 * @throws ContractException
@@ -34,7 +33,8 @@ public interface SimulationContext {
 	public double getTime();
 
 	/**
-	 * Terminates the simulation after the current plan is fully executed.
+	 * Terminates the simulation after the current time is fully executed. Has
+	 * no effect if state recording is scheduled.
 	 */
 	public void halt();
 

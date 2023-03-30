@@ -23,6 +23,7 @@ import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestScenarioReport;
 import nucleus.testsupport.testplugin.TestSimulation;
+import util.annotations.UnitTag;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.wrappers.MultiKey;
@@ -567,7 +568,7 @@ public class AT_ActorContext {
 	 * Tests {@link AgentContext#getPlan(Object)
 	 */
 	@Test
-	@UnitTestMethod(target = ActorContext.class, name = "getPlan", args = { Object.class })
+	@UnitTestMethod(target = ActorContext.class, name = "getPlan", args = { Object.class }, tags = {UnitTag.INCOMPLETE})
 	public void testGetPlan() {
 
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
@@ -625,44 +626,6 @@ public class AT_ActorContext {
 			Set<Object> actualKeys = context.getPlanKeys().stream().collect(Collectors.toCollection(LinkedHashSet::new));
 			assertEquals(expectedKeys, actualKeys);
 
-		}));
-
-		// build the plugin
-		TestPluginData testPluginData = pluginDataBuilder.build();
-		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
-
-		// run the simulation
-		TestSimulation.builder().addPlugin(testPlugin).build().execute();
-	}
-
-	/**
-	 * Tests {@link AgentContext#getPlanTime(Object)
-	 */
-	@Test
-	@UnitTestMethod(target = ActorContext.class, name = "getPlanTime", args = { Object.class })
-	public void testGetPlanTime() {
-
-		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
-
-		// test preconditions
-		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(1, (context) -> {
-			ContractException contractException = assertThrows(ContractException.class, () -> context.getPlanTime(null));
-			assertEquals(NucleusError.NULL_PLAN_KEY, contractException.getErrorType());
-		}));
-
-		/*
-		 * have the added test agent add a plan and show that the plan time is
-		 * as expected
-		 */
-		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(2, (context) -> {
-			Object key = new Object();
-			assertFalse(context.getPlanTime(key).isPresent());
-			double expectedPlanTime = 100;
-			context.addKeyedPlan((c) -> {
-			}, expectedPlanTime, key);
-			assertTrue(context.getPlanTime(key).isPresent());
-			Double actualPlanTime = context.getPlanTime(key).get();
-			assertEquals(expectedPlanTime, actualPlanTime, 0);
 		}));
 
 		// build the plugin
@@ -860,8 +823,12 @@ public class AT_ActorContext {
 	 * Tests {@link AgentContext#removePlan(Object)
 	 */
 	@Test
-	@UnitTestMethod(target = ActorContext.class, name = "removePlan", args = { Object.class })
+	@UnitTestMethod(target = ActorContext.class, name = "removePlan", args = { Object.class }, tags = {UnitTag.INCOMPLETE})
 	public void testRemovePlan() {
+		
+		/*
+		 * The test does not show that the plan is returned through the remove invocation
+		 */
 
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 

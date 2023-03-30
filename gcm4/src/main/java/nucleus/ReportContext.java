@@ -17,7 +17,7 @@ import util.errors.ContractException;
  */
 
 public final class ReportContext {
-	
+
 	public ReportId getReportId() {
 		return simulation.focalReportId;
 	}
@@ -36,14 +36,23 @@ public final class ReportContext {
 	 * @throws ContractException
 	 *             <li>{@link NucleusError#NULL_PLAN} if the plan is null
 	 *             <li>{@link NucleusError#PAST_PLANNING_TIME} if the plan is
-	 *             scheduled for a time in the past
-	 * 
+	 *             scheduled for a time in the past *
+	 *             <li>{@link NucleusError#PLANNING_QUEUE_CLOSED} if the plan is
+	 *             added to the simulation after event processing is finished
 	 * 
 	 * 
 	 * 
 	 */
-	public void addPlan(final Consumer<ReportContext> plan, final double planTime) {
-		simulation.addReportPlan(plan, planTime, null);
+	public void addPlan(final Consumer<ReportContext> consumer, final double planTime) {
+		Plan<ReportContext> plan = Plan	.builder(ReportContext.class)//
+										.setActive(false)//
+										.setCallbackConsumer(consumer)//
+										.setKey(null)//
+										.setPlanData(null)//
+										.setPriority(-1)//
+										.setTime(planTime)//
+										.build();//
+		simulation.addReportPlan(plan);
 	}
 
 	/**
@@ -67,10 +76,20 @@ public final class ReportContext {
 	 * 
 	 */
 
-	public void addKeyedPlan(final Consumer<ReportContext> plan, final double planTime, final Object key) {
+	public void addKeyedPlan(final Consumer<ReportContext> consumer, final double planTime, final Object key) {
 		simulation.validatePlanKeyNotNull(key);
 		simulation.validateReportPlanKeyNotDuplicate(key);
-		simulation.addReportPlan(plan, planTime, key);
+
+		Plan<ReportContext> plan = Plan	.builder(ReportContext.class)//
+										.setActive(false)//
+										.setCallbackConsumer(consumer)//
+										.setKey(key)//
+										.setPlanData(null)//
+										.setPriority(-1)//
+										.setTime(planTime)//
+										.build();//
+
+		simulation.addReportPlan(plan);
 	}
 
 	/**
@@ -80,32 +99,16 @@ public final class ReportContext {
 	 *             <li>{@link NucleusError#NULL_PLAN_KEY} if the plan key is
 	 *             null
 	 */
-
-	@SuppressWarnings("unchecked")
-	public <T extends Consumer<ReportContext>> Optional<T> getPlan(final Object key) {
-		return (Optional<T>) simulation.getReportPlan(key);
+	public Optional<Plan<ReportContext>> getPlan(final Object key) {
+		return simulation.getReportPlan(key);
 	}
-	
-	
+
 	/**
-	 * Returns true if and only if the reports should output their state
-	 * as a plugin data instances at the end of the simulation.
+	 * Returns true if and only if the reports should output their state as a
+	 * plugin data instances at the end of the simulation.
 	 */
 	public boolean produceSimulationStateOnHalt() {
 		return simulation.produceSimulationStateOnHalt();
-	}
-
-
-	/**
-	 * Returns the scheduled execution time for the plan associated with the
-	 * given key
-	 *
-	 * @throws ContractException
-	 *             <li>{@link NucleusError#NULL_PLAN_KEY} if the plan key is
-	 *             null
-	 */
-	public Optional<Double> getPlanTime(final Object key) {
-		return simulation.getReportPlanTime(key);
 	}
 
 	/**
@@ -116,17 +119,18 @@ public final class ReportContext {
 	 *             null
 	 */
 
-	public <T extends Consumer<ReportContext>> Optional<T> removePlan(final Object key) {
+	public Optional<Plan<ReportContext>> removePlan(final Object key) {
 		return simulation.removeReportPlan(key);
 	}
 
 	/**
-	 * Returns a list of the current plan keys associated with the current report
+	 * Returns a list of the current plan keys associated with the current
+	 * report
 	 * 
 	 */
-	 public List<Object> getPlanKeys() {
-	 return simulation.getReportPlanKeys();
-	 }
+	public List<Object> getPlanKeys() {
+		return simulation.getReportPlanKeys();
+	}
 
 	/**
 	 * Subscribes the report to events of the given type for the purpose of
@@ -144,9 +148,6 @@ public final class ReportContext {
 	public <T extends Event> void subscribe(Class<T> eventClass, BiConsumer<ReportContext, T> eventConsumer) {
 		simulation.subscribeReportToEvent(eventClass, eventConsumer);
 	}
-	
-	
-	
 
 	/**
 	 * Unsubscribes the report from events of the given type for all phases of
@@ -192,6 +193,21 @@ public final class ReportContext {
 
 	public void releaseOutput(Object output) {
 		simulation.releaseOutput(output);
+	}
+
+	/**
+	 * Returns all PlanData objects that are associated with plans that remain
+	 * scheduled at the end of the simulation.
+	 * 
+	 * @throws ContractException()
+	 *             <li>{@linkplain NucleusError#TERMINAL_PLAN_DATA_ACCESS_VIOLATION}
+	 *             if invoked prior to the close of the simulation. Should only
+	 *             be invoked as part of the callback specified in the
+	 *             subscription to simulation close</li>
+	 * 
+	 */
+	public <T extends PlanData> List<T> getTerminalReportPlanDatas(Class<T> classRef) {
+		return simulation.getTerminalReportPlanDatas(classRef);
 	}
 
 }
