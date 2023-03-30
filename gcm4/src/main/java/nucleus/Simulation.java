@@ -127,12 +127,11 @@ public class Simulation {
 		}
 
 		/**
-		 * If true and an output consumer is also assigned then the simulation
-		 * will produce plugins and a SimulationTime that reflect the final
-		 * state of the simulation. Defaults to false.
+		 * Signals to simulation components to record their state as plugin data
+		 * as output to the experiment Defaults to false.
 		 */
-		public Builder setProduceSimulationStateOnHalt(boolean produceSimulationStateOnHalt) {
-			data.produceSimulationStateOnHalt = produceSimulationStateOnHalt;
+		public Builder setRecordState(boolean recordState) {
+			data.stateRecordingIsScheduled = recordState;
 			return this;
 		}
 
@@ -184,7 +183,7 @@ public class Simulation {
 		}
 
 		private void validate() {
-			if (data.produceSimulationStateOnHalt) {
+			if (data.stateRecordingIsScheduled) {
 				if (data.simulationHaltTime < 0) {
 					throw new ContractException(NucleusError.MISSING_SIM_HALT_TIME);
 				}
@@ -229,7 +228,7 @@ public class Simulation {
 
 	private static class Data {
 		private double simulationHaltTime = -1;
-		private boolean produceSimulationStateOnHalt;
+		private boolean stateRecordingIsScheduled;
 		private List<Plugin> plugins = new ArrayList<>();
 		private Consumer<Object> outputConsumer;
 		private SimulationTime simulationTime = SimulationTime.builder().build();
@@ -721,10 +720,21 @@ public class Simulation {
 
 		return orderedPlugins;
 	}
-
-	protected boolean produceSimulationStateOnHalt() {
-		return data.produceSimulationStateOnHalt;
+	protected double getScheduledSimulationHaltTime() {
+		return data.simulationHaltTime;
 	}
+	protected boolean stateRecordingIsScheduled() {
+		return data.stateRecordingIsScheduled;
+	}
+	protected boolean plansRequirePlanData(double time) {
+		if(data.stateRecordingIsScheduled) {
+			if(time>data.simulationHaltTime) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 
 	/**
 	 * Executes this Simulation instance. Contributed plugin initializers are
@@ -937,7 +947,7 @@ public class Simulation {
 			focalReportId = null;
 		}
 
-		if (data.produceSimulationStateOnHalt && outputConsumer != null) {
+		if (data.stateRecordingIsScheduled && outputConsumer != null) {
 			SimulationTime.Builder simulationTimeBuilder = SimulationTime.builder();
 			simulationTimeBuilder.setBaseDate(data.simulationTime.getBaseDate());
 			simulationTimeBuilder.setStartTime(time);
@@ -945,63 +955,61 @@ public class Simulation {
 		}
 
 	}
-	
-	@SuppressWarnings("unchecked")
-	protected <T extends PlanData> List<T> getTerminalActorPlanDatas(Class<T> classRef){
-		if(planningQueueMode != PlanningQueueMode.CLOSED) {
+
+	protected List<PrioritizedPlanData> getTerminalActorPlanDatas(Class<?> classRef) {
+		if (planningQueueMode != PlanningQueueMode.CLOSED) {
 			throw new ContractException(NucleusError.TERMINAL_PLAN_DATA_ACCESS_VIOLATION);
 		}
-		List<T> result = new ArrayList<>();
-		List<PlanData> planDatas = terminalActorPlanDatas.get(focalActorId);
-		if(planDatas != null) {
-			for(PlanData planData : planDatas) {
-				if(classRef.isAssignableFrom(planData.getClass())) {
-					result.add((T)planData);
+		List<PrioritizedPlanData> result = new ArrayList<>();
+		List<PrioritizedPlanData> prioritizedPlanDatas = terminalActorPlanDatas.get(focalActorId);
+		if (prioritizedPlanDatas != null) {
+			for (PrioritizedPlanData prioritizedPlanData : prioritizedPlanDatas) {
+				if (classRef.isAssignableFrom(prioritizedPlanData.getPlanData().getClass())) {					
+					result.add(prioritizedPlanData);
 				}
 			}
 		}
 		return result;
 	}
-	
-	@SuppressWarnings("unchecked")
-	protected <T extends PlanData> List<T> getTerminalDataManagerPlanDatas(DataManagerId dataManagerId,Class<T> classRef){
-		if(planningQueueMode != PlanningQueueMode.CLOSED) {
+
+	protected List<PrioritizedPlanData> getTerminalDataManagerPlanDatas(DataManagerId dataManagerId, Class<?> classRef) {
+		if (planningQueueMode != PlanningQueueMode.CLOSED) {
 			throw new ContractException(NucleusError.TERMINAL_PLAN_DATA_ACCESS_VIOLATION);
 		}
-		List<T> result = new ArrayList<>();
-		List<PlanData> planDatas = terminalDataManagerPlanDatas.get(dataManagerId);
-		if(planDatas != null) {
-			for(PlanData planData : planDatas) {
-				if(classRef.isAssignableFrom(planData.getClass())) {
-					result.add((T)planData);
+		List<PrioritizedPlanData> result = new ArrayList<>();
+		List<PrioritizedPlanData> prioritizedPlanDatas = terminalDataManagerPlanDatas.get(dataManagerId);
+		if (prioritizedPlanDatas != null) {
+			for (PrioritizedPlanData prioritizedPlanData : prioritizedPlanDatas) {
+				if (classRef.isAssignableFrom(prioritizedPlanData.getPlanData().getClass())) {
+					result.add(prioritizedPlanData);
 				}
 			}
 		}
 		return result;
 	}
-	
-	@SuppressWarnings("unchecked")
-	protected <T extends PlanData> List<T> getTerminalReportPlanDatas(Class<T> classRef){
-		if(planningQueueMode != PlanningQueueMode.CLOSED) {
+
+	protected List<PrioritizedPlanData> getTerminalReportPlanDatas(Class<?> classRef) {
+		if (planningQueueMode != PlanningQueueMode.CLOSED) {
 			throw new ContractException(NucleusError.TERMINAL_PLAN_DATA_ACCESS_VIOLATION);
 		}
-		List<T> result = new ArrayList<>();
-		List<PlanData> planDatas = terminalReportPlanDatas.get(focalReportId);
-		if(planDatas != null) {
-			for(PlanData planData : planDatas) {
-				if(classRef.isAssignableFrom(planData.getClass())) {
-					result.add((T)planData);
+		List<PrioritizedPlanData> result = new ArrayList<>();
+		List<PrioritizedPlanData> prioritizedPlanDatas = terminalReportPlanDatas.get(focalReportId);
+		if (prioritizedPlanDatas != null) {
+			for (PrioritizedPlanData prioritizedPlanData : prioritizedPlanDatas) {
+				if (classRef.isAssignableFrom(prioritizedPlanData.getPlanData().getClass())) {
+					result.add(prioritizedPlanData);
 				}
 			}
 		}
 		return result;
 	}
-	private Map<ActorId,List<PlanData>> terminalActorPlanDatas = new LinkedHashMap<>();
-	private Map<DataManagerId,List<PlanData>> terminalDataManagerPlanDatas = new LinkedHashMap<>(); 
-	private Map<ReportId,List<PlanData>> terminalReportPlanDatas = new LinkedHashMap<>();
+
+	private Map<ActorId, List<PrioritizedPlanData>> terminalActorPlanDatas = new LinkedHashMap<>();
+	private Map<DataManagerId, List<PrioritizedPlanData>> terminalDataManagerPlanDatas = new LinkedHashMap<>();
+	private Map<ReportId, List<PrioritizedPlanData>> terminalReportPlanDatas = new LinkedHashMap<>();
 
 	private void buildPlanDataRetrievalStructures() {
-		List<PlanData> list;
+		List<PrioritizedPlanData> list;
 		while (!planningQueue.isEmpty()) {
 			PlanRec planRec = planningQueue.poll();
 			Plan<?> plan = planRec.plan;
@@ -1011,27 +1019,27 @@ public class Simulation {
 					switch (planRec.planner) {
 					case ACTOR:
 						list = terminalActorPlanDatas.get(planRec.actorId);
-						if(list == null) {
-							list= new ArrayList<>();
+						if (list == null) {
+							list = new ArrayList<>();
 							terminalActorPlanDatas.put(planRec.actorId, list);
 						}
-						list.add(planData);
+						list.add(new PrioritizedPlanData(planData,planRec.arrivalId));
 						break;
 					case DATA_MANAGER:
 						list = terminalDataManagerPlanDatas.get(planRec.dataManagerId);
-						if(list == null) {
-							list= new ArrayList<>();
+						if (list == null) {
+							list = new ArrayList<>();
 							terminalDataManagerPlanDatas.put(planRec.dataManagerId, list);
 						}
-						list.add(planData);
+						list.add(new PrioritizedPlanData(planData,planRec.arrivalId));
 						break;
 					case REPORT:
 						list = terminalReportPlanDatas.get(planRec.reportId);
-						if(list == null) {
-							list= new ArrayList<>();
+						if (list == null) {
+							list = new ArrayList<>();
 							terminalReportPlanDatas.put(planRec.reportId, list);
 						}
-						list.add(planData);
+						list.add(new PrioritizedPlanData(planData,planRec.arrivalId));
 						break;
 					default:
 						throw new RuntimeException("unhandled case " + planRec.planner);
@@ -1241,7 +1249,7 @@ public class Simulation {
 	}
 
 	protected void halt() {
-		if (!data.produceSimulationStateOnHalt) {
+		if (!data.stateRecordingIsScheduled) {
 			simulationHaltTime = time;
 			forcedHaltPresent = true;
 		}

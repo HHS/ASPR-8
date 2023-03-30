@@ -146,7 +146,7 @@ public final class StageReport {
 		reportContext.subscribe(StageAdditionEvent.class, this::handleStageAdditionEvent);
 		reportContext.subscribe(StageImminentRemovalEvent.class, this::handleStageImminentRemovalEvent);
 		reportContext.subscribe(StageMaterialsProducerUpdateEvent.class, this::handleStageMaterialsProducerUpdateEvent);
-		if (reportContext.produceSimulationStateOnHalt()) {
+		if (reportContext.stateRecordingIsScheduled()) {
 			reportContext.subscribeToSimulationClose(this::recordSimulationState);
 		}
 

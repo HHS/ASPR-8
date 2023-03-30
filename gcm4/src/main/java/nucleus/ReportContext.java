@@ -54,43 +54,25 @@ public final class ReportContext {
 										.build();//
 		simulation.addReportPlan(plan);
 	}
-
+	
 	/**
-	 * Schedules a passive plan that will be executed at the given time. The
-	 * plan is associated with the given key and can be canceled or retrieved
-	 * via this key. Keys must be unique to the report doing the planning, but
-	 * can be repeated across reports and other planning entities. Use of keys
-	 * with plans should be avoided unless retrieval or cancellation is needed.
-	 * Passive plans are not required to execute and the simulation will
-	 * terminate if only passive plans remain on the planning schedule.
-	 * 
+	 * Schedules a plan.
 	 * 
 	 * @throws ContractException
 	 *             <li>{@link NucleusError#NULL_PLAN} if the plan is null
-	 *             <li>{@link NucleusError#NULL_PLAN_KEY} if the plan key is
-	 *             null
-	 *             <li>{@link NucleusError#DUPLICATE_PLAN_KEY} if the key is
-	 *             already in use by an existing plan
 	 *             <li>{@link NucleusError#PAST_PLANNING_TIME} if the plan is
-	 *             scheduled for a time in the past
+	 *             scheduled for a time in the past *
+	 *             <li>{@link NucleusError#PLANNING_QUEUE_CLOSED} if the plan is
+	 *             added to the simulation after event processing is finished
+	 * 
+	 * 
 	 * 
 	 */
-
-	public void addKeyedPlan(final Consumer<ReportContext> consumer, final double planTime, final Object key) {
-		simulation.validatePlanKeyNotNull(key);
-		simulation.validateReportPlanKeyNotDuplicate(key);
-
-		Plan<ReportContext> plan = Plan	.builder(ReportContext.class)//
-										.setActive(false)//
-										.setCallbackConsumer(consumer)//
-										.setKey(key)//
-										.setPlanData(null)//
-										.setPriority(-1)//
-										.setTime(planTime)//
-										.build();//
-
+	public void addPlan(Plan<ReportContext> plan) {		
 		simulation.addReportPlan(plan);
 	}
+
+	
 
 	/**
 	 * Retrieves a plan stored for the given key.
@@ -107,10 +89,24 @@ public final class ReportContext {
 	 * Returns true if and only if the reports should output their state as a
 	 * plugin data instances at the end of the simulation.
 	 */
-	public boolean produceSimulationStateOnHalt() {
-		return simulation.produceSimulationStateOnHalt();
+	public boolean stateRecordingIsScheduled() {
+		return simulation.stateRecordingIsScheduled();
 	}
-
+	/**
+	 * Returns the scheduled simulation halt time. Negative values indicate
+	 * there is no scheduled halt time.
+	 */
+	public double getScheduledSimulationHaltTime() {
+		return simulation.getScheduledSimulationHaltTime();
+	}
+	
+	/**
+	 * Returns true if and only if there a state recording is scheduled and the
+	 * given time exceeds the recording time.
+	 */
+	protected boolean plansRequirePlanData(double time) {
+		return simulation.plansRequirePlanData(time);
+	}
 	/**
 	 * Removes and returns the plan associated with the given key.
 	 * 
@@ -196,7 +192,7 @@ public final class ReportContext {
 	}
 
 	/**
-	 * Returns all PlanData objects that are associated with plans that remain
+	 * Returns all PrioritizedPlanData objects that are associated with plans that remain
 	 * scheduled at the end of the simulation.
 	 * 
 	 * @throws ContractException()
@@ -206,7 +202,7 @@ public final class ReportContext {
 	 *             subscription to simulation close</li>
 	 * 
 	 */
-	public <T extends PlanData> List<T> getTerminalReportPlanDatas(Class<T> classRef) {
+	public List<PrioritizedPlanData> getTerminalReportPlanDatas(Class<?> classRef) {
 		return simulation.getTerminalReportPlanDatas(classRef);
 	}
 

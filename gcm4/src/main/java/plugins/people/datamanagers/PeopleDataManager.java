@@ -209,7 +209,7 @@ public final class PeopleDataManager extends DataManager {
 		}
 		globalPopulationRecord.projectedPopulationCount = personIds.size();
 		globalPopulationRecord.assignmentTime = dataManagerContext.getTime();
-		if (dataManagerContext.produceSimulationStateOnHalt()) {
+		if (dataManagerContext.stateRecordingIsScheduled()) {
 			dataManagerContext.subscribeToSimulationClose(this::recordSimulationState);
 		}
 	}

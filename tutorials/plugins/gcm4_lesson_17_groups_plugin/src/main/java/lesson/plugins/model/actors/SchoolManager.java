@@ -9,6 +9,7 @@ import lesson.plugins.model.support.GroupType;
 import lesson.plugins.model.support.PersonProperty;
 import lesson.plugins.model.support.SchoolStatus;
 import nucleus.ActorContext;
+import nucleus.Plan;
 import plugins.globalproperties.datamanagers.GlobalPropertiesDataManager;
 import plugins.groups.datamanagers.GroupsDataManager;
 import plugins.groups.support.GroupConstructionInfo;
@@ -43,7 +44,12 @@ public class SchoolManager {
 
 	private void planNextReview() {
 		double planTime = actorContext.getTime() + reviewInterval;
-		actorContext.addPassivePlan(this::reviewSchools, planTime);
+		Plan<ActorContext> plan = Plan.builder(ActorContext.class)//
+				.setCallbackConsumer(this::reviewSchools)//
+				.setActive(false)//
+				.setTime(planTime)//
+				.build();
+		actorContext.addPlan(plan);
 	}
 
 	private void reviewSchools(ActorContext actorContext) {

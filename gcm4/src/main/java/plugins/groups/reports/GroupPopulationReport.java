@@ -107,7 +107,7 @@ public final class GroupPopulationReport extends PeriodicReport {
 	@Override
 	protected void prepare(ReportContext reportContext) {
 		groupsDataManager = reportContext.getDataManager(GroupsDataManager.class);
-		if (reportContext.produceSimulationStateOnHalt()) {
+		if (reportContext.stateRecordingIsScheduled()) {
 			reportContext.subscribeToSimulationClose(this::recordSimulationState);
 		}
 	}

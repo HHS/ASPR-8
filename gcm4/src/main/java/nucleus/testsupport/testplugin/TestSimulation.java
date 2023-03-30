@@ -160,7 +160,7 @@ public class TestSimulation {
 
 		// build and execute the engine
 		builder//
-				.setProduceSimulationStateOnHalt(data.produceSimulationStateOnHalt)//
+				.setRecordState(data.produceSimulationStateOnHalt)//
 				.setOutputConsumer(data.testOutputConsumer)//
 				.setSimulationTime(data.simulationTime)//
 				.setSimulationHaltTime(data.simulationHaltTime)//

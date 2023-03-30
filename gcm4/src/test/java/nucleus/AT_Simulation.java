@@ -313,7 +313,7 @@ public class AT_Simulation {
 					.addPlugin(testPlugin)//
 					.setSimulationTime(startingSimulationTime)//
 					.setOutputConsumer(testOutputConsumer)//
-					.setProduceSimulationStateOnHalt(true)//
+					.setRecordState(true)//
 					.setSimulationHaltTime(20)//
 					.build()//
 					.execute();//
@@ -343,7 +343,7 @@ public class AT_Simulation {
 					.addPlugin(testPlugin)//
 					.setSimulationTime(startingSimulationTime)//
 					.setOutputConsumer(testOutputConsumer)//
-					.setProduceSimulationStateOnHalt(false)//
+					.setRecordState(false)//
 					.build()//
 					.execute();//
 

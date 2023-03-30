@@ -52,6 +52,23 @@ public final class DataManagerContext implements SimulationContext {
 	}
 
 	/**
+	 * Schedules a plan.
+	 * 
+	 * @throws ContractException
+	 *             <li>{@link NucleusError#NULL_PLAN} if the plan is null
+	 *             <li>{@link NucleusError#PAST_PLANNING_TIME} if the plan is
+	 *             scheduled for a time in the past *
+	 *             <li>{@link NucleusError#PLANNING_QUEUE_CLOSED} if the plan is
+	 *             added to the simulation after event processing is finished
+	 * 
+	 * 
+	 * 
+	 */
+	public void addPlan(Plan<DataManagerContext> plan) {		
+		simulation.addDataManagerPlan(dataManagerId,plan);
+	}
+	
+	/**
 	 * Registers the given consumer to be executed at the end of the simulation.
 	 * Activity associated with the consumer should be limited to querying data
 	 * state and releasing output.
@@ -68,98 +85,23 @@ public final class DataManagerContext implements SimulationContext {
 	 * Returns true if and only if the data managers should output their state
 	 * as a plugin data instances at the end of the simulation.
 	 */
-	public boolean produceSimulationStateOnHalt() {
-		return simulation.produceSimulationStateOnHalt();
+	public boolean stateRecordingIsScheduled() {
+		return simulation.stateRecordingIsScheduled();
 	}
-
 	/**
-	 * Schedules a plan that will be executed at the given time. The plan is
-	 * associated with the given key and can be canceled or retrieved via this
-	 * key. Keys must be unique to the actor doing the planning, but can be
-	 * repeated across actors and other planning entities. Use of keys with
-	 * plans should be avoided unless retrieval or cancellation is needed.
-	 * 
-	 * 
-	 * @throws ContractException
-	 *             <li>{@link NucleusError#NULL_PLAN} if the plan is null
-	 *             <li>{@link NucleusError#DUPLICATE_PLAN_KEY} if the key is
-	 *             already in use by an existing plan
-	 *             <li>{@link NucleusError#PAST_PLANNING_TIME} if the plan is
-	 *             scheduled for a time in the past
+	 * Returns the scheduled simulation halt time. Negative values indicate
+	 * there is no scheduled halt time.
 	 */
-	public void addKeyedPlan(final Consumer<DataManagerContext> consumer, final double planTime, final Object key) {
-		simulation.validatePlanKeyNotNull(key);
-		simulation.validateDataManagerPlanKeyNotDuplicate(dataManagerId, key);
-
-		Plan<DataManagerContext> plan = Plan.builder(DataManagerContext.class)//
-											.setActive(true)//
-											.setCallbackConsumer(consumer)//
-											.setKey(key)//
-											.setPlanData(null)//
-											.setPriority(-1)//
-											.setTime(planTime)//
-											.build();//
-
-		simulation.addDataManagerPlan(dataManagerId, plan);
+	public double getScheduledSimulationHaltTime() {
+		return simulation.getScheduledSimulationHaltTime();
 	}
-
+	
 	/**
-	 * Schedules a plan that will be executed at the given time. Passive plans
-	 * are not required to execute and the simulation will terminate if only
-	 * passive plans remain on the planning schedule.
-	 * 
-	 * @throws ContractException
-	 *             <li>{@link NucleusError#NULL_PLAN} if the plan is null
-	 *             <li>{@link NucleusError#PAST_PLANNING_TIME} if the plan is
-	 *             scheduled for a time in the past
-	 * 
-	 * 
+	 * Returns true if and only if there a state recording is scheduled and the
+	 * given time exceeds the recording time.
 	 */
-	public void addPassivePlan(final Consumer<DataManagerContext> consumer, final double planTime) {
-
-		Plan<DataManagerContext> plan = Plan.builder(DataManagerContext.class)//
-											.setActive(false)//
-											.setCallbackConsumer(consumer)//
-											.setKey(null)//
-											.setPlanData(null)//
-											.setPriority(-1)//
-											.setTime(planTime)//
-											.build();//
-
-		simulation.addDataManagerPlan(dataManagerId, plan);
-	}
-
-	/**
-	 * Schedules a plan that will be executed at the given time. The plan is
-	 * associated with the given key and can be canceled or retrieved via this
-	 * key. Keys must be unique to the actor doing the planning, but can be
-	 * repeated across actors and other planning entities. Use of keys with
-	 * plans should be avoided unless retrieval or cancellation is
-	 * needed.Passive plans are not required to execute and the simulation will
-	 * terminate if only passive plans remain on the planning schedule.
-	 * 
-	 * 
-	 * @throws ContractException
-	 *             <li>{@link NucleusError#NULL_PLAN} if the plan is null
-	 *             <li>{@link NucleusError#DUPLICATE_PLAN_KEY} if the key is
-	 *             already in use by an existing plan
-	 *             <li>{@link NucleusError#PAST_PLANNING_TIME} if the plan is
-	 *             scheduled for a time in the past
-	 */
-	public void addPassiveKeyedPlan(final Consumer<DataManagerContext> consumer, final double planTime, final Object key) {
-		simulation.validatePlanKeyNotNull(key);
-		simulation.validateDataManagerPlanKeyNotDuplicate(dataManagerId, key);
-
-		Plan<DataManagerContext> plan = Plan.builder(DataManagerContext.class)//
-											.setActive(false)//
-											.setCallbackConsumer(consumer)//
-											.setKey(key)//
-											.setPlanData(null)//
-											.setPriority(-1)//
-											.setTime(planTime)//
-											.build();//
-
-		simulation.addDataManagerPlan(dataManagerId, plan);
+	protected boolean plansRequirePlanData(double time) {
+		return simulation.plansRequirePlanData(time);
 	}
 
 	/**
@@ -320,7 +262,7 @@ public final class DataManagerContext implements SimulationContext {
 	}
 	
 	/**
-	 * Returns all PlanData objects that are associated with plans that remain
+	 * Returns all PrioritizedPlanData objects that are associated with plans that remain
 	 * scheduled at the end of the simulation.
 	 * 
 	 * @throws ContractException()
@@ -330,7 +272,7 @@ public final class DataManagerContext implements SimulationContext {
 	 *             subscription to simulation close</li>
 	 * 
 	 */	
-	public <T extends PlanData> List<T> getTerminalDataManagerPlanDatas(Class<T> classRef){
+	public List<PrioritizedPlanData> getTerminalDataManagerPlanDatas(Class<?> classRef){
 		return simulation.getTerminalDataManagerPlanDatas(dataManagerId, classRef);
 	}
 }

@@ -53,106 +53,6 @@ public class AT_ReportContext {
 
 	}
 
-	@Test
-	@UnitTestMethod(target = ReportContext.class, name = "addKeyedPlan", args = { Consumer.class, double.class, Object.class })
-	public void testAddKeyedPlan() {
-		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
-
-		/*
-		 * have the added test report add a plan that can be retrieved and thus
-		 * was added successfully
-		 */
-		pluginDataBuilder.addTestReportPlan("report", new TestReportPlan(2, (context) -> {
-			Object key = new Object();
-
-			assertFalse(context.getPlan(key).isPresent());
-
-			context.addKeyedPlan((c) -> {
-			}, 3, key);
-
-			assertTrue(context.getPlan(key).isPresent());
-		}));
-
-		/*
-		 * Show that passive plans do not execute if there are no remaining
-		 * active plans. To do this, we will schedule a few passive plans, one
-		 * active plan and then a few more passive plans. We will then show that
-		 * the passive plans that come after the last active plan never execute
-		 */
-
-		// create some containers for passive keys
-		Set<Object> expectedPassiveKeys = new LinkedHashSet<>();
-		expectedPassiveKeys.add("A");
-		expectedPassiveKeys.add("B");
-		Set<Object> actualPassiveKeys = new LinkedHashSet<>();
-
-		pluginDataBuilder.addTestReportPlan("actor", new TestReportPlan(4, (context) -> {
-
-			// schedule two passive plans
-			context.addKeyedPlan((c) -> {
-				actualPassiveKeys.add("A");
-			}, 5, "A");
-			context.addKeyedPlan((c) -> {
-				actualPassiveKeys.add("B");
-			}, 6, "B");
-
-			// schedule two more passive plans
-			context.addKeyedPlan((c) -> {
-				actualPassiveKeys.add("C");
-			}, 8, "C");
-			context.addKeyedPlan((c) -> {
-				actualPassiveKeys.add("D");
-			}, 9, "D");
-
-		}));
-
-		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(7, (context) -> {
-			// place holder active plan that drives time to 7.0
-		}));
-
-		// build the plugin
-		TestPluginData testPluginData = pluginDataBuilder.build();
-		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
-
-		// run the simulation -- we do not need to show that all plans executed
-		Simulation	.builder()//
-					.addPlugin(testPlugin)//
-					.build()//
-					.execute();//
-
-		// show that the last two passive plans did not execute
-		assertEquals(expectedPassiveKeys, actualPassiveKeys);
-
-		// precondition test : if the plan is null
-		ContractException contractException = assertThrows(ContractException.class, () -> testConsumer((c) -> {
-			c.addKeyedPlan(null, 0, "key");
-		}));
-		assertEquals(NucleusError.NULL_PLAN, contractException.getErrorType());
-
-		// precondition test : if the plan is scheduled for the past
-		contractException = assertThrows(ContractException.class, () -> testConsumer((c) -> {
-			c.addKeyedPlan((c2) -> {
-			}, -1, "key");
-		}));
-		assertEquals(NucleusError.PAST_PLANNING_TIME, contractException.getErrorType());
-
-		// precondition test : if the plan key is null
-		contractException = assertThrows(ContractException.class, () -> testConsumer((c) -> {
-			c.addKeyedPlan((c2) -> {
-			}, 0, null);
-		}));
-		assertEquals(NucleusError.NULL_PLAN_KEY, contractException.getErrorType());
-
-		// precondition test : if the plan key duplicates an existing plan
-		contractException = assertThrows(ContractException.class, () -> testConsumer((c) -> {
-			c.addKeyedPlan((c2) -> {
-			}, 0, "key");
-			c.addKeyedPlan((c2) -> {
-			}, 0, "key");
-		}));
-		assertEquals(NucleusError.DUPLICATE_PLAN_KEY, contractException.getErrorType());
-	}
-
 	/*
 	 * Executes the simulation by adding TestReport that executes the give
 	 * consumer in a task planned at time zero. Also adds a TestActor with a
@@ -314,8 +214,14 @@ public class AT_ReportContext {
 		testConsumer((context) -> {
 			Object key = new Object();
 			assertFalse(context.getPlan(key).isPresent());
-			context.addKeyedPlan((c) -> {
-			}, 100, key);
+			
+			Plan<ReportContext> plan = Plan.builder(ReportContext.class)//
+					.setCallbackConsumer((c)->{})//
+					.setTime(100)//
+					.setKey(key)//
+					.build();
+			
+			context.addPlan(plan);
 			assertTrue(context.getPlan(key).isPresent());
 		});
 
@@ -337,8 +243,14 @@ public class AT_ReportContext {
 
 		testConsumer((context) -> {
 			for (Object key : expectedKeys) {
-				context.addKeyedPlan((c) -> {
-				}, 100, key);
+				
+				Plan<ReportContext> plan = Plan.builder(ReportContext.class)//
+						.setCallbackConsumer((c) -> {})//
+						.setTime(100)//
+						.setKey(key)//
+						.build();//
+				
+				context.addPlan(plan);
 			}
 
 			Set<Object> actualKeys = context.getPlanKeys().stream().collect(Collectors.toCollection(LinkedHashSet::new));
@@ -480,10 +392,14 @@ public class AT_ReportContext {
 		MutableBoolean removedPlanHasExecuted = new MutableBoolean();
 
 		// have the added test report add a plan
-		pluginDataBuilder.addTestReportPlan("report", new TestReportPlan(2, (context) -> {
-			context.addKeyedPlan((c2) -> {
-				removedPlanHasExecuted.setValue(true);
-			}, 4, key);
+		pluginDataBuilder.addTestReportPlan("report", new TestReportPlan(2, (context) -> {			
+			Plan<ReportContext> plan = Plan.builder(ReportContext.class)//
+					.setCallbackConsumer((c2) -> {removedPlanHasExecuted.setValue(true);})//
+					.setTime(4)//
+					.setKey(key)//
+					.build();//			
+			
+			context.addPlan(plan);
 		}));
 
 		// have the test report remove the plan and show the plan no longer
