@@ -1,6 +1,5 @@
 package plugins.materials.reports;
 
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -136,8 +135,6 @@ public final class AT_MaterialsProducerPropertyReport {
 
 		TestPluginData testPluginData = pluginBuilder.build();
 
-
-
 		Factory factory = MaterialsTestPluginFactory.factory(0, 0, 0, 8759226038479000135L, testPluginData);
 		factory.setMaterialsProducerPropertyReportPluginData(MaterialsProducerPropertyReportPluginData.builder().setReportLabel(REPORT_LABEL).build());
 		
@@ -153,6 +150,7 @@ public final class AT_MaterialsProducerPropertyReport {
 	@Test
 	@UnitTestMethod(target = MaterialsProducerPropertyReport.class, name = "init", args = {ReportContext.class })
 	public void testInit_State() {
+		// Test with producing simulation state
 
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
@@ -202,15 +200,37 @@ public final class AT_MaterialsProducerPropertyReport {
 
 		TestPluginData testPluginData = pluginBuilder.build();
 
+		MaterialsProducerPropertyReportPluginData materialsProducerPropertyReportPluginData = MaterialsProducerPropertyReportPluginData
+				.builder()
+				.setReportLabel(REPORT_LABEL)
+				.build();
+
 		Factory factory = MaterialsTestPluginFactory.factory(0, 0, 0, 8759226038479000135L, testPluginData);
-		factory.setMaterialsProducerPropertyReportPluginData(MaterialsProducerPropertyReportPluginData.builder().setReportLabel(REPORT_LABEL).build());
+		factory.setMaterialsProducerPropertyReportPluginData(materialsProducerPropertyReportPluginData);
 
 		TestOutputConsumer testOutputConsumer = TestSimulation	.builder()//
 				.addPlugins(factory.getPlugins())//
+				.setProduceSimulationStateOnHalt(true)//
+				.setSimulationHaltTime(50)//
 				.build()//
 				.execute();
 
 		Map<MaterialsProducerPropertyReportPluginData, Integer> outputItems = testOutputConsumer.getOutputItems(MaterialsProducerPropertyReportPluginData.class);
+		assertEquals(1, outputItems.size());
+		MaterialsProducerPropertyReportPluginData materialsProducerPropertyReportPluginData2 = outputItems.keySet().iterator().next();
+		assertEquals(materialsProducerPropertyReportPluginData, materialsProducerPropertyReportPluginData2);
+
+		// Test without producing simulation state
+
+		testOutputConsumer = TestSimulation	.builder()//
+				.addPlugins(factory.getPlugins())//
+				.setProduceSimulationStateOnHalt(false)//
+				.setSimulationHaltTime(50)//
+				.build()//
+				.execute();
+
+		outputItems = testOutputConsumer.getOutputItems(MaterialsProducerPropertyReportPluginData.class);
+		assertEquals(0, outputItems.size());
 	}
 
 
