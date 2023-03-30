@@ -139,7 +139,7 @@ public final class StochasticsDataManager extends DataManager {
 	@Override
 	public void init(DataManagerContext dataManagerContext) {
 		super.init(dataManagerContext);
-		if (dataManagerContext.produceSimulationStateOnHalt()) {
+		if (dataManagerContext.stateRecordingIsScheduled()) {
 			dataManagerContext.subscribeToSimulationClose(this::recordSimulationState);
 		}
 	}

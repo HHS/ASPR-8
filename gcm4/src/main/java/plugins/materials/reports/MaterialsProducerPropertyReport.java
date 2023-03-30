@@ -59,7 +59,7 @@ public final class MaterialsProducerPropertyReport {
 
 		reportContext.subscribe(MaterialsProducerPropertyUpdateEvent.class, this::handleMaterialsProducerPropertyUpdateEvent);
 		reportContext.subscribe(MaterialsProducerAdditionEvent.class, this::handleMaterialsProducerAdditionEvent);
-		if (reportContext.produceSimulationStateOnHalt()) {
+		if (reportContext.stateRecordingIsScheduled()) {
 			reportContext.subscribeToSimulationClose(this::recordSimulationState);
 		}
 

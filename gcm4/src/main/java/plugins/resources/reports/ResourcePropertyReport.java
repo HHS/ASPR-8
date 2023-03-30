@@ -58,7 +58,7 @@ public final class ResourcePropertyReport {
 
 		reportContext.subscribe(ResourcePropertyUpdateEvent.class, this::handleResourcePropertyUpdateEvent);
 		reportContext.subscribe(ResourcePropertyDefinitionEvent.class, this::handleResourcePropertyAdditionEvent);
-		if (reportContext.produceSimulationStateOnHalt()) {
+		if (reportContext.stateRecordingIsScheduled()) {
 			reportContext.subscribeToSimulationClose(this::recordSimulationState);
 		}
 

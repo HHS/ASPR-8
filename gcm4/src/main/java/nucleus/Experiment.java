@@ -139,13 +139,43 @@ public final class Experiment {
 			data.threadCount = threadCount;
 			return this;
 		}
+		
+		/**
+		 * Set the simulation time. Defaults to the current date and a start
+		 * time of zero.
+		 * 
+		 * @throws ContractException
+		 *             <li>{@link NucleusError#NULL_SIMULATION_TIME} if the
+		 *             simulation time is null
+		 * 
+		 */
+		public Builder setSimulationTime(SimulationTime simulationTime) {
+			if (simulationTime == null) {
+				throw new ContractException(NucleusError.NULL_SIMULATION_TIME);
+			}
+			data.simulationTime = simulationTime;
+			return this;
+		}
 
 		/**
-		 * If true, the simulations will produce plugins and a SimulationTime
-		 * that reflect the final state of the simulation. Defaults to false.
+		 * Signals to simulation components to record their state as plugin data
+		 * as output to the experiment Defaults to false.
 		 */
-		public Builder setProduceSimulationStateOnHalt(boolean produceSimulationStateOnHalt) {
-			data.produceSimulationStateOnHalt = produceSimulationStateOnHalt;
+		public Builder setRecordState(boolean recordState) {
+			data.stateRecordingIsScheduled = recordState;
+			return this;
+		}
+		
+		/**
+		 * Sets the halt time for the simulation. Defaults to -1, which is
+		 * equivalent to not halting. If the simulation has been instructed to
+		 * produce its state at halt, then the halt time must be set to a
+		 * positive value. Setting this to a non-negative value that is less
+		 * than the simulation time used to start the simulation will result in
+		 * an exception.
+		 */
+		public Builder setSimulationHaltTime(double simulationHaltTime) {
+			data.simulationHaltTime = simulationHaltTime;
 			return this;
 		}
 
@@ -172,11 +202,14 @@ public final class Experiment {
 		private final List<Plugin> plugins = new ArrayList<>();
 		private final List<Consumer<ExperimentContext>> experimentContextConsumers = new ArrayList<>();
 		private int threadCount;
-		private boolean produceSimulationStateOnHalt;
+		private boolean stateRecordingIsScheduled;
+		private double simulationHaltTime = -1;
 		private boolean haltOnException = true;
 		private Path experimentProgressLogPath;
 		private boolean continueFromProgressLog;
 		private Set<Integer> explicitScenarioIds = new LinkedHashSet<>();
+		private SimulationTime simulationTime = SimulationTime.builder().build();
+		
 	}
 
 	/*
@@ -204,16 +237,18 @@ public final class Experiment {
 		private final List<Plugin> plugins;
 		private final Integer scenarioId;
 		private final boolean produceSimulationStateOnHalt;
-
+		private final double simulationHaltTime;
+		private final SimulationTime simulationTime;
 		/*
 		 * All construction arguments are thread safe implementations.
 		 */
-		private SimulationCallable(final Integer scenarioId, final ExperimentStateManager experimentStateManager, final List<Plugin> plugins, final boolean produceSimulationStateOnHalt) {
-
+		private SimulationCallable(final Integer scenarioId, final ExperimentStateManager experimentStateManager, final List<Plugin> plugins, final boolean produceSimulationStateOnHalt,final double simulationHaltTime,final SimulationTime simulationTime) {
 			this.scenarioId = scenarioId;
 			this.experimentStateManager = experimentStateManager;
 			this.plugins = new ArrayList<>(plugins);
 			this.produceSimulationStateOnHalt = produceSimulationStateOnHalt;
+			this.simulationHaltTime = simulationHaltTime;
+			this.simulationTime = simulationTime;
 		}
 
 		/**
@@ -234,8 +269,9 @@ public final class Experiment {
 
 			// direct output from the simulation to the subscribed consumers
 			simBuilder.setOutputConsumer(experimentStateManager.getOutputConsumer(scenarioId));
-			simBuilder.setProduceSimulationStateOnHalt(produceSimulationStateOnHalt);
-
+			simBuilder.setRecordState(produceSimulationStateOnHalt);
+			simBuilder.setSimulationHaltTime(simulationHaltTime);
+			simBuilder.setSimulationTime(simulationTime);
 			// build the simulation
 			final Simulation simulation = simBuilder.build();
 
@@ -372,7 +408,14 @@ public final class Experiment {
 		while (jobIndex < (Math.min(data.threadCount, jobs.size()) - 1)) {
 			final Integer scenarioId = jobs.get(jobIndex);
 			List<Plugin> plugins = getNewPluginInstancesFromScenarioId(scenarioId);
-			completionService.submit(new SimulationCallable(scenarioId, experimentStateManager, plugins, data.produceSimulationStateOnHalt));
+			completionService.submit(new SimulationCallable(
+					scenarioId,
+					experimentStateManager,
+					plugins,
+					data.stateRecordingIsScheduled,
+					data.simulationHaltTime,
+					data.simulationTime
+					));
 			jobIndex++;
 		}
 
@@ -386,7 +429,14 @@ public final class Experiment {
 			if (jobIndex < jobs.size()) {
 				final Integer scenarioId = jobs.get(jobIndex);
 				List<Plugin> plugins = getNewPluginInstancesFromScenarioId(scenarioId);
-				completionService.submit(new SimulationCallable(scenarioId, experimentStateManager, plugins, data.produceSimulationStateOnHalt));
+				completionService.submit(new SimulationCallable(
+						scenarioId,
+						experimentStateManager,
+						plugins,
+						data.stateRecordingIsScheduled,
+						data.simulationHaltTime,
+						data.simulationTime
+						));
 				jobIndex++;
 			}
 
@@ -440,8 +490,9 @@ public final class Experiment {
 				simBuilder.addPlugin(plugin);
 			}
 
-			simBuilder.setProduceSimulationStateOnHalt(data.produceSimulationStateOnHalt);
-
+			simBuilder.setRecordState(data.stateRecordingIsScheduled);
+			simBuilder.setSimulationHaltTime(data.simulationHaltTime);
+			simBuilder.setSimulationTime(data.simulationTime);
 			// direct output from the simulation to the subscribed consumers
 			simBuilder.setOutputConsumer(experimentStateManager.getOutputConsumer(scenarioId));
 

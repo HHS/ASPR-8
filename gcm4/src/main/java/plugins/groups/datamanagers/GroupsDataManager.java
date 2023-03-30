@@ -222,7 +222,7 @@ public final class GroupsDataManager extends DataManager {
 		loadGroupPropertyValues();
 
 		dataManagerContext.subscribe(PersonRemovalEvent.class, this::handlePersonRemovalEvent);
-		if (dataManagerContext.produceSimulationStateOnHalt()) {
+		if (dataManagerContext.stateRecordingIsScheduled()) {
 			dataManagerContext.subscribeToSimulationClose(this::recordSimulationState);
 		}
 	}

@@ -271,8 +271,24 @@ public final class ActorContext implements SimulationContext {
 	 * Returns true if and only if the actors should output their state as a
 	 * plugin data instances at the end of the simulation.
 	 */
-	public boolean produceSimulationStateOnHalt() {
-		return simulation.produceSimulationStateOnHalt();
+	public boolean stateRecordingIsScheduled() {
+		return simulation.stateRecordingIsScheduled();
+	}
+
+	/**
+	 * Returns the scheduled simulation halt time. Negative values indicate
+	 * there is no scheduled halt time.
+	 */
+	public double getScheduledSimulationHaltTime() {
+		return simulation.getScheduledSimulationHaltTime();
+	}
+
+	/**
+	 * Returns true if and only if there a state recording is scheduled and the
+	 * given time exceeds the recording time.
+	 */
+	protected boolean plansRequirePlanData(double time) {
+		return simulation.plansRequirePlanData(time);
 	}
 
 	/**
@@ -290,7 +306,7 @@ public final class ActorContext implements SimulationContext {
 	}
 
 	/**
-	 * Returns all PlanData objects that are associated with plans that remain
+	 * Returns all PrioritizedPlanData objects that are associated with plans that remain
 	 * scheduled at the end of the simulation.
 	 * 
 	 * @throws ContractException()
@@ -300,7 +316,7 @@ public final class ActorContext implements SimulationContext {
 	 *             subscription to simulation close</li>
 	 * 
 	 */
-	public <T extends PlanData> List<T> getTerminalActorPlanDatas(Class<T> classRef) {
+	public List<PrioritizedPlanData> getTerminalActorPlanDatas(Class<?> classRef) { 
 		return simulation.getTerminalActorPlanDatas(classRef);
 	}
 

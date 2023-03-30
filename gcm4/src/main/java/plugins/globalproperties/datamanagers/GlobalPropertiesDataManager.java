@@ -193,7 +193,7 @@ public final class GlobalPropertiesDataManager extends DataManager {
 			globalPropertyDefinitions.put(globalPropertyId, globalPropertyDefinition);
 		}
 
-		if (dataManagerContext.produceSimulationStateOnHalt()) {
+		if (dataManagerContext.stateRecordingIsScheduled()) {
 			dataManagerContext.subscribeToSimulationClose(this::recordSimulationState);
 		}
 

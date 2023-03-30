@@ -273,7 +273,7 @@ public final class PersonResourceReport extends PeriodicReport {
 		reportContext.subscribe(PersonResourceUpdateEvent.class, this::handlePersonResourceUpdateEvent);
 		reportContext.subscribe(ResourceIdAdditionEvent.class, this::handleResourceIdAdditionEvent);
 
-		if (reportContext.produceSimulationStateOnHalt()) {
+		if (reportContext.stateRecordingIsScheduled()) {
 			reportContext.subscribeToSimulationClose(this::recordSimulationState);
 		}
 
