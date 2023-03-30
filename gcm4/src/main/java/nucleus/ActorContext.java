@@ -64,100 +64,22 @@ public final class ActorContext implements SimulationContext {
 										.build();//
 		simulation.addActorPlan(plan);
 	}
-
+	
 	/**
-	 * Schedules a plan that will be executed at the given time. The plan is
-	 * associated with the given key and can be canceled or retrieved via this
-	 * key. Keys must be unique to the actor doing the planning, but can be
-	 * repeated across actors and other planning entities. Use of keys with
-	 * plans should be avoided unless retrieval or cancellation is needed.
-	 * 
-	 * 
-	 * @throws ContractException
-	 *             <li>{@link NucleusError#NULL_PLAN} if the plan is null
-	 *             <li>{@link NucleusError#NULL_PLAN_KEY} if the plan key is
-	 *             null
-	 *             <li>{@link NucleusError#DUPLICATE_PLAN_KEY} if the key is
-	 *             already in use by an existing plan
-	 *             <li>{@link NucleusError#PAST_PLANNING_TIME} if the plan is
-	 *             scheduled for a time in the past
-	 * 
-	 */
-	public void addKeyedPlan(final Consumer<ActorContext> consumer, final double planTime, final Object key) {
-		simulation.validatePlanKeyNotNull(key);
-		simulation.validateActorPlanKeyNotDuplicate(key);
-
-		Plan<ActorContext> plan = Plan	.builder(ActorContext.class)//
-										.setActive(true)//
-										.setCallbackConsumer(consumer)//
-										.setKey(key)//
-										.setPlanData(null)//
-										.setPriority(-1)//
-										.setTime(planTime)//
-										.build();//
-
-		simulation.addActorPlan(plan);
-	}
-
-	/**
-	 * Schedules a plan that will be executed at the given time. Passive plans
-	 * are not required to execute and the simulation will terminate if only
-	 * passive plans remain on the planning schedule.
+	 * Schedules a plan.
 	 * 
 	 * @throws ContractException
 	 *             <li>{@link NucleusError#NULL_PLAN} if the plan is null
 	 *             <li>{@link NucleusError#PAST_PLANNING_TIME} if the plan is
 	 *             scheduled for a time in the past
+	 *             <li>{@link NucleusError#PLANNING_QUEUE_CLOSED} if the plan is
+	 *             added to the simulation after event processing is finished
 	 * 
 	 * 
 	 * 
 	 * 
 	 */
-	public void addPassivePlan(final Consumer<ActorContext> consumer, final double planTime) {
-		Plan<ActorContext> plan = Plan	.builder(ActorContext.class)//
-										.setActive(false)//
-										.setCallbackConsumer(consumer)//
-										.setKey(null)//
-										.setPlanData(null)//
-										.setPriority(-1)//
-										.setTime(planTime)//
-										.build();//
-		simulation.addActorPlan(plan);
-	}
-
-	/**
-	 * Schedules a plan that will be executed at the given time. The plan is
-	 * associated with the given key and can be canceled or retrieved via this
-	 * key. Keys must be unique to the actor doing the planning, but can be
-	 * repeated across actors and other planning entities. Use of keys with
-	 * plans should be avoided unless retrieval or cancellation is needed.
-	 * Passive plans are not required to execute and the simulation will
-	 * terminate if only passive plans remain on the planning schedule.
-	 * 
-	 * 
-	 * @throws ContractException
-	 *             <li>{@link NucleusError#NULL_PLAN} if the plan is null
-	 *             <li>{@link NucleusError#NULL_PLAN_KEY} if the plan key is
-	 *             null
-	 *             <li>{@link NucleusError#DUPLICATE_PLAN_KEY} if the key is
-	 *             already in use by an existing plan
-	 *             <li>{@link NucleusError#PAST_PLANNING_TIME} if the plan is
-	 *             scheduled for a time in the past
-	 * 
-	 */
-	public void addPassiveKeyedPlan(final Consumer<ActorContext> consumer, final double planTime, final Object key) {
-		simulation.validatePlanKeyNotNull(key);
-		simulation.validateActorPlanKeyNotDuplicate(key);
-
-		Plan<ActorContext> plan = Plan	.builder(ActorContext.class)//
-										.setActive(false)//
-										.setCallbackConsumer(consumer)//
-										.setKey(key)//
-										.setPlanData(null)//
-										.setPriority(-1)//
-										.setTime(planTime)//
-										.build();//
-
+	public void addPlan(final Plan<ActorContext> plan) {
 		simulation.addActorPlan(plan);
 	}
 

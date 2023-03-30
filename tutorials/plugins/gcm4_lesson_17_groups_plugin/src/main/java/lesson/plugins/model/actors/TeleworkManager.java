@@ -10,6 +10,7 @@ import lesson.plugins.model.support.GroupProperty;
 import lesson.plugins.model.support.GroupType;
 import lesson.plugins.model.support.PersonProperty;
 import nucleus.ActorContext;
+import nucleus.Plan;
 import plugins.globalproperties.datamanagers.GlobalPropertiesDataManager;
 import plugins.groups.datamanagers.GroupsDataManager;
 import plugins.groups.support.GroupId;
@@ -29,7 +30,13 @@ public class TeleworkManager {
 	
 	private void scheduleNextReview() {
 		double planTime = actorContext.getTime() + reviewInterval;
-		actorContext.addPassivePlan(this::reviewTeleworkStatus, planTime);
+		Plan<ActorContext> plan = Plan.builder(ActorContext.class)//
+				.setCallbackConsumer(this::reviewTeleworkStatus)//
+				.setActive(false)//
+				.setTime(planTime)//
+				.build();
+		
+		actorContext.addPlan(plan);
 	}
 
 	private void reviewTeleworkStatus(ActorContext actorContext) {
