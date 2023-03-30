@@ -92,8 +92,7 @@ public final class AT_BatchStatusReport {
 	}
 
 	@Test
-	@UnitTestMethod(target = BatchStatusReport.class, name = "init", args = { ReportContext.class }, tags = {
-			UnitTag.INCOMPLETE })
+	@UnitTestMethod(target = BatchStatusReport.class, name = "init", args = { ReportContext.class }, tags = {UnitTag.INCOMPLETE })
 	public void testInit() {
 
 		Map<ReportItem, Integer> expectedReportItems = new LinkedHashMap<>();
@@ -242,6 +241,170 @@ public final class AT_BatchStatusReport {
 				.execute();
 		
 		assertEquals(expectedReportItems, testOutputConsumer.getOutputItems(ReportItem.class));
+	}
+
+	@Test
+	@UnitTestMethod(target = BatchStatusReport.class, name = "init", args = { ReportContext.class })
+	public void testInit_State() {
+		// Test with producing simulation
+
+		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+
+		double actionTime = 0;
+
+		for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
+
+			// add a few batches
+			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(actionTime++, (c) -> {
+				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
+				RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
+
+				for (int i = 0; i < 20; i++) {
+					TestMaterialId materialId = TestMaterialId.getRandomMaterialId(randomGenerator);
+					double amount = randomGenerator.nextDouble();
+					BatchConstructionInfo batchConstructionInfo = TestBatchConstructionInfo
+							.getBatchConstructionInfo(testMaterialsProducerId, materialId, amount, randomGenerator);
+					BatchId batchId = materialsDataManager.addBatch(batchConstructionInfo);
+				}
+			}));
+
+			// transfer material between batches
+			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(actionTime++, (c) -> {
+
+				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
+				RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
+
+				for (TestMaterialId testMaterialId : TestMaterialId.values()) {
+					List<BatchId> batches = materialsDataManager
+							.getInventoryBatchesByMaterialId(testMaterialsProducerId, testMaterialId);
+
+					if (batches.size() > 1) {
+						for (int i = 0; i < batches.size(); i++) {
+							int index1 = randomGenerator.nextInt(batches.size());
+							int index2 = randomGenerator.nextInt(batches.size() - 1);
+							if (index2 >= index1) {
+								index2++;
+							}
+							BatchId batchId1 = batches.get(index1);
+							BatchId batchId2 = batches.get(index2);
+							double portion = randomGenerator.nextDouble();
+							double amount = materialsDataManager.getBatchAmount(batchId1);
+							double transferAmount = amount *= portion;
+							materialsDataManager.transferMaterialBetweenBatches(batchId1, batchId2, transferAmount);
+						}
+					}
+				}
+			}));
+
+			// destroy some batches
+			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(actionTime++, (c) -> {
+				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
+				RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
+				Random random = new Random(randomGenerator.nextLong());
+				List<BatchId> inventoryBatches = materialsDataManager.getInventoryBatches(testMaterialsProducerId);
+				Collections.shuffle(inventoryBatches, random);
+				int destructionCount = inventoryBatches.size() / 5;
+				for (int i = 0; i < destructionCount; i++) {
+					BatchId batchId = inventoryBatches.get(i);
+					materialsDataManager.removeBatch(batchId);
+				}
+			}));
+
+			// set some batch property values
+			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(actionTime++, (c) -> {
+				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
+				RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
+
+				List<BatchId> inventoryBatches = materialsDataManager.getInventoryBatches(testMaterialsProducerId);
+
+				for (BatchId batchId : inventoryBatches) {
+					TestMaterialId materialId = materialsDataManager.getBatchMaterial(batchId);
+					TestBatchPropertyId propertyId = TestBatchPropertyId.getRandomMutableBatchPropertyId(materialId,
+							randomGenerator);
+					Object value = propertyId.getRandomPropertyValue(randomGenerator);
+					materialsDataManager.setBatchPropertyValue(batchId, propertyId, value);
+				}
+			}));
+
+			// put some of the batches on stages
+			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(actionTime++, (c) -> {
+				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
+				RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
+
+				List<StageId> stageIds = new ArrayList<>();
+				for (int i = 0; i < 3; i++) {
+					StageId stageId = materialsDataManager.addStage(testMaterialsProducerId);
+					stageIds.add(stageId);
+				}
+
+				List<BatchId> inventoryBatches = materialsDataManager.getInventoryBatches(testMaterialsProducerId);
+				for (BatchId batchId : inventoryBatches) {
+					if (randomGenerator.nextBoolean()) {
+						StageId stageId = stageIds.get(randomGenerator.nextInt(stageIds.size()));
+						materialsDataManager.moveBatchToStage(batchId, stageId);
+					}
+				}
+
+			}));
+
+			// take some of the batches off of stages
+			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(actionTime++, (c) -> {
+				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
+				RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
+
+				List<StageId> stageIds = materialsDataManager.getStages(testMaterialsProducerId);
+
+				for (StageId stageId : stageIds) {
+					List<BatchId> batches = materialsDataManager.getStageBatches(stageId);
+					for (BatchId batchId : batches) {
+						if (randomGenerator.nextBoolean()) {
+							materialsDataManager.moveBatchToInventory(batchId);
+						}
+					}
+				}
+			}));
+
+		}
+
+		TestPluginData testPluginData = pluginBuilder.build();
+
+		BatchStatusReportPluginData batchStatusReportPluginData = BatchStatusReportPluginData.builder()
+				.setReportLabel(REPORT_LABEL)
+				.build();
+
+		Factory factory = MaterialsTestPluginFactory//
+				.factory(0, 0, 0, 2819236410498978100L, testPluginData)
+				.setBatchStatusReportPluginData(BatchStatusReportPluginData.builder().setReportLabel(REPORT_LABEL).build());
+
+		TestOutputConsumer testOutputConsumer = TestSimulation	.builder()//
+				.addPlugins(factory.getPlugins())//
+				.setProduceSimulationStateOnHalt(true)//
+				.setSimulationHaltTime(20)//
+				.build()//
+				.execute();
+
+		// show that the plugin data persists after simulation
+		Map<BatchStatusReportPluginData, Integer> outputItems = testOutputConsumer.getOutputItems(BatchStatusReportPluginData.class);
+		assertEquals(1, outputItems.size());
+		BatchStatusReportPluginData batchStatusReportPluginData2 = outputItems.keySet().iterator().next();
+		assertEquals(batchStatusReportPluginData, batchStatusReportPluginData2);
+
+		// Test without producing simulation
+		testOutputConsumer = TestSimulation	.builder()//
+				.addPlugins(factory.getPlugins())//
+				.setProduceSimulationStateOnHalt(false)//
+				.setSimulationHaltTime(20)//
+				.build()//
+				.execute();
+
+		outputItems = testOutputConsumer.getOutputItems(BatchStatusReportPluginData.class);
+		assertEquals(0, outputItems.size());
 	}
 
 	private static ReportItem getReportItem(List<Object> values) {
