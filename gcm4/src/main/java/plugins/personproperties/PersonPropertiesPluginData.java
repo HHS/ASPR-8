@@ -174,7 +174,7 @@ public class PersonPropertiesPluginData implements PluginData {
 		 *             id is null</li>
 		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
 		 *             person property id is null</li>
-		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE} if the
+		 *             <li>{@linkplain PersonPropertyError#NULL_PROPERTY_VALUE} if the
 		 *             person property value is null</li>
 		 */
 		public Builder setPersonPropertyValue(final PersonId personId, final PersonPropertyId personPropertyId, final Object personPropertyValue) {

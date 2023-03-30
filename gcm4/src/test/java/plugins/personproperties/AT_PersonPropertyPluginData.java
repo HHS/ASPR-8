@@ -18,6 +18,7 @@ import nucleus.PluginData;
 import nucleus.PluginDataBuilder;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
+import plugins.personproperties.support.PersonPropertyError;
 import plugins.personproperties.support.PersonPropertyId;
 import plugins.personproperties.support.PersonPropertyInitialization;
 import plugins.personproperties.testsupport.TestPersonPropertyId;
@@ -47,8 +48,7 @@ public class AT_PersonPropertyPluginData {
 		 */
 		ContractException contractException = assertThrows(ContractException.class, //
 				() -> PersonPropertiesPluginData.builder()//
-				.addPerson(new PersonId(0))
-												.setPersonPropertyValue(new PersonId(0), TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK, true)//
+												.addPerson(new PersonId(0)).setPersonPropertyValue(new PersonId(0), TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK, true)//
 												.build());//
 		assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
 
@@ -62,8 +62,7 @@ public class AT_PersonPropertyPluginData {
 					PropertyDefinition propertyDefinition = testPersonPropertyId.getPropertyDefinition();
 					PersonPropertiesPluginData	.builder()//
 												.definePersonProperty(testPersonPropertyId, propertyDefinition)//
-												.addPerson(new PersonId(0))
-												.setPersonPropertyValue(new PersonId(0), TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK, 45)//
+												.addPerson(new PersonId(0)).setPersonPropertyValue(new PersonId(0), TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK, 45)//
 												.build();//
 				});//
 		assertEquals(PropertyError.INCOMPATIBLE_VALUE, contractException.getErrorType());
@@ -91,6 +90,38 @@ public class AT_PersonPropertyPluginData {
 				});//
 		assertEquals(PropertyError.INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT, contractException.getErrorType());
 
+		contractException = assertThrows(ContractException.class, //
+				() -> {//
+
+					TestPersonPropertyId prop1 = TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK;
+					PropertyDefinition def1 = prop1.getPropertyDefinition();
+
+					// this property has no associated default value
+					TestPersonPropertyId prop2 = TestPersonPropertyId.PERSON_PROPERTY_9_DOUBLE_IMMUTABLE_NO_TRACK;
+					PropertyDefinition def2 = prop2.getPropertyDefinition();
+
+					PersonPropertiesPluginData.Builder builder =
+
+							PersonPropertiesPluginData.builder();//
+					builder	.definePersonProperty(prop1, def1)//
+							.definePersonProperty(prop2, def2);//
+
+					for (int i = 0; i < 10; i++) {
+						if (i % 2 == 0) {
+							builder.addPerson(new PersonId(i));//
+						}
+						builder.setPersonPropertyValue(new PersonId(i), prop1, false);//
+						builder.setPersonPropertyValue(new PersonId(i), prop2, 2.556);//
+					}
+					builder.build();
+
+				});//
+		assertEquals(PersonPropertyError.PROPERTY_ASSIGNMENT_FOR_NON_ADDED_PERSON, contractException.getErrorType());
+
+		// * <li>{@linkplain
+		// PropertyError#PROPERTY_ASSIGNMENT_FOR_NON_ADDED_PERSON}
+		// * if a person who is not explicitly added via addPerson()
+		// * is assigned property values</li>
 	}
 
 	@Test
@@ -391,12 +422,12 @@ public class AT_PersonPropertyPluginData {
 		int personCount = 50;
 		int expectedMaxPersonIndex = -1;
 		for (int i = 0; i < personCount; i++) {
-			
+
 			if (randomGenerator.nextBoolean()) {
 				PersonId personId = new PersonId(i);
 				personPropertyBuilder.addPerson(personId);
 				expectedMaxPersonIndex = FastMath.max(expectedMaxPersonIndex, i);
-				int propertyCount = randomGenerator.nextInt(5);				
+				int propertyCount = randomGenerator.nextInt(5);
 				for (int j = 0; j < propertyCount; j++) {
 					TestPersonPropertyId testPersonPropertyId = propertiesWithDefaultValues.get(randomGenerator.nextInt(propertiesWithDefaultValues.size()));
 					Object value = testPersonPropertyId.getRandomPropertyValue(randomGenerator);
