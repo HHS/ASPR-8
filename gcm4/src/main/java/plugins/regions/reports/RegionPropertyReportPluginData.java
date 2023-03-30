@@ -167,7 +167,7 @@ public final class RegionPropertyReportPluginData implements PluginData {
          *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
          *             person property id is null</li>
          */
-        public Builder includeRegionPropertyId(RegionPropertyId regionPropertyId) {
+        public Builder includeRegionProperty(RegionPropertyId regionPropertyId) {
             ensureDataMutability();
             if (regionPropertyId == null) {
                 throw new ContractException(PropertyError.NULL_PROPERTY_ID);
@@ -184,7 +184,7 @@ public final class RegionPropertyReportPluginData implements PluginData {
          *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
          *             person property id is null</li>
          */
-        public Builder excludeRegionPropertyId(RegionPropertyId regionPropertyId) {
+        public Builder excludeRegionProperty(RegionPropertyId regionPropertyId) {
             ensureDataMutability();
             if (regionPropertyId == null) {
                 throw new ContractException(PropertyError.NULL_PROPERTY_ID);

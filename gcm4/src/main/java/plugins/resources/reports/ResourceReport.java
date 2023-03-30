@@ -417,10 +417,10 @@ public final class ResourceReport extends PeriodicReport {
 	private void recordSimulationState(ReportContext reportContext) {
 		ResourceReportPluginData.Builder builder = ResourceReportPluginData.builder();
 		for (ResourceId resourceId : includedResourceIds) {
-			builder.includeResourceId(resourceId);
+			builder.includeResource(resourceId);
 		}
 		for (ResourceId resourceId : excludedResourceIds) {
-			builder.excludeResourceId(resourceId);
+			builder.excludeResource(resourceId);
 		}
 		builder.setDefaultInclusion(includeNewResourceIds);
 		builder.setReportLabel(getReportLabel());

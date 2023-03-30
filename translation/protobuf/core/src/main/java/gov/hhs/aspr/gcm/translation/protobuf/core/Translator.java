@@ -30,6 +30,7 @@ public final class Translator {
         private TranslatorId translatorId;
         private final Map<Reader, Message> readers = new LinkedHashMap<>();
         private final Map<Pair<Class<?>, Integer>, Writer> writers = new LinkedHashMap<>();
+        private final Map<Class<?>, Class<?>> markerInterfaceClassMap = new LinkedHashMap<>();
         private boolean hasInput = false;
         private boolean hasOutput = false;
         private boolean inputIsPluginData = true;
@@ -82,7 +83,7 @@ public final class Translator {
 
         public Builder addOutputFile(String outputFileName, Class<?> classRef, Integer scenarioId) {
             Pair<Class<?>, Integer> key = new Pair<>(classRef, scenarioId);
-            if(this.data.writers.containsKey(key)) {
+            if (this.data.writers.containsKey(key)) {
                 throw new RuntimeException("Attempted to overwrite an existing output file.");
             }
             try {
@@ -96,18 +97,7 @@ public final class Translator {
         }
 
         public Builder addOutputFile(String outputFileName, Class<?> classRef) {
-            Pair<Class<?>, Integer> key = new Pair<>(classRef, 0);
-            if(this.data.writers.containsKey(key)) {
-                throw new RuntimeException("Attempted to overwrite an existing output file.");
-            }
-            try {
-                this.data.writers.put(key, new FileWriter(Paths.get(outputFileName).toFile()));
-            } catch (IOException e) {
-                throw new RuntimeException("Failed to create Writer", e);
-            }
-
-            this.data.hasOutput = true;
-            return this;
+            return addOutputFile(outputFileName, classRef, 0);
         }
 
         public Builder setInitializer(Consumer<TranslatorContext> initConsumer) {
@@ -131,6 +121,16 @@ public final class Translator {
         public Builder addDependency(TranslatorId dependency) {
             this.data.dependencies.add(dependency);
 
+            return this;
+        }
+
+        public <T, U extends T> Builder addMarkerInterface(Class<U> classRef, Class<T> markerInterface) {
+
+            if (!markerInterface.isAssignableFrom(classRef)) {
+                throw new RuntimeException("cannot cast " + classRef.getName() + " to " + markerInterface.getName());
+            }
+
+            this.data.markerInterfaceClassMap.put(classRef, markerInterface);
             return this;
         }
     }
@@ -188,11 +188,6 @@ public final class Translator {
         }
         Set<Reader> readers = this.data.readers.keySet();
 
-        if(readers.size() > 1) {
-            throw new RuntimeException(
-                    "There should be at most 1 plugin data file for a given translator.");
-        }
-
         for (Reader reader : readers) {
             readerContext.readPluginDataInput(reader, this.data.readers.get(reader).newBuilderForType());
         }
@@ -205,12 +200,27 @@ public final class Translator {
             throw new RuntimeException(
                     "The output data for this translator is a plugin data, and should be written via the writePluginDataOutput() method.");
         }
+        Class<?> simObjectClass = simObject.getClass();
 
-        Pair<Class<?>, Integer> key = new Pair<>(simObject.getClass(), writerContext.getScenarioId());
-        if(!this.data.writers.containsKey(key)) {
-            throw new RuntimeException("No writer exists for type: " + simObject.getClass() + " and scenario : " + writerContext.getScenarioId());
+        Pair<Class<?>, Integer> key = new Pair<>(simObjectClass, writerContext.getScenarioId());
+
+        if (!this.data.writers.containsKey(key)) {
+            if (!this.data.markerInterfaceClassMap.containsKey(simObjectClass)) {
+                throw new RuntimeException("No writer exists for type: " + simObjectClass + " and scenario : "
+                        + writerContext.getScenarioId());
+            }
+            Class<?> markerInterfaceClass = this.data.markerInterfaceClassMap.get(simObjectClass);
+
+            key = new Pair<>(markerInterfaceClass, writerContext.getScenarioId());
+            if (!this.data.writers.containsKey(key)) {
+                throw new RuntimeException("No writer exists for types: "
+                        + simObjectClass + " nor "
+                        + markerInterfaceClass + " and scenario : "
+                        + writerContext.getScenarioId());
+            }
+            writerContext.writeJsonOutput(this.data.writers.get(key), simObject, markerInterfaceClass);
+            return;
         }
-
         writerContext.writeJsonOutput(this.data.writers.get(key), simObject);
     }
 
@@ -223,8 +233,9 @@ public final class Translator {
         }
 
         Pair<Class<?>, Integer> key = new Pair<>(pluginData.getClass(), writerContext.getScenarioId());
-        if(!this.data.writers.containsKey(key)) {
-            throw new RuntimeException("No writer exists for type: " + pluginData.getClass() + " and scenario : " + writerContext.getScenarioId());
+        if (!this.data.writers.containsKey(key)) {
+            throw new RuntimeException("No writer exists for type: " + pluginData.getClass() + " and scenario : "
+                    + writerContext.getScenarioId());
         }
 
         writerContext.writePluginDataOutput(this.data.writers.get(key), pluginData);

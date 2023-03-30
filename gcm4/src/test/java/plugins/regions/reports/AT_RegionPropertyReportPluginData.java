@@ -114,7 +114,7 @@ public class AT_RegionPropertyReportPluginData {
                 .setReportLabel(reportLabel);//
 
         for (RegionPropertyId regionPropertyId : expectedRegionPropertyIds) {
-            builder.includeRegionPropertyId(regionPropertyId);
+            builder.includeRegionProperty(regionPropertyId);
         }
 
         regionPropertyReportPluginData = builder.build();
@@ -131,8 +131,8 @@ public class AT_RegionPropertyReportPluginData {
                 .setReportLabel(reportLabel);//
 
         for (RegionPropertyId regionPropertyId : expectedRegionPropertyIds) {
-            builder.excludeRegionPropertyId(regionPropertyId);
-            builder.includeRegionPropertyId(regionPropertyId);
+            builder.excludeRegionProperty(regionPropertyId);
+            builder.includeRegionProperty(regionPropertyId);
         }
 
         regionPropertyReportPluginData = builder.build();
@@ -140,7 +140,7 @@ public class AT_RegionPropertyReportPluginData {
 
         // precondition: if the region property id is null
         ContractException contractException = assertThrows(ContractException.class, () -> {
-            RegionPropertyReportPluginData.builder().includeRegionPropertyId(null);
+            RegionPropertyReportPluginData.builder().includeRegionProperty(null);
         });
         assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
     }
@@ -168,7 +168,7 @@ public class AT_RegionPropertyReportPluginData {
                 .setReportLabel(reportLabel);//
 
         for (RegionPropertyId regionPropertyId : expectedRegionPropertyIds) {
-            builder.excludeRegionPropertyId(regionPropertyId);
+            builder.excludeRegionProperty(regionPropertyId);
         }
 
         regionPropertyReportPluginData = builder.build();
@@ -185,8 +185,8 @@ public class AT_RegionPropertyReportPluginData {
                 .setReportLabel(reportLabel);//
 
         for (RegionPropertyId regionPropertyId : expectedRegionPropertyIds) {
-            builder.includeRegionPropertyId(regionPropertyId);
-            builder.excludeRegionPropertyId(regionPropertyId);
+            builder.includeRegionProperty(regionPropertyId);
+            builder.excludeRegionProperty(regionPropertyId);
         }
 
         regionPropertyReportPluginData = builder.build();
@@ -194,7 +194,7 @@ public class AT_RegionPropertyReportPluginData {
 
         // precondition: if the region property id is null
         ContractException contractException = assertThrows(ContractException.class, () -> {
-            RegionPropertyReportPluginData.builder().excludeRegionPropertyId(null);
+            RegionPropertyReportPluginData.builder().excludeRegionProperty(null);
         });
         assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
     }
@@ -239,7 +239,7 @@ public class AT_RegionPropertyReportPluginData {
                 .setReportLabel(reportLabel);//
 
         for (RegionPropertyId regionPropertyId : expectedRegionPropertyIds) {
-            builder.includeRegionPropertyId(regionPropertyId);
+            builder.includeRegionProperty(regionPropertyId);
         }
 
         regionPropertyReportPluginData = builder.build();
@@ -256,8 +256,8 @@ public class AT_RegionPropertyReportPluginData {
                 .setReportLabel(reportLabel);//
 
         for (RegionPropertyId regionPropertyId : expectedRegionPropertyIds) {
-            builder.excludeRegionPropertyId(regionPropertyId);
-            builder.includeRegionPropertyId(regionPropertyId);
+            builder.excludeRegionProperty(regionPropertyId);
+            builder.includeRegionProperty(regionPropertyId);
         }
 
         regionPropertyReportPluginData = builder.build();
@@ -288,7 +288,7 @@ public class AT_RegionPropertyReportPluginData {
                 .setReportLabel(reportLabel);//
 
         for (RegionPropertyId regionPropertyId : expectedRegionPropertyIds) {
-            builder.excludeRegionPropertyId(regionPropertyId);
+            builder.excludeRegionProperty(regionPropertyId);
         }
 
         regionPropertyReportPluginData = builder.build();
@@ -306,8 +306,8 @@ public class AT_RegionPropertyReportPluginData {
                 .setReportLabel(reportLabel);//
 
         for (RegionPropertyId regionPropertyId : expectedRegionPropertyIds) {
-            builder.includeRegionPropertyId(regionPropertyId);
-            builder.excludeRegionPropertyId(regionPropertyId);
+            builder.includeRegionProperty(regionPropertyId);
+            builder.excludeRegionProperty(regionPropertyId);
         }
 
         regionPropertyReportPluginData = builder.build();
@@ -352,8 +352,8 @@ public class AT_RegionPropertyReportPluginData {
         RegionPropertyReportPluginData filledRegionPropertyReportPluginData = //
                 RegionPropertyReportPluginData	.builder()//
                         .setReportLabel(reportLabel)//
-                        .includeRegionPropertyId(TestRegionPropertyId.REGION_PROPERTY_1_BOOLEAN_MUTABLE)
-                        .includeRegionPropertyId(TestRegionPropertyId.REGION_PROPERTY_2_INTEGER_MUTABLE).setDefaultInclusion(false).build();
+                        .includeRegionProperty(TestRegionPropertyId.REGION_PROPERTY_1_BOOLEAN_MUTABLE)
+                        .includeRegionProperty(TestRegionPropertyId.REGION_PROPERTY_2_INTEGER_MUTABLE).setDefaultInclusion(false).build();
 
         // show that the empty builder is indeed empty
 
@@ -399,9 +399,9 @@ public class AT_RegionPropertyReportPluginData {
             for (int j = 0; j < 10; j++) {
                 TestRegionPropertyId testRegionPropertyId = TestRegionPropertyId.getRandomRegionPropertyId(randomGenerator);
                 if (randomGenerator.nextBoolean()) {
-                    builder.includeRegionPropertyId(testRegionPropertyId);
+                    builder.includeRegionProperty(testRegionPropertyId);
                 } else {
-                    builder.excludeRegionPropertyId(testRegionPropertyId);
+                    builder.excludeRegionProperty(testRegionPropertyId);
                 }
             }
 
@@ -437,11 +437,11 @@ public class AT_RegionPropertyReportPluginData {
             for (int j = 0; j < 10; j++) {
                 TestRegionPropertyId testRegionPropertyId = TestRegionPropertyId.getRandomRegionPropertyId(randomGenerator);
                 if (randomGenerator.nextBoolean()) {
-                    builder1.includeRegionPropertyId(testRegionPropertyId);
-                    builder2.includeRegionPropertyId(testRegionPropertyId);
+                    builder1.includeRegionProperty(testRegionPropertyId);
+                    builder2.includeRegionProperty(testRegionPropertyId);
                 } else {
-                    builder1.excludeRegionPropertyId(testRegionPropertyId);
-                    builder2.excludeRegionPropertyId(testRegionPropertyId);
+                    builder1.excludeRegionProperty(testRegionPropertyId);
+                    builder2.excludeRegionProperty(testRegionPropertyId);
                 }
             }
 
@@ -476,7 +476,7 @@ public class AT_RegionPropertyReportPluginData {
                 RegionPropertyId regionPropertyId = regionPropertyReportPluginData1.getIncludedProperties().iterator().next();
                 regionPropertyReportPluginData2 = //
                         regionPropertyReportPluginData1	.getCloneBuilder()//
-                                .excludeRegionPropertyId(regionPropertyId)//
+                                .excludeRegionProperty(regionPropertyId)//
                                 .build();
                 assertNotEquals(regionPropertyReportPluginData2, regionPropertyReportPluginData1);
             }
@@ -485,7 +485,7 @@ public class AT_RegionPropertyReportPluginData {
                 RegionPropertyId regionPropertyId = regionPropertyReportPluginData1.getExcludedProperties().iterator().next();
                 regionPropertyReportPluginData2 = //
                         regionPropertyReportPluginData1	.getCloneBuilder()//
-                                .includeRegionPropertyId(regionPropertyId)//
+                                .includeRegionProperty(regionPropertyId)//
                                 .build();
                 assertNotEquals(regionPropertyReportPluginData2, regionPropertyReportPluginData1);
             }
@@ -513,11 +513,11 @@ public class AT_RegionPropertyReportPluginData {
             for (int j = 0; j < 10; j++) {
                 TestRegionPropertyId testRegionPropertyId = TestRegionPropertyId.getRandomRegionPropertyId(randomGenerator);
                 if (randomGenerator.nextBoolean()) {
-                    builder1.includeRegionPropertyId(testRegionPropertyId);
-                    builder2.includeRegionPropertyId(testRegionPropertyId);
+                    builder1.includeRegionProperty(testRegionPropertyId);
+                    builder2.includeRegionProperty(testRegionPropertyId);
                 } else {
-                    builder1.excludeRegionPropertyId(testRegionPropertyId);
-                    builder2.excludeRegionPropertyId(testRegionPropertyId);
+                    builder1.excludeRegionProperty(testRegionPropertyId);
+                    builder2.excludeRegionProperty(testRegionPropertyId);
                 }
             }
 

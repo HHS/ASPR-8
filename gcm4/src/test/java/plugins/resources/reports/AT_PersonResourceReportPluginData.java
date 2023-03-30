@@ -155,7 +155,7 @@ public class AT_PersonResourceReportPluginData {
 																						.setReportLabel(reportLabel);//
 
 		for (ResourceId resourceId : expectedResourceIds) {
-			builder.includeResourceId(resourceId);
+			builder.includeResource(resourceId);
 		}
 
 		personResourceReportPluginData = builder.build();
@@ -173,8 +173,8 @@ public class AT_PersonResourceReportPluginData {
 												.setReportLabel(reportLabel);//
 
 		for (ResourceId resourceId : expectedResourceIds) {
-			builder.excludeResourceId(resourceId);
-			builder.includeResourceId(resourceId);
+			builder.excludeResource(resourceId);
+			builder.includeResource(resourceId);
 		}
 
 		personResourceReportPluginData = builder.build();
@@ -182,7 +182,7 @@ public class AT_PersonResourceReportPluginData {
 
 		// precondition: if the person property id is null
 		ContractException contractException = assertThrows(ContractException.class, () -> {
-			PersonResourceReportPluginData.builder().includeResourceId(null);
+			PersonResourceReportPluginData.builder().includeResource(null);
 		});
 		assertEquals(ResourceError.NULL_RESOURCE_ID, contractException.getErrorType());
 	}
@@ -213,7 +213,7 @@ public class AT_PersonResourceReportPluginData {
 																						.setReportLabel(reportLabel);//
 
 		for (ResourceId resourceId : expectedResourceIds) {
-			builder.excludeResourceId(resourceId);
+			builder.excludeResource(resourceId);
 		}
 
 		personResourceReportPluginData = builder.build();
@@ -231,8 +231,8 @@ public class AT_PersonResourceReportPluginData {
 												.setReportLabel(reportLabel);//
 
 		for (ResourceId resourceId : expectedResourceIds) {
-			builder.includeResourceId(resourceId);
-			builder.excludeResourceId(resourceId);
+			builder.includeResource(resourceId);
+			builder.excludeResource(resourceId);
 		}
 
 		personResourceReportPluginData = builder.build();
@@ -240,7 +240,7 @@ public class AT_PersonResourceReportPluginData {
 
 		// precondition: if the person property id is null
 		ContractException contractException = assertThrows(ContractException.class, () -> {
-			PersonResourceReportPluginData.builder().excludeResourceId(null);
+			PersonResourceReportPluginData.builder().excludeResource(null);
 		});
 		assertEquals(ResourceError.NULL_RESOURCE_ID, contractException.getErrorType());
 	}
@@ -303,7 +303,7 @@ public class AT_PersonResourceReportPluginData {
 																						.setReportLabel(reportLabel);//
 
 		for (ResourceId resourceId : expectedResourceIds) {
-			builder.includeResourceId(resourceId);
+			builder.includeResource(resourceId);
 		}
 
 		personResourceReportPluginData = builder.build();
@@ -321,8 +321,8 @@ public class AT_PersonResourceReportPluginData {
 												.setReportLabel(reportLabel);//
 
 		for (ResourceId resourceId : expectedResourceIds) {
-			builder.excludeResourceId(resourceId);
-			builder.includeResourceId(resourceId);
+			builder.excludeResource(resourceId);
+			builder.includeResource(resourceId);
 		}
 
 		personResourceReportPluginData = builder.build();
@@ -356,7 +356,7 @@ public class AT_PersonResourceReportPluginData {
 																						.setReportLabel(reportLabel);//
 
 		for (ResourceId resourceId : expectedResourceIds) {
-			builder.excludeResourceId(resourceId);
+			builder.excludeResource(resourceId);
 		}
 
 		personResourceReportPluginData = builder.build();
@@ -374,8 +374,8 @@ public class AT_PersonResourceReportPluginData {
 												.setReportLabel(reportLabel);//
 
 		for (ResourceId resourceId : expectedResourceIds) {
-			builder.includeResourceId(resourceId);
-			builder.excludeResourceId(resourceId);
+			builder.includeResource(resourceId);
+			builder.excludeResource(resourceId);
 		}
 
 		personResourceReportPluginData = builder.build();
@@ -425,7 +425,7 @@ public class AT_PersonResourceReportPluginData {
 				PersonResourceReportPluginData	.builder()//
 												.setReportPeriod(reportPeriod)//
 												.setReportLabel(reportLabel)//
-												.includeResourceId(TestResourceId.RESOURCE_1).excludeResourceId(TestResourceId.RESOURCE_2)//
+												.includeResource(TestResourceId.RESOURCE_1).excludeResource(TestResourceId.RESOURCE_2)//
 												.setDefaultInclusion(false)//
 												.build();
 
@@ -483,9 +483,9 @@ public class AT_PersonResourceReportPluginData {
 			for (int j = 0; j < 10; j++) {
 				TestResourceId testResourceId = TestResourceId.getRandomResourceId(randomGenerator);
 				if (randomGenerator.nextBoolean()) {
-					builder.includeResourceId(testResourceId);
+					builder.includeResource(testResourceId);
 				} else {
-					builder.excludeResourceId(testResourceId);
+					builder.excludeResource(testResourceId);
 				}
 			}
 
@@ -525,11 +525,11 @@ public class AT_PersonResourceReportPluginData {
 			for (int j = 0; j < 10; j++) {
 				TestResourceId testResourceId = TestResourceId.getRandomResourceId(randomGenerator);
 				if (randomGenerator.nextBoolean()) {
-					builder1.includeResourceId(testResourceId);
-					builder2.includeResourceId(testResourceId);
+					builder1.includeResource(testResourceId);
+					builder2.includeResource(testResourceId);
 				} else {
-					builder1.excludeResourceId(testResourceId);
-					builder2.excludeResourceId(testResourceId);
+					builder1.excludeResource(testResourceId);
+					builder2.excludeResource(testResourceId);
 				}
 			}
 
@@ -574,7 +574,7 @@ public class AT_PersonResourceReportPluginData {
 				ResourceId resourceId = personResourceReportPluginData1.getIncludedResourceIds().iterator().next();
 				personResourceReportPluginData2 = //
 						personResourceReportPluginData1	.getCloneBuilder()//
-														.excludeResourceId(resourceId)//
+														.excludeResource(resourceId)//
 														.build();
 				assertNotEquals(personResourceReportPluginData2, personResourceReportPluginData1);
 			}
@@ -583,7 +583,7 @@ public class AT_PersonResourceReportPluginData {
 				ResourceId resourceId = personResourceReportPluginData1.getExcludedResourceIds().iterator().next();
 				personResourceReportPluginData2 = //
 						personResourceReportPluginData1	.getCloneBuilder()//
-														.includeResourceId(resourceId)//
+														.includeResource(resourceId)//
 														.build();
 				assertNotEquals(personResourceReportPluginData2, personResourceReportPluginData1);
 			}
@@ -615,11 +615,11 @@ public class AT_PersonResourceReportPluginData {
 			for (int j = 0; j < 10; j++) {
 				TestResourceId testResourceId = TestResourceId.getRandomResourceId(randomGenerator);
 				if (randomGenerator.nextBoolean()) {
-					builder1.includeResourceId(testResourceId);
-					builder2.includeResourceId(testResourceId);
+					builder1.includeResource(testResourceId);
+					builder2.includeResource(testResourceId);
 				} else {
-					builder1.excludeResourceId(testResourceId);
-					builder2.excludeResourceId(testResourceId);
+					builder1.excludeResource(testResourceId);
+					builder2.excludeResource(testResourceId);
 				}
 			}
 

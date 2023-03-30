@@ -29,6 +29,10 @@ public final class SimpleReportLabel implements ReportLabel {
 		this.value = value;
 	}
 
+	public Object getValue() {
+		return this.value;
+	}
+
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();

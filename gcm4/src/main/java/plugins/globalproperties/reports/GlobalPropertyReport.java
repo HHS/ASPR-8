@@ -167,10 +167,10 @@ public final class GlobalPropertyReport {
 		GlobalPropertyReportPluginData.Builder builder = GlobalPropertyReportPluginData.builder();
 		builder.setReportLabel(reportLabel);
 		for (GlobalPropertyId globalPropertyId : includedPropertyIds) {
-			builder.includeGlobalPropertyId(globalPropertyId);
+			builder.includeGlobalProperty(globalPropertyId);
 		}
 		for (GlobalPropertyId globalPropertyId : excludedPropertyIds) {
-			builder.excludeGlobalPropertyId(globalPropertyId);
+			builder.excludeGlobalProperty(globalPropertyId);
 		}
 		builder.setDefaultInclusion(includeNewPropertyIds);
 		reportContext.releaseOutput(builder.build());

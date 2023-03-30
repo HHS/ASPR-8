@@ -260,8 +260,8 @@ public class AT_RegionPropertyReport {
 		RegionPropertyReportPluginData.Builder builder = RegionPropertyReportPluginData.builder();
 		builder.setReportLabel(reportLabel);
 		builder.setDefaultInclusion(false);
-		builder.includeRegionPropertyId(testRegionPropertyId);
-		builder.includeRegionPropertyId(unknownRegionPropertyId);
+		builder.includeRegionProperty(testRegionPropertyId);
+		builder.includeRegionProperty(unknownRegionPropertyId);
 		RegionPropertyReportPluginData regionPropertyReportPluginData = builder.build();
 
 		TestPluginData testPluginData = pluginDataBuilder.build();
@@ -327,8 +327,8 @@ public class AT_RegionPropertyReport {
 				// do nothing
 			}
 
-			reportBuilder.includeRegionPropertyId(includedPropertyId);
-			reportBuilder.excludeRegionPropertyId(excludedPropertyId);
+			reportBuilder.includeRegionProperty(includedPropertyId);
+			reportBuilder.excludeRegionProperty(excludedPropertyId);
 			RegionPropertyReportPluginData regionPropertyReportPluginData = reportBuilder.build();
 
 			// build the region plugin using the report plugin data and the
@@ -455,8 +455,8 @@ public class AT_RegionPropertyReport {
 		RegionPropertyReportPluginData.Builder builder = RegionPropertyReportPluginData.builder();
 		builder.setReportLabel(reportLabel);
 		builder.setDefaultInclusion(true);
-		builder.excludeRegionPropertyId(testRegionPropertyId);
-		builder.excludeRegionPropertyId(unknownRegionPropertyId);
+		builder.excludeRegionProperty(testRegionPropertyId);
+		builder.excludeRegionProperty(unknownRegionPropertyId);
 		RegionPropertyReportPluginData regionPropertyReportPluginData = builder.build();
 
 		TestPluginData testPluginData = pluginDataBuilder.build();

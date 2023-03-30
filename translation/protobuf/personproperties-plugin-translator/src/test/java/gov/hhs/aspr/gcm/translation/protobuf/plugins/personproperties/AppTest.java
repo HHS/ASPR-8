@@ -13,16 +13,25 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.util.Pair;
 import org.junit.jupiter.api.Test;
 
+import gov.hhs.aspr.gcm.translation.protobuf.core.Translator;
 import gov.hhs.aspr.gcm.translation.protobuf.core.TranslatorController;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.PeopleTranslator;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.translatorSpecs.TestPersonPropertyIdTranslatorSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.input.PersonPropertiesPluginDataInput;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.input.PersonPropertyInteractionReportPluginDataInput;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.input.PersonPropertyReportPluginDataInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.PropertiesTranslator;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.ReportsTranslator;
 import nucleus.PluginData;
 import plugins.people.support.PersonId;
 import plugins.personproperties.PersonPropertiesPluginData;
+import plugins.personproperties.reports.PersonPropertyInteractionReportPluginData;
+import plugins.personproperties.reports.PersonPropertyReportPluginData;
 import plugins.personproperties.support.PersonPropertyId;
 import plugins.personproperties.support.PersonPropertyInitialization;
 import plugins.personproperties.testsupport.TestPersonPropertyId;
+import plugins.reports.support.ReportLabel;
+import plugins.reports.support.ReportPeriod;
+import plugins.reports.support.SimpleReportLabel;
 import plugins.util.properties.PropertyDefinition;
 import util.random.RandomGeneratorProvider;
 
@@ -38,18 +47,24 @@ public class AppTest {
 
         Path inputFilePath = basePath.resolve("src/main/resources/json");
         Path outputFilePath = basePath.resolve("src/main/resources/json/output");
-        
+
         outputFilePath.toFile().mkdir();
 
-        String inputFileName = "input.json";
-        String outputFileName = "output.json";
+        String fileName = "pluginData.json";
+
+        Translator personPropertiesTranslator = PersonPropertiesTranslator
+                .builder()
+                .addInputFile(inputFilePath.resolve(fileName).toString(),
+                        PersonPropertiesPluginDataInput.getDefaultInstance())
+                .addOutputFile(outputFilePath.resolve(fileName).toString(),
+                        PersonPropertiesPluginData.class)
+                .build();
 
         TranslatorController translatorController = TranslatorController.builder()
-                .addTranslator(
-                        PersonPropertiesTranslator.getTranslatorRW(inputFilePath.resolve(inputFileName).toString(), outputFilePath.resolve(outputFileName).toString()))
+                .addTranslator(personPropertiesTranslator)
                 .addTranslator(PropertiesTranslator.getTranslator())
                 .addTranslator(PeopleTranslator.getTranslator())
-                .addTranslatorSpec(new TestPersonPropertyIdTranslatorSpec())
+                .addTranslator(ReportsTranslator.getTranslator())
                 .build();
 
         List<PluginData> pluginDatas = translatorController.readInput().getPluginDatas();
@@ -81,8 +96,10 @@ public class AppTest {
         for (PersonId personId : people) {
             List<Pair<TestPersonPropertyId, Object>> expectedValues = new ArrayList<>();
             for (TestPersonPropertyId propertyId : TestPersonPropertyId.values()) {
-                if (propertyId.getPropertyDefinition().getDefaultValue().isEmpty() || randomGenerator.nextBoolean()) {
-                    Object expectedPropertyValue = propertyId.getRandomPropertyValue(randomGenerator);
+                if (propertyId.getPropertyDefinition().getDefaultValue().isEmpty()
+                        || randomGenerator.nextBoolean()) {
+                    Object expectedPropertyValue = propertyId
+                            .getRandomPropertyValue(randomGenerator);
                     expectedValues.add(new Pair<>(propertyId, expectedPropertyValue));
                 }
             }
@@ -103,6 +120,148 @@ public class AppTest {
             }
 
         }
+
+        translatorController.writeOutput();
+    }
+
+    @Test
+    public void testPersonPropertyReportTranslatorSpec() {
+        Path basePath = Path.of("").toAbsolutePath();
+
+        if (!basePath.endsWith("personproperties-plugin-translator")) {
+            basePath = basePath.resolve("personproperties-plugin-translator");
+        }
+
+        Path inputFilePath = basePath.resolve("src/main/resources/json");
+        Path outputFilePath = basePath.resolve("src/main/resources/json/output");
+
+        outputFilePath.toFile().mkdir();
+
+        String fileName = "propertyReport.json";
+
+        Translator personPropertiesTranslator = PersonPropertiesTranslator
+                .builder(true)
+                .addInputFile(inputFilePath.resolve(fileName)
+                        .toString(),
+                        PersonPropertyReportPluginDataInput.getDefaultInstance())
+                .addOutputFile(outputFilePath.resolve(fileName)
+                        .toString(),
+                        PersonPropertyReportPluginData.class)
+                .build();
+
+        TranslatorController translatorController = TranslatorController.builder()
+                .addTranslator(personPropertiesTranslator)
+                .addTranslator(PropertiesTranslator.getTranslator())
+                .addTranslator(PeopleTranslator.getTranslator())
+                .addTranslator(ReportsTranslator.getTranslator())
+                .build();
+
+        List<PluginData> pluginDatas = translatorController.readInput().getPluginDatas();
+
+        PersonPropertyReportPluginData actualPluginData = (PersonPropertyReportPluginData) pluginDatas
+                .get(0);
+
+        long seed = 4684903523797799712L;
+
+        RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
+
+        ReportLabel reportLabel = new SimpleReportLabel("property report label");
+        ReportPeriod reportPeriod = ReportPeriod.DAILY;
+
+        Set<TestPersonPropertyId> expectedPersonPropertyIds = EnumSet.allOf(TestPersonPropertyId.class);
+        assertFalse(expectedPersonPropertyIds.isEmpty());
+
+        PersonPropertyReportPluginData.Builder personPropertyReportPluginDataBuilder = //
+                PersonPropertyReportPluginData.builder()//
+                        .setReportPeriod(reportPeriod)//
+                        .setReportLabel(reportLabel);//
+
+        for (PersonPropertyId personPropertyId : expectedPersonPropertyIds) {
+            if (randomGenerator.nextBoolean()) {
+                personPropertyReportPluginDataBuilder.includePersonProperty(personPropertyId);
+            } else {
+                personPropertyReportPluginDataBuilder.excludePersonProperty(personPropertyId);
+            }
+        }
+
+        PersonPropertyReportPluginData expectedPluginData = personPropertyReportPluginDataBuilder.build();
+
+        assertEquals(expectedPluginData.getReportLabel(), actualPluginData.getReportLabel());
+        assertEquals(expectedPluginData.getReportPeriod(), actualPluginData.getReportPeriod());
+
+        assertEquals(expectedPluginData.getDefaultInclusionPolicy(),
+                actualPluginData.getDefaultInclusionPolicy());
+
+        assertEquals(expectedPluginData.getIncludedProperties(), actualPluginData.getIncludedProperties());
+        assertEquals(expectedPluginData.getExcludedProperties(), actualPluginData.getExcludedProperties());
+
+        translatorController.writeOutput();
+    }
+
+    @Test
+    public void testPersonInteractionReportTranslatorSpec() {
+        Path basePath = Path.of("").toAbsolutePath();
+
+        if (!basePath.endsWith("personproperties-plugin-translator")) {
+            basePath = basePath.resolve("personproperties-plugin-translator");
+        }
+
+        Path inputFilePath = basePath.resolve("src/main/resources/json");
+        Path outputFilePath = basePath.resolve("src/main/resources/json/output");
+
+        outputFilePath.toFile().mkdir();
+
+        String fileName = "interactionReport.json";
+
+        Translator personPropertiesTranslator = PersonPropertiesTranslator
+                .builder(true)
+                .addInputFile(inputFilePath.resolve(fileName)
+                        .toString(),
+                        PersonPropertyInteractionReportPluginDataInput.getDefaultInstance())
+                .addOutputFile(outputFilePath.resolve(fileName)
+                        .toString(),
+                        PersonPropertyInteractionReportPluginData.class)
+                .build();
+
+        TranslatorController translatorController = TranslatorController.builder()
+                .addTranslator(personPropertiesTranslator)
+                .addTranslator(PropertiesTranslator.getTranslator())
+                .addTranslator(PeopleTranslator.getTranslator())
+                .addTranslator(ReportsTranslator.getTranslator())
+                .build();
+
+        List<PluginData> pluginDatas = translatorController.readInput().getPluginDatas();
+
+        PersonPropertyInteractionReportPluginData actualPluginData = (PersonPropertyInteractionReportPluginData) pluginDatas
+                .get(0);
+
+        long seed = 4684903523797799712L;
+        RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
+
+        ReportLabel reportLabel = new SimpleReportLabel("interaction report label");
+        ReportPeriod reportPeriod = ReportPeriod.DAILY;
+
+        PersonPropertyInteractionReportPluginData.Builder builder = PersonPropertyInteractionReportPluginData
+                .builder();
+
+        builder
+                .setReportLabel(reportLabel)
+                .setReportPeriod(reportPeriod);
+
+        Set<TestPersonPropertyId> expectedPersonPropertyIds = EnumSet.allOf(TestPersonPropertyId.class);
+        assertFalse(expectedPersonPropertyIds.isEmpty());
+
+        for (PersonPropertyId personPropertyId : expectedPersonPropertyIds) {
+            if (randomGenerator.nextBoolean()) {
+                builder.addPersonPropertyId(personPropertyId);
+            }
+        }
+
+        PersonPropertyInteractionReportPluginData expectedPluginData = builder.build();
+
+        assertEquals(expectedPluginData.getReportLabel(), actualPluginData.getReportLabel());
+        assertEquals(expectedPluginData.getReportPeriod(), actualPluginData.getReportPeriod());
+        assertEquals(expectedPluginData.getPersonPropertyIds(), actualPluginData.getPersonPropertyIds());
 
         translatorController.writeOutput();
     }

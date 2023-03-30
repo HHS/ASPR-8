@@ -28,11 +28,10 @@ public class AppTest {
         
         outputFilePath.toFile().mkdir();
 
-        String inputFileName = "input.json";
-        String outputFileName = "output.json";
+        String fileName = "pluginData.json";
 
         TranslatorController translatorController = TranslatorController.builder()
-                .addTranslator(PeopleTranslator.getTranslatorRW(inputFilePath.resolve(inputFileName).toString(), outputFilePath.resolve(outputFileName).toString()))
+                .addTranslator(PeopleTranslator.getTranslatorRW(inputFilePath.resolve(fileName).toString(), outputFilePath.resolve(fileName).toString()))
                 .build();
 
         List<PluginData> pluginDatas = translatorController.readInput().getPluginDatas();

@@ -238,8 +238,8 @@ public class AT_GlobalPropertyReport {
 		GlobalPropertyReportPluginData.Builder builder = GlobalPropertyReportPluginData.builder();
 		builder.setReportLabel(reportLabel);
 		builder.setDefaultInclusion(false);
-		builder.includeGlobalPropertyId(testGlobalPropertyId);
-		builder.includeGlobalPropertyId(unknownGlobalPropertyId);
+		builder.includeGlobalProperty(testGlobalPropertyId);
+		builder.includeGlobalProperty(unknownGlobalPropertyId);
 		GlobalPropertyReportPluginData globalPropertyReportPluginData = builder.build();
 
 		TestPluginData testPluginData = pluginDataBuilder.build();
@@ -308,8 +308,8 @@ public class AT_GlobalPropertyReport {
 				// do nothing
 			}
 
-			reportBuilder.includeGlobalPropertyId(includedPropertyId);
-			reportBuilder.excludeGlobalPropertyId(excludedPropertyId);
+			reportBuilder.includeGlobalProperty(includedPropertyId);
+			reportBuilder.excludeGlobalProperty(excludedPropertyId);
 			GlobalPropertyReportPluginData globalPropertyReportPluginData = reportBuilder.build();
 
 			// build the global plugin using the report plugin data and the
@@ -441,8 +441,8 @@ public class AT_GlobalPropertyReport {
 		GlobalPropertyReportPluginData.Builder builder = GlobalPropertyReportPluginData.builder();
 		builder.setReportLabel(reportLabel);
 		builder.setDefaultInclusion(true);
-		builder.excludeGlobalPropertyId(testGlobalPropertyId);
-		builder.excludeGlobalPropertyId(unknownGlobalPropertyId);
+		builder.excludeGlobalProperty(testGlobalPropertyId);
+		builder.excludeGlobalProperty(unknownGlobalPropertyId);
 		GlobalPropertyReportPluginData globalPropertyReportPluginData = builder.build();
 
 		TestPluginData testPluginData = pluginDataBuilder.build();

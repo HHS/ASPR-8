@@ -15,19 +15,22 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.gcm.translation.protobuf.core.TranslatorController;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.translatorSpecs.SimpleGroupTypeIdTranslatorSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.translatorSpecs.TestGroupPropertyIdTranslatorSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.translatorSpecs.TestGroupTypeIdTranslatorSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.input.GroupPropertyReportPluginDataInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.PeopleTranslator;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.PropertiesTranslator;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.ReportsTranslator;
 import nucleus.PluginData;
 import plugins.groups.GroupsPluginData;
+import plugins.groups.reports.GroupPropertyReportPluginData;
 import plugins.groups.support.GroupId;
 import plugins.groups.support.GroupPropertyValue;
 import plugins.groups.support.GroupTypeId;
 import plugins.groups.testsupport.TestGroupPropertyId;
 import plugins.groups.testsupport.TestGroupTypeId;
 import plugins.people.support.PersonId;
+import plugins.reports.support.ReportLabel;
+import plugins.reports.support.ReportPeriod;
+import plugins.reports.support.SimpleReportLabel;
 import plugins.util.properties.PropertyDefinition;
 import util.random.RandomGeneratorProvider;
 import util.wrappers.MultiKey;
@@ -45,19 +48,17 @@ public class AppTest {
 
         Path inputFilePath = basePath.resolve("src/main/resources/json");
         Path outputFilePath = basePath.resolve("src/main/resources/json/output");
-        
+
         outputFilePath.toFile().mkdir();
 
-        String inputFileName = "input.json";
-        String outputFileName = "output.json";
+        String fileName = "pluginData.json";
 
         TranslatorController translatorController = TranslatorController.builder()
-                .addTranslator(GroupsTranslator.getTranslatorRW(inputFilePath.resolve(inputFileName).toString(), outputFilePath.resolve(outputFileName).toString()))
+                .addTranslator(GroupsTranslator.getTranslatorRW(inputFilePath.resolve(fileName).toString(),
+                        outputFilePath.resolve(fileName).toString()))
                 .addTranslator(PropertiesTranslator.getTranslator())
                 .addTranslator(PeopleTranslator.getTranslator())
-                .addTranslatorSpec(new TestGroupTypeIdTranslatorSpec())
-                .addTranslatorSpec(new TestGroupPropertyIdTranslatorSpec())
-                .addTranslatorSpec(new SimpleGroupTypeIdTranslatorSpec())
+
                 .build();
 
         List<PluginData> pluginDatas = translatorController.readInput().getPluginDatas();
@@ -147,6 +148,72 @@ public class AppTest {
 
         assertTrue(actualGroupsPerPerson <= upperBound);
         assertTrue(actualGroupsPerPerson > lowerBound);
+
+        translatorController.writeOutput();
+    }
+
+    @Test
+    public void testGroupPropertyReportTranslatorSpec() {
+        Path basePath = Path.of("").toAbsolutePath();
+
+        if (!basePath.endsWith("groups-plugin-translator")) {
+            basePath = basePath.resolve("groups-plugin-translator");
+        }
+
+        Path inputFilePath = basePath.resolve("src/main/resources/json");
+        Path outputFilePath = basePath.resolve("src/main/resources/json/output");
+
+        outputFilePath.toFile().mkdir();
+
+        String fileName = "propertyReport.json";
+
+        TranslatorController translatorController = TranslatorController.builder()
+                .addTranslator(GroupsTranslator.builder(true)
+                        .addInputFile(inputFilePath.resolve(fileName).toString(),
+                                GroupPropertyReportPluginDataInput.getDefaultInstance())
+                        .addOutputFile(outputFilePath.resolve(fileName).toString(),
+                                GroupPropertyReportPluginData.class)
+                        .build())
+                .addTranslator(PropertiesTranslator.getTranslator())
+                .addTranslator(PeopleTranslator.getTranslator())
+                .addTranslator(ReportsTranslator.getTranslator())
+                .build();
+
+        List<PluginData> pluginDatas = translatorController.readInput().getPluginDatas();
+
+        GroupPropertyReportPluginData actualPluginData = (GroupPropertyReportPluginData) pluginDatas.get(0);
+
+        RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(524805676405822016L);
+
+        GroupPropertyReportPluginData.Builder builder = GroupPropertyReportPluginData.builder();
+
+        ReportLabel reportLabel = new SimpleReportLabel("report label");
+
+        builder.setReportLabel(reportLabel).setDefaultInclusion(false).setReportPeriod(ReportPeriod.DAILY);
+
+        for (TestGroupTypeId testGroupTypeId : TestGroupTypeId.values()) {
+            for (TestGroupPropertyId testGroupPropertyId : TestGroupPropertyId.values()) {
+                if (randomGenerator.nextBoolean()) {
+                    builder.includeGroupProperty(testGroupTypeId, testGroupPropertyId);
+                } else {
+                    builder.excludeGroupProperty(testGroupTypeId, testGroupPropertyId);
+                }
+            }
+        }
+
+        GroupPropertyReportPluginData expectedPluginData = builder.build();
+
+        assertEquals(expectedPluginData.getReportLabel(), actualPluginData.getReportLabel());
+        assertEquals(expectedPluginData.getReportPeriod(), actualPluginData.getReportPeriod());
+        assertEquals(expectedPluginData.getDefaultInclusionPolicy(), actualPluginData.getDefaultInclusionPolicy());
+        assertEquals(expectedPluginData.getGroupTypeIds(), actualPluginData.getGroupTypeIds());
+
+        for (GroupTypeId groupTypeId : actualPluginData.getGroupTypeIds()) {
+            assertEquals(expectedPluginData.getIncludedProperties(groupTypeId),
+                    actualPluginData.getIncludedProperties(groupTypeId));
+            assertEquals(expectedPluginData.getExcludedProperties(groupTypeId),
+                    actualPluginData.getExcludedProperties(groupTypeId));
+        }
 
         translatorController.writeOutput();
     }
