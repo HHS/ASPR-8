@@ -347,25 +347,6 @@ public class AT_ReportContext {
 	}
 
 	@Test
-	@UnitTestMethod(target = ReportContext.class, name = "getPlanTime", args = { Object.class })
-	public void testGetPlanTime() {
-		testConsumer((context) -> {
-			Object key = new Object();
-			assertFalse(context.getPlanTime(key).isPresent());
-			double expectedPlanTime = 100;
-			context.addKeyedPlan((c) -> {
-			}, expectedPlanTime, key);
-			assertTrue(context.getPlanTime(key).isPresent());
-			Double actualPlanTime = context.getPlanTime(key).get();
-			assertEquals(expectedPlanTime, actualPlanTime, 0);
-		});
-
-		// precondition test : if the plan key is null
-		ContractException contractException = assertThrows(ContractException.class, () -> testConsumer((c) -> c.getPlanTime(null)));
-		assertEquals(NucleusError.NULL_PLAN_KEY, contractException.getErrorType());
-	}
-
-	@Test
 	@UnitTestMethod(target = ReportContext.class, name = "getReportId", args = {})
 	public void testGetReportId() {
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();

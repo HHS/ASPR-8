@@ -31,13 +31,24 @@ public final class DataManagerContext implements SimulationContext {
 	 * @throws ContractException
 	 *             <li>{@link NucleusError#NULL_PLAN} if the plan is null
 	 *             <li>{@link NucleusError#PAST_PLANNING_TIME} if the plan is
-	 *             scheduled for a time in the past
-	 * 
+	 *             scheduled for a time in the past *
+	 *             <li>{@link NucleusError#PLANNING_QUEUE_CLOSED} if the plan is
+	 *             added to the simulation after event processing is finished
 	 * 
 	 */
 
-	public void addPlan(final Consumer<DataManagerContext> plan, final double planTime) {
-		simulation.addDataManagerPlan(dataManagerId, plan, planTime, true, null);
+	public void addPlan(final Consumer<DataManagerContext> consumer, final double planTime) {
+
+		Plan<DataManagerContext> plan = Plan.builder(DataManagerContext.class)//
+											.setActive(true)//
+											.setCallbackConsumer(consumer)//
+											.setKey(null)//
+											.setPlanData(null)//
+											.setPriority(-1)//
+											.setTime(planTime)//
+											.build();//
+
+		simulation.addDataManagerPlan(dataManagerId, plan);
 	}
 
 	/**
@@ -76,10 +87,20 @@ public final class DataManagerContext implements SimulationContext {
 	 *             <li>{@link NucleusError#PAST_PLANNING_TIME} if the plan is
 	 *             scheduled for a time in the past
 	 */
-	public void addKeyedPlan(final Consumer<DataManagerContext> plan, final double planTime, final Object key) {
+	public void addKeyedPlan(final Consumer<DataManagerContext> consumer, final double planTime, final Object key) {
 		simulation.validatePlanKeyNotNull(key);
 		simulation.validateDataManagerPlanKeyNotDuplicate(dataManagerId, key);
-		simulation.addDataManagerPlan(dataManagerId, plan, planTime, true, key);
+
+		Plan<DataManagerContext> plan = Plan.builder(DataManagerContext.class)//
+											.setActive(true)//
+											.setCallbackConsumer(consumer)//
+											.setKey(key)//
+											.setPlanData(null)//
+											.setPriority(-1)//
+											.setTime(planTime)//
+											.build();//
+
+		simulation.addDataManagerPlan(dataManagerId, plan);
 	}
 
 	/**
@@ -94,8 +115,18 @@ public final class DataManagerContext implements SimulationContext {
 	 * 
 	 * 
 	 */
-	public void addPassivePlan(final Consumer<DataManagerContext> plan, final double planTime) {
-		simulation.addDataManagerPlan(dataManagerId, plan, planTime, false, null);
+	public void addPassivePlan(final Consumer<DataManagerContext> consumer, final double planTime) {
+
+		Plan<DataManagerContext> plan = Plan.builder(DataManagerContext.class)//
+											.setActive(false)//
+											.setCallbackConsumer(consumer)//
+											.setKey(null)//
+											.setPlanData(null)//
+											.setPriority(-1)//
+											.setTime(planTime)//
+											.build();//
+
+		simulation.addDataManagerPlan(dataManagerId, plan);
 	}
 
 	/**
@@ -115,10 +146,20 @@ public final class DataManagerContext implements SimulationContext {
 	 *             <li>{@link NucleusError#PAST_PLANNING_TIME} if the plan is
 	 *             scheduled for a time in the past
 	 */
-	public void addPassiveKeyedPlan(final Consumer<DataManagerContext> plan, final double planTime, final Object key) {
+	public void addPassiveKeyedPlan(final Consumer<DataManagerContext> consumer, final double planTime, final Object key) {
 		simulation.validatePlanKeyNotNull(key);
 		simulation.validateDataManagerPlanKeyNotDuplicate(dataManagerId, key);
-		simulation.addDataManagerPlan(dataManagerId, plan, planTime, false, key);
+
+		Plan<DataManagerContext> plan = Plan.builder(DataManagerContext.class)//
+											.setActive(false)//
+											.setCallbackConsumer(consumer)//
+											.setKey(key)//
+											.setPlanData(null)//
+											.setPriority(-1)//
+											.setTime(planTime)//
+											.build();//
+
+		simulation.addDataManagerPlan(dataManagerId, plan);
 	}
 
 	/**
@@ -128,23 +169,8 @@ public final class DataManagerContext implements SimulationContext {
 	 *             <li>{@link NucleusError#NULL_PLAN_KEY} if the plan key is
 	 *             null
 	 */
-
-	@SuppressWarnings("unchecked")
-
-	public <T extends Consumer<DataManagerContext>> Optional<T> getPlan(final Object key) {
-		return (Optional<T>) simulation.getDataManagerPlan(dataManagerId, key);
-	}
-
-	/**
-	 * Returns the scheduled execution time for the plan associated with the
-	 * given key
-	 *
-	 * @throws ContractException
-	 *             <li>{@link NucleusError#NULL_PLAN_KEY} if the plan key is
-	 *             null
-	 */
-	public Optional<Double> getPlanTime(final Object key) {
-		return simulation.getDataManagerPlanTime(dataManagerId, key);
+	public Optional<Plan<DataManagerContext>> getPlan(final Object key) {
+		return simulation.getDataManagerPlan(dataManagerId, key);
 	}
 
 	/**
@@ -183,7 +209,7 @@ public final class DataManagerContext implements SimulationContext {
 	 *             <li>{@link NucleusError#NULL_PLAN_KEY} if the plan key is
 	 *             null
 	 */
-	public <T> Optional<T> removePlan(final Object key) {
+	public Optional<Plan<DataManagerContext>> removePlan(final Object key) {
 		return simulation.removeDataManagerPlan(dataManagerId, key);
 	}
 
@@ -292,5 +318,19 @@ public final class DataManagerContext implements SimulationContext {
 	public void releaseOutput(Object output) {
 		simulation.releaseOutput(output);
 	}
-
+	
+	/**
+	 * Returns all PlanData objects that are associated with plans that remain
+	 * scheduled at the end of the simulation.
+	 * 
+	 * @throws ContractException()
+	 *             <li>{@linkplain NucleusError#TERMINAL_PLAN_DATA_ACCESS_VIOLATION}
+	 *             if invoked prior to the close of the simulation. Should only
+	 *             be invoked as part of the callback specified in the
+	 *             subscription to simulation close</li>
+	 * 
+	 */	
+	public <T extends PlanData> List<T> getTerminalDataManagerPlanDatas(Class<T> classRef){
+		return simulation.getTerminalDataManagerPlanDatas(dataManagerId, classRef);
+	}
 }
