@@ -7,9 +7,9 @@ public class Plan1<T> {
 	private static class Data<K> {
 		private double time;
 		private Consumer<K> callbackConsumer;
-		private long arrivalId;
+		private long priority;		
 		private boolean active = true;
-		private Object planData;
+		private PlanData planData;
 		private Object key;
 	}
 
@@ -55,8 +55,8 @@ public class Plan1<T> {
 		 * previous simulation run. Defaults to -1;
 		 * 
 		 */
-		public Builder<K> setArrivalId(long arrivalId) {
-			data.arrivalId = arrivalId;
+		public Builder<K> setPriority(long priority) {
+			data.priority = priority;
 			return this;
 		}
 
@@ -80,7 +80,7 @@ public class Plan1<T> {
 		 * has been instructed to record state on halt. Defaults to false;
 		 * 
 		 */
-		public Builder<K> setPlanData(Object planData) {
+		public Builder<K> setPlanData(PlanData planData) {
 			data.planData = planData;
 			return this;
 		}
@@ -123,15 +123,15 @@ public class Plan1<T> {
 		return data.callbackConsumer;
 	}
 
-	public long getArrivalId() {
-		return data.arrivalId;
+	public long getPriority() {
+		return data.priority;
 	}
 
 	public boolean isActive() {
 		return data.active;
 	}
 
-	public Object getPlanData() {
+	public PlanData getPlanData() {
 		return data.planData;
 	}
 

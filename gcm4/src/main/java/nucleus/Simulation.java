@@ -56,11 +56,20 @@ public class Simulation {
 	private static final String LINE_SEPARATOR = System.getProperty("line.separator");
 
 	private static class PlanRec {
-
+//		private double time;
+//		private Consumer<K> callbackConsumer;
+//		private long priority;		
+//		private boolean active = true;
+//		private PlanData planData;
+//		private Object key;
+		
+		
 		private Planner planner;
-		private double time;
 		private long arrivalId;
+		
+		private double time;
 		private boolean isActive;
+		private Object key;
 
 		private Consumer<ReportContext> reportPlan;
 		private ReportId reportId;
@@ -70,8 +79,6 @@ public class Simulation {
 
 		private Consumer<DataManagerContext> dataManagerPlan;
 		private DataManagerId dataManagerId;
-
-		private Object key;
 
 		@Override
 		public String toString() {
