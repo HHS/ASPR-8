@@ -380,7 +380,7 @@ public final class AT_BatchStatusReport {
 
 		Factory factory = MaterialsTestPluginFactory//
 				.factory(0, 0, 0, 2819236410498978100L, testPluginData)
-				.setBatchStatusReportPluginData(BatchStatusReportPluginData.builder().setReportLabel(REPORT_LABEL).build());
+				.setBatchStatusReportPluginData(batchStatusReportPluginData);
 
 		TestOutputConsumer testOutputConsumer = TestSimulation	.builder()//
 				.addPlugins(factory.getPlugins())//
