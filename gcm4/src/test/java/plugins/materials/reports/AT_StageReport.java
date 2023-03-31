@@ -73,8 +73,7 @@ public final class AT_StageReport {
 	}
 
 	@Test
-	@UnitTestMethod(target = StageReport.class, name = "init", args = { ReportContext.class }, tags = {
-			UnitTag.INCOMPLETE })
+	@UnitTestMethod(target = StageReport.class, name = "init", args = { ReportContext.class }, tags = {UnitTag.INCOMPLETE })
 	public void testInit() {
 		/*
 		 * Create containers for the expected and actual report items that will
@@ -207,6 +206,141 @@ public final class AT_StageReport {
 
 		
 		assertEquals(expectedReportItems, testOutputConsumer.getOutputItems(ReportItem.class));
+	}
+
+	@Test
+	@UnitTestMethod(target = StageReport.class, name = "init", args = { ReportContext.class })
+	public void testInit_State() {
+		// Test with producing simulation state
+
+		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+
+		// Generate 500 stage-based actions
+		RandomGenerator rg = RandomGeneratorProvider.getRandomGenerator(8635270533185454765L);
+
+		double actionTime = 0;
+
+		// create a list of 500 producer ids at random
+		List<TestMaterialsProducerId> producerIds = new ArrayList<>();
+		for (int i = 0; i < 500; i++) {
+			TestMaterialsProducerId testMaterialsProducerId = TestMaterialsProducerId.getRandomMaterialsProducerId(rg);
+			producerIds.add(testMaterialsProducerId);
+		}
+
+		// for each producer id, execute and action and increment time for the
+		// plan
+		for (TestMaterialsProducerId testMaterialsProducerId : producerIds) {
+
+			/*
+			 * Have the producer execute one of the four actions: stage
+			 * creation, stage destruction, stage offer status change and stage
+			 * transfer
+			 *
+			 */
+			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(actionTime++, (c) -> {
+				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
+				RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
+
+				List<StageId> stages = materialsDataManager.getStages(testMaterialsProducerId);
+				List<StageId> offeredStages = materialsDataManager.getOfferedStages(testMaterialsProducerId);
+
+				// select one of the four possible actions at random based on
+				// the availability of the action
+
+				// should we create a stage? -- we can always create a new
+				// stage, so assume that is what we will do
+				Action action = Action.CREATED;
+				int candidateActionCount = 1;
+
+				// should we destroy a non-offered stage?
+				if (stages.size() > offeredStages.size()) {
+					candidateActionCount++;
+					if (randomGenerator.nextDouble() < 1.0 / candidateActionCount) {
+						action = Action.DESTROYED;
+					}
+				}
+
+				// should we transfer an offered stage?
+				if (offeredStages.size() > 0) {
+					candidateActionCount++;
+					if (randomGenerator.nextDouble() < 1.0 / candidateActionCount) {
+						action = Action.TRANSFERRED;
+					}
+				}
+
+				// should we change the offer state of a stage?
+				if (stages.size() > 0) {
+					candidateActionCount++;
+					if (randomGenerator.nextDouble() < 1.0 / candidateActionCount) {
+						action = Action.OFFERED;
+					}
+				}
+
+				StageId stageId;
+				boolean stageOffered;
+				switch (action) {
+					case CREATED:
+						break;
+					case DESTROYED:
+						stages.removeAll(offeredStages);
+						stageId = stages.get(randomGenerator.nextInt(stages.size()));
+						materialsDataManager.removeStage(stageId, false);
+						break;
+					case OFFERED:
+						stageId = stages.get(randomGenerator.nextInt(stages.size()));
+						stageOffered = materialsDataManager.isStageOffered(stageId);
+						materialsDataManager.setStageOfferState(stageId, !stageOffered);
+						break;
+					case TRANSFERRED:
+						stageId = offeredStages.get(randomGenerator.nextInt(offeredStages.size()));
+						List<MaterialsProducerId> candidateProducerIds = new ArrayList<>(
+								materialsDataManager.getMaterialsProducerIds());
+						candidateProducerIds.remove(testMaterialsProducerId);
+						MaterialsProducerId materialsProducerId = candidateProducerIds
+								.get(randomGenerator.nextInt(candidateProducerIds.size()));
+						materialsDataManager.transferOfferedStage(stageId, materialsProducerId);
+						break;
+					default:
+						throw new RuntimeException("unhandled action type");
+				}
+
+			}));
+		}
+
+		TestPluginData testPluginData = pluginBuilder.build();
+		StageReportPluginData stageReportPluginData = StageReportPluginData.builder()
+				.setReportLabel(REPORT_LABEL)
+				.build();
+
+		Factory factory = MaterialsTestPluginFactory//
+				.factory(0, 0, 0, 542686524159732447L, testPluginData)
+				.setStageReportPluginData(stageReportPluginData);//
+
+
+		TestOutputConsumer testOutputConsumer = TestSimulation	.builder()//
+				.addPlugins(factory.getPlugins())//
+				.setProduceSimulationStateOnHalt(true)//
+				.setSimulationHaltTime(550)//
+				.build()//
+				.execute();
+
+		Map<StageReportPluginData, Integer> outputItems = testOutputConsumer.getOutputItems(StageReportPluginData.class);
+		assertEquals(1, outputItems.size());
+		StageReportPluginData stageReportPluginData2 = outputItems.keySet().iterator().next();
+		assertEquals(stageReportPluginData, stageReportPluginData2);
+
+		// Test without producing simulation state
+
+		testOutputConsumer = TestSimulation	.builder()//
+				.addPlugins(factory.getPlugins())//
+				.setProduceSimulationStateOnHalt(false)//
+				.setSimulationHaltTime(550)//
+				.build()//
+				.execute();
+
+		outputItems = testOutputConsumer.getOutputItems(StageReportPluginData.class);
+		assertEquals(0, outputItems.size());
 	}
 
 	private static final ReportLabel REPORT_LABEL = new SimpleReportLabel("report");
