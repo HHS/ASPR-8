@@ -1033,6 +1033,8 @@ public class Simulation {
 		List<PrioritizedPlanData> list;
 		while (!planningQueue.isEmpty()) {
 			PlanRec planRec = planningQueue.poll();
+			//System.out.println(planRec);
+			
 			Plan<?> plan = planRec.plan;
 			//System.out.println(planRec);
 			if (plan != null) {
