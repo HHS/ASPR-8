@@ -3,14 +3,17 @@ package plugins.resources.reports;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 
-import nucleus.testsupport.testplugin.*;
 import org.junit.jupiter.api.Test;
 
 import nucleus.Plugin;
 import nucleus.ReportContext;
-import plugins.people.datamanagers.PeopleDataManager;
+import nucleus.testsupport.testplugin.TestActorPlan;
+import nucleus.testsupport.testplugin.TestOutputConsumer;
+import nucleus.testsupport.testplugin.TestPluginData;
+import nucleus.testsupport.testplugin.TestSimulation;
 import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportPeriod;
 import plugins.reports.support.SimpleReportLabel;

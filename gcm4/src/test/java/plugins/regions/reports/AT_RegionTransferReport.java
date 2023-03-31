@@ -42,8 +42,6 @@ import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 
-import javax.swing.plaf.synth.Region;
-
 public class AT_RegionTransferReport {
 
 	@Test

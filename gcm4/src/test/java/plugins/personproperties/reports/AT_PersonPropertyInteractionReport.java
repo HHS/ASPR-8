@@ -3,11 +3,21 @@ package plugins.personproperties.reports;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import nucleus.Plugin;
-import nucleus.testsupport.testplugin.*;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.junit.jupiter.api.Test;
 
+import nucleus.Plugin;
 import nucleus.ReportContext;
+import nucleus.testsupport.testplugin.TestActorPlan;
+import nucleus.testsupport.testplugin.TestOutputConsumer;
+import nucleus.testsupport.testplugin.TestPlugin;
+import nucleus.testsupport.testplugin.TestPluginData;
+import nucleus.testsupport.testplugin.TestSimulation;
 import plugins.people.PeoplePlugin;
 import plugins.people.PeoplePluginData;
 import plugins.people.support.PersonId;
@@ -30,36 +40,34 @@ import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 
-import java.util.*;
-
 public class AT_PersonPropertyInteractionReport {
 
 	@Test
 	@UnitTestConstructor(target = PersonPropertyInteractionReport.class, args = { ReportLabel.class, ReportPeriod.class, PersonPropertyId[].class })
 	public void testConstructor() {
-		
+
 		// precondition: report label is null
 		ContractException contractException = assertThrows(ContractException.class, () -> {
 			PersonPropertyInteractionReportPluginData pluginData = PersonPropertyInteractionReportPluginData.builder().setReportPeriod(ReportPeriod.DAILY).build();
-		    new PersonPropertyInteractionReport(pluginData);
+			new PersonPropertyInteractionReport(pluginData);
 		});
 		assertEquals(ReportError.NULL_REPORT_LABEL, contractException.getErrorType());
 
 		// precondition: report period is null
 		contractException = assertThrows(ContractException.class, () -> {
 			PersonPropertyInteractionReportPluginData pluginData = PersonPropertyInteractionReportPluginData.builder().setReportLabel(new SimpleReportLabel("label")).build();
-		    new PersonPropertyInteractionReport(pluginData);
+			new PersonPropertyInteractionReport(pluginData);
 		});
 		assertEquals(ReportError.NULL_REPORT_PERIOD, contractException.getErrorType());
 	}
 
 	@Test
-	@UnitTestMethod(target = PersonPropertyInteractionReport.class,name = "init", args = { ReportContext.class }, tags = { UnitTag.INCOMPLETE })
+	@UnitTestMethod(target = PersonPropertyInteractionReport.class, name = "init", args = { ReportContext.class }, tags = { UnitTag.INCOMPLETE })
 	public void testInit() {
 		// TBD
 	}
 
-
+	@Test
 	@UnitTestMethod(target = PersonPropertyInteractionReport.class, name = "init", args = { ReportContext.class })
 	public void testInit_State() {
 		// Test with producing simulation output
@@ -79,6 +87,7 @@ public class AT_PersonPropertyInteractionReport {
 		};
 
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
+		// pluginDataBuilder.addPluginDependency(PersonPropertiesPluginId.PLUGIN_ID);
 
 		// have the actor add a new person property definitions
 		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
@@ -86,12 +95,12 @@ public class AT_PersonPropertyInteractionReport {
 			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(1).build();
 
 			PersonPropertyDefinitionInitialization personPropertyDefinitionInitialization = PersonPropertyDefinitionInitialization	.builder().setPersonPropertyId(unknownIdToExclude)
-					.setPropertyDefinition(propertyDefinition).build();
+																																	.setPropertyDefinition(propertyDefinition).build();
 			personPropertiesDataManager.definePersonProperty(personPropertyDefinitionInitialization);
 
 			propertyDefinition = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(false).build();
 			PersonPropertyDefinitionInitialization personPropertyDefinitionInitialization2 = PersonPropertyDefinitionInitialization	.builder().setPersonPropertyId(unknownIdToInclude)
-					.setPropertyDefinition(propertyDefinition).build();
+																																	.setPropertyDefinition(propertyDefinition).build();
 			personPropertiesDataManager.definePersonProperty(personPropertyDefinitionInitialization2);
 
 		}));
@@ -169,26 +178,17 @@ public class AT_PersonPropertyInteractionReport {
 		}
 		PersonPropertiesPluginData personPropertiesPluginData = personPropertyBuilder.build();
 
-		PersonPropertyReportPluginData.Builder builder = PersonPropertyReportPluginData.builder();
-		builder.setReportLabel(reportLabel);
-		builder.setReportPeriod(hourlyReportPeriod);
-		builder.setDefaultInclusion(true);
-		builder.excludePersonProperty(TestPersonPropertyId.PERSON_PROPERTY_3_DOUBLE_MUTABLE_NO_TRACK);
-		builder.excludePersonProperty(unknownIdToExclude);
-		PersonPropertyReportPluginData personPropertyReportPluginData = builder.build();
-
-		PersonPropertyInteractionReportPluginData personPropertyInteractionReportPluginData = PersonPropertyInteractionReportPluginData.builder()
-				.setReportLabel(reportLabel)
-				.setReportPeriod(hourlyReportPeriod)
-				.addPersonPropertyId(TestPersonPropertyId.PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK)
-				.removePersonPropertyId(TestPersonPropertyId.PERSON_PROPERTY_6_DOUBLE_MUTABLE_TRACK)
-				.build();
+		PersonPropertyInteractionReportPluginData personPropertyInteractionReportPluginData = //
+				PersonPropertyInteractionReportPluginData	.builder()//
+															.setReportLabel(reportLabel).setReportPeriod(hourlyReportPeriod)//
+															.addPersonPropertyId(TestPersonPropertyId.PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK)//
+															.removePersonPropertyId(TestPersonPropertyId.PERSON_PROPERTY_6_DOUBLE_MUTABLE_TRACK)//
+															.build();
 
 		Plugin personPropertyPlugin = PersonPropertiesPlugin.builder()//
-				.setPersonPropertiesPluginData(personPropertiesPluginData)//
-				.setPersonPropertyReportPluginData(personPropertyReportPluginData)//
-				.setPersonPropertyInteractionReportPluginData(personPropertyInteractionReportPluginData)//
-				.getPersonPropertyPlugin();
+															.setPersonPropertiesPluginData(personPropertiesPluginData)//
+															.setPersonPropertyInteractionReportPluginData(personPropertyInteractionReportPluginData)//
+															.getPersonPropertyPlugin();
 
 		plugins.add(personPropertyPlugin);
 
@@ -213,29 +213,29 @@ public class AT_PersonPropertyInteractionReport {
 
 		// execute the simulation and gather the report items
 
-		TestOutputConsumer testOutputConsumer = TestSimulation.builder()//
-				.addPlugins(plugins)//
-				.setProduceSimulationStateOnHalt(true)//
-				.setSimulationHaltTime(50)//
-				.build()//
-				.execute();
+		TestOutputConsumer testOutputConsumer = TestSimulation	.builder()//
+																.addPlugins(plugins)//
+																.setProduceSimulationStateOnHalt(true)//
+																.setSimulationHaltTime(50)//
+																.build()//
+																.execute();
 
-//		Map<PersonPropertyInteractionReportPluginData, Integer> outputItems = testOutputConsumer.getOutputItems(PersonPropertyInteractionReportPluginData.class);
-//		assertEquals(1, outputItems.size());
-//		PersonPropertyInteractionReportPluginData personPropertyInteractionReportPluginData2 = outputItems.keySet().iterator().next();
-//		assertEquals(personPropertyInteractionReportPluginData, personPropertyInteractionReportPluginData2);
-//
-//		// Test without producing simulation state
-//
-//		testOutputConsumer = TestSimulation	.builder()//
-//				.addPlugins(plugins)//
-//				.setProduceSimulationStateOnHalt(false)//
-//				.setSimulationHaltTime(20)//
-//				.build()//
-//				.execute();
-//
-//		outputItems = testOutputConsumer.getOutputItems(PersonPropertyInteractionReportPluginData.class);
-//		assertEquals(0, outputItems.size());
+		Map<PersonPropertyInteractionReportPluginData, Integer> outputItems = testOutputConsumer.getOutputItems(PersonPropertyInteractionReportPluginData.class);
+		assertEquals(1, outputItems.size());
+		PersonPropertyInteractionReportPluginData personPropertyInteractionReportPluginData2 = outputItems.keySet().iterator().next();
+		assertEquals(personPropertyInteractionReportPluginData, personPropertyInteractionReportPluginData2);
+
+		// Test without producing simulation state
+
+		testOutputConsumer = TestSimulation	.builder()//
+											.addPlugins(plugins)//
+											.setProduceSimulationStateOnHalt(false)//
+											.setSimulationHaltTime(20)//
+											.build()//
+											.execute();
+
+		outputItems = testOutputConsumer.getOutputItems(PersonPropertyInteractionReportPluginData.class);
+		assertEquals(0, outputItems.size());
 	}
 
 }

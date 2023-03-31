@@ -13,7 +13,6 @@ import plugins.people.events.PersonAdditionEvent;
 import plugins.people.events.PersonImminentRemovalEvent;
 import plugins.people.support.PersonId;
 import plugins.personproperties.datamanagers.PersonPropertiesDataManager;
-import plugins.personproperties.events.PersonPropertyDefinitionEvent;
 import plugins.personproperties.events.PersonPropertyUpdateEvent;
 import plugins.personproperties.support.PersonPropertyId;
 import plugins.regions.datamanagers.RegionsDataManager;
@@ -239,13 +238,7 @@ public final class PersonPropertyInteractionReport extends PeriodicReport {
 		if (reportContext.stateRecordingIsScheduled()) {
 			reportContext.subscribeToSimulationClose(this::recordSimulationState);
 		}
-		/*
-		 * if the client did not choose any properties, then we assume that all
-		 * properties are selected
-		 */
-		if (propertyIds.size() == 0) {
-			propertyIds.addAll(personPropertiesDataManager.getPersonPropertyIds());
-		}
+		
 
 		/*
 		 * Validate the client's property ids and ignore any that are not known
@@ -261,7 +254,7 @@ public final class PersonPropertyInteractionReport extends PeriodicReport {
 		}
 
 		reportContext.subscribe(PersonPropertyUpdateEvent.class, this::handlePersonPropertyUpdateEvent);
-		reportContext.subscribe(PersonPropertyDefinitionEvent.class, this::handlePersonPropertyDefinitionEvent);
+		
 
 		for (PersonId personId : peopleDataManager.getPeople()) {
 			final Object regionId = regionsDataManager.getPersonRegion(personId);
@@ -279,9 +272,6 @@ public final class PersonPropertyInteractionReport extends PeriodicReport {
 		reportContext.releaseOutput(builder.build());
 	}
 
-	private void handlePersonPropertyDefinitionEvent(ReportContext reportContext, PersonPropertyDefinitionEvent personPropertyDefinitionEvent) {
-		propertyIds.add(personPropertyDefinitionEvent.personPropertyId());
-	}
 
 	/*
 	 * Flushes the positive counters recursively.
