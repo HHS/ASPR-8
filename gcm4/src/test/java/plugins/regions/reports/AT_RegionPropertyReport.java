@@ -519,6 +519,131 @@ public class AT_RegionPropertyReport {
 		}
 	}
 
+	@Test
+	@UnitTestMethod(target = RegionPropertyReport.class, name = "init", args = { ReportContext.class })
+	public void testInit_State() {
+		// Test with producing simulation state
+
+		RegionPropertyReportPluginData regionPropertyReportPluginData = //
+				RegionPropertyReportPluginData	.builder()//
+						.setReportLabel(REPORT_LABEL)//
+						.setDefaultInclusion(true)//
+						.excludeRegionProperty(TestRegionPropertyId.REGION_PROPERTY_2_INTEGER_MUTABLE)
+						.build();
+
+		// add the global property definitions
+
+		RegionsPluginData.Builder initialDatabuilder = RegionsPluginData.builder();
+
+		RegionId regionA = new SimpleRegionId("Region_A");
+		initialDatabuilder.addRegion(regionA);
+		RegionId regionB = new SimpleRegionId("Region_B");
+		initialDatabuilder.addRegion(regionB);
+		RegionId regionC = new SimpleRegionId("Region_C");
+		initialDatabuilder.addRegion(regionC);
+
+		RegionPropertyId regionPropertyId_1 = new SimpleRegionPropertyId("id_1");
+		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(3).build();
+		initialDatabuilder.defineRegionProperty(regionPropertyId_1, propertyDefinition);
+
+		RegionPropertyId regionPropertyId_2 = new SimpleRegionPropertyId("id_2");
+		propertyDefinition = PropertyDefinition.builder().setType(Double.class).setDefaultValue(6.78).build();
+		initialDatabuilder.defineRegionProperty(regionPropertyId_2, propertyDefinition);
+
+		RegionPropertyId regionPropertyId_3 = new SimpleRegionPropertyId("id_3");
+		propertyDefinition = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(true).build();
+		initialDatabuilder.defineRegionProperty(regionPropertyId_3, propertyDefinition);
+
+		RegionsPluginData regionsPluginData = initialDatabuilder.build();
+
+		/*
+		 * Define two more properties that are not included in the plugin data
+		 * and will be added by an actor
+		 */
+		RegionPropertyId regionPropertyId_4 = new SimpleRegionPropertyId("id_4");
+		PropertyDefinition propertyDefinition_4 = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(true).build();
+
+		RegionPropertyId regionPropertyId_5 = new SimpleRegionPropertyId("id_5");
+		PropertyDefinition propertyDefinition_5 = PropertyDefinition.builder().setType(Double.class).setDefaultValue(199.16).build();
+
+		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+
+		// create an agent and have it assign various region properties at
+		// various times
+
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0.0, (c) -> {
+			/*
+			 * note that this is time 0 and should show that property initial
+			 * values are still reported correctly
+			 */
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
+			regionsDataManager.setRegionPropertyValue(regionA, regionPropertyId_1, 67);
+		}));
+
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1.0, (c) -> {
+			// two settings of the same property
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
+			regionsDataManager.setRegionPropertyValue(regionB, regionPropertyId_2, 88.88);
+			regionsDataManager.setRegionPropertyValue(regionC, regionPropertyId_3, false);
+		}));
+
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(2.0, (c) -> {
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
+			regionsDataManager.setRegionPropertyValue(regionA, regionPropertyId_1, 100);
+			regionsDataManager.setRegionPropertyValue(regionB, regionPropertyId_2, 3.45);
+			regionsDataManager.setRegionPropertyValue(regionC, regionPropertyId_3, true);
+			RegionPropertyDefinitionInitialization regionPropertyDefinitionInitialization = RegionPropertyDefinitionInitialization	.builder().setRegionPropertyId(regionPropertyId_4)
+					.setPropertyDefinition(propertyDefinition_4).build();
+			regionsDataManager.defineRegionProperty(regionPropertyDefinitionInitialization);
+
+		}));
+
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(3.0, (c) -> {
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
+
+			regionsDataManager.setRegionPropertyValue(regionC, regionPropertyId_3, false);
+			// note the duplicated value
+			regionsDataManager.setRegionPropertyValue(regionB, regionPropertyId_2, 99.7);
+			regionsDataManager.setRegionPropertyValue(regionB, regionPropertyId_2, 99.7);
+			// and now a third setting of the same property to a new value
+			regionsDataManager.setRegionPropertyValue(regionB, regionPropertyId_2, 100.0);
+			regionsDataManager.setRegionPropertyValue(regionC, regionPropertyId_3, true);
+			RegionPropertyDefinitionInitialization regionPropertyDefinitionInitialization = RegionPropertyDefinitionInitialization	.builder().setRegionPropertyId(regionPropertyId_5)
+					.setPropertyDefinition(propertyDefinition_5).build();
+			regionsDataManager.defineRegionProperty(regionPropertyDefinitionInitialization);
+		}));
+
+		TestPluginData testPluginData = pluginBuilder.build();
+
+		Factory factory = RegionsTestPluginFactory	.factory(0, 3558607823596502222L, TimeTrackingPolicy.TRACK_TIME, testPluginData)//
+				.setRegionsPluginData(regionsPluginData)//
+				.setRegionPropertyReportPluginData(regionPropertyReportPluginData);//
+
+		TestOutputConsumer testOutputConsumer = TestSimulation	.builder()//
+				.addPlugins(factory.getPlugins())//
+				.setProduceSimulationStateOnHalt(true)//
+				.setSimulationHaltTime(20)
+				.build()//
+				.execute();
+
+		Map<RegionPropertyReportPluginData, Integer> outputItems = testOutputConsumer.getOutputItems(RegionPropertyReportPluginData.class);
+		assertEquals(1, outputItems.size());
+		RegionPropertyReportPluginData regionPropertyReportPluginData2 = outputItems.keySet().iterator().next();
+		assertEquals(regionPropertyReportPluginData, regionPropertyReportPluginData2);
+
+		// Test without producing simulation output
+
+		testOutputConsumer = TestSimulation	.builder()//
+				.addPlugins(factory.getPlugins())//
+				.setProduceSimulationStateOnHalt(false)//
+				.setSimulationHaltTime(20)
+				.build()//
+				.execute();
+
+		outputItems = testOutputConsumer.getOutputItems(RegionPropertyReportPluginData.class);
+		assertEquals(0, outputItems.size());
+	}
+
 	private static final ReportLabel REPORT_LABEL = new SimpleReportLabel("region property report");
 
 	private static final ReportHeader REPORT_HEADER = ReportHeader.builder().add("Time").add("Region").add("Property").add("Value").build();
