@@ -42,6 +42,8 @@ import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 
+import javax.swing.plaf.synth.Region;
+
 public class AT_RegionTransferReport {
 
 	@Test
@@ -177,6 +179,121 @@ public class AT_RegionTransferReport {
 		});
 		assertEquals(ReportError.NULL_CONTEXT, contractException.getErrorType());
 	}
+
+	@Test
+	@UnitTestMethod(target = RegionTransferReport.class, name = "init", args = { ReportContext.class })
+	public void testInit_State() {
+		// Test with producing simulation state
+
+		RegionsPluginData.Builder regionBuilder = RegionsPluginData.builder();
+
+		// add regions A, B, C and D
+		RegionId regionA = new SimpleRegionId("Region_A");
+		regionBuilder.addRegion(regionA);
+		RegionId regionB = new SimpleRegionId("Region_B");
+		regionBuilder.addRegion(regionB);
+		RegionId regionC = new SimpleRegionId("Region_C");
+		regionBuilder.addRegion(regionC);
+		RegionId regionD = new SimpleRegionId("Region_D");
+		regionBuilder.addRegion(regionD);
+
+		// add the region properties
+		RegionPropertyId prop_age = new SimpleRegionPropertyId("prop_age");
+		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setDefaultValue(3).setType(Integer.class).build();
+		regionBuilder.defineRegionProperty(prop_age, propertyDefinition);
+
+		RegionsPluginData regionsPluginData = regionBuilder.build();
+		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+
+		/*
+		 * Collect the expected report items. Note that order does not matter. *
+		 */
+
+		final int numPeople = 100;
+		// create an actor to add people to the simulation
+		// This will test adding people to a region, which on the report will
+		// say that
+		// the person transfer to and from the same region
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0.0, (c) -> {
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			RegionId[] regionIds = { regionA, regionB, regionC, regionD };
+			for (int i = 0; i < numPeople; i++) {
+				PersonConstructionData personConstructionData = PersonConstructionData.builder().add(regionIds[i % 4]).build();
+				peopleDataManager.addPerson(personConstructionData);
+			}
+		}));
+
+		// create an actor to move people from one region to another
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1.1, (c) -> {
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			RandomGenerator randomGenerator = c.getDataManager(StochasticsDataManager.class).getRandomGenerator();
+
+			List<PersonId> personIds = peopleDataManager.getPeople();
+			// randomly move 25 people each to region a, region b, region c and
+			// region d
+			RegionId[] regionIds = { regionA, regionB, regionC, regionD };
+			Map<Pair<RegionId, RegionId>, Integer> transfermap = new LinkedHashMap<>();
+
+			for (int i = 0; i < numPeople; i++) {
+				int person = randomGenerator.nextInt(personIds.size());
+				PersonId personId = personIds.remove(person);
+				RegionId prevRegionId = regionsDataManager.getPersonRegion(personId);
+				RegionId nextRegionId = regionIds[i % 4];
+				Pair<RegionId, RegionId> transfer = new Pair<>(prevRegionId, nextRegionId);
+				int numTransfers = 1;
+				if (transfermap.containsKey(transfer)) {
+					numTransfers += transfermap.get(transfer);
+				}
+				transfermap.put(transfer, numTransfers);
+
+				regionsDataManager.setPersonRegion(personId, nextRegionId);
+			}
+		}));
+
+		/*
+		 * To get the report for day 1, must do 'something' on day 2 otherwise
+		 * the report for the previous day won't print
+		 */
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(2.0, (c) -> {
+		}));
+
+		TestPluginData testPluginData = pluginBuilder.build();
+
+		RegionTransferReportPluginData regionTransferReportPluginData = RegionTransferReportPluginData.builder()
+				.setReportLabel(REPORT_LABEL)
+				.setReportPeriod(ReportPeriod.DAILY)
+				.build();
+
+		Factory factory = RegionsTestPluginFactory//
+				.factory(0, 3054641152904904632L, TimeTrackingPolicy.TRACK_TIME, testPluginData).setRegionsPluginData(regionsPluginData)//
+				.setRegionTransferReportPluginData(regionTransferReportPluginData);
+
+		TestOutputConsumer actualConsumer = TestSimulation	.builder()//
+				.addPlugins(factory.getPlugins())//
+				.setProduceSimulationStateOnHalt(true)//
+				.setSimulationHaltTime(20)//
+				.build()//
+				.execute();
+
+		Map<RegionTransferReportPluginData, Integer> outputItems = actualConsumer.getOutputItems(RegionTransferReportPluginData.class);
+		assertEquals(1, outputItems.size());
+		RegionTransferReportPluginData regionTransferReportPluginData2 = outputItems.keySet().iterator().next();
+		assertEquals(regionTransferReportPluginData, regionTransferReportPluginData2);
+
+		// Test without producing simulation state
+
+		actualConsumer = TestSimulation	.builder()//
+				.addPlugins(factory.getPlugins())//
+				.setProduceSimulationStateOnHalt(false)//
+				.setSimulationHaltTime(20)//
+				.build()//
+				.execute();
+
+		outputItems = actualConsumer.getOutputItems(RegionTransferReportPluginData.class);
+		assertEquals(0, outputItems.size());
+	}
+
 
 	private static ReportItem getReportItem(Object... values) {
 		ReportItem.Builder builder = ReportItem.builder();
