@@ -23,6 +23,45 @@ public class PersonPropertyInteractionReportPluginData implements PluginData {
 			reportPeriod = data.reportPeriod;
 			personPropertyIds.addAll(data.personPropertyIds);
 		}
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + ((personPropertyIds == null) ? 0 : personPropertyIds.hashCode());
+			result = prime * result + ((reportLabel == null) ? 0 : reportLabel.hashCode());
+			result = prime * result + ((reportPeriod == null) ? 0 : reportPeriod.hashCode());
+			return result;
+		}
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (!(obj instanceof Data)) {
+				return false;
+			}
+			Data other = (Data) obj;
+			if (personPropertyIds == null) {
+				if (other.personPropertyIds != null) {
+					return false;
+				}
+			} else if (!personPropertyIds.equals(other.personPropertyIds)) {
+				return false;
+			}
+			if (reportLabel == null) {
+				if (other.reportLabel != null) {
+					return false;
+				}
+			} else if (!reportLabel.equals(other.reportLabel)) {
+				return false;
+			}
+			if (reportPeriod != other.reportPeriod) {
+				return false;
+			}
+			return true;
+		}
+		
+		
 	}
 
 	public static Builder builder() {
@@ -93,4 +132,34 @@ public class PersonPropertyInteractionReportPluginData implements PluginData {
 		return builder();
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((data == null) ? 0 : data.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!(obj instanceof PersonPropertyInteractionReportPluginData)) {
+			return false;
+		}
+		PersonPropertyInteractionReportPluginData other = (PersonPropertyInteractionReportPluginData) obj;
+		if (data == null) {
+			if (other.data != null) {
+				return false;
+			}
+		} else if (!data.equals(other.data)) {
+			return false;
+		}
+		return true;
+	}
+
+	
+	
+	
 }
