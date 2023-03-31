@@ -76,6 +76,7 @@ public class Simulation {
 
 		@Override
 		public String toString() {
+
 			StringBuilder builder = new StringBuilder();
 
 			builder.append("time = ");
@@ -84,6 +85,10 @@ public class Simulation {
 
 			builder.append("arrivalId = ");
 			builder.append(arrivalId);
+			builder.append(LINE_SEPARATOR);
+
+			builder.append("isActive = ");
+			builder.append(isActive);
 			builder.append(LINE_SEPARATOR);
 
 			builder.append("key = ");
@@ -95,14 +100,28 @@ public class Simulation {
 			switch (planner) {
 			case ACTOR:
 				builder.append(actorId);
+				builder.append(LINE_SEPARATOR);
+				builder.append(actorPlan);
 				break;
 			case DATA_MANAGER:
 				builder.append(dataManagerId);
+				builder.append(LINE_SEPARATOR);
+				builder.append(dataManagerPlan);
+				break;
+			case REPORT:
+				builder.append(reportId);
+				builder.append(LINE_SEPARATOR);
+				builder.append(reportPlan);
 				break;
 			default:
 				throw new RuntimeException("unhandled planner case");
-
 			}
+
+			builder.append(LINE_SEPARATOR);
+			builder.append("plan = ");
+			builder.append(LINE_SEPARATOR);
+			builder.append(plan);
+
 			builder.append(LINE_SEPARATOR);
 			builder.append(LINE_SEPARATOR);
 
@@ -454,6 +473,7 @@ public class Simulation {
 		if (planRec.isActive) {
 			activePlanCount++;
 		}
+		
 		planningQueue.add(planRec);
 	}
 
@@ -474,8 +494,7 @@ public class Simulation {
 		}
 
 		planRec.plan = plan;
-		planRec.isActive = false;
-		planRec.arrivalId = masterPlanningArrivalId++;
+		planRec.isActive = false;		
 		planRec.planner = Planner.REPORT;
 		planRec.time = plan.getTime();
 		planRec.reportPlan = plan.getCallbackConsumer();
@@ -493,7 +512,6 @@ public class Simulation {
 			}
 			map.put(planRec.key, planRec);
 		}
-
 		planningQueue.add(planRec);
 
 	}
@@ -515,8 +533,7 @@ public class Simulation {
 		}
 
 		planRec.plan = plan;
-		planRec.isActive = plan.isActive();
-		planRec.arrivalId = masterPlanningArrivalId++;
+		planRec.isActive = plan.isActive();		
 		planRec.planner = Planner.DATA_MANAGER;
 		planRec.time = plan.getTime();
 		planRec.dataManagerPlan = plan.getCallbackConsumer();
@@ -720,21 +737,23 @@ public class Simulation {
 
 		return orderedPlugins;
 	}
+
 	protected double getScheduledSimulationHaltTime() {
 		return data.simulationHaltTime;
 	}
+
 	protected boolean stateRecordingIsScheduled() {
 		return data.stateRecordingIsScheduled;
 	}
+
 	protected boolean plansRequirePlanData(double time) {
-		if(data.stateRecordingIsScheduled) {
-			if(time>data.simulationHaltTime) {
+		if (data.stateRecordingIsScheduled) {
+			if (time > data.simulationHaltTime) {
 				return true;
 			}
 		}
 		return false;
 	}
-	
 
 	/**
 	 * Executes this Simulation instance. Contributed plugin initializers are
@@ -849,7 +868,7 @@ public class Simulation {
 		forcedHaltPresent = simulationHaltTime >= 0;
 
 		// start the planning-based portion of the simulation where time flows
-		if (plansFromPreviousExecutionPresent) {
+		if (plansFromPreviousExecutionPresent) {			
 			rebuildPlanningQueue();
 		}
 
@@ -915,7 +934,9 @@ public class Simulation {
 		}
 		planningQueueMode = PlanningQueueMode.CLOSED;
 		// Move the remaining plan recs into a searchable structure
-		buildPlanDataRetrievalStructures();
+		if (data.stateRecordingIsScheduled) {
+			buildPlanDataRetrievalStructures();
+		}
 		eventProcessingAllowed = false;
 
 		// signal to the data managers that the simulation is closing
@@ -964,7 +985,7 @@ public class Simulation {
 		List<PrioritizedPlanData> prioritizedPlanDatas = terminalActorPlanDatas.get(focalActorId);
 		if (prioritizedPlanDatas != null) {
 			for (PrioritizedPlanData prioritizedPlanData : prioritizedPlanDatas) {
-				if (classRef.isAssignableFrom(prioritizedPlanData.getPlanData().getClass())) {					
+				if (classRef.isAssignableFrom(prioritizedPlanData.getPlanData().getClass())) {
 					result.add(prioritizedPlanData);
 				}
 			}
@@ -1013,6 +1034,7 @@ public class Simulation {
 		while (!planningQueue.isEmpty()) {
 			PlanRec planRec = planningQueue.poll();
 			Plan<?> plan = planRec.plan;
+			//System.out.println(planRec);
 			if (plan != null) {
 				PlanData planData = plan.getPlanData();
 				if (planData != null) {
@@ -1023,7 +1045,7 @@ public class Simulation {
 							list = new ArrayList<>();
 							terminalActorPlanDatas.put(planRec.actorId, list);
 						}
-						list.add(new PrioritizedPlanData(planData,planRec.arrivalId));
+						list.add(new PrioritizedPlanData(planData, planRec.arrivalId));
 						break;
 					case DATA_MANAGER:
 						list = terminalDataManagerPlanDatas.get(planRec.dataManagerId);
@@ -1031,7 +1053,7 @@ public class Simulation {
 							list = new ArrayList<>();
 							terminalDataManagerPlanDatas.put(planRec.dataManagerId, list);
 						}
-						list.add(new PrioritizedPlanData(planData,planRec.arrivalId));
+						list.add(new PrioritizedPlanData(planData, planRec.arrivalId));
 						break;
 					case REPORT:
 						list = terminalReportPlanDatas.get(planRec.reportId);
@@ -1039,7 +1061,7 @@ public class Simulation {
 							list = new ArrayList<>();
 							terminalReportPlanDatas.put(planRec.reportId, list);
 						}
-						list.add(new PrioritizedPlanData(planData,planRec.arrivalId));
+						list.add(new PrioritizedPlanData(planData, planRec.arrivalId));
 						break;
 					default:
 						throw new RuntimeException("unhandled case " + planRec.planner);
@@ -1054,6 +1076,7 @@ public class Simulation {
 	 * if there were any plans from a previous simulation execution detected.
 	 */
 	private void rebuildPlanningQueue() {
+		
 		// empty the planning queue into a list
 		List<PlanRec> list = new ArrayList<>();
 		while (!planningQueue.isEmpty()) {
