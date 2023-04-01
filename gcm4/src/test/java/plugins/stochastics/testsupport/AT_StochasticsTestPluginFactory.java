@@ -27,6 +27,7 @@ import plugins.stochastics.StochasticsPluginData;
 import plugins.stochastics.StochasticsPluginId;
 import plugins.stochastics.support.RandomNumberGeneratorId;
 import plugins.stochastics.support.StochasticsError;
+import plugins.stochastics.testsupport.StochasticsTestPluginFactory.Factory;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.wrappers.MutableBoolean;
@@ -38,8 +39,9 @@ public class AT_StochasticsTestPluginFactory {
 			Consumer.class })
 	public void testFactory_Consumer() {
 		MutableBoolean executed = new MutableBoolean();
-		TestSimulation.executeSimulation(
-				StochasticsTestPluginFactory.factory(576570479777898470L, c -> executed.setValue(true)).getPlugins());
+		
+		Factory factory = StochasticsTestPluginFactory.factory(576570479777898470L, c -> executed.setValue(true));
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 		assertTrue(executed.getValue());
 
 		// precondition: consumer is null
@@ -58,8 +60,9 @@ public class AT_StochasticsTestPluginFactory {
 		TestPluginData.Builder builder = TestPluginData.builder();
 		builder.addTestActorPlan("actor", new TestActorPlan(0, c -> executed.setValue(true)));
 		TestPluginData testPluginData = builder.build();
-		TestSimulation.executeSimulation(
-				StochasticsTestPluginFactory.factory(45235233432345378L, testPluginData).getPlugins());
+		
+		Factory factory = StochasticsTestPluginFactory.factory(45235233432345378L, testPluginData);
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 		assertTrue(executed.getValue());
 
 		// precondition: testPluginData is null

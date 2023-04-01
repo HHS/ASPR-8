@@ -24,4 +24,17 @@ public final class PrioritizedPlanData {
 	public long getPriority() {
 		return priority;
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("PrioritizedPlanData [planData=");
+		builder.append(planData);
+		builder.append(", priority=");
+		builder.append(priority);
+		builder.append("]");
+		return builder.toString();
+	}
+	
+	
 }

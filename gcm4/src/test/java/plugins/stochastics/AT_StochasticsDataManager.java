@@ -18,6 +18,7 @@ import nucleus.testsupport.testplugin.TestSimulation;
 import plugins.stochastics.support.RandomNumberGeneratorId;
 import plugins.stochastics.support.StochasticsError;
 import plugins.stochastics.testsupport.StochasticsTestPluginFactory;
+import plugins.stochastics.testsupport.StochasticsTestPluginFactory.Factory;
 import plugins.stochastics.testsupport.TestRandomGeneratorId;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
@@ -35,7 +36,7 @@ public class AT_StochasticsDataManager {
 	@UnitTestMethod(target = StochasticsDataManager.class, name = "getRandomNumberGeneratorIds", args = {})
 	public void testGetRandomNumberGeneratorIds() {
 
-		TestSimulation.executeSimulation(StochasticsTestPluginFactory.factory(1244273915891145733L, (c) -> {
+		Factory factory = StochasticsTestPluginFactory.factory(1244273915891145733L, (c) -> {
 
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 
@@ -46,7 +47,8 @@ public class AT_StochasticsDataManager {
 				expectedRandomGeneratorIds.add(testRandomGeneratorId);
 			}
 			assertEquals(expectedRandomGeneratorIds, actualRandomNumberGeneratorIds);
-		}).getPlugins());
+		});
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
 	@Test
@@ -54,17 +56,19 @@ public class AT_StochasticsDataManager {
 	public void testGetRandomGeneratorFromId() {
 
 		// show that random generators can be retrieved by ids.
-		TestSimulation.executeSimulation(StochasticsTestPluginFactory.factory(5489824520767978373L, (c) -> {
+		Factory factory = StochasticsTestPluginFactory.factory(5489824520767978373L, (c) -> {
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			for (TestRandomGeneratorId testRandomGeneratorId : TestRandomGeneratorId.values()) {
 				RandomGenerator randomGeneratorFromId = stochasticsDataManager.getRandomGeneratorFromId(testRandomGeneratorId);
 				assertNotNull(randomGeneratorFromId);
 			}
-		}).getPlugins());
+		});
 
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
+		
 		// show that an unknown random number generator id will retrieve a
 		// random generator
-		TestSimulation.executeSimulation(StochasticsTestPluginFactory.factory(5985120270606833945L, (c) -> {
+		factory = StochasticsTestPluginFactory.factory(5985120270606833945L, (c) -> {
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 
 			RandomNumberGeneratorId randomNumberGeneratorIdA = new RandomNumberGeneratorId() {
@@ -99,14 +103,19 @@ public class AT_StochasticsDataManager {
 				assertEquals(valueA, valueB);
 			}
 
-		}).getPlugins());
+		});
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 		// precondition test : if the random number generator is null
-		TestSimulation.executeSimulation(StochasticsTestPluginFactory.factory(1893848105389404535L, (c) -> {
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
-			ContractException contractException = assertThrows(ContractException.class, () -> stochasticsDataManager.getRandomGeneratorFromId(null));
-			assertEquals(StochasticsError.NULL_RANDOM_NUMBER_GENERATOR_ID, contractException.getErrorType());
-		}).getPlugins());
+		ContractException contractException = assertThrows(ContractException.class, () ->{
+			Factory factory2 = StochasticsTestPluginFactory.factory(1893848105389404535L, (c) -> {
+				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
+				stochasticsDataManager.getRandomGeneratorFromId(null);			
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(StochasticsError.NULL_RANDOM_NUMBER_GENERATOR_ID, contractException.getErrorType());
+		
 
 	}
 
@@ -114,11 +123,12 @@ public class AT_StochasticsDataManager {
 	@UnitTestMethod(target = StochasticsDataManager.class, name = "getRandomGenerator", args = {})
 	public void testGetRandomGenerator() {
 		// show that random generators can be retrieved by ids
-		TestSimulation.executeSimulation(StochasticsTestPluginFactory.factory(683597885444214892L, (c) -> {
+		Factory factory = StochasticsTestPluginFactory.factory(683597885444214892L, (c) -> {
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGeneratorFromId = stochasticsDataManager.getRandomGenerator();
 			assertNotNull(randomGeneratorFromId);
-		}).getPlugins());
+		});
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
 	@Test
@@ -131,7 +141,7 @@ public class AT_StochasticsDataManager {
 	@UnitTestMethod(target = StochasticsDataManager.class, name = "resetSeeds", args = { long.class })
 	public void testResetSeeds() {
 
-		TestSimulation.executeSimulation(StochasticsTestPluginFactory.factory(7392476210385850542L, (c) -> {
+		Factory factory = StochasticsTestPluginFactory.factory(7392476210385850542L, (c) -> {
 
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 
@@ -184,7 +194,9 @@ public class AT_StochasticsDataManager {
 				assertEquals(expectedGeneratorValues.get(testRandomGeneratorId), value);
 			}
 
-		}).getPlugins());
+		});
+		
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 	}
 

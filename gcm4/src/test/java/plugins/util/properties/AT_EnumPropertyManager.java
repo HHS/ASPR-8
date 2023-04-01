@@ -17,6 +17,7 @@ import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestDataManager;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestPluginFactory;
+import nucleus.testsupport.testplugin.TestPluginFactory.Factory;
 import nucleus.testsupport.testplugin.TestSimulation;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
@@ -36,7 +37,7 @@ public class AT_EnumPropertyManager {
 	@Test
 	@UnitTestMethod(target = EnumPropertyManager.class, name = "getPropertyValue", args = { int.class })
 	public void testGetPropertyValue() {
-		TestSimulation.executeSimulation(TestPluginFactory.factory((c) -> {
+		Factory factory = TestPluginFactory.factory((c) -> {
 			RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(5102684240650614254L);
 
 			Color defaultValue = Color.YELLOW;
@@ -74,7 +75,8 @@ public class AT_EnumPropertyManager {
 			// precondition tests
 			ContractException contractException = assertThrows(ContractException.class, () -> enumPropertyManager.getPropertyValue(-1));
 			assertEquals(PropertyError.NEGATIVE_INDEX, contractException.getErrorType());
-		}).getPlugins());
+		});
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
 	/*
@@ -126,28 +128,36 @@ public class AT_EnumPropertyManager {
 
 		// build and run the simulation
 		TestPluginData testPluginData = pluginDataBuilder.build();
-		TestSimulation.executeSimulation(TestPluginFactory.factory(testPluginData).getPlugins());
+		Factory factory = TestPluginFactory.factory(testPluginData);
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
+
 
 		// precondition tests:
-		TestSimulation.executeSimulation(TestPluginFactory.factory((c) -> {
-			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Color.class).setDefaultValue(Color.BLUE).build();
-			EnumPropertyManager epm = new EnumPropertyManager(c, propertyDefinition, 0);
-			ContractException contractException = assertThrows(ContractException.class, () -> epm.getPropertyTime(0));
-			assertEquals(PropertyError.TIME_TRACKING_OFF, contractException.getErrorType());
-		}).getPlugins());
-
-		TestSimulation.executeSimulation(TestPluginFactory.factory((c) -> {
-			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Color.class).setDefaultValue(Color.BLUE).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
-			EnumPropertyManager epm = new EnumPropertyManager(c, propertyDefinition, 0);
-			ContractException contractException = assertThrows(ContractException.class, () -> epm.getPropertyTime(-1));
-			assertEquals(PropertyError.NEGATIVE_INDEX, contractException.getErrorType());
-		}).getPlugins());
+		ContractException contractException = assertThrows(ContractException.class, () ->{
+			Factory factory2 = TestPluginFactory.factory((c) -> {
+				PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Color.class).setDefaultValue(Color.BLUE).build();
+				EnumPropertyManager epm = new EnumPropertyManager(c, propertyDefinition, 0);
+				epm.getPropertyTime(0);			
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(PropertyError.TIME_TRACKING_OFF, contractException.getErrorType());
+		
+		contractException = assertThrows(ContractException.class, () ->{
+			Factory factory2 = TestPluginFactory.factory((c) -> {
+				PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Color.class).setDefaultValue(Color.BLUE).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
+				EnumPropertyManager epm = new EnumPropertyManager(c, propertyDefinition, 0);
+				epm.getPropertyTime(-1);			
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(PropertyError.NEGATIVE_INDEX, contractException.getErrorType());
 	}
 
 	@Test
 	@UnitTestMethod(target = EnumPropertyManager.class, name = "setPropertyValue", args = { int.class, Object.class })
 	public void testSetPropertyValue() {
-		TestSimulation.executeSimulation(TestPluginFactory.factory((c) -> {
+		Factory factory = TestPluginFactory.factory((c) -> {
 			RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6716984272666831621L);
 
 			Color defaultValue = Color.YELLOW;
@@ -185,13 +195,14 @@ public class AT_EnumPropertyManager {
 			// precondition tests
 			ContractException contractException = assertThrows(ContractException.class, () -> enumPropertyManager.setPropertyValue(-1, Color.BLUE));
 			assertEquals(PropertyError.NEGATIVE_INDEX, contractException.getErrorType());
-		}).getPlugins());
+		});
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
 	@Test
 	@UnitTestMethod(target = EnumPropertyManager.class, name = "removeId", args = { int.class })
 	public void testRemoveId() {
-		TestSimulation.executeSimulation(TestPluginFactory.factory((c) -> {
+		Factory factory = TestPluginFactory.factory((c) -> {
 			/*
 			 * Should have no effect on the value that is stored for the sake of
 			 * efficiency.
@@ -246,7 +257,8 @@ public class AT_EnumPropertyManager {
 			ContractException contractException = assertThrows(ContractException.class, () -> epm.removeId(-1));
 
 			assertEquals(PropertyError.NEGATIVE_INDEX, contractException.getErrorType());
-		}).getPlugins());
+		});
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
 	// Helper enum
@@ -257,7 +269,7 @@ public class AT_EnumPropertyManager {
 	@Test
 	@UnitTestConstructor(target = EnumPropertyManager.class, args = { SimulationContext.class, PropertyDefinition.class, int.class })
 	public void testConstructor() {
-		TestSimulation.executeSimulation(TestPluginFactory.factory((c) -> {
+		Factory factory = TestPluginFactory.factory((c) -> {
 
 			PropertyDefinition goodPropertyDefinition = PropertyDefinition.builder().setType(Color.class).setDefaultValue(Color.BLUE).build();
 			PropertyDefinition badPropertyDefinition = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(false).build();
@@ -276,13 +288,14 @@ public class AT_EnumPropertyManager {
 
 			EnumPropertyManager enumPropertyManager = new EnumPropertyManager(c, goodPropertyDefinition, 0);
 			assertNotNull(enumPropertyManager);
-		}).getPlugins());
+		});
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
 	@Test
 	@UnitTestMethod(target = EnumPropertyManager.class, name = "incrementCapacity", args = { int.class })
 	public void testIncrementCapacity() {
-		TestSimulation.executeSimulation(TestPluginFactory.factory((c) -> {
+		Factory factory = TestPluginFactory.factory((c) -> {
 
 			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Color.class).setDefaultValue(Color.RED).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
 
@@ -291,7 +304,8 @@ public class AT_EnumPropertyManager {
 			// precondition tests
 			ContractException contractException = assertThrows(ContractException.class, () -> enumPropertyManager.incrementCapacity(-1));
 			assertEquals(PropertyError.NEGATIVE_CAPACITY_INCREMENT, contractException.getErrorType());
-		}).getPlugins());
+		});
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
 }

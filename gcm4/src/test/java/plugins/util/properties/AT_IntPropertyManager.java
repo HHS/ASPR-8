@@ -17,6 +17,7 @@ import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestDataManager;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestPluginFactory;
+import nucleus.testsupport.testplugin.TestPluginFactory.Factory;
 import nucleus.testsupport.testplugin.TestSimulation;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
@@ -35,7 +36,7 @@ public class AT_IntPropertyManager {
 	@Test
 	@UnitTestMethod(target = IntPropertyManager.class, name = "getPropertyValue", args = { int.class })
 	public void testGetPropertyValue() {
-		TestSimulation.executeSimulation(TestPluginFactory.factory((c) -> {
+		Factory factory = TestPluginFactory.factory((c) -> {
 			RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7951361060252638380L);
 
 			int defaultValue = 423;
@@ -72,7 +73,8 @@ public class AT_IntPropertyManager {
 			// precondition tests
 			ContractException contractException = assertThrows(ContractException.class, () -> intPropertyManager.getPropertyValue(-1));
 			assertEquals(PropertyError.NEGATIVE_INDEX, contractException.getErrorType());
-		}).getPlugins());
+		});
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
 	/*
@@ -112,27 +114,43 @@ public class AT_IntPropertyManager {
 				assertEquals(c.getTime(), intPropertyManager.getPropertyTime(id), 0);
 			}));
 		}));
+		
+		// add the local data manager
+		pluginDataBuilder.addTestDataManager("dm", ()->new LocalDM());
+		
+		TestPluginData testPluginData = pluginDataBuilder.build();
+		
+		Factory factory = TestPluginFactory.factory(testPluginData);
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
+		
 
 		// precondition tests:
-		TestSimulation.executeSimulation(TestPluginFactory.factory((c) -> {
-			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(2).build();
-			IntPropertyManager ipm = new IntPropertyManager(c, propertyDefinition, 0);
-			ContractException contractException = assertThrows(ContractException.class, () -> ipm.getPropertyTime(0));
-			assertEquals(PropertyError.TIME_TRACKING_OFF, contractException.getErrorType());
-		}).getPlugins());
-
-		TestSimulation.executeSimulation(TestPluginFactory.factory((c) -> {
-			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(2).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
-			IntPropertyManager ipm = new IntPropertyManager(c, propertyDefinition, 0);
-			ContractException contractException = assertThrows(ContractException.class, () -> ipm.getPropertyTime(-1));
-			assertEquals(PropertyError.NEGATIVE_INDEX, contractException.getErrorType());
-		}).getPlugins());
+		ContractException contractException = assertThrows(ContractException.class, () ->{
+			Factory factory2 = TestPluginFactory.factory((c) -> {
+				PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(2).build();
+				IntPropertyManager ipm = new IntPropertyManager(c, propertyDefinition, 0);
+				ipm.getPropertyTime(0);			
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(PropertyError.TIME_TRACKING_OFF, contractException.getErrorType());
+		
+		
+		contractException = assertThrows(ContractException.class, () ->{
+			Factory factory2 = TestPluginFactory.factory((c) -> {
+				PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(2).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
+				IntPropertyManager ipm = new IntPropertyManager(c, propertyDefinition, 0);
+				ipm.getPropertyTime(-1);			
+			});
+			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
+		});
+		assertEquals(PropertyError.NEGATIVE_INDEX, contractException.getErrorType());
 	}
 
 	@Test
 	@UnitTestMethod(target = IntPropertyManager.class, name = "setPropertyValue", args = { int.class, Object.class })
 	public void testSetPropertyValue() {
-		TestSimulation.executeSimulation(TestPluginFactory.factory((c) -> {
+		Factory factory = TestPluginFactory.factory((c) -> {
 			RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(5297426971018191882L);
 
 			int defaultValue = 423;
@@ -169,13 +187,14 @@ public class AT_IntPropertyManager {
 			// precondition tests
 			ContractException contractException = assertThrows(ContractException.class, () -> intPropertyManager.setPropertyValue(-1, 23));
 			assertEquals(PropertyError.NEGATIVE_INDEX, contractException.getErrorType());
-		}).getPlugins());
+		});
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
 	@Test
 	@UnitTestMethod(target = IntPropertyManager.class, name = "removeId", args = { int.class })
 	public void testRemoveId() {
-		TestSimulation.executeSimulation(TestPluginFactory.factory((c) -> {
+		Factory factory = TestPluginFactory.factory((c) -> {
 			/*
 			 * Should have no effect on the value that is stored for the sake of
 			 * efficiency.
@@ -228,13 +247,14 @@ public class AT_IntPropertyManager {
 
 			ContractException contractException = assertThrows(ContractException.class, () -> ipm.removeId(-1));
 			assertEquals(PropertyError.NEGATIVE_INDEX, contractException.getErrorType());
-		}).getPlugins());
+		});
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
 	@Test
 	@UnitTestConstructor(target = IntPropertyManager.class, args = { SimulationContext.class, PropertyDefinition.class, int.class })
 	public void testConstructor() {
-		TestSimulation.executeSimulation(TestPluginFactory.factory((c) -> {
+		Factory factory = TestPluginFactory.factory((c) -> {
 
 			PropertyDefinition goodPropertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(2).build();
 			PropertyDefinition badPropertyDefinition = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(false).build();
@@ -253,13 +273,14 @@ public class AT_IntPropertyManager {
 
 			IntPropertyManager doublePropertyManager = new IntPropertyManager(c, goodPropertyDefinition, 0);
 			assertNotNull(doublePropertyManager);
-		}).getPlugins());
+		});
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
 	@Test
 	@UnitTestMethod(target = IntPropertyManager.class, name = "incrementCapacity", args = { int.class })
 	public void testIncrementCapacity() {
-		TestSimulation.executeSimulation(TestPluginFactory.factory((c) -> {
+		Factory factory = TestPluginFactory.factory((c) -> {
 
 			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(234).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
 
@@ -268,7 +289,8 @@ public class AT_IntPropertyManager {
 			// precondition tests
 			ContractException contractException = assertThrows(ContractException.class, () -> intPropertyManager.incrementCapacity(-1));
 			assertEquals(PropertyError.NEGATIVE_CAPACITY_INCREMENT, contractException.getErrorType());
-		}).getPlugins());
+		});
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
 }

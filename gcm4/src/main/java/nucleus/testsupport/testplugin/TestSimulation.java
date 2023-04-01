@@ -133,21 +133,6 @@ public class TestSimulation {
 		this.data = data;
 	}
 
-	/**
-	 * Executes a simulation instance
-	 * 
-	 * @throws ContractException
-	 *             <li>{@linkplain NucleusError#NULL_PLUGIN} if pluginsToAdd is
-	 *             null</li>
-	 *             <li>{@linkplain NucleusError#NULL_PLUGIN} if pluginsToAdd
-	 *             contains a null plugin</li>
-	 *             <li>{@linkplain TestError#TEST_EXECUTION_FAILURE} if the
-	 *             simulation does not complete successfully</li>
-	 */
-	public static void executeSimulation(List<Plugin> pluginsToAdd) {
-		builder().addPlugins(pluginsToAdd).build().execute();
-	}
-
 	public TestOutputConsumer execute() {
 		// List<Plugin> pluginsToAdd, TestOutputConsumer outputConsumer, boolean
 		// produceSimulationState

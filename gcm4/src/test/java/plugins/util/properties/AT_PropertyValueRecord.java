@@ -9,6 +9,7 @@ import nucleus.SimulationContext;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestPluginFactory;
+import nucleus.testsupport.testplugin.TestPluginFactory.Factory;
 import nucleus.testsupport.testplugin.TestSimulation;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
@@ -38,7 +39,8 @@ public class AT_PropertyValueRecord {
 		}));
 
 		TestPluginData testPluginData = pluginDataBuilder.build();
-		TestSimulation.executeSimulation(TestPluginFactory.factory(testPluginData).getPlugins());
+		Factory factory = TestPluginFactory.factory(testPluginData);
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
 	/**
@@ -64,7 +66,8 @@ public class AT_PropertyValueRecord {
 		}));
 
 		TestPluginData testPluginData = pluginDataBuilder.build();
-		TestSimulation.executeSimulation(TestPluginFactory.factory(testPluginData).getPlugins());
+		Factory factory = TestPluginFactory.factory(testPluginData);
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
 	@Test
@@ -86,18 +89,20 @@ public class AT_PropertyValueRecord {
 		}));
 
 		TestPluginData testPluginData = pluginDataBuilder.build();
-		TestSimulation.executeSimulation(TestPluginFactory.factory(testPluginData).getPlugins());
+		Factory factory = TestPluginFactory.factory(testPluginData);
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 	}
 
 	@Test
 	@UnitTestConstructor(target = PropertyValueRecord.class, args = { SimulationContext.class })
 	public void testConstructor() {
-		TestSimulation.executeSimulation(TestPluginFactory.factory((c) -> {
+		Factory factory = TestPluginFactory.factory((c) -> {
 			PropertyValueRecord propertyValueRecord = new PropertyValueRecord(c);
 			assertNotNull(propertyValueRecord);
 			assertEquals(0, propertyValueRecord.getAssignmentTime());
-		}).getPlugins());
+		});
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 	}
 

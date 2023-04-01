@@ -39,6 +39,7 @@ import plugins.resources.ResourcesPluginData;
 import plugins.resources.ResourcesPluginId;
 import plugins.resources.support.ResourceError;
 import plugins.resources.support.ResourceId;
+import plugins.resources.testsupport.ResourcesTestPluginFactory.Factory;
 import plugins.stochastics.StochasticsPluginData;
 import plugins.stochastics.StochasticsPluginId;
 import plugins.stochastics.support.StochasticsError;
@@ -57,9 +58,8 @@ public class AT_ResourcesTestPluginFactory {
 			Consumer.class })
 	public void testFactory_Consumer() {
 		MutableBoolean executed = new MutableBoolean();
-		TestSimulation.executeSimulation(ResourcesTestPluginFactory
-				.factory(100, 5785172948650781925L, c -> executed.setValue(true))
-				.getPlugins());
+		Factory factory = ResourcesTestPluginFactory.factory(100, 5785172948650781925L, c -> executed.setValue(true));
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 		assertTrue(executed.getValue());
 
 		// precondition: consumer is null
@@ -78,9 +78,8 @@ public class AT_ResourcesTestPluginFactory {
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, c -> executed.setValue(true)));
 		TestPluginData testPluginData = pluginBuilder.build();
 
-		TestSimulation.executeSimulation(ResourcesTestPluginFactory
-				.factory(100, 5785172948650781925L, testPluginData)
-				.getPlugins());
+		Factory factory = ResourcesTestPluginFactory.factory(100, 5785172948650781925L, testPluginData);		
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 		assertTrue(executed.getValue());
 
 		// precondition: testPluginData is null

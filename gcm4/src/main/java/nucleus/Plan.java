@@ -7,10 +7,30 @@ public class Plan<T> {
 	private static class Data<K> {
 		private double time;
 		private Consumer<K> callbackConsumer;
-		private long priority;		
+		private long priority = -1;		
 		private boolean active = true;
 		private PlanData planData;
 		private Object key;
+		@Override
+		public String toString() {
+			StringBuilder builder = new StringBuilder();
+			builder.append("Data [time=");
+			builder.append(time);
+			builder.append(", callbackConsumer=");
+			builder.append(callbackConsumer);
+			builder.append(", priority=");
+			builder.append(priority);
+			builder.append(", active=");
+			builder.append(active);
+			builder.append(", planData=");
+			builder.append(planData);
+			builder.append(", key=");
+			builder.append(key);
+			builder.append("]");
+			return builder.toString();
+		}
+		
+		
 	}
 
 	/**
@@ -137,6 +157,15 @@ public class Plan<T> {
 
 	public Object getKey() {
 		return data.key;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder2 = new StringBuilder();
+		builder2.append("Plan [data=");
+		builder2.append(data);
+		builder2.append("]");
+		return builder2.toString();
 	}
 
 }
