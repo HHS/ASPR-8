@@ -7,7 +7,7 @@ public class Plan<T> {
 	private static class Data<K> {
 		private double time;
 		private Consumer<K> callbackConsumer;
-		private long priority;		
+		private long priority = -1;		
 		private boolean active = true;
 		private PlanData planData;
 		private Object key;
