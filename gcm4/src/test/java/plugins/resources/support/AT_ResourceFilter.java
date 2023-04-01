@@ -23,6 +23,7 @@ import plugins.regions.support.RegionId;
 import plugins.resources.datamanagers.ResourcesDataManager;
 import plugins.resources.events.PersonResourceUpdateEvent;
 import plugins.resources.testsupport.ResourcesTestPluginFactory;
+import plugins.resources.testsupport.ResourcesTestPluginFactory.Factory;
 import plugins.resources.testsupport.TestResourceId;
 import plugins.stochastics.StochasticsDataManager;
 import util.annotations.UnitTestConstructor;
@@ -34,7 +35,7 @@ public class AT_ResourceFilter {
 	@UnitTestMethod(target = ResourceFilter.class, name = "getFilterSensitivities", args = {})
 	public void testGetFilterSensitivities() {
 
-		TestSimulation.executeSimulation(ResourcesTestPluginFactory.factory(12, 5802033011343021047L, (c) -> {
+		Factory factory = ResourcesTestPluginFactory.factory(12, 5802033011343021047L, (c) -> {
 			Filter filter = new ResourceFilter(TestResourceId.RESOURCE_1, Equality.EQUAL, 12L);
 
 			Set<FilterSensitivity<?>> filterSensitivities = filter.getFilterSensitivities();
@@ -44,15 +45,15 @@ public class AT_ResourceFilter {
 			FilterSensitivity<?> filterSensitivity = filterSensitivities.iterator().next();
 			assertEquals(PersonResourceUpdateEvent.class, filterSensitivity.getEventClass());
 
-		}).getPlugins());
-
+		});
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
 	@Test
 	@UnitTestMethod(target = ResourceFilter.class, name = "validate", args = { SimulationContext.class })
 	public void testValidate() {
 
-		TestSimulation.executeSimulation(ResourcesTestPluginFactory.factory(12, 6989281647149803633L, (c) -> {
+		Factory factory = ResourcesTestPluginFactory.factory(12, 6989281647149803633L, (c) -> {
 			// if the equality operator is null
 			ContractException contractException = assertThrows(ContractException.class, () -> new ResourceFilter(TestResourceId.RESOURCE_1, null, 12L).validate(c));
 			assertEquals(PartitionError.NULL_EQUALITY_OPERATOR, contractException.getErrorType());
@@ -68,15 +69,15 @@ public class AT_ResourceFilter {
 			// ResourceError.UNKNOWN_RESOURCE_ID
 			contractException = assertThrows(ContractException.class, () -> new ResourceFilter(TestResourceId.getUnknownResourceId(), Equality.GREATER_THAN, 12L).validate(c));
 			assertEquals(ResourceError.UNKNOWN_RESOURCE_ID, contractException.getErrorType());
-		}).getPlugins());
-
+		});
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
 	@Test
 	@UnitTestMethod(target = ResourceFilter.class, name = "evaluate", args = { SimulationContext.class, PersonId.class })
 	public void testEvaluate() {
 
-		TestSimulation.executeSimulation(ResourcesTestPluginFactory.factory(100, 5313696152098995059L, (c) -> {
+		Factory factory = ResourcesTestPluginFactory.factory(100, 5313696152098995059L, (c) -> {
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
@@ -107,7 +108,9 @@ public class AT_ResourceFilter {
 
 			/* precondition: if the person id is unknown */
 			assertThrows(RuntimeException.class, () -> filter.evaluate(c, new PersonId(123412342)));
-		}).getPlugins());
+		});
+		
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();	
 
 	}
 

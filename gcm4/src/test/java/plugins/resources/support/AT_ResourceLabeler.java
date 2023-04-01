@@ -28,6 +28,7 @@ import plugins.regions.support.RegionId;
 import plugins.resources.datamanagers.ResourcesDataManager;
 import plugins.resources.events.PersonResourceUpdateEvent;
 import plugins.resources.testsupport.ResourcesTestPluginFactory;
+import plugins.resources.testsupport.ResourcesTestPluginFactory.Factory;
 import plugins.resources.testsupport.TestResourceId;
 import plugins.stochastics.StochasticsDataManager;
 import util.annotations.UnitTestConstructor;
@@ -154,7 +155,8 @@ public final class AT_ResourceLabeler {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		TestSimulation.executeSimulation(ResourcesTestPluginFactory.factory(10, 7394122902151816457L, testPluginData).getPlugins());
+		Factory factory = ResourcesTestPluginFactory.factory(10, 7394122902151816457L, testPluginData);
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 	}
 
@@ -169,7 +171,7 @@ public final class AT_ResourceLabeler {
 	@Test
 	@UnitTestMethod(target = ResourceLabeler.class, name = "getPastLabel", args = { SimulationContext.class, Event.class })
 	public void testGetPastLabel() {
-		TestSimulation.executeSimulation(ResourcesTestPluginFactory.factory(10, 6601261985382450295L, (c) -> {
+		Factory factory = ResourcesTestPluginFactory.factory(10, 6601261985382450295L, (c) -> {
 
 			final PersonId personId = new PersonId(45);
 			final ResourceId resourceId = TestResourceId.RESOURCE_4;
@@ -189,7 +191,8 @@ public final class AT_ResourceLabeler {
 				Object actualLabel = resourceLabeler.getPastLabel(c, personResourceUpdateEvent);
 				assertEquals(expectedLabel, actualLabel);
 			}
-		}).getPlugins());
+		});
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 	}
 
