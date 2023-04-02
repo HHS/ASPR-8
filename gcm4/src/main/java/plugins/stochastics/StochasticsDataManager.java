@@ -9,11 +9,11 @@ import org.apache.commons.math3.random.RandomGenerator;
 
 import nucleus.DataManager;
 import nucleus.DataManagerContext;
-import plugins.stochastics.support.CopyableWell44497b;
 import plugins.stochastics.support.RandomNumberGeneratorId;
 import plugins.stochastics.support.StochasticsError;
+import plugins.stochastics.support.WellRNG;
+import plugins.stochastics.support.WellState;
 import util.errors.ContractException;
-import util.random.RandomGeneratorProvider;
 
 /**
  * A mutable data manager for random number generators.
@@ -21,9 +21,9 @@ import util.random.RandomGeneratorProvider;
  */
 public final class StochasticsDataManager extends DataManager {
 
-	private Map<RandomNumberGeneratorId, RandomGenerator> randomGeneratorMap = new LinkedHashMap<>();
+	private Map<RandomNumberGeneratorId, WellRNG> randomGeneratorMap = new LinkedHashMap<>();
 
-	private RandomGenerator randomGenerator;
+	private WellRNG randomGenerator;
 
 	/**
 	 * Returns the general, non-identified, random number generator was
@@ -36,11 +36,7 @@ public final class StochasticsDataManager extends DataManager {
 	}
 
 	/**
-	 * Returns the random generator associated with the given id. If the random
-	 * generator does not exist, a new one is created and seeded using the
-	 * current base seed and the id.
-	 * 
-	 * RNG seed = seed + id.toString().hashcode()
+	 * Returns the random generator associated with the given id.
 	 * 
 	 * @throws ContractException
 	 *             <li>{@linkplain StochasticsError#NULL_RANDOM_NUMBER_GENERATOR_ID}
@@ -50,37 +46,70 @@ public final class StochasticsDataManager extends DataManager {
 	 */
 	public RandomGenerator getRandomGeneratorFromId(RandomNumberGeneratorId randomNumberGeneratorId) {
 		validateRandomNumberGeneratorId(randomNumberGeneratorId);
-		RandomGenerator result = randomGeneratorMap.get(randomNumberGeneratorId);
-		if (result == null) {
-			result = addRandomGenerator(randomNumberGeneratorId);
-		}
-		return result;
+		return randomGeneratorMap.get(randomNumberGeneratorId);
 	}
 
 	/**
-	 * Returns the random number generator ids that were contained in the
-	 * initial data of the {@linkplain StochasticsPluginData} or that have been
-	 * added via
-	 * {@linkplain StochasticsDataManager#getRandomGeneratorFromId(RandomNumberGeneratorId)}.
+	 * Returns the random number generator ids.
 	 */
 	@SuppressWarnings("unchecked")
 	public <T extends RandomNumberGeneratorId> Set<T> getRandomNumberGeneratorIds() {
-
 		Set<T> result = new LinkedHashSet<>(randomGeneratorMap.size());
 		for (RandomNumberGeneratorId randomNumberGeneratorId : randomGeneratorMap.keySet()) {
 			result.add((T) randomNumberGeneratorId);
 		}
 		return result;
+	}
+	
+	/**
+	 * Returns true if and only if the random generator id is known
+	 */
+	public boolean randomNumberGeneratorIdExists(RandomNumberGeneratorId randomNumberGeneratorId) {
+		return randomGeneratorMap.containsKey(randomNumberGeneratorId);
+	}
 
+	/**
+	 * Adds a new RNG.
+	 * 
+	 * @throws ContractException
+	 *             <li>{@linkplain StochasticsError#NULL_RANDOM_NUMBER_GENERATOR_ID}
+	 *             if the randomNumberGeneratorId is null</li>
+	 *             <li>{@linkplain StochasticsError#RANDOM_NUMBER_GENERATOR_ID_ALREADY_EXISTS}
+	 *             if the randomNumberGeneratorId was previously added</li>
+	 *             <li>{@linkplain StochasticsError#NULL_WELL_STATE} if the
+	 *             wellstate is null</li>
+	 */
+	public RandomGenerator addRandomNumberGenerator(RandomNumberGeneratorId randomNumberGeneratorId, WellState wellState) {
+		validateNewRandomNumberGeneratorId(randomNumberGeneratorId);
+		validateWellStateNotNull(wellState);
+		WellRNG result = new WellRNG(wellState);
+		randomGeneratorMap.put(randomNumberGeneratorId, result);
+		return result;
 	}
 
 	private void validateRandomNumberGeneratorId(RandomNumberGeneratorId randomNumberGeneratorId) {
 		if (randomNumberGeneratorId == null) {
 			throw new ContractException(StochasticsError.NULL_RANDOM_NUMBER_GENERATOR_ID);
 		}
+		if (!randomGeneratorMap.containsKey(randomNumberGeneratorId)) {
+			throw new ContractException(StochasticsError.UNKNOWN_RANDOM_NUMBER_GENERATOR_ID);
+		}
 	}
 
-	private long seed;
+	private void validateWellStateNotNull(WellState wellState) {
+		if (wellState == null) {
+			throw new ContractException(StochasticsError.NULL_WELL_STATE);
+		}
+	}
+
+	private void validateNewRandomNumberGeneratorId(RandomNumberGeneratorId randomNumberGeneratorId) {
+		if (randomNumberGeneratorId == null) {
+			throw new ContractException(StochasticsError.NULL_RANDOM_NUMBER_GENERATOR_ID);
+		}
+		if (randomGeneratorMap.containsKey(randomNumberGeneratorId)) {
+			throw new ContractException(StochasticsError.RANDOM_NUMBER_GENERATOR_ID_ALREADY_EXISTS);
+		}
+	}
 
 	/**
 	 * Creates the StochasticsDataManager from the given
@@ -96,44 +125,14 @@ public final class StochasticsDataManager extends DataManager {
 		// create RandomGenerators for each of the ids using a hash built from
 		// the id and the replication seed
 		Set<RandomNumberGeneratorId> randomNumberGeneratorIds = stochasticsPluginData.getRandomNumberGeneratorIds();
-		seed = stochasticsPluginData.getWellSeed().getSeed();
+		randomGenerator = new WellRNG(stochasticsPluginData.getWellState());
 		for (RandomNumberGeneratorId randomNumberGeneratorId : randomNumberGeneratorIds) {
-			addRandomGenerator(randomNumberGeneratorId);
+			WellState wellState = stochasticsPluginData.getWellState(randomNumberGeneratorId);
+			randomGeneratorMap.put(randomNumberGeneratorId, new WellRNG(wellState));
 		}
 
 		// finally, set up the standard RandomGenerator
-		randomGenerator = new CopyableWell44497b(stochasticsPluginData.getWellSeed());
-	}
-
-	/*
-	 * The random generator should not already exist
-	 */
-	private RandomGenerator addRandomGenerator(RandomNumberGeneratorId randomNumberGeneratorId) {
-		String name = randomNumberGeneratorId.toString();
-		long seedForId = name.hashCode() + seed;
-		RandomGenerator randomGeneratorForID = RandomGeneratorProvider.getRandomGenerator(seedForId);
-		this.randomGeneratorMap.put(randomNumberGeneratorId, randomGeneratorForID);
-		return randomGeneratorForID;
-	}
-
-	/**
-	 * Resets the seeds for all managed random number generators from the given
-	 * seed.
-	 */
-	public void resetSeeds(long seed) {
-		this.seed = seed;
-
-		// reset the default random number generator
-		randomGenerator.setSeed(seed);
-
-		// reset the id based random number generators
-		for (RandomNumberGeneratorId randomNumberGeneratorId : randomGeneratorMap.keySet()) {
-			String name = randomNumberGeneratorId.toString();
-			long seedForId = name.hashCode() + seed;
-			RandomGenerator rng = randomGeneratorMap.get(randomNumberGeneratorId);
-			rng.setSeed(seedForId);
-		}
-
+		randomGenerator = new WellRNG(stochasticsPluginData.getWellState());
 	}
 
 	@Override
@@ -146,12 +145,11 @@ public final class StochasticsDataManager extends DataManager {
 
 	private void recordSimulationState(DataManagerContext dataManagerContext) {
 		StochasticsPluginData.Builder builder = StochasticsPluginData.builder();
-
 		for (RandomNumberGeneratorId randomNumberGeneratorId : randomGeneratorMap.keySet()) {
-			builder.addRandomGeneratorId(randomNumberGeneratorId);
+			WellRNG wellRNG = randomGeneratorMap.get(randomNumberGeneratorId);
+			builder.addRNG(randomNumberGeneratorId, wellRNG.getWellState());
 		}
-
-		builder.setSeed(randomGenerator.nextLong());
+		builder.setMainRNG(randomGenerator.getWellState());
 		dataManagerContext.releaseOutput(builder.build());
 	}
 }

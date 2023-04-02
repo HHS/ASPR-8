@@ -31,6 +31,7 @@ import plugins.resources.support.ResourceError;
 import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.StochasticsPluginData;
 import plugins.stochastics.support.StochasticsError;
+import plugins.stochastics.support.WellState;
 import plugins.util.properties.PropertyDefinition;
 import util.errors.ContractException;
 import util.random.RandomGeneratorProvider;
@@ -64,10 +65,11 @@ public class ResourcesTestPluginFactory {
 		private TestPluginData testPluginData;
 
 		private Data(int initialPopulation, long seed, TestPluginData testPluginData) {
-			this.resourcesPluginData = getStandardResourcesPluginData(seed);
+			RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
+			this.resourcesPluginData = getStandardResourcesPluginData(randomGenerator.nextLong());
 			this.peoplePluginData = getStandardPeoplePluginData(initialPopulation);
-			this.regionsPluginData = getStandardRegionsPluginData(this.peoplePluginData.getPersonIds(), seed);
-			this.stochasticsPluginData = getStandardStochasticsPluginData(seed);
+			this.regionsPluginData = getStandardRegionsPluginData(this.peoplePluginData.getPersonIds(), randomGenerator.nextLong());
+			this.stochasticsPluginData = getStandardStochasticsPluginData(randomGenerator.nextLong());
 			this.testPluginData = testPluginData;
 		}
 	}
@@ -411,8 +413,8 @@ public class ResourcesTestPluginFactory {
 	 * </ul>
 	 */
 	public static StochasticsPluginData getStandardStochasticsPluginData(long seed) {
-		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
-		return StochasticsPluginData.builder().setSeed(randomGenerator.nextLong()).build();
+		WellState wellState = WellState.builder().setSeed(seed).build();
+		return StochasticsPluginData.builder().setMainRNG(wellState).build();
 	}
 
 }

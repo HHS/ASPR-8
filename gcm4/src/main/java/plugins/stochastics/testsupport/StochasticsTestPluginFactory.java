@@ -15,6 +15,8 @@ import nucleus.testsupport.testplugin.TestSimulation;
 import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.StochasticsPluginData;
 import plugins.stochastics.support.StochasticsError;
+import plugins.stochastics.support.WellRNG;
+import plugins.stochastics.support.WellState;
 import util.errors.ContractException;
 
 /**
@@ -169,11 +171,14 @@ public class StochasticsTestPluginFactory {
 	 */
 	public static StochasticsPluginData getStandardStochasticsPluginData(long seed) {
 		StochasticsPluginData.Builder builder = StochasticsPluginData.builder();
+		WellState wellState = WellState.builder().setSeed(seed).build();
+		WellRNG rng = new WellRNG(wellState);
 		for (TestRandomGeneratorId testRandomGeneratorId : TestRandomGeneratorId.values()) {
-			builder.addRandomGeneratorId(testRandomGeneratorId);
+			wellState = WellState.builder().setSeed(rng.nextLong()).build();
+			builder.addRNG(testRandomGeneratorId,wellState);
 		}
-		builder.setSeed(seed);
-
+		wellState = WellState.builder().setSeed(rng.nextLong()).build();
+		builder.setMainRNG(wellState);
 		return builder.build();
 	}
 }

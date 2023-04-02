@@ -30,6 +30,7 @@ import plugins.people.support.PersonId;
 import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.StochasticsPluginData;
 import plugins.stochastics.support.StochasticsError;
+import plugins.stochastics.support.WellState;
 import util.errors.ContractException;
 import util.random.RandomGeneratorProvider;
 import util.wrappers.MultiKey;
@@ -63,14 +64,16 @@ public final class GroupsTestPluginFactory {
 		private Data(int initialPopulation, double expectedGroupsPerPerson,
 				double expectedPeoplePerGroup, long seed, TestPluginData testPluginData) {
 
+			RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
+			
 			int membershipCount = (int) FastMath.round(initialPopulation * expectedGroupsPerPerson);
 			int groupCount = expectedPeoplePerGroup == 0 ? 0
 					: (int) FastMath.round(membershipCount / expectedPeoplePerGroup);
 
 			this.peoplePluginData = getStandardPeoplePluginData(initialPopulation);
 			this.groupsPluginData = getStandardGroupsPluginData(groupCount, membershipCount,
-					this.peoplePluginData.getPersonIds(), seed);
-			this.stochasticsPluginData = getStandardStochasticsPluginData(seed);
+					this.peoplePluginData.getPersonIds(), randomGenerator.nextLong());
+			this.stochasticsPluginData = getStandardStochasticsPluginData(randomGenerator.nextLong());
 			this.testPluginData = testPluginData;
 		}
 	}
@@ -389,9 +392,8 @@ public final class GroupsTestPluginFactory {
 	 * </ul>
 	 */
 	public static StochasticsPluginData getStandardStochasticsPluginData(long seed) {
-		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
-		return StochasticsPluginData.builder()
-				.setSeed(randomGenerator.nextLong()).build();
+		WellState wellState = WellState.builder().setSeed(seed).build();
+		return StochasticsPluginData.builder().setMainRNG(wellState).build();
 	}
 
 }

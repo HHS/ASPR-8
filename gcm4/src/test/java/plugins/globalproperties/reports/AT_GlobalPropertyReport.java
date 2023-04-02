@@ -37,6 +37,7 @@ import plugins.reports.support.SimpleReportLabel;
 import plugins.stochastics.StochasticsDataManager;
 import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.StochasticsPluginData;
+import plugins.stochastics.support.WellState;
 import plugins.util.properties.PropertyDefinition;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
@@ -248,7 +249,8 @@ public class AT_GlobalPropertyReport {
 													.factory(testPluginData)//
 													.setGlobalPropertyReportPluginData(globalPropertyReportPluginData);
 
-		StochasticsPluginData stochasticsPluginData = StochasticsPluginData.builder().setSeed(4059891083116386869L).build();
+		WellState wellState = WellState.builder().setSeed(4059891083116386869L).build();
+		StochasticsPluginData stochasticsPluginData = StochasticsPluginData.builder().setMainRNG(wellState).build();
 		Plugin stochasticsPlugin = StochasticsPlugin.getStochasticsPlugin(stochasticsPluginData);
 
 		// tell the builder to include a specific global property id
@@ -451,7 +453,8 @@ public class AT_GlobalPropertyReport {
 													.factory(testPluginData)//
 													.setGlobalPropertyReportPluginData(globalPropertyReportPluginData);
 
-		StochasticsPluginData stochasticsPluginData = StochasticsPluginData.builder().setSeed(4059891083116386869L).build();
+		WellState wellState = WellState.builder().setSeed(4059891083116386869L).build();
+		StochasticsPluginData stochasticsPluginData = StochasticsPluginData.builder().setMainRNG(wellState).build();
 		Plugin stochasticsPlugin = StochasticsPlugin.getStochasticsPlugin(stochasticsPluginData);
 
 		// tell the builder to include a specific global property id

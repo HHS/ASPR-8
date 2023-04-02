@@ -39,10 +39,10 @@ import plugins.people.support.PersonId;
 import plugins.stochastics.StochasticsPluginData;
 import plugins.stochastics.StochasticsPluginId;
 import plugins.stochastics.support.StochasticsError;
+import plugins.stochastics.support.WellState;
 import plugins.stochastics.testsupport.TestRandomGeneratorId;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
-import util.random.RandomGeneratorProvider;
 import util.wrappers.MutableBoolean;
 
 public class AT_PartitionsTestPluginFactory {
@@ -204,7 +204,11 @@ public class AT_PartitionsTestPluginFactory {
 	public void testSetStochasticsPluginData() {
 		StochasticsPluginData.Builder builder = StochasticsPluginData.builder();
 
-		builder.setSeed(2990359774692004249L).addRandomGeneratorId(TestRandomGeneratorId.BLITZEN);
+		WellState wellState = WellState.builder().setSeed(2990359774692004249L).build();
+		builder.setMainRNG(wellState);
+		
+		wellState = WellState.builder().setSeed(450787180090162111L).build();
+		builder.addRNG(TestRandomGeneratorId.BLITZEN,wellState);
 
 		StochasticsPluginData stochasticsPluginData = builder.build();
 
@@ -263,7 +267,7 @@ public class AT_PartitionsTestPluginFactory {
 		StochasticsPluginData stochasticsPluginData = PartitionsTestPluginFactory
 				.getStandardStochasticsPluginData(seed);
 
-		assertEquals(RandomGeneratorProvider.getRandomGenerator(seed).nextLong(), stochasticsPluginData.getSeed());
+		assertEquals(seed, stochasticsPluginData.getWellState().getSeed());
 		assertEquals(0, stochasticsPluginData.getRandomNumberGeneratorIds().size());
 	}
 }

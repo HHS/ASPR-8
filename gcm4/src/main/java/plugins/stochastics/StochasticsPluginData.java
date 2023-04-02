@@ -1,6 +1,8 @@
 package plugins.stochastics;
 
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
 
 import net.jcip.annotations.ThreadSafe;
@@ -8,7 +10,7 @@ import nucleus.PluginData;
 import nucleus.PluginDataBuilder;
 import plugins.stochastics.support.RandomNumberGeneratorId;
 import plugins.stochastics.support.StochasticsError;
-import plugins.stochastics.support.Well44497bSeed;
+import plugins.stochastics.support.WellState;
 import util.errors.ContractException;
 
 /**
@@ -39,15 +41,53 @@ public final class StochasticsPluginData implements PluginData {
 		}
 
 		public Data(Data data) {
-			this.wellSeed = data.wellSeed;
-			randomNumberGeneratorIds.addAll(data.randomNumberGeneratorIds);
+			this.wellState = data.wellState;
+			randomNumberGeneratorIds.putAll(data.randomNumberGeneratorIds);
 			locked = data.locked;
 		}
 
-//		private Long seed;
-		private Well44497bSeed wellSeed;
-		private Set<RandomNumberGeneratorId> randomNumberGeneratorIds = new LinkedHashSet<>();
+		private WellState wellState;
+		private Map<RandomNumberGeneratorId, WellState> randomNumberGeneratorIds = new LinkedHashMap<>();
 		private boolean locked;
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + (locked ? 1231 : 1237);
+			result = prime * result + ((randomNumberGeneratorIds == null) ? 0 : randomNumberGeneratorIds.hashCode());
+			result = prime * result + ((wellState == null) ? 0 : wellState.hashCode());
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (!(obj instanceof Data)) {
+				return false;
+			}
+			Data other = (Data) obj;
+			if (locked != other.locked) {
+				return false;
+			}
+			if (randomNumberGeneratorIds == null) {
+				if (other.randomNumberGeneratorIds != null) {
+					return false;
+				}
+			} else if (!randomNumberGeneratorIds.equals(other.randomNumberGeneratorIds)) {
+				return false;
+			}
+			if (wellState == null) {
+				if (other.wellState != null) {
+					return false;
+				}
+			} else if (!wellState.equals(other.wellState)) {
+				return false;
+			}
+			return true;
+		}
+		
 	}
 
 	/**
@@ -84,7 +124,7 @@ public final class StochasticsPluginData implements PluginData {
 		}
 
 		private void validateData() {
-			if (data.wellSeed == null) {
+			if (data.wellState == null) {
 				throw new ContractException(StochasticsError.NULL_SEED);
 			}
 		}
@@ -112,29 +152,24 @@ public final class StochasticsPluginData implements PluginData {
 		 * @throws ContractException
 		 *             <li>{@linkplain StochasticsError#NULL_RANDOM_NUMBER_GENERATOR_ID}
 		 *             if the id is null</li>
+		 * 
+		 *             <li>{@linkplain StochasticsError#NULL_WELL_STATE} if the
+		 *             well state is null</li>
 		 */
-		public Builder addRandomGeneratorId(RandomNumberGeneratorId randomNumberGeneratorId) {
+		public Builder addRNG(RandomNumberGeneratorId randomNumberGeneratorId, WellState wellState) {
 			ensureDataMutability();
 			validateRandomNumberGeneratorIdNotNull(randomNumberGeneratorId);
-			data.randomNumberGeneratorIds.add(randomNumberGeneratorId);
+			validateWellStateNull(wellState);
+			data.randomNumberGeneratorIds.put(randomNumberGeneratorId, wellState);
 			return this;
 		}
 
 		/**
 		 * Sets the seed value.
 		 */
-		public Builder setSeed(long seed) {
+		public Builder setMainRNG(WellState wellState) {
 			ensureDataMutability();
-			data.wellSeed = Well44497bSeed.builder().setSeed(seed).build();
-			return this;
-		}
-		
-		/**
-		 * Sets the seed value.
-		 */
-		public Builder setSeed(Well44497bSeed wellSeed) {
-			ensureDataMutability();
-			data.wellSeed = wellSeed;
+			data.wellState = wellState;
 			return this;
 		}
 
@@ -143,6 +178,12 @@ public final class StochasticsPluginData implements PluginData {
 	private static void validateRandomNumberGeneratorIdNotNull(final Object value) {
 		if (value == null) {
 			throw new ContractException(StochasticsError.NULL_RANDOM_NUMBER_GENERATOR_ID);
+		}
+	}
+
+	private static void validateWellStateNull(final WellState wellState) {
+		if (wellState == null) {
+			throw new ContractException(StochasticsError.NULL_WELL_STATE);
 		}
 	}
 
@@ -155,26 +196,74 @@ public final class StochasticsPluginData implements PluginData {
 	@SuppressWarnings("unchecked")
 	public <T extends RandomNumberGeneratorId> Set<T> getRandomNumberGeneratorIds() {
 		Set<T> result = new LinkedHashSet<>();
-		for (RandomNumberGeneratorId randomNumberGeneratorId : data.randomNumberGeneratorIds) {
+		for (RandomNumberGeneratorId randomNumberGeneratorId : data.randomNumberGeneratorIds.keySet()) {
 			result.add((T) randomNumberGeneratorId);
 		}
 		return result;
 	}
 
 	/**
-	 * Returns the base seed.
+	 * Returns the well state for the give RandomNumberGeneratorId
+	 * 
+	 * @throws ContractException
+	 *             <li>{@linkplain StochasticsError#UNKNOWN_RANDOM_NUMBER_GENERATOR_ID}
+	 *             if the randomNumberGeneratorId is not known</li>
+	 * 
 	 */
-	public long getSeed() {
-		return data.wellSeed.getSeed();
+	public WellState getWellState(RandomNumberGeneratorId randomNumberGeneratorId) {
+
+		WellState result = data.randomNumberGeneratorIds.get(randomNumberGeneratorId);
+		if (result == null) {
+			throw new ContractException(StochasticsError.UNKNOWN_RANDOM_NUMBER_GENERATOR_ID);
+		}
+		return result;
 	}
+
 	
-	public Well44497bSeed getWellSeed() {
-		return data.wellSeed;
+	/**
+	 * Returns the main well state
+	 * 
+	 * @throws ContractException
+	 *             <li>{@linkplain StochasticsError#UNKNOWN_RANDOM_NUMBER_GENERATOR_ID}
+	 *             if the randomNumberGeneratorId is not known</li>
+	 * 
+	 */
+	public WellState getWellState() {
+		return data.wellState;
 	}
 
 	@Override
 	public PluginDataBuilder getEmptyBuilder() {
 		return builder();
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((data == null) ? 0 : data.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!(obj instanceof StochasticsPluginData)) {
+			return false;
+		}
+		StochasticsPluginData other = (StochasticsPluginData) obj;
+		if (data == null) {
+			if (other.data != null) {
+				return false;
+			}
+		} else if (!data.equals(other.data)) {
+			return false;
+		}
+		return true;
+	}
+	
+	
 
 }

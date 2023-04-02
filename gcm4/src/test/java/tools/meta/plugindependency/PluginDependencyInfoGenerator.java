@@ -45,6 +45,7 @@ import plugins.resources.ResourcesPluginId;
 import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.StochasticsPluginData;
 import plugins.stochastics.StochasticsPluginId;
+import plugins.stochastics.support.WellState;
 import tools.meta.packagedependency.PackageDependencyData;
 import util.graph.Graph;
 import util.graph.GraphDepthEvaluator;
@@ -296,7 +297,8 @@ public class PluginDependencyInfoGenerator {
 		addToGraph(pluginDependencyGraph, RegionsPlugin.builder().setRegionsPluginData(RegionsPluginData.builder().build()).getRegionsPlugin());
 		addToGraph(pluginDependencyGraph, ReportsPlugin.getReportsPlugin());
 		addToGraph(pluginDependencyGraph, ResourcesPlugin.builder().setResourcesPluginData(ResourcesPluginData.builder().build()).getResourcesPlugin());
-		addToGraph(pluginDependencyGraph, StochasticsPlugin.getStochasticsPlugin(StochasticsPluginData.builder().setSeed(0L).build()));
+		WellState wellState = WellState.builder().setSeed(0L).build();
+		addToGraph(pluginDependencyGraph, StochasticsPlugin.getStochasticsPlugin(StochasticsPluginData.builder().setMainRNG(wellState).build()));
 
 		// build a map to help convert the map above into the type of graph we
 		// need

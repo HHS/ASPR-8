@@ -45,7 +45,7 @@ import plugins.regions.testsupport.TestRegionPropertyId;
 import plugins.stochastics.StochasticsPluginData;
 import plugins.stochastics.StochasticsPluginId;
 import plugins.stochastics.support.StochasticsError;
-import plugins.stochastics.testsupport.TestRandomGeneratorId;
+import plugins.stochastics.support.WellState;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.TimeTrackingPolicy;
 import util.annotations.UnitTestMethod;
@@ -276,7 +276,8 @@ public class AT_PersonPropertiesTestPluginFactory {
 	public void testSetStochasticsPluginData() {
 		StochasticsPluginData.Builder builder = StochasticsPluginData.builder();
 
-		builder.setSeed(2758378374654665699L).addRandomGeneratorId(TestRandomGeneratorId.BLITZEN);
+		WellState wellState = WellState.builder().setSeed(2758378374654665699L).build();
+		builder.setMainRNG(wellState);
 
 		StochasticsPluginData stochasticsPluginData = builder.build();
 
@@ -405,7 +406,7 @@ public class AT_PersonPropertiesTestPluginFactory {
 		StochasticsPluginData stochasticsPluginData = PersonPropertiesTestPluginFactory
 				.getStandardStochasticsPluginData(seed);
 
-		assertEquals(RandomGeneratorProvider.getRandomGenerator(seed).nextLong(), stochasticsPluginData.getSeed());
+		assertEquals(seed, stochasticsPluginData.getWellState().getSeed());
 		assertEquals(0, stochasticsPluginData.getRandomNumberGeneratorIds().size());
 	}
 }

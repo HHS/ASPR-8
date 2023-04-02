@@ -37,6 +37,7 @@ import plugins.people.support.PersonId;
 import plugins.stochastics.StochasticsDataManager;
 import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.StochasticsPluginData;
+import plugins.stochastics.support.WellState;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
@@ -111,7 +112,8 @@ public final class AT_AttributeFilter {
 		Plugin peoplePlugin = PeoplePlugin.getPeoplePlugin(peoplePluginData);
 		plugins.add(peoplePlugin);
 
-		plugins.add(StochasticsPlugin.getStochasticsPlugin(StochasticsPluginData.builder().setSeed(7698506335486677498L).build()));
+		WellState wellState = WellState.builder().setSeed(7698506335486677498L).build();
+		plugins.add(StochasticsPlugin.getStochasticsPlugin(StochasticsPluginData.builder().setMainRNG(wellState).build()));
 
 		plugins.add(PartitionsPlugin.getPartitionsPlugin());
 
