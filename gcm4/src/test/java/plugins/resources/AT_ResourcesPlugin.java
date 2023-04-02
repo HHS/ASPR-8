@@ -17,7 +17,7 @@ import util.annotations.UnitTestMethod;
 public class AT_ResourcesPlugin {
 
 	@Test
-	@UnitTestMethod(target = ResourcesPlugin.class, name = "getResourcesPlugin", args = { ResourcesPluginData.class })
+	@UnitTestMethod(target = ResourcesPlugin.Builder.class, name = "getResourcesPlugin", args = { })
 	public void testGetResourcesPlugin() {
 
 		ResourcesPluginData resourcesPluginData = ResourcesPluginData.builder().build();

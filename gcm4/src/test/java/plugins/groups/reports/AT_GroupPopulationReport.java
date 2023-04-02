@@ -31,7 +31,7 @@ import util.annotations.UnitTestMethod;
 public class AT_GroupPopulationReport {
 
 	@Test
-	@UnitTestConstructor(target = GroupPopulationReport.class, args = { ReportLabel.class, ReportPeriod.class })
+	@UnitTestConstructor(target = GroupPopulationReport.class, args = { GroupPopulationReportPluginData.class})
 	public void testConstructor() {
 
 		/*
@@ -399,8 +399,8 @@ public class AT_GroupPopulationReport {
 		return groupBuilder.build();
 	}
 
-	@Test
-	@UnitTestConstructor(target = GroupPopulationReport.class, args = { ReportLabel.class, ReportPeriod.class })
+	@Test	
+	@UnitTestMethod(target = GroupPopulationReport.class, name = "init", args = { ReportContext.class })
 	public void testInit_State() {
 		// Test with producing simulation
 

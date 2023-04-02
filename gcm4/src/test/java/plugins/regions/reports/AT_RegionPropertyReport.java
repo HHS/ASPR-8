@@ -214,7 +214,7 @@ public class AT_RegionPropertyReport {
 	}
 
 	@Test
-	@UnitTestMethod(target = RegionPropertyReport.class, name = "init", args = { RegionPropertyId.class })
+	@UnitTestMethod(target = RegionPropertyReport.class, name = "init", args = { ReportContext.class })
 	public void testInit_IncludeProperty() {
 		/*
 		 * This test shows that the report produces report items with the
@@ -290,7 +290,7 @@ public class AT_RegionPropertyReport {
 	}
 
 	@Test
-	@UnitTestMethod(target = RegionPropertyReport.class, name = "init", args = { RegionPropertyId.class })
+	@UnitTestMethod(target = RegionPropertyReport.class, name = "init", args = { ReportContext.class })
 	public void testInit_DefaultInclusion() {
 
 		// group the properties into explicitly included, explicitly excluded,
@@ -376,7 +376,7 @@ public class AT_RegionPropertyReport {
 	}
 
 	@Test
-	@UnitTestMethod(target = RegionPropertyReport.class, name = "init", args = { RegionPropertyId.class })
+	@UnitTestMethod(target = RegionPropertyReport.class, name = "init", args = { ReportContext.class })
 	public void testInit_ReportHeader() {
 		/*
 		 * This test shows that the report produces report items with the
@@ -408,7 +408,7 @@ public class AT_RegionPropertyReport {
 	}
 
 	@Test
-	@UnitTestMethod(target = RegionPropertyReport.class, name = "init", args = { RegionPropertyId.class })
+	@UnitTestMethod(target = RegionPropertyReport.class, name = "init", args = { ReportContext.class })
 	public void testInit_ExcludeProperty() {
 		/*
 		 * This test shows that the report produces report items with the
@@ -486,7 +486,7 @@ public class AT_RegionPropertyReport {
 	}
 
 	@Test
-	@UnitTestMethod(target = RegionPropertyReport.class, name = "init", args = { RegionPropertyId.class })
+	@UnitTestMethod(target = RegionPropertyReport.class, name = "init", args = { ReportContext.class })
 	public void testInit_ReportLabel() {
 		/*
 		 * This test shows that the report produces report items with the

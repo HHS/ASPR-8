@@ -17,7 +17,7 @@ import util.annotations.UnitTestMethod;
 public class AT_MaterialsPlugin {
 
 	@Test
-	@UnitTestMethod(target = MaterialsPlugin.class, name = "getMaterialsPlugin", args = { MaterialsPluginData.class })
+	@UnitTestMethod(target = MaterialsPlugin.Builder.class, name = "getMaterialsPlugin", args = {})
 	public void testGetMaterialsPlugin() {
 		MaterialsPluginData materialsPluginData = MaterialsPluginData.builder().build();
 		Plugin materialsPlugin = MaterialsPlugin.builder().setMaterialsPluginData(materialsPluginData).getMaterialsPlugin();

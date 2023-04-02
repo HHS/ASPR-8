@@ -17,8 +17,8 @@ import util.annotations.UnitTestMethod;
 public class AT_GroupsPlugin {
 
 	@Test
-	@UnitTestMethod(target = GroupsPlugin.class, name = "getGroupPlugin", args = { GroupsPluginData.class })
-	public void testGetGroupPlugin() {
+	@UnitTestMethod(target = GroupsPlugin.Builder.class, name = "getGroupsPlugin", args = {})
+	public void testGetGroupsPlugin() {
 
 		GroupsPluginData groupsPluginData = GroupsPluginData.builder().build();
 		Plugin groupPlugin = GroupsPlugin.builder().setGroupsPluginData(groupsPluginData).getGroupsPlugin();

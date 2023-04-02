@@ -131,8 +131,8 @@ public class AT_PersonResourceReportPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = PersonResourceReportPluginData.Builder.class, name = "includeResourceId", args = { ResourceId.class })
-	public void testIncludeResourceId() {
+	@UnitTestMethod(target = PersonResourceReportPluginData.Builder.class, name = "includeResource", args = { ResourceId.class })
+	public void testIncludeResource() {
 		ReportLabel reportLabel = new SimpleReportLabel("report label");
 		ReportPeriod reportPeriod = ReportPeriod.DAILY;
 
@@ -188,8 +188,8 @@ public class AT_PersonResourceReportPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = PersonResourceReportPluginData.Builder.class, name = "excludeResourceId", args = { ResourceId.class })
-	public void testExcludeResourceId() {
+	@UnitTestMethod(target = PersonResourceReportPluginData.Builder.class, name = "excludeResource", args = { ResourceId.class })
+	public void testExcludeResource() {
 		ReportLabel reportLabel = new SimpleReportLabel("report label");
 		ReportPeriod reportPeriod = ReportPeriod.DAILY;
 

@@ -135,7 +135,7 @@ public class AT_GroupPropertyReportPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = GroupPropertyReportPluginData.Builder.class, name = "includeGroupProperty", args = { GroupPropertyId.class })
+	@UnitTestMethod(target = GroupPropertyReportPluginData.Builder.class, name = "includeGroupProperty", args = { GroupTypeId.class,GroupPropertyId.class })
 	public void testIncludeGroupProperty() {
 		ReportLabel reportLabel = new SimpleReportLabel("report label");
 		ReportPeriod reportPeriod = ReportPeriod.DAILY;
@@ -213,7 +213,7 @@ public class AT_GroupPropertyReportPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = GroupPropertyReportPluginData.Builder.class, name = "excludeGroupProperty", args = { GroupPropertyId.class })
+	@UnitTestMethod(target = GroupPropertyReportPluginData.Builder.class, name = "excludeGroupProperty", args = { GroupTypeId.class,GroupPropertyId.class })
 	public void testExcludeGroupProperty() {
 		ReportLabel reportLabel = new SimpleReportLabel("report label");
 		ReportPeriod reportPeriod = ReportPeriod.DAILY;
@@ -323,7 +323,8 @@ public class AT_GroupPropertyReportPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = GroupPropertyReportPluginData.class, name = "getIncludedProperties", args = {})
+	@UnitTestMethod(target = GroupPropertyReportPluginData.class, name = "getIncludedProperties", args = {GroupTypeId.class})
+	
 	public void testGetIncludedProperties() {
 		ReportLabel reportLabel = new SimpleReportLabel("report label");
 		ReportPeriod reportPeriod = ReportPeriod.DAILY;
@@ -396,7 +397,7 @@ public class AT_GroupPropertyReportPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = GroupPropertyReportPluginData.class, name = "getExcludedProperties", args = {})
+	@UnitTestMethod(target = GroupPropertyReportPluginData.class, name = "getExcludedProperties", args = {GroupTypeId.class})
 	public void testGetExcludedProperties() {
 		ReportLabel reportLabel = new SimpleReportLabel("report label");
 		ReportPeriod reportPeriod = ReportPeriod.DAILY;
@@ -744,7 +745,7 @@ public class AT_GroupPropertyReportPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = GroupPropertyReportPluginData.class, name = "getGroupTypeIds", args = { ReportLabel.class })
+	@UnitTestMethod(target = GroupPropertyReportPluginData.class, name = "getGroupTypeIds", args = { })
 	public void testGetGroupTypeIds() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(626906625322362256L);
 

@@ -60,7 +60,7 @@ public final class AT_MaterialsProducerResourceReport {
 	}
 
 	@Test
-	@UnitTestConstructor(target = MaterialsProducerResourceReport.class, args = { ReportLabel.class })
+	@UnitTestConstructor(target = MaterialsProducerResourceReport.class, args = { MaterialsProducerResourceReportPluginData.class })
 	public void testConstructor() {
 		MaterialsProducerResourceReport report = new MaterialsProducerResourceReport(MaterialsProducerResourceReportPluginData.builder().setReportLabel(REPORT_LABEL).build());
 		assertNotNull(report);

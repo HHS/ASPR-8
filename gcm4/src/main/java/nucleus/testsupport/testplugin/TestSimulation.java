@@ -134,9 +134,6 @@ public class TestSimulation {
 	}
 
 	public TestOutputConsumer execute() {
-		// List<Plugin> pluginsToAdd, TestOutputConsumer outputConsumer, boolean
-		// produceSimulationState
-
 		Simulation.Builder builder = Simulation.builder();
 
 		for (Plugin plugin : data.plugins) {

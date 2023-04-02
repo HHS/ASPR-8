@@ -55,7 +55,7 @@ public final class AT_MaterialsProducerPropertyReport {
 	}
 
 	@Test
-	@UnitTestConstructor(target = MaterialsProducerPropertyReport.class, args = { ReportLabel.class })
+	@UnitTestConstructor(target = MaterialsProducerPropertyReport.class, args = { MaterialsProducerPropertyReportPluginData.class })
 	public void testConstructor() {
 		MaterialsProducerPropertyReport report = new MaterialsProducerPropertyReport(MaterialsProducerPropertyReportPluginData.builder().setReportLabel(REPORT_LABEL).build());
 		assertNotNull(report);

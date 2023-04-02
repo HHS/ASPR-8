@@ -14,7 +14,6 @@ import org.junit.jupiter.api.Test;
 
 import plugins.globalproperties.support.GlobalPropertyId;
 import plugins.globalproperties.testsupport.TestGlobalPropertyId;
-import plugins.personproperties.support.PersonPropertyId;
 import plugins.reports.support.ReportError;
 import plugins.reports.support.ReportLabel;
 import plugins.reports.support.SimpleReportLabel;
@@ -96,8 +95,8 @@ public class AT_GlobalPropertyReportPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = GlobalPropertyReportPluginData.Builder.class, name = "includePersonProperty", args = { PersonPropertyId.class })
-	public void testIncludePersonProperty() {
+	@UnitTestMethod(target = GlobalPropertyReportPluginData.Builder.class, name = "includeGlobalProperty", args = { GlobalPropertyId.class })
+	public void testIncludeGlobalProperty() {
 		ReportLabel reportLabel = new SimpleReportLabel("report label");
 
 		// show the default is non-inclusion
@@ -150,7 +149,7 @@ public class AT_GlobalPropertyReportPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = GlobalPropertyReportPluginData.Builder.class, name = "excludePersonProperty", args = { PersonPropertyId.class })
+	@UnitTestMethod(target = GlobalPropertyReportPluginData.Builder.class, name = "excludeGlobalProperty", args = { GlobalPropertyId.class })
 	public void testExcludePersonProperty() {
 		ReportLabel reportLabel = new SimpleReportLabel("report label");
 

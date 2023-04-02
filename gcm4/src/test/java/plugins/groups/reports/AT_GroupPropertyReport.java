@@ -353,7 +353,7 @@ public class AT_GroupPropertyReport {
 	}
 
 	@Test
-	@UnitTestMethod(target = GroupPropertyReport.class, name = "init", args = { ReportPeriod.class })
+	@UnitTestMethod(target = GroupPropertyReport.class, name = "init", args = { ReportContext.class })
 	public void testInit_ReportPeriod() {
 		/*
 		 * This test shows that the report produces report items with the
@@ -418,7 +418,7 @@ public class AT_GroupPropertyReport {
 	}
 
 	@Test
-	@UnitTestMethod(target = GroupPropertyReport.class, name = "init", args = { ReportLabel.class })
+	@UnitTestMethod(target = GroupPropertyReport.class, name = "init", args = { ReportContext.class })
 	public void testInit_ReportLabel() {
 
 		/*

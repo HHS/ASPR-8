@@ -45,7 +45,7 @@ import util.errors.ContractException;
 public class AT_RegionTransferReport {
 
 	@Test
-	@UnitTestConstructor(target = RegionTransferReport.class, args = { ReportLabel.class, ReportPeriod.class })
+	@UnitTestConstructor(target = RegionTransferReport.class, args = { RegionTransferReportPluginData.class})
 	public void testConstructor() {
 		RegionTransferReport regionTransferReport = new RegionTransferReport(RegionTransferReportPluginData.builder().setReportLabel(REPORT_LABEL).setReportPeriod(ReportPeriod.DAILY).build());
 
