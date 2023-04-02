@@ -55,7 +55,7 @@ public class AT_ResourcePropertyReport {
 	}
 
 	@Test
-	@UnitTestConstructor(target = ResourcePropertyReport.class, args = { ReportLabel.class })
+	@UnitTestConstructor(target = ResourcePropertyReport.class, args = { ResourcePropertyReportPluginData.class })
 	public void testConstructor() {
 		// nothing to test
 	}

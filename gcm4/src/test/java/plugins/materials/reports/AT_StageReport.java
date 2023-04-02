@@ -66,7 +66,7 @@ public final class AT_StageReport {
 	}
 
 	@Test
-	@UnitTestConstructor(target = StageReport.class, args = { ReportLabel.class })
+	@UnitTestConstructor(target = StageReport.class, args = { StageReportPluginData.class })
 	public void testConstructor() {
 		StageReport report = new StageReport(StageReportPluginData.builder().setReportLabel(REPORT_LABEL).build());
 		assertNotNull(report);

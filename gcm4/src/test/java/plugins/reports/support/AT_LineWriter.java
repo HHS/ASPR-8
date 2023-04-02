@@ -12,7 +12,7 @@ import util.annotations.UnitTestMethod;
 public class AT_LineWriter {
 
 	@Test
-	@UnitTestConstructor(target = LineWriter.class, args = { ExperimentContext.class, Path.class, boolean.class }, tags = { UnitTag.MANUAL , UnitTag.CLASS_PROXY})
+	@UnitTestConstructor(target = LineWriter.class, args = { ExperimentContext.class, Path.class, boolean.class,String.class}, tags = { UnitTag.MANUAL , UnitTag.CLASS_PROXY})
 	public void testConstructor() {
 		// covered by manual test of NIOReportItemHandler
 	}

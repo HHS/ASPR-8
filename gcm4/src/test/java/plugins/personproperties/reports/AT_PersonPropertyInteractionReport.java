@@ -43,7 +43,7 @@ import util.errors.ContractException;
 public class AT_PersonPropertyInteractionReport {
 
 	@Test
-	@UnitTestConstructor(target = PersonPropertyInteractionReport.class, args = { ReportLabel.class, ReportPeriod.class, PersonPropertyId[].class })
+	@UnitTestConstructor(target = PersonPropertyInteractionReport.class, args = { PersonPropertyInteractionReportPluginData.class})
 	public void testConstructor() {
 
 		// precondition: report label is null

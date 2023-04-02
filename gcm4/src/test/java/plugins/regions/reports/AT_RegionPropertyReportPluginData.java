@@ -1,8 +1,17 @@
 package plugins.regions.reports;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
-import plugins.personproperties.support.PersonPropertyId;
+
 import plugins.regions.support.RegionPropertyId;
 import plugins.regions.testsupport.TestRegionPropertyId;
 import plugins.reports.support.ReportError;
@@ -12,12 +21,6 @@ import plugins.util.properties.PropertyError;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.random.RandomGeneratorProvider;
-
-import java.util.LinkedHashSet;
-import java.util.Set;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AT_RegionPropertyReportPluginData {
 
@@ -92,8 +95,8 @@ public class AT_RegionPropertyReportPluginData {
     }
 
     @Test
-    @UnitTestMethod(target = RegionPropertyReportPluginData.Builder.class, name = "includePersonProperty", args = { PersonPropertyId.class })
-    public void testIncludePersonProperty() {
+    @UnitTestMethod(target = RegionPropertyReportPluginData.Builder.class, name = "includeRegionProperty", args = { RegionPropertyId.class })
+    public void testIncludeRegionProperty() {
         ReportLabel reportLabel = new SimpleReportLabel("report label");
 
         // show the default is non-inclusion
@@ -146,8 +149,8 @@ public class AT_RegionPropertyReportPluginData {
     }
 
     @Test
-    @UnitTestMethod(target = RegionPropertyReportPluginData.Builder.class, name = "excludePersonProperty", args = { PersonPropertyId.class })
-    public void testExcludePersonProperty() {
+    @UnitTestMethod(target = RegionPropertyReportPluginData.Builder.class, name = "excludeRegionProperty", args = { RegionPropertyId.class })
+    public void testExcludeRegionProperty() {
         ReportLabel reportLabel = new SimpleReportLabel("report label");
 
         // show the default is non-exclusion

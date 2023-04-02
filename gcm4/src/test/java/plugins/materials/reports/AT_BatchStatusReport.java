@@ -84,7 +84,7 @@ public final class AT_BatchStatusReport {
 	}
 
 	@Test
-	@UnitTestConstructor(target = BatchStatusReport.class, args = { ReportLabel.class })
+	@UnitTestConstructor(target = BatchStatusReport.class, args = { BatchStatusReportPluginData.class })
 	public void testConstructor() {
 		BatchStatusReport report = new BatchStatusReport(BatchStatusReportPluginData.builder().setReportLabel(REPORT_LABEL).build());
 

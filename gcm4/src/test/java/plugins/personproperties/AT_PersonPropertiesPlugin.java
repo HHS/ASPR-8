@@ -17,7 +17,7 @@ import util.annotations.UnitTestMethod;
 public class AT_PersonPropertiesPlugin {
 
 	@Test
-	@UnitTestMethod(target = PersonPropertiesPlugin.class, name = "getPersonPropertyPlugin", args = { PersonPropertiesPluginData.class })
+	@UnitTestMethod(target = PersonPropertiesPlugin.Builder.class, name = "getPersonPropertyPlugin", args = { })
 	public void testGetPersonPropertyPlugin() {
 		PersonPropertiesPluginData personPropertiesPluginData = PersonPropertiesPluginData.builder().build();
 		Plugin personPropertiesPlugin = PersonPropertiesPlugin.builder().setPersonPropertiesPluginData(personPropertiesPluginData).getPersonPropertyPlugin();
