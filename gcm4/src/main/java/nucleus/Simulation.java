@@ -79,38 +79,47 @@ public class Simulation {
 
 			StringBuilder builder = new StringBuilder();
 
+			builder.append("\t");
 			builder.append("time = ");
 			builder.append(time);
 			builder.append(LINE_SEPARATOR);
 
+			builder.append("\t");
 			builder.append("arrivalId = ");
 			builder.append(arrivalId);
 			builder.append(LINE_SEPARATOR);
 
+			builder.append("\t");
 			builder.append("isActive = ");
 			builder.append(isActive);
 			builder.append(LINE_SEPARATOR);
 
+			builder.append("\t");
 			builder.append("key = ");
 			builder.append(key);
 			builder.append(LINE_SEPARATOR);
 
+			builder.append("\t");
 			builder.append(planner);
 			builder.append(" = ");
 			switch (planner) {
 			case ACTOR:
 				builder.append(actorId);
 				builder.append(LINE_SEPARATOR);
+				builder.append("\t");
 				builder.append(actorPlan);
 				break;
 			case DATA_MANAGER:
 				builder.append(dataManagerId);
 				builder.append(LINE_SEPARATOR);
+				builder.append("\t");
 				builder.append(dataManagerPlan);
 				break;
 			case REPORT:
 				builder.append(reportId);
+				builder.append("\t");
 				builder.append(LINE_SEPARATOR);
+				builder.append("\t");
 				builder.append(reportPlan);
 				break;
 			default:
@@ -118,8 +127,10 @@ public class Simulation {
 			}
 
 			builder.append(LINE_SEPARATOR);
+			builder.append("\t");
 			builder.append("plan = ");
 			builder.append(LINE_SEPARATOR);
+			builder.append("\t");
 			builder.append(plan);
 
 			builder.append(LINE_SEPARATOR);
@@ -473,7 +484,7 @@ public class Simulation {
 		if (planRec.isActive) {
 			activePlanCount++;
 		}
-		
+
 		planningQueue.add(planRec);
 	}
 
@@ -494,7 +505,7 @@ public class Simulation {
 		}
 
 		planRec.plan = plan;
-		planRec.isActive = false;		
+		planRec.isActive = false;
 		planRec.planner = Planner.REPORT;
 		planRec.time = plan.getTime();
 		planRec.reportPlan = plan.getCallbackConsumer();
@@ -533,7 +544,7 @@ public class Simulation {
 		}
 
 		planRec.plan = plan;
-		planRec.isActive = plan.isActive();		
+		planRec.isActive = plan.isActive();
 		planRec.planner = Planner.DATA_MANAGER;
 		planRec.time = plan.getTime();
 		planRec.dataManagerPlan = plan.getCallbackConsumer();
@@ -868,15 +879,15 @@ public class Simulation {
 		forcedHaltPresent = simulationHaltTime >= 0;
 
 		// start the planning-based portion of the simulation where time flows
-		if (plansFromPreviousExecutionPresent) {			
+		if (plansFromPreviousExecutionPresent) {
 			rebuildPlanningQueue();
 		}
 
 		planningQueueMode = PlanningQueueMode.RUNNING;
+		reportPlanningQueue(PlanningQueueReportMode.PRE);
 		while (activePlanCount > 0) {
 			if (forcedHaltPresent) {
-				if (planningQueue.peek().time > simulationHaltTime) {
-					time = simulationHaltTime;
+				if (planningQueue.peek().time > simulationHaltTime) {					
 					break;
 				}
 			}
@@ -932,6 +943,11 @@ public class Simulation {
 				throw new RuntimeException("unhandled planner type " + planRec.planner);
 			}
 		}
+		reportPlanningQueue(PlanningQueueReportMode.POST);
+		if (forcedHaltPresent) {
+			time = simulationHaltTime;
+		}
+
 		planningQueueMode = PlanningQueueMode.CLOSED;
 		// Move the remaining plan recs into a searchable structure
 		if (data.stateRecordingIsScheduled) {
@@ -1033,10 +1049,10 @@ public class Simulation {
 		List<PrioritizedPlanData> list;
 		while (!planningQueue.isEmpty()) {
 			PlanRec planRec = planningQueue.poll();
-			//System.out.println(planRec);
-			
+			// System.out.println(planRec);
+
 			Plan<?> plan = planRec.plan;
-			//System.out.println(planRec);
+			// System.out.println(planRec);
 			if (plan != null) {
 				PlanData planData = plan.getPlanData();
 				if (planData != null) {
@@ -1078,7 +1094,7 @@ public class Simulation {
 	 * if there were any plans from a previous simulation execution detected.
 	 */
 	private void rebuildPlanningQueue() {
-		
+
 		// empty the planning queue into a list
 		List<PlanRec> list = new ArrayList<>();
 		while (!planningQueue.isEmpty()) {
@@ -2062,5 +2078,20 @@ public class Simulation {
 			filterNode = filterNode.parent;
 		}
 
+	}
+	
+	private enum PlanningQueueReportMode{PRE,POST}
+	
+	private void reportPlanningQueue(PlanningQueueReportMode planningQueueReportMode) {
+		List<PlanRec> planRecs = new ArrayList<>();
+		System.out.println("Report mode = "+planningQueueReportMode);
+		while(!planningQueue.isEmpty()) {
+			PlanRec planRec = planningQueue.poll();
+			System.out.println(planRec);
+			planRecs.add(planRec);
+		}
+		for(PlanRec planRec : planRecs) {
+			planningQueue.add(planRec);
+		}
 	}
 }

@@ -125,7 +125,7 @@ public final class StochasticsDataManager extends DataManager {
 		// create RandomGenerators for each of the ids using a hash built from
 		// the id and the replication seed
 		Set<RandomNumberGeneratorId> randomNumberGeneratorIds = stochasticsPluginData.getRandomNumberGeneratorIds();
-		randomGenerator = new WellRNG(stochasticsPluginData.getWellState());
+		randomGenerator = new WellRNG(stochasticsPluginData.getWellState());		
 		for (RandomNumberGeneratorId randomNumberGeneratorId : randomNumberGeneratorIds) {
 			WellState wellState = stochasticsPluginData.getWellState(randomNumberGeneratorId);
 			randomGeneratorMap.put(randomNumberGeneratorId, new WellRNG(wellState));
@@ -149,7 +149,7 @@ public final class StochasticsDataManager extends DataManager {
 			WellRNG wellRNG = randomGeneratorMap.get(randomNumberGeneratorId);
 			builder.addRNG(randomNumberGeneratorId, wellRNG.getWellState());
 		}
-		builder.setMainRNG(randomGenerator.getWellState());
+		builder.setMainRNG(randomGenerator.getWellState());		
 		dataManagerContext.releaseOutput(builder.build());
 	}
 }
