@@ -63,46 +63,7 @@ public class AT_StochasticsDataManager {
 
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 		
-		// show that an unknown random number generator id will retrieve a
-		// random generator
-		factory = StochasticsTestPluginFactory.factory(5985120270606833945L, (c) -> {
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
-
-			RandomNumberGeneratorId randomNumberGeneratorIdA = new RandomNumberGeneratorId() {
-				@Override
-				public String toString() {
-					return "some string";
-				}
-			};
-
-			RandomNumberGeneratorId randomNumberGeneratorIdB = new RandomNumberGeneratorId() {
-				@Override
-				public String toString() {
-					return "some string";
-				}
-			};
-
-			// show that random number generators can be retrieved for new id
-			// values
-			RandomGenerator randomGeneratorFromIdA = stochasticsDataManager.getRandomGeneratorFromId(randomNumberGeneratorIdA);
-			assertNotNull(randomGeneratorFromIdA);
-
-			RandomGenerator randomGeneratorFromIdB = stochasticsDataManager.getRandomGeneratorFromId(randomNumberGeneratorIdB);
-			assertNotNull(randomGeneratorFromIdB);
-
-			// show that the random generators are identical since their ids
-			// evaluate to same string and were generated under the same base
-			// seed value(no reseed invocations between generators)
-
-			for (int i = 0; i < 10; i++) {
-				long valueA = randomGeneratorFromIdA.nextLong();
-				long valueB = randomGeneratorFromIdB.nextLong();
-				assertEquals(valueA, valueB);
-			}
-
-		});
-		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
-
+		
 		// precondition test : if the random number generator is null
 		ContractException contractException = assertThrows(ContractException.class, () ->{
 			Factory factory2 = StochasticsTestPluginFactory.factory(1893848105389404535L, (c) -> {

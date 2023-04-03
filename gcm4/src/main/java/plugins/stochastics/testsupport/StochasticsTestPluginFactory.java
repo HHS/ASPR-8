@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
+import org.apache.commons.math3.random.RandomGenerator;
+
 import nucleus.ActorContext;
 import nucleus.NucleusError;
 import nucleus.Plugin;
@@ -15,9 +17,9 @@ import nucleus.testsupport.testplugin.TestSimulation;
 import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.StochasticsPluginData;
 import plugins.stochastics.support.StochasticsError;
-import plugins.stochastics.support.WellRNG;
 import plugins.stochastics.support.WellState;
 import util.errors.ContractException;
+import util.random.RandomGeneratorProvider;
 
 /**
  * A static test support class for the {@linkplain StochasticsPlugin}. Provides
@@ -171,14 +173,13 @@ public class StochasticsTestPluginFactory {
 	 */
 	public static StochasticsPluginData getStandardStochasticsPluginData(long seed) {
 		StochasticsPluginData.Builder builder = StochasticsPluginData.builder();
-		WellState wellState = WellState.builder().setSeed(seed).build();
-		WellRNG rng = new WellRNG(wellState);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
+		WellState wellState = WellState.builder().setSeed(randomGenerator.nextLong()).build();
+		builder.setMainRNG(wellState);
 		for (TestRandomGeneratorId testRandomGeneratorId : TestRandomGeneratorId.values()) {
-			wellState = WellState.builder().setSeed(rng.nextLong()).build();
+			wellState = WellState.builder().setSeed(randomGenerator.nextLong()).build();
 			builder.addRNG(testRandomGeneratorId,wellState);
 		}
-		wellState = WellState.builder().setSeed(rng.nextLong()).build();
-		builder.setMainRNG(wellState);
 		return builder.build();
 	}
 }

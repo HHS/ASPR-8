@@ -26,6 +26,7 @@ import plugins.reports.support.NIOReportItemHandler;
 import plugins.reports.support.ReportPeriod;
 import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.StochasticsPluginData;
+import plugins.stochastics.support.WellState;
 import plugins.util.properties.PropertyDefinition;
 import util.random.RandomGeneratorProvider;
 
@@ -115,8 +116,10 @@ public final class Example_15 {
 	}
 
 	private Plugin getStochasticsPlugin() {
+		
+		WellState wellState = WellState.builder().setSeed(randomGenerator.nextLong()).build();
 		StochasticsPluginData stochasticsPluginData = StochasticsPluginData	.builder()//
-																			.setSeed(randomGenerator.nextLong()).build();
+																			.setMainRNG(wellState).build();
 		return StochasticsPlugin.getStochasticsPlugin(stochasticsPluginData);
 	}
 
@@ -134,7 +137,8 @@ public final class Example_15 {
 			builder.addLevel((context) -> {
 				StochasticsPluginData.Builder stochasticsPluginDataBuilder = context.get(StochasticsPluginData.Builder.class);
 				long seedValue = seedValues.get(i);
-				stochasticsPluginDataBuilder.setSeed(seedValue);
+				WellState wellState = WellState.builder().setSeed(seedValue).build();
+				stochasticsPluginDataBuilder.setMainRNG(wellState);
 
 				ArrayList<String> result = new ArrayList<>();
 				result.add(Integer.toString(i));

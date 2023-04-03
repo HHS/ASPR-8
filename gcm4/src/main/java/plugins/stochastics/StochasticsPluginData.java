@@ -87,6 +87,19 @@ public final class StochasticsPluginData implements PluginData {
 			}
 			return true;
 		}
+
+		@Override
+		public String toString() {
+			StringBuilder builder = new StringBuilder();
+			builder.append("Data [wellState=");
+			builder.append(wellState);
+			builder.append(", randomNumberGeneratorIds=");
+			builder.append(randomNumberGeneratorIds);
+			builder.append(", locked=");
+			builder.append(locked);
+			builder.append("]");
+			return builder.toString();
+		}
 		
 	}
 
@@ -262,6 +275,15 @@ public final class StochasticsPluginData implements PluginData {
 			return false;
 		}
 		return true;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder2 = new StringBuilder();
+		builder2.append("StochasticsPluginData [data=");
+		builder2.append(data);
+		builder2.append("]");
+		return builder2.toString();
 	}
 	
 	

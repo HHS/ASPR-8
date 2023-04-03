@@ -26,7 +26,6 @@ import org.junit.jupiter.api.Test;
 import nucleus.ActorContext;
 import nucleus.DataManagerContext;
 import nucleus.EventFilter;
-import nucleus.Plugin;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestSimulation;
@@ -2718,10 +2717,11 @@ public class AT_GroupsDataManager {
 
 		TestPluginData testPluginData = pluginBuilder.build();
 
-		List<Plugin> plugins = GroupsTestPluginFactory.factory(initialPopulation, expectedGroupsPerPerson, expectedPeoplePerGroup, seed, testPluginData).getPlugins();
+		Factory factory = GroupsTestPluginFactory.factory(initialPopulation, expectedGroupsPerPerson, expectedPeoplePerGroup, seed, testPluginData);
+		factory.setGroupsPluginData(groupsPluginData);
 		// build and execute the engine
 		
-		TestSimulation.builder().addPlugins(plugins).build().execute();
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
 	@Test

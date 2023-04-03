@@ -13,6 +13,7 @@ import nucleus.Experiment;
 import nucleus.Plugin;
 import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.StochasticsPluginData;
+import plugins.stochastics.support.WellState;
 
 public final class Example_11_A {
 
@@ -71,7 +72,8 @@ public final class Example_11_A {
 
 		Plugin modelPlugin = ModelPlugin.getModelPlugin();
 
-		StochasticsPluginData stochasticsPluginData = StochasticsPluginData.builder().setSeed(0).build();
+		WellState wellState = WellState.builder().setSeed(0).build();
+		StochasticsPluginData stochasticsPluginData = StochasticsPluginData.builder().setMainRNG(wellState).build();
 		Plugin stochasticsPlugin = StochasticsPlugin.getStochasticsPlugin(stochasticsPluginData);
 
 		Dimension policyDimension = getPolicyDimension();

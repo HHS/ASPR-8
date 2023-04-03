@@ -31,6 +31,7 @@ import plugins.stochastics.support.WellState;
 import plugins.stochastics.testsupport.StochasticsTestPluginFactory.Factory;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
+import util.random.RandomGeneratorProvider;
 import util.wrappers.MutableBoolean;
 
 public class AT_StochasticsTestPluginFactory {
@@ -147,8 +148,8 @@ public class AT_StochasticsTestPluginFactory {
 		long seed = 6072871729256538807L;
 		StochasticsPluginData stochasticsPluginData = StochasticsTestPluginFactory
 				.getStandardStochasticsPluginData(seed);
-
-		assertEquals(seed, stochasticsPluginData.getWellState().getSeed());
+		
+		assertEquals(RandomGeneratorProvider.getRandomGenerator(seed).nextLong(), stochasticsPluginData.getWellState().getSeed());
 
 		Set<TestRandomGeneratorId> expectedRandomGeneratorIds = EnumSet.allOf(TestRandomGeneratorId.class);
 		assertFalse(expectedRandomGeneratorIds.isEmpty());
