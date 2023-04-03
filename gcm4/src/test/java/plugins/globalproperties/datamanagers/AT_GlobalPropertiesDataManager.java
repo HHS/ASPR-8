@@ -195,9 +195,6 @@ public final class AT_GlobalPropertiesDataManager {
 		assertEquals(expectedPluginData, actualPluginData);
 	}
 
-	//////////////////////////
-	// from the old data manager
-	////////////////////////////////
 
 	@Test
 	@UnitTestMethod(target = GlobalPropertiesDataManager.class, name = "globalPropertyIdExists", args = { GlobalPropertyId.class })
