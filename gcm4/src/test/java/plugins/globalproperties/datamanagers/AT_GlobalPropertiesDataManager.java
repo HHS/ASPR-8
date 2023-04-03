@@ -103,6 +103,47 @@ public final class AT_GlobalPropertiesDataManager {
 
 	}
 
+	@Test
+	@UnitTestMethod(target = GlobalPropertiesDataManager.class, name = "init", args = { DataManagerContext.class })
+	public void testInit_State() {
+
+//		GlobalPropertiesPluginData.Builder globalsPluginBuilder = GlobalPropertiesPluginData.builder();
+//		GlobalPropertiesPluginData globalPropertiesPluginData = globalsPluginBuilder.build();
+//
+//		TestPluginData.Builder testPluginDataBuilder = TestPluginData.builder();
+//
+//		testPluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
+//			GlobalPropertiesDataManager globalPropertiesDataManager = c.getDataManager(GlobalPropertiesDataManager.class);
+//			PropertyDefinition propertyDefinition = TestGlobalPropertyId.GLOBAL_PROPERTY_1_BOOLEAN_MUTABLE.getPropertyDefinition();
+//			PropertyDefinition expectedPropertyDefinition = TestGlobalPropertyId.GLOBAL_PROPERTY_1_BOOLEAN_MUTABLE.getPropertyDefinition();
+//			GlobalPropertyInitialization globalPropertyInitialization = GlobalPropertyInitialization.builder()
+//					.setGlobalPropertyId(TestGlobalPropertyId.GLOBAL_PROPERTY_1_BOOLEAN_MUTABLE)
+//					.setPropertyDefinition(propertyDefinition)
+//					.build();
+//
+//			globalPropertiesDataManager.defineGlobalProperty(globalPropertyInitialization);
+//
+//			PropertyDefinition actualPropertyDefinition = globalPropertiesDataManager.getGlobalPropertyDefinition();////
+//			assertEquals(expectedPropertyDefinition, actualPropertyDefinition);
+//		}));
+//
+//		testPluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
+//			GlobalPropertiesDataManager globalPropertiesDataManager = c.getDataManager(GlobalPropertiesDataManager.class);
+//			PropertyDefinition propertyDefinition = TestGlobalPropertyId.GLOBAL_PROPERTY_2_INTEGER_MUTABLE.getPropertyDefinition();
+//			PropertyDefinition expectedPropertyDefinition = TestGlobalPropertyId.GLOBAL_PROPERTY_2_INTEGER_MUTABLE.getPropertyDefinition();
+//			GlobalPropertyInitialization globalPropertyInitialization = GlobalPropertyInitialization.builder()
+//					.setGlobalPropertyId(TestGlobalPropertyId.GLOBAL_PROPERTY_2_INTEGER_MUTABLE)
+//					.setPropertyDefinition(propertyDefinition)
+//					.setValue(53)
+//					.build();
+//		}));
+//
+//		TestPluginData testPluginData = testPluginDataBuilder.build();
+//		Factory factory = GlobalPropertiesTestPluginFactory.factory(testPluginData).setGlobalPropertiesPluginData(globalPropertiesPluginData);
+//		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
+
+	}
+
 	//////////////////////////
 	// from the old data manager
 	////////////////////////////////
