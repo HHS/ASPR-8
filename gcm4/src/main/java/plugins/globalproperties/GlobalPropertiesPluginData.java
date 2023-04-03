@@ -1,9 +1,6 @@
 package plugins.globalproperties;
 
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import net.jcip.annotations.Immutable;
 import nucleus.PluginData;
@@ -173,6 +170,19 @@ public final class GlobalPropertiesPluginData implements PluginData {
 			globalPropertyValues.putAll(data.globalPropertyValues);
 			locked = data.locked;
 		}
+
+		@Override
+		public boolean equals(Object o) {
+			if (this == o) return true;
+			if (!(o instanceof Data)) return false;
+			Data data = (Data) o;
+			return locked == data.locked && globalPropertyDefinitions.equals(data.globalPropertyDefinitions) && globalPropertyValues.equals(data.globalPropertyValues);
+		}
+
+		@Override
+		public int hashCode() {
+			return Objects.hash(globalPropertyDefinitions, globalPropertyValues, locked);
+		}
 	}
 
 	/**
@@ -275,4 +285,16 @@ public final class GlobalPropertiesPluginData implements PluginData {
 		return builder();
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof GlobalPropertiesPluginData)) return false;
+		GlobalPropertiesPluginData that = (GlobalPropertiesPluginData) o;
+		return data.equals(that.data);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(data);
+	}
 }
