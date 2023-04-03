@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.IntStream;
 
+import nucleus.testsupport.testplugin.TestOutputConsumer;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
@@ -103,9 +104,97 @@ public final class AT_GlobalPropertiesDataManager {
 
 	}
 
-	//////////////////////////
-	// from the old data manager
-	////////////////////////////////
+	@Test
+	@UnitTestMethod(target = GlobalPropertiesDataManager.class, name = "init", args = { DataManagerContext.class })
+	public void testInit_State() {
+
+		GlobalPropertiesPluginData.Builder globalsPluginBuilder = GlobalPropertiesPluginData.builder();
+		GlobalPropertiesPluginData globalPropertiesPluginData = globalsPluginBuilder.build();
+
+		// add a property definition
+		PropertyDefinition propertyDefinition = TestGlobalPropertyId.GLOBAL_PROPERTY_1_BOOLEAN_MUTABLE.getPropertyDefinition();
+		GlobalPropertyInitialization globalPropertyInitialization = GlobalPropertyInitialization.builder()
+				.setGlobalPropertyId(TestGlobalPropertyId.GLOBAL_PROPERTY_1_BOOLEAN_MUTABLE)
+				.setPropertyDefinition(propertyDefinition)
+				.build();
+
+
+		TestPluginData.Builder testPluginDataBuilder = TestPluginData.builder();
+
+		// define property definition with the data manager
+		testPluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
+			GlobalPropertiesDataManager globalPropertiesDataManager = c.getDataManager(GlobalPropertiesDataManager.class);
+			globalPropertiesDataManager.defineGlobalProperty(globalPropertyInitialization);
+			globalPropertiesDataManager.setGlobalPropertyValue(globalPropertyInitialization.getGlobalPropertyId(), true);
+		}));
+
+		// show that the plugin data contains what we defined
+		TestPluginData testPluginData = testPluginDataBuilder.build();
+		Factory factory = GlobalPropertiesTestPluginFactory.factory(testPluginData).setGlobalPropertiesPluginData(globalPropertiesPluginData);
+		TestOutputConsumer testOutputConsumer = TestSimulation.builder().addPlugins(factory.getPlugins())
+				.setSimulationHaltTime(2)
+				.setProduceSimulationStateOnHalt(true)
+				.build()
+				.execute();
+		Map<GlobalPropertiesPluginData, Integer> outputItems = testOutputConsumer.getOutputItems(GlobalPropertiesPluginData.class);
+		assertEquals(1, outputItems.size());
+		GlobalPropertiesPluginData actualPluginData = outputItems.keySet().iterator().next();
+		GlobalPropertiesPluginData expectedPluginData = GlobalPropertiesPluginData.builder()
+				.defineGlobalProperty(globalPropertyInitialization.getGlobalPropertyId(), globalPropertyInitialization.getPropertyDefinition())
+				.setGlobalPropertyValue(globalPropertyInitialization.getGlobalPropertyId(), true)
+				.build();
+		assertEquals(expectedPluginData, actualPluginData);
+
+		// show that the plugin data persists after multiple actions
+		PropertyDefinition propertyDefinition2 = TestGlobalPropertyId.GLOBAL_PROPERTY_2_INTEGER_MUTABLE.getPropertyDefinition();
+		GlobalPropertyInitialization globalPropertyInitialization2 = GlobalPropertyInitialization.builder()
+				.setGlobalPropertyId(TestGlobalPropertyId.GLOBAL_PROPERTY_2_INTEGER_MUTABLE)
+				.setPropertyDefinition(propertyDefinition2)
+				.build();
+
+		PropertyDefinition propertyDefinition3 = TestGlobalPropertyId.GLOBAL_PROPERTY_3_DOUBLE_MUTABLE.getPropertyDefinition();
+		GlobalPropertyInitialization globalPropertyInitialization3 = GlobalPropertyInitialization.builder()
+				.setGlobalPropertyId(TestGlobalPropertyId.GLOBAL_PROPERTY_3_DOUBLE_MUTABLE)
+				.setPropertyDefinition(propertyDefinition3)
+				.build();
+
+		testPluginDataBuilder = TestPluginData.builder();
+
+		testPluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
+			GlobalPropertiesDataManager globalPropertiesDataManager = c.getDataManager(GlobalPropertiesDataManager.class);
+			globalPropertiesDataManager.defineGlobalProperty(globalPropertyInitialization2);
+			globalPropertiesDataManager.defineGlobalProperty(globalPropertyInitialization3);
+			globalPropertiesDataManager.setGlobalPropertyValue(globalPropertyInitialization2.getGlobalPropertyId(), 5);
+			globalPropertiesDataManager.setGlobalPropertyValue(globalPropertyInitialization2.getGlobalPropertyId(), 3);
+			globalPropertiesDataManager.setGlobalPropertyValue(globalPropertyInitialization3.getGlobalPropertyId(), 14.5);
+			globalPropertiesDataManager.setGlobalPropertyValue(globalPropertyInitialization3.getGlobalPropertyId(), 32.8);
+		}));
+
+		testPluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
+			GlobalPropertiesDataManager globalPropertiesDataManager = c.getDataManager(GlobalPropertiesDataManager.class);
+			globalPropertiesDataManager.setGlobalPropertyValue(globalPropertyInitialization2.getGlobalPropertyId(), 15);
+			globalPropertiesDataManager.setGlobalPropertyValue(globalPropertyInitialization3.getGlobalPropertyId(), 15.9);
+		}));
+
+		testPluginData = testPluginDataBuilder.build();
+		factory = GlobalPropertiesTestPluginFactory.factory(testPluginData).setGlobalPropertiesPluginData(globalPropertiesPluginData);
+		testOutputConsumer = TestSimulation.builder().addPlugins(factory.getPlugins())
+				.setSimulationHaltTime(2)
+				.setProduceSimulationStateOnHalt(true)
+				.build()
+				.execute();
+		outputItems = testOutputConsumer.getOutputItems(GlobalPropertiesPluginData.class);
+		assertEquals(1, outputItems.size());
+		actualPluginData = outputItems.keySet().iterator().next();
+		expectedPluginData = GlobalPropertiesPluginData.builder()
+				.defineGlobalProperty(globalPropertyInitialization2.getGlobalPropertyId(), globalPropertyInitialization2.getPropertyDefinition())
+				.defineGlobalProperty(globalPropertyInitialization3.getGlobalPropertyId(), globalPropertyInitialization3.getPropertyDefinition())
+				.setGlobalPropertyValue(globalPropertyInitialization2.getGlobalPropertyId(), 15)
+				.setGlobalPropertyValue(globalPropertyInitialization3.getGlobalPropertyId(), 15.9)
+				.build();
+		assertEquals(expectedPluginData, actualPluginData);
+	}
+
 
 	@Test
 	@UnitTestMethod(target = GlobalPropertiesDataManager.class, name = "globalPropertyIdExists", args = { GlobalPropertyId.class })
