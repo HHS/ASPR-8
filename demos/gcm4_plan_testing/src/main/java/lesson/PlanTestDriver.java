@@ -7,6 +7,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.commons.math3.random.RandomGenerator;
 
@@ -54,10 +55,18 @@ import util.random.RandomGeneratorProvider;
 
 public final class PlanTestDriver {
 	private int iterationCount = 0;
+	private final static boolean executeFull = false;
 
 	public static void main(final String[] args) throws IOException {
 		Path baseOutputDirectory = Paths.get(args[0]);
-		new PlanTestDriver(baseOutputDirectory).execute();
+		PlanTestDriver planTestDriver = new PlanTestDriver(baseOutputDirectory);
+
+		if (executeFull) {
+			planTestDriver.executeFull();
+		} else {
+			planTestDriver.executeByParts();
+		}
+
 	}
 
 	private void clearDirectory(File file) {
@@ -119,17 +128,45 @@ public final class PlanTestDriver {
 		Plugin materialsPlugin = MaterialsPlugin.builder().setMaterialsPluginData(materialsPluginData).getMaterialsPlugin();
 		plugins.add(materialsPlugin);
 
-		PersonPropertiesPluginData personPropertiesPluginData = stateCollector.get(0, PersonPropertiesPluginData.class).get();
-		PersonPropertyReportPluginData personPropertyReportPluginData = stateCollector.get(0, PersonPropertyReportPluginData.class).get();
+		PersonPropertiesPluginData personPropertiesPluginData = null;
+		Optional<PersonPropertiesPluginData> optional1 = stateCollector.get(0, PersonPropertiesPluginData.class);
+		if (optional1.isPresent()) {
+			personPropertiesPluginData = optional1.get();
+		}
+		PersonPropertyReportPluginData personPropertyReportPluginData = null;
+		Optional<PersonPropertyReportPluginData> optional2 = stateCollector.get(0, PersonPropertyReportPluginData.class);
+		if (optional2.isPresent()) {
+			personPropertyReportPluginData = optional2.get();
+		}
 		Plugin personPropertyPlugin = PersonPropertiesPlugin.builder()//
-															.setPersonPropertiesPluginData(personPropertiesPluginData).setPersonPropertyReportPluginData(personPropertyReportPluginData)
-															.getPersonPropertyPlugin();
+															.setPersonPropertiesPluginData(personPropertiesPluginData)//
+															.setPersonPropertyReportPluginData(personPropertyReportPluginData).getPersonPropertyPlugin();
 		plugins.add(personPropertyPlugin);
 
-		AntigenProducerPluginData antigenProducerPluginData = stateCollector.get(0, AntigenProducerPluginData.class).get();
-		VaccineProducerPluginData vaccineProducerPluginData = stateCollector.get(0, VaccineProducerPluginData.class).get();
-		VaccinatorPluginData vaccinatorPluginData = stateCollector.get(0, VaccinatorPluginData.class).get();
-		ContactManagerPluginData contactManagerPluginData = stateCollector.get(0, ContactManagerPluginData.class).get();
+		AntigenProducerPluginData antigenProducerPluginData = null;
+		Optional<AntigenProducerPluginData> optional3 = stateCollector.get(0, AntigenProducerPluginData.class);
+		if(optional3.isPresent()) {
+			antigenProducerPluginData = optional3.get();
+		}
+		
+		VaccineProducerPluginData vaccineProducerPluginData = null;
+		Optional<VaccineProducerPluginData> optional4 = stateCollector.get(0, VaccineProducerPluginData.class);
+		if(optional4.isPresent()) {
+			vaccineProducerPluginData = optional4.get();
+		}
+		
+		
+		VaccinatorPluginData vaccinatorPluginData = null;
+		Optional<VaccinatorPluginData> optional5 = stateCollector.get(0, VaccinatorPluginData.class);
+		if(optional5.isPresent()) {
+			vaccinatorPluginData = optional5.get();
+		}
+		
+		ContactManagerPluginData contactManagerPluginData = null;
+		Optional<ContactManagerPluginData> optional6 = stateCollector.get(0, ContactManagerPluginData.class);
+		if(optional6.isPresent()) {
+			contactManagerPluginData = optional6.get();
+		}
 
 		Plugin modelPlugin = ModelPlugin.builder()//
 										.setAntigenProducerPluginData(antigenProducerPluginData)//
@@ -142,22 +179,48 @@ public final class PlanTestDriver {
 		return plugins;
 	}
 
-	private void execute() throws IOException {
+	private void executeFull() throws IOException {
 		clearDirectory(baseOutputDirectory.toFile());
 
 		SimulationTime simulationTime = SimulationTime.builder().build();
 		List<Plugin> plugins = getStartingPlugins();
 
-		for (int i = 0; i < 5; i++) {
-			System.out.println(simulationTime);
+		Path outputDirectory = baseOutputDirectory.resolve("sub" + iterationCount++);
+		if (!Files.exists(outputDirectory)) {
+			Files.createDirectory(outputDirectory);
+		}
+		Experiment.Builder builder = Experiment.builder();//
+		for (Plugin plugin : plugins) {
+			builder.addPlugin(plugin);
+		}
+
+		Experiment experiment = builder	.setSimulationTime(simulationTime)//
+										.addExperimentContextConsumer(getNIOReportItemHandler(outputDirectory))//
+										.build();//
+
+		experiment.execute();//
+
+	}
+
+	private void executeByParts() throws IOException {
+		clearDirectory(baseOutputDirectory.toFile());
+
+		SimulationTime simulationTime = SimulationTime.builder().build();
+		List<Plugin> plugins = getStartingPlugins();
+
+		for (int i = 0; i < 40; i++) {
+			//System.out.println(simulationTime);
 			StateCollector stateCollector = executeSim(simulationTime, plugins);
 			plugins = getPlugins(stateCollector);
 			simulationTime = stateCollector.get(0, SimulationTime.class).get();
 		}
-
+		executeSim(simulationTime, plugins);
 	}
 
-	private final RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(9032703880551658180L);
+	private final RandomGenerator randomGenerator = 
+			//RandomGeneratorProvider.getRandomGenerator(9032703880551658180L);
+	        RandomGeneratorProvider.getRandomGenerator(1713830743266777795L);
+	
 	private final Path baseOutputDirectory;
 
 	private PlanTestDriver(Path baseOutputDirectory) {
@@ -328,7 +391,7 @@ public final class PlanTestDriver {
 
 		return PersonPropertiesPlugin	.builder()//
 										.setPersonPropertiesPluginData(personPropertiesPluginData)//
-										.setPersonPropertyReportPluginData(personPropertyReportPluginData)//
+										// .setPersonPropertyReportPluginData(personPropertyReportPluginData)//
 										.getPersonPropertyPlugin();
 
 	}
@@ -345,10 +408,11 @@ public final class PlanTestDriver {
 
 	private NIOReportItemHandler getNIOReportItemHandler(Path outputDirectory) {
 		return NIOReportItemHandler	.builder()//
-									.addReport(ModelReportLabel.DISEASE_STATE_REPORT, outputDirectory.resolve("disease_state_report.xls"))//
-									.addReport(ModelReportLabel.PERSON_PROPERTY_REPORT, outputDirectory.resolve("person_property_report.xls"))//
-									.addReport(ModelReportLabel.VACCINE_REPORT, outputDirectory.resolve("vaccine_report.xls"))//
-									.addReport(ModelReportLabel.VACCINE_PRODUCTION_REPORT, outputDirectory.resolve("vaccine_production_report.xls"))//
+									.addReport(ModelReportLabel.DISEASE_STATE_REPORT, outputDirectory.resolve("disease_state_report.csv"))//
+									.addReport(ModelReportLabel.PERSON_PROPERTY_REPORT, outputDirectory.resolve("person_property_report.csv"))//
+									.addReport(ModelReportLabel.VACCINE_REPORT, outputDirectory.resolve("vaccine_report.csv"))//
+									.addReport(ModelReportLabel.VACCINE_PRODUCTION_REPORT, outputDirectory.resolve("vaccine_production_report.csv"))//
+									.setDelimiter(",")//
 									.build();
 	}
 

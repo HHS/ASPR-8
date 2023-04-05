@@ -43,41 +43,38 @@ public class PopulationLoader {
 
 	public void init(final ActorContext actorContext) {
 		peopleDataManager = actorContext.getDataManager(PeopleDataManager.class);
-		if(peopleDataManager.getPopulationCount()>0) {
-			return;
-		}
-		
-		personPropertiesDataManager = actorContext.getDataManager(PersonPropertiesDataManager.class);
-		groupsDataManager = actorContext.getDataManager(GroupsDataManager.class);
-		final StochasticsDataManager stochasticsDataManager = actorContext.getDataManager(StochasticsDataManager.class);
-		randomGenerator = stochasticsDataManager.getRandomGenerator();
-		peopleDataManager = actorContext.getDataManager(PeopleDataManager.class);
-		
-		
-		
-		final GlobalPropertiesDataManager globalPropertiesDataManager = actorContext.getDataManager(GlobalPropertiesDataManager.class);
-		regionsDataManager = actorContext.getDataManager(RegionsDataManager.class);
+		if (peopleDataManager.getPopulationCount() == 0) {
 
-		final int populationSize = globalPropertiesDataManager.getGlobalPropertyValue(GlobalProperty.POPULATION_SIZE);
-		susceptibleProbability = globalPropertiesDataManager.getGlobalPropertyValue(GlobalProperty.SUSCEPTIBLE_POPULATION_PROPORTION);
-		childPopulationProportion = globalPropertiesDataManager.getGlobalPropertyValue(GlobalProperty.CHILD_POPULATION_PROPORTION);
-		seniorPopulationProportion = globalPropertiesDataManager.getGlobalPropertyValue(GlobalProperty.SENIOR_POPULATION_PROPORTION);
-		averageHomeSize = globalPropertiesDataManager.getGlobalPropertyValue(GlobalProperty.AVERAGE_HOME_SIZE);
-		averageSchoolSize = globalPropertiesDataManager.getGlobalPropertyValue(GlobalProperty.AVERAGE_SCHOOL_SIZE);
-		averageWorkSize = globalPropertiesDataManager.getGlobalPropertyValue(GlobalProperty.AVERAGE_WORK_SIZE);
+			personPropertiesDataManager = actorContext.getDataManager(PersonPropertiesDataManager.class);
+			groupsDataManager = actorContext.getDataManager(GroupsDataManager.class);
+			final StochasticsDataManager stochasticsDataManager = actorContext.getDataManager(StochasticsDataManager.class);
+			randomGenerator = stochasticsDataManager.getRandomGenerator();
+			peopleDataManager = actorContext.getDataManager(PeopleDataManager.class);
 
-		final Set<RegionId> regionIds = regionsDataManager.getRegionIds();
-		final int regionSize = populationSize / regionIds.size();
-		int leftoverPeople = populationSize % regionIds.size();
+			final GlobalPropertiesDataManager globalPropertiesDataManager = actorContext.getDataManager(GlobalPropertiesDataManager.class);
+			regionsDataManager = actorContext.getDataManager(RegionsDataManager.class);
 
-		for (final RegionId regionId : regionIds) {
-			int regionPopulation = regionSize;
-			if (leftoverPeople > 0) {
-				leftoverPeople--;
-				regionPopulation++;
+			final int populationSize = globalPropertiesDataManager.getGlobalPropertyValue(GlobalProperty.POPULATION_SIZE);
+			susceptibleProbability = globalPropertiesDataManager.getGlobalPropertyValue(GlobalProperty.SUSCEPTIBLE_POPULATION_PROPORTION);
+			childPopulationProportion = globalPropertiesDataManager.getGlobalPropertyValue(GlobalProperty.CHILD_POPULATION_PROPORTION);
+			seniorPopulationProportion = globalPropertiesDataManager.getGlobalPropertyValue(GlobalProperty.SENIOR_POPULATION_PROPORTION);
+			averageHomeSize = globalPropertiesDataManager.getGlobalPropertyValue(GlobalProperty.AVERAGE_HOME_SIZE);
+			averageSchoolSize = globalPropertiesDataManager.getGlobalPropertyValue(GlobalProperty.AVERAGE_SCHOOL_SIZE);
+			averageWorkSize = globalPropertiesDataManager.getGlobalPropertyValue(GlobalProperty.AVERAGE_WORK_SIZE);
+
+			final Set<RegionId> regionIds = regionsDataManager.getRegionIds();
+			final int regionSize = populationSize / regionIds.size();
+			int leftoverPeople = populationSize % regionIds.size();
+
+			for (final RegionId regionId : regionIds) {
+				int regionPopulation = regionSize;
+				if (leftoverPeople > 0) {
+					leftoverPeople--;
+					regionPopulation++;
+				}
+				initializeRegionPopulation(regionId, regionPopulation);
 			}
-			initializeRegionPopulation(regionId, regionPopulation);
-		}
+		}		
 	}
 
 	private void initializeRegionPopulation(final RegionId regionId, final int populationSize) {

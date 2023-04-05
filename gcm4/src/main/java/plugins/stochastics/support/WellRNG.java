@@ -38,9 +38,66 @@ public class WellRNG extends Well44497b {
 			return false;
 		}
 		WellRNG other = (WellRNG) obj;
-		
+
 		return getWellState().equals(other.getWellState());
+
+	}
+
+	public static boolean debug;
+
+	private void reporIndex() {
+		if (debug) {
+			System.out.println("index = " + index);
+		}
+	}
+
+	@Override
+	public boolean nextBoolean() {
 		
+		boolean result =  super.nextBoolean();
+		reporIndex();
+		return result;
+	}
+
+	@Override
+	public double nextDouble() {
+		
+		double result =  super.nextDouble();
+		reporIndex();
+		return result;
+
+	}
+
+	@Override
+	public float nextFloat() {
+		
+		float result = super.nextFloat();
+		reporIndex();
+		return result;
+	}
+
+	@Override
+	public int nextInt() {
+		
+		int result = super.nextInt();
+		reporIndex();
+		return result;
+	}
+
+	@Override
+	public int nextInt(int n) {
+		
+		int result = super.nextInt(n);
+		reporIndex();
+		return result;
+	}
+
+	@Override
+	public long nextLong() {
+		
+		long result = super.nextLong();
+		reporIndex();
+		return result;
 	}
 
 }

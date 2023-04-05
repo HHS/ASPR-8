@@ -17,8 +17,10 @@ public abstract class PeriodicReport {
 	 * Creates the periodic report from the given report period
 	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain ReportError#NULL_REPORT_PERIOD} if the report period is null</li>
-	 *             <li>{@linkplain ReportError.NULL_REPORT_LABEL} if the report period is null</li>
+	 *             <li>{@linkplain ReportError#NULL_REPORT_PERIOD} if the report
+	 *             period is null</li>
+	 *             <li>{@linkplain ReportError.NULL_REPORT_LABEL} if the report
+	 *             period is null</li>
 	 */
 	public PeriodicReport(ReportLabel reportLabel, ReportPeriod reportPeriod) {
 		if (reportPeriod == null) {
@@ -77,7 +79,7 @@ public abstract class PeriodicReport {
 	protected final ReportLabel getReportLabel() {
 		return reportLabel;
 	}
-	
+
 	protected final ReportPeriod getReportPeriod() {
 		return reportPeriod;
 	}
@@ -125,15 +127,18 @@ public abstract class PeriodicReport {
 
 		reportingDay = (int) reportContext.getTime();
 		reportingHour = (int) (24 * (reportContext.getTime() - reportingDay));
-		if(reportingHour>23) {
+		if (reportingHour > 23) {
 			reportingHour = 23;
 		}
 
 		prepare(reportContext);
-		if (reportPeriod != ReportPeriod.END_OF_SIMULATION) {
-			flush(reportContext);
-			incrementReportingTimeFields();
-			reportContext.addPlan(this::executePlan, getNextPlanTime());
+
+		if (reportContext.getTime() == 0) {
+			if (reportPeriod != ReportPeriod.END_OF_SIMULATION) {
+				flush(reportContext);
+				incrementReportingTimeFields();
+				reportContext.addPlan(this::executePlan, getNextPlanTime());
+			}
 		}
 	}
 
