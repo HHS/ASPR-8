@@ -18,6 +18,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.function.Consumer;
 
+import nucleus.testsupport.testplugin.TestOutputConsumer;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.util.FastMath;
 import org.apache.commons.math3.util.Pair;
@@ -64,12 +65,66 @@ import plugins.util.properties.TimeTrackingPolicy;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
+import util.random.RandomGeneratorProvider;
 import util.wrappers.MultiKey;
 import util.wrappers.MutableDouble;
 import util.wrappers.MutableInteger;
 import util.wrappers.MutableObject;
 
 public class AT_GroupsDataManager {
+
+	@Test
+	@UnitTestMethod(target = GroupsDataManager.class, name = "init", args = {GroupId.class})
+	public void testInit_State() {
+//
+//		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(385296335335709376L);
+//		GroupsPluginData.Builder builder = GroupsPluginData.builder();
+//		GroupsPluginData groupsPluginData = builder.build();
+//
+//		// add a property definition
+//		PropertyDefinition propertyDefinition = TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK.getPropertyDefinition();
+//		GroupPropertyDefinitionInitialization groupPropertyDefinitionInitialization = GroupPropertyDefinitionInitialization.builder()
+//				.setGroupTypeId(TestGroupTypeId.GROUP_TYPE_1)
+//				.setPropertyDefinition(propertyDefinition)
+//				.setPropertyId(TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK)
+//				.build();
+//
+//		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+//
+//		// define property definition with the data manager
+//		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
+//			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+//			GroupConstructionInfo groupConstructionInfo = GroupConstructionInfo.builder()
+//					.setGroupTypeId(groupPropertyDefinitionInitialization.getGroupTypeId())
+//					.setGroupPropertyValue(groupPropertyDefinitionInitialization.getPropertyId(), false)
+//					.build();
+//			GroupId groupId = groupsDataManager.addGroup(groupConstructionInfo);
+//			groupsDataManager.setGroupPropertyValue(groupId, groupPropertyDefinitionInitialization.getPropertyId(), );
+//
+//			}));
+//
+//		// show that the plugin data contains what we defined
+//		TestPluginData testPluginData = pluginBuilder.build();
+//		Long seed = randomGenerator.nextLong();
+//		Factory factory = GroupsTestPluginFactory.factory(30, 1, 10, seed, testPluginData)
+//				.setGroupsPluginData(groupsPluginData);
+//		TestOutputConsumer testOutputConsumer = TestSimulation.builder().addPlugins(factory.getPlugins())
+//				.setSimulationHaltTime(2)
+//				.setProduceSimulationStateOnHalt(true)
+//				.build()
+//				.execute();
+//		Map<GroupsPluginData, Integer> outputItems = testOutputConsumer.getOutputItems(GroupsPluginData.class);
+//		assertEquals(1, outputItems.size());
+//		GroupsPluginData actualPluginData = outputItems.keySet().iterator().next();
+//		GroupsPluginData expectedPluginData = GroupsPluginData.builder()
+//				.defineGroupProperty(groupPropertyDefinitionInitialization.getGroupTypeId(), groupPropertyDefinitionInitialization.getPropertyId(), groupPropertyDefinitionInitialization.getPropertyDefinition())
+//				.setGroupPropertyValue(new GroupId(1), TestAuxiliaryGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK, 74)
+//				.addGroup(new GroupId(1), TestGroupTypeId.GROUP_TYPE_1)
+//				.build();
+//		assertEquals(expectedPluginData, actualPluginData);
+//
+
+	}
 
 	@Test
 	@UnitTestMethod(target = GroupsDataManager.class, name = "removeGroup", args = { GroupId.class })
