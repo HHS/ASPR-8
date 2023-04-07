@@ -1,13 +1,6 @@
 package plugins.groups;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import org.apache.commons.math3.util.FastMath;
 
@@ -46,9 +39,35 @@ public final class GroupsPluginData implements PluginData {
 		private GroupId groupId;
 		private GroupTypeId groupTypeId;
 		private List<GroupPropertyValue> groupPropertyValues;
+
+		@Override
+		public boolean equals(Object o) {
+			if (this == o) return true;
+			if (!(o instanceof GroupSpecification)) return false;
+			GroupSpecification that = (GroupSpecification) o;
+			return groupId.equals(that.groupId) && groupTypeId.equals(that.groupTypeId) && groupPropertyValues.equals(that.groupPropertyValues);
+		}
+
+		@Override
+		public int hashCode() {
+			return Objects.hash(groupId, groupTypeId, groupPropertyValues);
+		}
 	}
 
 	private static class Data {
+
+		@Override
+		public boolean equals(Object o) {
+			if (this == o) return true;
+			if (!(o instanceof Data)) return false;
+			Data data = (Data) o;
+			return personCount == data.personCount && locked == data.locked && groupPropertyDefinitions.equals(data.groupPropertyDefinitions) && groupTypeIds.equals(data.groupTypeIds) && emptyGroupList.equals(data.emptyGroupList) && groupSpecifications.equals(data.groupSpecifications) && emptyGroupPropertyValues.equals(data.emptyGroupPropertyValues) && groupMemberships.equals(data.groupMemberships);
+		}
+
+		@Override
+		public int hashCode() {
+			return Objects.hash(groupPropertyDefinitions, groupTypeIds, emptyGroupList, personCount, locked, groupSpecifications, emptyGroupPropertyValues, groupMemberships);
+		}
 
 		private final Map<GroupTypeId, Map<GroupPropertyId, PropertyDefinition>> groupPropertyDefinitions;
 		private final Set<GroupTypeId> groupTypeIds;
@@ -61,6 +80,20 @@ public final class GroupsPluginData implements PluginData {
 
 		// indexed by person id
 		private final List<List<GroupId>> groupMemberships;
+
+		@Override
+		public String toString() {
+			return "Data{" +
+					"groupPropertyDefinitions=" + groupPropertyDefinitions +
+					", groupTypeIds=" + groupTypeIds +
+					", emptyGroupList=" + emptyGroupList +
+					", personCount=" + personCount +
+					", locked=" + locked +
+					", groupSpecifications=" + groupSpecifications +
+					", emptyGroupPropertyValues=" + emptyGroupPropertyValues +
+					", groupMemberships=" + groupMemberships +
+					'}';
+		}
 
 		public Data() {
 			groupPropertyDefinitions = new LinkedHashMap<>();
@@ -688,4 +721,23 @@ public final class GroupsPluginData implements PluginData {
 		return builder();
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof GroupsPluginData)) return false;
+		GroupsPluginData that = (GroupsPluginData) o;
+		return data.equals(that.data);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(data);
+	}
+
+	@Override
+	public String toString() {
+		return "GroupsPluginData{" +
+				"data=" + data +
+				'}';
+	}
 }
