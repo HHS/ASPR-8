@@ -32,8 +32,12 @@ public class WellStateTranslatorSpec
     protected WellStateInput convertAppObject(WellState simObject) {
         WellStateInput.Builder builder = WellStateInput.newBuilder();
 
-        builder.setSeed(simObject.getSeed())
-                .setIndex(simObject.getIndex());
+        builder.setSeed(simObject.getSeed());
+
+        if (simObject.getIndex() > 0) {
+            builder.setIndex(simObject.getIndex());
+        }
+
         if (simObject.getVArray().length > 0) {
             ByteString byteString = encode(simObject.getVArray());
             builder.setVArray(byteString);

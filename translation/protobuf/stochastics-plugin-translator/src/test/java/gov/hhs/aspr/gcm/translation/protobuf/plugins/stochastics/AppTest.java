@@ -16,6 +16,7 @@ import plugins.stochastics.StochasticsDataManager;
 import plugins.stochastics.StochasticsPluginData;
 import plugins.stochastics.support.RandomNumberGeneratorId;
 import plugins.stochastics.support.Well;
+import plugins.stochastics.support.WellState;
 import plugins.stochastics.testsupport.StochasticsTestPluginFactory;
 import plugins.stochastics.testsupport.TestRandomGeneratorId;
 
@@ -58,7 +59,13 @@ public class AppTest {
 
         for (RandomNumberGeneratorId randomNumberGeneratorId : stochasticsDataManager.getRandomNumberGeneratorIds()) {
             Well wellRNG = (Well) stochasticsDataManager.getRandomGeneratorFromId(randomNumberGeneratorId);
-            builder.addRNG(randomNumberGeneratorId, wellRNG.getWellState());
+            if (randomNumberGeneratorId == TestRandomGeneratorId.DASHER
+                    || randomNumberGeneratorId == TestRandomGeneratorId.CUPID) {
+                builder.addRNG(randomNumberGeneratorId,
+                        WellState.builder().setSeed(wellRNG.getWellState().getSeed()).build());
+            } else {
+                builder.addRNG(randomNumberGeneratorId, wellRNG.getWellState());
+            }
         }
         builder.setMainRNGState(((Well) stochasticsDataManager.getRandomGenerator()).getWellState());
 
