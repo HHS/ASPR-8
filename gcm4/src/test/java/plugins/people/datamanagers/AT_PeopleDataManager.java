@@ -5,12 +5,9 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
+import nucleus.testsupport.testplugin.TestOutputConsumer;
 import org.apache.commons.math3.util.FastMath;
 import org.junit.jupiter.api.Test;
 
@@ -88,7 +85,39 @@ public final class AT_PeopleDataManager {
 
 		Factory factory = PeopleTestPluginFactory.factory(6970812715559334185L, testPluginData).setPeoplePluginData(peoplePluginData);
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
+	}
 
+	@Test
+	@UnitTestMethod(target = PeopleDataManager.class, name = "init", args = { DataManagerContext.class })
+	public void testInit_State() {
+
+		PeoplePluginData.Builder peoplePluginDataBuilder = PeoplePluginData.builder();
+		PeoplePluginData peoplePluginData = peoplePluginDataBuilder.build();
+		Set<PersonId> expectedPersonIds = new LinkedHashSet<>();
+
+		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			PersonConstructionData personConstructionData = PersonConstructionData.builder().build();
+			for (int i=0; i < 10; i++) {
+				PersonId personId = peopleDataManager.addPerson(personConstructionData);
+				expectedPersonIds.add(personId);
+			}
+		}));
+
+		TestPluginData testPluginData = pluginBuilder.build();
+		Factory factory = PeopleTestPluginFactory.factory(6970812715559334185L, testPluginData).setPeoplePluginData(peoplePluginData);
+		TestOutputConsumer testOutputConsumer = TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
+		Map<PeoplePluginData, Integer> outputItems = testOutputConsumer.getOutputItems(PeoplePluginData.class);
+		assertEquals(1, outputItems.size());
+		PeoplePluginData.Builder expectedBuilder = PeoplePluginData.builder();
+		for (PersonId personId : expectedPersonIds) {
+			expectedBuilder.addPersonId(personId);
+		}
+		PeoplePluginData expectedPluginData = expectedBuilder.build();
+		PeoplePluginData actualPluginData = outputItems.keySet().iterator().next();
+		assertEquals(expectedPluginData, actualPluginData);
 	}
 
 	@Test
