@@ -196,7 +196,8 @@ public class TranslatorCore {
 
     private <U extends Message> void writeJson(Writer writer, U message) {
         try {
-            writer.write(this.data.jsonPrinter.print(message));
+            String messageToWrite = this.data.jsonPrinter.print(message);
+            writer.write(messageToWrite);
             writer.flush();
         } catch (IOException e) {
             throw new RuntimeException(e);
