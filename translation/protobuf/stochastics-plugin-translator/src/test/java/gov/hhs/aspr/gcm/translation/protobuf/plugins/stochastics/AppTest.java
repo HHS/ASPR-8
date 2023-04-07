@@ -12,8 +12,11 @@ import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.gcm.translation.protobuf.core.TranslatorController;
 import nucleus.PluginData;
+import plugins.stochastics.StochasticsDataManager;
 import plugins.stochastics.StochasticsPluginData;
 import plugins.stochastics.support.RandomNumberGeneratorId;
+import plugins.stochastics.support.Well;
+import plugins.stochastics.testsupport.StochasticsTestPluginFactory;
 import plugins.stochastics.testsupport.TestRandomGeneratorId;
 
 public class AppTest {
@@ -29,31 +32,53 @@ public class AppTest {
 
         Path inputFilePath = basePath.resolve("src/main/resources/json");
         Path outputFilePath = basePath.resolve("src/main/resources/json/output");
-        
+
         outputFilePath.toFile().mkdir();
 
         String fileName = "pluginData.json";
 
         TranslatorController translatorController = TranslatorController.builder()
                 .addTranslator(
-                        StochasticsTranslator.getTranslatorRW(inputFilePath.resolve(fileName).toString(), outputFilePath.resolve(fileName).toString()))
+                        StochasticsTranslator.getTranslatorRW(inputFilePath.resolve(fileName).toString(),
+                                outputFilePath.resolve(fileName).toString()))
                 .build();
 
         List<PluginData> pluginDatas = translatorController.readInput().getPluginDatas();
 
-        StochasticsPluginData stochasticsPluginData = (StochasticsPluginData) pluginDatas.get(0);
+        StochasticsPluginData actualPluginData = (StochasticsPluginData) pluginDatas.get(0);
 
         long seed = 524805676405822016L;
 
-        assertEquals(seed, stochasticsPluginData.getSeed());
+        StochasticsPluginData stochasticsPluginDataIn = StochasticsTestPluginFactory
+                .getStandardStochasticsPluginData(seed);
+
+        StochasticsDataManager stochasticsDataManager = new StochasticsDataManager(stochasticsPluginDataIn);
+
+        StochasticsPluginData.Builder builder = StochasticsPluginData.builder();
+
+        for (RandomNumberGeneratorId randomNumberGeneratorId : stochasticsDataManager.getRandomNumberGeneratorIds()) {
+            Well wellRNG = (Well) stochasticsDataManager.getRandomGeneratorFromId(randomNumberGeneratorId);
+            builder.addRNG(randomNumberGeneratorId, wellRNG.getWellState());
+        }
+        builder.setMainRNGState(((Well) stochasticsDataManager.getRandomGenerator()).getWellState());
+
+        StochasticsPluginData expectedPluginData = builder.build();
+
+        assertEquals(expectedPluginData.getWellState(), actualPluginData.getWellState());
 
         Set<TestRandomGeneratorId> expectedRandomGeneratorIds = EnumSet.allOf(TestRandomGeneratorId.class);
         assertFalse(expectedRandomGeneratorIds.isEmpty());
 
-        Set<RandomNumberGeneratorId> actualsGeneratorIds = stochasticsPluginData.getRandomNumberGeneratorIds();
+        Set<RandomNumberGeneratorId> actualsGeneratorIds = actualPluginData.getRandomNumberGeneratorIds();
 
         assertEquals(expectedRandomGeneratorIds, actualsGeneratorIds);
 
+        for (RandomNumberGeneratorId randomNumberGeneratorId : actualsGeneratorIds) {
+            assertEquals(expectedPluginData.getWellState(randomNumberGeneratorId),
+                    actualPluginData.getWellState(randomNumberGeneratorId));
+        }
+
         translatorController.writeOutput();
+
     }
 }
