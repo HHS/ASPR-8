@@ -3,6 +3,7 @@ package plugins.people;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import net.jcip.annotations.Immutable;
 import nucleus.PluginData;
@@ -29,6 +30,19 @@ public final class PeoplePluginData implements PluginData {
 		public Data(Data data) {
 			this.personIds.addAll(data.personIds);
 			locked = data.locked;
+		}
+
+		@Override
+		public boolean equals(Object o) {
+			if (this == o) return true;
+			if (!(o instanceof Data)) return false;
+			Data data = (Data) o;
+			return locked == data.locked && personIds.equals(data.personIds);
+		}
+
+		@Override
+		public int hashCode() {
+			return Objects.hash(personIds, locked);
 		}
 	}
 
@@ -128,5 +142,18 @@ public final class PeoplePluginData implements PluginData {
 	@Override
 	public PluginDataBuilder getEmptyBuilder() {
 		return builder();
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof PeoplePluginData)) return false;
+		PeoplePluginData that = (PeoplePluginData) o;
+		return data.equals(that.data);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(data);
 	}
 }
