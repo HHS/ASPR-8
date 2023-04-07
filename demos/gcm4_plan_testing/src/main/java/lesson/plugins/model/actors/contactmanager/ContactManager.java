@@ -23,7 +23,7 @@ import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonId;
 import plugins.personproperties.datamanagers.PersonPropertiesDataManager;
 import plugins.stochastics.StochasticsDataManager;
-import plugins.stochastics.support.WellRNG;
+import plugins.stochastics.support.Well;
 
 public class ContactManager {
 	private final ContactManagerPluginData contactManagerPluginData;
@@ -139,7 +139,7 @@ public class ContactManager {
 	}
 
 	private void reportRNG() {
-		WellRNG wellRNG = (WellRNG) randomGenerator;
+		Well wellRNG = (Well) randomGenerator;
 		log("rng index =", wellRNG.getWellState().getIndex());
 	}
 

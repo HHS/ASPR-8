@@ -428,7 +428,7 @@ public final class PlanTestDriver {
 	private Plugin getStochasticsPlugin() {
 		WellState wellState = WellState.builder().setSeed(randomGenerator.nextLong()).build();
 		final StochasticsPluginData stochasticsPluginData = StochasticsPluginData	.builder()//
-																					.setMainRNG(wellState)//
+																					.setMainRNGState(wellState)//
 																					.build();
 
 		return StochasticsPlugin.getStochasticsPlugin(stochasticsPluginData);
