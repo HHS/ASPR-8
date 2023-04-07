@@ -175,7 +175,7 @@ public class StochasticsTestPluginFactory {
 		StochasticsPluginData.Builder builder = StochasticsPluginData.builder();
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
 		WellState wellState = WellState.builder().setSeed(randomGenerator.nextLong()).build();
-		builder.setMainRNG(wellState);
+		builder.setMainRNGState(wellState);
 		for (TestRandomGeneratorId testRandomGeneratorId : TestRandomGeneratorId.values()) {
 			wellState = WellState.builder().setSeed(randomGenerator.nextLong()).build();
 			builder.addRNG(testRandomGeneratorId,wellState);

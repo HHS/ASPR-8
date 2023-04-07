@@ -2,13 +2,13 @@ package plugins.stochastics.support;
 
 import org.apache.commons.math3.random.Well44497b;
 
-public class WellRNG extends Well44497b {
+public class Well extends Well44497b {
 
 	private static final long serialVersionUID = -6456786712498941886L;
 
 	private final long seed;
 
-	public WellRNG(WellState wellState) {
+	public Well(WellState wellState) {
 		super(wellState.getSeed());
 		if (!wellState.isSimple()) {
 			int[] vArray = wellState.getVArray();
@@ -34,10 +34,10 @@ public class WellRNG extends Well44497b {
 		if (this == obj) {
 			return true;
 		}
-		if (!(obj instanceof WellRNG)) {
+		if (!(obj instanceof Well)) {
 			return false;
 		}
-		WellRNG other = (WellRNG) obj;
+		Well other = (Well) obj;
 
 		return getWellState().equals(other.getWellState());
 

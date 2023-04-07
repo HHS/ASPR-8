@@ -205,7 +205,7 @@ public class AT_PartitionsTestPluginFactory {
 		StochasticsPluginData.Builder builder = StochasticsPluginData.builder();
 
 		WellState wellState = WellState.builder().setSeed(2990359774692004249L).build();
-		builder.setMainRNG(wellState);
+		builder.setMainRNGState(wellState);
 		
 		wellState = WellState.builder().setSeed(450787180090162111L).build();
 		builder.addRNG(TestRandomGeneratorId.BLITZEN,wellState);

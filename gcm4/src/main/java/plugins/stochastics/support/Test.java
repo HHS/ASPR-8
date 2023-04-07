@@ -20,7 +20,7 @@ public class Test {
 
 		WellState wellState = WellState.builder().setSeed(2352345345757564564L).build();
 
-		WellRNG cr = new WellRNG(wellState);
+		Well cr = new Well(wellState);
 
 		/* changes internal state of cr */
 
@@ -33,7 +33,7 @@ public class Test {
 		
 
 		wellState = cr.getWellState();
-		WellRNG copy = new WellRNG(wellState);
+		Well copy = new Well(wellState);
 
 		System.out.println("\nTEST: INTEGER\n");
 
@@ -51,7 +51,7 @@ public class Test {
 		System.out.println(
 		wellState.getVArray().length);
 
-		WellRNG anotherCopy = new WellRNG(wellState);
+		Well anotherCopy = new Well(wellState);
 
 		System.out.println("\nTEST: DOUBLE\n");
 

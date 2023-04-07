@@ -203,7 +203,7 @@ public class AT_GroupsTestPluginFactory {
 	public void testSetStochasticsPluginData() {
 		StochasticsPluginData.Builder builder = StochasticsPluginData.builder();
 		WellState wellState = WellState.builder().setSeed(8478739978811865148L).build();
-		builder.setMainRNG(wellState);
+		builder.setMainRNGState(wellState);
 		wellState = WellState.builder().setSeed(1336318114409771694L).build();
 		builder.addRNG(TestRandomGeneratorId.BLITZEN,wellState);
 

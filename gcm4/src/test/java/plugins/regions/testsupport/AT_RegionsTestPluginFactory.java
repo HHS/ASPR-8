@@ -221,7 +221,7 @@ public class AT_RegionsTestPluginFactory {
 		StochasticsPluginData.Builder builder = StochasticsPluginData.builder();
 
 		WellState wellState = WellState.builder().setSeed(1286485118818778304L).build();
-		builder.setMainRNG(wellState);
+		builder.setMainRNGState(wellState);
 
 		StochasticsPluginData stochasticsPluginData = builder.build();
 

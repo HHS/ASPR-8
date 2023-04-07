@@ -214,7 +214,7 @@ public class PeopleTestPluginFactory {
 	 */
 	public static StochasticsPluginData getStandardStochasticsPluginData(long seed) {
 		WellState wellState = WellState.builder().setSeed(seed).build();
-		return StochasticsPluginData.builder().setMainRNG(wellState).build();
+		return StochasticsPluginData.builder().setMainRNGState(wellState).build();
 	}
 
 }

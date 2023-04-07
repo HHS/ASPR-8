@@ -290,7 +290,7 @@ public class AT_MaterialsTestPluginFactory {
 		StochasticsPluginData.Builder builder = StochasticsPluginData.builder();
 
 		WellState wellState = WellState.builder().setSeed(2990359774692004249L).build();
-		builder.setMainRNG(wellState);
+		builder.setMainRNGState(wellState);
 		
 		wellState = WellState.builder().setSeed(1090094972994322820L).build();
 		builder.addRNG(TestRandomGeneratorId.BLITZEN, wellState);

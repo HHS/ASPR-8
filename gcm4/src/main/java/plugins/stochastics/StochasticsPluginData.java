@@ -180,7 +180,7 @@ public final class StochasticsPluginData implements PluginData {
 		/**
 		 * Sets the seed value.
 		 */
-		public Builder setMainRNG(WellState wellState) {
+		public Builder setMainRNGState(WellState wellState) {
 			ensureDataMutability();
 			data.wellState = wellState;
 			return this;

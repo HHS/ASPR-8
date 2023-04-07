@@ -28,7 +28,7 @@ public class AT_StochasticsPluginData {
 		WellState wellState = WellState.builder().setSeed(4970625656919510170L).build();
 
 		StochasticsPluginData stochasticsPluginData = StochasticsPluginData	.builder()//
-																			.setMainRNG(wellState)//
+																			.setMainRNGState(wellState)//
 																			.addRNG(TestRandomGeneratorId.BLITZEN, wellState)//
 																			.addRNG(TestRandomGeneratorId.COMET, wellState)//
 																			.build();//
@@ -50,7 +50,7 @@ public class AT_StochasticsPluginData {
 		for (int i = 0; i < 30; i++) {
 			long seed = randomGenerator.nextLong();
 			WellState wellState = WellState.builder().setSeed(seed).build();
-			StochasticsPluginData stochasticsPluginData = StochasticsPluginData.builder().setMainRNG(wellState).build();
+			StochasticsPluginData stochasticsPluginData = StochasticsPluginData.builder().setMainRNGState(wellState).build();
 			assertEquals(wellState, stochasticsPluginData.getWellState());
 		}
 	}
@@ -67,7 +67,7 @@ public class AT_StochasticsPluginData {
 			builder.addRNG(testRandomGeneratorId, wellState);
 		}
 		WellState wellState = WellState.builder().setSeed(randomGenerator.nextLong()).build();
-		builder.setMainRNG(wellState);
+		builder.setMainRNGState(wellState);
 		StochasticsPluginData stochasticsPluginData = builder.build();
 
 		Map<RandomNumberGeneratorId, WellState> actualRandomNumberGeneratorIds = new LinkedHashMap<>();
@@ -90,7 +90,7 @@ public class AT_StochasticsPluginData {
 			builder.addRNG(testRandomGeneratorId, wellState);
 		}
 		WellState wellState = WellState.builder().setSeed(randomGenerator.nextLong()).build();
-		builder.setMainRNG(wellState);
+		builder.setMainRNGState(wellState);
 		StochasticsPluginData stochasticsPluginData = builder.build();
 
 		Map<RandomNumberGeneratorId, WellState> actualRandomNumberGeneratorIds = new LinkedHashMap<>();
@@ -122,7 +122,7 @@ public class AT_StochasticsPluginData {
 		long seed = 235234623445234756L;
 		WellState wellState = WellState.builder().setSeed(seed).build();
 		StochasticsPluginData stochasticsPluginData = StochasticsPluginData	.builder()//
-																			.setMainRNG(wellState)//
+																			.setMainRNGState(wellState)//
 																			.build();
 		assertEquals(seed, stochasticsPluginData.getWellState().getSeed());
 	}
@@ -135,7 +135,7 @@ public class AT_StochasticsPluginData {
 		Map<RandomNumberGeneratorId, WellState> expectedGenerators = new LinkedHashMap<>();
 
 		StochasticsPluginData.Builder builder = StochasticsPluginData.builder();//
-		builder.setMainRNG(WellState.builder().setSeed(randomGenerator.nextLong()).build());
+		builder.setMainRNGState(WellState.builder().setSeed(randomGenerator.nextLong()).build());
 		for (TestRandomGeneratorId testRandomGeneratorId : TestRandomGeneratorId.values()) {
 			WellState wellState = WellState.builder().setSeed(randomGenerator.nextLong()).build();
 			builder.addRNG(testRandomGeneratorId, wellState);

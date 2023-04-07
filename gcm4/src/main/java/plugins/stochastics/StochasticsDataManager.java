@@ -11,7 +11,7 @@ import nucleus.DataManager;
 import nucleus.DataManagerContext;
 import plugins.stochastics.support.RandomNumberGeneratorId;
 import plugins.stochastics.support.StochasticsError;
-import plugins.stochastics.support.WellRNG;
+import plugins.stochastics.support.Well;
 import plugins.stochastics.support.WellState;
 import util.errors.ContractException;
 
@@ -21,9 +21,9 @@ import util.errors.ContractException;
  */
 public final class StochasticsDataManager extends DataManager {
 
-	private Map<RandomNumberGeneratorId, WellRNG> randomGeneratorMap = new LinkedHashMap<>();
+	private Map<RandomNumberGeneratorId, Well> randomGeneratorMap = new LinkedHashMap<>();
 
-	private WellRNG randomGenerator;
+	private Well randomGenerator;
 
 	/**
 	 * Returns the general, non-identified, random number generator was
@@ -82,7 +82,7 @@ public final class StochasticsDataManager extends DataManager {
 	public RandomGenerator addRandomNumberGenerator(RandomNumberGeneratorId randomNumberGeneratorId, WellState wellState) {
 		validateNewRandomNumberGeneratorId(randomNumberGeneratorId);
 		validateWellStateNotNull(wellState);
-		WellRNG result = new WellRNG(wellState);
+		Well result = new Well(wellState);
 		randomGeneratorMap.put(randomNumberGeneratorId, result);
 		return result;
 	}
@@ -125,14 +125,14 @@ public final class StochasticsDataManager extends DataManager {
 		// create RandomGenerators for each of the ids using a hash built from
 		// the id and the replication seed
 		Set<RandomNumberGeneratorId> randomNumberGeneratorIds = stochasticsPluginData.getRandomNumberGeneratorIds();
-		randomGenerator = new WellRNG(stochasticsPluginData.getWellState());		
+		randomGenerator = new Well(stochasticsPluginData.getWellState());		
 		for (RandomNumberGeneratorId randomNumberGeneratorId : randomNumberGeneratorIds) {
 			WellState wellState = stochasticsPluginData.getWellState(randomNumberGeneratorId);
-			randomGeneratorMap.put(randomNumberGeneratorId, new WellRNG(wellState));
+			randomGeneratorMap.put(randomNumberGeneratorId, new Well(wellState));
 		}
 
 		// finally, set up the standard RandomGenerator
-		randomGenerator = new WellRNG(stochasticsPluginData.getWellState());
+		randomGenerator = new Well(stochasticsPluginData.getWellState());
 	}
 
 	@Override
@@ -146,10 +146,10 @@ public final class StochasticsDataManager extends DataManager {
 	private void recordSimulationState(DataManagerContext dataManagerContext) {
 		StochasticsPluginData.Builder builder = StochasticsPluginData.builder();
 		for (RandomNumberGeneratorId randomNumberGeneratorId : randomGeneratorMap.keySet()) {
-			WellRNG wellRNG = randomGeneratorMap.get(randomNumberGeneratorId);
+			Well wellRNG = randomGeneratorMap.get(randomNumberGeneratorId);
 			builder.addRNG(randomNumberGeneratorId, wellRNG.getWellState());
 		}
-		builder.setMainRNG(randomGenerator.getWellState());		
+		builder.setMainRNGState(randomGenerator.getWellState());		
 		dataManagerContext.releaseOutput(builder.build());
 	}
 }

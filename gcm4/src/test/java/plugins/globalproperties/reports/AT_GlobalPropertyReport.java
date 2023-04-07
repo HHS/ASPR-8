@@ -250,7 +250,7 @@ public class AT_GlobalPropertyReport {
 													.setGlobalPropertyReportPluginData(globalPropertyReportPluginData);
 
 		WellState wellState = WellState.builder().setSeed(4059891083116386869L).build();
-		StochasticsPluginData stochasticsPluginData = StochasticsPluginData.builder().setMainRNG(wellState).build();
+		StochasticsPluginData stochasticsPluginData = StochasticsPluginData.builder().setMainRNGState(wellState).build();
 		Plugin stochasticsPlugin = StochasticsPlugin.getStochasticsPlugin(stochasticsPluginData);
 
 		// tell the builder to include a specific global property id
@@ -454,7 +454,7 @@ public class AT_GlobalPropertyReport {
 													.setGlobalPropertyReportPluginData(globalPropertyReportPluginData);
 
 		WellState wellState = WellState.builder().setSeed(4059891083116386869L).build();
-		StochasticsPluginData stochasticsPluginData = StochasticsPluginData.builder().setMainRNG(wellState).build();
+		StochasticsPluginData stochasticsPluginData = StochasticsPluginData.builder().setMainRNGState(wellState).build();
 		Plugin stochasticsPlugin = StochasticsPlugin.getStochasticsPlugin(stochasticsPluginData);
 
 		// tell the builder to include a specific global property id

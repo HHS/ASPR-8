@@ -578,7 +578,7 @@ public class MaterialsTestPluginFactory {
 	 * </ul>
 	 */
 	public static StochasticsPluginData getStandardStochasticsPluginData(long seed) {
-		return StochasticsPluginData.builder().setMainRNG(WellState.builder().setSeed(seed).build()).build();
+		return StochasticsPluginData.builder().setMainRNGState(WellState.builder().setSeed(seed).build()).build();
 	}
 
 }

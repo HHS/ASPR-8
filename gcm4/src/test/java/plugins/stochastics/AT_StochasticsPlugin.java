@@ -20,7 +20,7 @@ public class AT_StochasticsPlugin {
 	public void testGetPlugin() {
 
 		WellState wellState = WellState.builder().setSeed(7501293495427253479L).build();
-		StochasticsPluginData stochasticsPluginData = StochasticsPluginData.builder().setMainRNG(wellState).build();
+		StochasticsPluginData stochasticsPluginData = StochasticsPluginData.builder().setMainRNGState(wellState).build();
 		Plugin stochasticsPlugin = StochasticsPlugin.getStochasticsPlugin(stochasticsPluginData);
 
 		// show the plugin is not null

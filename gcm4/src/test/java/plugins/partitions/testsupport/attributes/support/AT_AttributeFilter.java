@@ -113,7 +113,7 @@ public final class AT_AttributeFilter {
 		plugins.add(peoplePlugin);
 
 		WellState wellState = WellState.builder().setSeed(7698506335486677498L).build();
-		plugins.add(StochasticsPlugin.getStochasticsPlugin(StochasticsPluginData.builder().setMainRNG(wellState).build()));
+		plugins.add(StochasticsPlugin.getStochasticsPlugin(StochasticsPluginData.builder().setMainRNGState(wellState).build()));
 
 		plugins.add(PartitionsPlugin.getPartitionsPlugin());
 

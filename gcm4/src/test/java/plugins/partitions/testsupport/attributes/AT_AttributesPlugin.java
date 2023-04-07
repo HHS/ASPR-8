@@ -70,7 +70,7 @@ public class AT_AttributesPlugin {
 		List<Plugin> plugins = new ArrayList<>();
 		plugins.add(testPlugin);
 		WellState wellState = WellState.builder().setSeed(435346454564566L).build();
-		plugins.add(StochasticsPlugin.getStochasticsPlugin(StochasticsPluginData.builder().setMainRNG(wellState).build()));
+		plugins.add(StochasticsPlugin.getStochasticsPlugin(StochasticsPluginData.builder().setMainRNGState(wellState).build()));
 		plugins.add(PeoplePlugin.getPeoplePlugin(PeoplePluginData.builder().build()));
 		plugins.add(PartitionsPlugin.getPartitionsPlugin());
 		plugins.add(attributesPlugin);

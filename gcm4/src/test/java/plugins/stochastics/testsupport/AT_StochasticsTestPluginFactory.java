@@ -125,7 +125,7 @@ public class AT_StochasticsTestPluginFactory {
 		StochasticsPluginData.Builder builder = StochasticsPluginData.builder();
 
 		WellState wellState = WellState.builder().setSeed(2990359774692004249L).build();
-		builder.setMainRNG(wellState);
+		builder.setMainRNGState(wellState);
 
 		StochasticsPluginData stochasticsPluginData = builder.build();
 
