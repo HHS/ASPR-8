@@ -44,11 +44,15 @@ public final class MaterialManufactureSpecification {
 			data.stageAmount = stageAmount;
 			return this;
 		}
+		
+		public Builder setOnOrder(boolean onOrder) {
+			data.onOrder = onOrder;
+			return this;
+		}
 
 	}
 
 	private static class Data {
-
 		private MaterialId materialId;
 		private boolean onOrder;
 		private double deliveryAmount;
@@ -91,8 +95,8 @@ public final class MaterialManufactureSpecification {
 		return data.onOrder;
 	}
 
-	public void toggleOnOrder() {
-		data.onOrder = !data.onOrder;
+	public void setIsOnOrder(boolean onOrder) {
+		data.onOrder = onOrder;
 	}
 
 }

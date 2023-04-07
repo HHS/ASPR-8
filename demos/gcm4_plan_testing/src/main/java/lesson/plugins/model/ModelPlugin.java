@@ -4,12 +4,12 @@ import lesson.plugins.model.actors.antigenproducer.AntigenProducerPluginData;
 import lesson.plugins.model.actors.contactmanager.ContactManager;
 import lesson.plugins.model.actors.contactmanager.ContactManagerPluginData;
 import lesson.plugins.model.actors.populationloader.PopulationLoader;
+import lesson.plugins.model.actors.vaccinator.Vaccinator;
 import lesson.plugins.model.actors.vaccinator.VaccinatorPluginData;
+import lesson.plugins.model.actors.vaccineproducer.VaccineProducer;
 import lesson.plugins.model.actors.vaccineproducer.VaccineProducerPluginData;
-import lesson.plugins.model.support.ModelError;
 import nucleus.Plugin;
 import nucleus.PluginContext;
-import util.errors.ContractException;
 
 public final class ModelPlugin {
 	private static class Data {
@@ -36,8 +36,8 @@ public final class ModelPlugin {
 				validate();
 				Plugin.Builder builder = Plugin.builder();
 //				builder.addPluginData(data.antigenProducerPluginData);
-//				builder.addPluginData(data.vaccineProducerPluginData);
-//				builder.addPluginData(data.vaccinatorPluginData);
+				builder.addPluginData(data.vaccineProducerPluginData);
+				builder.addPluginData(data.vaccinatorPluginData);
 				builder.addPluginData(data.contactManagerPluginData);
 				builder.setPluginId(ModelPluginId.PLUGIN_ID);
 				builder.setInitializer(ModelPlugin::init);
@@ -58,9 +58,9 @@ public final class ModelPlugin {
 //			if (data.vaccinatorPluginData == null) {
 //				throw new ContractException(ModelError.NULL_VACCINATOR_PLUGIN_DATA);
 //			}
-			if (data.contactManagerPluginData == null) {
-				throw new ContractException(ModelError.NULL_CONTACT_MANAGER_PLUGIN_DATA);
-			}
+//			if (data.contactManagerPluginData == null) {
+//				throw new ContractException(ModelError.NULL_CONTACT_MANAGER_PLUGIN_DATA);
+//			}
 		}
 
 		public Builder setAntigenProducerPluginData(AntigenProducerPluginData antigenProducerPluginData) {
@@ -87,14 +87,14 @@ public final class ModelPlugin {
 
 	private static void init(PluginContext pluginContext) {
 //		AntigenProducerPluginData antigenProducerPluginData = pluginContext.getPluginData(AntigenProducerPluginData.class).get();
-//		VaccineProducerPluginData vaccineProducerPluginData = pluginContext.getPluginData(VaccineProducerPluginData.class).get();
-//		VaccinatorPluginData vaccinatorPluginData = pluginContext.getPluginData(VaccinatorPluginData.class).get();
+		VaccineProducerPluginData vaccineProducerPluginData = pluginContext.getPluginData(VaccineProducerPluginData.class).get();
+		VaccinatorPluginData vaccinatorPluginData = pluginContext.getPluginData(VaccinatorPluginData.class).get();
 		ContactManagerPluginData contactManagerPluginData = pluginContext.getPluginData(ContactManagerPluginData.class).get();
 
 		pluginContext.addActor(new PopulationLoader()::init);
 		pluginContext.addActor(new ContactManager(contactManagerPluginData)::init);
-//		pluginContext.addActor(new Vaccinator(vaccinatorPluginData)::init);
-//		pluginContext.addActor(new VaccineProducer(vaccineProducerPluginData)::init);
+		pluginContext.addActor(new Vaccinator(vaccinatorPluginData)::init);
+		pluginContext.addActor(new VaccineProducer(vaccineProducerPluginData)::init);
 //		pluginContext.addActor(new AntigenProducer(antigenProducerPluginData)::init);
 //		pluginContext.addReport(new DiseaseStateReport(ModelReportLabel.DISEASE_STATE_REPORT, ReportPeriod.END_OF_SIMULATION)::init);//
 //		pluginContext.addReport(new VaccineReport(ModelReportLabel.VACCINE_REPORT, ReportPeriod.DAILY)::init);//

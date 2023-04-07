@@ -1,6 +1,7 @@
 package lesson.plugins.model.actors.vaccinator;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,7 +46,7 @@ public class Vaccinator {
 
 	private final Map<RegionId, MutableLong> availableVaccines = new LinkedHashMap<>();
 
-	private final int vaccinationsPerRegionPerDay = 100;
+	private final int vaccinationsPerRegionPerDay = 25;
 
 	private int infectionPersonCountThreshold;
 
@@ -129,6 +130,8 @@ public class Vaccinator {
 		}
 
 		if (actorContext.getTime() > 0) {
+			
+			
 			manufactureStarted = vaccinatorPluginData.isManufactureStarted();
 			if (!manufactureStarted) {
 				actorContext.subscribe(personPropertiesDataManager.getEventFilterForPersonPropertyUpdateEvent(PersonProperty.DISEASE_STATE), this::handlePersonPropertyUpdateEvent);
@@ -156,13 +159,18 @@ public class Vaccinator {
 			}
 
 		} else {
+			//used when the vaccine producer is off so that there are sufficient vaccines to vaccinate all people
+//			for (final RegionId regionId : regionsDataManager.getRegionIds()) {				
+//				int regionPopulationCount = regionsDataManager.getRegionPopulationCount(regionId);
+//				resourcesDataManager.addResourceToRegion(Resource.VACCINE, regionId, regionPopulationCount);
+//				availableVaccines.get(regionId).setValue(regionPopulationCount);
+//			}
+			
 			actorContext.subscribe(personPropertiesDataManager.getEventFilterForPersonPropertyUpdateEvent(PersonProperty.DISEASE_STATE), this::handlePersonPropertyUpdateEvent);
-
 			final double infectionThreshold = globalPropertiesDataManager.getGlobalPropertyValue(GlobalProperty.INFECTION_THRESHOLD);
 			infectedPersonCount = personPropertiesDataManager.getPeopleWithPropertyValue(PersonProperty.DISEASE_STATE, DiseaseState.INFECTIOUS).size();
 			infectionPersonCountThreshold = (int) (peopleDataManager.getPopulationCount() * infectionThreshold);
 			determineVaccineManufacutureStart();
-
 			scheduleVaccinations();
 		}
 	}
@@ -221,6 +229,7 @@ public class Vaccinator {
 				vaccineTime.setValue(actorContext.getTime());
 			}
 			final List<PersonId> peopleInRegion = regionsDataManager.getPeopleInRegion(regionId);
+			Collections.sort(peopleInRegion);
 			for (final PersonId personId : peopleInRegion) {
 				final boolean vaccine_scheduled = personPropertiesDataManager.getPersonPropertyValue(personId, PersonProperty.VACCINE_SCHEDULED);
 				if (availableVaccine.getValue() <= 0) {
@@ -248,8 +257,24 @@ public class Vaccinator {
 			globalPropertiesDataManager.setGlobalPropertyValue(GlobalProperty.MANUFACTURE_VACCINE, false);
 		}
 	}
+	private boolean logActive = false;
+
+	private void log(Object... values) {
+		if (logActive) {
+			StringBuilder sb = new StringBuilder();
+			sb.append("Vaccinator : ");
+			sb.append(actorContext.getTime());
+			sb.append(" :");
+			for(Object value : values) {
+				sb.append(" ");
+				sb.append(String.valueOf(value));
+			}
+			System.out.println(sb);
+		}
+	}
 
 	private void vaccinatePerson(final PersonId personId) {
+		log("vaccinating person",personId);
 		personPropertiesDataManager.setPersonPropertyValue(personId, PersonProperty.VACCINATED, true);
 		resourcesDataManager.transferResourceToPersonFromRegion(Resource.VACCINE, personId, 1L);
 	}

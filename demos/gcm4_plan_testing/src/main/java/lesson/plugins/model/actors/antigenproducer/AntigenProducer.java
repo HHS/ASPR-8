@@ -119,7 +119,7 @@ public final class AntigenProducer {
 			for (MaterialId materialId : materialRecs.keySet()) {
 				boolean onOrder = antigenProducerPluginData.getOrderStatus(materialId);
 				if(onOrder) {
-					materialRecs.get(materialId).toggleOnOrder();
+					materialRecs.get(materialId).setIsOnOrder(true);
 				}
 			}
 
@@ -193,7 +193,7 @@ public final class AntigenProducer {
 		amountToOrder = FastMath.ceil(amountToOrder / materialRec.getDeliveryAmount()) * materialRec.getDeliveryAmount();
 		final double deliveryTime = materialRec.getDeliveryDelay() + actorContext.getTime();
 		final double amount = amountToOrder;
-		materialRec.toggleOnOrder();
+		materialRec.setIsOnOrder(true);
 
 		MaterialReceiptPlanData materialReceiptPlanData = new MaterialReceiptPlanData(materialId, amount, deliveryTime);
 
@@ -245,7 +245,7 @@ public final class AntigenProducer {
 
 	private void receiveMaterial(final MaterialId materialId, final double amount) {
 		final MaterialManufactureSpecification materialRec = materialRecs.get(materialId);
-		materialRec.toggleOnOrder();
+		materialRec.setIsOnOrder(false);
 
 		final BatchId newBatchId = materialsDataManager.addBatch(BatchConstructionInfo.builder().setMaterialsProducerId(materialsProducerId).setMaterialId(materialId).setAmount(amount).build());
 		materialsDataManager.transferMaterialBetweenBatches(newBatchId, materialRec.getBatchId(), amount);

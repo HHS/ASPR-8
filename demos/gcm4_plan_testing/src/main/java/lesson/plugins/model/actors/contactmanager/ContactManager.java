@@ -3,7 +3,6 @@ package lesson.plugins.model.actors.contactmanager;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.Random;
 import java.util.function.Consumer;
 
@@ -20,7 +19,6 @@ import nucleus.PrioritizedPlanData;
 import plugins.globalproperties.datamanagers.GlobalPropertiesDataManager;
 import plugins.groups.datamanagers.GroupsDataManager;
 import plugins.groups.support.GroupId;
-import plugins.groups.support.GroupSampler;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonId;
 import plugins.personproperties.datamanagers.PersonPropertiesDataManager;
@@ -39,20 +37,36 @@ public class ContactManager {
 	private double infectionInterval;
 	private double communityContactRate;
 
+	private boolean logActive = false;
+
+	private void log(Object... values) {
+		if (logActive) {
+			StringBuilder sb = new StringBuilder();
+			sb.append("Contact Manager : ");
+			sb.append(actorContext.getTime());
+			sb.append(" :");
+			for(Object value : values) {
+				sb.append(" ");
+				sb.append(String.valueOf(value));
+			}
+			System.out.println(sb);
+		}
+	}
+
 	public ContactManager(final ContactManagerPluginData contactManagerPluginData) {
 		this.contactManagerPluginData = contactManagerPluginData;
 	}
 
 	protected void endInfectiousness(final PersonId personId) {
-		System.out.println(actorContext.getTime()+"\t"+"ending infectiousness for person "+personId);
+		log("ending infectiousness for person ", personId);
 		reportRNG();
 		personPropertiesDataManager.setPersonPropertyValue(personId, PersonProperty.DISEASE_STATE, DiseaseState.RECOVERED);
 	}
 
 	protected void infectContact(final PersonId personId) {
-		System.out.println(actorContext.getTime()+"\t"+"resolving infectious contact for person "+personId);
+		log("resolving infectious contact for person ",personId);
 		reportRNG();
-		
+
 		if (randomGenerator.nextDouble() < communityContactRate) {
 			final List<PersonId> people = peopleDataManager.getPeople();
 			people.remove(personId);
@@ -61,7 +75,7 @@ public class ContactManager {
 				final DiseaseState diseaseState = personPropertiesDataManager.getPersonPropertyValue(contactedPerson, PersonProperty.DISEASE_STATE);
 				final boolean vaccinated = personPropertiesDataManager.getPersonPropertyValue(contactedPerson, PersonProperty.VACCINATED);
 				if ((diseaseState == DiseaseState.SUSCEPTIBLE) && !vaccinated) {
-					System.out.println(actorContext.getTime()+"\t"+"person "+personId+" infects person "+contactedPerson);
+					log("person", personId, "infects person", contactedPerson);
 					infectPerson(contactedPerson);
 				}
 			}
@@ -72,18 +86,20 @@ public class ContactManager {
 			final GroupId groupId = groupsForPerson.get(index);
 			List<PersonId> peopleForGroup = groupsDataManager.getPeopleForGroup(groupId);
 			peopleForGroup.remove(personId);
-			
-			//final GroupSampler groupSampler = GroupSampler.builder().setExcludedPersonId(personId).build();
-			//final Optional<PersonId> optional = groupsDataManager.sampleGroup(groupId, groupSampler);
-			//if (optional.isPresent()) {
-			if(!peopleForGroup.isEmpty()) {
+
+			// final GroupSampler groupSampler =
+			// GroupSampler.builder().setExcludedPersonId(personId).build();
+			// final Optional<PersonId> optional =
+			// groupsDataManager.sampleGroup(groupId, groupSampler);
+			// if (optional.isPresent()) {
+			if (!peopleForGroup.isEmpty()) {
 				Collections.sort(peopleForGroup);
 				index = randomGenerator.nextInt(peopleForGroup.size());
 				final PersonId contactedPerson = peopleForGroup.get(index);
 				final DiseaseState diseaseState = personPropertiesDataManager.getPersonPropertyValue(contactedPerson, PersonProperty.DISEASE_STATE);
 				final boolean vaccinated = personPropertiesDataManager.getPersonPropertyValue(contactedPerson, PersonProperty.VACCINATED);
 				if ((diseaseState == DiseaseState.SUSCEPTIBLE) && !vaccinated) {
-					System.out.println(actorContext.getTime()+"\t"+"person "+personId+" infects person "+contactedPerson);
+					log("person", personId, "infects person" + contactedPerson);
 					infectPerson(contactedPerson);
 				}
 			}
@@ -91,7 +107,7 @@ public class ContactManager {
 	}
 
 	protected void infectPerson(final PersonId personId) {
-		System.out.println(actorContext.getTime()+"\t"+"infecting person "+personId);
+		log("infecting person",personId);
 		reportRNG();
 		personPropertiesDataManager.setPersonPropertyValue(personId, PersonProperty.DISEASE_STATE, DiseaseState.INFECTIOUS);
 		final int infectiousDays = randomGenerator.nextInt(maxInfectiousPeriod - minInfectiousPeriod) + minInfectiousPeriod;
@@ -100,7 +116,7 @@ public class ContactManager {
 		double planTime = actorContext.getTime();
 
 		for (int j = 0; j < infectionCount; j++) {
-			System.out.println(actorContext.getTime()+"\t"+"planning infectious contact for person "+personId);
+			log("planning infectious contact for person", personId);
 			planTime += infectionInterval;
 
 			final ContactPlanData contactPlanData = new ContactPlanData(personId, ContactAction.INFECT_CONTACT, planTime);
@@ -121,23 +137,19 @@ public class ContactManager {
 																.build();//
 		actorContext.addPlan(endInfectiousnessPlan);
 	}
-	
+
 	private void reportRNG() {
-		WellRNG wellRNG =
-		(WellRNG)randomGenerator;
-		System.out.println("rng index = "+
-		wellRNG.getWellState().getIndex());
+		WellRNG wellRNG = (WellRNG) randomGenerator;
+		log("rng index =", wellRNG.getWellState().getIndex());
 	}
 
 	public void init(final ActorContext actorContext) {
-		//System.out.println("ContactManager.init()");
+		
 
 		this.actorContext = actorContext;
 
 		final StochasticsDataManager stochasticsDataManager = actorContext.getDataManager(StochasticsDataManager.class);
 		randomGenerator = stochasticsDataManager.getRandomGenerator();
-		//reportRNG();
-		
 		
 
 		peopleDataManager = actorContext.getDataManager(PeopleDataManager.class);
@@ -175,7 +187,7 @@ public class ContactManager {
 
 			for (int i = 0; i < initialInfections; i++) {
 				final PersonId personId = susceptibleAdults.get(i);
-				System.out.println(actorContext.getTime()+"\t"+"selecting person "+personId+" for initial infection");
+				log("selecting person",personId,"for initial infection");
 				final double planTime = actorContext.getTime() + (randomGenerator.nextDouble() * 0.5) + 0.25;
 
 				final ContactPlanData contactPlanData = new ContactPlanData(personId, ContactAction.INFECT_PERSON, planTime);
@@ -185,7 +197,7 @@ public class ContactManager {
 															.setPlanData(contactPlanData)//
 															.build();//
 
-				actorContext.addPlan(contactPlan);				
+				actorContext.addPlan(contactPlan);
 			}
 		} else {
 			infectionInterval = contactManagerPluginData.getInfectionInterval();
@@ -207,7 +219,7 @@ public class ContactManager {
 					break;
 				case INFECT_PERSON:
 					consumer = (c) -> infectPerson(contactPlanData.getPersonId());
-					
+
 					break;
 				default:
 					throw new RuntimeException("unhandled case " + contactPlanData.getContactAction());
@@ -223,7 +235,7 @@ public class ContactManager {
 
 			}
 		}
-		
+
 	}
 
 	private void recordSimulationState(final ActorContext actorContext) {

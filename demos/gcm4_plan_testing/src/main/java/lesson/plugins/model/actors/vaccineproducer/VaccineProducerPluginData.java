@@ -1,8 +1,10 @@
 package lesson.plugins.model.actors.vaccineproducer;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import lesson.plugins.model.support.ModelError;
@@ -71,7 +73,7 @@ public final class VaccineProducerPluginData implements PluginData {
 			data.lastBatchAssemblyEndTime = lastBatchAssemblyEndTime;
 			return this;
 		}
-		
+
 		public Builder setAntigenBatchId(BatchId antigenBatchId) {
 			ensureDataMutability();
 			data.antigenBatchId = antigenBatchId;
@@ -86,11 +88,55 @@ public final class VaccineProducerPluginData implements PluginData {
 
 		public Builder setOrderStatus(MaterialId materialId, boolean onOrder) {
 			ensureDataMutability();
-			if (onOrder) {
-				data.materialsOnOrder.add(materialId);
-			} else {
-				data.materialsOnOrder.remove(materialId);
+			if (materialId == null) {
+				throw new ContractException(MaterialsError.NULL_MATERIAL_ID);
 			}
+			data.materialsOnOrder.put(materialId, onOrder);
+			return this;
+		}
+
+		public Builder setDeliveryAmount(MaterialId materialId, double deliveryAmount) {
+			ensureDataMutability();
+			if (materialId == null) {
+				throw new ContractException(MaterialsError.NULL_MATERIAL_ID);
+			}
+			data.deliveryAmounts.put(materialId, deliveryAmount);
+			return this;
+		}
+
+		public Builder setDeliveryDelay(MaterialId materialId, double deliveryDelay) {
+			ensureDataMutability();
+			if (materialId == null) {
+				throw new ContractException(MaterialsError.NULL_MATERIAL_ID);
+			}
+			data.deliveryDelays.put(materialId, deliveryDelay);
+			return this;
+		}
+
+		public Builder setStageAmount(MaterialId materialId, double stageAmount) {
+			ensureDataMutability();
+			if (materialId == null) {
+				throw new ContractException(MaterialsError.NULL_MATERIAL_ID);
+			}
+			data.stageAmounts.put(materialId, stageAmount);
+			return this;
+		}
+
+		public Builder addMaterialId(MaterialId materialId) {
+			ensureDataMutability();
+			if (materialId == null) {
+				throw new ContractException(MaterialsError.NULL_MATERIAL_ID);
+			}
+			data.materialIds.add(materialId);
+			return this;
+		}
+
+		public Builder setMaterialBatchId(MaterialId materialId, BatchId batchId) {
+			ensureDataMutability();
+			if (materialId == null) {
+				throw new ContractException(MaterialsError.NULL_MATERIAL_ID);
+			}
+			data.materialBatchIds.put(materialId, batchId);
 			return this;
 		}
 
@@ -114,17 +160,41 @@ public final class VaccineProducerPluginData implements PluginData {
 			if (data.lastBatchAssemblyEndTime < 0) {
 				throw new ContractException(ModelError.ANTIGEN_PRODUCER_LAST_BATCH_ASSEMBLY_END_TIME);
 			}
+
+			if (!data.materialsOnOrder.keySet().equals(data.materialIds)) {
+				throw new ContractException(ModelError.MATERIALS_MISMATCH);
+			}
 			
+			if (!data.deliveryAmounts.keySet().equals(data.materialIds)) {
+				throw new ContractException(ModelError.MATERIALS_MISMATCH);
+			}
+			
+			if (!data.deliveryDelays.keySet().equals(data.materialIds)) {
+				throw new ContractException(ModelError.MATERIALS_MISMATCH);
+			}
+			
+			if (!data.stageAmounts.keySet().equals(data.materialIds)) {
+				throw new ContractException(ModelError.MATERIALS_MISMATCH);
+			}
+			
+			if (!data.materialBatchIds.keySet().equals(data.materialIds)) {
+				throw new ContractException(ModelError.MATERIALS_MISMATCH);
+			}
 		}
 
 	}
 
-	private static class Data {		
-		private Set<MaterialId> materialsOnOrder = new LinkedHashSet<>();
+	private static class Data {
+		private Set<MaterialId> materialIds = new LinkedHashSet<>();
+		private Map<MaterialId, Boolean> materialsOnOrder = new LinkedHashMap<>();
+		private Map<MaterialId, Double> deliveryAmounts = new LinkedHashMap<>();
+		private Map<MaterialId, Double> deliveryDelays = new LinkedHashMap<>();
+		private Map<MaterialId, Double> stageAmounts = new LinkedHashMap<>();
+		private Map<MaterialId, BatchId> materialBatchIds = new LinkedHashMap<>();
 		private MaterialsProducerId materialsProducerId;
 		private double lastBatchAssemblyEndTime;
 		private BatchId antigenBatchId;
-		
+
 		private final List<PrioritizedPlanData> prioritizedPlanDatas = new ArrayList<>();
 
 		private boolean locked;
@@ -136,31 +206,14 @@ public final class VaccineProducerPluginData implements PluginData {
 			prioritizedPlanDatas.addAll(data.prioritizedPlanDatas);
 			lastBatchAssemblyEndTime = data.lastBatchAssemblyEndTime;
 			materialsProducerId = data.materialsProducerId;
-			materialsOnOrder.addAll(data.materialsOnOrder);
+			materialsOnOrder.putAll(data.materialsOnOrder);
 			antigenBatchId = data.antigenBatchId;
+			deliveryAmounts.putAll(data.deliveryAmounts);
+			deliveryDelays.putAll(data.deliveryDelays);
+			stageAmounts.putAll(data.stageAmounts);
+			materialBatchIds.putAll(data.materialBatchIds);
 			locked = data.locked;
 		}
-
-		@Override
-		public String toString() {
-			StringBuilder builder = new StringBuilder();
-			builder.append("Data [materialsOnOrder=");
-			builder.append(materialsOnOrder);
-			builder.append(", materialsProducerId=");
-			builder.append(materialsProducerId);
-			builder.append(", lastBatchAssemblyEndTime=");
-			builder.append(lastBatchAssemblyEndTime);
-			builder.append(", antigenBatchId=");
-			builder.append(antigenBatchId);
-			builder.append(", prioritizedPlanDatas=");
-			builder.append(prioritizedPlanDatas);
-			builder.append(", locked=");
-			builder.append(locked);
-			builder.append("]");
-			return builder.toString();
-		}
-
-		
 
 	}
 
@@ -240,11 +293,47 @@ public final class VaccineProducerPluginData implements PluginData {
 	}
 
 	public boolean getOrderStatus(MaterialId materialId) {
-		return data.materialsOnOrder.contains(materialId);
-	}
-	
-	public BatchId getAntigenBatchId() {		
-		return data.antigenBatchId;		
+		Boolean result = data.materialsOnOrder.get(materialId);
+		if (result == null) {
+			result = false;
+		}
+		return result;
 	}
 
+	public BatchId getAntigenBatchId() {
+		return data.antigenBatchId;
+	}
+
+	public double getDeliveryAmount(MaterialId materialId) {
+
+		Double result = data.deliveryAmounts.get(materialId);
+		if (result == null) {
+			result = 0.0;
+		}
+		return result;
+	}
+
+	public double getDeliveryDelay(MaterialId materialId) {
+		Double result = data.deliveryDelays.get(materialId);
+		if (result == null) {
+			result = 0.0;
+		}
+		return result;
+	}
+
+	public double getStageAmount(MaterialId materialId) {
+		Double result = data.stageAmounts.get(materialId);
+		if (result == null) {
+			result = 0.0;
+		}
+		return result;
+	}
+
+	public BatchId getMaterialBatchId(MaterialId materialId) {
+		return data.materialBatchIds.get(materialId);
+	}
+
+	public Set<MaterialId> getMaterialIds() {
+		return new LinkedHashSet<>(data.materialIds);
+	}
 }
