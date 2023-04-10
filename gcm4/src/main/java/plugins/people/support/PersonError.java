@@ -16,8 +16,12 @@ public enum PersonError implements ContractError {
 	NULL_AUXILIARY_DATA("Null auxiliary data"),
 	NULL_PERSON_CONSTRUCTION_DATA("Null person construction data"),
 	NULL_PERSON_ID("Null person id"),
+	NULL_PERSON_RANGE("Null person range"),
 	UNKNOWN_PERSON_ID("Unknown person id"),
 	DUPLICATE_PERSON_ID("Duplicate person addition"),
+	ILLEGAL_PERSON_RANGE("Illegal person range"),
+	INVALID_PERSON_COUNT("The person count must exceed the highest person range value"),
+	NEGATIVE_PERSON_COUNT("Negative person count"),
 	NON_ONE_TO_ONE_MAPPING("Mapping of initial data person ids to simulation person is not one-to-one"),
 	NULL_PEOPLE_PLUGIN_DATA("null people plugin data"),
 

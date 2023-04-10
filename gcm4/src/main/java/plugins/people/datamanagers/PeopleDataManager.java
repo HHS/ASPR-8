@@ -17,6 +17,7 @@ import plugins.people.events.PersonRemovalEvent;
 import plugins.people.support.PersonConstructionData;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
+import plugins.people.support.PersonRange;
 import util.errors.ContractException;
 
 /**
@@ -200,13 +201,17 @@ public final class PeopleDataManager extends DataManager {
 		dataManagerContext.subscribe(PersonAdditionMutationEvent.class, this::handlePersonAdditionMutationEvent);
 		dataManagerContext.subscribe(PersonRemovalMutationEvent.class, this::handlePersonRemovalMutationEvent);
 
-		this.personIds.addAll(peoplePluginData.getPersonIds());
-
-		for (PersonId personId : personIds) {
-			if (personId != null) {
-				globalPopulationRecord.populationCount++;
-			}
+		int personCount = peoplePluginData.getPersonCount();
+		globalPopulationRecord.populationCount = personCount;
+		personIds = new ArrayList<>(personCount);
+		for(int i = 0;i<personCount;i++) {
+			personIds.add(null);
 		}
+		for(PersonId personId : peoplePluginData.getPersonIds()) {
+			personIds.set(personId.getValue(), personId);
+		}		
+
+		
 		globalPopulationRecord.projectedPopulationCount = personIds.size();
 		globalPopulationRecord.assignmentTime = dataManagerContext.getTime();
 		if (dataManagerContext.stateRecordingIsScheduled()) {
@@ -216,11 +221,26 @@ public final class PeopleDataManager extends DataManager {
 
 	private void recordSimulationState(DataManagerContext dataManagerContext) {
 		PeoplePluginData.Builder builder = PeoplePluginData.builder();
+		builder.setPersonCount(personIds.size());
 
-		for (final PersonId personId : personIds) {
+		int a = -1;
+		int b = -1;
+		PersonId lastPersonId = null;
+		for (int i = 0; i < personIds.size(); i++) {
+			PersonId personId = personIds.get(i);
 			if (personId != null) {
-				builder.addPersonId(personId);
+				if (lastPersonId == null) {
+					a = i;
+					b = i;
+				} else {
+					b = i;
+				}
+			}else {
+				if(lastPersonId != null) {
+					builder.addPersonRange(new PersonRange(a, b));
+				}
 			}
+			lastPersonId = personId;
 		}
 		dataManagerContext.releaseOutput(builder.build());
 	}
