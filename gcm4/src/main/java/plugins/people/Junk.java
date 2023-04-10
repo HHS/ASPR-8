@@ -1,5 +1,6 @@
 package plugins.people;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import nucleus.DataManagerContext;
@@ -21,10 +22,22 @@ public class Junk {
 		System.out.println(peoplePluginData);
 		
 		List<PersonId> personIds = peoplePluginData.getPersonIds();
+		List<PersonId> expandedPeople = getExpandedPeople(personIds, peoplePluginData.getPersonCount());
 		//System.out.println(personIds);
-		PeoplePluginData peoplePluginData2 = getPeoplePluginData(personIds);
+		PeoplePluginData peoplePluginData2 = getPeoplePluginData(expandedPeople);
 		System.out.println(peoplePluginData2);
 
+	}
+	
+	private static List<PersonId> getExpandedPeople(List<PersonId> people, int personCount){
+		List<PersonId> result = new ArrayList<>(personCount);
+		for(int i = 0;i<personCount;i++) {
+			result.add(null);
+		}
+		for(PersonId personId : people) {
+			result.set(personId.getValue(), personId);
+		}
+		return result;
 	}
 	
 	private static PeoplePluginData getPeoplePluginData(List<PersonId> personIds) {
