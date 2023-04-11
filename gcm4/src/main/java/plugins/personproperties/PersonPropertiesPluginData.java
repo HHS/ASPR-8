@@ -1,13 +1,6 @@
 package plugins.personproperties;
 
-import java.util.ArrayList;
-import java.util.BitSet;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import net.jcip.annotations.Immutable;
 import nucleus.PluginData;
@@ -67,6 +60,19 @@ public class PersonPropertiesPluginData implements PluginData {
 				personPropertyValues.add(newList);
 			}
 			locked = data.locked;
+		}
+
+		@Override
+		public boolean equals(Object o) {
+			if (this == o) return true;
+			if (!(o instanceof Data)) return false;
+			Data data = (Data) o;
+			return maxPersonIndex == data.maxPersonIndex && locked == data.locked && personPropertyDefinitions.equals(data.personPropertyDefinitions) && personPropertyValues.equals(data.personPropertyValues) && emptyList.equals(data.emptyList) && people.equals(data.people);
+		}
+
+		@Override
+		public int hashCode() {
+			return Objects.hash(personPropertyDefinitions, personPropertyValues, emptyList, people, maxPersonIndex, locked);
 		}
 	}
 
@@ -424,4 +430,16 @@ public class PersonPropertiesPluginData implements PluginData {
 		return builder();
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof PersonPropertiesPluginData)) return false;
+		PersonPropertiesPluginData that = (PersonPropertiesPluginData) o;
+		return data.equals(that.data);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(data);
+	}
 }
