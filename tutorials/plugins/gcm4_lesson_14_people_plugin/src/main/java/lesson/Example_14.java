@@ -43,7 +43,7 @@ public final class Example_14 {
 						context.get(StochasticsPluginData.Builder.class);
 				long seedValue = seedValues.get(i);
 				WellState wellState = WellState.builder().setSeed(seedValue).build();
-				stochasticsPluginDataBuilder.setMainRNG(wellState);
+				stochasticsPluginDataBuilder.setMainRNGState(wellState);
 
 				ArrayList<String> result = new ArrayList<>();
 				result.add(Integer.toString(i));
@@ -84,7 +84,7 @@ public final class Example_14 {
 		// create the stochastics plugin and build a dimension with 5 seed
 		// values
 		WellState wellState = WellState.builder().setSeed(463390897335624435L).build();
-		StochasticsPluginData stochasticsPluginData = StochasticsPluginData.builder().setMainRNG(wellState).build();
+		StochasticsPluginData stochasticsPluginData = StochasticsPluginData.builder().setMainRNGState(wellState).build();
 		Plugin stochasticsPlugin = StochasticsPlugin.getStochasticsPlugin(stochasticsPluginData);
 
 		Dimension stochasticsDimension = getStochasticsDimension(5, 8265427588292179209L);

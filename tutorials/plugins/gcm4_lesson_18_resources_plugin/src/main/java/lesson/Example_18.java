@@ -94,7 +94,7 @@ public final class Example_18 {
 		WellState wellState = WellState.builder().setSeed(randomGenerator.nextLong()).build();
 		StochasticsPluginData stochasticsPluginData = StochasticsPluginData	.builder()//
 
-																			.setMainRNG(wellState)//
+																			.setMainRNGState(wellState)//
 																			.build();
 
 		return StochasticsPlugin.getStochasticsPlugin(stochasticsPluginData);

@@ -64,7 +64,7 @@ public final class Example_12 {
 		Plugin modelPlugin = ModelPlugin.getModelPlugin();
 		
 		WellState wellState = WellState.builder().setSeed(452363456L).build();
-		StochasticsPluginData stochasticsPluginData = StochasticsPluginData.builder().setMainRNG(wellState).build();
+		StochasticsPluginData stochasticsPluginData = StochasticsPluginData.builder().setMainRNGState(wellState).build();
 		Plugin stochasticsPlugin = StochasticsPlugin.getStochasticsPlugin(stochasticsPluginData);
 
 		FamilyPluginData familyPluginData = FamilyPluginData.builder()//

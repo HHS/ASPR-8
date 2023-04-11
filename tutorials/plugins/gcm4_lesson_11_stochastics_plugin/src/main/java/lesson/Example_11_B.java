@@ -80,7 +80,7 @@ public final class Example_11_B {
 						context.get(StochasticsPluginData.Builder.class);
 				long seedValue = seedValues.get(i);
 				WellState wellState = WellState.builder().setSeed(seedValue).build();
-				stochasticsPluginDataBuilder.setMainRNG(wellState);
+				stochasticsPluginDataBuilder.setMainRNGState(wellState);
 
 				ArrayList<String> result = new ArrayList<>();
 				result.add(Integer.toString(i));
@@ -106,7 +106,7 @@ public final class Example_11_B {
 
 		Plugin modelPlugin = ModelPlugin.getModelPlugin();
 		WellState wellState = WellState.builder().setSeed(0).build();
-		StochasticsPluginData stochasticsPluginData = StochasticsPluginData.builder().setMainRNG(wellState).build();
+		StochasticsPluginData stochasticsPluginData = StochasticsPluginData.builder().setMainRNGState(wellState).build();
 		Plugin stochasticsPlugin = StochasticsPlugin.getStochasticsPlugin(stochasticsPluginData);
 
 		Dimension policyDimension = getPolicyDimension();

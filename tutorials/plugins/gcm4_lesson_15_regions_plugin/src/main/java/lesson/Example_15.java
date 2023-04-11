@@ -119,7 +119,7 @@ public final class Example_15 {
 		
 		WellState wellState = WellState.builder().setSeed(randomGenerator.nextLong()).build();
 		StochasticsPluginData stochasticsPluginData = StochasticsPluginData	.builder()//
-																			.setMainRNG(wellState).build();
+																			.setMainRNGState(wellState).build();
 		return StochasticsPlugin.getStochasticsPlugin(stochasticsPluginData);
 	}
 
@@ -138,7 +138,7 @@ public final class Example_15 {
 				StochasticsPluginData.Builder stochasticsPluginDataBuilder = context.get(StochasticsPluginData.Builder.class);
 				long seedValue = seedValues.get(i);
 				WellState wellState = WellState.builder().setSeed(seedValue).build();
-				stochasticsPluginDataBuilder.setMainRNG(wellState);
+				stochasticsPluginDataBuilder.setMainRNGState(wellState);
 
 				ArrayList<String> result = new ArrayList<>();
 				result.add(Integer.toString(i));
