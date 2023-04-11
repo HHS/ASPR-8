@@ -179,7 +179,10 @@ public class AT_RegionsDataManager {
 				.defineRegionProperty(regionPropertyDefinitionInitialization2.getRegionPropertyId(), regionPropertyDefinitionInitialization2.getPropertyDefinition())
 				.defineRegionProperty(regionPropertyDefinitionInitialization3.getRegionPropertyId(), regionPropertyDefinitionInitialization3.getPropertyDefinition())
 				.setRegionPropertyValue(TestRegionId.REGION_2, regionPropertyDefinitionInitialization2.getRegionPropertyId(), 5)
+				.setRegionPropertyValue(TestRegionId.REGION_3, regionPropertyDefinitionInitialization2.getRegionPropertyId(), 67)
+				.setRegionPropertyValue(TestRegionId.REGION_2, regionPropertyDefinitionInitialization3.getRegionPropertyId(), 0.0)
 				.setRegionPropertyValue(TestRegionId.REGION_3, regionPropertyDefinitionInitialization3.getRegionPropertyId(), 123.5)
+
 				.build();
 		actualPluginData = outputItems.keySet().iterator().next();
 		assertEquals(expectedPluginData, actualPluginData);
