@@ -5,13 +5,15 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
+import nucleus.PluginData;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
+import plugins.people.support.PersonRange;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 
@@ -26,115 +28,192 @@ public final class AT_PeoplePluginData {
 	@UnitTestMethod(target = PeoplePluginData.Builder.class, name = "build", args = {})
 	public void testBuild() {
 
+		// RandomGenerator randomGenerator =
+		// RandomGeneratorProvider.getRandomGenerator(1713830743266777795L);
+
+		// show that an empty builder returns an empty set of people
 		PeoplePluginData peoplePluginData = PeoplePluginData.builder().build();
+		assertEquals(0, peoplePluginData.getPersonCount());
 		assertTrue(peoplePluginData.getPersonIds().isEmpty());
+		assertTrue(peoplePluginData.getPersonRanges().isEmpty());
 
-		Set<PersonId> expectedPersonIds = new LinkedHashSet<>();
-		for (int i = 0; i < 10; i++) {
-			expectedPersonIds.add(new PersonId(3 * 1 + 5));
-		}
-		PeoplePluginData.Builder builder = PeoplePluginData.builder();
-		for (PersonId personId : expectedPersonIds) {
-			builder.addPersonId(personId);
-		}
-
-		peoplePluginData = builder.build();
-		Set<PersonId> actualPersonIds = new LinkedHashSet<>();
-		for (PersonId personId : peoplePluginData.getPersonIds()) {
-			if (personId != null) {
-				actualPersonIds.add(personId);
-			}
-		}
-		assertEquals(expectedPersonIds, actualPersonIds);
-
+		// precondition test: if an invalid person count is set
+		ContractException contractException = assertThrows(ContractException.class, () -> {
+			PeoplePluginData.builder().addPersonRange(new PersonRange(5, 19)).setPersonCount(10).build();
+		});
+		assertEquals(PersonError.INVALID_PERSON_COUNT, contractException.getErrorType());
 	}
 
 	@Test
-	@UnitTestMethod(target = PeoplePluginData.Builder.class, name = "addPersonId", args = { PersonId.class })
-	public void testAddPersonId() {
-		PeoplePluginData peoplePluginData = PeoplePluginData.builder().build();
-		assertTrue(peoplePluginData.getPersonIds().isEmpty());
+	@UnitTestMethod(target = PeoplePluginData.Builder.class, name = "addPersonRange", args = { PersonRange.class })
+	public void testAddPersonRange() {
 
-		Set<PersonId> expectedPersonIds = new LinkedHashSet<>();
-		for (int i = 0; i < 10; i++) {
-			expectedPersonIds.add(new PersonId(3 * i + 5));
-		}
-		PeoplePluginData.Builder builder = PeoplePluginData.builder();
-		for (PersonId personId : expectedPersonIds) {
-			builder.addPersonId(personId);
-			// adding duplicate data to show that the value persists
-			builder.addPersonId(personId);
-		}
+		List<PersonRange> expectedPersonRanges = new ArrayList<>();
+		expectedPersonRanges.add(new PersonRange(3, 8));
+		expectedPersonRanges.add(new PersonRange(12, 18));
+		expectedPersonRanges.add(new PersonRange(20, 22));
 
-		peoplePluginData = builder.build();
+		List<PersonRange> actualPersonRanges = //
+				PeoplePluginData.builder()//
+								.addPersonRange(new PersonRange(12, 15))//
+								.addPersonRange(new PersonRange(3, 8))//
+								.addPersonRange(new PersonRange(13, 18))//
+								.addPersonRange(new PersonRange(20, 22))//
+								.build()//
+								.getPersonRanges();
 
-		Set<PersonId> actualPersonIds = new LinkedHashSet<>();
-		for (PersonId personId : peoplePluginData.getPersonIds()) {
-			if (personId != null) {
-				actualPersonIds.add(personId);
-			}
-		}
+		assertEquals(expectedPersonRanges, actualPersonRanges);
 
-		assertEquals(expectedPersonIds, actualPersonIds);
+		expectedPersonRanges = new ArrayList<>();
+		expectedPersonRanges.add(new PersonRange(1, 13));
 
-		// precondition tests
-		builder.addPersonId(new PersonId(5));
+		actualPersonRanges = PeoplePluginData	.builder()//
+												.addPersonRange(new PersonRange(3, 5))//
+												.addPersonRange(new PersonRange(1, 5))//
+												.addPersonRange(new PersonRange(4, 8)).addPersonRange(new PersonRange(9, 13))//
+												.build()//
+												.getPersonRanges();
 
-		// null person id
-		ContractException contractException = assertThrows(ContractException.class, () -> builder.addPersonId(null));
-		assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
+		assertEquals(expectedPersonRanges, actualPersonRanges);
+
+		// precondition test : if a person range is null
+		ContractException contractException = assertThrows(ContractException.class, () -> PeoplePluginData.builder().addPersonRange(null));
+		assertEquals(PersonError.NULL_PERSON_RANGE, contractException.getErrorType());
 
 	}
 
 	@Test
 	@UnitTestMethod(target = PeoplePluginData.class, name = "getPersonIds", args = {})
 	public void testGetPersonIds() {
-		PeoplePluginData peoplePluginData = PeoplePluginData.builder().build();
-		assertTrue(peoplePluginData.getPersonIds().isEmpty());
 
-		Set<PersonId> expectedPersonIds = new LinkedHashSet<>();
-		for (int i = 0; i < 10; i++) {
-			expectedPersonIds.add(new PersonId(3 * 1 + 5));
+		List<PersonId> expectedPersonIds = new ArrayList<>();
+		for (int i = 3; i <= 8; i++) {
+			expectedPersonIds.add(new PersonId(i));
 		}
-		PeoplePluginData.Builder builder = PeoplePluginData.builder();
-		for (PersonId personId : expectedPersonIds) {
-			builder.addPersonId(personId);
+		for (int i = 12; i <= 18; i++) {
+			expectedPersonIds.add(new PersonId(i));
+		}
+		for (int i = 20; i <= 22; i++) {
+			expectedPersonIds.add(new PersonId(i));
 		}
 
-		peoplePluginData = builder.build();
-		Set<PersonId> actualPersonIds = new LinkedHashSet<>();
-		for (PersonId personId : peoplePluginData.getPersonIds()) {
-			if (personId != null) {
-				actualPersonIds.add(personId);
-			}
-		}
+		List<PersonId> actualPersonIds = //
+				PeoplePluginData.builder()//
+								.addPersonRange(new PersonRange(12, 15))//
+								.addPersonRange(new PersonRange(3, 8))//
+								.addPersonRange(new PersonRange(13, 18))//
+								.addPersonRange(new PersonRange(20, 22))//
+								.build()//
+								.getPersonIds();
+
 		assertEquals(expectedPersonIds, actualPersonIds);
+
+		expectedPersonIds = new ArrayList<>();
+		for (int i = 1; i <= 13; i++) {
+			expectedPersonIds.add(new PersonId(i));
+		}
+
+		actualPersonIds = PeoplePluginData	.builder()//
+											.addPersonRange(new PersonRange(3, 5))//
+											.addPersonRange(new PersonRange(1, 5))//
+											.addPersonRange(new PersonRange(4, 8)).addPersonRange(new PersonRange(9, 13))//
+											.build()//
+											.getPersonIds();
+
+		assertEquals(expectedPersonIds, actualPersonIds);
+
+	}
+
+	@Test
+	@UnitTestMethod(target = PeoplePluginData.class, name = "getPersonRanges", args = {})
+	public void testGetPersonRanges() {
+		List<PersonRange> expectedPersonRanges = new ArrayList<>();
+		expectedPersonRanges.add(new PersonRange(3, 8));
+		expectedPersonRanges.add(new PersonRange(12, 18));
+		expectedPersonRanges.add(new PersonRange(20, 22));
+
+		List<PersonRange> actualPersonRanges = //
+				PeoplePluginData.builder()//
+								.addPersonRange(new PersonRange(12, 15))//
+								.addPersonRange(new PersonRange(3, 8))//
+								.addPersonRange(new PersonRange(13, 18))//
+								.addPersonRange(new PersonRange(20, 22))//
+								.build()//
+								.getPersonRanges();
+
+		assertEquals(expectedPersonRanges, actualPersonRanges);
+
+		expectedPersonRanges = new ArrayList<>();
+		expectedPersonRanges.add(new PersonRange(1, 13));
+
+		actualPersonRanges = PeoplePluginData	.builder()//
+												.addPersonRange(new PersonRange(3, 5))//
+												.addPersonRange(new PersonRange(1, 5))//
+												.addPersonRange(new PersonRange(4, 8)).addPersonRange(new PersonRange(9, 13))//
+												.build()//
+												.getPersonRanges();
+
+		assertEquals(expectedPersonRanges, actualPersonRanges);
+	}
+
+	@Test
+	@UnitTestMethod(target = PeoplePluginData.class, name = "setPersonCount", args = {})
+	public void testSetPersonCount() {
+
+		// if the builder is empty
+		assertEquals(0, PeoplePluginData.builder().build().getPersonCount());
+
+		// if we explicitly set the person count on an empty builder
+		assertEquals(5, PeoplePluginData.builder().setPersonCount(5).build().getPersonCount());
+
+		// if we do not explicitly set the person count
+		int actualPersonCount = PeoplePluginData.builder()//
+												.addPersonRange(new PersonRange(12, 15))//
+												.addPersonRange(new PersonRange(3, 8))//
+												.addPersonRange(new PersonRange(13, 18))//
+												.addPersonRange(new PersonRange(20, 22))//
+												.build()//
+												.getPersonCount();
+		assertEquals(23, actualPersonCount);
+
+		// if we explicitly set the person count
+		actualPersonCount = PeoplePluginData.builder()//
+											.addPersonRange(new PersonRange(12, 15))//
+											.addPersonRange(new PersonRange(3, 8))//
+											.addPersonRange(new PersonRange(13, 18))//
+											.addPersonRange(new PersonRange(20, 22))//
+											.setPersonCount(45).build()//
+											.getPersonCount();
+		assertEquals(45, actualPersonCount);
+
+		/*
+		 * precondition : if the person count is explicitly set to a value less
+		 * than or equal to the highest value in an included range
+		 */
+
+		ContractException contractException = assertThrows(ContractException.class, () -> {
+			PeoplePluginData.builder()//
+							.addPersonRange(new PersonRange(12, 15))//
+							.setPersonCount(15).build();
+		});//
+		assertEquals(PersonError.INVALID_PERSON_COUNT, contractException.getErrorType());
 
 	}
 
 	@Test
 	@UnitTestMethod(target = PeoplePluginData.class, name = "getCloneBuilder", args = {})
 	public void testGetCloneBuilder() {
-
-		Set<PersonId> expectedPersonIds = new LinkedHashSet<>();
-		for (int i = 0; i < 10; i++) {
-			expectedPersonIds.add(new PersonId(3 * 1 + 5));
-		}
-		PeoplePluginData.Builder builder = PeoplePluginData.builder();
-		for (PersonId personId : expectedPersonIds) {
-			builder.addPersonId(personId);
-		}
-
-		PeoplePluginData peoplePluginData = builder.build();
-		PeoplePluginData peoplePluginData2 = (PeoplePluginData) peoplePluginData.getCloneBuilder().build();
-
-		Set<PersonId> actualPersonIds = new LinkedHashSet<>();
-		for (PersonId personId : peoplePluginData2.getPersonIds()) {
-			if (personId != null) {
-				actualPersonIds.add(personId);
-			}
-		}
-		assertEquals(expectedPersonIds, actualPersonIds);
+		
+		
+		PeoplePluginData pluginData = PeoplePluginData.builder()//
+		.addPersonRange(new PersonRange(3, 9))
+		.addPersonRange(new PersonRange(8, 12))
+		.addPersonRange(new PersonRange(15, 19))
+		.build();
+		
+		PluginData pluginData2 = pluginData.getCloneBuilder().build();
+		
+		assertEquals(pluginData, pluginData2);
 	}
 
 }

@@ -202,12 +202,16 @@ public final class PeopleDataManager extends DataManager {
 		dataManagerContext.subscribe(PersonRemovalMutationEvent.class, this::handlePersonRemovalMutationEvent);
 
 		int personCount = peoplePluginData.getPersonCount();
-		globalPopulationRecord.populationCount = personCount;
+	
 		personIds = new ArrayList<>(personCount);
 		for(int i = 0;i<personCount;i++) {
 			personIds.add(null);
 		}
-		for(PersonId personId : peoplePluginData.getPersonIds()) {
+		
+		List<PersonId> personIdsFromPluginData = peoplePluginData.getPersonIds();
+		globalPopulationRecord.populationCount = personIdsFromPluginData.size();
+		
+		for(PersonId personId : personIdsFromPluginData) {
 			personIds.set(personId.getValue(), personId);
 		}		
 
@@ -241,6 +245,9 @@ public final class PeopleDataManager extends DataManager {
 				}
 			}
 			lastPersonId = personId;
+		}
+		if(a>=0) {
+			builder.addPersonRange(new PersonRange(a, b));
 		}
 		dataManagerContext.releaseOutput(builder.build());
 	}

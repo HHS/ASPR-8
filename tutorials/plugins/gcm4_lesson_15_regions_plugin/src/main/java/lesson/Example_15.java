@@ -18,6 +18,7 @@ import nucleus.Plugin;
 import plugins.people.PeoplePlugin;
 import plugins.people.PeoplePluginData;
 import plugins.people.support.PersonId;
+import plugins.people.support.PersonRange;
 import plugins.regions.RegionsPlugin;
 import plugins.regions.RegionsPluginData;
 import plugins.regions.reports.RegionPropertyReportPluginData;
@@ -53,7 +54,7 @@ public final class Example_15 {
 	private Plugin getPeoplePlugin() {
 		PeoplePluginData.Builder peoplePluginDataBuilder = PeoplePluginData.builder();
 		for (PersonId personId : initialPeople) {
-			peoplePluginDataBuilder.addPersonId(personId);
+			peoplePluginDataBuilder.addPersonRange(new PersonRange(personId.getValue(),personId.getValue()));
 		}
 		PeoplePluginData peoplePluginData = peoplePluginDataBuilder.build();
 		return PeoplePlugin.getPeoplePlugin(peoplePluginData);

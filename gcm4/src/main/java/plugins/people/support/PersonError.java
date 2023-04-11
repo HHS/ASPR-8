@@ -28,8 +28,6 @@ public enum PersonError implements ContractError {
 	NULL_SUGGESTED_POPULATION_SIZE("Scenario identifier is null"),
 	NEGATIVE_SUGGGESTED_POPULATION("Suggested population size is negative"),
 	NEGATIVE_GROWTH_PROJECTION("Growth projection count is negative");
-
-	
 	
 	private final String description;
 

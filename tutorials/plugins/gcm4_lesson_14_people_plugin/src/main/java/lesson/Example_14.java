@@ -16,6 +16,7 @@ import nucleus.Plugin;
 import plugins.people.PeoplePlugin;
 import plugins.people.PeoplePluginData;
 import plugins.people.support.PersonId;
+import plugins.people.support.PersonRange;
 import plugins.reports.support.NIOReportItemHandler;
 import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.StochasticsPluginData;
@@ -74,7 +75,8 @@ public final class Example_14 {
 		// numbered 1, 3, 5,...,19
 		PeoplePluginData.Builder peoplePluginDataBuilder = PeoplePluginData.builder();
 		for (int i = 0; i < 10; i++) {
-			peoplePluginDataBuilder.addPersonId(new PersonId(i * 2 + 1));
+			PersonId personId = new PersonId(i * 2 + 1);
+			peoplePluginDataBuilder.addPersonRange(new PersonRange(personId.getValue(), personId.getValue()));
 		}
 		PeoplePluginData peoplePluginData = peoplePluginDataBuilder.build();
 		Plugin peoplePlugin = PeoplePlugin.getPeoplePlugin(peoplePluginData);

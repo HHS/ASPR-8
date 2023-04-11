@@ -42,6 +42,7 @@ import plugins.people.PeoplePluginData;
 import plugins.people.PeoplePluginId;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
+import plugins.people.support.PersonRange;
 import plugins.regions.RegionsPluginData;
 import plugins.regions.RegionsPluginId;
 import plugins.regions.support.RegionError;
@@ -285,11 +286,7 @@ public class AT_MaterialsTestPluginFactory {
 			PeoplePluginData.class })
 	public void testSetPeoplePluginData() {
 		PeoplePluginData.Builder builder = PeoplePluginData.builder();
-
-		for (int i = 0; i < 100; i++) {
-			builder.addPersonId(new PersonId(i));
-		}
-
+		builder.addPersonRange(new PersonRange(0,99));
 		PeoplePluginData peoplePluginData = builder.build();
 
 		List<Plugin> plugins = MaterialsTestPluginFactory.factory(0, 0, 0, 0, t -> {

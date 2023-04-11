@@ -18,6 +18,7 @@ import plugins.people.PeoplePlugin;
 import plugins.people.PeoplePluginData;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
+import plugins.people.support.PersonRange;
 import plugins.regions.RegionsPlugin;
 import plugins.regions.RegionsPluginData;
 import plugins.regions.support.RegionError;
@@ -140,10 +141,11 @@ public class ResourcesTestPluginFactory {
 			this.data.resourcesPluginData = resourcesPluginData;
 			return this;
 		}
-		
+
 		/**
-		 * Sets the {@link PersonResourceReportPluginData} in this Factory. This explicit
-		 * instance of pluginData will be used to create a ResourcesPlugin
+		 * Sets the {@link PersonResourceReportPluginData} in this Factory. This
+		 * explicit instance of pluginData will be used to create a
+		 * ResourcesPlugin
 		 * 
 		 * @throws ContractExecption
 		 *             {@linkplain ResourceError#NULL_RESOURCE_PLUGIN_DATA} if
@@ -154,12 +156,13 @@ public class ResourcesTestPluginFactory {
 				throw new ContractException(ResourceError.NULL_PERSON_RESOURCE_REPORT_PLUGIN_DATA);
 			}
 			this.data.personResourceReportPluginData = personResourceReportPluginData;
-			return this;			
+			return this;
 		}
-		
+
 		/**
-		 * Sets the {@link ResourcePropertyReportPluginData} in this Factory. This explicit
-		 * instance of pluginData will be used to create a ResourcesPlugin
+		 * Sets the {@link ResourcePropertyReportPluginData} in this Factory.
+		 * This explicit instance of pluginData will be used to create a
+		 * ResourcesPlugin
 		 * 
 		 * @throws ContractExecption
 		 *             {@linkplain ResourceError#NULL_RESOURCE_PLUGIN_DATA} if
@@ -170,11 +173,13 @@ public class ResourcesTestPluginFactory {
 				throw new ContractException(ResourceError.NULL_RESOURCE_PROPERTY_REPORT_PLUGIN_DATA);
 			}
 			this.data.resourcePropertyReportPluginData = resourcePropertyReportPluginData;
-			return this;	
-		}		
+			return this;
+		}
+
 		/**
-		 * Sets the {@link ResourceReportPluginData} in this Factory. This explicit
-		 * instance of pluginData will be used to create a ResourcesPlugin
+		 * Sets the {@link ResourceReportPluginData} in this Factory. This
+		 * explicit instance of pluginData will be used to create a
+		 * ResourcesPlugin
 		 * 
 		 * @throws ContractExecption
 		 *             {@linkplain ResourceError#NULL_RESOURCE_PLUGIN_DATA} if
@@ -187,8 +192,6 @@ public class ResourcesTestPluginFactory {
 			this.data.resourceReportPluginData = resourceReportPluginData;
 			return this;
 		}
-		
-		
 
 		/**
 		 * Sets the {@link PeoplePluginData} in this Factory. This explicit
@@ -327,9 +330,8 @@ public class ResourcesTestPluginFactory {
 	 */
 	public static PeoplePluginData getStandardPeoplePluginData(int initialPopulation) {
 		PeoplePluginData.Builder peopleBuilder = PeoplePluginData.builder();
-
-		for (int i = 0; i < initialPopulation; i++) {
-			peopleBuilder.addPersonId(new PersonId(i));
+		if (initialPopulation > 0) {
+			peopleBuilder.addPersonRange(new PersonRange(0, initialPopulation - 1));
 		}
 		return peopleBuilder.build();
 	}

@@ -22,7 +22,7 @@ import util.errors.ContractException;
 @Immutable
 public final class PeoplePluginData implements PluginData {
 	private static class Data {
-		private int personCount = 0;
+		private int personCount = -1;
 		private List<PersonRange> personRanges = new ArrayList<>();
 		private List<PersonId> personIds;
 		private boolean locked;
@@ -80,8 +80,6 @@ public final class PeoplePluginData implements PluginData {
 			builder.append("]");
 			return builder.toString();
 		}
-		
-		
 
 	}
 
@@ -107,9 +105,11 @@ public final class PeoplePluginData implements PluginData {
 		}
 
 		private void validate() {
-			for (PersonRange personRange : data.personRanges) {
-				if (personRange.getHighPersonId() >= data.personCount) {
-					throw new ContractException(PersonError.INVALID_PERSON_COUNT);
+			if (data.personCount >= 0) {
+				for (PersonRange personRange : data.personRanges) {
+					if (personRange.getHighPersonId() >= data.personCount) {
+						throw new ContractException(PersonError.INVALID_PERSON_COUNT);
+					}
 				}
 			}
 		}
@@ -144,7 +144,7 @@ public final class PeoplePluginData implements PluginData {
 
 				/*
 				 * Count is the number of person id values we will be recording
-				 * It will be used to set the size of the person ids array list 
+				 * It will be used to set the size of the person ids array list
 				 * so that it won't have wasted allocations
 				 */
 				int count = 0;
@@ -155,7 +155,7 @@ public final class PeoplePluginData implements PluginData {
 						a = low;
 						b = high;
 					} else {
-						if (low > b) {
+						if (low > b+1) {
 							count += (b - a + 1);
 							list2.add(new PersonRange(a, b));
 							a = low;
@@ -167,25 +167,34 @@ public final class PeoplePluginData implements PluginData {
 						}
 					}
 				}
-				
+
 				/*
-				 * The last values of a and b may not have been converted onto the second list
+				 * The last values of a and b may not have been converted onto
+				 * the second list
 				 */
 				if (a >= 0) {
 					count += (b - a + 1);
 					list2.add(new PersonRange(a, b));
 				}
-				
-				data.personIds = new ArrayList<>(count);
 
-				//We now transfer the non-overlapping person ranges
-				for (PersonRange personRange : list2) {
+				data.personRanges = list2;
+				data.personIds = new ArrayList<>(count);
+				
+				if(data.personCount<0) {
+					data.personCount = 0;
+					if(!data.personRanges.isEmpty()) {
+						data.personCount = data.personRanges.get(data.personRanges.size()-1).getHighPersonId()+1;
+					}
+				}
+
+				// We now transfer the non-overlapping person ranges
+				for (PersonRange personRange : data.personRanges) {
 					for (int id = personRange.getLowPersonId(); id <= personRange.getHighPersonId(); id++) {
 						data.personIds.add(new PersonId(id));
 					}
 				}
 
-				//Finally, we mark the data as locked
+				// Finally, we mark the data as locked
 				data.locked = true;
 			}
 		}
@@ -227,7 +236,9 @@ public final class PeoplePluginData implements PluginData {
 		}
 
 		/**
-		 * Sets the person count.
+		 * Sets the person count. Defaults to one more than the maximum person
+		 * id of any of the person ranges added. If no person ranges are added,
+		 * the default is zero.
 		 * 
 		 * @throws ContractException
 		 *             <li>{@linkplain PersonError#NEGATIVE_PERSON_COUNT} if the
@@ -246,12 +257,19 @@ public final class PeoplePluginData implements PluginData {
 	}
 
 	/**
-	 * Returns the list person ids such that each PersonId is located at the
-	 * index associated with the person id's value. Thus, this list may contain
-	 * null entries.
+	 * Returns an unmodifiable, ordered list person ids contained by this people
+	 * plugin data.
 	 */
 	public List<PersonId> getPersonIds() {
 		return Collections.unmodifiableList(data.personIds);
+	}
+
+	/**
+	 * Returns an unmodifiable, ordered, non-overlapping, list person ranges
+	 * contained by this people plugin data.
+	 */
+	public List<PersonRange> getPersonRanges() {
+		return Collections.unmodifiableList(data.personRanges);
 	}
 
 	@Override
@@ -303,6 +321,5 @@ public final class PeoplePluginData implements PluginData {
 		builder2.append("]");
 		return builder2.toString();
 	}
-	
-	
+
 }
