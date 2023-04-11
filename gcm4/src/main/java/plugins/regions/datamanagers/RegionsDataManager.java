@@ -257,6 +257,10 @@ public final class RegionsDataManager extends DataManager {
 	 *             <li>{@linkplain PropertyError#DUPLICATE_PROPERTY_DEFINITION}
 	 *             if the region property is already defined</li>
 	 * 
+	 *             <li>{@linkplain RegionError# UNKNOWN_REGION_ID} if the
+	 *             RegionPropertyDefinitionInitialization contains region
+	 *             property assignments for unknown regions</li>
+	 * 
 	 *             <li>{@linkplain PropertyError#INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT}
 	 *             if the region property definition has no default and a
 	 *             property value for some region is missing from the
@@ -291,6 +295,11 @@ public final class RegionsDataManager extends DataManager {
 					throw new ContractException(PropertyError.INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT);
 				}
 			}
+		}
+
+		//validate each region property assignment belongs to a known region
+		for (final Pair<RegionId, Object> pair : regionPropertyDefinitionInitialization.getPropertyValues()) {
+			validateRegionId(pair.getFirst());
 		}
 
 		if (checkAllRegionsHaveValues) {
@@ -755,7 +764,7 @@ public final class RegionsDataManager extends DataManager {
 		}
 
 		builder.setPersonRegionArrivalTracking(getPersonRegionArrivalTrackingPolicy());
-		
+
 		dataManagerContext.releaseOutput(builder.build());
 
 		// for (RegionId regionId : regionPopulationRecordMap.keySet()) {

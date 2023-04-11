@@ -1,13 +1,6 @@
 package plugins.regions;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 import net.jcip.annotations.Immutable;
 import nucleus.PluginData;
@@ -70,6 +63,19 @@ public class RegionsPluginData implements PluginData {
 			personRegions.addAll(data.personRegions);
 
 			locked = data.locked;
+		}
+
+		@Override
+		public boolean equals(Object o) {
+			if (this == o) return true;
+			if (!(o instanceof Data)) return false;
+			Data data = (Data) o;
+			return locked == data.locked && regionPropertyDefinitions.equals(data.regionPropertyDefinitions) && regionIds.equals(data.regionIds) && regionArrivalTimeTrackingPolicy == data.regionArrivalTimeTrackingPolicy && regionPropertyValues.equals(data.regionPropertyValues) && emptyRegionPropertyMap.equals(data.emptyRegionPropertyMap) && personRegions.equals(data.personRegions);
+		}
+
+		@Override
+		public int hashCode() {
+			return Objects.hash(regionPropertyDefinitions, regionIds, regionArrivalTimeTrackingPolicy, regionPropertyValues, emptyRegionPropertyMap, personRegions, locked);
 		}
 	}
 
@@ -446,4 +452,16 @@ public class RegionsPluginData implements PluginData {
 		return builder();
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof RegionsPluginData)) return false;
+		RegionsPluginData that = (RegionsPluginData) o;
+		return data.equals(that.data);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(data);
+	}
 }
