@@ -12,6 +12,7 @@ import nucleus.Plugin;
 import nucleus.PluginContext;
 
 public final class ModelPlugin {
+	
 	private static class Data {
 		private AntigenProducerPluginData antigenProducerPluginData;
 		private VaccineProducerPluginData vaccineProducerPluginData;
