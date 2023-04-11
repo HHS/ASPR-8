@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 
+import nucleus.testsupport.testplugin.*;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.util.Pair;
 import org.junit.jupiter.api.Test;
@@ -21,11 +22,6 @@ import nucleus.ActorContext;
 import nucleus.DataManagerContext;
 import nucleus.Event;
 import nucleus.EventFilter;
-import nucleus.testsupport.testplugin.TestActorPlan;
-import nucleus.testsupport.testplugin.TestDataManager;
-import nucleus.testsupport.testplugin.TestDataManagerPlan;
-import nucleus.testsupport.testplugin.TestPluginData;
-import nucleus.testsupport.testplugin.TestSimulation;
 import plugins.people.PeoplePluginId;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.events.PersonImminentAdditionEvent;
@@ -81,6 +77,112 @@ public class AT_RegionsDataManager {
 		// this test is covered by the remaining tests
 		ContractException contractException = assertThrows(ContractException.class, () -> new RegionsDataManager(null));
 		assertEquals(RegionError.NULL_REGION_PLUGIN_DATA, contractException.getErrorType());
+	}
+
+	@Test
+	@UnitTestMethod(target = RegionsDataManager.class, name = "init", args = {RegionId.class})
+	public void testInit_State() {
+
+		RegionsPluginData regionsPluginData = RegionsPluginData.builder().build();
+		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+		RegionPropertyDefinitionInitialization regionPropertyDefinitionInitialization = RegionPropertyDefinitionInitialization.builder()
+				.setRegionPropertyId(TestRegionPropertyId.REGION_PROPERTY_1_BOOLEAN_MUTABLE)
+				.setPropertyDefinition(TestRegionPropertyId.REGION_PROPERTY_1_BOOLEAN_MUTABLE.getPropertyDefinition())
+				.build();
+
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
+			regionsDataManager.defineRegionProperty(regionPropertyDefinitionInitialization);
+			RegionId regionId = TestRegionId.REGION_1;
+			RegionConstructionData regionConstructionData = RegionConstructionData.builder()
+					.setRegionPropertyValue(regionPropertyDefinitionInitialization.getRegionPropertyId(), true)
+					.setRegionId(regionId)
+					.build();
+			regionsDataManager.addRegion(regionConstructionData);
+			regionsDataManager.setRegionPropertyValue(regionId, regionPropertyDefinitionInitialization.getRegionPropertyId(), true);
+		}));
+
+		TestPluginData testPluginData = pluginBuilder.build();
+		Factory factory = RegionsTestPluginFactory.factory(0, 3347423560010833899L, TimeTrackingPolicy.TRACK_TIME, testPluginData)
+				.setRegionsPluginData(regionsPluginData);
+		TestOutputConsumer testOutputConsumer = TestSimulation.builder().addPlugins(factory.getPlugins())
+				.setProduceSimulationStateOnHalt(true)
+				.setSimulationHaltTime(2)
+				.build()
+				.execute();
+		Map<RegionsPluginData, Integer> outputItems = testOutputConsumer.getOutputItems(RegionsPluginData.class);
+		assertEquals(1, outputItems.size());
+		RegionsPluginData expectedPluginData = RegionsPluginData.builder()
+				.addRegion(TestRegionId.REGION_1)
+				.defineRegionProperty(regionPropertyDefinitionInitialization.getRegionPropertyId(), regionPropertyDefinitionInitialization.getPropertyDefinition())
+				.setRegionPropertyValue(TestRegionId.REGION_1, regionPropertyDefinitionInitialization.getRegionPropertyId(), true)
+				.build();
+		RegionsPluginData actualPluginData = outputItems.keySet().iterator().next();
+		assertEquals(expectedPluginData, actualPluginData);
+
+		//
+		regionsPluginData = RegionsPluginData.builder().build();
+		pluginBuilder = TestPluginData.builder();
+		RegionPropertyDefinitionInitialization regionPropertyDefinitionInitialization2 = RegionPropertyDefinitionInitialization.builder()
+				.setRegionPropertyId(TestRegionPropertyId.REGION_PROPERTY_2_INTEGER_MUTABLE)
+				.setPropertyDefinition(TestRegionPropertyId.REGION_PROPERTY_2_INTEGER_MUTABLE.getPropertyDefinition())
+				.build();
+		RegionPropertyDefinitionInitialization regionPropertyDefinitionInitialization3 = RegionPropertyDefinitionInitialization.builder()
+				.setRegionPropertyId(TestRegionPropertyId.REGION_PROPERTY_3_DOUBLE_MUTABLE)
+				.setPropertyDefinition(TestRegionPropertyId.REGION_PROPERTY_3_DOUBLE_MUTABLE.getPropertyDefinition())
+				.build();
+
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
+			regionsDataManager.defineRegionProperty(regionPropertyDefinitionInitialization2);
+			regionsDataManager.defineRegionProperty(regionPropertyDefinitionInitialization3);
+			RegionId regionId2 = TestRegionId.REGION_2;
+			RegionId regionId3 = TestRegionId.REGION_3;
+			RegionConstructionData regionConstructionData2 = RegionConstructionData.builder()
+					.setRegionPropertyValue(regionPropertyDefinitionInitialization2.getRegionPropertyId(), 15)
+					.setRegionId(regionId2)
+					.build();
+			RegionConstructionData regionConstructionData3 = RegionConstructionData.builder()
+					.setRegionPropertyValue(regionPropertyDefinitionInitialization2.getRegionPropertyId(), 67)
+					.setRegionId(regionId3)
+					.build();
+			regionsDataManager.addRegion(regionConstructionData2);
+			regionsDataManager.addRegion(regionConstructionData3);
+			regionsDataManager.setRegionPropertyValue(regionId2, regionPropertyDefinitionInitialization2.getRegionPropertyId(), 15);
+			regionsDataManager.setRegionPropertyValue(regionId3, regionPropertyDefinitionInitialization3.getRegionPropertyId(), 67.9);
+		}));
+
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
+			RegionId regionId2 = TestRegionId.REGION_2;
+			RegionId regionId3 = TestRegionId.REGION_3;
+			regionsDataManager.setRegionPropertyValue(regionId2, regionPropertyDefinitionInitialization2.getRegionPropertyId(), 92);
+			regionsDataManager.setRegionPropertyValue(regionId2, regionPropertyDefinitionInitialization2.getRegionPropertyId(), 5);
+			regionsDataManager.setRegionPropertyValue(regionId3, regionPropertyDefinitionInitialization3.getRegionPropertyId(), 82.5);
+			regionsDataManager.setRegionPropertyValue(regionId3, regionPropertyDefinitionInitialization3.getRegionPropertyId(), 123.5);
+		}));
+
+
+		testPluginData = pluginBuilder.build();
+		factory = RegionsTestPluginFactory.factory(0, 3347423560010833899L, TimeTrackingPolicy.TRACK_TIME, testPluginData)
+				.setRegionsPluginData(regionsPluginData);
+		testOutputConsumer = TestSimulation.builder().addPlugins(factory.getPlugins())
+				.setProduceSimulationStateOnHalt(true)
+				.setSimulationHaltTime(2)
+				.build()
+				.execute();
+		outputItems = testOutputConsumer.getOutputItems(RegionsPluginData.class);
+		assertEquals(1, outputItems.size());
+		expectedPluginData = RegionsPluginData.builder()
+				.addRegion(TestRegionId.REGION_2)
+				.addRegion(TestRegionId.REGION_3)
+				.defineRegionProperty(regionPropertyDefinitionInitialization2.getRegionPropertyId(), regionPropertyDefinitionInitialization2.getPropertyDefinition())
+				.defineRegionProperty(regionPropertyDefinitionInitialization3.getRegionPropertyId(), regionPropertyDefinitionInitialization3.getPropertyDefinition())
+				.setRegionPropertyValue(TestRegionId.REGION_2, regionPropertyDefinitionInitialization2.getRegionPropertyId(), 5)
+				.setRegionPropertyValue(TestRegionId.REGION_3, regionPropertyDefinitionInitialization3.getRegionPropertyId(), 123.5)
+				.build();
+		actualPluginData = outputItems.keySet().iterator().next();
+		assertEquals(expectedPluginData, actualPluginData);
 	}
 
 	@Test
