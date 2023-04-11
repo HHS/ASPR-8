@@ -22,7 +22,7 @@ import plugins.partitions.testsupport.attributes.support.TestAttributeId;
 import plugins.people.PeoplePlugin;
 import plugins.people.PeoplePluginData;
 import plugins.people.support.PersonError;
-import plugins.people.support.PersonId;
+import plugins.people.support.PersonRange;
 import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.StochasticsPluginData;
 import plugins.stochastics.support.StochasticsError;
@@ -303,10 +303,9 @@ public class PartitionsTestPluginFactory {
 	public static PeoplePluginData getStandardPeoplePluginData(int initialPopulation) {
 		// add the people plugin
 		PeoplePluginData.Builder peopleBuilder = PeoplePluginData.builder();
-		for (int i = 0; i < initialPopulation; i++) {
-			peopleBuilder.addPersonId(new PersonId(i));
+		if (initialPopulation > 0) {
+			peopleBuilder.addPersonRange(new PersonRange(0, initialPopulation - 1));
 		}
-
 		return peopleBuilder.build();
 	}
 
