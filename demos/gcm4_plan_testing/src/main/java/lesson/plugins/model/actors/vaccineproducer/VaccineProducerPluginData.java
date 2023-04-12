@@ -1,19 +1,14 @@
 package lesson.plugins.model.actors.vaccineproducer;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import lesson.plugins.model.support.ModelError;
 import net.jcip.annotations.Immutable;
-import nucleus.NucleusError;
-import nucleus.PlanData;
 import nucleus.PluginData;
 import nucleus.PluginDataBuilder;
-import nucleus.PrioritizedPlanData;
 import plugins.materials.support.BatchId;
 import plugins.materials.support.MaterialId;
 import plugins.materials.support.MaterialsError;
@@ -54,19 +49,6 @@ public final class VaccineProducerPluginData implements PluginData {
 			return new VaccineProducerPluginData(data);
 		}
 
-		/**
-		 * Adds a plan data.
-		 * 
-		 * @throws ContractException
-		 *             <li>{@linkplain NucleusError.NULL_PLAN_DATA}</li> if the
-		 *             plan data is null
-		 */
-		public Builder addPrioritizedPlanData(final PrioritizedPlanData prioritizedPlanData) {
-			ensureDataMutability();
-			validatePlanDataNotNull(prioritizedPlanData);
-			data.prioritizedPlanDatas.add(prioritizedPlanData);
-			return this;
-		}
 
 		public Builder setLastBatchAssemblyEndTime(double lastBatchAssemblyEndTime) {
 			ensureDataMutability();
@@ -195,15 +177,13 @@ public final class VaccineProducerPluginData implements PluginData {
 		private double lastBatchAssemblyEndTime;
 		private BatchId antigenBatchId;
 
-		private final List<PrioritizedPlanData> prioritizedPlanDatas = new ArrayList<>();
-
 		private boolean locked;
 
 		private Data() {
 		}
 
 		private Data(Data data) {
-			prioritizedPlanDatas.addAll(data.prioritizedPlanDatas);
+			materialIds.addAll(data.materialIds);
 			lastBatchAssemblyEndTime = data.lastBatchAssemblyEndTime;
 			materialsProducerId = data.materialsProducerId;
 			materialsOnOrder.putAll(data.materialsOnOrder);
@@ -224,11 +204,6 @@ public final class VaccineProducerPluginData implements PluginData {
 		return new Builder(new Data());
 	}
 
-	private static void validatePlanDataNotNull(final PrioritizedPlanData prioritizedPlanData) {
-		if (prioritizedPlanData == null) {
-			throw new ContractException(NucleusError.NULL_PLAN_DATA);
-		}
-	}
 
 	private final Data data;
 
@@ -236,38 +211,11 @@ public final class VaccineProducerPluginData implements PluginData {
 		this.data = data;
 	}
 
-	/**
-	 * Returns the {@link PlanData} objects that are instances of the give class
-	 * reference
-	 * 
-	 * @throws ContractException
-	 * 
-	 *             <li>{@linkplain NucleusError#NULL_CLASS_REFERENCE}</li> if
-	 *             the class reference is null
-	 * 
-	 */
-	public List<PrioritizedPlanData> getPrioritizedPlanDatas(final Class<?> classReference) {
-		validateClassReferenceNotNull(classReference);
-		List<PrioritizedPlanData> result = new ArrayList<>();
-		for (PrioritizedPlanData prioritizedPlanData : data.prioritizedPlanDatas) {
-			if (classReference.isAssignableFrom(prioritizedPlanData.getPlanData().getClass())) {
-				result.add(prioritizedPlanData);
-			}
-		}
-
-		return result;
-	}
 
 	public MaterialsProducerId getMaterialsProducerId() {
 		return data.materialsProducerId;
 	}
 
-	private static void validateClassReferenceNotNull(final Class<?> classReference) {
-		if (classReference == null) {
-			throw new ContractException(NucleusError.NULL_CLASS_REFERENCE);
-		}
-
-	}
 
 	@Override
 	public PluginDataBuilder getCloneBuilder() {

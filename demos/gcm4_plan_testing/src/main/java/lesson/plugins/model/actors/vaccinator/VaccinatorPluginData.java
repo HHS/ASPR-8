@@ -1,16 +1,11 @@
 package lesson.plugins.model.actors.vaccinator;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 import net.jcip.annotations.Immutable;
-import nucleus.NucleusError;
-import nucleus.PlanData;
 import nucleus.PluginData;
 import nucleus.PluginDataBuilder;
-import nucleus.PrioritizedPlanData;
 import plugins.regions.support.RegionError;
 import plugins.regions.support.RegionId;
 import util.errors.ContractException;
@@ -47,20 +42,6 @@ public final class VaccinatorPluginData implements PluginData {
 			}
 			ensureImmutability();
 			return new VaccinatorPluginData(data);
-		}
-
-		/**
-		 * Adds a plan data.
-		 * 
-		 * @throws ContractException
-		 *             <li>{@linkplain NucleusError.NULL_PLAN_DATA}</li> if the
-		 *             plan data is null
-		 */
-		public Builder addPrioritizedPlanData(final PrioritizedPlanData prioritizedPlanData) {
-			ensureDataMutability();
-			validatePlanDataNotNull(prioritizedPlanData);
-			data.prioritizedPlanDatas.add(prioritizedPlanData);
-			return this;
 		}
 
 		/**
@@ -144,7 +125,7 @@ public final class VaccinatorPluginData implements PluginData {
 		}
 
 		private void validateData() {
-			//nothing to validate
+			// nothing to validate
 		}
 
 	}
@@ -155,7 +136,6 @@ public final class VaccinatorPluginData implements PluginData {
 		private int infectionPersonCountThreshold;
 		private int infectedPersonCount;
 		private boolean manufactureStarted;
-		private final List<PrioritizedPlanData> prioritizedPlanDatas = new ArrayList<>();
 
 		private boolean locked;
 
@@ -163,7 +143,7 @@ public final class VaccinatorPluginData implements PluginData {
 		}
 
 		private Data(Data data) {
-			prioritizedPlanDatas.addAll(data.prioritizedPlanDatas);
+
 			vaccinationSchedules.putAll(data.vaccinationSchedules);
 			availableVaccines.putAll(data.availableVaccines);
 			infectionPersonCountThreshold = data.infectionPersonCountThreshold;
@@ -186,8 +166,6 @@ public final class VaccinatorPluginData implements PluginData {
 			builder.append(infectedPersonCount);
 			builder.append(", manufactureStarted=");
 			builder.append(manufactureStarted);
-			builder.append(", prioritizedPlanDatas=");
-			builder.append(prioritizedPlanDatas);
 			builder.append(", locked=");
 			builder.append(locked);
 			builder.append("]");
@@ -203,12 +181,6 @@ public final class VaccinatorPluginData implements PluginData {
 		return new Builder(new Data());
 	}
 
-	private static void validatePlanDataNotNull(final PrioritizedPlanData prioritizedPlanData) {
-		if (prioritizedPlanData == null) {
-			throw new ContractException(NucleusError.NULL_PLAN_DATA);
-		}
-	}
-
 	private static void validateRegionIdNotNull(final RegionId regionId) {
 		if (regionId == null) {
 			throw new ContractException(RegionError.NULL_REGION_ID);
@@ -221,35 +193,6 @@ public final class VaccinatorPluginData implements PluginData {
 		this.data = data;
 	}
 
-	/**
-	 * Returns the {@link PlanData} objects that are instances of the give class
-	 * reference
-	 * 
-	 * @throws ContractException
-	 * 
-	 *             <li>{@linkplain NucleusError#NULL_CLASS_REFERENCE}</li> if
-	 *             the class reference is null
-	 * 
-	 */
-	public List<PrioritizedPlanData> getPrioritizedPlanDatas(final Class<?> classReference) {
-		validateClassReferenceNotNull(classReference);
-		List<PrioritizedPlanData> result = new ArrayList<>();
-		for (PrioritizedPlanData prioritizedPlanData : data.prioritizedPlanDatas) {
-			if (classReference.isAssignableFrom(prioritizedPlanData.getPlanData().getClass())) {
-				result.add(prioritizedPlanData);
-			}
-		}
-
-		return result;
-	}
-
-	private static void validateClassReferenceNotNull(final Class<?> classReference) {
-		if (classReference == null) {
-			throw new ContractException(NucleusError.NULL_CLASS_REFERENCE);
-		}
-
-	}
-
 	@Override
 	public PluginDataBuilder getCloneBuilder() {
 		return new Builder(data);
@@ -259,8 +202,6 @@ public final class VaccinatorPluginData implements PluginData {
 	public PluginDataBuilder getEmptyBuilder() {
 		return builder();
 	}
-
-	
 
 	@Override
 	public String toString() {
@@ -273,7 +214,7 @@ public final class VaccinatorPluginData implements PluginData {
 
 	public Double getVaccinationSchedule(RegionId regionId) {
 		Double result = data.vaccinationSchedules.get(regionId);
-		if(result == null) {
+		if (result == null) {
 			result = 0.0;
 		}
 		return result;
@@ -281,7 +222,7 @@ public final class VaccinatorPluginData implements PluginData {
 
 	public Long getAvailableVaccine(RegionId regionId) {
 		Long result = data.availableVaccines.get(regionId);
-		if(result == null) {
+		if (result == null) {
 			result = 0L;
 		}
 		return result;

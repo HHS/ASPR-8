@@ -5,6 +5,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
 
 import org.apache.commons.math3.util.FastMath;
 
@@ -16,8 +17,6 @@ import lesson.plugins.model.support.MaterialManufactureSpecification;
 import lesson.plugins.model.support.Resource;
 import nucleus.ActorContext;
 import nucleus.Plan;
-import nucleus.PlanData;
-import nucleus.PrioritizedPlanData;
 import plugins.globalproperties.datamanagers.GlobalPropertiesDataManager;
 import plugins.materials.datamangers.MaterialsDataManager;
 import plugins.materials.events.StageOfferUpdateEvent;
@@ -29,7 +28,8 @@ import plugins.materials.support.StageId;
 
 public final class VaccineProducer {
 
-	private boolean logActive = true;
+	private boolean logActive = false;
+	private boolean selfProduceAntigen = false;
 
 	private void log(Object... values) {
 		if (logActive) {
@@ -202,9 +202,20 @@ public final class VaccineProducer {
 
 	}
 
+	private Consumer<ActorContext> getConsumerFromMaterialReceiptPlanData(MaterialReceiptPlanData materialReceiptPlanData) {
+		return (c) -> receiveMaterial(materialReceiptPlanData.getMaterialId(), materialReceiptPlanData.getAmount());
+	}
+
+	private Consumer<ActorContext> getConsumerFromStagePlanData(StagePlanData stagePlanData) {
+		return (c) -> endVaccinePreparation(stagePlanData.getStageId());
+	}
+
 	public void init(final ActorContext actorContext) {
 
 		this.actorContext = actorContext;
+
+		actorContext.setPlanDataConverter(MaterialReceiptPlanData.class, this::getConsumerFromMaterialReceiptPlanData);
+		actorContext.setPlanDataConverter(StagePlanData.class, this::getConsumerFromStagePlanData);
 
 		materialsProducerId = vaccineProducerPluginData.getMaterialsProducerId();
 
@@ -220,12 +231,16 @@ public final class VaccineProducer {
 
 		if (actorContext.getTime() == 0) {
 			initializeMaterialRecsFromEmpty();
+			double antigenAmount = 0;
+			if(selfProduceAntigen) {
+				antigenAmount = 1000000;
+			}
 
 			final BatchConstructionInfo batchConstructionInfo = //
 					BatchConstructionInfo	.builder()//
 											.setMaterialId(Material.ANTIGEN)//
 											.setMaterialsProducerId(materialsProducerId)//
-											.setAmount(1000000)//
+											.setAmount(antigenAmount)//
 											.build();//
 			antigenBatchId = materialsDataManager.addBatch(batchConstructionInfo);
 
@@ -234,43 +249,17 @@ public final class VaccineProducer {
 			initializeMaterialRecsFromPreviousRun();
 			antigenBatchId = vaccineProducerPluginData.getAntigenBatchId();
 			lastBatchAssemblyEndTime = vaccineProducerPluginData.getLastBatchAssemblyEndTime();
-
-			List<PrioritizedPlanData> prioritizedPlanDatas = vaccineProducerPluginData.getPrioritizedPlanDatas(MaterialReceiptPlanData.class);
-			for (PrioritizedPlanData prioritizedPlanData : prioritizedPlanDatas) {
-				MaterialReceiptPlanData materialReceiptPlanData = prioritizedPlanData.getPlanData();
-				Plan<ActorContext> plan = Plan	.builder(ActorContext.class)//
-												.setTime(materialReceiptPlanData.getDeliveryTime())//
-												.setCallbackConsumer((c) -> receiveMaterial(materialReceiptPlanData.getMaterialId(), materialReceiptPlanData.getAmount()))//
-												.setPlanData(materialReceiptPlanData)//
-												.setPriority(prioritizedPlanData.getPriority()).build();
-				actorContext.addPlan(plan);
-			}
-
-			prioritizedPlanDatas = vaccineProducerPluginData.getPrioritizedPlanDatas(StagePlanData.class);
-			for (PrioritizedPlanData prioritizedPlanData : prioritizedPlanDatas) {
-				StagePlanData stagePlanData = prioritizedPlanData.getPlanData();
-				Plan<ActorContext> plan = Plan	.builder(ActorContext.class)//
-												.setTime(stagePlanData.getPlanTime())//
-												.setCallbackConsumer((c) -> endVaccinePreparation(stagePlanData.getStageId()))//
-												.setPlanData(stagePlanData)//
-												.setPriority(prioritizedPlanData.getPriority()).build();
-				actorContext.addPlan(plan);
-			}
 		}
 
 	}
 
 	private void recordSimulationState(ActorContext actorContext) {
 		VaccineProducerPluginData.Builder builder = VaccineProducerPluginData.builder();
-		List<PrioritizedPlanData> prioritizedPlanDatas = actorContext.getTerminalActorPlanDatas(PlanData.class);
-		for (PrioritizedPlanData prioritizedPlanData : prioritizedPlanDatas) {
-			builder.addPrioritizedPlanData(prioritizedPlanData);
-		}
 		builder.setLastBatchAssemblyEndTime(lastBatchAssemblyEndTime);
 		builder.setMaterialsProducerId(materialsProducerId);
 		for (MaterialId materialId : materialRecs.keySet()) {
 			builder.addMaterialId(materialId);
-			MaterialManufactureSpecification materialManufactureSpecification = materialRecs.get(materialId);			
+			MaterialManufactureSpecification materialManufactureSpecification = materialRecs.get(materialId);
 			builder.setOrderStatus(materialId, materialManufactureSpecification.isOnOrder());
 			builder.setMaterialBatchId(materialId, materialManufactureSpecification.getBatchId());
 			builder.setDeliveryDelay(materialId, materialManufactureSpecification.getDeliveryDelay());
@@ -333,7 +322,6 @@ public final class VaccineProducer {
 			return;
 		}
 
-		
 		double requiredAmount = materialRec.getStageAmount() * stageCapacity;
 		requiredAmount /= batchAssemblyDuration;
 		requiredAmount *= materialRec.getDeliveryDelay();

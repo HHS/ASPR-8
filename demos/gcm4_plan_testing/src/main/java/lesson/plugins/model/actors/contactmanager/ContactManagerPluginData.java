@@ -1,15 +1,8 @@
 package lesson.plugins.model.actors.contactmanager;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import net.jcip.annotations.Immutable;
-import nucleus.NucleusError;
-import nucleus.PlanData;
 import nucleus.PluginData;
 import nucleus.PluginDataBuilder;
-import nucleus.PrioritizedPlanData;
-import util.errors.ContractException;
 
 /**
  * An immutable container of the initial state of actor plans
@@ -45,19 +38,7 @@ public final class ContactManagerPluginData implements PluginData {
 			return new ContactManagerPluginData(data);
 		}
 
-		/**
-		 * Adds a plan data.
-		 * 
-		 * @throws ContractException
-		 *             <li>{@linkplain NucleusError.NULL_PLAN_DATA}</li> if the
-		 *             plan data is null
-		 */
-		public Builder addPrioritizedPlanData(final PrioritizedPlanData prioritizedPlanData) {
-			ensureDataMutability();
-			validatePlanDataNotNull(prioritizedPlanData);
-			data.prioritizedPlanDatas.add(prioritizedPlanData);
-			return this;
-		}
+		
 
 		/**
 		 * Sets the minInfectiousPeriod.
@@ -117,8 +98,6 @@ public final class ContactManagerPluginData implements PluginData {
 	}
 
 	private static class Data {
-
-		private final List<PrioritizedPlanData> prioritizedPlanDatas = new ArrayList<>();
 		private int minInfectiousPeriod;
 		private int maxInfectiousPeriod;
 		private double infectionInterval;
@@ -130,8 +109,7 @@ public final class ContactManagerPluginData implements PluginData {
 		private Data() {
 		}
 
-		private Data(Data data) {
-			prioritizedPlanDatas.addAll(data.prioritizedPlanDatas);
+		private Data(Data data) {			
 			minInfectiousPeriod = data.minInfectiousPeriod;
 			maxInfectiousPeriod = data.maxInfectiousPeriod;
 			infectionInterval = data.infectionInterval;
@@ -142,9 +120,7 @@ public final class ContactManagerPluginData implements PluginData {
 		@Override
 		public String toString() {
 			StringBuilder builder = new StringBuilder();
-			builder.append("Data [prioritizedPlanDatas=");
-			builder.append(prioritizedPlanDatas);
-			builder.append(", minInfectiousPeriod=");
+			builder.append("Data [minInfectiousPeriod=");
 			builder.append(minInfectiousPeriod);
 			builder.append(", maxInfectiousPeriod=");
 			builder.append(maxInfectiousPeriod);
@@ -152,10 +128,13 @@ public final class ContactManagerPluginData implements PluginData {
 			builder.append(infectionInterval);
 			builder.append(", communityContactRate=");
 			builder.append(communityContactRate);
+			builder.append(", locked=");
+			builder.append(locked);
 			builder.append("]");
 			return builder.toString();
 		}
 
+		
 		
 
 	}
@@ -167,47 +146,10 @@ public final class ContactManagerPluginData implements PluginData {
 		return new Builder(new Data());
 	}
 
-	private static void validatePlanDataNotNull(final PrioritizedPlanData prioritizedPlanData) {
-		if (prioritizedPlanData == null) {
-			throw new ContractException(NucleusError.NULL_PLAN_DATA);
-		}
-	}
-
-	
-
 	private final Data data;
 
 	private ContactManagerPluginData(final Data data) {
 		this.data = data;
-	}
-
-	/**
-	 * Returns the {@link PlanData} objects that are instances of the give class
-	 * reference
-	 * 
-	 * @throws ContractException
-	 * 
-	 *             <li>{@linkplain NucleusError#NULL_CLASS_REFERENCE}</li> if
-	 *             the class reference is null
-	 * 
-	 */
-	public List<PrioritizedPlanData> getPrioritizedPlanDatas(final Class<?> classReference) {
-		validateClassReferenceNotNull(classReference);
-		List<PrioritizedPlanData> result = new ArrayList<>();
-		for (PrioritizedPlanData prioritizedPlanData : data.prioritizedPlanDatas) {
-			if (classReference.isAssignableFrom(prioritizedPlanData.getPlanData().getClass())) {
-				result.add(prioritizedPlanData);
-			}
-		}
-
-		return result;
-	}
-
-	private static void validateClassReferenceNotNull(final Class<?> classReference) {
-		if (classReference == null) {
-			throw new ContractException(NucleusError.NULL_CLASS_REFERENCE);
-		}
-
 	}
 
 	@Override

@@ -1041,7 +1041,7 @@ public class Simulation {
 		loadExistingPlans();
 
 		planningQueueMode = PlanningQueueMode.RUNNING;
-		reportPlanningQueue(PlanningQueueReportMode.PRE);
+		
 		while (activePlanCount > 0) {
 			if (forcedHaltPresent) {
 				if (planningQueue.peek().time > simulationHaltTime) {
@@ -1101,7 +1101,7 @@ public class Simulation {
 				throw new RuntimeException("unhandled planner type " + planRec.planner);
 			}
 		}
-		reportPlanningQueue(PlanningQueueReportMode.POST);
+		
 		if (forcedHaltPresent) {
 			time = simulationHaltTime;
 		}
@@ -2107,21 +2107,5 @@ public class Simulation {
 		}
 
 	}
-
-	private enum PlanningQueueReportMode {
-		PRE, POST
-	}
-
-	private void reportPlanningQueue(PlanningQueueReportMode planningQueueReportMode) {
-		// List<PlanRec> planRecs = new ArrayList<>();
-		// System.out.println("Report mode = "+planningQueueReportMode);
-		// while(!planningQueue.isEmpty()) {
-		// PlanRec planRec = planningQueue.poll();
-		// System.out.println(planRec);
-		// planRecs.add(planRec);
-		// }
-		// for(PlanRec planRec : planRecs) {
-		// planningQueue.add(planRec);
-		// }
-	}
+	
 }

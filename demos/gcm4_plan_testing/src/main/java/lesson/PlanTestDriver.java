@@ -43,7 +43,6 @@ import plugins.personproperties.reports.PersonPropertyReportPluginData;
 import plugins.regions.RegionsPlugin;
 import plugins.regions.RegionsPluginData;
 import plugins.reports.support.NIOReportItemHandler;
-import plugins.reports.support.ReportPeriod;
 import plugins.resources.ResourcesPlugin;
 import plugins.resources.ResourcesPluginData;
 import plugins.resources.support.ResourceId;
@@ -55,7 +54,7 @@ import util.random.RandomGeneratorProvider;
 
 public final class PlanTestDriver {
 	private int iterationCount = 0;
-	private final static boolean executeFull = false;
+	private final static boolean executeFull = true;
 
 	public static void main(final String[] args) throws IOException {
 		Path baseOutputDirectory = Paths.get(args[0]);
@@ -381,13 +380,13 @@ public final class PlanTestDriver {
 
 		final PersonPropertiesPluginData personPropertiesPluginData = builder.build();
 
-		PersonPropertyReportPluginData personPropertyReportPluginData = //
-				PersonPropertyReportPluginData	.builder()//
-												.setReportLabel(ModelReportLabel.PERSON_PROPERTY_REPORT)//
-												.setReportPeriod(ReportPeriod.DAILY)//
-												.includePersonProperty(PersonProperty.VACCINATED)//
-												.includePersonProperty(PersonProperty.VACCINE_SCHEDULED)//
-												.build();
+//		PersonPropertyReportPluginData personPropertyReportPluginData = //
+//				PersonPropertyReportPluginData	.builder()//
+//												.setReportLabel(ModelReportLabel.PERSON_PROPERTY_REPORT)//
+//												.setReportPeriod(ReportPeriod.DAILY)//
+//												.includePersonProperty(PersonProperty.VACCINATED)//
+//												.includePersonProperty(PersonProperty.VACCINE_SCHEDULED)//
+//												.build();
 
 		return PersonPropertiesPlugin	.builder()//
 										.setPersonPropertiesPluginData(personPropertiesPluginData)//
