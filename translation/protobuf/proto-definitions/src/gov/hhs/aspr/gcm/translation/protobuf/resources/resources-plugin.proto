@@ -36,7 +36,7 @@ enum TestResourcePropertyIdInput {
     ResourceProperty_3_2_STRING_MUTABLE = 6;
     ResourceProperty_4_1_BOOLEAN_MUTABLE = 7;
     ResourceProperty_5_1_INTEGER_IMMUTABLE = 8;
-    ResourceProperty_5_1_DOUBLE_IMMUTABLE = 9;
+    ResourceProperty_5_2_DOUBLE_IMMUTABLE = 9;
 }
 
 message ResourceInitializationInput {
