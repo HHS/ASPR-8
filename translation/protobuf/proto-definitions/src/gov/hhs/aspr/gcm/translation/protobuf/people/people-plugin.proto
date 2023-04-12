@@ -9,6 +9,12 @@ message PersonIdInput {
     int32 id = 1;
 }
 
+message PersonRangeInput {
+    int32 lowPersonId = 1;
+    int32 highPersonId = 2;
+}
+
 message PeoplePluginDataInput {
-    repeated PersonIdInput personIds = 1;
+    repeated PersonRangeInput personRanges = 1;
+    optional int32 personCount = 2;
 }

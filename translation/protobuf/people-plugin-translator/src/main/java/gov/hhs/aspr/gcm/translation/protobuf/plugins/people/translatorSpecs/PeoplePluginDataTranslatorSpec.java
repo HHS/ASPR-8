@@ -1,10 +1,10 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.people.translatorSpecs;
 
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.input.PeoplePluginDataInput;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.input.PersonIdInput;
 import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractTranslatorSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.input.PeoplePluginDataInput;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.input.PersonRangeInput;
 import plugins.people.PeoplePluginData;
-import plugins.people.support.PersonId;
+import plugins.people.support.PersonRange;
 
 public class PeoplePluginDataTranslatorSpec
         extends AbstractTranslatorSpec<PeoplePluginDataInput, PeoplePluginData> {
@@ -13,9 +13,13 @@ public class PeoplePluginDataTranslatorSpec
     protected PeoplePluginData convertInputObject(PeoplePluginDataInput inputObject) {
         PeoplePluginData.Builder builder = PeoplePluginData.builder();
 
-        for (PersonIdInput personIdInput : inputObject.getPersonIdsList()) {
-            PersonId personId = this.translator.convertInputObject(personIdInput);
-            builder.addPersonId(personId);
+        for (PersonRangeInput personRangeInput : inputObject.getPersonRangesList()) {
+            PersonRange personRange = this.translator.convertInputObject(personRangeInput);
+            builder.addPersonRange(personRange);
+        }
+
+        if (inputObject.hasPersonCount()) {
+            builder.setPersonCount(inputObject.getPersonCount());
         }
 
         return builder.build();
@@ -25,12 +29,12 @@ public class PeoplePluginDataTranslatorSpec
     protected PeoplePluginDataInput convertAppObject(PeoplePluginData simObject) {
         PeoplePluginDataInput.Builder builder = PeoplePluginDataInput.newBuilder();
 
-        for (PersonId personId : simObject.getPersonIds()) {
-            if (personId != null) {
-                PersonIdInput personIdInput = this.translator.convertSimObject(personId);
-                builder.addPersonIds(personIdInput);
-            }
+        for (PersonRange personRange : simObject.getPersonRanges()) {
+            PersonRangeInput personRangeInput = this.translator.convertSimObject(personRange);
+            builder.addPersonRanges(personRangeInput);
         }
+
+        builder.setPersonCount(simObject.getPersonCount());
 
         return builder.build();
     }
