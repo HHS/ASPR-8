@@ -1,7 +1,10 @@
 package gov.hhs.aspr.gcm.translation.protobuf.core;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.Reader;
 import java.io.Writer;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -11,6 +14,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import org.apache.commons.math3.util.Pair;
 
 import com.google.protobuf.Descriptors.FieldDescriptor;
 import com.google.protobuf.Message;
@@ -37,6 +42,8 @@ public class TranslatorController {
     private static class Data {
         private TranslatorCore.Builder translatorCoreBuilder = TranslatorCore.builder();
         private final List<Translator> translators = new ArrayList<>();
+        private final Map<Reader, Class<?>> readerMap = new LinkedHashMap<>();
+        private final Map<Pair<Class<?>, Integer>, Writer> writerMap = new LinkedHashMap<>();
 
         private Data() {
         }
@@ -54,6 +61,34 @@ public class TranslatorController {
 
             translatorController.init();
             return translatorController;
+        }
+
+        public Builder addReader(Path filePath, Class<?> classRef) {
+            try {
+                this.data.readerMap.put(new FileReader(filePath.toFile()), classRef);
+            } catch (FileNotFoundException e) {
+                throw new RuntimeException("Failed to create Reader", e);
+            }
+
+            return this;
+        }
+
+        public Builder addWriter(Path filePath, Class<?> classRef) {
+            return this.addWriterForScenario(filePath, classRef, 0);
+        }
+
+        public Builder addWriterForScenario(Path filePath, Class<?> classRef, Integer scenarioId) {
+            Pair<Class<?>, Integer> key = new Pair<>(classRef, scenarioId);
+
+            if (this.data.writerMap.containsKey(key)) {
+                throw new RuntimeException("Attempted to overwrite an existing output file.");
+            }
+            try {
+                this.data.writers.put(key, new FileWriter(Paths.get(outputFileName).toFile()));
+            } catch (IOException e) {
+                throw new RuntimeException("Failed to create Writer", e);
+            }
+            return this;
         }
 
         public Builder addTranslator(Translator translator) {
