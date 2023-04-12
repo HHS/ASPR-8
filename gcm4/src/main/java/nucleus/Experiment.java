@@ -141,7 +141,7 @@ public final class Experiment {
 		}
 		
 		/**
-		 * Set the simulation time. Defaults to the current date and a start
+		 * Set the simulation state. Defaults to the current date and a start
 		 * time of zero.
 		 * 
 		 * @throws ContractException
@@ -149,11 +149,11 @@ public final class Experiment {
 		 *             simulation time is null
 		 * 
 		 */
-		public Builder setSimulationTime(SimulationTime simulationTime) {
-			if (simulationTime == null) {
+		public Builder setSimulationState(SimulationState simulationState) {
+			if (simulationState == null) {
 				throw new ContractException(NucleusError.NULL_SIMULATION_TIME);
 			}
-			data.simulationTime = simulationTime;
+			data.simulationState = simulationState;
 			return this;
 		}
 
@@ -208,7 +208,7 @@ public final class Experiment {
 		private Path experimentProgressLogPath;
 		private boolean continueFromProgressLog;
 		private Set<Integer> explicitScenarioIds = new LinkedHashSet<>();
-		private SimulationTime simulationTime = SimulationTime.builder().build();
+		private SimulationState simulationState = SimulationState.builder().build();
 		
 	}
 
@@ -238,17 +238,17 @@ public final class Experiment {
 		private final Integer scenarioId;
 		private final boolean produceSimulationStateOnHalt;
 		private final double simulationHaltTime;
-		private final SimulationTime simulationTime;
+		private final SimulationState simulationState;
 		/*
 		 * All construction arguments are thread safe implementations.
 		 */
-		private SimulationCallable(final Integer scenarioId, final ExperimentStateManager experimentStateManager, final List<Plugin> plugins, final boolean produceSimulationStateOnHalt,final double simulationHaltTime,final SimulationTime simulationTime) {
+		private SimulationCallable(final Integer scenarioId, final ExperimentStateManager experimentStateManager, final List<Plugin> plugins, final boolean produceSimulationStateOnHalt,final double simulationHaltTime,final SimulationState simulationState) {
 			this.scenarioId = scenarioId;
 			this.experimentStateManager = experimentStateManager;
 			this.plugins = new ArrayList<>(plugins);
 			this.produceSimulationStateOnHalt = produceSimulationStateOnHalt;
 			this.simulationHaltTime = simulationHaltTime;
-			this.simulationTime = simulationTime;
+			this.simulationState = simulationState;
 		}
 
 		/**
@@ -271,7 +271,7 @@ public final class Experiment {
 			simBuilder.setOutputConsumer(experimentStateManager.getOutputConsumer(scenarioId));
 			simBuilder.setRecordState(produceSimulationStateOnHalt);
 			simBuilder.setSimulationHaltTime(simulationHaltTime);
-			simBuilder.setSimulationTime(simulationTime);
+			simBuilder.setSimulationState(simulationState);
 			// build the simulation
 			final Simulation simulation = simBuilder.build();
 
@@ -414,7 +414,7 @@ public final class Experiment {
 					plugins,
 					data.stateRecordingIsScheduled,
 					data.simulationHaltTime,
-					data.simulationTime
+					data.simulationState
 					));
 			jobIndex++;
 		}
@@ -435,7 +435,7 @@ public final class Experiment {
 						plugins,
 						data.stateRecordingIsScheduled,
 						data.simulationHaltTime,
-						data.simulationTime
+						data.simulationState
 						));
 				jobIndex++;
 			}
@@ -492,7 +492,7 @@ public final class Experiment {
 
 			simBuilder.setRecordState(data.stateRecordingIsScheduled);
 			simBuilder.setSimulationHaltTime(data.simulationHaltTime);
-			simBuilder.setSimulationTime(data.simulationTime);
+			simBuilder.setSimulationState(data.simulationState);
 			// direct output from the simulation to the subscribed consumers
 			simBuilder.setOutputConsumer(experimentStateManager.getOutputConsumer(scenarioId));
 

@@ -8,7 +8,7 @@ import java.util.Map;
 import nucleus.NucleusError;
 import nucleus.Plugin;
 import nucleus.Simulation;
-import nucleus.SimulationTime;
+import nucleus.SimulationState;
 import util.errors.ContractException;
 
 /**
@@ -22,7 +22,7 @@ public class TestSimulation {
 		private boolean produceSimulationStateOnHalt;
 		private List<Plugin> plugins = new ArrayList<>();
 		private TestOutputConsumer testOutputConsumer = new TestOutputConsumer();
-		private SimulationTime simulationTime = SimulationTime.builder().build();
+		private SimulationState simulationState = SimulationState.builder().build();
 	}
 
 	public static Builder builder() {
@@ -64,11 +64,11 @@ public class TestSimulation {
 		 *             simulation time is null
 		 * 
 		 */
-		public Builder setSimulationTime(SimulationTime simulationTime) {
-			if (simulationTime == null) {
+		public Builder setSimulationTime(SimulationState simulationState) {
+			if (simulationState == null) {
 				throw new ContractException(NucleusError.NULL_SIMULATION_TIME);
 			}
-			data.simulationTime = simulationTime;
+			data.simulationState = simulationState;
 			return this;
 		}
 
@@ -144,7 +144,7 @@ public class TestSimulation {
 		builder//
 				.setRecordState(data.produceSimulationStateOnHalt)//
 				.setOutputConsumer(data.testOutputConsumer)//
-				.setSimulationTime(data.simulationTime)//
+				.setSimulationState(data.simulationState)//
 				.setSimulationHaltTime(data.simulationHaltTime)//
 				.build().execute();
 

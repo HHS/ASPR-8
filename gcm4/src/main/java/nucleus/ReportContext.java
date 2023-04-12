@@ -48,8 +48,7 @@ public final class ReportContext {
 										.setActive(false)//
 										.setCallbackConsumer(consumer)//
 										.setKey(null)//
-										.setPlanData(null)//
-										.setPriority(-1)//
+										.setPlanData(null)//										
 										.setTime(planTime)//
 										.build();//
 		simulation.addReportPlan(plan);
@@ -189,21 +188,6 @@ public final class ReportContext {
 
 	public void releaseOutput(Object output) {
 		simulation.releaseOutput(output);
-	}
-
-	/**
-	 * Returns all PrioritizedPlanData objects that are associated with plans that remain
-	 * scheduled at the end of the simulation.
-	 * 
-	 * @throws ContractException()
-	 *             <li>{@linkplain NucleusError#TERMINAL_PLAN_DATA_ACCESS_VIOLATION}
-	 *             if invoked prior to the close of the simulation. Should only
-	 *             be invoked as part of the callback specified in the
-	 *             subscription to simulation close</li>
-	 * 
-	 */
-	public List<PrioritizedPlanData> getTerminalReportPlanDatas(Class<?> classRef) {
-		return simulation.getTerminalReportPlanDatas(classRef);
 	}
 
 }
