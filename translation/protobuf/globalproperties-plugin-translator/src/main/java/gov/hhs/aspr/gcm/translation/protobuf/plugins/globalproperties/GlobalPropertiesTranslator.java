@@ -7,8 +7,6 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.globalproperties.translator
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.globalproperties.translatorSpecs.TestGlobalPropertyIdTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.PropertiesTranslatorId;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.ReportsTranslatorId;
-import plugins.globalproperties.GlobalPropertiesPluginData;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.globalproperties.input.GlobalPropertiesPluginDataInput;
 
 public class GlobalPropertiesTranslator {
 
@@ -19,7 +17,6 @@ public class GlobalPropertiesTranslator {
         Translator.Builder builder = Translator.builder()
                 .setTranslatorId(GlobalPropertiesTranslatorId.TRANSLATOR_ID)
                 .addDependency(PropertiesTranslatorId.TRANSLATOR_ID)
-
                 .setInitializer((translatorContext) -> {
                     translatorContext.addTranslatorSpec(new GlobalPropertiesPluginDataTranslatorSpec());
                     translatorContext.addTranslatorSpec(new GlobalPropertyIdTranslatorSpec());
@@ -37,25 +34,6 @@ public class GlobalPropertiesTranslator {
 
     public static Translator.Builder builder() {
         return builder(false);
-    }
-
-    public static Translator getTranslatorRW(String inputFileName, String outputFileName) {
-        return builder()
-                .addInputFile(inputFileName, GlobalPropertiesPluginDataInput.getDefaultInstance())
-                .addOutputFile(outputFileName, GlobalPropertiesPluginData.class)
-                .build();
-    }
-
-    public static Translator getTranslatorR(String inputFileName) {
-        return builder()
-                .addInputFile(inputFileName, GlobalPropertiesPluginDataInput.getDefaultInstance())
-                .build();
-    }
-
-    public static Translator getTranslatorW(String outputFileName) {
-        return builder()
-                .addOutputFile(outputFileName, GlobalPropertiesPluginData.class)
-                .build();
     }
 
     public static Translator getTranslator() {

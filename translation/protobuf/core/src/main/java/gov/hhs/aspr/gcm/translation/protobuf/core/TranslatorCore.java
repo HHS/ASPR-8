@@ -4,9 +4,11 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import com.google.gson.JsonObject;
@@ -179,18 +181,14 @@ public class TranslatorCore {
         return this.data.jsonPrinter;
     }
 
-    public <T extends PluginData, U extends Message> void writeJson(Writer writer, T pluginData) {
-        U message = convertSimObject(pluginData);
-        writeJson(writer, message);
-    }
+    public <T extends V, V, U extends Message> void writeJson(Writer writer, T simObject, Optional<Class<V>> superClass) {
+        U message;
 
-    public <U extends Message> void writeJson(Writer writer, Object simObject, Class<?> superClass) {
-        U message = convertSimObject(simObject, superClass);
-        writeJson(writer, message);
-    }
-
-    public <U extends Message> void writeJson(Writer writer, Object simObject) {
-        U message = convertSimObject(simObject);
+        if (superClass.isPresent()) {
+            message = convertSimObject(simObject, superClass.get());
+        } else {
+            message = convertSimObject(simObject);
+        }
         writeJson(writer, message);
     }
 
@@ -212,13 +210,23 @@ public class TranslatorCore {
         }
     }
 
-    public <T, U extends Message.Builder> T readJson(Reader reader, U builder) {
+    public <T, U> T readJson(Reader reader, Class<U> inputClassRef) {
         JsonObject jsonObject = JsonParser.parseReader(new JsonReader(reader)).getAsJsonObject();
-        return parseJson(jsonObject, builder);
+        return parseJson(jsonObject, inputClassRef);
     }
 
-    private <T, U extends Message.Builder> T parseJson(JsonObject inputJson, U builder) {
+    private <T, U> T parseJson(JsonObject inputJson, Class<U> inputClassRef) {
         JsonObject jsonObject = inputJson.deepCopy();
+
+        Message.Builder builder;
+        try {
+            Method buildermethod = inputClassRef.getDeclaredMethod("newBuilder");
+
+            builder = (com.google.protobuf.Message.Builder) buildermethod.invoke(null);
+        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException
+                | SecurityException e) {
+            throw new RuntimeException("Failed to find method or failed to invoke method", e);
+        }
 
         try {
             this.data.jsonParser.merge(jsonObject.toString(), builder);
@@ -328,7 +336,7 @@ public class TranslatorCore {
         }
     }
 
-    public <T, U> T convertInputEnum(ProtocolMessageEnum inputEnum, Class<U> superClass) {
+    public <T extends U, U> T convertInputEnum(ProtocolMessageEnum inputEnum, Class<U> superClass) {
         T convertedEnum = convertInputEnum(inputEnum);
 
         // verify translated object can be casted to the super class
@@ -341,7 +349,7 @@ public class TranslatorCore {
         return getTranslatorForClass(inputEnum.getClass()).convert(inputEnum);
     }
 
-    public <T, U> T convertInputObject(Message inputObject, Class<U> superClass) {
+    public <T extends U, U> T convertInputObject(Message inputObject, Class<U> superClass) {
 
         T convertInputObject = convertInputObject(inputObject);
 
@@ -355,7 +363,7 @@ public class TranslatorCore {
         return getTranslatorForClass(inputObject.getClass()).convert(inputObject);
     }
 
-    public <T, U> T convertSimObject(Object simObject, Class<U> superClass) {
+    public <T extends U, U> T convertSimObject(Object simObject, Class<U> superClass) {
 
         superClassCastCheck(simObject, superClass);
 

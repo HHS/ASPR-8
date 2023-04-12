@@ -17,4 +17,8 @@ public class TranslatorContext {
     public void addFieldToIncludeDefaultValue(FieldDescriptor fieldDescriptor) {
         this.translatorController.addFieldToIncludeDefaultValue(fieldDescriptor);
     }
+
+    public <T, U extends T> void addMarkerInterface(Class<U> classRef, Class<T> markerInterface) {
+        this.translatorController.addMarkerInterface(classRef, markerInterface);
+    }
 }

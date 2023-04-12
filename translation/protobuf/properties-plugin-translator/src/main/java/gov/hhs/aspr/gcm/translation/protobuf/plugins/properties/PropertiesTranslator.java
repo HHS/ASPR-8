@@ -15,8 +15,6 @@ public class PropertiesTranslator {
     public static Translator.Builder builder() {
         return Translator.builder()
                 .setTranslatorId(PropertiesTranslatorId.TRANSLATOR_ID)
-                .setInputIsPluginData(false)
-                .setOutputIsPluginData(false)
                 .setInitializer((translatorContext) -> {
                     translatorContext.addTranslatorSpec(new PropertyDefinitionTranslatorSpec());
                     translatorContext.addTranslatorSpec(new TimeTrackingPolicyTranslatorSpec());

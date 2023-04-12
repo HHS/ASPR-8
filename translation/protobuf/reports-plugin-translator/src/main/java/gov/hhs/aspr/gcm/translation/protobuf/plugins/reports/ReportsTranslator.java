@@ -16,14 +16,13 @@ public class ReportsTranslator {
     public static Translator.Builder builder() {
         return Translator.builder()
                 .setTranslatorId(ReportsTranslatorId.TRANSLATOR_ID)
-                .setInputIsPluginData(false)
-                .setOutputIsPluginData(false)
                 .setInitializer((translatorContext) -> {
                     translatorContext.addTranslatorSpec(new ReportLabelTranslatorSpec());
                     translatorContext.addTranslatorSpec(new ReportPeriodTranslatorSpec());
                     translatorContext.addTranslatorSpec(new SimpleReportLabelTranslatorSpec());
-                })
-                .addMarkerInterface(SimpleReportLabel.class, ReportLabel.class);
+
+                    translatorContext.addMarkerInterface(SimpleReportLabel.class, ReportLabel.class);
+                });
 
     }
 
