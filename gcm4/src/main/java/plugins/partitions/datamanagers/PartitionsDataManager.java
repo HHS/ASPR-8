@@ -368,6 +368,9 @@ public final class PartitionsDataManager extends DataManager {
 		dataManagerContext.subscribe(PersonAdditionEvent.class, this::handlePersonAdditionEvent);
 
 		dataManagerContext.subscribe(PersonRemovalEvent.class, this::handlePersonRemovalEvent);
+		
+		reservedEventClasses.add(PersonAdditionEvent.class);
+		reservedEventClasses.add(PersonRemovalEvent.class);
 
 	}
 

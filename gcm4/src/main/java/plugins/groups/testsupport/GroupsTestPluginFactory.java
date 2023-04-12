@@ -27,22 +27,23 @@ import plugins.people.PeoplePlugin;
 import plugins.people.PeoplePluginData;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
+import plugins.people.support.PersonRange;
 import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.StochasticsPluginData;
 import plugins.stochastics.support.StochasticsError;
+import plugins.stochastics.support.WellState;
 import util.errors.ContractException;
 import util.random.RandomGeneratorProvider;
 import util.wrappers.MultiKey;
 
 /**
  * A static test support class for the {@linkplain GroupsPlugin}. Provides
- * convenience
- * methods for obtaining standarized PluginData for the listed Plugin.
+ * convenience methods for obtaining standarized PluginData for the listed
+ * Plugin.
  * 
  * <p>
  * Also contains factory methods to obtain a list of plugins that is the minimal
- * set needed to adequately test this Plugin that can be
- * utilized with
+ * set needed to adequately test this Plugin that can be utilized with
  * </p>
  * 
  * <li>{@link TestSimulation#executeSimulation}
@@ -54,23 +55,22 @@ public final class GroupsTestPluginFactory {
 
 	private static class Data {
 		private GroupPopulationReportPluginData groupPopulationReportPluginData;
-		private GroupPropertyReportPluginData groupPropertyReportPluginData; 
+		private GroupPropertyReportPluginData groupPropertyReportPluginData;
 		private GroupsPluginData groupsPluginData;
 		private PeoplePluginData peoplePluginData;
 		private StochasticsPluginData stochasticsPluginData;
 		private TestPluginData testPluginData;
 
-		private Data(int initialPopulation, double expectedGroupsPerPerson,
-				double expectedPeoplePerGroup, long seed, TestPluginData testPluginData) {
+		private Data(int initialPopulation, double expectedGroupsPerPerson, double expectedPeoplePerGroup, long seed, TestPluginData testPluginData) {
+
+			RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
 
 			int membershipCount = (int) FastMath.round(initialPopulation * expectedGroupsPerPerson);
-			int groupCount = expectedPeoplePerGroup == 0 ? 0
-					: (int) FastMath.round(membershipCount / expectedPeoplePerGroup);
+			int groupCount = expectedPeoplePerGroup == 0 ? 0 : (int) FastMath.round(membershipCount / expectedPeoplePerGroup);
 
 			this.peoplePluginData = getStandardPeoplePluginData(initialPopulation);
-			this.groupsPluginData = getStandardGroupsPluginData(groupCount, membershipCount,
-					this.peoplePluginData.getPersonIds(), seed);
-			this.stochasticsPluginData = getStandardStochasticsPluginData(seed);
+			this.groupsPluginData = getStandardGroupsPluginData(groupCount, membershipCount, this.peoplePluginData.getPersonIds(), randomGenerator.nextLong());
+			this.stochasticsPluginData = getStandardStochasticsPluginData(randomGenerator.nextLong());
 			this.testPluginData = testPluginData;
 		}
 	}
@@ -87,9 +87,8 @@ public final class GroupsTestPluginFactory {
 		}
 
 		/**
-		 * Returns a list of plugins containing a Groups, People, Stocastics and a Test
-		 * Plugin
-		 * built from the contributed PluginDatas.
+		 * Returns a list of plugins containing a Groups, People, Stocastics and
+		 * a Test Plugin built from the contributed PluginDatas.
 		 * 
 		 * <li>GroupsPlugin is defaulted to one formed from
 		 * {@link GroupsTestPluginFactory#getStandardGroupsPluginData}
@@ -104,13 +103,13 @@ public final class GroupsTestPluginFactory {
 			List<Plugin> pluginsToAdd = new ArrayList<>();
 			GroupsPlugin.Builder groupsPluginBuilder = GroupsPlugin.builder();
 			groupsPluginBuilder.setGroupsPluginData(this.data.groupsPluginData);
-			if(data.groupPopulationReportPluginData != null) {
-				groupsPluginBuilder.setGroupPopulationReportPluginData(data.groupPopulationReportPluginData);	
+			if (data.groupPopulationReportPluginData != null) {
+				groupsPluginBuilder.setGroupPopulationReportPluginData(data.groupPopulationReportPluginData);
 			}
-			if(data.groupPropertyReportPluginData != null) {
-				groupsPluginBuilder.setGroupPropertyReportPluginData(data.groupPropertyReportPluginData);	
+			if (data.groupPropertyReportPluginData != null) {
+				groupsPluginBuilder.setGroupPropertyReportPluginData(data.groupPropertyReportPluginData);
 			}
-			
+
 			Plugin groupPlugin = groupsPluginBuilder.getGroupsPlugin();
 
 			Plugin peoplePlugin = PeoplePlugin.getPeoplePlugin(this.data.peoplePluginData);
@@ -128,13 +127,12 @@ public final class GroupsTestPluginFactory {
 		}
 
 		/**
-		 * Sets the {@link GroupsPluginData} in this Factory.
-		 * This explicit instance of pluginData will be used to create a
-		 * GroupsPlugin
+		 * Sets the {@link GroupsPluginData} in this Factory. This explicit
+		 * instance of pluginData will be used to create a GroupsPlugin
 		 * 
 		 * @throws ContractExecption
-		 *                           {@linkplain GroupError#NULL_GROUP_PLUGIN_DATA}
-		 *                           if the passed in pluginData is null
+		 *             {@linkplain GroupError#NULL_GROUP_PLUGIN_DATA} if the
+		 *             passed in pluginData is null
 		 */
 		public Factory setGroupsPluginData(GroupsPluginData groupsPluginData) {
 			if (groupsPluginData == null) {
@@ -143,15 +141,15 @@ public final class GroupsTestPluginFactory {
 			this.data.groupsPluginData = groupsPluginData;
 			return this;
 		}
-		
+
 		/**
 		 * Sets the {@link GroupPopulationReportPluginData} in this Factory.
 		 * This explicit instance of pluginData will be used to create a
 		 * GroupsPlugin
 		 * 
 		 * @throws ContractExecption
-		 *                           {@linkplain GroupError#NULL_GROUP_POPULATION_REPORT_PLUGIN_DATA}
-		 *                           if the passed in pluginData is null
+		 *             {@linkplain GroupError#NULL_GROUP_POPULATION_REPORT_PLUGIN_DATA}
+		 *             if the passed in pluginData is null
 		 */
 		public Factory setGroupPopulationReportPluginData(GroupPopulationReportPluginData groupPopulationReportPluginData) {
 			if (groupPopulationReportPluginData == null) {
@@ -160,14 +158,15 @@ public final class GroupsTestPluginFactory {
 			this.data.groupPopulationReportPluginData = groupPopulationReportPluginData;
 			return this;
 		}
+
 		/**
 		 * Sets the {@link GroupPopulationReportPluginData} in this Factory.
 		 * This explicit instance of pluginData will be used to create a
 		 * GroupsPlugin
 		 * 
 		 * @throws ContractExecption
-		 *                           {@linkplain GroupError#NULL_GROUP_PROPERTY_REPORT_PLUGIN_DATA}
-		 *                           if the passed in pluginData is null
+		 *             {@linkplain GroupError#NULL_GROUP_PROPERTY_REPORT_PLUGIN_DATA}
+		 *             if the passed in pluginData is null
 		 */
 		public Factory setGroupPropertyReportPluginData(GroupPropertyReportPluginData groupPropertyReportPluginData) {
 			if (groupPropertyReportPluginData == null) {
@@ -176,16 +175,14 @@ public final class GroupsTestPluginFactory {
 			this.data.groupPropertyReportPluginData = groupPropertyReportPluginData;
 			return this;
 		}
-		
 
 		/**
-		 * Sets the {@link PeoplePluginData} in this Factory.
-		 * This explicit instance of pluginData will be used to create a
-		 * PeoplePlugin
+		 * Sets the {@link PeoplePluginData} in this Factory. This explicit
+		 * instance of pluginData will be used to create a PeoplePlugin
 		 * 
 		 * @throws ContractExecption
-		 *                           {@linkplain PersonError#NULL_PEOPLE_PLUGIN_DATA}
-		 *                           if the passed in pluginData is null
+		 *             {@linkplain PersonError#NULL_PEOPLE_PLUGIN_DATA} if the
+		 *             passed in pluginData is null
 		 */
 		public Factory setPeoplePluginData(PeoplePluginData peoplePluginData) {
 			if (peoplePluginData == null) {
@@ -196,13 +193,12 @@ public final class GroupsTestPluginFactory {
 		}
 
 		/**
-		 * Sets the {@link StochasticsPluginData} in this Factory.
-		 * This explicit instance of pluginData will be used to create a
-		 * StochasticsPlugin
+		 * Sets the {@link StochasticsPluginData} in this Factory. This explicit
+		 * instance of pluginData will be used to create a StochasticsPlugin
 		 * 
 		 * @throws ContractExecption
-		 *                           {@linkplain StochasticsError#NULL_STOCHASTICS_PLUGIN_DATA}
-		 *                           if the passed in pluginData is null
+		 *             {@linkplain StochasticsError#NULL_STOCHASTICS_PLUGIN_DATA}
+		 *             if the passed in pluginData is null
 		 */
 		public Factory setStochasticsPluginData(StochasticsPluginData stochasticsPluginData) {
 			if (stochasticsPluginData == null) {
@@ -215,8 +211,8 @@ public final class GroupsTestPluginFactory {
 	}
 
 	/**
-	 * Returns a Factory that facilitates the creation of a minimal set of plugins
-	 * needed to adequately test the {@link GroupsPlugin} by generating:
+	 * Returns a Factory that facilitates the creation of a minimal set of
+	 * plugins needed to adequately test the {@link GroupsPlugin} by generating:
 	 * <ul>
 	 * <li>{@link GroupsPluginData}
 	 * <li>{@link PeoplePluginData}
@@ -235,26 +231,23 @@ public final class GroupsTestPluginFactory {
 	 * <li>{@link Factory#setStochasticsPluginData}
 	 * </ul>
 	 * 
-	 * <li>via the
-	 * {@link Factory#getPlugins()} method.
+	 * <li>via the {@link Factory#getPlugins()} method.
 	 *
 	 * 
 	 * @throws ContractExecption
-	 *                           {@linkplain NucleusError#NULL_PLUGIN_DATA}
-	 *                           if testPluginData is null
+	 *             {@linkplain NucleusError#NULL_PLUGIN_DATA} if testPluginData
+	 *             is null
 	 */
-	public static Factory factory(int initialPopulation, double expectedGroupsPerPerson,
-			double expectedPeoplePerGroup, long seed, TestPluginData testPluginData) {
+	public static Factory factory(int initialPopulation, double expectedGroupsPerPerson, double expectedPeoplePerGroup, long seed, TestPluginData testPluginData) {
 		if (testPluginData == null) {
 			throw new ContractException(NucleusError.NULL_PLUGIN_DATA);
 		}
-		return new Factory(
-				new Data(initialPopulation, expectedGroupsPerPerson, expectedPeoplePerGroup, seed, testPluginData));
+		return new Factory(new Data(initialPopulation, expectedGroupsPerPerson, expectedPeoplePerGroup, seed, testPluginData));
 	}
 
 	/**
-	 * Creates a Factory that facilitates the creation of a minimal set of plugins
-	 * needed to adequately test the {@link GroupsPlugin} by generating:
+	 * Creates a Factory that facilitates the creation of a minimal set of
+	 * plugins needed to adequately test the {@link GroupsPlugin} by generating:
 	 * <ul>
 	 * <li>{@link GroupsPluginData}
 	 * <li>{@link PeoplePluginData}
@@ -273,15 +266,13 @@ public final class GroupsTestPluginFactory {
 	 * <li>{@link Factory#setStochasticsPluginData}
 	 * </ul>
 	 * 
-	 * <li>via the
-	 * {@link Factory#getPlugins()} method.
+	 * <li>via the {@link Factory#getPlugins()} method.
 	 *
 	 * @throws ContractExecption
-	 *                           {@linkplain NucleusError#NULL_ACTOR_CONTEXT_CONSUMER}
-	 *                           if consumer is null
+	 *             {@linkplain NucleusError#NULL_ACTOR_CONTEXT_CONSUMER} if
+	 *             consumer is null
 	 */
-	public static Factory factory(int initialPopulation, double expectedGroupsPerPerson,
-			double expectedPeoplePerGroup, long seed, Consumer<ActorContext> consumer) {
+	public static Factory factory(int initialPopulation, double expectedGroupsPerPerson, double expectedPeoplePerGroup, long seed, Consumer<ActorContext> consumer) {
 		if (consumer == null) {
 			throw new ContractException(NucleusError.NULL_ACTOR_CONTEXT_CONSUMER);
 		}
@@ -305,21 +296,18 @@ public final class GroupsTestPluginFactory {
 	 * <li>A number of groups equal to the passed in groupCount
 	 * <ul>
 	 * <li>each group will get a random groupTypeId based on a RandomGenerator
-	 * seeded by the passed
-	 * in seed
-	 * <li>every GroupPropertyId included in
-	 * {@link TestGroupPropertyId} with a randomPropertyValue obtained from each
-	 * based on the same RandomGenerator
+	 * seeded by the passed in seed
+	 * <li>every GroupPropertyId included in {@link TestGroupPropertyId} with a
+	 * randomPropertyValue obtained from each based on the same RandomGenerator
 	 * </ul>
-	 * <li>an average group membership based on the passed in membershipCount and
-	 * passed in people.
+	 * <li>an average group membership based on the passed in membershipCount
+	 * and passed in people.
 	 * <ul>
 	 * <li>This is determined based on the above RandomGenerator.
 	 * </ul>
 	 * </ul>
 	 */
-	public static GroupsPluginData getStandardGroupsPluginData(int groupCount, int membershipCount,
-			List<PersonId> people, long seed) {
+	public static GroupsPluginData getStandardGroupsPluginData(int groupCount, int membershipCount, List<PersonId> people, long seed) {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
 		GroupsPluginData.Builder groupBuilder = GroupsPluginData.builder();
@@ -329,20 +317,18 @@ public final class GroupsTestPluginFactory {
 		}
 
 		for (TestGroupPropertyId testGroupPropertyId : TestGroupPropertyId.values()) {
-			groupBuilder.defineGroupProperty(testGroupPropertyId.getTestGroupTypeId(), testGroupPropertyId,
-					testGroupPropertyId.getPropertyDefinition());
+			groupBuilder.defineGroupProperty(testGroupPropertyId.getTestGroupTypeId(), testGroupPropertyId, testGroupPropertyId.getPropertyDefinition());
 		}
 
 		List<GroupId> groups = new ArrayList<>();
-		
+
 		TestGroupTypeId testGroupTypeId = TestGroupTypeId.GROUP_TYPE_1;
 		for (int i = 0; i < groupCount; i++) {
 			GroupId groupId = new GroupId(i);
 			groups.add(groupId);
 			groupBuilder.addGroup(groupId, testGroupTypeId);
 			for (TestGroupPropertyId testGroupPropertyId : TestGroupPropertyId.getTestGroupPropertyIds(testGroupTypeId)) {
-				groupBuilder.setGroupPropertyValue(groupId, testGroupPropertyId,
-						testGroupPropertyId.getRandomPropertyValue(randomGenerator));
+				groupBuilder.setGroupPropertyValue(groupId, testGroupPropertyId, testGroupPropertyId.getRandomPropertyValue(randomGenerator));
 			}
 			testGroupTypeId = testGroupTypeId.next();
 		}
@@ -373,15 +359,15 @@ public final class GroupsTestPluginFactory {
 	public static PeoplePluginData getStandardPeoplePluginData(int initialPopulation) {
 		PeoplePluginData.Builder peopleBuilder = PeoplePluginData.builder();
 
-		for (int i = 0; i < initialPopulation; i++) {
-			peopleBuilder.addPersonId(new PersonId(i));
+		if (initialPopulation > 0) {
+			peopleBuilder.addPersonRange(new PersonRange(0, initialPopulation - 1));
 		}
 		return peopleBuilder.build();
 	}
 
 	/**
-	 * Returns a standardized StochasticsPluginData that is minimally adequate for
-	 * testing the GroupsPlugin
+	 * Returns a standardized StochasticsPluginData that is minimally adequate
+	 * for testing the GroupsPlugin
 	 * <li>The resulting StochasticsPluginData will include:
 	 * <ul>
 	 * <li>a seed based on the nextLong of a RandomGenerator seeded from the
@@ -389,9 +375,8 @@ public final class GroupsTestPluginFactory {
 	 * </ul>
 	 */
 	public static StochasticsPluginData getStandardStochasticsPluginData(long seed) {
-		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
-		return StochasticsPluginData.builder()
-				.setSeed(randomGenerator.nextLong()).build();
+		WellState wellState = WellState.builder().setSeed(seed).build();
+		return StochasticsPluginData.builder().setMainRNGState(wellState).build();
 	}
 
 }

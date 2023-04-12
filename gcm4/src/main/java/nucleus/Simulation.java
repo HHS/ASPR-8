@@ -61,7 +61,7 @@ public class Simulation {
 		private Planner planner;
 		private long arrivalId;
 
-		private double time;
+		private double time;			
 		private boolean isActive;
 		private Object key;
 
@@ -79,38 +79,48 @@ public class Simulation {
 
 			StringBuilder builder = new StringBuilder();
 
+			
+			builder.append("\t");
 			builder.append("time = ");
 			builder.append(time);
 			builder.append(LINE_SEPARATOR);
 
+			builder.append("\t");
 			builder.append("arrivalId = ");
 			builder.append(arrivalId);
 			builder.append(LINE_SEPARATOR);
 
+			builder.append("\t");
 			builder.append("isActive = ");
 			builder.append(isActive);
 			builder.append(LINE_SEPARATOR);
 
+			builder.append("\t");
 			builder.append("key = ");
 			builder.append(key);
 			builder.append(LINE_SEPARATOR);
 
+			builder.append("\t");
 			builder.append(planner);
 			builder.append(" = ");
 			switch (planner) {
 			case ACTOR:
 				builder.append(actorId);
 				builder.append(LINE_SEPARATOR);
+				builder.append("\t");
 				builder.append(actorPlan);
 				break;
 			case DATA_MANAGER:
 				builder.append(dataManagerId);
 				builder.append(LINE_SEPARATOR);
+				builder.append("\t");
 				builder.append(dataManagerPlan);
 				break;
 			case REPORT:
 				builder.append(reportId);
+				builder.append("\t");
 				builder.append(LINE_SEPARATOR);
+				builder.append("\t");
 				builder.append(reportPlan);
 				break;
 			default:
@@ -118,8 +128,10 @@ public class Simulation {
 			}
 
 			builder.append(LINE_SEPARATOR);
+			builder.append("\t");
 			builder.append("plan = ");
 			builder.append(LINE_SEPARATOR);
+			builder.append("\t");
 			builder.append(plan);
 
 			builder.append(LINE_SEPARATOR);
@@ -442,12 +454,14 @@ public class Simulation {
 		validateActorPlan(plan.getCallbackConsumer());
 
 		final PlanRec planRec = new PlanRec();
+		
 		if (planningQueueMode == PlanningQueueMode.READY && plan.getPriority() >= 0) {
 			plansFromPreviousExecutionPresent = true;
 			planRec.arrivalId = plan.getPriority();
 		} else {
 			planRec.arrivalId = masterPlanningArrivalId++;
 		}
+
 
 		planRec.plan = plan;
 		planRec.isActive = plan.isActive();
@@ -473,7 +487,7 @@ public class Simulation {
 		if (planRec.isActive) {
 			activePlanCount++;
 		}
-		
+
 		planningQueue.add(planRec);
 	}
 
@@ -486,6 +500,7 @@ public class Simulation {
 		validateReportPlan(plan.getCallbackConsumer());
 
 		final PlanRec planRec = new PlanRec();
+		
 		if (planningQueueMode == PlanningQueueMode.READY && plan.getPriority() >= 0) {
 			plansFromPreviousExecutionPresent = true;
 			planRec.arrivalId = plan.getPriority();
@@ -494,7 +509,7 @@ public class Simulation {
 		}
 
 		planRec.plan = plan;
-		planRec.isActive = false;		
+		planRec.isActive = false;
 		planRec.planner = Planner.REPORT;
 		planRec.time = plan.getTime();
 		planRec.reportPlan = plan.getCallbackConsumer();
@@ -525,6 +540,7 @@ public class Simulation {
 		validatePlanTime(plan.getTime());
 
 		final PlanRec planRec = new PlanRec();
+		
 		if (planningQueueMode == PlanningQueueMode.READY && plan.getPriority() >= 0) {
 			plansFromPreviousExecutionPresent = true;
 			planRec.arrivalId = plan.getPriority();
@@ -533,7 +549,7 @@ public class Simulation {
 		}
 
 		planRec.plan = plan;
-		planRec.isActive = plan.isActive();		
+		planRec.isActive = plan.isActive();
 		planRec.planner = Planner.DATA_MANAGER;
 		planRec.time = plan.getTime();
 		planRec.dataManagerPlan = plan.getCallbackConsumer();
@@ -868,20 +884,21 @@ public class Simulation {
 		forcedHaltPresent = simulationHaltTime >= 0;
 
 		// start the planning-based portion of the simulation where time flows
-		if (plansFromPreviousExecutionPresent) {			
+		if (plansFromPreviousExecutionPresent) {
 			rebuildPlanningQueue();
 		}
 
 		planningQueueMode = PlanningQueueMode.RUNNING;
+		reportPlanningQueue(PlanningQueueReportMode.PRE);
 		while (activePlanCount > 0) {
 			if (forcedHaltPresent) {
-				if (planningQueue.peek().time > simulationHaltTime) {
-					time = simulationHaltTime;
+				if (planningQueue.peek().time > simulationHaltTime) {					
 					break;
 				}
 			}
 
 			final PlanRec planRec = planningQueue.poll();
+			//System.out.println(planRec);
 
 			time = planRec.time;
 			if (planRec.isActive) {
@@ -932,6 +949,11 @@ public class Simulation {
 				throw new RuntimeException("unhandled planner type " + planRec.planner);
 			}
 		}
+		reportPlanningQueue(PlanningQueueReportMode.POST);
+		if (forcedHaltPresent) {
+			time = simulationHaltTime;
+		}
+
 		planningQueueMode = PlanningQueueMode.CLOSED;
 		// Move the remaining plan recs into a searchable structure
 		if (data.stateRecordingIsScheduled) {
@@ -1033,10 +1055,10 @@ public class Simulation {
 		List<PrioritizedPlanData> list;
 		while (!planningQueue.isEmpty()) {
 			PlanRec planRec = planningQueue.poll();
-			//System.out.println(planRec);
-			
+			// System.out.println(planRec);
+
 			Plan<?> plan = planRec.plan;
-			//System.out.println(planRec);
+			// System.out.println(planRec);
 			if (plan != null) {
 				PlanData planData = plan.getPlanData();
 				if (planData != null) {
@@ -1078,7 +1100,7 @@ public class Simulation {
 	 * if there were any plans from a previous simulation execution detected.
 	 */
 	private void rebuildPlanningQueue() {
-		
+
 		// empty the planning queue into a list
 		List<PlanRec> list = new ArrayList<>();
 		while (!planningQueue.isEmpty()) {
@@ -1089,23 +1111,24 @@ public class Simulation {
 		 * Establish the maximum arrival id for the plans that were added from a
 		 * previous execution
 		 */
-		long maxPreviousArrivalId = -1;
+		long maxPriority = -1;
 		for (PlanRec planRec : list) {
 			long priority = planRec.plan.getPriority();
 			if (priority >= 0) {
-				maxPreviousArrivalId = FastMath.max(maxPreviousArrivalId, priority);
+				maxPriority = FastMath.max(maxPriority, priority);
 			}
 		}
-		maxPreviousArrivalId++;
+		maxPriority++;
 		/*
 		 * Adjust the arrival id for plans that are new to the simulation
 		 */
 		for (PlanRec planRec : list) {
 			long priority = planRec.plan.getPriority();
 			if (priority < 0) {
-				planRec.arrivalId += maxPreviousArrivalId;
+				planRec.arrivalId += maxPriority;
 			}
 		}
+		masterPlanningArrivalId = maxPriority;
 		/*
 		 * Check the plans for duplicate arrival ids -- this can happen if the
 		 * components contribute plans with non-negative priority values during
@@ -2062,5 +2085,20 @@ public class Simulation {
 			filterNode = filterNode.parent;
 		}
 
+	}
+	
+	private enum PlanningQueueReportMode{PRE,POST}
+	
+	private void reportPlanningQueue(PlanningQueueReportMode planningQueueReportMode) {
+//		List<PlanRec> planRecs = new ArrayList<>();
+//		System.out.println("Report mode = "+planningQueueReportMode);
+//		while(!planningQueue.isEmpty()) {
+//			PlanRec planRec = planningQueue.poll();
+//			System.out.println(planRec);
+//			planRecs.add(planRec);
+//		}
+//		for(PlanRec planRec : planRecs) {
+//			planningQueue.add(planRec);
+//		}
 	}
 }

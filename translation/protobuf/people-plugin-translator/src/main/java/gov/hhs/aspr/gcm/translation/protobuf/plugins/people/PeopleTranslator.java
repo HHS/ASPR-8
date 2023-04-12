@@ -5,6 +5,7 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.input.PersonIdInput;
 import gov.hhs.aspr.gcm.translation.protobuf.core.Translator;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.translatorSpecs.PeoplePluginDataTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.translatorSpecs.PersonIdTranslatorSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.translatorSpecs.PersonRangeTranslatorSpec;
 import plugins.people.PeoplePluginData;
 
 public class PeopleTranslator {
@@ -18,6 +19,7 @@ public class PeopleTranslator {
                 .setInitializer((translatorContext) -> {
                     translatorContext.addTranslatorSpec(new PeoplePluginDataTranslatorSpec());
                     translatorContext.addTranslatorSpec(new PersonIdTranslatorSpec());
+                    translatorContext.addTranslatorSpec(new PersonRangeTranslatorSpec());
 
                     translatorContext
                             .addFieldToIncludeDefaultValue(PersonIdInput.getDescriptor().findFieldByName("id"));

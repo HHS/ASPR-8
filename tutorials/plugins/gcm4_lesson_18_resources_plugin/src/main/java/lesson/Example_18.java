@@ -33,6 +33,7 @@ import plugins.resources.reports.PersonResourceReportPluginData;
 import plugins.resources.support.ResourceId;
 import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.StochasticsPluginData;
+import plugins.stochastics.support.WellState;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.TimeTrackingPolicy;
 import util.random.RandomGeneratorProvider;
@@ -90,9 +91,10 @@ public final class Example_18 {
 	}
 
 	private Plugin getStochasticsPlugin() {
+		WellState wellState = WellState.builder().setSeed(randomGenerator.nextLong()).build();
 		StochasticsPluginData stochasticsPluginData = StochasticsPluginData	.builder()//
 
-																			.setSeed(randomGenerator.nextLong())//
+																			.setMainRNGState(wellState)//
 																			.build();
 
 		return StochasticsPlugin.getStochasticsPlugin(stochasticsPluginData);

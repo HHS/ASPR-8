@@ -158,7 +158,8 @@ public class AT_RegionTransferReport {
 		RegionTransferReportPluginData regionTransferReportPluginData = RegionTransferReportPluginData.builder().setReportLabel(REPORT_LABEL).setReportPeriod(ReportPeriod.DAILY).build();
 		
 		Factory factory = RegionsTestPluginFactory//
-				.factory(0, 3054641152904904632L, TimeTrackingPolicy.TRACK_TIME, testPluginData).setRegionsPluginData(regionsPluginData)//
+				.factory(0, 3054641152904904632L, TimeTrackingPolicy.TRACK_TIME, testPluginData)
+				.setRegionsPluginData(regionsPluginData)//
 				.setRegionTransferReportPluginData(regionTransferReportPluginData);
 
 		TestOutputConsumer actualConsumer = TestSimulation	.builder()//

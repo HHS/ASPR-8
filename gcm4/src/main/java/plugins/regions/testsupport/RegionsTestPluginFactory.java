@@ -18,6 +18,7 @@ import plugins.people.PeoplePlugin;
 import plugins.people.PeoplePluginData;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
+import plugins.people.support.PersonRange;
 import plugins.regions.RegionsPlugin;
 import plugins.regions.RegionsPluginData;
 import plugins.regions.reports.RegionPropertyReportPluginData;
@@ -26,6 +27,7 @@ import plugins.regions.support.RegionError;
 import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.StochasticsPluginData;
 import plugins.stochastics.support.StochasticsError;
+import plugins.stochastics.support.WellState;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.TimeTrackingPolicy;
 import util.errors.ContractException;
@@ -58,10 +60,10 @@ public final class RegionsTestPluginFactory {
 		private TestPluginData testPluginData;
 
 		private Data(int initialPopulation, TimeTrackingPolicy timeTrackingPolicy, long seed, TestPluginData testPluginData) {
-
+			RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
 			this.peoplePluginData = getStandardPeoplePluginData(initialPopulation);
-			this.regionsPluginData = getStandardRegionsPluginData(this.peoplePluginData.getPersonIds(), timeTrackingPolicy, seed);
-			this.stochasticsPluginData = getStandardStochasticsPluginData(seed);
+			this.regionsPluginData = getStandardRegionsPluginData(this.peoplePluginData.getPersonIds(), timeTrackingPolicy, randomGenerator.nextLong());
+			this.stochasticsPluginData = getStandardStochasticsPluginData(randomGenerator.nextLong());
 			this.testPluginData = testPluginData;
 		}
 	}
@@ -326,14 +328,9 @@ public final class RegionsTestPluginFactory {
 	 * </ul>
 	 */
 	public static PeoplePluginData getStandardPeoplePluginData(int initialPopulation) {
-		List<PersonId> people = new ArrayList<>();
-		for (int i = 0; i < initialPopulation; i++) {
-			people.add(new PersonId(i));
-		}
-
 		PeoplePluginData.Builder peopleBuilder = PeoplePluginData.builder();
-		for (PersonId personId : people) {
-			peopleBuilder.addPersonId(personId);
+		if (initialPopulation > 0) {
+			peopleBuilder.addPersonRange(new PersonRange(0, initialPopulation - 1));
 		}
 		return peopleBuilder.build();
 	}
@@ -348,7 +345,7 @@ public final class RegionsTestPluginFactory {
 	 * </ul>
 	 */
 	public static StochasticsPluginData getStandardStochasticsPluginData(long seed) {
-		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
-		return StochasticsPluginData.builder().setSeed(randomGenerator.nextLong()).build();
+		WellState wellState = WellState.builder().setSeed(seed).build();
+		return StochasticsPluginData.builder().setMainRNGState(wellState).build();
 	}
 }

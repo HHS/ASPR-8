@@ -24,15 +24,14 @@ import nucleus.testsupport.testplugin.TestSimulation;
 import plugins.people.PeoplePluginData;
 import plugins.people.PeoplePluginId;
 import plugins.people.support.PersonError;
-import plugins.people.support.PersonId;
+import plugins.people.support.PersonRange;
 import plugins.people.testsupport.PeopleTestPluginFactory.Factory;
 import plugins.stochastics.StochasticsPluginData;
 import plugins.stochastics.StochasticsPluginId;
 import plugins.stochastics.support.StochasticsError;
-import plugins.stochastics.testsupport.TestRandomGeneratorId;
+import plugins.stochastics.support.WellState;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
-import util.random.RandomGeneratorProvider;
 import util.wrappers.MutableBoolean;
 
 public class AT_PeopleTestPluginFactory {
@@ -125,10 +124,8 @@ public class AT_PeopleTestPluginFactory {
 			PeoplePluginData.class })
 	public void testSetPeoplePluginData() {
 		PeoplePluginData.Builder builder = PeoplePluginData.builder();
-
-		for (int i = 0; i < 100; i++) {
-			builder.addPersonId(new PersonId(i));
-		}
+		builder.addPersonRange(new PersonRange(0, 99));
+		
 
 		PeoplePluginData peoplePluginData = builder.build();
 
@@ -155,7 +152,8 @@ public class AT_PeopleTestPluginFactory {
 	public void testSetStochasticsPluginData() {
 		StochasticsPluginData.Builder builder = StochasticsPluginData.builder();
 
-		builder.setSeed(2758378374654665699L).addRandomGeneratorId(TestRandomGeneratorId.BLITZEN);
+		WellState wellState = WellState.builder().setSeed(2758378374654665699L).build();
+		builder.setMainRNGState(wellState);
 
 		StochasticsPluginData stochasticsPluginData = builder.build();
 
@@ -193,7 +191,7 @@ public class AT_PeopleTestPluginFactory {
 		StochasticsPluginData stochasticsPluginData = PeopleTestPluginFactory
 				.getStandardStochasticsPluginData(seed);
 
-		assertEquals(RandomGeneratorProvider.getRandomGenerator(seed).nextLong(), stochasticsPluginData.getSeed());
+		assertEquals(seed, stochasticsPluginData.getWellState().getSeed());
 		assertEquals(0, stochasticsPluginData.getRandomNumberGeneratorIds().size());
 	}
 

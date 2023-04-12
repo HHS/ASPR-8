@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-import org.apache.commons.math3.random.RandomGenerator;
-
 import nucleus.ActorContext;
 import nucleus.NucleusError;
 import nucleus.Plugin;
@@ -20,18 +18,17 @@ import plugins.people.support.PersonError;
 import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.StochasticsPluginData;
 import plugins.stochastics.support.StochasticsError;
+import plugins.stochastics.support.WellState;
 import util.errors.ContractException;
-import util.random.RandomGeneratorProvider;
 
 /**
  * A static test support class for the {@linkplain PeoplePlugin}. Provides
- * convenience
- * methods for obtaining standarized PluginData for the listed Plugin.
+ * convenience methods for obtaining standarized PluginData for the listed
+ * Plugin.
  * 
  * <p>
  * Also contains factory methods to obtain a list of plugins that is the minimal
- * set needed to adequately test this Plugin that can be
- * utilized with
+ * set needed to adequately test this Plugin that can be utilized with
  * </p>
  * 
  * <li>{@link TestSimulation#executeSimulation}
@@ -66,8 +63,8 @@ public class PeopleTestPluginFactory {
 		}
 
 		/**
-		 * Returns a list of plugins containing a People, Stochastic and Test Plugin
-		 * built from the contributed PluginDatas.
+		 * Returns a list of plugins containing a People, Stochastic and Test
+		 * Plugin built from the contributed PluginDatas.
 		 * 
 		 * <li>PeoplePlugin is defaulted to one formed from
 		 * {@link PeopleTestPluginFactory#getStandardPeoplePluginData}
@@ -93,13 +90,12 @@ public class PeopleTestPluginFactory {
 		}
 
 		/**
-		 * Sets the {@link PeoplePluginData} in this Factory.
-		 * This explicit instance of pluginData will be used to create a
-		 * PeoplePlugin
+		 * Sets the {@link PeoplePluginData} in this Factory. This explicit
+		 * instance of pluginData will be used to create a PeoplePlugin
 		 * 
 		 * @throws ContractExecption
-		 *                           {@linkplain PersonError#NULL_PEOPLE_PLUGIN_DATA}
-		 *                           if the passed in pluginData is null
+		 *             {@linkplain PersonError#NULL_PEOPLE_PLUGIN_DATA} if the
+		 *             passed in pluginData is null
 		 */
 		public Factory setPeoplePluginData(PeoplePluginData peoplePluginData) {
 			if (peoplePluginData == null) {
@@ -110,13 +106,12 @@ public class PeopleTestPluginFactory {
 		}
 
 		/**
-		 * Sets the {@link StochasticsPluginData} in this Factory.
-		 * This explicit instance of pluginData will be used to create a
-		 * StochasticsPlugin
+		 * Sets the {@link StochasticsPluginData} in this Factory. This explicit
+		 * instance of pluginData will be used to create a StochasticsPlugin
 		 * 
 		 * @throws ContractExecption
-		 *                           {@linkplain StochasticsError#NULL_STOCHASTICS_PLUGIN_DATA}
-		 *                           if the passed in pluginData is null
+		 *             {@linkplain StochasticsError#NULL_STOCHASTICS_PLUGIN_DATA}
+		 *             if the passed in pluginData is null
 		 */
 		public Factory setStochasticsPluginData(StochasticsPluginData stochasticsPluginData) {
 			if (stochasticsPluginData == null) {
@@ -129,8 +124,8 @@ public class PeopleTestPluginFactory {
 	}
 
 	/**
-	 * Creates a Factory that facilitates the creation of a minimal set of plugins
-	 * needed to adequately test the {@link PeoplePlugin} by generating:
+	 * Creates a Factory that facilitates the creation of a minimal set of
+	 * plugins needed to adequately test the {@link PeoplePlugin} by generating:
 	 * <ul>
 	 * <li>{@link PeoplePluginData}
 	 * <li>{@link StochasticsPluginData}
@@ -146,12 +141,11 @@ public class PeopleTestPluginFactory {
 	 * <li>{@link Factory#setStochasticsPluginData}
 	 * </ul>
 	 * 
-	 * <li>via the
-	 * {@link Factory#getPlugins()} method.
+	 * <li>via the {@link Factory#getPlugins()} method.
 	 *
 	 * @throws ContractExecption
-	 *                           {@linkplain NucleusError#NULL_PLUGIN_DATA}
-	 *                           if testPluginData is null
+	 *             {@linkplain NucleusError#NULL_PLUGIN_DATA} if testPluginData
+	 *             is null
 	 */
 	public static Factory factory(long seed, TestPluginData testPluginData) {
 		if (testPluginData == null) {
@@ -161,8 +155,8 @@ public class PeopleTestPluginFactory {
 	}
 
 	/**
-	 * Creates a Factory that facilitates the creation of a minimal set of plugins
-	 * needed to adequately test the {@link PeoplePlugin} by generating:
+	 * Creates a Factory that facilitates the creation of a minimal set of
+	 * plugins needed to adequately test the {@link PeoplePlugin} by generating:
 	 * <ul>
 	 * <li>{@link PeoplePluginData}
 	 * <li>{@link StochasticsPluginData}
@@ -178,20 +172,19 @@ public class PeopleTestPluginFactory {
 	 * <li>{@link Factory#setStochasticsPluginData}
 	 * </ul>
 	 * 
-	 * <li>via the
-	 * {@link Factory#getPlugins()} method.
+	 * <li>via the {@link Factory#getPlugins()} method.
 	 *
 	 * @throws ContractExecption
-	 *                           {@linkplain NucleusError#NULL_ACTOR_CONTEXT_CONSUMER}
-	 *                           if consumer is null
+	 *             {@linkplain NucleusError#NULL_ACTOR_CONTEXT_CONSUMER} if
+	 *             consumer is null
 	 */
 	public static Factory factory(long seed, Consumer<ActorContext> consumer) {
 		if (consumer == null) {
 			throw new ContractException(NucleusError.NULL_ACTOR_CONTEXT_CONSUMER);
 		}
-		TestPluginData testPluginData = TestPluginData.builder()//
-				.addTestActorPlan("actor", new TestActorPlan(0, consumer))//
-				.build();
+		TestPluginData testPluginData = TestPluginData	.builder()//
+														.addTestActorPlan("actor", new TestActorPlan(0, consumer))//
+														.build();
 
 		return factory(seed, testPluginData);
 	}
@@ -211,8 +204,8 @@ public class PeopleTestPluginFactory {
 	}
 
 	/**
-	 * Returns a standardized StochasticsPluginData that is minimally adequate for
-	 * testing the PeoplePlugin
+	 * Returns a standardized StochasticsPluginData that is minimally adequate
+	 * for testing the PeoplePlugin
 	 * <li>The resulting StochasticsPluginData will include:
 	 * <ul>
 	 * <li>a seed based on the nextLong of a RandomGenerator seeded from the
@@ -220,9 +213,8 @@ public class PeopleTestPluginFactory {
 	 * </ul>
 	 */
 	public static StochasticsPluginData getStandardStochasticsPluginData(long seed) {
-		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
-		return StochasticsPluginData.builder()
-				.setSeed(randomGenerator.nextLong()).build();
+		WellState wellState = WellState.builder().setSeed(seed).build();
+		return StochasticsPluginData.builder().setMainRNGState(wellState).build();
 	}
 
 }

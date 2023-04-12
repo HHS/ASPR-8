@@ -25,6 +25,7 @@ import plugins.people.PeoplePlugin;
 import plugins.people.PeoplePluginData;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonId;
+import plugins.people.support.PersonRange;
 import plugins.personproperties.PersonPropertiesPlugin;
 import plugins.personproperties.PersonPropertiesPluginData;
 import plugins.personproperties.datamanagers.PersonPropertiesDataManager;
@@ -159,10 +160,8 @@ public class AT_PersonPropertyReport {
 		int populationSize = 30;
 
 		PeoplePluginData.Builder peopleBuilder = PeoplePluginData.builder();
-
-		for (int i = 0; i < populationSize; i++) {
-			peopleBuilder.addPersonId(new PersonId(i));
-		}
+		peopleBuilder.addPersonRange(new PersonRange(0,populationSize-1));
+		
 		PeoplePluginData peoplePluginData = peopleBuilder.build();
 		Plugin peoplePlugin = PeoplePlugin.getPeoplePlugin(peoplePluginData);
 		plugins.add(peoplePlugin);
@@ -929,18 +928,28 @@ public class AT_PersonPropertyReport {
 
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
-		// have the actor add a new person property definitions
+		// have the actor add two new person property definitions
 		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
 			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
 			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(1).build();
 
-			PersonPropertyDefinitionInitialization personPropertyDefinitionInitialization = PersonPropertyDefinitionInitialization	.builder().setPersonPropertyId(unknownIdToExclude)
-					.setPropertyDefinition(propertyDefinition).build();
+			PersonPropertyDefinitionInitialization personPropertyDefinitionInitialization = PersonPropertyDefinitionInitialization	.builder()//
+					.setPersonPropertyId(unknownIdToExclude)
+					.setPropertyDefinition(propertyDefinition)//
+					.build();
+			
 			personPropertiesDataManager.definePersonProperty(personPropertyDefinitionInitialization);
 
-			propertyDefinition = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(false).build();
-			PersonPropertyDefinitionInitialization personPropertyDefinitionInitialization2 = PersonPropertyDefinitionInitialization	.builder().setPersonPropertyId(unknownIdToInclude)
-					.setPropertyDefinition(propertyDefinition).build();
+			propertyDefinition = PropertyDefinition.builder()//
+					.setType(Boolean.class).setDefaultValue(false)//
+					.build();
+			
+			PersonPropertyDefinitionInitialization personPropertyDefinitionInitialization2 = //
+					PersonPropertyDefinitionInitialization	.builder()//
+					.setPersonPropertyId(unknownIdToInclude)
+					.setPropertyDefinition(propertyDefinition)//
+					.build();
+			
 			personPropertiesDataManager.definePersonProperty(personPropertyDefinitionInitialization2);
 
 		}));
@@ -999,10 +1008,8 @@ public class AT_PersonPropertyReport {
 		int populationSize = 30;
 
 		PeoplePluginData.Builder peopleBuilder = PeoplePluginData.builder();
-
-		for (int i = 0; i < populationSize; i++) {
-			peopleBuilder.addPersonId(new PersonId(i));
-		}
+		peopleBuilder.addPersonRange(new PersonRange(0,populationSize-1));
+		
 		PeoplePluginData peoplePluginData = peopleBuilder.build();
 		Plugin peoplePlugin = PeoplePlugin.getPeoplePlugin(peoplePluginData);
 		plugins.add(peoplePlugin);

@@ -24,7 +24,7 @@ public enum TestResourcePropertyId implements ResourcePropertyId {
 	ResourceProperty_3_2_STRING_MUTABLE(TestResourceId.RESOURCE_3, PropertyDefinition.builder().setType(String.class).setDefaultValue("").build()),
 	ResourceProperty_4_1_BOOLEAN_MUTABLE(TestResourceId.RESOURCE_4, PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(true).build()),
 	ResourceProperty_5_1_INTEGER_IMMUTABLE(TestResourceId.RESOURCE_5, PropertyDefinition.builder().setType(Integer.class).setDefaultValue(7).setPropertyValueMutability(false).build()),
-	ResourceProperty_5_1_DOUBLE_IMMUTABLE(TestResourceId.RESOURCE_5, PropertyDefinition.builder().setType(Double.class).setDefaultValue(2.7).setPropertyValueMutability(false).build());
+	ResourceProperty_5_2_DOUBLE_IMMUTABLE(TestResourceId.RESOURCE_5, PropertyDefinition.builder().setType(Double.class).setDefaultValue(2.7).setPropertyValueMutability(false).build());
 
 	private final TestResourceId testResourceId;
 	private final PropertyDefinition propertyDefinition;
@@ -83,7 +83,7 @@ public enum TestResourcePropertyId implements ResourcePropertyId {
 			return Integer.toString(randomGenerator.nextInt());
 		case ResourceProperty_4_1_BOOLEAN_MUTABLE:
 			return randomGenerator.nextBoolean();
-		case ResourceProperty_5_1_DOUBLE_IMMUTABLE:
+		case ResourceProperty_5_2_DOUBLE_IMMUTABLE:
 			return randomGenerator.nextDouble();
 		case ResourceProperty_5_1_INTEGER_IMMUTABLE:
 			return randomGenerator.nextInt();

@@ -325,7 +325,7 @@ public class AT_Simulation {
 		Integer count = simulationTimeItems.get(simulationTime);
 		assertEquals(1, count);
 		assertEquals(localDate, simulationTime.getBaseDate());
-		assertEquals(3, simulationTime.getStartTime());
+		assertEquals(20.0, simulationTime.getStartTime());
 
 		// show that there are two plugins and that the AlphaPluginData contains
 		// the last value of x

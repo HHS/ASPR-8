@@ -10,6 +10,7 @@ import nucleus.Plugin;
 import nucleus.Simulation;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
+import plugins.stochastics.support.WellState;
 import util.annotations.UnitTestMethod;
 
 public class AT_StochasticsPlugin {
@@ -18,7 +19,8 @@ public class AT_StochasticsPlugin {
 	@UnitTestMethod(target = StochasticsPlugin.class, name = "getStochasticsPlugin", args = { StochasticsPluginData.class })
 	public void testGetPlugin() {
 
-		StochasticsPluginData stochasticsPluginData = StochasticsPluginData.builder().setSeed(34534).build();
+		WellState wellState = WellState.builder().setSeed(7501293495427253479L).build();
+		StochasticsPluginData stochasticsPluginData = StochasticsPluginData.builder().setMainRNGState(wellState).build();
 		Plugin stochasticsPlugin = StochasticsPlugin.getStochasticsPlugin(stochasticsPluginData);
 
 		// show the plugin is not null

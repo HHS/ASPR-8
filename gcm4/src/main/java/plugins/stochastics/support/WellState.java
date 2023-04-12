@@ -6,7 +6,7 @@ import net.jcip.annotations.ThreadSafe;
 import util.errors.ContractException;
 
 @ThreadSafe
-public class Well44497bSeed {
+public class WellState {
 
 	private static class Data {
 		boolean simple = true;
@@ -60,9 +60,6 @@ public class Well44497bSeed {
 			builder.append("]");
 			return builder.toString();
 		}
-		
-		
-		
 	}
 
 	public static Builder builder() {
@@ -76,9 +73,9 @@ public class Well44497bSeed {
 
 		}
 
-		public Well44497bSeed build() {
+		public WellState build() {
 			try {
-				return new Well44497bSeed(data);
+				return new WellState(data);
 			} finally {
 				data = new Data();
 			}
@@ -110,7 +107,7 @@ public class Well44497bSeed {
 
 	}
 
-	private Well44497bSeed(Data data) {
+	private WellState(Data data) {
 		this.data = data;
 	}
 
@@ -145,10 +142,10 @@ public class Well44497bSeed {
 		if (this == obj) {
 			return true;
 		}
-		if (!(obj instanceof Well44497bSeed)) {
+		if (!(obj instanceof WellState)) {
 			return false;
 		}
-		Well44497bSeed other = (Well44497bSeed) obj;
+		WellState other = (WellState) obj;
 		if (data == null) {
 			if (other.data != null) {
 				return false;

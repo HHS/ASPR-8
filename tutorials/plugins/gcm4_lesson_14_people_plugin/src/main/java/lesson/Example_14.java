@@ -16,9 +16,11 @@ import nucleus.Plugin;
 import plugins.people.PeoplePlugin;
 import plugins.people.PeoplePluginData;
 import plugins.people.support.PersonId;
+import plugins.people.support.PersonRange;
 import plugins.reports.support.NIOReportItemHandler;
 import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.StochasticsPluginData;
+import plugins.stochastics.support.WellState;
 import util.random.RandomGeneratorProvider;
 
 public final class Example_14 {
@@ -41,7 +43,8 @@ public final class Example_14 {
 				StochasticsPluginData.Builder stochasticsPluginDataBuilder = 
 						context.get(StochasticsPluginData.Builder.class);
 				long seedValue = seedValues.get(i);
-				stochasticsPluginDataBuilder.setSeed(seedValue);
+				WellState wellState = WellState.builder().setSeed(seedValue).build();
+				stochasticsPluginDataBuilder.setMainRNGState(wellState);
 
 				ArrayList<String> result = new ArrayList<>();
 				result.add(Integer.toString(i));
@@ -74,14 +77,16 @@ public final class Example_14 {
 		// numbered 1, 3, 5,...,19
 		PeoplePluginData.Builder peoplePluginDataBuilder = PeoplePluginData.builder();
 		for (int i = 0; i < 10; i++) {
-			peoplePluginDataBuilder.addPersonId(new PersonId(i * 2 + 1));
+			PersonId personId = new PersonId(i * 2 + 1);
+			peoplePluginDataBuilder.addPersonRange(new PersonRange(personId.getValue(), personId.getValue()));
 		}
 		PeoplePluginData peoplePluginData = peoplePluginDataBuilder.build();
 		Plugin peoplePlugin = PeoplePlugin.getPeoplePlugin(peoplePluginData);
 
 		// create the stochastics plugin and build a dimension with 5 seed
 		// values
-		StochasticsPluginData stochasticsPluginData = StochasticsPluginData.builder().setSeed(463390897335624435L).build();
+		WellState wellState = WellState.builder().setSeed(463390897335624435L).build();
+		StochasticsPluginData stochasticsPluginData = StochasticsPluginData.builder().setMainRNGState(wellState).build();
 		Plugin stochasticsPlugin = StochasticsPlugin.getStochasticsPlugin(stochasticsPluginData);
 
 		Dimension stochasticsDimension = getStochasticsDimension(5, 8265427588292179209L);
