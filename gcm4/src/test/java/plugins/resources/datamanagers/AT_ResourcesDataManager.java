@@ -3730,7 +3730,7 @@ public final class AT_ResourcesDataManager {
 		selectedResourcePropertyPairs.add(new Pair<>(TestResourceId.RESOURCE_2, TestResourcePropertyId.ResourceProperty_2_2_INTEGER_MUTABLE));
 		selectedResourcePropertyPairs.add(new Pair<>(TestResourceId.RESOURCE_3, TestResourcePropertyId.ResourceProperty_3_2_STRING_MUTABLE));
 		selectedResourcePropertyPairs.add(new Pair<>(TestResourceId.RESOURCE_3, TestResourcePropertyId.ResourceProperty_3_1_BOOLEAN_MUTABLE));
-		selectedResourcePropertyPairs.add(new Pair<>(TestResourceId.RESOURCE_5, TestResourcePropertyId.ResourceProperty_5_1_DOUBLE_IMMUTABLE));
+		selectedResourcePropertyPairs.add(new Pair<>(TestResourceId.RESOURCE_5, TestResourcePropertyId.ResourceProperty_5_2_DOUBLE_IMMUTABLE));
 
 		// Have an actor observe the selected resource property changes
 

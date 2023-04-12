@@ -18,22 +18,22 @@ public class Test {
 		System.out.println(rng.toString());
 		
 
-		Well44497bSeed well44497bSeed = Well44497bSeed.builder().setSeed(2352345345757564564L).build();
+		WellState wellState = WellState.builder().setSeed(2352345345757564564L).build();
 
-		CopyableWell44497b cr = new CopyableWell44497b(well44497bSeed);
+		Well cr = new Well(wellState);
 
 		/* changes internal state of cr */
 
 		for (int i = 0; i < 10; i++) {
 			System.out.println(cr.nextInt(50));
-			System.out.println(cr.getWell44497bSeed());
+			System.out.println(cr.getWellState());
 			
 		}
 		
 		
 
-		well44497bSeed = cr.getWell44497bSeed();
-		CopyableWell44497b copy = new CopyableWell44497b(well44497bSeed);
+		wellState = cr.getWellState();
+		Well copy = new Well(wellState);
 
 		System.out.println("\nTEST: INTEGER\n");
 
@@ -46,12 +46,12 @@ public class Test {
 					copy.nextInt(50) + "\n");
 		}
 
-		well44497bSeed = copy.getWell44497bSeed();
+		wellState = copy.getWellState();
 		
 		System.out.println(
-		well44497bSeed.getVArray().length);
+		wellState.getVArray().length);
 
-		CopyableWell44497b anotherCopy = new CopyableWell44497b(well44497bSeed);
+		Well anotherCopy = new Well(wellState);
 
 		System.out.println("\nTEST: DOUBLE\n");
 

@@ -23,7 +23,6 @@ import lesson.plugins.model.ModelPlugin;
 import lesson.plugins.model.ModelReportLabel;
 import lesson.plugins.model.PersonProperty;
 import lesson.plugins.model.Region;
-import lesson.plugins.model.reports.VaccineReport;
 import lesson.translatorSpecs.GlobalPropertyTranslatorSpec;
 import lesson.translatorSpecs.PersonPropertyTranslatorSpec;
 import lesson.translatorSpecs.RegionTranslatorSpec;
@@ -44,11 +43,10 @@ import plugins.personproperties.PersonPropertiesPlugin;
 import plugins.personproperties.PersonPropertiesPluginData;
 import plugins.regions.RegionsPlugin;
 import plugins.regions.RegionsPluginData;
-import plugins.reports.ReportsPlugin;
-import plugins.reports.ReportsPluginData;
 import plugins.reports.support.NIOReportItemHandler;
 import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.StochasticsPluginData;
+import plugins.stochastics.support.WellState;
 import plugins.util.properties.PropertyDefinition;
 import util.random.RandomGeneratorProvider;
 import util.time.Stopwatch;
@@ -86,17 +84,6 @@ public final class SerializationDemonstration {
 
 	private RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(524055747550937602L);
 
-	private Plugin getReportsPlugin() {
-		ReportsPluginData reportsPluginData = //
-				ReportsPluginData.builder()//
-						.addReport(() -> {
-							return new VaccineReport(ModelReportLabel.VACCINATION)::init;
-						})//
-						.build();
-
-		return ReportsPlugin.getReportsPlugin(reportsPluginData);
-	}
-
 	private NIOReportItemHandler getNIOReportItemHandler() {
 		return NIOReportItemHandler.builder()//
 				.addReport(ModelReportLabel.PERSON_PROPERTY_REPORT, //
@@ -118,7 +105,7 @@ public final class SerializationDemonstration {
 			regionsPluginDataBuilder.addRegion(new Region(i));
 		}
 		RegionsPluginData regionsPluginData = regionsPluginDataBuilder.build();
-		return RegionsPlugin.getRegionsPlugin(regionsPluginData);
+		return RegionsPlugin.builder().setRegionsPluginData(regionsPluginData).getRegionsPlugin();
 	}
 
 	private Plugin getPersonPropertiesPlugin() {
@@ -149,7 +136,7 @@ public final class SerializationDemonstration {
 	private Plugin getStochasticsPlugin() {
 		StochasticsPluginData stochasticsPluginData = StochasticsPluginData.builder()//
 
-				.setSeed(randomGenerator.nextLong())//
+				.setMainRNGState(WellState.builder().setSeed(randomGenerator.nextLong()).build())//
 				.build();
 
 		return StochasticsPlugin.getStochasticsPlugin(stochasticsPluginData);
@@ -290,7 +277,7 @@ public final class SerializationDemonstration {
 			}
 
 			if (pluginData instanceof RegionsPluginData) {
-				regionsPlugin = RegionsPlugin.getRegionsPlugin((RegionsPluginData) pluginData);
+				regionsPlugin = RegionsPlugin.builder().setRegionsPluginData((RegionsPluginData) pluginData).getRegionsPlugin();
 				continue;
 			}
 
@@ -311,7 +298,6 @@ public final class SerializationDemonstration {
 		/*
 		 * Create the reports
 		 */
-		Plugin reportsPlugin = getReportsPlugin();
 		NIOReportItemHandler nioReportItemHandler = getNIOReportItemHandler();
 
 		Plugin modelPlugin = ModelPlugin.getModelPlugin();
@@ -328,7 +314,6 @@ public final class SerializationDemonstration {
 				.addPlugin(regionsPlugin)//
 				.addPlugin(peoplePlugin)//
 				.addPlugin(stochasticsPlugin)//
-				.addPlugin(reportsPlugin)//
 
 				.addDimension(getImmunityStartTimeDimension())//
 				.addDimension(getImmunityProbabilityDimension())//
@@ -337,8 +322,7 @@ public final class SerializationDemonstration {
 				// .addDimension(getEducationSuccessRatedimension())//
 				// .addDimension(getVaccineRefusalProbabilityDimension())//
 				.addExperimentContextConsumer(nioReportItemHandler)//
-
-				.setProduceSimulationStateOnHalt(true)//
+				.setRecordState(true)
 				.addExperimentContextConsumer(new SimulationStateCollector(this::handleSimulationStateCollection,
 						this::handleExperiementOpen))
 

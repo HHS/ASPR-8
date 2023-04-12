@@ -10,6 +10,17 @@ message RandomNumberGeneratorIdInput {
     google.protobuf.Any id = 1;
 }
 
+message WellStateInput {
+    int64 seed = 1;
+    optional int32 index = 2;
+    optional bytes vArray = 3;
+}
+
+message RandomNumberGeneratorMapInput {
+    RandomNumberGeneratorIdInput randomNumberGeneratorId = 1;
+    WellStateInput wellState = 2;
+}
+
 enum TestRandomGeneratorIdInput {
     DASHER = 0;
     DANCER = 1;
@@ -22,7 +33,7 @@ enum TestRandomGeneratorIdInput {
 }
 
 message StochasticsPluginDataInput {
-    int64 seed = 1;
-    repeated RandomNumberGeneratorIdInput randomNumberGeneratorIds = 2;
+    WellStateInput wellState = 1;
+    repeated RandomNumberGeneratorMapInput randomNumberGeneratorIds = 2;
 }
 

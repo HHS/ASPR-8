@@ -3,15 +3,17 @@ package gov.hhs.aspr.gcm.translation.protobuf.plugins.people;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.gcm.translation.protobuf.core.TranslatorController;
 import nucleus.PluginData;
 import plugins.people.PeoplePluginData;
 import plugins.people.support.PersonId;
+import plugins.people.support.PersonRange;
+import util.random.RandomGeneratorProvider;
 
 public class AppTest {
 
@@ -25,38 +27,46 @@ public class AppTest {
 
         Path inputFilePath = basePath.resolve("src/main/resources/json");
         Path outputFilePath = basePath.resolve("src/main/resources/json/output");
-        
+
         outputFilePath.toFile().mkdir();
 
         String fileName = "pluginData.json";
 
         TranslatorController translatorController = TranslatorController.builder()
-                .addTranslator(PeopleTranslator.getTranslatorRW(inputFilePath.resolve(fileName).toString(), outputFilePath.resolve(fileName).toString()))
+                .addTranslator(PeopleTranslator.getTranslatorRW(inputFilePath.resolve(fileName).toString(),
+                        outputFilePath.resolve(fileName).toString()))
                 .build();
 
         List<PluginData> pluginDatas = translatorController.readInput().getPluginDatas();
-        PeoplePluginData peoplePluginData = (PeoplePluginData) pluginDatas.get(0);
+        PeoplePluginData actualPluginData = (PeoplePluginData) pluginDatas.get(0);
 
-        int initialPopulation = 100;
+        PeoplePluginData.Builder builder = PeoplePluginData.builder();
 
-        // add 1 to actual because of i % 2 resulting in a null for index 99, precluding
-        // it from the list
-        assertEquals(initialPopulation, peoplePluginData.getPersonIds().size() + 1);
+        RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6573670690105604419L);
 
-        List<PersonId> expectedPersonIds = new ArrayList<>();
-        for (int i = 0; i < initialPopulation; i++) {
-            if (i % 2 == 0)
-                expectedPersonIds.add(new PersonId(i));
-            else
-                expectedPersonIds.add(null);
+        int numRanges = randomGenerator.nextInt(15);
+
+        for (int i = 0; i < numRanges; i++) {
+            PersonRange personRange = new PersonRange(i * 15, (i * 15) + 1);
+            builder.addPersonRange(personRange);
         }
 
-        for (int i = 0; i < peoplePluginData.getPersonIds().size(); i++) {
-            PersonId actualPersonId = peoplePluginData.getPersonIds().get(i);
-            PersonId expectedPersonid = expectedPersonIds.get(i);
+        PeoplePluginData expectedPluginData = builder.build();
 
-            assertEquals(expectedPersonid, actualPersonId);
+        assertEquals(expectedPluginData.getPersonCount(), actualPluginData.getPersonCount());
 
+        List<PersonRange> expectedRanges = expectedPluginData.getPersonRanges();
+        List<PersonRange> actualRanges = actualPluginData.getPersonRanges();
+
+        for (int i = 0; i < expectedRanges.size(); i++) {
+            assertEquals(expectedRanges.get(i), actualRanges.get(i));
+        }
+
+        List<PersonId> expectedPersonIds = expectedPluginData.getPersonIds();
+        List<PersonId> actualPersonIds = actualPluginData.getPersonIds();
+
+        for (int i = 0; i < expectedPersonIds.size(); i++) {
+            assertEquals(expectedPersonIds.get(i), actualPersonIds.get(i));
         }
 
         translatorController.writeOutput();

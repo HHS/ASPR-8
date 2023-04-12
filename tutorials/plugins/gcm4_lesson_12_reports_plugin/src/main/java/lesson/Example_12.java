@@ -17,6 +17,7 @@ import nucleus.Plugin;
 import plugins.reports.support.NIOReportItemHandler;
 import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.StochasticsPluginData;
+import plugins.stochastics.support.WellState;
 
 public final class Example_12 {
 
@@ -62,7 +63,8 @@ public final class Example_12 {
 		
 		Plugin modelPlugin = ModelPlugin.getModelPlugin();
 		
-		StochasticsPluginData stochasticsPluginData = StochasticsPluginData.builder().setSeed(452363456L).build();
+		WellState wellState = WellState.builder().setSeed(452363456L).build();
+		StochasticsPluginData stochasticsPluginData = StochasticsPluginData.builder().setMainRNGState(wellState).build();
 		Plugin stochasticsPlugin = StochasticsPlugin.getStochasticsPlugin(stochasticsPluginData);
 
 		FamilyPluginData familyPluginData = FamilyPluginData.builder()//

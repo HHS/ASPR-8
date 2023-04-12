@@ -42,6 +42,7 @@ import plugins.people.PeoplePluginData;
 import plugins.people.PeoplePluginId;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
+import plugins.people.support.PersonRange;
 import plugins.regions.RegionsPluginData;
 import plugins.regions.RegionsPluginId;
 import plugins.regions.support.RegionError;
@@ -57,6 +58,7 @@ import plugins.resources.testsupport.TestResourcePropertyId;
 import plugins.stochastics.StochasticsPluginData;
 import plugins.stochastics.StochasticsPluginId;
 import plugins.stochastics.support.StochasticsError;
+import plugins.stochastics.support.WellState;
 import plugins.stochastics.testsupport.TestRandomGeneratorId;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.TimeTrackingPolicy;
@@ -68,48 +70,43 @@ import util.wrappers.MutableBoolean;
 public class AT_MaterialsTestPluginFactory {
 
 	@Test
-	@UnitTestMethod(target = MaterialsTestPluginFactory.class, name = "factory", args = { int.class, int.class,
-			int.class, long.class, Consumer.class })
+	@UnitTestMethod(target = MaterialsTestPluginFactory.class, name = "factory", args = { int.class, int.class, int.class, long.class, Consumer.class })
 	public void testFactory_Consumer() {
 		MutableBoolean executed = new MutableBoolean();
 		Factory factory = MaterialsTestPluginFactory.factory(0, 0, 0, 3328026739613106739L, c -> executed.setValue(true));
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
-		
+
 		assertTrue(executed.getValue());
 
 		// precondition: consumer is null
 		Consumer<ActorContext> nullConsumer = null;
-		ContractException contractException = assertThrows(ContractException.class,
-				() -> MaterialsTestPluginFactory.factory(0, 0, 0, 0, nullConsumer));
+		ContractException contractException = assertThrows(ContractException.class, () -> MaterialsTestPluginFactory.factory(0, 0, 0, 0, nullConsumer));
 		assertEquals(NucleusError.NULL_ACTOR_CONTEXT_CONSUMER, contractException.getErrorType());
 	}
 
 	@Test
-	@UnitTestMethod(target = MaterialsTestPluginFactory.class, name = "factory", args = { int.class, int.class,
-			int.class, long.class, TestPluginData.class })
+	@UnitTestMethod(target = MaterialsTestPluginFactory.class, name = "factory", args = { int.class, int.class, int.class, long.class, TestPluginData.class })
 	public void testFactory_TestPluginData() {
 		MutableBoolean executed = new MutableBoolean();
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, c -> executed.setValue(true)));
 		TestPluginData testPluginData = pluginBuilder.build();
 
-		
 		Factory factory = MaterialsTestPluginFactory.factory(0, 0, 0, 7995349318419680542L, testPluginData);
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
-		
+
 		assertTrue(executed.getValue());
 
 		// precondition: testPluginData is null
 		TestPluginData nullTestPluginData = null;
-		ContractException contractException = assertThrows(ContractException.class,
-				() -> MaterialsTestPluginFactory.factory(0, 0, 0, 0, nullTestPluginData));
+		ContractException contractException = assertThrows(ContractException.class, () -> MaterialsTestPluginFactory.factory(0, 0, 0, 0, nullTestPluginData));
 		assertEquals(NucleusError.NULL_PLUGIN_DATA, contractException.getErrorType());
 
 	}
 
 	/*
-	 * Given a list of plugins, will show that the plugin with the given pluginId
-	 * exists, and exists EXACTLY once.
+	 * Given a list of plugins, will show that the plugin with the given
+	 * pluginId exists, and exists EXACTLY once.
 	 */
 	private Plugin checkPluginExists(List<Plugin> plugins, PluginId pluginId) {
 		Plugin actualPlugin = null;
@@ -126,11 +123,10 @@ public class AT_MaterialsTestPluginFactory {
 	}
 
 	/**
-	 * Given a list of plugins, will show that the explicit plugindata for the given
-	 * pluginid exists, and exists EXACTLY once.
+	 * Given a list of plugins, will show that the explicit plugindata for the
+	 * given pluginid exists, and exists EXACTLY once.
 	 */
-	private <T extends PluginData> void checkPluginDataExists(List<Plugin> plugins, T expectedPluginData,
-			PluginId pluginId) {
+	private <T extends PluginData> void checkPluginDataExists(List<Plugin> plugins, T expectedPluginData, PluginId pluginId) {
 		Plugin actualPlugin = checkPluginExists(plugins, pluginId);
 		Set<PluginData> actualPluginDatas = actualPlugin.getPluginDatas();
 		assertNotNull(actualPluginDatas);
@@ -155,8 +151,7 @@ public class AT_MaterialsTestPluginFactory {
 	}
 
 	@Test
-	@UnitTestMethod(target = MaterialsTestPluginFactory.Factory.class, name = "setMaterialsPluginData", args = {
-			MaterialsPluginData.class })
+	@UnitTestMethod(target = MaterialsTestPluginFactory.Factory.class, name = "setMaterialsPluginData", args = { MaterialsPluginData.class })
 	public void testSetMaterialsPluginData() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(4328791012645031581L);
 		MaterialsPluginData.Builder materialsBuilder = MaterialsPluginData.builder();
@@ -169,26 +164,21 @@ public class AT_MaterialsTestPluginFactory {
 			materialsBuilder.addMaterialsProducerId(testMaterialsProducerId);
 		}
 
-		for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId
-				.values()) {
-			materialsBuilder.defineMaterialsProducerProperty(testMaterialsProducerPropertyId,
-					testMaterialsProducerPropertyId.getPropertyDefinition());
+		for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId.values()) {
+			materialsBuilder.defineMaterialsProducerProperty(testMaterialsProducerPropertyId, testMaterialsProducerPropertyId.getPropertyDefinition());
 		}
 
-		for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId
-				.getPropertiesWithoutDefaultValues()) {
+		for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId.getPropertiesWithoutDefaultValues()) {
 			for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
 				Object randomPropertyValue = testMaterialsProducerPropertyId.getRandomPropertyValue(randomGenerator);
-				materialsBuilder.setMaterialsProducerPropertyValue(testMaterialsProducerId,
-						testMaterialsProducerPropertyId, randomPropertyValue);
+				materialsBuilder.setMaterialsProducerPropertyValue(testMaterialsProducerId, testMaterialsProducerPropertyId, randomPropertyValue);
 			}
 		}
 
 		for (TestMaterialId testMaterialId : TestMaterialId.values()) {
 			Set<TestBatchPropertyId> testBatchPropertyIds = TestBatchPropertyId.getTestBatchPropertyIds(testMaterialId);
 			for (TestBatchPropertyId testBatchPropertyId : testBatchPropertyIds) {
-				materialsBuilder.defineBatchProperty(testMaterialId, testBatchPropertyId,
-						testBatchPropertyId.getPropertyDefinition());
+				materialsBuilder.defineBatchProperty(testMaterialId, testBatchPropertyId, testBatchPropertyId.getPropertyDefinition());
 			}
 		}
 
@@ -200,16 +190,14 @@ public class AT_MaterialsTestPluginFactory {
 		checkPluginDataExists(plugins, materialsPluginData, MaterialsPluginId.PLUGIN_ID);
 
 		// precondition: materialsPluginData is not null
-		ContractException contractException = assertThrows(ContractException.class,
-				() -> MaterialsTestPluginFactory.factory(0, 0, 0, 0, t -> {
-				}).setMaterialsPluginData(null));
+		ContractException contractException = assertThrows(ContractException.class, () -> MaterialsTestPluginFactory.factory(0, 0, 0, 0, t -> {
+		}).setMaterialsPluginData(null));
 		assertEquals(MaterialsError.NULL_MATERIALS_PLUGIN_DATA, contractException.getErrorType());
 
 	}
 
 	@Test
-	@UnitTestMethod(target = MaterialsTestPluginFactory.Factory.class, name = "setResourcesPluginData", args = {
-			ResourcesPluginData.class })
+	@UnitTestMethod(target = MaterialsTestPluginFactory.Factory.class, name = "setResourcesPluginData", args = { ResourcesPluginData.class })
 	public void testSetResourcesPluginData() {
 		ResourcesPluginData.Builder builder = ResourcesPluginData.builder();
 
@@ -221,15 +209,13 @@ public class AT_MaterialsTestPluginFactory {
 		checkPluginDataExists(plugins, resourcesPluginData, ResourcesPluginId.PLUGIN_ID);
 
 		// precondition: resourcesPluginData is not null
-		ContractException contractException = assertThrows(ContractException.class,
-				() -> MaterialsTestPluginFactory.factory(0, 0, 0, 0, t -> {
-				}).setResourcesPluginData(null));
+		ContractException contractException = assertThrows(ContractException.class, () -> MaterialsTestPluginFactory.factory(0, 0, 0, 0, t -> {
+		}).setResourcesPluginData(null));
 		assertEquals(ResourceError.NULL_RESOURCE_PLUGIN_DATA, contractException.getErrorType());
 	}
 
 	@Test
-	@UnitTestMethod(target = MaterialsTestPluginFactory.Factory.class, name = "setRegionsPluginData", args = {
-			RegionsPluginData.class })
+	@UnitTestMethod(target = MaterialsTestPluginFactory.Factory.class, name = "setRegionsPluginData", args = { RegionsPluginData.class })
 	public void testSetRegionsPluginData() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(968101337385656117L);
 		int initialPopulation = 30;
@@ -245,14 +231,12 @@ public class AT_MaterialsTestPluginFactory {
 		}
 
 		for (TestRegionPropertyId testRegionPropertyId : TestRegionPropertyId.values()) {
-			regionPluginBuilder.defineRegionProperty(testRegionPropertyId,
-					testRegionPropertyId.getPropertyDefinition());
+			regionPluginBuilder.defineRegionProperty(testRegionPropertyId, testRegionPropertyId.getPropertyDefinition());
 		}
 
 		for (TestRegionId regionId : TestRegionId.values()) {
 			for (TestRegionPropertyId testRegionPropertyId : TestRegionPropertyId.values()) {
-				if (testRegionPropertyId.getPropertyDefinition().getDefaultValue().isEmpty()
-						|| randomGenerator.nextBoolean()) {
+				if (testRegionPropertyId.getPropertyDefinition().getDefaultValue().isEmpty() || randomGenerator.nextBoolean()) {
 					Object randomPropertyValue = testRegionPropertyId.getRandomPropertyValue(randomGenerator);
 					regionPluginBuilder.setRegionPropertyValue(regionId, testRegionPropertyId, randomPropertyValue);
 				}
@@ -274,43 +258,39 @@ public class AT_MaterialsTestPluginFactory {
 		checkPluginDataExists(plugins, regionsPluginData, RegionsPluginId.PLUGIN_ID);
 
 		// precondition: regionsPluginData is not null
-		ContractException contractException = assertThrows(ContractException.class,
-				() -> MaterialsTestPluginFactory.factory(0, 0, 0, 0, t -> {
-				}).setRegionsPluginData(null));
+		ContractException contractException = assertThrows(ContractException.class, () -> MaterialsTestPluginFactory.factory(0, 0, 0, 0, t -> {
+		}).setRegionsPluginData(null));
 		assertEquals(RegionError.NULL_REGION_PLUGIN_DATA, contractException.getErrorType());
 	}
 
 	@Test
-	@UnitTestMethod(target = MaterialsTestPluginFactory.Factory.class, name = "setPeoplePluginData", args = {
-			PeoplePluginData.class })
+	@UnitTestMethod(target = MaterialsTestPluginFactory.Factory.class, name = "setPeoplePluginData", args = { PeoplePluginData.class })
 	public void testSetPeoplePluginData() {
 		PeoplePluginData.Builder builder = PeoplePluginData.builder();
-
-		for (int i = 0; i < 100; i++) {
-			builder.addPersonId(new PersonId(i));
-		}
-
+		builder.addPersonRange(new PersonRange(0,99));
 		PeoplePluginData peoplePluginData = builder.build();
 
 		List<Plugin> plugins = MaterialsTestPluginFactory.factory(0, 0, 0, 0, t -> {
 		}).setPeoplePluginData(peoplePluginData).getPlugins();
 
 		checkPluginDataExists(plugins, peoplePluginData, PeoplePluginId.PLUGIN_ID);
-		
+
 		// precondition: peoplePluginData is not null
-		ContractException contractException = assertThrows(ContractException.class,
-				() -> MaterialsTestPluginFactory.factory(0, 0, 0, 0, t -> {
-				}).setPeoplePluginData(null));
+		ContractException contractException = assertThrows(ContractException.class, () -> MaterialsTestPluginFactory.factory(0, 0, 0, 0, t -> {
+		}).setPeoplePluginData(null));
 		assertEquals(PersonError.NULL_PEOPLE_PLUGIN_DATA, contractException.getErrorType());
 	}
 
 	@Test
-	@UnitTestMethod(target = MaterialsTestPluginFactory.Factory.class, name = "setStochasticsPluginData", args = {
-			StochasticsPluginData.class })
+	@UnitTestMethod(target = MaterialsTestPluginFactory.Factory.class, name = "setStochasticsPluginData", args = { StochasticsPluginData.class })
 	public void testSetStochasticsPluginData() {
 		StochasticsPluginData.Builder builder = StochasticsPluginData.builder();
 
-		builder.setSeed(2990359774692004249L).addRandomGeneratorId(TestRandomGeneratorId.BLITZEN);
+		WellState wellState = WellState.builder().setSeed(2990359774692004249L).build();
+		builder.setMainRNGState(wellState);
+		
+		wellState = WellState.builder().setSeed(1090094972994322820L).build();
+		builder.addRNG(TestRandomGeneratorId.BLITZEN, wellState);
 
 		StochasticsPluginData stochasticsPluginData = builder.build();
 
@@ -320,23 +300,20 @@ public class AT_MaterialsTestPluginFactory {
 		checkPluginDataExists(plugins, stochasticsPluginData, StochasticsPluginId.PLUGIN_ID);
 
 		// precondition: stochasticsPluginData is not null
-		ContractException contractException = assertThrows(ContractException.class,
-				() -> MaterialsTestPluginFactory.factory(0, 0, 0, 0, t -> {
-				}).setStochasticsPluginData(null));
+		ContractException contractException = assertThrows(ContractException.class, () -> MaterialsTestPluginFactory.factory(0, 0, 0, 0, t -> {
+		}).setStochasticsPluginData(null));
 		assertEquals(StochasticsError.NULL_STOCHASTICS_PLUGIN_DATA, contractException.getErrorType());
 	}
 
 	@Test
-	@UnitTestMethod(target = MaterialsTestPluginFactory.class, name = "getStandardMaterialsPluginData", args = {
-			int.class, int.class, int.class, long.class })
+	@UnitTestMethod(target = MaterialsTestPluginFactory.class, name = "getStandardMaterialsPluginData", args = { int.class, int.class, int.class, long.class })
 	public void testGetStandardMaterialsPluginData() {
 		int numBatches = 50;
 		int numStages = 10;
 		int numBatchesInStage = 30;
 		long seed = 9029198675932589278L;
 
-		MaterialsPluginData materialsPluginData = MaterialsTestPluginFactory.getStandardMaterialsPluginData(numBatches,
-				numStages, numBatchesInStage, seed);
+		MaterialsPluginData materialsPluginData = MaterialsTestPluginFactory.getStandardMaterialsPluginData(numBatches, numStages, numBatchesInStage, seed);
 
 		Set<TestMaterialId> expectedMaterialIds = EnumSet.allOf(TestMaterialId.class);
 		assertFalse(expectedMaterialIds.isEmpty());
@@ -345,16 +322,13 @@ public class AT_MaterialsTestPluginFactory {
 		assertEquals(expectedMaterialIds, actualMaterialIds);
 
 		for (TestMaterialId expectedMaterialId : expectedMaterialIds) {
-			Set<TestBatchPropertyId> expectedBatchPropertyIds = TestBatchPropertyId
-					.getTestBatchPropertyIds(expectedMaterialId);
+			Set<TestBatchPropertyId> expectedBatchPropertyIds = TestBatchPropertyId.getTestBatchPropertyIds(expectedMaterialId);
 			assertFalse(expectedBatchPropertyIds.isEmpty());
 			Set<BatchPropertyId> actualBatchPropertyIds = materialsPluginData.getBatchPropertyIds(expectedMaterialId);
 			assertEquals(expectedBatchPropertyIds, actualBatchPropertyIds);
 			for (TestBatchPropertyId batchPropertyId : expectedBatchPropertyIds) {
 				PropertyDefinition expectedPropertyDefinition = batchPropertyId.getPropertyDefinition();
-				PropertyDefinition actualPropertyDefinition = materialsPluginData.getBatchPropertyDefinition(
-						expectedMaterialId,
-						batchPropertyId);
+				PropertyDefinition actualPropertyDefinition = materialsPluginData.getBatchPropertyDefinition(expectedMaterialId, batchPropertyId);
 				assertEquals(expectedPropertyDefinition, actualPropertyDefinition);
 			}
 		}
@@ -392,14 +366,11 @@ public class AT_MaterialsTestPluginFactory {
 
 				double actualAmount = materialsPluginData.getBatchAmount(batchId);
 				assertEquals(expectedAmount, actualAmount);
-				for (TestBatchPropertyId expectedBatchPropertyId : TestBatchPropertyId
-						.getTestBatchPropertyIds(expectedMaterialId)) {
-					if (expectedBatchPropertyId.getPropertyDefinition().getDefaultValue().isEmpty()
-							|| randomGenerator.nextBoolean()) {
+				for (TestBatchPropertyId expectedBatchPropertyId : TestBatchPropertyId.getTestBatchPropertyIds(expectedMaterialId)) {
+					if (expectedBatchPropertyId.getPropertyDefinition().getDefaultValue().isEmpty() || randomGenerator.nextBoolean()) {
 						Object expectedPropertyValue = expectedBatchPropertyId.getRandomPropertyValue(randomGenerator);
 
-						Map<BatchPropertyId, Object> propertyValueMap = materialsPluginData
-								.getBatchPropertyValues(batchId);
+						Map<BatchPropertyId, Object> propertyValueMap = materialsPluginData.getBatchPropertyValues(batchId);
 						assertTrue(propertyValueMap.containsKey(expectedBatchPropertyId));
 						assertEquals(expectedPropertyValue, propertyValueMap.get(expectedBatchPropertyId));
 					}
@@ -413,8 +384,7 @@ public class AT_MaterialsTestPluginFactory {
 			assertTrue(materialsPluginData.getStageIds().containsAll(stages));
 
 			for (int i = 0; i < stages.size(); i++) {
-				MaterialsProducerId actualMaterialsProducerId = materialsPluginData
-						.getStageMaterialsProducer(stages.get(i));
+				MaterialsProducerId actualMaterialsProducerId = materialsPluginData.getStageMaterialsProducer(stages.get(i));
 				assertEquals(expectedProducerId, actualMaterialsProducerId);
 				boolean expectedOffered = i % 2 == 0;
 				boolean actualOffered = materialsPluginData.isStageOffered(stages.get(i));
@@ -434,25 +404,20 @@ public class AT_MaterialsTestPluginFactory {
 		}
 		assertEquals(expectedNumBatchesPerStage, actualNumBatchesPerStage);
 
-		Set<TestMaterialsProducerPropertyId> expectedMaterialsProducerPropertyIds = EnumSet
-				.allOf(TestMaterialsProducerPropertyId.class);
+		Set<TestMaterialsProducerPropertyId> expectedMaterialsProducerPropertyIds = EnumSet.allOf(TestMaterialsProducerPropertyId.class);
 		assertFalse(expectedMaterialsProducerPropertyIds.isEmpty());
 
-		Set<MaterialsProducerPropertyId> actualMaterialProducerPropertyIds = materialsPluginData
-				.getMaterialsProducerPropertyIds();
+		Set<MaterialsProducerPropertyId> actualMaterialProducerPropertyIds = materialsPluginData.getMaterialsProducerPropertyIds();
 		assertEquals(expectedMaterialsProducerPropertyIds, actualMaterialProducerPropertyIds);
 
 		for (TestMaterialsProducerPropertyId expectedMaterialsProducerPropertyId : expectedMaterialsProducerPropertyIds) {
 			PropertyDefinition expectedPropertyDefinition = expectedMaterialsProducerPropertyId.getPropertyDefinition();
-			PropertyDefinition actualPropertyDefinition = materialsPluginData
-					.getMaterialsProducerPropertyDefinition(expectedMaterialsProducerPropertyId);
+			PropertyDefinition actualPropertyDefinition = materialsPluginData.getMaterialsProducerPropertyDefinition(expectedMaterialsProducerPropertyId);
 			assertEquals(expectedPropertyDefinition, actualPropertyDefinition);
 			if (expectedPropertyDefinition.getDefaultValue().isEmpty()) {
 				for (TestMaterialsProducerId producerId : expectedMaterialsProducerIds) {
-					Object expectedPropertyValue = expectedMaterialsProducerPropertyId
-							.getRandomPropertyValue(randomGenerator);
-					Map<MaterialsProducerPropertyId, Object> propertyValueMap = materialsPluginData
-							.getMaterialsProducerPropertyValues(producerId);
+					Object expectedPropertyValue = expectedMaterialsProducerPropertyId.getRandomPropertyValue(randomGenerator);
+					Map<MaterialsProducerPropertyId, Object> propertyValueMap = materialsPluginData.getMaterialsProducerPropertyValues(producerId);
 					assertTrue(propertyValueMap.containsKey(expectedMaterialsProducerPropertyId));
 					Object actualPropertyValue = propertyValueMap.get(expectedMaterialsProducerPropertyId);
 					assertEquals(expectedPropertyValue, actualPropertyValue);
@@ -463,13 +428,11 @@ public class AT_MaterialsTestPluginFactory {
 	}
 
 	@Test
-	@UnitTestMethod(target = MaterialsTestPluginFactory.class, name = "getStandardResourcesPluginData", args = {
-			long.class })
+	@UnitTestMethod(target = MaterialsTestPluginFactory.class, name = "getStandardResourcesPluginData", args = { long.class })
 	public void testGetStandardResourcesPluginData() {
 
 		long seed = 4800551796983227153L;
-		ResourcesPluginData resourcesPluginData = MaterialsTestPluginFactory
-				.getStandardResourcesPluginData(seed);
+		ResourcesPluginData resourcesPluginData = MaterialsTestPluginFactory.getStandardResourcesPluginData(seed);
 
 		Set<TestResourceId> expectedResourceIds = EnumSet.allOf(TestResourceId.class);
 		assertFalse(expectedResourceIds.isEmpty());
@@ -494,12 +457,10 @@ public class AT_MaterialsTestPluginFactory {
 
 			assertTrue(resourcesPluginData.getResourcePropertyIds(expectedResourceId).contains(resourcePropertyId));
 
-			PropertyDefinition actualPropertyDefinition = resourcesPluginData
-					.getResourcePropertyDefinition(expectedResourceId, resourcePropertyId);
+			PropertyDefinition actualPropertyDefinition = resourcesPluginData.getResourcePropertyDefinition(expectedResourceId, resourcePropertyId);
 			assertEquals(expectedPropertyDefinition, actualPropertyDefinition);
 
-			Object actualPropertyValue = resourcesPluginData.getResourcePropertyValue(expectedResourceId,
-					resourcePropertyId);
+			Object actualPropertyValue = resourcesPluginData.getResourcePropertyValue(expectedResourceId, resourcePropertyId);
 			assertEquals(expectedPropertyValue, actualPropertyValue);
 		}
 	}
@@ -526,13 +487,10 @@ public class AT_MaterialsTestPluginFactory {
 	}
 
 	@Test
-	@UnitTestMethod(target = MaterialsTestPluginFactory.class, name = "getStandardStochasticsPluginData", args = {
-			long.class })
+	@UnitTestMethod(target = MaterialsTestPluginFactory.class, name = "getStandardStochasticsPluginData", args = { long.class })
 	public void testGetStandardStochasticsPluginData() {
 		long seed = 6072871729256538807L;
-		StochasticsPluginData stochasticsPluginData = MaterialsTestPluginFactory
-				.getStandardStochasticsPluginData(seed);
-
-		assertEquals(RandomGeneratorProvider.getRandomGenerator(seed).nextLong(), stochasticsPluginData.getSeed());
+		StochasticsPluginData stochasticsPluginData = MaterialsTestPluginFactory.getStandardStochasticsPluginData(seed);
+		assertEquals(seed, stochasticsPluginData.getWellState().getSeed());
 	}
 }

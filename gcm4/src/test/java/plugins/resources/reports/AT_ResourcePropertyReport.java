@@ -16,6 +16,7 @@ import plugins.reports.support.ReportHeader;
 import plugins.reports.support.ReportItem;
 import plugins.reports.support.ReportLabel;
 import plugins.reports.support.SimpleReportLabel;
+import plugins.resources.ResourcesPluginData;
 import plugins.resources.datamanagers.ResourcesDataManager;
 import plugins.resources.support.ResourcePropertyId;
 import plugins.resources.support.ResourcePropertyInitialization;
@@ -140,25 +141,25 @@ public class AT_ResourcePropertyReport {
 		 */
 		Map<ReportItem, Integer> expectedReportItems = new LinkedHashMap<>();
 		expectedReportItems.put(getReportItem(0.0, TestResourceId.RESOURCE_1,
-				TestResourcePropertyId.ResourceProperty_1_1_BOOLEAN_MUTABLE, true), 1);
+				TestResourcePropertyId.ResourceProperty_1_1_BOOLEAN_MUTABLE, false), 1);
 		expectedReportItems.put(getReportItem(0.0, TestResourceId.RESOURCE_1,
-				TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE, 1673029105), 1);
+				TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE, 0), 1);
 		expectedReportItems.put(getReportItem(0.0, TestResourceId.RESOURCE_1,
-				TestResourcePropertyId.ResourceProperty_1_3_DOUBLE_MUTABLE, 0.9762970538942173), 1);
+				TestResourcePropertyId.ResourceProperty_1_3_DOUBLE_MUTABLE, 0.0), 1);
 		expectedReportItems.put(getReportItem(0.0, TestResourceId.RESOURCE_2,
 				TestResourcePropertyId.ResourceProperty_2_1_BOOLEAN_MUTABLE, true), 1);
 		expectedReportItems.put(getReportItem(0.0, TestResourceId.RESOURCE_2,
-				TestResourcePropertyId.ResourceProperty_2_2_INTEGER_MUTABLE, 1818034648), 1);
+				TestResourcePropertyId.ResourceProperty_2_2_INTEGER_MUTABLE, 5), 1);
 		expectedReportItems.put(getReportItem(0.0, TestResourceId.RESOURCE_3,
-				TestResourcePropertyId.ResourceProperty_3_1_BOOLEAN_MUTABLE, true), 1);
+				TestResourcePropertyId.ResourceProperty_3_1_BOOLEAN_MUTABLE, false), 1);
 		expectedReportItems.put(getReportItem(0.0, TestResourceId.RESOURCE_3,
-				TestResourcePropertyId.ResourceProperty_3_2_STRING_MUTABLE, 319183829), 1);
+				TestResourcePropertyId.ResourceProperty_3_2_STRING_MUTABLE, ""), 1);
 		expectedReportItems.put(getReportItem(0.0, TestResourceId.RESOURCE_4,
 				TestResourcePropertyId.ResourceProperty_4_1_BOOLEAN_MUTABLE, true), 1);
 		expectedReportItems.put(getReportItem(0.0, TestResourceId.RESOURCE_5,
-				TestResourcePropertyId.ResourceProperty_5_1_INTEGER_IMMUTABLE, 704893369), 1);
+				TestResourcePropertyId.ResourceProperty_5_1_INTEGER_IMMUTABLE, 7), 1);
 		expectedReportItems.put(getReportItem(0.0, TestResourceId.RESOURCE_5,
-				TestResourcePropertyId.ResourceProperty_5_1_DOUBLE_IMMUTABLE, 0.7547798894049567), 1);
+				TestResourcePropertyId.ResourceProperty_5_2_DOUBLE_IMMUTABLE, 2.7), 1);
 		expectedReportItems.put(getReportItem(0.0, TestResourceId.RESOURCE_3,
 				TestResourcePropertyId.ResourceProperty_3_2_STRING_MUTABLE, "A"), 1);
 		expectedReportItems.put(getReportItem(1.0, TestResourceId.RESOURCE_2,
@@ -187,9 +188,24 @@ public class AT_ResourcePropertyReport {
 				TestAuxiliaryResourcePropertyId.AUX_RESOURCE_PROPERTY_2_INTEGER_MUTABLE, 137), 1);
 
 
+		ResourcesPluginData.Builder resourcesBuilder = ResourcesPluginData.builder();
+
+		for (TestResourceId testResourceId : TestResourceId.values()) {
+			resourcesBuilder.addResource(testResourceId);
+			resourcesBuilder.setResourceTimeTracking(testResourceId, testResourceId.getTimeTrackingPolicy());
+		}
+
+		for (TestResourcePropertyId testResourcePropertyId : TestResourcePropertyId.values()) {
+			TestResourceId testResourceId = testResourcePropertyId.getTestResourceId();
+			PropertyDefinition propertyDefinition = testResourcePropertyId.getPropertyDefinition();
+			resourcesBuilder.defineResourceProperty(testResourceId, testResourcePropertyId, propertyDefinition);
+		}
+
+		ResourcesPluginData resourcesPluginData = resourcesBuilder.build();
 
 		 
 		Factory factory = ResourcesTestPluginFactory.factory(initialPopulation, 8914112012010329946L, testPluginData);
+		factory.setResourcesPluginData(resourcesPluginData);
 		ResourcePropertyReportPluginData resourcePropertyReportPluginData = ResourcePropertyReportPluginData.builder().setReportLabel(REPORT_LABEL).build();
 		factory.setResourcePropertyReportPluginData(resourcePropertyReportPluginData);
 		
@@ -197,9 +213,10 @@ public class AT_ResourcePropertyReport {
 				.addPlugins(factory.getPlugins())//
 				.build()//
 				.execute();
-
 		
-		assertEquals(expectedReportItems, testOutputConsumer.getOutputItems(ReportItem.class));
+		Map<ReportItem, Integer> actualReportItems = testOutputConsumer.getOutputItems(ReportItem.class);
+		
+		assertEquals(expectedReportItems, actualReportItems);
 	}
 
 	@Test

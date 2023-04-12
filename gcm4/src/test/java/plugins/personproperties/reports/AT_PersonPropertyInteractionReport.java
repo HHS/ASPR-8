@@ -21,6 +21,7 @@ import nucleus.testsupport.testplugin.TestSimulation;
 import plugins.people.PeoplePlugin;
 import plugins.people.PeoplePluginData;
 import plugins.people.support.PersonId;
+import plugins.people.support.PersonRange;
 import plugins.personproperties.PersonPropertiesPlugin;
 import plugins.personproperties.PersonPropertiesPluginData;
 import plugins.personproperties.datamanagers.PersonPropertiesDataManager;
@@ -159,10 +160,8 @@ public class AT_PersonPropertyInteractionReport {
 		int populationSize = 30;
 
 		PeoplePluginData.Builder peopleBuilder = PeoplePluginData.builder();
-
-		for (int i = 0; i < populationSize; i++) {
-			peopleBuilder.addPersonId(new PersonId(i));
-		}
+		peopleBuilder.addPersonRange(new PersonRange(0, populationSize-1));
+		
 		PeoplePluginData peoplePluginData = peopleBuilder.build();
 		Plugin peoplePlugin = PeoplePlugin.getPeoplePlugin(peoplePluginData);
 		plugins.add(peoplePlugin);
