@@ -3,7 +3,6 @@ package gov.hss.aspr.gcm.translation.protobuf.nucleus;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.nio.file.Path;
-import java.time.LocalDate;
 import java.util.List;
 
 import org.apache.commons.math3.random.RandomGenerator;
@@ -46,11 +45,6 @@ public class AppTest {
         List<Object> objects = translatorController.readInput().getObjects();
 
         SimulationState actualSimulationState = (SimulationState) objects.get(0);
-
-        // assertEquals(exptectedSimulationState.getBaseDate(),
-        // actualSimulationState.getBaseDate());
-        // assertEquals(exptectedSimulationState.getStartTime(),
-        // actualSimulationState.getStartTime());
 
         RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6625494580697137579L);
 
