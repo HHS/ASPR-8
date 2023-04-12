@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 import util.errors.ContractException;
 
@@ -58,12 +59,12 @@ public final class ActorContext implements SimulationContext {
 										.setActive(true)//
 										.setCallbackConsumer(consumer)//
 										.setKey(null)//
-										.setPlanData(null)//										
+										.setPlanData(null)//
 										.setTime(planTime)//
 										.build();//
 		simulation.addActorPlan(plan);
 	}
-	
+
 	/**
 	 * Schedules a plan.
 	 * 
@@ -224,6 +225,16 @@ public final class ActorContext implements SimulationContext {
 	 */
 	public void removeActor(ActorId actorId) {
 		simulation.removeActor(actorId);
+	}
+
+	/**
+	 * Sets a function for converting plan data instances into consumers of
+	 * actor context that will be used to convert stored plans from a previous
+	 * simulation execution into current plans. Only used during the
+	 * initialization of the simulation before time flows.
+	 */
+	public <T extends PlanData> void setPlanDataConverter(Class<T> planDataClass, Function<T, Consumer<ActorContext>> conversionFunction) {
+		simulation.setActorPlanDataConverter(planDataClass, conversionFunction);
 	}
 
 }

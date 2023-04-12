@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 import util.errors.ContractException;
 
@@ -43,7 +44,7 @@ public final class DataManagerContext implements SimulationContext {
 											.setActive(true)//
 											.setCallbackConsumer(consumer)//
 											.setKey(null)//
-											.setPlanData(null)//											
+											.setPlanData(null)//
 											.setTime(planTime)//
 											.build();//
 
@@ -63,10 +64,10 @@ public final class DataManagerContext implements SimulationContext {
 	 * 
 	 * 
 	 */
-	public void addPlan(Plan<DataManagerContext> plan) {		
-		simulation.addDataManagerPlan(dataManagerId,plan);
+	public void addPlan(Plan<DataManagerContext> plan) {
+		simulation.addDataManagerPlan(dataManagerId, plan);
 	}
-	
+
 	/**
 	 * Registers the given consumer to be executed at the end of the simulation.
 	 * Activity associated with the consumer should be limited to querying data
@@ -87,6 +88,7 @@ public final class DataManagerContext implements SimulationContext {
 	public boolean stateRecordingIsScheduled() {
 		return simulation.stateRecordingIsScheduled();
 	}
+
 	/**
 	 * Returns the scheduled simulation halt time. Negative values indicate
 	 * there is no scheduled halt time.
@@ -94,7 +96,7 @@ public final class DataManagerContext implements SimulationContext {
 	public double getScheduledSimulationHaltTime() {
 		return simulation.getScheduledSimulationHaltTime();
 	}
-	
+
 	/**
 	 * Returns true if and only if there a state recording is scheduled and the
 	 * given time exceeds the recording time.
@@ -259,5 +261,15 @@ public final class DataManagerContext implements SimulationContext {
 	public void releaseOutput(Object output) {
 		simulation.releaseOutput(output);
 	}
-	
+
+	/**
+	 * Sets a function for converting plan data instances into consumers of
+	 * actor context that will be used to convert stored plans from a previous
+	 * simulation execution into current plans. Only used during the
+	 * initialization of the simulation before time flows.
+	 */
+	public <T extends PlanData> void setPlanDataConverter(Class<T> planDataClass, Function<T, Consumer<DataManagerContext>> conversionFunction) {
+		simulation.setDataManagerPlanDataConverter(dataManagerId, planDataClass, conversionFunction);
+	}
+
 }
