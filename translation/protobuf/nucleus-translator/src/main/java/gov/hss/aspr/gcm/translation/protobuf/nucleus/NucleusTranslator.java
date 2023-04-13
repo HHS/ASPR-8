@@ -22,21 +22,20 @@ public class NucleusTranslator {
                     translatorContext.addTranslatorSpec(new PlannerTranslatorSpec());
                     translatorContext.addTranslatorSpec(new PlanDataTranslatorSpec());
 
-                    translatorContext
+                    translatorContext.getTranslatorCoreBuilder()
                             .addFieldToIncludeDefaultValue(
-                                    SimulationStateInput.getDescriptor().findFieldByName("startTime"));
-                    translatorContext
+                                    SimulationStateInput.getDescriptor()
+                                            .findFieldByName("startTime"))
                             .addFieldToIncludeDefaultValue(
-                                    PlanQueueDataInput.getDescriptor().findFieldByName("time"));
-                    translatorContext
+                                    PlanQueueDataInput.getDescriptor()
+                                            .findFieldByName("time"))
                             .addFieldToIncludeDefaultValue(
-                                    PlanQueueDataInput.getDescriptor().findFieldByName("plannerId"));
-                    translatorContext
+                                    PlanQueueDataInput.getDescriptor()
+                                            .findFieldByName("plannerId"))
                             .addFieldToIncludeDefaultValue(
-                                    PlanQueueDataInput.getDescriptor().findFieldByName("active"));
-                })
-                .setInputIsPluginData(false)
-                .setOutputIsPluginData(false);
+                                    PlanQueueDataInput.getDescriptor()
+                                            .findFieldByName("active"));
+                });
 
     }
 

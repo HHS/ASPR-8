@@ -3,12 +3,14 @@ package gov.hss.aspr.gcm.translation.protobuf.nucleus;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.nio.file.Path;
+import java.time.LocalDate;
 import java.util.List;
 
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.gcm.translation.protobuf.core.TranslatorController;
+import gov.hhs.aspr.gcm.translation.protobuf.core.TranslatorCore;
 import gov.hhs.aspr.gcm.translation.protobuf.nucleus.input.SimulationStateInput;
 import gov.hss.aspr.gcm.translation.protobuf.nucleus.simObjects.ExamplePlanData;
 import gov.hss.aspr.gcm.translation.protobuf.nucleus.simObjects.translatorSpecs.ExamplePlanDataTranslatorSpec;
@@ -35,11 +37,11 @@ public class AppTest {
         String fileName = "simulationState.json";
 
         TranslatorController translatorController = TranslatorController.builder()
-                .addTranslator(NucleusTranslator.builder()
-                        .addInputFile(inputFilePath.resolve(fileName).toString(),
-                                SimulationStateInput.getDefaultInstance())
-                        .addOutputFile(outputFilePath.resolve(fileName).toString(), SimulationState.class).build())
-                .addTranslatorSpec(new ExamplePlanDataTranslatorSpec())
+                .setTranslatorCoreBuilder(TranslatorCore.builder()
+                        .addTranslatorSpec(new ExamplePlanDataTranslatorSpec()))
+                .addTranslator(NucleusTranslator.getTranslator())
+                .addReader(inputFilePath.resolve(fileName), SimulationStateInput.class)
+                .addWriter(outputFilePath.resolve(fileName), SimulationState.class)
                 .build();
 
         List<Object> objects = translatorController.readInput().getObjects();
@@ -74,7 +76,8 @@ public class AppTest {
         double startTime = 5;
         long planningQueueArrivalId = arrivalId + 1;
 
-        builder.setStartTime(startTime).setPlanningQueueArrivalId(planningQueueArrivalId);
+        builder.setStartTime(startTime).setPlanningQueueArrivalId(planningQueueArrivalId)
+                .setBaseDate(LocalDate.of(2023, 4, 12));
 
         SimulationState exptectedSimulationState = builder.build();
 
