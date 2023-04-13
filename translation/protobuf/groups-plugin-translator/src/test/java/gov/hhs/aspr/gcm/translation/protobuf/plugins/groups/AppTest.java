@@ -15,7 +15,9 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.gcm.translation.protobuf.core.TranslatorController;
+import gov.hhs.aspr.gcm.translation.protobuf.core.TranslatorCore;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.input.GroupPropertyReportPluginDataInput;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.input.GroupsPluginDataInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.PeopleTranslator;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.PropertiesTranslator;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.ReportsTranslator;
@@ -54,11 +56,12 @@ public class AppTest {
         String fileName = "pluginData.json";
 
         TranslatorController translatorController = TranslatorController.builder()
-                .addTranslator(GroupsTranslator.getTranslatorRW(inputFilePath.resolve(fileName).toString(),
-                        outputFilePath.resolve(fileName).toString()))
+                .setTranslatorCoreBuilder(TranslatorCore.builder())
+                .addTranslator(GroupsTranslator.getTranslator())
                 .addTranslator(PropertiesTranslator.getTranslator())
                 .addTranslator(PeopleTranslator.getTranslator())
-
+                .addReader(inputFilePath.resolve(fileName), GroupsPluginDataInput.class)
+                .addWriter(outputFilePath.resolve(fileName), GroupsPluginData.class)
                 .build();
 
         List<PluginData> pluginDatas = translatorController.readInput().getPluginDatas();
@@ -168,15 +171,13 @@ public class AppTest {
         String fileName = "propertyReport.json";
 
         TranslatorController translatorController = TranslatorController.builder()
-                .addTranslator(GroupsTranslator.builder(true)
-                        .addInputFile(inputFilePath.resolve(fileName).toString(),
-                                GroupPropertyReportPluginDataInput.getDefaultInstance())
-                        .addOutputFile(outputFilePath.resolve(fileName).toString(),
-                                GroupPropertyReportPluginData.class)
-                        .build())
+                .setTranslatorCoreBuilder(TranslatorCore.builder())
+                .addTranslator(GroupsTranslator.builder(true).build())
                 .addTranslator(PropertiesTranslator.getTranslator())
                 .addTranslator(PeopleTranslator.getTranslator())
                 .addTranslator(ReportsTranslator.getTranslator())
+                .addReader(inputFilePath.resolve(fileName), GroupPropertyReportPluginDataInput.class)
+                .addWriter(outputFilePath.resolve(fileName), GroupPropertyReportPluginData.class)
                 .build();
 
         List<PluginData> pluginDatas = translatorController.readInput().getPluginDatas();

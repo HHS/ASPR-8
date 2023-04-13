@@ -1,6 +1,7 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.groups;
 
 import gov.hhs.aspr.gcm.translation.protobuf.core.Translator;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.input.GroupIdInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.translatorSpecs.GroupIdTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.translatorSpecs.GroupPropertyIdTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.translatorSpecs.GroupPropertyReportPluginDataTranslatorSpec;
@@ -12,9 +13,6 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.translatorSpecs.Test
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.PeopleTranslatorId;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.PropertiesTranslatorId;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.ReportsTranslatorId;
-import plugins.groups.GroupsPluginData;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.input.GroupIdInput;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.input.GroupsPluginDataInput;
 
 public class GroupsTranslator {
     private GroupsTranslator() {
@@ -38,7 +36,7 @@ public class GroupsTranslator {
                         translatorContext.addTranslatorSpec(new GroupPropertyReportPluginDataTranslatorSpec());
                     }
 
-                    translatorContext
+                    translatorContext.getTranslatorCoreBuilder()
                             .addFieldToIncludeDefaultValue(GroupIdInput.getDescriptor().findFieldByName("id"));
                 });
 
@@ -50,25 +48,6 @@ public class GroupsTranslator {
 
     public static Translator.Builder builder() {
         return builder(false);
-    }
-
-    public static Translator getTranslatorRW(String inputFileName, String outputFileName) {
-        return builder()
-                .addInputFile(inputFileName, GroupsPluginDataInput.getDefaultInstance())
-                .addOutputFile(outputFileName, GroupsPluginData.class)
-                .build();
-    }
-
-    public static Translator getTranslatorR(String inputFileName) {
-        return builder()
-                .addInputFile(inputFileName, GroupsPluginDataInput.getDefaultInstance())
-                .build();
-    }
-
-    public static Translator getTranslatorW(String outputFileName) {
-        return builder()
-                .addOutputFile(outputFileName, GroupsPluginData.class)
-                .build();
     }
 
     public static Translator getTranslator() {
