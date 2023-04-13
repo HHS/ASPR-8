@@ -1,10 +1,6 @@
 package plugins.materials;
 
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import net.jcip.annotations.Immutable;
 import nucleus.PluginData;
@@ -726,6 +722,18 @@ public final class MaterialsPluginData implements PluginData {
 			locked = data.locked;
 		}
 
+		@Override
+		public boolean equals(Object o) {
+			if (this == o) return true;
+			if (!(o instanceof Data)) return false;
+			Data data = (Data) o;
+			return locked == data.locked && materialsProducerIds.equals(data.materialsProducerIds) && materialIds.equals(data.materialIds) && batchPropertyDefinitions.equals(data.batchPropertyDefinitions) && materialsProducerPropertyDefinitions.equals(data.materialsProducerPropertyDefinitions) && materialsProducerPropertyValues.equals(data.materialsProducerPropertyValues) && emptyMaterialsProducerPropertyValuesMap.equals(data.emptyMaterialsProducerPropertyValuesMap) && materialsProducerResourceLevels.equals(data.materialsProducerResourceLevels) && batchIds.equals(data.batchIds) && batchMaterials.equals(data.batchMaterials) && batchAmounts.equals(data.batchAmounts) && batchMaterialsProducers.equals(data.batchMaterialsProducers) && batchPropertyValues.equals(data.batchPropertyValues) && emptyBatchPropertyValues.equals(data.emptyBatchPropertyValues) && stageIds.equals(data.stageIds) && stageOffers.equals(data.stageOffers) && stageMaterialsProducers.equals(data.stageMaterialsProducers) && stageBatches.equals(data.stageBatches) && batchStages.equals(data.batchStages);
+		}
+
+		@Override
+		public int hashCode() {
+			return Objects.hash(materialsProducerIds, materialIds, batchPropertyDefinitions, materialsProducerPropertyDefinitions, materialsProducerPropertyValues, emptyMaterialsProducerPropertyValuesMap, materialsProducerResourceLevels, batchIds, batchMaterials, batchAmounts, batchMaterialsProducers, batchPropertyValues, emptyBatchPropertyValues, stageIds, stageOffers, stageMaterialsProducers, stageBatches, batchStages, locked);
+		}
 	}
 
 	/**
@@ -1163,5 +1171,18 @@ public final class MaterialsPluginData implements PluginData {
 	@Override
 	public PluginDataBuilder getEmptyBuilder() {
 		return builder();
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof MaterialsPluginData)) return false;
+		MaterialsPluginData that = (MaterialsPluginData) o;
+		return data.equals(that.data);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(data);
 	}
 }
