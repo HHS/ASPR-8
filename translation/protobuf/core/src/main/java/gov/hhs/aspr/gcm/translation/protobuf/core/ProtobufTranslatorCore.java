@@ -33,7 +33,7 @@ import gov.hhs.aspr.gcm.translation.protobuf.core.translatorSpecs.PrimitiveTrans
 public class ProtobufTranslatorCore extends TranslatorCore {
     private final ProtobufTranslatorCoreData data;
 
-    protected ProtobufTranslatorCore(ProtobufTranslatorCoreData data) {
+    private ProtobufTranslatorCore(ProtobufTranslatorCoreData data) {
         super(data);
         this.data = data;
     }
