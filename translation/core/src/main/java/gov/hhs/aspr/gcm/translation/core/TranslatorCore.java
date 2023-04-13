@@ -10,26 +10,26 @@ import java.util.Set;
 
 public abstract class TranslatorCore {
 
-    private final TranslatorCoreData data;
+    private final Data data;
     protected boolean debug = false;
     protected boolean isInitialized = false;
 
-    protected TranslatorCore(TranslatorCoreData data) {
+    protected TranslatorCore(Data data) {
         this.data = data;
     }
 
-    protected static class TranslatorCoreData {
+    protected static class Data {
         public final Map<Class<?>, ITranslatorSpec> classToTranslatorSpecMap = new LinkedHashMap<>();
         public final Set<ITranslatorSpec> translatorSpecs = new LinkedHashSet<>();
 
-        protected TranslatorCoreData() {
+        protected Data() {
         }
     }
 
     public static class Builder {
-        protected TranslatorCoreData data;
+        protected Data data;
 
-        protected Builder(TranslatorCoreData data) {
+        protected Builder(Data data) {
             this.data = data;
         }
 
@@ -49,7 +49,7 @@ public abstract class TranslatorCore {
     }
 
     public static Builder builder() {
-        return new Builder(new TranslatorCoreData());
+        return new Builder(new Data());
     }
 
     public void init() {

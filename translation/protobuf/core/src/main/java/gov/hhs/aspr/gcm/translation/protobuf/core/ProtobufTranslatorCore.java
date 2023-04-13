@@ -31,15 +31,15 @@ import gov.hhs.aspr.gcm.translation.protobuf.core.input.WrapperEnumValue;
 import gov.hhs.aspr.gcm.translation.protobuf.core.translatorSpecs.PrimitiveTranslatorSpecs;
 
 public class ProtobufTranslatorCore extends TranslatorCore {
-    private final ProtobufTranslatorCoreData data;
+    private final Data data;
 
-    private ProtobufTranslatorCore(ProtobufTranslatorCoreData data) {
+    private ProtobufTranslatorCore(Data data) {
         super(data);
         this.data = data;
     }
 
 
-    private static class ProtobufTranslatorCoreData extends TranslatorCore.TranslatorCoreData {
+    private static class Data extends TranslatorCore.Data {
         private final Map<String, Message> descriptorMap = new LinkedHashMap<>();
         private final Map<String, ProtocolMessageEnum> typeUrlToEnumMap = new LinkedHashMap<>();
         private final Set<FieldDescriptor> defaultValueFieldsToPrint = new LinkedHashSet<>();
@@ -49,7 +49,7 @@ public class ProtobufTranslatorCore extends TranslatorCore {
         private boolean ignoringUnknownFields = true;
         private boolean includingDefaultValueFields = false;
 
-        private ProtobufTranslatorCoreData() {
+        private Data() {
             super();
             this.descriptorMap.putAll(PrimitiveTranslatorSpecs.getPrimitiveTypeUrlToMessageMap());
             this.classToTranslatorSpecMap.putAll(PrimitiveTranslatorSpecs.getPrimitiveInputTranslatorSpecMap());
@@ -59,9 +59,9 @@ public class ProtobufTranslatorCore extends TranslatorCore {
     }
 
     public static class Builder extends TranslatorCore.Builder {
-        private ProtobufTranslatorCoreData data;
+        private ProtobufTranslatorCore.Data data;
 
-        private Builder(ProtobufTranslatorCoreData data) {
+        private Builder(ProtobufTranslatorCore.Data data) {
             super(data);
             this.data = data;
         }
@@ -161,7 +161,7 @@ public class ProtobufTranslatorCore extends TranslatorCore {
     }
 
     public static Builder builder() {
-        return new Builder(new ProtobufTranslatorCoreData());
+        return new Builder(new Data());
     }
  
     public Parser getJsonParser() {
