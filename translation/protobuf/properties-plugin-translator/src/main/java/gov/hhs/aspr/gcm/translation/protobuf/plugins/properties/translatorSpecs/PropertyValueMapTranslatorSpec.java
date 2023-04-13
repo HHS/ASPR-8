@@ -1,10 +1,10 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.translatorSpecs;
 
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.input.PropertyValueMapInput;
-import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractTranslatorSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractProtobufTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.simobjects.PropertyValueMap;
 
-public class PropertyValueMapTranslatorSpec extends AbstractTranslatorSpec<PropertyValueMapInput, PropertyValueMap> {
+public class PropertyValueMapTranslatorSpec extends AbstractProtobufTranslatorSpec<PropertyValueMapInput, PropertyValueMap> {
 
     @Override
     protected PropertyValueMap convertInputObject(PropertyValueMapInput inputObject) {

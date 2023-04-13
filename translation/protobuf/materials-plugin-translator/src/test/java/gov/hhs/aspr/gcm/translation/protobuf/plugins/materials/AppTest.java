@@ -16,8 +16,8 @@ import java.util.Set;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
+import gov.hhs.aspr.gcm.translation.protobuf.core.ProtobufTranslatorCore;
 import gov.hhs.aspr.gcm.translation.protobuf.core.TranslatorController;
-import gov.hhs.aspr.gcm.translation.protobuf.core.TranslatorCore;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.input.BatchStatusReportPluginDataInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.input.MaterialsPluginDataInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.input.MaterialsProducerPropertyReportPluginDataInput;
@@ -68,7 +68,7 @@ public class AppTest {
 		String fileName = "pluginData.json";
 
 		TranslatorController translatorController = TranslatorController.builder()
-				.setTranslatorCoreBuilder(TranslatorCore.builder())
+				.setTranslatorCoreBuilder(ProtobufTranslatorCore.builder())
 				.addTranslator(MaterialsTranslator.getTranslator())
 				.addTranslator(PropertiesTranslator.getTranslator())
 				.addTranslator(ResourcesTranslator.getTranslator())
@@ -229,7 +229,7 @@ public class AppTest {
 		String fileName = "batchStatusReport.json";
 
 		TranslatorController translatorController = TranslatorController.builder()
-				.setTranslatorCoreBuilder(TranslatorCore.builder())
+				.setTranslatorCoreBuilder(ProtobufTranslatorCore.builder())
 				.addTranslator(MaterialsTranslator.builder(true).build())
 				.addTranslator(ReportsTranslator.getTranslator())
 				.addTranslator(PropertiesTranslator.getTranslator())
@@ -273,7 +273,7 @@ public class AppTest {
 		String fileName = "materialsProducerPropertyReport.json";
 
 		TranslatorController translatorController = TranslatorController.builder()
-				.setTranslatorCoreBuilder(TranslatorCore.builder())
+				.setTranslatorCoreBuilder(ProtobufTranslatorCore.builder())
 				.addTranslator(MaterialsTranslator.builder(true).build())
 				.addTranslator(ReportsTranslator.getTranslator())
 				.addTranslator(PropertiesTranslator.getTranslator())
@@ -318,7 +318,7 @@ public class AppTest {
 		String fileName = "materialsProducerResourceReport.json";
 
 		TranslatorController translatorController = TranslatorController.builder()
-				.setTranslatorCoreBuilder(TranslatorCore.builder())
+				.setTranslatorCoreBuilder(ProtobufTranslatorCore.builder())
 				.addTranslator(MaterialsTranslator.builder(true).build())
 				.addTranslator(ReportsTranslator.getTranslator())
 				.addTranslator(PropertiesTranslator.getTranslator())
@@ -362,7 +362,7 @@ public class AppTest {
 		String fileName = "stageReport.json";
 
 		TranslatorController translatorController = TranslatorController.builder()
-				.setTranslatorCoreBuilder(TranslatorCore.builder())
+				.setTranslatorCoreBuilder(ProtobufTranslatorCore.builder())
 				.addTranslator(MaterialsTranslator.builder(true).build())
 				.addTranslator(ReportsTranslator.getTranslator())
 				.addTranslator(PropertiesTranslator.getTranslator())

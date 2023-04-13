@@ -1,5 +1,6 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.materials;
 
+import gov.hhs.aspr.gcm.translation.protobuf.core.ProtobufTranslatorCore;
 import gov.hhs.aspr.gcm.translation.protobuf.core.Translator;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.input.BatchIdInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.input.StageIdInput;
@@ -56,7 +57,7 @@ public class MaterialsTranslator {
                         translatorContext.addTranslatorSpec(new StageReportPluginDataTranslatorSpec());
                     }
 
-                    translatorContext.getTranslatorCoreBuilder()
+                    ((ProtobufTranslatorCore.Builder) translatorContext.getTranslatorCoreBuilder())
                             .addFieldToIncludeDefaultValue(BatchIdInput.getDescriptor().findFieldByName("id"))
                             .addFieldToIncludeDefaultValue(StageIdInput.getDescriptor().findFieldByName("id"));
                 });

@@ -1,6 +1,6 @@
 package gov.hss.aspr.gcm.translation.protobuf.nucleus.translatorSpecs;
 
-import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractTranslatorSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractProtobufTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.nucleus.input.PlanDataInput;
 import gov.hhs.aspr.gcm.translation.protobuf.nucleus.input.PlanQueueDataInput;
 import gov.hhs.aspr.gcm.translation.protobuf.nucleus.input.PlannerInput;
@@ -8,7 +8,7 @@ import nucleus.PlanData;
 import nucleus.PlanQueueData;
 import nucleus.Planner;
 
-public class PlanQueueDataTranslatorSpec extends AbstractTranslatorSpec<PlanQueueDataInput, PlanQueueData> {
+public class PlanQueueDataTranslatorSpec extends AbstractProtobufTranslatorSpec<PlanQueueDataInput, PlanQueueData> {
 
     @Override
     protected PlanQueueData convertInputObject(PlanQueueDataInput inputObject) {

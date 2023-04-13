@@ -8,8 +8,8 @@ import java.util.List;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
+import gov.hhs.aspr.gcm.translation.protobuf.core.ProtobufTranslatorCore;
 import gov.hhs.aspr.gcm.translation.protobuf.core.TranslatorController;
-import gov.hhs.aspr.gcm.translation.protobuf.core.TranslatorCore;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.input.PeoplePluginDataInput;
 import nucleus.PluginData;
 import plugins.people.PeoplePluginData;
@@ -35,7 +35,7 @@ public class AppTest {
         String fileName = "pluginData.json";
 
         TranslatorController translatorController = TranslatorController.builder()
-                .setTranslatorCoreBuilder(TranslatorCore.builder())
+                .setTranslatorCoreBuilder(ProtobufTranslatorCore.builder())
                 .addTranslator(PeopleTranslator.getTranslator())
                 .addReader(inputFilePath.resolve(fileName), PeoplePluginDataInput.class)
                 .addWriter(outputFilePath.resolve(fileName), PeoplePluginData.class)

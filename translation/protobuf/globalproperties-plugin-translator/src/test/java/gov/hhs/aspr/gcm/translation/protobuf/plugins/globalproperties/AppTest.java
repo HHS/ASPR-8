@@ -10,8 +10,8 @@ import java.util.Set;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
+import gov.hhs.aspr.gcm.translation.protobuf.core.ProtobufTranslatorCore;
 import gov.hhs.aspr.gcm.translation.protobuf.core.TranslatorController;
-import gov.hhs.aspr.gcm.translation.protobuf.core.TranslatorCore;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.globalproperties.input.GlobalPropertiesPluginDataInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.globalproperties.input.GlobalPropertyReportPluginDataInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.PropertiesTranslator;
@@ -44,7 +44,7 @@ public class AppTest {
         String fileName = "pluginData.json";
 
         TranslatorController translatorController = TranslatorController.builder()
-                .setTranslatorCoreBuilder(TranslatorCore.builder())
+                .setTranslatorCoreBuilder(ProtobufTranslatorCore.builder())
                 .addTranslator(
                         GlobalPropertiesTranslator.getTranslator())
                 .addTranslator(PropertiesTranslator.getTranslator())
@@ -89,7 +89,7 @@ public class AppTest {
         String fileName = "propertyReport.json";
 
         TranslatorController translatorController = TranslatorController.builder()
-                .setTranslatorCoreBuilder(TranslatorCore.builder())
+                .setTranslatorCoreBuilder(ProtobufTranslatorCore.builder())
                 .addTranslator(GlobalPropertiesTranslator.builder(true).build())
                 .addTranslator(PropertiesTranslator.getTranslator())
                 .addTranslator(ReportsTranslator.getTranslator())

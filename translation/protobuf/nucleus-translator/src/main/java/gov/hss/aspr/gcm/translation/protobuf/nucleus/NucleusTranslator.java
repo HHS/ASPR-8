@@ -1,8 +1,9 @@
 package gov.hss.aspr.gcm.translation.protobuf.nucleus;
 
+import gov.hhs.aspr.gcm.translation.protobuf.core.Translator;
+import gov.hhs.aspr.gcm.translation.protobuf.core.ProtobufTranslatorCore;
 import gov.hhs.aspr.gcm.translation.protobuf.nucleus.input.PlanQueueDataInput;
 import gov.hhs.aspr.gcm.translation.protobuf.nucleus.input.SimulationStateInput;
-import gov.hhs.aspr.gcm.translation.protobuf.core.Translator;
 import gov.hss.aspr.gcm.translation.protobuf.nucleus.translatorSpecs.PlanDataTranslatorSpec;
 import gov.hss.aspr.gcm.translation.protobuf.nucleus.translatorSpecs.PlanQueueDataTranslatorSpec;
 import gov.hss.aspr.gcm.translation.protobuf.nucleus.translatorSpecs.PlannerTranslatorSpec;
@@ -22,7 +23,7 @@ public class NucleusTranslator {
                     translatorContext.addTranslatorSpec(new PlannerTranslatorSpec());
                     translatorContext.addTranslatorSpec(new PlanDataTranslatorSpec());
 
-                    translatorContext.getTranslatorCoreBuilder()
+                    ((ProtobufTranslatorCore.Builder) translatorContext.getTranslatorCoreBuilder())
                             .addFieldToIncludeDefaultValue(
                                     SimulationStateInput.getDescriptor()
                                             .findFieldByName("startTime"))

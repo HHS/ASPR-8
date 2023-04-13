@@ -1,10 +1,10 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.translatorSpecs;
 
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.input.TestResourceIdInput;
-import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractTranslatorSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractProtobufTranslatorSpec;
 import plugins.resources.testsupport.TestResourceId;
 
-public class TestResourceIdTranslatorSpec extends AbstractTranslatorSpec<TestResourceIdInput, TestResourceId> {
+public class TestResourceIdTranslatorSpec extends AbstractProtobufTranslatorSpec<TestResourceIdInput, TestResourceId> {
 
     @Override
     protected TestResourceId convertInputObject(TestResourceIdInput inputObject) {

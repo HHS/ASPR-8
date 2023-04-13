@@ -7,8 +7,8 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
+import gov.hhs.aspr.gcm.translation.protobuf.core.ProtobufTranslatorCore;
 import gov.hhs.aspr.gcm.translation.protobuf.core.TranslatorController;
-import gov.hhs.aspr.gcm.translation.protobuf.core.TranslatorCore;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.input.ReportLabelInput;
 import plugins.reports.support.ReportLabel;
 import plugins.reports.support.SimpleReportLabel;
@@ -32,7 +32,7 @@ public class AppTest {
         String fileName = "reportLabel.json";
 
         TranslatorController translatorController = TranslatorController.builder()
-                .setTranslatorCoreBuilder(TranslatorCore.builder())
+                .setTranslatorCoreBuilder(ProtobufTranslatorCore.builder())
                 .addTranslator(ReportsTranslator.getTranslator())
                 .addReader(inputFilePath.resolve(fileName), ReportLabelInput.class)
                 .addWriter(outputFilePath.resolve(fileName), ReportLabel.class)

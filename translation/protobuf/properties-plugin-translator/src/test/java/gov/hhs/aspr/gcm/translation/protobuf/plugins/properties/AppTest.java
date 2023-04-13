@@ -7,8 +7,8 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
+import gov.hhs.aspr.gcm.translation.protobuf.core.ProtobufTranslatorCore;
 import gov.hhs.aspr.gcm.translation.protobuf.core.TranslatorController;
-import gov.hhs.aspr.gcm.translation.protobuf.core.TranslatorCore;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.input.PropertyValueMapInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.simobjects.PropertyValueMap;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.testsupport.simobjects.Layer1SimObject;
@@ -35,7 +35,7 @@ public class AppTest {
         String fileName = "data.json";
 
         TranslatorController translatorController = TranslatorController.builder()
-                .setTranslatorCoreBuilder(TranslatorCore.builder()
+                .setTranslatorCoreBuilder(ProtobufTranslatorCore.builder()
                         .addTranslatorSpec(new TestMessageTranslatorSpec())
                         .addTranslatorSpec(new Layer1TranslatorSpec()))
                 .addTranslator(PropertiesTranslator.getTranslator())
