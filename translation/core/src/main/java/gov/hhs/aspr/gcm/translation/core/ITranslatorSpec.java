@@ -1,7 +1,7 @@
 package gov.hhs.aspr.gcm.translation.core;
 
 public interface ITranslatorSpec {
-    void init(TranslatorCore translator);
+    <T extends TranslatorCore> void init(T translator);
 
     <T> T convert(Object object);
 }

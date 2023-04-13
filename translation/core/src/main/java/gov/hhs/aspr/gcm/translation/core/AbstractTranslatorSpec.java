@@ -3,7 +3,7 @@ package gov.hhs.aspr.gcm.translation.core;
 public abstract class AbstractTranslatorSpec<I, S> implements ITranslatorSpec {
     protected boolean initialized = false;
 
-    public abstract void init(TranslatorCore translator);
+    public abstract <T extends TranslatorCore> void init(T translator);
 
     protected void checkInit() {
         if (!this.initialized) {
