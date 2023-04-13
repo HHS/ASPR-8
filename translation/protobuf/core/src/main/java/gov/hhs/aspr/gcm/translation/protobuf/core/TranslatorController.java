@@ -161,7 +161,7 @@ public class TranslatorController {
     private void validateCoreTranslator() {
         if (this.translatorCore == null || !this.translatorCore.isInitialized()) {
             throw new RuntimeException(
-                    "Trying to call readInput() or writeInput() before calling initTranslators on the TranslatorController.");
+                    "Trying to call readInput() or writeInput() after calling initTranslators on the TranslatorController.");
         }
     }
 
