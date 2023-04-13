@@ -9,8 +9,8 @@ import java.util.List;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import gov.hhs.aspr.gcm.translation.protobuf.core.TranslatorController;
-import gov.hhs.aspr.gcm.translation.protobuf.core.TranslatorCore;
+import gov.hhs.aspr.gcm.translation.protobuf.core.ProtobufTranslatorCore;
+import gov.hhs.aspr.gcm.translation.core.TranslatorController;
 import gov.hhs.aspr.gcm.translation.protobuf.nucleus.input.SimulationStateInput;
 import gov.hss.aspr.gcm.translation.protobuf.nucleus.simObjects.ExamplePlanData;
 import gov.hss.aspr.gcm.translation.protobuf.nucleus.simObjects.translatorSpecs.ExamplePlanDataTranslatorSpec;
@@ -37,7 +37,7 @@ public class AppTest {
         String fileName = "simulationState.json";
 
         TranslatorController translatorController = TranslatorController.builder()
-                .setTranslatorCoreBuilder(TranslatorCore.builder()
+                .setTranslatorCoreBuilder(ProtobufTranslatorCore.builder()
                         .addTranslatorSpec(new ExamplePlanDataTranslatorSpec()))
                 .addTranslator(NucleusTranslator.getTranslator())
                 .addReader(inputFilePath.resolve(fileName), SimulationStateInput.class)

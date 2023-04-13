@@ -1,4 +1,4 @@
-package gov.hhs.aspr.gcm.translation.protobuf.core;
+package gov.hhs.aspr.gcm.translation.core;
 
 import java.util.LinkedHashSet;
 import java.util.Set;

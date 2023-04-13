@@ -2,9 +2,9 @@ package gov.hhs.aspr.gcm.translation.protobuf.core.translatorSpecs;
 
 import com.google.protobuf.BoolValue;
 
-import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractTranslatorSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractProtobufTranslatorSpec;
 
-public class BooleanTranslatorSpec extends AbstractTranslatorSpec<BoolValue, Boolean> {
+public class BooleanTranslatorSpec extends AbstractProtobufTranslatorSpec<BoolValue, Boolean> {
 
     @Override
     protected Boolean convertInputObject(BoolValue inputObject) {

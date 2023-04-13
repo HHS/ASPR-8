@@ -1,11 +1,11 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.stochastics.translatorSpecs;
 
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.stochastics.input.RandomNumberGeneratorIdInput;
-import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractTranslatorSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractProtobufTranslatorSpec;
 import plugins.stochastics.support.RandomNumberGeneratorId;
 
 public class RandomGeneratorIdTranslatorSpec
-        extends AbstractTranslatorSpec<RandomNumberGeneratorIdInput, RandomNumberGeneratorId> {
+        extends AbstractProtobufTranslatorSpec<RandomNumberGeneratorIdInput, RandomNumberGeneratorId> {
 
     @Override
     protected RandomNumberGeneratorId convertInputObject(RandomNumberGeneratorIdInput inputObject) {

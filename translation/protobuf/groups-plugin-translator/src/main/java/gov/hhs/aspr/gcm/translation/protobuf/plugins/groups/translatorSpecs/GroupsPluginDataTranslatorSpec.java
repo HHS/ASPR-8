@@ -14,7 +14,7 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.input.PersonIdInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.input.PropertyDefinitionInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.input.PropertyDefinitionMapInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.input.PropertyValueMapInput;
-import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractTranslatorSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractProtobufTranslatorSpec;
 import plugins.groups.GroupsPluginData;
 import plugins.groups.support.GroupId;
 import plugins.groups.support.GroupPropertyId;
@@ -23,7 +23,7 @@ import plugins.groups.support.GroupTypeId;
 import plugins.people.support.PersonId;
 import plugins.util.properties.PropertyDefinition;
 
-public class GroupsPluginDataTranslatorSpec extends AbstractTranslatorSpec<GroupsPluginDataInput, GroupsPluginData> {
+public class GroupsPluginDataTranslatorSpec extends AbstractProtobufTranslatorSpec<GroupsPluginDataInput, GroupsPluginData> {
 
     @Override
     protected GroupsPluginData convertInputObject(GroupsPluginDataInput inputObject) {

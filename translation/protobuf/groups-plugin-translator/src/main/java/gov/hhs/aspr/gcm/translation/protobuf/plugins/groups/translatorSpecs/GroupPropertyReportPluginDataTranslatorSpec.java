@@ -1,6 +1,6 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.translatorSpecs;
 
-import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractTranslatorSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractProtobufTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.input.GroupPropertyIdInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.input.GroupPropertyReportPluginDataInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.input.GroupPropertyReportPropertyMap;
@@ -12,7 +12,7 @@ import plugins.groups.support.GroupTypeId;
 import plugins.reports.support.ReportLabel;
 
 public class GroupPropertyReportPluginDataTranslatorSpec
-        extends AbstractTranslatorSpec<GroupPropertyReportPluginDataInput, GroupPropertyReportPluginData> {
+        extends AbstractProtobufTranslatorSpec<GroupPropertyReportPluginDataInput, GroupPropertyReportPluginData> {
 
     @Override
     protected GroupPropertyReportPluginData convertInputObject(GroupPropertyReportPluginDataInput inputObject) {

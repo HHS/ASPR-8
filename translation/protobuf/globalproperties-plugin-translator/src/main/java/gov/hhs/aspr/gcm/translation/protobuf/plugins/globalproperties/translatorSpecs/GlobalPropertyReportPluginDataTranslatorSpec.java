@@ -1,6 +1,6 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.globalproperties.translatorSpecs;
 
-import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractTranslatorSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractProtobufTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.globalproperties.input.GlobalPropertyIdInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.globalproperties.input.GlobalPropertyReportPluginDataInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.input.ReportLabelInput;
@@ -9,7 +9,7 @@ import plugins.globalproperties.support.GlobalPropertyId;
 import plugins.reports.support.ReportLabel;
 
 public class GlobalPropertyReportPluginDataTranslatorSpec
-        extends AbstractTranslatorSpec<GlobalPropertyReportPluginDataInput, GlobalPropertyReportPluginData> {
+        extends AbstractProtobufTranslatorSpec<GlobalPropertyReportPluginDataInput, GlobalPropertyReportPluginData> {
 
     @Override
     protected GlobalPropertyReportPluginData convertInputObject(GlobalPropertyReportPluginDataInput inputObject) {

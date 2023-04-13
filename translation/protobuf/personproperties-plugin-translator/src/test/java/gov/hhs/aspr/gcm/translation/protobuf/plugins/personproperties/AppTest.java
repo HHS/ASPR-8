@@ -13,8 +13,8 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.util.Pair;
 import org.junit.jupiter.api.Test;
 
-import gov.hhs.aspr.gcm.translation.protobuf.core.TranslatorController;
-import gov.hhs.aspr.gcm.translation.protobuf.core.TranslatorCore;
+import gov.hhs.aspr.gcm.translation.protobuf.core.ProtobufTranslatorCore;
+import gov.hhs.aspr.gcm.translation.core.TranslatorController;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.PeopleTranslator;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.input.PersonPropertiesPluginDataInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.input.PersonPropertyInteractionReportPluginDataInput;
@@ -53,7 +53,7 @@ public class AppTest {
         String fileName = "pluginData.json";
 
         TranslatorController translatorController = TranslatorController.builder()
-                .setTranslatorCoreBuilder(TranslatorCore.builder())
+                .setTranslatorCoreBuilder(ProtobufTranslatorCore.builder())
                 .addTranslator(PersonPropertiesTranslator.getTranslator())
                 .addTranslator(PropertiesTranslator.getTranslator())
                 .addTranslator(PeopleTranslator.getTranslator())
@@ -135,7 +135,7 @@ public class AppTest {
         String fileName = "propertyReport.json";
 
         TranslatorController translatorController = TranslatorController.builder()
-                .setTranslatorCoreBuilder(TranslatorCore.builder())
+                .setTranslatorCoreBuilder(ProtobufTranslatorCore.builder())
                 .addTranslator(PersonPropertiesTranslator.builder(true).build())
                 .addTranslator(PropertiesTranslator.getTranslator())
                 .addTranslator(PeopleTranslator.getTranslator())
@@ -202,7 +202,7 @@ public class AppTest {
         String fileName = "interactionReport.json";
 
         TranslatorController translatorController = TranslatorController.builder()
-                .setTranslatorCoreBuilder(TranslatorCore.builder())
+                .setTranslatorCoreBuilder(ProtobufTranslatorCore.builder())
                 .addTranslator(PersonPropertiesTranslator.builder(true).build())
                 .addTranslator(PropertiesTranslator.getTranslator())
                 .addTranslator(PeopleTranslator.getTranslator())

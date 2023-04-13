@@ -1,6 +1,6 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.translatorSpecs;
 
-import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractTranslatorSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractProtobufTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.input.ReportLabelInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.input.ReportPeriodInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.input.ResourceIdInput;
@@ -11,7 +11,7 @@ import plugins.resources.reports.ResourceReportPluginData;
 import plugins.resources.support.ResourceId;
 
 public class ResourceReportPluginDataTranslatorSpec
-        extends AbstractTranslatorSpec<ResourceReportPluginDataInput, ResourceReportPluginData> {
+        extends AbstractProtobufTranslatorSpec<ResourceReportPluginDataInput, ResourceReportPluginData> {
 
     @Override
     protected ResourceReportPluginData convertInputObject(ResourceReportPluginDataInput inputObject) {

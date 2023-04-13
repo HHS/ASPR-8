@@ -1,13 +1,13 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.translatorSpecs;
 
-import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractTranslatorSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractProtobufTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.input.BatchStatusReportPluginDataInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.input.ReportLabelInput;
 import plugins.materials.reports.BatchStatusReportPluginData;
 import plugins.reports.support.ReportLabel;
 
 public class BatchStatusReportPluginDataTranslatorSpec
-        extends AbstractTranslatorSpec<BatchStatusReportPluginDataInput, BatchStatusReportPluginData> {
+        extends AbstractProtobufTranslatorSpec<BatchStatusReportPluginDataInput, BatchStatusReportPluginData> {
 
     @Override
     protected BatchStatusReportPluginData convertInputObject(BatchStatusReportPluginDataInput inputObject) {

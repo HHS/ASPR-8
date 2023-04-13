@@ -13,8 +13,8 @@ import java.util.Set;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import gov.hhs.aspr.gcm.translation.protobuf.core.TranslatorController;
-import gov.hhs.aspr.gcm.translation.protobuf.core.TranslatorCore;
+import gov.hhs.aspr.gcm.translation.protobuf.core.ProtobufTranslatorCore;
+import gov.hhs.aspr.gcm.translation.core.TranslatorController;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.PeopleTranslator;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.PropertiesTranslator;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.input.RegionPropertyReportPluginDataInput;
@@ -55,7 +55,7 @@ public class AppTest {
         String fileName = "pluginData.json";
 
         TranslatorController translatorController = TranslatorController.builder()
-                .setTranslatorCoreBuilder(TranslatorCore.builder())
+                .setTranslatorCoreBuilder(ProtobufTranslatorCore.builder())
                 .addTranslator(RegionsTranslator.getTranslator())
                 .addTranslator(PropertiesTranslator.getTranslator())
                 .addTranslator(PeopleTranslator.getTranslator())
@@ -137,7 +137,7 @@ public class AppTest {
         String fileName = "propertyReport.json";
 
         TranslatorController translatorController = TranslatorController.builder()
-                .setTranslatorCoreBuilder(TranslatorCore.builder())
+                .setTranslatorCoreBuilder(ProtobufTranslatorCore.builder())
                 .addTranslator(RegionsTranslator.builder(true).build())
                 .addTranslator(PropertiesTranslator.getTranslator())
                 .addTranslator(PeopleTranslator.getTranslator())
@@ -202,7 +202,7 @@ public class AppTest {
         String fileName = "transferReport.json";
 
         TranslatorController translatorController = TranslatorController.builder()
-                .setTranslatorCoreBuilder(TranslatorCore.builder())
+                .setTranslatorCoreBuilder(ProtobufTranslatorCore.builder())
                 .addTranslator(RegionsTranslator.builder(true).build())
                 .addTranslator(PropertiesTranslator.getTranslator())
                 .addTranslator(PeopleTranslator.getTranslator())
