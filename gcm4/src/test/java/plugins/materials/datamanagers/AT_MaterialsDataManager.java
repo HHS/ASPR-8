@@ -18,6 +18,7 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 
+import nucleus.testsupport.testplugin.TestOutputConsumer;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.util.Pair;
 import org.junit.jupiter.api.Test;
@@ -91,6 +92,44 @@ public class AT_MaterialsDataManager {
 	public void testConstructor() {
 		ContractException contractException = assertThrows(ContractException.class, () -> new MaterialsDataManager(null));
 		assertEquals(MaterialsError.NULL_MATERIALS_PLUGIN_DATA, contractException.getErrorType());
+	}
+
+	@Test
+	@UnitTestMethod(target = MaterialsDataManager.class, name = "init", args = { BatchConstructionInfo.class })
+	public void testInit_State() {
+//
+//		List<BatchId> expectedBatchIds = new ArrayList<>();
+//		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+//
+//		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
+//			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+//
+//			TestMaterialId testMaterialId = TestMaterialId.MATERIAL_1;
+//			BatchConstructionInfo.Builder builder = BatchConstructionInfo.builder();
+//			builder.setMaterialsProducerId(TestMaterialsProducerId.MATERIALS_PRODUCER_1);
+//			builder.setMaterialId(testMaterialId);
+//			builder.setAmount(54.5);
+//			builder.setPropertyValue(TestBatchPropertyId.BATCH_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK, 15);
+//
+//			BatchConstructionInfo batchConstructionInfo = builder.build();
+//			BatchId batchId = materialsDataManager.addBatch(batchConstructionInfo);
+//			expectedBatchIds.add(batchId);
+//		}));
+//
+//		TestPluginData testPluginData = pluginBuilder.build();
+//		Factory factory = MaterialsTestPluginFactory.factory(0, 0, 0, 5818867905165255006L, testPluginData);
+//		TestOutputConsumer testOutputConsumer = TestSimulation.builder().addPlugins(factory.getPlugins())
+//				.setProduceSimulationStateOnHalt(true)
+//				.setSimulationHaltTime(2)
+//				.build()
+//				.execute();
+//		Map<MaterialsPluginData, Integer> outputItems = testOutputConsumer.getOutputItems(MaterialsPluginData.class);
+//		assertEquals(1, outputItems.size());
+//		MaterialsPluginData expectedPluginData = MaterialsPluginData.builder()
+//				.build();
+//		MaterialsPluginData actualPluginData = outputItems.keySet().iterator().next();
+//		assertEquals(expectedPluginData, actualPluginData);
+
 	}
 
 	@Test
