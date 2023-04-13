@@ -9,7 +9,7 @@ import java.util.function.Consumer;
 
 import nucleus.ExperimentContext;
 import nucleus.PluginData;
-import nucleus.SimulationTime;
+import nucleus.SimulationState;
 
 public final class StateCollector implements Consumer<ExperimentContext> {
 
@@ -18,7 +18,7 @@ public final class StateCollector implements Consumer<ExperimentContext> {
 	@Override
 	public synchronized void accept(ExperimentContext experimentContext) {
 		experimentContext.subscribeToOutput(PluginData.class, this::handlePluginDataOuput);
-		experimentContext.subscribeToOutput(SimulationTime.class, this::handleSimulationTimeOuput);
+		experimentContext.subscribeToOutput(SimulationState.class, this::handleSimulationTimeOuput);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -61,13 +61,13 @@ public final class StateCollector implements Consumer<ExperimentContext> {
 		list.add(pluginData);
 	}
 
-	private synchronized void handleSimulationTimeOuput(ExperimentContext experimentContext, Integer scenarioId, SimulationTime simulationTime) {
+	private synchronized void handleSimulationTimeOuput(ExperimentContext experimentContext, Integer scenarioId, SimulationState simulationState) {
 		List<Object> list = observedOutputObjects.get(scenarioId);
 		if (list == null) {
 			list = new ArrayList<>();
 			observedOutputObjects.put(scenarioId, list);
 		}
-		list.add(simulationTime);
+		list.add(simulationState);
 	}
 
 }

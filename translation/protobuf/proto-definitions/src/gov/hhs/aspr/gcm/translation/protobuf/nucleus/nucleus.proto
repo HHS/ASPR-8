@@ -5,8 +5,31 @@ option java_multiple_files = true;
 option java_package = "gov.hhs.aspr.gcm.translation.protobuf.nucleus.input";
 
 import "date.proto";
+import "google/protobuf/any.proto";
 
-message SimulationTimeInput {
+message PlanDataInput {
+    google.protobuf.Any data = 1;
+}
+
+enum PlannerInput {
+    DATA_MANAGER = 0;
+    ACTOR = 1;
+    REPORT = 2;
+}
+
+message PlanQueueDataInput {
+    double time = 1;
+    optional bool active = 2;
+    google.protobuf.Any key = 3;
+    PlanDataInput planData = 4;
+    PlannerInput planner = 5;
+    int32 plannerId = 6;
+    int64 arrivalId = 7;
+}
+
+message SimulationStateInput {
     double startTime = 1;
     optional google.type.Date baseDate = 2;
+    int64 planningQueueArrivalId = 3;
+    repeated PlanQueueDataInput planQueueDatas = 4;
 }

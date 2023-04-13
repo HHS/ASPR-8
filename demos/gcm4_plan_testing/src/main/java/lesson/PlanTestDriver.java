@@ -27,7 +27,7 @@ import lesson.plugins.model.support.Region;
 import lesson.plugins.model.support.Resource;
 import nucleus.Experiment;
 import nucleus.Plugin;
-import nucleus.SimulationTime;
+import nucleus.SimulationState;
 import plugins.globalproperties.GlobalPropertiesPlugin;
 import plugins.globalproperties.GlobalPropertiesPluginData;
 import plugins.globalproperties.GlobalPropertiesPluginData.Builder;
@@ -43,7 +43,6 @@ import plugins.personproperties.reports.PersonPropertyReportPluginData;
 import plugins.regions.RegionsPlugin;
 import plugins.regions.RegionsPluginData;
 import plugins.reports.support.NIOReportItemHandler;
-import plugins.reports.support.ReportPeriod;
 import plugins.resources.ResourcesPlugin;
 import plugins.resources.ResourcesPluginData;
 import plugins.resources.support.ResourceId;
@@ -55,7 +54,7 @@ import util.random.RandomGeneratorProvider;
 
 public final class PlanTestDriver {
 	private int iterationCount = 0;
-	private final static boolean executeFull = false;
+	private final static boolean executeFull = true;
 
 	public static void main(final String[] args) throws IOException {
 		Path baseOutputDirectory = Paths.get(args[0]);
@@ -182,7 +181,7 @@ public final class PlanTestDriver {
 	private void executeFull() throws IOException {
 		clearDirectory(baseOutputDirectory.toFile());
 
-		SimulationTime simulationTime = SimulationTime.builder().build();
+		SimulationState simulationState = SimulationState.builder().build();
 		List<Plugin> plugins = getStartingPlugins();
 
 		Path outputDirectory = baseOutputDirectory.resolve("sub" + iterationCount++);
@@ -194,7 +193,7 @@ public final class PlanTestDriver {
 			builder.addPlugin(plugin);
 		}
 
-		Experiment experiment = builder	.setSimulationTime(simulationTime)//
+		Experiment experiment = builder	.setSimulationState(simulationState)//
 										.addExperimentContextConsumer(getNIOReportItemHandler(outputDirectory))//
 										.build();//
 
@@ -205,16 +204,16 @@ public final class PlanTestDriver {
 	private void executeByParts() throws IOException {
 		clearDirectory(baseOutputDirectory.toFile());
 
-		SimulationTime simulationTime = SimulationTime.builder().build();
+		SimulationState simulationState = SimulationState.builder().build();
 		List<Plugin> plugins = getStartingPlugins();
 
 		for (int i = 0; i < 40; i++) {
 			//System.out.println(simulationTime);
-			StateCollector stateCollector = executeSim(simulationTime, plugins);
+			StateCollector stateCollector = executeSim(simulationState, plugins);
 			plugins = getPlugins(stateCollector);
-			simulationTime = stateCollector.get(0, SimulationTime.class).get();
+			simulationState = stateCollector.get(0, SimulationState.class).get();
 		}
-		executeSim(simulationTime, plugins);
+		executeSim(simulationState, plugins);
 	}
 
 	private final RandomGenerator randomGenerator = 
@@ -227,7 +226,7 @@ public final class PlanTestDriver {
 		this.baseOutputDirectory = baseOutputDirectory;
 	}
 
-	private StateCollector executeSim(SimulationTime simulationTime, List<Plugin> plugins) throws IOException {
+	private StateCollector executeSim(SimulationState simulationState, List<Plugin> plugins) throws IOException {
 		Path outputDirectory = baseOutputDirectory.resolve("sub" + iterationCount++);
 		if (!Files.exists(outputDirectory)) {
 			Files.createDirectory(outputDirectory);
@@ -238,11 +237,11 @@ public final class PlanTestDriver {
 		}
 		StateCollector stateCollector = new StateCollector();
 
-		Experiment experiment = builder	.setSimulationTime(simulationTime)//
+		Experiment experiment = builder	.setSimulationState(simulationState)//
 										.addExperimentContextConsumer(getNIOReportItemHandler(outputDirectory))//
 										.addExperimentContextConsumer(stateCollector)//
 										.setRecordState(true)//
-										.setSimulationHaltTime(simulationTime.getStartTime() + 10)//
+										.setSimulationHaltTime(simulationState.getStartTime() + 10)//
 										.build();//
 
 		experiment.execute();//
@@ -381,13 +380,13 @@ public final class PlanTestDriver {
 
 		final PersonPropertiesPluginData personPropertiesPluginData = builder.build();
 
-		PersonPropertyReportPluginData personPropertyReportPluginData = //
-				PersonPropertyReportPluginData	.builder()//
-												.setReportLabel(ModelReportLabel.PERSON_PROPERTY_REPORT)//
-												.setReportPeriod(ReportPeriod.DAILY)//
-												.includePersonProperty(PersonProperty.VACCINATED)//
-												.includePersonProperty(PersonProperty.VACCINE_SCHEDULED)//
-												.build();
+//		PersonPropertyReportPluginData personPropertyReportPluginData = //
+//				PersonPropertyReportPluginData	.builder()//
+//												.setReportLabel(ModelReportLabel.PERSON_PROPERTY_REPORT)//
+//												.setReportPeriod(ReportPeriod.DAILY)//
+//												.includePersonProperty(PersonProperty.VACCINATED)//
+//												.includePersonProperty(PersonProperty.VACCINE_SCHEDULED)//
+//												.build();
 
 		return PersonPropertiesPlugin	.builder()//
 										.setPersonPropertiesPluginData(personPropertiesPluginData)//
