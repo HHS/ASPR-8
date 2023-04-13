@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -19,9 +18,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.math3.util.Pair;
-
-import com.google.protobuf.Descriptors.FieldDescriptor;
-import com.google.protobuf.Message;
 
 import nucleus.PluginData;
 import util.graph.Graph;
@@ -43,7 +39,7 @@ public class TranslatorController {
     }
 
     private static class Data {
-        private TranslatorCore.Builder translatorCoreBuilder = TranslatorCore.builder();
+        private TranslatorCore.Builder translatorCoreBuilder;
         private final List<Translator> translators = new ArrayList<>();
         private final Map<Reader, Class<?>> readerMap = new LinkedHashMap<>();
         private final Map<Pair<Class<?>, Integer>, Writer> writerMap = new LinkedHashMap<>();
@@ -61,9 +57,12 @@ public class TranslatorController {
         }
 
         public TranslatorController build() {
+            if(this.data.translatorCoreBuilder == null) {
+                throw new RuntimeException("Did not set the TranslatorCore Builder");
+            }
             TranslatorController translatorController = new TranslatorController(this.data);
 
-            translatorController.init();
+            translatorController.initTranslators();
             return translatorController;
         }
 
@@ -110,21 +109,11 @@ public class TranslatorController {
             return this;
         }
 
-        public <I, S> Builder addTranslatorSpec(AbstractTranslatorSpec<I, S> translatorSpec) {
-            this.data.translatorCoreBuilder.addTranslatorSpec(translatorSpec);
+        public Builder setTranslatorCoreBuilder(TranslatorCore.Builder translatorCoreBuilder) {
+            this.data.translatorCoreBuilder = translatorCoreBuilder;
+
             return this;
         }
-
-        public Builder setIgnoringUnknownFields(boolean ignoringUnknownFields) {
-            this.data.translatorCoreBuilder.setIgnoringUnknownFields(ignoringUnknownFields);
-            return this;
-        }
-
-        public Builder setIncludingDefaultValueFields(boolean includingDefaultValueFields) {
-            this.data.translatorCoreBuilder.setIncludingDefaultValueFields(includingDefaultValueFields);
-            return this;
-        }
-
     }
 
     public static Builder builder() {
@@ -137,8 +126,13 @@ public class TranslatorController {
         this.appObjectClassToTranslatorMap.put(translatorSpec.getAppObjectClass(), this.focalTranslator);
     }
 
-    protected void addFieldToIncludeDefaultValue(FieldDescriptor fieldDescriptor) {
-        this.data.translatorCoreBuilder.addFieldToIncludeDefaultValue(fieldDescriptor);
+    protected TranslatorCore.Builder getTranslatorCoreBuilder() {
+        if (this.translatorCore == null || !this.translatorCore.isInitialized()) {
+            return this.data.translatorCoreBuilder;
+        }
+        throw new RuntimeException(
+                "Trying to call readInput() or writeInput() before calling initTranslators on the TranslatorController.");
+
     }
 
     protected <T, U extends T> void addMarkerInterface(Class<U> classRef, Class<T> markerInterface) {
@@ -160,22 +154,18 @@ public class TranslatorController {
         }
     }
 
-    protected <T> void writeJson(Writer writer, T simObject) {
-        this.translatorCore.writeJson(writer, simObject, Optional.empty());
-    }
-
-    protected <T extends U, U> void writeJsonOutput(Writer writer, T simObject, Class<U> superClass) {
-        this.translatorCore.writeJson(writer, simObject, Optional.of(superClass));
+    protected <T extends U, U> void writeJsonOutput(Writer writer, T simObject, Optional<Class<U>> superClass) {
+        this.translatorCore.writeJson(writer, simObject, superClass);
     }
 
     private void validateCoreTranslator() {
         if (this.translatorCore == null || !this.translatorCore.isInitialized()) {
             throw new RuntimeException(
-                    "Trying to call readInput() or writeInput() before calling init on the TranslatorController.");
+                    "Trying to call readInput() or writeInput() before calling initTranslators on the TranslatorController.");
         }
     }
 
-    private TranslatorController init() {
+    private TranslatorController initTranslators() {
         TranslatorContext translatorContext = new TranslatorContext(this);
 
         List<Translator> orderedTranslators = this.getOrderedTranslators();
@@ -195,6 +185,12 @@ public class TranslatorController {
 
     public TranslatorController readInputParrallel() {
         validateCoreTranslator();
+
+        this.data.readerMap.keySet().parallelStream().forEach(reader -> {
+            Class<?> classRef = this.data.readerMap.get(reader);
+
+            this.readJsonInput(reader, classRef);
+        });
 
         return this;
     }
@@ -220,7 +216,7 @@ public class TranslatorController {
             Class<?> classRef = pluginData.getClass();
             Writer writer = this.data.writerMap.get(new Pair<Class<?>, Integer>(classRef, scenarioId));
 
-            this.writeJson(writer, pluginData);
+            this.writeJsonOutput(writer, pluginData, Optional.empty());
         }
 
         for (Object simObject : this.objects) {
@@ -233,62 +229,56 @@ public class TranslatorController {
 
             Writer writer = this.data.writerMap.get(new Pair<Class<?>, Integer>(classRef, scenarioId));
 
-            this.writeJson(writer, simObject);
+            this.writeJsonOutput(writer, simObject, Optional.empty());
         }
     }
 
-    public <T> void writeObjectOutput(List<T> objects) {
-        for (Object object : objects) {
-            writeObjectOutput(object);
+    public <T> void writeOutput(List<T> objects) {
+        for (T object : objects) {
+            writeOutput(object);
         }
     }
 
-    public void writeObjectOutput(Object object) {
-        this.writeObjectOutput(object, 0);
+    public <T> void writeOutput(List<T> objects, Integer scenarioId) {
+        for (T object : objects) {
+            writeOutput(object, scenarioId);
+        }
     }
 
-    public void writeObjectOutput(Object object, Integer scenarioId) {
+    public <T> void writeOutput(T object) {
+        this.writeOutput(object, 0);
+    }
+
+    public <T> void writeOutput(T object, Integer scenarioId) {
         validateCoreTranslator();
 
         Writer writer = this.data.writerMap.get(new Pair<Class<?>, Integer>(object.getClass(), 0));
 
-        this.writeJson(writer, object);
-    }
-
-    public void writePluginDataOutput(List<PluginData> pluginDatas) {
-        for (PluginData pluginData : pluginDatas) {
-            writePluginDataOutput(pluginData);
-        }
-    }
-
-    public void writePluginDataOutput(PluginData pluginData) {
-        validateCoreTranslator();
-
-        WriterContext writerContext = new WriterContext(this);
-
-        Translator translator = this.appObjectClassToTranslatorMap.get(pluginData.getClass());
-        if (translator == null) {
-            System.out.println("translator was null for: " + pluginData.getClass());
-            return;
-        }
-        // translator.writePluginDataOutput(writerContext, pluginData);
-    }
-
-    public void writePluginDataOutput(PluginData pluginData, Integer scenarioId) {
-        validateCoreTranslator();
-
-        WriterContext writerContext = new WriterContext(this, scenarioId);
-
-        Translator translator = this.appObjectClassToTranslatorMap.get(pluginData.getClass());
-        if (translator == null) {
-            System.out.println("translator was null for: " + pluginData.getClass());
-            return;
-        }
-        // translator.writePluginDataOutput(writerContext, pluginData);
+        this.writeJsonOutput(writer, object, Optional.empty());
     }
 
     public List<PluginData> getPluginDatas() {
         return this.pluginDatas;
+    }
+
+    public <T extends PluginData> T getPluginData(Class<T> classRef) {
+        for (PluginData pluginData : this.pluginDatas) {
+            if (classRef.isAssignableFrom(pluginData.getClass())) {
+                return classRef.cast(pluginData);
+            }
+        }
+
+        throw new RuntimeException("Unable to find the specified PluginData");
+    }
+
+    public <T> T getObject(Class<T> classRef) {
+        for (Object object : this.objects) {
+            if (classRef.isAssignableFrom(object.getClass())) {
+                return classRef.cast(object);
+            }
+        }
+
+        throw new RuntimeException("Unable to find the specified Object");
     }
 
     public List<Object> getObjects() {

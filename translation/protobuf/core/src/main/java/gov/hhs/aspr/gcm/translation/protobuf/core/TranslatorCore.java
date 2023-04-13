@@ -27,7 +27,6 @@ import com.google.protobuf.util.JsonFormat.Printer;
 
 import gov.hhs.aspr.gcm.translation.protobuf.core.input.WrapperEnumValue;
 import gov.hhs.aspr.gcm.translation.protobuf.core.translatorSpecs.PrimitiveTranslatorSpecs;
-import nucleus.PluginData;
 
 public class TranslatorCore {
 

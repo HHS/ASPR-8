@@ -1,7 +1,5 @@
 package gov.hhs.aspr.gcm.translation.protobuf.core;
 
-import com.google.protobuf.Descriptors.FieldDescriptor;
-
 public class TranslatorContext {
 
     private final TranslatorController translatorController;
@@ -14,8 +12,8 @@ public class TranslatorContext {
         this.translatorController.addTranslatorSpec(translatorSpec);
     }
 
-    public void addFieldToIncludeDefaultValue(FieldDescriptor fieldDescriptor) {
-        this.translatorController.addFieldToIncludeDefaultValue(fieldDescriptor);
+    public TranslatorCore.Builder getTranslatorCoreBuilder() {
+        return this.translatorController.getTranslatorCoreBuilder();
     }
 
     public <T, U extends T> void addMarkerInterface(Class<U> classRef, Class<T> markerInterface) {
