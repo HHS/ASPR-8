@@ -1,12 +1,10 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.stochastics;
 
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.stochastics.input.StochasticsPluginDataInput;
 import gov.hhs.aspr.gcm.translation.protobuf.core.Translator;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.stochastics.translatorSpecs.RandomGeneratorIdTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.stochastics.translatorSpecs.StochasticsPluginDataTranslatorSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.stochastics.translatorSpecs.WellStateTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.stochastics.translatorSpecs.TestRandomGeneratorIdTranslatorSpec;
-import plugins.stochastics.StochasticsPluginData;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.stochastics.translatorSpecs.WellStateTranslatorSpec;
 
 public class StochasticsTranslator {
 
@@ -24,25 +22,6 @@ public class StochasticsTranslator {
                     translatorContext.addTranslatorSpec(new TestRandomGeneratorIdTranslatorSpec());
                 });
 
-    }
-
-    public static Translator getTranslatorRW(String inputFileName, String outputFileName) {
-        return builder()
-                .addInputFile(inputFileName, StochasticsPluginDataInput.getDefaultInstance())
-                .addOutputFile(outputFileName, StochasticsPluginData.class)
-                .build();
-    }
-
-    public static Translator getTranslatorR(String inputFileName) {
-        return builder()
-                .addInputFile(inputFileName, StochasticsPluginDataInput.getDefaultInstance())
-                .build();
-    }
-
-    public static Translator getTranslatorW(String outputFileName) {
-        return builder()
-                .addOutputFile(outputFileName, StochasticsPluginData.class)
-                .build();
     }
 
     public static Translator getTranslator() {
