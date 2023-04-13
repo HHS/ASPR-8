@@ -11,6 +11,7 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.gcm.translation.protobuf.core.TranslatorController;
+import gov.hhs.aspr.gcm.translation.protobuf.core.TranslatorCore;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.globalproperties.input.GlobalPropertiesPluginDataInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.globalproperties.input.GlobalPropertyReportPluginDataInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.PropertiesTranslator;
@@ -42,14 +43,13 @@ public class AppTest {
 
         String fileName = "pluginData.json";
 
-        // .toString(),
-        //                         outputFilePath.resolve(fileName).toString()
-
         TranslatorController translatorController = TranslatorController.builder()
+                .setTranslatorCoreBuilder(TranslatorCore.builder())
                 .addTranslator(
                         GlobalPropertiesTranslator.getTranslator())
                 .addTranslator(PropertiesTranslator.getTranslator())
                 .addReader(inputFilePath.resolve(fileName), GlobalPropertiesPluginDataInput.class)
+                .addWriter(outputFilePath.resolve(fileName), GlobalPropertiesPluginData.class)
                 .build();
 
         List<PluginData> pluginDatas = translatorController.readInput().getPluginDatas();
@@ -70,7 +70,7 @@ public class AppTest {
 
         }
 
-        // translatorController.writeOutput();
+        translatorController.writeOutput();
     }
 
     @Test
@@ -88,17 +88,13 @@ public class AppTest {
 
         String fileName = "propertyReport.json";
 
-        // .addInputFile(inputFilePath.resolve(fileName).toString(),
-        //                         GlobalPropertyReportPluginDataInput.getDefaultInstance())
-        //                 .addOutputFile(outputFilePath.resolve(fileName).toString(),
-        //                         GlobalPropertyReportPluginData.class)
-
         TranslatorController translatorController = TranslatorController.builder()
-                .addTranslator(GlobalPropertiesTranslator.builder(true)
-                        .build())
+                .setTranslatorCoreBuilder(TranslatorCore.builder())
+                .addTranslator(GlobalPropertiesTranslator.builder(true).build())
                 .addTranslator(PropertiesTranslator.getTranslator())
                 .addTranslator(ReportsTranslator.getTranslator())
                 .addReader(inputFilePath.resolve(fileName), GlobalPropertyReportPluginDataInput.class)
+                .addWriter(outputFilePath.resolve(fileName), GlobalPropertyReportPluginData.class)
                 .build();
 
         List<PluginData> pluginDatas = translatorController.readInput().getPluginDatas();
