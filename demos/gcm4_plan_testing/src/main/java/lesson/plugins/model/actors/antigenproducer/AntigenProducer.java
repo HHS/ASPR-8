@@ -1,8 +1,11 @@
 package lesson.plugins.model.actors.antigenproducer;
 
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.function.Consumer;
 
 import org.apache.commons.math3.util.FastMath;
 
@@ -11,8 +14,6 @@ import lesson.plugins.model.support.Material;
 import lesson.plugins.model.support.MaterialManufactureSpecification;
 import nucleus.ActorContext;
 import nucleus.Plan;
-import nucleus.PlanData;
-import nucleus.PrioritizedPlanData;
 import plugins.globalproperties.datamanagers.GlobalPropertiesDataManager;
 import plugins.materials.datamangers.MaterialsDataManager;
 import plugins.materials.support.BatchConstructionInfo;
@@ -23,6 +24,23 @@ import plugins.materials.support.StageConversionInfo;
 import plugins.materials.support.StageId;
 
 public final class AntigenProducer {
+	private boolean logActive = true;
+	
+
+	private void log(Object... values) {
+		if (logActive) {
+			StringBuilder sb = new StringBuilder();
+			sb.append("Vaccine Producer : ");
+			sb.append(actorContext.getTime());
+			sb.append(" :");
+			for (Object value : values) {
+				sb.append(" ");
+				sb.append(String.valueOf(value));
+			}
+			System.out.println(sb);
+		}
+	}
+
 	private ActorContext actorContext;
 
 	private MaterialsProducerId materialsProducerId;
@@ -52,19 +70,8 @@ public final class AntigenProducer {
 
 	}
 
-	private void addMaterialRec(final MaterialId materialId, final MaterialManufactureSpecification.Builder builder) {
-		final BatchConstructionInfo batchConstructionInfo = BatchConstructionInfo	.builder()//
-																					.setMaterialId(materialId)//
-																					.setMaterialsProducerId(materialsProducerId)//
-																					.build();//
-		final BatchId batchId = materialsDataManager.addBatch(batchConstructionInfo);
-		builder.setBatchId(batchId);
-		builder.setMaterialId(materialId);
-		final MaterialManufactureSpecification materialManufactureSpecification = builder.build();
-		materialRecs.put(materialId, materialManufactureSpecification);
-	}
-
 	private void endFermentationStage(final StageId stageId) {
+		log("producing fermentation from stage", stageId, "yielding", antigenUnits, "of antigen");
 		final BatchId batch = materialsDataManager.convertStageToBatch(//
 				StageConversionInfo	.builder()//
 									.setAmount(antigenUnits)//
@@ -89,20 +96,85 @@ public final class AntigenProducer {
 		return true;
 	}
 
+	private Consumer<ActorContext> getConsumerFromMaterialReceiptPlanData(MaterialReceiptPlanData materialReceiptPlanData) {
+		return (c) -> receiveMaterial(materialReceiptPlanData.getMaterialId(), materialReceiptPlanData.getAmount());//
+	}
+
+	private Consumer<ActorContext> getConsumerFromStagePlanData(StagePlanData stagePlanData) {
+
+		return (c) -> endFermentationStage(stagePlanData.getStageId());
+
+	}
+	
+	private void initializeMaterialRecsFromPreviousRun() {
+		Set<Material> materials = new LinkedHashSet<>();
+		materials.add(Material.GROWTH_MEDIUM);
+		materials.add(Material.VIRUS);
+		
+
+		for (Material material : materials) {
+
+			MaterialManufactureSpecification materialManufactureSpecification = //
+					MaterialManufactureSpecification.builder()//
+													.setDeliveryAmount(antigenProducerPluginData.getDeliveryAmount(material))//
+													.setDeliveryDelay(antigenProducerPluginData.getDeliveryDelay(material))//
+													.setStageAmount(antigenProducerPluginData.getStageAmount(material))//
+													.setMaterialId(material)//
+													.setBatchId(antigenProducerPluginData.getMaterialBatchId(material))//
+													.setOnOrder(antigenProducerPluginData.getOrderStatus(material))//
+													.build();
+			materialRecs.put(material, materialManufactureSpecification);
+		}
+
+	}
+
+	private void initializeMaterialRecsFromEmpty() {
+		BatchConstructionInfo batchConstructionInfo = //
+				BatchConstructionInfo	.builder()//
+										.setMaterialId(Material.GROWTH_MEDIUM)//
+										.setMaterialsProducerId(materialsProducerId)//
+										.build();//
+		BatchId batchId = materialsDataManager.addBatch(batchConstructionInfo);
+		MaterialManufactureSpecification materialManufactureSpecification = //
+				MaterialManufactureSpecification.builder()//
+												.setDeliveryAmount(35.0)//
+												.setDeliveryDelay(7.0)//
+												.setStageAmount(1.0)//
+												.setMaterialId(Material.GROWTH_MEDIUM)//
+												.setBatchId(batchId)//
+												.setOnOrder(false)//
+												.build();
+		materialRecs.put(Material.GROWTH_MEDIUM, materialManufactureSpecification);
+
+		batchConstructionInfo = BatchConstructionInfo	.builder()//
+														.setMaterialId(Material.VIRUS)//
+														.setMaterialsProducerId(materialsProducerId)//
+														.build();//
+		batchId = materialsDataManager.addBatch(batchConstructionInfo);
+		materialManufactureSpecification = MaterialManufactureSpecification	.builder()//
+																			.setDeliveryAmount(100.0)//
+																			.setDeliveryDelay(21.0)//
+																			.setStageAmount(1.0)//
+																			.setMaterialId(Material.VIRUS)//
+																			.setBatchId(batchId)//
+																			.setOnOrder(false)//
+																			.build();
+		materialRecs.put(Material.VIRUS, materialManufactureSpecification);
+
+	}
+
+
 	public void init(final ActorContext actorContext) {
+		
+		
 		this.actorContext = actorContext;
+
 		materialsProducerId = antigenProducerPluginData.getMaterialsProducerId();
 		materialsDataManager = actorContext.getDataManager(MaterialsDataManager.class);
 		globalPropertiesDataManager = actorContext.getDataManager(GlobalPropertiesDataManager.class);
-		addMaterialRec(Material.GROWTH_MEDIUM, MaterialManufactureSpecification	.builder()//
-																				.setDeliveryAmount(35.0)//
-																				.setDeliveryDelay(7.0)//
-																				.setStageAmount(1.0));//
 
-		addMaterialRec(Material.VIRUS, MaterialManufactureSpecification	.builder()//
-																		.setDeliveryAmount(100.0)//
-																		.setDeliveryDelay(21.0)//
-																		.setStageAmount(1.0));//
+		actorContext.setPlanDataConverter(MaterialReceiptPlanData.class, this::getConsumerFromMaterialReceiptPlanData);
+		actorContext.setPlanDataConverter(StagePlanData.class, this::getConsumerFromStagePlanData);
 
 		// each time a stage is transferred
 		actorContext.subscribe(materialsDataManager.getEventFilterForStageMaterialsProducerUpdateEvent_BySource(materialsProducerId), (c, e) -> planFermentation());
@@ -115,56 +187,35 @@ public final class AntigenProducer {
 		}
 
 		if (actorContext.getTime() > 0) {
-
+			initializeMaterialRecsFromPreviousRun();
 			for (MaterialId materialId : materialRecs.keySet()) {
 				boolean onOrder = antigenProducerPluginData.getOrderStatus(materialId);
-				if(onOrder) {
+				if (onOrder) {
 					materialRecs.get(materialId).setIsOnOrder(true);
 				}
 			}
 
 			lastBatchAssemblyEndTime = antigenProducerPluginData.getLastBatchAssemblyEndTime();
-			List<PrioritizedPlanData> prioritizedPlanDatas = antigenProducerPluginData.getPrioritizedPlanDatas(MaterialReceiptPlanData.class);
-			for (PrioritizedPlanData prioritizedPlanData : prioritizedPlanDatas) {
-				
-				MaterialReceiptPlanData materialReceiptPlanData = prioritizedPlanData.getPlanData();
-
-				Plan<ActorContext> plan = Plan	.builder(ActorContext.class)//
-												.setTime(materialReceiptPlanData.getDeliveryTime())//
-												.setCallbackConsumer((c) -> receiveMaterial(materialReceiptPlanData.getMaterialId(), materialReceiptPlanData.getAmount()))//
-												.setPlanData(materialReceiptPlanData)//
-												.setPriority(prioritizedPlanData.getPriority()).build();
-				actorContext.addPlan(plan);
-			}
-			prioritizedPlanDatas = antigenProducerPluginData.getPrioritizedPlanDatas(StagePlanData.class);
-			for (PrioritizedPlanData prioritizedPlanData : prioritizedPlanDatas) {
-				
-				StagePlanData stagePlanData = prioritizedPlanData.getPlanData();
-				Plan<ActorContext> plan = Plan	.builder(ActorContext.class)//
-												.setTime(stagePlanData.getPlanTime())//
-												.setCallbackConsumer((c) -> endFermentationStage(stagePlanData.getStageId()))//
-												.setPlanData(stagePlanData)//
-												.setPriority(prioritizedPlanData.getPriority()).build();
-				actorContext.addPlan(plan);
-			}
 
 		} else {
+			initializeMaterialRecsFromEmpty();
 			planFermentation();
 		}
 	}
 
 	private void recordSimulationState(ActorContext actorContext) {
 		AntigenProducerPluginData.Builder builder = AntigenProducerPluginData.builder();
-		List<PrioritizedPlanData> prioritizedPlanDatas = actorContext.getTerminalActorPlanDatas(PlanData.class);
-		for (PrioritizedPlanData prioritizedPlanData : prioritizedPlanDatas) {
-			builder.addPrioritizedPlanData(prioritizedPlanData);
-		}
+
 		builder.setLastBatchAssemblyEndTime(lastBatchAssemblyEndTime);
 		builder.setMaterialsProducerId(materialsProducerId);
-		for(MaterialId materialId : materialRecs.keySet()) {
-			if(materialRecs.get(materialId).isOnOrder()) {
-				builder.setOrderStatus(materialId, true);
-			}
+		for (MaterialId materialId : materialRecs.keySet()) {
+			builder.addMaterialId(materialId);
+			MaterialManufactureSpecification materialManufactureSpecification = materialRecs.get(materialId);
+			builder.setOrderStatus(materialId, materialManufactureSpecification.isOnOrder());
+			builder.setMaterialBatchId(materialId, materialManufactureSpecification.getBatchId());
+			builder.setDeliveryDelay(materialId, materialManufactureSpecification.getDeliveryDelay());
+			builder.setDeliveryAmount(materialId, materialManufactureSpecification.getDeliveryAmount());
+			builder.setStageAmount(materialId, materialManufactureSpecification.getStageAmount());
 		}
 
 		actorContext.releaseOutput(builder.build());
@@ -189,6 +240,8 @@ public final class AntigenProducer {
 		if (amountToOrder <= 0) {
 			return;
 		}
+
+		log("ordering material", materialId);
 
 		amountToOrder = FastMath.ceil(amountToOrder / materialRec.getDeliveryAmount()) * materialRec.getDeliveryAmount();
 		final double deliveryTime = materialRec.getDeliveryDelay() + actorContext.getTime();
@@ -231,7 +284,8 @@ public final class AntigenProducer {
 			final double fermentationStartTime = batchAssemblyStartTime + batchAssemblyDuration;
 			lastBatchAssemblyEndTime = fermentationStartTime;
 			final double planTime = fermentationStartTime + fermentationTime;
-			
+
+			log("planning antigen production via", stageId, "for time =", planTime);
 
 			StagePlanData stagePlanData = new StagePlanData(stageId, planTime);
 			Plan<ActorContext> plan = Plan	.builder(ActorContext.class)//
@@ -244,6 +298,7 @@ public final class AntigenProducer {
 	}
 
 	private void receiveMaterial(final MaterialId materialId, final double amount) {
+		log("receiving material", materialId, amount);
 		final MaterialManufactureSpecification materialRec = materialRecs.get(materialId);
 		materialRec.setIsOnOrder(false);
 

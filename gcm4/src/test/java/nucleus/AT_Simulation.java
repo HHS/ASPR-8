@@ -305,13 +305,13 @@ public class AT_Simulation {
 
 		TestOutputConsumer testOutputConsumer = new TestOutputConsumer();
 		LocalDate localDate = LocalDate.of(2023, 03, 11);
-		SimulationTime startingSimulationTime = SimulationTime.builder().setBaseDate(localDate).build();
+		SimulationState startingSimulationState = SimulationState.builder().setBaseDate(localDate).build();
 
 		// run the simulation
 		Simulation	.builder()//
 					.addPlugin(alphaPlugin)//
 					.addPlugin(testPlugin)//
-					.setSimulationTime(startingSimulationTime)//
+					.setSimulationState(startingSimulationState)//
 					.setOutputConsumer(testOutputConsumer)//
 					.setRecordState(true)//
 					.setSimulationHaltTime(20)//
@@ -319,10 +319,10 @@ public class AT_Simulation {
 					.execute();//
 
 		// show that the simulation time data is correct
-		Map<SimulationTime, Integer> simulationTimeItems = testOutputConsumer.getOutputItems(SimulationTime.class);
-		assertEquals(1, simulationTimeItems.size());
-		SimulationTime simulationTime = simulationTimeItems.keySet().iterator().next();
-		Integer count = simulationTimeItems.get(simulationTime);
+		Map<SimulationState, Integer> simulationStateItems = testOutputConsumer.getOutputItems(SimulationState.class);
+		assertEquals(1, simulationStateItems.size());
+		SimulationState simulationTime = simulationStateItems.keySet().iterator().next();
+		Integer count = simulationStateItems.get(simulationTime);
 		assertEquals(1, count);
 		assertEquals(localDate, simulationTime.getBaseDate());
 		assertEquals(20.0, simulationTime.getStartTime());
@@ -341,13 +341,13 @@ public class AT_Simulation {
 		Simulation	.builder()//
 					.addPlugin(alphaPlugin)//
 					.addPlugin(testPlugin)//
-					.setSimulationTime(startingSimulationTime)//
+					.setSimulationState(startingSimulationState)//
 					.setOutputConsumer(testOutputConsumer)//
 					.setRecordState(false)//
 					.build()//
 					.execute();//
 
-		assertTrue(testOutputConsumer.getOutputItems(SimulationTime.class).isEmpty());
+		assertTrue(testOutputConsumer.getOutputItems(SimulationState.class).isEmpty());
 		assertTrue(testOutputConsumer.getOutputItems(Plugin.class).isEmpty());
 
 		// show that if we do not set the production to false that nothing
@@ -356,12 +356,12 @@ public class AT_Simulation {
 		Simulation	.builder()//
 					.addPlugin(alphaPlugin)//
 					.addPlugin(testPlugin)//
-					.setSimulationTime(startingSimulationTime)//
+					.setSimulationState(startingSimulationState)//
 					.setOutputConsumer(testOutputConsumer)//					
 					.build()//
 					.execute();//
 
-		assertTrue(testOutputConsumer.getOutputItems(SimulationTime.class).isEmpty());
+		assertTrue(testOutputConsumer.getOutputItems(SimulationState.class).isEmpty());
 		assertTrue(testOutputConsumer.getOutputItems(Plugin.class).isEmpty());
 
 	}
