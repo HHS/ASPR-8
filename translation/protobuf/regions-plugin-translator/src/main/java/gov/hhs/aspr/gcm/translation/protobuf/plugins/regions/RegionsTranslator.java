@@ -1,6 +1,5 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.regions;
 
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.input.RegionsPluginDataInput;
 import gov.hhs.aspr.gcm.translation.protobuf.core.Translator;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.PeopleTranslatorId;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.PropertiesTranslatorId;
@@ -14,7 +13,6 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.translatorSpecs.Sim
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.translatorSpecs.TestRegionIdTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.translatorSpecs.TestRegionPropertyIdTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.ReportsTranslatorId;
-import plugins.regions.RegionsPluginData;
 
 public class RegionsTranslator {
 
@@ -52,26 +50,7 @@ public class RegionsTranslator {
         return builder(false);
     }
 
-    public static Translator getTranslatorRW(String inputFileName, String outputFileName) {
-        return builder()
-                .addInputFile(inputFileName, RegionsPluginDataInput.getDefaultInstance())
-                .addOutputFile(outputFileName, RegionsPluginData.class)
-                .build();
-    }
-
-    public static Translator getTranslatorR(String inputFileName) {
-        return builder()
-                .addInputFile(inputFileName, RegionsPluginDataInput.getDefaultInstance())
-                .build();
-    }
-
-    public static Translator getTranslatorW(String outputFileName) {
-        return builder()
-                .addOutputFile(outputFileName, RegionsPluginData.class)
-                .build();
-    }
-
-    public static Translator getTranslatorModule() {
+    public static Translator getTranslator() {
         return builder().build();
     }
 }
