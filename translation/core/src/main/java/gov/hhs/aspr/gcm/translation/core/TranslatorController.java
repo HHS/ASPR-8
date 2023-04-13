@@ -1,7 +1,12 @@
-package gov.hhs.aspr.gcm.translation.protobuf.core;
+package gov.hhs.aspr.gcm.translation.core;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -12,8 +17,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.google.protobuf.Descriptors.FieldDescriptor;
-import com.google.protobuf.Message;
+import org.apache.commons.math3.util.Pair;
 
 import nucleus.PluginData;
 import util.graph.Graph;
@@ -35,8 +39,11 @@ public class TranslatorController {
     }
 
     private static class Data {
-        private TranslatorCore.Builder translatorCoreBuilder = TranslatorCore.builder();
+        private TranslatorCore.Builder translatorCoreBuilder;
         private final List<Translator> translators = new ArrayList<>();
+        private final Map<Reader, Class<?>> readerMap = new LinkedHashMap<>();
+        private final Map<Pair<Class<?>, Integer>, Writer> writerMap = new LinkedHashMap<>();
+        private final Map<Class<?>, Class<?>> markerInterfaceClassMap = new LinkedHashMap<>();
 
         private Data() {
         }
@@ -50,10 +57,51 @@ public class TranslatorController {
         }
 
         public TranslatorController build() {
+            if(this.data.translatorCoreBuilder == null) {
+                throw new RuntimeException("Did not set the TranslatorCore Builder");
+            }
             TranslatorController translatorController = new TranslatorController(this.data);
 
-            translatorController.init();
+            translatorController.initTranslators();
             return translatorController;
+        }
+
+        public Builder addReader(Path filePath, Class<?> classRef) {
+            try {
+                this.data.readerMap.put(new FileReader(filePath.toFile()), classRef);
+            } catch (FileNotFoundException e) {
+                throw new RuntimeException("Failed to create Reader", e);
+            }
+
+            return this;
+        }
+
+        public Builder addWriter(Path filePath, Class<?> classRef) {
+            return this.addWriterForScenario(filePath, classRef, 0);
+        }
+
+        public Builder addWriterForScenario(Path filePath, Class<?> classRef, Integer scenarioId) {
+            Pair<Class<?>, Integer> key = new Pair<>(classRef, scenarioId);
+
+            if (this.data.writerMap.containsKey(key)) {
+                throw new RuntimeException("Attempted to overwrite an existing output file.");
+            }
+            try {
+                this.data.writerMap.put(key, new FileWriter(filePath.toFile()));
+            } catch (IOException e) {
+                throw new RuntimeException("Failed to create Writer", e);
+            }
+            return this;
+        }
+
+        public <T, U extends T> Builder addMarkerInterface(Class<U> classRef, Class<T> markerInterface) {
+
+            if (!markerInterface.isAssignableFrom(classRef)) {
+                throw new RuntimeException("cannot cast " + classRef.getName() + " to " + markerInterface.getName());
+            }
+
+            this.data.markerInterfaceClassMap.put(classRef, markerInterface);
+            return this;
         }
 
         public Builder addTranslator(Translator translator) {
@@ -61,21 +109,11 @@ public class TranslatorController {
             return this;
         }
 
-        public <I, S> Builder addTranslatorSpec(AbstractTranslatorSpec<I, S> translatorSpec) {
-            this.data.translatorCoreBuilder.addTranslatorSpec(translatorSpec);
+        public Builder setTranslatorCoreBuilder(TranslatorCore.Builder translatorCoreBuilder) {
+            this.data.translatorCoreBuilder = translatorCoreBuilder;
+
             return this;
         }
-
-        public Builder setIgnoringUnknownFields(boolean ignoringUnknownFields) {
-            this.data.translatorCoreBuilder.setIgnoringUnknownFields(ignoringUnknownFields);
-            return this;
-        }
-
-        public Builder setIncludingDefaultValueFields(boolean includingDefaultValueFields) {
-            this.data.translatorCoreBuilder.setIncludingDefaultValueFields(includingDefaultValueFields);
-            return this;
-        }
-
     }
 
     public static Builder builder() {
@@ -88,51 +126,46 @@ public class TranslatorController {
         this.appObjectClassToTranslatorMap.put(translatorSpec.getAppObjectClass(), this.focalTranslator);
     }
 
-    protected void addFieldToIncludeDefaultValue(FieldDescriptor fieldDescriptor) {
-        this.data.translatorCoreBuilder.addFieldToIncludeDefaultValue(fieldDescriptor);
+    protected TranslatorCore.Builder getTranslatorCoreBuilder() {
+        if (this.translatorCore == null || !this.translatorCore.isInitialized()) {
+            return this.data.translatorCoreBuilder;
+        }
+        throw new RuntimeException(
+                "Trying to call readInput() or writeInput() before calling initTranslators on the TranslatorController.");
+
     }
 
-    protected <U extends Message.Builder> void readPluginDataInput(Reader reader, U builder) {
-        PluginData pluginData = this.translatorCore.readJson(reader, builder);
+    protected <T, U extends T> void addMarkerInterface(Class<U> classRef, Class<T> markerInterface) {
 
-        this.pluginDatas.add(pluginData);
-    }
-
-    protected <U extends Message.Builder> void readJsonInput(Reader reader, U builder) {
-        Object simObject = this.translatorCore.readJson(reader, builder);
-
-        this.objects.add(simObject);
-    }
-
-    protected <T extends PluginData> void writePluginDataOutput(Writer writer, T pluginData) {
-        this.translatorCore.writeJson(writer, pluginData);
-    }
-
-    protected void writeJsonOutput(Writer writer, Object simObject) {
-        this.translatorCore.writeJson(writer, simObject);
-    }
-
-    protected void writeJsonOutput(Writer writer, Object simObject, Class<?> superClass) {
-        this.translatorCore.writeJson(writer, simObject, superClass);
-    }
-
-    // temporary pass through method
-    public TranslatorCore getTranslatorCore() {
-        if (this.translatorCore == null) {
-            throw new RuntimeException("translatorCore is null");
+        if (!markerInterface.isAssignableFrom(classRef)) {
+            throw new RuntimeException("cannot cast " + classRef.getName() + " to " + markerInterface.getName());
         }
 
-        return this.translatorCore;
+        this.data.markerInterfaceClassMap.put(classRef, markerInterface);
+    }
+
+    protected <U> void readJsonInput(Reader reader, Class<U> inputClassRef) {
+        Object simObject = this.translatorCore.readJson(reader, inputClassRef);
+
+        if (simObject instanceof PluginData) {
+            this.pluginDatas.add((PluginData) simObject);
+        } else {
+            this.objects.add(simObject);
+        }
+    }
+
+    protected <M extends U, U> void writeJsonOutput(Writer writer, M simObject, Optional<Class<U>> superClass) {
+        this.translatorCore.writeJson(writer, simObject, superClass);
     }
 
     private void validateCoreTranslator() {
         if (this.translatorCore == null || !this.translatorCore.isInitialized()) {
             throw new RuntimeException(
-                    "Trying to call readInput() or writeInput() before calling init on the TranslatorController.");
+                    "Trying to call readInput() or writeInput() after calling initTranslators on the TranslatorController.");
         }
     }
 
-    private TranslatorController init() {
+    private TranslatorController initTranslators() {
         TranslatorContext translatorContext = new TranslatorContext(this);
 
         List<Translator> orderedTranslators = this.getOrderedTranslators();
@@ -153,34 +186,22 @@ public class TranslatorController {
     public TranslatorController readInputParrallel() {
         validateCoreTranslator();
 
-        ReaderContext readerContext = new ReaderContext(this);
+        this.data.readerMap.keySet().parallelStream().forEach(reader -> {
+            Class<?> classRef = this.data.readerMap.get(reader);
 
-        this.data.translators.parallelStream().forEach((translator) -> {
-            if (translator.hasInput()) {
-                if (translator.inputIsPluginData()) {
-                    translator.readPluginDataInput(readerContext);
-                } else {
-                    translator.readJsonInput(readerContext);
-                }
-            }
-
+            this.readJsonInput(reader, classRef);
         });
+
         return this;
     }
 
     public TranslatorController readInput() {
         validateCoreTranslator();
 
-        ReaderContext readerContext = new ReaderContext(this);
+        for (Reader reader : this.data.readerMap.keySet()) {
+            Class<?> classRef = this.data.readerMap.get(reader);
 
-        for (Translator translator : this.data.translators) {
-            if (!translator.hasInput())
-                continue;
-            if (translator.inputIsPluginData()) {
-                translator.readPluginDataInput(readerContext);
-                continue;
-            }
-            translator.readJsonInput(readerContext);
+            this.readJsonInput(reader, classRef);
         }
 
         return this;
@@ -189,85 +210,75 @@ public class TranslatorController {
     public void writeOutput() {
         validateCoreTranslator();
 
-        WriterContext writerContext = new WriterContext(this);
+        int scenarioId = 0;
 
         for (PluginData pluginData : this.pluginDatas) {
-            Translator translator = this.appObjectClassToTranslatorMap.get(pluginData.getClass());
-            translator.writePluginDataOutput(writerContext, pluginData);
+            Class<?> classRef = pluginData.getClass();
+            Writer writer = this.data.writerMap.get(new Pair<Class<?>, Integer>(classRef, scenarioId));
+
+            this.writeJsonOutput(writer, pluginData, Optional.empty());
         }
 
         for (Object simObject : this.objects) {
-            Translator translator = this.appObjectClassToTranslatorMap.get(simObject.getClass());
-            translator.writeJsonOutput(writerContext, simObject);
+
+            Class<?> classRef = simObject.getClass();
+
+            if (this.data.markerInterfaceClassMap.containsKey(classRef)) {
+                classRef = this.data.markerInterfaceClassMap.get(classRef);
+            }
+
+            Writer writer = this.data.writerMap.get(new Pair<Class<?>, Integer>(classRef, scenarioId));
+
+            this.writeJsonOutput(writer, simObject, Optional.empty());
         }
     }
 
-    public <T> void writeObjectOutput(List<T> objects) {
-        for (Object object : objects) {
-            writeObjectOutput(object);
+    public <T> void writeOutput(List<T> objects) {
+        for (T object : objects) {
+            writeOutput(object);
         }
     }
 
-    public void writeObjectOutput(Object object) {
+    public <T> void writeOutput(List<T> objects, Integer scenarioId) {
+        for (T object : objects) {
+            writeOutput(object, scenarioId);
+        }
+    }
+
+    public <T> void writeOutput(T object) {
+        this.writeOutput(object, 0);
+    }
+
+    public <T> void writeOutput(T object, Integer scenarioId) {
         validateCoreTranslator();
 
-        WriterContext writerContext = new WriterContext(this);
+        Writer writer = this.data.writerMap.get(new Pair<Class<?>, Integer>(object.getClass(), 0));
 
-        Translator translator = this.appObjectClassToTranslatorMap.get(object.getClass());
-        if (translator == null) {
-            System.out.println("translator was null for: " + object.getClass());
-            return;
-        }
-        translator.writeJsonOutput(writerContext, object);
-    }
-
-    public void writeObjectOutput(Object object, Integer scenarioId) {
-        validateCoreTranslator();
-
-        WriterContext writerContext = new WriterContext(this, scenarioId);
-
-        Translator translator = this.appObjectClassToTranslatorMap.get(object.getClass());
-        if (translator == null) {
-            System.out.println("translator was null for: " + object.getClass());
-            return;
-        }
-        translator.writeJsonOutput(writerContext, object);
-    }
-
-    public void writePluginDataOutput(List<PluginData> pluginDatas) {
-        for (PluginData pluginData : pluginDatas) {
-            writePluginDataOutput(pluginData);
-        }
-    }
-
-    public void writePluginDataOutput(PluginData pluginData) {
-        validateCoreTranslator();
-
-        WriterContext writerContext = new WriterContext(this);
-
-        Translator translator = this.appObjectClassToTranslatorMap.get(pluginData.getClass());
-        if (translator == null) {
-            System.out.println("translator was null for: " + pluginData.getClass());
-            return;
-        }
-        translator.writePluginDataOutput(writerContext, pluginData);
-    }
-
-    public void writePluginDataOutput(PluginData pluginData, Integer scenarioId) {
-        validateCoreTranslator();
-
-        WriterContext writerContext = new WriterContext(this, scenarioId);
-
-        Translator translator = this.appObjectClassToTranslatorMap.get(pluginData.getClass());
-        if (translator == null) {
-            System.out.println("translator was null for: " + pluginData.getClass());
-            return;
-        }
-        translator.writePluginDataOutput(writerContext, pluginData);
+        this.writeJsonOutput(writer, object, Optional.empty());
     }
 
     public List<PluginData> getPluginDatas() {
         return this.pluginDatas;
+    }
+
+    public <T extends PluginData> T getPluginData(Class<T> classRef) {
+        for (PluginData pluginData : this.pluginDatas) {
+            if (classRef.isAssignableFrom(pluginData.getClass())) {
+                return classRef.cast(pluginData);
+            }
+        }
+
+        throw new RuntimeException("Unable to find the specified PluginData");
+    }
+
+    public <T> T getObject(Class<T> classRef) {
+        for (Object object : this.objects) {
+            if (classRef.isAssignableFrom(object.getClass())) {
+                return classRef.cast(object);
+            }
+        }
+
+        throw new RuntimeException("Unable to find the specified Object");
     }
 
     public List<Object> getObjects() {

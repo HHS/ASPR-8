@@ -15,7 +15,7 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.input.PropertyDe
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.input.PropertyValueMapInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.input.ResourceIdInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.input.ResourceInitializationInput;
-import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractTranslatorSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractProtobufTranslatorSpec;
 import plugins.materials.MaterialsPluginData;
 import plugins.materials.support.BatchId;
 import plugins.materials.support.BatchPropertyId;
@@ -27,7 +27,7 @@ import plugins.resources.support.ResourceId;
 import plugins.util.properties.PropertyDefinition;
 
 public class MaterialsPluginDataTranslatorSpec
-                extends AbstractTranslatorSpec<MaterialsPluginDataInput, MaterialsPluginData> {
+                extends AbstractProtobufTranslatorSpec<MaterialsPluginDataInput, MaterialsPluginData> {
 
         @Override
         protected MaterialsPluginData convertInputObject(MaterialsPluginDataInput inputObject) {

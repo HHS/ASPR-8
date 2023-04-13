@@ -1,10 +1,10 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.translatorSpecs;
 
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.input.GroupPropertyIdInput;
-import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractTranslatorSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractProtobufTranslatorSpec;
 import plugins.groups.support.GroupPropertyId;
 
-public class GroupPropertyIdTranslatorSpec extends AbstractTranslatorSpec<GroupPropertyIdInput, GroupPropertyId> {
+public class GroupPropertyIdTranslatorSpec extends AbstractProtobufTranslatorSpec<GroupPropertyIdInput, GroupPropertyId> {
 
     @Override
     protected GroupPropertyId convertInputObject(GroupPropertyIdInput inputObject) {

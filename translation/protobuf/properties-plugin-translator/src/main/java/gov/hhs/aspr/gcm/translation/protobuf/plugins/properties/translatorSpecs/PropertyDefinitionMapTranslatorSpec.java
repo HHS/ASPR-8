@@ -2,11 +2,11 @@ package gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.translatorSpecs
 
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.input.PropertyDefinitionInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.input.PropertyDefinitionMapInput;
-import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractTranslatorSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractProtobufTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.simobjects.PropertyDefinitionMap;
 
 public class PropertyDefinitionMapTranslatorSpec
-        extends AbstractTranslatorSpec<PropertyDefinitionMapInput, PropertyDefinitionMap> {
+        extends AbstractProtobufTranslatorSpec<PropertyDefinitionMapInput, PropertyDefinitionMap> {
 
     @Override
     protected PropertyDefinitionMap convertInputObject(PropertyDefinitionMapInput inputObject) {

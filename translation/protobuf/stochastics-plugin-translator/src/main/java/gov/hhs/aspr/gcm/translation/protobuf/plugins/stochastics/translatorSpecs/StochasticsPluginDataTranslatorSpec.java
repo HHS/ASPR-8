@@ -4,13 +4,13 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.stochastics.input.RandomNum
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.stochastics.input.RandomNumberGeneratorMapInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.stochastics.input.StochasticsPluginDataInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.stochastics.input.WellStateInput;
-import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractTranslatorSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractProtobufTranslatorSpec;
 import plugins.stochastics.StochasticsPluginData;
 import plugins.stochastics.support.RandomNumberGeneratorId;
 import plugins.stochastics.support.WellState;
 
 public class StochasticsPluginDataTranslatorSpec
-        extends AbstractTranslatorSpec<StochasticsPluginDataInput, StochasticsPluginData> {
+        extends AbstractProtobufTranslatorSpec<StochasticsPluginDataInput, StochasticsPluginData> {
 
     @Override
     protected StochasticsPluginData convertInputObject(StochasticsPluginDataInput inputObject) {

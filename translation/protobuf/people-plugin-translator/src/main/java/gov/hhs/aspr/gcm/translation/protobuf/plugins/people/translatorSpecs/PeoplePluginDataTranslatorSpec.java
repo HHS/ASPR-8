@@ -1,13 +1,13 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.people.translatorSpecs;
 
-import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractTranslatorSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractProtobufTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.input.PeoplePluginDataInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.input.PersonRangeInput;
 import plugins.people.PeoplePluginData;
 import plugins.people.support.PersonRange;
 
 public class PeoplePluginDataTranslatorSpec
-        extends AbstractTranslatorSpec<PeoplePluginDataInput, PeoplePluginData> {
+        extends AbstractProtobufTranslatorSpec<PeoplePluginDataInput, PeoplePluginData> {
 
     @Override
     protected PeoplePluginData convertInputObject(PeoplePluginDataInput inputObject) {

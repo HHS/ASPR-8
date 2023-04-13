@@ -1,8 +1,9 @@
 package gov.hss.aspr.gcm.translation.protobuf.nucleus;
 
+import gov.hhs.aspr.gcm.translation.core.Translator;
+import gov.hhs.aspr.gcm.translation.protobuf.core.ProtobufTranslatorCore;
 import gov.hhs.aspr.gcm.translation.protobuf.nucleus.input.PlanQueueDataInput;
 import gov.hhs.aspr.gcm.translation.protobuf.nucleus.input.SimulationStateInput;
-import gov.hhs.aspr.gcm.translation.protobuf.core.Translator;
 import gov.hss.aspr.gcm.translation.protobuf.nucleus.translatorSpecs.PlanDataTranslatorSpec;
 import gov.hss.aspr.gcm.translation.protobuf.nucleus.translatorSpecs.PlanQueueDataTranslatorSpec;
 import gov.hss.aspr.gcm.translation.protobuf.nucleus.translatorSpecs.PlannerTranslatorSpec;
@@ -22,21 +23,20 @@ public class NucleusTranslator {
                     translatorContext.addTranslatorSpec(new PlannerTranslatorSpec());
                     translatorContext.addTranslatorSpec(new PlanDataTranslatorSpec());
 
-                    translatorContext
+                    ((ProtobufTranslatorCore.Builder) translatorContext.getTranslatorCoreBuilder())
                             .addFieldToIncludeDefaultValue(
-                                    SimulationStateInput.getDescriptor().findFieldByName("startTime"));
-                    translatorContext
+                                    SimulationStateInput.getDescriptor()
+                                            .findFieldByName("startTime"))
                             .addFieldToIncludeDefaultValue(
-                                    PlanQueueDataInput.getDescriptor().findFieldByName("time"));
-                    translatorContext
+                                    PlanQueueDataInput.getDescriptor()
+                                            .findFieldByName("time"))
                             .addFieldToIncludeDefaultValue(
-                                    PlanQueueDataInput.getDescriptor().findFieldByName("plannerId"));
-                    translatorContext
+                                    PlanQueueDataInput.getDescriptor()
+                                            .findFieldByName("plannerId"))
                             .addFieldToIncludeDefaultValue(
-                                    PlanQueueDataInput.getDescriptor().findFieldByName("active"));
-                })
-                .setInputIsPluginData(false)
-                .setOutputIsPluginData(false);
+                                    PlanQueueDataInput.getDescriptor()
+                                            .findFieldByName("active"));
+                });
 
     }
 
