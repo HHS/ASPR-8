@@ -1,4 +1,4 @@
-package gov.hhs.aspr.gcm.translation.protobuf.core;
+package gov.hhs.aspr.gcm.translation.core;
 
 import java.io.Reader;
 import java.io.Writer;
@@ -10,26 +10,26 @@ import java.util.Set;
 
 public abstract class TranslatorCore {
 
-    private final Data data;
+    private final TranslatorCoreData data;
     protected boolean debug = false;
     protected boolean isInitialized = false;
 
-    protected TranslatorCore(Data data) {
+    protected TranslatorCore(TranslatorCoreData data) {
         this.data = data;
     }
 
-    protected static class Data {
-        protected final Map<Class<?>, ITranslatorSpec> classToTranslatorSpecMap = new LinkedHashMap<>();
-        protected final Set<ITranslatorSpec> translatorSpecs = new LinkedHashSet<>();
+    protected static class TranslatorCoreData {
+        public final Map<Class<?>, ITranslatorSpec> classToTranslatorSpecMap = new LinkedHashMap<>();
+        public final Set<ITranslatorSpec> translatorSpecs = new LinkedHashSet<>();
 
-        protected Data() {
+        protected TranslatorCoreData() {
         }
     }
 
     public static class Builder {
-        private Data data;
+        protected TranslatorCoreData data;
 
-        protected Builder(Data data) {
+        protected Builder(TranslatorCoreData data) {
             this.data = data;
         }
 
@@ -49,7 +49,7 @@ public abstract class TranslatorCore {
     }
 
     public static Builder builder() {
-        return new Builder(new Data());
+        return new Builder(new TranslatorCoreData());
     }
 
     public void init() {

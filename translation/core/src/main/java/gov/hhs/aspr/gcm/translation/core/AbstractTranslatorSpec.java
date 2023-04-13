@@ -1,4 +1,4 @@
-package gov.hhs.aspr.gcm.translation.protobuf.core;
+package gov.hhs.aspr.gcm.translation.core;
 
 public abstract class AbstractTranslatorSpec<I, S> implements ITranslatorSpec {
     protected boolean initialized = false;

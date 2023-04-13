@@ -1,4 +1,4 @@
-package gov.hhs.aspr.gcm.translation.protobuf.core;
+package gov.hhs.aspr.gcm.translation.core;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
