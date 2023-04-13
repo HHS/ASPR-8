@@ -180,8 +180,8 @@ public class TranslatorCore {
         return this.data.jsonPrinter;
     }
 
-    public <T extends V, V, U extends Message> void writeJson(Writer writer, T simObject, Optional<Class<V>> superClass) {
-        U message;
+    public <T extends Message, M extends U, U> void writeJson(Writer writer, M simObject, Optional<Class<U>> superClass) {
+        T message;
 
         if (superClass.isPresent()) {
             message = convertSimObject(simObject, superClass.get());
@@ -238,7 +238,7 @@ public class TranslatorCore {
         }
     }
 
-    public Any getAnyFromObject(Object object, Class<?> superClass) {
+    public <M extends U, U> Any getAnyFromObject(M object, Class<U> superClass) {
         if (Enum.class.isAssignableFrom(object.getClass())) {
             superClassCastCheck(object, superClass);
             return packMessage(getWrapperEnum(object));
@@ -253,11 +253,11 @@ public class TranslatorCore {
         return packMessage(convertSimObject(object));
     }
 
-    public Any packMessage(Message messageToPack) {
+    private Any packMessage(Message messageToPack) {
         return Any.pack(messageToPack);
     }
 
-    public <T> T getObjectFromAny(Any anyValue, Class<?> superClass) {
+    public <T extends U, U> T getObjectFromAny(Any anyValue, Class<U> superClass) {
         Message anyMessage = getMessageFromAny(anyValue);
 
         if (anyMessage.getDescriptorForType() == WrapperEnumValue.getDescriptor()) {
@@ -362,7 +362,7 @@ public class TranslatorCore {
         return getTranslatorForClass(inputObject.getClass()).convert(inputObject);
     }
 
-    public <T extends U, U> T convertSimObject(Object simObject, Class<U> superClass) {
+    public <T, M extends U, U> T convertSimObject(M simObject, Class<U> superClass) {
 
         superClassCastCheck(simObject, superClass);
 
@@ -373,7 +373,7 @@ public class TranslatorCore {
         return getTranslatorForClass(simObject.getClass()).convert(simObject);
     }
 
-    private <T> void superClassCastCheck(Object object, Class<T> superClass) {
+    private <U, M extends U> void superClassCastCheck(M object, Class<U> superClass) {
         validateObjectNotNull(object);
 
         try {

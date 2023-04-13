@@ -154,7 +154,7 @@ public class TranslatorController {
         }
     }
 
-    protected <T extends U, U> void writeJsonOutput(Writer writer, T simObject, Optional<Class<U>> superClass) {
+    protected <M extends U, U> void writeJsonOutput(Writer writer, M simObject, Optional<Class<U>> superClass) {
         this.translatorCore.writeJson(writer, simObject, superClass);
     }
 
