@@ -1,6 +1,6 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.translatorSpecs;
 
-import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractTranslatorSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractProtobufTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.input.PersonPropertyIdInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.input.PersonPropertyInteractionReportPluginDataInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.input.ReportLabelInput;
@@ -12,7 +12,7 @@ import plugins.reports.support.ReportPeriod;
 
 public class PersonPropertyInteractionReportPluginDataTranslatorSpec
         extends
-        AbstractTranslatorSpec<PersonPropertyInteractionReportPluginDataInput, PersonPropertyInteractionReportPluginData> {
+        AbstractProtobufTranslatorSpec<PersonPropertyInteractionReportPluginDataInput, PersonPropertyInteractionReportPluginData> {
 
     @Override
     protected PersonPropertyInteractionReportPluginData convertInputObject(

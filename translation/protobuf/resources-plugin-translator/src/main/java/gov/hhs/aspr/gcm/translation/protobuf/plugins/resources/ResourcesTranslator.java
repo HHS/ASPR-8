@@ -1,7 +1,6 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.resources;
 
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.input.ResourcesPluginDataInput;
-import gov.hhs.aspr.gcm.translation.protobuf.core.Translator;
+import gov.hhs.aspr.gcm.translation.core.Translator;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.PeopleTranslatorId;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.PropertiesTranslatorId;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.RegionsTranslatorId;
@@ -16,7 +15,6 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.translatorSpecs.R
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.translatorSpecs.ResourcesPluginDataTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.translatorSpecs.TestResourceIdTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.translatorSpecs.TestResourcePropertyIdTranslatorSpec;
-import plugins.resources.ResourcesPluginData;
 
 public class ResourcesTranslator {
     private ResourcesTranslator() {
@@ -53,25 +51,6 @@ public class ResourcesTranslator {
 
     public static Translator.Builder builder() {
         return builder(false);
-    }
-
-    public static Translator getTranslatorRW(String inputFileName, String outputFileName) {
-        return builder()
-                .addInputFile(inputFileName, ResourcesPluginDataInput.getDefaultInstance())
-                .addOutputFile(outputFileName, ResourcesPluginData.class)
-                .build();
-    }
-
-    public static Translator getTranslatorR(String inputFileName) {
-        return builder()
-                .addInputFile(inputFileName, ResourcesPluginDataInput.getDefaultInstance())
-                .build();
-    }
-
-    public static Translator getTranslatorW(String outputFileName) {
-        return builder()
-                .addOutputFile(outputFileName, ResourcesPluginData.class)
-                .build();
     }
 
     public static Translator getTranslator() {

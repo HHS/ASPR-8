@@ -7,7 +7,8 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import gov.hhs.aspr.gcm.translation.protobuf.core.TranslatorController;
+import gov.hhs.aspr.gcm.translation.protobuf.core.ProtobufTranslatorCore;
+import gov.hhs.aspr.gcm.translation.core.TranslatorController;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.input.PropertyValueMapInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.simobjects.PropertyValueMap;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.testsupport.simobjects.Layer1SimObject;
@@ -28,17 +29,18 @@ public class AppTest {
 
         Path inputFilePath = basePath.resolve("src/main/resources/json");
         Path outputFilePath = basePath.resolve("src/main/resources/json/output");
-        
+
         outputFilePath.toFile().mkdir();
 
         String fileName = "data.json";
 
         TranslatorController translatorController = TranslatorController.builder()
-                .addTranslator(PropertiesTranslator.builder()
-                        .addInputFile(inputFilePath.resolve(fileName).toString(), PropertyValueMapInput.getDefaultInstance())
-                        .addOutputFile(outputFilePath.resolve(fileName).toString(), PropertyValueMap.class).build())
-                .addTranslatorSpec(new TestMessageTranslatorSpec())
-                .addTranslatorSpec(new Layer1TranslatorSpec())
+                .setTranslatorCoreBuilder(ProtobufTranslatorCore.builder()
+                        .addTranslatorSpec(new TestMessageTranslatorSpec())
+                        .addTranslatorSpec(new Layer1TranslatorSpec()))
+                .addTranslator(PropertiesTranslator.getTranslator())
+                .addReader(inputFilePath.resolve(fileName), PropertyValueMapInput.class)
+                .addWriter(outputFilePath.resolve(fileName), PropertyValueMap.class)
                 .build();
 
         List<Object> objects = translatorController.readInput().getObjects();

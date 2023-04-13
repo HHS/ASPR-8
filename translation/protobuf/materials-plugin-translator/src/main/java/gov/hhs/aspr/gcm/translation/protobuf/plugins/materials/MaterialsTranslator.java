@@ -1,6 +1,9 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.materials;
 
-import gov.hhs.aspr.gcm.translation.protobuf.core.Translator;
+import gov.hhs.aspr.gcm.translation.protobuf.core.ProtobufTranslatorCore;
+import gov.hhs.aspr.gcm.translation.core.Translator;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.input.BatchIdInput;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.input.StageIdInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.translatorSpecs.BatchIdTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.translatorSpecs.BatchPropertyIdTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.translatorSpecs.BatchStatusReportPluginDataTranslatorSpec;
@@ -20,10 +23,6 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.PropertiesTransl
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.ReportsTranslatorId;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.ResourcesTranslatorId;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.translatorSpecs.TestResourceIdTranslatorSpec;
-import plugins.materials.MaterialsPluginData;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.input.BatchIdInput;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.input.MaterialsPluginDataInput;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.input.StageIdInput;
 
 public class MaterialsTranslator {
     private MaterialsTranslator() {
@@ -58,9 +57,8 @@ public class MaterialsTranslator {
                         translatorContext.addTranslatorSpec(new StageReportPluginDataTranslatorSpec());
                     }
 
-                    translatorContext
-                            .addFieldToIncludeDefaultValue(BatchIdInput.getDescriptor().findFieldByName("id"));
-                    translatorContext
+                    ((ProtobufTranslatorCore.Builder) translatorContext.getTranslatorCoreBuilder())
+                            .addFieldToIncludeDefaultValue(BatchIdInput.getDescriptor().findFieldByName("id"))
                             .addFieldToIncludeDefaultValue(StageIdInput.getDescriptor().findFieldByName("id"));
                 });
 
@@ -73,25 +71,6 @@ public class MaterialsTranslator {
 
     public static Translator.Builder builder() {
         return builder(false);
-    }
-
-    public static Translator getTranslatorRW(String inputFileName, String outputFileName) {
-        return builder()
-                .addInputFile(inputFileName, MaterialsPluginDataInput.getDefaultInstance())
-                .addOutputFile(outputFileName, MaterialsPluginData.class)
-                .build();
-    }
-
-    public static Translator getTranslatorR(String inputFileName) {
-        return builder()
-                .addInputFile(inputFileName, MaterialsPluginDataInput.getDefaultInstance())
-                .build();
-    }
-
-    public static Translator getTranslatorW(String outputFileName) {
-        return builder()
-                .addOutputFile(outputFileName, MaterialsPluginData.class)
-                .build();
     }
 
     public static Translator getTranslator() {

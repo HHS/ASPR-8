@@ -4,9 +4,11 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import com.google.gson.JsonObject;
@@ -18,30 +20,28 @@ import com.google.protobuf.Descriptors.FieldDescriptor.JavaType;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.Message;
 import com.google.protobuf.ProtocolMessageEnum;
-import com.google.protobuf.TypeRegistry;
 import com.google.protobuf.util.JsonFormat;
 import com.google.protobuf.util.JsonFormat.Parser;
 import com.google.protobuf.util.JsonFormat.Printer;
+import com.google.protobuf.util.JsonFormat.TypeRegistry;
 
+import gov.hhs.aspr.gcm.translation.core.AbstractTranslatorSpec;
+import gov.hhs.aspr.gcm.translation.core.TranslatorCore;
 import gov.hhs.aspr.gcm.translation.protobuf.core.input.WrapperEnumValue;
 import gov.hhs.aspr.gcm.translation.protobuf.core.translatorSpecs.PrimitiveTranslatorSpecs;
-import nucleus.PluginData;
 
-public class TranslatorCore {
-
+public class ProtobufTranslatorCore extends TranslatorCore {
     private final Data data;
-    private boolean debug = false;
-    private boolean isInitialized = false;
 
-    private TranslatorCore(Data data) {
+    private ProtobufTranslatorCore(Data data) {
+        super(data);
         this.data = data;
     }
 
-    private static class Data {
+
+    private static class Data extends TranslatorCore.Data {
         private final Map<String, Message> descriptorMap = new LinkedHashMap<>();
         private final Map<String, ProtocolMessageEnum> typeUrlToEnumMap = new LinkedHashMap<>();
-        private final Map<Class<?>, ITranslatorSpec> classToTranslatorSpecMap = new LinkedHashMap<>();
-        private final Set<ITranslatorSpec> translatorSpecs = new LinkedHashSet<>();
         private final Set<FieldDescriptor> defaultValueFieldsToPrint = new LinkedHashSet<>();
         private TypeRegistry registry;
         private Parser jsonParser;
@@ -50,6 +50,7 @@ public class TranslatorCore {
         private boolean includingDefaultValueFields = false;
 
         private Data() {
+            super();
             this.descriptorMap.putAll(PrimitiveTranslatorSpecs.getPrimitiveTypeUrlToMessageMap());
             this.classToTranslatorSpecMap.putAll(PrimitiveTranslatorSpecs.getPrimitiveInputTranslatorSpecMap());
             this.classToTranslatorSpecMap.putAll(PrimitiveTranslatorSpecs.getPrimitiveObjectTranslatorSpecMap());
@@ -57,10 +58,11 @@ public class TranslatorCore {
         }
     }
 
-    public static class Builder {
-        private Data data;
+    public static class Builder extends TranslatorCore.Builder {
+        private ProtobufTranslatorCore.Data data;
 
-        private Builder(Data data) {
+        private Builder(ProtobufTranslatorCore.Data data) {
+            super(data);
             this.data = data;
         }
 
@@ -90,7 +92,7 @@ public class TranslatorCore {
             }
             this.data.jsonPrinter = printer;
 
-            return new TranslatorCore(this.data);
+            return new ProtobufTranslatorCore(this.data);
         }
 
         public Builder setIgnoringUnknownFields(boolean ignoringUnknownFields) {
@@ -114,6 +116,7 @@ public class TranslatorCore {
             return this;
         }
 
+        @Override
         public <I, S> Builder addTranslatorSpec(AbstractTranslatorSpec<I, S> translatorSpec) {
             this.data.classToTranslatorSpecMap.putIfAbsent(translatorSpec.getInputObjectClass(),
                     translatorSpec);
@@ -160,17 +163,7 @@ public class TranslatorCore {
     public static Builder builder() {
         return new Builder(new Data());
     }
-
-    public void init() {
-        this.data.translatorSpecs.forEach((translatorSpec) -> translatorSpec.init(this));
-
-        this.isInitialized = true;
-    }
-
-    public boolean isInitialized() {
-        return this.isInitialized;
-    }
-
+ 
     public Parser getJsonParser() {
         return this.data.jsonParser;
     }
@@ -179,18 +172,14 @@ public class TranslatorCore {
         return this.data.jsonPrinter;
     }
 
-    public <T extends PluginData, U extends Message> void writeJson(Writer writer, T pluginData) {
-        U message = convertSimObject(pluginData);
-        writeJson(writer, message);
-    }
+    public <M extends U, U> void writeJson(Writer writer, M simObject, Optional<Class<U>> superClass) {
+        Message message;
 
-    public <U extends Message> void writeJson(Writer writer, Object simObject, Class<?> superClass) {
-        U message = convertSimObject(simObject, superClass);
-        writeJson(writer, message);
-    }
-
-    public <U extends Message> void writeJson(Writer writer, Object simObject) {
-        U message = convertSimObject(simObject);
+        if (superClass.isPresent()) {
+            message = convertSimObject(simObject, superClass.get());
+        } else {
+            message = convertSimObject(simObject);
+        }
         writeJson(writer, message);
     }
 
@@ -212,13 +201,23 @@ public class TranslatorCore {
         }
     }
 
-    public <T, U extends Message.Builder> T readJson(Reader reader, U builder) {
+    public <T, U> T readJson(Reader reader, Class<U> inputClassRef) {
         JsonObject jsonObject = JsonParser.parseReader(new JsonReader(reader)).getAsJsonObject();
-        return parseJson(jsonObject, builder);
+        return parseJson(jsonObject, inputClassRef);
     }
 
-    private <T, U extends Message.Builder> T parseJson(JsonObject inputJson, U builder) {
+    private <T, U> T parseJson(JsonObject inputJson, Class<U> inputClassRef) {
         JsonObject jsonObject = inputJson.deepCopy();
+
+        Message.Builder builder;
+        try {
+            Method buildermethod = inputClassRef.getDeclaredMethod("newBuilder");
+
+            builder = (com.google.protobuf.Message.Builder) buildermethod.invoke(null);
+        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException
+                | SecurityException e) {
+            throw new RuntimeException("Failed to find method or failed to invoke method", e);
+        }
 
         try {
             this.data.jsonParser.merge(jsonObject.toString(), builder);
@@ -231,7 +230,7 @@ public class TranslatorCore {
         }
     }
 
-    public Any getAnyFromObject(Object object, Class<?> superClass) {
+    public <M extends U, U> Any getAnyFromObject(M object, Class<U> superClass) {
         if (Enum.class.isAssignableFrom(object.getClass())) {
             superClassCastCheck(object, superClass);
             return packMessage(getWrapperEnum(object));
@@ -246,11 +245,11 @@ public class TranslatorCore {
         return packMessage(convertSimObject(object));
     }
 
-    public Any packMessage(Message messageToPack) {
+    private Any packMessage(Message messageToPack) {
         return Any.pack(messageToPack);
     }
 
-    public <T> T getObjectFromAny(Any anyValue, Class<?> superClass) {
+    public <T extends U, U> T getObjectFromAny(Any anyValue, Class<U> superClass) {
         Message anyMessage = getMessageFromAny(anyValue);
 
         if (anyMessage.getDescriptorForType() == WrapperEnumValue.getDescriptor()) {
@@ -328,7 +327,7 @@ public class TranslatorCore {
         }
     }
 
-    public <T, U> T convertInputEnum(ProtocolMessageEnum inputEnum, Class<U> superClass) {
+    private <T extends U, U> T convertInputEnum(ProtocolMessageEnum inputEnum, Class<U> superClass) {
         T convertedEnum = convertInputEnum(inputEnum);
 
         // verify translated object can be casted to the super class
@@ -337,62 +336,7 @@ public class TranslatorCore {
         return convertedEnum;
     }
 
-    public <T> T convertInputEnum(ProtocolMessageEnum inputEnum) {
+    private <T> T convertInputEnum(ProtocolMessageEnum inputEnum) {
         return getTranslatorForClass(inputEnum.getClass()).convert(inputEnum);
     }
-
-    public <T, U> T convertInputObject(Message inputObject, Class<U> superClass) {
-
-        T convertInputObject = convertInputObject(inputObject);
-
-        // verify translated object can be casted to the super class
-        superClassCastCheck(convertInputObject, superClass);
-
-        return convertInputObject;
-    }
-
-    public <T> T convertInputObject(Message inputObject) {
-        return getTranslatorForClass(inputObject.getClass()).convert(inputObject);
-    }
-
-    public <T, U> T convertSimObject(Object simObject, Class<U> superClass) {
-
-        superClassCastCheck(simObject, superClass);
-
-        return getTranslatorForClass(superClass).convert(simObject);
-    }
-
-    public <T> T convertSimObject(Object simObject) {
-        return getTranslatorForClass(simObject.getClass()).convert(simObject);
-    }
-
-    private <T> void superClassCastCheck(Object object, Class<T> superClass) {
-        validateObjectNotNull(object);
-
-        try {
-            // verify object can be casted to the super class
-            superClass.cast(object);
-        } catch (ClassCastException e) {
-            throw new RuntimeException("Unable to cast:" + object.getClass() + " to: " + superClass, e);
-        }
-    }
-
-    private void validateObjectNotNull(Object object) {
-        if (object == null) {
-            throw new RuntimeException("Object is null");
-        }
-    }
-
-    private ITranslatorSpec getTranslatorForClass(Class<?> classRef) {
-        if (this.data.classToTranslatorSpecMap.containsKey(classRef)) {
-            return this.data.classToTranslatorSpecMap.get(classRef);
-        }
-        throw new RuntimeException(
-                "No TranslatorSpec was provided for message type: " + classRef.getName());
-    }
-
-    public Builder getCloneBuilder() {
-        return new Builder(data);
-    }
-
 }

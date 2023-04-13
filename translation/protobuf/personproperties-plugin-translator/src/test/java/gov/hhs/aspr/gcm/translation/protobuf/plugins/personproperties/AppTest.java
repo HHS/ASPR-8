@@ -13,8 +13,8 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.util.Pair;
 import org.junit.jupiter.api.Test;
 
-import gov.hhs.aspr.gcm.translation.protobuf.core.Translator;
-import gov.hhs.aspr.gcm.translation.protobuf.core.TranslatorController;
+import gov.hhs.aspr.gcm.translation.protobuf.core.ProtobufTranslatorCore;
+import gov.hhs.aspr.gcm.translation.core.TranslatorController;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.PeopleTranslator;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.input.PersonPropertiesPluginDataInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.input.PersonPropertyInteractionReportPluginDataInput;
@@ -52,19 +52,14 @@ public class AppTest {
 
         String fileName = "pluginData.json";
 
-        Translator personPropertiesTranslator = PersonPropertiesTranslator
-                .builder()
-                .addInputFile(inputFilePath.resolve(fileName).toString(),
-                        PersonPropertiesPluginDataInput.getDefaultInstance())
-                .addOutputFile(outputFilePath.resolve(fileName).toString(),
-                        PersonPropertiesPluginData.class)
-                .build();
-
         TranslatorController translatorController = TranslatorController.builder()
-                .addTranslator(personPropertiesTranslator)
+                .setTranslatorCoreBuilder(ProtobufTranslatorCore.builder())
+                .addTranslator(PersonPropertiesTranslator.getTranslator())
                 .addTranslator(PropertiesTranslator.getTranslator())
                 .addTranslator(PeopleTranslator.getTranslator())
                 .addTranslator(ReportsTranslator.getTranslator())
+                .addReader(inputFilePath.resolve(fileName), PersonPropertiesPluginDataInput.class)
+                .addWriter(outputFilePath.resolve(fileName), PersonPropertiesPluginData.class)
                 .build();
 
         List<PluginData> pluginDatas = translatorController.readInput().getPluginDatas();
@@ -139,21 +134,14 @@ public class AppTest {
 
         String fileName = "propertyReport.json";
 
-        Translator personPropertiesTranslator = PersonPropertiesTranslator
-                .builder(true)
-                .addInputFile(inputFilePath.resolve(fileName)
-                        .toString(),
-                        PersonPropertyReportPluginDataInput.getDefaultInstance())
-                .addOutputFile(outputFilePath.resolve(fileName)
-                        .toString(),
-                        PersonPropertyReportPluginData.class)
-                .build();
-
         TranslatorController translatorController = TranslatorController.builder()
-                .addTranslator(personPropertiesTranslator)
+                .setTranslatorCoreBuilder(ProtobufTranslatorCore.builder())
+                .addTranslator(PersonPropertiesTranslator.builder(true).build())
                 .addTranslator(PropertiesTranslator.getTranslator())
                 .addTranslator(PeopleTranslator.getTranslator())
                 .addTranslator(ReportsTranslator.getTranslator())
+                .addReader(inputFilePath.resolve(fileName), PersonPropertyReportPluginDataInput.class)
+                .addWriter(outputFilePath.resolve(fileName), PersonPropertyReportPluginData.class)
                 .build();
 
         List<PluginData> pluginDatas = translatorController.readInput().getPluginDatas();
@@ -213,21 +201,14 @@ public class AppTest {
 
         String fileName = "interactionReport.json";
 
-        Translator personPropertiesTranslator = PersonPropertiesTranslator
-                .builder(true)
-                .addInputFile(inputFilePath.resolve(fileName)
-                        .toString(),
-                        PersonPropertyInteractionReportPluginDataInput.getDefaultInstance())
-                .addOutputFile(outputFilePath.resolve(fileName)
-                        .toString(),
-                        PersonPropertyInteractionReportPluginData.class)
-                .build();
-
         TranslatorController translatorController = TranslatorController.builder()
-                .addTranslator(personPropertiesTranslator)
+                .setTranslatorCoreBuilder(ProtobufTranslatorCore.builder())
+                .addTranslator(PersonPropertiesTranslator.builder(true).build())
                 .addTranslator(PropertiesTranslator.getTranslator())
                 .addTranslator(PeopleTranslator.getTranslator())
                 .addTranslator(ReportsTranslator.getTranslator())
+                .addReader(inputFilePath.resolve(fileName), PersonPropertyInteractionReportPluginDataInput.class)
+                .addWriter(outputFilePath.resolve(fileName), PersonPropertyInteractionReportPluginData.class)
                 .build();
 
         List<PluginData> pluginDatas = translatorController.readInput().getPluginDatas();

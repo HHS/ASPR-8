@@ -13,6 +13,14 @@
     <name>gcm.translation :: protobuf :: core</name>
     <packaging>jar</packaging>
 
+    <dependencies>
+        <dependency>
+            <groupId>gov.hhs.aspr.gcm.translation</groupId>
+            <artifactId>core</artifactId>
+            <version>${translation.core.version}</version>
+        </dependency>
+    </dependencies>
+    
     <build>
         <plugins>
             <plugin>

@@ -1,10 +1,10 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.globalproperties.translatorSpecs;
 
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.globalproperties.input.GlobalPropertyIdInput;
-import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractTranslatorSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractProtobufTranslatorSpec;
 import plugins.globalproperties.support.GlobalPropertyId;
 
-public class GlobalPropertyIdTranslatorSpec extends AbstractTranslatorSpec<GlobalPropertyIdInput, GlobalPropertyId> {
+public class GlobalPropertyIdTranslatorSpec extends AbstractProtobufTranslatorSpec<GlobalPropertyIdInput, GlobalPropertyId> {
 
     @Override
     protected GlobalPropertyId convertInputObject(GlobalPropertyIdInput inputObject) {

@@ -5,8 +5,8 @@ import java.util.Map;
 
 import com.google.protobuf.Message;
 
+import gov.hhs.aspr.gcm.translation.core.ITranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.core.input.WrapperEnumValue;
-import gov.hhs.aspr.gcm.translation.protobuf.core.ITranslatorSpec;
 
 public class PrimitiveTranslatorSpecs {
 

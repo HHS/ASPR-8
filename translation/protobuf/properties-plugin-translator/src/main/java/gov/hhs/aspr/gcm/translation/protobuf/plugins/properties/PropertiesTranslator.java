@@ -1,6 +1,6 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.properties;
 
-import gov.hhs.aspr.gcm.translation.protobuf.core.Translator;
+import gov.hhs.aspr.gcm.translation.core.Translator;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.translatorSpecs.PropertyDefinitionMapTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.translatorSpecs.PropertyDefinitionTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.translatorSpecs.PropertyValueMapTranslatorSpec;
@@ -15,8 +15,6 @@ public class PropertiesTranslator {
     public static Translator.Builder builder() {
         return Translator.builder()
                 .setTranslatorId(PropertiesTranslatorId.TRANSLATOR_ID)
-                .setInputIsPluginData(false)
-                .setOutputIsPluginData(false)
                 .setInitializer((translatorContext) -> {
                     translatorContext.addTranslatorSpec(new PropertyDefinitionTranslatorSpec());
                     translatorContext.addTranslatorSpec(new TimeTrackingPolicyTranslatorSpec());

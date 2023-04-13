@@ -1,10 +1,10 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.people.translatorSpecs;
 
-import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractTranslatorSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractProtobufTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.input.PersonRangeInput;
 import plugins.people.support.PersonRange;
 
-public class PersonRangeTranslatorSpec extends AbstractTranslatorSpec<PersonRangeInput, PersonRange> {
+public class PersonRangeTranslatorSpec extends AbstractProtobufTranslatorSpec<PersonRangeInput, PersonRange> {
 
     @Override
     protected PersonRange convertInputObject(PersonRangeInput inputObject) {
