@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 import util.errors.ContractException;
 
@@ -59,12 +60,11 @@ public final class ActorContext implements SimulationContext {
 										.setCallbackConsumer(consumer)//
 										.setKey(null)//
 										.setPlanData(null)//
-										.setPriority(-1)//
 										.setTime(planTime)//
 										.build();//
 		simulation.addActorPlan(plan);
 	}
-	
+
 	/**
 	 * Schedules a plan.
 	 * 
@@ -228,18 +228,13 @@ public final class ActorContext implements SimulationContext {
 	}
 
 	/**
-	 * Returns all PrioritizedPlanData objects that are associated with plans that remain
-	 * scheduled at the end of the simulation.
-	 * 
-	 * @throws ContractException()
-	 *             <li>{@linkplain NucleusError#TERMINAL_PLAN_DATA_ACCESS_VIOLATION}
-	 *             if invoked prior to the close of the simulation. Should only
-	 *             be invoked as part of the callback specified in the
-	 *             subscription to simulation close</li>
-	 * 
+	 * Sets a function for converting plan data instances into consumers of
+	 * actor context that will be used to convert stored plans from a previous
+	 * simulation execution into current plans. Only used during the
+	 * initialization of the simulation before time flows.
 	 */
-	public List<PrioritizedPlanData> getTerminalActorPlanDatas(Class<?> classRef) { 
-		return simulation.getTerminalActorPlanDatas(classRef);
+	public <T extends PlanData> void setPlanDataConverter(Class<T> planDataClass, Function<T, Consumer<ActorContext>> conversionFunction) {
+		simulation.setActorPlanDataConverter(planDataClass, conversionFunction);
 	}
 
 }

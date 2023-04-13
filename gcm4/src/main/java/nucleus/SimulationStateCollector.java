@@ -22,7 +22,7 @@ public class SimulationStateCollector implements Consumer<ExperimentContext>{
 	public synchronized void accept(ExperimentContext experimentContext) {
 		experimentContext.subscribeToExperimentOpen(this.experimentOpenConsumer);
 		experimentContext.subscribeToOutput(PluginData.class, this::handlePluginDataOuput);
-		experimentContext.subscribeToOutput(SimulationTime.class, this::handleSimulationTimeOuput);
+		experimentContext.subscribeToOutput(SimulationState.class, this::handleSimulationTimeOuput);
 		experimentContext.subscribeToSimulationClose(this::handleSimulationClose);
 	}
 	
@@ -41,13 +41,13 @@ public class SimulationStateCollector implements Consumer<ExperimentContext>{
 		}
 		list.add(pluginData);
 	}
-	private synchronized void handleSimulationTimeOuput(ExperimentContext experimentContext, Integer scenarioId, SimulationTime simulationTime) {
+	private synchronized void handleSimulationTimeOuput(ExperimentContext experimentContext, Integer scenarioId, SimulationState simulationState) {
 		List<Object> list = observedOutputObjects.get(scenarioId);
 		if(list == null) {
 			list = new ArrayList<>();
 			observedOutputObjects.put(scenarioId, list);
 		}
-		list.add(simulationTime);
+		list.add(simulationState);
 	}
 
 }

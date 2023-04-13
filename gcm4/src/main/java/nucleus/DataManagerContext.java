@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 import util.errors.ContractException;
 
@@ -44,7 +45,6 @@ public final class DataManagerContext implements SimulationContext {
 											.setCallbackConsumer(consumer)//
 											.setKey(null)//
 											.setPlanData(null)//
-											.setPriority(-1)//
 											.setTime(planTime)//
 											.build();//
 
@@ -64,10 +64,10 @@ public final class DataManagerContext implements SimulationContext {
 	 * 
 	 * 
 	 */
-	public void addPlan(Plan<DataManagerContext> plan) {		
-		simulation.addDataManagerPlan(dataManagerId,plan);
+	public void addPlan(Plan<DataManagerContext> plan) {
+		simulation.addDataManagerPlan(dataManagerId, plan);
 	}
-	
+
 	/**
 	 * Registers the given consumer to be executed at the end of the simulation.
 	 * Activity associated with the consumer should be limited to querying data
@@ -88,6 +88,7 @@ public final class DataManagerContext implements SimulationContext {
 	public boolean stateRecordingIsScheduled() {
 		return simulation.stateRecordingIsScheduled();
 	}
+
 	/**
 	 * Returns the scheduled simulation halt time. Negative values indicate
 	 * there is no scheduled halt time.
@@ -95,7 +96,7 @@ public final class DataManagerContext implements SimulationContext {
 	public double getScheduledSimulationHaltTime() {
 		return simulation.getScheduledSimulationHaltTime();
 	}
-	
+
 	/**
 	 * Returns true if and only if there a state recording is scheduled and the
 	 * given time exceeds the recording time.
@@ -260,19 +261,15 @@ public final class DataManagerContext implements SimulationContext {
 	public void releaseOutput(Object output) {
 		simulation.releaseOutput(output);
 	}
-	
+
 	/**
-	 * Returns all PrioritizedPlanData objects that are associated with plans that remain
-	 * scheduled at the end of the simulation.
-	 * 
-	 * @throws ContractException()
-	 *             <li>{@linkplain NucleusError#TERMINAL_PLAN_DATA_ACCESS_VIOLATION}
-	 *             if invoked prior to the close of the simulation. Should only
-	 *             be invoked as part of the callback specified in the
-	 *             subscription to simulation close</li>
-	 * 
-	 */	
-	public List<PrioritizedPlanData> getTerminalDataManagerPlanDatas(Class<?> classRef){
-		return simulation.getTerminalDataManagerPlanDatas(dataManagerId, classRef);
+	 * Sets a function for converting plan data instances into consumers of
+	 * actor context that will be used to convert stored plans from a previous
+	 * simulation execution into current plans. Only used during the
+	 * initialization of the simulation before time flows.
+	 */
+	public <T extends PlanData> void setPlanDataConverter(Class<T> planDataClass, Function<T, Consumer<DataManagerContext>> conversionFunction) {
+		simulation.setDataManagerPlanDataConverter(dataManagerId, planDataClass, conversionFunction);
 	}
+
 }

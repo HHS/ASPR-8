@@ -6,31 +6,10 @@ public class Plan<T> {
 
 	private static class Data<K> {
 		private double time;
-		private Consumer<K> callbackConsumer;
-		private long priority = -1;		
+		private Consumer<K> callbackConsumer;			
 		private boolean active = true;
 		private PlanData planData;
 		private Object key;
-		@Override
-		public String toString() {
-			StringBuilder builder = new StringBuilder();
-			builder.append("Data [time=");
-			builder.append(time);
-			builder.append(", callbackConsumer=");
-			builder.append(callbackConsumer);
-			builder.append(", priority=");
-			builder.append(priority);
-			builder.append(", active=");
-			builder.append(active);
-			builder.append(", planData=");
-			builder.append(planData);
-			builder.append(", key=");
-			builder.append(key);
-			builder.append("]");
-			return builder.toString();
-		}
-		
-		
 	}
 
 	/**
@@ -65,18 +44,6 @@ public class Plan<T> {
 		 */
 		public Builder<K> setTime(double time) {
 			data.time = time;
-			return this;
-		}
-
-		/**
-		 * Sets the relative priority in the planning queue. Only operates
-		 * during the initialization phase of the simulation before time begins
-		 * to flow and is used to re-establish the planning queue from a
-		 * previous simulation run. Defaults to -1;
-		 * 
-		 */
-		public Builder<K> setPriority(long priority) {
-			data.priority = priority;
 			return this;
 		}
 
@@ -141,10 +108,6 @@ public class Plan<T> {
 
 	public Consumer<T> getCallbackConsumer() {
 		return data.callbackConsumer;
-	}
-
-	public long getPriority() {
-		return data.priority;
 	}
 
 	public boolean isActive() {
