@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -44,7 +45,7 @@ public class AT_GlobalPropertiesPluginData {
 
 		ContractException contractException = assertThrows(ContractException.class, () -> {
 			GlobalPropertiesPluginData	.builder()//
-										.defineGlobalProperty(globalPropertyId1, propertyDefinition,0)//
+										.defineGlobalProperty(globalPropertyId1, propertyDefinition, 0)//
 										.setGlobalPropertyValue(globalPropertyId2, 67, 0)//
 										.build();
 		});
@@ -58,7 +59,7 @@ public class AT_GlobalPropertiesPluginData {
 
 		contractException = assertThrows(ContractException.class, () -> {
 			GlobalPropertiesPluginData	.builder()//
-										.defineGlobalProperty(globalPropertyId1, propertyDefinition,0)//
+										.defineGlobalProperty(globalPropertyId1, propertyDefinition, 0)//
 										.setGlobalPropertyValue(globalPropertyId1, "bad value", 0)//
 										.build();
 		});
@@ -70,7 +71,7 @@ public class AT_GlobalPropertiesPluginData {
 		 */
 		contractException = assertThrows(ContractException.class, () -> {
 			GlobalPropertiesPluginData	.builder()//
-										.defineGlobalProperty(globalPropertyId1, PropertyDefinition.builder().setType(Integer.class).build(),0)//
+										.defineGlobalProperty(globalPropertyId1, PropertyDefinition.builder().setType(Integer.class).build(), 0)//
 										.build();
 		});
 		assertEquals(PropertyError.INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT, contractException.getErrorType());
@@ -84,37 +85,41 @@ public class AT_GlobalPropertiesPluginData {
 
 		// create a container to hold the expected property definitions
 		Map<GlobalPropertyId, PropertyDefinition> expectedPropertyDefinitions = new LinkedHashMap<>();
+		Map<GlobalPropertyId, Double> expectedPropertyDefinitionCreationTimes = new LinkedHashMap<>();
 
 		// define a few global properties
 		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(34).build();
 		PropertyDefinition propertyDefinition2 = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(57).build();
 		GlobalPropertyId globalPropertyId = new SimpleGlobalPropertyId("id 1");
-		builder.defineGlobalProperty(globalPropertyId, propertyDefinition2);
+		builder.defineGlobalProperty(globalPropertyId, propertyDefinition2, 2.5);
 		// replacing data to show that the value persists
-		builder.defineGlobalProperty(globalPropertyId, propertyDefinition);
+		builder.defineGlobalProperty(globalPropertyId, propertyDefinition, 0);
 		// adding duplicate data to show that the value persists
-		builder.defineGlobalProperty(globalPropertyId, propertyDefinition);
+		builder.defineGlobalProperty(globalPropertyId, propertyDefinition, 3.4);
 		expectedPropertyDefinitions.put(globalPropertyId, propertyDefinition);
+		expectedPropertyDefinitionCreationTimes.put(globalPropertyId, 3.4);
 
 		propertyDefinition = PropertyDefinition.builder().setType(Double.class).setDefaultValue(234.34).build();
 		propertyDefinition2 = PropertyDefinition.builder().setType(Double.class).setDefaultValue(795.88).build();
 		globalPropertyId = new SimpleGlobalPropertyId("id 2");
-		builder.defineGlobalProperty(globalPropertyId, propertyDefinition2);
+		builder.defineGlobalProperty(globalPropertyId, propertyDefinition2, 2.0);
 		// replacing data to show that the value persists
-		builder.defineGlobalProperty(globalPropertyId, propertyDefinition);
+		builder.defineGlobalProperty(globalPropertyId, propertyDefinition, 2.9);
 		// adding duplicate data to show that the value persists
-		builder.defineGlobalProperty(globalPropertyId, propertyDefinition);
+		builder.defineGlobalProperty(globalPropertyId, propertyDefinition, 3.1);
 		expectedPropertyDefinitions.put(globalPropertyId, propertyDefinition);
+		expectedPropertyDefinitionCreationTimes.put(globalPropertyId, 3.1);
 
 		propertyDefinition = PropertyDefinition.builder().setType(String.class).setDefaultValue("default value").build();
 		propertyDefinition2 = PropertyDefinition.builder().setType(String.class).setDefaultValue("second default").build();
 		globalPropertyId = new SimpleGlobalPropertyId("id 3");
-		builder.defineGlobalProperty(globalPropertyId, propertyDefinition2);
+		builder.defineGlobalProperty(globalPropertyId, propertyDefinition2, 0.5);
 		// replacing data to show that the value persists
-		builder.defineGlobalProperty(globalPropertyId, propertyDefinition);
+		builder.defineGlobalProperty(globalPropertyId, propertyDefinition, 6.8);
 		// adding duplicate data to show that the value persists
-		builder.defineGlobalProperty(globalPropertyId, propertyDefinition);
+		builder.defineGlobalProperty(globalPropertyId, propertyDefinition, 2.1);
 		expectedPropertyDefinitions.put(globalPropertyId, propertyDefinition);
+		expectedPropertyDefinitionCreationTimes.put(globalPropertyId, 2.1);
 
 		// build the initial data
 		GlobalPropertiesPluginData globalInitialData = builder.build();
@@ -131,16 +136,27 @@ public class AT_GlobalPropertiesPluginData {
 			assertEquals(expectedPropertyDefinition, actualPropertyDefinition);
 		}
 
+		// show that the property creation times are correct
+		for (GlobalPropertyId gpid : expectedPropertyDefinitionCreationTimes.keySet()) {
+			Double expectedTime = expectedPropertyDefinitionCreationTimes.get(gpid);
+			Double actualTime = globalInitialData.getGlobalPropertyDefinitionTime(gpid);
+			assertEquals(expectedTime, actualTime);
+		}
+
 		// precondition tests
 
 		// if the global property id is null
 		PropertyDefinition propDef = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(17).build();
-		ContractException contractException = assertThrows(ContractException.class, () -> builder.defineGlobalProperty(null, propDef));
+		ContractException contractException = assertThrows(ContractException.class, () -> builder.defineGlobalProperty(null, propDef, 0));
 		assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
 
 		// if the property definition is null
-		contractException = assertThrows(ContractException.class, () -> builder.defineGlobalProperty(new SimpleGlobalPropertyId("id"), null));
+		contractException = assertThrows(ContractException.class, () -> builder.defineGlobalProperty(new SimpleGlobalPropertyId("id"), null, 0));
 		assertEquals(PropertyError.NULL_PROPERTY_DEFINITION, contractException.getErrorType());
+
+		// if the property definition creation time is negative
+		contractException = assertThrows(ContractException.class, () -> builder.defineGlobalProperty(new SimpleGlobalPropertyId("id"), propDef, -1));
+		assertEquals(PropertyError.NEGATIVE_TIME, contractException.getErrorType());
 	}
 
 	@Test
@@ -299,7 +315,7 @@ public class AT_GlobalPropertiesPluginData {
 		// set the values
 		for (TestGlobalPropertyId testGlobalPropertyId : TestGlobalPropertyId.values()) {
 			int value = randomGenerator.nextInt();
-			builder.setGlobalPropertyValue(testGlobalPropertyId, value,0);
+			builder.setGlobalPropertyValue(testGlobalPropertyId, value, 0);
 			expectedValues.put(testGlobalPropertyId, value);
 		}
 
@@ -335,7 +351,7 @@ public class AT_GlobalPropertiesPluginData {
 
 		for (TestGlobalPropertyId testGlobalPropertyId : TestGlobalPropertyId.values()) {
 			builder.defineGlobalProperty(testGlobalPropertyId, testGlobalPropertyId.getPropertyDefinition());
-			builder.setGlobalPropertyValue(testGlobalPropertyId, testGlobalPropertyId.getRandomPropertyValue(randomGenerator),0);
+			builder.setGlobalPropertyValue(testGlobalPropertyId, testGlobalPropertyId.getRandomPropertyValue(randomGenerator), 0);
 		}
 
 		GlobalPropertiesPluginData globalPropertiesPluginData = builder.build();
@@ -364,6 +380,30 @@ public class AT_GlobalPropertiesPluginData {
 			assertEquals(expectedValues, actualValues);
 		}
 
+	}
+
+	@Test
+	@UnitTestMethod(target = GlobalPropertiesPluginData.class, name = "getGlobalPropertyDefinitionTime", args = { GlobalPropertyId.class })
+	public void testGetGlobalPropertyDefinitionTime() {
+		fail();
+	}
+
+	@Test
+	@UnitTestMethod(target = GlobalPropertiesPluginData.class, name = "getGlobalPropertyTime", args = { GlobalPropertyId.class })
+	public void testGetGlobalPropertyTime() {
+		fail();
+	}
+
+	@Test
+	@UnitTestMethod(target = GlobalPropertiesPluginData.class, name = "equals", args = { Object.class })
+	public void testEquals() {
+		fail();
+	}
+
+	@Test
+	@UnitTestMethod(target = GlobalPropertiesPluginData.class, name = "hashCode", args = {})
+	public void testHashCode() {
+		fail();
 	}
 
 }
