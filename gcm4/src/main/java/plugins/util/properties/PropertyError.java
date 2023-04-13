@@ -21,6 +21,7 @@ public enum PropertyError implements ContractError {
 	UNKNOWN_PROPERTY_ID("Unknown property id"),
 	INCOMPATIBLE_VALUE("Property value is incompatible with the property definition"),//
 	DUPLICATE_PROPERTY_VALUE_ASSIGNMENT("Duplicate property value assignment"),
+	PROPERTY_CREATION_TIME_NOT_CURRENT("A property creation time does not agree with the current time"),
 
 	
 	
@@ -32,6 +33,7 @@ public enum PropertyError implements ContractError {
 	
 	NEGATIVE_INITIAL_SIZE("Negative initial size"),//
 	NEGATIVE_CAPACITY_INCREMENT("Negative capacity increment"),//
+	NEGATIVE_TIME("Negative time value"),//
 	NEGATIVE_INDEX("Negative index"),//
 	
 	

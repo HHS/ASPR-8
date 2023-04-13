@@ -25,11 +25,19 @@ public class PropertyValueRecord {
 	}
 
 	/**
-	 * Sets the current value and records the assignment time
+	 * Sets the current value and records the assignment time to the current time
 	 */
 	public void setPropertyValue(Object propertyValue) {
 		this.propertyValue = propertyValue;
 		assignmentTime = simulationContext.getTime();
+	}
+	
+	/**
+	 * Sets the current value and assignment time 
+	 */
+	public void setPropertyValue(Object propertyValue, double assignmentTime) {
+		this.propertyValue = propertyValue;
+		this.assignmentTime = assignmentTime;
 	}
 
 	/**

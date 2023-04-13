@@ -67,10 +67,10 @@ public final class AT_GlobalPropertiesDataManager {
 			expectedPropertyValues.put(testGlobalPropertyId, propertyDefinition.getDefaultValue().get());
 		}
 		// change two of the properties from their default values
-		globalsPluginBuilder.setGlobalPropertyValue(TestGlobalPropertyId.GLOBAL_PROPERTY_1_BOOLEAN_MUTABLE, true);
+		globalsPluginBuilder.setGlobalPropertyValue(TestGlobalPropertyId.GLOBAL_PROPERTY_1_BOOLEAN_MUTABLE, true,0);
 		expectedPropertyValues.put(TestGlobalPropertyId.GLOBAL_PROPERTY_1_BOOLEAN_MUTABLE, true);
 
-		globalsPluginBuilder.setGlobalPropertyValue(TestGlobalPropertyId.GLOBAL_PROPERTY_2_INTEGER_MUTABLE, 456);
+		globalsPluginBuilder.setGlobalPropertyValue(TestGlobalPropertyId.GLOBAL_PROPERTY_2_INTEGER_MUTABLE, 456,0);
 		expectedPropertyValues.put(TestGlobalPropertyId.GLOBAL_PROPERTY_2_INTEGER_MUTABLE, 456);
 
 		GlobalPropertiesPluginData globalPropertiesPluginData = globalsPluginBuilder.build();
@@ -141,7 +141,7 @@ public final class AT_GlobalPropertiesDataManager {
 		GlobalPropertiesPluginData actualPluginData = outputItems.keySet().iterator().next();
 		GlobalPropertiesPluginData expectedPluginData = GlobalPropertiesPluginData.builder()
 				.defineGlobalProperty(globalPropertyInitialization.getGlobalPropertyId(), globalPropertyInitialization.getPropertyDefinition())
-				.setGlobalPropertyValue(globalPropertyInitialization.getGlobalPropertyId(), true)
+				.setGlobalPropertyValue(globalPropertyInitialization.getGlobalPropertyId(), true,0)
 				.build();
 		assertEquals(expectedPluginData, actualPluginData);
 
@@ -189,8 +189,8 @@ public final class AT_GlobalPropertiesDataManager {
 		expectedPluginData = GlobalPropertiesPluginData.builder()
 				.defineGlobalProperty(globalPropertyInitialization2.getGlobalPropertyId(), globalPropertyInitialization2.getPropertyDefinition())
 				.defineGlobalProperty(globalPropertyInitialization3.getGlobalPropertyId(), globalPropertyInitialization3.getPropertyDefinition())
-				.setGlobalPropertyValue(globalPropertyInitialization2.getGlobalPropertyId(), 15)
-				.setGlobalPropertyValue(globalPropertyInitialization3.getGlobalPropertyId(), 15.9)
+				.setGlobalPropertyValue(globalPropertyInitialization2.getGlobalPropertyId(), 15,0)
+				.setGlobalPropertyValue(globalPropertyInitialization3.getGlobalPropertyId(), 15.9,0)
 				.build();
 		assertEquals(expectedPluginData, actualPluginData);
 	}
