@@ -44,7 +44,8 @@ public class AT_GlobalPropertiesPluginData {
 
 		ContractException contractException = assertThrows(ContractException.class, () -> {
 			GlobalPropertiesPluginData	.builder()//
-										.defineGlobalProperty(globalPropertyId1, propertyDefinition).setGlobalPropertyValue(globalPropertyId2, 67, 0)//
+										.defineGlobalProperty(globalPropertyId1, propertyDefinition,0)//
+										.setGlobalPropertyValue(globalPropertyId2, 67, 0)//
 										.build();
 		});
 		assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
@@ -57,7 +58,7 @@ public class AT_GlobalPropertiesPluginData {
 
 		contractException = assertThrows(ContractException.class, () -> {
 			GlobalPropertiesPluginData	.builder()//
-										.defineGlobalProperty(globalPropertyId1, propertyDefinition)//
+										.defineGlobalProperty(globalPropertyId1, propertyDefinition,0)//
 										.setGlobalPropertyValue(globalPropertyId1, "bad value", 0)//
 										.build();
 		});
@@ -69,7 +70,7 @@ public class AT_GlobalPropertiesPluginData {
 		 */
 		contractException = assertThrows(ContractException.class, () -> {
 			GlobalPropertiesPluginData	.builder()//
-										.defineGlobalProperty(globalPropertyId1, PropertyDefinition.builder().setType(Integer.class).build())//
+										.defineGlobalProperty(globalPropertyId1, PropertyDefinition.builder().setType(Integer.class).build(),0)//
 										.build();
 		});
 		assertEquals(PropertyError.INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT, contractException.getErrorType());
