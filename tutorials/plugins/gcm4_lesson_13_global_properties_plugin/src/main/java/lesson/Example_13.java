@@ -34,7 +34,7 @@ public final class Example_13 {
 																	.setTimeTrackingPolicy(TimeTrackingPolicy.DO_NOT_TRACK_TIME)//
 																	.setPropertyValueMutability(false)//
 																	.build();
-		builder.defineGlobalProperty(GlobalProperty.ALPHA, propertyDefinition);
+		builder.defineGlobalProperty(GlobalProperty.ALPHA, propertyDefinition,0);
 
 		propertyDefinition = PropertyDefinition	.builder()//
 												.setType(Double.class)//
@@ -43,7 +43,7 @@ public final class Example_13 {
 												.setPropertyValueMutability(false)//
 												.build();
 
-		builder.defineGlobalProperty(GlobalProperty.BETA, propertyDefinition);
+		builder.defineGlobalProperty(GlobalProperty.BETA, propertyDefinition,0);
 
 		propertyDefinition = PropertyDefinition	.builder()//
 												.setType(Double.class)//
@@ -52,7 +52,7 @@ public final class Example_13 {
 												.setPropertyValueMutability(true)//
 												.build();
 
-		builder.defineGlobalProperty(GlobalProperty.GAMMA, propertyDefinition);
+		builder.defineGlobalProperty(GlobalProperty.GAMMA, propertyDefinition,0);
 
 		return builder.build();
 	}
@@ -71,8 +71,8 @@ public final class Example_13 {
 			dimensionBuilder.addLevel((c) -> {
 				List<String> result = new ArrayList<>();
 				Builder builder = c.get(GlobalPropertiesPluginData.Builder.class);
-				builder.setGlobalPropertyValue(GlobalProperty.ALPHA, pair.getFirst());
-				builder.setGlobalPropertyValue(GlobalProperty.BETA, pair.getSecond());
+				builder.setGlobalPropertyValue(GlobalProperty.ALPHA, pair.getFirst(),0);
+				builder.setGlobalPropertyValue(GlobalProperty.BETA, pair.getSecond(),0);
 				result.add(pair.getFirst().toString());
 				result.add(pair.getSecond().toString());
 				return result;

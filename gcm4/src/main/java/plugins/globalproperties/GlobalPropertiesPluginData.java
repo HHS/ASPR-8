@@ -49,17 +49,27 @@ public final class GlobalPropertiesPluginData implements PluginData {
 		 *             property id that is incompatible with the corresponding
 		 *             property definition.
 		 * 
+		 *             <li>{@linkplain PropertyError#INCOMPATIBLE_TIME}</li> if
+		 *             a global property assignment time was less than the
+		 *             associated property definition creation time.
+		 * 
 		 *             <li>{@linkplain PropertyError#INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT}</li>
 		 *             if a global property definition has no default value and
 		 *             there is also no corresponding property value assignment.
 		 * 
+		 * 
+		 * 
 		 */
 		public GlobalPropertiesPluginData build() {
-			if (!data.locked) {
-				validateData();
+			try {
+				if (!data.locked) {
+					validateData();
+				}
+				ensureImmutability();
+				return new GlobalPropertiesPluginData(data);
+			} finally {
+				data = new Data();
 			}
-			ensureImmutability();
-			return new GlobalPropertiesPluginData(data);
 		}
 
 		/**
@@ -135,11 +145,20 @@ public final class GlobalPropertiesPluginData implements PluginData {
 					throw new ContractException(PropertyError.UNKNOWN_PROPERTY_ID, globalPropertyId);
 				}
 			}
+
 			for (final GlobalPropertyId globalPropertyId : data.globalPropertyValues.keySet()) {
 				final Object propertyValue = data.globalPropertyValues.get(globalPropertyId);
 				final PropertyDefinition propertyDefinition = data.globalPropertyDefinitions.get(globalPropertyId);
 				if (!propertyDefinition.getType().isAssignableFrom(propertyValue.getClass())) {
 					throw new ContractException(PropertyError.INCOMPATIBLE_VALUE, globalPropertyId + " = " + propertyValue);
+				}
+			}
+
+			for (final GlobalPropertyId globalPropertyId : data.globalPropertyValues.keySet()) {
+				final Double propertyTime = data.globalPropertyTimes.get(globalPropertyId);
+				final Double definitionTime = data.globalPropertyDefinitionTimes.get(globalPropertyId);
+				if (propertyTime < definitionTime) {
+					throw new ContractException(PropertyError.INCOMPATIBLE_TIME, globalPropertyId + " at " + propertyTime);
 				}
 			}
 
@@ -220,27 +239,40 @@ public final class GlobalPropertiesPluginData implements PluginData {
 			} else if (!globalPropertyDefinitions.equals(other.globalPropertyDefinitions)) {
 				return false;
 			}
-			if (globalPropertyTimes == null) {
-				if (other.globalPropertyTimes != null) {
+
+			for (GlobalPropertyId globalPropertyId : globalPropertyDefinitions.keySet()) {
+				Object propertyValue = globalPropertyValues.get(globalPropertyId);
+				if (propertyValue == null) {
+					propertyValue = globalPropertyDefinitions.get(globalPropertyId).getDefaultValue().get();
+				}
+				Object otherPropertyValue = other.globalPropertyValues.get(globalPropertyId);
+				if (otherPropertyValue == null) {
+					otherPropertyValue = other.globalPropertyDefinitions.get(globalPropertyId).getDefaultValue().get();
+				}
+				if (!propertyValue.equals(otherPropertyValue)) {
 					return false;
 				}
-			} else if (!globalPropertyTimes.equals(other.globalPropertyTimes)) {
-				return false;
 			}
-			if (globalPropertyValues == null) {
-				if (other.globalPropertyValues != null) {
+
+			for (GlobalPropertyId globalPropertyId : globalPropertyDefinitions.keySet()) {
+				Double propertyTime = globalPropertyTimes.get(globalPropertyId);
+				if (propertyTime == null) {
+					propertyTime = globalPropertyDefinitionTimes.get(globalPropertyId);
+				}
+				Double otherPropertyTime = other.globalPropertyTimes.get(globalPropertyId);
+				if (otherPropertyTime == null) {
+					otherPropertyTime = other.globalPropertyDefinitionTimes.get(globalPropertyId);
+				}
+				if (!propertyTime.equals(otherPropertyTime)) {
 					return false;
 				}
-			} else if (!globalPropertyValues.equals(other.globalPropertyValues)) {
-				return false;
 			}
+
 			if (locked != other.locked) {
 				return false;
 			}
 			return true;
 		}
-		
-		
 
 	}
 
@@ -387,17 +419,30 @@ public final class GlobalPropertiesPluginData implements PluginData {
 	}
 
 	@Override
-	public boolean equals(Object o) {
-		if (this == o)
-			return true;
-		if (!(o instanceof GlobalPropertiesPluginData))
-			return false;
-		GlobalPropertiesPluginData that = (GlobalPropertiesPluginData) o;
-		return data.equals(that.data);
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((data == null) ? 0 : data.hashCode());
+		return result;
 	}
 
 	@Override
-	public int hashCode() {
-		return Objects.hash(data);
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!(obj instanceof GlobalPropertiesPluginData)) {
+			return false;
+		}
+		GlobalPropertiesPluginData other = (GlobalPropertiesPluginData) obj;
+		if (data == null) {
+			if (other.data != null) {
+				return false;
+			}
+		} else if (!data.equals(other.data)) {
+			return false;
+		}
+		return true;
 	}
+
 }

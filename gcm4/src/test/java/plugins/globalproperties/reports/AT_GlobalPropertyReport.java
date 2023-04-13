@@ -79,15 +79,15 @@ public class AT_GlobalPropertyReport {
 
 		GlobalPropertyId globalPropertyId_1 = new SimpleGlobalPropertyId("id_1");
 		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(3).build();
-		initialDatabuilder.defineGlobalProperty(globalPropertyId_1, propertyDefinition);
+		initialDatabuilder.defineGlobalProperty(globalPropertyId_1, propertyDefinition,0);
 
 		GlobalPropertyId globalPropertyId_2 = new SimpleGlobalPropertyId("id_2");
 		propertyDefinition = PropertyDefinition.builder().setType(Double.class).setDefaultValue(6.78).build();
-		initialDatabuilder.defineGlobalProperty(globalPropertyId_2, propertyDefinition);
+		initialDatabuilder.defineGlobalProperty(globalPropertyId_2, propertyDefinition,0);
 
 		GlobalPropertyId globalPropertyId_3 = new SimpleGlobalPropertyId("id_3");
 		propertyDefinition = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(true).build();
-		initialDatabuilder.defineGlobalProperty(globalPropertyId_3, propertyDefinition);
+		initialDatabuilder.defineGlobalProperty(globalPropertyId_3, propertyDefinition,0);
 
 		GlobalPropertiesPluginData globalPropertiesPluginData = initialDatabuilder.build();
 
@@ -537,15 +537,15 @@ public class AT_GlobalPropertyReport {
 
 		GlobalPropertyId globalPropertyId_1 = new SimpleGlobalPropertyId("id_1");
 		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(3).build();
-		initialDatabuilder.defineGlobalProperty(globalPropertyId_1, propertyDefinition);
+		initialDatabuilder.defineGlobalProperty(globalPropertyId_1, propertyDefinition,0);
 
 		GlobalPropertyId globalPropertyId_2 = new SimpleGlobalPropertyId("id_2");
 		propertyDefinition = PropertyDefinition.builder().setType(Double.class).setDefaultValue(6.78).build();
-		initialDatabuilder.defineGlobalProperty(globalPropertyId_2, propertyDefinition);
+		initialDatabuilder.defineGlobalProperty(globalPropertyId_2, propertyDefinition,0);
 
 		GlobalPropertyId globalPropertyId_3 = new SimpleGlobalPropertyId("id_3");
 		propertyDefinition = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(true).build();
-		initialDatabuilder.defineGlobalProperty(globalPropertyId_3, propertyDefinition);
+		initialDatabuilder.defineGlobalProperty(globalPropertyId_3, propertyDefinition,0);
 
 		GlobalPropertiesPluginData globalPropertiesPluginData = initialDatabuilder.build();
 

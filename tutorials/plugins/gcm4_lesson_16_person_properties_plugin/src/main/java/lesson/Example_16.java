@@ -113,7 +113,7 @@ public final class Example_16 {
 			dimensionBuilder.addLevel((context) -> {
 				GlobalPropertiesPluginData.Builder builder = context.get(GlobalPropertiesPluginData.Builder.class);
 				double value = values[i];
-				builder.setGlobalPropertyValue(globalPropertyId, value);
+				builder.setGlobalPropertyValue(globalPropertyId, value,0);
 				ArrayList<String> result = new ArrayList<>();
 				result.add(Double.toString(value));
 				return result;
@@ -163,19 +163,19 @@ public final class Example_16 {
 																	.setPropertyValueMutability(false)//
 																	.build();
 
-		builder.defineGlobalProperty(GlobalProperty.IMMUNITY_START_TIME, propertyDefinition);
-		builder.defineGlobalProperty(GlobalProperty.VACCINE_ATTEMPT_INTERVAL, propertyDefinition);
-		builder.defineGlobalProperty(GlobalProperty.EDUCATION_ATTEMPT_INTERVAL, propertyDefinition);
-		builder.defineGlobalProperty(GlobalProperty.EDUCATION_SUCCESS_RATE, propertyDefinition);
-		builder.defineGlobalProperty(GlobalProperty.VACCINE_REFUSAL_PROBABILITY, propertyDefinition);
-		builder.defineGlobalProperty(GlobalProperty.IMMUNITY_PROBABILITY, propertyDefinition);
+		builder.defineGlobalProperty(GlobalProperty.IMMUNITY_START_TIME, propertyDefinition,0);
+		builder.defineGlobalProperty(GlobalProperty.VACCINE_ATTEMPT_INTERVAL, propertyDefinition,0);
+		builder.defineGlobalProperty(GlobalProperty.EDUCATION_ATTEMPT_INTERVAL, propertyDefinition,0);
+		builder.defineGlobalProperty(GlobalProperty.EDUCATION_SUCCESS_RATE, propertyDefinition,0);
+		builder.defineGlobalProperty(GlobalProperty.VACCINE_REFUSAL_PROBABILITY, propertyDefinition,0);
+		builder.defineGlobalProperty(GlobalProperty.IMMUNITY_PROBABILITY, propertyDefinition,0);
 
 		propertyDefinition = PropertyDefinition	.builder()//
 												.setType(Double.class)//
 												.setDefaultValue(365.0)//
 												.setPropertyValueMutability(false)//
 												.build();
-		builder.defineGlobalProperty(GlobalProperty.SIMULATION_DURATION, propertyDefinition);
+		builder.defineGlobalProperty(GlobalProperty.SIMULATION_DURATION, propertyDefinition,0);
 
 		propertyDefinition = PropertyDefinition	.builder()//
 												.setType(Integer.class)//
@@ -183,7 +183,7 @@ public final class Example_16 {
 												.setPropertyValueMutability(false)//
 												.build();
 
-		builder.defineGlobalProperty(GlobalProperty.POPULATION_SIZE, propertyDefinition);
+		builder.defineGlobalProperty(GlobalProperty.POPULATION_SIZE, propertyDefinition,0);
 
 		GlobalPropertiesPluginData globalPropertiesPluginData = builder.build();
 
