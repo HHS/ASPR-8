@@ -100,11 +100,28 @@ public class AT_MaterialsDataManager {
 
 		List<BatchId> expectedBatchIds = new ArrayList<>();
 		List<StageId> expectedStageIds = new ArrayList<>();
+		MaterialsPluginData materialsPluginData = MaterialsPluginData.builder().build();
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+
+		MaterialsProducerConstructionData materialsProducerConstructionData1 = MaterialsProducerConstructionData.builder()
+				.setMaterialsProducerId(TestMaterialsProducerId.MATERIALS_PRODUCER_1)
+				.build();
 
 		MaterialsProducerConstructionData materialsProducerConstructionData = MaterialsProducerConstructionData.builder()
 				.setMaterialsProducerId(TestMaterialsProducerId.MATERIALS_PRODUCER_1)
 				.setMaterialsProducerPropertyValue(TestMaterialsProducerPropertyId.MATERIALS_PRODUCER_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK, true)
+				.build();
+
+		BatchPropertyDefinitionInitialization batchPropertyDefinitionInitialization = BatchPropertyDefinitionInitialization.builder()
+				.setPropertyId(TestBatchPropertyId.BATCH_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK)
+				.setPropertyDefinition(TestBatchPropertyId.BATCH_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK.getPropertyDefinition())
+				.setMaterialId(TestMaterialId.MATERIAL_1)
+				.build();
+
+		BatchPropertyDefinitionInitialization batchPropertyDefinitionInitialization2 = BatchPropertyDefinitionInitialization.builder()
+				.setPropertyId(TestBatchPropertyId.BATCH_PROPERTY_1_3_DOUBLE_MUTABLE_NO_TRACK)
+				.setPropertyDefinition(TestBatchPropertyId.BATCH_PROPERTY_1_3_DOUBLE_MUTABLE_NO_TRACK.getPropertyDefinition())
+				.setMaterialId(TestMaterialId.MATERIAL_1)
 				.build();
 
 		BatchConstructionInfo.Builder builder = BatchConstructionInfo.builder();
@@ -120,6 +137,9 @@ public class AT_MaterialsDataManager {
 			BatchId batchId = materialsDataManager.addBatch(batchConstructionInfo);
 			StageId stageId = materialsDataManager.addStage(materialsProducerConstructionData.getMaterialsProducerId());
 			materialsDataManager.setStageOfferState(stageId, true);
+			materialsDataManager.setMaterialsProducerPropertyValue(TestMaterialsProducerId.MATERIALS_PRODUCER_1, TestMaterialsProducerPropertyId.MATERIALS_PRODUCER_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK, 88);
+			materialsDataManager.setMaterialsProducerPropertyValue(TestMaterialsProducerId.MATERIALS_PRODUCER_2, TestMaterialsProducerPropertyId.MATERIALS_PRODUCER_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK, 17);
+			materialsDataManager.setMaterialsProducerPropertyValue(TestMaterialsProducerId.MATERIALS_PRODUCER_3, TestMaterialsProducerPropertyId.MATERIALS_PRODUCER_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK, 34);
 			expectedStageIds.add(stageId);
 			expectedBatchIds.add(batchId);
 		}));
@@ -137,7 +157,7 @@ public class AT_MaterialsDataManager {
 				.addMaterial(batchConstructionInfo.getMaterialId())
 				.addMaterial(TestMaterialId.MATERIAL_2)
 				.addMaterial(TestMaterialId.MATERIAL_3)
-				.addMaterialsProducerId(batchConstructionInfo.getMaterialsProducerId())
+				.addMaterialsProducerId(TestMaterialsProducerId.MATERIALS_PRODUCER_1)
 				.addMaterialsProducerId(TestMaterialsProducerId.MATERIALS_PRODUCER_2)
 				.addMaterialsProducerId(TestMaterialsProducerId.MATERIALS_PRODUCER_3)
 				.addBatch(expectedBatchIds.get(0), batchConstructionInfo.getMaterialId(), batchConstructionInfo.getAmount(), batchConstructionInfo.getMaterialsProducerId())
@@ -152,31 +172,42 @@ public class AT_MaterialsDataManager {
 				.defineMaterialsProducerProperty(TestMaterialsProducerPropertyId.MATERIALS_PRODUCER_PROPERTY_8_INTEGER_IMMUTABLE_NO_TRACK, TestMaterialsProducerPropertyId.MATERIALS_PRODUCER_PROPERTY_8_INTEGER_IMMUTABLE_NO_TRACK.getPropertyDefinition())
 				.defineMaterialsProducerProperty(TestMaterialsProducerPropertyId.MATERIALS_PRODUCER_PROPERTY_9_DOUBLE_IMMUTABLE_NO_TRACK, TestMaterialsProducerPropertyId.MATERIALS_PRODUCER_PROPERTY_9_DOUBLE_IMMUTABLE_NO_TRACK.getPropertyDefinition())
 				.defineBatchProperty(batchConstructionInfo.getMaterialId(), TestBatchPropertyId.BATCH_PROPERTY_1_1_BOOLEAN_IMMUTABLE_NO_TRACK, TestBatchPropertyId.BATCH_PROPERTY_1_1_BOOLEAN_IMMUTABLE_NO_TRACK.getPropertyDefinition())
-				.setBatchPropertyValue(expectedBatchIds.get(0), TestBatchPropertyId.BATCH_PROPERTY_1_1_BOOLEAN_IMMUTABLE_NO_TRACK, true)
+				.setBatchPropertyValue(expectedBatchIds.get(0), TestBatchPropertyId.BATCH_PROPERTY_1_1_BOOLEAN_IMMUTABLE_NO_TRACK, false)
 				.defineBatchProperty(batchConstructionInfo.getMaterialId(), TestBatchPropertyId.BATCH_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK, TestBatchPropertyId.BATCH_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK.getPropertyDefinition())
 				.setBatchPropertyValue(expectedBatchIds.get(0), TestBatchPropertyId.BATCH_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK, 15)
 				.defineBatchProperty(batchConstructionInfo.getMaterialId(), TestBatchPropertyId.BATCH_PROPERTY_1_3_DOUBLE_MUTABLE_NO_TRACK, TestBatchPropertyId.BATCH_PROPERTY_1_3_DOUBLE_MUTABLE_NO_TRACK.getPropertyDefinition())
 				.setBatchPropertyValue(expectedBatchIds.get(0), TestBatchPropertyId.BATCH_PROPERTY_1_3_DOUBLE_MUTABLE_NO_TRACK, 44.5)
-				.setMaterialsProducerPropertyValue(materialsProducerConstructionData.getMaterialsProducerId(), TestMaterialsProducerPropertyId.MATERIALS_PRODUCER_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK, -1718167691)
+				.setMaterialsProducerPropertyValue(TestMaterialsProducerId.MATERIALS_PRODUCER_1, TestMaterialsProducerPropertyId.MATERIALS_PRODUCER_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK, false)
+				.setMaterialsProducerPropertyValue(TestMaterialsProducerId.MATERIALS_PRODUCER_1, TestMaterialsProducerPropertyId.MATERIALS_PRODUCER_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK, 88)
+				.setMaterialsProducerPropertyValue(TestMaterialsProducerId.MATERIALS_PRODUCER_1, TestMaterialsProducerPropertyId.MATERIALS_PRODUCER_PROPERTY_3_DOUBLE_MUTABLE_NO_TRACK, 0.0)
+				.setMaterialsProducerPropertyValue(TestMaterialsProducerId.MATERIALS_PRODUCER_1, TestMaterialsProducerPropertyId.MATERIALS_PRODUCER_PROPERTY_4_BOOLEAN_MUTABLE_TRACK, false)
+				.setMaterialsProducerPropertyValue(TestMaterialsProducerId.MATERIALS_PRODUCER_1, TestMaterialsProducerPropertyId.MATERIALS_PRODUCER_PROPERTY_5_INTEGER_MUTABLE_TRACK, 0)
+				.setMaterialsProducerPropertyValue(TestMaterialsProducerId.MATERIALS_PRODUCER_1, TestMaterialsProducerPropertyId.MATERIALS_PRODUCER_PROPERTY_6_DOUBLE_MUTABLE_TRACK, 0.0)
+				.setMaterialsProducerPropertyValue(TestMaterialsProducerId.MATERIALS_PRODUCER_1, TestMaterialsProducerPropertyId.MATERIALS_PRODUCER_PROPERTY_7_BOOLEAN_IMMUTABLE_NO_TRACK, false)
+				.setMaterialsProducerPropertyValue(TestMaterialsProducerId.MATERIALS_PRODUCER_1, TestMaterialsProducerPropertyId.MATERIALS_PRODUCER_PROPERTY_8_INTEGER_IMMUTABLE_NO_TRACK, 0)
+				.setMaterialsProducerPropertyValue(TestMaterialsProducerId.MATERIALS_PRODUCER_1, TestMaterialsProducerPropertyId.MATERIALS_PRODUCER_PROPERTY_9_DOUBLE_IMMUTABLE_NO_TRACK, 0.0)
+				.setMaterialsProducerPropertyValue(TestMaterialsProducerId.MATERIALS_PRODUCER_2, TestMaterialsProducerPropertyId.MATERIALS_PRODUCER_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK, false)
+				.setMaterialsProducerPropertyValue(TestMaterialsProducerId.MATERIALS_PRODUCER_2, TestMaterialsProducerPropertyId.MATERIALS_PRODUCER_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK, 17)
+				.setMaterialsProducerPropertyValue(TestMaterialsProducerId.MATERIALS_PRODUCER_2, TestMaterialsProducerPropertyId.MATERIALS_PRODUCER_PROPERTY_3_DOUBLE_MUTABLE_NO_TRACK, 0.0)
+				.setMaterialsProducerPropertyValue(TestMaterialsProducerId.MATERIALS_PRODUCER_2, TestMaterialsProducerPropertyId.MATERIALS_PRODUCER_PROPERTY_4_BOOLEAN_MUTABLE_TRACK, false)
+				.setMaterialsProducerPropertyValue(TestMaterialsProducerId.MATERIALS_PRODUCER_2, TestMaterialsProducerPropertyId.MATERIALS_PRODUCER_PROPERTY_5_INTEGER_MUTABLE_TRACK, 0)
+				.setMaterialsProducerPropertyValue(TestMaterialsProducerId.MATERIALS_PRODUCER_2, TestMaterialsProducerPropertyId.MATERIALS_PRODUCER_PROPERTY_6_DOUBLE_MUTABLE_TRACK, 0.0)
+				.setMaterialsProducerPropertyValue(TestMaterialsProducerId.MATERIALS_PRODUCER_2, TestMaterialsProducerPropertyId.MATERIALS_PRODUCER_PROPERTY_7_BOOLEAN_IMMUTABLE_NO_TRACK, false)
+				.setMaterialsProducerPropertyValue(TestMaterialsProducerId.MATERIALS_PRODUCER_2, TestMaterialsProducerPropertyId.MATERIALS_PRODUCER_PROPERTY_8_INTEGER_IMMUTABLE_NO_TRACK, 0)
+				.setMaterialsProducerPropertyValue(TestMaterialsProducerId.MATERIALS_PRODUCER_2, TestMaterialsProducerPropertyId.MATERIALS_PRODUCER_PROPERTY_9_DOUBLE_IMMUTABLE_NO_TRACK, 0.0)
+				.setMaterialsProducerPropertyValue(TestMaterialsProducerId.MATERIALS_PRODUCER_3, TestMaterialsProducerPropertyId.MATERIALS_PRODUCER_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK, false)
+				.setMaterialsProducerPropertyValue(TestMaterialsProducerId.MATERIALS_PRODUCER_3, TestMaterialsProducerPropertyId.MATERIALS_PRODUCER_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK, 34)
+				.setMaterialsProducerPropertyValue(TestMaterialsProducerId.MATERIALS_PRODUCER_3, TestMaterialsProducerPropertyId.MATERIALS_PRODUCER_PROPERTY_3_DOUBLE_MUTABLE_NO_TRACK, 0.0)
+				.setMaterialsProducerPropertyValue(TestMaterialsProducerId.MATERIALS_PRODUCER_3, TestMaterialsProducerPropertyId.MATERIALS_PRODUCER_PROPERTY_4_BOOLEAN_MUTABLE_TRACK, false)
+				.setMaterialsProducerPropertyValue(TestMaterialsProducerId.MATERIALS_PRODUCER_3, TestMaterialsProducerPropertyId.MATERIALS_PRODUCER_PROPERTY_5_INTEGER_MUTABLE_TRACK, 0)
+				.setMaterialsProducerPropertyValue(TestMaterialsProducerId.MATERIALS_PRODUCER_3, TestMaterialsProducerPropertyId.MATERIALS_PRODUCER_PROPERTY_6_DOUBLE_MUTABLE_TRACK, 0.0)
+				.setMaterialsProducerPropertyValue(TestMaterialsProducerId.MATERIALS_PRODUCER_3, TestMaterialsProducerPropertyId.MATERIALS_PRODUCER_PROPERTY_7_BOOLEAN_IMMUTABLE_NO_TRACK, false)
+				.setMaterialsProducerPropertyValue(TestMaterialsProducerId.MATERIALS_PRODUCER_3, TestMaterialsProducerPropertyId.MATERIALS_PRODUCER_PROPERTY_8_INTEGER_IMMUTABLE_NO_TRACK, 0)
+				.setMaterialsProducerPropertyValue(TestMaterialsProducerId.MATERIALS_PRODUCER_3, TestMaterialsProducerPropertyId.MATERIALS_PRODUCER_PROPERTY_9_DOUBLE_IMMUTABLE_NO_TRACK, 0.0)
 				.build();
 		MaterialsPluginData actualPluginData = outputItems.keySet().iterator().next();
-		System.out.println(expectedPluginData.getStageIds());
-		System.out.println(expectedPluginData.getBatchPropertyIds(batchConstructionInfo.getMaterialId()));
-		System.out.println(expectedPluginData.getMaterialsProducerIds());
-		System.out.println(expectedPluginData.getBatchIds());
-		System.out.println(expectedPluginData.getMaterialsProducerPropertyIds());
-		System.out.println(expectedPluginData.getMaterialIds());
-		System.out.println(expectedPluginData.getBatchPropertyValues(expectedBatchIds.get(0)));
-		System.out.println("______________________________");
-		System.out.println(actualPluginData.getStageIds());
-		System.out.println(actualPluginData.getBatchPropertyIds(batchConstructionInfo.getMaterialId()));
-		System.out.println(actualPluginData.getMaterialsProducerIds());
-		System.out.println(actualPluginData.getBatchIds());
-		System.out.println(actualPluginData.getMaterialsProducerPropertyIds());
-		System.out.println(actualPluginData.getMaterialIds());
-		System.out.println(actualPluginData.getBatchPropertyValues(expectedBatchIds.get(0)));
-		System.out.println(actualPluginData.getMaterialsProducerPropertyValues(TestMaterialsProducerId.MATERIALS_PRODUCER_2));
-//		assertEquals(expectedPluginData, actualPluginData);
+		
+		assertEquals(expectedPluginData, actualPluginData);
 
 //		MaterialsProducerConstructionData materialsProducerConstructionData2 = MaterialsProducerConstructionData.builder()
 //				.setMaterialsProducerId(TestMaterialsProducerId.MATERIALS_PRODUCER_2)
