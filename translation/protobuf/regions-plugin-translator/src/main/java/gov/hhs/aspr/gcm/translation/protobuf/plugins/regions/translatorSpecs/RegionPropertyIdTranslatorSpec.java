@@ -1,10 +1,10 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.translatorSpecs;
 
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.input.RegionPropertyIdInput;
-import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractTranslatorSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractProtobufTranslatorSpec;
 import plugins.regions.support.RegionPropertyId;
 
-public class RegionPropertyIdTranslatorSpec extends AbstractTranslatorSpec<RegionPropertyIdInput, RegionPropertyId> {
+public class RegionPropertyIdTranslatorSpec extends AbstractProtobufTranslatorSpec<RegionPropertyIdInput, RegionPropertyId> {
 
     @Override
     protected RegionPropertyId convertInputObject(RegionPropertyIdInput inputObject) {

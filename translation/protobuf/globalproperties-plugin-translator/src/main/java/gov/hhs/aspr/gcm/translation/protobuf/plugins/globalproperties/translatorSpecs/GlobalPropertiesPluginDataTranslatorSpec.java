@@ -4,13 +4,13 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.globalproperties.input.Glob
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.input.PropertyDefinitionInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.input.PropertyDefinitionMapInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.input.PropertyValueMapInput;
-import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractTranslatorSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractProtobufTranslatorSpec;
 import plugins.globalproperties.GlobalPropertiesPluginData;
 import plugins.globalproperties.support.GlobalPropertyId;
 import plugins.util.properties.PropertyDefinition;
 
 public class GlobalPropertiesPluginDataTranslatorSpec
-        extends AbstractTranslatorSpec<GlobalPropertiesPluginDataInput, GlobalPropertiesPluginData> {
+        extends AbstractProtobufTranslatorSpec<GlobalPropertiesPluginDataInput, GlobalPropertiesPluginData> {
 
     @Override
     protected GlobalPropertiesPluginData convertInputObject(GlobalPropertiesPluginDataInput inputObject) {

@@ -1,13 +1,9 @@
-package gov.hhs.aspr.gcm.translation.protobuf.core;
+package gov.hhs.aspr.gcm.translation.core;
 
 public abstract class AbstractTranslatorSpec<I, S> implements ITranslatorSpec {
-    protected TranslatorCore translator;
-    private boolean initialized = false;
+    protected boolean initialized = false;
 
-    public void init(TranslatorCore translator) {
-        this.translator = translator;
-        this.initialized = true;
-    }
+    public abstract <T extends TranslatorCore> void init(T translator);
 
     protected void checkInit() {
         if (!this.initialized) {

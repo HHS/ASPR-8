@@ -5,12 +5,12 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.google.protobuf.ByteString;
 
-import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractTranslatorSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractProtobufTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.stochastics.input.WellStateInput;
 import plugins.stochastics.support.WellState;
 
 public class WellStateTranslatorSpec
-        extends AbstractTranslatorSpec<WellStateInput, WellState> {
+        extends AbstractProtobufTranslatorSpec<WellStateInput, WellState> {
 
     @Override
     protected WellState convertInputObject(WellStateInput inputObject) {

@@ -13,7 +13,8 @@ import java.util.Set;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import gov.hhs.aspr.gcm.translation.protobuf.core.TranslatorController;
+import gov.hhs.aspr.gcm.translation.protobuf.core.ProtobufTranslatorCore;
+import gov.hhs.aspr.gcm.translation.core.TranslatorController;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.PeopleTranslator;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.PropertiesTranslator;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.RegionsTranslator;
@@ -21,6 +22,7 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.ReportsTranslator;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.input.PersonResourceReportPluginDataInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.input.ResourcePropertyReportPluginDataInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.input.ResourceReportPluginDataInput;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.input.ResourcesPluginDataInput;
 import nucleus.PluginData;
 import plugins.people.support.PersonId;
 import plugins.reports.support.ReportLabel;
@@ -55,11 +57,13 @@ public class AppTest {
         String fileName = "pluginData.json";
 
         TranslatorController translatorController = TranslatorController.builder()
-                .addTranslator(ResourcesTranslator.getTranslatorRW(inputFilePath.resolve(fileName).toString(),
-                        outputFilePath.resolve(fileName).toString()))
+                .setTranslatorCoreBuilder(ProtobufTranslatorCore.builder())
+                .addTranslator(ResourcesTranslator.getTranslator())
                 .addTranslator(PropertiesTranslator.getTranslator())
                 .addTranslator(PeopleTranslator.getTranslator())
-                .addTranslator(RegionsTranslator.getTranslatorModule())
+                .addTranslator(RegionsTranslator.getTranslator())
+                .addReader(inputFilePath.resolve(fileName), ResourcesPluginDataInput.class)
+                .addWriter(outputFilePath.resolve(fileName), ResourcesPluginData.class)
                 .build();
 
         List<PluginData> pluginDatas = translatorController.readInput().getPluginDatas();
@@ -124,16 +128,16 @@ public class AppTest {
         String fileName = "personResourceReport.json";
 
         TranslatorController translatorController = TranslatorController.builder()
-                .addTranslator(ResourcesTranslator.builder(true)
-                        .addInputFile(inputFilePath.resolve(fileName).toString(),
-                                PersonResourceReportPluginDataInput.getDefaultInstance())
-                        .addOutputFile(outputFilePath.resolve(fileName).toString(),
-                                PersonResourceReportPluginData.class)
-                        .build())
+                .setTranslatorCoreBuilder(ProtobufTranslatorCore.builder())
+                .addTranslator(ResourcesTranslator.builder(true).build())
                 .addTranslator(PropertiesTranslator.getTranslator())
                 .addTranslator(PeopleTranslator.getTranslator())
-                .addTranslator(RegionsTranslator.getTranslatorModule())
+                .addTranslator(RegionsTranslator.getTranslator())
                 .addTranslator(ReportsTranslator.getTranslator())
+                .addReader(inputFilePath.resolve(fileName),
+                        PersonResourceReportPluginDataInput.class)
+                .addWriter(outputFilePath.resolve(fileName),
+                        PersonResourceReportPluginData.class)
                 .build();
 
         List<PluginData> pluginDatas = translatorController.readInput().getPluginDatas();
@@ -189,16 +193,16 @@ public class AppTest {
         String fileName = "resourcePropertyReport.json";
 
         TranslatorController translatorController = TranslatorController.builder()
-                .addTranslator(ResourcesTranslator.builder(true)
-                        .addInputFile(inputFilePath.resolve(fileName).toString(),
-                                ResourcePropertyReportPluginDataInput.getDefaultInstance())
-                        .addOutputFile(outputFilePath.resolve(fileName).toString(),
-                                ResourcePropertyReportPluginData.class)
-                        .build())
+                .setTranslatorCoreBuilder(ProtobufTranslatorCore.builder())
+                .addTranslator(ResourcesTranslator.builder(true).build())
                 .addTranslator(PropertiesTranslator.getTranslator())
                 .addTranslator(PeopleTranslator.getTranslator())
-                .addTranslator(RegionsTranslator.getTranslatorModule())
+                .addTranslator(RegionsTranslator.getTranslator())
                 .addTranslator(ReportsTranslator.getTranslator())
+                .addReader(inputFilePath.resolve(fileName),
+                        ResourcePropertyReportPluginDataInput.class)
+                .addWriter(outputFilePath.resolve(fileName),
+                        ResourcePropertyReportPluginData.class)
                 .build();
 
         List<PluginData> pluginDatas = translatorController.readInput().getPluginDatas();
@@ -234,16 +238,16 @@ public class AppTest {
         String fileName = "resourceReport.json";
 
         TranslatorController translatorController = TranslatorController.builder()
-                .addTranslator(ResourcesTranslator.builder(true)
-                        .addInputFile(inputFilePath.resolve(fileName).toString(),
-                                ResourceReportPluginDataInput.getDefaultInstance())
-                        .addOutputFile(outputFilePath.resolve(fileName).toString(),
-                                ResourceReportPluginData.class)
-                        .build())
+                .setTranslatorCoreBuilder(ProtobufTranslatorCore.builder())
+                .addTranslator(ResourcesTranslator.builder(true).build())
                 .addTranslator(PropertiesTranslator.getTranslator())
                 .addTranslator(PeopleTranslator.getTranslator())
-                .addTranslator(RegionsTranslator.getTranslatorModule())
+                .addTranslator(RegionsTranslator.getTranslator())
                 .addTranslator(ReportsTranslator.getTranslator())
+                .addReader(inputFilePath.resolve(fileName),
+                        ResourceReportPluginDataInput.class)
+                .addWriter(outputFilePath.resolve(fileName),
+                        ResourceReportPluginData.class)
                 .build();
 
         List<PluginData> pluginDatas = translatorController.readInput().getPluginDatas();
