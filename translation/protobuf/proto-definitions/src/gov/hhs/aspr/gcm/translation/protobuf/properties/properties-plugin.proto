@@ -9,11 +9,13 @@ import "google/protobuf/any.proto";
 message PropertyValueMapInput {
   google.protobuf.Any propertyId = 1;
   google.protobuf.Any propertyValue = 2;
+  double time = 3;
 }
 
 message PropertyDefinitionMapInput {
   google.protobuf.Any propertyId = 1;
   PropertyDefinitionInput propertyDefinition = 2;
+  double time = 3;
 }
 
 enum TimeTrackingPolicyInput {

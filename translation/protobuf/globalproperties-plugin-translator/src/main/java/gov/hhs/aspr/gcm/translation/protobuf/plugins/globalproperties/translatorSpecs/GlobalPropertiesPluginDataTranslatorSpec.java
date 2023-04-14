@@ -1,6 +1,7 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.globalproperties.translatorSpecs;
 
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.globalproperties.input.GlobalPropertiesPluginDataInput;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.globalproperties.input.GlobalPropertyTimeInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.input.PropertyDefinitionInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.input.PropertyDefinitionMapInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.input.PropertyValueMapInput;
@@ -32,6 +33,13 @@ public class GlobalPropertiesPluginDataTranslatorSpec
             Object value = this.translator.getObjectFromAny(propertyValueMapInput.getPropertyValue());
 
             builder.setGlobalPropertyValue(propertyId, value);
+        }
+
+        for(GlobalPropertyTimeInput globalPropertyTimeInput : inputObject.getGlobalPropertyDefinitionTimesList()) {
+            GlobalPropertyId propertyId = this.translator.getObjectFromAny(globalPropertyTimeInput.getPropertyId().getId(),
+                    GlobalPropertyId.class);
+
+            
         }
 
         return builder.build();
