@@ -135,11 +135,15 @@ public class PersonPropertiesPluginData implements PluginData {
 		 * 
 		 */
 		public PersonPropertiesPluginData build() {
+			try {
 			if (!data.locked) {
 				validateData();
 			}
 			ensureImmutability();
 			return new PersonPropertiesPluginData(data);
+			}finally {
+				data = new Data();
+			}
 		}
 
 		/**

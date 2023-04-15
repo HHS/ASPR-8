@@ -247,11 +247,15 @@ public final class MaterialsPluginData implements PluginData {
 		 */
 
 		public MaterialsPluginData build() {
+			try {
 			if (!data.locked) {
 				validateData();
 			}
 			ensureImmutability();
 			return new MaterialsPluginData(data);
+			}finally {
+				data = new Data();
+			}
 
 		}
 

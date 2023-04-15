@@ -56,8 +56,12 @@ public class AttributesPluginData implements PluginData {
 		 * Returns the {@linkplain AttributesPluginData} from the collected data
 		 */
 		public AttributesPluginData build() {
-			ensureImmutability();
-			return new AttributesPluginData(data);
+			try {
+				ensureImmutability();
+				return new AttributesPluginData(data);
+			} finally {
+				data = new Data();
+			}
 		}
 
 		/**

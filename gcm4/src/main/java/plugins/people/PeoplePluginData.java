@@ -155,7 +155,7 @@ public final class PeoplePluginData implements PluginData {
 						a = low;
 						b = high;
 					} else {
-						if (low > b+1) {
+						if (low > b + 1) {
 							count += (b - a + 1);
 							list2.add(new PersonRange(a, b));
 							a = low;
@@ -179,11 +179,11 @@ public final class PeoplePluginData implements PluginData {
 
 				data.personRanges = list2;
 				data.personIds = new ArrayList<>(count);
-				
-				if(data.personCount<0) {
+
+				if (data.personCount < 0) {
 					data.personCount = 0;
-					if(!data.personRanges.isEmpty()) {
-						data.personCount = data.personRanges.get(data.personRanges.size()-1).getHighPersonId()+1;
+					if (!data.personRanges.isEmpty()) {
+						data.personCount = data.personRanges.get(data.personRanges.size() - 1).getHighPersonId() + 1;
 					}
 				}
 
@@ -215,9 +215,13 @@ public final class PeoplePluginData implements PluginData {
 		 * 
 		 */
 		public PeoplePluginData build() {
-			validate();
-			ensureImmutability();
-			return new PeoplePluginData(data);
+			try {
+				validate();
+				ensureImmutability();
+				return new PeoplePluginData(data);
+			} finally {
+				data = new Data();
+			}
 		}
 
 		/**

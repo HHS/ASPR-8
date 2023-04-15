@@ -254,11 +254,15 @@ public final class GroupsPluginData implements PluginData {
 		 * 
 		 */
 		public GroupsPluginData build() {
+			try {
 			if (!data.locked) {
 				validateData();
 			}
 			ensureImmutability();
 			return new GroupsPluginData(data);
+			}finally {
+				data = new Data();
+			}
 		}
 
 		/**
