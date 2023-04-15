@@ -87,9 +87,4 @@ public final class FamilyPluginData implements PluginData {
 		return new Builder(new Data(data));
 	}
 
-	@Override
-	public PluginDataBuilder getEmptyBuilder() {
-		return new Builder(new Data());
-	}
-
 }

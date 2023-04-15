@@ -294,11 +294,6 @@ public final class PeoplePluginData implements PluginData {
 	}
 
 	@Override
-	public PluginDataBuilder getEmptyBuilder() {
-		return builder();
-	}
-
-	@Override
 	public boolean equals(Object o) {
 		if (this == o)
 			return true;

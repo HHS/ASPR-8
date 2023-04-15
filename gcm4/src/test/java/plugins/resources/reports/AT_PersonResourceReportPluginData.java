@@ -415,56 +415,6 @@ public class AT_PersonResourceReportPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = PersonResourceReportPluginData.class, name = "getEmptyBuilder", args = {})
-	public void testGetEmptyBuilder() {
-		ReportLabel reportLabel = new SimpleReportLabel("report label");
-		ReportPeriod reportPeriod = ReportPeriod.DAILY;
-
-		// show the default value is true
-		PersonResourceReportPluginData filledPersonResourceReportPluginData = //
-				PersonResourceReportPluginData	.builder()//
-												.setReportPeriod(reportPeriod)//
-												.setReportLabel(reportLabel)//
-												.includeResource(TestResourceId.RESOURCE_1).excludeResource(TestResourceId.RESOURCE_2)//
-												.setDefaultInclusion(false)//
-												.build();
-
-		// show that the empty builder is indeed empty
-
-		// the report label is not set
-		ContractException contractException = assertThrows(ContractException.class, () -> {
-			filledPersonResourceReportPluginData.getEmptyBuilder().build();
-		});
-		assertEquals(ReportError.NULL_REPORT_LABEL, contractException.getErrorType());
-
-		// the report period is not set
-		contractException = assertThrows(ContractException.class, () -> {
-			filledPersonResourceReportPluginData.getEmptyBuilder()//
-												.setReportLabel(new SimpleReportLabel("report label"))//
-												.build();
-		});
-		assertEquals(ReportError.NULL_REPORT_PERIOD, contractException.getErrorType());
-
-		// After filling the report label and report period we should get the
-		// same results as if starting from an empty builder
-		reportLabel = new SimpleReportLabel("another label");
-		reportPeriod = ReportPeriod.END_OF_SIMULATION;
-
-		PersonResourceReportPluginData personResourceReportPluginData1 = //
-				filledPersonResourceReportPluginData.getEmptyBuilder()//
-													.setReportLabel(reportLabel)//
-													.setReportPeriod(reportPeriod)//
-													.build();
-		PersonResourceReportPluginData personResourceReportPluginData2 = //
-				PersonResourceReportPluginData	.builder()//
-												.setReportLabel(reportLabel)//
-												.setReportPeriod(reportPeriod)//
-												.build();
-
-		assertEquals(personResourceReportPluginData1, personResourceReportPluginData2);
-	}
-
-	@Test
 	@UnitTestMethod(target = PersonResourceReportPluginData.class, name = "getCloneBuilder", args = {})
 	public void testGetCloneBuilder() {
 

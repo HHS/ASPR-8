@@ -144,11 +144,6 @@ public final class MaterialsProducerPropertyReportPluginData implements PluginDa
 		return new Builder(data);
 	}
 
-	@Override
-	public Builder getEmptyBuilder() {
-		return builder();
-	}
-
 	public ReportLabel getReportLabel() {
 		return data.reportLabel;
 	}

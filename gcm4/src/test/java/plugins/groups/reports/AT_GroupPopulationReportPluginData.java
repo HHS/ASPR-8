@@ -128,54 +128,6 @@ public class AT_GroupPopulationReportPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = GroupPopulationReportPluginData.class, name = "getEmptyBuilder", args = {})
-	public void testGetEmptyBuilder() {
-		ReportLabel reportLabel = new SimpleReportLabel("report label");
-		ReportPeriod reportPeriod = ReportPeriod.DAILY;
-
-		// show the default value is true
-		GroupPopulationReportPluginData filledGroupPopulationReportPluginData = //
-				GroupPopulationReportPluginData	.builder()//
-												.setReportPeriod(reportPeriod)//
-												.setReportLabel(reportLabel)//
-												.build();
-
-		// show that the empty builder is indeed empty
-
-		// the report label is not set
-		ContractException contractException = assertThrows(ContractException.class, () -> {
-			filledGroupPopulationReportPluginData.getEmptyBuilder().build();
-		});
-		assertEquals(ReportError.NULL_REPORT_LABEL, contractException.getErrorType());
-
-		// the report period is not set
-		contractException = assertThrows(ContractException.class, () -> {
-			filledGroupPopulationReportPluginData	.getEmptyBuilder()//
-													.setReportLabel(new SimpleReportLabel("report label"))//
-													.build();
-		});
-		assertEquals(ReportError.NULL_REPORT_PERIOD, contractException.getErrorType());
-
-		// After filling the report label and report period we should get the
-		// same results as if starting from an empty builder
-		reportLabel = new SimpleReportLabel("another label");
-		reportPeriod = ReportPeriod.END_OF_SIMULATION;
-
-		GroupPopulationReportPluginData groupPopulationReportPluginData1 = //
-				filledGroupPopulationReportPluginData	.getEmptyBuilder()//
-														.setReportLabel(reportLabel)//
-														.setReportPeriod(reportPeriod)//
-														.build();
-		GroupPopulationReportPluginData groupPopulationReportPluginData2 = //
-				GroupPopulationReportPluginData	.builder()//
-												.setReportLabel(reportLabel)//
-												.setReportPeriod(reportPeriod)//
-												.build();
-
-		assertEquals(groupPopulationReportPluginData1, groupPopulationReportPluginData2);
-	}
-
-	@Test
 	@UnitTestMethod(target = GroupPopulationReportPluginData.class, name = "getCloneBuilder", args = {})
 	public void testGetCloneBuilder() {
 

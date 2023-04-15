@@ -1490,11 +1490,6 @@ public final class MaterialsPluginData implements PluginData {
 	}
 
 	@Override
-	public PluginDataBuilder getEmptyBuilder() {
-		return builder();
-	}
-
-	@Override
 	public boolean equals(Object o) {
 		if (this == o)
 			return true;
