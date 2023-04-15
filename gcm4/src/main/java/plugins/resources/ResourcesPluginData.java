@@ -252,11 +252,15 @@ public final class ResourcesPluginData implements PluginData {
 		 * 
 		 */
 		public ResourcesPluginData build() {
-			if (!data.locked) {
-				validateData();
+			try {
+				if (!data.locked) {
+					validateData();
+				}
+				ensureImmutability();
+				return new ResourcesPluginData(data);
+			} finally {
+				data = new Data();
 			}
-			ensureImmutability();
-			return new ResourcesPluginData(data);
 		}
 
 		/**

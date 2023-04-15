@@ -152,11 +152,15 @@ public final class StochasticsPluginData implements PluginData {
 		 * 
 		 */
 		public StochasticsPluginData build() {
+			try {
 			if (!data.locked) {
 				validateData();
 			}
 			ensureImmutability();
 			return new StochasticsPluginData(data);
+			}finally {
+				data = new Data();
+			}
 		}
 
 		/**
