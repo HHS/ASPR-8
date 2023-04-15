@@ -52,7 +52,7 @@ public class BasePeopleContainer implements PeopleContainer {
 		switch (mode) {
 
 		case TREE_BIT_SET_SLOW:
-			if (size <= peopleDataManager.getProjectedPopulationCount() / INT_SET_THRESHOLD) {
+			if (size <= peopleDataManager.getPersonIdLimit() / INT_SET_THRESHOLD) {
 				mode = PeopleContainerMode.INTSET;
 				List<PersonId> people = internalPeopleContainer.getPeople();
 				internalPeopleContainer = new IntSetPeopleContainer();
@@ -66,7 +66,7 @@ public class BasePeopleContainer implements PeopleContainer {
 			}
 			break;
 		case INTSET:
-			if (size >= peopleDataManager.getProjectedPopulationCount() / TREE_BIT_SET_SLOW_THRESHOLD) {
+			if (size >= peopleDataManager.getPersonIdLimit() / TREE_BIT_SET_SLOW_THRESHOLD) {
 				mode = PeopleContainerMode.TREE_BIT_SET_SLOW;
 				List<PersonId> people = internalPeopleContainer.getPeople();
 				internalPeopleContainer = new TreeBitSetPeopleContainer(peopleDataManager);

@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 
 import nucleus.DataManagerContext;
 import nucleus.EventFilter;
+import nucleus.SimulationState;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestSimulation;
@@ -87,6 +88,34 @@ public final class AT_PeopleDataManager {
 
 		Factory factory = PeopleTestPluginFactory.factory(6970812715559334185L, testPluginData).setPeoplePluginData(peoplePluginData);
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
+
+		/**
+		 * precondition test: if the plugin data person assignment time exceeds
+		 * the start time of the simulation
+		 * 
+		 * 
+		 */
+
+		ContractException contractException = assertThrows(ContractException.class, () -> {
+			PeoplePluginData peoplePluginData2 = PeoplePluginData	.builder()//
+																	.setAssignmentTime(2.0)//
+																	.build();
+
+			Factory factory2 = PeopleTestPluginFactory	.factory(1054042752863257441L, testPluginData)//
+														.setPeoplePluginData(peoplePluginData2);
+			
+			SimulationState simulationState = SimulationState	.builder()//
+																.setStartTime(1.0)//
+																.build();
+
+			TestSimulation	.builder()//
+							.addPlugins(factory2.getPlugins())//
+							.setSimulationState(simulationState)//
+							.build()//
+							.execute();
+		});
+		assertEquals(PersonError.PERSON_ASSIGNMENT_TIME_IN_FUTURE, contractException.getErrorType());
+
 	}
 
 	@Test
@@ -157,6 +186,7 @@ public final class AT_PeopleDataManager {
 		for (PersonId personId : expectedPersonIds2) {
 			expectedBuilder.addPersonRange(new PersonRange(personId.getValue(), personId.getValue()));
 		}
+		expectedBuilder.setAssignmentTime(1.0);
 		expectedPluginData = expectedBuilder.build();
 		actualPluginData = outputItems.keySet().iterator().next();
 		assertEquals(expectedPluginData, actualPluginData);
@@ -424,27 +454,13 @@ public final class AT_PeopleDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(target = PeopleDataManager.class, name = "expandCapacity", args = { int.class })
-	public void testExpandCapacity() {
-		Factory factory = PeopleTestPluginFactory.factory(2579559197218306247L, (c) -> {
-			// show that a negative growth causes an exception
-			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
-			ContractException contractException = assertThrows(ContractException.class, () -> peopleDataManager.expandCapacity(-1));
-			assertEquals(PersonError.NEGATIVE_GROWTH_PROJECTION, contractException.getErrorType());
-		});
-		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
-
-		// use manual tests for non-negative growth
-	}
-
-	@Test
 	@UnitTestMethod(target = PeopleDataManager.class, name = "getPopulationCount", args = {}, tags = { UnitTag.INCOMPLETE })
 	public void testGetPopulationCount() {
 
-		/* INCOMPLETE TEST
-		 * The test is incomplete since it does not start with a population
-		 * present in the plugin data -- it failed to catch a bug in the people
-		 * data manager's init
+		/*
+		 * INCOMPLETE TEST The test is incomplete since it does not start with a
+		 * population present in the plugin data -- it failed to catch a bug in
+		 * the people data manager's init
 		 */
 
 		Factory factory = PeopleTestPluginFactory.factory(8471595108422434117L, (c) -> {
@@ -458,50 +474,6 @@ public final class AT_PeopleDataManager {
 		});
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
-	}
-
-	@Test
-	@UnitTestMethod(target = PeopleDataManager.class, name = "getProjectedPopulationCount", args = {})
-	public void testGetProjectedPopulationCount() {
-
-		Factory factory = PeopleTestPluginFactory.factory(1779635024257337287L, (c) -> {
-
-			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
-
-			assertEquals(0, peopleDataManager.getProjectedPopulationCount());
-
-			/*
-			 * Add a few people, so we are not working from a zero-base and show
-			 * the projected population count is correct
-			 */
-			for (int i = 0; i < 10; i++) {
-				peopleDataManager.addPerson(PersonConstructionData.builder().build());
-			}
-			assertEquals(10, peopleDataManager.getProjectedPopulationCount());
-
-			// show that expanding the capacity results in the correct projected
-			// count
-			peopleDataManager.expandCapacity(30);
-			assertEquals(40, peopleDataManager.getProjectedPopulationCount());
-
-			/*
-			 * show that adding people will not change the projected population
-			 * count until the actual population catches up
-			 */
-			for (int i = 0; i < 100; i++) {
-				peopleDataManager.addPerson(PersonConstructionData.builder().build());
-				int expectedValue = FastMath.max(40, peopleDataManager.getPopulationCount());
-				assertEquals(expectedValue, peopleDataManager.getProjectedPopulationCount());
-			}
-
-			// show that expanding multiple times works as well
-			peopleDataManager.expandCapacity(100);
-			assertEquals(210, peopleDataManager.getProjectedPopulationCount());
-
-			peopleDataManager.expandCapacity(100);
-			assertEquals(310, peopleDataManager.getProjectedPopulationCount());
-		});
-		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
 	@Test
