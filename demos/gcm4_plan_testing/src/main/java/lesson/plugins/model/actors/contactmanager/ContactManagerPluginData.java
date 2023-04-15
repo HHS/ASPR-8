@@ -158,11 +158,6 @@ public final class ContactManagerPluginData implements PluginData {
 	}
 
 	@Override
-	public PluginDataBuilder getEmptyBuilder() {
-		return builder();
-	}
-
-	@Override
 	public String toString() {
 		StringBuilder builder2 = new StringBuilder();
 		builder2.append("ContactManagerPluginData [data=");

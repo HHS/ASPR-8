@@ -33,5 +33,7 @@ public interface PluginData {
 	 * Returns a PluginDataBuilder that can build the plugin data. The returned
 	 * builder should be initialized as empty.
 	 */
-	public PluginDataBuilder getEmptyBuilder();
+	public default PluginDataBuilder getEmptyBuilder() {
+		return null;
+	};
 }

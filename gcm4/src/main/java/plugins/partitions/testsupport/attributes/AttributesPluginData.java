@@ -148,9 +148,4 @@ public class AttributesPluginData implements PluginData {
 		return new Builder(data);
 	}
 
-	@Override
-	public PluginDataBuilder getEmptyBuilder() {
-		return builder();
-	}
-
 }

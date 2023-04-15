@@ -501,58 +501,6 @@ public class AT_GroupPropertyReportPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = GroupPropertyReportPluginData.class, name = "getEmptyBuilder", args = {})
-	public void testGetEmptyBuilder() {
-		ReportLabel reportLabel = new SimpleReportLabel("report label");
-		ReportPeriod reportPeriod = ReportPeriod.DAILY;
-		TestGroupPropertyId propertyId1 = TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK;
-		TestGroupPropertyId propertyId2 = TestGroupPropertyId.GROUP_PROPERTY_2_2_INTEGER_MUTABLE_TRACK;
-		// show the default value is true
-		GroupPropertyReportPluginData filledGroupPropertyReportPluginData = //
-				GroupPropertyReportPluginData	.builder()//
-												.setReportPeriod(reportPeriod)//
-												.setReportLabel(reportLabel)//
-												.includeGroupProperty(propertyId1.getTestGroupTypeId(), propertyId1)//
-												.excludeGroupProperty(propertyId2.getTestGroupTypeId(), propertyId2)//
-												.setDefaultInclusion(false)//
-												.build();//
-
-		// show that the empty builder is indeed empty
-
-		// the report label is not set
-		ContractException contractException = assertThrows(ContractException.class, () -> {
-			filledGroupPropertyReportPluginData.getEmptyBuilder().build();
-		});
-		assertEquals(ReportError.NULL_REPORT_LABEL, contractException.getErrorType());
-
-		// the report period is not set
-		contractException = assertThrows(ContractException.class, () -> {
-			filledGroupPropertyReportPluginData	.getEmptyBuilder()//
-												.setReportLabel(new SimpleReportLabel("report label"))//
-												.build();
-		});
-		assertEquals(ReportError.NULL_REPORT_PERIOD, contractException.getErrorType());
-
-		// After filling the report label and report period we should get the
-		// same results as if starting from an empty builder
-		reportLabel = new SimpleReportLabel("another label");
-		reportPeriod = ReportPeriod.END_OF_SIMULATION;
-
-		GroupPropertyReportPluginData groupPropertyReportPluginData1 = //
-				filledGroupPropertyReportPluginData	.getEmptyBuilder()//
-													.setReportLabel(reportLabel)//
-													.setReportPeriod(reportPeriod)//
-													.build();
-		GroupPropertyReportPluginData groupPropertyReportPluginData2 = //
-				GroupPropertyReportPluginData	.builder()//
-												.setReportLabel(reportLabel)//
-												.setReportPeriod(reportPeriod)//
-												.build();
-
-		assertEquals(groupPropertyReportPluginData1, groupPropertyReportPluginData2);
-	}
-
-	@Test
 	@UnitTestMethod(target = GroupPropertyReportPluginData.class, name = "getCloneBuilder", args = {})
 	public void testGetCloneBuilder() {
 

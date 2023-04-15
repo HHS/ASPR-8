@@ -128,11 +128,6 @@ public class PersonPropertyInteractionReportPluginData implements PluginData {
 	}
 
 	@Override
-	public PluginDataBuilder getEmptyBuilder() {
-		return builder();
-	}
-
-	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
