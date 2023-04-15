@@ -2304,7 +2304,7 @@ public final class MaterialsDataManager extends DataManager {
 	 * 
 	 */
 	public StageId addStage(final MaterialsProducerId materialsProducerId) {
-		StageId stageId = new StageId(nextBatchRecordId++);
+		StageId stageId = new StageId(nextStageRecordId++);
 		dataManagerContext.releaseMutationEvent(new StageAdditionMutationEvent(stageId, materialsProducerId));
 		return stageId;
 	}

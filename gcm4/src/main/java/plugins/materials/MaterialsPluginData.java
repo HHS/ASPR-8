@@ -1,10 +1,6 @@
 package plugins.materials;
 
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import net.jcip.annotations.Immutable;
 import nucleus.PluginData;
@@ -21,6 +17,7 @@ import plugins.resources.support.ResourceId;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
 import util.errors.ContractException;
+import util.wrappers.MultiKey;
 
 /**
  * An immutable container of the initial state materials producers. It contains:
@@ -386,8 +383,6 @@ public final class MaterialsPluginData implements PluginData {
 
 		private void validateData() {
 
-			
-
 			for (final MaterialId materialId : data.batchPropertyDefinitions.keySet()) {
 				if (!data.materialIds.contains(materialId)) {
 					throw new ContractException(MaterialsError.UNKNOWN_MATERIAL_ID, materialId + " in batch property definitions");
@@ -626,6 +621,111 @@ public final class MaterialsPluginData implements PluginData {
 
 		private boolean locked;
 
+		private boolean compareBatchPropertyValues(Data other) {
+			for (BatchId batchId : batchIds) {
+				MaterialId materialId = batchMaterials.get(batchId);
+				for (BatchPropertyId batchPropertyId : batchPropertyDefinitions.get(materialId).keySet()) {
+					Object propertyValue = null;
+
+					Map<BatchPropertyId, Object> map = batchPropertyValues.get(batchId);
+					if (map != null) {
+						propertyValue = map.get(batchPropertyId);
+					}
+					if (propertyValue == null) {
+						PropertyDefinition propertyDefinition = batchPropertyDefinitions.get(materialId).get(batchPropertyId);
+						propertyValue = propertyDefinition.getDefaultValue().get();
+					}
+
+					Object otherPropertyValue = null;
+					map = other.batchPropertyValues.get(batchId);
+					if (map != null) {
+						otherPropertyValue = map.get(batchPropertyId);
+					}
+					if (otherPropertyValue == null) {
+						PropertyDefinition propertyDefinition = batchPropertyDefinitions.get(materialId).get(batchPropertyId);
+						otherPropertyValue = propertyDefinition.getDefaultValue().get();
+					}
+					if (!propertyValue.equals(otherPropertyValue)) {
+						return false;
+					}
+				}
+			}
+			return true;
+		}
+
+		private boolean compareProducerPropertyValues(Data other) {
+
+			for (MaterialsProducerId materialsProducerId : materialsProducerIds) {
+				for (MaterialsProducerPropertyId materialsProducerPropertyId : materialsProducerPropertyDefinitions.keySet()) {
+					Object propertyValue = null;
+					Map<MaterialsProducerPropertyId, Object> map = materialsProducerPropertyValues.get(materialsProducerId);
+					if (map != null) {
+						propertyValue = map.get(materialsProducerPropertyId);
+					}
+					if (propertyValue == null) {
+						PropertyDefinition propertyDefinition = materialsProducerPropertyDefinitions.get(materialsProducerPropertyId);
+						propertyValue = propertyDefinition.getDefaultValue().get();
+					}
+					Object otherPropertyValue = null;
+					map = other.materialsProducerPropertyValues.get(materialsProducerId);
+					if (map != null) {
+						otherPropertyValue = map.get(materialsProducerPropertyId);
+					}
+					if (otherPropertyValue == null) {
+						PropertyDefinition propertyDefinition = materialsProducerPropertyDefinitions.get(materialsProducerPropertyId);
+						propertyValue = propertyDefinition.getDefaultValue().get();
+					}
+					if (!propertyValue.equals(otherPropertyValue)) {
+						return false;
+					}
+				}
+			}
+			return true;
+		}
+
+		private int getProducerPropertyValuesHashCode() {
+			final int prime = 31;
+			int result = 1;
+			for (MaterialsProducerId materialsProducerId : materialsProducerIds) {
+				for (MaterialsProducerPropertyId materialsProducerPropertyId : materialsProducerPropertyDefinitions.keySet()) {
+					Object propertyValue = null;
+					Map<MaterialsProducerPropertyId, Object> map = materialsProducerPropertyValues.get(materialsProducerId);
+					if (map != null) {
+						propertyValue = map.get(materialsProducerPropertyId);
+					}
+					if (propertyValue == null) {
+						PropertyDefinition propertyDefinition = materialsProducerPropertyDefinitions.get(materialsProducerPropertyId);
+						propertyValue = propertyDefinition.getDefaultValue().get();
+					}
+					result = prime * result + propertyValue.hashCode();
+				}
+			}
+			return result;
+		}
+
+		private int getBatchPropertyValuesHashCode() {
+			final int prime = 31;
+			int result = 1;
+
+			for (BatchId batchId : batchIds) {
+				MaterialId materialId = batchMaterials.get(batchId);
+				for (BatchPropertyId batchPropertyId : batchPropertyDefinitions.get(materialId).keySet()) {
+					Object propertyValue = null;
+
+					Map<BatchPropertyId, Object> map = batchPropertyValues.get(batchId);
+					if (map != null) {
+						propertyValue = map.get(batchPropertyId);
+					}
+					if (propertyValue == null) {
+						PropertyDefinition propertyDefinition = batchPropertyDefinitions.get(materialId).get(batchPropertyId);
+						propertyValue = propertyDefinition.getDefaultValue().get();
+					}
+					result = prime * result + propertyValue.hashCode();
+				}
+			}
+			return result;
+		}
+
 		public Data() {
 			materialsProducerIds = new LinkedHashSet<>();
 
@@ -724,6 +824,231 @@ public final class MaterialsPluginData implements PluginData {
 			emptyBatchPropertyValues = Collections.unmodifiableMap(new LinkedHashMap<>());
 
 			locked = data.locked;
+		}
+
+		/*
+		 * This is not a boiler plate hash code contract. See notes below
+		 */
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + ((batchAmounts == null) ? 0 : batchAmounts.hashCode());
+			result = prime * result + ((batchIds == null) ? 0 : batchIds.hashCode());
+			result = prime * result + ((batchMaterials == null) ? 0 : batchMaterials.hashCode());
+			result = prime * result + ((batchMaterialsProducers == null) ? 0 : batchMaterialsProducers.hashCode());
+			result = prime * result + ((batchPropertyDefinitions == null) ? 0 : batchPropertyDefinitions.hashCode());
+			result = prime * result + getBatchPropertyValuesHashCode();
+			result = prime * result + ((batchStages == null) ? 0 : batchStages.hashCode());
+			result = prime * result + ((emptyBatchPropertyValues == null) ? 0 : emptyBatchPropertyValues.hashCode());
+			result = prime * result + ((emptyMaterialsProducerPropertyValuesMap == null) ? 0 : emptyMaterialsProducerPropertyValuesMap.hashCode());
+			result = prime * result + (locked ? 1231 : 1237);
+			result = prime * result + ((materialIds == null) ? 0 : materialIds.hashCode());
+			result = prime * result + ((materialsProducerIds == null) ? 0 : materialsProducerIds.hashCode());
+			result = prime * result + ((materialsProducerPropertyDefinitions == null) ? 0 : materialsProducerPropertyDefinitions.hashCode());
+			result = prime * result + getProducerPropertyValuesHashCode();
+			result = prime * result + getProducerResourceLevelsHashCode();
+			result = prime * result + ((stageBatches == null) ? 0 : stageBatches.hashCode());
+			result = prime * result + ((stageIds == null) ? 0 : stageIds.hashCode());
+			result = prime * result + ((stageMaterialsProducers == null) ? 0 : stageMaterialsProducers.hashCode());
+			result = prime * result + ((stageOffers == null) ? 0 : stageOffers.hashCode());
+			return result;
+		}
+
+		private boolean compareProducerResourceLevels(Data other) {			
+			
+			for(MaterialsProducerId materialsProducerId : materialsProducerResourceLevels.keySet()) {
+				Set<MultiKey> nonZeroValues = new LinkedHashSet<>();
+				Map<ResourceId, Long> map = materialsProducerResourceLevels.get(materialsProducerId);				
+				if(map != null) {
+					for(ResourceId resourceId : map.keySet()) {						
+						Long level = map.get(resourceId);
+						if(level>0) {
+							nonZeroValues.add(new MultiKey(resourceId,level));
+						}
+					}
+				}
+				
+				Set<MultiKey> otherNonZeroValues = new LinkedHashSet<>();
+				map = other.materialsProducerResourceLevels.get(materialsProducerId);				
+				if(map != null) {
+					for(ResourceId resourceId : map.keySet()) {						
+						Long level = map.get(resourceId);
+						if(level>0) {
+							otherNonZeroValues.add(new MultiKey(resourceId,level));
+						}
+					}
+				}
+				if(!nonZeroValues.equals(otherNonZeroValues)) {
+					return false;
+				}				
+			}
+			return true;
+		}
+		
+		private int getProducerResourceLevelsHashCode() {			
+			final int prime = 31;
+			int result = 1;
+			for(MaterialsProducerId materialsProducerId : materialsProducerResourceLevels.keySet()) {
+				Set<MultiKey> nonZeroValues = new LinkedHashSet<>();
+				Map<ResourceId, Long> map = materialsProducerResourceLevels.get(materialsProducerId);				
+				if(map != null) {
+					for(ResourceId resourceId : map.keySet()) {						
+						Long level = map.get(resourceId);
+						if(level>0) {
+							nonZeroValues.add(new MultiKey(resourceId,level));
+						}
+					}
+				}
+				result = prime * result +nonZeroValues.hashCode();
+			}
+			return result;
+		}
+
+
+		/*
+		 * This is not a boiler plate equals contract. See notes below
+		 */
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (!(obj instanceof Data)) {
+				return false;
+			}
+			Data other = (Data) obj;
+			if (batchAmounts == null) {
+				if (other.batchAmounts != null) {
+					return false;
+				}
+			} else if (!batchAmounts.equals(other.batchAmounts)) {
+				return false;
+			}
+			if (batchIds == null) {
+				if (other.batchIds != null) {
+					return false;
+				}
+			} else if (!batchIds.equals(other.batchIds)) {
+				return false;
+			}
+			if (batchMaterials == null) {
+				if (other.batchMaterials != null) {
+					return false;
+				}
+			} else if (!batchMaterials.equals(other.batchMaterials)) {
+				return false;
+			}
+			if (batchMaterialsProducers == null) {
+				if (other.batchMaterialsProducers != null) {
+					return false;
+				}
+			} else if (!batchMaterialsProducers.equals(other.batchMaterialsProducers)) {
+				return false;
+			}
+			if (batchPropertyDefinitions == null) {
+				if (other.batchPropertyDefinitions != null) {
+					return false;
+				}
+			} else if (!batchPropertyDefinitions.equals(other.batchPropertyDefinitions)) {
+				return false;
+			}
+
+			/*
+			 * This is special handling to deal with missing property values
+			 * that are implicitly equal to the associated default value from
+			 * the corresponding property definition
+			 */
+
+			if (!compareBatchPropertyValues(other)) {
+				return false;
+			}
+
+			if (batchStages == null)
+
+			{
+				if (other.batchStages != null) {
+					return false;
+				}
+			} else if (!batchStages.equals(other.batchStages)) {
+				return false;
+			}
+			if (emptyBatchPropertyValues == null) {
+				if (other.emptyBatchPropertyValues != null) {
+					return false;
+				}
+			} else if (!emptyBatchPropertyValues.equals(other.emptyBatchPropertyValues)) {
+				return false;
+			}
+			if (emptyMaterialsProducerPropertyValuesMap == null) {
+				if (other.emptyMaterialsProducerPropertyValuesMap != null) {
+					return false;
+				}
+			} else if (!emptyMaterialsProducerPropertyValuesMap.equals(other.emptyMaterialsProducerPropertyValuesMap)) {
+				return false;
+			}
+			if (locked != other.locked) {
+				return false;
+			}
+			if (materialIds == null) {
+				if (other.materialIds != null) {
+					return false;
+				}
+			} else if (!materialIds.equals(other.materialIds)) {
+				return false;
+			}
+			if (materialsProducerIds == null) {
+				if (other.materialsProducerIds != null) {
+					return false;
+				}
+			} else if (!materialsProducerIds.equals(other.materialsProducerIds)) {
+				return false;
+			}
+			if (materialsProducerPropertyDefinitions == null) {
+				if (other.materialsProducerPropertyDefinitions != null) {
+					return false;
+				}
+			} else if (!materialsProducerPropertyDefinitions.equals(other.materialsProducerPropertyDefinitions)) {
+				return false;
+			}
+
+			if (!compareProducerPropertyValues(other)) {
+				return false;
+			}
+			
+			if (!compareProducerResourceLevels(other)) {
+				return false;
+			}
+
+			if (stageBatches == null) {
+				if (other.stageBatches != null) {
+					return false;
+				}
+			} else if (!stageBatches.equals(other.stageBatches)) {
+				return false;
+			}
+			if (stageIds == null) {
+				if (other.stageIds != null) {
+					return false;
+				}
+			} else if (!stageIds.equals(other.stageIds)) {
+				return false;
+			}
+			if (stageMaterialsProducers == null) {
+				if (other.stageMaterialsProducers != null) {
+					return false;
+				}
+			} else if (!stageMaterialsProducers.equals(other.stageMaterialsProducers)) {
+				return false;
+			}
+			if (stageOffers == null) {
+				if (other.stageOffers != null) {
+					return false;
+				}
+			} else if (!stageOffers.equals(other.stageOffers)) {
+				return false;
+			}
+			return true;
 		}
 
 	}
@@ -1163,5 +1488,20 @@ public final class MaterialsPluginData implements PluginData {
 	@Override
 	public PluginDataBuilder getEmptyBuilder() {
 		return builder();
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (!(o instanceof MaterialsPluginData))
+			return false;
+		MaterialsPluginData that = (MaterialsPluginData) o;
+		return data.equals(that.data);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(data);
 	}
 }
