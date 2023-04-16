@@ -64,7 +64,7 @@ public class TestSimulation {
 		 *             simulation time is null
 		 * 
 		 */
-		public Builder setSimulationTime(SimulationState simulationState) {
+		public Builder setSimulationState(SimulationState simulationState) {
 			if (simulationState == null) {
 				throw new ContractException(NucleusError.NULL_SIMULATION_TIME);
 			}
