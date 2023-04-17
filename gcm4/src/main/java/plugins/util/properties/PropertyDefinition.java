@@ -18,7 +18,8 @@ public final class PropertyDefinition {
 		return new Builder();
 	}
 
-	private static class Scaffold {
+	private static class Data {		
+
 		private Class<?> type = null;
 
 		private boolean propertyValuesAreMutable = true;
@@ -35,7 +36,7 @@ public final class PropertyDefinition {
 	 */
 	public static class Builder {
 
-		private Scaffold scaffold = new Scaffold();
+		private Data data = new Data();
 
 		private Builder() {
 		}
@@ -48,14 +49,14 @@ public final class PropertyDefinition {
 		 *             class type of the definition is not assigned or null</li>
 		 *             <li>{@linkplain PropertyError#INCOMPATIBLE_DEFAULT_VALUE}if
 		 *             the default value is not null and the class type is not a
-		 *             super-type of the default value</li> 
+		 *             super-type of the default value</li>
 		 * 
 		 */
 		public PropertyDefinition build() {
 			try {
-				return new PropertyDefinition(scaffold);
+				return new PropertyDefinition(data);
 			} finally {
-				scaffold = new Scaffold();
+				data = new Data();
 			}
 		}
 
@@ -63,7 +64,7 @@ public final class PropertyDefinition {
 		 * Sets the class type. Value must be set by client.
 		 */
 		public Builder setType(final Class<?> type) {
-			scaffold.type = type;
+			data.type = type;
 			return this;
 		}
 
@@ -72,7 +73,7 @@ public final class PropertyDefinition {
 		 * value is true.
 		 */
 		public Builder setPropertyValueMutability(boolean propertyValuesAreMutable) {
-			scaffold.propertyValuesAreMutable = propertyValuesAreMutable;
+			data.propertyValuesAreMutable = propertyValuesAreMutable;
 			return this;
 		}
 
@@ -81,7 +82,7 @@ public final class PropertyDefinition {
 		 * must be set(non-null) by client.
 		 */
 		public Builder setDefaultValue(Object defaultValue) {
-			scaffold.defaultValue = defaultValue;
+			data.defaultValue = defaultValue;
 			return this;
 		}
 
@@ -90,9 +91,11 @@ public final class PropertyDefinition {
 		 * {@link TimeTrackingPolicy#DO_NOT_TRACK_TIME}
 		 */
 		public Builder setTimeTrackingPolicy(TimeTrackingPolicy timeTrackingPolicy) {
-			scaffold.timeTrackingPolicy = timeTrackingPolicy;
+			data.timeTrackingPolicy = timeTrackingPolicy;
 			return this;
 		}
+
+		
 	}
 
 	private final Class<?> type;
@@ -103,24 +106,24 @@ public final class PropertyDefinition {
 
 	private final TimeTrackingPolicy timeTrackingPolicy;
 
-	private PropertyDefinition(Scaffold scaffold) {
-		if (scaffold.type == null) {
+	private PropertyDefinition(Data data) {
+		if (data.type == null) {
 			throw new ContractException(PropertyError.NULL_PROPERTY_TYPE);
 		}
 
-		if (scaffold.defaultValue != null) {
-			if (!scaffold.type.isInstance(scaffold.defaultValue)) {
+		if (data.defaultValue != null) {
+			if (!data.type.isInstance(data.defaultValue)) {
 				throw new ContractException(PropertyError.INCOMPATIBLE_DEFAULT_VALUE);
 			}
 		}
 
-		this.type = scaffold.type;
+		this.type = data.type;
 
-		this.propertyValuesAreMutable = scaffold.propertyValuesAreMutable;
+		this.propertyValuesAreMutable = data.propertyValuesAreMutable;
 
-		this.defaultValue = scaffold.defaultValue;
+		this.defaultValue = data.defaultValue;
 
-		this.timeTrackingPolicy = scaffold.timeTrackingPolicy;
+		this.timeTrackingPolicy = data.timeTrackingPolicy;
 
 	}
 
@@ -221,20 +224,18 @@ public final class PropertyDefinition {
 	 * constantPropertyValues=true, defaultValue=someValue,
 	 * timeTrackingPolicy=policy]
 	 */
-
 	@Override
 	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("PropertyDefinition [type=");
-		builder.append(type);
-		builder.append(", propertyValuesAreMutable=");
-		builder.append(propertyValuesAreMutable);
-		builder.append(", defaultValue=");
-		builder.append(defaultValue);
-		builder.append(", timeTrackingPolicy=");
-		builder.append(timeTrackingPolicy);
-		builder.append("]");
-		return builder.toString();
+		StringBuilder builder2 = new StringBuilder();
+		builder2.append("PropertyDefinition [type=");
+		builder2.append(type);
+		builder2.append(", propertyValuesAreMutable=");
+		builder2.append(propertyValuesAreMutable);
+		builder2.append(", defaultValue=");
+		builder2.append(defaultValue);		
+		builder2.append(", timeTrackingPolicy=");
+		builder2.append(timeTrackingPolicy);
+		builder2.append("]");
+		return builder2.toString();
 	}
-
 }

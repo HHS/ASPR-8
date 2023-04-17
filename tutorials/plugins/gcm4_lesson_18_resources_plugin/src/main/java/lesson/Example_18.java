@@ -139,16 +139,16 @@ public final class Example_18 {
 																	.setPropertyValueMutability(false)//
 																	.build();
 
-		builder.defineGlobalProperty(GlobalProperty.SUSCEPTIBLE_POPULATION_PROPORTION, propertyDefinition);
-		builder.defineGlobalProperty(GlobalProperty.MAXIMUM_SYMPTOM_ONSET_TIME, propertyDefinition);
-		builder.defineGlobalProperty(GlobalProperty.ANTIVIRAL_COVERAGE_TIME, propertyDefinition);
-		builder.defineGlobalProperty(GlobalProperty.ANTIVIRAL_SUCCESS_RATE, propertyDefinition);
-		builder.defineGlobalProperty(GlobalProperty.HOSPITAL_SUCCESS_WITH_ANTIVIRAL, propertyDefinition);
-		builder.defineGlobalProperty(GlobalProperty.HOSPITAL_SUCCESS_WITHOUT_ANTIVIRAL, propertyDefinition);
-		builder.defineGlobalProperty(GlobalProperty.HOSPITAL_BEDS_PER_PERSON, propertyDefinition);
-		builder.defineGlobalProperty(GlobalProperty.ANTIVIRAL_DOSES_PER_PERSON, propertyDefinition);
-		builder.defineGlobalProperty(GlobalProperty.HOSPITAL_STAY_DURATION_MIN, propertyDefinition);
-		builder.defineGlobalProperty(GlobalProperty.HOSPITAL_STAY_DURATION_MAX, propertyDefinition);
+		builder.defineGlobalProperty(GlobalProperty.SUSCEPTIBLE_POPULATION_PROPORTION, propertyDefinition,0);
+		builder.defineGlobalProperty(GlobalProperty.MAXIMUM_SYMPTOM_ONSET_TIME, propertyDefinition,0);
+		builder.defineGlobalProperty(GlobalProperty.ANTIVIRAL_COVERAGE_TIME, propertyDefinition,0);
+		builder.defineGlobalProperty(GlobalProperty.ANTIVIRAL_SUCCESS_RATE, propertyDefinition,0);
+		builder.defineGlobalProperty(GlobalProperty.HOSPITAL_SUCCESS_WITH_ANTIVIRAL, propertyDefinition,0);
+		builder.defineGlobalProperty(GlobalProperty.HOSPITAL_SUCCESS_WITHOUT_ANTIVIRAL, propertyDefinition,0);
+		builder.defineGlobalProperty(GlobalProperty.HOSPITAL_BEDS_PER_PERSON, propertyDefinition,0);
+		builder.defineGlobalProperty(GlobalProperty.ANTIVIRAL_DOSES_PER_PERSON, propertyDefinition,0);
+		builder.defineGlobalProperty(GlobalProperty.HOSPITAL_STAY_DURATION_MIN, propertyDefinition,0);
+		builder.defineGlobalProperty(GlobalProperty.HOSPITAL_STAY_DURATION_MAX, propertyDefinition,0);
 
 		propertyDefinition = PropertyDefinition	.builder()//
 												.setType(Integer.class)//
@@ -156,7 +156,7 @@ public final class Example_18 {
 												.setPropertyValueMutability(false)//
 												.build();
 
-		builder.defineGlobalProperty(GlobalProperty.POPULATION_SIZE, propertyDefinition);
+		builder.defineGlobalProperty(GlobalProperty.POPULATION_SIZE, propertyDefinition,0);
 
 		GlobalPropertiesPluginData globalPropertiesPluginData = builder.build();
 
@@ -170,7 +170,7 @@ public final class Example_18 {
 			dimensionBuilder.addLevel((context) -> {
 				GlobalPropertiesPluginData.Builder builder = context.get(GlobalPropertiesPluginData.Builder.class);
 				double value = values[i];
-				builder.setGlobalPropertyValue(globalPropertyId, value);
+				builder.setGlobalPropertyValue(globalPropertyId, value,0);
 				ArrayList<String> result = new ArrayList<>();
 				result.add(Double.toString(value));
 				return result;
@@ -189,9 +189,9 @@ public final class Example_18 {
 			dimensionBuilder.addLevel((context) -> {
 				GlobalPropertiesPluginData.Builder builder = context.get(GlobalPropertiesPluginData.Builder.class);
 				double minValue = minValues[i];
-				builder.setGlobalPropertyValue(GlobalProperty.HOSPITAL_STAY_DURATION_MIN, minValue);
+				builder.setGlobalPropertyValue(GlobalProperty.HOSPITAL_STAY_DURATION_MIN, minValue,0);
 				double maxValue = maxValues[i];
-				builder.setGlobalPropertyValue(GlobalProperty.HOSPITAL_STAY_DURATION_MAX, maxValue);
+				builder.setGlobalPropertyValue(GlobalProperty.HOSPITAL_STAY_DURATION_MAX, maxValue,0);
 				ArrayList<String> result = new ArrayList<>();
 				result.add(Double.toString(minValue));
 				result.add(Double.toString(maxValue));
@@ -222,9 +222,9 @@ public final class Example_18 {
 			dimensionBuilder.addLevel((context) -> {
 				GlobalPropertiesPluginData.Builder builder = context.get(GlobalPropertiesPluginData.Builder.class);
 				double minValue = minValues[i];
-				builder.setGlobalPropertyValue(GlobalProperty.HOSPITAL_SUCCESS_WITHOUT_ANTIVIRAL, minValue);
+				builder.setGlobalPropertyValue(GlobalProperty.HOSPITAL_SUCCESS_WITHOUT_ANTIVIRAL, minValue,0);
 				double maxValue = maxValues[i];
-				builder.setGlobalPropertyValue(GlobalProperty.HOSPITAL_SUCCESS_WITH_ANTIVIRAL, maxValue);
+				builder.setGlobalPropertyValue(GlobalProperty.HOSPITAL_SUCCESS_WITH_ANTIVIRAL, maxValue,0);
 				ArrayList<String> result = new ArrayList<>();
 				result.add(Double.toString(minValue));
 				result.add(Double.toString(maxValue));

@@ -95,45 +95,45 @@ public final class Example_19 {
 																	.setDefaultValue(0.0)//
 																	.build();
 
-		builder.defineGlobalProperty(GlobalProperty.SUSCEPTIBLE_POPULATION_PROPORTION, propertyDefinition);
-		builder.defineGlobalProperty(GlobalProperty.AVERAGE_HOME_SIZE, propertyDefinition);
-		builder.defineGlobalProperty(GlobalProperty.AVERAGE_SCHOOL_SIZE, propertyDefinition);
-		builder.defineGlobalProperty(GlobalProperty.AVERAGE_WORK_SIZE, propertyDefinition);
-		builder.defineGlobalProperty(GlobalProperty.CHILD_POPULATION_PROPORTION, propertyDefinition);
-		builder.defineGlobalProperty(GlobalProperty.SENIOR_POPULATION_PROPORTION, propertyDefinition);
-		builder.defineGlobalProperty(GlobalProperty.R0, propertyDefinition);
-		builder.defineGlobalProperty(GlobalProperty.COMMUNITY_CONTACT_RATE, propertyDefinition);
-		builder.defineGlobalProperty(GlobalProperty.INFECTION_THRESHOLD, propertyDefinition);
+		builder.defineGlobalProperty(GlobalProperty.SUSCEPTIBLE_POPULATION_PROPORTION, propertyDefinition,0);
+		builder.defineGlobalProperty(GlobalProperty.AVERAGE_HOME_SIZE, propertyDefinition,0);
+		builder.defineGlobalProperty(GlobalProperty.AVERAGE_SCHOOL_SIZE, propertyDefinition,0);
+		builder.defineGlobalProperty(GlobalProperty.AVERAGE_WORK_SIZE, propertyDefinition,0);
+		builder.defineGlobalProperty(GlobalProperty.CHILD_POPULATION_PROPORTION, propertyDefinition,0);
+		builder.defineGlobalProperty(GlobalProperty.SENIOR_POPULATION_PROPORTION, propertyDefinition,0);
+		builder.defineGlobalProperty(GlobalProperty.R0, propertyDefinition,0);
+		builder.defineGlobalProperty(GlobalProperty.COMMUNITY_CONTACT_RATE, propertyDefinition,0);
+		builder.defineGlobalProperty(GlobalProperty.INFECTION_THRESHOLD, propertyDefinition,0);
 
 		propertyDefinition = PropertyDefinition	.builder()//
 												.setType(Integer.class)//
 												.setPropertyValueMutability(false)//
 												.build();
-		builder.defineGlobalProperty(GlobalProperty.INITIAL_INFECTIONS, propertyDefinition);
-		builder.defineGlobalProperty(GlobalProperty.MIN_INFECTIOUS_PERIOD, propertyDefinition);
-		builder.defineGlobalProperty(GlobalProperty.MAX_INFECTIOUS_PERIOD, propertyDefinition);
-		builder.defineGlobalProperty(GlobalProperty.POPULATION_SIZE, propertyDefinition);
+		builder.defineGlobalProperty(GlobalProperty.INITIAL_INFECTIONS, propertyDefinition,0);
+		builder.defineGlobalProperty(GlobalProperty.MIN_INFECTIOUS_PERIOD, propertyDefinition,0);
+		builder.defineGlobalProperty(GlobalProperty.MAX_INFECTIOUS_PERIOD, propertyDefinition,0);
+		builder.defineGlobalProperty(GlobalProperty.POPULATION_SIZE, propertyDefinition,0);
 
 		propertyDefinition = PropertyDefinition	.builder()//
 												.setType(Boolean.class)//
 												.setDefaultValue(false)//
 												.setPropertyValueMutability(true)//
 												.build();
-		builder.defineGlobalProperty(GlobalProperty.MANUFACTURE_VACCINE, propertyDefinition);
+		builder.defineGlobalProperty(GlobalProperty.MANUFACTURE_VACCINE, propertyDefinition,0);
 
-		builder.setGlobalPropertyValue(GlobalProperty.POPULATION_SIZE, 10_000);
-		builder.setGlobalPropertyValue(GlobalProperty.SUSCEPTIBLE_POPULATION_PROPORTION, 1.0);
-		builder.setGlobalPropertyValue(GlobalProperty.INITIAL_INFECTIONS, 1);
-		builder.setGlobalPropertyValue(GlobalProperty.MIN_INFECTIOUS_PERIOD, 7);
-		builder.setGlobalPropertyValue(GlobalProperty.MAX_INFECTIOUS_PERIOD, 14);
-		builder.setGlobalPropertyValue(GlobalProperty.R0, 2.0);
-		builder.setGlobalPropertyValue(GlobalProperty.CHILD_POPULATION_PROPORTION, 0.235);
-		builder.setGlobalPropertyValue(GlobalProperty.SENIOR_POPULATION_PROPORTION, 0.169);
-		builder.setGlobalPropertyValue(GlobalProperty.AVERAGE_HOME_SIZE, 2.5);
-		builder.setGlobalPropertyValue(GlobalProperty.AVERAGE_SCHOOL_SIZE, 250.0);
-		builder.setGlobalPropertyValue(GlobalProperty.AVERAGE_WORK_SIZE, 30.0);
-		builder.setGlobalPropertyValue(GlobalProperty.INFECTION_THRESHOLD, 0.0);
-		builder.setGlobalPropertyValue(GlobalProperty.COMMUNITY_CONTACT_RATE, 0.0);
+		builder.setGlobalPropertyValue(GlobalProperty.POPULATION_SIZE, 10_000,0);
+		builder.setGlobalPropertyValue(GlobalProperty.SUSCEPTIBLE_POPULATION_PROPORTION, 1.0,0);
+		builder.setGlobalPropertyValue(GlobalProperty.INITIAL_INFECTIONS, 1,0);
+		builder.setGlobalPropertyValue(GlobalProperty.MIN_INFECTIOUS_PERIOD, 7,0);
+		builder.setGlobalPropertyValue(GlobalProperty.MAX_INFECTIOUS_PERIOD, 14,0);
+		builder.setGlobalPropertyValue(GlobalProperty.R0, 2.0,0);
+		builder.setGlobalPropertyValue(GlobalProperty.CHILD_POPULATION_PROPORTION, 0.235,0);
+		builder.setGlobalPropertyValue(GlobalProperty.SENIOR_POPULATION_PROPORTION, 0.169,0);
+		builder.setGlobalPropertyValue(GlobalProperty.AVERAGE_HOME_SIZE, 2.5,0);
+		builder.setGlobalPropertyValue(GlobalProperty.AVERAGE_SCHOOL_SIZE, 250.0,0);
+		builder.setGlobalPropertyValue(GlobalProperty.AVERAGE_WORK_SIZE, 30.0,0);
+		builder.setGlobalPropertyValue(GlobalProperty.INFECTION_THRESHOLD, 0.0,0);
+		builder.setGlobalPropertyValue(GlobalProperty.COMMUNITY_CONTACT_RATE, 0.0,0);
 
 		final GlobalPropertiesPluginData globalPropertiesPluginData = builder.build();
 
@@ -147,7 +147,7 @@ public final class Example_19 {
 			dimensionBuilder.addLevel((context) -> {
 				final GlobalPropertiesPluginData.Builder builder = context.get(GlobalPropertiesPluginData.Builder.class);
 				final Object value = values[i];
-				builder.setGlobalPropertyValue(globalPropertyId, value);
+				builder.setGlobalPropertyValue(globalPropertyId, value,0);
 				final ArrayList<String> result = new ArrayList<>();
 				result.add(value.toString());
 				return result;
