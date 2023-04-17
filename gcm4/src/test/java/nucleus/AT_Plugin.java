@@ -27,11 +27,6 @@ public class AT_Plugin {
 			throw new UnsupportedOperationException();
 		}
 
-		@Override
-		public PluginDataBuilder getEmptyBuilder() {			
-			throw new UnsupportedOperationException();
-		}
-
 	}
 
 	private static final class YPluginData implements PluginData {
@@ -67,11 +62,6 @@ public class AT_Plugin {
 				return false;
 			}
 			return true;
-		}
-
-		@Override
-		public PluginDataBuilder getEmptyBuilder() {			
-			throw new UnsupportedOperationException();
 		}
 
 	}

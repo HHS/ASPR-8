@@ -60,21 +60,11 @@ public class AT_Simulation {
 		public PluginDataBuilder getCloneBuilder() {
 			throw new UnsupportedOperationException();
 		}
-
-		@Override
-		public PluginDataBuilder getEmptyBuilder() {
-			throw new UnsupportedOperationException();
-		}
 	}
 
 	private static class PluginData2 implements PluginData {
 		@Override
 		public PluginDataBuilder getCloneBuilder() {
-			throw new UnsupportedOperationException();
-		}
-
-		@Override
-		public PluginDataBuilder getEmptyBuilder() {
 			throw new UnsupportedOperationException();
 		}
 	}
@@ -222,12 +212,6 @@ public class AT_Simulation {
 		public PluginDataBuilder getCloneBuilder() {
 			AlphaPluginDataBuilder result = new AlphaPluginDataBuilder();
 			result.setX(x);
-			return result;
-		}
-
-		@Override
-		public PluginDataBuilder getEmptyBuilder() {
-			AlphaPluginDataBuilder result = new AlphaPluginDataBuilder();
 			return result;
 		}
 

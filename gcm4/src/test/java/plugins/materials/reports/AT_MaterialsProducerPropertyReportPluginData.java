@@ -78,40 +78,6 @@ public class AT_MaterialsProducerPropertyReportPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = MaterialsProducerPropertyReportPluginData.class, name = "getEmptyBuilder", args = {})
-	public void testGetEmptyBuilder() {
-		ReportLabel reportLabel = new SimpleReportLabel("report label");
-
-		MaterialsProducerPropertyReportPluginData filledMaterialsProducerPropertyReportPluginData = //
-				MaterialsProducerPropertyReportPluginData	.builder()//
-															.setReportLabel(reportLabel)//
-															.build();
-
-		// show that the empty builder is indeed empty
-
-		// the report label is not set
-		ContractException contractException = assertThrows(ContractException.class, () -> {
-			filledMaterialsProducerPropertyReportPluginData.getEmptyBuilder().build();
-		});
-		assertEquals(ReportError.NULL_REPORT_LABEL, contractException.getErrorType());
-
-		// After filling the report label and report period we should get the
-		// same results as if starting from an empty builder
-		reportLabel = new SimpleReportLabel("another label");
-
-		MaterialsProducerPropertyReportPluginData materialsProducerPropertyReportPluginData1 = //
-				filledMaterialsProducerPropertyReportPluginData	.getEmptyBuilder()//
-																.setReportLabel(reportLabel)//
-																.build();
-		MaterialsProducerPropertyReportPluginData materialsProducerPropertyReportPluginData2 = //
-				MaterialsProducerPropertyReportPluginData	.builder()//
-															.setReportLabel(reportLabel)//
-															.build();
-
-		assertEquals(materialsProducerPropertyReportPluginData1, materialsProducerPropertyReportPluginData2);
-	}
-
-	@Test
 	@UnitTestMethod(target = MaterialsProducerPropertyReportPluginData.class, name = "getCloneBuilder", args = {})
 	public void testGetCloneBuilder() {
 

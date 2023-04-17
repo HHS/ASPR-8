@@ -78,42 +78,6 @@ public class AT_BatchStatusReportPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = BatchStatusReportPluginData.class, name = "getEmptyBuilder", args = {})
-	public void testGetEmptyBuilder() {
-		ReportLabel reportLabel = new SimpleReportLabel("report label");
-
-		BatchStatusReportPluginData filledBatchStatusReportPluginData = //
-				BatchStatusReportPluginData.builder()//
-												.setReportLabel(reportLabel)//
-												.build();
-
-		// show that the empty builder is indeed empty
-
-		// the report label is not set
-		ContractException contractException = assertThrows(ContractException.class, () -> {
-			filledBatchStatusReportPluginData.getEmptyBuilder().build();
-		});
-		assertEquals(ReportError.NULL_REPORT_LABEL, contractException.getErrorType());
-
-		
-
-		// After filling the report label and report period we should get the
-		// same results as if starting from an empty builder
-		reportLabel = new SimpleReportLabel("another label");
-
-		BatchStatusReportPluginData batchStatusReportPluginData1 = //
-				filledBatchStatusReportPluginData	.getEmptyBuilder()//
-														.setReportLabel(reportLabel)//
-														.build();
-		BatchStatusReportPluginData batchStatusReportPluginData2 = //
-				BatchStatusReportPluginData.builder()//
-												.setReportLabel(reportLabel)//
-												.build();
-
-		assertEquals(batchStatusReportPluginData1, batchStatusReportPluginData2);
-	}
-
-	@Test
 	@UnitTestMethod(target = BatchStatusReportPluginData.class, name = "getCloneBuilder", args = {})
 	public void testGetCloneBuilder() {
 

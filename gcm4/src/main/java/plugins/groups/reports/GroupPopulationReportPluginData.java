@@ -175,10 +175,7 @@ public final class GroupPopulationReportPluginData implements PluginData {
 		return new Builder(data);
 	}
 
-	@Override
-	public Builder getEmptyBuilder() {
-		return builder();
-	}
+	
 
 	public ReportLabel getReportLabel() {
 		return data.reportLabel;

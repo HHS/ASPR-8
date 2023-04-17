@@ -254,11 +254,15 @@ public final class GroupsPluginData implements PluginData {
 		 * 
 		 */
 		public GroupsPluginData build() {
+			try {
 			if (!data.locked) {
 				validateData();
 			}
 			ensureImmutability();
 			return new GroupsPluginData(data);
+			}finally {
+				data = new Data();
+			}
 		}
 
 		/**
@@ -714,11 +718,6 @@ public final class GroupsPluginData implements PluginData {
 	@Override
 	public PluginDataBuilder getCloneBuilder() {
 		return new Builder(data);
-	}
-
-	@Override
-	public PluginDataBuilder getEmptyBuilder() {
-		return builder();
 	}
 
 	@Override

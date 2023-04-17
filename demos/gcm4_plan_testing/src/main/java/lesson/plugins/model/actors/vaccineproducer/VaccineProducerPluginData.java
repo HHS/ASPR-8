@@ -222,11 +222,6 @@ public final class VaccineProducerPluginData implements PluginData {
 		return new Builder(data);
 	}
 
-	@Override
-	public PluginDataBuilder getEmptyBuilder() {
-		return builder();
-	}
-
 	public double getLastBatchAssemblyEndTime() {
 		return data.lastBatchAssemblyEndTime;
 	}

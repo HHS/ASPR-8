@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import nucleus.PluginData;
@@ -16,6 +17,7 @@ import plugins.people.support.PersonId;
 import plugins.people.support.PersonRange;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
+import util.random.RandomGeneratorProvider;
 
 public final class AT_PeoplePluginData {
 	@Test
@@ -214,6 +216,32 @@ public final class AT_PeoplePluginData {
 		PluginData pluginData2 = pluginData.getCloneBuilder().build();
 		
 		assertEquals(pluginData, pluginData2);
+	}
+	
+	
+	@Test
+	@UnitTestMethod(target = PeoplePluginData.Builder.class, name = "setAssignmentTime", args = { double.class })
+	public void testSetAssignmentTime() {
+
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(2239063975495496234L);
+
+	
+		for(int i = 0;i<30;i++) {
+		double expectedAssignmentTime = randomGenerator.nextDouble();
+		double actualAssignmentTime = //
+				PeoplePluginData.builder()//
+								.addPersonRange(new PersonRange(0, 15))//								
+								.setAssignmentTime(expectedAssignmentTime)//
+								.build()//
+								.getAssignmentTime();
+		assertEquals(expectedAssignmentTime, actualAssignmentTime);
+		}
+		
+
+		// precondition test : if the assignment time is negative
+		ContractException contractException = assertThrows(ContractException.class, () -> PeoplePluginData.builder().setAssignmentTime(-1));
+		assertEquals(PersonError.NEGATIVE_TIME, contractException.getErrorType());
+
 	}
 
 }
