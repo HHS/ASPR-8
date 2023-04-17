@@ -43,7 +43,7 @@ public class ProtobufTranslatorCore extends TranslatorCore {
         private final Map<String, Message> descriptorMap = new LinkedHashMap<>();
         private final Map<String, ProtocolMessageEnum> typeUrlToEnumMap = new LinkedHashMap<>();
         private final Set<FieldDescriptor> defaultValueFieldsToPrint = new LinkedHashSet<>();
-        private TypeRegistry registry;
+
         private Parser jsonParser;
         private Printer jsonPrinter;
         private boolean ignoringUnknownFields = true;
@@ -73,15 +73,15 @@ public class ProtobufTranslatorCore extends TranslatorCore {
                 typeRegistryBuilder.add(message.getDescriptorForType());
             });
 
-            this.data.registry = typeRegistryBuilder.build();
+            TypeRegistry registry = typeRegistryBuilder.build();
 
-            Parser parser = JsonFormat.parser().usingTypeRegistry(this.data.registry);
+            Parser parser = JsonFormat.parser().usingTypeRegistry(registry);
             if (this.data.ignoringUnknownFields) {
                 parser = parser.ignoringUnknownFields();
             }
             this.data.jsonParser = parser;
 
-            Printer printer = JsonFormat.printer().usingTypeRegistry(this.data.registry);
+            Printer printer = JsonFormat.printer().usingTypeRegistry(registry);
 
             if (!this.data.defaultValueFieldsToPrint.isEmpty()) {
                 printer = printer.includingDefaultValueFields(this.data.defaultValueFieldsToPrint);
@@ -111,18 +111,14 @@ public class ProtobufTranslatorCore extends TranslatorCore {
             return this;
         }
 
-        public Builder addDescriptor(Message message) {
-            populate(message);
-            return this;
-        }
+        // public Builder addDescriptor(Message message) {
+        //     populate(message);
+        //     return this;
+        // }
 
         @Override
         public <I, S> Builder addTranslatorSpec(AbstractTranslatorSpec<I, S> translatorSpec) {
-            this.data.classToTranslatorSpecMap.putIfAbsent(translatorSpec.getInputObjectClass(),
-                    translatorSpec);
-            this.data.classToTranslatorSpecMap.putIfAbsent(translatorSpec.getAppObjectClass(), translatorSpec);
-
-            this.data.translatorSpecs.add(translatorSpec);
+           super.addTranslatorSpec(translatorSpec);
 
             if (translatorSpec.getDefaultInstanceForInputObject() instanceof Message) {
                 populate((Message) translatorSpec.getDefaultInstanceForInputObject());
@@ -221,10 +217,11 @@ public class ProtobufTranslatorCore extends TranslatorCore {
 
         try {
             this.data.jsonParser.merge(jsonObject.toString(), builder);
+            Message message = builder.build();
             if (this.debug) {
-                printJsonToConsole(builder.build());
+                printJsonToConsole(message);
             }
-            return convertInputObject(builder.build());
+            return convertInputObject(message);
         } catch (InvalidProtocolBufferException e) {
             throw new RuntimeException(e);
         }

@@ -19,8 +19,8 @@ public abstract class TranslatorCore {
     }
 
     protected static class Data {
-        public final Map<Class<?>, ITranslatorSpec> classToTranslatorSpecMap = new LinkedHashMap<>();
-        public final Set<ITranslatorSpec> translatorSpecs = new LinkedHashSet<>();
+        protected final Map<Class<?>, ITranslatorSpec> classToTranslatorSpecMap = new LinkedHashMap<>();
+        protected final Set<ITranslatorSpec> translatorSpecs = new LinkedHashSet<>();
 
         protected Data() {
         }

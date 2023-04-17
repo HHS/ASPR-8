@@ -1,14 +1,20 @@
 package gov.hhs.aspr.gcm.translation.core;
 
 public abstract class AbstractTranslatorSpec<I, S> implements ITranslatorSpec {
-    protected boolean initialized = false;
+    private boolean initialized = false;
 
-    public abstract <T extends TranslatorCore> void init(T translator);
+    public <T extends TranslatorCore> void init(T translator) {
+        this.initialized = true;
+    }
 
     protected void checkInit() {
         if (!this.initialized) {
             throw new RuntimeException("Translator not initialized.");
         }
+    }
+
+    boolean isInitialized() {
+        return initialized;
     }
 
     @SuppressWarnings("unchecked")

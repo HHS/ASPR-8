@@ -127,6 +127,7 @@ public class TranslatorController {
     }
 
     protected TranslatorCore.Builder getTranslatorCoreBuilder() {
+        // TODO: only return if null
         if (this.translatorCore == null || !this.translatorCore.isInitialized()) {
             return this.data.translatorCoreBuilder;
         }
