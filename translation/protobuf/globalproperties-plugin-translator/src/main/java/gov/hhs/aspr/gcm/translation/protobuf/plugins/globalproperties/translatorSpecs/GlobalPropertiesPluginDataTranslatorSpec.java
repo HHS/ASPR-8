@@ -1,10 +1,10 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.globalproperties.translatorSpecs;
 
+import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractProtobufTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.globalproperties.input.GlobalPropertiesPluginDataInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.input.PropertyDefinitionInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.input.PropertyDefinitionMapInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.input.PropertyValueMapInput;
-import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractProtobufTranslatorSpec;
 import plugins.globalproperties.GlobalPropertiesPluginData;
 import plugins.globalproperties.support.GlobalPropertyId;
 import plugins.util.properties.PropertyDefinition;
@@ -22,7 +22,7 @@ public class GlobalPropertiesPluginDataTranslatorSpec
             PropertyDefinition propertyDefinition = this.translator
                     .convertInputObject(propertyDefinitionMapInput.getPropertyDefinition());
 
-            builder.defineGlobalProperty(propertyId, propertyDefinition);
+            builder.defineGlobalProperty(propertyId, propertyDefinition, propertyDefinitionMapInput.getTime());
         }
 
         for (PropertyValueMapInput propertyValueMapInput : inputObject.getGlobalPropertyValuesList()) {
@@ -31,7 +31,7 @@ public class GlobalPropertiesPluginDataTranslatorSpec
                     GlobalPropertyId.class);
             Object value = this.translator.getObjectFromAny(propertyValueMapInput.getPropertyValue());
 
-            builder.setGlobalPropertyValue(propertyId, value);
+            builder.setGlobalPropertyValue(propertyId, value, propertyValueMapInput.getTime());
         }
 
         return builder.build();
@@ -51,6 +51,7 @@ public class GlobalPropertiesPluginDataTranslatorSpec
                     .newBuilder()
                     .setPropertyDefinition(propertyDefinitionInput)
                     .setPropertyId(this.translator.getAnyFromObject(propertyId, GlobalPropertyId.class))
+                    .setTime(simObject.getGlobalPropertyDefinitionTime(propertyId))
                     .build();
 
             builder.addGlobalPropertyDefinitinions(propertyDefinitionMapInput);
@@ -61,6 +62,7 @@ public class GlobalPropertiesPluginDataTranslatorSpec
                         .newBuilder()
                         .setPropertyId(this.translator.getAnyFromObject(propertyId, GlobalPropertyId.class))
                         .setPropertyValue(this.translator.getAnyFromObject(propertyValue))
+                        .setTime(simObject.getGlobalPropertyTime(propertyId))
                         .build();
                 builder.addGlobalPropertyValues(propertyValueMapInput);
             }
