@@ -10,7 +10,7 @@
     <name>gcm.translation :: protobuf :: protobuf-parent</name>
 
     <properties>
-        <revision>2.2.0-SNAPSHOT</revision>
+        <revision>2.1.0</revision>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
@@ -34,8 +34,6 @@
         <protobuf.version>3.21.12</protobuf.version>
         <protoc.version>3.21.12</protoc.version>
         <proto-definitions.version>1.4.0</proto-definitions.version>
-
-        <protoc>protoc</protoc>
         <protobuf.basedir>${project.basedir}/..</protobuf.basedir>
         <protobuf.source.dir>${protobuf.basedir}/src</protobuf.source.dir>
         <generated.sources.dir>${project.build.directory}/generated-sources</generated.sources.dir>
@@ -356,24 +354,6 @@
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
-            <modules>
-                <module>nucleus-translator</module>
-                <module>properties-plugin-translator</module>
-                <module>stochastics-plugin-translator</module>
-                <module>globalproperties-plugin-translator</module>
-                <module>people-plugin-translator</module>
-                <module>groups-plugin-translator</module>
-                <module>regions-plugin-translator</module>
-                <module>personproperties-plugin-translator</module>
-                <module>resources-plugin-translator</module>
-                <module>materials-plugin-translator</module>
-                <module>reports-plugin-translator</module>
-            </modules>
-        </profile>
-        
-        <!-- will build the uber jar that contains all the individual child projects -->
-        <profile>
-            <id>all-jar</id>
             <modules>
                 <module>nucleus-translator</module>
                 <module>properties-plugin-translator</module>
