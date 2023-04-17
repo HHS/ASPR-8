@@ -24,8 +24,6 @@ enum TestGlobalPropertyIdInput {
 message GlobalPropertiesPluginDataInput {
     repeated PropertyDefinitionMapInput globalPropertyDefinitinions = 1;
     repeated PropertyValueMapInput globalPropertyValues = 2;
-    repeated GlobalPropertyTimeInput globalPropertyDefinitionTimes = 3;
-    repeated GlobalPropertyTimeInput globalPropertyTimes = 4;
 }
 
 message GlobalPropertyReportPluginDataInput {
