@@ -329,7 +329,7 @@
                 </executions>
                 <configuration>
                     <includes>
-                        <include>target/generated-sources/**/*.java</include>
+                        <include>${project.build.directory}/generated-sources/**/*.java</include>
                     </includes>
                     <regex>true</regex>
                     <regexFlags>
@@ -370,6 +370,7 @@
                 <module>reports-plugin-translator</module>
             </modules>
         </profile>
+        
         <!-- will build the uber jar that contains all the individual child projects -->
         <profile>
             <id>all-jar</id>
