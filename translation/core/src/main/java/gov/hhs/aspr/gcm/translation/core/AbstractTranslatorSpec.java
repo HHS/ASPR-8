@@ -13,8 +13,8 @@ public abstract class AbstractTranslatorSpec<I, S> implements ITranslatorSpec {
         }
     }
 
-    boolean isInitialized() {
-        return initialized;
+    public boolean isInitialized() {
+        return this.initialized;
     }
 
     @SuppressWarnings("unchecked")

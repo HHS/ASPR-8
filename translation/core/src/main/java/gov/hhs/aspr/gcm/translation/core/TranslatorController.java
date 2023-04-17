@@ -19,7 +19,6 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.math3.util.Pair;
 
-import nucleus.PluginData;
 import util.graph.Graph;
 import util.graph.GraphDepthEvaluator;
 import util.graph.Graphs;
@@ -28,7 +27,6 @@ import util.graph.MutableGraph;
 public class TranslatorController {
     private final Data data;
     private TranslatorCore translatorCore;
-    private final List<PluginData> pluginDatas = Collections.synchronizedList(new ArrayList<>());
     private final List<Object> objects = Collections.synchronizedList(new ArrayList<>());
     private final Map<Class<?>, Translator> appObjectClassToTranslatorMap = new LinkedHashMap<>();
     private Translator focalTranslator = null;
@@ -127,12 +125,11 @@ public class TranslatorController {
     }
 
     protected TranslatorCore.Builder getTranslatorCoreBuilder() {
-        // TODO: only return if null
-        if (this.translatorCore == null || !this.translatorCore.isInitialized()) {
+        if (this.translatorCore == null) {
             return this.data.translatorCoreBuilder;
         }
         throw new RuntimeException(
-                "Trying to call readInput() or writeInput() before calling initTranslators on the TranslatorController.");
+                "Trying to get TranslatorCoreBuilder after it was built and/or initialized");
 
     }
 
@@ -145,18 +142,14 @@ public class TranslatorController {
         this.data.markerInterfaceClassMap.put(classRef, markerInterface);
     }
 
-    protected <U> void readJsonInput(Reader reader, Class<U> inputClassRef) {
-        Object simObject = this.translatorCore.readJson(reader, inputClassRef);
+    protected <U> void readInput(Reader reader, Class<U> inputClassRef) {
+        Object simObject = this.translatorCore.readInput(reader, inputClassRef);
 
-        if (simObject instanceof PluginData) {
-            this.pluginDatas.add((PluginData) simObject);
-        } else {
-            this.objects.add(simObject);
-        }
+        this.objects.add(simObject);
     }
 
-    protected <M extends U, U> void writeJsonOutput(Writer writer, M simObject, Optional<Class<U>> superClass) {
-        this.translatorCore.writeJson(writer, simObject, superClass);
+    protected <M extends U, U> void writeOutput(Writer writer, M simObject, Optional<Class<U>> superClass) {
+        this.translatorCore.writeOutput(writer, simObject, superClass);
     }
 
     private void validateCoreTranslator() {
@@ -181,6 +174,8 @@ public class TranslatorController {
 
         this.translatorCore.init();
 
+        this.translatorCore.translatorSpecsAreInitialized();
+
         return this;
     }
 
@@ -190,7 +185,7 @@ public class TranslatorController {
         this.data.readerMap.keySet().parallelStream().forEach(reader -> {
             Class<?> classRef = this.data.readerMap.get(reader);
 
-            this.readJsonInput(reader, classRef);
+            this.readInput(reader, classRef);
         });
 
         return this;
@@ -202,7 +197,7 @@ public class TranslatorController {
         for (Reader reader : this.data.readerMap.keySet()) {
             Class<?> classRef = this.data.readerMap.get(reader);
 
-            this.readJsonInput(reader, classRef);
+            this.readInput(reader, classRef);
         }
 
         return this;
@@ -212,13 +207,6 @@ public class TranslatorController {
         validateCoreTranslator();
 
         int scenarioId = 0;
-
-        for (PluginData pluginData : this.pluginDatas) {
-            Class<?> classRef = pluginData.getClass();
-            Writer writer = this.data.writerMap.get(new Pair<Class<?>, Integer>(classRef, scenarioId));
-
-            this.writeJsonOutput(writer, pluginData, Optional.empty());
-        }
 
         for (Object simObject : this.objects) {
 
@@ -230,7 +218,7 @@ public class TranslatorController {
 
             Writer writer = this.data.writerMap.get(new Pair<Class<?>, Integer>(classRef, scenarioId));
 
-            this.writeJsonOutput(writer, simObject, Optional.empty());
+            this.writeOutput(writer, simObject, Optional.empty());
         }
     }
 
@@ -253,24 +241,11 @@ public class TranslatorController {
     public <T> void writeOutput(T object, Integer scenarioId) {
         validateCoreTranslator();
 
-        Writer writer = this.data.writerMap.get(new Pair<Class<?>, Integer>(object.getClass(), 0));
+        Writer writer = this.data.writerMap.get(new Pair<Class<?>, Integer>(object.getClass(), scenarioId));
 
-        this.writeJsonOutput(writer, object, Optional.empty());
+        this.writeOutput(writer, object, Optional.empty());
     }
 
-    public List<PluginData> getPluginDatas() {
-        return this.pluginDatas;
-    }
-
-    public <T extends PluginData> T getPluginData(Class<T> classRef) {
-        for (PluginData pluginData : this.pluginDatas) {
-            if (classRef.isAssignableFrom(pluginData.getClass())) {
-                return classRef.cast(pluginData);
-            }
-        }
-
-        throw new RuntimeException("Unable to find the specified PluginData");
-    }
 
     public <T> T getObject(Class<T> classRef) {
         for (Object object : this.objects) {
@@ -280,6 +255,17 @@ public class TranslatorController {
         }
 
         throw new RuntimeException("Unable to find the specified Object");
+    }
+
+    public <T> List<T> getObjects(Class<T> classRef) {
+        List<T> objects = new ArrayList<>();
+        for (Object object : this.objects) {
+            if (classRef.isAssignableFrom(object.getClass())) {
+                objects.add(classRef.cast(object));
+            }
+        }
+
+        return objects;
     }
 
     public List<Object> getObjects() {

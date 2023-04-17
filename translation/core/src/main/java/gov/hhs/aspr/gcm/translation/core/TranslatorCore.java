@@ -62,15 +62,22 @@ public abstract class TranslatorCore {
         return this.isInitialized;
     }
 
-    public abstract <M extends U, U> void writeJson(Writer writer, M simObject, Optional<Class<U>> superClass);
+    void translatorSpecsAreInitialized() {
 
-    public abstract <T, U> T readJson(Reader reader, Class<U> inputClassRef);
+        for (ITranslatorSpec translatorSpec : this.data.translatorSpecs) {
+            if (!translatorSpec.isInitialized()) {
+                throw new RuntimeException("TranslatoSpec class was not properly initialized, be sure to call super()");
+            }
+        }
+
+    }
+
+    public abstract <M extends U, U> void writeOutput(Writer writer, M simObject, Optional<Class<U>> superClass);
+
+    public abstract <T, U> T readInput(Reader reader, Class<U> inputClassRef);
 
     public <T extends U, U, E extends Enum<E>> T convertInputEnum(Enum<E> inputEnum, Class<U> superClass) {
         T convertedEnum = convertInputEnum(inputEnum);
-
-        // verify translated object can be casted to the super class
-        superClassCastCheck(convertedEnum, superClass);
 
         return convertedEnum;
     }
@@ -80,11 +87,7 @@ public abstract class TranslatorCore {
     }
 
     public <T extends U, U> T convertInputObject(Object inputObject, Class<U> superClass) {
-
         T convertInputObject = convertInputObject(inputObject);
-
-        // verify translated object can be casted to the super class
-        superClassCastCheck(convertInputObject, superClass);
 
         return convertInputObject;
     }
@@ -94,31 +97,11 @@ public abstract class TranslatorCore {
     }
 
     public <T, M extends U, U> T convertSimObject(M simObject, Class<U> superClass) {
-
-        superClassCastCheck(simObject, superClass);
-
         return getTranslatorForClass(superClass).convert(simObject);
     }
 
     public <T> T convertSimObject(Object simObject) {
         return getTranslatorForClass(simObject.getClass()).convert(simObject);
-    }
-
-    protected <U, M extends U> void superClassCastCheck(M object, Class<U> superClass) {
-        validateObjectNotNull(object);
-
-        try {
-            // verify object can be casted to the super class
-            superClass.cast(object);
-        } catch (ClassCastException e) {
-            throw new RuntimeException("Unable to cast:" + object.getClass() + " to: " + superClass, e);
-        }
-    }
-
-    private void validateObjectNotNull(Object object) {
-        if (object == null) {
-            throw new RuntimeException("Object is null");
-        }
     }
 
     protected ITranslatorSpec getTranslatorForClass(Class<?> classRef) {
