@@ -45,7 +45,7 @@
     -->
     <dependencyManagement>
         <dependencies>
-            <!-- dependency for core protobuf translation logic -->
+            <!-- core protobuf translation dependency  -->
             <dependency>
                 <groupId>gov.hhs.aspr.translation</groupId>
                 <artifactId>protobuf-core</artifactId>
@@ -58,6 +58,7 @@
                 <artifactId>gcm4</artifactId>
                 <version>${gcm.version}</version>
                 <exclusions>
+                    <!-- exclude util since protobuf-core includes it -->
                     <exclusion>
                         <groupId>gov.hhs.aspr</groupId>
                         <artifactId>util</artifactId>
@@ -125,6 +126,11 @@
         recommended to have module names match artifact ids.
      -->
     <modules>
+        <!--
+            proto-definitions does not inheirt from this parent pom,
+            however including it here insures that the project will be
+            built each time this or any child projects are built
+        -->
         <module>proto-definitions</module>
     </modules>
 
@@ -184,7 +190,7 @@
             </plugins>
         </pluginManagement>
 
-        <!-- 
+        <!--
             The plugin executions defined here will be executed for each project that inherits this project.
             The plugins here are listed in order of execution to aid in understanding when they will run.
             Look up "maven lifecycle phases" and compare those to the phases in each execution for a more
@@ -205,7 +211,7 @@
                 </executions>
             </plugin>
 
-            <!-- unpacks the proto definitions into the build directory (/target) -->
+            <!-- unpacks the proto definitions and core proto definitions into the build directory (/target) -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
@@ -345,7 +351,7 @@
         </plugins>
     </build>
 
-    <!-- 
+    <!--
         A listing of project-local build profiles which will modify the build process when activated.
      -->
     <profiles>
@@ -370,7 +376,7 @@
                 <module>reports-plugin-translator</module>
             </modules>
         </profile>
-        
+
         <!-- will build the uber jar that contains all the individual child projects -->
         <profile>
             <id>all-jar</id>
@@ -389,6 +395,8 @@
                 <module>plugin-translators-all</module>
             </modules>
         </profile>
+        
+        <!-- each profile herein-after will build ONLY the child after which it is named -->
         <profile>
             <id>nucleus</id>
             <modules>
@@ -414,7 +422,7 @@
                 <module>properties-plugin-translator</module>
                 <module>globalproperties-plugin-translator</module>
             </modules>
-        </profile>  
+        </profile>
         <profile>
             <id>groups</id>
             <modules>
