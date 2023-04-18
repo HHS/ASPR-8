@@ -88,7 +88,7 @@ public class AppTest {
 
         TranslatorController translatorController = TranslatorController.builder()
                 .setTranslatorCoreBuilder(ProtobufTranslatorCore.builder())
-                .addTranslator(GlobalPropertiesTranslator.builder(true).build())
+                .addTranslator(GlobalPropertiesTranslator.getTranslatorWithReport())
                 .addTranslator(PropertiesTranslator.getTranslator())
                 .addTranslator(ReportsTranslator.getTranslator())
                 .addReader(inputFilePath.resolve(fileName), GlobalPropertyReportPluginDataInput.class)
