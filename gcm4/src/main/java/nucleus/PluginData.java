@@ -27,13 +27,5 @@ public interface PluginData {
 	 * state such that invocation of pluginData.getCloneBuilder().build() will
 	 * generate a copy of the current plugin.
 	 */
-	public PluginDataBuilder getCloneBuilder();
-
-	/**
-	 * Returns a PluginDataBuilder that can build the plugin data. The returned
-	 * builder should be initialized as empty.
-	 */
-	public default PluginDataBuilder getEmptyBuilder() {
-		return null;
-	};
+	public PluginDataBuilder getCloneBuilder();	
 }
