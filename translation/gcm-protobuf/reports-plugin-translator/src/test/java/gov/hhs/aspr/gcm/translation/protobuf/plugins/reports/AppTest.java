@@ -41,8 +41,8 @@ public class AppTest {
         TranslatorController translatorController = TranslatorController.builder()
                 .setTranslatorCoreBuilder(ProtobufTranslatorCore.builder())
                 .addTranslator(ReportsTranslator.getTranslator())
-                .addReader(inputFilePath.resolve(fileName), ReportLabelInput.class)
-                .addWriter(outputFilePath.resolve(fileName), ReportLabel.class)
+                .addInputFilePath(inputFilePath.resolve(fileName), ReportLabelInput.class)
+                .addOutputFilePath(outputFilePath.resolve(fileName), ReportLabel.class)
                 .build();
 
         translatorController.readInput();

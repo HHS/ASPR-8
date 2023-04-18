@@ -67,8 +67,8 @@ public class AppTest {
                 .addTranslator(RegionsTranslator.getTranslator())
                 .addTranslator(PropertiesTranslator.getTranslator())
                 .addTranslator(PeopleTranslator.getTranslator())
-                .addReader(inputFilePath.resolve(fileName), RegionsPluginDataInput.class)
-                .addWriter(outputFilePath.resolve(fileName), RegionsPluginData.class)
+                .addInputFilePath(inputFilePath.resolve(fileName), RegionsPluginDataInput.class)
+                .addOutputFilePath(outputFilePath.resolve(fileName), RegionsPluginData.class)
                 .build();
 
         translatorController.readInput();
@@ -138,9 +138,9 @@ public class AppTest {
                 .addTranslator(PropertiesTranslator.getTranslator())
                 .addTranslator(PeopleTranslator.getTranslator())
                 .addTranslator(ReportsTranslator.getTranslator())
-                .addReader(inputFilePath.resolve(fileName),
+                .addInputFilePath(inputFilePath.resolve(fileName),
                         RegionPropertyReportPluginDataInput.class)
-                .addWriter(outputFilePath.resolve(fileName),
+                .addOutputFilePath(outputFilePath.resolve(fileName),
                         RegionPropertyReportPluginData.class)
                 .build();
 
@@ -192,9 +192,9 @@ public class AppTest {
                 .addTranslator(PropertiesTranslator.getTranslator())
                 .addTranslator(PeopleTranslator.getTranslator())
                 .addTranslator(ReportsTranslator.getTranslator())
-                .addReader(inputFilePath.resolve(fileName),
+                .addInputFilePath(inputFilePath.resolve(fileName),
                         RegionTransferReportPluginDataInput.class)
-                .addWriter(outputFilePath.resolve(fileName),
+                .addOutputFilePath(outputFilePath.resolve(fileName),
                         RegionTransferReportPluginData.class)
                 .build();
 

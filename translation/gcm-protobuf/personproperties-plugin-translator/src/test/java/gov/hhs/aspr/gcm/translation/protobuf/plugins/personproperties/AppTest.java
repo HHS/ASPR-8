@@ -66,8 +66,8 @@ public class AppTest {
                 .addTranslator(PropertiesTranslator.getTranslator())
                 .addTranslator(PeopleTranslator.getTranslator())
                 .addTranslator(ReportsTranslator.getTranslator())
-                .addReader(inputFilePath.resolve(fileName), PersonPropertiesPluginDataInput.class)
-                .addWriter(outputFilePath.resolve(fileName), PersonPropertiesPluginData.class)
+                .addInputFilePath(inputFilePath.resolve(fileName), PersonPropertiesPluginDataInput.class)
+                .addOutputFilePath(outputFilePath.resolve(fileName), PersonPropertiesPluginData.class)
                 .build();
 
         translatorController.readInput();
@@ -138,8 +138,8 @@ public class AppTest {
                 .addTranslator(PropertiesTranslator.getTranslator())
                 .addTranslator(PeopleTranslator.getTranslator())
                 .addTranslator(ReportsTranslator.getTranslator())
-                .addReader(inputFilePath.resolve(fileName), PersonPropertyReportPluginDataInput.class)
-                .addWriter(outputFilePath.resolve(fileName), PersonPropertyReportPluginData.class)
+                .addInputFilePath(inputFilePath.resolve(fileName), PersonPropertyReportPluginDataInput.class)
+                .addOutputFilePath(outputFilePath.resolve(fileName), PersonPropertyReportPluginData.class)
                 .build();
 
         translatorController.readInput();
@@ -194,8 +194,8 @@ public class AppTest {
                 .addTranslator(PropertiesTranslator.getTranslator())
                 .addTranslator(PeopleTranslator.getTranslator())
                 .addTranslator(ReportsTranslator.getTranslator())
-                .addReader(inputFilePath.resolve(fileName), PersonPropertyInteractionReportPluginDataInput.class)
-                .addWriter(outputFilePath.resolve(fileName), PersonPropertyInteractionReportPluginData.class)
+                .addInputFilePath(inputFilePath.resolve(fileName), PersonPropertyInteractionReportPluginDataInput.class)
+                .addOutputFilePath(outputFilePath.resolve(fileName), PersonPropertyInteractionReportPluginData.class)
                 .build();
 
         translatorController.readInput();

@@ -64,24 +64,23 @@ public class TranslatorController {
             return translatorController;
         }
 
-        public Builder addReader(Path filePath, Class<?> classRef) {
+        public Builder addInputFilePath(Path filePath, Class<?> classRef) {
             this.data.inputFilePathMap.put(filePath, classRef);
-
             return this;
         }
 
-        public Builder addWriter(Path filePath, Class<?> classRef) {
-            return this.addWriterForScenario(filePath, classRef, 0);
+        public Builder addOutputFilePath(Path filePath, Class<?> classRef) {
+            return this.addOutputFilePath(filePath, classRef, 0);
         }
 
-        public Builder addWriterForScenario(Path filePath, Class<?> classRef, Integer scenarioId) {
+        public Builder addOutputFilePath(Path filePath, Class<?> classRef, Integer scenarioId) {
             Pair<Class<?>, Integer> key = new Pair<>(classRef, scenarioId);
 
             if (this.data.outputFilePathMap.containsKey(key)) {
                 throw new RuntimeException("Attempted to overwrite an existing output file.");
             }
-            this.data.outputFilePathMap.put(key, filePath);
 
+            this.data.outputFilePathMap.put(key, filePath);
             return this;
         }
 
@@ -102,7 +101,6 @@ public class TranslatorController {
 
         public Builder setTranslatorCoreBuilder(TranslatorCore.Builder translatorCoreBuilder) {
             this.data.translatorCoreBuilder = translatorCoreBuilder;
-
             return this;
         }
     }
@@ -133,11 +131,6 @@ public class TranslatorController {
     }
 
     protected <T, U extends T> void addMarkerInterface(Class<U> classRef, Class<T> markerInterface) {
-
-        if (!markerInterface.isAssignableFrom(classRef)) {
-            throw new RuntimeException("cannot cast " + classRef.getName() + " to " + markerInterface.getName());
-        }
-
         this.data.markerInterfaceClassMap.put(classRef, markerInterface);
     }
 
@@ -152,9 +145,13 @@ public class TranslatorController {
     }
 
     private void validateCoreTranslator() {
-        if (this.translatorCore == null || !this.translatorCore.isInitialized()) {
+        if (this.translatorCore == null) {
             throw new RuntimeException(
-                    "Trying to call readInput() or writeInput() after calling initTranslators on the TranslatorController.");
+                    "TranslatorCore has not been built");
+        }
+
+        if (!this.translatorCore.isInitialized()) {
+            throw new RuntimeException("TranslatorCore has been built but has not been initialized.");
         }
     }
 
@@ -236,6 +233,10 @@ public class TranslatorController {
 
     public void writeOutput() {
         validateCoreTranslator();
+
+        if(this.objects.isEmpty()) {
+            throw new RuntimeException("Calling this method without having also called readInput() is not allowed.");
+        }
 
         int scenarioId = 0;
 

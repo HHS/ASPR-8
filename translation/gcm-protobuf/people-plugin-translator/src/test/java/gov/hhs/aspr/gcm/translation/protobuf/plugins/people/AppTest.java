@@ -45,8 +45,8 @@ public class AppTest {
         TranslatorController translatorController = TranslatorController.builder()
                 .setTranslatorCoreBuilder(ProtobufTranslatorCore.builder())
                 .addTranslator(PeopleTranslator.getTranslator())
-                .addReader(inputFilePath.resolve(fileName), PeoplePluginDataInput.class)
-                .addWriter(outputFilePath.resolve(fileName), PeoplePluginData.class)
+                .addInputFilePath(inputFilePath.resolve(fileName), PeoplePluginDataInput.class)
+                .addOutputFilePath(outputFilePath.resolve(fileName), PeoplePluginData.class)
                 .build();
 
         translatorController.readInput();

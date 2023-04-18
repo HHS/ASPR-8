@@ -56,8 +56,8 @@ public class AppTest {
                 .addTranslator(
                         GlobalPropertiesTranslator.getTranslator())
                 .addTranslator(PropertiesTranslator.getTranslator())
-                .addReader(inputFilePath.resolve(fileName), GlobalPropertiesPluginDataInput.class)
-                .addWriter(outputFilePath.resolve(fileName), GlobalPropertiesPluginData.class)
+                .addInputFilePath(inputFilePath.resolve(fileName), GlobalPropertiesPluginDataInput.class)
+                .addOutputFilePath(outputFilePath.resolve(fileName), GlobalPropertiesPluginData.class)
                 .build();
 
         translatorController.readInput();
@@ -91,8 +91,8 @@ public class AppTest {
                 .addTranslator(GlobalPropertiesTranslator.getTranslatorWithReport())
                 .addTranslator(PropertiesTranslator.getTranslator())
                 .addTranslator(ReportsTranslator.getTranslator())
-                .addReader(inputFilePath.resolve(fileName), GlobalPropertyReportPluginDataInput.class)
-                .addWriter(outputFilePath.resolve(fileName), GlobalPropertyReportPluginData.class)
+                .addInputFilePath(inputFilePath.resolve(fileName), GlobalPropertyReportPluginDataInput.class)
+                .addOutputFilePath(outputFilePath.resolve(fileName), GlobalPropertyReportPluginData.class)
                 .build();
 
         translatorController.readInput();

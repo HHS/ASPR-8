@@ -17,7 +17,6 @@ public final class Translator {
         private final Set<TranslatorId> dependencies = new LinkedHashSet<>();
 
         private Data() {
-
         }
 
     }

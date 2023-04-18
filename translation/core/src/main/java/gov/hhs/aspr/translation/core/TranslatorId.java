@@ -8,9 +8,9 @@ public interface TranslatorId {
 	public int hashCode();
 
 	/**
-	 * Two plugin bundle ids are equal if and only if they represent the same plugin
+	 * Two Translator ids are equal if and only if they represent the same plugin
 	 * bundle.
-	 * Plugin bundle ids are generally implemented as static instances.
+	 * Translator ids are generally implemented as static instances.
 	 */
 	@Override
 	public boolean equals(Object obj);

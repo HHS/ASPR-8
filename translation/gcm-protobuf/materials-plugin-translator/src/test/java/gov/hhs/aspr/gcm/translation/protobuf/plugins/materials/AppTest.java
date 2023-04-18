@@ -81,8 +81,8 @@ public class AppTest {
 				.addTranslator(ResourcesTranslator.getTranslator())
 				.addTranslator(RegionsTranslator.getTranslator())
 				.addTranslator(PeopleTranslator.getTranslator())
-				.addReader(inputFilePath.resolve(fileName), MaterialsPluginDataInput.class)
-				.addWriter(outputFilePath.resolve(fileName), MaterialsPluginData.class)
+				.addInputFilePath(inputFilePath.resolve(fileName), MaterialsPluginDataInput.class)
+				.addOutputFilePath(outputFilePath.resolve(fileName), MaterialsPluginData.class)
 
 				.build();
 
@@ -231,8 +231,8 @@ public class AppTest {
 				.addTranslator(ResourcesTranslator.getTranslator())
 				.addTranslator(RegionsTranslator.getTranslator())
 				.addTranslator(PeopleTranslator.getTranslator())
-				.addReader(inputFilePath.resolve(fileName), BatchStatusReportPluginDataInput.class)
-				.addWriter(outputFilePath.resolve(fileName), BatchStatusReportPluginData.class)
+				.addInputFilePath(inputFilePath.resolve(fileName), BatchStatusReportPluginDataInput.class)
+				.addOutputFilePath(outputFilePath.resolve(fileName), BatchStatusReportPluginData.class)
 				.build();
 
 		translatorController.readInput();
@@ -264,8 +264,8 @@ public class AppTest {
 				.addTranslator(ResourcesTranslator.getTranslator())
 				.addTranslator(RegionsTranslator.getTranslator())
 				.addTranslator(PeopleTranslator.getTranslator())
-				.addReader(inputFilePath.resolve(fileName), MaterialsProducerPropertyReportPluginDataInput.class)
-				.addWriter(outputFilePath.resolve(fileName),
+				.addInputFilePath(inputFilePath.resolve(fileName), MaterialsProducerPropertyReportPluginDataInput.class)
+				.addOutputFilePath(outputFilePath.resolve(fileName),
 						MaterialsProducerPropertyReportPluginData.class)
 				.build();
 
@@ -298,8 +298,8 @@ public class AppTest {
 				.addTranslator(ResourcesTranslator.getTranslator())
 				.addTranslator(RegionsTranslator.getTranslator())
 				.addTranslator(PeopleTranslator.getTranslator())
-				.addReader(inputFilePath.resolve(fileName), MaterialsProducerResourceReportPluginDataInput.class)
-				.addWriter(outputFilePath.resolve(fileName), MaterialsProducerResourceReportPluginData.class)
+				.addInputFilePath(inputFilePath.resolve(fileName), MaterialsProducerResourceReportPluginDataInput.class)
+				.addOutputFilePath(outputFilePath.resolve(fileName), MaterialsProducerResourceReportPluginData.class)
 				.build();
 
 		translatorController.readInput();
@@ -331,8 +331,8 @@ public class AppTest {
 				.addTranslator(ResourcesTranslator.getTranslator())
 				.addTranslator(RegionsTranslator.getTranslator())
 				.addTranslator(PeopleTranslator.getTranslator())
-				.addReader(inputFilePath.resolve(fileName), StageReportPluginDataInput.class)
-				.addWriter(outputFilePath.resolve(fileName), StageReportPluginData.class)
+				.addInputFilePath(inputFilePath.resolve(fileName), StageReportPluginDataInput.class)
+				.addOutputFilePath(outputFilePath.resolve(fileName), StageReportPluginData.class)
 				.build();
 
 		translatorController.readInput();

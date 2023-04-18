@@ -67,8 +67,8 @@ public class AppTest {
                 .addTranslator(GroupsTranslator.getTranslator())
                 .addTranslator(PropertiesTranslator.getTranslator())
                 .addTranslator(PeopleTranslator.getTranslator())
-                .addReader(inputFilePath.resolve(fileName), GroupsPluginDataInput.class)
-                .addWriter(outputFilePath.resolve(fileName), GroupsPluginData.class)
+                .addInputFilePath(inputFilePath.resolve(fileName), GroupsPluginDataInput.class)
+                .addOutputFilePath(outputFilePath.resolve(fileName), GroupsPluginData.class)
                 .build();
 
         translatorController.readInput();
@@ -172,8 +172,8 @@ public class AppTest {
                 .addTranslator(PropertiesTranslator.getTranslator())
                 .addTranslator(PeopleTranslator.getTranslator())
                 .addTranslator(ReportsTranslator.getTranslator())
-                .addReader(inputFilePath.resolve(fileName), GroupPropertyReportPluginDataInput.class)
-                .addWriter(outputFilePath.resolve(fileName), GroupPropertyReportPluginData.class)
+                .addInputFilePath(inputFilePath.resolve(fileName), GroupPropertyReportPluginDataInput.class)
+                .addOutputFilePath(outputFilePath.resolve(fileName), GroupPropertyReportPluginData.class)
                 .build();
 
         translatorController.readInput();

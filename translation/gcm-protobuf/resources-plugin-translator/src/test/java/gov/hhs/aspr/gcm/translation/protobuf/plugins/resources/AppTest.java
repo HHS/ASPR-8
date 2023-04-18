@@ -70,8 +70,8 @@ public class AppTest {
                 .addTranslator(PropertiesTranslator.getTranslator())
                 .addTranslator(PeopleTranslator.getTranslator())
                 .addTranslator(RegionsTranslator.getTranslator())
-                .addReader(inputFilePath.resolve(fileName), ResourcesPluginDataInput.class)
-                .addWriter(outputFilePath.resolve(fileName), ResourcesPluginData.class)
+                .addInputFilePath(inputFilePath.resolve(fileName), ResourcesPluginDataInput.class)
+                .addOutputFilePath(outputFilePath.resolve(fileName), ResourcesPluginData.class)
                 .build();
 
         translatorController.readInput();
@@ -130,9 +130,9 @@ public class AppTest {
                 .addTranslator(PeopleTranslator.getTranslator())
                 .addTranslator(RegionsTranslator.getTranslator())
                 .addTranslator(ReportsTranslator.getTranslator())
-                .addReader(inputFilePath.resolve(fileName),
+                .addInputFilePath(inputFilePath.resolve(fileName),
                         PersonResourceReportPluginDataInput.class)
-                .addWriter(outputFilePath.resolve(fileName),
+                .addOutputFilePath(outputFilePath.resolve(fileName),
                         PersonResourceReportPluginData.class)
                 .build();
 
@@ -184,9 +184,9 @@ public class AppTest {
                 .addTranslator(PeopleTranslator.getTranslator())
                 .addTranslator(RegionsTranslator.getTranslator())
                 .addTranslator(ReportsTranslator.getTranslator())
-                .addReader(inputFilePath.resolve(fileName),
+                .addInputFilePath(inputFilePath.resolve(fileName),
                         ResourcePropertyReportPluginDataInput.class)
-                .addWriter(outputFilePath.resolve(fileName),
+                .addOutputFilePath(outputFilePath.resolve(fileName),
                         ResourcePropertyReportPluginData.class)
                 .build();
 
@@ -218,9 +218,9 @@ public class AppTest {
                 .addTranslator(PeopleTranslator.getTranslator())
                 .addTranslator(RegionsTranslator.getTranslator())
                 .addTranslator(ReportsTranslator.getTranslator())
-                .addReader(inputFilePath.resolve(fileName),
+                .addInputFilePath(inputFilePath.resolve(fileName),
                         ResourceReportPluginDataInput.class)
-                .addWriter(outputFilePath.resolve(fileName),
+                .addOutputFilePath(outputFilePath.resolve(fileName),
                         ResourceReportPluginData.class)
                 .build();
 

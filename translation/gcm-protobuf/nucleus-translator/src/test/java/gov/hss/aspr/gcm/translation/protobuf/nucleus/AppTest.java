@@ -49,8 +49,8 @@ public class AppTest {
                 .setTranslatorCoreBuilder(ProtobufTranslatorCore.builder()
                         .addTranslatorSpec(new ExamplePlanDataTranslatorSpec()))
                 .addTranslator(NucleusTranslator.getTranslator())
-                .addReader(inputFilePath.resolve(fileName), SimulationStateInput.class)
-                .addWriter(outputFilePath.resolve(fileName), SimulationState.class)
+                .addInputFilePath(inputFilePath.resolve(fileName), SimulationStateInput.class)
+                .addOutputFilePath(outputFilePath.resolve(fileName), SimulationState.class)
                 .build();
 
         translatorController.readInput();

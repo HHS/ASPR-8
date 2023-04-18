@@ -49,8 +49,8 @@ public class AppTest {
         TranslatorController translatorController = TranslatorController.builder()
                 .setTranslatorCoreBuilder(ProtobufTranslatorCore.builder())
                 .addTranslator(StochasticsTranslator.getTranslator())
-                .addReader(inputFilePath.resolve(fileName), StochasticsPluginDataInput.class)
-                .addWriter(outputFilePath.resolve(fileName), StochasticsPluginData.class)
+                .addInputFilePath(inputFilePath.resolve(fileName), StochasticsPluginDataInput.class)
+                .addOutputFilePath(outputFilePath.resolve(fileName), StochasticsPluginData.class)
                 .build();
 
         translatorController.readInput();

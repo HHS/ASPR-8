@@ -46,8 +46,8 @@ public class AppTest {
                         .addTranslatorSpec(new TestMessageTranslatorSpec())
                         .addTranslatorSpec(new Layer1TranslatorSpec()))
                 .addTranslator(PropertiesTranslator.getTranslator())
-                .addReader(inputFilePath.resolve(fileName), PropertyValueMapInput.class)
-                .addWriter(outputFilePath.resolve(fileName), PropertyValueMap.class)
+                .addInputFilePath(inputFilePath.resolve(fileName), PropertyValueMapInput.class)
+                .addOutputFilePath(outputFilePath.resolve(fileName), PropertyValueMap.class)
                 .build();
 
         translatorController.readInput();
