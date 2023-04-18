@@ -134,7 +134,7 @@ public class AppTest {
 
         TranslatorController translatorController = TranslatorController.builder()
                 .setTranslatorCoreBuilder(ProtobufTranslatorCore.builder())
-                .addTranslator(PersonPropertiesTranslator.builder(true).build())
+                .addTranslator(PersonPropertiesTranslator.getTranslatorWithReport())
                 .addTranslator(PropertiesTranslator.getTranslator())
                 .addTranslator(PeopleTranslator.getTranslator())
                 .addTranslator(ReportsTranslator.getTranslator())
@@ -190,7 +190,7 @@ public class AppTest {
 
         TranslatorController translatorController = TranslatorController.builder()
                 .setTranslatorCoreBuilder(ProtobufTranslatorCore.builder())
-                .addTranslator(PersonPropertiesTranslator.builder(true).build())
+                .addTranslator(PersonPropertiesTranslator.getTranslatorWithReport())
                 .addTranslator(PropertiesTranslator.getTranslator())
                 .addTranslator(PeopleTranslator.getTranslator())
                 .addTranslator(ReportsTranslator.getTranslator())

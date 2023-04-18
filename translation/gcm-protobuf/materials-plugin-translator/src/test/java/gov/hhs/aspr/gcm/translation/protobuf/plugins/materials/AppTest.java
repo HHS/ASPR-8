@@ -292,7 +292,7 @@ public class AppTest {
 
 		TranslatorController translatorController = TranslatorController.builder()
 				.setTranslatorCoreBuilder(ProtobufTranslatorCore.builder())
-				.addTranslator(MaterialsTranslator.builder(true).build())
+				.addTranslator(MaterialsTranslator.getTranslatorWithReport())
 				.addTranslator(ReportsTranslator.getTranslator())
 				.addTranslator(PropertiesTranslator.getTranslator())
 				.addTranslator(ResourcesTranslator.getTranslator())
@@ -325,7 +325,7 @@ public class AppTest {
 
 		TranslatorController translatorController = TranslatorController.builder()
 				.setTranslatorCoreBuilder(ProtobufTranslatorCore.builder())
-				.addTranslator(MaterialsTranslator.builder(true).build())
+				.addTranslator(MaterialsTranslator.getTranslatorWithReport())
 				.addTranslator(ReportsTranslator.getTranslator())
 				.addTranslator(PropertiesTranslator.getTranslator())
 				.addTranslator(ResourcesTranslator.getTranslator())
