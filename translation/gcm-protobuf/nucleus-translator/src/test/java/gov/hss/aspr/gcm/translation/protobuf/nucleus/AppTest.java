@@ -2,6 +2,7 @@ package gov.hss.aspr.gcm.translation.protobuf.nucleus;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.List;
@@ -20,20 +21,28 @@ import nucleus.SimulationState;
 import util.random.RandomGeneratorProvider;
 
 public class AppTest {
+    Path basePath = getCurrentDir();
+    Path inputFilePath = basePath.resolve("json");
+    Path outputFilePath = makeOutputDir();
+
+    private Path getCurrentDir() {
+        try {
+            return Path.of(this.getClass().getClassLoader().getResource("").toURI());
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private Path makeOutputDir() {
+        Path path = basePath.resolve("json/output");
+
+        path.toFile().mkdirs();
+
+        return path;
+    }
 
     @Test
     public void testSimulationStateTranslator() {
-        Path basePath = Path.of("").toAbsolutePath();
-
-        if (!basePath.endsWith("nucleus-translator")) {
-            basePath = basePath.resolve("nucleus-translator");
-        }
-
-        Path inputFilePath = basePath.resolve("src/main/resources/json");
-        Path outputFilePath = basePath.resolve("src/main/resources/json/output");
-
-        outputFilePath.toFile().mkdir();
-
         String fileName = "simulationState.json";
 
         TranslatorController translatorController = TranslatorController.builder()
@@ -44,9 +53,9 @@ public class AppTest {
                 .addWriter(outputFilePath.resolve(fileName), SimulationState.class)
                 .build();
 
-        List<Object> objects = translatorController.readInput().getObjects();
+        translatorController.readInput();
 
-        SimulationState actualSimulationState = (SimulationState) objects.get(0);
+        SimulationState actualSimulationState = translatorController.getObject(SimulationState.class);
 
         RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6625494580697137579L);
 
