@@ -3,6 +3,7 @@ package gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
+import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -21,7 +22,6 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.input.Pers
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.input.PersonPropertyReportPluginDataInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.PropertiesTranslator;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.ReportsTranslator;
-import nucleus.PluginData;
 import plugins.people.support.PersonId;
 import plugins.personproperties.PersonPropertiesPluginData;
 import plugins.personproperties.reports.PersonPropertyInteractionReportPluginData;
@@ -36,20 +36,28 @@ import plugins.util.properties.PropertyDefinition;
 import util.random.RandomGeneratorProvider;
 
 public class AppTest {
+    Path basePath = getCurrentDir();
+    Path inputFilePath = basePath.resolve("json");
+    Path outputFilePath = makeOutputDir();
+
+    private Path getCurrentDir() {
+        try {
+            return Path.of(this.getClass().getClassLoader().getResource("").toURI());
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private Path makeOutputDir() {
+        Path path = basePath.resolve("json/output");
+
+        path.toFile().mkdirs();
+
+        return path;
+    }
 
     @Test
     public void testPersonPropertiesTranslator() {
-        Path basePath = Path.of("").toAbsolutePath();
-
-        if (!basePath.endsWith("personproperties-plugin-translator")) {
-            basePath = basePath.resolve("personproperties-plugin-translator");
-        }
-
-        Path inputFilePath = basePath.resolve("src/main/resources/json");
-        Path outputFilePath = basePath.resolve("src/main/resources/json/output");
-
-        outputFilePath.toFile().mkdir();
-
         String fileName = "pluginData.json";
 
         TranslatorController translatorController = TranslatorController.builder()
@@ -62,9 +70,10 @@ public class AppTest {
                 .addWriter(outputFilePath.resolve(fileName), PersonPropertiesPluginData.class)
                 .build();
 
-        List<PluginData> pluginDatas = translatorController.readInput().getPluginDatas();
+        translatorController.readInput();
 
-        PersonPropertiesPluginData personPropertiesPluginData = (PersonPropertiesPluginData) pluginDatas.get(0);
+        PersonPropertiesPluginData personPropertiesPluginData = translatorController
+                .getObject(PersonPropertiesPluginData.class);
 
         long seed = 4684903523797799712L;
         int initialPoptulation = 100;
@@ -121,17 +130,6 @@ public class AppTest {
 
     @Test
     public void testPersonPropertyReportTranslatorSpec() {
-        Path basePath = Path.of("").toAbsolutePath();
-
-        if (!basePath.endsWith("personproperties-plugin-translator")) {
-            basePath = basePath.resolve("personproperties-plugin-translator");
-        }
-
-        Path inputFilePath = basePath.resolve("src/main/resources/json");
-        Path outputFilePath = basePath.resolve("src/main/resources/json/output");
-
-        outputFilePath.toFile().mkdir();
-
         String fileName = "propertyReport.json";
 
         TranslatorController translatorController = TranslatorController.builder()
@@ -144,10 +142,10 @@ public class AppTest {
                 .addWriter(outputFilePath.resolve(fileName), PersonPropertyReportPluginData.class)
                 .build();
 
-        List<PluginData> pluginDatas = translatorController.readInput().getPluginDatas();
+        translatorController.readInput();
 
-        PersonPropertyReportPluginData actualPluginData = (PersonPropertyReportPluginData) pluginDatas
-                .get(0);
+        PersonPropertyReportPluginData actualPluginData = translatorController
+                .getObject(PersonPropertyReportPluginData.class);
 
         long seed = 4684903523797799712L;
 
@@ -188,17 +186,6 @@ public class AppTest {
 
     @Test
     public void testPersonInteractionReportTranslatorSpec() {
-        Path basePath = Path.of("").toAbsolutePath();
-
-        if (!basePath.endsWith("personproperties-plugin-translator")) {
-            basePath = basePath.resolve("personproperties-plugin-translator");
-        }
-
-        Path inputFilePath = basePath.resolve("src/main/resources/json");
-        Path outputFilePath = basePath.resolve("src/main/resources/json/output");
-
-        outputFilePath.toFile().mkdir();
-
         String fileName = "interactionReport.json";
 
         TranslatorController translatorController = TranslatorController.builder()
@@ -211,10 +198,10 @@ public class AppTest {
                 .addWriter(outputFilePath.resolve(fileName), PersonPropertyInteractionReportPluginData.class)
                 .build();
 
-        List<PluginData> pluginDatas = translatorController.readInput().getPluginDatas();
+        translatorController.readInput();
 
-        PersonPropertyInteractionReportPluginData actualPluginData = (PersonPropertyInteractionReportPluginData) pluginDatas
-                .get(0);
+        PersonPropertyInteractionReportPluginData actualPluginData = translatorController
+                .getObject(PersonPropertyInteractionReportPluginData.class);
 
         long seed = 4684903523797799712L;
         RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
