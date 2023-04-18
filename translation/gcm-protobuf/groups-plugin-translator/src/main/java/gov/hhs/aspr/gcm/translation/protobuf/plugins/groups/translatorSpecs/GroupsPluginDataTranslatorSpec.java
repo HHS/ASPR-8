@@ -186,11 +186,6 @@ public class GroupsPluginDataTranslatorSpec extends AbstractProtobufTranslatorSp
     }
 
     @Override
-    public GroupsPluginDataInput getDefaultInstanceForInputObject() {
-        return GroupsPluginDataInput.getDefaultInstance();
-    }
-
-    @Override
     public Class<GroupsPluginData> getAppObjectClass() {
         return GroupsPluginData.class;
     }

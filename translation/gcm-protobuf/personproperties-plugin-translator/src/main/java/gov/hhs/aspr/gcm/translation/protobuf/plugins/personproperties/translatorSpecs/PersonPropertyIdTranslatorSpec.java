@@ -18,11 +18,6 @@ public class PersonPropertyIdTranslatorSpec extends AbstractProtobufTranslatorSp
     }
 
     @Override
-    public PersonPropertyIdInput getDefaultInstanceForInputObject() {
-        return PersonPropertyIdInput.getDefaultInstance();
-    }
-
-    @Override
     public Class<PersonPropertyId> getAppObjectClass() {
         return PersonPropertyId.class;
     }

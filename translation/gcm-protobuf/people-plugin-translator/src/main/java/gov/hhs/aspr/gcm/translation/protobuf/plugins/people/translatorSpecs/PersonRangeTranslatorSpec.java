@@ -17,11 +17,6 @@ public class PersonRangeTranslatorSpec extends AbstractProtobufTranslatorSpec<Pe
     }
 
     @Override
-    public PersonRangeInput getDefaultInstanceForInputObject() {
-      return PersonRangeInput.getDefaultInstance();
-    }
-
-    @Override
     public Class<PersonRange> getAppObjectClass() {
        return PersonRange.class;
     }

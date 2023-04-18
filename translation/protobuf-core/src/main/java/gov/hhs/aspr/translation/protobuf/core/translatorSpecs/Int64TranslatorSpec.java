@@ -17,11 +17,6 @@ public class Int64TranslatorSpec extends AbstractProtobufTranslatorSpec<Int64Val
     }
 
     @Override
-    public Int64Value getDefaultInstanceForInputObject() {
-        return Int64Value.getDefaultInstance();
-    }
-
-    @Override
     public Class<Long> getAppObjectClass() {
         return Long.class;
     }

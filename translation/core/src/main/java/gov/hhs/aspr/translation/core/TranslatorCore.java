@@ -76,16 +76,6 @@ public abstract class TranslatorCore {
 
     public abstract <T, U> T readInput(Reader reader, Class<U> inputClassRef);
 
-    public <T extends U, U, E extends Enum<E>> T convertInputEnum(Enum<E> inputEnum, Class<U> superClass) {
-        T convertedEnum = convertInputEnum(inputEnum);
-
-        return convertedEnum;
-    }
-
-    public <T, E extends Enum<E>> T convertInputEnum(Enum<E> inputEnum) {
-        return getTranslatorForClass(inputEnum.getClass()).convert(inputEnum);
-    }
-
     public <T extends U, U> T convertInputObject(Object inputObject, Class<U> superClass) {
         T convertInputObject = convertInputObject(inputObject);
 

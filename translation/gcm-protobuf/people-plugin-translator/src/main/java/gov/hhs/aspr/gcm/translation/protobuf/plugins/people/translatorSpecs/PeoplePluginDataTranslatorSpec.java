@@ -40,11 +40,6 @@ public class PeoplePluginDataTranslatorSpec
     }
 
     @Override
-    public PeoplePluginDataInput getDefaultInstanceForInputObject() {
-        return PeoplePluginDataInput.getDefaultInstance();
-    }
-
-    @Override
     public Class<PeoplePluginData> getAppObjectClass() {
         return PeoplePluginData.class;
     }

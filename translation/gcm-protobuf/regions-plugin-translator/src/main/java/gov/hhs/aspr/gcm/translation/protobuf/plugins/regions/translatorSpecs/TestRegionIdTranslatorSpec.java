@@ -17,11 +17,6 @@ public class TestRegionIdTranslatorSpec extends AbstractProtobufTranslatorSpec<T
     }
 
     @Override
-    public TestRegionIdInput getDefaultInstanceForInputObject() {
-        return TestRegionIdInput.forNumber(0);
-    }
-
-    @Override
     public Class<TestRegionId> getAppObjectClass() {
         return TestRegionId.class;
     }

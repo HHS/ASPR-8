@@ -94,11 +94,6 @@ public class PersonPropertiesPluginDataTranslatorSpec
     }
 
     @Override
-    public PersonPropertiesPluginDataInput getDefaultInstanceForInputObject() {
-        return PersonPropertiesPluginDataInput.getDefaultInstance();
-    }
-
-    @Override
     public Class<PersonPropertiesPluginData> getAppObjectClass() {
         return PersonPropertiesPluginData.class;
     }

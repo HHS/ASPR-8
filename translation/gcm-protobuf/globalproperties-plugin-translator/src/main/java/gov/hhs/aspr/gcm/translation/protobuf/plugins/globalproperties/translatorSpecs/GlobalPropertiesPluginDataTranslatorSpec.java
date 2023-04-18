@@ -73,11 +73,6 @@ public class GlobalPropertiesPluginDataTranslatorSpec
     }
 
     @Override
-    public GlobalPropertiesPluginDataInput getDefaultInstanceForInputObject() {
-        return GlobalPropertiesPluginDataInput.getDefaultInstance();
-    }
-
-    @Override
     public Class<GlobalPropertiesPluginData> getAppObjectClass() {
         return GlobalPropertiesPluginData.class;
     }

@@ -24,11 +24,6 @@ public class DateTranslatorSpec extends AbstractProtobufTranslatorSpec<Date, Loc
     }
 
     @Override
-    public Date getDefaultInstanceForInputObject() {
-        return Date.getDefaultInstance();
-    }
-
-    @Override
     public Class<LocalDate> getAppObjectClass() {
         return LocalDate.class;
     }

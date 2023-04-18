@@ -19,11 +19,6 @@ public class RandomGeneratorIdTranslatorSpec
     }
 
     @Override
-    public RandomNumberGeneratorIdInput getDefaultInstanceForInputObject() {
-        return RandomNumberGeneratorIdInput.getDefaultInstance();
-    }
-
-    @Override
     public Class<RandomNumberGeneratorId> getAppObjectClass() {
         return RandomNumberGeneratorId.class;
     }

@@ -16,7 +16,7 @@ public class RegionTransferReportPluginDataTranslatorSpec
         RegionTransferReportPluginData.Builder builder = RegionTransferReportPluginData.builder();
 
         ReportLabel reportLabel = this.translator.convertInputObject(inputObject.getReportLabel());
-        ReportPeriod reportPeriod = this.translator.convertInputEnum(inputObject.getReportPeriod());
+        ReportPeriod reportPeriod = this.translator.convertInputObject(inputObject.getReportPeriod());
 
         builder.setReportLabel(reportLabel).setReportPeriod(reportPeriod);
 
@@ -34,11 +34,6 @@ public class RegionTransferReportPluginDataTranslatorSpec
         builder.setReportLabel(reportLabelInput).setReportPeriod(reportPeriodInput);
 
         return builder.build();
-    }
-
-    @Override
-    public RegionTransferReportPluginDataInput getDefaultInstanceForInputObject() {
-        return RegionTransferReportPluginDataInput.getDefaultInstance();
     }
 
     @Override

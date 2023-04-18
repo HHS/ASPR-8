@@ -17,11 +17,6 @@ public class PersonIdTranslatorSpec extends AbstractProtobufTranslatorSpec<Perso
     }
 
     @Override
-    public PersonIdInput getDefaultInstanceForInputObject() {
-        return PersonIdInput.getDefaultInstance();
-    }
-
-    @Override
     public Class<PersonId> getAppObjectClass() {
         return PersonId.class;
     }

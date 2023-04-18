@@ -19,11 +19,6 @@ public class SimpleRegionPropertyIdTranslatorSpec
     }
 
     @Override
-    public SimpleRegionPropertyIdInput getDefaultInstanceForInputObject() {
-        return SimpleRegionPropertyIdInput.getDefaultInstance();
-    }
-
-    @Override
     public Class<SimpleRegionPropertyId> getAppObjectClass() {
         return SimpleRegionPropertyId.class;
     }

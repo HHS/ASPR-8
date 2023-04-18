@@ -17,11 +17,6 @@ public class MaterialIdTranslatorSpec extends AbstractProtobufTranslatorSpec<Mat
     }
 
     @Override
-    public MaterialIdInput getDefaultInstanceForInputObject() {
-        return MaterialIdInput.getDefaultInstance();
-    }
-
-    @Override
     public Class<MaterialId> getAppObjectClass() {
         return MaterialId.class;
     }

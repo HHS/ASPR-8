@@ -17,11 +17,6 @@ public class FloatTranslatorSpec extends AbstractProtobufTranslatorSpec<FloatVal
     }
 
     @Override
-    public FloatValue getDefaultInstanceForInputObject() {
-        return FloatValue.getDefaultInstance();
-    }
-
-    @Override
     public Class<Float> getAppObjectClass() {
         return Float.class;
     }

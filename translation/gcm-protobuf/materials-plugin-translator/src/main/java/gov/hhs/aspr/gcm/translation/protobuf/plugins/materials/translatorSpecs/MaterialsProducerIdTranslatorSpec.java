@@ -18,11 +18,6 @@ public class MaterialsProducerIdTranslatorSpec
     }
 
     @Override
-    public MaterialsProducerIdInput getDefaultInstanceForInputObject() {
-        return MaterialsProducerIdInput.getDefaultInstance();
-    }
-
-    @Override
     public Class<MaterialsProducerId> getAppObjectClass() {
         return MaterialsProducerId.class;
     }

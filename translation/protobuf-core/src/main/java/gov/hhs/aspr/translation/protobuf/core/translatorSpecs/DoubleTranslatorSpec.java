@@ -17,11 +17,6 @@ public class DoubleTranslatorSpec extends AbstractProtobufTranslatorSpec<DoubleV
     }
 
     @Override
-    public DoubleValue getDefaultInstanceForInputObject() {
-        return DoubleValue.getDefaultInstance();
-    }
-
-    @Override
     public Class<Double> getAppObjectClass() {
         return Double.class;
     }

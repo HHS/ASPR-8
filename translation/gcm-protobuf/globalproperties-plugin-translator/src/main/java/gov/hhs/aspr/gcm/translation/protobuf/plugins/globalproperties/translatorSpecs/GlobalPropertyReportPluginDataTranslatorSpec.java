@@ -62,11 +62,6 @@ public class GlobalPropertyReportPluginDataTranslatorSpec
     }
 
     @Override
-    public GlobalPropertyReportPluginDataInput getDefaultInstanceForInputObject() {
-        return GlobalPropertyReportPluginDataInput.getDefaultInstance();
-    }
-
-    @Override
     public Class<GlobalPropertyReportPluginData> getAppObjectClass() {
         return GlobalPropertyReportPluginData.class;
     }

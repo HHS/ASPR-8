@@ -17,11 +17,6 @@ public class PlannerTranslatorSpec extends AbstractProtobufTranslatorSpec<Planne
     }
 
     @Override
-    public PlannerInput getDefaultInstanceForInputObject() {
-        return PlannerInput.forNumber(0);
-    }
-
-    @Override
     public Class<Planner> getAppObjectClass() {
         return Planner.class;
     }

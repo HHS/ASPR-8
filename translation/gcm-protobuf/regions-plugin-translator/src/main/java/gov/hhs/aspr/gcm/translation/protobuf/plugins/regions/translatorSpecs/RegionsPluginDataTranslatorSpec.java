@@ -62,7 +62,7 @@ public class RegionsPluginDataTranslatorSpec extends AbstractProtobufTranslatorS
         }
 
         TimeTrackingPolicy timeTrackingPolicy = this.translator
-                .convertInputEnum(inputObject.getRegionArrivalTimeTrackingPolicy());
+                .convertInputObject(inputObject.getRegionArrivalTimeTrackingPolicy());
         builder.setPersonRegionArrivalTracking(timeTrackingPolicy);
 
         return builder.build();
@@ -134,11 +134,6 @@ public class RegionsPluginDataTranslatorSpec extends AbstractProtobufTranslatorS
         builder.setRegionArrivalTimeTrackingPolicy(timeTrackingPolicyInput);
 
         return builder.build();
-    }
-
-    @Override
-    public RegionsPluginDataInput getDefaultInstanceForInputObject() {
-        return RegionsPluginDataInput.getDefaultInstance();
     }
 
     @Override

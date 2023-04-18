@@ -17,11 +17,6 @@ public class PlanDataTranslatorSpec extends AbstractProtobufTranslatorSpec<PlanD
     }
 
     @Override
-    public PlanDataInput getDefaultInstanceForInputObject() {
-        return PlanDataInput.getDefaultInstance();
-    }
-
-    @Override
     public Class<PlanData> getAppObjectClass() {
         return PlanData.class;
     }

@@ -22,7 +22,7 @@ public class GroupPropertyReportPluginDataTranslatorSpec
         builder.setReportLabel(reportLabel);
 
         builder.setDefaultInclusion(inputObject.getDefaultInclusionPolicy());
-        builder.setReportPeriod(this.translator.convertInputEnum(inputObject.getReportPeriod()));
+        builder.setReportPeriod(this.translator.convertInputObject(inputObject.getReportPeriod()));
 
         for(GroupPropertyReportPropertyMap propertyMap : inputObject.getIncludedPropertiesList()) {
             GroupTypeId groupTypeId = this.translator.convertInputObject(propertyMap.getGroupTypeId(), GroupTypeId.class);
@@ -80,11 +80,6 @@ public class GroupPropertyReportPluginDataTranslatorSpec
         }
 
         return builder.build();
-    }
-
-    @Override
-    public GroupPropertyReportPluginDataInput getDefaultInstanceForInputObject() {
-        return GroupPropertyReportPluginDataInput.getDefaultInstance();
     }
 
     @Override

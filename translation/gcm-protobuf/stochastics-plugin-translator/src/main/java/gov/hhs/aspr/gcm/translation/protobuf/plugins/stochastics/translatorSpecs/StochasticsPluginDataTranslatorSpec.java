@@ -52,11 +52,6 @@ public class StochasticsPluginDataTranslatorSpec
     }
 
     @Override
-    public StochasticsPluginDataInput getDefaultInstanceForInputObject() {
-        return StochasticsPluginDataInput.getDefaultInstance();
-    }
-
-    @Override
     public Class<StochasticsPluginData> getAppObjectClass() {
         return StochasticsPluginData.class;
     }

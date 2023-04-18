@@ -17,11 +17,6 @@ public class StageIdTranslatorSpec extends AbstractProtobufTranslatorSpec<StageI
     }
 
     @Override
-    public StageIdInput getDefaultInstanceForInputObject() {
-        return StageIdInput.getDefaultInstance();
-    }
-
-    @Override
     public Class<StageId> getAppObjectClass() {
         return StageId.class;
     }

@@ -18,11 +18,6 @@ public class TestRegionPropertyIdTranslatorSpec
     }
 
     @Override
-    public TestRegionPropertyIdInput getDefaultInstanceForInputObject() {
-        return TestRegionPropertyIdInput.forNumber(0);
-    }
-
-    @Override
     public Class<TestRegionPropertyId> getAppObjectClass() {
         return TestRegionPropertyId.class;
     }

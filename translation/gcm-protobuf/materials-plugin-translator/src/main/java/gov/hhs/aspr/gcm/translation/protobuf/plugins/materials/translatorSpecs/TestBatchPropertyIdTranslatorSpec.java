@@ -18,11 +18,6 @@ public class TestBatchPropertyIdTranslatorSpec
     }
 
     @Override
-    public TestBatchPropertyIdInput getDefaultInstanceForInputObject() {
-        return TestBatchPropertyIdInput.forNumber(0);
-    }
-
-    @Override
     public Class<TestBatchPropertyId> getAppObjectClass() {
         return TestBatchPropertyId.class;
     }

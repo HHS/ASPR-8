@@ -63,11 +63,6 @@ public class RegionPropertyReportPluginDataTranslatorSpec
     }
 
     @Override
-    public RegionPropertyReportPluginDataInput getDefaultInstanceForInputObject() {
-        return RegionPropertyReportPluginDataInput.getDefaultInstance();
-    }
-
-    @Override
     public Class<RegionPropertyReportPluginData> getAppObjectClass() {
         return RegionPropertyReportPluginData.class;
     }

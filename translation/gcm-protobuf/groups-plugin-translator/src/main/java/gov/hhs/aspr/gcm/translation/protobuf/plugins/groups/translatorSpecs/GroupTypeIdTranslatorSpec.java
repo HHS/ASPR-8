@@ -18,11 +18,6 @@ public class GroupTypeIdTranslatorSpec extends AbstractProtobufTranslatorSpec<Gr
     }
 
     @Override
-    public GroupTypeIdInput getDefaultInstanceForInputObject() {
-        return GroupTypeIdInput.getDefaultInstance();
-    }
-
-    @Override
     public Class<GroupTypeId> getAppObjectClass() {
         return GroupTypeId.class;
     }

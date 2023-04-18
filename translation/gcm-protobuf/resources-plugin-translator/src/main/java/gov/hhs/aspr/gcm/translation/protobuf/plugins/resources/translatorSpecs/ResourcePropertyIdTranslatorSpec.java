@@ -18,11 +18,6 @@ public class ResourcePropertyIdTranslatorSpec
     }
 
     @Override
-    public ResourcePropertyIdInput getDefaultInstanceForInputObject() {
-        return ResourcePropertyIdInput.getDefaultInstance();
-    }
-
-    @Override
     public Class<ResourcePropertyId> getAppObjectClass() {
         return ResourcePropertyId.class;
     }

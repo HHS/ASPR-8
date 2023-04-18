@@ -108,7 +108,7 @@ public class ResourcesPluginDataTranslatorSpec
                                         resourceTimeTrackingPolicyMapInput.getResourceId(),
                                         ResourceId.class);
                         TimeTrackingPolicy timeTrackingPolicy = this.translator
-                                        .convertInputEnum(resourceTimeTrackingPolicyMapInput.getTimeTrackingPolicy());
+                                        .convertInputObject(resourceTimeTrackingPolicyMapInput.getTimeTrackingPolicy());
 
                         builder.setResourceTimeTracking(resourceId, timeTrackingPolicy);
                 }
@@ -221,10 +221,7 @@ public class ResourcesPluginDataTranslatorSpec
                 return builder.build();
         }
 
-        @Override
-        public ResourcesPluginDataInput getDefaultInstanceForInputObject() {
-                return ResourcesPluginDataInput.getDefaultInstance();
-        }
+        
 
         @Override
         public Class<ResourcesPluginData> getAppObjectClass() {

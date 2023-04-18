@@ -31,11 +31,6 @@ public class StageReportPluginDataTranslatorSpec
     }
 
     @Override
-    public StageReportPluginDataInput getDefaultInstanceForInputObject() {
-        return StageReportPluginDataInput.getDefaultInstance();
-    }
-
-    @Override
     public Class<StageReportPluginData> getAppObjectClass() {
         return StageReportPluginData.class;
     }

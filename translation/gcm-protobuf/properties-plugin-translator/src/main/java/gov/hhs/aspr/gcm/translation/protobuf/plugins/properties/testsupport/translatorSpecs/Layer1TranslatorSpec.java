@@ -23,11 +23,6 @@ public class Layer1TranslatorSpec extends AbstractProtobufTranslatorSpec<Layer1,
     }
 
     @Override
-    public Layer1 getDefaultInstanceForInputObject() {
-        return Layer1.getDefaultInstance();
-    }
-
-    @Override
     public Class<Layer1SimObject> getAppObjectClass() {
         return Layer1SimObject.class;
     }

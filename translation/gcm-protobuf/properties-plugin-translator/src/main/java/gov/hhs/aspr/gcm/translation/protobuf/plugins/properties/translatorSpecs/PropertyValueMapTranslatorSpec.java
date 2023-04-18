@@ -26,11 +26,6 @@ public class PropertyValueMapTranslatorSpec extends AbstractProtobufTranslatorSp
     }
 
     @Override
-    public PropertyValueMapInput getDefaultInstanceForInputObject() {
-        return PropertyValueMapInput.getDefaultInstance();
-    }
-
-    @Override
     public Class<PropertyValueMap> getAppObjectClass() {
         return PropertyValueMap.class;
     }

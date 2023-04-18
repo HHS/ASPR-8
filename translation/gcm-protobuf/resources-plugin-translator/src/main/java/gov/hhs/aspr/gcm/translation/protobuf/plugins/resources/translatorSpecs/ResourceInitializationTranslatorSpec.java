@@ -24,11 +24,6 @@ public class ResourceInitializationTranslatorSpec
     }
 
     @Override
-    public ResourceInitializationInput getDefaultInstanceForInputObject() {
-        return ResourceInitializationInput.getDefaultInstance();
-    }
-
-    @Override
     public Class<ResourceInitialization> getAppObjectClass() {
         return ResourceInitialization.class;
     }

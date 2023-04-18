@@ -18,11 +18,6 @@ public class TestRandomGeneratorIdTranslatorSpec
     }
 
     @Override
-    public TestRandomGeneratorIdInput getDefaultInstanceForInputObject() {
-        return TestRandomGeneratorIdInput.forNumber(0);
-    }
-
-    @Override
     public Class<TestRandomGeneratorId> getAppObjectClass() {
         return TestRandomGeneratorId.class;
     }

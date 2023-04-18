@@ -22,7 +22,7 @@ public class PersonPropertyInteractionReportPluginDataTranslatorSpec
         ReportLabel reportLabel = this.translator.convertInputObject(inputObject.getReportLabel(), ReportLabel.class);
         builder.setReportLabel(reportLabel);
 
-        ReportPeriod reportPeriod = this.translator.convertInputEnum(inputObject.getReportPeriod());
+        ReportPeriod reportPeriod = this.translator.convertInputObject(inputObject.getReportPeriod());
         builder.setReportPeriod(reportPeriod);
 
         for (PersonPropertyIdInput personPropertyIdInput : inputObject.getPersonPropertyIdsList()) {
@@ -55,11 +55,6 @@ public class PersonPropertyInteractionReportPluginDataTranslatorSpec
         }
 
         return builder.build();
-    }
-
-    @Override
-    public PersonPropertyInteractionReportPluginDataInput getDefaultInstanceForInputObject() {
-        return PersonPropertyInteractionReportPluginDataInput.getDefaultInstance();
     }
 
     @Override

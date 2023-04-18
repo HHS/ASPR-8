@@ -17,11 +17,6 @@ public class ReportPeriodTranslatorSpec extends AbstractProtobufTranslatorSpec<R
     }
 
     @Override
-    public ReportPeriodInput getDefaultInstanceForInputObject() {
-        return ReportPeriodInput.forNumber(0);
-    }
-
-    @Override
     public Class<ReportPeriod> getAppObjectClass() {
         return ReportPeriod.class;
     }

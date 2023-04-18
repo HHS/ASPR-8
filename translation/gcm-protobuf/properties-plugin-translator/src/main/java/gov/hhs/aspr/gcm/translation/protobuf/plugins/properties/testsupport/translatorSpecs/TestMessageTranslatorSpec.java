@@ -27,11 +27,6 @@ public class TestMessageTranslatorSpec extends AbstractProtobufTranslatorSpec<Te
     }
 
     @Override
-    public TestMessage getDefaultInstanceForInputObject() {
-        return TestMessage.getDefaultInstance();
-    }
-
-    @Override
     public Class<TestMessageSimObject> getAppObjectClass() {
         return TestMessageSimObject.class;
     }

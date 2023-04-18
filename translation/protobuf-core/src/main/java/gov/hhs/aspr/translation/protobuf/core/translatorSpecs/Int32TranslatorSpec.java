@@ -17,11 +17,6 @@ public class Int32TranslatorSpec extends AbstractProtobufTranslatorSpec<Int32Val
     }
 
     @Override
-    public Int32Value getDefaultInstanceForInputObject() {
-        return Int32Value.getDefaultInstance();
-    }
-
-    @Override
     public Class<Integer> getAppObjectClass() {
         return Integer.class;
     }

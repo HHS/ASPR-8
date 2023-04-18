@@ -18,11 +18,6 @@ public class TestResourcePropertyIdTranslatorSpec
     }
 
     @Override
-    public TestResourcePropertyIdInput getDefaultInstanceForInputObject() {
-        return TestResourcePropertyIdInput.forNumber(0);
-    }
-
-    @Override
     public Class<TestResourcePropertyId> getAppObjectClass() {
         return TestResourcePropertyId.class;
     }

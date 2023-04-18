@@ -17,11 +17,6 @@ public class UInt32TranslatorSpec extends AbstractProtobufTranslatorSpec<UInt32V
     }
 
     @Override
-    public UInt32Value getDefaultInstanceForInputObject() {
-        return UInt32Value.getDefaultInstance();
-    }
-
-    @Override
     public Class<Integer> getAppObjectClass() {
         return Integer.class;
     }

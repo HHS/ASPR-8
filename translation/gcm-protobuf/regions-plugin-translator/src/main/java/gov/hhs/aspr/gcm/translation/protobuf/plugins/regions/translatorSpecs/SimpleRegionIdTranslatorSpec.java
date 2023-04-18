@@ -18,11 +18,6 @@ public class SimpleRegionIdTranslatorSpec extends AbstractProtobufTranslatorSpec
     }
 
     @Override
-    public SimpleRegionIdInput getDefaultInstanceForInputObject() {
-        return SimpleRegionIdInput.getDefaultInstance();
-    }
-
-    @Override
     public Class<SimpleRegionId> getAppObjectClass() {
         return SimpleRegionId.class;
     }

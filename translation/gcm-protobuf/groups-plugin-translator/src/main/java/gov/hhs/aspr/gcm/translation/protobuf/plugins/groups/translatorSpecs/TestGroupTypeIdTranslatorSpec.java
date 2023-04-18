@@ -17,11 +17,6 @@ public class TestGroupTypeIdTranslatorSpec extends AbstractProtobufTranslatorSpe
     }
 
     @Override
-    public TestGroupTypeIdInput getDefaultInstanceForInputObject() {
-        return TestGroupTypeIdInput.forNumber(0);
-    }
-
-    @Override
     public Class<TestGroupTypeId> getAppObjectClass() {
         return TestGroupTypeId.class;
     }

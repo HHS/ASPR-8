@@ -17,11 +17,6 @@ public class BooleanTranslatorSpec extends AbstractProtobufTranslatorSpec<BoolVa
     }
 
     @Override
-    public BoolValue getDefaultInstanceForInputObject() {
-        return BoolValue.getDefaultInstance();
-    }
-
-    @Override
     public Class<Boolean> getAppObjectClass() {
         return Boolean.class;
     }

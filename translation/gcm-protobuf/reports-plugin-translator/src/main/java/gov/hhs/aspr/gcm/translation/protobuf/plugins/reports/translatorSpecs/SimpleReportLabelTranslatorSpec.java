@@ -17,11 +17,6 @@ public class SimpleReportLabelTranslatorSpec extends AbstractProtobufTranslatorS
     }
 
     @Override
-    public SimpleReportLabelInput getDefaultInstanceForInputObject() {
-       return SimpleReportLabelInput.getDefaultInstance();
-    }
-
-    @Override
     public Class<SimpleReportLabel> getAppObjectClass() {
         return SimpleReportLabel.class;
     }

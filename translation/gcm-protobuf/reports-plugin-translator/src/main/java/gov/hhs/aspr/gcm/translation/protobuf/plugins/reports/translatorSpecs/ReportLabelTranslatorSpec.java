@@ -18,11 +18,6 @@ public class ReportLabelTranslatorSpec extends AbstractProtobufTranslatorSpec<Re
     }
 
     @Override
-    public ReportLabelInput getDefaultInstanceForInputObject() {
-        return ReportLabelInput.getDefaultInstance();
-    }
-
-    @Override
     public Class<ReportLabel> getAppObjectClass() {
         return ReportLabel.class;
     }

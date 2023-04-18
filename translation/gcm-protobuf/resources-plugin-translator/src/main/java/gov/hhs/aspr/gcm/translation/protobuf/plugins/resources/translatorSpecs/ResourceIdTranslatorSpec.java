@@ -17,11 +17,6 @@ public class ResourceIdTranslatorSpec extends AbstractProtobufTranslatorSpec<Res
     }
 
     @Override
-    public ResourceIdInput getDefaultInstanceForInputObject() {
-        return ResourceIdInput.getDefaultInstance();
-    }
-
-    @Override
     public Class<ResourceId> getAppObjectClass() {
         return ResourceId.class;
     }

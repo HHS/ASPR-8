@@ -18,11 +18,6 @@ public class TimeTrackingPolicyTranslatorSpec
     }
 
     @Override
-    public TimeTrackingPolicyInput getDefaultInstanceForInputObject() {
-        return TimeTrackingPolicyInput.forNumber(0);
-    }
-
-    @Override
     public Class<TimeTrackingPolicy> getAppObjectClass() {
         return TimeTrackingPolicy.class;
     }

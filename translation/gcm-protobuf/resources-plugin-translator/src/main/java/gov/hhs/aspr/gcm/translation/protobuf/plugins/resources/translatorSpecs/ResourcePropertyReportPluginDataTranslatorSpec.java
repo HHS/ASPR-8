@@ -31,11 +31,6 @@ public class ResourcePropertyReportPluginDataTranslatorSpec
     }
 
     @Override
-    public ResourcePropertyReportPluginDataInput getDefaultInstanceForInputObject() {
-        return ResourcePropertyReportPluginDataInput.getDefaultInstance();
-    }
-
-    @Override
     public Class<ResourcePropertyReportPluginData> getAppObjectClass() {
         return ResourcePropertyReportPluginData.class;
     }

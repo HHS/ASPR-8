@@ -31,11 +31,6 @@ public class BatchStatusReportPluginDataTranslatorSpec
     }
 
     @Override
-    public BatchStatusReportPluginDataInput getDefaultInstanceForInputObject() {
-        return BatchStatusReportPluginDataInput.getDefaultInstance();
-    }
-
-    @Override
     public Class<BatchStatusReportPluginData> getAppObjectClass() {
         return BatchStatusReportPluginData.class;
     }

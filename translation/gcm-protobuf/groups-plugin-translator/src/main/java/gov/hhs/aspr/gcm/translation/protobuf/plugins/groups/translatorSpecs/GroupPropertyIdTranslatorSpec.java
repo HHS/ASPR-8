@@ -18,11 +18,6 @@ public class GroupPropertyIdTranslatorSpec extends AbstractProtobufTranslatorSpe
     }
 
     @Override
-    public GroupPropertyIdInput getDefaultInstanceForInputObject() {
-        return GroupPropertyIdInput.getDefaultInstance();
-    }
-
-    @Override
     public Class<GroupPropertyId> getAppObjectClass() {
         return GroupPropertyId.class;
     }

@@ -32,11 +32,6 @@ public class PropertyDefinitionMapTranslatorSpec
     }
 
     @Override
-    public PropertyDefinitionMapInput getDefaultInstanceForInputObject() {
-        return PropertyDefinitionMapInput.getDefaultInstance();
-    }
-
-    @Override
     public Class<PropertyDefinitionMap> getAppObjectClass() {
         return PropertyDefinitionMap.class;
     }

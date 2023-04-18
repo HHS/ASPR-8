@@ -47,11 +47,6 @@ public class WellStateTranslatorSpec
     }
 
     @Override
-    public WellStateInput getDefaultInstanceForInputObject() {
-        return WellStateInput.getDefaultInstance();
-    }
-
-    @Override
     public Class<WellState> getAppObjectClass() {
         return WellState.class;
     }

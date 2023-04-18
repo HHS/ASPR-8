@@ -18,11 +18,6 @@ public class TestMaterialsProducerPropertyIdTranslatorSpec
     }
 
     @Override
-    public TestMaterialsProducerPropertyIdInput getDefaultInstanceForInputObject() {
-        return TestMaterialsProducerPropertyIdInput.forNumber(0);
-    }
-
-    @Override
     public Class<TestMaterialsProducerPropertyId> getAppObjectClass() {
         return TestMaterialsProducerPropertyId.class;
     }

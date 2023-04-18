@@ -311,11 +311,6 @@ public class MaterialsPluginDataTranslatorSpec
         }
 
         @Override
-        public MaterialsPluginDataInput getDefaultInstanceForInputObject() {
-                return MaterialsPluginDataInput.getDefaultInstance();
-        }
-
-        @Override
         public Class<MaterialsPluginData> getAppObjectClass() {
                 return MaterialsPluginData.class;
         }

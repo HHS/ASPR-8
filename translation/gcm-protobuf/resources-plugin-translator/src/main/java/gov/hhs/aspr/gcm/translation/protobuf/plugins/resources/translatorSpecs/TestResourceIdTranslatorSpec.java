@@ -17,11 +17,6 @@ public class TestResourceIdTranslatorSpec extends AbstractProtobufTranslatorSpec
     }
 
     @Override
-    public TestResourceIdInput getDefaultInstanceForInputObject() {
-        return TestResourceIdInput.forNumber(0);
-    }
-
-    @Override
     public Class<TestResourceId> getAppObjectClass() {
         return TestResourceId.class;
     }

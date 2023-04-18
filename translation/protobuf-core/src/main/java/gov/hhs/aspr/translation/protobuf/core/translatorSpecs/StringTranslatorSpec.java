@@ -17,11 +17,6 @@ public class StringTranslatorSpec extends AbstractProtobufTranslatorSpec<StringV
     }
 
     @Override
-    public StringValue getDefaultInstanceForInputObject() {
-        return StringValue.getDefaultInstance();
-    }
-
-    @Override
     public Class<String> getAppObjectClass() {
         return String.class;
     }

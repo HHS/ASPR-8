@@ -1,38 +1,66 @@
 package gov.hhs.aspr.translation.protobuf.core.translatorSpecs;
 
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 
-import com.google.protobuf.Message;
+import com.google.protobuf.BoolValue;
+import com.google.protobuf.DoubleValue;
+import com.google.protobuf.FloatValue;
+import com.google.protobuf.Int32Value;
+import com.google.protobuf.Int64Value;
+import com.google.protobuf.StringValue;
+import com.google.protobuf.UInt32Value;
+import com.google.protobuf.UInt64Value;
+import com.google.protobuf.Descriptors.Descriptor;
+import com.google.type.Date;
 
 import gov.hhs.aspr.translation.core.ITranslatorSpec;
 import gov.hhs.aspr.translation.protobuf.core.input.WrapperEnumValue;
 
 public class PrimitiveTranslatorSpecs {
 
-    public final static BooleanTranslatorSpec BOOLEAN_TRANSLATOR_SPEC = new BooleanTranslatorSpec();
-    public final static Int32TranslatorSpec INT32_TRANSLATOR_SPEC = new Int32TranslatorSpec();
-    public final static UInt32TranslatorSpec UINT32_TRANSLATOR_SPEC = new UInt32TranslatorSpec();
-    public final static Int64TranslatorSpec INT64_TRANSLATOR_SPEC = new Int64TranslatorSpec();
-    public final static UInt64TranslatorSpec UINT64_TRANSLATOR_SPEC = new UInt64TranslatorSpec();
-    public final static StringTranslatorSpec STRING_TRANSLATOR_SPEC = new StringTranslatorSpec();
-    public final static FloatTranslatorSpec FLOAT_TRANSLATOR_SPEC = new FloatTranslatorSpec();
-    public final static DoubleTranslatorSpec DOUBLE_TRANSLATOR_SPEC = new DoubleTranslatorSpec();
-    public final static DateTranslatorSpec DATE_TRANSLATOR_SPEC = new DateTranslatorSpec();
+    private final static BooleanTranslatorSpec BOOLEAN_TRANSLATOR_SPEC = new BooleanTranslatorSpec();
+    private final static Int32TranslatorSpec INT32_TRANSLATOR_SPEC = new Int32TranslatorSpec();
+    private final static UInt32TranslatorSpec UINT32_TRANSLATOR_SPEC = new UInt32TranslatorSpec();
+    private final static Int64TranslatorSpec INT64_TRANSLATOR_SPEC = new Int64TranslatorSpec();
+    private final static UInt64TranslatorSpec UINT64_TRANSLATOR_SPEC = new UInt64TranslatorSpec();
+    private final static StringTranslatorSpec STRING_TRANSLATOR_SPEC = new StringTranslatorSpec();
+    private final static FloatTranslatorSpec FLOAT_TRANSLATOR_SPEC = new FloatTranslatorSpec();
+    private final static DoubleTranslatorSpec DOUBLE_TRANSLATOR_SPEC = new DoubleTranslatorSpec();
+    private final static DateTranslatorSpec DATE_TRANSLATOR_SPEC = new DateTranslatorSpec();
 
-    public static Map<String, Message> getPrimitiveTypeUrlToMessageMap() {
-        Map<String, Message> map = new LinkedHashMap<>();
+    public static Set<Descriptor> getPrimitiveDescriptors() {
+        Set<Descriptor> set = new LinkedHashSet<>();
 
-        map.put(BOOLEAN_TRANSLATOR_SPEC.getDefaultInstanceForInputObject().getDescriptorForType().getFullName(),BOOLEAN_TRANSLATOR_SPEC.getDefaultInstanceForInputObject());
-        map.put(INT32_TRANSLATOR_SPEC.getDefaultInstanceForInputObject().getDescriptorForType().getFullName(), INT32_TRANSLATOR_SPEC.getDefaultInstanceForInputObject());
-        map.put(UINT32_TRANSLATOR_SPEC.getDefaultInstanceForInputObject().getDescriptorForType().getFullName(), UINT32_TRANSLATOR_SPEC.getDefaultInstanceForInputObject());
-        map.put(INT64_TRANSLATOR_SPEC.getDefaultInstanceForInputObject().getDescriptorForType().getFullName(), INT64_TRANSLATOR_SPEC.getDefaultInstanceForInputObject());
-        map.put(UINT64_TRANSLATOR_SPEC.getDefaultInstanceForInputObject().getDescriptorForType().getFullName(), UINT64_TRANSLATOR_SPEC.getDefaultInstanceForInputObject());
-        map.put(STRING_TRANSLATOR_SPEC.getDefaultInstanceForInputObject().getDescriptorForType().getFullName(), STRING_TRANSLATOR_SPEC.getDefaultInstanceForInputObject());
-        map.put(FLOAT_TRANSLATOR_SPEC.getDefaultInstanceForInputObject().getDescriptorForType().getFullName(), FLOAT_TRANSLATOR_SPEC.getDefaultInstanceForInputObject());
-        map.put(DOUBLE_TRANSLATOR_SPEC.getDefaultInstanceForInputObject().getDescriptorForType().getFullName(), DOUBLE_TRANSLATOR_SPEC.getDefaultInstanceForInputObject());
-        map.put(DATE_TRANSLATOR_SPEC.getDefaultInstanceForInputObject().getDescriptorForType().getFullName(), DATE_TRANSLATOR_SPEC.getDefaultInstanceForInputObject());
-        map.put(WrapperEnumValue.getDescriptor().getFullName(), WrapperEnumValue.getDefaultInstance());
+        set.add(BoolValue.getDefaultInstance().getDescriptorForType());
+        set.add(Int32Value.getDefaultInstance().getDescriptorForType());
+        set.add(UInt32Value.getDefaultInstance().getDescriptorForType());
+        set.add(Int64Value.getDefaultInstance().getDescriptorForType());
+        set.add(UInt64Value.getDefaultInstance().getDescriptorForType());
+        set.add(StringValue.getDefaultInstance().getDescriptorForType());
+        set.add(FloatValue.getDefaultInstance().getDescriptorForType());
+        set.add(DoubleValue.getDefaultInstance().getDescriptorForType());
+        set.add(Date.getDefaultInstance().getDescriptorForType());
+        set.add(WrapperEnumValue.getDescriptor());
+
+        return set;
+    }
+    
+    public static Map<String, Class<?>> getPrimitiveTypeUrlToClassMap() {
+        Map<String, Class<?>> map = new LinkedHashMap<>();
+
+        map.put(BoolValue.getDefaultInstance().getDescriptorForType().getFullName(),BOOLEAN_TRANSLATOR_SPEC.getInputObjectClass());
+        map.put(Int32Value.getDefaultInstance().getDescriptorForType().getFullName(), INT32_TRANSLATOR_SPEC.getInputObjectClass());
+        map.put(UInt32Value.getDefaultInstance().getDescriptorForType().getFullName(), UINT32_TRANSLATOR_SPEC.getInputObjectClass());
+        map.put(Int64Value.getDefaultInstance().getDescriptorForType().getFullName(), INT64_TRANSLATOR_SPEC.getInputObjectClass());
+        map.put(UInt64Value.getDefaultInstance().getDescriptorForType().getFullName(), UINT64_TRANSLATOR_SPEC.getInputObjectClass());
+        map.put(StringValue.getDefaultInstance().getDescriptorForType().getFullName(), STRING_TRANSLATOR_SPEC.getInputObjectClass());
+        map.put(FloatValue.getDefaultInstance().getDescriptorForType().getFullName(), FLOAT_TRANSLATOR_SPEC.getInputObjectClass());
+        map.put(DoubleValue.getDefaultInstance().getDescriptorForType().getFullName(), DOUBLE_TRANSLATOR_SPEC.getInputObjectClass());
+        map.put(Date.getDefaultInstance().getDescriptorForType().getFullName(), DATE_TRANSLATOR_SPEC.getInputObjectClass());
+        map.put(WrapperEnumValue.getDescriptor().getFullName(), WrapperEnumValue.class);
 
         return map;
     }

@@ -17,11 +17,6 @@ public class RegionPropertyIdTranslatorSpec extends AbstractProtobufTranslatorSp
     }
 
     @Override
-    public RegionPropertyIdInput getDefaultInstanceForInputObject() {
-        return RegionPropertyIdInput.getDefaultInstance();
-    }
-
-    @Override
     public Class<RegionPropertyId> getAppObjectClass() {
         return RegionPropertyId.class;
     }

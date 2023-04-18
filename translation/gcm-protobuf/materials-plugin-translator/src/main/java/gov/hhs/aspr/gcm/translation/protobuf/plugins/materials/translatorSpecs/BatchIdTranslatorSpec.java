@@ -17,11 +17,6 @@ public class BatchIdTranslatorSpec extends AbstractProtobufTranslatorSpec<BatchI
     }
 
     @Override
-    public BatchIdInput getDefaultInstanceForInputObject() {
-        return BatchIdInput.getDefaultInstance();
-    }
-
-    @Override
     public Class<BatchId> getAppObjectClass() {
         return BatchId.class;
     }

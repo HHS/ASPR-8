@@ -54,11 +54,6 @@ public class SimulationStateTranslatorSpec extends AbstractProtobufTranslatorSpe
     }
 
     @Override
-    public SimulationStateInput getDefaultInstanceForInputObject() {
-        return SimulationStateInput.getDefaultInstance();
-    }
-
-    @Override
     public Class<SimulationState> getAppObjectClass() {
         return SimulationState.class;
     }

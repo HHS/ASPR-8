@@ -18,11 +18,6 @@ public class TestGlobalPropertyIdTranslatorSpec
     }
 
     @Override
-    public TestGlobalPropertyIdInput getDefaultInstanceForInputObject() {
-        return TestGlobalPropertyIdInput.forNumber(0);
-    }
-
-    @Override
     public Class<TestGlobalPropertyId> getAppObjectClass() {
         return TestGlobalPropertyId.class;
     }

@@ -15,6 +15,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
 import com.google.protobuf.Any;
+import com.google.protobuf.Descriptors.Descriptor;
 import com.google.protobuf.Descriptors.FieldDescriptor;
 import com.google.protobuf.Descriptors.FieldDescriptor.JavaType;
 import com.google.protobuf.InvalidProtocolBufferException;
@@ -38,10 +39,8 @@ public class ProtobufTranslatorCore extends TranslatorCore {
         this.data = data;
     }
 
-
     private static class Data extends TranslatorCore.Data {
-        private final Map<String, Message> descriptorMap = new LinkedHashMap<>();
-        private final Map<String, ProtocolMessageEnum> typeUrlToEnumMap = new LinkedHashMap<>();
+        private final Map<String, Class<?>> typeUrlToClassMap = new LinkedHashMap<>();
         private final Set<FieldDescriptor> defaultValueFieldsToPrint = new LinkedHashSet<>();
 
         private Parser jsonParser;
@@ -51,7 +50,7 @@ public class ProtobufTranslatorCore extends TranslatorCore {
 
         private Data() {
             super();
-            this.descriptorMap.putAll(PrimitiveTranslatorSpecs.getPrimitiveTypeUrlToMessageMap());
+            this.typeUrlToClassMap.putAll(PrimitiveTranslatorSpecs.getPrimitiveTypeUrlToClassMap());
             this.classToTranslatorSpecMap.putAll(PrimitiveTranslatorSpecs.getPrimitiveInputTranslatorSpecMap());
             this.classToTranslatorSpecMap.putAll(PrimitiveTranslatorSpecs.getPrimitiveObjectTranslatorSpecMap());
             this.translatorSpecs.addAll(PrimitiveTranslatorSpecs.getPrimitiveObjectTranslatorSpecMap().values());
@@ -60,6 +59,7 @@ public class ProtobufTranslatorCore extends TranslatorCore {
 
     public static class Builder extends TranslatorCore.Builder {
         private ProtobufTranslatorCore.Data data;
+        private Set<Descriptor> descriptorSet = new LinkedHashSet<>();
 
         private Builder(ProtobufTranslatorCore.Data data) {
             super(data);
@@ -68,9 +68,10 @@ public class ProtobufTranslatorCore extends TranslatorCore {
 
         public TranslatorCore build() {
             TypeRegistry.Builder typeRegistryBuilder = TypeRegistry.newBuilder();
+            this.descriptorSet.addAll(PrimitiveTranslatorSpecs.getPrimitiveDescriptors());
 
-            this.data.descriptorMap.values().forEach((message) -> {
-                typeRegistryBuilder.add(message.getDescriptorForType());
+            this.descriptorSet.forEach((descriptor) -> {
+                typeRegistryBuilder.add(descriptor);
             });
 
             TypeRegistry registry = typeRegistryBuilder.build();
@@ -113,40 +114,62 @@ public class ProtobufTranslatorCore extends TranslatorCore {
 
         @Override
         public <I, S> Builder addTranslatorSpec(AbstractTranslatorSpec<I, S> translatorSpec) {
-           super.addTranslatorSpec(translatorSpec);
+            super.addTranslatorSpec(translatorSpec);
 
-            if (translatorSpec.getDefaultInstanceForInputObject() instanceof Message) {
-                populate((Message) translatorSpec.getDefaultInstanceForInputObject());
-                return this;
-            }
-
-            if (translatorSpec.getDefaultInstanceForInputObject() instanceof ProtocolMessageEnum) {
-                ProtocolMessageEnum messageEnum = (ProtocolMessageEnum) translatorSpec
-                        .getDefaultInstanceForInputObject();
-                this.data.typeUrlToEnumMap.putIfAbsent(messageEnum.getDescriptorForType().getFullName(), messageEnum);
-                return this;
-            }
-
+            populate(translatorSpec.getInputObjectClass());
             return this;
-
         }
 
-        private void populate(Message message) {
-            this.data.descriptorMap.putIfAbsent(message.getDescriptorForType().getFullName(), message);
-
-            Set<FieldDescriptor> fieldDescriptors = message.getAllFields().keySet();
-
-            if (fieldDescriptors.isEmpty()) {
+        private void populate(Class<?> classRef) {
+            String typeUrl;
+            if (Enum.class.isAssignableFrom(classRef)) {
+                typeUrl = getDefaultEnum(classRef).getDescriptorForType().getFullName();
+                this.data.typeUrlToClassMap.putIfAbsent(typeUrl, classRef);
                 return;
             }
 
-            for (FieldDescriptor fieldDescriptor : fieldDescriptors) {
-                if (fieldDescriptor.getJavaType() == JavaType.MESSAGE) {
-                    Message subMessage = (Message) message.getField(fieldDescriptor);
-                    if (!(subMessage.getDescriptorForType() == Any.getDescriptor())) {
-                        populate(subMessage);
+            if (Message.class.isAssignableFrom(classRef)) {
+                Message message = getDefaultMessage(classRef);
+                typeUrl = message.getDescriptorForType().getFullName();
+
+                this.data.typeUrlToClassMap.putIfAbsent(typeUrl, classRef);
+                this.descriptorSet.add(message.getDescriptorForType());
+
+                Set<FieldDescriptor> fieldDescriptors = message.getAllFields().keySet();
+
+                if (fieldDescriptors.isEmpty()) {
+                    return;
+                }
+
+                for (FieldDescriptor fieldDescriptor : fieldDescriptors) {
+                    if (fieldDescriptor.getJavaType() == JavaType.MESSAGE) {
+                        Message subMessage = (Message) message.getField(fieldDescriptor);
+                        if (!(subMessage.getDescriptorForType() == Any.getDescriptor())) {
+                            populate(subMessage.getClass());
+                        }
                     }
                 }
+            }
+
+        }
+
+        private Message getDefaultMessage(Class<?> classRef) {
+            try {
+                Method method = classRef.getMethod("getDefaultInstance");
+                return (Message) method.invoke(null);
+            } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
+                    | InvocationTargetException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        private ProtocolMessageEnum getDefaultEnum(Class<?> classRef) {
+            try {
+                Method method = classRef.getMethod("forNumber", int.class);
+                return (ProtocolMessageEnum) method.invoke(null, 0);
+            } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
+                    | InvocationTargetException e) {
+                throw new RuntimeException(e);
             }
         }
     }
@@ -154,7 +177,7 @@ public class ProtobufTranslatorCore extends TranslatorCore {
     public static Builder builder() {
         return new Builder(new Data());
     }
- 
+
     public Parser getJsonParser() {
         return this.data.jsonParser;
     }
@@ -244,7 +267,7 @@ public class ProtobufTranslatorCore extends TranslatorCore {
         Message anyMessage = getMessageFromAny(anyValue);
 
         if (anyMessage.getDescriptorForType() == WrapperEnumValue.getDescriptor()) {
-            return convertInputEnum(getEnumFromMessage((WrapperEnumValue) anyMessage), superClass);
+            return convertInputObject(getEnumFromMessage((WrapperEnumValue) anyMessage), superClass);
         }
 
         return convertInputObject(anyMessage, superClass);
@@ -254,7 +277,7 @@ public class ProtobufTranslatorCore extends TranslatorCore {
         Message anyMessage = getMessageFromAny(anyValue);
 
         if (anyMessage.getDescriptorForType() == WrapperEnumValue.getDescriptor()) {
-            return convertInputEnum(getEnumFromMessage((WrapperEnumValue) anyMessage));
+            return convertInputObject(getEnumFromMessage((WrapperEnumValue) anyMessage));
         }
         return convertInputObject(anyMessage);
     }
@@ -269,17 +292,15 @@ public class ProtobufTranslatorCore extends TranslatorCore {
         return wrapperEnumValue;
     }
 
-    private ProtocolMessageEnum getEnumFromMessage(WrapperEnumValue enumValue) {
+    private Enum<?> getEnumFromMessage(WrapperEnumValue enumValue) {
         String typeUrl = enumValue.getEnumTypeUrl();
         String value = enumValue.getValue();
 
-        if (this.data.typeUrlToEnumMap.containsKey(typeUrl)) {
-
-            ProtocolMessageEnum defaultInstance = this.data.typeUrlToEnumMap.get(typeUrl);
-            Class<? extends ProtocolMessageEnum> classRef = defaultInstance.getClass();
+        if (this.data.typeUrlToClassMap.containsKey(typeUrl)) {
+            Class<?> classRef = this.data.typeUrlToClassMap.get(typeUrl);
 
             try {
-                return (ProtocolMessageEnum) classRef.getMethod("valueOf", String.class).invoke(null, value);
+                return (Enum<?>) classRef.getMethod("valueOf", String.class).invoke(null, value);
             } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException
                     | NoSuchMethodException | SecurityException e) {
                 throw new RuntimeException(e);
@@ -295,36 +316,25 @@ public class ProtobufTranslatorCore extends TranslatorCore {
         String fullTypeUrl = anyValue.getTypeUrl();
         String[] parts = fullTypeUrl.split("/");
 
-        if (parts.length > 2) {
+        if (parts.length != 2) {
             throw new RuntimeException("Malformed type url");
         }
 
         String typeUrl = parts[1];
-        Message message;
-        Class<? extends Message> classRef;
+        Class<?> classRef = this.data.typeUrlToClassMap.get(typeUrl);
+        Class<? extends Message> messageClassRef;
 
-        message = this.data.descriptorMap.get(typeUrl);
-
-        if (message == null) {
+        if (!(Message.class.isAssignableFrom(classRef))) {
             throw new RuntimeException("No default instance was provided for: " + typeUrl);
         }
+        messageClassRef = classRef.asSubclass(Message.class);
 
-        classRef = message.getClass();
         try {
-            Message unpackedMessage = anyValue.unpack(classRef);
+            Message unpackedMessage = anyValue.unpack(messageClassRef);
             return unpackedMessage;
         } catch (InvalidProtocolBufferException e) {
             throw new RuntimeException("Unable To unpack any type to given class: " + classRef.getName(), e);
         }
     }
 
-    private <T extends U, U> T convertInputEnum(ProtocolMessageEnum inputEnum, Class<U> superClass) {
-        T convertedEnum = convertInputEnum(inputEnum);
-
-        return convertedEnum;
-    }
-
-    private <T> T convertInputEnum(ProtocolMessageEnum inputEnum) {
-        return getTranslatorForClass(inputEnum.getClass()).convert(inputEnum);
-    }
 }

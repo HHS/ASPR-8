@@ -18,11 +18,6 @@ public class GlobalPropertyIdTranslatorSpec extends AbstractProtobufTranslatorSp
     }
 
     @Override
-    public GlobalPropertyIdInput getDefaultInstanceForInputObject() {
-        return GlobalPropertyIdInput.getDefaultInstance();
-    }
-
-    @Override
     public Class<GlobalPropertyId> getAppObjectClass() {
         return GlobalPropertyId.class;
     }

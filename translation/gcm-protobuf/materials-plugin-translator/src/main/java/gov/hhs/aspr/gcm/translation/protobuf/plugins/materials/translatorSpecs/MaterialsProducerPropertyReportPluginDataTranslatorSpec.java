@@ -31,11 +31,6 @@ public class MaterialsProducerPropertyReportPluginDataTranslatorSpec
     }
 
     @Override
-    public MaterialsProducerPropertyReportPluginDataInput getDefaultInstanceForInputObject() {
-        return MaterialsProducerPropertyReportPluginDataInput.getDefaultInstance();
-    }
-
-    @Override
     public Class<MaterialsProducerPropertyReportPluginData> getAppObjectClass() {
         return MaterialsProducerPropertyReportPluginData.class;
     }
