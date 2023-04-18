@@ -2,21 +2,20 @@ package gov.hhs.aspr.gcm.translation.protobuf.plugins.globalproperties;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.util.EnumSet;
-import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslatorCore;
-import gov.hhs.aspr.translation.core.TranslatorController;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.globalproperties.input.GlobalPropertiesPluginDataInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.globalproperties.input.GlobalPropertyReportPluginDataInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.PropertiesTranslator;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.ReportsTranslator;
-import nucleus.PluginData;
+import gov.hhs.aspr.translation.core.TranslatorController;
+import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslatorCore;
 import plugins.globalproperties.GlobalPropertiesPluginData;
 import plugins.globalproperties.reports.GlobalPropertyReportPluginData;
 import plugins.globalproperties.support.GlobalPropertyId;
@@ -27,19 +26,28 @@ import plugins.util.properties.PropertyDefinition;
 import util.random.RandomGeneratorProvider;
 
 public class AppTest {
+    Path basePath = getCurrentDir();
+    Path inputFilePath = basePath.resolve("json");
+    Path outputFilePath = makeOutputDir();
+
+    private Path getCurrentDir() {
+        try {
+            return Path.of(this.getClass().getClassLoader().getResource("").toURI());
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private Path makeOutputDir() {
+        Path path = basePath.resolve("json/output");
+
+        path.toFile().mkdirs();
+
+        return path;
+    }
 
     @Test
     public void testGlobalPropertiesPluginDataTranslatorSpec() {
-
-        Path basePath = Path.of("").toAbsolutePath();
-
-        if (!basePath.endsWith("globalproperties-plugin-translator")) {
-            basePath = basePath.resolve("globalproperties-plugin-translator");
-        }
-        Path inputFilePath = basePath.resolve("src/main/resources/json");
-        Path outputFilePath = basePath.resolve("src/main/resources/json/output");
-
-        outputFilePath.toFile().mkdir();
 
         String fileName = "pluginData.json";
 
@@ -52,9 +60,9 @@ public class AppTest {
                 .addWriter(outputFilePath.resolve(fileName), GlobalPropertiesPluginData.class)
                 .build();
 
-        List<PluginData> pluginDatas = translatorController.readInput().getPluginDatas();
+        translatorController.readInput();
 
-        GlobalPropertiesPluginData actualPluginData = (GlobalPropertiesPluginData) pluginDatas.get(0);
+        GlobalPropertiesPluginData actualPluginData = translatorController.getObject(GlobalPropertiesPluginData.class);
 
         Set<TestGlobalPropertyId> expectedPropertyIds = EnumSet.allOf(TestGlobalPropertyId.class);
 
@@ -76,16 +84,6 @@ public class AppTest {
     @Test
     public void testGlobalPropertyReportTranslatorSpec() {
 
-        Path basePath = Path.of("").toAbsolutePath();
-
-        if (!basePath.endsWith("globalproperties-plugin-translator")) {
-            basePath = basePath.resolve("globalproperties-plugin-translator");
-        }
-        Path inputFilePath = basePath.resolve("src/main/resources/json");
-        Path outputFilePath = basePath.resolve("src/main/resources/json/output");
-
-        outputFilePath.toFile().mkdir();
-
         String fileName = "propertyReport.json";
 
         TranslatorController translatorController = TranslatorController.builder()
@@ -97,9 +95,9 @@ public class AppTest {
                 .addWriter(outputFilePath.resolve(fileName), GlobalPropertyReportPluginData.class)
                 .build();
 
-        List<PluginData> pluginDatas = translatorController.readInput().getPluginDatas();
+        translatorController.readInput();
 
-        GlobalPropertyReportPluginData actualPluginData = (GlobalPropertyReportPluginData) pluginDatas.get(0);
+        GlobalPropertyReportPluginData actualPluginData = translatorController.getObject(GlobalPropertyReportPluginData.class);
 
         RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(524805676405822016L);
         GlobalPropertyReportPluginData.Builder builder = GlobalPropertyReportPluginData.builder();

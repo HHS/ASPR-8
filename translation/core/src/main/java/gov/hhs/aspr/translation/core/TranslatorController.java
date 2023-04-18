@@ -39,8 +39,8 @@ public class TranslatorController {
     private static class Data {
         private TranslatorCore.Builder translatorCoreBuilder;
         private final List<Translator> translators = new ArrayList<>();
-        private final Map<Reader, Class<?>> readerMap = new LinkedHashMap<>();
-        private final Map<Pair<Class<?>, Integer>, Writer> writerMap = new LinkedHashMap<>();
+        private final Map<Path, Class<?>> inputFilePathMap = new LinkedHashMap<>();
+        private final Map<Pair<Class<?>, Integer>, Path> outputFilePathMap = new LinkedHashMap<>();
         private final Map<Class<?>, Class<?>> markerInterfaceClassMap = new LinkedHashMap<>();
 
         private Data() {
@@ -55,7 +55,7 @@ public class TranslatorController {
         }
 
         public TranslatorController build() {
-            if(this.data.translatorCoreBuilder == null) {
+            if (this.data.translatorCoreBuilder == null) {
                 throw new RuntimeException("Did not set the TranslatorCore Builder");
             }
             TranslatorController translatorController = new TranslatorController(this.data);
@@ -65,11 +65,7 @@ public class TranslatorController {
         }
 
         public Builder addReader(Path filePath, Class<?> classRef) {
-            try {
-                this.data.readerMap.put(new FileReader(filePath.toFile()), classRef);
-            } catch (FileNotFoundException e) {
-                throw new RuntimeException("Failed to create Reader", e);
-            }
+            this.data.inputFilePathMap.put(filePath, classRef);
 
             return this;
         }
@@ -81,14 +77,11 @@ public class TranslatorController {
         public Builder addWriterForScenario(Path filePath, Class<?> classRef, Integer scenarioId) {
             Pair<Class<?>, Integer> key = new Pair<>(classRef, scenarioId);
 
-            if (this.data.writerMap.containsKey(key)) {
+            if (this.data.outputFilePathMap.containsKey(key)) {
                 throw new RuntimeException("Attempted to overwrite an existing output file.");
             }
-            try {
-                this.data.writerMap.put(key, new FileWriter(filePath.toFile()));
-            } catch (IOException e) {
-                throw new RuntimeException("Failed to create Writer", e);
-            }
+            this.data.outputFilePathMap.put(key, filePath);
+
             return this;
         }
 
@@ -126,11 +119,13 @@ public class TranslatorController {
 
     protected <T extends TranslatorCore.Builder> T getTranslatorCoreBuilder(Class<T> classRef) {
         if (this.translatorCore == null) {
-            if(this.data.translatorCoreBuilder.getClass() == classRef) {
+            if (this.data.translatorCoreBuilder.getClass() == classRef) {
                 return classRef.cast(this.data.translatorCoreBuilder);
             }
 
-            throw new RuntimeException("The TranslatorCore is of type: " + this.data.translatorCoreBuilder.getClass().getName() + " and the given classRef was: " + classRef.getName());
+            throw new RuntimeException(
+                    "The TranslatorCore is of type: " + this.data.translatorCoreBuilder.getClass().getName()
+                            + " and the given classRef was: " + classRef.getName());
         }
         throw new RuntimeException(
                 "Trying to get TranslatorCoreBuilder after it was built and/or initialized");
@@ -186,8 +181,14 @@ public class TranslatorController {
     public TranslatorController readInputParrallel() {
         validateCoreTranslator();
 
-        this.data.readerMap.keySet().parallelStream().forEach(reader -> {
-            Class<?> classRef = this.data.readerMap.get(reader);
+        this.data.inputFilePathMap.keySet().parallelStream().forEach(path -> {
+            Class<?> classRef = this.data.inputFilePathMap.get(path);
+            Reader reader;
+            try {
+                reader = new FileReader(path.toFile());
+            } catch (FileNotFoundException e) {
+                throw new RuntimeException("Failed to create Reader", e);
+            }
 
             this.readInput(reader, classRef);
         });
@@ -198,13 +199,39 @@ public class TranslatorController {
     public TranslatorController readInput() {
         validateCoreTranslator();
 
-        for (Reader reader : this.data.readerMap.keySet()) {
-            Class<?> classRef = this.data.readerMap.get(reader);
+        for (Path path : this.data.inputFilePathMap.keySet()) {
+            Class<?> classRef = this.data.inputFilePathMap.get(path);
+
+            Reader reader;
+            try {
+                reader = new FileReader(path.toFile());
+            } catch (FileNotFoundException e) {
+                throw new RuntimeException("Failed to create Reader", e);
+            }
 
             this.readInput(reader, classRef);
         }
 
         return this;
+    }
+
+    private Path getOutputPath(Class<?> classRef, Integer scenarioId) {
+        Pair<Class<?>, Integer> key = new Pair<>(classRef, scenarioId);
+
+        if (this.data.outputFilePathMap.containsKey(key)) {
+            return this.data.outputFilePathMap.get(key);
+        }
+
+        if (this.data.markerInterfaceClassMap.containsKey(classRef)) {
+            Class<?> markerInterfaceClass = this.data.markerInterfaceClassMap.get(classRef);
+            key = new Pair<>(markerInterfaceClass, scenarioId);
+
+            if (this.data.outputFilePathMap.containsKey(key)) {
+                return this.data.outputFilePathMap.get(key);
+            }
+        }
+
+        throw new RuntimeException("No path was provided for " + classRef.getName());
     }
 
     public void writeOutput() {
@@ -216,13 +243,13 @@ public class TranslatorController {
 
             Class<?> classRef = simObject.getClass();
 
-            if (this.data.markerInterfaceClassMap.containsKey(classRef)) {
-                classRef = this.data.markerInterfaceClassMap.get(classRef);
+            Path path = getOutputPath(classRef, scenarioId);
+            try {
+                this.writeOutput(new FileWriter(path.toFile()), simObject, Optional.empty());
+            } catch (IOException e) {
+                throw new RuntimeException("Unable to create writer for file: " + path.toString(), e);
             }
 
-            Writer writer = this.data.writerMap.get(new Pair<Class<?>, Integer>(classRef, scenarioId));
-
-            this.writeOutput(writer, simObject, Optional.empty());
         }
     }
 
@@ -245,11 +272,14 @@ public class TranslatorController {
     public <T> void writeOutput(T object, Integer scenarioId) {
         validateCoreTranslator();
 
-        Writer writer = this.data.writerMap.get(new Pair<Class<?>, Integer>(object.getClass(), scenarioId));
+        Path path = getOutputPath(object.getClass(), scenarioId);
 
-        this.writeOutput(writer, object, Optional.empty());
+        try {
+            this.writeOutput(new FileWriter(path.toFile()), object, Optional.empty());
+        } catch (IOException e) {
+            throw new RuntimeException("Unable to create writer for file: " + path.toString(), e);
+        }
     }
-
 
     public <T> T getObject(Class<T> classRef) {
         for (Object object : this.objects) {
