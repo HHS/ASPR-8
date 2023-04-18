@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -16,8 +17,6 @@ import java.util.Set;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslatorCore;
-import gov.hhs.aspr.translation.core.TranslatorController;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.input.BatchStatusReportPluginDataInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.input.MaterialsPluginDataInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.input.MaterialsProducerPropertyReportPluginDataInput;
@@ -28,7 +27,8 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.PropertiesTransl
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.RegionsTranslator;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.ReportsTranslator;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.ResourcesTranslator;
-import nucleus.PluginData;
+import gov.hhs.aspr.translation.core.TranslatorController;
+import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslatorCore;
 import plugins.materials.MaterialsPluginData;
 import plugins.materials.reports.BatchStatusReportPluginData;
 import plugins.materials.reports.MaterialsProducerPropertyReportPluginData;
@@ -50,21 +50,28 @@ import plugins.util.properties.PropertyDefinition;
 import util.random.RandomGeneratorProvider;
 
 public class AppTest {
+	Path basePath = getCurrentDir();
+	Path inputFilePath = basePath.resolve("json");
+	Path outputFilePath = makeOutputDir();
+
+	private Path getCurrentDir() {
+		try {
+			return Path.of(this.getClass().getClassLoader().getResource("").toURI());
+		} catch (URISyntaxException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	private Path makeOutputDir() {
+		Path path = basePath.resolve("json/output");
+
+		path.toFile().mkdirs();
+
+		return path;
+	}
 
 	@Test
 	public void testMaterialsTranslator() {
-
-		Path basePath = Path.of("").toAbsolutePath();
-
-		if (!basePath.endsWith("materials-plugin-translator")) {
-			basePath = basePath.resolve("materials-plugin-translator");
-		}
-
-		Path inputFilePath = basePath.resolve("src/main/resources/json");
-		Path outputFilePath = basePath.resolve("src/main/resources/json/output");
-
-		outputFilePath.toFile().mkdir();
-
 		String fileName = "pluginData.json";
 
 		TranslatorController translatorController = TranslatorController.builder()
@@ -79,10 +86,9 @@ public class AppTest {
 
 				.build();
 
-		List<PluginData> pluginDatas = translatorController.readInput().getPluginDatas();
+		translatorController.readInput();
 
-		MaterialsPluginData materialsPluginData = (MaterialsPluginData) pluginDatas.get(0);
-
+		MaterialsPluginData materialsPluginData = translatorController.getObject(MaterialsPluginData.class);
 		int numBatches = 50;
 		int numStages = 10;
 		int numBatchesInStage = 30;
@@ -215,22 +221,11 @@ public class AppTest {
 
 	@Test
 	public void testBatchStatusReportPluginDataTranslatorSpec() {
-		Path basePath = Path.of("").toAbsolutePath();
-
-		if (!basePath.endsWith("materials-plugin-translator")) {
-			basePath = basePath.resolve("materials-plugin-translator");
-		}
-
-		Path inputFilePath = basePath.resolve("src/main/resources/json");
-		Path outputFilePath = basePath.resolve("src/main/resources/json/output");
-
-		outputFilePath.toFile().mkdir();
-
 		String fileName = "batchStatusReport.json";
 
 		TranslatorController translatorController = TranslatorController.builder()
 				.setTranslatorCoreBuilder(ProtobufTranslatorCore.builder())
-				.addTranslator(MaterialsTranslator.builder(true).build())
+				.addTranslator(MaterialsTranslator.getTranslatorWithReport())
 				.addTranslator(ReportsTranslator.getTranslator())
 				.addTranslator(PropertiesTranslator.getTranslator())
 				.addTranslator(ResourcesTranslator.getTranslator())
@@ -240,10 +235,10 @@ public class AppTest {
 				.addWriter(outputFilePath.resolve(fileName), BatchStatusReportPluginData.class)
 				.build();
 
-		List<PluginData> pluginDatas = translatorController.readInput().getPluginDatas();
+		translatorController.readInput();
 
-		BatchStatusReportPluginData actualPluginData = (BatchStatusReportPluginData) pluginDatas.get(0);
-
+		BatchStatusReportPluginData actualPluginData = translatorController
+				.getObject(BatchStatusReportPluginData.class);
 		BatchStatusReportPluginData.Builder builder = BatchStatusReportPluginData.builder();
 
 		ReportLabel reportLabel = new SimpleReportLabel("batch status report label");
@@ -259,22 +254,11 @@ public class AppTest {
 
 	@Test
 	public void testMaterialsProducerPropertyReportPluginDataTranslatorSpec() {
-		Path basePath = Path.of("").toAbsolutePath();
-
-		if (!basePath.endsWith("materials-plugin-translator")) {
-			basePath = basePath.resolve("materials-plugin-translator");
-		}
-
-		Path inputFilePath = basePath.resolve("src/main/resources/json");
-		Path outputFilePath = basePath.resolve("src/main/resources/json/output");
-
-		outputFilePath.toFile().mkdir();
-
 		String fileName = "materialsProducerPropertyReport.json";
 
 		TranslatorController translatorController = TranslatorController.builder()
 				.setTranslatorCoreBuilder(ProtobufTranslatorCore.builder())
-				.addTranslator(MaterialsTranslator.builder(true).build())
+				.addTranslator(MaterialsTranslator.getTranslatorWithReport())
 				.addTranslator(ReportsTranslator.getTranslator())
 				.addTranslator(PropertiesTranslator.getTranslator())
 				.addTranslator(ResourcesTranslator.getTranslator())
@@ -285,10 +269,10 @@ public class AppTest {
 						MaterialsProducerPropertyReportPluginData.class)
 				.build();
 
-		List<PluginData> pluginDatas = translatorController.readInput().getPluginDatas();
+		translatorController.readInput();
 
-		MaterialsProducerPropertyReportPluginData actualPluginData = (MaterialsProducerPropertyReportPluginData) pluginDatas
-				.get(0);
+		MaterialsProducerPropertyReportPluginData actualPluginData = translatorController
+				.getObject(MaterialsProducerPropertyReportPluginData.class);
 		MaterialsProducerPropertyReportPluginData.Builder builder = MaterialsProducerPropertyReportPluginData.builder();
 
 		ReportLabel reportLabel = new SimpleReportLabel("materials producer property report report label");
@@ -304,17 +288,6 @@ public class AppTest {
 
 	@Test
 	public void testMaterialsProducerResourceReportPluginDataTranslatorSpec() {
-		Path basePath = Path.of("").toAbsolutePath();
-
-		if (!basePath.endsWith("materials-plugin-translator")) {
-			basePath = basePath.resolve("materials-plugin-translator");
-		}
-
-		Path inputFilePath = basePath.resolve("src/main/resources/json");
-		Path outputFilePath = basePath.resolve("src/main/resources/json/output");
-
-		outputFilePath.toFile().mkdir();
-
 		String fileName = "materialsProducerResourceReport.json";
 
 		TranslatorController translatorController = TranslatorController.builder()
@@ -329,10 +302,10 @@ public class AppTest {
 				.addWriter(outputFilePath.resolve(fileName), MaterialsProducerResourceReportPluginData.class)
 				.build();
 
-		List<PluginData> pluginDatas = translatorController.readInput().getPluginDatas();
+		translatorController.readInput();
 
-		MaterialsProducerResourceReportPluginData actualPluginData = (MaterialsProducerResourceReportPluginData) pluginDatas
-				.get(0);
+		MaterialsProducerResourceReportPluginData actualPluginData = translatorController
+				.getObject(MaterialsProducerResourceReportPluginData.class);
 		MaterialsProducerResourceReportPluginData.Builder builder = MaterialsProducerResourceReportPluginData.builder();
 
 		ReportLabel reportLabel = new SimpleReportLabel("materials producer resource report label");
@@ -348,17 +321,6 @@ public class AppTest {
 
 	@Test
 	public void testStageReportPluginDataTranslatorSpec() {
-		Path basePath = Path.of("").toAbsolutePath();
-
-		if (!basePath.endsWith("materials-plugin-translator")) {
-			basePath = basePath.resolve("materials-plugin-translator");
-		}
-
-		Path inputFilePath = basePath.resolve("src/main/resources/json");
-		Path outputFilePath = basePath.resolve("src/main/resources/json/output");
-
-		outputFilePath.toFile().mkdir();
-
 		String fileName = "stageReport.json";
 
 		TranslatorController translatorController = TranslatorController.builder()
@@ -373,10 +335,9 @@ public class AppTest {
 				.addWriter(outputFilePath.resolve(fileName), StageReportPluginData.class)
 				.build();
 
-		List<PluginData> pluginDatas = translatorController.readInput().getPluginDatas();
+		translatorController.readInput();
 
-		StageReportPluginData actualPluginData = (StageReportPluginData) pluginDatas.get(0);
-
+		StageReportPluginData actualPluginData = translatorController.getObject(StageReportPluginData.class);
 		StageReportPluginData.Builder builder = StageReportPluginData.builder();
 
 		ReportLabel reportLabel = new SimpleReportLabel("stage report label");
