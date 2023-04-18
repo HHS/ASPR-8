@@ -17,8 +17,8 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.translatorSpecs.T
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.translatorSpecs.TestResourcePropertyIdTranslatorSpec;
 
 public class ResourcesTranslator {
-    private ResourcesTranslator() {
 
+    private ResourcesTranslator() {
     }
 
     public static Translator.Builder builder(boolean withReport) {
@@ -46,14 +46,15 @@ public class ResourcesTranslator {
         if (withReport) {
             builder.addDependency(ReportsTranslatorId.TRANSLATOR_ID);
         }
+
         return builder;
     }
 
-    public static Translator.Builder builder() {
-        return builder(false);
+    public static Translator getTranslatorWithReport() {
+        return builder(true).build();
     }
 
     public static Translator getTranslator() {
-        return builder().build();
+        return builder(false).build();
     }
 }

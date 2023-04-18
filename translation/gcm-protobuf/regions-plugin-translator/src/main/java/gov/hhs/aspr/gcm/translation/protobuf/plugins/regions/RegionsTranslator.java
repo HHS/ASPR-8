@@ -17,7 +17,6 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.ReportsTranslatorId
 public class RegionsTranslator {
 
     private RegionsTranslator() {
-
     }
 
     public static Translator.Builder builder(boolean withReport) {
@@ -43,14 +42,15 @@ public class RegionsTranslator {
         if (withReport) {
             builder.addDependency(ReportsTranslatorId.TRANSLATOR_ID);
         }
+
         return builder;
     }
 
-    public static Translator.Builder builder() {
-        return builder(false);
+    public static Translator getTranslatorWithReport() {
+        return builder(true).build();
     }
 
     public static Translator getTranslator() {
-        return builder().build();
+        return builder(false).build();
     }
 }

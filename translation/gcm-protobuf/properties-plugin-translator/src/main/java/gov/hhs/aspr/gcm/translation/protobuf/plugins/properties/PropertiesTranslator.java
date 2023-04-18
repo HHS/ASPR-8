@@ -9,11 +9,10 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.translatorSpecs.
 public class PropertiesTranslator {
 
     private PropertiesTranslator() {
-
     }
 
     public static Translator.Builder builder() {
-        return Translator.builder()
+        Translator.Builder builder = Translator.builder()
                 .setTranslatorId(PropertiesTranslatorId.TRANSLATOR_ID)
                 .setInitializer((translatorContext) -> {
                     translatorContext.addTranslatorSpec(new PropertyDefinitionTranslatorSpec());
@@ -22,10 +21,10 @@ public class PropertiesTranslator {
                     translatorContext.addTranslatorSpec(new PropertyDefinitionMapTranslatorSpec());
                 });
 
+        return builder;
     }
 
     public static Translator getTranslator() {
         return builder().build();
-
     }
 }

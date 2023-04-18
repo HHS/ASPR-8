@@ -10,11 +10,10 @@ import plugins.reports.support.SimpleReportLabel;
 public class ReportsTranslator {
 
     private ReportsTranslator() {
-
     }
 
     public static Translator.Builder builder() {
-        return Translator.builder()
+        Translator.Builder builder = Translator.builder()
                 .setTranslatorId(ReportsTranslatorId.TRANSLATOR_ID)
                 .setInitializer((translatorContext) -> {
                     translatorContext.addTranslatorSpec(new ReportLabelTranslatorSpec());
@@ -24,10 +23,10 @@ public class ReportsTranslator {
                     translatorContext.addMarkerInterface(SimpleReportLabel.class, ReportLabel.class);
                 });
 
+        return builder;
     }
 
     public static Translator getTranslator() {
         return builder().build();
-
     }
 }

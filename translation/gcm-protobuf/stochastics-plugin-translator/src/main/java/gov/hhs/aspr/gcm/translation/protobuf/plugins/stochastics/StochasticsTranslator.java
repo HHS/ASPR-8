@@ -9,11 +9,10 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.stochastics.translatorSpecs
 public class StochasticsTranslator {
 
     private StochasticsTranslator() {
-
     }
 
     public static Translator.Builder builder() {
-        return Translator.builder()
+        Translator.Builder builder = Translator.builder()
                 .setTranslatorId(StochasticsTranslatorId.PLUGIN_BUNDLE_ID)
                 .setInitializer((translatorContext) -> {
                     translatorContext.addTranslatorSpec(new StochasticsPluginDataTranslatorSpec());
@@ -22,6 +21,7 @@ public class StochasticsTranslator {
                     translatorContext.addTranslatorSpec(new TestRandomGeneratorIdTranslatorSpec());
                 });
 
+        return builder;
     }
 
     public static Translator getTranslator() {

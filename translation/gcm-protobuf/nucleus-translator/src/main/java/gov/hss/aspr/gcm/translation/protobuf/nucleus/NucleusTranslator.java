@@ -10,12 +10,12 @@ import gov.hss.aspr.gcm.translation.protobuf.nucleus.translatorSpecs.PlannerTran
 import gov.hss.aspr.gcm.translation.protobuf.nucleus.translatorSpecs.SimulationStateTranslatorSpec;
 
 public class NucleusTranslator {
-    private NucleusTranslator() {
 
+    private NucleusTranslator() {
     }
 
     public static Translator.Builder builder() {
-        return Translator.builder()
+        Translator.Builder builder = Translator.builder()
                 .setTranslatorId(NucleusTranslatorId.TRANSLATOR_ID)
                 .setInitializer((translatorContext) -> {
                     translatorContext.addTranslatorSpec(new SimulationStateTranslatorSpec());
@@ -38,6 +38,7 @@ public class NucleusTranslator {
                                             .findFieldByName("active"));
                 });
 
+        return builder;
     }
 
     public static Translator getTranslator() {
