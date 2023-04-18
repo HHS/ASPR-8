@@ -2,33 +2,40 @@ package gov.hhs.aspr.gcm.translation.protobuf.plugins.reports;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.net.URISyntaxException;
 import java.nio.file.Path;
-import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslatorCore;
-import gov.hhs.aspr.translation.core.TranslatorController;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.input.ReportLabelInput;
+import gov.hhs.aspr.translation.core.TranslatorController;
+import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslatorCore;
 import plugins.reports.support.ReportLabel;
 import plugins.reports.support.SimpleReportLabel;
 
 public class AppTest {
+    Path basePath = getCurrentDir();
+    Path inputFilePath = basePath.resolve("json");
+    Path outputFilePath = makeOutputDir();
+
+    private Path getCurrentDir() {
+        try {
+            return Path.of(this.getClass().getClassLoader().getResource("").toURI());
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private Path makeOutputDir() {
+        Path path = basePath.resolve("json/output");
+
+        path.toFile().mkdirs();
+
+        return path;
+    }
 
     @Test
     public void testReportLabelTranslatorSpec() {
-
-        Path basePath = Path.of("").toAbsolutePath();
-
-        if (!basePath.endsWith("reports-plugin-translator")) {
-            basePath = basePath.resolve("reports-plugin-translator");
-        }
-
-        Path inputFilePath = basePath.resolve("src/main/resources/json");
-        Path outputFilePath = basePath.resolve("src/main/resources/json/output");
-
-        outputFilePath.toFile().mkdir();
-
         String fileName = "reportLabel.json";
 
         TranslatorController translatorController = TranslatorController.builder()
@@ -38,9 +45,9 @@ public class AppTest {
                 .addWriter(outputFilePath.resolve(fileName), ReportLabel.class)
                 .build();
 
-        List<Object> objects = translatorController.readInput().getObjects();
+        translatorController.readInput();
 
-        ReportLabel label = (ReportLabel) objects.get(0);
+        ReportLabel label = translatorController.getObject(ReportLabel.class);
 
         assertEquals(new SimpleReportLabel("report label"), label);
 
