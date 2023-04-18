@@ -20,7 +20,7 @@ public class PeopleTranslator {
                     translatorContext.addTranslatorSpec(new PersonIdTranslatorSpec());
                     translatorContext.addTranslatorSpec(new PersonRangeTranslatorSpec());
 
-                    ((ProtobufTranslatorCore.Builder) translatorContext.getTranslatorCoreBuilder())
+                    translatorContext.getTranslatorCoreBuilder(ProtobufTranslatorCore.Builder.class)
                             .addFieldToIncludeDefaultValue(PersonIdInput.getDescriptor().findFieldByName("id"));
                 });
 
