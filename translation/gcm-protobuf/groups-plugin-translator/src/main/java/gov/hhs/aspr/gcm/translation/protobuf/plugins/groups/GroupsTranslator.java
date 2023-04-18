@@ -24,7 +24,6 @@ public class GroupsTranslator {
                 .setTranslatorId(GroupsTranslatorId.TRANSLATOR_ID)
                 .addDependency(PropertiesTranslatorId.TRANSLATOR_ID)
                 .addDependency(PeopleTranslatorId.TRANSLATOR_ID)
-
                 .setInitializer((translatorContext) -> {
                     translatorContext.addTranslatorSpec(new GroupsPluginDataTranslatorSpec());
                     translatorContext.addTranslatorSpec(new GroupIdTranslatorSpec());
@@ -33,17 +32,19 @@ public class GroupsTranslator {
                     translatorContext.addTranslatorSpec(new TestGroupTypeIdTranslatorSpec());
                     translatorContext.addTranslatorSpec(new TestGroupPropertyIdTranslatorSpec());
                     translatorContext.addTranslatorSpec(new SimpleGroupTypeIdTranslatorSpec());
+
                     if (withReport) {
                         translatorContext.addTranslatorSpec(new GroupPropertyReportPluginDataTranslatorSpec());
                     }
 
-                    ((ProtobufTranslatorCore.Builder) translatorContext.getTranslatorCoreBuilder())
+                    translatorContext.getTranslatorCoreBuilder(ProtobufTranslatorCore.Builder.class)
                             .addFieldToIncludeDefaultValue(GroupIdInput.getDescriptor().findFieldByName("id"));
                 });
 
         if (withReport) {
             builder.addDependency(ReportsTranslatorId.TRANSLATOR_ID);
         }
+
         return builder;
     }
 

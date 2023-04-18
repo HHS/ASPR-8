@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -14,14 +15,13 @@ import java.util.Set;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslatorCore;
-import gov.hhs.aspr.translation.core.TranslatorController;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.input.GroupPropertyReportPluginDataInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.input.GroupsPluginDataInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.PeopleTranslator;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.PropertiesTranslator;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.ReportsTranslator;
-import nucleus.PluginData;
+import gov.hhs.aspr.translation.core.TranslatorController;
+import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslatorCore;
 import plugins.groups.GroupsPluginData;
 import plugins.groups.reports.GroupPropertyReportPluginData;
 import plugins.groups.support.GroupId;
@@ -38,21 +38,28 @@ import util.random.RandomGeneratorProvider;
 import util.wrappers.MultiKey;
 
 public class AppTest {
+    Path basePath = getCurrentDir();
+    Path inputFilePath = basePath.resolve("json");
+    Path outputFilePath = makeOutputDir();
+
+    private Path getCurrentDir() {
+        try {
+            return Path.of(this.getClass().getClassLoader().getResource("").toURI());
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private Path makeOutputDir() {
+        Path path = basePath.resolve("json/output");
+
+        path.toFile().mkdirs();
+
+        return path;
+    }
 
     @Test
     public void testGroupsTranslator() {
-
-        Path basePath = Path.of("").toAbsolutePath();
-
-        if (!basePath.endsWith("groups-plugin-translator")) {
-            basePath = basePath.resolve("groups-plugin-translator");
-        }
-
-        Path inputFilePath = basePath.resolve("src/main/resources/json");
-        Path outputFilePath = basePath.resolve("src/main/resources/json/output");
-
-        outputFilePath.toFile().mkdir();
-
         String fileName = "pluginData.json";
 
         TranslatorController translatorController = TranslatorController.builder()
@@ -64,9 +71,9 @@ public class AppTest {
                 .addWriter(outputFilePath.resolve(fileName), GroupsPluginData.class)
                 .build();
 
-        List<PluginData> pluginDatas = translatorController.readInput().getPluginDatas();
+        translatorController.readInput();
 
-        GroupsPluginData groupsPluginData = (GroupsPluginData) pluginDatas.get(0);
+        GroupsPluginData groupsPluginData = translatorController.getObject(GroupsPluginData.class);
 
         long seed = 524805676405822016L;
         int initialPopulation = 100;
@@ -157,17 +164,6 @@ public class AppTest {
 
     @Test
     public void testGroupPropertyReportTranslatorSpec() {
-        Path basePath = Path.of("").toAbsolutePath();
-
-        if (!basePath.endsWith("groups-plugin-translator")) {
-            basePath = basePath.resolve("groups-plugin-translator");
-        }
-
-        Path inputFilePath = basePath.resolve("src/main/resources/json");
-        Path outputFilePath = basePath.resolve("src/main/resources/json/output");
-
-        outputFilePath.toFile().mkdir();
-
         String fileName = "propertyReport.json";
 
         TranslatorController translatorController = TranslatorController.builder()
@@ -180,9 +176,10 @@ public class AppTest {
                 .addWriter(outputFilePath.resolve(fileName), GroupPropertyReportPluginData.class)
                 .build();
 
-        List<PluginData> pluginDatas = translatorController.readInput().getPluginDatas();
+        translatorController.readInput();
 
-        GroupPropertyReportPluginData actualPluginData = (GroupPropertyReportPluginData) pluginDatas.get(0);
+        GroupPropertyReportPluginData actualPluginData = translatorController
+                .getObject(GroupPropertyReportPluginData.class);
 
         RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(524805676405822016L);
 
