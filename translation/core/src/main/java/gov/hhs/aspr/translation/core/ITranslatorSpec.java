@@ -1,4 +1,4 @@
-package gov.hhs.aspr.gcm.translation.core;
+package gov.hhs.aspr.translation.core;
 
 public interface ITranslatorSpec {
     <T extends TranslatorCore> void init(T translator);

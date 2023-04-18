@@ -1,4 +1,4 @@
-package gov.hhs.aspr.gcm.translation.core;
+package gov.hhs.aspr.translation.core;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -124,9 +124,13 @@ public class TranslatorController {
         this.appObjectClassToTranslatorMap.put(translatorSpec.getAppObjectClass(), this.focalTranslator);
     }
 
-    protected TranslatorCore.Builder getTranslatorCoreBuilder() {
+    protected <T extends TranslatorCore.Builder> T getTranslatorCoreBuilder(Class<T> classRef) {
         if (this.translatorCore == null) {
-            return this.data.translatorCoreBuilder;
+            if(this.data.translatorCoreBuilder.getClass() == classRef) {
+                return classRef.cast(this.data.translatorCoreBuilder);
+            }
+
+            throw new RuntimeException("The TranslatorCore is of type: " + this.data.translatorCoreBuilder.getClass().getName() + " and the given classRef was: " + classRef.getName());
         }
         throw new RuntimeException(
                 "Trying to get TranslatorCoreBuilder after it was built and/or initialized");

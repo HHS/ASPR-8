@@ -1,4 +1,4 @@
-package gov.hhs.aspr.gcm.translation.core;
+package gov.hhs.aspr.translation.core;
 
 public abstract class AbstractTranslatorSpec<I, S> implements ITranslatorSpec {
     private boolean initialized = false;

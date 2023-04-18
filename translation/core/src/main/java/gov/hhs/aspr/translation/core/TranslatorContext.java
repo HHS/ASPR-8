@@ -1,4 +1,4 @@
-package gov.hhs.aspr.gcm.translation.core;
+package gov.hhs.aspr.translation.core;
 
 public class TranslatorContext {
 
@@ -12,8 +12,8 @@ public class TranslatorContext {
         this.translatorController.addTranslatorSpec(translatorSpec);
     }
 
-    public TranslatorCore.Builder getTranslatorCoreBuilder() {
-        return this.translatorController.getTranslatorCoreBuilder();
+    public <T extends TranslatorCore.Builder> T getTranslatorCoreBuilder(Class<T> classRef) {
+        return this.translatorController.getTranslatorCoreBuilder(classRef);
     }
 
     public <T, U extends T> void addMarkerInterface(Class<U> classRef, Class<T> markerInterface) {
