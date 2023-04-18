@@ -1,4 +1,4 @@
-package gov.hhs.aspr.gcm.translation.protobuf.core;
+package gov.hhs.aspr.translation.protobuf.core;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -25,10 +25,10 @@ import com.google.protobuf.util.JsonFormat.Parser;
 import com.google.protobuf.util.JsonFormat.Printer;
 import com.google.protobuf.util.JsonFormat.TypeRegistry;
 
-import gov.hhs.aspr.gcm.translation.core.AbstractTranslatorSpec;
-import gov.hhs.aspr.gcm.translation.core.TranslatorCore;
-import gov.hhs.aspr.gcm.translation.protobuf.core.input.WrapperEnumValue;
-import gov.hhs.aspr.gcm.translation.protobuf.core.translatorSpecs.PrimitiveTranslatorSpecs;
+import gov.hhs.aspr.translation.core.AbstractTranslatorSpec;
+import gov.hhs.aspr.translation.core.TranslatorCore;
+import gov.hhs.aspr.translation.protobuf.core.input.WrapperEnumValue;
+import gov.hhs.aspr.translation.protobuf.core.translatorSpecs.PrimitiveTranslatorSpecs;
 
 public class ProtobufTranslatorCore extends TranslatorCore {
     private final Data data;
@@ -111,11 +111,6 @@ public class ProtobufTranslatorCore extends TranslatorCore {
             return this;
         }
 
-        // public Builder addDescriptor(Message message) {
-        //     populate(message);
-        //     return this;
-        // }
-
         @Override
         public <I, S> Builder addTranslatorSpec(AbstractTranslatorSpec<I, S> translatorSpec) {
            super.addTranslatorSpec(translatorSpec);
@@ -168,7 +163,7 @@ public class ProtobufTranslatorCore extends TranslatorCore {
         return this.data.jsonPrinter;
     }
 
-    public <M extends U, U> void writeJson(Writer writer, M simObject, Optional<Class<U>> superClass) {
+    public <M extends U, U> void writeOutput(Writer writer, M simObject, Optional<Class<U>> superClass) {
         Message message;
 
         if (superClass.isPresent()) {
@@ -176,10 +171,10 @@ public class ProtobufTranslatorCore extends TranslatorCore {
         } else {
             message = convertSimObject(simObject);
         }
-        writeJson(writer, message);
+        writeOutput(writer, message);
     }
 
-    private <U extends Message> void writeJson(Writer writer, U message) {
+    private <U extends Message> void writeOutput(Writer writer, U message) {
         try {
             String messageToWrite = this.data.jsonPrinter.print(message);
             writer.write(messageToWrite);
@@ -197,7 +192,7 @@ public class ProtobufTranslatorCore extends TranslatorCore {
         }
     }
 
-    public <T, U> T readJson(Reader reader, Class<U> inputClassRef) {
+    public <T, U> T readInput(Reader reader, Class<U> inputClassRef) {
         JsonObject jsonObject = JsonParser.parseReader(new JsonReader(reader)).getAsJsonObject();
         return parseJson(jsonObject, inputClassRef);
     }
@@ -229,7 +224,6 @@ public class ProtobufTranslatorCore extends TranslatorCore {
 
     public <M extends U, U> Any getAnyFromObject(M object, Class<U> superClass) {
         if (Enum.class.isAssignableFrom(object.getClass())) {
-            superClassCastCheck(object, superClass);
             return packMessage(getWrapperEnum(object));
         }
         return packMessage(convertSimObject(object, superClass));
@@ -326,9 +320,6 @@ public class ProtobufTranslatorCore extends TranslatorCore {
 
     private <T extends U, U> T convertInputEnum(ProtocolMessageEnum inputEnum, Class<U> superClass) {
         T convertedEnum = convertInputEnum(inputEnum);
-
-        // verify translated object can be casted to the super class
-        superClassCastCheck(convertedEnum, superClass);
 
         return convertedEnum;
     }

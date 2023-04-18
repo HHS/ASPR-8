@@ -1,8 +1,8 @@
-package gov.hhs.aspr.gcm.translation.protobuf.core.translatorSpecs;
+package gov.hhs.aspr.translation.protobuf.core.translatorSpecs;
 
 import com.google.protobuf.UInt64Value;
 
-import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractProtobufTranslatorSpec;
+import gov.hhs.aspr.translation.protobuf.core.AbstractProtobufTranslatorSpec;
 
 public class UInt64TranslatorSpec extends AbstractProtobufTranslatorSpec<UInt64Value, Long> {
 

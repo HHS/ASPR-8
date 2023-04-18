@@ -1,4 +1,4 @@
-package gov.hhs.aspr.gcm.translation.protobuf.core;
+package gov.hhs.aspr.translation.protobuf.core;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;

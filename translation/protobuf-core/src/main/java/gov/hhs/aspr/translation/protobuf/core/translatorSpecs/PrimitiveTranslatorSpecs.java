@@ -1,12 +1,12 @@
-package gov.hhs.aspr.gcm.translation.protobuf.core.translatorSpecs;
+package gov.hhs.aspr.translation.protobuf.core.translatorSpecs;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import com.google.protobuf.Message;
 
-import gov.hhs.aspr.gcm.translation.core.ITranslatorSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.core.input.WrapperEnumValue;
+import gov.hhs.aspr.translation.core.ITranslatorSpec;
+import gov.hhs.aspr.translation.protobuf.core.input.WrapperEnumValue;
 
 public class PrimitiveTranslatorSpecs {
 

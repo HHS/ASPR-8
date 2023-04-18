@@ -1,8 +1,8 @@
-package gov.hhs.aspr.gcm.translation.protobuf.core.translatorSpecs;
+package gov.hhs.aspr.translation.protobuf.core.translatorSpecs;
 
 import com.google.protobuf.FloatValue;
 
-import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractProtobufTranslatorSpec;
+import gov.hhs.aspr.translation.protobuf.core.AbstractProtobufTranslatorSpec;
 
 public class FloatTranslatorSpec extends AbstractProtobufTranslatorSpec<FloatValue, Float> {
 
