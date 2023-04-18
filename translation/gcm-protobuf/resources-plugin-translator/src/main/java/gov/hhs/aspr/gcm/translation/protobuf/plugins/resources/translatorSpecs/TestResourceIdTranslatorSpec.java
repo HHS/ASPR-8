@@ -1,7 +1,7 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.translatorSpecs;
 
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.input.TestResourceIdInput;
-import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractProtobufTranslatorSpec;
+import gov.hhs.aspr.translation.protobuf.core.AbstractProtobufTranslatorSpec;
 import plugins.resources.testsupport.TestResourceId;
 
 public class TestResourceIdTranslatorSpec extends AbstractProtobufTranslatorSpec<TestResourceIdInput, TestResourceId> {

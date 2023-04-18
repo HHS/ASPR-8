@@ -33,7 +33,6 @@
                                 <resource>
                                     <directory>${project.basedir}/src</directory>
                                     <includes>
-                                        <include>gov/hhs/aspr/gcm/translation/protobuf/core/*.proto</include>
                                         <include>gov/hhs/aspr/gcm/translation/protobuf/nucleus/*.proto</include>
                                         <include>gov/hhs/aspr/gcm/translation/protobuf/properties/*.proto</include>
                                         <include>gov/hhs/aspr/gcm/translation/protobuf/stochastics/*.proto</include>

@@ -16,7 +16,7 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.input.ResourcePro
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.input.ResourcePropertyValueMapInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.input.ResourceTimeTrackingPolicyMapInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.input.ResourcesPluginDataInput;
-import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractProtobufTranslatorSpec;
+import gov.hhs.aspr.translation.protobuf.core.AbstractProtobufTranslatorSpec;
 import plugins.people.support.PersonId;
 import plugins.regions.support.RegionId;
 import plugins.resources.ResourcesPluginData;

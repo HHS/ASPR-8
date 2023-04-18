@@ -1,7 +1,7 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.materials;
 
-import gov.hhs.aspr.gcm.translation.protobuf.core.ProtobufTranslatorCore;
-import gov.hhs.aspr.gcm.translation.core.Translator;
+import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslatorCore;
+import gov.hhs.aspr.translation.core.Translator;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.input.BatchIdInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.input.StageIdInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.translatorSpecs.BatchIdTranslatorSpec;

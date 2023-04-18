@@ -15,7 +15,7 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.input.PropertyDe
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.input.PropertyValueMapInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.input.ResourceIdInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.input.ResourceInitializationInput;
-import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractProtobufTranslatorSpec;
+import gov.hhs.aspr.translation.protobuf.core.AbstractProtobufTranslatorSpec;
 import plugins.materials.MaterialsPluginData;
 import plugins.materials.support.BatchId;
 import plugins.materials.support.BatchPropertyId;

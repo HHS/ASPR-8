@@ -32,6 +32,8 @@
         <gcm.version>4.0.0-SNAPSHOT</gcm.version>
         <proto-definitions.version>1.4.0</proto-definitions.version>
         <junit-jupiter-engine.version>5.8.2</junit-jupiter-engine.version>
+
+        <protoc.version>3.21.12</protoc.version>
     </properties>
 
     <!--
@@ -45,8 +47,8 @@
         <dependencies>
             <!-- dependency for core protobuf translation logic -->
             <dependency>
-                <groupId>gov.hhs.aspr.translation.protobuf</groupId>
-                <artifactId>core</artifactId>
+                <groupId>gov.hhs.aspr.translation</groupId>
+                <artifactId>protobuf-core</artifactId>
                 <version>${translation.protobuf-core.version}</version>
             </dependency>
 
@@ -55,6 +57,12 @@
                 <groupId>gov.hhs.aspr</groupId>
                 <artifactId>gcm4</artifactId>
                 <version>${gcm.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>gov.hhs.aspr</groupId>
+                        <artifactId>util</artifactId>
+                    </exclusion>
+                </exclusions>
                 <!--
                     A scope of provided means that the resulting jar file will not include this in its dependencies
                     instead, must be provided by the project that uses this dependecy
@@ -93,16 +101,12 @@
     -->
     <dependencies>
         <dependency>
+            <groupId>gov.hhs.aspr.translation</groupId>
+            <artifactId>protobuf-core</artifactId>
+        </dependency>
+        <dependency>
             <groupId>gov.hhs.aspr</groupId>
             <artifactId>gcm4</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.google.protobuf</groupId>
-            <artifactId>protobuf-java</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.google.protobuf</groupId>
-            <artifactId>protobuf-java-util</artifactId>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
@@ -122,7 +126,6 @@
      -->
     <modules>
         <module>proto-definitions</module>
-        <module>core</module>
     </modules>
 
     <build>
@@ -220,6 +223,14 @@
                                     <groupId>gov.hhs.aspr.gcm.translation.protobuf</groupId>
                                     <artifactId>proto-definitions</artifactId>
                                     <version>${proto-definitions.version}</version>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${project.build.outputDirectory}</outputDirectory>
+                                    <includes>**/*.proto</includes>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>gov.hhs.aspr.translation</groupId>
+                                    <artifactId>protobuf-core</artifactId>
+                                    <version>${translation.protobuf-core.version}</version>
                                     <overWrite>true</overWrite>
                                     <outputDirectory>${project.build.outputDirectory}</outputDirectory>
                                     <includes>**/*.proto</includes>

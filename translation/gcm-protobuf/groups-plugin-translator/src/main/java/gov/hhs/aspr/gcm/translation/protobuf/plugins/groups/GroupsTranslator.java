@@ -1,7 +1,7 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.groups;
 
-import gov.hhs.aspr.gcm.translation.protobuf.core.ProtobufTranslatorCore;
-import gov.hhs.aspr.gcm.translation.core.Translator;
+import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslatorCore;
+import gov.hhs.aspr.translation.core.Translator;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.input.GroupIdInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.translatorSpecs.GroupIdTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.translatorSpecs.GroupPropertyIdTranslatorSpec;

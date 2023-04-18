@@ -1,7 +1,7 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.translatorSpecs;
 
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.input.TestBatchPropertyIdInput;
-import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractProtobufTranslatorSpec;
+import gov.hhs.aspr.translation.protobuf.core.AbstractProtobufTranslatorSpec;
 import plugins.materials.testsupport.TestBatchPropertyId;
 
 public class TestBatchPropertyIdTranslatorSpec
