@@ -413,10 +413,7 @@ public final class GlobalPropertiesPluginData implements PluginData {
 		return new Builder(data);
 	}
 
-	@Override
-	public PluginDataBuilder getEmptyBuilder() {
-		return builder();
-	}
+	
 
 	@Override
 	public int hashCode() {
