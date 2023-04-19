@@ -163,8 +163,7 @@ public class TestPluginData implements PluginData {
 		@Override
 		public TestPluginData build() {
 			validate();
-			//return new TestPluginData(new Data(data));
-			return new TestPluginData(data);
+			return new TestPluginData(new Data(data));
 		}
 
 		private void validate() {

@@ -677,7 +677,7 @@ public final class MaterialsPluginData implements PluginData {
 					}
 					if (otherPropertyValue == null) {
 						PropertyDefinition propertyDefinition = materialsProducerPropertyDefinitions.get(materialsProducerPropertyId);
-						propertyValue = propertyDefinition.getDefaultValue().get();
+						otherPropertyValue = propertyDefinition.getDefaultValue().get();
 					}
 					if (!propertyValue.equals(otherPropertyValue)) {
 						return false;

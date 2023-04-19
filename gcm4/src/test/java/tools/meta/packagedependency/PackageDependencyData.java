@@ -96,6 +96,26 @@ public final class PackageDependencyData {
 		private Set<Path> inputDirectories = new LinkedHashSet<>();
 		private Set<String> inputPackageNames = new LinkedHashSet<>();
 		private Set<String> packageNamesFound = new LinkedHashSet<>();
+		public Data() {}
+		public Data(Data data) {
+			MutableGraph<PackageRef, PackageDependencyDetails> m = new MutableGraph<PackageRef, PackageDependencyDetails>();
+			for(PackageRef packageRef : data.graph.getNodes()) {
+				m.addNode(packageRef);
+			}
+			for(PackageDependencyDetails packageDependencyDetails : data.graph.getEdges()) {
+				PackageRef originNode = data.graph.getOriginNode(packageDependencyDetails);
+				PackageRef destinationNode = data.graph.getDestinationNode(packageDependencyDetails);
+				m.addEdge(packageDependencyDetails, originNode, destinationNode);
+			}
+			graph = m.toGraph();
+			
+			wildCardClasses.addAll(data.wildCardClasses);
+			packagelessClasses.addAll(data.packagelessClasses);
+			uncoveredClasses.addAll(data.uncoveredClasses);
+			inputDirectories.addAll(data.inputDirectories);
+			inputPackageNames.addAll(data.inputPackageNames);
+			packageNamesFound.addAll(data.packageNamesFound);
+		}
 	}
 
 	public final static Builder builder() {
@@ -110,11 +130,7 @@ public final class PackageDependencyData {
 		private Data data = new Data();
 
 		public PackageDependencyData build() {
-			try {
-				return new PackageDependencyData(data);
-			} finally {
-				data = new Data();
-			}
+			return new PackageDependencyData(new Data(data));
 		}
 
 		/**
@@ -210,7 +226,7 @@ public final class PackageDependencyData {
 			data.inputPackageNames.add(packageName);
 			return this;
 		}
-		
+
 		/**
 		 * Adds a found package name.
 		 * 
@@ -225,7 +241,6 @@ public final class PackageDependencyData {
 			data.packageNamesFound.add(packageName);
 			return this;
 		}
-	
 
 	}
 
@@ -258,9 +273,9 @@ public final class PackageDependencyData {
 	public Set<String> getCoveredPackageNames() {
 		return new LinkedHashSet<>(data.inputPackageNames);
 	}
-	
+
 	public Set<String> getPackageNamesFound() {
 		return new LinkedHashSet<>(data.packageNamesFound);
 	}
-	
+
 }

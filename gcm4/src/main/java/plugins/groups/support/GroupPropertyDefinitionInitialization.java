@@ -27,6 +27,16 @@ public final class GroupPropertyDefinitionInitialization {
 		GroupPropertyId groupPropertyId;
 		PropertyDefinition propertyDefinition;
 		List<Pair<GroupId, Object>> propertyValues = new ArrayList<>();
+
+		public Data() {
+		}
+
+		public Data(Data data) {
+			groupTypeId = data.groupTypeId;
+			groupPropertyId = data.groupPropertyId;
+			propertyDefinition = data.propertyDefinition;
+			propertyValues.addAll(data.propertyValues);
+		}
 	}
 
 	private final Data data;
@@ -62,11 +72,10 @@ public final class GroupPropertyDefinitionInitialization {
 			if (data.groupPropertyId == null) {
 				throw new ContractException(PropertyError.NULL_PROPERTY_ID);
 			}
-			
+
 			if (data.groupTypeId == null) {
 				throw new ContractException(GroupError.NULL_GROUP_TYPE_ID);
 			}
-
 
 			Class<?> type = data.propertyDefinition.getType();
 			for (Pair<GroupId, Object> pair : data.propertyValues) {
@@ -91,17 +100,13 @@ public final class GroupPropertyDefinitionInitialization {
 		 *             <li>{@linkplain PropertyError#INCOMPATIBLE_VALUE} if a
 		 *             collected property value is incompatible with the
 		 *             property definition</li>
-		 *             <li>{@linkplain  GroupError#NULL_GROUP_TYPE_ID} if no
-		 *             group type id was assigned to the builder</li>             
-		 *            
+		 *             <li>{@linkplain GroupError#NULL_GROUP_TYPE_ID} if no
+		 *             group type id was assigned to the builder</li>
+		 * 
 		 */
 		public GroupPropertyDefinitionInitialization build() {
-			try {
-				validate();
-				return new GroupPropertyDefinitionInitialization(data);
-			} finally {
-				data = new Data();
-			}
+			validate();
+			return new GroupPropertyDefinitionInitialization(new Data(data));
 		}
 
 		/**

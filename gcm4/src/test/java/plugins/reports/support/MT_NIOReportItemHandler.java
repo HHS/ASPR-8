@@ -117,13 +117,13 @@ public final class MT_NIOReportItemHandler {
 
 	public static void main(String[] args) throws IOException {
 
-		Map<Command,List<CommandBlock>> commandBlocks = new LinkedHashMap<>();
-		for(Command command : Command.values()) {
+		Map<Command, List<CommandBlock>> commandBlocks = new LinkedHashMap<>();
+		for (Command command : Command.values()) {
 			commandBlocks.put(command, new ArrayList<>());
 		}
 		CommandBlock currentCommandBlock = new CommandBlock(Command.UNKNOWN);
 		commandBlocks.get(currentCommandBlock.command).add(currentCommandBlock);
-		
+
 		for (String arg : args) {
 			Command command = Command.getCommand(arg);
 			if (command != null) {
@@ -133,44 +133,44 @@ public final class MT_NIOReportItemHandler {
 				currentCommandBlock.arguments.add(arg);
 			}
 		}
-		
+
 		Path basePath = null;
 		int testIndex = 0;
-		
-		//HELP
+
+		// HELP
 		int directoryCount = commandBlocks.get(Command.DIRECTORY).size();
 		int testCount = commandBlocks.get(Command.TEST).size();
-		
-		if(directoryCount==0 && testCount==0) {
+
+		if (directoryCount == 0 && testCount == 0) {
 			printInstructions();
 			return;
 		}
-		
+
 		List<CommandBlock> blocks = commandBlocks.get(Command.HELP);
-		if(!blocks.isEmpty()) {
+		if (!blocks.isEmpty()) {
 			printInstructions();
 			return;
 		}
-		
-		//DIRECTORY
+
+		// DIRECTORY
 		blocks = commandBlocks.get(Command.DIRECTORY);
-		if(blocks.isEmpty()) {
+		if (blocks.isEmpty()) {
 			throw new RuntimeException("requires a directory command -d");
 		}
-		
-		if(blocks.size()>1) {
+
+		if (blocks.size() > 1) {
 			throw new RuntimeException("too many directory commands -d");
 		}
-		
+
 		CommandBlock commandBlock = blocks.get(0);
-		if(commandBlock.arguments.isEmpty()) {
+		if (commandBlock.arguments.isEmpty()) {
 			throw new RuntimeException("requires exactly one directory for -d");
 		}
-		
-		if(commandBlock.arguments.size()>1) {
+
+		if (commandBlock.arguments.size() > 1) {
 			throw new RuntimeException("too many directories listed for -d");
-		}		
-		
+		}
+
 		String directoryName = commandBlock.arguments.get(0);
 		basePath = Paths.get(directoryName);
 		if (!basePath.toFile().exists()) {
@@ -179,43 +179,43 @@ public final class MT_NIOReportItemHandler {
 		if (!basePath.toFile().isDirectory()) {
 			throw new RuntimeException("base directory is not a directory");
 		}
-		
-		//TEST
-		
+
+		// TEST
+
 		blocks = commandBlocks.get(Command.TEST);
-		if(blocks.isEmpty()) {
+		if (blocks.isEmpty()) {
 			throw new RuntimeException("requires a test command -t");
 		}
-		
-		if(blocks.size()>1) {
+
+		if (blocks.size() > 1) {
 			throw new RuntimeException("too many test commands -t");
 		}
-		
+
 		commandBlock = blocks.get(0);
-		if(commandBlock.arguments.isEmpty()) {
+		if (commandBlock.arguments.isEmpty()) {
 			throw new RuntimeException("requires exactly one test number for -t");
 		}
-		
-		if(commandBlock.arguments.size()>1) {
+
+		if (commandBlock.arguments.size() > 1) {
 			throw new RuntimeException("too many test numbers listed for -t");
-		}		
+		}
 		try {
-			testIndex = Integer.parseInt(commandBlock.arguments.get(0));			
+			testIndex = Integer.parseInt(commandBlock.arguments.get(0));
 		} catch (NumberFormatException e) {
 			throw new RuntimeException("test index needs to be a integer", e);
 		}
-		
-		if(testIndex<1||testIndex>6) {
+
+		if (testIndex < 1 || testIndex > 6) {
 			throw new RuntimeException("test index out of bounds");
 		}
-		
-		//UNKNOWN
+
+		// UNKNOWN
 		blocks = commandBlocks.get(Command.UNKNOWN);
 
-		if(blocks.size()>1) {
+		if (blocks.size() > 1) {
 			StringBuilder sb = new StringBuilder();
 			String unknownCommand = commandBlocks.get(Command.UNKNOWN).get(0).command.commandString;
-			if(!currentCommandBlock.arguments.isEmpty()) {
+			if (!currentCommandBlock.arguments.isEmpty()) {
 				String unknownCommandArgs = currentCommandBlock.arguments.get(0);
 				sb.append("encountered an unknown command: ");
 				sb.append(unknownCommand);
@@ -331,43 +331,37 @@ public final class MT_NIOReportItemHandler {
 			}
 		}));
 
-		Dimension.Builder dimensionBuilder = Dimension.builder();
-		dimensionBuilder.addMetaDatum("xxx");
-		dimensionBuilder.addLevel((c) -> {
-			List<String> result = new ArrayList<>();
-			result.add("a");
-			return result;
-		});
-		dimensionBuilder.addLevel((c) -> {
-			List<String> result = new ArrayList<>();
-			result.add("b");
-			return result;
-		});
-		Dimension dimension1 = dimensionBuilder.build();
+		Dimension dimension1 = Dimension.builder()//
+										.addMetaDatum("xxx")//
+										.addLevel((c) -> {
+											List<String> result = new ArrayList<>();
+											result.add("a");
+											return result;
+										}).addLevel((c) -> {
+											List<String> result = new ArrayList<>();
+											result.add("b");
+											return result;
+										}).build();
 
-		dimensionBuilder.addMetaDatum("xyz");
-		dimensionBuilder.addLevel((c) -> {
-			List<String> result = new ArrayList<>();
-			result.add("x");
-			return result;
-		});
-		dimensionBuilder.addLevel((c) -> {
-			List<String> result = new ArrayList<>();
-			result.add("y");
-			return result;
-		});
-		dimensionBuilder.addLevel((c) -> {
-			List<String> result = new ArrayList<>();
-			result.add("z");
-			return result;
-		});
-		Dimension dimension2 = dimensionBuilder.build();
+		Dimension dimension2 = Dimension.builder()//
+										.addMetaDatum("xyz").addLevel((c) -> {
+											List<String> result = new ArrayList<>();
+											result.add("x");
+											return result;
+										}).addLevel((c) -> {
+											List<String> result = new ArrayList<>();
+											result.add("y");
+											return result;
+										}).addLevel((c) -> {
+											List<String> result = new ArrayList<>();
+											result.add("z");
+											return result;
+										}).build();
 
 		NIOReportItemHandler nioReportItemHandler = //
 				NIOReportItemHandler.builder()//
 									.addReport(reportLabel, subPath.resolve("report1.txt"))//
-									.setDelimiter(",")
-									.build();
+									.setDelimiter(",").build();
 
 		TestPluginData testPluginData = pluginDataBuilder.build();
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
@@ -418,37 +412,38 @@ public final class MT_NIOReportItemHandler {
 			}
 		}));
 
-		Dimension.Builder dimensionBuilder = Dimension.builder();
-		dimensionBuilder.addMetaDatum("xxx");
-		dimensionBuilder.addLevel((c) -> {
-			List<String> result = new ArrayList<>();
-			result.add("a");
-			return result;
-		});
-		dimensionBuilder.addLevel((c) -> {
-			List<String> result = new ArrayList<>();
-			result.add("b");
-			return result;
-		});
-		Dimension dimension1 = dimensionBuilder.build();
+		Dimension dimension1 = Dimension.builder()//
+										.addMetaDatum("xxx")//
+										.addLevel((c) -> {
+											List<String> result = new ArrayList<>();
+											result.add("a");
+											return result;
+										})//
+										.addLevel((c) -> {
+											List<String> result = new ArrayList<>();
+											result.add("b");
+											return result;
+										})//
+										.build();
 
-		dimensionBuilder.addMetaDatum("xyz");
-		dimensionBuilder.addLevel((c) -> {
-			List<String> result = new ArrayList<>();
-			result.add("x");
-			return result;
-		});
-		dimensionBuilder.addLevel((c) -> {
-			List<String> result = new ArrayList<>();
-			result.add("y");
-			return result;
-		});
-		dimensionBuilder.addLevel((c) -> {
-			List<String> result = new ArrayList<>();
-			result.add("z");
-			return result;
-		});
-		Dimension dimension2 = dimensionBuilder.build();
+		Dimension dimension2 = Dimension.builder()//
+										.addMetaDatum("xyz")//
+										.addLevel((c) -> {
+											List<String> result = new ArrayList<>();
+											result.add("x");
+											return result;
+										})//
+										.addLevel((c) -> {
+											List<String> result = new ArrayList<>();
+											result.add("y");
+											return result;
+										})//
+										.addLevel((c) -> {
+											List<String> result = new ArrayList<>();
+											result.add("z");
+											return result;
+										})//
+										.build();//
 
 		NIOReportItemHandler nioReportItemHandler = //
 				NIOReportItemHandler.builder()//
@@ -503,37 +498,38 @@ public final class MT_NIOReportItemHandler {
 			}
 		}));
 
-		Dimension.Builder dimensionBuilder = Dimension.builder();
-		dimensionBuilder.addMetaDatum("xxx");
-		dimensionBuilder.addLevel((c) -> {
-			List<String> result = new ArrayList<>();
-			result.add("a");
-			return result;
-		});
-		dimensionBuilder.addLevel((c) -> {
-			List<String> result = new ArrayList<>();
-			result.add("b");
-			return result;
-		});
-		Dimension dimension1 = dimensionBuilder.build();
+		Dimension dimension1 = Dimension.builder()//
+										.addMetaDatum("xxx")//
+										.addLevel((c) -> {
+											List<String> result = new ArrayList<>();
+											result.add("a");
+											return result;
+										})//
+										.addLevel((c) -> {
+											List<String> result = new ArrayList<>();
+											result.add("b");
+											return result;
+										})//
+										.build();
 
-		dimensionBuilder.addMetaDatum("xyz");
-		dimensionBuilder.addLevel((c) -> {
-			List<String> result = new ArrayList<>();
-			result.add("x");
-			return result;
-		});
-		dimensionBuilder.addLevel((c) -> {
-			List<String> result = new ArrayList<>();
-			result.add("y");
-			return result;
-		});
-		dimensionBuilder.addLevel((c) -> {
-			List<String> result = new ArrayList<>();
-			result.add("z");
-			return result;
-		});
-		Dimension dimension2 = dimensionBuilder.build();
+		Dimension dimension2 = Dimension.builder()//
+										.addMetaDatum("xyz")//
+										.addLevel((c) -> {
+											List<String> result = new ArrayList<>();
+											result.add("x");
+											return result;
+										})//
+										.addLevel((c) -> {
+											List<String> result = new ArrayList<>();
+											result.add("y");
+											return result;
+										})//
+										.addLevel((c) -> {
+											List<String> result = new ArrayList<>();
+											result.add("z");
+											return result;
+										})//
+										.build();
 
 		NIOReportItemHandler nioReportItemHandler = //
 				NIOReportItemHandler.builder()//
@@ -616,37 +612,34 @@ public final class MT_NIOReportItemHandler {
 			}
 		}));
 
-		Dimension.Builder dimensionBuilder = Dimension.builder();
-		dimensionBuilder.addMetaDatum("xxx");
-		dimensionBuilder.addLevel((c) -> {
-			List<String> result = new ArrayList<>();
-			result.add("a");
-			return result;
-		});
-		dimensionBuilder.addLevel((c) -> {
-			List<String> result = new ArrayList<>();
-			result.add("b");
-			return result;
-		});
-		Dimension dimension1 = dimensionBuilder.build();
+		Dimension dimension1 = Dimension.builder()//
+										.addMetaDatum("xxx")//
+										.addLevel((c) -> {
+											List<String> result = new ArrayList<>();
+											result.add("a");
+											return result;
+										})//
+										.addLevel((c) -> {
+											List<String> result = new ArrayList<>();
+											result.add("b");
+											return result;
+										})//
+										.build();//
 
-		dimensionBuilder.addMetaDatum("xyz");
-		dimensionBuilder.addLevel((c) -> {
-			List<String> result = new ArrayList<>();
-			result.add("x");
-			return result;
-		});
-		dimensionBuilder.addLevel((c) -> {
-			List<String> result = new ArrayList<>();
-			result.add("y");
-			return result;
-		});
-		dimensionBuilder.addLevel((c) -> {
-			List<String> result = new ArrayList<>();
-			result.add("z");
-			return result;
-		});
-		Dimension dimension2 = dimensionBuilder.build();
+		Dimension dimension2 = Dimension.builder()//
+										.addMetaDatum("xyz").addLevel((c) -> {
+											List<String> result = new ArrayList<>();
+											result.add("x");
+											return result;
+										}).addLevel((c) -> {
+											List<String> result = new ArrayList<>();
+											result.add("y");
+											return result;
+										}).addLevel((c) -> {
+											List<String> result = new ArrayList<>();
+											result.add("z");
+											return result;
+										}).build();
 
 		NIOReportItemHandler nioReportItemHandler = //
 				NIOReportItemHandler.builder()//
@@ -705,37 +698,38 @@ public final class MT_NIOReportItemHandler {
 			}
 		}));
 
-		Dimension.Builder dimensionBuilder = Dimension.builder();
-		dimensionBuilder.addMetaDatum("xxx");
-		dimensionBuilder.addLevel((c) -> {
+		Dimension dimension1 = Dimension.builder()//
+		.addMetaDatum("xxx")//
+		.addLevel((c) -> {
 			List<String> result = new ArrayList<>();
 			result.add("a");
 			return result;
-		});
-		dimensionBuilder.addLevel((c) -> {
+		})//
+		.addLevel((c) -> {
 			List<String> result = new ArrayList<>();
 			result.add("b");
 			return result;
-		});
-		Dimension dimension1 = dimensionBuilder.build();
+		})//
+		.build();
 
-		dimensionBuilder.addMetaDatum("xyz");
-		dimensionBuilder.addLevel((c) -> {
+		Dimension dimension2 = Dimension.builder()//
+		.addMetaDatum("xyz")
+		.addLevel((c) -> {
 			List<String> result = new ArrayList<>();
 			result.add("x");
 			return result;
-		});
-		dimensionBuilder.addLevel((c) -> {
+		})
+		.addLevel((c) -> {
 			List<String> result = new ArrayList<>();
 			result.add("y");
 			return result;
-		});
-		dimensionBuilder.addLevel((c) -> {
+		})
+		.addLevel((c) -> {
 			List<String> result = new ArrayList<>();
 			result.add("z");
 			return result;
-		});
-		Dimension dimension2 = dimensionBuilder.build();
+		})
+		 .build();
 
 		NIOReportItemHandler nioReportItemHandler = //
 				NIOReportItemHandler.builder()//

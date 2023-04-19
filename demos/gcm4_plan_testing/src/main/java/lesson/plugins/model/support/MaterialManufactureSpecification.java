@@ -14,7 +14,7 @@ public final class MaterialManufactureSpecification {
 
 		public MaterialManufactureSpecification build() {
 			try {
-				return new MaterialManufactureSpecification(data);
+				return new MaterialManufactureSpecification(new Data(data));
 			} finally {
 				data = new Data();
 			}
@@ -59,6 +59,18 @@ public final class MaterialManufactureSpecification {
 		private double deliveryDelay;
 		private double stageAmount;
 		private BatchId batchId;
+		
+		public Data() {
+			
+		}
+		public Data(Data data) {
+			materialId = data.materialId;
+			onOrder = data.onOrder;
+			deliveryAmount = data.deliveryAmount;
+			deliveryDelay = data.deliveryDelay;
+			stageAmount = data.stageAmount;
+			batchId = data.batchId;
+		}
 	}
 
 	public static Builder builder() {

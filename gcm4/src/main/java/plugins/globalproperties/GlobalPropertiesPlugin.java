@@ -20,7 +20,6 @@ public final class GlobalPropertiesPlugin {
 	private static class Data {
 		private GlobalPropertyReportPluginData globalPropertyReportPluginData;
 		private GlobalPropertiesPluginData globalPropertiesPluginData;
-
 	}
 
 	private GlobalPropertiesPlugin() {
@@ -72,24 +71,18 @@ public final class GlobalPropertiesPlugin {
 		 * 
 		 */
 		public Plugin getGlobalPropertiesPlugin() {
+			validate();
+			Plugin.Builder builder = Plugin.builder();//
+			builder.addPluginData(data.globalPropertiesPluginData);//
 
-			try {
-				validate();
-				Plugin.Builder builder = Plugin.builder();//
-				builder.addPluginData(data.globalPropertiesPluginData);//
-
-				if (data.globalPropertyReportPluginData != null) {
-					builder.addPluginData(data.globalPropertyReportPluginData);
-				}
-				builder.setInitializer(GlobalPropertiesPlugin::init);
-				builder.setPluginId(GlobalPropertiesPluginId.PLUGIN_ID);//
-				return builder.build();
-			} finally {
-				data = new Data();
+			if (data.globalPropertyReportPluginData != null) {
+				builder.addPluginData(data.globalPropertyReportPluginData);
 			}
+			builder.setInitializer(GlobalPropertiesPlugin::init);
+			builder.setPluginId(GlobalPropertiesPluginId.PLUGIN_ID);//
+			return builder.build();
 		}
-		
-		
+
 		private void validate() {
 			if (data.globalPropertiesPluginData == null) {
 				throw new ContractException(GlobalPropertiesError.NULL_GLOBAL_PLUGIN_DATA);
@@ -107,7 +100,7 @@ public final class GlobalPropertiesPlugin {
 		}
 
 	}
-	
+
 	private static void init(PluginContext pluginContext) {
 		GlobalPropertiesPluginData data = pluginContext.getPluginData(GlobalPropertiesPluginData.class).get();
 		pluginContext.addDataManager(new GlobalPropertiesDataManager(data));
@@ -118,6 +111,5 @@ public final class GlobalPropertiesPlugin {
 			pluginContext.addReport(new GlobalPropertyReport(globalPropertyReportPluginData)::init);
 		}
 	}
-
 
 }

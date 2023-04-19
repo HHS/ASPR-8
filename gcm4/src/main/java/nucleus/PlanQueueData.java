@@ -18,6 +18,19 @@ public final class PlanQueueData {
 		private Planner planner;
 		private int plannerId;
 		private long arrivalId;
+
+		public Data() {
+		}
+
+		public Data(Data data) {
+			time = data.time;
+			active = data.active;
+			key = data.key;
+			planData = data.planData;
+			planner = data.planner;
+			plannerId = data.plannerId;
+			arrivalId = data.arrivalId;
+		}
 	}
 
 	/**
@@ -65,12 +78,8 @@ public final class PlanQueueData {
 		 *             type is null</li>
 		 */
 		public PlanQueueData build() {
-			try {
-				validate();
-				return new PlanQueueData(data);
-			} finally {
-				data = new Data();
-			}
+			validate();
+			return new PlanQueueData(new Data(data));
 		}
 
 		/**
@@ -133,48 +142,52 @@ public final class PlanQueueData {
 
 	private final Data data;
 
-	
 	private PlanQueueData(Data data) {
 		this.data = data;
 	}
 
 	/**
-	 * Returns the time for the plan 
+	 * Returns the time for the plan
 	 */
 	public double getTime() {
 		return data.time;
 	}
 
 	/**
-	 * Returns the active state for the plan 
+	 * Returns the active state for the plan
 	 */
 	public boolean isActive() {
 		return data.active;
 	}
+
 	/**
-	 * Returns the key for the plan 
+	 * Returns the key for the plan
 	 */
 	public Object getKey() {
 		return data.key;
 	}
+
 	/**
-	 * Returns the plan data for the plan 
+	 * Returns the plan data for the plan
 	 */
 	public PlanData getPlanData() {
 		return data.planData;
 	}
+
 	/**
 	 * Returns the planner type for the plan
 	 */
 	public Planner getPlanner() {
 		return data.planner;
 	}
+
 	/**
 	 * Returns the planner id for the plan
 	 */
 	public int getPlannerId() {
 		return data.plannerId;
 	}
+
 	/**
 	 * Returns the arrival id for the plan
 	 */

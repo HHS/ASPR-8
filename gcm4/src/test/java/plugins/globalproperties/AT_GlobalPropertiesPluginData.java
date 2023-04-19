@@ -43,10 +43,11 @@ public class AT_GlobalPropertiesPluginData {
 		GlobalPropertyId globalPropertyId2 = new SimpleGlobalPropertyId("id 2");
 
 		//show that the builder clears its contents on build
-		GlobalPropertiesPluginData.Builder builder =	
-		GlobalPropertiesPluginData.builder();//
+		GlobalPropertiesPluginData.Builder builder = GlobalPropertiesPluginData.builder();//
 		builder.defineGlobalProperty(globalPropertyId1, propertyDefinition, 0)//
 				.build();
+		
+		builder = GlobalPropertiesPluginData.builder();//
 		GlobalPropertiesPluginData globalPropertiesPluginData = builder.build();
 		assertTrue(globalPropertiesPluginData.getGlobalPropertyIds().isEmpty());
 		
