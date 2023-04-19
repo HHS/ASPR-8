@@ -1,6 +1,6 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.translatorSpecs;
 
-import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractProtobufTranslatorSpec;
+import gov.hhs.aspr.translation.protobuf.core.AbstractProtobufTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.input.ReportLabelInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.input.ReportPeriodInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.input.ResourceIdInput;
@@ -17,21 +17,19 @@ public class ResourceReportPluginDataTranslatorSpec
     protected ResourceReportPluginData convertInputObject(ResourceReportPluginDataInput inputObject) {
         ResourceReportPluginData.Builder builder = ResourceReportPluginData.builder();
 
-        ReportLabel reportLabel = this.translator.convertInputObject(inputObject.getReportLabel(), ReportLabel.class);
-        ReportPeriod reportPeriod = this.translator.convertInputEnum(inputObject.getReportPeriod());
+        ReportLabel reportLabel = this.translator.convertInputObject(inputObject.getReportLabel());
+        ReportPeriod reportPeriod = this.translator.convertInputObject(inputObject.getReportPeriod());
 
         builder.setReportLabel(reportLabel).setReportPeriod(reportPeriod)
                 .setDefaultInclusion(inputObject.getDefaultInclusionPolicy());
 
         for (ResourceIdInput resourceIdInput : inputObject.getIncludedPropertiesList()) {
-            ResourceId resourceId = this.translator.convertInputObject(resourceIdInput,
-                    ResourceId.class);
+            ResourceId resourceId = this.translator.convertInputObject(resourceIdInput);
             builder.includeResource(resourceId);
         }
 
         for (ResourceIdInput resourceIdInput : inputObject.getExcludedPropertiesList()) {
-            ResourceId resourceId = this.translator.convertInputObject(resourceIdInput,
-                    ResourceId.class);
+            ResourceId resourceId = this.translator.convertInputObject(resourceIdInput);
             builder.excludeResource(resourceId);
         }
 
@@ -64,11 +62,6 @@ public class ResourceReportPluginDataTranslatorSpec
         }
 
         return builder.build();
-    }
-
-    @Override
-    public ResourceReportPluginDataInput getDefaultInstanceForInputObject() {
-        return ResourceReportPluginDataInput.getDefaultInstance();
     }
 
     @Override

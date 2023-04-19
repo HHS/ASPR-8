@@ -1,7 +1,7 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.translatorSpecs;
 
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.input.TestResourcePropertyIdInput;
-import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractProtobufTranslatorSpec;
+import gov.hhs.aspr.translation.protobuf.core.AbstractProtobufTranslatorSpec;
 import plugins.resources.testsupport.TestResourcePropertyId;
 
 public class TestResourcePropertyIdTranslatorSpec
@@ -15,11 +15,6 @@ public class TestResourcePropertyIdTranslatorSpec
     @Override
     protected TestResourcePropertyIdInput convertAppObject(TestResourcePropertyId simObject) {
         return TestResourcePropertyIdInput.valueOf(simObject.name());
-    }
-
-    @Override
-    public TestResourcePropertyIdInput getDefaultInstanceForInputObject() {
-        return TestResourcePropertyIdInput.forNumber(0);
     }
 
     @Override

@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -13,8 +14,6 @@ import java.util.Set;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import gov.hhs.aspr.gcm.translation.protobuf.core.ProtobufTranslatorCore;
-import gov.hhs.aspr.gcm.translation.core.TranslatorController;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.PeopleTranslator;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.PropertiesTranslator;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.RegionsTranslator;
@@ -23,7 +22,8 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.input.PersonResou
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.input.ResourcePropertyReportPluginDataInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.input.ResourceReportPluginDataInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.input.ResourcesPluginDataInput;
-import nucleus.PluginData;
+import gov.hhs.aspr.translation.core.TranslatorController;
+import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslatorCore;
 import plugins.people.support.PersonId;
 import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportPeriod;
@@ -40,20 +40,28 @@ import plugins.util.properties.TimeTrackingPolicy;
 import util.random.RandomGeneratorProvider;
 
 public class AppTest {
+    Path basePath = getCurrentDir();
+    Path inputFilePath = basePath.resolve("json");
+    Path outputFilePath = makeOutputDir();
+
+    private Path getCurrentDir() {
+        try {
+            return Path.of(this.getClass().getClassLoader().getResource("").toURI());
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private Path makeOutputDir() {
+        Path path = basePath.resolve("json/output");
+
+        path.toFile().mkdirs();
+
+        return path;
+    }
 
     @Test
     public void testResourcesTranslator() {
-        Path basePath = Path.of("").toAbsolutePath();
-
-        if (!basePath.endsWith("resources-plugin-translator")) {
-            basePath = basePath.resolve("resources-plugin-translator");
-        }
-
-        Path inputFilePath = basePath.resolve("src/main/resources/json");
-        Path outputFilePath = basePath.resolve("src/main/resources/json/output");
-
-        outputFilePath.toFile().mkdir();
-
         String fileName = "pluginData.json";
 
         TranslatorController translatorController = TranslatorController.builder()
@@ -62,14 +70,13 @@ public class AppTest {
                 .addTranslator(PropertiesTranslator.getTranslator())
                 .addTranslator(PeopleTranslator.getTranslator())
                 .addTranslator(RegionsTranslator.getTranslator())
-                .addReader(inputFilePath.resolve(fileName), ResourcesPluginDataInput.class)
-                .addWriter(outputFilePath.resolve(fileName), ResourcesPluginData.class)
+                .addInputFilePath(inputFilePath.resolve(fileName), ResourcesPluginDataInput.class)
+                .addOutputFilePath(outputFilePath.resolve(fileName), ResourcesPluginData.class)
                 .build();
 
-        List<PluginData> pluginDatas = translatorController.readInput().getPluginDatas();
+        translatorController.readInput();
 
-        ResourcesPluginData resourcesPluginData = (ResourcesPluginData) pluginDatas.get(0);
-
+        ResourcesPluginData resourcesPluginData = translatorController.getObject(ResourcesPluginData.class);
         long seed = 524805676405822016L;
         List<PersonId> people = new ArrayList<>();
 
@@ -114,36 +121,25 @@ public class AppTest {
 
     @Test
     public void testPersonResourceReportTranslatorSpec() {
-        Path basePath = Path.of("").toAbsolutePath();
-
-        if (!basePath.endsWith("resources-plugin-translator")) {
-            basePath = basePath.resolve("resources-plugin-translator");
-        }
-
-        Path inputFilePath = basePath.resolve("src/main/resources/json");
-        Path outputFilePath = basePath.resolve("src/main/resources/json/output");
-
-        outputFilePath.toFile().mkdir();
-
         String fileName = "personResourceReport.json";
 
         TranslatorController translatorController = TranslatorController.builder()
                 .setTranslatorCoreBuilder(ProtobufTranslatorCore.builder())
-                .addTranslator(ResourcesTranslator.builder(true).build())
+                .addTranslator(ResourcesTranslator.getTranslatorWithReport())
                 .addTranslator(PropertiesTranslator.getTranslator())
                 .addTranslator(PeopleTranslator.getTranslator())
                 .addTranslator(RegionsTranslator.getTranslator())
                 .addTranslator(ReportsTranslator.getTranslator())
-                .addReader(inputFilePath.resolve(fileName),
+                .addInputFilePath(inputFilePath.resolve(fileName),
                         PersonResourceReportPluginDataInput.class)
-                .addWriter(outputFilePath.resolve(fileName),
+                .addOutputFilePath(outputFilePath.resolve(fileName),
                         PersonResourceReportPluginData.class)
                 .build();
 
-        List<PluginData> pluginDatas = translatorController.readInput().getPluginDatas();
+        translatorController.readInput();
 
-        PersonResourceReportPluginData actualPluginData = (PersonResourceReportPluginData) pluginDatas.get(0);
-
+        PersonResourceReportPluginData actualPluginData = translatorController
+                .getObject(PersonResourceReportPluginData.class);
         long seed = 524805676405822016L;
         RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
 
@@ -179,36 +175,25 @@ public class AppTest {
 
     @Test
     public void testResourcePropertyReportTranslatorSpec() {
-        Path basePath = Path.of("").toAbsolutePath();
-
-        if (!basePath.endsWith("resources-plugin-translator")) {
-            basePath = basePath.resolve("resources-plugin-translator");
-        }
-
-        Path inputFilePath = basePath.resolve("src/main/resources/json");
-        Path outputFilePath = basePath.resolve("src/main/resources/json/output");
-
-        outputFilePath.toFile().mkdir();
-
         String fileName = "resourcePropertyReport.json";
 
         TranslatorController translatorController = TranslatorController.builder()
                 .setTranslatorCoreBuilder(ProtobufTranslatorCore.builder())
-                .addTranslator(ResourcesTranslator.builder(true).build())
+                .addTranslator(ResourcesTranslator.getTranslatorWithReport())
                 .addTranslator(PropertiesTranslator.getTranslator())
                 .addTranslator(PeopleTranslator.getTranslator())
                 .addTranslator(RegionsTranslator.getTranslator())
                 .addTranslator(ReportsTranslator.getTranslator())
-                .addReader(inputFilePath.resolve(fileName),
+                .addInputFilePath(inputFilePath.resolve(fileName),
                         ResourcePropertyReportPluginDataInput.class)
-                .addWriter(outputFilePath.resolve(fileName),
+                .addOutputFilePath(outputFilePath.resolve(fileName),
                         ResourcePropertyReportPluginData.class)
                 .build();
 
-        List<PluginData> pluginDatas = translatorController.readInput().getPluginDatas();
+        translatorController.readInput();
 
-        ResourcePropertyReportPluginData actualPluginData = (ResourcePropertyReportPluginData) pluginDatas.get(0);
-
+        ResourcePropertyReportPluginData actualPluginData = translatorController
+                .getObject(ResourcePropertyReportPluginData.class);
         ReportLabel reportLabel = new SimpleReportLabel("resource property report label");
 
         ResourcePropertyReportPluginData.Builder builder = ResourcePropertyReportPluginData.builder();
@@ -224,36 +209,24 @@ public class AppTest {
 
     @Test
     public void testResourceReportTranslatorSpec() {
-        Path basePath = Path.of("").toAbsolutePath();
-
-        if (!basePath.endsWith("resources-plugin-translator")) {
-            basePath = basePath.resolve("resources-plugin-translator");
-        }
-
-        Path inputFilePath = basePath.resolve("src/main/resources/json");
-        Path outputFilePath = basePath.resolve("src/main/resources/json/output");
-
-        outputFilePath.toFile().mkdir();
-
         String fileName = "resourceReport.json";
 
         TranslatorController translatorController = TranslatorController.builder()
                 .setTranslatorCoreBuilder(ProtobufTranslatorCore.builder())
-                .addTranslator(ResourcesTranslator.builder(true).build())
+                .addTranslator(ResourcesTranslator.getTranslatorWithReport())
                 .addTranslator(PropertiesTranslator.getTranslator())
                 .addTranslator(PeopleTranslator.getTranslator())
                 .addTranslator(RegionsTranslator.getTranslator())
                 .addTranslator(ReportsTranslator.getTranslator())
-                .addReader(inputFilePath.resolve(fileName),
+                .addInputFilePath(inputFilePath.resolve(fileName),
                         ResourceReportPluginDataInput.class)
-                .addWriter(outputFilePath.resolve(fileName),
+                .addOutputFilePath(outputFilePath.resolve(fileName),
                         ResourceReportPluginData.class)
                 .build();
 
-        List<PluginData> pluginDatas = translatorController.readInput().getPluginDatas();
+        translatorController.readInput();
 
-        ResourceReportPluginData actualPluginData = (ResourceReportPluginData) pluginDatas.get(0);
-
+        ResourceReportPluginData actualPluginData = translatorController.getObject(ResourceReportPluginData.class);
         long seed = 524805676405822016L;
         RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
 

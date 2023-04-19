@@ -1,7 +1,7 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.translatorSpecs;
 
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.input.ResourcePropertyIdInput;
-import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractProtobufTranslatorSpec;
+import gov.hhs.aspr.translation.protobuf.core.AbstractProtobufTranslatorSpec;
 import plugins.resources.support.ResourcePropertyId;
 
 public class ResourcePropertyIdTranslatorSpec
@@ -9,17 +9,12 @@ public class ResourcePropertyIdTranslatorSpec
 
     @Override
     protected ResourcePropertyId convertInputObject(ResourcePropertyIdInput inputObject) {
-        return this.translator.getObjectFromAny(inputObject.getId(), getAppObjectClass());
+        return this.translator.getObjectFromAny(inputObject.getId());
     }
 
     @Override
     protected ResourcePropertyIdInput convertAppObject(ResourcePropertyId simObject) {
         return ResourcePropertyIdInput.newBuilder().setId(this.translator.getAnyFromObject(simObject)).build();
-    }
-
-    @Override
-    public ResourcePropertyIdInput getDefaultInstanceForInputObject() {
-        return ResourcePropertyIdInput.getDefaultInstance();
     }
 
     @Override

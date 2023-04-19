@@ -1,6 +1,6 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.translatorSpecs;
 
-import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractProtobufTranslatorSpec;
+import gov.hhs.aspr.translation.protobuf.core.AbstractProtobufTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.input.ReportLabelInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.input.ResourcePropertyReportPluginDataInput;
 import plugins.reports.support.ReportLabel;
@@ -28,11 +28,6 @@ public class ResourcePropertyReportPluginDataTranslatorSpec
 
         builder.setReportLabel(reportLabelInput);
         return builder.build();
-    }
-
-    @Override
-    public ResourcePropertyReportPluginDataInput getDefaultInstanceForInputObject() {
-        return ResourcePropertyReportPluginDataInput.getDefaultInstance();
     }
 
     @Override
