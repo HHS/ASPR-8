@@ -14,7 +14,7 @@ public class TestResourceHelper {
     }
 
     public static Path makeTestOutputDir(Path basePath) {
-        Path path = basePath.resolve("json").resolve("test-output");
+        Path path = basePath.resolve("test-output");
 
         path.toFile().mkdirs();
 
