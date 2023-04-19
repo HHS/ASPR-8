@@ -1,7 +1,7 @@
 package gov.hss.aspr.gcm.translation.protobuf.nucleus;
 
-import gov.hhs.aspr.gcm.translation.core.Translator;
-import gov.hhs.aspr.gcm.translation.protobuf.core.ProtobufTranslatorCore;
+import gov.hhs.aspr.translation.core.Translator;
+import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslatorCore;
 import gov.hhs.aspr.gcm.translation.protobuf.nucleus.input.PlanQueueDataInput;
 import gov.hhs.aspr.gcm.translation.protobuf.nucleus.input.SimulationStateInput;
 import gov.hss.aspr.gcm.translation.protobuf.nucleus.translatorSpecs.PlanDataTranslatorSpec;
@@ -10,12 +10,12 @@ import gov.hss.aspr.gcm.translation.protobuf.nucleus.translatorSpecs.PlannerTran
 import gov.hss.aspr.gcm.translation.protobuf.nucleus.translatorSpecs.SimulationStateTranslatorSpec;
 
 public class NucleusTranslator {
-    private NucleusTranslator() {
 
+    private NucleusTranslator() {
     }
 
     public static Translator.Builder builder() {
-        return Translator.builder()
+        Translator.Builder builder = Translator.builder()
                 .setTranslatorId(NucleusTranslatorId.TRANSLATOR_ID)
                 .setInitializer((translatorContext) -> {
                     translatorContext.addTranslatorSpec(new SimulationStateTranslatorSpec());
@@ -23,7 +23,7 @@ public class NucleusTranslator {
                     translatorContext.addTranslatorSpec(new PlannerTranslatorSpec());
                     translatorContext.addTranslatorSpec(new PlanDataTranslatorSpec());
 
-                    ((ProtobufTranslatorCore.Builder) translatorContext.getTranslatorCoreBuilder())
+                    translatorContext.getTranslatorCoreBuilder(ProtobufTranslatorCore.Builder.class)
                             .addFieldToIncludeDefaultValue(
                                     SimulationStateInput.getDescriptor()
                                             .findFieldByName("startTime"))
@@ -38,6 +38,7 @@ public class NucleusTranslator {
                                             .findFieldByName("active"));
                 });
 
+        return builder;
     }
 
     public static Translator getTranslator() {

@@ -2,6 +2,7 @@ package gov.hss.aspr.gcm.translation.protobuf.nucleus;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.List;
@@ -9,8 +10,8 @@ import java.util.List;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import gov.hhs.aspr.gcm.translation.protobuf.core.ProtobufTranslatorCore;
-import gov.hhs.aspr.gcm.translation.core.TranslatorController;
+import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslatorCore;
+import gov.hhs.aspr.translation.core.TranslatorController;
 import gov.hhs.aspr.gcm.translation.protobuf.nucleus.input.SimulationStateInput;
 import gov.hss.aspr.gcm.translation.protobuf.nucleus.simObjects.ExamplePlanData;
 import gov.hss.aspr.gcm.translation.protobuf.nucleus.simObjects.translatorSpecs.ExamplePlanDataTranslatorSpec;
@@ -20,33 +21,41 @@ import nucleus.SimulationState;
 import util.random.RandomGeneratorProvider;
 
 public class AppTest {
+    Path basePath = getCurrentDir();
+    Path inputFilePath = basePath.resolve("json");
+    Path outputFilePath = makeOutputDir();
+
+    private Path getCurrentDir() {
+        try {
+            return Path.of(this.getClass().getClassLoader().getResource("").toURI());
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private Path makeOutputDir() {
+        Path path = basePath.resolve("json/output");
+
+        path.toFile().mkdirs();
+
+        return path;
+    }
 
     @Test
     public void testSimulationStateTranslator() {
-        Path basePath = Path.of("").toAbsolutePath();
-
-        if (!basePath.endsWith("nucleus-translator")) {
-            basePath = basePath.resolve("nucleus-translator");
-        }
-
-        Path inputFilePath = basePath.resolve("src/main/resources/json");
-        Path outputFilePath = basePath.resolve("src/main/resources/json/output");
-
-        outputFilePath.toFile().mkdir();
-
         String fileName = "simulationState.json";
 
         TranslatorController translatorController = TranslatorController.builder()
                 .setTranslatorCoreBuilder(ProtobufTranslatorCore.builder()
                         .addTranslatorSpec(new ExamplePlanDataTranslatorSpec()))
                 .addTranslator(NucleusTranslator.getTranslator())
-                .addReader(inputFilePath.resolve(fileName), SimulationStateInput.class)
-                .addWriter(outputFilePath.resolve(fileName), SimulationState.class)
+                .addInputFilePath(inputFilePath.resolve(fileName), SimulationStateInput.class)
+                .addOutputFilePath(outputFilePath.resolve(fileName), SimulationState.class)
                 .build();
 
-        List<Object> objects = translatorController.readInput().getObjects();
+        translatorController.readInput();
 
-        SimulationState actualSimulationState = (SimulationState) objects.get(0);
+        SimulationState actualSimulationState = translatorController.getObject(SimulationState.class);
 
         RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6625494580697137579L);
 

@@ -6,7 +6,7 @@ import com.google.type.Date;
 
 import gov.hhs.aspr.gcm.translation.protobuf.nucleus.input.PlanQueueDataInput;
 import gov.hhs.aspr.gcm.translation.protobuf.nucleus.input.SimulationStateInput;
-import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractProtobufTranslatorSpec;
+import gov.hhs.aspr.translation.protobuf.core.AbstractProtobufTranslatorSpec;
 import nucleus.PlanQueueData;
 import nucleus.SimulationState;
 
@@ -51,11 +51,6 @@ public class SimulationStateTranslatorSpec extends AbstractProtobufTranslatorSpe
         }
 
         return builder.build();
-    }
-
-    @Override
-    public SimulationStateInput getDefaultInstanceForInputObject() {
-        return SimulationStateInput.getDefaultInstance();
     }
 
     @Override

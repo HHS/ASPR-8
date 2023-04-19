@@ -1,6 +1,6 @@
 package gov.hss.aspr.gcm.translation.protobuf.nucleus.translatorSpecs;
 
-import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractProtobufTranslatorSpec;
+import gov.hhs.aspr.translation.protobuf.core.AbstractProtobufTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.nucleus.input.PlanDataInput;
 import nucleus.PlanData;
 
@@ -8,17 +8,12 @@ public class PlanDataTranslatorSpec extends AbstractProtobufTranslatorSpec<PlanD
 
     @Override
     protected PlanData convertInputObject(PlanDataInput inputObject) {
-        return this.translator.getObjectFromAny(inputObject.getData(), getAppObjectClass());
+        return this.translator.getObjectFromAny(inputObject.getData());
     }
 
     @Override
     protected PlanDataInput convertAppObject(PlanData simObject) {
         return PlanDataInput.newBuilder().setData(this.translator.getAnyFromObject(simObject)).build();
-    }
-
-    @Override
-    public PlanDataInput getDefaultInstanceForInputObject() {
-        return PlanDataInput.getDefaultInstance();
     }
 
     @Override
