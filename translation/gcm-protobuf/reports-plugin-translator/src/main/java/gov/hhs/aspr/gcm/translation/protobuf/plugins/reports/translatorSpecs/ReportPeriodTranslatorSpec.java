@@ -1,6 +1,6 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.translatorSpecs;
 
-import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractProtobufTranslatorSpec;
+import gov.hhs.aspr.translation.protobuf.core.AbstractProtobufTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.input.ReportPeriodInput;
 import plugins.reports.support.ReportPeriod;
 
@@ -14,11 +14,6 @@ public class ReportPeriodTranslatorSpec extends AbstractProtobufTranslatorSpec<R
     @Override
     protected ReportPeriodInput convertAppObject(ReportPeriod simObject) {
         return ReportPeriodInput.valueOf(simObject.name());
-    }
-
-    @Override
-    public ReportPeriodInput getDefaultInstanceForInputObject() {
-        return ReportPeriodInput.forNumber(0);
     }
 
     @Override

@@ -3,48 +3,42 @@ package gov.hhs.aspr.gcm.translation.protobuf.plugins.reports;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.nio.file.Path;
-import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import gov.hhs.aspr.gcm.translation.protobuf.core.ProtobufTranslatorCore;
-import gov.hhs.aspr.gcm.translation.core.TranslatorController;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.input.ReportLabelInput;
+import gov.hhs.aspr.translation.core.TranslatorController;
+import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslatorCore;
+import gov.hhs.aspr.translation.protobuf.core.testsupport.TestResourceHelper;
 import plugins.reports.support.ReportLabel;
 import plugins.reports.support.SimpleReportLabel;
 
 public class AppTest {
+    Path basePath = TestResourceHelper.getResourceDir(this.getClass());
+    Path filePath = TestResourceHelper.makeTestOutputDir(basePath);
 
     @Test
     public void testReportLabelTranslatorSpec() {
-
-        Path basePath = Path.of("").toAbsolutePath();
-
-        if (!basePath.endsWith("reports-plugin-translator")) {
-            basePath = basePath.resolve("reports-plugin-translator");
-        }
-
-        Path inputFilePath = basePath.resolve("src/main/resources/json");
-        Path outputFilePath = basePath.resolve("src/main/resources/json/output");
-
-        outputFilePath.toFile().mkdir();
-
         String fileName = "reportLabel.json";
+        
+        TestResourceHelper.createTestOutputFile(filePath, fileName);
 
         TranslatorController translatorController = TranslatorController.builder()
                 .setTranslatorCoreBuilder(ProtobufTranslatorCore.builder())
                 .addTranslator(ReportsTranslator.getTranslator())
-                .addReader(inputFilePath.resolve(fileName), ReportLabelInput.class)
-                .addWriter(outputFilePath.resolve(fileName), ReportLabel.class)
+                .addInputFilePath(filePath.resolve(fileName), ReportLabelInput.class)
+                .addOutputFilePath(filePath.resolve(fileName), ReportLabel.class)
                 .build();
+        
+        ReportLabel expecetdReportLabel = new SimpleReportLabel("report label");
 
-        List<Object> objects = translatorController.readInput().getObjects();
+        translatorController.writeOutput(expecetdReportLabel);
 
-        ReportLabel label = (ReportLabel) objects.get(0);
+        translatorController.readInput();
 
-        assertEquals(new SimpleReportLabel("report label"), label);
+        ReportLabel actualReportLabel = translatorController.getObject(ReportLabel.class);
 
-        translatorController.writeOutput();
+        assertEquals(expecetdReportLabel, actualReportLabel);
 
     }
 }

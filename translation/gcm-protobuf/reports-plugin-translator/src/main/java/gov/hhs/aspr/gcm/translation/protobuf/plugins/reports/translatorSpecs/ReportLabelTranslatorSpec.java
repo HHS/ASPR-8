@@ -1,6 +1,6 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.translatorSpecs;
 
-import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractProtobufTranslatorSpec;
+import gov.hhs.aspr.translation.protobuf.core.AbstractProtobufTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.input.ReportLabelInput;
 import plugins.reports.support.ReportLabel;
 
@@ -8,18 +8,13 @@ public class ReportLabelTranslatorSpec extends AbstractProtobufTranslatorSpec<Re
 
     @Override
     protected ReportLabel convertInputObject(ReportLabelInput inputObject) {
-        return this.translator.getObjectFromAny(inputObject.getLabel(), getAppObjectClass());
+        return this.translator.getObjectFromAny(inputObject.getLabel());
     }
 
     @Override
     protected ReportLabelInput convertAppObject(ReportLabel simObject) {
         return ReportLabelInput.newBuilder()
                 .setLabel(this.translator.getAnyFromObject(simObject)).build();
-    }
-
-    @Override
-    public ReportLabelInput getDefaultInstanceForInputObject() {
-        return ReportLabelInput.getDefaultInstance();
     }
 
     @Override
