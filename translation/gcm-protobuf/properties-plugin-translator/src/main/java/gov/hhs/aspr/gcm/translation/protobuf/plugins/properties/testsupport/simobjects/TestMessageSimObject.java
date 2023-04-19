@@ -1,5 +1,7 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.testsupport.simobjects;
 
+import java.util.Objects;
+
 public class TestMessageSimObject {
     private Layer1SimObject layer1;
 
@@ -13,28 +15,22 @@ public class TestMessageSimObject {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((layer1 == null) ? 0 : layer1.hashCode());
-        return result;
+        return Objects.hash(layer1);
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         TestMessageSimObject other = (TestMessageSimObject) obj;
-        if (layer1 == null) {
-            if (other.layer1 != null)
-                return false;
-        } else if (!layer1.equals(other.layer1))
-            return false;
-        return true;
+        return Objects.equals(layer1, other.layer1);
     }
 
-    
 }
