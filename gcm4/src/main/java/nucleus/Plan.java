@@ -6,10 +6,21 @@ public class Plan<T> {
 
 	private static class Data<K> {
 		private double time;
-		private Consumer<K> callbackConsumer;			
+		private Consumer<K> callbackConsumer;
 		private boolean active = true;
 		private PlanData planData;
 		private Object key;
+
+		public Data() {
+		}
+
+		public Data(Data<K> data) {
+			time = data.time;
+			callbackConsumer = data.callbackConsumer;
+			active = data.active;
+			planData = data.planData;
+			key = data.key;
+		}
 	}
 
 	/**
@@ -31,11 +42,7 @@ public class Plan<T> {
 		 * 
 		 */
 		public Plan<K> build() {
-			try {
-				return new Plan<>(data);
-			} finally {
-				data = new Data<>();
-			}
+			return new Plan<>(new Data<>(data));
 		}
 
 		/**

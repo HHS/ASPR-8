@@ -329,15 +329,17 @@ public class AT_Experiment {
 
 		Dimension dimension1 = dimBuilder.build();
 
+		
+		Dimension.Builder dimBuilder2 = Dimension.builder();
 		IntStream.range(0, 8).forEach((i) -> {
-			dimBuilder.addLevel((context) -> {
+			dimBuilder2.addLevel((context) -> {
 				List<String> result = new ArrayList<>();
 				result.add(Integer.toString(i));
 				return result;
 			});
 		});
 
-		Dimension dimension2 = dimBuilder.addMetaDatum("beta").build();
+		Dimension dimension2 = dimBuilder2.addMetaDatum("beta").build();
 
 		/*
 		 * Create a thread safe set to record the thread ids that are used by

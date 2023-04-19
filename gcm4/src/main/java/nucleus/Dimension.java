@@ -19,6 +19,12 @@ public final class Dimension {
 	private static class Data {
 		List<String> metaData = new ArrayList<>();
 		List<Function<DimensionContext, List<String>>> levels = new ArrayList<>();
+		
+		public Data() {}
+		public Data(Data data) {
+			metaData.addAll(data.metaData);
+			levels.addAll(data.levels);
+		}
 	}
 
 	/**
@@ -43,17 +49,13 @@ public final class Dimension {
 		 * Returns a Dimension from the collected data
 		 */
 		public Dimension build() {
-			try {
-				return new Dimension(data);
-			} finally {
-				data = new Data();
-			}
+			return new Dimension(new Data(data));
 		}
 
 		/**
 		 * Adds a level function to the dimension. Each such function consumes a
-		 * DimensionContext of PluginDataBuilders and returns a list of scenario-level
-		 * meta data that describes the changes performed on the
+		 * DimensionContext of PluginDataBuilders and returns a list of
+		 * scenario-level meta data that describes the changes performed on the
 		 * PluginDataBuilders. The list of meta data is aligned to the
 		 * experiment level meta data contained in the dimension and must
 		 * contain the same number of elements.
@@ -87,7 +89,7 @@ public final class Dimension {
 	public List<String> getMetaData() {
 		return new ArrayList<>(data.metaData);
 	}
-	
+
 	public int getMetaDataSize() {
 		return data.metaData.size();
 	}
@@ -100,7 +102,8 @@ public final class Dimension {
 	}
 
 	/**
-	 * Returns the function(level) for the given index.  Valid indexes are zero through size()-1 inclusive.
+	 * Returns the function(level) for the given index. Valid indexes are zero
+	 * through size()-1 inclusive.
 	 */
 	public Function<DimensionContext, List<String>> getLevel(int index) {
 		return data.levels.get(index);

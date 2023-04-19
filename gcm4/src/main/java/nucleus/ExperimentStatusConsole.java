@@ -43,17 +43,30 @@ public final class ExperimentStatusConsole implements Consumer<ExperimentContext
 
 			return result;
 		}
+		
+		private StatusConsoleState getCopiedStatusConsoleState() {
+
+			/*
+			 * initialize the state
+			 */
+			StatusConsoleState result = new StatusConsoleState();
+			result.setImmediateErrorReporting(statusConsoleState.immediateErrorReporting());
+			result.setReportScenarioProgress(statusConsoleState.reportScenarioProgress());
+			result.setStackTraceReportLimit(statusConsoleState.getStackTraceReportLimit());
+			result.setLastReportedCompletionPercentage(statusConsoleState.getLastReportedCompletionPercentage());
+			return result;
+		}
 
 		private Builder() {
 
 		}
 
 		/**
-		 * Builds the ExperimentStatusConsole from the arguments gathered by the builder.
+		 * Builds the ExperimentStatusConsole from the arguments gathered by the builder. 
 		 */
 		public ExperimentStatusConsole build() {
 			try {
-				return new ExperimentStatusConsole(statusConsoleState);
+				return new ExperimentStatusConsole(getCopiedStatusConsoleState());
 			} finally {
 				statusConsoleState = getInitializedStatusConsoleState();
 			}

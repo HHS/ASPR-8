@@ -68,7 +68,7 @@ public class PackageDependencyDataGenerator {
 	private void probeFile(Path dir, Path file) throws IOException {
 
 		String className = getClassName(dir, file);
-		
+
 		List<String> lines = Files.readAllLines(file);
 
 		Node originNode = null;
@@ -81,8 +81,8 @@ public class PackageDependencyDataGenerator {
 				if (trim.contains("package")) {
 					packageRead = true;
 					trim = line.substring(7, trim.length()).trim();
-					if(trim.endsWith(";")) {
-						trim = trim.substring(0,trim.length()-1);
+					if (trim.endsWith(";")) {
+						trim = trim.substring(0, trim.length() - 1);
 					}
 					data.packageDependencyInfoBuilder.addFoundPackageName(trim);
 					Node node = getImportNode(trim);
@@ -112,7 +112,7 @@ public class PackageDependencyDataGenerator {
 				data.packageDependencyInfoBuilder.addPackagelessClass(className);
 			}
 		} else {
-			
+
 			destinationNodes.remove(originNode);
 
 			for (Node node : destinationNodes) {
@@ -125,7 +125,7 @@ public class PackageDependencyDataGenerator {
 					edge = edges.get(0);
 				}
 				edge.classes.add(className);
-			}						
+			}
 		}
 
 	}
@@ -196,6 +196,23 @@ public class PackageDependencyDataGenerator {
 		private List<String> nodeNames = new ArrayList<>();
 		private Map<String, Node> nodeMap = new LinkedHashMap<>();
 		private PackageDependencyData.Builder packageDependencyInfoBuilder = PackageDependencyData.builder();
+		
+		public Data() {}
+		public Data(Data data) {
+			directories.addAll(data.directories);
+			packageNames.addAll(data.packageNames);
+			for(Node node : data.packageDependencyGraph.getNodes()) {
+				packageDependencyGraph.addNode(node);
+			}
+			for(Edge edge : data.packageDependencyGraph.getEdges()) {
+				Node originNode = data.packageDependencyGraph.getOriginNode(edge);
+				Node destinationNode = data.packageDependencyGraph.getDestinationNode(edge);
+				packageDependencyGraph.addEdge(edge, originNode, destinationNode);
+			}
+			nodeNames.addAll(data.nodeNames);
+			nodeMap.putAll(data.nodeMap);
+			
+		}
 	}
 
 	public final static Builder builder() {
@@ -209,12 +226,8 @@ public class PackageDependencyDataGenerator {
 		private Data data = new Data();
 
 		public PackageDependencyDataGenerator build() {
-			try {
-				validate();
-				return new PackageDependencyDataGenerator(data);
-			} finally {
-				data = new Data();
-			}
+			validate();
+			return new PackageDependencyDataGenerator(new Data(data));
 		}
 
 		private void validate() {
@@ -264,14 +277,14 @@ public class PackageDependencyDataGenerator {
 				break;
 			}
 		}
-		if(packageName.startsWith(".")) {
+		if (packageName.startsWith(".")) {
 			valid = false;
 		}
-		
-		if(!valid) {
-			throw new IllegalArgumentException("Illegal package name "+packageName);
+
+		if (!valid) {
+			throw new IllegalArgumentException("Illegal package name " + packageName);
 		}
-		
+
 	}
 
 	private static boolean isValidPackageNameCharacter(char c) {
@@ -321,7 +334,7 @@ public class PackageDependencyDataGenerator {
 			loadClasses();
 
 			MutableGraph<PackageRef, PackageDependencyDetails> m = new MutableGraph<>();
-			
+
 			for (Node node : data.packageDependencyGraph.getNodes()) {
 				m.addNode(new PackageRef(node.name));
 			}

@@ -94,11 +94,7 @@ public final class Experiment {
 		 * output handlers.
 		 */
 		public Experiment build() {
-			try {
-				return new Experiment(data);
-			} finally {
-				data = new Data();
-			}
+			return new Experiment(new Data(data));
 		}
 
 		/**
@@ -139,7 +135,7 @@ public final class Experiment {
 			data.threadCount = threadCount;
 			return this;
 		}
-		
+
 		/**
 		 * Set the simulation state. Defaults to the current date and a start
 		 * time of zero.
@@ -165,7 +161,7 @@ public final class Experiment {
 			data.stateRecordingIsScheduled = recordState;
 			return this;
 		}
-		
+
 		/**
 		 * Sets the halt time for the simulation. Defaults to -1, which is
 		 * equivalent to not halting. If the simulation has been instructed to
@@ -209,7 +205,23 @@ public final class Experiment {
 		private boolean continueFromProgressLog;
 		private Set<Integer> explicitScenarioIds = new LinkedHashSet<>();
 		private SimulationState simulationState = SimulationState.builder().build();
-		
+
+		public Data() {
+		}
+
+		public Data(Data data) {
+			dimensions.addAll(data.dimensions);
+			plugins.addAll(data.plugins);
+			experimentContextConsumers.addAll(data.experimentContextConsumers);
+			threadCount = data.threadCount;
+			stateRecordingIsScheduled = data.stateRecordingIsScheduled;
+			simulationHaltTime = data.simulationHaltTime;
+			haltOnException = data.haltOnException;
+			experimentProgressLogPath = data.experimentProgressLogPath;
+			continueFromProgressLog = data.continueFromProgressLog;
+			explicitScenarioIds.addAll(data.explicitScenarioIds);
+			simulationState = data.simulationState;
+		}
 	}
 
 	/*
@@ -239,10 +251,12 @@ public final class Experiment {
 		private final boolean produceSimulationStateOnHalt;
 		private final double simulationHaltTime;
 		private final SimulationState simulationState;
+
 		/*
 		 * All construction arguments are thread safe implementations.
 		 */
-		private SimulationCallable(final Integer scenarioId, final ExperimentStateManager experimentStateManager, final List<Plugin> plugins, final boolean produceSimulationStateOnHalt,final double simulationHaltTime,final SimulationState simulationState) {
+		private SimulationCallable(final Integer scenarioId, final ExperimentStateManager experimentStateManager, final List<Plugin> plugins, final boolean produceSimulationStateOnHalt,
+				final double simulationHaltTime, final SimulationState simulationState) {
 			this.scenarioId = scenarioId;
 			this.experimentStateManager = experimentStateManager;
 			this.plugins = new ArrayList<>(plugins);
@@ -408,14 +422,7 @@ public final class Experiment {
 		while (jobIndex < (Math.min(data.threadCount, jobs.size()) - 1)) {
 			final Integer scenarioId = jobs.get(jobIndex);
 			List<Plugin> plugins = getNewPluginInstancesFromScenarioId(scenarioId);
-			completionService.submit(new SimulationCallable(
-					scenarioId,
-					experimentStateManager,
-					plugins,
-					data.stateRecordingIsScheduled,
-					data.simulationHaltTime,
-					data.simulationState
-					));
+			completionService.submit(new SimulationCallable(scenarioId, experimentStateManager, plugins, data.stateRecordingIsScheduled, data.simulationHaltTime, data.simulationState));
 			jobIndex++;
 		}
 
@@ -429,14 +436,7 @@ public final class Experiment {
 			if (jobIndex < jobs.size()) {
 				final Integer scenarioId = jobs.get(jobIndex);
 				List<Plugin> plugins = getNewPluginInstancesFromScenarioId(scenarioId);
-				completionService.submit(new SimulationCallable(
-						scenarioId,
-						experimentStateManager,
-						plugins,
-						data.stateRecordingIsScheduled,
-						data.simulationHaltTime,
-						data.simulationState
-						));
+				completionService.submit(new SimulationCallable(scenarioId, experimentStateManager, plugins, data.stateRecordingIsScheduled, data.simulationHaltTime, data.simulationState));
 				jobIndex++;
 			}
 
@@ -474,8 +474,9 @@ public final class Experiment {
 
 		// Execute each scenario
 		final int scenarioCount = experimentStateManager.getScenarioCount();
-		final Simulation.Builder simBuilder = Simulation.builder();
+		
 		for (int scenarioId = 0; scenarioId < scenarioCount; scenarioId++) {
+			Simulation.Builder simBuilder = Simulation.builder();
 			final ScenarioStatus scenarioStatus = experimentStateManager.getScenarioStatus(scenarioId).get();
 			if (scenarioStatus != ScenarioStatus.READY) {
 				continue;

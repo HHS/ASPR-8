@@ -23,6 +23,16 @@ public class SimulationState {
 		private LocalDate baseDate = LocalDate.now();
 		private long planningQueueArrivalId;
 		private List<PlanQueueData> planQueueDatas = new ArrayList<>();
+
+		public Data() {
+		}
+
+		public Data(Data data) {
+			startTime = data.startTime;
+			baseDate = data.baseDate;
+			planningQueueArrivalId = data.planningQueueArrivalId;
+			planQueueDatas.addAll(data.planQueueDatas);
+		}
 	}
 
 	private final Data data;
@@ -61,12 +71,8 @@ public class SimulationState {
 		 *             arrival id values for all stored PlanQueueData</li>
 		 */
 		public SimulationState build() {
-			try {
-				validate();
-				return new SimulationState(data);
-			} finally {
-				data = new Data();
-			}
+			validate();
+			return new SimulationState(new Data(data));
 		}
 
 		/**

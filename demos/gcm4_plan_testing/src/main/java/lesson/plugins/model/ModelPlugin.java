@@ -15,7 +15,7 @@ import nucleus.PluginContext;
 import util.errors.ContractException;
 
 public final class ModelPlugin {
-	
+
 	private static class Data {
 		private AntigenProducerPluginData antigenProducerPluginData;
 		private VaccineProducerPluginData vaccineProducerPluginData;
@@ -36,19 +36,15 @@ public final class ModelPlugin {
 		private Data data = new Data();
 
 		public Plugin getModelPlugin() {
-			try {
-				validate();
-				Plugin.Builder builder = Plugin.builder();
-				builder.addPluginData(data.antigenProducerPluginData);
-				builder.addPluginData(data.vaccineProducerPluginData);
-				builder.addPluginData(data.vaccinatorPluginData);
-				builder.addPluginData(data.contactManagerPluginData);
-				builder.setPluginId(ModelPluginId.PLUGIN_ID);
-				builder.setInitializer(ModelPlugin::init);
-				return builder.build();
-			} finally {
-				data = new Data();
-			}
+			validate();
+			Plugin.Builder builder = Plugin.builder();
+			builder.addPluginData(data.antigenProducerPluginData);
+			builder.addPluginData(data.vaccineProducerPluginData);
+			builder.addPluginData(data.vaccinatorPluginData);
+			builder.addPluginData(data.contactManagerPluginData);
+			builder.setPluginId(ModelPluginId.PLUGIN_ID);
+			builder.setInitializer(ModelPlugin::init);
+			return builder.build();
 		}
 
 		private void validate() {
@@ -100,9 +96,15 @@ public final class ModelPlugin {
 		pluginContext.addActor(new Vaccinator(vaccinatorPluginData)::init);
 		pluginContext.addActor(new VaccineProducer(vaccineProducerPluginData)::init);
 		pluginContext.addActor(new AntigenProducer(antigenProducerPluginData)::init);
-//		pluginContext.addReport(new DiseaseStateReport(ModelReportLabel.DISEASE_STATE_REPORT, ReportPeriod.END_OF_SIMULATION)::init);//
-//		pluginContext.addReport(new VaccineReport(ModelReportLabel.VACCINE_REPORT, ReportPeriod.DAILY)::init);//
-//		pluginContext.addReport(new VaccineProductionReport(ModelReportLabel.VACCINE_PRODUCTION_REPORT, ReportPeriod.DAILY)::init);//
+		// pluginContext.addReport(new
+		// DiseaseStateReport(ModelReportLabel.DISEASE_STATE_REPORT,
+		// ReportPeriod.END_OF_SIMULATION)::init);//
+		// pluginContext.addReport(new
+		// VaccineReport(ModelReportLabel.VACCINE_REPORT,
+		// ReportPeriod.DAILY)::init);//
+		// pluginContext.addReport(new
+		// VaccineProductionReport(ModelReportLabel.VACCINE_PRODUCTION_REPORT,
+		// ReportPeriod.DAILY)::init);//
 	}
 
 	private ModelPlugin() {

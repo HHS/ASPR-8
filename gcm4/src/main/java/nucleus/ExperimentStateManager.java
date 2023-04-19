@@ -299,6 +299,18 @@ public final class ExperimentStateManager {
 		private List<Consumer<ExperimentContext>> contextConsumers = new ArrayList<>();
 		private boolean continueFromProgressLog;
 		private Set<Integer> explicitScenarioIds = new LinkedHashSet<>();
+
+		public Data() {
+		}
+
+		public Data(Data data) {
+			scenarioCount = data.scenarioCount;
+			progressLogFile = data.progressLogFile;
+			experimentMetaData.addAll(data.experimentMetaData);
+			contextConsumers.addAll(data.contextConsumers);
+			continueFromProgressLog = data.continueFromProgressLog;
+			explicitScenarioIds.addAll(explicitScenarioIds);
+		}
 	}
 
 	/**
@@ -321,13 +333,9 @@ public final class ExperimentStateManager {
 		}
 
 		public ExperimentStateManager build() {
-			try {
-				ExperimentStateManager result = new ExperimentStateManager(data);
-				result.init();
-				return result;
-			} finally {
-				data = new Data();
-			}
+			ExperimentStateManager result = new ExperimentStateManager(new Data(data));
+			result.init();
+			return result;
 		}
 
 		/**
@@ -348,7 +356,8 @@ public final class ExperimentStateManager {
 		}
 
 		/**
-		 * Marks the scenario to be explicitly run.  All other scenarios will be ignored.
+		 * Marks the scenario to be explicitly run. All other scenarios will be
+		 * ignored.
 		 */
 		public Builder addExplicitScenarioId(Integer scenarioId) {
 			data.explicitScenarioIds.add(scenarioId);

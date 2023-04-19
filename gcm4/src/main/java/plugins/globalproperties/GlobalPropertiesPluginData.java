@@ -61,15 +61,11 @@ public final class GlobalPropertiesPluginData implements PluginData {
 		 * 
 		 */
 		public GlobalPropertiesPluginData build() {
-			try {
-				if (!data.locked) {
-					validateData();
-				}
-				ensureImmutability();
-				return new GlobalPropertiesPluginData(data);
-			} finally {
-				data = new Data();
+			if (!data.locked) {
+				validateData();
 			}
+			ensureImmutability();
+			return new GlobalPropertiesPluginData(data);
 		}
 
 		/**
@@ -412,8 +408,6 @@ public final class GlobalPropertiesPluginData implements PluginData {
 	public PluginDataBuilder getCloneBuilder() {
 		return new Builder(data);
 	}
-
-	
 
 	@Override
 	public int hashCode() {

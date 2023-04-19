@@ -283,10 +283,12 @@ public class AT_Plugin {
 		Set<Integer> hashcodes = new LinkedHashSet<>();
 		// show equal objects have equal hash codes
 
-		Plugin.Builder builder1 = Plugin.builder();
-		Plugin.Builder builder2 = Plugin.builder();
+		
 
 		for (int i = 0; i < 100; i++) {
+			Plugin.Builder builder1 = Plugin.builder();
+			Plugin.Builder builder2 = Plugin.builder();
+			
 			Set<PluginData> pluginDatas = new LinkedHashSet<>();
 			int pluginDataCount = randomGenerator.nextInt(5) + 1;
 			for (int j = 0; j < pluginDataCount; j++) {

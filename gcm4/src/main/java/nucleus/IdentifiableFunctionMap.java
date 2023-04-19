@@ -11,6 +11,13 @@ import util.errors.ContractException;
 public final class IdentifiableFunctionMap<N> {
 	private static class Data<T> {
 		private Map<Object, IdentifiableFunction<T>> functionMap = new LinkedHashMap<>();
+
+		public Data() {
+		}
+
+		public Data(Data<T> data) {
+			functionMap.putAll(data.functionMap);
+		}
 	}
 
 	/**
@@ -31,12 +38,7 @@ public final class IdentifiableFunctionMap<N> {
 		}
 
 		public IdentifiableFunctionMap<T> build() {
-			try {
-				return new IdentifiableFunctionMap<>(data);
-			} finally {
-				data = new Data<>();
-			}
-
+			return new IdentifiableFunctionMap<>(new Data<>(data));
 		}
 
 		/**
