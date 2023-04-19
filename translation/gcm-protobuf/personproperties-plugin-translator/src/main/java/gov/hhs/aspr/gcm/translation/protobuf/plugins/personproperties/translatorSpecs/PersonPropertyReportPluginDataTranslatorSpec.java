@@ -1,6 +1,6 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.translatorSpecs;
 
-import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractProtobufTranslatorSpec;
+import gov.hhs.aspr.translation.protobuf.core.AbstractProtobufTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.input.PersonPropertyIdInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.input.PersonPropertyReportPluginDataInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.input.ReportLabelInput;
@@ -17,23 +17,21 @@ public class PersonPropertyReportPluginDataTranslatorSpec
     protected PersonPropertyReportPluginData convertInputObject(PersonPropertyReportPluginDataInput inputObject) {
         PersonPropertyReportPluginData.Builder builder = PersonPropertyReportPluginData.builder();
 
-        ReportLabel reportLabel = this.translator.convertInputObject(inputObject.getReportLabel(), ReportLabel.class);
+        ReportLabel reportLabel = this.translator.convertInputObject(inputObject.getReportLabel());
         builder.setReportLabel(reportLabel);
 
-        ReportPeriod reportPeriod = this.translator.convertInputEnum(inputObject.getReportPeriod());
+        ReportPeriod reportPeriod = this.translator.convertInputObject(inputObject.getReportPeriod());
         builder.setReportPeriod(reportPeriod);
 
         builder.setDefaultInclusion(inputObject.getDefaultInclusionPolicy());
 
         for (PersonPropertyIdInput personPropertyIdInput : inputObject.getIncludedPropertiesList()) {
-            PersonPropertyId personPropertyId = this.translator.convertInputObject(personPropertyIdInput,
-                    PersonPropertyId.class);
+            PersonPropertyId personPropertyId = this.translator.convertInputObject(personPropertyIdInput);
             builder.includePersonProperty(personPropertyId);
         }
 
         for (PersonPropertyIdInput personPropertyIdInput : inputObject.getExcludedPropertiesList()) {
-            PersonPropertyId personPropertyId = this.translator.convertInputObject(personPropertyIdInput,
-                    PersonPropertyId.class);
+            PersonPropertyId personPropertyId = this.translator.convertInputObject(personPropertyIdInput);
             builder.excludePersonProperty(personPropertyId);
         }
 
@@ -66,11 +64,6 @@ public class PersonPropertyReportPluginDataTranslatorSpec
         }
 
         return builder.build();
-    }
-
-    @Override
-    public PersonPropertyReportPluginDataInput getDefaultInstanceForInputObject() {
-        return PersonPropertyReportPluginDataInput.getDefaultInstance();
     }
 
     @Override

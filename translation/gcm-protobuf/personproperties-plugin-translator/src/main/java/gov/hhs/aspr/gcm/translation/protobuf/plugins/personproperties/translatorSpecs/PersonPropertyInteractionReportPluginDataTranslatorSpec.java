@@ -1,6 +1,6 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.translatorSpecs;
 
-import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractProtobufTranslatorSpec;
+import gov.hhs.aspr.translation.protobuf.core.AbstractProtobufTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.input.PersonPropertyIdInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.input.PersonPropertyInteractionReportPluginDataInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.input.ReportLabelInput;
@@ -19,15 +19,14 @@ public class PersonPropertyInteractionReportPluginDataTranslatorSpec
             PersonPropertyInteractionReportPluginDataInput inputObject) {
         PersonPropertyInteractionReportPluginData.Builder builder = PersonPropertyInteractionReportPluginData.builder();
 
-        ReportLabel reportLabel = this.translator.convertInputObject(inputObject.getReportLabel(), ReportLabel.class);
+        ReportLabel reportLabel = this.translator.convertInputObject(inputObject.getReportLabel());
         builder.setReportLabel(reportLabel);
 
-        ReportPeriod reportPeriod = this.translator.convertInputEnum(inputObject.getReportPeriod());
+        ReportPeriod reportPeriod = this.translator.convertInputObject(inputObject.getReportPeriod());
         builder.setReportPeriod(reportPeriod);
 
         for (PersonPropertyIdInput personPropertyIdInput : inputObject.getPersonPropertyIdsList()) {
-            PersonPropertyId personPropertyId = this.translator.convertInputObject(personPropertyIdInput,
-                    PersonPropertyId.class);
+            PersonPropertyId personPropertyId = this.translator.convertInputObject(personPropertyIdInput);
             builder.addPersonPropertyId(personPropertyId);
         }
 
@@ -55,11 +54,6 @@ public class PersonPropertyInteractionReportPluginDataTranslatorSpec
         }
 
         return builder.build();
-    }
-
-    @Override
-    public PersonPropertyInteractionReportPluginDataInput getDefaultInstanceForInputObject() {
-        return PersonPropertyInteractionReportPluginDataInput.getDefaultInstance();
     }
 
     @Override

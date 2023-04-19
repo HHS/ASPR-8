@@ -1,6 +1,6 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties;
 
-import gov.hhs.aspr.gcm.translation.core.Translator;
+import gov.hhs.aspr.translation.core.Translator;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.PeopleTranslatorId;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.translatorSpecs.PersonPropertiesPluginDataTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.translatorSpecs.PersonPropertyIdTranslatorSpec;
@@ -8,13 +8,15 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.translator
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.translatorSpecs.PersonPropertyReportPluginDataTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.translatorSpecs.TestPersonPropertyIdTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.PropertiesTranslatorId;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.ReportsTranslatorId;
 
 public class PersonPropertiesTranslator {
+
     private PersonPropertiesTranslator() {
     }
 
     public static Translator.Builder builder(boolean withReport) {
-        return Translator.builder()
+        Translator.Builder builder = Translator.builder()
                 .setTranslatorId(PersonPropertiesTranslatorId.TRANSLATOR_ID)
                 .addDependency(PropertiesTranslatorId.TRANSLATOR_ID)
                 .addDependency(PeopleTranslatorId.TRANSLATOR_ID)
@@ -30,13 +32,18 @@ public class PersonPropertiesTranslator {
                     }
                 });
 
+        if (withReport) {
+            builder.addDependency(ReportsTranslatorId.TRANSLATOR_ID);
+        }
+
+        return builder;
     }
 
-    public static Translator.Builder builder() {
-        return builder(false);
+    public static Translator getTranslatorWithReport() {
+        return builder(true).build();
     }
 
     public static Translator getTranslator() {
-        return builder().build();
+        return builder(false).build();
     }
 }
