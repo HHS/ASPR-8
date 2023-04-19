@@ -246,30 +246,19 @@ public class ProtobufTranslatorCore extends TranslatorCore {
 
     public <M extends U, U> Any getAnyFromObject(M object, Class<U> superClass) {
         if (Enum.class.isAssignableFrom(object.getClass())) {
-            return packMessage(convertSimObject(Enum.class.cast(object), Enum.class));
+            return Any.pack(convertSimObject(Enum.class.cast(object), Enum.class));
         }
-        return packMessage(convertSimObject(object, superClass));
+        return Any.pack(convertSimObject(object, superClass));
     }
 
     public Any getAnyFromObject(Object object) {
         if (Enum.class.isAssignableFrom(object.getClass())) {
-            return packMessage(convertSimObject(Enum.class.cast(object), Enum.class));
+            return Any.pack(convertSimObject(Enum.class.cast(object), Enum.class));
         }
-        return packMessage(convertSimObject(object));
-    }
-
-    private Any packMessage(Message messageToPack) {
-        return Any.pack(messageToPack);
+        return Any.pack(convertSimObject(object));
     }
 
     public <T> T getObjectFromAny(Any anyValue) {
-        Message anyMessage = getMessageFromAny(anyValue);
-
-        return convertInputObject(anyMessage);
-    }
-
-    private Message getMessageFromAny(Any anyValue) {
-
         String fullTypeUrl = anyValue.getTypeUrl();
         String[] parts = fullTypeUrl.split("/");
 
@@ -278,25 +267,26 @@ public class ProtobufTranslatorCore extends TranslatorCore {
         }
 
         String typeUrl = parts[1];
-        Class<?> classRef = this.data.typeUrlToClassMap.get(typeUrl);
+        Class<?> classRef = getClassFromTypeUrl(typeUrl);
         Class<? extends Message> messageClassRef;
 
         if (!(Message.class.isAssignableFrom(classRef))) {
-            throw new RuntimeException("No default instance was provided for: " + typeUrl);
+            throw new RuntimeException("Message is not assignable from " + classRef.getName());
         }
+
         messageClassRef = classRef.asSubclass(Message.class);
 
         try {
             Message unpackedMessage = anyValue.unpack(messageClassRef);
 
-            return unpackedMessage;
+            return convertInputObject(unpackedMessage);
         } catch (InvalidProtocolBufferException e) {
             throw new RuntimeException("Unable To unpack any type to given class: " + classRef.getName(), e);
         }
     }
 
     public Class<?> getClassFromTypeUrl(String typeUrl) {
-        if(this.data.typeUrlToClassMap.containsKey(typeUrl)) {
+        if (this.data.typeUrlToClassMap.containsKey(typeUrl)) {
             return this.data.typeUrlToClassMap.get(typeUrl);
         }
 
