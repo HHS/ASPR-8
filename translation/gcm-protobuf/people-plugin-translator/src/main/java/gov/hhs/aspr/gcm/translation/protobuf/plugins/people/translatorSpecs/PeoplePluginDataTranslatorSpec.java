@@ -1,6 +1,6 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.people.translatorSpecs;
 
-import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractProtobufTranslatorSpec;
+import gov.hhs.aspr.translation.protobuf.core.AbstractProtobufTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.input.PeoplePluginDataInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.input.PersonRangeInput;
 import plugins.people.PeoplePluginData;
@@ -37,11 +37,6 @@ public class PeoplePluginDataTranslatorSpec
         builder.setPersonCount(simObject.getPersonCount());
 
         return builder.build();
-    }
-
-    @Override
-    public PeoplePluginDataInput getDefaultInstanceForInputObject() {
-        return PeoplePluginDataInput.getDefaultInstance();
     }
 
     @Override

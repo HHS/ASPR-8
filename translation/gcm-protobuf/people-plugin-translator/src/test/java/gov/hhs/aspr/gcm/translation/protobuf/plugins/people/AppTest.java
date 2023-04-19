@@ -2,47 +2,55 @@ package gov.hhs.aspr.gcm.translation.protobuf.plugins.people;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.util.List;
 
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import gov.hhs.aspr.gcm.translation.protobuf.core.ProtobufTranslatorCore;
-import gov.hhs.aspr.gcm.translation.core.TranslatorController;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.input.PeoplePluginDataInput;
-import nucleus.PluginData;
+import gov.hhs.aspr.translation.core.TranslatorController;
+import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslatorCore;
 import plugins.people.PeoplePluginData;
 import plugins.people.support.PersonId;
 import plugins.people.support.PersonRange;
 import util.random.RandomGeneratorProvider;
 
 public class AppTest {
+    Path basePath = getCurrentDir();
+    Path inputFilePath = basePath.resolve("json");
+    Path outputFilePath = makeOutputDir();
 
+    private Path getCurrentDir() {
+        try {
+            return Path.of(this.getClass().getClassLoader().getResource("").toURI());
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private Path makeOutputDir() {
+        Path path = basePath.resolve("json/output");
+
+        path.toFile().mkdirs();
+
+        return path;
+    }
+    
     @Test
     public void testPeopleTranslator() {
-        Path basePath = Path.of("").toAbsolutePath();
-
-        if (!basePath.endsWith("people-plugin-translator")) {
-            basePath = basePath.resolve("people-plugin-translator");
-        }
-
-        Path inputFilePath = basePath.resolve("src/main/resources/json");
-        Path outputFilePath = basePath.resolve("src/main/resources/json/output");
-
-        outputFilePath.toFile().mkdir();
-
         String fileName = "pluginData.json";
 
         TranslatorController translatorController = TranslatorController.builder()
                 .setTranslatorCoreBuilder(ProtobufTranslatorCore.builder())
                 .addTranslator(PeopleTranslator.getTranslator())
-                .addReader(inputFilePath.resolve(fileName), PeoplePluginDataInput.class)
-                .addWriter(outputFilePath.resolve(fileName), PeoplePluginData.class)
+                .addInputFilePath(inputFilePath.resolve(fileName), PeoplePluginDataInput.class)
+                .addOutputFilePath(outputFilePath.resolve(fileName), PeoplePluginData.class)
                 .build();
 
-        List<PluginData> pluginDatas = translatorController.readInput().getPluginDatas();
-        PeoplePluginData actualPluginData = (PeoplePluginData) pluginDatas.get(0);
+        translatorController.readInput();
+        PeoplePluginData actualPluginData = translatorController.getObject(PeoplePluginData.class);
 
         PeoplePluginData.Builder builder = PeoplePluginData.builder();
 

@@ -1,6 +1,6 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.people.translatorSpecs;
 
-import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractProtobufTranslatorSpec;
+import gov.hhs.aspr.translation.protobuf.core.AbstractProtobufTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.input.PersonRangeInput;
 import plugins.people.support.PersonRange;
 
@@ -14,11 +14,6 @@ public class PersonRangeTranslatorSpec extends AbstractProtobufTranslatorSpec<Pe
     @Override
     protected PersonRangeInput convertAppObject(PersonRange simObject) {
        return PersonRangeInput.newBuilder().setLowPersonId(simObject.getLowPersonId()).setHighPersonId(simObject.getHighPersonId()).build();
-    }
-
-    @Override
-    public PersonRangeInput getDefaultInstanceForInputObject() {
-      return PersonRangeInput.getDefaultInstance();
     }
 
     @Override
