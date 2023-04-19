@@ -4,11 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.net.URISyntaxException;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.EnumSet;
-import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.math3.random.RandomGenerator;
@@ -24,7 +21,7 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.input.ResourceRep
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.input.ResourcesPluginDataInput;
 import gov.hhs.aspr.translation.core.TranslatorController;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslatorCore;
-import plugins.people.support.PersonId;
+import gov.hhs.aspr.translation.protobuf.core.testsupport.TestResourceHelper;
 import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportPeriod;
 import plugins.reports.support.SimpleReportLabel;
@@ -33,6 +30,7 @@ import plugins.resources.reports.PersonResourceReportPluginData;
 import plugins.resources.reports.ResourcePropertyReportPluginData;
 import plugins.resources.reports.ResourceReportPluginData;
 import plugins.resources.support.ResourceId;
+import plugins.resources.testsupport.ResourcesTestPluginFactory;
 import plugins.resources.testsupport.TestResourceId;
 import plugins.resources.testsupport.TestResourcePropertyId;
 import plugins.util.properties.PropertyDefinition;
@@ -40,29 +38,14 @@ import plugins.util.properties.TimeTrackingPolicy;
 import util.random.RandomGeneratorProvider;
 
 public class AppTest {
-    Path basePath = getCurrentDir();
-    Path inputFilePath = basePath.resolve("json");
-    Path outputFilePath = makeOutputDir();
-
-    private Path getCurrentDir() {
-        try {
-            return Path.of(this.getClass().getClassLoader().getResource("").toURI());
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private Path makeOutputDir() {
-        Path path = basePath.resolve("json/output");
-
-        path.toFile().mkdirs();
-
-        return path;
-    }
+    Path basePath = TestResourceHelper.getResourceDir(this.getClass());
+    Path filePath = TestResourceHelper.makeTestOutputDir(basePath);
 
     @Test
     public void testResourcesTranslator() {
         String fileName = "pluginData.json";
+
+        TestResourceHelper.createTestOutputFile(filePath, fileName);
 
         TranslatorController translatorController = TranslatorController.builder()
                 .setTranslatorCoreBuilder(ProtobufTranslatorCore.builder())
@@ -70,29 +53,28 @@ public class AppTest {
                 .addTranslator(PropertiesTranslator.getTranslator())
                 .addTranslator(PeopleTranslator.getTranslator())
                 .addTranslator(RegionsTranslator.getTranslator())
-                .addInputFilePath(inputFilePath.resolve(fileName), ResourcesPluginDataInput.class)
-                .addOutputFilePath(outputFilePath.resolve(fileName), ResourcesPluginData.class)
+                .addInputFilePath(filePath.resolve(fileName), ResourcesPluginDataInput.class)
+                .addOutputFilePath(filePath.resolve(fileName), ResourcesPluginData.class)
                 .build();
 
+        long seed = 524805676405822016L;
+
+        ResourcesPluginData expectedPluginData = ResourcesTestPluginFactory.getStandardResourcesPluginData(seed);
+
+        translatorController.writeOutput(expectedPluginData);
         translatorController.readInput();
 
-        ResourcesPluginData resourcesPluginData = translatorController.getObject(ResourcesPluginData.class);
-        long seed = 524805676405822016L;
-        List<PersonId> people = new ArrayList<>();
-
-        for (int i = 0; i < 100; i++) {
-            people.add(new PersonId(i));
-        }
+        ResourcesPluginData actualPluginData = translatorController.getObject(ResourcesPluginData.class);
 
         Set<TestResourceId> expectedResourceIds = EnumSet.allOf(TestResourceId.class);
         assertFalse(expectedResourceIds.isEmpty());
 
-        Set<ResourceId> actualResourceIds = resourcesPluginData.getResourceIds();
+        Set<ResourceId> actualResourceIds = actualPluginData.getResourceIds();
         assertEquals(expectedResourceIds, actualResourceIds);
 
         for (TestResourceId resourceId : TestResourceId.values()) {
             TimeTrackingPolicy expectedPolicy = resourceId.getTimeTrackingPolicy();
-            TimeTrackingPolicy actualPolicy = resourcesPluginData.getPersonResourceTimeTrackingPolicy(resourceId);
+            TimeTrackingPolicy actualPolicy = actualPluginData.getPersonResourceTimeTrackingPolicy(resourceId);
             assertEquals(expectedPolicy, actualPolicy);
         }
 
@@ -105,23 +87,26 @@ public class AppTest {
             PropertyDefinition expectedPropertyDefinition = resourcePropertyId.getPropertyDefinition();
             Object expectedPropertyValue = resourcePropertyId.getRandomPropertyValue(randomGenerator);
 
-            assertTrue(resourcesPluginData.getResourcePropertyIds(expectedResourceId).contains(resourcePropertyId));
+            assertTrue(actualPluginData.getResourcePropertyIds(expectedResourceId).contains(resourcePropertyId));
 
-            PropertyDefinition actualPropertyDefinition = resourcesPluginData
+            PropertyDefinition actualPropertyDefinition = actualPluginData
                     .getResourcePropertyDefinition(expectedResourceId, resourcePropertyId);
             assertEquals(expectedPropertyDefinition, actualPropertyDefinition);
 
-            Object actualPropertyValue = resourcesPluginData.getResourcePropertyValue(expectedResourceId,
+            Object actualPropertyValue = actualPluginData.getResourcePropertyValue(expectedResourceId,
                     resourcePropertyId);
             assertEquals(expectedPropertyValue, actualPropertyValue);
         }
 
-        translatorController.writeOutput();
+        // TODO: fix equals contract
+        // assertEquals(expectedPluginData, actualPluginData);
     }
 
     @Test
     public void testPersonResourceReportTranslatorSpec() {
         String fileName = "personResourceReport.json";
+
+        TestResourceHelper.createTestOutputFile(filePath, fileName);
 
         TranslatorController translatorController = TranslatorController.builder()
                 .setTranslatorCoreBuilder(ProtobufTranslatorCore.builder())
@@ -130,16 +115,12 @@ public class AppTest {
                 .addTranslator(PeopleTranslator.getTranslator())
                 .addTranslator(RegionsTranslator.getTranslator())
                 .addTranslator(ReportsTranslator.getTranslator())
-                .addInputFilePath(inputFilePath.resolve(fileName),
+                .addInputFilePath(filePath.resolve(fileName),
                         PersonResourceReportPluginDataInput.class)
-                .addOutputFilePath(outputFilePath.resolve(fileName),
+                .addOutputFilePath(filePath.resolve(fileName),
                         PersonResourceReportPluginData.class)
                 .build();
 
-        translatorController.readInput();
-
-        PersonResourceReportPluginData actualPluginData = translatorController
-                .getObject(PersonResourceReportPluginData.class);
         long seed = 524805676405822016L;
         RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
 
@@ -163,19 +144,21 @@ public class AppTest {
 
         PersonResourceReportPluginData expectedPluginData = builder.build();
 
-        assertEquals(expectedPluginData.getReportLabel(), actualPluginData.getReportLabel());
-        assertEquals(expectedPluginData.getReportPeriod(), actualPluginData.getReportPeriod());
-        assertEquals(expectedPluginData.getDefaultInclusionPolicy(), actualPluginData.getDefaultInclusionPolicy());
-        assertEquals(expectedPluginData.getIncludedResourceIds(), actualPluginData.getIncludedResourceIds());
-        assertEquals(expectedPluginData.getExcludedResourceIds(), actualPluginData.getExcludedResourceIds());
+        translatorController.writeOutput(expectedPluginData);
+        translatorController.readInput();
 
-        translatorController.writeOutput();
+        PersonResourceReportPluginData actualPluginData = translatorController
+                .getObject(PersonResourceReportPluginData.class);
+
+        assertEquals(expectedPluginData, actualPluginData);
 
     }
 
     @Test
     public void testResourcePropertyReportTranslatorSpec() {
         String fileName = "resourcePropertyReport.json";
+
+        TestResourceHelper.createTestOutputFile(filePath, fileName);
 
         TranslatorController translatorController = TranslatorController.builder()
                 .setTranslatorCoreBuilder(ProtobufTranslatorCore.builder())
@@ -184,16 +167,12 @@ public class AppTest {
                 .addTranslator(PeopleTranslator.getTranslator())
                 .addTranslator(RegionsTranslator.getTranslator())
                 .addTranslator(ReportsTranslator.getTranslator())
-                .addInputFilePath(inputFilePath.resolve(fileName),
+                .addInputFilePath(filePath.resolve(fileName),
                         ResourcePropertyReportPluginDataInput.class)
-                .addOutputFilePath(outputFilePath.resolve(fileName),
+                .addOutputFilePath(filePath.resolve(fileName),
                         ResourcePropertyReportPluginData.class)
                 .build();
 
-        translatorController.readInput();
-
-        ResourcePropertyReportPluginData actualPluginData = translatorController
-                .getObject(ResourcePropertyReportPluginData.class);
         ReportLabel reportLabel = new SimpleReportLabel("resource property report label");
 
         ResourcePropertyReportPluginData.Builder builder = ResourcePropertyReportPluginData.builder();
@@ -202,14 +181,20 @@ public class AppTest {
 
         ResourcePropertyReportPluginData expectedPluginData = builder.build();
 
-        assertEquals(expectedPluginData.getReportLabel(), actualPluginData.getReportLabel());
-        translatorController.writeOutput();
+        translatorController.writeOutput(expectedPluginData);
+        translatorController.readInput();
 
+        ResourcePropertyReportPluginData actualPluginData = translatorController
+                .getObject(ResourcePropertyReportPluginData.class);
+
+        assertEquals(expectedPluginData, actualPluginData);
     }
 
     @Test
     public void testResourceReportTranslatorSpec() {
         String fileName = "resourceReport.json";
+
+        TestResourceHelper.createTestOutputFile(filePath, fileName);
 
         TranslatorController translatorController = TranslatorController.builder()
                 .setTranslatorCoreBuilder(ProtobufTranslatorCore.builder())
@@ -218,15 +203,12 @@ public class AppTest {
                 .addTranslator(PeopleTranslator.getTranslator())
                 .addTranslator(RegionsTranslator.getTranslator())
                 .addTranslator(ReportsTranslator.getTranslator())
-                .addInputFilePath(inputFilePath.resolve(fileName),
+                .addInputFilePath(filePath.resolve(fileName),
                         ResourceReportPluginDataInput.class)
-                .addOutputFilePath(outputFilePath.resolve(fileName),
+                .addOutputFilePath(filePath.resolve(fileName),
                         ResourceReportPluginData.class)
                 .build();
 
-        translatorController.readInput();
-
-        ResourceReportPluginData actualPluginData = translatorController.getObject(ResourceReportPluginData.class);
         long seed = 524805676405822016L;
         RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
 
@@ -250,14 +232,12 @@ public class AppTest {
 
         ResourceReportPluginData expectedPluginData = builder.build();
 
-        assertEquals(expectedPluginData.getReportLabel(), actualPluginData.getReportLabel());
-        assertEquals(expectedPluginData.getReportPeriod(), actualPluginData.getReportPeriod());
-        assertEquals(expectedPluginData.getDefaultInclusionPolicy(), actualPluginData.getDefaultInclusionPolicy());
-        assertEquals(expectedPluginData.getIncludedResourceIds(), actualPluginData.getIncludedResourceIds());
-        assertEquals(expectedPluginData.getExcludedResourceIds(), actualPluginData.getExcludedResourceIds());
+        translatorController.writeOutput(expectedPluginData);
+        translatorController.readInput();
 
-        translatorController.writeOutput();
+        ResourceReportPluginData actualPluginData = translatorController.getObject(ResourceReportPluginData.class);
 
+        assertEquals(expectedPluginData, actualPluginData);
     }
 
 }
