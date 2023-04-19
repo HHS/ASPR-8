@@ -2,7 +2,6 @@ package gov.hss.aspr.gcm.translation.protobuf.nucleus;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.List;
@@ -10,10 +9,10 @@ import java.util.List;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
+import gov.hhs.aspr.gcm.translation.protobuf.nucleus.input.SimulationStateInput;
+import gov.hhs.aspr.translation.core.TranslatorController;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslatorCore;
 import gov.hhs.aspr.translation.protobuf.core.testsupport.TestResourceHelper;
-import gov.hhs.aspr.translation.core.TranslatorController;
-import gov.hhs.aspr.gcm.translation.protobuf.nucleus.input.SimulationStateInput;
 import gov.hss.aspr.gcm.translation.protobuf.nucleus.simObjects.ExamplePlanData;
 import gov.hss.aspr.gcm.translation.protobuf.nucleus.simObjects.translatorSpecs.ExamplePlanDataTranslatorSpec;
 import nucleus.PlanQueueData;
@@ -77,8 +76,6 @@ public class AppTest {
         translatorController.readInput();
 
         SimulationState actualSimulationState = translatorController.getObject(SimulationState.class);
-
-        
 
         assertEquals(exptectedSimulationState.getBaseDate(), actualSimulationState.getBaseDate());
         assertEquals(exptectedSimulationState.getStartTime(), actualSimulationState.getStartTime());
