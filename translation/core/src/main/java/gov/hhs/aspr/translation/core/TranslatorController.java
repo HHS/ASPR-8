@@ -84,12 +84,7 @@ public class TranslatorController {
             return this;
         }
 
-        public <T, U extends T> Builder addMarkerInterface(Class<U> classRef, Class<T> markerInterface) {
-
-            if (!markerInterface.isAssignableFrom(classRef)) {
-                throw new RuntimeException("cannot cast " + classRef.getName() + " to " + markerInterface.getName());
-            }
-
+        public <U, M extends U> Builder addMarkerInterface(Class<M> classRef, Class<U> markerInterface) {
             this.data.markerInterfaceClassMap.put(classRef, markerInterface);
             return this;
         }
@@ -212,57 +207,65 @@ public class TranslatorController {
         return this;
     }
 
-    private Path getOutputPath(Class<?> classRef, Integer scenarioId) {
+    private <U, M extends U> Pair<Path, Optional<Class<U>>> getOutputPath(Class<M> classRef, Integer scenarioId) {
         Pair<Class<?>, Integer> key = new Pair<>(classRef, scenarioId);
 
         if (this.data.outputFilePathMap.containsKey(key)) {
-            return this.data.outputFilePathMap.get(key);
+            return new Pair<>(this.data.outputFilePathMap.get(key), Optional.empty());
         }
 
         if (this.data.markerInterfaceClassMap.containsKey(classRef)) {
-            Class<?> markerInterfaceClass = this.data.markerInterfaceClassMap.get(classRef);
+            // can safely cast because of type checking when adding to the
+            // markerInterfaceClassMap
+            @SuppressWarnings("unchecked")
+            Class<U> markerInterfaceClass = (Class<U>) this.data.markerInterfaceClassMap.get(classRef);
+
             key = new Pair<>(markerInterfaceClass, scenarioId);
 
             if (this.data.outputFilePathMap.containsKey(key)) {
-                return this.data.outputFilePathMap.get(key);
+                return new Pair<>(this.data.outputFilePathMap.get(key), Optional.of(markerInterfaceClass));
             }
         }
 
         throw new RuntimeException("No path was provided for " + classRef.getName());
     }
 
-    public void writeOutput() {
+    @SuppressWarnings("unchecked")
+    public <U, M extends U> void writeOutput() {
         validateCoreTranslator();
 
-        if(this.objects.isEmpty()) {
+        if (this.objects.isEmpty()) {
             throw new RuntimeException("Calling this method without having also called readInput() is not allowed.");
         }
 
         int scenarioId = 0;
 
-        for (Object simObject : this.objects) {
+        for (int i = 0; i < this.objects.size(); i++) {
+            // use generics instead of Object for consistency
+            M object = (M) this.objects.get(i);
+            Class<M> classRef = (Class<M>) object.getClass();
 
-            Class<?> classRef = simObject.getClass();
+            Pair<Path, Optional<Class<U>>> pathPair = getOutputPath(classRef, scenarioId);
+            Path path = pathPair.getFirst();
 
-            Path path = getOutputPath(classRef, scenarioId);
             try {
-                this.writeOutput(new FileWriter(path.toFile()), simObject, Optional.empty());
+                this.writeOutput(new FileWriter(path.toFile()), object, pathPair.getSecond());
             } catch (IOException e) {
                 throw new RuntimeException("Unable to create writer for file: " + path.toString(), e);
             }
-
         }
+
     }
 
     public <T> void writeOutput(List<T> objects) {
         for (T object : objects) {
-            writeOutput(object);
+            this.writeOutput(object);
         }
     }
 
     public <T> void writeOutput(List<T> objects, Integer scenarioId) {
         for (T object : objects) {
-            writeOutput(object, scenarioId);
+            this.writeOutput(object, scenarioId);
         }
     }
 
@@ -270,13 +273,17 @@ public class TranslatorController {
         this.writeOutput(object, 0);
     }
 
-    public <T> void writeOutput(T object, Integer scenarioId) {
+    @SuppressWarnings("unchecked")
+    public <U, T extends U> void writeOutput(T object, Integer scenarioId) {
         validateCoreTranslator();
+        // this gives an unchecked warning, surprisingly
+        Class<T> classRef = (Class<T>) object.getClass();
 
-        Path path = getOutputPath(object.getClass(), scenarioId);
+        Pair<Path, Optional<Class<U>>> pathPair = getOutputPath(classRef, scenarioId);
+        Path path = pathPair.getFirst();
 
         try {
-            this.writeOutput(new FileWriter(path.toFile()), object, Optional.empty());
+            this.writeOutput(new FileWriter(path.toFile()), object, pathPair.getSecond());
         } catch (IOException e) {
             throw new RuntimeException("Unable to create writer for file: " + path.toString(), e);
         }
