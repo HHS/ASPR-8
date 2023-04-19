@@ -1,4 +1,4 @@
-package gov.hhs.aspr.translation.core.testsupport;
+package gov.hhs.aspr.translation.protobuf.core.testsupport;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
