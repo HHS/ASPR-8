@@ -76,12 +76,6 @@ public abstract class TranslatorCore {
 
     public abstract <T, U> T readInput(Reader reader, Class<U> inputClassRef);
 
-    public <T extends U, U> T convertInputObject(Object inputObject, Class<U> superClass) {
-        T convertInputObject = convertInputObject(inputObject);
-
-        return convertInputObject;
-    }
-
     public <T> T convertInputObject(Object inputObject) {
         return getTranslatorForClass(inputObject.getClass()).convert(inputObject);
     }
