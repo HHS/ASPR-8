@@ -176,9 +176,10 @@ public class AT_BatchConstructionInfo {
 			BatchPropertyId.class, Object.class })
 	public void testSetPropertyValue() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(1174771995707697849L);
-		BatchConstructionInfo.Builder builder = BatchConstructionInfo.builder();//
+		
 		for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
 			for (TestMaterialId testMaterialId : TestMaterialId.values()) {
+				BatchConstructionInfo.Builder builder = BatchConstructionInfo.builder();//
 				builder.setMaterialId(testMaterialId).setMaterialsProducerId(testMaterialsProducerId);//
 				Map<BatchPropertyId, Object> expectedPropertyValues = new LinkedHashMap<>();
 				for (TestBatchPropertyId testBatchPropertyId : TestBatchPropertyId
@@ -239,9 +240,10 @@ public class AT_BatchConstructionInfo {
 	public void testGetPropertyValues() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(1805920219436314340L);
-		BatchConstructionInfo.Builder builder = BatchConstructionInfo.builder();//
+		
 		for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
 			for (TestMaterialId testMaterialId : TestMaterialId.values()) {
+				BatchConstructionInfo.Builder builder = BatchConstructionInfo.builder();//
 				builder.setMaterialsProducerId(testMaterialsProducerId).setMaterialId(testMaterialId);//
 
 				Map<BatchPropertyId, Object> expectedPropertyValues = new LinkedHashMap<>();

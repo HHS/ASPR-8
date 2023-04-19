@@ -18,7 +18,7 @@ public final class PropertyDefinition {
 		return new Builder();
 	}
 
-	private static class Data {		
+	private static class Data {
 
 		private Class<?> type = null;
 
@@ -27,6 +27,20 @@ public final class PropertyDefinition {
 		private Object defaultValue = null;
 
 		private TimeTrackingPolicy timeTrackingPolicy = TimeTrackingPolicy.DO_NOT_TRACK_TIME;
+
+		public Data() {
+		}
+
+		public Data(Data data) {
+			type = data.type;
+
+			propertyValuesAreMutable = data.propertyValuesAreMutable;
+
+			defaultValue = data.defaultValue;
+
+			timeTrackingPolicy = data.timeTrackingPolicy;
+
+		}
 	}
 
 	/**
@@ -53,11 +67,7 @@ public final class PropertyDefinition {
 		 * 
 		 */
 		public PropertyDefinition build() {
-			try {
-				return new PropertyDefinition(data);
-			} finally {
-				data = new Data();
-			}
+			return new PropertyDefinition(new Data(data));
 		}
 
 		/**
@@ -95,7 +105,6 @@ public final class PropertyDefinition {
 			return this;
 		}
 
-		
 	}
 
 	private final Class<?> type;
@@ -232,7 +241,7 @@ public final class PropertyDefinition {
 		builder2.append(", propertyValuesAreMutable=");
 		builder2.append(propertyValuesAreMutable);
 		builder2.append(", defaultValue=");
-		builder2.append(defaultValue);		
+		builder2.append(defaultValue);
 		builder2.append(", timeTrackingPolicy=");
 		builder2.append(timeTrackingPolicy);
 		builder2.append("]");

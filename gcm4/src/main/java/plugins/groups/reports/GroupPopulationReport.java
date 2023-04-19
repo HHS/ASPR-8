@@ -58,7 +58,7 @@ public final class GroupPopulationReport extends PeriodicReport {
 	@Override
 	protected void flush(ReportContext reportContext) {
 
-		final ReportItem.Builder reportItemBuilder = ReportItem.builder();
+		
 
 		/*
 		 * Count the number of groups of each size that exist for each group
@@ -85,6 +85,7 @@ public final class GroupPopulationReport extends PeriodicReport {
 		for (final GroupTypeId groupTypeId : groupTypePopulationMap.keySet()) {
 			Map<Integer, Counter> groupSizeMap = groupTypePopulationMap.get(groupTypeId);
 			for (final Integer personCount : groupSizeMap.keySet()) {
+				ReportItem.Builder reportItemBuilder = ReportItem.builder();
 				Counter counter = groupSizeMap.get(personCount);
 
 				final int groupCount = counter.count;

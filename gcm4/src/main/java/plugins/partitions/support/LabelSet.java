@@ -76,14 +76,10 @@ public final class LabelSet {
 
 		}
 
-		private Scaffold scaffold = new Scaffold();
+		private Data data = new Data();
 
 		public LabelSet build() {
-			try {
-				return new LabelSet(scaffold);
-			} finally {
-				scaffold = new Scaffold();
-			}
+			return new LabelSet(new Data(data));
 		}
 
 		/**
@@ -102,7 +98,7 @@ public final class LabelSet {
 			if (label == null) {
 				throw new ContractException(PartitionError.NULL_PARTITION_LABEL);
 			}
-			scaffold.labels.put(dimension, label);
+			data.labels.put(dimension, label);
 			return this;
 		}
 
@@ -117,8 +113,15 @@ public final class LabelSet {
 		return builder.toString();
 	}
 
-	private static class Scaffold {
+	private static class Data {
 		private Map<Object, Object> labels = new LinkedHashMap<>();
+
+		public Data() {
+		}
+
+		public Data(Data data) {
+			labels.putAll(data.labels);
+		}
 	}
 
 	/**
@@ -142,8 +145,8 @@ public final class LabelSet {
 		return labels.isEmpty();
 	}
 
-	private LabelSet(Scaffold scaffold) {
-		this.labels = scaffold.labels;
+	private LabelSet(Data data) {
+		this.labels = data.labels;
 		this.dimensions = Collections.unmodifiableSet(new LinkedHashSet<>(labels.keySet()));
 	}
 

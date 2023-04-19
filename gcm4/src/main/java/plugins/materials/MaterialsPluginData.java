@@ -247,15 +247,12 @@ public final class MaterialsPluginData implements PluginData {
 		 */
 
 		public MaterialsPluginData build() {
-			try {
+
 			if (!data.locked) {
 				validateData();
 			}
 			ensureImmutability();
 			return new MaterialsPluginData(data);
-			}finally {
-				data = new Data();
-			}
 
 		}
 
@@ -859,56 +856,55 @@ public final class MaterialsPluginData implements PluginData {
 			return result;
 		}
 
-		private boolean compareProducerResourceLevels(Data other) {			
-			
-			for(MaterialsProducerId materialsProducerId : materialsProducerResourceLevels.keySet()) {
+		private boolean compareProducerResourceLevels(Data other) {
+
+			for (MaterialsProducerId materialsProducerId : materialsProducerResourceLevels.keySet()) {
 				Set<MultiKey> nonZeroValues = new LinkedHashSet<>();
-				Map<ResourceId, Long> map = materialsProducerResourceLevels.get(materialsProducerId);				
-				if(map != null) {
-					for(ResourceId resourceId : map.keySet()) {						
+				Map<ResourceId, Long> map = materialsProducerResourceLevels.get(materialsProducerId);
+				if (map != null) {
+					for (ResourceId resourceId : map.keySet()) {
 						Long level = map.get(resourceId);
-						if(level>0) {
-							nonZeroValues.add(new MultiKey(resourceId,level));
+						if (level > 0) {
+							nonZeroValues.add(new MultiKey(resourceId, level));
 						}
 					}
 				}
-				
+
 				Set<MultiKey> otherNonZeroValues = new LinkedHashSet<>();
-				map = other.materialsProducerResourceLevels.get(materialsProducerId);				
-				if(map != null) {
-					for(ResourceId resourceId : map.keySet()) {						
+				map = other.materialsProducerResourceLevels.get(materialsProducerId);
+				if (map != null) {
+					for (ResourceId resourceId : map.keySet()) {
 						Long level = map.get(resourceId);
-						if(level>0) {
-							otherNonZeroValues.add(new MultiKey(resourceId,level));
+						if (level > 0) {
+							otherNonZeroValues.add(new MultiKey(resourceId, level));
 						}
 					}
 				}
-				if(!nonZeroValues.equals(otherNonZeroValues)) {
+				if (!nonZeroValues.equals(otherNonZeroValues)) {
 					return false;
-				}				
+				}
 			}
 			return true;
 		}
-		
-		private int getProducerResourceLevelsHashCode() {			
+
+		private int getProducerResourceLevelsHashCode() {
 			final int prime = 31;
 			int result = 1;
-			for(MaterialsProducerId materialsProducerId : materialsProducerResourceLevels.keySet()) {
+			for (MaterialsProducerId materialsProducerId : materialsProducerResourceLevels.keySet()) {
 				Set<MultiKey> nonZeroValues = new LinkedHashSet<>();
-				Map<ResourceId, Long> map = materialsProducerResourceLevels.get(materialsProducerId);				
-				if(map != null) {
-					for(ResourceId resourceId : map.keySet()) {						
+				Map<ResourceId, Long> map = materialsProducerResourceLevels.get(materialsProducerId);
+				if (map != null) {
+					for (ResourceId resourceId : map.keySet()) {
 						Long level = map.get(resourceId);
-						if(level>0) {
-							nonZeroValues.add(new MultiKey(resourceId,level));
+						if (level > 0) {
+							nonZeroValues.add(new MultiKey(resourceId, level));
 						}
 					}
 				}
-				result = prime * result +nonZeroValues.hashCode();
+				result = prime * result + nonZeroValues.hashCode();
 			}
 			return result;
 		}
-
 
 		/*
 		 * This is not a boiler plate equals contract. See notes below
@@ -1019,7 +1015,7 @@ public final class MaterialsPluginData implements PluginData {
 			if (!compareProducerPropertyValues(other)) {
 				return false;
 			}
-			
+
 			if (!compareProducerResourceLevels(other)) {
 				return false;
 			}

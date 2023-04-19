@@ -113,12 +113,13 @@ public final class PersonResourceReport extends PeriodicReport {
 	@Override
 	protected void flush(ReportContext reportContext) {
 
-		final ReportItem.Builder reportItemBuilder = ReportItem.builder();
+		
 		for (final RegionId regionId : regionMap.keySet()) {
 			int populationCount = regionsDataManager.getRegionPopulationCount(regionId);
 			Map<ResourceId, MutableInteger> resourceMap = regionMap.get(regionId);
 			for (final ResourceId resourceId : resourceMap.keySet()) {
 				MutableInteger mutableInteger = resourceMap.get(resourceId);
+				ReportItem.Builder reportItemBuilder = ReportItem.builder();
 				reportItemBuilder.setReportHeader(getReportHeader());
 				reportItemBuilder.setReportLabel(getReportLabel());
 				fillTimeFields(reportItemBuilder);

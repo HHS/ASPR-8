@@ -13,6 +13,17 @@ public class WellState {
 		long seed;
 		int index;
 		int[] vArray = new int[0];
+
+		public Data() {
+		}
+
+		public Data(Data data) {
+			simple = data.simple;
+			seed = data.seed;
+			index = data.index;
+			vArray = Arrays.copyOf(data.vArray, data.vArray.length);
+		}
+
 		@Override
 		public int hashCode() {
 			final int prime = 31;
@@ -23,6 +34,7 @@ public class WellState {
 			result = prime * result + Arrays.hashCode(vArray);
 			return result;
 		}
+
 		@Override
 		public boolean equals(Object obj) {
 			if (this == obj) {
@@ -46,6 +58,7 @@ public class WellState {
 			}
 			return true;
 		}
+
 		@Override
 		public String toString() {
 			StringBuilder builder = new StringBuilder();
@@ -74,11 +87,7 @@ public class WellState {
 		}
 
 		public WellState build() {
-			try {
-				return new WellState(data);
-			} finally {
-				data = new Data();
-			}
+			return new WellState(new Data(data));
 		}
 
 		public Builder setSeed(long seed) {
@@ -88,16 +97,16 @@ public class WellState {
 
 		public Builder setInternals(int index, int[] vArray) {
 			if (vArray != null) {
-				if(vArray.length != 1391) {
+				if (vArray.length != 1391) {
 					throw new ContractException(StochasticsError.ILLEGAL_SEED_ININITIAL_STATE);
 				}
-				if(index<0||index>1390) {
+				if (index < 0 || index > 1390) {
 					throw new ContractException(StochasticsError.ILLEGAL_SEED_ININITIAL_STATE);
 				}
 				data.simple = false;
 				data.index = index;
 				data.vArray = Arrays.copyOf(vArray, vArray.length);
-			}else {
+			} else {
 				data.index = 0;
 				data.vArray = new int[0];
 				data.simple = true;
@@ -164,6 +173,5 @@ public class WellState {
 		builder2.append("]");
 		return builder2.toString();
 	}
-	
-	
+
 }

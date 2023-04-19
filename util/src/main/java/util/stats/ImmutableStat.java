@@ -19,12 +19,23 @@ public final class ImmutableStat implements Stat {
 	 * 
 	 *
 	 */
-	private static class Scaffold {
+	private static class Data {
 		private double mean;
 		private double variance;
 		private double max;
 		private double min;
 		private int size;
+
+		public Data() {
+		}
+
+		public Data(Data data) {
+			mean = data.mean;
+			variance = data.variance;
+			max = data.max;
+			min = data.min;
+			size = data.size;
+		}
 	}
 
 	/**
@@ -45,7 +56,7 @@ public final class ImmutableStat implements Stat {
 
 		}
 
-		private Scaffold scaffold = new Scaffold();
+		private Data data = new Data();
 
 		/**
 		 * Builds the ImmutableStat
@@ -65,19 +76,15 @@ public final class ImmutableStat implements Stat {
 		 *             variance is negative
 		 */
 		public ImmutableStat build() {
-			try {
-				validateScaffold();
-				return new ImmutableStat(scaffold);
-			} finally {
-				scaffold = new Scaffold();
-			}
+			validate();
+			return new ImmutableStat(new Data(data));
 		}
 
 		/**
 		 * Sets the mean
 		 */
 		public Builder setMean(double mean) {
-			scaffold.mean = mean;
+			data.mean = mean;
 			return this;
 		}
 
@@ -85,7 +92,7 @@ public final class ImmutableStat implements Stat {
 		 * Sets the variance
 		 */
 		public Builder setVariance(double variance) {
-			scaffold.variance = variance;
+			data.variance = variance;
 			return this;
 		}
 
@@ -93,7 +100,7 @@ public final class ImmutableStat implements Stat {
 		 * Sets the max
 		 */
 		public Builder setMax(double max) {
-			scaffold.max = max;
+			data.max = max;
 			return this;
 		}
 
@@ -101,7 +108,7 @@ public final class ImmutableStat implements Stat {
 		 * Sets the min
 		 */
 		public Builder setMin(double min) {
-			scaffold.min = min;
+			data.min = min;
 			return this;
 		}
 
@@ -109,7 +116,7 @@ public final class ImmutableStat implements Stat {
 		 * Sets the size
 		 */
 		public Builder setSize(int size) {
-			scaffold.size = size;
+			data.size = size;
 			return this;
 		}
 
@@ -135,47 +142,47 @@ public final class ImmutableStat implements Stat {
 		 * <li>if the size value is greater than one and the variance is
 		 * negative
 		 */
-		private void validateScaffold() {
-			if (scaffold.size < 0) {
+		private void validate() {
+			if (data.size < 0) {
 				throw new IllegalArgumentException("negative size");
 			}
-			if (scaffold.size == 1) {
+			if (data.size == 1) {
 				// min, max and mean must be equal and variance must be zero
-				if (scaffold.min != scaffold.max) {
+				if (data.min != data.max) {
 					throw new IllegalArgumentException("size = 1 implies min=max");
 				}
-				if (scaffold.min != scaffold.mean) {
+				if (data.min != data.mean) {
 					throw new IllegalArgumentException("size = 1 implies min=mean=max");
 				}
-				if (scaffold.variance != 0) {
+				if (data.variance != 0) {
 					throw new IllegalArgumentException("size = 1 implies variance = 0");
 				}
-			} else if (scaffold.size > 1) {
-				if (scaffold.min > scaffold.max) {
+			} else if (data.size > 1) {
+				if (data.min > data.max) {
 					throw new IllegalArgumentException("min exceeds max");
 				}
-				if (scaffold.min > scaffold.mean) {
+				if (data.min > data.mean) {
 					throw new RuntimeException("min exceeds mean");
 				}
 
-				if (scaffold.mean > scaffold.max) {
+				if (data.mean > data.max) {
 					throw new IllegalArgumentException("mean exceeds max");
 				}
 
-				if (scaffold.variance < 0) {
+				if (data.variance < 0) {
 					throw new IllegalArgumentException("variance cannot be negative");
 				}
 			}
 		}
 	}
 
-	private ImmutableStat(Scaffold scaffold) {
-		this.mean = scaffold.mean;
-		this.min = scaffold.min;
-		this.max = scaffold.max;
-		this.variance = scaffold.variance;
-		this.standardDeviation = Math.sqrt(scaffold.variance);
-		this.size = scaffold.size;
+	private ImmutableStat(Data data) {
+		this.mean = data.mean;
+		this.min = data.min;
+		this.max = data.max;
+		this.variance = data.variance;
+		this.standardDeviation = Math.sqrt(data.variance);
+		this.size = data.size;
 	}
 
 	private final double mean;

@@ -157,11 +157,12 @@ public class AT_RegionPropertyDefinitionInitialization {
 		assertEquals(expectedValues, propertyDefinitionInitialization.getPropertyValues());
 
 		// precondition: region id is null
-		ContractException contractException = assertThrows(ContractException.class, () -> builder.addPropertyValue(null, 1000));
+		
+		ContractException contractException = assertThrows(ContractException.class, () -> RegionPropertyDefinitionInitialization.builder().addPropertyValue(null, 1000));
 		assertEquals(RegionError.NULL_REGION_ID, contractException.getErrorType());
 
 		// precondition: value is null
-		contractException = assertThrows(ContractException.class, () -> builder.addPropertyValue(new SimpleRegionId(1000), null));
+		contractException = assertThrows(ContractException.class, () -> RegionPropertyDefinitionInitialization.builder().addPropertyValue(new SimpleRegionId(1000), null));
 		assertEquals(PropertyError.NULL_PROPERTY_VALUE, contractException.getErrorType());
 	}
 

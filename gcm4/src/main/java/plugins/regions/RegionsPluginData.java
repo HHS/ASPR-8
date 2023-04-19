@@ -175,16 +175,11 @@ public class RegionsPluginData implements PluginData {
 		 * 
 		 */
 		public RegionsPluginData build() {
-			try {
-				if (!data.locked) {
-					validateData();
-				}
-				ensureImmutability();
-				return new RegionsPluginData(data);
-			} finally {
-				data = new Data();
+			if (!data.locked) {
+				validateData();
 			}
-
+			ensureImmutability();
+			return new RegionsPluginData(data);
 		}
 
 		/**

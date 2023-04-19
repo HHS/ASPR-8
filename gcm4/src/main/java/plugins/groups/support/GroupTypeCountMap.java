@@ -21,12 +21,20 @@ import util.errors.ContractException;
 @Immutable
 public final class GroupTypeCountMap {
 
-	private static class Scaffold {
+	private static class Data {
 		private Map<GroupTypeId, Integer> map = new LinkedHashMap<>();
+
+		public Data() {
+		}
+
+		public Data(Data data) {
+			map.putAll(data.map);
+		}
+
 	}
 
-	private GroupTypeCountMap(Scaffold scaffold) {
-		map.putAll(scaffold.map);
+	private GroupTypeCountMap(Data data) {
+		map.putAll(data.map);
 		groupTypeIds = Collections.unmodifiableSet(map.keySet());
 	}
 
@@ -114,25 +122,23 @@ public final class GroupTypeCountMap {
 	 */
 	@NotThreadSafe
 	public static class Builder {
-		private Scaffold scaffold = new Scaffold();
+		private Data data = new Data();
 
 		private Builder() {
 		}
 
 		public GroupTypeCountMap build() {
-			try {
-				return new GroupTypeCountMap(scaffold);
-			} finally {
-				scaffold = new Scaffold();
-			}
+			return new GroupTypeCountMap(new Data(data));
 		}
 
 		/**
 		 * Sets the count for the given group type id
 		 * 
 		 * @throws ContractException
-		 *             <li>{@linkplain GroupError#NULL_GROUP_TYPE_ID} if groupTypeId is null</li>
-		 *             <li>{@linkplain GroupError#NEGATIVE_GROUP_COUNT}if the count is negative</li>
+		 *             <li>{@linkplain GroupError#NULL_GROUP_TYPE_ID} if
+		 *             groupTypeId is null</li>
+		 *             <li>{@linkplain GroupError#NEGATIVE_GROUP_COUNT}if the
+		 *             count is negative</li>
 		 * 
 		 */
 		public Builder setCount(GroupTypeId groupTypeId, int count) {
@@ -140,9 +146,9 @@ public final class GroupTypeCountMap {
 				throw new ContractException(GroupError.NULL_GROUP_TYPE_ID);
 			}
 			if (count < 0) {
-				throw new ContractException(GroupError.NEGATIVE_GROUP_COUNT);				
+				throw new ContractException(GroupError.NEGATIVE_GROUP_COUNT);
 			}
-			scaffold.map.put(groupTypeId, count);
+			data.map.put(groupTypeId, count);
 			return this;
 		}
 	}

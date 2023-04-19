@@ -252,15 +252,12 @@ public final class ResourcesPluginData implements PluginData {
 		 * 
 		 */
 		public ResourcesPluginData build() {
-			try {
-				if (!data.locked) {
-					validateData();
-				}
-				ensureImmutability();
-				return new ResourcesPluginData(data);
-			} finally {
-				data = new Data();
+
+			if (!data.locked) {
+				validateData();
 			}
+			ensureImmutability();
+			return new ResourcesPluginData(data);
 		}
 
 		/**
@@ -738,6 +735,5 @@ public final class ResourcesPluginData implements PluginData {
 	public int getPersonCount() {
 		return data.personCount;
 	}
-
 
 }

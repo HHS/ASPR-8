@@ -28,6 +28,16 @@ public class BatchConstructionInfo {
 		private MaterialId materialId;
 		private double amount;
 		private Map<BatchPropertyId, Object> propertyValues = new LinkedHashMap<>();
+
+		public Data() {
+		}
+
+		public Data(Data data) {
+			materialsProducerId = data.materialsProducerId;
+			materialId = data.materialId;
+			amount = data.amount;
+			propertyValues.putAll(data.propertyValues);
+		}
 	}
 
 	/**
@@ -66,28 +76,24 @@ public class BatchConstructionInfo {
 		 * 
 		 */
 		public BatchConstructionInfo build() {
-			try {
-				validate();
-				return new BatchConstructionInfo(data);
-			} finally {
-				data = new Data();
-			}
+			validate();
+			return new BatchConstructionInfo(new Data(data));
 		}
 
 		/**
 		 * Sets the amount. Defaulted to zero.
 		 * 
 		 * @throws ContractException
-		 *             <li>{@linkplain MaterialsError#NEGATIVE_MATERIAL_AMOUNT}		 *             
-		 *             if the amount is negative</li>
+		 *             <li>{@linkplain MaterialsError#NEGATIVE_MATERIAL_AMOUNT}
+		 *             * if the amount is negative</li>
 		 *             <li>{@linkplain MaterialsError#NON_FINITE_MATERIAL_AMOUNT}
-		 *             if the amount is not finite</li>             
+		 *             if the amount is not finite</li>
 		 */
 		public Builder setAmount(double amount) {
 			if (amount < 0) {
 				throw new ContractException(MaterialsError.NEGATIVE_MATERIAL_AMOUNT);
 			}
-			if(!Double.isFinite(amount)) {
+			if (!Double.isFinite(amount)) {
 				throw new ContractException(MaterialsError.NON_FINITE_MATERIAL_AMOUNT);
 			}
 			data.amount = amount;

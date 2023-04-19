@@ -9,7 +9,8 @@ import plugins.util.properties.PropertyError;
 import util.errors.ContractException;
 
 /**
- * Represents the information to fully specify the conversion of a stage into a batch
+ * Represents the information to fully specify the conversion of a stage into a
+ * batch
  * 
  *
  */
@@ -27,6 +28,16 @@ public class StageConversionInfo {
 		private MaterialId materialId;
 		private double amount;
 		private Map<BatchPropertyId, Object> propertyValues = new LinkedHashMap<>();
+
+		public Data() {
+		}
+
+		public Data(Data data) {
+			stageId = data.stageId;
+			materialId = data.materialId;
+			amount = data.amount;
+			propertyValues.putAll(data.propertyValues);
+		}
 	}
 
 	/**
@@ -65,28 +76,24 @@ public class StageConversionInfo {
 		 * 
 		 */
 		public StageConversionInfo build() {
-			try {
-				validate();
-				return new StageConversionInfo(data);
-			} finally {
-				data = new Data();
-			}
+			validate();
+			return new StageConversionInfo(new Data(data));
 		}
 
 		/**
 		 * Sets the amount. Defaulted to zero.
 		 * 
 		 * @throws ContractException
-		 *             <li>{@linkplain MaterialsError#NEGATIVE_MATERIAL_AMOUNT}		 *             
-		 *             if the amount is negative</li>
+		 *             <li>{@linkplain MaterialsError#NEGATIVE_MATERIAL_AMOUNT}
+		 *             * if the amount is negative</li>
 		 *             <li>{@linkplain MaterialsError#NON_FINITE_MATERIAL_AMOUNT}
-		 *             if the amount is not finite</li>             
+		 *             if the amount is not finite</li>
 		 */
 		public Builder setAmount(double amount) {
 			if (amount < 0) {
 				throw new ContractException(MaterialsError.NEGATIVE_MATERIAL_AMOUNT);
 			}
-			if(!Double.isFinite(amount)) {
+			if (!Double.isFinite(amount)) {
 				throw new ContractException(MaterialsError.NON_FINITE_MATERIAL_AMOUNT);
 			}
 			data.amount = amount;

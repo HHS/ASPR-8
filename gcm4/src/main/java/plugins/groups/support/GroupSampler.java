@@ -12,19 +12,31 @@ public final class GroupSampler {
 
 	private final GroupWeightingFunction weightingFunction;
 
-	private GroupSampler(Scaffold scaffold) {
-		this.excludedPerson = scaffold.excludedPerson;
-		this.weightingFunction = scaffold.weightingFunction;
-		this.randomNumberGeneratorId = scaffold.randomNumberGeneratorId;
+	private GroupSampler(Data data) {
+		this.excludedPerson = data.excludedPerson;
+		this.weightingFunction = data.weightingFunction;
+		this.randomNumberGeneratorId = data.randomNumberGeneratorId;
 	}
 
-	private static class Scaffold {
+	private static class Data {
 
 		private PersonId excludedPerson;
 
 		private RandomNumberGeneratorId randomNumberGeneratorId;
 
 		private GroupWeightingFunction weightingFunction;
+
+		public Data() {
+		}
+
+		public Data(Data data) {
+			excludedPerson = data.excludedPerson;
+
+			randomNumberGeneratorId = data.randomNumberGeneratorId;
+
+			weightingFunction = data.weightingFunction;
+
+		}
 	}
 
 	public static Builder builder() {
@@ -32,32 +44,28 @@ public final class GroupSampler {
 	}
 
 	public final static class Builder {
-		Scaffold scaffold = new Scaffold();
+		Data data = new Data();
 
 		private Builder() {
 
 		}
 
 		public GroupSampler build() {
-			try {
-				return new GroupSampler(scaffold);
-			} finally {
-				scaffold = new Scaffold();
-			}
+			return new GroupSampler(new Data(data));
 		}
 
 		public Builder setExcludedPersonId(PersonId personId) {
-			scaffold.excludedPerson = personId;
+			data.excludedPerson = personId;
 			return this;
 		}
 
 		public Builder setRandomNumberGeneratorId(RandomNumberGeneratorId randomNumberGeneratorId) {
-			scaffold.randomNumberGeneratorId = randomNumberGeneratorId;
+			data.randomNumberGeneratorId = randomNumberGeneratorId;
 			return this;
 		}
 
 		public Builder setGroupWeightingFunction(GroupWeightingFunction weightingFunction) {
-			scaffold.weightingFunction = weightingFunction;
+			data.weightingFunction = weightingFunction;
 			return this;
 		}
 

@@ -77,7 +77,7 @@ public class PersonPropertyInteractionReportPluginData implements PluginData {
 
 		@Override
 		public PersonPropertyInteractionReportPluginData build() {
-			return new  PersonPropertyInteractionReportPluginData(new Data(data));
+			return new PersonPropertyInteractionReportPluginData(new Data(data));
 		}
 
 		public Builder addPersonPropertyId(PersonPropertyId personPropertyId) {
