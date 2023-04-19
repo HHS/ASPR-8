@@ -2,7 +2,7 @@ package gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.testsupport.tra
 
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.testsupport.input.Layer1;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.testsupport.input.TestMessage;
-import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractProtobufTranslatorSpec;
+import gov.hhs.aspr.translation.protobuf.core.AbstractProtobufTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.testsupport.simobjects.Layer1SimObject;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.testsupport.simobjects.TestMessageSimObject;
 
@@ -24,11 +24,6 @@ public class TestMessageTranslatorSpec extends AbstractProtobufTranslatorSpec<Te
         TestMessage testMessage = TestMessage.newBuilder().setLayer1(layer1).build();
 
         return testMessage;
-    }
-
-    @Override
-    public TestMessage getDefaultInstanceForInputObject() {
-        return TestMessage.getDefaultInstance();
     }
 
     @Override

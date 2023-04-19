@@ -1,7 +1,7 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.translatorSpecs;
 
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.input.PropertyValueMapInput;
-import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractProtobufTranslatorSpec;
+import gov.hhs.aspr.translation.protobuf.core.AbstractProtobufTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.simobjects.PropertyValueMap;
 
 public class PropertyValueMapTranslatorSpec extends AbstractProtobufTranslatorSpec<PropertyValueMapInput, PropertyValueMap> {
@@ -23,11 +23,6 @@ public class PropertyValueMapTranslatorSpec extends AbstractProtobufTranslatorSp
         builder.setPropertyValue(this.translator.getAnyFromObject(simObject.getPropertyValue()));
 
         return builder.build();
-    }
-
-    @Override
-    public PropertyValueMapInput getDefaultInstanceForInputObject() {
-        return PropertyValueMapInput.getDefaultInstance();
     }
 
     @Override

@@ -1,7 +1,7 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.translatorSpecs;
 
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.input.PropertyDefinitionInput;
-import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractProtobufTranslatorSpec;
+import gov.hhs.aspr.translation.protobuf.core.AbstractProtobufTranslatorSpec;
 import plugins.util.properties.PropertyDefinition;
 
 public class PropertyDefinitionTranslatorSpec extends AbstractProtobufTranslatorSpec<PropertyDefinitionInput, PropertyDefinition> {
@@ -11,7 +11,7 @@ public class PropertyDefinitionTranslatorSpec extends AbstractProtobufTranslator
         PropertyDefinition.Builder builder = PropertyDefinition.builder();
 
         builder.setPropertyValueMutability(inputObject.getPropertyValuesAreMutable());
-        builder.setTimeTrackingPolicy(this.translator.convertInputEnum(inputObject.getTimeTrackingPolicy()));
+        builder.setTimeTrackingPolicy(this.translator.convertInputObject(inputObject.getTimeTrackingPolicy()));
 
         if (inputObject.hasDefaultValue()) {
             Object defaultValue = this.translator.getObjectFromAny(inputObject.getDefaultValue());
@@ -44,11 +44,6 @@ public class PropertyDefinitionTranslatorSpec extends AbstractProtobufTranslator
                 .setTimeTrackingPolicy(this.translator.convertSimObject(simObject.getTimeTrackingPolicy()));
 
         return builder.build();
-    }
-
-    @Override
-    public PropertyDefinitionInput getDefaultInstanceForInputObject() {
-        return PropertyDefinitionInput.getDefaultInstance();
     }
 
     @Override

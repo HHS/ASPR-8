@@ -1,7 +1,7 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.testsupport.translatorSpecs;
 
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.testsupport.input.Layer1;
-import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractProtobufTranslatorSpec;
+import gov.hhs.aspr.translation.protobuf.core.AbstractProtobufTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.testsupport.simobjects.Layer1SimObject;
 
 public class Layer1TranslatorSpec extends AbstractProtobufTranslatorSpec<Layer1, Layer1SimObject> {
@@ -20,11 +20,6 @@ public class Layer1TranslatorSpec extends AbstractProtobufTranslatorSpec<Layer1,
     @Override
     protected Layer1 convertAppObject(Layer1SimObject simObject) {
         return Layer1.newBuilder().setX(simObject.getX()).setY(simObject.getY()).setZ(simObject.getZ()).build();
-    }
-
-    @Override
-    public Layer1 getDefaultInstanceForInputObject() {
-        return Layer1.getDefaultInstance();
     }
 
     @Override

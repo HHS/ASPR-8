@@ -2,7 +2,7 @@ package gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.translatorSpecs
 
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.input.PropertyDefinitionInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.input.PropertyDefinitionMapInput;
-import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractProtobufTranslatorSpec;
+import gov.hhs.aspr.translation.protobuf.core.AbstractProtobufTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.simobjects.PropertyDefinitionMap;
 
 public class PropertyDefinitionMapTranslatorSpec
@@ -29,11 +29,6 @@ public class PropertyDefinitionMapTranslatorSpec
         builder.setPropertyDefinition(definitionInput);
 
         return builder.build();
-    }
-
-    @Override
-    public PropertyDefinitionMapInput getDefaultInstanceForInputObject() {
-        return PropertyDefinitionMapInput.getDefaultInstance();
     }
 
     @Override
