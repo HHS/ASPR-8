@@ -8,7 +8,7 @@ public class MaterialIdTranslatorSpec extends AbstractProtobufTranslatorSpec<Mat
 
     @Override
     protected MaterialId convertInputObject(MaterialIdInput inputObject) {
-        return this.translator.getObjectFromAny(inputObject.getId(), getAppObjectClass());
+        return this.translator.getObjectFromAny(inputObject.getId());
     }
 
     @Override

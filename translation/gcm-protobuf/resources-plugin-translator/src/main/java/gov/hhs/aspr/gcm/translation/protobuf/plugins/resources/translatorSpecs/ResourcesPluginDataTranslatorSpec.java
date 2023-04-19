@@ -34,22 +34,20 @@ public class ResourcesPluginDataTranslatorSpec
                 ResourcesPluginData.Builder builder = ResourcesPluginData.builder();
 
                 for (ResourceIdInput resourceIdInput : inputObject.getResourceIdsList()) {
-                        ResourceId resourceId = this.translator.convertInputObject(resourceIdInput, ResourceId.class);
+                        ResourceId resourceId = this.translator.convertInputObject(resourceIdInput);
                         builder.addResource(resourceId);
                 }
 
                 for (ResourcePropertyDefinitionMapInput resourcePropertyDefinitionMapInput : inputObject
                                 .getResourcePropertyDefinitionsList()) {
                         ResourceId resourceId = this.translator
-                                        .convertInputObject(resourcePropertyDefinitionMapInput.getResourceId(),
-                                                        ResourceId.class);
+                                        .convertInputObject(resourcePropertyDefinitionMapInput.getResourceId());
 
                         PropertyDefinitionMapInput propertyDefinitionMapInput = resourcePropertyDefinitionMapInput
                                         .getResourcePropertyDefinitionMap();
 
                         ResourcePropertyId resourcePropertyId = this.translator
-                                        .getObjectFromAny(propertyDefinitionMapInput.getPropertyId(),
-                                                        ResourcePropertyId.class);
+                                        .getObjectFromAny(propertyDefinitionMapInput.getPropertyId());
                         PropertyDefinition propertyDefinition = this.translator
                                         .convertInputObject(propertyDefinitionMapInput.getPropertyDefinition());
 
@@ -59,14 +57,12 @@ public class ResourcesPluginDataTranslatorSpec
                 for (ResourcePropertyValueMapInput resourcePropertyValueMapInput : inputObject
                                 .getResourcePropertyValuesList()) {
                         ResourceId resourceId = this.translator.convertInputObject(
-                                        resourcePropertyValueMapInput.getResourceId(),
-                                        ResourceId.class);
+                                        resourcePropertyValueMapInput.getResourceId());
 
                         PropertyValueMapInput propertyValueMapInput = resourcePropertyValueMapInput
                                         .getResourcePropertyValueMap();
                         ResourcePropertyId resourcePropertyId = this.translator
-                                        .getObjectFromAny(propertyValueMapInput.getPropertyId(),
-                                                        ResourcePropertyId.class);
+                                        .getObjectFromAny(propertyValueMapInput.getPropertyId());
                         Object propertyValue = this.translator
                                         .getObjectFromAny(propertyValueMapInput.getPropertyValue());
 
@@ -79,8 +75,7 @@ public class ResourcesPluginDataTranslatorSpec
                         for (ResourceInitializationInput resourceInitializationInput : personResourceLevelsInput
                                         .getResourceLevelsList()) {
                                 ResourceId resourceId = this.translator.convertInputObject(
-                                                resourceInitializationInput.getResourceId(),
-                                                ResourceId.class);
+                                                resourceInitializationInput.getResourceId());
                                 Long amount = resourceInitializationInput.getAmount();
 
                                 builder.setPersonResourceLevel(personId, resourceId, amount);
@@ -88,14 +83,12 @@ public class ResourcesPluginDataTranslatorSpec
                 }
 
                 for (RegionResourceLevelsInput regionResourceLevelsInput : inputObject.getRegionResourceLevelsList()) {
-                        RegionId regionId = this.translator.convertInputObject(regionResourceLevelsInput.getRegionId(),
-                                        RegionId.class);
+                        RegionId regionId = this.translator.convertInputObject(regionResourceLevelsInput.getRegionId());
 
                         for (ResourceInitializationInput resourceInitializationInput : regionResourceLevelsInput
                                         .getResourceLevelsList()) {
                                 ResourceId resourceId = this.translator.convertInputObject(
-                                                resourceInitializationInput.getResourceId(),
-                                                ResourceId.class);
+                                                resourceInitializationInput.getResourceId());
                                 Long amount = resourceInitializationInput.getAmount();
 
                                 builder.setRegionResourceLevel(regionId, resourceId, amount);
@@ -105,8 +98,7 @@ public class ResourcesPluginDataTranslatorSpec
                 for (ResourceTimeTrackingPolicyMapInput resourceTimeTrackingPolicyMapInput : inputObject
                                 .getResourceTimeTrackingPoliciesList()) {
                         ResourceId resourceId = this.translator.convertInputObject(
-                                        resourceTimeTrackingPolicyMapInput.getResourceId(),
-                                        ResourceId.class);
+                                        resourceTimeTrackingPolicyMapInput.getResourceId());
                         TimeTrackingPolicy timeTrackingPolicy = this.translator
                                         .convertInputObject(resourceTimeTrackingPolicyMapInput.getTimeTrackingPolicy());
 

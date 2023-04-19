@@ -23,8 +23,7 @@ public class PersonPropertiesPluginDataTranslatorSpec
         PersonPropertiesPluginData.Builder builder = PersonPropertiesPluginData.builder();
 
         for (PropertyDefinitionMapInput propertyDefinitionMapInput : inputObject.getPersonPropertyDefinitionsList()) {
-            PersonPropertyId propertyId = this.translator.getObjectFromAny(propertyDefinitionMapInput.getPropertyId(),
-                    PersonPropertyId.class);
+            PersonPropertyId propertyId = this.translator.getObjectFromAny(propertyDefinitionMapInput.getPropertyId());
             PropertyDefinition propertyDefinition = this.translator
                     .convertInputObject(propertyDefinitionMapInput.getPropertyDefinition());
 
@@ -37,8 +36,7 @@ public class PersonPropertiesPluginDataTranslatorSpec
             builder.addPerson(personId);
             
             for (PropertyValueMapInput propertyValueMapInput : personPropertyValueMapInput.getPropertyValueMapList()) {
-                PersonPropertyId propertyId = this.translator.getObjectFromAny(propertyValueMapInput.getPropertyId(),
-                        PersonPropertyId.class);
+                PersonPropertyId propertyId = this.translator.getObjectFromAny(propertyValueMapInput.getPropertyId());
                 Object value = this.translator.getObjectFromAny(propertyValueMapInput.getPropertyValue());
 
                 builder.setPersonPropertyValue(personId, propertyId, value);

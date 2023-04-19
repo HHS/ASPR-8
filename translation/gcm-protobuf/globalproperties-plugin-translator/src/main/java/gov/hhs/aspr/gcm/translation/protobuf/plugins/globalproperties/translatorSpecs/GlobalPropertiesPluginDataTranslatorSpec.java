@@ -17,8 +17,7 @@ public class GlobalPropertiesPluginDataTranslatorSpec
         GlobalPropertiesPluginData.Builder builder = GlobalPropertiesPluginData.builder();
 
         for (PropertyDefinitionMapInput propertyDefinitionMapInput : inputObject.getGlobalPropertyDefinitinionsList()) {
-            GlobalPropertyId propertyId = this.translator.getObjectFromAny(propertyDefinitionMapInput.getPropertyId(),
-                    GlobalPropertyId.class);
+            GlobalPropertyId propertyId = this.translator.getObjectFromAny(propertyDefinitionMapInput.getPropertyId());
             PropertyDefinition propertyDefinition = this.translator
                     .convertInputObject(propertyDefinitionMapInput.getPropertyDefinition());
 
@@ -27,8 +26,7 @@ public class GlobalPropertiesPluginDataTranslatorSpec
 
         for (PropertyValueMapInput propertyValueMapInput : inputObject.getGlobalPropertyValuesList()) {
 
-            GlobalPropertyId propertyId = this.translator.getObjectFromAny(propertyValueMapInput.getPropertyId(),
-                    GlobalPropertyId.class);
+            GlobalPropertyId propertyId = this.translator.getObjectFromAny(propertyValueMapInput.getPropertyId());
             Object value = this.translator.getObjectFromAny(propertyValueMapInput.getPropertyValue());
 
             builder.setGlobalPropertyValue(propertyId, value, propertyValueMapInput.getTime());

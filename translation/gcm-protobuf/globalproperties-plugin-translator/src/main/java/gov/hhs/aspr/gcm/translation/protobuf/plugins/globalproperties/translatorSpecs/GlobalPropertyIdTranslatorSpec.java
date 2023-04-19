@@ -8,7 +8,7 @@ public class GlobalPropertyIdTranslatorSpec extends AbstractProtobufTranslatorSp
 
     @Override
     protected GlobalPropertyId convertInputObject(GlobalPropertyIdInput inputObject) {
-        return this.translator.getObjectFromAny(inputObject.getId(), getAppObjectClass());
+        return this.translator.getObjectFromAny(inputObject.getId());
     }
 
     @Override

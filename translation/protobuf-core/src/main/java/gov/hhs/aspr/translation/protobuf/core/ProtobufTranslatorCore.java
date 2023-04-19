@@ -28,7 +28,6 @@ import com.google.protobuf.util.JsonFormat.TypeRegistry;
 
 import gov.hhs.aspr.translation.core.AbstractTranslatorSpec;
 import gov.hhs.aspr.translation.core.TranslatorCore;
-import gov.hhs.aspr.translation.protobuf.core.input.WrapperEnumValue;
 import gov.hhs.aspr.translation.protobuf.core.translatorSpecs.PrimitiveTranslatorSpecs;
 
 public class ProtobufTranslatorCore extends TranslatorCore {
@@ -41,25 +40,25 @@ public class ProtobufTranslatorCore extends TranslatorCore {
 
     private static class Data extends TranslatorCore.Data {
         private final Map<String, Class<?>> typeUrlToClassMap = new LinkedHashMap<>();
-        private final Set<FieldDescriptor> defaultValueFieldsToPrint = new LinkedHashSet<>();
 
         private Parser jsonParser;
         private Printer jsonPrinter;
-        private boolean ignoringUnknownFields = true;
-        private boolean includingDefaultValueFields = false;
 
         private Data() {
             super();
             this.typeUrlToClassMap.putAll(PrimitiveTranslatorSpecs.getPrimitiveTypeUrlToClassMap());
             this.classToTranslatorSpecMap.putAll(PrimitiveTranslatorSpecs.getPrimitiveInputTranslatorSpecMap());
             this.classToTranslatorSpecMap.putAll(PrimitiveTranslatorSpecs.getPrimitiveObjectTranslatorSpecMap());
-            this.translatorSpecs.addAll(PrimitiveTranslatorSpecs.getPrimitiveObjectTranslatorSpecMap().values());
+            this.translatorSpecs.addAll(PrimitiveTranslatorSpecs.getPrimitiveTranslatorSpecs());
         }
     }
 
     public static class Builder extends TranslatorCore.Builder {
         private ProtobufTranslatorCore.Data data;
         private Set<Descriptor> descriptorSet = new LinkedHashSet<>();
+        private final Set<FieldDescriptor> defaultValueFieldsToPrint = new LinkedHashSet<>();
+        private boolean ignoringUnknownFields = true;
+        private boolean includingDefaultValueFields = false;
 
         private Builder(ProtobufTranslatorCore.Data data) {
             super(data);
@@ -77,18 +76,18 @@ public class ProtobufTranslatorCore extends TranslatorCore {
             TypeRegistry registry = typeRegistryBuilder.build();
 
             Parser parser = JsonFormat.parser().usingTypeRegistry(registry);
-            if (this.data.ignoringUnknownFields) {
+            if (this.ignoringUnknownFields) {
                 parser = parser.ignoringUnknownFields();
             }
             this.data.jsonParser = parser;
 
             Printer printer = JsonFormat.printer().usingTypeRegistry(registry);
 
-            if (!this.data.defaultValueFieldsToPrint.isEmpty()) {
-                printer = printer.includingDefaultValueFields(this.data.defaultValueFieldsToPrint);
+            if (!this.defaultValueFieldsToPrint.isEmpty()) {
+                printer = printer.includingDefaultValueFields(this.defaultValueFieldsToPrint);
             }
 
-            if (this.data.includingDefaultValueFields) {
+            if (this.includingDefaultValueFields) {
                 printer = printer.includingDefaultValueFields();
             }
             this.data.jsonPrinter = printer;
@@ -97,17 +96,17 @@ public class ProtobufTranslatorCore extends TranslatorCore {
         }
 
         public Builder setIgnoringUnknownFields(boolean ignoringUnknownFields) {
-            this.data.ignoringUnknownFields = ignoringUnknownFields;
+            this.ignoringUnknownFields = ignoringUnknownFields;
             return this;
         }
 
         public Builder setIncludingDefaultValueFields(boolean includingDefaultValueFields) {
-            this.data.includingDefaultValueFields = includingDefaultValueFields;
+            this.includingDefaultValueFields = includingDefaultValueFields;
             return this;
         }
 
         public Builder addFieldToIncludeDefaultValue(FieldDescriptor fieldDescriptor) {
-            this.data.defaultValueFieldsToPrint.add(fieldDescriptor);
+            this.defaultValueFieldsToPrint.add(fieldDescriptor);
 
             return this;
         }
@@ -247,14 +246,14 @@ public class ProtobufTranslatorCore extends TranslatorCore {
 
     public <M extends U, U> Any getAnyFromObject(M object, Class<U> superClass) {
         if (Enum.class.isAssignableFrom(object.getClass())) {
-            return packMessage(getWrapperEnum(object));
+            return packMessage(convertSimObject(Enum.class.cast(object), Enum.class));
         }
         return packMessage(convertSimObject(object, superClass));
     }
 
     public Any getAnyFromObject(Object object) {
         if (Enum.class.isAssignableFrom(object.getClass())) {
-            return packMessage(getWrapperEnum(object));
+            return packMessage(convertSimObject(Enum.class.cast(object), Enum.class));
         }
         return packMessage(convertSimObject(object));
     }
@@ -263,52 +262,10 @@ public class ProtobufTranslatorCore extends TranslatorCore {
         return Any.pack(messageToPack);
     }
 
-    public <T extends U, U> T getObjectFromAny(Any anyValue, Class<U> superClass) {
-        Message anyMessage = getMessageFromAny(anyValue);
-
-        if (anyMessage.getDescriptorForType() == WrapperEnumValue.getDescriptor()) {
-            return convertInputObject(getEnumFromMessage((WrapperEnumValue) anyMessage), superClass);
-        }
-
-        return convertInputObject(anyMessage, superClass);
-    }
-
     public <T> T getObjectFromAny(Any anyValue) {
         Message anyMessage = getMessageFromAny(anyValue);
 
-        if (anyMessage.getDescriptorForType() == WrapperEnumValue.getDescriptor()) {
-            return convertInputObject(getEnumFromMessage((WrapperEnumValue) anyMessage));
-        }
         return convertInputObject(anyMessage);
-    }
-
-    private Message getWrapperEnum(Object object) {
-        ProtocolMessageEnum messageEnum = convertSimObject(object);
-
-        WrapperEnumValue wrapperEnumValue = WrapperEnumValue.newBuilder()
-                .setValue(messageEnum.getValueDescriptor().getName())
-                .setEnumTypeUrl(messageEnum.getDescriptorForType().getFullName()).build();
-
-        return wrapperEnumValue;
-    }
-
-    private Enum<?> getEnumFromMessage(WrapperEnumValue enumValue) {
-        String typeUrl = enumValue.getEnumTypeUrl();
-        String value = enumValue.getValue();
-
-        if (this.data.typeUrlToClassMap.containsKey(typeUrl)) {
-            Class<?> classRef = this.data.typeUrlToClassMap.get(typeUrl);
-
-            try {
-                return (Enum<?>) classRef.getMethod("valueOf", String.class).invoke(null, value);
-            } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException
-                    | NoSuchMethodException | SecurityException e) {
-                throw new RuntimeException(e);
-            }
-
-        }
-
-        throw new RuntimeException("Unable to find corrsponding Enum type for: " + typeUrl);
     }
 
     private Message getMessageFromAny(Any anyValue) {
@@ -331,10 +288,19 @@ public class ProtobufTranslatorCore extends TranslatorCore {
 
         try {
             Message unpackedMessage = anyValue.unpack(messageClassRef);
+
             return unpackedMessage;
         } catch (InvalidProtocolBufferException e) {
             throw new RuntimeException("Unable To unpack any type to given class: " + classRef.getName(), e);
         }
+    }
+
+    public Class<?> getClassFromTypeUrl(String typeUrl) {
+        if(this.data.typeUrlToClassMap.containsKey(typeUrl)) {
+            return this.data.typeUrlToClassMap.get(typeUrl);
+        }
+
+        throw new RuntimeException("Unable to find corrsponding Enum type for: " + typeUrl);
     }
 
 }

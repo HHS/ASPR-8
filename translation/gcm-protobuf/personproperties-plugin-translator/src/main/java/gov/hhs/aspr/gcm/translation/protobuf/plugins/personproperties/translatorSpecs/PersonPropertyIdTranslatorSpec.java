@@ -8,7 +8,7 @@ public class PersonPropertyIdTranslatorSpec extends AbstractProtobufTranslatorSp
 
     @Override
     protected PersonPropertyId convertInputObject(PersonPropertyIdInput inputObject) {
-        return this.translator.getObjectFromAny(inputObject.getId(), getAppObjectClass());
+        return this.translator.getObjectFromAny(inputObject.getId());
     }
 
     @Override

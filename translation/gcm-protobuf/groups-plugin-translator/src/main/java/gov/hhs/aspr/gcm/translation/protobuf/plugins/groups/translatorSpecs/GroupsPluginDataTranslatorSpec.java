@@ -51,8 +51,7 @@ public class GroupsPluginDataTranslatorSpec extends AbstractProtobufTranslatorSp
             for (PropertyDefinitionMapInput propertyDefinitionMapInput : groupPropertyDefinitionMapInput
                     .getPropertyDefinitionsList()) {
 
-                GroupPropertyId groupPropertyId = this.translator
-                        .getObjectFromAny(propertyDefinitionMapInput.getPropertyId(), GroupPropertyId.class);
+                GroupPropertyId groupPropertyId = this.translator.getObjectFromAny(propertyDefinitionMapInput.getPropertyId());
                 PropertyDefinition propertyDefinition = this.translator
                         .convertInputObject(propertyDefinitionMapInput.getPropertyDefinition());
                 builder.defineGroupProperty(groupTypeId, groupPropertyId, propertyDefinition);
@@ -64,8 +63,7 @@ public class GroupsPluginDataTranslatorSpec extends AbstractProtobufTranslatorSp
             GroupId groupId = this.translator.convertInputObject(groupPropertyValueMapInput.getGroupId());
             for (PropertyValueMapInput propertyValueMapInput : groupPropertyValueMapInput.getPropertyValueMapList()) {
 
-                GroupPropertyId groupPropertyId = this.translator
-                        .getObjectFromAny(propertyValueMapInput.getPropertyId(), GroupPropertyId.class);
+                GroupPropertyId groupPropertyId = this.translator.getObjectFromAny(propertyValueMapInput.getPropertyId());
                 Object propertyValue = this.translator.getObjectFromAny(propertyValueMapInput.getPropertyValue());
 
                 builder.setGroupPropertyValue(groupId, groupPropertyId, propertyValue);

@@ -11,7 +11,7 @@ public class ResourceInitializationTranslatorSpec
 
     @Override
     protected ResourceInitialization convertInputObject(ResourceInitializationInput inputObject) {
-        ResourceId resourceId = this.translator.convertInputObject(inputObject.getResourceId(), ResourceId.class);
+        ResourceId resourceId = this.translator.convertInputObject(inputObject.getResourceId());
         long amount = inputObject.getAmount();
         return new ResourceInitialization(resourceId, amount);
     }

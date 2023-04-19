@@ -17,21 +17,19 @@ public class ResourceReportPluginDataTranslatorSpec
     protected ResourceReportPluginData convertInputObject(ResourceReportPluginDataInput inputObject) {
         ResourceReportPluginData.Builder builder = ResourceReportPluginData.builder();
 
-        ReportLabel reportLabel = this.translator.convertInputObject(inputObject.getReportLabel(), ReportLabel.class);
+        ReportLabel reportLabel = this.translator.convertInputObject(inputObject.getReportLabel());
         ReportPeriod reportPeriod = this.translator.convertInputObject(inputObject.getReportPeriod());
 
         builder.setReportLabel(reportLabel).setReportPeriod(reportPeriod)
                 .setDefaultInclusion(inputObject.getDefaultInclusionPolicy());
 
         for (ResourceIdInput resourceIdInput : inputObject.getIncludedPropertiesList()) {
-            ResourceId resourceId = this.translator.convertInputObject(resourceIdInput,
-                    ResourceId.class);
+            ResourceId resourceId = this.translator.convertInputObject(resourceIdInput);
             builder.includeResource(resourceId);
         }
 
         for (ResourceIdInput resourceIdInput : inputObject.getExcludedPropertiesList()) {
-            ResourceId resourceId = this.translator.convertInputObject(resourceIdInput,
-                    ResourceId.class);
+            ResourceId resourceId = this.translator.convertInputObject(resourceIdInput);
             builder.excludeResource(resourceId);
         }
 

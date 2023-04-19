@@ -8,7 +8,7 @@ public class RegionPropertyIdTranslatorSpec extends AbstractProtobufTranslatorSp
 
     @Override
     protected RegionPropertyId convertInputObject(RegionPropertyIdInput inputObject) {
-        return this.translator.getObjectFromAny(inputObject.getId(), getAppObjectClass());
+        return this.translator.getObjectFromAny(inputObject.getId());
     }
 
     @Override

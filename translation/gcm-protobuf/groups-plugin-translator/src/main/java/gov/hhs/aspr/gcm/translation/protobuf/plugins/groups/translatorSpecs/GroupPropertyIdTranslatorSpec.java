@@ -8,7 +8,7 @@ public class GroupPropertyIdTranslatorSpec extends AbstractProtobufTranslatorSpe
 
     @Override
     protected GroupPropertyId convertInputObject(GroupPropertyIdInput inputObject) {
-        return this.translator.getObjectFromAny(inputObject.getId(), getAppObjectClass());
+        return this.translator.getObjectFromAny(inputObject.getId());
     }
 
     @Override

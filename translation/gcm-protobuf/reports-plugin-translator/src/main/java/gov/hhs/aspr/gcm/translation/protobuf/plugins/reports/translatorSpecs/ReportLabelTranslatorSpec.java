@@ -8,7 +8,7 @@ public class ReportLabelTranslatorSpec extends AbstractProtobufTranslatorSpec<Re
 
     @Override
     protected ReportLabel convertInputObject(ReportLabelInput inputObject) {
-        return this.translator.getObjectFromAny(inputObject.getLabel(), getAppObjectClass());
+        return this.translator.getObjectFromAny(inputObject.getLabel());
     }
 
     @Override

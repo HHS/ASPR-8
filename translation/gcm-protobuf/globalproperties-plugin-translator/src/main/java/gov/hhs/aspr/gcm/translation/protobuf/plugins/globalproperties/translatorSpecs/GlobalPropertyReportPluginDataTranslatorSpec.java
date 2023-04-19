@@ -15,20 +15,18 @@ public class GlobalPropertyReportPluginDataTranslatorSpec
     protected GlobalPropertyReportPluginData convertInputObject(GlobalPropertyReportPluginDataInput inputObject) {
         GlobalPropertyReportPluginData.Builder builder = GlobalPropertyReportPluginData.builder();
 
-        ReportLabel reportLabel = this.translator.convertInputObject(inputObject.getReportLabel(), ReportLabel.class);
+        ReportLabel reportLabel = this.translator.convertInputObject(inputObject.getReportLabel());
         builder.setReportLabel(reportLabel);
 
         builder.setDefaultInclusion(inputObject.getDefaultInclusionPolicy());
 
         for (GlobalPropertyIdInput globalPropertyIdInput : inputObject.getIncludedPropertiesList()) {
-            GlobalPropertyId globalPropertyId = this.translator.convertInputObject(globalPropertyIdInput,
-                    GlobalPropertyId.class);
+            GlobalPropertyId globalPropertyId = this.translator.convertInputObject(globalPropertyIdInput);
             builder.includeGlobalProperty(globalPropertyId);
         }
 
         for (GlobalPropertyIdInput globalPropertyIdInput : inputObject.getExcludedPropertiesList()) {
-            GlobalPropertyId globalPropertyId = this.translator.convertInputObject(globalPropertyIdInput,
-                    GlobalPropertyId.class);
+            GlobalPropertyId globalPropertyId = this.translator.convertInputObject(globalPropertyIdInput);
             builder.excludeGlobalProperty(globalPropertyId);
         }
 

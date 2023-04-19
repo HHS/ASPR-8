@@ -16,20 +16,18 @@ public class RegionPropertyReportPluginDataTranslatorSpec
     protected RegionPropertyReportPluginData convertInputObject(RegionPropertyReportPluginDataInput inputObject) {
         RegionPropertyReportPluginData.Builder builder = RegionPropertyReportPluginData.builder();
 
-        ReportLabel reportLabel = this.translator.convertInputObject(inputObject.getReportLabel(), ReportLabel.class);
+        ReportLabel reportLabel = this.translator.convertInputObject(inputObject.getReportLabel());
         builder.setReportLabel(reportLabel);
 
         builder.setDefaultInclusion(inputObject.getDefaultInclusionPolicy());
 
         for (RegionPropertyIdInput regionPropertyIdInput : inputObject.getIncludedPropertiesList()) {
-            RegionPropertyId regionPropertyId = this.translator.convertInputObject(regionPropertyIdInput,
-                    RegionPropertyId.class);
+            RegionPropertyId regionPropertyId = this.translator.convertInputObject(regionPropertyIdInput);
             builder.includeRegionProperty(regionPropertyId);
         }
 
         for (RegionPropertyIdInput regionPropertyIdInput : inputObject.getExcludedPropertiesList()) {
-            RegionPropertyId regionPropertyId = this.translator.convertInputObject(regionPropertyIdInput,
-                    RegionPropertyId.class);
+            RegionPropertyId regionPropertyId = this.translator.convertInputObject(regionPropertyIdInput);
             builder.excludeRegionProperty(regionPropertyId);
         }
 

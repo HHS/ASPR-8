@@ -8,7 +8,7 @@ public class RegionIdTranslatorSpec extends AbstractProtobufTranslatorSpec<Regio
 
     @Override
     protected RegionId convertInputObject(RegionIdInput inputObject) {
-        return this.translator.getObjectFromAny(inputObject.getId(), getAppObjectClass());
+        return this.translator.getObjectFromAny(inputObject.getId());
     }
 
     @Override

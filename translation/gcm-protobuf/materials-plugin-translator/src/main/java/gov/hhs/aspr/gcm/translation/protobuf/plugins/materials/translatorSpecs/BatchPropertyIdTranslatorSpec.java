@@ -8,7 +8,7 @@ public class BatchPropertyIdTranslatorSpec extends AbstractProtobufTranslatorSpe
 
     @Override
     protected BatchPropertyId convertInputObject(BatchPropertyIdInput inputObject) {
-        return this.translator.getObjectFromAny(inputObject.getId(), getAppObjectClass());
+        return this.translator.getObjectFromAny(inputObject.getId());
     }
 
     @Override

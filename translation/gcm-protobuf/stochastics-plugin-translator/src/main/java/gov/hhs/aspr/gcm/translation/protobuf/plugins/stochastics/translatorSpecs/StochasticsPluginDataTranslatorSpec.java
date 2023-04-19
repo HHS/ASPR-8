@@ -22,7 +22,7 @@ public class StochasticsPluginDataTranslatorSpec
 
         for (RandomNumberGeneratorMapInput randomGenIdInput : inputObject.getRandomNumberGeneratorIdsList()) {
             RandomNumberGeneratorId generatorId = this.translator
-                    .convertInputObject(randomGenIdInput.getRandomNumberGeneratorId(), RandomNumberGeneratorId.class);
+                    .convertInputObject(randomGenIdInput.getRandomNumberGeneratorId());
             WellState generatorWellState = this.translator.convertInputObject(randomGenIdInput.getWellState());
             builder.addRNG(generatorId, generatorWellState);
         }

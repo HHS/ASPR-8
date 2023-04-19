@@ -8,7 +8,7 @@ public class GroupTypeIdTranslatorSpec extends AbstractProtobufTranslatorSpec<Gr
 
     @Override
     protected GroupTypeId convertInputObject(GroupTypeIdInput inputObject) {
-        return this.translator.getObjectFromAny(inputObject.getId(), GroupTypeId.class);
+        return this.translator.getObjectFromAny(inputObject.getId());
     }
 
     @Override

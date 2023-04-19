@@ -9,7 +9,7 @@ public class RandomGeneratorIdTranslatorSpec
 
     @Override
     protected RandomNumberGeneratorId convertInputObject(RandomNumberGeneratorIdInput inputObject) {
-        return this.translator.getObjectFromAny(inputObject.getId(), getAppObjectClass());
+        return this.translator.getObjectFromAny(inputObject.getId());
     }
 
     @Override

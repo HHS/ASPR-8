@@ -19,15 +19,14 @@ public class PersonPropertyInteractionReportPluginDataTranslatorSpec
             PersonPropertyInteractionReportPluginDataInput inputObject) {
         PersonPropertyInteractionReportPluginData.Builder builder = PersonPropertyInteractionReportPluginData.builder();
 
-        ReportLabel reportLabel = this.translator.convertInputObject(inputObject.getReportLabel(), ReportLabel.class);
+        ReportLabel reportLabel = this.translator.convertInputObject(inputObject.getReportLabel());
         builder.setReportLabel(reportLabel);
 
         ReportPeriod reportPeriod = this.translator.convertInputObject(inputObject.getReportPeriod());
         builder.setReportPeriod(reportPeriod);
 
         for (PersonPropertyIdInput personPropertyIdInput : inputObject.getPersonPropertyIdsList()) {
-            PersonPropertyId personPropertyId = this.translator.convertInputObject(personPropertyIdInput,
-                    PersonPropertyId.class);
+            PersonPropertyId personPropertyId = this.translator.convertInputObject(personPropertyIdInput);
             builder.addPersonPropertyId(personPropertyId);
         }
 

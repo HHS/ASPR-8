@@ -8,7 +8,7 @@ public class ResourceIdTranslatorSpec extends AbstractProtobufTranslatorSpec<Res
 
     @Override
     protected ResourceId convertInputObject(ResourceIdInput inputObject) {
-        return this.translator.getObjectFromAny(inputObject.getId(), getAppObjectClass());
+        return this.translator.getObjectFromAny(inputObject.getId());
     }
 
     @Override

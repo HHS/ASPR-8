@@ -30,6 +30,7 @@ public class PrimitiveTranslatorSpecs {
     private final static FloatTranslatorSpec FLOAT_TRANSLATOR_SPEC = new FloatTranslatorSpec();
     private final static DoubleTranslatorSpec DOUBLE_TRANSLATOR_SPEC = new DoubleTranslatorSpec();
     private final static DateTranslatorSpec DATE_TRANSLATOR_SPEC = new DateTranslatorSpec();
+    private final static EnumTranslatorSpec ENUM_TRANSLATOR_SPEC = new EnumTranslatorSpec();
 
     public static Set<Descriptor> getPrimitiveDescriptors() {
         Set<Descriptor> set = new LinkedHashSet<>();
@@ -43,24 +44,43 @@ public class PrimitiveTranslatorSpecs {
         set.add(FloatValue.getDefaultInstance().getDescriptorForType());
         set.add(DoubleValue.getDefaultInstance().getDescriptorForType());
         set.add(Date.getDefaultInstance().getDescriptorForType());
-        set.add(WrapperEnumValue.getDescriptor());
+        set.add(WrapperEnumValue.getDefaultInstance().getDescriptorForType());
 
         return set;
     }
-    
+
+    public static Set<ITranslatorSpec> getPrimitiveTranslatorSpecs() {
+        Set<ITranslatorSpec> set = new LinkedHashSet<>();
+
+        set.addAll(getPrimitiveInputTranslatorSpecMap().values());
+        set.addAll(getPrimitiveObjectTranslatorSpecMap().values());
+
+        return set;
+    }
+
     public static Map<String, Class<?>> getPrimitiveTypeUrlToClassMap() {
         Map<String, Class<?>> map = new LinkedHashMap<>();
 
-        map.put(BoolValue.getDefaultInstance().getDescriptorForType().getFullName(),BOOLEAN_TRANSLATOR_SPEC.getInputObjectClass());
-        map.put(Int32Value.getDefaultInstance().getDescriptorForType().getFullName(), INT32_TRANSLATOR_SPEC.getInputObjectClass());
-        map.put(UInt32Value.getDefaultInstance().getDescriptorForType().getFullName(), UINT32_TRANSLATOR_SPEC.getInputObjectClass());
-        map.put(Int64Value.getDefaultInstance().getDescriptorForType().getFullName(), INT64_TRANSLATOR_SPEC.getInputObjectClass());
-        map.put(UInt64Value.getDefaultInstance().getDescriptorForType().getFullName(), UINT64_TRANSLATOR_SPEC.getInputObjectClass());
-        map.put(StringValue.getDefaultInstance().getDescriptorForType().getFullName(), STRING_TRANSLATOR_SPEC.getInputObjectClass());
-        map.put(FloatValue.getDefaultInstance().getDescriptorForType().getFullName(), FLOAT_TRANSLATOR_SPEC.getInputObjectClass());
-        map.put(DoubleValue.getDefaultInstance().getDescriptorForType().getFullName(), DOUBLE_TRANSLATOR_SPEC.getInputObjectClass());
-        map.put(Date.getDefaultInstance().getDescriptorForType().getFullName(), DATE_TRANSLATOR_SPEC.getInputObjectClass());
-        map.put(WrapperEnumValue.getDescriptor().getFullName(), WrapperEnumValue.class);
+        map.put(BoolValue.getDefaultInstance().getDescriptorForType().getFullName(),
+                BOOLEAN_TRANSLATOR_SPEC.getInputObjectClass());
+        map.put(Int32Value.getDefaultInstance().getDescriptorForType().getFullName(),
+                INT32_TRANSLATOR_SPEC.getInputObjectClass());
+        map.put(UInt32Value.getDefaultInstance().getDescriptorForType().getFullName(),
+                UINT32_TRANSLATOR_SPEC.getInputObjectClass());
+        map.put(Int64Value.getDefaultInstance().getDescriptorForType().getFullName(),
+                INT64_TRANSLATOR_SPEC.getInputObjectClass());
+        map.put(UInt64Value.getDefaultInstance().getDescriptorForType().getFullName(),
+                UINT64_TRANSLATOR_SPEC.getInputObjectClass());
+        map.put(StringValue.getDefaultInstance().getDescriptorForType().getFullName(),
+                STRING_TRANSLATOR_SPEC.getInputObjectClass());
+        map.put(FloatValue.getDefaultInstance().getDescriptorForType().getFullName(),
+                FLOAT_TRANSLATOR_SPEC.getInputObjectClass());
+        map.put(DoubleValue.getDefaultInstance().getDescriptorForType().getFullName(),
+                DOUBLE_TRANSLATOR_SPEC.getInputObjectClass());
+        map.put(Date.getDefaultInstance().getDescriptorForType().getFullName(),
+                DATE_TRANSLATOR_SPEC.getInputObjectClass());
+        map.put(WrapperEnumValue.getDefaultInstance().getDescriptorForType().getFullName(),
+                ENUM_TRANSLATOR_SPEC.getInputObjectClass());
 
         return map;
     }
@@ -77,6 +97,7 @@ public class PrimitiveTranslatorSpecs {
         map.put(FLOAT_TRANSLATOR_SPEC.getInputObjectClass(), FLOAT_TRANSLATOR_SPEC);
         map.put(DOUBLE_TRANSLATOR_SPEC.getInputObjectClass(), DOUBLE_TRANSLATOR_SPEC);
         map.put(DATE_TRANSLATOR_SPEC.getInputObjectClass(), DATE_TRANSLATOR_SPEC);
+        map.put(ENUM_TRANSLATOR_SPEC.getInputObjectClass(), ENUM_TRANSLATOR_SPEC);
 
         return map;
     }
@@ -92,6 +113,7 @@ public class PrimitiveTranslatorSpecs {
         map.put(FLOAT_TRANSLATOR_SPEC.getAppObjectClass(), FLOAT_TRANSLATOR_SPEC);
         map.put(DOUBLE_TRANSLATOR_SPEC.getAppObjectClass(), DOUBLE_TRANSLATOR_SPEC);
         map.put(DATE_TRANSLATOR_SPEC.getAppObjectClass(), DATE_TRANSLATOR_SPEC);
+        map.put(ENUM_TRANSLATOR_SPEC.getAppObjectClass(), ENUM_TRANSLATOR_SPEC);
 
         return map;
     }

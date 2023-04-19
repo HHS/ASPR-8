@@ -9,7 +9,7 @@ public class MaterialsProducerIdTranslatorSpec
 
     @Override
     protected MaterialsProducerId convertInputObject(MaterialsProducerIdInput inputObject) {
-        return this.translator.getObjectFromAny(inputObject.getId(), getAppObjectClass());
+        return this.translator.getObjectFromAny(inputObject.getId());
     }
 
     @Override

@@ -8,7 +8,7 @@ public class PlanDataTranslatorSpec extends AbstractProtobufTranslatorSpec<PlanD
 
     @Override
     protected PlanData convertInputObject(PlanDataInput inputObject) {
-        return this.translator.getObjectFromAny(inputObject.getData(), getAppObjectClass());
+        return this.translator.getObjectFromAny(inputObject.getData());
     }
 
     @Override

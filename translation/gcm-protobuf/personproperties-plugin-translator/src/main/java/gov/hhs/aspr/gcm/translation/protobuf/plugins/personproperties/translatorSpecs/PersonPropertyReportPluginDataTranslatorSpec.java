@@ -17,7 +17,7 @@ public class PersonPropertyReportPluginDataTranslatorSpec
     protected PersonPropertyReportPluginData convertInputObject(PersonPropertyReportPluginDataInput inputObject) {
         PersonPropertyReportPluginData.Builder builder = PersonPropertyReportPluginData.builder();
 
-        ReportLabel reportLabel = this.translator.convertInputObject(inputObject.getReportLabel(), ReportLabel.class);
+        ReportLabel reportLabel = this.translator.convertInputObject(inputObject.getReportLabel());
         builder.setReportLabel(reportLabel);
 
         ReportPeriod reportPeriod = this.translator.convertInputObject(inputObject.getReportPeriod());
@@ -26,14 +26,12 @@ public class PersonPropertyReportPluginDataTranslatorSpec
         builder.setDefaultInclusion(inputObject.getDefaultInclusionPolicy());
 
         for (PersonPropertyIdInput personPropertyIdInput : inputObject.getIncludedPropertiesList()) {
-            PersonPropertyId personPropertyId = this.translator.convertInputObject(personPropertyIdInput,
-                    PersonPropertyId.class);
+            PersonPropertyId personPropertyId = this.translator.convertInputObject(personPropertyIdInput);
             builder.includePersonProperty(personPropertyId);
         }
 
         for (PersonPropertyIdInput personPropertyIdInput : inputObject.getExcludedPropertiesList()) {
-            PersonPropertyId personPropertyId = this.translator.convertInputObject(personPropertyIdInput,
-                    PersonPropertyId.class);
+            PersonPropertyId personPropertyId = this.translator.convertInputObject(personPropertyIdInput);
             builder.excludePersonProperty(personPropertyId);
         }
 
