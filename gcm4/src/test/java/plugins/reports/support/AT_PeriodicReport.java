@@ -201,6 +201,7 @@ public class AT_PeriodicReport {
 		assertEquals("day", headerStrings.get(0));
 		assertEquals("hour", headerStrings.get(1));
 
+		reportHeaderBuilder = ReportHeader.builder();
 		testReport = new TestReport(reportLabel, ReportPeriod.DAILY);
 		testReport.addTimeFieldHeaders(reportHeaderBuilder);
 		reportHeader = reportHeaderBuilder.build();
@@ -208,6 +209,7 @@ public class AT_PeriodicReport {
 		assertEquals(1, headerStrings.size());
 		assertEquals("day", headerStrings.get(0));
 
+		reportHeaderBuilder = ReportHeader.builder();
 		testReport = new TestReport(reportLabel, ReportPeriod.END_OF_SIMULATION);
 		testReport.addTimeFieldHeaders(reportHeaderBuilder);
 		reportHeader = reportHeaderBuilder.build();

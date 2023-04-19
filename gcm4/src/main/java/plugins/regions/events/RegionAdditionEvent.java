@@ -21,6 +21,14 @@ public class RegionAdditionEvent implements Event {
 	private static class Data {
 		private RegionId regionId;
 		private List<Object> values = new ArrayList<>();
+
+		public Data() {
+		}
+
+		public Data(Data data) {
+			regionId = data.regionId;
+			values.addAll(data.values);
+		}
 	}
 
 	/**
@@ -55,26 +63,20 @@ public class RegionAdditionEvent implements Event {
 		 * Builds the Region addition event from the inputs
 		 * 
 		 * @throws ContractException
-		 *                           <li>{@linkplain RegionError#NULL_REGION_ID} if the
-		 *                           region
-		 *                           id was not set</li>
+		 *             <li>{@linkplain RegionError#NULL_REGION_ID} if the region
+		 *             id was not set</li>
 		 */
 		public RegionAdditionEvent build() {
-			try {
-				validate();
-				return new RegionAdditionEvent(data);
-			} finally {
-				data = new Data();
-			}
+			validate();
+			return new RegionAdditionEvent(new Data(data));
 		}
 
 		/**
 		 * Sets the region id
 		 * 
 		 * @throws ContractException
-		 *                           <li>{@linkplain RegionError#NULL_REGION_ID} if the
-		 *                           region
-		 *                           id is null</li>
+		 *             <li>{@linkplain RegionError#NULL_REGION_ID} if the region
+		 *             id is null</li>
 		 */
 		public Builder setRegionId(RegionId regionId) {
 			if (regionId == null) {
@@ -88,9 +90,8 @@ public class RegionAdditionEvent implements Event {
 		 * Adds an auxiliary value to be used by observers of region addition
 		 * 
 		 * @throws ContractException
-		 *                           <li>{@linkplain RegionError#NULL_AUXILIARY_DATA} if
-		 *                           the
-		 *                           value is null</li>
+		 *             <li>{@linkplain RegionError#NULL_AUXILIARY_DATA} if the
+		 *             value is null</li>
 		 */
 		public Builder addValue(Object value) {
 			if (value == null) {

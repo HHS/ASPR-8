@@ -497,9 +497,10 @@ public class AT_PopulationPartitionImpl {
 			Map<LabelSet, Map<LabelSet, Integer>> expectedStructure = new LinkedHashMap<>();
 
 			// build the keys of the expected structure
-			LabelSet.Builder labelSetBuilder = LabelSet.builder();
+			
 			for (Integer int_0_labelValue : int_0_labelValues) {
 				for (String double_0_labelValue : double_0_labelValues) {
+					LabelSet.Builder labelSetBuilder = LabelSet.builder();
 					LabelSet labelSet = labelSetBuilder.setLabel(TestAttributeId.INT_0, int_0_labelValue).setLabel(TestAttributeId.DOUBLE_0, double_0_labelValue).build();
 					expectedStructure.put(labelSet, new LinkedHashMap<>());
 				}
@@ -521,9 +522,9 @@ public class AT_PopulationPartitionImpl {
 					Double d1 = attributesDataManager.getAttributeValue(personId, TestAttributeId.DOUBLE_1);
 					Object double_1_label_value = DOUBLE_1_LABELFUNCTION.apply(d1);
 
-					LabelSet labelSet = labelSetBuilder.setLabel(TestAttributeId.INT_0, int_0_label_value).setLabel(TestAttributeId.DOUBLE_0, double_0_label_value).build();
+					LabelSet labelSet = LabelSet.builder().setLabel(TestAttributeId.INT_0, int_0_label_value).setLabel(TestAttributeId.DOUBLE_0, double_0_label_value).build();
 					Map<LabelSet, Integer> map = expectedStructure.get(labelSet);
-					labelSet = labelSetBuilder	.setLabel(TestAttributeId.INT_0, int_0_label_value).setLabel(TestAttributeId.DOUBLE_0, double_0_label_value)
+					labelSet = LabelSet.builder()	.setLabel(TestAttributeId.INT_0, int_0_label_value).setLabel(TestAttributeId.DOUBLE_0, double_0_label_value)
 												.setLabel(TestAttributeId.INT_1, int_1_label_value).setLabel(TestAttributeId.DOUBLE_1, double_1_label_value).build();
 					Integer count = map.get(labelSet);
 					if (count == null) {
@@ -572,7 +573,7 @@ public class AT_PopulationPartitionImpl {
 					
 				}
 			}
-			//System.out.println("expectedPeople = "+expectedPeople);
+			
 			
 
 			/*
@@ -586,7 +587,7 @@ public class AT_PopulationPartitionImpl {
 			// show that the person data view contains the people we expect
 			assertEquals(expectedPeople.size(), populationPartition.getPeople().size());
 			for (PersonId personId : peopleDataManager.getPeople()) {
-				//System.out.println(personId+" : "+ populationPartition.contains(personId));
+				
 				assertEquals(expectedPeople.contains(personId), populationPartition.contains(personId));
 			}
 		});

@@ -24,7 +24,8 @@ public class AttributesPluginData implements PluginData {
 		}
 
 		public Data(Data data) {
-			attributeDefinitions = new LinkedHashMap<>(data.attributeDefinitions);
+			locked = data.locked;
+			attributeDefinitions.putAll(data.attributeDefinitions);
 		}
 	}
 
@@ -56,12 +57,8 @@ public class AttributesPluginData implements PluginData {
 		 * Returns the {@linkplain AttributesPluginData} from the collected data
 		 */
 		public AttributesPluginData build() {
-			try {
-				ensureImmutability();
-				return new AttributesPluginData(data);
-			} finally {
-				data = new Data();
-			}
+			ensureImmutability();
+			return new AttributesPluginData(new Data(data));
 		}
 
 		/**

@@ -219,7 +219,7 @@ public class MT_ArrayIntSet {
 //		sb.append(intSetPerformance.memorySizeAtPeak);
 //		sb.append("\t");
 //		sb.append(intSetPerformance.memorySizeAtEnd);
-//		System.out.println(sb);
+//		
 //	}
 //
 //	private MT_ArrayIntSet() {

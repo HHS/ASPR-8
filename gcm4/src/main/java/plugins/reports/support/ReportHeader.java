@@ -47,8 +47,8 @@ public final class ReportHeader {
 		 * Add a string to the list of strings in the header in the order added.
 		 * 
 		 * @throws ContractException
-		 *             <li>{@linkplain ReportError#NULL_REPORT_HEADER_STRING} if the
-		 *             header string is null</li>
+		 *             <li>{@linkplain ReportError#NULL_REPORT_HEADER_STRING} if
+		 *             the header string is null</li>
 		 */
 		public Builder add(String headerString) {
 			if (headerString == null) {
@@ -63,11 +63,7 @@ public final class ReportHeader {
 		 * state of the builder.
 		 */
 		public ReportHeader build() {
-			try {
-				return new ReportHeader(headerStrings);
-			} finally {
-				headerStrings = new ArrayList<>();
-			}
+			return new ReportHeader(headerStrings);
 		}
 	}
 

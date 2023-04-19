@@ -160,7 +160,7 @@ public final class ResourceReport extends PeriodicReport {
 
 	@Override
 	protected void flush(ReportContext reportContext) {
-		final ReportItem.Builder reportItemBuilder = ReportItem.builder();
+		
 		for (final RegionId regionId : regionMap.keySet()) {
 
 			final Map<ResourceId, Map<Activity, Counter>> resourceMap = regionMap.get(regionId);
@@ -169,6 +169,7 @@ public final class ResourceReport extends PeriodicReport {
 				for (final Activity activity : activityMap.keySet()) {
 					final Counter counter = activityMap.get(activity);
 					if (counter.actionCount > 0) {
+						ReportItem.Builder reportItemBuilder = ReportItem.builder();
 						reportItemBuilder.setReportHeader(getReportHeader());
 						reportItemBuilder.setReportLabel(getReportLabel());
 						fillTimeFields(reportItemBuilder);

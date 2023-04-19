@@ -21,6 +21,14 @@ import util.errors.ContractException;
  */
 @Immutable
 public final class PeoplePluginData implements PluginData {
+
+	/*
+	 * The person ids are calculated when the data is being locked and are
+	 * retained here instead of in the PeoplePluginData instance for efficiency.
+	 * We do not copy the person ids in the copy constructor of the data class
+	 * since we will be setting the locked to false and will just have to
+	 * recalculate the person ids later.
+	 */
 	private static class Data {
 		private int personCount = -1;
 		private List<PersonRange> personRanges = new ArrayList<>();
@@ -32,6 +40,7 @@ public final class PeoplePluginData implements PluginData {
 		}
 
 		public Data(Data data) {
+			locked = data.locked;
 			this.personCount = data.personCount;
 			this.personRanges.addAll(data.personRanges);
 			this.assignmentTime = data.assignmentTime;
@@ -88,10 +97,6 @@ public final class PeoplePluginData implements PluginData {
 			builder.append("]");
 			return builder.toString();
 		}
-
-	
-
-		
 
 	}
 
@@ -227,13 +232,9 @@ public final class PeoplePluginData implements PluginData {
 		 * 
 		 */
 		public PeoplePluginData build() {
-			try {
-				validate();
-				ensureImmutability();
-				return new PeoplePluginData(data);
-			} finally {
-				data = new Data();
-			}
+			validate();
+			ensureImmutability();
+			return new PeoplePluginData(data);
 		}
 
 		/**
@@ -268,7 +269,8 @@ public final class PeoplePluginData implements PluginData {
 		}
 
 		/**
-		 * Sets the time for the last person added to the population. Defaults to zero.
+		 * Sets the time for the last person added to the population. Defaults
+		 * to zero.
 		 * 
 		 * @throws ContractException
 		 *             <li>{@linkplain PersonError#NEGATIVE_TIME} if the

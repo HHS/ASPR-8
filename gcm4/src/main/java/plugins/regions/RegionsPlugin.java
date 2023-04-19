@@ -48,40 +48,36 @@ public final class RegionsPlugin {
 		 */
 		public Plugin getRegionsPlugin() {
 
-			try {
-				validate();
-				Plugin.Builder builder = Plugin.builder();//
-				builder.setPluginId(RegionsPluginId.PLUGIN_ID);//
-				builder.addPluginData(data.regionsPluginData);//
-				if (data.regionPropertyReportPluginData != null) {
-					builder.addPluginData(data.regionPropertyReportPluginData);//
-				}
-				if (data.regionTransferReportPluginData != null) {
-					builder.addPluginData(data.regionTransferReportPluginData);//
-				}
-				builder.addPluginDependency(PeoplePluginId.PLUGIN_ID);//
-
-				builder.setInitializer((c) -> {
-					RegionsPluginData pluginData = c.getPluginData(RegionsPluginData.class).get();
-					c.addDataManager(new RegionsDataManager(pluginData));
-
-					Optional<RegionPropertyReportPluginData> optional1 = c.getPluginData(RegionPropertyReportPluginData.class);
-					if (optional1.isPresent()) {
-						RegionPropertyReportPluginData regionPropertyReportPluginData = optional1.get();
-						c.addReport(new RegionPropertyReport(regionPropertyReportPluginData)::init);
-					}
-
-					Optional<RegionTransferReportPluginData> optional2 = c.getPluginData(RegionTransferReportPluginData.class);
-					if (optional2.isPresent()) {
-						RegionTransferReportPluginData regionTransferReportPluginData = optional2.get();
-						c.addReport(new RegionTransferReport(regionTransferReportPluginData)::init);
-					}
-
-				});
-				return builder.build();
-			} finally {
-				data = new Data();
+			validate();
+			Plugin.Builder builder = Plugin.builder();//
+			builder.setPluginId(RegionsPluginId.PLUGIN_ID);//
+			builder.addPluginData(data.regionsPluginData);//
+			if (data.regionPropertyReportPluginData != null) {
+				builder.addPluginData(data.regionPropertyReportPluginData);//
 			}
+			if (data.regionTransferReportPluginData != null) {
+				builder.addPluginData(data.regionTransferReportPluginData);//
+			}
+			builder.addPluginDependency(PeoplePluginId.PLUGIN_ID);//
+
+			builder.setInitializer((c) -> {
+				RegionsPluginData pluginData = c.getPluginData(RegionsPluginData.class).get();
+				c.addDataManager(new RegionsDataManager(pluginData));
+
+				Optional<RegionPropertyReportPluginData> optional1 = c.getPluginData(RegionPropertyReportPluginData.class);
+				if (optional1.isPresent()) {
+					RegionPropertyReportPluginData regionPropertyReportPluginData = optional1.get();
+					c.addReport(new RegionPropertyReport(regionPropertyReportPluginData)::init);
+				}
+
+				Optional<RegionTransferReportPluginData> optional2 = c.getPluginData(RegionTransferReportPluginData.class);
+				if (optional2.isPresent()) {
+					RegionTransferReportPluginData regionTransferReportPluginData = optional2.get();
+					c.addReport(new RegionTransferReport(regionTransferReportPluginData)::init);
+				}
+
+			});
+			return builder.build();
 
 		}
 

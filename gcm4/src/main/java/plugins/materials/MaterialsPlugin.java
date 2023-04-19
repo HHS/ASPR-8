@@ -35,7 +35,7 @@ public final class MaterialsPlugin {
 
 	private MaterialsPlugin() {
 	}
-	
+
 	public static Builder builder() {
 		return new Builder();
 	}
@@ -61,63 +61,59 @@ public final class MaterialsPlugin {
 		 */
 		public Plugin getMaterialsPlugin() {
 
-			try {
-				validate();
-				Plugin.Builder builder = Plugin.builder();//
-				builder.setPluginId(MaterialsPluginId.PLUGIN_ID);//
+			validate();
+			Plugin.Builder builder = Plugin.builder();//
+			builder.setPluginId(MaterialsPluginId.PLUGIN_ID);//
 
-				builder.addPluginData(data.materialsPluginData);//
+			builder.addPluginData(data.materialsPluginData);//
 
-				if (data.batchStatusReportPluginData != null) {
-					builder.addPluginData(data.batchStatusReportPluginData);//
-				}
-				if (data.materialsProducerPropertyReportPluginData != null) {
-					builder.addPluginData(data.materialsProducerPropertyReportPluginData);//
-				}
-				if (data.materialsProducerResourceReportPluginData != null) {
-					builder.addPluginData(data.materialsProducerResourceReportPluginData);//
-				}
-				if (data.stageReportPluginData != null) {
-					builder.addPluginData(data.stageReportPluginData);//
-				}
-
-				builder.addPluginDependency(RegionsPluginId.PLUGIN_ID);//
-				builder.addPluginDependency(ResourcesPluginId.PLUGIN_ID);//
-
-				builder.setInitializer((c) -> {
-
-					MaterialsPluginData pluginData = c.getPluginData(MaterialsPluginData.class).get();
-					c.addDataManager(new MaterialsDataManager(pluginData));
-
-					Optional<BatchStatusReportPluginData> optional1 = c.getPluginData(BatchStatusReportPluginData.class);
-					if (optional1.isPresent()) {
-						BatchStatusReportPluginData batchStatusReportPluginData = optional1.get();
-						c.addReport(new BatchStatusReport(batchStatusReportPluginData)::init);
-					}
-
-					Optional<MaterialsProducerPropertyReportPluginData> optional2 = c.getPluginData(MaterialsProducerPropertyReportPluginData.class);
-					if (optional2.isPresent()) {
-						MaterialsProducerPropertyReportPluginData materialsProducerPropertyReportPluginData = optional2.get();
-						c.addReport(new MaterialsProducerPropertyReport(materialsProducerPropertyReportPluginData)::init);
-					}
-
-					Optional<MaterialsProducerResourceReportPluginData> optional3 = c.getPluginData(MaterialsProducerResourceReportPluginData.class);
-					if (optional3.isPresent()) {
-						MaterialsProducerResourceReportPluginData materialsProducerResourceReportPluginData = optional3.get();
-						c.addReport(new MaterialsProducerResourceReport(materialsProducerResourceReportPluginData)::init);
-					}
-
-					Optional<StageReportPluginData> optional4 = c.getPluginData(StageReportPluginData.class);
-					if (optional4.isPresent()) {
-						StageReportPluginData stageReportPluginData = optional4.get();
-						c.addReport(new StageReport(stageReportPluginData)::init);
-					}
-
-				});
-				return builder.build();
-			} finally {
-				data = new Data();
+			if (data.batchStatusReportPluginData != null) {
+				builder.addPluginData(data.batchStatusReportPluginData);//
 			}
+			if (data.materialsProducerPropertyReportPluginData != null) {
+				builder.addPluginData(data.materialsProducerPropertyReportPluginData);//
+			}
+			if (data.materialsProducerResourceReportPluginData != null) {
+				builder.addPluginData(data.materialsProducerResourceReportPluginData);//
+			}
+			if (data.stageReportPluginData != null) {
+				builder.addPluginData(data.stageReportPluginData);//
+			}
+
+			builder.addPluginDependency(RegionsPluginId.PLUGIN_ID);//
+			builder.addPluginDependency(ResourcesPluginId.PLUGIN_ID);//
+
+			builder.setInitializer((c) -> {
+
+				MaterialsPluginData pluginData = c.getPluginData(MaterialsPluginData.class).get();
+				c.addDataManager(new MaterialsDataManager(pluginData));
+
+				Optional<BatchStatusReportPluginData> optional1 = c.getPluginData(BatchStatusReportPluginData.class);
+				if (optional1.isPresent()) {
+					BatchStatusReportPluginData batchStatusReportPluginData = optional1.get();
+					c.addReport(new BatchStatusReport(batchStatusReportPluginData)::init);
+				}
+
+				Optional<MaterialsProducerPropertyReportPluginData> optional2 = c.getPluginData(MaterialsProducerPropertyReportPluginData.class);
+				if (optional2.isPresent()) {
+					MaterialsProducerPropertyReportPluginData materialsProducerPropertyReportPluginData = optional2.get();
+					c.addReport(new MaterialsProducerPropertyReport(materialsProducerPropertyReportPluginData)::init);
+				}
+
+				Optional<MaterialsProducerResourceReportPluginData> optional3 = c.getPluginData(MaterialsProducerResourceReportPluginData.class);
+				if (optional3.isPresent()) {
+					MaterialsProducerResourceReportPluginData materialsProducerResourceReportPluginData = optional3.get();
+					c.addReport(new MaterialsProducerResourceReport(materialsProducerResourceReportPluginData)::init);
+				}
+
+				Optional<StageReportPluginData> optional4 = c.getPluginData(StageReportPluginData.class);
+				if (optional4.isPresent()) {
+					StageReportPluginData stageReportPluginData = optional4.get();
+					c.addReport(new StageReport(stageReportPluginData)::init);
+				}
+
+			});
+			return builder.build();
 
 		}
 

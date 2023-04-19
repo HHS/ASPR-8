@@ -83,7 +83,7 @@ public final class Partition {
 	 */
 	public static class Builder {
 
-		private Scaffold scaffold = new Scaffold();
+		private Data data = new Data();
 
 		private Builder() {
 		}
@@ -93,18 +93,14 @@ public final class Partition {
 		 * by this builder and resets the state of the builder to empty.
 		 */
 		public Partition build() {
-			try {
-				return new Partition(scaffold);
-			} finally {
-				scaffold = new Scaffold();
-			}
+			return new Partition(new Data(data));
 		}
 
 		/**
 		 * Adds a labeler.
 		 */
 		public Builder addLabeler(Labeler labeler) {
-			scaffold.labelers.add(labeler);
+			data.labelers.add(labeler);
 			return this;
 		}
 
@@ -113,7 +109,7 @@ public final class Partition {
 		 * provided, a default filter that accepts all people is used instead.
 		 */
 		public Builder setFilter(Filter filter) {
-			scaffold.filter = filter;
+			data.filter = filter;
 			return this;
 		}
 
@@ -121,16 +117,16 @@ public final class Partition {
 		 * Set the retention policy for derived partition cell keys for people
 		 */
 		public Builder setRetainPersonKeys(boolean retainPersonKeys) {
-			scaffold.retainPersonKeys = retainPersonKeys;
+			data.retainPersonKeys = retainPersonKeys;
 			return this;
 		}
 
 	}
 
-	private Partition(Scaffold scaffold) {
-		this.labelers = scaffold.labelers;
-		this.filter = scaffold.filter;
-		this.retainPersonKeys = scaffold.retainPersonKeys;
+	private Partition(Data data) {
+		this.labelers = data.labelers;
+		this.filter = data.filter;
+		this.retainPersonKeys = data.retainPersonKeys;
 	}
 
 	/**
@@ -149,12 +145,22 @@ public final class Partition {
 		return retainPersonKeys;
 	}
 
-	private static class Scaffold {
+	private static class Data {
 		private boolean retainPersonKeys = true;
 
 		private Set<Labeler> labelers = new LinkedHashSet<>();
 
 		private Filter filter;
+
+		public Data() {
+		}
+
+		public Data(Data data) {
+			retainPersonKeys = data.retainPersonKeys;
+			labelers.addAll(data.labelers);
+			filter = data.filter;
+		}
+
 	}
 
 	private final Set<Labeler> labelers;
