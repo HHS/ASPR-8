@@ -1,6 +1,6 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.translatorSpecs;
 
-import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractProtobufTranslatorSpec;
+import gov.hhs.aspr.translation.protobuf.core.AbstractProtobufTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.input.MaterialsProducerPropertyReportPluginDataInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.input.ReportLabelInput;
 import plugins.materials.reports.MaterialsProducerPropertyReportPluginData;
@@ -28,11 +28,6 @@ public class MaterialsProducerPropertyReportPluginDataTranslatorSpec
 
         builder.setReportLabel(reportLabelInput);
         return builder.build();
-    }
-
-    @Override
-    public MaterialsProducerPropertyReportPluginDataInput getDefaultInstanceForInputObject() {
-        return MaterialsProducerPropertyReportPluginDataInput.getDefaultInstance();
     }
 
     @Override

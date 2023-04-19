@@ -1,24 +1,19 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.translatorSpecs;
 
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.input.MaterialIdInput;
-import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractProtobufTranslatorSpec;
+import gov.hhs.aspr.translation.protobuf.core.AbstractProtobufTranslatorSpec;
 import plugins.materials.support.MaterialId;
 
 public class MaterialIdTranslatorSpec extends AbstractProtobufTranslatorSpec<MaterialIdInput, MaterialId> {
 
     @Override
     protected MaterialId convertInputObject(MaterialIdInput inputObject) {
-        return this.translator.getObjectFromAny(inputObject.getId(), getAppObjectClass());
+        return this.translator.getObjectFromAny(inputObject.getId());
     }
 
     @Override
     protected MaterialIdInput convertAppObject(MaterialId simObject) {
         return MaterialIdInput.newBuilder().setId(this.translator.getAnyFromObject(simObject)).build();
-    }
-
-    @Override
-    public MaterialIdInput getDefaultInstanceForInputObject() {
-        return MaterialIdInput.getDefaultInstance();
     }
 
     @Override

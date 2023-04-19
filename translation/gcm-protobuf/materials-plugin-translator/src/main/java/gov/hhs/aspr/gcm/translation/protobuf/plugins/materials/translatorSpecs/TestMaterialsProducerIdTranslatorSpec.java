@@ -1,7 +1,7 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.translatorSpecs;
 
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.input.TestMaterialsProducerIdInput;
-import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractProtobufTranslatorSpec;
+import gov.hhs.aspr.translation.protobuf.core.AbstractProtobufTranslatorSpec;
 import plugins.materials.testsupport.TestMaterialsProducerId;
 
 public class TestMaterialsProducerIdTranslatorSpec
@@ -15,11 +15,6 @@ public class TestMaterialsProducerIdTranslatorSpec
     @Override
     protected TestMaterialsProducerIdInput convertAppObject(TestMaterialsProducerId simObject) {
         return TestMaterialsProducerIdInput.valueOf(simObject.name());
-    }
-
-    @Override
-    public TestMaterialsProducerIdInput getDefaultInstanceForInputObject() {
-        return TestMaterialsProducerIdInput.forNumber(0);
     }
 
     @Override

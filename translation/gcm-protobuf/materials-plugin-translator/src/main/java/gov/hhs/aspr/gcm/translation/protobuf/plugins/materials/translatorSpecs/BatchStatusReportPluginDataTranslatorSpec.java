@@ -1,6 +1,6 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.translatorSpecs;
 
-import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractProtobufTranslatorSpec;
+import gov.hhs.aspr.translation.protobuf.core.AbstractProtobufTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.input.BatchStatusReportPluginDataInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.input.ReportLabelInput;
 import plugins.materials.reports.BatchStatusReportPluginData;
@@ -28,11 +28,6 @@ public class BatchStatusReportPluginDataTranslatorSpec
 
         builder.setReportLabel(reportLabelInput);
         return builder.build();
-    }
-
-    @Override
-    public BatchStatusReportPluginDataInput getDefaultInstanceForInputObject() {
-        return BatchStatusReportPluginDataInput.getDefaultInstance();
     }
 
     @Override

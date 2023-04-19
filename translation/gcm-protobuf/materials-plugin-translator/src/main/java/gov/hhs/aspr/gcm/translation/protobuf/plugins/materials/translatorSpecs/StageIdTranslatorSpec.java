@@ -1,7 +1,7 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.translatorSpecs;
 
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.input.StageIdInput;
-import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractProtobufTranslatorSpec;
+import gov.hhs.aspr.translation.protobuf.core.AbstractProtobufTranslatorSpec;
 import plugins.materials.support.StageId;
 
 public class StageIdTranslatorSpec extends AbstractProtobufTranslatorSpec<StageIdInput, StageId> {
@@ -14,11 +14,6 @@ public class StageIdTranslatorSpec extends AbstractProtobufTranslatorSpec<StageI
     @Override
     protected StageIdInput convertAppObject(StageId simObject) {
         return StageIdInput.newBuilder().setId(simObject.getValue()).build();
-    }
-
-    @Override
-    public StageIdInput getDefaultInstanceForInputObject() {
-        return StageIdInput.getDefaultInstance();
     }
 
     @Override
