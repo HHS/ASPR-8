@@ -1,7 +1,7 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.translatorSpecs;
 
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.input.GroupIdInput;
-import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractProtobufTranslatorSpec;
+import gov.hhs.aspr.translation.protobuf.core.AbstractProtobufTranslatorSpec;
 import plugins.groups.support.GroupId;
 
 public class GroupIdTranslatorSpec extends AbstractProtobufTranslatorSpec<GroupIdInput, GroupId> {
@@ -14,11 +14,6 @@ public class GroupIdTranslatorSpec extends AbstractProtobufTranslatorSpec<GroupI
     @Override
     protected GroupIdInput convertAppObject(GroupId simObject) {
         return GroupIdInput.newBuilder().setId(simObject.getValue()).build();
-    }
-
-    @Override
-    public GroupIdInput getDefaultInstanceForInputObject() {
-        return GroupIdInput.getDefaultInstance();
     }
 
     @Override

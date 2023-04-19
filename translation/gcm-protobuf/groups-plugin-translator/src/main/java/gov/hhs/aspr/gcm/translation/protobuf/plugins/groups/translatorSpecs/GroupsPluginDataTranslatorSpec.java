@@ -14,7 +14,7 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.input.PersonIdInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.input.PropertyDefinitionInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.input.PropertyDefinitionMapInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.input.PropertyValueMapInput;
-import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractProtobufTranslatorSpec;
+import gov.hhs.aspr.translation.protobuf.core.AbstractProtobufTranslatorSpec;
 import plugins.groups.GroupsPluginData;
 import plugins.groups.support.GroupId;
 import plugins.groups.support.GroupPropertyId;
@@ -51,8 +51,7 @@ public class GroupsPluginDataTranslatorSpec extends AbstractProtobufTranslatorSp
             for (PropertyDefinitionMapInput propertyDefinitionMapInput : groupPropertyDefinitionMapInput
                     .getPropertyDefinitionsList()) {
 
-                GroupPropertyId groupPropertyId = this.translator
-                        .getObjectFromAny(propertyDefinitionMapInput.getPropertyId(), GroupPropertyId.class);
+                GroupPropertyId groupPropertyId = this.translator.getObjectFromAny(propertyDefinitionMapInput.getPropertyId());
                 PropertyDefinition propertyDefinition = this.translator
                         .convertInputObject(propertyDefinitionMapInput.getPropertyDefinition());
                 builder.defineGroupProperty(groupTypeId, groupPropertyId, propertyDefinition);
@@ -64,8 +63,7 @@ public class GroupsPluginDataTranslatorSpec extends AbstractProtobufTranslatorSp
             GroupId groupId = this.translator.convertInputObject(groupPropertyValueMapInput.getGroupId());
             for (PropertyValueMapInput propertyValueMapInput : groupPropertyValueMapInput.getPropertyValueMapList()) {
 
-                GroupPropertyId groupPropertyId = this.translator
-                        .getObjectFromAny(propertyValueMapInput.getPropertyId(), GroupPropertyId.class);
+                GroupPropertyId groupPropertyId = this.translator.getObjectFromAny(propertyValueMapInput.getPropertyId());
                 Object propertyValue = this.translator.getObjectFromAny(propertyValueMapInput.getPropertyValue());
 
                 builder.setGroupPropertyValue(groupId, groupPropertyId, propertyValue);
@@ -183,11 +181,6 @@ public class GroupsPluginDataTranslatorSpec extends AbstractProtobufTranslatorSp
         }
 
         return builder.build();
-    }
-
-    @Override
-    public GroupsPluginDataInput getDefaultInstanceForInputObject() {
-        return GroupsPluginDataInput.getDefaultInstance();
     }
 
     @Override

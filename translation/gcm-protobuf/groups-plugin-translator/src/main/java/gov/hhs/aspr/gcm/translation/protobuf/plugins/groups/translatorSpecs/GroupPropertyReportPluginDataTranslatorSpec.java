@@ -1,6 +1,6 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.translatorSpecs;
 
-import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractProtobufTranslatorSpec;
+import gov.hhs.aspr.translation.protobuf.core.AbstractProtobufTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.input.GroupPropertyIdInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.input.GroupPropertyReportPluginDataInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.input.GroupPropertyReportPropertyMap;
@@ -18,25 +18,25 @@ public class GroupPropertyReportPluginDataTranslatorSpec
     protected GroupPropertyReportPluginData convertInputObject(GroupPropertyReportPluginDataInput inputObject) {
         GroupPropertyReportPluginData.Builder builder = GroupPropertyReportPluginData.builder();
 
-        ReportLabel reportLabel = this.translator.convertInputObject(inputObject.getReportLabel(), ReportLabel.class);
+        ReportLabel reportLabel = this.translator.convertInputObject(inputObject.getReportLabel());
         builder.setReportLabel(reportLabel);
 
         builder.setDefaultInclusion(inputObject.getDefaultInclusionPolicy());
-        builder.setReportPeriod(this.translator.convertInputEnum(inputObject.getReportPeriod()));
+        builder.setReportPeriod(this.translator.convertInputObject(inputObject.getReportPeriod()));
 
         for(GroupPropertyReportPropertyMap propertyMap : inputObject.getIncludedPropertiesList()) {
-            GroupTypeId groupTypeId = this.translator.convertInputObject(propertyMap.getGroupTypeId(), GroupTypeId.class);
+            GroupTypeId groupTypeId = this.translator.convertInputObject(propertyMap.getGroupTypeId());
             for(GroupPropertyIdInput groupPropertyIdInput : propertyMap.getGroupPropertiesList()) {
-                GroupPropertyId groupPropertyId = this.translator.convertInputObject(groupPropertyIdInput, GroupPropertyId.class);
+                GroupPropertyId groupPropertyId = this.translator.convertInputObject(groupPropertyIdInput);
 
                 builder.includeGroupProperty(groupTypeId, groupPropertyId);
             }
         }
 
         for(GroupPropertyReportPropertyMap propertyMap : inputObject.getExcludedPropertiesList()) {
-            GroupTypeId groupTypeId = this.translator.convertInputObject(propertyMap.getGroupTypeId(), GroupTypeId.class);
+            GroupTypeId groupTypeId = this.translator.convertInputObject(propertyMap.getGroupTypeId());
             for(GroupPropertyIdInput groupPropertyIdInput : propertyMap.getGroupPropertiesList()) {
-                GroupPropertyId groupPropertyId = this.translator.convertInputObject(groupPropertyIdInput, GroupPropertyId.class);
+                GroupPropertyId groupPropertyId = this.translator.convertInputObject(groupPropertyIdInput);
 
                 builder.excludeGroupProperty(groupTypeId, groupPropertyId);
             }
@@ -80,11 +80,6 @@ public class GroupPropertyReportPluginDataTranslatorSpec
         }
 
         return builder.build();
-    }
-
-    @Override
-    public GroupPropertyReportPluginDataInput getDefaultInstanceForInputObject() {
-        return GroupPropertyReportPluginDataInput.getDefaultInstance();
     }
 
     @Override
