@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -29,6 +28,7 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.ReportsTranslator;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.ResourcesTranslator;
 import gov.hhs.aspr.translation.core.TranslatorController;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslatorCore;
+import gov.hhs.aspr.translation.protobuf.core.testsupport.TestResourceHelper;
 import plugins.materials.MaterialsPluginData;
 import plugins.materials.reports.BatchStatusReportPluginData;
 import plugins.materials.reports.MaterialsProducerPropertyReportPluginData;
@@ -40,6 +40,7 @@ import plugins.materials.support.MaterialId;
 import plugins.materials.support.MaterialsProducerId;
 import plugins.materials.support.MaterialsProducerPropertyId;
 import plugins.materials.support.StageId;
+import plugins.materials.testsupport.MaterialsTestPluginFactory;
 import plugins.materials.testsupport.TestBatchPropertyId;
 import plugins.materials.testsupport.TestMaterialId;
 import plugins.materials.testsupport.TestMaterialsProducerId;
@@ -50,29 +51,14 @@ import plugins.util.properties.PropertyDefinition;
 import util.random.RandomGeneratorProvider;
 
 public class AppTest {
-	Path basePath = getCurrentDir();
-	Path inputFilePath = basePath.resolve("json");
-	Path outputFilePath = makeOutputDir();
-
-	private Path getCurrentDir() {
-		try {
-			return Path.of(this.getClass().getClassLoader().getResource("").toURI());
-		} catch (URISyntaxException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	private Path makeOutputDir() {
-		Path path = basePath.resolve("json/output");
-
-		path.toFile().mkdirs();
-
-		return path;
-	}
+	Path basePath = TestResourceHelper.getResourceDir(this.getClass());
+	Path filePath = TestResourceHelper.makeTestOutputDir(basePath);
 
 	@Test
 	public void testMaterialsTranslator() {
 		String fileName = "pluginData.json";
+
+		TestResourceHelper.createTestOutputFile(filePath, fileName);
 
 		TranslatorController translatorController = TranslatorController.builder()
 				.setTranslatorCoreBuilder(ProtobufTranslatorCore.builder())
@@ -81,34 +67,38 @@ public class AppTest {
 				.addTranslator(ResourcesTranslator.getTranslator())
 				.addTranslator(RegionsTranslator.getTranslator())
 				.addTranslator(PeopleTranslator.getTranslator())
-				.addInputFilePath(inputFilePath.resolve(fileName), MaterialsPluginDataInput.class)
-				.addOutputFilePath(outputFilePath.resolve(fileName), MaterialsPluginData.class)
+				.addInputFilePath(filePath.resolve(fileName), MaterialsPluginDataInput.class)
+				.addOutputFilePath(filePath.resolve(fileName), MaterialsPluginData.class)
 
 				.build();
 
-		translatorController.readInput();
-
-		MaterialsPluginData materialsPluginData = translatorController.getObject(MaterialsPluginData.class);
 		int numBatches = 50;
 		int numStages = 10;
 		int numBatchesInStage = 30;
 		long seed = 524805676405822016L;
 
+		MaterialsPluginData expectedPluginData = MaterialsTestPluginFactory.getStandardMaterialsPluginData(numBatches,
+				numStages, numBatchesInStage, seed);
+		translatorController.writeOutput(expectedPluginData);
+
+		translatorController.readInput();
+		MaterialsPluginData actualPluginData = translatorController.getObject(MaterialsPluginData.class);
+
 		Set<TestMaterialId> expectedMaterialIds = EnumSet.allOf(TestMaterialId.class);
 		assertFalse(expectedMaterialIds.isEmpty());
 
-		Set<MaterialId> actualMaterialIds = materialsPluginData.getMaterialIds();
+		Set<MaterialId> actualMaterialIds = actualPluginData.getMaterialIds();
 		assertEquals(expectedMaterialIds, actualMaterialIds);
 
 		for (TestMaterialId expectedMaterialId : expectedMaterialIds) {
 			Set<TestBatchPropertyId> expectedBatchPropertyIds = TestBatchPropertyId
 					.getTestBatchPropertyIds(expectedMaterialId);
 			assertFalse(expectedBatchPropertyIds.isEmpty());
-			Set<BatchPropertyId> actualBatchPropertyIds = materialsPluginData.getBatchPropertyIds(expectedMaterialId);
+			Set<BatchPropertyId> actualBatchPropertyIds = actualPluginData.getBatchPropertyIds(expectedMaterialId);
 			assertEquals(expectedBatchPropertyIds, actualBatchPropertyIds);
 			for (TestBatchPropertyId batchPropertyId : expectedBatchPropertyIds) {
 				PropertyDefinition expectedPropertyDefinition = batchPropertyId.getPropertyDefinition();
-				PropertyDefinition actualPropertyDefinition = materialsPluginData.getBatchPropertyDefinition(
+				PropertyDefinition actualPropertyDefinition = actualPluginData.getBatchPropertyDefinition(
 						expectedMaterialId,
 						batchPropertyId);
 				assertEquals(expectedPropertyDefinition, actualPropertyDefinition);
@@ -117,13 +107,13 @@ public class AppTest {
 
 		Set<TestMaterialsProducerId> expectedMaterialsProducerIds = EnumSet.allOf(TestMaterialsProducerId.class);
 		assertFalse(expectedMaterialsProducerIds.isEmpty());
-		Set<MaterialsProducerId> actualProducerIds = materialsPluginData.getMaterialsProducerIds();
+		Set<MaterialsProducerId> actualProducerIds = actualPluginData.getMaterialsProducerIds();
 		assertEquals(expectedMaterialsProducerIds, actualProducerIds);
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
 
-		assertEquals(numBatches * expectedMaterialsProducerIds.size(), materialsPluginData.getBatchIds().size());
-		assertEquals(numStages * expectedMaterialsProducerIds.size(), materialsPluginData.getStageIds().size());
+		assertEquals(numBatches * expectedMaterialsProducerIds.size(), actualPluginData.getBatchIds().size());
+		assertEquals(numStages * expectedMaterialsProducerIds.size(), actualPluginData.getStageIds().size());
 
 		int expectedNumBatchesPerStage = numBatchesInStage * expectedMaterialsProducerIds.size();
 		int actualNumBatchesPerStage = 0;
@@ -136,17 +126,17 @@ public class AppTest {
 			for (int i = 0; i < numBatches; i++) {
 				batches.add(new BatchId(bId++));
 			}
-			assertTrue(materialsPluginData.getBatchIds().containsAll(batches));
+			assertTrue(actualPluginData.getBatchIds().containsAll(batches));
 
 			for (BatchId batchId : batches) {
 
 				TestMaterialId expectedMaterialId = TestMaterialId.getRandomMaterialId(randomGenerator);
 				double expectedAmount = randomGenerator.nextDouble();
 
-				MaterialId actualMaterialId = materialsPluginData.getBatchMaterial(batchId);
+				MaterialId actualMaterialId = actualPluginData.getBatchMaterial(batchId);
 				assertEquals(expectedMaterialId, actualMaterialId);
 
-				double actualAmount = materialsPluginData.getBatchAmount(batchId);
+				double actualAmount = actualPluginData.getBatchAmount(batchId);
 				assertEquals(expectedAmount, actualAmount);
 				for (TestBatchPropertyId expectedBatchPropertyId : TestBatchPropertyId
 						.getTestBatchPropertyIds(expectedMaterialId)) {
@@ -154,7 +144,7 @@ public class AppTest {
 							|| randomGenerator.nextBoolean()) {
 						Object expectedPropertyValue = expectedBatchPropertyId.getRandomPropertyValue(randomGenerator);
 
-						Map<BatchPropertyId, Object> propertyValueMap = materialsPluginData
+						Map<BatchPropertyId, Object> propertyValueMap = actualPluginData
 								.getBatchPropertyValues(batchId);
 						assertTrue(propertyValueMap.containsKey(expectedBatchPropertyId));
 						assertEquals(expectedPropertyValue, propertyValueMap.get(expectedBatchPropertyId));
@@ -166,14 +156,14 @@ public class AppTest {
 			for (int i = 0; i < numStages; i++) {
 				stages.add(new StageId(sId++));
 			}
-			assertTrue(materialsPluginData.getStageIds().containsAll(stages));
+			assertTrue(actualPluginData.getStageIds().containsAll(stages));
 
 			for (int i = 0; i < stages.size(); i++) {
-				MaterialsProducerId actualMaterialsProducerId = materialsPluginData
+				MaterialsProducerId actualMaterialsProducerId = actualPluginData
 						.getStageMaterialsProducer(stages.get(i));
 				assertEquals(expectedProducerId, actualMaterialsProducerId);
 				boolean expectedOffered = i % 2 == 0;
-				boolean actualOffered = materialsPluginData.isStageOffered(stages.get(i));
+				boolean actualOffered = actualPluginData.isStageOffered(stages.get(i));
 				assertTrue(expectedOffered == actualOffered);
 			}
 
@@ -182,7 +172,7 @@ public class AppTest {
 				StageId expectedStageId = stages.get(randomGenerator.nextInt(stages.size()));
 				BatchId expectedBatchId = batches.get(i);
 
-				Set<BatchId> actualBatchIds = materialsPluginData.getStageBatches(expectedStageId);
+				Set<BatchId> actualBatchIds = actualPluginData.getStageBatches(expectedStageId);
 				assertTrue(actualBatchIds.contains(expectedBatchId));
 				actualNumBatchesPerStage++;
 			}
@@ -194,20 +184,20 @@ public class AppTest {
 				.allOf(TestMaterialsProducerPropertyId.class);
 		assertFalse(expectedMaterialsProducerPropertyIds.isEmpty());
 
-		Set<MaterialsProducerPropertyId> actualMaterialProducerPropertyIds = materialsPluginData
+		Set<MaterialsProducerPropertyId> actualMaterialProducerPropertyIds = actualPluginData
 				.getMaterialsProducerPropertyIds();
 		assertEquals(expectedMaterialsProducerPropertyIds, actualMaterialProducerPropertyIds);
 
 		for (TestMaterialsProducerPropertyId expectedMaterialsProducerPropertyId : expectedMaterialsProducerPropertyIds) {
 			PropertyDefinition expectedPropertyDefinition = expectedMaterialsProducerPropertyId.getPropertyDefinition();
-			PropertyDefinition actualPropertyDefinition = materialsPluginData
+			PropertyDefinition actualPropertyDefinition = actualPluginData
 					.getMaterialsProducerPropertyDefinition(expectedMaterialsProducerPropertyId);
 			assertEquals(expectedPropertyDefinition, actualPropertyDefinition);
 			if (expectedPropertyDefinition.getDefaultValue().isEmpty()) {
 				for (TestMaterialsProducerId producerId : expectedMaterialsProducerIds) {
 					Object expectedPropertyValue = expectedMaterialsProducerPropertyId
 							.getRandomPropertyValue(randomGenerator);
-					Map<MaterialsProducerPropertyId, Object> propertyValueMap = materialsPluginData
+					Map<MaterialsProducerPropertyId, Object> propertyValueMap = actualPluginData
 							.getMaterialsProducerPropertyValues(producerId);
 					assertTrue(propertyValueMap.containsKey(expectedMaterialsProducerPropertyId));
 					Object actualPropertyValue = propertyValueMap.get(expectedMaterialsProducerPropertyId);
@@ -215,13 +205,15 @@ public class AppTest {
 				}
 			}
 		}
-
-		translatorController.writeOutput();
+		// TODO: fix Materials equals contract
+		// assertEquals(expectedPluginData, actualPluginData);
 	}
 
 	@Test
 	public void testBatchStatusReportPluginDataTranslatorSpec() {
 		String fileName = "batchStatusReport.json";
+
+		TestResourceHelper.createTestOutputFile(filePath, fileName);
 
 		TranslatorController translatorController = TranslatorController.builder()
 				.setTranslatorCoreBuilder(ProtobufTranslatorCore.builder())
@@ -231,14 +223,10 @@ public class AppTest {
 				.addTranslator(ResourcesTranslator.getTranslator())
 				.addTranslator(RegionsTranslator.getTranslator())
 				.addTranslator(PeopleTranslator.getTranslator())
-				.addInputFilePath(inputFilePath.resolve(fileName), BatchStatusReportPluginDataInput.class)
-				.addOutputFilePath(outputFilePath.resolve(fileName), BatchStatusReportPluginData.class)
+				.addInputFilePath(filePath.resolve(fileName), BatchStatusReportPluginDataInput.class)
+				.addOutputFilePath(filePath.resolve(fileName), BatchStatusReportPluginData.class)
 				.build();
 
-		translatorController.readInput();
-
-		BatchStatusReportPluginData actualPluginData = translatorController
-				.getObject(BatchStatusReportPluginData.class);
 		BatchStatusReportPluginData.Builder builder = BatchStatusReportPluginData.builder();
 
 		ReportLabel reportLabel = new SimpleReportLabel("batch status report label");
@@ -247,15 +235,23 @@ public class AppTest {
 
 		BatchStatusReportPluginData expectedPluginData = builder.build();
 
-		assertEquals(expectedPluginData.getReportLabel(), actualPluginData.getReportLabel());
+		translatorController.writeOutput(expectedPluginData);
 
-		translatorController.writeOutput();
+		translatorController.readInput();
+
+		BatchStatusReportPluginData actualPluginData = translatorController
+				.getObject(BatchStatusReportPluginData.class);
+
+		assertEquals(expectedPluginData, actualPluginData);
+
 	}
 
 	@Test
 	public void testMaterialsProducerPropertyReportPluginDataTranslatorSpec() {
 		String fileName = "materialsProducerPropertyReport.json";
 
+		TestResourceHelper.createTestOutputFile(filePath, fileName);
+
 		TranslatorController translatorController = TranslatorController.builder()
 				.setTranslatorCoreBuilder(ProtobufTranslatorCore.builder())
 				.addTranslator(MaterialsTranslator.getTranslatorWithReport())
@@ -264,31 +260,33 @@ public class AppTest {
 				.addTranslator(ResourcesTranslator.getTranslator())
 				.addTranslator(RegionsTranslator.getTranslator())
 				.addTranslator(PeopleTranslator.getTranslator())
-				.addInputFilePath(inputFilePath.resolve(fileName), MaterialsProducerPropertyReportPluginDataInput.class)
-				.addOutputFilePath(outputFilePath.resolve(fileName),
+				.addInputFilePath(filePath.resolve(fileName), MaterialsProducerPropertyReportPluginDataInput.class)
+				.addOutputFilePath(filePath.resolve(fileName),
 						MaterialsProducerPropertyReportPluginData.class)
 				.build();
 
-		translatorController.readInput();
-
-		MaterialsProducerPropertyReportPluginData actualPluginData = translatorController
-				.getObject(MaterialsProducerPropertyReportPluginData.class);
 		MaterialsProducerPropertyReportPluginData.Builder builder = MaterialsProducerPropertyReportPluginData.builder();
-
 		ReportLabel reportLabel = new SimpleReportLabel("materials producer property report report label");
 
 		builder.setReportLabel(reportLabel);
 
 		MaterialsProducerPropertyReportPluginData expectedPluginData = builder.build();
 
-		assertEquals(expectedPluginData.getReportLabel(), actualPluginData.getReportLabel());
+		translatorController.writeOutput(expectedPluginData);
 
-		translatorController.writeOutput();
+		translatorController.readInput();
+
+		MaterialsProducerPropertyReportPluginData actualPluginData = translatorController
+				.getObject(MaterialsProducerPropertyReportPluginData.class);
+
+		assertEquals(expectedPluginData, actualPluginData);
 	}
 
 	@Test
 	public void testMaterialsProducerResourceReportPluginDataTranslatorSpec() {
 		String fileName = "materialsProducerResourceReport.json";
+
+		TestResourceHelper.createTestOutputFile(filePath, fileName);
 
 		TranslatorController translatorController = TranslatorController.builder()
 				.setTranslatorCoreBuilder(ProtobufTranslatorCore.builder())
@@ -298,14 +296,10 @@ public class AppTest {
 				.addTranslator(ResourcesTranslator.getTranslator())
 				.addTranslator(RegionsTranslator.getTranslator())
 				.addTranslator(PeopleTranslator.getTranslator())
-				.addInputFilePath(inputFilePath.resolve(fileName), MaterialsProducerResourceReportPluginDataInput.class)
-				.addOutputFilePath(outputFilePath.resolve(fileName), MaterialsProducerResourceReportPluginData.class)
+				.addInputFilePath(filePath.resolve(fileName), MaterialsProducerResourceReportPluginDataInput.class)
+				.addOutputFilePath(filePath.resolve(fileName), MaterialsProducerResourceReportPluginData.class)
 				.build();
 
-		translatorController.readInput();
-
-		MaterialsProducerResourceReportPluginData actualPluginData = translatorController
-				.getObject(MaterialsProducerResourceReportPluginData.class);
 		MaterialsProducerResourceReportPluginData.Builder builder = MaterialsProducerResourceReportPluginData.builder();
 
 		ReportLabel reportLabel = new SimpleReportLabel("materials producer resource report label");
@@ -314,14 +308,20 @@ public class AppTest {
 
 		MaterialsProducerResourceReportPluginData expectedPluginData = builder.build();
 
-		assertEquals(expectedPluginData.getReportLabel(), actualPluginData.getReportLabel());
+		translatorController.writeOutput(expectedPluginData);
+		translatorController.readInput();
 
-		translatorController.writeOutput();
+		MaterialsProducerResourceReportPluginData actualPluginData = translatorController
+				.getObject(MaterialsProducerResourceReportPluginData.class);
+
+		assertEquals(expectedPluginData, actualPluginData);
 	}
 
 	@Test
 	public void testStageReportPluginDataTranslatorSpec() {
 		String fileName = "stageReport.json";
+
+		TestResourceHelper.createTestOutputFile(filePath, fileName);
 
 		TranslatorController translatorController = TranslatorController.builder()
 				.setTranslatorCoreBuilder(ProtobufTranslatorCore.builder())
@@ -331,13 +331,10 @@ public class AppTest {
 				.addTranslator(ResourcesTranslator.getTranslator())
 				.addTranslator(RegionsTranslator.getTranslator())
 				.addTranslator(PeopleTranslator.getTranslator())
-				.addInputFilePath(inputFilePath.resolve(fileName), StageReportPluginDataInput.class)
-				.addOutputFilePath(outputFilePath.resolve(fileName), StageReportPluginData.class)
+				.addInputFilePath(filePath.resolve(fileName), StageReportPluginDataInput.class)
+				.addOutputFilePath(filePath.resolve(fileName), StageReportPluginData.class)
 				.build();
 
-		translatorController.readInput();
-
-		StageReportPluginData actualPluginData = translatorController.getObject(StageReportPluginData.class);
 		StageReportPluginData.Builder builder = StageReportPluginData.builder();
 
 		ReportLabel reportLabel = new SimpleReportLabel("stage report label");
@@ -346,9 +343,13 @@ public class AppTest {
 
 		StageReportPluginData expectedPluginData = builder.build();
 
-		assertEquals(expectedPluginData.getReportLabel(), actualPluginData.getReportLabel());
+		translatorController.writeOutput(expectedPluginData);
+		translatorController.readInput();
 
-		translatorController.writeOutput();
+		StageReportPluginData actualPluginData = translatorController.getObject(StageReportPluginData.class);
+
+		assertEquals(expectedPluginData, actualPluginData);
+
 	}
 
 }
