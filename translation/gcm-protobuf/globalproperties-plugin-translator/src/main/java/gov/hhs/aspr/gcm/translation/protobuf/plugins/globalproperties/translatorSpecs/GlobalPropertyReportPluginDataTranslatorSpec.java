@@ -1,6 +1,6 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.globalproperties.translatorSpecs;
 
-import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractProtobufTranslatorSpec;
+import gov.hhs.aspr.translation.protobuf.core.AbstractProtobufTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.globalproperties.input.GlobalPropertyIdInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.globalproperties.input.GlobalPropertyReportPluginDataInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.input.ReportLabelInput;
@@ -15,20 +15,18 @@ public class GlobalPropertyReportPluginDataTranslatorSpec
     protected GlobalPropertyReportPluginData convertInputObject(GlobalPropertyReportPluginDataInput inputObject) {
         GlobalPropertyReportPluginData.Builder builder = GlobalPropertyReportPluginData.builder();
 
-        ReportLabel reportLabel = this.translator.convertInputObject(inputObject.getReportLabel(), ReportLabel.class);
+        ReportLabel reportLabel = this.translator.convertInputObject(inputObject.getReportLabel());
         builder.setReportLabel(reportLabel);
 
         builder.setDefaultInclusion(inputObject.getDefaultInclusionPolicy());
 
         for (GlobalPropertyIdInput globalPropertyIdInput : inputObject.getIncludedPropertiesList()) {
-            GlobalPropertyId globalPropertyId = this.translator.convertInputObject(globalPropertyIdInput,
-                    GlobalPropertyId.class);
+            GlobalPropertyId globalPropertyId = this.translator.convertInputObject(globalPropertyIdInput);
             builder.includeGlobalProperty(globalPropertyId);
         }
 
         for (GlobalPropertyIdInput globalPropertyIdInput : inputObject.getExcludedPropertiesList()) {
-            GlobalPropertyId globalPropertyId = this.translator.convertInputObject(globalPropertyIdInput,
-                    GlobalPropertyId.class);
+            GlobalPropertyId globalPropertyId = this.translator.convertInputObject(globalPropertyIdInput);
             builder.excludeGlobalProperty(globalPropertyId);
         }
 
@@ -59,11 +57,6 @@ public class GlobalPropertyReportPluginDataTranslatorSpec
         }
 
         return builder.build();
-    }
-
-    @Override
-    public GlobalPropertyReportPluginDataInput getDefaultInstanceForInputObject() {
-        return GlobalPropertyReportPluginDataInput.getDefaultInstance();
     }
 
     @Override
