@@ -65,7 +65,7 @@ public class PersonPropertiesPluginDataTranslatorSpec
             builder.addPersonPropertyDefinitions(propertyDefinitionMapInput);
         }
 
-        for (int i = 0; i < simObject.getMaxPersonIndex(); i++) {
+        for (int i = 0; i <= simObject.getMaxPersonIndex(); i++) {
             if (simObject.personExists(i)) {
                 List<PersonPropertyInitialization> personPropertiesValues = simObject.getPropertyValues(i);
                 PersonIdInput personIdInput = this.translator.convertSimObject(new PersonId(i));
