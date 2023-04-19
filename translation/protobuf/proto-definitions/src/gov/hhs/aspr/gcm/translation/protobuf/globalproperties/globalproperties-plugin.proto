@@ -1,0 +1,35 @@
+syntax = "proto3";
+package gov.hhs.aspr.gcm.translation.protobuf;
+
+option java_multiple_files = true;
+option java_package = "gov.hhs.aspr.gcm.translation.protobuf.plugins.globalproperties.input";
+
+import "properties-plugin.proto";
+import "reports-plugin.proto";
+import "google/protobuf/any.proto";
+
+message GlobalPropertyIdInput {
+    google.protobuf.Any id = 1;
+}
+
+enum TestGlobalPropertyIdInput {
+    GLOBAL_PROPERTY_1_BOOLEAN_MUTABLE = 0;
+    GLOBAL_PROPERTY_2_INTEGER_MUTABLE = 1;
+    GLOBAL_PROPERTY_3_DOUBLE_MUTABLE = 2;
+    GLOBAL_PROPERTY_4_BOOLEAN_IMMUTABLE = 3;
+    GLOBAL_PROPERTY_5_INTEGER_IMMUTABLE = 4;
+    GLOBAL_PROPERTY_6_DOUBLE_IMMUTABLE = 5;
+}
+
+message GlobalPropertiesPluginDataInput {
+    repeated PropertyDefinitionMapInput globalPropertyDefinitinions = 1;
+    repeated PropertyValueMapInput globalPropertyValues = 2;
+}
+
+message GlobalPropertyReportPluginDataInput {
+    ReportLabelInput reportLabel = 1;
+    ReportPeriodInput reportPeriod = 2;
+    repeated GlobalPropertyIdInput includedProperties = 3;
+    repeated GlobalPropertyIdInput excludedProperties = 4;
+    bool defaultInclusionPolicy = 5;
+}
