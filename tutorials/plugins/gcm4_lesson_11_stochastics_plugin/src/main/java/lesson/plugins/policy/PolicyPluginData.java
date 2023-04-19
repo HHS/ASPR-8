@@ -30,12 +30,8 @@ public final class PolicyPluginData implements PluginData {
 		}
 
 		@Override
-		public PolicyPluginData build() {
-			try {
-				return new PolicyPluginData(new Data(data));
-			} finally {
-				data = new Data();
-			}
+		public PolicyPluginData build() {		
+			return new PolicyPluginData(new Data(data));			
 		}
 
 

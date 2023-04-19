@@ -42,8 +42,10 @@ public final class GroupsPluginData implements PluginData {
 
 		@Override
 		public boolean equals(Object o) {
-			if (this == o) return true;
-			if (!(o instanceof GroupSpecification)) return false;
+			if (this == o)
+				return true;
+			if (!(o instanceof GroupSpecification))
+				return false;
 			GroupSpecification that = (GroupSpecification) o;
 			return groupId.equals(that.groupId) && groupTypeId.equals(that.groupTypeId) && groupPropertyValues.equals(that.groupPropertyValues);
 		}
@@ -58,10 +60,14 @@ public final class GroupsPluginData implements PluginData {
 
 		@Override
 		public boolean equals(Object o) {
-			if (this == o) return true;
-			if (!(o instanceof Data)) return false;
+			if (this == o)
+				return true;
+			if (!(o instanceof Data))
+				return false;
 			Data data = (Data) o;
-			return personCount == data.personCount && locked == data.locked && groupPropertyDefinitions.equals(data.groupPropertyDefinitions) && groupTypeIds.equals(data.groupTypeIds) && emptyGroupList.equals(data.emptyGroupList) && groupSpecifications.equals(data.groupSpecifications) && emptyGroupPropertyValues.equals(data.emptyGroupPropertyValues) && groupMemberships.equals(data.groupMemberships);
+			return personCount == data.personCount && locked == data.locked && groupPropertyDefinitions.equals(data.groupPropertyDefinitions) && groupTypeIds.equals(data.groupTypeIds)
+					&& emptyGroupList.equals(data.emptyGroupList) && groupSpecifications.equals(data.groupSpecifications) && emptyGroupPropertyValues.equals(data.emptyGroupPropertyValues)
+					&& groupMemberships.equals(data.groupMemberships);
 		}
 
 		@Override
@@ -83,16 +89,8 @@ public final class GroupsPluginData implements PluginData {
 
 		@Override
 		public String toString() {
-			return "Data{" +
-					"groupPropertyDefinitions=" + groupPropertyDefinitions +
-					", groupTypeIds=" + groupTypeIds +
-					", emptyGroupList=" + emptyGroupList +
-					", personCount=" + personCount +
-					", locked=" + locked +
-					", groupSpecifications=" + groupSpecifications +
-					", emptyGroupPropertyValues=" + emptyGroupPropertyValues +
-					", groupMemberships=" + groupMemberships +
-					'}';
+			return "Data{" + "groupPropertyDefinitions=" + groupPropertyDefinitions + ", groupTypeIds=" + groupTypeIds + ", emptyGroupList=" + emptyGroupList + ", personCount=" + personCount
+					+ ", locked=" + locked + ", groupSpecifications=" + groupSpecifications + ", emptyGroupPropertyValues=" + emptyGroupPropertyValues + ", groupMemberships=" + groupMemberships + '}';
 		}
 
 		public Data() {
@@ -254,15 +252,13 @@ public final class GroupsPluginData implements PluginData {
 		 * 
 		 */
 		public GroupsPluginData build() {
-			try {
+
 			if (!data.locked) {
 				validateData();
 			}
 			ensureImmutability();
 			return new GroupsPluginData(data);
-			}finally {
-				data = new Data();
-			}
+
 		}
 
 		/**
@@ -722,8 +718,10 @@ public final class GroupsPluginData implements PluginData {
 
 	@Override
 	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (!(o instanceof GroupsPluginData)) return false;
+		if (this == o)
+			return true;
+		if (!(o instanceof GroupsPluginData))
+			return false;
 		GroupsPluginData that = (GroupsPluginData) o;
 		return data.equals(that.data);
 	}
@@ -735,8 +733,6 @@ public final class GroupsPluginData implements PluginData {
 
 	@Override
 	public String toString() {
-		return "GroupsPluginData{" +
-				"data=" + data +
-				'}';
+		return "GroupsPluginData{" + "data=" + data + '}';
 	}
 }

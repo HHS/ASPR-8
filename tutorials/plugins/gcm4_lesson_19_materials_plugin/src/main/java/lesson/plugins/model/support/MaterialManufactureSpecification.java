@@ -13,11 +13,7 @@ public final class MaterialManufactureSpecification {
 		}
 
 		public MaterialManufactureSpecification build() {
-			try {
-				return new MaterialManufactureSpecification(data);
-			} finally {
-				data = new Data();
-			}
+			return new MaterialManufactureSpecification(new Data(data));
 		}
 
 		public Builder setBatchId(final BatchId batchId) {
@@ -55,6 +51,16 @@ public final class MaterialManufactureSpecification {
 		private double deliveryDelay;
 		private double stageAmount;
 		private BatchId batchId;
+		
+		public Data() {}
+		public Data(Data data) {
+			materialId = data.materialId;
+			onOrder = data.onOrder;
+			deliveryAmount = data.deliveryAmount;
+			deliveryDelay = data.deliveryDelay;
+			stageAmount = data.stageAmount;
+			data.batchId = batchId;
+		}
 	}
 
 	public static Builder builder() {

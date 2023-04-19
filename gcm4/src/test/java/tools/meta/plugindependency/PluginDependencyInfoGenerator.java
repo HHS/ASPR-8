@@ -207,6 +207,12 @@ public class PluginDependencyInfoGenerator {
 		private Path sourcePath;
 
 		private Path testPath;
+		
+		public Data() {}
+		public Data(Data data) {
+			sourcePath = data.sourcePath;
+			testPath = data.testPath;
+		}
 	}
 
 	public final static Builder builder() {
@@ -220,12 +226,8 @@ public class PluginDependencyInfoGenerator {
 		private Data data = new Data();
 
 		public PluginDependencyInfoGenerator build() {
-			try {
-				validate();
-				return new PluginDependencyInfoGenerator(data);
-			} finally {
-				data = new Data();
-			}
+			validate();
+			return new PluginDependencyInfoGenerator(new Data(data));
 		}
 
 		private void validate() {
@@ -293,7 +295,7 @@ public class PluginDependencyInfoGenerator {
 		addToGraph(pluginDependencyGraph, PartitionsPlugin.getPartitionsPlugin());
 		addToGraph(pluginDependencyGraph, PeoplePlugin.getPeoplePlugin(PeoplePluginData.builder().build()));
 		addToGraph(pluginDependencyGraph, PersonPropertiesPlugin.builder().setPersonPropertiesPluginData(PersonPropertiesPluginData.builder().build()).getPersonPropertyPlugin());
-		
+
 		addToGraph(pluginDependencyGraph, RegionsPlugin.builder().setRegionsPluginData(RegionsPluginData.builder().build()).getRegionsPlugin());
 		addToGraph(pluginDependencyGraph, ReportsPlugin.getReportsPlugin());
 		addToGraph(pluginDependencyGraph, ResourcesPlugin.builder().setResourcesPluginData(ResourcesPluginData.builder().build()).getResourcesPlugin());
@@ -427,26 +429,29 @@ public class PluginDependencyInfoGenerator {
 			Node originNode = packageDependencyGraph.getOriginNode(edge);
 			Node destinationNode = packageDependencyGraph.getDestinationNode(edge);
 
-//			if (originNode.name.equals("plugins.partitions")) {
-//				if (destinationNode.name.equals("plugins.materials")) {
-//					System.out.println("weeeeeeeeeeeeeeee");
-//					
-//					for (Node node : pluginDependencyGraph.getNodes()) {
-//						if (node.name.equals(originNode.name)) {
-//							System.out.println("found the origin node " + pluginDependencyGraph.containsNode(originNode));
-//
-//						}
-//						if (node.name.equals(destinationNode.name)) {
-//							System.out.println("found the destination node " + pluginDependencyGraph.containsNode(destinationNode));
-//
-//						}
-//					}
-//					System.out.println(pluginDependencyGraph.containsNode(originNode));
-//					System.out.println(pluginDependencyGraph.containsNode(originNode));
-//					System.out.println(pluginDependencyGraph.containsNode(originNode) && pluginDependencyGraph.containsEdge(destinationNode));
-//
-//				}
-//			}
+			// if (originNode.name.equals("plugins.partitions")) {
+			// if (destinationNode.name.equals("plugins.materials")) {
+			// System.out.println("weeeeeeeeeeeeeeee");
+			//
+			// for (Node node : pluginDependencyGraph.getNodes()) {
+			// if (node.name.equals(originNode.name)) {
+			// System.out.println("found the origin node " +
+			// pluginDependencyGraph.containsNode(originNode));
+			//
+			// }
+			// if (node.name.equals(destinationNode.name)) {
+			// System.out.println("found the destination node " +
+			// pluginDependencyGraph.containsNode(destinationNode));
+			//
+			// }
+			// }
+			// System.out.println(pluginDependencyGraph.containsNode(originNode));
+			// System.out.println(pluginDependencyGraph.containsNode(originNode));
+			// System.out.println(pluginDependencyGraph.containsNode(originNode)
+			// && pluginDependencyGraph.containsEdge(destinationNode));
+			//
+			// }
+			// }
 
 			if (pluginDependencyGraph.containsNode(originNode) && pluginDependencyGraph.containsNode(destinationNode)) {
 				Optional<util.path.Path<Edge>> optionalPath = mapPathSolver.getPath(originNode, destinationNode);

@@ -20,8 +20,9 @@ import java.util.Set;
 import util.wrappers.MutableInteger;
 
 public class CodeCountReport {
-	
-	private CodeCountReport() {}
+
+	private CodeCountReport() {
+	}
 
 	private int totalCodeLineCount;
 
@@ -56,61 +57,55 @@ public class CodeCountReport {
 		private Builder() {
 		}
 
-		
 		public CodeCountReport build() {
-			try {
 
-				final CounterFileVisitor counterFileVisitor = new CounterFileVisitor();
-				for (Path directory : directories) {
-					try {
-						Files.walkFileTree(directory, counterFileVisitor);
-					} catch (final IOException e) {
-						throw new RuntimeException(e);
-					}
+			final CounterFileVisitor counterFileVisitor = new CounterFileVisitor();
+			for (Path directory : directories) {
+				try {
+					Files.walkFileTree(directory, counterFileVisitor);
+				} catch (final IOException e) {
+					throw new RuntimeException(e);
 				}
-
-			
-				Node rootNode = counterFileVisitor.rootNode;
-				rootNode.cascadeLineCounts();
-
-				//write the report
-				CodeCountReport codeCountReport = new CodeCountReport();
-				codeCountReport.totalBlankLineCount = rootNode.getLineCount(LineType.BLANK);
-				codeCountReport.totalCodeLineCount = rootNode.getLineCount(LineType.CODE);
-				codeCountReport.totalCommentLineCount = rootNode.getLineCount(LineType.COMMENT);
-				int totalLineCount = codeCountReport.totalBlankLineCount + codeCountReport.totalCodeLineCount + codeCountReport.totalCommentLineCount;
-
-				StringBuilder sb = new StringBuilder();
-				for (LineType lineType : LineType.values()) {
-					sb.append(lineType);
-					sb.append("\t");
-				}
-				sb.append(totalLineCount);
-				sb.append("\n");
-				List<Node> allNodes = rootNode.getAllNodes();
-				for (Node node : allNodes) {
-
-					for (LineType lineType : LineType.values()) {
-						sb.append(node.getLineCount(lineType));
-						sb.append("\t");
-					}
-					sb.append("\t");
-
-					Iterator<Path> iterator = node.getPath().iterator();
-					while (iterator.hasNext()) {
-						sb.append("\t");
-						sb.append(iterator.next());
-					}
-					sb.append("\n");
-
-				}
-
-				codeCountReport.detailsReport = sb.toString();
-				return codeCountReport;
-
-			} finally {
-				directories = new LinkedHashSet<>();
 			}
+
+			Node rootNode = counterFileVisitor.rootNode;
+			rootNode.cascadeLineCounts();
+
+			// write the report
+			CodeCountReport codeCountReport = new CodeCountReport();
+			codeCountReport.totalBlankLineCount = rootNode.getLineCount(LineType.BLANK);
+			codeCountReport.totalCodeLineCount = rootNode.getLineCount(LineType.CODE);
+			codeCountReport.totalCommentLineCount = rootNode.getLineCount(LineType.COMMENT);
+			int totalLineCount = codeCountReport.totalBlankLineCount + codeCountReport.totalCodeLineCount + codeCountReport.totalCommentLineCount;
+
+			StringBuilder sb = new StringBuilder();
+			for (LineType lineType : LineType.values()) {
+				sb.append(lineType);
+				sb.append("\t");
+			}
+			sb.append(totalLineCount);
+			sb.append("\n");
+			List<Node> allNodes = rootNode.getAllNodes();
+			for (Node node : allNodes) {
+
+				for (LineType lineType : LineType.values()) {
+					sb.append(node.getLineCount(lineType));
+					sb.append("\t");
+				}
+				sb.append("\t");
+
+				Iterator<Path> iterator = node.getPath().iterator();
+				while (iterator.hasNext()) {
+					sb.append("\t");
+					sb.append(iterator.next());
+				}
+				sb.append("\n");
+
+			}
+
+			codeCountReport.detailsReport = sb.toString();
+			return codeCountReport;
+
 		}
 
 		private Set<Path> directories = new LinkedHashSet<>();
@@ -134,15 +129,13 @@ public class CodeCountReport {
 			Objects.requireNonNull(dir);
 			Objects.requireNonNull(attrs);
 
-			Node node = new Node(dir);		
+			Node node = new Node(dir);
 			map.put(dir, node);
 			Node parentNode = map.get(dir.getParent());
 			if (parentNode == null) {
 				parentNode = rootNode;
 			}
 			parentNode.addChildNode(node);
-				
-			
 
 			return FileVisitResult.CONTINUE;
 		}
@@ -176,16 +169,16 @@ public class CodeCountReport {
 	}
 
 	private static class Node implements Comparable<Node> {
-		
-		public List<Node> getAllNodes(){
+
+		public List<Node> getAllNodes() {
 			List<Node> result = new ArrayList<>();
 			result.add(this);
-			for(Node childNode : children) {
+			for (Node childNode : children) {
 				result.addAll(childNode.getAllNodes());
 			}
 			return result;
 		}
-		
+
 		private void cascadeLineCounts() {
 			Collections.sort(children);
 			for (Node childNode : children) {
@@ -193,15 +186,15 @@ public class CodeCountReport {
 			}
 			for (Node childNode : children) {
 				for (LineType lineType : LineType.values()) {
-					increment(lineType,childNode.getLineCount(lineType));					
+					increment(lineType, childNode.getLineCount(lineType));
 				}
 			}
 		}
-		
+
 		private int getLineCount(LineType lineType) {
 			return counterMap.get(lineType).getValue();
 		}
-		
+
 		private void increment(LineType lineType, int count) {
 			counterMap.get(lineType).increment(count);
 		}
@@ -209,9 +202,9 @@ public class CodeCountReport {
 		public void addChildNode(Node node) {
 			children.add(node);
 		}
-		
+
 		private List<Node> children = new ArrayList<>();
-		
+
 		private Map<LineType, MutableInteger> counterMap = new LinkedHashMap<>();
 
 		private final Path path;
@@ -322,6 +315,5 @@ public class CodeCountReport {
 		CODE, COMMENT, BLANK;
 
 	}
-
 
 }

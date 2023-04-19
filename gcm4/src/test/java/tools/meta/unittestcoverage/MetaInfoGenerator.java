@@ -58,12 +58,11 @@ public class MetaInfoGenerator {
 	private void probeClass(Class<?> c) {
 		final Method[] methods = c.getMethods();
 		boolean isEnum = c.isEnum();
-		
 
 		for (final Method method : methods) {
 
 			boolean addRec = method.getDeclaringClass().equals(c);
-			
+
 			addRec &= !method.isBridge();
 			addRec &= !method.isSynthetic();
 			addRec &= !(Modifier.isAbstract(method.getModifiers()) && !isEnum);
@@ -306,6 +305,12 @@ public class MetaInfoGenerator {
 		private Path sourcePath;
 
 		private Path testPath;
+		
+		public Data() {}
+		public Data(Data data) {
+			sourcePath = data.sourcePath;
+			testPath = data.testPath;
+		}
 	}
 
 	public final static Builder builder() {
@@ -319,12 +324,8 @@ public class MetaInfoGenerator {
 		private Data data = new Data();
 
 		public MetaInfoGenerator build() {
-			try {
-				validate();
-				return new MetaInfoGenerator(data);
-			} finally {
-				data = new Data();
-			}
+			validate();
+			return new MetaInfoGenerator(new Data(data));
 		}
 
 		private void validate() {

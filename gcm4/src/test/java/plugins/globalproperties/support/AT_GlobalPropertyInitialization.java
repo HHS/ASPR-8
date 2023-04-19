@@ -23,38 +23,50 @@ public class AT_GlobalPropertyInitialization {
 	@UnitTestMethod(target = GlobalPropertyInitialization.Builder.class, name = "build", args = {})
 	public void testBuild() {
 
-		GlobalPropertyInitialization.Builder builder = GlobalPropertyInitialization.builder();
 		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).build();
 
-		builder.setValue(5);
-		builder.setGlobalPropertyId(new SimpleGlobalPropertyId("firstTestId"));
-		builder.setPropertyDefinition(propertyDefinition);
-		assertNotNull(builder.build());
+		assertNotNull(GlobalPropertyInitialization	.builder()//
+													.setValue(5)//
+													.setGlobalPropertyId(new SimpleGlobalPropertyId("firstTestId"))//
+													.setPropertyDefinition(propertyDefinition).build());
 
 		// precondition test: if property id is not set
-		builder.setPropertyDefinition(propertyDefinition);
-		builder.setValue(5);
-		ContractException idContractException = assertThrows(ContractException.class, () -> builder.build());
+		ContractException idContractException = assertThrows(ContractException.class, () -> {
+			GlobalPropertyInitialization.builder()//
+										.setPropertyDefinition(propertyDefinition)//
+										.setValue(5)//
+										.build();
+		});
+
 		assertEquals(PropertyError.NULL_PROPERTY_ID, idContractException.getErrorType());
 
 		// precondition test: if property definition is not set
-		builder.setGlobalPropertyId(new SimpleGlobalPropertyId("secondTestId"));
-		builder.setValue(6);
-		ContractException propertyContractException = assertThrows(ContractException.class, () -> builder.build());
+		ContractException propertyContractException = assertThrows(ContractException.class, () -> {
+			GlobalPropertyInitialization.builder()//
+										.setGlobalPropertyId(new SimpleGlobalPropertyId("secondTestId"))//
+										.setValue(6).build();
+		});
 		assertEquals(PropertyError.NULL_PROPERTY_DEFINITION, propertyContractException.getErrorType());
 
 		// precondition test: if the property value is not set
-		builder.setGlobalPropertyId(new SimpleGlobalPropertyId("thirdTestId"));
-		builder.setPropertyDefinition(propertyDefinition);
-		ContractException valueContractException = assertThrows(ContractException.class, () -> builder.build());
+		ContractException valueContractException = assertThrows(ContractException.class, () -> {
+			GlobalPropertyInitialization.builder()//
+										.setGlobalPropertyId(new SimpleGlobalPropertyId("thirdTestId"))//
+										.setPropertyDefinition(propertyDefinition)//
+										.build();
+		});
+
 		assertEquals(PropertyError.INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT, valueContractException.getErrorType());
 
 		// precondition test: if the property definition and value types are
 		// incompatible
-		builder.setGlobalPropertyId(new SimpleGlobalPropertyId("fourthTestId"));
-		builder.setPropertyDefinition(propertyDefinition);
-		builder.setValue(15.5f);
-		ContractException incompatibleContractException = assertThrows(ContractException.class, () -> builder.build());
+		ContractException incompatibleContractException = assertThrows(ContractException.class, () -> {
+			GlobalPropertyInitialization.builder()//
+										.setGlobalPropertyId(new SimpleGlobalPropertyId("fourthTestId"))//
+										.setPropertyDefinition(propertyDefinition)//
+										.setValue(15.5f).build();
+		});
+
 		assertEquals(PropertyError.INCOMPATIBLE_VALUE, incompatibleContractException.getErrorType());
 
 	}

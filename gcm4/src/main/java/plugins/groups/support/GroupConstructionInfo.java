@@ -22,6 +22,14 @@ public final class GroupConstructionInfo {
 	private static class Data {
 		private GroupTypeId groupTypeId;
 		private Map<GroupPropertyId, Object> propertyValues = new LinkedHashMap<>();
+
+		public Data() {
+		}
+
+		public Data(Data data) {
+			groupTypeId = data.groupTypeId;
+			propertyValues.putAll(data.propertyValues);
+		}
 	}
 
 	/**
@@ -72,12 +80,8 @@ public final class GroupConstructionInfo {
 		 *             group type id was collected</li>
 		 */
 		public GroupConstructionInfo build() {
-			try {
-				validate();
-				return new GroupConstructionInfo(data);
-			} finally {
-				data = new Data();
-			}
+			validate();
+			return new GroupConstructionInfo(new Data(data));
 		}
 
 		/**
@@ -98,8 +102,10 @@ public final class GroupConstructionInfo {
 		 * Sets the group property value.
 		 * 
 		 * @throws ContractException
-		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the group property id is null</li>
-		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE} if the group property value is null</li>
+		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
+		 *             group property id is null</li>
+		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE} if the
+		 *             group property value is null</li>
 		 */
 		public Builder setGroupPropertyValue(GroupPropertyId groupPropertyId, Object groupPropertyValue) {
 			if (groupPropertyId == null) {

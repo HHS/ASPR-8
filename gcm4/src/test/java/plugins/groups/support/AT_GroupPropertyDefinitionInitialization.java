@@ -83,10 +83,11 @@ public class AT_GroupPropertyDefinitionInitialization {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(5838196849857214331L);
 		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setDefaultValue(Integer.toString(randomGenerator.nextInt(100))).setType(String.class).build();
 
-		GroupPropertyDefinitionInitialization.Builder definitionInitializationBuilder = GroupPropertyDefinitionInitialization.builder();
+		
 		List<Pair<GroupId, String>> expectedListOfPropertyValues = new ArrayList<>();
 
 		for (int i = 0; i < 10; i++) {
+			GroupPropertyDefinitionInitialization.Builder definitionInitializationBuilder = GroupPropertyDefinitionInitialization.builder();
 			GroupTypeId groupTypeId = TestGroupTypeId.getRandomGroupTypeId(randomGenerator);
 			GroupPropertyId groupPropertyId = TestGroupPropertyId.values()[randomGenerator.nextInt(TestGroupPropertyId.values().length)];
 
@@ -119,7 +120,7 @@ public class AT_GroupPropertyDefinitionInitialization {
 		GroupPropertyId groupPropertyId = TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK;
 		GroupId groupId = new GroupId(0);
 
-		GroupPropertyDefinitionInitialization.Builder builder = GroupPropertyDefinitionInitialization.builder();
+		
 
 		GroupPropertyDefinitionInitialization definitionInitialization = GroupPropertyDefinitionInitialization	.builder().setGroupTypeId(groupTypeId).setPropertyDefinition(propertyDefinition)
 																												.setPropertyId(groupPropertyId).build();
@@ -127,20 +128,20 @@ public class AT_GroupPropertyDefinitionInitialization {
 		assertNotNull(definitionInitialization);
 
 		// precondition: null property definition
-		ContractException contractException = assertThrows(ContractException.class, () -> builder.setGroupTypeId(groupTypeId).setPropertyId(groupPropertyId).build());
+		ContractException contractException = assertThrows(ContractException.class, () -> GroupPropertyDefinitionInitialization.builder().setGroupTypeId(groupTypeId).setPropertyId(groupPropertyId).build());
 		assertEquals(PropertyError.NULL_PROPERTY_DEFINITION, contractException.getErrorType());
 
 		// precondition: incompatible property definition value
 		contractException = assertThrows(ContractException.class,
-				() -> builder.setPropertyDefinition(propertyDefinition).setPropertyId(groupPropertyId).setGroupTypeId(groupTypeId).addPropertyValue(groupId, 1).build());
+				() -> GroupPropertyDefinitionInitialization.builder().setPropertyDefinition(propertyDefinition).setPropertyId(groupPropertyId).setGroupTypeId(groupTypeId).addPropertyValue(groupId, 1).build());
 		assertEquals(PropertyError.INCOMPATIBLE_VALUE, contractException.getErrorType());
 
 		// precondition: null groupTypeId
-		contractException = assertThrows(ContractException.class, () -> builder.setPropertyDefinition(propertyDefinition).setPropertyId(groupPropertyId).build());
+		contractException = assertThrows(ContractException.class, () -> GroupPropertyDefinitionInitialization.builder().setPropertyDefinition(propertyDefinition).setPropertyId(groupPropertyId).build());
 		assertEquals(GroupError.NULL_GROUP_TYPE_ID, contractException.getErrorType());
 
 		// precondition: null propertyId
-		contractException = assertThrows(ContractException.class, () -> builder.setPropertyDefinition(propertyDefinition).setGroupTypeId(groupTypeId).build());
+		contractException = assertThrows(ContractException.class, () -> GroupPropertyDefinitionInitialization.builder().setPropertyDefinition(propertyDefinition).setGroupTypeId(groupTypeId).build());
 		assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
 	}
 
@@ -221,9 +222,9 @@ public class AT_GroupPropertyDefinitionInitialization {
 		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setDefaultValue(Integer.toString(randomGenerator.nextInt(100))).setType(String.class).build();
 
 		List<Pair<GroupId, String>> expectedListOfPropertyValues = new ArrayList<>();
-		GroupPropertyDefinitionInitialization.Builder definitionInitializationBuilder = GroupPropertyDefinitionInitialization.builder();
-
+		
 		for (int i = 0; i < 10; i++) {
+			GroupPropertyDefinitionInitialization.Builder definitionInitializationBuilder = GroupPropertyDefinitionInitialization.builder();
 			GroupTypeId groupTypeId = TestGroupTypeId.getRandomGroupTypeId(randomGenerator);
 			GroupPropertyId groupPropertyId = TestGroupPropertyId.values()[randomGenerator.nextInt(TestGroupPropertyId.values().length)];
 
@@ -258,13 +259,15 @@ public class AT_GroupPropertyDefinitionInitialization {
 		GroupPropertyId groupPropertyId = TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK;
 
 		// precondition: null group id
+		
+		
 		ContractException contractException = assertThrows(ContractException.class,
-				() -> definitionInitializationBuilder	.setPropertyDefinition(propertyDefinition).setGroupTypeId(groupTypeId).setPropertyId(groupPropertyId)
+				() -> GroupPropertyDefinitionInitialization.builder()	.setPropertyDefinition(propertyDefinition).setGroupTypeId(groupTypeId).setPropertyId(groupPropertyId)
 														.addPropertyValue(null, Integer.toString(randomGenerator.nextInt(100))).build());
 		assertEquals(GroupError.NULL_GROUP_ID, contractException.getErrorType());
 
 		// precondition: null property value
-		contractException = assertThrows(ContractException.class, () -> definitionInitializationBuilder	.setPropertyDefinition(propertyDefinition).setGroupTypeId(groupTypeId)
+		contractException = assertThrows(ContractException.class, () -> GroupPropertyDefinitionInitialization.builder()	.setPropertyDefinition(propertyDefinition).setGroupTypeId(groupTypeId)
 																										.setPropertyId(groupPropertyId).addPropertyValue(new GroupId(15000), null).build());
 		assertEquals(PropertyError.NULL_PROPERTY_VALUE, contractException.getErrorType());
 

@@ -24,6 +24,17 @@ public final class Plugin {
 		private Set<PluginId> pluginDependencies = new LinkedHashSet<>();
 		private Set<PluginData> pluginDatas = new LinkedHashSet<>();
 		private Consumer<PluginContext> initializer;
+
+		public Data() {
+		}
+
+		public Data(Data data) {
+			pluginId = data.pluginId;
+			pluginDependencies.addAll(data.pluginDependencies);
+			pluginDatas.addAll(data.pluginDatas);
+			initializer = data.initializer;
+		}
+
 		@Override
 		public int hashCode() {
 			final int prime = 31;
@@ -33,6 +44,7 @@ public final class Plugin {
 			result = prime * result + ((pluginId == null) ? 0 : pluginId.hashCode());
 			return result;
 		}
+
 		@Override
 		public boolean equals(Object obj) {
 			if (this == obj) {
@@ -64,9 +76,8 @@ public final class Plugin {
 				return false;
 			}
 			return true;
-		}	
-		
-		
+		}
+
 	}
 
 	/**
@@ -102,16 +113,12 @@ public final class Plugin {
 		 *             plugin id was not set or set to null</li>
 		 */
 		public Plugin build() {
-			try {
-				validate();
-				return new Plugin(data);
-			} finally {
-				data = new Data();
-			}
+			validate();
+			return new Plugin(new Data(data));
 		}
 
 		public Builder setPluginId(PluginId pluginId) {
-			if(pluginId == null) {
+			if (pluginId == null) {
 				throw new ContractException(NucleusError.NULL_PLUGIN_ID);
 			}
 			data.pluginId = pluginId;
@@ -133,12 +140,12 @@ public final class Plugin {
 		 * contributed to a simulation or experiment.
 		 * 
 		 * @throws ContractException
-		 *            
+		 * 
 		 *             <li>{@link NucleusError#NULL_PLUGIN_ID} if the plugin id
 		 *             is null
 		 */
 		public Builder addPluginDependency(PluginId pluginId) {
-			if(pluginId == null) {
+			if (pluginId == null) {
 				throw new ContractException(NucleusError.NULL_PLUGIN_ID);
 			}
 			data.pluginDependencies.add(pluginId);
@@ -172,11 +179,12 @@ public final class Plugin {
 		 * practice for the initializer to be stateless.
 		 * 
 		 * @throws ContractException
-		 * <li>{@linkplain NucleusError#NULL_PLUGIN_INITIALIZER} if the initializer is null</li>
+		 *             <li>{@linkplain NucleusError#NULL_PLUGIN_INITIALIZER} if
+		 *             the initializer is null</li>
 		 * 
 		 */
 		public Builder setInitializer(Consumer<PluginContext> initializer) {
-			if(initializer == null) {
+			if (initializer == null) {
 				throw new ContractException(NucleusError.NULL_PLUGIN_INITIALIZER);
 			}
 			data.initializer = initializer;
@@ -223,7 +231,7 @@ public final class Plugin {
 	public final Optional<Consumer<PluginContext>> getInitializer() {
 		return Optional.ofNullable(data.initializer);
 	}
-	
+
 	/**
 	 * Implementation consistent with equals()
 	 */
