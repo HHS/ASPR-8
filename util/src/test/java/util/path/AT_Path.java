@@ -69,6 +69,7 @@ public class AT_Path {
 		builder.addEdge(1);
 		Path<Integer> path1 = builder.build();
 
+		builder = Path.builder();
 		builder.addEdge(1);
 		builder.addEdge(3);
 		builder.addEdge(4);
@@ -81,6 +82,7 @@ public class AT_Path {
 		assertEquals(path1, path1);
 		assertEquals(path2, path1);
 
+		builder = Path.builder();
 		builder.addEdge(1);
 		builder.addEdge(3);
 		builder.addEdge(4);
@@ -106,6 +108,8 @@ public class AT_Path {
 		builder.addEdge(1);
 		Path<Integer> path1 = builder.build();
 
+		
+		builder = Path.builder();
 		builder.addEdge(1);
 		builder.addEdge(3);
 		builder.addEdge(4);
@@ -172,6 +176,8 @@ public class AT_Path {
 		path = builder.build();
 		assertEquals(6, path.length());
 
+		
+		builder = Path.builder();
 		builder.addEdge(1);
 		builder.addEdge(2);
 		builder.addEdge(3);

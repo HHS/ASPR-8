@@ -18,7 +18,7 @@ import util.vector.Vector3D;
 /**
  * A generics-based utility class for managing point locations on a spherical
  * earth of WGS-84 mean radius. This utility specifically finds locations based
- * on a lat-lon coordinates and a search radius.
+ * on lat-lon coordinates and a search radius.
  * 
  * 
  */
@@ -50,8 +50,15 @@ public class GeoLocator<T> {
 	/*
 	 * Container for the location records collected by the builder
 	 */
-	private static class Scaffold<T> {
+	private static class Data<T> {
 		List<LocationRecord<T>> locationRecords = new ArrayList<>();
+
+		public Data() {
+		}
+
+		public Data(Data<T> data) {
+			locationRecords.addAll(data.locationRecords);
+		}
 	}
 
 	/**
@@ -62,7 +69,7 @@ public class GeoLocator<T> {
 	 * @param <T>
 	 */
 	public static class Builder<T> {
-		private Scaffold<T> scaffold = new Scaffold<>();
+		private Data<T> data = new Data<>();
 
 		private Builder() {
 		}
@@ -72,7 +79,7 @@ public class GeoLocator<T> {
 		 */
 		public Builder<T> addLocation(double latDegrees, double lonDegrees, T location) {
 			LocationRecord<T> locationRecord = new LocationRecord<>(latDegrees, lonDegrees, location);
-			scaffold.locationRecords.add(locationRecord);
+			data.locationRecords.add(locationRecord);
 			return this;
 		}
 
@@ -81,11 +88,7 @@ public class GeoLocator<T> {
 		 * to this builder.
 		 */
 		public GeoLocator<T> build() {
-			try {
-				return new GeoLocator<>(scaffold);
-			} finally {
-				scaffold = new Scaffold<>();
-			}
+			return new GeoLocator<>(new Data<>(data));
 		}
 	}
 
@@ -117,7 +120,7 @@ public class GeoLocator<T> {
 	 */
 	private final Earth earth = Earth.fromMeanRadius();
 
-	private GeoLocator(Scaffold<T> scaffold) {
+	private GeoLocator(Data<T> scaffold) {
 
 		/*
 		 * Create the Location Position Records(ecc-vector based) from the

@@ -50,11 +50,10 @@ public final class BinContainer {
 	private final int highIndex;
 
 	public static class Builder {
-		private final double binSize;
+		
 		private MutableBinContainer mutableBinContainer;
 
-		private Builder(double binSize) {
-			this.binSize = binSize;
+		private Builder(double binSize) {			
 			mutableBinContainer = new MutableBinContainer(binSize);
 		}
 
@@ -62,12 +61,8 @@ public final class BinContainer {
 		 * Builds the {@link BinContainer} from the contributed values.
 		 * 
 		 */
-		public BinContainer build() {
-			try {
-				return new BinContainer(mutableBinContainer);
-			} finally {
-				mutableBinContainer = new MutableBinContainer(binSize);
-			}
+		public BinContainer build() {			
+			return new BinContainer(mutableBinContainer);			
 		}
 
 		/**

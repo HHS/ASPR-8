@@ -634,10 +634,12 @@ public class AT_Graph {
 
 		assertFalse(graph.isEmpty());
 
+		builder = Graph.builder();
 		builder.addEdge("A->B", "A", "B");
 		graph = builder.build();
 		assertFalse(graph.isEmpty());
 
+		builder = Graph.builder();
 		graph = builder.build();
 		assertTrue(graph.isEmpty());
 	}

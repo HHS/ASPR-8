@@ -21,7 +21,7 @@ public class WellState {
 			simple = data.simple;
 			seed = data.seed;
 			index = data.index;
-			vArray = Arrays.copyOf(vArray, vArray.length);
+			vArray = Arrays.copyOf(data.vArray, data.vArray.length);
 		}
 
 		@Override

@@ -28,16 +28,22 @@ public class VolumetricDimensionTree<T> {
 
 	}
 
-	private static class InitialTreeSettings {
+	private static class Data {
 		private double[] lowerBounds;
 		private double[] upperBounds;
 		private int leafSize = DEFAULTLEAFSIZE;
 		private boolean fastRemovals = false;
-	}
 
-	// public static <T> Builder<T> builder(Class<T> c) {
-	// return new Builder<>();
-	// }
+		public Data() {
+		}
+
+		public Data(Data data) {
+			lowerBounds = Arrays.copyOf(data.lowerBounds, data.lowerBounds.length);
+			upperBounds = Arrays.copyOf(data.upperBounds, data.upperBounds.length);
+			leafSize = data.leafSize;
+			fastRemovals = data.fastRemovals;
+		}
+	}
 
 	public static Builder builder() {
 		return new Builder();
@@ -45,39 +51,33 @@ public class VolumetricDimensionTree<T> {
 
 	public static class Builder {
 
-		private InitialTreeSettings initialTreeSettings = new InitialTreeSettings();
+		private Data data = new Data();
 
 		private Builder() {
 		}
 
 		public Builder setFastRemovals(boolean fastRemovals) {
-			initialTreeSettings.fastRemovals = fastRemovals;
+			data.fastRemovals = fastRemovals;
 			return this;
 		}
 
 		public Builder setLeafSize(int leafSize) {
-			initialTreeSettings.leafSize = leafSize;
+			data.leafSize = leafSize;
 			return this;
 		}
 
 		public Builder setLowerBounds(double[] lowerBounds) {
-			initialTreeSettings.lowerBounds = Arrays.copyOf(lowerBounds, lowerBounds.length);
+			data.lowerBounds = Arrays.copyOf(lowerBounds, lowerBounds.length);
 			return this;
 		}
 
 		public Builder setUpperBounds(double[] upperBounds) {
-			initialTreeSettings.upperBounds = Arrays.copyOf(upperBounds, upperBounds.length);
+			data.upperBounds = Arrays.copyOf(upperBounds, upperBounds.length);
 			return this;
 		}
 
 		public <T> VolumetricDimensionTree<T> build() {
-
-			try {
-				return new VolumetricDimensionTree<>(initialTreeSettings);
-			} finally {
-				initialTreeSettings = new InitialTreeSettings();
-			}
-
+			return new VolumetricDimensionTree<>(new Data(data));
 		}
 	}
 
@@ -159,20 +159,20 @@ public class VolumetricDimensionTree<T> {
 
 	}
 
-	private final InitialTreeSettings initialTreeSettings;
+	private final Data data;
 
 	private Map<Integer, DimensionTreeRec<T>> treeMap = new LinkedHashMap<>();
 
 	private DimensionTreeRec<T> defaultDimensionTreeRec;
 
-	private VolumetricDimensionTree(InitialTreeSettings initialTreeSettings) {
-		this.initialTreeSettings = initialTreeSettings;
+	private VolumetricDimensionTree(Data data) {
+		this.data = data;
 		defaultDimensionTreeRec = new DimensionTreeRec<>();
 		defaultDimensionTreeRec.dimensionTree = DimensionTree	.builder()//
-																.setLowerBounds(initialTreeSettings.lowerBounds)//
-																.setUpperBounds(initialTreeSettings.upperBounds)//
-																.setLeafSize(initialTreeSettings.leafSize)//
-																.setFastRemovals(initialTreeSettings.fastRemovals)//
+																.setLowerBounds(data.lowerBounds)//
+																.setUpperBounds(data.upperBounds)//
+																.setLeafSize(data.leafSize)//
+																.setFastRemovals(data.fastRemovals)//
 																.build();//
 
 		defaultDimensionTreeRec.maxRadius = 0;
@@ -200,10 +200,10 @@ public class VolumetricDimensionTree<T> {
 			if (dimensionTreeRec == null) {
 				dimensionTreeRec = new DimensionTreeRec<>();
 
-				dimensionTreeRec.dimensionTree = DimensionTree	.builder().setLowerBounds(initialTreeSettings.lowerBounds)//
-																.setUpperBounds(initialTreeSettings.upperBounds)//
-																.setLeafSize(initialTreeSettings.leafSize)//
-																.setFastRemovals(initialTreeSettings.fastRemovals)//
+				dimensionTreeRec.dimensionTree = DimensionTree	.builder().setLowerBounds(data.lowerBounds)//
+																.setUpperBounds(data.upperBounds)//
+																.setLeafSize(data.leafSize)//
+																.setFastRemovals(data.fastRemovals)//
 																.build();//
 
 				dimensionTreeRec.maxRadius = FastMath.exp(index);

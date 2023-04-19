@@ -35,20 +35,16 @@ public final class Path<E> {
 			return this;
 		}
 
-		public Path<T> build() {
-			try {
-				return new Path<>(edges);
-			} finally {
-				edges = new ArrayList<>();
-			}
+		public Path<T> build() {			
+			return new Path<>(edges);			
 		}
 	}
 
 	private Path(List<E> edges) {
-		this.edges = edges;
+		this.edges.addAll(edges);
 	}
 
-	private final List<E> edges;
+	private final List<E> edges = new ArrayList<>();
 
 	/**
 	 * Returns a list over the edges in the path walk. Note that the path may
