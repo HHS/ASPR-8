@@ -11,6 +11,7 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslatorCore;
+import gov.hhs.aspr.translation.protobuf.core.testsupport.TestResourceHelper;
 import gov.hhs.aspr.translation.core.TranslatorController;
 import gov.hhs.aspr.gcm.translation.protobuf.nucleus.input.SimulationStateInput;
 import gov.hss.aspr.gcm.translation.protobuf.nucleus.simObjects.ExamplePlanData;
@@ -21,43 +22,24 @@ import nucleus.SimulationState;
 import util.random.RandomGeneratorProvider;
 
 public class AppTest {
-    Path basePath = getCurrentDir();
-    Path inputFilePath = basePath.resolve("json");
-    Path outputFilePath = makeOutputDir();
-
-    private Path getCurrentDir() {
-        try {
-            return Path.of(this.getClass().getClassLoader().getResource("").toURI());
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private Path makeOutputDir() {
-        Path path = basePath.resolve("json/output");
-
-        path.toFile().mkdirs();
-
-        return path;
-    }
+    Path basePath = TestResourceHelper.getResourceDir(this.getClass());
+    Path filePath = TestResourceHelper.makeTestOutputDir(basePath);
 
     @Test
     public void testSimulationStateTranslator() {
         String fileName = "simulationState.json";
 
+        TestResourceHelper.createTestOutputFile(filePath, fileName);
+
         TranslatorController translatorController = TranslatorController.builder()
                 .setTranslatorCoreBuilder(ProtobufTranslatorCore.builder()
                         .addTranslatorSpec(new ExamplePlanDataTranslatorSpec()))
                 .addTranslator(NucleusTranslator.getTranslator())
-                .addInputFilePath(inputFilePath.resolve(fileName), SimulationStateInput.class)
-                .addOutputFilePath(outputFilePath.resolve(fileName), SimulationState.class)
+                .addInputFilePath(filePath.resolve(fileName), SimulationStateInput.class)
+                .addOutputFilePath(filePath.resolve(fileName), SimulationState.class)
                 .build();
 
-        translatorController.readInput();
-
-        SimulationState actualSimulationState = translatorController.getObject(SimulationState.class);
-
-        RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6625494580697137579L);
+                RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6625494580697137579L);
 
         long arrivalId = randomGenerator.nextLong();
         SimulationState.Builder builder = SimulationState.builder();
@@ -90,6 +72,14 @@ public class AppTest {
 
         SimulationState exptectedSimulationState = builder.build();
 
+        translatorController.writeOutput(exptectedSimulationState);
+
+        translatorController.readInput();
+
+        SimulationState actualSimulationState = translatorController.getObject(SimulationState.class);
+
+        
+
         assertEquals(exptectedSimulationState.getBaseDate(), actualSimulationState.getBaseDate());
         assertEquals(exptectedSimulationState.getStartTime(), actualSimulationState.getStartTime());
         assertEquals(exptectedSimulationState.getPlanningQueueArrivalId(),
@@ -114,7 +104,8 @@ public class AppTest {
             assertEquals(expecetdPlanQueueData.getPlanData(), actualPlanQueueData.getPlanData());
         }
 
-        translatorController.writeOutput();
+        
+        // TODO: fix equals contract for Simulation State
     }
 
 }
