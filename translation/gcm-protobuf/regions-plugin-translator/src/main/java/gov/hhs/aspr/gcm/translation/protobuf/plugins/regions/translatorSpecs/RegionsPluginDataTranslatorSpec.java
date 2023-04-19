@@ -11,7 +11,7 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.input.RegionIdInput
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.input.RegionMembershipInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.input.RegionPropertyValueMapInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.input.RegionsPluginDataInput;
-import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractProtobufTranslatorSpec;
+import gov.hhs.aspr.translation.protobuf.core.AbstractProtobufTranslatorSpec;
 import plugins.regions.support.RegionId;
 import plugins.regions.support.RegionPropertyId;
 import plugins.util.properties.PropertyDefinition;
@@ -25,7 +25,7 @@ public class RegionsPluginDataTranslatorSpec extends AbstractProtobufTranslatorS
 
         // add regions
         for (RegionIdInput regionIdInput : inputObject.getRegionIdsList()) {
-            RegionId regionId = this.translator.convertInputObject(regionIdInput, RegionId.class);
+            RegionId regionId = this.translator.convertInputObject(regionIdInput);
 
             builder.addRegion(regionId);
         }
@@ -33,7 +33,7 @@ public class RegionsPluginDataTranslatorSpec extends AbstractProtobufTranslatorS
         // define regions
         for (PropertyDefinitionMapInput propertyDefinitionMapInput : inputObject.getRegionPropertyDefinitionsList()) {
             RegionPropertyId regionPropertyId = this.translator
-                    .getObjectFromAny(propertyDefinitionMapInput.getPropertyId(), RegionPropertyId.class);
+                    .getObjectFromAny(propertyDefinitionMapInput.getPropertyId());
             PropertyDefinition propertyDefinition = this.translator
                     .convertInputObject(propertyDefinitionMapInput.getPropertyDefinition());
 
@@ -42,11 +42,10 @@ public class RegionsPluginDataTranslatorSpec extends AbstractProtobufTranslatorS
 
         // add region property values
         for (RegionPropertyValueMapInput regionPropertyValueMapInput : inputObject.getRegionPropertyValuesList()) {
-            RegionId regionId = this.translator.convertInputObject(regionPropertyValueMapInput.getRegionId(),
-                    RegionId.class);
+            RegionId regionId = this.translator.convertInputObject(regionPropertyValueMapInput.getRegionId());
             for (PropertyValueMapInput propertyValueMapInput : regionPropertyValueMapInput.getPropertyValueMapList()) {
                 RegionPropertyId regionPropertyId = this.translator
-                        .getObjectFromAny(propertyValueMapInput.getPropertyId(), RegionPropertyId.class);
+                        .getObjectFromAny(propertyValueMapInput.getPropertyId());
                 Object regionPropertyValue = this.translator.getObjectFromAny(propertyValueMapInput.getPropertyValue());
 
                 builder.setRegionPropertyValue(regionId, regionPropertyId, regionPropertyValue);
@@ -56,13 +55,13 @@ public class RegionsPluginDataTranslatorSpec extends AbstractProtobufTranslatorS
         // assign people to regions
         for (RegionMembershipInput regionMembershipInput : inputObject.getPersonRegionsList()) {
             PersonId personId = this.translator.convertInputObject(regionMembershipInput.getPersonId());
-            RegionId regionId = this.translator.convertInputObject(regionMembershipInput.getRegionId(), RegionId.class);
+            RegionId regionId = this.translator.convertInputObject(regionMembershipInput.getRegionId());
 
             builder.setPersonRegion(personId, regionId);
         }
 
         TimeTrackingPolicy timeTrackingPolicy = this.translator
-                .convertInputEnum(inputObject.getRegionArrivalTimeTrackingPolicy());
+                .convertInputObject(inputObject.getRegionArrivalTimeTrackingPolicy());
         builder.setPersonRegionArrivalTracking(timeTrackingPolicy);
 
         return builder.build();
@@ -134,11 +133,6 @@ public class RegionsPluginDataTranslatorSpec extends AbstractProtobufTranslatorS
         builder.setRegionArrivalTimeTrackingPolicy(timeTrackingPolicyInput);
 
         return builder.build();
-    }
-
-    @Override
-    public RegionsPluginDataInput getDefaultInstanceForInputObject() {
-        return RegionsPluginDataInput.getDefaultInstance();
     }
 
     @Override

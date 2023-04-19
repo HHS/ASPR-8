@@ -1,24 +1,19 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.translatorSpecs;
 
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.input.RegionIdInput;
-import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractProtobufTranslatorSpec;
+import gov.hhs.aspr.translation.protobuf.core.AbstractProtobufTranslatorSpec;
 import plugins.regions.support.RegionId;
 
 public class RegionIdTranslatorSpec extends AbstractProtobufTranslatorSpec<RegionIdInput, RegionId> {
 
     @Override
     protected RegionId convertInputObject(RegionIdInput inputObject) {
-        return this.translator.getObjectFromAny(inputObject.getId(), getAppObjectClass());
+        return this.translator.getObjectFromAny(inputObject.getId());
     }
 
     @Override
     protected RegionIdInput convertAppObject(RegionId simObject) {
         return RegionIdInput.newBuilder().setId(this.translator.getAnyFromObject(simObject)).build();
-    }
-
-    @Override
-    public RegionIdInput getDefaultInstanceForInputObject() {
-        return RegionIdInput.getDefaultInstance();
     }
 
     @Override

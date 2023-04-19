@@ -1,6 +1,6 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.translatorSpecs;
 
-import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractProtobufTranslatorSpec;
+import gov.hhs.aspr.translation.protobuf.core.AbstractProtobufTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.input.RegionTransferReportPluginDataInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.input.ReportLabelInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.input.ReportPeriodInput;
@@ -16,7 +16,7 @@ public class RegionTransferReportPluginDataTranslatorSpec
         RegionTransferReportPluginData.Builder builder = RegionTransferReportPluginData.builder();
 
         ReportLabel reportLabel = this.translator.convertInputObject(inputObject.getReportLabel());
-        ReportPeriod reportPeriod = this.translator.convertInputEnum(inputObject.getReportPeriod());
+        ReportPeriod reportPeriod = this.translator.convertInputObject(inputObject.getReportPeriod());
 
         builder.setReportLabel(reportLabel).setReportPeriod(reportPeriod);
 
@@ -34,11 +34,6 @@ public class RegionTransferReportPluginDataTranslatorSpec
         builder.setReportLabel(reportLabelInput).setReportPeriod(reportPeriodInput);
 
         return builder.build();
-    }
-
-    @Override
-    public RegionTransferReportPluginDataInput getDefaultInstanceForInputObject() {
-        return RegionTransferReportPluginDataInput.getDefaultInstance();
     }
 
     @Override

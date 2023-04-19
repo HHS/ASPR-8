@@ -1,6 +1,6 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.regions;
 
-import gov.hhs.aspr.gcm.translation.core.Translator;
+import gov.hhs.aspr.translation.core.Translator;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.PeopleTranslatorId;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.PropertiesTranslatorId;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.translatorSpecs.RegionIdTranslatorSpec;
@@ -17,7 +17,6 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.ReportsTranslatorId
 public class RegionsTranslator {
 
     private RegionsTranslator() {
-
     }
 
     public static Translator.Builder builder(boolean withReport) {
@@ -43,14 +42,15 @@ public class RegionsTranslator {
         if (withReport) {
             builder.addDependency(ReportsTranslatorId.TRANSLATOR_ID);
         }
+
         return builder;
     }
 
-    public static Translator.Builder builder() {
-        return builder(false);
+    public static Translator getTranslatorWithReport() {
+        return builder(true).build();
     }
 
     public static Translator getTranslator() {
-        return builder().build();
+        return builder(false).build();
     }
 }

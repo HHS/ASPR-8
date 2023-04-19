@@ -1,6 +1,6 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.translatorSpecs;
 
-import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractProtobufTranslatorSpec;
+import gov.hhs.aspr.translation.protobuf.core.AbstractProtobufTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.input.RegionPropertyIdInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.input.RegionPropertyReportPluginDataInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.input.ReportLabelInput;
@@ -16,20 +16,18 @@ public class RegionPropertyReportPluginDataTranslatorSpec
     protected RegionPropertyReportPluginData convertInputObject(RegionPropertyReportPluginDataInput inputObject) {
         RegionPropertyReportPluginData.Builder builder = RegionPropertyReportPluginData.builder();
 
-        ReportLabel reportLabel = this.translator.convertInputObject(inputObject.getReportLabel(), ReportLabel.class);
+        ReportLabel reportLabel = this.translator.convertInputObject(inputObject.getReportLabel());
         builder.setReportLabel(reportLabel);
 
         builder.setDefaultInclusion(inputObject.getDefaultInclusionPolicy());
 
         for (RegionPropertyIdInput regionPropertyIdInput : inputObject.getIncludedPropertiesList()) {
-            RegionPropertyId regionPropertyId = this.translator.convertInputObject(regionPropertyIdInput,
-                    RegionPropertyId.class);
+            RegionPropertyId regionPropertyId = this.translator.convertInputObject(regionPropertyIdInput);
             builder.includeRegionProperty(regionPropertyId);
         }
 
         for (RegionPropertyIdInput regionPropertyIdInput : inputObject.getExcludedPropertiesList()) {
-            RegionPropertyId regionPropertyId = this.translator.convertInputObject(regionPropertyIdInput,
-                    RegionPropertyId.class);
+            RegionPropertyId regionPropertyId = this.translator.convertInputObject(regionPropertyIdInput);
             builder.excludeRegionProperty(regionPropertyId);
         }
 
@@ -60,11 +58,6 @@ public class RegionPropertyReportPluginDataTranslatorSpec
         }
 
         return builder.build();
-    }
-
-    @Override
-    public RegionPropertyReportPluginDataInput getDefaultInstanceForInputObject() {
-        return RegionPropertyReportPluginDataInput.getDefaultInstance();
     }
 
     @Override
