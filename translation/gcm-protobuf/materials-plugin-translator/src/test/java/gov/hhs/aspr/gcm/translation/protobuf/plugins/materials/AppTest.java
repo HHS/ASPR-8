@@ -1,19 +1,9 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.materials;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
 
-import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.input.BatchStatusReportPluginDataInput;
@@ -34,21 +24,9 @@ import plugins.materials.reports.BatchStatusReportPluginData;
 import plugins.materials.reports.MaterialsProducerPropertyReportPluginData;
 import plugins.materials.reports.MaterialsProducerResourceReportPluginData;
 import plugins.materials.reports.StageReportPluginData;
-import plugins.materials.support.BatchId;
-import plugins.materials.support.BatchPropertyId;
-import plugins.materials.support.MaterialId;
-import plugins.materials.support.MaterialsProducerId;
-import plugins.materials.support.MaterialsProducerPropertyId;
-import plugins.materials.support.StageId;
 import plugins.materials.testsupport.MaterialsTestPluginFactory;
-import plugins.materials.testsupport.TestBatchPropertyId;
-import plugins.materials.testsupport.TestMaterialId;
-import plugins.materials.testsupport.TestMaterialsProducerId;
-import plugins.materials.testsupport.TestMaterialsProducerPropertyId;
 import plugins.reports.support.ReportLabel;
 import plugins.reports.support.SimpleReportLabel;
-import plugins.util.properties.PropertyDefinition;
-import util.random.RandomGeneratorProvider;
 
 public class AppTest {
 	Path basePath = TestResourceHelper.getResourceDir(this.getClass());
@@ -84,129 +62,7 @@ public class AppTest {
 		translatorController.readInput();
 		MaterialsPluginData actualPluginData = translatorController.getObject(MaterialsPluginData.class);
 
-		Set<TestMaterialId> expectedMaterialIds = EnumSet.allOf(TestMaterialId.class);
-		assertFalse(expectedMaterialIds.isEmpty());
-
-		Set<MaterialId> actualMaterialIds = actualPluginData.getMaterialIds();
-		assertEquals(expectedMaterialIds, actualMaterialIds);
-
-		for (TestMaterialId expectedMaterialId : expectedMaterialIds) {
-			Set<TestBatchPropertyId> expectedBatchPropertyIds = TestBatchPropertyId
-					.getTestBatchPropertyIds(expectedMaterialId);
-			assertFalse(expectedBatchPropertyIds.isEmpty());
-			Set<BatchPropertyId> actualBatchPropertyIds = actualPluginData.getBatchPropertyIds(expectedMaterialId);
-			assertEquals(expectedBatchPropertyIds, actualBatchPropertyIds);
-			for (TestBatchPropertyId batchPropertyId : expectedBatchPropertyIds) {
-				PropertyDefinition expectedPropertyDefinition = batchPropertyId.getPropertyDefinition();
-				PropertyDefinition actualPropertyDefinition = actualPluginData.getBatchPropertyDefinition(
-						expectedMaterialId,
-						batchPropertyId);
-				assertEquals(expectedPropertyDefinition, actualPropertyDefinition);
-			}
-		}
-
-		Set<TestMaterialsProducerId> expectedMaterialsProducerIds = EnumSet.allOf(TestMaterialsProducerId.class);
-		assertFalse(expectedMaterialsProducerIds.isEmpty());
-		Set<MaterialsProducerId> actualProducerIds = actualPluginData.getMaterialsProducerIds();
-		assertEquals(expectedMaterialsProducerIds, actualProducerIds);
-
-		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
-
-		assertEquals(numBatches * expectedMaterialsProducerIds.size(), actualPluginData.getBatchIds().size());
-		assertEquals(numStages * expectedMaterialsProducerIds.size(), actualPluginData.getStageIds().size());
-
-		int expectedNumBatchesPerStage = numBatchesInStage * expectedMaterialsProducerIds.size();
-		int actualNumBatchesPerStage = 0;
-
-		int bId = 0;
-		int sId = 0;
-		for (TestMaterialsProducerId expectedProducerId : expectedMaterialsProducerIds) {
-
-			List<BatchId> batches = new ArrayList<>();
-			for (int i = 0; i < numBatches; i++) {
-				batches.add(new BatchId(bId++));
-			}
-			assertTrue(actualPluginData.getBatchIds().containsAll(batches));
-
-			for (BatchId batchId : batches) {
-
-				TestMaterialId expectedMaterialId = TestMaterialId.getRandomMaterialId(randomGenerator);
-				double expectedAmount = randomGenerator.nextDouble();
-
-				MaterialId actualMaterialId = actualPluginData.getBatchMaterial(batchId);
-				assertEquals(expectedMaterialId, actualMaterialId);
-
-				double actualAmount = actualPluginData.getBatchAmount(batchId);
-				assertEquals(expectedAmount, actualAmount);
-				for (TestBatchPropertyId expectedBatchPropertyId : TestBatchPropertyId
-						.getTestBatchPropertyIds(expectedMaterialId)) {
-					if (expectedBatchPropertyId.getPropertyDefinition().getDefaultValue().isEmpty()
-							|| randomGenerator.nextBoolean()) {
-						Object expectedPropertyValue = expectedBatchPropertyId.getRandomPropertyValue(randomGenerator);
-
-						Map<BatchPropertyId, Object> propertyValueMap = actualPluginData
-								.getBatchPropertyValues(batchId);
-						assertTrue(propertyValueMap.containsKey(expectedBatchPropertyId));
-						assertEquals(expectedPropertyValue, propertyValueMap.get(expectedBatchPropertyId));
-					}
-				}
-			}
-
-			List<StageId> stages = new ArrayList<>();
-			for (int i = 0; i < numStages; i++) {
-				stages.add(new StageId(sId++));
-			}
-			assertTrue(actualPluginData.getStageIds().containsAll(stages));
-
-			for (int i = 0; i < stages.size(); i++) {
-				MaterialsProducerId actualMaterialsProducerId = actualPluginData
-						.getStageMaterialsProducer(stages.get(i));
-				assertEquals(expectedProducerId, actualMaterialsProducerId);
-				boolean expectedOffered = i % 2 == 0;
-				boolean actualOffered = actualPluginData.isStageOffered(stages.get(i));
-				assertTrue(expectedOffered == actualOffered);
-			}
-
-			Collections.shuffle(batches, new Random(randomGenerator.nextLong()));
-			for (int i = 0; i < numBatchesInStage; i++) {
-				StageId expectedStageId = stages.get(randomGenerator.nextInt(stages.size()));
-				BatchId expectedBatchId = batches.get(i);
-
-				Set<BatchId> actualBatchIds = actualPluginData.getStageBatches(expectedStageId);
-				assertTrue(actualBatchIds.contains(expectedBatchId));
-				actualNumBatchesPerStage++;
-			}
-
-		}
-		assertEquals(expectedNumBatchesPerStage, actualNumBatchesPerStage);
-
-		Set<TestMaterialsProducerPropertyId> expectedMaterialsProducerPropertyIds = EnumSet
-				.allOf(TestMaterialsProducerPropertyId.class);
-		assertFalse(expectedMaterialsProducerPropertyIds.isEmpty());
-
-		Set<MaterialsProducerPropertyId> actualMaterialProducerPropertyIds = actualPluginData
-				.getMaterialsProducerPropertyIds();
-		assertEquals(expectedMaterialsProducerPropertyIds, actualMaterialProducerPropertyIds);
-
-		for (TestMaterialsProducerPropertyId expectedMaterialsProducerPropertyId : expectedMaterialsProducerPropertyIds) {
-			PropertyDefinition expectedPropertyDefinition = expectedMaterialsProducerPropertyId.getPropertyDefinition();
-			PropertyDefinition actualPropertyDefinition = actualPluginData
-					.getMaterialsProducerPropertyDefinition(expectedMaterialsProducerPropertyId);
-			assertEquals(expectedPropertyDefinition, actualPropertyDefinition);
-			if (expectedPropertyDefinition.getDefaultValue().isEmpty()) {
-				for (TestMaterialsProducerId producerId : expectedMaterialsProducerIds) {
-					Object expectedPropertyValue = expectedMaterialsProducerPropertyId
-							.getRandomPropertyValue(randomGenerator);
-					Map<MaterialsProducerPropertyId, Object> propertyValueMap = actualPluginData
-							.getMaterialsProducerPropertyValues(producerId);
-					assertTrue(propertyValueMap.containsKey(expectedMaterialsProducerPropertyId));
-					Object actualPropertyValue = propertyValueMap.get(expectedMaterialsProducerPropertyId);
-					assertEquals(expectedPropertyValue, actualPropertyValue);
-				}
-			}
-		}
-		// TODO: fix Materials equals contract
-		// assertEquals(expectedPluginData, actualPluginData);
+		assertEquals(expectedPluginData, actualPluginData);
 	}
 
 	@Test
