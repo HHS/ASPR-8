@@ -47,7 +47,7 @@ public class PlanQueueDataTranslatorSpec extends AbstractProtobufTranslatorSpec<
         PlannerInput plannerInput = this.translator.convertSimObject(simObject.getPlanner());
         builder.setPlanner(plannerInput);
 
-        PlanDataInput planDataInput = this.translator.convertSimObject(simObject.getPlanData());
+        PlanDataInput planDataInput = this.translator.convertSimObject(simObject.getPlanData(), PlanData.class);
         builder.setPlanData(planDataInput);
 
         builder.setKey(this.translator.getAnyFromObject(simObject.getKey()));
