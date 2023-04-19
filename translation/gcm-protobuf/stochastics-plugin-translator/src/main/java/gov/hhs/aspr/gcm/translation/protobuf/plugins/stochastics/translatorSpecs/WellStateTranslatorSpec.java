@@ -5,7 +5,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.google.protobuf.ByteString;
 
-import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractProtobufTranslatorSpec;
+import gov.hhs.aspr.translation.protobuf.core.AbstractProtobufTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.stochastics.input.WellStateInput;
 import plugins.stochastics.support.WellState;
 
@@ -44,11 +44,6 @@ public class WellStateTranslatorSpec
         }
 
         return builder.build();
-    }
-
-    @Override
-    public WellStateInput getDefaultInstanceForInputObject() {
-        return WellStateInput.getDefaultInstance();
     }
 
     @Override

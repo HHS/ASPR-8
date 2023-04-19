@@ -1,7 +1,7 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.stochastics.translatorSpecs;
 
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.stochastics.input.TestRandomGeneratorIdInput;
-import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractProtobufTranslatorSpec;
+import gov.hhs.aspr.translation.protobuf.core.AbstractProtobufTranslatorSpec;
 import plugins.stochastics.testsupport.TestRandomGeneratorId;
 
 public class TestRandomGeneratorIdTranslatorSpec
@@ -15,11 +15,6 @@ public class TestRandomGeneratorIdTranslatorSpec
     @Override
     protected TestRandomGeneratorIdInput convertAppObject(TestRandomGeneratorId simObject) {
         return TestRandomGeneratorIdInput.valueOf(simObject.name());
-    }
-
-    @Override
-    public TestRandomGeneratorIdInput getDefaultInstanceForInputObject() {
-        return TestRandomGeneratorIdInput.forNumber(0);
     }
 
     @Override

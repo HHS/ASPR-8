@@ -4,7 +4,7 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.stochastics.input.RandomNum
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.stochastics.input.RandomNumberGeneratorMapInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.stochastics.input.StochasticsPluginDataInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.stochastics.input.WellStateInput;
-import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractProtobufTranslatorSpec;
+import gov.hhs.aspr.translation.protobuf.core.AbstractProtobufTranslatorSpec;
 import plugins.stochastics.StochasticsPluginData;
 import plugins.stochastics.support.RandomNumberGeneratorId;
 import plugins.stochastics.support.WellState;
@@ -22,7 +22,7 @@ public class StochasticsPluginDataTranslatorSpec
 
         for (RandomNumberGeneratorMapInput randomGenIdInput : inputObject.getRandomNumberGeneratorIdsList()) {
             RandomNumberGeneratorId generatorId = this.translator
-                    .convertInputObject(randomGenIdInput.getRandomNumberGeneratorId(), RandomNumberGeneratorId.class);
+                    .convertInputObject(randomGenIdInput.getRandomNumberGeneratorId());
             WellState generatorWellState = this.translator.convertInputObject(randomGenIdInput.getWellState());
             builder.addRNG(generatorId, generatorWellState);
         }
@@ -49,11 +49,6 @@ public class StochasticsPluginDataTranslatorSpec
         }
 
         return builder.build();
-    }
-
-    @Override
-    public StochasticsPluginDataInput getDefaultInstanceForInputObject() {
-        return StochasticsPluginDataInput.getDefaultInstance();
     }
 
     @Override
