@@ -57,40 +57,36 @@ public final class PersonPropertiesPlugin {
 		 */
 		public Plugin getPersonPropertyPlugin() {
 
-			try {
-				validate();
-				Plugin.Builder builder = Plugin.builder();//
-				builder.setPluginId(PersonPropertiesPluginId.PLUGIN_ID);//
-				builder.addPluginData(data.personPropertiesPluginData);//
-				if(data.personPropertyInteractionReportPluginData != null) {
-					builder.addPluginData(data.personPropertyInteractionReportPluginData);//
-				}
-				if(data.personPropertyReportPluginData != null) {
-					builder.addPluginData(data.personPropertyReportPluginData);//
-				}
-				builder.addPluginDependency(PeoplePluginId.PLUGIN_ID);//
-				builder.addPluginDependency(RegionsPluginId.PLUGIN_ID);//
-				builder.setInitializer((c) -> {
-					PersonPropertiesPluginData pluginData = c.getPluginData(PersonPropertiesPluginData.class).get();
-					c.addDataManager(new PersonPropertiesDataManager(pluginData));
-					
-					Optional<PersonPropertyReportPluginData> optional1 = c.getPluginData(PersonPropertyReportPluginData.class);
-					if(optional1.isPresent()) {
-						PersonPropertyReportPluginData personPropertyReportPluginData = optional1.get();
-						c.addReport(new PersonPropertyReport(personPropertyReportPluginData)::init);
-					}
-					
-					Optional<PersonPropertyInteractionReportPluginData> optional2 = c.getPluginData(PersonPropertyInteractionReportPluginData.class);
-					if(optional2.isPresent()) {
-						PersonPropertyInteractionReportPluginData personPropertyInteractionReportPluginData = optional2.get();
-						c.addReport(new PersonPropertyInteractionReport(personPropertyInteractionReportPluginData)::init);
-					}
-					
-				});
-				return builder.build();
-			} finally {
-				data = new Data();
+			validate();
+			Plugin.Builder builder = Plugin.builder();//
+			builder.setPluginId(PersonPropertiesPluginId.PLUGIN_ID);//
+			builder.addPluginData(data.personPropertiesPluginData);//
+			if (data.personPropertyInteractionReportPluginData != null) {
+				builder.addPluginData(data.personPropertyInteractionReportPluginData);//
 			}
+			if (data.personPropertyReportPluginData != null) {
+				builder.addPluginData(data.personPropertyReportPluginData);//
+			}
+			builder.addPluginDependency(PeoplePluginId.PLUGIN_ID);//
+			builder.addPluginDependency(RegionsPluginId.PLUGIN_ID);//
+			builder.setInitializer((c) -> {
+				PersonPropertiesPluginData pluginData = c.getPluginData(PersonPropertiesPluginData.class).get();
+				c.addDataManager(new PersonPropertiesDataManager(pluginData));
+
+				Optional<PersonPropertyReportPluginData> optional1 = c.getPluginData(PersonPropertyReportPluginData.class);
+				if (optional1.isPresent()) {
+					PersonPropertyReportPluginData personPropertyReportPluginData = optional1.get();
+					c.addReport(new PersonPropertyReport(personPropertyReportPluginData)::init);
+				}
+
+				Optional<PersonPropertyInteractionReportPluginData> optional2 = c.getPluginData(PersonPropertyInteractionReportPluginData.class);
+				if (optional2.isPresent()) {
+					PersonPropertyInteractionReportPluginData personPropertyInteractionReportPluginData = optional2.get();
+					c.addReport(new PersonPropertyInteractionReport(personPropertyInteractionReportPluginData)::init);
+				}
+
+			});
+			return builder.build();
 
 		}
 

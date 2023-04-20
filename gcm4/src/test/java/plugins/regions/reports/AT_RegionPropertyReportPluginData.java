@@ -347,45 +347,6 @@ public class AT_RegionPropertyReportPluginData {
     }
 
     @Test
-    @UnitTestMethod(target = RegionPropertyReportPluginData.class, name = "getEmptyBuilder", args = {})
-    public void testGetEmptyBuilder() {
-        ReportLabel reportLabel = new SimpleReportLabel("report label");
-
-        // show the default value is true
-        RegionPropertyReportPluginData filledRegionPropertyReportPluginData = //
-                RegionPropertyReportPluginData	.builder()//
-                        .setReportLabel(reportLabel)//
-                        .includeRegionProperty(TestRegionPropertyId.REGION_PROPERTY_1_BOOLEAN_MUTABLE)
-                        .includeRegionProperty(TestRegionPropertyId.REGION_PROPERTY_2_INTEGER_MUTABLE).setDefaultInclusion(false).build();
-
-        // show that the empty builder is indeed empty
-
-        // the report label is not set
-        ContractException contractException = assertThrows(ContractException.class, () -> {
-            filledRegionPropertyReportPluginData.getEmptyBuilder().build();
-        });
-        assertEquals(ReportError.NULL_REPORT_LABEL, contractException.getErrorType());
-
-
-
-        // After filling the report label we should get the
-        // same results as if starting from an empty builder
-        reportLabel = new SimpleReportLabel("another label");
-
-
-        RegionPropertyReportPluginData regionPropertyReportPluginData = //
-                filledRegionPropertyReportPluginData.getEmptyBuilder()//
-                        .setReportLabel(reportLabel)//													.
-                        .build();
-        RegionPropertyReportPluginData regionPropertyReportPluginData1 = //
-                RegionPropertyReportPluginData	.builder()//
-                        .setReportLabel(reportLabel)//
-                        .build();
-
-        assertEquals(regionPropertyReportPluginData, regionPropertyReportPluginData1);
-    }
-
-    @Test
     @UnitTestMethod(target = RegionPropertyReportPluginData.class, name = "getCloneBuilder", args = {})
     public void testGetCloneBuilder() {
 

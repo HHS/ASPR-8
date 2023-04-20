@@ -406,9 +406,10 @@ public class AT_GroupsDataManager {
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
 			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
 			RandomGenerator randomGenerator = c.getDataManager(StochasticsDataManager.class).getRandomGenerator();
-			GroupConstructionInfo.Builder builder = GroupConstructionInfo.builder();
+			
 
 			for (TestGroupTypeId testGroupTypeId : TestGroupTypeId.values()) {
+				GroupConstructionInfo.Builder builder = GroupConstructionInfo.builder();
 				builder.setGroupTypeId(testGroupTypeId);
 				Map<TestGroupPropertyId, Object> expectedPropertyValues = new LinkedHashMap<>();
 				for (TestGroupPropertyId testGroupPropertyId : TestGroupPropertyId.getTestGroupPropertyIds(testGroupTypeId)) {

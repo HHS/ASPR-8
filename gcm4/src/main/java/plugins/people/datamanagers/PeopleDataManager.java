@@ -27,17 +27,18 @@ import util.errors.ContractException;
  */
 public final class PeopleDataManager extends DataManager {
 
-	private final PeoplePluginData peoplePluginData;
-
-	public PeopleDataManager(PeoplePluginData peoplePluginData) {
-		this.peoplePluginData = peoplePluginData;
-	}
-
 	private static class PopulationRecord {
-		private int projectedPopulationCount;
 		private int populationCount;
 		private double assignmentTime;
 	}
+
+	private static record PersonAdditionMutationEvent(PersonId personId, PersonConstructionData personConstructionData) implements Event {
+	}
+
+	private static record PersonRemovalMutationEvent(PersonId personId) implements Event {
+	}
+
+	private final PeoplePluginData peoplePluginData;
 
 	/*
 	 * We keep the person records in a list rather than a map so that we can
@@ -49,7 +50,8 @@ public final class PeopleDataManager extends DataManager {
 
 	private final PopulationRecord globalPopulationRecord = new PopulationRecord();
 
-	private static record PersonAdditionMutationEvent(PersonId personId, PersonConstructionData personConstructionData) implements Event {
+	public PeopleDataManager(PeoplePluginData peoplePluginData) {
+		this.peoplePluginData = peoplePluginData;
 	}
 
 	/**
@@ -68,57 +70,6 @@ public final class PeopleDataManager extends DataManager {
 		return personId;
 	}
 
-	private void handlePersonAdditionMutationEvent(DataManagerContext dataManagerContext, PersonAdditionMutationEvent personAdditionMutationEvent) {
-		PersonConstructionData personConstructionData = personAdditionMutationEvent.personConstructionData();
-		PersonId personId = personAdditionMutationEvent.personId();
-		validatePersonConstructionDataNotNull(personConstructionData);
-
-		if (personId.getValue() != personIds.size()) {
-			throw new RuntimeException("unexpected person id during person addition " + personId);
-		}
-
-		personIds.add(personId);
-		if (globalPopulationRecord.projectedPopulationCount < personIds.size()) {
-			globalPopulationRecord.projectedPopulationCount = personIds.size();
-		}
-		globalPopulationRecord.populationCount++;
-		globalPopulationRecord.assignmentTime = dataManagerContext.getTime();
-
-		/*
-		 * It is very likely that the PersonImminentAdditionEvent will have
-		 * subscribers, so we don't waste time asking if there are any.
-		 * 
-		 */
-		final PersonImminentAdditionEvent personImminentAdditionEvent = new PersonImminentAdditionEvent(personId, personConstructionData);
-		dataManagerContext.releaseObservationEvent(personImminentAdditionEvent);
-
-		if (dataManagerContext.subscribersExist(PersonAdditionEvent.class)) {
-			dataManagerContext.releaseObservationEvent(new PersonAdditionEvent(personId));
-		}
-
-	}
-
-	/**
-	 * Expands the capacity of data structures to hold people by the given
-	 * count. Used to more efficiently prepare for multiple population
-	 * additions.
-	 *
-	 * @throws ContractException
-	 *             <li>{@linkplain PersonError#NEGATIVE_GROWTH_PROJECTION} if
-	 *             the count is negative</li>
-	 */
-	public void expandCapacity(final int count) {
-		if (count < 0) {
-			throw new ContractException(PersonError.NEGATIVE_GROWTH_PROJECTION);
-		}
-		if (count > 0) {
-			globalPopulationRecord.projectedPopulationCount += count;
-			final List<PersonId> newPersonIds = new ArrayList<>(personIds.size() + count);
-			newPersonIds.addAll(personIds);
-			personIds = newPersonIds;
-		}
-	}
-
 	/**
 	 * Returns the PersonId that corresponds to the given int value.
 	 */
@@ -128,6 +79,24 @@ public final class PeopleDataManager extends DataManager {
 			result = personIds.get(personId);
 		}
 		return Optional.ofNullable(result);
+	}
+
+	/**
+	 * Returns an event filter used to subscribe to {@link PersonAdditionEvent}
+	 * events. Matches all such events.
+	 */
+	public EventFilter<PersonAdditionEvent> getEventFilterForPersonAdditionEvent() {
+		return EventFilter	.builder(PersonAdditionEvent.class)//
+							.build();
+	}
+
+	/**
+	 * Returns an event filter used to subscribe to
+	 * {@link PersonImminentRemovalEvent} events. Matches all such events.
+	 */
+	public EventFilter<PersonImminentRemovalEvent> getEventFilterForPersonImminentRemovalEvent() {
+		return EventFilter	.builder(PersonImminentRemovalEvent.class)//
+							.build();
 	}
 
 	/**
@@ -175,12 +144,52 @@ public final class PeopleDataManager extends DataManager {
 		return globalPopulationRecord.assignmentTime;
 	}
 
-	/**
-	 * Returns the projected population count that reflects the effect of the
-	 * current population count and any capacity expansions.
-	 */
-	public int getProjectedPopulationCount() {
-		return globalPopulationRecord.projectedPopulationCount;
+	private void handlePersonAdditionMutationEvent(DataManagerContext dataManagerContext, PersonAdditionMutationEvent personAdditionMutationEvent) {
+		PersonConstructionData personConstructionData = personAdditionMutationEvent.personConstructionData();
+		PersonId personId = personAdditionMutationEvent.personId();
+		validatePersonConstructionDataNotNull(personConstructionData);
+
+		if (personId.getValue() != personIds.size()) {
+			throw new RuntimeException("unexpected person id during person addition " + personId);
+		}
+
+		personIds.add(personId);
+		globalPopulationRecord.populationCount++;
+		globalPopulationRecord.assignmentTime = dataManagerContext.getTime();
+
+		/*
+		 * It is very likely that the PersonImminentAdditionEvent will have
+		 * subscribers, so we don't waste time asking if there are any.
+		 * 
+		 */
+		final PersonImminentAdditionEvent personImminentAdditionEvent = new PersonImminentAdditionEvent(personId, personConstructionData);
+		dataManagerContext.releaseObservationEvent(personImminentAdditionEvent);
+
+		if (dataManagerContext.subscribersExist(PersonAdditionEvent.class)) {
+			dataManagerContext.releaseObservationEvent(new PersonAdditionEvent(personId));
+		}
+
+	}
+
+	private void handlePersonRemovalMutationEvent(DataManagerContext dataManagerContext, PersonRemovalMutationEvent personRemovalMutationEvent) {
+		PersonId personId = personRemovalMutationEvent.personId();
+
+		validatePersonExists(personId);
+
+		dataManagerContext.addPlan((context) -> {
+			globalPopulationRecord.populationCount--;
+			globalPopulationRecord.assignmentTime = dataManagerContext.getTime();
+			personIds.set(personId.getValue(), null);
+
+			// it is very likely that there are observers, so we don't ask
+			// before creating the event
+			context.releaseObservationEvent(new PersonRemovalEvent(personId));
+
+		}, dataManagerContext.getTime());
+
+		if (dataManagerContext.subscribersExist(PersonImminentRemovalEvent.class)) {
+			dataManagerContext.releaseObservationEvent(new PersonImminentRemovalEvent(personId));
+		}
 	}
 
 	/**
@@ -191,6 +200,11 @@ public final class PeopleDataManager extends DataManager {
 	 * @throws ContractException
 	 *             <li>{@linkplain NucleusError#DATA_MANAGER_DUPLICATE_INITIALIZATION}
 	 *             if init() is invoked more than once</li>
+	 * 
+	 * 
+	 *             <li>{@linkplain PersonError#PERSON_ASSIGNMENT_TIME_IN_FUTURE}
+	 *             if the plugin data person assignment time exceeds the start
+	 *             time of the simulation</li>
 	 *
 	 */
 	@Override
@@ -202,54 +216,27 @@ public final class PeopleDataManager extends DataManager {
 		dataManagerContext.subscribe(PersonRemovalMutationEvent.class, this::handlePersonRemovalMutationEvent);
 
 		int personCount = peoplePluginData.getPersonCount();
-	
+
 		personIds = new ArrayList<>(personCount);
-		for(int i = 0;i<personCount;i++) {
+		for (int i = 0; i < personCount; i++) {
 			personIds.add(null);
 		}
-		
+
 		List<PersonId> personIdsFromPluginData = peoplePluginData.getPersonIds();
 		globalPopulationRecord.populationCount = personIdsFromPluginData.size();
-		
-		for(PersonId personId : personIdsFromPluginData) {
-			personIds.set(personId.getValue(), personId);
-		}		
 
-		
-		globalPopulationRecord.projectedPopulationCount = personIds.size();
-		globalPopulationRecord.assignmentTime = dataManagerContext.getTime();
+		for (PersonId personId : personIdsFromPluginData) {
+			personIds.set(personId.getValue(), personId);
+		}
+
+		if (peoplePluginData.getAssignmentTime() > dataManagerContext.getTime()) {
+			throw new ContractException(PersonError.PERSON_ASSIGNMENT_TIME_IN_FUTURE);
+		}
+
+		globalPopulationRecord.assignmentTime = peoplePluginData.getAssignmentTime();
 		if (dataManagerContext.stateRecordingIsScheduled()) {
 			dataManagerContext.subscribeToSimulationClose(this::recordSimulationState);
 		}
-	}
-
-	private void recordSimulationState(DataManagerContext dataManagerContext) {
-		PeoplePluginData.Builder builder = PeoplePluginData.builder();
-		builder.setPersonCount(personIds.size());
-
-		int a = -1;
-		int b = -1;
-		PersonId lastPersonId = null;
-		for (int i = 0; i < personIds.size(); i++) {
-			PersonId personId = personIds.get(i);
-			if (personId != null) {
-				if (lastPersonId == null) {
-					a = i;
-					b = i;
-				} else {
-					b = i;
-				}
-			}else {
-				if(lastPersonId != null) {
-					builder.addPersonRange(new PersonRange(a, b));
-				}
-			}
-			lastPersonId = personId;
-		}
-		if(a>=0) {
-			builder.addPersonRange(new PersonRange(a, b));
-		}
-		dataManagerContext.releaseOutput(builder.build());
 	}
 
 	/**
@@ -278,7 +265,34 @@ public final class PeopleDataManager extends DataManager {
 
 	}
 
-	private static record PersonRemovalMutationEvent(PersonId personId) implements Event {
+	private void recordSimulationState(DataManagerContext dataManagerContext) {
+		PeoplePluginData.Builder builder = PeoplePluginData.builder();
+		builder.setPersonCount(personIds.size());
+		builder.setAssignmentTime(globalPopulationRecord.assignmentTime);
+
+		int a = -1;
+		int b = -1;
+		PersonId lastPersonId = null;
+		for (int i = 0; i < personIds.size(); i++) {
+			PersonId personId = personIds.get(i);
+			if (personId != null) {
+				if (lastPersonId == null) {
+					a = i;
+					b = i;
+				} else {
+					b = i;
+				}
+			} else {
+				if (lastPersonId != null) {
+					builder.addPersonRange(new PersonRange(a, b));
+				}
+			}
+			lastPersonId = personId;
+		}
+		if (a >= 0) {
+			builder.addPersonRange(new PersonRange(a, b));
+		}
+		dataManagerContext.releaseOutput(builder.build());
 	}
 
 	/**
@@ -298,27 +312,6 @@ public final class PeopleDataManager extends DataManager {
 		dataManagerContext.releaseMutationEvent(new PersonRemovalMutationEvent(personId));
 	}
 
-	private void handlePersonRemovalMutationEvent(DataManagerContext dataManagerContext, PersonRemovalMutationEvent personRemovalMutationEvent) {
-		PersonId personId = personRemovalMutationEvent.personId();
-
-		validatePersonExists(personId);
-
-		dataManagerContext.addPlan((context) -> {
-			globalPopulationRecord.populationCount--;
-			globalPopulationRecord.assignmentTime = dataManagerContext.getTime();
-			personIds.set(personId.getValue(), null);
-
-			// it is very likely that there are observers, so we don't ask
-			// before creating the event
-			context.releaseObservationEvent(new PersonRemovalEvent(personId));
-
-		}, dataManagerContext.getTime());
-
-		if (dataManagerContext.subscribersExist(PersonImminentRemovalEvent.class)) {
-			dataManagerContext.releaseObservationEvent(new PersonImminentRemovalEvent(personId));
-		}
-	}
-
 	private void validatePersonConstructionDataNotNull(final PersonConstructionData personConstructionData) {
 		if (personConstructionData == null) {
 			throw new ContractException(PersonError.NULL_PERSON_CONSTRUCTION_DATA);
@@ -332,24 +325,6 @@ public final class PeopleDataManager extends DataManager {
 		if (!personExists(personId)) {
 			throw new ContractException(PersonError.UNKNOWN_PERSON_ID);
 		}
-	}
-
-	/**
-	 * Returns an event filter used to subscribe to {@link PersonAdditionEvent}
-	 * events. Matches all such events.
-	 */
-	public EventFilter<PersonAdditionEvent> getEventFilterForPersonAdditionEvent() {
-		return EventFilter	.builder(PersonAdditionEvent.class)//
-							.build();
-	}
-
-	/**
-	 * Returns an event filter used to subscribe to
-	 * {@link PersonImminentRemovalEvent} events. Matches all such events.
-	 */
-	public EventFilter<PersonImminentRemovalEvent> getEventFilterForPersonImminentRemovalEvent() {
-		return EventFilter	.builder(PersonImminentRemovalEvent.class)//
-							.build();
 	}
 
 }

@@ -15,9 +15,9 @@ import plugins.stochastics.support.RandomNumberGeneratorId;
  */
 public final class PartitionSampler {
 
-	private final Scaffold scaffold;
+	private final Data data;
 
-	private static class Scaffold {
+	private static class Data {
 
 		private PersonId excludedPersonId;
 
@@ -26,6 +26,16 @@ public final class PartitionSampler {
 		private LabelSet labelSet;
 
 		private LabelSetWeightingFunction labelSetWeightingFunction;
+
+		public Data() {
+		}
+
+		public Data(Data data) {
+			excludedPersonId = data.excludedPersonId;
+			randomNumberGeneratorId = data.randomNumberGeneratorId;
+			labelSet = data.labelSet;
+			labelSetWeightingFunction = data.labelSetWeightingFunction;
+		}
 	}
 
 	/**
@@ -41,7 +51,7 @@ public final class PartitionSampler {
 	 *
 	 */
 	public static class Builder {
-		private Scaffold scaffold = new Scaffold();
+		private Data data = new Data();
 
 		private Builder() {
 		}
@@ -52,18 +62,14 @@ public final class PartitionSampler {
 		 * empty.
 		 */
 		public PartitionSampler build() {
-			try {
-				return new PartitionSampler(scaffold);
-			} finally {
-				scaffold = new Scaffold();
-			}
+			return new PartitionSampler(new Data(data));
 		}
 
 		/**
 		 * Sets the {@link PersonId} to be excluded as a sample result.
 		 */
 		public Builder setExcludedPerson(PersonId excludedPersonId) {
-			scaffold.excludedPersonId = excludedPersonId;
+			data.excludedPersonId = excludedPersonId;
 			return this;
 		}
 
@@ -74,7 +80,7 @@ public final class PartitionSampler {
 		 * used.
 		 */
 		public Builder setRandomNumberGeneratorId(RandomNumberGeneratorId randomNumberGeneratorId) {
-			scaffold.randomNumberGeneratorId = randomNumberGeneratorId;
+			data.randomNumberGeneratorId = randomNumberGeneratorId;
 			return this;
 		}
 
@@ -84,7 +90,7 @@ public final class PartitionSampler {
 		 * participate in the sampling.
 		 */
 		public Builder setLabelSet(LabelSet labelSet) {
-			scaffold.labelSet = labelSet;
+			data.labelSet = labelSet;
 			return this;
 		}
 
@@ -94,7 +100,7 @@ public final class PartitionSampler {
 		 * provided, all cells of the {@link Partition} are weighted uniformly.
 		 */
 		public Builder setLabelSetWeightingFunction(LabelSetWeightingFunction labelSetWeightingFunction) {
-			scaffold.labelSetWeightingFunction = labelSetWeightingFunction;
+			data.labelSetWeightingFunction = labelSetWeightingFunction;
 			return this;
 		}
 
@@ -105,7 +111,7 @@ public final class PartitionSampler {
 	 * {@link Partition}
 	 */
 	public Optional<PersonId> getExcludedPerson() {
-		return Optional.ofNullable(scaffold.excludedPersonId);
+		return Optional.ofNullable(data.excludedPersonId);
 	}
 
 	/**
@@ -114,7 +120,7 @@ public final class PartitionSampler {
 	 * default random number generator for the simulation is used.
 	 */
 	public Optional<RandomNumberGeneratorId> getRandomNumberGeneratorId() {
-		return Optional.ofNullable(scaffold.randomNumberGeneratorId);
+		return Optional.ofNullable(data.randomNumberGeneratorId);
 	}
 
 	/**
@@ -123,7 +129,7 @@ public final class PartitionSampler {
 	 * participate in the sampling.
 	 */
 	public Optional<LabelSet> getLabelSet() {
-		return Optional.ofNullable(scaffold.labelSet);
+		return Optional.ofNullable(data.labelSet);
 	}
 
 	/**
@@ -132,11 +138,11 @@ public final class PartitionSampler {
 	 * provided, all cells of the {@link Partition} are weighted uniformly.
 	 */
 	public Optional<LabelSetWeightingFunction> getLabelSetWeightingFunction() {
-		return Optional.ofNullable(scaffold.labelSetWeightingFunction);
+		return Optional.ofNullable(data.labelSetWeightingFunction);
 	}
 
-	private PartitionSampler(Scaffold scaffold) {
-		this.scaffold = scaffold;
+	private PartitionSampler(Data data) {
+		this.data = data;
 	}
 
 }

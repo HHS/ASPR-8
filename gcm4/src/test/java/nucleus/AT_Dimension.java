@@ -44,8 +44,8 @@ public class AT_Dimension {
 		testGetMetaDataValues("B", "B", "Z");
 		testGetMetaDataValues("A", "B", "C", "A");
 	}
-	
-	private void testGetMetaDataSizeValue(String... values) {		
+
+	private void testGetMetaDataSizeValue(String... values) {
 		Dimension.Builder builder = Dimension.builder();
 		for (String value : values) {
 			builder.addMetaDatum(value);
@@ -54,7 +54,7 @@ public class AT_Dimension {
 		List<String> actualMetaData = dimension.getMetaData();
 		assertEquals(values.length, actualMetaData.size());
 	}
-	
+
 	@Test
 	@UnitTestMethod(target = Dimension.class, name = "getMetaDataSize", args = {})
 	public void testGetMetatDataSize() {
@@ -65,7 +65,6 @@ public class AT_Dimension {
 		testGetMetaDataSizeValue("B", "B", "Z");
 		testGetMetaDataSizeValue("A", "B", "C", "A");
 	}
-
 
 	@Test
 	@UnitTestMethod(target = Dimension.class, name = "getLevel", args = { int.class })
@@ -95,25 +94,26 @@ public class AT_Dimension {
 	@Test
 	@UnitTestMethod(target = Dimension.class, name = "size", args = {})
 	public void testSize() {
-		Dimension.Builder builder = Dimension.builder();
-		Dimension dimension = builder.build();
+
+		Dimension dimension = Dimension.builder().build();
 		assertEquals(0, dimension.size());
 
-		builder.addLevel((map) -> {
-			return new ArrayList<>();
-		});
-		dimension = builder.build();
+		dimension = Dimension	.builder()//
+								.addLevel((map) -> {
+									return new ArrayList<>();
+								})//
+								.build();
 		assertEquals(1, dimension.size());
 
-		builder.addLevel((map) -> {
-			return new ArrayList<>();
-		});
-		builder.addLevel((map) -> {
-			return new ArrayList<>();
-		});
-		dimension = builder.build();
+		dimension = Dimension	.builder()//
+								.addLevel((map) -> {
+									return new ArrayList<>();
+								})//
+								.addLevel((map) -> {
+									return new ArrayList<>();
+								})//
+								.build();
 		assertEquals(2, dimension.size());
-
 	}
 
 	@Test

@@ -23,6 +23,61 @@ public class SimulationState {
 		private LocalDate baseDate = LocalDate.now();
 		private long planningQueueArrivalId;
 		private List<PlanQueueData> planQueueDatas = new ArrayList<>();
+
+		public Data() {
+		}
+
+		public Data(Data data) {
+			startTime = data.startTime;
+			baseDate = data.baseDate;
+			planningQueueArrivalId = data.planningQueueArrivalId;
+			planQueueDatas.addAll(data.planQueueDatas);
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + ((baseDate == null) ? 0 : baseDate.hashCode());
+			result = prime * result + ((planQueueDatas == null) ? 0 : planQueueDatas.hashCode());
+			result = prime * result + (int) (planningQueueArrivalId ^ (planningQueueArrivalId >>> 32));
+			long temp;
+			temp = Double.doubleToLongBits(startTime);
+			result = prime * result + (int) (temp ^ (temp >>> 32));
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (!(obj instanceof Data)) {
+				return false;
+			}
+			Data other = (Data) obj;
+			if (baseDate == null) {
+				if (other.baseDate != null) {
+					return false;
+				}
+			} else if (!baseDate.equals(other.baseDate)) {
+				return false;
+			}
+			if (planQueueDatas == null) {
+				if (other.planQueueDatas != null) {
+					return false;
+				}
+			} else if (!planQueueDatas.equals(other.planQueueDatas)) {
+				return false;
+			}
+			if (planningQueueArrivalId != other.planningQueueArrivalId) {
+				return false;
+			}
+			if (Double.doubleToLongBits(startTime) != Double.doubleToLongBits(other.startTime)) {
+				return false;
+			}
+			return true;
+		}
 	}
 
 	private final Data data;
@@ -45,6 +100,10 @@ public class SimulationState {
 		private void validate() {
 
 			for (PlanQueueData planQueueData : data.planQueueDatas) {
+				if (planQueueData.getTime() < data.startTime) {
+					throw new ContractException(NucleusError.PLANNING_QUEUE_TIME);
+
+				}
 				if (planQueueData.getArrivalId() >= data.planningQueueArrivalId) {
 					throw new ContractException(NucleusError.PLANNING_QUEUE_ARRIVAL_INVALID);
 				}
@@ -59,28 +118,24 @@ public class SimulationState {
 		 *             <li>{@linkplain NucleusError#PLANNING_QUEUE_ARRIVAL_INVALID}
 		 *             if the planning queue arrival id does not exceed the
 		 *             arrival id values for all stored PlanQueueData</li>
+		 *             
+		 *             <li>{@linkplain NucleusError#PLANNING_QUEUE_TIME} if the
+		 *             simulation start time is exceeded by any time value
+		 *             stored for a plan</li>
+		 * 
+		 * 
 		 */
 		public SimulationState build() {
-			try {
-				validate();
-				return new SimulationState(data);
-			} finally {
-				data = new Data();
-			}
+			validate();
+			return new SimulationState(new Data(data));
 		}
 
 		/**
 		 * Sets the time (floating point days) of simulation start. Defaults to
 		 * zero.
-		 * 
-		 * @throws ContractException
-		 *             <li>{@linkplain NucleusError#NEGATIVE_START_TIME} if the
-		 *             start time is negative</li>
+		 *		
 		 */
-		public Builder setStartTime(double startTime) {
-			if (startTime < 0) {
-				throw new ContractException(NucleusError.NEGATIVE_START_TIME);
-			}
+		public Builder setStartTime(double startTime) {			
 			data.startTime = startTime;
 			return this;
 		}
@@ -155,6 +210,33 @@ public class SimulationState {
 	 */
 	public long getPlanningQueueArrivalId() {
 		return data.planningQueueArrivalId;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((data == null) ? 0 : data.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!(obj instanceof SimulationState)) {
+			return false;
+		}
+		SimulationState other = (SimulationState) obj;
+		if (data == null) {
+			if (other.data != null) {
+				return false;
+			}
+		} else if (!data.equals(other.data)) {
+			return false;
+		}
+		return true;
 	}
 
 }

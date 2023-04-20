@@ -20,7 +20,9 @@ public enum PropertyError implements ContractError {
 	DUPLICATE_PROPERTY_DEFINITION("Duplicate assignment of a property definition to a property id"),
 	UNKNOWN_PROPERTY_ID("Unknown property id"),
 	INCOMPATIBLE_VALUE("Property value is incompatible with the property definition"),//
+	INCOMPATIBLE_TIME("Property assignment time is less than property definition creation time"),//
 	DUPLICATE_PROPERTY_VALUE_ASSIGNMENT("Duplicate property value assignment"),
+	PROPERTY_CREATION_TIME_NOT_CURRENT("A property creation time does not agree with the current time"),
 
 	
 	

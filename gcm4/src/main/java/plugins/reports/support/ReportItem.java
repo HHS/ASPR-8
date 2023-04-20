@@ -29,11 +29,11 @@ public final class ReportItem {
 		private Builder() {
 		}
 
-		private Scaffold scaffold = new Scaffold();
+		private Data data = new Data();
 
 		/**
-		 * Adds an entry's string value to the report item. Order should follow the order in the
-		 * {@link ReportHeader}
+		 * Adds an entry's string value to the report item. Order should follow
+		 * the order in the {@link ReportHeader}
 		 * 
 		 * @throws ContractException
 		 *             <li>if the entry is null</li>
@@ -42,7 +42,7 @@ public final class ReportItem {
 			if (entry == null) {
 				throw new ContractException(ReportError.NULL_REPORT_ITEM_ENTRY);
 			}
-			scaffold.values.add(entry.toString());
+			data.values.add(entry.toString());
 			return this;
 		}
 
@@ -51,11 +51,11 @@ public final class ReportItem {
 		 */
 		private void validateData() {
 
-			if (scaffold.reportHeader == null) {
+			if (data.reportHeader == null) {
 				throw new ContractException(ReportError.NULL_REPORT_HEADER);
 			}
 
-			if (scaffold.reportLabel == null) {
+			if (data.reportLabel == null) {
 				throw new ContractException(ReportError.NULL_REPORT_LABEL);
 			}
 
@@ -66,17 +66,15 @@ public final class ReportItem {
 		 * 
 		 * 
 		 * @throws ContractException
-		 *             <li>{@linkplain ReportError#NULL_REPORT_HEADER} if the collected report header is null</li>
-		 *             <li>{@linkplain ReportError#NULL_REPORT_LABEL} if the collected report label is null</li>
+		 *             <li>{@linkplain ReportError#NULL_REPORT_HEADER} if the
+		 *             collected report header is null</li>
+		 *             <li>{@linkplain ReportError#NULL_REPORT_LABEL} if the
+		 *             collected report label is null</li>
 		 * 
 		 */
 		public ReportItem build() {
-			try {
-				validateData();
-				return new ReportItem(scaffold);
-			} finally {
-				scaffold = new Scaffold();
-			}
+			validateData();
+			return new ReportItem(new Data(data));
 		}
 
 		/**
@@ -88,7 +86,7 @@ public final class ReportItem {
 			if (reportHeader == null) {
 				throw new ContractException(ReportError.NULL_REPORT_HEADER);
 			}
-			scaffold.reportHeader = reportHeader;
+			data.reportHeader = reportHeader;
 			return this;
 		}
 
@@ -100,53 +98,100 @@ public final class ReportItem {
 			if (reportLabel == null) {
 				throw new ContractException(ReportError.NULL_REPORT_LABEL);
 			}
-			scaffold.reportLabel = reportLabel;
+			data.reportLabel = reportLabel;
 			return this;
 		}
 
 	}
 
-	private static class Scaffold {
+	private static class Data {
 		private ReportLabel reportLabel;
 		private ReportHeader reportHeader;
 		private final List<String> values = new ArrayList<>();
+
+		public Data() {
+
+		}
+
+		public Data(Data data) {
+			reportLabel = data.reportLabel;
+			reportHeader = data.reportHeader;
+			values.addAll(data.values);
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + ((reportHeader == null) ? 0 : reportHeader.hashCode());
+			result = prime * result + ((reportLabel == null) ? 0 : reportLabel.hashCode());
+			result = prime * result + ((values == null) ? 0 : values.hashCode());
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (!(obj instanceof Data)) {
+				return false;
+			}
+			Data other = (Data) obj;
+			if (reportHeader == null) {
+				if (other.reportHeader != null) {
+					return false;
+				}
+			} else if (!reportHeader.equals(other.reportHeader)) {
+				return false;
+			}
+			if (reportLabel == null) {
+				if (other.reportLabel != null) {
+					return false;
+				}
+			} else if (!reportLabel.equals(other.reportLabel)) {
+				return false;
+			}
+			if (values == null) {
+				if (other.values != null) {
+					return false;
+				}
+			} else if (!values.equals(other.values)) {
+				return false;
+			}
+			return true;
+		}
 	}
 
-	private final ReportLabel reportLabel;
+	private final Data data;
 
-	private final List<String> values;
-
-	private final ReportHeader reportHeader;
-
-	private ReportItem(final Scaffold scaffold) {
-		reportLabel = scaffold.reportLabel;
-		reportHeader = scaffold.reportHeader;
-		values = scaffold.values;
+	private ReportItem(final Data data) {
+		this.data = data;
 	}
 
 	/**
 	 * Returns the report label for this report item
 	 */
 	public ReportLabel getReportLabel() {
-		return reportLabel;
+		return data.reportLabel;
 	}
 
 	/**
 	 * Returns the report header for this report item
 	 */
 	public ReportHeader getReportHeader() {
-		return reportHeader;
+		return data.reportHeader;
 	}
 
 	/**
 	 * Returns the string value stored at the given index
 	 *
-	 *@throws IndexOutOfBoundsException
-	 *<li> if the index < 0</li>	 
-	 *<li> if the index >= size()</li>
+	 * @throws IndexOutOfBoundsException
+	 *             <li>if the index < 0</li>
+	 *             <li>if the index >= size()</li>
 	 */
 	public String getValue(final int index) {
-		return values.get(index);
+		return data.values.get(index);
 	}
 
 	/**
@@ -155,7 +200,7 @@ public final class ReportItem {
 	 * @return
 	 */
 	public int size() {
-		return values.size();
+		return data.values.size();
 	}
 
 	/**
@@ -170,35 +215,29 @@ public final class ReportItem {
 	public String toString() {
 		StringBuilder builder2 = new StringBuilder();
 		builder2.append("ReportItem [reportLabel=");
-		builder2.append(reportLabel);
+		builder2.append(data.reportLabel);
 		builder2.append(", reportHeader=");
-		builder2.append(reportHeader);
+		builder2.append(data.reportHeader);
 		builder2.append(", values=");
-		builder2.append(values);
+		builder2.append(data.values);
 		builder2.append("]");
 		return builder2.toString();
 	}
-	
+
 	/**
 	 * Returns the values in the form [value[0], value[1], ... ,value[N-1]]
 	 */
 	public String toValueString() {
-		return values.toString();	
+		return data.values.toString();
 	}
 
-	/**
-	 * Standard hash code implementation
-	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((reportHeader == null) ? 0 : reportHeader.hashCode());
-		result = prime * result + ((reportLabel == null) ? 0 : reportLabel.hashCode());
-		result = prime * result + ((values == null) ? 0 : values.hashCode());
+		result = prime * result + ((data == null) ? 0 : data.hashCode());
 		return result;
 	}
-
 	/**
 	 * Two report items are equal iff and only if their ids, headers and ordered
 	 * values are equal.
@@ -212,28 +251,17 @@ public final class ReportItem {
 			return false;
 		}
 		ReportItem other = (ReportItem) obj;
-		if (reportHeader == null) {
-			if (other.reportHeader != null) {
+		if (data == null) {
+			if (other.data != null) {
 				return false;
 			}
-		} else if (!reportHeader.equals(other.reportHeader)) {
-			return false;
-		}
-		if (reportLabel == null) {
-			if (other.reportLabel != null) {
-				return false;
-			}
-		} else if (!reportLabel.equals(other.reportLabel)) {
-			return false;
-		}
-		if (values == null) {
-			if (other.values != null) {
-				return false;
-			}
-		} else if (!values.equals(other.values)) {
+		} else if (!data.equals(other.data)) {
 			return false;
 		}
 		return true;
 	}
+
+	
+	
 
 }

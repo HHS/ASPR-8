@@ -172,6 +172,59 @@ public final class VaccinatorPluginData implements PluginData {
 			return builder.toString();
 		}
 
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + ((availableVaccines == null) ? 0 : availableVaccines.hashCode());
+			result = prime * result + infectedPersonCount;
+			result = prime * result + infectionPersonCountThreshold;
+			result = prime * result + (locked ? 1231 : 1237);
+			result = prime * result + (manufactureStarted ? 1231 : 1237);
+			result = prime * result + ((vaccinationSchedules == null) ? 0 : vaccinationSchedules.hashCode());
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (!(obj instanceof Data)) {
+				return false;
+			}
+			Data other = (Data) obj;
+			if (availableVaccines == null) {
+				if (other.availableVaccines != null) {
+					return false;
+				}
+			} else if (!availableVaccines.equals(other.availableVaccines)) {
+				return false;
+			}
+			if (infectedPersonCount != other.infectedPersonCount) {
+				return false;
+			}
+			if (infectionPersonCountThreshold != other.infectionPersonCountThreshold) {
+				return false;
+			}
+			if (locked != other.locked) {
+				return false;
+			}
+			if (manufactureStarted != other.manufactureStarted) {
+				return false;
+			}
+			if (vaccinationSchedules == null) {
+				if (other.vaccinationSchedules != null) {
+					return false;
+				}
+			} else if (!vaccinationSchedules.equals(other.vaccinationSchedules)) {
+				return false;
+			}
+			return true;
+		}
+		
+		
+
 	}
 
 	/**
@@ -196,11 +249,6 @@ public final class VaccinatorPluginData implements PluginData {
 	@Override
 	public PluginDataBuilder getCloneBuilder() {
 		return new Builder(data);
-	}
-
-	@Override
-	public PluginDataBuilder getEmptyBuilder() {
-		return builder();
 	}
 
 	@Override
@@ -239,5 +287,33 @@ public final class VaccinatorPluginData implements PluginData {
 	public boolean isManufactureStarted() {
 		return data.manufactureStarted;
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((data == null) ? 0 : data.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!(obj instanceof VaccinatorPluginData)) {
+			return false;
+		}
+		VaccinatorPluginData other = (VaccinatorPluginData) obj;
+		if (data == null) {
+			if (other.data != null) {
+				return false;
+			}
+		} else if (!data.equals(other.data)) {
+			return false;
+		}
+		return true;
+	}
+	
 
 }

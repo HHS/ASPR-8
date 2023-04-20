@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import nucleus.PluginData;
@@ -16,6 +17,7 @@ import plugins.people.support.PersonId;
 import plugins.people.support.PersonRange;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
+import util.random.RandomGeneratorProvider;
 
 public final class AT_PeoplePluginData {
 	@Test
@@ -203,17 +205,32 @@ public final class AT_PeoplePluginData {
 	@Test
 	@UnitTestMethod(target = PeoplePluginData.class, name = "getCloneBuilder", args = {})
 	public void testGetCloneBuilder() {
-		
-		
-		PeoplePluginData pluginData = PeoplePluginData.builder()//
-		.addPersonRange(new PersonRange(3, 9))
-		.addPersonRange(new PersonRange(8, 12))
-		.addPersonRange(new PersonRange(15, 19))
-		.build();
-		
+
+		PeoplePluginData pluginData = PeoplePluginData	.builder()//
+														.addPersonRange(new PersonRange(3, 9)).addPersonRange(new PersonRange(8, 12)).addPersonRange(new PersonRange(15, 19)).build();
+
 		PluginData pluginData2 = pluginData.getCloneBuilder().build();
-		
+
 		assertEquals(pluginData, pluginData2);
+	}
+
+	@Test
+	@UnitTestMethod(target = PeoplePluginData.Builder.class, name = "setAssignmentTime", args = { double.class })
+	public void testSetAssignmentTime() {
+
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(2239063975495496234L);
+
+		for (int i = 0; i < 30; i++) {
+			double expectedAssignmentTime = randomGenerator.nextDouble();
+			double actualAssignmentTime = //
+					PeoplePluginData.builder()//
+									.addPersonRange(new PersonRange(0, 15))//
+									.setAssignmentTime(expectedAssignmentTime)//
+									.build()//
+									.getAssignmentTime();
+			assertEquals(expectedAssignmentTime, actualAssignmentTime);
+		}
+
 	}
 
 }

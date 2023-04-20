@@ -67,10 +67,14 @@ public class RegionsPluginData implements PluginData {
 
 		@Override
 		public boolean equals(Object o) {
-			if (this == o) return true;
-			if (!(o instanceof Data)) return false;
+			if (this == o)
+				return true;
+			if (!(o instanceof Data))
+				return false;
 			Data data = (Data) o;
-			return locked == data.locked && regionPropertyDefinitions.equals(data.regionPropertyDefinitions) && regionIds.equals(data.regionIds) && regionArrivalTimeTrackingPolicy == data.regionArrivalTimeTrackingPolicy && regionPropertyValues.equals(data.regionPropertyValues) && emptyRegionPropertyMap.equals(data.emptyRegionPropertyMap) && personRegions.equals(data.personRegions);
+			return locked == data.locked && regionPropertyDefinitions.equals(data.regionPropertyDefinitions) && regionIds.equals(data.regionIds)
+					&& regionArrivalTimeTrackingPolicy == data.regionArrivalTimeTrackingPolicy && regionPropertyValues.equals(data.regionPropertyValues)
+					&& emptyRegionPropertyMap.equals(data.emptyRegionPropertyMap) && personRegions.equals(data.personRegions);
 		}
 
 		@Override
@@ -171,12 +175,11 @@ public class RegionsPluginData implements PluginData {
 		 * 
 		 */
 		public RegionsPluginData build() {
-			if (!data.locked) {				
+			if (!data.locked) {
 				validateData();
 			}
 			ensureImmutability();
 			return new RegionsPluginData(data);
-
 		}
 
 		/**
@@ -448,14 +451,11 @@ public class RegionsPluginData implements PluginData {
 	}
 
 	@Override
-	public PluginDataBuilder getEmptyBuilder() {
-		return builder();
-	}
-
-	@Override
 	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (!(o instanceof RegionsPluginData)) return false;
+		if (this == o)
+			return true;
+		if (!(o instanceof RegionsPluginData))
+			return false;
 		RegionsPluginData that = (RegionsPluginData) o;
 		return data.equals(that.data);
 	}

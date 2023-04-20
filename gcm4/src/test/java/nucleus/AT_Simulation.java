@@ -60,21 +60,11 @@ public class AT_Simulation {
 		public PluginDataBuilder getCloneBuilder() {
 			throw new UnsupportedOperationException();
 		}
-
-		@Override
-		public PluginDataBuilder getEmptyBuilder() {
-			throw new UnsupportedOperationException();
-		}
 	}
 
 	private static class PluginData2 implements PluginData {
 		@Override
 		public PluginDataBuilder getCloneBuilder() {
-			throw new UnsupportedOperationException();
-		}
-
-		@Override
-		public PluginDataBuilder getEmptyBuilder() {
 			throw new UnsupportedOperationException();
 		}
 	}
@@ -225,12 +215,6 @@ public class AT_Simulation {
 			return result;
 		}
 
-		@Override
-		public PluginDataBuilder getEmptyBuilder() {
-			AlphaPluginDataBuilder result = new AlphaPluginDataBuilder();
-			return result;
-		}
-
 		public int getX() {
 			return x;
 		}
@@ -272,8 +256,8 @@ public class AT_Simulation {
 	}
 
 	@Test
-	@UnitTestMethod(target = Simulation.Builder.class, name = "setRecordState", args = { boolean.class })
-	public void testSetRecordState() {
+	@UnitTestMethod(target = Simulation.Builder.class, name = "setSimulationState", args = { boolean.class })
+	public void testSetSimulationState() {
 
 		AlphaPluginData alphaPluginData = new AlphaPluginDataBuilder().setX(10).build();
 		Plugin alphaPlugin = getAlphaPlugin(alphaPluginData);

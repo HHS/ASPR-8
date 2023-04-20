@@ -22,6 +22,7 @@ public enum PersonError implements ContractError {
 	ILLEGAL_PERSON_RANGE("Illegal person range"),
 	INVALID_PERSON_COUNT("The person count must exceed the highest person range value"),
 	NEGATIVE_PERSON_COUNT("Negative person count"),
+	PERSON_ASSIGNMENT_TIME_IN_FUTURE("The person assignment time from the plugin data is greater than the current time in the simulation"),
 	NON_ONE_TO_ONE_MAPPING("Mapping of initial data person ids to simulation person is not one-to-one"),
 	NULL_PEOPLE_PLUGIN_DATA("null people plugin data"),
 

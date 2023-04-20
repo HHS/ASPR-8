@@ -70,43 +70,40 @@ public final class GroupsPlugin {
 		 */
 		public Plugin getGroupsPlugin() {
 
-			try {
-				validate();
-				Plugin.Builder builder = Plugin.builder();//
-				builder.setPluginId(GroupsPluginId.PLUGIN_ID);//
+			validate();
+			Plugin.Builder builder = Plugin.builder();//
+			builder.setPluginId(GroupsPluginId.PLUGIN_ID);//
 
-				if (data.groupPopulationReportPluginData != null) {
-					builder.addPluginData(data.groupPopulationReportPluginData);
-				}
-
-				if (data.groupPropertyReportPluginData != null) {
-					builder.addPluginData(data.groupPropertyReportPluginData);
-				}
-
-				builder.addPluginData(data.groupsPluginData);//
-				builder.addPluginDependency(PeoplePluginId.PLUGIN_ID);//
-				builder	.addPluginDependency(StochasticsPluginId.PLUGIN_ID)//
-						.setInitializer((c) -> {
-							GroupsPluginData pluginData = c.getPluginData(GroupsPluginData.class).get();
-							c.addDataManager(new GroupsDataManager(pluginData));
-
-							Optional<GroupPopulationReportPluginData> optional1 = c.getPluginData(GroupPopulationReportPluginData.class);
-							if (optional1.isPresent()) {
-								GroupPopulationReportPluginData groupPopulationReportPluginData = optional1.get();
-								c.addReport(new GroupPopulationReport(groupPopulationReportPluginData)::init);
-							}
-
-							Optional<GroupPropertyReportPluginData> optional2 = c.getPluginData(GroupPropertyReportPluginData.class);
-							if (optional2.isPresent()) {
-								GroupPropertyReportPluginData groupPropertyReportPluginData = optional2.get();
-								c.addReport(new GroupPropertyReport(groupPropertyReportPluginData)::init);
-							}
-
-						});//
-				return builder.build();
-			} finally {
-				data = new Data();
+			if (data.groupPopulationReportPluginData != null) {
+				builder.addPluginData(data.groupPopulationReportPluginData);
 			}
+
+			if (data.groupPropertyReportPluginData != null) {
+				builder.addPluginData(data.groupPropertyReportPluginData);
+			}
+
+			builder.addPluginData(data.groupsPluginData);//
+			builder.addPluginDependency(PeoplePluginId.PLUGIN_ID);//
+			builder	.addPluginDependency(StochasticsPluginId.PLUGIN_ID)//
+					.setInitializer((c) -> {
+						GroupsPluginData pluginData = c.getPluginData(GroupsPluginData.class).get();
+						c.addDataManager(new GroupsDataManager(pluginData));
+
+						Optional<GroupPopulationReportPluginData> optional1 = c.getPluginData(GroupPopulationReportPluginData.class);
+						if (optional1.isPresent()) {
+							GroupPopulationReportPluginData groupPopulationReportPluginData = optional1.get();
+							c.addReport(new GroupPopulationReport(groupPopulationReportPluginData)::init);
+						}
+
+						Optional<GroupPropertyReportPluginData> optional2 = c.getPluginData(GroupPropertyReportPluginData.class);
+						if (optional2.isPresent()) {
+							GroupPropertyReportPluginData groupPropertyReportPluginData = optional2.get();
+							c.addReport(new GroupPropertyReport(groupPropertyReportPluginData)::init);
+						}
+
+					});//
+			return builder.build();
+
 		}
 	}
 

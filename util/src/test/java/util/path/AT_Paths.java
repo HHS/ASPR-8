@@ -2,7 +2,6 @@ package util.path;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
@@ -11,32 +10,43 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 
-import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
 import util.graph.Graph;
 import util.path.Paths.EdgeCostEvaluator;
 import util.path.Paths.TravelCostEvaluator;
 import util.vector.Vector2D;
 
-public class AT_MapPathSolver {
-	/*
-	 * The travel cost will be the straight-line distance
+public class AT_Paths {
+
+	/**
+	 * Tests {@link Paths#getCost(Path, EdgeCostEvaluator)}
 	 */
-	private final static TravelCostEvaluator<Node> TRAVEL_COST_EVALUATOR = new TravelCostEvaluator<Node>() {
+	@Test
+	@UnitTestMethod(target = Paths.class, name = "getCost", args = { Path.class, EdgeCostEvaluator.class })
+	public void testGetCost() {
+		Path.Builder<String> builder = Path.builder();
+		Path<String> path = builder.build();
+		assertEquals(0, Paths.getCost(path, (edge) -> 1), 0);
 
-		@Override
-		public double getMinimumCost(Node originNode, Node destination) {
-			return originNode.position.distanceTo(destination.position);
-		}
-	};
+		builder.addEdge("A->B");
+		builder.addEdge("B->C");
+		builder.addEdge("C->D");
+		path = builder.build();
+		assertEquals(3, Paths.getCost(path, (edge) -> 1), 0);
 
-	private final static EdgeCostEvaluator<Edge> EDGE_COST_EVALUATOR = new EdgeCostEvaluator<Edge>() {
+		builder = Path.builder();
+		builder.addEdge("A->B");
+		builder.addEdge("B->C");
+		builder.addEdge("C->D");
+		path = builder.build();
+		assertEquals(2, Paths.getCost(path, (edge) -> {
+			if (edge.contains("B")) {
+				return 1;
+			}
+			return 0;
+		}), 0);
 
-		@Override
-		public double getEdgeCost(Edge edge) {
-			return edge.cost();
-		}
-	};
+	}
 
 	private static class Edge {
 		private final Node originNode;
@@ -77,23 +87,31 @@ public class AT_MapPathSolver {
 
 	}
 
-	/**
-	 * Tests
-	 * {@link MapPathSolver#MapPathSolver(Graph, EdgeCostEvaluator, TravelCostEvaluator)}
+	/*
+	 * The travel cost will be the straight-line distance
 	 */
-	@Test
-	@UnitTestConstructor(target = MapPathSolver.class, args = { Graph.class, EdgeCostEvaluator.class, TravelCostEvaluator.class })
-	public void testConstructor() {
-		Graph.Builder<String, Integer> builder = Graph.builder();
-		MapPathSolver<String, Integer> arrayPathSolver = new MapPathSolver<>(builder.build(), (e) -> 0.0, (n1, n2) -> 0);
-		assertNotNull(arrayPathSolver);
-	}
+	private final static TravelCostEvaluator<Node> TRAVEL_COST_EVALUATOR = new TravelCostEvaluator<AT_Paths.Node>() {
+
+		@Override
+		public double getMinimumCost(Node originNode, Node destination) {
+			return originNode.position.distanceTo(destination.position);
+		}
+	};
+
+	private final static EdgeCostEvaluator<Edge> EDGE_COST_EVALUATOR = new EdgeCostEvaluator<AT_Paths.Edge>() {
+
+		@Override
+		public double getEdgeCost(Edge edge) {
+			return edge.cost();
+		}
+	};
 
 	/**
-	 * Tests {@link MapPathSolver#getPath(Object, Object)}
+	 * Tests
+	 * {@link Paths#getPath(Graph, Object, Object, EdgeCostEvaluator, TravelCostEvaluator)}
 	 */
 	@Test
-	@UnitTestMethod(target = MapPathSolver.class, name = "getPath", args = { Object.class, Object.class })
+	@UnitTestMethod(target = Paths.class, name = "getPath", args = { Graph.class, Object.class, Object.class, EdgeCostEvaluator.class, TravelCostEvaluator.class })
 	public void testGetPath() {
 
 		// create a few nodes
@@ -132,15 +150,13 @@ public class AT_MapPathSolver {
 		edges.forEach(edge -> graphBuilder.addEdge(edge, edge.originNode, edge.destinationNode));
 		Graph<Node, Edge> graph = graphBuilder.build();
 
-		PathSolver<Node, Edge> pathSolver = new MapPathSolver<>(graph, EDGE_COST_EVALUATOR, TRAVEL_COST_EVALUATOR);
-
 		Path.Builder<Edge> pathBuilder = Path.builder();
 
 		// solve for path from A to D
 		pathBuilder.addEdge(edgeAB);
 		pathBuilder.addEdge(edgeBD);
 		Path<Edge> expectedPath = pathBuilder.build();
-		Optional<Path<Edge>> optionalPath = pathSolver.getPath(nodeA, nodeD);
+		Optional<Path<Edge>> optionalPath = Paths.getPath(graph, nodeA, nodeD, EDGE_COST_EVALUATOR, TRAVEL_COST_EVALUATOR);
 		assertTrue(optionalPath.isPresent());
 		Path<Edge> actualPath = optionalPath.get();
 		assertEquals(expectedPath, actualPath);
@@ -149,31 +165,32 @@ public class AT_MapPathSolver {
 		 * solve for path from D to F -- there is no such path so the optional
 		 * should not be present.
 		 */
-		optionalPath = pathSolver.getPath(nodeD, nodeF);
+		optionalPath = Paths.getPath(graph, nodeD, nodeF, EDGE_COST_EVALUATOR, TRAVEL_COST_EVALUATOR);
 		assertFalse(optionalPath.isPresent());
 
 		// solve for path from A to A
+		pathBuilder = Path.builder();
 		pathBuilder.addEdge(edgeAC);
 		pathBuilder.addEdge(edgeCE);
 		pathBuilder.addEdge(edgeEF);
 		pathBuilder.addEdge(edgeFG);
 		pathBuilder.addEdge(edgeGA);
 		expectedPath = pathBuilder.build();
-		optionalPath = pathSolver.getPath(nodeA, nodeA);
+		optionalPath = Paths.getPath(graph, nodeA, nodeA, EDGE_COST_EVALUATOR, TRAVEL_COST_EVALUATOR);
 		assertTrue(optionalPath.isPresent());
 		actualPath = optionalPath.get();
 		assertEquals(expectedPath, actualPath);
 
 		// solve for path from G to D
+		pathBuilder = Path.builder();
 		pathBuilder.addEdge(edgeGA);
 		pathBuilder.addEdge(edgeAB);
 		pathBuilder.addEdge(edgeBD);
 		expectedPath = pathBuilder.build();
-		optionalPath = pathSolver.getPath(nodeG, nodeD);
+		optionalPath = Paths.getPath(graph, nodeG, nodeD, EDGE_COST_EVALUATOR, TRAVEL_COST_EVALUATOR);
 		assertTrue(optionalPath.isPresent());
 		actualPath = optionalPath.get();
 		assertEquals(expectedPath, actualPath);
 
 	}
-
 }

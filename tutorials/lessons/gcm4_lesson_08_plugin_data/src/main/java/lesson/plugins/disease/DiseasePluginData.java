@@ -23,6 +23,43 @@ public final class DiseasePluginData implements PluginData {
 			asymptomaticDays = data.asymptomaticDays;
 			symptomaticDays = data.symptomaticDays;
 		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			long temp;
+			temp = Double.doubleToLongBits(asymptomaticDays);
+			result = prime * result + (int) (temp ^ (temp >>> 32));
+			temp = Double.doubleToLongBits(r0);
+			result = prime * result + (int) (temp ^ (temp >>> 32));
+			temp = Double.doubleToLongBits(symptomaticDays);
+			result = prime * result + (int) (temp ^ (temp >>> 32));
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (!(obj instanceof Data)) {
+				return false;
+			}
+			Data other = (Data) obj;
+			if (Double.doubleToLongBits(asymptomaticDays) != Double.doubleToLongBits(other.asymptomaticDays)) {
+				return false;
+			}
+			if (Double.doubleToLongBits(r0) != Double.doubleToLongBits(other.r0)) {
+				return false;
+			}
+			if (Double.doubleToLongBits(symptomaticDays) != Double.doubleToLongBits(other.symptomaticDays)) {
+				return false;
+			}
+			return true;
+		}
+		
+		
 	}
 
 	public static class Builder implements PluginDataBuilder {
@@ -84,8 +121,30 @@ public final class DiseasePluginData implements PluginData {
 	}
 
 	@Override
-	public PluginDataBuilder getEmptyBuilder() {
-		return new Builder(new Data());
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((data == null) ? 0 : data.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!(obj instanceof DiseasePluginData)) {
+			return false;
+		}
+		DiseasePluginData other = (DiseasePluginData) obj;
+		if (data == null) {
+			if (other.data != null) {
+				return false;
+			}
+		} else if (!data.equals(other.data)) {
+			return false;
+		}
+		return true;
 	}
 
 }

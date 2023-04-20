@@ -23,6 +23,17 @@ public class TestSimulation {
 		private List<Plugin> plugins = new ArrayList<>();
 		private TestOutputConsumer testOutputConsumer = new TestOutputConsumer();
 		private SimulationState simulationState = SimulationState.builder().build();
+
+		public Data() {
+		}
+
+		public Data(Data data) {
+			simulationHaltTime = data.simulationHaltTime;
+			produceSimulationStateOnHalt = data.produceSimulationStateOnHalt;
+			plugins.addAll(data.plugins);
+			testOutputConsumer = data.testOutputConsumer;
+			simulationState = data.simulationState;
+		}
 	}
 
 	public static Builder builder() {
@@ -64,7 +75,7 @@ public class TestSimulation {
 		 *             simulation time is null
 		 * 
 		 */
-		public Builder setSimulationTime(SimulationState simulationState) {
+		public Builder setSimulationState(SimulationState simulationState) {
 			if (simulationState == null) {
 				throw new ContractException(NucleusError.NULL_SIMULATION_TIME);
 			}
@@ -119,11 +130,7 @@ public class TestSimulation {
 		 * output consumer collected by this builder.
 		 */
 		public TestSimulation build() {
-			try {
-				return new TestSimulation(data);
-			} finally {
-				data = new Data();
-			}
+			return new TestSimulation(new Data(data));
 		}
 	}
 

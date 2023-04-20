@@ -15,6 +15,15 @@ public class RegionConstructionData {
 		private RegionId regionId;
 		private List<Object> values = new ArrayList<>();
 		private Map<RegionPropertyId, Object> propertyValues = new LinkedHashMap<>();
+
+		public Data() {
+		}
+
+		public Data(Data data) {
+			regionId = data.regionId;
+			values.addAll(data.values);
+			propertyValues.putAll(data.propertyValues);
+		}
 	}
 
 	/**
@@ -41,6 +50,7 @@ public class RegionConstructionData {
 		private Builder(Data data) {
 			this.data = data;
 		}
+
 		/**
 		 * Builds the Region Construction Data from the given inputs.
 		 * 
@@ -49,12 +59,8 @@ public class RegionConstructionData {
 		 *             id was not set</li>
 		 */
 		public RegionConstructionData build() {
-			try {
-				validate();
-				return new RegionConstructionData(data);
-			} finally {
-				data = new Data();
-			}
+			validate();
+			return new RegionConstructionData(new Data(data));
 		}
 
 		/**
@@ -93,7 +99,7 @@ public class RegionConstructionData {
 		 * @throws ContractException
 		 * 
 		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
-		 *             region property id is null</li> 
+		 *             region property id is null</li>
 		 * 
 		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE} if the
 		 *             value is null</li>

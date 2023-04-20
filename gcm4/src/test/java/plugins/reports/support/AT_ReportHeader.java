@@ -205,13 +205,13 @@ public class AT_ReportHeader {
 	@Test
 	@UnitTestMethod(target = ReportHeader.class, name = "equals", args = { Object.class })
 	public void testEquals() {
-		ReportHeader.Builder builder = ReportHeader.builder();
-		ReportHeader AB1 = builder.add("A").add("B").build();
-		ReportHeader BA = builder.add("B").add("A").build();
-		ReportHeader ABC1 = builder.add("A").add("B").add("C").build();
-		ReportHeader AB2 = builder.add("A").add("B").build();
-		ReportHeader ABC2 = builder.add("A").add("B").add("C").build();
-		ReportHeader ABC3 = builder.add("A").add("B").add("C").build();
+		
+		ReportHeader AB1 = ReportHeader.builder().add("A").add("B").build();
+		ReportHeader BA = ReportHeader.builder().add("B").add("A").build();
+		ReportHeader ABC1 = ReportHeader.builder().add("A").add("B").add("C").build();
+		ReportHeader AB2 = ReportHeader.builder().add("A").add("B").build();
+		ReportHeader ABC2 = ReportHeader.builder().add("A").add("B").add("C").build();
+		ReportHeader ABC3 = ReportHeader.builder().add("A").add("B").add("C").build();
 
 		// Reflexive
 		assertEquals(AB1, AB1);

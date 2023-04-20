@@ -15,10 +15,22 @@ import util.errors.ContractException;
 @Immutable
 public final class PersonConstructionData {
 
-	private final List<Object> values;
+	private static class Data {
+		private List<Object> values = new ArrayList<>();
 
-	private PersonConstructionData(List<Object> auxiliaryData) {
-		this.values = auxiliaryData;
+		public Data() {
+		}
+
+		public Data(Data data) {
+			values.addAll(data.values);
+		}
+
+	}
+
+	private final Data data;
+
+	private PersonConstructionData(Data data) {
+		this.data = data;
 	}
 
 	public static Builder builder() {
@@ -31,7 +43,7 @@ public final class PersonConstructionData {
 	 *
 	 */
 	public static class Builder {
-		private List<Object> values = new ArrayList<>();
+		private Data data = new Data();
 
 		private Builder() {
 
@@ -42,11 +54,7 @@ public final class PersonConstructionData {
 		 * this builder.
 		 */
 		public PersonConstructionData build() {
-			try {
-				return new PersonConstructionData(values);
-			} finally {
-				values = new ArrayList<>();
-			}
+			return new PersonConstructionData(new Data(data));
 		}
 
 		/**
@@ -60,7 +68,7 @@ public final class PersonConstructionData {
 			if (value == null) {
 				throw new ContractException(PersonError.NULL_AUXILIARY_DATA);
 			}
-			values.add(value);
+			data.values.add(value);
 			return this;
 		}
 
@@ -74,7 +82,7 @@ public final class PersonConstructionData {
 	@SuppressWarnings("unchecked")
 	public <T> Optional<T> getValue(Class<T> c) {
 		T result = null;
-		for (Object value : values) {
+		for (Object value : data.values) {
 			if (c.isAssignableFrom(value.getClass())) {
 				result = (T) value;
 				break;
@@ -91,7 +99,7 @@ public final class PersonConstructionData {
 	@SuppressWarnings("unchecked")
 	public <T> List<T> getValues(Class<T> c) {
 		List<T> result = new ArrayList<>();
-		for (Object value : values) {
+		for (Object value : data.values) {
 			if (c.isAssignableFrom(value.getClass())) {
 				result.add((T) value);
 			}

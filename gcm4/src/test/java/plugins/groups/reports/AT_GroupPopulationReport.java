@@ -31,7 +31,7 @@ import util.annotations.UnitTestMethod;
 public class AT_GroupPopulationReport {
 
 	@Test
-	@UnitTestConstructor(target = GroupPopulationReport.class, args = { GroupPopulationReportPluginData.class})
+	@UnitTestConstructor(target = GroupPopulationReport.class, args = { GroupPopulationReportPluginData.class })
 	public void testConstructor() {
 
 		/*
@@ -366,7 +366,6 @@ public class AT_GroupPopulationReport {
 
 		Map<ReportItem, Integer> expectedReportItems = expectedConsumer.getOutputItems(ReportItem.class);
 		Map<ReportItem, Integer> actualReportItems = testOutputConsumer.getOutputItems(ReportItem.class);
-
 		assertEquals(expectedReportItems, actualReportItems);
 	}
 
@@ -399,7 +398,7 @@ public class AT_GroupPopulationReport {
 		return groupBuilder.build();
 	}
 
-	@Test	
+	@Test
 	@UnitTestMethod(target = GroupPopulationReport.class, name = "init", args = { ReportContext.class })
 	public void testInit_State() {
 		// Test with producing simulation
@@ -430,24 +429,20 @@ public class AT_GroupPopulationReport {
 			groupsDataManager.addPersonToGroup(new PersonId(9), new GroupId(3));
 		}));
 
-		GroupPopulationReportPluginData groupPopulationReportPluginData = GroupPopulationReportPluginData
-				.builder()
-				.setReportLabel(REPORT_LABEL)
-				.setReportPeriod(ReportPeriod.HOURLY)
-				.build();
+		GroupPopulationReportPluginData groupPopulationReportPluginData = GroupPopulationReportPluginData.builder().setReportLabel(REPORT_LABEL).setReportPeriod(ReportPeriod.HOURLY).build();
 
 		TestPluginData testPluginData = pluginBuilder.build();
 
 		Factory factory = GroupsTestPluginFactory	.factory(10, 0, 3, 4023600052052959521L, testPluginData)//
-				.setGroupsPluginData(getGroupsPluginData())//
-				.setGroupPopulationReportPluginData(groupPopulationReportPluginData);
+													.setGroupsPluginData(getGroupsPluginData())//
+													.setGroupPopulationReportPluginData(groupPopulationReportPluginData);
 
 		TestOutputConsumer testOutputConsumer = TestSimulation	.builder()//
-				.addPlugins(factory.getPlugins())//
-				.setProduceSimulationStateOnHalt(true)//
-				.setSimulationHaltTime(20)//
-				.build()//
-				.execute();
+																.addPlugins(factory.getPlugins())//
+																.setProduceSimulationStateOnHalt(true)//
+																.setSimulationHaltTime(20)//
+																.build()//
+																.execute();
 
 		// show that the output plugin data is similar to the input plugin data
 		Map<GroupPopulationReportPluginData, Integer> outputItems = testOutputConsumer.getOutputItems(GroupPopulationReportPluginData.class);
@@ -458,13 +453,14 @@ public class AT_GroupPopulationReport {
 		// Test without producing simulation
 
 		testOutputConsumer = TestSimulation	.builder()//
-				.addPlugins(factory.getPlugins())//
-				.setProduceSimulationStateOnHalt(false)//
-				.setSimulationHaltTime(20)//
-				.build()//
-				.execute();
+											.addPlugins(factory.getPlugins())//
+											.setProduceSimulationStateOnHalt(false)//
+											.setSimulationHaltTime(20)//
+											.build()//
+											.execute();
 
-		// show that when the simulation state is not being produced, there is no output plugin data+
+		// show that when the simulation state is not being produced, there is
+		// no output plugin data+
 		outputItems = testOutputConsumer.getOutputItems(GroupPopulationReportPluginData.class);
 		assertEquals(0, outputItems.size());
 	}

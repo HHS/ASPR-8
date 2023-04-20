@@ -49,16 +49,24 @@ public final class DimensionTree<T> {
 		return new Builder();
 	}
 
-	private static class Scaffold {
+	private static class Data {
 		private double[] lowerBounds;
 		private double[] upperBounds;
 		private int leafSize = DEFAULTLEAFSIZE;
 		private boolean fastRemovals = false;
+		
+		public Data() {}
+		public Data(Data data) {
+			lowerBounds = Arrays.copyOf(data.lowerBounds, data.lowerBounds.length);
+			upperBounds = Arrays.copyOf(data.upperBounds, data.upperBounds.length);
+			leafSize = data.leafSize;
+			fastRemovals = data.fastRemovals;
+		}
 	}
 
 	public static class Builder {
 
-		private Scaffold scaffold = new Scaffold();
+		private Data data = new Data();
 
 		private Builder() {
 		}
@@ -71,7 +79,7 @@ public final class DimensionTree<T> {
 		 * time through exhaustive searching.
 		 */
 		public Builder setFastRemovals(boolean fastRemovals) {
-			scaffold.fastRemovals = fastRemovals;
+			data.fastRemovals = fastRemovals;
 			return this;
 		}
 
@@ -88,7 +96,7 @@ public final class DimensionTree<T> {
 		 */
 
 		public Builder setLeafSize(int leafSize) {
-			scaffold.leafSize = leafSize;
+			data.leafSize = leafSize;
 			return this;
 		}
 
@@ -99,7 +107,7 @@ public final class DimensionTree<T> {
 		 * downs. Lower bounds should not exceed upper bounds.
 		 */
 		public Builder setLowerBounds(double[] lowerBounds) {
-			scaffold.lowerBounds = Arrays.copyOf(lowerBounds, lowerBounds.length);
+			data.lowerBounds = Arrays.copyOf(lowerBounds, lowerBounds.length);
 			return this;
 		}
 
@@ -110,7 +118,7 @@ public final class DimensionTree<T> {
 		 * downs. Lower bounds should not exceed upper bounds.
 		 */
 		public Builder setUpperBounds(double[] upperBounds) {
-			scaffold.upperBounds = Arrays.copyOf(upperBounds, upperBounds.length);
+			data.upperBounds = Arrays.copyOf(upperBounds, upperBounds.length);
 			return this;
 		}
 
@@ -136,13 +144,7 @@ public final class DimensionTree<T> {
 		 * 
 		 */
 		public <T> DimensionTree<T> build() {
-
-			try {
-				return new DimensionTree<>(scaffold);
-			} finally {
-				scaffold = new Scaffold();
-			}
-
+			return new DimensionTree<>(new Data(data));
 		}
 	}
 
@@ -153,37 +155,37 @@ public final class DimensionTree<T> {
 	/*
 	 * Hidden constructor
 	 */
-	private DimensionTree(Scaffold scaffold) {
+	private DimensionTree(Data data) {
 
-		if (scaffold.leafSize < 1) {
+		if (data.leafSize < 1) {
 			throw new ContractException(DimensionTreeError.NON_POSITIVE_LEAF_SIZE);
 		}
 
-		if (scaffold.lowerBounds == null) {
+		if (data.lowerBounds == null) {
 			throw new ContractException(DimensionTreeError.LOWER_BOUNDS_ARE_NULL);
 		}
 
-		if (scaffold.upperBounds == null) {
+		if (data.upperBounds == null) {
 			throw new ContractException(DimensionTreeError.UPPER_BOUNDS_ARE_NULL);
 		}
 
-		int dimension = scaffold.lowerBounds.length;
+		int dimension = data.lowerBounds.length;
 
-		if (scaffold.upperBounds.length != dimension) {
+		if (data.upperBounds.length != dimension) {
 			throw new ContractException(DimensionTreeError.BOUNDS_MISMATCH);
 		}
 
 		for (int i = 0; i < dimension; i++) {
-			if (scaffold.lowerBounds[i] > scaffold.upperBounds[i]) {
+			if (data.lowerBounds[i] > data.upperBounds[i]) {
 				throw new ContractException(DimensionTreeError.LOWER_BOUNDS_EXCEED_UPPER_BOUNDS);
 			}
 		}
 
-		commonState = new CommonState(scaffold.leafSize, dimension);
+		commonState = new CommonState(data.leafSize, dimension);
 
-		root = new Node<>(commonState, scaffold.lowerBounds, scaffold.upperBounds);
+		root = new Node<>(commonState, data.lowerBounds, data.upperBounds);
 
-		if (scaffold.fastRemovals) {
+		if (data.fastRemovals) {
 			groupMap = new LinkedHashMap<>();
 		}
 	}

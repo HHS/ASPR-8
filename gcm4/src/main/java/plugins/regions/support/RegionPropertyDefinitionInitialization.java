@@ -12,8 +12,8 @@ import plugins.util.properties.PropertyError;
 import util.errors.ContractException;
 
 /**
- * A class for defining a person property with an associated property id
- * and property values for extant people.
+ * A class for defining a person property with an associated property id and
+ * property values for extant people.
  * 
  */
 @Immutable
@@ -23,6 +23,15 @@ public final class RegionPropertyDefinitionInitialization {
 		RegionPropertyId regionPropertyId;
 		PropertyDefinition propertyDefinition;
 		List<Pair<RegionId, Object>> propertyValues = new ArrayList<>();
+
+		public Data() {
+		}
+
+		public Data(Data data) {
+			regionPropertyId = data.regionPropertyId;
+			propertyDefinition = data.propertyDefinition;
+			propertyValues.addAll(data.propertyValues);
+		}
 	}
 
 	private final Data data;
@@ -30,7 +39,7 @@ public final class RegionPropertyDefinitionInitialization {
 	private RegionPropertyDefinitionInitialization(Data data) {
 		this.data = data;
 	}
-	
+
 	/**
 	 * Returns a new Builder instance
 	 */
@@ -43,8 +52,9 @@ public final class RegionPropertyDefinitionInitialization {
 	 * 
 	 */
 	public final static class Builder {
-		
-		private Builder() {}
+
+		private Builder() {
+		}
 
 		private Data data = new Data();
 
@@ -68,8 +78,8 @@ public final class RegionPropertyDefinitionInitialization {
 		}
 
 		/**
-		 * Constructs the PersonPropertyDefinitionInitialization from the collected
-		 * data
+		 * Constructs the PersonPropertyDefinitionInitialization from the
+		 * collected data
 		 * 
 		 * @throws ContractException
 		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION}
@@ -82,12 +92,8 @@ public final class RegionPropertyDefinitionInitialization {
 		 *             property definition</li>
 		 */
 		public RegionPropertyDefinitionInitialization build() {
-			try {
-				validate();
-				return new RegionPropertyDefinitionInitialization(data);
-			} finally {
-				data = new Data();
-			}
+			validate();
+			return new RegionPropertyDefinitionInitialization(new Data(data));
 		}
 
 		/**

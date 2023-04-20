@@ -32,12 +32,8 @@ public final class MetaInfoContainer {
 
 		private Data data = new Data();
 
-		public MetaInfoContainer build() {
-			try {
-				return new MetaInfoContainer(data);
-			} finally {
-				data = new Data();
-			}
+		public MetaInfoContainer build() {			
+			return new MetaInfoContainer(data);			
 		}
 
 		/**

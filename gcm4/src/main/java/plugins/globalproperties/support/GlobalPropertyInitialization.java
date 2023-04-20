@@ -21,6 +21,15 @@ public class GlobalPropertyInitialization {
 		private PropertyDefinition propertyDefinition;
 		private Object value;
 
+		public Data() {
+		}
+
+		public Data(Data data) {
+			globalPropertyId = data.globalPropertyId;
+			propertyDefinition = data.propertyDefinition;
+			value = data.value;
+		}
+
 	}
 
 	/**
@@ -54,29 +63,24 @@ public class GlobalPropertyInitialization {
 			}
 		}
 
-
 		/**
 		 * Returns the GlobalPropertyInitialization formed from the inputs.
 		 * 
 		 * @throws ContractException
 		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION}
 		 *             if no property definition was provided</li>
-		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID}
-		 *             if no property id was provided</li>
+		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if no
+		 *             property id was provided</li>
 		 *             <li>{@linkplain PropertyError#INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT}
 		 *             if no property value was provided and the property
 		 *             definition does not contain a default value</li>
-		 *             <li>(@linkplain PropertyError#INCOMPATIBLE_VALUE)
-		 *             if the property value type is not compatible with the
-		 *             property definition</li>
+		 *             <li>(@linkplain PropertyError#INCOMPATIBLE_VALUE) if the
+		 *             property value type is not compatible with the property
+		 *             definition</li>
 		 */
 		public GlobalPropertyInitialization build() {
-			try {
-				validate();
-				return new GlobalPropertyInitialization(data);
-			} finally {
-				data = new Data();
-			}
+			validate();
+			return new GlobalPropertyInitialization(new Data(data));
 		}
 
 		/**
@@ -84,10 +88,10 @@ public class GlobalPropertyInitialization {
 		 * 
 		 * @throws ContractException
 		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
-		 *             property id is null</li> 
+		 *             property id is null</li>
 		 */
 		public Builder setGlobalPropertyId(GlobalPropertyId globalPropertyId) {
-			if(globalPropertyId == null) {
+			if (globalPropertyId == null) {
 				throw new ContractException(PropertyError.NULL_PROPERTY_ID);
 			}
 			data.globalPropertyId = globalPropertyId;
@@ -98,8 +102,8 @@ public class GlobalPropertyInitialization {
 		 * Sets the property definition.
 		 * 
 		 * @throws ContractException
-		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION} if the
-		 *             property definition is null</li> 
+		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION}
+		 *             if the property definition is null</li>
 		 */
 		public Builder setPropertyDefinition(PropertyDefinition propertyDefinition) {
 			if (propertyDefinition == null) {

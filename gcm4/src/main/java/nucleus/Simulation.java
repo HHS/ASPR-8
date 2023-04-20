@@ -237,12 +237,8 @@ public class Simulation {
 		 *             halt time is not set.</li>
 		 */
 		public Simulation build() {
-			try {
-				validate();
-				return new Simulation(data);
-			} finally {
-				data = new Data();
-			}
+			validate();
+			return new Simulation(new Data(data));
 		}
 	}
 
@@ -252,6 +248,17 @@ public class Simulation {
 		private List<Plugin> plugins = new ArrayList<>();
 		private Consumer<Object> outputConsumer;
 		private SimulationState simulationState = SimulationState.builder().build();
+
+		public Data() {
+		}
+
+		public Data(Data data) {
+			simulationHaltTime = data.simulationHaltTime;
+			stateRecordingIsScheduled = data.stateRecordingIsScheduled;
+			plugins.addAll(data.plugins);
+			outputConsumer = data.outputConsumer;
+			simulationState = data.simulationState;
+		}
 	}
 
 	/**
@@ -743,12 +750,11 @@ public class Simulation {
 		}
 		return false;
 	}
-	
-	
+
 	private final Map<DataManagerId, Map<Class<? extends PlanData>, Function<PlanData, Consumer<DataManagerContext>>>> dataManagerPlanDataConversionMap = new LinkedHashMap<>();
 
 	@SuppressWarnings("unchecked")
-	protected <T extends PlanData> void setDataManagerPlanDataConverter(DataManagerId dataManagerId,Class<T> planDataClass, Function<T, Consumer<DataManagerContext>> conversionFunction) {
+	protected <T extends PlanData> void setDataManagerPlanDataConverter(DataManagerId dataManagerId, Class<T> planDataClass, Function<T, Consumer<DataManagerContext>> conversionFunction) {
 		Map<Class<? extends PlanData>, Function<PlanData, Consumer<DataManagerContext>>> map = dataManagerPlanDataConversionMap.get(dataManagerId);
 
 		if (map == null) {
@@ -772,7 +778,6 @@ public class Simulation {
 		}
 		return result;
 	}
-
 
 	private final Map<ActorId, Map<Class<? extends PlanData>, Function<PlanData, Consumer<ActorContext>>>> actorPlanDataConversionMap = new LinkedHashMap<>();
 
@@ -801,7 +806,7 @@ public class Simulation {
 		}
 		return result;
 	}
-	
+
 	private final Map<ReportId, Map<Class<? extends PlanData>, Function<PlanData, Consumer<ReportContext>>>> reportPlanDataConversionMap = new LinkedHashMap<>();
 
 	@SuppressWarnings("unchecked")
@@ -847,11 +852,11 @@ public class Simulation {
 									.setTime(planQueueData.getTime())//
 									.setCallbackConsumer(planRec.actorPlan)//
 									.build();
-				
+
 				break;
 			case DATA_MANAGER:
 				planRec.dataManagerId = dataManagerIds.get(planQueueData.getPlannerId());
-				planRec.dataManagerPlan = getDataManagerContextConsumer(planRec.dataManagerId,planQueueData.getPlanData());
+				planRec.dataManagerPlan = getDataManagerContextConsumer(planRec.dataManagerId, planQueueData.getPlanData());
 				planRec.plan = Plan	.builder(DataManagerContext.class)//
 									.setActive(planQueueData.isActive())//
 									.setKey(planQueueData.getKey())//
@@ -859,7 +864,7 @@ public class Simulation {
 									.setTime(planQueueData.getTime())//
 									.setCallbackConsumer(planRec.dataManagerPlan)//
 									.build();
-				
+
 				break;
 			case REPORT:
 				planRec.reportId = reportIds.get(planQueueData.getPlannerId());
@@ -871,7 +876,7 @@ public class Simulation {
 									.setTime(planQueueData.getTime())//
 									.setCallbackConsumer(planRec.reportPlan)//
 									.build();
-				
+
 				break;
 			default:
 				throw new RuntimeException("unhandled case " + planner);
@@ -1041,7 +1046,7 @@ public class Simulation {
 		loadExistingPlans();
 
 		planningQueueMode = PlanningQueueMode.RUNNING;
-		
+
 		while (activePlanCount > 0) {
 			if (forcedHaltPresent) {
 				if (planningQueue.peek().time > simulationHaltTime) {
@@ -1101,7 +1106,7 @@ public class Simulation {
 				throw new RuntimeException("unhandled planner type " + planRec.planner);
 			}
 		}
-		
+
 		if (forcedHaltPresent) {
 			time = simulationHaltTime;
 		}
@@ -2107,5 +2112,5 @@ public class Simulation {
 		}
 
 	}
-	
+
 }

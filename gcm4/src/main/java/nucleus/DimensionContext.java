@@ -58,7 +58,7 @@ public final class DimensionContext {
 		if (pluginDataBuilder == null) {
 			throw new ContractException(NucleusError.UNKNOWN_PLUGIN_DATA_BUILDER_CLASS);
 		}
-		return (T)pluginDataBuilder;
+		return (T) pluginDataBuilder;
 	}
 
 	/**
@@ -80,17 +80,13 @@ public final class DimensionContext {
 		private Map<Class<?>, PluginDataBuilder> map = new LinkedHashMap<>();
 
 		/**
-		 * Returns the DimensionContext instance composed from the
-		 * inputs to this builder.
+		 * Returns the DimensionContext instance composed from the inputs to
+		 * this builder.
 		 */
 		public DimensionContext build() {
-			try {
-				DimensionContext result = new DimensionContext();
-				result.baseMap = map;
-				return result;
-			} finally {
-				map = new LinkedHashMap<>();
-			}
+			DimensionContext result = new DimensionContext();
+			result.baseMap.putAll(map);
+			return result;
 		}
 
 		/**

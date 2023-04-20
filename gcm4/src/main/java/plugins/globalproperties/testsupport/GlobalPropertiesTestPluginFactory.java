@@ -194,7 +194,7 @@ public final class GlobalPropertiesTestPluginFactory {
 	public static GlobalPropertiesPluginData getStandardGlobalPropertiesPluginData() {
 		GlobalPropertiesPluginData.Builder globalsPluginBuilder = GlobalPropertiesPluginData.builder();
 		for (TestGlobalPropertyId testGlobalPropertyId : TestGlobalPropertyId.values()) {
-			globalsPluginBuilder.defineGlobalProperty(testGlobalPropertyId, testGlobalPropertyId.getPropertyDefinition());
+			globalsPluginBuilder.defineGlobalProperty(testGlobalPropertyId, testGlobalPropertyId.getPropertyDefinition(),0);
 		}
 
 		return globalsPluginBuilder.build();

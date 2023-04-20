@@ -14,12 +14,12 @@ import plugins.util.properties.PropertyError;
 import util.errors.ContractException;
 
 /**
- * A class for defining a person property with an associated property id
- * and property values for extant people.
+ * A class for defining a person property with an associated property id and
+ * property values for extant people.
  * 
  * 
  *
- 
+ * 
  */
 @Immutable
 public final class PersonPropertyDefinitionInitialization {
@@ -28,6 +28,15 @@ public final class PersonPropertyDefinitionInitialization {
 		PersonPropertyId personPropertyId;
 		PropertyDefinition propertyDefinition;
 		List<Pair<PersonId, Object>> propertyValues = new ArrayList<>();
+
+		public Data() {
+		}
+
+		public Data(Data data) {
+			personPropertyId = data.personPropertyId;
+			propertyDefinition = data.propertyDefinition;
+			propertyValues.addAll(data.propertyValues);
+		}
 	}
 
 	private final Data data;
@@ -35,7 +44,7 @@ public final class PersonPropertyDefinitionInitialization {
 	private PersonPropertyDefinitionInitialization(Data data) {
 		this.data = data;
 	}
-	
+
 	/**
 	 * Returns a new Builder instance
 	 */
@@ -48,8 +57,9 @@ public final class PersonPropertyDefinitionInitialization {
 	 * 
 	 */
 	public final static class Builder {
-		
-		private Builder() {}
+
+		private Builder() {
+		}
 
 		private Data data = new Data();
 
@@ -73,8 +83,8 @@ public final class PersonPropertyDefinitionInitialization {
 		}
 
 		/**
-		 * Constructs the PersonPropertyDefinitionInitialization from the collected
-		 * data
+		 * Constructs the PersonPropertyDefinitionInitialization from the
+		 * collected data
 		 * 
 		 * @throws ContractException
 		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION}
@@ -87,12 +97,8 @@ public final class PersonPropertyDefinitionInitialization {
 		 *             property definition</li>
 		 */
 		public PersonPropertyDefinitionInitialization build() {
-			try {
-				validate();
-				return new PersonPropertyDefinitionInitialization(data);
-			} finally {
-				data = new Data();
-			}
+			validate();
+			return new PersonPropertyDefinitionInitialization(new Data(data));
 		}
 
 		/**

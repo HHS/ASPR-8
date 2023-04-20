@@ -27,11 +27,11 @@ public interface PluginData {
 	 * state such that invocation of pluginData.getCloneBuilder().build() will
 	 * generate a copy of the current plugin.
 	 */
-	public PluginDataBuilder getCloneBuilder();
+	public PluginDataBuilder getCloneBuilder();	
+	
+	@Override
+	public int hashCode();
 
-	/**
-	 * Returns a PluginDataBuilder that can build the plugin data. The returned
-	 * builder should be initialized as empty.
-	 */
-	public PluginDataBuilder getEmptyBuilder();
+	@Override
+	public boolean equals(Object obj);
 }

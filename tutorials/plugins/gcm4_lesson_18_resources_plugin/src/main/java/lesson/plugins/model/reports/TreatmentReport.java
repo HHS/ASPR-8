@@ -72,14 +72,14 @@ public final class TreatmentReport {
 												.add("people")//
 												.build();
 
-		ReportItem.Builder reportItemBuilder = ReportItem.builder();
+		
 
 		/*
 		 * Form a report item for each multikey, taking the ordered property
 		 * values from the multikey and using them as inputs to the report item
 		 */
 		for (MultiKey multiKey : map.keySet()) {
-
+			ReportItem.Builder reportItemBuilder = ReportItem.builder();
 			int personCount = map.get(multiKey).getValue();
 			boolean immune = multiKey.getKey(0);
 			boolean infected = multiKey.getKey(1);

@@ -36,7 +36,6 @@ public final class Graph<N, E> {
 		return new Builder<>();
 	}
 
-	
 	public static class Builder<N, E> {
 
 		private MutableGraph<N, E> mutableGraph = new MutableGraph<>();
@@ -46,11 +45,9 @@ public final class Graph<N, E> {
 		}
 
 		public Graph<N, E> build() {
-			try {
-				return new Graph<>(mutableGraph);
-			} finally {
-				mutableGraph = new MutableGraph<>();
-			}
+			MutableGraph<N, E> m = new MutableGraph<>();
+			m.addAll(mutableGraph);
+			return new Graph<>(m);
 		}
 
 		/**

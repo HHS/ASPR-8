@@ -78,40 +78,6 @@ public class AT_StageReportPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = StageReportPluginData.class, name = "getEmptyBuilder", args = {})
-	public void testGetEmptyBuilder() {
-		ReportLabel reportLabel = new SimpleReportLabel("report label");
-
-		StageReportPluginData filledStageReportPluginData = //
-				StageReportPluginData	.builder()//
-										.setReportLabel(reportLabel)//
-										.build();
-
-		// show that the empty builder is indeed empty
-
-		// the report label is not set
-		ContractException contractException = assertThrows(ContractException.class, () -> {
-			filledStageReportPluginData.getEmptyBuilder().build();
-		});
-		assertEquals(ReportError.NULL_REPORT_LABEL, contractException.getErrorType());
-
-		// After filling the report label and report period we should get the
-		// same results as if starting from an empty builder
-		reportLabel = new SimpleReportLabel("another label");
-
-		StageReportPluginData stageReportPluginData1 = //
-				filledStageReportPluginData	.getEmptyBuilder()//
-											.setReportLabel(reportLabel)//
-											.build();
-		StageReportPluginData stageReportPluginData2 = //
-				StageReportPluginData	.builder()//
-										.setReportLabel(reportLabel)//
-										.build();
-
-		assertEquals(stageReportPluginData1, stageReportPluginData2);
-	}
-
-	@Test
 	@UnitTestMethod(target = StageReportPluginData.class, name = "getCloneBuilder", args = {})
 	public void testGetCloneBuilder() {
 

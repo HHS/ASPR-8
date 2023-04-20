@@ -64,10 +64,13 @@ public class PersonPropertiesPluginData implements PluginData {
 
 		@Override
 		public boolean equals(Object o) {
-			if (this == o) return true;
-			if (!(o instanceof Data)) return false;
+			if (this == o)
+				return true;
+			if (!(o instanceof Data))
+				return false;
 			Data data = (Data) o;
-			return maxPersonIndex == data.maxPersonIndex && locked == data.locked && personPropertyDefinitions.equals(data.personPropertyDefinitions) && personPropertyValues.equals(data.personPropertyValues) && emptyList.equals(data.emptyList) && people.equals(data.people);
+			return maxPersonIndex == data.maxPersonIndex && locked == data.locked && personPropertyDefinitions.equals(data.personPropertyDefinitions)
+					&& personPropertyValues.equals(data.personPropertyValues) && emptyList.equals(data.emptyList) && people.equals(data.people);
 		}
 
 		@Override
@@ -135,11 +138,13 @@ public class PersonPropertiesPluginData implements PluginData {
 		 * 
 		 */
 		public PersonPropertiesPluginData build() {
+
 			if (!data.locked) {
 				validateData();
 			}
 			ensureImmutability();
 			return new PersonPropertiesPluginData(data);
+
 		}
 
 		/**
@@ -426,14 +431,11 @@ public class PersonPropertiesPluginData implements PluginData {
 	}
 
 	@Override
-	public PluginDataBuilder getEmptyBuilder() {
-		return builder();
-	}
-
-	@Override
 	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (!(o instanceof PersonPropertiesPluginData)) return false;
+		if (this == o)
+			return true;
+		if (!(o instanceof PersonPropertiesPluginData))
+			return false;
 		PersonPropertiesPluginData that = (PersonPropertiesPluginData) o;
 		return data.equals(that.data);
 	}

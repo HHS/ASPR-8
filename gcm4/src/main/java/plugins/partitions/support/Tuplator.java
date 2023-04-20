@@ -60,11 +60,11 @@ public final class Tuplator {
 		if ((index < 0) || (index >= size)) {
 			throw new IndexOutOfBoundsException("index out of bounds");
 		}
-		
+
 		if (tuple == null) {
 			throw new IllegalArgumentException("null array");
 		}
-		
+
 		if (tuple.length != dimensions.length) {
 			throw new IllegalArgumentException("wrong number of dimensions");
 		}
@@ -85,11 +85,7 @@ public final class Tuplator {
 		}
 
 		public Tuplator build() {
-			try {
-				return new Tuplator(dimensionSizes);
-			} finally {
-				dimensionSizes = new ArrayList<>();
-			}
+			return new Tuplator(dimensionSizes);
 		}
 
 		public Builder addDimension(int dimensionSize) {

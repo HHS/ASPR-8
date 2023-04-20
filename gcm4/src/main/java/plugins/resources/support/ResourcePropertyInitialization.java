@@ -17,8 +17,18 @@ public class ResourcePropertyInitialization {
 	private static class Data {
 		private ResourceId resourceId;
 		private ResourcePropertyId resourcePropertyId;
-		PropertyDefinition propertyDefinition;
+		private PropertyDefinition propertyDefinition;
 		private Object value;
+
+		public Data() {
+		}
+
+		public Data(Data data) {
+			resourceId = data.resourceId;
+			resourcePropertyId = data.resourcePropertyId;
+			propertyDefinition = data.propertyDefinition;
+			value = data.value;
+		}
 
 	}
 
@@ -71,12 +81,8 @@ public class ResourcePropertyInitialization {
 		 *             definition does not contain a default value</li>
 		 */
 		public ResourcePropertyInitialization build() {
-			try {
-				validate();
-				return new ResourcePropertyInitialization(data);
-			} finally {
-				data = new Data();
-			}
+			validate();
+			return new ResourcePropertyInitialization(new Data(data));
 		}
 
 		/**

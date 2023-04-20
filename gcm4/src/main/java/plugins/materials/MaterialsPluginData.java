@@ -247,6 +247,7 @@ public final class MaterialsPluginData implements PluginData {
 		 */
 
 		public MaterialsPluginData build() {
+
 			if (!data.locked) {
 				validateData();
 			}
@@ -673,7 +674,7 @@ public final class MaterialsPluginData implements PluginData {
 					}
 					if (otherPropertyValue == null) {
 						PropertyDefinition propertyDefinition = materialsProducerPropertyDefinitions.get(materialsProducerPropertyId);
-						propertyValue = propertyDefinition.getDefaultValue().get();
+						otherPropertyValue = propertyDefinition.getDefaultValue().get();
 					}
 					if (!propertyValue.equals(otherPropertyValue)) {
 						return false;
@@ -709,18 +710,21 @@ public final class MaterialsPluginData implements PluginData {
 
 			for (BatchId batchId : batchIds) {
 				MaterialId materialId = batchMaterials.get(batchId);
-				for (BatchPropertyId batchPropertyId : batchPropertyDefinitions.get(materialId).keySet()) {
-					Object propertyValue = null;
+				Map<BatchPropertyId, PropertyDefinition> map2 = batchPropertyDefinitions.get(materialId);
+				if (map2 != null) {
+					for (BatchPropertyId batchPropertyId : map2.keySet()) {
+						Object propertyValue = null;
 
-					Map<BatchPropertyId, Object> map = batchPropertyValues.get(batchId);
-					if (map != null) {
-						propertyValue = map.get(batchPropertyId);
+						Map<BatchPropertyId, Object> map = batchPropertyValues.get(batchId);
+						if (map != null) {
+							propertyValue = map.get(batchPropertyId);
+						}
+						if (propertyValue == null) {
+							PropertyDefinition propertyDefinition = batchPropertyDefinitions.get(materialId).get(batchPropertyId);
+							propertyValue = propertyDefinition.getDefaultValue().get();
+						}
+						result = prime * result + propertyValue.hashCode();
 					}
-					if (propertyValue == null) {
-						PropertyDefinition propertyDefinition = batchPropertyDefinitions.get(materialId).get(batchPropertyId);
-						propertyValue = propertyDefinition.getDefaultValue().get();
-					}
-					result = prime * result + propertyValue.hashCode();
 				}
 			}
 			return result;
@@ -855,56 +859,55 @@ public final class MaterialsPluginData implements PluginData {
 			return result;
 		}
 
-		private boolean compareProducerResourceLevels(Data other) {			
-			
-			for(MaterialsProducerId materialsProducerId : materialsProducerResourceLevels.keySet()) {
+		private boolean compareProducerResourceLevels(Data other) {
+
+			for (MaterialsProducerId materialsProducerId : materialsProducerResourceLevels.keySet()) {
 				Set<MultiKey> nonZeroValues = new LinkedHashSet<>();
-				Map<ResourceId, Long> map = materialsProducerResourceLevels.get(materialsProducerId);				
-				if(map != null) {
-					for(ResourceId resourceId : map.keySet()) {						
+				Map<ResourceId, Long> map = materialsProducerResourceLevels.get(materialsProducerId);
+				if (map != null) {
+					for (ResourceId resourceId : map.keySet()) {
 						Long level = map.get(resourceId);
-						if(level>0) {
-							nonZeroValues.add(new MultiKey(resourceId,level));
+						if (level > 0) {
+							nonZeroValues.add(new MultiKey(resourceId, level));
 						}
 					}
 				}
-				
+
 				Set<MultiKey> otherNonZeroValues = new LinkedHashSet<>();
-				map = other.materialsProducerResourceLevels.get(materialsProducerId);				
-				if(map != null) {
-					for(ResourceId resourceId : map.keySet()) {						
+				map = other.materialsProducerResourceLevels.get(materialsProducerId);
+				if (map != null) {
+					for (ResourceId resourceId : map.keySet()) {
 						Long level = map.get(resourceId);
-						if(level>0) {
-							otherNonZeroValues.add(new MultiKey(resourceId,level));
+						if (level > 0) {
+							otherNonZeroValues.add(new MultiKey(resourceId, level));
 						}
 					}
 				}
-				if(!nonZeroValues.equals(otherNonZeroValues)) {
+				if (!nonZeroValues.equals(otherNonZeroValues)) {
 					return false;
-				}				
+				}
 			}
 			return true;
 		}
-		
-		private int getProducerResourceLevelsHashCode() {			
+
+		private int getProducerResourceLevelsHashCode() {
 			final int prime = 31;
 			int result = 1;
-			for(MaterialsProducerId materialsProducerId : materialsProducerResourceLevels.keySet()) {
+			for (MaterialsProducerId materialsProducerId : materialsProducerResourceLevels.keySet()) {
 				Set<MultiKey> nonZeroValues = new LinkedHashSet<>();
-				Map<ResourceId, Long> map = materialsProducerResourceLevels.get(materialsProducerId);				
-				if(map != null) {
-					for(ResourceId resourceId : map.keySet()) {						
+				Map<ResourceId, Long> map = materialsProducerResourceLevels.get(materialsProducerId);
+				if (map != null) {
+					for (ResourceId resourceId : map.keySet()) {
 						Long level = map.get(resourceId);
-						if(level>0) {
-							nonZeroValues.add(new MultiKey(resourceId,level));
+						if (level > 0) {
+							nonZeroValues.add(new MultiKey(resourceId, level));
 						}
 					}
 				}
-				result = prime * result +nonZeroValues.hashCode();
+				result = prime * result + nonZeroValues.hashCode();
 			}
 			return result;
 		}
-
 
 		/*
 		 * This is not a boiler plate equals contract. See notes below
@@ -1015,7 +1018,7 @@ public final class MaterialsPluginData implements PluginData {
 			if (!compareProducerPropertyValues(other)) {
 				return false;
 			}
-			
+
 			if (!compareProducerResourceLevels(other)) {
 				return false;
 			}
@@ -1483,11 +1486,6 @@ public final class MaterialsPluginData implements PluginData {
 	@Override
 	public PluginDataBuilder getCloneBuilder() {
 		return new Builder(data);
-	}
-
-	@Override
-	public PluginDataBuilder getEmptyBuilder() {
-		return builder();
 	}
 
 	@Override

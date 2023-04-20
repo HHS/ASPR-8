@@ -21,24 +21,38 @@ import util.errors.ContractException;
  */
 @Immutable
 public final class PeoplePluginData implements PluginData {
+
+	/*
+	 * The person ids are calculated when the data is being locked and are
+	 * retained here instead of in the PeoplePluginData instance for efficiency.
+	 * We do not copy the person ids in the copy constructor of the data class
+	 * since we will be setting the locked to false and will just have to
+	 * recalculate the person ids later.
+	 */
 	private static class Data {
 		private int personCount = -1;
 		private List<PersonRange> personRanges = new ArrayList<>();
 		private List<PersonId> personIds;
+		private double assignmentTime;
 		private boolean locked;
 
 		public Data() {
 		}
 
 		public Data(Data data) {
+			locked = data.locked;
 			this.personCount = data.personCount;
 			this.personRanges.addAll(data.personRanges);
+			this.assignmentTime = data.assignmentTime;
 		}
 
 		@Override
 		public int hashCode() {
 			final int prime = 31;
 			int result = 1;
+			long temp;
+			temp = Double.doubleToLongBits(assignmentTime);
+			result = prime * result + (int) (temp ^ (temp >>> 32));
 			result = prime * result + personCount;
 			result = prime * result + ((personRanges == null) ? 0 : personRanges.hashCode());
 			return result;
@@ -53,6 +67,9 @@ public final class PeoplePluginData implements PluginData {
 				return false;
 			}
 			Data other = (Data) obj;
+			if (Double.doubleToLongBits(assignmentTime) != Double.doubleToLongBits(other.assignmentTime)) {
+				return false;
+			}
 			if (personCount != other.personCount) {
 				return false;
 			}
@@ -73,8 +90,8 @@ public final class PeoplePluginData implements PluginData {
 			builder.append(personCount);
 			builder.append(", personRanges=");
 			builder.append(personRanges);
-			builder.append(", personIds=");
-			builder.append(personIds);
+			builder.append(", assignmentTime=");
+			builder.append(assignmentTime);
 			builder.append(", locked=");
 			builder.append(locked);
 			builder.append("]");
@@ -155,7 +172,7 @@ public final class PeoplePluginData implements PluginData {
 						a = low;
 						b = high;
 					} else {
-						if (low > b+1) {
+						if (low > b + 1) {
 							count += (b - a + 1);
 							list2.add(new PersonRange(a, b));
 							a = low;
@@ -179,11 +196,11 @@ public final class PeoplePluginData implements PluginData {
 
 				data.personRanges = list2;
 				data.personIds = new ArrayList<>(count);
-				
-				if(data.personCount<0) {
+
+				if (data.personCount < 0) {
 					data.personCount = 0;
-					if(!data.personRanges.isEmpty()) {
-						data.personCount = data.personRanges.get(data.personRanges.size()-1).getHighPersonId()+1;
+					if (!data.personRanges.isEmpty()) {
+						data.personCount = data.personRanges.get(data.personRanges.size() - 1).getHighPersonId() + 1;
 					}
 				}
 
@@ -238,16 +255,31 @@ public final class PeoplePluginData implements PluginData {
 		/**
 		 * Sets the person count. Defaults to one more than the maximum person
 		 * id of any of the person ranges added. If no person ranges are added,
-		 * the default is zero.
-		 * 
-		 * @throws ContractException
-		 *             <li>{@linkplain PersonError#NEGATIVE_PERSON_COUNT} if the
-		 *             person count is negative</li>
+		 * the default is zero. This reflects the number of person id values
+		 * that have been issued. Note that this is not the same as the number
+		 * of people and will be greater than the highest id value of any
+		 * existing person.
 		 */
+
 		public Builder setPersonCount(int personCount) {
 			ensureDataMutability();
 			validatePersonCount(personCount);
 			data.personCount = personCount;
+			return this;
+		}
+
+		/**
+		 * Sets the time for the last person added to the population. Defaults
+		 * to zero.
+		 * 
+		 * @throws ContractException
+		 *             <li>{@linkplain PersonError#NEGATIVE_TIME} if the
+		 *             assignment time is negative</li>
+		 */
+
+		public Builder setAssignmentTime(double assignmentTime) {
+			ensureDataMutability();
+			data.assignmentTime = assignmentTime;
 			return this;
 		}
 	}
@@ -290,11 +322,6 @@ public final class PeoplePluginData implements PluginData {
 	}
 
 	@Override
-	public PluginDataBuilder getEmptyBuilder() {
-		return builder();
-	}
-
-	@Override
 	public boolean equals(Object o) {
 		if (this == o)
 			return true;
@@ -309,8 +336,17 @@ public final class PeoplePluginData implements PluginData {
 		return Objects.hash(data);
 	}
 
+	/**
+	 * Returns the number of person id values that have been issued. Note that
+	 * this is not the same as the number of people and will be greater than the
+	 * highest id value of any existing person.
+	 */
 	public int getPersonCount() {
 		return data.personCount;
+	}
+
+	public double getAssignmentTime() {
+		return data.assignmentTime;
 	}
 
 	@Override

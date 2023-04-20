@@ -347,45 +347,6 @@ public class AT_GlobalPropertyReportPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = GlobalPropertyReportPluginData.class, name = "getEmptyBuilder", args = {})
-	public void testGetEmptyBuilder() {
-		ReportLabel reportLabel = new SimpleReportLabel("report label");
-
-		// show the default value is true
-		GlobalPropertyReportPluginData filledGlobalPropertyReportPluginData = //
-				GlobalPropertyReportPluginData	.builder()//
-												.setReportLabel(reportLabel)//
-												.includeGlobalProperty(TestGlobalPropertyId.GLOBAL_PROPERTY_1_BOOLEAN_MUTABLE)
-												.excludeGlobalProperty(TestGlobalPropertyId.GLOBAL_PROPERTY_2_INTEGER_MUTABLE).setDefaultInclusion(false).build();
-
-		// show that the empty builder is indeed empty
-
-		// the report label is not set
-		ContractException contractException = assertThrows(ContractException.class, () -> {
-			filledGlobalPropertyReportPluginData.getEmptyBuilder().build();
-		});
-		assertEquals(ReportError.NULL_REPORT_LABEL, contractException.getErrorType());
-
-		
-
-		// After filling the report label we should get the
-		// same results as if starting from an empty builder
-		reportLabel = new SimpleReportLabel("another label");
-		
-
-		GlobalPropertyReportPluginData globalPropertyReportPluginData1 = //
-				filledGlobalPropertyReportPluginData.getEmptyBuilder()//
-													.setReportLabel(reportLabel)//													.
-													.build();
-		GlobalPropertyReportPluginData globalPropertyReportPluginData2 = //
-				GlobalPropertyReportPluginData	.builder()//
-												.setReportLabel(reportLabel)//												
-												.build();
-
-		assertEquals(globalPropertyReportPluginData1, globalPropertyReportPluginData2);
-	}
-
-	@Test
 	@UnitTestMethod(target = GlobalPropertyReportPluginData.class, name = "getCloneBuilder", args = {})
 	public void testGetCloneBuilder() {
 

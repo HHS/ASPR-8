@@ -163,15 +163,16 @@ public class AT_ExperimentContext {
 		});
 		Dimension dimension1 = dimBuilder.build();
 
-		dimBuilder.addMetaDatum("X");
+		Dimension.Builder dimBuilder2 = Dimension.builder();
+		dimBuilder2.addMetaDatum("X");
 		IntStream.range(0, 7).forEach((i) -> {
-			dimBuilder.addLevel((context) -> {
+			dimBuilder2.addLevel((context) -> {
 				List<String> result = new ArrayList<>();
 				result.add(Integer.toString(i * i));
 				return result;
 			});
 		});
-		Dimension dimension2 = dimBuilder.build();
+		Dimension dimension2 = dimBuilder2.build();
 
 		// execute the experiment
 		Experiment	.builder()//
@@ -204,15 +205,16 @@ public class AT_ExperimentContext {
 		});
 		Dimension dimension1 = dimBuilder.build();
 
-		dimBuilder.addMetaDatum("X");
+		Dimension.Builder dimBuilder2 = Dimension.builder();
+		dimBuilder2.addMetaDatum("X");
 		IntStream.range(0, 7).forEach((i) -> {
-			dimBuilder.addLevel((context) -> {
+			dimBuilder2.addLevel((context) -> {
 				List<String> result = new ArrayList<>();
 				result.add(Integer.toString(i * i));
 				return result;
 			});
 		});
-		Dimension dimension2 = dimBuilder.build();
+		Dimension dimension2 = dimBuilder2.build();
 
 		/*
 		 * Create a plugin that will put a single actor into the simulation and
@@ -293,7 +295,9 @@ public class AT_ExperimentContext {
 	public void testGetScenarios() {
 		// create an experiment with two dimensions with some experiment meta
 		// data
-		Dimension.Builder dimBuilder = Dimension.builder().addMetaDatum("A").addMetaDatum("B");
+		Dimension.Builder dimBuilder = Dimension.builder()//
+				.addMetaDatum("A")//
+				.addMetaDatum("B");
 		IntStream.range(0, 10).forEach((i) -> {
 			dimBuilder.addLevel((context) -> {
 				List<String> result = new ArrayList<>();
@@ -304,15 +308,16 @@ public class AT_ExperimentContext {
 		});
 		Dimension dimension1 = dimBuilder.build();
 
-		dimBuilder.addMetaDatum("X");
+		Dimension.Builder dimBuilder2 = Dimension.builder();
+		dimBuilder2.addMetaDatum("X");
 		IntStream.range(0, 7).forEach((i) -> {
-			dimBuilder.addLevel((context) -> {
+			dimBuilder2.addLevel((context) -> {
 				List<String> result = new ArrayList<>();
 				result.add(Integer.toString(i * i));
 				return result;
 			});
 		});
-		Dimension dimension2 = dimBuilder.build();
+		Dimension dimension2 = dimBuilder2.build();
 
 		/*
 		 * Create a plugin that will put a single actor into the simulation and
