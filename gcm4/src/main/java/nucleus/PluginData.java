@@ -28,4 +28,10 @@ public interface PluginData {
 	 * generate a copy of the current plugin.
 	 */
 	public PluginDataBuilder getCloneBuilder();	
+	
+	@Override
+	public int hashCode();
+
+	@Override
+	public boolean equals(Object obj);
 }

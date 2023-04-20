@@ -134,6 +134,48 @@ public final class ContactManagerPluginData implements PluginData {
 			return builder.toString();
 		}
 
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			long temp;
+			temp = Double.doubleToLongBits(communityContactRate);
+			result = prime * result + (int) (temp ^ (temp >>> 32));
+			temp = Double.doubleToLongBits(infectionInterval);
+			result = prime * result + (int) (temp ^ (temp >>> 32));
+			result = prime * result + (locked ? 1231 : 1237);
+			result = prime * result + maxInfectiousPeriod;
+			result = prime * result + minInfectiousPeriod;
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (!(obj instanceof Data)) {
+				return false;
+			}
+			Data other = (Data) obj;
+			if (Double.doubleToLongBits(communityContactRate) != Double.doubleToLongBits(other.communityContactRate)) {
+				return false;
+			}
+			if (Double.doubleToLongBits(infectionInterval) != Double.doubleToLongBits(other.infectionInterval)) {
+				return false;
+			}
+			if (locked != other.locked) {
+				return false;
+			}
+			if (maxInfectiousPeriod != other.maxInfectiousPeriod) {
+				return false;
+			}
+			if (minInfectiousPeriod != other.minInfectiousPeriod) {
+				return false;
+			}
+			return true;
+		}
+
 		
 		
 
@@ -180,6 +222,33 @@ public final class ContactManagerPluginData implements PluginData {
 
 	public double getCommunityContactRate() {
 		return data.communityContactRate;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((data == null) ? 0 : data.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!(obj instanceof ContactManagerPluginData)) {
+			return false;
+		}
+		ContactManagerPluginData other = (ContactManagerPluginData) obj;
+		if (data == null) {
+			if (other.data != null) {
+				return false;
+			}
+		} else if (!data.equals(other.data)) {
+			return false;
+		}
+		return true;
 	}
 
 }

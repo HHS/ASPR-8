@@ -30,7 +30,7 @@ public final class AttributeDefinition {
 			type = data.type;
 			defaultValue = data.defaultValue;
 		}
-
+		
 	}
 
 	/**
@@ -176,5 +176,7 @@ public final class AttributeDefinition {
 		builder.append("]");
 		return builder.toString();
 	}
+	
+	
 
 }
