@@ -279,7 +279,6 @@ public final class PeoplePluginData implements PluginData {
 
 		public Builder setAssignmentTime(double assignmentTime) {
 			ensureDataMutability();
-			validateTime(assignmentTime);
 			data.assignmentTime = assignmentTime;
 			return this;
 		}
@@ -319,12 +318,6 @@ public final class PeoplePluginData implements PluginData {
 	private static void validatePersonCount(int personCount) {
 		if (personCount < 0) {
 			throw new ContractException(PersonError.NEGATIVE_PERSON_COUNT);
-		}
-	}
-
-	private static void validateTime(double time) {
-		if (time < 0) {
-			throw new ContractException(PersonError.NEGATIVE_TIME);
 		}
 	}
 
