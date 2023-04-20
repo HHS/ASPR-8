@@ -1,6 +1,7 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties;
 
 import gov.hhs.aspr.translation.core.Translator;
+import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslatorCore;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.PeopleTranslatorId;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.translatorSpecs.PersonPropertiesPluginDataTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.translatorSpecs.PersonPropertyIdTranslatorSpec;
@@ -21,14 +22,16 @@ public class PersonPropertiesTranslator {
                 .addDependency(PropertiesTranslatorId.TRANSLATOR_ID)
                 .addDependency(PeopleTranslatorId.TRANSLATOR_ID)
                 .setInitializer((translatorContext) -> {
-                    translatorContext.addTranslatorSpec(new PersonPropertyIdTranslatorSpec());
-                    translatorContext.addTranslatorSpec(new PersonPropertiesPluginDataTranslatorSpec());
-                    translatorContext.addTranslatorSpec(new TestPersonPropertyIdTranslatorSpec());
+                    ProtobufTranslatorCore.Builder coreBuilder = translatorContext
+                            .getTranslatorCoreBuilder(ProtobufTranslatorCore.Builder.class);
+
+                    coreBuilder.addTranslatorSpec(new PersonPropertyIdTranslatorSpec());
+                    coreBuilder.addTranslatorSpec(new PersonPropertiesPluginDataTranslatorSpec());
+                    coreBuilder.addTranslatorSpec(new TestPersonPropertyIdTranslatorSpec());
 
                     if (withReport) {
-                        translatorContext.addTranslatorSpec(new PersonPropertyReportPluginDataTranslatorSpec());
-                        translatorContext
-                                .addTranslatorSpec(new PersonPropertyInteractionReportPluginDataTranslatorSpec());
+                        coreBuilder.addTranslatorSpec(new PersonPropertyReportPluginDataTranslatorSpec());
+                        coreBuilder.addTranslatorSpec(new PersonPropertyInteractionReportPluginDataTranslatorSpec());
                     }
                 });
 

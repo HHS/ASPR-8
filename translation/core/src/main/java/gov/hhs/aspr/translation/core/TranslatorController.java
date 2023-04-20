@@ -28,8 +28,6 @@ public class TranslatorController {
     private final Data data;
     private TranslatorCore translatorCore;
     private final List<Object> objects = Collections.synchronizedList(new ArrayList<>());
-    private final Map<Class<?>, Translator> appObjectClassToTranslatorMap = new LinkedHashMap<>();
-    private Translator focalTranslator = null;
     private TranslatorId focalTranslatorId = null;
 
     private TranslatorController(Data data) {
@@ -104,12 +102,6 @@ public class TranslatorController {
         return new Builder(new Data());
     }
 
-    protected <I, S> void addTranslatorSpec(AbstractTranslatorSpec<I, S> translatorSpec) {
-        this.data.translatorCoreBuilder.addTranslatorSpec(translatorSpec);
-
-        this.appObjectClassToTranslatorMap.put(translatorSpec.getAppObjectClass(), this.focalTranslator);
-    }
-
     protected <T extends TranslatorCore.Builder> T getTranslatorCoreBuilder(Class<T> classRef) {
         if (this.translatorCore == null) {
             if (this.data.translatorCoreBuilder.getClass() == classRef) {
@@ -156,9 +148,7 @@ public class TranslatorController {
         List<Translator> orderedTranslators = this.getOrderedTranslators();
 
         for (Translator translator : orderedTranslators) {
-            this.focalTranslator = translator;
             translator.getInitializer().accept(translatorContext);
-            this.focalTranslator = null;
         }
 
         this.translatorCore = this.data.translatorCoreBuilder.build();

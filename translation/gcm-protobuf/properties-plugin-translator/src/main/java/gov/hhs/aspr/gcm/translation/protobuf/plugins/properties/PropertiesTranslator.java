@@ -1,6 +1,7 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.properties;
 
 import gov.hhs.aspr.translation.core.Translator;
+import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslatorCore;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.translatorSpecs.PropertyDefinitionMapTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.translatorSpecs.PropertyDefinitionTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.translatorSpecs.PropertyValueMapTranslatorSpec;
@@ -15,10 +16,13 @@ public class PropertiesTranslator {
         Translator.Builder builder = Translator.builder()
                 .setTranslatorId(PropertiesTranslatorId.TRANSLATOR_ID)
                 .setInitializer((translatorContext) -> {
-                    translatorContext.addTranslatorSpec(new PropertyDefinitionTranslatorSpec());
-                    translatorContext.addTranslatorSpec(new TimeTrackingPolicyTranslatorSpec());
-                    translatorContext.addTranslatorSpec(new PropertyValueMapTranslatorSpec());
-                    translatorContext.addTranslatorSpec(new PropertyDefinitionMapTranslatorSpec());
+                    ProtobufTranslatorCore.Builder coreBuilder = translatorContext
+                            .getTranslatorCoreBuilder(ProtobufTranslatorCore.Builder.class);
+
+                    coreBuilder.addTranslatorSpec(new PropertyDefinitionTranslatorSpec());
+                    coreBuilder.addTranslatorSpec(new TimeTrackingPolicyTranslatorSpec());
+                    coreBuilder.addTranslatorSpec(new PropertyValueMapTranslatorSpec());
+                    coreBuilder.addTranslatorSpec(new PropertyDefinitionMapTranslatorSpec());
                 });
 
         return builder;

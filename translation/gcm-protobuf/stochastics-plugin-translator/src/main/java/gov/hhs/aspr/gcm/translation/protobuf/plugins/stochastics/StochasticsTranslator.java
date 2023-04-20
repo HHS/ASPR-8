@@ -1,6 +1,7 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.stochastics;
 
 import gov.hhs.aspr.translation.core.Translator;
+import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslatorCore;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.stochastics.translatorSpecs.RandomGeneratorIdTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.stochastics.translatorSpecs.StochasticsPluginDataTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.stochastics.translatorSpecs.TestRandomGeneratorIdTranslatorSpec;
@@ -15,10 +16,12 @@ public class StochasticsTranslator {
         Translator.Builder builder = Translator.builder()
                 .setTranslatorId(StochasticsTranslatorId.PLUGIN_BUNDLE_ID)
                 .setInitializer((translatorContext) -> {
-                    translatorContext.addTranslatorSpec(new StochasticsPluginDataTranslatorSpec());
-                    translatorContext.addTranslatorSpec(new WellStateTranslatorSpec());
-                    translatorContext.addTranslatorSpec(new RandomGeneratorIdTranslatorSpec());
-                    translatorContext.addTranslatorSpec(new TestRandomGeneratorIdTranslatorSpec());
+                    ProtobufTranslatorCore.Builder coreBuilder = translatorContext.getTranslatorCoreBuilder(ProtobufTranslatorCore.Builder.class);
+
+                    coreBuilder.addTranslatorSpec(new StochasticsPluginDataTranslatorSpec());
+                    coreBuilder.addTranslatorSpec(new WellStateTranslatorSpec());
+                    coreBuilder.addTranslatorSpec(new RandomGeneratorIdTranslatorSpec());
+                    coreBuilder.addTranslatorSpec(new TestRandomGeneratorIdTranslatorSpec());
                 });
 
         return builder;

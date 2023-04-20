@@ -35,29 +35,30 @@ public class MaterialsTranslator {
                 .addDependency(PropertiesTranslatorId.TRANSLATOR_ID)
                 .addDependency(ResourcesTranslatorId.TRANSLATOR_ID)
                 .setInitializer((translatorContext) -> {
-                    translatorContext.addTranslatorSpec(new MaterialsPluginDataTranslatorSpec());
-                    translatorContext.addTranslatorSpec(new MaterialIdTranslatorSpec());
-                    translatorContext.addTranslatorSpec(new MaterialsProducerIdTranslatorSpec());
-                    translatorContext.addTranslatorSpec(new MaterialsProducerPropertyIdTranslatorSpec());
-                    translatorContext.addTranslatorSpec(new BatchIdTranslatorSpec());
-                    translatorContext.addTranslatorSpec(new StageIdTranslatorSpec());
-                    translatorContext.addTranslatorSpec(new BatchPropertyIdTranslatorSpec());
-                    translatorContext.addTranslatorSpec(new TestResourceIdTranslatorSpec());
-                    translatorContext.addTranslatorSpec(new TestBatchPropertyIdTranslatorSpec());
-                    translatorContext.addTranslatorSpec(new TestMaterialIdTranslatorSpec());
-                    translatorContext.addTranslatorSpec(new TestMaterialsProducerIdTranslatorSpec());
-                    translatorContext.addTranslatorSpec(new TestMaterialsProducerPropertyIdTranslatorSpec());
+                    ProtobufTranslatorCore.Builder coreBuilder = translatorContext
+                            .getTranslatorCoreBuilder(ProtobufTranslatorCore.Builder.class);
+
+                    coreBuilder.addTranslatorSpec(new MaterialsPluginDataTranslatorSpec());
+                    coreBuilder.addTranslatorSpec(new MaterialIdTranslatorSpec());
+                    coreBuilder.addTranslatorSpec(new MaterialsProducerIdTranslatorSpec());
+                    coreBuilder.addTranslatorSpec(new MaterialsProducerPropertyIdTranslatorSpec());
+                    coreBuilder.addTranslatorSpec(new BatchIdTranslatorSpec());
+                    coreBuilder.addTranslatorSpec(new StageIdTranslatorSpec());
+                    coreBuilder.addTranslatorSpec(new BatchPropertyIdTranslatorSpec());
+                    coreBuilder.addTranslatorSpec(new TestResourceIdTranslatorSpec());
+                    coreBuilder.addTranslatorSpec(new TestBatchPropertyIdTranslatorSpec());
+                    coreBuilder.addTranslatorSpec(new TestMaterialIdTranslatorSpec());
+                    coreBuilder.addTranslatorSpec(new TestMaterialsProducerIdTranslatorSpec());
+                    coreBuilder.addTranslatorSpec(new TestMaterialsProducerPropertyIdTranslatorSpec());
 
                     if (withReport) {
-                        translatorContext.addTranslatorSpec(new BatchStatusReportPluginDataTranslatorSpec());
-                        translatorContext
-                                .addTranslatorSpec(new MaterialsProducerPropertyReportPluginDataTranslatorSpec());
-                        translatorContext
-                                .addTranslatorSpec(new MaterialsProducerResourceReportPluginDataTranslatorSpec());
-                        translatorContext.addTranslatorSpec(new StageReportPluginDataTranslatorSpec());
+                        coreBuilder.addTranslatorSpec(new BatchStatusReportPluginDataTranslatorSpec());
+                        coreBuilder.addTranslatorSpec(new MaterialsProducerPropertyReportPluginDataTranslatorSpec());
+                        coreBuilder.addTranslatorSpec(new MaterialsProducerResourceReportPluginDataTranslatorSpec());
+                        coreBuilder.addTranslatorSpec(new StageReportPluginDataTranslatorSpec());
                     }
 
-                    translatorContext.getTranslatorCoreBuilder(ProtobufTranslatorCore.Builder.class)
+                    coreBuilder
                             .addFieldToIncludeDefaultValue(BatchIdInput.getDescriptor().findFieldByName("id"))
                             .addFieldToIncludeDefaultValue(StageIdInput.getDescriptor().findFieldByName("id"));
                 });

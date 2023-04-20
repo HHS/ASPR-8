@@ -1,6 +1,7 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.regions;
 
 import gov.hhs.aspr.translation.core.Translator;
+import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslatorCore;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.PeopleTranslatorId;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.PropertiesTranslatorId;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.translatorSpecs.RegionIdTranslatorSpec;
@@ -25,17 +26,20 @@ public class RegionsTranslator {
                 .addDependency(PeopleTranslatorId.TRANSLATOR_ID)
                 .addDependency(PropertiesTranslatorId.TRANSLATOR_ID)
                 .setInitializer((translatorContext) -> {
-                    translatorContext.addTranslatorSpec(new RegionsPluginDataTranslatorSpec());
-                    translatorContext.addTranslatorSpec(new RegionIdTranslatorSpec());
-                    translatorContext.addTranslatorSpec(new RegionPropertyIdTranslatorSpec());
-                    translatorContext.addTranslatorSpec(new SimpleRegionIdTranslatorSpec());
-                    translatorContext.addTranslatorSpec(new SimpleRegionPropertyIdTranslatorSpec());
-                    translatorContext.addTranslatorSpec(new TestRegionIdTranslatorSpec());
-                    translatorContext.addTranslatorSpec(new TestRegionPropertyIdTranslatorSpec());
+                    ProtobufTranslatorCore.Builder coreBuilder = translatorContext
+                            .getTranslatorCoreBuilder(ProtobufTranslatorCore.Builder.class);
+
+                    coreBuilder.addTranslatorSpec(new RegionsPluginDataTranslatorSpec());
+                    coreBuilder.addTranslatorSpec(new RegionIdTranslatorSpec());
+                    coreBuilder.addTranslatorSpec(new RegionPropertyIdTranslatorSpec());
+                    coreBuilder.addTranslatorSpec(new SimpleRegionIdTranslatorSpec());
+                    coreBuilder.addTranslatorSpec(new SimpleRegionPropertyIdTranslatorSpec());
+                    coreBuilder.addTranslatorSpec(new TestRegionIdTranslatorSpec());
+                    coreBuilder.addTranslatorSpec(new TestRegionPropertyIdTranslatorSpec());
 
                     if (withReport) {
-                        translatorContext.addTranslatorSpec(new RegionPropertyReportPluginDataTranslatorSpec());
-                        translatorContext.addTranslatorSpec(new RegionTransferReportPluginDataTranslatorSpec());
+                        coreBuilder.addTranslatorSpec(new RegionPropertyReportPluginDataTranslatorSpec());
+                        coreBuilder.addTranslatorSpec(new RegionTransferReportPluginDataTranslatorSpec());
                     }
                 });
 

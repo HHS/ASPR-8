@@ -8,10 +8,6 @@ public class TranslatorContext {
         this.translatorController = translatorController;
     }
 
-    public <I, S> void addTranslatorSpec(AbstractTranslatorSpec<I, S> translatorSpec) {
-        this.translatorController.addTranslatorSpec(translatorSpec);
-    }
-
     public <T extends TranslatorCore.Builder> T getTranslatorCoreBuilder(Class<T> classRef) {
         return this.translatorController.getTranslatorCoreBuilder(classRef);
     }

@@ -1,6 +1,7 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.reports;
 
 import gov.hhs.aspr.translation.core.Translator;
+import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslatorCore;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.translatorSpecs.ReportLabelTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.translatorSpecs.ReportPeriodTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.translatorSpecs.SimpleReportLabelTranslatorSpec;
@@ -16,9 +17,12 @@ public class ReportsTranslator {
         Translator.Builder builder = Translator.builder()
                 .setTranslatorId(ReportsTranslatorId.TRANSLATOR_ID)
                 .setInitializer((translatorContext) -> {
-                    translatorContext.addTranslatorSpec(new ReportLabelTranslatorSpec());
-                    translatorContext.addTranslatorSpec(new ReportPeriodTranslatorSpec());
-                    translatorContext.addTranslatorSpec(new SimpleReportLabelTranslatorSpec());
+                    ProtobufTranslatorCore.Builder coreBuilder = translatorContext
+                            .getTranslatorCoreBuilder(ProtobufTranslatorCore.Builder.class);
+
+                    coreBuilder.addTranslatorSpec(new ReportLabelTranslatorSpec());
+                    coreBuilder.addTranslatorSpec(new ReportPeriodTranslatorSpec());
+                    coreBuilder.addTranslatorSpec(new SimpleReportLabelTranslatorSpec());
 
                     translatorContext.addMarkerInterface(SimpleReportLabel.class, ReportLabel.class);
                 });

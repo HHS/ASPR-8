@@ -18,12 +18,15 @@ public class NucleusTranslator {
         Translator.Builder builder = Translator.builder()
                 .setTranslatorId(NucleusTranslatorId.TRANSLATOR_ID)
                 .setInitializer((translatorContext) -> {
-                    translatorContext.addTranslatorSpec(new SimulationStateTranslatorSpec());
-                    translatorContext.addTranslatorSpec(new PlanQueueDataTranslatorSpec());
-                    translatorContext.addTranslatorSpec(new PlannerTranslatorSpec());
-                    translatorContext.addTranslatorSpec(new PlanDataTranslatorSpec());
+                    ProtobufTranslatorCore.Builder coreBuilder = translatorContext
+                            .getTranslatorCoreBuilder(ProtobufTranslatorCore.Builder.class);
 
-                    translatorContext.getTranslatorCoreBuilder(ProtobufTranslatorCore.Builder.class)
+                    coreBuilder.addTranslatorSpec(new SimulationStateTranslatorSpec());
+                    coreBuilder.addTranslatorSpec(new PlanQueueDataTranslatorSpec());
+                    coreBuilder.addTranslatorSpec(new PlannerTranslatorSpec());
+                    coreBuilder.addTranslatorSpec(new PlanDataTranslatorSpec());
+
+                    coreBuilder
                             .addFieldToIncludeDefaultValue(
                                     SimulationStateInput.getDescriptor()
                                             .findFieldByName("startTime"))
