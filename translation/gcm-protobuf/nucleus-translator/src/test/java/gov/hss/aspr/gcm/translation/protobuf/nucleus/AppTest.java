@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.nio.file.Path;
 import java.time.LocalDate;
-import java.util.List;
 
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
@@ -38,7 +37,7 @@ public class AppTest {
                 .addOutputFilePath(filePath.resolve(fileName), SimulationState.class)
                 .build();
 
-                RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6625494580697137579L);
+        RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6625494580697137579L);
 
         long arrivalId = randomGenerator.nextLong();
         SimulationState.Builder builder = SimulationState.builder();
@@ -77,32 +76,7 @@ public class AppTest {
 
         SimulationState actualSimulationState = translatorController.getObject(SimulationState.class);
 
-        assertEquals(exptectedSimulationState.getBaseDate(), actualSimulationState.getBaseDate());
-        assertEquals(exptectedSimulationState.getStartTime(), actualSimulationState.getStartTime());
-        assertEquals(exptectedSimulationState.getPlanningQueueArrivalId(),
-                actualSimulationState.getPlanningQueueArrivalId());
-
-        List<PlanQueueData> expectedPlanQueueDatas = exptectedSimulationState.getPlanQueueDatas();
-        List<PlanQueueData> actualPlanQueueDatas = actualSimulationState.getPlanQueueDatas();
-
-        assertEquals(expectedPlanQueueDatas.size(), actualPlanQueueDatas.size());
-
-        for (int i = 0; i < expectedPlanQueueDatas.size(); i++) {
-            PlanQueueData expecetdPlanQueueData = expectedPlanQueueDatas.get(i);
-            PlanQueueData actualPlanQueueData = actualPlanQueueDatas.get(i);
-
-            assertEquals(expecetdPlanQueueData.getArrivalId(), actualPlanQueueData.getArrivalId());
-            assertEquals(expecetdPlanQueueData.getKey(), actualPlanQueueData.getKey());
-            assertEquals(expecetdPlanQueueData.getPlanner(), actualPlanQueueData.getPlanner());
-            assertEquals(expecetdPlanQueueData.getPlannerId(), actualPlanQueueData.getPlannerId());
-            assertEquals(expecetdPlanQueueData.getTime(), actualPlanQueueData.getTime());
-            assertEquals(expecetdPlanQueueData.isActive(), actualPlanQueueData.isActive());
-
-            assertEquals(expecetdPlanQueueData.getPlanData(), actualPlanQueueData.getPlanData());
-        }
-
-        
-        // TODO: fix equals contract for Simulation State
+        assertEquals(exptectedSimulationState, actualSimulationState);
     }
 
 }

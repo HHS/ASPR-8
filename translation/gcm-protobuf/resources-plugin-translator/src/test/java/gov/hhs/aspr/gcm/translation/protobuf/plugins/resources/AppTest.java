@@ -2,7 +2,6 @@ package gov.hhs.aspr.gcm.translation.protobuf.plugins.resources;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.file.Path;
 import java.util.EnumSet;
@@ -32,9 +31,6 @@ import plugins.resources.reports.ResourceReportPluginData;
 import plugins.resources.support.ResourceId;
 import plugins.resources.testsupport.ResourcesTestPluginFactory;
 import plugins.resources.testsupport.TestResourceId;
-import plugins.resources.testsupport.TestResourcePropertyId;
-import plugins.util.properties.PropertyDefinition;
-import plugins.util.properties.TimeTrackingPolicy;
 import util.random.RandomGeneratorProvider;
 
 public class AppTest {
@@ -66,40 +62,7 @@ public class AppTest {
 
         ResourcesPluginData actualPluginData = translatorController.getObject(ResourcesPluginData.class);
 
-        Set<TestResourceId> expectedResourceIds = EnumSet.allOf(TestResourceId.class);
-        assertFalse(expectedResourceIds.isEmpty());
-
-        Set<ResourceId> actualResourceIds = actualPluginData.getResourceIds();
-        assertEquals(expectedResourceIds, actualResourceIds);
-
-        for (TestResourceId resourceId : TestResourceId.values()) {
-            TimeTrackingPolicy expectedPolicy = resourceId.getTimeTrackingPolicy();
-            TimeTrackingPolicy actualPolicy = actualPluginData.getPersonResourceTimeTrackingPolicy(resourceId);
-            assertEquals(expectedPolicy, actualPolicy);
-        }
-
-        Set<TestResourcePropertyId> expectedResourcePropertyIds = EnumSet.allOf(TestResourcePropertyId.class);
-        assertFalse(expectedResourcePropertyIds.isEmpty());
-
-        RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
-        for (TestResourcePropertyId resourcePropertyId : TestResourcePropertyId.values()) {
-            TestResourceId expectedResourceId = resourcePropertyId.getTestResourceId();
-            PropertyDefinition expectedPropertyDefinition = resourcePropertyId.getPropertyDefinition();
-            Object expectedPropertyValue = resourcePropertyId.getRandomPropertyValue(randomGenerator);
-
-            assertTrue(actualPluginData.getResourcePropertyIds(expectedResourceId).contains(resourcePropertyId));
-
-            PropertyDefinition actualPropertyDefinition = actualPluginData
-                    .getResourcePropertyDefinition(expectedResourceId, resourcePropertyId);
-            assertEquals(expectedPropertyDefinition, actualPropertyDefinition);
-
-            Object actualPropertyValue = actualPluginData.getResourcePropertyValue(expectedResourceId,
-                    resourcePropertyId);
-            assertEquals(expectedPropertyValue, actualPropertyValue);
-        }
-
-        // TODO: fix equals contract
-        // assertEquals(expectedPluginData, actualPluginData);
+        assertEquals(expectedPluginData, actualPluginData);
     }
 
     @Test
