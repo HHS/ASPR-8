@@ -158,7 +158,7 @@ public final class AT_ResourcesDataManager {
 
 		}));
 
-		TestPluginData testPluginData2 = pluginBuilder.build();
+		TestPluginData testPluginData2 = pluginBuilder2.build();
 		Factory factory2 = ResourcesTestPluginFactory.factory(2, 7939130943360648501L, testPluginData2)
 				.setResourcesPluginData(resourcesPluginData2);
 		TestOutputConsumer testOutputConsumer2 = TestSimulation.builder().addPlugins(factory2.getPlugins())
@@ -180,23 +180,30 @@ public final class AT_ResourcesDataManager {
 				.setResourcePropertyValue(TestResourceId.RESOURCE_2, TestResourcePropertyId.ResourceProperty_1_1_BOOLEAN_MUTABLE, false)
 				.setRegionResourceLevel(TestRegionId.REGION_1, TestResourceId.RESOURCE_1, 55)
 				.setRegionResourceLevel(expectedRegionIds.get(0), TestResourceId.RESOURCE_2, 8)
+				.setRegionResourceLevel(TestRegionId.REGION_1, TestResourceId.RESOURCE_3, 0)
 				.setRegionResourceLevel(TestRegionId.REGION_2, TestResourceId.RESOURCE_1, 0)
 				.setRegionResourceLevel(TestRegionId.REGION_2, TestResourceId.RESOURCE_2, 5)
 				.setRegionResourceLevel(TestRegionId.REGION_2, TestResourceId.RESOURCE_3, 73)
 				.setRegionResourceLevel(TestRegionId.REGION_3, TestResourceId.RESOURCE_1, 0)
 				.setRegionResourceLevel(TestRegionId.REGION_3, TestResourceId.RESOURCE_2, 0)
+				.setRegionResourceLevel(TestRegionId.REGION_3, TestResourceId.RESOURCE_3, 0)
 				.setRegionResourceLevel(TestRegionId.REGION_4, TestResourceId.RESOURCE_1, 0)
 				.setRegionResourceLevel(TestRegionId.REGION_4, TestResourceId.RESOURCE_2, 0)
+				.setRegionResourceLevel(TestRegionId.REGION_4, TestResourceId.RESOURCE_3, 0)
 				.setRegionResourceLevel(TestRegionId.REGION_5, TestResourceId.RESOURCE_1, 0)
 				.setRegionResourceLevel(TestRegionId.REGION_5, TestResourceId.RESOURCE_2, 0)
+				.setRegionResourceLevel(TestRegionId.REGION_5, TestResourceId.RESOURCE_3, 0)
 				.setRegionResourceLevel(TestRegionId.REGION_6, TestResourceId.RESOURCE_1, 0)
 				.setRegionResourceLevel(TestRegionId.REGION_6, TestResourceId.RESOURCE_2, 0)
+				.setRegionResourceLevel(TestRegionId.REGION_6, TestResourceId.RESOURCE_3, 0)
 				.setPersonResourceLevel(new PersonId(0), TestResourceId.RESOURCE_1, 0)
 				.setPersonResourceLevel(new PersonId(0), TestResourceId.RESOURCE_2, 20)
+				.setPersonResourceLevel(new PersonId(0), TestResourceId.RESOURCE_3, 0)
 				.setPersonResourceLevel(new PersonId(1), TestResourceId.RESOURCE_1, 0)
 				.setPersonResourceLevel(new PersonId(1), TestResourceId.RESOURCE_2, 0)
+				.setPersonResourceLevel(new PersonId(1), TestResourceId.RESOURCE_3, 0)
 				.build();
-//		assertEquals(expectedPluginData2, actualPluginData2);
+		assertEquals(expectedPluginData2, actualPluginData2);
 	}
 
 
