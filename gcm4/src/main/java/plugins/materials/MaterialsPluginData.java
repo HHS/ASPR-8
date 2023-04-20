@@ -710,18 +710,21 @@ public final class MaterialsPluginData implements PluginData {
 
 			for (BatchId batchId : batchIds) {
 				MaterialId materialId = batchMaterials.get(batchId);
-				for (BatchPropertyId batchPropertyId : batchPropertyDefinitions.get(materialId).keySet()) {
-					Object propertyValue = null;
+				Map<BatchPropertyId, PropertyDefinition> map2 = batchPropertyDefinitions.get(materialId);
+				if (map2 != null) {
+					for (BatchPropertyId batchPropertyId : map2.keySet()) {
+						Object propertyValue = null;
 
-					Map<BatchPropertyId, Object> map = batchPropertyValues.get(batchId);
-					if (map != null) {
-						propertyValue = map.get(batchPropertyId);
+						Map<BatchPropertyId, Object> map = batchPropertyValues.get(batchId);
+						if (map != null) {
+							propertyValue = map.get(batchPropertyId);
+						}
+						if (propertyValue == null) {
+							PropertyDefinition propertyDefinition = batchPropertyDefinitions.get(materialId).get(batchPropertyId);
+							propertyValue = propertyDefinition.getDefaultValue().get();
+						}
+						result = prime * result + propertyValue.hashCode();
 					}
-					if (propertyValue == null) {
-						PropertyDefinition propertyDefinition = batchPropertyDefinitions.get(materialId).get(batchPropertyId);
-						propertyValue = propertyDefinition.getDefaultValue().get();
-					}
-					result = prime * result + propertyValue.hashCode();
 				}
 			}
 			return result;

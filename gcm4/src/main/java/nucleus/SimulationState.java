@@ -100,6 +100,10 @@ public class SimulationState {
 		private void validate() {
 
 			for (PlanQueueData planQueueData : data.planQueueDatas) {
+				if (planQueueData.getTime() < data.startTime) {
+					throw new ContractException(NucleusError.PLANNING_QUEUE_TIME);
+
+				}
 				if (planQueueData.getArrivalId() >= data.planningQueueArrivalId) {
 					throw new ContractException(NucleusError.PLANNING_QUEUE_ARRIVAL_INVALID);
 				}
@@ -114,6 +118,12 @@ public class SimulationState {
 		 *             <li>{@linkplain NucleusError#PLANNING_QUEUE_ARRIVAL_INVALID}
 		 *             if the planning queue arrival id does not exceed the
 		 *             arrival id values for all stored PlanQueueData</li>
+		 *             
+		 *             <li>{@linkplain NucleusError#PLANNING_QUEUE_TIME} if the
+		 *             simulation start time is exceeded by any time value
+		 *             stored for a plan</li>
+		 * 
+		 * 
 		 */
 		public SimulationState build() {
 			validate();
@@ -123,15 +133,9 @@ public class SimulationState {
 		/**
 		 * Sets the time (floating point days) of simulation start. Defaults to
 		 * zero.
-		 * 
-		 * @throws ContractException
-		 *             <li>{@linkplain NucleusError#NEGATIVE_START_TIME} if the
-		 *             start time is negative</li>
+		 *		
 		 */
-		public Builder setStartTime(double startTime) {
-			if (startTime < 0) {
-				throw new ContractException(NucleusError.NEGATIVE_START_TIME);
-			}
+		public Builder setStartTime(double startTime) {			
 			data.startTime = startTime;
 			return this;
 		}
@@ -234,7 +238,5 @@ public class SimulationState {
 		}
 		return true;
 	}
-	
-	
 
 }

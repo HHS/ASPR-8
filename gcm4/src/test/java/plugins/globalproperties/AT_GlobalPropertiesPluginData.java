@@ -183,9 +183,6 @@ public class AT_GlobalPropertiesPluginData {
 		contractException = assertThrows(ContractException.class, () -> builder.defineGlobalProperty(new SimpleGlobalPropertyId("id"), null, 0));
 		assertEquals(PropertyError.NULL_PROPERTY_DEFINITION, contractException.getErrorType());
 
-		// if the property definition creation time is negative
-		contractException = assertThrows(ContractException.class, () -> builder.defineGlobalProperty(new SimpleGlobalPropertyId("id"), propDef, -1));
-		assertEquals(PropertyError.NEGATIVE_TIME, contractException.getErrorType());
 	}
 
 	@Test
@@ -259,9 +256,6 @@ public class AT_GlobalPropertiesPluginData {
 		contractException = assertThrows(ContractException.class, () -> builder.setGlobalPropertyValue(TestGlobalPropertyId.GLOBAL_PROPERTY_1_BOOLEAN_MUTABLE, null, 0));
 		assertEquals(PropertyError.NULL_PROPERTY_VALUE, contractException.getErrorType());
 
-		// if the time is negative
-		contractException = assertThrows(ContractException.class, () -> builder.setGlobalPropertyValue(TestGlobalPropertyId.GLOBAL_PROPERTY_1_BOOLEAN_MUTABLE, 5, -10));
-		assertEquals(PropertyError.NEGATIVE_TIME, contractException.getErrorType());
 	}
 
 	@Test

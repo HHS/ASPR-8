@@ -108,9 +108,6 @@ public final class PlanQueueData {
 		}
 
 		private void validate() {
-			if (data.time < 0) {
-				throw new ContractException(NucleusError.NEGATIVE_TIME);
-			}
 
 			if (data.planData == null) {
 				throw new ContractException(NucleusError.NULL_PLAN_DATA);
@@ -127,8 +124,6 @@ public final class PlanQueueData {
 		 * 
 		 * @throws ContractException
 		 * 
-		 *             <li>{@linkplain NucleusError#NEGATIVE_TIME} if the plan
-		 *             time is negative</li>
 		 *             <li>{@linkplain NucleusError#NULL_PLAN_DATA} if the plan
 		 *             data is null</li>
 		 *             <li>{@linkplain NucleusError#NULL_PLANNER} if the planner
