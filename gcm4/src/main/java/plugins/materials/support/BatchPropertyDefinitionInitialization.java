@@ -27,6 +27,17 @@ public final class BatchPropertyDefinitionInitialization {
 		BatchPropertyId batchPropertyId;
 		PropertyDefinition propertyDefinition;
 		List<Pair<BatchId, Object>> propertyValues = new ArrayList<>();
+
+		public Data() {
+		}
+
+		public Data(Data data) {
+			materialId = data.materialId;
+			batchPropertyId = data.batchPropertyId;
+			propertyDefinition = data.propertyDefinition;
+			propertyValues.addAll(data.propertyValues);
+
+		}
 	}
 
 	private final Data data;
@@ -96,12 +107,8 @@ public final class BatchPropertyDefinitionInitialization {
 		 * 
 		 */
 		public BatchPropertyDefinitionInitialization build() {
-			try {
-				validate();
-				return new BatchPropertyDefinitionInitialization(data);
-			} finally {
-				data = new Data();
-			}
+			validate();
+			return new BatchPropertyDefinitionInitialization(new Data(data));
 		}
 
 		/**
@@ -153,8 +160,8 @@ public final class BatchPropertyDefinitionInitialization {
 		 * Adds a property value
 		 * 
 		 * @throws ContractException
-		 *             <li>{@linkplain MaterialsError#NULL_BATCH_ID} if the batch id
-		 *             is null</li>
+		 *             <li>{@linkplain MaterialsError#NULL_BATCH_ID} if the
+		 *             batch id is null</li>
 		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE} if the
 		 *             property value is null</li>
 		 */

@@ -114,6 +114,91 @@ public final class ResourcesPluginData implements PluginData {
 
 		}
 
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + ((emptyResourceInitializationList == null) ? 0 : emptyResourceInitializationList.hashCode());
+			result = prime * result + (locked ? 1231 : 1237);
+			result = prime * result + personCount;
+			result = prime * result + ((personResourceLevels == null) ? 0 : personResourceLevels.hashCode());
+			result = prime * result + ((regionResourceLevels == null) ? 0 : regionResourceLevels.hashCode());
+			result = prime * result + ((resourceIds == null) ? 0 : resourceIds.hashCode());
+			result = prime * result + ((resourcePropertyDefinitions == null) ? 0 : resourcePropertyDefinitions.hashCode());
+			result = prime * result + ((resourcePropertyValues == null) ? 0 : resourcePropertyValues.hashCode());
+			result = prime * result + ((resourceTimeTrackingPolicies == null) ? 0 : resourceTimeTrackingPolicies.hashCode());
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (!(obj instanceof Data)) {
+				return false;
+			}
+			Data other = (Data) obj;
+			if (emptyResourceInitializationList == null) {
+				if (other.emptyResourceInitializationList != null) {
+					return false;
+				}
+			} else if (!emptyResourceInitializationList.equals(other.emptyResourceInitializationList)) {
+				return false;
+			}
+			if (locked != other.locked) {
+				return false;
+			}
+			if (personCount != other.personCount) {
+				return false;
+			}
+			if (personResourceLevels == null) {
+				if (other.personResourceLevels != null) {
+					return false;
+				}
+			} else if (!personResourceLevels.equals(other.personResourceLevels)) {
+				return false;
+			}
+			if (regionResourceLevels == null) {
+				if (other.regionResourceLevels != null) {
+					return false;
+				}
+			} else if (!regionResourceLevels.equals(other.regionResourceLevels)) {
+				return false;
+			}
+			if (resourceIds == null) {
+				if (other.resourceIds != null) {
+					return false;
+				}
+			} else if (!resourceIds.equals(other.resourceIds)) {
+				return false;
+			}
+			if (resourcePropertyDefinitions == null) {
+				if (other.resourcePropertyDefinitions != null) {
+					return false;
+				}
+			} else if (!resourcePropertyDefinitions.equals(other.resourcePropertyDefinitions)) {
+				return false;
+			}
+			if (resourcePropertyValues == null) {
+				if (other.resourcePropertyValues != null) {
+					return false;
+				}
+			} else if (!resourcePropertyValues.equals(other.resourcePropertyValues)) {
+				return false;
+			}
+			if (resourceTimeTrackingPolicies == null) {
+				if (other.resourceTimeTrackingPolicies != null) {
+					return false;
+				}
+			} else if (!resourceTimeTrackingPolicies.equals(other.resourceTimeTrackingPolicies)) {
+				return false;
+			}
+			return true;
+		}
+		
+		
+
 	}
 
 	private final Data data;
@@ -252,15 +337,12 @@ public final class ResourcesPluginData implements PluginData {
 		 * 
 		 */
 		public ResourcesPluginData build() {
-			try {
-				if (!data.locked) {
-					validateData();
-				}
-				ensureImmutability();
-				return new ResourcesPluginData(data);
-			} finally {
-				data = new Data();
+
+			if (!data.locked) {
+				validateData();
 			}
+			ensureImmutability();
+			return new ResourcesPluginData(data);
 		}
 
 		/**
@@ -739,5 +821,33 @@ public final class ResourcesPluginData implements PluginData {
 		return data.personCount;
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((data == null) ? 0 : data.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!(obj instanceof ResourcesPluginData)) {
+			return false;
+		}
+		ResourcesPluginData other = (ResourcesPluginData) obj;
+		if (data == null) {
+			if (other.data != null) {
+				return false;
+			}
+		} else if (!data.equals(other.data)) {
+			return false;
+		}
+		return true;
+	}
+	
+	
 
 }

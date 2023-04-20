@@ -33,6 +33,51 @@ public class SimulationState {
 			planningQueueArrivalId = data.planningQueueArrivalId;
 			planQueueDatas.addAll(data.planQueueDatas);
 		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + ((baseDate == null) ? 0 : baseDate.hashCode());
+			result = prime * result + ((planQueueDatas == null) ? 0 : planQueueDatas.hashCode());
+			result = prime * result + (int) (planningQueueArrivalId ^ (planningQueueArrivalId >>> 32));
+			long temp;
+			temp = Double.doubleToLongBits(startTime);
+			result = prime * result + (int) (temp ^ (temp >>> 32));
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (!(obj instanceof Data)) {
+				return false;
+			}
+			Data other = (Data) obj;
+			if (baseDate == null) {
+				if (other.baseDate != null) {
+					return false;
+				}
+			} else if (!baseDate.equals(other.baseDate)) {
+				return false;
+			}
+			if (planQueueDatas == null) {
+				if (other.planQueueDatas != null) {
+					return false;
+				}
+			} else if (!planQueueDatas.equals(other.planQueueDatas)) {
+				return false;
+			}
+			if (planningQueueArrivalId != other.planningQueueArrivalId) {
+				return false;
+			}
+			if (Double.doubleToLongBits(startTime) != Double.doubleToLongBits(other.startTime)) {
+				return false;
+			}
+			return true;
+		}
 	}
 
 	private final Data data;
@@ -162,5 +207,34 @@ public class SimulationState {
 	public long getPlanningQueueArrivalId() {
 		return data.planningQueueArrivalId;
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((data == null) ? 0 : data.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!(obj instanceof SimulationState)) {
+			return false;
+		}
+		SimulationState other = (SimulationState) obj;
+		if (data == null) {
+			if (other.data != null) {
+				return false;
+			}
+		} else if (!data.equals(other.data)) {
+			return false;
+		}
+		return true;
+	}
+	
+	
 
 }

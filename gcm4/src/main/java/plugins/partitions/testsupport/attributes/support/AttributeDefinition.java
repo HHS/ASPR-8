@@ -3,7 +3,6 @@ package plugins.partitions.testsupport.attributes.support;
 import net.jcip.annotations.ThreadSafe;
 import util.errors.ContractException;
 
-
 /**
  * A thread-safe, immutable class that defines an attribute, but does not
  * indicate the role that attribute is playing or the identifier of the
@@ -18,12 +17,20 @@ public final class AttributeDefinition {
 		return new Builder();
 	}
 
-	private static class Scaffold {
+	private static class Data {
 
 		private Class<?> type = null;
 
 		private Object defaultValue = null;
 
+		public Data() {
+		}
+
+		public Data(Data data) {
+			type = data.type;
+			defaultValue = data.defaultValue;
+		}
+		
 	}
 
 	/**
@@ -33,7 +40,7 @@ public final class AttributeDefinition {
 	 */
 	public static class Builder {
 
-		private Scaffold scaffold = new Scaffold();
+		private Data data = new Data();
 
 		private Builder() {
 		}
@@ -55,18 +62,14 @@ public final class AttributeDefinition {
 		 * 
 		 */
 		public AttributeDefinition build() {
-			try {
-				return new AttributeDefinition(scaffold);
-			} finally {
-				scaffold = new Scaffold();
-			}
+			return new AttributeDefinition(new Data(data));
 		}
 
 		/**
 		 * Sets the class type. Value must be set by client.
 		 */
 		public Builder setType(final Class<?> type) {
-			scaffold.type = type;
+			data.type = type;
 			return this;
 		}
 
@@ -74,7 +77,7 @@ public final class AttributeDefinition {
 		 * Sets the default value for the attribute.
 		 */
 		public Builder setDefaultValue(Object defaultValue) {
-			scaffold.defaultValue = defaultValue;
+			data.defaultValue = defaultValue;
 			return this;
 		}
 
@@ -84,23 +87,23 @@ public final class AttributeDefinition {
 
 	private final Object defaultValue;
 
-	private AttributeDefinition(Scaffold scaffold) {
+	private AttributeDefinition(Data data) {
 
-		if (scaffold.type == null) {
+		if (data.type == null) {
 			throw new ContractException(AttributeError.NULL_ATTRIBUTE_TYPE);
 		}
 
-		if (scaffold.defaultValue == null) {
+		if (data.defaultValue == null) {
 			throw new ContractException(AttributeError.NULL_DEFAULT_VALUE);
 		}
 
-		if (!scaffold.type.isInstance(scaffold.defaultValue)) {
+		if (!data.type.isInstance(data.defaultValue)) {
 			throw new ContractException(AttributeError.INCOMPATIBLE_DEFAULT_VALUE);
 		}
 
-		this.type = scaffold.type;
+		this.type = data.type;
 
-		this.defaultValue = scaffold.defaultValue;
+		this.defaultValue = data.defaultValue;
 
 	}
 
@@ -173,5 +176,7 @@ public final class AttributeDefinition {
 		builder.append("]");
 		return builder.toString();
 	}
+	
+	
 
 }

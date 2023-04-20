@@ -88,7 +88,7 @@ public final class GroupPropertyReport extends PeriodicReport {
 	@Override
 	protected void flush(ReportContext reportContext) {
 
-		final ReportItem.Builder reportItemBuilder = ReportItem.builder();
+		
 
 		for (final GroupTypeId groupTypeId : groupTypeMap.keySet()) {
 			final Map<GroupPropertyId, Map<Object, Counter>> propertyIdMap = groupTypeMap.get(groupTypeId);
@@ -98,6 +98,7 @@ public final class GroupPropertyReport extends PeriodicReport {
 					final Counter counter = groupPropertyValueMap.get(groupPropertyValue);
 					if (counter.count > 0) {
 						final int personCount = counter.count;
+						ReportItem.Builder reportItemBuilder = ReportItem.builder();
 						reportItemBuilder.setReportHeader(getReportHeader());
 						reportItemBuilder.setReportLabel(getReportLabel());
 

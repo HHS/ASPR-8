@@ -98,7 +98,7 @@ public final class PersonPropertyReport extends PeriodicReport {
 	@Override
 	protected void flush(ReportContext reportContext) {
 
-		final ReportItem.Builder reportItemBuilder = ReportItem.builder();
+		
 
 		/*
 		 * For each tuple having a positive population, report the tuple
@@ -111,6 +111,7 @@ public final class PersonPropertyReport extends PeriodicReport {
 					final Counter counter = personPropertyValueMap.get(personPropertyValue);
 					if (counter.count > 0) {
 						final int personCount = counter.count;
+						ReportItem.Builder reportItemBuilder = ReportItem.builder();
 						reportItemBuilder.setReportHeader(getReportHeader());
 						reportItemBuilder.setReportLabel(getReportLabel());
 

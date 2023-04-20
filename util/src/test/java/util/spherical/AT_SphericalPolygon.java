@@ -19,7 +19,6 @@ import util.annotations.UnitTestMethod;
 import util.earth.Earth;
 import util.earth.LatLon;
 import util.random.RandomGeneratorProvider;
-import util.spherical.SphericalPolygon.Builder;
 import util.vector.Vector3D;
 
 public class AT_SphericalPolygon {
@@ -75,26 +74,39 @@ public class AT_SphericalPolygon {
 
 		// Show that an empty set of vertices will throw a
 		// MalformedSphericalPolygonException
-		Builder builder = SphericalPolygon.builder();
-		assertThrows(MalformedSphericalPolygonException.class, () -> builder.build());
+
+		assertThrows(MalformedSphericalPolygonException.class, () -> {
+			SphericalPolygon.builder().build();
+		});
 
 		// Show that a single vertex will throw a
 		// MalformedSphericalPolygonException
-		builder.addSphericalPoint(generateRandomizedSphericalPoint(randomGenerator));
-		assertThrows(MalformedSphericalPolygonException.class, () -> builder.build());
+
+		assertThrows(MalformedSphericalPolygonException.class, () -> {
+			SphericalPolygon.builder()//
+							.addSphericalPoint(generateRandomizedSphericalPoint(randomGenerator))//
+							.build();
+		});
 
 		// Show that two vertices will throw a
 		// MalformedSphericalPolygonException
-		builder.addSphericalPoint(generateRandomizedSphericalPoint(randomGenerator));
-		builder.addSphericalPoint(generateRandomizedSphericalPoint(randomGenerator));
-		assertThrows(MalformedSphericalPolygonException.class, () -> builder.build());
+		assertThrows(MalformedSphericalPolygonException.class, () -> {
+			SphericalPolygon.builder()//
+							.addSphericalPoint(generateRandomizedSphericalPoint(randomGenerator))//
+							.addSphericalPoint(generateRandomizedSphericalPoint(randomGenerator))//
+							.build();
+
+		});
 
 		// Show that null vertices will throw a
 		// MalformedSphericalPolygonException
-		builder.addSphericalPoint(null);
-		builder.addSphericalPoint(generateRandomizedSphericalPoint(randomGenerator));
-		builder.addSphericalPoint(generateRandomizedSphericalPoint(randomGenerator));
-		assertThrows(MalformedSphericalPolygonException.class, () -> builder.build());
+		assertThrows(MalformedSphericalPolygonException.class, () -> {
+			SphericalPolygon.builder()//
+							.addSphericalPoint(null)//
+							.addSphericalPoint(generateRandomizedSphericalPoint(randomGenerator))//
+							.addSphericalPoint(generateRandomizedSphericalPoint(randomGenerator))//
+							.build();
+		});
 
 		// Show that a crossing edges will throw a
 		// MalformedSphericalPolygonException
@@ -104,18 +116,6 @@ public class AT_SphericalPolygon {
 																					.add(0, 20)//
 																					.add(30, 20)//
 																					.build());
-
-		// Show that an ambiguous set of points will throw a
-		// MalformedSphericalPolygonException -- In practice, this is a very
-		// difficult condition to create, so we choose to pass this test via
-		// manual inspection of the SphereicalPolygon class.
-
-		// assertThrows(() -> localBuilder()//
-		// .add(0, 0)//
-		// .add(0, 120)//
-		// .add(0, -120)//
-		// .build(),
-		// MalformedSphericalPolygonException.class);
 
 	}
 

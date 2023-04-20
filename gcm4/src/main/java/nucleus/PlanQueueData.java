@@ -31,6 +31,63 @@ public final class PlanQueueData {
 			plannerId = data.plannerId;
 			arrivalId = data.arrivalId;
 		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + (active ? 1231 : 1237);
+			result = prime * result + (int) (arrivalId ^ (arrivalId >>> 32));
+			result = prime * result + ((key == null) ? 0 : key.hashCode());
+			result = prime * result + ((planData == null) ? 0 : planData.hashCode());
+			result = prime * result + ((planner == null) ? 0 : planner.hashCode());
+			result = prime * result + plannerId;
+			long temp;
+			temp = Double.doubleToLongBits(time);
+			result = prime * result + (int) (temp ^ (temp >>> 32));
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (!(obj instanceof Data)) {
+				return false;
+			}
+			Data other = (Data) obj;
+			if (active != other.active) {
+				return false;
+			}
+			if (arrivalId != other.arrivalId) {
+				return false;
+			}
+			if (key == null) {
+				if (other.key != null) {
+					return false;
+				}
+			} else if (!key.equals(other.key)) {
+				return false;
+			}
+			if (planData == null) {
+				if (other.planData != null) {
+					return false;
+				}
+			} else if (!planData.equals(other.planData)) {
+				return false;
+			}
+			if (planner != other.planner) {
+				return false;
+			}
+			if (plannerId != other.plannerId) {
+				return false;
+			}
+			if (Double.doubleToLongBits(time) != Double.doubleToLongBits(other.time)) {
+				return false;
+			}
+			return true;
+		}
 	}
 
 	/**
@@ -194,5 +251,34 @@ public final class PlanQueueData {
 	public long getArrivalId() {
 		return data.arrivalId;
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((data == null) ? 0 : data.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!(obj instanceof PlanQueueData)) {
+			return false;
+		}
+		PlanQueueData other = (PlanQueueData) obj;
+		if (data == null) {
+			if (other.data != null) {
+				return false;
+			}
+		} else if (!data.equals(other.data)) {
+			return false;
+		}
+		return true;
+	}
+	
+	
 
 }

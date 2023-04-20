@@ -34,6 +34,7 @@ public class AT_Paths {
 		path = builder.build();
 		assertEquals(3, Paths.getCost(path, (edge) -> 1), 0);
 
+		builder = Path.builder();
 		builder.addEdge("A->B");
 		builder.addEdge("B->C");
 		builder.addEdge("C->D");
@@ -168,6 +169,7 @@ public class AT_Paths {
 		assertFalse(optionalPath.isPresent());
 
 		// solve for path from A to A
+		pathBuilder = Path.builder();
 		pathBuilder.addEdge(edgeAC);
 		pathBuilder.addEdge(edgeCE);
 		pathBuilder.addEdge(edgeEF);
@@ -180,6 +182,7 @@ public class AT_Paths {
 		assertEquals(expectedPath, actualPath);
 
 		// solve for path from G to D
+		pathBuilder = Path.builder();
 		pathBuilder.addEdge(edgeGA);
 		pathBuilder.addEdge(edgeAB);
 		pathBuilder.addEdge(edgeBD);

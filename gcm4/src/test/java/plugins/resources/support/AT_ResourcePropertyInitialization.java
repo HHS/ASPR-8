@@ -41,40 +41,59 @@ public class AT_ResourcePropertyInitialization {
 		assertEquals(resourcePropertyInitialization.getPropertyDefinition(), propertyDefinition);
 
 		// precondition test: if property definition is not set
-		builder.setResourceId(testResourceId);
-		builder.setValue(2);
-		builder.setResourcePropertyId(testResourcePropertyId);
-		ContractException definitionContractException = assertThrows(ContractException.class, () -> builder.build());
+
+		ContractException definitionContractException = assertThrows(ContractException.class, () -> {
+			ResourcePropertyInitialization	.builder()//
+											.setResourceId(testResourceId)//
+											.setValue(2)//
+											.setResourcePropertyId(testResourcePropertyId)//
+											.build();//
+		});
 		assertEquals(definitionContractException.getErrorType(), PropertyError.NULL_PROPERTY_DEFINITION);
 
 		// precondition test: if property id is not set
-		builder.setPropertyDefinition(propertyDefinition);
-		builder.setValue(3);
-		builder.setResourceId(testResourceId);
-		ContractException propertyIdContractException = assertThrows(ContractException.class, () -> builder.build());
+		ContractException propertyIdContractException = assertThrows(ContractException.class, () -> {
+			ResourcePropertyInitialization	.builder()//
+											.setPropertyDefinition(propertyDefinition)//
+											.setValue(3)//
+											.setResourceId(testResourceId)//
+											.build();//
+		});
 		assertEquals(propertyIdContractException.getErrorType(), PropertyError.NULL_PROPERTY_ID);
 
 		// precondition test: if resource id is not set
-		builder.setPropertyDefinition(propertyDefinition);
-		builder.setValue(4);
-		builder.setResourcePropertyId(testResourcePropertyId);
-		ContractException resourceIdContractException = assertThrows(ContractException.class, () -> builder.build());
+
+		ContractException resourceIdContractException = assertThrows(ContractException.class, () -> {
+			ResourcePropertyInitialization	.builder()//
+											.setPropertyDefinition(propertyDefinition)//
+											.setValue(4)//
+											.setResourcePropertyId(testResourcePropertyId)//
+											.build();//
+		});
 		assertEquals(resourceIdContractException.getErrorType(), ResourceError.NULL_RESOURCE_ID);
 
 		// precondition test: if the value is not set
-		builder.setPropertyDefinition(propertyDefinition);
-		builder.setResourcePropertyId(testResourcePropertyId);
-		builder.setResourceId(testResourceId);
-		ContractException insufficientValueContractException = assertThrows(ContractException.class, () -> builder.build());
+
+		ContractException insufficientValueContractException = assertThrows(ContractException.class, () -> {
+			ResourcePropertyInitialization	.builder()//
+											.setPropertyDefinition(propertyDefinition)//
+											.setResourcePropertyId(testResourcePropertyId)//
+											.setResourceId(testResourceId)//
+											.build();
+		});
 		assertEquals(insufficientValueContractException.getErrorType(), PropertyError.INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT);
 
 		// precondition test: if the value in incompatible with the property
 		// definition
-		builder.setPropertyDefinition(propertyDefinition);
-		builder.setValue("this is a string");
-		builder.setResourcePropertyId(testResourcePropertyId);
-		builder.setResourceId(testResourceId);
-		ContractException incompatibleContractException = assertThrows(ContractException.class, () -> builder.build());
+
+		ContractException incompatibleContractException = assertThrows(ContractException.class, () -> {
+			ResourcePropertyInitialization	.builder()//
+											.setPropertyDefinition(propertyDefinition)//
+											.setValue("this is a string")//
+											.setResourcePropertyId(testResourcePropertyId)//
+											.setResourceId(testResourceId)//
+											.build();
+		});
 		assertEquals(incompatibleContractException.getErrorType(), PropertyError.INCOMPATIBLE_VALUE);
 	}
 

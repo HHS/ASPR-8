@@ -10,5 +10,9 @@ import net.jcip.annotations.ThreadSafe;
  */
 @ThreadSafe
 public interface RegionId {
+	@Override
+	public int hashCode();
 
+	@Override
+	public boolean equals(Object obj);
 }

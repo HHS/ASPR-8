@@ -49,6 +49,7 @@ public final class StochasticsPluginData implements PluginData {
 		private WellState wellState;
 		private Map<RandomNumberGeneratorId, WellState> randomNumberGeneratorIds = new LinkedHashMap<>();
 		private boolean locked;
+
 		@Override
 		public int hashCode() {
 			final int prime = 31;
@@ -100,7 +101,7 @@ public final class StochasticsPluginData implements PluginData {
 			builder.append("]");
 			return builder.toString();
 		}
-		
+
 	}
 
 	/**
@@ -152,15 +153,13 @@ public final class StochasticsPluginData implements PluginData {
 		 * 
 		 */
 		public StochasticsPluginData build() {
-			try {
+
 			if (!data.locked) {
 				validateData();
 			}
 			ensureImmutability();
 			return new StochasticsPluginData(data);
-			}finally {
-				data = new Data();
-			}
+
 		}
 
 		/**
@@ -236,7 +235,6 @@ public final class StochasticsPluginData implements PluginData {
 		return result;
 	}
 
-	
 	/**
 	 * Returns the main well state
 	 * 
@@ -284,7 +282,5 @@ public final class StochasticsPluginData implements PluginData {
 		builder2.append("]");
 		return builder2.toString();
 	}
-	
-	
 
 }

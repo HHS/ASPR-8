@@ -16,7 +16,7 @@ import util.errors.ContractException;
  * 
  *
  */
-public final class NIOReportItemHandler implements Consumer<ExperimentContext>{
+public final class NIOReportItemHandler implements Consumer<ExperimentContext> {
 
 	public static Builder builder() {
 		return new Builder();
@@ -39,8 +39,8 @@ public final class NIOReportItemHandler implements Consumer<ExperimentContext>{
 		 * 
 		 * @throws ContractException
 		 * 
-		 *             <li>{@linkplain ReportError#NULL_REPORT_LABEL} if the report
-		 *             label is null</li>
+		 *             <li>{@linkplain ReportError#NULL_REPORT_LABEL} if the
+		 *             report label is null</li>
 		 *             <li>{@linkplain ReportError#NULL_REPORT_PATH} if the path
 		 *             is null</li>
 		 * 
@@ -82,12 +82,8 @@ public final class NIOReportItemHandler implements Consumer<ExperimentContext>{
 		 * 
 		 */
 		public NIOReportItemHandler build() {
-			try {
-				validate();
-				return new NIOReportItemHandler(data);
-			} finally {
-				data = new Data();
-			}
+			validate();
+			return new NIOReportItemHandler(new Data(data));
 		}
 
 		/**
@@ -113,6 +109,15 @@ public final class NIOReportItemHandler implements Consumer<ExperimentContext>{
 		private final Map<ReportLabel, Path> reportMap = new LinkedHashMap<>();
 		private boolean displayExperimentColumnsInReports = DEFAULT_DISPLAY_EXPERIMENT_COLUMNS;
 
+		public Data() {
+		}
+
+		public Data(Data data) {
+			delimiter = data.delimiter;
+			reportMap.putAll(data.reportMap);
+			displayExperimentColumnsInReports = data.displayExperimentColumnsInReports;
+		}
+
 	}
 
 	private final static boolean DEFAULT_DISPLAY_EXPERIMENT_COLUMNS = true;
@@ -124,7 +129,6 @@ public final class NIOReportItemHandler implements Consumer<ExperimentContext>{
 	private final String delimiter;
 
 	private final boolean displayExperimentColumnsInReports;
-
 
 	private NIOReportItemHandler(final Data data) {
 		delimiter = data.delimiter;
@@ -169,8 +173,9 @@ public final class NIOReportItemHandler implements Consumer<ExperimentContext>{
 	 * Initializes this report item handler. It subscribes to the following
 	 * experiment level events:
 	 * <ul>
-	 * <li>Experiment Open : Reads and initializes all report files.
-	 * All content that doesn't correspond to a previously fully executed scenario is removed.</li>
+	 * <li>Experiment Open : Reads and initializes all report files. All content
+	 * that doesn't correspond to a previously fully executed scenario is
+	 * removed.</li>
 	 * <li>Simulation Output : directs report items to the appropriate file
 	 * writer</li>
 	 * <li>Simulation Close : ensures all files are flushed so that the content
@@ -179,10 +184,11 @@ public final class NIOReportItemHandler implements Consumer<ExperimentContext>{
 	 * </ul>
 	 *
 	 * @throws RuntimeException
-	 *             <li>if an {@link IOException} is thrown during file initialization</li>
-	 *             <li>if the simulation run is continuing from a progress log and
-	 *             the path is not a regular file (path does not exist) during
-	 *             file initialization</li>
+	 *             <li>if an {@link IOException} is thrown during file
+	 *             initialization</li>
+	 *             <li>if the simulation run is continuing from a progress log
+	 *             and the path is not a regular file (path does not exist)
+	 *             during file initialization</li>
 	 */
 	@Override
 	public void accept(ExperimentContext experimentContext) {

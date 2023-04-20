@@ -18,6 +18,16 @@ public class MaterialsProducerConstructionData {
 		private List<Object> values = new ArrayList<>();
 		private Map<MaterialsProducerPropertyId, Object> propertyValues = new LinkedHashMap<>();
 		private Map<ResourceId, Long> resourceLevels = new LinkedHashMap<>();
+
+		public Data() {
+		}
+
+		public Data(Data data) {
+			materialsProducerId = data.materialsProducerId;
+			values.addAll(data.values);
+			propertyValues.putAll(data.propertyValues);
+			resourceLevels.putAll(data.resourceLevels);
+		}
 	}
 
 	/**
@@ -35,7 +45,8 @@ public class MaterialsProducerConstructionData {
 	public static class Builder {
 		private Data data = new Data();
 
-		private Builder() {}
+		private Builder() {
+		}
 
 		private void validate() {
 			if (data.materialsProducerId == null) {
@@ -51,12 +62,8 @@ public class MaterialsProducerConstructionData {
 		 *             if the materials producer id was not set</li>
 		 */
 		public MaterialsProducerConstructionData build() {
-			try {
-				validate();
-				return new MaterialsProducerConstructionData(data);
-			} finally {
-				data = new Data();
-			}
+			validate();
+			return new MaterialsProducerConstructionData(new Data(data));
 		}
 
 		/**
@@ -133,8 +140,8 @@ public class MaterialsProducerConstructionData {
 		 *             <li>{@linkplain ResourceError#DUPLICATE_REGION_RESOURCE_LEVEL_ASSIGNMENT}
 		 *             if the resource level was previously set</li>
 		 */
-		public Builder setResourceLevel(ResourceId resourceId, long level) {			
-			
+		public Builder setResourceLevel(ResourceId resourceId, long level) {
+
 			if (resourceId == null) {
 				throw new ContractException(ResourceError.NULL_RESOURCE_ID);
 			}

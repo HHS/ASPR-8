@@ -12,12 +12,12 @@ import plugins.util.properties.PropertyError;
 import util.errors.ContractException;
 
 /**
- * A class for defining a material producer property with an associated property id
- * and property values for extant materials producers.
+ * A class for defining a material producer property with an associated property
+ * id and property values for extant materials producers.
  * 
  * 
  *
- 
+ * 
  */
 @Immutable
 public final class MaterialsProducerPropertyDefinitionInitialization {
@@ -26,6 +26,15 @@ public final class MaterialsProducerPropertyDefinitionInitialization {
 		MaterialsProducerPropertyId materialsProducerPropertyId;
 		PropertyDefinition propertyDefinition;
 		List<Pair<MaterialsProducerId, Object>> propertyValues = new ArrayList<>();
+
+		public Data() {
+		}
+
+		public Data(Data data) {
+			materialsProducerPropertyId = data.materialsProducerPropertyId;
+			propertyDefinition = data.propertyDefinition;
+			propertyValues.addAll(data.propertyValues);
+		}
 	}
 
 	private final Data data;
@@ -33,7 +42,7 @@ public final class MaterialsProducerPropertyDefinitionInitialization {
 	private MaterialsProducerPropertyDefinitionInitialization(Data data) {
 		this.data = data;
 	}
-	
+
 	/**
 	 * Returns a new Builder instance
 	 */
@@ -45,11 +54,12 @@ public final class MaterialsProducerPropertyDefinitionInitialization {
 	 * Builder class for a MaterialsProducerPropertyDefinitionInitialization
 	 * 
 	 *
-	
+	 * 
 	 */
 	public final static class Builder {
-		
-		private Builder() {}
+
+		private Builder() {
+		}
 
 		private Data data = new Data();
 
@@ -73,28 +83,24 @@ public final class MaterialsProducerPropertyDefinitionInitialization {
 		}
 
 		/**
-		 * Constructs the MaterialsProducerPropertyDefinitionInitialization from the collected
-		 * data
+		 * Constructs the MaterialsProducerPropertyDefinitionInitialization from
+		 * the collected data
 		 * 
 		 * @throws ContractException
 		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION}
 		 *             if no property definition was assigned to the
 		 *             builder</li>
-		 *             
+		 * 
 		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if no
 		 *             property id was assigned to the builder</li>
-		 *             
+		 * 
 		 *             <li>{@linkplain PropertyError#INCOMPATIBLE_VALUE} if a
 		 *             collected property value is incompatible with the
 		 *             property definition</li>
 		 */
 		public MaterialsProducerPropertyDefinitionInitialization build() {
-			try {
-				validate();
-				return new MaterialsProducerPropertyDefinitionInitialization(data);
-			} finally {
-				data = new Data();
-			}
+			validate();
+			return new MaterialsProducerPropertyDefinitionInitialization(new Data(data));
 		}
 
 		/**
@@ -131,8 +137,8 @@ public final class MaterialsProducerPropertyDefinitionInitialization {
 		 * Adds a property value
 		 * 
 		 * @throws ContractException
-		 *             <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID} if the
-		 *             material producer id is null</li>
+		 *             <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID}
+		 *             if the material producer id is null</li>
 		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE} if the
 		 *             property value is null</li>
 		 */
@@ -166,10 +172,11 @@ public final class MaterialsProducerPropertyDefinitionInitialization {
 	}
 
 	/**
-	 * Returns the list of (MaterialsProducerId,value) pairs collected by the builder in the
-	 * order of their addition. All pairs have non-null entries and the values
-	 * are compatible with the contained property definition. Duplicate
-	 * assignments of values to the same materials producer may be present.
+	 * Returns the list of (MaterialsProducerId,value) pairs collected by the
+	 * builder in the order of their addition. All pairs have non-null entries
+	 * and the values are compatible with the contained property definition.
+	 * Duplicate assignments of values to the same materials producer may be
+	 * present.
 	 */
 	public List<Pair<MaterialsProducerId, Object>> getPropertyValues() {
 		return Collections.unmodifiableList(data.propertyValues);

@@ -153,6 +153,7 @@ public class AT_ArrayPathSolver {
 		assertFalse(optionalPath.isPresent());
 
 		// solve for path from A to A
+		pathBuilder = Path.builder();
 		pathBuilder.addEdge(edgeAC);
 		pathBuilder.addEdge(edgeCE);
 		pathBuilder.addEdge(edgeEF);
@@ -165,6 +166,7 @@ public class AT_ArrayPathSolver {
 		assertEquals(expectedPath, actualPath);
 
 		// solve for path from G to D
+		pathBuilder = Path.builder();
 		pathBuilder.addEdge(edgeGA);
 		pathBuilder.addEdge(edgeAB);
 		pathBuilder.addEdge(edgeBD);

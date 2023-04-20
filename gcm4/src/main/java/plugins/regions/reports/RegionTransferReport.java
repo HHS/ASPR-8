@@ -68,12 +68,13 @@ public final class RegionTransferReport extends PeriodicReport {
 	@Override
 	protected void flush(ReportContext reportContext) {
 
-		final ReportItem.Builder reportItemBuilder = ReportItem.builder();
+		
 
 		for (final MultiKey multiKey : baseMap.keySet()) {
 			RegionId sourceRegionId = multiKey.getKey(0);
 			RegionId destinationRegionId = multiKey.getKey(1);
 			MutableInteger mutableInteger = baseMap.get(multiKey);
+			ReportItem.Builder reportItemBuilder = ReportItem.builder();
 			reportItemBuilder.setReportHeader(getReportHeader());
 			reportItemBuilder.setReportLabel(getReportLabel());
 			fillTimeFields(reportItemBuilder);

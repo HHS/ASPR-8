@@ -195,6 +195,99 @@ public final class VaccineProducerPluginData implements PluginData {
 			locked = data.locked;
 		}
 
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + ((antigenBatchId == null) ? 0 : antigenBatchId.hashCode());
+			result = prime * result + ((deliveryAmounts == null) ? 0 : deliveryAmounts.hashCode());
+			result = prime * result + ((deliveryDelays == null) ? 0 : deliveryDelays.hashCode());
+			long temp;
+			temp = Double.doubleToLongBits(lastBatchAssemblyEndTime);
+			result = prime * result + (int) (temp ^ (temp >>> 32));
+			result = prime * result + (locked ? 1231 : 1237);
+			result = prime * result + ((materialBatchIds == null) ? 0 : materialBatchIds.hashCode());
+			result = prime * result + ((materialIds == null) ? 0 : materialIds.hashCode());
+			result = prime * result + ((materialsOnOrder == null) ? 0 : materialsOnOrder.hashCode());
+			result = prime * result + ((materialsProducerId == null) ? 0 : materialsProducerId.hashCode());
+			result = prime * result + ((stageAmounts == null) ? 0 : stageAmounts.hashCode());
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (!(obj instanceof Data)) {
+				return false;
+			}
+			Data other = (Data) obj;
+			if (antigenBatchId == null) {
+				if (other.antigenBatchId != null) {
+					return false;
+				}
+			} else if (!antigenBatchId.equals(other.antigenBatchId)) {
+				return false;
+			}
+			if (deliveryAmounts == null) {
+				if (other.deliveryAmounts != null) {
+					return false;
+				}
+			} else if (!deliveryAmounts.equals(other.deliveryAmounts)) {
+				return false;
+			}
+			if (deliveryDelays == null) {
+				if (other.deliveryDelays != null) {
+					return false;
+				}
+			} else if (!deliveryDelays.equals(other.deliveryDelays)) {
+				return false;
+			}
+			if (Double.doubleToLongBits(lastBatchAssemblyEndTime) != Double.doubleToLongBits(other.lastBatchAssemblyEndTime)) {
+				return false;
+			}
+			if (locked != other.locked) {
+				return false;
+			}
+			if (materialBatchIds == null) {
+				if (other.materialBatchIds != null) {
+					return false;
+				}
+			} else if (!materialBatchIds.equals(other.materialBatchIds)) {
+				return false;
+			}
+			if (materialIds == null) {
+				if (other.materialIds != null) {
+					return false;
+				}
+			} else if (!materialIds.equals(other.materialIds)) {
+				return false;
+			}
+			if (materialsOnOrder == null) {
+				if (other.materialsOnOrder != null) {
+					return false;
+				}
+			} else if (!materialsOnOrder.equals(other.materialsOnOrder)) {
+				return false;
+			}
+			if (materialsProducerId == null) {
+				if (other.materialsProducerId != null) {
+					return false;
+				}
+			} else if (!materialsProducerId.equals(other.materialsProducerId)) {
+				return false;
+			}
+			if (stageAmounts == null) {
+				if (other.stageAmounts != null) {
+					return false;
+				}
+			} else if (!stageAmounts.equals(other.stageAmounts)) {
+				return false;
+			}
+			return true;
+		}
+
 	}
 
 	/**
@@ -279,4 +372,35 @@ public final class VaccineProducerPluginData implements PluginData {
 	public Set<MaterialId> getMaterialIds() {
 		return new LinkedHashSet<>(data.materialIds);
 	}
+
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((data == null) ? 0 : data.hashCode());
+		return result;
+	}
+
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!(obj instanceof VaccineProducerPluginData)) {
+			return false;
+		}
+		VaccineProducerPluginData other = (VaccineProducerPluginData) obj;
+		if (data == null) {
+			if (other.data != null) {
+				return false;
+			}
+		} else if (!data.equals(other.data)) {
+			return false;
+		}
+		return true;
+	}
+	
+	
 }

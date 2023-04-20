@@ -25,7 +25,7 @@ public class SphericalPolygon {
 	 * static class for containing the contributed points that will the form the
 	 * polygon
 	 */
-	private static class Scaffold {
+	private static class Data {
 		private List<SphericalPoint> sphericalPoints = new ArrayList<>();
 		boolean useSearchTree = true;
 	}
@@ -43,7 +43,7 @@ public class SphericalPolygon {
 		 * Winding order may be either left or right handed.
 		 */
 		public Builder addSphericalPoint(SphericalPoint sphericalPoint) {
-			scaffold.sphericalPoints.add(sphericalPoint);
+			data.sphericalPoints.add(sphericalPoint);
 			return this;
 		}
 
@@ -52,11 +52,11 @@ public class SphericalPolygon {
 		 * Default is true;
 		 */
 		public Builder setUseSearchTree(boolean useSearchTree) {
-			scaffold.useSearchTree = useSearchTree;
+			data.useSearchTree = useSearchTree;
 			return this;
 		}
 
-		private Scaffold scaffold = new Scaffold();
+		private Data data = new Data();
 
 		/*
 		 * Hidden constructor
@@ -80,11 +80,7 @@ public class SphericalPolygon {
 		 * 
 		 */
 		public SphericalPolygon build() {
-			try {
-				return new SphericalPolygon(scaffold);
-			} finally {
-				scaffold = new Scaffold();
-			}
+			return new SphericalPolygon(data);
 		}
 	}
 
@@ -291,20 +287,20 @@ public class SphericalPolygon {
 		return result;
 	}
 
-	private SphericalPolygon(Scaffold scaffold) {
+	private SphericalPolygon(Data data) {
 
-		if (scaffold.sphericalPoints.size() < 3) {
+		if (data.sphericalPoints.size() < 3) {
 			throw new MalformedSphericalPolygonException("spherical polygons require at least three points");
 		}
 
-		for (SphericalPoint sphericalPoint : scaffold.sphericalPoints) {
+		for (SphericalPoint sphericalPoint : data.sphericalPoints) {
 			if (sphericalPoint == null) {
 				throw new MalformedSphericalPolygonException("spherical polygons require non-null spherical points");
 			}
 		}
 
 		MutableVector3D v = new MutableVector3D();
-		for (SphericalPoint sphericalPoint : scaffold.sphericalPoints) {
+		for (SphericalPoint sphericalPoint : data.sphericalPoints) {
 			v.add(sphericalPoint.getPosition());
 		}
 		centroid = new SphericalPoint(v);
@@ -314,16 +310,16 @@ public class SphericalPolygon {
 		}
 
 		double r = Double.NEGATIVE_INFINITY;
-		for (SphericalPoint sphericalPoint : scaffold.sphericalPoints) {
+		for (SphericalPoint sphericalPoint : data.sphericalPoints) {
 			r = FastMath.max(r, centroid.getPosition().angle(sphericalPoint.getPosition()));
 		}
 		radius = r;
 
 		Chirality chirality = Chirality.RIGHT_HANDED;
-		List<SphericalTriangle> triangles = triangulate(scaffold.sphericalPoints, Chirality.RIGHT_HANDED);
+		List<SphericalTriangle> triangles = triangulate(data.sphericalPoints, Chirality.RIGHT_HANDED);
 		if (triangles.size() == 0) {
 			chirality = Chirality.LEFT_HANDED;
-			triangles = triangulate(scaffold.sphericalPoints, Chirality.LEFT_HANDED);
+			triangles = triangulate(data.sphericalPoints, Chirality.LEFT_HANDED);
 		}
 
 		if (triangles.size() == 0) {
@@ -333,14 +329,14 @@ public class SphericalPolygon {
 		this.chirality = chirality;
 		sphericalTriangles = triangles;
 
-		sphericalPoints = scaffold.sphericalPoints;
+		sphericalPoints = data.sphericalPoints;
 
-		for (int i = 0; i < scaffold.sphericalPoints.size(); i++) {
-			int j = (i + 1) % scaffold.sphericalPoints.size();
-			sphericalArcs.add(new SphericalArc(scaffold.sphericalPoints.get(i), scaffold.sphericalPoints.get(j)));
+		for (int i = 0; i < data.sphericalPoints.size(); i++) {
+			int j = (i + 1) % data.sphericalPoints.size();
+			sphericalArcs.add(new SphericalArc(data.sphericalPoints.get(i), data.sphericalPoints.get(j)));
 		}
 
-		if (sphericalTriangles.size() > SEARCH_TREE_THRESHOLD && scaffold.useSearchTree) {
+		if (sphericalTriangles.size() > SEARCH_TREE_THRESHOLD && data.useSearchTree) {
 			searchTree = VolumetricDimensionTree.builder()//
 												.setFastRemovals(true)//
 												.setLowerBounds(new double[] { -1, -1, -1 })//

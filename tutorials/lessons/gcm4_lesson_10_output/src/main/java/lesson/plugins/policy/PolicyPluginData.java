@@ -20,6 +20,35 @@ public final class PolicyPluginData implements PluginData {
 			distributeVaccineLocally = data.distributeVaccineLocally;
 		}
 
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + (distributeVaccineLocally ? 1231 : 1237);
+			long temp;
+			temp = Double.doubleToLongBits(schoolClosingInfectionRate);
+			result = prime * result + (int) (temp ^ (temp >>> 32));
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (!(obj instanceof Data)) {
+				return false;
+			}
+			Data other = (Data) obj;
+			if (distributeVaccineLocally != other.distributeVaccineLocally) {
+				return false;
+			}
+			if (Double.doubleToLongBits(schoolClosingInfectionRate) != Double.doubleToLongBits(other.schoolClosingInfectionRate)) {
+				return false;
+			}
+			return true;
+		}
+
 	}
 
 	public static class Builder implements PluginDataBuilder {
@@ -67,6 +96,33 @@ public final class PolicyPluginData implements PluginData {
 	@Override
 	public PluginDataBuilder getCloneBuilder() {
 		return new Builder(new Data(data));
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((data == null) ? 0 : data.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!(obj instanceof PolicyPluginData)) {
+			return false;
+		}
+		PolicyPluginData other = (PolicyPluginData) obj;
+		if (data == null) {
+			if (other.data != null) {
+				return false;
+			}
+		} else if (!data.equals(other.data)) {
+			return false;
+		}
+		return true;
 	}
 
 }
