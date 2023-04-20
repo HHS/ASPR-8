@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>gov.hhs.aspr.gcm.translation.protobuf</groupId>
+        <artifactId>protobuf-parent</artifactId>
+        <version>${revision}</version>
+    </parent>
+
+    <artifactId>regions-plugin-translator</artifactId>
+    <packaging>jar</packaging>
+    <name>gcm.translation :: protobuf :: regions-plugin-translator</name>
+
+    <dependencies>
+        <dependency>
+            <groupId>gov.hhs.aspr.gcm.translation.protobuf</groupId>
+            <artifactId>properties-plugin-translator</artifactId>
+            <version>${revision}</version>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>gov.hhs.aspr.gcm.translation.protobuf</groupId>
+            <artifactId>people-plugin-translator</artifactId>
+            <version>${revision}</version>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>gov.hhs.aspr.gcm.translation.protobuf</groupId>
+            <artifactId>reports-plugin-translator</artifactId>
+            <version>${revision}</version>
+            <optional>true</optional>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.xolstice.maven.plugins</groupId>
+                <artifactId>protobuf-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compile</goal>
+                            <goal>test-compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <protocArtifact>com.google.protobuf:protoc:${protoc.version}:exe:${os.detected.classifier}</protocArtifact>
+                    <protoSourceRoot>${project.build.outputDirectory}/gov/hhs/aspr/gcm/translation/protobuf/regions</protoSourceRoot>
+                    <additionalProtoPathElements>
+                        <additionalProtoPathElement>${project.build.outputDirectory}/gov/hhs/aspr/gcm/translation/protobuf/properties</additionalProtoPathElement>
+                        <additionalProtoPathElement>${project.build.outputDirectory}/gov/hhs/aspr/gcm/translation/protobuf/people</additionalProtoPathElement>
+                        <additionalProtoPathElement>${project.build.outputDirectory}/gov/hhs/aspr/gcm/translation/protobuf/reports</additionalProtoPathElement>
+                    </additionalProtoPathElements>
+                    <attachProtoSources>false</attachProtoSources>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
