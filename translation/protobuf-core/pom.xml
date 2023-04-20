@@ -112,6 +112,37 @@
                 </executions>
             </plugin>
 
+            <!-- some of the generated proto files have warnings that clutter the 'problems' id the IDE. This adds a SuppressWarnings("all") to each generated file to clear up the warnings. -->
+            <plugin>
+                <groupId>com.google.code.maven-replacer-plugin</groupId>
+                <artifactId>maven-replacer-plugin</artifactId>
+                <version>${maven-replacer-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <?m2e execute onConfiguration,onIncremental?>
+                        <phase>process-sources</phase>
+                        <goals>
+                            <goal>replace</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <includes>
+                        <include>target/generated-sources/**/*.java</include>
+                    </includes>
+                    <regex>true</regex>
+                    <regexFlags>
+                        <regexFlag>MULTILINE</regexFlag>
+                    </regexFlags>
+                    <replacements>
+                        <replacement>
+                            <token>^(@SuppressWarnings\(.*?\)\s+)?public final class</token>
+                            <value>@SuppressWarnings("all") public final class</value>
+                        </replacement>
+                    </replacements>
+                </configuration>
+            </plugin>
+
             <!-- used with the ${revision} for versioning, creates a pom that has the version replaced with the value of ${revision} -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -187,36 +218,6 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
-
-            <!-- some of the generated proto files have warnings that clutter the 'problems' id the IDE. This adds a SuppressWarnings("all") to each generated file to clear up the warnings. -->
-            <plugin>
-                <groupId>com.google.code.maven-replacer-plugin</groupId>
-                <artifactId>maven-replacer-plugin</artifactId>
-                <version>${maven-replacer-plugin.version}</version>
-                <executions>
-                    <execution>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>replace</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <includes>
-                        <include>${project.build.directory}/generated-sources/**/*.java</include>
-                    </includes>
-                    <regex>true</regex>
-                    <regexFlags>
-                        <regexFlag>MULTILINE</regexFlag>
-                    </regexFlags>
-                    <replacements>
-                        <replacement>
-                            <token>^(@SuppressWarnings\(.*?\)\s+)?public final class</token>
-                            <value>@SuppressWarnings("all") public final class</value>
-                        </replacement>
-                    </replacements>
-                </configuration>
             </plugin>
         </plugins>
     </build>

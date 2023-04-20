@@ -33,7 +33,7 @@
         <gcm.version>4.0.0-SNAPSHOT</gcm.version>
         <junit-jupiter-engine.version>5.8.2</junit-jupiter-engine.version>
         <protoc.version>3.21.12</protoc.version>
-        
+
     </properties>
 
     <!--
@@ -203,6 +203,7 @@
                 <artifactId>os-maven-plugin</artifactId>
                 <executions>
                     <execution>
+                        <id>detect-os</id>
                         <phase>initialize</phase>
                         <goals>
                             <goal>detect</goal>
@@ -253,6 +254,7 @@
                 <artifactId>build-helper-maven-plugin</artifactId>
                 <executions>
                     <execution>
+                        <id>add-proto-gen-folder-as-source</id>
                         <phase>generate-sources</phase>
                         <goals>
                             <goal>add-source</goal>
@@ -264,6 +266,37 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+
+                        <!-- some of the generated proto files have warnings that clutter the 'problems' id the IDE. This adds a SuppressWarnings("all") to each generated file to clear up the warnings. -->
+            <plugin>
+                <groupId>com.google.code.maven-replacer-plugin</groupId>
+                <artifactId>maven-replacer-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <?m2e execute onConfiguration,onIncremental?>
+                        <id>replace-warnings-in-gen-files</id>
+                        <phase>process-sources</phase>
+                        <goals>
+                            <goal>replace</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <includes>
+                        <include>target/generated-sources/**/*.java</include>
+                    </includes>
+                    <regex>true</regex>
+                    <regexFlags>
+                        <regexFlag>MULTILINE</regexFlag>
+                    </regexFlags>
+                    <replacements>
+                        <replacement>
+                            <token>^(@SuppressWarnings\(.*?\)\s+)?public final class</token>
+                            <value>@SuppressWarnings("all") public final class</value>
+                        </replacement>
+                    </replacements>
+                </configuration>
             </plugin>
 
             <!-- used with the ${revision} for versioning, creates a pom that has the version replaced with the value of ${revision} -->
@@ -319,35 +352,6 @@
                     </execution>
                 </executions>
             </plugin>
-
-            <!-- some of the generated proto files have warnings that clutter the 'problems' id the IDE. This adds a SuppressWarnings("all") to each generated file to clear up the warnings. -->
-            <plugin>
-                <groupId>com.google.code.maven-replacer-plugin</groupId>
-                <artifactId>maven-replacer-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>replace</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <includes>
-                        <include>${project.build.directory}/generated-sources/**/*.java</include>
-                    </includes>
-                    <regex>true</regex>
-                    <regexFlags>
-                        <regexFlag>MULTILINE</regexFlag>
-                    </regexFlags>
-                    <replacements>
-                        <replacement>
-                            <token>^(@SuppressWarnings\(.*?\)\s+)?public final class</token>
-                            <value>@SuppressWarnings("all") public final class</value>
-                        </replacement>
-                    </replacements>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
 
@@ -395,7 +399,7 @@
                 <module>plugin-translators-all</module>
             </modules>
         </profile>
-        
+
         <!-- each profile herein-after will build ONLY the child after which it is named -->
         <profile>
             <id>nucleus</id>
