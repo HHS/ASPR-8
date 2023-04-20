@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import nucleus.testsupport.testplugin.TestOutputConsumer;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.util.Pair;
 import org.junit.jupiter.api.Test;
@@ -59,6 +60,69 @@ import util.wrappers.MutableInteger;
 import util.wrappers.MutableObject;
 
 public final class AT_ResourcesDataManager {
+	@Test
+	@UnitTestMethod(target = ResourcesDataManager.class, name = "init", args = {DataManagerContext.class})
+	public void testInit_State() {
+
+		ResourcesPluginData resourcesPluginData = ResourcesPluginData.builder()
+				.defineResourceProperty(TestResourceId.RESOURCE_1, TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE, TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE.getPropertyDefinition())
+				.defineResourceProperty(TestResourceId.RESOURCE_2, TestResourcePropertyId.ResourceProperty_1_1_BOOLEAN_MUTABLE, TestResourcePropertyId.ResourceProperty_1_1_BOOLEAN_MUTABLE.getPropertyDefinition())
+				.addResource(TestResourceId.RESOURCE_1)
+				.addResource(TestResourceId.RESOURCE_2)
+				.setResourceTimeTracking(TestResourceId.RESOURCE_2, TimeTrackingPolicy.TRACK_TIME)
+				.setResourcePropertyValue(TestResourceId.RESOURCE_1, TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE, 45)
+				.build();
+		List<RegionId> expectedRegionIds = new ArrayList<>();
+		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
+			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
+
+			resourcesDataManager.addResourceToRegion(TestResourceId.RESOURCE_1, TestRegionId.REGION_1, 55);
+			resourcesDataManager.addResourceId(TestResourceId.RESOURCE_3, TestResourceId.RESOURCE_3.getTimeTrackingPolicy());
+			ResourcePropertyInitialization resourcePropertyInitialization = ResourcePropertyInitialization.builder()
+					.setResourceId(TestResourceId.RESOURCE_3)
+					.setResourcePropertyId(TestResourcePropertyId.ResourceProperty_3_1_BOOLEAN_MUTABLE)
+					.setPropertyDefinition(TestResourcePropertyId.ResourceProperty_3_1_BOOLEAN_MUTABLE.getPropertyDefinition())
+					.build();
+			resourcesDataManager.defineResourceProperty(resourcePropertyInitialization);
+			resourcesDataManager.setResourcePropertyValue(TestResourceId.RESOURCE_3, TestResourcePropertyId.ResourceProperty_3_1_BOOLEAN_MUTABLE, true);
+
+			RegionId personRegion = regionsDataManager.getPersonRegion(new PersonId(0));
+			expectedRegionIds.add(personRegion);
+			resourcesDataManager.addResourceToRegion(TestResourceId.RESOURCE_2, personRegion, 33);
+			resourcesDataManager.transferResourceToPersonFromRegion(TestResourceId.RESOURCE_2, new PersonId(0), 30);
+		}));
+
+		TestPluginData testPluginData = pluginBuilder.build();
+		Factory factory = ResourcesTestPluginFactory.factory(10, 7939130943360648501L, testPluginData)
+				.setResourcesPluginData(resourcesPluginData);
+		TestOutputConsumer testOutputConsumer = TestSimulation.builder().addPlugins(factory.getPlugins())
+				.setProduceSimulationStateOnHalt(true)
+				.setSimulationHaltTime(2)
+				.build()
+				.execute();
+		Map<ResourcesPluginData, Integer> outputItems = testOutputConsumer.getOutputItems(ResourcesPluginData.class);
+		assertEquals(1, outputItems.size());
+		ResourcesPluginData actualPluginData = outputItems.keySet().iterator().next();
+		ResourcesPluginData expectedPluginData = ResourcesPluginData.builder()
+				.defineResourceProperty(TestResourceId.RESOURCE_1, TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE, TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE.getPropertyDefinition())
+				.defineResourceProperty(TestResourceId.RESOURCE_2, TestResourcePropertyId.ResourceProperty_1_1_BOOLEAN_MUTABLE, TestResourcePropertyId.ResourceProperty_1_1_BOOLEAN_MUTABLE.getPropertyDefinition())
+				.defineResourceProperty(TestResourceId.RESOURCE_3, TestResourcePropertyId.ResourceProperty_3_1_BOOLEAN_MUTABLE, TestResourcePropertyId.ResourceProperty_3_1_BOOLEAN_MUTABLE.getPropertyDefinition())
+				.addResource(TestResourceId.RESOURCE_1)
+				.addResource(TestResourceId.RESOURCE_2)
+				.addResource(TestResourceId.RESOURCE_3)
+				.setResourceTimeTracking(TestResourceId.RESOURCE_2, TimeTrackingPolicy.TRACK_TIME)
+				.setResourcePropertyValue(TestResourceId.RESOURCE_1, TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE, 45)
+				.setResourcePropertyValue(TestResourceId.RESOURCE_3, TestResourcePropertyId.ResourceProperty_3_1_BOOLEAN_MUTABLE, true)
+				.setRegionResourceLevel(TestRegionId.REGION_1, TestResourceId.RESOURCE_1, 55)
+				.setRegionResourceLevel(expectedRegionIds.get(0), TestResourceId.RESOURCE_2, 3)
+				.setPersonResourceLevel(new PersonId(0), TestResourceId.RESOURCE_2, 30)
+				.build();
+//		assertEquals(expectedPluginData, actualPluginData);
+	}
+
 	@Test
 	@UnitTestMethod(target = ResourcesDataManager.class, name = "init", args = { DataManagerContext.class })
 	public void testPersonRemovalEvent() {

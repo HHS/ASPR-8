@@ -1,13 +1,6 @@
 package plugins.resources;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 import org.apache.commons.math3.util.FastMath;
 
@@ -70,6 +63,19 @@ public final class ResourcesPluginData implements PluginData {
 			resourceTimeTrackingPolicies = new LinkedHashMap<>();
 		}
 
+		@Override
+		public boolean equals(Object o) {
+			if (this == o) return true;
+			if (!(o instanceof Data)) return false;
+			Data data = (Data) o;
+			return personCount == data.personCount && locked == data.locked && Objects.equals(resourcePropertyDefinitions, data.resourcePropertyDefinitions) && Objects.equals(resourcePropertyValues, data.resourcePropertyValues) && Objects.equals(personResourceLevels, data.personResourceLevels) && Objects.equals(emptyResourceInitializationList, data.emptyResourceInitializationList) && Objects.equals(resourceIds, data.resourceIds) && Objects.equals(regionResourceLevels, data.regionResourceLevels) && Objects.equals(resourceTimeTrackingPolicies, data.resourceTimeTrackingPolicies);
+		}
+
+		@Override
+		public int hashCode() {
+			return Objects.hash(resourcePropertyDefinitions, resourcePropertyValues, personResourceLevels, emptyResourceInitializationList, personCount, resourceIds, regionResourceLevels, resourceTimeTrackingPolicies, locked);
+		}
+
 		public Data(Data data) {
 			personCount = data.personCount;
 
@@ -111,6 +117,7 @@ public final class ResourcesPluginData implements PluginData {
 			resourceTimeTrackingPolicies = new LinkedHashMap<>(data.resourceTimeTrackingPolicies);
 
 			locked = data.locked;
+
 
 		}
 
@@ -740,4 +747,16 @@ public final class ResourcesPluginData implements PluginData {
 		return builder();
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof ResourcesPluginData)) return false;
+		ResourcesPluginData that = (ResourcesPluginData) o;
+		return Objects.equals(data, that.data);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(data);
+	}
 }
