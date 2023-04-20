@@ -35,14 +35,9 @@ public final class MultiKey {
 		}
 
 		public MultiKey build() {
-
-			try {
-				final MultiKey result = new MultiKey();
-				result.objects = keys.toArray();
-				return result;
-			} finally {
-				keys = new ArrayList<>();
-			}
+			final MultiKey result = new MultiKey();
+			result.objects = keys.toArray();
+			return result;
 		}
 	}
 

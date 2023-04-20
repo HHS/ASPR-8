@@ -9,5 +9,9 @@ import net.jcip.annotations.ThreadSafe;
  */
 @ThreadSafe
 public interface MaterialId {
+	@Override
+	public int hashCode();
 
+	@Override
+	public boolean equals(Object obj);
 }

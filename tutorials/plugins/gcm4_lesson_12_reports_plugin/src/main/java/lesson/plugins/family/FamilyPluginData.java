@@ -20,6 +20,33 @@ public final class FamilyPluginData implements PluginData {
 			familyCount = data.familyCount;
 			maxFamilySize = data.maxFamilySize;
 		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + familyCount;
+			result = prime * result + maxFamilySize;
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (!(obj instanceof Data)) {
+				return false;
+			}
+			Data other = (Data) obj;
+			if (familyCount != other.familyCount) {
+				return false;
+			}
+			if (maxFamilySize != other.maxFamilySize) {
+				return false;
+			}
+			return true;
+		}
 	}
 
 	public static class Builder implements PluginDataBuilder {
@@ -85,6 +112,33 @@ public final class FamilyPluginData implements PluginData {
 	@Override
 	public PluginDataBuilder getCloneBuilder() {
 		return new Builder(new Data(data));
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((data == null) ? 0 : data.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!(obj instanceof FamilyPluginData)) {
+			return false;
+		}
+		FamilyPluginData other = (FamilyPluginData) obj;
+		if (data == null) {
+			if (other.data != null) {
+				return false;
+			}
+		} else if (!data.equals(other.data)) {
+			return false;
+		}
+		return true;
 	}
 
 }

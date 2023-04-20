@@ -41,6 +41,8 @@ public final class PropertyDefinition {
 			timeTrackingPolicy = data.timeTrackingPolicy;
 
 		}
+		
+		
 	}
 
 	/**
@@ -186,47 +188,6 @@ public final class PropertyDefinition {
 	}
 
 	/**
-	 * Boilerplate implementation that uses all fields.
-	 */
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + (propertyValuesAreMutable ? 1231 : 1237);
-		result = prime * result + ((defaultValue == null) ? 0 : defaultValue.hashCode());
-		result = prime * result + ((timeTrackingPolicy == null) ? 0 : timeTrackingPolicy.hashCode());
-		result = prime * result + ((type == null) ? 0 : type.hashCode());
-		return result;
-	}
-
-	/**
-	 * Boilerplate implementation that uses all fields and type equality.
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		PropertyDefinition other = (PropertyDefinition) obj;
-		if (propertyValuesAreMutable != other.propertyValuesAreMutable)
-			return false;
-		if (defaultValue == null) {
-			if (other.defaultValue != null)
-				return false;
-		} else if (!defaultValue.equals(other.defaultValue))
-			return false;
-		if (timeTrackingPolicy != other.timeTrackingPolicy)
-			return false;
-		if (type == null) {
-			return other.type == null;
-		} else
-			return type.equals(other.type);
-	}
-
-	/**
 	 * Standard string representation in the form:
 	 * 
 	 * PropertyDefinition [type=someType,mapOption=mapOption,
@@ -247,4 +208,49 @@ public final class PropertyDefinition {
 		builder2.append("]");
 		return builder2.toString();
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((defaultValue == null) ? 0 : defaultValue.hashCode());
+		result = prime * result + (propertyValuesAreMutable ? 1231 : 1237);
+		result = prime * result + ((timeTrackingPolicy == null) ? 0 : timeTrackingPolicy.hashCode());
+		result = prime * result + ((type == null) ? 0 : type.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!(obj instanceof PropertyDefinition)) {
+			return false;
+		}
+		PropertyDefinition other = (PropertyDefinition) obj;
+		if (defaultValue == null) {
+			if (other.defaultValue != null) {
+				return false;
+			}
+		} else if (!defaultValue.equals(other.defaultValue)) {
+			return false;
+		}
+		if (propertyValuesAreMutable != other.propertyValuesAreMutable) {
+			return false;
+		}
+		if (timeTrackingPolicy != other.timeTrackingPolicy) {
+			return false;
+		}
+		if (type == null) {
+			if (other.type != null) {
+				return false;
+			}
+		} else if (!type.equals(other.type)) {
+			return false;
+		}
+		return true;
+	}
+	
+	
 }
