@@ -63,19 +63,6 @@ public final class ResourcesPluginData implements PluginData {
 			resourceTimeTrackingPolicies = new LinkedHashMap<>();
 		}
 
-		@Override
-		public boolean equals(Object o) {
-			if (this == o) return true;
-			if (!(o instanceof Data)) return false;
-			Data data = (Data) o;
-			return personCount == data.personCount && locked == data.locked && Objects.equals(resourcePropertyDefinitions, data.resourcePropertyDefinitions) && Objects.equals(resourcePropertyValues, data.resourcePropertyValues) && Objects.equals(personResourceLevels, data.personResourceLevels) && Objects.equals(emptyResourceInitializationList, data.emptyResourceInitializationList) && Objects.equals(resourceIds, data.resourceIds) && Objects.equals(regionResourceLevels, data.regionResourceLevels) && Objects.equals(resourceTimeTrackingPolicies, data.resourceTimeTrackingPolicies);
-		}
-
-		@Override
-		public int hashCode() {
-			return Objects.hash(resourcePropertyDefinitions, resourcePropertyValues, personResourceLevels, emptyResourceInitializationList, personCount, resourceIds, regionResourceLevels, resourceTimeTrackingPolicies, locked);
-		}
-
 		public Data(Data data) {
 			personCount = data.personCount;
 
@@ -853,20 +840,5 @@ public final class ResourcesPluginData implements PluginData {
 			return false;
 		}
 		return true;
-	}
-	
-	
-
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (!(o instanceof ResourcesPluginData)) return false;
-		ResourcesPluginData that = (ResourcesPluginData) o;
-		return Objects.equals(data, that.data);
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(data);
 	}
 }
