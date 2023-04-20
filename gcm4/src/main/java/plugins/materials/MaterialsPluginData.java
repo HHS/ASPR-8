@@ -2,6 +2,8 @@ package plugins.materials;
 
 import java.util.*;
 
+import org.apache.commons.math3.util.FastMath;
+
 import net.jcip.annotations.Immutable;
 import nucleus.PluginData;
 import nucleus.PluginDataBuilder;
@@ -244,6 +246,16 @@ public final class MaterialsPluginData implements PluginData {
 		 *             <li>{@linkplain MaterialsError#BATCH_STAGED_TO_DIFFERENT_OWNER}
 		 *             if a batch is associated with a stage that is not owned
 		 *             by the same materials producer as the batch</li>
+		 * 
+		 *             <li>{@linkplain MaterialsError#NEXT_BATCH_ID_TOO_SMALL}
+		 *             if a batch is greater than or equal to the next batch id
+		 *             assigned for the entire plugin data</li>
+		 * 
+		 *             <li>{@linkplain MaterialsError#NEXT_STAGE_ID_TOO_SMALL}
+		 *             if a stage is greater than or equal to the next stage id
+		 *             assigned for the entire plugin data</li>
+		 * 
+		 * 
 		 */
 
 		public MaterialsPluginData build() {
@@ -382,6 +394,42 @@ public final class MaterialsPluginData implements PluginData {
 			return this;
 		}
 
+		/**
+		 * Sets the next available batch id. This value needs to exceed all
+		 * extant batch ids. If the nextBatchRecordId is not set explicitly, the
+		 * nextBatchRecordId is assigned to either zero or the next integer
+		 * value that exceeds the highest valued batch added to this builder.
+		 * 
+		 * @throws ContractException
+		 *             <li>{@linkplain MaterialsError#NEGATIVE_BATCH_ID} if the
+		 *             next batch record id is negative</li>
+		 * 
+		 */
+		public Builder setNextBatchRecordId(int nextBatchRecordId) {
+			ensureDataMutability();
+			validateBatchIdValue(nextBatchRecordId);
+			data.nextBatchRecordId = nextBatchRecordId;
+			return this;
+		}
+
+		/**
+		 * Sets the next available stage id. This value needs to exceed all
+		 * extant stage ids. If the nextStageRecordId is not set explicitly, the
+		 * nextStageRecordId is assigned to either zero or the next integer
+		 * value that exceeds the highest valued batch added to this builder.
+		 * 
+		 * @throws ContractException
+		 *             <li>{@linkplain MaterialsError#NEGATIVE_BATCH_ID} if the
+		 *             next stage record id is negative</li>
+		 * 
+		 */
+		public Builder setNextStageRecordId(int nextStageRecordId) {
+			ensureDataMutability();
+			validateStageIdValue(nextStageRecordId);
+			data.nextStageRecordId = nextStageRecordId;
+			return this;
+		}
+
 		private void validateData() {
 
 			for (final MaterialId materialId : data.batchPropertyDefinitions.keySet()) {
@@ -502,7 +550,22 @@ public final class MaterialsPluginData implements PluginData {
 			 * Ensure that each batch has property value assignments for every
 			 * relevant property definition that does not have a default value
 			 */
+
+			if (data.nextBatchRecordId < 0) {
+				for (final BatchId batchId : data.batchIds) {
+					data.nextBatchRecordId = FastMath.max(data.nextBatchRecordId, batchId.getValue());
+				}
+				data.nextBatchRecordId++;
+			} else {
+				for (final BatchId batchId : data.batchIds) {
+					if (batchId.getValue() >= data.nextBatchRecordId) {
+						throw new ContractException(MaterialsError.NEXT_BATCH_ID_TOO_SMALL);
+					}
+				}
+			}
+
 			for (final BatchId batchId : data.batchIds) {
+
 				final MaterialId materialId = data.batchMaterials.get(batchId);
 				Map<BatchPropertyId, Integer> propertyIndexMap = nonDefaultBatchPropertiesMap.get(materialId);
 				boolean[] checkArray = nonDefaultBatchCheckArrayMap.get(materialId);
@@ -529,7 +592,21 @@ public final class MaterialsPluginData implements PluginData {
 				}
 			}
 
+			if (data.nextStageRecordId < 0) {
+				for (final StageId stageId : data.stageIds) {
+					data.nextStageRecordId = FastMath.max(data.nextStageRecordId, stageId.getValue());
+				}
+				data.nextStageRecordId++;
+			} else {
+				for (final StageId stageId : data.stageIds) {
+					if (stageId.getValue() >= data.nextStageRecordId) {
+						throw new ContractException(MaterialsError.NEXT_STAGE_ID_TOO_SMALL);
+					}
+				}
+			}
+
 			for (final StageId stageId : data.stageMaterialsProducers.keySet()) {
+
 				final MaterialsProducerId materialsProducerId = data.stageMaterialsProducers.get(stageId);
 				if (!data.materialsProducerIds.contains(materialsProducerId)) {
 					throw new ContractException(MaterialsError.UNKNOWN_MATERIALS_PRODUCER_ID, stageId + " in stage additions");
@@ -619,6 +696,10 @@ public final class MaterialsPluginData implements PluginData {
 		private final Map<StageId, Set<BatchId>> stageBatches;
 
 		private final Map<BatchId, StageId> batchStages;
+
+		private int nextBatchRecordId = -1;
+
+		private int nextStageRecordId = -1;
 
 		private boolean locked;
 
@@ -1177,6 +1258,18 @@ public final class MaterialsPluginData implements PluginData {
 		}
 	}
 
+	private static void validateBatchIdValue(int batchIdValue) {
+		if (batchIdValue < 0) {
+			throw new ContractException(MaterialsError.NEGATIVE_BATCH_ID, batchIdValue);
+		}
+	}
+
+	private static void validateStageIdValue(int stageIdValue) {
+		if (stageIdValue < 0) {
+			throw new ContractException(MaterialsError.NEGATIVE_STAGE_ID, stageIdValue);
+		}
+	}
+
 	private static void validateStageIdNotNull(final StageId stageId) {
 		if (stageId == null) {
 			throw new ContractException(MaterialsError.NULL_STAGE_ID);
@@ -1486,6 +1579,20 @@ public final class MaterialsPluginData implements PluginData {
 	@Override
 	public PluginDataBuilder getCloneBuilder() {
 		return new Builder(data);
+	}
+
+	/**
+	 * Returns the next available batch id.
+	 */
+	public int getNextBatchRecordId() {
+		return data.nextBatchRecordId;
+	}
+
+	/**
+	 * Returns the next available stage id.
+	 */
+	public int getNextStageRecordId() {
+		return data.nextStageRecordId;
 	}
 
 	@Override
