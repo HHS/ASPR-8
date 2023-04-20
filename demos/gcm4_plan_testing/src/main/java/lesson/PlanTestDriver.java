@@ -54,7 +54,7 @@ import util.random.RandomGeneratorProvider;
 
 public final class PlanTestDriver {
 	private int iterationCount = 0;
-	private final static boolean executeFull = true;
+	private final static boolean executeFull = false;
 
 	public static void main(final String[] args) throws IOException {
 		Path baseOutputDirectory = Paths.get(args[0]);

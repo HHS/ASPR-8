@@ -34,7 +34,6 @@ public enum PropertyError implements ContractError {
 	
 	NEGATIVE_INITIAL_SIZE("Negative initial size"),//
 	NEGATIVE_CAPACITY_INCREMENT("Negative capacity increment"),//
-	NEGATIVE_TIME("Negative time value"),//
 	NEGATIVE_INDEX("Negative index"),//
 	
 	

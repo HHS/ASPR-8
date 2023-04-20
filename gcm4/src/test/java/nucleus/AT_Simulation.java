@@ -256,8 +256,8 @@ public class AT_Simulation {
 	}
 
 	@Test
-	@UnitTestMethod(target = Simulation.Builder.class, name = "setRecordState", args = { boolean.class })
-	public void testSetRecordState() {
+	@UnitTestMethod(target = Simulation.Builder.class, name = "setSimulationState", args = { boolean.class })
+	public void testSetSimulationState() {
 
 		AlphaPluginData alphaPluginData = new AlphaPluginDataBuilder().setX(10).build();
 		Plugin alphaPlugin = getAlphaPlugin(alphaPluginData);

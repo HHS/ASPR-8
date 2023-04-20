@@ -32,15 +32,11 @@ public class TestDataManagerPlan {
 	 * actor action plan will return an empty optional key.
 	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain TestError#NEGATIVE_PLANNING_TIME} if the
-	 *             scheduled plan time is negative</li>
+	 *            
 	 *             <li>{@linkplain TestError#NULL_PLAN} if the plan is null</li>
 	 */
 	public TestDataManagerPlan(final double scheduledTime, Consumer<DataManagerContext> plan) {
-		if (scheduledTime < 0) {
-			throw new ContractException(TestError.NEGATIVE_PLANNING_TIME);
-		}
-
+		
 		if (plan == null) {
 			throw new ContractException(TestError.NULL_PLAN);
 		}

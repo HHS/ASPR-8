@@ -84,7 +84,6 @@ public final class GlobalPropertiesPluginData implements PluginData {
 		 */
 		public Builder defineGlobalProperty(final GlobalPropertyId globalPropertyId, final PropertyDefinition propertyDefinition, final double time) {
 			ensureDataMutability();
-			validateTime(time);
 			validateGlobalPropertyIdNotNull(globalPropertyId);
 			validateGlobalPropertyDefinitionNotNull(propertyDefinition);
 			data.globalPropertyDefinitions.put(globalPropertyId, propertyDefinition);
@@ -118,15 +117,13 @@ public final class GlobalPropertiesPluginData implements PluginData {
 		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE}</li>if
 		 *             the global property value is null
 		 * 
-		 *             <li>{@linkplain PropertyError#NEGATIVE_TIME}</li>if the
-		 *             assignment time is negative
+		 *            
 		 * 
 		 *
 		 * 
 		 */
 		public Builder setGlobalPropertyValue(final GlobalPropertyId globalPropertyId, final Object propertyValue, final double assignmentTime) {
 			ensureDataMutability();
-			validateTime(assignmentTime);
 			validateGlobalPropertyIdNotNull(globalPropertyId);
 			validateGlobalPropertyValueNotNull(propertyValue);
 			data.globalPropertyValues.put(globalPropertyId, propertyValue);
@@ -285,11 +282,7 @@ public final class GlobalPropertiesPluginData implements PluginData {
 		}
 	}
 
-	private static void validateTime(double time) {
-		if (time < 0) {
-			throw new ContractException(PropertyError.NEGATIVE_TIME);
-		}
-	}
+	
 
 	private static void validateGlobalPropertyIdNotNull(final GlobalPropertyId globalPropertyId) {
 		if (globalPropertyId == null) {
