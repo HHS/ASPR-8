@@ -582,16 +582,8 @@ public class AT_MaterialsPluginData {
 
 		MaterialsPluginData materialsInitialData = MaterialsPluginData	.builder()//
 																		.addStage(stageId, offered, materialsProducerId)//
-																		// adding
-																		// duplicate
-																		// data
-																		// to
-																		// show
-																		// that
-																		// the
-																		// value
-																		// persists
-																		.addStage(stageId, offered, materialsProducerId).addMaterialsProducerId(materialsProducerId)//
+																		.addStage(stageId, offered, materialsProducerId)//
+																		.addMaterialsProducerId(materialsProducerId)//
 																		.build();//
 		assertTrue(materialsInitialData.getStageIds().contains(stageId));
 		assertEquals(offered, materialsInitialData.isStageOffered(stageId));
@@ -600,9 +592,6 @@ public class AT_MaterialsPluginData {
 		offered = false;
 		materialsInitialData = MaterialsPluginData	.builder()//
 													.addStage(stageId, offered, materialsProducerId)//
-													// adding duplicate data to
-													// show that the value
-													// persists
 													.addStage(stageId, offered, materialsProducerId).addMaterialsProducerId(materialsProducerId)//
 													.build();//
 
@@ -1737,15 +1726,13 @@ public class AT_MaterialsPluginData {
 	@UnitTestMethod(target = MaterialsPluginData.class, name = "getResourceIds", args = {})
 	public void testGetResourceIds() {
 
-		
-
 		MaterialsPluginData materialsInitialData = MaterialsPluginData.builder().build();//
 
 		assertTrue(materialsInitialData.getResourceIds().isEmpty());
 
 		TestMaterialsProducerId testMaterialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_1;
 		long amount = 45L;
-		
+
 		MaterialsPluginData.Builder builder = MaterialsPluginData.builder();
 		for (TestResourceId testResourceId : TestResourceId.values()) {
 			builder.setMaterialsProducerResourceLevel(testMaterialsProducerId, testResourceId, amount++);

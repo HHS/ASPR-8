@@ -1,6 +1,8 @@
 package nucleus;
 
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -22,7 +24,7 @@ public final class Plugin {
 	private static class Data {
 		private PluginId pluginId;
 		private Set<PluginId> pluginDependencies = new LinkedHashSet<>();
-		private Set<PluginData> pluginDatas = new LinkedHashSet<>();
+		private List<PluginData> pluginDatas = new ArrayList<>();
 		private Consumer<PluginContext> initializer;
 
 		public Data() {
@@ -38,10 +40,11 @@ public final class Plugin {
 		@Override
 		public int hashCode() {
 			final int prime = 31;
-			int result = 1;
-			result = prime * result + ((pluginDatas == null) ? 0 : pluginDatas.hashCode());
-			result = prime * result + ((pluginDependencies == null) ? 0 : pluginDependencies.hashCode());
-			result = prime * result + ((pluginId == null) ? 0 : pluginId.hashCode());
+			int result = 1;			
+			LinkedHashSet<PluginData> set = new LinkedHashSet<>(pluginDatas);
+			result = prime * result +  set.hashCode();
+			result = prime * result + pluginDependencies.hashCode();
+			result = prime * result + pluginId.hashCode();
 			return result;
 		}
 
@@ -54,25 +57,15 @@ public final class Plugin {
 				return false;
 			}
 			Data other = (Data) obj;
-			if (pluginDatas == null) {
-				if (other.pluginDatas != null) {
-					return false;
-				}
-			} else if (!pluginDatas.equals(other.pluginDatas)) {
+			LinkedHashSet<PluginData> set = new LinkedHashSet<>(pluginDatas);
+			LinkedHashSet<PluginData> otherSet = new LinkedHashSet<>(other.pluginDatas);
+			if (!set.equals(otherSet)) {
 				return false;
 			}
-			if (pluginDependencies == null) {
-				if (other.pluginDependencies != null) {
-					return false;
-				}
-			} else if (!pluginDependencies.equals(other.pluginDependencies)) {
+			if (!pluginDependencies.equals(other.pluginDependencies)) {
 				return false;
 			}
-			if (pluginId == null) {
-				if (other.pluginId != null) {
-					return false;
-				}
-			} else if (!pluginId.equals(other.pluginId)) {
+			if (!pluginId.equals(other.pluginId)) {
 				return false;
 			}
 			return true;
@@ -219,8 +212,8 @@ public final class Plugin {
 	 * Returns the set thread-safe plugin data objects collected by this
 	 * plugin's builder.
 	 */
-	public final Set<PluginData> getPluginDatas() {
-		return new LinkedHashSet<>(data.pluginDatas);
+	public final List<PluginData> getPluginDatas() {
+		return new ArrayList<>(data.pluginDatas);
 	}
 
 	/**

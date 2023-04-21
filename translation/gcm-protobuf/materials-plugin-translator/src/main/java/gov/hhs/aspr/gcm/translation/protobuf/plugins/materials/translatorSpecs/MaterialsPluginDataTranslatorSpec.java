@@ -26,285 +26,220 @@ import plugins.materials.support.StageId;
 import plugins.resources.support.ResourceId;
 import plugins.util.properties.PropertyDefinition;
 
-public class MaterialsPluginDataTranslatorSpec
-                extends AbstractProtobufTranslatorSpec<MaterialsPluginDataInput, MaterialsPluginData> {
+public class MaterialsPluginDataTranslatorSpec extends AbstractProtobufTranslatorSpec<MaterialsPluginDataInput, MaterialsPluginData> {
 
-        @Override
-        protected MaterialsPluginData convertInputObject(MaterialsPluginDataInput inputObject) {
-                MaterialsPluginData.Builder builder = MaterialsPluginData.builder();
+	@Override
+	protected MaterialsPluginData convertInputObject(MaterialsPluginDataInput inputObject) {
+		MaterialsPluginData.Builder builder = MaterialsPluginData.builder();
+		
+		builder.setNextBatchRecordId(inputObject.getNextBatchRecordId());
+		builder.setNextStageRecordId(inputObject.getNextStageRecordId());
 
-                for (MaterialIdInput materialIdInput : inputObject.getMaterialIdsList()) {
-                        MaterialId materialId = this.translator.convertInputObject(materialIdInput);
-                        builder.addMaterial(materialId);
-                }
+		for (MaterialIdInput materialIdInput : inputObject.getMaterialIdsList()) {
+			MaterialId materialId = this.translator.convertInputObject(materialIdInput);
+			builder.addMaterial(materialId);
+		}
 
-                for (MaterialsProducerIdInput materialsProducerIdInput : inputObject.getMaterialsProducerIdsList()) {
-                        MaterialsProducerId materialsProducerId = this.translator
-                                        .convertInputObject(materialsProducerIdInput);
-                        builder.addMaterialsProducerId(materialsProducerId);
-                }
+		for (MaterialsProducerIdInput materialsProducerIdInput : inputObject.getMaterialsProducerIdsList()) {
+			MaterialsProducerId materialsProducerId = this.translator.convertInputObject(materialsProducerIdInput);
+			builder.addMaterialsProducerId(materialsProducerId);
+		}
 
-                for (BatchPropertyDefinitionMapInput batchPropertyDefinitionMapInput : inputObject
-                                .getBatchPropertyDefinitionsList()) {
-                        MaterialId materialId = this.translator
-                                        .convertInputObject(batchPropertyDefinitionMapInput.getMaterialId());
-                        for (PropertyDefinitionMapInput propertyDefinitionMapInput : batchPropertyDefinitionMapInput
-                                        .getPropertyDefinitionsList()) {
-                                BatchPropertyId batchPropertyId = this.translator
-                                                .getObjectFromAny(propertyDefinitionMapInput.getPropertyId());
-                                PropertyDefinition propertyDefinition = this.translator
-                                                .convertInputObject(propertyDefinitionMapInput.getPropertyDefinition());
+		for (BatchPropertyDefinitionMapInput batchPropertyDefinitionMapInput : inputObject.getBatchPropertyDefinitionsList()) {
+			MaterialId materialId = this.translator.convertInputObject(batchPropertyDefinitionMapInput.getMaterialId());
+			for (PropertyDefinitionMapInput propertyDefinitionMapInput : batchPropertyDefinitionMapInput.getPropertyDefinitionsList()) {
+				BatchPropertyId batchPropertyId = this.translator.getObjectFromAny(propertyDefinitionMapInput.getPropertyId());
+				PropertyDefinition propertyDefinition = this.translator.convertInputObject(propertyDefinitionMapInput.getPropertyDefinition());
 
-                                builder.defineBatchProperty(materialId, batchPropertyId, propertyDefinition);
-                        }
-                }
+				builder.defineBatchProperty(materialId, batchPropertyId, propertyDefinition);
+			}
+		}
 
-                for (PropertyDefinitionMapInput propertyDefinitionMapInput : inputObject
-                                .getMaterialsProducerPropertyDefinitionsList()) {
-                        MaterialsProducerPropertyId materialsProducerPropertyId = this.translator
-                                        .getObjectFromAny(propertyDefinitionMapInput.getPropertyId());
-                        PropertyDefinition propertyDefinition = this.translator
-                                        .convertInputObject(propertyDefinitionMapInput.getPropertyDefinition());
-                        builder.defineMaterialsProducerProperty(materialsProducerPropertyId, propertyDefinition);
-                }
+		for (PropertyDefinitionMapInput propertyDefinitionMapInput : inputObject.getMaterialsProducerPropertyDefinitionsList()) {
+			MaterialsProducerPropertyId materialsProducerPropertyId = this.translator.getObjectFromAny(propertyDefinitionMapInput.getPropertyId());
+			PropertyDefinition propertyDefinition = this.translator.convertInputObject(propertyDefinitionMapInput.getPropertyDefinition());
+			builder.defineMaterialsProducerProperty(materialsProducerPropertyId, propertyDefinition);
+		}
 
-                for (MaterialsProducerPropertyValueMapInput materialsProducerPropertyValueMapInput : inputObject
-                                .getMaterialsProducerPropertyValuesList()) {
-                        MaterialsProducerId materialsProducerId = this.translator.convertInputObject(
-                                        materialsProducerPropertyValueMapInput.getMaterialsProducerId());
-                        for (PropertyValueMapInput propertyValueMapInput : materialsProducerPropertyValueMapInput
-                                        .getPropertyValuesList()) {
-                                MaterialsProducerPropertyId materialsProducerPropertyId = this.translator
-                                                .getObjectFromAny(propertyValueMapInput.getPropertyId());
-                                Object value = this.translator
-                                                .getObjectFromAny(propertyValueMapInput.getPropertyValue());
+		for (MaterialsProducerPropertyValueMapInput materialsProducerPropertyValueMapInput : inputObject.getMaterialsProducerPropertyValuesList()) {
+			MaterialsProducerId materialsProducerId = this.translator.convertInputObject(materialsProducerPropertyValueMapInput.getMaterialsProducerId());
+			for (PropertyValueMapInput propertyValueMapInput : materialsProducerPropertyValueMapInput.getPropertyValuesList()) {
+				MaterialsProducerPropertyId materialsProducerPropertyId = this.translator.getObjectFromAny(propertyValueMapInput.getPropertyId());
+				Object value = this.translator.getObjectFromAny(propertyValueMapInput.getPropertyValue());
 
-                                builder.setMaterialsProducerPropertyValue(materialsProducerId,
-                                                materialsProducerPropertyId, value);
-                        }
-                }
+				builder.setMaterialsProducerPropertyValue(materialsProducerId, materialsProducerPropertyId, value);
+			}
+		}
 
-                for (MaterialsProducerResourceLevelMapInput materialsProducerResourceLevelMapInput : inputObject
-                                .getMaterialsProducerResourceLevelsList()) {
-                        MaterialsProducerId materialsProducerId = this.translator.convertInputObject(
-                                        materialsProducerResourceLevelMapInput.getMaterialsProducerId());
-                        for (ResourceInitializationInput resourceInitializationInput : materialsProducerResourceLevelMapInput
-                                        .getResourceLevelsList()) {
-                                ResourceId resourceId = this.translator
-                                                .convertInputObject(resourceInitializationInput.getResourceId());
-                                long amount = resourceInitializationInput.getAmount();
+		for (MaterialsProducerResourceLevelMapInput materialsProducerResourceLevelMapInput : inputObject.getMaterialsProducerResourceLevelsList()) {
+			MaterialsProducerId materialsProducerId = this.translator.convertInputObject(materialsProducerResourceLevelMapInput.getMaterialsProducerId());
+			for (ResourceInitializationInput resourceInitializationInput : materialsProducerResourceLevelMapInput.getResourceLevelsList()) {
+				ResourceId resourceId = this.translator.convertInputObject(resourceInitializationInput.getResourceId());
+				long amount = resourceInitializationInput.getAmount();
 
-                                builder.setMaterialsProducerResourceLevel(materialsProducerId, resourceId, amount);
-                        }
-                }
+				builder.setMaterialsProducerResourceLevel(materialsProducerId, resourceId, amount);
+			}
+		}
 
-                for (BatchMapInput batchMapInput : inputObject.getBatchIdsList()) {
-                        BatchId batchId = this.translator.convertInputObject(batchMapInput.getBatchId());
-                        MaterialId materialId = this.translator.convertInputObject(batchMapInput.getMaterialId());
-                        double amount = batchMapInput.getAmount();
-                        MaterialsProducerId materialsProducerId = this.translator
-                                        .convertInputObject(batchMapInput.getMaterialsProducerId());
+		for (BatchMapInput batchMapInput : inputObject.getBatchIdsList()) {
+			BatchId batchId = this.translator.convertInputObject(batchMapInput.getBatchId());
+			MaterialId materialId = this.translator.convertInputObject(batchMapInput.getMaterialId());
+			double amount = batchMapInput.getAmount();
+			MaterialsProducerId materialsProducerId = this.translator.convertInputObject(batchMapInput.getMaterialsProducerId());
 
-                        builder.addBatch(batchId, materialId, amount, materialsProducerId);
+			builder.addBatch(batchId, materialId, amount, materialsProducerId);
 
-                        for (PropertyValueMapInput propertyValueMapInput : batchMapInput.getPropertyValuesList()) {
-                                BatchPropertyId batchPropertyId = this.translator
-                                                .getObjectFromAny(propertyValueMapInput.getPropertyId());
-                                Object propertyValue = this.translator
-                                                .getObjectFromAny(propertyValueMapInput.getPropertyValue());
+			for (PropertyValueMapInput propertyValueMapInput : batchMapInput.getPropertyValuesList()) {
+				BatchPropertyId batchPropertyId = this.translator.getObjectFromAny(propertyValueMapInput.getPropertyId());
+				Object propertyValue = this.translator.getObjectFromAny(propertyValueMapInput.getPropertyValue());
 
-                                builder.setBatchPropertyValue(batchId, batchPropertyId, propertyValue);
-                        }
-                }
+				builder.setBatchPropertyValue(batchId, batchPropertyId, propertyValue);
+			}
+		}
 
-                for (StageMapInput stageMapInput : inputObject.getStageIdsList()) {
-                        StageId stageId = this.translator.convertInputObject(stageMapInput.getStageId());
-                        boolean offered = stageMapInput.getOffered();
-                        MaterialsProducerId materialsProducerId = this.translator
-                                        .convertInputObject(stageMapInput.getMaterialsProducerId());
+		for (StageMapInput stageMapInput : inputObject.getStageIdsList()) {
+			StageId stageId = this.translator.convertInputObject(stageMapInput.getStageId());
+			boolean offered = stageMapInput.getOffered();
+			MaterialsProducerId materialsProducerId = this.translator.convertInputObject(stageMapInput.getMaterialsProducerId());
 
-                        builder.addStage(stageId, offered, materialsProducerId);
+			builder.addStage(stageId, offered, materialsProducerId);
 
-                        for (BatchIdInput batchIdInput : stageMapInput.getBatchesInStageList()) {
-                                BatchId batchId = this.translator.convertInputObject(batchIdInput);
+			for (BatchIdInput batchIdInput : stageMapInput.getBatchesInStageList()) {
+				BatchId batchId = this.translator.convertInputObject(batchIdInput);
 
-                                builder.addBatchToStage(stageId, batchId);
-                        }
-                }
+				builder.addBatchToStage(stageId, batchId);
+			}
+		}
 
-                return builder.build();
-        }
+		return builder.build();
+	}
 
-        @Override
-        protected MaterialsPluginDataInput convertAppObject(MaterialsPluginData simObject) {
-                MaterialsPluginDataInput.Builder builder = MaterialsPluginDataInput.newBuilder();
+	@Override
+	protected MaterialsPluginDataInput convertAppObject(MaterialsPluginData simObject) {
+		MaterialsPluginDataInput.Builder builder = MaterialsPluginDataInput.newBuilder();
 
-                for (MaterialId materialId : simObject.getMaterialIds()) {
-                        MaterialIdInput materialIdInput = this.translator.convertSimObject(materialId,
-                                        MaterialId.class);
-                        // add materialIds
-                        builder.addMaterialIds(materialIdInput);
+		builder.setNextBatchRecordId(simObject.getNextBatchRecordId());
+		builder.setNextStageRecordId(simObject.getNextStageRecordId());
 
-                        BatchPropertyDefinitionMapInput.Builder batchPropertyDefinitionMapBuilder = BatchPropertyDefinitionMapInput
-                                        .newBuilder().setMaterialId(materialIdInput);
-                        for (BatchPropertyId batchPropertyId : simObject.getBatchPropertyIds(materialId)) {
-                                PropertyDefinition propertyDefinition = simObject.getBatchPropertyDefinition(materialId,
-                                                batchPropertyId);
-                                PropertyDefinitionInput propertyDefinitionInput = this.translator
-                                                .convertSimObject(propertyDefinition);
+		for (MaterialId materialId : simObject.getMaterialIds()) {
+			MaterialIdInput materialIdInput = this.translator.convertSimObject(materialId, MaterialId.class);
+			// add materialIds
+			builder.addMaterialIds(materialIdInput);
 
-                                PropertyDefinitionMapInput propertyDefinitionMapInput = PropertyDefinitionMapInput
-                                                .newBuilder()
-                                                .setPropertyDefinition(propertyDefinitionInput)
-                                                .setPropertyId(this.translator.getAnyFromObject(batchPropertyId,
-                                                                BatchPropertyId.class))
-                                                .build();
+			BatchPropertyDefinitionMapInput.Builder batchPropertyDefinitionMapBuilder = BatchPropertyDefinitionMapInput.newBuilder().setMaterialId(materialIdInput);
+			for (BatchPropertyId batchPropertyId : simObject.getBatchPropertyIds(materialId)) {
+				PropertyDefinition propertyDefinition = simObject.getBatchPropertyDefinition(materialId, batchPropertyId);
+				PropertyDefinitionInput propertyDefinitionInput = this.translator.convertSimObject(propertyDefinition);
 
-                                batchPropertyDefinitionMapBuilder.addPropertyDefinitions(propertyDefinitionMapInput);
-                        }
+				PropertyDefinitionMapInput propertyDefinitionMapInput = PropertyDefinitionMapInput	.newBuilder().setPropertyDefinition(propertyDefinitionInput)
+																									.setPropertyId(this.translator.getAnyFromObject(batchPropertyId, BatchPropertyId.class)).build();
 
-                        // add batchPropertyDefinitions
-                        builder.addBatchPropertyDefinitions(batchPropertyDefinitionMapBuilder.build());
-                }
+				batchPropertyDefinitionMapBuilder.addPropertyDefinitions(propertyDefinitionMapInput);
+			}
 
-                for (MaterialsProducerId materialsProducerId : simObject.getMaterialsProducerIds()) {
-                        MaterialsProducerIdInput materialsProducerIdInput = this.translator.convertSimObject(
-                                        materialsProducerId,
-                                        MaterialsProducerId.class);
+			// add batchPropertyDefinitions
+			builder.addBatchPropertyDefinitions(batchPropertyDefinitionMapBuilder.build());
+		}
 
-                        // add materialProducerId
-                        builder.addMaterialsProducerIds(materialsProducerIdInput);
+		for (MaterialsProducerId materialsProducerId : simObject.getMaterialsProducerIds()) {
+			MaterialsProducerIdInput materialsProducerIdInput = this.translator.convertSimObject(materialsProducerId, MaterialsProducerId.class);
 
-                        MaterialsProducerPropertyValueMapInput.Builder materialsProducerPropertyValueMapInput = MaterialsProducerPropertyValueMapInput
-                                        .newBuilder().setMaterialsProducerId(materialsProducerIdInput);
+			// add materialProducerId
+			builder.addMaterialsProducerIds(materialsProducerIdInput);
 
-                        for (MaterialsProducerPropertyId materialsProducerPropertyId : simObject
-                                        .getMaterialsProducerPropertyValues(materialsProducerId).keySet()) {
-                                Object value = simObject.getMaterialsProducerPropertyValues(materialsProducerId)
-                                                .get(materialsProducerPropertyId);
+			MaterialsProducerPropertyValueMapInput.Builder materialsProducerPropertyValueMapInput = MaterialsProducerPropertyValueMapInput	.newBuilder()
+																																			.setMaterialsProducerId(materialsProducerIdInput);
 
-                                PropertyValueMapInput propertyValueMapInput = PropertyValueMapInput
-                                                .newBuilder()
-                                                .setPropertyValue(this.translator.getAnyFromObject(value))
-                                                .setPropertyId(this.translator.getAnyFromObject(
-                                                                materialsProducerPropertyId,
-                                                                MaterialsProducerPropertyId.class))
-                                                .build();
+			for (MaterialsProducerPropertyId materialsProducerPropertyId : simObject.getMaterialsProducerPropertyValues(materialsProducerId).keySet()) {
+				Object value = simObject.getMaterialsProducerPropertyValues(materialsProducerId).get(materialsProducerPropertyId);
 
-                                materialsProducerPropertyValueMapInput.addPropertyValues(propertyValueMapInput);
-                        }
+				PropertyValueMapInput propertyValueMapInput = PropertyValueMapInput	.newBuilder().setPropertyValue(this.translator.getAnyFromObject(value))
+																					.setPropertyId(this.translator.getAnyFromObject(materialsProducerPropertyId, MaterialsProducerPropertyId.class))
+																					.build();
 
-                        // add materialsproducerpropertyvalues
-                        builder.addMaterialsProducerPropertyValues(materialsProducerPropertyValueMapInput.build());
+				materialsProducerPropertyValueMapInput.addPropertyValues(propertyValueMapInput);
+			}
 
-                        MaterialsProducerResourceLevelMapInput.Builder resourceLevelMapBuilder = MaterialsProducerResourceLevelMapInput
-                                        .newBuilder().setMaterialsProducerId(materialsProducerIdInput);
-                        for (ResourceId resourceId : simObject.getResourceIds()) {
-                                long amount = simObject.getMaterialsProducerResourceLevel(materialsProducerId,
-                                                resourceId);
-                                ResourceIdInput resourceIdInput = this.translator.convertSimObject(resourceId,
-                                                ResourceId.class);
+			// add materialsproducerpropertyvalues
+			builder.addMaterialsProducerPropertyValues(materialsProducerPropertyValueMapInput.build());
 
-                                ResourceInitializationInput resourceInitializationInput = ResourceInitializationInput
-                                                .newBuilder()
-                                                .setAmount(amount)
-                                                .setResourceId(resourceIdInput)
-                                                .build();
+			MaterialsProducerResourceLevelMapInput.Builder resourceLevelMapBuilder = MaterialsProducerResourceLevelMapInput.newBuilder().setMaterialsProducerId(materialsProducerIdInput);
+			for (ResourceId resourceId : simObject.getResourceIds()) {
+				long amount = simObject.getMaterialsProducerResourceLevel(materialsProducerId, resourceId);
+				ResourceIdInput resourceIdInput = this.translator.convertSimObject(resourceId, ResourceId.class);
 
-                                resourceLevelMapBuilder.addResourceLevels(resourceInitializationInput);
-                        }
+				ResourceInitializationInput resourceInitializationInput = ResourceInitializationInput.newBuilder().setAmount(amount).setResourceId(resourceIdInput).build();
 
-                        // add materialsproducerresourcelevels
-                        builder.addMaterialsProducerResourceLevels(resourceLevelMapBuilder.build());
-                }
+				resourceLevelMapBuilder.addResourceLevels(resourceInitializationInput);
+			}
 
-                for (MaterialsProducerPropertyId materialsProducerPropertyId : simObject
-                                .getMaterialsProducerPropertyIds()) {
-                        PropertyDefinitionInput propertyDefinitionInput = this.translator
-                                        .convertSimObject(simObject.getMaterialsProducerPropertyDefinition(
-                                                        materialsProducerPropertyId));
+			// add materialsproducerresourcelevels
+			builder.addMaterialsProducerResourceLevels(resourceLevelMapBuilder.build());
+		}
 
-                        PropertyDefinitionMapInput propertyDefinitionMapInput = PropertyDefinitionMapInput
-                                        .newBuilder()
-                                        .setPropertyDefinition(propertyDefinitionInput)
-                                        .setPropertyId(this.translator.getAnyFromObject(materialsProducerPropertyId,
-                                                        MaterialsProducerPropertyId.class))
-                                        .build();
+		for (MaterialsProducerPropertyId materialsProducerPropertyId : simObject.getMaterialsProducerPropertyIds()) {
+			PropertyDefinitionInput propertyDefinitionInput = this.translator.convertSimObject(simObject.getMaterialsProducerPropertyDefinition(materialsProducerPropertyId));
 
-                        // add materialsProducerPropertyDefinitions
-                        builder.addMaterialsProducerPropertyDefinitions(propertyDefinitionMapInput);
-                }
+			PropertyDefinitionMapInput propertyDefinitionMapInput = PropertyDefinitionMapInput.newBuilder().setPropertyDefinition(propertyDefinitionInput).setPropertyId(
+					this.translator.getAnyFromObject(materialsProducerPropertyId, MaterialsProducerPropertyId.class)).build();
 
-                // batches
-                for (BatchId batchId : simObject.getBatchIds()) {
-                        BatchMapInput.Builder batchMapBuilder = BatchMapInput.newBuilder();
+			// add materialsProducerPropertyDefinitions
+			builder.addMaterialsProducerPropertyDefinitions(propertyDefinitionMapInput);
+		}
 
-                        BatchIdInput batchIdInput = this.translator.convertSimObject(batchId);
-                        double amount = simObject.getBatchAmount(batchId);
-                        MaterialIdInput materialIdInput = this.translator.convertSimObject(
-                                        simObject.getBatchMaterial(batchId),
-                                        MaterialId.class);
-                        MaterialsProducerIdInput materialsProducerIdInput = this.translator
-                                        .convertSimObject(simObject.getBatchMaterialsProducer(batchId),
-                                                        MaterialsProducerId.class);
+		// batches
+		for (BatchId batchId : simObject.getBatchIds()) {
+			BatchMapInput.Builder batchMapBuilder = BatchMapInput.newBuilder();
 
-                        batchMapBuilder
-                                        .setAmount(amount)
-                                        .setBatchId(batchIdInput)
-                                        .setMaterialId(materialIdInput)
-                                        .setMaterialsProducerId(materialsProducerIdInput);
+			BatchIdInput batchIdInput = this.translator.convertSimObject(batchId);
+			double amount = simObject.getBatchAmount(batchId);
+			MaterialIdInput materialIdInput = this.translator.convertSimObject(simObject.getBatchMaterial(batchId), MaterialId.class);
+			MaterialsProducerIdInput materialsProducerIdInput = this.translator.convertSimObject(simObject.getBatchMaterialsProducer(batchId), MaterialsProducerId.class);
 
-                        for (BatchPropertyId propertyId : simObject.getBatchPropertyValues(batchId).keySet()) {
-                                PropertyValueMapInput.Builder batchPropertyValueMap = PropertyValueMapInput
-                                                .newBuilder();
-                                Object value = simObject.getBatchPropertyValues(batchId).get(propertyId);
+			batchMapBuilder.setAmount(amount).setBatchId(batchIdInput).setMaterialId(materialIdInput).setMaterialsProducerId(materialsProducerIdInput);
 
-                                batchPropertyValueMap
-                                                .setPropertyValue(this.translator.getAnyFromObject(value))
-                                                .setPropertyId(this.translator.getAnyFromObject(propertyId,
-                                                                BatchPropertyId.class));
+			for (BatchPropertyId propertyId : simObject.getBatchPropertyValues(batchId).keySet()) {
+				PropertyValueMapInput.Builder batchPropertyValueMap = PropertyValueMapInput.newBuilder();
+				Object value = simObject.getBatchPropertyValues(batchId).get(propertyId);
 
-                                batchMapBuilder.addPropertyValues(batchPropertyValueMap.build());
-                        }
+				batchPropertyValueMap.setPropertyValue(this.translator.getAnyFromObject(value)).setPropertyId(this.translator.getAnyFromObject(propertyId, BatchPropertyId.class));
 
-                        builder.addBatchIds(batchMapBuilder.build());
-                }
+				batchMapBuilder.addPropertyValues(batchPropertyValueMap.build());
+			}
 
-                // stages
-                for (StageId stageId : simObject.getStageIds()) {
+			builder.addBatchIds(batchMapBuilder.build());
+		}
 
-                        StageMapInput.Builder stageMapBuilder = StageMapInput.newBuilder();
+		// stages
+		for (StageId stageId : simObject.getStageIds()) {
 
-                        StageIdInput stageIdInput = this.translator.convertSimObject(stageId);
-                        boolean offered = simObject.isStageOffered(stageId);
-                        MaterialsProducerIdInput materialsProducerIdInput = this.translator
-                                        .convertSimObject(simObject.getStageMaterialsProducer(stageId),
-                                                        MaterialsProducerId.class);
+			StageMapInput.Builder stageMapBuilder = StageMapInput.newBuilder();
 
-                        stageMapBuilder
-                                        .setOffered(offered)
-                                        .setStageId(stageIdInput)
-                                        .setMaterialsProducerId(materialsProducerIdInput);
+			StageIdInput stageIdInput = this.translator.convertSimObject(stageId);
+			boolean offered = simObject.isStageOffered(stageId);
+			MaterialsProducerIdInput materialsProducerIdInput = this.translator.convertSimObject(simObject.getStageMaterialsProducer(stageId), MaterialsProducerId.class);
 
-                        for (BatchId batchId : simObject.getStageBatches(stageId)) {
-                                BatchIdInput batchIdInput = this.translator.convertSimObject(batchId);
+			stageMapBuilder.setOffered(offered).setStageId(stageIdInput).setMaterialsProducerId(materialsProducerIdInput);
 
-                                stageMapBuilder.addBatchesInStage(batchIdInput);
-                        }
+			for (BatchId batchId : simObject.getStageBatches(stageId)) {
+				BatchIdInput batchIdInput = this.translator.convertSimObject(batchId);
 
-                        builder.addStageIds(stageMapBuilder.build());
-                }
-                return builder.build();
-        }
+				stageMapBuilder.addBatchesInStage(batchIdInput);
+			}
 
-        @Override
-        public Class<MaterialsPluginData> getAppObjectClass() {
-                return MaterialsPluginData.class;
-        }
+			builder.addStageIds(stageMapBuilder.build());
+		}
+		return builder.build();
+	}
 
-        @Override
-        public Class<MaterialsPluginDataInput> getInputObjectClass() {
-                return MaterialsPluginDataInput.class;
-        }
+	@Override
+	public Class<MaterialsPluginData> getAppObjectClass() {
+		return MaterialsPluginData.class;
+	}
+
+	@Override
+	public Class<MaterialsPluginDataInput> getInputObjectClass() {
+		return MaterialsPluginDataInput.class;
+	}
 
 }

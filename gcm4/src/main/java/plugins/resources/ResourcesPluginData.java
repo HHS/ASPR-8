@@ -6,6 +6,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -26,6 +27,7 @@ import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
 import plugins.util.properties.TimeTrackingPolicy;
 import util.errors.ContractException;
+import util.wrappers.MultiKey;
 
 /**
  * An immutable container of the initial state of resources. It contains: <BR>
@@ -111,25 +113,100 @@ public final class ResourcesPluginData implements PluginData {
 			resourceTimeTrackingPolicies = new LinkedHashMap<>(data.resourceTimeTrackingPolicies);
 
 			locked = data.locked;
-
 		}
 
+		/**
+		 * 
+		 */
 		@Override
 		public int hashCode() {
 			final int prime = 31;
 			int result = 1;
-			result = prime * result + ((emptyResourceInitializationList == null) ? 0 : emptyResourceInitializationList.hashCode());
-			result = prime * result + (locked ? 1231 : 1237);
-			result = prime * result + personCount;
-			result = prime * result + ((personResourceLevels == null) ? 0 : personResourceLevels.hashCode());
-			result = prime * result + ((regionResourceLevels == null) ? 0 : regionResourceLevels.hashCode());
-			result = prime * result + ((resourceIds == null) ? 0 : resourceIds.hashCode());
-			result = prime * result + ((resourcePropertyDefinitions == null) ? 0 : resourcePropertyDefinitions.hashCode());
-			result = prime * result + ((resourcePropertyValues == null) ? 0 : resourcePropertyValues.hashCode());
-			result = prime * result + ((resourceTimeTrackingPolicies == null) ? 0 : resourceTimeTrackingPolicies.hashCode());
+			result = prime * result + resourceIds.hashCode();
+			result = prime * result + resourceTimeTrackingPolicies.hashCode();
+			result = prime * result + resourcePropertyDefinitions.hashCode();
+			result = prime * result + getResourcePropertyValuesHashCode();
+			result = prime * result + getRegionResourceLevelsHashCode();
+			result = prime * result + getPersonResourceLevelsHashCode();
+
 			return result;
 		}
 
+		private int getResourcePropertyValuesHashCode() {
+			final int prime = 31;
+			int result = 0;
+			for (ResourceId resourceId : resourcePropertyValues.keySet()) {
+				Map<ResourcePropertyId, PropertyDefinition> defMap = resourcePropertyDefinitions.get(resourceId);
+				Map<ResourcePropertyId, Object> map = resourcePropertyValues.get(resourceId);
+				for (ResourcePropertyId resourcePropertyId : map.keySet()) {
+					boolean addValue = true;
+					Object value = map.get(resourcePropertyId);
+					PropertyDefinition propertyDefinition = defMap.get(resourcePropertyId);
+					Optional<Object> optional = propertyDefinition.getDefaultValue();
+					if (optional.isPresent()) {
+						Object defaultValue = optional.get();
+						if (value.equals(defaultValue)) {
+							addValue = false;
+						}
+					}
+					if (addValue) {
+						int subResult = 1;
+						subResult = prime * subResult + resourceId.hashCode();
+						subResult = prime * subResult + resourcePropertyId.hashCode();
+						subResult = prime * subResult + value.hashCode();
+						result += subResult;
+					}
+				}
+			}
+			return result;
+		}
+
+		private int getRegionResourceLevelsHashCode() {
+			final int prime = 31;
+			int result = 0;
+			for (RegionId regionId : regionResourceLevels.keySet()) {
+				List<ResourceInitialization> list = regionResourceLevels.get(regionId);
+				if (list != null) {
+					for (ResourceInitialization resourceInitialization : list) {
+						Long amount = resourceInitialization.getAmount();
+						if (amount != 0L) {
+							ResourceId resourceId = resourceInitialization.getResourceId();
+							int subResult = 1;
+							subResult = prime * subResult + regionId.hashCode();
+							subResult = prime * subResult + resourceId.hashCode();
+							subResult = prime * subResult + amount.hashCode();
+							result += subResult;
+						}
+					}
+				}
+			}
+			return result;
+		}
+
+		private int getPersonResourceLevelsHashCode() {
+			final int prime = 31;
+			int result = 0;
+			for (int personIndex = 0; personIndex < personResourceLevels.size(); personIndex++) {
+				List<ResourceInitialization> list = personResourceLevels.get(personIndex);
+				if (list != null) {
+					for (ResourceInitialization resourceInitialization : list) {
+						Long amount = resourceInitialization.getAmount();
+						if (amount != 0L) {
+							ResourceId resourceId = resourceInitialization.getResourceId();
+							int subResult = 1;
+							subResult = prime * subResult + resourceId.hashCode();
+							subResult = prime * subResult + amount.hashCode();
+							result += subResult;
+						}
+					}
+				}
+			}
+			return result;
+		}
+
+		/**
+		 * 
+		 */
 		@Override
 		public boolean equals(Object obj) {
 			if (this == obj) {
@@ -139,65 +216,157 @@ public final class ResourcesPluginData implements PluginData {
 				return false;
 			}
 			Data other = (Data) obj;
-			if (emptyResourceInitializationList == null) {
-				if (other.emptyResourceInitializationList != null) {
+
+			/*
+			 * We exclude the following fields:
+			 * 
+			 * locked -- two Datas are only compared when they are both locked
+			 * -- there are no equality comparisons in this class.
+			 * 
+			 * personCount -- different person counts do not necessarily
+			 * indicate different content
+			 * 
+			 * emptyResourceInitializationList -- are just empty lists
+			 */
+
+			// These are simply compared:
+			if (!resourceIds.equals(other.resourceIds)) {
+				return false;
+			}
+
+			if (!resourceTimeTrackingPolicies.equals(other.resourceTimeTrackingPolicies)) {
+				return false;
+			}
+
+			if (!resourcePropertyDefinitions.equals(other.resourcePropertyDefinitions)) {
+				return false;
+			}
+
+			/*
+			 * The remaining fields must be compared by disregarding assignments
+			 * of default property values and zero resource levels
+			 */
+			if (!compareResourcePropertyValues(this, other)) {
+				return false;
+			}
+
+			if (!compareRegionResourceLevels(this, other)) {
+				return false;
+			}
+
+			if (!comparePersonResourceLevels(this, other)) {
+				return false;
+			}
+
+			return true;
+		}
+
+		/*
+		 * Both Data instances have been fully formed, validated and have equal
+		 * resource ids and resource property definitions
+		 */
+		private static boolean comparePersonResourceLevels(Data a, Data b) {
+
+			int personCount = FastMath.max(a.personCount, b.personCount);
+			for (int i = 0; i < personCount; i++) {
+				Set<MultiKey> aLevels = getPersonResourceLevels(a, i);
+				Set<MultiKey> bLevels = getPersonResourceLevels(b, i);
+				if (!aLevels.equals(bLevels)) {
 					return false;
 				}
-			} else if (!emptyResourceInitializationList.equals(other.emptyResourceInitializationList)) {
-				return false;
-			}
-			if (locked != other.locked) {
-				return false;
-			}
-			if (personCount != other.personCount) {
-				return false;
-			}
-			if (personResourceLevels == null) {
-				if (other.personResourceLevels != null) {
-					return false;
-				}
-			} else if (!personResourceLevels.equals(other.personResourceLevels)) {
-				return false;
-			}
-			if (regionResourceLevels == null) {
-				if (other.regionResourceLevels != null) {
-					return false;
-				}
-			} else if (!regionResourceLevels.equals(other.regionResourceLevels)) {
-				return false;
-			}
-			if (resourceIds == null) {
-				if (other.resourceIds != null) {
-					return false;
-				}
-			} else if (!resourceIds.equals(other.resourceIds)) {
-				return false;
-			}
-			if (resourcePropertyDefinitions == null) {
-				if (other.resourcePropertyDefinitions != null) {
-					return false;
-				}
-			} else if (!resourcePropertyDefinitions.equals(other.resourcePropertyDefinitions)) {
-				return false;
-			}
-			if (resourcePropertyValues == null) {
-				if (other.resourcePropertyValues != null) {
-					return false;
-				}
-			} else if (!resourcePropertyValues.equals(other.resourcePropertyValues)) {
-				return false;
-			}
-			if (resourceTimeTrackingPolicies == null) {
-				if (other.resourceTimeTrackingPolicies != null) {
-					return false;
-				}
-			} else if (!resourceTimeTrackingPolicies.equals(other.resourceTimeTrackingPolicies)) {
-				return false;
 			}
 			return true;
 		}
-		
-		
+
+		/*
+		 * Assembles a set of multi-keys from the region resource levels
+		 * contained in the data that are not zero.
+		 */
+		private static Set<MultiKey> getPersonResourceLevels(Data data, int personIndex) {
+			Set<MultiKey> result = new LinkedHashSet<>();
+			if (personIndex < data.personResourceLevels.size()) {
+				List<ResourceInitialization> list = data.personResourceLevels.get(personIndex);
+				if (list != null) {
+					for (ResourceInitialization resourceInitialization : list) {
+						Long amount = resourceInitialization.getAmount();
+						if (amount != 0L) {
+							ResourceId resourceId = resourceInitialization.getResourceId();
+							result.add(new MultiKey(resourceId, amount));
+						}
+					}
+				}
+			}
+			return result;
+		}
+
+		/*
+		 * Both Data instances have been fully formed, validated and have equal
+		 * resource ids and resource property definitions
+		 */
+		private static boolean compareRegionResourceLevels(Data a, Data b) {
+			Set<MultiKey> aLevels = getRegionResourceLevels(a);
+			Set<MultiKey> bLevels = getRegionResourceLevels(b);
+			return aLevels.equals(bLevels);
+		}
+
+		/*
+		 * Assembles a set of multi-keys from the region resource levels
+		 * contained in the data that are not zero.
+		 */
+		private static Set<MultiKey> getRegionResourceLevels(Data data) {
+			Set<MultiKey> result = new LinkedHashSet<>();
+			for (RegionId regionId : data.regionResourceLevels.keySet()) {
+				List<ResourceInitialization> list = data.regionResourceLevels.get(regionId);
+				if (list != null) {
+					for (ResourceInitialization resourceInitialization : list) {
+						Long amount = resourceInitialization.getAmount();
+						if (amount != 0L) {
+							ResourceId resourceId = resourceInitialization.getResourceId();
+							result.add(new MultiKey(regionId, resourceId, amount));
+						}
+					}
+				}
+			}
+			return result;
+		}
+
+		/*
+		 * Both Data instances have been fully formed, validated and have equal
+		 * resource ids and resource property definitions
+		 */
+		private static boolean compareResourcePropertyValues(Data a, Data b) {
+			Set<MultiKey> aValues = getResourcePropertyValues(a);
+			Set<MultiKey> bValues = getResourcePropertyValues(b);
+			return aValues.equals(bValues);
+		}
+
+		/*
+		 * Assembles a set of multi-keys from the resource property value
+		 * contained in the data that are not default values.
+		 */
+		private static Set<MultiKey> getResourcePropertyValues(Data data) {
+			Set<MultiKey> result = new LinkedHashSet<>();
+			for (ResourceId resourceId : data.resourcePropertyValues.keySet()) {
+				Map<ResourcePropertyId, PropertyDefinition> defMap = data.resourcePropertyDefinitions.get(resourceId);
+				Map<ResourcePropertyId, Object> map = data.resourcePropertyValues.get(resourceId);
+				for (ResourcePropertyId resourcePropertyId : map.keySet()) {
+					boolean addValue = true;
+					Object value = map.get(resourcePropertyId);
+					PropertyDefinition propertyDefinition = defMap.get(resourcePropertyId);
+					Optional<Object> optional = propertyDefinition.getDefaultValue();
+					if (optional.isPresent()) {
+						Object defaultValue = optional.get();
+						if (value.equals(defaultValue)) {
+							addValue = false;
+						}
+					}
+					if (addValue) {
+						result.add(new MultiKey(resourceId, resourcePropertyId, value));
+					}
+				}
+			}
+			return result;
+		}
 
 	}
 
@@ -823,10 +992,7 @@ public final class ResourcesPluginData implements PluginData {
 
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((data == null) ? 0 : data.hashCode());
-		return result;
+		return Objects.hash(data);
 	}
 
 	@Override
@@ -838,16 +1004,7 @@ public final class ResourcesPluginData implements PluginData {
 			return false;
 		}
 		ResourcesPluginData other = (ResourcesPluginData) obj;
-		if (data == null) {
-			if (other.data != null) {
-				return false;
-			}
-		} else if (!data.equals(other.data)) {
-			return false;
-		}
-		return true;
+		return Objects.equals(data, other.data);
 	}
-	
-	
 
 }

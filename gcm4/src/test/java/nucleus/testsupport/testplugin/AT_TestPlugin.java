@@ -27,7 +27,7 @@ public class AT_TestPlugin {
 		// show that the test plugin data is returned by the plugin
 		Set<PluginData> expectedPluginDatas = new LinkedHashSet<>();
 		expectedPluginDatas.add(testPluginData);
-		assertEquals(expectedPluginDatas, testPlugin.getPluginDatas());
+		assertEquals(expectedPluginDatas, new LinkedHashSet<>(testPlugin.getPluginDatas()));
 
 		// show that the initializer exists
 		assertNotNull(testPlugin.getInitializer());

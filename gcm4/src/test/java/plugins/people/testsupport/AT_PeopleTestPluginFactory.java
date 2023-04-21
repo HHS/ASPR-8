@@ -7,7 +7,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
-import java.util.Set;
 import java.util.function.Consumer;
 
 import org.junit.jupiter.api.Test;
@@ -98,10 +97,10 @@ public class AT_PeopleTestPluginFactory {
 	private <T extends PluginData> void checkPluginDataExists(List<Plugin> plugins, T expectedPluginData,
 			PluginId pluginId) {
 		Plugin actualPlugin = checkPluginExists(plugins, pluginId);
-		Set<PluginData> actualPluginDatas = actualPlugin.getPluginDatas();
+		List<PluginData> actualPluginDatas = actualPlugin.getPluginDatas();
 		assertNotNull(actualPluginDatas);
 		assertEquals(1, actualPluginDatas.size());
-		PluginData actualPluginData = actualPluginDatas.stream().toList().get(0);
+		PluginData actualPluginData = actualPluginDatas.get(0);
 		assertTrue(expectedPluginData == actualPluginData);
 	}
 

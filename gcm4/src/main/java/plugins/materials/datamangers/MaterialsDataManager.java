@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import org.apache.commons.math3.util.FastMath;
 import org.apache.commons.math3.util.Pair;
 
 import nucleus.DataManager;
@@ -309,28 +308,26 @@ public final class MaterialsDataManager extends DataManager {
 			}
 		}
 
-		nextStageRecordId = -1;
+		
 		for (final StageId stageId : materialsPluginData.getStageIds()) {
 			final MaterialsProducerId materialsProducerId = materialsPluginData.getStageMaterialsProducer(stageId);
 			final MaterialsProducerRecord materialsProducerRecord = materialsProducerMap.get(materialsProducerId);
-			final StageRecord stageRecord = new StageRecord(stageId);
-			nextStageRecordId = FastMath.max(nextStageRecordId, stageRecord.stageId.getValue());
+			final StageRecord stageRecord = new StageRecord(stageId);			
 			stageRecord.materialsProducerRecord = materialsProducerRecord;
 			stageRecord.offered = materialsPluginData.isStageOffered(stageId);
 			materialsProducerRecord.stageRecords.add(stageRecord);
 			stageRecords.put(stageRecord.stageId, stageRecord);
 		}
-		nextStageRecordId++;
+		nextStageRecordId = materialsPluginData.getNextStageRecordId();
 
-		nextBatchRecordId = -1;
+		
 		for (final BatchId batchId : materialsPluginData.getBatchIds()) {
 			final MaterialsProducerId materialsProducerId = materialsPluginData.getBatchMaterialsProducer(batchId);
 			final MaterialId materialId = materialsPluginData.getBatchMaterial(batchId);
 			final double amount = materialsPluginData.getBatchAmount(batchId);
 			final MaterialsProducerRecord materialsProducerRecord = materialsProducerMap.get(materialsProducerId);
 
-			final BatchRecord batchRecord = new BatchRecord(batchId);
-			nextBatchRecordId = FastMath.max(nextBatchRecordId, batchRecord.batchId.getValue());
+			final BatchRecord batchRecord = new BatchRecord(batchId);			
 			batchRecord.amount = amount;
 			batchRecord.creationTime = dataManagerContext.getTime();
 			batchRecord.materialId = materialId;
@@ -349,7 +346,7 @@ public final class MaterialsDataManager extends DataManager {
 			}
 
 		}
-		nextBatchRecordId++;
+		nextBatchRecordId = materialsPluginData.getNextBatchRecordId();
 
 		for (final StageId stageId : materialsPluginData.getStageIds()) {
 			final Set<BatchId> batches = materialsPluginData.getStageBatches(stageId);
@@ -385,6 +382,9 @@ public final class MaterialsDataManager extends DataManager {
 	private void recordSimulationState(DataManagerContext dataManagerContext) {
 
 		MaterialsPluginData.Builder builder = MaterialsPluginData.builder();
+		
+		builder.setNextBatchRecordId(nextBatchRecordId);
+		builder.setNextStageRecordId(nextStageRecordId);
 
 		Set<MaterialsProducerPropertyId> materialsProducerPropertyIds = getMaterialsProducerPropertyIds();
 

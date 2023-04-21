@@ -71,7 +71,9 @@ message MaterialsPluginDataInput {
     repeated MaterialsProducerPropertyValueMapInput materialsProducerPropertyValues = 5;
     repeated MaterialsProducerResourceLevelMapInput materialsProducerResourceLevels = 6;
     repeated BatchMapInput batchIds = 7;
-    repeated StageMapInput stageIds = 8;
+    repeated StageMapInput stageIds = 8;    
+    int32 nextBatchRecordId = 9;	
+	int32 nextStageRecordId = 10;    
 }
 
 enum TestBatchPropertyIdInput {
