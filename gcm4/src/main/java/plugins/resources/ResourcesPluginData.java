@@ -1,13 +1,6 @@
 package plugins.resources;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 import org.apache.commons.math3.util.FastMath;
 
@@ -111,6 +104,7 @@ public final class ResourcesPluginData implements PluginData {
 			resourceTimeTrackingPolicies = new LinkedHashMap<>(data.resourceTimeTrackingPolicies);
 
 			locked = data.locked;
+
 
 		}
 
@@ -847,7 +841,4 @@ public final class ResourcesPluginData implements PluginData {
 		}
 		return true;
 	}
-	
-	
-
 }

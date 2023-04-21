@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import nucleus.testsupport.testplugin.TestOutputConsumer;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.util.Pair;
 import org.junit.jupiter.api.Test;
@@ -59,6 +60,153 @@ import util.wrappers.MutableInteger;
 import util.wrappers.MutableObject;
 
 public final class AT_ResourcesDataManager {
+	@Test
+	@UnitTestMethod(target = ResourcesDataManager.class, name = "init", args = {DataManagerContext.class})
+	public void testInit_State() {
+
+		ResourcesPluginData resourcesPluginData = ResourcesPluginData.builder()
+				.defineResourceProperty(TestResourceId.RESOURCE_1, TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE, TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE.getPropertyDefinition())
+				.defineResourceProperty(TestResourceId.RESOURCE_2, TestResourcePropertyId.ResourceProperty_1_1_BOOLEAN_MUTABLE, TestResourcePropertyId.ResourceProperty_1_1_BOOLEAN_MUTABLE.getPropertyDefinition())
+				.addResource(TestResourceId.RESOURCE_1)
+				.addResource(TestResourceId.RESOURCE_2)
+				.setResourceTimeTracking(TestResourceId.RESOURCE_2, TimeTrackingPolicy.TRACK_TIME)
+				.setResourcePropertyValue(TestResourceId.RESOURCE_1, TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE, 45)
+				.build();
+		List<RegionId> expectedRegionIds = new ArrayList<>();
+		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
+			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
+
+			resourcesDataManager.addResourceToRegion(TestResourceId.RESOURCE_1, TestRegionId.REGION_1, 55);
+
+			RegionId personRegion = regionsDataManager.getPersonRegion(new PersonId(0));
+			expectedRegionIds.add(personRegion);
+			resourcesDataManager.addResourceToRegion(TestResourceId.RESOURCE_2, personRegion, 33);
+			resourcesDataManager.transferResourceToPersonFromRegion(TestResourceId.RESOURCE_2, new PersonId(0), 30);
+		}));
+
+		TestPluginData testPluginData = pluginBuilder.build();
+		Factory factory = ResourcesTestPluginFactory.factory(1, 7939130943360648501L, testPluginData)
+				.setResourcesPluginData(resourcesPluginData);
+		TestOutputConsumer testOutputConsumer = TestSimulation.builder().addPlugins(factory.getPlugins())
+				.setProduceSimulationStateOnHalt(true)
+				.setSimulationHaltTime(2)
+				.build()
+				.execute();
+		Map<ResourcesPluginData, Integer> outputItems = testOutputConsumer.getOutputItems(ResourcesPluginData.class);
+		assertEquals(1, outputItems.size());
+		ResourcesPluginData actualPluginData = outputItems.keySet().iterator().next();
+		ResourcesPluginData expectedPluginData = ResourcesPluginData.builder()
+				.defineResourceProperty(TestResourceId.RESOURCE_1, TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE, TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE.getPropertyDefinition())
+				.defineResourceProperty(TestResourceId.RESOURCE_2, TestResourcePropertyId.ResourceProperty_1_1_BOOLEAN_MUTABLE, TestResourcePropertyId.ResourceProperty_1_1_BOOLEAN_MUTABLE.getPropertyDefinition())
+				.addResource(TestResourceId.RESOURCE_1)
+				.addResource(TestResourceId.RESOURCE_2)
+				.setResourceTimeTracking(TestResourceId.RESOURCE_2, TimeTrackingPolicy.TRACK_TIME)
+				.setResourcePropertyValue(TestResourceId.RESOURCE_1, TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE, 45)
+				.setResourcePropertyValue(TestResourceId.RESOURCE_2, TestResourcePropertyId.ResourceProperty_1_1_BOOLEAN_MUTABLE, false)
+				.setRegionResourceLevel(TestRegionId.REGION_1, TestResourceId.RESOURCE_1, 55)
+				.setRegionResourceLevel(expectedRegionIds.get(0), TestResourceId.RESOURCE_2, 3)
+				.setRegionResourceLevel(TestRegionId.REGION_2, TestResourceId.RESOURCE_1, 0)
+				.setRegionResourceLevel(TestRegionId.REGION_2, TestResourceId.RESOURCE_2, 0)
+				.setRegionResourceLevel(TestRegionId.REGION_3, TestResourceId.RESOURCE_1, 0)
+				.setRegionResourceLevel(TestRegionId.REGION_3, TestResourceId.RESOURCE_2, 0)
+				.setRegionResourceLevel(TestRegionId.REGION_4, TestResourceId.RESOURCE_1, 0)
+				.setRegionResourceLevel(TestRegionId.REGION_4, TestResourceId.RESOURCE_2, 0)
+				.setRegionResourceLevel(TestRegionId.REGION_5, TestResourceId.RESOURCE_1, 0)
+				.setRegionResourceLevel(TestRegionId.REGION_5, TestResourceId.RESOURCE_2, 0)
+				.setRegionResourceLevel(TestRegionId.REGION_6, TestResourceId.RESOURCE_1, 0)
+				.setRegionResourceLevel(TestRegionId.REGION_6, TestResourceId.RESOURCE_2, 0)
+				.setPersonResourceLevel(new PersonId(0), TestResourceId.RESOURCE_1, 0)
+				.setPersonResourceLevel(new PersonId(0), TestResourceId.RESOURCE_2, 30)
+				.build();
+		assertEquals(expectedPluginData, actualPluginData);
+
+		// show that the plugin data persists after multiple actions
+		expectedRegionIds.clear();
+		ResourcesPluginData resourcesPluginData2 = ResourcesPluginData.builder()
+				.defineResourceProperty(TestResourceId.RESOURCE_1, TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE, TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE.getPropertyDefinition())
+				.defineResourceProperty(TestResourceId.RESOURCE_2, TestResourcePropertyId.ResourceProperty_1_1_BOOLEAN_MUTABLE, TestResourcePropertyId.ResourceProperty_1_1_BOOLEAN_MUTABLE.getPropertyDefinition())
+				.addResource(TestResourceId.RESOURCE_1)
+				.addResource(TestResourceId.RESOURCE_2)
+				.setResourceTimeTracking(TestResourceId.RESOURCE_2, TimeTrackingPolicy.TRACK_TIME)
+				.setResourcePropertyValue(TestResourceId.RESOURCE_1, TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE, 45)
+				.build();
+		TestPluginData.Builder pluginBuilder2 = TestPluginData.builder();
+
+		pluginBuilder2.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
+			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
+
+			resourcesDataManager.addResourceToRegion(TestResourceId.RESOURCE_1, TestRegionId.REGION_1, 55);
+
+			RegionId personRegion = regionsDataManager.getPersonRegion(new PersonId(0));
+			expectedRegionIds.add(personRegion);
+			resourcesDataManager.addResourceToRegion(TestResourceId.RESOURCE_2, personRegion, 33);
+			resourcesDataManager.transferResourceToPersonFromRegion(TestResourceId.RESOURCE_2, new PersonId(0), 30);
+		}));
+
+		pluginBuilder2.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
+			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+
+			resourcesDataManager.addResourceId(TestResourceId.RESOURCE_3, TimeTrackingPolicy.DO_NOT_TRACK_TIME);
+			resourcesDataManager.addResourceToRegion(TestResourceId.RESOURCE_3, TestRegionId.REGION_2, 73);
+			resourcesDataManager.transferResourceFromPersonToRegion(TestResourceId.RESOURCE_2, new PersonId(0), 10);
+			resourcesDataManager.transferResourceBetweenRegions(TestResourceId.RESOURCE_2, TestRegionId.REGION_1, TestRegionId.REGION_2, 5);
+			resourcesDataManager.expandCapacity(5);
+
+		}));
+
+		TestPluginData testPluginData2 = pluginBuilder2.build();
+		Factory factory2 = ResourcesTestPluginFactory.factory(2, 7939130943360648501L, testPluginData2)
+				.setResourcesPluginData(resourcesPluginData2);
+		TestOutputConsumer testOutputConsumer2 = TestSimulation.builder().addPlugins(factory2.getPlugins())
+				.setProduceSimulationStateOnHalt(true)
+				.setSimulationHaltTime(2)
+				.build()
+				.execute();
+		Map<ResourcesPluginData, Integer> outputItems2 = testOutputConsumer2.getOutputItems(ResourcesPluginData.class);
+		assertEquals(1, outputItems2.size());
+		ResourcesPluginData actualPluginData2 = outputItems2.keySet().iterator().next();
+		ResourcesPluginData expectedPluginData2 = ResourcesPluginData.builder()
+				.defineResourceProperty(TestResourceId.RESOURCE_1, TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE, TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE.getPropertyDefinition())
+				.defineResourceProperty(TestResourceId.RESOURCE_2, TestResourcePropertyId.ResourceProperty_1_1_BOOLEAN_MUTABLE, TestResourcePropertyId.ResourceProperty_1_1_BOOLEAN_MUTABLE.getPropertyDefinition())
+				.addResource(TestResourceId.RESOURCE_1)
+				.addResource(TestResourceId.RESOURCE_2)
+				.addResource(TestResourceId.RESOURCE_3)
+				.setResourceTimeTracking(TestResourceId.RESOURCE_2, TimeTrackingPolicy.TRACK_TIME)
+				.setResourcePropertyValue(TestResourceId.RESOURCE_1, TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE, 45)
+				.setResourcePropertyValue(TestResourceId.RESOURCE_2, TestResourcePropertyId.ResourceProperty_1_1_BOOLEAN_MUTABLE, false)
+				.setRegionResourceLevel(TestRegionId.REGION_1, TestResourceId.RESOURCE_1, 55)
+				.setRegionResourceLevel(expectedRegionIds.get(0), TestResourceId.RESOURCE_2, 8)
+				.setRegionResourceLevel(TestRegionId.REGION_1, TestResourceId.RESOURCE_3, 0)
+				.setRegionResourceLevel(TestRegionId.REGION_2, TestResourceId.RESOURCE_1, 0)
+				.setRegionResourceLevel(TestRegionId.REGION_2, TestResourceId.RESOURCE_2, 5)
+				.setRegionResourceLevel(TestRegionId.REGION_2, TestResourceId.RESOURCE_3, 73)
+				.setRegionResourceLevel(TestRegionId.REGION_3, TestResourceId.RESOURCE_1, 0)
+				.setRegionResourceLevel(TestRegionId.REGION_3, TestResourceId.RESOURCE_2, 0)
+				.setRegionResourceLevel(TestRegionId.REGION_3, TestResourceId.RESOURCE_3, 0)
+				.setRegionResourceLevel(TestRegionId.REGION_4, TestResourceId.RESOURCE_1, 0)
+				.setRegionResourceLevel(TestRegionId.REGION_4, TestResourceId.RESOURCE_2, 0)
+				.setRegionResourceLevel(TestRegionId.REGION_4, TestResourceId.RESOURCE_3, 0)
+				.setRegionResourceLevel(TestRegionId.REGION_5, TestResourceId.RESOURCE_1, 0)
+				.setRegionResourceLevel(TestRegionId.REGION_5, TestResourceId.RESOURCE_2, 0)
+				.setRegionResourceLevel(TestRegionId.REGION_5, TestResourceId.RESOURCE_3, 0)
+				.setRegionResourceLevel(TestRegionId.REGION_6, TestResourceId.RESOURCE_1, 0)
+				.setRegionResourceLevel(TestRegionId.REGION_6, TestResourceId.RESOURCE_2, 0)
+				.setRegionResourceLevel(TestRegionId.REGION_6, TestResourceId.RESOURCE_3, 0)
+				.setPersonResourceLevel(new PersonId(0), TestResourceId.RESOURCE_1, 0)
+				.setPersonResourceLevel(new PersonId(0), TestResourceId.RESOURCE_2, 20)
+				.setPersonResourceLevel(new PersonId(0), TestResourceId.RESOURCE_3, 0)
+				.setPersonResourceLevel(new PersonId(1), TestResourceId.RESOURCE_1, 0)
+				.setPersonResourceLevel(new PersonId(1), TestResourceId.RESOURCE_2, 0)
+				.setPersonResourceLevel(new PersonId(1), TestResourceId.RESOURCE_3, 0)
+				.build();
+		assertEquals(expectedPluginData2, actualPluginData2);
+	}
+
+
 	@Test
 	@UnitTestMethod(target = ResourcesDataManager.class, name = "init", args = { DataManagerContext.class })
 	public void testPersonRemovalEvent() {
