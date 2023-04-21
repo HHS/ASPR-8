@@ -134,7 +134,7 @@ public final class ResourcesPluginData implements PluginData {
 
 		private int getResourcePropertyValuesHashCode() {
 			final int prime = 31;
-			int result = 1;
+			int result = 0;
 			for (ResourceId resourceId : resourcePropertyValues.keySet()) {
 				Map<ResourcePropertyId, PropertyDefinition> defMap = resourcePropertyDefinitions.get(resourceId);
 				Map<ResourcePropertyId, Object> map = resourcePropertyValues.get(resourceId);
@@ -150,9 +150,11 @@ public final class ResourcesPluginData implements PluginData {
 						}
 					}
 					if (addValue) {
-						result = prime * result + resourceId.hashCode();
-						result = prime * result + resourcePropertyId.hashCode();
-						result = prime * result + value.hashCode();
+						int subResult = 1;
+						subResult = prime * subResult + resourceId.hashCode();
+						subResult = prime * subResult + resourcePropertyId.hashCode();
+						subResult = prime * subResult + value.hashCode();
+						result += subResult;
 					}
 				}
 			}
@@ -161,8 +163,7 @@ public final class ResourcesPluginData implements PluginData {
 
 		private int getRegionResourceLevelsHashCode() {
 			final int prime = 31;
-			int result = 1;
-
+			int result = 0;
 			for (RegionId regionId : regionResourceLevels.keySet()) {
 				List<ResourceInitialization> list = regionResourceLevels.get(regionId);
 				if (list != null) {
@@ -170,9 +171,11 @@ public final class ResourcesPluginData implements PluginData {
 						Long amount = resourceInitialization.getAmount();
 						if (amount != 0L) {
 							ResourceId resourceId = resourceInitialization.getResourceId();
-							result = prime * result + regionId.hashCode();
-							result = prime * result + resourceId.hashCode();
-							result = prime * result + amount.hashCode();
+							int subResult = 1;
+							subResult = prime * subResult + regionId.hashCode();
+							subResult = prime * subResult + resourceId.hashCode();
+							subResult = prime * subResult + amount.hashCode();
+							result += subResult;
 						}
 					}
 				}
@@ -182,7 +185,7 @@ public final class ResourcesPluginData implements PluginData {
 
 		private int getPersonResourceLevelsHashCode() {
 			final int prime = 31;
-			int result = 1;
+			int result = 0;
 			for (int personIndex = 0; personIndex < personResourceLevels.size(); personIndex++) {
 				List<ResourceInitialization> list = personResourceLevels.get(personIndex);
 				if (list != null) {
@@ -190,8 +193,10 @@ public final class ResourcesPluginData implements PluginData {
 						Long amount = resourceInitialization.getAmount();
 						if (amount != 0L) {
 							ResourceId resourceId = resourceInitialization.getResourceId();
-							result = prime * result + resourceId.hashCode();
-							result = prime * result + amount.hashCode();
+							int subResult = 1;
+							subResult = prime * subResult + resourceId.hashCode();
+							subResult = prime * subResult + amount.hashCode();
+							result += subResult;
 						}
 					}
 				}
