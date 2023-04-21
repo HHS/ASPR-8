@@ -39,40 +39,204 @@ public final class GroupsPluginData implements PluginData {
 		private GroupId groupId;
 		private GroupTypeId groupTypeId;
 		private List<GroupPropertyValue> groupPropertyValues;
-
-		@Override
-		public boolean equals(Object o) {
-			if (this == o)
-				return true;
-			if (!(o instanceof GroupSpecification))
-				return false;
-			GroupSpecification that = (GroupSpecification) o;
-			return groupId.equals(that.groupId) && groupTypeId.equals(that.groupTypeId) && groupPropertyValues.equals(that.groupPropertyValues);
-		}
-
-		@Override
-		public int hashCode() {
-			return Objects.hash(groupId, groupTypeId, groupPropertyValues);
-		}
 	}
 
 	private static class Data {
 
 		@Override
-		public boolean equals(Object o) {
-			if (this == o)
-				return true;
-			if (!(o instanceof Data))
-				return false;
-			Data data = (Data) o;
-			return personCount == data.personCount && locked == data.locked && groupPropertyDefinitions.equals(data.groupPropertyDefinitions) && groupTypeIds.equals(data.groupTypeIds)
-					&& emptyGroupList.equals(data.emptyGroupList) && groupSpecifications.equals(data.groupSpecifications) && emptyGroupPropertyValues.equals(data.emptyGroupPropertyValues)
-					&& groupMemberships.equals(data.groupMemberships);
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + groupTypeIds.hashCode();
+			result = prime * result + groupPropertyDefinitions.hashCode();
+			result = prime * result + getGroupMembershipsHashCode();
+			result = prime * result + getGroupSpecificationsHashCode();
+
+			return result;
 		}
 
 		@Override
-		public int hashCode() {
-			return Objects.hash(groupPropertyDefinitions, groupTypeIds, emptyGroupList, personCount, locked, groupSpecifications, emptyGroupPropertyValues, groupMemberships);
+		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (!(obj instanceof Data)) {
+				return false;
+			}
+
+			Data other = (Data) obj;
+
+			/*
+			 * We exclude:
+			 * 
+			 * locked -- both datas should be locked when equals is invoked
+			 * 
+			 * emptyGroupList -- just an empty list
+			 * 
+			 * emptyGroupPropertyValues-- just an empty list
+			 * 
+			 * personCount -- this is a convenience value for the client and
+			 * does not impact the actual content
+			 */
+
+			/*
+			 * These are simple comparisons:
+			 */
+			if (!groupTypeIds.equals(other.groupTypeIds)) {
+				return false;
+			}
+			if (!groupPropertyDefinitions.equals(other.groupPropertyDefinitions)) {
+				return false;
+			}
+			/*
+			 * The remaining fields must be compared by disregarding assignments
+			 * of default property values and times
+			 */
+
+			if (!compareGroupMemberships(this, other)) {
+				return false;
+			}
+			if (!compareGroupSpecifications(this, other)) {
+				return false;
+			}
+
+			return true;
+		}
+
+		private static Map<GroupId, GroupSpecification> getGroupSpecificationMap(Data data) {
+			Map<GroupId, GroupSpecification> result = new LinkedHashMap<>();
+			for (GroupSpecification groupSpecification : data.groupSpecifications) {
+				if (groupSpecification != null) {
+					result.put(groupSpecification.groupId, groupSpecification);
+				}
+			}
+			return result;
+		}
+
+		private static Set<GroupPropertyValue> getNonDefaultGroupPropertyValues(Data data, GroupSpecification aGroupSpecification) {
+			Set<GroupPropertyValue> result = new LinkedHashSet<>();
+			Map<GroupPropertyId, PropertyDefinition> defMap = data.groupPropertyDefinitions.get(aGroupSpecification.groupTypeId);
+			for (GroupPropertyValue groupPropertyValue : aGroupSpecification.groupPropertyValues) {
+				PropertyDefinition propertyDefinition = defMap.get(groupPropertyValue.groupPropertyId());
+				boolean valueIsDefault = false;
+				Optional<Object> optional = propertyDefinition.getDefaultValue();
+				if (optional.isPresent()) {
+					if (optional.get().equals(groupPropertyValue.value())) {
+						valueIsDefault = true;
+					}
+				}
+				if (!valueIsDefault) {
+					result.add(groupPropertyValue);
+				}
+			}
+			return result;
+		}
+
+		/*
+		 * The GroupSpecifications must represent the same groups with the same
+		 * group types. The associated property values must agree on non-default
+		 * values.
+		 */
+		private static boolean compareGroupSpecifications(Data a, Data b) {
+
+			//We place the GroupSpecifications into maps, ignoring null instances
+			Map<GroupId, GroupSpecification> aMap = getGroupSpecificationMap(a);
+			Map<GroupId, GroupSpecification> bMap = getGroupSpecificationMap(b);
+
+			//They must represent the same groups
+			if (!aMap.keySet().equals(bMap.keySet())) {
+				return false;
+			}
+
+			//The groups must be of the same type
+			for (GroupId groupId : aMap.keySet()) {
+				GroupSpecification aGroupSpecification = aMap.get(groupId);
+				GroupSpecification bGroupSpecification = bMap.get(groupId);
+				if (!aGroupSpecification.groupTypeId.equals(bGroupSpecification.groupTypeId)) {
+					return false;
+				}
+			}
+
+			//We extract the non-default property values from each group and compare them
+			for (GroupId groupId : aMap.keySet()) {
+				GroupSpecification aGroupSpecification = aMap.get(groupId);
+				GroupSpecification bGroupSpecification = bMap.get(groupId);
+				Set<GroupPropertyValue> aGroupPropertyValues = getNonDefaultGroupPropertyValues(a, aGroupSpecification);
+				Set<GroupPropertyValue> bGroupPropertyValues = getNonDefaultGroupPropertyValues(b, bGroupSpecification);
+				if (!aGroupPropertyValues.equals(bGroupPropertyValues)) {
+					return false;
+				}
+			}
+
+			return true;
+		}
+
+		private static boolean compareGroupMemberships(Data a, Data b) {
+			int personCount = FastMath.max(a.groupMemberships.size(), b.groupMemberships.size());
+			for (int i = 0; i < personCount; i++) {
+				Set<GroupId> aSet = getPersonGroupMemberships(a, i);
+				Set<GroupId> bSet = getPersonGroupMemberships(b, i);
+				if (!aSet.equals(bSet)) {
+					return false;
+				}
+			}
+			return true;
+		}
+
+		private static Set<GroupId> getPersonGroupMemberships(Data data, int personIndex) {
+			Set<GroupId> result = new LinkedHashSet<>();
+			if (personIndex < data.groupMemberships.size()) {
+				List<GroupId> list = data.groupMemberships.get(personIndex);
+				if (list != null) {
+					result.addAll(list);
+				}
+			}
+			return result;
+		}
+
+		private int getGroupSpecificationsHashCode() {
+			int prime = 31;
+			int result = 0;
+			for (int i = 0; i < groupSpecifications.size(); i++) {
+				GroupSpecification groupSpecification = groupSpecifications.get(i);
+				if (groupSpecification != null) {
+					int subResult = 1;
+					subResult = subResult * prime + groupSpecification.groupId.hashCode();
+					subResult = subResult * prime + groupSpecification.groupTypeId.hashCode();
+					Map<GroupPropertyId, PropertyDefinition> defMap = groupPropertyDefinitions.get(groupSpecification.groupTypeId);
+					// the fact that there are group property values ensures us
+					// that the defMap is not null
+					for (GroupPropertyValue groupPropertyValue : groupSpecification.groupPropertyValues) {
+						PropertyDefinition propertyDefinition = defMap.get(groupPropertyValue.groupPropertyId());
+						boolean isDefaultValue = false;
+						Optional<Object> optional = propertyDefinition.getDefaultValue();
+						if (optional.isPresent()) {
+							Object defaultValue = optional.get();
+							if (defaultValue.equals(groupPropertyValue.value())) {
+								isDefaultValue = true;
+							}
+						}
+						if (!isDefaultValue) {
+							subResult += groupPropertyValue.value().hashCode();
+						}
+					}
+					result += subResult;
+				}
+			}
+			return result;
+		}
+
+		private int getGroupMembershipsHashCode() {
+			int result = 0;
+			for (int i = 0; i < groupMemberships.size(); i++) {
+				List<GroupId> list = groupMemberships.get(i);
+				if (list != null) {
+					for (GroupId groupId : list) {
+						result += groupId.hashCode();
+					}
+				}
+			}
+			return result;
 		}
 
 		private final Map<GroupTypeId, Map<GroupPropertyId, PropertyDefinition>> groupPropertyDefinitions;
@@ -735,4 +899,5 @@ public final class GroupsPluginData implements PluginData {
 	public String toString() {
 		return "GroupsPluginData{" + "data=" + data + '}';
 	}
+
 }
