@@ -41,7 +41,7 @@ public class AT_AttributesPlugin {
 		Plugin attributesPlugin = AttributesPlugin.getAttributesPlugin(attributesPluginData);
 
 		// show that the plugin data is present
-		Set<PluginData> pluginDatas = attributesPlugin.getPluginDatas();
+		List<PluginData> pluginDatas = attributesPlugin.getPluginDatas();
 		assertNotNull(pluginDatas);
 		assertEquals(1, pluginDatas.size());
 		assertTrue(pluginDatas.contains(attributesPluginData));
