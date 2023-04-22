@@ -1,6 +1,11 @@
 package plugins.materials;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
 import org.apache.commons.math3.util.FastMath;
 
@@ -779,7 +784,12 @@ public final class MaterialsPluginData implements PluginData {
 						PropertyDefinition propertyDefinition = materialsProducerPropertyDefinitions.get(materialsProducerPropertyId);
 						propertyValue = propertyDefinition.getDefaultValue().get();
 					}
-					result = prime * result + propertyValue.hashCode();
+					int subResult = 1;
+					subResult = subResult * prime + materialsProducerId.hashCode();
+					subResult = subResult * prime + materialsProducerPropertyId.hashCode();
+					subResult = subResult * prime + propertyValue.hashCode();
+
+					result += subResult;
 				}
 			}
 			return result;
@@ -787,24 +797,30 @@ public final class MaterialsPluginData implements PluginData {
 
 		private int getBatchPropertyValuesHashCode() {
 			final int prime = 31;
-			int result = 1;
+			int result = 0;
 
 			for (BatchId batchId : batchIds) {
 				MaterialId materialId = batchMaterials.get(batchId);
-				Map<BatchPropertyId, PropertyDefinition> map2 = batchPropertyDefinitions.get(materialId);
-				if (map2 != null) {
-					for (BatchPropertyId batchPropertyId : map2.keySet()) {
+				Map<BatchPropertyId, PropertyDefinition> defMap = batchPropertyDefinitions.get(materialId);
+				if (defMap != null) {
+					for (BatchPropertyId batchPropertyId : defMap.keySet()) {
 						Object propertyValue = null;
 
-						Map<BatchPropertyId, Object> map = batchPropertyValues.get(batchId);
-						if (map != null) {
-							propertyValue = map.get(batchPropertyId);
+						Map<BatchPropertyId, Object> valueMap = batchPropertyValues.get(batchId);
+						if (valueMap != null) {
+							propertyValue = valueMap.get(batchPropertyId);
 						}
 						if (propertyValue == null) {
 							PropertyDefinition propertyDefinition = batchPropertyDefinitions.get(materialId).get(batchPropertyId);
 							propertyValue = propertyDefinition.getDefaultValue().get();
 						}
-						result = prime * result + propertyValue.hashCode();
+
+						int subResult = 1;
+						subResult = subResult * prime + batchId.hashCode();
+						subResult = subResult * prime + batchPropertyId.hashCode();
+						subResult = subResult * prime + propertyValue.hashCode();
+
+						result += subResult;
 					}
 				}
 			}
@@ -918,25 +934,25 @@ public final class MaterialsPluginData implements PluginData {
 		public int hashCode() {
 			final int prime = 31;
 			int result = 1;
+
 			result = prime * result + batchAmounts.hashCode();
 			result = prime * result + batchIds.hashCode();
 			result = prime * result + batchMaterials.hashCode();
 			result = prime * result + batchMaterialsProducers.hashCode();
 			result = prime * result + batchPropertyDefinitions.hashCode();
-			result = prime * result + getBatchPropertyValuesHashCode();
 			result = prime * result + batchStages.hashCode();
-			result = prime * result + emptyBatchPropertyValues.hashCode();
-			result = prime * result + emptyMaterialsProducerPropertyValuesMap.hashCode();
-			result = prime * result + (locked ? 1231 : 1237);
 			result = prime * result + materialIds.hashCode();
 			result = prime * result + materialsProducerIds.hashCode();
 			result = prime * result + materialsProducerPropertyDefinitions.hashCode();
-			result = prime * result + getProducerPropertyValuesHashCode();
-			result = prime * result + getProducerResourceLevelsHashCode();
 			result = prime * result + stageBatches.hashCode();
 			result = prime * result + stageIds.hashCode();
 			result = prime * result + stageMaterialsProducers.hashCode();
 			result = prime * result + stageOffers.hashCode();
+
+			result = prime * result + getBatchPropertyValuesHashCode();
+			result = prime * result + getProducerPropertyValuesHashCode();
+			result = prime * result + getProducerResourceLevelsHashCode();
+
 			return result;
 		}
 
@@ -975,17 +991,19 @@ public final class MaterialsPluginData implements PluginData {
 			final int prime = 31;
 			int result = 1;
 			for (MaterialsProducerId materialsProducerId : materialsProducerResourceLevels.keySet()) {
-				Set<MultiKey> nonZeroValues = new LinkedHashSet<>();
 				Map<ResourceId, Long> map = materialsProducerResourceLevels.get(materialsProducerId);
 				if (map != null) {
 					for (ResourceId resourceId : map.keySet()) {
 						Long level = map.get(resourceId);
 						if (level > 0) {
-							nonZeroValues.add(new MultiKey(resourceId, level));
+							int subResult = 1;
+							subResult = subResult * prime + materialsProducerId.hashCode();
+							subResult = subResult * prime + resourceId.hashCode();
+							subResult = subResult * prime + level.hashCode();
+							result += subResult;
 						}
 					}
 				}
-				result = prime * result + nonZeroValues.hashCode();
 			}
 			return result;
 		}
@@ -1002,72 +1020,84 @@ public final class MaterialsPluginData implements PluginData {
 				return false;
 			}
 			Data other = (Data) obj;
+
+			/*
+			 * We exclude the following fields:
+			 * 
+			 * emptyBatchPropertyValues -- just an empty list
+			 * 
+			 * emptyMaterialsProducerPropertyValuesMap -- just an empty map
+			 * 
+			 * locked -- should be locked when equals is invoked
+			 */
+
+			// most of the fields use normal comparison
 			if (!batchAmounts.equals(other.batchAmounts)) {
 				return false;
 			}
+
 			if (!batchIds.equals(other.batchIds)) {
 				return false;
 			}
+
 			if (!batchMaterials.equals(other.batchMaterials)) {
 				return false;
 			}
+
 			if (!batchMaterialsProducers.equals(other.batchMaterialsProducers)) {
 				return false;
 			}
+
 			if (!batchPropertyDefinitions.equals(other.batchPropertyDefinitions)) {
-				return false;
-			}
-
-			/*
-			 * This is special handling to deal with missing property values
-			 * that are implicitly equal to the associated default value from
-			 * the corresponding property definition
-			 */
-
-			if (!compareBatchPropertyValues(other)) {
 				return false;
 			}
 
 			if (!batchStages.equals(other.batchStages)) {
 				return false;
 			}
-			if (!emptyBatchPropertyValues.equals(other.emptyBatchPropertyValues)) {
-				return false;
-			}
-			if (!emptyMaterialsProducerPropertyValuesMap.equals(other.emptyMaterialsProducerPropertyValuesMap)) {
-				return false;
-			}
-			if (locked != other.locked) {
-				return false;
-			}
+
 			if (!materialIds.equals(other.materialIds)) {
 				return false;
 			}
+
 			if (!materialsProducerIds.equals(other.materialsProducerIds)) {
 				return false;
 			}
+
 			if (!materialsProducerPropertyDefinitions.equals(other.materialsProducerPropertyDefinitions)) {
-				return false;
-			}
-
-			if (!compareProducerPropertyValues(other)) {
-				return false;
-			}
-
-			if (!compareProducerResourceLevels(other)) {
 				return false;
 			}
 
 			if (!stageBatches.equals(other.stageBatches)) {
 				return false;
 			}
+
 			if (!stageIds.equals(other.stageIds)) {
 				return false;
 			}
+
 			if (!stageMaterialsProducers.equals(other.stageMaterialsProducers)) {
 				return false;
 			}
+
 			if (!stageOffers.equals(other.stageOffers)) {
+				return false;
+			}
+
+			/*
+			 * The remaining fields require special handling so that default
+			 * property/resource values and times are ignored. Note that we will
+			 * rely on the previous equalities being true.
+			 */
+
+			if (!compareBatchPropertyValues(other)) {
+				return false;
+			}
+			if (!compareProducerPropertyValues(other)) {
+				return false;
+			}
+
+			if (!compareProducerResourceLevels(other)) {
 				return false;
 			}
 			return true;
