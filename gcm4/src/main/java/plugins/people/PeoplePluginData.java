@@ -48,18 +48,26 @@ public final class PeoplePluginData implements PluginData {
 
 		@Override
 		public int hashCode() {
+			/*
+			 * See notes in equals()
+			 */
+
 			final int prime = 31;
 			int result = 1;
-			long temp;
-			temp = Double.doubleToLongBits(assignmentTime);
+			long temp = Double.doubleToLongBits(assignmentTime);
 			result = prime * result + (int) (temp ^ (temp >>> 32));
 			result = prime * result + personCount;
-			result = prime * result + ((personRanges == null) ? 0 : personRanges.hashCode());
+			result = prime * result + personRanges.hashCode();
 			return result;
 		}
 
 		@Override
 		public boolean equals(Object obj) {
+			/*
+			 * This boilerplate implementation works since the person ranges are
+			 * sorted and joined during the build process.
+			 */
+
 			if (this == obj) {
 				return true;
 			}
@@ -73,11 +81,7 @@ public final class PeoplePluginData implements PluginData {
 			if (personCount != other.personCount) {
 				return false;
 			}
-			if (personRanges == null) {
-				if (other.personRanges != null) {
-					return false;
-				}
-			} else if (!personRanges.equals(other.personRanges)) {
+			if (!personRanges.equals(other.personRanges)) {
 				return false;
 			}
 			return true;
