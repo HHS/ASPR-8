@@ -1,6 +1,14 @@
 package plugins.regions;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 
 import net.jcip.annotations.Immutable;
 import nucleus.PluginData;
@@ -14,6 +22,7 @@ import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
 import plugins.util.properties.TimeTrackingPolicy;
 import util.errors.ContractException;
+import util.wrappers.MultiKey;
 
 /**
  * An immutable container of the initial state of regions. It contains: <BR>
@@ -66,21 +75,123 @@ public class RegionsPluginData implements PluginData {
 		}
 
 		@Override
-		public boolean equals(Object o) {
-			if (this == o)
-				return true;
-			if (!(o instanceof Data))
-				return false;
-			Data data = (Data) o;
-			return locked == data.locked && regionPropertyDefinitions.equals(data.regionPropertyDefinitions) && regionIds.equals(data.regionIds)
-					&& regionArrivalTimeTrackingPolicy == data.regionArrivalTimeTrackingPolicy && regionPropertyValues.equals(data.regionPropertyValues)
-					&& emptyRegionPropertyMap.equals(data.emptyRegionPropertyMap) && personRegions.equals(data.personRegions);
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + personRegions.hashCode();
+			result = prime * result + regionArrivalTimeTrackingPolicy.hashCode();
+			result = prime * result + regionIds.hashCode();
+			result = prime * result + regionPropertyDefinitions.hashCode();
+			result = prime * result + getRegionPropertyValuesHashCode();
+			return result;
+		}
+
+		private int getRegionPropertyValuesHashCode() {
+			int result = 0;
+			int prime = 31;
+			for (RegionId regionId : regionPropertyValues.keySet()) {
+				Map<RegionPropertyId, Object> map = regionPropertyValues.get(regionId);
+				for (RegionPropertyId regionPropertyId : map.keySet()) {
+					boolean use = true;
+					Object propertyValue = map.get(regionPropertyId);
+					PropertyDefinition propertyDefinition = regionPropertyDefinitions.get(regionPropertyId);
+					Optional<Object> optional = propertyDefinition.getDefaultValue();
+					if (optional.isPresent()) {
+						Object defaultValue = optional.get();
+						if (defaultValue.equals(propertyValue)) {
+							use = false;
+						}
+					}
+					if (use) {
+						int subResult = 1;
+						subResult = subResult * prime + regionId.hashCode();
+						subResult = subResult * prime + regionPropertyId.hashCode();
+						subResult = subResult * prime + propertyValue.hashCode();
+						result += subResult;
+					}
+				}
+			}
+			return result;
 		}
 
 		@Override
-		public int hashCode() {
-			return Objects.hash(regionPropertyDefinitions, regionIds, regionArrivalTimeTrackingPolicy, regionPropertyValues, emptyRegionPropertyMap, personRegions, locked);
+		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (!(obj instanceof Data)) {
+				return false;
+			}
+			Data other = (Data) obj;
+
+			/*
+			 * We exclude the following fields:
+			 * 
+			 * locked -- two Datas are only compared when they are both locked
+			 * -- there are no equality comparisons in this class.
+			 * 
+			 * 
+			 * emptyRegionPropertyMap -- just an empty map
+			 */
+
+			if (!personRegions.equals(other.personRegions)) {
+				return false;
+			}
+			if (regionArrivalTimeTrackingPolicy != other.regionArrivalTimeTrackingPolicy) {
+				return false;
+			}
+			if (!regionIds.equals(other.regionIds)) {
+				return false;
+			}
+			if (!regionPropertyDefinitions.equals(other.regionPropertyDefinitions)) {
+				return false;
+			}
+			if (!comparteRegionPropertyValues(this, other)) {
+				return false;
+			}
+
+			return true;
 		}
+
+	}
+
+	private static Set<MultiKey> getNonDefaultRegionPropertyValues(Data data, RegionId regionId) {
+		Set<MultiKey> result = new LinkedHashSet<>();
+
+		Map<RegionPropertyId, Object> map = data.regionPropertyValues.get(regionId);
+		if (map != null) {
+			for(RegionPropertyId regionPropertyId : map.keySet()) {
+				boolean use = true;
+				Object propertyValue = map.get(regionPropertyId);
+				PropertyDefinition propertyDefinition = data.regionPropertyDefinitions.get(regionPropertyId);
+				Optional<Object> optional = propertyDefinition.getDefaultValue();
+				if(optional.isPresent()) {
+					Object defaultValue = optional.get();
+					if(defaultValue.equals(propertyValue)) {
+						use = false;
+					}
+				}
+				if(use) {
+					result.add(new MultiKey(regionPropertyId, propertyValue));
+				}
+			}
+		}
+		return result;
+	}
+
+	private static boolean comparteRegionPropertyValues(Data a, Data b) {
+		Set<RegionId> regionIds = new LinkedHashSet<>();
+		regionIds.addAll(a.regionPropertyValues.keySet());
+		regionIds.addAll(b.regionPropertyValues.keySet());
+		for (RegionId regionId : regionIds) {
+			Set<MultiKey> aSet = getNonDefaultRegionPropertyValues(a, regionId);
+			Set<MultiKey> bSet = getNonDefaultRegionPropertyValues(a, regionId);
+			if (!aSet.equals(bSet)) {
+				return false;
+			}
+		}
+		return true;
+
 	}
 
 	private static void validateRegionExists(final Data data, final RegionId regionId) {
