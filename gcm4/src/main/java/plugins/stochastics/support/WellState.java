@@ -9,16 +9,14 @@ import util.errors.ContractException;
 public class WellState {
 
 	private static class Data {
-		boolean simple = true;
 		long seed;
 		int index;
-		int[] vArray = new int[0];
+		int[] vArray;
 
 		public Data() {
 		}
 
 		public Data(Data data) {
-			simple = data.simple;
 			seed = data.seed;
 			index = data.index;
 			vArray = Arrays.copyOf(data.vArray, data.vArray.length);
@@ -30,7 +28,6 @@ public class WellState {
 			int result = 1;
 			result = prime * result + index;
 			result = prime * result + (int) (seed ^ (seed >>> 32));
-			result = prime * result + (simple ? 1231 : 1237);
 			result = prime * result + Arrays.hashCode(vArray);
 			return result;
 		}
@@ -50,9 +47,6 @@ public class WellState {
 			if (seed != other.seed) {
 				return false;
 			}
-			if (simple != other.simple) {
-				return false;
-			}
 			if (!Arrays.equals(vArray, other.vArray)) {
 				return false;
 			}
@@ -62,9 +56,7 @@ public class WellState {
 		@Override
 		public String toString() {
 			StringBuilder builder = new StringBuilder();
-			builder.append("Data [simple=");
-			builder.append(simple);
-			builder.append(", seed=");
+			builder.append("Data [seed=");
 			builder.append(seed);
 			builder.append(", index=");
 			builder.append(index);
@@ -87,6 +79,9 @@ public class WellState {
 		}
 
 		public WellState build() {
+			if (data.vArray == null) {
+				return new Well(data.seed).getWellState();
+			}
 			return new WellState(new Data(data));
 		}
 
@@ -96,21 +91,17 @@ public class WellState {
 		}
 
 		public Builder setInternals(int index, int[] vArray) {
-			if (vArray != null) {
-				if (vArray.length != 1391) {
-					throw new ContractException(StochasticsError.ILLEGAL_SEED_ININITIAL_STATE);
-				}
-				if (index < 0 || index > 1390) {
-					throw new ContractException(StochasticsError.ILLEGAL_SEED_ININITIAL_STATE);
-				}
-				data.simple = false;
-				data.index = index;
-				data.vArray = Arrays.copyOf(vArray, vArray.length);
-			} else {
-				data.index = 0;
-				data.vArray = new int[0];
-				data.simple = true;
+			if (vArray == null) {
+				throw new ContractException(StochasticsError.ILLEGAL_SEED_ININITIAL_STATE);
 			}
+			if (vArray.length != 1391) {
+				throw new ContractException(StochasticsError.ILLEGAL_SEED_ININITIAL_STATE);
+			}
+			if (index < 0 || index > 1390) {
+				throw new ContractException(StochasticsError.ILLEGAL_SEED_ININITIAL_STATE);
+			}
+			data.index = index;
+			data.vArray = Arrays.copyOf(vArray, vArray.length);
 			return this;
 		}
 
@@ -121,10 +112,6 @@ public class WellState {
 	}
 
 	private final Data data;
-
-	public boolean isSimple() {
-		return data.simple;
-	}
 
 	public long getSeed() {
 		return data.seed;
