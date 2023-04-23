@@ -54,9 +54,8 @@ public final class StochasticsPluginData implements PluginData {
 		public int hashCode() {
 			final int prime = 31;
 			int result = 1;
-			result = prime * result + (locked ? 1231 : 1237);
-			result = prime * result + ((randomNumberGeneratorIds == null) ? 0 : randomNumberGeneratorIds.hashCode());
-			result = prime * result + ((wellState == null) ? 0 : wellState.hashCode());
+			result = prime * result + randomNumberGeneratorIds.hashCode();
+			result = prime * result + wellState.hashCode();
 			return result;
 		}
 
@@ -69,9 +68,10 @@ public final class StochasticsPluginData implements PluginData {
 				return false;
 			}
 			Data other = (Data) obj;
-			if (locked != other.locked) {
-				return false;
-			}
+			/*
+			 * We exclude: locked -- both should be locked when equals is
+			 * invoked
+			 */
 			if (randomNumberGeneratorIds == null) {
 				if (other.randomNumberGeneratorIds != null) {
 					return false;

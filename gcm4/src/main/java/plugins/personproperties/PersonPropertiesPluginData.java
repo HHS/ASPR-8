@@ -1,6 +1,17 @@
 package plugins.personproperties;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.BitSet;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+
+import org.apache.commons.math3.util.FastMath;
 
 import net.jcip.annotations.Immutable;
 import nucleus.PluginData;
@@ -36,6 +47,7 @@ public class PersonPropertiesPluginData implements PluginData {
 		private List<PersonPropertyInitialization> emptyList = Collections.unmodifiableList(new ArrayList<>());
 
 		private BitSet people = new BitSet();
+		
 		private int maxPersonIndex = -1;
 
 		private boolean locked;
@@ -63,20 +75,111 @@ public class PersonPropertiesPluginData implements PluginData {
 		}
 
 		@Override
-		public boolean equals(Object o) {
-			if (this == o)
-				return true;
-			if (!(o instanceof Data))
-				return false;
-			Data data = (Data) o;
-			return maxPersonIndex == data.maxPersonIndex && locked == data.locked && personPropertyDefinitions.equals(data.personPropertyDefinitions)
-					&& personPropertyValues.equals(data.personPropertyValues) && emptyList.equals(data.emptyList) && people.equals(data.people);
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + maxPersonIndex;
+			result = prime * result + people.hashCode();
+			result = prime * result + personPropertyDefinitions.hashCode();
+			result = prime * result + getPersonPropertyValuesHashCode();
+			return result;
+		}
+
+		private int getPersonPropertyValuesHashCode() {
+			int result = 0;
+			int prime = 31;
+
+			for (int i = 0; i < personPropertyValues.size(); i++) {
+				List<PersonPropertyInitialization> list = personPropertyValues.get(i);
+				if (list != null) {
+					for (PersonPropertyInitialization personPropertyInitialization : list) {
+						PersonPropertyId personPropertyId = personPropertyInitialization.getPersonPropertyId();
+						PropertyDefinition propertyDefinition = personPropertyDefinitions.get(personPropertyId);
+						boolean use = true;
+						Object propertyValue = personPropertyInitialization.getValue();
+						Optional<Object> optional = propertyDefinition.getDefaultValue();
+						if (optional.isPresent()) {
+							Object defaultValue = optional.get();
+							if (defaultValue.equals(propertyValue)) {
+								use = false;
+							}
+						}
+						if (use) {
+							int subResult = 1;
+							subResult = subResult*prime+i;
+							subResult = subResult*prime+personPropertyId.hashCode();
+							subResult = subResult*prime+propertyValue.hashCode();
+							result += subResult;
+						}
+					}
+				}
+			}
+
+			return result;
 		}
 
 		@Override
-		public int hashCode() {
-			return Objects.hash(personPropertyDefinitions, personPropertyValues, emptyList, people, maxPersonIndex, locked);
+		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (!(obj instanceof Data)) {
+				return false;
+			}
+			Data other = (Data) obj;
+
+			if (maxPersonIndex != other.maxPersonIndex) {
+				return false;
+			}
+			if (!people.equals(other.people)) {
+				return false;
+			}
+			if (!personPropertyDefinitions.equals(other.personPropertyDefinitions)) {
+				return false;
+			}
+			if(!comparePersonPropertyValues(this,other)) {
+				return false;
+			}
+			return true;
 		}
+
+	}
+	
+	private static boolean comparePersonPropertyValues(Data a, Data b) {
+		int n = FastMath.max(a.personPropertyValues.size(), b.personPropertyValues.size());
+		
+		for(int i = 0;i<n;i++) {
+			Set<PersonPropertyInitialization> aSet = getNonDefaultPersonPropertyInitializations(a, i);
+			Set<PersonPropertyInitialization> bSet = getNonDefaultPersonPropertyInitializations(b, i);
+			if(!aSet.equals(bSet)) {
+				return false;
+			}
+		}
+		return true;		
+	}
+	
+	private static Set<PersonPropertyInitialization> getNonDefaultPersonPropertyInitializations(Data data, int personIndex){
+		Set<PersonPropertyInitialization> result = new LinkedHashSet<>();
+		if(personIndex<data.personPropertyValues.size()) {
+			List<PersonPropertyInitialization> list = data.personPropertyValues.get(personIndex);
+			for (PersonPropertyInitialization personPropertyInitialization : list) {
+				PersonPropertyId personPropertyId = personPropertyInitialization.getPersonPropertyId();
+				PropertyDefinition propertyDefinition = data.personPropertyDefinitions.get(personPropertyId);
+				boolean use = true;
+				Object propertyValue = personPropertyInitialization.getValue();
+				Optional<Object> optional = propertyDefinition.getDefaultValue();
+				if (optional.isPresent()) {
+					Object defaultValue = optional.get();
+					if (defaultValue.equals(propertyValue)) {
+						use = false;
+					}
+				}
+				if (use) {
+					result.add(personPropertyInitialization);
+				}
+			}
+		}		
+		return result;
 	}
 
 	/**
