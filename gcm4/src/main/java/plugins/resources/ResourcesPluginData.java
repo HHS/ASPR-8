@@ -6,7 +6,6 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -136,25 +135,29 @@ public final class ResourcesPluginData implements PluginData {
 			final int prime = 31;
 			int result = 0;
 			for (ResourceId resourceId : resourcePropertyValues.keySet()) {
+				//the defMap might be null
 				Map<ResourcePropertyId, PropertyDefinition> defMap = resourcePropertyDefinitions.get(resourceId);
 				Map<ResourcePropertyId, Object> map = resourcePropertyValues.get(resourceId);
-				for (ResourcePropertyId resourcePropertyId : map.keySet()) {
-					boolean addValue = true;
-					Object value = map.get(resourcePropertyId);
-					PropertyDefinition propertyDefinition = defMap.get(resourcePropertyId);
-					Optional<Object> optional = propertyDefinition.getDefaultValue();
-					if (optional.isPresent()) {
-						Object defaultValue = optional.get();
-						if (value.equals(defaultValue)) {
-							addValue = false;
+				if (map != null) {
+					for (ResourcePropertyId resourcePropertyId : map.keySet()) {
+						boolean addValue = true;
+						Object value = map.get(resourcePropertyId);
+						//the existence of the property id in a validated Data implies the defMap is not null
+						PropertyDefinition propertyDefinition = defMap.get(resourcePropertyId);
+						Optional<Object> optional = propertyDefinition.getDefaultValue();
+						if (optional.isPresent()) {
+							Object defaultValue = optional.get();
+							if (value.equals(defaultValue)) {
+								addValue = false;
+							}
 						}
-					}
-					if (addValue) {
-						int subResult = 1;
-						subResult = prime * subResult + resourceId.hashCode();
-						subResult = prime * subResult + resourcePropertyId.hashCode();
-						subResult = prime * subResult + value.hashCode();
-						result += subResult;
+						if (addValue) {
+							int subResult = 1;
+							subResult = prime * subResult + resourceId.hashCode();
+							subResult = prime * subResult + resourcePropertyId.hashCode();
+							subResult = prime * subResult + value.hashCode();
+							result += subResult;
+						}
 					}
 				}
 			}
@@ -347,21 +350,28 @@ public final class ResourcesPluginData implements PluginData {
 		private static Set<MultiKey> getResourcePropertyValues(Data data) {
 			Set<MultiKey> result = new LinkedHashSet<>();
 			for (ResourceId resourceId : data.resourcePropertyValues.keySet()) {
+				// This defMap might be null
 				Map<ResourcePropertyId, PropertyDefinition> defMap = data.resourcePropertyDefinitions.get(resourceId);
 				Map<ResourcePropertyId, Object> map = data.resourcePropertyValues.get(resourceId);
-				for (ResourcePropertyId resourcePropertyId : map.keySet()) {
-					boolean addValue = true;
-					Object value = map.get(resourcePropertyId);
-					PropertyDefinition propertyDefinition = defMap.get(resourcePropertyId);
-					Optional<Object> optional = propertyDefinition.getDefaultValue();
-					if (optional.isPresent()) {
-						Object defaultValue = optional.get();
-						if (value.equals(defaultValue)) {
-							addValue = false;
+				if (map != null) {
+					for (ResourcePropertyId resourcePropertyId : map.keySet()) {
+						boolean addValue = true;
+						Object value = map.get(resourcePropertyId);
+						/*
+						 * The Data was validated and since we have a property
+						 * id, we know that the defMap cannot be null
+						 */
+						PropertyDefinition propertyDefinition = defMap.get(resourcePropertyId);
+						Optional<Object> optional = propertyDefinition.getDefaultValue();
+						if (optional.isPresent()) {
+							Object defaultValue = optional.get();
+							if (value.equals(defaultValue)) {
+								addValue = false;
+							}
 						}
-					}
-					if (addValue) {
-						result.add(new MultiKey(resourceId, resourcePropertyId, value));
+						if (addValue) {
+							result.add(new MultiKey(resourceId, resourcePropertyId, value));
+						}
 					}
 				}
 			}
@@ -992,7 +1002,10 @@ public final class ResourcesPluginData implements PluginData {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(data);
+		final int prime = 31;
+		int result = 1;
+		result = prime * data.hashCode();
+		return result;
 	}
 
 	@Override
@@ -1004,7 +1017,10 @@ public final class ResourcesPluginData implements PluginData {
 			return false;
 		}
 		ResourcesPluginData other = (ResourcesPluginData) obj;
-		return Objects.equals(data, other.data);
+		if (!data.equals(other.data)) {
+			return false;
+		}
+		return true;
 	}
 
 }

@@ -113,20 +113,22 @@ public final class GroupsPluginData implements PluginData {
 			return result;
 		}
 
-		private static Set<GroupPropertyValue> getNonDefaultGroupPropertyValues(Data data, GroupSpecification aGroupSpecification) {
+		private static Set<GroupPropertyValue> getNonDefaultGroupPropertyValues(Data data, GroupSpecification groupSpecification) {
 			Set<GroupPropertyValue> result = new LinkedHashSet<>();
-			Map<GroupPropertyId, PropertyDefinition> defMap = data.groupPropertyDefinitions.get(aGroupSpecification.groupTypeId);
-			for (GroupPropertyValue groupPropertyValue : aGroupSpecification.groupPropertyValues) {
-				PropertyDefinition propertyDefinition = defMap.get(groupPropertyValue.groupPropertyId());
-				boolean valueIsDefault = false;
-				Optional<Object> optional = propertyDefinition.getDefaultValue();
-				if (optional.isPresent()) {
-					if (optional.get().equals(groupPropertyValue.value())) {
-						valueIsDefault = true;
+			Map<GroupPropertyId, PropertyDefinition> defMap = data.groupPropertyDefinitions.get(groupSpecification.groupTypeId);
+			if (groupSpecification.groupPropertyValues != null) {
+				for (GroupPropertyValue groupPropertyValue : groupSpecification.groupPropertyValues) {
+					PropertyDefinition propertyDefinition = defMap.get(groupPropertyValue.groupPropertyId());
+					boolean valueIsDefault = false;
+					Optional<Object> optional = propertyDefinition.getDefaultValue();
+					if (optional.isPresent()) {
+						if (optional.get().equals(groupPropertyValue.value())) {
+							valueIsDefault = true;
+						}
 					}
-				}
-				if (!valueIsDefault) {
-					result.add(groupPropertyValue);
+					if (!valueIsDefault) {
+						result.add(groupPropertyValue);
+					}
 				}
 			}
 			return result;
@@ -139,16 +141,17 @@ public final class GroupsPluginData implements PluginData {
 		 */
 		private static boolean compareGroupSpecifications(Data a, Data b) {
 
-			//We place the GroupSpecifications into maps, ignoring null instances
+			// We place the GroupSpecifications into maps, ignoring null
+			// instances
 			Map<GroupId, GroupSpecification> aMap = getGroupSpecificationMap(a);
 			Map<GroupId, GroupSpecification> bMap = getGroupSpecificationMap(b);
 
-			//They must represent the same groups
+			// They must represent the same groups - without the GroupSpecification, the group does not exist
 			if (!aMap.keySet().equals(bMap.keySet())) {
 				return false;
 			}
 
-			//The groups must be of the same type
+			// The groups must be of the same type
 			for (GroupId groupId : aMap.keySet()) {
 				GroupSpecification aGroupSpecification = aMap.get(groupId);
 				GroupSpecification bGroupSpecification = bMap.get(groupId);
@@ -157,7 +160,8 @@ public final class GroupsPluginData implements PluginData {
 				}
 			}
 
-			//We extract the non-default property values from each group and compare them
+			// We extract the non-default property values from each group and
+			// compare them
 			for (GroupId groupId : aMap.keySet()) {
 				GroupSpecification aGroupSpecification = aMap.get(groupId);
 				GroupSpecification bGroupSpecification = bMap.get(groupId);
@@ -206,18 +210,20 @@ public final class GroupsPluginData implements PluginData {
 					Map<GroupPropertyId, PropertyDefinition> defMap = groupPropertyDefinitions.get(groupSpecification.groupTypeId);
 					// the fact that there are group property values ensures us
 					// that the defMap is not null
-					for (GroupPropertyValue groupPropertyValue : groupSpecification.groupPropertyValues) {
-						PropertyDefinition propertyDefinition = defMap.get(groupPropertyValue.groupPropertyId());
-						boolean isDefaultValue = false;
-						Optional<Object> optional = propertyDefinition.getDefaultValue();
-						if (optional.isPresent()) {
-							Object defaultValue = optional.get();
-							if (defaultValue.equals(groupPropertyValue.value())) {
-								isDefaultValue = true;
+					if (groupSpecification.groupPropertyValues != null) {
+						for (GroupPropertyValue groupPropertyValue : groupSpecification.groupPropertyValues) {
+							PropertyDefinition propertyDefinition = defMap.get(groupPropertyValue.groupPropertyId());
+							boolean isDefaultValue = false;
+							Optional<Object> optional = propertyDefinition.getDefaultValue();
+							if (optional.isPresent()) {
+								Object defaultValue = optional.get();
+								if (defaultValue.equals(groupPropertyValue.value())) {
+									isDefaultValue = true;
+								}
 							}
-						}
-						if (!isDefaultValue) {
-							subResult += groupPropertyValue.value().hashCode();
+							if (!isDefaultValue) {
+								subResult += groupPropertyValue.value().hashCode();
+							}
 						}
 					}
 					result += subResult;
@@ -891,7 +897,7 @@ public final class GroupsPluginData implements PluginData {
 	}
 
 	@Override
-	public int hashCode() {
+	public int hashCode() {		
 		return Objects.hash(data);
 	}
 

@@ -207,13 +207,11 @@ public final class PlanTestDriver {
 		SimulationState simulationState = SimulationState.builder().build();
 		List<Plugin> plugins = getStartingPlugins();
 
-		for (int i = 0; i < 40; i++) {
-			//System.out.println(simulationTime);
+		for (int i = 0; i < 45; i++) {						
 			StateCollector stateCollector = executeSim(simulationState, plugins);
 			plugins = getPlugins(stateCollector);
 			simulationState = stateCollector.get(0, SimulationState.class).get();
-		}
-		executeSim(simulationState, plugins);
+		}		
 	}
 
 	private final RandomGenerator randomGenerator = 
@@ -227,6 +225,7 @@ public final class PlanTestDriver {
 	}
 
 	private StateCollector executeSim(SimulationState simulationState, List<Plugin> plugins) throws IOException {
+		
 		Path outputDirectory = baseOutputDirectory.resolve("sub" + iterationCount++);
 		if (!Files.exists(outputDirectory)) {
 			Files.createDirectory(outputDirectory);

@@ -35,7 +35,7 @@ public class ContactManager {
 	private double infectionInterval;
 	private double communityContactRate;
 
-	private boolean logActive = false;
+	private boolean logActive = true;
 
 	private void log(Object... values) {
 		if (logActive) {
