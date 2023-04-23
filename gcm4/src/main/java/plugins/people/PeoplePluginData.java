@@ -3,7 +3,6 @@ package plugins.people;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
 import net.jcip.annotations.Immutable;
 import nucleus.PluginData;
@@ -65,7 +64,8 @@ public final class PeoplePluginData implements PluginData {
 		public boolean equals(Object obj) {
 			/*
 			 * This boilerplate implementation works since the person ranges are
-			 * sorted and joined during the build process.
+			 * sorted and joined during the build process, leaving the person
+			 * ranges unambiguously ordered.
 			 */
 
 			if (this == obj) {
@@ -326,18 +326,26 @@ public final class PeoplePluginData implements PluginData {
 	}
 
 	@Override
-	public boolean equals(Object o) {
-		if (this == o)
-			return true;
-		if (!(o instanceof PeoplePluginData))
-			return false;
-		PeoplePluginData that = (PeoplePluginData) o;
-		return data.equals(that.data);
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + data.hashCode();
+		return result;
 	}
 
 	@Override
-	public int hashCode() {
-		return Objects.hash(data);
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!(obj instanceof PeoplePluginData)) {
+			return false;
+		}
+		PeoplePluginData other = (PeoplePluginData) obj;
+		if (!data.equals(other.data)) {
+			return false;
+		}
+		return true;
 	}
 
 	/**

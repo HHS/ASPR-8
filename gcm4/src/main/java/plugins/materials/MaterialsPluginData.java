@@ -711,29 +711,32 @@ public final class MaterialsPluginData implements PluginData {
 		private boolean compareBatchPropertyValues(Data other) {
 			for (BatchId batchId : batchIds) {
 				MaterialId materialId = batchMaterials.get(batchId);
-				for (BatchPropertyId batchPropertyId : batchPropertyDefinitions.get(materialId).keySet()) {
-					Object propertyValue = null;
+				Map<BatchPropertyId, PropertyDefinition> propMap = batchPropertyDefinitions.get(materialId);
+				if (propMap != null) {
+					for (BatchPropertyId batchPropertyId : propMap.keySet()) {
+						Object propertyValue = null;
 
-					Map<BatchPropertyId, Object> map = batchPropertyValues.get(batchId);
-					if (map != null) {
-						propertyValue = map.get(batchPropertyId);
-					}
-					if (propertyValue == null) {
-						PropertyDefinition propertyDefinition = batchPropertyDefinitions.get(materialId).get(batchPropertyId);
-						propertyValue = propertyDefinition.getDefaultValue().get();
-					}
+						Map<BatchPropertyId, Object> map = batchPropertyValues.get(batchId);
+						if (map != null) {
+							propertyValue = map.get(batchPropertyId);
+						}
+						if (propertyValue == null) {
+							PropertyDefinition propertyDefinition = batchPropertyDefinitions.get(materialId).get(batchPropertyId);
+							propertyValue = propertyDefinition.getDefaultValue().get();
+						}
 
-					Object otherPropertyValue = null;
-					map = other.batchPropertyValues.get(batchId);
-					if (map != null) {
-						otherPropertyValue = map.get(batchPropertyId);
-					}
-					if (otherPropertyValue == null) {
-						PropertyDefinition propertyDefinition = batchPropertyDefinitions.get(materialId).get(batchPropertyId);
-						otherPropertyValue = propertyDefinition.getDefaultValue().get();
-					}
-					if (!propertyValue.equals(otherPropertyValue)) {
-						return false;
+						Object otherPropertyValue = null;
+						map = other.batchPropertyValues.get(batchId);
+						if (map != null) {
+							otherPropertyValue = map.get(batchPropertyId);
+						}
+						if (otherPropertyValue == null) {
+							PropertyDefinition propertyDefinition = batchPropertyDefinitions.get(materialId).get(batchPropertyId);
+							otherPropertyValue = propertyDefinition.getDefaultValue().get();
+						}
+						if (!propertyValue.equals(otherPropertyValue)) {
+							return false;
+						}
 					}
 				}
 			}

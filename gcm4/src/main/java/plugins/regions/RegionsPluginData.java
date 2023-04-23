@@ -6,7 +6,6 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -146,7 +145,7 @@ public class RegionsPluginData implements PluginData {
 			if (!regionPropertyDefinitions.equals(other.regionPropertyDefinitions)) {
 				return false;
 			}
-			if (!comparteRegionPropertyValues(this, other)) {
+			if (!compartRegionPropertyValues(this, other)) {
 				return false;
 			}
 
@@ -179,7 +178,7 @@ public class RegionsPluginData implements PluginData {
 		return result;
 	}
 
-	private static boolean comparteRegionPropertyValues(Data a, Data b) {
+	private static boolean compartRegionPropertyValues(Data a, Data b) {
 		Set<RegionId> regionIds = new LinkedHashSet<>();
 		regionIds.addAll(a.regionPropertyValues.keySet());
 		regionIds.addAll(b.regionPropertyValues.keySet());
@@ -562,17 +561,27 @@ public class RegionsPluginData implements PluginData {
 	}
 
 	@Override
-	public boolean equals(Object o) {
-		if (this == o)
-			return true;
-		if (!(o instanceof RegionsPluginData))
-			return false;
-		RegionsPluginData that = (RegionsPluginData) o;
-		return data.equals(that.data);
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + data.hashCode();
+		return result;
 	}
 
 	@Override
-	public int hashCode() {
-		return Objects.hash(data);
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!(obj instanceof RegionsPluginData)) {
+			return false;
+		}
+		RegionsPluginData other = (RegionsPluginData) obj;
+		if (!data.equals(other.data)) {
+			return false;
+		}
+		return true;
 	}
+
+	
 }

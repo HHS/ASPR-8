@@ -474,7 +474,7 @@ public final class Experiment {
 
 		// Execute each scenario
 		final int scenarioCount = experimentStateManager.getScenarioCount();
-		
+
 		for (int scenarioId = 0; scenarioId < scenarioCount; scenarioId++) {
 			Simulation.Builder simBuilder = Simulation.builder();
 			final ScenarioStatus scenarioStatus = experimentStateManager.getScenarioStatus(scenarioId).get();
@@ -530,13 +530,19 @@ public final class Experiment {
 
 		/*
 		 * Set up a map that will allow us to associate with each plugin the new
-		 * plugin data data builder instances associated with that plugin
+		 * plugin data data builder instances associated with that plugin.
+		 * 
+		 * We need to avoid using the plugin as a key. Plugins contain plugin
+		 * datas, which may contain a huge amount of dataa and thus have
+		 * expensive hash code costs.
 		 */
-		Map<Plugin, List<PluginDataBuilder>> map = new LinkedHashMap<>();
+		Map<PluginId, List<PluginDataBuilder>> dataBuilderMap = new LinkedHashMap<>();
+		Map<PluginId, Plugin> pluginMap = new LinkedHashMap<>();
 
 		for (final Plugin plugin : data.plugins) {
 			List<PluginDataBuilder> list = new ArrayList<>();
-			map.put(plugin, list);
+			pluginMap.put(plugin.getPluginId(), plugin);
+			dataBuilderMap.put(plugin.getPluginId(), list);
 			for (final PluginData pluginData : plugin.getPluginDatas()) {
 				PluginDataBuilder pluginDataBuilder = pluginData.getCloneBuilder();
 				list.add(pluginDataBuilder);
@@ -589,7 +595,10 @@ public final class Experiment {
 
 		final List<Plugin> result = new ArrayList<>();
 
-		for (Plugin plugin : map.keySet()) {
+		for (PluginId pluginId : pluginMap.keySet()) {
+			Plugin plugin = pluginMap.get(pluginId);
+			List<PluginDataBuilder> pluginDataBuilders = dataBuilderMap.get(pluginId);
+			
 			Plugin.Builder pluginBuilder = Plugin.builder();
 			pluginBuilder.setPluginId(plugin.getPluginId());
 
@@ -598,11 +607,11 @@ public final class Experiment {
 				pluginBuilder.setInitializer(optionalInitializer.get());
 			}
 
-			for (PluginId pluginId : plugin.getPluginDependencies()) {
-				pluginBuilder.addPluginDependency(pluginId);
+			for (PluginId dependencyPluginId : plugin.getPluginDependencies()) {
+				pluginBuilder.addPluginDependency(dependencyPluginId);
 			}
 
-			List<PluginDataBuilder> pluginDataBuilders = map.get(plugin);
+			
 			for (PluginDataBuilder pluginDataBuilder : pluginDataBuilders) {
 				pluginBuilder.addPluginData(pluginDataBuilder.build());
 			}
