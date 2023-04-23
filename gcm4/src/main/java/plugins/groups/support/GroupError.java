@@ -13,6 +13,7 @@ public enum GroupError implements ContractError {
 	
 	NEGATIVE_GROUP_ID("group id is negative"),
 	NEGATIVE_GROUP_COUNT("group count is negative"),
+	NEXT_GROUP_ID_TOO_SMALL("The next gropu id must exceed all extant group ids"),
 	NULL_GROUP_INITIALIZATION_DATA("Null group initialization data"),	
 	NULL_GROUP_DATA_MANAGER("Null group data manager"),
 	NULL_GROUP_PLUGIN_DATA("null groupsplugin data"),	

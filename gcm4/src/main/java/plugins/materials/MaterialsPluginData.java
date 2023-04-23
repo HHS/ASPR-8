@@ -938,6 +938,7 @@ public final class MaterialsPluginData implements PluginData {
 			final int prime = 31;
 			int result = 1;
 
+			
 			result = prime * result + batchAmounts.hashCode();
 			result = prime * result + batchIds.hashCode();
 			result = prime * result + batchMaterials.hashCode();
@@ -951,6 +952,8 @@ public final class MaterialsPluginData implements PluginData {
 			result = prime * result + stageIds.hashCode();
 			result = prime * result + stageMaterialsProducers.hashCode();
 			result = prime * result + stageOffers.hashCode();
+			result = prime * result + nextBatchRecordId;
+			result = prime * result + nextStageRecordId;			
 
 			result = prime * result + getBatchPropertyValuesHashCode();
 			result = prime * result + getProducerPropertyValuesHashCode();
@@ -1016,6 +1019,8 @@ public final class MaterialsPluginData implements PluginData {
 		 */
 		@Override
 		public boolean equals(Object obj) {
+
+			
 			if (this == obj) {
 				return true;
 			}
@@ -1084,6 +1089,13 @@ public final class MaterialsPluginData implements PluginData {
 			}
 
 			if (!stageOffers.equals(other.stageOffers)) {
+				return false;
+			}
+			
+			if (nextBatchRecordId !=other.nextBatchRecordId) {
+				return false;
+			}
+			if (nextStageRecordId !=other.nextStageRecordId) {
 				return false;
 			}
 

@@ -100,6 +100,8 @@ public final class GroupsDataManager extends DataManager {
 
 	// container for group property values
 	private final Map<GroupTypeId, Map<GroupPropertyId, IndexedPropertyManager>> groupPropertyManagerMap = new LinkedHashMap<>();
+	
+	private final Map<GroupTypeId, Map<GroupPropertyId, PropertyDefinition>> groupPropertyDefinitions = new LinkedHashMap<>();
 
 	// Guard for both weights array and weightedPersonIds array
 	private boolean samplingIsLocked;
@@ -122,8 +124,6 @@ public final class GroupsDataManager extends DataManager {
 
 	private final Map<GroupTypeId, Integer> typesToIndexesMap = new LinkedHashMap<>();
 
-	private final Map<GroupTypeId, Map<GroupPropertyId, PropertyDefinition>> groupPropertyDefinitions = new LinkedHashMap<>();
-
 	private final Map<GroupTypeId, Map<GroupPropertyId, Integer>> nonDefaultBearingPropertyIds = new LinkedHashMap<>();
 
 	private Map<GroupTypeId, boolean[]> nonDefaultChecks = new LinkedHashMap<>();
@@ -135,6 +135,8 @@ public final class GroupsDataManager extends DataManager {
 	private DataManagerContext dataManagerContext;
 
 	private final GroupsPluginData groupsPluginData;
+	
+	private PeopleDataManager peopleDataManager;
 
 	/**
 	 * Constructs this person group data manager
@@ -149,7 +151,7 @@ public final class GroupsDataManager extends DataManager {
 		this.groupsPluginData = groupsPluginData;
 	}
 
-	private PeopleDataManager peopleDataManager;
+	
 
 	/**
 	 * Initial behavior
