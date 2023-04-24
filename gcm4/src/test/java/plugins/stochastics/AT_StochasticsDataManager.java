@@ -4,15 +4,19 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import nucleus.testsupport.testplugin.TestActorPlan;
-import nucleus.testsupport.testplugin.TestOutputConsumer;
-import nucleus.testsupport.testplugin.TestPluginData;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import nucleus.DataManagerContext;
+import nucleus.testsupport.testplugin.TestActorPlan;
+import nucleus.testsupport.testplugin.TestOutputConsumer;
+import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestSimulation;
 import plugins.stochastics.support.RandomNumberGeneratorId;
 import plugins.stochastics.support.StochasticsError;
@@ -24,7 +28,6 @@ import plugins.stochastics.testsupport.TestRandomGeneratorId;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
-import util.random.RandomGeneratorProvider;
 
 public class AT_StochasticsDataManager {
 
@@ -45,7 +48,7 @@ public class AT_StochasticsDataManager {
 		// create initial plugin data
 		WellState wellState = WellState.builder().build();
 		Well well = new Well(wellState);
-		well.nextInt();
+		
 		WellState wellState2 = well.getWellState();
 		StochasticsPluginData stochasticsPluginData = StochasticsPluginData.builder()
 				.setMainRNGState(wellState2)
@@ -59,7 +62,6 @@ public class AT_StochasticsDataManager {
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			WellState wellState3 = WellState.builder().build();
 			Well actorWell = new Well(wellState3);
-			actorWell.nextInt();
 			WellState actorWellState = actorWell.getWellState();
 			stochasticsDataManager.addRandomNumberGenerator(TestRandomGeneratorId.CUPID, actorWellState);
 			expectedWellStates.add(actorWellState);
@@ -88,8 +90,7 @@ public class AT_StochasticsDataManager {
 	private void testInit_StateMulti() {
 		// create initial plugin data
 		WellState wellState = WellState.builder().build();
-		Well well = new Well(wellState);
-		well.nextInt();
+		Well well = new Well(wellState);		
 		WellState wellState2 = well.getWellState();
 		StochasticsPluginData stochasticsPluginData = StochasticsPluginData.builder()
 				.setMainRNGState(wellState2)
@@ -103,7 +104,7 @@ public class AT_StochasticsDataManager {
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			WellState wellState3 = WellState.builder().build();
 			Well actorWell = new Well(wellState3);
-			actorWell.nextInt();
+			
 			WellState actorWellState = actorWell.getWellState();
 			stochasticsDataManager.addRandomNumberGenerator(TestRandomGeneratorId.CUPID, actorWellState);
 			expectedWellStates.add(actorWellState);
@@ -113,7 +114,7 @@ public class AT_StochasticsDataManager {
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			WellState wellState3 = WellState.builder().build();
 			Well actorWell = new Well(wellState3);
-			actorWell.nextInt();
+			
 			WellState actorWellState = actorWell.getWellState();
 			stochasticsDataManager.addRandomNumberGenerator(TestRandomGeneratorId.DANCER, actorWellState);
 			expectedWellStates.add(actorWellState);
