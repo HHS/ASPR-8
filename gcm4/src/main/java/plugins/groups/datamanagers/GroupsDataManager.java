@@ -10,7 +10,6 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.apache.commons.math3.random.RandomGenerator;
-import org.apache.commons.math3.util.FastMath;
 import org.apache.commons.math3.util.Pair;
 
 import net.jcip.annotations.GuardedBy;
@@ -100,7 +99,7 @@ public final class GroupsDataManager extends DataManager {
 
 	// container for group property values
 	private final Map<GroupTypeId, Map<GroupPropertyId, IndexedPropertyManager>> groupPropertyManagerMap = new LinkedHashMap<>();
-	
+
 	private final Map<GroupTypeId, Map<GroupPropertyId, PropertyDefinition>> groupPropertyDefinitions = new LinkedHashMap<>();
 
 	// Guard for both weights array and weightedPersonIds array
@@ -135,7 +134,7 @@ public final class GroupsDataManager extends DataManager {
 	private DataManagerContext dataManagerContext;
 
 	private final GroupsPluginData groupsPluginData;
-	
+
 	private PeopleDataManager peopleDataManager;
 
 	/**
@@ -150,8 +149,6 @@ public final class GroupsDataManager extends DataManager {
 		}
 		this.groupsPluginData = groupsPluginData;
 	}
-
-	
 
 	/**
 	 * Initial behavior
@@ -721,7 +718,6 @@ public final class GroupsDataManager extends DataManager {
 	}
 
 	private void loadGroups() {
-		masterGroupId = -1;
 		for (final GroupId groupId : groupsPluginData.getGroupIds()) {
 			final GroupTypeId groupTypeId = groupsPluginData.getGroupTypeId(groupId);
 			final Integer typeIndex = typesToIndexesMap.get(groupTypeId);
@@ -731,10 +727,9 @@ public final class GroupsDataManager extends DataManager {
 				typesToGroupsMap.setValue(typeIndex, groups);
 			}
 			groups.add(groupId);
-			masterGroupId = FastMath.max(masterGroupId, groupId.getValue());
 			groupsToTypesMap.setIntValue(groupId.getValue(), typeIndex);
 		}
-		masterGroupId++;
+		masterGroupId = groupsPluginData.getNextGroupIdValue();
 	}
 
 	private static record GroupAdditionMutationEvent(GroupId groupId, GroupConstructionInfo groupConstructionInfo) implements Event {
