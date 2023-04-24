@@ -48,7 +48,7 @@ public class AppTest {
 
         translatorController.readInput();
 
-        GlobalPropertiesPluginData actualPluginData = translatorController.getObject(GlobalPropertiesPluginData.class);
+        GlobalPropertiesPluginData actualPluginData = translatorController.getFirstObject(GlobalPropertiesPluginData.class);
 
         assertEquals(expectedPluginData, actualPluginData);
 
@@ -91,7 +91,7 @@ public class AppTest {
         translatorController.readInput();
 
         GlobalPropertyReportPluginData actualPluginData = translatorController
-                .getObject(GlobalPropertyReportPluginData.class);
+                .getFirstObject(GlobalPropertyReportPluginData.class);
 
         assertEquals(expectedPluginData, actualPluginData);
     }
