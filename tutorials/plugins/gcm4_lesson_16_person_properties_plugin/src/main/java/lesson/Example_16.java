@@ -1,5 +1,8 @@
 package lesson;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.stream.IntStream;
@@ -40,12 +43,10 @@ public final class Example_16 {
 
 	private RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(524055747550937602L);
 
-	private NIOReportItemHandler getNIOReportItemHandler() {
+	private NIOReportItemHandler getNIOReportItemHandler(Path path) {
 		return NIOReportItemHandler	.builder()//
-									.addReport(ModelReportLabel.PERSON_PROPERTY_REPORT, //
-											Paths.get("c:\\temp\\gcm\\person_property_report.xls"))//
-									.addReport(ModelReportLabel.VACCINATION, //
-											Paths.get("c:\\temp\\gcm\\vaccination_report.xls"))//
+									.addReport(ModelReportLabel.PERSON_PROPERTY_REPORT, Paths.get(path + "\\person_property_report.xls"))//
+									.addReport(ModelReportLabel.VACCINATION, Paths.get(path + "\\vaccination_report.xls"))//
 									.build();
 	}
 
@@ -191,7 +192,7 @@ public final class Example_16 {
 
 	}
 
-	private void execute() {
+	private void execute(Path path) {
 
 		/*
 		 * Create the global properties plugin
@@ -202,7 +203,7 @@ public final class Example_16 {
 		 * Create the reports
 		 */
 		
-		NIOReportItemHandler nioReportItemHandler = getNIOReportItemHandler();
+		NIOReportItemHandler nioReportItemHandler = getNIOReportItemHandler(path);
 
 		/*
 		 * Create the people plugin filled with 1000 people
@@ -254,7 +255,15 @@ public final class Example_16 {
 	}
 
 	public static void main(String[] args) {
-		new Example_16().execute();
+		Path inputPath = Paths.get(args[0]);
+		if (!Files.exists(inputPath)) {
+			try {
+				Files.createDirectory(inputPath);
+			} catch (IOException e) {
+				System.out.println("Could not create directory: " + e.getMessage());
+			}
+		}
+		new Example_16().execute(inputPath);
 	}
 
 }
