@@ -12,8 +12,8 @@ public class MaterialIdTranslatorSpec extends ProtobufTranslatorSpec<MaterialIdI
     }
 
     @Override
-    protected MaterialIdInput convertAppObject(MaterialId simObject) {
-        return MaterialIdInput.newBuilder().setId(this.translatorCore.getAnyFromObject(simObject)).build();
+    protected MaterialIdInput convertAppObject(MaterialId appObject) {
+        return MaterialIdInput.newBuilder().setId(this.translatorCore.getAnyFromObject(appObject)).build();
     }
 
     @Override

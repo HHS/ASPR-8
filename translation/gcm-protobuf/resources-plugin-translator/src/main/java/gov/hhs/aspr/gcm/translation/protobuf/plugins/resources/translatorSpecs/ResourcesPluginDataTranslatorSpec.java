@@ -109,14 +109,14 @@ public class ResourcesPluginDataTranslatorSpec
         }
 
         @Override
-        protected ResourcesPluginDataInput convertAppObject(ResourcesPluginData simObject) {
+        protected ResourcesPluginDataInput convertAppObject(ResourcesPluginData appObject) {
                 ResourcesPluginDataInput.Builder builder = ResourcesPluginDataInput.newBuilder();
 
-                for (ResourceId resourceId : simObject.getResourceIds()) {
+                for (ResourceId resourceId : appObject.getResourceIds()) {
                         ResourceIdInput resourceIdInput = this.translatorCore.convertObjectAsSafeClass(resourceId,
                                         ResourceId.class);
 
-                        for (ResourcePropertyId resourcePropertyId : simObject.getResourcePropertyIds(resourceId)) {
+                        for (ResourcePropertyId resourcePropertyId : appObject.getResourcePropertyIds(resourceId)) {
                                 ResourcePropertyDefinitionMapInput.Builder resourcePropDefBuilder = ResourcePropertyDefinitionMapInput
                                                 .newBuilder();
 
@@ -124,14 +124,12 @@ public class ResourcesPluginDataTranslatorSpec
                                                 .newBuilder();
 
                                 PropertyDefinitionInput propertyDefinitionInput = this.translatorCore
-                                                .convertObject(simObject.getResourcePropertyDefinition(resourceId,
+                                                .convertObject(appObject.getResourcePropertyDefinition(resourceId,
                                                                 resourcePropertyId));
 
                                 PropertyDefinitionMapInput propertyDefInput = PropertyDefinitionMapInput.newBuilder()
                                                 .setPropertyDefinition(propertyDefinitionInput)
-                                                .setPropertyId(this.translatorCore.getAnyFromObject(
-                                                                resourcePropertyId,
-                                                                ResourcePropertyId.class))
+                                                .setPropertyId(this.translatorCore.getAnyFromObject(resourcePropertyId))
                                                 .build();
 
                                 resourcePropDefBuilder.setResourcePropertyDefinitionMap(propertyDefInput)
@@ -139,11 +137,9 @@ public class ResourcesPluginDataTranslatorSpec
 
                                 PropertyValueMapInput propertyValueMapInput = PropertyValueMapInput.newBuilder()
                                                 .setPropertyValue(this.translatorCore
-                                                                .getAnyFromObject(simObject.getResourcePropertyValue(
+                                                                .getAnyFromObject(appObject.getResourcePropertyValue(
                                                                                 resourceId, resourcePropertyId)))
-                                                .setPropertyId(this.translatorCore.getAnyFromObject(
-                                                                resourcePropertyId,
-                                                                ResourcePropertyId.class))
+                                                .setPropertyId(this.translatorCore.getAnyFromObject(resourcePropertyId))
                                                 .build();
 
                                 resourcePropValBuilder
@@ -155,7 +151,7 @@ public class ResourcesPluginDataTranslatorSpec
                         }
 
                         TimeTrackingPolicyInput timeTrackingPolicyInput = this.translatorCore
-                                        .convertObject(simObject.getPersonResourceTimeTrackingPolicy(resourceId));
+                                        .convertObject(appObject.getPersonResourceTimeTrackingPolicy(resourceId));
                         ResourceTimeTrackingPolicyMapInput resourceTimeTrackingPolicyMapInput = ResourceTimeTrackingPolicyMapInput
                                         .newBuilder()
                                         .setResourceId(resourceIdInput)
@@ -167,10 +163,10 @@ public class ResourcesPluginDataTranslatorSpec
                         builder.addResourceIds(resourceIdInput);
                 }
 
-                for (int i = 0; i < simObject.getPersonCount(); i++) {
+                for (int i = 0; i < appObject.getPersonCount(); i++) {
                         PersonId personId = new PersonId(i);
 
-                        List<ResourceInitialization> personResourceLevels = simObject.getPersonResourceLevels(personId);
+                        List<ResourceInitialization> personResourceLevels = appObject.getPersonResourceLevels(personId);
 
                         if (!personResourceLevels.isEmpty()) {
                                 PersonIdInput personIdInput = this.translatorCore.convertObject(personId);
@@ -189,8 +185,8 @@ public class ResourcesPluginDataTranslatorSpec
                         }
                 }
 
-                for (RegionId regionId : simObject.getRegionIds()) {
-                        List<ResourceInitialization> regionResourceLevels = simObject.getRegionResourceLevels(regionId);
+                for (RegionId regionId : appObject.getRegionIds()) {
+                        List<ResourceInitialization> regionResourceLevels = appObject.getRegionResourceLevels(regionId);
 
                         if (!regionResourceLevels.isEmpty()) {
                                 RegionIdInput regionIdInput = this.translatorCore.convertObjectAsSafeClass(regionId,

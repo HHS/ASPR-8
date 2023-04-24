@@ -28,8 +28,8 @@ public class EnumTranslatorSpec extends ProtobufTranslatorSpec<WrapperEnumValue,
     }
 
     @Override
-    protected WrapperEnumValue convertAppObject(Enum simObject) {
-        ProtocolMessageEnum messageEnum = this.translatorCore.convertObject(simObject);
+    protected WrapperEnumValue convertAppObject(Enum appObject) {
+        ProtocolMessageEnum messageEnum = this.translatorCore.convertObject(appObject);
 
         WrapperEnumValue wrapperEnumValue = WrapperEnumValue.newBuilder()
                 .setValue(messageEnum.getValueDescriptor().getName())

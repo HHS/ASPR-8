@@ -20,10 +20,10 @@ public class MaterialsProducerPropertyReportPluginDataTranslatorSpec
     }
 
     @Override
-    protected MaterialsProducerPropertyReportPluginDataInput convertAppObject(MaterialsProducerPropertyReportPluginData simObject) {
+    protected MaterialsProducerPropertyReportPluginDataInput convertAppObject(MaterialsProducerPropertyReportPluginData appObject) {
         MaterialsProducerPropertyReportPluginDataInput.Builder builder = MaterialsProducerPropertyReportPluginDataInput.newBuilder();
 
-        ReportLabelInput reportLabelInput = this.translatorCore.convertObjectAsSafeClass(simObject.getReportLabel(),
+        ReportLabelInput reportLabelInput = this.translatorCore.convertObjectAsSafeClass(appObject.getReportLabel(),
                 ReportLabel.class);
 
         builder.setReportLabel(reportLabelInput);

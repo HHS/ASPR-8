@@ -13,8 +13,8 @@ public class TestRandomGeneratorIdTranslatorSpec
     }
 
     @Override
-    protected TestRandomGeneratorIdInput convertAppObject(TestRandomGeneratorId simObject) {
-        return TestRandomGeneratorIdInput.valueOf(simObject.name());
+    protected TestRandomGeneratorIdInput convertAppObject(TestRandomGeneratorId appObject) {
+        return TestRandomGeneratorIdInput.valueOf(appObject.name());
     }
 
     @Override

@@ -13,8 +13,8 @@ public class MaterialsProducerIdTranslatorSpec
     }
 
     @Override
-    protected MaterialsProducerIdInput convertAppObject(MaterialsProducerId simObject) {
-        return MaterialsProducerIdInput.newBuilder().setId(this.translatorCore.getAnyFromObject(simObject)).build();
+    protected MaterialsProducerIdInput convertAppObject(MaterialsProducerId appObject) {
+        return MaterialsProducerIdInput.newBuilder().setId(this.translatorCore.getAnyFromObject(appObject)).build();
     }
 
     @Override

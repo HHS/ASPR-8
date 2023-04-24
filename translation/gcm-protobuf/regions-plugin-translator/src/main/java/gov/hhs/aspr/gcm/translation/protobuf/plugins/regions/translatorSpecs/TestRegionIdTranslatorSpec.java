@@ -12,8 +12,8 @@ public class TestRegionIdTranslatorSpec extends ProtobufTranslatorSpec<TestRegio
     }
 
     @Override
-    protected TestRegionIdInput convertAppObject(TestRegionId simObject) {
-        return TestRegionIdInput.valueOf(simObject.name());
+    protected TestRegionIdInput convertAppObject(TestRegionId appObject) {
+        return TestRegionIdInput.valueOf(appObject.name());
     }
 
     @Override

@@ -12,9 +12,9 @@ public class GroupPropertyIdTranslatorSpec extends ProtobufTranslatorSpec<GroupP
     }
 
     @Override
-    protected GroupPropertyIdInput convertAppObject(GroupPropertyId simObject) {
+    protected GroupPropertyIdInput convertAppObject(GroupPropertyId appObject) {
         return GroupPropertyIdInput.newBuilder()
-                .setId(this.translatorCore.getAnyFromObject(simObject)).build();
+                .setId(this.translatorCore.getAnyFromObject(appObject)).build();
     }
 
     @Override

@@ -12,8 +12,8 @@ public class TestGroupTypeIdTranslatorSpec extends ProtobufTranslatorSpec<TestGr
     }
 
     @Override
-    protected TestGroupTypeIdInput convertAppObject(TestGroupTypeId simObject) {
-        return TestGroupTypeIdInput.valueOf(simObject.name());
+    protected TestGroupTypeIdInput convertAppObject(TestGroupTypeId appObject) {
+        return TestGroupTypeIdInput.valueOf(appObject.name());
     }
 
     @Override

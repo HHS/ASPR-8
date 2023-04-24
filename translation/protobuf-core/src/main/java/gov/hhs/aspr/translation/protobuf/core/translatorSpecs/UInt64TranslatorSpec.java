@@ -12,8 +12,8 @@ public class UInt64TranslatorSpec extends ProtobufTranslatorSpec<UInt64Value, Lo
     }
 
     @Override
-    protected UInt64Value convertAppObject(Long simObject) {
-        return UInt64Value.of(simObject);
+    protected UInt64Value convertAppObject(Long appObject) {
+        return UInt64Value.of(appObject);
     }
 
     @Override

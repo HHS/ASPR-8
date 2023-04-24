@@ -12,8 +12,8 @@ public class ExamplePlanDataTranslatorSpec extends ProtobufTranslatorSpec<Exampl
     }
 
     @Override
-    protected ExamplePlanDataInput convertAppObject(ExamplePlanData simObject) {
-        return ExamplePlanDataInput.newBuilder().setPlanTime(simObject.getPlanTime()).build();
+    protected ExamplePlanDataInput convertAppObject(ExamplePlanData appObject) {
+        return ExamplePlanDataInput.newBuilder().setPlanTime(appObject.getPlanTime()).build();
     }
 
     @Override

@@ -72,7 +72,7 @@ public abstract class TranslatorCore {
 
     }
 
-    public abstract <U, M extends U> void writeOutput(Writer writer, M simObject, Optional<Class<U>> superClass);
+    public abstract <U, M extends U> void writeOutput(Writer writer, M appObject, Optional<Class<U>> superClass);
 
     public abstract <T, U> T readInput(Reader reader, Class<U> inputClassRef);
 

@@ -12,8 +12,8 @@ public class StringTranslatorSpec extends ProtobufTranslatorSpec<StringValue, St
     }
 
     @Override
-    protected StringValue convertAppObject(String simObject) {
-        return StringValue.of(simObject);
+    protected StringValue convertAppObject(String appObject) {
+        return StringValue.of(appObject);
     }
 
     @Override

@@ -12,8 +12,8 @@ public class FloatTranslatorSpec extends ProtobufTranslatorSpec<FloatValue, Floa
     }
 
     @Override
-    protected FloatValue convertAppObject(Float simObject) {
-        return FloatValue.of(simObject);
+    protected FloatValue convertAppObject(Float appObject) {
+        return FloatValue.of(appObject);
     }
 
     @Override

@@ -26,15 +26,15 @@ public class PeoplePluginDataTranslatorSpec
     }
 
     @Override
-    protected PeoplePluginDataInput convertAppObject(PeoplePluginData simObject) {
+    protected PeoplePluginDataInput convertAppObject(PeoplePluginData appObject) {
         PeoplePluginDataInput.Builder builder = PeoplePluginDataInput.newBuilder();
 
-        for (PersonRange personRange : simObject.getPersonRanges()) {
+        for (PersonRange personRange : appObject.getPersonRanges()) {
             PersonRangeInput personRangeInput = this.translatorCore.convertObject(personRange);
             builder.addPersonRanges(personRangeInput);
         }
 
-        builder.setPersonCount(simObject.getPersonCount());
+        builder.setPersonCount(appObject.getPersonCount());
 
         return builder.build();
     }

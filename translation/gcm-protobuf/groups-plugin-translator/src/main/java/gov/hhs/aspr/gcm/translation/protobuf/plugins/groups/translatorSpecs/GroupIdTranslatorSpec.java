@@ -12,8 +12,8 @@ public class GroupIdTranslatorSpec extends ProtobufTranslatorSpec<GroupIdInput, 
     }
 
     @Override
-    protected GroupIdInput convertAppObject(GroupId simObject) {
-        return GroupIdInput.newBuilder().setId(simObject.getValue()).build();
+    protected GroupIdInput convertAppObject(GroupId appObject) {
+        return GroupIdInput.newBuilder().setId(appObject.getValue()).build();
     }
 
     @Override

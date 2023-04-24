@@ -12,8 +12,8 @@ public class RegionPropertyIdTranslatorSpec extends ProtobufTranslatorSpec<Regio
     }
 
     @Override
-    protected RegionPropertyIdInput convertAppObject(RegionPropertyId simObject) {
-        return RegionPropertyIdInput.newBuilder().setId(this.translatorCore.getAnyFromObject(simObject)).build();
+    protected RegionPropertyIdInput convertAppObject(RegionPropertyId appObject) {
+        return RegionPropertyIdInput.newBuilder().setId(this.translatorCore.getAnyFromObject(appObject)).build();
     }
 
     @Override

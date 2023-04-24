@@ -13,8 +13,8 @@ public class TestMaterialsProducerIdTranslatorSpec
     }
 
     @Override
-    protected TestMaterialsProducerIdInput convertAppObject(TestMaterialsProducerId simObject) {
-        return TestMaterialsProducerIdInput.valueOf(simObject.name());
+    protected TestMaterialsProducerIdInput convertAppObject(TestMaterialsProducerId appObject) {
+        return TestMaterialsProducerIdInput.valueOf(appObject.name());
     }
 
     @Override

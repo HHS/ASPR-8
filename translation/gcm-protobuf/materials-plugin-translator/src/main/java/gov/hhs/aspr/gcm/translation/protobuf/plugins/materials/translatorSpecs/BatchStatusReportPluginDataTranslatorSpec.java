@@ -20,10 +20,10 @@ public class BatchStatusReportPluginDataTranslatorSpec
     }
 
     @Override
-    protected BatchStatusReportPluginDataInput convertAppObject(BatchStatusReportPluginData simObject) {
+    protected BatchStatusReportPluginDataInput convertAppObject(BatchStatusReportPluginData appObject) {
         BatchStatusReportPluginDataInput.Builder builder = BatchStatusReportPluginDataInput.newBuilder();
 
-        ReportLabelInput reportLabelInput = this.translatorCore.convertObjectAsSafeClass(simObject.getReportLabel(),
+        ReportLabelInput reportLabelInput = this.translatorCore.convertObjectAsSafeClass(appObject.getReportLabel(),
                 ReportLabel.class);
 
         builder.setReportLabel(reportLabelInput);

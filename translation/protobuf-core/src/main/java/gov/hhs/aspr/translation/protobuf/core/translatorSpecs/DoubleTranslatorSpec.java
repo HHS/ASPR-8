@@ -12,8 +12,8 @@ public class DoubleTranslatorSpec extends ProtobufTranslatorSpec<DoubleValue, Do
     }
 
     @Override
-    protected DoubleValue convertAppObject(Double simObject) {
-        return DoubleValue.of(simObject);
+    protected DoubleValue convertAppObject(Double appObject) {
+        return DoubleValue.of(appObject);
     }
 
     @Override

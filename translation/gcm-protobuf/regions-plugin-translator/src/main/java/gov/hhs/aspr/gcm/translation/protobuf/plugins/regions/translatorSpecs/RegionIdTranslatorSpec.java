@@ -12,8 +12,8 @@ public class RegionIdTranslatorSpec extends ProtobufTranslatorSpec<RegionIdInput
     }
 
     @Override
-    protected RegionIdInput convertAppObject(RegionId simObject) {
-        return RegionIdInput.newBuilder().setId(this.translatorCore.getAnyFromObject(simObject)).build();
+    protected RegionIdInput convertAppObject(RegionId appObject) {
+        return RegionIdInput.newBuilder().setId(this.translatorCore.getAnyFromObject(appObject)).build();
     }
 
     @Override

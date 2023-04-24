@@ -13,8 +13,8 @@ public class TestResourcePropertyIdTranslatorSpec
     }
 
     @Override
-    protected TestResourcePropertyIdInput convertAppObject(TestResourcePropertyId simObject) {
-        return TestResourcePropertyIdInput.valueOf(simObject.name());
+    protected TestResourcePropertyIdInput convertAppObject(TestResourcePropertyId appObject) {
+        return TestResourcePropertyIdInput.valueOf(appObject.name());
     }
 
     @Override

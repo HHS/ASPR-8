@@ -12,8 +12,8 @@ public class PlannerTranslatorSpec extends ProtobufTranslatorSpec<PlannerInput, 
     }
 
     @Override
-    protected PlannerInput convertAppObject(Planner simObject) {
-        return PlannerInput.valueOf(simObject.name());
+    protected PlannerInput convertAppObject(Planner appObject) {
+        return PlannerInput.valueOf(appObject.name());
     }
 
     @Override

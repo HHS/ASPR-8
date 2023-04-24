@@ -13,8 +13,8 @@ public class ResourcePropertyIdTranslatorSpec
     }
 
     @Override
-    protected ResourcePropertyIdInput convertAppObject(ResourcePropertyId simObject) {
-        return ResourcePropertyIdInput.newBuilder().setId(this.translatorCore.getAnyFromObject(simObject)).build();
+    protected ResourcePropertyIdInput convertAppObject(ResourcePropertyId appObject) {
+        return ResourcePropertyIdInput.newBuilder().setId(this.translatorCore.getAnyFromObject(appObject)).build();
     }
 
     @Override

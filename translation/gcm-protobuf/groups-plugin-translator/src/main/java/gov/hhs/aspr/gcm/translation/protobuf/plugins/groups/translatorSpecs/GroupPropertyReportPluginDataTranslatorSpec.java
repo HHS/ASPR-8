@@ -46,23 +46,23 @@ public class GroupPropertyReportPluginDataTranslatorSpec
     }
 
     @Override
-    protected GroupPropertyReportPluginDataInput convertAppObject(GroupPropertyReportPluginData simObject) {
+    protected GroupPropertyReportPluginDataInput convertAppObject(GroupPropertyReportPluginData appObject) {
         GroupPropertyReportPluginDataInput.Builder builder = GroupPropertyReportPluginDataInput.newBuilder();
 
-        ReportLabelInput reportLabelInput = this.translatorCore.convertObjectAsSafeClass(simObject.getReportLabel(),
+        ReportLabelInput reportLabelInput = this.translatorCore.convertObjectAsSafeClass(appObject.getReportLabel(),
                 ReportLabel.class);
 
         builder
-                .setDefaultInclusionPolicy(simObject.getDefaultInclusionPolicy())
+                .setDefaultInclusionPolicy(appObject.getDefaultInclusionPolicy())
                 .setReportLabel(reportLabelInput)
-                .setReportPeriod(this.translatorCore.convertObject(simObject.getReportPeriod()));
+                .setReportPeriod(this.translatorCore.convertObject(appObject.getReportPeriod()));
 
-        for (GroupTypeId groupTypeId : simObject.getGroupTypeIds()) {
+        for (GroupTypeId groupTypeId : appObject.getGroupTypeIds()) {
             GroupTypeIdInput groupTypeIdInput = this.translatorCore.convertObjectAsSafeClass(groupTypeId, GroupTypeId.class);
 
             GroupPropertyReportPropertyMap.Builder groupPropertyReportBuilder = GroupPropertyReportPropertyMap
                     .newBuilder().setGroupTypeId(groupTypeIdInput);
-            for (GroupPropertyId groupPropertyId : simObject.getIncludedProperties(groupTypeId)) {
+            for (GroupPropertyId groupPropertyId : appObject.getIncludedProperties(groupTypeId)) {
                 GroupPropertyIdInput groupPropertyIdInput = this.translatorCore.convertObjectAsSafeClass(groupPropertyId,
                         GroupPropertyId.class);
                 groupPropertyReportBuilder.addGroupProperties(groupPropertyIdInput);
@@ -71,7 +71,7 @@ public class GroupPropertyReportPluginDataTranslatorSpec
 
             groupPropertyReportBuilder = GroupPropertyReportPropertyMap
                     .newBuilder().setGroupTypeId(groupTypeIdInput);
-            for (GroupPropertyId groupPropertyId : simObject.getExcludedProperties(groupTypeId)) {
+            for (GroupPropertyId groupPropertyId : appObject.getExcludedProperties(groupTypeId)) {
                 GroupPropertyIdInput groupPropertyIdInput = this.translatorCore.convertObjectAsSafeClass(groupPropertyId,
                         GroupPropertyId.class);
                 groupPropertyReportBuilder.addGroupProperties(groupPropertyIdInput);

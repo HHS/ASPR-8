@@ -12,8 +12,8 @@ public class ReportPeriodTranslatorSpec extends ProtobufTranslatorSpec<ReportPer
     }
 
     @Override
-    protected ReportPeriodInput convertAppObject(ReportPeriod simObject) {
-        return ReportPeriodInput.valueOf(simObject.name());
+    protected ReportPeriodInput convertAppObject(ReportPeriod appObject) {
+        return ReportPeriodInput.valueOf(appObject.name());
     }
 
     @Override

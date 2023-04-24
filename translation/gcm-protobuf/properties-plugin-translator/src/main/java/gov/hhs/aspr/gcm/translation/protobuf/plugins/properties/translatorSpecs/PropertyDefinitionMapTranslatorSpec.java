@@ -20,12 +20,12 @@ public class PropertyDefinitionMapTranslatorSpec
     }
 
     @Override
-    protected PropertyDefinitionMapInput convertAppObject(PropertyDefinitionMap simObject) {
+    protected PropertyDefinitionMapInput convertAppObject(PropertyDefinitionMap appObject) {
         PropertyDefinitionMapInput.Builder builder = PropertyDefinitionMapInput.newBuilder();
 
-        builder.setPropertyId(this.translatorCore.getAnyFromObject(simObject.getPropertyId()));
+        builder.setPropertyId(this.translatorCore.getAnyFromObject(appObject.getPropertyId()));
 
-        PropertyDefinitionInput definitionInput = this.translatorCore.convertObject(simObject.getPropertyDefinition());
+        PropertyDefinitionInput definitionInput = this.translatorCore.convertObject(appObject.getPropertyDefinition());
         builder.setPropertyDefinition(definitionInput);
 
         return builder.build();

@@ -13,8 +13,8 @@ public class TimeTrackingPolicyTranslatorSpec
     }
 
     @Override
-    protected TimeTrackingPolicyInput convertAppObject(TimeTrackingPolicy simObject) {
-        return TimeTrackingPolicyInput.valueOf(simObject.name());
+    protected TimeTrackingPolicyInput convertAppObject(TimeTrackingPolicy appObject) {
+        return TimeTrackingPolicyInput.valueOf(appObject.name());
     }
 
     @Override

@@ -34,17 +34,17 @@ public class SimulationStateTranslatorSpec extends ProtobufTranslatorSpec<Simula
     }
 
     @Override
-    protected SimulationStateInput convertAppObject(SimulationState simObject) {
+    protected SimulationStateInput convertAppObject(SimulationState appObject) {
         SimulationStateInput.Builder builder = SimulationStateInput.newBuilder();
 
-        builder.setStartTime(simObject.getStartTime());
+        builder.setStartTime(appObject.getStartTime());
 
-        Date date = this.translatorCore.convertObject(simObject.getBaseDate());
+        Date date = this.translatorCore.convertObject(appObject.getBaseDate());
         builder.setBaseDate(date);
 
-        builder.setPlanningQueueArrivalId(simObject.getPlanningQueueArrivalId());
+        builder.setPlanningQueueArrivalId(appObject.getPlanningQueueArrivalId());
 
-        for(PlanQueueData planQueueData : simObject.getPlanQueueDatas()) {
+        for(PlanQueueData planQueueData : appObject.getPlanQueueDatas()) {
             PlanQueueDataInput planQueueDataInput = this.translatorCore.convertObject(planQueueData);
 
             builder.addPlanQueueDatas(planQueueDataInput);

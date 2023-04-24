@@ -12,8 +12,8 @@ public class SimpleGroupTypeIdTranslatorSpec extends ProtobufTranslatorSpec<Simp
     }
 
     @Override
-    protected SimpleGroupTypeIdInput convertAppObject(SimpleGroupTypeId simObject) {
-        return SimpleGroupTypeIdInput.newBuilder().setValue(simObject.getValue().toString()).build();
+    protected SimpleGroupTypeIdInput convertAppObject(SimpleGroupTypeId appObject) {
+        return SimpleGroupTypeIdInput.newBuilder().setValue(appObject.getValue().toString()).build();
     }
 
     @Override

@@ -12,8 +12,8 @@ public class BatchIdTranslatorSpec extends ProtobufTranslatorSpec<BatchIdInput, 
     }
 
     @Override
-    protected BatchIdInput convertAppObject(BatchId simObject) {
-        return BatchIdInput.newBuilder().setId(simObject.getValue()).build();
+    protected BatchIdInput convertAppObject(BatchId appObject) {
+        return BatchIdInput.newBuilder().setId(appObject.getValue()).build();
     }
 
     @Override

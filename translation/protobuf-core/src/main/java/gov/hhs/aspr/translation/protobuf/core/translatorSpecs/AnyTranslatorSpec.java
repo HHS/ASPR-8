@@ -37,11 +37,11 @@ public class AnyTranslatorSpec extends ProtobufTranslatorSpec<Any, Object> {
     }
 
     @Override
-    protected Any convertAppObject(Object simObject) {
-        if (Enum.class.isAssignableFrom(simObject.getClass())) {
-            return Any.pack(this.translatorCore.convertObjectAsSafeClass(Enum.class.cast(simObject), Enum.class));
+    protected Any convertAppObject(Object appObject) {
+        if (Enum.class.isAssignableFrom(appObject.getClass())) {
+            return Any.pack(this.translatorCore.convertObjectAsSafeClass(Enum.class.cast(appObject), Enum.class));
         }
-        return Any.pack(this.translatorCore.convertObject(simObject));
+        return Any.pack(this.translatorCore.convertObject(appObject));
     }
 
     @Override

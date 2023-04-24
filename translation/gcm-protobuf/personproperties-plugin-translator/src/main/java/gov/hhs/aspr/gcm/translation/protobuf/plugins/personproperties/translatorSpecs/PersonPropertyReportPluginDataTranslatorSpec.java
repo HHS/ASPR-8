@@ -39,25 +39,25 @@ public class PersonPropertyReportPluginDataTranslatorSpec
     }
 
     @Override
-    protected PersonPropertyReportPluginDataInput convertAppObject(PersonPropertyReportPluginData simObject) {
+    protected PersonPropertyReportPluginDataInput convertAppObject(PersonPropertyReportPluginData appObject) {
         PersonPropertyReportPluginDataInput.Builder builder = PersonPropertyReportPluginDataInput.newBuilder();
 
-        ReportLabelInput reportLabelInput = this.translatorCore.convertObjectAsSafeClass(simObject.getReportLabel(),
+        ReportLabelInput reportLabelInput = this.translatorCore.convertObjectAsSafeClass(appObject.getReportLabel(),
                 ReportLabel.class);
-        ReportPeriodInput reportPeriodInput = this.translatorCore.convertObject(simObject.getReportPeriod());
+        ReportPeriodInput reportPeriodInput = this.translatorCore.convertObject(appObject.getReportPeriod());
 
         builder
-                .setDefaultInclusionPolicy(simObject.getDefaultInclusionPolicy())
+                .setDefaultInclusionPolicy(appObject.getDefaultInclusionPolicy())
                 .setReportLabel(reportLabelInput)
                 .setReportPeriod(reportPeriodInput);
 
-        for (PersonPropertyId personPropertyId : simObject.getIncludedProperties()) {
+        for (PersonPropertyId personPropertyId : appObject.getIncludedProperties()) {
             PersonPropertyIdInput personPropertyIdInput = this.translatorCore.convertObjectAsSafeClass(personPropertyId,
                     PersonPropertyId.class);
             builder.addIncludedProperties(personPropertyIdInput);
         }
 
-        for (PersonPropertyId personPropertyId : simObject.getExcludedProperties()) {
+        for (PersonPropertyId personPropertyId : appObject.getExcludedProperties()) {
             PersonPropertyIdInput personPropertyIdInput = this.translatorCore.convertObjectAsSafeClass(personPropertyId,
                     PersonPropertyId.class);
             builder.addExcludedProperties(personPropertyIdInput);

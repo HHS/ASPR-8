@@ -8,18 +8,18 @@ public class Layer1TranslatorSpec extends ProtobufTranslatorSpec<Layer1, Layer1S
 
     @Override
     protected Layer1SimObject convertInputObject(Layer1 inputObject) {
-        Layer1SimObject simObject = new Layer1SimObject();
+        Layer1SimObject appObject = new Layer1SimObject();
 
-        simObject.setX(inputObject.getX());
-        simObject.setY(inputObject.getY());
-        simObject.setZ(inputObject.getZ());
+        appObject.setX(inputObject.getX());
+        appObject.setY(inputObject.getY());
+        appObject.setZ(inputObject.getZ());
 
-        return simObject;
+        return appObject;
     }
 
     @Override
-    protected Layer1 convertAppObject(Layer1SimObject simObject) {
-        return Layer1.newBuilder().setX(simObject.getX()).setY(simObject.getY()).setZ(simObject.getZ()).build();
+    protected Layer1 convertAppObject(Layer1SimObject appObject) {
+        return Layer1.newBuilder().setX(appObject.getX()).setY(appObject.getY()).setZ(appObject.getZ()).build();
     }
 
     @Override

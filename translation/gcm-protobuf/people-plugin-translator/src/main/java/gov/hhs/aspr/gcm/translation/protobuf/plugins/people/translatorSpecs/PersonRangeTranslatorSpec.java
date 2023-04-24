@@ -12,8 +12,8 @@ public class PersonRangeTranslatorSpec extends ProtobufTranslatorSpec<PersonRang
     }
 
     @Override
-    protected PersonRangeInput convertAppObject(PersonRange simObject) {
-       return PersonRangeInput.newBuilder().setLowPersonId(simObject.getLowPersonId()).setHighPersonId(simObject.getHighPersonId()).build();
+    protected PersonRangeInput convertAppObject(PersonRange appObject) {
+       return PersonRangeInput.newBuilder().setLowPersonId(appObject.getLowPersonId()).setHighPersonId(appObject.getHighPersonId()).build();
     }
 
     @Override

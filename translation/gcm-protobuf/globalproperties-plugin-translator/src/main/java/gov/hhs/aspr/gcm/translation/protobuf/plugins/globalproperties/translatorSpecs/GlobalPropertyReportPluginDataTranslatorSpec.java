@@ -34,23 +34,23 @@ public class GlobalPropertyReportPluginDataTranslatorSpec
     }
 
     @Override
-    protected GlobalPropertyReportPluginDataInput convertAppObject(GlobalPropertyReportPluginData simObject) {
+    protected GlobalPropertyReportPluginDataInput convertAppObject(GlobalPropertyReportPluginData appObject) {
         GlobalPropertyReportPluginDataInput.Builder builder = GlobalPropertyReportPluginDataInput.newBuilder();
 
-        ReportLabelInput reportLabelInput = this.translatorCore.convertObjectAsSafeClass(simObject.getReportLabel(),
+        ReportLabelInput reportLabelInput = this.translatorCore.convertObjectAsSafeClass(appObject.getReportLabel(),
                 ReportLabel.class);
 
         builder
-                .setDefaultInclusionPolicy(simObject.getDefaultInclusionPolicy())
+                .setDefaultInclusionPolicy(appObject.getDefaultInclusionPolicy())
                 .setReportLabel(reportLabelInput);
 
-        for (GlobalPropertyId globalPropertyId : simObject.getIncludedProperties()) {
+        for (GlobalPropertyId globalPropertyId : appObject.getIncludedProperties()) {
             GlobalPropertyIdInput globalPropertyIdInput = this.translatorCore.convertObjectAsSafeClass(globalPropertyId,
                     GlobalPropertyId.class);
             builder.addIncludedProperties(globalPropertyIdInput);
         }
 
-        for (GlobalPropertyId globalPropertyId : simObject.getExcludedProperties()) {
+        for (GlobalPropertyId globalPropertyId : appObject.getExcludedProperties()) {
             GlobalPropertyIdInput globalPropertyIdInput = this.translatorCore.convertObjectAsSafeClass(globalPropertyId,
                     GlobalPropertyId.class);
             builder.addExcludedProperties(globalPropertyIdInput);

@@ -35,19 +35,19 @@ public class PersonPropertyInteractionReportPluginDataTranslatorSpec
 
     @Override
     protected PersonPropertyInteractionReportPluginDataInput convertAppObject(
-            PersonPropertyInteractionReportPluginData simObject) {
+            PersonPropertyInteractionReportPluginData appObject) {
         PersonPropertyInteractionReportPluginDataInput.Builder builder = PersonPropertyInteractionReportPluginDataInput
                 .newBuilder();
 
-        ReportLabelInput reportLabelInput = this.translatorCore.convertObjectAsSafeClass(simObject.getReportLabel(),
+        ReportLabelInput reportLabelInput = this.translatorCore.convertObjectAsSafeClass(appObject.getReportLabel(),
                 ReportLabel.class);
-        ReportPeriodInput reportPeriodInput = this.translatorCore.convertObject(simObject.getReportPeriod());
+        ReportPeriodInput reportPeriodInput = this.translatorCore.convertObject(appObject.getReportPeriod());
 
         builder
                 .setReportLabel(reportLabelInput)
                 .setReportPeriod(reportPeriodInput);
 
-        for (PersonPropertyId personPropertyId : simObject.getPersonPropertyIds()) {
+        for (PersonPropertyId personPropertyId : appObject.getPersonPropertyIds()) {
             PersonPropertyIdInput personPropertyIdInput = this.translatorCore.convertObjectAsSafeClass(personPropertyId,
                     PersonPropertyId.class);
             builder.addPersonPropertyIds(personPropertyIdInput);

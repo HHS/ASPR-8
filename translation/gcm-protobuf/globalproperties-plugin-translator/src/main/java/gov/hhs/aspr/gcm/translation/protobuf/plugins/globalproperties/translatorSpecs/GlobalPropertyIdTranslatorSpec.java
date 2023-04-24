@@ -12,8 +12,8 @@ public class GlobalPropertyIdTranslatorSpec extends ProtobufTranslatorSpec<Globa
     }
 
     @Override
-    protected GlobalPropertyIdInput convertAppObject(GlobalPropertyId simObject) {
-        return GlobalPropertyIdInput.newBuilder().setId(this.translatorCore.getAnyFromObject(simObject))
+    protected GlobalPropertyIdInput convertAppObject(GlobalPropertyId appObject) {
+        return GlobalPropertyIdInput.newBuilder().setId(this.translatorCore.getAnyFromObject(appObject))
                 .build();
     }
 

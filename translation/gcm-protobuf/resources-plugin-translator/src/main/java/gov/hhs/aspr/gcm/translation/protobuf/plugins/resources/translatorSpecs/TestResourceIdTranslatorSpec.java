@@ -12,8 +12,8 @@ public class TestResourceIdTranslatorSpec extends ProtobufTranslatorSpec<TestRes
     }
 
     @Override
-    protected TestResourceIdInput convertAppObject(TestResourceId simObject) {
-        return TestResourceIdInput.valueOf(simObject.name());
+    protected TestResourceIdInput convertAppObject(TestResourceId appObject) {
+        return TestResourceIdInput.valueOf(appObject.name());
     }
 
     @Override

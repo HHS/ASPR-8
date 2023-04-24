@@ -37,25 +37,25 @@ public class ResourceReportPluginDataTranslatorSpec
     }
 
     @Override
-    protected ResourceReportPluginDataInput convertAppObject(ResourceReportPluginData simObject) {
+    protected ResourceReportPluginDataInput convertAppObject(ResourceReportPluginData appObject) {
         ResourceReportPluginDataInput.Builder builder = ResourceReportPluginDataInput.newBuilder();
 
-        ReportLabelInput reportLabelInput = this.translatorCore.convertObjectAsSafeClass(simObject.getReportLabel(),
+        ReportLabelInput reportLabelInput = this.translatorCore.convertObjectAsSafeClass(appObject.getReportLabel(),
                 ReportLabel.class);
-        ReportPeriodInput reportPeriodInput = this.translatorCore.convertObject(simObject.getReportPeriod());
+        ReportPeriodInput reportPeriodInput = this.translatorCore.convertObject(appObject.getReportPeriod());
 
         builder
-                .setDefaultInclusionPolicy(simObject.getDefaultInclusionPolicy())
+                .setDefaultInclusionPolicy(appObject.getDefaultInclusionPolicy())
                 .setReportPeriod(reportPeriodInput)
                 .setReportLabel(reportLabelInput);
 
-        for (ResourceId resourceId : simObject.getIncludedResourceIds()) {
+        for (ResourceId resourceId : appObject.getIncludedResourceIds()) {
             ResourceIdInput resourceIdInput = this.translatorCore.convertObjectAsSafeClass(resourceId,
                     ResourceId.class);
             builder.addIncludedProperties(resourceIdInput);
         }
 
-        for (ResourceId resourceId : simObject.getExcludedResourceIds()) {
+        for (ResourceId resourceId : appObject.getExcludedResourceIds()) {
             ResourceIdInput resourceIdInput = this.translatorCore.convertObjectAsSafeClass(resourceId,
                     ResourceId.class);
             builder.addExcludedProperties(resourceIdInput);

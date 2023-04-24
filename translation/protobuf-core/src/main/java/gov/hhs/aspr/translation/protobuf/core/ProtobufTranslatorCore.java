@@ -185,13 +185,13 @@ public class ProtobufTranslatorCore extends TranslatorCore {
         return this.data.jsonPrinter;
     }
 
-    public <U, M extends U> void writeOutput(Writer writer, M simObject, Optional<Class<U>> superClass) {
+    public <U, M extends U> void writeOutput(Writer writer, M appObject, Optional<Class<U>> superClass) {
         Message message;
 
         if (superClass.isPresent()) {
-            message = convertObjectAsSafeClass(simObject, superClass.get());
+            message = convertObjectAsSafeClass(appObject, superClass.get());
         } else {
-            message = convertObject(simObject);
+            message = convertObject(appObject);
         }
         writeOutput(writer, message);
     }
@@ -244,45 +244,18 @@ public class ProtobufTranslatorCore extends TranslatorCore {
         }
     }
 
-    public <U, M extends U> Any getAnyFromObject(M object, Class<U> superClass) {
-        if (Enum.class.isAssignableFrom(object.getClass())) {
-            return Any.pack(convertObjectAsSafeClass(Enum.class.cast(object), Enum.class));
-        }
-        return Any.pack(convertObjectAsSafeClass(object, superClass));
+    public <U, M extends U> Any getAnyFromObjectAsSafeClass(M object, Class<U> parentClassRef) {
+        U convertedObject = convertObjectAsSafeClass(object, parentClassRef);
+
+        return convertObjectAsUnsafeClass(convertedObject, Any.class);
     }
 
     public Any getAnyFromObject(Object object) {
-        if (Enum.class.isAssignableFrom(object.getClass())) {
-            return Any.pack(convertObjectAsSafeClass(Enum.class.cast(object), Enum.class));
-        }
-        return Any.pack(convertObject(object));
+        return convertObjectAsUnsafeClass(object, Any.class);
     }
 
     public <T> T getObjectFromAny(Any anyValue) {
-        String fullTypeUrl = anyValue.getTypeUrl();
-        String[] parts = fullTypeUrl.split("/");
-
-        if (parts.length != 2) {
-            throw new RuntimeException("Malformed type url");
-        }
-
-        String typeUrl = parts[1];
-        Class<?> classRef = getClassFromTypeUrl(typeUrl);
-        Class<? extends Message> messageClassRef;
-
-        if (!(Message.class.isAssignableFrom(classRef))) {
-            throw new RuntimeException("Message is not assignable from " + classRef.getName());
-        }
-
-        messageClassRef = classRef.asSubclass(Message.class);
-
-        try {
-            Message unpackedMessage = anyValue.unpack(messageClassRef);
-
-            return convertObject(unpackedMessage);
-        } catch (InvalidProtocolBufferException e) {
-            throw new RuntimeException("Unable To unpack any type to given class: " + classRef.getName(), e);
-        }
+        return convertObject(anyValue);
     }
 
     public Class<?> getClassFromTypeUrl(String typeUrl) {

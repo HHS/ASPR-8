@@ -31,17 +31,17 @@ public class StochasticsPluginDataTranslatorSpec
     }
 
     @Override
-    protected StochasticsPluginDataInput convertAppObject(StochasticsPluginData simObject) {
+    protected StochasticsPluginDataInput convertAppObject(StochasticsPluginData appObject) {
         StochasticsPluginDataInput.Builder builder = StochasticsPluginDataInput.newBuilder();
 
-        WellStateInput wellStateInput = this.translatorCore.convertObject(simObject.getWellState());
+        WellStateInput wellStateInput = this.translatorCore.convertObject(appObject.getWellState());
         builder.setWellState(wellStateInput);
 
-        for (RandomNumberGeneratorId randomNumberGeneratorId : simObject.getRandomNumberGeneratorIds()) {
+        for (RandomNumberGeneratorId randomNumberGeneratorId : appObject.getRandomNumberGeneratorIds()) {
             RandomNumberGeneratorIdInput randomNumberGeneratorIdInput = this.translatorCore
                     .convertObjectAsSafeClass(randomNumberGeneratorId, RandomNumberGeneratorId.class);
             WellStateInput generatorWellStateInput = this.translatorCore
-                    .convertObject(simObject.getWellState(randomNumberGeneratorId));
+                    .convertObject(appObject.getWellState(randomNumberGeneratorId));
 
             builder.addRandomNumberGeneratorIds(
                     RandomNumberGeneratorMapInput.newBuilder().setWellState(generatorWellStateInput)

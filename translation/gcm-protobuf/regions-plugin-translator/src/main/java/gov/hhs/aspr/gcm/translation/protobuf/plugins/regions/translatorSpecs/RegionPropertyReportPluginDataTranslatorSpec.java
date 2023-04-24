@@ -35,23 +35,23 @@ public class RegionPropertyReportPluginDataTranslatorSpec
     }
 
     @Override
-    protected RegionPropertyReportPluginDataInput convertAppObject(RegionPropertyReportPluginData simObject) {
+    protected RegionPropertyReportPluginDataInput convertAppObject(RegionPropertyReportPluginData appObject) {
         RegionPropertyReportPluginDataInput.Builder builder = RegionPropertyReportPluginDataInput.newBuilder();
 
-        ReportLabelInput reportLabelInput = this.translatorCore.convertObjectAsSafeClass(simObject.getReportLabel(),
+        ReportLabelInput reportLabelInput = this.translatorCore.convertObjectAsSafeClass(appObject.getReportLabel(),
                 ReportLabel.class);
 
         builder
-                .setDefaultInclusionPolicy(simObject.getDefaultInclusionPolicy())
+                .setDefaultInclusionPolicy(appObject.getDefaultInclusionPolicy())
                 .setReportLabel(reportLabelInput);
 
-        for (RegionPropertyId regionPropertyId : simObject.getIncludedProperties()) {
+        for (RegionPropertyId regionPropertyId : appObject.getIncludedProperties()) {
             RegionPropertyIdInput regionPropertyIdInput = this.translatorCore.convertObjectAsSafeClass(regionPropertyId,
                     RegionPropertyId.class);
             builder.addIncludedProperties(regionPropertyIdInput);
         }
 
-        for (RegionPropertyId regionPropertyId : simObject.getExcludedProperties()) {
+        for (RegionPropertyId regionPropertyId : appObject.getExcludedProperties()) {
             RegionPropertyIdInput regionPropertyIdInput = this.translatorCore.convertObjectAsSafeClass(regionPropertyId,
                     RegionPropertyId.class);
             builder.addExcludedProperties(regionPropertyIdInput);

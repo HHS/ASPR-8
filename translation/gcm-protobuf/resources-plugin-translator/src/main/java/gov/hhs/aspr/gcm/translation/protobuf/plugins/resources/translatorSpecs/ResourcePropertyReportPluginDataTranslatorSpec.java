@@ -20,10 +20,10 @@ public class ResourcePropertyReportPluginDataTranslatorSpec
     }
 
     @Override
-    protected ResourcePropertyReportPluginDataInput convertAppObject(ResourcePropertyReportPluginData simObject) {
+    protected ResourcePropertyReportPluginDataInput convertAppObject(ResourcePropertyReportPluginData appObject) {
         ResourcePropertyReportPluginDataInput.Builder builder = ResourcePropertyReportPluginDataInput.newBuilder();
 
-        ReportLabelInput reportLabelInput = this.translatorCore.convertObjectAsSafeClass(simObject.getReportLabel(),
+        ReportLabelInput reportLabelInput = this.translatorCore.convertObjectAsSafeClass(appObject.getReportLabel(),
                 ReportLabel.class);
 
         builder.setReportLabel(reportLabelInput);

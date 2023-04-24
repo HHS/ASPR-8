@@ -13,8 +13,8 @@ public class TestBatchPropertyIdTranslatorSpec
     }
 
     @Override
-    protected TestBatchPropertyIdInput convertAppObject(TestBatchPropertyId simObject) {
-        return TestBatchPropertyIdInput.valueOf(simObject.name());
+    protected TestBatchPropertyIdInput convertAppObject(TestBatchPropertyId appObject) {
+        return TestBatchPropertyIdInput.valueOf(appObject.name());
     }
 
     @Override

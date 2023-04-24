@@ -39,12 +39,12 @@ public class GlobalPropertiesPluginDataTranslatorSpec
     }
 
     @Override
-    protected GlobalPropertiesPluginDataInput convertAppObject(GlobalPropertiesPluginData simObject) {
+    protected GlobalPropertiesPluginDataInput convertAppObject(GlobalPropertiesPluginData appObject) {
         GlobalPropertiesPluginDataInput.Builder builder = GlobalPropertiesPluginDataInput.newBuilder();
 
-        for (GlobalPropertyId propertyId : simObject.getGlobalPropertyIds()) {
-            PropertyDefinition propertyDefinition = simObject.getGlobalPropertyDefinition(propertyId);
-            Object propertyValue = simObject.getGlobalPropertyValue(propertyId);
+        for (GlobalPropertyId propertyId : appObject.getGlobalPropertyIds()) {
+            PropertyDefinition propertyDefinition = appObject.getGlobalPropertyDefinition(propertyId);
+            Object propertyValue = appObject.getGlobalPropertyValue(propertyId);
 
             PropertyDefinitionInput propertyDefinitionInput = this.translatorCore.convertObject(propertyDefinition);
 
@@ -53,7 +53,7 @@ public class GlobalPropertiesPluginDataTranslatorSpec
                     .newBuilder()
                     .setPropertyDefinition(propertyDefinitionInput)
                     .setPropertyId(id)
-                    .setTime(simObject.getGlobalPropertyDefinitionTime(propertyId))
+                    .setTime(appObject.getGlobalPropertyDefinitionTime(propertyId))
                     .build();
 
             builder.addGlobalPropertyDefinitinions(propertyDefinitionMapInput);
@@ -65,7 +65,7 @@ public class GlobalPropertiesPluginDataTranslatorSpec
                         .newBuilder()
                         .setPropertyId(id)
                         .setPropertyValue(propertyValueInput)
-                        .setTime(simObject.getGlobalPropertyTime(propertyId))
+                        .setTime(appObject.getGlobalPropertyTime(propertyId))
                         .build();
                 builder.addGlobalPropertyValues(propertyValueMapInput);
             }

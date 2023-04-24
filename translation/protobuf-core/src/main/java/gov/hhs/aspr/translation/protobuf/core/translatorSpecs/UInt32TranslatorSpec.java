@@ -12,8 +12,8 @@ public class UInt32TranslatorSpec extends ProtobufTranslatorSpec<UInt32Value, In
     }
 
     @Override
-    protected UInt32Value convertAppObject(Integer simObject) {
-        return UInt32Value.of(simObject);
+    protected UInt32Value convertAppObject(Integer appObject) {
+        return UInt32Value.of(appObject);
     }
 
     @Override

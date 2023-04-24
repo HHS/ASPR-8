@@ -12,8 +12,8 @@ public class PlanDataTranslatorSpec extends ProtobufTranslatorSpec<PlanDataInput
     }
 
     @Override
-    protected PlanDataInput convertAppObject(PlanData simObject) {
-        return PlanDataInput.newBuilder().setData(this.translatorCore.getAnyFromObject(simObject)).build();
+    protected PlanDataInput convertAppObject(PlanData appObject) {
+        return PlanDataInput.newBuilder().setData(this.translatorCore.getAnyFromObject(appObject)).build();
     }
 
     @Override

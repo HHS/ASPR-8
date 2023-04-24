@@ -24,13 +24,13 @@ public class RegionTransferReportPluginDataTranslatorSpec
     }
 
     @Override
-    protected RegionTransferReportPluginDataInput convertAppObject(RegionTransferReportPluginData simObject) {
+    protected RegionTransferReportPluginDataInput convertAppObject(RegionTransferReportPluginData appObject) {
         RegionTransferReportPluginDataInput.Builder builder = RegionTransferReportPluginDataInput.newBuilder();
 
-        ReportLabelInput reportLabelInput = this.translatorCore.convertObjectAsSafeClass(simObject.getReportLabel(),
+        ReportLabelInput reportLabelInput = this.translatorCore.convertObjectAsSafeClass(appObject.getReportLabel(),
                 ReportLabel.class);
 
-        ReportPeriodInput reportPeriodInput = this.translatorCore.convertObject(simObject.getReportPeriod());
+        ReportPeriodInput reportPeriodInput = this.translatorCore.convertObject(appObject.getReportPeriod());
         builder.setReportLabel(reportLabelInput).setReportPeriod(reportPeriodInput);
 
         return builder.build();

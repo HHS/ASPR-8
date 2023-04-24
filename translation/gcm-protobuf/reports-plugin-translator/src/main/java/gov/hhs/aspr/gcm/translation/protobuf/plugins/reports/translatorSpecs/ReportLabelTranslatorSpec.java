@@ -12,9 +12,9 @@ public class ReportLabelTranslatorSpec extends ProtobufTranslatorSpec<ReportLabe
     }
 
     @Override
-    protected ReportLabelInput convertAppObject(ReportLabel simObject) {
+    protected ReportLabelInput convertAppObject(ReportLabel appObject) {
         return ReportLabelInput.newBuilder()
-                .setLabel(this.translatorCore.getAnyFromObject(simObject)).build();
+                .setLabel(this.translatorCore.getAnyFromObject(appObject)).build();
     }
 
     @Override

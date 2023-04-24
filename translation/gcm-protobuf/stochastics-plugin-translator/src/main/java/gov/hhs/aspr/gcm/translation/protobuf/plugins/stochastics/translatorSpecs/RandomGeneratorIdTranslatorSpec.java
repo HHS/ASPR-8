@@ -13,9 +13,9 @@ public class RandomGeneratorIdTranslatorSpec
     }
 
     @Override
-    protected RandomNumberGeneratorIdInput convertAppObject(RandomNumberGeneratorId simObject) {
+    protected RandomNumberGeneratorIdInput convertAppObject(RandomNumberGeneratorId appObject) {
         return RandomNumberGeneratorIdInput.newBuilder()
-                .setId(this.translatorCore.getAnyFromObject(simObject)).build();
+                .setId(this.translatorCore.getAnyFromObject(appObject)).build();
     }
 
     @Override

@@ -13,8 +13,8 @@ public class TestGlobalPropertyIdTranslatorSpec
     }
 
     @Override
-    protected TestGlobalPropertyIdInput convertAppObject(TestGlobalPropertyId simObject) {
-        return TestGlobalPropertyIdInput.valueOf(simObject.name());
+    protected TestGlobalPropertyIdInput convertAppObject(TestGlobalPropertyId appObject) {
+        return TestGlobalPropertyIdInput.valueOf(appObject.name());
     }
 
     @Override

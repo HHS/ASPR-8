@@ -20,10 +20,10 @@ public class StageReportPluginDataTranslatorSpec
     }
 
     @Override
-    protected StageReportPluginDataInput convertAppObject(StageReportPluginData simObject) {
+    protected StageReportPluginDataInput convertAppObject(StageReportPluginData appObject) {
         StageReportPluginDataInput.Builder builder = StageReportPluginDataInput.newBuilder();
 
-        ReportLabelInput reportLabelInput = this.translatorCore.convertObjectAsSafeClass(simObject.getReportLabel(),
+        ReportLabelInput reportLabelInput = this.translatorCore.convertObjectAsSafeClass(appObject.getReportLabel(),
                 ReportLabel.class);
 
         builder.setReportLabel(reportLabelInput);

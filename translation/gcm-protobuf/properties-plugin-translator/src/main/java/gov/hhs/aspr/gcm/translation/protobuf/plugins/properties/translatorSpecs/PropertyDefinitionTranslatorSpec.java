@@ -35,15 +35,15 @@ public class PropertyDefinitionTranslatorSpec extends ProtobufTranslatorSpec<Pro
     }
 
     @Override
-    protected PropertyDefinitionInput convertAppObject(PropertyDefinition simObject) {
+    protected PropertyDefinitionInput convertAppObject(PropertyDefinition appObject) {
         PropertyDefinitionInput.Builder builder = PropertyDefinitionInput.newBuilder();
-        if (simObject.getDefaultValue().isPresent()) {
-            builder.setDefaultValue((Any) this.translatorCore.convertObjectAsUnsafeClass(simObject.getDefaultValue().get(), Any.class));
+        if (appObject.getDefaultValue().isPresent()) {
+            builder.setDefaultValue((Any) this.translatorCore.convertObjectAsUnsafeClass(appObject.getDefaultValue().get(), Any.class));
         } else {
-            builder.setType(simObject.getType().getName());
+            builder.setType(appObject.getType().getName());
         }
-        builder.setPropertyValuesAreMutable(simObject.propertyValuesAreMutable())
-                .setTimeTrackingPolicy(this.translatorCore.convertObject(simObject.getTimeTrackingPolicy()));
+        builder.setPropertyValuesAreMutable(appObject.propertyValuesAreMutable())
+                .setTimeTrackingPolicy(this.translatorCore.convertObject(appObject.getTimeTrackingPolicy()));
 
         return builder.build();
     }

@@ -12,8 +12,8 @@ public class PersonPropertyIdTranslatorSpec extends ProtobufTranslatorSpec<Perso
     }
 
     @Override
-    protected PersonPropertyIdInput convertAppObject(PersonPropertyId simObject) {
-        return PersonPropertyIdInput.newBuilder().setId(this.translatorCore.getAnyFromObject(simObject))
+    protected PersonPropertyIdInput convertAppObject(PersonPropertyId appObject) {
+        return PersonPropertyIdInput.newBuilder().setId(this.translatorCore.getAnyFromObject(appObject))
                 .build();
     }
 

@@ -12,8 +12,8 @@ public class StageIdTranslatorSpec extends ProtobufTranslatorSpec<StageIdInput, 
     }
 
     @Override
-    protected StageIdInput convertAppObject(StageId simObject) {
-        return StageIdInput.newBuilder().setId(simObject.getValue()).build();
+    protected StageIdInput convertAppObject(StageId appObject) {
+        return StageIdInput.newBuilder().setId(appObject.getValue()).build();
     }
 
     @Override

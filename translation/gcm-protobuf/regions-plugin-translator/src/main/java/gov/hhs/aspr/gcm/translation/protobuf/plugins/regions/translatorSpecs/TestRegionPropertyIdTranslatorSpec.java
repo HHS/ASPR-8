@@ -13,8 +13,8 @@ public class TestRegionPropertyIdTranslatorSpec
     }
 
     @Override
-    protected TestRegionPropertyIdInput convertAppObject(TestRegionPropertyId simObject) {
-        return TestRegionPropertyIdInput.valueOf(simObject.name());
+    protected TestRegionPropertyIdInput convertAppObject(TestRegionPropertyId appObject) {
+        return TestRegionPropertyIdInput.valueOf(appObject.name());
     }
 
     @Override

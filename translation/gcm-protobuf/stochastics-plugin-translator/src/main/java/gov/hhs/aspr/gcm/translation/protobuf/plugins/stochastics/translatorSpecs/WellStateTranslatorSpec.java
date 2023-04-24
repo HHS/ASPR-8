@@ -29,17 +29,17 @@ public class WellStateTranslatorSpec
     }
 
     @Override
-    protected WellStateInput convertAppObject(WellState simObject) {
+    protected WellStateInput convertAppObject(WellState appObject) {
         WellStateInput.Builder builder = WellStateInput.newBuilder();
 
-        builder.setSeed(simObject.getSeed());
+        builder.setSeed(appObject.getSeed());
 
-        if (simObject.getIndex() > 0) {
-            builder.setIndex(simObject.getIndex());
+        if (appObject.getIndex() > 0) {
+            builder.setIndex(appObject.getIndex());
         }
 
-        if (simObject.getVArray().length > 0) {
-            ByteString byteString = encode(simObject.getVArray());
+        if (appObject.getVArray().length > 0) {
+            ByteString byteString = encode(appObject.getVArray());
             builder.setVArray(byteString);
         }
 

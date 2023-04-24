@@ -13,8 +13,8 @@ public class SimpleRegionPropertyIdTranslatorSpec
     }
 
     @Override
-    protected SimpleRegionPropertyIdInput convertAppObject(SimpleRegionPropertyId simObject) {
-        return SimpleRegionPropertyIdInput.newBuilder().setValue(this.translatorCore.getAnyFromObject(simObject.getValue()))
+    protected SimpleRegionPropertyIdInput convertAppObject(SimpleRegionPropertyId appObject) {
+        return SimpleRegionPropertyIdInput.newBuilder().setValue(this.translatorCore.getAnyFromObject(appObject.getValue()))
                 .build();
     }
 

@@ -14,12 +14,12 @@ public class DateTranslatorSpec extends ProtobufTranslatorSpec<Date, LocalDate> 
     }
 
     @Override
-    protected Date convertAppObject(LocalDate simObject) {
+    protected Date convertAppObject(LocalDate appObject) {
         return Date
                 .newBuilder()
-                .setYear(simObject.getYear())
-                .setMonth(simObject.getMonth().getValue())
-                .setDay(simObject.getDayOfMonth())
+                .setYear(appObject.getYear())
+                .setMonth(appObject.getMonth().getValue())
+                .setDay(appObject.getDayOfMonth())
                 .build();
     }
 

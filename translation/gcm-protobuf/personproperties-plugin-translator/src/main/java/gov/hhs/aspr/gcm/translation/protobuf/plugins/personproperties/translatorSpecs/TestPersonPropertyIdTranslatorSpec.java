@@ -13,8 +13,8 @@ public class TestPersonPropertyIdTranslatorSpec
     }
 
     @Override
-    protected TestPersonPropertyIdInput convertAppObject(TestPersonPropertyId simObject) {
-        return TestPersonPropertyIdInput.valueOf(simObject.name());
+    protected TestPersonPropertyIdInput convertAppObject(TestPersonPropertyId appObject) {
+        return TestPersonPropertyIdInput.valueOf(appObject.name());
     }
 
     @Override

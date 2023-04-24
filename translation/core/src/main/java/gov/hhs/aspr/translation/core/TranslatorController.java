@@ -306,9 +306,9 @@ public class TranslatorController {
      * @param <U> the classType associated with the reader
      */
     private <U> void readInput(Reader reader, Class<U> inputClassRef) {
-        Object simObject = this.translatorCore.readInput(reader, inputClassRef);
+        Object appObject = this.translatorCore.readInput(reader, inputClassRef);
 
-        this.objects.add(simObject);
+        this.objects.add(appObject);
     }
 
     /**

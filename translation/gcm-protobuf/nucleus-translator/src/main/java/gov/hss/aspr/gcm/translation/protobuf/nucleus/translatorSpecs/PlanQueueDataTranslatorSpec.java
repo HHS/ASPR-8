@@ -35,22 +35,22 @@ public class PlanQueueDataTranslatorSpec extends ProtobufTranslatorSpec<PlanQueu
     }
 
     @Override
-    protected PlanQueueDataInput convertAppObject(PlanQueueData simObject) {
+    protected PlanQueueDataInput convertAppObject(PlanQueueData appObject) {
         PlanQueueDataInput.Builder builder = PlanQueueDataInput.newBuilder();
 
         builder
-                .setActive(simObject.isActive())
-                .setArrivalId(simObject.getArrivalId())
-                .setPlannerId(simObject.getPlannerId())
-                .setTime(simObject.getTime());
+                .setActive(appObject.isActive())
+                .setArrivalId(appObject.getArrivalId())
+                .setPlannerId(appObject.getPlannerId())
+                .setTime(appObject.getTime());
 
-        PlannerInput plannerInput = this.translatorCore.convertObject(simObject.getPlanner());
+        PlannerInput plannerInput = this.translatorCore.convertObject(appObject.getPlanner());
         builder.setPlanner(plannerInput);
 
-        PlanDataInput planDataInput = this.translatorCore.convertObjectAsSafeClass(simObject.getPlanData(), PlanData.class);
+        PlanDataInput planDataInput = this.translatorCore.convertObjectAsSafeClass(appObject.getPlanData(), PlanData.class);
         builder.setPlanData(planDataInput);
 
-        builder.setKey(this.translatorCore.getAnyFromObject(simObject.getKey()));
+        builder.setKey(this.translatorCore.getAnyFromObject(appObject.getKey()));
 
         return builder.build();
     }

@@ -87,22 +87,22 @@ public class GroupsPluginDataTranslatorSpec extends ProtobufTranslatorSpec<Group
     }
 
     @Override
-    protected GroupsPluginDataInput convertAppObject(GroupsPluginData simObject) {
+    protected GroupsPluginDataInput convertAppObject(GroupsPluginData appObject) {
         GroupsPluginDataInput.Builder builder = GroupsPluginDataInput.newBuilder();
 
         // add group type ids
-        for (GroupTypeId groupTypeId : simObject.getGroupTypeIds()) {
+        for (GroupTypeId groupTypeId : appObject.getGroupTypeIds()) {
             GroupTypeIdInput groupTypeIdInput = this.translatorCore.convertObjectAsSafeClass(groupTypeId,
                     GroupTypeId.class);
             builder.addGroupTypeIds(groupTypeIdInput);
         }
 
         // add groups
-        for (GroupId groupId : simObject.getGroupIds()) {
+        for (GroupId groupId : appObject.getGroupIds()) {
 
             GroupIdInput groupIdInput = this.translatorCore.convertObject(groupId);
             GroupTypeIdInput groupTypeIdInput = this.translatorCore.convertObjectAsSafeClass(
-                    simObject.getGroupTypeId(groupId),
+                    appObject.getGroupTypeId(groupId),
                     GroupTypeId.class);
 
             GroupInput groupInput = GroupInput.newBuilder()
@@ -115,7 +115,7 @@ public class GroupsPluginDataTranslatorSpec extends ProtobufTranslatorSpec<Group
 
         // add group type property definitions
 
-        for (GroupTypeId groupTypeId : simObject.getGroupTypeIds()) {
+        for (GroupTypeId groupTypeId : appObject.getGroupTypeIds()) {
             GroupPropertyDefinitionMapInput.Builder groupPropDefMapInputBuilder = GroupPropertyDefinitionMapInput
                     .newBuilder();
 
@@ -123,10 +123,10 @@ public class GroupsPluginDataTranslatorSpec extends ProtobufTranslatorSpec<Group
                     GroupTypeId.class);
             groupPropDefMapInputBuilder.setGroupTypeId(groupTypeIdInput);
 
-            Set<GroupPropertyId> groupPropertyIds = simObject.getGroupPropertyIds(groupTypeId);
+            Set<GroupPropertyId> groupPropertyIds = appObject.getGroupPropertyIds(groupTypeId);
 
             for (GroupPropertyId groupPropertyId : groupPropertyIds) {
-                PropertyDefinition propertyDefinition = simObject.getGroupPropertyDefinition(groupTypeId,
+                PropertyDefinition propertyDefinition = appObject.getGroupPropertyDefinition(groupTypeId,
                         groupPropertyId);
 
                 PropertyDefinitionInput propertyDefinitionInput = this.translatorCore.convertObject(propertyDefinition);
@@ -142,13 +142,13 @@ public class GroupsPluginDataTranslatorSpec extends ProtobufTranslatorSpec<Group
             builder.addGroupPropertyDefinitions(groupPropDefMapInputBuilder.build());
         }
         // add group property values
-        for (GroupId groupId : simObject.getGroupIds()) {
+        for (GroupId groupId : appObject.getGroupIds()) {
             GroupPropertyValueMapInput.Builder groupPropValMapBuilder = GroupPropertyValueMapInput.newBuilder();
 
             GroupIdInput groupIdInput = this.translatorCore.convertObject(groupId);
             groupPropValMapBuilder.setGroupId(groupIdInput);
 
-            List<GroupPropertyValue> groupPropertyValues = simObject.getGroupPropertyValues(groupId);
+            List<GroupPropertyValue> groupPropertyValues = appObject.getGroupPropertyValues(groupId);
 
             for (GroupPropertyValue groupPropertyValue : groupPropertyValues) {
                 Object propertyValue = groupPropertyValue.value();
@@ -165,9 +165,9 @@ public class GroupsPluginDataTranslatorSpec extends ProtobufTranslatorSpec<Group
         }
 
         // add people
-        for (int i = 0; i < simObject.getPersonCount(); i++) {
+        for (int i = 0; i < appObject.getPersonCount(); i++) {
             PersonId personId = new PersonId(i);
-            List<GroupId> groupIds = simObject.getGroupsForPerson(personId);
+            List<GroupId> groupIds = appObject.getGroupsForPerson(personId);
 
             if (!groupIds.isEmpty()) {
                 GroupMembershipInput.Builder groupMembershipBuilder = GroupMembershipInput.newBuilder();

@@ -13,8 +13,8 @@ public class TestMaterialIdTranslatorSpec
     }
 
     @Override
-    protected TestMaterialIdInput convertAppObject(TestMaterialId simObject) {
-        return TestMaterialIdInput.valueOf(simObject.name());
+    protected TestMaterialIdInput convertAppObject(TestMaterialId appObject) {
+        return TestMaterialIdInput.valueOf(appObject.name());
     }
 
     @Override

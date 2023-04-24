@@ -16,11 +16,11 @@ public class PropertyValueMapTranslatorSpec extends ProtobufTranslatorSpec<Prope
     }
 
     @Override
-    protected PropertyValueMapInput convertAppObject(PropertyValueMap simObject) {
+    protected PropertyValueMapInput convertAppObject(PropertyValueMap appObject) {
         PropertyValueMapInput.Builder builder = PropertyValueMapInput.newBuilder();
 
-        builder.setPropertyId(this.translatorCore.getAnyFromObject(simObject.getPropertyId()));
-        builder.setPropertyValue(this.translatorCore.getAnyFromObject(simObject.getPropertyValue()));
+        builder.setPropertyId(this.translatorCore.getAnyFromObject(appObject.getPropertyId()));
+        builder.setPropertyValue(this.translatorCore.getAnyFromObject(appObject.getPropertyValue()));
 
         return builder.build();
     }
