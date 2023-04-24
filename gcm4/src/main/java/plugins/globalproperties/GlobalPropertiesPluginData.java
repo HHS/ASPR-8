@@ -446,7 +446,7 @@ public final class GlobalPropertiesPluginData implements PluginData {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((data == null) ? 0 : data.hashCode());
+		result = prime * result +data.hashCode();
 		return result;
 	}
 
@@ -459,11 +459,7 @@ public final class GlobalPropertiesPluginData implements PluginData {
 			return false;
 		}
 		GlobalPropertiesPluginData other = (GlobalPropertiesPluginData) obj;
-		if (data == null) {
-			if (other.data != null) {
-				return false;
-			}
-		} else if (!data.equals(other.data)) {
+		if (!data.equals(other.data)) {
 			return false;
 		}
 		return true;

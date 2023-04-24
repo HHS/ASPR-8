@@ -28,7 +28,7 @@ import util.wrappers.MutableDouble;
 import util.wrappers.MutableLong;
 
 public class Vaccinator {
-	private boolean logActive = false;
+	private boolean logActive = true;
 	
 	private boolean selfProduceVaccine = false;
 	

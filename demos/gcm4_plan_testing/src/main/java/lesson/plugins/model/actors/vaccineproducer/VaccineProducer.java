@@ -28,7 +28,7 @@ import plugins.materials.support.StageId;
 
 public final class VaccineProducer {
 
-	private boolean logActive = false;
+	private boolean logActive = true;
 	private boolean selfProduceAntigen = false;
 
 	private void log(Object... values) {
