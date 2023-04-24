@@ -95,8 +95,7 @@ public final class AT_PersonPropertyDataManager {
 		Map<PersonPropertiesPluginData, Integer> outputItems = testOutputConsumer.getOutputItems(PersonPropertiesPluginData.class);
 		assertEquals(1, outputItems.size());
 		PersonPropertiesPluginData actualPluginData = outputItems.keySet().iterator().next();
-		PersonPropertiesPluginData expectedPluginData = PersonPropertiesPluginData.builder()
-				.addPerson(expectedPersonIds.get(0))
+		PersonPropertiesPluginData expectedPluginData = PersonPropertiesPluginData.builder()				
 				.definePersonProperty(personPropertyDefinitionInitialization.getPersonPropertyId(), personPropertyDefinitionInitialization.getPropertyDefinition())
 				.setPersonPropertyValue(expectedPersonIds.get(0), personPropertyDefinitionInitialization.getPersonPropertyId(), true)
 				.build();
@@ -163,8 +162,6 @@ public final class AT_PersonPropertyDataManager {
 		assertEquals(1, outputItems.size());
 		actualPluginData = outputItems.keySet().iterator().next();
 		expectedPluginData = PersonPropertiesPluginData.builder()
-				.addPerson(expectedPersonIds.get(0))
-				.addPerson(expectedPersonIds.get(1))
 				.definePersonProperty(personPropertyDefinitionInitialization2.getPersonPropertyId(), personPropertyDefinitionInitialization2.getPropertyDefinition())
 				.definePersonProperty(personPropertyDefinitionInitialization3.getPersonPropertyId(), personPropertyDefinitionInitialization3.getPropertyDefinition())
 				.setPersonPropertyValue(expectedPersonIds.get(0), personPropertyDefinitionInitialization2.getPersonPropertyId(), 56)
@@ -646,7 +643,7 @@ public final class AT_PersonPropertyDataManager {
 				PropertyDefinition actualPropertyDefinition = personPropertiesDataManager.getPersonPropertyDefinition(personPropertyId);
 				assertEquals(expectedPropertyDefinition, actualPropertyDefinition);
 			}
-			assertEquals(totalPeople - 1, personPropertiesPluginData.getMaxPersonIndex());
+			assertEquals(totalPeople , personPropertiesPluginData.getPersonCount());
 
 			// show that the person property values are set to the default
 			// values for those properties that have default values

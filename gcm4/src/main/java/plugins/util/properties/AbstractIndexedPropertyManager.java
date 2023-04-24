@@ -55,7 +55,9 @@ public abstract class AbstractIndexedPropertyManager implements IndexedPropertyM
 		if (initialSize < 0) {
 			throw new ContractException(PropertyError.NEGATIVE_INITIAL_SIZE);
 		}
-		timeTrackingContainer = new DoubleValueContainer(simulationContext.getTime(), initialSize);
+		if (trackTime) {
+			timeTrackingContainer = new DoubleValueContainer(simulationContext.getTime(), initialSize);
+		}
 	}
 
 	@Override
@@ -76,11 +78,11 @@ public abstract class AbstractIndexedPropertyManager implements IndexedPropertyM
 		if (id < 0) {
 			throw new ContractException(PropertyError.NEGATIVE_INDEX);
 		}
-		
+
 		if (trackTime) {
 			return timeTrackingContainer.getValue(id);
 		}
-		
+
 		throw new ContractException(PropertyError.TIME_TRACKING_OFF);
 
 	}

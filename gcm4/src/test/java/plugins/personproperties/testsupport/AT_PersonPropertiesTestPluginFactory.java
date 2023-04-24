@@ -157,8 +157,7 @@ public class AT_PersonPropertiesTestPluginFactory {
 			personPropertyBuilder.definePersonProperty(testPersonPropertyId,
 					testPersonPropertyId.getPropertyDefinition());
 		}
-		for (PersonId personId : people) {
-			personPropertyBuilder.addPerson(personId);
+		for (PersonId personId : people) {			
 			for (TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.values()) {
 				boolean doesNotHaveDefaultValue = testPersonPropertyId.getPropertyDefinition().getDefaultValue()
 						.isEmpty();

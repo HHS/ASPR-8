@@ -1,7 +1,6 @@
 package plugins.personproperties;
 
 import java.util.ArrayList;
-import java.util.BitSet;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -45,10 +44,6 @@ public class PersonPropertiesPluginData implements PluginData {
 
 		private List<PersonPropertyInitialization> emptyList = Collections.unmodifiableList(new ArrayList<>());
 
-		private BitSet people = new BitSet();
-
-		private int maxPersonIndex = -1;
-
 		private boolean locked;
 
 		private Data() {
@@ -57,15 +52,7 @@ public class PersonPropertiesPluginData implements PluginData {
 		private Data(Data data) {
 
 			personPropertyDefinitions.putAll(data.personPropertyDefinitions);
-			people = new BitSet();
-			maxPersonIndex = data.maxPersonIndex;
-			if (maxPersonIndex >= 0) {
-				for (int i = 0; i < maxPersonIndex; i++) {
-					if (data.people.get(i)) {
-						people.set(i);
-					}
-				}
-			}
+			
 			for (List<PersonPropertyInitialization> list : data.personPropertyValues) {
 				List<PersonPropertyInitialization> newList = new ArrayList<>(list);
 				personPropertyValues.add(newList);
@@ -77,8 +64,6 @@ public class PersonPropertiesPluginData implements PluginData {
 		public int hashCode() {
 			final int prime = 31;
 			int result = 1;
-			result = prime * result + maxPersonIndex;
-			result = prime * result + people.hashCode();
 			result = prime * result + personPropertyDefinitions.hashCode();
 			result = prime * result + getPersonPropertyValuesHashCode();
 			return result;
@@ -126,13 +111,7 @@ public class PersonPropertiesPluginData implements PluginData {
 				return false;
 			}
 			Data other = (Data) obj;
-
-			if (maxPersonIndex != other.maxPersonIndex) {
-				return false;
-			}
-			if (!people.equals(other.people)) {
-				return false;
-			}
+			
 			if (!personPropertyDefinitions.equals(other.personPropertyDefinitions)) {
 				return false;
 			}
@@ -233,9 +212,7 @@ public class PersonPropertiesPluginData implements PluginData {
 		 *             property id where the associated property definition does
 		 *             not contain a default value</li>
 		 * 
-		 *             <li>{@linkplain PropertyError#PROPERTY_ASSIGNMENT_FOR_NON_ADDED_PERSON}
-		 *             if a person who is not explicitly added via addPerson()
-		 *             is assigned property values</li>
+		 *             
 		 * 
 		 * 
 		 * 
@@ -270,15 +247,6 @@ public class PersonPropertiesPluginData implements PluginData {
 			return this;
 		}
 
-		public Builder addPerson(PersonId personId) {
-			validatePersonId(personId);
-			int personIndex = personId.getValue();
-			data.people.set(personIndex);
-			if (data.maxPersonIndex < personIndex) {
-				data.maxPersonIndex = personIndex;
-			}
-			return this;
-		}
 
 		/**
 		 * Sets the person's property value. Duplicate inputs override previous
@@ -356,17 +324,7 @@ public class PersonPropertiesPluginData implements PluginData {
 				}
 			}
 
-			for (int i = 0; i < data.personPropertyValues.size(); i++) {
-				List<PersonPropertyInitialization> list = data.personPropertyValues.get(i);
-
-				boolean personExists = data.people.get(i);
-
-				if (!personExists) {
-					if (list != null) {
-						throw new ContractException(PersonPropertyError.PROPERTY_ASSIGNMENT_FOR_NON_ADDED_PERSON);
-					}
-				}
-			}
+			
 
 			if (nonDefaultBearingPropertyIds.isEmpty()) {
 				return;
@@ -491,40 +449,20 @@ public class PersonPropertiesPluginData implements PluginData {
 	}
 
 	/**
-	 * Returns the highest person index contain in this plugin data. Returns -1
-	 * if there are no people contained.
+	 * Returns the number of people 
 	 */
-	public int getMaxPersonIndex() {
-		return data.maxPersonIndex;
-	}
-
-	/**
-	 * Returns true if and only if the person index corresponds to a know person
-	 */
-	public boolean personExists(int personIndex) {
-		if (personIndex < 0) {
-			return false;
-		}
-		if (personIndex > data.maxPersonIndex) {
-			return false;
-		}
-		return data.people.get(personIndex);
+	public int getPersonCount() {
+		return data.personPropertyValues.size();
 	}
 
 	/**
 	 * Returns the property values for the given {@link PersonId} as an
 	 * unmodifiable list.
 	 *
-	 * @throws ContractException
-	 *             <li>{@linkplain PersonPropertyError#UNKNOWN_PERSON_ID} if the
-	 *             person is not known (does not exist) to this plugin data</li>
-	 *
 	 */
 	public List<PersonPropertyInitialization> getPropertyValues(int personIndex) {
-		if (!personExists(personIndex)) {
-			throw new ContractException(PersonPropertyError.UNKNOWN_PERSON_ID);
-		}
-		if (personIndex >= data.personPropertyValues.size()) {
+		
+		if (personIndex<0 || personIndex >= data.personPropertyValues.size()) {
 			return data.emptyList;
 		}
 		List<PersonPropertyInitialization> list = data.personPropertyValues.get(personIndex);

@@ -337,7 +337,7 @@ public class PersonPropertiesTestPluginFactory {
 			personPropertyBuilder.definePersonProperty(testPersonPropertyId, testPersonPropertyId.getPropertyDefinition());
 		}
 		for (PersonId personId : people) {
-			personPropertyBuilder.addPerson(personId);
+			
 			for (TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.values()) {
 				boolean doesNotHaveDefaultValue = testPersonPropertyId.getPropertyDefinition().getDefaultValue().isEmpty();
 				if (doesNotHaveDefaultValue || randomGenerator.nextBoolean()) {
