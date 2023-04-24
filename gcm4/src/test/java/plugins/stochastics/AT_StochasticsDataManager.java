@@ -37,23 +37,35 @@ public class AT_StochasticsDataManager {
 	@Test
 	@UnitTestMethod(target = StochasticsDataManager.class, name = "init", args = {DataManagerContext.class})
 	public void testInit_State() {
+		testInit_StateSingle();
+		testInit_StateMulti();
+	}
+
+	private void testInit_StateSingle() {
+		// create initial plugin data
 		WellState wellState = WellState.builder().build();
+		Well well = new Well(wellState);
+		well.nextInt();
+		WellState wellState2 = well.getWellState();
 		StochasticsPluginData stochasticsPluginData = StochasticsPluginData.builder()
-				.setMainRNGState(wellState)
-				.addRNG(TestRandomGeneratorId.BLITZEN, wellState)
+				.setMainRNGState(wellState2)
+				.addRNG(TestRandomGeneratorId.BLITZEN, wellState2)
 				.build();
-		List<RandomNumberGeneratorId> expectedRandomGeneratorIds = new ArrayList<>();
 		List<WellState> expectedWellStates = new ArrayList<>();
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
+		// add rng within test actor
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
-//			WellState wellState = WellState.builder().build();
-//			stochasticsDataManager.addRandomNumberGenerator(TestRandomGeneratorId.BLITZEN, wellState);
-//			expectedRandomGeneratorIds.add(TestRandomGeneratorId.BLITZEN);
-//			expectedWellStates.add(wellState);
+			WellState wellState3 = WellState.builder().build();
+			Well actorWell = new Well(wellState3);
+			actorWell.nextInt();
+			WellState actorWellState = actorWell.getWellState();
+			stochasticsDataManager.addRandomNumberGenerator(TestRandomGeneratorId.CUPID, actorWellState);
+			expectedWellStates.add(actorWellState);
 		}));
 
+		// show that the plugin data contains what we defined
 		TestPluginData testPluginData = pluginBuilder.build();
 		Factory factory = StochasticsTestPluginFactory.factory(3078336459131759089L, testPluginData)
 				.setStochasticsPluginData(stochasticsPluginData);
@@ -66,11 +78,66 @@ public class AT_StochasticsDataManager {
 		assertEquals(1, outputItems.size());
 		StochasticsPluginData actualPluginData = outputItems.keySet().iterator().next();
 		StochasticsPluginData expectedPluginData = StochasticsPluginData.builder()
-				.setMainRNGState(wellState)
-				.addRNG(TestRandomGeneratorId.BLITZEN, wellState)
+				.setMainRNGState(wellState2)
+				.addRNG(TestRandomGeneratorId.BLITZEN, wellState2)
+				.addRNG(TestRandomGeneratorId.CUPID, expectedWellStates.get(0))
 				.build();
 		assertEquals(expectedPluginData, actualPluginData);
+	}
 
+	private void testInit_StateMulti() {
+		// create initial plugin data
+		WellState wellState = WellState.builder().build();
+		Well well = new Well(wellState);
+		well.nextInt();
+		WellState wellState2 = well.getWellState();
+		StochasticsPluginData stochasticsPluginData = StochasticsPluginData.builder()
+				.setMainRNGState(wellState2)
+				.addRNG(TestRandomGeneratorId.BLITZEN, wellState2)
+				.build();
+		List<WellState> expectedWellStates = new ArrayList<>();
+		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+
+		// show that the plugin data persists after multiple actions
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
+			WellState wellState3 = WellState.builder().build();
+			Well actorWell = new Well(wellState3);
+			actorWell.nextInt();
+			WellState actorWellState = actorWell.getWellState();
+			stochasticsDataManager.addRandomNumberGenerator(TestRandomGeneratorId.CUPID, actorWellState);
+			expectedWellStates.add(actorWellState);
+		}));
+
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
+			WellState wellState3 = WellState.builder().build();
+			Well actorWell = new Well(wellState3);
+			actorWell.nextInt();
+			WellState actorWellState = actorWell.getWellState();
+			stochasticsDataManager.addRandomNumberGenerator(TestRandomGeneratorId.DANCER, actorWellState);
+			expectedWellStates.add(actorWellState);
+		}));
+
+		// show that the plugin data contains what we defined
+		TestPluginData testPluginData = pluginBuilder.build();
+		Factory factory = StochasticsTestPluginFactory.factory(3078336459131759089L, testPluginData)
+				.setStochasticsPluginData(stochasticsPluginData);
+		TestOutputConsumer testOutputConsumer = TestSimulation.builder().addPlugins(factory.getPlugins())
+				.setProduceSimulationStateOnHalt(true)
+				.setSimulationHaltTime(2)
+				.build()
+				.execute();
+		Map<StochasticsPluginData, Integer> outputItems = testOutputConsumer.getOutputItems(StochasticsPluginData.class);
+		assertEquals(1, outputItems.size());
+		StochasticsPluginData actualPluginData = outputItems.keySet().iterator().next();
+		StochasticsPluginData expectedPluginData = StochasticsPluginData.builder()
+				.setMainRNGState(wellState2)
+				.addRNG(TestRandomGeneratorId.BLITZEN, wellState2)
+				.addRNG(TestRandomGeneratorId.CUPID, expectedWellStates.get(0))
+				.addRNG(TestRandomGeneratorId.DANCER, expectedWellStates.get(1))
+				.build();
+		assertEquals(expectedPluginData, actualPluginData);
 	}
 
 	@Test
