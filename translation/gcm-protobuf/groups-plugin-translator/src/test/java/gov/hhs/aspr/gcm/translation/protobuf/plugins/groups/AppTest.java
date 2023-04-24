@@ -64,7 +64,7 @@ public class AppTest {
 
         translatorController.readInput();
 
-        GroupsPluginData actualPluginData = translatorController.getObject(GroupsPluginData.class);
+        GroupsPluginData actualPluginData = translatorController.getFirstObject(GroupsPluginData.class);
 
         assertEquals(expectedPluginData, actualPluginData);
     }
@@ -110,7 +110,7 @@ public class AppTest {
         translatorController.readInput();
 
         GroupPropertyReportPluginData actualPluginData = translatorController
-                .getObject(GroupPropertyReportPluginData.class);
+                .getFirstObject(GroupPropertyReportPluginData.class);
 
         assertEquals(expectedPluginData, actualPluginData);
 
