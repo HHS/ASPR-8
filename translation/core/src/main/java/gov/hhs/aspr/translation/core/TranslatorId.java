@@ -1,5 +1,8 @@
 package gov.hhs.aspr.translation.core;
 
+/** 
+ * Used as a {@link Translator} identifier
+ */
 public interface TranslatorId {
 	/**
 	 * Implementationn consistent with equals()
@@ -8,8 +11,7 @@ public interface TranslatorId {
 	public int hashCode();
 
 	/**
-	 * Two Translator ids are equal if and only if they represent the same plugin
-	 * bundle.
+	 * Two Translator ids are equal if and only if they represent the same Translator.
 	 * Translator ids are generally implemented as static instances.
 	 */
 	@Override

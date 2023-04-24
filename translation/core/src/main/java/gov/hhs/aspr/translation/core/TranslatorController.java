@@ -19,11 +19,18 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.math3.util.Pair;
 
+import util.errors.ContractException;
 import util.graph.Graph;
 import util.graph.GraphDepthEvaluator;
 import util.graph.Graphs;
 import util.graph.MutableGraph;
 
+/**
+ * The TranslatorController serves as the master of cerimonies for translating
+ * between two
+ * types of objects. Additionally, it has the ability to distribute Input/Output
+ * files for reading and writing.
+ */
 public class TranslatorController {
     private final Data data;
     private TranslatorCore translatorCore;
@@ -52,96 +59,292 @@ public class TranslatorController {
             this.data = data;
         }
 
-        public TranslatorController build() {
-            if (this.data.translatorCoreBuilder == null) {
-                throw new RuntimeException("Did not set the TranslatorCore Builder");
+        private void validateClassRefNotNull(Class<?> classRef) {
+            if (classRef == null) {
+                throw new ContractException(TranslationCoreError.NULL_CLASS_REF);
             }
+        }
+
+        private void validateFilePathNotNull(Path filePath) {
+            if (filePath == null) {
+                throw new ContractException(TranslationCoreError.NULL_PATH);
+            }
+        }
+
+        private void validatePathNotDuplicate(Path filePath, boolean in, boolean out) {
+            if (in && this.data.inputFilePathMap.containsKey(filePath)) {
+                throw new ContractException(TranslationCoreError.DUPLICATE_INPUT_PATH);
+            }
+
+            if (out && this.data.outputFilePathMap.values().contains(filePath)) {
+                throw new ContractException(TranslationCoreError.DUPLICATE_OUTPUT_PATH);
+            }
+        }
+
+        private void validateTranslatorNotNull(Translator translator) {
+            if (translator == null) {
+                throw new ContractException(TranslationCoreError.NULL_TRANSLATOR);
+            }
+        }
+
+        private void validateTranslatorCoreBuilderNotNull(TranslatorCore.Builder translatorCoreBuilder) {
+            if (translatorCoreBuilder == null) {
+                throw new ContractException(TranslationCoreError.NULL_TRANSLATORCORE_BUILDER);
+            }
+        }
+
+        /**
+         * Builds the TranslatorController.
+         * 
+         * Calls the initializer on each added {@link Translator}
+         * 
+         * @throws ContractException
+         *                           <li>{@linkplain TranslationCoreError#NULL_TRANSLATORCORE_BUILDER}
+         *                           if translatorCoreBuilder has not been set</li>
+         */
+        public TranslatorController build() {
+            validateTranslatorCoreBuilderNotNull(this.data.translatorCoreBuilder);
+
             TranslatorController translatorController = new TranslatorController(this.data);
 
             translatorController.initTranslators();
             return translatorController;
         }
 
+        /**
+         * Adds the path and class ref to be read from after building via
+         * {@link TranslatorController#readInput()}
+         * 
+         * @throws ContractException
+         *                           <li>{@linkplain TranslationCoreError#NULL_PATH}
+         *                           if filePath is null</li>
+         *                           <li>{@linkplain TranslationCoreError#NULL_CLASS_REF}
+         *                           if classRef is null</li>
+         *                           <li>{@linkplain TranslationCoreError#DUPLICATE_INPUT_PATH}
+         *                           if filePath has already been added</li>
+         *                           <li>{@linkplain TranslationCoreError#INVALID_INPUT_PATH}
+         *                           if filePath does not exist on the system</li>
+         */
         public Builder addInputFilePath(Path filePath, Class<?> classRef) {
+            validateFilePathNotNull(filePath);
+            validateClassRefNotNull(classRef);
+            validatePathNotDuplicate(filePath, true, false);
+
+            if (!filePath.toFile().exists()) {
+                throw new ContractException(TranslationCoreError.INVALID_INPUT_PATH);
+            }
+
             this.data.inputFilePathMap.put(filePath, classRef);
             return this;
         }
 
+        /**
+         * Adds the path and class ref to be written to after building via
+         * {@link TranslatorController#writeOutput} with a scenario id of 0
+         * 
+         * @throws ContractException
+         *                           <li>{@linkplain TranslationCoreError#NULL_PATH}
+         *                           if filePath is null</li>
+         *                           <li>{@linkplain TranslationCoreError#NULL_CLASS_REF}
+         *                           if classRef is null</li>
+         *                           <li>{@linkplain TranslationCoreError#DUPLICATE_OUTPUT_PATH}
+         *                           if filePath has already been added</li>
+         *                           <li>{@linkplain TranslationCoreError#DUPLICATE_CLASSREF_SCENARIO_PAIR}
+         *                           if the classRef and scenarioId pair has already
+         *                           been added</li>
+         *                           <li>{@linkplain TranslationCoreError#INVALID_OUTPUT_PATH}
+         *                           if filePath does not exist on the system</li>
+         */
         public Builder addOutputFilePath(Path filePath, Class<?> classRef) {
             return this.addOutputFilePath(filePath, classRef, 0);
         }
 
+        /**
+         * Adds the path and class ref to be written to after building via
+         * {@link TranslatorController#writeOutput} with the given scenarioId
+         * 
+         * @throws ContractException
+         *                           <li>{@linkplain TranslationCoreError#NULL_PATH}
+         *                           if filePath is null</li>
+         *                           <li>{@linkplain TranslationCoreError#NULL_CLASS_REF}
+         *                           if classRef is null</li>
+         *                           <li>{@linkplain TranslationCoreError#DUPLICATE_OUTPUT_PATH}
+         *                           if filePath has already been added</li>
+         *                           <li>{@linkplain TranslationCoreError#DUPLICATE_CLASSREF_SCENARIO_PAIR}
+         *                           if the classRef and scenarioId pair has already
+         *                           been added</li>
+         *                           <li>{@linkplain TranslationCoreError#INVALID_OUTPUT_PATH}
+         *                           if filePath does not exist on the system</li>
+         */
         public Builder addOutputFilePath(Path filePath, Class<?> classRef, Integer scenarioId) {
+            validateFilePathNotNull(filePath);
+            validateClassRefNotNull(classRef);
+            validatePathNotDuplicate(filePath, false, true);
+
             Pair<Class<?>, Integer> key = new Pair<>(classRef, scenarioId);
 
             if (this.data.outputFilePathMap.containsKey(key)) {
-                throw new RuntimeException("Attempted to overwrite an existing output file.");
+                throw new ContractException(TranslationCoreError.DUPLICATE_CLASSREF_SCENARIO_PAIR);
+            }
+
+            if (!filePath.getParent().toFile().exists()) {
+                throw new ContractException(TranslationCoreError.INVALID_OUTPUT_PATH);
             }
 
             this.data.outputFilePathMap.put(key, filePath);
             return this;
         }
 
+        /**
+         * Adds the given classRef markerInterace mapping.
+         * 
+         * <li>explicitly used when calling
+         * {@link TranslatorController#writeOutput} with a class for which a classRef
+         * ScenarioId pair does not exist and/or the need to output the given class as
+         * the markerInterface instead of the concrete class
+         * 
+         * @param <U> the parentClass/MarkerInterfaceClass
+         * @param <M> the childClass
+         * 
+         * @throws ContractException
+         *                           <li>{@linkplain TranslationCoreError#NULL_CLASS_REF}
+         *                           if classRef is null or if markerInterface is
+         *                           null</li>
+         */
         public <U, M extends U> Builder addMarkerInterface(Class<M> classRef, Class<U> markerInterface) {
+            validateClassRefNotNull(classRef);
+            validateClassRefNotNull(markerInterface);
+
+            if (this.data.markerInterfaceClassMap.containsKey(classRef)) {
+                throw new ContractException(TranslationCoreError.DUPLICATE_CLASSREF);
+            }
+
             this.data.markerInterfaceClassMap.put(classRef, markerInterface);
             return this;
         }
 
+        /**
+         * Add a {@link Translator}
+         * 
+         * @throws ContractException
+         *                           <li>{@linkplain TranslationCoreError#NULL_TRANSLATOR}
+         *                           if translator is null</li>
+         */
         public Builder addTranslator(Translator translator) {
+            validateTranslatorNotNull(translator);
+
+            if (this.data.translators.contains(translator)) {
+                throw new ContractException(TranslationCoreError.DUPLICATE_TRANSLATOR);
+            }
+
             this.data.translators.add(translator);
             return this;
         }
 
+        /**
+         * Sets the {@link TranslatorCore.Builder}
+         * 
+         * @throws ContractException
+         *                           <li>{@linkplain TranslationCoreError#NULL_TRANSLATORCORE_BUILDER}
+         *                           if translatorCoreBuilder is null</li>
+         */
         public Builder setTranslatorCoreBuilder(TranslatorCore.Builder translatorCoreBuilder) {
+            validateTranslatorCoreBuilderNotNull(translatorCoreBuilder);
+
             this.data.translatorCoreBuilder = translatorCoreBuilder;
             return this;
         }
     }
 
+    /**
+     * Returns a new instance of Builder
+     */
     public static Builder builder() {
         return new Builder(new Data());
     }
 
+    /**
+     * Returns the translatorCoreBuilder if and only if it is set, has not had it
+     * build method called, has not had it's init method called and is of the same
+     * type as the given classRef
+     * 
+     * @param <T> the class type of the TranslatorCore.Builder
+     */
     protected <T extends TranslatorCore.Builder> T getTranslatorCoreBuilder(Class<T> classRef) {
         if (this.translatorCore == null) {
             if (this.data.translatorCoreBuilder.getClass() == classRef) {
                 return classRef.cast(this.data.translatorCoreBuilder);
             }
 
-            throw new RuntimeException(
+            throw new ContractException(TranslationCoreError.INVALID_TRANSLATORCORE_BUILDER,
                     "The TranslatorCore is of type: " + this.data.translatorCoreBuilder.getClass().getName()
                             + " and the given classRef was: " + classRef.getName());
         }
+        // This should never happen, therefore it is an actual runtime exception and not
+        // a contract exception
         throw new RuntimeException(
                 "Trying to get TranslatorCoreBuilder after it was built and/or initialized");
 
     }
 
-    protected <T, U extends T> void addMarkerInterface(Class<U> classRef, Class<T> markerInterface) {
+    /**
+     * Adds the given classRef and MarkerInterface to the internal list.
+     * Only callable through a {@link TranslatorContext} via the
+     * {@link Translator#getInitializer()} consumer
+     * 
+     * @param <U> the parentClass/MarkerInterfaceClass
+     * @param <M> the childClass
+     */
+    protected <U, M extends U> void addMarkerInterface(Class<M> classRef, Class<U> markerInterface) {
         this.data.markerInterfaceClassMap.put(classRef, markerInterface);
     }
 
-    protected <U> void readInput(Reader reader, Class<U> inputClassRef) {
+    /**
+     * Passes the given reader and inputClassRef to the built {@link TranslatorCore}
+     * to read, parse and translate the inputData.
+     * 
+     * @param <U> the classType associated with the reader
+     */
+    private <U> void readInput(Reader reader, Class<U> inputClassRef) {
         Object simObject = this.translatorCore.readInput(reader, inputClassRef);
 
         this.objects.add(simObject);
     }
 
-    protected <M extends U, U> void writeOutput(Writer writer, M simObject, Optional<Class<U>> superClass) {
-        this.translatorCore.writeOutput(writer, simObject, superClass);
+    /**
+     * Passes the given writer object and optional superClass to the built
+     * {@link TranslatorCore}
+     * to translate and write to the outputFile
+     * 
+     * @param <U> the class of the object to write to the outputFile
+     * @param <M> the optional parent class of the object to write to the outputFile
+     */
+    private <U, M extends U> void writeOutput(Writer writer, M object, Optional<Class<U>> superClass) {
+        this.translatorCore.writeOutput(writer, object, superClass);
     }
 
     private void validateCoreTranslator() {
         if (this.translatorCore == null) {
-            throw new RuntimeException(
-                    "TranslatorCore has not been built");
+            throw new ContractException(TranslationCoreError.NULL_TRANSLATORCORE);
         }
 
+        /*
+         * Because the translatorCore's init method is called within the
+         * initTranslators() method, this should never happen, thus it is a
+         * RuntimeException and not a ContractException
+         */
         if (!this.translatorCore.isInitialized()) {
             throw new RuntimeException("TranslatorCore has been built but has not been initialized.");
         }
     }
 
+    /*
+     * First gets an ordered list of translators based on their dependencies
+     * Then calls each translator's init callback method
+     * Then builds the translatorCore
+     * Then calls the init method on the translatorCore
+     * Verifies that all translatorSpecs have been initialized
+     */
     private TranslatorController initTranslators() {
         TranslatorContext translatorContext = new TranslatorContext(this);
 
@@ -160,6 +363,13 @@ public class TranslatorController {
         return this;
     }
 
+    /**
+     * Reads all provided inputFilePaths in a Parrallel manner via a parallelStream
+     * 
+     * @throws ContractException
+     *                           <li>{@linkplain TranslationCoreError#NULL_TRANSLATORCORE}
+     *                           if translatorCore is null</li>
+     */
     public TranslatorController readInputParrallel() {
         validateCoreTranslator();
 
@@ -178,6 +388,14 @@ public class TranslatorController {
         return this;
     }
 
+    /**
+     * Creates readers for each inputFilePath and passes the reader and classRef to
+     * the TranslatorCore via {@link TranslatorController#readInput(Reader, Class)}
+     * 
+     * @throws ContractException
+     *                           <li>{@linkplain TranslationCoreError#NULL_TRANSLATORCORE}
+     *                           if translatorCore is null</li>
+     */
     public TranslatorController readInput() {
         validateCoreTranslator();
 
@@ -197,6 +415,17 @@ public class TranslatorController {
         return this;
     }
 
+    /**
+     * Given the classRef and scenarioId, find the given outputFilePath.
+     * If the classRef Scenario pair has been added, that is returned.
+     * 
+     * Otherwise, checks to see if the classRef exists in the
+     * markerInterfaceClassMap and if so, returns the resulting classRef scenarioId
+     * pair
+     * 
+     * @param <U> the parentClass/MarkerInterfaceClass
+     * @param <M> the childClass
+     */
     private <U, M extends U> Pair<Path, Optional<Class<U>>> getOutputPath(Class<M> classRef, Integer scenarioId) {
         Pair<Class<?>, Integer> key = new Pair<>(classRef, scenarioId);
 
@@ -217,57 +446,99 @@ public class TranslatorController {
             }
         }
 
-        throw new RuntimeException("No path was provided for " + classRef.getName());
+        throw new ContractException(TranslationCoreError.INVALID_OUTPUT_CLASSREF,
+                "No path was provided for " + classRef.getName());
     }
 
-    @SuppressWarnings("unchecked")
-    public <U, M extends U> void writeOutput() {
-        validateCoreTranslator();
-
-        if (this.objects.isEmpty()) {
-            throw new RuntimeException("Calling this method without having also called readInput() is not allowed.");
-        }
-
-        int scenarioId = 0;
-
-        for (int i = 0; i < this.objects.size(); i++) {
-            // use generics instead of Object for consistency
-            M object = (M) this.objects.get(i);
-            Class<M> classRef = (Class<M>) object.getClass();
-
-            Pair<Path, Optional<Class<U>>> pathPair = getOutputPath(classRef, scenarioId);
-            Path path = pathPair.getFirst();
-
-            try {
-                this.writeOutput(new FileWriter(path.toFile()), object, pathPair.getSecond());
-            } catch (IOException e) {
-                throw new RuntimeException("Unable to create writer for file: " + path.toString(), e);
-            }
-        }
-
-    }
-
+    /**
+     * takes the list of objects and writes each object out to it's corresponding
+     * outputFilePath, if it exists
+     * 
+     * <li>internally calls {@link TranslatorController#writeOutput(Object)}
+     * 
+     * @param <T> the type of the list of obects to write to output
+     * 
+     * @throws ContractException
+     *                           <li>{@linkplain TranslationCoreError#INVALID_OUTPUT_CLASSREF}
+     *                           if the class of an object in the list does not have
+     *                           a associated outputFilePath</li>
+     *                           <li>{@linkplain TranslationCoreError#NULL_TRANSLATORCORE}
+     *                           if translatorCore is null</li>
+     */
     public <T> void writeOutput(List<T> objects) {
         for (T object : objects) {
             this.writeOutput(object);
         }
     }
 
+    /**
+     * takes the list of objects with the specified scenarioId and writes each
+     * object out to it's corresponding
+     * outputFilePath, if it exists
+     * 
+     * <li>internally calls
+     * {@link TranslatorController#writeOutput(Object, Integer)}
+     * 
+     * @param <T> the type of the list of obects to write to output
+     * 
+     * @throws ContractException
+     *                           <li>{@linkplain TranslationCoreError#INVALID_OUTPUT_CLASSREF}
+     *                           if the class of an object in the list paired with
+     *                           the scenarioId does not have
+     *                           a associated outputFilePath</li>
+     *                           <li>{@linkplain TranslationCoreError#NULL_TRANSLATORCORE}
+     *                           if translatorCore is null</li>
+     */
     public <T> void writeOutput(List<T> objects, Integer scenarioId) {
         for (T object : objects) {
             this.writeOutput(object, scenarioId);
         }
     }
 
+    /**
+     * takes the given object and writes it out to it's corresponding
+     * outputFilePath, if it exists
+     * <li>internally calls
+     * {@link TranslatorController#writeOutput(Object, Integer)}
+     * with a scenarioId of 0
+     * 
+     * @param <T> the type of the list of obects to write to output
+     * 
+     * @throws ContractException
+     *                           <li>{@linkplain TranslationCoreError#INVALID_OUTPUT_CLASSREF}
+     *                           if the class of the object does not have a
+     *                           associated outputFilePath</li>
+     *                           <li>{@linkplain TranslationCoreError#NULL_TRANSLATORCORE}
+     *                           if translatorCore is null</li>
+     */
     public <T> void writeOutput(T object) {
         this.writeOutput(object, 0);
     }
 
+    /**
+     * takes the given object and scenarioId pair and writes it out to it's
+     * corresponding
+     * outputFilePath, if it exists
+     * <li>internally calls
+     * {@link TranslatorController#writeOutput(Object, Integer)}
+     * with a scenarioId of 0
+     * 
+     * @param <U> the optional type of the parent class of the object
+     * @param <M> the classType of the object
+     * 
+     * @throws ContractException
+     *                           <li>{@linkplain TranslationCoreError#INVALID_OUTPUT_CLASSREF}
+     *                           if the class of the object paired with the
+     *                           scenarioId does not have a associated
+     *                           outputFilePath</li>
+     *                           <li>{@linkplain TranslationCoreError#NULL_TRANSLATORCORE}
+     *                           if translatorCore is null</li>
+     */
     @SuppressWarnings("unchecked")
-    public <U, T extends U> void writeOutput(T object, Integer scenarioId) {
+    public <U, M extends U> void writeOutput(M object, Integer scenarioId) {
         validateCoreTranslator();
         // this gives an unchecked warning, surprisingly
-        Class<T> classRef = (Class<T>) object.getClass();
+        Class<M> classRef = (Class<M>) object.getClass();
 
         Pair<Path, Optional<Class<U>>> pathPair = getOutputPath(classRef, scenarioId);
         Path path = pathPair.getFirst();
@@ -279,16 +550,36 @@ public class TranslatorController {
         }
     }
 
-    public <T> T getObject(Class<T> classRef) {
+    /**
+     * Searches the list of read in objects and returns the first Object found of
+     * the given classRef
+     * 
+     * @param <T> the type of the obect to get
+     * 
+     * @throws ContractException
+     *                           <li>{@linkplain TranslationCoreError#UNKNOWN_CLASSREF}
+     *                           if no object with the specified class is found</li>
+     */
+    public <T> T getFirstObject(Class<T> classRef) {
         for (Object object : this.objects) {
             if (classRef.isAssignableFrom(object.getClass())) {
                 return classRef.cast(object);
             }
         }
 
-        throw new RuntimeException("Unable to find the specified Object");
+        throw new ContractException(TranslationCoreError.UNKNOWN_CLASSREF);
     }
 
+    /**
+     * Searches the list of read in objects and returns all Objects found with the
+     * given classRef
+     * 
+     * @param <T> the type of the obect to get
+     * 
+     * @throws ContractException
+     *                           <li>{@linkplain TranslationCoreError#UNKNOWN_CLASSREF}
+     *                           if no object with the specified class is found</li>
+     */
     public <T> List<T> getObjects(Class<T> classRef) {
         List<T> objects = new ArrayList<>();
         for (Object object : this.objects) {
@@ -297,13 +588,24 @@ public class TranslatorController {
             }
         }
 
+        if (objects.size() == 0) {
+            throw new ContractException(TranslationCoreError.UNKNOWN_CLASSREF);
+        }
+
         return objects;
     }
 
+    /**
+     * Returns the entire list of read in objects
+     */
     public List<Object> getObjects() {
         return this.objects;
     }
 
+    /*
+     * Goes through the list of translators and orders them based on their
+     * dependencies
+     */
     private List<Translator> getOrderedTranslators() {
 
         MutableGraph<TranslatorId, Object> mutableGraph = new MutableGraph<>();

@@ -37,7 +37,7 @@ public abstract class TranslatorCore {
             throw new RuntimeException("Tried to call build on abstract Translator Core");
         }
 
-        public <I, S> Builder addTranslatorSpec(AbstractTranslatorSpec<I, S> translatorSpec) {
+        public <I, S> Builder addTranslatorSpec(TranslatorSpec<I, S> translatorSpec) {
             this.data.classToTranslatorSpecMap.putIfAbsent(translatorSpec.getInputObjectClass(),
                     translatorSpec);
             this.data.classToTranslatorSpecMap.putIfAbsent(translatorSpec.getAppObjectClass(), translatorSpec);
@@ -72,20 +72,20 @@ public abstract class TranslatorCore {
 
     }
 
-    public abstract <M extends U, U> void writeOutput(Writer writer, M simObject, Optional<Class<U>> superClass);
+    public abstract <U, M extends U> void writeOutput(Writer writer, M simObject, Optional<Class<U>> superClass);
 
     public abstract <T, U> T readInput(Reader reader, Class<U> inputClassRef);
 
-    public <T> T convertInputObject(Object inputObject) {
-        return getTranslatorForClass(inputObject.getClass()).convert(inputObject);
+    public <T> T convertObject(Object object) {
+        return getTranslatorForClass(object.getClass()).convert(object);
     }
 
-    public <T, M extends U, U> T convertSimObject(M simObject, Class<U> superClass) {
-        return getTranslatorForClass(superClass).convert(simObject);
+    public <T, U, M extends U> T convertObjectAsSafeClass(M object, Class<U> parentClassRef) {
+        return getTranslatorForClass(parentClassRef).convert(object);
     }
 
-    public <T> T convertSimObject(Object simObject) {
-        return getTranslatorForClass(simObject.getClass()).convert(simObject);
+    public <T, U, M> T convertObjectAsUnsafeClass(M object, Class<U> objectClassRef) {
+        return getTranslatorForClass(objectClassRef).convert(object);
     }
 
     protected ITranslatorSpec getTranslatorForClass(Class<?> classRef) {
