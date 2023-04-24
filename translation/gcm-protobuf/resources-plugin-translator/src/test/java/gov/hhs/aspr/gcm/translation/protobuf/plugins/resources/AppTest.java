@@ -60,7 +60,7 @@ public class AppTest {
         translatorController.writeOutput(expectedPluginData);
         translatorController.readInput();
 
-        ResourcesPluginData actualPluginData = translatorController.getObject(ResourcesPluginData.class);
+        ResourcesPluginData actualPluginData = translatorController.getFirstObject(ResourcesPluginData.class);
 
         assertEquals(expectedPluginData, actualPluginData);
     }
@@ -111,7 +111,7 @@ public class AppTest {
         translatorController.readInput();
 
         PersonResourceReportPluginData actualPluginData = translatorController
-                .getObject(PersonResourceReportPluginData.class);
+                .getFirstObject(PersonResourceReportPluginData.class);
 
         assertEquals(expectedPluginData, actualPluginData);
 
@@ -148,7 +148,7 @@ public class AppTest {
         translatorController.readInput();
 
         ResourcePropertyReportPluginData actualPluginData = translatorController
-                .getObject(ResourcePropertyReportPluginData.class);
+                .getFirstObject(ResourcePropertyReportPluginData.class);
 
         assertEquals(expectedPluginData, actualPluginData);
     }
@@ -198,7 +198,7 @@ public class AppTest {
         translatorController.writeOutput(expectedPluginData);
         translatorController.readInput();
 
-        ResourceReportPluginData actualPluginData = translatorController.getObject(ResourceReportPluginData.class);
+        ResourceReportPluginData actualPluginData = translatorController.getFirstObject(ResourceReportPluginData.class);
 
         assertEquals(expectedPluginData, actualPluginData);
     }

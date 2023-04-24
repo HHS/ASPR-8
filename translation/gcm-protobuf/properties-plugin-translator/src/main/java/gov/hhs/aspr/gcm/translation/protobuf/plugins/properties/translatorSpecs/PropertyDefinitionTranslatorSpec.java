@@ -1,20 +1,22 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.translatorSpecs;
 
+import com.google.protobuf.Any;
+
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.input.PropertyDefinitionInput;
-import gov.hhs.aspr.translation.protobuf.core.AbstractProtobufTranslatorSpec;
+import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslatorSpec;
 import plugins.util.properties.PropertyDefinition;
 
-public class PropertyDefinitionTranslatorSpec extends AbstractProtobufTranslatorSpec<PropertyDefinitionInput, PropertyDefinition> {
+public class PropertyDefinitionTranslatorSpec extends ProtobufTranslatorSpec<PropertyDefinitionInput, PropertyDefinition> {
 
     @Override
     protected PropertyDefinition convertInputObject(PropertyDefinitionInput inputObject) {
         PropertyDefinition.Builder builder = PropertyDefinition.builder();
 
         builder.setPropertyValueMutability(inputObject.getPropertyValuesAreMutable());
-        builder.setTimeTrackingPolicy(this.translator.convertInputObject(inputObject.getTimeTrackingPolicy()));
+        builder.setTimeTrackingPolicy(this.translatorCore.convertObject(inputObject.getTimeTrackingPolicy()));
 
         if (inputObject.hasDefaultValue()) {
-            Object defaultValue = this.translator.getObjectFromAny(inputObject.getDefaultValue());
+            Object defaultValue = this.translatorCore.convertObject(inputObject.getDefaultValue());
             builder.setDefaultValue(defaultValue);
             builder.setType(defaultValue.getClass());
         } else {
@@ -36,12 +38,12 @@ public class PropertyDefinitionTranslatorSpec extends AbstractProtobufTranslator
     protected PropertyDefinitionInput convertAppObject(PropertyDefinition simObject) {
         PropertyDefinitionInput.Builder builder = PropertyDefinitionInput.newBuilder();
         if (simObject.getDefaultValue().isPresent()) {
-            builder.setDefaultValue(this.translator.getAnyFromObject(simObject.getDefaultValue().get()));
+            builder.setDefaultValue((Any) this.translatorCore.convertObjectAsUnsafeClass(simObject.getDefaultValue().get(), Any.class));
         } else {
             builder.setType(simObject.getType().getName());
         }
         builder.setPropertyValuesAreMutable(simObject.propertyValuesAreMutable())
-                .setTimeTrackingPolicy(this.translator.convertSimObject(simObject.getTimeTrackingPolicy()));
+                .setTimeTrackingPolicy(this.translatorCore.convertObject(simObject.getTimeTrackingPolicy()));
 
         return builder.build();
     }

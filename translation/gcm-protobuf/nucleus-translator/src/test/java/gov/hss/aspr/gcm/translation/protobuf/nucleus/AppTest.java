@@ -74,7 +74,7 @@ public class AppTest {
 
         translatorController.readInput();
 
-        SimulationState actualSimulationState = translatorController.getObject(SimulationState.class);
+        SimulationState actualSimulationState = translatorController.getFirstObject(SimulationState.class);
 
         assertEquals(exptectedSimulationState, actualSimulationState);
     }

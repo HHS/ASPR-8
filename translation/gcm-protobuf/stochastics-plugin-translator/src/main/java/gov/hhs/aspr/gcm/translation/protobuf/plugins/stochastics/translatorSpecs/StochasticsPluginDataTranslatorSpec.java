@@ -4,26 +4,26 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.stochastics.input.RandomNum
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.stochastics.input.RandomNumberGeneratorMapInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.stochastics.input.StochasticsPluginDataInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.stochastics.input.WellStateInput;
-import gov.hhs.aspr.translation.protobuf.core.AbstractProtobufTranslatorSpec;
+import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslatorSpec;
 import plugins.stochastics.StochasticsPluginData;
 import plugins.stochastics.support.RandomNumberGeneratorId;
 import plugins.stochastics.support.WellState;
 
 public class StochasticsPluginDataTranslatorSpec
-        extends AbstractProtobufTranslatorSpec<StochasticsPluginDataInput, StochasticsPluginData> {
+        extends ProtobufTranslatorSpec<StochasticsPluginDataInput, StochasticsPluginData> {
 
     @Override
     protected StochasticsPluginData convertInputObject(StochasticsPluginDataInput inputObject) {
         StochasticsPluginData.Builder builder = StochasticsPluginData.builder();
 
-        WellState wellState = this.translator.convertInputObject(inputObject.getWellState());
+        WellState wellState = this.translatorCore.convertObject(inputObject.getWellState());
 
         builder.setMainRNGState(wellState);
 
         for (RandomNumberGeneratorMapInput randomGenIdInput : inputObject.getRandomNumberGeneratorIdsList()) {
-            RandomNumberGeneratorId generatorId = this.translator
-                    .convertInputObject(randomGenIdInput.getRandomNumberGeneratorId());
-            WellState generatorWellState = this.translator.convertInputObject(randomGenIdInput.getWellState());
+            RandomNumberGeneratorId generatorId = this.translatorCore
+                    .convertObject(randomGenIdInput.getRandomNumberGeneratorId());
+            WellState generatorWellState = this.translatorCore.convertObject(randomGenIdInput.getWellState());
             builder.addRNG(generatorId, generatorWellState);
         }
 
@@ -34,14 +34,14 @@ public class StochasticsPluginDataTranslatorSpec
     protected StochasticsPluginDataInput convertAppObject(StochasticsPluginData simObject) {
         StochasticsPluginDataInput.Builder builder = StochasticsPluginDataInput.newBuilder();
 
-        WellStateInput wellStateInput = this.translator.convertSimObject(simObject.getWellState());
+        WellStateInput wellStateInput = this.translatorCore.convertObject(simObject.getWellState());
         builder.setWellState(wellStateInput);
 
         for (RandomNumberGeneratorId randomNumberGeneratorId : simObject.getRandomNumberGeneratorIds()) {
-            RandomNumberGeneratorIdInput randomNumberGeneratorIdInput = this.translator
-                    .convertSimObject(randomNumberGeneratorId, RandomNumberGeneratorId.class);
-            WellStateInput generatorWellStateInput = this.translator
-                    .convertSimObject(simObject.getWellState(randomNumberGeneratorId));
+            RandomNumberGeneratorIdInput randomNumberGeneratorIdInput = this.translatorCore
+                    .convertObjectAsSafeClass(randomNumberGeneratorId, RandomNumberGeneratorId.class);
+            WellStateInput generatorWellStateInput = this.translatorCore
+                    .convertObject(simObject.getWellState(randomNumberGeneratorId));
 
             builder.addRandomNumberGeneratorIds(
                     RandomNumberGeneratorMapInput.newBuilder().setWellState(generatorWellStateInput)

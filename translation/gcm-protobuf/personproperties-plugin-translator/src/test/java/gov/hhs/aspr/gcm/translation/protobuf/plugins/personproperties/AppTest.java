@@ -67,7 +67,7 @@ public class AppTest {
         translatorController.readInput();
 
         PersonPropertiesPluginData actualPluginData = translatorController
-                .getObject(PersonPropertiesPluginData.class);
+                .getFirstObject(PersonPropertiesPluginData.class);
 
         assertEquals(expectedPluginData, actualPluginData);
     }
@@ -115,7 +115,7 @@ public class AppTest {
         translatorController.readInput();
 
         PersonPropertyReportPluginData actualPluginData = translatorController
-                .getObject(PersonPropertyReportPluginData.class);
+                .getFirstObject(PersonPropertyReportPluginData.class);
 
         assertEquals(expectedPluginData, actualPluginData);
     }
@@ -161,7 +161,7 @@ public class AppTest {
         translatorController.readInput();
 
         PersonPropertyInteractionReportPluginData actualPluginData = translatorController
-                .getObject(PersonPropertyInteractionReportPluginData.class);
+                .getFirstObject(PersonPropertyInteractionReportPluginData.class);
 
         assertEquals(expectedPluginData, actualPluginData);
     }

@@ -31,6 +31,7 @@ public class PrimitiveTranslatorSpecs {
     private final static DoubleTranslatorSpec DOUBLE_TRANSLATOR_SPEC = new DoubleTranslatorSpec();
     private final static DateTranslatorSpec DATE_TRANSLATOR_SPEC = new DateTranslatorSpec();
     private final static EnumTranslatorSpec ENUM_TRANSLATOR_SPEC = new EnumTranslatorSpec();
+    private final static AnyTranslatorSpec ANY_TRANSLATOR_SPEC = new AnyTranslatorSpec();
 
     public static Set<Descriptor> getPrimitiveDescriptors() {
         Set<Descriptor> set = new LinkedHashSet<>();
@@ -98,6 +99,7 @@ public class PrimitiveTranslatorSpecs {
         map.put(DOUBLE_TRANSLATOR_SPEC.getInputObjectClass(), DOUBLE_TRANSLATOR_SPEC);
         map.put(DATE_TRANSLATOR_SPEC.getInputObjectClass(), DATE_TRANSLATOR_SPEC);
         map.put(ENUM_TRANSLATOR_SPEC.getInputObjectClass(), ENUM_TRANSLATOR_SPEC);
+        map.put(ANY_TRANSLATOR_SPEC.getInputObjectClass(), ANY_TRANSLATOR_SPEC);
 
         return map;
     }

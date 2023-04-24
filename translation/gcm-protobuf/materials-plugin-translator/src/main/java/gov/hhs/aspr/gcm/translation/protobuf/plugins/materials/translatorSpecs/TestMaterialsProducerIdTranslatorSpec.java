@@ -1,11 +1,11 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.translatorSpecs;
 
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.input.TestMaterialsProducerIdInput;
-import gov.hhs.aspr.translation.protobuf.core.AbstractProtobufTranslatorSpec;
+import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslatorSpec;
 import plugins.materials.testsupport.TestMaterialsProducerId;
 
 public class TestMaterialsProducerIdTranslatorSpec
-        extends AbstractProtobufTranslatorSpec<TestMaterialsProducerIdInput, TestMaterialsProducerId> {
+        extends ProtobufTranslatorSpec<TestMaterialsProducerIdInput, TestMaterialsProducerId> {
 
     @Override
     protected TestMaterialsProducerId convertInputObject(TestMaterialsProducerIdInput inputObject) {

@@ -1,6 +1,6 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.translatorSpecs;
 
-import gov.hhs.aspr.translation.protobuf.core.AbstractProtobufTranslatorSpec;
+import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.input.ReportLabelInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.input.ReportPeriodInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.input.PersonResourceReportPluginDataInput;
@@ -11,25 +11,25 @@ import plugins.resources.reports.PersonResourceReportPluginData;
 import plugins.resources.support.ResourceId;
 
 public class PersonResourceReportPluginDataTranslatorSpec
-        extends AbstractProtobufTranslatorSpec<PersonResourceReportPluginDataInput, PersonResourceReportPluginData> {
+        extends ProtobufTranslatorSpec<PersonResourceReportPluginDataInput, PersonResourceReportPluginData> {
 
     @Override
     protected PersonResourceReportPluginData convertInputObject(PersonResourceReportPluginDataInput inputObject) {
         PersonResourceReportPluginData.Builder builder = PersonResourceReportPluginData.builder();
 
-        ReportLabel reportLabel = this.translator.convertInputObject(inputObject.getReportLabel());
-        ReportPeriod reportPeriod = this.translator.convertInputObject(inputObject.getReportPeriod());
+        ReportLabel reportLabel = this.translatorCore.convertObject(inputObject.getReportLabel());
+        ReportPeriod reportPeriod = this.translatorCore.convertObject(inputObject.getReportPeriod());
 
         builder.setReportLabel(reportLabel).setReportPeriod(reportPeriod)
                 .setDefaultInclusion(inputObject.getDefaultInclusionPolicy());
 
         for (ResourceIdInput resourceIdInput : inputObject.getIncludedPropertiesList()) {
-            ResourceId resourceId = this.translator.convertInputObject(resourceIdInput);
+            ResourceId resourceId = this.translatorCore.convertObject(resourceIdInput);
             builder.includeResource(resourceId);
         }
 
         for (ResourceIdInput resourceIdInput : inputObject.getExcludedPropertiesList()) {
-            ResourceId resourceId = this.translator.convertInputObject(resourceIdInput);
+            ResourceId resourceId = this.translatorCore.convertObject(resourceIdInput);
             builder.excludeResource(resourceId);
         }
 
@@ -40,9 +40,9 @@ public class PersonResourceReportPluginDataTranslatorSpec
     protected PersonResourceReportPluginDataInput convertAppObject(PersonResourceReportPluginData simObject) {
         PersonResourceReportPluginDataInput.Builder builder = PersonResourceReportPluginDataInput.newBuilder();
 
-        ReportLabelInput reportLabelInput = this.translator.convertSimObject(simObject.getReportLabel(),
+        ReportLabelInput reportLabelInput = this.translatorCore.convertObjectAsSafeClass(simObject.getReportLabel(),
                 ReportLabel.class);
-        ReportPeriodInput reportPeriodInput = this.translator.convertSimObject(simObject.getReportPeriod());
+        ReportPeriodInput reportPeriodInput = this.translatorCore.convertObject(simObject.getReportPeriod());
 
         builder
                 .setDefaultInclusionPolicy(simObject.getDefaultInclusionPolicy())
@@ -50,13 +50,13 @@ public class PersonResourceReportPluginDataTranslatorSpec
                 .setReportLabel(reportLabelInput);
 
         for (ResourceId resourceId : simObject.getIncludedResourceIds()) {
-            ResourceIdInput resourceIdInput = this.translator.convertSimObject(resourceId,
+            ResourceIdInput resourceIdInput = this.translatorCore.convertObjectAsSafeClass(resourceId,
             ResourceId.class);
             builder.addIncludedProperties(resourceIdInput);
         }
 
         for (ResourceId resourceId : simObject.getExcludedResourceIds()) {
-            ResourceIdInput resourceIdInput = this.translator.convertSimObject(resourceId,
+            ResourceIdInput resourceIdInput = this.translatorCore.convertObjectAsSafeClass(resourceId,
             ResourceId.class);
             builder.addExcludedProperties(resourceIdInput);
         }

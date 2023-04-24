@@ -47,7 +47,7 @@ public class AppTest {
         translatorController.writeOutput(expectedPluginData);
         translatorController.readInput();
 
-        PeoplePluginData actualPluginData = translatorController.getObject(PeoplePluginData.class);
+        PeoplePluginData actualPluginData = translatorController.getFirstObject(PeoplePluginData.class);
 
         assertEquals(expectedPluginData, actualPluginData);
     }

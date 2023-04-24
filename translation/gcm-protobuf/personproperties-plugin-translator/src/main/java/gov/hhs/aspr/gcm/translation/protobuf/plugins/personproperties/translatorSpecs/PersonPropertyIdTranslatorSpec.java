@@ -1,19 +1,19 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.translatorSpecs;
 
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.input.PersonPropertyIdInput;
-import gov.hhs.aspr.translation.protobuf.core.AbstractProtobufTranslatorSpec;
+import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslatorSpec;
 import plugins.personproperties.support.PersonPropertyId;
 
-public class PersonPropertyIdTranslatorSpec extends AbstractProtobufTranslatorSpec<PersonPropertyIdInput, PersonPropertyId> {
+public class PersonPropertyIdTranslatorSpec extends ProtobufTranslatorSpec<PersonPropertyIdInput, PersonPropertyId> {
 
     @Override
     protected PersonPropertyId convertInputObject(PersonPropertyIdInput inputObject) {
-        return this.translator.getObjectFromAny(inputObject.getId());
+        return this.translatorCore.getObjectFromAny(inputObject.getId());
     }
 
     @Override
     protected PersonPropertyIdInput convertAppObject(PersonPropertyId simObject) {
-        return PersonPropertyIdInput.newBuilder().setId(this.translator.getAnyFromObject(simObject))
+        return PersonPropertyIdInput.newBuilder().setId(this.translatorCore.getAnyFromObject(simObject))
                 .build();
     }
 

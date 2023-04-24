@@ -67,7 +67,7 @@ public class AppTest {
         translatorController.writeOutput(expectedPluginData);
         translatorController.readInput();
 
-        RegionsPluginData actualPluginData = translatorController.getObject(RegionsPluginData.class);
+        RegionsPluginData actualPluginData = translatorController.getFirstObject(RegionsPluginData.class);
 
         assertEquals(expectedPluginData, actualPluginData);
     }
@@ -116,7 +116,7 @@ public class AppTest {
         translatorController.readInput();
 
         RegionPropertyReportPluginData actualPluginData = translatorController
-                .getObject(RegionPropertyReportPluginData.class);
+                .getFirstObject(RegionPropertyReportPluginData.class);
 
         assertEquals(expectedPluginData, actualPluginData);
     }
@@ -152,7 +152,7 @@ public class AppTest {
         translatorController.readInput();
 
         RegionTransferReportPluginData actualPluginData = translatorController
-                .getObject(RegionTransferReportPluginData.class);
+                .getFirstObject(RegionTransferReportPluginData.class);
 
         assertEquals(expectedPluginData, actualPluginData);
 

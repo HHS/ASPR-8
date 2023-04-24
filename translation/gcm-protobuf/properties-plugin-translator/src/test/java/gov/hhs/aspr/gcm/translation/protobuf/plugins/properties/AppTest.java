@@ -47,7 +47,7 @@ public class AppTest {
         translatorController.writeOutput(expectedMap);
         translatorController.readInput();
 
-        PropertyValueMap actualMap = translatorController.getObject(PropertyValueMap.class);
+        PropertyValueMap actualMap = translatorController.getFirstObject(PropertyValueMap.class);
 
         assertEquals(expectedMap, actualMap);
 

@@ -2,23 +2,23 @@ package gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.translatorSpecs;
 
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.input.ResourceIdInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.input.ResourceInitializationInput;
-import gov.hhs.aspr.translation.protobuf.core.AbstractProtobufTranslatorSpec;
+import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslatorSpec;
 import plugins.resources.support.ResourceId;
 import plugins.resources.support.ResourceInitialization;
 
 public class ResourceInitializationTranslatorSpec
-        extends AbstractProtobufTranslatorSpec<ResourceInitializationInput, ResourceInitialization> {
+        extends ProtobufTranslatorSpec<ResourceInitializationInput, ResourceInitialization> {
 
     @Override
     protected ResourceInitialization convertInputObject(ResourceInitializationInput inputObject) {
-        ResourceId resourceId = this.translator.convertInputObject(inputObject.getResourceId());
+        ResourceId resourceId = this.translatorCore.convertObject(inputObject.getResourceId());
         long amount = inputObject.getAmount();
         return new ResourceInitialization(resourceId, amount);
     }
 
     @Override
     protected ResourceInitializationInput convertAppObject(ResourceInitialization simObject) {
-        ResourceIdInput resourceIdInput = this.translator.convertSimObject(simObject.getResourceId(), ResourceId.class);
+        ResourceIdInput resourceIdInput = this.translatorCore.convertObjectAsSafeClass(simObject.getResourceId(), ResourceId.class);
         return ResourceInitializationInput.newBuilder().setAmount(simObject.getAmount()).setResourceId(
                 resourceIdInput).build();
     }

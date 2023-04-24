@@ -1,10 +1,10 @@
 package gov.hss.aspr.gcm.translation.protobuf.nucleus.translatorSpecs;
 
-import gov.hhs.aspr.translation.protobuf.core.AbstractProtobufTranslatorSpec;
+import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.nucleus.input.PlannerInput;
 import nucleus.Planner;
 
-public class PlannerTranslatorSpec extends AbstractProtobufTranslatorSpec<PlannerInput, Planner> {
+public class PlannerTranslatorSpec extends ProtobufTranslatorSpec<PlannerInput, Planner> {
 
     @Override
     protected Planner convertInputObject(PlannerInput inputObject) {

@@ -36,7 +36,7 @@ public class AppTest {
 
         translatorController.readInput();
 
-        ReportLabel actualReportLabel = translatorController.getObject(ReportLabel.class);
+        ReportLabel actualReportLabel = translatorController.getFirstObject(ReportLabel.class);
 
         assertEquals(expecetdReportLabel, actualReportLabel);
 

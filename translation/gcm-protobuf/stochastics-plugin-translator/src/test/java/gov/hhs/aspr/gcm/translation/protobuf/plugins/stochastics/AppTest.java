@@ -61,7 +61,7 @@ public class AppTest {
         translatorController.writeOutput(expectedPluginData);
         translatorController.readInput();
 
-        StochasticsPluginData actualPluginData = translatorController.getObject(StochasticsPluginData.class);
+        StochasticsPluginData actualPluginData = translatorController.getFirstObject(StochasticsPluginData.class);
 
         assertEquals(expectedPluginData, actualPluginData);
     }

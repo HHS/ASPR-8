@@ -2,9 +2,9 @@ package gov.hhs.aspr.translation.protobuf.core.translatorSpecs;
 
 import com.google.protobuf.UInt64Value;
 
-import gov.hhs.aspr.translation.protobuf.core.AbstractProtobufTranslatorSpec;
+import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslatorSpec;
 
-public class UInt64TranslatorSpec extends AbstractProtobufTranslatorSpec<UInt64Value, Long> {
+public class UInt64TranslatorSpec extends ProtobufTranslatorSpec<UInt64Value, Long> {
 
     @Override
     protected Long convertInputObject(UInt64Value inputObject) {

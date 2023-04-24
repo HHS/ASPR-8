@@ -60,7 +60,7 @@ public class AppTest {
 		translatorController.writeOutput(expectedPluginData);
 
 		translatorController.readInput();
-		MaterialsPluginData actualPluginData = translatorController.getObject(MaterialsPluginData.class);
+		MaterialsPluginData actualPluginData = translatorController.getFirstObject(MaterialsPluginData.class);
 
 		assertEquals(expectedPluginData, actualPluginData);
 	}
@@ -96,7 +96,7 @@ public class AppTest {
 		translatorController.readInput();
 
 		BatchStatusReportPluginData actualPluginData = translatorController
-				.getObject(BatchStatusReportPluginData.class);
+				.getFirstObject(BatchStatusReportPluginData.class);
 
 		assertEquals(expectedPluginData, actualPluginData);
 
@@ -133,7 +133,7 @@ public class AppTest {
 		translatorController.readInput();
 
 		MaterialsProducerPropertyReportPluginData actualPluginData = translatorController
-				.getObject(MaterialsProducerPropertyReportPluginData.class);
+				.getFirstObject(MaterialsProducerPropertyReportPluginData.class);
 
 		assertEquals(expectedPluginData, actualPluginData);
 	}
@@ -168,7 +168,7 @@ public class AppTest {
 		translatorController.readInput();
 
 		MaterialsProducerResourceReportPluginData actualPluginData = translatorController
-				.getObject(MaterialsProducerResourceReportPluginData.class);
+				.getFirstObject(MaterialsProducerResourceReportPluginData.class);
 
 		assertEquals(expectedPluginData, actualPluginData);
 	}
@@ -202,7 +202,7 @@ public class AppTest {
 		translatorController.writeOutput(expectedPluginData);
 		translatorController.readInput();
 
-		StageReportPluginData actualPluginData = translatorController.getObject(StageReportPluginData.class);
+		StageReportPluginData actualPluginData = translatorController.getFirstObject(StageReportPluginData.class);
 
 		assertEquals(expectedPluginData, actualPluginData);
 

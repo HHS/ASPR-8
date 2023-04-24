@@ -1,6 +1,6 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.translatorSpecs;
 
-import gov.hhs.aspr.translation.protobuf.core.AbstractProtobufTranslatorSpec;
+import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.input.RegionTransferReportPluginDataInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.input.ReportLabelInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.input.ReportPeriodInput;
@@ -9,14 +9,14 @@ import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportPeriod;
 
 public class RegionTransferReportPluginDataTranslatorSpec
-        extends AbstractProtobufTranslatorSpec<RegionTransferReportPluginDataInput, RegionTransferReportPluginData> {
+        extends ProtobufTranslatorSpec<RegionTransferReportPluginDataInput, RegionTransferReportPluginData> {
 
     @Override
     protected RegionTransferReportPluginData convertInputObject(RegionTransferReportPluginDataInput inputObject) {
         RegionTransferReportPluginData.Builder builder = RegionTransferReportPluginData.builder();
 
-        ReportLabel reportLabel = this.translator.convertInputObject(inputObject.getReportLabel());
-        ReportPeriod reportPeriod = this.translator.convertInputObject(inputObject.getReportPeriod());
+        ReportLabel reportLabel = this.translatorCore.convertObject(inputObject.getReportLabel());
+        ReportPeriod reportPeriod = this.translatorCore.convertObject(inputObject.getReportPeriod());
 
         builder.setReportLabel(reportLabel).setReportPeriod(reportPeriod);
 
@@ -27,10 +27,10 @@ public class RegionTransferReportPluginDataTranslatorSpec
     protected RegionTransferReportPluginDataInput convertAppObject(RegionTransferReportPluginData simObject) {
         RegionTransferReportPluginDataInput.Builder builder = RegionTransferReportPluginDataInput.newBuilder();
 
-        ReportLabelInput reportLabelInput = this.translator.convertSimObject(simObject.getReportLabel(),
+        ReportLabelInput reportLabelInput = this.translatorCore.convertObjectAsSafeClass(simObject.getReportLabel(),
                 ReportLabel.class);
 
-        ReportPeriodInput reportPeriodInput = this.translator.convertSimObject(simObject.getReportPeriod());
+        ReportPeriodInput reportPeriodInput = this.translatorCore.convertObject(simObject.getReportPeriod());
         builder.setReportLabel(reportLabelInput).setReportPeriod(reportPeriodInput);
 
         return builder.build();

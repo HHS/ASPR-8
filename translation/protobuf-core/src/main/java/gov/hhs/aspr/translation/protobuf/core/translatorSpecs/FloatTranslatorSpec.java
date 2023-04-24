@@ -2,9 +2,9 @@ package gov.hhs.aspr.translation.protobuf.core.translatorSpecs;
 
 import com.google.protobuf.FloatValue;
 
-import gov.hhs.aspr.translation.protobuf.core.AbstractProtobufTranslatorSpec;
+import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslatorSpec;
 
-public class FloatTranslatorSpec extends AbstractProtobufTranslatorSpec<FloatValue, Float> {
+public class FloatTranslatorSpec extends ProtobufTranslatorSpec<FloatValue, Float> {
 
     @Override
     protected Float convertInputObject(FloatValue inputObject) {

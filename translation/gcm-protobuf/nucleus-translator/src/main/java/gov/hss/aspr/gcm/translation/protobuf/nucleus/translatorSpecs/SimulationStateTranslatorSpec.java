@@ -6,11 +6,11 @@ import com.google.type.Date;
 
 import gov.hhs.aspr.gcm.translation.protobuf.nucleus.input.PlanQueueDataInput;
 import gov.hhs.aspr.gcm.translation.protobuf.nucleus.input.SimulationStateInput;
-import gov.hhs.aspr.translation.protobuf.core.AbstractProtobufTranslatorSpec;
+import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslatorSpec;
 import nucleus.PlanQueueData;
 import nucleus.SimulationState;
 
-public class SimulationStateTranslatorSpec extends AbstractProtobufTranslatorSpec<SimulationStateInput, SimulationState> {
+public class SimulationStateTranslatorSpec extends ProtobufTranslatorSpec<SimulationStateInput, SimulationState> {
 
     @Override
     protected SimulationState convertInputObject(SimulationStateInput inputObject) {
@@ -19,14 +19,14 @@ public class SimulationStateTranslatorSpec extends AbstractProtobufTranslatorSpe
         builder.setStartTime(inputObject.getStartTime());
 
         if (inputObject.hasBaseDate()) {
-            LocalDate LocalDate = this.translator.convertInputObject(inputObject.getBaseDate());
+            LocalDate LocalDate = this.translatorCore.convertObject(inputObject.getBaseDate());
             builder.setBaseDate(LocalDate);
         }
 
         builder.setPlanningQueueArrivalId(inputObject.getPlanningQueueArrivalId());
 
         for(PlanQueueDataInput planQueueDataInput : inputObject.getPlanQueueDatasList()) {
-            PlanQueueData planQueueData = this.translator.convertInputObject(planQueueDataInput);
+            PlanQueueData planQueueData = this.translatorCore.convertObject(planQueueDataInput);
 
             builder.addPlanQueueData(planQueueData);
         }
@@ -39,13 +39,13 @@ public class SimulationStateTranslatorSpec extends AbstractProtobufTranslatorSpe
 
         builder.setStartTime(simObject.getStartTime());
 
-        Date date = this.translator.convertSimObject(simObject.getBaseDate());
+        Date date = this.translatorCore.convertObject(simObject.getBaseDate());
         builder.setBaseDate(date);
 
         builder.setPlanningQueueArrivalId(simObject.getPlanningQueueArrivalId());
 
         for(PlanQueueData planQueueData : simObject.getPlanQueueDatas()) {
-            PlanQueueDataInput planQueueDataInput = this.translator.convertSimObject(planQueueData);
+            PlanQueueDataInput planQueueDataInput = this.translatorCore.convertObject(planQueueData);
 
             builder.addPlanQueueDatas(planQueueDataInput);
         }

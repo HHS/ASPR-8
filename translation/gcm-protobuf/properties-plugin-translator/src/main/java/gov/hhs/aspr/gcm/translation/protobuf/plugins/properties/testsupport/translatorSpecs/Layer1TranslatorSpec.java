@@ -1,10 +1,10 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.testsupport.translatorSpecs;
 
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.testsupport.input.Layer1;
-import gov.hhs.aspr.translation.protobuf.core.AbstractProtobufTranslatorSpec;
+import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.testsupport.simobjects.Layer1SimObject;
 
-public class Layer1TranslatorSpec extends AbstractProtobufTranslatorSpec<Layer1, Layer1SimObject> {
+public class Layer1TranslatorSpec extends ProtobufTranslatorSpec<Layer1, Layer1SimObject> {
 
     @Override
     protected Layer1SimObject convertInputObject(Layer1 inputObject) {

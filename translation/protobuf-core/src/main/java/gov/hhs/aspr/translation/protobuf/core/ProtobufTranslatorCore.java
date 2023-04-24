@@ -26,7 +26,7 @@ import com.google.protobuf.util.JsonFormat.Parser;
 import com.google.protobuf.util.JsonFormat.Printer;
 import com.google.protobuf.util.JsonFormat.TypeRegistry;
 
-import gov.hhs.aspr.translation.core.AbstractTranslatorSpec;
+import gov.hhs.aspr.translation.core.TranslatorSpec;
 import gov.hhs.aspr.translation.core.TranslatorCore;
 import gov.hhs.aspr.translation.protobuf.core.translatorSpecs.PrimitiveTranslatorSpecs;
 
@@ -112,7 +112,7 @@ public class ProtobufTranslatorCore extends TranslatorCore {
         }
 
         @Override
-        public <I, S> Builder addTranslatorSpec(AbstractTranslatorSpec<I, S> translatorSpec) {
+        public <I, S> Builder addTranslatorSpec(TranslatorSpec<I, S> translatorSpec) {
             super.addTranslatorSpec(translatorSpec);
 
             populate(translatorSpec.getInputObjectClass());
@@ -185,13 +185,13 @@ public class ProtobufTranslatorCore extends TranslatorCore {
         return this.data.jsonPrinter;
     }
 
-    public <M extends U, U> void writeOutput(Writer writer, M simObject, Optional<Class<U>> superClass) {
+    public <U, M extends U> void writeOutput(Writer writer, M simObject, Optional<Class<U>> superClass) {
         Message message;
 
         if (superClass.isPresent()) {
-            message = convertSimObject(simObject, superClass.get());
+            message = convertObjectAsSafeClass(simObject, superClass.get());
         } else {
-            message = convertSimObject(simObject);
+            message = convertObject(simObject);
         }
         writeOutput(writer, message);
     }
@@ -238,24 +238,24 @@ public class ProtobufTranslatorCore extends TranslatorCore {
             if (this.debug) {
                 printJsonToConsole(message);
             }
-            return convertInputObject(message);
+            return convertObject(message);
         } catch (InvalidProtocolBufferException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public <M extends U, U> Any getAnyFromObject(M object, Class<U> superClass) {
+    public <U, M extends U> Any getAnyFromObject(M object, Class<U> superClass) {
         if (Enum.class.isAssignableFrom(object.getClass())) {
-            return Any.pack(convertSimObject(Enum.class.cast(object), Enum.class));
+            return Any.pack(convertObjectAsSafeClass(Enum.class.cast(object), Enum.class));
         }
-        return Any.pack(convertSimObject(object, superClass));
+        return Any.pack(convertObjectAsSafeClass(object, superClass));
     }
 
     public Any getAnyFromObject(Object object) {
         if (Enum.class.isAssignableFrom(object.getClass())) {
-            return Any.pack(convertSimObject(Enum.class.cast(object), Enum.class));
+            return Any.pack(convertObjectAsSafeClass(Enum.class.cast(object), Enum.class));
         }
-        return Any.pack(convertSimObject(object));
+        return Any.pack(convertObject(object));
     }
 
     public <T> T getObjectFromAny(Any anyValue) {
@@ -279,7 +279,7 @@ public class ProtobufTranslatorCore extends TranslatorCore {
         try {
             Message unpackedMessage = anyValue.unpack(messageClassRef);
 
-            return convertInputObject(unpackedMessage);
+            return convertObject(unpackedMessage);
         } catch (InvalidProtocolBufferException e) {
             throw new RuntimeException("Unable To unpack any type to given class: " + classRef.getName(), e);
         }

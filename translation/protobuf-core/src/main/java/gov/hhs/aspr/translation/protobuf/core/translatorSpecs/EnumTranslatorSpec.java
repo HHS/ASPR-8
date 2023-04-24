@@ -4,22 +4,22 @@ import java.lang.reflect.InvocationTargetException;
 
 import com.google.protobuf.ProtocolMessageEnum;
 
-import gov.hhs.aspr.translation.protobuf.core.AbstractProtobufTranslatorSpec;
+import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslatorSpec;
 import gov.hhs.aspr.translation.protobuf.core.input.WrapperEnumValue;
 
 @SuppressWarnings("rawtypes")
-public class EnumTranslatorSpec extends AbstractProtobufTranslatorSpec<WrapperEnumValue, Enum> {
+public class EnumTranslatorSpec extends ProtobufTranslatorSpec<WrapperEnumValue, Enum> {
 
     @Override
     protected Enum convertInputObject(WrapperEnumValue inputObject) {
         String typeUrl = inputObject.getEnumTypeUrl();
         String value = inputObject.getValue();
 
-        Class<?> classRef = this.translator.getClassFromTypeUrl(typeUrl);
+        Class<?> classRef = this.translatorCore.getClassFromTypeUrl(typeUrl);
 
         try {
             Enum inputInput = (Enum<?>) classRef.getMethod("valueOf", String.class).invoke(null, value);
-            return this.translator.convertInputObject(inputInput);
+            return this.translatorCore.convertObject(inputInput);
         } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException
                 | NoSuchMethodException | SecurityException e) {
             throw new RuntimeException(e);
@@ -29,7 +29,7 @@ public class EnumTranslatorSpec extends AbstractProtobufTranslatorSpec<WrapperEn
 
     @Override
     protected WrapperEnumValue convertAppObject(Enum simObject) {
-        ProtocolMessageEnum messageEnum = this.translator.convertSimObject(simObject);
+        ProtocolMessageEnum messageEnum = this.translatorCore.convertObject(simObject);
 
         WrapperEnumValue wrapperEnumValue = WrapperEnumValue.newBuilder()
                 .setValue(messageEnum.getValueDescriptor().getName())

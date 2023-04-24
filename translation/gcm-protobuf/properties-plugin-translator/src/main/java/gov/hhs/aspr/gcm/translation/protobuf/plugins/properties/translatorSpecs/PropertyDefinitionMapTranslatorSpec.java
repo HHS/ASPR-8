@@ -2,19 +2,19 @@ package gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.translatorSpecs
 
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.input.PropertyDefinitionInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.input.PropertyDefinitionMapInput;
-import gov.hhs.aspr.translation.protobuf.core.AbstractProtobufTranslatorSpec;
+import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.simobjects.PropertyDefinitionMap;
 
 public class PropertyDefinitionMapTranslatorSpec
-        extends AbstractProtobufTranslatorSpec<PropertyDefinitionMapInput, PropertyDefinitionMap> {
+        extends ProtobufTranslatorSpec<PropertyDefinitionMapInput, PropertyDefinitionMap> {
 
     @Override
     protected PropertyDefinitionMap convertInputObject(PropertyDefinitionMapInput inputObject) {
         PropertyDefinitionMap propertyDefinitionMap = new PropertyDefinitionMap();
 
-        propertyDefinitionMap.setPropertyId(this.translator.getObjectFromAny(inputObject.getPropertyId()));
+        propertyDefinitionMap.setPropertyId(this.translatorCore.getObjectFromAny(inputObject.getPropertyId()));
         propertyDefinitionMap
-                .setPropertyDefinition(this.translator.convertInputObject(inputObject.getPropertyDefinition()));
+                .setPropertyDefinition(this.translatorCore.convertObject(inputObject.getPropertyDefinition()));
 
         return propertyDefinitionMap;
     }
@@ -23,9 +23,9 @@ public class PropertyDefinitionMapTranslatorSpec
     protected PropertyDefinitionMapInput convertAppObject(PropertyDefinitionMap simObject) {
         PropertyDefinitionMapInput.Builder builder = PropertyDefinitionMapInput.newBuilder();
 
-        builder.setPropertyId(this.translator.getAnyFromObject(simObject.getPropertyId()));
+        builder.setPropertyId(this.translatorCore.getAnyFromObject(simObject.getPropertyId()));
 
-        PropertyDefinitionInput definitionInput = this.translator.convertSimObject(simObject.getPropertyDefinition());
+        PropertyDefinitionInput definitionInput = this.translatorCore.convertObject(simObject.getPropertyDefinition());
         builder.setPropertyDefinition(definitionInput);
 
         return builder.build();

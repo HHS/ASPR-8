@@ -11,13 +11,13 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.input.RegionIdInput
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.input.RegionMembershipInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.input.RegionPropertyValueMapInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.input.RegionsPluginDataInput;
-import gov.hhs.aspr.translation.protobuf.core.AbstractProtobufTranslatorSpec;
+import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslatorSpec;
 import plugins.regions.support.RegionId;
 import plugins.regions.support.RegionPropertyId;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.TimeTrackingPolicy;
 
-public class RegionsPluginDataTranslatorSpec extends AbstractProtobufTranslatorSpec<RegionsPluginDataInput, RegionsPluginData> {
+public class RegionsPluginDataTranslatorSpec extends ProtobufTranslatorSpec<RegionsPluginDataInput, RegionsPluginData> {
 
     @Override
     protected RegionsPluginData convertInputObject(RegionsPluginDataInput inputObject) {
@@ -25,28 +25,28 @@ public class RegionsPluginDataTranslatorSpec extends AbstractProtobufTranslatorS
 
         // add regions
         for (RegionIdInput regionIdInput : inputObject.getRegionIdsList()) {
-            RegionId regionId = this.translator.convertInputObject(regionIdInput);
+            RegionId regionId = this.translatorCore.convertObject(regionIdInput);
 
             builder.addRegion(regionId);
         }
 
         // define regions
         for (PropertyDefinitionMapInput propertyDefinitionMapInput : inputObject.getRegionPropertyDefinitionsList()) {
-            RegionPropertyId regionPropertyId = this.translator
+            RegionPropertyId regionPropertyId = this.translatorCore
                     .getObjectFromAny(propertyDefinitionMapInput.getPropertyId());
-            PropertyDefinition propertyDefinition = this.translator
-                    .convertInputObject(propertyDefinitionMapInput.getPropertyDefinition());
+            PropertyDefinition propertyDefinition = this.translatorCore
+                    .convertObject(propertyDefinitionMapInput.getPropertyDefinition());
 
             builder.defineRegionProperty(regionPropertyId, propertyDefinition);
         }
 
         // add region property values
         for (RegionPropertyValueMapInput regionPropertyValueMapInput : inputObject.getRegionPropertyValuesList()) {
-            RegionId regionId = this.translator.convertInputObject(regionPropertyValueMapInput.getRegionId());
+            RegionId regionId = this.translatorCore.convertObject(regionPropertyValueMapInput.getRegionId());
             for (PropertyValueMapInput propertyValueMapInput : regionPropertyValueMapInput.getPropertyValueMapList()) {
-                RegionPropertyId regionPropertyId = this.translator
+                RegionPropertyId regionPropertyId = this.translatorCore
                         .getObjectFromAny(propertyValueMapInput.getPropertyId());
-                Object regionPropertyValue = this.translator.getObjectFromAny(propertyValueMapInput.getPropertyValue());
+                Object regionPropertyValue = this.translatorCore.getObjectFromAny(propertyValueMapInput.getPropertyValue());
 
                 builder.setRegionPropertyValue(regionId, regionPropertyId, regionPropertyValue);
             }
@@ -54,14 +54,14 @@ public class RegionsPluginDataTranslatorSpec extends AbstractProtobufTranslatorS
 
         // assign people to regions
         for (RegionMembershipInput regionMembershipInput : inputObject.getPersonRegionsList()) {
-            PersonId personId = this.translator.convertInputObject(regionMembershipInput.getPersonId());
-            RegionId regionId = this.translator.convertInputObject(regionMembershipInput.getRegionId());
+            PersonId personId = this.translatorCore.convertObject(regionMembershipInput.getPersonId());
+            RegionId regionId = this.translatorCore.convertObject(regionMembershipInput.getRegionId());
 
             builder.setPersonRegion(personId, regionId);
         }
 
-        TimeTrackingPolicy timeTrackingPolicy = this.translator
-                .convertInputObject(inputObject.getRegionArrivalTimeTrackingPolicy());
+        TimeTrackingPolicy timeTrackingPolicy = this.translatorCore
+                .convertObject(inputObject.getRegionArrivalTimeTrackingPolicy());
         builder.setPersonRegionArrivalTracking(timeTrackingPolicy);
 
         return builder.build();
@@ -73,18 +73,18 @@ public class RegionsPluginDataTranslatorSpec extends AbstractProtobufTranslatorS
 
         // add regions
         for (RegionId regionId : simObject.getRegionIds()) {
-            RegionIdInput regionIdInput = this.translator.convertSimObject(regionId, RegionId.class);
+            RegionIdInput regionIdInput = this.translatorCore.convertObjectAsSafeClass(regionId, RegionId.class);
             builder.addRegionIds(regionIdInput);
         }
 
         // add region property definitions
         for (RegionPropertyId regionPropertyId : simObject.getRegionPropertyIds()) {
-            PropertyDefinitionInput propertyDefinitionInput = this.translator
-                    .convertSimObject(simObject.getRegionPropertyDefinition(regionPropertyId));
+            PropertyDefinitionInput propertyDefinitionInput = this.translatorCore
+                    .convertObject(simObject.getRegionPropertyDefinition(regionPropertyId));
 
             PropertyDefinitionMapInput propertyDefinitionMapInput = PropertyDefinitionMapInput
                     .newBuilder()
-                    .setPropertyId(this.translator.getAnyFromObject(regionPropertyId, RegionPropertyId.class))
+                    .setPropertyId(this.translatorCore.getAnyFromObject(regionPropertyId, RegionPropertyId.class))
                     .setPropertyDefinition(propertyDefinitionInput)
                     .build();
 
@@ -92,13 +92,13 @@ public class RegionsPluginDataTranslatorSpec extends AbstractProtobufTranslatorS
         }
 
         for (RegionId regionId : simObject.getRegionIds()) {
-            RegionIdInput regionIdInput = this.translator.convertSimObject(regionId, RegionId.class);
+            RegionIdInput regionIdInput = this.translatorCore.convertObjectAsSafeClass(regionId, RegionId.class);
 
             for (RegionPropertyId regionPropertyId : simObject.getRegionPropertyValues(regionId).keySet()) {
                 PropertyValueMapInput propertyValueMapInput = PropertyValueMapInput
                         .newBuilder()
-                        .setPropertyId(this.translator.getAnyFromObject(regionPropertyId, RegionPropertyId.class))
-                        .setPropertyValue(this.translator
+                        .setPropertyId(this.translatorCore.getAnyFromObject(regionPropertyId, RegionPropertyId.class))
+                        .setPropertyValue(this.translatorCore
                                 .getAnyFromObject(simObject.getRegionPropertyValues(regionId).get(regionPropertyId)))
                         .build();
 
@@ -118,8 +118,8 @@ public class RegionsPluginDataTranslatorSpec extends AbstractProtobufTranslatorS
             if (simObject.getPersonRegion(personId).isPresent()) {
                 RegionId regionId = simObject.getPersonRegion(personId).get();
                 RegionMembershipInput.Builder regionMembershipBuilder = RegionMembershipInput.newBuilder();
-                PersonIdInput personIdInput = this.translator.convertSimObject(personId);
-                RegionIdInput regionIdInput = this.translator.convertSimObject(regionId, RegionId.class);
+                PersonIdInput personIdInput = this.translatorCore.convertObject(personId);
+                RegionIdInput regionIdInput = this.translatorCore.convertObjectAsSafeClass(regionId, RegionId.class);
                 regionMembershipBuilder.setPersonId(personIdInput).setRegionId(regionIdInput);
 
                 builder.addPersonRegions(regionMembershipBuilder.build());
@@ -127,8 +127,8 @@ public class RegionsPluginDataTranslatorSpec extends AbstractProtobufTranslatorS
             }
         }
 
-        TimeTrackingPolicyInput timeTrackingPolicyInput = this.translator
-                .convertSimObject(simObject.getPersonRegionArrivalTrackingPolicy());
+        TimeTrackingPolicyInput timeTrackingPolicyInput = this.translatorCore
+                .convertObject(simObject.getPersonRegionArrivalTrackingPolicy());
 
         builder.setRegionArrivalTimeTrackingPolicy(timeTrackingPolicyInput);
 

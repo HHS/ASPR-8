@@ -1,20 +1,20 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.translatorSpecs;
 
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.input.SimpleRegionPropertyIdInput;
-import gov.hhs.aspr.translation.protobuf.core.AbstractProtobufTranslatorSpec;
+import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslatorSpec;
 import plugins.regions.support.SimpleRegionPropertyId;
 
 public class SimpleRegionPropertyIdTranslatorSpec
-        extends AbstractProtobufTranslatorSpec<SimpleRegionPropertyIdInput, SimpleRegionPropertyId> {
+        extends ProtobufTranslatorSpec<SimpleRegionPropertyIdInput, SimpleRegionPropertyId> {
 
     @Override
     protected SimpleRegionPropertyId convertInputObject(SimpleRegionPropertyIdInput inputObject) {
-        return new SimpleRegionPropertyId(this.translator.getObjectFromAny(inputObject.getValue()));
+        return new SimpleRegionPropertyId(this.translatorCore.getObjectFromAny(inputObject.getValue()));
     }
 
     @Override
     protected SimpleRegionPropertyIdInput convertAppObject(SimpleRegionPropertyId simObject) {
-        return SimpleRegionPropertyIdInput.newBuilder().setValue(this.translator.getAnyFromObject(simObject.getValue()))
+        return SimpleRegionPropertyIdInput.newBuilder().setValue(this.translatorCore.getAnyFromObject(simObject.getValue()))
                 .build();
     }
 

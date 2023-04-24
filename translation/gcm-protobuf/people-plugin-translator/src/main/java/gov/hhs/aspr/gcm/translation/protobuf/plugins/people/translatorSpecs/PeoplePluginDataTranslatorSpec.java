@@ -1,20 +1,20 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.people.translatorSpecs;
 
-import gov.hhs.aspr.translation.protobuf.core.AbstractProtobufTranslatorSpec;
+import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.input.PeoplePluginDataInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.input.PersonRangeInput;
 import plugins.people.PeoplePluginData;
 import plugins.people.support.PersonRange;
 
 public class PeoplePluginDataTranslatorSpec
-        extends AbstractProtobufTranslatorSpec<PeoplePluginDataInput, PeoplePluginData> {
+        extends ProtobufTranslatorSpec<PeoplePluginDataInput, PeoplePluginData> {
 
     @Override
     protected PeoplePluginData convertInputObject(PeoplePluginDataInput inputObject) {
         PeoplePluginData.Builder builder = PeoplePluginData.builder();
 
         for (PersonRangeInput personRangeInput : inputObject.getPersonRangesList()) {
-            PersonRange personRange = this.translator.convertInputObject(personRangeInput);
+            PersonRange personRange = this.translatorCore.convertObject(personRangeInput);
             builder.addPersonRange(personRange);
         }
 
@@ -30,7 +30,7 @@ public class PeoplePluginDataTranslatorSpec
         PeoplePluginDataInput.Builder builder = PeoplePluginDataInput.newBuilder();
 
         for (PersonRange personRange : simObject.getPersonRanges()) {
-            PersonRangeInput personRangeInput = this.translator.convertSimObject(personRange);
+            PersonRangeInput personRangeInput = this.translatorCore.convertObject(personRange);
             builder.addPersonRanges(personRangeInput);
         }
 

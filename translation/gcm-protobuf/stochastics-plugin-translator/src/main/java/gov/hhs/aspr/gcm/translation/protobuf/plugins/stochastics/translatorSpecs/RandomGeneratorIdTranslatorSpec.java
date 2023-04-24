@@ -1,21 +1,21 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.stochastics.translatorSpecs;
 
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.stochastics.input.RandomNumberGeneratorIdInput;
-import gov.hhs.aspr.translation.protobuf.core.AbstractProtobufTranslatorSpec;
+import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslatorSpec;
 import plugins.stochastics.support.RandomNumberGeneratorId;
 
 public class RandomGeneratorIdTranslatorSpec
-        extends AbstractProtobufTranslatorSpec<RandomNumberGeneratorIdInput, RandomNumberGeneratorId> {
+        extends ProtobufTranslatorSpec<RandomNumberGeneratorIdInput, RandomNumberGeneratorId> {
 
     @Override
     protected RandomNumberGeneratorId convertInputObject(RandomNumberGeneratorIdInput inputObject) {
-        return this.translator.getObjectFromAny(inputObject.getId());
+        return this.translatorCore.getObjectFromAny(inputObject.getId());
     }
 
     @Override
     protected RandomNumberGeneratorIdInput convertAppObject(RandomNumberGeneratorId simObject) {
         return RandomNumberGeneratorIdInput.newBuilder()
-                .setId(this.translator.getAnyFromObject(simObject)).build();
+                .setId(this.translatorCore.getAnyFromObject(simObject)).build();
     }
 
     @Override
