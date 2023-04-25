@@ -33,7 +33,7 @@ import util.graph.MutableGraph;
  */
 public class TranslationController {
     private final Data data;
-    private TranslatorCore translatorCore;
+    private TranslationEngine translatorCore;
     private final List<Object> objects = Collections.synchronizedList(new ArrayList<>());
     private TranslatorId focalTranslatorId = null;
 
@@ -42,7 +42,7 @@ public class TranslationController {
     }
 
     private static class Data {
-        private TranslatorCore.Builder translatorCoreBuilder;
+        private TranslationEngine.Builder translatorCoreBuilder;
         private final List<Translator> translators = new ArrayList<>();
         private final Map<Path, Class<?>> inputFilePathMap = new LinkedHashMap<>();
         private final Map<Pair<Class<?>, Integer>, Path> outputFilePathMap = new LinkedHashMap<>();
@@ -87,7 +87,7 @@ public class TranslationController {
             }
         }
 
-        private void validateTranslatorCoreBuilderNotNull(TranslatorCore.Builder translatorCoreBuilder) {
+        private void validateTranslatorCoreBuilderNotNull(TranslationEngine.Builder translatorCoreBuilder) {
             if (translatorCoreBuilder == null) {
                 throw new ContractException(CoreTranslationError.NULL_TRANSLATORCORE_BUILDER);
             }
@@ -242,13 +242,13 @@ public class TranslationController {
         }
 
         /**
-         * Sets the {@link TranslatorCore.Builder}
+         * Sets the {@link TranslationEngine.Builder}
          * 
          * @throws ContractException
          *                           <li>{@linkplain CoreTranslationError#NULL_TRANSLATORCORE_BUILDER}
          *                           if translatorCoreBuilder is null</li>
          */
-        public Builder setTranslatorCoreBuilder(TranslatorCore.Builder translatorCoreBuilder) {
+        public Builder setTranslatorCoreBuilder(TranslationEngine.Builder translatorCoreBuilder) {
             validateTranslatorCoreBuilderNotNull(translatorCoreBuilder);
 
             this.data.translatorCoreBuilder = translatorCoreBuilder;
@@ -276,7 +276,7 @@ public class TranslationController {
      *                           the translatorCoreBuilder
      *                           null</li>
      */
-    protected <T extends TranslatorCore.Builder> T getTranslatorCoreBuilder(Class<T> classRef) {
+    protected <T extends TranslationEngine.Builder> T getTranslatorCoreBuilder(Class<T> classRef) {
         if (this.translatorCore == null) {
             if (this.data.translatorCoreBuilder.getClass() == classRef) {
                 return classRef.cast(this.data.translatorCoreBuilder);
@@ -306,7 +306,7 @@ public class TranslationController {
     }
 
     /**
-     * Passes the given reader and inputClassRef to the built {@link TranslatorCore}
+     * Passes the given reader and inputClassRef to the built {@link TranslationEngine}
      * to read, parse and translate the inputData.
      * 
      * @param <U> the classType associated with the reader
@@ -319,7 +319,7 @@ public class TranslationController {
 
     /**
      * Passes the given writer object and optional superClass to the built
-     * {@link TranslatorCore}
+     * {@link TranslationEngine}
      * to translate and write to the outputFile
      * 
      * @param <M> the class of the object to write to the outputFile

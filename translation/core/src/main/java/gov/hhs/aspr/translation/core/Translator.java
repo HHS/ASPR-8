@@ -11,7 +11,7 @@ import util.errors.ContractException;
  * The Translator class serves as a wrapper around one or more
  * {@link BaseTranslationSpec}(s)
  * 
- * and assists in adding those TranslatorSpecs to the {@link TranslatorCore}
+ * and assists in adding those TranslatorSpecs to the {@link TranslationEngine}
  */
 public final class Translator {
     private final Data data;

@@ -27,10 +27,10 @@ import com.google.protobuf.util.JsonFormat.Printer;
 import com.google.protobuf.util.JsonFormat.TypeRegistry;
 
 import gov.hhs.aspr.translation.core.TranslationSpec;
-import gov.hhs.aspr.translation.core.TranslatorCore;
+import gov.hhs.aspr.translation.core.TranslationEngine;
 import gov.hhs.aspr.translation.protobuf.core.translatorSpecs.PrimitiveTranslatorSpecs;
 
-public class ProtobufTranslatorCore extends TranslatorCore {
+public class ProtobufTranslatorCore extends TranslationEngine {
     private final Data data;
 
     private ProtobufTranslatorCore(Data data) {
@@ -38,7 +38,7 @@ public class ProtobufTranslatorCore extends TranslatorCore {
         this.data = data;
     }
 
-    private static class Data extends TranslatorCore.Data {
+    private static class Data extends TranslationEngine.Data {
         private final Map<String, Class<?>> typeUrlToClassMap = new LinkedHashMap<>();
 
         private Parser jsonParser;
@@ -47,13 +47,13 @@ public class ProtobufTranslatorCore extends TranslatorCore {
         private Data() {
             super();
             this.typeUrlToClassMap.putAll(PrimitiveTranslatorSpecs.getPrimitiveTypeUrlToClassMap());
-            this.classToTranslatorSpecMap.putAll(PrimitiveTranslatorSpecs.getPrimitiveInputTranslatorSpecMap());
-            this.classToTranslatorSpecMap.putAll(PrimitiveTranslatorSpecs.getPrimitiveObjectTranslatorSpecMap());
-            this.translatorSpecs.addAll(PrimitiveTranslatorSpecs.getPrimitiveTranslatorSpecs());
+            this.classToTranslationSpecMap.putAll(PrimitiveTranslatorSpecs.getPrimitiveInputTranslatorSpecMap());
+            this.classToTranslationSpecMap.putAll(PrimitiveTranslatorSpecs.getPrimitiveObjectTranslatorSpecMap());
+            this.translationSpecs.addAll(PrimitiveTranslatorSpecs.getPrimitiveTranslatorSpecs());
         }
     }
 
-    public static class Builder extends TranslatorCore.Builder {
+    public static class Builder extends TranslationEngine.Builder {
         private ProtobufTranslatorCore.Data data;
         private Set<Descriptor> descriptorSet = new LinkedHashSet<>();
         private final Set<FieldDescriptor> defaultValueFieldsToPrint = new LinkedHashSet<>();
@@ -65,7 +65,7 @@ public class ProtobufTranslatorCore extends TranslatorCore {
             this.data = data;
         }
 
-        public TranslatorCore build() {
+        public TranslationEngine build() {
             TypeRegistry.Builder typeRegistryBuilder = TypeRegistry.newBuilder();
             this.descriptorSet.addAll(PrimitiveTranslatorSpecs.getPrimitiveDescriptors());
 
@@ -112,10 +112,10 @@ public class ProtobufTranslatorCore extends TranslatorCore {
         }
 
         @Override
-        public <I, S> Builder addTranslatorSpec(TranslationSpec<I, S> translatorSpec) {
-            super.addTranslatorSpec(translatorSpec);
+        public <I, S> Builder addTranslatorSpec(TranslationSpec<I, S> translationSpec) {
+            super.addTranslatorSpec(translationSpec);
 
-            populate(translatorSpec.getInputObjectClass());
+            populate(translationSpec.getInputObjectClass());
             return this;
         }
 

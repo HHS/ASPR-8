@@ -5,7 +5,7 @@ import java.util.Objects;
 public abstract class TranslationSpec<I, A> implements BaseTranslationSpec {
     private boolean initialized = false;
 
-    public <T extends TranslatorCore> void init(T translatorCore) {
+    public <T extends TranslationEngine> void init(T translatorCore) {
         this.initialized = true;
     }
 

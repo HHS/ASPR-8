@@ -8,7 +8,7 @@ public class TranslatorContext {
         this.translatorController = translatorController;
     }
 
-    public <T extends TranslatorCore.Builder> T getTranslatorCoreBuilder(Class<T> classRef) {
+    public <T extends TranslationEngine.Builder> T getTranslatorCoreBuilder(Class<T> classRef) {
         return this.translatorController.getTranslatorCoreBuilder(classRef);
     }
 

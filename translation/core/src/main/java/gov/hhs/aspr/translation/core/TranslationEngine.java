@@ -14,25 +14,25 @@ import util.errors.ContractException;
  * Main Translator Class
  * 
  * Initializes all {@link TranslationSpec}s and maintains a mapping between the
- * translatorSpec and it's respective classes
+ * translationSpec and it's respective classes
  * 
  * This is an Abstract class, meaning that for a given translation library
  * (Fasterxml, Protobuf, etc) must have a custom implemented TranslatorCore
  * 
  */
-public abstract class TranslatorCore {
+public abstract class TranslationEngine {
 
     private final Data data;
     protected boolean debug = false;
     protected boolean isInitialized = false;
 
-    protected TranslatorCore(Data data) {
+    protected TranslationEngine(Data data) {
         this.data = data;
     }
 
     protected static class Data {
-        protected final Map<Class<?>, BaseTranslationSpec> classToTranslatorSpecMap = new LinkedHashMap<>();
-        protected final Set<BaseTranslationSpec> translatorSpecs = new LinkedHashSet<>();
+        protected final Map<Class<?>, BaseTranslationSpec> classToTranslationSpecMap = new LinkedHashMap<>();
+        protected final Set<BaseTranslationSpec> translationSpecs = new LinkedHashSet<>();
 
         protected Data() {
         }
@@ -45,21 +45,21 @@ public abstract class TranslatorCore {
             this.data = data;
         }
 
-        private <I, A> void validateTranslatorSpec(TranslationSpec<I, A> translatorSpec) {
-            if (translatorSpec == null) {
-                throw new ContractException(CoreTranslationError.NULL_TRANSLATOR_SPEC);
+        private <I, A> void validateTranslatorSpec(TranslationSpec<I, A> translationSpec) {
+            if (translationSpec == null) {
+                throw new ContractException(CoreTranslationError.NULL_TRANSLATION_SPEC);
             }
 
-            if (translatorSpec.getAppObjectClass() == null) {
-                throw new ContractException(CoreTranslationError.NULL_TRANSLATOR_SPEC_APP_CLASS);
+            if (translationSpec.getAppObjectClass() == null) {
+                throw new ContractException(CoreTranslationError.NULL_TRANSLATION_SPEC_APP_CLASS);
             }
 
-            if (translatorSpec.getInputObjectClass() == null) {
-                throw new ContractException(CoreTranslationError.NULL_TRANSLATOR_SPEC_INPUT_CLASS);
+            if (translationSpec.getInputObjectClass() == null) {
+                throw new ContractException(CoreTranslationError.NULL_TRANSLATION_SPEC_INPUT_CLASS);
             }
 
-            if (this.data.translatorSpecs.contains(translatorSpec)) {
-                throw new ContractException(CoreTranslationError.DUPLICATE_TRANSLATOR_SPEC);
+            if (this.data.translationSpecs.contains(translationSpec)) {
+                throw new ContractException(CoreTranslationError.DUPLICATE_TRANSLATION_SPEC);
             }
         }
 
@@ -73,7 +73,7 @@ public abstract class TranslatorCore {
          *                          istead be calling the child method in the child
          *                          TranslatorCore that extends this class
          */
-        public TranslatorCore build() {
+        public TranslationEngine build() {
             throw new RuntimeException("Tried to call build on abstract Translator Core");
         }
 
@@ -82,28 +82,28 @@ public abstract class TranslatorCore {
          * classToTranslatorSpecMap
          * 
          * @throws ContractException
-         *                           <li>{@linkplain CoreTranslationError#NULL_TRANSLATOR_SPEC}
-         *                           if the given translatorSpec is null</li>
-         *                           <li>{@linkplain CoreTranslationError#NULL_TRANSLATOR_SPEC_APP_CLASS}
+         *                           <li>{@linkplain CoreTranslationError#NULL_TRANSLATION_SPEC}
+         *                           if the given translationSpec is null</li>
+         *                           <li>{@linkplain CoreTranslationError#NULL_TRANSLATION_SPEC_APP_CLASS}
          *                           if the given translatorSpecs getAppClass method
          *                           returns null</li>
-         *                           <li>{@linkplain CoreTranslationError#NULL_TRANSLATOR_SPEC_INPUT_CLASS}
+         *                           <li>{@linkplain CoreTranslationError#NULL_TRANSLATION_SPEC_INPUT_CLASS}
          *                           if the given translatorSpecs getInputClass method
          *                           returns null</li>
-         *                           <li>{@linkplain CoreTranslationError#DUPLICATE_TRANSLATOR_SPEC}
-         *                           if the given translatorSpec is already known</li>
+         *                           <li>{@linkplain CoreTranslationError#DUPLICATE_TRANSLATION_SPEC}
+         *                           if the given translationSpec is already known</li>
          * 
          * @param <I> the input object type
          * @param <A> the app object type
          */
-        public <I, A> Builder addTranslatorSpec(TranslationSpec<I, A> translatorSpec) {
-            validateTranslatorSpec(translatorSpec);
+        public <I, A> Builder addTranslatorSpec(TranslationSpec<I, A> translationSpec) {
+            validateTranslatorSpec(translationSpec);
 
-            this.data.classToTranslatorSpecMap.put(translatorSpec.getInputObjectClass(),
-                    translatorSpec);
-            this.data.classToTranslatorSpecMap.put(translatorSpec.getAppObjectClass(), translatorSpec);
+            this.data.classToTranslationSpecMap.put(translationSpec.getInputObjectClass(),
+                    translationSpec);
+            this.data.classToTranslationSpecMap.put(translationSpec.getAppObjectClass(), translationSpec);
 
-            this.data.translatorSpecs.add(translatorSpec);
+            this.data.translationSpecs.add(translationSpec);
 
             return this;
         }
@@ -117,11 +117,11 @@ public abstract class TranslatorCore {
     }
 
     /**
-     * Initializes the translatorCore by calling init on each translatorSpec added
+     * Initializes the translatorCore by calling init on each translationSpec added
      * in the builder
      */
     public void init() {
-        this.data.translatorSpecs.forEach((translatorSpec) -> translatorSpec.init(this));
+        this.data.translationSpecs.forEach((translationSpec) -> translationSpec.init(this));
 
         this.isInitialized = true;
     }
@@ -145,8 +145,8 @@ public abstract class TranslatorCore {
      */
     void translatorSpecsAreInitialized() {
 
-        for (BaseTranslationSpec translatorSpec : this.data.translatorSpecs) {
-            if (!translatorSpec.isInitialized()) {
+        for (BaseTranslationSpec translationSpec : this.data.translationSpecs) {
+            if (!translationSpec.isInitialized()) {
                 throw new RuntimeException("TranslatoSpec class was not properly initialized, be sure to call super()");
             }
         }
@@ -166,7 +166,7 @@ public abstract class TranslatorCore {
     public abstract <T, U> T readInput(Reader reader, Class<U> inputClassRef);
 
     /**
-     * Given an object, uses the class of the object to obtain the translatorSpec
+     * Given an object, uses the class of the object to obtain the translationSpec
      * and then calls {@link TranslationSpec#convert(Object)}
      * <li>this conversion method will be used approx ~90% of the
      * time
@@ -174,8 +174,8 @@ public abstract class TranslatorCore {
      * @param <T> the return type after converting
      * 
      * @throws ContractException
-     *                           <li>{@linkplain CoreTranslationError#UNKNOWN_TRANSLATOR_SPEC}
-     *                           if no translatorSpec was provided for the given
+     *                           <li>{@linkplain CoreTranslationError#UNKNOWN_TRANSLATION_SPEC}
+     *                           if no translationSpec was provided for the given
      *                           objects class
      */
     public <T> T convertObject(Object object) {
@@ -184,7 +184,7 @@ public abstract class TranslatorCore {
 
     /**
      * Given an object, uses the parent class of the object to obtain the
-     * translatorSpec
+     * translationSpec
      * and then calls {@link TranslationSpec#convert(Object)}
      * <li>This method call is safe in the sense that the type parameters ensure
      * that the passed in object is actually a child of the passed in parentClassRef
@@ -194,11 +194,11 @@ public abstract class TranslatorCore {
      * @param <T> the return type after converting
      * @param <M> the type of the object; extends U
      * @param <U> the parent type of the object and the class for which
-     *            translatorSpec you want to use
+     *            translationSpec you want to use
      * 
      * @throws ContractException
-     *                           <li>{@linkplain CoreTranslationError#UNKNOWN_TRANSLATOR_SPEC}
-     *                           if no translatorSpec was provided for the given
+     *                           <li>{@linkplain CoreTranslationError#UNKNOWN_TRANSLATION_SPEC}
+     *                           if no translationSpec was provided for the given
      *                           objects class
      */
     public <T, M extends U, U> T convertObjectAsSafeClass(M object, Class<U> parentClassRef) {
@@ -207,24 +207,24 @@ public abstract class TranslatorCore {
 
     /**
      * Given an object, uses the passed in class to obtain the
-     * translatorSpec
+     * translationSpec
      * and then calls {@link TranslationSpec#convert(Object)}
      * <li>This method call is unsafe in the sense that the type parameters do not
      * ensure
      * any relationship between the passed in object and the passed in classRef.
      * <li>A common use case for using this conversion method would be to call a
-     * translatorSpec that will wrap the given object in another object.
+     * translationSpec that will wrap the given object in another object.
      * 
      * <li>this conversion method will be used approx ~3% of the
      * time
      * 
      * @param <T> the return type after converting
      * @param <M> the type of the object
-     * @param <U> the type of the class for which translatorSpec you want to use
+     * @param <U> the type of the class for which translationSpec you want to use
      * 
      * @throws ContractException
-     *                           <li>{@linkplain CoreTranslationError#UNKNOWN_TRANSLATOR_SPEC}
-     *                           if no translatorSpec was provided for the given
+     *                           <li>{@linkplain CoreTranslationError#UNKNOWN_TRANSLATION_SPEC}
+     *                           if no translationSpec was provided for the given
      *                           objects class
      */
     public <T, M, U> T convertObjectAsUnsafeClass(M object, Class<U> objectClassRef) {
@@ -232,18 +232,18 @@ public abstract class TranslatorCore {
     }
 
     /**
-     * Given a classRef, returns the translatorSpec associated with that class, if
+     * Given a classRef, returns the translationSpec associated with that class, if
      * it is known
      * 
      * @throws ContractException
-     *                           <li>{@linkplain CoreTranslationError#UNKNOWN_TRANSLATOR_SPEC}
-     *                           if no translatorSpec for the given class was found
+     *                           <li>{@linkplain CoreTranslationError#UNKNOWN_TRANSLATION_SPEC}
+     *                           if no translationSpec for the given class was found
      */
     protected BaseTranslationSpec getTranslatorForClass(Class<?> classRef) {
-        if (this.data.classToTranslatorSpecMap.containsKey(classRef)) {
-            return this.data.classToTranslatorSpecMap.get(classRef);
+        if (this.data.classToTranslationSpecMap.containsKey(classRef)) {
+            return this.data.classToTranslationSpecMap.get(classRef);
         }
-        throw new ContractException(CoreTranslationError.UNKNOWN_TRANSLATOR_SPEC, classRef.getName());
+        throw new ContractException(CoreTranslationError.UNKNOWN_TRANSLATION_SPEC, classRef.getName());
     }
 
 }
