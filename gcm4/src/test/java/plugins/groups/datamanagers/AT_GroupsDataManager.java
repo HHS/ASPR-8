@@ -18,7 +18,6 @@ import java.util.Random;
 import java.util.Set;
 import java.util.function.Consumer;
 
-import nucleus.testsupport.testplugin.TestOutputConsumer;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.util.FastMath;
 import org.apache.commons.math3.util.Pair;
@@ -28,6 +27,7 @@ import nucleus.ActorContext;
 import nucleus.DataManagerContext;
 import nucleus.EventFilter;
 import nucleus.testsupport.testplugin.TestActorPlan;
+import nucleus.testsupport.testplugin.TestOutputConsumer;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestSimulation;
 import plugins.groups.GroupsPluginData;
@@ -66,7 +66,6 @@ import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.random.RandomGeneratorProvider;
 import util.wrappers.MultiKey;
-import util.wrappers.MutableDouble;
 import util.wrappers.MutableInteger;
 import util.wrappers.MutableObject;
 
@@ -1431,167 +1430,6 @@ public class AT_GroupsDataManager {
 			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
 		});
 		assertEquals(GroupError.UNKNOWN_GROUP_TYPE_ID, contractException.getErrorType());
-	}
-
-	@Test
-	@UnitTestMethod(target = GroupsDataManager.class, name = "getGroupPropertyTime", args = { GroupId.class, GroupPropertyId.class })
-	public void testGetGroupPropertyTime() {
-
-		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
-
-		/*
-		 * Create a container to hold our expectations. The MultiKey will be
-		 * (GroupId,GroupPropertyId) pairs and the MutableDoubles will hold the
-		 * most recent time when each property was set.
-		 */
-		Map<MultiKey, MutableDouble> expectedTimes = new LinkedHashMap<>();
-
-		/*
-		 * At time = 1, have the agent show that the property values were all
-		 * set at time = 0 and then set those properties to new values
-		 */
-		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
-			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
-			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
-
-			List<GroupId> groupIds = groupsDataManager.getGroupIds();
-
-			// show that we have enough groups to conduct the test
-			assertTrue(groupIds.size() > 10);
-
-			Set<TestGroupPropertyId> mutableTrackablePropertyIds = new LinkedHashSet<>();
-			for (TestGroupPropertyId testGroupPropertyId : TestGroupPropertyId.values()) {
-				PropertyDefinition propertyDefinition = testGroupPropertyId.getPropertyDefinition();
-				if (propertyDefinition.propertyValuesAreMutable()) {
-					if (propertyDefinition.getTimeTrackingPolicy() == TimeTrackingPolicy.TRACK_TIME) {
-						mutableTrackablePropertyIds.add(testGroupPropertyId);
-					}
-				}
-			}
-
-			// show that we have at least one mutable, trackable property
-			assertTrue(mutableTrackablePropertyIds.size() > 0);
-
-			// Change all the mutable, trackable property values and record the
-			// expected time values.
-			for (TestGroupPropertyId testGroupPropertyId : mutableTrackablePropertyIds) {
-				TestGroupTypeId testGroupTypeId = testGroupPropertyId.getTestGroupTypeId();
-				List<GroupId> groupsForGroupType = groupsDataManager.getGroupsForGroupType(testGroupTypeId);
-				for (GroupId groupId : groupsForGroupType) {
-					double groupPropertyTime = groupsDataManager.getGroupPropertyTime(groupId, testGroupPropertyId);
-					assertEquals(0.0, groupPropertyTime);
-					expectedTimes.put(new MultiKey(groupId, testGroupPropertyId), new MutableDouble(1.0));
-					groupsDataManager.setGroupPropertyValue(groupId, testGroupPropertyId, testGroupPropertyId.getRandomPropertyValue(randomGenerator));
-				}
-			}
-		}));
-
-		/*
-		 * At time = 2, have the agent show that the property values were all
-		 * set at time = 1 and then set those properties to new values
-		 */
-		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(2, (c) -> {
-			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
-			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
-
-			for (MultiKey multiKey : expectedTimes.keySet()) {
-				GroupId groupId = multiKey.getKey(0);
-				TestGroupPropertyId testGroupPropertyId = multiKey.getKey(1);
-				double groupPropertyTime = groupsDataManager.getGroupPropertyTime(groupId, testGroupPropertyId);
-				MutableDouble mutableDouble = expectedTimes.get(multiKey);
-				assertEquals(mutableDouble.getValue(), groupPropertyTime);
-
-				mutableDouble.setValue(2.0);
-				groupsDataManager.setGroupPropertyValue(groupId, testGroupPropertyId, testGroupPropertyId.getRandomPropertyValue(randomGenerator));
-			}
-
-		}));
-
-		/*
-		 * At time = 3, have the agent show that the property values were all
-		 * set at time = 2
-		 */
-		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(3, (c) -> {
-			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-
-			for (MultiKey multiKey : expectedTimes.keySet()) {
-				GroupId groupId = multiKey.getKey(0);
-				TestGroupPropertyId testGroupPropertyId = multiKey.getKey(1);
-				double groupPropertyTime = groupsDataManager.getGroupPropertyTime(groupId, testGroupPropertyId);
-				MutableDouble mutableDouble = expectedTimes.get(multiKey);
-				assertEquals(mutableDouble.getValue(), groupPropertyTime);
-			}
-
-		}));
-
-		TestPluginData testPluginData = pluginBuilder.build();
-		Factory factory = GroupsTestPluginFactory.factory(30, 3, 5, 7313144886869436931L, testPluginData);
-		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
-
-		/*
-		 * precondition test: if the group id is null
-		 */
-		ContractException contractException = assertThrows(ContractException.class, () -> {
-			Factory factory2 = GroupsTestPluginFactory.factory(30, 3, 5, 4540064428634658468L, (c) -> {
-				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-				groupsDataManager.getGroupPropertyTime(null, TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK);
-			});
-			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
-		});
-		assertEquals(GroupError.NULL_GROUP_ID, contractException.getErrorType());
-
-		/*
-		 * precondition test: if the group id is null
-		 */
-		contractException = assertThrows(ContractException.class, () -> {
-			Factory factory2 = GroupsTestPluginFactory.factory(30, 3, 5, 5080244401642933835L, (c) -> {
-				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-				groupsDataManager.getGroupPropertyTime(new GroupId(1000000), TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK);
-			});
-			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
-		});
-		assertEquals(GroupError.UNKNOWN_GROUP_ID, contractException.getErrorType());
-
-		/*
-		 * precondition test: if the group property id is null
-		 */
-		contractException = assertThrows(ContractException.class, () -> {
-			Factory factory2 = GroupsTestPluginFactory.factory(30, 3, 5, 4175298436277522063L, (c) -> {
-				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-				groupsDataManager.getGroupPropertyTime(new GroupId(0), null);
-			});
-			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
-		});
-		assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
-
-		/*
-		 * precondition test: if the group property id is unknown
-		 */
-		contractException = assertThrows(ContractException.class, () -> {
-			Factory factory2 = GroupsTestPluginFactory.factory(30, 3, 5, 3557052948001350675L, (c) -> {
-				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-				GroupId groupId = groupsDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_1);
-				groupsDataManager.getGroupPropertyTime(groupId, TestGroupPropertyId.getUnknownGroupPropertyId());
-			});
-			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
-		});
-		assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
-
-		/*
-		 * precondition test: if the group property id is unknown
-		 */
-		contractException = assertThrows(ContractException.class, () -> {
-			Factory factory2 = GroupsTestPluginFactory.factory(30, 3, 5, 7349200768842830982L, (c) -> {
-				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-				GroupId groupId = groupsDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_1);
-				groupsDataManager.getGroupPropertyTime(groupId, TestGroupPropertyId.GROUP_PROPERTY_2_1_BOOLEAN_MUTABLE_TRACK);
-			});
-			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
-		});
-		assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
-
 	}
 
 	@Test

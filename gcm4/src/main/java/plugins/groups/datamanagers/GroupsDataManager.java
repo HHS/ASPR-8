@@ -99,7 +99,7 @@ public final class GroupsDataManager extends DataManager {
 
 	// container for group property values
 	private final Map<GroupTypeId, Map<GroupPropertyId, IndexedPropertyManager>> groupPropertyManagerMap = new LinkedHashMap<>();
-	private final Map<GroupTypeId, Map<GroupPropertyId, DoubleValueContainer>> groupPropertyTimeMap = new LinkedHashMap<>();
+	
 
 	private final Map<GroupTypeId, Map<GroupPropertyId, PropertyDefinition>> groupPropertyDefinitions = new LinkedHashMap<>();
 
@@ -229,6 +229,8 @@ public final class GroupsDataManager extends DataManager {
 
 	private void recordSimulationState(DataManagerContext dataManagerContext) {
 		GroupsPluginData.Builder builder = GroupsPluginData.builder();
+		
+		builder.setNextGroupIdValue(masterGroupId);
 
 		for (final GroupTypeId groupTypeId : typesToIndexesMap.keySet()) {
 			builder.addGroupTypeId(groupTypeId);
@@ -301,7 +303,7 @@ public final class GroupsDataManager extends DataManager {
 				final IndexedPropertyManager indexedPropertyManager = getIndexedPropertyManager( propertyDefinition, 0);
 				managerMap.put(groupPropertyId, indexedPropertyManager);
 				
-				groupPropertyTimeMap.get(groupTypeId).put(groupPropertyId, new DoubleValueContainer(0));
+				
 				
 			}
 		}
@@ -316,8 +318,7 @@ public final class GroupsDataManager extends DataManager {
 			final int index = typesToIndexesMap.size();
 			typesToIndexesMap.put(groupTypeId, index);
 			indexesToTypesMap.add(groupTypeId);
-			groupPropertyManagerMap.put(groupTypeId, new LinkedHashMap<>());
-			groupPropertyTimeMap.put(groupTypeId, new LinkedHashMap<>());
+			groupPropertyManagerMap.put(groupTypeId, new LinkedHashMap<>());			
 			groupPropertyDefinitions.put(groupTypeId, new LinkedHashMap<>());
 			nonDefaultBearingPropertyIds.put(groupTypeId, new LinkedHashMap<>());
 		}
@@ -345,8 +346,7 @@ public final class GroupsDataManager extends DataManager {
 		final int index = typesToIndexesMap.size();
 		typesToIndexesMap.put(groupTypeId, index);
 		indexesToTypesMap.add(groupTypeId);
-		groupPropertyManagerMap.put(groupTypeId, new LinkedHashMap<>());
-		groupPropertyTimeMap.put(groupTypeId, new LinkedHashMap<>());
+		groupPropertyManagerMap.put(groupTypeId, new LinkedHashMap<>());		
 		groupPropertyDefinitions.put(groupTypeId, new LinkedHashMap<>());
 		nonDefaultBearingPropertyIds.put(groupTypeId, new LinkedHashMap<>());
 		nonDefaultChecks.put(groupTypeId, new boolean[0]);
@@ -507,8 +507,6 @@ public final class GroupsDataManager extends DataManager {
 		IndexedPropertyManager indexedPropertyManager = getIndexedPropertyManager(propertyDefinition, 0);
 		managerMap.put(groupPropertyId, indexedPropertyManager);
 		DoubleValueContainer doubleValueContainer = new DoubleValueContainer(0);
-		groupPropertyTimeMap.get(groupTypeId).put(groupPropertyId, doubleValueContainer);
-		
 		Map<GroupPropertyId, PropertyDefinition> map = groupPropertyDefinitions.get(groupTypeId);
 		map.put(groupPropertyId, propertyDefinition);
 
@@ -664,9 +662,6 @@ public final class GroupsDataManager extends DataManager {
 					final Map<GroupPropertyId, IndexedPropertyManager> map = groupPropertyManagerMap.get(groupTypeId);
 					final IndexedPropertyManager indexedPropertyManager = map.get(groupPropertyId);
 					indexedPropertyManager.setPropertyValue(groupId.getValue(), value);
-					
-					DoubleValueContainer doubleValueContainer = groupPropertyTimeMap.get(groupTypeId).get(groupPropertyId);
-					doubleValueContainer.setValue(groupId.getValue(), dataManagerContext.getTime());
 				}
 			}
 		}
@@ -715,15 +710,13 @@ public final class GroupsDataManager extends DataManager {
 		validateValueCompatibility(groupPropertyId, propertyDefinition, groupPropertyValue);
 		final Map<GroupPropertyId, IndexedPropertyManager> map = groupPropertyManagerMap.get(groupTypeId);
 		final IndexedPropertyManager indexedPropertyManager = map.get(groupPropertyId);
-		DoubleValueContainer doubleValueContainer = groupPropertyTimeMap.get(groupTypeId).get(groupPropertyId);
+		
 		if (dataManagerContext.subscribersExist(GroupPropertyUpdateEvent.class)) {
 			Object oldValue = indexedPropertyManager.getPropertyValue(groupId.getValue());
-			indexedPropertyManager.setPropertyValue(groupId.getValue(), groupPropertyValue);
-			doubleValueContainer.setValue(groupId.getValue(), dataManagerContext.getTime());
+			indexedPropertyManager.setPropertyValue(groupId.getValue(), groupPropertyValue);			
 			dataManagerContext.releaseObservationEvent(new GroupPropertyUpdateEvent(groupId, groupPropertyId, oldValue, groupPropertyValue));
 		} else {
-			indexedPropertyManager.setPropertyValue(groupId.getValue(), groupPropertyValue);
-			doubleValueContainer.setValue(groupId.getValue(), dataManagerContext.getTime());
+			indexedPropertyManager.setPropertyValue(groupId.getValue(), groupPropertyValue);			
 		}
 
 	}
@@ -831,10 +824,7 @@ public final class GroupsDataManager extends DataManager {
 			final Object groupPropertyValue = propertyValues.get(groupPropertyId);
 			final Map<GroupPropertyId, IndexedPropertyManager> map = groupPropertyManagerMap.get(groupTypeId);
 			final IndexedPropertyManager indexedPropertyManager = map.get(groupPropertyId);
-			DoubleValueContainer doubleValueContainer = groupPropertyTimeMap.get(groupTypeId).get(groupPropertyId);
-			
 			indexedPropertyManager.setPropertyValue(groupId.getValue(), groupPropertyValue);
-			doubleValueContainer.setValue(groupId.getValue(), dataManagerContext.getTime());
 		}
 
 		if (dataManagerContext.subscribersExist(GroupAdditionEvent.class)) {
@@ -1116,28 +1106,6 @@ public final class GroupsDataManager extends DataManager {
 		return result;
 	}
 
-	/**
-	 * Returns the value of the group property.
-	 * 
-	 * @throws ContractException
-	 *             <li>{@linkplain GroupError#NULL_GROUP_ID} if the group id is
-	 *             null</li>
-	 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_ID} if the group id
-	 *             is unknown</li>
-	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the group
-	 *             property id is null</li>
-	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if the
-	 *             group property id is unknown</li>
-	 * 
-	 */
-	public double getGroupPropertyTime(final GroupId groupId, GroupPropertyId groupPropertyId) {
-		validateGroupExists(groupId);
-		final GroupTypeId groupTypeId = getGroupType(groupId);
-		validateGroupPropertyId(groupTypeId, groupPropertyId);
-		final Map<GroupPropertyId, DoubleValueContainer> map = groupPropertyTimeMap.get(groupTypeId);
-		final DoubleValueContainer doubleValueContainer = map.get(groupPropertyId);
-		return doubleValueContainer.getValue(groupId.getValue());
-	}
 
 	private void validateGroupExists(final GroupId groupId) {
 		if (groupId == null) {
