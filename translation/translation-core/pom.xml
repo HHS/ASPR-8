@@ -10,7 +10,7 @@
     <name>translation :: core</name>
 
     <properties>
-        <revision>2.2.0</revision>
+        <revision>2.3.0-SNAPSHOT</revision>
         <!-- basic project properties -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>17</maven.compiler.source>
