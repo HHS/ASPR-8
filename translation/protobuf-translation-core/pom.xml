@@ -4,8 +4,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>gov.hhs.aspr.translation</groupId>
-    <artifactId>protobuf-core</artifactId>
-    <name>translation :: protobuf-core</name>
+    <artifactId>protobuf-translation-core</artifactId>
+    <name>translation :: protobuf-translation-core</name>
     <version>${revision}</version>
     <packaging>jar</packaging>
 
