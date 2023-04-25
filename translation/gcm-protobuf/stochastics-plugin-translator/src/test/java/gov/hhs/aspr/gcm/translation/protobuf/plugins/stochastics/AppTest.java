@@ -7,7 +7,7 @@ import java.nio.file.Path;
 import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.stochastics.input.StochasticsPluginDataInput;
-import gov.hhs.aspr.translation.core.TranslatorController;
+import gov.hhs.aspr.translation.core.TranslationController;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslatorCore;
 import gov.hhs.aspr.translation.protobuf.core.testsupport.TestResourceHelper;
 import plugins.stochastics.StochasticsDataManager;
@@ -28,7 +28,7 @@ public class AppTest {
 
         TestResourceHelper.createTestOutputFile(filePath, fileName);
 
-        TranslatorController translatorController = TranslatorController.builder()
+        TranslationController translatorController = TranslationController.builder()
                 .setTranslatorCoreBuilder(ProtobufTranslatorCore.builder())
                 .addTranslator(StochasticsTranslator.getTranslator())
                 .addInputFilePath(filePath.resolve(fileName), StochasticsPluginDataInput.class)

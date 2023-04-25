@@ -2,9 +2,9 @@ package gov.hhs.aspr.translation.core;
 
 public class TranslatorContext {
 
-    private final TranslatorController translatorController;
+    private final TranslationController translatorController;
 
-    public TranslatorContext(TranslatorController translatorController) {
+    public TranslatorContext(TranslationController translatorController) {
         this.translatorController = translatorController;
     }
 

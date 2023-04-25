@@ -26,7 +26,7 @@ import com.google.protobuf.util.JsonFormat.Parser;
 import com.google.protobuf.util.JsonFormat.Printer;
 import com.google.protobuf.util.JsonFormat.TypeRegistry;
 
-import gov.hhs.aspr.translation.core.TranslatorSpec;
+import gov.hhs.aspr.translation.core.TranslationSpec;
 import gov.hhs.aspr.translation.core.TranslatorCore;
 import gov.hhs.aspr.translation.protobuf.core.translatorSpecs.PrimitiveTranslatorSpecs;
 
@@ -112,7 +112,7 @@ public class ProtobufTranslatorCore extends TranslatorCore {
         }
 
         @Override
-        public <I, S> Builder addTranslatorSpec(TranslatorSpec<I, S> translatorSpec) {
+        public <I, S> Builder addTranslatorSpec(TranslationSpec<I, S> translatorSpec) {
             super.addTranslatorSpec(translatorSpec);
 
             populate(translatorSpec.getInputObjectClass());

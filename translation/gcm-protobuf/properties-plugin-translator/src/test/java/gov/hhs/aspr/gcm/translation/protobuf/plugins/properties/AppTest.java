@@ -12,7 +12,7 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.testsupport.simo
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.testsupport.simobjects.TestMessageSimObject;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.testsupport.translatorSpecs.Layer1TranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.testsupport.translatorSpecs.TestMessageTranslatorSpec;
-import gov.hhs.aspr.translation.core.TranslatorController;
+import gov.hhs.aspr.translation.core.TranslationController;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslatorCore;
 import gov.hhs.aspr.translation.protobuf.core.testsupport.TestResourceHelper;
 
@@ -26,7 +26,7 @@ public class AppTest {
 
         TestResourceHelper.createTestOutputFile(filePath, fileName);
 
-        TranslatorController translatorController = TranslatorController.builder()
+        TranslationController translatorController = TranslationController.builder()
                 .setTranslatorCoreBuilder(ProtobufTranslatorCore.builder()
                         .addTranslatorSpec(new TestMessageTranslatorSpec())
                         .addTranslatorSpec(new Layer1TranslatorSpec()))

@@ -2,7 +2,7 @@ package gov.hhs.aspr.translation.core;
 
 import util.errors.ContractError;
 
-public enum TranslationCoreError implements ContractError {
+public enum CoreTranslationError implements ContractError {
 
     NULL_TRANSLATOR_ID("Null TranslatorId"),
     NULL_TRANSLATOR("Null Translator"),
@@ -22,12 +22,17 @@ public enum TranslationCoreError implements ContractError {
     INVALID_OUTPUT_PATH("The given output file path does not exist. While the file will be created on write, the directory will not."),
     DUPLICATE_CLASSREF_SCENARIO_PAIR("Duplicate ClassRef and Scenario Pair"),
     DUPLICATE_CLASSREF("Duplicate ClassRef"),
-    UNKNOWN_CLASSREF("No object has been read in with the specified classRef")
+    UNKNOWN_CLASSREF("No object has been read in with the specified classRef"),
+    NULL_TRANSLATOR_SPEC("Null TranslatorSpec"),
+    NULL_TRANSLATOR_SPEC_APP_CLASS("Null TranslatorSpec App Class"),
+    NULL_TRANSLATOR_SPEC_INPUT_CLASS("Null TranslatorSpec Input Class"),
+    DUPLICATE_TRANSLATOR_SPEC("Duplicate TranslatorSpec"),
+    UNKNOWN_TRANSLATOR_SPEC("No translator spec was provided for the given class")
     ;
 
     private final String description;
 
-    private TranslationCoreError(final String description) {
+    private CoreTranslationError(final String description) {
         this.description = description;
     }
 

@@ -2,7 +2,7 @@ package gov.hhs.aspr.translation.core;
 
 import java.util.Objects;
 
-public abstract class TranslatorSpec<I, S> implements ITranslatorSpec {
+public abstract class TranslationSpec<I, A> implements BaseTranslationSpec {
     private boolean initialized = false;
 
     public <T extends TranslatorCore> void init(T translatorCore) {
@@ -24,7 +24,7 @@ public abstract class TranslatorSpec<I, S> implements ITranslatorSpec {
         checkInit();
 
         if ((this.getAppObjectClass() == obj.getClass())) {
-            return (T) this.convertAppObject((S) obj);
+            return (T) this.convertAppObject((A) obj);
         }
 
         if ((this.getInputObjectClass() == obj.getClass())) {
@@ -32,7 +32,7 @@ public abstract class TranslatorSpec<I, S> implements ITranslatorSpec {
         }
 
         if ((this.getAppObjectClass().isAssignableFrom(obj.getClass()))) {
-            return (T) this.convertAppObject((S) obj);
+            return (T) this.convertAppObject((A) obj);
         }
 
         if ((this.getInputObjectClass().isAssignableFrom(obj.getClass()))) {
@@ -62,7 +62,7 @@ public abstract class TranslatorSpec<I, S> implements ITranslatorSpec {
         }
 
         @SuppressWarnings("rawtypes")
-        TranslatorSpec other = (TranslatorSpec) obj;
+        TranslationSpec other = (TranslationSpec) obj;
 
         if (getAppObjectClass() == other.getAppObjectClass()) {
             return false;
@@ -75,11 +75,11 @@ public abstract class TranslatorSpec<I, S> implements ITranslatorSpec {
         return initialized == other.initialized;
     }
 
-    protected abstract S convertInputObject(I inputObject);
+    protected abstract A convertInputObject(I inputObject);
 
-    protected abstract I convertAppObject(S appObject);
+    protected abstract I convertAppObject(A appObject);
 
-    public abstract Class<S> getAppObjectClass();
+    public abstract Class<A> getAppObjectClass();
 
     public abstract Class<I> getInputObjectClass();
 }

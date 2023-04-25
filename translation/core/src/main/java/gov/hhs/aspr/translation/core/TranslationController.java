@@ -31,13 +31,13 @@ import util.graph.MutableGraph;
  * types of objects. Additionally, it has the ability to distribute Input/Output
  * files for reading and writing.
  */
-public class TranslatorController {
+public class TranslationController {
     private final Data data;
     private TranslatorCore translatorCore;
     private final List<Object> objects = Collections.synchronizedList(new ArrayList<>());
     private TranslatorId focalTranslatorId = null;
 
-    private TranslatorController(Data data) {
+    private TranslationController(Data data) {
         this.data = data;
     }
 
@@ -61,35 +61,35 @@ public class TranslatorController {
 
         private void validateClassRefNotNull(Class<?> classRef) {
             if (classRef == null) {
-                throw new ContractException(TranslationCoreError.NULL_CLASS_REF);
+                throw new ContractException(CoreTranslationError.NULL_CLASS_REF);
             }
         }
 
         private void validateFilePathNotNull(Path filePath) {
             if (filePath == null) {
-                throw new ContractException(TranslationCoreError.NULL_PATH);
+                throw new ContractException(CoreTranslationError.NULL_PATH);
             }
         }
 
         private void validatePathNotDuplicate(Path filePath, boolean in, boolean out) {
             if (in && this.data.inputFilePathMap.containsKey(filePath)) {
-                throw new ContractException(TranslationCoreError.DUPLICATE_INPUT_PATH);
+                throw new ContractException(CoreTranslationError.DUPLICATE_INPUT_PATH);
             }
 
             if (out && this.data.outputFilePathMap.values().contains(filePath)) {
-                throw new ContractException(TranslationCoreError.DUPLICATE_OUTPUT_PATH);
+                throw new ContractException(CoreTranslationError.DUPLICATE_OUTPUT_PATH);
             }
         }
 
         private void validateTranslatorNotNull(Translator translator) {
             if (translator == null) {
-                throw new ContractException(TranslationCoreError.NULL_TRANSLATOR);
+                throw new ContractException(CoreTranslationError.NULL_TRANSLATOR);
             }
         }
 
         private void validateTranslatorCoreBuilderNotNull(TranslatorCore.Builder translatorCoreBuilder) {
             if (translatorCoreBuilder == null) {
-                throw new ContractException(TranslationCoreError.NULL_TRANSLATORCORE_BUILDER);
+                throw new ContractException(CoreTranslationError.NULL_TRANSLATORCORE_BUILDER);
             }
         }
 
@@ -99,13 +99,13 @@ public class TranslatorController {
          * Calls the initializer on each added {@link Translator}
          * 
          * @throws ContractException
-         *                           <li>{@linkplain TranslationCoreError#NULL_TRANSLATORCORE_BUILDER}
+         *                           <li>{@linkplain CoreTranslationError#NULL_TRANSLATORCORE_BUILDER}
          *                           if translatorCoreBuilder has not been set</li>
          */
-        public TranslatorController build() {
+        public TranslationController build() {
             validateTranslatorCoreBuilderNotNull(this.data.translatorCoreBuilder);
 
-            TranslatorController translatorController = new TranslatorController(this.data);
+            TranslationController translatorController = new TranslationController(this.data);
 
             translatorController.initTranslators();
             return translatorController;
@@ -113,16 +113,16 @@ public class TranslatorController {
 
         /**
          * Adds the path and class ref to be read from after building via
-         * {@link TranslatorController#readInput()}
+         * {@link TranslationController#readInput()}
          * 
          * @throws ContractException
-         *                           <li>{@linkplain TranslationCoreError#NULL_PATH}
+         *                           <li>{@linkplain CoreTranslationError#NULL_PATH}
          *                           if filePath is null</li>
-         *                           <li>{@linkplain TranslationCoreError#NULL_CLASS_REF}
+         *                           <li>{@linkplain CoreTranslationError#NULL_CLASS_REF}
          *                           if classRef is null</li>
-         *                           <li>{@linkplain TranslationCoreError#DUPLICATE_INPUT_PATH}
+         *                           <li>{@linkplain CoreTranslationError#DUPLICATE_INPUT_PATH}
          *                           if filePath has already been added</li>
-         *                           <li>{@linkplain TranslationCoreError#INVALID_INPUT_PATH}
+         *                           <li>{@linkplain CoreTranslationError#INVALID_INPUT_PATH}
          *                           if filePath does not exist on the system</li>
          */
         public Builder addInputFilePath(Path filePath, Class<?> classRef) {
@@ -131,7 +131,7 @@ public class TranslatorController {
             validatePathNotDuplicate(filePath, true, false);
 
             if (!filePath.toFile().exists()) {
-                throw new ContractException(TranslationCoreError.INVALID_INPUT_PATH);
+                throw new ContractException(CoreTranslationError.INVALID_INPUT_PATH);
             }
 
             this.data.inputFilePathMap.put(filePath, classRef);
@@ -140,19 +140,19 @@ public class TranslatorController {
 
         /**
          * Adds the path and class ref to be written to after building via
-         * {@link TranslatorController#writeOutput} with a scenario id of 0
+         * {@link TranslationController#writeOutput} with a scenario id of 0
          * 
          * @throws ContractException
-         *                           <li>{@linkplain TranslationCoreError#NULL_PATH}
+         *                           <li>{@linkplain CoreTranslationError#NULL_PATH}
          *                           if filePath is null</li>
-         *                           <li>{@linkplain TranslationCoreError#NULL_CLASS_REF}
+         *                           <li>{@linkplain CoreTranslationError#NULL_CLASS_REF}
          *                           if classRef is null</li>
-         *                           <li>{@linkplain TranslationCoreError#DUPLICATE_OUTPUT_PATH}
+         *                           <li>{@linkplain CoreTranslationError#DUPLICATE_OUTPUT_PATH}
          *                           if filePath has already been added</li>
-         *                           <li>{@linkplain TranslationCoreError#DUPLICATE_CLASSREF_SCENARIO_PAIR}
+         *                           <li>{@linkplain CoreTranslationError#DUPLICATE_CLASSREF_SCENARIO_PAIR}
          *                           if the classRef and scenarioId pair has already
          *                           been added</li>
-         *                           <li>{@linkplain TranslationCoreError#INVALID_OUTPUT_PATH}
+         *                           <li>{@linkplain CoreTranslationError#INVALID_OUTPUT_PATH}
          *                           if filePath does not exist on the system</li>
          */
         public Builder addOutputFilePath(Path filePath, Class<?> classRef) {
@@ -161,19 +161,19 @@ public class TranslatorController {
 
         /**
          * Adds the path and class ref to be written to after building via
-         * {@link TranslatorController#writeOutput} with the given scenarioId
+         * {@link TranslationController#writeOutput} with the given scenarioId
          * 
          * @throws ContractException
-         *                           <li>{@linkplain TranslationCoreError#NULL_PATH}
+         *                           <li>{@linkplain CoreTranslationError#NULL_PATH}
          *                           if filePath is null</li>
-         *                           <li>{@linkplain TranslationCoreError#NULL_CLASS_REF}
+         *                           <li>{@linkplain CoreTranslationError#NULL_CLASS_REF}
          *                           if classRef is null</li>
-         *                           <li>{@linkplain TranslationCoreError#DUPLICATE_OUTPUT_PATH}
+         *                           <li>{@linkplain CoreTranslationError#DUPLICATE_OUTPUT_PATH}
          *                           if filePath has already been added</li>
-         *                           <li>{@linkplain TranslationCoreError#DUPLICATE_CLASSREF_SCENARIO_PAIR}
+         *                           <li>{@linkplain CoreTranslationError#DUPLICATE_CLASSREF_SCENARIO_PAIR}
          *                           if the classRef and scenarioId pair has already
          *                           been added</li>
-         *                           <li>{@linkplain TranslationCoreError#INVALID_OUTPUT_PATH}
+         *                           <li>{@linkplain CoreTranslationError#INVALID_OUTPUT_PATH}
          *                           if filePath does not exist on the system</li>
          */
         public Builder addOutputFilePath(Path filePath, Class<?> classRef, Integer scenarioId) {
@@ -184,11 +184,11 @@ public class TranslatorController {
             Pair<Class<?>, Integer> key = new Pair<>(classRef, scenarioId);
 
             if (this.data.outputFilePathMap.containsKey(key)) {
-                throw new ContractException(TranslationCoreError.DUPLICATE_CLASSREF_SCENARIO_PAIR);
+                throw new ContractException(CoreTranslationError.DUPLICATE_CLASSREF_SCENARIO_PAIR);
             }
 
             if (!filePath.getParent().toFile().exists()) {
-                throw new ContractException(TranslationCoreError.INVALID_OUTPUT_PATH);
+                throw new ContractException(CoreTranslationError.INVALID_OUTPUT_PATH);
             }
 
             this.data.outputFilePathMap.put(key, filePath);
@@ -199,24 +199,24 @@ public class TranslatorController {
          * Adds the given classRef markerInterace mapping.
          * 
          * <li>explicitly used when calling
-         * {@link TranslatorController#writeOutput} with a class for which a classRef
+         * {@link TranslationController#writeOutput} with a class for which a classRef
          * ScenarioId pair does not exist and/or the need to output the given class as
          * the markerInterface instead of the concrete class
          * 
-         * @param <U> the parentClass/MarkerInterfaceClass
          * @param <M> the childClass
+         * @param <U> the parentClass/MarkerInterfaceClass
          * 
          * @throws ContractException
-         *                           <li>{@linkplain TranslationCoreError#NULL_CLASS_REF}
+         *                           <li>{@linkplain CoreTranslationError#NULL_CLASS_REF}
          *                           if classRef is null or if markerInterface is
          *                           null</li>
          */
-        public <U, M extends U> Builder addMarkerInterface(Class<M> classRef, Class<U> markerInterface) {
+        public <M extends U, U> Builder addMarkerInterface(Class<M> classRef, Class<U> markerInterface) {
             validateClassRefNotNull(classRef);
             validateClassRefNotNull(markerInterface);
 
             if (this.data.markerInterfaceClassMap.containsKey(classRef)) {
-                throw new ContractException(TranslationCoreError.DUPLICATE_CLASSREF);
+                throw new ContractException(CoreTranslationError.DUPLICATE_CLASSREF);
             }
 
             this.data.markerInterfaceClassMap.put(classRef, markerInterface);
@@ -227,14 +227,14 @@ public class TranslatorController {
          * Add a {@link Translator}
          * 
          * @throws ContractException
-         *                           <li>{@linkplain TranslationCoreError#NULL_TRANSLATOR}
+         *                           <li>{@linkplain CoreTranslationError#NULL_TRANSLATOR}
          *                           if translator is null</li>
          */
         public Builder addTranslator(Translator translator) {
             validateTranslatorNotNull(translator);
 
             if (this.data.translators.contains(translator)) {
-                throw new ContractException(TranslationCoreError.DUPLICATE_TRANSLATOR);
+                throw new ContractException(CoreTranslationError.DUPLICATE_TRANSLATOR);
             }
 
             this.data.translators.add(translator);
@@ -245,7 +245,7 @@ public class TranslatorController {
          * Sets the {@link TranslatorCore.Builder}
          * 
          * @throws ContractException
-         *                           <li>{@linkplain TranslationCoreError#NULL_TRANSLATORCORE_BUILDER}
+         *                           <li>{@linkplain CoreTranslationError#NULL_TRANSLATORCORE_BUILDER}
          *                           if translatorCoreBuilder is null</li>
          */
         public Builder setTranslatorCoreBuilder(TranslatorCore.Builder translatorCoreBuilder) {
@@ -269,6 +269,12 @@ public class TranslatorController {
      * type as the given classRef
      * 
      * @param <T> the class type of the TranslatorCore.Builder
+     * 
+     * @throws ContractException
+     *                           <li>{@linkplain CoreTranslationError#INVALID_TRANSLATORCORE_BUILDER}
+     *                           if the given classRef does not match the class of
+     *                           the translatorCoreBuilder
+     *                           null</li>
      */
     protected <T extends TranslatorCore.Builder> T getTranslatorCoreBuilder(Class<T> classRef) {
         if (this.translatorCore == null) {
@@ -276,7 +282,7 @@ public class TranslatorController {
                 return classRef.cast(this.data.translatorCoreBuilder);
             }
 
-            throw new ContractException(TranslationCoreError.INVALID_TRANSLATORCORE_BUILDER,
+            throw new ContractException(CoreTranslationError.INVALID_TRANSLATORCORE_BUILDER,
                     "The TranslatorCore is of type: " + this.data.translatorCoreBuilder.getClass().getName()
                             + " and the given classRef was: " + classRef.getName());
         }
@@ -292,10 +298,10 @@ public class TranslatorController {
      * Only callable through a {@link TranslatorContext} via the
      * {@link Translator#getInitializer()} consumer
      * 
-     * @param <U> the parentClass/MarkerInterfaceClass
      * @param <M> the childClass
+     * @param <U> the parentClass/MarkerInterfaceClass
      */
-    protected <U, M extends U> void addMarkerInterface(Class<M> classRef, Class<U> markerInterface) {
+    protected <M extends U, U> void addMarkerInterface(Class<M> classRef, Class<U> markerInterface) {
         this.data.markerInterfaceClassMap.put(classRef, markerInterface);
     }
 
@@ -316,16 +322,16 @@ public class TranslatorController {
      * {@link TranslatorCore}
      * to translate and write to the outputFile
      * 
-     * @param <U> the class of the object to write to the outputFile
-     * @param <M> the optional parent class of the object to write to the outputFile
+     * @param <M> the class of the object to write to the outputFile
+     * @param <U> the optional parent class of the object to write to the outputFile
      */
-    private <U, M extends U> void writeOutput(Writer writer, M object, Optional<Class<U>> superClass) {
+    private <M extends U, U> void writeOutput(Writer writer, M object, Optional<Class<U>> superClass) {
         this.translatorCore.writeOutput(writer, object, superClass);
     }
 
     private void validateCoreTranslator() {
         if (this.translatorCore == null) {
-            throw new ContractException(TranslationCoreError.NULL_TRANSLATORCORE);
+            throw new ContractException(CoreTranslationError.NULL_TRANSLATORCORE);
         }
 
         /*
@@ -345,7 +351,7 @@ public class TranslatorController {
      * Then calls the init method on the translatorCore
      * Verifies that all translatorSpecs have been initialized
      */
-    private TranslatorController initTranslators() {
+    private TranslationController initTranslators() {
         TranslatorContext translatorContext = new TranslatorContext(this);
 
         List<Translator> orderedTranslators = this.getOrderedTranslators();
@@ -367,10 +373,10 @@ public class TranslatorController {
      * Reads all provided inputFilePaths in a Parrallel manner via a parallelStream
      * 
      * @throws ContractException
-     *                           <li>{@linkplain TranslationCoreError#NULL_TRANSLATORCORE}
+     *                           <li>{@linkplain CoreTranslationError#NULL_TRANSLATORCORE}
      *                           if translatorCore is null</li>
      */
-    public TranslatorController readInputParrallel() {
+    public TranslationController readInputParrallel() {
         validateCoreTranslator();
 
         this.data.inputFilePathMap.keySet().parallelStream().forEach(path -> {
@@ -390,13 +396,13 @@ public class TranslatorController {
 
     /**
      * Creates readers for each inputFilePath and passes the reader and classRef to
-     * the TranslatorCore via {@link TranslatorController#readInput(Reader, Class)}
+     * the TranslatorCore via {@link TranslationController#readInput(Reader, Class)}
      * 
      * @throws ContractException
-     *                           <li>{@linkplain TranslationCoreError#NULL_TRANSLATORCORE}
+     *                           <li>{@linkplain CoreTranslationError#NULL_TRANSLATORCORE}
      *                           if translatorCore is null</li>
      */
-    public TranslatorController readInput() {
+    public TranslationController readInput() {
         validateCoreTranslator();
 
         for (Path path : this.data.inputFilePathMap.keySet()) {
@@ -423,10 +429,10 @@ public class TranslatorController {
      * markerInterfaceClassMap and if so, returns the resulting classRef scenarioId
      * pair
      * 
-     * @param <U> the parentClass/MarkerInterfaceClass
      * @param <M> the childClass
+     * @param <U> the optional parentClass/MarkerInterfaceClass
      */
-    private <U, M extends U> Pair<Path, Optional<Class<U>>> getOutputPath(Class<M> classRef, Integer scenarioId) {
+    private <M extends U, U> Pair<Path, Optional<Class<U>>> getOutputPath(Class<M> classRef, Integer scenarioId) {
         Pair<Class<?>, Integer> key = new Pair<>(classRef, scenarioId);
 
         if (this.data.outputFilePathMap.containsKey(key)) {
@@ -446,7 +452,7 @@ public class TranslatorController {
             }
         }
 
-        throw new ContractException(TranslationCoreError.INVALID_OUTPUT_CLASSREF,
+        throw new ContractException(CoreTranslationError.INVALID_OUTPUT_CLASSREF,
                 "No path was provided for " + classRef.getName());
     }
 
@@ -454,15 +460,15 @@ public class TranslatorController {
      * takes the list of objects and writes each object out to it's corresponding
      * outputFilePath, if it exists
      * 
-     * <li>internally calls {@link TranslatorController#writeOutput(Object)}
+     * <li>internally calls {@link TranslationController#writeOutput(Object)}
      * 
      * @param <T> the type of the list of obects to write to output
      * 
      * @throws ContractException
-     *                           <li>{@linkplain TranslationCoreError#INVALID_OUTPUT_CLASSREF}
+     *                           <li>{@linkplain CoreTranslationError#INVALID_OUTPUT_CLASSREF}
      *                           if the class of an object in the list does not have
      *                           a associated outputFilePath</li>
-     *                           <li>{@linkplain TranslationCoreError#NULL_TRANSLATORCORE}
+     *                           <li>{@linkplain CoreTranslationError#NULL_TRANSLATORCORE}
      *                           if translatorCore is null</li>
      */
     public <T> void writeOutput(List<T> objects) {
@@ -477,16 +483,16 @@ public class TranslatorController {
      * outputFilePath, if it exists
      * 
      * <li>internally calls
-     * {@link TranslatorController#writeOutput(Object, Integer)}
+     * {@link TranslationController#writeOutput(Object, Integer)}
      * 
      * @param <T> the type of the list of obects to write to output
      * 
      * @throws ContractException
-     *                           <li>{@linkplain TranslationCoreError#INVALID_OUTPUT_CLASSREF}
+     *                           <li>{@linkplain CoreTranslationError#INVALID_OUTPUT_CLASSREF}
      *                           if the class of an object in the list paired with
      *                           the scenarioId does not have
      *                           a associated outputFilePath</li>
-     *                           <li>{@linkplain TranslationCoreError#NULL_TRANSLATORCORE}
+     *                           <li>{@linkplain CoreTranslationError#NULL_TRANSLATORCORE}
      *                           if translatorCore is null</li>
      */
     public <T> void writeOutput(List<T> objects, Integer scenarioId) {
@@ -499,16 +505,16 @@ public class TranslatorController {
      * takes the given object and writes it out to it's corresponding
      * outputFilePath, if it exists
      * <li>internally calls
-     * {@link TranslatorController#writeOutput(Object, Integer)}
+     * {@link TranslationController#writeOutput(Object, Integer)}
      * with a scenarioId of 0
      * 
      * @param <T> the type of the list of obects to write to output
      * 
      * @throws ContractException
-     *                           <li>{@linkplain TranslationCoreError#INVALID_OUTPUT_CLASSREF}
+     *                           <li>{@linkplain CoreTranslationError#INVALID_OUTPUT_CLASSREF}
      *                           if the class of the object does not have a
      *                           associated outputFilePath</li>
-     *                           <li>{@linkplain TranslationCoreError#NULL_TRANSLATORCORE}
+     *                           <li>{@linkplain CoreTranslationError#NULL_TRANSLATORCORE}
      *                           if translatorCore is null</li>
      */
     public <T> void writeOutput(T object) {
@@ -520,22 +526,22 @@ public class TranslatorController {
      * corresponding
      * outputFilePath, if it exists
      * <li>internally calls
-     * {@link TranslatorController#writeOutput(Object, Integer)}
+     * {@link TranslationController#writeOutput(Object, Integer)}
      * with a scenarioId of 0
      * 
-     * @param <U> the optional type of the parent class of the object
      * @param <M> the classType of the object
+     * @param <U> the optional type of the parent class of the object
      * 
      * @throws ContractException
-     *                           <li>{@linkplain TranslationCoreError#INVALID_OUTPUT_CLASSREF}
+     *                           <li>{@linkplain CoreTranslationError#INVALID_OUTPUT_CLASSREF}
      *                           if the class of the object paired with the
      *                           scenarioId does not have a associated
      *                           outputFilePath</li>
-     *                           <li>{@linkplain TranslationCoreError#NULL_TRANSLATORCORE}
+     *                           <li>{@linkplain CoreTranslationError#NULL_TRANSLATORCORE}
      *                           if translatorCore is null</li>
      */
     @SuppressWarnings("unchecked")
-    public <U, M extends U> void writeOutput(M object, Integer scenarioId) {
+    public <M extends U, U> void writeOutput(M object, Integer scenarioId) {
         validateCoreTranslator();
         // this gives an unchecked warning, surprisingly
         Class<M> classRef = (Class<M>) object.getClass();
@@ -557,7 +563,7 @@ public class TranslatorController {
      * @param <T> the type of the obect to get
      * 
      * @throws ContractException
-     *                           <li>{@linkplain TranslationCoreError#UNKNOWN_CLASSREF}
+     *                           <li>{@linkplain CoreTranslationError#UNKNOWN_CLASSREF}
      *                           if no object with the specified class is found</li>
      */
     public <T> T getFirstObject(Class<T> classRef) {
@@ -567,7 +573,7 @@ public class TranslatorController {
             }
         }
 
-        throw new ContractException(TranslationCoreError.UNKNOWN_CLASSREF);
+        throw new ContractException(CoreTranslationError.UNKNOWN_CLASSREF);
     }
 
     /**
@@ -577,7 +583,7 @@ public class TranslatorController {
      * @param <T> the type of the obect to get
      * 
      * @throws ContractException
-     *                           <li>{@linkplain TranslationCoreError#UNKNOWN_CLASSREF}
+     *                           <li>{@linkplain CoreTranslationError#UNKNOWN_CLASSREF}
      *                           if no object with the specified class is found</li>
      */
     public <T> List<T> getObjects(Class<T> classRef) {
@@ -589,7 +595,7 @@ public class TranslatorController {
         }
 
         if (objects.size() == 0) {
-            throw new ContractException(TranslationCoreError.UNKNOWN_CLASSREF);
+            throw new ContractException(CoreTranslationError.UNKNOWN_CLASSREF);
         }
 
         return objects;

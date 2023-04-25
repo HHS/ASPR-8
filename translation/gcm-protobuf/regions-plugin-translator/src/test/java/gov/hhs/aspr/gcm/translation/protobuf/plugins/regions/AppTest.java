@@ -18,7 +18,7 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.input.RegionPropert
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.input.RegionTransferReportPluginDataInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.input.RegionsPluginDataInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.ReportsTranslator;
-import gov.hhs.aspr.translation.core.TranslatorController;
+import gov.hhs.aspr.translation.core.TranslationController;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslatorCore;
 import gov.hhs.aspr.translation.protobuf.core.testsupport.TestResourceHelper;
 import plugins.people.support.PersonId;
@@ -44,7 +44,7 @@ public class AppTest {
 
         TestResourceHelper.createTestOutputFile(filePath, fileName);
 
-        TranslatorController translatorController = TranslatorController.builder()
+        TranslationController translatorController = TranslationController.builder()
                 .setTranslatorCoreBuilder(ProtobufTranslatorCore.builder())
                 .addTranslator(RegionsTranslator.getTranslator())
                 .addTranslator(PropertiesTranslator.getTranslator())
@@ -78,7 +78,7 @@ public class AppTest {
 
         TestResourceHelper.createTestOutputFile(filePath, fileName);
 
-        TranslatorController translatorController = TranslatorController.builder()
+        TranslationController translatorController = TranslationController.builder()
                 .setTranslatorCoreBuilder(ProtobufTranslatorCore.builder())
                 .addTranslator(RegionsTranslator.getTranslatorWithReport())
                 .addTranslator(PropertiesTranslator.getTranslator())
@@ -127,7 +127,7 @@ public class AppTest {
 
         TestResourceHelper.createTestOutputFile(filePath, fileName);
 
-        TranslatorController translatorController = TranslatorController.builder()
+        TranslationController translatorController = TranslationController.builder()
                 .setTranslatorCoreBuilder(ProtobufTranslatorCore.builder())
                 .addTranslator(RegionsTranslator.getTranslatorWithReport())
                 .addTranslator(PropertiesTranslator.getTranslator())

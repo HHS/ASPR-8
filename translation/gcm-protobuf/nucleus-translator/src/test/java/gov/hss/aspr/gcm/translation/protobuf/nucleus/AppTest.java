@@ -9,7 +9,7 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.gcm.translation.protobuf.nucleus.input.SimulationStateInput;
-import gov.hhs.aspr.translation.core.TranslatorController;
+import gov.hhs.aspr.translation.core.TranslationController;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslatorCore;
 import gov.hhs.aspr.translation.protobuf.core.testsupport.TestResourceHelper;
 import gov.hss.aspr.gcm.translation.protobuf.nucleus.simObjects.ExamplePlanData;
@@ -29,7 +29,7 @@ public class AppTest {
 
         TestResourceHelper.createTestOutputFile(filePath, fileName);
 
-        TranslatorController translatorController = TranslatorController.builder()
+        TranslationController translatorController = TranslationController.builder()
                 .setTranslatorCoreBuilder(ProtobufTranslatorCore.builder()
                         .addTranslatorSpec(new ExamplePlanDataTranslatorSpec()))
                 .addTranslator(NucleusTranslator.getTranslator())

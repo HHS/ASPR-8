@@ -16,7 +16,7 @@ import com.google.protobuf.UInt64Value;
 import com.google.protobuf.Descriptors.Descriptor;
 import com.google.type.Date;
 
-import gov.hhs.aspr.translation.core.ITranslatorSpec;
+import gov.hhs.aspr.translation.core.BaseTranslationSpec;
 import gov.hhs.aspr.translation.protobuf.core.input.WrapperEnumValue;
 
 public class PrimitiveTranslatorSpecs {
@@ -50,8 +50,8 @@ public class PrimitiveTranslatorSpecs {
         return set;
     }
 
-    public static Set<ITranslatorSpec> getPrimitiveTranslatorSpecs() {
-        Set<ITranslatorSpec> set = new LinkedHashSet<>();
+    public static Set<BaseTranslationSpec> getPrimitiveTranslatorSpecs() {
+        Set<BaseTranslationSpec> set = new LinkedHashSet<>();
 
         set.addAll(getPrimitiveInputTranslatorSpecMap().values());
         set.addAll(getPrimitiveObjectTranslatorSpecMap().values());
@@ -86,8 +86,8 @@ public class PrimitiveTranslatorSpecs {
         return map;
     }
 
-    public static Map<Class<?>, ITranslatorSpec> getPrimitiveInputTranslatorSpecMap() {
-        Map<Class<?>, ITranslatorSpec> map = new LinkedHashMap<>();
+    public static Map<Class<?>, BaseTranslationSpec> getPrimitiveInputTranslatorSpecMap() {
+        Map<Class<?>, BaseTranslationSpec> map = new LinkedHashMap<>();
 
         map.put(BOOLEAN_TRANSLATOR_SPEC.getInputObjectClass(), BOOLEAN_TRANSLATOR_SPEC);
         map.put(INT32_TRANSLATOR_SPEC.getInputObjectClass(), INT32_TRANSLATOR_SPEC);
@@ -104,8 +104,8 @@ public class PrimitiveTranslatorSpecs {
         return map;
     }
 
-    public static Map<Class<?>, ITranslatorSpec> getPrimitiveObjectTranslatorSpecMap() {
-        Map<Class<?>, ITranslatorSpec> map = new LinkedHashMap<>();
+    public static Map<Class<?>, BaseTranslationSpec> getPrimitiveObjectTranslatorSpecMap() {
+        Map<Class<?>, BaseTranslationSpec> map = new LinkedHashMap<>();
 
         // no java version of unsigned int nor unsigned long
         map.put(BOOLEAN_TRANSLATOR_SPEC.getAppObjectClass(), BOOLEAN_TRANSLATOR_SPEC);
