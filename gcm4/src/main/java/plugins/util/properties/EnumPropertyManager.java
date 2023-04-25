@@ -1,6 +1,5 @@
 package plugins.util.properties;
 
-import nucleus.SimulationContext;
 import plugins.util.properties.arraycontainers.EnumContainer;
 import util.errors.ContractException;
 
@@ -28,8 +27,8 @@ public final class EnumPropertyManager extends AbstractIndexedPropertyManager {
 	 *             property definition's type is not an enumeration</li>
 	 * 
 	 */
-	public EnumPropertyManager(SimulationContext simulationContext, PropertyDefinition propertyDefinition, int initialSize) {
-		super(simulationContext, propertyDefinition, initialSize);
+	public EnumPropertyManager(PropertyDefinition propertyDefinition, int initialSize) {
+		super(propertyDefinition, initialSize);
 
 		
 		Object defaultValue = null;

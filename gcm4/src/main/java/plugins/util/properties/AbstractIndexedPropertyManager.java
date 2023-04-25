@@ -1,7 +1,5 @@
 package plugins.util.properties;
 
-import nucleus.SimulationContext;
-import plugins.util.properties.arraycontainers.DoubleValueContainer;
 import util.errors.ContractException;
 
 /**
@@ -20,19 +18,6 @@ import util.errors.ContractException;
  */
 public abstract class AbstractIndexedPropertyManager implements IndexedPropertyManager {
 
-	/*
-	 * Contains the assignment times for this property value. Subject to
-	 * tracking policy.
-	 */
-	private DoubleValueContainer timeTrackingContainer;
-
-	/*
-	 * The time tracking policy.
-	 */
-	private final boolean trackTime;
-
-	private SimulationContext simulationContext;
-
 	/**
 	 * Constructs an AbstractPropertyManger. Establishes the time tracking and
 	 * map option policies from the environment. Establishes the property value
@@ -46,18 +31,16 @@ public abstract class AbstractIndexedPropertyManager implements IndexedPropertyM
 	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION} if
 	 *             the property definition is null</li>
 	 */
-	public AbstractIndexedPropertyManager(SimulationContext simulationContext, PropertyDefinition propertyDefinition, int initialSize) {
-		this.simulationContext = simulationContext;
+	public AbstractIndexedPropertyManager(PropertyDefinition propertyDefinition, int initialSize) {
+
 		if (propertyDefinition == null) {
 			throw new ContractException(PropertyError.NULL_PROPERTY_DEFINITION);
 		}
-		trackTime = propertyDefinition.getTimeTrackingPolicy() == TimeTrackingPolicy.TRACK_TIME;
+		
 		if (initialSize < 0) {
 			throw new ContractException(PropertyError.NEGATIVE_INITIAL_SIZE);
 		}
-		if (trackTime) {
-			timeTrackingContainer = new DoubleValueContainer(simulationContext.getTime(), initialSize);
-		}
+		
 	}
 
 	@Override
@@ -68,24 +51,9 @@ public abstract class AbstractIndexedPropertyManager implements IndexedPropertyM
 		if (id < 0) {
 			throw new ContractException(PropertyError.NEGATIVE_INDEX);
 		}
-		if (trackTime) {
-			timeTrackingContainer.setValue(id, simulationContext.getTime());
-		}
+		
 	}
 
-	@Override
-	public final double getPropertyTime(int id) {
-		if (id < 0) {
-			throw new ContractException(PropertyError.NEGATIVE_INDEX);
-		}
-
-		if (trackTime) {
-			return timeTrackingContainer.getValue(id);
-		}
-
-		throw new ContractException(PropertyError.TIME_TRACKING_OFF);
-
-	}
 
 	@Override
 	public void removeId(int id) {
@@ -98,9 +66,6 @@ public abstract class AbstractIndexedPropertyManager implements IndexedPropertyM
 	public void incrementCapacity(int count) {
 		if (count < 0) {
 			throw new ContractException(PropertyError.NEGATIVE_CAPACITY_INCREMENT);
-		}
-		if (trackTime) {
-			timeTrackingContainer.setCapacity(timeTrackingContainer.getCapacity() + count);
 		}
 	}
 }

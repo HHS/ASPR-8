@@ -8,16 +8,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.stream.IntStream;
 
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import nucleus.DataManagerContext;
-import nucleus.SimulationContext;
-import nucleus.testsupport.testplugin.TestActorPlan;
-import nucleus.testsupport.testplugin.TestDataManager;
-import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestPluginFactory;
 import nucleus.testsupport.testplugin.TestPluginFactory.Factory;
 import nucleus.testsupport.testplugin.TestSimulation;
@@ -44,7 +38,7 @@ public class AT_BooleanPropertyManager {
 
 			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(false).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
 
-			BooleanPropertyManager booleanPropertyManager = new BooleanPropertyManager(c, propertyDefinition, 0);
+			BooleanPropertyManager booleanPropertyManager = new BooleanPropertyManager(propertyDefinition, 0);
 
 			/*
 			 * We will set the first 300 values multiple times at random
@@ -81,70 +75,6 @@ public class AT_BooleanPropertyManager {
 
 	}
 
-	/*
-	 * Local data manager used to properly initialize an BooleanPropertyManager
-	 * for use in time sensitive tests
-	 */
-	private static class LocalDM extends TestDataManager {
-		protected BooleanPropertyManager booleanPropertyManager;
-
-		@Override
-		public void init(DataManagerContext dataManagerContext) {
-			super.init(dataManagerContext);
-			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(false).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
-			booleanPropertyManager = new BooleanPropertyManager(dataManagerContext, propertyDefinition, 0);
-		}
-	}
-
-	@Test
-	@UnitTestMethod(target = BooleanPropertyManager.class, name = "getPropertyTime", args = { int.class })
-	public void testGetPropertyTime() {
-		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6779797760333524552L);
-
-		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
-
-		IntStream.range(0, 1000).forEach((i -> {
-			pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(i, (c) -> {
-				LocalDM localDM = c.getDataManager(LocalDM.class);
-				int id = randomGenerator.nextInt(300);
-				boolean value = randomGenerator.nextBoolean();
-				BooleanPropertyManager booleanPropertyManager = localDM.booleanPropertyManager;
-				booleanPropertyManager.setPropertyValue(id, value);
-				// show that the property time for the id was properly set
-				assertEquals(c.getTime(), booleanPropertyManager.getPropertyTime(id), 0);
-			}));
-		}));
-
-		// add the local data manager
-		pluginDataBuilder.addTestDataManager("dm", () -> new LocalDM());
-
-		// build and run the simulation
-		TestPluginData testPluginData = pluginDataBuilder.build();
-		Factory factory = TestPluginFactory.factory(testPluginData);
-		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
-
-		// precondition tests:
-		ContractException contractException = assertThrows(ContractException.class, () -> {
-			Factory factory2 = TestPluginFactory.factory((c) -> {
-				PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(false).build();
-				BooleanPropertyManager booleanPropertyManager = new BooleanPropertyManager(c, propertyDefinition, 0);
-				booleanPropertyManager.getPropertyTime(0);			
-			});
-			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
-		});
-		assertEquals(PropertyError.TIME_TRACKING_OFF, contractException.getErrorType());
-
-		contractException = assertThrows(ContractException.class, () -> {
-			Factory factory2 = TestPluginFactory.factory((c) -> {
-				PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(false).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
-				BooleanPropertyManager booleanPropertyManager = new BooleanPropertyManager(c, propertyDefinition, 0);
-				booleanPropertyManager.getPropertyTime(-1);
-			});
-			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
-		});
-		assertEquals(PropertyError.NEGATIVE_INDEX, contractException.getErrorType());
-	}
-
 	@Test
 	@UnitTestMethod(target = BooleanPropertyManager.class, name = "setPropertyValue", args = { int.class, Object.class })
 	public void testSetPropertyValue() {
@@ -153,7 +83,7 @@ public class AT_BooleanPropertyManager {
 
 			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(false).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
 
-			BooleanPropertyManager booleanPropertyManager = new BooleanPropertyManager(c, propertyDefinition, 0);
+			BooleanPropertyManager booleanPropertyManager = new BooleanPropertyManager(propertyDefinition, 0);
 
 			/*
 			 * We will set the first 300 values multiple times at random
@@ -197,7 +127,7 @@ public class AT_BooleanPropertyManager {
 			// we will first test the manager with an initial value of false
 			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(false).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
 
-			BooleanPropertyManager booleanPropertyManager = new BooleanPropertyManager(c, propertyDefinition, 0);
+			BooleanPropertyManager booleanPropertyManager = new BooleanPropertyManager(propertyDefinition, 0);
 
 			// initially, the value should be the default value for the manager
 			assertFalse((Boolean) booleanPropertyManager.getPropertyValue(5));
@@ -217,7 +147,7 @@ public class AT_BooleanPropertyManager {
 			// we will next test the manager with an initial value of true
 			propertyDefinition = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(true).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
 
-			booleanPropertyManager = new BooleanPropertyManager(c, propertyDefinition, 0);
+			booleanPropertyManager = new BooleanPropertyManager(propertyDefinition, 0);
 
 			// initially, the value should be the default value for the manager
 			assertTrue((Boolean) booleanPropertyManager.getPropertyValue(5));
@@ -236,7 +166,7 @@ public class AT_BooleanPropertyManager {
 
 			// precondition tests
 			PropertyDefinition def = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(true).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
-			BooleanPropertyManager bpm = new BooleanPropertyManager(c, def, 0);
+			BooleanPropertyManager bpm = new BooleanPropertyManager(def, 0);
 
 			ContractException contractException = assertThrows(ContractException.class, () -> bpm.removeId(-1));
 			assertEquals(PropertyError.NEGATIVE_INDEX, contractException.getErrorType());
@@ -245,7 +175,7 @@ public class AT_BooleanPropertyManager {
 	}
 
 	@Test
-	@UnitTestConstructor(target = BooleanPropertyManager.class, args = { SimulationContext.class, PropertyDefinition.class, int.class })
+	@UnitTestConstructor(target = BooleanPropertyManager.class, args = { PropertyDefinition.class, int.class })
 	public void testConstructor() {
 		Factory factory = TestPluginFactory.factory((c) -> {
 
@@ -255,18 +185,18 @@ public class AT_BooleanPropertyManager {
 			// precondition tests
 
 			// if the property definition is null
-			ContractException contractException = assertThrows(ContractException.class, () -> new BooleanPropertyManager(c, null, 0));
+			ContractException contractException = assertThrows(ContractException.class, () -> new BooleanPropertyManager(null, 0));
 			assertEquals(PropertyError.NULL_PROPERTY_DEFINITION, contractException.getErrorType());
 
 			// if the property definition does not have a type of Boolean.class
-			contractException = assertThrows(ContractException.class, () -> new BooleanPropertyManager(c, badPropertyDefinition, 0));
+			contractException = assertThrows(ContractException.class, () -> new BooleanPropertyManager(badPropertyDefinition, 0));
 			assertEquals(PropertyError.PROPERTY_DEFINITION_IMPROPER_TYPE, contractException.getErrorType());
 
 			// if the initial size is negative
-			contractException = assertThrows(ContractException.class, () -> new BooleanPropertyManager(c, goodPropertyDefinition, -1));
+			contractException = assertThrows(ContractException.class, () -> new BooleanPropertyManager(goodPropertyDefinition, -1));
 			assertEquals(PropertyError.NEGATIVE_INITIAL_SIZE, contractException.getErrorType());
 
-			BooleanPropertyManager booleanPropertyManager = new BooleanPropertyManager(c, goodPropertyDefinition, 0);
+			BooleanPropertyManager booleanPropertyManager = new BooleanPropertyManager(goodPropertyDefinition, 0);
 			assertNotNull(booleanPropertyManager);
 		});
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
@@ -279,7 +209,7 @@ public class AT_BooleanPropertyManager {
 
 			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(false).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
 
-			BooleanPropertyManager booleanPropertyManager = new BooleanPropertyManager(c, propertyDefinition, 0);
+			BooleanPropertyManager booleanPropertyManager = new BooleanPropertyManager(propertyDefinition, 0);
 
 			// precondition tests
 			ContractException contractException = assertThrows(ContractException.class, () -> booleanPropertyManager.incrementCapacity(-1));

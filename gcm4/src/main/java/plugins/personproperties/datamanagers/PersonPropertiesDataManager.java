@@ -16,7 +16,6 @@ import nucleus.DataManagerContext;
 import nucleus.Event;
 import nucleus.EventFilter;
 import nucleus.IdentifiableFunctionMap;
-import nucleus.SimulationContext;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.events.PersonImminentAdditionEvent;
 import plugins.people.events.PersonRemovalEvent;
@@ -289,27 +288,27 @@ public final class PersonPropertiesDataManager extends DataManager {
 							.build();
 	}
 
-	private IndexedPropertyManager getIndexedPropertyManager(final SimulationContext simulationContext, final PropertyDefinition propertyDefinition, final int intialSize) {
+	private IndexedPropertyManager getIndexedPropertyManager(final PropertyDefinition propertyDefinition, final int intialSize) {
 
 		IndexedPropertyManager indexedPropertyManager;
 		if (propertyDefinition.getType() == Boolean.class) {
-			indexedPropertyManager = new BooleanPropertyManager(simulationContext, propertyDefinition, intialSize);
+			indexedPropertyManager = new BooleanPropertyManager(propertyDefinition, intialSize);
 		} else if (propertyDefinition.getType() == Float.class) {
-			indexedPropertyManager = new FloatPropertyManager(simulationContext, propertyDefinition, intialSize);
+			indexedPropertyManager = new FloatPropertyManager(propertyDefinition, intialSize);
 		} else if (propertyDefinition.getType() == Double.class) {
-			indexedPropertyManager = new DoublePropertyManager(simulationContext, propertyDefinition, intialSize);
+			indexedPropertyManager = new DoublePropertyManager(propertyDefinition, intialSize);
 		} else if (propertyDefinition.getType() == Byte.class) {
-			indexedPropertyManager = new IntPropertyManager(simulationContext, propertyDefinition, intialSize);
+			indexedPropertyManager = new IntPropertyManager(propertyDefinition, intialSize);
 		} else if (propertyDefinition.getType() == Short.class) {
-			indexedPropertyManager = new IntPropertyManager(simulationContext, propertyDefinition, intialSize);
+			indexedPropertyManager = new IntPropertyManager(propertyDefinition, intialSize);
 		} else if (propertyDefinition.getType() == Integer.class) {
-			indexedPropertyManager = new IntPropertyManager(simulationContext, propertyDefinition, intialSize);
+			indexedPropertyManager = new IntPropertyManager(propertyDefinition, intialSize);
 		} else if (propertyDefinition.getType() == Long.class) {
-			indexedPropertyManager = new IntPropertyManager(simulationContext, propertyDefinition, intialSize);
+			indexedPropertyManager = new IntPropertyManager(propertyDefinition, intialSize);
 		} else if (Enum.class.isAssignableFrom(propertyDefinition.getType())) {
-			indexedPropertyManager = new EnumPropertyManager(simulationContext, propertyDefinition, intialSize);
+			indexedPropertyManager = new EnumPropertyManager(propertyDefinition, intialSize);
 		} else {
-			indexedPropertyManager = new ObjectPropertyManager(simulationContext, propertyDefinition, intialSize);
+			indexedPropertyManager = new ObjectPropertyManager(propertyDefinition, intialSize);
 		}
 		return indexedPropertyManager;
 	}
@@ -575,7 +574,7 @@ public final class PersonPropertiesDataManager extends DataManager {
 		}
 
 		personPropertyDefinitions.put(personPropertyId, propertyDefinition);
-		final IndexedPropertyManager propertyManager = getIndexedPropertyManager(dataManagerContext, propertyDefinition, 0);
+		final IndexedPropertyManager propertyManager = getIndexedPropertyManager(propertyDefinition, 0);
 		personPropertyManagerMap.put(personPropertyId, propertyManager);
 
 		if (propertyDefinition.getTimeTrackingPolicy() == TimeTrackingPolicy.TRACK_TIME) {
@@ -646,7 +645,7 @@ public final class PersonPropertiesDataManager extends DataManager {
 				nonDefaultBearingPropertyIds.put(personPropertyId, nonDefaultBearingPropertyIds.size());
 			}
 			personPropertyDefinitions.put(personPropertyId, personPropertyDefinition);
-			final IndexedPropertyManager indexedPropertyManager = getIndexedPropertyManager(dataManagerContext, personPropertyDefinition, 0);
+			final IndexedPropertyManager indexedPropertyManager = getIndexedPropertyManager(personPropertyDefinition, 0);
 			personPropertyManagerMap.put(personPropertyId, indexedPropertyManager);
 
 			if (personPropertyDefinition.getTimeTrackingPolicy() == TimeTrackingPolicy.TRACK_TIME) {

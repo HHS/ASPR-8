@@ -19,7 +19,6 @@ import nucleus.Event;
 import nucleus.EventFilter;
 import nucleus.IdentifiableFunctionMap;
 import nucleus.NucleusError;
-import nucleus.SimulationContext;
 import plugins.groups.GroupsPluginData;
 import plugins.groups.events.GroupAdditionEvent;
 import plugins.groups.events.GroupImminentRemovalEvent;
@@ -299,7 +298,7 @@ public final class GroupsDataManager extends DataManager {
 				map.put(groupPropertyId, propertyDefinition);
 				
 				Map<GroupPropertyId, IndexedPropertyManager> managerMap = groupPropertyManagerMap.get(groupTypeId);
-				final IndexedPropertyManager indexedPropertyManager = getIndexedPropertyManager(dataManagerContext, propertyDefinition, 0);
+				final IndexedPropertyManager indexedPropertyManager = getIndexedPropertyManager( propertyDefinition, 0);
 				managerMap.put(groupPropertyId, indexedPropertyManager);
 				
 				groupPropertyTimeMap.get(groupTypeId).put(groupPropertyId, new DoubleValueContainer(0));
@@ -505,7 +504,7 @@ public final class GroupsDataManager extends DataManager {
 
 		// integrate the new group property id and definition
 		Map<GroupPropertyId, IndexedPropertyManager> managerMap = groupPropertyManagerMap.get(groupTypeId);
-		IndexedPropertyManager indexedPropertyManager = getIndexedPropertyManager(dataManagerContext, propertyDefinition, 0);
+		IndexedPropertyManager indexedPropertyManager = getIndexedPropertyManager(propertyDefinition, 0);
 		managerMap.put(groupPropertyId, indexedPropertyManager);
 		DoubleValueContainer doubleValueContainer = new DoubleValueContainer(0);
 		groupPropertyTimeMap.get(groupTypeId).put(groupPropertyId, doubleValueContainer);
@@ -1315,27 +1314,27 @@ public final class GroupsDataManager extends DataManager {
 		return new ArrayList<>(types);
 	}
 
-	private IndexedPropertyManager getIndexedPropertyManager(final SimulationContext simulationContext, final PropertyDefinition propertyDefinition, final int intialSize) {
+	private IndexedPropertyManager getIndexedPropertyManager( final PropertyDefinition propertyDefinition, final int intialSize) {
 
 		IndexedPropertyManager indexedPropertyManager;
 		if (propertyDefinition.getType() == Boolean.class) {
-			indexedPropertyManager = new BooleanPropertyManager(simulationContext, propertyDefinition, intialSize);
+			indexedPropertyManager = new BooleanPropertyManager(propertyDefinition, intialSize);
 		} else if (propertyDefinition.getType() == Float.class) {
-			indexedPropertyManager = new FloatPropertyManager(simulationContext, propertyDefinition, intialSize);
+			indexedPropertyManager = new FloatPropertyManager(propertyDefinition, intialSize);
 		} else if (propertyDefinition.getType() == Double.class) {
-			indexedPropertyManager = new DoublePropertyManager(simulationContext, propertyDefinition, intialSize);
+			indexedPropertyManager = new DoublePropertyManager(propertyDefinition, intialSize);
 		} else if (propertyDefinition.getType() == Byte.class) {
-			indexedPropertyManager = new IntPropertyManager(simulationContext, propertyDefinition, intialSize);
+			indexedPropertyManager = new IntPropertyManager(propertyDefinition, intialSize);
 		} else if (propertyDefinition.getType() == Short.class) {
-			indexedPropertyManager = new IntPropertyManager(simulationContext, propertyDefinition, intialSize);
+			indexedPropertyManager = new IntPropertyManager(propertyDefinition, intialSize);
 		} else if (propertyDefinition.getType() == Integer.class) {
-			indexedPropertyManager = new IntPropertyManager(simulationContext, propertyDefinition, intialSize);
+			indexedPropertyManager = new IntPropertyManager(propertyDefinition, intialSize);
 		} else if (propertyDefinition.getType() == Long.class) {
-			indexedPropertyManager = new IntPropertyManager(simulationContext, propertyDefinition, intialSize);
+			indexedPropertyManager = new IntPropertyManager(propertyDefinition, intialSize);
 		} else if (Enum.class.isAssignableFrom(propertyDefinition.getType())) {
-			indexedPropertyManager = new EnumPropertyManager(simulationContext, propertyDefinition, intialSize);
+			indexedPropertyManager = new EnumPropertyManager(propertyDefinition, intialSize);
 		} else {
-			indexedPropertyManager = new ObjectPropertyManager(simulationContext, propertyDefinition, intialSize);
+			indexedPropertyManager = new ObjectPropertyManager(propertyDefinition, intialSize);
 		}
 		return indexedPropertyManager;
 	}

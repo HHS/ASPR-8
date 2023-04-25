@@ -6,16 +6,12 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.stream.IntStream;
 
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import nucleus.DataManagerContext;
-import nucleus.SimulationContext;
-import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestDataManager;
-import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestPluginFactory;
 import nucleus.testsupport.testplugin.TestPluginFactory.Factory;
 import nucleus.testsupport.testplugin.TestSimulation;
@@ -42,7 +38,7 @@ public class AT_IntPropertyManager {
 			int defaultValue = 423;
 			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(defaultValue).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
 
-			IntPropertyManager intPropertyManager = new IntPropertyManager(c, propertyDefinition, 0);
+			IntPropertyManager intPropertyManager = new IntPropertyManager(propertyDefinition, 0);
 
 			/*
 			 * We will set the first 300 values multiple times at random
@@ -88,63 +84,8 @@ public class AT_IntPropertyManager {
 		public void init(DataManagerContext dataManagerContext) {
 			super.init(dataManagerContext);
 			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(342).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
-			intPropertyManager = new IntPropertyManager(dataManagerContext, propertyDefinition, 0);
+			intPropertyManager = new IntPropertyManager(propertyDefinition, 0);
 		}
-	}
-
-	@Test
-	@UnitTestMethod(target = IntPropertyManager.class, name = "getPropertyTime", args = { int.class })
-	public void testGetPropertyTime() {
-
-		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7115872240650739867L);
-
-		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
-
-		// Plan 1000 changes
-		IntStream.range(0, 1000).forEach((i -> {
-			pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(i, (c) -> {
-				LocalDM localDM = c.getDataManager(LocalDM.class);
-				int id = randomGenerator.nextInt(300);
-				int value = randomGenerator.nextInt();
-
-				IntPropertyManager intPropertyManager = localDM.intPropertyManager;
-
-				intPropertyManager.setPropertyValue(id, value);
-				// show that the property time for the id was properly set
-				assertEquals(c.getTime(), intPropertyManager.getPropertyTime(id), 0);
-			}));
-		}));
-		
-		// add the local data manager
-		pluginDataBuilder.addTestDataManager("dm", ()->new LocalDM());
-		
-		TestPluginData testPluginData = pluginDataBuilder.build();
-		
-		Factory factory = TestPluginFactory.factory(testPluginData);
-		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
-		
-
-		// precondition tests:
-		ContractException contractException = assertThrows(ContractException.class, () ->{
-			Factory factory2 = TestPluginFactory.factory((c) -> {
-				PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(2).build();
-				IntPropertyManager ipm = new IntPropertyManager(c, propertyDefinition, 0);
-				ipm.getPropertyTime(0);			
-			});
-			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
-		});
-		assertEquals(PropertyError.TIME_TRACKING_OFF, contractException.getErrorType());
-		
-		
-		contractException = assertThrows(ContractException.class, () ->{
-			Factory factory2 = TestPluginFactory.factory((c) -> {
-				PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(2).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
-				IntPropertyManager ipm = new IntPropertyManager(c, propertyDefinition, 0);
-				ipm.getPropertyTime(-1);			
-			});
-			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
-		});
-		assertEquals(PropertyError.NEGATIVE_INDEX, contractException.getErrorType());
 	}
 
 	@Test
@@ -156,7 +97,7 @@ public class AT_IntPropertyManager {
 			int defaultValue = 423;
 			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(defaultValue).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
 
-			IntPropertyManager intPropertyManager = new IntPropertyManager(c, propertyDefinition, 0);
+			IntPropertyManager intPropertyManager = new IntPropertyManager(propertyDefinition, 0);
 
 			/*
 			 * We will set the first 300 values multiple times at random
@@ -204,7 +145,7 @@ public class AT_IntPropertyManager {
 			int defaultValue = 6;
 			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(defaultValue).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
 
-			IntPropertyManager intPropertyManager = new IntPropertyManager(c, propertyDefinition, 0);
+			IntPropertyManager intPropertyManager = new IntPropertyManager(propertyDefinition, 0);
 
 			// initially, the value should be the default value for the manager
 			assertEquals(defaultValue, ((Integer) intPropertyManager.getPropertyValue(5)).intValue());
@@ -224,7 +165,7 @@ public class AT_IntPropertyManager {
 			// we will next test the manager with an initial value of true
 			propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(defaultValue).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
 
-			intPropertyManager = new IntPropertyManager(c, propertyDefinition, 0);
+			intPropertyManager = new IntPropertyManager(propertyDefinition, 0);
 
 			// initially, the value should be the default value for the manager
 			assertEquals(defaultValue, ((Integer) intPropertyManager.getPropertyValue(5)).intValue());
@@ -243,7 +184,7 @@ public class AT_IntPropertyManager {
 
 			// precondition tests
 			PropertyDefinition def = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(3).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
-			IntPropertyManager ipm = new IntPropertyManager(c, def, 0);
+			IntPropertyManager ipm = new IntPropertyManager(def, 0);
 
 			ContractException contractException = assertThrows(ContractException.class, () -> ipm.removeId(-1));
 			assertEquals(PropertyError.NEGATIVE_INDEX, contractException.getErrorType());
@@ -252,7 +193,7 @@ public class AT_IntPropertyManager {
 	}
 
 	@Test
-	@UnitTestConstructor(target = IntPropertyManager.class, args = { SimulationContext.class, PropertyDefinition.class, int.class })
+	@UnitTestConstructor(target = IntPropertyManager.class, args = { PropertyDefinition.class, int.class })
 	public void testConstructor() {
 		Factory factory = TestPluginFactory.factory((c) -> {
 
@@ -260,18 +201,18 @@ public class AT_IntPropertyManager {
 			PropertyDefinition badPropertyDefinition = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(false).build();
 
 			// if the property definition is null
-			ContractException contractException = assertThrows(ContractException.class, () -> new IntPropertyManager(c, null, 0));
+			ContractException contractException = assertThrows(ContractException.class, () -> new IntPropertyManager(null, 0));
 			assertEquals(PropertyError.NULL_PROPERTY_DEFINITION, contractException.getErrorType());
 
 			// if the property definition does not have a type of Double.class
-			contractException = assertThrows(ContractException.class, () -> new IntPropertyManager(c, badPropertyDefinition, 0));
+			contractException = assertThrows(ContractException.class, () -> new IntPropertyManager(badPropertyDefinition, 0));
 			assertEquals(PropertyError.PROPERTY_DEFINITION_IMPROPER_TYPE, contractException.getErrorType());
 
 			// if the initial size is negative
-			contractException = assertThrows(ContractException.class, () -> new IntPropertyManager(c, goodPropertyDefinition, -1));
+			contractException = assertThrows(ContractException.class, () -> new IntPropertyManager(goodPropertyDefinition, -1));
 			assertEquals(PropertyError.NEGATIVE_INITIAL_SIZE, contractException.getErrorType());
 
-			IntPropertyManager doublePropertyManager = new IntPropertyManager(c, goodPropertyDefinition, 0);
+			IntPropertyManager doublePropertyManager = new IntPropertyManager(goodPropertyDefinition, 0);
 			assertNotNull(doublePropertyManager);
 		});
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
@@ -284,7 +225,7 @@ public class AT_IntPropertyManager {
 
 			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(234).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
 
-			IntPropertyManager intPropertyManager = new IntPropertyManager(c, propertyDefinition, 0);
+			IntPropertyManager intPropertyManager = new IntPropertyManager(propertyDefinition, 0);
 
 			// precondition tests
 			ContractException contractException = assertThrows(ContractException.class, () -> intPropertyManager.incrementCapacity(-1));
