@@ -28,7 +28,7 @@
         <maven-replacer-plugin.version>1.3.2</maven-replacer-plugin.version>
 
         <!-- dependency versions -->
-        <translation.protobuf-core.version>2.2.0</translation.protobuf-core.version>
+        <protobuf-translation-core.version>2.2.0</protobuf-translation-core.version>
         <proto-definitions.version>1.4.0</proto-definitions.version>
         <gcm.version>4.0.0-SNAPSHOT</gcm.version>
         <junit-jupiter-engine.version>5.8.2</junit-jupiter-engine.version>
@@ -48,8 +48,8 @@
             <!-- core protobuf translation dependency  -->
             <dependency>
                 <groupId>gov.hhs.aspr.translation</groupId>
-                <artifactId>protobuf-core</artifactId>
-                <version>${translation.protobuf-core.version}</version>
+                <artifactId>protobuf-translation-core</artifactId>
+                <version>${protobuf-translation-core.version}</version>
             </dependency>
 
             <!-- gcm dependency -->
@@ -236,8 +236,8 @@
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>gov.hhs.aspr.translation</groupId>
-                                    <artifactId>protobuf-core</artifactId>
-                                    <version>${translation.protobuf-core.version}</version>
+                                    <artifactId>protobuf-translation-core</artifactId>
+                                    <version>${protobuf-translation-core.version}</version>
                                     <overWrite>true</overWrite>
                                     <outputDirectory>${project.build.outputDirectory}</outputDirectory>
                                     <includes>**/*.proto</includes>

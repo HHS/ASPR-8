@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>gov.hhs.aspr.translation</groupId>
-    <artifactId>core</artifactId>
+    <artifactId>translation-core</artifactId>
     <version>${revision}</version>
     <packaging>jar</packaging>
     <name>translation :: core</name>

@@ -38,7 +38,7 @@
         <!-- core translation dependency -->
         <dependency>
             <groupId>gov.hhs.aspr.translation</groupId>
-            <artifactId>core</artifactId>
+            <artifactId>translation-core</artifactId>
             <version>${translation-core.version}</version>
         </dependency>
 
