@@ -1,4 +1,4 @@
-package gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.translatorSpecs;
+package gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.translationSpecs;
 
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.input.BatchIdInput;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
