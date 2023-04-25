@@ -43,6 +43,7 @@ import plugins.util.properties.ObjectPropertyManager;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
 import plugins.util.properties.TimeTrackingPolicy;
+import plugins.util.properties.arraycontainers.DoubleValueContainer;
 import util.errors.ContractException;
 
 /**
@@ -75,6 +76,8 @@ public final class PersonPropertiesDataManager extends DataManager {
 	private final Map<PersonPropertyId, PropertyDefinition> personPropertyDefinitions = new LinkedHashMap<>();
 
 	private final Map<PersonPropertyId, IndexedPropertyManager> personPropertyManagerMap = new LinkedHashMap<>();
+
+	private final Map<PersonPropertyId, DoubleValueContainer> personPropertyTimeMap = new LinkedHashMap<>();
 
 	private final Map<PersonPropertyId, Integer> nonDefaultBearingPropertyIds = new LinkedHashMap<>();
 
@@ -161,6 +164,11 @@ public final class PersonPropertiesDataManager extends DataManager {
 			for (final PersonPropertyId personPropertyId : personPropertyManagerMap.keySet()) {
 				IndexedPropertyManager indexedPropertyManager = personPropertyManagerMap.get(personPropertyId);
 				indexedPropertyManager.incrementCapacity(count);
+
+				DoubleValueContainer doubleValueContainer = personPropertyTimeMap.get(personPropertyId);
+				if (doubleValueContainer != null) {
+					doubleValueContainer.setCapacity(doubleValueContainer.getCapacity() + count);
+				}
 			}
 		}
 	}
@@ -458,7 +466,7 @@ public final class PersonPropertiesDataManager extends DataManager {
 		validatePersonExists(personId);
 		validatePersonPropertyId(personPropertyId);
 		validatePersonPropertyAssignmentTimesTracked(personPropertyId);
-		return personPropertyManagerMap.get(personPropertyId).getPropertyTime(personId.getValue());
+		return personPropertyTimeMap.get(personPropertyId).getValue(personId.getValue());
 	}
 
 	/**
@@ -514,6 +522,10 @@ public final class PersonPropertiesDataManager extends DataManager {
 			int pId = personId.getValue();
 			IndexedPropertyManager propertyManager = personPropertyManagerMap.get(personPropertyId);
 			propertyManager.setPropertyValue(pId, personPropertyValue);
+			DoubleValueContainer doubleValueContainer = personPropertyTimeMap.get(personPropertyId);
+			if (doubleValueContainer != null) {
+				doubleValueContainer.setValue(pId, dataManagerContext.getTime());
+			}
 		}
 
 	}
@@ -566,6 +578,11 @@ public final class PersonPropertiesDataManager extends DataManager {
 		final IndexedPropertyManager propertyManager = getIndexedPropertyManager(dataManagerContext, propertyDefinition, 0);
 		personPropertyManagerMap.put(personPropertyId, propertyManager);
 
+		if (propertyDefinition.getTimeTrackingPolicy() == TimeTrackingPolicy.TRACK_TIME) {
+			DoubleValueContainer doubleValueContainer = new DoubleValueContainer(dataManagerContext.getTime());
+			personPropertyTimeMap.put(personPropertyId, doubleValueContainer);
+		}
+
 		for (Pair<PersonId, Object> pair : propertyDefinitionInitialization.getPropertyValues()) {
 			PersonId personId = pair.getFirst();
 			int pId = personId.getValue();
@@ -598,6 +615,12 @@ public final class PersonPropertiesDataManager extends DataManager {
 		IndexedPropertyManager propertyManager = personPropertyManagerMap.get(personPropertyId);
 		Object oldValue = propertyManager.getPropertyValue(pId);
 		propertyManager.setPropertyValue(pId, personPropertyValue);
+
+		DoubleValueContainer doubleValueContainer = personPropertyTimeMap.get(personPropertyId);
+		if (doubleValueContainer != null) {
+			doubleValueContainer.setValue(pId, dataManagerContext.getTime());
+		}
+
 		if (dataManagerContext.subscribersExist(PersonPropertyUpdateEvent.class)) {
 			dataManagerContext.releaseObservationEvent(new PersonPropertyUpdateEvent(personId, personPropertyId, oldValue, personPropertyValue));
 		}
@@ -625,6 +648,11 @@ public final class PersonPropertiesDataManager extends DataManager {
 			personPropertyDefinitions.put(personPropertyId, personPropertyDefinition);
 			final IndexedPropertyManager indexedPropertyManager = getIndexedPropertyManager(dataManagerContext, personPropertyDefinition, 0);
 			personPropertyManagerMap.put(personPropertyId, indexedPropertyManager);
+
+			if (personPropertyDefinition.getTimeTrackingPolicy() == TimeTrackingPolicy.TRACK_TIME) {
+				personPropertyTimeMap.put(personPropertyId, new DoubleValueContainer(0));
+			}
+
 		}
 
 		nonDefaultChecks = new boolean[nonDefaultBearingPropertyIds.size()];
@@ -699,7 +727,7 @@ public final class PersonPropertiesDataManager extends DataManager {
 		PersonPropertiesPluginData.Builder builder = PersonPropertiesPluginData.builder();
 
 		List<PersonId> people = peopleDataManager.getPeople();
-		
+
 		for (PersonPropertyId personPropertyId : personPropertyDefinitions.keySet()) {
 			PropertyDefinition personPropertyDefinition = personPropertyDefinitions.get(personPropertyId);
 			builder.definePersonProperty(personPropertyId, personPropertyDefinition);
