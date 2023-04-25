@@ -10,8 +10,8 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.input.PropertyVa
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.simobjects.PropertyValueMap;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.testsupport.simobjects.Layer1SimObject;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.testsupport.simobjects.TestMessageSimObject;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.testsupport.translatorSpecs.Layer1TranslatorSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.testsupport.translatorSpecs.TestMessageTranslatorSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.testsupport.translationSpecs.Layer1TranslatorSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.testsupport.translationSpecs.TestMessageTranslatorSpec;
 import gov.hhs.aspr.translation.core.TranslationController;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
 import gov.hhs.aspr.translation.protobuf.core.testsupport.TestResourceHelper;
