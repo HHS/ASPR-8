@@ -38,18 +38,18 @@ import util.random.RandomGeneratorProvider;
 
 public final class Example_16 {
 
-	private Path outputPath;
+	private final Path outputDirectory;
 
-	private Example_16(Path outputPath) {
-		this.outputPath = outputPath;
+	private Example_16(Path outputDirectory) {
+		this.outputDirectory = outputDirectory;
 	}
 
 	private RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(524055747550937602L);
 
 	private NIOReportItemHandler getNIOReportItemHandler() {
 		return NIOReportItemHandler	.builder()//
-									.addReport(ModelReportLabel.PERSON_PROPERTY_REPORT, Paths.get(outputPath + "\\person_property_report.xls"))//
-									.addReport(ModelReportLabel.VACCINATION, Paths.get(outputPath + "\\vaccination_report.xls"))//
+									.addReport(ModelReportLabel.PERSON_PROPERTY_REPORT, outputDirectory.resolve("person_property_report.xls"))//
+									.addReport(ModelReportLabel.VACCINATION, outputDirectory.resolve("vaccination_report.xls"))//
 									.build();
 	}
 

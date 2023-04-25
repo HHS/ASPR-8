@@ -80,9 +80,9 @@ public final class Example_14 {
 		NIOReportItemHandler nioReportItemHandler = //
 				NIOReportItemHandler.builder()//
 									.addReport(ModelReportLabel.POPULATION_TRACE, //
-											Paths.get(outputDirectory + "\\population_trace_report.xls"))//
+											outputDirectory.resolve("population_trace_report.xls"))//
 									.addReport(ModelReportLabel.VACCINATION, //
-											Paths.get(outputDirectory + "\\vaccination_report.xls"))//
+											outputDirectory.resolve("vaccination_report.xls"))//
 									.build();
 
 		// create the people plugin with an initial population of ten people,

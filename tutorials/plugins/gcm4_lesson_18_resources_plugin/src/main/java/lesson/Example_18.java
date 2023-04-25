@@ -43,7 +43,7 @@ import util.random.RandomGeneratorProvider;
 
 public final class Example_18 {
 
-	private Path outputDirectory;
+	private final Path outputDirectory;
 
 	private Example_18(Path outputDirectory) {
 		this.outputDirectory = outputDirectory;

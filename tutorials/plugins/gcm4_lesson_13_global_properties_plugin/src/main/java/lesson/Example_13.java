@@ -123,7 +123,7 @@ public final class Example_13 {
 		NIOReportItemHandler nioReportItemHandler = //
 				NIOReportItemHandler.builder()//
 									.addReport(ModelReportLabel.GLOBAL_PROPERTY_REPORT, //
-											Paths.get(outputDirectory + "\\global property report.xls"))//
+											outputDirectory.resolve("global property report.xls"))//
 									.build();
 
 		Dimension alphaBetaDimension = getAlphaBetaDimension();

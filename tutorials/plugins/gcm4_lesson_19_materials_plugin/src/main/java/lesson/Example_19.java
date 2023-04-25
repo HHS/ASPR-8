@@ -50,7 +50,7 @@ import util.random.RandomGeneratorProvider;
 
 public final class Example_19 {
 
-	private Path outputDirectory;
+	private final Path outputDirectory;
 
 	public static void main(final String[] args) throws IOException {
 		if (args.length == 0) {

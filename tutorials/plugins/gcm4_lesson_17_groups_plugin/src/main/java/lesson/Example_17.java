@@ -45,10 +45,10 @@ import util.random.RandomGeneratorProvider;
 
 public final class Example_17 {
 
-	private Path outputPath;
+	private final Path outputDirectory;
 
-	private Example_17(Path outputPath) {
-		this.outputPath = outputPath;
+	private Example_17(Path outputDirectory) {
+		this.outputDirectory = outputDirectory;
 	}
 
 	private RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(9032703880551658180L);
@@ -56,10 +56,10 @@ public final class Example_17 {
 	
 	private NIOReportItemHandler getNIOReportItemHandler() {
 		return NIOReportItemHandler	.builder()//
-									.addReport(ModelReportLabel.GROUP_POPULATON, Paths.get(outputPath + "\\group_population_report.xls"))//
-									.addReport(ModelReportLabel.PERSON_PROPERTY, Paths.get(outputPath + "\\person_property_report.xls"))//
-									.addReport(ModelReportLabel.DISEASE_STATE, Paths.get(outputPath + "\\disease_state_report.xls"))//
-									.addReport(ModelReportLabel.CONTAGION, Paths.get(outputPath + "\\contagion_report.xls"))//
+									.addReport(ModelReportLabel.GROUP_POPULATON, outputDirectory.resolve("group_population_report.xls"))//
+									.addReport(ModelReportLabel.PERSON_PROPERTY, outputDirectory.resolve("person_property_report.xls"))//
+									.addReport(ModelReportLabel.DISEASE_STATE, outputDirectory.resolve("disease_state_report.xls"))//
+									.addReport(ModelReportLabel.CONTAGION, outputDirectory.resolve("contagion_report.xls"))//
 									.build();
 	}
 

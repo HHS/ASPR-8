@@ -88,9 +88,9 @@ public final class Example_12 {
 
 		
 		NIOReportItemHandler nioReportItemHandler = NIOReportItemHandler.builder()//
-				.addReport(ModelLabel.FAMILY_VACCINE_REPORT, Paths.get(outputDirectory + "\\family_vaccine_report.xls"))//
-				.addReport(ModelLabel.HOURLY_VACCINE_REPORT, Paths.get(outputDirectory + "\\hourly_vaccine_report.xls"))//
-				.addReport(ModelLabel.STATELESS_VACCINE_REPORT, Paths.get(outputDirectory + "\\stateless_vaccine_report.xls"))//
+				.addReport(ModelLabel.FAMILY_VACCINE_REPORT, outputDirectory.resolve("family_vaccine_report.xls"))//
+				.addReport(ModelLabel.HOURLY_VACCINE_REPORT, outputDirectory.resolve("hourly_vaccine_report.xls"))//
+				.addReport(ModelLabel.STATELESS_VACCINE_REPORT, outputDirectory.resolve("stateless_vaccine_report.xls"))//
 				.build();
 
 		

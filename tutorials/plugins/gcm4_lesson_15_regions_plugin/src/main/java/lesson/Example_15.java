@@ -36,7 +36,7 @@ import util.random.RandomGeneratorProvider;
 
 public final class Example_15 {
 
-	private Path outputDirectory;
+	private final Path outputDirectory;
 
 	private Example_15(Path outputDirectory) {
 		this.outputDirectory = outputDirectory;
@@ -50,11 +50,11 @@ public final class Example_15 {
 	private NIOReportItemHandler getNIOReportItemHandler() {
 		return NIOReportItemHandler	.builder()//
 									.addReport(ModelReportLabel.REGION_PROPERTY_REPORT, //
-											Paths.get(outputDirectory + "\\region_property_report.xls"))//
+											outputDirectory.resolve("region_property_report.xls"))//
 									.addReport(ModelReportLabel.REGION_TRANSFER_REPORT, //
-											Paths.get(outputDirectory + "\\region_transfer_report.xls"))//
+											outputDirectory.resolve("region_transfer_report.xls"))//
 									.addReport(ModelReportLabel.VACCINATION, //
-											Paths.get(outputDirectory + "\\vaccine_report.xls"))//
+											outputDirectory.resolve("vaccine_report.xls"))//
 									.build();
 	}
 
