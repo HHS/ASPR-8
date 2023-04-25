@@ -1,7 +1,7 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.people;
 
 import gov.hhs.aspr.translation.core.Translator;
-import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslatorCore;
+import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.input.PersonIdInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.translatorSpecs.PeoplePluginDataTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.translatorSpecs.PersonIdTranslatorSpec;
@@ -16,8 +16,8 @@ public class PeopleTranslator {
         return Translator.builder()
                 .setTranslatorId(PeopleTranslatorId.TRANSLATOR_ID)
                 .setInitializer((translatorContext) -> {
-                    ProtobufTranslatorCore.Builder coreBuilder = translatorContext
-                            .getTranslatorCoreBuilder(ProtobufTranslatorCore.Builder.class);
+                    ProtobufTranslationEngine.Builder coreBuilder = translatorContext
+                            .getTranslatorCoreBuilder(ProtobufTranslationEngine.Builder.class);
 
                     coreBuilder.addTranslatorSpec(new PeoplePluginDataTranslatorSpec());
                     coreBuilder.addTranslatorSpec(new PersonIdTranslatorSpec());

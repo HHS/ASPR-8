@@ -30,10 +30,10 @@ import gov.hhs.aspr.translation.core.TranslationSpec;
 import gov.hhs.aspr.translation.protobuf.core.translationSpecs.PrimitiveTranslatorSpecs;
 import gov.hhs.aspr.translation.core.TranslationEngine;
 
-public class ProtobufTranslatorCore extends TranslationEngine {
+public class ProtobufTranslationEngine extends TranslationEngine {
     private final Data data;
 
-    private ProtobufTranslatorCore(Data data) {
+    private ProtobufTranslationEngine(Data data) {
         super(data);
         this.data = data;
     }
@@ -54,13 +54,13 @@ public class ProtobufTranslatorCore extends TranslationEngine {
     }
 
     public static class Builder extends TranslationEngine.Builder {
-        private ProtobufTranslatorCore.Data data;
+        private ProtobufTranslationEngine.Data data;
         private Set<Descriptor> descriptorSet = new LinkedHashSet<>();
         private final Set<FieldDescriptor> defaultValueFieldsToPrint = new LinkedHashSet<>();
         private boolean ignoringUnknownFields = true;
         private boolean includingDefaultValueFields = false;
 
-        private Builder(ProtobufTranslatorCore.Data data) {
+        private Builder(ProtobufTranslationEngine.Data data) {
             super(data);
             this.data = data;
         }
@@ -92,7 +92,7 @@ public class ProtobufTranslatorCore extends TranslationEngine {
             }
             this.data.jsonPrinter = printer;
 
-            return new ProtobufTranslatorCore(this.data);
+            return new ProtobufTranslationEngine(this.data);
         }
 
         public Builder setIgnoringUnknownFields(boolean ignoringUnknownFields) {

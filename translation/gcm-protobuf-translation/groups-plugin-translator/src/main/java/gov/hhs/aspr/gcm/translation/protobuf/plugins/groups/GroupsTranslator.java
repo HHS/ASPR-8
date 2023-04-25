@@ -13,7 +13,7 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.PeopleTranslatorId;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.PropertiesTranslatorId;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.ReportsTranslatorId;
 import gov.hhs.aspr.translation.core.Translator;
-import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslatorCore;
+import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
 
 public class GroupsTranslator {
     
@@ -26,7 +26,7 @@ public class GroupsTranslator {
                 .addDependency(PropertiesTranslatorId.TRANSLATOR_ID)
                 .addDependency(PeopleTranslatorId.TRANSLATOR_ID)
                 .setInitializer((translatorContext) -> {
-                    ProtobufTranslatorCore.Builder coreBuilder = translatorContext.getTranslatorCoreBuilder(ProtobufTranslatorCore.Builder.class);
+                    ProtobufTranslationEngine.Builder coreBuilder = translatorContext.getTranslatorCoreBuilder(ProtobufTranslationEngine.Builder.class);
                     
                     coreBuilder.addTranslatorSpec(new GroupsPluginDataTranslatorSpec());
                     coreBuilder.addTranslatorSpec(new GroupIdTranslatorSpec());

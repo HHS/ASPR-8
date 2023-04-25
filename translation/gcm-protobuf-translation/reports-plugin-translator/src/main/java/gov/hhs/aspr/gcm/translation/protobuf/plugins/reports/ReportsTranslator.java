@@ -1,7 +1,7 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.reports;
 
 import gov.hhs.aspr.translation.core.Translator;
-import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslatorCore;
+import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.translatorSpecs.ReportLabelTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.translatorSpecs.ReportPeriodTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.translatorSpecs.SimpleReportLabelTranslatorSpec;
@@ -17,8 +17,8 @@ public class ReportsTranslator {
         Translator.Builder builder = Translator.builder()
                 .setTranslatorId(ReportsTranslatorId.TRANSLATOR_ID)
                 .setInitializer((translatorContext) -> {
-                    ProtobufTranslatorCore.Builder coreBuilder = translatorContext
-                            .getTranslatorCoreBuilder(ProtobufTranslatorCore.Builder.class);
+                    ProtobufTranslationEngine.Builder coreBuilder = translatorContext
+                            .getTranslatorCoreBuilder(ProtobufTranslationEngine.Builder.class);
 
                     coreBuilder.addTranslatorSpec(new ReportLabelTranslatorSpec());
                     coreBuilder.addTranslatorSpec(new ReportPeriodTranslatorSpec());

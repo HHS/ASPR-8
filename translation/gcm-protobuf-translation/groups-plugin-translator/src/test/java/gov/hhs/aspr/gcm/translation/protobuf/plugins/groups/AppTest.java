@@ -15,7 +15,7 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.PeopleTranslator;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.PropertiesTranslator;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.ReportsTranslator;
 import gov.hhs.aspr.translation.core.TranslationController;
-import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslatorCore;
+import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
 import gov.hhs.aspr.translation.protobuf.core.testsupport.TestResourceHelper;
 import plugins.groups.GroupsPluginData;
 import plugins.groups.reports.GroupPropertyReportPluginData;
@@ -39,7 +39,7 @@ public class AppTest {
         TestResourceHelper.createTestOutputFile(filePath, fileName);
 
         TranslationController translatorController = TranslationController.builder()
-                .setTranslatorCoreBuilder(ProtobufTranslatorCore.builder())
+                .setTranslatorCoreBuilder(ProtobufTranslationEngine.builder())
                 .addTranslator(GroupsTranslator.getTranslator())
                 .addTranslator(PropertiesTranslator.getTranslator())
                 .addTranslator(PeopleTranslator.getTranslator())
@@ -76,7 +76,7 @@ public class AppTest {
         TestResourceHelper.createTestOutputFile(filePath, fileName);
 
         TranslationController translatorController = TranslationController.builder()
-                .setTranslatorCoreBuilder(ProtobufTranslatorCore.builder())
+                .setTranslatorCoreBuilder(ProtobufTranslationEngine.builder())
                 .addTranslator(GroupsTranslator.getTranslatorWithReport())
                 .addTranslator(PropertiesTranslator.getTranslator())
                 .addTranslator(PeopleTranslator.getTranslator())

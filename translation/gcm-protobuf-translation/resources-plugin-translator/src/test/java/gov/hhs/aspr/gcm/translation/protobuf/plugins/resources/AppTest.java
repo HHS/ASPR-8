@@ -19,7 +19,7 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.input.ResourcePro
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.input.ResourceReportPluginDataInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.input.ResourcesPluginDataInput;
 import gov.hhs.aspr.translation.core.TranslationController;
-import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslatorCore;
+import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
 import gov.hhs.aspr.translation.protobuf.core.testsupport.TestResourceHelper;
 import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportPeriod;
@@ -44,7 +44,7 @@ public class AppTest {
         TestResourceHelper.createTestOutputFile(filePath, fileName);
 
         TranslationController translatorController = TranslationController.builder()
-                .setTranslatorCoreBuilder(ProtobufTranslatorCore.builder())
+                .setTranslatorCoreBuilder(ProtobufTranslationEngine.builder())
                 .addTranslator(ResourcesTranslator.getTranslator())
                 .addTranslator(PropertiesTranslator.getTranslator())
                 .addTranslator(PeopleTranslator.getTranslator())
@@ -72,7 +72,7 @@ public class AppTest {
         TestResourceHelper.createTestOutputFile(filePath, fileName);
 
         TranslationController translatorController = TranslationController.builder()
-                .setTranslatorCoreBuilder(ProtobufTranslatorCore.builder())
+                .setTranslatorCoreBuilder(ProtobufTranslationEngine.builder())
                 .addTranslator(ResourcesTranslator.getTranslatorWithReport())
                 .addTranslator(PropertiesTranslator.getTranslator())
                 .addTranslator(PeopleTranslator.getTranslator())
@@ -124,7 +124,7 @@ public class AppTest {
         TestResourceHelper.createTestOutputFile(filePath, fileName);
 
         TranslationController translatorController = TranslationController.builder()
-                .setTranslatorCoreBuilder(ProtobufTranslatorCore.builder())
+                .setTranslatorCoreBuilder(ProtobufTranslationEngine.builder())
                 .addTranslator(ResourcesTranslator.getTranslatorWithReport())
                 .addTranslator(PropertiesTranslator.getTranslator())
                 .addTranslator(PeopleTranslator.getTranslator())
@@ -160,7 +160,7 @@ public class AppTest {
         TestResourceHelper.createTestOutputFile(filePath, fileName);
 
         TranslationController translatorController = TranslationController.builder()
-                .setTranslatorCoreBuilder(ProtobufTranslatorCore.builder())
+                .setTranslatorCoreBuilder(ProtobufTranslationEngine.builder())
                 .addTranslator(ResourcesTranslator.getTranslatorWithReport())
                 .addTranslator(PropertiesTranslator.getTranslator())
                 .addTranslator(PeopleTranslator.getTranslator())

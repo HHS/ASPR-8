@@ -7,7 +7,7 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.globalproperties.translator
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.PropertiesTranslatorId;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.ReportsTranslatorId;
 import gov.hhs.aspr.translation.core.Translator;
-import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslatorCore;
+import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
 
 public class GlobalPropertiesTranslator {
 
@@ -20,7 +20,7 @@ public class GlobalPropertiesTranslator {
                 .setTranslatorId(GlobalPropertiesTranslatorId.TRANSLATOR_ID)
                 .addDependency(PropertiesTranslatorId.TRANSLATOR_ID)
                 .setInitializer((translatorContext) -> {
-                    ProtobufTranslatorCore.Builder coreBuilder = translatorContext.getTranslatorCoreBuilder(ProtobufTranslatorCore.Builder.class);
+                    ProtobufTranslationEngine.Builder coreBuilder = translatorContext.getTranslatorCoreBuilder(ProtobufTranslationEngine.Builder.class);
 
                     coreBuilder.addTranslatorSpec(new GlobalPropertiesPluginDataTranslatorSpec());
                     coreBuilder.addTranslatorSpec(new GlobalPropertyIdTranslatorSpec());

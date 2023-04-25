@@ -1,7 +1,7 @@
 package gov.hss.aspr.gcm.translation.protobuf.nucleus;
 
 import gov.hhs.aspr.translation.core.Translator;
-import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslatorCore;
+import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
 import gov.hhs.aspr.gcm.translation.protobuf.nucleus.input.PlanQueueDataInput;
 import gov.hhs.aspr.gcm.translation.protobuf.nucleus.input.SimulationStateInput;
 import gov.hss.aspr.gcm.translation.protobuf.nucleus.translatorSpecs.PlanDataTranslatorSpec;
@@ -18,8 +18,8 @@ public class NucleusTranslator {
         Translator.Builder builder = Translator.builder()
                 .setTranslatorId(NucleusTranslatorId.TRANSLATOR_ID)
                 .setInitializer((translatorContext) -> {
-                    ProtobufTranslatorCore.Builder coreBuilder = translatorContext
-                            .getTranslatorCoreBuilder(ProtobufTranslatorCore.Builder.class);
+                    ProtobufTranslationEngine.Builder coreBuilder = translatorContext
+                            .getTranslatorCoreBuilder(ProtobufTranslationEngine.Builder.class);
 
                     coreBuilder.addTranslatorSpec(new SimulationStateTranslatorSpec());
                     coreBuilder.addTranslatorSpec(new PlanQueueDataTranslatorSpec());

@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.input.PeoplePluginDataInput;
 import gov.hhs.aspr.translation.core.TranslationController;
-import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslatorCore;
+import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
 import gov.hhs.aspr.translation.protobuf.core.testsupport.TestResourceHelper;
 import plugins.people.PeoplePluginData;
 import plugins.people.support.PersonRange;
@@ -26,7 +26,7 @@ public class AppTest {
         TestResourceHelper.createTestOutputFile(filePath, fileName);
 
         TranslationController translatorController = TranslationController.builder()
-                .setTranslatorCoreBuilder(ProtobufTranslatorCore.builder())
+                .setTranslatorCoreBuilder(ProtobufTranslationEngine.builder())
                 .addTranslator(PeopleTranslator.getTranslator())
                 .addInputFilePath(filePath.resolve(fileName), PeoplePluginDataInput.class)
                 .addOutputFilePath(filePath.resolve(fileName), PeoplePluginData.class)

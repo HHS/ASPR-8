@@ -1,7 +1,7 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.resources;
 
 import gov.hhs.aspr.translation.core.Translator;
-import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslatorCore;
+import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.PeopleTranslatorId;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.PropertiesTranslatorId;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.RegionsTranslatorId;
@@ -29,8 +29,8 @@ public class ResourcesTranslator {
                 .addDependency(PropertiesTranslatorId.TRANSLATOR_ID)
                 .addDependency(RegionsTranslatorId.TRANSLATOR_ID)
                 .setInitializer((translatorContext) -> {
-                    ProtobufTranslatorCore.Builder coreBuilder = translatorContext
-                            .getTranslatorCoreBuilder(ProtobufTranslatorCore.Builder.class);
+                    ProtobufTranslationEngine.Builder coreBuilder = translatorContext
+                            .getTranslatorCoreBuilder(ProtobufTranslationEngine.Builder.class);
 
                     coreBuilder.addTranslatorSpec(new ResourcesPluginDataTranslatorSpec());
                     coreBuilder.addTranslatorSpec(new ResourceIdTranslatorSpec());

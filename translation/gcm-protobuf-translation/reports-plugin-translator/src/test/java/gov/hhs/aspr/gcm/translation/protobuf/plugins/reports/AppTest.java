@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.input.ReportLabelInput;
 import gov.hhs.aspr.translation.core.TranslationController;
-import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslatorCore;
+import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
 import gov.hhs.aspr.translation.protobuf.core.testsupport.TestResourceHelper;
 import plugins.reports.support.ReportLabel;
 import plugins.reports.support.SimpleReportLabel;
@@ -24,7 +24,7 @@ public class AppTest {
         TestResourceHelper.createTestOutputFile(filePath, fileName);
 
         TranslationController translatorController = TranslationController.builder()
-                .setTranslatorCoreBuilder(ProtobufTranslatorCore.builder())
+                .setTranslatorCoreBuilder(ProtobufTranslationEngine.builder())
                 .addTranslator(ReportsTranslator.getTranslator())
                 .addInputFilePath(filePath.resolve(fileName), ReportLabelInput.class)
                 .addOutputFilePath(filePath.resolve(fileName), ReportLabel.class)
