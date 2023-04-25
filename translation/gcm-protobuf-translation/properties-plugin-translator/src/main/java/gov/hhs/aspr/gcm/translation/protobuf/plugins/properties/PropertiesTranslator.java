@@ -17,7 +17,7 @@ public class PropertiesTranslator {
                 .setTranslatorId(PropertiesTranslatorId.TRANSLATOR_ID)
                 .setInitializer((translatorContext) -> {
                     ProtobufTranslationEngine.Builder coreBuilder = translatorContext
-                            .getTranslatorCoreBuilder(ProtobufTranslationEngine.Builder.class);
+                            .getTranslationEngineBuilder(ProtobufTranslationEngine.Builder.class);
 
                     coreBuilder.addTranslatorSpec(new PropertyDefinitionTranslationSpec());
                     coreBuilder.addTranslatorSpec(new TimeTrackingPolicyTranslationSpec());

@@ -15,18 +15,18 @@ public class GlobalPropertyReportPluginDataTranslationSpec
     protected GlobalPropertyReportPluginData convertInputObject(GlobalPropertyReportPluginDataInput inputObject) {
         GlobalPropertyReportPluginData.Builder builder = GlobalPropertyReportPluginData.builder();
 
-        ReportLabel reportLabel = this.translatorCore.convertObject(inputObject.getReportLabel());
+        ReportLabel reportLabel = this.translationEnine.convertObject(inputObject.getReportLabel());
         builder.setReportLabel(reportLabel);
 
         builder.setDefaultInclusion(inputObject.getDefaultInclusionPolicy());
 
         for (GlobalPropertyIdInput globalPropertyIdInput : inputObject.getIncludedPropertiesList()) {
-            GlobalPropertyId globalPropertyId = this.translatorCore.convertObject(globalPropertyIdInput);
+            GlobalPropertyId globalPropertyId = this.translationEnine.convertObject(globalPropertyIdInput);
             builder.includeGlobalProperty(globalPropertyId);
         }
 
         for (GlobalPropertyIdInput globalPropertyIdInput : inputObject.getExcludedPropertiesList()) {
-            GlobalPropertyId globalPropertyId = this.translatorCore.convertObject(globalPropertyIdInput);
+            GlobalPropertyId globalPropertyId = this.translationEnine.convertObject(globalPropertyIdInput);
             builder.excludeGlobalProperty(globalPropertyId);
         }
 
@@ -37,7 +37,7 @@ public class GlobalPropertyReportPluginDataTranslationSpec
     protected GlobalPropertyReportPluginDataInput convertAppObject(GlobalPropertyReportPluginData appObject) {
         GlobalPropertyReportPluginDataInput.Builder builder = GlobalPropertyReportPluginDataInput.newBuilder();
 
-        ReportLabelInput reportLabelInput = this.translatorCore.convertObjectAsSafeClass(appObject.getReportLabel(),
+        ReportLabelInput reportLabelInput = this.translationEnine.convertObjectAsSafeClass(appObject.getReportLabel(),
                 ReportLabel.class);
 
         builder
@@ -45,13 +45,13 @@ public class GlobalPropertyReportPluginDataTranslationSpec
                 .setReportLabel(reportLabelInput);
 
         for (GlobalPropertyId globalPropertyId : appObject.getIncludedProperties()) {
-            GlobalPropertyIdInput globalPropertyIdInput = this.translatorCore.convertObjectAsSafeClass(globalPropertyId,
+            GlobalPropertyIdInput globalPropertyIdInput = this.translationEnine.convertObjectAsSafeClass(globalPropertyId,
                     GlobalPropertyId.class);
             builder.addIncludedProperties(globalPropertyIdInput);
         }
 
         for (GlobalPropertyId globalPropertyId : appObject.getExcludedProperties()) {
-            GlobalPropertyIdInput globalPropertyIdInput = this.translatorCore.convertObjectAsSafeClass(globalPropertyId,
+            GlobalPropertyIdInput globalPropertyIdInput = this.translationEnine.convertObjectAsSafeClass(globalPropertyId,
                     GlobalPropertyId.class);
             builder.addExcludedProperties(globalPropertyIdInput);
         }

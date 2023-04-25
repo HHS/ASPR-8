@@ -6,9 +6,9 @@ public enum CoreTranslationError implements ContractError {
 
     NULL_TRANSLATOR_ID("Null TranslatorId"),
     NULL_TRANSLATOR("Null Translator"),
-    NULL_TRANSLATORCORE_BUILDER("Null TranslatorCore Builder"),
-    NULL_TRANSLATORCORE("Null TranslatorCore"),
-    INVALID_TRANSLATORCORE_BUILDER("The given TranslatorCore Builder classRef does not match the class of the actual TranslatorCore Builder"),
+    NULL_TRANSLATION_ENGINE_BUILDER("Null Translation Engine Builder"),
+    NULL_TRANSLATION_ENGINE("Null Translation Engine"),
+    INVALID_TRANSLATION_ENGINE_BUILDER("The given Translation Engine Builder classRef does not match the class of the actual Translation Engine Builder"),
     DUPLICATE_TRANSLATOR("Duplicate Translator"),
     NULL_INIT_CONSUMER("Null Initilizer Consumer"),
     NULL_DEPENDENCY("Null dependency"),

@@ -17,7 +17,7 @@ public class PeopleTranslator {
                 .setTranslatorId(PeopleTranslatorId.TRANSLATOR_ID)
                 .setInitializer((translatorContext) -> {
                     ProtobufTranslationEngine.Builder coreBuilder = translatorContext
-                            .getTranslatorCoreBuilder(ProtobufTranslationEngine.Builder.class);
+                            .getTranslationEngineBuilder(ProtobufTranslationEngine.Builder.class);
 
                     coreBuilder.addTranslatorSpec(new PeoplePluginDataTranslationSpec());
                     coreBuilder.addTranslatorSpec(new PersonIdTranslationSpec());

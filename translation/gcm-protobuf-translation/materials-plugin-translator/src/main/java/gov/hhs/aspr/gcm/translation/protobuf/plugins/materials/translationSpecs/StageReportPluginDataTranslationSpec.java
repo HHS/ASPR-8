@@ -13,7 +13,7 @@ public class StageReportPluginDataTranslationSpec
     protected StageReportPluginData convertInputObject(StageReportPluginDataInput inputObject) {
         StageReportPluginData.Builder builder = StageReportPluginData.builder();
 
-        ReportLabel reportLabel = this.translatorCore.convertObject(inputObject.getReportLabel());
+        ReportLabel reportLabel = this.translationEnine.convertObject(inputObject.getReportLabel());
 
         builder.setReportLabel(reportLabel);
         return builder.build();
@@ -23,7 +23,7 @@ public class StageReportPluginDataTranslationSpec
     protected StageReportPluginDataInput convertAppObject(StageReportPluginData appObject) {
         StageReportPluginDataInput.Builder builder = StageReportPluginDataInput.newBuilder();
 
-        ReportLabelInput reportLabelInput = this.translatorCore.convertObjectAsSafeClass(appObject.getReportLabel(),
+        ReportLabelInput reportLabelInput = this.translationEnine.convertObjectAsSafeClass(appObject.getReportLabel(),
                 ReportLabel.class);
 
         builder.setReportLabel(reportLabelInput);

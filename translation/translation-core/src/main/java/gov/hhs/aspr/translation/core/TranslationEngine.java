@@ -17,7 +17,7 @@ import util.errors.ContractException;
  * translationSpec and it's respective classes
  * 
  * This is an Abstract class, meaning that for a given translation library
- * (Fasterxml, Protobuf, etc) must have a custom implemented TranslatorCore
+ * (Fasterxml, Protobuf, etc) must have a custom implemented TranslationEngine
  * 
  */
 public abstract class TranslationEngine {
@@ -64,14 +64,14 @@ public abstract class TranslationEngine {
         }
 
         /**
-         * Builder for the TranslatorCore
+         * Builder for the TranslationEngine
          * 
          * <li>Note: Calling this specific method will result in a RuntimeException
          * 
          * @throws RuntimeException
          *                          <li>If this method is called directly. You should
          *                          istead be calling the child method in the child
-         *                          TranslatorCore that extends this class
+         *                          TranslationEngine that extends this class
          */
         public TranslationEngine build() {
             throw new RuntimeException("Tried to call build on abstract Translator Core");
@@ -117,7 +117,7 @@ public abstract class TranslationEngine {
     }
 
     /**
-     * Initializes the translatorCore by calling init on each translationSpec added
+     * Initializes the translationEngine by calling init on each translationSpec added
      * in the builder
      */
     public void init() {
@@ -127,7 +127,7 @@ public abstract class TranslationEngine {
     }
 
     /**
-     * returns whether this translatorCore is initialized or not
+     * returns whether this translationEngine is initialized or not
      */
     public boolean isInitialized() {
         return this.isInitialized;

@@ -17,19 +17,19 @@ public class PersonResourceReportPluginDataTranslationSpec
     protected PersonResourceReportPluginData convertInputObject(PersonResourceReportPluginDataInput inputObject) {
         PersonResourceReportPluginData.Builder builder = PersonResourceReportPluginData.builder();
 
-        ReportLabel reportLabel = this.translatorCore.convertObject(inputObject.getReportLabel());
-        ReportPeriod reportPeriod = this.translatorCore.convertObject(inputObject.getReportPeriod());
+        ReportLabel reportLabel = this.translationEnine.convertObject(inputObject.getReportLabel());
+        ReportPeriod reportPeriod = this.translationEnine.convertObject(inputObject.getReportPeriod());
 
         builder.setReportLabel(reportLabel).setReportPeriod(reportPeriod)
                 .setDefaultInclusion(inputObject.getDefaultInclusionPolicy());
 
         for (ResourceIdInput resourceIdInput : inputObject.getIncludedPropertiesList()) {
-            ResourceId resourceId = this.translatorCore.convertObject(resourceIdInput);
+            ResourceId resourceId = this.translationEnine.convertObject(resourceIdInput);
             builder.includeResource(resourceId);
         }
 
         for (ResourceIdInput resourceIdInput : inputObject.getExcludedPropertiesList()) {
-            ResourceId resourceId = this.translatorCore.convertObject(resourceIdInput);
+            ResourceId resourceId = this.translationEnine.convertObject(resourceIdInput);
             builder.excludeResource(resourceId);
         }
 
@@ -40,9 +40,9 @@ public class PersonResourceReportPluginDataTranslationSpec
     protected PersonResourceReportPluginDataInput convertAppObject(PersonResourceReportPluginData appObject) {
         PersonResourceReportPluginDataInput.Builder builder = PersonResourceReportPluginDataInput.newBuilder();
 
-        ReportLabelInput reportLabelInput = this.translatorCore.convertObjectAsSafeClass(appObject.getReportLabel(),
+        ReportLabelInput reportLabelInput = this.translationEnine.convertObjectAsSafeClass(appObject.getReportLabel(),
                 ReportLabel.class);
-        ReportPeriodInput reportPeriodInput = this.translatorCore.convertObject(appObject.getReportPeriod());
+        ReportPeriodInput reportPeriodInput = this.translationEnine.convertObject(appObject.getReportPeriod());
 
         builder
                 .setDefaultInclusionPolicy(appObject.getDefaultInclusionPolicy())
@@ -50,13 +50,13 @@ public class PersonResourceReportPluginDataTranslationSpec
                 .setReportLabel(reportLabelInput);
 
         for (ResourceId resourceId : appObject.getIncludedResourceIds()) {
-            ResourceIdInput resourceIdInput = this.translatorCore.convertObjectAsSafeClass(resourceId,
+            ResourceIdInput resourceIdInput = this.translationEnine.convertObjectAsSafeClass(resourceId,
             ResourceId.class);
             builder.addIncludedProperties(resourceIdInput);
         }
 
         for (ResourceId resourceId : appObject.getExcludedResourceIds()) {
-            ResourceIdInput resourceIdInput = this.translatorCore.convertObjectAsSafeClass(resourceId,
+            ResourceIdInput resourceIdInput = this.translationEnine.convertObjectAsSafeClass(resourceId,
             ResourceId.class);
             builder.addExcludedProperties(resourceIdInput);
         }

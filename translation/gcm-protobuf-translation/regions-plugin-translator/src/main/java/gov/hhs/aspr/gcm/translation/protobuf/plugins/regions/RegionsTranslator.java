@@ -27,7 +27,7 @@ public class RegionsTranslator {
                 .addDependency(PropertiesTranslatorId.TRANSLATOR_ID)
                 .setInitializer((translatorContext) -> {
                     ProtobufTranslationEngine.Builder coreBuilder = translatorContext
-                            .getTranslatorCoreBuilder(ProtobufTranslationEngine.Builder.class);
+                            .getTranslationEngineBuilder(ProtobufTranslationEngine.Builder.class);
 
                     coreBuilder.addTranslatorSpec(new RegionsPluginDataTranslationSpec());
                     coreBuilder.addTranslatorSpec(new RegionIdTranslationSpec());

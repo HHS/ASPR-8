@@ -8,12 +8,12 @@ public class MaterialIdTranslationSpec extends ProtobufTranslationSpec<MaterialI
 
     @Override
     protected MaterialId convertInputObject(MaterialIdInput inputObject) {
-        return this.translatorCore.getObjectFromAny(inputObject.getId());
+        return this.translationEnine.getObjectFromAny(inputObject.getId());
     }
 
     @Override
     protected MaterialIdInput convertAppObject(MaterialId appObject) {
-        return MaterialIdInput.newBuilder().setId(this.translatorCore.getAnyFromObject(appObject)).build();
+        return MaterialIdInput.newBuilder().setId(this.translationEnine.getAnyFromObject(appObject)).build();
     }
 
     @Override

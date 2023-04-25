@@ -23,7 +23,7 @@ public class PersonPropertiesTranslator {
                 .addDependency(PeopleTranslatorId.TRANSLATOR_ID)
                 .setInitializer((translatorContext) -> {
                     ProtobufTranslationEngine.Builder coreBuilder = translatorContext
-                            .getTranslatorCoreBuilder(ProtobufTranslationEngine.Builder.class);
+                            .getTranslationEngineBuilder(ProtobufTranslationEngine.Builder.class);
 
                     coreBuilder.addTranslatorSpec(new PersonPropertyIdTranslationSpec());
                     coreBuilder.addTranslatorSpec(new PersonPropertiesPluginDataTranslationSpec());

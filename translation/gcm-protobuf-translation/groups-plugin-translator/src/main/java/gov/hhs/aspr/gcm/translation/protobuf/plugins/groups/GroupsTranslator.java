@@ -26,7 +26,7 @@ public class GroupsTranslator {
                 .addDependency(PropertiesTranslatorId.TRANSLATOR_ID)
                 .addDependency(PeopleTranslatorId.TRANSLATOR_ID)
                 .setInitializer((translatorContext) -> {
-                    ProtobufTranslationEngine.Builder coreBuilder = translatorContext.getTranslatorCoreBuilder(ProtobufTranslationEngine.Builder.class);
+                    ProtobufTranslationEngine.Builder coreBuilder = translatorContext.getTranslationEngineBuilder(ProtobufTranslationEngine.Builder.class);
                     
                     coreBuilder.addTranslatorSpec(new GroupsPluginDataTranslationSpec());
                     coreBuilder.addTranslatorSpec(new GroupIdTranslationSpec());

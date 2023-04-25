@@ -20,7 +20,7 @@ public class GlobalPropertiesTranslator {
                 .setTranslatorId(GlobalPropertiesTranslatorId.TRANSLATOR_ID)
                 .addDependency(PropertiesTranslatorId.TRANSLATOR_ID)
                 .setInitializer((translatorContext) -> {
-                    ProtobufTranslationEngine.Builder coreBuilder = translatorContext.getTranslatorCoreBuilder(ProtobufTranslationEngine.Builder.class);
+                    ProtobufTranslationEngine.Builder coreBuilder = translatorContext.getTranslationEngineBuilder(ProtobufTranslationEngine.Builder.class);
 
                     coreBuilder.addTranslatorSpec(new GlobalPropertiesPluginDataTranslationSpec());
                     coreBuilder.addTranslatorSpec(new GlobalPropertyIdTranslationSpec());

@@ -20,13 +20,13 @@ public class PlanQueueDataTranslationSpec extends ProtobufTranslationSpec<PlanQu
             builder.setActive(inputObject.getActive());
         }
 
-        Object key = this.translatorCore.getObjectFromAny(inputObject.getKey());
+        Object key = this.translationEnine.getObjectFromAny(inputObject.getKey());
         builder.setKey(key);
 
-        PlanData planData = this.translatorCore.convertObject(inputObject.getPlanData());
+        PlanData planData = this.translationEnine.convertObject(inputObject.getPlanData());
         builder.setPlanData(planData);
 
-        Planner planner = this.translatorCore.convertObject(inputObject.getPlanner());
+        Planner planner = this.translationEnine.convertObject(inputObject.getPlanner());
         builder.setPlanner(planner);
 
         builder.setPlannerId(inputObject.getPlannerId()).setArrivalId(inputObject.getArrivalId());
@@ -44,13 +44,13 @@ public class PlanQueueDataTranslationSpec extends ProtobufTranslationSpec<PlanQu
                 .setPlannerId(appObject.getPlannerId())
                 .setTime(appObject.getTime());
 
-        PlannerInput plannerInput = this.translatorCore.convertObject(appObject.getPlanner());
+        PlannerInput plannerInput = this.translationEnine.convertObject(appObject.getPlanner());
         builder.setPlanner(plannerInput);
 
-        PlanDataInput planDataInput = this.translatorCore.convertObjectAsSafeClass(appObject.getPlanData(), PlanData.class);
+        PlanDataInput planDataInput = this.translationEnine.convertObjectAsSafeClass(appObject.getPlanData(), PlanData.class);
         builder.setPlanData(planDataInput);
 
-        builder.setKey(this.translatorCore.getAnyFromObject(appObject.getKey()));
+        builder.setKey(this.translationEnine.getAnyFromObject(appObject.getKey()));
 
         return builder.build();
     }

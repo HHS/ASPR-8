@@ -19,14 +19,14 @@ public class SimulationStateTranslationSpec extends ProtobufTranslationSpec<Simu
         builder.setStartTime(inputObject.getStartTime());
 
         if (inputObject.hasBaseDate()) {
-            LocalDate LocalDate = this.translatorCore.convertObject(inputObject.getBaseDate());
+            LocalDate LocalDate = this.translationEnine.convertObject(inputObject.getBaseDate());
             builder.setBaseDate(LocalDate);
         }
 
         builder.setPlanningQueueArrivalId(inputObject.getPlanningQueueArrivalId());
 
         for(PlanQueueDataInput planQueueDataInput : inputObject.getPlanQueueDatasList()) {
-            PlanQueueData planQueueData = this.translatorCore.convertObject(planQueueDataInput);
+            PlanQueueData planQueueData = this.translationEnine.convertObject(planQueueDataInput);
 
             builder.addPlanQueueData(planQueueData);
         }
@@ -39,13 +39,13 @@ public class SimulationStateTranslationSpec extends ProtobufTranslationSpec<Simu
 
         builder.setStartTime(appObject.getStartTime());
 
-        Date date = this.translatorCore.convertObject(appObject.getBaseDate());
+        Date date = this.translationEnine.convertObject(appObject.getBaseDate());
         builder.setBaseDate(date);
 
         builder.setPlanningQueueArrivalId(appObject.getPlanningQueueArrivalId());
 
         for(PlanQueueData planQueueData : appObject.getPlanQueueDatas()) {
-            PlanQueueDataInput planQueueDataInput = this.translatorCore.convertObject(planQueueData);
+            PlanQueueDataInput planQueueDataInput = this.translationEnine.convertObject(planQueueData);
 
             builder.addPlanQueueDatas(planQueueDataInput);
         }

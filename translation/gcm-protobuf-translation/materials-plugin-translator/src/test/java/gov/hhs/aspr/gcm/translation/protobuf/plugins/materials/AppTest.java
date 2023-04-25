@@ -39,7 +39,7 @@ public class AppTest {
 		TestResourceHelper.createTestOutputFile(filePath, fileName);
 
 		TranslationController translatorController = TranslationController.builder()
-				.setTranslatorCoreBuilder(ProtobufTranslationEngine.builder())
+				.setTranslationEngineBuilder(ProtobufTranslationEngine.builder())
 				.addTranslator(MaterialsTranslator.getTranslator())
 				.addTranslator(PropertiesTranslator.getTranslator())
 				.addTranslator(ResourcesTranslator.getTranslator())
@@ -72,7 +72,7 @@ public class AppTest {
 		TestResourceHelper.createTestOutputFile(filePath, fileName);
 
 		TranslationController translatorController = TranslationController.builder()
-				.setTranslatorCoreBuilder(ProtobufTranslationEngine.builder())
+				.setTranslationEngineBuilder(ProtobufTranslationEngine.builder())
 				.addTranslator(MaterialsTranslator.getTranslatorWithReport())
 				.addTranslator(ReportsTranslator.getTranslator())
 				.addTranslator(PropertiesTranslator.getTranslator())
@@ -109,7 +109,7 @@ public class AppTest {
 		TestResourceHelper.createTestOutputFile(filePath, fileName);
 
 		TranslationController translatorController = TranslationController.builder()
-				.setTranslatorCoreBuilder(ProtobufTranslationEngine.builder())
+				.setTranslationEngineBuilder(ProtobufTranslationEngine.builder())
 				.addTranslator(MaterialsTranslator.getTranslatorWithReport())
 				.addTranslator(ReportsTranslator.getTranslator())
 				.addTranslator(PropertiesTranslator.getTranslator())
@@ -145,7 +145,7 @@ public class AppTest {
 		TestResourceHelper.createTestOutputFile(filePath, fileName);
 
 		TranslationController translatorController = TranslationController.builder()
-				.setTranslatorCoreBuilder(ProtobufTranslationEngine.builder())
+				.setTranslationEngineBuilder(ProtobufTranslationEngine.builder())
 				.addTranslator(MaterialsTranslator.getTranslatorWithReport())
 				.addTranslator(ReportsTranslator.getTranslator())
 				.addTranslator(PropertiesTranslator.getTranslator())
@@ -180,7 +180,7 @@ public class AppTest {
 		TestResourceHelper.createTestOutputFile(filePath, fileName);
 
 		TranslationController translatorController = TranslationController.builder()
-				.setTranslatorCoreBuilder(ProtobufTranslationEngine.builder())
+				.setTranslationEngineBuilder(ProtobufTranslationEngine.builder())
 				.addTranslator(MaterialsTranslator.getTranslatorWithReport())
 				.addTranslator(ReportsTranslator.getTranslator())
 				.addTranslator(PropertiesTranslator.getTranslator())

@@ -8,12 +8,12 @@ public class RegionIdTranslationSpec extends ProtobufTranslationSpec<RegionIdInp
 
     @Override
     protected RegionId convertInputObject(RegionIdInput inputObject) {
-        return this.translatorCore.getObjectFromAny(inputObject.getId());
+        return this.translationEnine.getObjectFromAny(inputObject.getId());
     }
 
     @Override
     protected RegionIdInput convertAppObject(RegionId appObject) {
-        return RegionIdInput.newBuilder().setId(this.translatorCore.getAnyFromObject(appObject)).build();
+        return RegionIdInput.newBuilder().setId(this.translationEnine.getAnyFromObject(appObject)).build();
     }
 
     @Override

@@ -8,13 +8,13 @@ public class GroupTypeIdTranslationSpec extends ProtobufTranslationSpec<GroupTyp
 
     @Override
     protected GroupTypeId convertInputObject(GroupTypeIdInput inputObject) {
-        return this.translatorCore.getObjectFromAny(inputObject.getId());
+        return this.translationEnine.getObjectFromAny(inputObject.getId());
     }
 
     @Override
     protected GroupTypeIdInput convertAppObject(GroupTypeId appObject) {
         return GroupTypeIdInput.newBuilder()
-                .setId(this.translatorCore.getAnyFromObject(appObject)).build();
+                .setId(this.translationEnine.getAnyFromObject(appObject)).build();
     }
 
     @Override

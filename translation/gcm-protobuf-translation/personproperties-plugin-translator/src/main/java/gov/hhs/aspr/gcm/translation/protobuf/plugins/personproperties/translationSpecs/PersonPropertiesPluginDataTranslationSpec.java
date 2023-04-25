@@ -23,8 +23,8 @@ public class PersonPropertiesPluginDataTranslationSpec
         PersonPropertiesPluginData.Builder builder = PersonPropertiesPluginData.builder();
 
         for (PropertyDefinitionMapInput propertyDefinitionMapInput : inputObject.getPersonPropertyDefinitionsList()) {
-            PersonPropertyId propertyId = this.translatorCore.getObjectFromAny(propertyDefinitionMapInput.getPropertyId());
-            PropertyDefinition propertyDefinition = this.translatorCore
+            PersonPropertyId propertyId = this.translationEnine.getObjectFromAny(propertyDefinitionMapInput.getPropertyId());
+            PropertyDefinition propertyDefinition = this.translationEnine
                     .convertObject(propertyDefinitionMapInput.getPropertyDefinition());
 
             builder.definePersonProperty(propertyId, propertyDefinition);
@@ -32,12 +32,12 @@ public class PersonPropertiesPluginDataTranslationSpec
 
         for (PersonPropertyValueMapInput personPropertyValueMapInput : inputObject.getPersonPropertyValuesList()) {
 
-            PersonId personId = this.translatorCore.convertObject(personPropertyValueMapInput.getPersonId());
+            PersonId personId = this.translationEnine.convertObject(personPropertyValueMapInput.getPersonId());
             builder.addPerson(personId);
             
             for (PropertyValueMapInput propertyValueMapInput : personPropertyValueMapInput.getPropertyValueMapList()) {
-                PersonPropertyId propertyId = this.translatorCore.getObjectFromAny(propertyValueMapInput.getPropertyId());
-                Object value = this.translatorCore.getObjectFromAny(propertyValueMapInput.getPropertyValue());
+                PersonPropertyId propertyId = this.translationEnine.getObjectFromAny(propertyValueMapInput.getPropertyId());
+                Object value = this.translationEnine.getObjectFromAny(propertyValueMapInput.getPropertyValue());
 
                 builder.setPersonPropertyValue(personId, propertyId, value);
             }
@@ -54,12 +54,12 @@ public class PersonPropertiesPluginDataTranslationSpec
         for (PersonPropertyId propertyId : appObject.getPersonPropertyIds()) {
             PropertyDefinition propertyDefinition = appObject.getPersonPropertyDefinition(propertyId);
 
-            PropertyDefinitionInput propertyDefinitionInput = this.translatorCore.convertObject(propertyDefinition);
+            PropertyDefinitionInput propertyDefinitionInput = this.translationEnine.convertObject(propertyDefinition);
 
             PropertyDefinitionMapInput propertyDefinitionMapInput = PropertyDefinitionMapInput
                     .newBuilder()
                     .setPropertyDefinition(propertyDefinitionInput)
-                    .setPropertyId(this.translatorCore.getAnyFromObject(propertyId))
+                    .setPropertyId(this.translationEnine.getAnyFromObject(propertyId))
                     .build();
 
             builder.addPersonPropertyDefinitions(propertyDefinitionMapInput);
@@ -68,16 +68,16 @@ public class PersonPropertiesPluginDataTranslationSpec
         for (int i = 0; i <= appObject.getMaxPersonIndex(); i++) {
             if (appObject.personExists(i)) {
                 List<PersonPropertyInitialization> personPropertiesValues = appObject.getPropertyValues(i);
-                PersonIdInput personIdInput = this.translatorCore.convertObject(new PersonId(i));
+                PersonIdInput personIdInput = this.translationEnine.convertObject(new PersonId(i));
                 PersonPropertyValueMapInput.Builder personPropertyValueMapBuilder = PersonPropertyValueMapInput
                         .newBuilder().setPersonId(personIdInput);
 
                 for (PersonPropertyInitialization personPropertyInitialization : personPropertiesValues) {
                     PropertyValueMapInput propertyValueMapInput = PropertyValueMapInput.newBuilder()
-                            .setPropertyValue(this.translatorCore.getAnyFromObject(
+                            .setPropertyValue(this.translationEnine.getAnyFromObject(
                                     personPropertyInitialization.getValue()))
                             .setPropertyId(
-                                    this.translatorCore.getAnyFromObject(personPropertyInitialization.getPersonPropertyId()))
+                                    this.translationEnine.getAnyFromObject(personPropertyInitialization.getPersonPropertyId()))
                             .build();
 
                     personPropertyValueMapBuilder.addPropertyValueMap(propertyValueMapInput);

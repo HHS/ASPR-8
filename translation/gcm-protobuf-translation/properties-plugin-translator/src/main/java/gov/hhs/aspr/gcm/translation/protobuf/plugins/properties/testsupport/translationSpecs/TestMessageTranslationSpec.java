@@ -12,14 +12,14 @@ public class TestMessageTranslationSpec extends ProtobufTranslationSpec<TestMess
     protected TestMessageSimObject convertInputObject(TestMessage inputObject) {
         TestMessageSimObject appObject = new TestMessageSimObject();
 
-        appObject.setLayer1((Layer1SimObject) this.translatorCore.convertObject(inputObject.getLayer1()));
+        appObject.setLayer1((Layer1SimObject) this.translationEnine.convertObject(inputObject.getLayer1()));
 
         return appObject;
     }
 
     @Override
     protected TestMessage convertAppObject(TestMessageSimObject appObject) {
-        Layer1 layer1 = (Layer1) this.translatorCore.convertObject(appObject.getLayer1());
+        Layer1 layer1 = (Layer1) this.translationEnine.convertObject(appObject.getLayer1());
 
         TestMessage testMessage = TestMessage.newBuilder().setLayer1(layer1).build();
 

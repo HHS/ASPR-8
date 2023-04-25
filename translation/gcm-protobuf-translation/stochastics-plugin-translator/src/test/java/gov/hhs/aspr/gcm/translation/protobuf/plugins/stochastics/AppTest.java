@@ -29,7 +29,7 @@ public class AppTest {
         TestResourceHelper.createTestOutputFile(filePath, fileName);
 
         TranslationController translatorController = TranslationController.builder()
-                .setTranslatorCoreBuilder(ProtobufTranslationEngine.builder())
+                .setTranslationEngineBuilder(ProtobufTranslationEngine.builder())
                 .addTranslator(StochasticsTranslator.getTranslator())
                 .addInputFilePath(filePath.resolve(fileName), StochasticsPluginDataInput.class)
                 .addOutputFilePath(filePath.resolve(fileName), StochasticsPluginData.class)

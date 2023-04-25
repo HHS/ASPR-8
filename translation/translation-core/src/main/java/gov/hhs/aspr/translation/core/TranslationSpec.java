@@ -18,7 +18,7 @@ public abstract class TranslationSpec<I, A> implements BaseTranslationSpec {
      * All child TranslationSpecs must call super() otherwise there will be an
      * exception throw in the TranslationEngine
      */
-    public <T extends TranslationEngine> void init(T translatorCore) {
+    public <T extends TranslationEngine> void init(T translationEngine) {
         this.initialized = true;
     }
 

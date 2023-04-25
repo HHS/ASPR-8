@@ -13,7 +13,7 @@ public class ResourcePropertyReportPluginDataTranslationSpec
     protected ResourcePropertyReportPluginData convertInputObject(ResourcePropertyReportPluginDataInput inputObject) {
         ResourcePropertyReportPluginData.Builder builder = ResourcePropertyReportPluginData.builder();
 
-        ReportLabel reportLabel = this.translatorCore.convertObject(inputObject.getReportLabel());
+        ReportLabel reportLabel = this.translationEnine.convertObject(inputObject.getReportLabel());
 
         builder.setReportLabel(reportLabel);
         return builder.build();
@@ -23,7 +23,7 @@ public class ResourcePropertyReportPluginDataTranslationSpec
     protected ResourcePropertyReportPluginDataInput convertAppObject(ResourcePropertyReportPluginData appObject) {
         ResourcePropertyReportPluginDataInput.Builder builder = ResourcePropertyReportPluginDataInput.newBuilder();
 
-        ReportLabelInput reportLabelInput = this.translatorCore.convertObjectAsSafeClass(appObject.getReportLabel(),
+        ReportLabelInput reportLabelInput = this.translationEnine.convertObjectAsSafeClass(appObject.getReportLabel(),
                 ReportLabel.class);
 
         builder.setReportLabel(reportLabelInput);

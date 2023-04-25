@@ -8,12 +8,12 @@ public class PlanDataTranslationSpec extends ProtobufTranslationSpec<PlanDataInp
 
     @Override
     protected PlanData convertInputObject(PlanDataInput inputObject) {
-        return this.translatorCore.getObjectFromAny(inputObject.getData());
+        return this.translationEnine.getObjectFromAny(inputObject.getData());
     }
 
     @Override
     protected PlanDataInput convertAppObject(PlanData appObject) {
-        return PlanDataInput.newBuilder().setData(this.translatorCore.getAnyFromObject(appObject)).build();
+        return PlanDataInput.newBuilder().setData(this.translationEnine.getAnyFromObject(appObject)).build();
     }
 
     @Override

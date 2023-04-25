@@ -34,21 +34,21 @@ public class ResourcesPluginDataTranslationSpec
                 ResourcesPluginData.Builder builder = ResourcesPluginData.builder();
 
                 for (ResourceIdInput resourceIdInput : inputObject.getResourceIdsList()) {
-                        ResourceId resourceId = this.translatorCore.convertObject(resourceIdInput);
+                        ResourceId resourceId = this.translationEnine.convertObject(resourceIdInput);
                         builder.addResource(resourceId);
                 }
 
                 for (ResourcePropertyDefinitionMapInput resourcePropertyDefinitionMapInput : inputObject
                                 .getResourcePropertyDefinitionsList()) {
-                        ResourceId resourceId = this.translatorCore
+                        ResourceId resourceId = this.translationEnine
                                         .convertObject(resourcePropertyDefinitionMapInput.getResourceId());
 
                         PropertyDefinitionMapInput propertyDefinitionMapInput = resourcePropertyDefinitionMapInput
                                         .getResourcePropertyDefinitionMap();
 
-                        ResourcePropertyId resourcePropertyId = this.translatorCore
+                        ResourcePropertyId resourcePropertyId = this.translationEnine
                                         .getObjectFromAny(propertyDefinitionMapInput.getPropertyId());
-                        PropertyDefinition propertyDefinition = this.translatorCore
+                        PropertyDefinition propertyDefinition = this.translationEnine
                                         .convertObject(propertyDefinitionMapInput.getPropertyDefinition());
 
                         builder.defineResourceProperty(resourceId, resourcePropertyId, propertyDefinition);
@@ -56,25 +56,25 @@ public class ResourcesPluginDataTranslationSpec
 
                 for (ResourcePropertyValueMapInput resourcePropertyValueMapInput : inputObject
                                 .getResourcePropertyValuesList()) {
-                        ResourceId resourceId = this.translatorCore.convertObject(
+                        ResourceId resourceId = this.translationEnine.convertObject(
                                         resourcePropertyValueMapInput.getResourceId());
 
                         PropertyValueMapInput propertyValueMapInput = resourcePropertyValueMapInput
                                         .getResourcePropertyValueMap();
-                        ResourcePropertyId resourcePropertyId = this.translatorCore
+                        ResourcePropertyId resourcePropertyId = this.translationEnine
                                         .getObjectFromAny(propertyValueMapInput.getPropertyId());
-                        Object propertyValue = this.translatorCore
+                        Object propertyValue = this.translationEnine
                                         .getObjectFromAny(propertyValueMapInput.getPropertyValue());
 
                         builder.setResourcePropertyValue(resourceId, resourcePropertyId, propertyValue);
                 }
 
                 for (PersonResourceLevelsInput personResourceLevelsInput : inputObject.getPersonResourceLevelsList()) {
-                        PersonId personId = this.translatorCore.convertObject(personResourceLevelsInput.getPersonId());
+                        PersonId personId = this.translationEnine.convertObject(personResourceLevelsInput.getPersonId());
 
                         for (ResourceInitializationInput resourceInitializationInput : personResourceLevelsInput
                                         .getResourceLevelsList()) {
-                                ResourceId resourceId = this.translatorCore.convertObject(
+                                ResourceId resourceId = this.translationEnine.convertObject(
                                                 resourceInitializationInput.getResourceId());
                                 Long amount = resourceInitializationInput.getAmount();
 
@@ -83,11 +83,11 @@ public class ResourcesPluginDataTranslationSpec
                 }
 
                 for (RegionResourceLevelsInput regionResourceLevelsInput : inputObject.getRegionResourceLevelsList()) {
-                        RegionId regionId = this.translatorCore.convertObject(regionResourceLevelsInput.getRegionId());
+                        RegionId regionId = this.translationEnine.convertObject(regionResourceLevelsInput.getRegionId());
 
                         for (ResourceInitializationInput resourceInitializationInput : regionResourceLevelsInput
                                         .getResourceLevelsList()) {
-                                ResourceId resourceId = this.translatorCore.convertObject(
+                                ResourceId resourceId = this.translationEnine.convertObject(
                                                 resourceInitializationInput.getResourceId());
                                 Long amount = resourceInitializationInput.getAmount();
 
@@ -97,9 +97,9 @@ public class ResourcesPluginDataTranslationSpec
 
                 for (ResourceTimeTrackingPolicyMapInput resourceTimeTrackingPolicyMapInput : inputObject
                                 .getResourceTimeTrackingPoliciesList()) {
-                        ResourceId resourceId = this.translatorCore.convertObject(
+                        ResourceId resourceId = this.translationEnine.convertObject(
                                         resourceTimeTrackingPolicyMapInput.getResourceId());
-                        TimeTrackingPolicy timeTrackingPolicy = this.translatorCore
+                        TimeTrackingPolicy timeTrackingPolicy = this.translationEnine
                                         .convertObject(resourceTimeTrackingPolicyMapInput.getTimeTrackingPolicy());
 
                         builder.setResourceTimeTracking(resourceId, timeTrackingPolicy);
@@ -113,7 +113,7 @@ public class ResourcesPluginDataTranslationSpec
                 ResourcesPluginDataInput.Builder builder = ResourcesPluginDataInput.newBuilder();
 
                 for (ResourceId resourceId : appObject.getResourceIds()) {
-                        ResourceIdInput resourceIdInput = this.translatorCore.convertObjectAsSafeClass(resourceId,
+                        ResourceIdInput resourceIdInput = this.translationEnine.convertObjectAsSafeClass(resourceId,
                                         ResourceId.class);
 
                         for (ResourcePropertyId resourcePropertyId : appObject.getResourcePropertyIds(resourceId)) {
@@ -123,23 +123,23 @@ public class ResourcesPluginDataTranslationSpec
                                 ResourcePropertyValueMapInput.Builder resourcePropValBuilder = ResourcePropertyValueMapInput
                                                 .newBuilder();
 
-                                PropertyDefinitionInput propertyDefinitionInput = this.translatorCore
+                                PropertyDefinitionInput propertyDefinitionInput = this.translationEnine
                                                 .convertObject(appObject.getResourcePropertyDefinition(resourceId,
                                                                 resourcePropertyId));
 
                                 PropertyDefinitionMapInput propertyDefInput = PropertyDefinitionMapInput.newBuilder()
                                                 .setPropertyDefinition(propertyDefinitionInput)
-                                                .setPropertyId(this.translatorCore.getAnyFromObject(resourcePropertyId))
+                                                .setPropertyId(this.translationEnine.getAnyFromObject(resourcePropertyId))
                                                 .build();
 
                                 resourcePropDefBuilder.setResourcePropertyDefinitionMap(propertyDefInput)
                                                 .setResourceId(resourceIdInput);
 
                                 PropertyValueMapInput propertyValueMapInput = PropertyValueMapInput.newBuilder()
-                                                .setPropertyValue(this.translatorCore
+                                                .setPropertyValue(this.translationEnine
                                                                 .getAnyFromObject(appObject.getResourcePropertyValue(
                                                                                 resourceId, resourcePropertyId)))
-                                                .setPropertyId(this.translatorCore.getAnyFromObject(resourcePropertyId))
+                                                .setPropertyId(this.translationEnine.getAnyFromObject(resourcePropertyId))
                                                 .build();
 
                                 resourcePropValBuilder
@@ -150,7 +150,7 @@ public class ResourcesPluginDataTranslationSpec
                                 builder.addResourcePropertyValues(resourcePropValBuilder.build());
                         }
 
-                        TimeTrackingPolicyInput timeTrackingPolicyInput = this.translatorCore
+                        TimeTrackingPolicyInput timeTrackingPolicyInput = this.translationEnine
                                         .convertObject(appObject.getPersonResourceTimeTrackingPolicy(resourceId));
                         ResourceTimeTrackingPolicyMapInput resourceTimeTrackingPolicyMapInput = ResourceTimeTrackingPolicyMapInput
                                         .newBuilder()
@@ -169,13 +169,13 @@ public class ResourcesPluginDataTranslationSpec
                         List<ResourceInitialization> personResourceLevels = appObject.getPersonResourceLevels(personId);
 
                         if (!personResourceLevels.isEmpty()) {
-                                PersonIdInput personIdInput = this.translatorCore.convertObject(personId);
+                                PersonIdInput personIdInput = this.translationEnine.convertObject(personId);
                                 PersonResourceLevelsInput.Builder personResourceLevelsBuilder = PersonResourceLevelsInput
                                                 .newBuilder()
                                                 .setPersonId(personIdInput);
 
                                 for (ResourceInitialization resourceInitialization : personResourceLevels) {
-                                        ResourceInitializationInput resourceInitializationInput = this.translatorCore
+                                        ResourceInitializationInput resourceInitializationInput = this.translationEnine
                                                         .convertObject(resourceInitialization);
 
                                         personResourceLevelsBuilder.addResourceLevels(resourceInitializationInput);
@@ -189,7 +189,7 @@ public class ResourcesPluginDataTranslationSpec
                         List<ResourceInitialization> regionResourceLevels = appObject.getRegionResourceLevels(regionId);
 
                         if (!regionResourceLevels.isEmpty()) {
-                                RegionIdInput regionIdInput = this.translatorCore.convertObjectAsSafeClass(regionId,
+                                RegionIdInput regionIdInput = this.translationEnine.convertObjectAsSafeClass(regionId,
                                                 RegionId.class);
 
                                 RegionResourceLevelsInput.Builder regionResourceLevelsBuilder = RegionResourceLevelsInput
@@ -197,7 +197,7 @@ public class ResourcesPluginDataTranslationSpec
                                                 .setRegionId(regionIdInput);
 
                                 for (ResourceInitialization resourceInitialization : regionResourceLevels) {
-                                        ResourceInitializationInput resourceInitializationInput = this.translatorCore
+                                        ResourceInitializationInput resourceInitializationInput = this.translationEnine
                                                         .convertObject(resourceInitialization);
 
                                         regionResourceLevelsBuilder.addResourceLevels(resourceInitializationInput);

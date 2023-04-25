@@ -25,16 +25,16 @@ public class RegionsPluginDataTranslationSpec extends ProtobufTranslationSpec<Re
 
         // add regions
         for (RegionIdInput regionIdInput : inputObject.getRegionIdsList()) {
-            RegionId regionId = this.translatorCore.convertObject(regionIdInput);
+            RegionId regionId = this.translationEnine.convertObject(regionIdInput);
 
             builder.addRegion(regionId);
         }
 
         // define regions
         for (PropertyDefinitionMapInput propertyDefinitionMapInput : inputObject.getRegionPropertyDefinitionsList()) {
-            RegionPropertyId regionPropertyId = this.translatorCore
+            RegionPropertyId regionPropertyId = this.translationEnine
                     .getObjectFromAny(propertyDefinitionMapInput.getPropertyId());
-            PropertyDefinition propertyDefinition = this.translatorCore
+            PropertyDefinition propertyDefinition = this.translationEnine
                     .convertObject(propertyDefinitionMapInput.getPropertyDefinition());
 
             builder.defineRegionProperty(regionPropertyId, propertyDefinition);
@@ -42,11 +42,11 @@ public class RegionsPluginDataTranslationSpec extends ProtobufTranslationSpec<Re
 
         // add region property values
         for (RegionPropertyValueMapInput regionPropertyValueMapInput : inputObject.getRegionPropertyValuesList()) {
-            RegionId regionId = this.translatorCore.convertObject(regionPropertyValueMapInput.getRegionId());
+            RegionId regionId = this.translationEnine.convertObject(regionPropertyValueMapInput.getRegionId());
             for (PropertyValueMapInput propertyValueMapInput : regionPropertyValueMapInput.getPropertyValueMapList()) {
-                RegionPropertyId regionPropertyId = this.translatorCore
+                RegionPropertyId regionPropertyId = this.translationEnine
                         .getObjectFromAny(propertyValueMapInput.getPropertyId());
-                Object regionPropertyValue = this.translatorCore.getObjectFromAny(propertyValueMapInput.getPropertyValue());
+                Object regionPropertyValue = this.translationEnine.getObjectFromAny(propertyValueMapInput.getPropertyValue());
 
                 builder.setRegionPropertyValue(regionId, regionPropertyId, regionPropertyValue);
             }
@@ -54,13 +54,13 @@ public class RegionsPluginDataTranslationSpec extends ProtobufTranslationSpec<Re
 
         // assign people to regions
         for (RegionMembershipInput regionMembershipInput : inputObject.getPersonRegionsList()) {
-            PersonId personId = this.translatorCore.convertObject(regionMembershipInput.getPersonId());
-            RegionId regionId = this.translatorCore.convertObject(regionMembershipInput.getRegionId());
+            PersonId personId = this.translationEnine.convertObject(regionMembershipInput.getPersonId());
+            RegionId regionId = this.translationEnine.convertObject(regionMembershipInput.getRegionId());
 
             builder.setPersonRegion(personId, regionId);
         }
 
-        TimeTrackingPolicy timeTrackingPolicy = this.translatorCore
+        TimeTrackingPolicy timeTrackingPolicy = this.translationEnine
                 .convertObject(inputObject.getRegionArrivalTimeTrackingPolicy());
         builder.setPersonRegionArrivalTracking(timeTrackingPolicy);
 
@@ -73,18 +73,18 @@ public class RegionsPluginDataTranslationSpec extends ProtobufTranslationSpec<Re
 
         // add regions
         for (RegionId regionId : appObject.getRegionIds()) {
-            RegionIdInput regionIdInput = this.translatorCore.convertObjectAsSafeClass(regionId, RegionId.class);
+            RegionIdInput regionIdInput = this.translationEnine.convertObjectAsSafeClass(regionId, RegionId.class);
             builder.addRegionIds(regionIdInput);
         }
 
         // add region property definitions
         for (RegionPropertyId regionPropertyId : appObject.getRegionPropertyIds()) {
-            PropertyDefinitionInput propertyDefinitionInput = this.translatorCore
+            PropertyDefinitionInput propertyDefinitionInput = this.translationEnine
                     .convertObject(appObject.getRegionPropertyDefinition(regionPropertyId));
 
             PropertyDefinitionMapInput propertyDefinitionMapInput = PropertyDefinitionMapInput
                     .newBuilder()
-                    .setPropertyId(this.translatorCore.getAnyFromObject(regionPropertyId))
+                    .setPropertyId(this.translationEnine.getAnyFromObject(regionPropertyId))
                     .setPropertyDefinition(propertyDefinitionInput)
                     .build();
 
@@ -92,13 +92,13 @@ public class RegionsPluginDataTranslationSpec extends ProtobufTranslationSpec<Re
         }
 
         for (RegionId regionId : appObject.getRegionIds()) {
-            RegionIdInput regionIdInput = this.translatorCore.convertObjectAsSafeClass(regionId, RegionId.class);
+            RegionIdInput regionIdInput = this.translationEnine.convertObjectAsSafeClass(regionId, RegionId.class);
 
             for (RegionPropertyId regionPropertyId : appObject.getRegionPropertyValues(regionId).keySet()) {
                 PropertyValueMapInput propertyValueMapInput = PropertyValueMapInput
                         .newBuilder()
-                        .setPropertyId(this.translatorCore.getAnyFromObject(regionPropertyId))
-                        .setPropertyValue(this.translatorCore
+                        .setPropertyId(this.translationEnine.getAnyFromObject(regionPropertyId))
+                        .setPropertyValue(this.translationEnine
                                 .getAnyFromObject(appObject.getRegionPropertyValues(regionId).get(regionPropertyId)))
                         .build();
 
@@ -118,8 +118,8 @@ public class RegionsPluginDataTranslationSpec extends ProtobufTranslationSpec<Re
             if (appObject.getPersonRegion(personId).isPresent()) {
                 RegionId regionId = appObject.getPersonRegion(personId).get();
                 RegionMembershipInput.Builder regionMembershipBuilder = RegionMembershipInput.newBuilder();
-                PersonIdInput personIdInput = this.translatorCore.convertObject(personId);
-                RegionIdInput regionIdInput = this.translatorCore.convertObjectAsSafeClass(regionId, RegionId.class);
+                PersonIdInput personIdInput = this.translationEnine.convertObject(personId);
+                RegionIdInput regionIdInput = this.translationEnine.convertObjectAsSafeClass(regionId, RegionId.class);
                 regionMembershipBuilder.setPersonId(personIdInput).setRegionId(regionIdInput);
 
                 builder.addPersonRegions(regionMembershipBuilder.build());
@@ -127,7 +127,7 @@ public class RegionsPluginDataTranslationSpec extends ProtobufTranslationSpec<Re
             }
         }
 
-        TimeTrackingPolicyInput timeTrackingPolicyInput = this.translatorCore
+        TimeTrackingPolicyInput timeTrackingPolicyInput = this.translationEnine
                 .convertObject(appObject.getPersonRegionArrivalTrackingPolicy());
 
         builder.setRegionArrivalTimeTrackingPolicy(timeTrackingPolicyInput);

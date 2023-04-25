@@ -10,8 +10,8 @@ public class PropertyValueMapTranslationSpec extends ProtobufTranslationSpec<Pro
     protected PropertyValueMap convertInputObject(PropertyValueMapInput inputObject) {
         PropertyValueMap propertyValueMap = new PropertyValueMap();
 
-        propertyValueMap.setPropertyId(this.translatorCore.getObjectFromAny(inputObject.getPropertyId()));
-        propertyValueMap.setPropertyValue(this.translatorCore.getObjectFromAny(inputObject.getPropertyValue()));
+        propertyValueMap.setPropertyId(this.translationEnine.getObjectFromAny(inputObject.getPropertyId()));
+        propertyValueMap.setPropertyValue(this.translationEnine.getObjectFromAny(inputObject.getPropertyValue()));
         return propertyValueMap;
     }
 
@@ -19,8 +19,8 @@ public class PropertyValueMapTranslationSpec extends ProtobufTranslationSpec<Pro
     protected PropertyValueMapInput convertAppObject(PropertyValueMap appObject) {
         PropertyValueMapInput.Builder builder = PropertyValueMapInput.newBuilder();
 
-        builder.setPropertyId(this.translatorCore.getAnyFromObject(appObject.getPropertyId()));
-        builder.setPropertyValue(this.translatorCore.getAnyFromObject(appObject.getPropertyValue()));
+        builder.setPropertyId(this.translationEnine.getAnyFromObject(appObject.getPropertyId()));
+        builder.setPropertyValue(this.translationEnine.getAnyFromObject(appObject.getPropertyValue()));
 
         return builder.build();
     }

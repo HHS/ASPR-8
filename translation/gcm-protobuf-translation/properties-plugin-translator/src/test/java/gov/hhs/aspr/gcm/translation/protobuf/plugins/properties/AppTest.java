@@ -27,7 +27,7 @@ public class AppTest {
         TestResourceHelper.createTestOutputFile(filePath, fileName);
 
         TranslationController translatorController = TranslationController.builder()
-                .setTranslatorCoreBuilder(ProtobufTranslationEngine.builder()
+                .setTranslationEngineBuilder(ProtobufTranslationEngine.builder()
                         .addTranslatorSpec(new TestMessageTranslationSpec())
                         .addTranslatorSpec(new Layer1TranslationSpec()))
                 .addTranslator(PropertiesTranslator.getTranslator())

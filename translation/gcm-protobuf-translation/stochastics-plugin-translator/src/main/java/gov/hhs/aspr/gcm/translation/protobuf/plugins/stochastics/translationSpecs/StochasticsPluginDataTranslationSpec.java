@@ -16,14 +16,14 @@ public class StochasticsPluginDataTranslationSpec
     protected StochasticsPluginData convertInputObject(StochasticsPluginDataInput inputObject) {
         StochasticsPluginData.Builder builder = StochasticsPluginData.builder();
 
-        WellState wellState = this.translatorCore.convertObject(inputObject.getWellState());
+        WellState wellState = this.translationEnine.convertObject(inputObject.getWellState());
 
         builder.setMainRNGState(wellState);
 
         for (RandomNumberGeneratorMapInput randomGenIdInput : inputObject.getRandomNumberGeneratorIdsList()) {
-            RandomNumberGeneratorId generatorId = this.translatorCore
+            RandomNumberGeneratorId generatorId = this.translationEnine
                     .convertObject(randomGenIdInput.getRandomNumberGeneratorId());
-            WellState generatorWellState = this.translatorCore.convertObject(randomGenIdInput.getWellState());
+            WellState generatorWellState = this.translationEnine.convertObject(randomGenIdInput.getWellState());
             builder.addRNG(generatorId, generatorWellState);
         }
 
@@ -34,13 +34,13 @@ public class StochasticsPluginDataTranslationSpec
     protected StochasticsPluginDataInput convertAppObject(StochasticsPluginData appObject) {
         StochasticsPluginDataInput.Builder builder = StochasticsPluginDataInput.newBuilder();
 
-        WellStateInput wellStateInput = this.translatorCore.convertObject(appObject.getWellState());
+        WellStateInput wellStateInput = this.translationEnine.convertObject(appObject.getWellState());
         builder.setWellState(wellStateInput);
 
         for (RandomNumberGeneratorId randomNumberGeneratorId : appObject.getRandomNumberGeneratorIds()) {
-            RandomNumberGeneratorIdInput randomNumberGeneratorIdInput = this.translatorCore
+            RandomNumberGeneratorIdInput randomNumberGeneratorIdInput = this.translationEnine
                     .convertObjectAsSafeClass(randomNumberGeneratorId, RandomNumberGeneratorId.class);
-            WellStateInput generatorWellStateInput = this.translatorCore
+            WellStateInput generatorWellStateInput = this.translationEnine
                     .convertObject(appObject.getWellState(randomNumberGeneratorId));
 
             builder.addRandomNumberGeneratorIds(

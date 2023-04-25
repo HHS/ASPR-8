@@ -26,7 +26,7 @@ public class AppTest {
         TestResourceHelper.createTestOutputFile(filePath, fileName);
 
         TranslationController translatorController = TranslationController.builder()
-                .setTranslatorCoreBuilder(ProtobufTranslationEngine.builder())
+                .setTranslationEngineBuilder(ProtobufTranslationEngine.builder())
                 .addTranslator(PeopleTranslator.getTranslator())
                 .addInputFilePath(filePath.resolve(fileName), PeoplePluginDataInput.class)
                 .addOutputFilePath(filePath.resolve(fileName), PeoplePluginData.class)
