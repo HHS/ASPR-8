@@ -27,8 +27,8 @@ import com.google.protobuf.util.JsonFormat.Printer;
 import com.google.protobuf.util.JsonFormat.TypeRegistry;
 
 import gov.hhs.aspr.translation.core.TranslationSpec;
+import gov.hhs.aspr.translation.protobuf.core.translationSpecs.PrimitiveTranslatorSpecs;
 import gov.hhs.aspr.translation.core.TranslationEngine;
-import gov.hhs.aspr.translation.protobuf.core.translatorSpecs.PrimitiveTranslatorSpecs;
 
 public class ProtobufTranslatorCore extends TranslationEngine {
     private final Data data;

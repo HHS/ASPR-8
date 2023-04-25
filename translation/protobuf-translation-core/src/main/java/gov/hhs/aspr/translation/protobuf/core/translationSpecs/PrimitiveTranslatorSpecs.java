@@ -1,4 +1,4 @@
-package gov.hhs.aspr.translation.protobuf.core.translatorSpecs;
+package gov.hhs.aspr.translation.protobuf.core.translationSpecs;
 
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;

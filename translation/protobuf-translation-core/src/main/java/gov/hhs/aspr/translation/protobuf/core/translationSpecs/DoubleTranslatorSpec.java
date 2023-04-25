@@ -1,4 +1,4 @@
-package gov.hhs.aspr.translation.protobuf.core.translatorSpecs;
+package gov.hhs.aspr.translation.protobuf.core.translationSpecs;
 
 import com.google.protobuf.DoubleValue;
 
