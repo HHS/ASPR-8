@@ -38,15 +38,18 @@ import util.random.RandomGeneratorProvider;
 
 public final class Example_16 {
 
-	private Example_16() {
+	private Path outputPath;
+
+	private Example_16(Path outputPath) {
+		this.outputPath = outputPath;
 	}
 
 	private RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(524055747550937602L);
 
-	private NIOReportItemHandler getNIOReportItemHandler(Path path) {
+	private NIOReportItemHandler getNIOReportItemHandler() {
 		return NIOReportItemHandler	.builder()//
-									.addReport(ModelReportLabel.PERSON_PROPERTY_REPORT, Paths.get(path + "\\person_property_report.xls"))//
-									.addReport(ModelReportLabel.VACCINATION, Paths.get(path + "\\vaccination_report.xls"))//
+									.addReport(ModelReportLabel.PERSON_PROPERTY_REPORT, Paths.get(outputPath + "\\person_property_report.xls"))//
+									.addReport(ModelReportLabel.VACCINATION, Paths.get(outputPath + "\\vaccination_report.xls"))//
 									.build();
 	}
 
@@ -192,7 +195,7 @@ public final class Example_16 {
 
 	}
 
-	private void execute(Path path) {
+	private void execute() {
 
 		/*
 		 * Create the global properties plugin
@@ -203,7 +206,7 @@ public final class Example_16 {
 		 * Create the reports
 		 */
 		
-		NIOReportItemHandler nioReportItemHandler = getNIOReportItemHandler(path);
+		NIOReportItemHandler nioReportItemHandler = getNIOReportItemHandler();
 
 		/*
 		 * Create the people plugin filled with 1000 people
@@ -254,16 +257,19 @@ public final class Example_16 {
 
 	}
 
-	public static void main(String[] args) {
-		Path inputPath = Paths.get(args[0]);
-		if (!Files.exists(inputPath)) {
-			try {
-				Files.createDirectory(inputPath);
-			} catch (IOException e) {
-				System.out.println("Could not create directory: " + e.getMessage());
+	public static void main(String[] args) throws IOException {
+		if (args.length == 0) {
+			throw new RuntimeException("One output directory argument is required");
+		}
+		Path outputPath = Paths.get(args[0]);
+		if (!Files.exists(outputPath)) {
+			Files.createDirectory(outputPath);
+		} else {
+			if (!Files.isDirectory(outputPath)) {
+				throw new IOException("Provided path is not a directory");
 			}
 		}
-		new Example_16().execute(inputPath);
+		new Example_16(outputPath).execute();
 	}
 
 }
