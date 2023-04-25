@@ -5,7 +5,6 @@ import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.PeopleTranslatorId;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.PropertiesTranslatorId;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.RegionsTranslatorId;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.translationSpecs.TestRegionIdTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.ReportsTranslatorId;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.translationSpecs.PersonResourceReportPluginDataTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.translationSpecs.ResourceIdTranslatorSpec;
@@ -38,7 +37,6 @@ public class ResourcesTranslator {
                     coreBuilder.addTranslatorSpec(new ResourceInitializationTranslatorSpec());
                     coreBuilder.addTranslatorSpec(new TestResourceIdTranslatorSpec());
                     coreBuilder.addTranslatorSpec(new TestResourcePropertyIdTranslatorSpec());
-                    coreBuilder.addTranslatorSpec(new TestRegionIdTranslatorSpec());
 
                     if (withReport) {
                         coreBuilder.addTranslatorSpec(new PersonResourceReportPluginDataTranslatorSpec());

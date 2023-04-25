@@ -22,7 +22,6 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.translationSpecs.
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.PropertiesTranslatorId;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.ReportsTranslatorId;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.ResourcesTranslatorId;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.translationSpecs.TestResourceIdTranslatorSpec;
 
 public class MaterialsTranslator {
 
@@ -45,7 +44,6 @@ public class MaterialsTranslator {
                     coreBuilder.addTranslatorSpec(new BatchIdTranslatorSpec());
                     coreBuilder.addTranslatorSpec(new StageIdTranslatorSpec());
                     coreBuilder.addTranslatorSpec(new BatchPropertyIdTranslatorSpec());
-                    coreBuilder.addTranslatorSpec(new TestResourceIdTranslatorSpec());
                     coreBuilder.addTranslatorSpec(new TestBatchPropertyIdTranslatorSpec());
                     coreBuilder.addTranslatorSpec(new TestMaterialIdTranslatorSpec());
                     coreBuilder.addTranslatorSpec(new TestMaterialsProducerIdTranslatorSpec());
