@@ -4,7 +4,7 @@ import com.google.protobuf.BoolValue;
 
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 
-public class BooleanTranslatorSpec extends ProtobufTranslationSpec<BoolValue, Boolean> {
+public class BooleanTranslationSpec extends ProtobufTranslationSpec<BoolValue, Boolean> {
 
     @Override
     protected Boolean convertInputObject(BoolValue inputObject) {

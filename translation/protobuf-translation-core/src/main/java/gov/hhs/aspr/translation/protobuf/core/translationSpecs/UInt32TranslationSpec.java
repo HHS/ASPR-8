@@ -4,7 +4,7 @@ import com.google.protobuf.UInt32Value;
 
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 
-public class UInt32TranslatorSpec extends ProtobufTranslationSpec<UInt32Value, Integer> {
+public class UInt32TranslationSpec extends ProtobufTranslationSpec<UInt32Value, Integer> {
 
     @Override
     protected Integer convertInputObject(UInt32Value inputObject) {

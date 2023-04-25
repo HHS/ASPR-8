@@ -19,19 +19,19 @@ import com.google.type.Date;
 import gov.hhs.aspr.translation.core.BaseTranslationSpec;
 import gov.hhs.aspr.translation.protobuf.core.input.WrapperEnumValue;
 
-public class PrimitiveTranslatorSpecs {
+public class PrimitiveTranslationSpecs {
 
-    private final static BooleanTranslatorSpec BOOLEAN_TRANSLATOR_SPEC = new BooleanTranslatorSpec();
-    private final static Int32TranslatorSpec INT32_TRANSLATOR_SPEC = new Int32TranslatorSpec();
-    private final static UInt32TranslatorSpec UINT32_TRANSLATOR_SPEC = new UInt32TranslatorSpec();
-    private final static Int64TranslatorSpec INT64_TRANSLATOR_SPEC = new Int64TranslatorSpec();
-    private final static UInt64TranslatorSpec UINT64_TRANSLATOR_SPEC = new UInt64TranslatorSpec();
-    private final static StringTranslatorSpec STRING_TRANSLATOR_SPEC = new StringTranslatorSpec();
-    private final static FloatTranslatorSpec FLOAT_TRANSLATOR_SPEC = new FloatTranslatorSpec();
-    private final static DoubleTranslatorSpec DOUBLE_TRANSLATOR_SPEC = new DoubleTranslatorSpec();
-    private final static DateTranslatorSpec DATE_TRANSLATOR_SPEC = new DateTranslatorSpec();
-    private final static EnumTranslatorSpec ENUM_TRANSLATOR_SPEC = new EnumTranslatorSpec();
-    private final static AnyTranslatorSpec ANY_TRANSLATOR_SPEC = new AnyTranslatorSpec();
+    private final static BooleanTranslationSpec BOOLEAN_TRANSLATOR_SPEC = new BooleanTranslationSpec();
+    private final static Int32TranslationSpec INT32_TRANSLATOR_SPEC = new Int32TranslationSpec();
+    private final static UInt32TranslationSpec UINT32_TRANSLATOR_SPEC = new UInt32TranslationSpec();
+    private final static Int64TranslationSpec INT64_TRANSLATOR_SPEC = new Int64TranslationSpec();
+    private final static UInt64TranslationSpec UINT64_TRANSLATOR_SPEC = new UInt64TranslationSpec();
+    private final static StringTranslationSpec STRING_TRANSLATOR_SPEC = new StringTranslationSpec();
+    private final static FloatTranslationSpec FLOAT_TRANSLATOR_SPEC = new FloatTranslationSpec();
+    private final static DoubleTranslationSpec DOUBLE_TRANSLATOR_SPEC = new DoubleTranslationSpec();
+    private final static DateTranslationSpec DATE_TRANSLATOR_SPEC = new DateTranslationSpec();
+    private final static EnumTranslationSpec ENUM_TRANSLATOR_SPEC = new EnumTranslationSpec();
+    private final static AnyTranslationSpec ANY_TRANSLATOR_SPEC = new AnyTranslationSpec();
 
     public static Set<Descriptor> getPrimitiveDescriptors() {
         Set<Descriptor> set = new LinkedHashSet<>();

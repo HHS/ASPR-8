@@ -4,7 +4,7 @@ import com.google.protobuf.DoubleValue;
 
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 
-public class DoubleTranslatorSpec extends ProtobufTranslationSpec<DoubleValue, Double> {
+public class DoubleTranslationSpec extends ProtobufTranslationSpec<DoubleValue, Double> {
 
     @Override
     protected Double convertInputObject(DoubleValue inputObject) {

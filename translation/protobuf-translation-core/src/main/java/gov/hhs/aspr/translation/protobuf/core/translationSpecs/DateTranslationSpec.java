@@ -6,7 +6,7 @@ import com.google.type.Date;
 
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 
-public class DateTranslatorSpec extends ProtobufTranslationSpec<Date, LocalDate> {
+public class DateTranslationSpec extends ProtobufTranslationSpec<Date, LocalDate> {
 
     @Override
     protected LocalDate convertInputObject(Date inputObject) {

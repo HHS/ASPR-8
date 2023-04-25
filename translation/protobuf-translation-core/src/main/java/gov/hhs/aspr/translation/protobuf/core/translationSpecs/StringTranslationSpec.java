@@ -4,7 +4,7 @@ import com.google.protobuf.StringValue;
 
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 
-public class StringTranslatorSpec extends ProtobufTranslationSpec<StringValue, String> {
+public class StringTranslationSpec extends ProtobufTranslationSpec<StringValue, String> {
 
     @Override
     protected String convertInputObject(StringValue inputObject) {

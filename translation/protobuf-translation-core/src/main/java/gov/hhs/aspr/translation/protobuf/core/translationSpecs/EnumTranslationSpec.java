@@ -8,7 +8,7 @@ import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 import gov.hhs.aspr.translation.protobuf.core.input.WrapperEnumValue;
 
 @SuppressWarnings("rawtypes")
-public class EnumTranslatorSpec extends ProtobufTranslationSpec<WrapperEnumValue, Enum> {
+public class EnumTranslationSpec extends ProtobufTranslationSpec<WrapperEnumValue, Enum> {
 
     @Override
     protected Enum convertInputObject(WrapperEnumValue inputObject) {

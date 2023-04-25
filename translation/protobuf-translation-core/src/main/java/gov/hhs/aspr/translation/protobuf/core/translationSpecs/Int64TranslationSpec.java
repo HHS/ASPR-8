@@ -4,7 +4,7 @@ import com.google.protobuf.Int64Value;
 
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 
-public class Int64TranslatorSpec extends ProtobufTranslationSpec<Int64Value, Long> {
+public class Int64TranslationSpec extends ProtobufTranslationSpec<Int64Value, Long> {
 
     @Override
     protected Long convertInputObject(Int64Value inputObject) {

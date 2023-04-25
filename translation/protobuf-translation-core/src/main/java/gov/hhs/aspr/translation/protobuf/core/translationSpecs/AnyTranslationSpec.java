@@ -6,7 +6,7 @@ import com.google.protobuf.Message;
 
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 
-public class AnyTranslatorSpec extends ProtobufTranslationSpec<Any, Object> {
+public class AnyTranslationSpec extends ProtobufTranslationSpec<Any, Object> {
 
     @Override
     protected Object convertInputObject(Any inputObject) {

@@ -27,7 +27,7 @@ import com.google.protobuf.util.JsonFormat.Printer;
 import com.google.protobuf.util.JsonFormat.TypeRegistry;
 
 import gov.hhs.aspr.translation.core.TranslationSpec;
-import gov.hhs.aspr.translation.protobuf.core.translationSpecs.PrimitiveTranslatorSpecs;
+import gov.hhs.aspr.translation.protobuf.core.translationSpecs.PrimitiveTranslationSpecs;
 import gov.hhs.aspr.translation.core.TranslationEngine;
 
 public class ProtobufTranslationEngine extends TranslationEngine {
@@ -46,10 +46,10 @@ public class ProtobufTranslationEngine extends TranslationEngine {
 
         private Data() {
             super();
-            this.typeUrlToClassMap.putAll(PrimitiveTranslatorSpecs.getPrimitiveTypeUrlToClassMap());
-            this.classToTranslationSpecMap.putAll(PrimitiveTranslatorSpecs.getPrimitiveInputTranslatorSpecMap());
-            this.classToTranslationSpecMap.putAll(PrimitiveTranslatorSpecs.getPrimitiveObjectTranslatorSpecMap());
-            this.translationSpecs.addAll(PrimitiveTranslatorSpecs.getPrimitiveTranslatorSpecs());
+            this.typeUrlToClassMap.putAll(PrimitiveTranslationSpecs.getPrimitiveTypeUrlToClassMap());
+            this.classToTranslationSpecMap.putAll(PrimitiveTranslationSpecs.getPrimitiveInputTranslatorSpecMap());
+            this.classToTranslationSpecMap.putAll(PrimitiveTranslationSpecs.getPrimitiveObjectTranslatorSpecMap());
+            this.translationSpecs.addAll(PrimitiveTranslationSpecs.getPrimitiveTranslatorSpecs());
         }
     }
 
@@ -67,7 +67,7 @@ public class ProtobufTranslationEngine extends TranslationEngine {
 
         public TranslationEngine build() {
             TypeRegistry.Builder typeRegistryBuilder = TypeRegistry.newBuilder();
-            this.descriptorSet.addAll(PrimitiveTranslatorSpecs.getPrimitiveDescriptors());
+            this.descriptorSet.addAll(PrimitiveTranslationSpecs.getPrimitiveDescriptors());
 
             this.descriptorSet.forEach((descriptor) -> {
                 typeRegistryBuilder.add(descriptor);
