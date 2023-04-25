@@ -1,5 +1,8 @@
 package lesson;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.stream.IntStream;
@@ -47,13 +50,28 @@ import util.random.RandomGeneratorProvider;
 
 public final class Example_19 {
 
-	public static void main(final String[] args) {
-		new Example_19().execute();
+	private final Path outputDirectory;
+
+	public static void main(final String[] args) throws IOException {
+		if (args.length == 0) {
+			throw new RuntimeException("One output directory argument is required");
+		}
+		Path outputDirectory = Paths.get(args[0]);
+		if (!Files.exists(outputDirectory)) {
+			Files.createDirectory(outputDirectory);
+		} else {
+			if (!Files.isDirectory(outputDirectory)) {
+				throw new IOException("Provided path is not a directory");
+			}
+		}
+
+		new Example_19(outputDirectory).execute();
 	}
 
 	private final RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(9032703880551658180L);
 
-	private Example_19() {
+	private Example_19(Path outputDirectory) {
+		this.outputDirectory = outputDirectory;
 	}
 
 	private void execute() {
@@ -252,10 +270,10 @@ public final class Example_19 {
 	
 	private NIOReportItemHandler getNIOReportItemHandler() {
 		return NIOReportItemHandler	.builder()//
-									.addReport(ModelReportLabel.DISEASE_STATE_REPORT, Paths.get("c:\\temp\\gcm\\disease_state_report.xls"))//
-									.addReport(ModelReportLabel.PERSON_PROPERTY_REPORT, Paths.get("c:\\temp\\gcm\\person_property_report.xls"))//
-									.addReport(ModelReportLabel.VACCINE_REPORT, Paths.get("c:\\temp\\gcm\\vaccine_report.xls"))//
-									.addReport(ModelReportLabel.VACCINE_PRODUCTION_REPORT, Paths.get("c:\\temp\\gcm\\vaccine_production_report.xls"))//
+									.addReport(ModelReportLabel.DISEASE_STATE_REPORT, outputDirectory.resolve("disease_state_report.xls"))//
+									.addReport(ModelReportLabel.PERSON_PROPERTY_REPORT, outputDirectory.resolve("person_property_report.xls"))//
+									.addReport(ModelReportLabel.VACCINE_REPORT, outputDirectory.resolve("vaccine_report.xls"))//
+									.addReport(ModelReportLabel.VACCINE_PRODUCTION_REPORT, outputDirectory.resolve("vaccine_production_report.xls"))//
 									.build();
 	}
 

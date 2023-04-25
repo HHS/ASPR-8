@@ -1,5 +1,8 @@
 package lesson;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.stream.IntStream;
@@ -35,17 +38,18 @@ import util.random.RandomGeneratorProvider;
 
 public final class Example_16 {
 
-	private Example_16() {
+	private final Path outputDirectory;
+
+	private Example_16(Path outputDirectory) {
+		this.outputDirectory = outputDirectory;
 	}
 
 	private RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(524055747550937602L);
 
 	private NIOReportItemHandler getNIOReportItemHandler() {
 		return NIOReportItemHandler	.builder()//
-									.addReport(ModelReportLabel.PERSON_PROPERTY_REPORT, //
-											Paths.get("c:\\temp\\gcm\\person_property_report.xls"))//
-									.addReport(ModelReportLabel.VACCINATION, //
-											Paths.get("c:\\temp\\gcm\\vaccination_report.xls"))//
+									.addReport(ModelReportLabel.PERSON_PROPERTY_REPORT, outputDirectory.resolve("person_property_report.xls"))//
+									.addReport(ModelReportLabel.VACCINATION, outputDirectory.resolve("vaccination_report.xls"))//
 									.build();
 	}
 
@@ -253,8 +257,19 @@ public final class Example_16 {
 
 	}
 
-	public static void main(String[] args) {
-		new Example_16().execute();
+	public static void main(String[] args) throws IOException {
+		if (args.length == 0) {
+			throw new RuntimeException("One output directory argument is required");
+		}
+		Path outputPath = Paths.get(args[0]);
+		if (!Files.exists(outputPath)) {
+			Files.createDirectory(outputPath);
+		} else {
+			if (!Files.isDirectory(outputPath)) {
+				throw new IOException("Provided path is not a directory");
+			}
+		}
+		new Example_16(outputPath).execute();
 	}
 
 }
