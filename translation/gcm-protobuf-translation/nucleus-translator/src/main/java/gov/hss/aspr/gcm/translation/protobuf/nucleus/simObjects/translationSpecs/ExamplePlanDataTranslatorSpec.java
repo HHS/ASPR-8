@@ -1,4 +1,4 @@
-package gov.hss.aspr.gcm.translation.protobuf.nucleus.simObjects.translatorSpecs;
+package gov.hss.aspr.gcm.translation.protobuf.nucleus.simObjects.translationSpecs;
 
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.nucleus.example.input.ExamplePlanDataInput;

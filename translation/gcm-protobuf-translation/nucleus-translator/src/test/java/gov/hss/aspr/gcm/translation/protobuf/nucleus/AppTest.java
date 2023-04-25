@@ -13,7 +13,7 @@ import gov.hhs.aspr.translation.core.TranslationController;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
 import gov.hhs.aspr.translation.protobuf.core.testsupport.TestResourceHelper;
 import gov.hss.aspr.gcm.translation.protobuf.nucleus.simObjects.ExamplePlanData;
-import gov.hss.aspr.gcm.translation.protobuf.nucleus.simObjects.translatorSpecs.ExamplePlanDataTranslatorSpec;
+import gov.hss.aspr.gcm.translation.protobuf.nucleus.simObjects.translationSpecs.ExamplePlanDataTranslatorSpec;
 import nucleus.PlanQueueData;
 import nucleus.Planner;
 import nucleus.SimulationState;
