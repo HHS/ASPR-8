@@ -28,7 +28,7 @@
         <maven-replacer-plugin.version>1.3.2</maven-replacer-plugin.version>
 
         <!-- dependency versions -->
-        <protobuf-translation-core.version>2.2.0</protobuf-translation-core.version>
+        <protobuf-translation-core.version>2.3.0-SNAPSHOT</protobuf-translation-core.version>
         <proto-definitions.version>1.4.0</proto-definitions.version>
         <gcm.version>4.0.0-SNAPSHOT</gcm.version>
         <junit-jupiter-engine.version>5.8.2</junit-jupiter-engine.version>
@@ -103,7 +103,7 @@
     <dependencies>
         <dependency>
             <groupId>gov.hhs.aspr.translation</groupId>
-            <artifactId>protobuf-core</artifactId>
+            <artifactId>protobuf-translation-core</artifactId>
         </dependency>
         <dependency>
             <groupId>gov.hhs.aspr</groupId>
