@@ -6,11 +6,11 @@ import com.google.type.Date;
 
 import gov.hhs.aspr.gcm.translation.protobuf.nucleus.input.PlanQueueDataInput;
 import gov.hhs.aspr.gcm.translation.protobuf.nucleus.input.SimulationStateInput;
-import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslatorSpec;
+import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 import nucleus.PlanQueueData;
 import nucleus.SimulationState;
 
-public class SimulationStateTranslatorSpec extends ProtobufTranslatorSpec<SimulationStateInput, SimulationState> {
+public class SimulationStateTranslatorSpec extends ProtobufTranslationSpec<SimulationStateInput, SimulationState> {
 
     @Override
     protected SimulationState convertInputObject(SimulationStateInput inputObject) {

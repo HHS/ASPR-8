@@ -1,10 +1,10 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.translatorSpecs;
 
-import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslatorSpec;
+import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.input.ReportPeriodInput;
 import plugins.reports.support.ReportPeriod;
 
-public class ReportPeriodTranslatorSpec extends ProtobufTranslatorSpec<ReportPeriodInput, ReportPeriod> {
+public class ReportPeriodTranslatorSpec extends ProtobufTranslationSpec<ReportPeriodInput, ReportPeriod> {
 
     @Override
     protected ReportPeriod convertInputObject(ReportPeriodInput inputObject) {

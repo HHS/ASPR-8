@@ -4,11 +4,11 @@ import java.lang.reflect.InvocationTargetException;
 
 import com.google.protobuf.ProtocolMessageEnum;
 
-import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslatorSpec;
+import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 import gov.hhs.aspr.translation.protobuf.core.input.WrapperEnumValue;
 
 @SuppressWarnings("rawtypes")
-public class EnumTranslatorSpec extends ProtobufTranslatorSpec<WrapperEnumValue, Enum> {
+public class EnumTranslatorSpec extends ProtobufTranslationSpec<WrapperEnumValue, Enum> {
 
     @Override
     protected Enum convertInputObject(WrapperEnumValue inputObject) {

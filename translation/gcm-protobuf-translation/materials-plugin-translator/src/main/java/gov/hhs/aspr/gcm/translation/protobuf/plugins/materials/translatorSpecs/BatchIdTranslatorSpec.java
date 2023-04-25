@@ -1,10 +1,10 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.translatorSpecs;
 
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.input.BatchIdInput;
-import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslatorSpec;
+import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 import plugins.materials.support.BatchId;
 
-public class BatchIdTranslatorSpec extends ProtobufTranslatorSpec<BatchIdInput, BatchId> {
+public class BatchIdTranslatorSpec extends ProtobufTranslationSpec<BatchIdInput, BatchId> {
 
     @Override
     protected BatchId convertInputObject(BatchIdInput inputObject) {

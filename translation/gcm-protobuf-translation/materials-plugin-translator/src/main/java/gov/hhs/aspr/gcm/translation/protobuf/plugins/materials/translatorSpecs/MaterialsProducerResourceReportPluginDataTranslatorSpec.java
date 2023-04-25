@@ -1,13 +1,13 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.translatorSpecs;
 
-import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslatorSpec;
+import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.input.MaterialsProducerResourceReportPluginDataInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.input.ReportLabelInput;
 import plugins.materials.reports.MaterialsProducerResourceReportPluginData;
 import plugins.reports.support.ReportLabel;
 
 public class MaterialsProducerResourceReportPluginDataTranslatorSpec
-        extends ProtobufTranslatorSpec<MaterialsProducerResourceReportPluginDataInput, MaterialsProducerResourceReportPluginData> {
+        extends ProtobufTranslationSpec<MaterialsProducerResourceReportPluginDataInput, MaterialsProducerResourceReportPluginData> {
 
     @Override
     protected MaterialsProducerResourceReportPluginData convertInputObject(MaterialsProducerResourceReportPluginDataInput inputObject) {

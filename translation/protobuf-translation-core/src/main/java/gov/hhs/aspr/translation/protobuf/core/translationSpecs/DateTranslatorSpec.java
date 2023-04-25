@@ -4,9 +4,9 @@ import java.time.LocalDate;
 
 import com.google.type.Date;
 
-import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslatorSpec;
+import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 
-public class DateTranslatorSpec extends ProtobufTranslatorSpec<Date, LocalDate> {
+public class DateTranslatorSpec extends ProtobufTranslationSpec<Date, LocalDate> {
 
     @Override
     protected LocalDate convertInputObject(Date inputObject) {

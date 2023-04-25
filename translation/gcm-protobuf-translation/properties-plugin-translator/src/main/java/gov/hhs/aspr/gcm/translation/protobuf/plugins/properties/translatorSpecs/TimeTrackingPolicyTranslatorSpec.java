@@ -1,11 +1,11 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.translatorSpecs;
 
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.input.TimeTrackingPolicyInput;
-import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslatorSpec;
+import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 import plugins.util.properties.TimeTrackingPolicy;
 
 public class TimeTrackingPolicyTranslatorSpec
-        extends ProtobufTranslatorSpec<TimeTrackingPolicyInput, TimeTrackingPolicy> {
+        extends ProtobufTranslationSpec<TimeTrackingPolicyInput, TimeTrackingPolicy> {
 
     @Override
     protected TimeTrackingPolicy convertInputObject(TimeTrackingPolicyInput inputObject) {

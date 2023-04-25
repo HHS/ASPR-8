@@ -1,10 +1,10 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.translatorSpecs;
 
-import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslatorSpec;
+import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.input.SimpleReportLabelInput;
 import plugins.reports.support.SimpleReportLabel;
 
-public class SimpleReportLabelTranslatorSpec extends ProtobufTranslatorSpec<SimpleReportLabelInput, SimpleReportLabel>{
+public class SimpleReportLabelTranslatorSpec extends ProtobufTranslationSpec<SimpleReportLabelInput, SimpleReportLabel>{
 
     @Override
     protected SimpleReportLabel convertInputObject(SimpleReportLabelInput inputObject) {

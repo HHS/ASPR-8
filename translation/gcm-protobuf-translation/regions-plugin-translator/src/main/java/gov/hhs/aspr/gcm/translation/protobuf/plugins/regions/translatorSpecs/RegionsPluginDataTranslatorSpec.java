@@ -11,13 +11,13 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.input.RegionIdInput
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.input.RegionMembershipInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.input.RegionPropertyValueMapInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.input.RegionsPluginDataInput;
-import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslatorSpec;
+import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 import plugins.regions.support.RegionId;
 import plugins.regions.support.RegionPropertyId;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.TimeTrackingPolicy;
 
-public class RegionsPluginDataTranslatorSpec extends ProtobufTranslatorSpec<RegionsPluginDataInput, RegionsPluginData> {
+public class RegionsPluginDataTranslatorSpec extends ProtobufTranslationSpec<RegionsPluginDataInput, RegionsPluginData> {
 
     @Override
     protected RegionsPluginData convertInputObject(RegionsPluginDataInput inputObject) {

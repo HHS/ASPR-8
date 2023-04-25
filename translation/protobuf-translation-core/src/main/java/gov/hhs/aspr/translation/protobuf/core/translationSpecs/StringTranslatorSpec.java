@@ -2,9 +2,9 @@ package gov.hhs.aspr.translation.protobuf.core.translationSpecs;
 
 import com.google.protobuf.StringValue;
 
-import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslatorSpec;
+import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 
-public class StringTranslatorSpec extends ProtobufTranslatorSpec<StringValue, String> {
+public class StringTranslatorSpec extends ProtobufTranslationSpec<StringValue, String> {
 
     @Override
     protected String convertInputObject(StringValue inputObject) {

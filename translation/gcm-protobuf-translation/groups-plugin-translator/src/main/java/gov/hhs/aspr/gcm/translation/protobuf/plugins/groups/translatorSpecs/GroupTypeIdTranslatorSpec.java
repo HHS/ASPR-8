@@ -1,10 +1,10 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.translatorSpecs;
 
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.input.GroupTypeIdInput;
-import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslatorSpec;
+import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 import plugins.groups.support.GroupTypeId;
 
-public class GroupTypeIdTranslatorSpec extends ProtobufTranslatorSpec<GroupTypeIdInput, GroupTypeId> {
+public class GroupTypeIdTranslatorSpec extends ProtobufTranslationSpec<GroupTypeIdInput, GroupTypeId> {
 
     @Override
     protected GroupTypeId convertInputObject(GroupTypeIdInput inputObject) {

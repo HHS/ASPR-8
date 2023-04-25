@@ -2,12 +2,12 @@ package gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.translatorSpecs;
 
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.input.ResourceIdInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.input.ResourceInitializationInput;
-import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslatorSpec;
+import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 import plugins.resources.support.ResourceId;
 import plugins.resources.support.ResourceInitialization;
 
 public class ResourceInitializationTranslatorSpec
-        extends ProtobufTranslatorSpec<ResourceInitializationInput, ResourceInitialization> {
+        extends ProtobufTranslationSpec<ResourceInitializationInput, ResourceInitialization> {
 
     @Override
     protected ResourceInitialization convertInputObject(ResourceInitializationInput inputObject) {

@@ -1,10 +1,10 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.translatorSpecs;
 
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.input.MaterialIdInput;
-import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslatorSpec;
+import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 import plugins.materials.support.MaterialId;
 
-public class MaterialIdTranslatorSpec extends ProtobufTranslatorSpec<MaterialIdInput, MaterialId> {
+public class MaterialIdTranslatorSpec extends ProtobufTranslationSpec<MaterialIdInput, MaterialId> {
 
     @Override
     protected MaterialId convertInputObject(MaterialIdInput inputObject) {

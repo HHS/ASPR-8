@@ -4,9 +4,9 @@ import com.google.protobuf.Any;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.Message;
 
-import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslatorSpec;
+import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 
-public class AnyTranslatorSpec extends ProtobufTranslatorSpec<Any, Object> {
+public class AnyTranslatorSpec extends ProtobufTranslationSpec<Any, Object> {
 
     @Override
     protected Object convertInputObject(Any inputObject) {

@@ -1,6 +1,6 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.translatorSpecs;
 
-import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslatorSpec;
+import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.input.RegionTransferReportPluginDataInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.input.ReportLabelInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.input.ReportPeriodInput;
@@ -9,7 +9,7 @@ import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportPeriod;
 
 public class RegionTransferReportPluginDataTranslatorSpec
-        extends ProtobufTranslatorSpec<RegionTransferReportPluginDataInput, RegionTransferReportPluginData> {
+        extends ProtobufTranslationSpec<RegionTransferReportPluginDataInput, RegionTransferReportPluginData> {
 
     @Override
     protected RegionTransferReportPluginData convertInputObject(RegionTransferReportPluginDataInput inputObject) {

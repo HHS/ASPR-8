@@ -2,11 +2,11 @@ package gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.testsupport.tra
 
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.testsupport.input.Layer1;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.testsupport.input.TestMessage;
-import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslatorSpec;
+import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.testsupport.simobjects.Layer1SimObject;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.testsupport.simobjects.TestMessageSimObject;
 
-public class TestMessageTranslatorSpec extends ProtobufTranslatorSpec<TestMessage, TestMessageSimObject> {
+public class TestMessageTranslatorSpec extends ProtobufTranslationSpec<TestMessage, TestMessageSimObject> {
 
     @Override
     protected TestMessageSimObject convertInputObject(TestMessage inputObject) {

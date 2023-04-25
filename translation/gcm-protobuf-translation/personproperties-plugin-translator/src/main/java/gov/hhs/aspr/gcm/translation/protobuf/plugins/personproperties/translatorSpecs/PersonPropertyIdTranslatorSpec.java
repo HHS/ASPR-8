@@ -1,10 +1,10 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.translatorSpecs;
 
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.input.PersonPropertyIdInput;
-import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslatorSpec;
+import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 import plugins.personproperties.support.PersonPropertyId;
 
-public class PersonPropertyIdTranslatorSpec extends ProtobufTranslatorSpec<PersonPropertyIdInput, PersonPropertyId> {
+public class PersonPropertyIdTranslatorSpec extends ProtobufTranslationSpec<PersonPropertyIdInput, PersonPropertyId> {
 
     @Override
     protected PersonPropertyId convertInputObject(PersonPropertyIdInput inputObject) {

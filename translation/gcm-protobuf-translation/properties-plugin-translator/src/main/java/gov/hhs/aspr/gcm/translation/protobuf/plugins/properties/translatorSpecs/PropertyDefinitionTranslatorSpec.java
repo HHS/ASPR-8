@@ -3,10 +3,10 @@ package gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.translatorSpecs
 import com.google.protobuf.Any;
 
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.input.PropertyDefinitionInput;
-import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslatorSpec;
+import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 import plugins.util.properties.PropertyDefinition;
 
-public class PropertyDefinitionTranslatorSpec extends ProtobufTranslatorSpec<PropertyDefinitionInput, PropertyDefinition> {
+public class PropertyDefinitionTranslatorSpec extends ProtobufTranslationSpec<PropertyDefinitionInput, PropertyDefinition> {
 
     @Override
     protected PropertyDefinition convertInputObject(PropertyDefinitionInput inputObject) {
