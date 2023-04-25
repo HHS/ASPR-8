@@ -16,12 +16,12 @@ public class StochasticsTranslator {
         Translator.Builder builder = Translator.builder()
                 .setTranslatorId(StochasticsTranslatorId.PLUGIN_BUNDLE_ID)
                 .setInitializer((translatorContext) -> {
-                    ProtobufTranslationEngine.Builder coreBuilder = translatorContext.getTranslationEngineBuilder(ProtobufTranslationEngine.Builder.class);
+                    ProtobufTranslationEngine.Builder translationEngineBuilder = translatorContext.getTranslationEngineBuilder(ProtobufTranslationEngine.Builder.class);
 
-                    coreBuilder.addTranslatorSpec(new StochasticsPluginDataTranslationSpec());
-                    coreBuilder.addTranslatorSpec(new WellStateTranslationSpec());
-                    coreBuilder.addTranslatorSpec(new RandomGeneratorIdTranslationSpec());
-                    coreBuilder.addTranslatorSpec(new TestRandomGeneratorIdTranslationSpec());
+                    translationEngineBuilder.addTranslatorSpec(new StochasticsPluginDataTranslationSpec());
+                    translationEngineBuilder.addTranslatorSpec(new WellStateTranslationSpec());
+                    translationEngineBuilder.addTranslatorSpec(new RandomGeneratorIdTranslationSpec());
+                    translationEngineBuilder.addTranslatorSpec(new TestRandomGeneratorIdTranslationSpec());
                 });
 
         return builder;

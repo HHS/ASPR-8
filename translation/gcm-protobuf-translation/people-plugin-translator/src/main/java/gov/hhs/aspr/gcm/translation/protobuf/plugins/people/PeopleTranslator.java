@@ -16,14 +16,14 @@ public class PeopleTranslator {
         return Translator.builder()
                 .setTranslatorId(PeopleTranslatorId.TRANSLATOR_ID)
                 .setInitializer((translatorContext) -> {
-                    ProtobufTranslationEngine.Builder coreBuilder = translatorContext
+                    ProtobufTranslationEngine.Builder translationEngineBuilder = translatorContext
                             .getTranslationEngineBuilder(ProtobufTranslationEngine.Builder.class);
 
-                    coreBuilder.addTranslatorSpec(new PeoplePluginDataTranslationSpec());
-                    coreBuilder.addTranslatorSpec(new PersonIdTranslationSpec());
-                    coreBuilder.addTranslatorSpec(new PersonRangeTranslationSpec());
+                    translationEngineBuilder.addTranslatorSpec(new PeoplePluginDataTranslationSpec());
+                    translationEngineBuilder.addTranslatorSpec(new PersonIdTranslationSpec());
+                    translationEngineBuilder.addTranslatorSpec(new PersonRangeTranslationSpec());
 
-                    coreBuilder.addFieldToIncludeDefaultValue(PersonIdInput.getDescriptor().findFieldByName("id"));
+                    translationEngineBuilder.addFieldToIncludeDefaultValue(PersonIdInput.getDescriptor().findFieldByName("id"));
                 });
 
     }

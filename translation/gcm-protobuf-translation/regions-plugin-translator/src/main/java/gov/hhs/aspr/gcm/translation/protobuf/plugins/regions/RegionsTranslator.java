@@ -26,20 +26,20 @@ public class RegionsTranslator {
                 .addDependency(PeopleTranslatorId.TRANSLATOR_ID)
                 .addDependency(PropertiesTranslatorId.TRANSLATOR_ID)
                 .setInitializer((translatorContext) -> {
-                    ProtobufTranslationEngine.Builder coreBuilder = translatorContext
+                    ProtobufTranslationEngine.Builder translationEngineBuilder = translatorContext
                             .getTranslationEngineBuilder(ProtobufTranslationEngine.Builder.class);
 
-                    coreBuilder.addTranslatorSpec(new RegionsPluginDataTranslationSpec());
-                    coreBuilder.addTranslatorSpec(new RegionIdTranslationSpec());
-                    coreBuilder.addTranslatorSpec(new RegionPropertyIdTranslationSpec());
-                    coreBuilder.addTranslatorSpec(new SimpleRegionIdTranslationSpec());
-                    coreBuilder.addTranslatorSpec(new SimpleRegionPropertyIdTranslationSpec());
-                    coreBuilder.addTranslatorSpec(new TestRegionIdTranslationSpec());
-                    coreBuilder.addTranslatorSpec(new TestRegionPropertyIdTranslationSpec());
+                    translationEngineBuilder.addTranslatorSpec(new RegionsPluginDataTranslationSpec());
+                    translationEngineBuilder.addTranslatorSpec(new RegionIdTranslationSpec());
+                    translationEngineBuilder.addTranslatorSpec(new RegionPropertyIdTranslationSpec());
+                    translationEngineBuilder.addTranslatorSpec(new SimpleRegionIdTranslationSpec());
+                    translationEngineBuilder.addTranslatorSpec(new SimpleRegionPropertyIdTranslationSpec());
+                    translationEngineBuilder.addTranslatorSpec(new TestRegionIdTranslationSpec());
+                    translationEngineBuilder.addTranslatorSpec(new TestRegionPropertyIdTranslationSpec());
 
                     if (withReport) {
-                        coreBuilder.addTranslatorSpec(new RegionPropertyReportPluginDataTranslationSpec());
-                        coreBuilder.addTranslatorSpec(new RegionTransferReportPluginDataTranslationSpec());
+                        translationEngineBuilder.addTranslatorSpec(new RegionPropertyReportPluginDataTranslationSpec());
+                        translationEngineBuilder.addTranslatorSpec(new RegionTransferReportPluginDataTranslationSpec());
                     }
                 });
 

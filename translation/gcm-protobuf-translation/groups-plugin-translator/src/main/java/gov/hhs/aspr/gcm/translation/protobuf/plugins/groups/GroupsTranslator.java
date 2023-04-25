@@ -26,21 +26,21 @@ public class GroupsTranslator {
                 .addDependency(PropertiesTranslatorId.TRANSLATOR_ID)
                 .addDependency(PeopleTranslatorId.TRANSLATOR_ID)
                 .setInitializer((translatorContext) -> {
-                    ProtobufTranslationEngine.Builder coreBuilder = translatorContext.getTranslationEngineBuilder(ProtobufTranslationEngine.Builder.class);
+                    ProtobufTranslationEngine.Builder translationEngineBuilder = translatorContext.getTranslationEngineBuilder(ProtobufTranslationEngine.Builder.class);
                     
-                    coreBuilder.addTranslatorSpec(new GroupsPluginDataTranslationSpec());
-                    coreBuilder.addTranslatorSpec(new GroupIdTranslationSpec());
-                    coreBuilder.addTranslatorSpec(new GroupTypeIdTranslationSpec());
-                    coreBuilder.addTranslatorSpec(new GroupPropertyIdTranslationSpec());
-                    coreBuilder.addTranslatorSpec(new TestGroupTypeIdTranslationSpec());
-                    coreBuilder.addTranslatorSpec(new TestGroupPropertyIdTranslationSpec());
-                    coreBuilder.addTranslatorSpec(new SimpleGroupTypeIdTranslationSpec());
+                    translationEngineBuilder.addTranslatorSpec(new GroupsPluginDataTranslationSpec());
+                    translationEngineBuilder.addTranslatorSpec(new GroupIdTranslationSpec());
+                    translationEngineBuilder.addTranslatorSpec(new GroupTypeIdTranslationSpec());
+                    translationEngineBuilder.addTranslatorSpec(new GroupPropertyIdTranslationSpec());
+                    translationEngineBuilder.addTranslatorSpec(new TestGroupTypeIdTranslationSpec());
+                    translationEngineBuilder.addTranslatorSpec(new TestGroupPropertyIdTranslationSpec());
+                    translationEngineBuilder.addTranslatorSpec(new SimpleGroupTypeIdTranslationSpec());
 
                     if (withReport) {
-                        coreBuilder.addTranslatorSpec(new GroupPropertyReportPluginDataTranslationSpec());
+                        translationEngineBuilder.addTranslatorSpec(new GroupPropertyReportPluginDataTranslationSpec());
                     }
 
-                    coreBuilder.addFieldToIncludeDefaultValue(GroupIdInput.getDescriptor().findFieldByName("id"));
+                    translationEngineBuilder.addFieldToIncludeDefaultValue(GroupIdInput.getDescriptor().findFieldByName("id"));
                 });
 
         if (withReport) {

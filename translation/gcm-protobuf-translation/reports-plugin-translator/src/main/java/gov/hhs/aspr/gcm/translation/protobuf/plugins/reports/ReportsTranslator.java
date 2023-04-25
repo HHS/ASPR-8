@@ -17,12 +17,12 @@ public class ReportsTranslator {
         Translator.Builder builder = Translator.builder()
                 .setTranslatorId(ReportsTranslatorId.TRANSLATOR_ID)
                 .setInitializer((translatorContext) -> {
-                    ProtobufTranslationEngine.Builder coreBuilder = translatorContext
+                    ProtobufTranslationEngine.Builder translationEngineBuilder = translatorContext
                             .getTranslationEngineBuilder(ProtobufTranslationEngine.Builder.class);
 
-                    coreBuilder.addTranslatorSpec(new ReportLabelTranslationSpec());
-                    coreBuilder.addTranslatorSpec(new ReportPeriodTranslationSpec());
-                    coreBuilder.addTranslatorSpec(new SimpleReportLabelTranslationSpec());
+                    translationEngineBuilder.addTranslatorSpec(new ReportLabelTranslationSpec());
+                    translationEngineBuilder.addTranslatorSpec(new ReportPeriodTranslationSpec());
+                    translationEngineBuilder.addTranslatorSpec(new SimpleReportLabelTranslationSpec());
 
                     translatorContext.addParentChildClassRelationship(SimpleReportLabel.class, ReportLabel.class);
                 });

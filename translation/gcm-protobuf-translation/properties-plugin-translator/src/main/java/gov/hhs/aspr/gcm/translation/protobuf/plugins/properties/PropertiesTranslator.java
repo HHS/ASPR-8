@@ -16,13 +16,13 @@ public class PropertiesTranslator {
         Translator.Builder builder = Translator.builder()
                 .setTranslatorId(PropertiesTranslatorId.TRANSLATOR_ID)
                 .setInitializer((translatorContext) -> {
-                    ProtobufTranslationEngine.Builder coreBuilder = translatorContext
+                    ProtobufTranslationEngine.Builder translationEngineBuilder = translatorContext
                             .getTranslationEngineBuilder(ProtobufTranslationEngine.Builder.class);
 
-                    coreBuilder.addTranslatorSpec(new PropertyDefinitionTranslationSpec());
-                    coreBuilder.addTranslatorSpec(new TimeTrackingPolicyTranslationSpec());
-                    coreBuilder.addTranslatorSpec(new PropertyValueMapTranslationSpec());
-                    coreBuilder.addTranslatorSpec(new PropertyDefinitionMapTranslationSpec());
+                    translationEngineBuilder.addTranslatorSpec(new PropertyDefinitionTranslationSpec());
+                    translationEngineBuilder.addTranslatorSpec(new TimeTrackingPolicyTranslationSpec());
+                    translationEngineBuilder.addTranslatorSpec(new PropertyValueMapTranslationSpec());
+                    translationEngineBuilder.addTranslatorSpec(new PropertyDefinitionMapTranslationSpec());
                 });
 
         return builder;

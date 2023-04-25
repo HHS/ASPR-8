@@ -22,16 +22,16 @@ public class PersonPropertiesTranslator {
                 .addDependency(PropertiesTranslatorId.TRANSLATOR_ID)
                 .addDependency(PeopleTranslatorId.TRANSLATOR_ID)
                 .setInitializer((translatorContext) -> {
-                    ProtobufTranslationEngine.Builder coreBuilder = translatorContext
+                    ProtobufTranslationEngine.Builder translationEngineBuilder = translatorContext
                             .getTranslationEngineBuilder(ProtobufTranslationEngine.Builder.class);
 
-                    coreBuilder.addTranslatorSpec(new PersonPropertyIdTranslationSpec());
-                    coreBuilder.addTranslatorSpec(new PersonPropertiesPluginDataTranslationSpec());
-                    coreBuilder.addTranslatorSpec(new TestPersonPropertyIdTranslationSpec());
+                    translationEngineBuilder.addTranslatorSpec(new PersonPropertyIdTranslationSpec());
+                    translationEngineBuilder.addTranslatorSpec(new PersonPropertiesPluginDataTranslationSpec());
+                    translationEngineBuilder.addTranslatorSpec(new TestPersonPropertyIdTranslationSpec());
 
                     if (withReport) {
-                        coreBuilder.addTranslatorSpec(new PersonPropertyReportPluginDataTranslationSpec());
-                        coreBuilder.addTranslatorSpec(new PersonPropertyInteractionReportPluginDataTranslationSpec());
+                        translationEngineBuilder.addTranslatorSpec(new PersonPropertyReportPluginDataTranslationSpec());
+                        translationEngineBuilder.addTranslatorSpec(new PersonPropertyInteractionReportPluginDataTranslationSpec());
                     }
                 });
 
