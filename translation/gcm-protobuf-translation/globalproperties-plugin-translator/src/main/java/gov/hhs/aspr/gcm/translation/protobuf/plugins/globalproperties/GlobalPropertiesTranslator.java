@@ -1,9 +1,9 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.globalproperties;
 
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.globalproperties.translationSpecs.GlobalPropertiesPluginDataTranslatorSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.globalproperties.translationSpecs.GlobalPropertyIdTranslatorSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.globalproperties.translationSpecs.GlobalPropertyReportPluginDataTranslatorSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.globalproperties.translationSpecs.TestGlobalPropertyIdTranslatorSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.globalproperties.translationSpecs.GlobalPropertiesPluginDataTranslationSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.globalproperties.translationSpecs.GlobalPropertyIdTranslationSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.globalproperties.translationSpecs.GlobalPropertyReportPluginDataTranslationSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.globalproperties.translationSpecs.TestGlobalPropertyIdTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.PropertiesTranslatorId;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.ReportsTranslatorId;
 import gov.hhs.aspr.translation.core.Translator;
@@ -22,11 +22,11 @@ public class GlobalPropertiesTranslator {
                 .setInitializer((translatorContext) -> {
                     ProtobufTranslationEngine.Builder coreBuilder = translatorContext.getTranslatorCoreBuilder(ProtobufTranslationEngine.Builder.class);
 
-                    coreBuilder.addTranslatorSpec(new GlobalPropertiesPluginDataTranslatorSpec());
-                    coreBuilder.addTranslatorSpec(new GlobalPropertyIdTranslatorSpec());
-                    coreBuilder.addTranslatorSpec(new TestGlobalPropertyIdTranslatorSpec());
+                    coreBuilder.addTranslatorSpec(new GlobalPropertiesPluginDataTranslationSpec());
+                    coreBuilder.addTranslatorSpec(new GlobalPropertyIdTranslationSpec());
+                    coreBuilder.addTranslatorSpec(new TestGlobalPropertyIdTranslationSpec());
                     if (withReport) {
-                        coreBuilder.addTranslatorSpec(new GlobalPropertyReportPluginDataTranslatorSpec());
+                        coreBuilder.addTranslatorSpec(new GlobalPropertyReportPluginDataTranslationSpec());
                     }
                 });
 

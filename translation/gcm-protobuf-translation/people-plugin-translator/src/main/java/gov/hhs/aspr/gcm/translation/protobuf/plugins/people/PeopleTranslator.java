@@ -3,9 +3,9 @@ package gov.hhs.aspr.gcm.translation.protobuf.plugins.people;
 import gov.hhs.aspr.translation.core.Translator;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.input.PersonIdInput;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.translationSpecs.PeoplePluginDataTranslatorSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.translationSpecs.PersonIdTranslatorSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.translationSpecs.PersonRangeTranslatorSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.translationSpecs.PeoplePluginDataTranslationSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.translationSpecs.PersonIdTranslationSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.translationSpecs.PersonRangeTranslationSpec;
 
 public class PeopleTranslator {
 
@@ -19,9 +19,9 @@ public class PeopleTranslator {
                     ProtobufTranslationEngine.Builder coreBuilder = translatorContext
                             .getTranslatorCoreBuilder(ProtobufTranslationEngine.Builder.class);
 
-                    coreBuilder.addTranslatorSpec(new PeoplePluginDataTranslatorSpec());
-                    coreBuilder.addTranslatorSpec(new PersonIdTranslatorSpec());
-                    coreBuilder.addTranslatorSpec(new PersonRangeTranslatorSpec());
+                    coreBuilder.addTranslatorSpec(new PeoplePluginDataTranslationSpec());
+                    coreBuilder.addTranslatorSpec(new PersonIdTranslationSpec());
+                    coreBuilder.addTranslatorSpec(new PersonRangeTranslationSpec());
 
                     coreBuilder.addFieldToIncludeDefaultValue(PersonIdInput.getDescriptor().findFieldByName("id"));
                 });

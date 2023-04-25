@@ -10,8 +10,8 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.input.PropertyVa
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.simobjects.PropertyValueMap;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.testsupport.simobjects.Layer1SimObject;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.testsupport.simobjects.TestMessageSimObject;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.testsupport.translationSpecs.Layer1TranslatorSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.testsupport.translationSpecs.TestMessageTranslatorSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.testsupport.translationSpecs.Layer1TranslationSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.testsupport.translationSpecs.TestMessageTranslationSpec;
 import gov.hhs.aspr.translation.core.TranslationController;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
 import gov.hhs.aspr.translation.protobuf.core.testsupport.TestResourceHelper;
@@ -28,8 +28,8 @@ public class AppTest {
 
         TranslationController translatorController = TranslationController.builder()
                 .setTranslatorCoreBuilder(ProtobufTranslationEngine.builder()
-                        .addTranslatorSpec(new TestMessageTranslatorSpec())
-                        .addTranslatorSpec(new Layer1TranslatorSpec()))
+                        .addTranslatorSpec(new TestMessageTranslationSpec())
+                        .addTranslatorSpec(new Layer1TranslationSpec()))
                 .addTranslator(PropertiesTranslator.getTranslator())
                 .addInputFilePath(filePath.resolve(fileName), PropertyValueMapInput.class)
                 .addOutputFilePath(filePath.resolve(fileName), PropertyValueMap.class)

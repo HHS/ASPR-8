@@ -3,11 +3,11 @@ package gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties;
 import gov.hhs.aspr.translation.core.Translator;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.PeopleTranslatorId;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.translationSpecs.PersonPropertiesPluginDataTranslatorSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.translationSpecs.PersonPropertyIdTranslatorSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.translationSpecs.PersonPropertyInteractionReportPluginDataTranslatorSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.translationSpecs.PersonPropertyReportPluginDataTranslatorSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.translationSpecs.TestPersonPropertyIdTranslatorSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.translationSpecs.PersonPropertiesPluginDataTranslationSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.translationSpecs.PersonPropertyIdTranslationSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.translationSpecs.PersonPropertyInteractionReportPluginDataTranslationSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.translationSpecs.PersonPropertyReportPluginDataTranslationSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.translationSpecs.TestPersonPropertyIdTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.PropertiesTranslatorId;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.ReportsTranslatorId;
 
@@ -25,13 +25,13 @@ public class PersonPropertiesTranslator {
                     ProtobufTranslationEngine.Builder coreBuilder = translatorContext
                             .getTranslatorCoreBuilder(ProtobufTranslationEngine.Builder.class);
 
-                    coreBuilder.addTranslatorSpec(new PersonPropertyIdTranslatorSpec());
-                    coreBuilder.addTranslatorSpec(new PersonPropertiesPluginDataTranslatorSpec());
-                    coreBuilder.addTranslatorSpec(new TestPersonPropertyIdTranslatorSpec());
+                    coreBuilder.addTranslatorSpec(new PersonPropertyIdTranslationSpec());
+                    coreBuilder.addTranslatorSpec(new PersonPropertiesPluginDataTranslationSpec());
+                    coreBuilder.addTranslatorSpec(new TestPersonPropertyIdTranslationSpec());
 
                     if (withReport) {
-                        coreBuilder.addTranslatorSpec(new PersonPropertyReportPluginDataTranslatorSpec());
-                        coreBuilder.addTranslatorSpec(new PersonPropertyInteractionReportPluginDataTranslatorSpec());
+                        coreBuilder.addTranslatorSpec(new PersonPropertyReportPluginDataTranslationSpec());
+                        coreBuilder.addTranslatorSpec(new PersonPropertyInteractionReportPluginDataTranslationSpec());
                     }
                 });
 

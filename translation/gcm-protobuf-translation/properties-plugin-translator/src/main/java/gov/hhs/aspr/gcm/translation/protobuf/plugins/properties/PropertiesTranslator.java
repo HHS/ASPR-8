@@ -1,9 +1,9 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.properties;
 
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.translationSpecs.PropertyDefinitionMapTranslatorSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.translationSpecs.PropertyDefinitionTranslatorSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.translationSpecs.PropertyValueMapTranslatorSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.translationSpecs.TimeTrackingPolicyTranslatorSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.translationSpecs.PropertyDefinitionMapTranslationSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.translationSpecs.PropertyDefinitionTranslationSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.translationSpecs.PropertyValueMapTranslationSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.translationSpecs.TimeTrackingPolicyTranslationSpec;
 import gov.hhs.aspr.translation.core.Translator;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
 
@@ -19,10 +19,10 @@ public class PropertiesTranslator {
                     ProtobufTranslationEngine.Builder coreBuilder = translatorContext
                             .getTranslatorCoreBuilder(ProtobufTranslationEngine.Builder.class);
 
-                    coreBuilder.addTranslatorSpec(new PropertyDefinitionTranslatorSpec());
-                    coreBuilder.addTranslatorSpec(new TimeTrackingPolicyTranslatorSpec());
-                    coreBuilder.addTranslatorSpec(new PropertyValueMapTranslatorSpec());
-                    coreBuilder.addTranslatorSpec(new PropertyDefinitionMapTranslatorSpec());
+                    coreBuilder.addTranslatorSpec(new PropertyDefinitionTranslationSpec());
+                    coreBuilder.addTranslatorSpec(new TimeTrackingPolicyTranslationSpec());
+                    coreBuilder.addTranslatorSpec(new PropertyValueMapTranslationSpec());
+                    coreBuilder.addTranslatorSpec(new PropertyDefinitionMapTranslationSpec());
                 });
 
         return builder;

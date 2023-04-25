@@ -1,9 +1,9 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.stochastics;
 
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.stochastics.translationSpecs.RandomGeneratorIdTranslatorSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.stochastics.translationSpecs.StochasticsPluginDataTranslatorSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.stochastics.translationSpecs.TestRandomGeneratorIdTranslatorSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.stochastics.translationSpecs.WellStateTranslatorSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.stochastics.translationSpecs.RandomGeneratorIdTranslationSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.stochastics.translationSpecs.StochasticsPluginDataTranslationSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.stochastics.translationSpecs.TestRandomGeneratorIdTranslationSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.stochastics.translationSpecs.WellStateTranslationSpec;
 import gov.hhs.aspr.translation.core.Translator;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
 
@@ -18,10 +18,10 @@ public class StochasticsTranslator {
                 .setInitializer((translatorContext) -> {
                     ProtobufTranslationEngine.Builder coreBuilder = translatorContext.getTranslatorCoreBuilder(ProtobufTranslationEngine.Builder.class);
 
-                    coreBuilder.addTranslatorSpec(new StochasticsPluginDataTranslatorSpec());
-                    coreBuilder.addTranslatorSpec(new WellStateTranslatorSpec());
-                    coreBuilder.addTranslatorSpec(new RandomGeneratorIdTranslatorSpec());
-                    coreBuilder.addTranslatorSpec(new TestRandomGeneratorIdTranslatorSpec());
+                    coreBuilder.addTranslatorSpec(new StochasticsPluginDataTranslationSpec());
+                    coreBuilder.addTranslatorSpec(new WellStateTranslationSpec());
+                    coreBuilder.addTranslatorSpec(new RandomGeneratorIdTranslationSpec());
+                    coreBuilder.addTranslatorSpec(new TestRandomGeneratorIdTranslationSpec());
                 });
 
         return builder;

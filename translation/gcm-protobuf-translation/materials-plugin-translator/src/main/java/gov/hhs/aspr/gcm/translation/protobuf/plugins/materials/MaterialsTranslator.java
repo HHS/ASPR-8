@@ -4,21 +4,21 @@ import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
 import gov.hhs.aspr.translation.core.Translator;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.input.BatchIdInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.input.StageIdInput;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.translationSpecs.BatchIdTranslatorSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.translationSpecs.BatchPropertyIdTranslatorSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.translationSpecs.BatchStatusReportPluginDataTranslatorSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.translationSpecs.MaterialIdTranslatorSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.translationSpecs.MaterialsPluginDataTranslatorSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.translationSpecs.MaterialsProducerIdTranslatorSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.translationSpecs.MaterialsProducerPropertyIdTranslatorSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.translationSpecs.MaterialsProducerPropertyReportPluginDataTranslatorSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.translationSpecs.MaterialsProducerResourceReportPluginDataTranslatorSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.translationSpecs.StageIdTranslatorSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.translationSpecs.StageReportPluginDataTranslatorSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.translationSpecs.TestBatchPropertyIdTranslatorSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.translationSpecs.TestMaterialIdTranslatorSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.translationSpecs.TestMaterialsProducerIdTranslatorSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.translationSpecs.TestMaterialsProducerPropertyIdTranslatorSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.translationSpecs.BatchIdTranslationSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.translationSpecs.BatchPropertyIdTranslationSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.translationSpecs.BatchStatusReportPluginDataTranslationSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.translationSpecs.MaterialIdTranslationSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.translationSpecs.MaterialsPluginDataTranslationSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.translationSpecs.MaterialsProducerIdTranslationSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.translationSpecs.MaterialsProducerPropertyIdTranslationSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.translationSpecs.MaterialsProducerPropertyReportPluginDataTranslationSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.translationSpecs.MaterialsProducerResourceReportPluginDataTranslationSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.translationSpecs.StageIdTranslationSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.translationSpecs.StageReportPluginDataTranslationSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.translationSpecs.TestBatchPropertyIdTranslationSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.translationSpecs.TestMaterialIdTranslationSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.translationSpecs.TestMaterialsProducerIdTranslationSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.translationSpecs.TestMaterialsProducerPropertyIdTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.PropertiesTranslatorId;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.ReportsTranslatorId;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.ResourcesTranslatorId;
@@ -37,23 +37,23 @@ public class MaterialsTranslator {
                     ProtobufTranslationEngine.Builder coreBuilder = translatorContext
                             .getTranslatorCoreBuilder(ProtobufTranslationEngine.Builder.class);
 
-                    coreBuilder.addTranslatorSpec(new MaterialsPluginDataTranslatorSpec());
-                    coreBuilder.addTranslatorSpec(new MaterialIdTranslatorSpec());
-                    coreBuilder.addTranslatorSpec(new MaterialsProducerIdTranslatorSpec());
-                    coreBuilder.addTranslatorSpec(new MaterialsProducerPropertyIdTranslatorSpec());
-                    coreBuilder.addTranslatorSpec(new BatchIdTranslatorSpec());
-                    coreBuilder.addTranslatorSpec(new StageIdTranslatorSpec());
-                    coreBuilder.addTranslatorSpec(new BatchPropertyIdTranslatorSpec());
-                    coreBuilder.addTranslatorSpec(new TestBatchPropertyIdTranslatorSpec());
-                    coreBuilder.addTranslatorSpec(new TestMaterialIdTranslatorSpec());
-                    coreBuilder.addTranslatorSpec(new TestMaterialsProducerIdTranslatorSpec());
-                    coreBuilder.addTranslatorSpec(new TestMaterialsProducerPropertyIdTranslatorSpec());
+                    coreBuilder.addTranslatorSpec(new MaterialsPluginDataTranslationSpec());
+                    coreBuilder.addTranslatorSpec(new MaterialIdTranslationSpec());
+                    coreBuilder.addTranslatorSpec(new MaterialsProducerIdTranslationSpec());
+                    coreBuilder.addTranslatorSpec(new MaterialsProducerPropertyIdTranslationSpec());
+                    coreBuilder.addTranslatorSpec(new BatchIdTranslationSpec());
+                    coreBuilder.addTranslatorSpec(new StageIdTranslationSpec());
+                    coreBuilder.addTranslatorSpec(new BatchPropertyIdTranslationSpec());
+                    coreBuilder.addTranslatorSpec(new TestBatchPropertyIdTranslationSpec());
+                    coreBuilder.addTranslatorSpec(new TestMaterialIdTranslationSpec());
+                    coreBuilder.addTranslatorSpec(new TestMaterialsProducerIdTranslationSpec());
+                    coreBuilder.addTranslatorSpec(new TestMaterialsProducerPropertyIdTranslationSpec());
 
                     if (withReport) {
-                        coreBuilder.addTranslatorSpec(new BatchStatusReportPluginDataTranslatorSpec());
-                        coreBuilder.addTranslatorSpec(new MaterialsProducerPropertyReportPluginDataTranslatorSpec());
-                        coreBuilder.addTranslatorSpec(new MaterialsProducerResourceReportPluginDataTranslatorSpec());
-                        coreBuilder.addTranslatorSpec(new StageReportPluginDataTranslatorSpec());
+                        coreBuilder.addTranslatorSpec(new BatchStatusReportPluginDataTranslationSpec());
+                        coreBuilder.addTranslatorSpec(new MaterialsProducerPropertyReportPluginDataTranslationSpec());
+                        coreBuilder.addTranslatorSpec(new MaterialsProducerResourceReportPluginDataTranslationSpec());
+                        coreBuilder.addTranslatorSpec(new StageReportPluginDataTranslationSpec());
                     }
 
                     coreBuilder

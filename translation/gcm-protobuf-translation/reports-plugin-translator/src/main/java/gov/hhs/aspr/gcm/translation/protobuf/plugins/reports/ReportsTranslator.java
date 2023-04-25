@@ -1,8 +1,8 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.reports;
 
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.translationSpecs.ReportLabelTranslatorSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.translationSpecs.ReportPeriodTranslatorSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.translationSpecs.SimpleReportLabelTranslatorSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.translationSpecs.ReportLabelTranslationSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.translationSpecs.ReportPeriodTranslationSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.translationSpecs.SimpleReportLabelTranslationSpec;
 import gov.hhs.aspr.translation.core.Translator;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
 import plugins.reports.support.ReportLabel;
@@ -20,9 +20,9 @@ public class ReportsTranslator {
                     ProtobufTranslationEngine.Builder coreBuilder = translatorContext
                             .getTranslatorCoreBuilder(ProtobufTranslationEngine.Builder.class);
 
-                    coreBuilder.addTranslatorSpec(new ReportLabelTranslatorSpec());
-                    coreBuilder.addTranslatorSpec(new ReportPeriodTranslatorSpec());
-                    coreBuilder.addTranslatorSpec(new SimpleReportLabelTranslatorSpec());
+                    coreBuilder.addTranslatorSpec(new ReportLabelTranslationSpec());
+                    coreBuilder.addTranslatorSpec(new ReportPeriodTranslationSpec());
+                    coreBuilder.addTranslatorSpec(new SimpleReportLabelTranslationSpec());
 
                     translatorContext.addMarkerInterface(SimpleReportLabel.class, ReportLabel.class);
                 });

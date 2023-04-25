@@ -1,14 +1,14 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.groups;
 
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.input.GroupIdInput;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.translationSpecs.GroupIdTranslatorSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.translationSpecs.GroupPropertyIdTranslatorSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.translationSpecs.GroupPropertyReportPluginDataTranslatorSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.translationSpecs.GroupTypeIdTranslatorSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.translationSpecs.GroupsPluginDataTranslatorSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.translationSpecs.SimpleGroupTypeIdTranslatorSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.translationSpecs.TestGroupPropertyIdTranslatorSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.translationSpecs.TestGroupTypeIdTranslatorSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.translationSpecs.GroupIdTranslationSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.translationSpecs.GroupPropertyIdTranslationSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.translationSpecs.GroupPropertyReportPluginDataTranslationSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.translationSpecs.GroupTypeIdTranslationSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.translationSpecs.GroupsPluginDataTranslationSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.translationSpecs.SimpleGroupTypeIdTranslationSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.translationSpecs.TestGroupPropertyIdTranslationSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.translationSpecs.TestGroupTypeIdTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.PeopleTranslatorId;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.PropertiesTranslatorId;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.ReportsTranslatorId;
@@ -28,16 +28,16 @@ public class GroupsTranslator {
                 .setInitializer((translatorContext) -> {
                     ProtobufTranslationEngine.Builder coreBuilder = translatorContext.getTranslatorCoreBuilder(ProtobufTranslationEngine.Builder.class);
                     
-                    coreBuilder.addTranslatorSpec(new GroupsPluginDataTranslatorSpec());
-                    coreBuilder.addTranslatorSpec(new GroupIdTranslatorSpec());
-                    coreBuilder.addTranslatorSpec(new GroupTypeIdTranslatorSpec());
-                    coreBuilder.addTranslatorSpec(new GroupPropertyIdTranslatorSpec());
-                    coreBuilder.addTranslatorSpec(new TestGroupTypeIdTranslatorSpec());
-                    coreBuilder.addTranslatorSpec(new TestGroupPropertyIdTranslatorSpec());
-                    coreBuilder.addTranslatorSpec(new SimpleGroupTypeIdTranslatorSpec());
+                    coreBuilder.addTranslatorSpec(new GroupsPluginDataTranslationSpec());
+                    coreBuilder.addTranslatorSpec(new GroupIdTranslationSpec());
+                    coreBuilder.addTranslatorSpec(new GroupTypeIdTranslationSpec());
+                    coreBuilder.addTranslatorSpec(new GroupPropertyIdTranslationSpec());
+                    coreBuilder.addTranslatorSpec(new TestGroupTypeIdTranslationSpec());
+                    coreBuilder.addTranslatorSpec(new TestGroupPropertyIdTranslationSpec());
+                    coreBuilder.addTranslatorSpec(new SimpleGroupTypeIdTranslationSpec());
 
                     if (withReport) {
-                        coreBuilder.addTranslatorSpec(new GroupPropertyReportPluginDataTranslatorSpec());
+                        coreBuilder.addTranslatorSpec(new GroupPropertyReportPluginDataTranslationSpec());
                     }
 
                     coreBuilder.addFieldToIncludeDefaultValue(GroupIdInput.getDescriptor().findFieldByName("id"));

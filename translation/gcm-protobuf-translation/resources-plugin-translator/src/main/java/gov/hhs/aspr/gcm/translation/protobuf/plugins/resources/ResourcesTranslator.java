@@ -6,15 +6,15 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.PeopleTranslatorId;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.PropertiesTranslatorId;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.RegionsTranslatorId;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.ReportsTranslatorId;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.translationSpecs.PersonResourceReportPluginDataTranslatorSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.translationSpecs.ResourceIdTranslatorSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.translationSpecs.ResourceInitializationTranslatorSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.translationSpecs.ResourcePropertyIdTranslatorSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.translationSpecs.ResourcePropertyReportPluginDataTranslatorSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.translationSpecs.ResourceReportPluginDataTranslatorSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.translationSpecs.ResourcesPluginDataTranslatorSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.translationSpecs.TestResourceIdTranslatorSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.translationSpecs.TestResourcePropertyIdTranslatorSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.translationSpecs.PersonResourceReportPluginDataTranslationSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.translationSpecs.ResourceIdTranslationSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.translationSpecs.ResourceInitializationTranslationSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.translationSpecs.ResourcePropertyIdTranslationSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.translationSpecs.ResourcePropertyReportPluginDataTranslationSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.translationSpecs.ResourceReportPluginDataTranslationSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.translationSpecs.ResourcesPluginDataTranslationSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.translationSpecs.TestResourceIdTranslationSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.translationSpecs.TestResourcePropertyIdTranslationSpec;
 
 public class ResourcesTranslator {
 
@@ -31,17 +31,17 @@ public class ResourcesTranslator {
                     ProtobufTranslationEngine.Builder coreBuilder = translatorContext
                             .getTranslatorCoreBuilder(ProtobufTranslationEngine.Builder.class);
 
-                    coreBuilder.addTranslatorSpec(new ResourcesPluginDataTranslatorSpec());
-                    coreBuilder.addTranslatorSpec(new ResourceIdTranslatorSpec());
-                    coreBuilder.addTranslatorSpec(new ResourcePropertyIdTranslatorSpec());
-                    coreBuilder.addTranslatorSpec(new ResourceInitializationTranslatorSpec());
-                    coreBuilder.addTranslatorSpec(new TestResourceIdTranslatorSpec());
-                    coreBuilder.addTranslatorSpec(new TestResourcePropertyIdTranslatorSpec());
+                    coreBuilder.addTranslatorSpec(new ResourcesPluginDataTranslationSpec());
+                    coreBuilder.addTranslatorSpec(new ResourceIdTranslationSpec());
+                    coreBuilder.addTranslatorSpec(new ResourcePropertyIdTranslationSpec());
+                    coreBuilder.addTranslatorSpec(new ResourceInitializationTranslationSpec());
+                    coreBuilder.addTranslatorSpec(new TestResourceIdTranslationSpec());
+                    coreBuilder.addTranslatorSpec(new TestResourcePropertyIdTranslationSpec());
 
                     if (withReport) {
-                        coreBuilder.addTranslatorSpec(new PersonResourceReportPluginDataTranslatorSpec());
-                        coreBuilder.addTranslatorSpec(new ResourcePropertyReportPluginDataTranslatorSpec());
-                        coreBuilder.addTranslatorSpec(new ResourceReportPluginDataTranslatorSpec());
+                        coreBuilder.addTranslatorSpec(new PersonResourceReportPluginDataTranslationSpec());
+                        coreBuilder.addTranslatorSpec(new ResourcePropertyReportPluginDataTranslationSpec());
+                        coreBuilder.addTranslatorSpec(new ResourceReportPluginDataTranslationSpec());
                     }
                 });
 

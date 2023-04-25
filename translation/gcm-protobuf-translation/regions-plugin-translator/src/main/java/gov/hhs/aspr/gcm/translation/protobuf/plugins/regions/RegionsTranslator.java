@@ -4,15 +4,15 @@ import gov.hhs.aspr.translation.core.Translator;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.PeopleTranslatorId;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.PropertiesTranslatorId;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.translationSpecs.RegionIdTranslatorSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.translationSpecs.RegionPropertyIdTranslatorSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.translationSpecs.RegionPropertyReportPluginDataTranslatorSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.translationSpecs.RegionTransferReportPluginDataTranslatorSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.translationSpecs.RegionsPluginDataTranslatorSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.translationSpecs.SimpleRegionIdTranslatorSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.translationSpecs.SimpleRegionPropertyIdTranslatorSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.translationSpecs.TestRegionIdTranslatorSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.translationSpecs.TestRegionPropertyIdTranslatorSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.translationSpecs.RegionIdTranslationSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.translationSpecs.RegionPropertyIdTranslationSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.translationSpecs.RegionPropertyReportPluginDataTranslationSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.translationSpecs.RegionTransferReportPluginDataTranslationSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.translationSpecs.RegionsPluginDataTranslationSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.translationSpecs.SimpleRegionIdTranslationSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.translationSpecs.SimpleRegionPropertyIdTranslationSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.translationSpecs.TestRegionIdTranslationSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.translationSpecs.TestRegionPropertyIdTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.ReportsTranslatorId;
 
 public class RegionsTranslator {
@@ -29,17 +29,17 @@ public class RegionsTranslator {
                     ProtobufTranslationEngine.Builder coreBuilder = translatorContext
                             .getTranslatorCoreBuilder(ProtobufTranslationEngine.Builder.class);
 
-                    coreBuilder.addTranslatorSpec(new RegionsPluginDataTranslatorSpec());
-                    coreBuilder.addTranslatorSpec(new RegionIdTranslatorSpec());
-                    coreBuilder.addTranslatorSpec(new RegionPropertyIdTranslatorSpec());
-                    coreBuilder.addTranslatorSpec(new SimpleRegionIdTranslatorSpec());
-                    coreBuilder.addTranslatorSpec(new SimpleRegionPropertyIdTranslatorSpec());
-                    coreBuilder.addTranslatorSpec(new TestRegionIdTranslatorSpec());
-                    coreBuilder.addTranslatorSpec(new TestRegionPropertyIdTranslatorSpec());
+                    coreBuilder.addTranslatorSpec(new RegionsPluginDataTranslationSpec());
+                    coreBuilder.addTranslatorSpec(new RegionIdTranslationSpec());
+                    coreBuilder.addTranslatorSpec(new RegionPropertyIdTranslationSpec());
+                    coreBuilder.addTranslatorSpec(new SimpleRegionIdTranslationSpec());
+                    coreBuilder.addTranslatorSpec(new SimpleRegionPropertyIdTranslationSpec());
+                    coreBuilder.addTranslatorSpec(new TestRegionIdTranslationSpec());
+                    coreBuilder.addTranslatorSpec(new TestRegionPropertyIdTranslationSpec());
 
                     if (withReport) {
-                        coreBuilder.addTranslatorSpec(new RegionPropertyReportPluginDataTranslatorSpec());
-                        coreBuilder.addTranslatorSpec(new RegionTransferReportPluginDataTranslatorSpec());
+                        coreBuilder.addTranslatorSpec(new RegionPropertyReportPluginDataTranslationSpec());
+                        coreBuilder.addTranslatorSpec(new RegionTransferReportPluginDataTranslationSpec());
                     }
                 });
 

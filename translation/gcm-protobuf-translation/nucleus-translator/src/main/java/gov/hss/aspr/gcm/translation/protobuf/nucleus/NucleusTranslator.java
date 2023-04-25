@@ -2,10 +2,10 @@ package gov.hss.aspr.gcm.translation.protobuf.nucleus;
 
 import gov.hhs.aspr.translation.core.Translator;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
-import gov.hss.aspr.gcm.translation.protobuf.nucleus.translationSpecs.PlanDataTranslatorSpec;
-import gov.hss.aspr.gcm.translation.protobuf.nucleus.translationSpecs.PlanQueueDataTranslatorSpec;
-import gov.hss.aspr.gcm.translation.protobuf.nucleus.translationSpecs.PlannerTranslatorSpec;
-import gov.hss.aspr.gcm.translation.protobuf.nucleus.translationSpecs.SimulationStateTranslatorSpec;
+import gov.hss.aspr.gcm.translation.protobuf.nucleus.translationSpecs.PlanDataTranslationSpec;
+import gov.hss.aspr.gcm.translation.protobuf.nucleus.translationSpecs.PlanQueueDataTranslationSpec;
+import gov.hss.aspr.gcm.translation.protobuf.nucleus.translationSpecs.PlannerTranslationSpec;
+import gov.hss.aspr.gcm.translation.protobuf.nucleus.translationSpecs.SimulationStateTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.nucleus.input.PlanQueueDataInput;
 import gov.hhs.aspr.gcm.translation.protobuf.nucleus.input.SimulationStateInput;
 
@@ -21,10 +21,10 @@ public class NucleusTranslator {
                     ProtobufTranslationEngine.Builder coreBuilder = translatorContext
                             .getTranslatorCoreBuilder(ProtobufTranslationEngine.Builder.class);
 
-                    coreBuilder.addTranslatorSpec(new SimulationStateTranslatorSpec());
-                    coreBuilder.addTranslatorSpec(new PlanQueueDataTranslatorSpec());
-                    coreBuilder.addTranslatorSpec(new PlannerTranslatorSpec());
-                    coreBuilder.addTranslatorSpec(new PlanDataTranslatorSpec());
+                    coreBuilder.addTranslatorSpec(new SimulationStateTranslationSpec());
+                    coreBuilder.addTranslatorSpec(new PlanQueueDataTranslationSpec());
+                    coreBuilder.addTranslatorSpec(new PlannerTranslationSpec());
+                    coreBuilder.addTranslatorSpec(new PlanDataTranslationSpec());
 
                     coreBuilder
                             .addFieldToIncludeDefaultValue(
