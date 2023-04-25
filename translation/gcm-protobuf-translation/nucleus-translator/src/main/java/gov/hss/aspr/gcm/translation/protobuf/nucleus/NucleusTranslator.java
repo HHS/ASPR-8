@@ -2,12 +2,12 @@ package gov.hss.aspr.gcm.translation.protobuf.nucleus;
 
 import gov.hhs.aspr.translation.core.Translator;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
+import gov.hss.aspr.gcm.translation.protobuf.nucleus.translationSpecs.PlanDataTranslatorSpec;
+import gov.hss.aspr.gcm.translation.protobuf.nucleus.translationSpecs.PlanQueueDataTranslatorSpec;
+import gov.hss.aspr.gcm.translation.protobuf.nucleus.translationSpecs.PlannerTranslatorSpec;
+import gov.hss.aspr.gcm.translation.protobuf.nucleus.translationSpecs.SimulationStateTranslatorSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.nucleus.input.PlanQueueDataInput;
 import gov.hhs.aspr.gcm.translation.protobuf.nucleus.input.SimulationStateInput;
-import gov.hss.aspr.gcm.translation.protobuf.nucleus.translatorSpecs.PlanDataTranslatorSpec;
-import gov.hss.aspr.gcm.translation.protobuf.nucleus.translatorSpecs.PlanQueueDataTranslatorSpec;
-import gov.hss.aspr.gcm.translation.protobuf.nucleus.translatorSpecs.PlannerTranslatorSpec;
-import gov.hss.aspr.gcm.translation.protobuf.nucleus.translatorSpecs.SimulationStateTranslatorSpec;
 
 public class NucleusTranslator {
 
