@@ -1,4 +1,4 @@
-package gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.translatorSpecs;
+package gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.translationSpecs;
 
 import java.util.List;
 import java.util.Set;
