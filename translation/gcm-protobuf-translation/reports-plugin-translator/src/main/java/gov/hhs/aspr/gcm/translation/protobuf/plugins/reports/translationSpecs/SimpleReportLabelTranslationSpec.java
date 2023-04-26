@@ -8,12 +8,12 @@ public class SimpleReportLabelTranslationSpec extends ProtobufTranslationSpec<Si
 
     @Override
     protected SimpleReportLabel convertInputObject(SimpleReportLabelInput inputObject) {
-        return new SimpleReportLabel(this.translationEnine.getObjectFromAny(inputObject.getValue()));
+        return new SimpleReportLabel(this.translationEngine.getObjectFromAny(inputObject.getValue()));
     }
 
     @Override
     protected SimpleReportLabelInput convertAppObject(SimpleReportLabel appObject) {
-       return SimpleReportLabelInput.newBuilder().setValue(this.translationEnine.getAnyFromObject(appObject.getValue())).build();
+       return SimpleReportLabelInput.newBuilder().setValue(this.translationEngine.getAnyFromObject(appObject.getValue())).build();
     }
 
     @Override

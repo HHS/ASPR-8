@@ -12,9 +12,9 @@ public class PropertyDefinitionMapTranslationSpec
     protected PropertyDefinitionMap convertInputObject(PropertyDefinitionMapInput inputObject) {
         PropertyDefinitionMap propertyDefinitionMap = new PropertyDefinitionMap();
 
-        propertyDefinitionMap.setPropertyId(this.translationEnine.getObjectFromAny(inputObject.getPropertyId()));
+        propertyDefinitionMap.setPropertyId(this.translationEngine.getObjectFromAny(inputObject.getPropertyId()));
         propertyDefinitionMap
-                .setPropertyDefinition(this.translationEnine.convertObject(inputObject.getPropertyDefinition()));
+                .setPropertyDefinition(this.translationEngine.convertObject(inputObject.getPropertyDefinition()));
 
         return propertyDefinitionMap;
     }
@@ -23,9 +23,9 @@ public class PropertyDefinitionMapTranslationSpec
     protected PropertyDefinitionMapInput convertAppObject(PropertyDefinitionMap appObject) {
         PropertyDefinitionMapInput.Builder builder = PropertyDefinitionMapInput.newBuilder();
 
-        builder.setPropertyId(this.translationEnine.getAnyFromObject(appObject.getPropertyId()));
+        builder.setPropertyId(this.translationEngine.getAnyFromObject(appObject.getPropertyId()));
 
-        PropertyDefinitionInput definitionInput = this.translationEnine.convertObject(appObject.getPropertyDefinition());
+        PropertyDefinitionInput definitionInput = this.translationEngine.convertObject(appObject.getPropertyDefinition());
         builder.setPropertyDefinition(definitionInput);
 
         return builder.build();

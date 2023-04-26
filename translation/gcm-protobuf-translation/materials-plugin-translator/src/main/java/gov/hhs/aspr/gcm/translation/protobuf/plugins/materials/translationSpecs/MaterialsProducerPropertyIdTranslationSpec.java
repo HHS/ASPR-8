@@ -9,12 +9,12 @@ public class MaterialsProducerPropertyIdTranslationSpec
 
     @Override
     protected MaterialsProducerPropertyId convertInputObject(MaterialsProducerPropertyIdInput inputObject) {
-        return this.translationEnine.getObjectFromAny(inputObject.getId());
+        return this.translationEngine.getObjectFromAny(inputObject.getId());
     }
 
     @Override
     protected MaterialsProducerPropertyIdInput convertAppObject(MaterialsProducerPropertyId appObject) {
-        return MaterialsProducerPropertyIdInput.newBuilder().setId(this.translationEnine.getAnyFromObject(appObject)).build();
+        return MaterialsProducerPropertyIdInput.newBuilder().setId(this.translationEngine.getAnyFromObject(appObject)).build();
     }
 
     @Override

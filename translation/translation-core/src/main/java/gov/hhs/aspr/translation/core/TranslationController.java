@@ -210,8 +210,11 @@ public class TranslationController {
          *                           <li>{@linkplain CoreTranslationError#NULL_CLASS_REF}
          *                           if classRef is null or if markerInterface is
          *                           null</li>
+         *                           <li>{@linkplain CoreTranslationError#DUPLICATE_CLASSREF}
+         *                           if child parent relationship has already been added</li>
+         * 
          */
-        public <M extends U, U> Builder addMarkerInterface(Class<M> classRef, Class<U> markerInterface) {
+        public <M extends U, U> Builder addParentChildClassRelationship(Class<M> classRef, Class<U> markerInterface) {
             validateClassRefNotNull(classRef);
             validateClassRefNotNull(markerInterface);
 
@@ -229,6 +232,8 @@ public class TranslationController {
          * @throws ContractException
          *                           <li>{@linkplain CoreTranslationError#NULL_TRANSLATOR}
          *                           if translator is null</li>
+         *                           <li>{@linkplain CoreTranslationError#DUPLICATE_TRANSLATOR}
+         *                           if translator has alaready been added</li>
          */
         public Builder addTranslator(Translator translator) {
             validateTranslatorNotNull(translator);
@@ -370,34 +375,21 @@ public class TranslationController {
         return this;
     }
 
-    /**
-     * Reads all provided inputFilePaths in a Parrallel manner via a parallelStream
-     * 
-     * @throws ContractException
-     *                           <li>{@linkplain CoreTranslationError#NULL_TRANSLATION_ENGINE}
-     *                           if translationEngine is null</li>
-     */
-    public TranslationController readInputParrallel() {
-        validateCoreTranslator();
+    private void readInput(Path path, Class<?> classRef) {
+        Reader reader;
+        try {
+            reader = new FileReader(path.toFile());
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException("Failed to create Reader", e);
+        }
 
-        this.data.inputFilePathMap.keySet().parallelStream().forEach(path -> {
-            Class<?> classRef = this.data.inputFilePathMap.get(path);
-            Reader reader;
-            try {
-                reader = new FileReader(path.toFile());
-            } catch (FileNotFoundException e) {
-                throw new RuntimeException("Failed to create Reader", e);
-            }
-
-            this.readInput(reader, classRef);
-        });
-
-        return this;
+        this.readInput(reader, classRef);
     }
 
     /**
      * Creates readers for each inputFilePath and passes the reader and classRef to
-     * the TranslationEngine via {@link TranslationController#readInput(Reader, Class)}
+     * the TranslationEngine via
+     * {@link TranslationController#readInput(Reader, Class)}
      * 
      * @throws ContractException
      *                           <li>{@linkplain CoreTranslationError#NULL_TRANSLATION_ENGINE}
@@ -409,14 +401,7 @@ public class TranslationController {
         for (Path path : this.data.inputFilePathMap.keySet()) {
             Class<?> classRef = this.data.inputFilePathMap.get(path);
 
-            Reader reader;
-            try {
-                reader = new FileReader(path.toFile());
-            } catch (FileNotFoundException e) {
-                throw new RuntimeException("Failed to create Reader", e);
-            }
-
-            this.readInput(reader, classRef);
+            this.readInput(path, classRef);
         }
 
         return this;

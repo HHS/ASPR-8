@@ -16,18 +16,18 @@ public class RegionPropertyReportPluginDataTranslationSpec
     protected RegionPropertyReportPluginData convertInputObject(RegionPropertyReportPluginDataInput inputObject) {
         RegionPropertyReportPluginData.Builder builder = RegionPropertyReportPluginData.builder();
 
-        ReportLabel reportLabel = this.translationEnine.convertObject(inputObject.getReportLabel());
+        ReportLabel reportLabel = this.translationEngine.convertObject(inputObject.getReportLabel());
         builder.setReportLabel(reportLabel);
 
         builder.setDefaultInclusion(inputObject.getDefaultInclusionPolicy());
 
         for (RegionPropertyIdInput regionPropertyIdInput : inputObject.getIncludedPropertiesList()) {
-            RegionPropertyId regionPropertyId = this.translationEnine.convertObject(regionPropertyIdInput);
+            RegionPropertyId regionPropertyId = this.translationEngine.convertObject(regionPropertyIdInput);
             builder.includeRegionProperty(regionPropertyId);
         }
 
         for (RegionPropertyIdInput regionPropertyIdInput : inputObject.getExcludedPropertiesList()) {
-            RegionPropertyId regionPropertyId = this.translationEnine.convertObject(regionPropertyIdInput);
+            RegionPropertyId regionPropertyId = this.translationEngine.convertObject(regionPropertyIdInput);
             builder.excludeRegionProperty(regionPropertyId);
         }
 
@@ -38,7 +38,7 @@ public class RegionPropertyReportPluginDataTranslationSpec
     protected RegionPropertyReportPluginDataInput convertAppObject(RegionPropertyReportPluginData appObject) {
         RegionPropertyReportPluginDataInput.Builder builder = RegionPropertyReportPluginDataInput.newBuilder();
 
-        ReportLabelInput reportLabelInput = this.translationEnine.convertObjectAsSafeClass(appObject.getReportLabel(),
+        ReportLabelInput reportLabelInput = this.translationEngine.convertObjectAsSafeClass(appObject.getReportLabel(),
                 ReportLabel.class);
 
         builder
@@ -46,13 +46,13 @@ public class RegionPropertyReportPluginDataTranslationSpec
                 .setReportLabel(reportLabelInput);
 
         for (RegionPropertyId regionPropertyId : appObject.getIncludedProperties()) {
-            RegionPropertyIdInput regionPropertyIdInput = this.translationEnine.convertObjectAsSafeClass(regionPropertyId,
+            RegionPropertyIdInput regionPropertyIdInput = this.translationEngine.convertObjectAsSafeClass(regionPropertyId,
                     RegionPropertyId.class);
             builder.addIncludedProperties(regionPropertyIdInput);
         }
 
         for (RegionPropertyId regionPropertyId : appObject.getExcludedProperties()) {
-            RegionPropertyIdInput regionPropertyIdInput = this.translationEnine.convertObjectAsSafeClass(regionPropertyId,
+            RegionPropertyIdInput regionPropertyIdInput = this.translationEngine.convertObjectAsSafeClass(regionPropertyId,
                     RegionPropertyId.class);
             builder.addExcludedProperties(regionPropertyIdInput);
         }

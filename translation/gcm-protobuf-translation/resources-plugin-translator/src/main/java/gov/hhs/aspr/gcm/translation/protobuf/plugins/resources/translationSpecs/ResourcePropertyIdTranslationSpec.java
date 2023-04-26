@@ -9,12 +9,12 @@ public class ResourcePropertyIdTranslationSpec
 
     @Override
     protected ResourcePropertyId convertInputObject(ResourcePropertyIdInput inputObject) {
-        return this.translationEnine.getObjectFromAny(inputObject.getId());
+        return this.translationEngine.getObjectFromAny(inputObject.getId());
     }
 
     @Override
     protected ResourcePropertyIdInput convertAppObject(ResourcePropertyId appObject) {
-        return ResourcePropertyIdInput.newBuilder().setId(this.translationEnine.getAnyFromObject(appObject)).build();
+        return ResourcePropertyIdInput.newBuilder().setId(this.translationEngine.getAnyFromObject(appObject)).build();
     }
 
     @Override

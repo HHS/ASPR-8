@@ -8,13 +8,13 @@ public class ReportLabelTranslationSpec extends ProtobufTranslationSpec<ReportLa
 
     @Override
     protected ReportLabel convertInputObject(ReportLabelInput inputObject) {
-        return this.translationEnine.getObjectFromAny(inputObject.getLabel());
+        return this.translationEngine.getObjectFromAny(inputObject.getLabel());
     }
 
     @Override
     protected ReportLabelInput convertAppObject(ReportLabel appObject) {
         return ReportLabelInput.newBuilder()
-                .setLabel(this.translationEnine.getAnyFromObject(appObject)).build();
+                .setLabel(this.translationEngine.getAnyFromObject(appObject)).build();
     }
 
     @Override

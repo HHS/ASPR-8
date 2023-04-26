@@ -8,12 +8,12 @@ public class SimpleRegionIdTranslationSpec extends ProtobufTranslationSpec<Simpl
 
     @Override
     protected SimpleRegionId convertInputObject(SimpleRegionIdInput inputObject) {
-        return new SimpleRegionId(this.translationEnine.getObjectFromAny(inputObject.getValue()));
+        return new SimpleRegionId(this.translationEngine.getObjectFromAny(inputObject.getValue()));
     }
 
     @Override
     protected SimpleRegionIdInput convertAppObject(SimpleRegionId appObject) {
-        return SimpleRegionIdInput.newBuilder().setValue(this.translationEnine.getAnyFromObject(appObject.getValue()))
+        return SimpleRegionIdInput.newBuilder().setValue(this.translationEngine.getAnyFromObject(appObject.getValue()))
                 .build();
     }
 

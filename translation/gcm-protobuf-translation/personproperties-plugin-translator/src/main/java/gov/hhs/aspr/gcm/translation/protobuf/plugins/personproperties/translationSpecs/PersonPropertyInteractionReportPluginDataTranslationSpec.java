@@ -19,14 +19,14 @@ public class PersonPropertyInteractionReportPluginDataTranslationSpec
             PersonPropertyInteractionReportPluginDataInput inputObject) {
         PersonPropertyInteractionReportPluginData.Builder builder = PersonPropertyInteractionReportPluginData.builder();
 
-        ReportLabel reportLabel = this.translationEnine.convertObject(inputObject.getReportLabel());
+        ReportLabel reportLabel = this.translationEngine.convertObject(inputObject.getReportLabel());
         builder.setReportLabel(reportLabel);
 
-        ReportPeriod reportPeriod = this.translationEnine.convertObject(inputObject.getReportPeriod());
+        ReportPeriod reportPeriod = this.translationEngine.convertObject(inputObject.getReportPeriod());
         builder.setReportPeriod(reportPeriod);
 
         for (PersonPropertyIdInput personPropertyIdInput : inputObject.getPersonPropertyIdsList()) {
-            PersonPropertyId personPropertyId = this.translationEnine.convertObject(personPropertyIdInput);
+            PersonPropertyId personPropertyId = this.translationEngine.convertObject(personPropertyIdInput);
             builder.addPersonPropertyId(personPropertyId);
         }
 
@@ -39,16 +39,16 @@ public class PersonPropertyInteractionReportPluginDataTranslationSpec
         PersonPropertyInteractionReportPluginDataInput.Builder builder = PersonPropertyInteractionReportPluginDataInput
                 .newBuilder();
 
-        ReportLabelInput reportLabelInput = this.translationEnine.convertObjectAsSafeClass(appObject.getReportLabel(),
+        ReportLabelInput reportLabelInput = this.translationEngine.convertObjectAsSafeClass(appObject.getReportLabel(),
                 ReportLabel.class);
-        ReportPeriodInput reportPeriodInput = this.translationEnine.convertObject(appObject.getReportPeriod());
+        ReportPeriodInput reportPeriodInput = this.translationEngine.convertObject(appObject.getReportPeriod());
 
         builder
                 .setReportLabel(reportLabelInput)
                 .setReportPeriod(reportPeriodInput);
 
         for (PersonPropertyId personPropertyId : appObject.getPersonPropertyIds()) {
-            PersonPropertyIdInput personPropertyIdInput = this.translationEnine.convertObjectAsSafeClass(personPropertyId,
+            PersonPropertyIdInput personPropertyIdInput = this.translationEngine.convertObjectAsSafeClass(personPropertyId,
                     PersonPropertyId.class);
             builder.addPersonPropertyIds(personPropertyIdInput);
         }

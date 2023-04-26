@@ -15,8 +15,8 @@ public class RegionTransferReportPluginDataTranslationSpec
     protected RegionTransferReportPluginData convertInputObject(RegionTransferReportPluginDataInput inputObject) {
         RegionTransferReportPluginData.Builder builder = RegionTransferReportPluginData.builder();
 
-        ReportLabel reportLabel = this.translationEnine.convertObject(inputObject.getReportLabel());
-        ReportPeriod reportPeriod = this.translationEnine.convertObject(inputObject.getReportPeriod());
+        ReportLabel reportLabel = this.translationEngine.convertObject(inputObject.getReportLabel());
+        ReportPeriod reportPeriod = this.translationEngine.convertObject(inputObject.getReportPeriod());
 
         builder.setReportLabel(reportLabel).setReportPeriod(reportPeriod);
 
@@ -27,10 +27,10 @@ public class RegionTransferReportPluginDataTranslationSpec
     protected RegionTransferReportPluginDataInput convertAppObject(RegionTransferReportPluginData appObject) {
         RegionTransferReportPluginDataInput.Builder builder = RegionTransferReportPluginDataInput.newBuilder();
 
-        ReportLabelInput reportLabelInput = this.translationEnine.convertObjectAsSafeClass(appObject.getReportLabel(),
+        ReportLabelInput reportLabelInput = this.translationEngine.convertObjectAsSafeClass(appObject.getReportLabel(),
                 ReportLabel.class);
 
-        ReportPeriodInput reportPeriodInput = this.translationEnine.convertObject(appObject.getReportPeriod());
+        ReportPeriodInput reportPeriodInput = this.translationEngine.convertObject(appObject.getReportPeriod());
         builder.setReportLabel(reportLabelInput).setReportPeriod(reportPeriodInput);
 
         return builder.build();

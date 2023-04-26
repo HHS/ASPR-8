@@ -15,18 +15,18 @@ public class GlobalPropertyReportPluginDataTranslationSpec
     protected GlobalPropertyReportPluginData convertInputObject(GlobalPropertyReportPluginDataInput inputObject) {
         GlobalPropertyReportPluginData.Builder builder = GlobalPropertyReportPluginData.builder();
 
-        ReportLabel reportLabel = this.translationEnine.convertObject(inputObject.getReportLabel());
+        ReportLabel reportLabel = this.translationEngine.convertObject(inputObject.getReportLabel());
         builder.setReportLabel(reportLabel);
 
         builder.setDefaultInclusion(inputObject.getDefaultInclusionPolicy());
 
         for (GlobalPropertyIdInput globalPropertyIdInput : inputObject.getIncludedPropertiesList()) {
-            GlobalPropertyId globalPropertyId = this.translationEnine.convertObject(globalPropertyIdInput);
+            GlobalPropertyId globalPropertyId = this.translationEngine.convertObject(globalPropertyIdInput);
             builder.includeGlobalProperty(globalPropertyId);
         }
 
         for (GlobalPropertyIdInput globalPropertyIdInput : inputObject.getExcludedPropertiesList()) {
-            GlobalPropertyId globalPropertyId = this.translationEnine.convertObject(globalPropertyIdInput);
+            GlobalPropertyId globalPropertyId = this.translationEngine.convertObject(globalPropertyIdInput);
             builder.excludeGlobalProperty(globalPropertyId);
         }
 
@@ -37,7 +37,7 @@ public class GlobalPropertyReportPluginDataTranslationSpec
     protected GlobalPropertyReportPluginDataInput convertAppObject(GlobalPropertyReportPluginData appObject) {
         GlobalPropertyReportPluginDataInput.Builder builder = GlobalPropertyReportPluginDataInput.newBuilder();
 
-        ReportLabelInput reportLabelInput = this.translationEnine.convertObjectAsSafeClass(appObject.getReportLabel(),
+        ReportLabelInput reportLabelInput = this.translationEngine.convertObjectAsSafeClass(appObject.getReportLabel(),
                 ReportLabel.class);
 
         builder
@@ -45,13 +45,13 @@ public class GlobalPropertyReportPluginDataTranslationSpec
                 .setReportLabel(reportLabelInput);
 
         for (GlobalPropertyId globalPropertyId : appObject.getIncludedProperties()) {
-            GlobalPropertyIdInput globalPropertyIdInput = this.translationEnine.convertObjectAsSafeClass(globalPropertyId,
+            GlobalPropertyIdInput globalPropertyIdInput = this.translationEngine.convertObjectAsSafeClass(globalPropertyId,
                     GlobalPropertyId.class);
             builder.addIncludedProperties(globalPropertyIdInput);
         }
 
         for (GlobalPropertyId globalPropertyId : appObject.getExcludedProperties()) {
-            GlobalPropertyIdInput globalPropertyIdInput = this.translationEnine.convertObjectAsSafeClass(globalPropertyId,
+            GlobalPropertyIdInput globalPropertyIdInput = this.translationEngine.convertObjectAsSafeClass(globalPropertyId,
                     GlobalPropertyId.class);
             builder.addExcludedProperties(globalPropertyIdInput);
         }

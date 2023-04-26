@@ -13,7 +13,7 @@ public class BatchStatusReportPluginDataTranslationSpec
     protected BatchStatusReportPluginData convertInputObject(BatchStatusReportPluginDataInput inputObject) {
         BatchStatusReportPluginData.Builder builder = BatchStatusReportPluginData.builder();
 
-        ReportLabel reportLabel = this.translationEnine.convertObject(inputObject.getReportLabel());
+        ReportLabel reportLabel = this.translationEngine.convertObject(inputObject.getReportLabel());
 
         builder.setReportLabel(reportLabel);
         return builder.build();
@@ -23,7 +23,7 @@ public class BatchStatusReportPluginDataTranslationSpec
     protected BatchStatusReportPluginDataInput convertAppObject(BatchStatusReportPluginData appObject) {
         BatchStatusReportPluginDataInput.Builder builder = BatchStatusReportPluginDataInput.newBuilder();
 
-        ReportLabelInput reportLabelInput = this.translationEnine.convertObjectAsSafeClass(appObject.getReportLabel(),
+        ReportLabelInput reportLabelInput = this.translationEngine.convertObjectAsSafeClass(appObject.getReportLabel(),
                 ReportLabel.class);
 
         builder.setReportLabel(reportLabelInput);

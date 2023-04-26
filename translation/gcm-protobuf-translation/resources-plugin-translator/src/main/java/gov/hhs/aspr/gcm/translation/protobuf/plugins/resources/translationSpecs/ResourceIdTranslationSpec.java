@@ -8,12 +8,12 @@ public class ResourceIdTranslationSpec extends ProtobufTranslationSpec<ResourceI
 
     @Override
     protected ResourceId convertInputObject(ResourceIdInput inputObject) {
-        return this.translationEnine.getObjectFromAny(inputObject.getId());
+        return this.translationEngine.getObjectFromAny(inputObject.getId());
     }
 
     @Override
     protected ResourceIdInput convertAppObject(ResourceId appObject) {
-        return ResourceIdInput.newBuilder().setId(this.translationEnine.getAnyFromObject(appObject)).build();
+        return ResourceIdInput.newBuilder().setId(this.translationEngine.getAnyFromObject(appObject)).build();
     }
 
     @Override

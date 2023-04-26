@@ -13,10 +13,10 @@ public class PropertyDefinitionTranslationSpec extends ProtobufTranslationSpec<P
         PropertyDefinition.Builder builder = PropertyDefinition.builder();
 
         builder.setPropertyValueMutability(inputObject.getPropertyValuesAreMutable());
-        builder.setTimeTrackingPolicy(this.translationEnine.convertObject(inputObject.getTimeTrackingPolicy()));
+        builder.setTimeTrackingPolicy(this.translationEngine.convertObject(inputObject.getTimeTrackingPolicy()));
 
         if (inputObject.hasDefaultValue()) {
-            Object defaultValue = this.translationEnine.convertObject(inputObject.getDefaultValue());
+            Object defaultValue = this.translationEngine.convertObject(inputObject.getDefaultValue());
             builder.setDefaultValue(defaultValue);
             builder.setType(defaultValue.getClass());
         } else {
@@ -38,12 +38,12 @@ public class PropertyDefinitionTranslationSpec extends ProtobufTranslationSpec<P
     protected PropertyDefinitionInput convertAppObject(PropertyDefinition appObject) {
         PropertyDefinitionInput.Builder builder = PropertyDefinitionInput.newBuilder();
         if (appObject.getDefaultValue().isPresent()) {
-            builder.setDefaultValue((Any) this.translationEnine.convertObjectAsUnsafeClass(appObject.getDefaultValue().get(), Any.class));
+            builder.setDefaultValue((Any) this.translationEngine.convertObjectAsUnsafeClass(appObject.getDefaultValue().get(), Any.class));
         } else {
             builder.setType(appObject.getType().getName());
         }
         builder.setPropertyValuesAreMutable(appObject.propertyValuesAreMutable())
-                .setTimeTrackingPolicy(this.translationEnine.convertObject(appObject.getTimeTrackingPolicy()));
+                .setTimeTrackingPolicy(this.translationEngine.convertObject(appObject.getTimeTrackingPolicy()));
 
         return builder.build();
     }

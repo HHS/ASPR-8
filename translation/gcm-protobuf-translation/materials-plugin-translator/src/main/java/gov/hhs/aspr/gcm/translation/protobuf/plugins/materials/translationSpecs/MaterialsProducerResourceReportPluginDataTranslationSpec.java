@@ -13,7 +13,7 @@ public class MaterialsProducerResourceReportPluginDataTranslationSpec
     protected MaterialsProducerResourceReportPluginData convertInputObject(MaterialsProducerResourceReportPluginDataInput inputObject) {
         MaterialsProducerResourceReportPluginData.Builder builder = MaterialsProducerResourceReportPluginData.builder();
 
-        ReportLabel reportLabel = this.translationEnine.convertObject(inputObject.getReportLabel());
+        ReportLabel reportLabel = this.translationEngine.convertObject(inputObject.getReportLabel());
 
         builder.setReportLabel(reportLabel);
         return builder.build();
@@ -23,7 +23,7 @@ public class MaterialsProducerResourceReportPluginDataTranslationSpec
     protected MaterialsProducerResourceReportPluginDataInput convertAppObject(MaterialsProducerResourceReportPluginData appObject) {
         MaterialsProducerResourceReportPluginDataInput.Builder builder = MaterialsProducerResourceReportPluginDataInput.newBuilder();
 
-        ReportLabelInput reportLabelInput = this.translationEnine.convertObjectAsSafeClass(appObject.getReportLabel(),
+        ReportLabelInput reportLabelInput = this.translationEngine.convertObjectAsSafeClass(appObject.getReportLabel(),
                 ReportLabel.class);
 
         builder.setReportLabel(reportLabelInput);

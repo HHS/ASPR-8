@@ -11,14 +11,14 @@ public class ResourceInitializationTranslationSpec
 
     @Override
     protected ResourceInitialization convertInputObject(ResourceInitializationInput inputObject) {
-        ResourceId resourceId = this.translationEnine.convertObject(inputObject.getResourceId());
+        ResourceId resourceId = this.translationEngine.convertObject(inputObject.getResourceId());
         long amount = inputObject.getAmount();
         return new ResourceInitialization(resourceId, amount);
     }
 
     @Override
     protected ResourceInitializationInput convertAppObject(ResourceInitialization appObject) {
-        ResourceIdInput resourceIdInput = this.translationEnine.convertObjectAsSafeClass(appObject.getResourceId(), ResourceId.class);
+        ResourceIdInput resourceIdInput = this.translationEngine.convertObjectAsSafeClass(appObject.getResourceId(), ResourceId.class);
         return ResourceInitializationInput.newBuilder().setAmount(appObject.getAmount()).setResourceId(
                 resourceIdInput).build();
     }

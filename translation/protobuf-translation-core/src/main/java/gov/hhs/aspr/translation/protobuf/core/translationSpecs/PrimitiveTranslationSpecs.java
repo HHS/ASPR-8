@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Set;
 
 import com.google.protobuf.BoolValue;
+import com.google.protobuf.Descriptors.Descriptor;
 import com.google.protobuf.DoubleValue;
 import com.google.protobuf.FloatValue;
 import com.google.protobuf.Int32Value;
@@ -13,10 +14,9 @@ import com.google.protobuf.Int64Value;
 import com.google.protobuf.StringValue;
 import com.google.protobuf.UInt32Value;
 import com.google.protobuf.UInt64Value;
-import com.google.protobuf.Descriptors.Descriptor;
 import com.google.type.Date;
 
-import gov.hhs.aspr.translation.core.BaseTranslationSpec;
+import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 import gov.hhs.aspr.translation.protobuf.core.input.WrapperEnumValue;
 
 public class PrimitiveTranslationSpecs {
@@ -50,8 +50,8 @@ public class PrimitiveTranslationSpecs {
         return set;
     }
 
-    public static Set<BaseTranslationSpec> getPrimitiveTranslatorSpecs() {
-        Set<BaseTranslationSpec> set = new LinkedHashSet<>();
+    public static Set<ProtobufTranslationSpec<?, ?>> getPrimitiveTranslatorSpecs() {
+        Set<ProtobufTranslationSpec<?, ?>> set = new LinkedHashSet<>();
 
         set.addAll(getPrimitiveInputTranslatorSpecMap().values());
         set.addAll(getPrimitiveObjectTranslatorSpecMap().values());
@@ -86,8 +86,8 @@ public class PrimitiveTranslationSpecs {
         return map;
     }
 
-    public static Map<Class<?>, BaseTranslationSpec> getPrimitiveInputTranslatorSpecMap() {
-        Map<Class<?>, BaseTranslationSpec> map = new LinkedHashMap<>();
+    public static Map<Class<?>, ProtobufTranslationSpec<?, ?>> getPrimitiveInputTranslatorSpecMap() {
+        Map<Class<?>, ProtobufTranslationSpec<?, ?>> map = new LinkedHashMap<>();
 
         map.put(BOOLEAN_TRANSLATOR_SPEC.getInputObjectClass(), BOOLEAN_TRANSLATOR_SPEC);
         map.put(INT32_TRANSLATOR_SPEC.getInputObjectClass(), INT32_TRANSLATOR_SPEC);
@@ -104,8 +104,8 @@ public class PrimitiveTranslationSpecs {
         return map;
     }
 
-    public static Map<Class<?>, BaseTranslationSpec> getPrimitiveObjectTranslatorSpecMap() {
-        Map<Class<?>, BaseTranslationSpec> map = new LinkedHashMap<>();
+    public static Map<Class<?>, ProtobufTranslationSpec<?, ?>> getPrimitiveObjectTranslatorSpecMap() {
+        Map<Class<?>, ProtobufTranslationSpec<?, ?>> map = new LinkedHashMap<>();
 
         // no java version of unsigned int nor unsigned long
         map.put(BOOLEAN_TRANSLATOR_SPEC.getAppObjectClass(), BOOLEAN_TRANSLATOR_SPEC);

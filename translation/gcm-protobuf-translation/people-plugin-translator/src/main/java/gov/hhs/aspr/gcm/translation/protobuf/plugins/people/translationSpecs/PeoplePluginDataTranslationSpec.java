@@ -14,7 +14,7 @@ public class PeoplePluginDataTranslationSpec
         PeoplePluginData.Builder builder = PeoplePluginData.builder();
 
         for (PersonRangeInput personRangeInput : inputObject.getPersonRangesList()) {
-            PersonRange personRange = this.translationEnine.convertObject(personRangeInput);
+            PersonRange personRange = this.translationEngine.convertObject(personRangeInput);
             builder.addPersonRange(personRange);
         }
 
@@ -30,7 +30,7 @@ public class PeoplePluginDataTranslationSpec
         PeoplePluginDataInput.Builder builder = PeoplePluginDataInput.newBuilder();
 
         for (PersonRange personRange : appObject.getPersonRanges()) {
-            PersonRangeInput personRangeInput = this.translationEnine.convertObject(personRange);
+            PersonRangeInput personRangeInput = this.translationEngine.convertObject(personRange);
             builder.addPersonRanges(personRangeInput);
         }
 

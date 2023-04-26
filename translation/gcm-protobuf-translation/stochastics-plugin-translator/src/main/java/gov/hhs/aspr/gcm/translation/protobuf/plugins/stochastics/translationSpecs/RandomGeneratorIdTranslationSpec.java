@@ -9,13 +9,13 @@ public class RandomGeneratorIdTranslationSpec
 
     @Override
     protected RandomNumberGeneratorId convertInputObject(RandomNumberGeneratorIdInput inputObject) {
-        return this.translationEnine.getObjectFromAny(inputObject.getId());
+        return this.translationEngine.getObjectFromAny(inputObject.getId());
     }
 
     @Override
     protected RandomNumberGeneratorIdInput convertAppObject(RandomNumberGeneratorId appObject) {
         return RandomNumberGeneratorIdInput.newBuilder()
-                .setId(this.translationEnine.getAnyFromObject(appObject)).build();
+                .setId(this.translationEngine.getAnyFromObject(appObject)).build();
     }
 
     @Override
