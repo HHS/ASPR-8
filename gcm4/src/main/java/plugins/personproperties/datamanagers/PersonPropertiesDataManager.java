@@ -28,7 +28,7 @@ import plugins.personproperties.events.PersonPropertyUpdateEvent;
 import plugins.personproperties.support.PersonPropertyDefinitionInitialization;
 import plugins.personproperties.support.PersonPropertyError;
 import plugins.personproperties.support.PersonPropertyId;
-import plugins.personproperties.support.PersonPropertyInitialization;
+import plugins.personproperties.support.PersonPropertyValueInitialization;
 import plugins.regions.datamanagers.RegionsDataManager;
 import plugins.regions.support.RegionError;
 import plugins.regions.support.RegionId;
@@ -495,9 +495,9 @@ public final class PersonPropertiesDataManager extends DataManager {
 
 		PersonId personId = personImminentAdditionEvent.personId();
 
-		List<PersonPropertyInitialization> personPropertyAssignments = personConstructionData.getValues(PersonPropertyInitialization.class);
+		List<PersonPropertyValueInitialization> personPropertyAssignments = personConstructionData.getValues(PersonPropertyValueInitialization.class);
 
-		for (final PersonPropertyInitialization personPropertyAssignment : personPropertyAssignments) {
+		for (final PersonPropertyValueInitialization personPropertyAssignment : personPropertyAssignments) {
 			PersonPropertyId personPropertyId = personPropertyAssignment.getPersonPropertyId();
 			final Object personPropertyValue = personPropertyAssignment.getValue();
 			validatePersonPropertyId(personPropertyId);
@@ -508,14 +508,14 @@ public final class PersonPropertiesDataManager extends DataManager {
 
 		if (!nonDefaultBearingPropertyIds.isEmpty()) {
 			clearNonDefaultChecks();
-			for (final PersonPropertyInitialization personPropertyAssignment : personPropertyAssignments) {
+			for (final PersonPropertyValueInitialization personPropertyAssignment : personPropertyAssignments) {
 				PersonPropertyId personPropertyId = personPropertyAssignment.getPersonPropertyId();
 				markAssigned(personPropertyId);
 			}
 			verifyNonDefaultChecks();
 		}
 
-		for (final PersonPropertyInitialization personPropertyAssignment : personPropertyAssignments) {
+		for (final PersonPropertyValueInitialization personPropertyAssignment : personPropertyAssignments) {
 			PersonPropertyId personPropertyId = personPropertyAssignment.getPersonPropertyId();
 			final Object personPropertyValue = personPropertyAssignment.getValue();
 			int pId = personId.getValue();
@@ -661,15 +661,15 @@ public final class PersonPropertiesDataManager extends DataManager {
 		if (nonDefaultBearingPropertyIds.isEmpty()) {
 			for (int personIndex = 0; personIndex < personCount; personIndex++) {
 
-				List<PersonPropertyInitialization> propertyValues = personPropertiesPluginData.getPropertyValues(personIndex);
+				List<PersonPropertyValueInitialization> propertyValues = personPropertiesPluginData.getPropertyValues(personIndex);
 
 				if (!propertyValues.isEmpty() && !peopleDataManager.personIndexExists(personIndex)) {
 					throw new ContractException(PersonError.UNKNOWN_PERSON_ID);
 				}
 
-				for (PersonPropertyInitialization personPropertyInitialization : propertyValues) {
-					Object personPropertyValue = personPropertyInitialization.getValue();
-					PersonPropertyId personPropertyId = personPropertyInitialization.getPersonPropertyId();
+				for (PersonPropertyValueInitialization personPropertyValueInitialization : propertyValues) {
+					Object personPropertyValue = personPropertyValueInitialization.getValue();
+					PersonPropertyId personPropertyId = personPropertyValueInitialization.getPersonPropertyId();
 					IndexedPropertyManager propertyManager = personPropertyManagerMap.get(personPropertyId);
 					propertyManager.setPropertyValue(personIndex, personPropertyValue);
 				}
@@ -679,7 +679,7 @@ public final class PersonPropertiesDataManager extends DataManager {
 		} else {
 			for (int personIndex = 0; personIndex < personCount; personIndex++) {
 
-				List<PersonPropertyInitialization> propertyValues = personPropertiesPluginData.getPropertyValues(personIndex);
+				List<PersonPropertyValueInitialization> propertyValues = personPropertiesPluginData.getPropertyValues(personIndex);
 
 				if (!propertyValues.isEmpty() && !peopleDataManager.personIndexExists(personIndex)) {
 					throw new ContractException(PersonError.UNKNOWN_PERSON_ID);
@@ -687,9 +687,9 @@ public final class PersonPropertiesDataManager extends DataManager {
 
 				if (peopleDataManager.personIndexExists(personIndex)) {
 					clearNonDefaultChecks();
-					for (PersonPropertyInitialization personPropertyInitialization : propertyValues) {
-						Object personPropertyValue = personPropertyInitialization.getValue();
-						PersonPropertyId personPropertyId = personPropertyInitialization.getPersonPropertyId();
+					for (PersonPropertyValueInitialization personPropertyValueInitialization : propertyValues) {
+						Object personPropertyValue = personPropertyValueInitialization.getValue();
+						PersonPropertyId personPropertyId = personPropertyValueInitialization.getPersonPropertyId();
 						markAssigned(personPropertyId);
 						IndexedPropertyManager propertyManager = personPropertyManagerMap.get(personPropertyId);
 						propertyManager.setPropertyValue(personIndex, personPropertyValue);

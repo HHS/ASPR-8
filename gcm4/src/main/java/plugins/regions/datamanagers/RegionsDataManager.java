@@ -34,11 +34,11 @@ import plugins.regions.support.RegionPropertyDefinitionInitialization;
 import plugins.regions.support.RegionPropertyId;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
-import plugins.util.properties.PropertyValueRecord;
 import plugins.util.properties.TimeTrackingPolicy;
 import plugins.util.properties.arraycontainers.DoubleValueContainer;
 import plugins.util.properties.arraycontainers.IntValueContainer;
 import util.errors.ContractException;
+import util.wrappers.MutableInteger;
 
 /**
  * Mutable data manager that backs the {@linkplain RegionDataView}. This data
@@ -53,16 +53,6 @@ import util.errors.ContractException;
  *
  */
 public final class RegionsDataManager extends DataManager {
-	/*
-	 * Record for maintaining the number of people either globally or
-	 * regionally. Also maintains the time when the population count was last
-	 * changed. PopulationRecords are maintained to eliminate iterations over
-	 * other tracking structures to answer queries about population counts.
-	 */
-	private static class PopulationRecord {
-		private int populationCount;
-		private double assignmentTime;
-	}
 
 	private DataManagerContext dataManagerContext;
 
@@ -74,15 +64,15 @@ public final class RegionsDataManager extends DataManager {
 
 	private boolean[] nonDefaultChecks = new boolean[0];
 
-	private final Map<RegionId, Map<RegionPropertyId, PropertyValueRecord>> regionPropertyMap = new LinkedHashMap<>();
+	private final Map<RegionId, Map<RegionPropertyId, Object>> regionPropertyMap = new LinkedHashMap<>();
 
 	private final Set<RegionPropertyId> regionPropertyIds = new LinkedHashSet<>();
 	private final Map<RegionPropertyId, PropertyDefinition> regionPropertyDefinitions = new LinkedHashMap<>();
-	private final Map<RegionPropertyId, Double> regionPropertyDefinitionTimes = new LinkedHashMap<>();
+
 	/*
 	 * Tracking record for the total number of people in each region.
 	 */
-	private final Map<RegionId, PopulationRecord> regionPopulationRecordMap = new LinkedHashMap<>();
+	private final Map<RegionId, MutableInteger> regionPopulationRecordMap = new LinkedHashMap<>();
 
 	/*
 	 * Supports the conversion of region ids into int values.
@@ -216,21 +206,16 @@ public final class RegionsDataManager extends DataManager {
 			verifyNonDefaultChecks();
 		}
 
-		regionPopulationRecordMap.put(regionId, new PopulationRecord());
+		regionPopulationRecordMap.put(regionId, new MutableInteger());
 		regionToIndexMap.put(regionId, regionToIndexMap.size() + 1);
 		indexToRegionMap.add(regionId);
 
-		final Map<RegionPropertyId, PropertyValueRecord> map = new LinkedHashMap<>();
+		final Map<RegionPropertyId, Object> map = new LinkedHashMap<>();
 		regionPropertyMap.put(regionId, map);
 
 		for (RegionPropertyId regionPropertyId : regionPropertyValues.keySet()) {
 			Object regionPropertyValue = regionPropertyValues.get(regionPropertyId);
-			PropertyValueRecord propertyValueRecord = map.get(regionPropertyId);
-			if (propertyValueRecord == null) {
-				propertyValueRecord = new PropertyValueRecord(dataManagerContext);
-				map.put(regionPropertyId, propertyValueRecord);
-			}
-			propertyValueRecord.setPropertyValue(regionPropertyValue);
+			map.put(regionPropertyId, regionPropertyValue);
 		}
 
 		if (dataManagerContext.subscribersExist(RegionAdditionEvent.class)) {
@@ -297,7 +282,7 @@ public final class RegionsDataManager extends DataManager {
 			}
 		}
 
-		//validate each region property assignment belongs to a known region
+		// validate each region property assignment belongs to a known region
 		for (final Pair<RegionId, Object> pair : regionPropertyDefinitionInitialization.getPropertyValues()) {
 			validateRegionId(pair.getFirst());
 		}
@@ -305,7 +290,7 @@ public final class RegionsDataManager extends DataManager {
 		if (checkAllRegionsHaveValues) {
 			addNonDefaultProperty(regionPropertyId);
 		}
-		regionPropertyDefinitionTimes.put(regionPropertyId, dataManagerContext.getTime());
+
 		regionPropertyIds.add(regionPropertyId);
 		regionPropertyDefinitions.put(regionPropertyId, propertyDefinition);
 
@@ -317,11 +302,8 @@ public final class RegionsDataManager extends DataManager {
 			 * consistent with the property definition by contract.
 			 */
 			final Object value = pair.getSecond();
-			Map<RegionPropertyId, PropertyValueRecord> map = regionPropertyMap.get(regionId);
-			PropertyValueRecord propertyValueRecord = new PropertyValueRecord(dataManagerContext);
-			map.put(regionPropertyId, propertyValueRecord);
-			propertyValueRecord.setPropertyValue(value);
-
+			Map<RegionPropertyId, Object> map = regionPropertyMap.get(regionId);
+			map.put(regionPropertyId, value);
 		}
 
 		if (dataManagerContext.subscribersExist(RegionPropertyDefinitionEvent.class)) {
@@ -451,22 +433,7 @@ public final class RegionsDataManager extends DataManager {
 	 */
 	public int getRegionPopulationCount(final RegionId regionId) {
 		validateRegionId(regionId);
-		return regionPopulationRecordMap.get(regionId).populationCount;
-	}
-
-	/**
-	 * Returns the time when the current population of the given region was
-	 * established.
-	 *
-	 * @throwsContractException
-	 *                          <li>{@linkplain RegionError#NULL_REGION_ID} if
-	 *                          the region id is null
-	 *                          <li>{@linkplain RegionError#UNKNOWN_REGION_ID}
-	 *                          if the region id is not known
-	 */
-	public double getRegionPopulationTime(final RegionId regionId) {
-		validateRegionId(regionId);
-		return regionPopulationRecordMap.get(regionId).assignmentTime;
+		return regionPopulationRecordMap.get(regionId).getValue();
 	}
 
 	/**
@@ -497,30 +464,6 @@ public final class RegionsDataManager extends DataManager {
 	}
 
 	/**
-	 * Returns the time when the of the region property was last assigned.
-	 *
-	 * @throws ContractException
-	 *             <li>{@linkplain RegionError#NULL_REGION_ID} if the region id
-	 *             is null</li>
-	 *             <li>{@linkplain RegionError#UNKNOWN_REGION_ID} if the region
-	 *             id is not known</li>
-	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the region
-	 *             property id is null</li>
-	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if the
-	 *             region property id is unknown</li>
-	 */
-	public double getRegionPropertyTime(final RegionId regionId, final RegionPropertyId regionPropertyId) {
-		validateRegionId(regionId);
-		validateRegionPropertyId(regionPropertyId);
-		Map<RegionPropertyId, PropertyValueRecord> map = regionPropertyMap.get(regionId);
-		PropertyValueRecord propertyValueRecord = map.get(regionPropertyId);
-		if (propertyValueRecord != null) {
-			return propertyValueRecord.getAssignmentTime();
-		}
-		return regionPropertyDefinitionTimes.get(regionPropertyId);
-	}
-
-	/**
 	 * Returns the value of the region property.
 	 *
 	 * @throws ContractException
@@ -537,10 +480,10 @@ public final class RegionsDataManager extends DataManager {
 	public <T> T getRegionPropertyValue(final RegionId regionId, final RegionPropertyId regionPropertyId) {
 		validateRegionId(regionId);
 		validateRegionPropertyId(regionPropertyId);
-		Map<RegionPropertyId, PropertyValueRecord> map = regionPropertyMap.get(regionId);
-		PropertyValueRecord propertyValueRecord = map.get(regionPropertyId);
-		if (propertyValueRecord != null) {
-			return (T) propertyValueRecord.getValue();
+		Map<RegionPropertyId, Object> map = regionPropertyMap.get(regionId);
+		Object propertyValue = map.get(regionPropertyId);
+		if (propertyValue != null) {
+			return (T) propertyValue;
 		}
 		/*
 		 * If the value is missing, then we are guaranteed that the property
@@ -564,9 +507,7 @@ public final class RegionsDataManager extends DataManager {
 		 * Update the population count of the new region
 		 */
 
-		final PopulationRecord populationRecord = regionPopulationRecordMap.get(regionId);
-		populationRecord.populationCount++;
-		populationRecord.assignmentTime = dataManagerContext.getTime();
+		regionPopulationRecordMap.get(regionId).increment();
 
 		final Integer regionIndex = regionToIndexMap.get(regionId).intValue();
 		regionValues.setIntValue(personId.getValue(), regionIndex);
@@ -591,9 +532,7 @@ public final class RegionsDataManager extends DataManager {
 		validatePersonContained(personId);
 		final int regionIndex = regionValues.getValueAsInt(personId.getValue());
 		final RegionId oldRegionId = indexToRegionMap.get(regionIndex);
-		final PopulationRecord populationRecord = regionPopulationRecordMap.get(oldRegionId);
-		populationRecord.populationCount--;
-		populationRecord.assignmentTime = dataManagerContext.getTime();
+		regionPopulationRecordMap.get(oldRegionId).decrement();
 		regionValues.setIntValue(personId.getValue(), 0);
 	}
 
@@ -645,7 +584,27 @@ public final class RegionsDataManager extends DataManager {
 	 *             <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if the person
 	 *             id is not currently tracked by the regions data manager</li>
 	 *
+	 * 
+	 *             <li>{@linkplain RegionError#UNKNOWN_REGION_ID} if a person in
+	 *             the people plugin does not have an assigned region id in the
+	 *             region plugin data</li>
 	 *
+	 *             <li>{@linkplain RegionError#UNKNOWN_REGION_ARRIVAL_TIME} if
+	 *             the person id person region arrival time cannot be found in
+	 *             the plugin data when the arrival tracking policy is true</li>
+	 *
+	 *             <li>{@linkplain RegionError#REGION_ARRIVAL_TIME_EXCEEDS_SIM_TIME}
+	 *             if a person's region arrival time exceeds the current
+	 *             simulation time</li>
+	 * 
+	 * 
+	 *             <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if the regions
+	 *             plugin data contains information for an unknown person
+	 *             id</li>
+	 * 
+	 * 
+	 *             );
+	 * 
 	 *
 	 *             </ul>
 	 *
@@ -680,7 +639,7 @@ public final class RegionsDataManager extends DataManager {
 
 		final Set<RegionId> regionIds = regionsPluginData.getRegionIds();
 		for (final RegionId regionId : regionIds) {
-			regionPopulationRecordMap.put(regionId, new PopulationRecord());
+			regionPopulationRecordMap.put(regionId, new MutableInteger());
 		}
 
 		int index = 1;
@@ -690,13 +649,11 @@ public final class RegionsDataManager extends DataManager {
 
 		indexToRegionMap.add(null);
 		indexToRegionMap.addAll(regionIds);
-		Double time = dataManagerContext.getTime();
 
 		for (final RegionPropertyId regionPropertyId : regionsPluginData.getRegionPropertyIds()) {
 			final PropertyDefinition propertyDefinition = regionsPluginData.getRegionPropertyDefinition(regionPropertyId);
 			regionPropertyIds.add(regionPropertyId);
 			regionPropertyDefinitions.put(regionPropertyId, propertyDefinition);
-			regionPropertyDefinitionTimes.put(regionPropertyId, time);
 			if (propertyDefinition.getDefaultValue().isEmpty()) {
 				nonDefaultBearingPropertyIds.put(regionPropertyId, nonDefaultBearingPropertyIds.size());
 			}
@@ -704,17 +661,16 @@ public final class RegionsDataManager extends DataManager {
 		nonDefaultChecks = new boolean[nonDefaultBearingPropertyIds.size()];
 
 		for (final RegionId regionId : regionIds) {
-			final Map<RegionPropertyId, PropertyValueRecord> map = new LinkedHashMap<>();
+			final Map<RegionPropertyId, Object> map = new LinkedHashMap<>();
 			regionPropertyMap.put(regionId, map);
 			Map<RegionPropertyId, Object> regionPropertyValues = regionsPluginData.getRegionPropertyValues(regionId);
 			for (final RegionPropertyId regionPropertyId : regionPropertyValues.keySet()) {
 				final Object regionPropertyValue = regionPropertyValues.get(regionPropertyId);
-				final PropertyValueRecord propertyValueRecord = new PropertyValueRecord(dataManagerContext);
-				propertyValueRecord.setPropertyValue(regionPropertyValue);
-				map.put(regionPropertyId, propertyValueRecord);
+				map.put(regionPropertyId, regionPropertyValue);
 			}
 		}
 
+		double currentTime = dataManagerContext.getTime();
 		final List<PersonId> people = peopleDataManager.getPeople();
 		for (final PersonId personId : people) {
 			final Optional<RegionId> optional = regionsPluginData.getPersonRegion(personId);
@@ -722,10 +678,32 @@ public final class RegionsDataManager extends DataManager {
 				throw new ContractException(RegionError.UNKNOWN_REGION_ID);
 			}
 			final RegionId regionId = optional.get();
-			final PopulationRecord populationRecord = regionPopulationRecordMap.get(regionId);
-			populationRecord.populationCount++;
+			regionPopulationRecordMap.get(regionId).increment();
 			final Integer regionIndex = regionToIndexMap.get(regionId).intValue();
 			regionValues.setIntValue(personId.getValue(), regionIndex);
+
+			if (regionArrivalTimes != null) {
+				Optional<Double> optionalTime = regionsPluginData.getPersonRegionArrivalTime(personId);
+				if (optionalTime.isEmpty()) {
+					throw new ContractException(RegionError.UNKNOWN_REGION_ARRIVAL_TIME);
+				}
+				double arrivalTime = optionalTime.get();
+				if (arrivalTime > currentTime) {
+					throw new ContractException(RegionError.REGION_ARRIVAL_TIME_EXCEEDS_SIM_TIME);
+				}
+
+				regionArrivalTimes.setValue(personId.getValue(), arrivalTime);
+			}
+		}
+
+		int n = regionsPluginData.getPersonCount();
+		for (int i = 0; i < n; i++) {
+			if (!peopleDataManager.personIndexExists(i)) {
+				Optional<RegionId> optional = regionsPluginData.getPersonRegion(new PersonId(i));
+				if (optional.isPresent()) {
+					throw new ContractException(PersonError.UNKNOWN_PERSON_ID);
+				}
+			}
 		}
 
 		dataManagerContext.subscribe(PersonImminentAdditionEvent.class, this::handlePersonImminentAdditionEvent);
@@ -757,46 +735,22 @@ public final class RegionsDataManager extends DataManager {
 				builder.setRegionPropertyValue(regionId, regionPropertyId, regionPropertyValue);
 			}
 		}
-
-		for (PersonId personId : peopleDataManager.getPeople()) {
+		List<PersonId> people = peopleDataManager.getPeople();
+		for (PersonId personId : people) {
 			RegionId regionId = getPersonRegion(personId);
 			builder.setPersonRegion(personId, regionId);
 		}
 
+		
 		builder.setPersonRegionArrivalTracking(getPersonRegionArrivalTrackingPolicy());
+		if (regionArrivalTimes != null) {
+			for (PersonId personId : people) {
+				double arrivalTime = regionArrivalTimes.getValue(personId.getValue());
+				builder.setPersonRegionArrivalTime(personId, arrivalTime);
+			}
+		}
 
 		dataManagerContext.releaseOutput(builder.build());
-
-		// for (RegionId regionId : regionPopulationRecordMap.keySet()) {
-		// builder.addRegion(regionId);
-		// }
-		//
-		// for (RegionPropertyId regionPropertyId :
-		// regionPropertyDefinitions.keySet()) {
-		// PropertyDefinition propertyDefinition =
-		// regionPropertyDefinitions.get(regionPropertyId);
-		// builder.defineRegionProperty(regionPropertyId, propertyDefinition);
-		// for (RegionId regionId : regionPopulationRecordMap.keySet()) {
-		// Map<RegionPropertyId, PropertyValueRecord> map =
-		// regionPropertyMap.get(regionId);
-		// PropertyValueRecord propertyValueRecord = map.get(regionPropertyId);
-		// if (propertyValueRecord != null) {
-		// builder.setRegionPropertyValue(regionId, regionPropertyId,
-		// propertyValueRecord.getValue());
-		// } else {
-		// builder.setRegionPropertyValue(regionId, regionPropertyId,
-		// propertyDefinition.getDefaultValue().get());
-		// }
-		// }
-		// }
-		//
-		// for (PersonId personId : peopleDataManager.getPeople()) {
-		// final int r = regionValues.getValueAsInt(personId.getValue());
-		// RegionId regionId = indexToRegionMap.get(r);
-		// builder.setPersonRegion(personId, regionId);
-		// }
-		//
-		// builder.setPersonRegionArrivalTracking(regionArrivalTrackingPolicy);
 
 	}
 
@@ -852,19 +806,17 @@ public final class RegionsDataManager extends DataManager {
 		 */
 		int regionIndex = regionValues.getValueAsInt(personId.getValue());
 		final RegionId oldRegionId = indexToRegionMap.get(regionIndex);
-		PopulationRecord populationRecord = regionPopulationRecordMap.get(oldRegionId);
 		/*
 		 * Update the population count associated with the old region
 		 */
-		populationRecord.populationCount--;
-		populationRecord.assignmentTime = dataManagerContext.getTime();
+
+		regionPopulationRecordMap.get(oldRegionId).decrement();
 
 		/*
 		 * Update the population count of the new region
 		 */
-		populationRecord = regionPopulationRecordMap.get(regionId);
-		populationRecord.populationCount++;
-		populationRecord.assignmentTime = dataManagerContext.getTime();
+		regionPopulationRecordMap.get(regionId).increment();
+
 		/*
 		 * Convert the new region id into an int
 		 */
@@ -925,28 +877,20 @@ public final class RegionsDataManager extends DataManager {
 		final PropertyDefinition propertyDefinition = getRegionPropertyDefinition(regionPropertyId);
 		validateValueCompatibility(regionPropertyId, propertyDefinition, regionPropertyValue);
 		validatePropertyMutability(propertyDefinition);
-		Map<RegionPropertyId, PropertyValueRecord> map = regionPropertyMap.get(regionId);
-		PropertyValueRecord propertyValueRecord = map.get(regionPropertyId);
+		Map<RegionPropertyId, Object> map = regionPropertyMap.get(regionId);
 
 		if (dataManagerContext.subscribersExist(RegionPropertyUpdateEvent.class)) {
-			Object previousPropertyValue;
-			if (propertyValueRecord == null) {
-				propertyValueRecord = new PropertyValueRecord(dataManagerContext);
-				map.put(regionPropertyId, propertyValueRecord);
+			Object previousPropertyValue = map.get(regionPropertyId);
+			if (previousPropertyValue == null) {
 				previousPropertyValue = regionPropertyDefinitions.get(regionPropertyId).getDefaultValue().get();
-			} else {
-				previousPropertyValue = propertyValueRecord.getValue();
 			}
-			propertyValueRecord.setPropertyValue(regionPropertyValue);
+
+			map.put(regionPropertyId, regionPropertyValue);
+
 			dataManagerContext.releaseObservationEvent(new RegionPropertyUpdateEvent(regionId, regionPropertyId, previousPropertyValue, regionPropertyValue));
 		} else {
+			map.put(regionPropertyId, regionPropertyValue);
 
-			if (propertyValueRecord == null) {
-				propertyValueRecord = new PropertyValueRecord(dataManagerContext);
-				map.put(regionPropertyId, propertyValueRecord);
-
-			}
-			propertyValueRecord.setPropertyValue(regionPropertyValue);
 		}
 
 	}

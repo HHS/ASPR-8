@@ -35,7 +35,7 @@ import plugins.personproperties.events.PersonPropertyUpdateEvent;
 import plugins.personproperties.support.PersonPropertyDefinitionInitialization;
 import plugins.personproperties.support.PersonPropertyError;
 import plugins.personproperties.support.PersonPropertyId;
-import plugins.personproperties.support.PersonPropertyInitialization;
+import plugins.personproperties.support.PersonPropertyValueInitialization;
 import plugins.personproperties.testsupport.PersonPropertiesTestPluginFactory;
 import plugins.personproperties.testsupport.PersonPropertiesTestPluginFactory.Factory;
 import plugins.personproperties.testsupport.TestAuxiliaryPersonPropertyId;
@@ -659,9 +659,9 @@ public final class AT_PersonPropertyDataManager {
 						expectedPropertyValues.put(personPropertyId, propertyDefinition.getDefaultValue().get());
 					}
 				}
-				List<PersonPropertyInitialization> propertyValues = personPropertiesPluginData.getPropertyValues(personId.getValue());
-				for (PersonPropertyInitialization personPropertyInitialization : propertyValues) {
-					expectedPropertyValues.put(personPropertyInitialization.getPersonPropertyId(), personPropertyInitialization.getValue());
+				List<PersonPropertyValueInitialization> propertyValues = personPropertiesPluginData.getPropertyValues(personId.getValue());
+				for (PersonPropertyValueInitialization personPropertyValueInitialization : propertyValues) {
+					expectedPropertyValues.put(personPropertyValueInitialization.getPersonPropertyId(), personPropertyValueInitialization.getValue());
 				}
 				Map<PersonPropertyId, Object> actualPropertyValues = new LinkedHashMap<>();
 
@@ -721,17 +721,17 @@ public final class AT_PersonPropertyDataManager {
 			// set two properties to random values and record them in the
 			// expected data
 			int iValue = randomGenerator.nextInt();
-			personBuilder.add(new PersonPropertyInitialization(TestPersonPropertyId.PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK, iValue));
+			personBuilder.add(new PersonPropertyValueInitialization(TestPersonPropertyId.PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK, iValue));
 			expectedPropertyValues.put(TestPersonPropertyId.PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK, iValue);
 
 			double dValue = randomGenerator.nextDouble();
-			personBuilder.add(new PersonPropertyInitialization(TestPersonPropertyId.PERSON_PROPERTY_3_DOUBLE_MUTABLE_NO_TRACK, dValue));
+			personBuilder.add(new PersonPropertyValueInitialization(TestPersonPropertyId.PERSON_PROPERTY_3_DOUBLE_MUTABLE_NO_TRACK, dValue));
 			expectedPropertyValues.put(TestPersonPropertyId.PERSON_PROPERTY_3_DOUBLE_MUTABLE_NO_TRACK, dValue);
 
 			// ensure that non-defaulted properties get a value assignment
 			for (TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.getPropertiesWithoutDefaultValues()) {
 				Object value = testPersonPropertyId.getRandomPropertyValue(randomGenerator);
-				personBuilder.add(new PersonPropertyInitialization(testPersonPropertyId, value));
+				personBuilder.add(new PersonPropertyValueInitialization(testPersonPropertyId, value));
 				expectedPropertyValues.put(testPersonPropertyId, value);
 
 			}
@@ -768,7 +768,7 @@ public final class AT_PersonPropertyDataManager {
 				PersonConstructionData.Builder personBuilder = PersonConstructionData.builder();
 				RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 				personBuilder.add(TestRegionId.getRandomRegionId(randomGenerator));
-				personBuilder.add(new PersonPropertyInitialization(TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK, 45));
+				personBuilder.add(new PersonPropertyValueInitialization(TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK, 45));
 				PersonConstructionData constructionData = personBuilder.build();
 				peopleDataManager.addPerson(constructionData);
 			});
@@ -788,7 +788,7 @@ public final class AT_PersonPropertyDataManager {
 				PersonConstructionData.Builder personBuilder = PersonConstructionData.builder();
 				RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 				personBuilder.add(TestRegionId.getRandomRegionId(randomGenerator));
-				personBuilder.add(new PersonPropertyInitialization(TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK, null));
+				personBuilder.add(new PersonPropertyValueInitialization(TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK, null));
 				PersonConstructionData constructionData = personBuilder.build();
 				peopleDataManager.addPerson(constructionData);
 			});
@@ -809,7 +809,7 @@ public final class AT_PersonPropertyDataManager {
 				RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 				personBuilder.add(TestRegionId.getRandomRegionId(randomGenerator));
-				personBuilder.add(new PersonPropertyInitialization(TestPersonPropertyId.getUnknownPersonPropertyId(), false));
+				personBuilder.add(new PersonPropertyValueInitialization(TestPersonPropertyId.getUnknownPersonPropertyId(), false));
 				PersonConstructionData constructionData = personBuilder.build();
 				peopleDataManager.addPerson(constructionData);
 
@@ -832,7 +832,7 @@ public final class AT_PersonPropertyDataManager {
 				// if the event contains a PersonPropertyInitialization that has a
 				// null person property id
 				personBuilder.add(TestRegionId.getRandomRegionId(randomGenerator));
-				personBuilder.add(new PersonPropertyInitialization(null, false));
+				personBuilder.add(new PersonPropertyValueInitialization(null, false));
 				PersonConstructionData constructionData = personBuilder.build();
 				peopleDataManager.addPerson(constructionData);
 			});
@@ -1076,8 +1076,8 @@ public final class AT_PersonPropertyDataManager {
 				personBuilder.add(TestRegionId.REGION_1);
 				for (TestPersonPropertyId testPersonPropertyId : requiredPropertyIds) {
 					Object value = testPersonPropertyId.getRandomPropertyValue(randomGenerator);
-					PersonPropertyInitialization personPropertyInitialization = new PersonPropertyInitialization(testPersonPropertyId, value);
-					personBuilder.add(personPropertyInitialization);
+					PersonPropertyValueInitialization personPropertyValueInitialization = new PersonPropertyValueInitialization(testPersonPropertyId, value);
+					personBuilder.add(personPropertyValueInitialization);
 				}
 				PersonConstructionData personConstructionData = personBuilder.build();
 				PersonId personId1 = peopleDataManager.addPerson(personConstructionData);
@@ -1086,8 +1086,8 @@ public final class AT_PersonPropertyDataManager {
 				personBuilder.add(TestRegionId.REGION_2);
 				for (TestPersonPropertyId testPersonPropertyId : requiredPropertyIds) {
 					Object value = testPersonPropertyId.getRandomPropertyValue(randomGenerator);
-					PersonPropertyInitialization personPropertyInitialization = new PersonPropertyInitialization(testPersonPropertyId, value);
-					personBuilder.add(personPropertyInitialization);
+					PersonPropertyValueInitialization personPropertyValueInitialization = new PersonPropertyValueInitialization(testPersonPropertyId, value);
+					personBuilder.add(personPropertyValueInitialization);
 				}
 				personConstructionData = personBuilder.build();
 				peopleDataManager.addPerson(personConstructionData);

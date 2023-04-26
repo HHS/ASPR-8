@@ -19,7 +19,7 @@ import nucleus.PluginDataBuilder;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
 import plugins.personproperties.support.PersonPropertyId;
-import plugins.personproperties.support.PersonPropertyInitialization;
+import plugins.personproperties.support.PersonPropertyValueInitialization;
 import plugins.personproperties.testsupport.TestPersonPropertyId;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
@@ -260,11 +260,11 @@ public class AT_PersonPropertyPluginData {
 			personPropertyBuilder.definePersonProperty(testPersonPropertyId, propertyDefinition);
 		}
 
-		List<List<PersonPropertyInitialization>> expectedPropertyValues = new ArrayList<>();
+		List<List<PersonPropertyValueInitialization>> expectedPropertyValues = new ArrayList<>();
 
 		int personCount = 50;
 		for (int i = 0; i < personCount; i++) {
-			List<PersonPropertyInitialization> list = new ArrayList<>();
+			List<PersonPropertyValueInitialization> list = new ArrayList<>();
 			expectedPropertyValues.add(list);
 			PersonId personId = new PersonId(i);			
 			int propertyCount = randomGenerator.nextInt(3);
@@ -290,9 +290,9 @@ public class AT_PersonPropertyPluginData {
 				}
 
 				if (index == -1) {
-					list.add(new PersonPropertyInitialization(testPersonPropertyId, value));
+					list.add(new PersonPropertyValueInitialization(testPersonPropertyId, value));
 				} else {
-					list.set(index, new PersonPropertyInitialization(testPersonPropertyId, value));
+					list.set(index, new PersonPropertyValueInitialization(testPersonPropertyId, value));
 				}
 			}
 			for (TestPersonPropertyId testPersonPropertyId : propertiesWithoutDefaultValues) {
@@ -315,9 +315,9 @@ public class AT_PersonPropertyPluginData {
 				}
 
 				if (index == -1) {
-					list.add(new PersonPropertyInitialization(testPersonPropertyId, value));
+					list.add(new PersonPropertyValueInitialization(testPersonPropertyId, value));
 				} else {
-					list.set(index, new PersonPropertyInitialization(testPersonPropertyId, value));
+					list.set(index, new PersonPropertyValueInitialization(testPersonPropertyId, value));
 				}
 			}
 
@@ -331,8 +331,8 @@ public class AT_PersonPropertyPluginData {
 		 */
 
 		for (int i = 0; i < personCount; i++) {
-			List<PersonPropertyInitialization> expectedList = expectedPropertyValues.get(i);
-			List<PersonPropertyInitialization> actualList = personPropertyInitialData.getPropertyValues(i);
+			List<PersonPropertyValueInitialization> expectedList = expectedPropertyValues.get(i);
+			List<PersonPropertyValueInitialization> actualList = personPropertyInitialData.getPropertyValues(i);
 			assertEquals(expectedList, actualList);
 		}
 

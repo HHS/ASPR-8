@@ -302,6 +302,37 @@ public class AT_RegionsPluginData {
 								.build();//
 		});
 		assertEquals(PropertyError.INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT, contractException.getErrorType());
+
+		/*
+		 * if a person region arrival data was collected, but the policy for
+		 * region arrival tracking is false
+		 */
+		contractException = assertThrows(ContractException.class, () -> {
+			RegionsPluginData	.builder()//
+								.addRegion(TestRegionId.REGION_1)//
+								.setPersonRegionArrivalTracking(TimeTrackingPolicy.DO_NOT_TRACK_TIME)//
+								.setPersonRegion(new PersonId(0), TestRegionId.REGION_1)//
+								.setPersonRegionArrivalTime(new PersonId(0), 0.0)//
+								.build();//
+		});
+		assertEquals(RegionError.PERSON_ARRIVAL_DATA_PRESENT, contractException.getErrorType());
+
+		/*
+		 * if the policy for region arrival tracking is set to true, but only
+		 * one of the region assignment and region arrival are set for some
+		 * person
+		 */
+
+		contractException = assertThrows(ContractException.class, () -> {
+			RegionsPluginData	.builder()//
+								.addRegion(TestRegionId.REGION_1)//
+								.setPersonRegionArrivalTracking(TimeTrackingPolicy.TRACK_TIME)//
+								.setPersonRegion(new PersonId(0), TestRegionId.REGION_1)//
+								.build();
+		});
+		assertEquals(RegionError.REGION_ARRIVAL_TIMES_MISMATCHED, contractException.getErrorType());
+
+		
 	}
 
 	@Test
@@ -456,6 +487,7 @@ public class AT_RegionsPluginData {
 			PersonId personId = new PersonId(i * 2 + 5);
 			TestRegionId randomRegionId = TestRegionId.getRandomRegionId(randomGenerator);
 			regionPluginDataBuilder.setPersonRegion(personId, randomRegionId);
+			regionPluginDataBuilder.setPersonRegionArrivalTime(personId, 0.0);
 		}
 
 		RegionsPluginData regionsPluginData = regionPluginDataBuilder.build();
@@ -549,6 +581,7 @@ public class AT_RegionsPluginData {
 				PersonId personId = new PersonId(i + offset);
 				TestRegionId randomRegionId = TestRegionId.getRandomRegionId(randomGenerator);
 				regionPluginDataBuilder.setPersonRegion(personId, randomRegionId);
+				regionPluginDataBuilder.setPersonRegionArrivalTime(personId, 0.0);
 			}
 
 			RegionsPluginData regionsPluginData = regionPluginDataBuilder.build();

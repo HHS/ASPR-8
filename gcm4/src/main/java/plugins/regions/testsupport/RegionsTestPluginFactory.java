@@ -316,6 +316,13 @@ public final class RegionsTestPluginFactory {
 			regionPluginBuilder.setPersonRegion(personId, testRegionId);
 			testRegionId = testRegionId.next();
 		}
+		
+		if(timeTrackingPolicy == TimeTrackingPolicy.TRACK_TIME) {
+			for (PersonId personId : people) {
+				regionPluginBuilder.setPersonRegionArrivalTime(personId, 0.0);				
+			}
+		}
+		
 		return regionPluginBuilder.build();
 	}
 

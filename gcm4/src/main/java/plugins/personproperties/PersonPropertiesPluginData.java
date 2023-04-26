@@ -18,7 +18,7 @@ import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
 import plugins.personproperties.support.PersonPropertyError;
 import plugins.personproperties.support.PersonPropertyId;
-import plugins.personproperties.support.PersonPropertyInitialization;
+import plugins.personproperties.support.PersonPropertyValueInitialization;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
 import util.errors.ContractException;
@@ -40,9 +40,9 @@ public class PersonPropertiesPluginData implements PluginData {
 
 		private Map<PersonPropertyId, PropertyDefinition> personPropertyDefinitions = new LinkedHashMap<>();
 
-		private List<List<PersonPropertyInitialization>> personPropertyValues = new ArrayList<>();
+		private List<List<PersonPropertyValueInitialization>> personPropertyValues = new ArrayList<>();
 
-		private List<PersonPropertyInitialization> emptyList = Collections.unmodifiableList(new ArrayList<>());
+		private List<PersonPropertyValueInitialization> emptyList = Collections.unmodifiableList(new ArrayList<>());
 
 		private boolean locked;
 
@@ -53,8 +53,8 @@ public class PersonPropertiesPluginData implements PluginData {
 
 			personPropertyDefinitions.putAll(data.personPropertyDefinitions);
 			
-			for (List<PersonPropertyInitialization> list : data.personPropertyValues) {
-				List<PersonPropertyInitialization> newList = new ArrayList<>(list);
+			for (List<PersonPropertyValueInitialization> list : data.personPropertyValues) {
+				List<PersonPropertyValueInitialization> newList = new ArrayList<>(list);
 				personPropertyValues.add(newList);
 			}
 			locked = data.locked;
@@ -74,13 +74,13 @@ public class PersonPropertiesPluginData implements PluginData {
 			int prime = 31;
 
 			for (int i = 0; i < personPropertyValues.size(); i++) {
-				List<PersonPropertyInitialization> list = personPropertyValues.get(i);
+				List<PersonPropertyValueInitialization> list = personPropertyValues.get(i);
 				if (list != null) {
-					for (PersonPropertyInitialization personPropertyInitialization : list) {
-						PersonPropertyId personPropertyId = personPropertyInitialization.getPersonPropertyId();
+					for (PersonPropertyValueInitialization personPropertyValueInitialization : list) {
+						PersonPropertyId personPropertyId = personPropertyValueInitialization.getPersonPropertyId();
 						PropertyDefinition propertyDefinition = personPropertyDefinitions.get(personPropertyId);
 						boolean use = true;
-						Object propertyValue = personPropertyInitialization.getValue();
+						Object propertyValue = personPropertyValueInitialization.getValue();
 						Optional<Object> optional = propertyDefinition.getDefaultValue();
 						if (optional.isPresent()) {
 							Object defaultValue = optional.get();
@@ -127,8 +127,8 @@ public class PersonPropertiesPluginData implements PluginData {
 		int n = FastMath.max(a.personPropertyValues.size(), b.personPropertyValues.size());
 
 		for (int i = 0; i < n; i++) {
-			Set<PersonPropertyInitialization> aSet = getNonDefaultPersonPropertyInitializations(a, i);
-			Set<PersonPropertyInitialization> bSet = getNonDefaultPersonPropertyInitializations(b, i);
+			Set<PersonPropertyValueInitialization> aSet = getNonDefaultPersonPropertyInitializations(a, i);
+			Set<PersonPropertyValueInitialization> bSet = getNonDefaultPersonPropertyInitializations(b, i);
 			if (!aSet.equals(bSet)) {
 				return false;
 			}
@@ -136,16 +136,16 @@ public class PersonPropertiesPluginData implements PluginData {
 		return true;
 	}
 
-	private static Set<PersonPropertyInitialization> getNonDefaultPersonPropertyInitializations(Data data, int personIndex) {
-		Set<PersonPropertyInitialization> result = new LinkedHashSet<>();
+	private static Set<PersonPropertyValueInitialization> getNonDefaultPersonPropertyInitializations(Data data, int personIndex) {
+		Set<PersonPropertyValueInitialization> result = new LinkedHashSet<>();
 		if (personIndex < data.personPropertyValues.size()) {
-			List<PersonPropertyInitialization> list = data.personPropertyValues.get(personIndex);
+			List<PersonPropertyValueInitialization> list = data.personPropertyValues.get(personIndex);
 			if (list != null) {
-				for (PersonPropertyInitialization personPropertyInitialization : list) {
-					PersonPropertyId personPropertyId = personPropertyInitialization.getPersonPropertyId();
+				for (PersonPropertyValueInitialization personPropertyValueInitialization : list) {
+					PersonPropertyId personPropertyId = personPropertyValueInitialization.getPersonPropertyId();
 					PropertyDefinition propertyDefinition = data.personPropertyDefinitions.get(personPropertyId);
 					boolean use = true;
-					Object propertyValue = personPropertyInitialization.getValue();
+					Object propertyValue = personPropertyValueInitialization.getValue();
 					Optional<Object> optional = propertyDefinition.getDefaultValue();
 					if (optional.isPresent()) {
 						Object defaultValue = optional.get();
@@ -154,7 +154,7 @@ public class PersonPropertiesPluginData implements PluginData {
 						}
 					}
 					if (use) {
-						result.add(personPropertyInitialization);
+						result.add(personPropertyValueInitialization);
 					}
 				}
 			}
@@ -271,8 +271,8 @@ public class PersonPropertiesPluginData implements PluginData {
 				data.personPropertyValues.add(null);
 			}
 
-			List<PersonPropertyInitialization> list = data.personPropertyValues.get(personIndex);
-			PersonPropertyInitialization personPropertyInitialization = new PersonPropertyInitialization(personPropertyId, personPropertyValue);
+			List<PersonPropertyValueInitialization> list = data.personPropertyValues.get(personIndex);
+			PersonPropertyValueInitialization personPropertyValueInitialization = new PersonPropertyValueInitialization(personPropertyId, personPropertyValue);
 
 			if (list == null) {
 				list = new ArrayList<>();
@@ -289,9 +289,9 @@ public class PersonPropertiesPluginData implements PluginData {
 			}
 
 			if (index == -1) {
-				list.add(personPropertyInitialization);
+				list.add(personPropertyValueInitialization);
 			} else {
-				list.set(index, personPropertyInitialization);
+				list.set(index, personPropertyValueInitialization);
 			}
 
 			return this;
@@ -299,15 +299,15 @@ public class PersonPropertiesPluginData implements PluginData {
 
 		private void validateData() {
 
-			for (List<PersonPropertyInitialization> list : data.personPropertyValues) {
+			for (List<PersonPropertyValueInitialization> list : data.personPropertyValues) {
 				if (list != null) {
-					for (PersonPropertyInitialization personPropertyInitialization : list) {
-						PersonPropertyId personPropertyId = personPropertyInitialization.getPersonPropertyId();
+					for (PersonPropertyValueInitialization personPropertyValueInitialization : list) {
+						PersonPropertyId personPropertyId = personPropertyValueInitialization.getPersonPropertyId();
 						PropertyDefinition propertyDefinition = data.personPropertyDefinitions.get(personPropertyId);
 						if (propertyDefinition == null) {
 							throw new ContractException(PropertyError.UNKNOWN_PROPERTY_ID, personPropertyId);
 						}
-						Object propertyValue = personPropertyInitialization.getValue();
+						Object propertyValue = personPropertyValueInitialization.getValue();
 						if (!propertyDefinition.getType().isAssignableFrom(propertyValue.getClass())) {
 							throw new ContractException(PropertyError.INCOMPATIBLE_VALUE, personPropertyId + " = " + propertyValue);
 						}
@@ -333,15 +333,15 @@ public class PersonPropertiesPluginData implements PluginData {
 			boolean[] nonDefaultChecks = new boolean[nonDefaultBearingPropertyIds.size()];
 
 			for (int i = 0; i < data.personPropertyValues.size(); i++) {
-				List<PersonPropertyInitialization> list = data.personPropertyValues.get(i);
+				List<PersonPropertyValueInitialization> list = data.personPropertyValues.get(i);
 
 				for (int j = 0; j < nonDefaultChecks.length; j++) {
 					nonDefaultChecks[j] = false;
 				}
 
 				if (list != null) {
-					for (PersonPropertyInitialization personPropertyInitialization : list) {
-						PersonPropertyId personPropertyId = personPropertyInitialization.getPersonPropertyId();
+					for (PersonPropertyValueInitialization personPropertyValueInitialization : list) {
+						PersonPropertyId personPropertyId = personPropertyValueInitialization.getPersonPropertyId();
 						Integer index = nonDefaultBearingPropertyIds.get(personPropertyId);
 						if (index != null) {
 							nonDefaultChecks[index] = true;
@@ -460,12 +460,12 @@ public class PersonPropertiesPluginData implements PluginData {
 	 * unmodifiable list.
 	 *
 	 */
-	public List<PersonPropertyInitialization> getPropertyValues(int personIndex) {
+	public List<PersonPropertyValueInitialization> getPropertyValues(int personIndex) {
 		
 		if (personIndex<0 || personIndex >= data.personPropertyValues.size()) {
 			return data.emptyList;
 		}
-		List<PersonPropertyInitialization> list = data.personPropertyValues.get(personIndex);
+		List<PersonPropertyValueInitialization> list = data.personPropertyValues.get(personIndex);
 		if (list == null) {
 			return data.emptyList;
 		}

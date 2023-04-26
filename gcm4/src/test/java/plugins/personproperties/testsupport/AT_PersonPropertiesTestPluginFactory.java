@@ -35,7 +35,7 @@ import plugins.personproperties.PersonPropertiesPluginData;
 import plugins.personproperties.PersonPropertiesPluginId;
 import plugins.personproperties.support.PersonPropertyError;
 import plugins.personproperties.support.PersonPropertyId;
-import plugins.personproperties.support.PersonPropertyInitialization;
+import plugins.personproperties.support.PersonPropertyValueInitialization;
 import plugins.personproperties.testsupport.PersonPropertiesTestPluginFactory.Factory;
 import plugins.regions.RegionsPluginData;
 import plugins.regions.RegionsPluginId;
@@ -248,6 +248,7 @@ public class AT_PersonPropertiesTestPluginFactory {
 		TestRegionId testRegionId = TestRegionId.REGION_1;
 		for (PersonId personId : people) {
 			regionPluginBuilder.setPersonRegion(personId, testRegionId);
+			regionPluginBuilder.setPersonRegionArrivalTime(personId, 0.0);
 			testRegionId = testRegionId.next();
 		}
 
@@ -331,7 +332,7 @@ public class AT_PersonPropertiesTestPluginFactory {
 					expectedValues.add(new Pair<>(propertyId, expectedPropertyValue));
 				}
 			}
-			List<PersonPropertyInitialization> propInitList = personPropertiesPluginData
+			List<PersonPropertyValueInitialization> propInitList = personPropertiesPluginData
 					.getPropertyValues(personId.getValue());
 
 			assertEquals(expectedValues.size(), propInitList.size());
