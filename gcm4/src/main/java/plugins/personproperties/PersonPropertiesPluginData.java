@@ -39,10 +39,12 @@ public class PersonPropertiesPluginData implements PluginData {
 	private static class Data {
 
 		private Map<PersonPropertyId, PropertyDefinition> personPropertyDefinitions = new LinkedHashMap<>();
-
-		private List<List<PersonPropertyValueInitialization>> personPropertyValues = new ArrayList<>();
-
-		private List<PersonPropertyValueInitialization> emptyList = Collections.unmodifiableList(new ArrayList<>());
+		
+		private Map<PersonPropertyId, Double> personPropertyDefinitionTimes = new LinkedHashMap<>();
+		
+		private Map<PersonPropertyId,List<Object>> personPropertyValues = new LinkedHashMap<>();
+		
+		private Map<PersonPropertyId,List<Double>> personPropertyTimes = new LinkedHashMap<>();
 
 		private boolean locked;
 
