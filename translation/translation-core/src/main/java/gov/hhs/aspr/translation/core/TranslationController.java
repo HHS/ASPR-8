@@ -32,30 +32,30 @@ import util.graph.MutableGraph;
  * files for reading and writing.
  */
 public class TranslationController {
-    private final Data data;
-    private TranslationEngine translatorEngine;
-    private final List<Object> objects = Collections.synchronizedList(new ArrayList<>());
-    private TranslatorId focalTranslatorId = null;
+    protected final Data data;
+    protected TranslationEngine translationEngine;
+    protected final List<Object> objects = Collections.synchronizedList(new ArrayList<>());
+    protected TranslatorId focalTranslatorId = null;
 
-    private TranslationController(Data data) {
+    protected TranslationController(Data data) {
         this.data = data;
     }
 
-    private static class Data {
-        private TranslationEngine.Builder translationEngineBuilder;
-        private final List<Translator> translators = new ArrayList<>();
-        private final Map<Path, Class<?>> inputFilePathMap = new LinkedHashMap<>();
-        private final Map<Pair<Class<?>, Integer>, Path> outputFilePathMap = new LinkedHashMap<>();
-        private final Map<Class<?>, Class<?>> parentChildClassRelationshipMap = new LinkedHashMap<>();
+    protected static class Data {
+        protected TranslationEngine.Builder translationEngineBuilder;
+        protected final List<Translator> translators = new ArrayList<>();
+        protected final Map<Path, Class<?>> inputFilePathMap = new LinkedHashMap<>();
+        protected final Map<Pair<Class<?>, Integer>, Path> outputFilePathMap = new LinkedHashMap<>();
+        protected final Map<Class<?>, Class<?>> parentChildClassRelationshipMap = new LinkedHashMap<>();
 
-        private Data() {
+        protected Data() {
         }
     }
 
     public static class Builder {
-        private Data data;
+        protected Data data;
 
-        private Builder(Data data) {
+        protected Builder(Data data) {
             this.data = data;
         }
 
@@ -99,8 +99,10 @@ public class TranslationController {
          * Calls the initializer on each added {@link Translator}
          * 
          * @throws ContractException
+         *                           <ul>
          *                           <li>{@linkplain CoreTranslationError#NULL_TRANSLATION_ENGINE_BUILDER}
          *                           if translationEngineBuilder has not been set</li>
+         *                           </ul>
          */
         public TranslationController build() {
             validateTranslationEngineBuilderNotNull(this.data.translationEngineBuilder);
@@ -111,11 +113,16 @@ public class TranslationController {
             return translatorController;
         }
 
+        protected TranslationController buildWithoutInitAndChecks() {
+            return new TranslationController(this.data);
+        }
+
         /**
          * Adds the path and class ref to be read from after building via
          * {@link TranslationController#readInput()}
          * 
          * @throws ContractException
+         *                           <ul>
          *                           <li>{@linkplain CoreTranslationError#NULL_PATH}
          *                           if filePath is null</li>
          *                           <li>{@linkplain CoreTranslationError#NULL_CLASS_REF}
@@ -124,6 +131,7 @@ public class TranslationController {
          *                           if filePath has already been added</li>
          *                           <li>{@linkplain CoreTranslationError#INVALID_INPUT_PATH}
          *                           if filePath does not exist on the system</li>
+         *                           </ul>
          */
         public Builder addInputFilePath(Path filePath, Class<?> classRef) {
             validateFilePathNotNull(filePath);
@@ -143,6 +151,7 @@ public class TranslationController {
          * {@link TranslationController#writeOutput} with a scenario id of 0
          * 
          * @throws ContractException
+         *                           <ul>
          *                           <li>{@linkplain CoreTranslationError#NULL_PATH}
          *                           if filePath is null</li>
          *                           <li>{@linkplain CoreTranslationError#NULL_CLASS_REF}
@@ -154,6 +163,7 @@ public class TranslationController {
          *                           been added</li>
          *                           <li>{@linkplain CoreTranslationError#INVALID_OUTPUT_PATH}
          *                           if filePath does not exist on the system</li>
+         *                           </ul>
          */
         public Builder addOutputFilePath(Path filePath, Class<?> classRef) {
             return this.addOutputFilePath(filePath, classRef, 0);
@@ -164,6 +174,7 @@ public class TranslationController {
          * {@link TranslationController#writeOutput} with the given scenarioId
          * 
          * @throws ContractException
+         *                           <ul>
          *                           <li>{@linkplain CoreTranslationError#NULL_PATH}
          *                           if filePath is null</li>
          *                           <li>{@linkplain CoreTranslationError#NULL_CLASS_REF}
@@ -175,6 +186,7 @@ public class TranslationController {
          *                           been added</li>
          *                           <li>{@linkplain CoreTranslationError#INVALID_OUTPUT_PATH}
          *                           if filePath does not exist on the system</li>
+         *                           </ul>
          */
         public Builder addOutputFilePath(Path filePath, Class<?> classRef, Integer scenarioId) {
             validateFilePathNotNull(filePath);
@@ -207,11 +219,14 @@ public class TranslationController {
          * @param <U> the parentClass/MarkerInterfaceClass
          * 
          * @throws ContractException
+         *                           <ul>
          *                           <li>{@linkplain CoreTranslationError#NULL_CLASS_REF}
          *                           if classRef is null or if markerInterface is
          *                           null</li>
          *                           <li>{@linkplain CoreTranslationError#DUPLICATE_CLASSREF}
-         *                           if child parent relationship has already been added</li>
+         *                           if child parent relationship has already been
+         *                           added</li>
+         *                           </ul>
          * 
          */
         public <M extends U, U> Builder addParentChildClassRelationship(Class<M> classRef, Class<U> markerInterface) {
@@ -230,10 +245,12 @@ public class TranslationController {
          * Add a {@link Translator}
          * 
          * @throws ContractException
+         *                           <ul>
          *                           <li>{@linkplain CoreTranslationError#NULL_TRANSLATOR}
          *                           if translator is null</li>
          *                           <li>{@linkplain CoreTranslationError#DUPLICATE_TRANSLATOR}
          *                           if translator has alaready been added</li>
+         *                           </ul>
          */
         public Builder addTranslator(Translator translator) {
             validateTranslatorNotNull(translator);
@@ -250,8 +267,10 @@ public class TranslationController {
          * Sets the {@link TranslationEngine.Builder}
          * 
          * @throws ContractException
+         *                           <ul>
          *                           <li>{@linkplain CoreTranslationError#NULL_TRANSLATION_ENGINE_BUILDER}
          *                           if translationEngineBuilder is null</li>
+         *                           </ul>
          */
         public Builder setTranslationEngineBuilder(TranslationEngine.Builder translationEngineBuilder) {
             validateTranslationEngineBuilderNotNull(translationEngineBuilder);
@@ -268,6 +287,12 @@ public class TranslationController {
         return new Builder(new Data());
     }
 
+    private void validateClassRefNotNull(Class<?> classRef) {
+        if (classRef == null) {
+            throw new ContractException(CoreTranslationError.NULL_CLASS_REF);
+        }
+    }
+
     /**
      * Returns the translationEngineBuilder if and only if it is set, has not had it
      * build method called, has not had it's init method called and is of the same
@@ -276,13 +301,15 @@ public class TranslationController {
      * @param <T> the class type of the TranslationEngine.Builder
      * 
      * @throws ContractException
+     *                           <ul>
      *                           <li>{@linkplain CoreTranslationError#INVALID_TRANSLATION_ENGINE_BUILDER}
      *                           if the given classRef does not match the class or
      *                           the translationEngineBuilder is
      *                           null</li>
+     *                           </ul>
      */
     protected <T extends TranslationEngine.Builder> T getTranslationEngineBuilder(Class<T> classRef) {
-        if (this.translatorEngine == null) {
+        if (this.translationEngine == null) {
             if (this.data.translationEngineBuilder.getClass() == classRef) {
                 return classRef.cast(this.data.translationEngineBuilder);
             }
@@ -307,6 +334,13 @@ public class TranslationController {
      * @param <U> the parentClass
      */
     protected <M extends U, U> void addParentChildClassRelationship(Class<M> classRef, Class<U> parentClassRef) {
+        validateClassRefNotNull(classRef);
+        validateClassRefNotNull(parentClassRef);
+
+        if (this.data.parentChildClassRelationshipMap.containsKey(classRef)) {
+            throw new ContractException(CoreTranslationError.DUPLICATE_CLASSREF);
+        }
+
         this.data.parentChildClassRelationshipMap.put(classRef, parentClassRef);
     }
 
@@ -318,7 +352,7 @@ public class TranslationController {
      * @param <U> the classType associated with the reader
      */
     private <U> void readInput(Reader reader, Class<U> inputClassRef) {
-        Object appObject = this.translatorEngine.readInput(reader, inputClassRef);
+        Object appObject = this.translationEngine.readInput(reader, inputClassRef);
 
         this.objects.add(appObject);
     }
@@ -332,11 +366,15 @@ public class TranslationController {
      * @param <U> the optional parent class of the object to write to the outputFile
      */
     private <M extends U, U> void writeOutput(Writer writer, M object, Optional<Class<U>> superClass) {
-        this.translatorEngine.writeOutput(writer, object, superClass);
+        this.translationEngine.writeOutput(writer, object, superClass);
     }
 
-    private void validateCoreTranslator() {
-        if (this.translatorEngine == null) {
+    protected void buildTranslationEngine() {
+        this.translationEngine = this.data.translationEngineBuilder.build();
+    }
+
+    protected void validateTranslationEngine() {
+        if (this.translationEngine == null) {
             throw new ContractException(CoreTranslationError.NULL_TRANSLATION_ENGINE);
         }
 
@@ -345,7 +383,7 @@ public class TranslationController {
          * initTranslators() method, this should never happen, thus it is a
          * RuntimeException and not a ContractException
          */
-        if (!this.translatorEngine.isInitialized()) {
+        if (!this.translationEngine.isInitialized()) {
             throw new RuntimeException("TranslationEngine has been built but has not been initialized.");
         }
     }
@@ -366,24 +404,23 @@ public class TranslationController {
             translator.getInitializer().accept(translatorContext);
         }
 
-        this.translatorEngine = this.data.translationEngineBuilder.build();
+        this.buildTranslationEngine();
 
-        this.translatorEngine.init();
+        this.translationEngine.init();
 
-        this.translatorEngine.translatorSpecsAreInitialized();
+        this.translationEngine.translatorSpecsAreInitialized();
 
         return this;
     }
 
-    private void readInput(Path path, Class<?> classRef) {
+    protected void readInput(Path path, Class<?> classRef) {
         Reader reader;
         try {
             reader = new FileReader(path.toFile());
+            this.readInput(reader, classRef);
         } catch (FileNotFoundException e) {
-            throw new RuntimeException("Failed to create Reader", e);
+            throw new RuntimeException(e);
         }
-
-        this.readInput(reader, classRef);
     }
 
     /**
@@ -392,11 +429,13 @@ public class TranslationController {
      * {@link TranslationController#readInput(Reader, Class)}
      * 
      * @throws ContractException
+     *                           <ul>
      *                           <li>{@linkplain CoreTranslationError#NULL_TRANSLATION_ENGINE}
      *                           if translationEngine is null</li>
+     *                           </ul>
      */
     public TranslationController readInput() {
-        validateCoreTranslator();
+        validateTranslationEngine();
 
         for (Path path : this.data.inputFilePathMap.keySet()) {
             Class<?> classRef = this.data.inputFilePathMap.get(path);
@@ -418,7 +457,7 @@ public class TranslationController {
      * @param <M> the childClass
      * @param <U> the optional parentClass/MarkerInterfaceClass
      */
-    private <M extends U, U> Pair<Path, Optional<Class<U>>> getOutputPath(Class<M> classRef, Integer scenarioId) {
+    protected <M extends U, U> Pair<Path, Optional<Class<U>>> getOutputPath(Class<M> classRef, Integer scenarioId) {
         Pair<Class<?>, Integer> key = new Pair<>(classRef, scenarioId);
 
         if (this.data.outputFilePathMap.containsKey(key)) {
@@ -429,12 +468,12 @@ public class TranslationController {
             // can safely cast because of type checking when adding to the
             // markerInterfaceClassMap
             @SuppressWarnings("unchecked")
-            Class<U> markerInterfaceClass = (Class<U>) this.data.parentChildClassRelationshipMap.get(classRef);
+            Class<U> parentClass = (Class<U>) this.data.parentChildClassRelationshipMap.get(classRef);
 
-            key = new Pair<>(markerInterfaceClass, scenarioId);
+            key = new Pair<>(parentClass, scenarioId);
 
             if (this.data.outputFilePathMap.containsKey(key)) {
-                return new Pair<>(this.data.outputFilePathMap.get(key), Optional.of(markerInterfaceClass));
+                return new Pair<>(this.data.outputFilePathMap.get(key), Optional.of(parentClass));
             }
         }
 
@@ -451,11 +490,14 @@ public class TranslationController {
      * @param <T> the type of the list of obects to write to output
      * 
      * @throws ContractException
+     *                           <ul>
      *                           <li>{@linkplain CoreTranslationError#INVALID_OUTPUT_CLASSREF}
-     *                           if the class of an object in the list does not have
-     *                           a associated outputFilePath</li>
+     *                           if the class of the object paired with the
+     *                           scenarioId does not have a associated
+     *                           outputFilePath</li>
      *                           <li>{@linkplain CoreTranslationError#NULL_TRANSLATION_ENGINE}
      *                           if translationEngine is null</li>
+     *                           </ul>
      */
     public <T> void writeOutput(List<T> objects) {
         for (T object : objects) {
@@ -474,12 +516,14 @@ public class TranslationController {
      * @param <T> the type of the list of obects to write to output
      * 
      * @throws ContractException
+     *                           <ul>
      *                           <li>{@linkplain CoreTranslationError#INVALID_OUTPUT_CLASSREF}
-     *                           if the class of an object in the list paired with
-     *                           the scenarioId does not have
-     *                           a associated outputFilePath</li>
+     *                           if the class of the object paired with the
+     *                           scenarioId does not have a associated
+     *                           outputFilePath</li>
      *                           <li>{@linkplain CoreTranslationError#NULL_TRANSLATION_ENGINE}
      *                           if translationEngine is null</li>
+     *                           </ul>
      */
     public <T> void writeOutput(List<T> objects, Integer scenarioId) {
         for (T object : objects) {
@@ -497,11 +541,14 @@ public class TranslationController {
      * @param <T> the type of the list of obects to write to output
      * 
      * @throws ContractException
+     *                           <ul>
      *                           <li>{@linkplain CoreTranslationError#INVALID_OUTPUT_CLASSREF}
-     *                           if the class of the object does not have a
-     *                           associated outputFilePath</li>
+     *                           if the class of the object paired with the
+     *                           scenarioId does not have a associated
+     *                           outputFilePath</li>
      *                           <li>{@linkplain CoreTranslationError#NULL_TRANSLATION_ENGINE}
      *                           if translationEngine is null</li>
+     *                           </ul>
      */
     public <T> void writeOutput(T object) {
         this.writeOutput(object, 0);
@@ -511,34 +558,38 @@ public class TranslationController {
      * takes the given object and scenarioId pair and writes it out to it's
      * corresponding
      * outputFilePath, if it exists
-     * <li>internally calls
-     * {@link TranslationController#writeOutput(Object, Integer)}
-     * with a scenarioId of 0
      * 
      * @param <M> the classType of the object
      * @param <U> the optional type of the parent class of the object
      * 
      * @throws ContractException
+     *                           <ul>
      *                           <li>{@linkplain CoreTranslationError#INVALID_OUTPUT_CLASSREF}
      *                           if the class of the object paired with the
      *                           scenarioId does not have a associated
      *                           outputFilePath</li>
      *                           <li>{@linkplain CoreTranslationError#NULL_TRANSLATION_ENGINE}
      *                           if translationEngine is null</li>
+     *                           </ul>
      */
     @SuppressWarnings("unchecked")
     public <M extends U, U> void writeOutput(M object, Integer scenarioId) {
-        validateCoreTranslator();
+        validateTranslationEngine();
         // this gives an unchecked warning, surprisingly
         Class<M> classRef = (Class<M>) object.getClass();
 
         Pair<Path, Optional<Class<U>>> pathPair = getOutputPath(classRef, scenarioId);
         Path path = pathPair.getFirst();
 
+        this.writeOutput(makeFileWriter(path), object, pathPair.getSecond());
+    }
+
+    protected FileWriter makeFileWriter(Path path) {
+
         try {
-            this.writeOutput(new FileWriter(path.toFile()), object, pathPair.getSecond());
+            return new FileWriter(path.toFile());
         } catch (IOException e) {
-            throw new RuntimeException("Unable to create writer for file: " + path.toString(), e);
+            throw new RuntimeException(e);
         }
     }
 
@@ -549,8 +600,10 @@ public class TranslationController {
      * @param <T> the type of the obect to get
      * 
      * @throws ContractException
+     *                           <ul>
      *                           <li>{@linkplain CoreTranslationError#UNKNOWN_CLASSREF}
      *                           if no object with the specified class is found</li>
+     *                           </ul>
      */
     public <T> T getFirstObject(Class<T> classRef) {
         for (Object object : this.objects) {
@@ -569,8 +622,10 @@ public class TranslationController {
      * @param <T> the type of the obect to get
      * 
      * @throws ContractException
+     *                           <ul>
      *                           <li>{@linkplain CoreTranslationError#UNKNOWN_CLASSREF}
      *                           if no object with the specified class is found</li>
+     *                           </ul>
      */
     public <T> List<T> getObjects(Class<T> classRef) {
         List<T> objects = new ArrayList<>();
@@ -598,28 +653,68 @@ public class TranslationController {
      * Goes through the list of translators and orders them based on their
      * dependencies
      */
-    private List<Translator> getOrderedTranslators() {
+    protected List<Translator> getOrderedTranslators() {
+        return this.getOrderedTranslators(new MutableGraph<>(), new LinkedHashMap<>());
+    }
 
-        MutableGraph<TranslatorId, Object> mutableGraph = new MutableGraph<>();
-
-        Map<TranslatorId, Translator> translatorMap = new LinkedHashMap<>();
+    /*
+     * Goes through the list of translators and orders them based on their
+     * dependencies
+     */
+    protected List<Translator> getOrderedTranslators(MutableGraph<TranslatorId, Object> mutableGraph,
+            Map<TranslatorId, Translator> translatorMap) {
 
         /*
          * Add the nodes to the graph, check for duplicate ids, build the
          * mapping from plugin id back to plugin
          */
+        this.addNodes(mutableGraph, translatorMap);
+
+        // Add the edges to the graph
+        this.addEdges(mutableGraph);
+
+        /*
+         * Check for missing plugins from the plugin dependencies that were
+         * collected from the known plugins.
+         */
+        checkForMissingTranslators(mutableGraph, translatorMap);
+
+        /*
+         * Determine whether the graph is acyclic and generate a graph depth
+         * evaluator for the graph so that we can determine the order of
+         * initialization.
+         */
+        checkForCyclicGraph(mutableGraph);
+
+        // the graph is acyclic, so the depth evaluator is present
+        GraphDepthEvaluator<TranslatorId> graphDepthEvaluator = GraphDepthEvaluator
+                .getGraphDepthEvaluator(mutableGraph.toGraph()).get();
+
+        List<TranslatorId> orderedTranslatorIds = graphDepthEvaluator.getNodesInRankOrder();
+
+        List<Translator> orderedTranslators = new ArrayList<>();
+        for (TranslatorId translatorId : orderedTranslatorIds) {
+            orderedTranslators.add(translatorMap.get(translatorId));
+        }
+
+        return orderedTranslators;
+    }
+
+    protected void addNodes(MutableGraph<TranslatorId, Object> mutableGraph,
+            Map<TranslatorId, Translator> translatorMap) {
         for (Translator translator : this.data.translators) {
             focalTranslatorId = translator.getTranslatorId();
             translatorMap.put(focalTranslatorId, translator);
             // ensure that there are no duplicate plugins
             if (mutableGraph.containsNode(focalTranslatorId)) {
-                throw new RuntimeException("Duplicate Translator");
+                throw new ContractException(CoreTranslationError.DUPLICATE_TRANSLATOR);
             }
             mutableGraph.addNode(focalTranslatorId);
             focalTranslatorId = null;
         }
+    }
 
-        // Add the edges to the graph
+    protected void addEdges(MutableGraph<TranslatorId, Object> mutableGraph) {
         for (Translator translator : this.data.translators) {
             focalTranslatorId = translator.getTranslatorId();
             for (TranslatorId translatorId : translator.getTranslatorDependencies()) {
@@ -627,11 +722,10 @@ public class TranslationController {
             }
             focalTranslatorId = null;
         }
+    }
 
-        /*
-         * Check for missing plugins from the plugin dependencies that were
-         * collected from the known plugins.
-         */
+    protected void checkForMissingTranslators(MutableGraph<TranslatorId, Object> mutableGraph,
+            Map<TranslatorId, Translator> translatorMap) {
         for (TranslatorId translatorId : mutableGraph.getNodes()) {
             if (!translatorMap.containsKey(translatorId)) {
                 List<Object> inboundEdges = mutableGraph.getInboundEdges(translatorId);
@@ -649,15 +743,12 @@ public class TranslationController {
                     TranslatorId dependentTranslatorId = mutableGraph.getOriginNode(edge);
                     sb.append(dependentTranslatorId);
                 }
-                throw new RuntimeException("Missing Translator: " + sb.toString());
+                throw new ContractException(CoreTranslationError.MISSING_TRANSLATOR, sb.toString());
             }
         }
+    }
 
-        /*
-         * Determine whether the graph is acyclic and generate a graph depth
-         * evaluator for the graph so that we can determine the order of
-         * initialization.
-         */
+    protected void checkForCyclicGraph(MutableGraph<TranslatorId, Object> mutableGraph) {
         Optional<GraphDepthEvaluator<TranslatorId>> optional = GraphDepthEvaluator
                 .getGraphDepthEvaluator(mutableGraph.toGraph());
 
@@ -667,7 +758,6 @@ public class TranslationController {
              */
 
             Graph<TranslatorId, Object> g = mutableGraph.toGraph();
-
             g = Graphs.getSourceSinkReducedGraph(g);
             g = Graphs.getEdgeReducedGraph(g);
             g = Graphs.getSourceSinkReducedGraph(g);
@@ -696,28 +786,14 @@ public class TranslationController {
                     sb.append(lineSeparator);
                     for (Object edge : cutGraph.getInboundEdges(node)) {
                         TranslatorId dependencyNode = cutGraph.getOriginNode(edge);
-                        if (nodes.contains(dependencyNode)) {
-                            sb.append("\t");
-                            sb.append("\t");
-                            sb.append(dependencyNode);
-                            sb.append(lineSeparator);
-                        }
+                        sb.append("\t");
+                        sb.append("\t");
+                        sb.append(dependencyNode);
+                        sb.append(lineSeparator);
                     }
                 }
             }
-            throw new RuntimeException("Circular translator dependencies: " + sb.toString());
+            throw new ContractException(CoreTranslationError.CIRCULAR_TRANSLATOR_DEPENDENCIES, sb.toString());
         }
-
-        // the graph is acyclic, so the depth evaluator is present
-        GraphDepthEvaluator<TranslatorId> graphDepthEvaluator = optional.get();
-
-        List<TranslatorId> orderedTranslatorIds = graphDepthEvaluator.getNodesInRankOrder();
-
-        List<Translator> orderedTranslators = new ArrayList<>();
-        for (TranslatorId translatorId : orderedTranslatorIds) {
-            orderedTranslators.add(translatorMap.get(translatorId));
-        }
-
-        return orderedTranslators;
     }
 }

@@ -6,25 +6,35 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
+import org.apache.commons.math3.util.Pair;
 import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.translation.core.testsupport.TestResourceHelper;
 import gov.hhs.aspr.translation.core.testsupport.TestTranslationEngine;
 import gov.hhs.aspr.translation.core.testsupport.testcomplexobject.TestComplexAppObject;
 import gov.hhs.aspr.translation.core.testsupport.testcomplexobject.TestComplexTranslator;
+import gov.hhs.aspr.translation.core.testsupport.testcomplexobject.TestComplexTranslatorId;
 import gov.hhs.aspr.translation.core.testsupport.testobject.TestAppObject;
 import gov.hhs.aspr.translation.core.testsupport.testobject.TestInputObject;
 import gov.hhs.aspr.translation.core.testsupport.testobject.TestTranslator;
+import gov.hhs.aspr.translation.core.testsupport.testobject.TestTranslatorId;
 import util.annotations.UnitTag;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
+import util.graph.MutableGraph;
 import util.random.RandomGeneratorProvider;
 
 public class AT_TranslationController {
+
     Path basePath = TestResourceHelper.getResourceDir(this.getClass());
     Path filePath = TestResourceHelper.makeTestOutputDir(basePath);
     org.apache.commons.math3.random.RandomGenerator randomGenerator = RandomGeneratorProvider
@@ -58,6 +68,30 @@ public class AT_TranslationController {
     }
 
     @Test
+    @UnitTestMethod(target = TranslationController.class, name = "validateTranslationEngine", args = {})
+    public void testValidateTranslationEngine() {
+        TranslationController translationController = TranslationController
+                .builder()
+                .setTranslationEngineBuilder(TestTranslationEngine.builder())
+                .buildWithoutInitAndChecks();
+
+        // preconditions
+        ContractException contractException = assertThrows(ContractException.class, () -> {
+            translationController.validateTranslationEngine();
+        });
+
+        assertEquals(CoreTranslationError.NULL_TRANSLATION_ENGINE, contractException.getErrorType());
+
+        RuntimeException runtimeException = assertThrows(RuntimeException.class, () -> {
+            translationController.buildTranslationEngine();
+            translationController.validateTranslationEngine();
+        });
+
+        assertEquals("TranslationEngine has been built but has not been initialized.", runtimeException.getMessage());
+
+    }
+
+    @Test
     @UnitTestMethod(target = TranslationController.class, name = "readInput", args = {})
     public void testReadInput() {
         String fileName = "readInput-testOutput.json";
@@ -83,6 +117,85 @@ public class AT_TranslationController {
         TestAppObject actualTestAppObject = translationController.getFirstObject(TestAppObject.class);
 
         assertEquals(expectedAppObject, actualTestAppObject);
+
+        // preconditions
+
+        // invalid file path
+        RuntimeException runtimeException = assertThrows(RuntimeException.class, () -> {
+            translationController.readInput(filePath.resolve("badPath"), TestInputObject.class);
+        });
+
+        assertTrue(runtimeException.getCause() instanceof IOException);
+    }
+
+    @Test
+    @UnitTestMethod(target = TranslationController.class, name = "makeFileWriter", args = { Path.class })
+    public void testMakeFileWriter() {
+        String fileName = "MakeFileWriter-testOutput.json";
+
+        TestResourceHelper.createTestOutputFile(filePath, fileName);
+
+        TranslationController translationController = TranslationController.builder()
+                .setTranslationEngineBuilder(TestTranslationEngine.builder())
+                .build();
+
+        FileWriter actuaFileWriter = translationController.makeFileWriter(filePath.resolve(fileName));
+
+        assertNotNull(actuaFileWriter);
+        // preconditions
+
+        // if the filePath is invalid
+        RuntimeException runtimeException = assertThrows(RuntimeException.class, () -> {
+            translationController.makeFileWriter(filePath);
+        });
+
+        assertTrue(runtimeException.getCause() instanceof IOException);
+    }
+
+    @Test
+    @UnitTestMethod(target = TranslationController.class, name = "getOutputPath", args = { Class.class, Integer.class })
+    public void testGetOutputPath() {
+        String fileName = "GetOutputPath_1-testOutput.json";
+        String fileName2 = "GetOutputPath_2-testOutput.json";
+
+        TestResourceHelper.createTestOutputFile(filePath, fileName);
+        TestResourceHelper.createTestOutputFile(filePath, fileName2);
+
+        TranslationController translationController = TranslationController.builder()
+                .setTranslationEngineBuilder(TestTranslationEngine.builder())
+                .addOutputFilePath(filePath.resolve(fileName), TestAppObject.class)
+                .addOutputFilePath(filePath.resolve(fileName2), Object.class, 1)
+                .addParentChildClassRelationship(TestAppObject.class, Object.class)
+                .build();
+
+        Pair<Path, Optional<Class<TestAppObject>>> expectedPair1 = new Pair<>(filePath.resolve(fileName),
+                Optional.empty());
+        Pair<Path, Optional<Class<Object>>> expectedPair2 = new Pair<>(filePath.resolve(fileName2),
+                Optional.of(Object.class));
+
+        Pair<Path, Optional<Class<TestAppObject>>> actualPair1 = translationController
+                .getOutputPath(TestAppObject.class, 0);
+        Pair<Path, Optional<Class<Object>>> actualPair2 = translationController.getOutputPath(TestAppObject.class, 1);
+
+        assertEquals(expectedPair1, actualPair1);
+        assertEquals(expectedPair2, actualPair2);
+        // preconditions
+
+        // if the class scenarioId pair does not exist and there is no parent child
+        // class relationship
+        ContractException contractException = assertThrows(ContractException.class, () -> {
+            translationController.getOutputPath(TestInputObject.class, 1);
+        });
+
+        assertEquals(CoreTranslationError.INVALID_OUTPUT_CLASSREF, contractException.getErrorType());
+
+        // if the class and scenarioID pair does not exist AND there is a parent child
+        // class relationship AND the parentClass scenarioId pair does not exists
+        contractException = assertThrows(ContractException.class, () -> {
+            translationController.getOutputPath(TestAppObject.class, 4);
+        });
+
+        assertEquals(CoreTranslationError.INVALID_OUTPUT_CLASSREF, contractException.getErrorType());
     }
 
     @Test
@@ -109,19 +222,17 @@ public class AT_TranslationController {
         translationController.writeOutput(outputObjects);
 
         // preconditions
-        ContractException contractException = assertThrows(ContractException.class, () -> {
-            List<Object> invalidList = new ArrayList<>();
-
-            invalidList.add(new TestInputObject());
-            translationController.writeOutput(invalidList);
-        });
-
-        assertEquals(CoreTranslationError.INVALID_OUTPUT_CLASSREF, contractException.getErrorType());
+        // the runtime exception is covered by the test - testMakeFileWriter()
+        // the contract exception for CoreTranslationError.INVALID_OUTPUT_CLASSREF is
+        // covered by the test - testGetOutputPath()
+        // the contract exception for CoreTranslationError.NULL_TRANSLATION_ENGINE is
+        // covered by the test - testValidateTranslationEngine()
     }
 
     @Test
-    @UnitTestMethod(target = TranslationController.class, name = "writeOutput", args = { List.class, Integer.class })
-    public void testWriteOutput_List_ScenarioId() {
+    @UnitTestMethod(target = TranslationController.class, name = "writeOutput", args = { List.class,
+            Integer.class }, tags = { UnitTag.LOCAL_PROXY })
+    public void testWriteOutput_List_ScenarioId() throws IOException {
         String fileName = "WriteOutput_List_ScenarioId_1-testOutput.json";
         String fileName2 = "WriteOutput_List_ScenarioId_2-testOutput.json";
 
@@ -143,19 +254,16 @@ public class AT_TranslationController {
         translationController.writeOutput(outputObjects, 1);
 
         // preconditions
-        ContractException contractException = assertThrows(ContractException.class, () -> {
-            List<Object> invalidList = new ArrayList<>();
-
-            invalidList.add(new TestInputObject());
-            translationController.writeOutput(invalidList, 1);
-        });
-
-        assertEquals(CoreTranslationError.INVALID_OUTPUT_CLASSREF, contractException.getErrorType());
+        // the runtime exception is covered by the test - testMakeFileWriter()
+        // the contract exception for CoreTranslationError.INVALID_OUTPUT_CLASSREF is
+        // covered by the test - testGetOutputPath()
+        // the contract exception for CoreTranslationError.NULL_TRANSLATION_ENGINE is
+        // covered by the test - testValidateTranslationEngine()
     }
 
     @Test
     @UnitTestMethod(target = TranslationController.class, name = "writeOutput", args = { Object.class })
-    public void testWriteOutput() {
+    public void testWriteOutput() throws IOException {
         String fileName = "writeOutput-testOutput.json";
 
         TestResourceHelper.createTestOutputFile(filePath, fileName);
@@ -172,17 +280,16 @@ public class AT_TranslationController {
         translationController.writeOutput(expectedAppObject);
 
         // preconditions
-        ContractException contractException = assertThrows(ContractException.class, () -> {
-
-            translationController.writeOutput(new TestInputObject());
-        });
-
-        assertEquals(CoreTranslationError.INVALID_OUTPUT_CLASSREF, contractException.getErrorType());
+        // the runtime exception is covered by the test - testMakeFileWriter()
+        // the contract exception for CoreTranslationError.INVALID_OUTPUT_CLASSREF is
+        // covered by the test - testGetOutputPath()
+        // the contract exception for CoreTranslationError.NULL_TRANSLATION_ENGINE is
+        // covered by the test - testValidateTranslationEngine()
     }
 
     @Test
     @UnitTestMethod(target = TranslationController.class, name = "writeOutput", args = { Object.class, Integer.class })
-    public void testWriteOutput_ScenarioId() {
+    public void testWriteOutput_ScenarioId() throws IOException {
         String fileName = "writeOutput_ScenarioId-testOutput.json";
 
         TestResourceHelper.createTestOutputFile(filePath, fileName);
@@ -199,17 +306,16 @@ public class AT_TranslationController {
         translationController.writeOutput(expectedAppObject, 1);
 
         // preconditions
-        ContractException contractException = assertThrows(ContractException.class, () -> {
-
-            translationController.writeOutput(new TestInputObject(), 1);
-        });
-
-        assertEquals(CoreTranslationError.INVALID_OUTPUT_CLASSREF, contractException.getErrorType());
+        // the runtime exception is covered by the test - testMakeFileWriter()
+        // the contract exception for CoreTranslationError.INVALID_OUTPUT_CLASSREF is
+        // covered by the test - testGetOutputPath()
+        // the contract exception for CoreTranslationError.NULL_TRANSLATION_ENGINE is
+        // covered by the test - testValidateTranslationEngine()
     }
 
     @Test
     @UnitTestMethod(target = TranslationController.class, name = "getFirstObject", args = { Class.class })
-    public void testGetFirstObject() {
+    public void testGetFirstObject() throws IOException {
         String fileName = "getFirstObject-testOutput.json";
 
         TestResourceHelper.createTestOutputFile(filePath, fileName);
@@ -245,7 +351,7 @@ public class AT_TranslationController {
 
     @Test
     @UnitTestMethod(target = TranslationController.class, name = "getObjects", args = { Class.class })
-    public void testGetObjects_OfClass() {
+    public void testGetObjects_OfClass() throws IOException {
         String fileName = "GetObjects_OfClass_1-testOutput.json";
         String fileName2 = "GetObjects_OfClass_2-testOutput.json";
 
@@ -287,7 +393,7 @@ public class AT_TranslationController {
 
     @Test
     @UnitTestMethod(target = TranslationController.class, name = "getObjects", args = {})
-    public void testGetObjects() {
+    public void testGetObjects() throws IOException {
         String fileName = "GetObjects_1-testOutput.json";
         String fileName2 = "GetObjects_2-testOutput.json";
 
@@ -318,6 +424,74 @@ public class AT_TranslationController {
         assertEquals(2, actualObjects.size());
 
         assertTrue(actualObjects.containsAll(expectedObjects));
+    }
+
+    @Test
+    @UnitTestMethod(target = TranslationController.class, name = "getOrderedTranslators", args = {})
+    public void testGetOrderedTranslators() {
+
+        TranslationController translationController = TranslationController.builder()
+                .addTranslator(TestTranslator.getTestTranslator())
+                .addTranslator(TestComplexTranslator.getTestComplexTranslator())
+                .setTranslationEngineBuilder(TestTranslationEngine.builder())
+                .build();
+
+        List<Translator> expectedList = new ArrayList<>();
+        expectedList.add(TestComplexTranslator.getTestComplexTranslator());
+        expectedList.add(TestTranslator.getTestTranslator());
+
+        List<Translator> actualList = translationController.getOrderedTranslators();
+
+        assertEquals(expectedList, actualList);
+
+        // preconditions
+
+        // duplicate translator in the graph
+
+        ContractException contractException = assertThrows(ContractException.class, () -> {
+            MutableGraph<TranslatorId, Object> mutableGraph = new MutableGraph<>();
+            Map<TranslatorId, Translator> translatorMap = new LinkedHashMap<>();
+            mutableGraph.addNode(TestTranslatorId.TRANSLATOR_ID);
+            translationController.addNodes(mutableGraph, translatorMap);
+        });
+
+        assertEquals(CoreTranslationError.DUPLICATE_TRANSLATOR, contractException.getErrorType());
+
+        // missing translator
+        contractException = assertThrows(ContractException.class, () -> {
+            MutableGraph<TranslatorId, Object> mutableGraph = new MutableGraph<>();
+            Map<TranslatorId, Translator> translatorMap = new LinkedHashMap<>();
+
+            // call normally
+            translationController.getOrderedTranslators(mutableGraph, translatorMap);
+            // remove a mapping
+            translatorMap.remove(TestComplexTranslatorId.TRANSLATOR_ID);
+            TranslatorId thirdId = new TranslatorId() {};
+            mutableGraph.addNode(thirdId);
+            mutableGraph.addEdge(new Object(), thirdId, TestComplexTranslatorId.TRANSLATOR_ID);
+            translationController.checkForMissingTranslators(mutableGraph, translatorMap);
+        });
+
+        assertEquals(CoreTranslationError.MISSING_TRANSLATOR, contractException.getErrorType());
+
+        // cyclic graph
+        contractException = assertThrows(ContractException.class, () -> {
+            MutableGraph<TranslatorId, Object> mutableGraph = new MutableGraph<>();
+            Map<TranslatorId, Translator> translatorMap = new LinkedHashMap<>();
+
+            // call normally
+            translationController.getOrderedTranslators(mutableGraph, translatorMap);
+            mutableGraph.addEdge(new Object(), TestComplexTranslatorId.TRANSLATOR_ID, TestTranslatorId.TRANSLATOR_ID);
+            TranslatorId thirdId = new TranslatorId() {};
+            TranslatorId fourthId = new TranslatorId() {};
+            mutableGraph.addNode(thirdId);
+            mutableGraph.addNode(fourthId);
+            mutableGraph.addEdge(new Object(), thirdId, fourthId);
+            mutableGraph.addEdge(new Object(), fourthId, thirdId);
+            translationController.checkForCyclicGraph(mutableGraph);
+        });
+
+        assertEquals(CoreTranslationError.CIRCULAR_TRANSLATOR_DEPENDENCIES, contractException.getErrorType());
     }
 
     @Test
@@ -507,5 +681,4 @@ public class AT_TranslationController {
 
         assertEquals(CoreTranslationError.NULL_TRANSLATION_ENGINE_BUILDER, contractException.getErrorType());
     }
-
 }
