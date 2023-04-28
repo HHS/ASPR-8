@@ -18,7 +18,6 @@ import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
 import plugins.personproperties.support.PersonPropertyError;
 import plugins.personproperties.support.PersonPropertyId;
-import plugins.personproperties.support.PersonPropertyValueInitialization;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
 import util.errors.ContractException;
@@ -39,12 +38,16 @@ public class PersonPropertiesPluginData implements PluginData {
 	private static class Data {
 
 		private Map<PersonPropertyId, PropertyDefinition> personPropertyDefinitions = new LinkedHashMap<>();
-		
-		private Map<PersonPropertyId, Double> personPropertyDefinitionTimes = new LinkedHashMap<>();
-		
-		private Map<PersonPropertyId,List<Object>> personPropertyValues = new LinkedHashMap<>();
-		
-		private Map<PersonPropertyId,List<Double>> personPropertyTimes = new LinkedHashMap<>();
+
+		private Map<PersonPropertyId, Double> propertyTrackingTimes = new LinkedHashMap<>();
+
+		private Map<PersonPropertyId, List<Object>> personPropertyValues = new LinkedHashMap<>();
+
+		private Map<PersonPropertyId, List<Double>> personPropertyTimes = new LinkedHashMap<>();
+
+		private List<Object> emptyValueList = Collections.unmodifiableList(new ArrayList<>());
+
+		private List<Double> emptyTimeList = Collections.unmodifiableList(new ArrayList<>());
 
 		private boolean locked;
 
@@ -52,12 +55,17 @@ public class PersonPropertiesPluginData implements PluginData {
 		}
 
 		private Data(Data data) {
-
 			personPropertyDefinitions.putAll(data.personPropertyDefinitions);
-			
-			for (List<PersonPropertyValueInitialization> list : data.personPropertyValues) {
-				List<PersonPropertyValueInitialization> newList = new ArrayList<>(list);
-				personPropertyValues.add(newList);
+			propertyTrackingTimes.putAll(data.propertyTrackingTimes);
+			for (PersonPropertyId personPropertyId : data.personPropertyValues.keySet()) {
+				List<Object> list = new ArrayList<>();
+				personPropertyValues.put(personPropertyId, list);
+				list.addAll(data.personPropertyValues.get(personPropertyId));
+			}
+			for (PersonPropertyId personPropertyId : data.personPropertyTimes.keySet()) {
+				List<Double> list = new ArrayList<>();
+				personPropertyTimes.put(personPropertyId, list);
+				list.addAll(data.personPropertyTimes.get(personPropertyId));
 			}
 			locked = data.locked;
 		}
@@ -67,38 +75,63 @@ public class PersonPropertiesPluginData implements PluginData {
 			final int prime = 31;
 			int result = 1;
 			result = prime * result + personPropertyDefinitions.hashCode();
+			result = prime * result + propertyTrackingTimes.hashCode();
 			result = prime * result + getPersonPropertyValuesHashCode();
+			result = prime * result + getPersonPropertyTimesHashCode();
+			return result;
+		}
+
+		private int getPersonPropertyTimesHashCode() {
+			int result = 0;
+			for (PersonPropertyId personPropertyId : propertyTrackingTimes.keySet()) {
+				result += getPersonPropertyTimesHashCode(personPropertyId);
+			}
+			return result;
+		}
+
+		private int getPersonPropertyTimesHashCode(PersonPropertyId personPropertyId) {
+			int result = 0;
+			Double defaultTime = propertyTrackingTimes.get(personPropertyId);
+
+			List<Double> list = personPropertyTimes.get(personPropertyId);
+			int prime = 31;
+			result = 1;
+			for (Double time : list) {
+				if (!time.equals(defaultTime)) {
+					result = result * prime + time.hashCode();
+				}
+			}
+
+			return result;
+		}
+
+		private int getPersonPropertyValuesHashCode(PersonPropertyId personPropertyId) {
+			int result = 0;
+			PropertyDefinition propertyDefinition = personPropertyDefinitions.get(personPropertyId);
+			Optional<Object> optional = propertyDefinition.getDefaultValue();
+			List<Object> list = personPropertyValues.get(personPropertyId);
+
+			if (optional.isPresent()) {
+				Object defaultValue = optional.get();
+				int prime = 31;
+				result = 1;
+				for (Object value : list) {
+					if (!value.equals(defaultValue)) {
+						result = result * prime + value.hashCode();
+					}
+				}
+			} else {
+				result = list.hashCode();
+			}
 			return result;
 		}
 
 		private int getPersonPropertyValuesHashCode() {
 			int result = 0;
-			int prime = 31;
 
-			for (int i = 0; i < personPropertyValues.size(); i++) {
-				List<PersonPropertyValueInitialization> list = personPropertyValues.get(i);
-				if (list != null) {
-					for (PersonPropertyValueInitialization personPropertyValueInitialization : list) {
-						PersonPropertyId personPropertyId = personPropertyValueInitialization.getPersonPropertyId();
-						PropertyDefinition propertyDefinition = personPropertyDefinitions.get(personPropertyId);
-						boolean use = true;
-						Object propertyValue = personPropertyValueInitialization.getValue();
-						Optional<Object> optional = propertyDefinition.getDefaultValue();
-						if (optional.isPresent()) {
-							Object defaultValue = optional.get();
-							if (defaultValue.equals(propertyValue)) {
-								use = false;
-							}
-						}
-						if (use) {
-							int subResult = 1;
-							subResult = subResult * prime + i;
-							subResult = subResult * prime + personPropertyId.hashCode();
-							subResult = subResult * prime + propertyValue.hashCode();
-							result += subResult;
-						}
-					}
-				}
+			for (PersonPropertyId personPropertyId : personPropertyValues.keySet()) {
+				result += getPersonPropertyValuesHashCode(personPropertyId);
+
 			}
 
 			return result;
@@ -113,11 +146,20 @@ public class PersonPropertiesPluginData implements PluginData {
 				return false;
 			}
 			Data other = (Data) obj;
-			
+
 			if (!personPropertyDefinitions.equals(other.personPropertyDefinitions)) {
 				return false;
 			}
+
+			if (!propertyTrackingTimes.equals(other.propertyTrackingTimes)) {
+				return false;
+			}
+
 			if (!comparePersonPropertyValues(this, other)) {
+				return false;
+			}
+
+			if (!comparePersonPropertyTimes(this, other)) {
 				return false;
 			}
 			return true;
@@ -126,43 +168,74 @@ public class PersonPropertiesPluginData implements PluginData {
 	}
 
 	private static boolean comparePersonPropertyValues(Data a, Data b) {
-		int n = FastMath.max(a.personPropertyValues.size(), b.personPropertyValues.size());
+		for (PersonPropertyId personPropertyId : a.personPropertyDefinitions.keySet()) {
+			List<Object> alist = a.personPropertyValues.get(personPropertyId);
+			List<Object> blist = b.personPropertyValues.get(personPropertyId);
 
-		for (int i = 0; i < n; i++) {
-			Set<PersonPropertyValueInitialization> aSet = getNonDefaultPersonPropertyInitializations(a, i);
-			Set<PersonPropertyValueInitialization> bSet = getNonDefaultPersonPropertyInitializations(b, i);
-			if (!aSet.equals(bSet)) {
-				return false;
+			PropertyDefinition propertyDefinition = a.personPropertyDefinitions.get(personPropertyId);
+			Optional<Object> optional = propertyDefinition.getDefaultValue();
+			if (optional.isPresent()) {
+				Object defaultValue = optional.get();
+				int n = FastMath.max(alist.size(), blist.size());
+				for (int i = 0; i < n; i++) {
+					Object aValue = null;
+					if (i < alist.size()) {
+						aValue = alist.get(i);
+					}
+					if (aValue == null) {
+						aValue = defaultValue;
+					}
+					Object bValue = null;
+					if (i < blist.size()) {
+						bValue = blist.get(i);
+					}
+					if (bValue == null) {
+						bValue = defaultValue;
+					}
+
+					if (!aValue.equals(bValue)) {
+						return false;
+					}
+				}
+			} else {
+				if (!alist.equals(blist)) {
+					return false;
+				}
 			}
 		}
 		return true;
 	}
 
-	private static Set<PersonPropertyValueInitialization> getNonDefaultPersonPropertyInitializations(Data data, int personIndex) {
-		Set<PersonPropertyValueInitialization> result = new LinkedHashSet<>();
-		if (personIndex < data.personPropertyValues.size()) {
-			List<PersonPropertyValueInitialization> list = data.personPropertyValues.get(personIndex);
-			if (list != null) {
-				for (PersonPropertyValueInitialization personPropertyValueInitialization : list) {
-					PersonPropertyId personPropertyId = personPropertyValueInitialization.getPersonPropertyId();
-					PropertyDefinition propertyDefinition = data.personPropertyDefinitions.get(personPropertyId);
-					boolean use = true;
-					Object propertyValue = personPropertyValueInitialization.getValue();
-					Optional<Object> optional = propertyDefinition.getDefaultValue();
-					if (optional.isPresent()) {
-						Object defaultValue = optional.get();
-						if (defaultValue.equals(propertyValue)) {
-							use = false;
-						}
-					}
-					if (use) {
-						result.add(personPropertyValueInitialization);
-					}
+	private static boolean comparePersonPropertyTimes(Data a, Data b) {
+		for (PersonPropertyId personPropertyId : a.propertyTrackingTimes.keySet()) {
+			Double defaultTime = a.propertyTrackingTimes.get(personPropertyId);
+			List<Double> alist = a.personPropertyTimes.get(personPropertyId);
+			List<Double> blist = b.personPropertyTimes.get(personPropertyId);
+			int n = FastMath.max(alist.size(), blist.size());
+			for (int i = 0; i < n; i++) {
+				Double aTime = null;
+				if (i < alist.size()) {
+					aTime = alist.get(i);
+				}
+				if (aTime == null) {
+					aTime = defaultTime;
+				}
+				Double bTime = null;
+				if (i < blist.size()) {
+					bTime = blist.get(i);
+				}
+				if (bTime == null) {
+					bTime = defaultTime;
+				}
+
+				if (!aTime.equals(bTime)) {
+					return false;
 				}
 			}
 		}
-		return result;
+		return true;
 	}
+
 
 	/**
 	 * Returns a new builder instance
@@ -214,7 +287,7 @@ public class PersonPropertiesPluginData implements PluginData {
 		 *             property id where the associated property definition does
 		 *             not contain a default value</li>
 		 * 
-		 *             
+		 * 
 		 * 
 		 * 
 		 * 
@@ -249,10 +322,29 @@ public class PersonPropertiesPluginData implements PluginData {
 			return this;
 		}
 
+		/**
+		 * Sets the Defines a person property definition. Duplicate inputs
+		 * override previous inputs.
+		 * 
+		 * @throws ContractException
+		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
+		 *             person property id is null</li>
+		 *             <li>{@linkplain PersonPropertyError#NON_FINITE_TIME} if
+		 *             the default property time is not finite</li>
+		 * 
+		 */
+		public Builder setTimeTracking(final PersonPropertyId personPropertyId, final double defaultPropertyTime) {
+			ensureDataMutability();
+			validatePersonPropertyIdNotNull(personPropertyId);
+			validateTime(defaultPropertyTime);
+			data.propertyTrackingTimes.put(personPropertyId, defaultPropertyTime);
+			return this;
+		}
 
 		/**
 		 * Sets the person's property value. Duplicate inputs override previous
-		 * inputs.
+		 * inputs. Avoid setting the value to the default value of the
+		 * corresponding property definition.
 		 * 
 		 * @throws ContractException
 		 *             <li>{@linkplain PersonError#NULL_PERSON_ID} if the person
@@ -268,116 +360,148 @@ public class PersonPropertiesPluginData implements PluginData {
 			validatePersonPropertyIdNotNull(personPropertyId);
 			validatePersonPropertyValueNotNull(personPropertyValue);
 
-			int personIndex = personId.getValue();
-			while (data.personPropertyValues.size() <= personIndex) {
-				data.personPropertyValues.add(null);
-			}
-
-			List<PersonPropertyValueInitialization> list = data.personPropertyValues.get(personIndex);
-			PersonPropertyValueInitialization personPropertyValueInitialization = new PersonPropertyValueInitialization(personPropertyId, personPropertyValue);
-
+			List<Object> list = data.personPropertyValues.get(personPropertyId);
 			if (list == null) {
 				list = new ArrayList<>();
-				data.personPropertyValues.set(personIndex, list);
+				data.personPropertyValues.put(personPropertyId, list);
 			}
 
-			int index = -1;
+			int personIndex = personId.getValue();
+			while (list.size() <= personIndex) {
+				list.add(null);
+			}
+			list.set(personIndex, personPropertyValue);
 
-			for (int i = 0; i < list.size(); i++) {
-				if (list.get(i).getPersonPropertyId().equals(personPropertyId)) {
-					index = i;
-					break;
-				}
+			return this;
+		}
+
+		/**
+		 * Sets the person's property time. Duplicate inputs override previous
+		 * inputs. Avoid setting the time to the default tracking time.
+		 * 
+		 * @throws ContractException
+		 *             <li>{@linkplain PersonError#NULL_PERSON_ID} if the person
+		 *             id is null</li>
+		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
+		 *             person property id is null</li>
+		 *             <li>{@linkplain PersonPropertyError#NULL_TIME} if the
+		 *             person property time is null</li>
+		 *             <li>{@linkplain PersonPropertyError#NON_FINITE_TIME} if
+		 *             the person property time is not finite</li>
+		 */
+		public Builder setPersonPropertyTime(final PersonId personId, final PersonPropertyId personPropertyId, final Double personPropertyTime) {
+			ensureDataMutability();
+			validatePersonId(personId);
+			validatePersonPropertyIdNotNull(personPropertyId);
+			validateTime(personPropertyTime);
+
+			List<Double> list = data.personPropertyTimes.get(personPropertyId);
+			if (list == null) {
+				list = new ArrayList<>();
+				data.personPropertyTimes.put(personPropertyId, list);
 			}
 
-			if (index == -1) {
-				list.add(personPropertyValueInitialization);
-			} else {
-				list.set(index, personPropertyValueInitialization);
+			int personIndex = personId.getValue();
+			while (list.size() <= personIndex) {
+				list.add(null);
 			}
+			list.set(personIndex, personPropertyTime);
 
 			return this;
 		}
 
 		private void validateData() {
 
-			for (List<PersonPropertyValueInitialization> list : data.personPropertyValues) {
-				if (list != null) {
-					for (PersonPropertyValueInitialization personPropertyValueInitialization : list) {
-						PersonPropertyId personPropertyId = personPropertyValueInitialization.getPersonPropertyId();
-						PropertyDefinition propertyDefinition = data.personPropertyDefinitions.get(personPropertyId);
-						if (propertyDefinition == null) {
-							throw new ContractException(PropertyError.UNKNOWN_PROPERTY_ID, personPropertyId);
-						}
-						Object propertyValue = personPropertyValueInitialization.getValue();
-						if (!propertyDefinition.getType().isAssignableFrom(propertyValue.getClass())) {
-							throw new ContractException(PropertyError.INCOMPATIBLE_VALUE, personPropertyId + " = " + propertyValue);
-						}
-					}
+			// show all property ids agree with the definitions
+			for (PersonPropertyId personPropertyId : data.propertyTrackingTimes.keySet()) {
+				if (!data.personPropertyDefinitions.keySet().contains(personPropertyId)) {
+					throw new ContractException(PropertyError.UNKNOWN_PROPERTY_ID, personPropertyId);
+				}
+			}
+			for (PersonPropertyId personPropertyId : data.personPropertyValues.keySet()) {
+				if (!data.personPropertyDefinitions.keySet().contains(personPropertyId)) {
+					throw new ContractException(PropertyError.UNKNOWN_PROPERTY_ID, personPropertyId);
+				}
+			}
+			for (PersonPropertyId personPropertyId : data.personPropertyTimes.keySet()) {
+				if (!data.personPropertyDefinitions.keySet().contains(personPropertyId)) {
+					throw new ContractException(PropertyError.UNKNOWN_PROPERTY_ID, personPropertyId);
 				}
 			}
 
-			Map<PersonPropertyId, Integer> nonDefaultBearingPropertyIds = new LinkedHashMap<>();
+			// add lists where needed
+			for (PersonPropertyId personPropertyId : data.personPropertyDefinitions.keySet()) {
+				if (!data.personPropertyValues.keySet().contains(personPropertyId)) {
+					data.personPropertyValues.put(personPropertyId, new ArrayList<>());
+				}
+			}
 
 			for (PersonPropertyId personPropertyId : data.personPropertyDefinitions.keySet()) {
+				if (!data.personPropertyTimes.keySet().contains(personPropertyId)) {
+					data.personPropertyTimes.put(personPropertyId, new ArrayList<>());
+				}
+			}
+
+			// replace null values where we can
+			for (PersonPropertyId personPropertyId : data.personPropertyDefinitions.keySet()) {
 				PropertyDefinition propertyDefinition = data.personPropertyDefinitions.get(personPropertyId);
-				if (propertyDefinition.getDefaultValue().isEmpty()) {
-					nonDefaultBearingPropertyIds.put(personPropertyId, nonDefaultBearingPropertyIds.size());
-				}
-			}
-
-			
-
-			if (nonDefaultBearingPropertyIds.isEmpty()) {
-				return;
-			}
-
-			boolean[] nonDefaultChecks = new boolean[nonDefaultBearingPropertyIds.size()];
-
-			for (int i = 0; i < data.personPropertyValues.size(); i++) {
-				List<PersonPropertyValueInitialization> list = data.personPropertyValues.get(i);
-
-				for (int j = 0; j < nonDefaultChecks.length; j++) {
-					nonDefaultChecks[j] = false;
-				}
-
-				if (list != null) {
-					for (PersonPropertyValueInitialization personPropertyValueInitialization : list) {
-						PersonPropertyId personPropertyId = personPropertyValueInitialization.getPersonPropertyId();
-						Integer index = nonDefaultBearingPropertyIds.get(personPropertyId);
-						if (index != null) {
-							nonDefaultChecks[index] = true;
+				Optional<Object> optional = propertyDefinition.getDefaultValue();
+				if (optional.isPresent()) {
+					Object defaultValue = optional.get();
+					List<Object> list = data.personPropertyValues.get(personPropertyId);
+					for (int i = 0; i < list.size(); i++) {
+						if (list.get(i) == null) {
+							list.set(i, defaultValue);
 						}
 					}
 				}
+			}
 
-				boolean missingPropertyAssignments = false;
-				for (int j = 0; j < nonDefaultChecks.length; j++) {
-					if (!nonDefaultChecks[j]) {
-						missingPropertyAssignments = true;
-						break;
+			// replace null times
+			for (PersonPropertyId personPropertyId : data.propertyTrackingTimes.keySet()) {
+				Double defaultTime = data.propertyTrackingTimes.get(personPropertyId);
+				List<Double> list = data.personPropertyTimes.get(personPropertyId);
+				for (int i = 0; i < list.size(); i++) {
+					if (list.get(i) == null) {
+						list.set(i, defaultTime);
 					}
 				}
+			}
 
-				if (missingPropertyAssignments) {
-					StringBuilder sb = new StringBuilder();
-					int index = -1;
-					boolean firstMember = true;
-					for (PersonPropertyId personPropertyId : nonDefaultBearingPropertyIds.keySet()) {
-						index++;
-						if (!nonDefaultChecks[index]) {
-							if (firstMember) {
-								firstMember = false;
-							} else {
-								sb.append(", ");
-							}
-							sb.append(personPropertyId);
+			/*
+			 * show that there are no null values where the property definition
+			 * does not have a default value
+			 * 
+			 * show that each value is compatible with the property definition
+			 */
+			for (PersonPropertyId personPropertyId : data.personPropertyDefinitions.keySet()) {
+				PropertyDefinition propertyDefinition = data.personPropertyDefinitions.get(personPropertyId);
+				Optional<Object> optional = propertyDefinition.getDefaultValue();
+				if (optional.isEmpty()) {
+					List<Object> list = data.personPropertyValues.get(personPropertyId);
+					for (int i = 0; i < list.size(); i++) {
+						Object value = list.get(i);
+						if (value == null) {
+							throw new ContractException(PropertyError.INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT, "person " + i + " is missing value for " + personPropertyId);
+						}
+						if (!propertyDefinition.getType().isAssignableFrom(value.getClass())) {
+							throw new ContractException(PropertyError.INCOMPATIBLE_VALUE, personPropertyId + " = " + value);
 						}
 					}
-					throw new ContractException(PropertyError.INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT, "person " + i + " is missing values for " + sb.toString());
 				}
-
 			}
+
+			// show that any property that is not time tracked has no time
+			// values
+			for (PersonPropertyId personPropertyId : data.personPropertyDefinitions.keySet()) {
+				if (!data.propertyTrackingTimes.keySet().contains(personPropertyId)) {
+					List<Double> list = data.personPropertyTimes.get(personPropertyId);
+					if (!list.isEmpty()) {
+						throw new ContractException(PropertyError.TIME_TRACKING_OFF, personPropertyId + " has tracking times collected, but is not itself marked for tracking");
+					}
+				}
+			}
+
 		}
 	}
 
@@ -421,6 +545,25 @@ public class PersonPropertiesPluginData implements PluginData {
 	}
 
 	/**
+	 * Returns the default tracking time for the given person property id as an
+	 * Optional<Double>. The property should be time tracked if the optional is
+	 * present.
+	 * 
+	 * @throws ContractException
+	 * 
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the person
+	 *             property id is null</li>
+	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if the
+	 *             person property id is unknown</li>
+	 * 
+	 */
+	public Optional<Double> getPersonPropertyTrackingTime(final PersonPropertyId personPropertyId) {
+		validatePersonPropertyId(personPropertyId);
+		Double result = data.propertyTrackingTimes.get(personPropertyId);
+		return Optional.ofNullable(result);
+	}
+
+	/**
 	 * Returns the set of {@link PersonPropertyId} ids
 	 * 
 	 */
@@ -438,9 +581,12 @@ public class PersonPropertiesPluginData implements PluginData {
 		return new Builder(data);
 	}
 
-	private static void validatePersonId(PersonId personId) {
-		if (personId == null) {
-			throw new ContractException(PersonError.NULL_PERSON_ID);
+	private void validatePersonPropertyId(PersonPropertyId personPropertyId) {
+		if (personPropertyId == null) {
+			throw new ContractException(PropertyError.NULL_PROPERTY_ID);
+		}
+		if (!data.personPropertyDefinitions.containsKey(personPropertyId)) {
+			throw new ContractException(PropertyError.UNKNOWN_PROPERTY_ID);
 		}
 	}
 
@@ -450,26 +596,50 @@ public class PersonPropertiesPluginData implements PluginData {
 		}
 	}
 
-	/**
-	 * Returns the number of people 
-	 */
-	public int getPersonCount() {
-		return data.personPropertyValues.size();
+	private static void validatePersonId(PersonId personId) {
+		if (personId == null) {
+			throw new ContractException(PersonError.NULL_PERSON_ID);
+		}
+	}
+
+	private static void validateTime(double time) {
+		if (!Double.isFinite(time)) {
+			throw new ContractException(PersonPropertyError.NON_FINITE_TIME);
+		}
+	}
+
+	private static void validateTime(Double time) {
+		if (time == null) {
+			throw new ContractException(PersonPropertyError.NULL_TIME);
+		}
+		validateTime(time.doubleValue());
 	}
 
 	/**
-	 * Returns the property values for the given {@link PersonId} as an
-	 * unmodifiable list.
+	 * Returns the property values for the given person property id as an
+	 * unmodifiable list. Each object in the list corresponds to a PersonId in
+	 * ascending order starting from zero.
+	 */
+	public List<Object> getPropertyValues(PersonPropertyId personPropertyId) {
+		validatePersonPropertyId(personPropertyId);
+		List<Object> list = data.personPropertyValues.get(personPropertyId);
+		if (list == null) {
+			return data.emptyValueList;
+		}
+		return Collections.unmodifiableList(list);
+	}
+
+	/**
+	 * Returns the property values for the given person property id as an
+	 * unmodifiable list. Each Double in the list corresponds to a PersonId in
+	 * ascending order starting from zero.
 	 *
 	 */
-	public List<PersonPropertyValueInitialization> getPropertyValues(int personIndex) {
-		
-		if (personIndex<0 || personIndex >= data.personPropertyValues.size()) {
-			return data.emptyList;
-		}
-		List<PersonPropertyValueInitialization> list = data.personPropertyValues.get(personIndex);
+	public List<Double> getPropertyTimes(PersonPropertyId personPropertyId) {
+		validatePersonPropertyId(personPropertyId);
+		List<Double> list = data.personPropertyTimes.get(personPropertyId);
 		if (list == null) {
-			return data.emptyList;
+			return data.emptyTimeList;
 		}
 		return Collections.unmodifiableList(list);
 	}
