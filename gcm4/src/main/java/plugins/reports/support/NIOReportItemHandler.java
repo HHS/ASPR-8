@@ -57,6 +57,14 @@ public final class NIOReportItemHandler implements Consumer<ExperimentContext> {
 			return this;
 		}
 
+		public Builder addExperimentReport(final Path path) {
+			if (path == null) {
+				throw new ContractException(ReportError.NULL_REPORT_PATH);
+			}
+			data.experimentReportPath = path;
+			return this;
+		}
+
 		private void validate() {
 			/*
 			 * Ensure that each path is associated with exactly one report label
@@ -106,6 +114,7 @@ public final class NIOReportItemHandler implements Consumer<ExperimentContext> {
 
 	private static class Data {
 		private String delimiter = "\t";
+		private Path experimentReportPath;
 		private final Map<ReportLabel, Path> reportMap = new LinkedHashMap<>();
 		private boolean displayExperimentColumnsInReports = DEFAULT_DISPLAY_EXPERIMENT_COLUMNS;
 
@@ -124,15 +133,20 @@ public final class NIOReportItemHandler implements Consumer<ExperimentContext> {
 
 	private final Map<Object, LineWriter> lineWriterMap = Collections.synchronizedMap(new LinkedHashMap<>());
 
+	private ExperimentLineWriter experimentLineWriter;
+
 	private final Map<ReportLabel, Path> reportMap;
 
 	private final String delimiter;
 
 	private final boolean displayExperimentColumnsInReports;
 
+	private final Path experimentReportPath;
+
 	private NIOReportItemHandler(final Data data) {
 		delimiter = data.delimiter;
 		reportMap = data.reportMap;
+		experimentReportPath = data.experimentReportPath;
 		displayExperimentColumnsInReports = data.displayExperimentColumnsInReports;
 	}
 
@@ -141,6 +155,9 @@ public final class NIOReportItemHandler implements Consumer<ExperimentContext> {
 			for (final LineWriter lineWriter : lineWriterMap.values()) {
 				lineWriter.close();
 			}
+			if (experimentLineWriter != null) {
+				experimentLineWriter.close();
+			}
 		}
 	}
 
@@ -148,6 +165,10 @@ public final class NIOReportItemHandler implements Consumer<ExperimentContext> {
 		synchronized (lineWriterMap) {
 			for (final LineWriter lineWriter : lineWriterMap.values()) {
 				lineWriter.flush();
+			}
+			if (experimentLineWriter != null) {
+				experimentLineWriter.write(experimentContext, scenarioId);
+				experimentLineWriter.flush();
 			}
 		}
 	}
@@ -165,6 +186,9 @@ public final class NIOReportItemHandler implements Consumer<ExperimentContext> {
 				final Path path = reportMap.get(reportLabel);
 				final LineWriter lineWriter = new LineWriter(experimentContext, path, displayExperimentColumnsInReports, delimiter);
 				lineWriterMap.put(reportLabel, lineWriter);
+			}
+			if (experimentLineWriter != null) {
+				this.experimentLineWriter = new ExperimentLineWriter(experimentContext, experimentReportPath, displayExperimentColumnsInReports, delimiter);
 			}
 		}
 	}
