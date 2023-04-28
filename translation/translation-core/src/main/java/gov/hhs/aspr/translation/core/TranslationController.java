@@ -408,7 +408,7 @@ public class TranslationController {
 
         this.translationEngine.init();
 
-        this.translationEngine.translatorSpecsAreInitialized();
+        this.translationEngine.translationSpecsAreInitialized();
 
         return this;
     }

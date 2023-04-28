@@ -38,7 +38,7 @@ public abstract class TranslationEngine {
         }
     }
 
-    protected static class Builder {
+    public static class Builder {
         protected Data data;
 
         protected Builder(Data data) {
@@ -82,6 +82,7 @@ public abstract class TranslationEngine {
          * classToTranslatorSpecMap
          * 
          * @throws ContractException
+         *                           <ul>
          *                           <li>{@linkplain CoreTranslationError#NULL_TRANSLATION_SPEC}
          *                           if the given translationSpec is null</li>
          *                           <li>{@linkplain CoreTranslationError#NULL_TRANSLATION_SPEC_APP_CLASS}
@@ -117,7 +118,8 @@ public abstract class TranslationEngine {
     }
 
     /**
-     * Initializes the translationEngine by calling init on each translationSpec added
+     * Initializes the translationEngine by calling init on each translationSpec
+     * added
      * in the builder
      */
     public void init() {
@@ -143,11 +145,12 @@ public abstract class TranslationEngine {
      *                          translatorSpecs are initialized, so if one of them
      *                          isn't, something went very wrong.
      */
-    void translatorSpecsAreInitialized() {
+    protected void translationSpecsAreInitialized() {
 
         for (BaseTranslationSpec translationSpec : this.data.translationSpecs) {
             if (!translationSpec.isInitialized()) {
-                throw new RuntimeException("TranslatoSpec class was not properly initialized, be sure to call super()");
+                throw new RuntimeException(translationSpec.getClass().getName()
+                        + " was not properly initialized, be sure to call super()");
             }
         }
 
@@ -174,12 +177,13 @@ public abstract class TranslationEngine {
      * @param <T> the return type after converting
      * 
      * @throws ContractException
+     *                           <ul>
      *                           <li>{@linkplain CoreTranslationError#UNKNOWN_TRANSLATION_SPEC}
      *                           if no translationSpec was provided for the given
      *                           objects class
      */
     public <T> T convertObject(Object object) {
-        return getTranslatorForClass(object.getClass()).convert(object);
+        return getTranslationSpecForClass(object.getClass()).convert(object);
     }
 
     /**
@@ -197,12 +201,13 @@ public abstract class TranslationEngine {
      *            translationSpec you want to use
      * 
      * @throws ContractException
+     *                           <ul>
      *                           <li>{@linkplain CoreTranslationError#UNKNOWN_TRANSLATION_SPEC}
      *                           if no translationSpec was provided for the given
      *                           objects class
      */
     public <T, M extends U, U> T convertObjectAsSafeClass(M object, Class<U> parentClassRef) {
-        return getTranslatorForClass(parentClassRef).convert(object);
+        return getTranslationSpecForClass(parentClassRef).convert(object);
     }
 
     /**
@@ -223,12 +228,13 @@ public abstract class TranslationEngine {
      * @param <U> the type of the class for which translationSpec you want to use
      * 
      * @throws ContractException
+     *                           <ul>
      *                           <li>{@linkplain CoreTranslationError#UNKNOWN_TRANSLATION_SPEC}
      *                           if no translationSpec was provided for the given
      *                           objects class
      */
     public <T, M, U> T convertObjectAsUnsafeClass(M object, Class<U> objectClassRef) {
-        return getTranslatorForClass(objectClassRef).convert(object);
+        return getTranslationSpecForClass(objectClassRef).convert(object);
     }
 
     /**
@@ -236,10 +242,11 @@ public abstract class TranslationEngine {
      * it is known
      * 
      * @throws ContractException
+     *                           <ul>
      *                           <li>{@linkplain CoreTranslationError#UNKNOWN_TRANSLATION_SPEC}
      *                           if no translationSpec for the given class was found
      */
-    protected BaseTranslationSpec getTranslatorForClass(Class<?> classRef) {
+    protected BaseTranslationSpec getTranslationSpecForClass(Class<?> classRef) {
         if (this.data.classToTranslationSpecMap.containsKey(classRef)) {
             return this.data.classToTranslationSpecMap.get(classRef);
         }

@@ -18,6 +18,7 @@ import java.util.Optional;
 import org.apache.commons.math3.util.Pair;
 import org.junit.jupiter.api.Test;
 
+import gov.hhs.aspr.translation.core.support.TestObjectUtil;
 import gov.hhs.aspr.translation.core.testsupport.TestResourceHelper;
 import gov.hhs.aspr.translation.core.testsupport.TestTranslationEngine;
 import gov.hhs.aspr.translation.core.testsupport.testcomplexobject.TestComplexAppObject;
@@ -25,47 +26,17 @@ import gov.hhs.aspr.translation.core.testsupport.testcomplexobject.TestComplexTr
 import gov.hhs.aspr.translation.core.testsupport.testcomplexobject.TestComplexTranslatorId;
 import gov.hhs.aspr.translation.core.testsupport.testobject.TestAppObject;
 import gov.hhs.aspr.translation.core.testsupport.testobject.TestInputObject;
-import gov.hhs.aspr.translation.core.testsupport.testobject.TestTranslator;
-import gov.hhs.aspr.translation.core.testsupport.testobject.TestTranslatorId;
+import gov.hhs.aspr.translation.core.testsupport.testobject.TestObjectTranslator;
+import gov.hhs.aspr.translation.core.testsupport.testobject.TestObjectTranslatorId;
 import util.annotations.UnitTag;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.graph.MutableGraph;
-import util.random.RandomGeneratorProvider;
 
 public class AT_TranslationController {
 
     Path basePath = TestResourceHelper.getResourceDir(this.getClass());
     Path filePath = TestResourceHelper.makeTestOutputDir(basePath);
-    org.apache.commons.math3.random.RandomGenerator randomGenerator = RandomGeneratorProvider
-            .getRandomGenerator(4444833210967964206L);
-
-    private TestAppObject generateTestAppObject() {
-
-        TestAppObject appObject = new TestAppObject();
-        TestComplexAppObject complexAppObject = new TestComplexAppObject();
-
-        complexAppObject.setNumEntities(randomGenerator.nextInt(100));
-        complexAppObject.setStartTime(randomGenerator.nextDouble() * 15);
-        complexAppObject.setTestString("readInput" + randomGenerator.nextInt(15));
-
-        appObject.setTestComplexAppObject(complexAppObject);
-        appObject.setBool(randomGenerator.nextBoolean());
-        appObject.setInteger(randomGenerator.nextInt(1500));
-        appObject.setString("readInput" + randomGenerator.nextInt(25));
-
-        return appObject;
-    }
-
-    private List<TestAppObject> getListOfAppObjects(int num) {
-        List<TestAppObject> appObjects = new ArrayList<>();
-
-        for (int i = 0; i < num; i++) {
-            appObjects.add(generateTestAppObject());
-        }
-
-        return appObjects;
-    }
 
     @Test
     @UnitTestMethod(target = TranslationController.class, name = "validateTranslationEngine", args = {})
@@ -101,12 +72,12 @@ public class AT_TranslationController {
         TranslationController translationController = TranslationController.builder()
                 .addInputFilePath(filePath.resolve(fileName), TestInputObject.class)
                 .addOutputFilePath(filePath.resolve(fileName), TestAppObject.class)
-                .addTranslator(TestTranslator.getTestTranslator())
+                .addTranslator(TestObjectTranslator.getTestTranslator())
                 .addTranslator(TestComplexTranslator.getTestComplexTranslator())
                 .setTranslationEngineBuilder(TestTranslationEngine.builder())
                 .build();
 
-        TestAppObject expectedAppObject = generateTestAppObject();
+        TestAppObject expectedAppObject = TestObjectUtil.generateTestAppObject();
 
         translationController.writeOutput(expectedAppObject);
 
@@ -210,15 +181,15 @@ public class AT_TranslationController {
         TranslationController translationController = TranslationController.builder()
                 .addOutputFilePath(filePath.resolve(fileName), TestAppObject.class)
                 .addOutputFilePath(filePath.resolve(fileName2), TestComplexAppObject.class)
-                .addTranslator(TestTranslator.getTestTranslator())
+                .addTranslator(TestObjectTranslator.getTestTranslator())
                 .addTranslator(TestComplexTranslator.getTestComplexTranslator())
                 .setTranslationEngineBuilder(TestTranslationEngine.builder())
                 .build();
 
         List<Object> outputObjects = new ArrayList<>();
 
-        outputObjects.add(generateTestAppObject());
-        outputObjects.add(generateTestAppObject().getTestComplexAppObject());
+        outputObjects.add(TestObjectUtil.generateTestAppObject());
+        outputObjects.add(TestObjectUtil.generateTestComplexAppObject());
         translationController.writeOutput(outputObjects);
 
         // preconditions
@@ -242,15 +213,15 @@ public class AT_TranslationController {
         TranslationController translationController = TranslationController.builder()
                 .addOutputFilePath(filePath.resolve(fileName), TestAppObject.class, 1)
                 .addOutputFilePath(filePath.resolve(fileName2), TestComplexAppObject.class, 1)
-                .addTranslator(TestTranslator.getTestTranslator())
+                .addTranslator(TestObjectTranslator.getTestTranslator())
                 .addTranslator(TestComplexTranslator.getTestComplexTranslator())
                 .setTranslationEngineBuilder(TestTranslationEngine.builder())
                 .build();
 
         List<Object> outputObjects = new ArrayList<>();
 
-        outputObjects.add(generateTestAppObject());
-        outputObjects.add(generateTestAppObject().getTestComplexAppObject());
+        outputObjects.add(TestObjectUtil.generateTestAppObject());
+        outputObjects.add(TestObjectUtil.generateTestComplexAppObject());
         translationController.writeOutput(outputObjects, 1);
 
         // preconditions
@@ -270,12 +241,12 @@ public class AT_TranslationController {
 
         TranslationController translationController = TranslationController.builder()
                 .addOutputFilePath(filePath.resolve(fileName), TestAppObject.class)
-                .addTranslator(TestTranslator.getTestTranslator())
+                .addTranslator(TestObjectTranslator.getTestTranslator())
                 .addTranslator(TestComplexTranslator.getTestComplexTranslator())
                 .setTranslationEngineBuilder(TestTranslationEngine.builder())
                 .build();
 
-        TestAppObject expectedAppObject = generateTestAppObject();
+        TestAppObject expectedAppObject = TestObjectUtil.generateTestAppObject();
 
         translationController.writeOutput(expectedAppObject);
 
@@ -296,12 +267,12 @@ public class AT_TranslationController {
 
         TranslationController translationController = TranslationController.builder()
                 .addOutputFilePath(filePath.resolve(fileName), TestAppObject.class, 1)
-                .addTranslator(TestTranslator.getTestTranslator())
+                .addTranslator(TestObjectTranslator.getTestTranslator())
                 .addTranslator(TestComplexTranslator.getTestComplexTranslator())
                 .setTranslationEngineBuilder(TestTranslationEngine.builder())
                 .build();
 
-        TestAppObject expectedAppObject = generateTestAppObject();
+        TestAppObject expectedAppObject = TestObjectUtil.generateTestAppObject();
 
         translationController.writeOutput(expectedAppObject, 1);
 
@@ -323,12 +294,12 @@ public class AT_TranslationController {
         TranslationController translationController = TranslationController.builder()
                 .addInputFilePath(filePath.resolve(fileName), TestInputObject.class)
                 .addOutputFilePath(filePath.resolve(fileName), TestAppObject.class)
-                .addTranslator(TestTranslator.getTestTranslator())
+                .addTranslator(TestObjectTranslator.getTestTranslator())
                 .addTranslator(TestComplexTranslator.getTestComplexTranslator())
                 .setTranslationEngineBuilder(TestTranslationEngine.builder())
                 .build();
 
-        TestAppObject expectedAppObject = generateTestAppObject();
+        TestAppObject expectedAppObject = TestObjectUtil.generateTestAppObject();
 
         translationController.writeOutput(expectedAppObject);
 
@@ -363,12 +334,12 @@ public class AT_TranslationController {
                 .addOutputFilePath(filePath.resolve(fileName2), TestAppObject.class, 2)
                 .addInputFilePath(filePath.resolve(fileName), TestInputObject.class)
                 .addInputFilePath(filePath.resolve(fileName2), TestInputObject.class)
-                .addTranslator(TestTranslator.getTestTranslator())
+                .addTranslator(TestObjectTranslator.getTestTranslator())
                 .addTranslator(TestComplexTranslator.getTestComplexTranslator())
                 .setTranslationEngineBuilder(TestTranslationEngine.builder())
                 .build();
 
-        List<TestAppObject> expectedObjects = getListOfAppObjects(2);
+        List<TestAppObject> expectedObjects = TestObjectUtil.getListOfAppObjects(2);
 
         translationController.writeOutput(expectedObjects.get(0), 1);
         translationController.writeOutput(expectedObjects.get(1), 2);
@@ -405,12 +376,12 @@ public class AT_TranslationController {
                 .addOutputFilePath(filePath.resolve(fileName2), TestAppObject.class, 2)
                 .addInputFilePath(filePath.resolve(fileName), TestInputObject.class)
                 .addInputFilePath(filePath.resolve(fileName2), TestInputObject.class)
-                .addTranslator(TestTranslator.getTestTranslator())
+                .addTranslator(TestObjectTranslator.getTestTranslator())
                 .addTranslator(TestComplexTranslator.getTestComplexTranslator())
                 .setTranslationEngineBuilder(TestTranslationEngine.builder())
                 .build();
 
-        List<TestAppObject> expectedObjects = getListOfAppObjects(2);
+        List<TestAppObject> expectedObjects = TestObjectUtil.getListOfAppObjects(2);
 
         translationController.writeOutput(expectedObjects.get(0), 1);
         translationController.writeOutput(expectedObjects.get(1), 2);
@@ -431,14 +402,14 @@ public class AT_TranslationController {
     public void testGetOrderedTranslators() {
 
         TranslationController translationController = TranslationController.builder()
-                .addTranslator(TestTranslator.getTestTranslator())
+                .addTranslator(TestObjectTranslator.getTestTranslator())
                 .addTranslator(TestComplexTranslator.getTestComplexTranslator())
                 .setTranslationEngineBuilder(TestTranslationEngine.builder())
                 .build();
 
         List<Translator> expectedList = new ArrayList<>();
         expectedList.add(TestComplexTranslator.getTestComplexTranslator());
-        expectedList.add(TestTranslator.getTestTranslator());
+        expectedList.add(TestObjectTranslator.getTestTranslator());
 
         List<Translator> actualList = translationController.getOrderedTranslators();
 
@@ -451,7 +422,7 @@ public class AT_TranslationController {
         ContractException contractException = assertThrows(ContractException.class, () -> {
             MutableGraph<TranslatorId, Object> mutableGraph = new MutableGraph<>();
             Map<TranslatorId, Translator> translatorMap = new LinkedHashMap<>();
-            mutableGraph.addNode(TestTranslatorId.TRANSLATOR_ID);
+            mutableGraph.addNode(TestObjectTranslatorId.TRANSLATOR_ID);
             translationController.addNodes(mutableGraph, translatorMap);
         });
 
@@ -481,7 +452,7 @@ public class AT_TranslationController {
 
             // call normally
             translationController.getOrderedTranslators(mutableGraph, translatorMap);
-            mutableGraph.addEdge(new Object(), TestComplexTranslatorId.TRANSLATOR_ID, TestTranslatorId.TRANSLATOR_ID);
+            mutableGraph.addEdge(new Object(), TestComplexTranslatorId.TRANSLATOR_ID, TestObjectTranslatorId.TRANSLATOR_ID);
             TranslatorId thirdId = new TranslatorId() {};
             TranslatorId fourthId = new TranslatorId() {};
             mutableGraph.addNode(thirdId);
@@ -648,7 +619,7 @@ public class AT_TranslationController {
     @Test
     @UnitTestMethod(target = TranslationController.Builder.class, name = "build", args = { Translator.class })
     public void testAddTranslator() {
-        TranslationController.builder().addTranslator(TestTranslator.getTestTranslator());
+        TranslationController.builder().addTranslator(TestObjectTranslator.getTestTranslator());
 
         // preconditions
         ContractException contractException = assertThrows(ContractException.class, () -> {
@@ -660,8 +631,8 @@ public class AT_TranslationController {
 
         contractException = assertThrows(ContractException.class, () -> {
             TranslationController.builder()
-                    .addTranslator(TestTranslator.getTestTranslator())
-                    .addTranslator(TestTranslator.getTestTranslator());
+                    .addTranslator(TestObjectTranslator.getTestTranslator())
+                    .addTranslator(TestObjectTranslator.getTestTranslator());
         });
 
         assertEquals(CoreTranslationError.DUPLICATE_TRANSLATOR, contractException.getErrorType());

@@ -35,15 +35,8 @@ public final class Translator {
 
         @Override
         public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (obj == null) {
-                return false;
-            }
-            if (getClass() != obj.getClass()) {
-                return false;
-            }
+            // Objects.equals will automatically return if a == b, so not need for check
+
             Data other = (Data) obj;
             return Objects.equals(translatorId, other.translatorId) && Objects.equals(initializer, other.initializer)
                     && Objects.equals(dependencies, other.dependencies);
@@ -186,7 +179,11 @@ public final class Translator {
             return false;
         }
         Translator other = (Translator) obj;
+        // Objects.equals will automatically return if a == b, so not need for check
         return Objects.equals(data, other.data);
     }
 
+    public Builder cloneBuilder() {
+        return new Builder(data);
+    }
 }

@@ -2,6 +2,8 @@ package gov.hhs.aspr.translation.core;
 
 import java.util.Objects;
 
+import util.errors.ContractException;
+
 /**
  * Core implementation of the {@link BaseTranslationSpec} that must be
  * implemented by each needed translationSpec.
@@ -24,7 +26,7 @@ public abstract class TranslationSpec<I, A> implements BaseTranslationSpec {
 
     protected void checkInit() {
         if (!this.initialized) {
-            throw new RuntimeException("Translator not initialized.");
+            throw new ContractException(CoreTranslationError.UNITIALIZED_TRANSLATION_SPEC);
         }
     }
 
@@ -35,7 +37,6 @@ public abstract class TranslationSpec<I, A> implements BaseTranslationSpec {
         return this.initialized;
     }
 
-    @SuppressWarnings("unchecked")
     /**
      * The implementation of the {@link BaseTranslationSpec#convert(Object)} method
      * 
@@ -47,10 +48,15 @@ public abstract class TranslationSpec<I, A> implements BaseTranslationSpec {
      * or Input Class and if so, calls the related method
      * <li>If no match can be found, an exception is throw
      * 
-     * @throws RuntimeException
-     *                          <li>if no match can be found between the passed in
-     *                          object and the given appClass and InputClass
+     * @param <T> the expected return type after translation/coversion
+     * 
+     * @throws ContractException
+     *                           <ul>
+     *                           <li>{@linkplain CoreTranslationError#UNKNOWN_OBJECT}
+     *                           if no match can be found between the passed in
+     *                           object and the given appClass and InputClass
      */
+    @SuppressWarnings("unchecked")
     public <T> T convert(Object obj) {
         checkInit();
 
@@ -70,46 +76,46 @@ public abstract class TranslationSpec<I, A> implements BaseTranslationSpec {
             return (T) this.convertInputObject((I) obj);
         }
 
-        throw new RuntimeException("Object is not a " + this.getAppObjectClass().getName() + " and it is not a "
-                + this.getInputObjectClass().getName());
+        throw new ContractException(CoreTranslationError.UNKNOWN_OBJECT,
+                "Object is not a " + this.getAppObjectClass().getName() + " and it is not a "
+                        + this.getInputObjectClass().getName());
 
     }
 
     @Override
-    /**
-     * boilerplate hashcode implementation
-     */
     public int hashCode() {
-        return Objects.hash(initialized);
+        return Objects.hash(initialized, getAppObjectClass(), getInputObjectClass());
     }
 
     @Override
-    /**
-     * boilerplate equals implementation
-     * plus additional comparisons to the app and input classes and initialized
-     */
     public boolean equals(Object obj) {
+        // if same object, then equal
         if (this == obj) {
             return true;
         }
+        // if obj is null, not equal
         if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        // if obj is not an instance of TranslationSpec, not equal
+        if (!(obj instanceof TranslationSpec)) {
             return false;
         }
 
         @SuppressWarnings("rawtypes")
         TranslationSpec other = (TranslationSpec) obj;
 
-        if (getAppObjectClass() == other.getAppObjectClass()) {
+        // if different app class, not equal
+        if (getAppObjectClass() != other.getAppObjectClass()) {
             return false;
         }
 
-        if (getInputObjectClass() == other.getInputObjectClass()) {
+        // if different intput class, not equal
+        if (getInputObjectClass() != other.getInputObjectClass()) {
             return false;
         }
 
+        // if not both initialized, not equal
         return initialized == other.initialized;
     }
 

@@ -1,13 +1,24 @@
 package gov.hhs.aspr.translation.core.testsupport;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.Path;
 
 public class TestResourceHelper {
+
+    private TestResourceHelper() {
+    }
+
     public static Path getResourceDir(Class<?> classRef) {
+        return Path.of(getURI(classRef.getClassLoader().getResource("")));
+    }
+
+    protected static URI getURI(URL url) {
         try {
-            return Path.of(classRef.getClassLoader().getResource("").toURI());
+            return url.toURI();
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         }
@@ -22,10 +33,20 @@ public class TestResourceHelper {
     }
 
     public static void createTestOutputFile(Path filePath, String fileName) {
+
+        File isAfile = filePath.resolve(fileName).toFile();
+
+        if (isAfile.exists()) {
+            isAfile.delete();
+        }
+        createFile(isAfile);
+    }
+
+    protected static void createFile(File file) {
         try {
-            filePath.resolve(fileName).toFile().createNewFile();
+            file.createNewFile();
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 }

@@ -31,11 +31,7 @@ public class TestAppObject {
     }
 
     public void setString(String string) {
-        String temp = string;
-        if(!string.endsWith("APP OBJECT")) {
-            temp = new StringBuilder().append(string).append("APP OBJECT").toString();
-        }
-        this.string = temp;
+        this.string = string;
     }
 
     public TestComplexAppObject getTestComplexAppObject() {
