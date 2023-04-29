@@ -3,10 +3,6 @@ package gov.hhs.aspr.translation.core.testsupport.testobject;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import java.util.LinkedHashSet;
-import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
@@ -128,30 +124,37 @@ public class AT_TestAppObject {
         testAppObject2.setString(string);
         testAppObject2.setTestComplexAppObject(testComplexAppObject);
 
-        // TODO: fix this
-        Set<TestAppObject> appObjects = new LinkedHashSet<>();
+        // exact same instance should be equal
+        assertEquals(testAppObject1.hashCode(), testAppObject1.hashCode());
 
-        appObjects.add(testAppObject1);
-        assertTrue(appObjects.contains(testAppObject1));
-        assertTrue(appObjects.size() == 1);
+        // different objects should not be equal
+        assertNotEquals(testAppObject1.hashCode(), new Object().hashCode());
 
-        appObjects.add(testAppObject2);
-        assertTrue(appObjects.contains(testAppObject1));
-        assertTrue(appObjects.contains(testAppObject2));
-        assertTrue(appObjects.size() == 1);
+        // different values of integer, bool, string and testComplexAppObject should
+        // not be equal
+        assertNotEquals(testAppObject1.hashCode(), testAppObject3.hashCode());
+        assertNotEquals(testAppObject1.hashCode(), testAppObject4.hashCode());
+        assertNotEquals(testAppObject3.hashCode(), testAppObject4.hashCode());
 
-        appObjects.add(testAppObject3);
-        assertTrue(appObjects.contains(testAppObject1));
-        assertTrue(appObjects.contains(testAppObject2));
-        assertTrue(appObjects.contains(testAppObject3));
-        assertTrue(appObjects.size() == 2);
+        testAppObject2.setInteger(0);
+        assertNotEquals(testAppObject1.hashCode(), testAppObject2.hashCode());
+        testAppObject2.setInteger(integer);
 
-        appObjects.add(testAppObject4);
-        assertTrue(appObjects.contains(testAppObject1));
-        assertTrue(appObjects.contains(testAppObject2));
-        assertTrue(appObjects.contains(testAppObject3));
-        assertTrue(appObjects.contains(testAppObject4));
-        assertTrue(appObjects.size() == 3);
+        testAppObject2.setBool(!bool);
+        assertNotEquals(testAppObject1.hashCode(), testAppObject2.hashCode());
+        testAppObject2.setBool(bool);
+
+        testAppObject2.setString("Test");
+        assertNotEquals(testAppObject1.hashCode(), testAppObject2.hashCode());
+        testAppObject2.setString(string);
+
+        testAppObject2.setTestComplexAppObject(TestObjectUtil.generateTestComplexAppObject());
+        assertNotEquals(testAppObject1.hashCode(), testAppObject2.hashCode());
+        testAppObject2.setTestComplexAppObject(testComplexAppObject);
+
+        // exact same values of integer, bool, string and testComplexAppObject should
+        // be equal
+        assertEquals(testAppObject1.hashCode(), testAppObject2.hashCode());
     }
 
     @Test

@@ -4,10 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import java.util.LinkedHashSet;
-import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
@@ -70,24 +66,18 @@ public class AT_TestObjectWrapper {
         TestObjectWrapper testObjectWrapper3 = new TestObjectWrapper();
 
         testObjectWrapper3.setWrappedObject(testInputObject);
-        // TODO: fix this
-        Set<TestObjectWrapper> wrapperSet = new LinkedHashSet<>();
 
-        wrapperSet.add(testObjectWrapper);
+        // exact same instance is equal
+        assertEquals(testObjectWrapper.hashCode(), testObjectWrapper.hashCode());
 
-        assertTrue(wrapperSet.contains(testObjectWrapper));
-        assertTrue(wrapperSet.size() == 1);
+        // different objects should not be equal
+        assertNotEquals(testObjectWrapper.hashCode(), new Object().hashCode());
 
-        wrapperSet.add(testObjectWrapper2);
-        assertTrue(wrapperSet.contains(testObjectWrapper2));
-        assertTrue(wrapperSet.contains(testObjectWrapper));
-        assertTrue(wrapperSet.size() == 1);
+        // different wrapped objects should not be equal
+        assertNotEquals(testObjectWrapper.hashCode(), testObjectWrapper3.hashCode());
 
-        wrapperSet.add(testObjectWrapper3);
-        assertTrue(wrapperSet.contains(testObjectWrapper3));
-        assertTrue(wrapperSet.contains(testObjectWrapper2));
-        assertTrue(wrapperSet.contains(testObjectWrapper));
-        assertTrue(wrapperSet.size() == 2);
+        // same wrapped objects should be equal
+        assertEquals(testObjectWrapper.hashCode(), testObjectWrapper2.hashCode());
     }
 
     @Test

@@ -3,10 +3,6 @@ package gov.hhs.aspr.translation.core.testsupport.testcomplexobject;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import java.util.LinkedHashSet;
-import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
@@ -15,13 +11,13 @@ import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
 
 public class AT_TestComplexInputObject {
-    
+
     @Test
     @UnitTestConstructor(target = TestComplexInputObject.class, args = {})
     public void testConstructor() {
         assertNotNull(new TestComplexInputObject());
     }
-    
+
     @Test
     @UnitTestMethod(target = TestComplexInputObject.class, name = "setNumEntities", args = { int.class })
     public void testSetNumEntities() {
@@ -102,29 +98,33 @@ public class AT_TestComplexInputObject {
         testComplexInputObject2.setStartTime(startTime);
         testComplexInputObject2.setTestString(testString);
 
-        Set<TestComplexInputObject> appObjects = new LinkedHashSet<>();
+        // exact same instance should be equal
+        assertEquals(testComplexInputObject1.hashCode(), testComplexInputObject1.hashCode());
 
-        appObjects.add(testComplexInputObject1);
-        assertTrue(appObjects.contains(testComplexInputObject1));
-        assertTrue(appObjects.size() == 1);
+        // different objects should not be equal
+        assertNotEquals(testComplexInputObject1.hashCode(), new Object().hashCode());
 
-        appObjects.add(testComplexInputObject2);
-        assertTrue(appObjects.contains(testComplexInputObject1));
-        assertTrue(appObjects.contains(testComplexInputObject2));
-        assertTrue(appObjects.size() == 1);
+        // different values of integer, bool, string and testComplexInputObject should
+        // not be equal
+        assertNotEquals(testComplexInputObject1.hashCode(), testComplexInputObject3.hashCode());
+        assertNotEquals(testComplexInputObject1.hashCode(), testComplexInputObject4.hashCode());
+        assertNotEquals(testComplexInputObject3.hashCode(), testComplexInputObject4.hashCode());
 
-        appObjects.add(testComplexInputObject3);
-        assertTrue(appObjects.contains(testComplexInputObject1));
-        assertTrue(appObjects.contains(testComplexInputObject2));
-        assertTrue(appObjects.contains(testComplexInputObject3));
-        assertTrue(appObjects.size() == 2);
+        testComplexInputObject2.setNumEntities(0);
+        assertNotEquals(testComplexInputObject1.hashCode(), testComplexInputObject2.hashCode());
+        testComplexInputObject2.setNumEntities(numEntities);
 
-        appObjects.add(testComplexInputObject4);
-        assertTrue(appObjects.contains(testComplexInputObject1));
-        assertTrue(appObjects.contains(testComplexInputObject2));
-        assertTrue(appObjects.contains(testComplexInputObject3));
-        assertTrue(appObjects.contains(testComplexInputObject4));
-        assertTrue(appObjects.size() == 3);
+        testComplexInputObject2.setStartTime(150.0156);
+        assertNotEquals(testComplexInputObject1.hashCode(), testComplexInputObject2.hashCode());
+        testComplexInputObject2.setStartTime(startTime);
+
+        testComplexInputObject2.setTestString("Test");
+        assertNotEquals(testComplexInputObject1.hashCode(), testComplexInputObject2.hashCode());
+        testComplexInputObject2.setTestString(testString);
+
+        // exact same values of integer, bool, string and testComplexInputObject should
+        // be equal
+        assertEquals(testComplexInputObject1.hashCode(), testComplexInputObject2.hashCode());
     }
 
     @Test
