@@ -1,4 +1,4 @@
-package gov.hhs.aspr.gcm.gcmprotobuf.core;
+package gov.hhs.aspr.translation.protobuf.core;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
