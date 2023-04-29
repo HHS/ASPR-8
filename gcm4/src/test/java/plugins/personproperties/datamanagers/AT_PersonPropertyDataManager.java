@@ -12,10 +12,10 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.IntStream;
 
-import nucleus.testsupport.testplugin.TestOutputConsumer;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.util.Pair;
 import org.junit.jupiter.api.Test;
@@ -23,6 +23,7 @@ import org.junit.jupiter.api.Test;
 import nucleus.DataManagerContext;
 import nucleus.EventFilter;
 import nucleus.testsupport.testplugin.TestActorPlan;
+import nucleus.testsupport.testplugin.TestOutputConsumer;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestSimulation;
 import plugins.people.datamanagers.PeopleDataManager;
@@ -47,12 +48,12 @@ import plugins.regions.testsupport.TestRegionId;
 import plugins.stochastics.StochasticsDataManager;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
-import plugins.util.properties.TimeTrackingPolicy;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.random.RandomGeneratorProvider;
 import util.wrappers.MultiKey;
+import util.wrappers.MutableBoolean;
 import util.wrappers.MutableInteger;
 
 public final class AT_PersonPropertyDataManager {
@@ -63,10 +64,8 @@ public final class AT_PersonPropertyDataManager {
 
 		PersonPropertiesPluginData personPropertiesPluginData = PersonPropertiesPluginData.builder().build();
 		List<PersonId> expectedPersonIds = new ArrayList<>();
-		PersonPropertyDefinitionInitialization personPropertyDefinitionInitialization = PersonPropertyDefinitionInitialization.builder()
-				.setPersonPropertyId(TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK)
-				.setPropertyDefinition(TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK.getPropertyDefinition())
-				.build();
+		PersonPropertyDefinitionInitialization personPropertyDefinitionInitialization = PersonPropertyDefinitionInitialization.builder().setPersonPropertyId(
+				TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK).setPropertyDefinition(TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK.getPropertyDefinition()).build();
 
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
@@ -75,9 +74,7 @@ public final class AT_PersonPropertyDataManager {
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			personPropertiesDataManager.definePersonProperty(personPropertyDefinitionInitialization);
 
-			PersonConstructionData personConstructionData = PersonConstructionData.builder()
-					.add(TestRegionId.REGION_1)
-					.build();
+			PersonConstructionData personConstructionData = PersonConstructionData.builder().add(TestRegionId.REGION_1).build();
 			PersonId personId = peopleDataManager.addPerson(personConstructionData);
 			expectedPersonIds.add(personId);
 
@@ -85,32 +82,25 @@ public final class AT_PersonPropertyDataManager {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		Factory factory = PersonPropertiesTestPluginFactory.factory(0, 6980289425630085602L, testPluginData)
-				.setPersonPropertiesPluginData(personPropertiesPluginData);
-		TestOutputConsumer testOutputConsumer = TestSimulation.builder().addPlugins(factory.getPlugins())
-				.setSimulationHaltTime(2)
-				.setProduceSimulationStateOnHalt(true)
-				.build()
-				.execute();
+		Factory factory = PersonPropertiesTestPluginFactory.factory(0, 6980289425630085602L, testPluginData).setPersonPropertiesPluginData(personPropertiesPluginData);
+		TestOutputConsumer testOutputConsumer = TestSimulation.builder().addPlugins(factory.getPlugins()).setSimulationHaltTime(2).setProduceSimulationStateOnHalt(true).build().execute();
 		Map<PersonPropertiesPluginData, Integer> outputItems = testOutputConsumer.getOutputItems(PersonPropertiesPluginData.class);
 		assertEquals(1, outputItems.size());
 		PersonPropertiesPluginData actualPluginData = outputItems.keySet().iterator().next();
-		PersonPropertiesPluginData expectedPluginData = PersonPropertiesPluginData.builder()				
-				.definePersonProperty(personPropertyDefinitionInitialization.getPersonPropertyId(), personPropertyDefinitionInitialization.getPropertyDefinition())
-				.setPersonPropertyValue(expectedPersonIds.get(0), personPropertyDefinitionInitialization.getPersonPropertyId(), true)
-				.build();
+		PersonPropertiesPluginData expectedPluginData = PersonPropertiesPluginData	.builder()
+																					.definePersonProperty(personPropertyDefinitionInitialization.getPersonPropertyId(),
+																							personPropertyDefinitionInitialization.getPropertyDefinition())
+																					.setPersonPropertyValue(expectedPersonIds.get(0), personPropertyDefinitionInitialization.getPersonPropertyId(),
+																							true)
+																					.build();
 		assertEquals(expectedPluginData, actualPluginData);
 
 		//
 		personPropertiesPluginData = PersonPropertiesPluginData.builder().build();
-		PersonPropertyDefinitionInitialization personPropertyDefinitionInitialization2 = PersonPropertyDefinitionInitialization.builder()
-				.setPersonPropertyId(TestPersonPropertyId.PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK)
-				.setPropertyDefinition(TestPersonPropertyId.PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK.getPropertyDefinition())
-				.build();
-		PersonPropertyDefinitionInitialization personPropertyDefinitionInitialization3 = PersonPropertyDefinitionInitialization.builder()
-				.setPersonPropertyId(TestPersonPropertyId.PERSON_PROPERTY_3_DOUBLE_MUTABLE_NO_TRACK)
-				.setPropertyDefinition(TestPersonPropertyId.PERSON_PROPERTY_3_DOUBLE_MUTABLE_NO_TRACK.getPropertyDefinition())
-				.build();
+		PersonPropertyDefinitionInitialization personPropertyDefinitionInitialization2 = PersonPropertyDefinitionInitialization.builder().setPersonPropertyId(
+				TestPersonPropertyId.PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK).setPropertyDefinition(TestPersonPropertyId.PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK.getPropertyDefinition()).build();
+		PersonPropertyDefinitionInitialization personPropertyDefinitionInitialization3 = PersonPropertyDefinitionInitialization.builder().setPersonPropertyId(
+				TestPersonPropertyId.PERSON_PROPERTY_3_DOUBLE_MUTABLE_NO_TRACK).setPropertyDefinition(TestPersonPropertyId.PERSON_PROPERTY_3_DOUBLE_MUTABLE_NO_TRACK.getPropertyDefinition()).build();
 
 		pluginBuilder = TestPluginData.builder();
 		expectedPersonIds.clear();
@@ -121,12 +111,8 @@ public final class AT_PersonPropertyDataManager {
 			personPropertiesDataManager.definePersonProperty(personPropertyDefinitionInitialization2);
 			personPropertiesDataManager.definePersonProperty(personPropertyDefinitionInitialization3);
 
-			PersonConstructionData personConstructionData2 = PersonConstructionData.builder()
-					.add(TestRegionId.REGION_2)
-					.build();
-			PersonConstructionData personConstructionData3 = PersonConstructionData.builder()
-					.add(TestRegionId.REGION_3)
-					.build();
+			PersonConstructionData personConstructionData2 = PersonConstructionData.builder().add(TestRegionId.REGION_2).build();
+			PersonConstructionData personConstructionData3 = PersonConstructionData.builder().add(TestRegionId.REGION_3).build();
 			PersonId personId2 = peopleDataManager.addPerson(personConstructionData2);
 			PersonId personId3 = peopleDataManager.addPerson(personConstructionData3);
 
@@ -151,24 +137,20 @@ public final class AT_PersonPropertyDataManager {
 		}));
 
 		testPluginData = pluginBuilder.build();
-		factory = PersonPropertiesTestPluginFactory.factory(0, 6980289425630085602L, testPluginData)
-				.setPersonPropertiesPluginData(personPropertiesPluginData);
-		testOutputConsumer = TestSimulation.builder().addPlugins(factory.getPlugins())
-				.setSimulationHaltTime(2)
-				.setProduceSimulationStateOnHalt(true)
-				.build()
-				.execute();
+		factory = PersonPropertiesTestPluginFactory.factory(0, 6980289425630085602L, testPluginData).setPersonPropertiesPluginData(personPropertiesPluginData);
+		testOutputConsumer = TestSimulation.builder().addPlugins(factory.getPlugins()).setSimulationHaltTime(2).setProduceSimulationStateOnHalt(true).build().execute();
 		outputItems = testOutputConsumer.getOutputItems(PersonPropertiesPluginData.class);
 		assertEquals(1, outputItems.size());
 		actualPluginData = outputItems.keySet().iterator().next();
-		expectedPluginData = PersonPropertiesPluginData.builder()
-				.definePersonProperty(personPropertyDefinitionInitialization2.getPersonPropertyId(), personPropertyDefinitionInitialization2.getPropertyDefinition())
-				.definePersonProperty(personPropertyDefinitionInitialization3.getPersonPropertyId(), personPropertyDefinitionInitialization3.getPropertyDefinition())
-				.setPersonPropertyValue(expectedPersonIds.get(0), personPropertyDefinitionInitialization2.getPersonPropertyId(), 56)
-				.setPersonPropertyValue(expectedPersonIds.get(0), personPropertyDefinitionInitialization3.getPersonPropertyId(), 0.0)
-				.setPersonPropertyValue(expectedPersonIds.get(1), personPropertyDefinitionInitialization2.getPersonPropertyId(), 0)
-				.setPersonPropertyValue(expectedPersonIds.get(1), personPropertyDefinitionInitialization3.getPersonPropertyId(), 79.2)
-				.build();
+		expectedPluginData = PersonPropertiesPluginData	.builder()
+														.definePersonProperty(personPropertyDefinitionInitialization2.getPersonPropertyId(),
+																personPropertyDefinitionInitialization2.getPropertyDefinition())
+														.definePersonProperty(personPropertyDefinitionInitialization3.getPersonPropertyId(),
+																personPropertyDefinitionInitialization3.getPropertyDefinition())
+														.setPersonPropertyValue(expectedPersonIds.get(0), personPropertyDefinitionInitialization2.getPersonPropertyId(), 56)
+														.setPersonPropertyValue(expectedPersonIds.get(0), personPropertyDefinitionInitialization3.getPersonPropertyId(), 0.0)
+														.setPersonPropertyValue(expectedPersonIds.get(1), personPropertyDefinitionInitialization2.getPersonPropertyId(), 0)
+														.setPersonPropertyValue(expectedPersonIds.get(1), personPropertyDefinitionInitialization3.getPersonPropertyId(), 79.2).build();
 		assertEquals(expectedPluginData, actualPluginData);
 	}
 
@@ -643,46 +625,36 @@ public final class AT_PersonPropertyDataManager {
 				PropertyDefinition actualPropertyDefinition = personPropertiesDataManager.getPersonPropertyDefinition(personPropertyId);
 				assertEquals(expectedPropertyDefinition, actualPropertyDefinition);
 			}
-			assertEquals(totalPeople , personPropertiesPluginData.getPersonCount());
 
 			// show that the person property values are set to the default
 			// values for those properties that have default values
 			List<PersonId> personIds = peopleDataManager.getPeople();
 			assertTrue(personIds.size() > 0);
-			for (PersonId personId : people) {
 
-				Map<PersonPropertyId, Object> expectedPropertyValues = new LinkedHashMap<>();
-				for (PersonPropertyId personPropertyId : personPropertiesPluginData.getPersonPropertyIds()) {
-
-					PropertyDefinition propertyDefinition = personPropertiesPluginData.getPersonPropertyDefinition(personPropertyId);
-					if (propertyDefinition.getDefaultValue().isPresent()) {
-						expectedPropertyValues.put(personPropertyId, propertyDefinition.getDefaultValue().get());
+			for (PersonPropertyId personPropertyId : personPropertiesPluginData.getPersonPropertyIds()) {
+				PropertyDefinition propertyDefinition = personPropertiesPluginData.getPersonPropertyDefinition(personPropertyId);
+				Optional<Object> optional = propertyDefinition.getDefaultValue();
+				Object defaultValue = null;
+				if (optional.isPresent()) {
+					defaultValue = optional.get();
+				}
+				List<Object> propertyValues = personPropertiesPluginData.getPropertyValues(personPropertyId);
+				for (PersonId personId : people) {
+					Object expectedValue = defaultValue;
+					if (personId.getValue() < propertyValues.size()) {
+						expectedValue = propertyValues.get(personId.getValue());
 					}
-				}
-				List<PersonPropertyValueInitialization> propertyValues = personPropertiesPluginData.getPropertyValues(personId.getValue());
-				for (PersonPropertyValueInitialization personPropertyValueInitialization : propertyValues) {
-					expectedPropertyValues.put(personPropertyValueInitialization.getPersonPropertyId(), personPropertyValueInitialization.getValue());
-				}
-				Map<PersonPropertyId, Object> actualPropertyValues = new LinkedHashMap<>();
 
-				for (PersonPropertyId personPropertyId : personPropertiesDataManager.getPersonPropertyIds()) {
-					actualPropertyValues.put(personPropertyId, personPropertiesDataManager.getPersonPropertyValue(personId, personPropertyId));
-
-					PropertyDefinition personPropertyDefinition = personPropertiesDataManager.getPersonPropertyDefinition(personPropertyId);
-					boolean timeTrackingOn = personPropertyDefinition.getTimeTrackingPolicy().equals(TimeTrackingPolicy.TRACK_TIME);
-					if (timeTrackingOn) {
-						assertEquals(0.0, personPropertiesDataManager.getPersonPropertyTime(personId, personPropertyId));
-					}
+					Object actualValue = personPropertiesDataManager.getPersonPropertyValue(personId, personPropertyId);
+					assertEquals(expectedValue, actualValue);
 				}
-				assertEquals(expectedPropertyValues, actualPropertyValues);
-
 			}
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
 
 		Factory factory = PersonPropertiesTestPluginFactory	.factory(totalPeople, seed, testPluginData)//
-																			.setPersonPropertiesPluginData(personPropertiesPluginData);
+															.setPersonPropertiesPluginData(personPropertiesPluginData);
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 	}
@@ -829,7 +801,8 @@ public final class AT_PersonPropertyDataManager {
 				PersonConstructionData.Builder personBuilder = PersonConstructionData.builder();
 				RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
-				// if the event contains a PersonPropertyInitialization that has a
+				// if the event contains a PersonPropertyInitialization that has
+				// a
 				// null person property id
 				personBuilder.add(TestRegionId.getRandomRegionId(randomGenerator));
 				personBuilder.add(new PersonPropertyValueInitialization(null, false));
@@ -910,6 +883,7 @@ public final class AT_PersonPropertyDataManager {
 		 */
 		Factory factory = PersonPropertiesTestPluginFactory.factory(100, 3100440347097616280L, (c) -> {
 			double planTime = 1;
+			MutableBoolean trackTimes = new MutableBoolean();
 			for (TestAuxiliaryPersonPropertyId auxPropertyId : TestAuxiliaryPersonPropertyId.values()) {
 
 				c.addPlan((c2) -> {
@@ -920,8 +894,9 @@ public final class AT_PersonPropertyDataManager {
 							PersonPropertyDefinitionInitialization	.builder()//
 																	.setPersonPropertyId(auxPropertyId)//
 																	.setPropertyDefinition(expectedPropertyDefinition)//
+																	.setTrackTimes(trackTimes.getValue())
 																	.build();
-
+					
 					personPropertiesDataManager.definePersonProperty(propertyDefinitionInitialization);
 
 					// show that the definition was added
@@ -937,11 +912,12 @@ public final class AT_PersonPropertyDataManager {
 						Object actualValue = personPropertiesDataManager.getPersonPropertyValue(personId, auxPropertyId);
 						assertEquals(expectedValue, actualValue);
 
-						if (expectedPropertyDefinition.getTimeTrackingPolicy().equals(TimeTrackingPolicy.TRACK_TIME)) {
+						if (trackTimes.getValue()) {
 							double actualTime = personPropertiesDataManager.getPersonPropertyTime(personId, auxPropertyId);
 							assertEquals(expectedTime, actualTime);
 						}
 					}
+					trackTimes.setValue(!trackTimes.getValue());
 
 				}, planTime++);
 			}
@@ -956,7 +932,8 @@ public final class AT_PersonPropertyDataManager {
 
 		factory = PersonPropertiesTestPluginFactory.factory(10, 3969826324474876300L, (c) -> {
 			double planTime = 1;
-
+			
+			MutableBoolean trackTimes = new MutableBoolean();
 			for (TestAuxiliaryPersonPropertyId auxPropertyId : TestAuxiliaryPersonPropertyId.values()) {
 
 				c.addPlan((c2) -> {
@@ -972,8 +949,7 @@ public final class AT_PersonPropertyDataManager {
 					 */
 					expectedPropertyDefinition = PropertyDefinition	.builder()//
 																	.setDefaultValue(expectedPropertyDefinition.getDefaultValue().get())//
-																	.setPropertyValueMutability(expectedPropertyDefinition.propertyValuesAreMutable())//
-																	.setTimeTrackingPolicy(expectedPropertyDefinition.getTimeTrackingPolicy())//
+																	.setPropertyValueMutability(expectedPropertyDefinition.propertyValuesAreMutable())//																	
 																	.setType(expectedPropertyDefinition.getType())//
 																	.build();
 
@@ -982,7 +958,9 @@ public final class AT_PersonPropertyDataManager {
 					PersonPropertyDefinitionInitialization.Builder defBuilder = //
 							PersonPropertyDefinitionInitialization	.builder()//
 																	.setPersonPropertyId(auxPropertyId)//
-																	.setPropertyDefinition(expectedPropertyDefinition);
+																	.setPropertyDefinition(expectedPropertyDefinition)
+																	.setTrackTimes(trackTimes.getValue());
+					
 					//
 					expectedPropertyDefinition.getType();
 					for (PersonId personId : peopleDataManager.getPeople()) {
@@ -1009,13 +987,14 @@ public final class AT_PersonPropertyDataManager {
 						Object actualValue = personPropertiesDataManager.getPersonPropertyValue(personId, auxPropertyId);
 						assertEquals(expectedValue, actualValue);
 
-						if (expectedPropertyDefinition.getTimeTrackingPolicy().equals(TimeTrackingPolicy.TRACK_TIME)) {
+						if (trackTimes.getValue()) {
 							double actualTime = personPropertiesDataManager.getPersonPropertyTime(personId, auxPropertyId);
 							assertEquals(expectedTime, actualTime);
 						}
 					}
-
+					trackTimes.setValue(!trackTimes.getValue());
 				}, planTime++);
+				
 			}
 		});
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();

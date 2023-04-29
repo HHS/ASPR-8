@@ -7,7 +7,6 @@ import org.apache.commons.math3.random.RandomGenerator;
 
 import plugins.personproperties.support.PersonPropertyId;
 import plugins.util.properties.PropertyDefinition;
-import plugins.util.properties.TimeTrackingPolicy;
 
 /**
  * Enumeration that identifies person property definitions
@@ -18,14 +17,12 @@ public enum TestPersonPropertyId implements PersonPropertyId {
 								.setType(Boolean.class)//
 								.setDefaultValue(false)//
 								.setPropertyValueMutability(true)//
-								.setTimeTrackingPolicy(TimeTrackingPolicy.DO_NOT_TRACK_TIME)//
 								.build()), //
 	PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK(
 			PropertyDefinition	.builder()//
 								.setType(Integer.class)//
 								.setDefaultValue(0)//
 								.setPropertyValueMutability(true)//
-								.setTimeTrackingPolicy(TimeTrackingPolicy.DO_NOT_TRACK_TIME)//
 								.build() //
 	), //
 	PERSON_PROPERTY_3_DOUBLE_MUTABLE_NO_TRACK(
@@ -33,7 +30,6 @@ public enum TestPersonPropertyId implements PersonPropertyId {
 								.setType(Double.class)//
 								.setDefaultValue(0.0)//
 								.setPropertyValueMutability(true)//
-								.setTimeTrackingPolicy(TimeTrackingPolicy.DO_NOT_TRACK_TIME)//
 								.build() //
 	), //
 	PERSON_PROPERTY_4_BOOLEAN_MUTABLE_TRACK(
@@ -41,7 +37,6 @@ public enum TestPersonPropertyId implements PersonPropertyId {
 								.setType(Boolean.class)//
 								.setDefaultValue(false)//
 								.setPropertyValueMutability(true)//
-								.setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME)//
 								.build() //
 	), //
 	PERSON_PROPERTY_5_INTEGER_MUTABLE_TRACK(
@@ -49,7 +44,6 @@ public enum TestPersonPropertyId implements PersonPropertyId {
 								.setType(Integer.class)//
 								.setDefaultValue(0)//
 								.setPropertyValueMutability(true)//
-								.setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME)//
 								.build() //
 	), //
 	PERSON_PROPERTY_6_DOUBLE_MUTABLE_TRACK(
@@ -57,7 +51,6 @@ public enum TestPersonPropertyId implements PersonPropertyId {
 								.setType(Double.class)//
 								.setDefaultValue(0.0)//
 								.setPropertyValueMutability(true)//
-								.setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME)//
 								.build() //
 	), //
 	PERSON_PROPERTY_7_BOOLEAN_IMMUTABLE_NO_TRACK(
@@ -65,7 +58,6 @@ public enum TestPersonPropertyId implements PersonPropertyId {
 								.setType(Boolean.class)//
 								.setDefaultValue(false)//
 								.setPropertyValueMutability(false)//
-								.setTimeTrackingPolicy(TimeTrackingPolicy.DO_NOT_TRACK_TIME)//
 								.build() //
 	), //
 	PERSON_PROPERTY_8_INTEGER_IMMUTABLE_NO_TRACK(
@@ -73,45 +65,43 @@ public enum TestPersonPropertyId implements PersonPropertyId {
 								.setType(Integer.class)//
 								.setDefaultValue(0)//
 								.setPropertyValueMutability(false)//
-								.setTimeTrackingPolicy(TimeTrackingPolicy.DO_NOT_TRACK_TIME)//
 								.build() //
 	), //
 	PERSON_PROPERTY_9_DOUBLE_IMMUTABLE_NO_TRACK(
 			PropertyDefinition	.builder()//
 								.setType(Double.class)//
-								//.setDefaultValue(0.0)//
+								// .setDefaultValue(0.0)//
 								.setPropertyValueMutability(false)//
-								.setTimeTrackingPolicy(TimeTrackingPolicy.DO_NOT_TRACK_TIME)//
 								.build() //
 	);//
-	
+
 	/**
 	 * Returns the test property ids associated with a default value
 	 */
-	public static List<TestPersonPropertyId> getPropertiesWithDefaultValues(){
+	public static List<TestPersonPropertyId> getPropertiesWithDefaultValues() {
 		List<TestPersonPropertyId> result = new ArrayList<>();
-		
-		for(TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.values()) {
-			if(testPersonPropertyId.getPropertyDefinition().getDefaultValue().isPresent()) {
+
+		for (TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.values()) {
+			if (testPersonPropertyId.getPropertyDefinition().getDefaultValue().isPresent()) {
 				result.add(testPersonPropertyId);
 			}
 		}
-		
+
 		return result;
 	}
-	
+
 	/**
 	 * Returns the test property ids not associated with a default value
 	 */
-	public static List<TestPersonPropertyId> getPropertiesWithoutDefaultValues(){
+	public static List<TestPersonPropertyId> getPropertiesWithoutDefaultValues() {
 		List<TestPersonPropertyId> result = new ArrayList<>();
-		
-		for(TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.values()) {
-			if(testPersonPropertyId.getPropertyDefinition().getDefaultValue().isEmpty()) {
+
+		for (TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.values()) {
+			if (testPersonPropertyId.getPropertyDefinition().getDefaultValue().isEmpty()) {
 				result.add(testPersonPropertyId);
 			}
 		}
-		
+
 		return result;
 	}
 
@@ -147,7 +137,7 @@ public enum TestPersonPropertyId implements PersonPropertyId {
 			return randomGenerator.nextInt();
 		case PERSON_PROPERTY_9_DOUBLE_IMMUTABLE_NO_TRACK:
 			return randomGenerator.nextDouble();
-		default:			
+		default:
 			throw new RuntimeException("unhandled case: " + this);
 
 		}

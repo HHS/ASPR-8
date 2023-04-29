@@ -17,7 +17,6 @@ import plugins.people.support.PersonId;
 import plugins.personproperties.testsupport.TestPersonPropertyId;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
-import plugins.util.properties.TimeTrackingPolicy;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.random.RandomGeneratorProvider;
@@ -37,10 +36,11 @@ public class AT_PersonPropertyDefinitionInitialization {
 	public void testGetPropertyDefinition() {
 		PersonPropertyDefinitionInitialization.Builder builder = PersonPropertyDefinitionInitialization.builder();
 		PropertyDefinition propertyDefinition = PropertyDefinition	.builder().setType(Integer.class).setDefaultValue(100).setPropertyValueMutability(true)
-																	.setTimeTrackingPolicy(TimeTrackingPolicy.DO_NOT_TRACK_TIME).build();
+																	.build();
 
 		builder.setPropertyDefinition(propertyDefinition);
 		builder.setPersonPropertyId(TestPersonPropertyId.PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK);
+		
 
 		PersonPropertyDefinitionInitialization propertyDefinitionInitialization = builder.build();
 
@@ -55,7 +55,7 @@ public class AT_PersonPropertyDefinitionInitialization {
 
 		PersonPropertyDefinitionInitialization.Builder builder = PersonPropertyDefinitionInitialization.builder();
 		PropertyDefinition propertyDefinition = PropertyDefinition	.builder().setType(Integer.class).setDefaultValue(100).setPropertyValueMutability(true)
-																	.setTimeTrackingPolicy(TimeTrackingPolicy.DO_NOT_TRACK_TIME).build();
+																	.build();
 
 		builder.setPropertyDefinition(propertyDefinition);
 		builder.setPersonPropertyId(TestPersonPropertyId.PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK);
@@ -84,7 +84,7 @@ public class AT_PersonPropertyDefinitionInitialization {
 	public void testGetPersonPropertyId() {
 		PersonPropertyDefinitionInitialization.Builder builder = PersonPropertyDefinitionInitialization.builder();
 		PropertyDefinition propertyDefinition = PropertyDefinition	.builder().setType(Integer.class).setDefaultValue(100).setPropertyValueMutability(true)
-																	.setTimeTrackingPolicy(TimeTrackingPolicy.DO_NOT_TRACK_TIME).build();
+																	.build();
 		PersonPropertyId personPropertyId = TestPersonPropertyId.PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK;
 		builder.setPropertyDefinition(propertyDefinition);
 		builder.setPersonPropertyId(personPropertyId);
@@ -99,7 +99,7 @@ public class AT_PersonPropertyDefinitionInitialization {
 	public void testBuild() {
 		PersonPropertyDefinitionInitialization.Builder builder = PersonPropertyDefinitionInitialization.builder();
 		PropertyDefinition propertyDefinition = PropertyDefinition	.builder().setType(Integer.class).setDefaultValue(100).setPropertyValueMutability(true)
-																	.setTimeTrackingPolicy(TimeTrackingPolicy.DO_NOT_TRACK_TIME).build();
+																	.build();
 		PersonPropertyId personPropertyId = TestPersonPropertyId.PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK;
 		builder.setPropertyDefinition(propertyDefinition);
 		builder.setPersonPropertyId(personPropertyId);
@@ -131,7 +131,7 @@ public class AT_PersonPropertyDefinitionInitialization {
 	public void testSetPropertyDefinition() {
 		PersonPropertyDefinitionInitialization.Builder builder = PersonPropertyDefinitionInitialization.builder();
 		PropertyDefinition propertyDefinition = PropertyDefinition	.builder().setType(Double.class).setDefaultValue(100.0).setPropertyValueMutability(true)
-																	.setTimeTrackingPolicy(TimeTrackingPolicy.DO_NOT_TRACK_TIME).build();
+																	.build();
 		PersonPropertyId personPropertyId = TestPersonPropertyId.PERSON_PROPERTY_3_DOUBLE_MUTABLE_NO_TRACK;
 		builder.setPropertyDefinition(propertyDefinition);
 		builder.setPersonPropertyId(personPropertyId);
@@ -154,7 +154,7 @@ public class AT_PersonPropertyDefinitionInitialization {
 
 		PersonPropertyDefinitionInitialization.Builder builder = PersonPropertyDefinitionInitialization.builder();
 		PropertyDefinition propertyDefinition = PropertyDefinition	.builder().setType(Double.class).setDefaultValue(100.0).setPropertyValueMutability(true)
-																	.setTimeTrackingPolicy(TimeTrackingPolicy.DO_NOT_TRACK_TIME).build();
+																	.build();
 
 		builder.setPropertyDefinition(propertyDefinition);
 		builder.setPersonPropertyId(TestPersonPropertyId.PERSON_PROPERTY_3_DOUBLE_MUTABLE_NO_TRACK);
@@ -191,7 +191,7 @@ public class AT_PersonPropertyDefinitionInitialization {
 	public void testSetPersonPropertyId() {
 		PersonPropertyDefinitionInitialization.Builder builder = PersonPropertyDefinitionInitialization.builder();
 		PropertyDefinition propertyDefinition = PropertyDefinition	.builder().setType(Double.class).setDefaultValue(100.0).setPropertyValueMutability(true)
-																	.setTimeTrackingPolicy(TimeTrackingPolicy.DO_NOT_TRACK_TIME).build();
+																	.build();
 		PersonPropertyId personPropertyId = TestPersonPropertyId.PERSON_PROPERTY_3_DOUBLE_MUTABLE_NO_TRACK;
 		builder.setPropertyDefinition(propertyDefinition);
 		builder.setPersonPropertyId(personPropertyId);

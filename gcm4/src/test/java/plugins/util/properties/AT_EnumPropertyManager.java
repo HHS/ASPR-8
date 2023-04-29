@@ -35,7 +35,7 @@ public class AT_EnumPropertyManager {
 			RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(5102684240650614254L);
 
 			Color defaultValue = Color.YELLOW;
-			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Color.class).setDefaultValue(defaultValue).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
+			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Color.class).setDefaultValue(defaultValue).build();
 
 			EnumPropertyManager enumPropertyManager = new EnumPropertyManager(propertyDefinition, 0);
 
@@ -81,7 +81,7 @@ public class AT_EnumPropertyManager {
 			RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6716984272666831621L);
 
 			Color defaultValue = Color.YELLOW;
-			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Color.class).setDefaultValue(defaultValue).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
+			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Color.class).setDefaultValue(defaultValue).build();
 
 			EnumPropertyManager enumPropertyManager = new EnumPropertyManager(propertyDefinition, 0);
 
@@ -130,7 +130,7 @@ public class AT_EnumPropertyManager {
 
 			// we will first test the manager with an initial value of false
 			Color defaultValue = Color.RED;
-			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Color.class).setDefaultValue(defaultValue).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
+			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Color.class).setDefaultValue(defaultValue).build();
 
 			EnumPropertyManager enumPropertyManager = new EnumPropertyManager(propertyDefinition, 0);
 
@@ -150,7 +150,7 @@ public class AT_EnumPropertyManager {
 			assertEquals(newValue, (Color) enumPropertyManager.getPropertyValue(5));
 
 			// we will next test the manager with an initial value of true
-			propertyDefinition = PropertyDefinition.builder().setType(Color.class).setDefaultValue(defaultValue).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
+			propertyDefinition = PropertyDefinition.builder().setType(Color.class).setDefaultValue(defaultValue).build();
 
 			enumPropertyManager = new EnumPropertyManager(propertyDefinition, 0);
 
@@ -171,7 +171,7 @@ public class AT_EnumPropertyManager {
 
 			// precondition tests
 			// precondition tests
-			PropertyDefinition def = PropertyDefinition.builder().setType(Color.class).setDefaultValue(Color.YELLOW).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
+			PropertyDefinition def = PropertyDefinition.builder().setType(Color.class).setDefaultValue(Color.YELLOW).build();
 			EnumPropertyManager epm = new EnumPropertyManager(def, 0);
 
 			ContractException contractException = assertThrows(ContractException.class, () -> epm.removeId(-1));
@@ -217,7 +217,7 @@ public class AT_EnumPropertyManager {
 	public void testIncrementCapacity() {
 		Factory factory = TestPluginFactory.factory((c) -> {
 
-			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Color.class).setDefaultValue(Color.RED).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
+			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Color.class).setDefaultValue(Color.RED).build();
 
 			EnumPropertyManager enumPropertyManager = new EnumPropertyManager(propertyDefinition, 0);
 

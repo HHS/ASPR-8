@@ -35,7 +35,7 @@ public class AT_DoublePropertyManager {
 			RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(3799865640223574835L);
 
 			double defaultValue = 423.645;
-			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Double.class).setDefaultValue(defaultValue).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
+			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Double.class).setDefaultValue(defaultValue).build();
 
 			DoublePropertyManager doublePropertyManager = new DoublePropertyManager(propertyDefinition, 0);
 
@@ -81,7 +81,7 @@ public class AT_DoublePropertyManager {
 			RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(1599837792379294459L);
 
 			double defaultValue = 423.645;
-			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Double.class).setDefaultValue(defaultValue).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
+			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Double.class).setDefaultValue(defaultValue).build();
 
 			DoublePropertyManager doublePropertyManager = new DoublePropertyManager(propertyDefinition, 0);
 
@@ -131,7 +131,7 @@ public class AT_DoublePropertyManager {
 
 			// we will first test the manager with an initial value of false
 			double defaultValue = 6.2345345;
-			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Double.class).setDefaultValue(defaultValue).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
+			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Double.class).setDefaultValue(defaultValue).build();
 
 			DoublePropertyManager doublePropertyManager = new DoublePropertyManager(propertyDefinition, 0);
 
@@ -151,7 +151,7 @@ public class AT_DoublePropertyManager {
 			assertEquals(newValue, (Double) doublePropertyManager.getPropertyValue(5), 0);
 
 			// we will next test the manager with an initial value of true
-			propertyDefinition = PropertyDefinition.builder().setType(Double.class).setDefaultValue(defaultValue).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
+			propertyDefinition = PropertyDefinition.builder().setType(Double.class).setDefaultValue(defaultValue).build();
 
 			doublePropertyManager = new DoublePropertyManager(propertyDefinition, 0);
 
@@ -172,7 +172,7 @@ public class AT_DoublePropertyManager {
 
 			// precondition tests
 			ContractException contractException = assertThrows(ContractException.class, () -> {
-				PropertyDefinition def = PropertyDefinition.builder().setType(Double.class).setDefaultValue(4534.4).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
+				PropertyDefinition def = PropertyDefinition.builder().setType(Double.class).setDefaultValue(4534.4).build();
 				DoublePropertyManager dpm = new DoublePropertyManager(def, 0);
 				dpm.removeId(-1);
 			});
@@ -214,7 +214,7 @@ public class AT_DoublePropertyManager {
 	public void testIncrementCapacity() {
 		Factory factory = TestPluginFactory.factory((c) -> {
 
-			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Double.class).setDefaultValue(2.42).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
+			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Double.class).setDefaultValue(2.42).build();
 
 			DoublePropertyManager doublePropertyManager = new DoublePropertyManager(propertyDefinition, 0);
 

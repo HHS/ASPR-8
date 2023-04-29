@@ -64,7 +64,10 @@ public class AT_AbstractIndexedPropertyManager {
 	public void testSetPropertyValue() {
 		Factory factory = TestPluginFactory.factory((c) -> {
 
-			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(false).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
+			PropertyDefinition propertyDefinition = PropertyDefinition.builder()//
+					.setType(Boolean.class)//
+					.setDefaultValue(false)//					
+					.build();
 
 			// precondition tests
 			SimplePropertyManager simplePropertyManager = new SimplePropertyManager(propertyDefinition, 0);
@@ -81,7 +84,8 @@ public class AT_AbstractIndexedPropertyManager {
 	public void testRemoveId() {
 		Factory factory = TestPluginFactory.factory((c) -> {
 			// precondition tests
-			PropertyDefinition def = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(true).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
+			PropertyDefinition def = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(true)//
+					.build();
 			SimplePropertyManager spm = new SimplePropertyManager(def, 0);
 
 			ContractException contractException = assertThrows(ContractException.class, () -> spm.removeId(-1));
@@ -95,7 +99,8 @@ public class AT_AbstractIndexedPropertyManager {
 	public void testIncrementCapacity() {
 		Factory factory = TestPluginFactory.factory((c) -> {
 
-			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(false).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
+			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(false)//
+					.build();
 
 			SimplePropertyManager simplePropertyManager = new SimplePropertyManager(propertyDefinition, 0);
 

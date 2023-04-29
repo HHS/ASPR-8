@@ -36,7 +36,7 @@ public class AT_BooleanPropertyManager {
 		Factory factory = TestPluginFactory.factory((c) -> {
 			RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(4879223247393954289L);
 
-			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(false).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
+			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(false).build();
 
 			BooleanPropertyManager booleanPropertyManager = new BooleanPropertyManager(propertyDefinition, 0);
 
@@ -81,7 +81,7 @@ public class AT_BooleanPropertyManager {
 		Factory factory = TestPluginFactory.factory((c) -> {
 			RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(4827517950755837724L);
 
-			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(false).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
+			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(false).build();
 
 			BooleanPropertyManager booleanPropertyManager = new BooleanPropertyManager(propertyDefinition, 0);
 
@@ -125,7 +125,7 @@ public class AT_BooleanPropertyManager {
 		Factory factory = TestPluginFactory.factory((c) -> {
 
 			// we will first test the manager with an initial value of false
-			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(false).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
+			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(false).build();
 
 			BooleanPropertyManager booleanPropertyManager = new BooleanPropertyManager(propertyDefinition, 0);
 
@@ -145,7 +145,7 @@ public class AT_BooleanPropertyManager {
 			assertTrue((Boolean) booleanPropertyManager.getPropertyValue(5));
 
 			// we will next test the manager with an initial value of true
-			propertyDefinition = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(true).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
+			propertyDefinition = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(true).build();
 
 			booleanPropertyManager = new BooleanPropertyManager(propertyDefinition, 0);
 
@@ -165,7 +165,7 @@ public class AT_BooleanPropertyManager {
 			assertFalse((Boolean) booleanPropertyManager.getPropertyValue(5));
 
 			// precondition tests
-			PropertyDefinition def = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(true).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
+			PropertyDefinition def = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(true).build();
 			BooleanPropertyManager bpm = new BooleanPropertyManager(def, 0);
 
 			ContractException contractException = assertThrows(ContractException.class, () -> bpm.removeId(-1));
@@ -207,7 +207,7 @@ public class AT_BooleanPropertyManager {
 	public void testIncrementCapacity() {
 		Factory factory = TestPluginFactory.factory((c) -> {
 
-			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(false).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
+			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(false).build();
 
 			BooleanPropertyManager booleanPropertyManager = new BooleanPropertyManager(propertyDefinition, 0);
 

@@ -7,7 +7,6 @@ import org.apache.commons.math3.random.RandomGenerator;
 
 import plugins.groups.support.GroupPropertyId;
 import plugins.util.properties.PropertyDefinition;
-import plugins.util.properties.TimeTrackingPolicy;
 
 public enum TestGroupPropertyId implements GroupPropertyId {
 
@@ -17,7 +16,6 @@ public enum TestGroupPropertyId implements GroupPropertyId {
 								.setType(Boolean.class)//
 								.setDefaultValue(false)//
 								.setPropertyValueMutability(true)//
-								.setTimeTrackingPolicy(TimeTrackingPolicy.DO_NOT_TRACK_TIME)//
 								.build()), //
 	GROUP_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK(
 			TestGroupTypeId.GROUP_TYPE_1, //
@@ -25,7 +23,6 @@ public enum TestGroupPropertyId implements GroupPropertyId {
 								.setType(Integer.class)//
 								.setDefaultValue(0)//
 								.setPropertyValueMutability(true)//
-								.setTimeTrackingPolicy(TimeTrackingPolicy.DO_NOT_TRACK_TIME)//
 								.build() //
 	), //
 	GROUP_PROPERTY_1_3_DOUBLE_MUTABLE_NO_TRACK(
@@ -34,7 +31,6 @@ public enum TestGroupPropertyId implements GroupPropertyId {
 								.setType(Double.class)//
 								.setDefaultValue(0.0)//
 								.setPropertyValueMutability(true)//
-								.setTimeTrackingPolicy(TimeTrackingPolicy.DO_NOT_TRACK_TIME)//
 								.build() //
 	), //
 	GROUP_PROPERTY_2_1_BOOLEAN_MUTABLE_TRACK(
@@ -43,7 +39,6 @@ public enum TestGroupPropertyId implements GroupPropertyId {
 								.setType(Boolean.class)//
 								.setDefaultValue(false)//
 								.setPropertyValueMutability(true)//
-								.setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME)//
 								.build() //
 	), //
 	GROUP_PROPERTY_2_2_INTEGER_MUTABLE_TRACK(
@@ -52,7 +47,6 @@ public enum TestGroupPropertyId implements GroupPropertyId {
 								.setType(Integer.class)//
 								.setDefaultValue(0)//
 								.setPropertyValueMutability(true)//
-								.setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME)//
 								.build() //
 	), //
 	GROUP_PROPERTY_2_3_DOUBLE_MUTABLE_TRACK(
@@ -61,7 +55,6 @@ public enum TestGroupPropertyId implements GroupPropertyId {
 								.setType(Double.class)//
 								.setDefaultValue(0.0)//
 								.setPropertyValueMutability(true)//
-								.setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME)//
 								.build() //
 	), //
 	GROUP_PROPERTY_3_1_BOOLEAN_IMMUTABLE_NO_TRACK(
@@ -70,7 +63,6 @@ public enum TestGroupPropertyId implements GroupPropertyId {
 								.setType(Boolean.class)//
 								.setDefaultValue(false)//
 								.setPropertyValueMutability(false)//
-								.setTimeTrackingPolicy(TimeTrackingPolicy.DO_NOT_TRACK_TIME)//
 								.build() //
 	), //
 	GROUP_PROPERTY_3_2_INTEGER_IMMUTABLE_NO_TRACK(
@@ -79,7 +71,6 @@ public enum TestGroupPropertyId implements GroupPropertyId {
 								.setType(Integer.class)//
 								.setDefaultValue(0)//
 								.setPropertyValueMutability(false)//
-								.setTimeTrackingPolicy(TimeTrackingPolicy.DO_NOT_TRACK_TIME)//
 								.build() //
 	), //
 	GROUP_PROPERTY_3_3_DOUBLE_IMMUTABLE_NO_TRACK(
@@ -88,7 +79,6 @@ public enum TestGroupPropertyId implements GroupPropertyId {
 								.setType(Double.class)//
 								.setDefaultValue(0.0)//
 								.setPropertyValueMutability(false)//
-								.setTimeTrackingPolicy(TimeTrackingPolicy.DO_NOT_TRACK_TIME)//
 								.build() //
 	);//
 
@@ -171,7 +161,7 @@ public enum TestGroupPropertyId implements GroupPropertyId {
 	}
 
 	/*
-	* Returns the next GroupPropertyId with wrap around
+	 * Returns the next GroupPropertyId with wrap around
 	 */
 	public TestGroupPropertyId next() {
 		int index = this.ordinal();
@@ -179,7 +169,7 @@ public enum TestGroupPropertyId implements GroupPropertyId {
 		index %= TestGroupPropertyId.values().length;
 		return TestGroupPropertyId.values()[index];
 	}
-	
+
 	/**
 	 * Returns a randomly selected TestGroupPropertyId.
 	 * 

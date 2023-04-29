@@ -36,7 +36,8 @@ public class AT_FloatPropertyManager {
 			RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8486538414190886901L);
 
 			float defaultValue = 423.645F;
-			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Float.class).setDefaultValue(defaultValue).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
+			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Float.class).setDefaultValue(defaultValue)
+					.build();
 
 			FloatPropertyManager floatPropertyManager = new FloatPropertyManager(propertyDefinition, 0);
 
@@ -82,7 +83,7 @@ public class AT_FloatPropertyManager {
 			RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6087185710247012204L);
 
 			float defaultValue = 423.645F;
-			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Float.class).setDefaultValue(defaultValue).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
+			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Float.class).setDefaultValue(defaultValue).build();
 
 			FloatPropertyManager floatPropertyManager = new FloatPropertyManager(propertyDefinition, 0);
 
@@ -132,7 +133,7 @@ public class AT_FloatPropertyManager {
 
 			// we will first test the manager with an initial value of false
 			float defaultValue = 6.2345345F;
-			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Float.class).setDefaultValue(defaultValue).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
+			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Float.class).setDefaultValue(defaultValue).build();
 
 			FloatPropertyManager floatPropertyManager = new FloatPropertyManager(propertyDefinition, 0);
 
@@ -152,7 +153,7 @@ public class AT_FloatPropertyManager {
 			assertEquals(newValue, (Float) floatPropertyManager.getPropertyValue(5), 0);
 
 			// we will next test the manager with an initial value of true
-			propertyDefinition = PropertyDefinition.builder().setType(Float.class).setDefaultValue(defaultValue).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
+			propertyDefinition = PropertyDefinition.builder().setType(Float.class).setDefaultValue(defaultValue).build();
 
 			floatPropertyManager = new FloatPropertyManager(propertyDefinition, 0);
 
@@ -172,7 +173,7 @@ public class AT_FloatPropertyManager {
 			assertEquals(newValue, (Float) floatPropertyManager.getPropertyValue(5), 0);
 
 			// precondition tests
-			PropertyDefinition def = PropertyDefinition.builder().setType(Float.class).setDefaultValue(4.5F).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
+			PropertyDefinition def = PropertyDefinition.builder().setType(Float.class).setDefaultValue(4.5F).build();
 			FloatPropertyManager fpm = new FloatPropertyManager(def, 0);
 
 			ContractException contractException = assertThrows(ContractException.class, () -> fpm.removeId(-1));
@@ -212,7 +213,7 @@ public class AT_FloatPropertyManager {
 	public void testIncrementCapacity() {
 		Factory factory = TestPluginFactory.factory((c) -> {
 
-			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Float.class).setDefaultValue(234.42F).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
+			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Float.class).setDefaultValue(234.42F).build();
 
 			FloatPropertyManager floatPropertyManager = new FloatPropertyManager(propertyDefinition, 0);
 

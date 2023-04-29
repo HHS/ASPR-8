@@ -26,20 +26,48 @@ public final class PropertyDefinition {
 
 		private Object defaultValue = null;
 
-		private TimeTrackingPolicy timeTrackingPolicy = TimeTrackingPolicy.DO_NOT_TRACK_TIME;
-
 		public Data() {
 		}
 
 		public Data(Data data) {
 			type = data.type;
-
 			propertyValuesAreMutable = data.propertyValuesAreMutable;
-
 			defaultValue = data.defaultValue;
+		}
 
-			timeTrackingPolicy = data.timeTrackingPolicy;
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + ((defaultValue == null) ? 0 : defaultValue.hashCode());
+			result = prime * result + (propertyValuesAreMutable ? 1231 : 1237);
+			result = prime * result +  type.hashCode();
+			return result;
+		}
 
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (!(obj instanceof Data)) {
+				return false;
+			}
+			Data other = (Data) obj;
+			if (defaultValue == null) {
+				if (other.defaultValue != null) {
+					return false;
+				}
+			} else if (!defaultValue.equals(other.defaultValue)) {
+				return false;
+			}
+			if (propertyValuesAreMutable != other.propertyValuesAreMutable) {
+				return false;
+			}
+			if (!type.equals(other.type)) {
+				return false;
+			}
+			return true;
 		}
 		
 		
@@ -56,6 +84,18 @@ public final class PropertyDefinition {
 
 		private Builder() {
 		}
+		
+		private void validate() {
+			if (data.type == null) {
+				throw new ContractException(PropertyError.NULL_PROPERTY_TYPE);
+			}
+
+			if (data.defaultValue != null) {
+				if (!data.type.isInstance(data.defaultValue)) {
+					throw new ContractException(PropertyError.INCOMPATIBLE_DEFAULT_VALUE);
+				}
+			}
+		}
 
 		/**
 		 * Builds the property definition
@@ -69,6 +109,7 @@ public final class PropertyDefinition {
 		 * 
 		 */
 		public PropertyDefinition build() {
+			validate();
 			return new PropertyDefinition(new Data(data));
 		}
 
@@ -98,44 +139,13 @@ public final class PropertyDefinition {
 			return this;
 		}
 
-		/**
-		 * Sets the {@linkplain TimeTrackingPolicy}. Default value is
-		 * {@link TimeTrackingPolicy#DO_NOT_TRACK_TIME}
-		 */
-		public Builder setTimeTrackingPolicy(TimeTrackingPolicy timeTrackingPolicy) {
-			data.timeTrackingPolicy = timeTrackingPolicy;
-			return this;
-		}
 
 	}
 
-	private final Class<?> type;
-
-	private final boolean propertyValuesAreMutable;
-
-	private final Object defaultValue;
-
-	private final TimeTrackingPolicy timeTrackingPolicy;
+	private final Data data;
 
 	private PropertyDefinition(Data data) {
-		if (data.type == null) {
-			throw new ContractException(PropertyError.NULL_PROPERTY_TYPE);
-		}
-
-		if (data.defaultValue != null) {
-			if (!data.type.isInstance(data.defaultValue)) {
-				throw new ContractException(PropertyError.INCOMPATIBLE_DEFAULT_VALUE);
-			}
-		}
-
-		this.type = data.type;
-
-		this.propertyValuesAreMutable = data.propertyValuesAreMutable;
-
-		this.defaultValue = data.defaultValue;
-
-		this.timeTrackingPolicy = data.timeTrackingPolicy;
-
+		this.data = data;
 	}
 
 	/**
@@ -148,10 +158,10 @@ public final class PropertyDefinition {
 	 * of the plugins.
 	 */
 	public Optional<Object> getDefaultValue() {
-		if (defaultValue == null) {
+		if (data.defaultValue == null) {
 			return Optional.empty();
 		}
-		return Optional.of(defaultValue);
+		return Optional.of(data.defaultValue);
 	}
 
 	/**
@@ -163,7 +173,7 @@ public final class PropertyDefinition {
 	 *
 	 */
 	public Class<?> getType() {
-		return type;
+		return data.type;
 	}
 
 	/**
@@ -177,14 +187,7 @@ public final class PropertyDefinition {
 	 * constant.
 	 */
 	public boolean propertyValuesAreMutable() {
-		return propertyValuesAreMutable;
-	}
-
-	/**
-	 * Returns the time tracking policy for the property.
-	 */
-	public TimeTrackingPolicy getTimeTrackingPolicy() {
-		return timeTrackingPolicy;
+		return data.propertyValuesAreMutable;
 	}
 
 	/**
@@ -198,13 +201,11 @@ public final class PropertyDefinition {
 	public String toString() {
 		StringBuilder builder2 = new StringBuilder();
 		builder2.append("PropertyDefinition [type=");
-		builder2.append(type);
+		builder2.append(data.type);
 		builder2.append(", propertyValuesAreMutable=");
-		builder2.append(propertyValuesAreMutable);
+		builder2.append(data.propertyValuesAreMutable);
 		builder2.append(", defaultValue=");
-		builder2.append(defaultValue);
-		builder2.append(", timeTrackingPolicy=");
-		builder2.append(timeTrackingPolicy);
+		builder2.append(data.defaultValue);		
 		builder2.append("]");
 		return builder2.toString();
 	}
@@ -213,10 +214,7 @@ public final class PropertyDefinition {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((defaultValue == null) ? 0 : defaultValue.hashCode());
-		result = prime * result + (propertyValuesAreMutable ? 1231 : 1237);
-		result = prime * result + ((timeTrackingPolicy == null) ? 0 : timeTrackingPolicy.hashCode());
-		result = prime * result + ((type == null) ? 0 : type.hashCode());
+		result = prime * result + ((data == null) ? 0 : data.hashCode());
 		return result;
 	}
 
@@ -229,28 +227,14 @@ public final class PropertyDefinition {
 			return false;
 		}
 		PropertyDefinition other = (PropertyDefinition) obj;
-		if (defaultValue == null) {
-			if (other.defaultValue != null) {
-				return false;
-			}
-		} else if (!defaultValue.equals(other.defaultValue)) {
-			return false;
-		}
-		if (propertyValuesAreMutable != other.propertyValuesAreMutable) {
-			return false;
-		}
-		if (timeTrackingPolicy != other.timeTrackingPolicy) {
-			return false;
-		}
-		if (type == null) {
-			if (other.type != null) {
-				return false;
-			}
-		} else if (!type.equals(other.type)) {
+		
+		if (!data.equals(other.data)) {
 			return false;
 		}
 		return true;
 	}
+
+	
 	
 	
 }

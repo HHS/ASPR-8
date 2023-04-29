@@ -35,7 +35,7 @@ public class AT_ObjectPropertyManager {
 			RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(3707927404057976793L);
 
 			String defaultValue = "YELLOW";
-			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(String.class).setDefaultValue(defaultValue).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
+			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(String.class).setDefaultValue(defaultValue).build();
 
 			ObjectPropertyManager objectPropertyManager = new ObjectPropertyManager(propertyDefinition, 0);
 
@@ -91,7 +91,7 @@ public class AT_ObjectPropertyManager {
 			RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6268125375257441705L);
 
 			String defaultValue = "YELLOW";
-			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(String.class).setDefaultValue(defaultValue).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
+			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(String.class).setDefaultValue(defaultValue).build();
 
 			ObjectPropertyManager objectPropertyManager = new ObjectPropertyManager( propertyDefinition, 0);
 
@@ -141,7 +141,7 @@ public class AT_ObjectPropertyManager {
 
 			// we will first test the manager with an initial value of false
 			String defaultValue = "RED";
-			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(String.class).setDefaultValue(defaultValue).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
+			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(String.class).setDefaultValue(defaultValue).build();
 
 			ObjectPropertyManager objectPropertyManager = new ObjectPropertyManager(propertyDefinition, 0);
 
@@ -160,7 +160,7 @@ public class AT_ObjectPropertyManager {
 			assertEquals(defaultValue, (String) objectPropertyManager.getPropertyValue(5));
 
 			// we will next test the manager with an initial value of true
-			propertyDefinition = PropertyDefinition.builder().setType(String.class).setDefaultValue(defaultValue).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
+			propertyDefinition = PropertyDefinition.builder().setType(String.class).setDefaultValue(defaultValue).build();
 
 			objectPropertyManager = new ObjectPropertyManager(propertyDefinition, 0);
 
@@ -179,7 +179,7 @@ public class AT_ObjectPropertyManager {
 			assertEquals(defaultValue, (String) objectPropertyManager.getPropertyValue(5));
 
 			// precondition tests
-			PropertyDefinition def = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(true).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
+			PropertyDefinition def = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(true).build();
 			ObjectPropertyManager opm = new ObjectPropertyManager( def, 0);
 
 			ContractException contractException = assertThrows(ContractException.class, () -> opm.removeId(-1));
@@ -214,7 +214,7 @@ public class AT_ObjectPropertyManager {
 	public void testIncrementCapacity() {
 		Factory factory = TestPluginFactory.factory((c) -> {
 
-			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(234).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
+			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(234).build();
 
 			ObjectPropertyManager objectPropertyManager = new ObjectPropertyManager(propertyDefinition, 0);
 

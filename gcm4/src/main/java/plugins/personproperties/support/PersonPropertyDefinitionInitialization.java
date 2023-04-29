@@ -25,9 +25,10 @@ import util.errors.ContractException;
 public final class PersonPropertyDefinitionInitialization {
 
 	private static class Data {
-		PersonPropertyId personPropertyId;
-		PropertyDefinition propertyDefinition;
-		List<Pair<PersonId, Object>> propertyValues = new ArrayList<>();
+		private PersonPropertyId personPropertyId;
+		private PropertyDefinition propertyDefinition;
+		private boolean trackTimes;
+		private List<Pair<PersonId, Object>> propertyValues = new ArrayList<>();
 
 		public Data() {
 		}
@@ -36,6 +37,7 @@ public final class PersonPropertyDefinitionInitialization {
 			personPropertyId = data.personPropertyId;
 			propertyDefinition = data.propertyDefinition;
 			propertyValues.addAll(data.propertyValues);
+			trackTimes = data.trackTimes;
 		}
 	}
 
@@ -130,6 +132,14 @@ public final class PersonPropertyDefinitionInitialization {
 			data.propertyDefinition = propertyDefinition;
 			return this;
 		}
+		
+		/**
+		 * Sets the time tracking policy. Defaults to false;
+		 */
+		public Builder setTrackTimes(boolean trackTimes) {			
+			data.trackTimes = trackTimes;
+			return this;
+		}
 
 		/**
 		 * Adds a property value
@@ -177,6 +187,13 @@ public final class PersonPropertyDefinitionInitialization {
 	 */
 	public List<Pair<PersonId, Object>> getPropertyValues() {
 		return Collections.unmodifiableList(data.propertyValues);
+	}
+	
+	/**
+	 * Returns the time tracking policy.
+	 */
+	public boolean trackTimes() {
+		return data.trackTimes;
 	}
 
 }

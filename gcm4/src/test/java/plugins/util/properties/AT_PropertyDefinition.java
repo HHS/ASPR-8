@@ -65,13 +65,11 @@ public class AT_PropertyDefinition {
 		}
 
 		boolean propertyValuesAreMutability = randomGenerator.nextBoolean();
-		TimeTrackingPolicy timeTrackingPolicy = TimeTrackingPolicy.values()[randomGenerator.nextInt(TimeTrackingPolicy.values().length)];
 
 		return PropertyDefinition	.builder()//
 									.setType(type)//
 									.setDefaultValue(defaultValue)//
-									.setPropertyValueMutability(propertyValuesAreMutability)//
-									.setTimeTrackingPolicy(timeTrackingPolicy)//
+									.setPropertyValueMutability(propertyValuesAreMutability)//									
 									.build();//
 
 	}
@@ -90,8 +88,7 @@ public class AT_PropertyDefinition {
 			if (propertyDefinition.getDefaultValue().isPresent() && result.getDefaultValue().isPresent()) {
 				different |= !result.getDefaultValue().get().equals(propertyDefinition.getDefaultValue().get());
 			}
-
-			different |= !result.getTimeTrackingPolicy().equals(propertyDefinition.getTimeTrackingPolicy());
+			
 			different |= !result.getType().equals(propertyDefinition.getType());
 			if (different) {
 				return result;
@@ -110,8 +107,7 @@ public class AT_PropertyDefinition {
 		}
 
 		return builder	.setType(propertyDefinition.getType())//
-						.setPropertyValueMutability(propertyDefinition.propertyValuesAreMutable())//
-						.setTimeTrackingPolicy(propertyDefinition.getTimeTrackingPolicy())//
+						.setPropertyValueMutability(propertyDefinition.propertyValuesAreMutable())//						
 						.build();//
 	}
 
@@ -185,24 +181,6 @@ public class AT_PropertyDefinition {
 
 	}
 
-	@Test
-	@UnitTestMethod(target = PropertyDefinition.class, name = "getTimeTrackingPolicy", args = {})
-	public void testGetTimeTrackingPolicy() {
-
-		/*
-		 * Show that the TimeTrackingPolicy value used to form the property
-		 * definition is returned by the property definition
-		 */
-		for (TimeTrackingPolicy timeTrackingPolicy : TimeTrackingPolicy.values()) {
-			PropertyDefinition propertyDefinition = PropertyDefinition	.builder()//
-																		.setType(String.class)//
-																		.setDefaultValue("defaultValue")//
-																		.setTimeTrackingPolicy(timeTrackingPolicy)//
-																		.build();//
-			assertEquals(timeTrackingPolicy, propertyDefinition.getTimeTrackingPolicy());
-		}
-
-	}
 
 	@Test
 	@UnitTestMethod(target = PropertyDefinition.class, name = "getType", args = {})
@@ -300,43 +278,37 @@ public class AT_PropertyDefinition {
 		PropertyDefinition propertyDefinition1 = PropertyDefinition	.builder()//
 																	.setType(String.class)//
 																	.setDefaultValue("asdf")//
-																	.setPropertyValueMutability(true)//
-																	.setTimeTrackingPolicy(TimeTrackingPolicy.DO_NOT_TRACK_TIME)//
+																	.setPropertyValueMutability(true)//																	
 																	.build();//
 
 		PropertyDefinition propertyDefinition2 = PropertyDefinition	.builder()//
 																	.setType(String.class)//
 																	.setDefaultValue("asdf")//
-																	.setPropertyValueMutability(true)//
-																	.setTimeTrackingPolicy(TimeTrackingPolicy.DO_NOT_TRACK_TIME)//
+																	.setPropertyValueMutability(true)//																	
 																	.build();//
 
 		PropertyDefinition propertyDefinition3 = PropertyDefinition	.builder()//
 																	.setType(String.class)//
 																	.setDefaultValue("xxx")//
-																	.setPropertyValueMutability(true)//
-																	.setTimeTrackingPolicy(TimeTrackingPolicy.DO_NOT_TRACK_TIME)//
+																	.setPropertyValueMutability(true)//																	
 																	.build();//
 
 		PropertyDefinition propertyDefinition4 = PropertyDefinition	.builder()//
 																	.setType(String.class)//
 																	.setDefaultValue("asdf")//
-																	.setPropertyValueMutability(false)//
-																	.setTimeTrackingPolicy(TimeTrackingPolicy.DO_NOT_TRACK_TIME)//
+																	.setPropertyValueMutability(false)//																	
 																	.build();//
 
 		PropertyDefinition propertyDefinition5 = PropertyDefinition	.builder()//
 																	.setType(String.class)//
 																	.setDefaultValue("asdf")//
-																	.setPropertyValueMutability(true)//
-																	.setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME)//
+																	.setPropertyValueMutability(true)//																	
 																	.build();//
 
 		PropertyDefinition propertyDefinition6 = PropertyDefinition	.builder()//
 																	.setType(Integer.class)//
 																	.setDefaultValue(45)//
-																	.setPropertyValueMutability(true)//
-																	.setTimeTrackingPolicy(TimeTrackingPolicy.DO_NOT_TRACK_TIME)//
+																	.setPropertyValueMutability(true)//																	
 																	.build();//
 
 		assertEquals(propertyDefinition1, propertyDefinition1);
@@ -404,15 +376,13 @@ public class AT_PropertyDefinition {
 		PropertyDefinition propertyDefinition1 = PropertyDefinition	.builder()//
 																	.setType(String.class)//
 																	.setDefaultValue("asdf")//
-																	.setPropertyValueMutability(true)//
-																	.setTimeTrackingPolicy(TimeTrackingPolicy.DO_NOT_TRACK_TIME)//
+																	.setPropertyValueMutability(true)//																	
 																	.build();//
 
 		PropertyDefinition propertyDefinition2 = PropertyDefinition	.builder()//
 																	.setType(String.class)//
 																	.setDefaultValue("asdf")//
-																	.setPropertyValueMutability(true)//
-																	.setTimeTrackingPolicy(TimeTrackingPolicy.DO_NOT_TRACK_TIME)//
+																	.setPropertyValueMutability(true)//																	
 																	.build();//
 
 		assertEquals(propertyDefinition1.hashCode(), propertyDefinition2.hashCode());
@@ -517,37 +487,6 @@ public class AT_PropertyDefinition {
 												.setPropertyValueMutability(false).build();//
 
 		assertFalse(propertyDefinition.propertyValuesAreMutable());
-
-	}
-
-	@Test
-	@UnitTestMethod(target = PropertyDefinition.Builder.class, name = "setTimeTrackingPolicy", args = { TimeTrackingPolicy.class })
-	public void testSetTimeTrackingPolicy() {
-
-		PropertyDefinition propertyDefinition = PropertyDefinition	.builder()//
-																	.setType(Integer.class)//
-																	.setDefaultValue(10)//
-																	.setTimeTrackingPolicy(TimeTrackingPolicy.DO_NOT_TRACK_TIME)//
-																	.build();//
-
-		assertEquals(TimeTrackingPolicy.DO_NOT_TRACK_TIME, propertyDefinition.getTimeTrackingPolicy());
-
-		propertyDefinition = PropertyDefinition	.builder()//
-												.setType(Integer.class)//
-												.setDefaultValue(10)//
-												.setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME)//
-												.build();//
-
-		assertEquals(TimeTrackingPolicy.TRACK_TIME, propertyDefinition.getTimeTrackingPolicy());
-
-		// show that the default is DO_NOT_TRACK_TIME
-		propertyDefinition = PropertyDefinition	.builder()//
-												.setType(Integer.class)//
-												.setDefaultValue(10)//
-												// .setTimeTrackingPolicy(TimeTrackingPolicy.DO_NOT_TRACK_TIME)//
-												.build();//
-
-		assertEquals(TimeTrackingPolicy.DO_NOT_TRACK_TIME, propertyDefinition.getTimeTrackingPolicy());
 
 	}
 

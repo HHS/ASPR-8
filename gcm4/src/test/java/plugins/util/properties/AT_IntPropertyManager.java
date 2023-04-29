@@ -36,7 +36,7 @@ public class AT_IntPropertyManager {
 			RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7951361060252638380L);
 
 			int defaultValue = 423;
-			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(defaultValue).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
+			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(defaultValue).build();
 
 			IntPropertyManager intPropertyManager = new IntPropertyManager(propertyDefinition, 0);
 
@@ -83,7 +83,7 @@ public class AT_IntPropertyManager {
 		@Override
 		public void init(DataManagerContext dataManagerContext) {
 			super.init(dataManagerContext);
-			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(342).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
+			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(342).build();
 			intPropertyManager = new IntPropertyManager(propertyDefinition, 0);
 		}
 	}
@@ -95,7 +95,7 @@ public class AT_IntPropertyManager {
 			RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(5297426971018191882L);
 
 			int defaultValue = 423;
-			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(defaultValue).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
+			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(defaultValue).build();
 
 			IntPropertyManager intPropertyManager = new IntPropertyManager(propertyDefinition, 0);
 
@@ -143,7 +143,7 @@ public class AT_IntPropertyManager {
 
 			// we will first test the manager with an initial value of 6
 			int defaultValue = 6;
-			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(defaultValue).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
+			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(defaultValue).build();
 
 			IntPropertyManager intPropertyManager = new IntPropertyManager(propertyDefinition, 0);
 
@@ -163,7 +163,7 @@ public class AT_IntPropertyManager {
 			assertEquals(newValue, ((Integer) intPropertyManager.getPropertyValue(5)).intValue());
 
 			// we will next test the manager with an initial value of true
-			propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(defaultValue).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
+			propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(defaultValue).build();
 
 			intPropertyManager = new IntPropertyManager(propertyDefinition, 0);
 
@@ -183,7 +183,7 @@ public class AT_IntPropertyManager {
 			assertEquals(newValue, ((Integer) intPropertyManager.getPropertyValue(5)).intValue(), 0);
 
 			// precondition tests
-			PropertyDefinition def = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(3).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
+			PropertyDefinition def = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(3).build();
 			IntPropertyManager ipm = new IntPropertyManager(def, 0);
 
 			ContractException contractException = assertThrows(ContractException.class, () -> ipm.removeId(-1));
@@ -223,7 +223,7 @@ public class AT_IntPropertyManager {
 	public void testIncrementCapacity() {
 		Factory factory = TestPluginFactory.factory((c) -> {
 
-			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(234).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
+			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(234).build();
 
 			IntPropertyManager intPropertyManager = new IntPropertyManager(propertyDefinition, 0);
 

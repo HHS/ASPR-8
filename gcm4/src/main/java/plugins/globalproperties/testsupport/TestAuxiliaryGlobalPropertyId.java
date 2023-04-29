@@ -4,7 +4,6 @@ import org.apache.commons.math3.random.RandomGenerator;
 
 import plugins.globalproperties.support.GlobalPropertyId;
 import plugins.util.properties.PropertyDefinition;
-import plugins.util.properties.TimeTrackingPolicy;
 
 /**
  * Enumeration that provides a variety of global property definitions for testing purposes
@@ -16,7 +15,6 @@ public enum TestAuxiliaryGlobalPropertyId implements GlobalPropertyId {
 								.setType(Boolean.class)//
 								.setDefaultValue(false)//
 								.setPropertyValueMutability(true)//
-								.setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME)//
 								.build() //
 	), //
 	GLOBAL_AUX_PROPERTY_2_INTEGER_MUTABLE(
@@ -24,7 +22,6 @@ public enum TestAuxiliaryGlobalPropertyId implements GlobalPropertyId {
 								.setType(Integer.class)//
 								.setDefaultValue(0)//
 								.setPropertyValueMutability(true)//
-								.setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME)//
 								.build() //
 	), //
 	GLOBAL_AUX_PROPERTY_3_DOUBLE_MUTABLE(
@@ -32,7 +29,6 @@ public enum TestAuxiliaryGlobalPropertyId implements GlobalPropertyId {
 								.setType(Double.class)//
 								.setDefaultValue(0.0)//
 								.setPropertyValueMutability(true)//
-								.setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME)//
 								.build() //
 	), //
 	GLOBAL_AUX_PROPERTY_4_BOOLEAN_IMMUTABLE(
@@ -40,7 +36,6 @@ public enum TestAuxiliaryGlobalPropertyId implements GlobalPropertyId {
 								.setType(Boolean.class)//
 								.setDefaultValue(false)//
 								.setPropertyValueMutability(false)//
-								.setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME)//
 								.build() //
 	), //
 	GLOBAL_AUX_PROPERTY_5_INTEGER_IMMUTABLE(
@@ -48,7 +43,6 @@ public enum TestAuxiliaryGlobalPropertyId implements GlobalPropertyId {
 								.setType(Integer.class)//
 								.setDefaultValue(0)//
 								.setPropertyValueMutability(false)//
-								.setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME)//
 								.build() //
 	), //
 	GLOBAL_AUX_PROPERTY_6_DOUBLE_IMMUTABLE(
@@ -56,7 +50,6 @@ public enum TestAuxiliaryGlobalPropertyId implements GlobalPropertyId {
 								.setType(Double.class)//
 								.setDefaultValue(0.0)//
 								.setPropertyValueMutability(false)//
-								.setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME)//
 								.build() //
 	);//
 

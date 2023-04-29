@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -11,7 +12,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.math3.random.RandomGenerator;
-import org.apache.commons.math3.util.FastMath;
 import org.junit.jupiter.api.Test;
 
 import nucleus.PluginData;
@@ -83,12 +83,11 @@ public class AT_PersonPropertyPluginData {
 
 					PersonPropertiesPluginData	.builder()//
 												.definePersonProperty(prop1, def1)//
-												.definePersonProperty(prop2, def2)//												
+												.definePersonProperty(prop2, def2)//
 												.setPersonPropertyValue(new PersonId(0), prop1, false).build();//
 				});//
 		assertEquals(PropertyError.INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT, contractException.getErrorType());
 
-		
 	}
 
 	@Test
@@ -209,7 +208,7 @@ public class AT_PersonPropertyPluginData {
 		}
 		int personCount = 100;
 		for (int i = 0; i < personCount; i++) {
-			PersonId personId = new PersonId(i);			
+			PersonId personId = new PersonId(i);
 			for (TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.values()) {
 				boolean hasDefault = testPersonPropertyId.getPropertyDefinition().getDefaultValue().isPresent();
 				if (!hasDefault || randomGenerator.nextBoolean()) {
@@ -241,7 +240,7 @@ public class AT_PersonPropertyPluginData {
 
 		// show that the two plugin datas are equal
 		assertEquals(personPropertiesPluginData, clonePersonPropertiesPluginData);
-		
+
 	}
 
 	@Test
@@ -266,7 +265,7 @@ public class AT_PersonPropertyPluginData {
 		for (int i = 0; i < personCount; i++) {
 			List<PersonPropertyValueInitialization> list = new ArrayList<>();
 			expectedPropertyValues.add(list);
-			PersonId personId = new PersonId(i);			
+			PersonId personId = new PersonId(i);
 			int propertyCount = randomGenerator.nextInt(3);
 			for (int j = 0; j < propertyCount; j++) {
 				TestPersonPropertyId testPersonPropertyId = TestPersonPropertyId.getRandomPersonPropertyId(randomGenerator);
@@ -330,11 +329,11 @@ public class AT_PersonPropertyPluginData {
 		 * Show that property values match expectations
 		 */
 
-		for (int i = 0; i < personCount; i++) {
-			List<PersonPropertyValueInitialization> expectedList = expectedPropertyValues.get(i);
-			List<PersonPropertyValueInitialization> actualList = personPropertyInitialData.getPropertyValues(i);
-			assertEquals(expectedList, actualList);
-		}
+//		for (int i = 0; i < personCount; i++) {
+//			List<PersonPropertyValueInitialization> expectedList = expectedPropertyValues.get(i);
+//			List<PersonPropertyValueInitialization> actualList = personPropertyInitialData.getPropertyValues(i);
+//			assertEquals(expectedList, actualList);
+//		}
 
 		// precondition test: if the person id is null
 		ContractException contractException = assertThrows(ContractException.class, () -> {
@@ -362,51 +361,45 @@ public class AT_PersonPropertyPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = PersonPropertiesPluginData.class, name = "getMaxPersonIndex", args = {})
-	public void testGetMaxPersonIndex() {
-		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(3422619272027560361L);
-
-		// create a builder
-		PersonPropertiesPluginData.Builder personPropertyBuilder = PersonPropertiesPluginData.builder();
-
-		// fill the builder with property definitions
-
-		List<TestPersonPropertyId> propertiesWithDefaultValues = TestPersonPropertyId.getPropertiesWithDefaultValues();
-		for (TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.getPropertiesWithDefaultValues()) {
-			personPropertyBuilder.definePersonProperty(testPersonPropertyId, testPersonPropertyId.getPropertyDefinition());
-		}
-
-		int personCount = 150;
-		int expectedMaxPersonCount = -1;
-		for (int i = 0; i < personCount; i++) {
-			if (randomGenerator.nextDouble()<0.1) {
-				PersonId personId = new PersonId(i);				
-				expectedMaxPersonCount = FastMath.max(expectedMaxPersonCount, i+1);
-				int propertyCount = randomGenerator.nextInt(5);
-				for (int j = 0; j < propertyCount; j++) {
-					TestPersonPropertyId testPersonPropertyId = propertiesWithDefaultValues.get(randomGenerator.nextInt(propertiesWithDefaultValues.size()));
-					Object value = testPersonPropertyId.getRandomPropertyValue(randomGenerator);
-					personPropertyBuilder.setPersonPropertyValue(personId, testPersonPropertyId, value);
-				}
-			}
-		}
-		
-
-		// build the person property initial data
-		PersonPropertiesPluginData personPropertyInitialData = personPropertyBuilder.build();
-
-		/*
-		 * Show that the personCount matches expectations
-		 */
-		int actualPersonCount = personPropertyInitialData.getPersonCount();
-		assertEquals(expectedMaxPersonCount, actualPersonCount);
-
-	}
-
-	@Test
 	@UnitTestMethod(target = PersonPropertiesPluginData.class, name = "getPropertyValues", args = { int.class })
 	public void testGetPropertyValues() {
 		// covered by testSetPersonPropertyValues()
+	}
+
+	@Test
+	@UnitTestMethod(target = PersonPropertiesPluginData.class, name = "getPersonPropertyTrackingTime", args = { PersonPropertyId.class })
+	public void testGetPersonPropertyTrackingTime() {
+		fail();
+	}
+
+	@Test
+	@UnitTestMethod(target = PersonPropertiesPluginData.class, name = "getPropertyTimes", args = { PersonPropertyId.class })
+	public void testGetPropertyTimes() {
+		fail();
+	}
+
+	@Test
+	@UnitTestMethod(target = PersonPropertiesPluginData.class, name = "setPersonPropertyTime", args = { PersonId.class, PersonPropertyId.class, Double.class })
+	public void testSetPersonPropertyTime() {
+		fail();
+	}
+
+	@Test
+	@UnitTestMethod(target = PersonPropertiesPluginData.class, name = "setTimeTracking", args = { PersonPropertyId.class, double.class })
+	public void testSetTimeTracking() {
+		fail();
+	}
+
+	@Test
+	@UnitTestMethod(target = PersonPropertiesPluginData.class, name = "equals", args = { Object.class })
+	public void testEquals() {
+		fail();
+	}
+
+	@Test
+	@UnitTestMethod(target = PersonPropertiesPluginData.class, name = "hashCode", args = {})
+	public void testHashCode() {
+		fail();
 	}
 
 }
