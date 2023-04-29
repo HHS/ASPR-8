@@ -25,6 +25,7 @@
         <!-- dependency versions -->
         <util.version>4.0.0-SNAPSHOT</util.version>
         <junit-jupiter-engine.version>5.8.2</junit-jupiter-engine.version>
+        <jacoco-maven-plugin.version>0.8.9</jacoco-maven-plugin.version>
     </properties>
 
     <dependencies>
@@ -38,6 +39,13 @@
             <artifactId>gson</artifactId>
             <version>2.10.1</version>
         </dependency>
+
+        <!-- Junit dependencies -->
+        <dependency>
+            <groupId>org.jacoco</groupId>
+            <artifactId>jacoco-maven-plugin</artifactId>
+            <version>${jacoco-maven-plugin.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
@@ -49,11 +57,6 @@
             <artifactId>junit-jupiter-api</artifactId>
             <version>${junit-jupiter-engine.version}</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jacoco</groupId>
-            <artifactId>jacoco-maven-plugin</artifactId>
-            <version>0.8.9</version>
         </dependency>
     </dependencies>
 
@@ -94,16 +97,16 @@
                 <version>${maven-surefire-plugin.version}</version>
                 <configuration>
 
-					<includes>
-						<include>*.java</include>
-					</includes>
-					<!-- <excludes> -->
-					<!-- <exclude>AT_EnvironmentImpl_01.java</exclude> -->
-					<!-- <exclude>AT_EnvironmentImpl_02.java</exclude> -->
-					<!-- </excludes> -->
+                    <includes>
+                        <include>*.java</include>
+                    </includes>
+                    <!-- <excludes> -->
+                    <!-- <exclude>AT_EnvironmentImpl_01.java</exclude> -->
+                    <!-- <exclude>AT_EnvironmentImpl_02.java</exclude> -->
+                    <!-- </excludes> -->
 
-					<excludedGroups>manual</excludedGroups>
-				</configuration>
+                    <excludedGroups>manual</excludedGroups>
+                </configuration>
             </plugin>
 
             <!-- runs integration tests -->
@@ -131,7 +134,7 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.9</version>
+                <version>${jacoco-maven-plugin.version}</version>
                 <executions>
                     <execution>
                         <id>default-prepare-agent</id>
@@ -167,7 +170,6 @@
                     </execution>
                 </executions>
             </plugin>
-
         </plugins>
     </build>
 
