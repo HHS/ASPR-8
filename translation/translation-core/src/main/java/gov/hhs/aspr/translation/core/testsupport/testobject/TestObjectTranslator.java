@@ -5,6 +5,9 @@ import gov.hhs.aspr.translation.core.testsupport.TestTranslationEngine;
 import gov.hhs.aspr.translation.core.testsupport.testcomplexobject.TestComplexTranslatorId;
 
 public class TestObjectTranslator {
+    private TestObjectTranslator() {
+    }
+
     public static Translator getTestTranslator() {
         return Translator.builder()
                 .setTranslatorId(TestObjectTranslatorId.TRANSLATOR_ID)
