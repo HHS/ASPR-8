@@ -14,7 +14,7 @@ import gov.hhs.aspr.translation.core.testsupport.testcomplexobject.TestComplexTr
 public class AT_TestObjectTranslator {
     @Test
     public void testGetTranslator() {
-        Translator testObjectTranslator = TestObjectTranslator.getTestTranslator();
+        Translator testObjectTranslator = TestObjectTranslator.getTranslator();
 
         assertEquals(TestObjectTranslatorId.TRANSLATOR_ID, testObjectTranslator.getTranslatorId());
         Set<TranslatorId> expectedDependencies = new LinkedHashSet<>();

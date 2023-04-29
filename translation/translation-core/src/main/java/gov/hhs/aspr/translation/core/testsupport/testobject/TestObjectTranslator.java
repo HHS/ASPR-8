@@ -8,7 +8,7 @@ public class TestObjectTranslator {
     private TestObjectTranslator() {
     }
 
-    public static Translator getTestTranslator() {
+    public static Translator getTranslator() {
         return Translator.builder()
                 .setTranslatorId(TestObjectTranslatorId.TRANSLATOR_ID)
                 .addDependency(TestComplexTranslatorId.TRANSLATOR_ID)

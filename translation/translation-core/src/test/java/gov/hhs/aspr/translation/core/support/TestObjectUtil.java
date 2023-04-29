@@ -81,11 +81,7 @@ public class TestObjectUtil {
 
     public static TestAppObject getAppFromInput(TestInputObject inputObject) {
         TestAppObject appObject = new TestAppObject();
-        TestComplexAppObject complextAppObject = new TestComplexAppObject();
-
-        complextAppObject.setNumEntities(inputObject.getTestComplexInputObject().getNumEntities());
-        complextAppObject.setStartTime(inputObject.getTestComplexInputObject().getStartTime());
-        complextAppObject.setTestString(inputObject.getTestComplexInputObject().getTestString());
+        TestComplexAppObject complextAppObject = getComplexAppFromComplexInput(inputObject.getTestComplexInputObject());
 
         appObject.setTestComplexAppObject(complextAppObject);
         appObject.setBool(inputObject.isBool());
@@ -97,11 +93,7 @@ public class TestObjectUtil {
 
     public static TestInputObject getInputFromApp(TestAppObject appObject) {
         TestInputObject inputObject = new TestInputObject();
-        TestComplexInputObject complextInputObject = new TestComplexInputObject();
-
-        complextInputObject.setNumEntities(appObject.getTestComplexAppObject().getNumEntities());
-        complextInputObject.setStartTime(appObject.getTestComplexAppObject().getStartTime());
-        complextInputObject.setTestString(appObject.getTestComplexAppObject().getTestString());
+        TestComplexInputObject complextInputObject = getComplexInputFromComplexApp(appObject.getTestComplexAppObject());
 
         inputObject.setTestComplexInputObject(complextInputObject);
         inputObject.setBool(appObject.isBool());
@@ -113,13 +105,8 @@ public class TestObjectUtil {
 
     public static TestAppChildObject getChildAppFromApp(TestAppObject appObject) {
         TestAppChildObject childAppObject = new TestAppChildObject();
-        TestComplexAppObject complexAppObject = new TestComplexAppObject();
 
-        complexAppObject.setNumEntities(appObject.getTestComplexAppObject().getNumEntities());
-        complexAppObject.setStartTime(appObject.getTestComplexAppObject().getStartTime());
-        complexAppObject.setTestString(appObject.getTestComplexAppObject().getTestString());
-
-        childAppObject.setTestComplexAppObject(complexAppObject);
+        childAppObject.setTestComplexAppObject(appObject.getTestComplexAppObject());
         childAppObject.setBool(appObject.isBool());
         childAppObject.setInteger(appObject.getInteger());
         childAppObject.setString(appObject.getString());
@@ -129,17 +116,32 @@ public class TestObjectUtil {
 
     public static TestInputChildObject getChildInputFromInput(TestInputObject inputObject) {
         TestInputChildObject childInputObject = new TestInputChildObject();
-        TestComplexInputObject complexInputObject = new TestComplexInputObject();
 
-        complexInputObject.setNumEntities(inputObject.getTestComplexInputObject().getNumEntities());
-        complexInputObject.setStartTime(inputObject.getTestComplexInputObject().getStartTime());
-        complexInputObject.setTestString(inputObject.getTestComplexInputObject().getTestString());
-
-        childInputObject.setTestComplexInputObject(complexInputObject);
+        childInputObject.setTestComplexInputObject(inputObject.getTestComplexInputObject());
         childInputObject.setBool(inputObject.isBool());
         childInputObject.setInteger(inputObject.getInteger());
         childInputObject.setString(inputObject.getString());
 
         return childInputObject;
+    }
+
+    public static TestComplexAppObject getComplexAppFromComplexInput(TestComplexInputObject inputObject) {
+        TestComplexAppObject complextAppObject = new TestComplexAppObject();
+
+        complextAppObject.setNumEntities(inputObject.getNumEntities());
+        complextAppObject.setStartTime(inputObject.getStartTime());
+        complextAppObject.setTestString(inputObject.getTestString());
+
+        return complextAppObject;
+    }
+
+    public static TestComplexInputObject getComplexInputFromComplexApp(TestComplexAppObject appObject) {
+        TestComplexInputObject complextInputObject = new TestComplexInputObject();
+
+        complextInputObject.setNumEntities(appObject.getNumEntities());
+        complextInputObject.setStartTime(appObject.getStartTime());
+        complextInputObject.setTestString(appObject.getTestString());
+
+        return complextInputObject;
     }
 }
