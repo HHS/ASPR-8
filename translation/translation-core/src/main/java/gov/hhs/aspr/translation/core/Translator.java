@@ -11,7 +11,7 @@ import util.errors.ContractException;
  * The Translator class serves as a wrapper around one or more
  * {@link BaseTranslationSpec}(s)
  * 
- * and assists in adding those TranslatorSpecs to the {@link TranslationEngine}
+ * and assists in adding those translationSpecs to the {@link TranslationEngine}
  */
 public final class Translator {
     private final Data data;
@@ -183,7 +183,7 @@ public final class Translator {
         return Objects.equals(data, other.data);
     }
 
-    public Builder cloneBuilder() {
+    protected Builder cloneBuilder() {
         return new Builder(data);
     }
 }

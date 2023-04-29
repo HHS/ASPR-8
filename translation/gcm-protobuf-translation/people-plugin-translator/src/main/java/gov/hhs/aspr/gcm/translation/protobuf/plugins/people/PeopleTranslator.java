@@ -19,9 +19,9 @@ public class PeopleTranslator {
                     ProtobufTranslationEngine.Builder translationEngineBuilder = translatorContext
                             .getTranslationEngineBuilder(ProtobufTranslationEngine.Builder.class);
 
-                    translationEngineBuilder.addTranslatorSpec(new PeoplePluginDataTranslationSpec());
-                    translationEngineBuilder.addTranslatorSpec(new PersonIdTranslationSpec());
-                    translationEngineBuilder.addTranslatorSpec(new PersonRangeTranslationSpec());
+                    translationEngineBuilder.addTranslationSpec(new PeoplePluginDataTranslationSpec());
+                    translationEngineBuilder.addTranslationSpec(new PersonIdTranslationSpec());
+                    translationEngineBuilder.addTranslationSpec(new PersonRangeTranslationSpec());
 
                     translationEngineBuilder.addFieldToIncludeDefaultValue(PersonIdInput.getDescriptor().findFieldByName("id"));
                 });

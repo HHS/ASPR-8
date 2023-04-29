@@ -19,10 +19,10 @@ public class PropertiesTranslator {
                     ProtobufTranslationEngine.Builder translationEngineBuilder = translatorContext
                             .getTranslationEngineBuilder(ProtobufTranslationEngine.Builder.class);
 
-                    translationEngineBuilder.addTranslatorSpec(new PropertyDefinitionTranslationSpec());
-                    translationEngineBuilder.addTranslatorSpec(new TimeTrackingPolicyTranslationSpec());
-                    translationEngineBuilder.addTranslatorSpec(new PropertyValueMapTranslationSpec());
-                    translationEngineBuilder.addTranslatorSpec(new PropertyDefinitionMapTranslationSpec());
+                    translationEngineBuilder.addTranslationSpec(new PropertyDefinitionTranslationSpec());
+                    translationEngineBuilder.addTranslationSpec(new TimeTrackingPolicyTranslationSpec());
+                    translationEngineBuilder.addTranslationSpec(new PropertyValueMapTranslationSpec());
+                    translationEngineBuilder.addTranslationSpec(new PropertyDefinitionMapTranslationSpec());
                 });
 
         return builder;

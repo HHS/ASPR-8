@@ -25,13 +25,13 @@ public class PersonPropertiesTranslator {
                     ProtobufTranslationEngine.Builder translationEngineBuilder = translatorContext
                             .getTranslationEngineBuilder(ProtobufTranslationEngine.Builder.class);
 
-                    translationEngineBuilder.addTranslatorSpec(new PersonPropertyIdTranslationSpec());
-                    translationEngineBuilder.addTranslatorSpec(new PersonPropertiesPluginDataTranslationSpec());
-                    translationEngineBuilder.addTranslatorSpec(new TestPersonPropertyIdTranslationSpec());
+                    translationEngineBuilder.addTranslationSpec(new PersonPropertyIdTranslationSpec());
+                    translationEngineBuilder.addTranslationSpec(new PersonPropertiesPluginDataTranslationSpec());
+                    translationEngineBuilder.addTranslationSpec(new TestPersonPropertyIdTranslationSpec());
 
                     if (withReport) {
-                        translationEngineBuilder.addTranslatorSpec(new PersonPropertyReportPluginDataTranslationSpec());
-                        translationEngineBuilder.addTranslatorSpec(new PersonPropertyInteractionReportPluginDataTranslationSpec());
+                        translationEngineBuilder.addTranslationSpec(new PersonPropertyReportPluginDataTranslationSpec());
+                        translationEngineBuilder.addTranslationSpec(new PersonPropertyInteractionReportPluginDataTranslationSpec());
                     }
                 });
 

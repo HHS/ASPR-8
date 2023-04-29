@@ -31,17 +31,17 @@ public class ResourcesTranslator {
                     ProtobufTranslationEngine.Builder translationEngineBuilder = translatorContext
                             .getTranslationEngineBuilder(ProtobufTranslationEngine.Builder.class);
 
-                    translationEngineBuilder.addTranslatorSpec(new ResourcesPluginDataTranslationSpec());
-                    translationEngineBuilder.addTranslatorSpec(new ResourceIdTranslationSpec());
-                    translationEngineBuilder.addTranslatorSpec(new ResourcePropertyIdTranslationSpec());
-                    translationEngineBuilder.addTranslatorSpec(new ResourceInitializationTranslationSpec());
-                    translationEngineBuilder.addTranslatorSpec(new TestResourceIdTranslationSpec());
-                    translationEngineBuilder.addTranslatorSpec(new TestResourcePropertyIdTranslationSpec());
+                    translationEngineBuilder.addTranslationSpec(new ResourcesPluginDataTranslationSpec());
+                    translationEngineBuilder.addTranslationSpec(new ResourceIdTranslationSpec());
+                    translationEngineBuilder.addTranslationSpec(new ResourcePropertyIdTranslationSpec());
+                    translationEngineBuilder.addTranslationSpec(new ResourceInitializationTranslationSpec());
+                    translationEngineBuilder.addTranslationSpec(new TestResourceIdTranslationSpec());
+                    translationEngineBuilder.addTranslationSpec(new TestResourcePropertyIdTranslationSpec());
 
                     if (withReport) {
-                        translationEngineBuilder.addTranslatorSpec(new PersonResourceReportPluginDataTranslationSpec());
-                        translationEngineBuilder.addTranslatorSpec(new ResourcePropertyReportPluginDataTranslationSpec());
-                        translationEngineBuilder.addTranslatorSpec(new ResourceReportPluginDataTranslationSpec());
+                        translationEngineBuilder.addTranslationSpec(new PersonResourceReportPluginDataTranslationSpec());
+                        translationEngineBuilder.addTranslationSpec(new ResourcePropertyReportPluginDataTranslationSpec());
+                        translationEngineBuilder.addTranslationSpec(new ResourceReportPluginDataTranslationSpec());
                     }
                 });
 

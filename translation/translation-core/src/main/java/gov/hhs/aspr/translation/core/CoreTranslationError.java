@@ -25,11 +25,11 @@ public enum CoreTranslationError implements ContractError {
     DUPLICATE_CLASSREF_SCENARIO_PAIR("Duplicate ClassRef and Scenario Pair"),
     DUPLICATE_CLASSREF("Duplicate ClassRef"),
     UNKNOWN_CLASSREF("No object has been read in with the specified classRef"),
-    NULL_TRANSLATION_SPEC("Null TranslatorSpec"),
-    NULL_TRANSLATION_SPEC_APP_CLASS("Null TranslatorSpec App Class"),
-    NULL_TRANSLATION_SPEC_INPUT_CLASS("Null TranslatorSpec Input Class"),
-    DUPLICATE_TRANSLATION_SPEC("Duplicate TranslatorSpec"),
-    UNKNOWN_TRANSLATION_SPEC("No translator spec was provided for the given class"),
+    NULL_TRANSLATION_SPEC("Null TranslationSpec"),
+    NULL_TRANSLATION_SPEC_APP_CLASS("Null TranslationSpec App Class"),
+    NULL_TRANSLATION_SPEC_INPUT_CLASS("Null TranslationSpec Input Class"),
+    DUPLICATE_TRANSLATION_SPEC("Duplicate TranslationSpec"),
+    UNKNOWN_TRANSLATION_SPEC("No translation spec was provided for the given class"),
     UNITIALIZED_TRANSLATION_SPEC("TranslationSpec not initialized"),
     UNKNOWN_OBJECT("Object is not Translatable by this TranslationSpec")
     ;

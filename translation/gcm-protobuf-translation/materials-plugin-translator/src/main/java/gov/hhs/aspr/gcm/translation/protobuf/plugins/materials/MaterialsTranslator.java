@@ -37,23 +37,23 @@ public class MaterialsTranslator {
                     ProtobufTranslationEngine.Builder translationEngineBuilder = translatorContext
                             .getTranslationEngineBuilder(ProtobufTranslationEngine.Builder.class);
 
-                    translationEngineBuilder.addTranslatorSpec(new MaterialsPluginDataTranslationSpec());
-                    translationEngineBuilder.addTranslatorSpec(new MaterialIdTranslationSpec());
-                    translationEngineBuilder.addTranslatorSpec(new MaterialsProducerIdTranslationSpec());
-                    translationEngineBuilder.addTranslatorSpec(new MaterialsProducerPropertyIdTranslationSpec());
-                    translationEngineBuilder.addTranslatorSpec(new BatchIdTranslationSpec());
-                    translationEngineBuilder.addTranslatorSpec(new StageIdTranslationSpec());
-                    translationEngineBuilder.addTranslatorSpec(new BatchPropertyIdTranslationSpec());
-                    translationEngineBuilder.addTranslatorSpec(new TestBatchPropertyIdTranslationSpec());
-                    translationEngineBuilder.addTranslatorSpec(new TestMaterialIdTranslationSpec());
-                    translationEngineBuilder.addTranslatorSpec(new TestMaterialsProducerIdTranslationSpec());
-                    translationEngineBuilder.addTranslatorSpec(new TestMaterialsProducerPropertyIdTranslationSpec());
+                    translationEngineBuilder.addTranslationSpec(new MaterialsPluginDataTranslationSpec());
+                    translationEngineBuilder.addTranslationSpec(new MaterialIdTranslationSpec());
+                    translationEngineBuilder.addTranslationSpec(new MaterialsProducerIdTranslationSpec());
+                    translationEngineBuilder.addTranslationSpec(new MaterialsProducerPropertyIdTranslationSpec());
+                    translationEngineBuilder.addTranslationSpec(new BatchIdTranslationSpec());
+                    translationEngineBuilder.addTranslationSpec(new StageIdTranslationSpec());
+                    translationEngineBuilder.addTranslationSpec(new BatchPropertyIdTranslationSpec());
+                    translationEngineBuilder.addTranslationSpec(new TestBatchPropertyIdTranslationSpec());
+                    translationEngineBuilder.addTranslationSpec(new TestMaterialIdTranslationSpec());
+                    translationEngineBuilder.addTranslationSpec(new TestMaterialsProducerIdTranslationSpec());
+                    translationEngineBuilder.addTranslationSpec(new TestMaterialsProducerPropertyIdTranslationSpec());
 
                     if (withReport) {
-                        translationEngineBuilder.addTranslatorSpec(new BatchStatusReportPluginDataTranslationSpec());
-                        translationEngineBuilder.addTranslatorSpec(new MaterialsProducerPropertyReportPluginDataTranslationSpec());
-                        translationEngineBuilder.addTranslatorSpec(new MaterialsProducerResourceReportPluginDataTranslationSpec());
-                        translationEngineBuilder.addTranslatorSpec(new StageReportPluginDataTranslationSpec());
+                        translationEngineBuilder.addTranslationSpec(new BatchStatusReportPluginDataTranslationSpec());
+                        translationEngineBuilder.addTranslationSpec(new MaterialsProducerPropertyReportPluginDataTranslationSpec());
+                        translationEngineBuilder.addTranslationSpec(new MaterialsProducerResourceReportPluginDataTranslationSpec());
+                        translationEngineBuilder.addTranslationSpec(new StageReportPluginDataTranslationSpec());
                     }
 
                     translationEngineBuilder

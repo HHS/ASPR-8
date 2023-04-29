@@ -12,7 +12,7 @@ public class TestComplexTranslator {
                 .setTranslatorId(TestComplexTranslatorId.TRANSLATOR_ID)
                 .setInitializer(translatorContext -> {
                     translatorContext.getTranslationEngineBuilder(TestTranslationEngine.Builder.class)
-                            .addTranslatorSpec(new TestComplexObjectTranslationSpec());
+                            .addTranslationSpec(new TestComplexObjectTranslationSpec());
                 })
                 .build();
     }

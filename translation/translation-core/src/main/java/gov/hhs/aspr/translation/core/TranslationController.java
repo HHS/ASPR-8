@@ -393,7 +393,7 @@ public class TranslationController {
      * Then calls each translator's init callback method
      * Then builds the translationEngine
      * Then calls the init method on the translationEngine
-     * Verifies that all translatorSpecs have been initialized
+     * Verifies that all translationSpecs have been initialized
      */
     private TranslationController initTranslators() {
         TranslatorContext translatorContext = new TranslatorContext(this);

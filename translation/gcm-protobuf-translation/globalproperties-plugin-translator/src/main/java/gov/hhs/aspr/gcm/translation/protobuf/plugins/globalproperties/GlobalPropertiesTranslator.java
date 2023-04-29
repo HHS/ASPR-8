@@ -22,11 +22,11 @@ public class GlobalPropertiesTranslator {
                 .setInitializer((translatorContext) -> {
                     ProtobufTranslationEngine.Builder translationEngineBuilder = translatorContext.getTranslationEngineBuilder(ProtobufTranslationEngine.Builder.class);
 
-                    translationEngineBuilder.addTranslatorSpec(new GlobalPropertiesPluginDataTranslationSpec());
-                    translationEngineBuilder.addTranslatorSpec(new GlobalPropertyIdTranslationSpec());
-                    translationEngineBuilder.addTranslatorSpec(new TestGlobalPropertyIdTranslationSpec());
+                    translationEngineBuilder.addTranslationSpec(new GlobalPropertiesPluginDataTranslationSpec());
+                    translationEngineBuilder.addTranslationSpec(new GlobalPropertyIdTranslationSpec());
+                    translationEngineBuilder.addTranslationSpec(new TestGlobalPropertyIdTranslationSpec());
                     if (withReport) {
-                        translationEngineBuilder.addTranslatorSpec(new GlobalPropertyReportPluginDataTranslationSpec());
+                        translationEngineBuilder.addTranslationSpec(new GlobalPropertyReportPluginDataTranslationSpec());
                     }
                 });
 

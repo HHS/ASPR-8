@@ -112,8 +112,8 @@ public class ProtobufTranslationEngine extends TranslationEngine {
         }
 
         @Override
-        public <I, S> Builder addTranslatorSpec(TranslationSpec<I, S> translationSpec) {
-            super.addTranslatorSpec(translationSpec);
+        public <I, S> Builder addTranslationSpec(TranslationSpec<I, S> translationSpec) {
+            super.addTranslationSpec(translationSpec);
 
             populate(translationSpec.getInputObjectClass());
             return this;

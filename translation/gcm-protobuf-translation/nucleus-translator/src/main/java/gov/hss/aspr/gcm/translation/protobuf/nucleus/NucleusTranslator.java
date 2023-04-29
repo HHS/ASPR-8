@@ -21,10 +21,10 @@ public class NucleusTranslator {
                     ProtobufTranslationEngine.Builder translationEngineBuilder = translatorContext
                             .getTranslationEngineBuilder(ProtobufTranslationEngine.Builder.class);
 
-                    translationEngineBuilder.addTranslatorSpec(new SimulationStateTranslationSpec());
-                    translationEngineBuilder.addTranslatorSpec(new PlanQueueDataTranslationSpec());
-                    translationEngineBuilder.addTranslatorSpec(new PlannerTranslationSpec());
-                    translationEngineBuilder.addTranslatorSpec(new PlanDataTranslationSpec());
+                    translationEngineBuilder.addTranslationSpec(new SimulationStateTranslationSpec());
+                    translationEngineBuilder.addTranslationSpec(new PlanQueueDataTranslationSpec());
+                    translationEngineBuilder.addTranslationSpec(new PlannerTranslationSpec());
+                    translationEngineBuilder.addTranslationSpec(new PlanDataTranslationSpec());
 
                     translationEngineBuilder
                             .addFieldToIncludeDefaultValue(

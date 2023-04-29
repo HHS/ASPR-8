@@ -20,9 +20,9 @@ public class ReportsTranslator {
                     ProtobufTranslationEngine.Builder translationEngineBuilder = translatorContext
                             .getTranslationEngineBuilder(ProtobufTranslationEngine.Builder.class);
 
-                    translationEngineBuilder.addTranslatorSpec(new ReportLabelTranslationSpec());
-                    translationEngineBuilder.addTranslatorSpec(new ReportPeriodTranslationSpec());
-                    translationEngineBuilder.addTranslatorSpec(new SimpleReportLabelTranslationSpec());
+                    translationEngineBuilder.addTranslationSpec(new ReportLabelTranslationSpec());
+                    translationEngineBuilder.addTranslationSpec(new ReportPeriodTranslationSpec());
+                    translationEngineBuilder.addTranslationSpec(new SimpleReportLabelTranslationSpec());
 
                     translatorContext.addParentChildClassRelationship(SimpleReportLabel.class, ReportLabel.class);
                 });

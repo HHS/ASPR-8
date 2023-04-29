@@ -31,7 +31,7 @@ public class AppTest {
 
         TranslationController translatorController = TranslationController.builder()
                 .setTranslationEngineBuilder(ProtobufTranslationEngine.builder()
-                        .addTranslatorSpec(new ExamplePlanDataTranslationSpec()))
+                        .addTranslationSpec(new ExamplePlanDataTranslationSpec()))
                 .addTranslator(NucleusTranslator.getTranslator())
                 .addInputFilePath(filePath.resolve(fileName), SimulationStateInput.class)
                 .addOutputFilePath(filePath.resolve(fileName), SimulationState.class)

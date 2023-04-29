@@ -28,8 +28,8 @@ public class AppTest {
 
         TranslationController translatorController = TranslationController.builder()
                 .setTranslationEngineBuilder(ProtobufTranslationEngine.builder()
-                        .addTranslatorSpec(new TestMessageTranslationSpec())
-                        .addTranslatorSpec(new Layer1TranslationSpec()))
+                        .addTranslationSpec(new TestMessageTranslationSpec())
+                        .addTranslationSpec(new Layer1TranslationSpec()))
                 .addTranslator(PropertiesTranslator.getTranslator())
                 .addInputFilePath(filePath.resolve(fileName), PropertyValueMapInput.class)
                 .addOutputFilePath(filePath.resolve(fileName), PropertyValueMap.class)

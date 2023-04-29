@@ -45,7 +45,7 @@ public abstract class TranslationEngine {
             this.data = data;
         }
 
-        private <I, A> void validateTranslatorSpec(TranslationSpec<I, A> translationSpec) {
+        private <I, A> void validateTranslationSpec(TranslationSpec<I, A> translationSpec) {
             if (translationSpec == null) {
                 throw new ContractException(CoreTranslationError.NULL_TRANSLATION_SPEC);
             }
@@ -79,17 +79,17 @@ public abstract class TranslationEngine {
 
         /**
          * Adds the given {@link TranslationSpec} to the internal
-         * classToTranslatorSpecMap
+         * classToTranslationSpecMap
          * 
          * @throws ContractException
          *                           <ul>
          *                           <li>{@linkplain CoreTranslationError#NULL_TRANSLATION_SPEC}
          *                           if the given translationSpec is null</li>
          *                           <li>{@linkplain CoreTranslationError#NULL_TRANSLATION_SPEC_APP_CLASS}
-         *                           if the given translatorSpecs getAppClass method
+         *                           if the given translationSpecs getAppClass method
          *                           returns null</li>
          *                           <li>{@linkplain CoreTranslationError#NULL_TRANSLATION_SPEC_INPUT_CLASS}
-         *                           if the given translatorSpecs getInputClass method
+         *                           if the given translationSpecs getInputClass method
          *                           returns null</li>
          *                           <li>{@linkplain CoreTranslationError#DUPLICATE_TRANSLATION_SPEC}
          *                           if the given translationSpec is already known</li>
@@ -97,8 +97,8 @@ public abstract class TranslationEngine {
          * @param <I> the input object type
          * @param <A> the app object type
          */
-        public <I, A> Builder addTranslatorSpec(TranslationSpec<I, A> translationSpec) {
-            validateTranslatorSpec(translationSpec);
+        public <I, A> Builder addTranslationSpec(TranslationSpec<I, A> translationSpec) {
+            validateTranslationSpec(translationSpec);
 
             this.data.classToTranslationSpecMap.put(translationSpec.getInputObjectClass(),
                     translationSpec);
@@ -138,11 +138,11 @@ public abstract class TranslationEngine {
     //
 
     /**
-     * checks to verify all the translatorSpecs have been initialized.
+     * checks to verify all the translationSpecs have been initialized.
      * 
      * @throws RuntimeException
      *                          <li>There should not be a case where all
-     *                          translatorSpecs are initialized, so if one of them
+     *                          translationSpecs are initialized, so if one of them
      *                          isn't, something went very wrong.
      */
     protected void translationSpecsAreInitialized() {

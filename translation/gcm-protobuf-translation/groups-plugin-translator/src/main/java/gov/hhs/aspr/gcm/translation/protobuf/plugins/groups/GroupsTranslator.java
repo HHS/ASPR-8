@@ -28,16 +28,16 @@ public class GroupsTranslator {
                 .setInitializer((translatorContext) -> {
                     ProtobufTranslationEngine.Builder translationEngineBuilder = translatorContext.getTranslationEngineBuilder(ProtobufTranslationEngine.Builder.class);
                     
-                    translationEngineBuilder.addTranslatorSpec(new GroupsPluginDataTranslationSpec());
-                    translationEngineBuilder.addTranslatorSpec(new GroupIdTranslationSpec());
-                    translationEngineBuilder.addTranslatorSpec(new GroupTypeIdTranslationSpec());
-                    translationEngineBuilder.addTranslatorSpec(new GroupPropertyIdTranslationSpec());
-                    translationEngineBuilder.addTranslatorSpec(new TestGroupTypeIdTranslationSpec());
-                    translationEngineBuilder.addTranslatorSpec(new TestGroupPropertyIdTranslationSpec());
-                    translationEngineBuilder.addTranslatorSpec(new SimpleGroupTypeIdTranslationSpec());
+                    translationEngineBuilder.addTranslationSpec(new GroupsPluginDataTranslationSpec());
+                    translationEngineBuilder.addTranslationSpec(new GroupIdTranslationSpec());
+                    translationEngineBuilder.addTranslationSpec(new GroupTypeIdTranslationSpec());
+                    translationEngineBuilder.addTranslationSpec(new GroupPropertyIdTranslationSpec());
+                    translationEngineBuilder.addTranslationSpec(new TestGroupTypeIdTranslationSpec());
+                    translationEngineBuilder.addTranslationSpec(new TestGroupPropertyIdTranslationSpec());
+                    translationEngineBuilder.addTranslationSpec(new SimpleGroupTypeIdTranslationSpec());
 
                     if (withReport) {
-                        translationEngineBuilder.addTranslatorSpec(new GroupPropertyReportPluginDataTranslationSpec());
+                        translationEngineBuilder.addTranslationSpec(new GroupPropertyReportPluginDataTranslationSpec());
                     }
 
                     translationEngineBuilder.addFieldToIncludeDefaultValue(GroupIdInput.getDescriptor().findFieldByName("id"));

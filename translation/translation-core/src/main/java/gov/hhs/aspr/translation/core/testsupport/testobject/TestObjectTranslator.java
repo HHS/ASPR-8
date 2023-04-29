@@ -14,7 +14,7 @@ public class TestObjectTranslator {
                 .addDependency(TestComplexTranslatorId.TRANSLATOR_ID)
                 .setInitializer(translatorContext -> {
                     translatorContext.getTranslationEngineBuilder(TestTranslationEngine.Builder.class)
-                            .addTranslatorSpec(new TestObjectTranslationSpec());
+                            .addTranslationSpec(new TestObjectTranslationSpec());
                 })
                 .build();
     }

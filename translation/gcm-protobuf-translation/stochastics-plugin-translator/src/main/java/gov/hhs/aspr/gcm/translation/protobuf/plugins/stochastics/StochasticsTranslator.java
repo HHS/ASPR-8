@@ -18,10 +18,10 @@ public class StochasticsTranslator {
                 .setInitializer((translatorContext) -> {
                     ProtobufTranslationEngine.Builder translationEngineBuilder = translatorContext.getTranslationEngineBuilder(ProtobufTranslationEngine.Builder.class);
 
-                    translationEngineBuilder.addTranslatorSpec(new StochasticsPluginDataTranslationSpec());
-                    translationEngineBuilder.addTranslatorSpec(new WellStateTranslationSpec());
-                    translationEngineBuilder.addTranslatorSpec(new RandomGeneratorIdTranslationSpec());
-                    translationEngineBuilder.addTranslatorSpec(new TestRandomGeneratorIdTranslationSpec());
+                    translationEngineBuilder.addTranslationSpec(new StochasticsPluginDataTranslationSpec());
+                    translationEngineBuilder.addTranslationSpec(new WellStateTranslationSpec());
+                    translationEngineBuilder.addTranslationSpec(new RandomGeneratorIdTranslationSpec());
+                    translationEngineBuilder.addTranslationSpec(new TestRandomGeneratorIdTranslationSpec());
                 });
 
         return builder;
