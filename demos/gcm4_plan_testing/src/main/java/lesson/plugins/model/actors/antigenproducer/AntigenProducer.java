@@ -30,7 +30,7 @@ public final class AntigenProducer {
 	private void log(Object... values) {
 		if (logActive) {
 			StringBuilder sb = new StringBuilder();
-			sb.append("Vaccine Producer : ");
+			sb.append("Antigen Producer : ");
 			sb.append(actorContext.getTime());
 			sb.append(" :");
 			for (Object value : values) {

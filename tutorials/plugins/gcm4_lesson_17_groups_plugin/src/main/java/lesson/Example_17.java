@@ -1,5 +1,8 @@
 package lesson;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.stream.IntStream;
@@ -42,7 +45,10 @@ import util.random.RandomGeneratorProvider;
 
 public final class Example_17 {
 
-	private Example_17() {
+	private final Path outputDirectory;
+
+	private Example_17(Path outputDirectory) {
+		this.outputDirectory = outputDirectory;
 	}
 
 	private RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(9032703880551658180L);
@@ -50,10 +56,10 @@ public final class Example_17 {
 	
 	private NIOReportItemHandler getNIOReportItemHandler() {
 		return NIOReportItemHandler	.builder()//
-									.addReport(ModelReportLabel.GROUP_POPULATON, Paths.get("c:\\temp\\gcm\\group_population_report.xls"))//
-									.addReport(ModelReportLabel.PERSON_PROPERTY, Paths.get("c:\\temp\\gcm\\person_property_report.xls"))//
-									.addReport(ModelReportLabel.DISEASE_STATE, Paths.get("c:\\temp\\gcm\\disease_state_report.xls"))//
-									.addReport(ModelReportLabel.CONTAGION, Paths.get("c:\\temp\\gcm\\contagion_report.xls"))//
+									.addReport(ModelReportLabel.GROUP_POPULATON, outputDirectory.resolve("group_population_report.xls"))//
+									.addReport(ModelReportLabel.PERSON_PROPERTY, outputDirectory.resolve("person_property_report.xls"))//
+									.addReport(ModelReportLabel.DISEASE_STATE, outputDirectory.resolve("disease_state_report.xls"))//
+									.addReport(ModelReportLabel.CONTAGION, outputDirectory.resolve("contagion_report.xls"))//
 									.build();
 	}
 
@@ -234,8 +240,20 @@ public final class Example_17 {
 					.execute();//
 	}
 
-	public static void main(String[] args) {
-		new Example_17().execute();
+	public static void main(String[] args) throws IOException {
+		if (args.length == 0) {
+			throw new RuntimeException("One output directory argument is required");
+		}
+		Path outputDirectory = Paths.get(args[0]);
+		if (!Files.exists(outputDirectory)) {
+			Files.createDirectory(outputDirectory);
+		} else {
+			if (!Files.isDirectory(outputDirectory)) {
+				throw new IOException("Provided path is not a directory");
+			}
+		}
+
+		new Example_17(outputDirectory).execute();
 	}
 
 	private Dimension getTeleworkProbabilityDimension() {

@@ -1,5 +1,7 @@
 package lesson;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -55,7 +57,18 @@ public final class Example_12 {
 	}
 
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
+		if (args.length == 0) {
+			throw new RuntimeException("One output directory argument is required");
+		}
+		Path outputDirectory = Paths.get(args[0]);
+		if (!Files.exists(outputDirectory)) {
+			Files.createDirectory(outputDirectory);
+		} else {
+			if (!Files.isDirectory(outputDirectory)) {
+				throw new IOException("Provided path is not a directory");
+			}
+		}
 
 		Plugin personPlugin = PersonPlugin.getPersonPlugin();
 
@@ -72,14 +85,12 @@ public final class Example_12 {
 															.setMaxFamilySize(5)//
 															.build();
 		Plugin familyPlugin = FamilyPlugin.getFamilyPlugin(familyPluginData);		
-		
-		
-		Path outputDirectory = Paths.get("C:\\temp\\gcm");		
+
 		
 		NIOReportItemHandler nioReportItemHandler = NIOReportItemHandler.builder()//
-				.addReport(ModelLabel.FAMILY_VACCINE_REPORT, outputDirectory.resolve(Paths.get("family_vaccine_report.xls")))//
-				.addReport(ModelLabel.HOURLY_VACCINE_REPORT, outputDirectory.resolve(Paths.get("hourly_vaccine_report.xls")))//
-				.addReport(ModelLabel.STATELESS_VACCINE_REPORT, outputDirectory.resolve(Paths.get("stateless_vaccine_report.xls")))//
+				.addReport(ModelLabel.FAMILY_VACCINE_REPORT, outputDirectory.resolve("family_vaccine_report.xls"))//
+				.addReport(ModelLabel.HOURLY_VACCINE_REPORT, outputDirectory.resolve("hourly_vaccine_report.xls"))//
+				.addReport(ModelLabel.STATELESS_VACCINE_REPORT, outputDirectory.resolve("stateless_vaccine_report.xls"))//
 				.build();
 
 		

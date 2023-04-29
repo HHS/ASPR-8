@@ -117,7 +117,7 @@ public final class GlobalPropertiesPluginData implements PluginData {
 		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE}</li>if
 		 *             the global property value is null
 		 * 
-		 *            
+		 * 
 		 * 
 		 *
 		 * 
@@ -201,11 +201,34 @@ public final class GlobalPropertiesPluginData implements PluginData {
 		public int hashCode() {
 			final int prime = 31;
 			int result = 1;
-			result = prime * result + ((globalPropertyDefinitionTimes == null) ? 0 : globalPropertyDefinitionTimes.hashCode());
-			result = prime * result + ((globalPropertyDefinitions == null) ? 0 : globalPropertyDefinitions.hashCode());
-			result = prime * result + ((globalPropertyTimes == null) ? 0 : globalPropertyTimes.hashCode());
-			result = prime * result + ((globalPropertyValues == null) ? 0 : globalPropertyValues.hashCode());
-			result = prime * result + (locked ? 1231 : 1237);
+			result = prime * result + globalPropertyDefinitionTimes.hashCode();
+			result = prime * result + globalPropertyDefinitions.hashCode();
+			result = prime * result + getGlobalPropertyTimesHashCode();
+			result = prime * result + getGlobalPropertyValuesHashCode();
+			return result;
+		}
+
+		private int getGlobalPropertyTimesHashCode() {
+			int result = 0;
+			for (GlobalPropertyId globalPropertyId : globalPropertyDefinitions.keySet()) {				
+				Double propertyTime = globalPropertyTimes.get(globalPropertyId);
+				if (propertyTime == null) {
+					propertyTime = globalPropertyDefinitionTimes.get(globalPropertyId);
+				}
+				result += propertyTime.hashCode();
+			}
+			return result;
+		}
+
+		private int getGlobalPropertyValuesHashCode() {			
+			int result = 0;
+			for (GlobalPropertyId globalPropertyId : globalPropertyDefinitions.keySet()) {
+				Object propertyValue = globalPropertyValues.get(globalPropertyId);
+				if (propertyValue == null) {
+					propertyValue = globalPropertyDefinitions.get(globalPropertyId).getDefaultValue().get();
+				}
+				result += propertyValue.hashCode();				
+			}
 			return result;
 		}
 
@@ -218,47 +241,32 @@ public final class GlobalPropertiesPluginData implements PluginData {
 				return false;
 			}
 			Data other = (Data) obj;
-			if (globalPropertyDefinitionTimes == null) {
-				if (other.globalPropertyDefinitionTimes != null) {
-					return false;
-				}
-			} else if (!globalPropertyDefinitionTimes.equals(other.globalPropertyDefinitionTimes)) {
+
+			/*
+			 * We exclude: locked -- both should be locked when equals is
+			 * invoked
+			 */
+
+			/*
+			 * These are simple comparisons:
+			 */
+			if (!globalPropertyDefinitionTimes.equals(other.globalPropertyDefinitionTimes)) {
 				return false;
 			}
-			if (globalPropertyDefinitions == null) {
-				if (other.globalPropertyDefinitions != null) {
-					return false;
-				}
-			} else if (!globalPropertyDefinitions.equals(other.globalPropertyDefinitions)) {
+			if (!globalPropertyDefinitions.equals(other.globalPropertyDefinitions)) {
 				return false;
 			}
 
-			for (GlobalPropertyId globalPropertyId : globalPropertyDefinitions.keySet()) {
-				Object propertyValue = globalPropertyValues.get(globalPropertyId);
-				if (propertyValue == null) {
-					propertyValue = globalPropertyDefinitions.get(globalPropertyId).getDefaultValue().get();
-				}
-				Object otherPropertyValue = other.globalPropertyValues.get(globalPropertyId);
-				if (otherPropertyValue == null) {
-					otherPropertyValue = other.globalPropertyDefinitions.get(globalPropertyId).getDefaultValue().get();
-				}
-				if (!propertyValue.equals(otherPropertyValue)) {
-					return false;
-				}
+			/*
+			 * The remaining fields must be compared by disregarding assignments
+			 * of default property values and times
+			 */
+			if (!comparePropertyValues(this, other)) {
+				return false;
 			}
 
-			for (GlobalPropertyId globalPropertyId : globalPropertyDefinitions.keySet()) {
-				Double propertyTime = globalPropertyTimes.get(globalPropertyId);
-				if (propertyTime == null) {
-					propertyTime = globalPropertyDefinitionTimes.get(globalPropertyId);
-				}
-				Double otherPropertyTime = other.globalPropertyTimes.get(globalPropertyId);
-				if (otherPropertyTime == null) {
-					otherPropertyTime = other.globalPropertyDefinitionTimes.get(globalPropertyId);
-				}
-				if (!propertyTime.equals(otherPropertyTime)) {
-					return false;
-				}
+			if (!comparePropertyTimes(this, other)) {
+				return false;
 			}
 
 			if (locked != other.locked) {
@@ -267,6 +275,40 @@ public final class GlobalPropertiesPluginData implements PluginData {
 			return true;
 		}
 
+	}
+
+	private static boolean comparePropertyValues(Data a, Data b) {
+		for (GlobalPropertyId globalPropertyId : a.globalPropertyDefinitions.keySet()) {
+			Object propertyValue = a.globalPropertyValues.get(globalPropertyId);
+			if (propertyValue == null) {
+				propertyValue = a.globalPropertyDefinitions.get(globalPropertyId).getDefaultValue().get();
+			}
+			Object otherPropertyValue = b.globalPropertyValues.get(globalPropertyId);
+			if (otherPropertyValue == null) {
+				otherPropertyValue = b.globalPropertyDefinitions.get(globalPropertyId).getDefaultValue().get();
+			}
+			if (!propertyValue.equals(otherPropertyValue)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	private static boolean comparePropertyTimes(Data a, Data b) {
+		for (GlobalPropertyId globalPropertyId : a.globalPropertyDefinitions.keySet()) {
+			Double propertyTime = a.globalPropertyTimes.get(globalPropertyId);
+			if (propertyTime == null) {
+				propertyTime = a.globalPropertyDefinitionTimes.get(globalPropertyId);
+			}
+			Double otherPropertyTime = b.globalPropertyTimes.get(globalPropertyId);
+			if (otherPropertyTime == null) {
+				otherPropertyTime = b.globalPropertyDefinitionTimes.get(globalPropertyId);
+			}
+			if (!propertyTime.equals(otherPropertyTime)) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	/**
@@ -281,8 +323,6 @@ public final class GlobalPropertiesPluginData implements PluginData {
 			throw new ContractException(PropertyError.NULL_PROPERTY_DEFINITION);
 		}
 	}
-
-	
 
 	private static void validateGlobalPropertyIdNotNull(final GlobalPropertyId globalPropertyId) {
 		if (globalPropertyId == null) {
@@ -406,7 +446,7 @@ public final class GlobalPropertiesPluginData implements PluginData {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((data == null) ? 0 : data.hashCode());
+		result = prime * result +data.hashCode();
 		return result;
 	}
 
@@ -419,11 +459,7 @@ public final class GlobalPropertiesPluginData implements PluginData {
 			return false;
 		}
 		GlobalPropertiesPluginData other = (GlobalPropertiesPluginData) obj;
-		if (data == null) {
-			if (other.data != null) {
-				return false;
-			}
-		} else if (!data.equals(other.data)) {
+		if (!data.equals(other.data)) {
 			return false;
 		}
 		return true;

@@ -1,5 +1,8 @@
 package lesson;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.stream.IntStream;
@@ -40,7 +43,10 @@ import util.random.RandomGeneratorProvider;
 
 public final class Example_18 {
 
-	private Example_18() {
+	private final Path outputDirectory;
+
+	private Example_18(Path outputDirectory) {
+		this.outputDirectory = outputDirectory;
 	}
 
 	private RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(9032703880551658180L);
@@ -68,10 +74,10 @@ public final class Example_18 {
 
 	private NIOReportItemHandler getNIOReportItemHandler() {
 		return NIOReportItemHandler	.builder()//
-									.addReport(ModelReportLabel.PERSON_RESOURCE_REPORT, Paths.get("c:\\temp\\gcm\\person_resource_report.xls"))//
-									.addReport(ModelReportLabel.TREATMENT_REPORT, Paths.get("c:\\temp\\gcm\\treatment_report.xls"))//
-									.addReport(ModelReportLabel.DEATH_REPORT, Paths.get("c:\\temp\\gcm\\death_report.xls"))//
-									.addReport(ModelReportLabel.QUESTIONNAIRE_REPORT, Paths.get("c:\\temp\\gcm\\questionnaire_report.xls"))//
+									.addReport(ModelReportLabel.PERSON_RESOURCE_REPORT, outputDirectory.resolve("person_resource_report.xls"))//
+									.addReport(ModelReportLabel.TREATMENT_REPORT,outputDirectory.resolve("treatment_report.xls"))//
+									.addReport(ModelReportLabel.DEATH_REPORT, outputDirectory.resolve("death_report.xls"))//
+									.addReport(ModelReportLabel.QUESTIONNAIRE_REPORT, outputDirectory.resolve("questionnaire_report.xls"))//
 									.build();
 	}
 
@@ -286,8 +292,20 @@ public final class Example_18 {
 	/* end */
 
 	/* start code_ref=resources_main */
-	public static void main(String[] args) {
-		new Example_18().execute();
+	public static void main(String[] args) throws IOException {
+		if (args.length == 0) {
+			throw new RuntimeException("One output directory argument is required");
+		}
+		Path outputDirectory = Paths.get(args[0]);
+		if (!Files.exists(outputDirectory)) {
+			Files.createDirectory(outputDirectory);
+		} else {
+			if (!Files.isDirectory(outputDirectory)) {
+				throw new IOException("Provided path is not a directory");
+			}
+		}
+
+		new Example_18(outputDirectory).execute();
 	}
 	/* end */
 

@@ -1,5 +1,8 @@
 package lesson;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
@@ -60,17 +63,26 @@ public final class Example_14 {
 		return builder.build();
 	}
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
+		if (args.length == 0) {
+			throw new RuntimeException("One output directory argument is required");
+		}
+		Path outputDirectory = Paths.get(args[0]);
+		if (!Files.exists(outputDirectory)) {
+			Files.createDirectory(outputDirectory);
+		} else {
+			if (!Files.isDirectory(outputDirectory)) {
+				throw new IOException("Provided path is not a directory");
+			}
+		}
 
 		// reports
-		
-
 		NIOReportItemHandler nioReportItemHandler = //
 				NIOReportItemHandler.builder()//
 									.addReport(ModelReportLabel.POPULATION_TRACE, //
-											Paths.get("C:\\temp\\gcm\\population_trace_report.xls"))//
+											outputDirectory.resolve("population_trace_report.xls"))//
 									.addReport(ModelReportLabel.VACCINATION, //
-											Paths.get("C:\\temp\\gcm\\vaccination_report.xls"))//
+											outputDirectory.resolve("vaccination_report.xls"))//
 									.build();
 
 		// create the people plugin with an initial population of ten people,

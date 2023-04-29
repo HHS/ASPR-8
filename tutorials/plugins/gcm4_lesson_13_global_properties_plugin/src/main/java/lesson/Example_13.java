@@ -1,5 +1,8 @@
 package lesson;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
@@ -85,7 +88,18 @@ public final class Example_13 {
 		return dimensionBuilder.build();
 	}
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
+		if (args.length == 0) {
+			throw new RuntimeException("One output directory argument is required");
+		}
+		Path outputDirectory = Paths.get(args[0]);
+		if (!Files.exists(outputDirectory)) {
+			Files.createDirectory(outputDirectory);
+		} else {
+			if (!Files.isDirectory(outputDirectory)) {
+				throw new IOException("Provided path is not a directory");
+			}
+		}
 
 		GlobalPropertiesPluginData globalPropertiesPluginData = getGlobalPropertiesPluginData();
 		
@@ -109,7 +123,7 @@ public final class Example_13 {
 		NIOReportItemHandler nioReportItemHandler = //
 				NIOReportItemHandler.builder()//
 									.addReport(ModelReportLabel.GLOBAL_PROPERTY_REPORT, //
-											Paths.get("C:\\temp\\gcm\\global property report.xls"))//
+											outputDirectory.resolve("global property report.xls"))//
 									.build();
 
 		Dimension alphaBetaDimension = getAlphaBetaDimension();

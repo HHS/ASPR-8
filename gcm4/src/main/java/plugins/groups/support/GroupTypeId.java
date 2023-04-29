@@ -10,4 +10,9 @@ import net.jcip.annotations.ThreadSafe;
 @ThreadSafe
 public interface GroupTypeId {
 
+	@Override
+	public boolean equals(Object obj);
+	
+	@Override
+	public int hashCode();
 }

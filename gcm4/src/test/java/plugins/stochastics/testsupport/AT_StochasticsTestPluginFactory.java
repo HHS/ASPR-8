@@ -99,10 +99,10 @@ public class AT_StochasticsTestPluginFactory {
 	private <T extends PluginData> void checkPluginDataExists(List<Plugin> plugins, T expectedPluginData,
 			PluginId pluginId) {
 		Plugin actualPlugin = checkPluginExists(plugins, pluginId);
-		Set<PluginData> actualPluginDatas = actualPlugin.getPluginDatas();
+		List<PluginData> actualPluginDatas = actualPlugin.getPluginDatas();
 		assertNotNull(actualPluginDatas);
 		assertEquals(1, actualPluginDatas.size());
-		PluginData actualPluginData = actualPluginDatas.stream().toList().get(0);
+		PluginData actualPluginData = actualPluginDatas.get(0);
 		assertTrue(expectedPluginData == actualPluginData);
 	}
 

@@ -134,7 +134,7 @@ public class AT_Plugin {
 						.addPluginData(xPluginData2)//
 						.build();//
 
-		assertEquals(expectedPluginDatas, plugin.getPluginDatas());
+		assertEquals(expectedPluginDatas, new LinkedHashSet<>(plugin.getPluginDatas()));
 	}
 
 	@Test
@@ -193,7 +193,7 @@ public class AT_Plugin {
 								.addPluginData(xPluginData2)//
 								.build();//
 
-		assertEquals(expectedPluginDatas, plugin.getPluginDatas());
+		assertEquals(expectedPluginDatas, new LinkedHashSet<>(plugin.getPluginDatas()));
 
 		// precondition test: if the plugin data is null
 		ContractException contractException = assertThrows(ContractException.class, () -> Plugin.builder().addPluginData(null));
@@ -283,12 +283,10 @@ public class AT_Plugin {
 		Set<Integer> hashcodes = new LinkedHashSet<>();
 		// show equal objects have equal hash codes
 
-		
-
 		for (int i = 0; i < 100; i++) {
 			Plugin.Builder builder1 = Plugin.builder();
 			Plugin.Builder builder2 = Plugin.builder();
-			
+
 			Set<PluginData> pluginDatas = new LinkedHashSet<>();
 			int pluginDataCount = randomGenerator.nextInt(5) + 1;
 			for (int j = 0; j < pluginDataCount; j++) {
@@ -395,9 +393,9 @@ public class AT_Plugin {
 				assertNotEquals(plugin1, plugin2);
 			}
 		}
-		
-		//show that we generated sufficient non-equal comparisons
-		assertTrue(nonEqualityCheck>90);
+
+		// show that we generated sufficient non-equal comparisons
+		assertTrue(nonEqualityCheck > 90);
 
 	}
 

@@ -32,6 +32,9 @@ public class MaterialsPluginDataTranslationSpec extends ProtobufTranslationSpec<
 	protected MaterialsPluginData convertInputObject(MaterialsPluginDataInput inputObject) {
 		MaterialsPluginData.Builder builder = MaterialsPluginData.builder();
 
+		builder.setNextBatchRecordId(inputObject.getNextBatchRecordId());
+		builder.setNextStageRecordId(inputObject.getNextStageRecordId());
+
 		for (MaterialIdInput materialIdInput : inputObject.getMaterialIdsList()) {
 			MaterialId materialId = this.translationEngine.convertObject(materialIdInput);
 			builder.addMaterial(materialId);
@@ -114,6 +117,9 @@ public class MaterialsPluginDataTranslationSpec extends ProtobufTranslationSpec<
 	@Override
 	protected MaterialsPluginDataInput convertAppObject(MaterialsPluginData appObject) {
 		MaterialsPluginDataInput.Builder builder = MaterialsPluginDataInput.newBuilder();
+
+		builder.setNextBatchRecordId(appObject.getNextBatchRecordId());
+		builder.setNextStageRecordId(appObject.getNextStageRecordId());
 
 		for (MaterialId materialId : appObject.getMaterialIds()) {
 			MaterialIdInput materialIdInput = this.translationEngine.convertObjectAsSafeClass(materialId, MaterialId.class);
