@@ -201,8 +201,7 @@ public class AT_TranslationController {
     }
 
     @Test
-    @UnitTestMethod(target = TranslationController.class, name = "writeOutput", args = { List.class,
-            Integer.class }, tags = { UnitTag.LOCAL_PROXY })
+    @UnitTestMethod(target = TranslationController.class, name = "writeOutput", args = { List.class, Integer.class })
     public void testWriteOutput_List_ScenarioId() throws IOException {
         String fileName = "WriteOutput_List_ScenarioId_1-testOutput.json";
         String fileName2 = "WriteOutput_List_ScenarioId_2-testOutput.json";
@@ -437,7 +436,8 @@ public class AT_TranslationController {
             translationController.getOrderedTranslators(mutableGraph, translatorMap);
             // remove a mapping
             translatorMap.remove(TestComplexTranslatorId.TRANSLATOR_ID);
-            TranslatorId thirdId = new TranslatorId() {};
+            TranslatorId thirdId = new TranslatorId() {
+            };
             mutableGraph.addNode(thirdId);
             mutableGraph.addEdge(new Object(), thirdId, TestComplexTranslatorId.TRANSLATOR_ID);
             translationController.checkForMissingTranslators(mutableGraph, translatorMap);
@@ -452,9 +452,12 @@ public class AT_TranslationController {
 
             // call normally
             translationController.getOrderedTranslators(mutableGraph, translatorMap);
-            mutableGraph.addEdge(new Object(), TestComplexTranslatorId.TRANSLATOR_ID, TestObjectTranslatorId.TRANSLATOR_ID);
-            TranslatorId thirdId = new TranslatorId() {};
-            TranslatorId fourthId = new TranslatorId() {};
+            mutableGraph.addEdge(new Object(), TestComplexTranslatorId.TRANSLATOR_ID,
+                    TestObjectTranslatorId.TRANSLATOR_ID);
+            TranslatorId thirdId = new TranslatorId() {
+            };
+            TranslatorId fourthId = new TranslatorId() {
+            };
             mutableGraph.addNode(thirdId);
             mutableGraph.addNode(fourthId);
             mutableGraph.addEdge(new Object(), thirdId, fourthId);
@@ -463,6 +466,12 @@ public class AT_TranslationController {
         });
 
         assertEquals(CoreTranslationError.CIRCULAR_TRANSLATOR_DEPENDENCIES, contractException.getErrorType());
+    }
+
+    @Test
+    @UnitTestMethod(target = TranslationController.class, name = "builder", args = {})
+    public void testBuilder() {
+        assertNotNull(TranslationController.builder());
     }
 
     @Test
@@ -484,7 +493,8 @@ public class AT_TranslationController {
     }
 
     @Test
-    @UnitTestMethod(target = TranslationController.Builder.class, name = "build", args = { Path.class, Class.class })
+    @UnitTestMethod(target = TranslationController.Builder.class, name = "addInputFilePath", args = { Path.class,
+            Class.class })
     public void testAddInputFilePath() {
         String fileName = "addInputFilePath-testOutput.json";
 
@@ -528,7 +538,8 @@ public class AT_TranslationController {
     }
 
     @Test
-    @UnitTestMethod(target = TranslationController.Builder.class, name = "build", args = { Path.class, Class.class })
+    @UnitTestMethod(target = TranslationController.Builder.class, name = "addOutputFilePath", args = { Path.class,
+            Class.class })
     public void testAddOutputFilePath() {
         String fileName = "addOutputFilePath1-testOutput.json";
         String fileName2 = "addOutputFilePath2-testOutput.json";
@@ -580,7 +591,8 @@ public class AT_TranslationController {
     }
 
     @Test
-    @UnitTestMethod(target = TranslationController.Builder.class, name = "build", args = { Path.class, Class.class,
+    @UnitTestMethod(target = TranslationController.Builder.class, name = "addOutputFilePath", args = { Path.class,
+            Class.class,
             Integer.class }, tags = { UnitTag.LOCAL_PROXY })
     public void testAddOutputFilePath_ScenarioId() {
         // Tested by testAddOutputFilePath, which internally calls
@@ -588,7 +600,8 @@ public class AT_TranslationController {
     }
 
     @Test
-    @UnitTestMethod(target = TranslationController.Builder.class, name = "build", args = { Class.class, Class.class })
+    @UnitTestMethod(target = TranslationController.Builder.class, name = "addParentChildClassRelationship", args = {
+            Class.class, Class.class })
     public void testAddParentChildClassRelationship() {
         TranslationController.builder().addParentChildClassRelationship(TestAppObject.class, Object.class);
 
@@ -617,7 +630,7 @@ public class AT_TranslationController {
     }
 
     @Test
-    @UnitTestMethod(target = TranslationController.Builder.class, name = "build", args = { Translator.class })
+    @UnitTestMethod(target = TranslationController.Builder.class, name = "addTranslator", args = { Translator.class })
     public void testAddTranslator() {
         TranslationController.builder().addTranslator(TestObjectTranslator.getTranslator());
 
@@ -639,7 +652,7 @@ public class AT_TranslationController {
     }
 
     @Test
-    @UnitTestMethod(target = TranslationController.Builder.class, name = "build", args = {
+    @UnitTestMethod(target = TranslationController.Builder.class, name = "setTranslationEngineBuilder", args = {
             TranslationEngine.Builder.class })
     public void testSetTransationEngineBuilder() {
         TranslationController.builder().setTranslationEngineBuilder(TestTranslationEngine.builder());

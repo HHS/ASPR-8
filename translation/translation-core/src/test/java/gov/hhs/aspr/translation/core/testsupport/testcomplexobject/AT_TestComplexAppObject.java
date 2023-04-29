@@ -2,6 +2,7 @@ package gov.hhs.aspr.translation.core.testsupport.testcomplexobject;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.LinkedHashSet;
@@ -10,10 +11,19 @@ import java.util.Set;
 import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.translation.core.testsupport.TestObjectUtil;
+import util.annotations.UnitTestConstructor;
+import util.annotations.UnitTestMethod;
 
 public class AT_TestComplexAppObject {
 
     @Test
+    @UnitTestConstructor(target = TestComplexAppObject.class, args = {})
+    public void testConstructor() {
+        assertNotNull(new TestComplexAppObject());
+    }
+
+    @Test
+    @UnitTestMethod(target = TestComplexAppObject.class, name = "setNumEntities", args = { int.class })
     public void testSetNumEntities() {
         TestComplexAppObject testComplexAppObject = new TestComplexAppObject();
 
@@ -23,6 +33,7 @@ public class AT_TestComplexAppObject {
     }
 
     @Test
+    @UnitTestMethod(target = TestComplexAppObject.class, name = "getNumEntities", args = {})
     public void testGetNumEntities() {
         TestComplexAppObject testComplexAppObject = new TestComplexAppObject();
 
@@ -32,6 +43,7 @@ public class AT_TestComplexAppObject {
     }
 
     @Test
+    @UnitTestMethod(target = TestComplexAppObject.class, name = "setStartTime", args = { double.class })
     public void testSetStartTime() {
         TestComplexAppObject testComplexAppObject = new TestComplexAppObject();
 
@@ -41,7 +53,8 @@ public class AT_TestComplexAppObject {
     }
 
     @Test
-    public void testIsStartTime() {
+    @UnitTestMethod(target = TestComplexAppObject.class, name = "getStartTime", args = {})
+    public void testGetStartTime() {
         TestComplexAppObject testComplexAppObject = new TestComplexAppObject();
 
         testComplexAppObject.setStartTime(150.0);
@@ -50,6 +63,7 @@ public class AT_TestComplexAppObject {
     }
 
     @Test
+    @UnitTestMethod(target = TestComplexAppObject.class, name = "setTestString", args = { String.class })
     public void testSetTestString() {
         TestComplexAppObject testComplexAppObject = new TestComplexAppObject();
 
@@ -59,7 +73,8 @@ public class AT_TestComplexAppObject {
     }
 
     @Test
-    public void testGetString() {
+    @UnitTestMethod(target = TestComplexAppObject.class, name = "getTestString", args = {})
+    public void testGetTestString() {
         TestComplexAppObject testComplexAppObject = new TestComplexAppObject();
 
         testComplexAppObject.setTestString("test2");
@@ -68,6 +83,7 @@ public class AT_TestComplexAppObject {
     }
 
     @Test
+    @UnitTestMethod(target = TestComplexAppObject.class, name = "hashCode", args = {})
     public void testHashCode() {
         TestComplexAppObject testComplexAppObject1 = new TestComplexAppObject();
         TestComplexAppObject testComplexAppObject2 = new TestComplexAppObject();
@@ -112,6 +128,7 @@ public class AT_TestComplexAppObject {
     }
 
     @Test
+    @UnitTestMethod(target = TestComplexAppObject.class, name = "equals", args = { Object.class })
     public void testEquals() {
         TestComplexAppObject testComplexAppObject1 = new TestComplexAppObject();
         TestComplexAppObject testComplexAppObject2 = new TestComplexAppObject();

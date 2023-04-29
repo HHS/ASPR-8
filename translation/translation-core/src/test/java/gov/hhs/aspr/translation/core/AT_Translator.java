@@ -13,11 +13,13 @@ import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.translation.core.testsupport.testcomplexobject.TestComplexTranslatorId;
 import gov.hhs.aspr.translation.core.testsupport.testobject.TestObjectTranslatorId;
+import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 
 public class AT_Translator {
 
     @Test
+    @UnitTestMethod(target = Translator.class, name = "getInitializer", args = {})
     public void testGetInitializer() {
         Consumer<TranslatorContext> expectedInitializer = (translatorConext) -> {
         };
@@ -31,6 +33,7 @@ public class AT_Translator {
     }
 
     @Test
+    @UnitTestMethod(target = Translator.class, name = "getTranslatorId", args = {})
     public void testGetTranslatorId() {
         TranslatorId expectedTranslatorId = new TranslatorId() {
         };
@@ -44,7 +47,8 @@ public class AT_Translator {
     }
 
     @Test
-    public void testGetDependencies() {
+    @UnitTestMethod(target = Translator.class, name = "getTranslatorDependencies", args = {})
+    public void testGetTranslatorDependencies() {
         TranslatorId expectedTranslatorId = new TranslatorId() {
         };
         Translator testTranslator = Translator.builder()
@@ -65,6 +69,7 @@ public class AT_Translator {
     }
 
     @Test
+    @UnitTestMethod(target = Translator.class, name = "hashCode", args = {})
     public void testHashCode() {
         TranslatorId translatorIdA = new TranslatorId() {
         };
@@ -132,6 +137,7 @@ public class AT_Translator {
     }
 
     @Test
+    @UnitTestMethod(target = Translator.class, name = "equals", args = { Object.class })
     public void testEquals() {
         TranslatorId translatorIdA = new TranslatorId() {
         };
@@ -202,11 +208,13 @@ public class AT_Translator {
     }
 
     @Test
+    @UnitTestMethod(target = Translator.class, name = "builder", args = {})
     public void testBuilder() {
         assertNotNull(Translator.builder());
     }
 
     @Test
+    @UnitTestMethod(target = Translator.Builder.class, name = "build", args = {})
     public void testBuild() {
         TranslatorId translatorIdA = new TranslatorId() {
         };
@@ -240,6 +248,7 @@ public class AT_Translator {
     }
 
     @Test
+    @UnitTestMethod(target = Translator.Builder.class, name = "setTranslatorId", args = { TranslatorId.class })
     public void testSetTranslatorId() {
         TranslatorId translatorIdA = new TranslatorId() {
         };
@@ -262,6 +271,7 @@ public class AT_Translator {
     }
 
     @Test
+    @UnitTestMethod(target = Translator.Builder.class, name = "setInitializer", args = { Consumer.class })
     public void testSetInitializer() {
         Consumer<TranslatorContext> expectedInitializer = (translatorConext) -> {
         };
@@ -284,6 +294,7 @@ public class AT_Translator {
     }
 
     @Test
+    @UnitTestMethod(target = Translator.Builder.class, name = "addDependency", args = { TranslatorId.class })
     public void testAddDependency() {
         TranslatorId expectedTranslatorId = new TranslatorId() {
         };

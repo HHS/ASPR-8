@@ -13,8 +13,12 @@ import java.nio.file.Path;
 
 import org.junit.jupiter.api.Test;
 
+import util.annotations.UnitTestMethod;
+
 public class AT_TestResourceHelper {
+
     @Test
+    @UnitTestMethod(target = TestResourceHelper.class, name = "getResourceDir", args = { Class.class })
     public void testGetResourceDir() throws MalformedURLException {
         Path path = TestResourceHelper.getResourceDir(this.getClass());
 
@@ -23,7 +27,7 @@ public class AT_TestResourceHelper {
 
         // preconditions
         URL url = new URL("file:${my.properties}");
-        
+
         RuntimeException runtimeException = assertThrows(RuntimeException.class, () -> {
             TestResourceHelper.getURI(url);
         });
@@ -32,6 +36,7 @@ public class AT_TestResourceHelper {
     }
 
     @Test
+    @UnitTestMethod(target = TestResourceHelper.class, name = "makeTestOutputDir", args = { Path.class })
     public void testMakeTestOutputDir() {
         Path path = TestResourceHelper.getResourceDir(this.getClass()).resolve("additional-folder");
 
@@ -50,7 +55,7 @@ public class AT_TestResourceHelper {
         public IOExceptionFile(File file) {
             super(file, pathSeparator);
         }
-        
+
         @Override
         public boolean createNewFile() throws IOException {
 
@@ -58,7 +63,10 @@ public class AT_TestResourceHelper {
         }
 
     }
+
     @Test
+    @UnitTestMethod(target = TestResourceHelper.class, name = "createTestOutputFile", args = { Path.class,
+            String.class })
     public void testCreateTestOutputFile() throws IOException {
         Path path = TestResourceHelper.getResourceDir(this.getClass());
 
@@ -78,7 +86,7 @@ public class AT_TestResourceHelper {
             IOExceptionFile testFile = new IOExceptionFile(newPath.resolve(fileName).toFile());
             TestResourceHelper.createFile(testFile);
         });
-        
+
         assertTrue(runtimeException.getCause() instanceof IOException);
     }
 }

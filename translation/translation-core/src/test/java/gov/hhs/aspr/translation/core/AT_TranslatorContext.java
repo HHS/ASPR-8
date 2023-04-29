@@ -62,7 +62,8 @@ public class AT_TranslatorContext {
     }
 
     @Test
-    @UnitTestMethod(target = TranslatorContext.class, name = "addParentChildClassRelationship", args = { Class.class })
+    @UnitTestMethod(target = TranslatorContext.class, name = "addParentChildClassRelationship", args = { Class.class,
+            Class.class })
     public void testAddParentChildClassRelationship() {
         TestTranslationEngine.Builder expectedBuilder = TestTranslationEngine.builder();
         TranslationController translationController = TranslationController
