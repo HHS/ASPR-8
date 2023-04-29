@@ -13,7 +13,6 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 
-import gov.hhs.aspr.translation.core.support.TestObjectUtil;
 import gov.hhs.aspr.translation.core.testsupport.testcomplexobject.TestComplexObjectTranslationSpec;
 import gov.hhs.aspr.translation.core.testsupport.testobject.TestAppObject;
 import gov.hhs.aspr.translation.core.testsupport.testobject.TestInputObject;

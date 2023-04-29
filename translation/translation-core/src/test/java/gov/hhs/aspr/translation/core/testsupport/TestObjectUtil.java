@@ -1,4 +1,4 @@
-package gov.hhs.aspr.translation.core.support;
+package gov.hhs.aspr.translation.core.testsupport;
 
 import java.util.ArrayList;
 import java.util.List;

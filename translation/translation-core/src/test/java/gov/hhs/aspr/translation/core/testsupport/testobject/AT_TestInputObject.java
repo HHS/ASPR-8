@@ -9,7 +9,7 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
-import gov.hhs.aspr.translation.core.support.TestObjectUtil;
+import gov.hhs.aspr.translation.core.testsupport.TestObjectUtil;
 import gov.hhs.aspr.translation.core.testsupport.testcomplexobject.TestComplexInputObject;
 
 public class AT_TestInputObject {

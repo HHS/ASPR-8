@@ -18,7 +18,7 @@ import java.util.Optional;
 import org.apache.commons.math3.util.Pair;
 import org.junit.jupiter.api.Test;
 
-import gov.hhs.aspr.translation.core.support.TestObjectUtil;
+import gov.hhs.aspr.translation.core.testsupport.TestObjectUtil;
 import gov.hhs.aspr.translation.core.testsupport.TestResourceHelper;
 import gov.hhs.aspr.translation.core.testsupport.TestTranslationEngine;
 import gov.hhs.aspr.translation.core.testsupport.testcomplexobject.TestComplexAppObject;
