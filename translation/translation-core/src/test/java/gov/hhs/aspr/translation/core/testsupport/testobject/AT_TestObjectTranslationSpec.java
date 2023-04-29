@@ -1,16 +1,26 @@
 package gov.hhs.aspr.translation.core.testsupport.testobject;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.translation.core.testsupport.TestObjectUtil;
 import gov.hhs.aspr.translation.core.testsupport.TestTranslationEngine;
 import gov.hhs.aspr.translation.core.testsupport.testcomplexobject.TestComplexObjectTranslationSpec;
+import util.annotations.UnitTestConstructor;
+import util.annotations.UnitTestMethod;
 
 public class AT_TestObjectTranslationSpec {
 
     @Test
+    @UnitTestConstructor(target = TestObjectTranslationSpec.class, args = {})
+    public void testConstructor() {
+        assertNotNull(new TestObjectTranslationSpec());
+    }
+
+    @Test
+    @UnitTestMethod(target = TestObjectTranslationSpec.class, name = "convertInputObject", args = { Object.class })
     public void testConvertInputObject() {
         TestInputObject testInputObject = TestObjectUtil.generateTestInputObject();
         TestAppObject expectedAppObject = TestObjectUtil.getAppFromInput(testInputObject);
@@ -31,6 +41,7 @@ public class AT_TestObjectTranslationSpec {
     }
 
     @Test
+    @UnitTestMethod(target = TestObjectTranslationSpec.class, name = "convertAppObject", args = { Object.class })
     public void testConvertAppObject() {
         TestAppObject testAppObject = TestObjectUtil.generateTestAppObject();
         TestInputObject expectedInputObject = TestObjectUtil.getInputFromApp(testAppObject);
@@ -51,6 +62,7 @@ public class AT_TestObjectTranslationSpec {
     }
 
     @Test
+    @UnitTestMethod(target = TestObjectTranslationSpec.class, name = "getAppObjectClass", args = {})
     public void testGetAppObjectClass() {
         TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
 
@@ -58,6 +70,7 @@ public class AT_TestObjectTranslationSpec {
     }
 
     @Test
+    @UnitTestMethod(target = TestObjectTranslationSpec.class, name = "getInputObjectClass", args = {})
     public void testGetInputObjectClass() {
         TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
 

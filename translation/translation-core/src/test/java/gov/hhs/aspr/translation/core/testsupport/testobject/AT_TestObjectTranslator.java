@@ -10,9 +10,12 @@ import org.junit.jupiter.api.Test;
 import gov.hhs.aspr.translation.core.Translator;
 import gov.hhs.aspr.translation.core.TranslatorId;
 import gov.hhs.aspr.translation.core.testsupport.testcomplexobject.TestComplexTranslatorId;
+import util.annotations.UnitTestMethod;
 
 public class AT_TestObjectTranslator {
+
     @Test
+    @UnitTestMethod(target = TestObjectTranslator.class, name = "getTranslator", args = {})
     public void testGetTranslator() {
         Translator testObjectTranslator = TestObjectTranslator.getTranslator();
 

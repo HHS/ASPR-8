@@ -85,8 +85,8 @@ public class AT_TestInputObject {
     }
 
     @Test
-    @UnitTestMethod(target = TestInputObject.class, name = "setTestComplexAppObject", args = {
-            TestComplexAppObject.class })
+    @UnitTestMethod(target = TestInputObject.class, name = "setTestComplexInputObject", args = {
+            TestComplexInputObject.class })
     public void testSetTestComplexInputObject() {
         TestInputObject testInputObject = new TestInputObject();
         TestComplexInputObject testComplexInputObject = TestObjectUtil.generateTestComplexInputObject();
@@ -97,7 +97,7 @@ public class AT_TestInputObject {
     }
 
     @Test
-    @UnitTestMethod(target = TestInputObject.class, name = "getTestComplexAppObject", args = {})
+    @UnitTestMethod(target = TestInputObject.class, name = "getTestComplexInputObject", args = {})
     public void testGetTestComplexInputObject() {
         TestInputObject testInputObject = new TestInputObject();
         TestComplexInputObject testComplexInputObject = TestObjectUtil.generateTestComplexInputObject();

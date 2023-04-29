@@ -12,15 +12,19 @@ import java.util.Set;
 import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.translation.core.testsupport.TestObjectUtil;
+import util.annotations.UnitTestConstructor;
+import util.annotations.UnitTestMethod;
 
 public class AT_TestObjectWrapper {
 
     @Test
+    @UnitTestConstructor(target = TestObjectWrapper.class, args = {})
     public void testConstructor() {
         assertNotNull(new TestObjectWrapper());
     }
 
     @Test
+    @UnitTestMethod(target = TestObjectWrapper.class, name = "setWrappedObject", args = { Object.class })
     public void testSetWrappedObject() {
         TestAppObject testAppObject = TestObjectUtil.generateTestAppObject();
         TestObjectWrapper testObjectWrapper = new TestObjectWrapper();
@@ -42,6 +46,7 @@ public class AT_TestObjectWrapper {
     }
 
     @Test
+    @UnitTestMethod(target = TestObjectWrapper.class, name = "getWrappedObject", args = {})
     public void testGetWrappedObject() {
         TestInputObject testInputObject = TestObjectUtil.generateTestInputObject();
         TestObjectWrapper testObjectWrapper = new TestObjectWrapper();
@@ -52,6 +57,7 @@ public class AT_TestObjectWrapper {
     }
 
     @Test
+    @UnitTestMethod(target = TestObjectWrapper.class, name = "hashCode", args = {})
     public void testHashCode() {
         TestAppObject testAppObject = TestObjectUtil.generateTestAppObject();
         TestObjectWrapper testObjectWrapper = new TestObjectWrapper();
@@ -64,7 +70,7 @@ public class AT_TestObjectWrapper {
         TestObjectWrapper testObjectWrapper3 = new TestObjectWrapper();
 
         testObjectWrapper3.setWrappedObject(testInputObject);
-
+        // TODO: fix this
         Set<TestObjectWrapper> wrapperSet = new LinkedHashSet<>();
 
         wrapperSet.add(testObjectWrapper);
@@ -85,6 +91,7 @@ public class AT_TestObjectWrapper {
     }
 
     @Test
+    @UnitTestMethod(target = TestObjectWrapper.class, name = "equals", args = { Object.class })
     public void testEquals() {
         TestAppObject testAppObject = TestObjectUtil.generateTestAppObject();
         TestObjectWrapper testObjectWrapper = new TestObjectWrapper();

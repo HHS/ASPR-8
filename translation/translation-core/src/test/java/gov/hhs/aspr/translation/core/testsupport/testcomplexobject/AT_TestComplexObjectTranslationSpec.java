@@ -1,15 +1,23 @@
 package gov.hhs.aspr.translation.core.testsupport.testcomplexobject;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.translation.core.testsupport.TestObjectUtil;
 import gov.hhs.aspr.translation.core.testsupport.TestTranslationEngine;
 import gov.hhs.aspr.translation.core.testsupport.testobject.TestObjectTranslationSpec;
+import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
 
 public class AT_TestComplexObjectTranslationSpec {
+
+    @Test
+    @UnitTestConstructor(target = TestComplexObjectTranslationSpec.class, args = {})
+    public void testConstructor() {
+        assertNotNull(new TestComplexObjectTranslationSpec());
+    }
 
     @Test
     @UnitTestMethod(target = TestComplexObjectTranslationSpec.class, name = "convertInputObject", args = {
