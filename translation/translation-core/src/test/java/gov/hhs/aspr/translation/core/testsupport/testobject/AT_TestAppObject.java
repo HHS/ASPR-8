@@ -2,6 +2,7 @@ package gov.hhs.aspr.translation.core.testsupport.testobject;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.LinkedHashSet;
@@ -11,10 +12,19 @@ import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.translation.core.testsupport.TestObjectUtil;
 import gov.hhs.aspr.translation.core.testsupport.testcomplexobject.TestComplexAppObject;
+import util.annotations.UnitTestConstructor;
+import util.annotations.UnitTestMethod;
 
 public class AT_TestAppObject {
 
     @Test
+    @UnitTestConstructor(target = TestAppObject.class, args = {})
+    public void testConstructor() {
+        assertNotNull(new TestAppObject());
+    }
+
+    @Test
+    @UnitTestMethod(target = TestAppObject.class, name = "setInteger", args = { int.class })
     public void testSetInteger() {
         TestAppObject testAppObject = new TestAppObject();
 
@@ -24,6 +34,7 @@ public class AT_TestAppObject {
     }
 
     @Test
+    @UnitTestMethod(target = TestAppObject.class, name = "getInteger", args = {})
     public void testGetInteger() {
         TestAppObject testAppObject = new TestAppObject();
 
@@ -33,6 +44,7 @@ public class AT_TestAppObject {
     }
 
     @Test
+    @UnitTestMethod(target = TestAppObject.class, name = "setBool", args = { boolean.class })
     public void testSetBool() {
         TestAppObject testAppObject = new TestAppObject();
 
@@ -42,6 +54,7 @@ public class AT_TestAppObject {
     }
 
     @Test
+    @UnitTestMethod(target = TestAppObject.class, name = "isBool", args = {})
     public void testIsBool() {
         TestAppObject testAppObject = new TestAppObject();
 
@@ -51,6 +64,7 @@ public class AT_TestAppObject {
     }
 
     @Test
+    @UnitTestMethod(target = TestAppObject.class, name = "setString", args = { String.class })
     public void testSetString() {
         TestAppObject testAppObject = new TestAppObject();
 
@@ -60,6 +74,7 @@ public class AT_TestAppObject {
     }
 
     @Test
+    @UnitTestMethod(target = TestAppObject.class, name = "getString", args = {})
     public void testGetString() {
         TestAppObject testAppObject = new TestAppObject();
 
@@ -69,6 +84,8 @@ public class AT_TestAppObject {
     }
 
     @Test
+    @UnitTestMethod(target = TestAppObject.class, name = "setTestComplexAppObject", args = {
+            TestComplexAppObject.class })
     public void testSetTestComplexInputObject() {
         TestAppObject testAppObject = new TestAppObject();
         TestComplexAppObject testComplexAppObject = TestObjectUtil.generateTestComplexAppObject();
@@ -79,6 +96,7 @@ public class AT_TestAppObject {
     }
 
     @Test
+    @UnitTestMethod(target = TestAppObject.class, name = "getTestComplexAppObject", args = {})
     public void testGetTestComplexInputObject() {
         TestAppObject testAppObject = new TestAppObject();
         TestComplexAppObject testComplexAppObject = TestObjectUtil.generateTestComplexAppObject();
@@ -89,6 +107,7 @@ public class AT_TestAppObject {
     }
 
     @Test
+    @UnitTestMethod(target = TestAppObject.class, name = "hashCode", args = {})
     public void testHashCode() {
         TestAppObject testAppObject1 = new TestAppObject();
         TestAppObject testAppObject2 = new TestAppObject();
@@ -109,6 +128,7 @@ public class AT_TestAppObject {
         testAppObject2.setString(string);
         testAppObject2.setTestComplexAppObject(testComplexAppObject);
 
+        // TODO: fix this
         Set<TestAppObject> appObjects = new LinkedHashSet<>();
 
         appObjects.add(testAppObject1);
@@ -135,6 +155,7 @@ public class AT_TestAppObject {
     }
 
     @Test
+    @UnitTestMethod(target = TestAppObject.class, name = "equals", args = { Object.class })
     public void testEquals() {
         TestAppObject testAppObject1 = new TestAppObject();
         TestAppObject testAppObject2 = new TestAppObject();

@@ -2,6 +2,7 @@ package gov.hhs.aspr.translation.core.testsupport.testobject;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.LinkedHashSet;
@@ -10,11 +11,21 @@ import java.util.Set;
 import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.translation.core.testsupport.TestObjectUtil;
+import gov.hhs.aspr.translation.core.testsupport.testcomplexobject.TestComplexAppObject;
 import gov.hhs.aspr.translation.core.testsupport.testcomplexobject.TestComplexInputObject;
+import util.annotations.UnitTestConstructor;
+import util.annotations.UnitTestMethod;
 
 public class AT_TestInputObject {
 
     @Test
+    @UnitTestConstructor(target = TestInputObject.class, args = {})
+    public void testConstructor() {
+        assertNotNull(new TestInputObject());
+    }
+
+    @Test
+    @UnitTestMethod(target = TestInputObject.class, name = "setInteger", args = { int.class })
     public void testSetInteger() {
         TestInputObject testInputObject = new TestInputObject();
 
@@ -24,6 +35,7 @@ public class AT_TestInputObject {
     }
 
     @Test
+    @UnitTestMethod(target = TestInputObject.class, name = "getInteger", args = {})
     public void testGetInteger() {
         TestInputObject testInputObject = new TestInputObject();
 
@@ -33,6 +45,7 @@ public class AT_TestInputObject {
     }
 
     @Test
+    @UnitTestMethod(target = TestInputObject.class, name = "setBool", args = { boolean.class })
     public void testSetBool() {
         TestInputObject testInputObject = new TestInputObject();
 
@@ -42,6 +55,7 @@ public class AT_TestInputObject {
     }
 
     @Test
+    @UnitTestMethod(target = TestInputObject.class, name = "isBool", args = {})
     public void testIsBool() {
         TestInputObject testInputObject = new TestInputObject();
 
@@ -51,6 +65,7 @@ public class AT_TestInputObject {
     }
 
     @Test
+    @UnitTestMethod(target = TestInputObject.class, name = "setString", args = { String.class })
     public void testSetString() {
         TestInputObject testInputObject = new TestInputObject();
 
@@ -60,6 +75,7 @@ public class AT_TestInputObject {
     }
 
     @Test
+    @UnitTestMethod(target = TestInputObject.class, name = "getString", args = {})
     public void testGetString() {
         TestInputObject testInputObject = new TestInputObject();
 
@@ -69,6 +85,8 @@ public class AT_TestInputObject {
     }
 
     @Test
+    @UnitTestMethod(target = TestInputObject.class, name = "setTestComplexAppObject", args = {
+            TestComplexAppObject.class })
     public void testSetTestComplexInputObject() {
         TestInputObject testInputObject = new TestInputObject();
         TestComplexInputObject testComplexInputObject = TestObjectUtil.generateTestComplexInputObject();
@@ -79,6 +97,7 @@ public class AT_TestInputObject {
     }
 
     @Test
+    @UnitTestMethod(target = TestInputObject.class, name = "getTestComplexAppObject", args = {})
     public void testGetTestComplexInputObject() {
         TestInputObject testInputObject = new TestInputObject();
         TestComplexInputObject testComplexInputObject = TestObjectUtil.generateTestComplexInputObject();
@@ -89,6 +108,7 @@ public class AT_TestInputObject {
     }
 
     @Test
+    @UnitTestMethod(target = TestInputObject.class, name = "hashCode", args = {})
     public void testHashCode() {
         TestInputObject testInputObject1 = new TestInputObject();
         TestInputObject testInputObject2 = new TestInputObject();
@@ -108,6 +128,7 @@ public class AT_TestInputObject {
         testInputObject2.setBool(bool);
         testInputObject2.setString(string);
         testInputObject2.setTestComplexInputObject(testComplexInputObject);
+        // TODO: fix this
 
         Set<TestInputObject> inputObjects = new LinkedHashSet<>();
 
@@ -135,6 +156,7 @@ public class AT_TestInputObject {
     }
 
     @Test
+    @UnitTestMethod(target = TestInputObject.class, name = "equals", args = { Object.class })
     public void testEquals() {
         TestInputObject testInputObject1 = new TestInputObject();
         TestInputObject testInputObject2 = new TestInputObject();

@@ -7,10 +7,13 @@ import org.junit.jupiter.api.Test;
 import gov.hhs.aspr.translation.core.testsupport.TestObjectUtil;
 import gov.hhs.aspr.translation.core.testsupport.TestTranslationEngine;
 import gov.hhs.aspr.translation.core.testsupport.testobject.TestObjectTranslationSpec;
+import util.annotations.UnitTestMethod;
 
 public class AT_TestComplexObjectTranslationSpec {
 
     @Test
+    @UnitTestMethod(target = TestComplexObjectTranslationSpec.class, name = "convertInputObject", args = {
+            Object.class })
     public void testConvertInputObject() {
         TestComplexInputObject testComplexInputObject = TestObjectUtil.generateTestComplexInputObject();
         TestComplexAppObject expectedComplexAppObject = TestObjectUtil
@@ -33,6 +36,8 @@ public class AT_TestComplexObjectTranslationSpec {
     }
 
     @Test
+    @UnitTestMethod(target = TestComplexObjectTranslationSpec.class, name = "convertAppObject", args = {
+            Object.class })
     public void testConvertAppObject() {
         TestComplexAppObject testComplexAppObject = TestObjectUtil.generateTestComplexAppObject();
         TestComplexInputObject expectedComplexInputObject = TestObjectUtil
@@ -55,6 +60,7 @@ public class AT_TestComplexObjectTranslationSpec {
     }
 
     @Test
+    @UnitTestMethod(target = TestComplexObjectTranslationSpec.class, name = "getAppObjectClass", args = {})
     public void testGetAppObjectClass() {
         TestComplexObjectTranslationSpec testComplexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
 
@@ -62,6 +68,7 @@ public class AT_TestComplexObjectTranslationSpec {
     }
 
     @Test
+    @UnitTestMethod(target = TestComplexObjectTranslationSpec.class, name = "getInputObjectClass", args = {})
     public void testGetInputObjectClass() {
         TestComplexObjectTranslationSpec testComplexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
 

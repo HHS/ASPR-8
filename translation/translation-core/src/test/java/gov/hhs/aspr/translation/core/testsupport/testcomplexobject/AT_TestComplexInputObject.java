@@ -2,6 +2,7 @@ package gov.hhs.aspr.translation.core.testsupport.testcomplexobject;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.LinkedHashSet;
@@ -10,10 +11,19 @@ import java.util.Set;
 import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.translation.core.testsupport.TestObjectUtil;
+import util.annotations.UnitTestConstructor;
+import util.annotations.UnitTestMethod;
 
 public class AT_TestComplexInputObject {
     
     @Test
+    @UnitTestConstructor(target = TestComplexInputObject.class, args = {})
+    public void testConstructor() {
+        assertNotNull(new TestComplexInputObject());
+    }
+    
+    @Test
+    @UnitTestMethod(target = TestComplexInputObject.class, name = "setNumEntities", args = { int.class })
     public void testSetNumEntities() {
         TestComplexInputObject testComplexInputObject = new TestComplexInputObject();
 
@@ -23,6 +33,7 @@ public class AT_TestComplexInputObject {
     }
 
     @Test
+    @UnitTestMethod(target = TestComplexInputObject.class, name = "getNumEntities", args = {})
     public void testGetNumEntities() {
         TestComplexInputObject testComplexInputObject = new TestComplexInputObject();
 
@@ -32,6 +43,7 @@ public class AT_TestComplexInputObject {
     }
 
     @Test
+    @UnitTestMethod(target = TestComplexInputObject.class, name = "setStartTime", args = { double.class })
     public void testSetStartTime() {
         TestComplexInputObject testComplexInputObject = new TestComplexInputObject();
 
@@ -41,6 +53,7 @@ public class AT_TestComplexInputObject {
     }
 
     @Test
+    @UnitTestMethod(target = TestComplexInputObject.class, name = "getStartTime", args = {})
     public void testIsStartTime() {
         TestComplexInputObject testComplexInputObject = new TestComplexInputObject();
 
@@ -50,6 +63,7 @@ public class AT_TestComplexInputObject {
     }
 
     @Test
+    @UnitTestMethod(target = TestComplexInputObject.class, name = "setTestString", args = { String.class })
     public void testSetTestString() {
         TestComplexInputObject testComplexInputObject = new TestComplexInputObject();
 
@@ -59,6 +73,7 @@ public class AT_TestComplexInputObject {
     }
 
     @Test
+    @UnitTestMethod(target = TestComplexInputObject.class, name = "getTestString", args = {})
     public void testGetString() {
         TestComplexInputObject testComplexInputObject = new TestComplexInputObject();
 
@@ -68,6 +83,7 @@ public class AT_TestComplexInputObject {
     }
 
     @Test
+    @UnitTestMethod(target = TestComplexInputObject.class, name = "hashCode", args = {})
     public void testHashCode() {
         TestComplexInputObject testComplexInputObject1 = new TestComplexInputObject();
         TestComplexInputObject testComplexInputObject2 = new TestComplexInputObject();
@@ -112,6 +128,7 @@ public class AT_TestComplexInputObject {
     }
 
     @Test
+    @UnitTestMethod(target = TestComplexInputObject.class, name = "equals", args = { Object.class })
     public void testEquals() {
         TestComplexInputObject testComplexInputObject1 = new TestComplexInputObject();
         TestComplexInputObject testComplexInputObject2 = new TestComplexInputObject();
