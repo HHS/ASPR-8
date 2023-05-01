@@ -38,7 +38,6 @@ import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.StochasticsPluginData;
 import plugins.stochastics.support.WellState;
 import plugins.util.properties.PropertyDefinition;
-import plugins.util.properties.TimeTrackingPolicy;
 import util.random.RandomGeneratorProvider;
 
 public final class Example_18 {
@@ -124,10 +123,10 @@ public final class Example_18 {
 
 		propertyDefinition = PropertyDefinition	.builder()//
 												.setType(Boolean.class)//
-												.setDefaultValue(false)//
-												.setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME)//
+												.setDefaultValue(false)//												
 												.build();
 		builder.definePersonProperty(PersonProperty.RECEIVED_QUESTIONNAIRE, propertyDefinition);//
+		builder.setTimeTracking(PersonProperty.RECEIVED_QUESTIONNAIRE, 0);
 
 		PersonPropertiesPluginData personPropertiesPluginData = builder.build();
 

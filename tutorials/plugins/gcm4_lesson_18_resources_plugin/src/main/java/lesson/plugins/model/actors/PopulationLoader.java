@@ -11,7 +11,7 @@ import nucleus.ActorContext;
 import plugins.globalproperties.datamanagers.GlobalPropertiesDataManager;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonConstructionData;
-import plugins.personproperties.support.PersonPropertyInitialization;
+import plugins.personproperties.support.PersonPropertyValueInitialization;
 import plugins.regions.datamanagers.RegionsDataManager;
 import plugins.regions.support.RegionId;
 import plugins.stochastics.StochasticsDataManager;
@@ -93,8 +93,8 @@ public class PopulationLoader {
 		for (int i = 0; i < populationSize; i++) {
 			RegionId regionId = getRandomRegionId();
 			boolean immune = randomGenerator.nextDouble() < immuneProbabilty;
-			PersonPropertyInitialization personPropertyInitialization = 
-					new PersonPropertyInitialization(PersonProperty.IMMUNE, immune);
+			PersonPropertyValueInitialization personPropertyInitialization = 
+					new PersonPropertyValueInitialization(PersonProperty.IMMUNE, immune);
 			PersonConstructionData personConstructionData = 
 					PersonConstructionData	.builder()//
 						.add(personPropertyInitialization)//
