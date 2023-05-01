@@ -243,19 +243,19 @@ public class ProtobufTranslationEngine extends TranslationEngine {
             throw new RuntimeException(e);
         }
     }
+    
+    public <T> T getObjectFromAny(Any anyValue) {
+        return convertObject(anyValue);
+    }
+    
+    public Any getAnyFromObject(Object object) {
+        return convertObjectAsUnsafeClass(object, Any.class);
+    }
 
     public <U, M extends U> Any getAnyFromObjectAsSafeClass(M object, Class<U> parentClassRef) {
         U convertedObject = convertObjectAsSafeClass(object, parentClassRef);
 
         return convertObjectAsUnsafeClass(convertedObject, Any.class);
-    }
-
-    public Any getAnyFromObject(Object object) {
-        return convertObjectAsUnsafeClass(object, Any.class);
-    }
-
-    public <T> T getObjectFromAny(Any anyValue) {
-        return convertObject(anyValue);
     }
 
     public Class<?> getClassFromTypeUrl(String typeUrl) {

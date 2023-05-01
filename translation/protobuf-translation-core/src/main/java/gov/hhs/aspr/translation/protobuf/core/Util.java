@@ -1,11 +1,7 @@
 package gov.hhs.aspr.translation.protobuf.core;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-
 public class Util {
-    public JsonObject deepMerge(JsonObject source, JsonObject target) {
+    /* public JsonObject deepMerge(JsonObject source, JsonObject target) {
         for (String key : source.keySet()) {
             JsonElement value = source.get(key);
             if (!target.has(key)) {
@@ -26,5 +22,5 @@ public class Util {
             }
         }
         return target;
-    }
+    } */
 }

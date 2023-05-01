@@ -1,0 +1,18 @@
+syntax = "proto3";
+package gov.hhs.aspr.gcm.translation.protobuf.testsupport;
+
+option java_multiple_files = true;
+option java_package = "gov.hhs.aspr.translation.protobuf.core.testsupport.testobject.input";
+
+message TestComplexInputObject {
+    string testString = 1;
+    double startTime = 2;
+    int32 numEntities = 3;
+}
+
+message TestInputObject {
+    int32 integer = 1;
+    bool bool = 2;
+    string string = 3;
+    TestComplexInputObject testComplexInputObject = 4;
+}
