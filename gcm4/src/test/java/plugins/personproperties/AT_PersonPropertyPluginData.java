@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -12,6 +13,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Random;
 import java.util.Set;
 
 import org.apache.commons.math3.random.RandomGenerator;
@@ -992,8 +994,8 @@ public class AT_PersonPropertyPluginData {
 	@Test
 	@UnitTestMethod(target = PersonPropertiesPluginData.class, name = "hashCode", args = {})
 	public void testHashCode() {
-		
-		//some setup first
+
+		// some setup first
 		PersonPropertyId propId1 = new PersonPropertyId() {
 		};
 		PropertyDefinition def1 = PropertyDefinition.builder()//
@@ -1010,66 +1012,102 @@ public class AT_PersonPropertyPluginData {
 													.setPropertyValueMutability(true)//
 													.build();
 
-		PersonPropertiesPluginData pluginData1 = PersonPropertiesPluginData.builder()//
-												.definePersonProperty(propId1, def1)//
-												.definePersonProperty(propId2, def2)//
-												.setTimeTracking(propId1, 2.0)//
-												.setTimeTracking(propId2, 3.0)//
+		PersonPropertiesPluginData pluginData1 = PersonPropertiesPluginData	.builder()//
+																			.definePersonProperty(propId1, def1)//
+																			.definePersonProperty(propId2, def2)//
+																			.setTimeTracking(propId1, 2.0)//
+																			.setTimeTracking(propId2, 3.0)//
 
-												.setPersonPropertyValue(new PersonId(2), propId1, 5)//
-												.setPersonPropertyTime(new PersonId(2), propId1, 6.0)//
+																			.setPersonPropertyValue(new PersonId(2), propId1, 5)//
+																			.setPersonPropertyTime(new PersonId(2), propId1, 6.0)//
 
-												.setPersonPropertyValue(new PersonId(5), propId2, 12.5)//
-												.setPersonPropertyTime(new PersonId(5), propId2, 3.0)//
+																			.setPersonPropertyValue(new PersonId(5), propId2, 12.5)//
+																			.setPersonPropertyTime(new PersonId(5), propId2, 3.0)//
 
-												.setPersonPropertyTime(new PersonId(8), propId2, 8.4)//
-												.setPersonPropertyTime(new PersonId(8), propId2, 12.7)//
-												.build();
+																			.setPersonPropertyTime(new PersonId(8), propId2, 8.4)//
+																			.setPersonPropertyTime(new PersonId(8), propId2, 12.7)//
+																			.build();
 
 		// we eliminate the value of person 2 since it is the default
-		PersonPropertiesPluginData pluginData2 = PersonPropertiesPluginData.builder()//
-												.definePersonProperty(propId1, def1)//
-												.definePersonProperty(propId2, def2)//
-												.setTimeTracking(propId1, 2)//
-												.setTimeTracking(propId2, 3)//
+		PersonPropertiesPluginData pluginData2 = PersonPropertiesPluginData	.builder()//
+																			.definePersonProperty(propId1, def1)//
+																			.definePersonProperty(propId2, def2)//
+																			.setTimeTracking(propId1, 2)//
+																			.setTimeTracking(propId2, 3)//
 
-												// .setPersonPropertyValue(new
-												// PersonId(2), propId1, 5)//
-												.setPersonPropertyTime(new PersonId(2), propId1, 6.0)//
+																			// .setPersonPropertyValue(new
+																			// PersonId(2),
+																			// propId1,
+																			// 5)//
+																			.setPersonPropertyTime(new PersonId(2), propId1, 6.0)//
 
-												.setPersonPropertyValue(new PersonId(5), propId2, 12.5)//
-												.setPersonPropertyTime(new PersonId(5), propId2, 3.0)//
+																			.setPersonPropertyValue(new PersonId(5), propId2, 12.5)//
+																			.setPersonPropertyTime(new PersonId(5), propId2, 3.0)//
 
-												.setPersonPropertyTime(new PersonId(8), propId2, 8.4)//
-												.setPersonPropertyTime(new PersonId(8), propId2, 12.7)//
-												.build();
+																			.setPersonPropertyTime(new PersonId(8), propId2, 8.4)//
+																			.setPersonPropertyTime(new PersonId(8), propId2, 12.7)//
+																			.build();
 
 		// we eliminate the property time for person 5 since it has the default
 		// time
-		PersonPropertiesPluginData pluginData3 = PersonPropertiesPluginData.builder()//
-												.definePersonProperty(propId1, def1)//
-												.definePersonProperty(propId2, def2)//
-												.setTimeTracking(propId1, 2.0)//
-												.setTimeTracking(propId2, 3.0)//
+		PersonPropertiesPluginData pluginData3 = PersonPropertiesPluginData	.builder()//
+																			.definePersonProperty(propId1, def1)//
+																			.definePersonProperty(propId2, def2)//
+																			.setTimeTracking(propId1, 2.0)//
+																			.setTimeTracking(propId2, 3.0)//
 
-												.setPersonPropertyValue(new PersonId(2), propId1, 5)//
-												.setPersonPropertyTime(new PersonId(2), propId1, 6.0)//
+																			.setPersonPropertyValue(new PersonId(2), propId1, 5)//
+																			.setPersonPropertyTime(new PersonId(2), propId1, 6.0)//
 
-												.setPersonPropertyValue(new PersonId(5), propId2, 12.5)//
-												// .setPersonPropertyTime(new
-												// PersonId(5), propId2, 3.0)//
+																			.setPersonPropertyValue(new PersonId(5), propId2, 12.5)//
+																			// .setPersonPropertyTime(new
+																			// PersonId(5),
+																			// propId2,
+																			// 3.0)//
 
-												.setPersonPropertyTime(new PersonId(8), propId2, 8.4)//
-												.setPersonPropertyTime(new PersonId(8), propId2, 12.7)//
-												.build();
-		
+																			.setPersonPropertyTime(new PersonId(8), propId2, 8.4)//
+																			.setPersonPropertyTime(new PersonId(8), propId2, 12.7)//
+																			.build();
+
 		// equal objects have equal hash codes
 		assertEquals(pluginData1, pluginData2);
 		assertEquals(pluginData1, pluginData3);
-		
+
 		assertEquals(pluginData1.hashCode(), pluginData2.hashCode());
 		assertEquals(pluginData1.hashCode(), pluginData3.hashCode());
-		
+
+		// show that hash codes are reasonably distributed
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(3839519625960869013L);
+
+		int n = 100;
+		Set<Integer> hashCodes = new LinkedHashSet<>();
+		for (int i = 0; i < n; i++) {
+			PersonPropertiesPluginData.Builder builder = PersonPropertiesPluginData.builder();
+			for (TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.values()) {
+				if (randomGenerator.nextBoolean()) {
+					PropertyDefinition propertyDefinition = testPersonPropertyId.getPropertyDefinition();
+					builder.definePersonProperty(testPersonPropertyId, propertyDefinition);//
+					for (int j = 0; j < 5; j++) {
+						if (randomGenerator.nextBoolean()) {
+							builder.setPersonPropertyValue(new PersonId(j), testPersonPropertyId, testPersonPropertyId.getRandomPropertyValue(randomGenerator));
+						}
+					}
+					if (randomGenerator.nextBoolean()) {
+						double baseTime = randomGenerator.nextDouble();
+						builder.setTimeTracking(testPersonPropertyId, baseTime);
+						for (int j = 0; j < 5; j++) {
+							if (randomGenerator.nextBoolean()) {
+								builder.setPersonPropertyTime(new PersonId(j), testPersonPropertyId, baseTime + randomGenerator.nextDouble());
+							}
+						}
+					}
+				}
+			}
+			PersonPropertiesPluginData personPropertiesPluginData = builder.build();
+			hashCodes.add(personPropertiesPluginData.hashCode());
+		}
+		int expectedCount = (9*n)/10;
+		assertTrue(hashCodes.size()>expectedCount);
 	}
 
 }
