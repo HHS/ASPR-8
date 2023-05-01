@@ -98,8 +98,10 @@ public class PersonPropertiesPluginData implements PluginData {
 			int prime = 31;
 			result = 1;
 			for (Double time : list) {
-				if (!time.equals(defaultTime)) {
-					result = result * prime + time.hashCode();
+				if (time != null) {
+					if (!time.equals(defaultTime)) {
+						result = result * prime + time.hashCode();
+					}
 				}
 			}
 
@@ -169,6 +171,28 @@ public class PersonPropertiesPluginData implements PluginData {
 			}
 			return true;
 		}
+
+		@Override
+		public String toString() {
+			StringBuilder builder = new StringBuilder();
+			builder.append("Data [personPropertyDefinitions=");
+			builder.append(personPropertyDefinitions);
+			builder.append(", propertyTrackingTimes=");
+			builder.append(propertyTrackingTimes);
+			builder.append(", personPropertyValues=");
+			builder.append(personPropertyValues);
+			builder.append(", personPropertyTimes=");
+			builder.append(personPropertyTimes);
+			builder.append(", emptyValueList=");
+			builder.append(emptyValueList);
+			builder.append(", emptyTimeList=");
+			builder.append(emptyTimeList);
+			builder.append(", locked=");
+			builder.append(locked);
+			builder.append("]");
+			return builder.toString();
+		}
+		
 
 	}
 
@@ -466,18 +490,17 @@ public class PersonPropertiesPluginData implements PluginData {
 			 */
 			for (PersonPropertyId personPropertyId : data.personPropertyDefinitions.keySet()) {
 				PropertyDefinition propertyDefinition = data.personPropertyDefinitions.get(personPropertyId);
-				Optional<Object> optional = propertyDefinition.getDefaultValue();
-				if (optional.isEmpty()) {
-					List<Object> list = data.personPropertyValues.get(personPropertyId);
-					for (int i = 0; i < list.size(); i++) {
-						Object value = list.get(i);
-						if (value != null) {
-							if (!propertyDefinition.getType().isAssignableFrom(value.getClass())) {
-								throw new ContractException(PropertyError.INCOMPATIBLE_VALUE, personPropertyId + " = " + value);
-							}
+
+				List<Object> list = data.personPropertyValues.get(personPropertyId);
+				for (int i = 0; i < list.size(); i++) {
+					Object value = list.get(i);
+					if (value != null) {
+						if (!propertyDefinition.getType().isAssignableFrom(value.getClass())) {
+							throw new ContractException(PropertyError.INCOMPATIBLE_VALUE, personPropertyId + " = " + value);
 						}
 					}
 				}
+
 			}
 
 			// show that any property that is not time tracked has no time
@@ -498,8 +521,10 @@ public class PersonPropertiesPluginData implements PluginData {
 					Double defaultTime = data.propertyTrackingTimes.get(personPropertyId);
 					List<Double> list = data.personPropertyTimes.get(personPropertyId);
 					for (Double time : list) {
-						if (time < defaultTime) {
-							throw new ContractException(PersonPropertyError.PROPERTY_TIME_PRECEDES_DEFAULT);
+						if (time != null) {
+							if (time < defaultTime) {
+								throw new ContractException(PersonPropertyError.PROPERTY_TIME_PRECEDES_DEFAULT);
+							}
 						}
 					}
 				}
@@ -549,7 +574,7 @@ public class PersonPropertiesPluginData implements PluginData {
 
 	/**
 	 * Returns the default tracking time for the given person property id as an
-	 * Optional<Double>. The property should be time tracked if the optional is
+	 * Optional<Double>. The property will be time tracked if the optional is
 	 * present.
 	 * 
 	 * @throws ContractException
@@ -560,7 +585,7 @@ public class PersonPropertiesPluginData implements PluginData {
 	 *             person property id is unknown</li>
 	 * 
 	 */
-	public Optional<Double> getPersonPropertyTrackingTime(final PersonPropertyId personPropertyId) {
+	public Optional<Double> getTrackingTime(final PersonPropertyId personPropertyId) {
 		validatePersonPropertyId(personPropertyId);
 		Double result = data.propertyTrackingTimes.get(personPropertyId);
 		return Optional.ofNullable(result);
@@ -622,6 +647,13 @@ public class PersonPropertiesPluginData implements PluginData {
 	 * Returns the property values for the given person property id as an
 	 * unmodifiable list. Each object in the list corresponds to a PersonId in
 	 * ascending order starting from zero.
+	 *
+	 * @throws ContractException
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the person
+	 *             property id is null</li>
+	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if the
+	 *             person property id is unknown</li>
+	 * 
 	 */
 	public List<Object> getPropertyValues(PersonPropertyId personPropertyId) {
 		validatePersonPropertyId(personPropertyId);
@@ -672,5 +704,16 @@ public class PersonPropertiesPluginData implements PluginData {
 		}
 		return true;
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder2 = new StringBuilder();
+		builder2.append("PersonPropertiesPluginData [data=");
+		builder2.append(data);
+		builder2.append("]");
+		return builder2.toString();
+	}
+	
+	
 
 }

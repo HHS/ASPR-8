@@ -317,7 +317,7 @@ public class AT_PropertyDefinition {
 
 		assertNotEquals(propertyDefinition1, propertyDefinition3);
 		assertNotEquals(propertyDefinition1, propertyDefinition4);
-		assertNotEquals(propertyDefinition1, propertyDefinition5);
+		assertEquals(propertyDefinition1, propertyDefinition5);
 		assertNotEquals(propertyDefinition1, propertyDefinition6);
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(3951851825163960855L);
