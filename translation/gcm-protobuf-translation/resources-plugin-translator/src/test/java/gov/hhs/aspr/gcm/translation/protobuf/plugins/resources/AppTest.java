@@ -20,7 +20,7 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.input.ResourceRep
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.input.ResourcesPluginDataInput;
 import gov.hhs.aspr.translation.core.TranslationController;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
-import gov.hhs.aspr.translation.protobuf.core.testsupport.TestResourceHelper;
+import gov.hhs.aspr.translation.core.testsupport.TestResourceHelper;
 import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportPeriod;
 import plugins.reports.support.SimpleReportLabel;

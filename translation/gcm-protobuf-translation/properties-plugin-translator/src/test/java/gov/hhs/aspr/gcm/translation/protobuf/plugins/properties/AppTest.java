@@ -14,7 +14,7 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.testsupport.tran
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.testsupport.translationSpecs.TestMessageTranslationSpec;
 import gov.hhs.aspr.translation.core.TranslationController;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
-import gov.hhs.aspr.translation.protobuf.core.testsupport.TestResourceHelper;
+import gov.hhs.aspr.translation.core.testsupport.TestResourceHelper;
 
 public class AppTest {
     Path basePath = TestResourceHelper.getResourceDir(this.getClass());
