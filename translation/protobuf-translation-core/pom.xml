@@ -192,7 +192,7 @@
                 </executions>
                 <configuration>
                     <protocArtifact>com.google.protobuf:protoc:${protoc.version}:exe:${os.detected.classifier}</protocArtifact>
-                    <protoSourceRoot>src/proto</protoSourceRoot>
+                    <protoSourceRoot>src/proto/gov/hhs/aspr/translation/protobuf/core</protoSourceRoot>
                 </configuration>
             </plugin>
 

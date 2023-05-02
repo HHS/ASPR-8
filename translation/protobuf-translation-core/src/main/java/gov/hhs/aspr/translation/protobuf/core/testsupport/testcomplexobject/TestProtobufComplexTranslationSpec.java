@@ -2,7 +2,7 @@ package gov.hhs.aspr.translation.protobuf.core.testsupport.testcomplexobject;
 
 import gov.hhs.aspr.translation.core.testsupport.testcomplexobject.app.TestComplexAppObject;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
-import gov.hhs.aspr.translation.protobuf.core.testsupport.testobject.input.TestComplexInputObject;
+import gov.hhs.aspr.translation.protobuf.core.testsupport.testcomplexobject.input.TestComplexInputObject;
 
 public class TestProtobufComplexTranslationSpec extends ProtobufTranslationSpec<TestComplexInputObject, TestComplexAppObject> {
 

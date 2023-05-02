@@ -11,7 +11,7 @@ public class AT_ProtobufTranslationEngine {
 
     @Test
     void testGetAnyFromObject() {
-        ProtobufTranslationEngine protobufTranslationEngine = (ProtobufTranslationEngine) ProtobufTranslationEngine.builder().build();
+        ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine.builder().build();
 
         protobufTranslationEngine.init();
 
@@ -26,7 +26,7 @@ public class AT_ProtobufTranslationEngine {
 
     @Test
     void testGetAnyFromObjectAsSafeClass() {
-        ProtobufTranslationEngine protobufTranslationEngine = (ProtobufTranslationEngine) ProtobufTranslationEngine.builder().build();
+        ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine.builder().build();
 
         protobufTranslationEngine.init();
 
