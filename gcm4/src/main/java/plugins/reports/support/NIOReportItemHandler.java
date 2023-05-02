@@ -124,6 +124,7 @@ public final class NIOReportItemHandler implements Consumer<ExperimentContext> {
 		public Data(Data data) {
 			delimiter = data.delimiter;
 			reportMap.putAll(data.reportMap);
+			experimentReportPath = data.experimentReportPath;
 			displayExperimentColumnsInReports = data.displayExperimentColumnsInReports;
 		}
 
@@ -187,7 +188,7 @@ public final class NIOReportItemHandler implements Consumer<ExperimentContext> {
 				final LineWriter lineWriter = new LineWriter(experimentContext, path, displayExperimentColumnsInReports, delimiter);
 				lineWriterMap.put(reportLabel, lineWriter);
 			}
-			if (experimentLineWriter != null) {
+			if (experimentReportPath != null) {
 				this.experimentLineWriter = new ExperimentLineWriter(experimentContext, experimentReportPath, displayExperimentColumnsInReports, delimiter);
 			}
 		}
