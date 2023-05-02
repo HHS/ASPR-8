@@ -31,7 +31,7 @@ public class AT_TranslationEngine {
     public void testInit() {
         TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
         TestComplexObjectTranslationSpec complexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
-        TestTranslationEngine testTranslationEngine = (TestTranslationEngine) TestTranslationEngine
+        TestTranslationEngine testTranslationEngine = TestTranslationEngine
                 .builder()
                 .addTranslationSpec(testObjectTranslationSpec)
                 .addTranslationSpec(complexObjectTranslationSpec)
@@ -45,7 +45,7 @@ public class AT_TranslationEngine {
     public void testIsInitialized() {
         TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
         TestComplexObjectTranslationSpec complexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
-        TestTranslationEngine testTranslationEngine = (TestTranslationEngine) TestTranslationEngine
+        TestTranslationEngine testTranslationEngine = TestTranslationEngine
                 .builder()
                 .addTranslationSpec(testObjectTranslationSpec)
                 .addTranslationSpec(complexObjectTranslationSpec)
@@ -63,7 +63,7 @@ public class AT_TranslationEngine {
     public void testTranslationSpecsAreInitialized() {
         TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
         TestComplexObjectTranslationSpec complexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
-        TestTranslationEngine testTranslationEngine = (TestTranslationEngine) TestTranslationEngine
+        TestTranslationEngine testTranslationEngine = TestTranslationEngine
                 .builder()
                 .addTranslationSpec(testObjectTranslationSpec)
                 .addTranslationSpec(complexObjectTranslationSpec)
@@ -76,7 +76,7 @@ public class AT_TranslationEngine {
         // preconditions
         // one or more Translation Specs are not properly initialized
         assertThrows(RuntimeException.class, () -> {
-            TestTranslationEngine testTranslationEngine2 = (TestTranslationEngine) TestTranslationEngine
+            TestTranslationEngine testTranslationEngine2 = TestTranslationEngine
                     .builder()
                     .addTranslationSpec(new TestObjectTranslationSpec())
                     .addTranslationSpec(complexObjectTranslationSpec)
@@ -91,7 +91,7 @@ public class AT_TranslationEngine {
     public void testConvertObject() {
         TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
         TestComplexObjectTranslationSpec complexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
-        TestTranslationEngine testTranslationEngine = (TestTranslationEngine) TestTranslationEngine
+        TestTranslationEngine testTranslationEngine = TestTranslationEngine
                 .builder()
                 .addTranslationSpec(testObjectTranslationSpec)
                 .addTranslationSpec(complexObjectTranslationSpec)
@@ -119,7 +119,7 @@ public class AT_TranslationEngine {
     public void testConvertObjectAsSafeClass() {
         TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
         TestComplexObjectTranslationSpec complexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
-        TestTranslationEngine testTranslationEngine = (TestTranslationEngine) TestTranslationEngine
+        TestTranslationEngine testTranslationEngine = TestTranslationEngine
                 .builder()
                 .addTranslationSpec(testObjectTranslationSpec)
                 .addTranslationSpec(complexObjectTranslationSpec)
@@ -180,7 +180,7 @@ public class AT_TranslationEngine {
             }
         };
 
-        TestTranslationEngine testTranslationEngine = (TestTranslationEngine) TestTranslationEngine
+        TestTranslationEngine testTranslationEngine = TestTranslationEngine
                 .builder()
                 .addTranslationSpec(testObjectTranslationSpec)
                 .addTranslationSpec(complexObjectTranslationSpec)
@@ -213,7 +213,7 @@ public class AT_TranslationEngine {
     public void testGetTranslationSpecForClass() {
         TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
         TestComplexObjectTranslationSpec complexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
-        TestTranslationEngine testTranslationEngine = (TestTranslationEngine) TestTranslationEngine
+        TestTranslationEngine testTranslationEngine = TestTranslationEngine
                 .builder()
                 .addTranslationSpec(testObjectTranslationSpec)
                 .addTranslationSpec(complexObjectTranslationSpec)
@@ -269,7 +269,7 @@ public class AT_TranslationEngine {
     public void testAddTranslationSpec() {
         TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
         TestComplexObjectTranslationSpec complexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
-        TestTranslationEngine testTranslationEngine = (TestTranslationEngine) TestTranslationEngine
+        TestTranslationEngine testTranslationEngine = TestTranslationEngine
                 .builder()
                 .addTranslationSpec(testObjectTranslationSpec)
                 .addTranslationSpec(complexObjectTranslationSpec)

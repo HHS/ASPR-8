@@ -29,7 +29,7 @@ public class AT_TestComplexObjectTranslationSpec {
 
         TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
         TestComplexObjectTranslationSpec complexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
-        TestTranslationEngine testTranslationEngine = (TestTranslationEngine) TestTranslationEngine
+        TestTranslationEngine testTranslationEngine = TestTranslationEngine
                 .builder()
                 .addTranslationSpec(testObjectTranslationSpec)
                 .addTranslationSpec(complexObjectTranslationSpec)
@@ -53,7 +53,7 @@ public class AT_TestComplexObjectTranslationSpec {
 
         TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
         TestComplexObjectTranslationSpec complexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
-        TestTranslationEngine testTranslationEngine = (TestTranslationEngine) TestTranslationEngine
+        TestTranslationEngine testTranslationEngine = TestTranslationEngine
                 .builder()
                 .addTranslationSpec(testObjectTranslationSpec)
                 .addTranslationSpec(complexObjectTranslationSpec)
