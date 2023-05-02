@@ -9,10 +9,3 @@ message TestComplexInputObject {
     double startTime = 2;
     int32 numEntities = 3;
 }
-
-message TestInputObject {
-    int32 integer = 1;
-    bool bool = 2;
-    string string = 3;
-    TestComplexInputObject testComplexInputObject = 4;
-}
