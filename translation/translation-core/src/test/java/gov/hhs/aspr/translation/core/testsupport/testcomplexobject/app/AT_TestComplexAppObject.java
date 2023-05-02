@@ -1,4 +1,4 @@
-package gov.hhs.aspr.translation.core.testsupport.testcomplexobject;
+package gov.hhs.aspr.translation.core.testsupport.testcomplexobject.app;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;

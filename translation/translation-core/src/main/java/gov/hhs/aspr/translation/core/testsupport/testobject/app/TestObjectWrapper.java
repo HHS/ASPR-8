@@ -1,4 +1,4 @@
-package gov.hhs.aspr.translation.core.testsupport.testobject;
+package gov.hhs.aspr.translation.core.testsupport.testobject.app;
 
 import java.util.Objects;
 

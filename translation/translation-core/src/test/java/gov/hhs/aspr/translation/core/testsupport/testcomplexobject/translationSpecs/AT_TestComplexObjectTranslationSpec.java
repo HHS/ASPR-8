@@ -1,4 +1,4 @@
-package gov.hhs.aspr.translation.core.testsupport.testcomplexobject;
+package gov.hhs.aspr.translation.core.testsupport.testcomplexobject.translationSpecs;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -7,7 +7,9 @@ import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.translation.core.testsupport.TestObjectUtil;
 import gov.hhs.aspr.translation.core.testsupport.TestTranslationEngine;
-import gov.hhs.aspr.translation.core.testsupport.testobject.TestObjectTranslationSpec;
+import gov.hhs.aspr.translation.core.testsupport.testcomplexobject.app.TestComplexAppObject;
+import gov.hhs.aspr.translation.core.testsupport.testcomplexobject.input.TestComplexInputObject;
+import gov.hhs.aspr.translation.core.testsupport.testobject.translationSpecs.TestObjectTranslationSpec;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
 

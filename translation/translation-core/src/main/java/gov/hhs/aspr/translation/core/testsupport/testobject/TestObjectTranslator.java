@@ -3,6 +3,7 @@ package gov.hhs.aspr.translation.core.testsupport.testobject;
 import gov.hhs.aspr.translation.core.Translator;
 import gov.hhs.aspr.translation.core.testsupport.TestTranslationEngine;
 import gov.hhs.aspr.translation.core.testsupport.testcomplexobject.TestComplexTranslatorId;
+import gov.hhs.aspr.translation.core.testsupport.testobject.translationSpecs.TestObjectTranslationSpec;
 
 public class TestObjectTranslator {
     private TestObjectTranslator() {

@@ -1,8 +1,8 @@
-package gov.hhs.aspr.translation.core.testsupport.testcomplexobject;
+package gov.hhs.aspr.translation.core.testsupport.testcomplexobject.app;
 
 import java.util.Objects;
 
-public class TestComplexInputObject {
+public class TestComplexAppObject {
     private String testString;
     private double startTime;
     private int numEntities;
@@ -47,7 +47,7 @@ public class TestComplexInputObject {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        TestComplexInputObject other = (TestComplexInputObject) obj;
+        TestComplexAppObject other = (TestComplexAppObject) obj;
         return Objects.equals(testString, other.testString)
                 && Double.doubleToLongBits(startTime) == Double.doubleToLongBits(other.startTime)
                 && numEntities == other.numEntities;

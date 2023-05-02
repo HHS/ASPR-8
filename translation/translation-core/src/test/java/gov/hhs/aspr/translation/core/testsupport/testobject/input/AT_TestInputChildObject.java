@@ -1,4 +1,4 @@
-package gov.hhs.aspr.translation.core.testsupport.testobject;
+package gov.hhs.aspr.translation.core.testsupport.testobject.input;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 

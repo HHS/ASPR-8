@@ -1,6 +1,8 @@
-package gov.hhs.aspr.translation.core.testsupport.testcomplexobject;
+package gov.hhs.aspr.translation.core.testsupport.testcomplexobject.translationSpecs;
 
 import gov.hhs.aspr.translation.core.testsupport.TestTranslationSpec;
+import gov.hhs.aspr.translation.core.testsupport.testcomplexobject.app.TestComplexAppObject;
+import gov.hhs.aspr.translation.core.testsupport.testcomplexobject.input.TestComplexInputObject;
 
 public class TestComplexObjectTranslationSpec extends TestTranslationSpec<TestComplexInputObject, TestComplexAppObject> {
 

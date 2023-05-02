@@ -1,8 +1,8 @@
-package gov.hhs.aspr.translation.core.testsupport.testobject;
+package gov.hhs.aspr.translation.core.testsupport.testobject.app;
 
 import java.util.Objects;
 
-import gov.hhs.aspr.translation.core.testsupport.testcomplexobject.TestComplexAppObject;
+import gov.hhs.aspr.translation.core.testsupport.testcomplexobject.app.TestComplexAppObject;
 
 public class TestAppObject {
     private int integer;
