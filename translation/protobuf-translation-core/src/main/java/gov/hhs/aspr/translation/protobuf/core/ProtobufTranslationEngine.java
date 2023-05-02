@@ -65,7 +65,8 @@ public class ProtobufTranslationEngine extends TranslationEngine {
             this.data = data;
         }
 
-        public TranslationEngine build() {
+        @Override
+        public ProtobufTranslationEngine build() {
             TypeRegistry.Builder typeRegistryBuilder = TypeRegistry.newBuilder();
             this.descriptorSet.addAll(PrimitiveTranslationSpecs.getPrimitiveDescriptors());
 

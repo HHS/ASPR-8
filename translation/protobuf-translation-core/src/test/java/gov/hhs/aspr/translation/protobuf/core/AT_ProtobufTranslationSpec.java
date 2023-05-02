@@ -12,7 +12,7 @@ public class AT_ProtobufTranslationSpec {
 
     @Test
     void testInit() {
-        ProtobufTranslationEngine protobufTranslationEngine = (ProtobufTranslationEngine) ProtobufTranslationEngine.builder().build();
+        ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine.builder().build();
     
         ProtobufTranslationSpec<BoolValue, Boolean> booleanTranslationSpec = new BooleanTranslationSpec();
 
