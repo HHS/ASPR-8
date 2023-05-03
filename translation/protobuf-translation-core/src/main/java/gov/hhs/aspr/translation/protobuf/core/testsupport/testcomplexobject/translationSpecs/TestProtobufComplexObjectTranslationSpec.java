@@ -1,10 +1,10 @@
-package gov.hhs.aspr.translation.protobuf.core.testsupport.testcomplexobject;
+package gov.hhs.aspr.translation.protobuf.core.testsupport.testcomplexobject.translationSpecs;
 
 import gov.hhs.aspr.translation.core.testsupport.testcomplexobject.app.TestComplexAppObject;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 import gov.hhs.aspr.translation.protobuf.core.testsupport.testcomplexobject.input.TestComplexInputObject;
 
-public class TestProtobufComplexTranslationSpec extends ProtobufTranslationSpec<TestComplexInputObject, TestComplexAppObject> {
+public class TestProtobufComplexObjectTranslationSpec extends ProtobufTranslationSpec<TestComplexInputObject, TestComplexAppObject> {
 
     @Override
     protected TestComplexAppObject convertInputObject(TestComplexInputObject inputObject) {

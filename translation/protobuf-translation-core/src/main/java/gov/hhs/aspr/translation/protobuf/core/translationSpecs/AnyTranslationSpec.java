@@ -41,7 +41,17 @@ public class AnyTranslationSpec extends ProtobufTranslationSpec<Any, Object> {
         if (Enum.class.isAssignableFrom(appObject.getClass())) {
             return Any.pack(this.translationEngine.convertObjectAsSafeClass(Enum.class.cast(appObject), Enum.class));
         }
-        return Any.pack(this.translationEngine.convertObject(appObject));
+
+        Message message;
+
+        // in the event that the object was converted BEFORE calling thsi
+        // translationSpec, there is no need to translate it again.
+        if (Message.class.isAssignableFrom(appObject.getClass())) {
+            message = Message.class.cast(appObject);
+        } else {
+            message = this.translationEngine.convertObject(appObject);
+        }
+        return Any.pack(message);
     }
 
     @Override
