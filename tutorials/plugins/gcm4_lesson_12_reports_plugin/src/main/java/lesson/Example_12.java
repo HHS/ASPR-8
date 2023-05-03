@@ -91,6 +91,7 @@ public final class Example_12 {
 				.addReport(ModelLabel.FAMILY_VACCINE_REPORT, outputDirectory.resolve("family_vaccine_report.xls"))//
 				.addReport(ModelLabel.HOURLY_VACCINE_REPORT, outputDirectory.resolve("hourly_vaccine_report.xls"))//
 				.addReport(ModelLabel.STATELESS_VACCINE_REPORT, outputDirectory.resolve("stateless_vaccine_report.xls"))//
+				.addExperimentReport(outputDirectory.resolve("experiment_report.xls"))
 				.build();
 
 		
