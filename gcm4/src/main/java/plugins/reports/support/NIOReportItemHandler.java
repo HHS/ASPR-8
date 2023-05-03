@@ -189,7 +189,7 @@ public final class NIOReportItemHandler implements Consumer<ExperimentContext> {
 				lineWriterMap.put(reportLabel, lineWriter);
 			}
 			if (experimentReportPath != null) {
-				this.experimentLineWriter = new ExperimentLineWriter(experimentContext, experimentReportPath, displayExperimentColumnsInReports, delimiter);
+				this.experimentLineWriter = new ExperimentLineWriter(experimentContext, experimentReportPath, delimiter);
 			}
 		}
 	}

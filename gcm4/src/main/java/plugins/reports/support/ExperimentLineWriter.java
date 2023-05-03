@@ -31,7 +31,6 @@ import java.util.stream.Stream;
 @ThreadSafe
 public final class ExperimentLineWriter {
 
-	private final boolean useExperimentColumns;
 	private static final String lineSeparator = System.getProperty("line.separator");
 	private final Object headerLock = new Object();
 	private BufferedWriter writer;
@@ -50,14 +49,15 @@ public final class ExperimentLineWriter {
 	 * not exist, then its parent directory must exist.
 	 *
 	 * @throws RuntimeException
-	 *             <li>if an {@link IOException} is thrown during file initialization</li>
-	 *             <li>if the simulation run is continuing from a progress log and
-	 *             the path is not a regular file (path does not exist) during
-	 *             file initialization</li>
+	 *             <li>if an {@link IOException} is thrown during file
+	 *             initialization</li>
+	 *             <li>if the simulation run is continuing from a progress log
+	 *             and the path is not a regular file (path does not exist)
+	 *             during file initialization</li>
 	 *
 	 */
 
-	public ExperimentLineWriter(final ExperimentContext experimentContext, final Path path, final boolean displayExperimentColumnsInReports, String delimiter) {
+	public ExperimentLineWriter(final ExperimentContext experimentContext, final Path path, String delimiter) {
 
 		if (Files.exists(path)) {
 			if (!Files.isRegularFile(path)) {
@@ -66,7 +66,6 @@ public final class ExperimentLineWriter {
 		}
 
 		this.delimiter = delimiter;
-		this.useExperimentColumns = displayExperimentColumnsInReports;
 
 		boolean loadedWithPreviousData = !experimentContext.getScenarios(ScenarioStatus.PREVIOUSLY_SUCCEEDED).isEmpty();
 		loadedWithPreviousData &= Files.exists(path);
@@ -79,7 +78,7 @@ public final class ExperimentLineWriter {
 	}
 
 	/*
-	* The path must correspond to an existing regular file.
+	 * The path must correspond to an existing regular file.
 	 */
 	private void initializeWithPreviousContent(Path path, ExperimentContext experimentContext) {
 
@@ -95,18 +94,18 @@ public final class ExperimentLineWriter {
 			OutputStream out = Files.newOutputStream(tempPath, StandardOpenOption.CREATE);
 			writer = new BufferedWriter(new OutputStreamWriter(out, encoder));
 			Stream<String> lines = Files.lines(path);
-			boolean[] header = new boolean[] {true};
+			boolean[] header = new boolean[] { true };
 			lines.forEach((line) -> {
 				if (!header[0]) {
 					String[] fields = line.split(delimiter);
 					/*
 					 * It is possible that the last line of a file was only
-					 * partially written because neither the writer's close
-					 * or flush was called during an abrupt shutdown. We
-					 * expect that such cases will not correspond to
-					 * successfully completed simulation execution, but must
-					 * ensure that the parsing of the scenario and
-					 * replication ids can still be performed
+					 * partially written because neither the writer's close or
+					 * flush was called during an abrupt shutdown. We expect
+					 * that such cases will not correspond to successfully
+					 * completed simulation execution, but must ensure that the
+					 * parsing of the scenario and replication ids can still be
+					 * performed
 					 */
 					if (fields.length > 1) {
 						int scenarioId = Integer.parseInt(fields[0]);
@@ -167,7 +166,7 @@ public final class ExperimentLineWriter {
 	 * Closes the writer, flushing all buffered outputs.
 	 * 
 	 * @throws RuntimeException
-	 * <li>if an {@link IOException} is thrown</li>
+	 *             <li>if an {@link IOException} is thrown</li>
 	 */
 	public void close() {
 
@@ -182,7 +181,7 @@ public final class ExperimentLineWriter {
 	 * Writes the report item to file recorded under the given scenario.
 	 * 
 	 * @throws RuntimeException
-	 *             <li>if an {@link IOException} is thrown</li> 
+	 *             <li>if an {@link IOException} is thrown</li>
 	 */
 	public void write(ExperimentContext experimentContext, int scenarioId) {
 
@@ -193,11 +192,9 @@ public final class ExperimentLineWriter {
 
 					sb.append("scenario");
 
-					if (useExperimentColumns) {
-						for (String item : experimentContext.getExperimentMetaData()) {
-							sb.append(delimiter);
-							sb.append(item);
-						}
+					for (String item : experimentContext.getExperimentMetaData()) {
+						sb.append(delimiter);
+						sb.append(item);
 					}
 
 					sb.append(lineSeparator);
@@ -209,17 +206,16 @@ public final class ExperimentLineWriter {
 			final StringBuilder sb = new StringBuilder();
 
 			sb.append(scenarioId);
-			if (useExperimentColumns) {
-				List<String> metaData = experimentContext.getScenarioMetaData(scenarioId).get();
-				for (String item : metaData) {
-					sb.append(delimiter);
-					sb.append(item);
-				}
+
+			List<String> metaData = experimentContext.getScenarioMetaData(scenarioId).get();
+			for (String item : metaData) {
+				sb.append(delimiter);
+				sb.append(item);
 			}
 
 			sb.append(lineSeparator);
 			writer.write(sb.toString());
-		} catch (IOException e) {			
+		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -229,12 +225,12 @@ public final class ExperimentLineWriter {
 	 * reporting of a closed scenario.
 	 * 
 	 * @throws RuntimeException
-	 *             <li>if an {@link IOException} is thrown</li> 
+	 *             <li>if an {@link IOException} is thrown</li>
 	 */
 	public void flush() {
 		try {
 			writer.flush();
-		} catch (IOException e) {			
+		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
