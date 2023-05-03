@@ -138,9 +138,8 @@ public final class AT_PersonPropertyDataManager {
 		PropertyDefinition def3 = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(true).build();
 
 		PersonPropertiesPluginData.Builder propBuilder = PersonPropertiesPluginData.builder();
-		propBuilder.definePersonProperty(prop1, def1);
-		propBuilder.definePersonProperty(prop2, def2);
-		propBuilder.setTimeTracking(prop1, 1.2);
+		propBuilder.definePersonProperty(prop1, def1,1.2,true);
+		propBuilder.definePersonProperty(prop2, def2,0,false);		
 		propBuilder.setPersonPropertyValue(new PersonId(1), prop1, 18);
 		propBuilder.setPersonPropertyTime(new PersonId(1), prop1, 1.5);
 		propBuilder.setPersonPropertyTime(new PersonId(2), prop1, 1.3);
@@ -233,11 +232,9 @@ public final class AT_PersonPropertyDataManager {
 		 * Generate the expected person properties plugin data
 		 */
 		propBuilder = PersonPropertiesPluginData.builder();
-		propBuilder.definePersonProperty(prop1, def1);
-		propBuilder.definePersonProperty(prop2, def2);
-		propBuilder.definePersonProperty(prop3, def3);
-		propBuilder.setTimeTracking(prop1, 1.2);
-		propBuilder.setTimeTracking(prop3, 3.4);		
+		propBuilder.definePersonProperty(prop1, def1,1.2,true);
+		propBuilder.definePersonProperty(prop2, def2,0,false);
+		propBuilder.definePersonProperty(prop3, def3,3.4,true);				
 		propBuilder.setPersonPropertyTime(new PersonId(2), prop1, 6.7);		
 		propBuilder.setPersonPropertyValue(new PersonId(2), prop2, 88.7);
 		propBuilder.setPersonPropertyValue(new PersonId(2), prop3, false);

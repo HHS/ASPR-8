@@ -334,15 +334,12 @@ public class PersonPropertiesTestPluginFactory {
 
 		PersonPropertiesPluginData.Builder personPropertyBuilder = PersonPropertiesPluginData.builder();
 		for (TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.values()) {
-			personPropertyBuilder.definePersonProperty(testPersonPropertyId, testPersonPropertyId.getPropertyDefinition());
-			if(testPersonPropertyId.isTimeTracked()) {
-				personPropertyBuilder.setTimeTracking(testPersonPropertyId, 0.0);
-			}
+			personPropertyBuilder.definePersonProperty(testPersonPropertyId, testPersonPropertyId.getPropertyDefinition(), 0.0, testPersonPropertyId.isTimeTracked());
 		}
 		for (PersonId personId : people) {
-			
+
 			for (TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.values()) {
-				
+
 				boolean doesNotHaveDefaultValue = testPersonPropertyId.getPropertyDefinition().getDefaultValue().isEmpty();
 				if (doesNotHaveDefaultValue || randomGenerator.nextBoolean()) {
 					Object randomPropertyValue = testPersonPropertyId.getRandomPropertyValue(randomGenerator);

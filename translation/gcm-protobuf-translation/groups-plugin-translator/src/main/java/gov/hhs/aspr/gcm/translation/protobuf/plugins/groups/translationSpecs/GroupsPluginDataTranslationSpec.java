@@ -82,6 +82,8 @@ public class GroupsPluginDataTranslationSpec extends ProtobufTranslationSpec<Gro
                 builder.addPersonToGroup(groupId, personId);
             }
         }
+        
+        builder.setNextGroupIdValue(inputObject.getNextGroupIdValue());
 
         return builder.build();
     }
@@ -182,6 +184,8 @@ public class GroupsPluginDataTranslationSpec extends ProtobufTranslationSpec<Gro
             }
 
         }
+        
+        builder.setNextGroupIdValue(appObject.getNextGroupIdValue());
 
         return builder.build();
     }

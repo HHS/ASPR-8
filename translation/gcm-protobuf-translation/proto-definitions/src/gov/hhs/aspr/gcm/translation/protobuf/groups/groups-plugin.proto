@@ -69,6 +69,7 @@ message GroupsPluginDataInput {
     repeated GroupMembershipInput groupMemberships = 3;
     repeated GroupPropertyDefinitionMapInput groupPropertyDefinitions = 4;
     repeated GroupPropertyValueMapInput groupPropertyValues = 5;
+    int32 nextGroupIdValue = 6;
 }
 
 message GroupPopulationReportPluginDataInput {

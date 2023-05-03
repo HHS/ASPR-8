@@ -73,6 +73,7 @@ public final class PersonPropertiesDataManager extends DataManager {
 	}
 
 	private final Map<PersonPropertyId, PropertyDefinition> personPropertyDefinitions = new LinkedHashMap<>();
+	private final Map<PersonPropertyId, Double> personPropertyDefinitionTimes = new LinkedHashMap<>();
 
 	private final Map<PersonPropertyId, IndexedPropertyManager> personPropertyManagerMap = new LinkedHashMap<>();
 
@@ -608,6 +609,7 @@ public final class PersonPropertiesDataManager extends DataManager {
 		}
 
 		personPropertyDefinitions.put(personPropertyId, propertyDefinition);
+		personPropertyDefinitionTimes.put(personPropertyId, dataManagerContext.getTime());
 		final IndexedPropertyManager propertyManager = getIndexedPropertyManager(propertyDefinition, 0);
 		personPropertyManagerMap.put(personPropertyId, propertyManager);
 
@@ -818,11 +820,12 @@ public final class PersonPropertiesDataManager extends DataManager {
 				nonDefaultBearingPropertyIds.put(personPropertyId, nonDefaultBearingPropertyIds.size());
 			}
 			personPropertyDefinitions.put(personPropertyId, personPropertyDefinition);
+			personPropertyDefinitionTimes.put(personPropertyId, personPropertiesPluginData.getPropertyDefinitionTime(personPropertyId));
 			final IndexedPropertyManager indexedPropertyManager = getIndexedPropertyManager(personPropertyDefinition, 0);
 			personPropertyManagerMap.put(personPropertyId, indexedPropertyManager);
-			Optional<Double> optional = personPropertiesPluginData.getTrackingTime(personPropertyId);
-			if (optional.isPresent()) {
-				Double defaultTime = optional.get();
+			boolean tracked = personPropertiesPluginData.propertyAssignmentTimesTracked(personPropertyId);
+			if (tracked) {
+				Double defaultTime = personPropertyDefinitionTimes.get(personPropertyId);
 				if (defaultTime > dataManagerContext.getTime()) {
 					throw new ContractException(PersonPropertyError.PROPERTY_DEFAULT_TIME_EXCEEDS_SIM_TIME, personPropertyId);
 				}
@@ -866,12 +869,15 @@ public final class PersonPropertiesDataManager extends DataManager {
 
 		for (PersonPropertyId personPropertyId : personPropertyDefinitions.keySet()) {
 			PropertyDefinition personPropertyDefinition = personPropertyDefinitions.get(personPropertyId);
-			builder.definePersonProperty(personPropertyId, personPropertyDefinition);
+			Double definitionTime = personPropertyDefinitionTimes.get(personPropertyId);
+			
 
 			DoubleValueContainer doubleValueContainer = personPropertyTimeMap.get(personPropertyId);
+			boolean tracked = doubleValueContainer!=null;
+			builder.definePersonProperty(personPropertyId, personPropertyDefinition,definitionTime,tracked);
+			
 			if (doubleValueContainer != null) {
-				Double defaultValue = doubleValueContainer.getDefaultValue();
-				builder.setTimeTracking(personPropertyId, defaultValue);
+				Double defaultValue = definitionTime;				
 				for (PersonId personId : people) {
 					Double propertyTime = doubleValueContainer.getValue(personId.getValue());
 					if (!propertyTime.equals(defaultValue)) {
@@ -898,7 +904,6 @@ public final class PersonPropertiesDataManager extends DataManager {
 		}
 
 		dataManagerContext.releaseOutput(builder.build());
-
 	}
 
 	/**

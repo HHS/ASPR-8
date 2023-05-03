@@ -12,7 +12,6 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 
 import org.apache.commons.math3.random.RandomGenerator;
@@ -27,6 +26,7 @@ import plugins.personproperties.support.PersonPropertyId;
 import plugins.personproperties.testsupport.TestPersonPropertyId;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
+import util.annotations.UnitTag;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.random.RandomGeneratorProvider;
@@ -49,8 +49,7 @@ public class AT_PersonPropertyPluginData {
 
 		// build a plugin data
 		PersonPropertiesPluginData pluginData1 = builder//
-														.definePersonProperty(propertyId, def)//
-														.setTimeTracking(propertyId, 1.2)//
+														.definePersonProperty(propertyId, def, 1.2, true)//
 														.setPersonPropertyValue(new PersonId(5), propertyId, 7)//
 														.setPersonPropertyTime(new PersonId(5), propertyId, 2.5)//
 														.build();
@@ -62,16 +61,6 @@ public class AT_PersonPropertyPluginData {
 		// invoked again
 		PersonPropertiesPluginData pluginData2 = builder.build();
 		assertEquals(pluginData1, pluginData2);
-
-		// * <li>{@linkplain PropertyError#TIME_TRACKING_OFF} if a
-		// * person is assigned a property assignment time, but the
-		// * corresponding property is not marked for time
-		// * tracking</li>
-		// *
-		// * <li>{@linkplain PropertyError#PROPERTY_TIME_PRECEDES_DEFAULT}
-		// * if a person is assigned a property assignment time, but
-		// * that value precedes default tracking time for the
-		// * corresponding property id</li>
 
 		/*
 		 * precondition test: if a person is assigned a property value for a
@@ -94,16 +83,6 @@ public class AT_PersonPropertyPluginData {
 		assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
 
 		/*
-		 * precondition test: If a person property was assigned a default
-		 * tracking time but has no corresponding property definition
-		 */
-		contractException = assertThrows(ContractException.class, //
-				() -> PersonPropertiesPluginData.builder()//
-												.setTimeTracking(TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK, 2.3)//
-												.build());//
-		assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
-
-		/*
 		 * precondition test: if a person is assigned a property value that is
 		 * incompatible with the associated property definition
 		 */
@@ -112,7 +91,7 @@ public class AT_PersonPropertyPluginData {
 					TestPersonPropertyId testPersonPropertyId = TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK;
 					PropertyDefinition propertyDefinition = testPersonPropertyId.getPropertyDefinition();
 					PersonPropertiesPluginData	.builder()//
-												.definePersonProperty(testPersonPropertyId, propertyDefinition)//
+												.definePersonProperty(testPersonPropertyId, propertyDefinition, 0.0, false)//
 												.setPersonPropertyValue(new PersonId(0), TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK, 45)//
 												.build();//
 				});//
@@ -129,7 +108,7 @@ public class AT_PersonPropertyPluginData {
 					PropertyDefinition def1 = prop1.getPropertyDefinition();
 
 					PersonPropertiesPluginData	.builder()//
-												.definePersonProperty(prop1, def1)//
+												.definePersonProperty(prop1, def1, 0.0, false)//
 												.setPersonPropertyTime(new PersonId(0), prop1, 3.2)//
 												.build();//
 				});//
@@ -148,8 +127,7 @@ public class AT_PersonPropertyPluginData {
 					PropertyDefinition def1 = prop1.getPropertyDefinition();
 
 					PersonPropertiesPluginData	.builder()//
-												.definePersonProperty(prop1, def1)//
-												.setTimeTracking(prop1, 4.2)//
+												.definePersonProperty(prop1, def1, 4.2, true)//
 												.setPersonPropertyTime(new PersonId(0), prop1, 3.2)//
 												.build();//
 				});//
@@ -160,17 +138,28 @@ public class AT_PersonPropertyPluginData {
 	@UnitTestMethod(target = PersonPropertiesPluginData.Builder.class, name = "definePersonProperty", args = { PersonPropertyId.class, PropertyDefinition.class })
 	public void testDefinePersonProperty() {
 
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7695820040353096191L);
+
 		// create a builder
 		PersonPropertiesPluginData.Builder personPropertyBuilder = PersonPropertiesPluginData.builder();
+
+		Set<MultiKey> expectedValues = new LinkedHashSet<>();
 
 		// fill the builder with property definitions
 		for (TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.values()) {
 			TestPersonPropertyId testPersonPropertyId2 = testPersonPropertyId.next();
-			personPropertyBuilder.definePersonProperty(testPersonPropertyId, testPersonPropertyId2.getPropertyDefinition());
+			double time = randomGenerator.nextDouble();
+			boolean trackTime = randomGenerator.nextBoolean();
+			personPropertyBuilder.definePersonProperty(testPersonPropertyId, testPersonPropertyId2.getPropertyDefinition(), time, trackTime);
 			// replacing data to show that the value persists
-			personPropertyBuilder.definePersonProperty(testPersonPropertyId, testPersonPropertyId.getPropertyDefinition());
+			time = randomGenerator.nextDouble();
+			trackTime = randomGenerator.nextBoolean();
+			personPropertyBuilder.definePersonProperty(testPersonPropertyId, testPersonPropertyId.getPropertyDefinition(), time, trackTime);
 			// adding duplicate data to show that the value persists
-			personPropertyBuilder.definePersonProperty(testPersonPropertyId, testPersonPropertyId.getPropertyDefinition());
+			time = randomGenerator.nextDouble();
+			trackTime = randomGenerator.nextBoolean();
+			personPropertyBuilder.definePersonProperty(testPersonPropertyId, testPersonPropertyId.getPropertyDefinition(), time, trackTime);
+			expectedValues.add(new MultiKey(testPersonPropertyId, testPersonPropertyId.getPropertyDefinition(), time, trackTime));
 		}
 
 		// build the person property plugin data
@@ -180,19 +169,22 @@ public class AT_PersonPropertyPluginData {
 		 * Show that the definitions returned by the initial data match the
 		 * expected definitions.
 		 */
+		Set<MultiKey> actualValues = new LinkedHashSet<>();
 		for (TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.values()) {
-			PropertyDefinition expectedPropertyDefinition = testPersonPropertyId.getPropertyDefinition();
-			PropertyDefinition actualPropertyDefinition = personPropertiesPluginData.getPersonPropertyDefinition(testPersonPropertyId);
-			assertEquals(expectedPropertyDefinition, actualPropertyDefinition);
+			PropertyDefinition propertyDefinition = personPropertiesPluginData.getPersonPropertyDefinition(testPersonPropertyId);
+			double time = personPropertiesPluginData.getPropertyDefinitionTime(testPersonPropertyId);
+			boolean tracked = personPropertiesPluginData.propertyAssignmentTimesTracked(testPersonPropertyId);
+			actualValues.add(new MultiKey(testPersonPropertyId, propertyDefinition, time, tracked));
 		}
 
+		assertEquals(expectedValues, actualValues);
 		// precondition tests
 
 		// if the person property id is null
 		ContractException contractException = assertThrows(ContractException.class, () -> {
 			PersonPropertiesPluginData.Builder builder = PersonPropertiesPluginData.builder();
 			TestPersonPropertyId testPersonPropertyId = TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK;
-			builder.definePersonProperty(null, testPersonPropertyId.getPropertyDefinition());
+			builder.definePersonProperty(null, testPersonPropertyId.getPropertyDefinition(), 0, false);
 		});
 		assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
 
@@ -200,46 +192,91 @@ public class AT_PersonPropertyPluginData {
 		contractException = assertThrows(ContractException.class, () -> {
 			PersonPropertiesPluginData.Builder builder = PersonPropertiesPluginData.builder();
 			TestPersonPropertyId testPersonPropertyId = TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK;
-			builder.definePersonProperty(testPersonPropertyId, null);
+			builder.definePersonProperty(testPersonPropertyId, null, 0, false);
 		});
 		assertEquals(PropertyError.NULL_PROPERTY_DEFINITION, contractException.getErrorType());
+
+		// if the person property definition value is null
+		contractException = assertThrows(ContractException.class, () -> {
+			PersonPropertiesPluginData.Builder builder = PersonPropertiesPluginData.builder();
+			TestPersonPropertyId testPersonPropertyId = TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK;
+			builder.definePersonProperty(testPersonPropertyId, testPersonPropertyId.getPropertyDefinition(), Double.NaN, false);
+		});
+		assertEquals(PersonPropertyError.NON_FINITE_TIME, contractException.getErrorType());
+
+		contractException = assertThrows(ContractException.class, () -> {
+			PersonPropertiesPluginData.Builder builder = PersonPropertiesPluginData.builder();
+			TestPersonPropertyId testPersonPropertyId = TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK;
+			builder.definePersonProperty(testPersonPropertyId, testPersonPropertyId.getPropertyDefinition(), Double.POSITIVE_INFINITY, false);
+		});
+		assertEquals(PersonPropertyError.NON_FINITE_TIME, contractException.getErrorType());
+
+		contractException = assertThrows(ContractException.class, () -> {
+			PersonPropertiesPluginData.Builder builder = PersonPropertiesPluginData.builder();
+			TestPersonPropertyId testPersonPropertyId = TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK;
+			builder.definePersonProperty(testPersonPropertyId, testPersonPropertyId.getPropertyDefinition(), Double.NEGATIVE_INFINITY, false);
+		});
+		assertEquals(PersonPropertyError.NON_FINITE_TIME, contractException.getErrorType());
 	}
 
 	@Test
-	@UnitTestMethod(target = PersonPropertiesPluginData.class, name = "getPersonPropertyDefinition", args = { PersonPropertyId.class })
+	@UnitTestMethod(target = PersonPropertiesPluginData.class, name = "getPersonPropertyDefinition", args = { PersonPropertyId.class }, tags = { UnitTag.LOCAL_PROXY })
 	public void testGetPersonPropertyDefinition() {
-		// create a builder
-		PersonPropertiesPluginData.Builder personPropertyBuilder = PersonPropertiesPluginData.builder();
 
-		// fill the builder with property definitions
-		for (TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.values()) {
-			personPropertyBuilder.definePersonProperty(testPersonPropertyId, testPersonPropertyId.getPropertyDefinition());
-		}
-
-		// build the person property initial data
-		PersonPropertiesPluginData personPropertiesPluginData = personPropertyBuilder.build();
-
-		/*
-		 * Show that the definitions returned by the initial data match the
-		 * expected definitions.
-		 */
-		for (TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.values()) {
-			PropertyDefinition expectedPropertyDefinition = testPersonPropertyId.getPropertyDefinition();
-			PropertyDefinition actualPropertyDefinition = personPropertiesPluginData.getPersonPropertyDefinition(testPersonPropertyId);
-			assertEquals(expectedPropertyDefinition, actualPropertyDefinition);
-		}
+		// the test: testDefinePersonProperty() covers all the postcondition
+		// tests
 
 		// precondition tests
 
 		// if the person property id is null
-		ContractException contractException = assertThrows(ContractException.class, () -> personPropertiesPluginData.getPersonPropertyDefinition(null));
+
+		ContractException contractException = assertThrows(ContractException.class, () -> PersonPropertiesPluginData.builder().build().getPersonPropertyDefinition(null));
 		assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
 
 		// if the person property id is unknown
-		contractException = assertThrows(ContractException.class, () -> personPropertiesPluginData.getPersonPropertyDefinition(TestPersonPropertyId.getUnknownPersonPropertyId()));
+		contractException = assertThrows(ContractException.class, () -> PersonPropertiesPluginData.builder().build().getPersonPropertyDefinition(TestPersonPropertyId.getUnknownPersonPropertyId()));
 		assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
 
 	}
+	
+	@Test
+	@UnitTestMethod(target = PersonPropertiesPluginData.class, name = "getPropertyDefinitionTime", args = { PersonPropertyId.class }, tags = { UnitTag.LOCAL_PROXY })
+	public void testGetPropertyDefinitionTime() {
+
+		// the test: testDefinePersonProperty() covers all the postcondition
+		// tests
+
+		// precondition tests
+
+		// if the person property id is null
+		ContractException contractException = assertThrows(ContractException.class, () -> PersonPropertiesPluginData.builder().build().getPropertyDefinitionTime(null));
+		assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
+
+		// if the person property id is unknown
+		contractException = assertThrows(ContractException.class, () -> PersonPropertiesPluginData.builder().build().getPropertyDefinitionTime(TestPersonPropertyId.getUnknownPersonPropertyId()));
+		assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
+
+	}
+	
+	@Test
+	@UnitTestMethod(target = PersonPropertiesPluginData.class, name = "propertyAssignmentTimesTracked", args = { PersonPropertyId.class }, tags = { UnitTag.LOCAL_PROXY })
+	public void testPropertyAssignmentTimesTracked() {
+
+		// the test: testDefinePersonProperty() covers all the postcondition
+		// tests
+
+		// precondition tests
+
+		// if the person property id is null
+		ContractException contractException = assertThrows(ContractException.class, () -> PersonPropertiesPluginData.builder().build().propertyAssignmentTimesTracked(null));
+		assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
+
+		// if the person property id is unknown
+		contractException = assertThrows(ContractException.class, () -> PersonPropertiesPluginData.builder().build().propertyAssignmentTimesTracked(TestPersonPropertyId.getUnknownPersonPropertyId()));
+		assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
+
+	}
+	
 
 	@Test
 	@UnitTestMethod(target = PersonPropertiesPluginData.class, name = "getPersonPropertyIds", args = {})
@@ -250,7 +287,7 @@ public class AT_PersonPropertyPluginData {
 
 		// fill the builder with property definitions
 		for (TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.values()) {
-			personPropertyBuilder.definePersonProperty(testPersonPropertyId, testPersonPropertyId.getPropertyDefinition());
+			personPropertyBuilder.definePersonProperty(testPersonPropertyId, testPersonPropertyId.getPropertyDefinition(), 0, false);
 		}
 
 		// build the person property initial data
@@ -270,7 +307,7 @@ public class AT_PersonPropertyPluginData {
 		PersonPropertiesPluginData.Builder pluginBuilder = PersonPropertiesPluginData.builder();
 
 		for (TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.values()) {
-			pluginBuilder.definePersonProperty(testPersonPropertyId, testPersonPropertyId.getPropertyDefinition());
+			pluginBuilder.definePersonProperty(testPersonPropertyId, testPersonPropertyId.getPropertyDefinition(), randomGenerator.nextDouble(), randomGenerator.nextBoolean());
 		}
 		int personCount = 100;
 		for (int i = 0; i < personCount; i++) {
@@ -314,7 +351,7 @@ public class AT_PersonPropertyPluginData {
 			} else {
 				propertiesWithoutDefaultValues.add(testPersonPropertyId);
 			}
-			personPropertyBuilder.definePersonProperty(testPersonPropertyId, propertyDefinition);
+			personPropertyBuilder.definePersonProperty(testPersonPropertyId, propertyDefinition, 0, false);
 		}
 
 		Set<MultiKey> expectedPersonPropertyValues = new LinkedHashSet<>();
@@ -407,7 +444,7 @@ public class AT_PersonPropertyPluginData {
 			} else {
 				propertiesWithoutDefaultValues.add(testPersonPropertyId);
 			}
-			personPropertyBuilder.definePersonProperty(testPersonPropertyId, propertyDefinition);
+			personPropertyBuilder.definePersonProperty(testPersonPropertyId, propertyDefinition, 0, false);
 		}
 
 		Set<MultiKey> expectedPersonPropertyValues = new LinkedHashSet<>();
@@ -472,46 +509,6 @@ public class AT_PersonPropertyPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = PersonPropertiesPluginData.class, name = "getTrackingTime", args = { PersonPropertyId.class })
-	public void testGetTrackingTime() {
-		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8639779742193903584L);
-		boolean trackTimes = false;
-		Set<MultiKey> expectedTrackingTimes = new LinkedHashSet<>();
-		PersonPropertiesPluginData.Builder builder = PersonPropertiesPluginData.builder();
-		for (TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.values()) {
-			builder.definePersonProperty(testPersonPropertyId, testPersonPropertyId.getPropertyDefinition());
-			if (trackTimes) {
-				double time = randomGenerator.nextDouble();
-				builder.setTimeTracking(testPersonPropertyId, time);
-				expectedTrackingTimes.add(new MultiKey(testPersonPropertyId, time));
-			}
-		}
-		PersonPropertiesPluginData pluginData = builder.build();
-		Set<MultiKey> actualTrackingTimes = new LinkedHashSet<>();
-		for (PersonPropertyId personPropertyId : pluginData.getPersonPropertyIds()) {
-			Optional<Double> optional = pluginData.getTrackingTime(personPropertyId);
-			if (optional.isPresent()) {
-				Double time = optional.get();
-				actualTrackingTimes.add(new MultiKey(personPropertyId, time));
-			}
-		}
-
-		assertEquals(expectedTrackingTimes, actualTrackingTimes);
-
-		// precondition test: if the person property id is null
-		ContractException contractException = assertThrows(ContractException.class, () -> {
-			PersonPropertiesPluginData.builder().build().getTrackingTime(null);
-		});
-		assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
-
-		// precondition test: if the person property id is unknown
-		contractException = assertThrows(ContractException.class, () -> {
-			PersonPropertiesPluginData.builder().build().getTrackingTime(TestPersonPropertyId.getUnknownPersonPropertyId());
-		});
-		assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
-	}
-
-	@Test
 	@UnitTestMethod(target = PersonPropertiesPluginData.class, name = "getPropertyTimes", args = { PersonPropertyId.class })
 	public void testGetPropertyTimes() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7969263718268675163L);
@@ -524,9 +521,8 @@ public class AT_PersonPropertyPluginData {
 		// fill the builder with property definitions
 		for (TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.values()) {
 			PropertyDefinition propertyDefinition = testPersonPropertyId.getPropertyDefinition();
-			personPropertyBuilder.definePersonProperty(testPersonPropertyId, propertyDefinition);
 			double time = randomGenerator.nextInt() * 10;
-			personPropertyBuilder.setTimeTracking(testPersonPropertyId, time);
+			personPropertyBuilder.definePersonProperty(testPersonPropertyId, propertyDefinition, time, true);
 			baseTimes.put(testPersonPropertyId, time);
 		}
 
@@ -594,9 +590,8 @@ public class AT_PersonPropertyPluginData {
 		// fill the builder with property definitions
 		for (TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.values()) {
 			PropertyDefinition propertyDefinition = testPersonPropertyId.getPropertyDefinition();
-			personPropertyBuilder.definePersonProperty(testPersonPropertyId, propertyDefinition);
 			double time = randomGenerator.nextInt() * 10;
-			personPropertyBuilder.setTimeTracking(testPersonPropertyId, time);
+			personPropertyBuilder.definePersonProperty(testPersonPropertyId, propertyDefinition, time, true);
 			baseTimes.put(testPersonPropertyId, time);
 		}
 
@@ -676,66 +671,6 @@ public class AT_PersonPropertyPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = PersonPropertiesPluginData.class, name = "setTimeTracking", args = { PersonPropertyId.class, double.class })
-	public void testSetTimeTracking() {
-		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(3029582776749012423L);
-
-		// create a builder
-		PersonPropertiesPluginData.Builder personPropertyBuilder = PersonPropertiesPluginData.builder();
-
-		Set<MultiKey> expectedTimes = new LinkedHashSet<>();
-
-		// fill the builder with property definitions
-		boolean use = false;
-		for (TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.values()) {
-			PropertyDefinition propertyDefinition = testPersonPropertyId.getPropertyDefinition();
-			personPropertyBuilder.definePersonProperty(testPersonPropertyId, propertyDefinition);
-			if (use) {
-				double time = randomGenerator.nextInt() * 10;
-				personPropertyBuilder.setTimeTracking(testPersonPropertyId, time);
-				expectedTimes.add(new MultiKey(testPersonPropertyId, time));
-			}
-			use = !use;
-		}
-
-		Set<MultiKey> actualTimes = new LinkedHashSet<>();
-		PersonPropertiesPluginData pluginData = personPropertyBuilder.build();
-		for (PersonPropertyId personPropertyId : pluginData.getPersonPropertyIds()) {
-			Optional<Double> optional = pluginData.getTrackingTime(personPropertyId);
-			if (optional.isPresent()) {
-				actualTimes.add(new MultiKey(personPropertyId, optional.get()));
-			}
-		}
-
-		assertEquals(expectedTimes, actualTimes);
-
-		// precondition test: if the person property id is null
-		ContractException contractException = assertThrows(ContractException.class, () -> {
-			PersonPropertiesPluginData.builder().setTimeTracking(null, 2.3);
-		});
-		assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
-
-		// precondition test: if the person property time is not finite
-		contractException = assertThrows(ContractException.class, () -> {
-			PersonPropertiesPluginData.builder().setTimeTracking(TestPersonPropertyId.PERSON_PROPERTY_3_DOUBLE_MUTABLE_NO_TRACK, Double.NaN);
-		});
-		assertEquals(PersonPropertyError.NON_FINITE_TIME, contractException.getErrorType());
-
-		// precondition test: if the person property time is not finite
-		contractException = assertThrows(ContractException.class, () -> {
-			PersonPropertiesPluginData.builder().setTimeTracking(TestPersonPropertyId.PERSON_PROPERTY_3_DOUBLE_MUTABLE_NO_TRACK, Double.POSITIVE_INFINITY);
-		});
-		assertEquals(PersonPropertyError.NON_FINITE_TIME, contractException.getErrorType());
-
-		// precondition test: if the person property time is not finite
-		contractException = assertThrows(ContractException.class, () -> {
-			PersonPropertiesPluginData.builder().setTimeTracking(TestPersonPropertyId.PERSON_PROPERTY_3_DOUBLE_MUTABLE_NO_TRACK, Double.NEGATIVE_INFINITY);
-		});
-		assertEquals(PersonPropertyError.NON_FINITE_TIME, contractException.getErrorType());
-
-	}
-
-	@Test
 	@UnitTestMethod(target = PersonPropertiesPluginData.class, name = "equals", args = { Object.class })
 	public void testEquals() {
 		// equality on property definitions
@@ -757,20 +692,20 @@ public class AT_PersonPropertyPluginData {
 
 		PersonPropertiesPluginData pluginData1 = PersonPropertiesPluginData.builder().build();
 		PersonPropertiesPluginData pluginData2 = PersonPropertiesPluginData	.builder()//
-																			.definePersonProperty(propId1, def1)//
+																			.definePersonProperty(propId1, def1, 2.0, true)//
 																			.build();
 		PersonPropertiesPluginData pluginData3 = PersonPropertiesPluginData	.builder()//
-																			.definePersonProperty(propId1, def1)//
+																			.definePersonProperty(propId1, def1, 2.0, true)//
 																			.build();
 		PersonPropertiesPluginData pluginData4 = PersonPropertiesPluginData	.builder()//
-																			.definePersonProperty(propId2, def1)//
+																			.definePersonProperty(propId2, def1, 0, true)//
 																			.build();
 		PersonPropertiesPluginData pluginData5 = PersonPropertiesPluginData	.builder()//
-																			.definePersonProperty(propId2, def2)//
+																			.definePersonProperty(propId2, def2, 0, true)//
 																			.build();
 		PersonPropertiesPluginData pluginData6 = PersonPropertiesPluginData	.builder()//
-																			.definePersonProperty(propId1, def1)//
-																			.definePersonProperty(propId2, def2)//
+																			.definePersonProperty(propId1, def1, 0, true)//
+																			.definePersonProperty(propId2, def2, 0, true)//
 																			.build();
 
 		// reflexive
@@ -791,33 +726,33 @@ public class AT_PersonPropertyPluginData {
 
 		// equality on time tracking
 		pluginData1 = PersonPropertiesPluginData.builder()//
-												.definePersonProperty(propId1, def1)//
-												.definePersonProperty(propId2, def2)//
-												.setTimeTracking(propId1, 2.3).build();
+												.definePersonProperty(propId1, def1, 2.3, true)//
+												.definePersonProperty(propId2, def2, 0, false)//
+												.build();
 
 		// same as 1
 		pluginData2 = PersonPropertiesPluginData.builder()//
-												.definePersonProperty(propId1, def1)//
-												.definePersonProperty(propId2, def2)//
-												.setTimeTracking(propId1, 2.3).build();
+												.definePersonProperty(propId1, def1, 2.3, true)//
+												.definePersonProperty(propId2, def2, 0, false)//
+												.build();
 
 		// use a different property id
 		pluginData3 = PersonPropertiesPluginData.builder()//
-												.definePersonProperty(propId1, def1)//
-												.definePersonProperty(propId2, def2)//
-												.setTimeTracking(propId2, 2.3).build();
+												.definePersonProperty(propId1, def1, 0, false)//
+												.definePersonProperty(propId2, def2, 2.3, true)//
+												.build();
 
 		// changed the default time
 		pluginData4 = PersonPropertiesPluginData.builder()//
-												.definePersonProperty(propId1, def1)//
-												.definePersonProperty(propId2, def2)//
-												.setTimeTracking(propId1, 5.3).build();
+												.definePersonProperty(propId1, def1, 5.3, true)//
+												.definePersonProperty(propId2, def2, 0, false)//
+												.build();
 
 		// now has two default times
 		pluginData5 = PersonPropertiesPluginData.builder()//
-												.definePersonProperty(propId1, def1)//
-												.definePersonProperty(propId2, def2)//
-												.setTimeTracking(propId1, 2.3).setTimeTracking(propId2, 4.7).build();
+												.definePersonProperty(propId1, def1, 2.3, true)//
+												.definePersonProperty(propId2, def2, 4.7, true)//
+												.build();
 
 		assertEquals(pluginData1, pluginData1);
 		assertEquals(pluginData1, pluginData2);
@@ -827,39 +762,31 @@ public class AT_PersonPropertyPluginData {
 
 		// equality on person property values
 		pluginData1 = PersonPropertiesPluginData.builder()//
-												.definePersonProperty(propId1, def1)//
-												.definePersonProperty(propId2, def2)//
-												.setPersonPropertyValue(new PersonId(2), propId1, 6)//
-												.setPersonPropertyValue(new PersonId(5), propId2, 5.4)//
+												.definePersonProperty(propId1, def1, 6, true)//
+												.definePersonProperty(propId2, def2, 5.4, true)//
 												.build();
 
 		pluginData2 = PersonPropertiesPluginData.builder()//
-												.definePersonProperty(propId1, def1)//
-												.definePersonProperty(propId2, def2)//
-												.setPersonPropertyValue(new PersonId(2), propId1, 6)//
-												.setPersonPropertyValue(new PersonId(5), propId2, 5.4)//
+												.definePersonProperty(propId1, def1, 6, true)//
+												.definePersonProperty(propId2, def2, 5.4, true)//
 												.build();
 
 		// change a person
 		pluginData3 = PersonPropertiesPluginData.builder()//
-												.definePersonProperty(propId1, def1)//
-												.definePersonProperty(propId2, def2)//
-												.setPersonPropertyValue(new PersonId(1), propId1, 6)//
-												.setPersonPropertyValue(new PersonId(5), propId2, 5.4)//
+												.definePersonProperty(propId1, def1, 6, true)//
+												.definePersonProperty(propId2, def2, 5.4, false)//
 												.build();
 
 		// change a value
 		pluginData4 = PersonPropertiesPluginData.builder()//
-												.definePersonProperty(propId1, def1)//
-												.definePersonProperty(propId2, def2)//
-												.setPersonPropertyValue(new PersonId(2), propId1, 6)//
-												.setPersonPropertyValue(new PersonId(5), propId2, 5.5)//
+												.definePersonProperty(propId1, def1, 6, true)//
+												.definePersonProperty(propId2, def2, 5.5, true)//
 												.build();
 
 		// add a person
 		pluginData5 = PersonPropertiesPluginData.builder()//
-												.definePersonProperty(propId1, def1)//
-												.definePersonProperty(propId2, def2)//
+												.definePersonProperty(propId1, def1, 0, false)//
+												.definePersonProperty(propId2, def2, 0, false)//
 												.setPersonPropertyValue(new PersonId(2), propId1, 6)//
 												.setPersonPropertyValue(new PersonId(5), propId2, 5.4)//
 												.setPersonPropertyValue(new PersonId(8), propId2, 8.4)//
@@ -873,49 +800,39 @@ public class AT_PersonPropertyPluginData {
 
 		// equality on person property times
 		pluginData1 = PersonPropertiesPluginData.builder()//
-												.definePersonProperty(propId1, def1)//
-												.definePersonProperty(propId2, def2)//
-												.setTimeTracking(propId1, 2)//
-												.setTimeTracking(propId2, 3)//
+												.definePersonProperty(propId1, def1, 2, true)//
+												.definePersonProperty(propId2, def2, 3, true)//
 												.setPersonPropertyTime(new PersonId(2), propId1, 6.0)//
 												.setPersonPropertyTime(new PersonId(5), propId2, 5.4)//
 												.build();
 
 		pluginData2 = PersonPropertiesPluginData.builder()//
-												.definePersonProperty(propId1, def1)//
-												.definePersonProperty(propId2, def2)//
-												.setTimeTracking(propId1, 2)//
-												.setTimeTracking(propId2, 3)//
+												.definePersonProperty(propId1, def1, 2, true)//
+												.definePersonProperty(propId2, def2, 3, true)//
 												.setPersonPropertyTime(new PersonId(2), propId1, 6.0)//
 												.setPersonPropertyTime(new PersonId(5), propId2, 5.4)//
 												.build();
 
 		// change a person
 		pluginData3 = PersonPropertiesPluginData.builder()//
-												.definePersonProperty(propId1, def1)//
-												.definePersonProperty(propId2, def2)//
-												.setTimeTracking(propId1, 2)//
-												.setTimeTracking(propId2, 3)//
+												.definePersonProperty(propId1, def1, 2, true)//
+												.definePersonProperty(propId2, def2, 3, true)//
 												.setPersonPropertyTime(new PersonId(1), propId1, 6.0)//
 												.setPersonPropertyTime(new PersonId(5), propId2, 5.4)//
 												.build();
 
 		// change a time
 		pluginData4 = PersonPropertiesPluginData.builder()//
-												.definePersonProperty(propId1, def1)//
-												.definePersonProperty(propId2, def2)//
-												.setTimeTracking(propId1, 2)//
-												.setTimeTracking(propId2, 3)//
+												.definePersonProperty(propId1, def1, 2, true)//
+												.definePersonProperty(propId2, def2, 3, true)//
 												.setPersonPropertyTime(new PersonId(2), propId1, 6.0)//
 												.setPersonPropertyTime(new PersonId(5), propId2, 5.5)//
 												.build();
 
 		// add a person
 		pluginData5 = PersonPropertiesPluginData.builder()//
-												.definePersonProperty(propId1, def1)//
-												.definePersonProperty(propId2, def2)//
-												.setTimeTracking(propId1, 2)//
-												.setTimeTracking(propId2, 3)//
+												.definePersonProperty(propId1, def1, 2, true)//
+												.definePersonProperty(propId2, def2, 3, true)//
 												.setPersonPropertyTime(new PersonId(2), propId1, 6.0)//
 												.setPersonPropertyTime(new PersonId(5), propId2, 5.5)//
 												.setPersonPropertyTime(new PersonId(8), propId2, 8.4)//
@@ -933,10 +850,8 @@ public class AT_PersonPropertyPluginData {
 		 * values of 5 and 3.0
 		 */
 		pluginData1 = PersonPropertiesPluginData.builder()//
-												.definePersonProperty(propId1, def1)//
-												.definePersonProperty(propId2, def2)//
-												.setTimeTracking(propId1, 2.0)//
-												.setTimeTracking(propId2, 3.0)//
+												.definePersonProperty(propId1, def1, 2, true)//
+												.definePersonProperty(propId2, def2, 3, true)//
 
 												.setPersonPropertyValue(new PersonId(2), propId1, 5)//
 												.setPersonPropertyTime(new PersonId(2), propId1, 6.0)//
@@ -950,13 +865,9 @@ public class AT_PersonPropertyPluginData {
 
 		// we eliminate the value of person 2 since it is the default
 		pluginData2 = PersonPropertiesPluginData.builder()//
-												.definePersonProperty(propId1, def1)//
-												.definePersonProperty(propId2, def2)//
-												.setTimeTracking(propId1, 2)//
-												.setTimeTracking(propId2, 3)//
+												.definePersonProperty(propId1, def1, 2, true)//
+												.definePersonProperty(propId2, def2, 3, true)//
 
-												// .setPersonPropertyValue(new
-												// PersonId(2), propId1, 5)//
 												.setPersonPropertyTime(new PersonId(2), propId1, 6.0)//
 
 												.setPersonPropertyValue(new PersonId(5), propId2, 12.5)//
@@ -969,10 +880,8 @@ public class AT_PersonPropertyPluginData {
 		// we eliminate the property time for person 5 since it has the default
 		// time
 		pluginData3 = PersonPropertiesPluginData.builder()//
-												.definePersonProperty(propId1, def1)//
-												.definePersonProperty(propId2, def2)//
-												.setTimeTracking(propId1, 2.0)//
-												.setTimeTracking(propId2, 3.0)//
+												.definePersonProperty(propId1, def1, 2, true)//
+												.definePersonProperty(propId2, def2, 3, true)//
 
 												.setPersonPropertyValue(new PersonId(2), propId1, 5)//
 												.setPersonPropertyTime(new PersonId(2), propId1, 6.0)//
@@ -1012,10 +921,8 @@ public class AT_PersonPropertyPluginData {
 													.build();
 
 		PersonPropertiesPluginData pluginData1 = PersonPropertiesPluginData	.builder()//
-																			.definePersonProperty(propId1, def1)//
-																			.definePersonProperty(propId2, def2)//
-																			.setTimeTracking(propId1, 2.0)//
-																			.setTimeTracking(propId2, 3.0)//
+																			.definePersonProperty(propId1, def1, 2, true)//
+																			.definePersonProperty(propId2, def2, 3, true)//
 
 																			.setPersonPropertyValue(new PersonId(2), propId1, 5)//
 																			.setPersonPropertyTime(new PersonId(2), propId1, 6.0)//
@@ -1029,15 +936,9 @@ public class AT_PersonPropertyPluginData {
 
 		// we eliminate the value of person 2 since it is the default
 		PersonPropertiesPluginData pluginData2 = PersonPropertiesPluginData	.builder()//
-																			.definePersonProperty(propId1, def1)//
-																			.definePersonProperty(propId2, def2)//
-																			.setTimeTracking(propId1, 2)//
-																			.setTimeTracking(propId2, 3)//
+																			.definePersonProperty(propId1, def1, 2, true)//
+																			.definePersonProperty(propId2, def2, 3, true)//
 
-																			// .setPersonPropertyValue(new
-																			// PersonId(2),
-																			// propId1,
-																			// 5)//
 																			.setPersonPropertyTime(new PersonId(2), propId1, 6.0)//
 
 																			.setPersonPropertyValue(new PersonId(5), propId2, 12.5)//
@@ -1050,19 +951,13 @@ public class AT_PersonPropertyPluginData {
 		// we eliminate the property time for person 5 since it has the default
 		// time
 		PersonPropertiesPluginData pluginData3 = PersonPropertiesPluginData	.builder()//
-																			.definePersonProperty(propId1, def1)//
-																			.definePersonProperty(propId2, def2)//
-																			.setTimeTracking(propId1, 2.0)//
-																			.setTimeTracking(propId2, 3.0)//
+																			.definePersonProperty(propId1, def1, 2, true)//
+																			.definePersonProperty(propId2, def2, 3, true)//
 
 																			.setPersonPropertyValue(new PersonId(2), propId1, 5)//
 																			.setPersonPropertyTime(new PersonId(2), propId1, 6.0)//
 
 																			.setPersonPropertyValue(new PersonId(5), propId2, 12.5)//
-																			// .setPersonPropertyTime(new
-																			// PersonId(5),
-																			// propId2,
-																			// 3.0)//
 
 																			.setPersonPropertyTime(new PersonId(8), propId2, 8.4)//
 																			.setPersonPropertyTime(new PersonId(8), propId2, 12.7)//
@@ -1084,16 +979,16 @@ public class AT_PersonPropertyPluginData {
 			PersonPropertiesPluginData.Builder builder = PersonPropertiesPluginData.builder();
 			for (TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.values()) {
 				if (randomGenerator.nextBoolean()) {
+					boolean trackTimes = randomGenerator.nextBoolean();
+					double baseTime = randomGenerator.nextDouble();
 					PropertyDefinition propertyDefinition = testPersonPropertyId.getPropertyDefinition();
-					builder.definePersonProperty(testPersonPropertyId, propertyDefinition);//
+					builder.definePersonProperty(testPersonPropertyId, propertyDefinition, baseTime, trackTimes);//
 					for (int j = 0; j < 5; j++) {
 						if (randomGenerator.nextBoolean()) {
 							builder.setPersonPropertyValue(new PersonId(j), testPersonPropertyId, testPersonPropertyId.getRandomPropertyValue(randomGenerator));
 						}
 					}
-					if (randomGenerator.nextBoolean()) {
-						double baseTime = randomGenerator.nextDouble();
-						builder.setTimeTracking(testPersonPropertyId, baseTime);
+					if (trackTimes) {
 						for (int j = 0; j < 5; j++) {
 							if (randomGenerator.nextBoolean()) {
 								builder.setPersonPropertyTime(new PersonId(j), testPersonPropertyId, baseTime + randomGenerator.nextDouble());
@@ -1105,8 +1000,8 @@ public class AT_PersonPropertyPluginData {
 			PersonPropertiesPluginData personPropertiesPluginData = builder.build();
 			hashCodes.add(personPropertiesPluginData.hashCode());
 		}
-		int expectedCount = (9*n)/10;
-		assertTrue(hashCodes.size()>expectedCount);
+		int expectedCount = (9 * n) / 10;
+		assertTrue(hashCodes.size() > expectedCount);
 	}
 
 }

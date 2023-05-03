@@ -173,7 +173,7 @@ public class AT_PersonPropertyInteractionReport {
 		basePropertyIds.add(TestPersonPropertyId.PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK);
 		basePropertyIds.add(TestPersonPropertyId.PERSON_PROPERTY_3_DOUBLE_MUTABLE_NO_TRACK);
 		for (TestPersonPropertyId testPersonPropertyId : basePropertyIds) {
-			personPropertyBuilder.definePersonProperty(testPersonPropertyId, testPersonPropertyId.getPropertyDefinition());
+			personPropertyBuilder.definePersonProperty(testPersonPropertyId, testPersonPropertyId.getPropertyDefinition(),0,false);
 		}
 		PersonPropertiesPluginData personPropertiesPluginData = personPropertyBuilder.build();
 
