@@ -15,7 +15,7 @@ import plugins.people.support.PersonConstructionData.Builder;
 import plugins.people.support.PersonId;
 import plugins.personproperties.datamanagers.PersonPropertiesDataManager;
 import plugins.personproperties.support.PersonPropertyDefinitionInitialization;
-import plugins.personproperties.support.PersonPropertyInitialization;
+import plugins.personproperties.support.PersonPropertyValueInitialization;
 import plugins.regions.datamanagers.RegionsDataManager;
 import plugins.regions.support.RegionId;
 import plugins.stochastics.StochasticsDataManager;
@@ -62,8 +62,8 @@ public class PopulationLoader {
 			personConstructionDataBuilder.add(regionId);
 
 			boolean refusesVaccine = randomGenerator.nextDouble() < refusalProbability;
-			PersonPropertyInitialization personPropertyInitialization = 
-					new PersonPropertyInitialization(PersonProperty.REFUSES_VACCINE, refusesVaccine);
+			PersonPropertyValueInitialization personPropertyInitialization = 
+					new PersonPropertyValueInitialization(PersonProperty.REFUSES_VACCINE, refusesVaccine);
 			personConstructionDataBuilder.add(personPropertyInitialization);
 			PersonConstructionData personConstructionData = personConstructionDataBuilder.build();
 			peopleDataManager.addPerson(personConstructionData);

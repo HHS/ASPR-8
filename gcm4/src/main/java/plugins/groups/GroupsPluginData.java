@@ -1,6 +1,15 @@
 package plugins.groups;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 
 import org.apache.commons.math3.util.FastMath;
 
@@ -51,7 +60,7 @@ public final class GroupsPluginData implements PluginData {
 			result = prime * result + groupPropertyDefinitions.hashCode();
 			result = prime * result + getGroupMembershipsHashCode();
 			result = prime * result + getGroupSpecificationsHashCode();
-
+			result = prime * result + nextGroupIdValue;
 			return result;
 		}
 
@@ -86,6 +95,9 @@ public final class GroupsPluginData implements PluginData {
 				return false;
 			}
 			if (!groupPropertyDefinitions.equals(other.groupPropertyDefinitions)) {
+				return false;
+			}
+			if (nextGroupIdValue !=other.nextGroupIdValue) {
 				return false;
 			}
 			/*
@@ -146,7 +158,8 @@ public final class GroupsPluginData implements PluginData {
 			Map<GroupId, GroupSpecification> aMap = getGroupSpecificationMap(a);
 			Map<GroupId, GroupSpecification> bMap = getGroupSpecificationMap(b);
 
-			// They must represent the same groups - without the GroupSpecification, the group does not exist
+			// They must represent the same groups - without the
+			// GroupSpecification, the group does not exist
 			if (!aMap.keySet().equals(bMap.keySet())) {
 				return false;
 			}
@@ -245,6 +258,7 @@ public final class GroupsPluginData implements PluginData {
 			return result;
 		}
 
+		private int nextGroupIdValue = -1;
 		private final Map<GroupTypeId, Map<GroupPropertyId, PropertyDefinition>> groupPropertyDefinitions;
 		private final Set<GroupTypeId> groupTypeIds;
 		private final List<GroupId> emptyGroupList;
@@ -598,6 +612,24 @@ public final class GroupsPluginData implements PluginData {
 			return this;
 		}
 
+		/**
+		 * Sets the next available group id. This value needs to exceed all
+		 * extant group ids. If the nextGroupRecordId is not set explicitly, the
+		 * nextGroupRecordId is assigned to either zero or the next integer
+		 * value that exceeds the highest valued group added to this builder.
+		 * 
+		 * @throws ContractException
+		 *             <li>{@linkplain GroupError#NEGATIVE_GROUP_ID} if the next
+		 *             group record id is negative</li>
+		 * 
+		 */
+		public Builder setNextGroupIdValue(int nextGroupIdValue) {
+			ensureDataMutability();
+			validateGroupIdValue(nextGroupIdValue);
+			data.nextGroupIdValue = nextGroupIdValue;
+			return this;
+		}
+
 		private void validateData() {
 
 			for (List<GroupId> groupIds : data.groupMemberships) {
@@ -697,6 +729,24 @@ public final class GroupsPluginData implements PluginData {
 						}
 					}
 				}
+			}
+
+			if (data.nextGroupIdValue < 0) {
+				for (GroupSpecification groupSpecification : data.groupSpecifications) {
+					if (groupSpecification != null) {
+						data.nextGroupIdValue = FastMath.max(data.nextGroupIdValue, groupSpecification.groupId.getValue());
+					}
+				}
+				data.nextGroupIdValue++;
+			} else {
+				for (GroupSpecification groupSpecification : data.groupSpecifications) {
+					if (groupSpecification != null) {
+						if (groupSpecification.groupId.getValue() >= data.nextGroupIdValue) {
+							throw new ContractException(GroupError.NEXT_GROUP_ID_TOO_SMALL);
+						}
+					}
+				}
+
 			}
 		}
 	}
@@ -873,6 +923,12 @@ public final class GroupsPluginData implements PluginData {
 		}
 	}
 
+	private static void validateGroupIdValue(int groupIdValue) {
+		if (groupIdValue < 0) {
+			throw new ContractException(GroupError.NEGATIVE_GROUP_ID, groupIdValue);
+		}
+	}
+
 	/**
 	 * Returns the int value that exceeds by one the highest person id value
 	 * encountered while associating people with groups.
@@ -897,13 +953,20 @@ public final class GroupsPluginData implements PluginData {
 	}
 
 	@Override
-	public int hashCode() {		
+	public int hashCode() {
 		return Objects.hash(data);
 	}
 
 	@Override
 	public String toString() {
 		return "GroupsPluginData{" + "data=" + data + '}';
+	}
+
+	/**
+	 * Returns the next available group id.
+	 */
+	public int getNextGroupIdValue() {
+		return data.nextGroupIdValue;
 	}
 
 }

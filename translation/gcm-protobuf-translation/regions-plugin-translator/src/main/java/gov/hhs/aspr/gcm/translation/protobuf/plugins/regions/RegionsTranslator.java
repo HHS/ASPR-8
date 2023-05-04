@@ -4,6 +4,7 @@ import gov.hhs.aspr.translation.core.Translator;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.PeopleTranslatorId;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.PropertiesTranslatorId;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.input.RegionMembershipInput.RegionPersonInfo;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.translationSpecs.RegionIdTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.translationSpecs.RegionPropertyIdTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.translationSpecs.RegionPropertyReportPluginDataTranslationSpec;
@@ -36,6 +37,8 @@ public class RegionsTranslator {
                     translationEngineBuilder.addTranslationSpec(new SimpleRegionPropertyIdTranslationSpec());
                     translationEngineBuilder.addTranslationSpec(new TestRegionIdTranslationSpec());
                     translationEngineBuilder.addTranslationSpec(new TestRegionPropertyIdTranslationSpec());
+
+                    translationEngineBuilder.addFieldToIncludeDefaultValue(RegionPersonInfo.getDescriptor().findFieldByName("personId"));
 
                     if (withReport) {
                         translationEngineBuilder.addTranslationSpec(new RegionPropertyReportPluginDataTranslationSpec());

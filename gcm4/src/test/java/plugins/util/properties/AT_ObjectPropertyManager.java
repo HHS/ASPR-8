@@ -6,16 +6,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.stream.IntStream;
 
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import nucleus.DataManagerContext;
-import nucleus.SimulationContext;
-import nucleus.testsupport.testplugin.TestActorPlan;
-import nucleus.testsupport.testplugin.TestDataManager;
-import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestPluginFactory;
 import nucleus.testsupport.testplugin.TestPluginFactory.Factory;
 import nucleus.testsupport.testplugin.TestSimulation;
@@ -41,9 +35,9 @@ public class AT_ObjectPropertyManager {
 			RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(3707927404057976793L);
 
 			String defaultValue = "YELLOW";
-			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(String.class).setDefaultValue(defaultValue).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
+			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(String.class).setDefaultValue(defaultValue).build();
 
-			ObjectPropertyManager objectPropertyManager = new ObjectPropertyManager(c, propertyDefinition, 0);
+			ObjectPropertyManager objectPropertyManager = new ObjectPropertyManager(propertyDefinition, 0);
 
 			/*
 			 * We will set the first 300 values multiple times at random
@@ -79,85 +73,6 @@ public class AT_ObjectPropertyManager {
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
-	/*
-	 * Local data manager used to properly initialize an ObjectPropertyManager
-	 * for use in time sensitive tests
-	 */
-	private static class LocalDM extends TestDataManager {
-		public ObjectPropertyManager objectPropertyManager;
-
-		@Override
-		public void init(DataManagerContext dataManagerContext) {
-			super.init(dataManagerContext);
-			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(String.class).setDefaultValue("YELLOW").setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
-			objectPropertyManager = new ObjectPropertyManager(dataManagerContext, propertyDefinition, 0);
-		}
-	}
-
-	@Test
-	@UnitTestMethod(target = ObjectPropertyManager.class, name = "getPropertyTime", args = { int.class })
-	public void testGetPropertyTime() {
-
-		/*
-		 * Execute random changes to an object property for several people.
-		 */
-		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(3180659211825142278L);
-
-		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
-
-		// Plan 1000 changes
-		IntStream.range(0, 1000).forEach((i -> {
-			pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(i, (c) -> {
-				LocalDM localDM = c.getDataManager(LocalDM.class);
-				int id = randomGenerator.nextInt(300);
-				String value = getRandomString(randomGenerator);
-				ObjectPropertyManager objectPropertyManager = localDM.objectPropertyManager;
-				objectPropertyManager.setPropertyValue(id, value);
-				// show that the property time for the id was properly set
-				assertEquals(c.getTime(), objectPropertyManager.getPropertyTime(id), 0);
-			}));
-		}));
-
-		// add the local data manager
-		pluginDataBuilder.addTestDataManager("dm", () -> new LocalDM());
-
-		// build and run the simulation
-		TestPluginData testPluginData = pluginDataBuilder.build();
-		Factory factory = TestPluginFactory.factory(testPluginData);
-		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
-
-		// precondition test: if time tracking is no engaged
-		ContractException contractException = assertThrows(ContractException.class, () -> {
-			Factory factory2 = TestPluginFactory.factory((c) -> {
-				PropertyDefinition propertyDefinition = PropertyDefinition	.builder()//
-																			.setType(Boolean.class)//
-																			.setDefaultValue(false)//
-																			.build();//
-				ObjectPropertyManager opm = new ObjectPropertyManager(c, propertyDefinition, 0);
-				opm.getPropertyTime(0);
-			});
-			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
-		});
-		assertEquals(PropertyError.TIME_TRACKING_OFF, contractException.getErrorType());
-
-		// precondition test: if a property time is retrieved for a negative
-		// index
-		contractException = assertThrows(ContractException.class, () -> {
-			Factory factory2 = TestPluginFactory.factory((c) -> {
-				PropertyDefinition propertyDefinition = PropertyDefinition	.builder()//
-																			.setType(Boolean.class)//
-																			.setDefaultValue(false)//
-																			.setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME)//
-																			.build();//
-				ObjectPropertyManager opm = new ObjectPropertyManager(c, propertyDefinition, 0);
-				opm.getPropertyTime(-1);
-			});
-			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
-		});
-		assertEquals(PropertyError.NEGATIVE_INDEX, contractException.getErrorType());
-
-	}
-
 	private static String getRandomString(RandomGenerator randomGenerator) {
 		switch (randomGenerator.nextInt(3)) {
 		case 0:
@@ -176,9 +91,9 @@ public class AT_ObjectPropertyManager {
 			RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6268125375257441705L);
 
 			String defaultValue = "YELLOW";
-			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(String.class).setDefaultValue(defaultValue).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
+			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(String.class).setDefaultValue(defaultValue).build();
 
-			ObjectPropertyManager objectPropertyManager = new ObjectPropertyManager(c, propertyDefinition, 0);
+			ObjectPropertyManager objectPropertyManager = new ObjectPropertyManager( propertyDefinition, 0);
 
 			/*
 			 * We will set the first 300 values multiple times at random
@@ -226,9 +141,9 @@ public class AT_ObjectPropertyManager {
 
 			// we will first test the manager with an initial value of false
 			String defaultValue = "RED";
-			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(String.class).setDefaultValue(defaultValue).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
+			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(String.class).setDefaultValue(defaultValue).build();
 
-			ObjectPropertyManager objectPropertyManager = new ObjectPropertyManager(c, propertyDefinition, 0);
+			ObjectPropertyManager objectPropertyManager = new ObjectPropertyManager(propertyDefinition, 0);
 
 			// initially, the value should be the default value for the manager
 			assertEquals(defaultValue, (String) objectPropertyManager.getPropertyValue(5));
@@ -245,9 +160,9 @@ public class AT_ObjectPropertyManager {
 			assertEquals(defaultValue, (String) objectPropertyManager.getPropertyValue(5));
 
 			// we will next test the manager with an initial value of true
-			propertyDefinition = PropertyDefinition.builder().setType(String.class).setDefaultValue(defaultValue).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
+			propertyDefinition = PropertyDefinition.builder().setType(String.class).setDefaultValue(defaultValue).build();
 
-			objectPropertyManager = new ObjectPropertyManager(c, propertyDefinition, 0);
+			objectPropertyManager = new ObjectPropertyManager(propertyDefinition, 0);
 
 			// initially, the value should be the default value for the manager
 			assertEquals(defaultValue, (String) objectPropertyManager.getPropertyValue(5));
@@ -264,8 +179,8 @@ public class AT_ObjectPropertyManager {
 			assertEquals(defaultValue, (String) objectPropertyManager.getPropertyValue(5));
 
 			// precondition tests
-			PropertyDefinition def = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(true).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
-			ObjectPropertyManager opm = new ObjectPropertyManager(c, def, 0);
+			PropertyDefinition def = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(true).build();
+			ObjectPropertyManager opm = new ObjectPropertyManager( def, 0);
 
 			ContractException contractException = assertThrows(ContractException.class, () -> opm.removeId(-1));
 			assertEquals(PropertyError.NEGATIVE_INDEX, contractException.getErrorType());
@@ -274,21 +189,21 @@ public class AT_ObjectPropertyManager {
 	}
 
 	@Test
-	@UnitTestConstructor(target = ObjectPropertyManager.class, args = { SimulationContext.class, PropertyDefinition.class, int.class })
+	@UnitTestConstructor(target = ObjectPropertyManager.class, args = { PropertyDefinition.class, int.class })
 	public void testConstructor() {
 		Factory factory = TestPluginFactory.factory((c) -> {
 
 			PropertyDefinition goodPropertyDefinition = PropertyDefinition.builder().setType(Object.class).setDefaultValue("BLUE").build();
 
 			// if the property definition is null
-			ContractException contractException = assertThrows(ContractException.class, () -> new ObjectPropertyManager(c, null, 0));
+			ContractException contractException = assertThrows(ContractException.class, () -> new ObjectPropertyManager(null, 0));
 			assertEquals(PropertyError.NULL_PROPERTY_DEFINITION, contractException.getErrorType());
 
 			// if the initial size is negative
-			contractException = assertThrows(ContractException.class, () -> new ObjectPropertyManager(c, goodPropertyDefinition, -1));
+			contractException = assertThrows(ContractException.class, () -> new ObjectPropertyManager(goodPropertyDefinition, -1));
 			assertEquals(PropertyError.NEGATIVE_INITIAL_SIZE, contractException.getErrorType());
 
-			ObjectPropertyManager objectPropertyManager = new ObjectPropertyManager(c, goodPropertyDefinition, 0);
+			ObjectPropertyManager objectPropertyManager = new ObjectPropertyManager(goodPropertyDefinition, 0);
 			assertNotNull(objectPropertyManager);
 		});
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
@@ -299,9 +214,9 @@ public class AT_ObjectPropertyManager {
 	public void testIncrementCapacity() {
 		Factory factory = TestPluginFactory.factory((c) -> {
 
-			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(234).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
+			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(234).build();
 
-			ObjectPropertyManager objectPropertyManager = new ObjectPropertyManager(c, propertyDefinition, 0);
+			ObjectPropertyManager objectPropertyManager = new ObjectPropertyManager(propertyDefinition, 0);
 
 			// precondition tests
 			ContractException contractException = assertThrows(ContractException.class, () -> objectPropertyManager.incrementCapacity(-1));

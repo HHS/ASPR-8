@@ -7,7 +7,6 @@ import org.apache.commons.math3.random.RandomGenerator;
 
 import plugins.materials.support.BatchPropertyId;
 import plugins.util.properties.PropertyDefinition;
-import plugins.util.properties.TimeTrackingPolicy;
 
 /**
  * A test support enumeration that contains a variety of batch property id
@@ -25,7 +24,6 @@ public enum TestBatchPropertyId implements BatchPropertyId {
 								.setType(Boolean.class)//
 								.setDefaultValue(false)//
 								.setPropertyValueMutability(false)//
-								.setTimeTrackingPolicy(TimeTrackingPolicy.DO_NOT_TRACK_TIME)//
 								.build()), //
 	BATCH_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK(
 			TestMaterialId.MATERIAL_1, //
@@ -33,7 +31,6 @@ public enum TestBatchPropertyId implements BatchPropertyId {
 								.setType(Integer.class)//
 								// .setDefaultValue(0)//no default value
 								.setPropertyValueMutability(true)//
-								.setTimeTrackingPolicy(TimeTrackingPolicy.DO_NOT_TRACK_TIME)//
 								.build() //
 	), //
 	BATCH_PROPERTY_1_3_DOUBLE_MUTABLE_NO_TRACK(
@@ -42,7 +39,6 @@ public enum TestBatchPropertyId implements BatchPropertyId {
 								.setType(Double.class)//
 								// .setDefaultValue(0.0)//no default
 								.setPropertyValueMutability(true)//
-								.setTimeTrackingPolicy(TimeTrackingPolicy.DO_NOT_TRACK_TIME)//
 								.build() //
 	), //
 	BATCH_PROPERTY_2_1_BOOLEAN_MUTABLE_TRACK(
@@ -51,7 +47,6 @@ public enum TestBatchPropertyId implements BatchPropertyId {
 								.setType(Boolean.class)//
 								.setDefaultValue(false)//
 								.setPropertyValueMutability(true)//
-								.setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME)//
 								.build() //
 	), //
 	BATCH_PROPERTY_2_2_INTEGER_IMMUTABLE_TRACK(
@@ -60,7 +55,6 @@ public enum TestBatchPropertyId implements BatchPropertyId {
 								.setType(Integer.class)//
 								.setDefaultValue(0)//
 								.setPropertyValueMutability(false)//
-								.setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME)//
 								.build() //
 	), //
 	BATCH_PROPERTY_2_3_DOUBLE_MUTABLE_TRACK(
@@ -69,7 +63,6 @@ public enum TestBatchPropertyId implements BatchPropertyId {
 								.setType(Double.class)//
 								.setDefaultValue(0.0)//
 								.setPropertyValueMutability(true)//
-								.setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME)//
 								.build() //
 	), //
 	BATCH_PROPERTY_3_1_BOOLEAN_MUTABLE_NO_TRACK(
@@ -78,7 +71,6 @@ public enum TestBatchPropertyId implements BatchPropertyId {
 								.setType(Boolean.class)//
 								.setDefaultValue(false)//
 								.setPropertyValueMutability(true)//
-								.setTimeTrackingPolicy(TimeTrackingPolicy.DO_NOT_TRACK_TIME)//
 								.build() //
 	), //
 	BATCH_PROPERTY_3_2_INTEGER_MUTABLE_NO_TRACK(
@@ -87,7 +79,6 @@ public enum TestBatchPropertyId implements BatchPropertyId {
 								.setType(Integer.class)//
 								.setDefaultValue(0)//
 								.setPropertyValueMutability(true)//
-								.setTimeTrackingPolicy(TimeTrackingPolicy.DO_NOT_TRACK_TIME)//
 								.build() //
 	), //
 	BATCH_PROPERTY_3_3_DOUBLE_IMMUTABLE_NO_TRACK(
@@ -96,7 +87,6 @@ public enum TestBatchPropertyId implements BatchPropertyId {
 								.setType(Double.class)//
 								.setDefaultValue(0.0)//
 								.setPropertyValueMutability(false)//
-								.setTimeTrackingPolicy(TimeTrackingPolicy.DO_NOT_TRACK_TIME)//
 								.build() //
 	);//
 

@@ -4,7 +4,6 @@ import org.apache.commons.math3.random.RandomGenerator;
 
 import plugins.personproperties.support.PersonPropertyId;
 import plugins.util.properties.PropertyDefinition;
-import plugins.util.properties.TimeTrackingPolicy;
 
 /**
  * Enumeration that identifies person property definitions
@@ -15,14 +14,12 @@ public enum TestAuxiliaryPersonPropertyId implements PersonPropertyId {
 								.setType(Boolean.class)//
 								.setDefaultValue(false)//
 								.setPropertyValueMutability(true)//
-								.setTimeTrackingPolicy(TimeTrackingPolicy.DO_NOT_TRACK_TIME)//
 								.build()), //
 	PERSON_AUX_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK(
 			PropertyDefinition	.builder()//
 								.setType(Integer.class)//
 								.setDefaultValue(0)//
 								.setPropertyValueMutability(true)//
-								.setTimeTrackingPolicy(TimeTrackingPolicy.DO_NOT_TRACK_TIME)//
 								.build() //
 	), //
 	PERSON_AUX_PROPERTY_3_DOUBLE_MUTABLE_NO_TRACK(
@@ -30,7 +27,6 @@ public enum TestAuxiliaryPersonPropertyId implements PersonPropertyId {
 								.setType(Double.class)//
 								.setDefaultValue(0.0)//
 								.setPropertyValueMutability(true)//
-								.setTimeTrackingPolicy(TimeTrackingPolicy.DO_NOT_TRACK_TIME)//
 								.build() //
 	), //
 	PERSON_AUX_PROPERTY_4_BOOLEAN_MUTABLE_TRACK(
@@ -38,7 +34,6 @@ public enum TestAuxiliaryPersonPropertyId implements PersonPropertyId {
 								.setType(Boolean.class)//
 								.setDefaultValue(false)//
 								.setPropertyValueMutability(true)//
-								.setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME)//
 								.build() //
 	), //
 	PERSON_AUX_PROPERTY_5_INTEGER_MUTABLE_TRACK(
@@ -46,7 +41,6 @@ public enum TestAuxiliaryPersonPropertyId implements PersonPropertyId {
 								.setType(Integer.class)//
 								.setDefaultValue(0)//
 								.setPropertyValueMutability(true)//
-								.setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME)//
 								.build() //
 	), //
 	PERSON_AUX_PROPERTY_6_DOUBLE_MUTABLE_TRACK(
@@ -54,7 +48,6 @@ public enum TestAuxiliaryPersonPropertyId implements PersonPropertyId {
 								.setType(Double.class)//
 								.setDefaultValue(0.0)//
 								.setPropertyValueMutability(true)//
-								.setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME)//
 								.build() //
 	), //
 	PERSON_AUX_PROPERTY_7_BOOLEAN_IMMUTABLE_NO_TRACK(
@@ -62,7 +55,6 @@ public enum TestAuxiliaryPersonPropertyId implements PersonPropertyId {
 								.setType(Boolean.class)//
 								.setDefaultValue(false)//
 								.setPropertyValueMutability(false)//
-								.setTimeTrackingPolicy(TimeTrackingPolicy.DO_NOT_TRACK_TIME)//
 								.build() //
 	), //
 	PERSON_AUX_PROPERTY_8_INTEGER_IMMUTABLE_NO_TRACK(
@@ -70,7 +62,6 @@ public enum TestAuxiliaryPersonPropertyId implements PersonPropertyId {
 								.setType(Integer.class)//
 								.setDefaultValue(0)//
 								.setPropertyValueMutability(false)//
-								.setTimeTrackingPolicy(TimeTrackingPolicy.DO_NOT_TRACK_TIME)//
 								.build() //
 	), //
 	PERSON_AUX_PROPERTY_9_DOUBLE_IMMUTABLE_NO_TRACK(
@@ -78,7 +69,6 @@ public enum TestAuxiliaryPersonPropertyId implements PersonPropertyId {
 								.setType(Double.class)//
 								.setDefaultValue(0.0)//
 								.setPropertyValueMutability(false)//
-								.setTimeTrackingPolicy(TimeTrackingPolicy.DO_NOT_TRACK_TIME)//
 								.build() //
 	);//
 

@@ -21,7 +21,6 @@ import plugins.globalproperties.GlobalPropertiesPluginData.Builder;
 import plugins.globalproperties.reports.GlobalPropertyReportPluginData;
 import plugins.reports.support.NIOReportItemHandler;
 import plugins.util.properties.PropertyDefinition;
-import plugins.util.properties.TimeTrackingPolicy;
 
 public final class Example_13 {
 
@@ -33,16 +32,14 @@ public final class Example_13 {
 
 		PropertyDefinition propertyDefinition = PropertyDefinition	.builder()//
 																	.setType(Double.class)//
-																	.setDefaultValue(2.0)//
-																	.setTimeTrackingPolicy(TimeTrackingPolicy.DO_NOT_TRACK_TIME)//
+																	.setDefaultValue(2.0)//																	
 																	.setPropertyValueMutability(false)//
 																	.build();
 		builder.defineGlobalProperty(GlobalProperty.ALPHA, propertyDefinition,0);
 
 		propertyDefinition = PropertyDefinition	.builder()//
 												.setType(Double.class)//
-												.setDefaultValue(5.0)//
-												.setTimeTrackingPolicy(TimeTrackingPolicy.DO_NOT_TRACK_TIME)//
+												.setDefaultValue(5.0)//												
 												.setPropertyValueMutability(false)//
 												.build();
 
@@ -50,8 +47,7 @@ public final class Example_13 {
 
 		propertyDefinition = PropertyDefinition	.builder()//
 												.setType(Double.class)//
-												.setDefaultValue(1.0)//
-												.setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME)//
+												.setDefaultValue(1.0)//												
 												.setPropertyValueMutability(true)//
 												.build();
 

@@ -9,6 +9,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import org.apache.commons.math3.util.FastMath;
+
 import net.jcip.annotations.Immutable;
 import nucleus.PluginData;
 import nucleus.PluginDataBuilder;
@@ -42,18 +44,27 @@ import util.wrappers.MultiKey;
 @Immutable
 public class RegionsPluginData implements PluginData {
 
+	private static enum PersonAdditionMode {
+		UNDETERMINED, REGION_ONLY, REGION_AND_TIME
+	}
+
 	private static class Data {
 
 		private final Map<RegionPropertyId, PropertyDefinition> regionPropertyDefinitions = new LinkedHashMap<>();
 
 		private final Set<RegionId> regionIds = new LinkedHashSet<>();
 
-		private TimeTrackingPolicy regionArrivalTimeTrackingPolicy = TimeTrackingPolicy.DO_NOT_TRACK_TIME;
+		private boolean trackRegionArrivalTimes;
 
 		private final Map<RegionId, Map<RegionPropertyId, Object>> regionPropertyValues = new LinkedHashMap<>();
+
 		private final Map<RegionPropertyId, Object> emptyRegionPropertyMap = Collections.unmodifiableMap(new LinkedHashMap<>());
 
 		private final List<RegionId> personRegions = new ArrayList<>();
+
+		private final List<Double> personArrivalTimes = new ArrayList<>();
+
+		private PersonAdditionMode personAdditionMode = PersonAdditionMode.UNDETERMINED;
 
 		private boolean locked;
 
@@ -63,12 +74,13 @@ public class RegionsPluginData implements PluginData {
 		public Data(Data data) {
 			regionPropertyDefinitions.putAll(data.regionPropertyDefinitions);
 			regionIds.addAll(data.regionIds);
-			regionArrivalTimeTrackingPolicy = data.regionArrivalTimeTrackingPolicy;
+			trackRegionArrivalTimes = data.trackRegionArrivalTimes;
 			for (RegionId regionId : data.regionPropertyValues.keySet()) {
 				Map<RegionPropertyId, Object> map = new LinkedHashMap<>(data.regionPropertyValues.get(regionId));
 				regionPropertyValues.put(regionId, map);
 			}
 			personRegions.addAll(data.personRegions);
+			personAdditionMode = data.personAdditionMode;
 
 			locked = data.locked;
 		}
@@ -77,8 +89,10 @@ public class RegionsPluginData implements PluginData {
 		public int hashCode() {
 			final int prime = 31;
 			int result = 1;
+			result = prime * result + (locked ? 1231 : 1237);
 			result = prime * result + personRegions.hashCode();
-			result = prime * result + regionArrivalTimeTrackingPolicy.hashCode();
+			result = prime * result + personArrivalTimes.hashCode();
+
 			result = prime * result + regionIds.hashCode();
 			result = prime * result + regionPropertyDefinitions.hashCode();
 			result = prime * result + getRegionPropertyValuesHashCode();
@@ -129,14 +143,21 @@ public class RegionsPluginData implements PluginData {
 			 * locked -- two Datas are only compared when they are both locked
 			 * -- there are no equality comparisons in this class.
 			 * 
+			 * personAdditionMode -- is a function of the existing data or is in
+			 * the UNDETERMINED state
 			 * 
 			 * emptyRegionPropertyMap -- just an empty map
 			 */
-
+			if (trackRegionArrivalTimes != other.trackRegionArrivalTimes) {
+				return false;
+			}
 			if (!personRegions.equals(other.personRegions)) {
 				return false;
 			}
-			if (regionArrivalTimeTrackingPolicy != other.regionArrivalTimeTrackingPolicy) {
+			if (!personRegions.equals(other.personRegions)) {
+				return false;
+			}
+			if (!personArrivalTimes.equals(other.personArrivalTimes)) {
 				return false;
 			}
 			if (!regionIds.equals(other.regionIds)) {
@@ -159,18 +180,18 @@ public class RegionsPluginData implements PluginData {
 
 		Map<RegionPropertyId, Object> map = data.regionPropertyValues.get(regionId);
 		if (map != null) {
-			for(RegionPropertyId regionPropertyId : map.keySet()) {
+			for (RegionPropertyId regionPropertyId : map.keySet()) {
 				boolean use = true;
 				Object propertyValue = map.get(regionPropertyId);
 				PropertyDefinition propertyDefinition = data.regionPropertyDefinitions.get(regionPropertyId);
 				Optional<Object> optional = propertyDefinition.getDefaultValue();
-				if(optional.isPresent()) {
+				if (optional.isPresent()) {
 					Object defaultValue = optional.get();
-					if(defaultValue.equals(propertyValue)) {
+					if (defaultValue.equals(propertyValue)) {
 						use = false;
 					}
 				}
-				if(use) {
+				if (use) {
 					result.add(new MultiKey(regionPropertyId, propertyValue));
 				}
 			}
@@ -204,12 +225,6 @@ public class RegionsPluginData implements PluginData {
 
 	public static Builder builder() {
 		return new Builder(new Data());
-	}
-
-	private static void validateTimeTrackingPolicyNotNull(TimeTrackingPolicy timeTrackingPolicy) {
-		if (timeTrackingPolicy == null) {
-			throw new ContractException(RegionError.NULL_TIME_TRACKING_POLICY);
-		}
 	}
 
 	private static void validateRegionIdNotNull(RegionId regionId) {
@@ -264,24 +279,35 @@ public class RegionsPluginData implements PluginData {
 		 * 
 		 * @throws ContractException
 		 * 
-		 *             <li>{@linkplain RegionError#UNKNOWN_REGION_ID}</li> if a
+		 *             <li>{@linkplain RegionError#UNKNOWN_REGION_ID} if a
 		 *             region property value was associated with a region id
 		 *             that was not properly added with an initial agent
-		 *             behavior.
+		 *             behavior.</li>
 		 * 
-		 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}</li>
-		 *             if a region property value was associated with a region
-		 *             property id that was not defined
+		 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if a
+		 *             region property value was associated with a region
+		 *             property id that was not defined</li>
 		 * 
-		 *             <li>{@linkplain PropertyError#INCOMPATIBLE_VALUE}</li> if
-		 *             a region property value was associated with a region and
+		 *             <li>{@linkplain PropertyError#INCOMPATIBLE_VALUE} if a
+		 *             region property value was associated with a region and
 		 *             region property id that is incompatible with the
-		 *             corresponding property definition.
+		 *             corresponding property definition.</li>
 		 * 
-		 *             <li>{@linkplain PropertyError#INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT}</li>
+		 *             <li>{@linkplain PropertyError#INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT}
 		 *             if a region property definition does not have a default
 		 *             value and there are no property values added to replace
-		 *             that default.
+		 *             that default.</li>
+		 * 
+		 *             <li>{@linkplain RegionError#PERSON_ARRIVAL_DATA_PRESENT}
+		 *             if a person region arrival data was collected, but the
+		 *             region arrival tracking policy is true</li>
+		 * 
+		 *             <li>{@linkplain RegionError#MISSING_PERSON_ARRIVAL_DATA}
+		 *             if person region arrival data was collected, but the
+		 *             region arrival time tracking policy is false</li>
+		 * 
+		 * 
+		 * 
 		 * 
 		 */
 		public RegionsPluginData build() {
@@ -318,22 +344,48 @@ public class RegionsPluginData implements PluginData {
 			return this;
 		}
 
+		private void setPersonAdditionMode(PersonAdditionMode personAdditionMode) {
+			if (personAdditionMode == PersonAdditionMode.UNDETERMINED) {
+				throw new RuntimeException("person addition mode cannot be set to " + PersonAdditionMode.UNDETERMINED);
+			}
+			switch (data.personAdditionMode) {
+			case REGION_AND_TIME:
+			case REGION_ONLY:
+				if (personAdditionMode != data.personAdditionMode) {
+					throw new ContractException(RegionError.REGION_ARRIVAL_TIMES_MISMATCHED);
+				}
+				break;
+			case UNDETERMINED:
+				data.personAdditionMode = personAdditionMode;
+				break;
+			default:
+				throw new RuntimeException("unhandled case " + data.personAdditionMode);
+			}
+		}
+
 		/**
-		 * Sets the person's region
+		 * Sets the person's region. Should be used exclusively when time
+		 * tracking will be set to false.
 		 * 
 		 * @throws ContractException
 		 * 
-		 *             <li>{@linkplain PersonError#NULL_PERSON_ID}</li>if the
-		 *             person id is null
+		 *             <li>{@linkplain PersonError#NULL_PERSON_ID} if the person
+		 *             id is null</li>
 		 * 
-		 *             <li>{@linkplain RegionError#NULL_REGION_ID}</li>if the
-		 *             region id is null
+		 *             <li>{@linkplain RegionError#NULL_REGION_ID} if the region
+		 *             id is null</li>
+		 * 
+		 *             <li>{@linkplain RegionError#REGION_ARRIVAL_TIMES_MISMATCHED}
+		 *             if other people have been added using region arrival
+		 *             times</li>
+		 * 
 		 * 
 		 */
-		public Builder setPersonRegion(final PersonId personId, final RegionId regionId) {
+		public Builder addPerson(final PersonId personId, final RegionId regionId) {
 			ensureDataMutability();
 			validatePersonId(personId);
 			validateRegionIdNotNull(regionId);
+			setPersonAdditionMode(PersonAdditionMode.REGION_ONLY);
 			int personIndex = personId.getValue();
 			while (personIndex >= data.personRegions.size()) {
 				data.personRegions.add(null);
@@ -343,18 +395,50 @@ public class RegionsPluginData implements PluginData {
 		}
 
 		/**
-		 * Sets the tracking policy for region arrival times
+		 * Sets the person's region and region arrival time. Should be used
+		 * exclusively when time tracking will be set to true.
 		 * 
 		 * @throws ContractException
 		 * 
-		 *             <li>{@linkplain RegionError#NULL_TIME_TRACKING_POLICY}</li>if
-		 *             the timeTrackingPolicy is null
+		 *             <li>{@linkplain PersonError#NULL_PERSON_ID}if the person
+		 *             id is null</li>
+		 * 
+		 *             <li>{@linkplain RegionError#NON_FINITE_TIME}if the
+		 *             arrival time is not finite</li>
+		 *             
+		 *              <li>{@linkplain RegionError#NULL_TIME}if the
+		 *             arrival time is null</li>
+		 * 
+		 *             <li>{@linkplain RegionError#REGION_ARRIVAL_TIMES_MISMATCHED}
+		 *             if other people have been added without using region
+		 *             arrival times</li>
+		 */
+		public Builder addPerson(final PersonId personId, final RegionId regionId, final Double arrivalTime) {
+			ensureDataMutability();
+			validatePersonId(personId);
+			validateRegionIdNotNull(regionId);
+			validateTime(arrivalTime);
+			setPersonAdditionMode(PersonAdditionMode.REGION_AND_TIME);
+			int personIndex = personId.getValue();
+			while (personIndex >= data.personRegions.size()) {
+				data.personRegions.add(null);
+				data.personArrivalTimes.add(null);
+			}
+			data.personRegions.set(personIndex, regionId);
+			data.personArrivalTimes.set(personIndex, arrivalTime);
+			return this;
+		}
+
+		/**
+		 * Sets the tracking policy for region arrival times. Defaults to false.
+		 * Must be set to true if people are added with arrival times.
+		 * 
+		 * @throws ContractException
 		 *
 		 */
-		public Builder setPersonRegionArrivalTracking(final TimeTrackingPolicy timeTrackingPolicy) {
+		public Builder setPersonRegionArrivalTracking(boolean trackRegionArrivalTimes) {
 			ensureDataMutability();
-			validateTimeTrackingPolicyNotNull(timeTrackingPolicy);
-			data.regionArrivalTimeTrackingPolicy = timeTrackingPolicy;
+			data.trackRegionArrivalTimes = trackRegionArrivalTimes;
 			return this;
 		}
 
@@ -394,6 +478,27 @@ public class RegionsPluginData implements PluginData {
 		}
 
 		private void validateData() {
+
+			// if the time tracking policy is off, then there should be no times
+			// recorded
+
+			switch (data.personAdditionMode) {
+			case REGION_AND_TIME:
+				if (!data.trackRegionArrivalTimes) {
+					throw new ContractException(RegionError.PERSON_ARRIVAL_DATA_PRESENT);
+				}
+				break;
+			case REGION_ONLY:
+				if (data.trackRegionArrivalTimes) {
+					throw new ContractException(RegionError.MISSING_PERSON_ARRIVAL_DATA);
+				}
+				break;
+			case UNDETERMINED:
+				// nothing to check
+				break;
+			default:
+				throw new RuntimeException("unhandled case " + data.personAdditionMode);
+			}
 
 			for (RegionId regionId : data.personRegions) {
 				if (regionId != null) {
@@ -517,8 +622,8 @@ public class RegionsPluginData implements PluginData {
 	 * {@link TimeTrackingPolicy#DO_NOT_TRACK_TIME} if not set in the builder.
 	 * 
 	 */
-	public TimeTrackingPolicy getPersonRegionArrivalTrackingPolicy() {
-		return data.regionArrivalTimeTrackingPolicy;
+	public boolean getPersonRegionArrivalTrackingPolicy() {
+		return data.trackRegionArrivalTimes;
 	}
 
 	@Override
@@ -533,11 +638,20 @@ public class RegionsPluginData implements PluginData {
 
 	}
 
+	private static void validateTime(Double time) {
+		if(time == null) {
+			throw new ContractException(RegionError.NULL_TIME);
+		}
+		if (!Double.isFinite(time)) {
+			throw new ContractException(RegionError.NON_FINITE_TIME);
+		}
+	}
+
 	/**
 	 * Returns the largest id value of any person assigned a region.
 	 */
 	public int getPersonCount() {
-		return data.personRegions.size();
+		return FastMath.max(data.personRegions.size(), data.personArrivalTimes.size());
 	}
 
 	/**
@@ -556,6 +670,24 @@ public class RegionsPluginData implements PluginData {
 		int personIndex = personId.getValue();
 		if (personIndex < data.personRegions.size()) {
 			return Optional.ofNullable((T) data.personRegions.get(personIndex));
+		}
+		return Optional.empty();
+	}
+
+	/**
+	 * Returns the region arrival time for the given {@link PersonId}.
+	 * 
+	 * @throws ContractException
+	 * 
+	 *             <li>{@linkplain PersonError#NULL_PERSON_ID}</li> if the
+	 *             person id is null
+	 * 
+	 */
+	public Optional<Double> getPersonRegionArrivalTime(final PersonId personId) {
+		validatePersonId(personId);
+		int personIndex = personId.getValue();
+		if (personIndex < data.personArrivalTimes.size()) {
+			return Optional.ofNullable(data.personArrivalTimes.get(personIndex));
 		}
 		return Optional.empty();
 	}
@@ -583,5 +715,4 @@ public class RegionsPluginData implements PluginData {
 		return true;
 	}
 
-	
 }

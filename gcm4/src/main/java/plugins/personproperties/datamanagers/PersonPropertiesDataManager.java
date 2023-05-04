@@ -6,8 +6,10 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
+import org.apache.commons.math3.util.FastMath;
 import org.apache.commons.math3.util.Pair;
 
 import nucleus.DataManager;
@@ -15,7 +17,6 @@ import nucleus.DataManagerContext;
 import nucleus.Event;
 import nucleus.EventFilter;
 import nucleus.IdentifiableFunctionMap;
-import nucleus.SimulationContext;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.events.PersonImminentAdditionEvent;
 import plugins.people.events.PersonRemovalEvent;
@@ -28,7 +29,7 @@ import plugins.personproperties.events.PersonPropertyUpdateEvent;
 import plugins.personproperties.support.PersonPropertyDefinitionInitialization;
 import plugins.personproperties.support.PersonPropertyError;
 import plugins.personproperties.support.PersonPropertyId;
-import plugins.personproperties.support.PersonPropertyInitialization;
+import plugins.personproperties.support.PersonPropertyValueInitialization;
 import plugins.regions.datamanagers.RegionsDataManager;
 import plugins.regions.support.RegionError;
 import plugins.regions.support.RegionId;
@@ -41,7 +42,7 @@ import plugins.util.properties.IntPropertyManager;
 import plugins.util.properties.ObjectPropertyManager;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
-import plugins.util.properties.TimeTrackingPolicy;
+import plugins.util.properties.arraycontainers.DoubleValueContainer;
 import util.errors.ContractException;
 
 /**
@@ -51,14 +52,68 @@ import util.errors.ContractException;
  */
 
 public final class PersonPropertiesDataManager extends DataManager {
-	private void validatePersonPropertyIdIsUnknown(final PersonPropertyId personPropertyId) {
-		if (personPropertyId == null) {
-			throw new ContractException(PropertyError.NULL_PROPERTY_ID);
-		}
+	private static enum EventFunctionId {
+		PERSON_PROPERTY_ID, //
+		REGION_ID, //
+		PERSON_ID,
+		CURRENT_VALUE,
+		PREVIOUS_VALUE;//
+	}
 
-		if (personPropertyDefinitions.containsKey(personPropertyId)) {
-			throw new ContractException(PropertyError.DUPLICATE_PROPERTY_DEFINITION, personPropertyId);
+	private static record PersonPropertyDefinitionMutationEvent(PersonPropertyDefinitionInitialization propertyDefinitionInitialization) implements Event {
+	}
+
+	private static record PersonPropertyUpdateMutationEvent(PersonId personId, PersonPropertyId personPropertyId, Object personPropertyValue) implements Event {
+	}
+
+	private static void validatePropertyMutability(final PropertyDefinition propertyDefinition) {
+		if (!propertyDefinition.propertyValuesAreMutable()) {
+			throw new ContractException(PropertyError.IMMUTABLE_VALUE);
 		}
+	}
+
+	private final Map<PersonPropertyId, PropertyDefinition> personPropertyDefinitions = new LinkedHashMap<>();
+	private final Map<PersonPropertyId, Double> personPropertyDefinitionTimes = new LinkedHashMap<>();
+
+	private final Map<PersonPropertyId, IndexedPropertyManager> personPropertyManagerMap = new LinkedHashMap<>();
+
+	private final Map<PersonPropertyId, DoubleValueContainer> personPropertyTimeMap = new LinkedHashMap<>();
+
+	private final Map<PersonPropertyId, Integer> nonDefaultBearingPropertyIds = new LinkedHashMap<>();
+
+	private boolean[] nonDefaultChecks = new boolean[0];
+
+	private PeopleDataManager peopleDataManager;
+
+	private RegionsDataManager regionsDataManager;
+
+	private DataManagerContext dataManagerContext;
+	private final PersonPropertiesPluginData personPropertiesPluginData;
+
+	/*
+	 * We keep the person records in a list rather than a map so that we can
+	 * retrieve a person record by index (personId).
+	 */
+
+	private IdentifiableFunctionMap<PersonPropertyUpdateEvent> functionMap = //
+			IdentifiableFunctionMap	.builder(PersonPropertyUpdateEvent.class)//
+									.put(EventFunctionId.PERSON_PROPERTY_ID, e -> e.personPropertyId())//
+									.put(EventFunctionId.REGION_ID, e -> regionsDataManager.getPersonRegion(e.personId()))//
+									.put(EventFunctionId.PERSON_ID, e -> e.personId())//
+									.put(EventFunctionId.CURRENT_VALUE, e -> e.currentPropertyValue()).put(EventFunctionId.PREVIOUS_VALUE, e -> e.previousPropertyValue()).build();//
+
+	/**
+	 * Constructs the person property data manager from the given plugin data
+	 * 
+	 * @throws ContractException
+	 *             <li>{@linkplain PersonPropertyError#NULL_PERSON_PROPERTY_PLUGN_DATA}
+	 *             if the plugin data is null</li>
+	 */
+	public PersonPropertiesDataManager(PersonPropertiesPluginData personPropertiesPluginData) {
+		if (personPropertiesPluginData == null) {
+			throw new ContractException(PersonPropertyError.NULL_PERSON_PROPERTY_PLUGN_DATA);
+		}
+		this.personPropertiesPluginData = personPropertiesPluginData;
 	}
 
 	private void addNonDefaultProperty(PersonPropertyId personPropertyId) {
@@ -66,13 +121,10 @@ public final class PersonPropertiesDataManager extends DataManager {
 		nonDefaultChecks = new boolean[nonDefaultBearingPropertyIds.size()];
 	}
 
-	private void validatePropertyDefinitionInitializationNotNull(PersonPropertyDefinitionInitialization propertyDefinitionInitialization) {
-		if (propertyDefinitionInitialization == null) {
-			throw new ContractException(PropertyError.NULL_PROPERTY_DEFINITION_INITIALIZATION);
+	private void clearNonDefaultChecks() {
+		for (int i = 0; i < nonDefaultChecks.length; i++) {
+			nonDefaultChecks[i] = false;
 		}
-	}
-
-	private static record PersonPropertyDefinitionMutationEvent(PersonPropertyDefinitionInitialization propertyDefinitionInitialization) implements Event {
 	}
 
 	/**
@@ -95,216 +147,171 @@ public final class PersonPropertiesDataManager extends DataManager {
 		dataManagerContext.releaseMutationEvent(new PersonPropertyDefinitionMutationEvent(propertyDefinitionInitialization));
 	}
 
-	private void handlePersonPropertyDefinitionMutationEvent(DataManagerContext dataManagerContext, PersonPropertyDefinitionMutationEvent personPropertyDefinitionMutationEvent) {
-		PersonPropertyDefinitionInitialization propertyDefinitionInitialization = personPropertyDefinitionMutationEvent.propertyDefinitionInitialization();
-		validatePropertyDefinitionInitializationNotNull(propertyDefinitionInitialization);
-		PersonPropertyId personPropertyId = propertyDefinitionInitialization.getPersonPropertyId();
-		PropertyDefinition propertyDefinition = propertyDefinitionInitialization.getPropertyDefinition();
-
-		validatePersonPropertyIdIsUnknown(personPropertyId);
-		boolean checkAllPeopleHaveValues = propertyDefinition.getDefaultValue().isEmpty();
-
-		for (Pair<PersonId, Object> pair : propertyDefinitionInitialization.getPropertyValues()) {
-			PersonId personId = pair.getFirst();
-			validatePersonExists(personId);
-		}
-
-		if (checkAllPeopleHaveValues) {
-			addNonDefaultProperty(personPropertyId);
-			int idLimit = peopleDataManager.getPersonIdLimit();
-			BitSet coverageSet = new BitSet(idLimit);
-
-			for (Pair<PersonId, Object> pair : propertyDefinitionInitialization.getPropertyValues()) {
-				PersonId personId = pair.getFirst();
-				int pId = personId.getValue();
-				coverageSet.set(pId);
-			}
-			for (int i = 0; i < idLimit; i++) {
-				if (peopleDataManager.personIndexExists(i)) {
-					boolean personCovered = coverageSet.get(i);
-					if (!personCovered) {
-						throw new ContractException(PropertyError.INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT);
-					}
-				}
-			}
-		}
-
-		personPropertyDefinitions.put(personPropertyId, propertyDefinition);
-		final IndexedPropertyManager propertyManager = getIndexedPropertyManager(dataManagerContext, propertyDefinition, 0);
-		personPropertyManagerMap.put(personPropertyId, propertyManager);
-
-		for (Pair<PersonId, Object> pair : propertyDefinitionInitialization.getPropertyValues()) {
-			PersonId personId = pair.getFirst();
-			int pId = personId.getValue();
-			/*
-			 * we do not have to validate the value since it is guaranteed to be
-			 * consistent with the property definition by contract.
-			 */
-			Object value = pair.getSecond();
-			propertyManager.setPropertyValue(pId, value);
-		}
-
-		if (dataManagerContext.subscribersExist(PersonPropertyDefinitionEvent.class)) {
-			dataManagerContext.releaseObservationEvent(new PersonPropertyDefinitionEvent(personPropertyId));
-		}
-
-	}
-
-	@Override
-	public void init(DataManagerContext dataManagerContext) {
-		super.init(dataManagerContext);
-		this.dataManagerContext = dataManagerContext;
-
-		peopleDataManager = dataManagerContext.getDataManager(PeopleDataManager.class);
-		regionsDataManager = dataManagerContext.getDataManager(RegionsDataManager.class);
-
-		dataManagerContext.subscribe(PersonPropertyDefinitionMutationEvent.class, this::handlePersonPropertyDefinitionMutationEvent);
-		dataManagerContext.subscribe(PersonPropertyUpdateMutationEvent.class, this::handlePersonPropertyUpdateMutationEvent);
-
-		Set<PersonPropertyId> personPropertyIds = personPropertiesPluginData.getPersonPropertyIds();
-
-		for (final PersonPropertyId personPropertyId : personPropertyIds) {
-			PropertyDefinition personPropertyDefinition = personPropertiesPluginData.getPersonPropertyDefinition(personPropertyId);
-			if (personPropertyDefinition.getDefaultValue().isEmpty()) {
-				nonDefaultBearingPropertyIds.put(personPropertyId, nonDefaultBearingPropertyIds.size());
-			}
-			personPropertyDefinitions.put(personPropertyId, personPropertyDefinition);
-			final IndexedPropertyManager indexedPropertyManager = getIndexedPropertyManager(dataManagerContext, personPropertyDefinition, 0);
-			personPropertyManagerMap.put(personPropertyId, indexedPropertyManager);
-		}
-
-		nonDefaultChecks = new boolean[nonDefaultBearingPropertyIds.size()];
-
-		int maxPersonIndex = personPropertiesPluginData.getMaxPersonIndex();
-
-		if (nonDefaultBearingPropertyIds.isEmpty()) {
-			for (int personIndex = 0; personIndex <= maxPersonIndex; personIndex++) {
-				if (personPropertiesPluginData.personExists(personIndex)) {
-					List<PersonPropertyInitialization> propertyValues = personPropertiesPluginData.getPropertyValues(personIndex);
-
-					if (!propertyValues.isEmpty() && !peopleDataManager.personIndexExists(personIndex)) {
-						throw new ContractException(PersonError.UNKNOWN_PERSON_ID);
-					}
-
-					for (PersonPropertyInitialization personPropertyInitialization : propertyValues) {
-						Object personPropertyValue = personPropertyInitialization.getValue();
-						PersonPropertyId personPropertyId = personPropertyInitialization.getPersonPropertyId();
-						IndexedPropertyManager propertyManager = personPropertyManagerMap.get(personPropertyId);
-						propertyManager.setPropertyValue(personIndex, personPropertyValue);
-					}
-				}
-			}
-
-		} else {
-			for (int personIndex = 0; personIndex <= maxPersonIndex; personIndex++) {
-
-				if (personPropertiesPluginData.personExists(personIndex)) {
-
-					List<PersonPropertyInitialization> propertyValues = personPropertiesPluginData.getPropertyValues(personIndex);
-
-					if (!propertyValues.isEmpty() && !peopleDataManager.personIndexExists(personIndex)) {
-						throw new ContractException(PersonError.UNKNOWN_PERSON_ID);
-					}
-
-					clearNonDefaultChecks();
-					for (PersonPropertyInitialization personPropertyInitialization : propertyValues) {
-						Object personPropertyValue = personPropertyInitialization.getValue();
-						PersonPropertyId personPropertyId = personPropertyInitialization.getPersonPropertyId();
-						markAssigned(personPropertyId);
-						IndexedPropertyManager propertyManager = personPropertyManagerMap.get(personPropertyId);
-						propertyManager.setPropertyValue(personIndex, personPropertyValue);
-					}
-					verifyNonDefaultChecks();
-
-				}
-
-			}
-
-		}
-		dataManagerContext.subscribe(PersonImminentAdditionEvent.class, this::handlePersonImminentAdditionEvent);
-		dataManagerContext.subscribe(PersonRemovalEvent.class, this::handlePersonImminentRemovalEvent);
-
-		if (dataManagerContext.stateRecordingIsScheduled()) {
-			dataManagerContext.subscribeToSimulationClose(this::recordSimulationState);
-		}
-	}
-
-	private void recordSimulationState(DataManagerContext dataManagerContext) {
-		PersonPropertiesPluginData.Builder builder = PersonPropertiesPluginData.builder();
-
-		List<PersonId> people = peopleDataManager.getPeople();
-		for (PersonId personId : people) {
-			builder.addPerson(personId);
-		}
-		for (PersonPropertyId personPropertyId : personPropertyDefinitions.keySet()) {
-			PropertyDefinition personPropertyDefinition = personPropertyDefinitions.get(personPropertyId);
-			builder.definePersonProperty(personPropertyId, personPropertyDefinition);
-			IndexedPropertyManager indexedPropertyManager = personPropertyManagerMap.get(personPropertyId);
-			for (PersonId personId : people) {
-				Object propertyValue = indexedPropertyManager.getPropertyValue(personId.getValue());
-				builder.setPersonPropertyValue(personId, personPropertyId, propertyValue);
-			}
-		}
-
-		dataManagerContext.releaseOutput(builder.build());
-
-	}
-
-	private final Map<PersonPropertyId, PropertyDefinition> personPropertyDefinitions = new LinkedHashMap<>();
-
-	private final Map<PersonPropertyId, IndexedPropertyManager> personPropertyManagerMap = new LinkedHashMap<>();
-
-	private final Map<PersonPropertyId, Integer> nonDefaultBearingPropertyIds = new LinkedHashMap<>();
-	private boolean[] nonDefaultChecks = new boolean[0];
-
-	/*
-	 * We keep the person records in a list rather than a map so that we can
-	 * retrieve a person record by index (personId).
+	/**
+	 * Expands the capacity of data structures to hold people by the given
+	 * count. Used to more efficiently prepare for multiple population
+	 * additions.
+	 *
+	 * @throws ContractException
+	 *             <li>{@linkplain PersonError#NEGATIVE_GROWTH_PROJECTION} if
+	 *             the count is negative</li>
 	 */
+	public void expandCapacity(final int count) {
+		if (count < 0) {
+			throw new ContractException(PersonError.NEGATIVE_GROWTH_PROJECTION);
+		}
+		if (count > 0) {
+			for (final PersonPropertyId personPropertyId : personPropertyManagerMap.keySet()) {
+				IndexedPropertyManager indexedPropertyManager = personPropertyManagerMap.get(personPropertyId);
+				indexedPropertyManager.incrementCapacity(count);
 
-	private PeopleDataManager peopleDataManager;
+				DoubleValueContainer doubleValueContainer = personPropertyTimeMap.get(personPropertyId);
+				if (doubleValueContainer != null) {
+					doubleValueContainer.setCapacity(doubleValueContainer.getCapacity() + count);
+				}
+			}
+		}
+	}
 
-	private RegionsDataManager regionsDataManager;
+	/**
+	 * Returns an event filter used to subscribe to
+	 * {@link PersonPropertyDefinitionEvent} events. Matches all such events.
+	 *
+	 */
+	public EventFilter<PersonPropertyDefinitionEvent> getEventFilterForPersonPropertyDefinitionEvent() {
+		return EventFilter	.builder(PersonPropertyDefinitionEvent.class)//
+							.build();
+	}
 
-	private IndexedPropertyManager getIndexedPropertyManager(final SimulationContext simulationContext, final PropertyDefinition propertyDefinition, final int intialSize) {
+	/**
+	 * Returns an event filter used to subscribe to
+	 * {@link PersonPropertyUpdateEvent} events. Matches all such events.
+	 */
+	public EventFilter<PersonPropertyUpdateEvent> getEventFilterForPersonPropertyUpdateEvent() {
+		return EventFilter.builder(PersonPropertyUpdateEvent.class).build();
+	}
+
+	/**
+	 * Returns an event filter used to subscribe to
+	 * {@link PersonPropertyUpdateEvent} events. Matches on person property id
+	 * and person id.
+	 * 
+	 * 
+	 * 
+	 * @throws ContractException
+	 * 
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the person
+	 *             property id is null</li>
+	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if the
+	 *             person property id is not known</li>
+	 *             <li>{@linkplain PersonError#NULL_PERSON_ID} if the person id
+	 *             is null</li>
+	 *             <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if the person
+	 *             id is not known</li>
+	 * 
+	 */
+	public EventFilter<PersonPropertyUpdateEvent> getEventFilterForPersonPropertyUpdateEvent(PersonId personId, PersonPropertyId personPropertyId) {
+		validatePersonPropertyId(personPropertyId);
+		validatePersonExists(personId);
+		return EventFilter	.builder(PersonPropertyUpdateEvent.class)//
+							.addFunctionValuePair(functionMap.get(EventFunctionId.PERSON_PROPERTY_ID), personPropertyId)//
+							.addFunctionValuePair(functionMap.get(EventFunctionId.PERSON_ID), personId)//
+							.build();
+	}
+
+	/**
+	 * Returns an event filter used to subscribe to
+	 * {@link PersonPropertyUpdateEvent} events. Matches on person property id.
+	 * 
+	 * @throws ContractException
+	 * 
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the person
+	 *             property id is null</li>
+	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if the
+	 *             person property id is not known</li>
+	 * 
+	 * 
+	 */
+	public EventFilter<PersonPropertyUpdateEvent> getEventFilterForPersonPropertyUpdateEvent(PersonPropertyId personPropertyId) {
+		validatePersonPropertyId(personPropertyId);
+		return EventFilter	.builder(PersonPropertyUpdateEvent.class)//
+							.addFunctionValuePair(functionMap.get(EventFunctionId.PERSON_PROPERTY_ID), personPropertyId)//
+							.build();
+
+	}
+
+	/**
+	 * Returns an event filter used to subscribe to
+	 * {@link PersonPropertyUpdateEvent} events. Matches on person property id
+	 * and property value.
+	 *
+	 * @throws ContractException
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the person
+	 *             property id is null</li>
+	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if the
+	 *             person property id is not known</li>
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE} if the
+	 *             person property value is null</li>
+	 *
+	 */
+	public EventFilter<PersonPropertyUpdateEvent> getEventFilterForPersonPropertyUpdateEvent(PersonPropertyId personPropertyId, Object propertyValue, boolean useCurrentValue) {
+		validatePersonPropertyId(personPropertyId);
+		validatePersonPropertyValueNotNull(propertyValue);
+		EventFunctionId propertyValueEnum = useCurrentValue ? EventFunctionId.CURRENT_VALUE : EventFunctionId.PREVIOUS_VALUE;
+		return EventFilter	.builder(PersonPropertyUpdateEvent.class).addFunctionValuePair(functionMap.get(EventFunctionId.PERSON_PROPERTY_ID), personPropertyId)//
+							.addFunctionValuePair(functionMap.get(propertyValueEnum), propertyValue).build();
+	}
+
+	/**
+	 * Returns an event filter used to subscribe to
+	 * {@link PersonPropertyUpdateEvent} events. Matches on region id and person
+	 * property id.
+	 *
+	 *
+	 * @throws ContractException
+	 *
+	 *             <li>{@linkplain RegionError#NULL_REGION_ID} if the region id
+	 *             is null</li>
+	 *             <li>{@linkplain RegionError#UNKNOWN_REGION_ID} if the region
+	 *             id is not known</li>
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the person
+	 *             property id is null</li>
+	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if the
+	 *             person property id is not known</li>
+	 * 
+	 */
+	public EventFilter<PersonPropertyUpdateEvent> getEventFilterForPersonPropertyUpdateEvent(RegionId regionId, PersonPropertyId personPropertyId) {
+		validatePersonPropertyId(personPropertyId);
+		validateRegionId(regionId);
+		return EventFilter	.builder(PersonPropertyUpdateEvent.class)//
+							.addFunctionValuePair(functionMap.get(EventFunctionId.PERSON_PROPERTY_ID), personPropertyId)//
+							.addFunctionValuePair(functionMap.get(EventFunctionId.REGION_ID), regionId)//
+							.build();
+	}
+
+	private IndexedPropertyManager getIndexedPropertyManager(final PropertyDefinition propertyDefinition, final int intialSize) {
 
 		IndexedPropertyManager indexedPropertyManager;
 		if (propertyDefinition.getType() == Boolean.class) {
-			indexedPropertyManager = new BooleanPropertyManager(simulationContext, propertyDefinition, intialSize);
+			indexedPropertyManager = new BooleanPropertyManager(propertyDefinition, intialSize);
 		} else if (propertyDefinition.getType() == Float.class) {
-			indexedPropertyManager = new FloatPropertyManager(simulationContext, propertyDefinition, intialSize);
+			indexedPropertyManager = new FloatPropertyManager(propertyDefinition, intialSize);
 		} else if (propertyDefinition.getType() == Double.class) {
-			indexedPropertyManager = new DoublePropertyManager(simulationContext, propertyDefinition, intialSize);
+			indexedPropertyManager = new DoublePropertyManager(propertyDefinition, intialSize);
 		} else if (propertyDefinition.getType() == Byte.class) {
-			indexedPropertyManager = new IntPropertyManager(simulationContext, propertyDefinition, intialSize);
+			indexedPropertyManager = new IntPropertyManager(propertyDefinition, intialSize);
 		} else if (propertyDefinition.getType() == Short.class) {
-			indexedPropertyManager = new IntPropertyManager(simulationContext, propertyDefinition, intialSize);
+			indexedPropertyManager = new IntPropertyManager(propertyDefinition, intialSize);
 		} else if (propertyDefinition.getType() == Integer.class) {
-			indexedPropertyManager = new IntPropertyManager(simulationContext, propertyDefinition, intialSize);
+			indexedPropertyManager = new IntPropertyManager(propertyDefinition, intialSize);
 		} else if (propertyDefinition.getType() == Long.class) {
-			indexedPropertyManager = new IntPropertyManager(simulationContext, propertyDefinition, intialSize);
+			indexedPropertyManager = new IntPropertyManager(propertyDefinition, intialSize);
 		} else if (Enum.class.isAssignableFrom(propertyDefinition.getType())) {
-			indexedPropertyManager = new EnumPropertyManager(simulationContext, propertyDefinition, intialSize);
+			indexedPropertyManager = new EnumPropertyManager(propertyDefinition, intialSize);
 		} else {
-			indexedPropertyManager = new ObjectPropertyManager(simulationContext, propertyDefinition, intialSize);
+			indexedPropertyManager = new ObjectPropertyManager(propertyDefinition, intialSize);
 		}
 		return indexedPropertyManager;
-	}
-
-	private void validatePersonPropertyValueNotNull(final Object propertyValue) {
-		if (propertyValue == null) {
-			throw new ContractException(PropertyError.NULL_PROPERTY_VALUE);
-		}
-	}
-
-	/*
-	 * Preconditions: all arguments are non-null
-	 */
-	private void validateValueCompatibility(final Object propertyId, final PropertyDefinition propertyDefinition, final Object propertyValue) {
-		if (!propertyDefinition.getType().isAssignableFrom(propertyValue.getClass())) {
-			throw new ContractException(PropertyError.INCOMPATIBLE_VALUE,
-					"Property value " + propertyValue + " is not of type " + propertyDefinition.getType().getName() + " and does not match definition of " + propertyId);
-		}
 	}
 
 	/**
@@ -459,17 +466,41 @@ public final class PersonPropertiesDataManager extends DataManager {
 		validatePersonExists(personId);
 		validatePersonPropertyId(personPropertyId);
 		validatePersonPropertyAssignmentTimesTracked(personPropertyId);
-		return personPropertyManagerMap.get(personPropertyId).getPropertyTime(personId.getValue());
+		return personPropertyTimeMap.get(personPropertyId).getValue(personId.getValue());
 	}
 
-	/*
-	 * Precondition : the person property id is valid
+	/**
+	 * Returns true if and only if the property assignment times are being
+	 * tracked
+	 * 
+	 * @throws ContractException
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the person
+	 *             property id is null</li>
+	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if the
+	 *             person property id is unknown</li>
 	 */
-	private void validatePersonPropertyAssignmentTimesTracked(final PersonPropertyId personPropertyId) {
-		final PropertyDefinition personPropertyDefinition = personPropertyDefinitions.get(personPropertyId);
-		if (personPropertyDefinition.getTimeTrackingPolicy() != TimeTrackingPolicy.TRACK_TIME) {
-			throw new ContractException(PersonPropertyError.PROPERTY_ASSIGNMENT_TIME_NOT_TRACKED);
+	public boolean isPropertyTimeTracked(final PersonPropertyId personPropertyId) {
+		validatePersonPropertyId(personPropertyId);
+		return personPropertyTimeMap.containsKey(personPropertyId);
+	}
+
+	/**
+	 * Returns an optional of the default property assignment time
+	 * 
+	 * @throws ContractException
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the person
+	 *             property id is null</li>
+	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if the
+	 *             person property id is unknown</li>
+	 */
+	public Optional<Double> getDefaultPropertyTime(final PersonPropertyId personPropertyId) {
+		validatePersonPropertyId(personPropertyId);
+		Double result = null;
+		DoubleValueContainer doubleValueContainer = personPropertyTimeMap.get(personPropertyId);
+		if (doubleValueContainer != null) {
+			result = doubleValueContainer.getDefaultValue();
 		}
+		return Optional.ofNullable(result);
 	}
 
 	/**
@@ -493,61 +524,334 @@ public final class PersonPropertiesDataManager extends DataManager {
 		return (T) personPropertyManagerMap.get(personPropertyId).getPropertyValue(personId.getValue());
 	}
 
-	private void validatePersonExists(final PersonId personId) {
-		if (personId == null) {
-			throw new ContractException(PersonError.NULL_PERSON_ID);
-		}
-		if (!peopleDataManager.personExists(personId)) {
-			throw new ContractException(PersonError.UNKNOWN_PERSON_ID);
-		}
-	}
+	private void handlePersonImminentAdditionEvent(final DataManagerContext dataManagerContext, final PersonImminentAdditionEvent personImminentAdditionEvent) {
 
-	private void validatePersonPropertyId(final PersonPropertyId personPropertyId) {
-		if (personPropertyId == null) {
-			throw new ContractException(PropertyError.NULL_PROPERTY_ID);
+		PersonConstructionData personConstructionData = personImminentAdditionEvent.personConstructionData();
+
+		PersonId personId = personImminentAdditionEvent.personId();
+
+		List<PersonPropertyValueInitialization> personPropertyAssignments = personConstructionData.getValues(PersonPropertyValueInitialization.class);
+
+		for (final PersonPropertyValueInitialization personPropertyAssignment : personPropertyAssignments) {
+			PersonPropertyId personPropertyId = personPropertyAssignment.getPersonPropertyId();
+			final Object personPropertyValue = personPropertyAssignment.getValue();
+			validatePersonPropertyId(personPropertyId);
+			validatePersonPropertyValueNotNull(personPropertyValue);
+			final PropertyDefinition propertyDefinition = personPropertyDefinitions.get(personPropertyId);
+			validateValueCompatibility(personPropertyId, propertyDefinition, personPropertyValue);
 		}
 
-		if (!personPropertyDefinitions.containsKey(personPropertyId)) {
-			throw new ContractException(PropertyError.UNKNOWN_PROPERTY_ID, personPropertyId);
-		}
-	}
-
-	private DataManagerContext dataManagerContext;
-
-	private final PersonPropertiesPluginData personPropertiesPluginData;
-
-	/**
-	 * Constructs the person property data manager from the given plugin data
-	 * 
-	 * @throws ContractException
-	 *             <li>{@linkplain PersonPropertyError#NULL_PERSON_PROPERTY_PLUGN_DATA}
-	 *             if the plugin data is null</li>
-	 */
-	public PersonPropertiesDataManager(PersonPropertiesPluginData personPropertiesPluginData) {
-		if (personPropertiesPluginData == null) {
-			throw new ContractException(PersonPropertyError.NULL_PERSON_PROPERTY_PLUGN_DATA);
-		}
-		this.personPropertiesPluginData = personPropertiesPluginData;
-	}
-
-	/**
-	 * Expands the capacity of data structures to hold people by the given
-	 * count. Used to more efficiently prepare for multiple population
-	 * additions.
-	 *
-	 * @throws ContractException
-	 *             <li>{@linkplain PersonError#NEGATIVE_GROWTH_PROJECTION} if
-	 *             the count is negative</li>
-	 */
-	public void expandCapacity(final int count) {
-		if (count < 0) {
-			throw new ContractException(PersonError.NEGATIVE_GROWTH_PROJECTION);
-		}
-		if (count > 0) {
-			for (final PersonPropertyId personPropertyId : personPropertyManagerMap.keySet()) {
-				IndexedPropertyManager indexedPropertyManager = personPropertyManagerMap.get(personPropertyId);
-				indexedPropertyManager.incrementCapacity(count);
+		if (!nonDefaultBearingPropertyIds.isEmpty()) {
+			clearNonDefaultChecks();
+			for (final PersonPropertyValueInitialization personPropertyAssignment : personPropertyAssignments) {
+				PersonPropertyId personPropertyId = personPropertyAssignment.getPersonPropertyId();
+				markAssigned(personPropertyId);
 			}
+			verifyNonDefaultChecks();
+		}
+
+		for (final PersonPropertyValueInitialization personPropertyAssignment : personPropertyAssignments) {
+			PersonPropertyId personPropertyId = personPropertyAssignment.getPersonPropertyId();
+			final Object personPropertyValue = personPropertyAssignment.getValue();
+			int pId = personId.getValue();
+			IndexedPropertyManager propertyManager = personPropertyManagerMap.get(personPropertyId);
+			propertyManager.setPropertyValue(pId, personPropertyValue);
+			DoubleValueContainer doubleValueContainer = personPropertyTimeMap.get(personPropertyId);
+			if (doubleValueContainer != null) {
+				doubleValueContainer.setValue(pId, dataManagerContext.getTime());
+			}
+		}
+
+	}
+
+	private void handlePersonImminentRemovalEvent(final DataManagerContext dataManagerContext, final PersonRemovalEvent personRemovalEvent) {
+		PersonId personId = personRemovalEvent.personId();
+
+		for (final PersonPropertyId personPropertyId : personPropertyManagerMap.keySet()) {
+			final IndexedPropertyManager indexedPropertyManager = personPropertyManagerMap.get(personPropertyId);
+			indexedPropertyManager.removeId(personId.getValue());
+		}
+
+	}
+
+	private void handlePersonPropertyDefinitionMutationEvent(DataManagerContext dataManagerContext, PersonPropertyDefinitionMutationEvent personPropertyDefinitionMutationEvent) {
+		PersonPropertyDefinitionInitialization propertyDefinitionInitialization = personPropertyDefinitionMutationEvent.propertyDefinitionInitialization();
+		validatePropertyDefinitionInitializationNotNull(propertyDefinitionInitialization);
+		PersonPropertyId personPropertyId = propertyDefinitionInitialization.getPersonPropertyId();
+		PropertyDefinition propertyDefinition = propertyDefinitionInitialization.getPropertyDefinition();
+
+		validatePersonPropertyIdIsUnknown(personPropertyId);
+		boolean checkAllPeopleHaveValues = propertyDefinition.getDefaultValue().isEmpty();
+
+		for (Pair<PersonId, Object> pair : propertyDefinitionInitialization.getPropertyValues()) {
+			PersonId personId = pair.getFirst();
+			validatePersonExists(personId);
+		}
+
+		if (checkAllPeopleHaveValues) {
+			addNonDefaultProperty(personPropertyId);
+			int idLimit = peopleDataManager.getPersonIdLimit();
+			BitSet coverageSet = new BitSet(idLimit);
+
+			for (Pair<PersonId, Object> pair : propertyDefinitionInitialization.getPropertyValues()) {
+				PersonId personId = pair.getFirst();
+				int pId = personId.getValue();
+				coverageSet.set(pId);
+			}
+			for (int i = 0; i < idLimit; i++) {
+				if (peopleDataManager.personIndexExists(i)) {
+					boolean personCovered = coverageSet.get(i);
+					if (!personCovered) {
+						throw new ContractException(PropertyError.INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT);
+					}
+				}
+			}
+		}
+
+		personPropertyDefinitions.put(personPropertyId, propertyDefinition);
+		personPropertyDefinitionTimes.put(personPropertyId, dataManagerContext.getTime());
+		final IndexedPropertyManager propertyManager = getIndexedPropertyManager(propertyDefinition, 0);
+		personPropertyManagerMap.put(personPropertyId, propertyManager);
+
+		if (propertyDefinitionInitialization.trackTimes()) {
+			DoubleValueContainer doubleValueContainer = new DoubleValueContainer(dataManagerContext.getTime());
+			personPropertyTimeMap.put(personPropertyId, doubleValueContainer);
+		}
+
+		for (Pair<PersonId, Object> pair : propertyDefinitionInitialization.getPropertyValues()) {
+			PersonId personId = pair.getFirst();
+			int pId = personId.getValue();
+			/*
+			 * we do not have to validate the value since it is guaranteed to be
+			 * consistent with the property definition by contract.
+			 */
+			Object value = pair.getSecond();
+			propertyManager.setPropertyValue(pId, value);
+		}
+
+		if (dataManagerContext.subscribersExist(PersonPropertyDefinitionEvent.class)) {
+			dataManagerContext.releaseObservationEvent(new PersonPropertyDefinitionEvent(personPropertyId));
+		}
+
+	}
+
+	private void handlePersonPropertyUpdateMutationEvent(DataManagerContext dataManagerContext, PersonPropertyUpdateMutationEvent personPropertyUpdateMutationEvent) {
+		PersonId personId = personPropertyUpdateMutationEvent.personId();
+		PersonPropertyId personPropertyId = personPropertyUpdateMutationEvent.personPropertyId();
+		Object personPropertyValue = personPropertyUpdateMutationEvent.personPropertyValue();
+		validatePersonExists(personId);
+		validatePersonPropertyId(personPropertyId);
+		validatePersonPropertyValueNotNull(personPropertyValue);
+		final PropertyDefinition propertyDefinition = personPropertyDefinitions.get(personPropertyId);
+		validateValueCompatibility(personPropertyId, propertyDefinition, personPropertyValue);
+		validatePropertyMutability(propertyDefinition);
+
+		int pId = personId.getValue();
+		IndexedPropertyManager propertyManager = personPropertyManagerMap.get(personPropertyId);
+		Object oldValue = propertyManager.getPropertyValue(pId);
+		propertyManager.setPropertyValue(pId, personPropertyValue);
+
+		DoubleValueContainer doubleValueContainer = personPropertyTimeMap.get(personPropertyId);
+		if (doubleValueContainer != null) {
+			doubleValueContainer.setValue(pId, dataManagerContext.getTime());
+		}
+
+		if (dataManagerContext.subscribersExist(PersonPropertyUpdateEvent.class)) {
+			dataManagerContext.releaseObservationEvent(new PersonPropertyUpdateEvent(personId, personPropertyId, oldValue, personPropertyValue));
+		}
+
+	}
+
+	private void loadPropertyTimes(PersonPropertyId personPropertyId) {
+		DoubleValueContainer timeValueContainer = personPropertyTimeMap.get(personPropertyId);
+		if (timeValueContainer == null) {
+			return;
+		}
+		/*
+		 * There are four cases to consider:
+		 * 
+		 * 1) person exists, time value is present -- adopt the time value
+		 * 
+		 * 2) person exists, time value is not present -- adopt the default --
+		 * do nothing since the default is already present in the
+		 * DoubleValueContainer
+		 * 
+		 * 3) person does not exist, time value is present -- throw an exception
+		 * since it appears data was collected for a non-existent person
+		 * 
+		 * 4) person does not exist, time value is not present -- nothing to do
+		 */
+
+		List<Double> propertyTimes = personPropertiesPluginData.getPropertyTimes(personPropertyId);
+		int n = FastMath.max(peopleDataManager.getPersonIdLimit(), propertyTimes.size());
+		for (int i = 0; i < n; i++) {
+			if (peopleDataManager.personIndexExists(i)) {
+				if (i < propertyTimes.size()) {
+					Double propertyTime = propertyTimes.get(i);
+					if (propertyTime != null) {
+						if (propertyTime > dataManagerContext.getTime()) {
+							throw new ContractException(PersonPropertyError.PROPERTY_ASSIGNMENT_TIME_EXCEEDS_SIM_TIME, "person(" + i + ") " + personPropertyId);
+						}
+						timeValueContainer.setValue(i, propertyTime);
+					}
+				}
+			} else {
+				if (i < propertyTimes.size()) {
+					Double propertyTime = propertyTimes.get(i);
+					if (propertyTime != null) {
+						throw new ContractException(PersonPropertyError.UNKNOWN_PERSON_HAS_PROPERTY_ASSIGNMENT_TIME, "unknown person(" + i + ") has property time for " + personPropertyId);
+					}
+				}
+			}
+		}
+	}
+
+	private void loadPropertyValues(PersonPropertyId personPropertyId) {
+
+		if (nonDefaultBearingPropertyIds.containsKey(personPropertyId)) {
+			loadPropertyValuesWithoutDefault(personPropertyId);
+		} else {
+			loadPropertyValuesWithDefault(personPropertyId);
+		}
+	}
+
+	private void loadPropertyValuesWithDefault(PersonPropertyId personPropertyId) {
+		IndexedPropertyManager indexedPropertyManager = personPropertyManagerMap.get(personPropertyId);
+		/*
+		 * There are four cases to consider:
+		 * 
+		 * 1) person exists, property value is present -- adopt the property
+		 * value
+		 * 
+		 * 2) person exists, property value is not present -- adopt the default
+		 * -- do nothing since the default is already present in the
+		 * IndexedPropertyManager
+		 * 
+		 * 3) person does not exist, property value is present -- throw an
+		 * exception since it appears data was collected for a non-existent
+		 * person
+		 * 
+		 * 4) person does not exist, property value is not present -- nothing to
+		 * do
+		 */
+
+		List<Object> propertyValues = personPropertiesPluginData.getPropertyValues(personPropertyId);
+		int n = FastMath.max(peopleDataManager.getPersonIdLimit(), propertyValues.size());
+		for (int i = 0; i < n; i++) {
+			if (peopleDataManager.personIndexExists(i)) {
+				if (i < propertyValues.size()) {
+					Object propertyValue = propertyValues.get(i);
+					if (propertyValue != null) {
+						indexedPropertyManager.setPropertyValue(i, propertyValue);
+					}
+				}
+			} else {
+				if (i < propertyValues.size()) {
+					Object propertyValue = propertyValues.get(i);
+					if (propertyValue != null) {
+						throw new ContractException(PersonPropertyError.UNKNOWN_PERSON_HAS_PROPERTY_VALUE_ASSIGNMENT, "unknown person(" + i + ") has property value for " + personPropertyId);
+					}
+				}
+			}
+		}
+	}
+
+	private void loadPropertyValuesWithoutDefault(PersonPropertyId personPropertyId) {
+		IndexedPropertyManager indexedPropertyManager = personPropertyManagerMap.get(personPropertyId);
+		/*
+		 * There are four cases to consider:
+		 * 
+		 * 1) person exists, property value is present -- adopt the property
+		 * value
+		 * 
+		 * 2) person exists, property value is not present -- throw an exception
+		 * since there is not default value present
+		 * 
+		 * 3) person does not exist, property value is present -- throw an
+		 * exception since it appears data was collected for a non-existent
+		 * person
+		 * 
+		 * 4) person does not exist, property value is not present -- nothing to
+		 * do
+		 */
+
+		List<Object> propertyValues = personPropertiesPluginData.getPropertyValues(personPropertyId);
+		int n = FastMath.max(peopleDataManager.getPersonIdLimit(), propertyValues.size());
+		for (int i = 0; i < n; i++) {
+
+			if (peopleDataManager.personIndexExists(i)) {
+				Object propertyValue = null;
+				if (i < propertyValues.size()) {
+					propertyValue = propertyValues.get(i);
+				}
+				if (propertyValue != null) {
+					indexedPropertyManager.setPropertyValue(i, propertyValue);
+				} else {
+					throw new ContractException(PropertyError.INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT, "person(" + i + ") lacks a property value for " + personPropertyId);
+				}
+			} else {
+				if (i < propertyValues.size()) {
+					Object propertyValue = propertyValues.get(i);
+					if (propertyValue != null) {
+						throw new ContractException(PersonPropertyError.UNKNOWN_PERSON_HAS_PROPERTY_VALUE_ASSIGNMENT, "unknown person(" + i + ") has property value for " + personPropertyId);
+					}
+				}
+			}
+		}
+
+	}
+
+	@Override
+	public void init(DataManagerContext dataManagerContext) {
+		super.init(dataManagerContext);
+		this.dataManagerContext = dataManagerContext;
+
+		peopleDataManager = dataManagerContext.getDataManager(PeopleDataManager.class);
+		regionsDataManager = dataManagerContext.getDataManager(RegionsDataManager.class);
+
+		dataManagerContext.subscribe(PersonPropertyDefinitionMutationEvent.class, this::handlePersonPropertyDefinitionMutationEvent);
+		dataManagerContext.subscribe(PersonPropertyUpdateMutationEvent.class, this::handlePersonPropertyUpdateMutationEvent);
+
+		Set<PersonPropertyId> personPropertyIds = personPropertiesPluginData.getPersonPropertyIds();
+
+		for (final PersonPropertyId personPropertyId : personPropertyIds) {
+			PropertyDefinition personPropertyDefinition = personPropertiesPluginData.getPersonPropertyDefinition(personPropertyId);
+			if (personPropertyDefinition.getDefaultValue().isEmpty()) {
+				nonDefaultBearingPropertyIds.put(personPropertyId, nonDefaultBearingPropertyIds.size());
+			}
+			personPropertyDefinitions.put(personPropertyId, personPropertyDefinition);
+			personPropertyDefinitionTimes.put(personPropertyId, personPropertiesPluginData.getPropertyDefinitionTime(personPropertyId));
+			final IndexedPropertyManager indexedPropertyManager = getIndexedPropertyManager(personPropertyDefinition, 0);
+			personPropertyManagerMap.put(personPropertyId, indexedPropertyManager);
+			boolean tracked = personPropertiesPluginData.propertyAssignmentTimesTracked(personPropertyId);
+			if (tracked) {
+				Double defaultTime = personPropertyDefinitionTimes.get(personPropertyId);
+				if (defaultTime > dataManagerContext.getTime()) {
+					throw new ContractException(PersonPropertyError.PROPERTY_DEFAULT_TIME_EXCEEDS_SIM_TIME, personPropertyId);
+				}
+				personPropertyTimeMap.put(personPropertyId, new DoubleValueContainer(defaultTime));
+			}
+		}
+
+		nonDefaultChecks = new boolean[nonDefaultBearingPropertyIds.size()];
+
+		for (PersonPropertyId personPropertyId : personPropertyIds) {
+			loadPropertyValues(personPropertyId);
+			loadPropertyTimes(personPropertyId);
+		}
+
+		dataManagerContext.subscribe(PersonImminentAdditionEvent.class, this::handlePersonImminentAdditionEvent);
+		dataManagerContext.subscribe(PersonRemovalEvent.class, this::handlePersonImminentRemovalEvent);
+
+		if (dataManagerContext.stateRecordingIsScheduled()) {
+			dataManagerContext.subscribeToSimulationClose(this::recordSimulationState);
+		}
+	}
+
+	private void markAssigned(PersonPropertyId personPropertyId) {
+		Integer nonDefaultPropertyIndex = nonDefaultBearingPropertyIds.get(personPropertyId);
+		if (nonDefaultPropertyIndex != null) {
+			nonDefaultChecks[nonDefaultPropertyIndex] = true;
 		}
 	}
 
@@ -558,7 +862,48 @@ public final class PersonPropertiesDataManager extends DataManager {
 		return personPropertyDefinitions.containsKey(personPropertyId);
 	}
 
-	private static record PersonPropertyUpdateMutationEvent(PersonId personId, PersonPropertyId personPropertyId, Object personPropertyValue) implements Event {
+	private void recordSimulationState(DataManagerContext dataManagerContext) {
+		PersonPropertiesPluginData.Builder builder = PersonPropertiesPluginData.builder();
+
+		List<PersonId> people = peopleDataManager.getPeople();
+
+		for (PersonPropertyId personPropertyId : personPropertyDefinitions.keySet()) {
+			PropertyDefinition personPropertyDefinition = personPropertyDefinitions.get(personPropertyId);
+			Double definitionTime = personPropertyDefinitionTimes.get(personPropertyId);
+			
+
+			DoubleValueContainer doubleValueContainer = personPropertyTimeMap.get(personPropertyId);
+			boolean tracked = doubleValueContainer!=null;
+			builder.definePersonProperty(personPropertyId, personPropertyDefinition,definitionTime,tracked);
+			
+			if (doubleValueContainer != null) {
+				Double defaultValue = definitionTime;				
+				for (PersonId personId : people) {
+					Double propertyTime = doubleValueContainer.getValue(personId.getValue());
+					if (!propertyTime.equals(defaultValue)) {
+						builder.setPersonPropertyTime(personId, personPropertyId, propertyTime);
+					}
+				}
+			}
+			IndexedPropertyManager indexedPropertyManager = personPropertyManagerMap.get(personPropertyId);
+			Optional<Object> optional = personPropertyDefinition.getDefaultValue();
+			if (optional.isPresent()) {
+				Object defaultValue = optional.get();
+				for (PersonId personId : people) {
+					Object propertyValue = indexedPropertyManager.getPropertyValue(personId.getValue());
+					if (!propertyValue.equals(defaultValue)) {
+						builder.setPersonPropertyValue(personId, personPropertyId, propertyValue);
+					}
+				}
+			} else {
+				for (PersonId personId : people) {
+					Object propertyValue = indexedPropertyManager.getPropertyValue(personId.getValue());
+					builder.setPersonPropertyValue(personId, personPropertyId, propertyValue);
+				}
+			}
+		}
+
+		dataManagerContext.releaseOutput(builder.build());
 	}
 
 	/**
@@ -587,79 +932,73 @@ public final class PersonPropertiesDataManager extends DataManager {
 		dataManagerContext.releaseMutationEvent(new PersonPropertyUpdateMutationEvent(personId, personPropertyId, personPropertyValue));
 	}
 
-	private void handlePersonPropertyUpdateMutationEvent(DataManagerContext dataManagerContext, PersonPropertyUpdateMutationEvent personPropertyUpdateMutationEvent) {
-		PersonId personId = personPropertyUpdateMutationEvent.personId();
-		PersonPropertyId personPropertyId = personPropertyUpdateMutationEvent.personPropertyId();
-		Object personPropertyValue = personPropertyUpdateMutationEvent.personPropertyValue();
-		validatePersonExists(personId);
-		validatePersonPropertyId(personPropertyId);
-		validatePersonPropertyValueNotNull(personPropertyValue);
-		final PropertyDefinition propertyDefinition = personPropertyDefinitions.get(personPropertyId);
-		validateValueCompatibility(personPropertyId, propertyDefinition, personPropertyValue);
-		validatePropertyMutability(propertyDefinition);
-
-		int pId = personId.getValue();
-		IndexedPropertyManager propertyManager = personPropertyManagerMap.get(personPropertyId);
-		Object oldValue = propertyManager.getPropertyValue(pId);
-		propertyManager.setPropertyValue(pId, personPropertyValue);
-		if (dataManagerContext.subscribersExist(PersonPropertyUpdateEvent.class)) {
-			dataManagerContext.releaseObservationEvent(new PersonPropertyUpdateEvent(personId, personPropertyId, oldValue, personPropertyValue));
+	private void validatePersonExists(final PersonId personId) {
+		if (personId == null) {
+			throw new ContractException(PersonError.NULL_PERSON_ID);
 		}
-
-	}
-
-	private static void validatePropertyMutability(final PropertyDefinition propertyDefinition) {
-		if (!propertyDefinition.propertyValuesAreMutable()) {
-			throw new ContractException(PropertyError.IMMUTABLE_VALUE);
+		if (!peopleDataManager.personExists(personId)) {
+			throw new ContractException(PersonError.UNKNOWN_PERSON_ID);
 		}
 	}
 
-	private void handlePersonImminentAdditionEvent(final DataManagerContext dataManagerContext, final PersonImminentAdditionEvent personImminentAdditionEvent) {
-
-		PersonConstructionData personConstructionData = personImminentAdditionEvent.personConstructionData();
-
-		PersonId personId = personImminentAdditionEvent.personId();
-
-		List<PersonPropertyInitialization> personPropertyAssignments = personConstructionData.getValues(PersonPropertyInitialization.class);
-
-		for (final PersonPropertyInitialization personPropertyAssignment : personPropertyAssignments) {
-			PersonPropertyId personPropertyId = personPropertyAssignment.getPersonPropertyId();
-			final Object personPropertyValue = personPropertyAssignment.getValue();
-			validatePersonPropertyId(personPropertyId);
-			validatePersonPropertyValueNotNull(personPropertyValue);
-			final PropertyDefinition propertyDefinition = personPropertyDefinitions.get(personPropertyId);
-			validateValueCompatibility(personPropertyId, propertyDefinition, personPropertyValue);
-		}
-
-		if (!nonDefaultBearingPropertyIds.isEmpty()) {
-			clearNonDefaultChecks();
-			for (final PersonPropertyInitialization personPropertyAssignment : personPropertyAssignments) {
-				PersonPropertyId personPropertyId = personPropertyAssignment.getPersonPropertyId();
-				markAssigned(personPropertyId);
-			}
-			verifyNonDefaultChecks();
-		}
-
-		for (final PersonPropertyInitialization personPropertyAssignment : personPropertyAssignments) {
-			PersonPropertyId personPropertyId = personPropertyAssignment.getPersonPropertyId();
-			final Object personPropertyValue = personPropertyAssignment.getValue();
-			int pId = personId.getValue();
-			IndexedPropertyManager propertyManager = personPropertyManagerMap.get(personPropertyId);
-			propertyManager.setPropertyValue(pId, personPropertyValue);
-		}
-
-	}
-
-	private void clearNonDefaultChecks() {
-		for (int i = 0; i < nonDefaultChecks.length; i++) {
-			nonDefaultChecks[i] = false;
+	/*
+	 * Precondition : the person property id is valid
+	 */
+	private void validatePersonPropertyAssignmentTimesTracked(final PersonPropertyId personPropertyId) {
+		if (!personPropertyTimeMap.containsKey(personPropertyId)) {
+			throw new ContractException(PersonPropertyError.PROPERTY_ASSIGNMENT_TIME_NOT_TRACKED);
 		}
 	}
 
-	private void markAssigned(PersonPropertyId personPropertyId) {
-		Integer nonDefaultPropertyIndex = nonDefaultBearingPropertyIds.get(personPropertyId);
-		if (nonDefaultPropertyIndex != null) {
-			nonDefaultChecks[nonDefaultPropertyIndex] = true;
+	private void validatePersonPropertyId(final PersonPropertyId personPropertyId) {
+		if (personPropertyId == null) {
+			throw new ContractException(PropertyError.NULL_PROPERTY_ID);
+		}
+
+		if (!personPropertyDefinitions.containsKey(personPropertyId)) {
+			throw new ContractException(PropertyError.UNKNOWN_PROPERTY_ID, personPropertyId);
+		}
+	}
+
+	private void validatePersonPropertyIdIsUnknown(final PersonPropertyId personPropertyId) {
+		if (personPropertyId == null) {
+			throw new ContractException(PropertyError.NULL_PROPERTY_ID);
+		}
+
+		if (personPropertyDefinitions.containsKey(personPropertyId)) {
+			throw new ContractException(PropertyError.DUPLICATE_PROPERTY_DEFINITION, personPropertyId);
+		}
+	}
+
+	private void validatePersonPropertyValueNotNull(final Object propertyValue) {
+		if (propertyValue == null) {
+			throw new ContractException(PropertyError.NULL_PROPERTY_VALUE);
+		}
+	}
+
+	private void validatePropertyDefinitionInitializationNotNull(PersonPropertyDefinitionInitialization propertyDefinitionInitialization) {
+		if (propertyDefinitionInitialization == null) {
+			throw new ContractException(PropertyError.NULL_PROPERTY_DEFINITION_INITIALIZATION);
+		}
+	}
+
+	private void validateRegionId(RegionId regionId) {
+		if (regionId == null) {
+			throw new ContractException(RegionError.NULL_REGION_ID);
+		}
+
+		if (!regionsDataManager.regionIdExists(regionId)) {
+			throw new ContractException(RegionError.UNKNOWN_REGION_ID);
+		}
+	}
+
+	/*
+	 * Preconditions: all arguments are non-null
+	 */
+	private void validateValueCompatibility(final Object propertyId, final PropertyDefinition propertyDefinition, final Object propertyValue) {
+		if (!propertyDefinition.getType().isAssignableFrom(propertyValue.getClass())) {
+			throw new ContractException(PropertyError.INCOMPATIBLE_VALUE,
+					"Property value " + propertyValue + " is not of type " + propertyDefinition.getType().getName() + " and does not match definition of " + propertyId);
 		}
 	}
 
@@ -691,157 +1030,6 @@ public final class PersonPropertiesDataManager extends DataManager {
 			}
 			throw new ContractException(PropertyError.INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT, sb.toString());
 		}
-	}
-
-	private void handlePersonImminentRemovalEvent(final DataManagerContext dataManagerContext, final PersonRemovalEvent personRemovalEvent) {
-		PersonId personId = personRemovalEvent.personId();
-
-		for (final PersonPropertyId personPropertyId : personPropertyManagerMap.keySet()) {
-			final IndexedPropertyManager indexedPropertyManager = personPropertyManagerMap.get(personPropertyId);
-			indexedPropertyManager.removeId(personId.getValue());
-		}
-
-	}
-
-	private void validateRegionId(RegionId regionId) {
-		if (regionId == null) {
-			throw new ContractException(RegionError.NULL_REGION_ID);
-		}
-
-		if (!regionsDataManager.regionIdExists(regionId)) {
-			throw new ContractException(RegionError.UNKNOWN_REGION_ID);
-		}
-	}
-
-	private static enum EventFunctionId {
-		PERSON_PROPERTY_ID, //
-		REGION_ID, //
-		PERSON_ID,
-		CURRENT_VALUE,
-		PREVIOUS_VALUE;//
-	}
-
-	private IdentifiableFunctionMap<PersonPropertyUpdateEvent> functionMap = //
-			IdentifiableFunctionMap	.builder(PersonPropertyUpdateEvent.class)//
-									.put(EventFunctionId.PERSON_PROPERTY_ID, e -> e.personPropertyId())//
-									.put(EventFunctionId.REGION_ID, e -> regionsDataManager.getPersonRegion(e.personId()))//
-									.put(EventFunctionId.PERSON_ID, e -> e.personId())//
-									.put(EventFunctionId.CURRENT_VALUE, e -> e.currentPropertyValue()).put(EventFunctionId.PREVIOUS_VALUE, e -> e.previousPropertyValue()).build();//
-
-	/**
-	 * Returns an event filter used to subscribe to
-	 * {@link PersonPropertyUpdateEvent} events. Matches all such events.
-	 */
-	public EventFilter<PersonPropertyUpdateEvent> getEventFilterForPersonPropertyUpdateEvent() {
-		return EventFilter.builder(PersonPropertyUpdateEvent.class).build();
-	}
-
-	/**
-	 * Returns an event filter used to subscribe to
-	 * {@link PersonPropertyUpdateEvent} events. Matches on person property id
-	 * and property value.
-	 *
-	 * @throws ContractException
-	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the person
-	 *             property id is null</li>
-	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if the
-	 *             person property id is not known</li>
-	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE} if the
-	 *             person property value is null</li>
-	 *
-	 */
-	public EventFilter<PersonPropertyUpdateEvent> getEventFilterForPersonPropertyUpdateEvent(PersonPropertyId personPropertyId, Object propertyValue, boolean useCurrentValue) {
-		validatePersonPropertyId(personPropertyId);
-		validatePersonPropertyValueNotNull(propertyValue);
-		EventFunctionId propertyValueEnum = useCurrentValue ? EventFunctionId.CURRENT_VALUE : EventFunctionId.PREVIOUS_VALUE;
-		return EventFilter	.builder(PersonPropertyUpdateEvent.class).addFunctionValuePair(functionMap.get(EventFunctionId.PERSON_PROPERTY_ID), personPropertyId)//
-							.addFunctionValuePair(functionMap.get(propertyValueEnum), propertyValue).build();
-	}
-
-	/**
-	 * Returns an event filter used to subscribe to
-	 * {@link PersonPropertyUpdateEvent} events. Matches on person property id.
-	 * 
-	 * @throws ContractException
-	 * 
-	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the person
-	 *             property id is null</li>
-	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if the
-	 *             person property id is not known</li>
-	 * 
-	 * 
-	 */
-	public EventFilter<PersonPropertyUpdateEvent> getEventFilterForPersonPropertyUpdateEvent(PersonPropertyId personPropertyId) {
-		validatePersonPropertyId(personPropertyId);
-		return EventFilter	.builder(PersonPropertyUpdateEvent.class)//
-							.addFunctionValuePair(functionMap.get(EventFunctionId.PERSON_PROPERTY_ID), personPropertyId)//
-							.build();
-
-	}
-
-	/**
-	 * Returns an event filter used to subscribe to
-	 * {@link PersonPropertyUpdateEvent} events. Matches on person property id
-	 * and person id.
-	 * 
-	 * 
-	 * 
-	 * @throws ContractException
-	 * 
-	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the person
-	 *             property id is null</li>
-	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if the
-	 *             person property id is not known</li>
-	 *             <li>{@linkplain PersonError#NULL_PERSON_ID} if the person id
-	 *             is null</li>
-	 *             <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if the person
-	 *             id is not known</li>
-	 * 
-	 */
-	public EventFilter<PersonPropertyUpdateEvent> getEventFilterForPersonPropertyUpdateEvent(PersonId personId, PersonPropertyId personPropertyId) {
-		validatePersonPropertyId(personPropertyId);
-		validatePersonExists(personId);
-		return EventFilter	.builder(PersonPropertyUpdateEvent.class)//
-							.addFunctionValuePair(functionMap.get(EventFunctionId.PERSON_PROPERTY_ID), personPropertyId)//
-							.addFunctionValuePair(functionMap.get(EventFunctionId.PERSON_ID), personId)//
-							.build();
-	}
-
-	/**
-	 * Returns an event filter used to subscribe to
-	 * {@link PersonPropertyUpdateEvent} events. Matches on region id and person
-	 * property id.
-	 *
-	 *
-	 * @throws ContractException
-	 *
-	 *             <li>{@linkplain RegionError#NULL_REGION_ID} if the region id
-	 *             is null</li>
-	 *             <li>{@linkplain RegionError#UNKNOWN_REGION_ID} if the region
-	 *             id is not known</li>
-	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the person
-	 *             property id is null</li>
-	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if the
-	 *             person property id is not known</li>
-	 * 
-	 */
-	public EventFilter<PersonPropertyUpdateEvent> getEventFilterForPersonPropertyUpdateEvent(RegionId regionId, PersonPropertyId personPropertyId) {
-		validatePersonPropertyId(personPropertyId);
-		validateRegionId(regionId);
-		return EventFilter	.builder(PersonPropertyUpdateEvent.class)//
-							.addFunctionValuePair(functionMap.get(EventFunctionId.PERSON_PROPERTY_ID), personPropertyId)//
-							.addFunctionValuePair(functionMap.get(EventFunctionId.REGION_ID), regionId)//
-							.build();
-	}
-
-	/**
-	 * Returns an event filter used to subscribe to
-	 * {@link PersonPropertyDefinitionEvent} events. Matches all such events.
-	 *
-	 */
-	public EventFilter<PersonPropertyDefinitionEvent> getEventFilterForPersonPropertyDefinitionEvent() {
-		return EventFilter	.builder(PersonPropertyDefinitionEvent.class)//
-							.build();
 	}
 
 }

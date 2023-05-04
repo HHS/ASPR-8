@@ -196,11 +196,11 @@ public class AT_ResourcesTestPluginFactory {
 
 		TestRegionId testRegionId = TestRegionId.REGION_1;
 		for (PersonId personId : people) {
-			regionPluginBuilder.setPersonRegion(personId, testRegionId);
+			regionPluginBuilder.addPerson(personId, testRegionId,0.0);			
 			testRegionId = testRegionId.next();
 		}
 
-		regionPluginBuilder.setPersonRegionArrivalTracking(TimeTrackingPolicy.TRACK_TIME);
+		regionPluginBuilder.setPersonRegionArrivalTracking(true);
 
 		RegionsPluginData regionsPluginData = regionPluginBuilder.build();
 

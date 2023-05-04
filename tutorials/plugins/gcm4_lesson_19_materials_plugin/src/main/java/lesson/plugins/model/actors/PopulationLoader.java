@@ -22,7 +22,7 @@ import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonConstructionData;
 import plugins.people.support.PersonId;
 import plugins.personproperties.datamanagers.PersonPropertiesDataManager;
-import plugins.personproperties.support.PersonPropertyInitialization;
+import plugins.personproperties.support.PersonPropertyValueInitialization;
 import plugins.regions.datamanagers.RegionsDataManager;
 import plugins.regions.support.RegionId;
 import plugins.stochastics.StochasticsDataManager;
@@ -95,14 +95,14 @@ public class PopulationLoader {
 			} else {
 				age = randomGenerator.nextInt(18);
 			}
-			final PersonPropertyInitialization ageInitialization = new PersonPropertyInitialization(PersonProperty.AGE, age);
+			final PersonPropertyValueInitialization ageInitialization = new PersonPropertyValueInitialization(PersonProperty.AGE, age);
 
 			DiseaseState diseaseState = DiseaseState.IMMUNE;
 			if (randomGenerator.nextDouble() < susceptibleProbability) {
 				diseaseState = DiseaseState.SUSCEPTIBLE;
 			}
 
-			final PersonPropertyInitialization diseaseInitialization = new PersonPropertyInitialization(PersonProperty.DISEASE_STATE, diseaseState);
+			final PersonPropertyValueInitialization diseaseInitialization = new PersonPropertyValueInitialization(PersonProperty.DISEASE_STATE, diseaseState);
 			final PersonConstructionData personConstructionData = PersonConstructionData.builder()//
 																						.add(ageInitialization)//
 																						.add(diseaseInitialization)//

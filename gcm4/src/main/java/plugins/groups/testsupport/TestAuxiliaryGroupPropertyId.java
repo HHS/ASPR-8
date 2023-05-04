@@ -7,7 +7,6 @@ import org.apache.commons.math3.random.RandomGenerator;
 
 import plugins.groups.support.GroupPropertyId;
 import plugins.util.properties.PropertyDefinition;
-import plugins.util.properties.TimeTrackingPolicy;
 
 public enum TestAuxiliaryGroupPropertyId implements GroupPropertyId {
 
@@ -17,7 +16,6 @@ public enum TestAuxiliaryGroupPropertyId implements GroupPropertyId {
 								.setType(Boolean.class)//
 								.setDefaultValue(false)//
 								.setPropertyValueMutability(true)//
-								.setTimeTrackingPolicy(TimeTrackingPolicy.DO_NOT_TRACK_TIME)//
 								.build()), //
 	GROUP_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK(
 			TestAuxiliaryGroupTypeId.GROUP_AUX_TYPE_1, //
@@ -25,7 +23,6 @@ public enum TestAuxiliaryGroupPropertyId implements GroupPropertyId {
 								.setType(Integer.class)//
 								.setDefaultValue(0)//
 								.setPropertyValueMutability(true)//
-								.setTimeTrackingPolicy(TimeTrackingPolicy.DO_NOT_TRACK_TIME)//
 								.build() //
 	), //
 	GROUP_PROPERTY_1_3_DOUBLE_MUTABLE_NO_TRACK(
@@ -34,7 +31,6 @@ public enum TestAuxiliaryGroupPropertyId implements GroupPropertyId {
 								.setType(Double.class)//
 								.setDefaultValue(0.0)//
 								.setPropertyValueMutability(true)//
-								.setTimeTrackingPolicy(TimeTrackingPolicy.DO_NOT_TRACK_TIME)//
 								.build() //
 	), //
 	GROUP_PROPERTY_2_1_BOOLEAN_MUTABLE_TRACK(
@@ -43,17 +39,15 @@ public enum TestAuxiliaryGroupPropertyId implements GroupPropertyId {
 								.setType(Boolean.class)//
 								.setDefaultValue(false)//
 								.setPropertyValueMutability(true)//
-								.setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME)//
 								.build() //
 	), //
-	
+
 	GROUP_PROPERTY_2_2_INTEGER_MUTABLE_TRACK(
 			TestAuxiliaryGroupTypeId.GROUP_AUX_TYPE_2, //
 			PropertyDefinition	.builder()//
 								.setType(Integer.class)//
-								//.setDefaultValue(0)//
+								// .setDefaultValue(0)//
 								.setPropertyValueMutability(true)//
-								.setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME)//
 								.build() //
 	), //
 	GROUP_PROPERTY_2_3_DOUBLE_MUTABLE_TRACK(
@@ -62,7 +56,6 @@ public enum TestAuxiliaryGroupPropertyId implements GroupPropertyId {
 								.setType(Double.class)//
 								.setDefaultValue(0.0)//
 								.setPropertyValueMutability(true)//
-								.setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME)//
 								.build() //
 	), //
 	GROUP_PROPERTY_3_1_BOOLEAN_IMMUTABLE_NO_TRACK(
@@ -71,7 +64,6 @@ public enum TestAuxiliaryGroupPropertyId implements GroupPropertyId {
 								.setType(Boolean.class)//
 								.setDefaultValue(false)//
 								.setPropertyValueMutability(false)//
-								.setTimeTrackingPolicy(TimeTrackingPolicy.DO_NOT_TRACK_TIME)//
 								.build() //
 	), //
 	GROUP_PROPERTY_3_2_INTEGER_IMMUTABLE_NO_TRACK(
@@ -80,7 +72,6 @@ public enum TestAuxiliaryGroupPropertyId implements GroupPropertyId {
 								.setType(Integer.class)//
 								.setDefaultValue(0)//
 								.setPropertyValueMutability(false)//
-								.setTimeTrackingPolicy(TimeTrackingPolicy.DO_NOT_TRACK_TIME)//
 								.build() //
 	), //
 	GROUP_PROPERTY_3_3_DOUBLE_IMMUTABLE_NO_TRACK(
@@ -89,7 +80,6 @@ public enum TestAuxiliaryGroupPropertyId implements GroupPropertyId {
 								.setType(Double.class)//
 								.setDefaultValue(0.0)//
 								.setPropertyValueMutability(false)//
-								.setTimeTrackingPolicy(TimeTrackingPolicy.DO_NOT_TRACK_TIME)//
 								.build() //
 	);//
 
@@ -115,29 +105,32 @@ public enum TestAuxiliaryGroupPropertyId implements GroupPropertyId {
 	public TestAuxiliaryGroupTypeId getTestGroupTypeId() {
 		return testAuxiliaryGroupTypeId;
 	}
-	
+
 	/**
-	 * Returns the TestAuxiliaryGroupPropertyId associated with the given TestAuxiliaryGroupTypeId
+	 * Returns the TestAuxiliaryGroupPropertyId associated with the given
+	 * TestAuxiliaryGroupTypeId
 	 * 
 	 * Preconditions: The TestAuxiliaryGroupTypeId should not be null
 	 */
-	public static Set<TestAuxiliaryGroupPropertyId> getTestGroupPropertyIds(TestAuxiliaryGroupTypeId testAuxiliaryGroupTypeId){
+	public static Set<TestAuxiliaryGroupPropertyId> getTestGroupPropertyIds(TestAuxiliaryGroupTypeId testAuxiliaryGroupTypeId) {
 		Set<TestAuxiliaryGroupPropertyId> result = new LinkedHashSet<>();
-		for(TestAuxiliaryGroupPropertyId testGroupPropertyId : TestAuxiliaryGroupPropertyId.values()) {
-			if(testGroupPropertyId.testAuxiliaryGroupTypeId==testAuxiliaryGroupTypeId) {
+		for (TestAuxiliaryGroupPropertyId testGroupPropertyId : TestAuxiliaryGroupPropertyId.values()) {
+			if (testGroupPropertyId.testAuxiliaryGroupTypeId == testAuxiliaryGroupTypeId) {
 				result.add(testGroupPropertyId);
 			}
 		}
 		return result;
 	}
-	
+
 	/**
-	 * Returns a unique GroupPropertyId instance that is not a member of this enumeration
+	 * Returns a unique GroupPropertyId instance that is not a member of this
+	 * enumeration
 	 */
 	public static GroupPropertyId getUnknownGroupPropertyId() {
-		return new GroupPropertyId() {};
+		return new GroupPropertyId() {
+		};
 	}
-	
+
 	/**
 	 * Returns a randomly selected value that is compatible with this member's
 	 * associated property definition.
@@ -163,7 +156,7 @@ public enum TestAuxiliaryGroupPropertyId implements GroupPropertyId {
 			return randomGenerator.nextInt();
 		case GROUP_PROPERTY_3_3_DOUBLE_IMMUTABLE_NO_TRACK:
 			return randomGenerator.nextDouble();
-		default:			
+		default:
 			throw new RuntimeException("unhandled case: " + this);
 
 		}

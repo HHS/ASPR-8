@@ -1,23 +1,27 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.translationSpecs;
 
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.input.PersonIdInput;
-import plugins.people.support.PersonId;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.input.PropertyDefinitionInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.input.PropertyDefinitionMapInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.input.PropertyValueMapInput;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.input.TimeTrackingPolicyInput;
-import plugins.regions.RegionsPluginData;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.input.RegionIdInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.input.RegionMembershipInput;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.input.RegionMembershipInput.RegionPersonInfo;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.input.RegionPropertyValueMapInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.input.RegionsPluginDataInput;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
+import plugins.people.support.PersonId;
+import plugins.regions.RegionsPluginData;
 import plugins.regions.support.RegionId;
 import plugins.regions.support.RegionPropertyId;
 import plugins.util.properties.PropertyDefinition;
-import plugins.util.properties.TimeTrackingPolicy;
 
-public class RegionsPluginDataTranslationSpec extends ProtobufTranslationSpec<RegionsPluginDataInput, RegionsPluginData> {
+public class RegionsPluginDataTranslationSpec
+        extends ProtobufTranslationSpec<RegionsPluginDataInput, RegionsPluginData> {
 
     @Override
     protected RegionsPluginData convertInputObject(RegionsPluginDataInput inputObject) {
@@ -46,23 +50,29 @@ public class RegionsPluginDataTranslationSpec extends ProtobufTranslationSpec<Re
             for (PropertyValueMapInput propertyValueMapInput : regionPropertyValueMapInput.getPropertyValueMapList()) {
                 RegionPropertyId regionPropertyId = this.translationEngine
                         .getObjectFromAny(propertyValueMapInput.getPropertyId());
-                Object regionPropertyValue = this.translationEngine.getObjectFromAny(propertyValueMapInput.getPropertyValue());
+                Object regionPropertyValue = this.translationEngine
+                        .getObjectFromAny(propertyValueMapInput.getPropertyValue());
 
                 builder.setRegionPropertyValue(regionId, regionPropertyId, regionPropertyValue);
             }
         }
 
         // assign people to regions
+        boolean trackRegionArrivalTimes = inputObject.getTrackRegionArrivalTimes();
+        builder.setPersonRegionArrivalTracking(trackRegionArrivalTimes);
+
         for (RegionMembershipInput regionMembershipInput : inputObject.getPersonRegionsList()) {
-            PersonId personId = this.translationEngine.convertObject(regionMembershipInput.getPersonId());
             RegionId regionId = this.translationEngine.convertObject(regionMembershipInput.getRegionId());
 
-            builder.setPersonRegion(personId, regionId);
+            for (RegionPersonInfo regionPersonInfo : regionMembershipInput.getPeopleList()) {
+                PersonId personId = new PersonId(regionPersonInfo.getPersonId());
+                if (trackRegionArrivalTimes) {
+                    builder.addPerson(personId, regionId, regionPersonInfo.getArrivalTime());
+                } else {
+                    builder.addPerson(personId, regionId);
+                }
+            }
         }
-
-        TimeTrackingPolicy timeTrackingPolicy = this.translationEngine
-                .convertObject(inputObject.getRegionArrivalTimeTrackingPolicy());
-        builder.setPersonRegionArrivalTracking(timeTrackingPolicy);
 
         return builder.build();
     }
@@ -112,25 +122,44 @@ public class RegionsPluginDataTranslationSpec extends ProtobufTranslationSpec<Re
             }
         }
 
+        boolean trackRegionArrivalTimes = appObject.getPersonRegionArrivalTrackingPolicy();
+
+        builder.setTrackRegionArrivalTimes(trackRegionArrivalTimes);
+
+        Map<RegionIdInput, List<RegionPersonInfo>> regionMembershipMap = new LinkedHashMap<>();
         for (int i = 0; i < appObject.getPersonCount(); i++) {
             PersonId personId = new PersonId(i);
 
             if (appObject.getPersonRegion(personId).isPresent()) {
                 RegionId regionId = appObject.getPersonRegion(personId).get();
-                RegionMembershipInput.Builder regionMembershipBuilder = RegionMembershipInput.newBuilder();
-                PersonIdInput personIdInput = this.translationEngine.convertObject(personId);
                 RegionIdInput regionIdInput = this.translationEngine.convertObjectAsSafeClass(regionId, RegionId.class);
-                regionMembershipBuilder.setPersonId(personIdInput).setRegionId(regionIdInput);
+                List<RegionPersonInfo> peopleInRegion = regionMembershipMap.get(regionIdInput);
 
-                builder.addPersonRegions(regionMembershipBuilder.build());
+                if (peopleInRegion == null) {
+                    peopleInRegion = new ArrayList<>();
+                    
+                    regionMembershipMap.put(regionIdInput, peopleInRegion);
+                }
 
+                RegionPersonInfo.Builder regionPersonInfoBuilder = RegionPersonInfo.newBuilder()
+                        .setPersonId(i);
+                if (trackRegionArrivalTimes) {
+                    // can safely assume this because the person region exists
+                    regionPersonInfoBuilder.setArrivalTime(appObject.getPersonRegionArrivalTime(personId).get());
+                }
+
+                peopleInRegion.add(regionPersonInfoBuilder.build());
             }
         }
 
-        TimeTrackingPolicyInput timeTrackingPolicyInput = this.translationEngine
-                .convertObject(appObject.getPersonRegionArrivalTrackingPolicy());
-
-        builder.setRegionArrivalTimeTrackingPolicy(timeTrackingPolicyInput);
+        for(RegionIdInput regionIdInput : regionMembershipMap.keySet()) {
+            RegionMembershipInput.Builder regionMembershipBuilder = RegionMembershipInput.newBuilder();
+            
+            regionMembershipBuilder.setRegionId(regionIdInput).addAllPeople(regionMembershipMap.get(regionIdInput));
+    
+            builder.addPersonRegions(regionMembershipBuilder.build());
+        }
+        
 
         return builder.build();
     }

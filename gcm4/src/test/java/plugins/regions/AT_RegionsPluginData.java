@@ -1,6 +1,7 @@
 package plugins.regions;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -232,12 +233,17 @@ public class AT_RegionsPluginData {
 	@Test
 	@UnitTestMethod(target = RegionsPluginData.class, name = "getPersonRegionArrivalTrackingPolicy", args = {})
 	public void testGetPersonRegionArrivalTrackingPolicy() {
-		for (TimeTrackingPolicy timeTrackingPolicy : TimeTrackingPolicy.values()) {
-			RegionsPluginData regionsPluginData = RegionsPluginData	.builder()//
-																	.setPersonRegionArrivalTracking(timeTrackingPolicy)//
-																	.build();//
-			assertEquals(timeTrackingPolicy, regionsPluginData.getPersonRegionArrivalTrackingPolicy());
-		}
+
+		RegionsPluginData regionsPluginData = RegionsPluginData	.builder()//
+																.setPersonRegionArrivalTracking(true)//
+																.build();//
+		assertEquals(true, regionsPluginData.getPersonRegionArrivalTrackingPolicy());
+
+		regionsPluginData = RegionsPluginData	.builder()//
+												.setPersonRegionArrivalTracking(false)//
+												.build();//
+		assertEquals(false, regionsPluginData.getPersonRegionArrivalTrackingPolicy());
+
 	}
 
 	@Test
@@ -302,6 +308,34 @@ public class AT_RegionsPluginData {
 								.build();//
 		});
 		assertEquals(PropertyError.INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT, contractException.getErrorType());
+
+		/*
+		 * if a person region arrival data was collected, but the policy for
+		 * region arrival tracking is false
+		 */
+		contractException = assertThrows(ContractException.class, () -> {
+			RegionsPluginData	.builder()//
+								.addRegion(TestRegionId.REGION_1)//
+								.setPersonRegionArrivalTracking(false)//
+								.addPerson(new PersonId(0), TestRegionId.REGION_1, 0.0)//
+								.build();//
+		});
+		assertEquals(RegionError.PERSON_ARRIVAL_DATA_PRESENT, contractException.getErrorType());
+
+		/*
+		 * if the policy for region arrival tracking is set to true, but region
+		 * arrival times are missing
+		 */
+
+		contractException = assertThrows(ContractException.class, () -> {
+			RegionsPluginData	.builder()//
+								.addRegion(TestRegionId.REGION_1)//
+								.setPersonRegionArrivalTracking(true)//
+								.addPerson(new PersonId(0), TestRegionId.REGION_1)//
+								.build();
+		});
+		assertEquals(RegionError.MISSING_PERSON_ARRIVAL_DATA, contractException.getErrorType());
+
 	}
 
 	@Test
@@ -332,6 +366,50 @@ public class AT_RegionsPluginData {
 	}
 
 	@Test
+	@UnitTestMethod(target = RegionsPluginData.class, name = "getPersonRegionArrivalTime", args = { PersonId.class })
+	public void testGetPersonRegionArrivalTime() {
+
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8722606929396924838L);
+
+		RegionsPluginData.Builder builder = RegionsPluginData.builder();
+		builder.setPersonRegionArrivalTracking(true);
+		for (TestRegionId testRegionId : TestRegionId.values()) {
+			builder.addRegion(testRegionId);
+		}
+
+		Map<PersonId, Double> expectedRegionArrivalTimes = new LinkedHashMap<>();
+		int maxId = Integer.MIN_VALUE;
+		for (int i = 0; i < 20; i++) {
+			PersonId personId = new PersonId(3 * i + 5);
+			maxId = FastMath.max(maxId, personId.getValue());
+			RegionId regionId = TestRegionId.getRandomRegionId(randomGenerator);
+			double time = randomGenerator.nextDouble();
+			builder.addPerson(personId, regionId, time);
+			expectedRegionArrivalTimes.put(personId, time);
+		}
+		maxId++;
+
+		RegionsPluginData regionsPluginData = builder.build();
+
+		for (int i = 0; i < maxId; i++) {
+			PersonId personId = new PersonId(i);
+			Optional<Double> optional = regionsPluginData.getPersonRegionArrivalTime(personId);
+			Double expectedTime = expectedRegionArrivalTimes.get(personId);
+			if (expectedTime != null) {
+				assertTrue(optional.isPresent());
+				assertEquals(expectedTime, optional.get());
+			} else {
+				assertTrue(optional.isEmpty());
+			}
+		}
+
+		// precondition test: if the person id is null
+		ContractException contractException = assertThrows(ContractException.class, () -> RegionsPluginData.builder().build().getPersonRegionArrivalTime(null));
+		assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
+
+	}
+
+	@Test
 	@UnitTestMethod(target = RegionsPluginData.class, name = "getPersonRegion", args = { PersonId.class })
 	public void testGetPersonRegion() {
 
@@ -348,7 +426,7 @@ public class AT_RegionsPluginData {
 			PersonId personId = new PersonId(3 * i + 5);
 			maxId = FastMath.max(maxId, personId.getValue());
 			RegionId regionId = TestRegionId.getRandomRegionId(randomGenerator);
-			builder.setPersonRegion(personId, regionId);
+			builder.addPerson(personId, regionId);
 			expectedRegionAssignments.put(personId, regionId);
 		}
 		maxId++;
@@ -402,19 +480,8 @@ public class AT_RegionsPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = RegionsPluginData.Builder.class, name = "setPersonRegionArrivalTracking", args = { TimeTrackingPolicy.class })
-	public void testSetPersonRegionArrivalTracking() {
-		RegionsPluginData.Builder builder = RegionsPluginData.builder();
-
-		// if the timeTrackingPolicy is null
-		ContractException contractException = assertThrows(ContractException.class, () -> builder.setPersonRegionArrivalTracking(null));
-		assertEquals(RegionError.NULL_TIME_TRACKING_POLICY, contractException.getErrorType());
-
-	}
-
-	@Test
-	@UnitTestMethod(target = RegionsPluginData.Builder.class, name = "setPersonRegion", args = { PersonId.class, RegionId.class }, tags = { UnitTag.LOCAL_PROXY })
-	public void testSetPersonRegion() {
+	@UnitTestMethod(target = RegionsPluginData.Builder.class, name = "addPerson", args = { PersonId.class, RegionId.class }, tags = { UnitTag.LOCAL_PROXY })
+	public void testAddPerson_Region() {
 		RegionsPluginData.Builder builder = RegionsPluginData.builder();
 
 		PersonId personId = new PersonId(45);
@@ -422,13 +489,73 @@ public class AT_RegionsPluginData {
 
 		// non-precondition tests covered by testGetPersonRegion
 
-		// if the person id is null
-		ContractException contractException = assertThrows(ContractException.class, () -> builder.setPersonRegion(null, regionId));
+		// precondition test: if the person id is null
+		ContractException contractException = assertThrows(ContractException.class, () -> builder.addPerson(null, regionId));
 		assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
 
-		// if the region id is null
-		contractException = assertThrows(ContractException.class, () -> builder.setPersonRegion(personId, null));
+		// precondition test: if the region id is null
+		contractException = assertThrows(ContractException.class, () -> builder.addPerson(personId, null));
 		assertEquals(RegionError.NULL_REGION_ID, contractException.getErrorType());
+
+		// precondition test: if other people have been added using region
+		// arrival times
+		contractException = assertThrows(ContractException.class, () -> {
+			builder.addPerson(personId, regionId, 2.6);
+			builder.addPerson(personId, regionId);
+		});
+		assertEquals(RegionError.REGION_ARRIVAL_TIMES_MISMATCHED, contractException.getErrorType());
+
+	}
+
+	@Test
+	@UnitTestMethod(target = RegionsPluginData.Builder.class, name = "addPerson", args = { PersonId.class, RegionId.class, Double.class }, tags = { UnitTag.LOCAL_PROXY })
+	public void testAddPerson_Region_Time() {
+		RegionsPluginData.Builder builder = RegionsPluginData.builder();
+
+		PersonId personId = new PersonId(45);
+		RegionId regionId = TestRegionId.REGION_1;
+		Double time = 2.6;
+
+		// non-precondition tests covered by testGetPersonRegion
+
+		// precondition test: if the person id is null
+		ContractException contractException = assertThrows(ContractException.class, () -> builder.addPerson(null, regionId, time));
+		assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
+
+		// precondition test: if the region id is null
+		contractException = assertThrows(ContractException.class, () -> builder.addPerson(personId, null, time));
+		assertEquals(RegionError.NULL_REGION_ID, contractException.getErrorType());
+
+		// precondition test: if the time is null
+		contractException = assertThrows(ContractException.class, () -> builder.addPerson(personId, regionId, null));
+		assertEquals(RegionError.NULL_TIME, contractException.getErrorType());
+
+		// precondition test: if the time is not finite
+		contractException = assertThrows(ContractException.class, () -> builder.addPerson(personId, regionId, Double.NaN));
+		assertEquals(RegionError.NON_FINITE_TIME, contractException.getErrorType());
+
+		contractException = assertThrows(ContractException.class, () -> builder.addPerson(personId, regionId, Double.POSITIVE_INFINITY));
+		assertEquals(RegionError.NON_FINITE_TIME, contractException.getErrorType());
+
+		contractException = assertThrows(ContractException.class, () -> builder.addPerson(personId, regionId, Double.NEGATIVE_INFINITY));
+		assertEquals(RegionError.NON_FINITE_TIME, contractException.getErrorType());
+
+		// precondition test: if other people have been added without using
+		// region
+		// arrival times
+		contractException = assertThrows(ContractException.class, () -> {
+			builder.addPerson(personId, regionId);
+			builder.addPerson(personId, regionId, 2.6);
+		});
+		assertEquals(RegionError.REGION_ARRIVAL_TIMES_MISMATCHED, contractException.getErrorType());
+
+	}
+
+	@Test
+	@UnitTestMethod(target = RegionsPluginData.Builder.class, name = "setPersonRegionArrivalTracking", args = { TimeTrackingPolicy.class })
+	public void testSetPersonRegionArrivalTracking() {
+		assertTrue(RegionsPluginData.builder().setPersonRegionArrivalTracking(true).build().getPersonRegionArrivalTrackingPolicy());
+		assertFalse(RegionsPluginData.builder().setPersonRegionArrivalTracking(false).build().getPersonRegionArrivalTrackingPolicy());
 	}
 
 	@Test
@@ -436,7 +563,7 @@ public class AT_RegionsPluginData {
 	public void testGetCloneBuilder() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6712645837048772782L);
 		RegionsPluginData.Builder regionPluginDataBuilder = RegionsPluginData.builder();
-		regionPluginDataBuilder.setPersonRegionArrivalTracking(TimeTrackingPolicy.TRACK_TIME);
+		regionPluginDataBuilder.setPersonRegionArrivalTracking(true);
 		for (TestRegionId testRegionId : TestRegionId.values()) {
 			regionPluginDataBuilder.addRegion(testRegionId);
 		}
@@ -455,7 +582,7 @@ public class AT_RegionsPluginData {
 		for (int i = 0; i < personCount; i++) {
 			PersonId personId = new PersonId(i * 2 + 5);
 			TestRegionId randomRegionId = TestRegionId.getRandomRegionId(randomGenerator);
-			regionPluginDataBuilder.setPersonRegion(personId, randomRegionId);
+			regionPluginDataBuilder.addPerson(personId, randomRegionId, 0.0);
 		}
 
 		RegionsPluginData regionsPluginData = regionPluginDataBuilder.build();
@@ -517,7 +644,7 @@ public class AT_RegionsPluginData {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(101704379866671191L);
 		for (int j = 0; j < 10; j++) {
 			RegionsPluginData.Builder regionPluginDataBuilder = RegionsPluginData.builder();
-			regionPluginDataBuilder.setPersonRegionArrivalTracking(TimeTrackingPolicy.TRACK_TIME);
+			regionPluginDataBuilder.setPersonRegionArrivalTracking(true);
 			for (TestRegionId testRegionId : TestRegionId.values()) {
 				regionPluginDataBuilder.addRegion(testRegionId);
 			}
@@ -548,7 +675,7 @@ public class AT_RegionsPluginData {
 				 */
 				PersonId personId = new PersonId(i + offset);
 				TestRegionId randomRegionId = TestRegionId.getRandomRegionId(randomGenerator);
-				regionPluginDataBuilder.setPersonRegion(personId, randomRegionId);
+				regionPluginDataBuilder.addPerson(personId, randomRegionId, 0.0);
 			}
 
 			RegionsPluginData regionsPluginData = regionPluginDataBuilder.build();

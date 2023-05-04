@@ -1,6 +1,5 @@
 package plugins.util.properties;
 
-import nucleus.SimulationContext;
 import plugins.util.properties.arraycontainers.IntValueContainer;
 import plugins.util.properties.arraycontainers.IntValueContainer.IntValueType;
 import util.errors.ContractException;
@@ -37,8 +36,8 @@ public final class IntPropertyManager extends AbstractIndexedPropertyManager {
 	 *             if the property definition's type is not a Byte, Short,
 	 *             Integer or Long</li>
 	 */
-	public IntPropertyManager(SimulationContext simulationContext, PropertyDefinition propertyDefinition, int initialSize) {
-		super(simulationContext, propertyDefinition, initialSize);
+	public IntPropertyManager(PropertyDefinition propertyDefinition, int initialSize) {
+		super(propertyDefinition, initialSize);
 
 		long longDefaultValue = 0L;
 		if (propertyDefinition.getType() == Byte.class) {

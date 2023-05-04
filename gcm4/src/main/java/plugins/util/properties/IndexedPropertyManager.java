@@ -21,23 +21,6 @@ public interface IndexedPropertyManager {
 	public <T> T getPropertyValue(int id);
 
 	/**
-	 * Returns the assignment time when the id's property was last set. Note
-	 * that this does not imply that the id exists in the simulation. Defaults
-	 * to zero for non-valid id values.
-	 * 
-	 * @throws ContractException
-	 *             <li>{@linkplain PropertyError#NEGATIVE_INDEX} if the id is
-	 *             negative</li>
-	 * 
-	 *             <li>{@linkplain PropertyError#TIME_TRACKING_OFF} if time
-	 *             tracking is off</li>
-	 * 
-	 *
-	 * 
-	 */
-	public double getPropertyTime(int id);
-
-	/**
 	 * Sets the property value stored for the given person. Note that this does
 	 * not imply that the person exists in the simulation. The environment must
 	 * guard against access to removed people.
