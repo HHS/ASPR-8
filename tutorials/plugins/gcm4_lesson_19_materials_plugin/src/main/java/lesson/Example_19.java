@@ -215,20 +215,20 @@ public final class Example_19 {
 																	.setDefaultValue(false)//
 																	.build();
 
-		builder.definePersonProperty(PersonProperty.VACCINATED, propertyDefinition);//
-		builder.definePersonProperty(PersonProperty.VACCINE_SCHEDULED, propertyDefinition);//
+		builder.definePersonProperty(PersonProperty.VACCINATED, propertyDefinition,0,false);//
+		builder.definePersonProperty(PersonProperty.VACCINE_SCHEDULED, propertyDefinition,0,false);//
 
 		propertyDefinition = PropertyDefinition	.builder()//
 												.setType(Integer.class)//
 												.build();//
-		builder.definePersonProperty(PersonProperty.AGE, propertyDefinition);//
+		builder.definePersonProperty(PersonProperty.AGE, propertyDefinition,0,false);//
 
 		propertyDefinition = PropertyDefinition	.builder()//
 												.setType(DiseaseState.class)//
 												.setDefaultValue(DiseaseState.SUSCEPTIBLE)//
 												.build();
 
-		builder.definePersonProperty(PersonProperty.DISEASE_STATE, propertyDefinition);//
+		builder.definePersonProperty(PersonProperty.DISEASE_STATE, propertyDefinition,0,false);//
 
 		final PersonPropertiesPluginData personPropertiesPluginData = builder.build();
 

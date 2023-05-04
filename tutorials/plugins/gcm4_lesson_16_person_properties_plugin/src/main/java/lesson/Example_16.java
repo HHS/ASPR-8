@@ -74,19 +74,19 @@ public final class Example_16 {
 																	.setType(Integer.class)//
 																	.setDefaultValue(0)//
 																	.build();
-		builder.definePersonProperty(PersonProperty.EDUCATION_ATTEMPTS, propertyDefinition);
-		builder.definePersonProperty(PersonProperty.VACCINE_ATTEMPTS, propertyDefinition);
+		builder.definePersonProperty(PersonProperty.EDUCATION_ATTEMPTS, propertyDefinition,0,false);
+		builder.definePersonProperty(PersonProperty.VACCINE_ATTEMPTS, propertyDefinition, 0, false);
 
 		propertyDefinition = PropertyDefinition	.builder()//
 												.setType(Boolean.class)//
 												.build();
-		builder.definePersonProperty(PersonProperty.REFUSES_VACCINE, propertyDefinition);
+		builder.definePersonProperty(PersonProperty.REFUSES_VACCINE, propertyDefinition,0,false);
 
 		propertyDefinition = PropertyDefinition	.builder()//
 												.setType(Boolean.class)//
 												.setDefaultValue(false)//
 												.build();
-		builder.definePersonProperty(PersonProperty.VACCINATED, propertyDefinition);
+		builder.definePersonProperty(PersonProperty.VACCINATED, propertyDefinition,0,false);
 
 		PersonPropertiesPluginData personPropertiesPluginData = builder.build();
 

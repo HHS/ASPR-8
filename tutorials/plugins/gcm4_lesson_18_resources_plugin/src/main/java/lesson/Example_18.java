@@ -114,19 +114,19 @@ public final class Example_18 {
 																	.setDefaultValue(false)//
 																	.build();
 
-		builder.definePersonProperty(PersonProperty.IMMUNE, propertyDefinition);//
-		builder.definePersonProperty(PersonProperty.INFECTED, propertyDefinition);//
-		builder.definePersonProperty(PersonProperty.HOSPITALIZED, propertyDefinition);//
-		builder.definePersonProperty(PersonProperty.TREATED_WITH_ANTIVIRAL, propertyDefinition);//
-		builder.definePersonProperty(PersonProperty.DEAD_IN_HOME, propertyDefinition);//
-		builder.definePersonProperty(PersonProperty.DEAD_IN_HOSPITAL, propertyDefinition);//
+		builder.definePersonProperty(PersonProperty.IMMUNE, propertyDefinition,0,false);//
+		builder.definePersonProperty(PersonProperty.INFECTED, propertyDefinition,0,false);//
+		builder.definePersonProperty(PersonProperty.HOSPITALIZED, propertyDefinition,0,false);//
+		builder.definePersonProperty(PersonProperty.TREATED_WITH_ANTIVIRAL, propertyDefinition,0,false);//
+		builder.definePersonProperty(PersonProperty.DEAD_IN_HOME, propertyDefinition,0,false);//
+		builder.definePersonProperty(PersonProperty.DEAD_IN_HOSPITAL, propertyDefinition,0,false);//
 
 		propertyDefinition = PropertyDefinition	.builder()//
 												.setType(Boolean.class)//
 												.setDefaultValue(false)//												
 												.build();
-		builder.definePersonProperty(PersonProperty.RECEIVED_QUESTIONNAIRE, propertyDefinition);//
-		builder.setTimeTracking(PersonProperty.RECEIVED_QUESTIONNAIRE, 0);
+		builder.definePersonProperty(PersonProperty.RECEIVED_QUESTIONNAIRE, propertyDefinition,0,true);//
+		
 
 		PersonPropertiesPluginData personPropertiesPluginData = builder.build();
 
