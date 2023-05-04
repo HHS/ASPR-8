@@ -6,6 +6,10 @@ import com.google.type.Date;
 
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 
+/**
+ * TranslationSpec that defines how to convert from any Java {@link LocalDate} to a
+ * Protobuf {@link Date} type and vice versa
+ */
 public class DateTranslationSpec extends ProtobufTranslationSpec<Date, LocalDate> {
 
     @Override

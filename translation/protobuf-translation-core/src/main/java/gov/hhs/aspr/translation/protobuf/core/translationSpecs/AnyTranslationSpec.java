@@ -6,6 +6,10 @@ import com.google.protobuf.Message;
 
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 
+/**
+ * TranslationSpec that defines how to convert from any Java Object to a
+ * Protobuf {@link Any} type and vice versa
+ */
 public class AnyTranslationSpec extends ProtobufTranslationSpec<Any, Object> {
 
     @Override

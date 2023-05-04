@@ -26,13 +26,15 @@ import com.google.protobuf.util.JsonFormat.Parser;
 import com.google.protobuf.util.JsonFormat.Printer;
 import com.google.protobuf.util.JsonFormat.TypeRegistry;
 
-import gov.hhs.aspr.translation.core.TranslationSpec;
-import gov.hhs.aspr.translation.protobuf.core.translationSpecs.PrimitiveTranslationSpecs;
+import gov.hhs.aspr.translation.core.CoreTranslationError;
 import gov.hhs.aspr.translation.core.TranslationEngine;
+import gov.hhs.aspr.translation.core.TranslationSpec;
+import gov.hhs.aspr.translation.protobuf.core.translationSpecs.AnyTranslationSpec;
+import util.errors.ContractException;
 
 /**
  * Protobuf TranslationEngine that allows for conversion between POJOs and
- * Protobuf Messages
+ * Protobuf Messages, extends {@link TranslationEngine}
  */
 public class ProtobufTranslationEngine extends TranslationEngine {
     private final Data data;
@@ -241,10 +243,27 @@ public class ProtobufTranslationEngine extends TranslationEngine {
         return new Builder(new Data());
     }
 
+    protected Parser getJsonParser() {
+        return this.data.jsonParser;
+    }
+
+    protected Printer getJsonPrinter() {
+        return this.data.jsonPrinter;
+    }
+
     /**
-     * write output implementation
+     * <li>write output implementation
      * 
-     * Will first convert the object, if needed
+     * <li>Will first convert the object, if needed
+     * and then use the jsonPrinter to take the the converted object and write it
+     * to a JSON string
+     * and then pass that string to the writer to writer the JSON to an output file
+     * 
+     * @param <U> the type of the optional parent class of the appObject
+     * @param <M> the type of the appObject
+     * 
+     * @throws RuntimeException
+     *                          if there is an IOException during writing
      */
     public <U, M extends U> void writeOutput(Writer writer, M appObject, Optional<Class<U>> superClass) {
         Message message;
@@ -258,9 +277,27 @@ public class ProtobufTranslationEngine extends TranslationEngine {
         writeOutput(writer, message);
     }
 
+    /**
+     * takes a protobuf message, parses it into a JSON string and then writes the
+     * JSON string to the output file for which the writer is defined.
+     * 
+     * <li>if debug is enabled in this class, it will also print the resulting
+     * output to the
+     * console</li>
+     * 
+     * @param <U> the type of the Message
+     * 
+     * @throws RuntimeException
+     *                          if there is an IOException during writing
+     */
     private <U extends Message> void writeOutput(Writer writer, U message) {
         try {
             String messageToWrite = this.data.jsonPrinter.print(message);
+
+            if (debug) {
+                printJsonToConsole(messageToWrite);
+            }
+
             writer.write(messageToWrite);
             writer.flush();
         } catch (IOException e) {
@@ -268,20 +305,72 @@ public class ProtobufTranslationEngine extends TranslationEngine {
         }
     }
 
-    private void printJsonToConsole(Message message) {
-        try {
-            System.out.println(this.data.jsonPrinter.print(message));
-        } catch (InvalidProtocolBufferException e) {
-            throw new RuntimeException(e);
-        }
+    private void printJsonToConsole(String jsonString) {
+        System.out.println(jsonString);
     }
 
+    /**
+     * Given a reader and a classRef, will read the JSON from the reader, parse it
+     * into a JSON Object,
+     * merge the resulting JSON Object into the equivalent Protobuf Message and then
+     * convert
+     * that Protobuf Message to the equivalent AppObject
+     * 
+     * <li>if debug is set on this class, will also print the resulting read in
+     * Protobuf Message to console
+     * 
+     * @param <U> the type of the inputClass
+     * @param <T> the return type
+     * 
+     * @throws RuntimeException
+     *                           <ul>
+     *                           <li>if there is an issue getting the builder method
+     *                           from
+     *                           the inputClassRef
+     *                           </li>
+     *                           <li>if there is an issue merging the read in JSON
+     *                           object into the resulting Protobuf Message builder
+     *                           </li>
+     *                           </ul>
+     * 
+     * @throws ContractException
+     *                           <ul>
+     *                           <li>{@linkplain ProtobufCoreTranslationError#INVALID_INPUT_CLASS_REF}
+     *                           if the given inputClassRef is not assingable from
+     *                           {@linkplain Message}</li>
+     *                           </ul>
+     */
     public <T, U> T readInput(Reader reader, Class<U> inputClassRef) {
+        if (!Message.class.isAssignableFrom(inputClassRef)) {
+            throw new ContractException(ProtobufCoreTranslationError.INVALID_INPUT_CLASS_REF);
+        }
+
         JsonObject jsonObject = JsonParser.parseReader(new JsonReader(reader)).getAsJsonObject();
-        return parseJson(jsonObject, inputClassRef);
+        return parseJson(jsonObject, inputClassRef.asSubclass(Message.class));
     }
 
-    private <T, U> T parseJson(JsonObject inputJson, Class<U> inputClassRef) {
+    /**
+     * Given a jsonObject and a inputClassRef, creates a builder for the inputClass
+     * type and then merges the JSON object into the resulting builder
+     * 
+     * <li>if debug is set on this class, will also print the resulting read in
+     * Protobuf Message to console
+     * 
+     * @param <T> the return type
+     * @param <U> the type of the inputClass, that is a child of {@link Message}
+     * 
+     * @throws RuntimeException
+     *                          <ul>
+     *                          <li>if there is an issue getting the builder method
+     *                          from
+     *                          the inputClassRef
+     *                          </li>
+     *                          <li>if there is an issue merging the read in JSON
+     *                          object into the resulting Protobuf Message builder
+     *                          </li>
+     *                          </ul>
+     */
+    protected <T, U extends Message> T parseJson(JsonObject inputJson, Class<U> inputClassRef) {
         JsonObject jsonObject = inputJson.deepCopy();
 
         Message.Builder builder;
@@ -296,36 +385,79 @@ public class ProtobufTranslationEngine extends TranslationEngine {
 
         try {
             this.data.jsonParser.merge(jsonObject.toString(), builder);
+
             Message message = builder.build();
-            if (this.debug) {
-                printJsonToConsole(message);
+            if (debug) {
+                printJsonToConsole(this.data.jsonPrinter.print(message));
             }
+
             return convertObject(message);
         } catch (InvalidProtocolBufferException e) {
             throw new RuntimeException(e);
         }
     }
 
+    /**
+     * Given an object of type {@link Any}, will convert it to the resulting object
+     * 
+     * <li>Will ultimately use the {@link AnyTranslationSpec} to accomplish this
+     * 
+     * @param <T> the return type
+     */
     public <T> T getObjectFromAny(Any anyValue) {
         return convertObject(anyValue);
     }
 
+    /**
+     * Given an object , will convert it to an {@link Any} type
+     * 
+     * <li>Will use the {@link AnyTranslationSpec} to accomplish this
+     */
     public Any getAnyFromObject(Object object) {
         return convertObjectAsUnsafeClass(object, Any.class);
     }
 
+    /**
+     * Given an object , will convert it to an {@link Any} type
+     * 
+     * <li>This method call differs from {@link #getAnyFromObject(Object)} in that
+     * it will first convert the object using the safe parent class by calling
+     * {@link #convertObjectAsSafeClass(Object, Class)}
+     * and will then use the {@link AnyTranslationSpec} to wrap the resulting
+     * converted object in an {@link Any}
+     * 
+     * @param <U> the parent Class
+     * @param <M> the object class
+     * 
+     * @throws ContractException
+     *                           <ul>
+     *                           <li>{@linkplain CoreTranslationError#UNKNOWN_TRANSLATION_SPEC}
+     *                           if no translationSpec was provided for the given
+     *                           parentClassRef
+     */
     public <U, M extends U> Any getAnyFromObjectAsSafeClass(M object, Class<U> parentClassRef) {
         U convertedObject = convertObjectAsSafeClass(object, parentClassRef);
 
         return convertObjectAsUnsafeClass(convertedObject, Any.class);
     }
 
+    /**
+     * Given a typeUrl, returns the associated Protobuf Message type Class, if it
+     * has been previously provided
+     * 
+     * @throws ContractException
+     *                           <ul>
+     *                           <li>{@linkplain ProtobufCoreTranslationError#UNKNOWN_TYPE_URL}
+     *                           if the given type url does not exist. This could be
+     *                           because the type url was never provided or the type
+     *                           url itself is malformed
+     */
     public Class<?> getClassFromTypeUrl(String typeUrl) {
         if (this.data.typeUrlToClassMap.containsKey(typeUrl)) {
             return this.data.typeUrlToClassMap.get(typeUrl);
         }
 
-        throw new RuntimeException("Unable to find corrsponding Enum type for: " + typeUrl);
+        throw new ContractException(ProtobufCoreTranslationError.UNKNOWN_TYPE_URL, "Unable to find corrsponding class for: " + typeUrl);
     }
 
 }
