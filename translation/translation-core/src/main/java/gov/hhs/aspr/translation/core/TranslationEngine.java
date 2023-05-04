@@ -69,12 +69,12 @@ public abstract class TranslationEngine {
          * <li>Note: Calling this specific method will result in a RuntimeException
          * 
          * @throws RuntimeException
-         *                          <li>If this method is called directly. You should
-         *                          istead be calling the child method in the child
+         *                          If this method is called directly. You should
+         *                          instead be calling the child method in the child
          *                          TranslationEngine that extends this class
          */
         public TranslationEngine build() {
-            throw new RuntimeException("Tried to call build on abstract Translator Core");
+            throw new RuntimeException("Tried to call build on abstract Translation Engine");
         }
 
         /**
@@ -141,7 +141,7 @@ public abstract class TranslationEngine {
      * checks to verify all the translationSpecs have been initialized.
      * 
      * @throws RuntimeException
-     *                          <li>There should not be a case where all
+     *                          There should not be a case where all
      *                          translationSpecs are initialized, so if one of them
      *                          isn't, something went very wrong.
      */
