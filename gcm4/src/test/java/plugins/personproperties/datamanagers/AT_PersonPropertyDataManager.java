@@ -104,9 +104,9 @@ public final class AT_PersonPropertyDataManager {
 																.addRegion(TestRegionId.REGION_1)//
 																.addRegion(TestRegionId.REGION_2)//
 																.addRegion(TestRegionId.REGION_3)//
-																.setPersonRegion(new PersonId(1), TestRegionId.REGION_1)//
-																.setPersonRegion(new PersonId(2), TestRegionId.REGION_2)//
-																.setPersonRegion(new PersonId(3), TestRegionId.REGION_2)//
+																.addPerson(new PersonId(1), TestRegionId.REGION_1)//
+																.addPerson(new PersonId(2), TestRegionId.REGION_2)//
+																.addPerson(new PersonId(3), TestRegionId.REGION_2)//
 																.build();
 		Plugin regionsPlugin = RegionsPlugin.builder()//
 											.setRegionsPluginData(regionsPluginData)//

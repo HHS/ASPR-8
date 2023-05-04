@@ -191,12 +191,11 @@ public class AT_RegionsTestPluginFactory {
 
 		TestRegionId testRegionId = TestRegionId.REGION_1;
 		for (PersonId personId : people) {
-			regionPluginBuilder.setPersonRegion(personId, testRegionId);
-			regionPluginBuilder.setPersonRegionArrivalTime(personId, 0.0);
+			regionPluginBuilder.addPerson(personId, testRegionId,0.0);			
 			testRegionId = testRegionId.next();
 		}
 
-		regionPluginBuilder.setPersonRegionArrivalTracking(TimeTrackingPolicy.TRACK_TIME);
+		regionPluginBuilder.setPersonRegionArrivalTracking(true);
 
 		RegionsPluginData regionsPluginData = regionPluginBuilder.build();
 
@@ -301,7 +300,7 @@ public class AT_RegionsTestPluginFactory {
 			}
 
 		}
-		assertEquals(TimeTrackingPolicy.TRACK_TIME, regionsPluginData.getPersonRegionArrivalTrackingPolicy());
+		assertEquals(true, regionsPluginData.getPersonRegionArrivalTrackingPolicy());
 
 		assertEquals(initialPopulation, regionsPluginData.getPersonCount());
 

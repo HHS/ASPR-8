@@ -390,7 +390,7 @@ public class PersonPropertiesTestPluginFactory {
 		}
 		for (PersonId personId : people) {
 			TestRegionId randomRegionId = TestRegionId.getRandomRegionId(randomGenerator);
-			regionBuilder.setPersonRegion(personId, randomRegionId);
+			regionBuilder.addPerson(personId, randomRegionId);
 		}
 		return regionBuilder.build();
 

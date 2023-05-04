@@ -489,11 +489,11 @@ public class AT_RegionsDataManager {
 	@Test
 	@UnitTestMethod(target = RegionsDataManager.class, name = "getPersonRegionArrivalTrackingPolicy", args = {})
 	public void testGetPersonRegionArrivalTrackingPolicy() {
-		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7220786446142555493L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7220786446142555493L);		
 		for (TimeTrackingPolicy timeTrackingPolicy : TimeTrackingPolicy.values()) {
 			Factory factory = RegionsTestPluginFactory.factory(0, randomGenerator.nextLong(), timeTrackingPolicy, (c) -> {
 				RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
-				assertEquals(timeTrackingPolicy, regionsDataManager.getPersonRegionArrivalTrackingPolicy());
+				assertEquals(timeTrackingPolicy==TimeTrackingPolicy.TRACK_TIME, regionsDataManager.regionArrivalsAreTracked());
 			});
 			TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 		}
@@ -1148,12 +1148,11 @@ public class AT_RegionsDataManager {
 		}
 		TestRegionId testRegionId = TestRegionId.REGION_1;
 		for (PersonId personId : people) {
-			regionPluginBuilder.setPersonRegion(personId, testRegionId);
-			regionPluginBuilder.setPersonRegionArrivalTime(personId, 0.0);
+			regionPluginBuilder.addPerson(personId, testRegionId,0.0);			
 			testRegionId = testRegionId.next();
 		}
 
-		regionPluginBuilder.setPersonRegionArrivalTracking(TimeTrackingPolicy.TRACK_TIME);
+		regionPluginBuilder.setPersonRegionArrivalTracking(true);
 		RegionsPluginData regionsPluginData = regionPluginBuilder.build();
 
 		// add the test plugin
@@ -1164,7 +1163,7 @@ public class AT_RegionsDataManager {
 			// show that the initial state of the region data manager matches
 			// the state of the region plugin data
 
-			assertEquals(regionsPluginData.getPersonRegionArrivalTrackingPolicy(), regionsDataManager.getPersonRegionArrivalTrackingPolicy());
+			assertEquals(regionsPluginData.getPersonRegionArrivalTrackingPolicy(), regionsDataManager.regionArrivalsAreTracked());
 			assertEquals(regionsPluginData.getRegionIds(), regionsDataManager.getRegionIds());
 			assertEquals(regionsPluginData.getRegionPropertyIds(), regionsDataManager.getRegionPropertyIds());
 			for (RegionPropertyId regionPropertyId : regionsPluginData.getRegionPropertyIds()) {
@@ -1246,10 +1245,9 @@ public class AT_RegionsDataManager {
 			}
 		}
 		TestRegionId testRegionId = TestRegionId.REGION_1;
-		regionPluginBuilder.setPersonRegionArrivalTracking(TimeTrackingPolicy.TRACK_TIME);
+		regionPluginBuilder.setPersonRegionArrivalTracking(true);
 		for (PersonId personId : people) {
-			regionPluginBuilder.setPersonRegion(personId, testRegionId);
-			regionPluginBuilder.setPersonRegionArrivalTime(personId, 0.0);
+			regionPluginBuilder.addPerson(personId, testRegionId,0.0);			
 			testRegionId = testRegionId.next();
 		}
 		RegionsPluginData regionsPluginData = regionPluginBuilder.build();

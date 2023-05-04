@@ -34,7 +34,6 @@ import plugins.regions.support.RegionPropertyDefinitionInitialization;
 import plugins.regions.support.RegionPropertyId;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
-import plugins.util.properties.TimeTrackingPolicy;
 import plugins.util.properties.arraycontainers.DoubleValueContainer;
 import plugins.util.properties.arraycontainers.IntValueContainer;
 import util.errors.ContractException;
@@ -95,7 +94,6 @@ public final class RegionsDataManager extends DataManager {
 	 */
 	private DoubleValueContainer regionArrivalTimes;
 
-	private TimeTrackingPolicy regionArrivalTrackingPolicy;
 
 	/**
 	 * Creates a Region Data Manager from the given resolver context.
@@ -405,8 +403,8 @@ public final class RegionsDataManager extends DataManager {
 	 * Returns the policy for tracking the last region arrival time for each
 	 * person
 	 */
-	public TimeTrackingPolicy getPersonRegionArrivalTrackingPolicy() {
-		return regionArrivalTrackingPolicy;
+	public boolean regionArrivalsAreTracked() {
+		return regionArrivalTimes != null;
 	}
 
 	/**
@@ -632,8 +630,8 @@ public final class RegionsDataManager extends DataManager {
 		 */
 		regionValues = new IntValueContainer(0);
 
-		regionArrivalTrackingPolicy = regionsPluginData.getPersonRegionArrivalTrackingPolicy();
-		if (regionArrivalTrackingPolicy == TimeTrackingPolicy.TRACK_TIME) {
+		boolean trackRegionArrivals = regionsPluginData.getPersonRegionArrivalTrackingPolicy();
+		if (trackRegionArrivals) {			
 			regionArrivalTimes = new DoubleValueContainer(0);
 		}
 
@@ -736,22 +734,23 @@ public final class RegionsDataManager extends DataManager {
 			}
 		}
 		List<PersonId> people = peopleDataManager.getPeople();
-		for (PersonId personId : people) {
-			RegionId regionId = getPersonRegion(personId);
-			builder.setPersonRegion(personId, regionId);
-		}
-
 		
-		builder.setPersonRegionArrivalTracking(getPersonRegionArrivalTrackingPolicy());
 		if (regionArrivalTimes != null) {
+			builder.setPersonRegionArrivalTracking(true);
 			for (PersonId personId : people) {
+				RegionId regionId = getPersonRegion(personId);
 				double arrivalTime = regionArrivalTimes.getValue(personId.getValue());
-				builder.setPersonRegionArrivalTime(personId, arrivalTime);
+				builder.addPerson(personId, regionId,arrivalTime);
+			}
+		}else {
+			builder.setPersonRegionArrivalTracking(false);
+			for (PersonId personId : people) {
+				RegionId regionId = getPersonRegion(personId);
+				builder.addPerson(personId, regionId);
 			}
 		}
 
 		dataManagerContext.releaseOutput(builder.build());
-
 	}
 
 	/**
@@ -948,7 +947,7 @@ public final class RegionsDataManager extends DataManager {
 	}
 
 	private void validatePersonRegionArrivalsTimesTracked() {
-		if (getPersonRegionArrivalTrackingPolicy() != TimeTrackingPolicy.TRACK_TIME) {
+		if (regionArrivalTimes == null) {
 			throw new ContractException(RegionError.REGION_ARRIVAL_TIMES_NOT_TRACKED);
 		}
 	}

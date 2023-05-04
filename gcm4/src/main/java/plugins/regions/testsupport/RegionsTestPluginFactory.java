@@ -310,19 +310,21 @@ public final class RegionsTestPluginFactory {
 			}
 
 		}
+		boolean trackTimes = timeTrackingPolicy == TimeTrackingPolicy.TRACK_TIME;
+		regionPluginBuilder.setPersonRegionArrivalTracking(trackTimes);
 		TestRegionId testRegionId = TestRegionId.REGION_1;
-		regionPluginBuilder.setPersonRegionArrivalTracking(timeTrackingPolicy);
-		for (PersonId personId : people) {
-			regionPluginBuilder.setPersonRegion(personId, testRegionId);
-			testRegionId = testRegionId.next();
-		}
-		
-		if(timeTrackingPolicy == TimeTrackingPolicy.TRACK_TIME) {
+		if (trackTimes) {
 			for (PersonId personId : people) {
-				regionPluginBuilder.setPersonRegionArrivalTime(personId, 0.0);				
+				regionPluginBuilder.addPerson(personId, testRegionId,0.0);
+				testRegionId = testRegionId.next();
+			}
+		} else {
+			for (PersonId personId : people) {
+				regionPluginBuilder.addPerson(personId, testRegionId);
+				testRegionId = testRegionId.next();
 			}
 		}
-		
+
 		return regionPluginBuilder.build();
 	}
 

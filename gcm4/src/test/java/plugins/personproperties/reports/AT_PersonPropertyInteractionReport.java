@@ -201,9 +201,9 @@ public class AT_PersonPropertyInteractionReport {
 		for (int i = 0; i < populationSize; i++) {
 			PersonId personId = peoplePluginData.getPersonIds().get(i);
 			if (i % 2 == 0) {
-				regionBuilder.setPersonRegion(personId, TestRegionId.REGION_1);
+				regionBuilder.addPerson(personId, TestRegionId.REGION_1);
 			} else {
-				regionBuilder.setPersonRegion(personId, TestRegionId.REGION_2);
+				regionBuilder.addPerson(personId, TestRegionId.REGION_2);
 			}
 		}
 		RegionsPluginData regionsPluginData = regionBuilder.build();

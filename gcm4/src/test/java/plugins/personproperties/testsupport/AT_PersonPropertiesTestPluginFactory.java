@@ -44,7 +44,6 @@ import plugins.stochastics.StochasticsPluginData;
 import plugins.stochastics.StochasticsPluginId;
 import plugins.stochastics.support.StochasticsError;
 import plugins.stochastics.support.WellState;
-import plugins.util.properties.TimeTrackingPolicy;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.random.RandomGeneratorProvider;
@@ -219,12 +218,11 @@ public class AT_PersonPropertiesTestPluginFactory {
 
 		TestRegionId testRegionId = TestRegionId.REGION_1;
 		for (PersonId personId : people) {
-			regionPluginBuilder.setPersonRegion(personId, testRegionId);
-			regionPluginBuilder.setPersonRegionArrivalTime(personId, 0.0);
+			regionPluginBuilder.addPerson(personId, testRegionId, 0.0);			
 			testRegionId = testRegionId.next();
 		}
 
-		regionPluginBuilder.setPersonRegionArrivalTracking(TimeTrackingPolicy.TRACK_TIME);
+		regionPluginBuilder.setPersonRegionArrivalTracking(true);
 
 		RegionsPluginData regionsPluginData = regionPluginBuilder.build();
 
