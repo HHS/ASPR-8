@@ -54,8 +54,6 @@ public final class ResourcesPluginData implements PluginData {
 
 		private final Map<RegionId, List<ResourceInitialization>> regionResourceLevels;
 
-		
-
 		private int personCount;
 		private boolean locked;		
 		private final List<ResourceInitialization> emptyResourceInitializationList = Collections.unmodifiableList(new ArrayList<>());
