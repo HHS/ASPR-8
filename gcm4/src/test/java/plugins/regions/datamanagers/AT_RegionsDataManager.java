@@ -489,11 +489,11 @@ public class AT_RegionsDataManager {
 	@Test
 	@UnitTestMethod(target = RegionsDataManager.class, name = "getPersonRegionArrivalTrackingPolicy", args = {})
 	public void testGetPersonRegionArrivalTrackingPolicy() {
-		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7220786446142555493L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7220786446142555493L);		
 		for (TimeTrackingPolicy timeTrackingPolicy : TimeTrackingPolicy.values()) {
 			Factory factory = RegionsTestPluginFactory.factory(0, randomGenerator.nextLong(), timeTrackingPolicy, (c) -> {
 				RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
-				assertEquals(timeTrackingPolicy, regionsDataManager.getPersonRegionArrivalTrackingPolicy());
+				assertEquals(timeTrackingPolicy==TimeTrackingPolicy.TRACK_TIME, regionsDataManager.regionArrivalsAreTracked());
 			});
 			TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 		}
@@ -566,85 +566,6 @@ public class AT_RegionsDataManager {
 		Factory factory = RegionsTestPluginFactory.factory(0, 1525815460460902517L, TimeTrackingPolicy.TRACK_TIME, testPluginData);
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
-	}
-
-	@Test
-	@UnitTestMethod(target = RegionsDataManager.class, name = "getRegionPopulationTime", args = { RegionId.class })
-	public void testGetRegionPopulationTime() {
-
-		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
-
-		// show that each region has a zero population time
-		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
-			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
-			for (TestRegionId testRegionId : TestRegionId.values()) {
-				assertEquals(0, regionsDataManager.getRegionPopulationTime(testRegionId));
-			}
-
-		}));
-
-		Map<RegionId, MutableDouble> expectedAssignmentTimes = new LinkedHashMap<>();
-		for (TestRegionId testRegionId : TestRegionId.values()) {
-			expectedAssignmentTimes.put(testRegionId, new MutableDouble());
-		}
-
-		int numberOfPeople = 100;
-
-		// show that adding people over time results in the correct population
-		// times
-		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
-			for (int i = 0; i < numberOfPeople; i++) {
-				double planTime = i;
-				c.addPlan((c2) -> {
-					RegionsDataManager regionsDataManager = c2.getDataManager(RegionsDataManager.class);
-					StochasticsDataManager stochasticsDataManager = c2.getDataManager(StochasticsDataManager.class);
-					TestRegionId regionId = TestRegionId.getRandomRegionId(stochasticsDataManager.getRandomGenerator());
-					PersonConstructionData personConstructionData = PersonConstructionData.builder().add(regionId).build();
-					PeopleDataManager peopleDataManager = c2.getDataManager(PeopleDataManager.class);
-					peopleDataManager.addPerson(personConstructionData);
-					assertEquals(c2.getTime(), regionsDataManager.getRegionPopulationTime(regionId), 0);
-					expectedAssignmentTimes.get(regionId).setValue(c2.getTime());
-				}, planTime);
-			}
-		}));
-
-		// show that the proper region population times are maintained
-		// after all the person additions are complete.
-		double postPersonAdditionTime = numberOfPeople;
-
-		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(postPersonAdditionTime, (c) -> {
-			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
-			for (TestRegionId testRegionId : TestRegionId.values()) {
-				double expectedRegionPopulationTime = expectedAssignmentTimes.get(testRegionId).getValue();
-				double actualRegionPopulationTime = regionsDataManager.getRegionPopulationTime(testRegionId);
-				assertEquals(expectedRegionPopulationTime, actualRegionPopulationTime);
-			}
-		}));
-
-		// build and add the action plugin
-		TestPluginData testPluginData = pluginBuilder.build();
-		Factory factory = RegionsTestPluginFactory.factory(numberOfPeople, 2430955549982485988L, TimeTrackingPolicy.TRACK_TIME, testPluginData);
-		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
-
-		// precondition test: if the region id is null
-		ContractException contractException = assertThrows(ContractException.class, () -> {
-			Factory factory2 = RegionsTestPluginFactory.factory(numberOfPeople, 3091951498637393024L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
-				RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
-				regionsDataManager.getRegionPopulationTime(null);
-			});
-			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
-		});
-		assertEquals(RegionError.NULL_REGION_ID, contractException.getErrorType());
-
-		// precondition tests: if the region id is unknown
-		contractException = assertThrows(ContractException.class, () -> {
-			Factory factory2 = RegionsTestPluginFactory.factory(numberOfPeople, 2415744693759237392L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
-				RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
-				regionsDataManager.getRegionPopulationTime(TestRegionId.getUnknownRegionId());
-			});
-			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
-		});
-		assertEquals(RegionError.UNKNOWN_REGION_ID, contractException.getErrorType());
 	}
 
 	@Test
@@ -790,106 +711,6 @@ public class AT_RegionsDataManager {
 				RegionId knownRegionId = TestRegionId.REGION_1;
 				RegionPropertyId unknownRegionPropertyId = TestRegionPropertyId.getUnknownRegionPropertyId();
 				regionsDataManager.getRegionPropertyValue(knownRegionId, unknownRegionPropertyId);
-			});
-			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
-		});
-		assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
-	}
-
-	@Test
-	@UnitTestMethod(target = RegionsDataManager.class, name = "getRegionPropertyTime", args = { RegionId.class, RegionPropertyId.class })
-	public void testGetRegionPropertyTime() {
-		Map<MultiKey, MutableDouble> expectedPropertyTimes = new LinkedHashMap<>();
-		for (TestRegionId testRegionId : TestRegionId.values()) {
-			for (TestRegionPropertyId testRegionPropertyId : TestRegionPropertyId.values()) {
-				expectedPropertyTimes.put(new MultiKey(testRegionId, testRegionPropertyId), new MutableDouble());
-			}
-		}
-		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
-
-		// show that the property times are currently zero
-		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
-			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
-			assertTrue(regionsDataManager.getRegionIds().size() > 0);
-			assertTrue(regionsDataManager.getRegionPropertyIds().size() > 0);
-			for (RegionId regionId : regionsDataManager.getRegionIds()) {
-				for (RegionPropertyId regionPropertyId : regionsDataManager.getRegionPropertyIds()) {
-					double regionPropertyTime = regionsDataManager.getRegionPropertyTime(regionId, regionPropertyId);
-					assertEquals(0, regionPropertyTime, 0);
-				}
-			}
-		}));
-
-		// show that changes to the property values properly reflect the time
-		// the occured
-
-		for (int i = 0; i < 300; i++) {
-			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(i, (c) -> {
-				RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
-				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
-				RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
-				TestRegionId testRegionId = TestRegionId.getRandomRegionId(randomGenerator);
-				TestRegionPropertyId testRegionPropertyId = TestRegionPropertyId.getRandomMutableRegionPropertyId(randomGenerator);
-
-				// show that the property has the correct time
-				MutableDouble mutableDouble = expectedPropertyTimes.get(new MultiKey(testRegionId, testRegionPropertyId));
-				double expectedPropertyTime = mutableDouble.getValue();
-				double actualPropertyTime = regionsDataManager.getRegionPropertyTime(testRegionId, testRegionPropertyId);
-				assertEquals(expectedPropertyTime, actualPropertyTime);
-
-				Object newPropertyValue = testRegionPropertyId.getRandomPropertyValue(randomGenerator);
-
-				regionsDataManager.setRegionPropertyValue(testRegionId, testRegionPropertyId, newPropertyValue);
-				assertEquals(c.getTime(), regionsDataManager.getRegionPropertyTime(testRegionId, testRegionPropertyId));
-				mutableDouble.setValue(c.getTime());
-			}));
-		}
-
-		TestPluginData testPluginData = pluginBuilder.build();
-		Factory factory = RegionsTestPluginFactory.factory(0, 1085097084913380645L, TimeTrackingPolicy.TRACK_TIME, testPluginData);
-		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
-
-		// precondition check: if the region id is null
-		ContractException contractException = assertThrows(ContractException.class, () -> {
-			Factory factory2 = RegionsTestPluginFactory.factory(0, 9165213921588406384L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
-				RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
-				RegionPropertyId knownRegionPropertyId = TestRegionPropertyId.REGION_PROPERTY_1_BOOLEAN_MUTABLE;
-				regionsDataManager.getRegionPropertyTime(null, knownRegionPropertyId);
-			});
-			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
-		});
-		assertEquals(RegionError.NULL_REGION_ID, contractException.getErrorType());
-
-		// precondition check: if the region id is not known
-		contractException = assertThrows(ContractException.class, () -> {
-			Factory factory2 = RegionsTestPluginFactory.factory(0, 1546629608367614750L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
-				RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
-				RegionId unknownRegionId = TestRegionId.getUnknownRegionId();
-				RegionPropertyId knownRegionPropertyId = TestRegionPropertyId.REGION_PROPERTY_1_BOOLEAN_MUTABLE;
-				regionsDataManager.getRegionPropertyTime(unknownRegionId, knownRegionPropertyId);
-			});
-			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
-		});
-		assertEquals(RegionError.UNKNOWN_REGION_ID, contractException.getErrorType());
-
-		// precondition check: if the region property id is null
-		contractException = assertThrows(ContractException.class, () -> {
-			Factory factory2 = RegionsTestPluginFactory.factory(0, 7141175136643291537L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
-				RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
-				RegionId knownRegionId = TestRegionId.REGION_1;
-				regionsDataManager.getRegionPropertyTime(knownRegionId, null);
-			});
-			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
-		});
-		assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
-
-		// precondition check: if the region property id is unknown
-		contractException = assertThrows(ContractException.class, () -> {
-			Factory factory2 = RegionsTestPluginFactory.factory(0, 2200230008116664966L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
-				RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
-				RegionId knownRegionId = TestRegionId.REGION_1;
-				RegionPropertyId unknownRegionPropertyId = TestRegionPropertyId.getUnknownRegionPropertyId();
-				regionsDataManager.getRegionPropertyTime(knownRegionId, unknownRegionPropertyId);
 			});
 			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
 		});
@@ -1158,8 +979,6 @@ public class AT_RegionsDataManager {
 					regionsDataManager.setRegionPropertyValue(TestRegionId.REGION_1, TestRegionPropertyId.REGION_PROPERTY_2_INTEGER_MUTABLE, newValue);
 					Integer actualValue = regionsDataManager.getRegionPropertyValue(TestRegionId.REGION_1, TestRegionPropertyId.REGION_PROPERTY_2_INTEGER_MUTABLE);
 					assertEquals(newValue, actualValue);
-					double valueTime = regionsDataManager.getRegionPropertyTime(TestRegionId.REGION_1, TestRegionPropertyId.REGION_PROPERTY_2_INTEGER_MUTABLE);
-					assertEquals(c2.getTime(), valueTime);
 					expectedObservations.add(new MultiKey(c2.getTime(), TestRegionId.REGION_1, TestRegionPropertyId.REGION_PROPERTY_2_INTEGER_MUTABLE, newValue));
 				}, randomGenerator.nextDouble() * 1000);
 			}
@@ -1173,8 +992,6 @@ public class AT_RegionsDataManager {
 					regionsDataManager.setRegionPropertyValue(TestRegionId.REGION_2, TestRegionPropertyId.REGION_PROPERTY_3_DOUBLE_MUTABLE, newValue);
 					Double actualValue = regionsDataManager.getRegionPropertyValue(TestRegionId.REGION_2, TestRegionPropertyId.REGION_PROPERTY_3_DOUBLE_MUTABLE);
 					assertEquals(newValue, actualValue);
-					double valueTime = regionsDataManager.getRegionPropertyTime(TestRegionId.REGION_2, TestRegionPropertyId.REGION_PROPERTY_3_DOUBLE_MUTABLE);
-					assertEquals(c2.getTime(), valueTime);
 					expectedObservations.add(new MultiKey(c2.getTime(), TestRegionId.REGION_2, TestRegionPropertyId.REGION_PROPERTY_3_DOUBLE_MUTABLE, newValue));
 				}, randomGenerator.nextDouble() * 1000);
 			}
@@ -1331,11 +1148,11 @@ public class AT_RegionsDataManager {
 		}
 		TestRegionId testRegionId = TestRegionId.REGION_1;
 		for (PersonId personId : people) {
-			regionPluginBuilder.setPersonRegion(personId, testRegionId);
+			regionPluginBuilder.addPerson(personId, testRegionId,0.0);			
 			testRegionId = testRegionId.next();
 		}
 
-		regionPluginBuilder.setPersonRegionArrivalTracking(TimeTrackingPolicy.TRACK_TIME);
+		regionPluginBuilder.setPersonRegionArrivalTracking(true);
 		RegionsPluginData regionsPluginData = regionPluginBuilder.build();
 
 		// add the test plugin
@@ -1346,7 +1163,7 @@ public class AT_RegionsDataManager {
 			// show that the initial state of the region data manager matches
 			// the state of the region plugin data
 
-			assertEquals(regionsPluginData.getPersonRegionArrivalTrackingPolicy(), regionsDataManager.getPersonRegionArrivalTrackingPolicy());
+			assertEquals(regionsPluginData.getPersonRegionArrivalTrackingPolicy(), regionsDataManager.regionArrivalsAreTracked());
 			assertEquals(regionsPluginData.getRegionIds(), regionsDataManager.getRegionIds());
 			assertEquals(regionsPluginData.getRegionPropertyIds(), regionsDataManager.getRegionPropertyIds());
 			for (RegionPropertyId regionPropertyId : regionsPluginData.getRegionPropertyIds()) {
@@ -1363,6 +1180,34 @@ public class AT_RegionsDataManager {
 			}
 
 		}));
+		
+		
+//		 *             <li>{@linkplain RegionError#UNKNOWN_REGION_ID} if
+//		 *             a person in the people plugin does not have an assigned region id in the region plugin data</li>
+
+		
+//		 *             <li>{@linkplain RegionError#UNKNOWN_REGION_ARRIVAL_TIME} if
+//		 *             the person id person region arrival time cannot be found in
+//		 *             the plugin data when the arrival tracking policy is true</li>
+		
+//		/*
+//		 * if a person's region arrival time exceeds the current simulation time
+//		 */
+//		contractException = assertThrows(ContractException.class, () -> {
+//			RegionsPluginData	.builder()//
+//								.addRegion(TestRegionId.REGION_1)//
+//								.setPersonRegionArrivalTracking(TimeTrackingPolicy.TRACK_TIME)//
+//								.setPersonRegion(new PersonId(0), TestRegionId.REGION_1)//
+//								.setPersonRegionArrivalTime(new PersonId(0), 4.7)//
+//								.build();
+//		});
+//		assertEquals(RegionError.REGION_ARRIVAL_TIME_EXCEEDS_SIM_TIME, contractException.getErrorType());
+//		
+		
+//		 *             <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if the regions
+//		 *             plugin data contains information for an unknown person
+//		 *             id</li>
+		
 		TestPluginData testPluginData = pluginBuilder.build();
 		Factory factory = RegionsTestPluginFactory.factory(initialPopulation, seed, TimeTrackingPolicy.TRACK_TIME, testPluginData).setRegionsPluginData(regionsPluginData);
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
@@ -1400,9 +1245,9 @@ public class AT_RegionsDataManager {
 			}
 		}
 		TestRegionId testRegionId = TestRegionId.REGION_1;
-		regionPluginBuilder.setPersonRegionArrivalTracking(TimeTrackingPolicy.TRACK_TIME);
+		regionPluginBuilder.setPersonRegionArrivalTracking(true);
 		for (PersonId personId : people) {
-			regionPluginBuilder.setPersonRegion(personId, testRegionId);
+			regionPluginBuilder.addPerson(personId, testRegionId,0.0);			
 			testRegionId = testRegionId.next();
 		}
 		RegionsPluginData regionsPluginData = regionPluginBuilder.build();

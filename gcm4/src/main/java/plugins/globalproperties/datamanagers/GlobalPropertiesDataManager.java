@@ -46,7 +46,7 @@ public final class GlobalPropertiesDataManager extends DataManager {
 	private Map<GlobalPropertyId, PropertyValueRecord> globalPropertyMap = new LinkedHashMap<>();
 
 	private Map<GlobalPropertyId, PropertyDefinition> globalPropertyDefinitions = new LinkedHashMap<>();
-	
+
 	private Map<GlobalPropertyId, Double> globalPropertyDefinitionTimes = new LinkedHashMap<>();
 
 	private final GlobalPropertiesPluginData globalPropertiesPluginData;
@@ -145,6 +145,22 @@ public final class GlobalPropertiesDataManager extends DataManager {
 	}
 
 	/**
+	 * Returns the property definition for the given {@link GlobalPropertyId}
+	 * 
+	 * @throws ContractException
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the global
+	 *             property id is null</li>
+	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if the
+	 *             global property id is unknown</li>
+	 * 
+	 */
+
+	public double getGlobalPropertyDefinitionTime(final GlobalPropertyId globalPropertyId) {
+		validateGlobalPropertyId(globalPropertyId);
+		return globalPropertyDefinitionTimes.get(globalPropertyId);
+	}
+
+	/**
 	 * Returns the set of global property ids
 	 */
 	@SuppressWarnings("unchecked")
@@ -199,7 +215,7 @@ public final class GlobalPropertiesDataManager extends DataManager {
 		GlobalPropertyInitialization globalPropertyInitialization = globalPropertyInitializationMutationEvent.globalPropertyInitialization;
 		validateGlobalPropertyInitializationNotNull(globalPropertyInitialization);
 		GlobalPropertyId globalPropertyId = globalPropertyInitialization.getGlobalPropertyId();
-		PropertyDefinition propertyDefinition = globalPropertyInitialization.getPropertyDefinition();		
+		PropertyDefinition propertyDefinition = globalPropertyInitialization.getPropertyDefinition();
 		validateGlobalPropertyIdIsUnknown(globalPropertyId);
 
 		Object globalPropertyValue;
@@ -237,11 +253,22 @@ public final class GlobalPropertiesDataManager extends DataManager {
 		}
 	}
 
+	/**
+	 * Initializes the global properties data manager
+	 * 
+	 * @throws ContractException
+	 * 
+	 *             <li>{@linkplain PropertyError#INCOMPATIBLE_DEF_TIME} if the
+	 *             Global Properties Plugin Data contains a property definition
+	 *             with a creation time that exceeds the current simulation
+	 *             time</li>
+	 */
 	@Override
 	public void init(DataManagerContext dataManagerContext) {
 		super.init(dataManagerContext);
-
+		
 		this.dataManagerContext = dataManagerContext;
+		validateGlobalPropertiesPluginData();
 
 		dataManagerContext.subscribe(GlobalPropertyInitializationMutationEvent.class, this::handleGlobalPropertyInitializationMutationEvent);
 		dataManagerContext.subscribe(GlobalPropertyUpdateMutationEvent.class, this::handleGlobalPropertyUpdateMutationEvent);
@@ -270,7 +297,7 @@ public final class GlobalPropertiesDataManager extends DataManager {
 		for (GlobalPropertyId globalPropertyId : globalPropertyDefinitions.keySet()) {
 			PropertyDefinition propertyDefinition = globalPropertyDefinitions.get(globalPropertyId);
 			Double propertyDefinitionCreationTime = globalPropertyDefinitionTimes.get(globalPropertyId);
-			builder.defineGlobalProperty(globalPropertyId, propertyDefinition,propertyDefinitionCreationTime);
+			builder.defineGlobalProperty(globalPropertyId, propertyDefinition, propertyDefinitionCreationTime);
 			PropertyValueRecord propertyValueRecord = globalPropertyMap.get(globalPropertyId);
 			Object value = propertyValueRecord.getValue();
 			double assignmentTime = propertyValueRecord.getAssignmentTime();
@@ -326,8 +353,6 @@ public final class GlobalPropertiesDataManager extends DataManager {
 			throw new ContractException(PropertyError.UNKNOWN_PROPERTY_ID, globalPropertyId);
 		}
 	}
-	
-	
 
 	private void validateGlobalPropertyIdIsUnknown(final GlobalPropertyId globalPropertyId) {
 
@@ -358,6 +383,15 @@ public final class GlobalPropertiesDataManager extends DataManager {
 		if (!propertyDefinition.getType().isAssignableFrom(propertyValue.getClass())) {
 			throw new ContractException(PropertyError.INCOMPATIBLE_VALUE,
 					"Property value " + propertyValue + " is not of type " + propertyDefinition.getType().getName() + " and does not match definition of " + propertyId);
+		}
+	}
+
+	private void validateGlobalPropertiesPluginData() {
+		double currentTime = dataManagerContext.getTime();
+		for (GlobalPropertyId globalPropertyId : globalPropertiesPluginData.getGlobalPropertyIds()) {
+			if (globalPropertiesPluginData.getGlobalPropertyDefinitionTime(globalPropertyId) > currentTime) {
+				throw new ContractException(PropertyError.INCOMPATIBLE_DEF_TIME);
+			}
 		}
 	}
 

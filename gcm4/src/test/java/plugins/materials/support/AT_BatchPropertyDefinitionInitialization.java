@@ -15,7 +15,6 @@ import plugins.materials.testsupport.TestBatchPropertyId;
 import plugins.materials.testsupport.TestMaterialId;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
-import plugins.util.properties.TimeTrackingPolicy;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.random.RandomGeneratorProvider;
@@ -31,7 +30,7 @@ public class AT_BatchPropertyDefinitionInitialization {
 	@Test
 	@UnitTestMethod(target = BatchPropertyDefinitionInitialization.class, name = "getPropertyDefinition", args = {})
 	public void testGetPropertyDefinition() {
-		PropertyDefinition propertyDefinition = PropertyDefinition	.builder().setDefaultValue(100).setPropertyValueMutability(false).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME)
+		PropertyDefinition propertyDefinition = PropertyDefinition	.builder().setDefaultValue(100).setPropertyValueMutability(false)
 																	.setType(Integer.class).build();
 
 		BatchPropertyId batchPropertyId = TestBatchPropertyId.BATCH_PROPERTY_2_2_INTEGER_IMMUTABLE_TRACK;
@@ -49,7 +48,7 @@ public class AT_BatchPropertyDefinitionInitialization {
 	@Test
 	@UnitTestMethod(target = BatchPropertyDefinitionInitialization.class, name = "getPropertyId", args = {})
 	public void testGetPropertyId() {
-		PropertyDefinition propertyDefinition = PropertyDefinition	.builder().setDefaultValue(100).setPropertyValueMutability(false).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME)
+		PropertyDefinition propertyDefinition = PropertyDefinition	.builder().setDefaultValue(100).setPropertyValueMutability(false)
 																	.setType(Integer.class).build();
 
 		BatchPropertyId batchPropertyId = TestBatchPropertyId.BATCH_PROPERTY_2_2_INTEGER_IMMUTABLE_TRACK;
@@ -68,7 +67,7 @@ public class AT_BatchPropertyDefinitionInitialization {
 	@UnitTestMethod(target = BatchPropertyDefinitionInitialization.class, name = "getPropertyValues", args = {})
 	public void testGetPropertyValues() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8487271708488687492L);
-		PropertyDefinition propertyDefinition = PropertyDefinition	.builder().setDefaultValue("100").setPropertyValueMutability(false).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME)
+		PropertyDefinition propertyDefinition = PropertyDefinition	.builder().setDefaultValue("100").setPropertyValueMutability(false)
 																	.setType(String.class).build();
 
 		BatchPropertyId batchPropertyId = TestBatchPropertyId.BATCH_PROPERTY_2_2_INTEGER_IMMUTABLE_TRACK;
@@ -96,7 +95,7 @@ public class AT_BatchPropertyDefinitionInitialization {
 	@Test
 	@UnitTestMethod(target = BatchPropertyDefinitionInitialization.class, name = "getMaterialId", args = {})
 	public void testGetMaterialId() {
-		PropertyDefinition propertyDefinition = PropertyDefinition	.builder().setDefaultValue(100).setPropertyValueMutability(false).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME)
+		PropertyDefinition propertyDefinition = PropertyDefinition	.builder().setDefaultValue(100).setPropertyValueMutability(false)
 																	.setType(Integer.class).build();
 
 		BatchPropertyId batchPropertyId = TestBatchPropertyId.BATCH_PROPERTY_2_2_INTEGER_IMMUTABLE_TRACK;
@@ -115,7 +114,7 @@ public class AT_BatchPropertyDefinitionInitialization {
 	@UnitTestMethod(target = BatchPropertyDefinitionInitialization.Builder.class, name = "build", args = {})
 	public void testBuild() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8487271708488687492L);
-		PropertyDefinition propertyDefinition = PropertyDefinition	.builder().setDefaultValue("100").setPropertyValueMutability(false).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME)
+		PropertyDefinition propertyDefinition = PropertyDefinition	.builder().setDefaultValue("100").setPropertyValueMutability(false)
 																	.setType(String.class).build();
 
 		BatchPropertyId batchPropertyId = TestBatchPropertyId.BATCH_PROPERTY_2_2_INTEGER_IMMUTABLE_TRACK;
@@ -165,7 +164,7 @@ public class AT_BatchPropertyDefinitionInitialization {
 	@Test
 	@UnitTestMethod(target = BatchPropertyDefinitionInitialization.Builder.class, name = "setPropertyDefinition", args = { PropertyDefinition.class })
 	public void testSetPropertyDefinition() {
-		PropertyDefinition propertyDefinition = PropertyDefinition	.builder().setDefaultValue(100).setPropertyValueMutability(false).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME)
+		PropertyDefinition propertyDefinition = PropertyDefinition	.builder().setDefaultValue(100).setPropertyValueMutability(false)
 																	.setType(Integer.class).build();
 
 		BatchPropertyId batchPropertyId = TestBatchPropertyId.BATCH_PROPERTY_2_2_INTEGER_IMMUTABLE_TRACK;
@@ -185,7 +184,7 @@ public class AT_BatchPropertyDefinitionInitialization {
 	@Test
 	@UnitTestMethod(target = BatchPropertyDefinitionInitialization.Builder.class, name = "setPropertyId", args = { BatchPropertyId.class })
 	public void testSetPropertyId() {
-		PropertyDefinition propertyDefinition = PropertyDefinition	.builder().setDefaultValue(100).setPropertyValueMutability(false).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME)
+		PropertyDefinition propertyDefinition = PropertyDefinition	.builder().setDefaultValue(100).setPropertyValueMutability(false)
 																	.setType(Integer.class).build();
 
 		BatchPropertyId batchPropertyId = TestBatchPropertyId.BATCH_PROPERTY_2_2_INTEGER_IMMUTABLE_TRACK;
@@ -208,7 +207,7 @@ public class AT_BatchPropertyDefinitionInitialization {
 	@UnitTestMethod(target = BatchPropertyDefinitionInitialization.Builder.class, name = "addPropertyValue", args = { BatchId.class, Object.class })
 	public void testAddPropertyValue() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8487271708488687492L);
-		PropertyDefinition propertyDefinition = PropertyDefinition	.builder().setDefaultValue("100").setPropertyValueMutability(false).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME)
+		PropertyDefinition propertyDefinition = PropertyDefinition	.builder().setDefaultValue("100").setPropertyValueMutability(false)
 																	.setType(String.class).build();
 
 		BatchPropertyId batchPropertyId = TestBatchPropertyId.BATCH_PROPERTY_2_2_INTEGER_IMMUTABLE_TRACK;
@@ -243,7 +242,7 @@ public class AT_BatchPropertyDefinitionInitialization {
 	@Test
 	@UnitTestMethod(target = BatchPropertyDefinitionInitialization.Builder.class, name = "setMaterialId", args = { MaterialId.class })
 	public void testSetMaterialId() {
-		PropertyDefinition propertyDefinition = PropertyDefinition	.builder().setDefaultValue(100).setPropertyValueMutability(false).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME)
+		PropertyDefinition propertyDefinition = PropertyDefinition	.builder().setDefaultValue(100).setPropertyValueMutability(false)
 																	.setType(Integer.class).build();
 
 		BatchPropertyId batchPropertyId = TestBatchPropertyId.BATCH_PROPERTY_2_2_INTEGER_IMMUTABLE_TRACK;

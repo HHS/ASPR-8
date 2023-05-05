@@ -25,9 +25,15 @@ enum TestPersonPropertyIdInput {
     PERSON_PROPERTY_9_DOUBLE_IMMUTABLE_NO_TRACK = 8;
 }
 
+message PersonPropertyValueInput {
+    int32 pId = 1;
+    optional google.protobuf.Any value = 2;
+    optional double propertyValueTime = 3;
+}
+
 message PersonPropertyValueMapInput {
-    PersonIdInput personId = 1;
-    repeated PropertyValueMapInput propertyValueMap = 2;
+    PersonPropertyIdInput personPropertyId = 1;
+    repeated PersonPropertyValueInput propertyValues = 2;
 }
 
 message PersonPropertiesPluginDataInput {

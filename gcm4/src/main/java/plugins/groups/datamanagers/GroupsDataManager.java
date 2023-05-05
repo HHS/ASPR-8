@@ -10,7 +10,6 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.apache.commons.math3.random.RandomGenerator;
-import org.apache.commons.math3.util.FastMath;
 import org.apache.commons.math3.util.Pair;
 
 import net.jcip.annotations.GuardedBy;
@@ -20,7 +19,6 @@ import nucleus.Event;
 import nucleus.EventFilter;
 import nucleus.IdentifiableFunctionMap;
 import nucleus.NucleusError;
-import nucleus.SimulationContext;
 import plugins.groups.GroupsPluginData;
 import plugins.groups.events.GroupAdditionEvent;
 import plugins.groups.events.GroupImminentRemovalEvent;
@@ -54,6 +52,7 @@ import plugins.util.properties.IntPropertyManager;
 import plugins.util.properties.ObjectPropertyManager;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
+import plugins.util.properties.arraycontainers.DoubleValueContainer;
 import plugins.util.properties.arraycontainers.IntValueContainer;
 import plugins.util.properties.arraycontainers.ObjectValueContainer;
 import util.errors.ContractException;
@@ -100,6 +99,9 @@ public final class GroupsDataManager extends DataManager {
 
 	// container for group property values
 	private final Map<GroupTypeId, Map<GroupPropertyId, IndexedPropertyManager>> groupPropertyManagerMap = new LinkedHashMap<>();
+	
+
+	private final Map<GroupTypeId, Map<GroupPropertyId, PropertyDefinition>> groupPropertyDefinitions = new LinkedHashMap<>();
 
 	// Guard for both weights array and weightedPersonIds array
 	private boolean samplingIsLocked;
@@ -122,8 +124,6 @@ public final class GroupsDataManager extends DataManager {
 
 	private final Map<GroupTypeId, Integer> typesToIndexesMap = new LinkedHashMap<>();
 
-	private final Map<GroupTypeId, Map<GroupPropertyId, PropertyDefinition>> groupPropertyDefinitions = new LinkedHashMap<>();
-
 	private final Map<GroupTypeId, Map<GroupPropertyId, Integer>> nonDefaultBearingPropertyIds = new LinkedHashMap<>();
 
 	private Map<GroupTypeId, boolean[]> nonDefaultChecks = new LinkedHashMap<>();
@@ -135,6 +135,8 @@ public final class GroupsDataManager extends DataManager {
 	private DataManagerContext dataManagerContext;
 
 	private final GroupsPluginData groupsPluginData;
+
+	private PeopleDataManager peopleDataManager;
 
 	/**
 	 * Constructs this person group data manager
@@ -148,8 +150,6 @@ public final class GroupsDataManager extends DataManager {
 		}
 		this.groupsPluginData = groupsPluginData;
 	}
-
-	private PeopleDataManager peopleDataManager;
 
 	/**
 	 * Initial behavior
@@ -229,6 +229,8 @@ public final class GroupsDataManager extends DataManager {
 
 	private void recordSimulationState(DataManagerContext dataManagerContext) {
 		GroupsPluginData.Builder builder = GroupsPluginData.builder();
+		
+		builder.setNextGroupIdValue(masterGroupId);
 
 		for (final GroupTypeId groupTypeId : typesToIndexesMap.keySet()) {
 			builder.addGroupTypeId(groupTypeId);
@@ -293,11 +295,16 @@ public final class GroupsDataManager extends DataManager {
 				if (propertyDefinition.getDefaultValue().isEmpty()) {
 					nonDefaultBearingPropertyIds.get(groupTypeId).put(groupPropertyId, nonDefaultBearingPropertyIds.size());
 				}
-				Map<GroupPropertyId, IndexedPropertyManager> managerMap = groupPropertyManagerMap.get(groupTypeId);
+				
 				Map<GroupPropertyId, PropertyDefinition> map = groupPropertyDefinitions.get(groupTypeId);
-				final IndexedPropertyManager indexedPropertyManager = getIndexedPropertyManager(dataManagerContext, propertyDefinition, 0);
-				managerMap.put(groupPropertyId, indexedPropertyManager);
 				map.put(groupPropertyId, propertyDefinition);
+				
+				Map<GroupPropertyId, IndexedPropertyManager> managerMap = groupPropertyManagerMap.get(groupTypeId);
+				final IndexedPropertyManager indexedPropertyManager = getIndexedPropertyManager( propertyDefinition, 0);
+				managerMap.put(groupPropertyId, indexedPropertyManager);
+				
+				
+				
 			}
 		}
 		for (GroupTypeId groupTypeId : nonDefaultBearingPropertyIds.keySet()) {
@@ -311,7 +318,7 @@ public final class GroupsDataManager extends DataManager {
 			final int index = typesToIndexesMap.size();
 			typesToIndexesMap.put(groupTypeId, index);
 			indexesToTypesMap.add(groupTypeId);
-			groupPropertyManagerMap.put(groupTypeId, new LinkedHashMap<>());
+			groupPropertyManagerMap.put(groupTypeId, new LinkedHashMap<>());			
 			groupPropertyDefinitions.put(groupTypeId, new LinkedHashMap<>());
 			nonDefaultBearingPropertyIds.put(groupTypeId, new LinkedHashMap<>());
 		}
@@ -339,7 +346,7 @@ public final class GroupsDataManager extends DataManager {
 		final int index = typesToIndexesMap.size();
 		typesToIndexesMap.put(groupTypeId, index);
 		indexesToTypesMap.add(groupTypeId);
-		groupPropertyManagerMap.put(groupTypeId, new LinkedHashMap<>());
+		groupPropertyManagerMap.put(groupTypeId, new LinkedHashMap<>());		
 		groupPropertyDefinitions.put(groupTypeId, new LinkedHashMap<>());
 		nonDefaultBearingPropertyIds.put(groupTypeId, new LinkedHashMap<>());
 		nonDefaultChecks.put(groupTypeId, new boolean[0]);
@@ -497,8 +504,9 @@ public final class GroupsDataManager extends DataManager {
 
 		// integrate the new group property id and definition
 		Map<GroupPropertyId, IndexedPropertyManager> managerMap = groupPropertyManagerMap.get(groupTypeId);
-		IndexedPropertyManager indexedPropertyManager = getIndexedPropertyManager(dataManagerContext, propertyDefinition, 0);
+		IndexedPropertyManager indexedPropertyManager = getIndexedPropertyManager(propertyDefinition, 0);
 		managerMap.put(groupPropertyId, indexedPropertyManager);
+		DoubleValueContainer doubleValueContainer = new DoubleValueContainer(0);
 		Map<GroupPropertyId, PropertyDefinition> map = groupPropertyDefinitions.get(groupTypeId);
 		map.put(groupPropertyId, propertyDefinition);
 
@@ -516,6 +524,7 @@ public final class GroupsDataManager extends DataManager {
 			int gId = groupId.getValue();
 			Object value = pair.getSecond();
 			indexedPropertyManager.setPropertyValue(gId, value);
+			doubleValueContainer.setValue(gId, dataManagerContext.getTime());
 		}
 
 		if (dataManagerContext.subscribersExist(GroupPropertyDefinitionEvent.class)) {
@@ -701,13 +710,13 @@ public final class GroupsDataManager extends DataManager {
 		validateValueCompatibility(groupPropertyId, propertyDefinition, groupPropertyValue);
 		final Map<GroupPropertyId, IndexedPropertyManager> map = groupPropertyManagerMap.get(groupTypeId);
 		final IndexedPropertyManager indexedPropertyManager = map.get(groupPropertyId);
-
+		
 		if (dataManagerContext.subscribersExist(GroupPropertyUpdateEvent.class)) {
 			Object oldValue = indexedPropertyManager.getPropertyValue(groupId.getValue());
-			indexedPropertyManager.setPropertyValue(groupId.getValue(), groupPropertyValue);
+			indexedPropertyManager.setPropertyValue(groupId.getValue(), groupPropertyValue);			
 			dataManagerContext.releaseObservationEvent(new GroupPropertyUpdateEvent(groupId, groupPropertyId, oldValue, groupPropertyValue));
 		} else {
-			indexedPropertyManager.setPropertyValue(groupId.getValue(), groupPropertyValue);
+			indexedPropertyManager.setPropertyValue(groupId.getValue(), groupPropertyValue);			
 		}
 
 	}
@@ -719,7 +728,6 @@ public final class GroupsDataManager extends DataManager {
 	}
 
 	private void loadGroups() {
-		masterGroupId = -1;
 		for (final GroupId groupId : groupsPluginData.getGroupIds()) {
 			final GroupTypeId groupTypeId = groupsPluginData.getGroupTypeId(groupId);
 			final Integer typeIndex = typesToIndexesMap.get(groupTypeId);
@@ -729,10 +737,9 @@ public final class GroupsDataManager extends DataManager {
 				typesToGroupsMap.setValue(typeIndex, groups);
 			}
 			groups.add(groupId);
-			masterGroupId = FastMath.max(masterGroupId, groupId.getValue());
 			groupsToTypesMap.setIntValue(groupId.getValue(), typeIndex);
 		}
-		masterGroupId++;
+		masterGroupId = groupsPluginData.getNextGroupIdValue();
 	}
 
 	private static record GroupAdditionMutationEvent(GroupId groupId, GroupConstructionInfo groupConstructionInfo) implements Event {
@@ -1099,28 +1106,6 @@ public final class GroupsDataManager extends DataManager {
 		return result;
 	}
 
-	/**
-	 * Returns the value of the group property.
-	 * 
-	 * @throws ContractException
-	 *             <li>{@linkplain GroupError#NULL_GROUP_ID} if the group id is
-	 *             null</li>
-	 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_ID} if the group id
-	 *             is unknown</li>
-	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the group
-	 *             property id is null</li>
-	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if the
-	 *             group property id is unknown</li>
-	 * 
-	 */
-	public double getGroupPropertyTime(final GroupId groupId, GroupPropertyId groupPropertyId) {
-		validateGroupExists(groupId);
-		final GroupTypeId groupTypeId = getGroupType(groupId);
-		validateGroupPropertyId(groupTypeId, groupPropertyId);
-		final Map<GroupPropertyId, IndexedPropertyManager> map = groupPropertyManagerMap.get(groupTypeId);
-		final IndexedPropertyManager indexedPropertyManager = map.get(groupPropertyId);
-		return indexedPropertyManager.getPropertyTime(groupId.getValue());
-	}
 
 	private void validateGroupExists(final GroupId groupId) {
 		if (groupId == null) {
@@ -1297,27 +1282,27 @@ public final class GroupsDataManager extends DataManager {
 		return new ArrayList<>(types);
 	}
 
-	private IndexedPropertyManager getIndexedPropertyManager(final SimulationContext simulationContext, final PropertyDefinition propertyDefinition, final int intialSize) {
+	private IndexedPropertyManager getIndexedPropertyManager( final PropertyDefinition propertyDefinition, final int intialSize) {
 
 		IndexedPropertyManager indexedPropertyManager;
 		if (propertyDefinition.getType() == Boolean.class) {
-			indexedPropertyManager = new BooleanPropertyManager(simulationContext, propertyDefinition, intialSize);
+			indexedPropertyManager = new BooleanPropertyManager(propertyDefinition, intialSize);
 		} else if (propertyDefinition.getType() == Float.class) {
-			indexedPropertyManager = new FloatPropertyManager(simulationContext, propertyDefinition, intialSize);
+			indexedPropertyManager = new FloatPropertyManager(propertyDefinition, intialSize);
 		} else if (propertyDefinition.getType() == Double.class) {
-			indexedPropertyManager = new DoublePropertyManager(simulationContext, propertyDefinition, intialSize);
+			indexedPropertyManager = new DoublePropertyManager(propertyDefinition, intialSize);
 		} else if (propertyDefinition.getType() == Byte.class) {
-			indexedPropertyManager = new IntPropertyManager(simulationContext, propertyDefinition, intialSize);
+			indexedPropertyManager = new IntPropertyManager(propertyDefinition, intialSize);
 		} else if (propertyDefinition.getType() == Short.class) {
-			indexedPropertyManager = new IntPropertyManager(simulationContext, propertyDefinition, intialSize);
+			indexedPropertyManager = new IntPropertyManager(propertyDefinition, intialSize);
 		} else if (propertyDefinition.getType() == Integer.class) {
-			indexedPropertyManager = new IntPropertyManager(simulationContext, propertyDefinition, intialSize);
+			indexedPropertyManager = new IntPropertyManager(propertyDefinition, intialSize);
 		} else if (propertyDefinition.getType() == Long.class) {
-			indexedPropertyManager = new IntPropertyManager(simulationContext, propertyDefinition, intialSize);
+			indexedPropertyManager = new IntPropertyManager(propertyDefinition, intialSize);
 		} else if (Enum.class.isAssignableFrom(propertyDefinition.getType())) {
-			indexedPropertyManager = new EnumPropertyManager(simulationContext, propertyDefinition, intialSize);
+			indexedPropertyManager = new EnumPropertyManager(propertyDefinition, intialSize);
 		} else {
-			indexedPropertyManager = new ObjectPropertyManager(simulationContext, propertyDefinition, intialSize);
+			indexedPropertyManager = new ObjectPropertyManager(propertyDefinition, intialSize);
 		}
 		return indexedPropertyManager;
 	}

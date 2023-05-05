@@ -7,7 +7,6 @@ import org.apache.commons.math3.random.RandomGenerator;
 
 import plugins.materials.support.MaterialsProducerPropertyId;
 import plugins.util.properties.PropertyDefinition;
-import plugins.util.properties.TimeTrackingPolicy;
 
 /**
  * A test support enumeration that contains a variety of materials producer
@@ -25,15 +24,13 @@ public enum TestMaterialsProducerPropertyId implements MaterialsProducerProperty
 								.setType(Boolean.class)//
 								.setDefaultValue(false)//
 								.setPropertyValueMutability(true)//
-								.setTimeTrackingPolicy(TimeTrackingPolicy.DO_NOT_TRACK_TIME)//
 								.build()), //
 	MATERIALS_PRODUCER_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK(
 
 			PropertyDefinition	.builder()//
 								.setType(Integer.class)//
-								//.setDefaultValue(0)//no default value
+								// .setDefaultValue(0)//no default value
 								.setPropertyValueMutability(true)//
-								.setTimeTrackingPolicy(TimeTrackingPolicy.DO_NOT_TRACK_TIME)//
 								.build() //
 	), //
 	MATERIALS_PRODUCER_PROPERTY_3_DOUBLE_MUTABLE_NO_TRACK(
@@ -42,7 +39,6 @@ public enum TestMaterialsProducerPropertyId implements MaterialsProducerProperty
 								.setType(Double.class)//
 								.setDefaultValue(0.0)//
 								.setPropertyValueMutability(true)//
-								.setTimeTrackingPolicy(TimeTrackingPolicy.DO_NOT_TRACK_TIME)//
 								.build() //
 	), //
 	MATERIALS_PRODUCER_PROPERTY_4_BOOLEAN_MUTABLE_TRACK(
@@ -51,7 +47,6 @@ public enum TestMaterialsProducerPropertyId implements MaterialsProducerProperty
 								.setType(Boolean.class)//
 								.setDefaultValue(false)//
 								.setPropertyValueMutability(true)//
-								.setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME)//
 								.build() //
 	), //
 	MATERIALS_PRODUCER_PROPERTY_5_INTEGER_MUTABLE_TRACK(
@@ -60,7 +55,6 @@ public enum TestMaterialsProducerPropertyId implements MaterialsProducerProperty
 								.setType(Integer.class)//
 								.setDefaultValue(0)//
 								.setPropertyValueMutability(true)//
-								.setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME)//
 								.build() //
 	), //
 	MATERIALS_PRODUCER_PROPERTY_6_DOUBLE_MUTABLE_TRACK(
@@ -69,7 +63,6 @@ public enum TestMaterialsProducerPropertyId implements MaterialsProducerProperty
 								.setType(Double.class)//
 								.setDefaultValue(0.0)//
 								.setPropertyValueMutability(true)//
-								.setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME)//
 								.build() //
 	), //
 	MATERIALS_PRODUCER_PROPERTY_7_BOOLEAN_IMMUTABLE_NO_TRACK(
@@ -78,7 +71,6 @@ public enum TestMaterialsProducerPropertyId implements MaterialsProducerProperty
 								.setType(Boolean.class)//
 								.setDefaultValue(false)//
 								.setPropertyValueMutability(false)//
-								.setTimeTrackingPolicy(TimeTrackingPolicy.DO_NOT_TRACK_TIME)//
 								.build() //
 	), //
 	MATERIALS_PRODUCER_PROPERTY_8_INTEGER_IMMUTABLE_NO_TRACK(
@@ -87,7 +79,6 @@ public enum TestMaterialsProducerPropertyId implements MaterialsProducerProperty
 								.setType(Integer.class)//
 								.setDefaultValue(0)//
 								.setPropertyValueMutability(false)//
-								.setTimeTrackingPolicy(TimeTrackingPolicy.DO_NOT_TRACK_TIME)//
 								.build() //
 	), //
 	MATERIALS_PRODUCER_PROPERTY_9_DOUBLE_IMMUTABLE_NO_TRACK(
@@ -96,7 +87,6 @@ public enum TestMaterialsProducerPropertyId implements MaterialsProducerProperty
 								.setType(Double.class)//
 								.setDefaultValue(0.0)//
 								.setPropertyValueMutability(false)//
-								.setTimeTrackingPolicy(TimeTrackingPolicy.DO_NOT_TRACK_TIME)//
 								.build() //
 	);//
 
@@ -149,7 +139,7 @@ public enum TestMaterialsProducerPropertyId implements MaterialsProducerProperty
 		case MATERIALS_PRODUCER_PROPERTY_9_DOUBLE_IMMUTABLE_NO_TRACK:
 			return randomGenerator.nextDouble();
 		default:
-			
+
 			throw new RuntimeException("unhandled case: " + this);
 
 		}
@@ -176,34 +166,34 @@ public enum TestMaterialsProducerPropertyId implements MaterialsProducerProperty
 	public static int size() {
 		return TestMaterialsProducerPropertyId.values().length;
 	}
-	
+
 	/**
 	 * Returns the test property ids associated with a default value
 	 */
-	public static List<TestMaterialsProducerPropertyId> getPropertiesWithDefaultValues(){
+	public static List<TestMaterialsProducerPropertyId> getPropertiesWithDefaultValues() {
 		List<TestMaterialsProducerPropertyId> result = new ArrayList<>();
-		
-		for(TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId.values()) {
-			if(testMaterialsProducerPropertyId.getPropertyDefinition().getDefaultValue().isPresent()) {
+
+		for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId.values()) {
+			if (testMaterialsProducerPropertyId.getPropertyDefinition().getDefaultValue().isPresent()) {
 				result.add(testMaterialsProducerPropertyId);
 			}
 		}
-		
+
 		return result;
 	}
-	
+
 	/**
 	 * Returns the test property ids associated without a default value
 	 */
-	public static List<TestMaterialsProducerPropertyId> getPropertiesWithoutDefaultValues(){
+	public static List<TestMaterialsProducerPropertyId> getPropertiesWithoutDefaultValues() {
 		List<TestMaterialsProducerPropertyId> result = new ArrayList<>();
-		
-		for(TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId.values()) {
-			if(testMaterialsProducerPropertyId.getPropertyDefinition().getDefaultValue().isEmpty()) {
+
+		for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId.values()) {
+			if (testMaterialsProducerPropertyId.getPropertyDefinition().getDefaultValue().isEmpty()) {
 				result.add(testMaterialsProducerPropertyId);
 			}
 		}
-		
+
 		return result;
 	}
 }

@@ -15,7 +15,6 @@ import plugins.materials.testsupport.TestMaterialsProducerId;
 import plugins.materials.testsupport.TestMaterialsProducerPropertyId;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
-import plugins.util.properties.TimeTrackingPolicy;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.random.RandomGeneratorProvider;
@@ -33,8 +32,7 @@ public class AT_MaterialsProducerPropertyDefinitionInitialization {
 	@UnitTestMethod(target = MaterialsProducerPropertyDefinitionInitialization.class, name = "getPropertyDefinition", args = {})
 	public void testGetPropertyDefinition() {
 		MaterialsProducerPropertyDefinitionInitialization.Builder builder = MaterialsProducerPropertyDefinitionInitialization.builder();
-		PropertyDefinition propertyDefinition = PropertyDefinition	.builder().setDefaultValue(100).setPropertyValueMutability(false).setType(Integer.class)
-																	.setTimeTrackingPolicy(TimeTrackingPolicy.DO_NOT_TRACK_TIME).build();
+		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setDefaultValue(100).setPropertyValueMutability(false).setType(Integer.class).build();
 		MaterialsProducerPropertyId producerPropertyId = TestMaterialsProducerPropertyId.MATERIALS_PRODUCER_PROPERTY_8_INTEGER_IMMUTABLE_NO_TRACK;
 
 		builder.setPropertyDefinition(propertyDefinition).setMaterialsProducerPropertyId(producerPropertyId);
@@ -51,8 +49,7 @@ public class AT_MaterialsProducerPropertyDefinitionInitialization {
 	public void testGetPropertyValues() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7180465772129297639L);
 		MaterialsProducerPropertyDefinitionInitialization.Builder builder = MaterialsProducerPropertyDefinitionInitialization.builder();
-		PropertyDefinition propertyDefinition = PropertyDefinition	.builder().setDefaultValue(100).setPropertyValueMutability(false).setType(Integer.class)
-																	.setTimeTrackingPolicy(TimeTrackingPolicy.DO_NOT_TRACK_TIME).build();
+		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setDefaultValue(100).setPropertyValueMutability(false).setType(Integer.class).build();
 		MaterialsProducerPropertyId producerPropertyId = TestMaterialsProducerPropertyId.MATERIALS_PRODUCER_PROPERTY_8_INTEGER_IMMUTABLE_NO_TRACK;
 
 		builder.setPropertyDefinition(propertyDefinition).setMaterialsProducerPropertyId(producerPropertyId);
@@ -76,8 +73,10 @@ public class AT_MaterialsProducerPropertyDefinitionInitialization {
 	@UnitTestMethod(target = MaterialsProducerPropertyDefinitionInitialization.class, name = "getMaterialsProducerPropertyId", args = {})
 	public void testGetMaterialsProducerPropertyId() {
 		MaterialsProducerPropertyDefinitionInitialization.Builder builder = MaterialsProducerPropertyDefinitionInitialization.builder();
-		PropertyDefinition propertyDefinition = PropertyDefinition	.builder().setDefaultValue(100).setPropertyValueMutability(false).setType(Integer.class)
-																	.setTimeTrackingPolicy(TimeTrackingPolicy.DO_NOT_TRACK_TIME).build();
+		PropertyDefinition propertyDefinition = PropertyDefinition	.builder().setDefaultValue(100)//
+																	.setPropertyValueMutability(false)//
+																	.setType(Integer.class)//
+																	.build();
 		MaterialsProducerPropertyId producerPropertyId = TestMaterialsProducerPropertyId.MATERIALS_PRODUCER_PROPERTY_8_INTEGER_IMMUTABLE_NO_TRACK;
 
 		builder.setPropertyDefinition(propertyDefinition).setMaterialsProducerPropertyId(producerPropertyId);
@@ -93,8 +92,10 @@ public class AT_MaterialsProducerPropertyDefinitionInitialization {
 	public void testBuild() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6087174477323266390L);
 		MaterialsProducerPropertyDefinitionInitialization.Builder builder = MaterialsProducerPropertyDefinitionInitialization.builder();
-		PropertyDefinition propertyDefinition = PropertyDefinition	.builder().setDefaultValue(100).setPropertyValueMutability(false).setType(Integer.class)
-																	.setTimeTrackingPolicy(TimeTrackingPolicy.DO_NOT_TRACK_TIME).build();
+		PropertyDefinition propertyDefinition = PropertyDefinition	.builder()//
+																	.setDefaultValue(100)//
+																	.setPropertyValueMutability(false)//
+																	.setType(Integer.class).build();
 		MaterialsProducerPropertyId producerPropertyId = TestMaterialsProducerPropertyId.MATERIALS_PRODUCER_PROPERTY_8_INTEGER_IMMUTABLE_NO_TRACK;
 
 		builder.setPropertyDefinition(propertyDefinition).setMaterialsProducerPropertyId(producerPropertyId);
@@ -131,8 +132,11 @@ public class AT_MaterialsProducerPropertyDefinitionInitialization {
 	@UnitTestMethod(target = MaterialsProducerPropertyDefinitionInitialization.Builder.class, name = "setPropertyDefinition", args = { PropertyDefinition.class })
 	public void testSetPropertyDefinition() {
 		MaterialsProducerPropertyDefinitionInitialization.Builder builder = MaterialsProducerPropertyDefinitionInitialization.builder();
-		PropertyDefinition propertyDefinition = PropertyDefinition	.builder().setDefaultValue(100).setPropertyValueMutability(false).setType(Integer.class)
-																	.setTimeTrackingPolicy(TimeTrackingPolicy.DO_NOT_TRACK_TIME).build();
+		PropertyDefinition propertyDefinition = PropertyDefinition	.builder()//
+																	.setDefaultValue(100)//
+																	.setPropertyValueMutability(false)//
+																	.setType(Integer.class)//
+																	.build();
 		MaterialsProducerPropertyId producerPropertyId = TestMaterialsProducerPropertyId.MATERIALS_PRODUCER_PROPERTY_8_INTEGER_IMMUTABLE_NO_TRACK;
 
 		builder.setPropertyDefinition(propertyDefinition).setMaterialsProducerPropertyId(producerPropertyId);
@@ -152,8 +156,10 @@ public class AT_MaterialsProducerPropertyDefinitionInitialization {
 	public void testAddPropertyValue() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(3968585809330067411L);
 		MaterialsProducerPropertyDefinitionInitialization.Builder builder = MaterialsProducerPropertyDefinitionInitialization.builder();
-		PropertyDefinition propertyDefinition = PropertyDefinition	.builder().setDefaultValue(100).setPropertyValueMutability(false).setType(Integer.class)
-																	.setTimeTrackingPolicy(TimeTrackingPolicy.DO_NOT_TRACK_TIME).build();
+		PropertyDefinition propertyDefinition = PropertyDefinition	.builder()//
+																	.setDefaultValue(100)//
+																	.setPropertyValueMutability(false)//
+																	.setType(Integer.class).build();
 		MaterialsProducerPropertyId producerPropertyId = TestMaterialsProducerPropertyId.MATERIALS_PRODUCER_PROPERTY_8_INTEGER_IMMUTABLE_NO_TRACK;
 
 		builder.setPropertyDefinition(propertyDefinition).setMaterialsProducerPropertyId(producerPropertyId);
@@ -186,8 +192,10 @@ public class AT_MaterialsProducerPropertyDefinitionInitialization {
 	@UnitTestMethod(target = MaterialsProducerPropertyDefinitionInitialization.Builder.class, name = "setMaterialsProducerPropertyId", args = { MaterialsProducerPropertyId.class })
 	public void testSetMaterialsProducerPropertyId() {
 		MaterialsProducerPropertyDefinitionInitialization.Builder builder = MaterialsProducerPropertyDefinitionInitialization.builder();
-		PropertyDefinition propertyDefinition = PropertyDefinition	.builder().setDefaultValue(100).setPropertyValueMutability(false).setType(Integer.class)
-																	.setTimeTrackingPolicy(TimeTrackingPolicy.DO_NOT_TRACK_TIME).build();
+		PropertyDefinition propertyDefinition = PropertyDefinition	.builder()//
+																	.setDefaultValue(100)//
+																	.setPropertyValueMutability(false)//
+																	.setType(Integer.class).build();
 		MaterialsProducerPropertyId producerPropertyId = TestMaterialsProducerPropertyId.MATERIALS_PRODUCER_PROPERTY_8_INTEGER_IMMUTABLE_NO_TRACK;
 
 		builder.setPropertyDefinition(propertyDefinition).setMaterialsProducerPropertyId(producerPropertyId);

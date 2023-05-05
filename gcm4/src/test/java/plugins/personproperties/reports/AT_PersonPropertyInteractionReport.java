@@ -173,7 +173,7 @@ public class AT_PersonPropertyInteractionReport {
 		basePropertyIds.add(TestPersonPropertyId.PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK);
 		basePropertyIds.add(TestPersonPropertyId.PERSON_PROPERTY_3_DOUBLE_MUTABLE_NO_TRACK);
 		for (TestPersonPropertyId testPersonPropertyId : basePropertyIds) {
-			personPropertyBuilder.definePersonProperty(testPersonPropertyId, testPersonPropertyId.getPropertyDefinition());
+			personPropertyBuilder.definePersonProperty(testPersonPropertyId, testPersonPropertyId.getPropertyDefinition(),0,false);
 		}
 		PersonPropertiesPluginData personPropertiesPluginData = personPropertyBuilder.build();
 
@@ -201,9 +201,9 @@ public class AT_PersonPropertyInteractionReport {
 		for (int i = 0; i < populationSize; i++) {
 			PersonId personId = peoplePluginData.getPersonIds().get(i);
 			if (i % 2 == 0) {
-				regionBuilder.setPersonRegion(personId, TestRegionId.REGION_1);
+				regionBuilder.addPerson(personId, TestRegionId.REGION_1);
 			} else {
-				regionBuilder.setPersonRegion(personId, TestRegionId.REGION_2);
+				regionBuilder.addPerson(personId, TestRegionId.REGION_2);
 			}
 		}
 		RegionsPluginData regionsPluginData = regionBuilder.build();

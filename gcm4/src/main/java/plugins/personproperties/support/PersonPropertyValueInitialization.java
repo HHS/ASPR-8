@@ -1,10 +1,10 @@
 package plugins.personproperties.support;
 
-public class PersonPropertyInitialization {
+public class PersonPropertyValueInitialization {
 	private final PersonPropertyId personPropertyId;
 	private final Object value;
 
-	public PersonPropertyInitialization(PersonPropertyId personPropertyId, Object value) {
+	public PersonPropertyValueInitialization(PersonPropertyId personPropertyId, Object value) {
 		super();
 		this.personPropertyId = personPropertyId;
 		this.value = value;
@@ -43,10 +43,10 @@ public class PersonPropertyInitialization {
 		if (this == obj) {
 			return true;
 		}
-		if (!(obj instanceof PersonPropertyInitialization)) {
+		if (!(obj instanceof PersonPropertyValueInitialization)) {
 			return false;
 		}
-		PersonPropertyInitialization other = (PersonPropertyInitialization) obj;
+		PersonPropertyValueInitialization other = (PersonPropertyValueInitialization) obj;
 		if (personPropertyId == null) {
 			if (other.personPropertyId != null) {
 				return false;

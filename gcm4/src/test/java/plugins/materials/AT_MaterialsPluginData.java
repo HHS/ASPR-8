@@ -36,7 +36,6 @@ import plugins.resources.support.ResourceId;
 import plugins.resources.testsupport.TestResourceId;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
-import plugins.util.properties.TimeTrackingPolicy;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.random.RandomGeneratorProvider;
@@ -89,8 +88,7 @@ public class AT_MaterialsPluginData {
 			TestBatchPropertyId propertyId = TestBatchPropertyId.BATCH_PROPERTY_1_1_BOOLEAN_IMMUTABLE_NO_TRACK;
 			PropertyDefinition propertyDefinition = PropertyDefinition	.builder()//
 																		.setType(Boolean.class)//
-																		.setPropertyValueMutability(false)//
-																		.setTimeTrackingPolicy(TimeTrackingPolicy.DO_NOT_TRACK_TIME)//
+																		.setPropertyValueMutability(false)//																		
 																		.build();//
 
 			MaterialsPluginData	.builder()//
@@ -165,8 +163,7 @@ public class AT_MaterialsPluginData {
 
 			PropertyDefinition propertyDefinition = PropertyDefinition	.builder()//
 																		.setType(Boolean.class)//
-																		.setPropertyValueMutability(true)//
-																		.setTimeTrackingPolicy(TimeTrackingPolicy.DO_NOT_TRACK_TIME)//
+																		.setPropertyValueMutability(true)//																		
 																		.build();
 
 			MaterialsPluginData	.builder()//
