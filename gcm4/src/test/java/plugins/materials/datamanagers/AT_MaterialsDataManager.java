@@ -76,7 +76,6 @@ import plugins.resources.testsupport.TestResourceId;
 import plugins.stochastics.StochasticsDataManager;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
-import plugins.util.properties.TimeTrackingPolicy;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
@@ -4602,7 +4601,7 @@ public class AT_MaterialsDataManager {
 		Factory factory = MaterialsTestPluginFactory.factory(0, 0, 0, 7336173642619419311L, (c) -> {
 			ResourceId newResourceId = TestResourceId.getUnknownResourceId();
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
-			resourcesDataManager.addResourceId(newResourceId, TimeTrackingPolicy.TRACK_TIME);
+			resourcesDataManager.addResourceId(newResourceId, true);
 
 			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			Set<MaterialsProducerId> materialsProducerIds = materialsDataManager.getMaterialsProducerIds();

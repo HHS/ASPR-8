@@ -445,14 +445,14 @@ public final class AT_ResourcesPluginData {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(9113503089361379130L);
 
-		Map<ResourceId, TimeTrackingPolicy> expectedValues = new LinkedHashMap<>();
+		Map<ResourceId, Boolean> expectedValues = new LinkedHashMap<>();
 
 		ResourcesPluginData.Builder builder = ResourcesPluginData.builder();
 		for (TestResourceId testResourceId : TestResourceId.values()) {
 			if (testResourceId != TestResourceId.RESOURCE_5) {
 				builder.addResource(testResourceId);
-				TimeTrackingPolicy timeTrackingPolicy = TimeTrackingPolicy.getRandomTimeTrackingPolicy(randomGenerator);
-				TimeTrackingPolicy timeTrackingPolicy2 = timeTrackingPolicy.next();
+				boolean timeTrackingPolicy = randomGenerator.nextBoolean();
+				boolean timeTrackingPolicy2 = !timeTrackingPolicy;
 				builder.setResourceTimeTracking(testResourceId, timeTrackingPolicy2);
 				// replacing data to show that the value persists
 				builder.setResourceTimeTracking(testResourceId, timeTrackingPolicy);
@@ -462,28 +462,22 @@ public final class AT_ResourcesPluginData {
 			}
 		}
 		builder.addResource(TestResourceId.RESOURCE_5);
-		expectedValues.put(TestResourceId.RESOURCE_5, TimeTrackingPolicy.DO_NOT_TRACK_TIME);
+		expectedValues.put(TestResourceId.RESOURCE_5, false);
 
 		ResourcesPluginData resourceInitialData = builder.build();
 		for (TestResourceId testResourceId : TestResourceId.values()) {
-			TimeTrackingPolicy expectedPolicy = expectedValues.get(testResourceId);
-			TimeTrackingPolicy actualPolicy = resourceInitialData.getPersonResourceTimeTrackingPolicy(testResourceId);
+			boolean expectedPolicy = expectedValues.get(testResourceId);
+			boolean actualPolicy = resourceInitialData.getPersonResourceTimeTrackingPolicy(testResourceId);
 			assertEquals(expectedPolicy, actualPolicy);
 		}
 
-		// precondition tests
-		ResourceId resourceId = TestResourceId.RESOURCE_2;
-		TimeTrackingPolicy timeTrackingPolicy = TimeTrackingPolicy.TRACK_TIME;
-
-		// if the resource id is null
-		// ResourceError#NULL_RESOURCE_ID
-		ContractException contractException = assertThrows(ContractException.class, () -> builder.setResourceTimeTracking(null, timeTrackingPolicy));
+		/*
+		 * precondition test: if the resource id is null
+		 * ResourceError#NULL_RESOURCE_ID
+		 */
+		ContractException contractException = assertThrows(ContractException.class, () -> builder.setResourceTimeTracking(null, true));
 		assertEquals(ResourceError.NULL_RESOURCE_ID, contractException.getErrorType());
 
-		// if the tracking policy is null
-		// ResourceError.NULL_TIME_TRACKING_POLICY
-		contractException = assertThrows(ContractException.class, () -> builder.setResourceTimeTracking(resourceId, null));
-		assertEquals(ResourceError.NULL_TIME_TRACKING_POLICY, contractException.getErrorType());
 	}
 
 	@Test
@@ -904,9 +898,9 @@ public final class AT_ResourcesPluginData {
 		ResourcesPluginData.Builder pluginDataBuilder = ResourcesPluginData.builder();
 
 		for (TestResourceId testResourceId : TestResourceId.values()) {
-			TimeTrackingPolicy timeTrackingPolicy = TimeTrackingPolicy.DO_NOT_TRACK_TIME;
+			boolean timeTrackingPolicy = false;
 			if (randomGenerator.nextBoolean()) {
-				timeTrackingPolicy = TimeTrackingPolicy.TRACK_TIME;
+				timeTrackingPolicy = true;
 			}
 			pluginDataBuilder.setResourceTimeTracking(testResourceId, timeTrackingPolicy);
 		}
@@ -968,8 +962,8 @@ public final class AT_ResourcesPluginData {
 		}
 
 		for (ResourceId resourceId : resourcesPluginData.getResourceIds()) {
-			TimeTrackingPolicy expectedPolicy = resourcesPluginData.getPersonResourceTimeTrackingPolicy(resourceId);
-			TimeTrackingPolicy actualPolicy = cloneResourcesPluginData.getPersonResourceTimeTrackingPolicy(resourceId);
+			boolean expectedPolicy = resourcesPluginData.getPersonResourceTimeTrackingPolicy(resourceId);
+			boolean actualPolicy = cloneResourcesPluginData.getPersonResourceTimeTrackingPolicy(resourceId);
 			assertEquals(expectedPolicy, actualPolicy);
 		}
 		for (ResourceId resourceId : resourcesPluginData.getResourceIds()) {

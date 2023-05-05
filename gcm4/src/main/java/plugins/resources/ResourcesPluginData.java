@@ -24,7 +24,6 @@ import plugins.resources.support.ResourceInitialization;
 import plugins.resources.support.ResourcePropertyId;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
-import plugins.util.properties.TimeTrackingPolicy;
 import util.errors.ContractException;
 import util.wrappers.MultiKey;
 
@@ -43,24 +42,23 @@ import util.wrappers.MultiKey;
 public final class ResourcesPluginData implements PluginData {
 
 	private static class Data {
+		
+		private final Set<ResourceId> resourceIds;
+		private final Map<ResourceId, Boolean> resourceTimeTrackingPolicies;
 
 		private final Map<ResourceId, Map<ResourcePropertyId, PropertyDefinition>> resourcePropertyDefinitions;
-
 		private final Map<ResourceId, Map<ResourcePropertyId, Object>> resourcePropertyValues;
 
+		
 		private final List<List<ResourceInitialization>> personResourceLevels;
-
-		private final List<ResourceInitialization> emptyResourceInitializationList = Collections.unmodifiableList(new ArrayList<>());
-
-		private int personCount;
-
-		private final Set<ResourceId> resourceIds;
 
 		private final Map<RegionId, List<ResourceInitialization>> regionResourceLevels;
 
-		private final Map<ResourceId, TimeTrackingPolicy> resourceTimeTrackingPolicies;
+		
 
-		private boolean locked;
+		private int personCount;
+		private boolean locked;		
+		private final List<ResourceInitialization> emptyResourceInitializationList = Collections.unmodifiableList(new ArrayList<>());
 
 		public Data() {
 			resourcePropertyDefinitions = new LinkedHashMap<>();
@@ -399,12 +397,6 @@ public final class ResourcesPluginData implements PluginData {
 		}
 	}
 
-	private static void validateTimeTrackingPolicyNotNull(TimeTrackingPolicy timeTrackingPolicy) {
-		if (timeTrackingPolicy == null) {
-			throw new ContractException(ResourceError.NULL_TIME_TRACKING_POLICY);
-		}
-	}
-
 	private static void validateRegionIdNotNull(RegionId regionId) {
 		if (regionId == null) {
 			throw new ContractException(RegionError.NULL_REGION_ID);
@@ -537,7 +529,7 @@ public final class ResourcesPluginData implements PluginData {
 			validateResourceIdNotNull(resourceId);
 			data.resourceIds.add(resourceId);
 			if (!data.resourceTimeTrackingPolicies.containsKey(resourceId)) {
-				data.resourceTimeTrackingPolicies.put(resourceId, TimeTrackingPolicy.DO_NOT_TRACK_TIME);
+				data.resourceTimeTrackingPolicies.put(resourceId, false);
 			}
 			return this;
 		}
@@ -708,10 +700,9 @@ public final class ResourcesPluginData implements PluginData {
 		 *             if the tracking policy is null</li>
 		 *
 		 */
-		public Builder setResourceTimeTracking(final ResourceId resourceId, final TimeTrackingPolicy trackValueAssignmentTimes) {
+		public Builder setResourceTimeTracking(final ResourceId resourceId, final boolean trackValueAssignmentTimes) {
 			ensureDataMutability();
-			validateResourceIdNotNull(resourceId);
-			validateTimeTrackingPolicyNotNull(trackValueAssignmentTimes);
+			validateResourceIdNotNull(resourceId);			
 			data.resourceTimeTrackingPolicies.put(resourceId, trackValueAssignmentTimes);
 			return this;
 		}
@@ -971,13 +962,9 @@ public final class ResourcesPluginData implements PluginData {
 	 *             <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID} if the
 	 *             resource id is unknown</li>
 	 */
-	public TimeTrackingPolicy getPersonResourceTimeTrackingPolicy(final ResourceId resourceId) {
+	public boolean getPersonResourceTimeTrackingPolicy(final ResourceId resourceId) {
 		validateResourceExists(data, resourceId);
-		TimeTrackingPolicy result = data.resourceTimeTrackingPolicies.get(resourceId);
-		if (result == null) {
-			result = TimeTrackingPolicy.DO_NOT_TRACK_TIME;
-		}
-		return result;
+		return data.resourceTimeTrackingPolicies.get(resourceId);
 	}
 
 	/**

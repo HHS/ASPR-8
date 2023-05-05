@@ -69,7 +69,7 @@ public final class AT_ResourcesDataManager {
 				.defineResourceProperty(TestResourceId.RESOURCE_2, TestResourcePropertyId.ResourceProperty_1_1_BOOLEAN_MUTABLE, TestResourcePropertyId.ResourceProperty_1_1_BOOLEAN_MUTABLE.getPropertyDefinition())
 				.addResource(TestResourceId.RESOURCE_1)
 				.addResource(TestResourceId.RESOURCE_2)
-				.setResourceTimeTracking(TestResourceId.RESOURCE_2, TimeTrackingPolicy.TRACK_TIME)
+				.setResourceTimeTracking(TestResourceId.RESOURCE_2, true)
 				.setResourcePropertyValue(TestResourceId.RESOURCE_1, TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE, 45)
 				.build();
 		List<RegionId> expectedRegionIds = new ArrayList<>();
@@ -103,7 +103,7 @@ public final class AT_ResourcesDataManager {
 				.defineResourceProperty(TestResourceId.RESOURCE_2, TestResourcePropertyId.ResourceProperty_1_1_BOOLEAN_MUTABLE, TestResourcePropertyId.ResourceProperty_1_1_BOOLEAN_MUTABLE.getPropertyDefinition())
 				.addResource(TestResourceId.RESOURCE_1)
 				.addResource(TestResourceId.RESOURCE_2)
-				.setResourceTimeTracking(TestResourceId.RESOURCE_2, TimeTrackingPolicy.TRACK_TIME)
+				.setResourceTimeTracking(TestResourceId.RESOURCE_2, true)
 				.setResourcePropertyValue(TestResourceId.RESOURCE_1, TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE, 45)
 				.setResourcePropertyValue(TestResourceId.RESOURCE_2, TestResourcePropertyId.ResourceProperty_1_1_BOOLEAN_MUTABLE, false)
 				.setRegionResourceLevel(TestRegionId.REGION_1, TestResourceId.RESOURCE_1, 55)
@@ -119,7 +119,7 @@ public final class AT_ResourcesDataManager {
 				.defineResourceProperty(TestResourceId.RESOURCE_2, TestResourcePropertyId.ResourceProperty_1_1_BOOLEAN_MUTABLE, TestResourcePropertyId.ResourceProperty_1_1_BOOLEAN_MUTABLE.getPropertyDefinition())
 				.addResource(TestResourceId.RESOURCE_1)
 				.addResource(TestResourceId.RESOURCE_2)
-				.setResourceTimeTracking(TestResourceId.RESOURCE_2, TimeTrackingPolicy.TRACK_TIME)
+				.setResourceTimeTracking(TestResourceId.RESOURCE_2, true)
 				.setResourcePropertyValue(TestResourceId.RESOURCE_1, TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE, 45)
 				.build();
 		TestPluginData.Builder pluginBuilder2 = TestPluginData.builder();
@@ -139,7 +139,7 @@ public final class AT_ResourcesDataManager {
 		pluginBuilder2.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 
-			resourcesDataManager.addResourceId(TestResourceId.RESOURCE_3, TimeTrackingPolicy.DO_NOT_TRACK_TIME);
+			resourcesDataManager.addResourceId(TestResourceId.RESOURCE_3, false);
 			resourcesDataManager.addResourceToRegion(TestResourceId.RESOURCE_3, TestRegionId.REGION_2, 73);
 			resourcesDataManager.transferResourceFromPersonToRegion(TestResourceId.RESOURCE_2, new PersonId(0), 10);
 			resourcesDataManager.transferResourceBetweenRegions(TestResourceId.RESOURCE_2, TestRegionId.REGION_1, TestRegionId.REGION_2, 5);
@@ -164,7 +164,7 @@ public final class AT_ResourcesDataManager {
 				.addResource(TestResourceId.RESOURCE_1)
 				.addResource(TestResourceId.RESOURCE_2)
 				.addResource(TestResourceId.RESOURCE_3)
-				.setResourceTimeTracking(TestResourceId.RESOURCE_2, TimeTrackingPolicy.TRACK_TIME)
+				.setResourceTimeTracking(TestResourceId.RESOURCE_2, true)
 				.setResourcePropertyValue(TestResourceId.RESOURCE_1, TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE, 45)
 				.setResourcePropertyValue(TestResourceId.RESOURCE_2, TestResourcePropertyId.ResourceProperty_1_1_BOOLEAN_MUTABLE, false)
 				.setRegionResourceLevel(TestRegionId.REGION_1, TestResourceId.RESOURCE_1, 55)
@@ -442,8 +442,8 @@ public final class AT_ResourcesDataManager {
 			// tracked
 			int trackedResourceCount = 0;
 			for (ResourceId resourceId : resourceIds) {
-				TimeTrackingPolicy personResourceTimeTrackingPolicy = resourcesDataManager.getPersonResourceTimeTrackingPolicy(resourceId);
-				if (personResourceTimeTrackingPolicy == TimeTrackingPolicy.TRACK_TIME) {
+				boolean personResourceTimeTrackingPolicy = resourcesDataManager.getPersonResourceTimeTrackingPolicy(resourceId);
+				if (personResourceTimeTrackingPolicy) {
 					trackedResourceCount++;
 				}
 			}
@@ -529,8 +529,8 @@ public final class AT_ResourcesDataManager {
 			for (MultiKey multiKey : expectedTimes.keySet()) {
 				PersonId personId = multiKey.getKey(0);
 				ResourceId resourceId = multiKey.getKey(1);
-				TimeTrackingPolicy personResourceTimeTrackingPolicy = resourcesDataManager.getPersonResourceTimeTrackingPolicy(resourceId);
-				if (personResourceTimeTrackingPolicy == TimeTrackingPolicy.TRACK_TIME) {
+				boolean trackTimes = resourcesDataManager.getPersonResourceTimeTrackingPolicy(resourceId);
+				if (trackTimes) {
 					double expectedTime = expectedTimes.get(multiKey).getValue();
 					double actualTime = resourcesDataManager.getPersonResourceTime(resourceId, personId);
 					assertEquals(expectedTime, actualTime);
@@ -545,8 +545,8 @@ public final class AT_ResourcesDataManager {
 
 			int trackedResourceCount = 0;
 			for (ResourceId resourceId : resourcesDataManager.getResourceIds()) {
-				TimeTrackingPolicy personResourceTimeTrackingPolicy = resourcesDataManager.getPersonResourceTimeTrackingPolicy(resourceId);
-				if (personResourceTimeTrackingPolicy == TimeTrackingPolicy.TRACK_TIME) {
+				boolean trackTimes = resourcesDataManager.getPersonResourceTimeTrackingPolicy(resourceId);
+				if (trackTimes) {
 					trackedResourceCount++;
 				}
 			}
@@ -610,8 +610,8 @@ public final class AT_ResourcesDataManager {
 		Factory factory = ResourcesTestPluginFactory.factory(5, 757175164544632409L, (c) -> {
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 			for (TestResourceId testResourceId : TestResourceId.values()) {
-				TimeTrackingPolicy actualPolicy = resourcesDataManager.getPersonResourceTimeTrackingPolicy(testResourceId);
-				TimeTrackingPolicy expectedPolicy = testResourceId.getTimeTrackingPolicy();
+				boolean actualPolicy = resourcesDataManager.getPersonResourceTimeTrackingPolicy(testResourceId);
+				boolean expectedPolicy = testResourceId.getTimeTrackingPolicy();
 				assertEquals(expectedPolicy, actualPolicy);
 			}
 		});
@@ -706,162 +706,6 @@ public final class AT_ResourcesDataManager {
 			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
 		});
 		assertEquals(RegionError.UNKNOWN_REGION_ID, contractException.getErrorType());
-	}
-
-	@Test
-	@UnitTestMethod(target = ResourcesDataManager.class, name = "getRegionResourceTime", args = { RegionId.class, ResourceId.class })
-	public void testGetRegionResourceTime() {
-
-		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
-
-		Map<MultiKey, MutableDouble> expectedTimes = new LinkedHashMap<>();
-
-		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
-			// establish data views
-
-			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
-			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
-			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
-
-			// establish the people and resources
-			Set<ResourceId> resourceIds = resourcesDataManager.getResourceIds();
-			List<RegionId> regionIds = new ArrayList<>(regionsDataManager.getRegionIds());
-
-			// initialize the expected times
-			for (RegionId regionId : regionIds) {
-				for (ResourceId resourceId : resourceIds) {
-					expectedTimes.put(new MultiKey(regionId, resourceId), new MutableDouble());
-				}
-			}
-
-			// give random amounts of resource to random regions
-			for (int i = 0; i < regionIds.size(); i++) {
-				RegionId regionId = regionIds.get(randomGenerator.nextInt(regionIds.size()));
-				ResourceId resourceId = TestResourceId.getRandomResourceId(randomGenerator);
-				int amount = randomGenerator.nextInt(5) + 1;
-				resourcesDataManager.addResourceToRegion(resourceId, regionId, amount);
-				expectedTimes.get(new MultiKey(regionId, resourceId)).setValue(c.getTime());
-			}
-
-		}));
-
-		// make more resource updates at time 1
-		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
-			// establish data views
-
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
-			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
-			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
-			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
-
-			// establish the regions
-			List<RegionId> regionIds = new ArrayList<>(regionsDataManager.getRegionIds());
-
-			// give random amounts of resource to random regions
-			for (int i = 0; i < regionIds.size(); i++) {
-				RegionId regionId = regionIds.get(randomGenerator.nextInt(regionIds.size()));
-				ResourceId resourceId = TestResourceId.getRandomResourceId(randomGenerator);
-				int amount = randomGenerator.nextInt(5) + 1;
-				resourcesDataManager.addResourceToRegion(resourceId, regionId, amount);
-				expectedTimes.get(new MultiKey(regionId, resourceId)).setValue(c.getTime());
-			}
-
-		}));
-
-		// make more resource updates at time 2
-		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(2, (c) -> {
-			// establish data views
-
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
-			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
-			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
-			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
-			// establish the regions
-			List<RegionId> regionIds = new ArrayList<>(regionsDataManager.getRegionIds());
-
-			// give random amounts of resource to random regions
-			for (int i = 0; i < regionIds.size(); i++) {
-				RegionId regionId = regionIds.get(randomGenerator.nextInt(regionIds.size()));
-				ResourceId resourceId = TestResourceId.getRandomResourceId(randomGenerator);
-				int amount = randomGenerator.nextInt(5) + 1;
-				resourcesDataManager.addResourceToRegion(resourceId, regionId, amount);
-				expectedTimes.get(new MultiKey(regionId, resourceId)).setValue(c.getTime());
-			}
-
-		}));
-
-		// test the person resource times
-		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(3, (c) -> {
-			// establish data views
-
-			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
-			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
-
-			// show that the region resource times match expectations
-			int actualAssertionsCount = 0;
-			for (MultiKey multiKey : expectedTimes.keySet()) {
-				RegionId regionId = multiKey.getKey(0);
-				ResourceId resourceId = multiKey.getKey(1);
-				double expectedTime = expectedTimes.get(multiKey).getValue();
-				double actualTime = resourcesDataManager.getRegionResourceTime(regionId, resourceId);
-				assertEquals(expectedTime, actualTime);
-				actualAssertionsCount++;
-			}
-			/*
-			 * Show that the number of time values that were tested is equal to
-			 * the size of the population times the number of resources
-			 */
-			int expectedAssertionsCount = regionsDataManager.getRegionIds().size() * resourcesDataManager.getResourceIds().size();
-			assertEquals(expectedAssertionsCount, actualAssertionsCount);
-		}));
-
-		TestPluginData testPluginData = pluginBuilder.build();
-		Factory factory = ResourcesTestPluginFactory.factory(30, 6128764970683025350L, testPluginData);
-		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
-		/*
-		 * precondition test: if the assignment times for the resource are not
-		 * tracked
-		 */
-		ContractException contractException = assertThrows(ContractException.class, () -> {
-			Factory factory2 = ResourcesTestPluginFactory.factory(30, 3888561557931148149L, (c) -> {
-				ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
-				resourcesDataManager.getPersonResourceTime(TestResourceId.RESOURCE_2, new PersonId(0));
-			});
-			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
-		});
-		assertEquals(ResourceError.RESOURCE_ASSIGNMENT_TIME_NOT_TRACKED, contractException.getErrorType());
-
-		/* precondition test: if the resource id is null */
-		contractException = assertThrows(ContractException.class, () -> {
-			Factory factory2 = ResourcesTestPluginFactory.factory(30, 9045818580061726595L, (c) -> {
-				ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
-				resourcesDataManager.getPersonResourceTime(null, new PersonId(0));
-			});
-			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
-		});
-		assertEquals(ResourceError.NULL_RESOURCE_ID, contractException.getErrorType());
-
-		/* precondition test: if the resource id is unknown */
-		contractException = assertThrows(ContractException.class, () -> {
-			Factory factory2 = ResourcesTestPluginFactory.factory(30, 5592254382530100326L, (c) -> {
-				ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
-				resourcesDataManager.getPersonResourceTime(TestResourceId.getUnknownResourceId(), new PersonId(0));
-			});
-			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
-		});
-		assertEquals(ResourceError.UNKNOWN_RESOURCE_ID, contractException.getErrorType());
-
-		/* precondition test: if the person id null */
-		contractException = assertThrows(ContractException.class, () -> {
-			Factory factory2 = ResourcesTestPluginFactory.factory(30, 1245016103076447355L, (c) -> {
-				ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
-				resourcesDataManager.getPersonResourceTime(TestResourceId.RESOURCE_1, null);
-			});
-			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
-		});
-		assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
-
 	}
 
 	@Test
@@ -1378,21 +1222,21 @@ public final class AT_ResourcesDataManager {
 
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
-			TimeTrackingPolicy timeTrackingPolicy = TimeTrackingPolicy.DO_NOT_TRACK_TIME;
+			boolean timeTrackingPolicy = false;
 			assertFalse(resourcesDataManager.resourceIdExists(newResourceId1));
 			resourcesDataManager.addResourceId(newResourceId1, timeTrackingPolicy);
 			assertTrue(resourcesDataManager.resourceIdExists(newResourceId1));
-			MultiKey multiKey = new MultiKey(c.getTime(), newResourceId1, TimeTrackingPolicy.DO_NOT_TRACK_TIME);
+			MultiKey multiKey = new MultiKey(c.getTime(), newResourceId1, false);
 			expectedObservations.add(multiKey);
 		}));
 
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(2, (c) -> {
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
-			TimeTrackingPolicy timeTrackingPolicy = TimeTrackingPolicy.TRACK_TIME;
+			boolean timeTrackingPolicy = true;
 			assertFalse(resourcesDataManager.resourceIdExists(newResourceId2));
 			resourcesDataManager.addResourceId(newResourceId2, timeTrackingPolicy);
 			assertTrue(resourcesDataManager.resourceIdExists(newResourceId2));
-			MultiKey multiKey = new MultiKey(c.getTime(), newResourceId2, TimeTrackingPolicy.TRACK_TIME);
+			MultiKey multiKey = new MultiKey(c.getTime(), newResourceId2, true);
 			expectedObservations.add(multiKey);
 		}));
 
@@ -1408,7 +1252,7 @@ public final class AT_ResourcesDataManager {
 		ContractException contractException = assertThrows(ContractException.class, () -> {
 			Factory factory2 = ResourcesTestPluginFactory.factory(5, 3016555021220987436L, (c) -> {
 				ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
-				resourcesDataManager.addResourceId(null, TimeTrackingPolicy.DO_NOT_TRACK_TIME);
+				resourcesDataManager.addResourceId(null, false);
 			});
 			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
 		});
@@ -1418,21 +1262,11 @@ public final class AT_ResourcesDataManager {
 		contractException = assertThrows(ContractException.class, () -> {
 			Factory factory2 = ResourcesTestPluginFactory.factory(5, 9097839209339012193L, (c) -> {
 				ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
-				resourcesDataManager.addResourceId(TestResourceId.RESOURCE_1, TimeTrackingPolicy.DO_NOT_TRACK_TIME);
+				resourcesDataManager.addResourceId(TestResourceId.RESOURCE_1, false);
 			});
 			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
 		});
 		assertEquals(ResourceError.DUPLICATE_RESOURCE_ID, contractException.getErrorType());
-
-		// precondition test: if the time tracking policy is null
-		contractException = assertThrows(ContractException.class, () -> {
-			Factory factory2 = ResourcesTestPluginFactory.factory(5, 5786650172226277505L, (c) -> {
-				ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
-				resourcesDataManager.addResourceId(TestResourceId.getUnknownResourceId(), null);
-			});
-			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
-		});
-		assertEquals(PropertyError.NULL_TIME_TRACKING_POLICY, contractException.getErrorType());
 
 	}
 
@@ -3091,8 +2925,8 @@ public final class AT_ResourcesDataManager {
 			}
 
 			for (ResourceId resourceId : resourcesPluginData.getResourceIds()) {
-				TimeTrackingPolicy expectedPolicy = resourcesPluginData.getPersonResourceTimeTrackingPolicy(resourceId);
-				TimeTrackingPolicy actualPolicy = resourcesDataManager.getPersonResourceTimeTrackingPolicy(resourceId);
+				boolean expectedPolicy = resourcesPluginData.getPersonResourceTimeTrackingPolicy(resourceId);
+				boolean actualPolicy = resourcesDataManager.getPersonResourceTimeTrackingPolicy(resourceId);
 				assertEquals(expectedPolicy, actualPolicy);
 			}
 
@@ -4054,19 +3888,19 @@ public final class AT_ResourcesDataManager {
 
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
-			TimeTrackingPolicy timeTrackingPolicy = TimeTrackingPolicy.DO_NOT_TRACK_TIME;
+			boolean timeTrackingPolicy = false;
 			assertFalse(resourcesDataManager.resourceIdExists(newResourceId1));
 			resourcesDataManager.addResourceId(newResourceId1, timeTrackingPolicy);
-			MultiKey multiKey = new MultiKey(c.getTime(), newResourceId1, TimeTrackingPolicy.DO_NOT_TRACK_TIME);
+			MultiKey multiKey = new MultiKey(c.getTime(), newResourceId1, false);
 			expectedObservations.add(multiKey);
 		}));
 
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(2, (c) -> {
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
-			TimeTrackingPolicy timeTrackingPolicy = TimeTrackingPolicy.TRACK_TIME;
+			boolean timeTrackingPolicy = true;
 			assertFalse(resourcesDataManager.resourceIdExists(newResourceId2));
 			resourcesDataManager.addResourceId(newResourceId2, timeTrackingPolicy);
-			MultiKey multiKey = new MultiKey(c.getTime(), newResourceId2, TimeTrackingPolicy.TRACK_TIME);
+			MultiKey multiKey = new MultiKey(c.getTime(), newResourceId2, true);
 			expectedObservations.add(multiKey);
 		}));
 
