@@ -15,6 +15,8 @@ public enum ResourceError implements ContractError {
 	DUPLICATE_RESOURCE_ID("Duplicate resource"),
 	DUPLICATE_REGION_RESOURCE_LEVEL_ASSIGNMENT("Duplicate region resource level assignment"),
 	NEGATIVE_RESOURCE_AMOUNT("Resource amount is negative"),
+	NULL_AMOUNT("Null amount"),
+	NULL_TIME("Null time"),
 	NULL_RESOURCE_ID("Null resource id"),
 	NULL_RESOURCE_DATA_MANAGER("Null resource data manager"),
 	NULL_RESOURCE_PLUGIN_DATA("Null resource plugin data"),	

@@ -42,20 +42,19 @@ import util.wrappers.MultiKey;
 public final class ResourcesPluginData implements PluginData {
 
 	private static class Data {
-		
-		private final Set<ResourceId> resourceIds;
-		private final Map<ResourceId, Boolean> resourceTimeTrackingPolicies;
 
+		private final Map<ResourceId, Double> resourceIds;
+		private final Map<ResourceId, Boolean> resourceTimeTrackingPolicies;
 		private final Map<ResourceId, Map<ResourcePropertyId, PropertyDefinition>> resourcePropertyDefinitions;
 		private final Map<ResourceId, Map<ResourcePropertyId, Object>> resourcePropertyValues;
 
-		
-		private final List<List<ResourceInitialization>> personResourceLevels;
+		private final Map<ResourceId, List<Long>> personResourceLevels;
+		private final Map<ResourceId, List<Double>> personResourceTimes;
 
 		private final Map<RegionId, List<ResourceInitialization>> regionResourceLevels;
 
 		private int personCount;
-		private boolean locked;		
+		private boolean locked;
 		private final List<ResourceInitialization> emptyResourceInitializationList = Collections.unmodifiableList(new ArrayList<>());
 
 		public Data() {
@@ -131,14 +130,15 @@ public final class ResourcesPluginData implements PluginData {
 			final int prime = 31;
 			int result = 0;
 			for (ResourceId resourceId : resourcePropertyValues.keySet()) {
-				//the defMap might be null
+				// the defMap might be null
 				Map<ResourcePropertyId, PropertyDefinition> defMap = resourcePropertyDefinitions.get(resourceId);
 				Map<ResourcePropertyId, Object> map = resourcePropertyValues.get(resourceId);
 				if (map != null) {
 					for (ResourcePropertyId resourcePropertyId : map.keySet()) {
 						boolean addValue = true;
 						Object value = map.get(resourcePropertyId);
-						//the existence of the property id in a validated Data implies the defMap is not null
+						// the existence of the property id in a validated Data
+						// implies the defMap is not null
 						PropertyDefinition propertyDefinition = defMap.get(resourcePropertyId);
 						Optional<Object> optional = propertyDefinition.getDefaultValue();
 						if (optional.isPresent()) {
@@ -419,6 +419,15 @@ public final class ResourcesPluginData implements PluginData {
 		}
 	}
 
+	private static void validateResourceAmount(final Long amount) {
+		if (amount == null) {
+			throw new ContractException(ResourceError.NULL_AMOUNT, amount);
+		}
+		if (amount < 0) {
+			throw new ContractException(ResourceError.NEGATIVE_RESOURCE_AMOUNT, amount);
+		}
+	}
+
 	private static void validateResourcePropertyIdNotNull(ResourcePropertyId resourcePropertyId) {
 		if (resourcePropertyId == null) {
 			throw new ContractException(PropertyError.NULL_PROPERTY_ID);
@@ -515,17 +524,21 @@ public final class ResourcesPluginData implements PluginData {
 		}
 
 		/**
-		 * Adds the given resouce id. Duplicate inputs override previous inputs.
+		 * Adds the given resouce id with default time value. Duplicate inputs
+		 * override previous inputs.
 		 * 
 		 * @throws ContractException
 		 *             <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if the
 		 *             resource id is null</li>
+		 *             <li>{@linkplain ResourceError#NULL_TIME} if the time is
+		 *             null</li>
 		 *
 		 */
-		public Builder addResource(final ResourceId resourceId) {
+		public Builder addResource(final ResourceId resourceId, Double time) {
 			ensureDataMutability();
 			validateResourceIdNotNull(resourceId);
-			data.resourceIds.add(resourceId);
+			validateTime(time);
+			data.resourceIds.put(resourceId, time);
 			if (!data.resourceTimeTrackingPolicies.containsKey(resourceId)) {
 				data.resourceTimeTrackingPolicies.put(resourceId, false);
 			}
@@ -572,47 +585,68 @@ public final class ResourcesPluginData implements PluginData {
 		 *             <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if the
 		 *             resource id is null</li>
 		 *             <li>{@linkplain ResourceError#NEGATIVE_RESOURCE_AMOUNT}
-		 *             if the resource amount is negative</li> *
-		 *
+		 *             if the resource amount is negative</li>
+		 *             <li>{@linkplain ResourceError#NULL_AMOUNT} if the amount
+		 *             is null</li>
+		 * 
 		 */
 
-		public Builder setPersonResourceLevel(final PersonId personId, final ResourceId resourceId, final long amount) {
+		public Builder setPersonResourceLevel(final PersonId personId, final ResourceId resourceId, final Long amount) {
 			ensureDataMutability();
 			validatePersonId(personId);
 			validateResourceIdNotNull(resourceId);
 			validateResourceAmount(amount);
 
-			int personIndex = personId.getValue();
-			data.personCount = FastMath.max(data.personCount, personIndex + 1);
-
-			while (personIndex >= data.personResourceLevels.size()) {
-				data.personResourceLevels.add(null);
-			}
-
-			List<ResourceInitialization> list = data.personResourceLevels.get(personIndex);
-			ResourceInitialization resourceInitialization = new ResourceInitialization(resourceId, amount);
-
+			List<Long> list = data.personResourceLevels.get(resourceId);
 			if (list == null) {
 				list = new ArrayList<>();
-				data.personResourceLevels.set(personIndex, list);
+				data.personResourceLevels.put(resourceId, list);
 			}
 
-			int index = -1;
-
-			for (int i = 0; i < list.size(); i++) {
-				if (list.get(i).getResourceId().equals(resourceId)) {
-					index = i;
-					break;
-				}
+			int personIndex = personId.getValue();
+			while (list.size() <= personIndex) {
+				list.add(null);
 			}
-
-			if (index == -1) {
-				list.add(resourceInitialization);
-			} else {
-				list.set(index, resourceInitialization);
-			}
+			list.set(personIndex, amount);
 
 			return this;
+
+		}
+
+		/**
+		 * Sets a person's initial resource time. Duplicate inputs override
+		 * previous inputs.
+		 * 
+		 * @throws ContractException
+		 *             <li>{@linkplain PersonError#NULL_PERSON_ID} if the person
+		 *             id is null</li>
+		 *             <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if the
+		 *             resource id is null</li>
+		 *             <li>{@linkplain ResourceError#NEGATIVE_RESOURCE_AMOUNT}
+		 *             if the resource amount is negative</li> *
+		 *             <li>{@linkplain ResourceError#NULL_TIME} if the time is
+		 *             null</li>
+		 */
+		public Builder setPersonResourceTime(final PersonId personId, final ResourceId resourceId, final Double time) {
+			ensureDataMutability();
+			validatePersonId(personId);
+			validateResourceIdNotNull(resourceId);
+			validateTime(time);
+
+			List<Double> list = data.personResourceTimes.get(resourceId);
+			if (list == null) {
+				list = new ArrayList<>();
+				data.personResourceTimes.put(resourceId, list);
+			}
+
+			int personIndex = personId.getValue();
+			while (list.size() <= personIndex) {
+				list.add(null);
+			}
+			list.set(personIndex, time);
+
+			return this;
+
 		}
 
 		/**
@@ -700,7 +734,7 @@ public final class ResourcesPluginData implements PluginData {
 		 */
 		public Builder setResourceTimeTracking(final ResourceId resourceId, final boolean trackValueAssignmentTimes) {
 			ensureDataMutability();
-			validateResourceIdNotNull(resourceId);			
+			validateResourceIdNotNull(resourceId);
 			data.resourceTimeTrackingPolicies.put(resourceId, trackValueAssignmentTimes);
 			return this;
 		}
@@ -789,6 +823,12 @@ public final class ResourcesPluginData implements PluginData {
 
 		}
 
+	}
+
+	private static void validateTime(Double time) {
+		if (time == null) {
+			throw new ContractException(ResourceError.NULL_TIME);
+		}
 	}
 
 	private static void validateResourcePropertyIsDefined(final Data data, final ResourceId resourceId, final ResourcePropertyId resourcePropertyId) {
