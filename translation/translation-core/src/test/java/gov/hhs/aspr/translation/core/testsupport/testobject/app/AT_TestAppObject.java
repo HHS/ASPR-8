@@ -103,6 +103,26 @@ public class AT_TestAppObject {
     }
 
     @Test
+    @UnitTestMethod(target = TestAppObject.class, name = "setTestAppEnum", args = { TestAppEnum.class })
+    public void testSetTestAppEnum() {
+        TestAppObject testAppObject = new TestAppObject();
+
+        testAppObject.setTestAppEnum(TestAppEnum.TEST1);
+
+        assertEquals(TestAppEnum.TEST1, testAppObject.getTestAppEnum());
+    }
+
+    @Test
+    @UnitTestMethod(target = TestAppObject.class, name = "getTestAppEnum", args = {})
+    public void testGetTestAppEnum() {
+        TestAppObject testAppObject = new TestAppObject();
+
+        testAppObject.setTestAppEnum(TestAppEnum.TEST2);
+
+        assertEquals(TestAppEnum.TEST2, testAppObject.getTestAppEnum());
+    }
+
+    @Test
     @UnitTestMethod(target = TestAppObject.class, name = "hashCode", args = {})
     public void testHashCode() {
         TestAppObject testAppObject1 = new TestAppObject();

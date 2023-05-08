@@ -6,9 +6,15 @@ option java_package = "gov.hhs.aspr.translation.protobuf.core.testsupport.testob
 
 import "testcomplexobject.proto";
 
+enum TestInputEnum {
+    TEST1 = 0;
+    TEST2 = 1;
+}
+
 message TestInputObject {
     int32 integer = 1;
     bool bool = 2;
     string string = 3;
     TestComplexInputObject testComplexInputObject = 4;
+    TestInputEnum enum = 5;
 }

@@ -160,13 +160,13 @@ public abstract class TranslationEngine {
      * abstract method that must be implemented by child TranslatorCores that
      * defines how to write to output files
      */
-    public abstract <U, M extends U> void writeOutput(Writer writer, M appObject, Optional<Class<U>> superClass);
+    protected abstract <U, M extends U> void writeOutput(Writer writer, M appObject, Optional<Class<U>> superClass);
 
     /**
      * abstract method that must be implemented by child TranslatorCores that
      * defines how to read from input files
      */
-    public abstract <T, U> T readInput(Reader reader, Class<U> inputClassRef);
+    protected abstract <T, U> T readInput(Reader reader, Class<U> inputClassRef);
 
     /**
      * Given an object, uses the class of the object to obtain the translationSpec

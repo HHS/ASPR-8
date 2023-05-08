@@ -35,6 +35,8 @@ import gov.hhs.aspr.translation.protobuf.core.translationSpecs.UInt64Translation
  * specs needed for converting to/from the Protobuf {@link Any} type.
  */
 class PrimitiveTranslationSpecs {
+        private PrimitiveTranslationSpecs() {
+        }
 
         private final static BooleanTranslationSpec BOOLEAN_TRANSLATOR_SPEC = new BooleanTranslationSpec();
         private final static Int32TranslationSpec INT32_TRANSLATOR_SPEC = new Int32TranslationSpec();

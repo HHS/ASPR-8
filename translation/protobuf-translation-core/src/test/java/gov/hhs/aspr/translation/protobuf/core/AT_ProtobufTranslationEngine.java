@@ -20,13 +20,22 @@ import com.google.gson.JsonParser;
 import com.google.protobuf.Any;
 import com.google.protobuf.Int32Value;
 import com.google.protobuf.InvalidProtocolBufferException;
+import com.google.protobuf.Message;
+import com.google.protobuf.ProtocolMessageEnum;
 
 import gov.hhs.aspr.translation.core.CoreTranslationError;
 import gov.hhs.aspr.translation.core.testsupport.TestResourceHelper;
 import gov.hhs.aspr.translation.core.testsupport.testobject.app.TestAppChildObject;
 import gov.hhs.aspr.translation.core.testsupport.testobject.app.TestAppObject;
+import gov.hhs.aspr.translation.protobuf.core.test.testobject.input.TestNoOuterClassName.TestNoOuterClassNameMessage;
+import gov.hhs.aspr.translation.protobuf.core.test.testobject.input.TestTest.TestOuterClassNameMessage;
 import gov.hhs.aspr.translation.protobuf.core.testsupport.TestObjectUtil;
+import gov.hhs.aspr.translation.protobuf.core.testsupport.testClasses.BadMessageBadArguements;
+import gov.hhs.aspr.translation.protobuf.core.testsupport.testClasses.BadMessageIllegalAccess;
+import gov.hhs.aspr.translation.protobuf.core.testsupport.testClasses.BadMessageNoMethod;
+import gov.hhs.aspr.translation.protobuf.core.testsupport.testClasses.BadMessageNonStaticMethod;
 import gov.hhs.aspr.translation.protobuf.core.testsupport.testcomplexobject.input.TestComplexInputObject;
+import gov.hhs.aspr.translation.protobuf.core.testsupport.testcomplexobject.input.TestComplexInputObjectSubObject;
 import gov.hhs.aspr.translation.protobuf.core.testsupport.testcomplexobject.translationSpecs.TestProtobufComplexObjectTranslationSpec;
 import gov.hhs.aspr.translation.protobuf.core.testsupport.testobject.input.TestInputObject;
 import gov.hhs.aspr.translation.protobuf.core.testsupport.testobject.translationSpecs.TestProtobufObjectTranslationSpec;
@@ -149,6 +158,91 @@ public class AT_ProtobufTranslationEngine {
     }
 
     @Test
+    public void testDebugPrint() throws IOException {
+        String fileName = "debugPrintFromEngine_1-testOutput.json";
+
+        TestResourceHelper.createTestOutputFile(filePath, fileName);
+
+        ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine
+                .builder()
+                .addTranslationSpec(new TestProtobufObjectTranslationSpec())
+                .addTranslationSpec(new TestProtobufComplexObjectTranslationSpec())
+                .build();
+
+        protobufTranslationEngine.init();
+        protobufTranslationEngine.setDebug(true);
+
+        TestAppObject expectedAppObject = TestObjectUtil.generateTestAppObject();
+
+        FileWriter fileWriter = new FileWriter(filePath.resolve(fileName).toFile());
+        FileReader fileReader = new FileReader(filePath.resolve(fileName).toFile());
+
+        protobufTranslationEngine.writeOutput(fileWriter, expectedAppObject, Optional.empty());
+        TestAppObject actualAppObject = protobufTranslationEngine.readInput(fileReader, TestInputObject.class);
+        assertEquals(expectedAppObject, actualAppObject);
+    }
+
+    @Test
+    public void testParseJson() {
+        ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine
+                .builder()
+                .addTranslationSpec(new TestProtobufObjectTranslationSpec())
+                .addTranslationSpec(new TestProtobufComplexObjectTranslationSpec())
+                .setIgnoringUnknownFields(false)
+                .build();
+
+        protobufTranslationEngine.init();
+
+        JsonObject jsonObject = new JsonObject();
+
+        jsonObject.addProperty("unknownProperty", "unknownValue");
+
+        assertThrows(RuntimeException.class, () -> {
+            protobufTranslationEngine.parseJson(jsonObject, TestInputObject.class);
+        });
+    }
+
+    @Test
+    public void testGetBuilderForMessage() {
+
+        ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine
+                .builder()
+                .addTranslationSpec(new TestProtobufObjectTranslationSpec())
+                .addTranslationSpec(new TestProtobufComplexObjectTranslationSpec())
+                .build();
+
+        protobufTranslationEngine.init();
+
+        // preconditions
+        /*
+         * Note on these preconditions: Because of the type enforced on readInput()
+         * ensuring that the passed in classRef is a child of Message.class, these
+         * preconditions should never be encountered. But for coverage purposes, are
+         * included here.
+         */
+        // class ref does not contain a newBuilder method
+        assertThrows(RuntimeException.class, () -> {
+            protobufTranslationEngine.getBuilderForMessage(BadMessageNoMethod.class);
+        });
+
+        // class has a newBuilder method but it is not static
+        assertThrows(RuntimeException.class, () -> {
+            protobufTranslationEngine.getBuilderForMessage(BadMessageNonStaticMethod.class);
+        });
+
+        // class has a static newBuilder method but it takes arguements
+        assertThrows(RuntimeException.class, () -> {
+            protobufTranslationEngine.getBuilderForMessage(BadMessageBadArguements.class);
+        });
+
+        // class has a newBuilder method but it is not accessible
+        assertThrows(RuntimeException.class, () -> {
+            protobufTranslationEngine.getBuilderForMessage(BadMessageIllegalAccess.class);
+        });
+
+    }
+
+    @Test
     void testReadInput() throws IOException {
         String fileName = "readInputFromEngine_1-testOutput.json";
         String fileName2 = "readInputFromEngine_2-testOutput.json";
@@ -190,7 +284,7 @@ public class AT_ProtobufTranslationEngine {
         assertEquals(ProtobufCoreTranslationError.INVALID_INPUT_CLASS_REF, contractException.getErrorType());
 
         // precondition for the Runtime exceptions are convered by the test:
-        // testParseJson()
+        // testGetBuilderForMessage() and testParseJson()
     }
 
     @Test
@@ -205,6 +299,7 @@ public class AT_ProtobufTranslationEngine {
                 .builder()
                 .addTranslationSpec(new TestProtobufObjectTranslationSpec())
                 .addTranslationSpec(new TestProtobufComplexObjectTranslationSpec())
+                // .addTranslationSpec(new TestProtobufEnumTranslationSpec())
                 .build();
 
         protobufTranslationEngine.init();
@@ -225,6 +320,13 @@ public class AT_ProtobufTranslationEngine {
                 Optional.of(TestAppObject.class));
         TestAppObject actualAppChildObject = protobufTranslationEngine.readInput(fileReader2, TestInputObject.class);
         assertEquals(expectedAppObject, actualAppChildObject);
+
+        // this test is just for coverage, but this method should never be directly
+        // called
+        TestInputObject inputObject = TestObjectUtil.generateTestInputObject();
+        protobufTranslationEngine.writeOutput(fileWriter2, inputObject, Optional.empty());
+        actualAppObject = protobufTranslationEngine.readInput(fileReader2, TestInputObject.class);
+        assertEquals(TestObjectUtil.getAppFromInput(inputObject), actualAppObject);
 
         // preconditions
         // IO error occurs
@@ -256,6 +358,81 @@ public class AT_ProtobufTranslationEngine {
         // equality
         // the use cases for them are adequately tested in: testReadInput and
         // testWriteOutput
+    }
+
+    @Test
+    public void testGetDefaultMessage() {
+        ProtobufTranslationEngine.Builder pBuilder = ProtobufTranslationEngine.builder();
+
+        /*
+         * Note: because this method is only ever called if the classRef is an instance
+         * of Message.class, this method should never throw an exception. This test is
+         * here exclusively for test coverage.
+         */
+        assertThrows(RuntimeException.class, () -> {
+            pBuilder.getDefaultMessage(Message.class);
+        });
+    }
+
+    @Test
+    public void testGetDefaultEnum() {
+        ProtobufTranslationEngine.Builder pBuilder = ProtobufTranslationEngine.builder();
+
+        /*
+         * Note: because this method is only ever called if the classRef is an instance
+         * of ProtocolMessageEnum.class, this method should never throw an exception.
+         * This test is here exclusively for test coverage.
+         */
+        assertThrows(RuntimeException.class, () -> {
+            pBuilder.getDefaultEnum(ProtocolMessageEnum.class);
+        });
+    }
+
+    @Test
+    public void testPopulate() {
+        ProtobufTranslationEngine.Builder pBuilder = ProtobufTranslationEngine.builder();
+
+        // Message has no fields
+        pBuilder.populate(TestComplexInputObjectSubObject.class);
+
+        // message has fields but no enums
+        pBuilder.populate(TestComplexInputObject.class);
+
+        // message has fields and at least one of them is an enum
+        // and the enum is defined in a proto file marked with option
+        // java_multiple_files = true
+        pBuilder.populate(TestInputObject.class);
+
+        // message has fields, and at least one of them is an enum
+        // and the enum is defined in a proto file marked with option
+        // java_outer_classname
+        pBuilder.populate(TestOuterClassNameMessage.class);
+
+        // message has fielsd, and at least one of them is an enum
+        // and the enum is defined in a proto file that is not marked with neither
+        // option java_multiple_files = true nor option java_outer_classname
+        pBuilder.populate(TestNoOuterClassNameMessage.class);
+
+        // class ref is exactly a ProtocolMessageEnum
+        pBuilder.populate(ProtocolMessageEnum.class);
+
+        // class ref is exactly a Message
+        pBuilder.populate(Message.class);
+
+        // preconditions
+        // the only precondition is a classNotFound Exception, which is tested in testGetClassFromInfo()
+    }
+
+    @Test
+    public void testGetClassFromInfo() {
+        ProtobufTranslationEngine.Builder pBuilder = ProtobufTranslationEngine.builder();
+
+        // precondition
+        // class not found
+        // Note: this should never happen, and this test is here exclusively for test coverage
+        assertThrows(RuntimeException.class, () -> {
+            pBuilder.getClassFromInfo(TestInputObject.getDescriptor().getFile(), "BADCLASSNAME");
+        });
     }
 
     @Test

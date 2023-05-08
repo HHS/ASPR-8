@@ -5,8 +5,10 @@ import java.io.Reader;
 import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -16,8 +18,10 @@ import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
 import com.google.protobuf.Any;
 import com.google.protobuf.Descriptors.Descriptor;
+import com.google.protobuf.Descriptors.EnumValueDescriptor;
 import com.google.protobuf.Descriptors.FieldDescriptor;
 import com.google.protobuf.Descriptors.FieldDescriptor.JavaType;
+import com.google.protobuf.Descriptors.FileDescriptor;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.Message;
 import com.google.protobuf.ProtocolMessageEnum;
@@ -174,23 +178,23 @@ public class ProtobufTranslationEngine extends TranslationEngine {
          * Message) for it to get the full name and add the typeUrl to the internal
          * descriptorMap and typeUrlToClassMap
          */
-        private void populate(Class<?> classRef) {
+        protected <U> void populate(Class<U> classRef) {
             String typeUrl;
-            if (ProtocolMessageEnum.class.isAssignableFrom(classRef)) {
+            if (ProtocolMessageEnum.class.isAssignableFrom(classRef) && ProtocolMessageEnum.class != classRef) {
                 typeUrl = getDefaultEnum(classRef.asSubclass(ProtocolMessageEnum.class)).getDescriptorForType()
                         .getFullName();
                 this.data.typeUrlToClassMap.putIfAbsent(typeUrl, classRef);
                 return;
             }
 
-            if (Message.class.isAssignableFrom(classRef)) {
+            if (Message.class.isAssignableFrom(classRef) && Message.class != classRef) {
                 Message message = getDefaultMessage(classRef.asSubclass(Message.class));
                 typeUrl = message.getDescriptorForType().getFullName();
 
                 this.data.typeUrlToClassMap.putIfAbsent(typeUrl, classRef);
                 this.descriptorSet.add(message.getDescriptorForType());
 
-                Set<FieldDescriptor> fieldDescriptors = message.getAllFields().keySet();
+                List<FieldDescriptor> fieldDescriptors = message.getDescriptorForType().getFields();
 
                 if (fieldDescriptors.isEmpty()) {
                     return;
@@ -200,21 +204,69 @@ public class ProtobufTranslationEngine extends TranslationEngine {
                     if (fieldDescriptor.getJavaType() == JavaType.MESSAGE) {
                         Message subMessage = (Message) message.getField(fieldDescriptor);
                         if (!(subMessage.getDescriptorForType() == Any.getDescriptor())) {
-                            populate(subMessage.getClass());
+                            if (!this.descriptorSet.contains(subMessage.getDescriptorForType())) {
+                                populate(subMessage.getClass());
+                                continue;
+                            }
                         }
                     }
+
+                    if (fieldDescriptor.getJavaType() == JavaType.ENUM) {
+                        EnumValueDescriptor enumValueDescriptor = (EnumValueDescriptor) message
+                                .getField(fieldDescriptor);
+
+                        FileDescriptor fileDescriptor = message.getDescriptorForType().getFile();
+
+                        populate(getClassFromInfo(fileDescriptor, enumValueDescriptor.getType().getName()));
+                    }
+
                 }
             }
 
         }
 
+        protected Class<?> getClassFromInfo(FileDescriptor fileDescriptor, String typeName) {
+            boolean javaMultFiles = fileDescriptor.getOptions().getJavaMultipleFiles();
+            String javaPackage = fileDescriptor.getOptions().getJavaPackage();
+            String javaOuterClassName = fileDescriptor.getOptions().getJavaOuterClassname();
+            String protoName = fileDescriptor.getName().split("\\.")[0];
+
+            StringBuilder sb = new StringBuilder();
+
+            sb.append(javaPackage);
+
+            if (!(javaOuterClassName.equals(""))) {
+                sb.append(".")
+                        .append(javaOuterClassName)
+                        .append("$");
+            } else if (!javaMultFiles) {
+                sb.append(".")
+                        .append(protoName.substring(0, 1).toUpperCase())
+                        .append(protoName.substring(1))
+                        .append("$");
+            } else {
+                sb.append(".");
+            }
+
+            sb.append(typeName);
+
+            String finalClassName = sb.toString();
+
+            try {
+                return Class.forName(finalClassName);
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
         /**
          * given a Class ref to a Protobuf Message, get the defaultInstance of it
          */
-        private Message getDefaultMessage(Class<? extends Message> classRef) {
+        protected <U extends Message> U getDefaultMessage(Class<U> classRef) {
             try {
                 Method method = classRef.getMethod("getDefaultInstance");
-                return (Message) method.invoke(null);
+                Object obj = method.invoke(null);
+                return classRef.cast(obj);
             } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
                     | InvocationTargetException e) {
                 throw new RuntimeException(e);
@@ -225,10 +277,11 @@ public class ProtobufTranslationEngine extends TranslationEngine {
          * given a Class ref to a ProtocolMessageEnum, get the default value for it,
          * enum number 0 within the proto enum
          */
-        private ProtocolMessageEnum getDefaultEnum(Class<? extends ProtocolMessageEnum> classRef) {
+        protected <U extends ProtocolMessageEnum> U getDefaultEnum(Class<U> classRef) {
             try {
                 Method method = classRef.getMethod("forNumber", int.class);
-                return (ProtocolMessageEnum) method.invoke(null, 0);
+                Object obj = method.invoke(null, 0);
+                return classRef.cast(obj);
             } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
                     | InvocationTargetException e) {
                 throw new RuntimeException(e);
@@ -251,6 +304,10 @@ public class ProtobufTranslationEngine extends TranslationEngine {
         return this.data.jsonPrinter;
     }
 
+    protected void setDebug(boolean debug) {
+        this.debug = debug;
+    }
+
     /**
      * <li>write output implementation
      * 
@@ -265,7 +322,7 @@ public class ProtobufTranslationEngine extends TranslationEngine {
      * @throws RuntimeException
      *                          if there is an IOException during writing
      */
-    public <U, M extends U> void writeOutput(Writer writer, M appObject, Optional<Class<U>> superClass) {
+    protected <U, M extends U> void writeOutput(Writer writer, M appObject, Optional<Class<U>> superClass) {
         Message message;
         if (Message.class.isAssignableFrom(appObject.getClass())) {
             message = Message.class.cast(appObject);
@@ -340,7 +397,7 @@ public class ProtobufTranslationEngine extends TranslationEngine {
      *                           {@linkplain Message}</li>
      *                           </ul>
      */
-    public <T, U> T readInput(Reader reader, Class<U> inputClassRef) {
+    protected <T, U> T readInput(Reader reader, Class<U> inputClassRef) {
         if (!Message.class.isAssignableFrom(inputClassRef)) {
             throw new ContractException(ProtobufCoreTranslationError.INVALID_INPUT_CLASS_REF);
         }
@@ -373,15 +430,7 @@ public class ProtobufTranslationEngine extends TranslationEngine {
     protected <T, U extends Message> T parseJson(JsonObject inputJson, Class<U> inputClassRef) {
         JsonObject jsonObject = inputJson.deepCopy();
 
-        Message.Builder builder;
-        try {
-            Method buildermethod = inputClassRef.getDeclaredMethod("newBuilder");
-
-            builder = (com.google.protobuf.Message.Builder) buildermethod.invoke(null);
-        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException
-                | SecurityException e) {
-            throw new RuntimeException("Failed to find method or failed to invoke method", e);
-        }
+        Message.Builder builder = getBuilderForMessage(inputClassRef);
 
         try {
             this.data.jsonParser.merge(jsonObject.toString(), builder);
@@ -395,6 +444,35 @@ public class ProtobufTranslationEngine extends TranslationEngine {
         } catch (InvalidProtocolBufferException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    protected <U> Message.Builder getBuilderForMessage(Class<U> messageClass) {
+
+        Method[] messageMethods = messageClass.getDeclaredMethods();
+
+        List<Method> newBuilderMethods = new ArrayList<>();
+        for (Method method : messageMethods) {
+            if (method.getName().equals("newBuilder")) {
+                newBuilderMethods.add(method);
+            }
+        }
+
+        if (newBuilderMethods.isEmpty()) {
+            throw new RuntimeException("The method \"newBuilder\" does not exist");
+        }
+
+        for (Method method : newBuilderMethods) {
+            if (method.getParameterCount() == 0) {
+                try {
+                    return (com.google.protobuf.Message.Builder) method.invoke(null);
+                } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+
+        throw new RuntimeException(
+                "\"newBuilder\" method exists, but it requires arugments, when it is expected to require 0 arugments");
     }
 
     /**
@@ -457,7 +535,8 @@ public class ProtobufTranslationEngine extends TranslationEngine {
             return this.data.typeUrlToClassMap.get(typeUrl);
         }
 
-        throw new ContractException(ProtobufCoreTranslationError.UNKNOWN_TYPE_URL, "Unable to find corrsponding class for: " + typeUrl);
+        throw new ContractException(ProtobufCoreTranslationError.UNKNOWN_TYPE_URL,
+                "Unable to find corrsponding class for: " + typeUrl);
     }
 
 }

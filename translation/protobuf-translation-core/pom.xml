@@ -212,6 +212,14 @@
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>${jacoco-maven-plugin.version}</version>
+                <configuration>
+                    <excludes>
+                        <exclude>com/google/type/*.class</exclude>
+                        <exclude>**/test/**/*.class</exclude>
+                        <exclude>**/input/**/*.class</exclude>
+                        <exclude>**/testsupport/**/input/**/*.class</exclude>
+                    </excludes>
+                </configuration>
                 <executions>
                     <execution>
                         <id>default-prepare-agent</id>

@@ -1,0 +1,14 @@
+syntax = "proto3";
+package gov.hhs.aspr.gcm.translation.protobuf.test;
+
+
+option java_package = "gov.hhs.aspr.translation.protobuf.core.test.testobject.input";
+
+enum TestNoOuterClassNameEnum {
+    TEST3 = 0;
+}
+
+message TestNoOuterClassNameMessage {
+    int32 testInt = 1;
+    TestNoOuterClassNameEnum testEnum = 2;
+}

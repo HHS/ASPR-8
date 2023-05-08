@@ -9,6 +9,7 @@ public class TestAppObject {
     private boolean bool;
     private String string;
     private TestComplexAppObject testComplexAppObject;
+    private TestAppEnum testAppEnum;
 
     public int getInteger() {
         return integer;
@@ -40,6 +41,14 @@ public class TestAppObject {
 
     public void setTestComplexAppObject(TestComplexAppObject testComplexAppObject) {
         this.testComplexAppObject = testComplexAppObject;
+    }
+
+    public void setTestAppEnum(TestAppEnum testAppEnum) {
+        this.testAppEnum = testAppEnum;
+    }
+
+    public TestAppEnum getTestAppEnum() {
+        return this.testAppEnum;
     }
 
     @Override
