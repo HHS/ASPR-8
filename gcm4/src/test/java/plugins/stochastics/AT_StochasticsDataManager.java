@@ -1,9 +1,5 @@
 package plugins.stochastics;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -28,6 +24,8 @@ import plugins.stochastics.testsupport.TestRandomGeneratorId;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class AT_StochasticsDataManager {
 
@@ -161,6 +159,21 @@ public class AT_StochasticsDataManager {
 	}
 
 	@Test
+	@UnitTestMethod(target = StochasticsDataManager.class, name = "randomNumberGeneratorIdExists", args = { RandomNumberGeneratorId.class })
+	public void testRandomNumberGeneratorIdExists() {
+		Factory factory = StochasticsTestPluginFactory.factory(1244273915891145733L, (c) -> {
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
+			RandomNumberGeneratorId unknownRandomGeneratorId = TestRandomGeneratorId.getUnknownRandomNumberGeneratorId();
+			Set<RandomNumberGeneratorId> randomNumberGeneratorIds = stochasticsDataManager.getRandomNumberGeneratorIds();
+			for (TestRandomGeneratorId testRandomGeneratorId : TestRandomGeneratorId.values()) {
+				assertTrue(randomNumberGeneratorIds.contains(testRandomGeneratorId));
+			}
+			assertFalse(randomNumberGeneratorIds.contains(unknownRandomGeneratorId));
+		});
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
+	}
+
+	@Test
 	@UnitTestMethod(target = StochasticsDataManager.class, name = "getRandomGeneratorFromId", args = { RandomNumberGeneratorId.class })
 	public void testGetRandomGeneratorFromId() {
 
@@ -185,8 +198,16 @@ public class AT_StochasticsDataManager {
 			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
 		});
 		assertEquals(StochasticsError.NULL_RANDOM_NUMBER_GENERATOR_ID, contractException.getErrorType());
-		
 
+		// precondition test : if the random number generator is unknown
+		ContractException contractException2 = assertThrows(ContractException.class, () -> {
+			Factory factory3 = StochasticsTestPluginFactory.factory(6057300273321098424L, (c) -> {
+				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
+				stochasticsDataManager.getRandomGeneratorFromId(TestRandomGeneratorId.getUnknownRandomNumberGeneratorId());
+			});
+			TestSimulation.builder().addPlugins(factory3.getPlugins()).build().execute();
+		});
+		assertEquals(StochasticsError.UNKNOWN_RANDOM_NUMBER_GENERATOR_ID, contractException2.getErrorType());
 	}
 
 	@Test
@@ -197,6 +218,28 @@ public class AT_StochasticsDataManager {
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGeneratorFromId = stochasticsDataManager.getRandomGenerator();
 			assertNotNull(randomGeneratorFromId);
+		});
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
+	}
+
+	@Test
+	@UnitTestMethod(target = StochasticsDataManager.class, name = "addRandomNumberGenerator", args = { RandomNumberGeneratorId.class, WellState.class })
+	public void testAddRandomNumberGenerator() {
+		Factory factory = StochasticsTestPluginFactory.factory(1244273915891145733L, (c) -> {
+
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
+			RandomNumberGeneratorId numberGeneratorIdToAdd = TestRandomGeneratorId.getUnknownRandomNumberGeneratorId();
+			WellState wellState = WellState.builder().build();
+			stochasticsDataManager.addRandomNumberGenerator(numberGeneratorIdToAdd, wellState);
+
+			Set<RandomNumberGeneratorId> actualRandomNumberGeneratorIds = stochasticsDataManager.getRandomNumberGeneratorIds();
+
+			Set<RandomNumberGeneratorId> expectedRandomGeneratorIds = new LinkedHashSet<>();
+			for (RandomNumberGeneratorId testRandomGeneratorId : TestRandomGeneratorId.values()) {
+				expectedRandomGeneratorIds.add(testRandomGeneratorId);
+			}
+			expectedRandomGeneratorIds.add(numberGeneratorIdToAdd);
+			assertEquals(expectedRandomGeneratorIds, actualRandomNumberGeneratorIds);
 		});
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
