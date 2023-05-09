@@ -5,6 +5,8 @@ import util.annotations.UnitTag;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 
+import java.util.Arrays;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class AT_WellState {
@@ -33,8 +35,20 @@ public class AT_WellState {
     @UnitTestMethod(target = WellState.Builder.class, name = "setInternals", args = {int.class, int[].class}, tags = UnitTag.INCOMPLETE)
     public void testSetInternals() {
         WellState.Builder builder = WellState.builder();
+        Long seed = 6559152513645047938L;
         int index = 13;
         int[] vArray = new int[1391];
+
+        WellState wellState = builder
+                .setInternals(index, vArray)
+                .setSeed(seed)
+                .build();
+
+        int actualIndex = wellState.getIndex();
+        int[] actualVArray = wellState.getVArray();
+
+        assertEquals(index, actualIndex);
+        assertTrue(Arrays.equals(vArray, actualVArray));
 
         // precondition test: null vArray
         ContractException contractException = assertThrows(ContractException.class, () -> builder.setInternals(index, null));
@@ -55,7 +69,28 @@ public class AT_WellState {
     @Test
     @UnitTestMethod(target = WellState.class, name = "equals", args = {Object.class}, tags = UnitTag.INCOMPLETE)
     public void testEquals() {
+        WellState.Builder builder = WellState.builder();
+        Long seed = 6559152513645047938L;
+        int index = 13;
+        int[] vArray = new int[1391];
 
+        WellState wellState = builder
+                .setInternals(index, vArray)
+                .setSeed(seed)
+                .build();
+
+        WellState duplicateState = builder
+                .setInternals(index, vArray)
+                .setSeed(seed)
+                .build();
+
+        WellState differentState = builder
+                .setInternals(23, vArray)
+                .setSeed(5289854998653146199L)
+                .build();
+
+        assertEquals(duplicateState, wellState);
+        assertNotEquals(differentState, wellState);
     }
 
 
