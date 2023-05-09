@@ -18,10 +18,7 @@ import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
 import com.google.protobuf.Any;
 import com.google.protobuf.Descriptors.Descriptor;
-import com.google.protobuf.Descriptors.EnumValueDescriptor;
 import com.google.protobuf.Descriptors.FieldDescriptor;
-import com.google.protobuf.Descriptors.FieldDescriptor.JavaType;
-import com.google.protobuf.Descriptors.FileDescriptor;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.Message;
 import com.google.protobuf.ProtocolMessageEnum;
@@ -163,6 +160,13 @@ public class ProtobufTranslationEngine extends TranslationEngine {
          * 
          * that also populates the type urls for all Protobuf Message types that exist
          * within the translationSpec
+         * 
+         * @throws ContractException
+         *                           <ul>
+         *                           <li>{@link ProtobufCoreTranslationError#INVALID_INPUT_CLASS}
+         *                           <li>if the given inputClassRef is not assingable from
+         *                           {@linkplain Message} nor {@linkplain ProtocolMessageEnum}</li>
+         *                           </ul>
          */
         @Override
         public <I, S> Builder addTranslationSpec(TranslationSpec<I, S> translationSpec) {
@@ -177,6 +181,13 @@ public class ProtobufTranslationEngine extends TranslationEngine {
          * if so, gets the Descriptor (which is akin to a class but for a Protobuf
          * Message) for it to get the full name and add the typeUrl to the internal
          * descriptorMap and typeUrlToClassMap
+         * 
+         * @throws ContractException
+         *                           <ul>
+         *                           <li>{@link ProtobufCoreTranslationError#INVALID_INPUT_CLASS}
+         *                           <li>if the given inputClassRef is not assingable from
+         *                           {@linkplain Message} nor {@linkplain ProtocolMessageEnum}</li>
+         *                           </ul>
          */
         protected <U> void populate(Class<U> classRef) {
             String typeUrl;
@@ -193,70 +204,9 @@ public class ProtobufTranslationEngine extends TranslationEngine {
 
                 this.data.typeUrlToClassMap.putIfAbsent(typeUrl, classRef);
                 this.descriptorSet.add(message.getDescriptorForType());
-
-                List<FieldDescriptor> fieldDescriptors = message.getDescriptorForType().getFields();
-
-                if (fieldDescriptors.isEmpty()) {
-                    return;
-                }
-
-                for (FieldDescriptor fieldDescriptor : fieldDescriptors) {
-                    if (fieldDescriptor.getJavaType() == JavaType.MESSAGE) {
-                        Message subMessage = (Message) message.getField(fieldDescriptor);
-                        if (!(subMessage.getDescriptorForType() == Any.getDescriptor())) {
-                            if (!this.descriptorSet.contains(subMessage.getDescriptorForType())) {
-                                populate(subMessage.getClass());
-                                continue;
-                            }
-                        }
-                    }
-
-                    if (fieldDescriptor.getJavaType() == JavaType.ENUM) {
-                        EnumValueDescriptor enumValueDescriptor = (EnumValueDescriptor) message
-                                .getField(fieldDescriptor);
-
-                        FileDescriptor fileDescriptor = message.getDescriptorForType().getFile();
-
-                        populate(getClassFromInfo(fileDescriptor, enumValueDescriptor.getType().getName()));
-                    }
-
-                }
             }
 
-        }
-
-        protected Class<?> getClassFromInfo(FileDescriptor fileDescriptor, String typeName) {
-            boolean javaMultFiles = fileDescriptor.getOptions().getJavaMultipleFiles();
-            String javaPackage = fileDescriptor.getOptions().getJavaPackage();
-            String javaOuterClassName = fileDescriptor.getOptions().getJavaOuterClassname();
-            String protoName = fileDescriptor.getName().split("\\.")[0];
-
-            StringBuilder sb = new StringBuilder();
-
-            sb.append(javaPackage);
-
-            if (!(javaOuterClassName.equals(""))) {
-                sb.append(".")
-                        .append(javaOuterClassName)
-                        .append("$");
-            } else if (!javaMultFiles) {
-                sb.append(".")
-                        .append(protoName.substring(0, 1).toUpperCase())
-                        .append(protoName.substring(1))
-                        .append("$");
-            } else {
-                sb.append(".");
-            }
-
-            sb.append(typeName);
-
-            String finalClassName = sb.toString();
-
-            try {
-                return Class.forName(finalClassName);
-            } catch (ClassNotFoundException e) {
-                throw new RuntimeException(e);
-            }
+            throw new ContractException(ProtobufCoreTranslationError.INVALID_INPUT_CLASS);
         }
 
         /**
@@ -392,14 +342,14 @@ public class ProtobufTranslationEngine extends TranslationEngine {
      * 
      * @throws ContractException
      *                           <ul>
-     *                           <li>{@linkplain ProtobufCoreTranslationError#INVALID_INPUT_CLASS_REF}
+     *                           <li>{@linkplain ProtobufCoreTranslationError#INVALID_READ_INPUT_CLASS_REF}
      *                           if the given inputClassRef is not assingable from
      *                           {@linkplain Message}</li>
      *                           </ul>
      */
     protected <T, U> T readInput(Reader reader, Class<U> inputClassRef) {
         if (!Message.class.isAssignableFrom(inputClassRef)) {
-            throw new ContractException(ProtobufCoreTranslationError.INVALID_INPUT_CLASS_REF);
+            throw new ContractException(ProtobufCoreTranslationError.INVALID_READ_INPUT_CLASS_REF);
         }
 
         JsonObject jsonObject = JsonParser.parseReader(new JsonReader(reader)).getAsJsonObject();

@@ -27,16 +27,14 @@ import gov.hhs.aspr.translation.core.CoreTranslationError;
 import gov.hhs.aspr.translation.core.testsupport.TestResourceHelper;
 import gov.hhs.aspr.translation.core.testsupport.testobject.app.TestAppChildObject;
 import gov.hhs.aspr.translation.core.testsupport.testobject.app.TestAppObject;
-import gov.hhs.aspr.translation.protobuf.core.test.testobject.input.TestNoOuterClassName.TestNoOuterClassNameMessage;
-import gov.hhs.aspr.translation.protobuf.core.test.testobject.input.TestTest.TestOuterClassNameMessage;
 import gov.hhs.aspr.translation.protobuf.core.testsupport.TestObjectUtil;
 import gov.hhs.aspr.translation.protobuf.core.testsupport.testClasses.BadMessageBadArguements;
 import gov.hhs.aspr.translation.protobuf.core.testsupport.testClasses.BadMessageIllegalAccess;
 import gov.hhs.aspr.translation.protobuf.core.testsupport.testClasses.BadMessageNoMethod;
 import gov.hhs.aspr.translation.protobuf.core.testsupport.testClasses.BadMessageNonStaticMethod;
 import gov.hhs.aspr.translation.protobuf.core.testsupport.testcomplexobject.input.TestComplexInputObject;
-import gov.hhs.aspr.translation.protobuf.core.testsupport.testcomplexobject.input.TestComplexInputObjectSubObject;
 import gov.hhs.aspr.translation.protobuf.core.testsupport.testcomplexobject.translationSpecs.TestProtobufComplexObjectTranslationSpec;
+import gov.hhs.aspr.translation.protobuf.core.testsupport.testobject.input.TestInputEnum;
 import gov.hhs.aspr.translation.protobuf.core.testsupport.testobject.input.TestInputObject;
 import gov.hhs.aspr.translation.protobuf.core.testsupport.testobject.translationSpecs.TestProtobufObjectTranslationSpec;
 import util.errors.ContractException;
@@ -281,7 +279,7 @@ public class AT_ProtobufTranslationEngine {
             protobufTranslationEngine.readInput(fileReader2, TestAppObject.class);
         });
 
-        assertEquals(ProtobufCoreTranslationError.INVALID_INPUT_CLASS_REF, contractException.getErrorType());
+        assertEquals(ProtobufCoreTranslationError.INVALID_READ_INPUT_CLASS_REF, contractException.getErrorType());
 
         // precondition for the Runtime exceptions are convered by the test:
         // testGetBuilderForMessage() and testParseJson()
@@ -392,47 +390,20 @@ public class AT_ProtobufTranslationEngine {
     public void testPopulate() {
         ProtobufTranslationEngine.Builder pBuilder = ProtobufTranslationEngine.builder();
 
-        // Message has no fields
-        pBuilder.populate(TestComplexInputObjectSubObject.class);
-
-        // message has fields but no enums
-        pBuilder.populate(TestComplexInputObject.class);
-
-        // message has fields and at least one of them is an enum
-        // and the enum is defined in a proto file marked with option
-        // java_multiple_files = true
+        // Protobuf Message
         pBuilder.populate(TestInputObject.class);
 
-        // message has fields, and at least one of them is an enum
-        // and the enum is defined in a proto file marked with option
-        // java_outer_classname
-        pBuilder.populate(TestOuterClassNameMessage.class);
-
-        // message has fielsd, and at least one of them is an enum
-        // and the enum is defined in a proto file that is not marked with neither
-        // option java_multiple_files = true nor option java_outer_classname
-        pBuilder.populate(TestNoOuterClassNameMessage.class);
-
-        // class ref is exactly a ProtocolMessageEnum
-        pBuilder.populate(ProtocolMessageEnum.class);
-
-        // class ref is exactly a Message
-        pBuilder.populate(Message.class);
-
-        // preconditions
-        // the only precondition is a classNotFound Exception, which is tested in testGetClassFromInfo()
-    }
-
-    @Test
-    public void testGetClassFromInfo() {
-        ProtobufTranslationEngine.Builder pBuilder = ProtobufTranslationEngine.builder();
+        // Protobuf Enum
+        pBuilder.populate(TestInputEnum.class);
 
         // precondition
-        // class not found
-        // Note: this should never happen, and this test is here exclusively for test coverage
-        assertThrows(RuntimeException.class, () -> {
-            pBuilder.getClassFromInfo(TestInputObject.getDescriptor().getFile(), "BADCLASSNAME");
+        // if class is neither a Message nor a ProtocolMessageEnum
+        ContractException contractException = assertThrows(ContractException.class, () -> {
+            pBuilder.populate(TestAppObject.class);
         });
+
+        assertEquals(ProtobufCoreTranslationError.INVALID_INPUT_CLASS, contractException.getErrorType());
+
     }
 
     @Test
@@ -481,6 +452,10 @@ public class AT_ProtobufTranslationEngine {
             protobufTranslationEngine.getClassFromTypeUrl(TestInputObject.getDescriptor().getFullName());
             protobufTranslationEngine.getClassFromTypeUrl(TestComplexInputObject.getDescriptor().getFullName());
         });
+
+        // precondition
+        // the precondition for this is that the inputClass is not a Message nor a
+        // ProtocolMessageEnum, and is tested in the testPopulate() test
     }
 
     @Test

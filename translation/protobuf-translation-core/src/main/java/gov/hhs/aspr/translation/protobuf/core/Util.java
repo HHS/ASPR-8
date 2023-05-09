@@ -23,4 +23,38 @@ public class Util {
         }
         return target;
     } */
+
+    /* protected Class<?> getClassFromInfo(FileDescriptor fileDescriptor, String typeName) {
+        boolean javaMultFiles = fileDescriptor.getOptions().getJavaMultipleFiles();
+        String javaPackage = fileDescriptor.getOptions().getJavaPackage();
+        String javaOuterClassName = fileDescriptor.getOptions().getJavaOuterClassname();
+        String protoName = fileDescriptor.getName().split("\\.")[0];
+
+        StringBuilder sb = new StringBuilder();
+
+        sb.append(javaPackage);
+
+        if (!(javaOuterClassName.equals(""))) {
+            sb.append(".")
+                    .append(javaOuterClassName)
+                    .append("$");
+        } else if (!javaMultFiles) {
+            sb.append(".")
+                    .append(protoName.substring(0, 1).toUpperCase())
+                    .append(protoName.substring(1))
+                    .append("$");
+        } else {
+            sb.append(".");
+        }
+
+        sb.append(typeName);
+
+        String finalClassName = sb.toString();
+
+        try {
+            return Class.forName(finalClassName);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    } */
 }
