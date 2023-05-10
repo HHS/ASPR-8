@@ -17,7 +17,8 @@ import plugins.regions.support.RegionPropertyId;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.TimeTrackingPolicy;
 
-public class RegionsPluginDataTranslationSpec extends ProtobufTranslationSpec<RegionsPluginDataInput, RegionsPluginData> {
+public class RegionsPluginDataTranslationSpec
+        extends ProtobufTranslationSpec<RegionsPluginDataInput, RegionsPluginData> {
 
     @Override
     protected RegionsPluginData convertInputObject(RegionsPluginDataInput inputObject) {
@@ -46,7 +47,8 @@ public class RegionsPluginDataTranslationSpec extends ProtobufTranslationSpec<Re
             for (PropertyValueMapInput propertyValueMapInput : regionPropertyValueMapInput.getPropertyValueMapList()) {
                 RegionPropertyId regionPropertyId = this.translationEngine
                         .getObjectFromAny(propertyValueMapInput.getPropertyId());
-                Object regionPropertyValue = this.translationEngine.getObjectFromAny(propertyValueMapInput.getPropertyValue());
+                Object regionPropertyValue = this.translationEngine
+                        .getObjectFromAny(propertyValueMapInput.getPropertyValue());
 
                 builder.setRegionPropertyValue(regionId, regionPropertyId, regionPropertyValue);
             }

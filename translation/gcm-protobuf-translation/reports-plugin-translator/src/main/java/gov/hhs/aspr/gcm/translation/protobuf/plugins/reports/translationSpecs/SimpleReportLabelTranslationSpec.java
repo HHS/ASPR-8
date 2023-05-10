@@ -4,7 +4,8 @@ import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.input.SimpleReportLabelInput;
 import plugins.reports.support.SimpleReportLabel;
 
-public class SimpleReportLabelTranslationSpec extends ProtobufTranslationSpec<SimpleReportLabelInput, SimpleReportLabel>{
+public class SimpleReportLabelTranslationSpec
+        extends ProtobufTranslationSpec<SimpleReportLabelInput, SimpleReportLabel> {
 
     @Override
     protected SimpleReportLabel convertInputObject(SimpleReportLabelInput inputObject) {
@@ -13,7 +14,8 @@ public class SimpleReportLabelTranslationSpec extends ProtobufTranslationSpec<Si
 
     @Override
     protected SimpleReportLabelInput convertAppObject(SimpleReportLabel appObject) {
-       return SimpleReportLabelInput.newBuilder().setValue(this.translationEngine.getAnyFromObject(appObject.getValue())).build();
+        return SimpleReportLabelInput.newBuilder()
+                .setValue(this.translationEngine.getAnyFromObject(appObject.getValue())).build();
     }
 
     @Override
@@ -23,7 +25,7 @@ public class SimpleReportLabelTranslationSpec extends ProtobufTranslationSpec<Si
 
     @Override
     public Class<SimpleReportLabelInput> getInputObjectClass() {
-       return SimpleReportLabelInput.class;
+        return SimpleReportLabelInput.class;
     }
-    
+
 }

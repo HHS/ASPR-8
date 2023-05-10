@@ -25,7 +25,7 @@ public class SimulationStateTranslationSpec extends ProtobufTranslationSpec<Simu
 
         builder.setPlanningQueueArrivalId(inputObject.getPlanningQueueArrivalId());
 
-        for(PlanQueueDataInput planQueueDataInput : inputObject.getPlanQueueDatasList()) {
+        for (PlanQueueDataInput planQueueDataInput : inputObject.getPlanQueueDatasList()) {
             PlanQueueData planQueueData = this.translationEngine.convertObject(planQueueDataInput);
 
             builder.addPlanQueueData(planQueueData);
@@ -44,7 +44,7 @@ public class SimulationStateTranslationSpec extends ProtobufTranslationSpec<Simu
 
         builder.setPlanningQueueArrivalId(appObject.getPlanningQueueArrivalId());
 
-        for(PlanQueueData planQueueData : appObject.getPlanQueueDatas()) {
+        for (PlanQueueData planQueueData : appObject.getPlanQueueDatas()) {
             PlanQueueDataInput planQueueDataInput = this.translationEngine.convertObject(planQueueData);
 
             builder.addPlanQueueDatas(planQueueDataInput);

@@ -23,7 +23,8 @@ public class PeopleTranslator {
                     translationEngineBuilder.addTranslationSpec(new PersonIdTranslationSpec());
                     translationEngineBuilder.addTranslationSpec(new PersonRangeTranslationSpec());
 
-                    translationEngineBuilder.addFieldToIncludeDefaultValue(PersonIdInput.getDescriptor().findFieldByName("id"));
+                    translationEngineBuilder
+                            .addFieldToIncludeDefaultValue(PersonIdInput.getDescriptor().findFieldByName("id"));
                 });
 
     }

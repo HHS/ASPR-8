@@ -23,7 +23,8 @@ public class PersonPropertiesPluginDataTranslationSpec
         PersonPropertiesPluginData.Builder builder = PersonPropertiesPluginData.builder();
 
         for (PropertyDefinitionMapInput propertyDefinitionMapInput : inputObject.getPersonPropertyDefinitionsList()) {
-            PersonPropertyId propertyId = this.translationEngine.getObjectFromAny(propertyDefinitionMapInput.getPropertyId());
+            PersonPropertyId propertyId = this.translationEngine
+                    .getObjectFromAny(propertyDefinitionMapInput.getPropertyId());
             PropertyDefinition propertyDefinition = this.translationEngine
                     .convertObject(propertyDefinitionMapInput.getPropertyDefinition());
 
@@ -34,9 +35,10 @@ public class PersonPropertiesPluginDataTranslationSpec
 
             PersonId personId = this.translationEngine.convertObject(personPropertyValueMapInput.getPersonId());
             builder.addPerson(personId);
-            
+
             for (PropertyValueMapInput propertyValueMapInput : personPropertyValueMapInput.getPropertyValueMapList()) {
-                PersonPropertyId propertyId = this.translationEngine.getObjectFromAny(propertyValueMapInput.getPropertyId());
+                PersonPropertyId propertyId = this.translationEngine
+                        .getObjectFromAny(propertyValueMapInput.getPropertyId());
                 Object value = this.translationEngine.getObjectFromAny(propertyValueMapInput.getPropertyValue());
 
                 builder.setPersonPropertyValue(personId, propertyId, value);
@@ -77,7 +79,8 @@ public class PersonPropertiesPluginDataTranslationSpec
                             .setPropertyValue(this.translationEngine.getAnyFromObject(
                                     personPropertyInitialization.getValue()))
                             .setPropertyId(
-                                    this.translationEngine.getAnyFromObject(personPropertyInitialization.getPersonPropertyId()))
+                                    this.translationEngine
+                                            .getAnyFromObject(personPropertyInitialization.getPersonPropertyId()))
                             .build();
 
                     personPropertyValueMapBuilder.addPropertyValueMap(propertyValueMapInput);

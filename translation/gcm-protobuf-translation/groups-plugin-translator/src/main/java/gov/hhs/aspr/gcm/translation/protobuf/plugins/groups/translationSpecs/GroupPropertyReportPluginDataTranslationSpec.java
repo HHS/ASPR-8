@@ -24,18 +24,18 @@ public class GroupPropertyReportPluginDataTranslationSpec
         builder.setDefaultInclusion(inputObject.getDefaultInclusionPolicy());
         builder.setReportPeriod(this.translationEngine.convertObject(inputObject.getReportPeriod()));
 
-        for(GroupPropertyReportPropertyMap propertyMap : inputObject.getIncludedPropertiesList()) {
+        for (GroupPropertyReportPropertyMap propertyMap : inputObject.getIncludedPropertiesList()) {
             GroupTypeId groupTypeId = this.translationEngine.convertObject(propertyMap.getGroupTypeId());
-            for(GroupPropertyIdInput groupPropertyIdInput : propertyMap.getGroupPropertiesList()) {
+            for (GroupPropertyIdInput groupPropertyIdInput : propertyMap.getGroupPropertiesList()) {
                 GroupPropertyId groupPropertyId = this.translationEngine.convertObject(groupPropertyIdInput);
 
                 builder.includeGroupProperty(groupTypeId, groupPropertyId);
             }
         }
 
-        for(GroupPropertyReportPropertyMap propertyMap : inputObject.getExcludedPropertiesList()) {
+        for (GroupPropertyReportPropertyMap propertyMap : inputObject.getExcludedPropertiesList()) {
             GroupTypeId groupTypeId = this.translationEngine.convertObject(propertyMap.getGroupTypeId());
-            for(GroupPropertyIdInput groupPropertyIdInput : propertyMap.getGroupPropertiesList()) {
+            for (GroupPropertyIdInput groupPropertyIdInput : propertyMap.getGroupPropertiesList()) {
                 GroupPropertyId groupPropertyId = this.translationEngine.convertObject(groupPropertyIdInput);
 
                 builder.excludeGroupProperty(groupTypeId, groupPropertyId);
@@ -58,12 +58,14 @@ public class GroupPropertyReportPluginDataTranslationSpec
                 .setReportPeriod(this.translationEngine.convertObject(appObject.getReportPeriod()));
 
         for (GroupTypeId groupTypeId : appObject.getGroupTypeIds()) {
-            GroupTypeIdInput groupTypeIdInput = this.translationEngine.convertObjectAsSafeClass(groupTypeId, GroupTypeId.class);
+            GroupTypeIdInput groupTypeIdInput = this.translationEngine.convertObjectAsSafeClass(groupTypeId,
+                    GroupTypeId.class);
 
             GroupPropertyReportPropertyMap.Builder groupPropertyReportBuilder = GroupPropertyReportPropertyMap
                     .newBuilder().setGroupTypeId(groupTypeIdInput);
             for (GroupPropertyId groupPropertyId : appObject.getIncludedProperties(groupTypeId)) {
-                GroupPropertyIdInput groupPropertyIdInput = this.translationEngine.convertObjectAsSafeClass(groupPropertyId,
+                GroupPropertyIdInput groupPropertyIdInput = this.translationEngine.convertObjectAsSafeClass(
+                        groupPropertyId,
                         GroupPropertyId.class);
                 groupPropertyReportBuilder.addGroupProperties(groupPropertyIdInput);
             }
@@ -72,7 +74,8 @@ public class GroupPropertyReportPluginDataTranslationSpec
             groupPropertyReportBuilder = GroupPropertyReportPropertyMap
                     .newBuilder().setGroupTypeId(groupTypeIdInput);
             for (GroupPropertyId groupPropertyId : appObject.getExcludedProperties(groupTypeId)) {
-                GroupPropertyIdInput groupPropertyIdInput = this.translationEngine.convertObjectAsSafeClass(groupPropertyId,
+                GroupPropertyIdInput groupPropertyIdInput = this.translationEngine.convertObjectAsSafeClass(
+                        groupPropertyId,
                         GroupPropertyId.class);
                 groupPropertyReportBuilder.addGroupProperties(groupPropertyIdInput);
             }

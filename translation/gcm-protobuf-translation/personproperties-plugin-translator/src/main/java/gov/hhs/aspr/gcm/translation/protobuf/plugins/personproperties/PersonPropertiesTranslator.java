@@ -30,8 +30,10 @@ public class PersonPropertiesTranslator {
                     translationEngineBuilder.addTranslationSpec(new TestPersonPropertyIdTranslationSpec());
 
                     if (withReport) {
-                        translationEngineBuilder.addTranslationSpec(new PersonPropertyReportPluginDataTranslationSpec());
-                        translationEngineBuilder.addTranslationSpec(new PersonPropertyInteractionReportPluginDataTranslationSpec());
+                        translationEngineBuilder
+                                .addTranslationSpec(new PersonPropertyReportPluginDataTranslationSpec());
+                        translationEngineBuilder
+                                .addTranslationSpec(new PersonPropertyInteractionReportPluginDataTranslationSpec());
                     }
                 });
 

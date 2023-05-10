@@ -38,8 +38,10 @@ public class RegionsTranslator {
                     translationEngineBuilder.addTranslationSpec(new TestRegionPropertyIdTranslationSpec());
 
                     if (withReport) {
-                        translationEngineBuilder.addTranslationSpec(new RegionPropertyReportPluginDataTranslationSpec());
-                        translationEngineBuilder.addTranslationSpec(new RegionTransferReportPluginDataTranslationSpec());
+                        translationEngineBuilder
+                                .addTranslationSpec(new RegionPropertyReportPluginDataTranslationSpec());
+                        translationEngineBuilder
+                                .addTranslationSpec(new RegionTransferReportPluginDataTranslationSpec());
                     }
                 });
 

@@ -55,7 +55,8 @@ public class AppTest {
 
         long seed = 524805676405822016L;
 
-        ResourcesPluginData expectedPluginData = ResourcesTestPluginFactory.getStandardResourcesPluginData(seed);
+        ResourcesPluginData expectedPluginData = ResourcesTestPluginFactory
+                .getStandardResourcesPluginData(seed);
 
         translatorController.writeOutput(expectedPluginData);
         translatorController.readInput();
@@ -198,7 +199,8 @@ public class AppTest {
         translatorController.writeOutput(expectedPluginData);
         translatorController.readInput();
 
-        ResourceReportPluginData actualPluginData = translatorController.getFirstObject(ResourceReportPluginData.class);
+        ResourceReportPluginData actualPluginData = translatorController
+                .getFirstObject(ResourceReportPluginData.class);
 
         assertEquals(expectedPluginData, actualPluginData);
     }

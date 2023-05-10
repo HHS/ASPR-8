@@ -4,7 +4,8 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.input.SimpleGroupTyp
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.simobjects.SimpleGroupTypeId;
 
-public class SimpleGroupTypeIdTranslationSpec extends ProtobufTranslationSpec<SimpleGroupTypeIdInput, SimpleGroupTypeId> {
+public class SimpleGroupTypeIdTranslationSpec
+        extends ProtobufTranslationSpec<SimpleGroupTypeIdInput, SimpleGroupTypeId> {
 
     @Override
     protected SimpleGroupTypeId convertInputObject(SimpleGroupTypeIdInput inputObject) {

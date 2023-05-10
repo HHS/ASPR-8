@@ -8,22 +8,23 @@ public class PersonRangeTranslationSpec extends ProtobufTranslationSpec<PersonRa
 
     @Override
     protected PersonRange convertInputObject(PersonRangeInput inputObject) {
-      return new PersonRange(inputObject.getLowPersonId(), inputObject.getHighPersonId());
+        return new PersonRange(inputObject.getLowPersonId(), inputObject.getHighPersonId());
     }
 
     @Override
     protected PersonRangeInput convertAppObject(PersonRange appObject) {
-       return PersonRangeInput.newBuilder().setLowPersonId(appObject.getLowPersonId()).setHighPersonId(appObject.getHighPersonId()).build();
+        return PersonRangeInput.newBuilder().setLowPersonId(appObject.getLowPersonId())
+                .setHighPersonId(appObject.getHighPersonId()).build();
     }
 
     @Override
     public Class<PersonRange> getAppObjectClass() {
-       return PersonRange.class;
+        return PersonRange.class;
     }
 
     @Override
     public Class<PersonRangeInput> getInputObjectClass() {
-       return PersonRangeInput.class;
+        return PersonRangeInput.class;
     }
-    
+
 }

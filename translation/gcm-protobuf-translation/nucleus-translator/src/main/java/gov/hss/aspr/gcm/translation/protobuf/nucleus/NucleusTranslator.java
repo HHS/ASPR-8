@@ -19,9 +19,11 @@ public class NucleusTranslator {
                 .setTranslatorId(NucleusTranslatorId.TRANSLATOR_ID)
                 .setInitializer((translatorContext) -> {
                     ProtobufTranslationEngine.Builder translationEngineBuilder = translatorContext
-                            .getTranslationEngineBuilder(ProtobufTranslationEngine.Builder.class);
+                            .getTranslationEngineBuilder(
+                                    ProtobufTranslationEngine.Builder.class);
 
-                    translationEngineBuilder.addTranslationSpec(new SimulationStateTranslationSpec());
+                    translationEngineBuilder
+                            .addTranslationSpec(new SimulationStateTranslationSpec());
                     translationEngineBuilder.addTranslationSpec(new PlanQueueDataTranslationSpec());
                     translationEngineBuilder.addTranslationSpec(new PlannerTranslationSpec());
                     translationEngineBuilder.addTranslationSpec(new PlanDataTranslationSpec());
