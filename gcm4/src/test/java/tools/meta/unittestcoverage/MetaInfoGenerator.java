@@ -23,6 +23,7 @@ import tools.meta.unittestcoverage.warnings.MethodWarning;
 import tools.meta.unittestcoverage.warnings.WarningType;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestField;
+import util.annotations.UnitTestForCoverage;
 import util.annotations.UnitTestMethod;
 
 /**
@@ -218,8 +219,10 @@ public class MetaInfoGenerator {
 			final UnitTestMethod unitTestMethod = testMethod.getAnnotation(UnitTestMethod.class);
 			final UnitTestConstructor unitTestConstructor = testMethod.getAnnotation(UnitTestConstructor.class);
 			final UnitTestField unitTestField = testMethod.getAnnotation(UnitTestField.class);
+			final UnitTestForCoverage unitTestForCoverage = testMethod.getAnnotation(UnitTestForCoverage.class);
+
 			int caseIndex = 0;
-			if (test != null) {
+			if (test != null && unitTestForCoverage == null) {
 				caseIndex += 8;
 			}
 			if (unitTestConstructor != null) {
