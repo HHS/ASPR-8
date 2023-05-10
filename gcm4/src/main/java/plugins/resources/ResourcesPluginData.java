@@ -47,28 +47,26 @@ public final class ResourcesPluginData implements PluginData {
 		private final Map<ResourceId, Boolean> resourceTimeTrackingPolicies;
 		private final Map<ResourceId, Map<ResourcePropertyId, PropertyDefinition>> resourcePropertyDefinitions;
 		private final Map<ResourceId, Map<ResourcePropertyId, Object>> resourcePropertyValues;
-
 		private final Map<ResourceId, List<Long>> personResourceLevels;
 		private final Map<ResourceId, List<Double>> personResourceTimes;
-
 		private final Map<RegionId, List<ResourceInitialization>> regionResourceLevels;
 
-		private int personCount;
 		private boolean locked;
 		private final List<ResourceInitialization> emptyResourceInitializationList = Collections.unmodifiableList(new ArrayList<>());
 
 		public Data() {
+			resourceIds = new LinkedHashMap<>();
+			resourceTimeTrackingPolicies = new LinkedHashMap<>();
 			resourcePropertyDefinitions = new LinkedHashMap<>();
 			resourcePropertyValues = new LinkedHashMap<>();
-			personResourceLevels = new ArrayList<>();
-			resourceIds = new LinkedHashSet<>();
+			personResourceLevels = new LinkedHashMap<>();
+			personResourceTimes = new LinkedHashMap<>();
 			regionResourceLevels = new LinkedHashMap<>();
-			resourceTimeTrackingPolicies = new LinkedHashMap<>();
 		}
 
 		public Data(Data data) {
-			personCount = data.personCount;
-
+			resourceIds = new LinkedHashMap<>(data.resourceIds);
+			resourceTimeTrackingPolicies = new LinkedHashMap<>(data.resourceTimeTrackingPolicies);
 			resourcePropertyDefinitions = new LinkedHashMap<>();
 			for (ResourceId resourceId : data.resourcePropertyDefinitions.keySet()) {
 				Map<ResourcePropertyId, PropertyDefinition> map = data.resourcePropertyDefinitions.get(resourceId);
@@ -83,19 +81,19 @@ public final class ResourcesPluginData implements PluginData {
 				resourcePropertyValues.put(resourceId, newMap);
 			}
 
-			personResourceLevels = new ArrayList<>();
-			int n = data.personResourceLevels.size();
-			for (int i = 0; i < n; i++) {
-
-				List<ResourceInitialization> list = data.personResourceLevels.get(i);
-				List<ResourceInitialization> newList = null;
-				if (list != null) {
-					newList = new ArrayList<>(list);
-				}
-				personResourceLevels.add(newList);
+			personResourceLevels = new LinkedHashMap<>();
+			for (ResourceId resourceId : data.personResourceLevels.keySet()) {
+				List<Long> list = data.personResourceLevels.get(resourceId);
+				List<Long> newlist = new ArrayList<>(list);
+				personResourceLevels.put(resourceId, newlist);
 			}
 
-			resourceIds = new LinkedHashSet<>(data.resourceIds);
+			personResourceTimes = new LinkedHashMap<>();
+			for (ResourceId resourceId : data.personResourceTimes.keySet()) {
+				List<Double> list = data.personResourceTimes.get(resourceId);
+				List<Double> newlist = new ArrayList<>(list);
+				personResourceTimes.put(resourceId, newlist);
+			}
 
 			regionResourceLevels = new LinkedHashMap<>();
 			for (RegionId regionId : data.regionResourceLevels.keySet()) {
@@ -103,8 +101,6 @@ public final class ResourcesPluginData implements PluginData {
 				List<ResourceInitialization> newList = new ArrayList<>(list);
 				regionResourceLevels.put(regionId, newList);
 			}
-
-			resourceTimeTrackingPolicies = new LinkedHashMap<>(data.resourceTimeTrackingPolicies);
 
 			locked = data.locked;
 		}
@@ -122,7 +118,7 @@ public final class ResourcesPluginData implements PluginData {
 			result = prime * result + getResourcePropertyValuesHashCode();
 			result = prime * result + getRegionResourceLevelsHashCode();
 			result = prime * result + getPersonResourceLevelsHashCode();
-
+			result = prime * result + getPersonResourceTimesHashCode();
 			return result;
 		}
 
@@ -203,6 +199,10 @@ public final class ResourcesPluginData implements PluginData {
 			return result;
 		}
 
+		private int getPersonResourceTimesHashCode() {
+			return 0;
+		}
+
 		/**
 		 * 
 		 */
@@ -221,9 +221,6 @@ public final class ResourcesPluginData implements PluginData {
 			 * 
 			 * locked -- two Datas are only compared when they are both locked
 			 * -- there are no equality comparisons in this class.
-			 * 
-			 * personCount -- different person counts do not necessarily
-			 * indicate different content
 			 * 
 			 * emptyResourceInitializationList -- are just empty lists
 			 */
@@ -256,7 +253,9 @@ public final class ResourcesPluginData implements PluginData {
 			if (!comparePersonResourceLevels(this, other)) {
 				return false;
 			}
-
+			if (!comparePersonResourceTimes(this, other)) {
+				return false;
+			}
 			return true;
 		}
 
@@ -275,6 +274,24 @@ public final class ResourcesPluginData implements PluginData {
 				}
 			}
 			return true;
+		}
+
+		/*
+		 * Both Data instances have been fully formed, validated and have equal
+		 * resource ids and resource property definitions
+		 */
+		private static boolean comparePersonResourceTimes(Data a, Data b) {
+
+			// int personCount = FastMath.max(a.personCount, b.personCount);
+			// for (int i = 0; i < personCount; i++) {
+			// Set<MultiKey> aLevels = getPersonResourceLevels(a, i);
+			// Set<MultiKey> bLevels = getPersonResourceLevels(b, i);
+			// if (!aLevels.equals(bLevels)) {
+			// return false;
+			// }
+			// }
+			return true;
+
 		}
 
 		/*
@@ -892,7 +909,7 @@ public final class ResourcesPluginData implements PluginData {
 		if (resourceId == null) {
 			throw new ContractException(ResourceError.NULL_RESOURCE_ID);
 		}
-		if (!data.resourceIds.contains(resourceId)) {
+		if (!data.resourceIds.containsKey(resourceId)) {
 			throw new ContractException(ResourceError.UNKNOWN_RESOURCE_ID, resourceId);
 		}
 	}
@@ -967,7 +984,7 @@ public final class ResourcesPluginData implements PluginData {
 	@SuppressWarnings("unchecked")
 	public <T extends ResourceId> Set<T> getResourceIds() {
 		Set<T> result = new LinkedHashSet<>(data.resourceIds.size());
-		for (ResourceId resourceId : data.resourceIds) {
+		for (ResourceId resourceId : data.resourceIds.keySet()) {
 			result.add((T) resourceId);
 		}
 		return result;
@@ -1017,13 +1034,7 @@ public final class ResourcesPluginData implements PluginData {
 		return new Builder(data);
 	}
 
-	/**
-	 * Returns the int value that exceeds by one the highest person id value
-	 * encountered while associating people with resources.
-	 */
-	public int getPersonCount() {
-		return data.personCount;
-	}
+	
 
 	@Override
 	public int hashCode() {
