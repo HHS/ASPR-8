@@ -1,6 +1,5 @@
 package plugins.util.properties;
 
-import nucleus.SimulationContext;
 import plugins.util.properties.arraycontainers.ObjectValueContainer;
 import util.errors.ContractException;
 
@@ -28,8 +27,8 @@ public final class ObjectPropertyManager extends AbstractIndexedPropertyManager 
 	 *             the property definition is null</li> 
 	 * 
 	 */
-	public ObjectPropertyManager(SimulationContext simulationContext, PropertyDefinition propertyDefinition, int initialSize) {
-		super(simulationContext, propertyDefinition, initialSize);
+	public ObjectPropertyManager(PropertyDefinition propertyDefinition, int initialSize) {
+		super(propertyDefinition, initialSize);
 		
 		if (propertyDefinition.getDefaultValue().isPresent()) {
 			defaultValue = propertyDefinition.getDefaultValue().get();			

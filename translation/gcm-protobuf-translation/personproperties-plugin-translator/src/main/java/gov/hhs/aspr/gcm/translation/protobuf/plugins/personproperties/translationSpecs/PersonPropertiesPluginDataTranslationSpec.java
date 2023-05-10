@@ -1,18 +1,20 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.translationSpecs;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.input.PersonIdInput;
+import org.apache.commons.math3.util.FastMath;
+
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.input.PersonPropertiesPluginDataInput;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.input.PersonPropertyIdInput;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.input.PersonPropertyValueInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.input.PersonPropertyValueMapInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.input.PropertyDefinitionInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.input.PropertyDefinitionMapInput;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.input.PropertyValueMapInput;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 import plugins.people.support.PersonId;
 import plugins.personproperties.PersonPropertiesPluginData;
 import plugins.personproperties.support.PersonPropertyId;
-import plugins.personproperties.support.PersonPropertyInitialization;
 import plugins.util.properties.PropertyDefinition;
 
 public class PersonPropertiesPluginDataTranslationSpec
@@ -28,22 +30,26 @@ public class PersonPropertiesPluginDataTranslationSpec
             PropertyDefinition propertyDefinition = this.translationEngine
                     .convertObject(propertyDefinitionMapInput.getPropertyDefinition());
 
-            builder.definePersonProperty(propertyId, propertyDefinition);
+            builder.definePersonProperty(propertyId, propertyDefinition,
+                    propertyDefinitionMapInput.getPropertyDefinitionTime(),
+                    propertyDefinitionMapInput.getPropertyTrackingPolicy());
         }
 
         for (PersonPropertyValueMapInput personPropertyValueMapInput : inputObject.getPersonPropertyValuesList()) {
-
-            PersonId personId = this.translationEngine.convertObject(personPropertyValueMapInput.getPersonId());
-            builder.addPerson(personId);
-
-            for (PropertyValueMapInput propertyValueMapInput : personPropertyValueMapInput.getPropertyValueMapList()) {
-                PersonPropertyId propertyId = this.translationEngine
-                        .getObjectFromAny(propertyValueMapInput.getPropertyId());
-                Object value = this.translationEngine.getObjectFromAny(propertyValueMapInput.getPropertyValue());
+            PersonPropertyId propertyId = this.translationEngine
+                    .convertObject(personPropertyValueMapInput.getPersonPropertyId());
+            for (PersonPropertyValueInput personPropertyValueInput : personPropertyValueMapInput
+                    .getPropertyValuesList()) {
+                PersonId personId = new PersonId(personPropertyValueInput.getPId());
+                Object value = this.translationEngine.getObjectFromAny(personPropertyValueInput.getValue());
 
                 builder.setPersonPropertyValue(personId, propertyId, value);
-            }
 
+                if (personPropertyValueInput.hasPropertyValueTime()) {
+                    builder.setPersonPropertyTime(personId, propertyId,
+                            personPropertyValueInput.getPropertyValueTime());
+                }
+            }
         }
 
         return builder.build();
@@ -57,37 +63,73 @@ public class PersonPropertiesPluginDataTranslationSpec
             PropertyDefinition propertyDefinition = appObject.getPersonPropertyDefinition(propertyId);
 
             PropertyDefinitionInput propertyDefinitionInput = this.translationEngine.convertObject(propertyDefinition);
+            double propertyDefinitionTime = appObject.getPropertyDefinitionTime(propertyId);
+            boolean propertyTrackingPolicy = appObject.propertyAssignmentTimesTracked(propertyId);
 
             PropertyDefinitionMapInput propertyDefinitionMapInput = PropertyDefinitionMapInput
                     .newBuilder()
                     .setPropertyDefinition(propertyDefinitionInput)
                     .setPropertyId(this.translationEngine.getAnyFromObject(propertyId))
+                    .setPropertyDefinitionTime(propertyDefinitionTime)
+                    .setPropertyTrackingPolicy(propertyTrackingPolicy)
                     .build();
 
             builder.addPersonPropertyDefinitions(propertyDefinitionMapInput);
-        }
 
-        for (int i = 0; i <= appObject.getMaxPersonIndex(); i++) {
-            if (appObject.personExists(i)) {
-                List<PersonPropertyInitialization> personPropertiesValues = appObject.getPropertyValues(i);
-                PersonIdInput personIdInput = this.translationEngine.convertObject(new PersonId(i));
-                PersonPropertyValueMapInput.Builder personPropertyValueMapBuilder = PersonPropertyValueMapInput
-                        .newBuilder().setPersonId(personIdInput);
+            List<PersonPropertyValueInput.Builder> personPropertyValueInputBuilders = new ArrayList<>();
 
-                for (PersonPropertyInitialization personPropertyInitialization : personPropertiesValues) {
-                    PropertyValueMapInput propertyValueMapInput = PropertyValueMapInput.newBuilder()
-                            .setPropertyValue(this.translationEngine.getAnyFromObject(
-                                    personPropertyInitialization.getValue()))
-                            .setPropertyId(
-                                    this.translationEngine
-                                            .getAnyFromObject(personPropertyInitialization.getPersonPropertyId()))
-                            .build();
+            List<Object> propertyValues = appObject.getPropertyValues(propertyId);
+            List<Double> propertyTimes = appObject.getPropertyTimes(propertyId);
 
-                    personPropertyValueMapBuilder.addPropertyValueMap(propertyValueMapInput);
-                }
+            int maxPersonId = FastMath.max(propertyValues.size(), propertyTimes.size());
 
-                builder.addPersonPropertyValues(personPropertyValueMapBuilder.build());
+            // prepopulate nulls based on max personId
+            for (int i = 0; i < maxPersonId; i++) {
+                personPropertyValueInputBuilders.add(null);
             }
+
+            for (int i = 0; i < propertyValues.size(); i++) {
+                if (propertyValues.get(i) != null) {
+                    PersonPropertyValueInput.Builder personPropertyValueInputBuilder = PersonPropertyValueInput
+                            .newBuilder();
+
+                    personPropertyValueInputBuilder.setPId(i)
+                            .setValue(this.translationEngine.getAnyFromObject(propertyValues.get(i)));
+
+                    personPropertyValueInputBuilders.set(i, personPropertyValueInputBuilder);
+                }
+            }
+
+            for (int i = 0; i < propertyTimes.size(); i++) {
+                if (propertyTimes.get(i) != null) {
+                    PersonPropertyValueInput.Builder personPropertyValueInputBuilder = PersonPropertyValueInput
+                            .newBuilder();
+                    // check for and use existing builder, if there is one
+                    if (personPropertyValueInputBuilders.get(i) != null) {
+                        personPropertyValueInputBuilder = personPropertyValueInputBuilders.get(i);
+
+                        personPropertyValueInputBuilder.setPropertyValueTime(propertyTimes.get(i));
+                    } else {
+                        personPropertyValueInputBuilder.setPId(i)
+                                .setPropertyValueTime(propertyTimes.get(i));
+                    }
+
+                    personPropertyValueInputBuilders.set(i, personPropertyValueInputBuilder);
+                }
+            }
+
+            PersonPropertyValueMapInput.Builder valueMapInputBuilder = PersonPropertyValueMapInput.newBuilder()
+                    .setPersonPropertyId((PersonPropertyIdInput) this.translationEngine
+                            .convertObjectAsSafeClass(propertyId, PersonPropertyId.class));
+
+            for (PersonPropertyValueInput.Builder personPropertyValueInputBuilder : personPropertyValueInputBuilders) {
+                if (personPropertyValueInputBuilder != null) {
+                    valueMapInputBuilder.addPropertyValues(personPropertyValueInputBuilder.build());
+                }
+            }
+
+            builder.addPersonPropertyValues(valueMapInputBuilder.build());
+
         }
 
         return builder.build();

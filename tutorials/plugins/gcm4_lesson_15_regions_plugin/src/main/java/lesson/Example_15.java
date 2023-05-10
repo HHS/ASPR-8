@@ -77,7 +77,7 @@ public final class Example_15 {
 
 		for (PersonId personId : initialPeople) {
 			Region region = initialRegions.get(randomGenerator.nextInt(initialRegions.size()));
-			regionsPluginDataBuilder.setPersonRegion(personId, region);
+			regionsPluginDataBuilder.addPerson(personId, region);
 		}
 
 		PropertyDefinition propertyDefinition = PropertyDefinition	.builder()//

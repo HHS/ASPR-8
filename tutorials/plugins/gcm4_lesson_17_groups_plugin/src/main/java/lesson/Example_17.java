@@ -118,19 +118,19 @@ public final class Example_17 {
 																	.setType(Integer.class)//
 																	.build();
 
-		builder.definePersonProperty(PersonProperty.AGE, propertyDefinition);//
+		builder.definePersonProperty(PersonProperty.AGE, propertyDefinition,0,false);//
 
 		propertyDefinition = PropertyDefinition	.builder()//
 												.setType(DiseaseState.class)//
 												.setDefaultValue(DiseaseState.SUSCEPTIBLE).build();
 
-		builder.definePersonProperty(PersonProperty.DISEASE_STATE, propertyDefinition);//
+		builder.definePersonProperty(PersonProperty.DISEASE_STATE, propertyDefinition,0,false);//
 
 		propertyDefinition = PropertyDefinition	.builder()//
 												.setType(Integer.class)//
 												.setDefaultValue(0).build();
 
-		builder.definePersonProperty(PersonProperty.INFECTED_COUNT, propertyDefinition);//
+		builder.definePersonProperty(PersonProperty.INFECTED_COUNT, propertyDefinition,0,false);//
 
 		PersonPropertiesPluginData personPropertiesPluginData = builder.build();
 

@@ -3,6 +3,7 @@ package gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties;
 import gov.hhs.aspr.translation.core.Translator;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.PeopleTranslatorId;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.input.PersonPropertyValueInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.translationSpecs.PersonPropertiesPluginDataTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.translationSpecs.PersonPropertyIdTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.translationSpecs.PersonPropertyInteractionReportPluginDataTranslationSpec;
@@ -29,12 +30,15 @@ public class PersonPropertiesTranslator {
                     translationEngineBuilder.addTranslationSpec(new PersonPropertiesPluginDataTranslationSpec());
                     translationEngineBuilder.addTranslationSpec(new TestPersonPropertyIdTranslationSpec());
 
+                    translationEngineBuilder.addFieldToIncludeDefaultValue(PersonPropertyValueInput.getDescriptor().findFieldByName("personId"));
+
                     if (withReport) {
                         translationEngineBuilder
                                 .addTranslationSpec(new PersonPropertyReportPluginDataTranslationSpec());
                         translationEngineBuilder
                                 .addTranslationSpec(new PersonPropertyInteractionReportPluginDataTranslationSpec());
                     }
+                    
                 });
 
         if (withReport) {

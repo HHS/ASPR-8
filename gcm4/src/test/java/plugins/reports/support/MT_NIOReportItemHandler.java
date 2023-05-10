@@ -93,7 +93,14 @@ public final class MT_NIOReportItemHandler {
 		sb.append("\t" + "Test 5:" + "\n");
 		sb.append("\t" + "\t" + "No progress log will be written, an attempt at reading a non-existent progress log " + "\n");
 		sb.append("\t" + "\t" + "will be made, and the experiment columns will be used" + "\n");
-
+		sb.append("\t" + "Test 6:" + "\n");
+		sb.append("\t" + "\t" + "No progress log will be written, no progress log will be read, and " + "\n");
+		sb.append("\t" + "\t" + "the experiment columns will be used. For this test, a custom delimiter is also set." + "\n");
+		sb.append("\t" + "\t" + "The process for this test will be executed twice." + "\n");
+		sb.append("\t" + "Test 7:" + "\n");
+		sb.append("\t" + "\t" + "No progress log will be written, no progress log will be read, and " + "\n");
+		sb.append("\t" + "\t" + "the experiment columns will be used. For this test, a custom delimiter is also set." + "\n");
+		sb.append("\t" + "\t" + "An experiment report will be written." + "\n");
 		System.out.println(sb);
 	}
 
@@ -205,7 +212,7 @@ public final class MT_NIOReportItemHandler {
 			throw new RuntimeException("test index needs to be a integer", e);
 		}
 
-		if (testIndex < 1 || testIndex > 6) {
+		if (testIndex < 1 || testIndex > 7) {
 			throw new RuntimeException("test index out of bounds");
 		}
 
@@ -291,6 +298,12 @@ public final class MT_NIOReportItemHandler {
 			printExpected(6);
 			test1(subPath);
 			test1(subPath);
+			break;
+		case 7:
+			subPath = basePath.resolve("test7");
+			createDirectory(subPath);
+			printExpected(7);
+			test7(subPath);
 			break;
 		default:
 			throw new RuntimeException("unknown test number: " + testToRun);
@@ -754,6 +767,90 @@ public final class MT_NIOReportItemHandler {
 
 	}
 
+	/*
+	 * no progress log written
+	 *
+	 * no progress log read
+	 *
+	 * use experiment columns
+	 *
+	 * delimiter set
+	 *
+	 * write four reports
+	 *
+	 * write one experiment report
+	 */
+	private void test7(Path subPath) {
+		ReportLabel reportLabel = new SimpleReportLabel("report label");
+
+		ReportHeader.Builder reportHeaderBuilder = ReportHeader.builder();
+		reportHeaderBuilder.add("alpha");
+		reportHeaderBuilder.add("beta");
+		ReportHeader reportHeader = reportHeaderBuilder.build();
+
+		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
+
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
+
+			for (int i = 0; i < 10; i++) {
+				ReportItem.Builder reportItemBuilder = ReportItem.builder();
+				reportItemBuilder.setReportHeader(reportHeader);
+				reportItemBuilder.setReportLabel(reportLabel);
+				reportItemBuilder.addValue(i);
+				reportItemBuilder.addValue("value " + i);
+				ReportItem reportItem = reportItemBuilder.build();
+				c.releaseOutput(reportItem);
+			}
+		}));
+
+		Dimension dimension1 = Dimension.builder()//
+				.addMetaDatum("xxx")//
+				.addLevel((c) -> {
+					List<String> result = new ArrayList<>();
+					result.add("a");
+					return result;
+				}).addLevel((c) -> {
+					List<String> result = new ArrayList<>();
+					result.add("b");
+					return result;
+				}).build();
+
+		Dimension dimension2 = Dimension.builder()//
+				.addMetaDatum("xyz").addLevel((c) -> {
+					List<String> result = new ArrayList<>();
+					result.add("x");
+					return result;
+				}).addLevel((c) -> {
+					List<String> result = new ArrayList<>();
+					result.add("y");
+					return result;
+				}).addLevel((c) -> {
+					List<String> result = new ArrayList<>();
+					result.add("z");
+					return result;
+				}).build();
+
+		NIOReportItemHandler nioReportItemHandler = //
+				NIOReportItemHandler.builder()//
+						.addReport(reportLabel, subPath.resolve("report1.csv"))//
+						.addExperimentReport(subPath.resolve("experiment_report.csv"))
+						.setDelimiter(",").build();
+
+		TestPluginData testPluginData = pluginDataBuilder.build();
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+
+		ExperimentStatusConsole experimentStatusConsole = ExperimentStatusConsole.builder().build();
+
+		Experiment	.builder()//
+				.addPlugin(testPlugin)//
+				.addDimension(dimension1)//
+				.addDimension(dimension2)//
+				.addExperimentContextConsumer(nioReportItemHandler)//
+				.addExperimentContextConsumer(experimentStatusConsole)//
+				.build()//
+				.execute();
+	}
+
 	private void printExpected(Integer testNum) {
 
 		StringBuilder sb = new StringBuilder();
@@ -857,7 +954,28 @@ public final class MT_NIOReportItemHandler {
 			sb.append("\t" + "\t" + "alpha" + "\n");
 			sb.append("\t" + "\t" + "beta" + "\n");
 			sb.append("------------------------------ CONSOLE OUTPUT ------------------------------" + "\n");
-
+			break;
+		case 7:
+			sb.append("This test is meant to prove that when we run a simulation, we can generate an experiment report " + "\n");
+			sb.append(" alongside our basic reports." + "\n");
+			sb.append("Expected Observations: " + "\n");
+			sb.append("\t" + "After all 6 scenarios are completed, the console should show 1" + "\n");
+			sb.append("\t" + "value. You should observe a SUCCEEDED value of 6." + "\n");
+			sb.append("\t" + "A folder named 'test7' should appear in the specified directory." + "\n");
+			sb.append("\t" + "A file named 'report1.csv' should be in the 'test1' folder." + "\n");
+			sb.append("\t" + "The file's data should be comma separated." + "\n");
+			sb.append("\t" + "The header of the text file should have the following columns: " + "\n");
+			sb.append("\t" + "\t" + "scenario" + "\n");
+			sb.append("\t" + "\t" + "xxx" + "\n");
+			sb.append("\t" + "\t" + "xyz" + "\n");
+			sb.append("\t" + "\t" + "alpha" + "\n");
+			sb.append("\t" + "\t" + "beta" + "\n");
+			sb.append("\t" + "Another file named 'experiment_report' should also appear in the folder.");
+			sb.append("\t" + "The file's data should be comma separated." + "\n");
+			sb.append("\t" + "The header of the text file should have the following columns: " + "\n");
+			sb.append("\t" + "\t" + "scenario" + "\n");
+			sb.append("\t" + "\t" + "max_family_size" + "\n");
+			sb.append("------------------------------ CONSOLE OUTPUT ------------------------------" + "\n");
 			break;
 		}
 

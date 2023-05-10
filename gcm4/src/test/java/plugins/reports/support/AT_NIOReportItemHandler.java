@@ -57,6 +57,18 @@ public class AT_NIOReportItemHandler {
 	}
 
 	@Test
+	@UnitTestMethod(target = NIOReportItemHandler.Builder.class, name = "addReport", args = { ReportLabel.class, Path.class }, tags = { UnitTag.MANUAL })
+	public void testAddExperimentReport() {
+		NIOReportItemHandler.Builder builder = NIOReportItemHandler.builder();
+
+		// null report path check
+		ContractException idContractException = assertThrows(ContractException.class, () -> builder.addExperimentReport(null));
+		assertEquals(idContractException.getErrorType(), ReportError.NULL_REPORT_PATH);
+
+		// the existence of the report file is covered by a manual test
+	}
+
+	@Test
 	@UnitTestMethod(target = NIOReportItemHandler.Builder.class, name = "setDelimiter", args = {String.class}, tags = UnitTag.MANUAL)
 	public void testSetDelimiter() {
 		// covered by test 6 in manual test

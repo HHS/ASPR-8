@@ -334,11 +334,12 @@ public class PersonPropertiesTestPluginFactory {
 
 		PersonPropertiesPluginData.Builder personPropertyBuilder = PersonPropertiesPluginData.builder();
 		for (TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.values()) {
-			personPropertyBuilder.definePersonProperty(testPersonPropertyId, testPersonPropertyId.getPropertyDefinition());
+			personPropertyBuilder.definePersonProperty(testPersonPropertyId, testPersonPropertyId.getPropertyDefinition(), 0.0, testPersonPropertyId.isTimeTracked());
 		}
 		for (PersonId personId : people) {
-			personPropertyBuilder.addPerson(personId);
+
 			for (TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.values()) {
+
 				boolean doesNotHaveDefaultValue = testPersonPropertyId.getPropertyDefinition().getDefaultValue().isEmpty();
 				if (doesNotHaveDefaultValue || randomGenerator.nextBoolean()) {
 					Object randomPropertyValue = testPersonPropertyId.getRandomPropertyValue(randomGenerator);
@@ -389,7 +390,7 @@ public class PersonPropertiesTestPluginFactory {
 		}
 		for (PersonId personId : people) {
 			TestRegionId randomRegionId = TestRegionId.getRandomRegionId(randomGenerator);
-			regionBuilder.setPersonRegion(personId, randomRegionId);
+			regionBuilder.addPerson(personId, randomRegionId);
 		}
 		return regionBuilder.build();
 

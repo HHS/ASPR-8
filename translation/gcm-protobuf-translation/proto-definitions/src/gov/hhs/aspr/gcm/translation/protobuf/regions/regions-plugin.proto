@@ -44,8 +44,12 @@ enum TestRegionPropertyIdInput {
 }
 
 message RegionMembershipInput {
-    PersonIdInput personId = 1;
-    RegionIdInput regionId = 2;
+    message RegionPersonInfo {
+        int32 personId = 1;
+        optional double arrivalTime = 3;
+    }
+    RegionIdInput regionId = 1;
+    repeated RegionPersonInfo people = 2;
 }
 
 message RegionPropertyValueMapInput {
@@ -58,7 +62,7 @@ message RegionsPluginDataInput {
     repeated PropertyDefinitionMapInput regionPropertyDefinitions = 2;
     repeated RegionPropertyValueMapInput regionPropertyValues = 3;
     repeated RegionMembershipInput personRegions = 4;
-    TimeTrackingPolicyInput regionArrivalTimeTrackingPolicy = 5;
+    bool trackRegionArrivalTimes = 5;
 }
 
 message RegionPropertyReportPluginDataInput {

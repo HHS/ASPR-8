@@ -7,7 +7,6 @@ import org.apache.commons.math3.random.RandomGenerator;
 
 import plugins.regions.support.RegionPropertyId;
 import plugins.util.properties.PropertyDefinition;
-import plugins.util.properties.TimeTrackingPolicy;
 
 /**
  * Enumeration that identifies region property definitions
@@ -18,14 +17,12 @@ public enum TestRegionPropertyId implements RegionPropertyId {
 								.setType(Boolean.class)//
 								.setDefaultValue(false)//
 								.setPropertyValueMutability(true)//
-								.setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME)//
 								.build()), //
 	REGION_PROPERTY_2_INTEGER_MUTABLE(
 			PropertyDefinition	.builder()//
 								.setType(Integer.class)//
 								// .setDefaultValue(0)//no default value
 								.setPropertyValueMutability(true)//
-								.setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME)//
 								.build()//
 	), //
 	REGION_PROPERTY_3_DOUBLE_MUTABLE(
@@ -33,7 +30,6 @@ public enum TestRegionPropertyId implements RegionPropertyId {
 								.setType(Double.class)//
 								.setDefaultValue(0.0)//
 								.setPropertyValueMutability(true)//
-								.setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME)//
 								.build()//
 	), //
 	REGION_PROPERTY_4_BOOLEAN_IMMUTABLE(
@@ -41,7 +37,6 @@ public enum TestRegionPropertyId implements RegionPropertyId {
 								.setType(Boolean.class)//
 								.setDefaultValue(false)//
 								.setPropertyValueMutability(false)//
-								.setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME)//
 								.build()//
 	), //
 	REGION_PROPERTY_5_INTEGER_IMMUTABLE(
@@ -49,7 +44,6 @@ public enum TestRegionPropertyId implements RegionPropertyId {
 								.setType(Integer.class)//
 								.setDefaultValue(0)//
 								.setPropertyValueMutability(false)//
-								.setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME)//
 								.build()//
 	), //
 	REGION_PROPERTY_6_DOUBLE_IMMUTABLE(
@@ -57,7 +51,6 @@ public enum TestRegionPropertyId implements RegionPropertyId {
 								.setType(Double.class)//
 								.setDefaultValue(0.0)//
 								.setPropertyValueMutability(false)//
-								.setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME)//
 								.build()//
 	), //
 
@@ -150,7 +143,7 @@ public enum TestRegionPropertyId implements RegionPropertyId {
 		}
 		return result;
 	}
-	
+
 	/**
 	 * Returns the test region property id values associated with property
 	 * definitions that do not have default values.
@@ -164,6 +157,5 @@ public enum TestRegionPropertyId implements RegionPropertyId {
 		}
 		return result;
 	}
-
 
 }

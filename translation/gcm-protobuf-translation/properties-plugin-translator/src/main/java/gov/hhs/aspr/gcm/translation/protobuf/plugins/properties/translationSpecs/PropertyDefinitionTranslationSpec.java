@@ -14,7 +14,6 @@ public class PropertyDefinitionTranslationSpec
         PropertyDefinition.Builder builder = PropertyDefinition.builder();
 
         builder.setPropertyValueMutability(inputObject.getPropertyValuesAreMutable());
-        builder.setTimeTrackingPolicy(this.translationEngine.convertObject(inputObject.getTimeTrackingPolicy()));
 
         if (inputObject.hasDefaultValue()) {
             Object defaultValue = this.translationEngine.convertObject(inputObject.getDefaultValue());
@@ -44,8 +43,7 @@ public class PropertyDefinitionTranslationSpec
         } else {
             builder.setType(appObject.getType().getName());
         }
-        builder.setPropertyValuesAreMutable(appObject.propertyValuesAreMutable())
-                .setTimeTrackingPolicy(this.translationEngine.convertObject(appObject.getTimeTrackingPolicy()));
+        builder.setPropertyValuesAreMutable(appObject.propertyValuesAreMutable());
 
         return builder.build();
     }
