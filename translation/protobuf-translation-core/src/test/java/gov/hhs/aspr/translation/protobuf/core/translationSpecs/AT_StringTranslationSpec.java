@@ -1,16 +1,26 @@
 package gov.hhs.aspr.translation.protobuf.core.translationSpecs;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.Test;
 
 import com.google.protobuf.StringValue;
 
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
+import util.annotations.UnitTestConstructor;
+import util.annotations.UnitTestMethod;
 
 public class AT_StringTranslationSpec {
 
     @Test
+    @UnitTestConstructor(target = StringTranslationSpec.class, args = {})
+    public void testConstructor() {
+        assertNotNull(new StringTranslationSpec());
+    }
+
+    @Test
+    @UnitTestMethod(target = StringTranslationSpec.class, name = "convertInputObject", args = { StringValue.class })
     public void testConvertInputObject() {
         ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine
                 .builder()
@@ -28,6 +38,7 @@ public class AT_StringTranslationSpec {
     }
 
     @Test
+    @UnitTestMethod(target = StringTranslationSpec.class, name = "convertAppObject", args = { String.class })
     public void testConvertAppObject() {
         ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine
                 .builder()
@@ -45,14 +56,16 @@ public class AT_StringTranslationSpec {
     }
 
     @Test
-    public void getAppObjectClass() {
+    @UnitTestMethod(target = StringTranslationSpec.class, name = "getAppObjectClass", args = {})
+    public void testGetAppObjectClass() {
         StringTranslationSpec stringTranslationSpec = new StringTranslationSpec();
 
         assertEquals(String.class, stringTranslationSpec.getAppObjectClass());
     }
 
     @Test
-    public void getInputObjectClass() {
+    @UnitTestMethod(target = StringTranslationSpec.class, name = "getInputObjectClass", args = {})
+    public void testGetInputObjectClass() {
         StringTranslationSpec stringTranslationSpec = new StringTranslationSpec();
 
         assertEquals(StringValue.class, stringTranslationSpec.getInputObjectClass());

@@ -1,16 +1,27 @@
 package gov.hhs.aspr.translation.protobuf.core.testsupport.testobject.translationSpecs;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.translation.core.testsupport.testobject.app.TestAppEnum;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
 import gov.hhs.aspr.translation.protobuf.core.testsupport.testobject.input.TestInputEnum;
+import util.annotations.UnitTestConstructor;
+import util.annotations.UnitTestMethod;
 
 public class AT_TestProtobufEnumTranslationSpec {
-    
+
     @Test
+    @UnitTestConstructor(target = TestProtobufEnumTranslationSpec.class, args = {})
+    public void testConstructor() {
+        assertNotNull(new TestProtobufEnumTranslationSpec());
+    }
+
+    @Test
+    @UnitTestMethod(target = TestProtobufEnumTranslationSpec.class, name = "convertInputObject", args = {
+            TestInputEnum.class })
     public void testConvertInputObject() {
         ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine
                 .builder()
@@ -29,6 +40,8 @@ public class AT_TestProtobufEnumTranslationSpec {
     }
 
     @Test
+    @UnitTestMethod(target = TestProtobufEnumTranslationSpec.class, name = "convertAppObject", args = {
+            TestAppEnum.class })
     public void testConvertAppObject() {
         ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine
                 .builder()
@@ -47,14 +60,16 @@ public class AT_TestProtobufEnumTranslationSpec {
     }
 
     @Test
-    public void getAppObjectClass() {
+    @UnitTestMethod(target = TestProtobufEnumTranslationSpec.class, name = "getAppObjectClass", args = {})
+    public void testGetAppObjectClass() {
         TestProtobufEnumTranslationSpec enumTranslationSpec = new TestProtobufEnumTranslationSpec();
 
         assertEquals(TestAppEnum.class, enumTranslationSpec.getAppObjectClass());
     }
 
     @Test
-    public void getInputObjectClass() {
+    @UnitTestMethod(target = TestProtobufEnumTranslationSpec.class, name = "getInputObjectClass", args = {})
+    public void testGetInputObjectClass() {
         TestProtobufEnumTranslationSpec enumTranslationSpec = new TestProtobufEnumTranslationSpec();
 
         assertEquals(TestInputEnum.class, enumTranslationSpec.getInputObjectClass());

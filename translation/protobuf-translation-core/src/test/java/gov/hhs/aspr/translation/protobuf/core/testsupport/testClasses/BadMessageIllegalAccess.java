@@ -4,7 +4,7 @@ public class BadMessageIllegalAccess {
     private BadMessageIllegalAccess() {
 
     }
-    
+
     private static class Builder {
 
     }

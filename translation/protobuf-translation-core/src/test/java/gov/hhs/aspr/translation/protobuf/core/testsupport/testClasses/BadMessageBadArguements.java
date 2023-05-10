@@ -5,7 +5,7 @@ public class BadMessageBadArguements {
     private BadMessageBadArguements() {
 
     }
-    
+
     private static class Builder {
 
     }

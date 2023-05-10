@@ -1,16 +1,26 @@
 package gov.hhs.aspr.translation.protobuf.core.translationSpecs;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.Test;
 
 import com.google.protobuf.UInt32Value;
 
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
+import util.annotations.UnitTestConstructor;
+import util.annotations.UnitTestMethod;
 
 public class AT_UIntegerTranslationSpec {
 
     @Test
+    @UnitTestConstructor(target = UIntegerTranslationSpec.class, args = {})
+    public void testConstructor() {
+        assertNotNull(new UIntegerTranslationSpec());
+    }
+
+    @Test
+    @UnitTestMethod(target = UIntegerTranslationSpec.class, name = "convertInputObject", args = { UInt32Value.class })
     public void testConvertInputObject() {
         ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine
                 .builder()
@@ -28,6 +38,7 @@ public class AT_UIntegerTranslationSpec {
     }
 
     @Test
+    @UnitTestMethod(target = UIntegerTranslationSpec.class, name = "convertAppObject", args = { Integer.class })
     public void testConvertAppObject() {
         ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine
                 .builder()
@@ -45,14 +56,16 @@ public class AT_UIntegerTranslationSpec {
     }
 
     @Test
-    public void getAppObjectClass() {
+    @UnitTestMethod(target = UIntegerTranslationSpec.class, name = "getAppObjectClass", args = {})
+    public void testGetAppObjectClass() {
         UIntegerTranslationSpec uIntegerTranslationSpec = new UIntegerTranslationSpec();
 
         assertEquals(Integer.class, uIntegerTranslationSpec.getAppObjectClass());
     }
 
     @Test
-    public void getInputObjectClass() {
+    @UnitTestMethod(target = UIntegerTranslationSpec.class, name = "getInputObjectClass", args = {})
+    public void testGetInputObjectClass() {
         UIntegerTranslationSpec uIntegerTranslationSpec = new UIntegerTranslationSpec();
 
         assertEquals(UInt32Value.class, uIntegerTranslationSpec.getInputObjectClass());

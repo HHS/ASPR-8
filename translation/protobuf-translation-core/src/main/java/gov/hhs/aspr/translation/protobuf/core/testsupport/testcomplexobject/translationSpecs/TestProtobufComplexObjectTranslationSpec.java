@@ -4,7 +4,8 @@ import gov.hhs.aspr.translation.core.testsupport.testcomplexobject.app.TestCompl
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 import gov.hhs.aspr.translation.protobuf.core.testsupport.testcomplexobject.input.TestComplexInputObject;
 
-public class TestProtobufComplexObjectTranslationSpec extends ProtobufTranslationSpec<TestComplexInputObject, TestComplexAppObject> {
+public class TestProtobufComplexObjectTranslationSpec
+        extends ProtobufTranslationSpec<TestComplexInputObject, TestComplexAppObject> {
 
     @Override
     protected TestComplexAppObject convertInputObject(TestComplexInputObject inputObject) {
@@ -19,7 +20,8 @@ public class TestProtobufComplexObjectTranslationSpec extends ProtobufTranslatio
 
     @Override
     protected TestComplexInputObject convertAppObject(TestComplexAppObject appObject) {
-        return TestComplexInputObject.newBuilder().setNumEntities(appObject.getNumEntities()).setStartTime(appObject.getStartTime())
+        return TestComplexInputObject.newBuilder().setNumEntities(appObject.getNumEntities())
+                .setStartTime(appObject.getStartTime())
                 .setTestString(appObject.getTestString()).build();
     }
 

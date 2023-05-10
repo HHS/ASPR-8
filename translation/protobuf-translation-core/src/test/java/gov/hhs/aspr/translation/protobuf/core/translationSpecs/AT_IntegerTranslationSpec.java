@@ -1,16 +1,26 @@
 package gov.hhs.aspr.translation.protobuf.core.translationSpecs;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.Test;
 
 import com.google.protobuf.Int32Value;
 
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
+import util.annotations.UnitTestConstructor;
+import util.annotations.UnitTestMethod;
 
 public class AT_IntegerTranslationSpec {
 
     @Test
+    @UnitTestConstructor(target = IntegerTranslationSpec.class, args = {})
+    public void testConstructor() {
+        assertNotNull(new IntegerTranslationSpec());
+    }
+
+    @Test
+    @UnitTestMethod(target = IntegerTranslationSpec.class, name = "convertInputObject", args = { Int32Value.class })
     public void testConvertInputObject() {
         ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine
                 .builder()
@@ -28,6 +38,7 @@ public class AT_IntegerTranslationSpec {
     }
 
     @Test
+    @UnitTestMethod(target = IntegerTranslationSpec.class, name = "convertAppObject", args = { Integer.class })
     public void testConvertAppObject() {
         ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine
                 .builder()
@@ -45,14 +56,16 @@ public class AT_IntegerTranslationSpec {
     }
 
     @Test
-    public void getAppObjectClass() {
+    @UnitTestMethod(target = IntegerTranslationSpec.class, name = "getAppObjectClass", args = {})
+    public void testGetAppObjectClass() {
         IntegerTranslationSpec integerTranslationSpec = new IntegerTranslationSpec();
 
         assertEquals(Integer.class, integerTranslationSpec.getAppObjectClass());
     }
 
     @Test
-    public void getInputObjectClass() {
+    @UnitTestMethod(target = IntegerTranslationSpec.class, name = "getInputObjectClass", args = {})
+    public void testGetInputObjectClass() {
         IntegerTranslationSpec integerTranslationSpec = new IntegerTranslationSpec();
 
         assertEquals(Int32Value.class, integerTranslationSpec.getInputObjectClass());

@@ -1,6 +1,7 @@
 package gov.hhs.aspr.translation.protobuf.core.translationSpecs;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
@@ -17,6 +18,8 @@ import gov.hhs.aspr.translation.protobuf.core.testsupport.testobject.input.TestI
 import gov.hhs.aspr.translation.protobuf.core.testsupport.testobject.input.TestInputObject;
 import gov.hhs.aspr.translation.protobuf.core.testsupport.testobject.translationSpecs.TestProtobufEnumTranslationSpec;
 import gov.hhs.aspr.translation.protobuf.core.testsupport.testobject.translationSpecs.TestProtobufObjectTranslationSpec;
+import util.annotations.UnitTestConstructor;
+import util.annotations.UnitTestMethod;
 
 /**
  * TranslationSpec that defines how to convert from any Java Object to a
@@ -25,6 +28,13 @@ import gov.hhs.aspr.translation.protobuf.core.testsupport.testobject.translation
 public class AT_AnyTranslationSpec {
 
     @Test
+    @UnitTestConstructor(target = AnyTranslationSpec.class, args = {})
+    public void testConstructor() {
+        assertNotNull(new AnyTranslationSpec());
+    }
+    
+    @Test
+    @UnitTestMethod(target = AnyTranslationSpec.class, name = "convertInputObject", args = { Any.class })
     public void testConvertInputObject() {
         ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine
                 .builder()
@@ -57,7 +67,8 @@ public class AT_AnyTranslationSpec {
 
         // the type url is set to a value that doesn't correspond to a Message Type
         runtimeException = assertThrows(RuntimeException.class, () -> {
-            Any badAny = Any.newBuilder().setTypeUrl("/" + TestInputEnum.TEST1.getDescriptorForType().getFullName()).build();
+            Any badAny = Any.newBuilder().setTypeUrl("/" + TestInputEnum.TEST1.getDescriptorForType().getFullName())
+                    .build();
             anyTranslationSpec.convertInputObject(badAny);
         });
 
@@ -68,6 +79,7 @@ public class AT_AnyTranslationSpec {
     }
 
     @Test
+    @UnitTestMethod(target = AnyTranslationSpec.class, name = "unpackMessage", args = { Any.class, Class.class })
     public void testUnpackMessage() {
         ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine
                 .builder()
@@ -83,17 +95,18 @@ public class AT_AnyTranslationSpec {
         Integer expectedValue = 100;
         Int32Value int32Value = Int32Value.of(expectedValue);
 
-
         RuntimeException runtimeException = assertThrows(RuntimeException.class, () -> {
             Any badAny = Any.pack(int32Value);
             anyTranslationSpec.unpackMessage(badAny, TestInputObject.class);
         });
 
-        assertEquals("Unable To unpack any type to given class: " + TestInputObject.class.getName(), runtimeException.getMessage());
+        assertEquals("Unable To unpack any type to given class: " + TestInputObject.class.getName(),
+                runtimeException.getMessage());
         assertEquals(InvalidProtocolBufferException.class, runtimeException.getCause().getClass());
     }
 
     @Test
+    @UnitTestMethod(target = AnyTranslationSpec.class, name = "convertAppObject", args = { Object.class })
     public void testConvertAppObject() {
         ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine
                 .builder()
@@ -122,7 +135,7 @@ public class AT_AnyTranslationSpec {
                 .setEnumTypeUrl(TestInputEnum.getDescriptor().getFullName())
                 .setValue(expecetedValue.name())
                 .build();
-        
+
         expectedAny = Any.pack(wrapperEnumValue);
 
         actualAny = anyTranslationSpec.convertAppObject(appValue);
@@ -130,13 +143,15 @@ public class AT_AnyTranslationSpec {
         assertEquals(expectedAny, actualAny);
 
         // by calling covert on an object that was already converted
-        // this case is specifcally used for ProtobufTranslationEngine.testGetAnyFromObjectAsSafeClass
+        // this case is specifcally used for
+        // ProtobufTranslationEngine.testGetAnyFromObjectAsSafeClass
         actualAny = anyTranslationSpec.convertAppObject(wrapperEnumValue);
 
         assertEquals(expectedAny, actualAny);
     }
 
     @Test
+    @UnitTestMethod(target = AnyTranslationSpec.class, name = "getAppObjectClass", args = {})
     public void testGetAppObjectClass() {
         AnyTranslationSpec anyTranslationSpec = new AnyTranslationSpec();
 
@@ -144,6 +159,7 @@ public class AT_AnyTranslationSpec {
     }
 
     @Test
+    @UnitTestMethod(target = AnyTranslationSpec.class, name = "getInputObjectClass", args = {})
     public void testGetInputObjectClass() {
         AnyTranslationSpec anyTranslationSpec = new AnyTranslationSpec();
 

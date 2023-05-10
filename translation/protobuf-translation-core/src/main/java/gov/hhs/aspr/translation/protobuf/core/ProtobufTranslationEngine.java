@@ -164,12 +164,21 @@ public class ProtobufTranslationEngine extends TranslationEngine {
          * @throws ContractException
          *                           <ul>
          *                           <li>{@link ProtobufCoreTranslationError#INVALID_INPUT_CLASS}
-         *                           <li>if the given inputClassRef is not assingable from
-         *                           {@linkplain Message} nor {@linkplain ProtocolMessageEnum}</li>
+         *                           <li>if the given inputClassRef is not assingable
+         *                           from
+         *                           {@linkplain Message} nor
+         *                           {@linkplain ProtocolMessageEnum}</li>
+         *                           <li>{@link ProtobufCoreTranslationError#INVALID_TRANSLATION_SPEC}
+         *                           <li>if the given translation spec is not assignable
+         *                           from
+         *                           {@linkplain ProtobufTranslationSpec}</li>
          *                           </ul>
          */
         @Override
         public <I, S> Builder addTranslationSpec(TranslationSpec<I, S> translationSpec) {
+            if (!ProtobufTranslationSpec.class.isAssignableFrom(translationSpec.getClass())) {
+                throw new ContractException(ProtobufCoreTranslationError.INVALID_TRANSLATION_SPEC);
+            }
             super.addTranslationSpec(translationSpec);
 
             populate(translationSpec.getInputObjectClass());
@@ -185,8 +194,10 @@ public class ProtobufTranslationEngine extends TranslationEngine {
          * @throws ContractException
          *                           <ul>
          *                           <li>{@link ProtobufCoreTranslationError#INVALID_INPUT_CLASS}
-         *                           <li>if the given inputClassRef is not assingable from
-         *                           {@linkplain Message} nor {@linkplain ProtocolMessageEnum}</li>
+         *                           <li>if the given inputClassRef is not assingable
+         *                           from
+         *                           {@linkplain Message} nor
+         *                           {@linkplain ProtocolMessageEnum}</li>
          *                           </ul>
          */
         protected <U> void populate(Class<U> classRef) {

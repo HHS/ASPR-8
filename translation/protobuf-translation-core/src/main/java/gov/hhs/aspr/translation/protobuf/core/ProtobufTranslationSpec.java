@@ -10,6 +10,9 @@ import gov.hhs.aspr.translation.core.TranslationEngine;
 public abstract class ProtobufTranslationSpec<I, A> extends TranslationSpec<I, A> {
     protected ProtobufTranslationEngine translationEngine;
 
+    protected ProtobufTranslationSpec() {
+    }
+
     /**
      * init implementation, sets the translationEngine on this translationSpec.
      * calls super.init() to ensure this spec was properly initialized.

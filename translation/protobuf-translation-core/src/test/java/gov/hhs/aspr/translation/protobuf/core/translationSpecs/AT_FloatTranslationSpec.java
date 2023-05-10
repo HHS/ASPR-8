@@ -1,16 +1,26 @@
 package gov.hhs.aspr.translation.protobuf.core.translationSpecs;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.Test;
 
 import com.google.protobuf.FloatValue;
 
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
+import util.annotations.UnitTestConstructor;
+import util.annotations.UnitTestMethod;
 
 public class AT_FloatTranslationSpec {
 
     @Test
+    @UnitTestConstructor(target = FloatTranslationSpec.class, args = {})
+    public void testConstructor() {
+        assertNotNull(new FloatTranslationSpec());
+    }
+
+    @Test
+    @UnitTestMethod(target = FloatTranslationSpec.class, name = "convertInputObject", args = { FloatValue.class })
     public void testConvertInputObject() {
         ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine
                 .builder()
@@ -28,6 +38,7 @@ public class AT_FloatTranslationSpec {
     }
 
     @Test
+    @UnitTestMethod(target = FloatTranslationSpec.class, name = "convertAppObject", args = { Float.class })
     public void testConvertAppObject() {
         ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine
                 .builder()
@@ -45,14 +56,16 @@ public class AT_FloatTranslationSpec {
     }
 
     @Test
-    public void getAppObjectClass() {
+    @UnitTestMethod(target = FloatTranslationSpec.class, name = "getAppObjectClass", args = {})
+    public void testGetAppObjectClass() {
         FloatTranslationSpec floatTranslationSpec = new FloatTranslationSpec();
 
         assertEquals(Float.class, floatTranslationSpec.getAppObjectClass());
     }
 
     @Test
-    public void getInputObjectClass() {
+    @UnitTestMethod(target = FloatTranslationSpec.class, name = "getInputObjectClass", args = {})
+    public void testGetInputObjectClass() {
         FloatTranslationSpec floatTranslationSpec = new FloatTranslationSpec();
 
         assertEquals(FloatValue.class, floatTranslationSpec.getInputObjectClass());

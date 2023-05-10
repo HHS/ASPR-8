@@ -1,16 +1,26 @@
 package gov.hhs.aspr.translation.protobuf.core.translationSpecs;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.Test;
 
 import com.google.protobuf.Int64Value;
 
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
+import util.annotations.UnitTestConstructor;
+import util.annotations.UnitTestMethod;
 
 public class AT_LongTranslationSpec {
 
     @Test
+    @UnitTestConstructor(target = LongTranslationSpec.class, args = {})
+    public void testConstructor() {
+        assertNotNull(new LongTranslationSpec());
+    }
+
+    @Test
+    @UnitTestMethod(target = LongTranslationSpec.class, name = "convertInputObject", args = { Int64Value.class })
     public void testConvertInputObject() {
         ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine
                 .builder()
@@ -28,6 +38,7 @@ public class AT_LongTranslationSpec {
     }
 
     @Test
+    @UnitTestMethod(target = LongTranslationSpec.class, name = "convertAppObject", args = { Long.class })
     public void testConvertAppObject() {
         ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine
                 .builder()
@@ -45,14 +56,16 @@ public class AT_LongTranslationSpec {
     }
 
     @Test
-    public void getAppObjectClass() {
+    @UnitTestMethod(target = LongTranslationSpec.class, name = "getAppObjectClass", args = {})
+    public void testGetAppObjectClass() {
         LongTranslationSpec longTranslationSpec = new LongTranslationSpec();
 
         assertEquals(Long.class, longTranslationSpec.getAppObjectClass());
     }
 
     @Test
-    public void getInputObjectClass() {
+    @UnitTestMethod(target = LongTranslationSpec.class, name = "getInputObjectClass", args = {})
+    public void testGetInputObjectClass() {
         LongTranslationSpec longTranslationSpec = new LongTranslationSpec();
 
         assertEquals(Int64Value.class, longTranslationSpec.getInputObjectClass());

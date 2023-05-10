@@ -1,16 +1,26 @@
 package gov.hhs.aspr.translation.protobuf.core.translationSpecs;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.Test;
 
 import com.google.protobuf.DoubleValue;
 
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
+import util.annotations.UnitTestConstructor;
+import util.annotations.UnitTestMethod;
 
 public class AT_DoubleTranslationSpec {
 
     @Test
+    @UnitTestConstructor(target = DoubleTranslationSpec.class, args = {})
+    public void testConstructor() {
+        assertNotNull(new DoubleTranslationSpec());
+    }
+
+    @Test
+    @UnitTestMethod(target = DoubleTranslationSpec.class, name = "convertInputObject", args = { DoubleValue.class })
     public void testConvertInputObject() {
         ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine
                 .builder()
@@ -28,6 +38,7 @@ public class AT_DoubleTranslationSpec {
     }
 
     @Test
+    @UnitTestMethod(target = DoubleTranslationSpec.class, name = "convertAppObject", args = { Double.class })
     public void testConvertAppObject() {
         ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine
                 .builder()
@@ -45,14 +56,16 @@ public class AT_DoubleTranslationSpec {
     }
 
     @Test
-    public void getAppObjectClass() {
+    @UnitTestMethod(target = DoubleTranslationSpec.class, name = "getAppObjectClass", args = {})
+    public void testGetAppObjectClass() {
         DoubleTranslationSpec doubleTranslationSpec = new DoubleTranslationSpec();
 
         assertEquals(Double.class, doubleTranslationSpec.getAppObjectClass());
     }
 
     @Test
-    public void getInputObjectClass() {
+    @UnitTestMethod(target = DoubleTranslationSpec.class, name = "getInputObjectClass", args = {})
+    public void testGetInputObjectClass() {
         DoubleTranslationSpec doubleTranslationSpec = new DoubleTranslationSpec();
 
         assertEquals(DoubleValue.class, doubleTranslationSpec.getInputObjectClass());

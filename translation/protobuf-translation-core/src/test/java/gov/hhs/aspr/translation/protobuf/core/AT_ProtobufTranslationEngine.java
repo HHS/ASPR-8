@@ -10,6 +10,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Reader;
+import java.io.Writer;
 import java.nio.file.Path;
 import java.util.Optional;
 
@@ -22,11 +24,14 @@ import com.google.protobuf.Int32Value;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.Message;
 import com.google.protobuf.ProtocolMessageEnum;
+import com.google.protobuf.Descriptors.FieldDescriptor;
 
 import gov.hhs.aspr.translation.core.CoreTranslationError;
+import gov.hhs.aspr.translation.core.TranslationSpec;
 import gov.hhs.aspr.translation.core.testsupport.TestResourceHelper;
 import gov.hhs.aspr.translation.core.testsupport.testobject.app.TestAppChildObject;
 import gov.hhs.aspr.translation.core.testsupport.testobject.app.TestAppObject;
+import gov.hhs.aspr.translation.core.testsupport.testobject.translationSpecs.TestObjectTranslationSpec;
 import gov.hhs.aspr.translation.protobuf.core.testsupport.TestObjectUtil;
 import gov.hhs.aspr.translation.protobuf.core.testsupport.testClasses.BadMessageBadArguements;
 import gov.hhs.aspr.translation.protobuf.core.testsupport.testClasses.BadMessageIllegalAccess;
@@ -37,6 +42,7 @@ import gov.hhs.aspr.translation.protobuf.core.testsupport.testcomplexobject.tran
 import gov.hhs.aspr.translation.protobuf.core.testsupport.testobject.input.TestInputEnum;
 import gov.hhs.aspr.translation.protobuf.core.testsupport.testobject.input.TestInputObject;
 import gov.hhs.aspr.translation.protobuf.core.testsupport.testobject.translationSpecs.TestProtobufObjectTranslationSpec;
+import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 
 public class AT_ProtobufTranslationEngine {
@@ -44,7 +50,8 @@ public class AT_ProtobufTranslationEngine {
     Path filePath = TestResourceHelper.makeTestOutputDir(basePath);
 
     @Test
-    void testGetAnyFromObject() {
+    @UnitTestMethod(target = ProtobufTranslationEngine.class, name = "getAnyFromObject", args = { Object.class })
+    public void testGetAnyFromObject() {
         ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine.builder().build();
 
         protobufTranslationEngine.init();
@@ -59,7 +66,9 @@ public class AT_ProtobufTranslationEngine {
     }
 
     @Test
-    void testGetAnyFromObjectAsSafeClass() {
+    @UnitTestMethod(target = ProtobufTranslationEngine.class, name = "getAnyFromObjectAsSafeClass", args = {
+            Object.class, Class.class })
+    public void testGetAnyFromObjectAsSafeClass() {
         ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine
                 .builder()
                 .addTranslationSpec(new TestProtobufObjectTranslationSpec())
@@ -99,7 +108,8 @@ public class AT_ProtobufTranslationEngine {
     }
 
     @Test
-    void testGetObjectFromAny() {
+    @UnitTestMethod(target = ProtobufTranslationEngine.class, name = "getObjectFromAny", args = { Any.class })
+    public void testGetObjectFromAny() {
         ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine
                 .builder()
                 .addTranslationSpec(new TestProtobufObjectTranslationSpec())
@@ -120,7 +130,8 @@ public class AT_ProtobufTranslationEngine {
     }
 
     @Test
-    void testGetClassFromTypeUrl() {
+    @UnitTestMethod(target = ProtobufTranslationEngine.class, name = "getClassFromTypeUrl", args = { String.class })
+    public void testGetClassFromTypeUrl() {
         ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine
                 .builder()
                 .addTranslationSpec(new TestProtobufObjectTranslationSpec())
@@ -192,7 +203,8 @@ public class AT_ProtobufTranslationEngine {
         protobufTranslationEngine.init();
 
         // preconditions
-        // json has unknown property and the ignoringUnknownFields property is set to false
+        // json has unknown property and the ignoringUnknownFields property is set to
+        // false
         JsonObject jsonObject = new JsonObject();
 
         jsonObject.addProperty("unknownProperty", "unknownValue");
@@ -245,7 +257,8 @@ public class AT_ProtobufTranslationEngine {
     }
 
     @Test
-    void testReadInput() throws IOException {
+    @UnitTestMethod(target = ProtobufTranslationEngine.class, name = "readInput", args = { Reader.class, Class.class })
+    public void testReadInput() throws IOException {
         String fileName = "readInputFromEngine_1-testOutput.json";
         String fileName2 = "readInputFromEngine_2-testOutput.json";
 
@@ -290,7 +303,9 @@ public class AT_ProtobufTranslationEngine {
     }
 
     @Test
-    void testWriteOutput() throws IOException {
+    @UnitTestMethod(target = ProtobufTranslationEngine.class, name = "writeOutput", args = { Writer.class, Object.class,
+            Optional.class })
+    public void testWriteOutput() throws IOException {
         String fileName = "writeOutputFromEngine_1-testOutput.json";
         String fileName2 = "writeOutputFromEngine_2-testOutput.json";
 
@@ -344,12 +359,14 @@ public class AT_ProtobufTranslationEngine {
     }
 
     @Test
-    void testBuilder() {
+    @UnitTestMethod(target = ProtobufTranslationEngine.class, name = "builder", args = {})
+    public void testBuilder() {
         assertNotNull(ProtobufTranslationEngine.builder());
     }
 
     @Test
-    void testBuild() {
+    @UnitTestMethod(target = ProtobufTranslationEngine.Builder.class, name = "build", args = {})
+    public void testBuild() {
 
         ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine.builder().build();
 
@@ -424,7 +441,9 @@ public class AT_ProtobufTranslationEngine {
     }
 
     @Test
-    void testAddFieldToIncludeDefaultValue() throws InvalidProtocolBufferException {
+    @UnitTestMethod(target = ProtobufTranslationEngine.Builder.class, name = "addFieldToIncludeDefaultValue", args = {
+            FieldDescriptor.class })
+    public void testAddFieldToIncludeDefaultValue() throws InvalidProtocolBufferException {
 
         ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine
                 .builder()
@@ -451,7 +470,9 @@ public class AT_ProtobufTranslationEngine {
     }
 
     @Test
-    void testAddTranslationSpec() {
+    @UnitTestMethod(target = ProtobufTranslationEngine.Builder.class, name = "addTranslationSpec", args = {
+            TranslationSpec.class })
+    public void testAddTranslationSpec() {
         /*
          * this test will only test the difference between the ProtobufTranslationEngine
          * and the TranslationEngine, which is only the populateMethod
@@ -471,12 +492,22 @@ public class AT_ProtobufTranslationEngine {
         });
 
         // precondition
-        // the precondition for this is that the inputClass is not a Message nor a
+        // translation spec is not a ProtobufTranslationSpec
+
+        ContractException contractException = assertThrows(ContractException.class, () -> {
+            ProtobufTranslationEngine.builder()
+                    .addTranslationSpec(new TestObjectTranslationSpec());
+        });
+
+        assertEquals(ProtobufCoreTranslationError.INVALID_TRANSLATION_SPEC, contractException.getErrorType());
+        // that the inputClass is not a Message nor a
         // ProtocolMessageEnum, and is tested in the testPopulate() test
     }
 
     @Test
-    void testSetIgnoringUnknownFields() {
+    @UnitTestMethod(target = ProtobufTranslationEngine.Builder.class, name = "setIgnoringUnknownFields", args = {
+            boolean.class })
+    public void testSetIgnoringUnknownFields() {
         ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine
                 .builder()
                 .setIgnoringUnknownFields(true)
@@ -507,7 +538,9 @@ public class AT_ProtobufTranslationEngine {
     }
 
     @Test
-    void testSetIncludingDefaultValueFields() throws InvalidProtocolBufferException {
+    @UnitTestMethod(target = ProtobufTranslationEngine.Builder.class, name = "setIncludingDefaultValueFields", args = {
+            boolean.class })
+    public void testSetIncludingDefaultValueFields() throws InvalidProtocolBufferException {
 
         ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine
                 .builder()

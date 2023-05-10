@@ -1,6 +1,7 @@
 package gov.hhs.aspr.translation.protobuf.core.translationSpecs;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
@@ -12,10 +13,19 @@ import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
 import gov.hhs.aspr.translation.protobuf.core.input.WrapperEnumValue;
 import gov.hhs.aspr.translation.protobuf.core.testsupport.testobject.input.TestInputEnum;
 import gov.hhs.aspr.translation.protobuf.core.testsupport.testobject.translationSpecs.TestProtobufEnumTranslationSpec;
+import util.annotations.UnitTestConstructor;
+import util.annotations.UnitTestMethod;
 
 public class AT_EnumTranslationSpec {
 
     @Test
+    @UnitTestConstructor(target = EnumTranslationSpec.class, args = {})
+    public void testConstructor() {
+        assertNotNull(new EnumTranslationSpec());
+    }
+
+    @Test
+    @UnitTestMethod(target = EnumTranslationSpec.class, name = "convertInputObject", args = { WrapperEnumValue.class })
     public void testConvertInputObject() {
         ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine
                 .builder()
@@ -39,14 +49,15 @@ public class AT_EnumTranslationSpec {
         // type url is well formed
         assertThrows(RuntimeException.class, () -> {
             WrapperEnumValue badInputValue = WrapperEnumValue.newBuilder()
-                .setEnumTypeUrl(BoolValue.getDefaultInstance().getDescriptorForType().getFullName())
-                .setValue(TestInputEnum.TEST1.name()).build();
+                    .setEnumTypeUrl(BoolValue.getDefaultInstance().getDescriptorForType().getFullName())
+                    .setValue(TestInputEnum.TEST1.name()).build();
 
-                enumTranslationSpec.convertInputObject(badInputValue);
+            enumTranslationSpec.convertInputObject(badInputValue);
         });
     }
 
     @Test
+    @UnitTestMethod(target = EnumTranslationSpec.class, name = "convertAppObject", args = { Enum.class })
     public void testConvertAppObject() {
         ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine
                 .builder()
@@ -68,14 +79,16 @@ public class AT_EnumTranslationSpec {
     }
 
     @Test
-    public void getAppObjectClass() {
+    @UnitTestMethod(target = EnumTranslationSpec.class, name = "getAppObjectClass", args = {})
+    public void testGetAppObjectClass() {
         EnumTranslationSpec enumTranslationSpec = new EnumTranslationSpec();
 
         assertEquals(Enum.class, enumTranslationSpec.getAppObjectClass());
     }
 
     @Test
-    public void getInputObjectClass() {
+    @UnitTestMethod(target = EnumTranslationSpec.class, name = "getInputObjectClass", args = {})
+    public void testGetInputObjectClass() {
         EnumTranslationSpec enumTranslationSpec = new EnumTranslationSpec();
 
         assertEquals(WrapperEnumValue.class, enumTranslationSpec.getInputObjectClass());

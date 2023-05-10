@@ -1,6 +1,7 @@
 package gov.hhs.aspr.translation.protobuf.core.testsupport.testcomplexobject.translationSpecs;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.Test;
 
@@ -8,10 +9,20 @@ import gov.hhs.aspr.translation.protobuf.core.testsupport.TestObjectUtil;
 import gov.hhs.aspr.translation.core.testsupport.testcomplexobject.app.TestComplexAppObject;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
 import gov.hhs.aspr.translation.protobuf.core.testsupport.testcomplexobject.input.TestComplexInputObject;
+import util.annotations.UnitTestConstructor;
+import util.annotations.UnitTestMethod;
 
 public class AT_TestProtobufComplexObjectTranslationSpec {
 
     @Test
+    @UnitTestConstructor(target = TestProtobufComplexObjectTranslationSpec.class, args = {})
+    public void testConstructor() {
+        assertNotNull(new TestProtobufComplexObjectTranslationSpec());
+    }
+
+    @Test
+    @UnitTestMethod(target = TestProtobufComplexObjectTranslationSpec.class, name = "convertInputObject", args = {
+            TestComplexInputObject.class })
     public void testConvertInputObject() {
         ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine
                 .builder()
@@ -31,6 +42,8 @@ public class AT_TestProtobufComplexObjectTranslationSpec {
     }
 
     @Test
+    @UnitTestMethod(target = TestProtobufComplexObjectTranslationSpec.class, name = "convertAppObject", args = {
+            TestComplexAppObject.class })
     public void testConvertAppObject() {
         ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine
                 .builder()
@@ -50,14 +63,16 @@ public class AT_TestProtobufComplexObjectTranslationSpec {
     }
 
     @Test
-    public void getAppObjectClass() {
+    @UnitTestMethod(target = TestProtobufComplexObjectTranslationSpec.class, name = "getAppObjectClass", args = {})
+    public void testGetAppObjectClass() {
         TestProtobufComplexObjectTranslationSpec complexObjectTranslationSpec = new TestProtobufComplexObjectTranslationSpec();
 
         assertEquals(TestComplexAppObject.class, complexObjectTranslationSpec.getAppObjectClass());
     }
 
     @Test
-    public void getInputObjectClass() {
+    @UnitTestMethod(target = TestProtobufComplexObjectTranslationSpec.class, name = "getInputObjectClass", args = {})
+    public void testGetInputObjectClass() {
         TestProtobufComplexObjectTranslationSpec complexObjectTranslationSpec = new TestProtobufComplexObjectTranslationSpec();
 
         assertEquals(TestComplexInputObject.class, complexObjectTranslationSpec.getInputObjectClass());
