@@ -14,7 +14,8 @@ public class MaterialsProducerPropertyIdTranslationSpec
 
     @Override
     protected MaterialsProducerPropertyIdInput convertAppObject(MaterialsProducerPropertyId appObject) {
-        return MaterialsProducerPropertyIdInput.newBuilder().setId(this.translationEngine.getAnyFromObject(appObject)).build();
+        return MaterialsProducerPropertyIdInput.newBuilder().setId(this.translationEngine.getAnyFromObject(appObject))
+                .build();
     }
 
     @Override

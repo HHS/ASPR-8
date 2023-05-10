@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.stochastics.input.StochasticsPluginDataInput;
 import gov.hhs.aspr.translation.core.TranslationController;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
-import gov.hhs.aspr.translation.protobuf.core.testsupport.TestResourceHelper;
+import gov.hhs.aspr.translation.core.testsupport.TestResourceHelper;
 import plugins.stochastics.StochasticsDataManager;
 import plugins.stochastics.StochasticsPluginData;
 import plugins.stochastics.support.RandomNumberGeneratorId;

@@ -1,6 +1,6 @@
 package gov.hhs.aspr.translation.core;
 
-/** 
+/**
  * Base interface for TranslationSpecifications (TranslationSpecs)
  * 
  * Package level access

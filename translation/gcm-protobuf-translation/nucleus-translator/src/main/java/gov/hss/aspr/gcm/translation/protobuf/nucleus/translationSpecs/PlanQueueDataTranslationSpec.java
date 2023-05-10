@@ -47,7 +47,8 @@ public class PlanQueueDataTranslationSpec extends ProtobufTranslationSpec<PlanQu
         PlannerInput plannerInput = this.translationEngine.convertObject(appObject.getPlanner());
         builder.setPlanner(plannerInput);
 
-        PlanDataInput planDataInput = this.translationEngine.convertObjectAsSafeClass(appObject.getPlanData(), PlanData.class);
+        PlanDataInput planDataInput = this.translationEngine.convertObjectAsSafeClass(appObject.getPlanData(),
+                PlanData.class);
         builder.setPlanData(planDataInput);
 
         builder.setKey(this.translationEngine.getAnyFromObject(appObject.getKey()));

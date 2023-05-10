@@ -4,6 +4,10 @@ import com.google.protobuf.StringValue;
 
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 
+/**
+ * TranslationSpec that defines how to convert from any Java String to a
+ * Protobuf {@link StringValue} type and vice versa
+ */
 public class StringTranslationSpec extends ProtobufTranslationSpec<StringValue, String> {
 
     @Override

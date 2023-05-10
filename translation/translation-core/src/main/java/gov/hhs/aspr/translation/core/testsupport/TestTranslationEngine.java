@@ -11,6 +11,7 @@ import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
 
 import gov.hhs.aspr.translation.core.TranslationEngine;
+import gov.hhs.aspr.translation.core.TranslationSpec;
 
 public class TestTranslationEngine extends TranslationEngine {
     private final Data data;
@@ -29,16 +30,25 @@ public class TestTranslationEngine extends TranslationEngine {
     }
 
     public static class Builder extends TranslationEngine.Builder {
-        private Data data;
+        private TestTranslationEngine.Data data;
 
-        private Builder(Data data) {
+        private Builder(TestTranslationEngine.Data data) {
             super(data);
             this.data = data;
         }
 
+        @Override
         public TestTranslationEngine build() {
             return new TestTranslationEngine(this.data);
         }
+
+        @Override
+        public <I, A> Builder addTranslationSpec(TranslationSpec<I, A> translationSpec) {
+            super.addTranslationSpec(translationSpec);
+
+            return this;
+        }
+
     }
 
     public static Builder builder() {

@@ -28,7 +28,7 @@ public enum WarningType {
 
 	MULTIPLE_UNIT_ANNOTATIONS_PRESENT("Test method is marked with a combination of @UnitField, @UnitTestMethod and @UnitTestConstructor annotations"),
 
-	TEST_ANNOTATION_WITHOUT_UNIT_ANNOTATION("Test method is marked with @Test but does not have a corresponding @UnitTestField, @UnitTestMethod or @UnitTestConstructor"),
+	TEST_ANNOTATION_WITHOUT_UNIT_ANNOTATION("Test method is marked with @Test but does not have a corresponding @UnitTestField, @UnitTestMethod, @UnitTestConstructor or @UnitTestForCoverage"),
 
 	NONSTATIC_SUBCLASS("Non-static public subclasses are not testable"),
 

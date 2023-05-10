@@ -39,8 +39,10 @@ public class ResourcesTranslator {
                     translationEngineBuilder.addTranslationSpec(new TestResourcePropertyIdTranslationSpec());
 
                     if (withReport) {
-                        translationEngineBuilder.addTranslationSpec(new PersonResourceReportPluginDataTranslationSpec());
-                        translationEngineBuilder.addTranslationSpec(new ResourcePropertyReportPluginDataTranslationSpec());
+                        translationEngineBuilder
+                                .addTranslationSpec(new PersonResourceReportPluginDataTranslationSpec());
+                        translationEngineBuilder
+                                .addTranslationSpec(new ResourcePropertyReportPluginDataTranslationSpec());
                         translationEngineBuilder.addTranslationSpec(new ResourceReportPluginDataTranslationSpec());
                     }
                 });

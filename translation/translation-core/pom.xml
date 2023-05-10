@@ -96,16 +96,9 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${maven-surefire-plugin.version}</version>
                 <configuration>
-
                     <includes>
-                        <include>*.java</include>
+                        <include>AT_*.java</include>
                     </includes>
-                    <!-- <excludes> -->
-                    <!-- <exclude>AT_EnvironmentImpl_01.java</exclude> -->
-                    <!-- <exclude>AT_EnvironmentImpl_02.java</exclude> -->
-                    <!-- </excludes> -->
-
-                    <excludedGroups>manual</excludedGroups>
                 </configuration>
             </plugin>
 
