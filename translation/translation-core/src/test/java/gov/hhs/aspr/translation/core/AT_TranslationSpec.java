@@ -137,7 +137,7 @@ public class AT_TranslationSpec {
     }
 
     @Test
-    @UnitTestMethod(target = TranslationSpec.class, name = "hashCode", args = { })
+    @UnitTestMethod(target = TranslationSpec.class, name = "hashCode", args = {})
     public void testHashCode() {
         TestTranslationEngine testTranslationEngine = TestTranslationEngine
                 .builder()

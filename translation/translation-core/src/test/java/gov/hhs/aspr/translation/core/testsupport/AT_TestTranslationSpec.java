@@ -22,7 +22,7 @@ public class AT_TestTranslationSpec {
 
             @Override
             protected TestAppObject convertInputObject(TestInputObject inputObject) {
-               return new TestAppObject();
+                return new TestAppObject();
             }
 
             @Override

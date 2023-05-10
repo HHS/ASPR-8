@@ -10,7 +10,7 @@ public class TestObjectWrapper {
     }
 
     public void setWrappedObject(Object wrappedObject) {
-        if(wrappedObject == this || wrappedObject instanceof TestObjectWrapper) {
+        if (wrappedObject == this || wrappedObject instanceof TestObjectWrapper) {
             throw new RuntimeException("Cant set the wrapped object to an instance of itself");
         }
         this.wrappedObject = wrappedObject;

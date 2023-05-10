@@ -59,7 +59,8 @@ public class AT_TestTranslationEngine {
 
         testTranslationEngine.writeOutput(fileWriter2, TestObjectUtil.getChildAppFromApp(expectedAppObject),
                 Optional.of(TestAppObject.class));
-        TestAppObject actualAppChildObject = testTranslationEngine.readInput(fileReader2, TestInputObject.class);
+        TestAppObject actualAppChildObject = testTranslationEngine.readInput(fileReader2,
+                TestInputObject.class);
         assertEquals(expectedAppObject, actualAppChildObject);
 
         // preconditions
@@ -109,7 +110,8 @@ public class AT_TestTranslationEngine {
 
         testTranslationEngine.writeOutput(fileWriter2, TestObjectUtil.getChildAppFromApp(expectedAppObject),
                 Optional.of(TestAppObject.class));
-        TestAppObject actualAppChildObject = testTranslationEngine.readInput(fileReader2, TestInputObject.class);
+        TestAppObject actualAppChildObject = testTranslationEngine.readInput(fileReader2,
+                TestInputObject.class);
         assertEquals(expectedAppObject, actualAppChildObject);
     }
 

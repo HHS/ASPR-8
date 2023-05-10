@@ -123,7 +123,7 @@ public class AT_TestInputObject {
         testInputObject2.setBool(bool);
         testInputObject2.setString(string);
         testInputObject2.setTestComplexInputObject(testComplexInputObject);
-        
+
         // exact same instance should be equal
         assertEquals(testInputObject1.hashCode(), testInputObject1.hashCode());
 

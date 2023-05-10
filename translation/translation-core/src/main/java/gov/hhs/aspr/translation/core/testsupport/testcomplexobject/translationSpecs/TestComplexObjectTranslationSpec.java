@@ -4,7 +4,8 @@ import gov.hhs.aspr.translation.core.testsupport.TestTranslationSpec;
 import gov.hhs.aspr.translation.core.testsupport.testcomplexobject.app.TestComplexAppObject;
 import gov.hhs.aspr.translation.core.testsupport.testcomplexobject.input.TestComplexInputObject;
 
-public class TestComplexObjectTranslationSpec extends TestTranslationSpec<TestComplexInputObject, TestComplexAppObject> {
+public class TestComplexObjectTranslationSpec
+        extends TestTranslationSpec<TestComplexInputObject, TestComplexAppObject> {
 
     @Override
     protected TestComplexAppObject convertInputObject(TestComplexInputObject inputObject) {
