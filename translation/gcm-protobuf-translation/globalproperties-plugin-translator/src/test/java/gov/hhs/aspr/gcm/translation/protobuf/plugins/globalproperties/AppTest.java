@@ -13,7 +13,7 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.PropertiesTransl
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.ReportsTranslator;
 import gov.hhs.aspr.translation.core.TranslationController;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
-import gov.hhs.aspr.translation.protobuf.core.testsupport.TestResourceHelper;
+import gov.hhs.aspr.translation.core.testsupport.TestResourceHelper;
 import plugins.globalproperties.GlobalPropertiesPluginData;
 import plugins.globalproperties.reports.GlobalPropertyReportPluginData;
 import plugins.globalproperties.testsupport.GlobalPropertiesTestPluginFactory;
@@ -48,7 +48,8 @@ public class AppTest {
 
         translatorController.readInput();
 
-        GlobalPropertiesPluginData actualPluginData = translatorController.getFirstObject(GlobalPropertiesPluginData.class);
+        GlobalPropertiesPluginData actualPluginData = translatorController
+                .getFirstObject(GlobalPropertiesPluginData.class);
 
         assertEquals(expectedPluginData, actualPluginData);
 

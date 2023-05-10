@@ -15,18 +15,20 @@ public class GlobalPropertiesTranslator {
     }
 
     public static Translator.Builder builder(boolean withReport) {
-        
+
         Translator.Builder builder = Translator.builder()
                 .setTranslatorId(GlobalPropertiesTranslatorId.TRANSLATOR_ID)
                 .addDependency(PropertiesTranslatorId.TRANSLATOR_ID)
                 .setInitializer((translatorContext) -> {
-                    ProtobufTranslationEngine.Builder translationEngineBuilder = translatorContext.getTranslationEngineBuilder(ProtobufTranslationEngine.Builder.class);
+                    ProtobufTranslationEngine.Builder translationEngineBuilder = translatorContext
+                            .getTranslationEngineBuilder(ProtobufTranslationEngine.Builder.class);
 
                     translationEngineBuilder.addTranslationSpec(new GlobalPropertiesPluginDataTranslationSpec());
                     translationEngineBuilder.addTranslationSpec(new GlobalPropertyIdTranslationSpec());
                     translationEngineBuilder.addTranslationSpec(new TestGlobalPropertyIdTranslationSpec());
                     if (withReport) {
-                        translationEngineBuilder.addTranslationSpec(new GlobalPropertyReportPluginDataTranslationSpec());
+                        translationEngineBuilder
+                                .addTranslationSpec(new GlobalPropertyReportPluginDataTranslationSpec());
                     }
                 });
 

@@ -30,13 +30,16 @@ public class PersonPropertiesTranslator {
                     translationEngineBuilder.addTranslationSpec(new PersonPropertiesPluginDataTranslationSpec());
                     translationEngineBuilder.addTranslationSpec(new TestPersonPropertyIdTranslationSpec());
 
-                    translationEngineBuilder.addFieldToIncludeDefaultValue(PersonPropertyValueInput.getDescriptor().findFieldByName("personId"));
+                    translationEngineBuilder.addFieldToIncludeDefaultValue(
+                            PersonPropertyValueInput.getDescriptor().findFieldByName("personId"));
 
                     if (withReport) {
-                        translationEngineBuilder.addTranslationSpec(new PersonPropertyReportPluginDataTranslationSpec());
-                        translationEngineBuilder.addTranslationSpec(new PersonPropertyInteractionReportPluginDataTranslationSpec());
+                        translationEngineBuilder
+                                .addTranslationSpec(new PersonPropertyReportPluginDataTranslationSpec());
+                        translationEngineBuilder
+                                .addTranslationSpec(new PersonPropertyInteractionReportPluginDataTranslationSpec());
                     }
-                    
+
                 });
 
         if (withReport) {

@@ -42,5 +42,4 @@ public class PropertyValueMap {
         return Objects.equals(propertyId, other.propertyId) && Objects.equals(propertyValue, other.propertyValue);
     }
 
-	
 }

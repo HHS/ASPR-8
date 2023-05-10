@@ -14,7 +14,8 @@ public class SimpleRegionPropertyIdTranslationSpec
 
     @Override
     protected SimpleRegionPropertyIdInput convertAppObject(SimpleRegionPropertyId appObject) {
-        return SimpleRegionPropertyIdInput.newBuilder().setValue(this.translationEngine.getAnyFromObject(appObject.getValue()))
+        return SimpleRegionPropertyIdInput.newBuilder()
+                .setValue(this.translationEngine.getAnyFromObject(appObject.getValue()))
                 .build();
     }
 

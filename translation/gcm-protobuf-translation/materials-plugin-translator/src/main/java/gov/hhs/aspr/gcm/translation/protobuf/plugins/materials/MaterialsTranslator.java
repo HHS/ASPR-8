@@ -51,8 +51,10 @@ public class MaterialsTranslator {
 
                     if (withReport) {
                         translationEngineBuilder.addTranslationSpec(new BatchStatusReportPluginDataTranslationSpec());
-                        translationEngineBuilder.addTranslationSpec(new MaterialsProducerPropertyReportPluginDataTranslationSpec());
-                        translationEngineBuilder.addTranslationSpec(new MaterialsProducerResourceReportPluginDataTranslationSpec());
+                        translationEngineBuilder
+                                .addTranslationSpec(new MaterialsProducerPropertyReportPluginDataTranslationSpec());
+                        translationEngineBuilder
+                                .addTranslationSpec(new MaterialsProducerResourceReportPluginDataTranslationSpec());
                         translationEngineBuilder.addTranslationSpec(new StageReportPluginDataTranslationSpec());
                     }
 

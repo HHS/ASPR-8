@@ -20,7 +20,7 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.input.ResourceRep
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.input.ResourcesPluginDataInput;
 import gov.hhs.aspr.translation.core.TranslationController;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
-import gov.hhs.aspr.translation.protobuf.core.testsupport.TestResourceHelper;
+import gov.hhs.aspr.translation.core.testsupport.TestResourceHelper;
 import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportPeriod;
 import plugins.reports.support.SimpleReportLabel;
@@ -55,7 +55,8 @@ public class AppTest {
 
         long seed = 524805676405822016L;
 
-        ResourcesPluginData expectedPluginData = ResourcesTestPluginFactory.getStandardResourcesPluginData(seed);
+        ResourcesPluginData expectedPluginData = ResourcesTestPluginFactory
+                .getStandardResourcesPluginData(seed);
 
         translatorController.writeOutput(expectedPluginData);
         translatorController.readInput();
@@ -198,7 +199,8 @@ public class AppTest {
         translatorController.writeOutput(expectedPluginData);
         translatorController.readInput();
 
-        ResourceReportPluginData actualPluginData = translatorController.getFirstObject(ResourceReportPluginData.class);
+        ResourceReportPluginData actualPluginData = translatorController
+                .getFirstObject(ResourceReportPluginData.class);
 
         assertEquals(expectedPluginData, actualPluginData);
     }

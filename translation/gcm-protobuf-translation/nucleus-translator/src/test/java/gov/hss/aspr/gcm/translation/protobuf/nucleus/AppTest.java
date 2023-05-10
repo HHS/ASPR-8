@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 import gov.hhs.aspr.gcm.translation.protobuf.nucleus.input.SimulationStateInput;
 import gov.hhs.aspr.translation.core.TranslationController;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
-import gov.hhs.aspr.translation.protobuf.core.testsupport.TestResourceHelper;
+import gov.hhs.aspr.translation.core.testsupport.TestResourceHelper;
 import gov.hss.aspr.gcm.translation.protobuf.nucleus.simObjects.ExamplePlanData;
 import gov.hss.aspr.gcm.translation.protobuf.nucleus.simObjects.translationSpecs.ExamplePlanDataTranslationSpec;
 import nucleus.PlanQueueData;

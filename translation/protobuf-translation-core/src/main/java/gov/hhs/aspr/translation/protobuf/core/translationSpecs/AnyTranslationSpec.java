@@ -6,6 +6,10 @@ import com.google.protobuf.Message;
 
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 
+/**
+ * TranslationSpec that defines how to convert from any Java Object to a
+ * Protobuf {@link Any} type and vice versa
+ */
 public class AnyTranslationSpec extends ProtobufTranslationSpec<Any, Object> {
 
     @Override
@@ -27,12 +31,16 @@ public class AnyTranslationSpec extends ProtobufTranslationSpec<Any, Object> {
 
         messageClassRef = classRef.asSubclass(Message.class);
 
+        return unpackMessage(inputObject, messageClassRef);
+    }
+
+    protected <U extends Message> Object unpackMessage(Any inputObject, Class<U> messageClassRef) {
         try {
             Message unpackedMessage = inputObject.unpack(messageClassRef);
 
             return this.translationEngine.convertObject(unpackedMessage);
         } catch (InvalidProtocolBufferException e) {
-            throw new RuntimeException("Unable To unpack any type to given class: " + classRef.getName(), e);
+            throw new RuntimeException("Unable To unpack any type to given class: " + messageClassRef.getName(), e);
         }
     }
 
@@ -41,7 +49,17 @@ public class AnyTranslationSpec extends ProtobufTranslationSpec<Any, Object> {
         if (Enum.class.isAssignableFrom(appObject.getClass())) {
             return Any.pack(this.translationEngine.convertObjectAsSafeClass(Enum.class.cast(appObject), Enum.class));
         }
-        return Any.pack(this.translationEngine.convertObject(appObject));
+
+        Message message;
+
+        // in the event that the object was converted BEFORE calling thsi
+        // translationSpec, there is no need to translate it again.
+        if (Message.class.isAssignableFrom(appObject.getClass())) {
+            message = Message.class.cast(appObject);
+        } else {
+            message = this.translationEngine.convertObject(appObject);
+        }
+        return Any.pack(message);
     }
 
     @Override

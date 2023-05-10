@@ -9,8 +9,8 @@ import util.annotations.UnitTestField;
 public class AT_TestComplexTranslatorId {
 
     @Test
-    @UnitTestField(target = TestComplexTranslatorId.class, name = "TRANSLATOR_ID")
+    @UnitTestField(target = TestComplexObjectTranslatorId.class, name = "TRANSLATOR_ID")
     public void testTranslatorId() {
-        assertNotNull(TestComplexTranslatorId.TRANSLATOR_ID);
+        assertNotNull(TestComplexObjectTranslatorId.TRANSLATOR_ID);
     }
 }

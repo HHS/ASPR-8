@@ -7,10 +7,12 @@ import plugins.materials.reports.MaterialsProducerPropertyReportPluginData;
 import plugins.reports.support.ReportLabel;
 
 public class MaterialsProducerPropertyReportPluginDataTranslationSpec
-        extends ProtobufTranslationSpec<MaterialsProducerPropertyReportPluginDataInput, MaterialsProducerPropertyReportPluginData> {
+        extends
+        ProtobufTranslationSpec<MaterialsProducerPropertyReportPluginDataInput, MaterialsProducerPropertyReportPluginData> {
 
     @Override
-    protected MaterialsProducerPropertyReportPluginData convertInputObject(MaterialsProducerPropertyReportPluginDataInput inputObject) {
+    protected MaterialsProducerPropertyReportPluginData convertInputObject(
+            MaterialsProducerPropertyReportPluginDataInput inputObject) {
         MaterialsProducerPropertyReportPluginData.Builder builder = MaterialsProducerPropertyReportPluginData.builder();
 
         ReportLabel reportLabel = this.translationEngine.convertObject(inputObject.getReportLabel());
@@ -20,8 +22,10 @@ public class MaterialsProducerPropertyReportPluginDataTranslationSpec
     }
 
     @Override
-    protected MaterialsProducerPropertyReportPluginDataInput convertAppObject(MaterialsProducerPropertyReportPluginData appObject) {
-        MaterialsProducerPropertyReportPluginDataInput.Builder builder = MaterialsProducerPropertyReportPluginDataInput.newBuilder();
+    protected MaterialsProducerPropertyReportPluginDataInput convertAppObject(
+            MaterialsProducerPropertyReportPluginData appObject) {
+        MaterialsProducerPropertyReportPluginDataInput.Builder builder = MaterialsProducerPropertyReportPluginDataInput
+                .newBuilder();
 
         ReportLabelInput reportLabelInput = this.translationEngine.convertObjectAsSafeClass(appObject.getReportLabel(),
                 ReportLabel.class);

@@ -11,7 +11,7 @@ import java.util.function.Consumer;
 
 import org.junit.jupiter.api.Test;
 
-import gov.hhs.aspr.translation.core.testsupport.testcomplexobject.TestComplexTranslatorId;
+import gov.hhs.aspr.translation.core.testsupport.testcomplexobject.TestComplexObjectTranslatorId;
 import gov.hhs.aspr.translation.core.testsupport.testobject.TestObjectTranslatorId;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
@@ -56,12 +56,12 @@ public class AT_Translator {
                 })
                 .setTranslatorId(expectedTranslatorId)
                 .addDependency(TestObjectTranslatorId.TRANSLATOR_ID)
-                .addDependency(TestComplexTranslatorId.TRANSLATOR_ID)
+                .addDependency(TestComplexObjectTranslatorId.TRANSLATOR_ID)
                 .build();
 
         Set<TranslatorId> expectedDependencies = new LinkedHashSet<>();
         expectedDependencies.add(TestObjectTranslatorId.TRANSLATOR_ID);
-        expectedDependencies.add(TestComplexTranslatorId.TRANSLATOR_ID);
+        expectedDependencies.add(TestComplexObjectTranslatorId.TRANSLATOR_ID);
 
         Set<TranslatorId> actualDependencies = testTranslator.getTranslatorDependencies();
 
@@ -303,12 +303,12 @@ public class AT_Translator {
                 })
                 .setTranslatorId(expectedTranslatorId)
                 .addDependency(TestObjectTranslatorId.TRANSLATOR_ID)
-                .addDependency(TestComplexTranslatorId.TRANSLATOR_ID)
+                .addDependency(TestComplexObjectTranslatorId.TRANSLATOR_ID)
                 .build();
 
         Set<TranslatorId> expectedDependencies = new LinkedHashSet<>();
         expectedDependencies.add(TestObjectTranslatorId.TRANSLATOR_ID);
-        expectedDependencies.add(TestComplexTranslatorId.TRANSLATOR_ID);
+        expectedDependencies.add(TestComplexObjectTranslatorId.TRANSLATOR_ID);
 
         Set<TranslatorId> actualDependencies = testTranslator.getTranslatorDependencies();
 

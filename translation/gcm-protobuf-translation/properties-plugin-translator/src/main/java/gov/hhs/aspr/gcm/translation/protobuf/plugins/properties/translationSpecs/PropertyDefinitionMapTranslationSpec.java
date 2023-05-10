@@ -25,7 +25,8 @@ public class PropertyDefinitionMapTranslationSpec
 
         builder.setPropertyId(this.translationEngine.getAnyFromObject(appObject.getPropertyId()));
 
-        PropertyDefinitionInput definitionInput = this.translationEngine.convertObject(appObject.getPropertyDefinition());
+        PropertyDefinitionInput definitionInput = this.translationEngine
+                .convertObject(appObject.getPropertyDefinition());
         builder.setPropertyDefinition(definitionInput);
 
         return builder.build();

@@ -14,11 +14,11 @@ import util.annotations.UnitTestMethod;
 public class AT_TestComplexTranslator {
 
     @Test
-    @UnitTestMethod(target = TestComplexTranslator.class, name = "getTranslator", args = {})
+    @UnitTestMethod(target = TestComplexObjectTranslator.class, name = "getTranslator", args = {})
     public void testGetTranslator() {
-        Translator testComplexTranslator = TestComplexTranslator.getTranslator();
+        Translator testComplexTranslator = TestComplexObjectTranslator.getTranslator();
 
-        assertEquals(TestComplexTranslatorId.TRANSLATOR_ID, testComplexTranslator.getTranslatorId());
+        assertEquals(TestComplexObjectTranslatorId.TRANSLATOR_ID, testComplexTranslator.getTranslatorId());
         Set<TranslatorId> expectedDependencies = new LinkedHashSet<>();
 
         assertEquals(expectedDependencies, testComplexTranslator.getTranslatorDependencies());

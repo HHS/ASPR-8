@@ -250,7 +250,7 @@
                                     <artifactId>protobuf-translation-core</artifactId>
                                     <version>${protobuf-translation-core.version}</version>
                                     <overWrite>true</overWrite>
-                                    <outputDirectory>${project.build.outputDirectory}</outputDirectory>
+                                    <outputDirectory>${project.build.outputDirectory}/gov/hhs/aspr/translation/core</outputDirectory>
                                     <includes>**/*.proto</includes>
                                 </artifactItem>
                             </artifactItems>

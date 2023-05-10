@@ -4,6 +4,10 @@ import com.google.protobuf.DoubleValue;
 
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 
+/**
+ * TranslationSpec that defines how to convert from any Java Double to a
+ * Protobuf {@link DoubleValue} type and vice versa
+ */
 public class DoubleTranslationSpec extends ProtobufTranslationSpec<DoubleValue, Double> {
 
     @Override

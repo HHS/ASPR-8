@@ -16,7 +16,8 @@ public class StochasticsTranslator {
         Translator.Builder builder = Translator.builder()
                 .setTranslatorId(StochasticsTranslatorId.PLUGIN_BUNDLE_ID)
                 .setInitializer((translatorContext) -> {
-                    ProtobufTranslationEngine.Builder translationEngineBuilder = translatorContext.getTranslationEngineBuilder(ProtobufTranslationEngine.Builder.class);
+                    ProtobufTranslationEngine.Builder translationEngineBuilder = translatorContext
+                            .getTranslationEngineBuilder(ProtobufTranslationEngine.Builder.class);
 
                     translationEngineBuilder.addTranslationSpec(new StochasticsPluginDataTranslationSpec());
                     translationEngineBuilder.addTranslationSpec(new WellStateTranslationSpec());

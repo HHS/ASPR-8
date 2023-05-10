@@ -51,13 +51,13 @@ public class PersonResourceReportPluginDataTranslationSpec
 
         for (ResourceId resourceId : appObject.getIncludedResourceIds()) {
             ResourceIdInput resourceIdInput = this.translationEngine.convertObjectAsSafeClass(resourceId,
-            ResourceId.class);
+                    ResourceId.class);
             builder.addIncludedProperties(resourceIdInput);
         }
 
         for (ResourceId resourceId : appObject.getExcludedResourceIds()) {
             ResourceIdInput resourceIdInput = this.translationEngine.convertObjectAsSafeClass(resourceId,
-            ResourceId.class);
+                    ResourceId.class);
             builder.addExcludedProperties(resourceIdInput);
         }
 

@@ -46,13 +46,15 @@ public class RegionPropertyReportPluginDataTranslationSpec
                 .setReportLabel(reportLabelInput);
 
         for (RegionPropertyId regionPropertyId : appObject.getIncludedProperties()) {
-            RegionPropertyIdInput regionPropertyIdInput = this.translationEngine.convertObjectAsSafeClass(regionPropertyId,
+            RegionPropertyIdInput regionPropertyIdInput = this.translationEngine.convertObjectAsSafeClass(
+                    regionPropertyId,
                     RegionPropertyId.class);
             builder.addIncludedProperties(regionPropertyIdInput);
         }
 
         for (RegionPropertyId regionPropertyId : appObject.getExcludedProperties()) {
-            RegionPropertyIdInput regionPropertyIdInput = this.translationEngine.convertObjectAsSafeClass(regionPropertyId,
+            RegionPropertyIdInput regionPropertyIdInput = this.translationEngine.convertObjectAsSafeClass(
+                    regionPropertyId,
                     RegionPropertyId.class);
             builder.addExcludedProperties(regionPropertyIdInput);
         }
