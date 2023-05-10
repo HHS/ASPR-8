@@ -8,7 +8,7 @@ import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
  * TranslationSpec that defines how to convert from any Java Integer to a
  * Protobuf {@link UInt32Value} type and vice versa
  */
-public class UInt32TranslationSpec extends ProtobufTranslationSpec<UInt32Value, Integer> {
+public class UIntegerTranslationSpec extends ProtobufTranslationSpec<UInt32Value, Integer> {
 
     @Override
     protected Integer convertInputObject(UInt32Value inputObject) {

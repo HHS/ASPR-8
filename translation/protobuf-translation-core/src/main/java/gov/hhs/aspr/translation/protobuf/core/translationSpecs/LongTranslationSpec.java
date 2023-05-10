@@ -8,7 +8,7 @@ import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
  * TranslationSpec that defines how to convert from any Java Long to a
  * Protobuf {@link Int64Value} type and vice versa
  */
-public class AT_Int64TranslationSpec extends ProtobufTranslationSpec<Int64Value, Long> {
+public class LongTranslationSpec extends ProtobufTranslationSpec<Int64Value, Long> {
 
     @Override
     protected Long convertInputObject(Int64Value inputObject) {

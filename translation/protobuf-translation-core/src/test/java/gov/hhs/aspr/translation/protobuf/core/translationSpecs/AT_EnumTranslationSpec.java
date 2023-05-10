@@ -1,59 +1,83 @@
 package gov.hhs.aspr.translation.protobuf.core.translationSpecs;
 
-import java.lang.reflect.InvocationTargetException;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import com.google.protobuf.Any;
-import com.google.protobuf.ProtocolMessageEnum;
+import org.junit.jupiter.api.Test;
 
-import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
+import com.google.protobuf.BoolValue;
+
+import gov.hhs.aspr.translation.core.testsupport.testobject.app.TestAppEnum;
+import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
 import gov.hhs.aspr.translation.protobuf.core.input.WrapperEnumValue;
+import gov.hhs.aspr.translation.protobuf.core.testsupport.testobject.input.TestInputEnum;
+import gov.hhs.aspr.translation.protobuf.core.testsupport.testobject.translationSpecs.TestProtobufEnumTranslationSpec;
 
-/**
- * TranslationSpec that defines how to convert from any Java Enum to a
- * Protobuf {@link WrapperEnumValue} type and vice versa
- * 
- * <li>Note: A {@link WrapperEnumValue} is specifically used to wrap a Enum
- * into a Protobuf {@link Any} type, since a Protobuf {@link Any} type does
- * not natively support enums, only primitives and other Protobuf Messages
- */
-@SuppressWarnings("rawtypes")
-public class AT_EnumTranslationSpec extends ProtobufTranslationSpec<WrapperEnumValue, Enum> {
+public class AT_EnumTranslationSpec {
 
-    @Override
-    protected Enum convertInputObject(WrapperEnumValue inputObject) {
-        String typeUrl = inputObject.getEnumTypeUrl();
-        String value = inputObject.getValue();
+    @Test
+    public void testConvertInputObject() {
+        ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine
+                .builder()
+                .addTranslationSpec(new TestProtobufEnumTranslationSpec())
+                .build();
+        protobufTranslationEngine.init();
 
-        Class<?> classRef = this.translationEngine.getClassFromTypeUrl(typeUrl);
+        EnumTranslationSpec enumTranslationSpec = new EnumTranslationSpec();
+        enumTranslationSpec.init(protobufTranslationEngine);
 
-        try {
-            Enum inputInput = (Enum<?>) classRef.getMethod("valueOf", String.class).invoke(null, value);
-            return this.translationEngine.convertObject(inputInput);
-        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException
-                | NoSuchMethodException | SecurityException e) {
-            throw new RuntimeException(e);
-        }
+        TestAppEnum expectedValue = TestAppEnum.TEST1;
+        WrapperEnumValue inputValue = WrapperEnumValue.newBuilder()
+                .setEnumTypeUrl(TestInputEnum.TEST1.getDescriptorForType().getFullName())
+                .setValue(TestInputEnum.TEST1.name()).build();
 
+        TestAppEnum actualValue = (TestAppEnum) enumTranslationSpec.convertInputObject(inputValue);
+
+        assertEquals(expectedValue, actualValue);
+
+        // precondition
+        // type url is well formed
+        assertThrows(RuntimeException.class, () -> {
+            WrapperEnumValue badInputValue = WrapperEnumValue.newBuilder()
+                .setEnumTypeUrl(BoolValue.getDefaultInstance().getDescriptorForType().getFullName())
+                .setValue(TestInputEnum.TEST1.name()).build();
+
+                enumTranslationSpec.convertInputObject(badInputValue);
+        });
     }
 
-    @Override
-    protected WrapperEnumValue convertAppObject(Enum appObject) {
-        ProtocolMessageEnum messageEnum = this.translationEngine.convertObject(appObject);
+    @Test
+    public void testConvertAppObject() {
+        ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine
+                .builder()
+                .addTranslationSpec(new TestProtobufEnumTranslationSpec())
+                .build();
+        protobufTranslationEngine.init();
 
-        WrapperEnumValue wrapperEnumValue = WrapperEnumValue.newBuilder()
-                .setValue(messageEnum.getValueDescriptor().getName())
-                .setEnumTypeUrl(messageEnum.getDescriptorForType().getFullName()).build();
+        EnumTranslationSpec enumTranslationSpec = new EnumTranslationSpec();
+        enumTranslationSpec.init(protobufTranslationEngine);
 
-        return wrapperEnumValue;
+        TestAppEnum appValue = TestAppEnum.TEST2;
+        WrapperEnumValue expectedValue = WrapperEnumValue.newBuilder()
+                .setEnumTypeUrl(TestInputEnum.TEST2.getDescriptorForType().getFullName())
+                .setValue(TestInputEnum.TEST2.name()).build();
+
+        WrapperEnumValue actualValue = enumTranslationSpec.convertAppObject(appValue);
+
+        assertEquals(expectedValue, actualValue);
     }
 
-    @Override
-    public Class<Enum> getAppObjectClass() {
-        return Enum.class;
+    @Test
+    public void getAppObjectClass() {
+        EnumTranslationSpec enumTranslationSpec = new EnumTranslationSpec();
+
+        assertEquals(Enum.class, enumTranslationSpec.getAppObjectClass());
     }
 
-    @Override
-    public Class<WrapperEnumValue> getInputObjectClass() {
-        return WrapperEnumValue.class;
+    @Test
+    public void getInputObjectClass() {
+        EnumTranslationSpec enumTranslationSpec = new EnumTranslationSpec();
+
+        assertEquals(WrapperEnumValue.class, enumTranslationSpec.getInputObjectClass());
     }
 }

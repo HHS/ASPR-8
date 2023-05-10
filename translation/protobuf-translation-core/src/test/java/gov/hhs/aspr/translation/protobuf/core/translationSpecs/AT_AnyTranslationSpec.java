@@ -1,14 +1,22 @@
 package gov.hhs.aspr.translation.protobuf.core.translationSpecs;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
 
 import com.google.protobuf.Any;
+import com.google.protobuf.Int32Value;
 import com.google.protobuf.InvalidProtocolBufferException;
-import com.google.protobuf.Message;
 
-import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
+import gov.hhs.aspr.translation.core.testsupport.testobject.app.TestAppEnum;
+import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
+import gov.hhs.aspr.translation.protobuf.core.input.WrapperEnumValue;
+import gov.hhs.aspr.translation.protobuf.core.testsupport.testcomplexobject.translationSpecs.TestProtobufComplexObjectTranslationSpec;
+import gov.hhs.aspr.translation.protobuf.core.testsupport.testobject.input.TestInputEnum;
+import gov.hhs.aspr.translation.protobuf.core.testsupport.testobject.input.TestInputObject;
+import gov.hhs.aspr.translation.protobuf.core.testsupport.testobject.translationSpecs.TestProtobufEnumTranslationSpec;
+import gov.hhs.aspr.translation.protobuf.core.testsupport.testobject.translationSpecs.TestProtobufObjectTranslationSpec;
 
 /**
  * TranslationSpec that defines how to convert from any Java Object to a
@@ -18,48 +26,114 @@ public class AT_AnyTranslationSpec {
 
     @Test
     public void testConvertInputObject() {
-        // String fullTypeUrl = inputObject.getTypeUrl();
-        // String[] parts = fullTypeUrl.split("/");
+        ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine
+                .builder()
+                .addTranslationSpec(new TestProtobufEnumTranslationSpec())
+                .addTranslationSpec(new TestProtobufObjectTranslationSpec())
+                .addTranslationSpec(new TestProtobufComplexObjectTranslationSpec())
+                .build();
 
-        // if (parts.length != 2) {
-        //     throw new RuntimeException("Malformed type url");
-        // }
+        protobufTranslationEngine.init();
+        AnyTranslationSpec anyTranslationSpec = new AnyTranslationSpec();
+        anyTranslationSpec.init(protobufTranslationEngine);
 
-        // String typeUrl = parts[1];
-        // Class<?> classRef = this.translationEngine.getClassFromTypeUrl(typeUrl);
-        // Class<? extends Message> messageClassRef;
+        Integer expectedValue = 100;
+        Int32Value int32Value = Int32Value.of(expectedValue);
 
-        // if (!(Message.class.isAssignableFrom(classRef))) {
-        //     throw new RuntimeException("Message is not assignable from " + classRef.getName());
-        // }
+        Any any = Any.pack(int32Value);
 
-        // messageClassRef = classRef.asSubclass(Message.class);
+        Object obj = anyTranslationSpec.convertInputObject(any);
 
-        // try {
-        //     Message unpackedMessage = inputObject.unpack(messageClassRef);
+        assertEquals(expectedValue, obj);
 
-        //     return this.translationEngine.convertObject(unpackedMessage);
-        // } catch (InvalidProtocolBufferException e) {
-        //     throw new RuntimeException("Unable To unpack any type to given class: " + classRef.getName(), e);
-        // }
+        // preconditions
+        // the typeurl of the any is malformed
+        RuntimeException runtimeException = assertThrows(RuntimeException.class, () -> {
+            Any badAny = Any.newBuilder().setTypeUrl("badTypeUrl").build();
+            anyTranslationSpec.convertInputObject(badAny);
+        });
+
+        assertEquals("Malformed type url", runtimeException.getMessage());
+
+        // the type url is set to a value that doesn't correspond to a Message Type
+        runtimeException = assertThrows(RuntimeException.class, () -> {
+            Any badAny = Any.newBuilder().setTypeUrl("/" + TestInputEnum.TEST1.getDescriptorForType().getFullName()).build();
+            anyTranslationSpec.convertInputObject(badAny);
+        });
+
+        assertEquals("Message is not assignable from " + TestInputEnum.class.getName(), runtimeException.getMessage());
+
+        // the typeurl doesn't match the class of the packed message
+        // this is tested in the test: testUnpackMessage
+    }
+
+    @Test
+    public void testUnpackMessage() {
+        ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine
+                .builder()
+                .addTranslationSpec(new TestProtobufEnumTranslationSpec())
+                .addTranslationSpec(new TestProtobufObjectTranslationSpec())
+                .addTranslationSpec(new TestProtobufComplexObjectTranslationSpec())
+                .build();
+
+        protobufTranslationEngine.init();
+        AnyTranslationSpec anyTranslationSpec = new AnyTranslationSpec();
+        anyTranslationSpec.init(protobufTranslationEngine);
+
+        Integer expectedValue = 100;
+        Int32Value int32Value = Int32Value.of(expectedValue);
+
+
+        RuntimeException runtimeException = assertThrows(RuntimeException.class, () -> {
+            Any badAny = Any.pack(int32Value);
+            anyTranslationSpec.unpackMessage(badAny, TestInputObject.class);
+        });
+
+        assertEquals("Unable To unpack any type to given class: " + TestInputObject.class.getName(), runtimeException.getMessage());
+        assertEquals(InvalidProtocolBufferException.class, runtimeException.getCause().getClass());
     }
 
     @Test
     public void testConvertAppObject() {
-        // if (Enum.class.isAssignableFrom(appObject.getClass())) {
-        //     return Any.pack(this.translationEngine.convertObjectAsSafeClass(Enum.class.cast(appObject), Enum.class));
-        // }
+        ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine
+                .builder()
+                .addTranslationSpec(new TestProtobufEnumTranslationSpec())
+                .build();
 
-        // Message message;
+        protobufTranslationEngine.init();
+        AnyTranslationSpec anyTranslationSpec = new AnyTranslationSpec();
+        anyTranslationSpec.init(protobufTranslationEngine);
 
-        // // in the event that the object was converted BEFORE calling thsi
-        // // translationSpec, there is no need to translate it again.
-        // if (Message.class.isAssignableFrom(appObject.getClass())) {
-        //     message = Message.class.cast(appObject);
-        // } else {
-        //     message = this.translationEngine.convertObject(appObject);
-        // }
-        // return Any.pack(message);
+        // app object coverted into any
+        Integer value = 100;
+        Int32Value expectedValue = Int32Value.of(value);
+
+        Any expectedAny = Any.pack(expectedValue);
+
+        Any actualAny = anyTranslationSpec.convertAppObject(value);
+
+        assertEquals(expectedAny, actualAny);
+
+        // app enum converted into any by wrapping it in a WrapperEnumValue
+        TestAppEnum appValue = TestAppEnum.TEST1;
+        TestInputEnum expecetedValue = TestInputEnum.TEST1;
+
+        WrapperEnumValue wrapperEnumValue = WrapperEnumValue.newBuilder()
+                .setEnumTypeUrl(TestInputEnum.getDescriptor().getFullName())
+                .setValue(expecetedValue.name())
+                .build();
+        
+        expectedAny = Any.pack(wrapperEnumValue);
+
+        actualAny = anyTranslationSpec.convertAppObject(appValue);
+
+        assertEquals(expectedAny, actualAny);
+
+        // by calling covert on an object that was already converted
+        // this case is specifcally used for ProtobufTranslationEngine.testGetAnyFromObjectAsSafeClass
+        actualAny = anyTranslationSpec.convertAppObject(wrapperEnumValue);
+
+        assertEquals(expectedAny, actualAny);
     }
 
     @Test

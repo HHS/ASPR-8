@@ -4,11 +4,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 
-import com.google.protobuf.BoolValue;
+import com.google.protobuf.UInt64Value;
 
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
 
-public class AT_BooleanTranslationSpec {
+public class AT_ULongTranslationSpec {
 
     @Test
     public void testConvertInputObject() {
@@ -16,13 +16,13 @@ public class AT_BooleanTranslationSpec {
                 .builder()
                 .build();
 
-        BooleanTranslationSpec booleanTranslationSpec = new BooleanTranslationSpec();
+        ULongTranslationSpec booleanTranslationSpec = new ULongTranslationSpec();
         booleanTranslationSpec.init(protobufTranslationEngine);
 
-        Boolean expectedValue = false;
-        BoolValue inputValue = BoolValue.of(false);
+        Long expectedValue = 100L;
+        UInt64Value inputValue = UInt64Value.of(expectedValue);
 
-        Boolean actualValue = booleanTranslationSpec.convertInputObject(inputValue);
+        Long actualValue = booleanTranslationSpec.convertInputObject(inputValue);
 
         assertEquals(expectedValue, actualValue);
     }
@@ -33,28 +33,28 @@ public class AT_BooleanTranslationSpec {
                 .builder()
                 .build();
 
-        BooleanTranslationSpec booleanTranslationSpec = new BooleanTranslationSpec();
+        ULongTranslationSpec booleanTranslationSpec = new ULongTranslationSpec();
         booleanTranslationSpec.init(protobufTranslationEngine);
 
-        Boolean appValue = false;
-        BoolValue expectedValue = BoolValue.of(false);
+        Long appValue = 100L;
+        UInt64Value expectedValue = UInt64Value.of(appValue);
 
-        BoolValue actualValue = booleanTranslationSpec.convertAppObject(appValue);
+        UInt64Value actualValue = booleanTranslationSpec.convertAppObject(appValue);
 
         assertEquals(expectedValue, actualValue);
     }
 
     @Test
     public void getAppObjectClass() {
-        BooleanTranslationSpec booleanTranslationSpec = new BooleanTranslationSpec();
+        ULongTranslationSpec booleanTranslationSpec = new ULongTranslationSpec();
 
-        assertEquals(Boolean.class, booleanTranslationSpec.getAppObjectClass());
+        assertEquals(Long.class, booleanTranslationSpec.getAppObjectClass());
     }
 
     @Test
     public void getInputObjectClass() {
-        BooleanTranslationSpec booleanTranslationSpec = new BooleanTranslationSpec();
+        ULongTranslationSpec booleanTranslationSpec = new ULongTranslationSpec();
 
-        assertEquals(BoolValue.class, booleanTranslationSpec.getInputObjectClass());
+        assertEquals(UInt64Value.class, booleanTranslationSpec.getInputObjectClass());
     }
 }

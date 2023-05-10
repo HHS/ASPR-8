@@ -191,13 +191,17 @@ public class AT_ProtobufTranslationEngine {
 
         protobufTranslationEngine.init();
 
+        // preconditions
+        // json has unknown property and the ignoringUnknownFields property is set to false
         JsonObject jsonObject = new JsonObject();
 
         jsonObject.addProperty("unknownProperty", "unknownValue");
 
-        assertThrows(RuntimeException.class, () -> {
+        RuntimeException runtimeException = assertThrows(RuntimeException.class, () -> {
             protobufTranslationEngine.parseJson(jsonObject, TestInputObject.class);
         });
+
+        assertEquals(InvalidProtocolBufferException.class, runtimeException.getCause().getClass());
     }
 
     @Test
@@ -281,7 +285,7 @@ public class AT_ProtobufTranslationEngine {
 
         assertEquals(ProtobufCoreTranslationError.INVALID_READ_INPUT_CLASS_REF, contractException.getErrorType());
 
-        // precondition for the Runtime exceptions are convered by the test:
+        // precondition for the Runtime exceptions are convered by the tests:
         // testGetBuilderForMessage() and testParseJson()
     }
 
@@ -297,7 +301,6 @@ public class AT_ProtobufTranslationEngine {
                 .builder()
                 .addTranslationSpec(new TestProtobufObjectTranslationSpec())
                 .addTranslationSpec(new TestProtobufComplexObjectTranslationSpec())
-                // .addTranslationSpec(new TestProtobufEnumTranslationSpec())
                 .build();
 
         protobufTranslationEngine.init();
@@ -400,6 +403,20 @@ public class AT_ProtobufTranslationEngine {
         // if class is neither a Message nor a ProtocolMessageEnum
         ContractException contractException = assertThrows(ContractException.class, () -> {
             pBuilder.populate(TestAppObject.class);
+        });
+
+        assertEquals(ProtobufCoreTranslationError.INVALID_INPUT_CLASS, contractException.getErrorType());
+
+        // the class is exactly a Message.class
+        contractException = assertThrows(ContractException.class, () -> {
+            pBuilder.populate(Message.class);
+        });
+
+        assertEquals(ProtobufCoreTranslationError.INVALID_INPUT_CLASS, contractException.getErrorType());
+
+        // the class is exactly a ProtocolMessageEnum.class
+        contractException = assertThrows(ContractException.class, () -> {
+            pBuilder.populate(ProtocolMessageEnum.class);
         });
 
         assertEquals(ProtobufCoreTranslationError.INVALID_INPUT_CLASS, contractException.getErrorType());

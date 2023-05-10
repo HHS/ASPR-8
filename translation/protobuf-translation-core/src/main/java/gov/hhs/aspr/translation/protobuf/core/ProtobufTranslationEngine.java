@@ -204,6 +204,7 @@ public class ProtobufTranslationEngine extends TranslationEngine {
 
                 this.data.typeUrlToClassMap.putIfAbsent(typeUrl, classRef);
                 this.descriptorSet.add(message.getDescriptorForType());
+                return;
             }
 
             throw new ContractException(ProtobufCoreTranslationError.INVALID_INPUT_CLASS);

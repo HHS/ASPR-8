@@ -24,11 +24,11 @@ import gov.hhs.aspr.translation.protobuf.core.translationSpecs.DateTranslationSp
 import gov.hhs.aspr.translation.protobuf.core.translationSpecs.DoubleTranslationSpec;
 import gov.hhs.aspr.translation.protobuf.core.translationSpecs.EnumTranslationSpec;
 import gov.hhs.aspr.translation.protobuf.core.translationSpecs.FloatTranslationSpec;
-import gov.hhs.aspr.translation.protobuf.core.translationSpecs.Int32TranslationSpec;
-import gov.hhs.aspr.translation.protobuf.core.translationSpecs.Int64TranslationSpec;
+import gov.hhs.aspr.translation.protobuf.core.translationSpecs.IntegerTranslationSpec;
+import gov.hhs.aspr.translation.protobuf.core.translationSpecs.LongTranslationSpec;
 import gov.hhs.aspr.translation.protobuf.core.translationSpecs.StringTranslationSpec;
-import gov.hhs.aspr.translation.protobuf.core.translationSpecs.UInt32TranslationSpec;
-import gov.hhs.aspr.translation.protobuf.core.translationSpecs.UInt64TranslationSpec;
+import gov.hhs.aspr.translation.protobuf.core.translationSpecs.UIntegerTranslationSpec;
+import gov.hhs.aspr.translation.protobuf.core.translationSpecs.ULongTranslationSpec;
 
 /**
  * This is a helper class that encompasses all of the primitive translation
@@ -39,10 +39,10 @@ class PrimitiveTranslationSpecs {
         }
 
         private final static BooleanTranslationSpec BOOLEAN_TRANSLATOR_SPEC = new BooleanTranslationSpec();
-        private final static Int32TranslationSpec INT32_TRANSLATOR_SPEC = new Int32TranslationSpec();
-        private final static UInt32TranslationSpec UINT32_TRANSLATOR_SPEC = new UInt32TranslationSpec();
-        private final static Int64TranslationSpec INT64_TRANSLATOR_SPEC = new Int64TranslationSpec();
-        private final static UInt64TranslationSpec UINT64_TRANSLATOR_SPEC = new UInt64TranslationSpec();
+        private final static IntegerTranslationSpec INT32_TRANSLATOR_SPEC = new IntegerTranslationSpec();
+        private final static UIntegerTranslationSpec UINT32_TRANSLATOR_SPEC = new UIntegerTranslationSpec();
+        private final static LongTranslationSpec INT64_TRANSLATOR_SPEC = new LongTranslationSpec();
+        private final static ULongTranslationSpec UINT64_TRANSLATOR_SPEC = new ULongTranslationSpec();
         private final static StringTranslationSpec STRING_TRANSLATOR_SPEC = new StringTranslationSpec();
         private final static FloatTranslationSpec FLOAT_TRANSLATOR_SPEC = new FloatTranslationSpec();
         private final static DoubleTranslationSpec DOUBLE_TRANSLATOR_SPEC = new DoubleTranslationSpec();

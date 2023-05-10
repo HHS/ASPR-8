@@ -31,12 +31,16 @@ public class AnyTranslationSpec extends ProtobufTranslationSpec<Any, Object> {
 
         messageClassRef = classRef.asSubclass(Message.class);
 
+        return unpackMessage(inputObject, messageClassRef);
+    }
+
+    protected <U extends Message> Object unpackMessage(Any inputObject, Class<U> messageClassRef) {
         try {
             Message unpackedMessage = inputObject.unpack(messageClassRef);
 
             return this.translationEngine.convertObject(unpackedMessage);
         } catch (InvalidProtocolBufferException e) {
-            throw new RuntimeException("Unable To unpack any type to given class: " + classRef.getName(), e);
+            throw new RuntimeException("Unable To unpack any type to given class: " + messageClassRef.getName(), e);
         }
     }
 

@@ -1,32 +1,60 @@
 package gov.hhs.aspr.translation.protobuf.core.translationSpecs;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.junit.jupiter.api.Test;
+
 import com.google.protobuf.FloatValue;
 
-import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
+import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
 
-/**
- * TranslationSpec that defines how to convert from any Java Float to a
- * Protobuf {@link FloatValue} type and vice versa
- */
-public class AT_FloatTranslationSpec extends ProtobufTranslationSpec<FloatValue, Float> {
+public class AT_FloatTranslationSpec {
 
-    @Override
-    protected Float convertInputObject(FloatValue inputObject) {
-        return inputObject.getValue();
+    @Test
+    public void testConvertInputObject() {
+        ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine
+                .builder()
+                .build();
+
+        FloatTranslationSpec floatTranslationSpec = new FloatTranslationSpec();
+        floatTranslationSpec.init(protobufTranslationEngine);
+
+        Float expectedValue = 10.0f;
+        FloatValue inputValue = FloatValue.of(expectedValue);
+
+        Float actualValue = floatTranslationSpec.convertInputObject(inputValue);
+
+        assertEquals(expectedValue, actualValue);
     }
 
-    @Override
-    protected FloatValue convertAppObject(Float appObject) {
-        return FloatValue.of(appObject);
+    @Test
+    public void testConvertAppObject() {
+        ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine
+                .builder()
+                .build();
+
+        FloatTranslationSpec floatTranslationSpec = new FloatTranslationSpec();
+        floatTranslationSpec.init(protobufTranslationEngine);
+
+        Float appValue = 10.01f;
+        FloatValue expectedValue = FloatValue.of(appValue);
+
+        FloatValue actualValue = floatTranslationSpec.convertAppObject(appValue);
+
+        assertEquals(expectedValue, actualValue);
     }
 
-    @Override
-    public Class<Float> getAppObjectClass() {
-        return Float.class;
+    @Test
+    public void getAppObjectClass() {
+        FloatTranslationSpec floatTranslationSpec = new FloatTranslationSpec();
+
+        assertEquals(Float.class, floatTranslationSpec.getAppObjectClass());
     }
 
-    @Override
-    public Class<FloatValue> getInputObjectClass() {
-        return FloatValue.class;
+    @Test
+    public void getInputObjectClass() {
+        FloatTranslationSpec floatTranslationSpec = new FloatTranslationSpec();
+
+        assertEquals(FloatValue.class, floatTranslationSpec.getInputObjectClass());
     }
 }

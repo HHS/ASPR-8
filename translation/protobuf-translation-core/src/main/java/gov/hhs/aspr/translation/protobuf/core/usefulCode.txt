@@ -1,7 +1,4 @@
-package gov.hhs.aspr.translation.protobuf.core;
-
-public class Util {
-    /* public JsonObject deepMerge(JsonObject source, JsonObject target) {
+    public JsonObject deepMerge(JsonObject source, JsonObject target) {
         for (String key : source.keySet()) {
             JsonElement value = source.get(key);
             if (!target.has(key)) {
@@ -22,9 +19,9 @@ public class Util {
             }
         }
         return target;
-    } */
+    }
 
-    /* protected Class<?> getClassFromInfo(FileDescriptor fileDescriptor, String typeName) {
+    protected Class<?> getClassFromInfo(FileDescriptor fileDescriptor, String typeName) {
         boolean javaMultFiles = fileDescriptor.getOptions().getJavaMultipleFiles();
         String javaPackage = fileDescriptor.getOptions().getJavaPackage();
         String javaOuterClassName = fileDescriptor.getOptions().getJavaOuterClassname();
@@ -56,5 +53,4 @@ public class Util {
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
-    } */
-}
+    }

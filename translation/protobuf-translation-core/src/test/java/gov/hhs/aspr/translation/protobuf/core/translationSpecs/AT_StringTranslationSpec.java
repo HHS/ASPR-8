@@ -1,32 +1,60 @@
 package gov.hhs.aspr.translation.protobuf.core.translationSpecs;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.junit.jupiter.api.Test;
+
 import com.google.protobuf.StringValue;
 
-import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
+import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
 
-/**
- * TranslationSpec that defines how to convert from any Java String to a
- * Protobuf {@link StringValue} type and vice versa
- */
-public class AT_StringTranslationSpec extends ProtobufTranslationSpec<StringValue, String> {
+public class AT_StringTranslationSpec {
 
-    @Override
-    protected String convertInputObject(StringValue inputObject) {
-        return inputObject.getValue();
+    @Test
+    public void testConvertInputObject() {
+        ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine
+                .builder()
+                .build();
+
+        StringTranslationSpec stringTranslationSpec = new StringTranslationSpec();
+        stringTranslationSpec.init(protobufTranslationEngine);
+
+        String expectedValue = "testString";
+        StringValue inputValue = StringValue.of(expectedValue);
+
+        String actualValue = stringTranslationSpec.convertInputObject(inputValue);
+
+        assertEquals(expectedValue, actualValue);
     }
 
-    @Override
-    protected StringValue convertAppObject(String appObject) {
-        return StringValue.of(appObject);
+    @Test
+    public void testConvertAppObject() {
+        ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine
+                .builder()
+                .build();
+
+        StringTranslationSpec stringTranslationSpec = new StringTranslationSpec();
+        stringTranslationSpec.init(protobufTranslationEngine);
+
+        String appValue = "testString";
+        StringValue expectedValue = StringValue.of(appValue);
+
+        StringValue actualValue = stringTranslationSpec.convertAppObject(appValue);
+
+        assertEquals(expectedValue, actualValue);
     }
 
-    @Override
-    public Class<String> getAppObjectClass() {
-        return String.class;
+    @Test
+    public void getAppObjectClass() {
+        StringTranslationSpec stringTranslationSpec = new StringTranslationSpec();
+
+        assertEquals(String.class, stringTranslationSpec.getAppObjectClass());
     }
 
-    @Override
-    public Class<StringValue> getInputObjectClass() {
-        return StringValue.class;
+    @Test
+    public void getInputObjectClass() {
+        StringTranslationSpec stringTranslationSpec = new StringTranslationSpec();
+
+        assertEquals(StringValue.class, stringTranslationSpec.getInputObjectClass());
     }
 }
