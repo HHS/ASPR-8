@@ -11,6 +11,7 @@ import gov.hhs.aspr.translation.core.testsupport.testcomplexobject.app.TestCompl
 import gov.hhs.aspr.translation.core.testsupport.testcomplexobject.input.TestComplexInputObject;
 import gov.hhs.aspr.translation.core.testsupport.testobject.translationSpecs.TestObjectTranslationSpec;
 import util.annotations.UnitTestConstructor;
+import util.annotations.UnitTestForCoverage;
 import util.annotations.UnitTestMethod;
 
 public class AT_TestComplexObjectTranslationSpec {
@@ -22,8 +23,7 @@ public class AT_TestComplexObjectTranslationSpec {
     }
 
     @Test
-    @UnitTestMethod(target = TestComplexObjectTranslationSpec.class, name = "convertInputObject", args = {
-            Object.class })
+    @UnitTestForCoverage
     public void testConvertInputObject() {
         TestComplexInputObject testComplexInputObject = TestObjectUtil.generateTestComplexInputObject();
         TestComplexAppObject expectedComplexAppObject = TestObjectUtil
@@ -46,8 +46,7 @@ public class AT_TestComplexObjectTranslationSpec {
     }
 
     @Test
-    @UnitTestMethod(target = TestComplexObjectTranslationSpec.class, name = "convertAppObject", args = {
-            Object.class })
+    @UnitTestForCoverage
     public void testConvertAppObject() {
         TestComplexAppObject testComplexAppObject = TestObjectUtil.generateTestComplexAppObject();
         TestComplexInputObject expectedComplexInputObject = TestObjectUtil

@@ -21,6 +21,7 @@ import gov.hhs.aspr.translation.core.testsupport.testobject.app.TestObjectWrappe
 import gov.hhs.aspr.translation.core.testsupport.testobject.input.TestInputChildObject;
 import gov.hhs.aspr.translation.core.testsupport.testobject.input.TestInputObject;
 import gov.hhs.aspr.translation.core.testsupport.testobject.translationSpecs.TestObjectTranslationSpec;
+import util.annotations.UnitTestForCoverage;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 
@@ -59,7 +60,7 @@ public class AT_TranslationEngine {
     }
 
     @Test
-    @UnitTestMethod(target = TranslationEngine.class, name = "translationSpecsAreInitialized", args = {})
+    @UnitTestForCoverage
     public void testTranslationSpecsAreInitialized() {
         TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
         TestComplexObjectTranslationSpec complexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
@@ -209,7 +210,7 @@ public class AT_TranslationEngine {
     }
 
     @Test
-    @UnitTestMethod(target = TranslationEngine.class, name = "getTranslationSpecForClass", args = { Class.class })
+    @UnitTestForCoverage
     public void testGetTranslationSpecForClass() {
         TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
         TestComplexObjectTranslationSpec complexObjectTranslationSpec = new TestComplexObjectTranslationSpec();

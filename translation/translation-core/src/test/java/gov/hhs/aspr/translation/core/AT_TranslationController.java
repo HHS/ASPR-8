@@ -28,7 +28,7 @@ import gov.hhs.aspr.translation.core.testsupport.testobject.TestObjectTranslator
 import gov.hhs.aspr.translation.core.testsupport.testobject.TestObjectTranslatorId;
 import gov.hhs.aspr.translation.core.testsupport.testobject.app.TestAppObject;
 import gov.hhs.aspr.translation.core.testsupport.testobject.input.TestInputObject;
-import util.annotations.UnitTag;
+import util.annotations.UnitTestForCoverage;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.graph.MutableGraph;
@@ -39,7 +39,7 @@ public class AT_TranslationController {
     Path filePath = TestResourceHelper.makeTestOutputDir(basePath);
 
     @Test
-    @UnitTestMethod(target = TranslationController.class, name = "validateTranslationEngine", args = {})
+    @UnitTestForCoverage
     public void testValidateTranslationEngine() {
         TranslationController translationController = TranslationController
                 .builder()
@@ -100,7 +100,7 @@ public class AT_TranslationController {
     }
 
     @Test
-    @UnitTestMethod(target = TranslationController.class, name = "makeFileWriter", args = { Path.class })
+    @UnitTestForCoverage
     public void testMakeFileWriter() {
         String fileName = "MakeFileWriter-testOutput.json";
 
@@ -124,7 +124,7 @@ public class AT_TranslationController {
     }
 
     @Test
-    @UnitTestMethod(target = TranslationController.class, name = "getOutputPath", args = { Class.class, Integer.class })
+    @UnitTestForCoverage
     public void testGetOutputPath() {
         String fileName = "GetOutputPath_1-testOutput.json";
         String fileName2 = "GetOutputPath_2-testOutput.json";
@@ -397,7 +397,7 @@ public class AT_TranslationController {
     }
 
     @Test
-    @UnitTestMethod(target = TranslationController.class, name = "getOrderedTranslators", args = {})
+    @UnitTestForCoverage
     public void testGetOrderedTranslators() {
 
         TranslationController translationController = TranslationController.builder()
@@ -593,7 +593,7 @@ public class AT_TranslationController {
     @Test
     @UnitTestMethod(target = TranslationController.Builder.class, name = "addOutputFilePath", args = { Path.class,
             Class.class,
-            Integer.class }, tags = { UnitTag.LOCAL_PROXY })
+            Integer.class })
     public void testAddOutputFilePath_ScenarioId() {
         // Tested by testAddOutputFilePath, which internally calls
         // addOutputFilePath(path, class, 0)

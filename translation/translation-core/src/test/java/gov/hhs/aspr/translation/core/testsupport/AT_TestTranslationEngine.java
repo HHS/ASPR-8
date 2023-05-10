@@ -15,6 +15,7 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 
+import gov.hhs.aspr.translation.core.TranslationSpec;
 import gov.hhs.aspr.translation.core.testsupport.testcomplexobject.translationSpecs.TestComplexObjectTranslationSpec;
 import gov.hhs.aspr.translation.core.testsupport.testobject.app.TestAppObject;
 import gov.hhs.aspr.translation.core.testsupport.testobject.input.TestInputObject;
@@ -127,5 +128,14 @@ public class AT_TestTranslationEngine {
     public void testBuild() {
         assertNotNull(TestTranslationEngine
                 .builder().build());
+    }
+
+    @Test
+    @UnitTestMethod(target = TestTranslationEngine.Builder.class, name = "addTranslationSpec", args = {
+            TranslationSpec.class })
+    public void testAddTranslationSpec() {
+        // covered by AT_TranslationEngine#testAddTranslationSpec
+        // this is just a wrapper method to ensure that the correct Child Engine builder
+        // is returned
     }
 }
