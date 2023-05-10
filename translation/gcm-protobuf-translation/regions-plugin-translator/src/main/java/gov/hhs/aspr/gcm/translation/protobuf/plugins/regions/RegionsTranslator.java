@@ -38,7 +38,8 @@ public class RegionsTranslator {
                     translationEngineBuilder.addTranslationSpec(new TestRegionIdTranslationSpec());
                     translationEngineBuilder.addTranslationSpec(new TestRegionPropertyIdTranslationSpec());
 
-                    translationEngineBuilder.addFieldToIncludeDefaultValue(RegionPersonInfo.getDescriptor().findFieldByName("personId"));
+                    translationEngineBuilder.addFieldToIncludeDefaultValue(
+                            RegionPersonInfo.getDescriptor().findFieldByName("personId"));
 
                     if (withReport) {
                         translationEngineBuilder

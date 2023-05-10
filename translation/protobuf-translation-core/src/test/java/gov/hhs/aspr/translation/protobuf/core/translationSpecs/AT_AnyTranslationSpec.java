@@ -32,7 +32,7 @@ public class AT_AnyTranslationSpec {
     public void testConstructor() {
         assertNotNull(new AnyTranslationSpec());
     }
-    
+
     @Test
     @UnitTestMethod(target = AnyTranslationSpec.class, name = "convertInputObject", args = { Any.class })
     public void testConvertInputObject() {
