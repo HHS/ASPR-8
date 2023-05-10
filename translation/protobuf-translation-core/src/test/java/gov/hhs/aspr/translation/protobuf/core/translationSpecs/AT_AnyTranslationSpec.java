@@ -20,6 +20,7 @@ import gov.hhs.aspr.translation.protobuf.core.testsupport.testobject.translation
 import gov.hhs.aspr.translation.protobuf.core.testsupport.testobject.translationSpecs.TestProtobufObjectTranslationSpec;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
+import util.annotations.UnitTestMethodForCoverage;
 
 /**
  * TranslationSpec that defines how to convert from any Java Object to a
@@ -34,7 +35,7 @@ public class AT_AnyTranslationSpec {
     }
 
     @Test
-    @UnitTestMethod(target = AnyTranslationSpec.class, name = "convertInputObject", args = { Any.class })
+    @UnitTestMethodForCoverage
     public void testConvertInputObject() {
         ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine
                 .builder()
@@ -79,7 +80,7 @@ public class AT_AnyTranslationSpec {
     }
 
     @Test
-    @UnitTestMethod(target = AnyTranslationSpec.class, name = "unpackMessage", args = { Any.class, Class.class })
+    @UnitTestMethodForCoverage
     public void testUnpackMessage() {
         ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine
                 .builder()
@@ -106,7 +107,7 @@ public class AT_AnyTranslationSpec {
     }
 
     @Test
-    @UnitTestMethod(target = AnyTranslationSpec.class, name = "convertAppObject", args = { Object.class })
+    @UnitTestMethodForCoverage
     public void testConvertAppObject() {
         ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine
                 .builder()

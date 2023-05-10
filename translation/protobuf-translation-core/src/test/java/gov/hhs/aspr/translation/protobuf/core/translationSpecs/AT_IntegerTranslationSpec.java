@@ -10,6 +10,7 @@ import com.google.protobuf.Int32Value;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
+import util.annotations.UnitTestMethodForCoverage;
 
 public class AT_IntegerTranslationSpec {
 
@@ -20,7 +21,7 @@ public class AT_IntegerTranslationSpec {
     }
 
     @Test
-    @UnitTestMethod(target = IntegerTranslationSpec.class, name = "convertInputObject", args = { Int32Value.class })
+    @UnitTestMethodForCoverage
     public void testConvertInputObject() {
         ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine
                 .builder()
@@ -38,7 +39,7 @@ public class AT_IntegerTranslationSpec {
     }
 
     @Test
-    @UnitTestMethod(target = IntegerTranslationSpec.class, name = "convertAppObject", args = { Integer.class })
+    @UnitTestMethodForCoverage
     public void testConvertAppObject() {
         ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine
                 .builder()

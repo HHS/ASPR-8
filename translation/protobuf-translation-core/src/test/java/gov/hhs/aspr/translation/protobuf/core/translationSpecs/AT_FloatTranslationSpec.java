@@ -10,6 +10,7 @@ import com.google.protobuf.FloatValue;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
+import util.annotations.UnitTestMethodForCoverage;
 
 public class AT_FloatTranslationSpec {
 
@@ -20,7 +21,7 @@ public class AT_FloatTranslationSpec {
     }
 
     @Test
-    @UnitTestMethod(target = FloatTranslationSpec.class, name = "convertInputObject", args = { FloatValue.class })
+    @UnitTestMethodForCoverage
     public void testConvertInputObject() {
         ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine
                 .builder()
@@ -38,7 +39,7 @@ public class AT_FloatTranslationSpec {
     }
 
     @Test
-    @UnitTestMethod(target = FloatTranslationSpec.class, name = "convertAppObject", args = { Float.class })
+    @UnitTestMethodForCoverage
     public void testConvertAppObject() {
         ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine
                 .builder()

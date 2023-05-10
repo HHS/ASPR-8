@@ -11,6 +11,7 @@ import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
 import gov.hhs.aspr.translation.protobuf.core.testsupport.testcomplexobject.input.TestComplexInputObject;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
+import util.annotations.UnitTestMethodForCoverage;
 
 public class AT_TestProtobufComplexObjectTranslationSpec {
 
@@ -21,8 +22,7 @@ public class AT_TestProtobufComplexObjectTranslationSpec {
     }
 
     @Test
-    @UnitTestMethod(target = TestProtobufComplexObjectTranslationSpec.class, name = "convertInputObject", args = {
-            TestComplexInputObject.class })
+    @UnitTestMethodForCoverage
     public void testConvertInputObject() {
         ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine
                 .builder()
@@ -42,8 +42,7 @@ public class AT_TestProtobufComplexObjectTranslationSpec {
     }
 
     @Test
-    @UnitTestMethod(target = TestProtobufComplexObjectTranslationSpec.class, name = "convertAppObject", args = {
-            TestComplexAppObject.class })
+    @UnitTestMethodForCoverage
     public void testConvertAppObject() {
         ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine
                 .builder()

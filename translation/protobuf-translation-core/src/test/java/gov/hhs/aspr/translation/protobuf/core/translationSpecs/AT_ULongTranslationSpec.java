@@ -10,6 +10,7 @@ import com.google.protobuf.UInt64Value;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
+import util.annotations.UnitTestMethodForCoverage;
 
 public class AT_ULongTranslationSpec {
 
@@ -20,7 +21,7 @@ public class AT_ULongTranslationSpec {
     }
 
     @Test
-    @UnitTestMethod(target = ULongTranslationSpec.class, name = "convertInputObject", args = { UInt64Value.class })
+    @UnitTestMethodForCoverage
     public void testConvertInputObject() {
         ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine
                 .builder()
@@ -38,7 +39,7 @@ public class AT_ULongTranslationSpec {
     }
 
     @Test
-    @UnitTestMethod(target = ULongTranslationSpec.class, name = "convertAppObject", args = { Long.class })
+    @UnitTestMethodForCoverage
     public void testConvertAppObject() {
         ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine
                 .builder()

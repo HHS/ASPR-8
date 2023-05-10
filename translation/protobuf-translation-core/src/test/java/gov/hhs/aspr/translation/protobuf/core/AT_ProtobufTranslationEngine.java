@@ -43,6 +43,7 @@ import gov.hhs.aspr.translation.protobuf.core.testsupport.testobject.input.TestI
 import gov.hhs.aspr.translation.protobuf.core.testsupport.testobject.input.TestInputObject;
 import gov.hhs.aspr.translation.protobuf.core.testsupport.testobject.translationSpecs.TestProtobufObjectTranslationSpec;
 import util.annotations.UnitTestMethod;
+import util.annotations.UnitTestMethodForCoverage;
 import util.errors.ContractException;
 
 public class AT_ProtobufTranslationEngine {
@@ -257,7 +258,7 @@ public class AT_ProtobufTranslationEngine {
     }
 
     @Test
-    @UnitTestMethod(target = ProtobufTranslationEngine.class, name = "readInput", args = { Reader.class, Class.class })
+    @UnitTestMethodForCoverage
     public void testReadInput() throws IOException {
         String fileName = "readInputFromEngine_1-testOutput.json";
         String fileName2 = "readInputFromEngine_2-testOutput.json";
@@ -303,8 +304,7 @@ public class AT_ProtobufTranslationEngine {
     }
 
     @Test
-    @UnitTestMethod(target = ProtobufTranslationEngine.class, name = "writeOutput", args = { Writer.class, Object.class,
-            Optional.class })
+    @UnitTestMethodForCoverage
     public void testWriteOutput() throws IOException {
         String fileName = "writeOutputFromEngine_1-testOutput.json";
         String fileName2 = "writeOutputFromEngine_2-testOutput.json";

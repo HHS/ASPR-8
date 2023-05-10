@@ -10,6 +10,7 @@ import com.google.protobuf.DoubleValue;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
+import util.annotations.UnitTestMethodForCoverage;
 
 public class AT_DoubleTranslationSpec {
 
@@ -20,7 +21,7 @@ public class AT_DoubleTranslationSpec {
     }
 
     @Test
-    @UnitTestMethod(target = DoubleTranslationSpec.class, name = "convertInputObject", args = { DoubleValue.class })
+    @UnitTestMethodForCoverage
     public void testConvertInputObject() {
         ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine
                 .builder()
@@ -38,7 +39,7 @@ public class AT_DoubleTranslationSpec {
     }
 
     @Test
-    @UnitTestMethod(target = DoubleTranslationSpec.class, name = "convertAppObject", args = { Double.class })
+    @UnitTestMethodForCoverage
     public void testConvertAppObject() {
         ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine
                 .builder()

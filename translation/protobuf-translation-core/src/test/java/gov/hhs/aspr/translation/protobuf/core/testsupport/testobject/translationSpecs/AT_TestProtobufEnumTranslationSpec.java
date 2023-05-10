@@ -10,6 +10,7 @@ import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
 import gov.hhs.aspr.translation.protobuf.core.testsupport.testobject.input.TestInputEnum;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
+import util.annotations.UnitTestMethodForCoverage;
 
 public class AT_TestProtobufEnumTranslationSpec {
 
@@ -20,8 +21,7 @@ public class AT_TestProtobufEnumTranslationSpec {
     }
 
     @Test
-    @UnitTestMethod(target = TestProtobufEnumTranslationSpec.class, name = "convertInputObject", args = {
-            TestInputEnum.class })
+    @UnitTestMethodForCoverage
     public void testConvertInputObject() {
         ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine
                 .builder()
@@ -40,8 +40,7 @@ public class AT_TestProtobufEnumTranslationSpec {
     }
 
     @Test
-    @UnitTestMethod(target = TestProtobufEnumTranslationSpec.class, name = "convertAppObject", args = {
-            TestAppEnum.class })
+    @UnitTestMethodForCoverage
     public void testConvertAppObject() {
         ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine
                 .builder()
