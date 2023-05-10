@@ -12,7 +12,7 @@ import com.google.type.Date;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
-import util.annotations.UnitTestMethodForCoverage;
+import util.annotations.UnitTestForCoverage;
 
 public class AT_DateTranslationSpec {
 
@@ -23,7 +23,7 @@ public class AT_DateTranslationSpec {
     }
 
     @Test
-    @UnitTestMethodForCoverage
+    @UnitTestForCoverage
     public void testConvertInputObject() {
         ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine
                 .builder()
@@ -42,7 +42,7 @@ public class AT_DateTranslationSpec {
     }
 
     @Test
-    @UnitTestMethodForCoverage
+    @UnitTestForCoverage
     public void testConvertAppObject() {
         ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine
                 .builder()

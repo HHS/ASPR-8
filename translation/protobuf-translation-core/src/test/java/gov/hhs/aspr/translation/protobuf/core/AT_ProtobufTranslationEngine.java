@@ -41,7 +41,7 @@ import gov.hhs.aspr.translation.protobuf.core.testsupport.testobject.input.TestI
 import gov.hhs.aspr.translation.protobuf.core.testsupport.testobject.input.TestInputObject;
 import gov.hhs.aspr.translation.protobuf.core.testsupport.testobject.translationSpecs.TestProtobufObjectTranslationSpec;
 import util.annotations.UnitTestMethod;
-import util.annotations.UnitTestMethodForCoverage;
+import util.annotations.UnitTestForCoverage;
 import util.errors.ContractException;
 
 public class AT_ProtobufTranslationEngine {
@@ -166,6 +166,7 @@ public class AT_ProtobufTranslationEngine {
     }
 
     @Test
+    @UnitTestForCoverage
     public void testDebugPrint() throws IOException {
         String fileName = "debugPrintFromEngine_1-testOutput.json";
 
@@ -191,6 +192,7 @@ public class AT_ProtobufTranslationEngine {
     }
 
     @Test
+    @UnitTestForCoverage
     public void testParseJson() {
         ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine
                 .builder()
@@ -216,6 +218,7 @@ public class AT_ProtobufTranslationEngine {
     }
 
     @Test
+    @UnitTestForCoverage
     public void testGetBuilderForMessage() {
 
         ProtobufTranslationEngine protobufTranslationEngine = ProtobufTranslationEngine
@@ -256,7 +259,7 @@ public class AT_ProtobufTranslationEngine {
     }
 
     @Test
-    @UnitTestMethodForCoverage
+    @UnitTestForCoverage
     public void testReadInput() throws IOException {
         String fileName = "readInputFromEngine_1-testOutput.json";
         String fileName2 = "readInputFromEngine_2-testOutput.json";
@@ -302,7 +305,7 @@ public class AT_ProtobufTranslationEngine {
     }
 
     @Test
-    @UnitTestMethodForCoverage
+    @UnitTestForCoverage
     public void testWriteOutput() throws IOException {
         String fileName = "writeOutputFromEngine_1-testOutput.json";
         String fileName2 = "writeOutputFromEngine_2-testOutput.json";
@@ -377,6 +380,7 @@ public class AT_ProtobufTranslationEngine {
     }
 
     @Test
+    @UnitTestForCoverage
     public void testGetDefaultMessage() {
         ProtobufTranslationEngine.Builder pBuilder = ProtobufTranslationEngine.builder();
 
@@ -391,6 +395,7 @@ public class AT_ProtobufTranslationEngine {
     }
 
     @Test
+    @UnitTestForCoverage
     public void testGetDefaultEnum() {
         ProtobufTranslationEngine.Builder pBuilder = ProtobufTranslationEngine.builder();
 
@@ -405,6 +410,7 @@ public class AT_ProtobufTranslationEngine {
     }
 
     @Test
+    @UnitTestForCoverage
     public void testPopulate() {
         ProtobufTranslationEngine.Builder pBuilder = ProtobufTranslationEngine.builder();
 
