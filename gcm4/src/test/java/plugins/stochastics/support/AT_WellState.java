@@ -1,11 +1,15 @@
 package plugins.stochastics.support;
 
+import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 import util.annotations.UnitTag;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
+import util.random.RandomGeneratorProvider;
 
 import java.util.Arrays;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -29,6 +33,85 @@ public class AT_WellState {
 
         Long actualSeed = wellState.getSeed();
         assertEquals(expectedSeed, actualSeed);
+    }
+
+    @Test
+    @UnitTestMethod(target = WellState.class, name = "builder", args = {})
+    public void testBuilder() {
+        assertNotNull(WellState.builder());
+    }
+
+    @Test
+    @UnitTestMethod(target = WellState.class, name = "getSeed", args = {})
+    public void testGetSeed() {
+        Long expectedSeed = 764258969836004163L;
+
+        WellState wellState = WellState.builder()
+                .setSeed(expectedSeed)
+                .build();
+
+        Long actualSeed = wellState.getSeed();
+        assertEquals(expectedSeed, actualSeed);
+    }
+
+    @Test
+    @UnitTestMethod(target = WellState.class, name = "getIndex", args = {})
+    public void testGetIndex() {
+        WellState.Builder builder = WellState.builder();
+        Long seed = 6559152513645047938L;
+        int expectedIndex = 13;
+        int[] vArray = new int[1391];
+
+        WellState wellState = builder
+                .setInternals(expectedIndex, vArray)
+                .setSeed(seed)
+                .build();
+        int actualIndex = wellState.getIndex();
+        assertEquals(expectedIndex, actualIndex);
+    }
+
+    @Test
+    @UnitTestMethod(target = WellState.class, name = "getVArray", args = {})
+    public void testGetVArray() {
+        WellState.Builder builder = WellState.builder();
+        Long seed = 6559152513645047938L;
+        int index = 13;
+        int[] expectedVArray = new int[1391];
+
+        WellState wellState = builder
+                .setInternals(index, expectedVArray)
+                .setSeed(seed)
+                .build();
+        int[] actualVArray = wellState.getVArray();
+
+        assertTrue(Arrays.equals(expectedVArray, actualVArray));
+    }
+
+    @Test
+    @UnitTestMethod(target = WellState.class, name = "hashCode", args = {})
+    public void testHashCode() {
+        // show that equal well states have equal hash codes
+        WellState.Builder builder = WellState.builder();
+        Long seed = 6559152513645047938L;
+        int index = 13;
+        int[] vArray = new int[1391];
+
+        WellState wellState1 = builder.setSeed(seed).setInternals(index, vArray).build();
+        WellState wellState2 = builder.setSeed(seed).setInternals(index, vArray).build();
+
+        assertEquals(wellState1.hashCode(), wellState2.hashCode());
+
+        // show that hash codes are reasonably distributed
+        RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(4898576492932415902L);
+        Set<Integer> hashCodes = new LinkedHashSet<Integer>();
+        for (int i = 0; i < 100; i++) {
+            Long stateSeed = randomGenerator.nextLong();
+            int stateIndex = randomGenerator.nextInt(1390);
+            WellState wellState = builder.setInternals(stateIndex, vArray).setSeed(stateSeed).build();
+            int stateHash = wellState.hashCode();
+            hashCodes.add(stateHash);
+        }
+        assertTrue(hashCodes.size() >= 85);
     }
 
     @Test
@@ -89,8 +172,8 @@ public class AT_WellState {
                 .setSeed(5289854998653146199L)
                 .build();
 
-        assertEquals(duplicateState, wellState);
-        assertNotEquals(differentState, wellState);
+        assertTrue(wellState.equals(duplicateState));
+        assertFalse(wellState.equals(differentState));
     }
 
 
