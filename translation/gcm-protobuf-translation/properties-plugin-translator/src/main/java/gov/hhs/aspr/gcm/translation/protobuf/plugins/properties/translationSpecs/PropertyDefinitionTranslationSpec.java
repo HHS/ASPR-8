@@ -6,7 +6,8 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.input.PropertyDe
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 import plugins.util.properties.PropertyDefinition;
 
-public class PropertyDefinitionTranslationSpec extends ProtobufTranslationSpec<PropertyDefinitionInput, PropertyDefinition> {
+public class PropertyDefinitionTranslationSpec
+        extends ProtobufTranslationSpec<PropertyDefinitionInput, PropertyDefinition> {
 
     @Override
     protected PropertyDefinition convertInputObject(PropertyDefinitionInput inputObject) {
@@ -37,7 +38,8 @@ public class PropertyDefinitionTranslationSpec extends ProtobufTranslationSpec<P
     protected PropertyDefinitionInput convertAppObject(PropertyDefinition appObject) {
         PropertyDefinitionInput.Builder builder = PropertyDefinitionInput.newBuilder();
         if (appObject.getDefaultValue().isPresent()) {
-            builder.setDefaultValue((Any) this.translationEngine.convertObjectAsUnsafeClass(appObject.getDefaultValue().get(), Any.class));
+            builder.setDefaultValue((Any) this.translationEngine
+                    .convertObjectAsUnsafeClass(appObject.getDefaultValue().get(), Any.class));
         } else {
             builder.setType(appObject.getType().getName());
         }

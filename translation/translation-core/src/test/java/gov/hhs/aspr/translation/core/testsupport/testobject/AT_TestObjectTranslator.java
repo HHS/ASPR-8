@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.translation.core.Translator;
 import gov.hhs.aspr.translation.core.TranslatorId;
-import gov.hhs.aspr.translation.core.testsupport.testcomplexobject.TestComplexTranslatorId;
+import gov.hhs.aspr.translation.core.testsupport.testcomplexobject.TestComplexObjectTranslatorId;
 import util.annotations.UnitTestMethod;
 
 public class AT_TestObjectTranslator {
@@ -22,7 +22,7 @@ public class AT_TestObjectTranslator {
         assertEquals(TestObjectTranslatorId.TRANSLATOR_ID, testObjectTranslator.getTranslatorId());
         Set<TranslatorId> expectedDependencies = new LinkedHashSet<>();
 
-        expectedDependencies.add(TestComplexTranslatorId.TRANSLATOR_ID);
+        expectedDependencies.add(TestComplexObjectTranslatorId.TRANSLATOR_ID);
 
         assertEquals(expectedDependencies, testObjectTranslator.getTranslatorDependencies());
     }

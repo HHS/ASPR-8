@@ -4,6 +4,10 @@ import com.google.protobuf.BoolValue;
 
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 
+/**
+ * TranslationSpec that defines how to convert from any Java Boolean to a
+ * Protobuf {@link BoolValue} type and vice versa
+ */
 public class BooleanTranslationSpec extends ProtobufTranslationSpec<BoolValue, Boolean> {
 
     @Override

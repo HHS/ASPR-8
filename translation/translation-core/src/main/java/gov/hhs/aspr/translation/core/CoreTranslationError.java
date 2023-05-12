@@ -8,7 +8,8 @@ public enum CoreTranslationError implements ContractError {
     NULL_TRANSLATOR("Null Translator"),
     NULL_TRANSLATION_ENGINE_BUILDER("Null Translation Engine Builder"),
     NULL_TRANSLATION_ENGINE("Null Translation Engine"),
-    INVALID_TRANSLATION_ENGINE_BUILDER("The given Translation Engine Builder classRef does not match the class of the actual Translation Engine Builder"),
+    INVALID_TRANSLATION_ENGINE_BUILDER(
+            "The given Translation Engine Builder classRef does not match the class of the actual Translation Engine Builder"),
     DUPLICATE_TRANSLATOR("Duplicate Translator"),
     MISSING_TRANSLATOR("Missing Translator: "),
     CIRCULAR_TRANSLATOR_DEPENDENCIES("Circular translator dependencies: "),
@@ -21,7 +22,8 @@ public enum CoreTranslationError implements ContractError {
     NULL_CLASS_REF("Null Class Ref"),
     INVALID_OUTPUT_CLASSREF("The given class does not have a output file path associated with it."),
     DUPLICATE_OUTPUT_PATH("Duplicate Output Path"),
-    INVALID_OUTPUT_PATH("The given output file path does not exist. While the file will be created on write, the directory will not."),
+    INVALID_OUTPUT_PATH(
+            "The given output file path does not exist. While the file will be created on write, the directory will not."),
     DUPLICATE_CLASSREF_SCENARIO_PAIR("Duplicate ClassRef and Scenario Pair"),
     DUPLICATE_CLASSREF("Duplicate ClassRef"),
     UNKNOWN_CLASSREF("No object has been read in with the specified classRef"),
@@ -31,8 +33,7 @@ public enum CoreTranslationError implements ContractError {
     DUPLICATE_TRANSLATION_SPEC("Duplicate TranslationSpec"),
     UNKNOWN_TRANSLATION_SPEC("No translation spec was provided for the given class"),
     UNITIALIZED_TRANSLATION_SPEC("TranslationSpec not initialized"),
-    UNKNOWN_OBJECT("Object is not Translatable by this TranslationSpec")
-    ;
+    UNKNOWN_OBJECT("Object is not Translatable by this TranslationSpec");
 
     private final String description;
 

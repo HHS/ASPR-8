@@ -11,13 +11,13 @@ import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.translation.core.testsupport.TestObjectUtil;
 import gov.hhs.aspr.translation.core.testsupport.TestTranslationEngine;
-import gov.hhs.aspr.translation.core.testsupport.testcomplexobject.TestComplexInputObject;
-import gov.hhs.aspr.translation.core.testsupport.testcomplexobject.TestComplexObjectTranslationSpec;
-import gov.hhs.aspr.translation.core.testsupport.testobject.TestAppChildObject;
-import gov.hhs.aspr.translation.core.testsupport.testobject.TestAppObject;
-import gov.hhs.aspr.translation.core.testsupport.testobject.TestInputChildObject;
-import gov.hhs.aspr.translation.core.testsupport.testobject.TestInputObject;
-import gov.hhs.aspr.translation.core.testsupport.testobject.TestObjectTranslationSpec;
+import gov.hhs.aspr.translation.core.testsupport.testcomplexobject.input.TestComplexInputObject;
+import gov.hhs.aspr.translation.core.testsupport.testcomplexobject.translationSpecs.TestComplexObjectTranslationSpec;
+import gov.hhs.aspr.translation.core.testsupport.testobject.app.TestAppChildObject;
+import gov.hhs.aspr.translation.core.testsupport.testobject.app.TestAppObject;
+import gov.hhs.aspr.translation.core.testsupport.testobject.input.TestInputChildObject;
+import gov.hhs.aspr.translation.core.testsupport.testobject.input.TestInputObject;
+import gov.hhs.aspr.translation.core.testsupport.testobject.translationSpecs.TestObjectTranslationSpec;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
@@ -58,7 +58,7 @@ public class AT_TranslationSpec {
     @UnitTestMethod(target = TranslationSpec.class, name = "init", args = { TranslationEngine.class })
     public void testInit() {
         TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
-        TestTranslationEngine testTranslationEngine = (TestTranslationEngine) TestTranslationEngine
+        TestTranslationEngine testTranslationEngine = TestTranslationEngine
                 .builder()
                 .addTranslationSpec(testObjectTranslationSpec)
                 .build();
@@ -73,7 +73,7 @@ public class AT_TranslationSpec {
     @UnitTestMethod(target = TranslationSpec.class, name = "isInitialized", args = {})
     public void testIsInitialized() {
         TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
-        TestTranslationEngine testTranslationEngine = (TestTranslationEngine) TestTranslationEngine
+        TestTranslationEngine testTranslationEngine = TestTranslationEngine
                 .builder()
                 .addTranslationSpec(testObjectTranslationSpec)
                 .build();
@@ -90,7 +90,7 @@ public class AT_TranslationSpec {
     public void testConvert() {
         TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
         TestComplexObjectTranslationSpec complexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
-        TestTranslationEngine testTranslationEngine = (TestTranslationEngine) TestTranslationEngine
+        TestTranslationEngine testTranslationEngine = TestTranslationEngine
                 .builder()
                 .addTranslationSpec(testObjectTranslationSpec)
                 .addTranslationSpec(complexObjectTranslationSpec)
@@ -137,9 +137,9 @@ public class AT_TranslationSpec {
     }
 
     @Test
-    @UnitTestMethod(target = TranslationSpec.class, name = "hashCode", args = { })
+    @UnitTestMethod(target = TranslationSpec.class, name = "hashCode", args = {})
     public void testHashCode() {
-        TestTranslationEngine testTranslationEngine = (TestTranslationEngine) TestTranslationEngine
+        TestTranslationEngine testTranslationEngine = TestTranslationEngine
                 .builder()
                 .build();
         // base
@@ -298,7 +298,7 @@ public class AT_TranslationSpec {
     @Test
     @UnitTestMethod(target = TranslationSpec.class, name = "equals", args = { Object.class })
     public void testEquals() {
-        TestTranslationEngine testTranslationEngine = (TestTranslationEngine) TestTranslationEngine
+        TestTranslationEngine testTranslationEngine = TestTranslationEngine
                 .builder()
                 .build();
         // base

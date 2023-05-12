@@ -15,10 +15,11 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 
-import gov.hhs.aspr.translation.core.testsupport.testcomplexobject.TestComplexObjectTranslationSpec;
-import gov.hhs.aspr.translation.core.testsupport.testobject.TestAppObject;
-import gov.hhs.aspr.translation.core.testsupport.testobject.TestInputObject;
-import gov.hhs.aspr.translation.core.testsupport.testobject.TestObjectTranslationSpec;
+import gov.hhs.aspr.translation.core.TranslationSpec;
+import gov.hhs.aspr.translation.core.testsupport.testcomplexobject.translationSpecs.TestComplexObjectTranslationSpec;
+import gov.hhs.aspr.translation.core.testsupport.testobject.app.TestAppObject;
+import gov.hhs.aspr.translation.core.testsupport.testobject.input.TestInputObject;
+import gov.hhs.aspr.translation.core.testsupport.testobject.translationSpecs.TestObjectTranslationSpec;
 import util.annotations.UnitTestMethod;
 
 public class AT_TestTranslationEngine {
@@ -37,7 +38,7 @@ public class AT_TestTranslationEngine {
 
         TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
         TestComplexObjectTranslationSpec complexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
-        TestTranslationEngine testTranslationEngine = (TestTranslationEngine) TestTranslationEngine
+        TestTranslationEngine testTranslationEngine = TestTranslationEngine
                 .builder()
                 .addTranslationSpec(testObjectTranslationSpec)
                 .addTranslationSpec(complexObjectTranslationSpec)
@@ -59,7 +60,8 @@ public class AT_TestTranslationEngine {
 
         testTranslationEngine.writeOutput(fileWriter2, TestObjectUtil.getChildAppFromApp(expectedAppObject),
                 Optional.of(TestAppObject.class));
-        TestAppObject actualAppChildObject = testTranslationEngine.readInput(fileReader2, TestInputObject.class);
+        TestAppObject actualAppChildObject = testTranslationEngine.readInput(fileReader2,
+                TestInputObject.class);
         assertEquals(expectedAppObject, actualAppChildObject);
 
         // preconditions
@@ -87,7 +89,7 @@ public class AT_TestTranslationEngine {
 
         TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
         TestComplexObjectTranslationSpec complexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
-        TestTranslationEngine testTranslationEngine = (TestTranslationEngine) TestTranslationEngine
+        TestTranslationEngine testTranslationEngine = TestTranslationEngine
                 .builder()
                 .addTranslationSpec(testObjectTranslationSpec)
                 .addTranslationSpec(complexObjectTranslationSpec)
@@ -109,7 +111,8 @@ public class AT_TestTranslationEngine {
 
         testTranslationEngine.writeOutput(fileWriter2, TestObjectUtil.getChildAppFromApp(expectedAppObject),
                 Optional.of(TestAppObject.class));
-        TestAppObject actualAppChildObject = testTranslationEngine.readInput(fileReader2, TestInputObject.class);
+        TestAppObject actualAppChildObject = testTranslationEngine.readInput(fileReader2,
+                TestInputObject.class);
         assertEquals(expectedAppObject, actualAppChildObject);
     }
 
@@ -125,5 +128,14 @@ public class AT_TestTranslationEngine {
     public void testBuild() {
         assertNotNull(TestTranslationEngine
                 .builder().build());
+    }
+
+    @Test
+    @UnitTestMethod(target = TestTranslationEngine.Builder.class, name = "addTranslationSpec", args = {
+            TranslationSpec.class })
+    public void testAddTranslationSpec() {
+        // covered by AT_TranslationEngine#testAddTranslationSpec
+        // this is just a wrapper method to ensure that the correct Child Engine builder
+        // is returned
     }
 }

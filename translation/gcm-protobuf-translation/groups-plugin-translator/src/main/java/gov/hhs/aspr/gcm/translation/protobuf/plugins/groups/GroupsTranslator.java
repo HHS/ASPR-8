@@ -16,7 +16,7 @@ import gov.hhs.aspr.translation.core.Translator;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
 
 public class GroupsTranslator {
-    
+
     private GroupsTranslator() {
     }
 
@@ -26,8 +26,9 @@ public class GroupsTranslator {
                 .addDependency(PropertiesTranslatorId.TRANSLATOR_ID)
                 .addDependency(PeopleTranslatorId.TRANSLATOR_ID)
                 .setInitializer((translatorContext) -> {
-                    ProtobufTranslationEngine.Builder translationEngineBuilder = translatorContext.getTranslationEngineBuilder(ProtobufTranslationEngine.Builder.class);
-                    
+                    ProtobufTranslationEngine.Builder translationEngineBuilder = translatorContext
+                            .getTranslationEngineBuilder(ProtobufTranslationEngine.Builder.class);
+
                     translationEngineBuilder.addTranslationSpec(new GroupsPluginDataTranslationSpec());
                     translationEngineBuilder.addTranslationSpec(new GroupIdTranslationSpec());
                     translationEngineBuilder.addTranslationSpec(new GroupTypeIdTranslationSpec());
@@ -40,7 +41,8 @@ public class GroupsTranslator {
                         translationEngineBuilder.addTranslationSpec(new GroupPropertyReportPluginDataTranslationSpec());
                     }
 
-                    translationEngineBuilder.addFieldToIncludeDefaultValue(GroupIdInput.getDescriptor().findFieldByName("id"));
+                    translationEngineBuilder
+                            .addFieldToIncludeDefaultValue(GroupIdInput.getDescriptor().findFieldByName("id"));
                 });
 
         if (withReport) {

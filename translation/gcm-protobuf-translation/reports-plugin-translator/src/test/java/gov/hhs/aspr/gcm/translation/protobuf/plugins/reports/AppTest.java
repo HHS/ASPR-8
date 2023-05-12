@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.input.ReportLabelInput;
 import gov.hhs.aspr.translation.core.TranslationController;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
-import gov.hhs.aspr.translation.protobuf.core.testsupport.TestResourceHelper;
+import gov.hhs.aspr.translation.core.testsupport.TestResourceHelper;
 import plugins.reports.support.ReportLabel;
 import plugins.reports.support.SimpleReportLabel;
 
@@ -20,7 +20,7 @@ public class AppTest {
     @Test
     public void testReportLabelTranslatorSpec() {
         String fileName = "reportLabel.json";
-        
+
         TestResourceHelper.createTestOutputFile(filePath, fileName);
 
         TranslationController translatorController = TranslationController.builder()
@@ -29,7 +29,7 @@ public class AppTest {
                 .addInputFilePath(filePath.resolve(fileName), ReportLabelInput.class)
                 .addOutputFilePath(filePath.resolve(fileName), ReportLabel.class)
                 .build();
-        
+
         ReportLabel expecetdReportLabel = new SimpleReportLabel("report label");
 
         translatorController.writeOutput(expecetdReportLabel);

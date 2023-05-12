@@ -137,7 +137,7 @@ public class RegionsPluginDataTranslationSpec
 
                 if (peopleInRegion == null) {
                     peopleInRegion = new ArrayList<>();
-                    
+
                     regionMembershipMap.put(regionIdInput, peopleInRegion);
                 }
 
@@ -152,14 +152,13 @@ public class RegionsPluginDataTranslationSpec
             }
         }
 
-        for(RegionIdInput regionIdInput : regionMembershipMap.keySet()) {
+        for (RegionIdInput regionIdInput : regionMembershipMap.keySet()) {
             RegionMembershipInput.Builder regionMembershipBuilder = RegionMembershipInput.newBuilder();
-            
+
             regionMembershipBuilder.setRegionId(regionIdInput).addAllPeople(regionMembershipMap.get(regionIdInput));
-    
+
             builder.addPersonRegions(regionMembershipBuilder.build());
         }
-        
 
         return builder.build();
     }
