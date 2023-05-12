@@ -418,12 +418,6 @@ public final class ResourcesPluginData implements PluginData {
 		}
 	}
 
-	private static void validatePersonIdNotNull(PersonId personId) {
-		if (personId == null) {
-			throw new ContractException(PersonError.NULL_PERSON_ID);
-		}
-	}
-
 	private static void validatePersonId(PersonId personId) {
 		if (personId == null) {
 			throw new ContractException(PersonError.NULL_PERSON_ID);
@@ -556,9 +550,6 @@ public final class ResourcesPluginData implements PluginData {
 			validateResourceIdNotNull(resourceId);
 			validateTime(time);
 			data.resourceIds.put(resourceId, time);
-			if (!data.resourceTimeTrackingPolicies.containsKey(resourceId)) {
-				data.resourceTimeTrackingPolicies.put(resourceId, false);
-			}
 			return this;
 		}
 
@@ -758,85 +749,125 @@ public final class ResourcesPluginData implements PluginData {
 
 		private void validateData() {
 
+			/*
+			 *  validate and fill in resourceTimeTrackingPolicies
+			 */
 			for (ResourceId resourceId : data.resourceTimeTrackingPolicies.keySet()) {
-				if (!data.resourceIds.contains(resourceId)) {
+				if (!data.resourceIds.containsKey(resourceId)) {
 					throw new ContractException(ResourceError.UNKNOWN_RESOURCE_ID, resourceId + " has a resource tracking policy but is not a known resource id");
 				}
 			}
 
+			//filling in with false
+			for (ResourceId resourceId : data.resourceIds.keySet()) {
+				if (!data.resourceTimeTrackingPolicies.containsKey(resourceId)) {
+					data.resourceTimeTrackingPolicies.put(resourceId, false);
+				}
+			}
+
+			/*
+			 *  validate and fill in resourcePropertyDefinitions
+			 */
 			for (ResourceId resourceId : data.resourcePropertyDefinitions.keySet()) {
-				if (!data.resourceIds.contains(resourceId)) {
+				if (!data.resourceIds.containsKey(resourceId)) {
 					throw new ContractException(ResourceError.UNKNOWN_RESOURCE_ID, resourceId + " has a property definitions but is not a known resource id");
 				}
 			}
 
-			for (ResourceId resourceId : data.resourcePropertyValues.keySet()) {
-				if (!data.resourceIds.contains(resourceId)) {
-					throw new ContractException(ResourceError.UNKNOWN_RESOURCE_ID, resourceId + " has a property values but is not a known resource id");
+			//filling in with empty maps
+			for (ResourceId resourceId : data.resourceIds.keySet()) {
+				if (!data.resourcePropertyDefinitions.containsKey(resourceId)) {
+					data.resourcePropertyDefinitions.put(resourceId, new LinkedHashMap<>());
 				}
-
-				Map<ResourcePropertyId, PropertyDefinition> propDefMap = data.resourcePropertyDefinitions.get(resourceId);
-
-				Map<ResourcePropertyId, Object> map = data.resourcePropertyValues.get(resourceId);
-				for (ResourcePropertyId resourcePropertyId : map.keySet()) {
-					if (propDefMap == null || !propDefMap.containsKey(resourcePropertyId)) {
-						throw new ContractException(PropertyError.UNKNOWN_PROPERTY_ID, resourceId + ": " + resourcePropertyId);
-					}
-					Object propertyValue = map.get(resourcePropertyId);
-					PropertyDefinition propertyDefinition = propDefMap.get(resourcePropertyId);
-					if (!propertyDefinition.getType().isAssignableFrom(propertyValue.getClass())) {
-						throw new ContractException(PropertyError.INCOMPATIBLE_VALUE, resourceId + ": " + resourcePropertyId + ": " + propertyValue);
-					}
-				}
-
 			}
 
 			/*
-			 * For every resource property definition that has a null default
-			 * value, ensure that there all corresponding resource property
-			 * values are not null.
+			 *  validate and fill in resourcePropertyValues
+			 *  
+			 *  show that the resource ids are in data.resourceids
+			 *  
+			 *  show that the resource property ids are in the data.resourcePropertyDefinitions
+			 *  
+			 *  show that the values are compatible with the property definitions
 			 */
-			for (ResourceId resourceId : data.resourceIds) {
+			for (ResourceId resourceId : data.resourcePropertyValues.keySet()) {
+				if (!data.resourceIds.containsKey(resourceId)) {
+					throw new ContractException(ResourceError.UNKNOWN_RESOURCE_ID, resourceId + " for a collected resource property value");
+				}
+				Map<ResourcePropertyId, PropertyDefinition> propMap = data.resourcePropertyDefinitions.get(resourceId);
+				Map<ResourcePropertyId, Object> map = data.resourcePropertyValues.get(resourceId);
+				for (ResourcePropertyId resourcePropertyId : map.keySet()) {
+					if (!propMap.containsKey(resourcePropertyId)) {
+						throw new ContractException(PropertyError.UNKNOWN_PROPERTY_ID,
+								resourcePropertyId + " has a resource property value under resource " + resourceId + " but there is no corresponding property definition");
+					}
+					Object propertyValue = map.get(resourcePropertyId);
+					PropertyDefinition propertyDefinition = propMap.get(resourcePropertyId);
+					if (!propertyDefinition.getType().isAssignableFrom(propertyValue.getClass())) {
+						throw new ContractException(PropertyError.INCOMPATIBLE_VALUE, resourcePropertyId + " has a resource property value of " + propertyValue + " under resource " + resourceId
+								+ " that is incompatible with the corresponding property definition");
+					}
+				}
+			}
+
+			//fill in with empty maps
+			for (ResourceId resourceId : data.resourceIds.keySet()) {
+				if (!data.resourcePropertyValues.containsKey(resourceId)) {
+					data.resourcePropertyValues.put(resourceId, new LinkedHashMap<>());
+				}
+			}
+
+			//show that property definitions without default values have complete value coverage
+			for (ResourceId resourceId : data.resourcePropertyDefinitions.keySet()) {
 				Map<ResourcePropertyId, PropertyDefinition> propertyDefinitionMap = data.resourcePropertyDefinitions.get(resourceId);
-				if (propertyDefinitionMap != null) {
-					for (ResourcePropertyId resourcePropertyId : propertyDefinitionMap.keySet()) {
-						PropertyDefinition propertyDefinition = propertyDefinitionMap.get(resourcePropertyId);
-						if (!propertyDefinition.getDefaultValue().isPresent()) {
-							Object propertyValue = null;
-							Map<ResourcePropertyId, Object> propertyValueMap = data.resourcePropertyValues.get(resourceId);
-							if (propertyValueMap != null) {
-								propertyValue = propertyValueMap.get(resourcePropertyId);
-							}
-							if (propertyValue == null) {
-								throw new ContractException(PropertyError.INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT, resourceId + ": " + resourcePropertyId);
-							}
+				for (ResourcePropertyId resourcePropertyId : propertyDefinitionMap.keySet()) {
+					PropertyDefinition propertyDefinition = propertyDefinitionMap.get(resourcePropertyId);
+					if (!propertyDefinition.getDefaultValue().isPresent()) {
+						Object propertyValue = null;
+						Map<ResourcePropertyId, Object> propertyValueMap = data.resourcePropertyValues.get(resourceId);						
+						propertyValue = propertyValueMap.get(resourcePropertyId);						
+						if (propertyValue == null) {
+							throw new ContractException(PropertyError.INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT, resourceId + ": " + resourcePropertyId);
 						}
 					}
 				}
 			}
 
-			int n = data.personResourceLevels.size();
-			for (int i = 0; i < n; i++) {
-				List<ResourceInitialization> list = data.personResourceLevels.get(i);
-				if (list != null) {
-					for (ResourceInitialization resourceInitialization : list) {
-						if (!data.resourceIds.contains(resourceInitialization.getResourceId())) {
-							throw new ContractException(ResourceError.UNKNOWN_RESOURCE_ID, new PersonId(i) + ": " + resourceInitialization.getResourceId());
-						}
-					}
-				}
-			}
-
+			/*
+			 *  validate regionResourceLevels
+			 */
 			for (RegionId regionId : data.regionResourceLevels.keySet()) {
-				List<ResourceInitialization> resourceInitializations = data.regionResourceLevels.get(regionId);
-				if (resourceInitializations != null) {
-					for (ResourceInitialization resourceInitialization : resourceInitializations) {
-						if (!data.resourceIds.contains(resourceInitialization.getResourceId())) {
-							throw new ContractException(ResourceError.UNKNOWN_RESOURCE_ID, regionId + ": " + resourceInitialization.getResourceId());
-						}
+				List<ResourceInitialization> list = data.regionResourceLevels.get(regionId);
+				for (ResourceInitialization resourceInitialization : list) {
+					ResourceId resourceId = resourceInitialization.getResourceId();
+					if (!data.resourceIds.containsKey(resourceId)) {
+						throw new ContractException(ResourceError.UNKNOWN_RESOURCE_ID, resourceId + " for region " + regionId + " has a level, but is not a known resource");
 					}
 				}
 			}
+
+			/*
+			 * validate and fill in personResourceLevels
+			 * private final Map<ResourceId, List<Long>> personResourceLevels;
+			 */
+			srtghkaeroptakweptoawket
+			
+			for(ResourceId resourceId : data.personResourceLevels.keySet()) {
+				if (!data.resourceIds.containsKey(resourceId)) {
+					throw new ContractException(ResourceError.UNKNOWN_RESOURCE_ID, resourceId + " has person resource levels, but is not a known resource id");
+				}
+			}
+			
+			//filling in with empty lists
+			for(ResourceId resourceId : data.resourceIds.keySet()) {
+				if (!data.personResourceLevels.containsKey(resourceId)) {
+					data.personResourceLevels.put(resourceId, new ArrayList<>());
+				}
+			}
+
+			// private final Map<ResourceId, List<Double>> personResourceTimes;
+
+			
 
 		}
 
@@ -875,7 +906,7 @@ public final class ResourcesPluginData implements PluginData {
 	 * 
 	 */
 	public PropertyDefinition getResourcePropertyDefinition(final ResourceId resourceId, final ResourcePropertyId resourcePropertyId) {
-		validateResourceExists(data, resourceId);
+		validateResourceExists(resourceId);
 		validateResourcePropertyIdNotNull(resourcePropertyId);
 		validateResourcePropertyIsDefined(data, resourceId, resourcePropertyId);
 		final Map<ResourcePropertyId, PropertyDefinition> defMap = data.resourcePropertyDefinitions.get(resourceId);
@@ -894,7 +925,7 @@ public final class ResourcesPluginData implements PluginData {
 	 */
 	@SuppressWarnings("unchecked")
 	public <T extends ResourcePropertyId> Set<T> getResourcePropertyIds(final ResourceId resourceId) {
-		validateResourceExists(data, resourceId);
+		validateResourceExists(resourceId);
 		Set<T> result = new LinkedHashSet<>();
 		Map<ResourcePropertyId, PropertyDefinition> defMap = data.resourcePropertyDefinitions.get(resourceId);
 		if (defMap != null) {
@@ -905,7 +936,7 @@ public final class ResourcesPluginData implements PluginData {
 		return result;
 	}
 
-	private static void validateResourceExists(final Data data, final ResourceId resourceId) {
+	private void validateResourceExists(final ResourceId resourceId) {
 		if (resourceId == null) {
 			throw new ContractException(ResourceError.NULL_RESOURCE_ID);
 		}
@@ -931,7 +962,7 @@ public final class ResourcesPluginData implements PluginData {
 	 */
 	@SuppressWarnings("unchecked")
 	public <T> T getResourcePropertyValue(final ResourceId resourceId, final ResourcePropertyId resourcePropertyId) {
-		validateResourceExists(data, resourceId);
+		validateResourceExists(resourceId);
 		validateResourcePropertyIdNotNull(resourcePropertyId);
 		validateResourcePropertyIsDefined(data, resourceId, resourcePropertyId);
 
@@ -952,29 +983,38 @@ public final class ResourcesPluginData implements PluginData {
 	}
 
 	/**
-	 * Returns the person's initial resource levels.
+	 * Returns an unmodifiable list of the initial resource levels for the given
+	 * resource id. May contain null, may be empty.
 	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain PersonError#NULL_PERSON_ID} if the person id
-	 *             is null</li>
+	 * 
 	 *             <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if the
 	 *             resource id is null</li>
 	 *             <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID} if the
 	 *             resource id is unknown</li>
+	 * 
 	 */
-	public List<ResourceInitialization> getPersonResourceLevels(final PersonId personId) {
+	public List<Long> getPersonResourceLevels(final ResourceId resourcId) {
+		validateResourceExists(resourcId);
+		List<Long> list = data.personResourceLevels.get(resourcId);
+		return Collections.unmodifiableList(list);
+	}
 
-		validatePersonIdNotNull(personId);
-		int personIndex = personId.getValue();
-		if (personIndex >= data.personResourceLevels.size()) {
-			return data.emptyResourceInitializationList;
-		}
-
-		List<ResourceInitialization> list = data.personResourceLevels.get(personIndex);
-		if (list == null) {
-			return data.emptyResourceInitializationList;
-		}
-
+	/**
+	 * Returns an unmodifiable list of the initial resource levels for the given
+	 * resource id. May contain null, may be empty.
+	 * 
+	 * @throws ContractException
+	 * 
+	 *             <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if the
+	 *             resource id is null</li>
+	 *             <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID} if the
+	 *             resource id is unknown</li>
+	 * 
+	 */
+	public List<Double> getPersonResourceTimes(final ResourceId resourcId) {
+		validateResourceExists(resourcId);
+		List<Double> list = data.personResourceTimes.get(resourcId);
 		return Collections.unmodifiableList(list);
 	}
 
@@ -1018,7 +1058,7 @@ public final class ResourcesPluginData implements PluginData {
 	 *             resource id is unknown</li>
 	 */
 	public boolean getPersonResourceTimeTrackingPolicy(final ResourceId resourceId) {
-		validateResourceExists(data, resourceId);
+		validateResourceExists(resourceId);
 		return data.resourceTimeTrackingPolicies.get(resourceId);
 	}
 
@@ -1033,8 +1073,6 @@ public final class ResourcesPluginData implements PluginData {
 	public PluginDataBuilder getCloneBuilder() {
 		return new Builder(data);
 	}
-
-	
 
 	@Override
 	public int hashCode() {
