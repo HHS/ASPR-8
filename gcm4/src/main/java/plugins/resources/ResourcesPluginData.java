@@ -52,7 +52,6 @@ public final class ResourcesPluginData implements PluginData {
 		private final Map<RegionId, List<ResourceInitialization>> regionResourceLevels;
 
 		private boolean locked;
-		private final List<ResourceInitialization> emptyResourceInitializationList = Collections.unmodifiableList(new ArrayList<>());
 
 		public Data() {
 			resourceIds = new LinkedHashMap<>();
@@ -178,29 +177,54 @@ public final class ResourcesPluginData implements PluginData {
 			return result;
 		}
 
-		private int getPersonResourceLevelsHashCode() {
+		private int getPersonResourceLevelsHashCode(ResourceId resourceId) {
 			final int prime = 31;
 			int result = 0;
-			for (int personIndex = 0; personIndex < personResourceLevels.size(); personIndex++) {
-				List<ResourceInitialization> list = personResourceLevels.get(personIndex);
-				if (list != null) {
-					for (ResourceInitialization resourceInitialization : list) {
-						Long amount = resourceInitialization.getAmount();
-						if (amount != 0L) {
-							ResourceId resourceId = resourceInitialization.getResourceId();
-							int subResult = 1;
-							subResult = prime * subResult + resourceId.hashCode();
-							subResult = prime * subResult + amount.hashCode();
-							result += subResult;
-						}
+			Long zero = 0L;
+
+			List<Long> values = personResourceLevels.get(resourceId);
+			for (Long value : values) {
+				if (value != null) {
+					if (!value.equals(zero)) {
+						result = result * prime + value.hashCode();
 					}
 				}
+			}
+
+			return result;
+		}
+
+		private int getPersonResourceLevelsHashCode() {
+			int result = 0;
+			for (ResourceId resourceId : resourceIds.keySet()) {
+				result += getPersonResourceLevelsHashCode(resourceId);
 			}
 			return result;
 		}
 
+		private int getPersonResourceTimesHashCode(ResourceId resourceId) {
+			final int prime = 31;
+			int result = 0;
+			Double defaultValue = resourceIds.get(resourceId);
+
+			List<Double> values = personResourceTimes.get(resourceId);
+			for (Double value : values) {
+				if (value != null) {
+					if (!value.equals(defaultValue)) {
+						result = result * prime + value.hashCode();
+					}
+				}
+			}
+
+			return result;
+		}
+
 		private int getPersonResourceTimesHashCode() {
-			return 0;
+			int result = 0;
+			for (ResourceId resourceId : resourceIds.keySet()) {
+				result += getPersonResourceTimesHashCode(resourceId);
+			}
+			return result;
 		}
 
 		/**
@@ -264,13 +288,32 @@ public final class ResourcesPluginData implements PluginData {
 		 * resource ids and resource property definitions
 		 */
 		private static boolean comparePersonResourceLevels(Data a, Data b) {
-
-			int personCount = FastMath.max(a.personCount, b.personCount);
-			for (int i = 0; i < personCount; i++) {
-				Set<MultiKey> aLevels = getPersonResourceLevels(a, i);
-				Set<MultiKey> bLevels = getPersonResourceLevels(b, i);
-				if (!aLevels.equals(bLevels)) {
-					return false;
+			for (ResourceId resourceId : a.resourceIds.keySet()) {
+				List<Long> aValues = a.personResourceLevels.get(resourceId);
+				List<Long> bValues = b.personResourceLevels.get(resourceId);
+				Long zero = 0L;
+				Long value;
+				Long aValue;
+				Long bValue;
+				int n = FastMath.max(aValues.size(), bValues.size());
+				for (int i = 0; i < n; i++) {
+					aValue = zero;
+					if (i < a.personResourceLevels.size()) {
+						value = aValues.get(i);
+						if (value != null) {
+							aValue = value;
+						}
+					}
+					bValue = zero;
+					if (i < b.personResourceLevels.size()) {
+						value = bValues.get(i);
+						if (value != null) {
+							bValue = value;
+						}
+					}
+					if (!aValue.equals(bValue)) {
+						return false;
+					}
 				}
 			}
 			return true;
@@ -282,37 +325,36 @@ public final class ResourcesPluginData implements PluginData {
 		 */
 		private static boolean comparePersonResourceTimes(Data a, Data b) {
 
-			// int personCount = FastMath.max(a.personCount, b.personCount);
-			// for (int i = 0; i < personCount; i++) {
-			// Set<MultiKey> aLevels = getPersonResourceLevels(a, i);
-			// Set<MultiKey> bLevels = getPersonResourceLevels(b, i);
-			// if (!aLevels.equals(bLevels)) {
-			// return false;
-			// }
-			// }
-			return true;
-
-		}
-
-		/*
-		 * Assembles a set of multi-keys from the region resource levels
-		 * contained in the data that are not zero.
-		 */
-		private static Set<MultiKey> getPersonResourceLevels(Data data, int personIndex) {
-			Set<MultiKey> result = new LinkedHashSet<>();
-			if (personIndex < data.personResourceLevels.size()) {
-				List<ResourceInitialization> list = data.personResourceLevels.get(personIndex);
-				if (list != null) {
-					for (ResourceInitialization resourceInitialization : list) {
-						Long amount = resourceInitialization.getAmount();
-						if (amount != 0L) {
-							ResourceId resourceId = resourceInitialization.getResourceId();
-							result.add(new MultiKey(resourceId, amount));
+			for (ResourceId resourceId : a.resourceIds.keySet()) {
+				List<Double> aValues = a.personResourceTimes.get(resourceId);
+				List<Double> bValues = b.personResourceTimes.get(resourceId);
+				Double defaultValue = a.resourceIds.get(resourceId);
+				Double value;
+				Double aValue;
+				Double bValue;
+				int n = FastMath.max(aValues.size(), bValues.size());
+				for (int i = 0; i < n; i++) {
+					aValue = defaultValue;
+					if (i < a.personResourceTimes.size()) {
+						value = aValues.get(i);
+						if (value != null) {
+							aValue = value;
 						}
+					}
+					bValue = defaultValue;
+					if (i < b.personResourceTimes.size()) {
+						value = bValues.get(i);
+						if (value != null) {
+							bValue = value;
+						}
+					}
+					if (!aValue.equals(bValue)) {
+						return false;
 					}
 				}
 			}
-			return result;
+			return true;
+
 		}
 
 		/*
@@ -425,15 +467,6 @@ public final class ResourcesPluginData implements PluginData {
 	}
 
 	private static void validateResourceAmount(final long amount) {
-		if (amount < 0) {
-			throw new ContractException(ResourceError.NEGATIVE_RESOURCE_AMOUNT, amount);
-		}
-	}
-
-	private static void validateResourceAmount(final Long amount) {
-		if (amount == null) {
-			throw new ContractException(ResourceError.NULL_AMOUNT, amount);
-		}
 		if (amount < 0) {
 			throw new ContractException(ResourceError.NEGATIVE_RESOURCE_AMOUNT, amount);
 		}
@@ -593,13 +626,10 @@ public final class ResourcesPluginData implements PluginData {
 		 *             <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if the
 		 *             resource id is null</li>
 		 *             <li>{@linkplain ResourceError#NEGATIVE_RESOURCE_AMOUNT}
-		 *             if the resource amount is negative</li>
-		 *             <li>{@linkplain ResourceError#NULL_AMOUNT} if the amount
-		 *             is null</li>
-		 * 
+		 *             if the resource amount is negative</li>            
 		 */
 
-		public Builder setPersonResourceLevel(final PersonId personId, final ResourceId resourceId, final Long amount) {
+		public Builder setPersonResourceLevel(final PersonId personId, final ResourceId resourceId, final long amount) {
 			ensureDataMutability();
 			validatePersonId(personId);
 			validateResourceIdNotNull(resourceId);
@@ -750,7 +780,7 @@ public final class ResourcesPluginData implements PluginData {
 		private void validateData() {
 
 			/*
-			 *  validate and fill in resourceTimeTrackingPolicies
+			 * validate and fill in resourceTimeTrackingPolicies
 			 */
 			for (ResourceId resourceId : data.resourceTimeTrackingPolicies.keySet()) {
 				if (!data.resourceIds.containsKey(resourceId)) {
@@ -758,7 +788,7 @@ public final class ResourcesPluginData implements PluginData {
 				}
 			}
 
-			//filling in with false
+			// filling in with false
 			for (ResourceId resourceId : data.resourceIds.keySet()) {
 				if (!data.resourceTimeTrackingPolicies.containsKey(resourceId)) {
 					data.resourceTimeTrackingPolicies.put(resourceId, false);
@@ -766,7 +796,7 @@ public final class ResourcesPluginData implements PluginData {
 			}
 
 			/*
-			 *  validate and fill in resourcePropertyDefinitions
+			 * validate and fill in resourcePropertyDefinitions
 			 */
 			for (ResourceId resourceId : data.resourcePropertyDefinitions.keySet()) {
 				if (!data.resourceIds.containsKey(resourceId)) {
@@ -774,7 +804,7 @@ public final class ResourcesPluginData implements PluginData {
 				}
 			}
 
-			//filling in with empty maps
+			// filling in with empty maps
 			for (ResourceId resourceId : data.resourceIds.keySet()) {
 				if (!data.resourcePropertyDefinitions.containsKey(resourceId)) {
 					data.resourcePropertyDefinitions.put(resourceId, new LinkedHashMap<>());
@@ -782,13 +812,14 @@ public final class ResourcesPluginData implements PluginData {
 			}
 
 			/*
-			 *  validate and fill in resourcePropertyValues
-			 *  
-			 *  show that the resource ids are in data.resourceids
-			 *  
-			 *  show that the resource property ids are in the data.resourcePropertyDefinitions
-			 *  
-			 *  show that the values are compatible with the property definitions
+			 * validate and fill in resourcePropertyValues
+			 * 
+			 * show that the resource ids are in data.resourceids
+			 * 
+			 * show that the resource property ids are in the
+			 * data.resourcePropertyDefinitions
+			 * 
+			 * show that the values are compatible with the property definitions
 			 */
 			for (ResourceId resourceId : data.resourcePropertyValues.keySet()) {
 				if (!data.resourceIds.containsKey(resourceId)) {
@@ -810,22 +841,23 @@ public final class ResourcesPluginData implements PluginData {
 				}
 			}
 
-			//fill in with empty maps
+			// fill in with empty maps
 			for (ResourceId resourceId : data.resourceIds.keySet()) {
 				if (!data.resourcePropertyValues.containsKey(resourceId)) {
 					data.resourcePropertyValues.put(resourceId, new LinkedHashMap<>());
 				}
 			}
 
-			//show that property definitions without default values have complete value coverage
+			// show that property definitions without default values have
+			// complete value coverage
 			for (ResourceId resourceId : data.resourcePropertyDefinitions.keySet()) {
 				Map<ResourcePropertyId, PropertyDefinition> propertyDefinitionMap = data.resourcePropertyDefinitions.get(resourceId);
 				for (ResourcePropertyId resourcePropertyId : propertyDefinitionMap.keySet()) {
 					PropertyDefinition propertyDefinition = propertyDefinitionMap.get(resourcePropertyId);
 					if (!propertyDefinition.getDefaultValue().isPresent()) {
 						Object propertyValue = null;
-						Map<ResourcePropertyId, Object> propertyValueMap = data.resourcePropertyValues.get(resourceId);						
-						propertyValue = propertyValueMap.get(resourcePropertyId);						
+						Map<ResourcePropertyId, Object> propertyValueMap = data.resourcePropertyValues.get(resourceId);
+						propertyValue = propertyValueMap.get(resourcePropertyId);
 						if (propertyValue == null) {
 							throw new ContractException(PropertyError.INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT, resourceId + ": " + resourcePropertyId);
 						}
@@ -834,7 +866,7 @@ public final class ResourcesPluginData implements PluginData {
 			}
 
 			/*
-			 *  validate regionResourceLevels
+			 * validate regionResourceLevels
 			 */
 			for (RegionId regionId : data.regionResourceLevels.keySet()) {
 				List<ResourceInitialization> list = data.regionResourceLevels.get(regionId);
@@ -848,27 +880,47 @@ public final class ResourcesPluginData implements PluginData {
 
 			/*
 			 * validate and fill in personResourceLevels
-			 * private final Map<ResourceId, List<Long>> personResourceLevels;
 			 */
-			srtghkaeroptakweptoawket
-			
-			for(ResourceId resourceId : data.personResourceLevels.keySet()) {
+			for (ResourceId resourceId : data.personResourceLevels.keySet()) {
 				if (!data.resourceIds.containsKey(resourceId)) {
 					throw new ContractException(ResourceError.UNKNOWN_RESOURCE_ID, resourceId + " has person resource levels, but is not a known resource id");
 				}
 			}
-			
-			//filling in with empty lists
-			for(ResourceId resourceId : data.resourceIds.keySet()) {
+
+			// filling in with empty lists
+			for (ResourceId resourceId : data.resourceIds.keySet()) {
 				if (!data.personResourceLevels.containsKey(resourceId)) {
 					data.personResourceLevels.put(resourceId, new ArrayList<>());
 				}
 			}
 
+			/*
+			 * validate and fill in personResourceTimes
+			 */
+
 			// private final Map<ResourceId, List<Double>> personResourceTimes;
+			for (ResourceId resourceId : data.personResourceTimes.keySet()) {
+				if (!data.resourceIds.containsKey(resourceId)) {
+					throw new ContractException(ResourceError.UNKNOWN_RESOURCE_ID, resourceId + " has person resource times, but is not a known resource id");
+				}
+			}
 
+			// filling in with empty lists
+			for (ResourceId resourceId : data.resourceIds.keySet()) {
+				if (!data.personResourceTimes.containsKey(resourceId)) {
+					data.personResourceTimes.put(resourceId, new ArrayList<>());
+				}
+			}
 			
-
+			for (ResourceId resourceId : data.personResourceTimes.keySet()) {
+				Double creationTime = data.resourceIds.get(resourceId);
+				List<Double> times = data.personResourceTimes.get(resourceId);
+				for(Double time : times) {
+					if(time<creationTime) {
+						throw new ContractException(ResourceError.RESOURCE_ASSIGNMENT_TIME_PRECEEDS_RESOURCE_CREATION_TIME);
+					}
+				}
+			}
 		}
 
 	}
@@ -1031,6 +1083,21 @@ public final class ResourcesPluginData implements PluginData {
 	}
 
 	/**
+	 * Returns the resource ids
+	 * 
+	 * @throws ContractException
+	 *             <li>{@linkplain ResourceError.NULL_RESOURCE_ID} if the
+	 *             resource id is null</li>
+	 *             <li>{@linkplain ResourceError.UNKNOWN_RESOURCE_ID} if the
+	 *             resource id is unknown</li>
+	 * 
+	 */
+	public Double getResourceDefaultTime(ResourceId resourceId) {
+		validateResourceExists(resourceId);
+		return data.resourceIds.get(resourceId);		
+	}
+
+	/**
 	 * Returns the region's initial resource level. Returns 0 if no value was
 	 * assigned during the build process.
 	 * 
@@ -1041,9 +1108,6 @@ public final class ResourcesPluginData implements PluginData {
 	public List<ResourceInitialization> getRegionResourceLevels(final RegionId regionId) {
 		validateRegionIdNotNull(regionId);
 		List<ResourceInitialization> list = data.regionResourceLevels.get(regionId);
-		if (list == null) {
-			return data.emptyResourceInitializationList;
-		}
 		return Collections.unmodifiableList(list);
 	}
 
@@ -1096,5 +1160,4 @@ public final class ResourcesPluginData implements PluginData {
 		}
 		return true;
 	}
-
 }

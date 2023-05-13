@@ -27,6 +27,9 @@ public enum ResourceError implements ContractError {
 	REFLEXIVE_RESOURCE_TRANSFER("Cannot transfer resources from a region to itself"),
 	RESOURCE_ARITHMETIC_EXCEPTION("Resource arithmetic resulting in underflow/overflow"),
 	RESOURCE_ASSIGNMENT_TIME_NOT_TRACKED("Resource assignment time not actively tracked"),
+	RESOURCE_CREATION_TIME_EXCEEDS_SIM_TIME("Resource creation time exceeds current simulation time"),
+	RESOURCE_ASSIGNMENT_TIME_PRECEEDS_RESOURCE_CREATION_TIME("Resource assignment time preceeds resource creation time"),
+	RESOURCE_ASSIGNMENT_TIME_EXCEEDS_SIM_TIME("Resource assignment time exceeds current simulation time"),
 	UNKNOWN_RESOURCE_ID("Unknown resource id"),
 
 	;
