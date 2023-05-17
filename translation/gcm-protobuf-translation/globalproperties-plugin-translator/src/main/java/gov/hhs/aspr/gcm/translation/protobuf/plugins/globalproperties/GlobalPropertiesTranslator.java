@@ -28,7 +28,7 @@ public class GlobalPropertiesTranslator {
      * GlobalPropertyReportPluginData and also add a dependency on the
      * ReportsTranslator
      */
-    public static Translator.Builder builder(boolean withReport) {
+    private static Translator.Builder builder(boolean withReport) {
 
         Translator.Builder builder = Translator.builder()
                 .setTranslatorId(GlobalPropertiesTranslatorId.TRANSLATOR_ID)
@@ -37,9 +37,11 @@ public class GlobalPropertiesTranslator {
                     ProtobufTranslationEngine.Builder translationEngineBuilder = translatorContext
                             .getTranslationEngineBuilder(ProtobufTranslationEngine.Builder.class);
 
-                    translationEngineBuilder.addTranslationSpec(new GlobalPropertiesPluginDataTranslationSpec());
-                    translationEngineBuilder.addTranslationSpec(new GlobalPropertyIdTranslationSpec());
-                    translationEngineBuilder.addTranslationSpec(new TestGlobalPropertyIdTranslationSpec());
+                    translationEngineBuilder
+                            .addTranslationSpec(new GlobalPropertiesPluginDataTranslationSpec())
+                            .addTranslationSpec(new GlobalPropertyIdTranslationSpec())
+                            .addTranslationSpec(new TestGlobalPropertyIdTranslationSpec());
+
                     if (withReport) {
                         translationEngineBuilder
                                 .addTranslationSpec(new GlobalPropertyReportPluginDataTranslationSpec());

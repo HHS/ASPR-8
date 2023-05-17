@@ -1,6 +1,7 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.globalproperties.translationSpecs;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
@@ -15,11 +16,18 @@ import plugins.globalproperties.reports.GlobalPropertyReportPluginData;
 import plugins.globalproperties.testsupport.TestGlobalPropertyId;
 import plugins.reports.support.ReportLabel;
 import plugins.reports.support.SimpleReportLabel;
+import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestForCoverage;
 import util.annotations.UnitTestMethod;
 import util.random.RandomGeneratorProvider;
 
 public class AT_GlobalPropertyReportPluginDataTranslationSpec {
+
+    @Test
+    @UnitTestConstructor(target = GlobalPropertyReportPluginDataTranslationSpec.class, args = {})
+    public void testConstructor() {
+        assertNotNull(new GlobalPropertiesPluginDataTranslationSpec());
+    }
 
     @Test
     @UnitTestForCoverage
@@ -64,7 +72,7 @@ public class AT_GlobalPropertyReportPluginDataTranslationSpec {
     }
 
     @Test
-    @UnitTestMethod(target = GlobalPropertiesPluginDataTranslationSpec.class, name = "getAppObjectClass", args = {})
+    @UnitTestMethod(target = GlobalPropertyReportPluginDataTranslationSpec.class, name = "getAppObjectClass", args = {})
     public void testGetAppObjectClass() {
         GlobalPropertyReportPluginDataTranslationSpec translationSpec = new GlobalPropertyReportPluginDataTranslationSpec();
 
@@ -73,7 +81,7 @@ public class AT_GlobalPropertyReportPluginDataTranslationSpec {
     }
 
     @Test
-    @UnitTestMethod(target = GlobalPropertiesPluginDataTranslationSpec.class, name = "getInputObjectClass", args = {})
+    @UnitTestMethod(target = GlobalPropertyReportPluginDataTranslationSpec.class, name = "getInputObjectClass", args = {})
     public void testGetInputObjectClass() {
         GlobalPropertyReportPluginDataTranslationSpec translationSpec = new GlobalPropertyReportPluginDataTranslationSpec();
 

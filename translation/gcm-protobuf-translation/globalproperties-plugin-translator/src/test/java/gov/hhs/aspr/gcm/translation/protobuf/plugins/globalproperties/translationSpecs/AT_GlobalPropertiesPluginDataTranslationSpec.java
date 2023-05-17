@@ -1,6 +1,7 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.globalproperties.translationSpecs;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.Test;
 
@@ -13,10 +14,17 @@ import plugins.globalproperties.GlobalPropertiesPluginData;
 import plugins.globalproperties.testsupport.GlobalPropertiesTestPluginFactory;
 import plugins.globalproperties.testsupport.TestGlobalPropertyId;
 import plugins.util.properties.PropertyDefinition;
+import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestForCoverage;
 import util.annotations.UnitTestMethod;
 
 public class AT_GlobalPropertiesPluginDataTranslationSpec {
+
+    @Test
+    @UnitTestConstructor(target = GlobalPropertiesPluginDataTranslationSpec.class, args = {})
+    public void testConstructor() {
+        assertNotNull(new GlobalPropertiesPluginDataTranslationSpec());
+    }
 
     @Test
     @UnitTestForCoverage
@@ -48,8 +56,8 @@ public class AT_GlobalPropertiesPluginDataTranslationSpec {
                                 .build(),
                         0)
                 .setGlobalPropertyValue(TestGlobalPropertyId.GLOBAL_PROPERTY_3_DOUBLE_MUTABLE, 500.0, 0)
-                .setGlobalPropertyValue(TestGlobalPropertyId.GLOBAL_PROPERTY_1_BOOLEAN_MUTABLE, false, 0);
-                    
+                .setGlobalPropertyValue(TestGlobalPropertyId.GLOBAL_PROPERTY_1_BOOLEAN_MUTABLE, false,
+                        0);
 
         expectedValue = expectedValueBuilder.build();
 

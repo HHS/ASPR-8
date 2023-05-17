@@ -1,6 +1,7 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.globalproperties.translationSpecs;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.Test;
 
@@ -10,10 +11,17 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.PropertiesTransl
 import gov.hhs.aspr.translation.core.TranslationController;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
 import plugins.globalproperties.testsupport.TestGlobalPropertyId;
+import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestForCoverage;
 import util.annotations.UnitTestMethod;
 
 public class AT_TestGlobalPropertyIdTranslationSpec {
+
+    @Test
+    @UnitTestConstructor(target = TestGlobalPropertyIdTranslationSpec.class, args = {})
+    public void testConstructor() {
+        assertNotNull(new GlobalPropertiesPluginDataTranslationSpec());
+    }
 
     @Test
     @UnitTestForCoverage
