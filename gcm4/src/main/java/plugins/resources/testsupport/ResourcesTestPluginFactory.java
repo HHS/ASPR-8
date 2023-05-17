@@ -390,7 +390,7 @@ public class ResourcesTestPluginFactory {
 		ResourcesPluginData.Builder resourcesBuilder = ResourcesPluginData.builder();
 
 		for (TestResourceId testResourceId : TestResourceId.values()) {
-			resourcesBuilder.addResource(testResourceId);
+			resourcesBuilder.addResource(testResourceId, 0.0);
 			resourcesBuilder.setResourceTimeTracking(testResourceId, testResourceId.getTimeTrackingPolicy());
 		}
 

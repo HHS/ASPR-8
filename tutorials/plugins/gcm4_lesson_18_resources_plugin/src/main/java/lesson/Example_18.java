@@ -54,7 +54,7 @@ public final class Example_18 {
 	private Plugin getResourcesPlugin() {
 		ResourcesPluginData.Builder builder = ResourcesPluginData.builder();
 		for (ResourceId resourcId : Resource.values()) {
-			builder.addResource(resourcId);
+			builder.addResource(resourcId,0.0);
 		}
 		ResourcesPluginData resourcesPluginData = builder.build();
 
