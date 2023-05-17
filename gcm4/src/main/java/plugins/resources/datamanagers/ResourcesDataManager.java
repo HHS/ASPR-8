@@ -156,8 +156,8 @@ public final class ResourcesDataManager extends DataManager {
 			for (final ResourceId resourceId : personResourceValues.keySet()) {
 				final IntValueContainer intValueContainer = personResourceValues.get(resourceId);
 				intValueContainer.setCapacity(intValueContainer.getCapacity() + count);
-				final DoubleValueContainer doubleValueContainer = personResourceTimes.get(resourceId);				
-				if (doubleValueContainer != null) {					
+				final DoubleValueContainer doubleValueContainer = personResourceTimes.get(resourceId);
+				if (doubleValueContainer != null) {
 					doubleValueContainer.setCapacity(doubleValueContainer.getCapacity() + count);
 				}
 			}
@@ -730,12 +730,12 @@ public final class ResourcesDataManager extends DataManager {
 		}
 
 		for (final RegionId regionId : resourcesPluginData.getRegionIds()) {
-			
+
 			if (!regionIds.contains(regionId)) {
 				throw new ContractException(RegionError.UNKNOWN_REGION_ID, regionId + " is an unknown region with initial resources");
 			}
 			Map<ResourceId, MutableLong> map = regionResources.get(regionId);
-			
+
 			for (ResourceInitialization resourceInitialization : resourcesPluginData.getRegionResourceLevels(regionId)) {
 				ResourceId resourceId = resourceInitialization.getResourceId();
 				Long amount = resourceInitialization.getAmount();
@@ -842,8 +842,9 @@ public final class ResourcesDataManager extends DataManager {
 		List<PersonId> people = peopleDataManager.getPeople();
 
 		for (ResourceId resourceId : getResourceIds()) {
-			
-			builder.addResource(resourceId,resourceDefinitionTimes.get(resourceId));
+
+			Double defaultResourceTime = resourceDefinitionTimes.get(resourceId);
+			builder.addResource(resourceId, defaultResourceTime);
 			for (ResourcePropertyId resourcePropertyId : getResourcePropertyIds(resourceId)) {
 				PropertyDefinition propertyDefinition = getResourcePropertyDefinition(resourceId, resourcePropertyId);
 				builder.defineResourceProperty(resourceId, resourcePropertyId, propertyDefinition);
@@ -856,14 +857,18 @@ public final class ResourcesDataManager extends DataManager {
 			}
 			for (PersonId personId : people) {
 				long personResourceLevel = getPersonResourceLevel(resourceId, personId);
-				builder.setPersonResourceLevel(personId, resourceId, personResourceLevel);
+				if (personResourceLevel != 0) {
+					builder.setPersonResourceLevel(personId, resourceId, personResourceLevel);
+				}
 			}
 			boolean trackTimes = getPersonResourceTimeTrackingPolicy(resourceId);
-			if(trackTimes) {
+			if (trackTimes) {
 				for (PersonId personId : people) {
 					double personResourceTime = getPersonResourceTime(resourceId, personId);
-					builder.setPersonResourceTime(personId, resourceId, personResourceTime);
-				}				
+					if (personResourceTime != defaultResourceTime) {
+						builder.setPersonResourceTime(personId, resourceId, personResourceTime);
+					}
+				}
 			}
 			builder.setResourceTimeTracking(resourceId, trackTimes);
 		}
@@ -934,7 +939,7 @@ public final class ResourcesDataManager extends DataManager {
 	 * Preconditions: the resource id must exist
 	 */
 	private void validatePersonResourceTimesTracked(final ResourceId resourceId) {
-		if(!personResourceTimes.containsKey(resourceId)) {
+		if (!personResourceTimes.containsKey(resourceId)) {
 			throw new ContractException(ResourceError.RESOURCE_ASSIGNMENT_TIME_NOT_TRACKED);
 		}
 	}

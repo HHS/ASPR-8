@@ -298,14 +298,14 @@ public final class ResourcesPluginData implements PluginData {
 				int n = FastMath.max(aValues.size(), bValues.size());
 				for (int i = 0; i < n; i++) {
 					aValue = zero;
-					if (i < a.personResourceLevels.size()) {
+					if (i < aValues.size()) {
 						value = aValues.get(i);
 						if (value != null) {
 							aValue = value;
 						}
 					}
 					bValue = zero;
-					if (i < b.personResourceLevels.size()) {
+					if (i < bValues.size()) {
 						value = bValues.get(i);
 						if (value != null) {
 							bValue = value;
@@ -335,14 +335,14 @@ public final class ResourcesPluginData implements PluginData {
 				int n = FastMath.max(aValues.size(), bValues.size());
 				for (int i = 0; i < n; i++) {
 					aValue = defaultValue;
-					if (i < a.personResourceTimes.size()) {
+					if (i < aValues.size()) {
 						value = aValues.get(i);
 						if (value != null) {
 							aValue = value;
 						}
 					}
 					bValue = defaultValue;
-					if (i < b.personResourceTimes.size()) {
+					if (i < bValues.size()) {
 						value = bValues.get(i);
 						if (value != null) {
 							bValue = value;
@@ -626,7 +626,7 @@ public final class ResourcesPluginData implements PluginData {
 		 *             <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if the
 		 *             resource id is null</li>
 		 *             <li>{@linkplain ResourceError#NEGATIVE_RESOURCE_AMOUNT}
-		 *             if the resource amount is negative</li>            
+		 *             if the resource amount is negative</li>
 		 */
 
 		public Builder setPersonResourceLevel(final PersonId personId, final ResourceId resourceId, final long amount) {
@@ -660,8 +660,6 @@ public final class ResourcesPluginData implements PluginData {
 		 *             id is null</li>
 		 *             <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if the
 		 *             resource id is null</li>
-		 *             <li>{@linkplain ResourceError#NEGATIVE_RESOURCE_AMOUNT}
-		 *             if the resource amount is negative</li> *
 		 *             <li>{@linkplain ResourceError#NULL_TIME} if the time is
 		 *             null</li>
 		 */
@@ -911,13 +909,15 @@ public final class ResourcesPluginData implements PluginData {
 					data.personResourceTimes.put(resourceId, new ArrayList<>());
 				}
 			}
-			
+
 			for (ResourceId resourceId : data.personResourceTimes.keySet()) {
 				Double creationTime = data.resourceIds.get(resourceId);
 				List<Double> times = data.personResourceTimes.get(resourceId);
-				for(Double time : times) {
-					if(time<creationTime) {
-						throw new ContractException(ResourceError.RESOURCE_ASSIGNMENT_TIME_PRECEEDS_RESOURCE_CREATION_TIME);
+				for (Double time : times) {
+					if (time != null) {
+						if (time < creationTime) {
+							throw new ContractException(ResourceError.RESOURCE_ASSIGNMENT_TIME_PRECEEDS_RESOURCE_CREATION_TIME);
+						}
 					}
 				}
 			}
@@ -1094,7 +1094,7 @@ public final class ResourcesPluginData implements PluginData {
 	 */
 	public Double getResourceDefaultTime(ResourceId resourceId) {
 		validateResourceExists(resourceId);
-		return data.resourceIds.get(resourceId);		
+		return data.resourceIds.get(resourceId);
 	}
 
 	/**
@@ -1108,6 +1108,9 @@ public final class ResourcesPluginData implements PluginData {
 	public List<ResourceInitialization> getRegionResourceLevels(final RegionId regionId) {
 		validateRegionIdNotNull(regionId);
 		List<ResourceInitialization> list = data.regionResourceLevels.get(regionId);
+		if (list == null) {
+			list = new ArrayList<>();
+		}
 		return Collections.unmodifiableList(list);
 	}
 

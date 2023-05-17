@@ -1,6 +1,7 @@
 package plugins.resources;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -28,7 +29,6 @@ import plugins.resources.testsupport.TestResourceId;
 import plugins.resources.testsupport.TestResourcePropertyId;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
-import plugins.util.properties.TimeTrackingPolicy;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.random.RandomGeneratorProvider;
@@ -36,6 +36,292 @@ import util.wrappers.MultiKey;
 import util.wrappers.MutableInteger;
 
 public final class AT_ResourcesPluginData {
+
+	@Test
+	@UnitTestMethod(target = ResourcesPluginData.class, name = "getPersonResourceTimes", args = { ResourceId.class })
+	public void testGetPersonResourceTimes() {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(2121375123528875466L);
+
+		// add the resources
+		ResourcesPluginData.Builder builder = ResourcesPluginData.builder();
+		for (TestResourceId testResourceId : TestResourceId.values()) {
+			builder.addResource(testResourceId, 0.0);
+		}
+
+		Set<MultiKey> expectedValues = new LinkedHashSet<>();
+
+		// add up to 30 people
+		Set<PersonId> people = new LinkedHashSet<>();
+		int id = 0;
+		for (int i = 0; i < 30; i++) {
+			id += randomGenerator.nextInt(3) + 1;
+			people.add(new PersonId(id));
+		}
+		assertTrue(people.size() > 20);
+		for (PersonId personId : people) {
+			for (TestResourceId testResourceId : TestResourceId.values()) {
+				if (randomGenerator.nextBoolean()) {
+					long amount = randomGenerator.nextInt(10);
+					double time = randomGenerator.nextDouble();
+					builder.setPersonResourceLevel(personId, testResourceId, amount);
+					builder.setPersonResourceTime(personId, testResourceId, time);
+					MultiKey multiKey = new MultiKey(personId, testResourceId, time);
+					expectedValues.add(multiKey);
+				}
+			}
+		}
+
+		ResourcesPluginData resourceInitialData = builder.build();
+
+		Set<MultiKey> actualValues = new LinkedHashSet<>();
+		for (TestResourceId testResourceId : TestResourceId.values()) {
+			List<Double> personResourceTimes = resourceInitialData.getPersonResourceTimes(testResourceId);
+			for (int i = 0; i < personResourceTimes.size(); i++) {
+				Double time = personResourceTimes.get(i);
+				if (time != null) {
+					MultiKey multiKey = new MultiKey(new PersonId(i), testResourceId, time);
+					actualValues.add(multiKey);
+				}
+			}
+		}
+
+		assertEquals(expectedValues, actualValues);
+
+		// precondition test: if the person id is null
+		ContractException contractException = assertThrows(ContractException.class, () -> resourceInitialData.getPersonResourceTimes(null));
+		assertEquals(ResourceError.NULL_RESOURCE_ID, contractException.getErrorType());
+	}
+
+	@Test
+	@UnitTestMethod(target = ResourcesPluginData.class, name = "getResourceDefaultTime", args = { ResourceId.class })
+	public void testGetResourceDefaultTime() {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(9133618222677631125L);
+		Set<MultiKey> expectedValues = new LinkedHashSet<>();
+		// add the resources
+		ResourcesPluginData.Builder builder = ResourcesPluginData.builder();
+		for (TestResourceId testResourceId : TestResourceId.values()) {
+			double time = randomGenerator.nextDouble();
+			builder.addResource(testResourceId, time);
+			expectedValues.add(new MultiKey(testResourceId, time));
+		}
+
+		ResourcesPluginData resourceInitialData = builder.build();
+
+		Set<MultiKey> actualValues = new LinkedHashSet<>();
+		for (ResourceId resourceId : resourceInitialData.getResourceIds()) {
+			Double time = resourceInitialData.getResourceDefaultTime(resourceId);
+			actualValues.add(new MultiKey(resourceId, time));
+		}
+
+		assertEquals(expectedValues, actualValues);
+
+		// precondition test: if the person id is null
+		ContractException contractException = assertThrows(ContractException.class, () -> resourceInitialData.getResourceDefaultTime(null));
+		assertEquals(ResourceError.NULL_RESOURCE_ID, contractException.getErrorType());
+
+	}
+
+	@Test
+	@UnitTestMethod(target = ResourcesPluginData.class, name = "hashCode", args = {})
+	public void testHashCode() {
+
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7567353570953948981L);
+
+		// equal objects have equal hash codes
+		for (int i = 0; i < 10; i++) {
+			long seed = randomGenerator.nextLong();
+			ResourcesPluginData rpd1 = getRandomResourcesPluginData(seed);
+			ResourcesPluginData rpd2 = getRandomResourcesPluginData(seed);
+
+			assertEquals(rpd1, rpd2);
+			assertEquals(rpd1.hashCode(), rpd2.hashCode());
+		}
+		int count = 100;
+		Set<Integer> hashCodes = new LinkedHashSet<>();
+		for(int i = 0;i<count;i++) {
+			long seed = randomGenerator.nextLong();
+			ResourcesPluginData rpd = getRandomResourcesPluginData(seed);
+			hashCodes.add(rpd.hashCode());
+		}
+		int minimumCount = count*9/10;
+		assertTrue(hashCodes.size()>minimumCount);
+	}
+
+	/*
+	 * Returns a randomly generated resources plugin data
+	 */
+	private ResourcesPluginData getRandomResourcesPluginData(long seed) {
+		// equal objects have equal hashCodes
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
+		ResourcesPluginData.Builder pluginDataBuilder = ResourcesPluginData.builder();
+
+		Set<TestResourceId> selectedTestResourceIds = new LinkedHashSet<>();
+		for (TestResourceId testResourceId : TestResourceId.values()) {
+			if (randomGenerator.nextDouble() < 0.8) {
+				selectedTestResourceIds.add(testResourceId);
+			}
+		}
+
+		for (TestResourceId testResourceId : selectedTestResourceIds) {
+			boolean timeTrackingPolicy = randomGenerator.nextBoolean();
+			pluginDataBuilder.setResourceTimeTracking(testResourceId, timeTrackingPolicy);
+		}
+
+		for (TestResourceId testResourceId : selectedTestResourceIds) {
+			double time = randomGenerator.nextDouble();
+			pluginDataBuilder.addResource(testResourceId, time);
+		}
+
+		Set<TestResourcePropertyId> selectedTestResourcePropertyIds = new LinkedHashSet<>();
+		for (TestResourcePropertyId testResourcePropertyId : TestResourcePropertyId.values()) {
+			TestResourceId testResourceId = testResourcePropertyId.getTestResourceId();
+			if (selectedTestResourceIds.contains(testResourceId)) {
+				if (randomGenerator.nextDouble() < 0.8) {
+					selectedTestResourcePropertyIds.add(testResourcePropertyId);
+				}
+			}
+		}
+
+		for (TestResourcePropertyId testResourcePropertyId : selectedTestResourcePropertyIds) {
+			pluginDataBuilder.defineResourceProperty(testResourcePropertyId.getTestResourceId(), testResourcePropertyId, testResourcePropertyId.getPropertyDefinition());
+		}
+
+		for (TestResourcePropertyId testResourcePropertyId : selectedTestResourcePropertyIds) {
+			if (randomGenerator.nextBoolean()) {
+				pluginDataBuilder.setResourcePropertyValue(testResourcePropertyId.getTestResourceId(), testResourcePropertyId, testResourcePropertyId.getRandomPropertyValue(randomGenerator));
+			}
+		}
+		Set<TestRegionId> selectedRegionIds = new LinkedHashSet<>();
+		
+		for (TestRegionId testRegionId : TestRegionId.values()) {
+			if(randomGenerator.nextDouble()<0.8) {
+				selectedRegionIds.add(testRegionId);
+			}
+		}
+		
+		for (TestRegionId testRegionId : selectedRegionIds) {
+			for (TestResourceId testResourceId : selectedTestResourceIds) {
+				if (randomGenerator.nextBoolean()) {
+					long value = randomGenerator.nextInt(1000);
+					pluginDataBuilder.setRegionResourceLevel(testRegionId, testResourceId, value);
+				}
+			}
+		}
+
+		int personCount = randomGenerator.nextInt(5)+5;
+		
+		for (int i = 0; i < personCount; i++) {
+			PersonId personId = new PersonId(i * i);
+			for (TestResourceId testResourceId : selectedTestResourceIds) {
+				if (randomGenerator.nextBoolean()) {
+					long value = randomGenerator.nextInt(5);					
+					pluginDataBuilder.setPersonResourceLevel(personId, testResourceId, value);					
+				}
+				if (randomGenerator.nextBoolean()) {					
+					double time = randomGenerator.nextDouble() + 1.0;					
+					pluginDataBuilder.setPersonResourceTime(personId, testResourceId, time);
+				}
+			}
+		}
+
+		return pluginDataBuilder.build();
+	}
+
+	@Test
+	@UnitTestMethod(target = ResourcesPluginData.class, name = "equals", args = { Object.class })
+	public void testEquals() {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(1110078478105073449L);
+
+		//null equality
+		for (int i = 0; i < 10; i++) {
+			long seed = randomGenerator.nextLong();
+			ResourcesPluginData rpd = getRandomResourcesPluginData(seed);
+			assertFalse(rpd.equals(null));
+		}
+		
+		// reflexivity
+		for (int i = 0; i < 10; i++) {
+			long seed = randomGenerator.nextLong();
+			ResourcesPluginData rpd = getRandomResourcesPluginData(seed);
+			assertEquals(rpd, rpd);
+		}
+		
+		// symmetry
+		for (int i = 0; i < 10; i++) {
+			long seed = randomGenerator.nextLong();
+			ResourcesPluginData rpd1 = getRandomResourcesPluginData(seed);
+			ResourcesPluginData rpd2 = getRandomResourcesPluginData(seed);
+			assertEquals(rpd1, rpd2);
+			assertEquals(rpd2, rpd1);
+		}
+		
+		// transitivity -- implied by symmetry
+		
+		
+	}
+
+	@Test
+	@UnitTestMethod(target = ResourcesPluginData.class, name = "setPersonResourceTime", args = { PersonId.class, ResourceId.class, Double.class })
+	public void testSetPersonResourceTime() {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(2121375123528875466L);
+
+		// add the resources
+		ResourcesPluginData.Builder builder = ResourcesPluginData.builder();
+		for (TestResourceId testResourceId : TestResourceId.values()) {
+			builder.addResource(testResourceId, 0.0);
+		}
+
+		Set<MultiKey> expectedValues = new LinkedHashSet<>();
+
+		// add up to 30 people
+		Set<PersonId> people = new LinkedHashSet<>();
+		int id = 0;
+		for (int i = 0; i < 30; i++) {
+			id += randomGenerator.nextInt(3) + 1;
+			people.add(new PersonId(id));
+		}
+		assertTrue(people.size() > 20);
+		for (PersonId personId : people) {
+			for (TestResourceId testResourceId : TestResourceId.values()) {
+				if (randomGenerator.nextBoolean()) {
+					long amount = randomGenerator.nextInt(10);
+					double time = randomGenerator.nextDouble();
+					builder.setPersonResourceLevel(personId, testResourceId, amount);
+					builder.setPersonResourceTime(personId, testResourceId, time);
+					MultiKey multiKey = new MultiKey(personId, testResourceId, time);
+					expectedValues.add(multiKey);
+				}
+			}
+		}
+
+		ResourcesPluginData resourceInitialData = builder.build();
+
+		Set<MultiKey> actualValues = new LinkedHashSet<>();
+		for (TestResourceId testResourceId : TestResourceId.values()) {
+			List<Double> personResourceTimes = resourceInitialData.getPersonResourceTimes(testResourceId);
+			for (int i = 0; i < personResourceTimes.size(); i++) {
+				Double time = personResourceTimes.get(i);
+				if (time != null) {
+					MultiKey multiKey = new MultiKey(new PersonId(i), testResourceId, time);
+					actualValues.add(multiKey);
+				}
+			}
+		}
+
+		assertEquals(expectedValues, actualValues);
+
+		// precondition test: if the person id is null
+		ContractException contractException = assertThrows(ContractException.class, () -> ResourcesPluginData.builder().setPersonResourceTime(null, TestResourceId.RESOURCE_1, 0.0));
+		assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
+
+		// precondition test: if the resource id is null
+		contractException = assertThrows(ContractException.class, () -> ResourcesPluginData.builder().setPersonResourceTime(new PersonId(0), null, 0.0));
+		assertEquals(ResourceError.NULL_RESOURCE_ID, contractException.getErrorType());
+
+		// precondition test: if the time is null
+		contractException = assertThrows(ContractException.class, () -> ResourcesPluginData.builder().setPersonResourceTime(new PersonId(0), TestResourceId.RESOURCE_1, null));
+		assertEquals(ResourceError.NULL_TIME, contractException.getErrorType());
+	}
 
 	@Test
 	@UnitTestMethod(target = ResourcesPluginData.class, name = "builder", args = {})
@@ -94,7 +380,7 @@ public final class AT_ResourcesPluginData {
 			ResourcePropertyId resourcePropertyId = TestResourcePropertyId.ResourceProperty_1_1_BOOLEAN_MUTABLE;
 			Boolean value = false;
 			ResourcesPluginData	.builder()//
-								.addResource(resourceId)//
+								.addResource(resourceId, 0.0)//
 								.setResourcePropertyValue(resourceId, resourcePropertyId, value)//
 								.build();//
 		});//
@@ -111,7 +397,7 @@ public final class AT_ResourcesPluginData {
 			PropertyDefinition propertyDefinition = TestResourcePropertyId.ResourceProperty_1_1_BOOLEAN_MUTABLE.getPropertyDefinition();
 			Integer value = 5;
 			ResourcesPluginData	.builder()//
-								.addResource(resourceId)//
+								.addResource(resourceId, 0.0)//
 								.defineResourceProperty(resourceId, resourcePropertyId, propertyDefinition)//
 								.setResourcePropertyValue(resourceId, resourcePropertyId, value)//
 								.build();
@@ -127,7 +413,7 @@ public final class AT_ResourcesPluginData {
 			ResourcePropertyId resourcePropertyId = TestResourcePropertyId.ResourceProperty_1_1_BOOLEAN_MUTABLE;
 			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Boolean.class).build();
 			ResourcesPluginData	.builder()//
-								.addResource(resourceId)//
+								.addResource(resourceId, 0.0)//
 								.defineResourceProperty(resourceId, resourcePropertyId, propertyDefinition)//
 								.build();
 		});//
@@ -157,7 +443,7 @@ public final class AT_ResourcesPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = ResourcesPluginData.Builder.class, name = "addResource", args = { ResourceId.class })
+	@UnitTestMethod(target = ResourcesPluginData.Builder.class, name = "addResource", args = { ResourceId.class, Double.class })
 	public void testAddResource() {
 
 		ResourcesPluginData.Builder builder = ResourcesPluginData.builder();
@@ -165,9 +451,9 @@ public final class AT_ResourcesPluginData {
 		for (TestResourceId testResourceId : TestResourceId.values()) {
 
 			// replacing data to show that the value persists
-			builder.addResource(testResourceId);
+			builder.addResource(testResourceId, 0.0);
 			// adding duplicate data to show that the value persists
-			builder.addResource(testResourceId);
+			builder.addResource(testResourceId, 0.0);
 			expectedResourceIds.add(testResourceId);
 		}
 		ResourcesPluginData resourceInitialData = builder.build();
@@ -176,7 +462,7 @@ public final class AT_ResourcesPluginData {
 		// precondition tests
 
 		// if the resource id is null
-		ContractException contractException = assertThrows(ContractException.class, () -> ResourcesPluginData.builder().addResource(null));
+		ContractException contractException = assertThrows(ContractException.class, () -> ResourcesPluginData.builder().addResource(null, 0.0));
 		assertEquals(ResourceError.NULL_RESOURCE_ID, contractException.getErrorType());
 
 	}
@@ -187,7 +473,7 @@ public final class AT_ResourcesPluginData {
 
 		ResourcesPluginData.Builder builder = ResourcesPluginData.builder();
 		for (TestResourceId testResourceId : TestResourceId.values()) {
-			builder.addResource(testResourceId);
+			builder.addResource(testResourceId, 0.0);
 			Set<TestResourcePropertyId> testResourcePropertyIds = TestResourcePropertyId.getTestResourcePropertyIds(testResourceId);
 			for (TestResourcePropertyId testResourcePropertyId : testResourcePropertyIds) {
 				PropertyDefinition propertyDefinition = testResourcePropertyId.getPropertyDefinition();
@@ -245,7 +531,7 @@ public final class AT_ResourcesPluginData {
 		// add the resources
 		ResourcesPluginData.Builder builder = ResourcesPluginData.builder();
 		for (TestResourceId testResourceId : TestResourceId.values()) {
-			builder.addResource(testResourceId);
+			builder.addResource(testResourceId, 0.0);
 		}
 
 		Set<MultiKey> expectedValues = new LinkedHashSet<>();
@@ -277,13 +563,14 @@ public final class AT_ResourcesPluginData {
 		ResourcesPluginData resourceInitialData = builder.build();
 
 		Set<MultiKey> actualValues = new LinkedHashSet<>();
-		for (PersonId personId : people) {
-			List<ResourceInitialization> personResourceLevels = resourceInitialData.getPersonResourceLevels(personId);
-			for (ResourceInitialization resourceInitialization : personResourceLevels) {
-				ResourceId resourceId = resourceInitialization.getResourceId();
-				Long amount = resourceInitialization.getAmount();
-				MultiKey multiKey = new MultiKey(personId, resourceId, amount);
-				actualValues.add(multiKey);
+		for (TestResourceId testResourceId : TestResourceId.values()) {
+			List<Long> personResourceLevels = resourceInitialData.getPersonResourceLevels(testResourceId);
+			for (int i = 0; i < personResourceLevels.size(); i++) {
+				Long amount = personResourceLevels.get(i);
+				if (amount != null) {
+					MultiKey multiKey = new MultiKey(new PersonId(i), testResourceId, amount);
+					actualValues.add(multiKey);
+				}
 			}
 		}
 
@@ -316,7 +603,7 @@ public final class AT_ResourcesPluginData {
 		// add the resources
 		ResourcesPluginData.Builder builder = ResourcesPluginData.builder();
 		for (TestResourceId testResourceId : TestResourceId.values()) {
-			builder.addResource(testResourceId);
+			builder.addResource(testResourceId, 0.0);
 		}
 
 		Map<MultiKey, MutableInteger> expectedValues = new LinkedHashMap<>();
@@ -386,7 +673,7 @@ public final class AT_ResourcesPluginData {
 
 		ResourcesPluginData.Builder builder = ResourcesPluginData.builder();
 		for (TestResourceId testResourceId : TestResourceId.values()) {
-			builder.addResource(testResourceId);
+			builder.addResource(testResourceId, 0.0);
 			Set<TestResourcePropertyId> testResourcePropertyIds = TestResourcePropertyId.getTestResourcePropertyIds(testResourceId);
 			for (TestResourcePropertyId testResourcePropertyId : testResourcePropertyIds) {
 				MultiKey multiKey = new MultiKey(testResourceId, testResourcePropertyId);
@@ -440,7 +727,7 @@ public final class AT_ResourcesPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = ResourcesPluginData.Builder.class, name = "setResourceTimeTracking", args = { ResourceId.class, TimeTrackingPolicy.class })
+	@UnitTestMethod(target = ResourcesPluginData.Builder.class, name = "setResourceTimeTracking", args = { ResourceId.class, boolean.class })
 	public void testSetResourceTimeTracking() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(9113503089361379130L);
@@ -450,7 +737,7 @@ public final class AT_ResourcesPluginData {
 		ResourcesPluginData.Builder builder = ResourcesPluginData.builder();
 		for (TestResourceId testResourceId : TestResourceId.values()) {
 			if (testResourceId != TestResourceId.RESOURCE_5) {
-				builder.addResource(testResourceId);
+				builder.addResource(testResourceId, 0.0);
 				boolean timeTrackingPolicy = randomGenerator.nextBoolean();
 				boolean timeTrackingPolicy2 = !timeTrackingPolicy;
 				builder.setResourceTimeTracking(testResourceId, timeTrackingPolicy2);
@@ -461,7 +748,7 @@ public final class AT_ResourcesPluginData {
 				expectedValues.put(testResourceId, timeTrackingPolicy);
 			}
 		}
-		builder.addResource(TestResourceId.RESOURCE_5);
+		builder.addResource(TestResourceId.RESOURCE_5, 0.0);
 		expectedValues.put(TestResourceId.RESOURCE_5, false);
 
 		ResourcesPluginData resourceInitialData = builder.build();
@@ -487,7 +774,7 @@ public final class AT_ResourcesPluginData {
 
 		ResourcesPluginData.Builder builder = ResourcesPluginData.builder();
 		for (TestResourceId testResourceId : TestResourceId.values()) {
-			builder.addResource(testResourceId);
+			builder.addResource(testResourceId, 0.0);
 			Set<TestResourcePropertyId> testResourcePropertyIds = TestResourcePropertyId.getTestResourcePropertyIds(testResourceId);
 			for (TestResourcePropertyId testResourcePropertyId : testResourcePropertyIds) {
 				PropertyDefinition propertyDefinition = testResourcePropertyId.getPropertyDefinition();
@@ -498,7 +785,7 @@ public final class AT_ResourcesPluginData {
 		ResourcesPluginData resourceInitialData = builder.build();
 
 		for (TestResourceId testResourceId : TestResourceId.values()) {
-			builder.addResource(testResourceId);
+			builder.addResource(testResourceId, 0.0);
 			Set<TestResourcePropertyId> testResourcePropertyIds = TestResourcePropertyId.getTestResourcePropertyIds(testResourceId);
 			for (TestResourcePropertyId testResourcePropertyId : testResourcePropertyIds) {
 				PropertyDefinition expectedPropertyDefinition = testResourcePropertyId.getPropertyDefinition();
@@ -546,7 +833,7 @@ public final class AT_ResourcesPluginData {
 		// 7475098698397765251L
 		ResourcesPluginData.Builder builder = ResourcesPluginData.builder();
 		for (TestResourceId testResourceId : TestResourceId.values()) {
-			builder.addResource(testResourceId);
+			builder.addResource(testResourceId, 0.0);
 			Set<TestResourcePropertyId> testResourcePropertyIds = TestResourcePropertyId.getTestResourcePropertyIds(testResourceId);
 			for (TestResourcePropertyId testResourcePropertyId : testResourcePropertyIds) {
 				PropertyDefinition propertyDefinition = testResourcePropertyId.getPropertyDefinition();
@@ -585,7 +872,7 @@ public final class AT_ResourcesPluginData {
 
 		ResourcesPluginData.Builder builder = ResourcesPluginData.builder();
 		for (TestResourceId testResourceId : TestResourceId.values()) {
-			builder.addResource(testResourceId);
+			builder.addResource(testResourceId, 0.0);
 			Set<TestResourcePropertyId> testResourcePropertyIds = TestResourcePropertyId.getTestResourcePropertyIds(testResourceId);
 			for (TestResourcePropertyId testResourcePropertyId : testResourcePropertyIds) {
 				MultiKey multiKey = new MultiKey(testResourceId, testResourcePropertyId);
@@ -639,7 +926,7 @@ public final class AT_ResourcesPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = ResourcesPluginData.class, name = "getPersonResourceLevels", args = { PersonId.class })
+	@UnitTestMethod(target = ResourcesPluginData.class, name = "getPersonResourceLevels", args = { ResourceId.class })
 	public void testGetPersonResourceLevels() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(2902745806851600371L);
@@ -647,7 +934,7 @@ public final class AT_ResourcesPluginData {
 		// add the resources
 		ResourcesPluginData.Builder builder = ResourcesPluginData.builder();
 		for (TestResourceId testResourceId : TestResourceId.values()) {
-			builder.addResource(testResourceId);
+			builder.addResource(testResourceId, 0.0);
 		}
 
 		Set<MultiKey> expectedValues = new LinkedHashSet<>();
@@ -675,13 +962,14 @@ public final class AT_ResourcesPluginData {
 		ResourcesPluginData resourceInitialData = builder.build();
 
 		Set<MultiKey> actualValues = new LinkedHashSet<>();
-		for (PersonId personId : people) {
-			List<ResourceInitialization> personResourceLevels = resourceInitialData.getPersonResourceLevels(personId);
-			for (ResourceInitialization resourceInitialization : personResourceLevels) {
-				ResourceId resourceId = resourceInitialization.getResourceId();
-				Long amount = resourceInitialization.getAmount();
-				MultiKey multiKey = new MultiKey(personId, resourceId, amount);
-				actualValues.add(multiKey);
+		for (TestResourceId testResourceId : TestResourceId.values()) {
+			List<Long> personResourceLevels = resourceInitialData.getPersonResourceLevels(testResourceId);
+			for (int i = 0; i < personResourceLevels.size(); i++) {
+				Long amount = personResourceLevels.get(i);
+				if (amount != null) {
+					MultiKey multiKey = new MultiKey(new PersonId(i), testResourceId, amount);
+					actualValues.add(multiKey);
+				}
 			}
 		}
 
@@ -689,7 +977,7 @@ public final class AT_ResourcesPluginData {
 
 		// precondition test: if the person id is null
 		ContractException contractException = assertThrows(ContractException.class, () -> resourceInitialData.getPersonResourceLevels(null));
-		assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
+		assertEquals(ResourceError.NULL_RESOURCE_ID, contractException.getErrorType());
 
 	}
 
@@ -700,7 +988,7 @@ public final class AT_ResourcesPluginData {
 		ResourcesPluginData.Builder builder = ResourcesPluginData.builder();
 		Set<ResourceId> expectedResourceIds = new LinkedHashSet<>();
 		for (TestResourceId testResourceId : TestResourceId.values()) {
-			builder.addResource(testResourceId);
+			builder.addResource(testResourceId, 0.0);
 			expectedResourceIds.add(testResourceId);
 		}
 		ResourcesPluginData resourceInitialData = builder.build();
@@ -710,14 +998,14 @@ public final class AT_ResourcesPluginData {
 
 	@Test
 	@UnitTestMethod(target = ResourcesPluginData.class, name = "getRegionResourceLevels", args = { RegionId.class })
-	public void testGetRegionResourceLevel() {
+	public void testGetRegionResourceLevels() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6794457915874374469L);
 
 		// add the resources
 		ResourcesPluginData.Builder builder = ResourcesPluginData.builder();
 		for (TestResourceId testResourceId : TestResourceId.values()) {
-			builder.addResource(testResourceId);
+			builder.addResource(testResourceId, 0.0);
 		}
 
 		Map<MultiKey, MutableInteger> expectedValues = new LinkedHashMap<>();
@@ -770,7 +1058,7 @@ public final class AT_ResourcesPluginData {
 
 		ResourcesPluginData.Builder builder = ResourcesPluginData.builder();
 		for (TestResourceId testResourceId : TestResourceId.values()) {
-			builder.addResource(testResourceId);
+			builder.addResource(testResourceId, 0.0);
 			Set<TestResourcePropertyId> testResourcePropertyIds = TestResourcePropertyId.getTestResourcePropertyIds(testResourceId);
 			for (TestResourcePropertyId testResourcePropertyId : testResourcePropertyIds) {
 				MultiKey multiKey = new MultiKey(testResourceId, testResourcePropertyId);
@@ -816,53 +1104,6 @@ public final class AT_ResourcesPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = ResourcesPluginData.class, name = "getPersonCount", args = {})
-	public void testGetPersonCount() {
-
-		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(1188005474782684784L);
-
-		// add the resources
-		ResourcesPluginData.Builder builder = ResourcesPluginData.builder();
-		for (TestResourceId testResourceId : TestResourceId.values()) {
-			builder.addResource(testResourceId);
-		}
-
-		Map<MultiKey, MutableInteger> expectedValues = new LinkedHashMap<>();
-
-		// add up to 30 people
-		Set<PersonId> people = new LinkedHashSet<>();
-		int id = 0;
-		for (int i = 0; i < 30; i++) {
-			id += randomGenerator.nextInt(3) + 1;
-			people.add(new PersonId(id));
-		}
-		assertTrue(people.size() > 20);
-
-		Set<PersonId> expectedPeople = new LinkedHashSet<>();
-
-		int expectedPersonCount = 0;
-		for (PersonId personId : people) {
-			for (TestResourceId testResourceId : TestResourceId.values()) {
-				MultiKey multiKey = new MultiKey(personId, testResourceId);
-				MutableInteger mutableInteger = new MutableInteger();
-				expectedValues.put(multiKey, mutableInteger);
-				if (randomGenerator.nextBoolean()) {
-					int amount = randomGenerator.nextInt(10);
-					builder.setPersonResourceLevel(personId, testResourceId, amount);
-					expectedPersonCount = personId.getValue() + 1;
-					expectedPeople.add(personId);
-					mutableInteger.setValue(amount);
-				}
-			}
-		}
-
-		ResourcesPluginData resourceInitialData = builder.build();
-
-		assertEquals(expectedPersonCount, resourceInitialData.getPersonCount());
-
-	}
-
-	@Test
 	@UnitTestMethod(target = ResourcesPluginData.class, name = "getRegionIds", args = {})
 	public void testGetRegionIds() {
 
@@ -871,7 +1112,7 @@ public final class AT_ResourcesPluginData {
 		// add the resources
 		ResourcesPluginData.Builder builder = ResourcesPluginData.builder();
 		for (TestResourceId testResourceId : TestResourceId.values()) {
-			builder.addResource(testResourceId);
+			builder.addResource(testResourceId, 0.0);
 		}
 
 		Set<RegionId> expectedRegionIds = new LinkedHashSet<>();
@@ -894,6 +1135,7 @@ public final class AT_ResourcesPluginData {
 	@Test
 	@UnitTestMethod(target = ResourcesPluginData.class, name = "getCloneBuilder", args = {})
 	public void testGetCloneBuilder() {
+
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7644775230297230691L);
 		ResourcesPluginData.Builder pluginDataBuilder = ResourcesPluginData.builder();
 
@@ -906,7 +1148,8 @@ public final class AT_ResourcesPluginData {
 		}
 
 		for (TestResourceId testResourceId : TestResourceId.values()) {
-			pluginDataBuilder.addResource(testResourceId);
+			double time = randomGenerator.nextDouble();
+			pluginDataBuilder.addResource(testResourceId, time);
 		}
 		for (TestResourcePropertyId testResourcePropertyId : TestResourcePropertyId.values()) {
 			pluginDataBuilder.defineResourceProperty(testResourcePropertyId.getTestResourceId(), testResourcePropertyId, testResourcePropertyId.getPropertyDefinition());
@@ -932,7 +1175,9 @@ public final class AT_ResourcesPluginData {
 			for (TestResourceId testResourceId : TestResourceId.values()) {
 				if (randomGenerator.nextBoolean()) {
 					long value = randomGenerator.nextInt(5);
+					double time = randomGenerator.nextDouble() + 1.0;
 					pluginDataBuilder.setPersonResourceLevel(personId, testResourceId, value);
+					pluginDataBuilder.setPersonResourceTime(personId, testResourceId, time);
 				}
 			}
 		}
@@ -946,53 +1191,7 @@ public final class AT_ResourcesPluginData {
 
 		ResourcesPluginData cloneResourcesPluginData = (ResourcesPluginData) pluginData;
 
-		assertEquals(resourcesPluginData.getResourceIds(), cloneResourcesPluginData.getResourceIds());
-
-		assertEquals(resourcesPluginData.getPersonCount(), cloneResourcesPluginData.getPersonCount());
-
-		for (int i = 0; i < resourcesPluginData.getPersonCount(); i++) {
-			PersonId personId = new PersonId(i);
-			List<ResourceInitialization> expectedLevels = resourcesPluginData.getPersonResourceLevels(personId);
-			List<ResourceInitialization> actualLevels = cloneResourcesPluginData.getPersonResourceLevels(personId);
-			assertEquals(expectedLevels.size(), actualLevels.size());
-
-			Set<ResourceInitialization> expectedSet = new LinkedHashSet<>(expectedLevels);
-			Set<ResourceInitialization> actualSet = new LinkedHashSet<>(actualLevels);
-			assertEquals(expectedSet, actualSet);
-		}
-
-		for (ResourceId resourceId : resourcesPluginData.getResourceIds()) {
-			boolean expectedPolicy = resourcesPluginData.getPersonResourceTimeTrackingPolicy(resourceId);
-			boolean actualPolicy = cloneResourcesPluginData.getPersonResourceTimeTrackingPolicy(resourceId);
-			assertEquals(expectedPolicy, actualPolicy);
-		}
-		for (ResourceId resourceId : resourcesPluginData.getResourceIds()) {
-			assertEquals(resourcesPluginData.getResourcePropertyIds(resourceId), cloneResourcesPluginData.getResourcePropertyIds(resourceId));
-		}
-
-		for (ResourceId resourceId : resourcesPluginData.getResourceIds()) {
-			for (ResourcePropertyId resourcePropertyId : resourcesPluginData.getResourcePropertyIds(resourceId)) {
-				Object expectedValue = resourcesPluginData.getResourcePropertyValue(resourceId, resourcePropertyId);
-				Object actualValue = cloneResourcesPluginData.getResourcePropertyValue(resourceId, resourcePropertyId);
-				assertEquals(expectedValue, actualValue);
-			}
-		}
-
-		for (ResourceId resourceId : resourcesPluginData.getResourceIds()) {
-			for (ResourcePropertyId resourcePropertyId : resourcesPluginData.getResourcePropertyIds(resourceId)) {
-				PropertyDefinition expectedPropertyDefinition = resourcesPluginData.getResourcePropertyDefinition(resourceId, resourcePropertyId);
-				PropertyDefinition actualPropertyDefinition = cloneResourcesPluginData.getResourcePropertyDefinition(resourceId, resourcePropertyId);
-				assertEquals(expectedPropertyDefinition, actualPropertyDefinition);
-			}
-		}
-
-		assertEquals(resourcesPluginData.getRegionIds(), cloneResourcesPluginData.getRegionIds());
-
-		for (RegionId regionId : resourcesPluginData.getRegionIds()) {
-			List<ResourceInitialization> regionResourceLevels = resourcesPluginData.getRegionResourceLevels(regionId);
-			List<ResourceInitialization> cloneRegionResourceLevels = cloneResourcesPluginData.getRegionResourceLevels(regionId);
-			assertEquals(regionResourceLevels, cloneRegionResourceLevels);
-		}
+		assertEquals(resourcesPluginData, cloneResourcesPluginData);
 
 	}
 

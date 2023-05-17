@@ -63,6 +63,11 @@ public final class AT_ResourcesDataManager {
 	@Test
 	@UnitTestMethod(target = ResourcesDataManager.class, name = "init", args = { DataManagerContext.class })
 	public void testInit_State() {
+		testInit_State_1();
+		testInit_State_2();
+	}
+
+	private void testInit_State_1() {
 
 		ResourcesPluginData resourcesPluginData = ResourcesPluginData	.builder()
 																		.defineResourceProperty(TestResourceId.RESOURCE_1, TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE,
@@ -106,9 +111,12 @@ public final class AT_ResourcesDataManager {
 																	.setRegionResourceLevel(expectedRegionIds.get(0), TestResourceId.RESOURCE_2, 3L)
 																	.setPersonResourceLevel(new PersonId(0), TestResourceId.RESOURCE_2, 30L).build();
 		assertEquals(expectedPluginData, actualPluginData);
+	}
 
+	private void testInit_State_2() {
 		// show that the plugin data persists after multiple actions
-		expectedRegionIds.clear();
+		List<RegionId> expectedRegionIds = new ArrayList<>();
+		
 		ResourcesPluginData resourcesPluginData2 = ResourcesPluginData	.builder()
 																		.defineResourceProperty(TestResourceId.RESOURCE_1, TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE,
 																				TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE.getPropertyDefinition())
@@ -117,9 +125,9 @@ public final class AT_ResourcesDataManager {
 																		.addResource(TestResourceId.RESOURCE_1, 0.0).addResource(TestResourceId.RESOURCE_2, 0.0)
 																		.setResourceTimeTracking(TestResourceId.RESOURCE_2, true)
 																		.setResourcePropertyValue(TestResourceId.RESOURCE_1, TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE, 45).build();
-		TestPluginData.Builder pluginBuilder2 = TestPluginData.builder();
+		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
-		pluginBuilder2.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 
@@ -131,7 +139,7 @@ public final class AT_ResourcesDataManager {
 			resourcesDataManager.transferResourceToPersonFromRegion(TestResourceId.RESOURCE_2, new PersonId(0), 30);
 		}));
 
-		pluginBuilder2.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 
 			resourcesDataManager.addResourceId(TestResourceId.RESOURCE_3, false);
@@ -142,27 +150,38 @@ public final class AT_ResourcesDataManager {
 
 		}));
 
-		TestPluginData testPluginData2 = pluginBuilder2.build();
-		Factory factory2 = ResourcesTestPluginFactory.factory(2, 7939130943360648501L, testPluginData2).setResourcesPluginData(resourcesPluginData2);
-		TestOutputConsumer testOutputConsumer2 = TestSimulation.builder().addPlugins(factory2.getPlugins()).setProduceSimulationStateOnHalt(true).setSimulationHaltTime(2).build().execute();
+		TestPluginData testPluginData2 = pluginBuilder.build();
+		Factory factory2 = ResourcesTestPluginFactory.factory(2, 7939130943360648501L, testPluginData2)//
+				.setResourcesPluginData(resourcesPluginData2);
+		TestOutputConsumer testOutputConsumer2 = TestSimulation	.builder()//
+																.addPlugins(factory2.getPlugins())//
+																.setProduceSimulationStateOnHalt(true)//
+																.setSimulationHaltTime(2)//
+																.build()//
+																.execute();
 		Map<ResourcesPluginData, Integer> outputItems2 = testOutputConsumer2.getOutputItems(ResourcesPluginData.class);
 		assertEquals(1, outputItems2.size());
-		ResourcesPluginData actualPluginData2 = outputItems2.keySet().iterator().next();
-		ResourcesPluginData expectedPluginData2 = ResourcesPluginData	.builder()
+		ResourcesPluginData actualPluginData = outputItems2.keySet().iterator().next();
+		ResourcesPluginData expectedPluginData = ResourcesPluginData	.builder()
 																		.defineResourceProperty(TestResourceId.RESOURCE_1, TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE,
 																				TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE.getPropertyDefinition())
 																		.defineResourceProperty(TestResourceId.RESOURCE_2, TestResourcePropertyId.ResourceProperty_1_1_BOOLEAN_MUTABLE,
 																				TestResourcePropertyId.ResourceProperty_1_1_BOOLEAN_MUTABLE.getPropertyDefinition())
-																		.addResource(TestResourceId.RESOURCE_1, 0.0).addResource(TestResourceId.RESOURCE_2, 0.0)
-																		.addResource(TestResourceId.RESOURCE_3, 0.0).setResourceTimeTracking(TestResourceId.RESOURCE_2, true)
+																		.addResource(TestResourceId.RESOURCE_1, 0.0)//
+																		.addResource(TestResourceId.RESOURCE_2, 0.0)//
+																		.addResource(TestResourceId.RESOURCE_3, 1.0)//
+																		.setResourceTimeTracking(TestResourceId.RESOURCE_2, true)
 																		.setResourcePropertyValue(TestResourceId.RESOURCE_1, TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE, 45)
 																		.setResourcePropertyValue(TestResourceId.RESOURCE_2, TestResourcePropertyId.ResourceProperty_1_1_BOOLEAN_MUTABLE, false)
 																		.setRegionResourceLevel(TestRegionId.REGION_1, TestResourceId.RESOURCE_1, 55)
 																		.setRegionResourceLevel(expectedRegionIds.get(0), TestResourceId.RESOURCE_2, 8)
 																		.setRegionResourceLevel(TestRegionId.REGION_2, TestResourceId.RESOURCE_2, 5)
 																		.setRegionResourceLevel(TestRegionId.REGION_2, TestResourceId.RESOURCE_3, 73)
-																		.setPersonResourceLevel(new PersonId(0), TestResourceId.RESOURCE_2, 20L).build();
-		assertEquals(expectedPluginData2, actualPluginData2);
+																		.setPersonResourceLevel(new PersonId(0), TestResourceId.RESOURCE_2, 20L)//
+																		.setPersonResourceTime(new PersonId(0), TestResourceId.RESOURCE_2, 1.0)
+																		.build();
+		
+		assertEquals(expectedPluginData, actualPluginData);
 	}
 
 	@Test
