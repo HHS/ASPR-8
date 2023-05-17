@@ -441,7 +441,7 @@ public class AT_MaterialsTestPluginFactory {
 
 		for (TestResourceId resourceId : TestResourceId.values()) {
 			boolean expectedPolicy = resourceId.getTimeTrackingPolicy();
-			boolean actualPolicy = resourcesPluginData.getPersonResourceTimeTrackingPolicy(resourceId);
+			boolean actualPolicy = resourcesPluginData.getResourceTimeTrackingPolicy(resourceId);
 			assertEquals(expectedPolicy, actualPolicy);
 		}
 

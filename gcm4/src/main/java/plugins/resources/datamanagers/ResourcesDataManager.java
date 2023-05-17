@@ -677,7 +677,7 @@ public final class ResourcesDataManager extends DataManager {
 
 	private void loadPersonResourceTimes() {
 		for (ResourceId resourceId : resourcesPluginData.getResourceIds()) {
-			boolean trackTimes = resourcesPluginData.getPersonResourceTimeTrackingPolicy(resourceId);
+			boolean trackTimes = resourcesPluginData.getResourceTimeTrackingPolicy(resourceId);
 			if (trackTimes) {
 				double resourceDefinitionTime = resourceDefinitionTimes.get(resourceId);
 				final DoubleValueContainer doubleValueContainer = new DoubleValueContainer(resourceDefinitionTime);

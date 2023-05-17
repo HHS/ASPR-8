@@ -754,7 +754,7 @@ public final class AT_ResourcesPluginData {
 		ResourcesPluginData resourceInitialData = builder.build();
 		for (TestResourceId testResourceId : TestResourceId.values()) {
 			boolean expectedPolicy = expectedValues.get(testResourceId);
-			boolean actualPolicy = resourceInitialData.getPersonResourceTimeTrackingPolicy(testResourceId);
+			boolean actualPolicy = resourceInitialData.getResourceTimeTrackingPolicy(testResourceId);
 			assertEquals(expectedPolicy, actualPolicy);
 		}
 

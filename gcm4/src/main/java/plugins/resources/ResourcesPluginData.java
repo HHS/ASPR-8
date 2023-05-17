@@ -587,6 +587,24 @@ public final class ResourcesPluginData implements PluginData {
 		}
 
 		/**
+		 * Sets the time tracking policy for a resource. Duplicate inputs
+		 * override previous inputs.
+		 * 
+		 * @throws ContractException
+		 *             <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if the
+		 *             resource id is null</li>
+		 *             <li>{@linkplain ResourceError#NULL_TIME_TRACKING_POLICY}
+		 *             if the tracking policy is null</li>
+		 *
+		 */
+		public Builder setResourceTimeTracking(final ResourceId resourceId, final boolean trackValueAssignmentTimes) {
+			ensureDataMutability();
+			validateResourceIdNotNull(resourceId);
+			data.resourceTimeTrackingPolicies.put(resourceId, trackValueAssignmentTimes);
+			return this;
+		}
+
+		/**
 		 * Defines a resource property Duplicate inputs override previous
 		 * inputs.
 		 * 
@@ -613,6 +631,34 @@ public final class ResourcesPluginData implements PluginData {
 				data.resourcePropertyDefinitions.put(resourceId, map);
 			}
 			map.put(resourcePropertyId, propertyDefinition);
+			return this;
+		}
+
+		/**
+		 * Sets a resource property value. Duplicate inputs override previous
+		 * inputs.
+		 * 
+		 * @throws ContractException
+		 *             <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if the
+		 *             resource id is null</li>
+		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
+		 *             resource property id is null</li>
+		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE} if the
+		 *             resource property value is null</li>
+		 *
+		 */
+		public Builder setResourcePropertyValue(final ResourceId resourceId, final ResourcePropertyId resourcePropertyId, final Object resourcePropertyValue) {
+			ensureDataMutability();
+			validateResourceIdNotNull(resourceId);
+			validateResourcePropertyIdNotNull(resourcePropertyId);
+			validateResourcePropertyValueNotNull(resourcePropertyValue);
+
+			Map<ResourcePropertyId, Object> propertyMap = data.resourcePropertyValues.get(resourceId);
+			if (propertyMap == null) {
+				propertyMap = new LinkedHashMap<>();
+				data.resourcePropertyValues.put(resourceId, propertyMap);
+			}
+			propertyMap.put(resourcePropertyId, resourcePropertyValue);
 			return this;
 		}
 
@@ -729,51 +775,7 @@ public final class ResourcesPluginData implements PluginData {
 			return this;
 		}
 
-		/**
-		 * Sets a resource property value. Duplicate inputs override previous
-		 * inputs.
-		 * 
-		 * @throws ContractException
-		 *             <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if the
-		 *             resource id is null</li>
-		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
-		 *             resource property id is null</li>
-		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE} if the
-		 *             resource property value is null</li>
-		 *
-		 */
-		public Builder setResourcePropertyValue(final ResourceId resourceId, final ResourcePropertyId resourcePropertyId, final Object resourcePropertyValue) {
-			ensureDataMutability();
-			validateResourceIdNotNull(resourceId);
-			validateResourcePropertyIdNotNull(resourcePropertyId);
-			validateResourcePropertyValueNotNull(resourcePropertyValue);
-
-			Map<ResourcePropertyId, Object> propertyMap = data.resourcePropertyValues.get(resourceId);
-			if (propertyMap == null) {
-				propertyMap = new LinkedHashMap<>();
-				data.resourcePropertyValues.put(resourceId, propertyMap);
-			}
-			propertyMap.put(resourcePropertyId, resourcePropertyValue);
-			return this;
-		}
-
-		/**
-		 * Sets the time tracking policy for a resource. Duplicate inputs
-		 * override previous inputs.
-		 * 
-		 * @throws ContractException
-		 *             <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if the
-		 *             resource id is null</li>
-		 *             <li>{@linkplain ResourceError#NULL_TIME_TRACKING_POLICY}
-		 *             if the tracking policy is null</li>
-		 *
-		 */
-		public Builder setResourceTimeTracking(final ResourceId resourceId, final boolean trackValueAssignmentTimes) {
-			ensureDataMutability();
-			validateResourceIdNotNull(resourceId);
-			data.resourceTimeTrackingPolicies.put(resourceId, trackValueAssignmentTimes);
-			return this;
-		}
+		
 
 		private void validateData() {
 
@@ -1124,7 +1126,7 @@ public final class ResourcesPluginData implements PluginData {
 	 *             <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID} if the
 	 *             resource id is unknown</li>
 	 */
-	public boolean getPersonResourceTimeTrackingPolicy(final ResourceId resourceId) {
+	public boolean getResourceTimeTrackingPolicy(final ResourceId resourceId) {
 		validateResourceExists(resourceId);
 		return data.resourceTimeTrackingPolicies.get(resourceId);
 	}

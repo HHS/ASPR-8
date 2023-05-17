@@ -2922,7 +2922,7 @@ public final class AT_ResourcesDataManager {
 			}
 
 			for (ResourceId resourceId : resourcesPluginData.getResourceIds()) {
-				boolean expectedPolicy = resourcesPluginData.getPersonResourceTimeTrackingPolicy(resourceId);
+				boolean expectedPolicy = resourcesPluginData.getResourceTimeTrackingPolicy(resourceId);
 				boolean actualPolicy = resourcesDataManager.getPersonResourceTimeTrackingPolicy(resourceId);
 				assertEquals(expectedPolicy, actualPolicy);
 			}
@@ -2946,7 +2946,7 @@ public final class AT_ResourcesDataManager {
 			}
 
 			for (ResourceId resourceId : resourcesDataManager.getResourceIds()) {
-				boolean trackTimes = resourcesPluginData.getPersonResourceTimeTrackingPolicy(resourceId);
+				boolean trackTimes = resourcesPluginData.getResourceTimeTrackingPolicy(resourceId);
 				if (trackTimes) {
 					List<Double> expectedResourceTimes = resourcesPluginData.getPersonResourceTimes(resourceId);
 					Double resourceDefaultTime = resourcesPluginData.getResourceDefaultTime(resourceId);
