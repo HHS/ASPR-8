@@ -65,7 +65,7 @@ public class AT_TranslationController {
     }
 
     @Test
-    @UnitTestMethod(target = TranslationController.class, name = "getTranslationEngine", args = {})
+    @UnitTestMethod(target = TranslationController.class, name = "getTranslationEngine", args = { Class.class })
     public void testGetTranslationEngine() {
         TestTranslationEngine expectedValue = TestTranslationEngine.builder()
                 .addTranslationSpec(new TestObjectTranslationSpec())
