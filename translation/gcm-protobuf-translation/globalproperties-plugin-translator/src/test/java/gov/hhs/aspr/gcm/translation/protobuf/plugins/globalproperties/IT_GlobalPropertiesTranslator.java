@@ -20,14 +20,16 @@ import plugins.globalproperties.testsupport.GlobalPropertiesTestPluginFactory;
 import plugins.globalproperties.testsupport.TestGlobalPropertyId;
 import plugins.reports.support.ReportLabel;
 import plugins.reports.support.SimpleReportLabel;
+import util.annotations.UnitTestForCoverage;
 import util.random.RandomGeneratorProvider;
 
-public class AppTest {
+public class IT_GlobalPropertiesTranslator {
     Path basePath = TestResourceHelper.getResourceDir(this.getClass());
     Path filePath = TestResourceHelper.makeTestOutputDir(basePath);
 
     @Test
-    public void testGlobalPropertiesPluginDataTranslatorSpec() {
+    @UnitTestForCoverage
+    public void testGlobalPropertiesPluginDataIntegration() {
         String fileName = "pluginData.json";
 
         TestResourceHelper.createTestOutputFile(filePath, fileName);
@@ -56,7 +58,8 @@ public class AppTest {
     }
 
     @Test
-    public void testGlobalPropertyReportTranslatorSpec() {
+    @UnitTestForCoverage
+    public void testGlobalPropertyReportPluginDataIntegration() {
         String fileName = "propertyReport.json";
 
         TestResourceHelper.createTestOutputFile(filePath, fileName);
