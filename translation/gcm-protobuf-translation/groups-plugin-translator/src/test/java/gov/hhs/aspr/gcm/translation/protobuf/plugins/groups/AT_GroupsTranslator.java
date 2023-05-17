@@ -1,5 +1,9 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.groups;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.junit.jupiter.api.Test;
+
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.input.GroupIdInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.translationSpecs.GroupIdTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.translationSpecs.GroupPropertyIdTranslationSpec;
@@ -14,14 +18,14 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.PropertiesTransl
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.ReportsTranslatorId;
 import gov.hhs.aspr.translation.core.Translator;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
+import util.annotations.UnitTestMethod;
 
-public class GroupsTranslator {
+public class AT_GroupsTranslator {
 
-    private GroupsTranslator() {
-    }
-
-    private static Translator.Builder builder(boolean withReport) {
-        Translator.Builder builder = Translator.builder()
+    @Test
+    @UnitTestMethod(target = GroupsTranslator.class, name = "getTranslator", args = {})
+    void testGetTranslator() {
+        Translator expectedTranslator = Translator.builder()
                 .setTranslatorId(GroupsTranslatorId.TRANSLATOR_ID)
                 .addDependency(PropertiesTranslatorId.TRANSLATOR_ID)
                 .addDependency(PeopleTranslatorId.TRANSLATOR_ID)
@@ -38,26 +42,38 @@ public class GroupsTranslator {
                             .addTranslationSpec(new TestGroupPropertyIdTranslationSpec())
                             .addTranslationSpec(new SimpleGroupTypeIdTranslationSpec());
 
-                    if (withReport) {
-                        translationEngineBuilder.addTranslationSpec(new GroupPropertyReportPluginDataTranslationSpec());
-                    }
+                    translationEngineBuilder
+                            .addFieldToIncludeDefaultValue(GroupIdInput.getDescriptor().findFieldByName("id"));
+                }).build();
+
+        assertEquals(expectedTranslator, GroupsTranslator.getTranslator());
+    }
+
+    @Test
+    @UnitTestMethod(target = GroupsTranslator.class, name = "getTranslatorWithReport", args = {})
+    void testGetTranslatorWithReport() {
+        Translator expectedTranslator = Translator.builder()
+                .setTranslatorId(GroupsTranslatorId.TRANSLATOR_ID)
+                .addDependency(PropertiesTranslatorId.TRANSLATOR_ID)
+                .addDependency(PeopleTranslatorId.TRANSLATOR_ID)
+                .addDependency(ReportsTranslatorId.TRANSLATOR_ID)
+                .setInitializer((translatorContext) -> {
+                    ProtobufTranslationEngine.Builder translationEngineBuilder = translatorContext
+                            .getTranslationEngineBuilder(ProtobufTranslationEngine.Builder.class);
+
+                    translationEngineBuilder.addTranslationSpec(new GroupsPluginDataTranslationSpec())
+                            .addTranslationSpec(new GroupIdTranslationSpec())
+                            .addTranslationSpec(new GroupTypeIdTranslationSpec())
+                            .addTranslationSpec(new GroupPropertyIdTranslationSpec())
+                            .addTranslationSpec(new TestGroupTypeIdTranslationSpec())
+                            .addTranslationSpec(new TestGroupPropertyIdTranslationSpec())
+                            .addTranslationSpec(new SimpleGroupTypeIdTranslationSpec())
+                            .addTranslationSpec(new GroupPropertyReportPluginDataTranslationSpec());
 
                     translationEngineBuilder
                             .addFieldToIncludeDefaultValue(GroupIdInput.getDescriptor().findFieldByName("id"));
-                });
+                }).build();
 
-        if (withReport) {
-            builder.addDependency(ReportsTranslatorId.TRANSLATOR_ID);
-        }
-
-        return builder;
-    }
-
-    public static Translator getTranslatorWithReport() {
-        return builder(true).build();
-    }
-
-    public static Translator getTranslator() {
-        return builder(false).build();
+        assertEquals(expectedTranslator, GroupsTranslator.getTranslatorWithReport());
     }
 }
