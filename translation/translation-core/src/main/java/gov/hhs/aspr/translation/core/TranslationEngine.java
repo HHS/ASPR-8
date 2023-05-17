@@ -2,9 +2,12 @@ package gov.hhs.aspr.translation.core;
 
 import java.io.Reader;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -36,6 +39,37 @@ public abstract class TranslationEngine {
 
         protected Data() {
         }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(classToTranslationSpecMap, translationSpecs);
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null) {
+                return false;
+            }
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
+            Data other = (Data) obj;
+
+            if (!Objects.equals(classToTranslationSpecMap, other.classToTranslationSpecMap)) {
+                return false;
+            }
+
+            if (!Objects.equals(translationSpecs, other.translationSpecs)) {
+                return false;
+            }
+
+            return true;
+
+        }
+
     }
 
     public static class Builder {
@@ -123,7 +157,22 @@ public abstract class TranslationEngine {
      * in the builder
      */
     public void init() {
-        this.data.translationSpecs.forEach((translationSpec) -> translationSpec.init(this));
+        /*
+         * Calling init on a translationSpec causes the hashCode of the translationSpec
+         * to change.
+         * Because of this, before calling init, we need to remove them from the
+         * translationSpecs Set
+         * then initialize them, then add them back to the set. Set's aren't happy when
+         * the hash code of the objects in them change
+         */
+        List<BaseTranslationSpec> copyOfTranslationSpecs = new ArrayList<>(this.data.translationSpecs);
+
+        this.data.translationSpecs.clear();
+
+        for (BaseTranslationSpec translationSpec : copyOfTranslationSpecs) {
+            translationSpec.init(this);
+            this.data.translationSpecs.add(translationSpec);
+        }
 
         this.isInitialized = true;
     }
@@ -251,6 +300,30 @@ public abstract class TranslationEngine {
             return this.data.classToTranslationSpecMap.get(classRef);
         }
         throw new ContractException(CoreTranslationError.UNKNOWN_TRANSLATION_SPEC, classRef.getName());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(data, isInitialized);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        TranslationEngine other = (TranslationEngine) obj;
+
+        if (isInitialized != other.isInitialized) {
+            return false;
+        }
+        return Objects.equals(data, other.data);
     }
 
 }

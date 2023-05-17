@@ -131,13 +131,16 @@ public class AT_TranslationEngine {
         TestInputObject expectedInputObject = TestObjectUtil.getInputFromApp(expectedAppObject);
 
         TestAppChildObject expectedAppChildObject = TestObjectUtil.getChildAppFromApp(expectedAppObject);
-        TestInputChildObject expectedInputChildObject = TestObjectUtil.getChildInputFromInput(expectedInputObject);
+        TestInputChildObject expectedInputChildObject = TestObjectUtil
+                .getChildInputFromInput(expectedInputObject);
 
-        TestInputObject actualInputChildObject = testTranslationEngine.convertObjectAsSafeClass(expectedAppChildObject,
+        TestInputObject actualInputChildObject = testTranslationEngine.convertObjectAsSafeClass(
+                expectedAppChildObject,
                 TestAppObject.class);
         assertEquals(expectedInputChildObject, TestObjectUtil.getChildInputFromInput(actualInputChildObject));
 
-        TestAppObject actualAppChildObject = testTranslationEngine.convertObjectAsSafeClass(expectedInputChildObject,
+        TestAppObject actualAppChildObject = testTranslationEngine.convertObjectAsSafeClass(
+                expectedInputChildObject,
                 TestInputObject.class);
         assertEquals(expectedAppChildObject, TestObjectUtil.getChildAppFromApp(actualAppChildObject));
 
@@ -222,7 +225,8 @@ public class AT_TranslationEngine {
 
         testTranslationEngine.init();
 
-        assertEquals(testObjectTranslationSpec, testTranslationEngine.getTranslationSpecForClass(TestAppObject.class));
+        assertEquals(testObjectTranslationSpec,
+                testTranslationEngine.getTranslationSpecForClass(TestAppObject.class));
         assertEquals(testObjectTranslationSpec,
                 testTranslationEngine.getTranslationSpecForClass(TestInputObject.class));
 
@@ -281,14 +285,18 @@ public class AT_TranslationEngine {
         // show that the translation specs are retrievable by their own app and input
         // classes
         assertEquals(testObjectTranslationSpec,
-                testTranslationEngine.getTranslationSpecForClass(testObjectTranslationSpec.getAppObjectClass()));
+                testTranslationEngine.getTranslationSpecForClass(
+                        testObjectTranslationSpec.getAppObjectClass()));
         assertEquals(testObjectTranslationSpec,
-                testTranslationEngine.getTranslationSpecForClass(testObjectTranslationSpec.getInputObjectClass()));
+                testTranslationEngine.getTranslationSpecForClass(
+                        testObjectTranslationSpec.getInputObjectClass()));
 
         assertEquals(complexObjectTranslationSpec,
-                testTranslationEngine.getTranslationSpecForClass(complexObjectTranslationSpec.getAppObjectClass()));
+                testTranslationEngine.getTranslationSpecForClass(
+                        complexObjectTranslationSpec.getAppObjectClass()));
         assertEquals(complexObjectTranslationSpec,
-                testTranslationEngine.getTranslationSpecForClass(complexObjectTranslationSpec.getInputObjectClass()));
+                testTranslationEngine.getTranslationSpecForClass(
+                        complexObjectTranslationSpec.getInputObjectClass()));
 
         // preconditions
         // translationSpec is null
@@ -395,5 +403,133 @@ public class AT_TranslationEngine {
         });
 
         assertEquals(CoreTranslationError.DUPLICATE_TRANSLATION_SPEC, contractException.getErrorType());
+    }
+
+    @Test
+    @UnitTestMethod(target = TranslationEngine.class, name = "hashCode", args = {})
+    public void testHashCode() {
+        TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
+        TestComplexObjectTranslationSpec complexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
+        TestTranslationEngine testTranslationEngine1 = TestTranslationEngine
+                .builder()
+                .addTranslationSpec(testObjectTranslationSpec)
+                .addTranslationSpec(complexObjectTranslationSpec)
+                .build();
+
+        TestTranslationEngine testTranslationEngine2 = TestTranslationEngine
+                .builder()
+                .addTranslationSpec(complexObjectTranslationSpec)
+                .build();
+
+        TestTranslationEngine testTranslationEngine3 = TestTranslationEngine
+                .builder()
+                .addTranslationSpec(testObjectTranslationSpec)
+                .build();
+
+        TestTranslationEngine testTranslationEngine4 = TestTranslationEngine
+                .builder()
+                .build();
+
+        TestTranslationEngine testTranslationEngine5 = TestTranslationEngine
+                .builder()
+                .addTranslationSpec(testObjectTranslationSpec)
+                .addTranslationSpec(complexObjectTranslationSpec)
+                .build();
+
+        // exact same, same hash code
+        assertEquals(testTranslationEngine1.hashCode(), testTranslationEngine1.hashCode());
+
+        // different translation specs
+        assertNotEquals(testTranslationEngine1.hashCode(), testTranslationEngine2.hashCode());
+        assertNotEquals(testTranslationEngine1.hashCode(), testTranslationEngine3.hashCode());
+        assertNotEquals(testTranslationEngine1.hashCode(), testTranslationEngine4.hashCode());
+        assertNotEquals(testTranslationEngine2.hashCode(), testTranslationEngine3.hashCode());
+        assertNotEquals(testTranslationEngine2.hashCode(), testTranslationEngine4.hashCode());
+        assertNotEquals(testTranslationEngine3.hashCode(), testTranslationEngine4.hashCode());
+
+        // same translation specs, but initialized vs not
+        testTranslationEngine5.init();
+        assertNotEquals(testTranslationEngine1.hashCode(), testTranslationEngine5.hashCode());
+
+        // same translation specs and both initialized
+        testTranslationEngine1.init();
+        assertEquals(testTranslationEngine1.hashCode(), testTranslationEngine5.hashCode());
+    }
+
+    @Test
+    @UnitTestMethod(target = TranslationEngine.class, name = "equals", args = { Object.class })
+    public void testEquals() {
+        TestObjectTranslationSpec testObjectTranslationSpec = new TestObjectTranslationSpec();
+        TestComplexObjectTranslationSpec complexObjectTranslationSpec = new TestComplexObjectTranslationSpec();
+        TestTranslationEngine testTranslationEngine1 = TestTranslationEngine
+                .builder()
+                .addTranslationSpec(testObjectTranslationSpec)
+                .addTranslationSpec(complexObjectTranslationSpec)
+                .build();
+
+        TestTranslationEngine testTranslationEngine2 = TestTranslationEngine
+                .builder()
+                .addTranslationSpec(complexObjectTranslationSpec)
+                .build();
+
+        TestTranslationEngine testTranslationEngine3 = TestTranslationEngine
+                .builder()
+                .addTranslationSpec(testObjectTranslationSpec)
+                .build();
+
+        TestTranslationEngine testTranslationEngine4 = TestTranslationEngine
+                .builder()
+                .build();
+
+        TestTranslationEngine testTranslationEngine5 = TestTranslationEngine
+                .builder()
+                .addTranslationSpec(testObjectTranslationSpec)
+                .addTranslationSpec(complexObjectTranslationSpec)
+                .build();
+
+        TestObjectTranslationSpec testObjectTranslationSpec2 = new TestObjectTranslationSpec();
+        TestObjectTranslationSpec testObjectTranslationSpec3 = new TestObjectTranslationSpec();
+
+        TestTranslationEngine testTranslationEngine6 = TestTranslationEngine
+                .builder()
+                .addTranslationSpec(testObjectTranslationSpec2)
+                .build();
+
+        TestTranslationEngine testTranslationEngine7 = TestTranslationEngine
+                .builder()
+                .addTranslationSpec(testObjectTranslationSpec3)
+                .build();
+
+        // exact same
+        assertEquals(testTranslationEngine1, testTranslationEngine1);
+
+        assertNotEquals(testTranslationEngine1, null);
+
+        assertNotEquals(testTranslationEngine1, new Object());
+
+        // different translation specs
+        assertNotEquals(testTranslationEngine1, testTranslationEngine2);
+        assertNotEquals(testTranslationEngine1, testTranslationEngine3);
+        assertNotEquals(testTranslationEngine1, testTranslationEngine4);
+        assertNotEquals(testTranslationEngine2, testTranslationEngine3);
+        assertNotEquals(testTranslationEngine2, testTranslationEngine4);
+        assertNotEquals(testTranslationEngine3, testTranslationEngine4);
+
+        testObjectTranslationSpec2.init(testTranslationEngine1);
+        testObjectTranslationSpec3.init(testTranslationEngine5);
+        assertNotEquals(testTranslationEngine6, testTranslationEngine7);
+
+        // same translation specs, but initialized vs not
+        testTranslationEngine5.init();
+        assertNotEquals(testTranslationEngine1, testTranslationEngine5);
+
+        // same translation specs and both initialized
+        testTranslationEngine1.init();
+        assertEquals(testTranslationEngine1, testTranslationEngine5);
+
+        TranslationEngine.Data data = new TranslationEngine.Data();
+        assertEquals(data, data);
+        assertNotEquals(data, null);
+        assertNotEquals(data, new Object());
     }
 }
