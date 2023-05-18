@@ -185,13 +185,11 @@ public final class MaterialsDataManager extends DataManager {
 		 * Those batches owned by this materials producer that are not staged
 		 */
 		private final Set<BatchRecord> inventory = new LinkedHashSet<>();
+		
 		private MaterialsProducerId materialProducerId;
 
 		private final Map<ResourceId, MutableLong> materialProducerResources = new LinkedHashMap<>();
-		/*
-		 * Identifier for the materials producer
-		 */
-
+		
 		/*
 		 * Those batches owned by this materials producer that are staged
 		 */
@@ -212,8 +210,6 @@ public final class MaterialsDataManager extends DataManager {
 	}
 
 	private final Map<MaterialId, Map<BatchPropertyId, PropertyDefinition>> batchPropertyDefinitions = new LinkedHashMap<>();
-
-	private final Map<MaterialId, Map<BatchPropertyId, Double>> batchPropertyDefinitionTimes = new LinkedHashMap<>();
 
 	private final Map<MaterialId, Set<BatchPropertyId>> batchPropertyIdMap = new LinkedHashMap<>();
 
@@ -672,32 +668,7 @@ public final class MaterialsDataManager extends DataManager {
 		return result;
 	}
 
-	/**
-	 * Returns the time when the of the batch property was last assigned. It is
-	 * the caller's responsibility to validate the inputs.
-	 * 
-	 * @throws ContractException
-	 *             <li>{@linkplain MaterialsError#NULL_BATCH_ID} if the batch id
-	 *             is null</li>
-	 *             <li>{@linkplain MaterialsError#UNKNOWN_BATCH_ID} if the batch
-	 *             id is unknown</li>
-	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the batch
-	 *             property id is null</li>
-	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if the
-	 *             batch property id is unknown</li>
-	 */
-	public double getBatchPropertyTime(BatchId batchId, BatchPropertyId batchPropertyId) {
-		validateBatchId(batchId);
-		final MaterialId materialId = getBatchMaterial(batchId);
-		validateBatchPropertyId(materialId, batchPropertyId);
-		final Map<BatchPropertyId, PropertyValueRecord> map = batchPropertyMap.get(batchId);
-		final PropertyValueRecord propertyValueRecord = map.get(batchPropertyId);
-
-		if (propertyValueRecord != null) {
-			return propertyValueRecord.getAssignmentTime();
-		}
-		return batchPropertyDefinitionTimes.get(materialId).get(batchPropertyId);
-	}
+	
 
 	/**
 	 * Returns the value of the batch property. It is the caller's
@@ -1423,7 +1394,7 @@ public final class MaterialsDataManager extends DataManager {
 		validateBatchPropertyDefinition(propertyDefinition);
 		batchPropertyIdMap.get(materialId).add(batchPropertyId);
 		batchPropertyDefinitions.get(materialId).put(batchPropertyId, propertyDefinition);
-		batchPropertyDefinitionTimes.get(materialId).put(batchPropertyId, dataManagerContext.getTime());
+		
 
 		// validate the <batchid, property> value assignments
 		for (Pair<BatchId, Object> pair : batchPropertyDefinitionInitialization.getPropertyValues()) {
@@ -1659,8 +1630,7 @@ public final class MaterialsDataManager extends DataManager {
 
 		materialIds.add(materialId);
 		batchPropertyIdMap.put(materialId, new LinkedHashSet<>());
-		batchPropertyDefinitions.put(materialId, new LinkedHashMap<>());
-		batchPropertyDefinitionTimes.put(materialId, new LinkedHashMap<>());
+		batchPropertyDefinitions.put(materialId, new LinkedHashMap<>());		
 		nonDefaultBearingBatchPropertyIds.put(materialId, new LinkedHashMap<>());
 		nonDefaultChecksForBatches.put(materialId, new boolean[0]);
 
@@ -2057,14 +2027,12 @@ public final class MaterialsDataManager extends DataManager {
 		for (final MaterialId materialId : materialsPluginData.getMaterialIds()) {
 			materialIds.add(materialId);
 			batchPropertyIdMap.put(materialId, new LinkedHashSet<>());
-			batchPropertyDefinitions.put(materialId, new LinkedHashMap<>());
-			batchPropertyDefinitionTimes.put(materialId, new LinkedHashMap<>());
+			batchPropertyDefinitions.put(materialId, new LinkedHashMap<>());			
 			nonDefaultBearingBatchPropertyIds.put(materialId, new LinkedHashMap<>());
 			for (final BatchPropertyId batchPropertyId : materialsPluginData.getBatchPropertyIds(materialId)) {
 				final PropertyDefinition propertyDefinition = materialsPluginData.getBatchPropertyDefinition(materialId, batchPropertyId);
 				batchPropertyIdMap.get(materialId).add(batchPropertyId);
-				batchPropertyDefinitions.get(materialId).put(batchPropertyId, propertyDefinition);
-				batchPropertyDefinitionTimes.get(materialId).put(batchPropertyId, dataManagerContext.getTime());
+				batchPropertyDefinitions.get(materialId).put(batchPropertyId, propertyDefinition);				
 				Map<BatchPropertyId, Integer> map = nonDefaultBearingBatchPropertyIds.get(materialId);
 				if (propertyDefinition.getDefaultValue().isEmpty()) {
 					map.put(batchPropertyId, map.size());
