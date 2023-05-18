@@ -17,6 +17,11 @@ import plugins.personproperties.PersonPropertiesPluginData;
 import plugins.personproperties.support.PersonPropertyId;
 import plugins.util.properties.PropertyDefinition;
 
+/**
+ * TranslationSpec that defines how to convert between
+ * {@linkplain PersonPropertiesPluginDataInput} and
+ * {@linkplain PersonPropertiesPluginData}
+ */
 public class PersonPropertiesPluginDataTranslationSpec
         extends ProtobufTranslationSpec<PersonPropertiesPluginDataInput, PersonPropertiesPluginData> {
 

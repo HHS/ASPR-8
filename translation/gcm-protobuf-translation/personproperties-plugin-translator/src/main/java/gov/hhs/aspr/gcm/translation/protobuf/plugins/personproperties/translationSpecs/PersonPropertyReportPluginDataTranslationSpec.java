@@ -10,6 +10,11 @@ import plugins.personproperties.support.PersonPropertyId;
 import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportPeriod;
 
+/**
+ * TranslationSpec that defines how to convert between
+ * {@linkplain PersonPropertyReportPluginDataInput} and
+ * {@linkplain PersonPropertyReportPluginData}
+ */
 public class PersonPropertyReportPluginDataTranslationSpec
         extends ProtobufTranslationSpec<PersonPropertyReportPluginDataInput, PersonPropertyReportPluginData> {
 
