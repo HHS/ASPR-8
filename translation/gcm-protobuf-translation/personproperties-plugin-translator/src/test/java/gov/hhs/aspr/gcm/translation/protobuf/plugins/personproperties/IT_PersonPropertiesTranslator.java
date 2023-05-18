@@ -32,7 +32,7 @@ import plugins.reports.support.ReportPeriod;
 import plugins.reports.support.SimpleReportLabel;
 import util.random.RandomGeneratorProvider;
 
-public class AppTest {
+public class IT_PersonPropertiesTranslator {
     Path basePath = TestResourceHelper.getResourceDir(this.getClass());
     Path filePath = TestResourceHelper.makeTestOutputDir(basePath);
 

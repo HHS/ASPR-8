@@ -41,9 +41,11 @@ public class PersonPropertiesPluginDataTranslationSpec
             for (PersonPropertyValueInput personPropertyValueInput : personPropertyValueMapInput
                     .getPropertyValuesList()) {
                 PersonId personId = new PersonId(personPropertyValueInput.getPId());
-                Object value = this.translationEngine.getObjectFromAny(personPropertyValueInput.getValue());
+                if (personPropertyValueInput.hasValue()) {
+                    Object value = this.translationEngine.getObjectFromAny(personPropertyValueInput.getValue());
 
-                builder.setPersonPropertyValue(personId, propertyId, value);
+                    builder.setPersonPropertyValue(personId, propertyId, value);
+                }
 
                 if (personPropertyValueInput.hasPropertyValueTime()) {
                     builder.setPersonPropertyTime(personId, propertyId,
@@ -100,8 +102,8 @@ public class PersonPropertiesPluginDataTranslationSpec
                 }
             }
 
-            for (int i = 0; i < propertyTimes.size(); i++) {
-                if (propertyTimes.get(i) != null) {
+            if (appObject.propertyAssignmentTimesTracked(propertyId)) {
+                for (int i = 0; i < propertyTimes.size(); i++) {
                     PersonPropertyValueInput.Builder personPropertyValueInputBuilder = PersonPropertyValueInput
                             .newBuilder();
                     // check for and use existing builder, if there is one
