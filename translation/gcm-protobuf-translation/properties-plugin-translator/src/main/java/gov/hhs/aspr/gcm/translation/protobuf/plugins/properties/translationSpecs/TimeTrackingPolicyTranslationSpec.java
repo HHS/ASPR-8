@@ -4,6 +4,11 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.input.TimeTracki
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 import plugins.util.properties.TimeTrackingPolicy;
 
+/**
+ * TranslationSpec that defines how to convert between
+ * {@linkplain TimeTrackingPolicyInput} and
+ * {@linkplain TimeTrackingPolicy}
+ */
 public class TimeTrackingPolicyTranslationSpec
         extends ProtobufTranslationSpec<TimeTrackingPolicyInput, TimeTrackingPolicy> {
 

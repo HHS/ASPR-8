@@ -6,6 +6,11 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.input.PropertyDe
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 import plugins.util.properties.PropertyDefinition;
 
+/**
+ * TranslationSpec that defines how to convert between
+ * {@linkplain PropertyDefinitionInput} and
+ * {@linkplain PropertyDefinition}
+ */
 public class PropertyDefinitionTranslationSpec
         extends ProtobufTranslationSpec<PropertyDefinitionInput, PropertyDefinition> {
 
