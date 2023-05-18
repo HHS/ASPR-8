@@ -10,6 +10,11 @@ import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 import nucleus.PlanQueueData;
 import nucleus.SimulationState;
 
+/**
+ * TranslationSpec that defines how to convert between
+ * {@linkplain SimulationStateInput} and
+ * {@linkplain SimulationState}
+ */
 public class SimulationStateTranslationSpec extends ProtobufTranslationSpec<SimulationStateInput, SimulationState> {
 
     @Override

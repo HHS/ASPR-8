@@ -4,6 +4,11 @@ import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.nucleus.input.PlanDataInput;
 import nucleus.PlanData;
 
+/**
+ * TranslationSpec that defines how to convert between
+ * {@linkplain PlanDataInput} and
+ * {@linkplain PlanData}
+ */
 public class PlanDataTranslationSpec extends ProtobufTranslationSpec<PlanDataInput, PlanData> {
 
     @Override

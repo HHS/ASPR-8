@@ -4,6 +4,9 @@ import java.util.Objects;
 
 import nucleus.PlanData;
 
+/** 
+ * Example implementation of {@link PlanData}
+ */
 public final class ExamplePlanData implements PlanData {
 	private final double planTime;
 

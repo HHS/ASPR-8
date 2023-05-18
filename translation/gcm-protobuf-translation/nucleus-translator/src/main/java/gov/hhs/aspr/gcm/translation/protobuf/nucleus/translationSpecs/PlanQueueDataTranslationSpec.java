@@ -8,6 +8,11 @@ import nucleus.PlanData;
 import nucleus.PlanQueueData;
 import nucleus.Planner;
 
+/**
+ * TranslationSpec that defines how to convert between
+ * {@linkplain PlanQueueDataInput} and
+ * {@linkplain PlanQueueData}
+ */
 public class PlanQueueDataTranslationSpec extends ProtobufTranslationSpec<PlanQueueDataInput, PlanQueueData> {
 
     @Override

@@ -10,6 +10,12 @@ import gov.hhs.aspr.gcm.translation.protobuf.nucleus.translationSpecs.PlanQueueD
 import gov.hhs.aspr.gcm.translation.protobuf.nucleus.translationSpecs.PlannerTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.nucleus.translationSpecs.SimulationStateTranslationSpec;
 
+/**
+ * Translator for Nucleus
+ * <li>Using this Translator will add
+ * all the necessary TanslationSpecs needed to read and write
+ * the classes within Nucleus
+ */
 public class NucleusTranslator {
 
     private NucleusTranslator() {
