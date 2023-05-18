@@ -13,13 +13,15 @@ import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
 import gov.hhs.aspr.translation.core.testsupport.TestResourceHelper;
 import plugins.people.PeoplePluginData;
 import plugins.people.support.PersonRange;
+import util.annotations.UnitTestForCoverage;
 import util.random.RandomGeneratorProvider;
 
-public class AppTest {
+public class IT_PeopleTranslator {
     Path basePath = TestResourceHelper.getResourceDir(this.getClass());
     Path filePath = TestResourceHelper.makeTestOutputDir(basePath);
 
     @Test
+    @UnitTestForCoverage
     public void testPeopleTranslator() {
         String fileName = "pluginData.json";
 

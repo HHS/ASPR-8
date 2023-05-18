@@ -1,19 +1,24 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.people;
 
-import gov.hhs.aspr.translation.core.Translator;
-import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.junit.jupiter.api.Test;
+
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.input.PersonIdInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.translationSpecs.PeoplePluginDataTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.translationSpecs.PersonIdTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.translationSpecs.PersonRangeTranslationSpec;
+import gov.hhs.aspr.translation.core.Translator;
+import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
+import util.annotations.UnitTestMethod;
 
-public class PeopleTranslator {
+public class AT_PeopleTranslator {
 
-    private PeopleTranslator() {
-    }
+    @Test
+    @UnitTestMethod(target = PeopleTranslator.class, name = "getTranslator", args = {})
+    public void testGetTranslator() {
 
-    private static Translator.Builder builder() {
-        return Translator.builder()
+        Translator expectedTranslator = Translator.builder()
                 .setTranslatorId(PeopleTranslatorId.TRANSLATOR_ID)
                 .setInitializer((translatorContext) -> {
                     ProtobufTranslationEngine.Builder translationEngineBuilder = translatorContext
@@ -26,11 +31,8 @@ public class PeopleTranslator {
 
                     translationEngineBuilder
                             .addFieldToIncludeDefaultValue(PersonIdInput.getDescriptor().findFieldByName("id"));
-                });
+                }).build();
 
-    }
-
-    public static Translator getTranslator() {
-        return builder().build();
+        assertEquals(expectedTranslator, PeopleTranslator.getTranslator());
     }
 }
