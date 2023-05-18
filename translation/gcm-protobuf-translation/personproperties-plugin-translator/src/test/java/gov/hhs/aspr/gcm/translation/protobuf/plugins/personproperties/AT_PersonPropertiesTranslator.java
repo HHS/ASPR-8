@@ -15,12 +15,12 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.PropertiesTransl
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.ReportsTranslatorId;
 import gov.hhs.aspr.translation.core.Translator;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
-import util.annotations.UnitTestForCoverage;
+import util.annotations.UnitTestMethod;
 
 public class AT_PersonPropertiesTranslator {
 
     @Test
-    @UnitTestForCoverage
+    @UnitTestMethod(target = PersonPropertiesTranslator.class, name = "getTranslator", args = {})
     public void testGetTranslator() {
         Translator expectedTranslator = Translator.builder()
                 .setTranslatorId(PersonPropertiesTranslatorId.TRANSLATOR_ID)
@@ -43,7 +43,7 @@ public class AT_PersonPropertiesTranslator {
     }
 
     @Test
-    @UnitTestForCoverage
+    @UnitTestMethod(target = PersonPropertiesTranslator.class, name = "getTranslatorWithReport", args = {})
     public void testGetTranslatorWithReport() {
         Translator expectedTranslator = Translator.builder()
                 .setTranslatorId(PersonPropertiesTranslatorId.TRANSLATOR_ID)

@@ -30,6 +30,7 @@ import plugins.personproperties.testsupport.TestPersonPropertyId;
 import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportPeriod;
 import plugins.reports.support.SimpleReportLabel;
+import util.annotations.UnitTestForCoverage;
 import util.random.RandomGeneratorProvider;
 
 public class IT_PersonPropertiesTranslator {
@@ -37,6 +38,7 @@ public class IT_PersonPropertiesTranslator {
     Path filePath = TestResourceHelper.makeTestOutputDir(basePath);
 
     @Test
+    @UnitTestForCoverage
     public void testPersonPropertiesTranslator() {
         String fileName = "pluginData.json";
 
@@ -73,6 +75,7 @@ public class IT_PersonPropertiesTranslator {
     }
 
     @Test
+    @UnitTestForCoverage
     public void testPersonPropertyReportTranslatorSpec() {
         String fileName = "propertyReport.json";
 
@@ -121,6 +124,7 @@ public class IT_PersonPropertiesTranslator {
     }
 
     @Test
+    @UnitTestForCoverage
     public void testPersonInteractionReportTranslatorSpec() {
         String fileName = "interactionReport.json";
 
