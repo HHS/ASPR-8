@@ -7,6 +7,12 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.translationSpecs.Peo
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.translationSpecs.PersonIdTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.translationSpecs.PersonRangeTranslationSpec;
 
+/**
+ * Translator for the People Plugin.
+ * <li>Using this Translator will add
+ * all the necessary TanslationSpecs needed to read and write
+ * PeoplePluginData
+ */
 public class PeopleTranslator {
 
     private PeopleTranslator() {
