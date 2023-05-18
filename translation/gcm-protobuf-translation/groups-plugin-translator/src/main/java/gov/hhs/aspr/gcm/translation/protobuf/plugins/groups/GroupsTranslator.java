@@ -6,7 +6,6 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.translationSpecs.Gro
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.translationSpecs.GroupPropertyReportPluginDataTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.translationSpecs.GroupTypeIdTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.translationSpecs.GroupsPluginDataTranslationSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.translationSpecs.SimpleGroupTypeIdTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.translationSpecs.TestGroupPropertyIdTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.translationSpecs.TestGroupTypeIdTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.PeopleTranslatorId;
@@ -35,8 +34,7 @@ public class GroupsTranslator {
                             .addTranslationSpec(new GroupTypeIdTranslationSpec())
                             .addTranslationSpec(new GroupPropertyIdTranslationSpec())
                             .addTranslationSpec(new TestGroupTypeIdTranslationSpec())
-                            .addTranslationSpec(new TestGroupPropertyIdTranslationSpec())
-                            .addTranslationSpec(new SimpleGroupTypeIdTranslationSpec());
+                            .addTranslationSpec(new TestGroupPropertyIdTranslationSpec());
 
                     if (withReport) {
                         translationEngineBuilder.addTranslationSpec(new GroupPropertyReportPluginDataTranslationSpec());

@@ -10,7 +10,6 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.translationSpecs.Gro
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.translationSpecs.GroupPropertyReportPluginDataTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.translationSpecs.GroupTypeIdTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.translationSpecs.GroupsPluginDataTranslationSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.translationSpecs.SimpleGroupTypeIdTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.translationSpecs.TestGroupPropertyIdTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.translationSpecs.TestGroupTypeIdTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.PeopleTranslatorId;
@@ -24,7 +23,7 @@ public class AT_GroupsTranslator {
 
     @Test
     @UnitTestMethod(target = GroupsTranslator.class, name = "getTranslator", args = {})
-    void testGetTranslator() {
+    public void testGetTranslator() {
         Translator expectedTranslator = Translator.builder()
                 .setTranslatorId(GroupsTranslatorId.TRANSLATOR_ID)
                 .addDependency(PropertiesTranslatorId.TRANSLATOR_ID)
@@ -39,8 +38,7 @@ public class AT_GroupsTranslator {
                             .addTranslationSpec(new GroupTypeIdTranslationSpec())
                             .addTranslationSpec(new GroupPropertyIdTranslationSpec())
                             .addTranslationSpec(new TestGroupTypeIdTranslationSpec())
-                            .addTranslationSpec(new TestGroupPropertyIdTranslationSpec())
-                            .addTranslationSpec(new SimpleGroupTypeIdTranslationSpec());
+                            .addTranslationSpec(new TestGroupPropertyIdTranslationSpec());
 
                     translationEngineBuilder
                             .addFieldToIncludeDefaultValue(GroupIdInput.getDescriptor().findFieldByName("id"));
@@ -51,7 +49,7 @@ public class AT_GroupsTranslator {
 
     @Test
     @UnitTestMethod(target = GroupsTranslator.class, name = "getTranslatorWithReport", args = {})
-    void testGetTranslatorWithReport() {
+    public void testGetTranslatorWithReport() {
         Translator expectedTranslator = Translator.builder()
                 .setTranslatorId(GroupsTranslatorId.TRANSLATOR_ID)
                 .addDependency(PropertiesTranslatorId.TRANSLATOR_ID)
@@ -67,7 +65,6 @@ public class AT_GroupsTranslator {
                             .addTranslationSpec(new GroupPropertyIdTranslationSpec())
                             .addTranslationSpec(new TestGroupTypeIdTranslationSpec())
                             .addTranslationSpec(new TestGroupPropertyIdTranslationSpec())
-                            .addTranslationSpec(new SimpleGroupTypeIdTranslationSpec())
                             .addTranslationSpec(new GroupPropertyReportPluginDataTranslationSpec());
 
                     translationEngineBuilder
