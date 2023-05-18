@@ -1,4 +1,4 @@
-package gov.hss.aspr.gcm.translation.protobuf.nucleus;
+package gov.hhs.aspr.gcm.translation.protobuf.nucleus;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -9,29 +9,29 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.gcm.translation.protobuf.nucleus.input.SimulationStateInput;
+import gov.hhs.aspr.gcm.translation.protobuf.nucleus.simObjects.ExamplePlanData;
 import gov.hhs.aspr.translation.core.TranslationController;
-import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
 import gov.hhs.aspr.translation.core.testsupport.TestResourceHelper;
-import gov.hss.aspr.gcm.translation.protobuf.nucleus.simObjects.ExamplePlanData;
-import gov.hss.aspr.gcm.translation.protobuf.nucleus.simObjects.translationSpecs.ExamplePlanDataTranslationSpec;
+import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
 import nucleus.PlanQueueData;
 import nucleus.Planner;
 import nucleus.SimulationState;
+import util.annotations.UnitTestForCoverage;
 import util.random.RandomGeneratorProvider;
 
-public class AppTest {
+public class IT_NucleusTranslator {
     Path basePath = TestResourceHelper.getResourceDir(this.getClass());
     Path filePath = TestResourceHelper.makeTestOutputDir(basePath);
 
     @Test
+    @UnitTestForCoverage
     public void testSimulationStateTranslator() {
         String fileName = "simulationState.json";
 
         TestResourceHelper.createTestOutputFile(filePath, fileName);
 
         TranslationController translatorController = TranslationController.builder()
-                .setTranslationEngineBuilder(ProtobufTranslationEngine.builder()
-                        .addTranslationSpec(new ExamplePlanDataTranslationSpec()))
+                .setTranslationEngineBuilder(ProtobufTranslationEngine.builder())
                 .addTranslator(NucleusTranslator.getTranslator())
                 .addInputFilePath(filePath.resolve(fileName), SimulationStateInput.class)
                 .addOutputFilePath(filePath.resolve(fileName), SimulationState.class)

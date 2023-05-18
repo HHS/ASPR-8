@@ -1,4 +1,4 @@
-package gov.hss.aspr.gcm.translation.protobuf.nucleus.translationSpecs;
+package gov.hhs.aspr.gcm.translation.protobuf.nucleus.translationSpecs;
 
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.nucleus.input.PlanDataInput;
@@ -16,8 +16,8 @@ public class PlanQueueDataTranslationSpec extends ProtobufTranslationSpec<PlanQu
 
         builder.setTime(inputObject.getTime());
 
-        if (inputObject.hasActive()) {
-            builder.setActive(inputObject.getActive());
+        if (inputObject.hasActive() && inputObject.getActive() == false) {
+            builder.setActive(false);
         }
 
         Object key = this.translationEngine.getObjectFromAny(inputObject.getKey());

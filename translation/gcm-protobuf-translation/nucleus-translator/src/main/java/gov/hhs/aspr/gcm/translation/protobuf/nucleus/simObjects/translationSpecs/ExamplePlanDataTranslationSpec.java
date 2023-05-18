@@ -1,8 +1,8 @@
-package gov.hss.aspr.gcm.translation.protobuf.nucleus.simObjects.translationSpecs;
+package gov.hhs.aspr.gcm.translation.protobuf.nucleus.simObjects.translationSpecs;
 
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.nucleus.example.input.ExamplePlanDataInput;
-import gov.hss.aspr.gcm.translation.protobuf.nucleus.simObjects.ExamplePlanData;
+import gov.hhs.aspr.gcm.translation.protobuf.nucleus.simObjects.ExamplePlanData;
 
 public class ExamplePlanDataTranslationSpec extends ProtobufTranslationSpec<ExamplePlanDataInput, ExamplePlanData> {
 

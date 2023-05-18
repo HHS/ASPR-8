@@ -1,4 +1,6 @@
-package gov.hss.aspr.gcm.translation.protobuf.nucleus.simObjects;
+package gov.hhs.aspr.gcm.translation.protobuf.nucleus.simObjects;
+
+import java.util.Objects;
 
 import nucleus.PlanData;
 
@@ -15,12 +17,8 @@ public final class ExamplePlanData implements PlanData {
 	}
 
 	@Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("ExamplePlanData [planTime=");
-		builder.append(planTime);
-		builder.append("]");
-		return builder.toString();
+	public int hashCode() {
+		return Objects.hash(planTime);
 	}
 
 	@Override
@@ -28,13 +26,14 @@ public final class ExamplePlanData implements PlanData {
 		if (this == obj) {
 			return true;
 		}
-		if (!(obj instanceof ExamplePlanData)) {
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
 		}
 		ExamplePlanData other = (ExamplePlanData) obj;
-
-		return getPlanTime() == other.getPlanTime();
-
+		return Double.doubleToLongBits(planTime) == Double.doubleToLongBits(other.planTime);
 	}
-
+	
 }
