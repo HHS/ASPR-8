@@ -4404,7 +4404,7 @@ public class AT_MaterialsDataManager {
 			materialsDataManager.addMaterialsProducer(materialsProducerConstructionData);
 			assertTrue(materialsDataManager.materialsProducerIdExists(newMaterialsProducerId));
 
-			double expectedTime = c.getTime();
+			
 			
 			for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId.values()) {
 				Object expectedValue = expectedPropertyValues.get(testMaterialsProducerPropertyId);

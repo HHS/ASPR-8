@@ -213,7 +213,7 @@ public final class MaterialsDataManager extends DataManager {
 
 	private final Map<MaterialId, Set<BatchPropertyId>> batchPropertyIdMap = new LinkedHashMap<>();
 
-	private final Map<BatchId, Map<BatchPropertyId, PropertyValueRecord>> batchPropertyMap = new LinkedHashMap<>();
+	private final Map<BatchId, Map<BatchPropertyId, Object>> batchPropertyMap = new LinkedHashMap<>();
 
 	private final Map<BatchId, BatchRecord> batchRecords = new LinkedHashMap<>();
 
@@ -688,10 +688,10 @@ public final class MaterialsDataManager extends DataManager {
 		validateBatchId(batchId);
 		final MaterialId batchMaterial = batchRecords.get(batchId).materialId;
 		validateBatchPropertyId(batchMaterial, batchPropertyId);
-		final Map<BatchPropertyId, PropertyValueRecord> map = batchPropertyMap.get(batchId);
-		final PropertyValueRecord propertyValueRecord = map.get(batchPropertyId);
-		if (propertyValueRecord != null) {
-			return (T) propertyValueRecord.getValue();
+		final Map<BatchPropertyId, Object> map = batchPropertyMap.get(batchId);
+		final Object propertyValue = map.get(batchPropertyId);
+		if (propertyValue != null) {
+			return (T) propertyValue;
 		}
 		PropertyDefinition propertyDefinition = batchPropertyDefinitions.get(batchMaterial).get(batchPropertyId);
 		return (T) propertyDefinition.getDefaultValue().get();
@@ -1307,14 +1307,12 @@ public final class MaterialsDataManager extends DataManager {
 		materialsProducerRecord.inventory.add(batchRecord);
 		batchRecords.put(batchRecord.batchId, batchRecord);
 
-		final Map<BatchPropertyId, PropertyValueRecord> map = new LinkedHashMap<>();
+		final Map<BatchPropertyId, Object> map = new LinkedHashMap<>();
 		batchPropertyMap.put(batchRecord.batchId, map);
 
 		for (final BatchPropertyId batchPropertyId : propertyValues.keySet()) {
 			final Object batchPropertyValue = propertyValues.get(batchPropertyId);
-			final PropertyValueRecord propertyValueRecord = new PropertyValueRecord(dataManagerContext);
-			propertyValueRecord.setPropertyValue(batchPropertyValue);
-			map.put(batchPropertyId, propertyValueRecord);
+			map.put(batchPropertyId, batchPropertyValue);
 		}
 
 		if (dataManagerContext.subscribersExist(BatchAdditionEvent.class)) {
@@ -1414,10 +1412,8 @@ public final class MaterialsDataManager extends DataManager {
 		for (Pair<BatchId, Object> pair : batchPropertyDefinitionInitialization.getPropertyValues()) {
 			BatchId batchId = pair.getFirst();
 			Object value = pair.getSecond();
-			Map<BatchPropertyId, PropertyValueRecord> map = batchPropertyMap.get(batchId);
-			PropertyValueRecord propertyValueRecord = new PropertyValueRecord(dataManagerContext);
-			propertyValueRecord.setPropertyValue(value);
-			map.put(batchPropertyId, propertyValueRecord);
+			Map<BatchPropertyId, Object> map = batchPropertyMap.get(batchId);
+			map.put(batchPropertyId, value);
 		}
 
 		if (dataManagerContext.subscribersExist(BatchPropertyDefinitionEvent.class)) {
@@ -1440,27 +1436,17 @@ public final class MaterialsDataManager extends DataManager {
 		validateBatchPropertyValueNotNull(batchPropertyValue);
 		validateValueCompatibility(batchPropertyId, propertyDefinition, batchPropertyValue);
 		validateBatchIsNotOnOfferedStage(batchId);
-		final Map<BatchPropertyId, PropertyValueRecord> map = batchPropertyMap.get(batchId);
+		final Map<BatchPropertyId, Object> map = batchPropertyMap.get(batchId);
 
-		if (dataManagerContext.subscribersExist(BatchPropertyUpdateEvent.class)) {
-			Object previousPropertyValue;
-			PropertyValueRecord propertyValueRecord = map.get(batchPropertyId);
-			if (propertyValueRecord == null) {
-				propertyValueRecord = new PropertyValueRecord(dataManagerContext);
-				map.put(batchPropertyId, propertyValueRecord);
+		if (dataManagerContext.subscribersExist(BatchPropertyUpdateEvent.class)) {			
+			Object previousPropertyValue = map.get(batchPropertyId);
+			if (previousPropertyValue == null) {				
 				previousPropertyValue = propertyDefinition.getDefaultValue().get();
-			} else {
-				previousPropertyValue = propertyValueRecord.getValue();
 			}
-			propertyValueRecord.setPropertyValue(batchPropertyValue);
+			map.put(batchPropertyId,batchPropertyValue);
 			dataManagerContext.releaseObservationEvent(new BatchPropertyUpdateEvent(batchId, batchPropertyId, previousPropertyValue, batchPropertyValue));
 		} else {
-			PropertyValueRecord propertyValueRecord = map.get(batchPropertyId);
-			if (propertyValueRecord == null) {
-				propertyValueRecord = new PropertyValueRecord(dataManagerContext);
-				map.put(batchPropertyId, propertyValueRecord);
-			}
-			propertyValueRecord.setPropertyValue(batchPropertyValue);
+			map.put(batchPropertyId,batchPropertyValue);
 		}
 	}
 
@@ -1520,12 +1506,10 @@ public final class MaterialsDataManager extends DataManager {
 		materialsProducerRecord.inventory.add(newBatchRecord);
 		batchRecords.put(newBatchRecord.batchId, newBatchRecord);
 
-		final Map<BatchPropertyId, PropertyValueRecord> map = new LinkedHashMap<>();
+		final Map<BatchPropertyId, Object> map = new LinkedHashMap<>();
 		for (final BatchPropertyId batchPropertyId : propertyValues.keySet()) {
 			Object propertyValue = propertyValues.get(batchPropertyId);
-			final PropertyValueRecord propertyValueRecord = new PropertyValueRecord(dataManagerContext);
-			propertyValueRecord.setPropertyValue(propertyValue);
-			map.put(batchPropertyId, propertyValueRecord);
+			map.put(batchPropertyId, propertyValue);
 		}
 		batchPropertyMap.put(newBatchRecord.batchId, map);
 
@@ -2078,15 +2062,13 @@ public final class MaterialsDataManager extends DataManager {
 			batchRecord.materialsProducerRecord = materialsProducerRecord;
 			materialsProducerRecord.inventory.add(batchRecord);
 			batchRecords.put(batchRecord.batchId, batchRecord);
-			final Map<BatchPropertyId, PropertyValueRecord> map = new LinkedHashMap<>();
+			final Map<BatchPropertyId, Object> map = new LinkedHashMap<>();
 			batchPropertyMap.put(batchRecord.batchId, map);
 
 			Map<BatchPropertyId, Object> batchPropertyValues = materialsPluginData.getBatchPropertyValues(batchId);
 			for (BatchPropertyId batchPropertyId : batchPropertyValues.keySet()) {
-				final Object batchPropertyValue = batchPropertyValues.get(batchPropertyId);
-				PropertyValueRecord propertyValueRecord = new PropertyValueRecord(dataManagerContext);
-				map.put(batchPropertyId, propertyValueRecord);
-				propertyValueRecord.setPropertyValue(batchPropertyValue);
+				final Object batchPropertyValue = batchPropertyValues.get(batchPropertyId);				
+				map.put(batchPropertyId, batchPropertyValue);				
 			}
 
 		}
