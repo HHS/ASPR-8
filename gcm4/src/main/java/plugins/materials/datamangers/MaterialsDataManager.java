@@ -55,7 +55,6 @@ import plugins.resources.support.ResourceError;
 import plugins.resources.support.ResourceId;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
-import plugins.util.properties.PropertyValueRecord;
 import util.errors.ContractException;
 import util.wrappers.MutableLong;
 
@@ -229,7 +228,7 @@ public final class MaterialsDataManager extends DataManager {
 
 	private final Set<MaterialsProducerPropertyId> materialsProducerPropertyIds = new LinkedHashSet<>();
 
-	private final Map<MaterialsProducerId, Map<MaterialsProducerPropertyId, PropertyValueRecord>> materialsProducerPropertyMap = new LinkedHashMap<>();
+	private final Map<MaterialsProducerId, Map<MaterialsProducerPropertyId, Object>> materialsProducerPropertyMap = new LinkedHashMap<>();
 
 	private IdentifiableFunctionMap<MaterialsProducerPropertyUpdateEvent> materialsProducerPropertyUpdateMap = //
 			IdentifiableFunctionMap	.builder(MaterialsProducerPropertyUpdateEvent.class)//
@@ -1135,9 +1134,9 @@ public final class MaterialsDataManager extends DataManager {
 		validateMaterialsProducerId(materialsProducerId);
 		validateMaterialsProducerPropertyId(materialsProducerPropertyId);
 
-		PropertyValueRecord propertyValueRecord = materialsProducerPropertyMap.get(materialsProducerId).get(materialsProducerPropertyId);
-		if (propertyValueRecord != null) {
-			return (T) propertyValueRecord.getValue();
+		Object propertyValue = materialsProducerPropertyMap.get(materialsProducerId).get(materialsProducerPropertyId);
+		if (propertyValue != null) {
+			return (T) propertyValue;
 		}
 		PropertyDefinition propertyDefinition = materialsProducerPropertyDefinitions.get(materialsProducerPropertyId);
 		return (T) propertyDefinition.getDefaultValue().get();
@@ -1633,14 +1632,12 @@ public final class MaterialsDataManager extends DataManager {
 		materialsProducerMap.put(materialsProducerId, materialsProducerRecord);
 
 		// integrate the new producer into the property values
-		Map<MaterialsProducerPropertyId, PropertyValueRecord> propertyValueMap = new LinkedHashMap<>();
+		Map<MaterialsProducerPropertyId, Object> propertyValueMap = new LinkedHashMap<>();
 		materialsProducerPropertyMap.put(materialsProducerId, propertyValueMap);
 
 		for (MaterialsProducerPropertyId materialsProducerPropertyId : materialsProducerPropertyValues.keySet()) {
 			Object propertyValue = materialsProducerPropertyValues.get(materialsProducerPropertyId);
-			PropertyValueRecord propertyValueRecord = new PropertyValueRecord(dataManagerContext);
-			propertyValueRecord.setPropertyValue(propertyValue);
-			propertyValueMap.put(materialsProducerPropertyId, propertyValueRecord);
+			propertyValueMap.put(materialsProducerPropertyId, propertyValue);
 		}
 
 		Map<ResourceId, Long> resourceLevels = materialsProducerConstructionData.getResourceLevels();
@@ -1720,10 +1717,8 @@ public final class MaterialsDataManager extends DataManager {
 			 * consistent with the property definition by contract.
 			 */
 			Object value = pair.getSecond();
-			Map<MaterialsProducerPropertyId, PropertyValueRecord> propertyMap = materialsProducerPropertyMap.get(materialsProducerId);
-			PropertyValueRecord propertyValueRecord = new PropertyValueRecord(dataManagerContext);
-			propertyValueRecord.setPropertyValue(value);
-			propertyMap.put(materialsProducerPropertyId, propertyValueRecord);
+			Map<MaterialsProducerPropertyId, Object> propertyMap = materialsProducerPropertyMap.get(materialsProducerId);
+			propertyMap.put(materialsProducerPropertyId, value);
 		}
 
 		if (dataManagerContext.subscribersExist(MaterialsProducerPropertyDefinitionEvent.class)) {
@@ -1743,28 +1738,17 @@ public final class MaterialsDataManager extends DataManager {
 		validatePropertyMutability(propertyDefinition);
 		validateMaterialProducerPropertyValueNotNull(materialsProducerPropertyValue);
 		validateValueCompatibility(materialsProducerPropertyId, propertyDefinition, materialsProducerPropertyValue);
-		Map<MaterialsProducerPropertyId, PropertyValueRecord> propertyValueMap = materialsProducerPropertyMap.get(materialsProducerId);
-		PropertyValueRecord propertyValueRecord = propertyValueMap.get(materialsProducerPropertyId);
+		Map<MaterialsProducerPropertyId, Object> propertyValueMap = materialsProducerPropertyMap.get(materialsProducerId);
+		Object currentPopertyValue = propertyValueMap.get(materialsProducerPropertyId);
 
 		if (dataManagerContext.subscribersExist(MaterialsProducerPropertyUpdateEvent.class)) {
-			Object oldPropertyValue;
-			if (propertyValueRecord != null) {
-				oldPropertyValue = propertyValueRecord.getValue();
-			} else {
-				propertyValueRecord = new PropertyValueRecord(dataManagerContext);
-				propertyValueMap.put(materialsProducerPropertyId, propertyValueRecord);
-				oldPropertyValue = propertyDefinition.getDefaultValue().get();
+			if (currentPopertyValue == null) {
+				currentPopertyValue = propertyDefinition.getDefaultValue().get();
 			}
-			propertyValueRecord.setPropertyValue(materialsProducerPropertyValue);
-
-			dataManagerContext.releaseObservationEvent(new MaterialsProducerPropertyUpdateEvent(materialsProducerId, materialsProducerPropertyId, oldPropertyValue, materialsProducerPropertyValue));
-
-		} else {
-			if (propertyValueRecord == null) {
-				propertyValueRecord = new PropertyValueRecord(dataManagerContext);
-				propertyValueMap.put(materialsProducerPropertyId, propertyValueRecord);
-			}
-			propertyValueRecord.setPropertyValue(materialsProducerPropertyValue);
+			propertyValueMap.put(materialsProducerPropertyId,materialsProducerPropertyValue);
+			dataManagerContext.releaseObservationEvent(new MaterialsProducerPropertyUpdateEvent(materialsProducerId, materialsProducerPropertyId, currentPopertyValue, materialsProducerPropertyValue));
+		} else {			
+			propertyValueMap.put(materialsProducerPropertyId,materialsProducerPropertyValue);
 		}
 
 	}
@@ -2030,10 +2014,8 @@ public final class MaterialsDataManager extends DataManager {
 			Map<MaterialsProducerPropertyId, Object> materialsProducerPropertyValues = materialsPluginData.getMaterialsProducerPropertyValues(materialsProducerId);
 			for (final MaterialsProducerPropertyId materialsProducerPropertyId : materialsProducerPropertyValues.keySet()) {
 				final Object value = materialsProducerPropertyValues.get(materialsProducerPropertyId);
-				Map<MaterialsProducerPropertyId, PropertyValueRecord> propertyToValueMap = materialsProducerPropertyMap.get(materialsProducerId);
-				PropertyValueRecord propertyValueRecord = new PropertyValueRecord(dataManagerContext);
-				propertyToValueMap.put(materialsProducerPropertyId, propertyValueRecord);
-				propertyValueRecord.setPropertyValue(value);
+				Map<MaterialsProducerPropertyId, Object> propertyToValueMap = materialsProducerPropertyMap.get(materialsProducerId);
+				propertyToValueMap.put(materialsProducerPropertyId, value);
 			}
 		}
 
