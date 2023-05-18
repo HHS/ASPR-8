@@ -690,6 +690,7 @@ public final class MaterialsPluginData implements PluginData {
 		private final Map<BatchId, MaterialsProducerId> batchMaterialsProducers;
 
 		private final Map<BatchId, Map<BatchPropertyId, Object>> batchPropertyValues;
+		
 		private final Map<BatchPropertyId, Object> emptyBatchPropertyValues;
 
 		private final Set<StageId> stageIds;
