@@ -14,6 +14,12 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.ReportsTranslatorId
 import gov.hhs.aspr.translation.core.Translator;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
 
+/**
+ * Translator for the Groups Plugin.
+ * <li>Using this Translator will add
+ * all the necessary TanslationSpecs needed to read and write
+ * GroupsPluginData
+ */
 public class GroupsTranslator {
 
     private GroupsTranslator() {
