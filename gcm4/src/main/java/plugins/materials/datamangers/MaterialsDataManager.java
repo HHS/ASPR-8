@@ -225,8 +225,6 @@ public final class MaterialsDataManager extends DataManager {
 
 	private final Map<MaterialsProducerId, MaterialsProducerRecord> materialsProducerMap = new LinkedHashMap<>();
 
-	private final Map<MaterialsProducerPropertyId, Double> materialsProducerPropertyCreationTimes = new LinkedHashMap<>();
-
 	private final Map<MaterialsProducerPropertyId, PropertyDefinition> materialsProducerPropertyDefinitions = new LinkedHashMap<>();
 
 	private final Set<MaterialsProducerPropertyId> materialsProducerPropertyIds = new LinkedHashSet<>();
@@ -1117,33 +1115,7 @@ public final class MaterialsDataManager extends DataManager {
 		return result;
 	}
 
-	/**
-	 * Returns the time when the of the materials producer property was last
-	 * assigned.
-	 * 
-	 * @throws ContractException
-	 *             <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID} if
-	 *             the materials producer id is null</li>
-	 *             <li>{@linkplain MaterialsError#UNKNOWN_MATERIALS_PRODUCER_ID}
-	 *             if the materials producer id is unknown</li>
-	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
-	 *             materials producer property id is null</li>
-	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if the
-	 *             materials producer property id is unknown</li>
-	 */
-
-	public double getMaterialsProducerPropertyTime(MaterialsProducerId materialsProducerId, MaterialsProducerPropertyId materialsProducerPropertyId) {
-		validateMaterialsProducerId(materialsProducerId);
-		validateMaterialsProducerPropertyId(materialsProducerPropertyId);
-
-		PropertyValueRecord propertyValueRecord = materialsProducerPropertyMap.get(materialsProducerId).get(materialsProducerPropertyId);
-		if (propertyValueRecord != null) {
-			return propertyValueRecord.getAssignmentTime();
-		}
-
-		return materialsProducerPropertyCreationTimes.get(materialsProducerPropertyId);
-
-	}
+	
 
 	/**
 	 * Returns the value of the materials producer property.
@@ -1750,8 +1722,7 @@ public final class MaterialsDataManager extends DataManager {
 			}
 		}
 
-		materialsProducerPropertyDefinitions.put(materialsProducerPropertyId, propertyDefinition);
-		materialsProducerPropertyCreationTimes.put(materialsProducerPropertyId, dataManagerContext.getTime());
+		materialsProducerPropertyDefinitions.put(materialsProducerPropertyId, propertyDefinition);		
 		materialsProducerPropertyIds.add(materialsProducerPropertyId);
 
 		if (checkAllProducersHaveValues) {
@@ -2054,8 +2025,7 @@ public final class MaterialsDataManager extends DataManager {
 		for (MaterialsProducerPropertyId materialsProducerPropertyId : materialsPluginData.getMaterialsProducerPropertyIds()) {
 			materialsProducerPropertyIds.add(materialsProducerPropertyId);
 			PropertyDefinition propertyDefinition = materialsPluginData.getMaterialsProducerPropertyDefinition(materialsProducerPropertyId);
-			materialsProducerPropertyDefinitions.put(materialsProducerPropertyId, propertyDefinition);
-			materialsProducerPropertyCreationTimes.put(materialsProducerPropertyId, dataManagerContext.getTime());
+			materialsProducerPropertyDefinitions.put(materialsProducerPropertyId, propertyDefinition);			
 			if (propertyDefinition.getDefaultValue().isEmpty()) {
 				nonDefaultBearingProducerPropertyIds.put(materialsProducerPropertyId, nonDefaultBearingProducerPropertyIds.size());
 			}
