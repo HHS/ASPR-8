@@ -7,8 +7,6 @@ import org.junit.jupiter.api.Test;
 
 import plugins.resources.support.ResourceError;
 import plugins.resources.support.ResourceId;
-import plugins.resources.testsupport.TestResourceId;
-import plugins.util.properties.PropertyError;
 import plugins.util.properties.TimeTrackingPolicy;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
@@ -19,16 +17,10 @@ public class AT_ResourceIdAdditionEvent {
 	@Test
 	@UnitTestConstructor(target = ResourceIdAdditionEvent.class, args = { ResourceId.class, TimeTrackingPolicy.class })
 	public void testConstructor() {
-		TimeTrackingPolicy timeTrackingPolicy = TimeTrackingPolicy.TRACK_TIME;
-		TestResourceId testResourceId = TestResourceId.RESOURCE_1;
-
+		
 		// test case: null resource id
-		ContractException resourceIdContractException = assertThrows(ContractException.class, () -> new ResourceIdAdditionEvent(null, timeTrackingPolicy));
+		ContractException resourceIdContractException = assertThrows(ContractException.class, () -> new ResourceIdAdditionEvent(null, true));
 		assertEquals(resourceIdContractException.getErrorType(), ResourceError.NULL_RESOURCE_ID);
-
-		// test case: null time tracking policy
-		ContractException timeContractException = assertThrows(ContractException.class, () -> new ResourceIdAdditionEvent(testResourceId, null));
-		assertEquals(timeContractException.getErrorType(), PropertyError.NULL_TIME_TRACKING_POLICY);
 	}
 
 	@Test

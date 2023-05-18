@@ -46,7 +46,6 @@ import plugins.stochastics.StochasticsPluginId;
 import plugins.stochastics.support.StochasticsError;
 import plugins.stochastics.support.WellState;
 import plugins.util.properties.PropertyDefinition;
-import plugins.util.properties.TimeTrackingPolicy;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.random.RandomGeneratorProvider;
@@ -318,8 +317,8 @@ public class AT_ResourcesTestPluginFactory {
 		assertEquals(expectedResourceIds, actualResourceIds);
 
 		for (TestResourceId resourceId : TestResourceId.values()) {
-			TimeTrackingPolicy expectedPolicy = resourceId.getTimeTrackingPolicy();
-			TimeTrackingPolicy actualPolicy = resourcesPluginData.getPersonResourceTimeTrackingPolicy(resourceId);
+			boolean expectedPolicy = resourceId.getTimeTrackingPolicy();
+			boolean actualPolicy = resourcesPluginData.getResourceTimeTrackingPolicy(resourceId);
 			assertEquals(expectedPolicy, actualPolicy);
 		}
 

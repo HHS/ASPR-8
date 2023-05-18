@@ -3,26 +3,25 @@ package plugins.resources.testsupport;
 import org.apache.commons.math3.random.RandomGenerator;
 
 import plugins.resources.support.ResourceId;
-import plugins.util.properties.TimeTrackingPolicy;
 
 /**
  * Enumeration that identifies resources for all tests
  */
 public enum TestResourceId implements ResourceId {
-	RESOURCE_1(TimeTrackingPolicy.TRACK_TIME),
-	RESOURCE_2(TimeTrackingPolicy.DO_NOT_TRACK_TIME),
-	RESOURCE_3(TimeTrackingPolicy.TRACK_TIME),
-	RESOURCE_4(TimeTrackingPolicy.DO_NOT_TRACK_TIME),
-	RESOURCE_5(TimeTrackingPolicy.TRACK_TIME);
+	RESOURCE_1(true),
+	RESOURCE_2(false),
+	RESOURCE_3(true),
+	RESOURCE_4(false),
+	RESOURCE_5(true);
 		
 
-	private final TimeTrackingPolicy timeTrackingPolicy;
+	private final boolean timeTrackingPolicy;
 
-	private TestResourceId(TimeTrackingPolicy timeTrackingPolicy) {
+	private TestResourceId(boolean timeTrackingPolicy) {
 		this.timeTrackingPolicy = timeTrackingPolicy;
 	}
 
-	public TimeTrackingPolicy getTimeTrackingPolicy() {
+	public boolean getTimeTrackingPolicy() {
 		return timeTrackingPolicy;
 	}
 
