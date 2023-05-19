@@ -1,5 +1,9 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.reports;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.junit.jupiter.api.Test;
+
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.translationSpecs.ReportLabelTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.translationSpecs.ReportPeriodTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.translationSpecs.SimpleReportLabelTranslationSpec;
@@ -7,20 +11,14 @@ import gov.hhs.aspr.translation.core.Translator;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
 import plugins.reports.support.ReportLabel;
 import plugins.reports.support.SimpleReportLabel;
+import util.annotations.UnitTestMethod;
 
-/**
- * Translator for the Reports Plugin.
- * <li>Using this Translator will add
- * all the necessary TanslationSpecs needed to read and write
- * ReportsPlugin
- */
-public class ReportsTranslator {
+public class AT_ReportsTranslator {
 
-    private ReportsTranslator() {
-    }
-
-    private static Translator.Builder builder() {
-        Translator.Builder builder = Translator.builder()
+    @Test
+    @UnitTestMethod(target = ReportsTranslator.class, name = "getTranslator", args = {})
+    public void testGetTranslator() {
+        Translator expectedTranslator = Translator.builder()
                 .setTranslatorId(ReportsTranslatorId.TRANSLATOR_ID)
                 .setInitializer((translatorContext) -> {
                     ProtobufTranslationEngine.Builder translationEngineBuilder = translatorContext
@@ -32,12 +30,8 @@ public class ReportsTranslator {
                             .addTranslationSpec(new SimpleReportLabelTranslationSpec());
 
                     translatorContext.addParentChildClassRelationship(SimpleReportLabel.class, ReportLabel.class);
-                });
+                }).build();
 
-        return builder;
-    }
-
-    public static Translator getTranslator() {
-        return builder().build();
+        assertEquals(expectedTranslator, ReportsTranslator.getTranslator());
     }
 }

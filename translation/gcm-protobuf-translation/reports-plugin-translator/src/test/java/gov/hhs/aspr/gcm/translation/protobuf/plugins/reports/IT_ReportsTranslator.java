@@ -12,12 +12,14 @@ import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
 import gov.hhs.aspr.translation.core.testsupport.TestResourceHelper;
 import plugins.reports.support.ReportLabel;
 import plugins.reports.support.SimpleReportLabel;
+import util.annotations.UnitTestForCoverage;
 
-public class AppTest {
+public class IT_ReportsTranslator {
     Path basePath = TestResourceHelper.getResourceDir(this.getClass());
     Path filePath = TestResourceHelper.makeTestOutputDir(basePath);
 
     @Test
+    @UnitTestForCoverage
     public void testReportLabelTranslatorSpec() {
         String fileName = "reportLabel.json";
 
