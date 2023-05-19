@@ -91,27 +91,34 @@ public class AT_WellState {
     @UnitTestMethod(target = WellState.class, name = "hashCode", args = {})
     public void testHashCode() {
         // show that equal well states have equal hash codes
-        WellState.Builder builder = WellState.builder();
+        Set<Integer> hashCodes = new LinkedHashSet<>();
         Long seed = 6559152513645047938L;
-        int index = 13;
-        int[] vArray = new int[1391];
-
-        WellState wellState1 = builder.setSeed(seed).setInternals(index, vArray).build();
-        WellState wellState2 = builder.setSeed(seed).setInternals(index, vArray).build();
-
-        assertEquals(wellState1.hashCode(), wellState2.hashCode());
+        WellState wellState1 = createWellState(seed);
+        Integer wellStateHash = wellState1.hashCode();
+        for (int i = 0; i < 5; i++) {
+            WellState wellState = createWellState(seed);
+            Integer stateHash = wellState.hashCode();
+            hashCodes.add(stateHash);
+            // show that when called multiple times on the same object, the same hash code is returned
+            assertEquals(stateHash, wellState.hashCode());
+        }
+        for (Integer hashCode : hashCodes) {
+            assertEquals(wellStateHash, hashCode);
+        }
+        WellState differentWellState = createWellState(5887805138861262404L);
+        Integer differentHash = differentWellState.hashCode();
+        assertNotEquals(differentHash, wellStateHash);
 
         // show that hash codes are reasonably distributed
         RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(4898576492932415902L);
-        Set<Integer> hashCodes = new LinkedHashSet<Integer>();
+        hashCodes = new LinkedHashSet<>();
         for (int i = 0; i < 100; i++) {
             Long stateSeed = randomGenerator.nextLong();
-            int stateIndex = randomGenerator.nextInt(1390);
-            WellState wellState = builder.setInternals(stateIndex, vArray).setSeed(stateSeed).build();
+            WellState wellState = createWellState(stateSeed);
             int stateHash = wellState.hashCode();
             hashCodes.add(stateHash);
         }
-        assertTrue(hashCodes.size() >= 85);
+        assertTrue(hashCodes.size() >= 90);
     }
 
     @Test
@@ -152,29 +159,37 @@ public class AT_WellState {
     @Test
     @UnitTestMethod(target = WellState.class, name = "equals", args = {Object.class}, tags = UnitTag.INCOMPLETE)
     public void testEquals() {
-        WellState.Builder builder = WellState.builder();
-        Long seed = 6559152513645047938L;
-        int index = 13;
-        int[] vArray = new int[1391];
+        Set<WellState> wellStates = new LinkedHashSet<>();
+        Long seed = 2864116845603920430L;
+        WellState wellState1 = createWellState(seed);
+        for (int i = 0; i < 5; i++) {
+            WellState wellState = createWellState(seed);
+            wellStates.add(wellState);
+        }
+        for (WellState wellState : wellStates) {
+            assertEquals(wellState1, wellState);
+        }
 
-        WellState wellState = builder
-                .setInternals(index, vArray)
-                .setSeed(seed)
-                .build();
-
-        WellState duplicateState = builder
-                .setInternals(index, vArray)
-                .setSeed(seed)
-                .build();
-
-        WellState differentState = builder
-                .setInternals(23, vArray)
-                .setSeed(5289854998653146199L)
-                .build();
-
-        assertTrue(wellState.equals(duplicateState));
-        assertFalse(wellState.equals(differentState));
+        RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7242512295369848202L);
+        wellStates = new LinkedHashSet<>();
+        for (int i = 0; i < 100; i++) {
+            Long stateSeed = randomGenerator.nextLong();
+            WellState wellState = createWellState(stateSeed);
+            wellStates.add(wellState);
+        }
+        assertTrue(wellStates.size() >= 95);
     }
 
 
+    private WellState createWellState(Long seed) {
+        RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
+        int stateIndex = randomGenerator.nextInt(1390);
+        int[] vArray = new int[1391];
+
+        for (int i = 0; i < 1391; i++) {
+            vArray[i] = randomGenerator.nextInt();
+        }
+        WellState wellState = WellState.builder().setInternals(stateIndex, vArray).setSeed(seed).build();
+        return wellState;
+    }
 }
