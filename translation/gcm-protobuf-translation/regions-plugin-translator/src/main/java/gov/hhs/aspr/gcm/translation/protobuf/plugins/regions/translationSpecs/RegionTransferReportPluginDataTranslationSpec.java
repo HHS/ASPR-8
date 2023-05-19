@@ -8,6 +8,11 @@ import plugins.regions.reports.RegionTransferReportPluginData;
 import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportPeriod;
 
+/**
+ * TranslationSpec that defines how to convert between
+ * {@linkplain RegionTransferReportPluginDataInput} and
+ * {@linkplain RegionTransferReportPluginData}
+ */
 public class RegionTransferReportPluginDataTranslationSpec
         extends ProtobufTranslationSpec<RegionTransferReportPluginDataInput, RegionTransferReportPluginData> {
 

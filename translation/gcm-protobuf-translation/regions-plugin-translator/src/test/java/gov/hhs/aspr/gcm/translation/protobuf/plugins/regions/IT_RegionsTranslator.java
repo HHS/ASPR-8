@@ -32,13 +32,15 @@ import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportPeriod;
 import plugins.reports.support.SimpleReportLabel;
 import plugins.util.properties.TimeTrackingPolicy;
+import util.annotations.UnitTestForCoverage;
 import util.random.RandomGeneratorProvider;
 
-public class AppTest {
+public class IT_RegionsTranslator {
     Path basePath = TestResourceHelper.getResourceDir(this.getClass());
     Path filePath = TestResourceHelper.makeTestOutputDir(basePath);
 
     @Test
+    @UnitTestForCoverage
     public void testRegionsTranslator() {
         String fileName = "pluginData.json";
 
@@ -73,6 +75,7 @@ public class AppTest {
     }
 
     @Test
+    @UnitTestForCoverage
     public void testRegionPropertyReportTranslatorSpec() {
         String fileName = "propertyReport.json";
 
@@ -122,6 +125,7 @@ public class AppTest {
     }
 
     @Test
+    @UnitTestForCoverage
     public void testRegionTransferReportTranslatorSpec() {
         String fileName = "transferReport.json";
 
