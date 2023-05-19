@@ -31,8 +31,7 @@ public class PropertyDefinitionTranslationSpec
                 classType = Class.forName(type);
                 builder.setType(classType);
             } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-                throw new RuntimeException("Unable to find class for type: " + type);
+                throw new RuntimeException("Unable to find class for type: " + type, e);
             }
         }
 
