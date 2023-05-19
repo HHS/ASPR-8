@@ -3,7 +3,7 @@ package plugins.resources.support;
 import net.jcip.annotations.Immutable;
 
 @Immutable
-public class ResourceInitialization {
+public final class ResourceInitialization {
 	private final ResourceId resourceId;
 	private final Long amount;
 

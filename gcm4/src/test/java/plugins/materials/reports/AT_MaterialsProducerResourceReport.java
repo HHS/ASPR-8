@@ -36,7 +36,6 @@ import plugins.resources.datamanagers.ResourcesDataManager;
 import plugins.resources.support.ResourceId;
 import plugins.resources.testsupport.TestResourceId;
 import plugins.stochastics.StochasticsDataManager;
-import plugins.util.properties.TimeTrackingPolicy;
 import util.annotations.UnitTag;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
@@ -86,7 +85,7 @@ public final class AT_MaterialsProducerResourceReport {
 
 			ResourceId newResourceId = TestResourceId.getUnknownResourceId();
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
-			resourcesDataManager.addResourceId(newResourceId, TimeTrackingPolicy.TRACK_TIME);
+			resourcesDataManager.addResourceId(newResourceId, true);
 
 			for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
 				expectedReportItems.put(getReportItemFromResourceId(c, testMaterialsProducerId, newResourceId, 0L), 1);
@@ -182,7 +181,7 @@ public final class AT_MaterialsProducerResourceReport {
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(actionTime++, (c) -> {
 			ResourceId newResourceId = TestResourceId.getUnknownResourceId();
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
-			resourcesDataManager.addResourceId(newResourceId, TimeTrackingPolicy.TRACK_TIME);
+			resourcesDataManager.addResourceId(newResourceId, true);
 		}));
 
 		// add a new materials producer just before time 20
