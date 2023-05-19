@@ -516,6 +516,12 @@
             </modules>
         </profile>
         <profile>
+            <id>reports</id>
+            <modules>
+                <module>reports-plugin-translator</module>
+            </modules>
+        </profile>
+        <profile>
             <id>person-props</id>
             <modules>
                 <module>reports-plugin-translator</module>
