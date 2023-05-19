@@ -9,7 +9,6 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.stochastics.StochasticsTran
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.stochastics.input.WellStateInput;
 import gov.hhs.aspr.translation.core.TranslationController;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
-import plugins.stochastics.support.Well;
 import plugins.stochastics.support.WellState;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestForCoverage;
