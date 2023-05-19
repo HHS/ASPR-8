@@ -4,6 +4,11 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.input.BatchIdInpu
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 import plugins.materials.support.BatchId;
 
+/**
+ * TranslationSpec that defines how to convert between
+ * {@linkplain BatchIdInput} and
+ * {@linkplain BatchId}
+ */
 public class BatchIdTranslationSpec extends ProtobufTranslationSpec<BatchIdInput, BatchId> {
 
     @Override

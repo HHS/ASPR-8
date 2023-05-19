@@ -27,12 +27,14 @@ import plugins.materials.reports.StageReportPluginData;
 import plugins.materials.testsupport.MaterialsTestPluginFactory;
 import plugins.reports.support.ReportLabel;
 import plugins.reports.support.SimpleReportLabel;
+import util.annotations.UnitTestForCoverage;
 
-public class AppTest {
+public class IT_MaterialsTranslator {
 	Path basePath = TestResourceHelper.getResourceDir(this.getClass());
 	Path filePath = TestResourceHelper.makeTestOutputDir(basePath);
 
 	@Test
+	@UnitTestForCoverage
 	public void testMaterialsTranslator() {
 		String fileName = "pluginData.json";
 
@@ -66,6 +68,7 @@ public class AppTest {
 	}
 
 	@Test
+	@UnitTestForCoverage
 	public void testBatchStatusReportPluginDataTranslatorSpec() {
 		String fileName = "batchStatusReport.json";
 
@@ -103,6 +106,7 @@ public class AppTest {
 	}
 
 	@Test
+	@UnitTestForCoverage
 	public void testMaterialsProducerPropertyReportPluginDataTranslatorSpec() {
 		String fileName = "materialsProducerPropertyReport.json";
 
@@ -139,6 +143,7 @@ public class AppTest {
 	}
 
 	@Test
+	@UnitTestForCoverage
 	public void testMaterialsProducerResourceReportPluginDataTranslatorSpec() {
 		String fileName = "materialsProducerResourceReport.json";
 
@@ -174,6 +179,7 @@ public class AppTest {
 	}
 
 	@Test
+	@UnitTestForCoverage
 	public void testStageReportPluginDataTranslatorSpec() {
 		String fileName = "stageReport.json";
 

@@ -1,7 +1,9 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.materials;
 
-import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
-import gov.hhs.aspr.translation.core.Translator;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.junit.jupiter.api.Test;
+
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.input.BatchIdInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.input.StageIdInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.translationSpecs.BatchIdTranslationSpec;
@@ -23,20 +25,16 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.PropertiesTransl
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.RegionsTranslatorId;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.ReportsTranslatorId;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.ResourcesTranslatorId;
+import gov.hhs.aspr.translation.core.Translator;
+import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
+import util.annotations.UnitTestMethod;
 
-/**
- * Translator for the Materials Plugin.
- * <li>Using this Translator will add
- * all the necessary TanslationSpecs needed to read and write
- * MaterialsPluginData
- */
-public class MaterialsTranslator {
+public class AT_MaterialsTranslator {
 
-    private MaterialsTranslator() {
-    }
-
-    private static Translator.Builder builder(boolean withReport) {
-        Translator.Builder builder = Translator.builder()
+    @Test
+    @UnitTestMethod(target = MaterialsTranslator.class, name = "getTranslator", args = {})
+    public void testGetTranslator() {
+        Translator expectedTranslator = Translator.builder()
                 .setTranslatorId(MaterialsTranslatorId.TRANSLATOR_ID)
                 .addDependency(PropertiesTranslatorId.TRANSLATOR_ID)
                 .addDependency(ResourcesTranslatorId.TRANSLATOR_ID)
@@ -58,31 +56,49 @@ public class MaterialsTranslator {
                             .addTranslationSpec(new TestMaterialsProducerIdTranslationSpec())
                             .addTranslationSpec(new TestMaterialsProducerPropertyIdTranslationSpec());
 
-                    if (withReport) {
-                        translationEngineBuilder
-                                .addTranslationSpec(new BatchStatusReportPluginDataTranslationSpec())
-                                .addTranslationSpec(new MaterialsProducerPropertyReportPluginDataTranslationSpec())
-                                .addTranslationSpec(new MaterialsProducerResourceReportPluginDataTranslationSpec())
-                                .addTranslationSpec(new StageReportPluginDataTranslationSpec());
-                    }
+                    translationEngineBuilder
+                            .addFieldToIncludeDefaultValue(BatchIdInput.getDescriptor().findFieldByName("id"))
+                            .addFieldToIncludeDefaultValue(StageIdInput.getDescriptor().findFieldByName("id"));
+                }).build();
+
+        assertEquals(expectedTranslator, MaterialsTranslator.getTranslator());
+    }
+
+    @Test
+    @UnitTestMethod(target = MaterialsTranslator.class, name = "getTranslatorWithReport", args = {})
+    public void testGetTranslatorWithReport() {
+        Translator expectedTranslator = Translator.builder()
+                .setTranslatorId(MaterialsTranslatorId.TRANSLATOR_ID)
+                .addDependency(PropertiesTranslatorId.TRANSLATOR_ID)
+                .addDependency(ResourcesTranslatorId.TRANSLATOR_ID)
+                .addDependency(RegionsTranslatorId.TRANSLATOR_ID)
+                .addDependency(ReportsTranslatorId.TRANSLATOR_ID)
+                .setInitializer((translatorContext) -> {
+                    ProtobufTranslationEngine.Builder translationEngineBuilder = translatorContext
+                            .getTranslationEngineBuilder(ProtobufTranslationEngine.Builder.class);
+
+                    translationEngineBuilder
+                            .addTranslationSpec(new MaterialsPluginDataTranslationSpec())
+                            .addTranslationSpec(new MaterialIdTranslationSpec())
+                            .addTranslationSpec(new MaterialsProducerIdTranslationSpec())
+                            .addTranslationSpec(new MaterialsProducerPropertyIdTranslationSpec())
+                            .addTranslationSpec(new BatchIdTranslationSpec())
+                            .addTranslationSpec(new StageIdTranslationSpec())
+                            .addTranslationSpec(new BatchPropertyIdTranslationSpec())
+                            .addTranslationSpec(new TestBatchPropertyIdTranslationSpec())
+                            .addTranslationSpec(new TestMaterialIdTranslationSpec())
+                            .addTranslationSpec(new TestMaterialsProducerIdTranslationSpec())
+                            .addTranslationSpec(new TestMaterialsProducerPropertyIdTranslationSpec())
+                            .addTranslationSpec(new BatchStatusReportPluginDataTranslationSpec())
+                            .addTranslationSpec(new MaterialsProducerPropertyReportPluginDataTranslationSpec())
+                            .addTranslationSpec(new MaterialsProducerResourceReportPluginDataTranslationSpec())
+                            .addTranslationSpec(new StageReportPluginDataTranslationSpec());
 
                     translationEngineBuilder
                             .addFieldToIncludeDefaultValue(BatchIdInput.getDescriptor().findFieldByName("id"))
                             .addFieldToIncludeDefaultValue(StageIdInput.getDescriptor().findFieldByName("id"));
-                });
+                }).build();
 
-        if (withReport) {
-            builder.addDependency(ReportsTranslatorId.TRANSLATOR_ID);
-        }
-
-        return builder;
-    }
-
-    public static Translator getTranslatorWithReport() {
-        return builder(true).build();
-    }
-
-    public static Translator getTranslator() {
-        return builder(false).build();
+        assertEquals(expectedTranslator, MaterialsTranslator.getTranslatorWithReport());
     }
 }

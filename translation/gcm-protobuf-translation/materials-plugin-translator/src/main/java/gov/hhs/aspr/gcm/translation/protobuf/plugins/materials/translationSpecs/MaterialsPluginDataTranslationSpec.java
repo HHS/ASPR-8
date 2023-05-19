@@ -25,6 +25,11 @@ import plugins.materials.support.StageId;
 import plugins.resources.support.ResourceId;
 import plugins.util.properties.PropertyDefinition;
 
+/**
+ * TranslationSpec that defines how to convert between
+ * {@linkplain MaterialsPluginDataInput} and
+ * {@linkplain MaterialsPluginData}
+ */
 public class MaterialsPluginDataTranslationSpec
 		extends ProtobufTranslationSpec<MaterialsPluginDataInput, MaterialsPluginData> {
 

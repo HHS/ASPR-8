@@ -4,6 +4,11 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.input.TestMateria
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 import plugins.materials.testsupport.TestMaterialsProducerId;
 
+/**
+ * TranslationSpec that defines how to convert between
+ * {@linkplain TestMaterialsProducerIdInput} and
+ * {@linkplain TestMaterialsProducerId}
+ */
 public class TestMaterialsProducerIdTranslationSpec
         extends ProtobufTranslationSpec<TestMaterialsProducerIdInput, TestMaterialsProducerId> {
 
