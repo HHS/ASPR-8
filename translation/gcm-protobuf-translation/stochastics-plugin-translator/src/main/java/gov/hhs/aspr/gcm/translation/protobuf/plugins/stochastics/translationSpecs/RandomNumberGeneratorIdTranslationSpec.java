@@ -4,7 +4,12 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.stochastics.input.RandomNum
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 import plugins.stochastics.support.RandomNumberGeneratorId;
 
-public class RandomGeneratorIdTranslationSpec
+/**
+ * TranslationSpec that defines how to convert between
+ * {@linkplain RandomNumberGeneratorIdInput} and
+ * {@linkplain RandomNumberGeneratorId}
+ */
+public class RandomNumberGeneratorIdTranslationSpec
         extends ProtobufTranslationSpec<RandomNumberGeneratorIdInput, RandomNumberGeneratorId> {
 
     @Override

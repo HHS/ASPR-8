@@ -9,6 +9,11 @@ import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.stochastics.input.WellStateInput;
 import plugins.stochastics.support.WellState;
 
+/**
+ * TranslationSpec that defines how to convert between
+ * {@linkplain WellStateInput} and
+ * {@linkplain WellState}
+ */
 public class WellStateTranslationSpec
         extends ProtobufTranslationSpec<WellStateInput, WellState> {
 
@@ -34,14 +39,10 @@ public class WellStateTranslationSpec
 
         builder.setSeed(appObject.getSeed());
 
-        if (appObject.getIndex() > 0) {
-            builder.setIndex(appObject.getIndex());
-        }
+        builder.setIndex(appObject.getIndex());
 
-        if (appObject.getVArray().length > 0) {
-            ByteString byteString = encode(appObject.getVArray());
-            builder.setVArray(byteString);
-        }
+        ByteString byteString = encode(appObject.getVArray());
+        builder.setVArray(byteString);
 
         return builder.build();
     }

@@ -17,12 +17,14 @@ import plugins.stochastics.support.Well;
 import plugins.stochastics.support.WellState;
 import plugins.stochastics.testsupport.StochasticsTestPluginFactory;
 import plugins.stochastics.testsupport.TestRandomGeneratorId;
+import util.annotations.UnitTestForCoverage;
 
-public class AppTest {
+public class IT_StochasticsTranslator {
     Path basePath = TestResourceHelper.getResourceDir(this.getClass());
     Path filePath = TestResourceHelper.makeTestOutputDir(basePath);
 
     @Test
+    @UnitTestForCoverage
     public void testStochasticsTranslator() {
         String fileName = "pluginData.json";
 

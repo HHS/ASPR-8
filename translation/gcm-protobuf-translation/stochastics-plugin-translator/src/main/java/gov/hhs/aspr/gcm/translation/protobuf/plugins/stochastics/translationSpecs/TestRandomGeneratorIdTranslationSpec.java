@@ -4,6 +4,11 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.stochastics.input.TestRando
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 import plugins.stochastics.testsupport.TestRandomGeneratorId;
 
+/**
+ * TranslationSpec that defines how to convert between
+ * {@linkplain TestRandomGeneratorIdInput} and
+ * {@linkplain TestRandomGeneratorId}
+ */
 public class TestRandomGeneratorIdTranslationSpec
         extends ProtobufTranslationSpec<TestRandomGeneratorIdInput, TestRandomGeneratorId> {
 
