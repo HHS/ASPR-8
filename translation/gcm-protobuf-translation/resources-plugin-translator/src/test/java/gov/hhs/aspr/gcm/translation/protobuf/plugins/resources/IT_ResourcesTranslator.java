@@ -31,13 +31,15 @@ import plugins.resources.reports.ResourceReportPluginData;
 import plugins.resources.support.ResourceId;
 import plugins.resources.testsupport.ResourcesTestPluginFactory;
 import plugins.resources.testsupport.TestResourceId;
+import util.annotations.UnitTestForCoverage;
 import util.random.RandomGeneratorProvider;
 
-public class AppTest {
+public class IT_ResourcesTranslator {
     Path basePath = TestResourceHelper.getResourceDir(this.getClass());
     Path filePath = TestResourceHelper.makeTestOutputDir(basePath);
 
     @Test
+    @UnitTestForCoverage
     public void testResourcesTranslator() {
         String fileName = "pluginData.json";
 
@@ -67,6 +69,7 @@ public class AppTest {
     }
 
     @Test
+    @UnitTestForCoverage
     public void testPersonResourceReportTranslatorSpec() {
         String fileName = "personResourceReport.json";
 
@@ -119,6 +122,7 @@ public class AppTest {
     }
 
     @Test
+    @UnitTestForCoverage
     public void testResourcePropertyReportTranslatorSpec() {
         String fileName = "resourcePropertyReport.json";
 
@@ -155,6 +159,7 @@ public class AppTest {
     }
 
     @Test
+    @UnitTestForCoverage
     public void testResourceReportTranslatorSpec() {
         String fileName = "resourceReport.json";
 

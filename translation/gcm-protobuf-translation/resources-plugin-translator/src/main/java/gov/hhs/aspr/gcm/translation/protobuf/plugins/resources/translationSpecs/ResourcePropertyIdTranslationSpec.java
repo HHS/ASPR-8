@@ -4,6 +4,11 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.input.ResourcePro
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 import plugins.resources.support.ResourcePropertyId;
 
+/**
+ * TranslationSpec that defines how to convert between
+ * {@linkplain ResourcePropertyIdInput} and
+ * {@linkplain ResourcePropertyId}
+ */
 public class ResourcePropertyIdTranslationSpec
         extends ProtobufTranslationSpec<ResourcePropertyIdInput, ResourcePropertyId> {
 

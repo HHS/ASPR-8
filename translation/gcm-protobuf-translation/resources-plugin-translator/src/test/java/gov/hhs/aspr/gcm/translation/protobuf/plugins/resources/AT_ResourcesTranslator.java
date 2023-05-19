@@ -1,5 +1,9 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.resources;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.junit.jupiter.api.Test;
+
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.PeopleTranslatorId;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.PropertiesTranslatorId;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.RegionsTranslatorId;
@@ -15,20 +19,16 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.translationSpecs.
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.translationSpecs.TestResourcePropertyIdTranslationSpec;
 import gov.hhs.aspr.translation.core.Translator;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
+import plugins.reports.support.ReportLabel;
+import plugins.reports.support.SimpleReportLabel;
+import util.annotations.UnitTestMethod;
 
-/**
- * Translator for the Resources Plugin.
- * <li>Using this Translator will add
- * all the necessary TanslationSpecs needed to read and write
- * ResourcesPlugin
- */
-public class ResourcesTranslator {
+public class AT_ResourcesTranslator {
 
-    private ResourcesTranslator() {
-    }
-
-    private static Translator.Builder builder(boolean withReport) {
-        Translator.Builder builder = Translator.builder()
+    @Test
+    @UnitTestMethod(target = ResourcesTranslator.class, name = "getTranslator", args = {})
+    public void testGetTranslator() {
+        Translator expectedTranslator = Translator.builder()
                 .setTranslatorId(ResourcesTranslatorId.TRANSLATOR_ID)
                 .addDependency(PeopleTranslatorId.TRANSLATOR_ID)
                 .addDependency(PropertiesTranslatorId.TRANSLATOR_ID)
@@ -45,26 +45,39 @@ public class ResourcesTranslator {
                             .addTranslationSpec(new TestResourceIdTranslationSpec())
                             .addTranslationSpec(new TestResourcePropertyIdTranslationSpec());
 
-                    if (withReport) {
-                        translationEngineBuilder
-                                .addTranslationSpec(new PersonResourceReportPluginDataTranslationSpec())
-                                .addTranslationSpec(new ResourcePropertyReportPluginDataTranslationSpec())
-                                .addTranslationSpec(new ResourceReportPluginDataTranslationSpec());
-                    }
-                });
+                    translatorContext.addParentChildClassRelationship(SimpleReportLabel.class, ReportLabel.class);
+                }).build();
 
-        if (withReport) {
-            builder.addDependency(ReportsTranslatorId.TRANSLATOR_ID);
-        }
-
-        return builder;
+        assertEquals(expectedTranslator, ResourcesTranslator.getTranslator());
     }
 
-    public static Translator getTranslatorWithReport() {
-        return builder(true).build();
-    }
+    @Test
+    @UnitTestMethod(target = ResourcesTranslator.class, name = "getTranslatorWithReport", args = {})
+    public void testGetTranslatorWithReport() {
+        Translator expectedTranslator = Translator.builder()
+                .setTranslatorId(ResourcesTranslatorId.TRANSLATOR_ID)
+                .addDependency(PeopleTranslatorId.TRANSLATOR_ID)
+                .addDependency(PropertiesTranslatorId.TRANSLATOR_ID)
+                .addDependency(RegionsTranslatorId.TRANSLATOR_ID)
+                .addDependency(ReportsTranslatorId.TRANSLATOR_ID)
+                .setInitializer((translatorContext) -> {
+                    ProtobufTranslationEngine.Builder translationEngineBuilder = translatorContext
+                            .getTranslationEngineBuilder(ProtobufTranslationEngine.Builder.class);
 
-    public static Translator getTranslator() {
-        return builder(false).build();
+                    translationEngineBuilder
+                            .addTranslationSpec(new ResourcesPluginDataTranslationSpec())
+                            .addTranslationSpec(new ResourceIdTranslationSpec())
+                            .addTranslationSpec(new ResourcePropertyIdTranslationSpec())
+                            .addTranslationSpec(new ResourceInitializationTranslationSpec())
+                            .addTranslationSpec(new TestResourceIdTranslationSpec())
+                            .addTranslationSpec(new TestResourcePropertyIdTranslationSpec())
+                            .addTranslationSpec(new PersonResourceReportPluginDataTranslationSpec())
+                            .addTranslationSpec(new ResourcePropertyReportPluginDataTranslationSpec())
+                            .addTranslationSpec(new ResourceReportPluginDataTranslationSpec());
+
+                    translatorContext.addParentChildClassRelationship(SimpleReportLabel.class, ReportLabel.class);
+                }).build();
+
+        assertEquals(expectedTranslator, ResourcesTranslator.getTranslatorWithReport());
     }
 }
