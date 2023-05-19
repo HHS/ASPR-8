@@ -484,6 +484,12 @@
             </modules>
         </profile>
         <profile>
+            <id>stochastics</id>
+            <modules>
+                <module>stochastics-plugin-translator</module>
+            </modules>
+        </profile>
+        <profile>
             <id>people</id>
             <modules>
                 <module>people-plugin-translator</module>
