@@ -27,6 +27,7 @@ import plugins.people.support.PersonId;
 public final class GroupLabeler implements Labeler {
 
 	private final Function<GroupTypeCountMap, Object> groupTypeCountLabelingFunction;
+	
 	private GroupsDataManager groupsDataManager;
 
 	/**
