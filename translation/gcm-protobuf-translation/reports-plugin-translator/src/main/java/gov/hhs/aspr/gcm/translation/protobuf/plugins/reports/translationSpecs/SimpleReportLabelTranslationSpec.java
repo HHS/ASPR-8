@@ -4,6 +4,11 @@ import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.input.SimpleReportLabelInput;
 import plugins.reports.support.SimpleReportLabel;
 
+/**
+ * TranslationSpec that defines how to convert between
+ * {@linkplain SimpleReportLabelInput} and
+ * {@linkplain SimpleReportLabel}
+ */
 public class SimpleReportLabelTranslationSpec
         extends ProtobufTranslationSpec<SimpleReportLabelInput, SimpleReportLabel> {
 

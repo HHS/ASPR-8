@@ -7,21 +7,28 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.translationSpecs.Peo
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.translationSpecs.PersonIdTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.translationSpecs.PersonRangeTranslationSpec;
 
+/**
+ * Translator for the People Plugin.
+ * <li>Using this Translator will add
+ * all the necessary TanslationSpecs needed to read and write
+ * PeoplePluginData
+ */
 public class PeopleTranslator {
 
     private PeopleTranslator() {
     }
 
-    public static Translator.Builder builder() {
+    private static Translator.Builder builder() {
         return Translator.builder()
                 .setTranslatorId(PeopleTranslatorId.TRANSLATOR_ID)
                 .setInitializer((translatorContext) -> {
                     ProtobufTranslationEngine.Builder translationEngineBuilder = translatorContext
                             .getTranslationEngineBuilder(ProtobufTranslationEngine.Builder.class);
 
-                    translationEngineBuilder.addTranslationSpec(new PeoplePluginDataTranslationSpec());
-                    translationEngineBuilder.addTranslationSpec(new PersonIdTranslationSpec());
-                    translationEngineBuilder.addTranslationSpec(new PersonRangeTranslationSpec());
+                    translationEngineBuilder
+                            .addTranslationSpec(new PeoplePluginDataTranslationSpec())
+                            .addTranslationSpec(new PersonIdTranslationSpec())
+                            .addTranslationSpec(new PersonRangeTranslationSpec());
 
                     translationEngineBuilder
                             .addFieldToIncludeDefaultValue(PersonIdInput.getDescriptor().findFieldByName("id"));

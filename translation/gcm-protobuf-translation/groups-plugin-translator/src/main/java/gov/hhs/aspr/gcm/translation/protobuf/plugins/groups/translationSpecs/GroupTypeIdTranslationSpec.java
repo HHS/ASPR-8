@@ -4,6 +4,11 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.input.GroupTypeIdInp
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 import plugins.groups.support.GroupTypeId;
 
+/**
+ * TranslationSpec that defines how to convert between
+ * {@linkplain GroupTypeIdInput} and
+ * {@linkplain GroupTypeId}
+ */
 public class GroupTypeIdTranslationSpec extends ProtobufTranslationSpec<GroupTypeIdInput, GroupTypeId> {
 
     @Override

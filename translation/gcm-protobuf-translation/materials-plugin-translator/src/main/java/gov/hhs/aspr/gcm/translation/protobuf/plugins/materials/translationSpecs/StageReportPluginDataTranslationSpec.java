@@ -6,6 +6,11 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.input.ReportLabelIn
 import plugins.materials.reports.StageReportPluginData;
 import plugins.reports.support.ReportLabel;
 
+/**
+ * TranslationSpec that defines how to convert between
+ * {@linkplain StageReportPluginDataInput} and
+ * {@linkplain StageReportPluginData}
+ */
 public class StageReportPluginDataTranslationSpec
         extends ProtobufTranslationSpec<StageReportPluginDataInput, StageReportPluginData> {
 

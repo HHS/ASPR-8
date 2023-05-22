@@ -6,6 +6,11 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.input.ReportLabelIn
 import plugins.materials.reports.BatchStatusReportPluginData;
 import plugins.reports.support.ReportLabel;
 
+/**
+ * TranslationSpec that defines how to convert between
+ * {@linkplain BatchStatusReportPluginDataInput} and
+ * {@linkplain BatchStatusReportPluginData}
+ */
 public class BatchStatusReportPluginDataTranslationSpec
         extends ProtobufTranslationSpec<BatchStatusReportPluginDataInput, BatchStatusReportPluginData> {
 

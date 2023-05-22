@@ -12,6 +12,11 @@ import plugins.globalproperties.GlobalPropertiesPluginData;
 import plugins.globalproperties.support.GlobalPropertyId;
 import plugins.util.properties.PropertyDefinition;
 
+/**
+ * TranslationSpec that defines how to convert between
+ * {@linkplain GlobalPropertiesPluginDataInput} and
+ * {@linkplain GlobalPropertiesPluginData}
+ */
 public class GlobalPropertiesPluginDataTranslationSpec
         extends ProtobufTranslationSpec<GlobalPropertiesPluginDataInput, GlobalPropertiesPluginData> {
 
@@ -62,7 +67,7 @@ public class GlobalPropertiesPluginDataTranslationSpec
 
             builder.addGlobalPropertyDefinitinions(propertyDefinitionMapInput);
 
-            if (propertyDefinition.getDefaultValue().isEmpty()) {
+            if (propertyDefinition.getDefaultValue().isEmpty() || propertyValue != propertyDefinition.getDefaultValue().get()) {
                 Any propertyValueInput = this.translationEngine.getAnyFromObject(propertyValue);
 
                 PropertyValueMapInput propertyValueMapInput = PropertyValueMapInput

@@ -6,7 +6,6 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.translationSpecs.Gro
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.translationSpecs.GroupPropertyReportPluginDataTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.translationSpecs.GroupTypeIdTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.translationSpecs.GroupsPluginDataTranslationSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.translationSpecs.SimpleGroupTypeIdTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.translationSpecs.TestGroupPropertyIdTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.translationSpecs.TestGroupTypeIdTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.PeopleTranslatorId;
@@ -15,12 +14,18 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.ReportsTranslatorId
 import gov.hhs.aspr.translation.core.Translator;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
 
+/**
+ * Translator for the Groups Plugin.
+ * <li>Using this Translator will add
+ * all the necessary TanslationSpecs needed to read and write
+ * GroupsPluginData
+ */
 public class GroupsTranslator {
 
     private GroupsTranslator() {
     }
 
-    public static Translator.Builder builder(boolean withReport) {
+    private static Translator.Builder builder(boolean withReport) {
         Translator.Builder builder = Translator.builder()
                 .setTranslatorId(GroupsTranslatorId.TRANSLATOR_ID)
                 .addDependency(PropertiesTranslatorId.TRANSLATOR_ID)
@@ -29,13 +34,13 @@ public class GroupsTranslator {
                     ProtobufTranslationEngine.Builder translationEngineBuilder = translatorContext
                             .getTranslationEngineBuilder(ProtobufTranslationEngine.Builder.class);
 
-                    translationEngineBuilder.addTranslationSpec(new GroupsPluginDataTranslationSpec());
-                    translationEngineBuilder.addTranslationSpec(new GroupIdTranslationSpec());
-                    translationEngineBuilder.addTranslationSpec(new GroupTypeIdTranslationSpec());
-                    translationEngineBuilder.addTranslationSpec(new GroupPropertyIdTranslationSpec());
-                    translationEngineBuilder.addTranslationSpec(new TestGroupTypeIdTranslationSpec());
-                    translationEngineBuilder.addTranslationSpec(new TestGroupPropertyIdTranslationSpec());
-                    translationEngineBuilder.addTranslationSpec(new SimpleGroupTypeIdTranslationSpec());
+                    translationEngineBuilder
+                            .addTranslationSpec(new GroupsPluginDataTranslationSpec())
+                            .addTranslationSpec(new GroupIdTranslationSpec())
+                            .addTranslationSpec(new GroupTypeIdTranslationSpec())
+                            .addTranslationSpec(new GroupPropertyIdTranslationSpec())
+                            .addTranslationSpec(new TestGroupTypeIdTranslationSpec())
+                            .addTranslationSpec(new TestGroupPropertyIdTranslationSpec());
 
                     if (withReport) {
                         translationEngineBuilder.addTranslationSpec(new GroupPropertyReportPluginDataTranslationSpec());

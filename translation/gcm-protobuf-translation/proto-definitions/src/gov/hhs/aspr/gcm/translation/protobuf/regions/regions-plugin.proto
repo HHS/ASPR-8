@@ -5,7 +5,6 @@ option java_multiple_files = true;
 option java_package = "gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.input";
 
 import "properties-plugin.proto";
-import "people-plugin.proto";
 import "reports-plugin.proto";
 import "google/protobuf/any.proto";
 
