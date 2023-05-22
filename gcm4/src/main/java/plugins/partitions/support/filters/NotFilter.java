@@ -16,8 +16,7 @@ public final class NotFilter extends Filter {
 	public Filter getSubFilter() {
 		return a;
 	}
-	
-	
+		
 
 	@Override
 	public void validate(SimulationContext simulationContext) {
