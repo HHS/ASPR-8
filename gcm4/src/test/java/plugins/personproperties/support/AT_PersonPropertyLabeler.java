@@ -32,6 +32,20 @@ import util.errors.ContractException;
 
 public class AT_PersonPropertyLabeler {
 
+	private static class PersonPropertyLabelerImpl extends PersonPropertyLabeler {
+		private final Function<Object, Object> labelingFunction;
+
+		public PersonPropertyLabelerImpl(PersonPropertyId personPropertyId, Function<Object, Object> labelingFunction) {
+			super(personPropertyId);
+			this.labelingFunction = labelingFunction;
+		}
+
+		@Override
+		protected Object getLabelFromValue(Object value) {
+			return labelingFunction.apply(value);
+		}
+	}
+
 	@Test
 	@UnitTestConstructor(target = PersonPropertyLabeler.class, args = { PersonPropertyId.class, Function.class })
 	public void testConstructor() {
@@ -48,7 +62,7 @@ public class AT_PersonPropertyLabeler {
 		 */
 
 		PersonPropertyId personPropertyId = TestPersonPropertyId.PERSON_PROPERTY_4_BOOLEAN_MUTABLE_TRACK;
-		PersonPropertyLabeler personPropertyLabeler = new PersonPropertyLabeler(personPropertyId, (c) -> null);
+		PersonPropertyLabeler personPropertyLabeler = new PersonPropertyLabelerImpl(personPropertyId, (c) -> null);
 
 		Set<LabelerSensitivity<?>> labelerSensitivities = personPropertyLabeler.getLabelerSensitivities();
 
@@ -123,7 +137,7 @@ public class AT_PersonPropertyLabeler {
 				return "B";
 			};
 
-			PersonPropertyLabeler personPropertyLabeler = new PersonPropertyLabeler(personPropertyId, function);
+			PersonPropertyLabeler personPropertyLabeler = new PersonPropertyLabelerImpl(personPropertyId, function);
 
 			/*
 			 * Apply the labeler to each person and compare it to the more
@@ -154,7 +168,7 @@ public class AT_PersonPropertyLabeler {
 			contractException = assertThrows(ContractException.class, () -> personPropertyLabeler.getLabel(c, null));
 			assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
 		});
-		
+
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
@@ -162,7 +176,7 @@ public class AT_PersonPropertyLabeler {
 	@UnitTestMethod(target = PersonPropertyLabeler.class, name = "getDimension", args = {})
 	public void testGetDimension() {
 		for (TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.values()) {
-			assertEquals(testPersonPropertyId, new PersonPropertyLabeler(testPersonPropertyId, (c) -> null).getDimension());
+			assertEquals(testPersonPropertyId, new PersonPropertyLabelerImpl(testPersonPropertyId, (c) -> null).getDimension());
 		}
 	}
 
@@ -197,7 +211,7 @@ public class AT_PersonPropertyLabeler {
 				return integer;
 			};
 
-			PersonPropertyLabeler personPropertyLabeler = new PersonPropertyLabeler(personPropertyId, function);
+			PersonPropertyLabeler personPropertyLabeler = new PersonPropertyLabelerImpl(personPropertyId, function);
 
 			/*
 			 * Apply the labeler to each person and compare it to the more
