@@ -24,10 +24,12 @@ import gov.hhs.aspr.translation.core.testsupport.TestTranslationEngine;
 import gov.hhs.aspr.translation.core.testsupport.testcomplexobject.TestComplexObjectTranslator;
 import gov.hhs.aspr.translation.core.testsupport.testcomplexobject.TestComplexObjectTranslatorId;
 import gov.hhs.aspr.translation.core.testsupport.testcomplexobject.app.TestComplexAppObject;
+import gov.hhs.aspr.translation.core.testsupport.testcomplexobject.translationSpecs.TestComplexObjectTranslationSpec;
 import gov.hhs.aspr.translation.core.testsupport.testobject.TestObjectTranslator;
 import gov.hhs.aspr.translation.core.testsupport.testobject.TestObjectTranslatorId;
 import gov.hhs.aspr.translation.core.testsupport.testobject.app.TestAppObject;
 import gov.hhs.aspr.translation.core.testsupport.testobject.input.TestInputObject;
+import gov.hhs.aspr.translation.core.testsupport.testobject.translationSpecs.TestObjectTranslationSpec;
 import util.annotations.UnitTestForCoverage;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
@@ -60,6 +62,35 @@ public class AT_TranslationController {
 
         assertEquals("TranslationEngine has been built but has not been initialized.", runtimeException.getMessage());
 
+    }
+
+    @Test
+    @UnitTestMethod(target = TranslationController.class, name = "getTranslationEngine", args = { Class.class })
+    public void testGetTranslationEngine() {
+        TestTranslationEngine expectedValue = TestTranslationEngine.builder()
+                .addTranslationSpec(new TestObjectTranslationSpec())
+                .addTranslationSpec(new TestComplexObjectTranslationSpec())
+                .build();
+        expectedValue.init();
+
+        TranslationController translationController = TranslationController.builder()
+                .addTranslator(TestObjectTranslator.getTranslator())
+                .addTranslator(TestComplexObjectTranslator.getTranslator())
+                .setTranslationEngineBuilder(TestTranslationEngine.builder())
+                .build();
+
+        assertEquals(expectedValue, translationController.getTranslationEngine(TestTranslationEngine.class));
+
+        // precondition
+        // translation engine is null and is tested by the test:
+        // testValidateTranslationEngine()
+
+        // classRef passed in does not match the class of the translation engine
+        ContractException contractException = assertThrows(ContractException.class, () -> {
+            translationController.getTranslationEngine(TranslationEngine.class);
+        });
+
+        assertEquals(CoreTranslationError.INVALID_TRANSLATION_ENGINE, contractException.getErrorType());
     }
 
     @Test

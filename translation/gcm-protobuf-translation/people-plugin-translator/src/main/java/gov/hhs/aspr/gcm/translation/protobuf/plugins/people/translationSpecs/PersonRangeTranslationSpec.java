@@ -4,6 +4,11 @@ import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.input.PersonRangeInput;
 import plugins.people.support.PersonRange;
 
+/**
+ * TranslationSpec that defines how to convert between
+ * {@linkplain PersonRangeInput} and
+ * {@linkplain PersonRange}
+ */
 public class PersonRangeTranslationSpec extends ProtobufTranslationSpec<PersonRangeInput, PersonRange> {
 
     @Override

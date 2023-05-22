@@ -4,6 +4,11 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.input.GroupPropertyI
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 import plugins.groups.support.GroupPropertyId;
 
+/**
+ * TranslationSpec that defines how to convert between
+ * {@linkplain GroupPropertyIdInput} and
+ * {@linkplain GroupPropertyId}
+ */
 public class GroupPropertyIdTranslationSpec extends ProtobufTranslationSpec<GroupPropertyIdInput, GroupPropertyId> {
 
     @Override

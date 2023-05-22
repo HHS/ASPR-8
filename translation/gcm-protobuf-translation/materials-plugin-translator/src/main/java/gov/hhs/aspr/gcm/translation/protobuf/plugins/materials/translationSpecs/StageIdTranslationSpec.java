@@ -4,6 +4,11 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.input.StageIdInpu
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 import plugins.materials.support.StageId;
 
+/**
+ * TranslationSpec that defines how to convert between
+ * {@linkplain StageIdInput} and
+ * {@linkplain StageId}
+ */
 public class StageIdTranslationSpec extends ProtobufTranslationSpec<StageIdInput, StageId> {
 
     @Override

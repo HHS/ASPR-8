@@ -13,7 +13,6 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.input.StageMapInp
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.input.PropertyDefinitionInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.input.PropertyDefinitionMapInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.input.PropertyValueMapInput;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.input.ResourceIdInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.input.ResourceInitializationInput;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 import plugins.materials.MaterialsPluginData;
@@ -26,6 +25,11 @@ import plugins.materials.support.StageId;
 import plugins.resources.support.ResourceId;
 import plugins.util.properties.PropertyDefinition;
 
+/**
+ * TranslationSpec that defines how to convert between
+ * {@linkplain MaterialsPluginDataInput} and
+ * {@linkplain MaterialsPluginData}
+ */
 public class MaterialsPluginDataTranslationSpec
 		extends ProtobufTranslationSpec<MaterialsPluginDataInput, MaterialsPluginData> {
 
@@ -197,11 +201,9 @@ public class MaterialsPluginDataTranslationSpec
 					.newBuilder().setMaterialsProducerId(materialsProducerIdInput);
 			for (ResourceId resourceId : appObject.getResourceIds()) {
 				long amount = appObject.getMaterialsProducerResourceLevel(materialsProducerId, resourceId);
-				ResourceIdInput resourceIdInput = this.translationEngine.convertObjectAsSafeClass(resourceId,
-						ResourceId.class);
 
 				ResourceInitializationInput resourceInitializationInput = ResourceInitializationInput.newBuilder()
-						.setAmount(amount).setResourceId(resourceIdInput).build();
+						.setAmount(amount).setResourceId(this.translationEngine.getAnyFromObject(resourceId)).build();
 
 				resourceLevelMapBuilder.addResourceLevels(resourceInitializationInput);
 			}

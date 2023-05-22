@@ -10,6 +10,11 @@ import plugins.reports.support.ReportPeriod;
 import plugins.resources.reports.PersonResourceReportPluginData;
 import plugins.resources.support.ResourceId;
 
+/**
+ * TranslationSpec that defines how to convert between
+ * {@linkplain PersonResourceReportPluginDataInput} and
+ * {@linkplain PersonResourceReportPluginData}
+ */
 public class PersonResourceReportPluginDataTranslationSpec
         extends ProtobufTranslationSpec<PersonResourceReportPluginDataInput, PersonResourceReportPluginData> {
 

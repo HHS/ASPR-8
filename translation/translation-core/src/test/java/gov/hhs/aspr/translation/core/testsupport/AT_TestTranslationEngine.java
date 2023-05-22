@@ -138,4 +138,16 @@ public class AT_TestTranslationEngine {
         // this is just a wrapper method to ensure that the correct Child Engine builder
         // is returned
     }
+
+    @Test
+    @UnitTestMethod(target = TestTranslationEngine.class, name = "hashCode", args = {})
+    public void testHashCode() {
+        // covered by AT_TranslationEngine#testHashCode
+    }
+
+    @Test
+    @UnitTestMethod(target = TestTranslationEngine.class, name = "equals", args = { Object.class })
+    public void testEquals() {
+        // covered by AT_TranslationEngine#testEquals
+    }
 }

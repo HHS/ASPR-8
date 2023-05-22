@@ -4,6 +4,11 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.input.TestResourc
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 import plugins.resources.testsupport.TestResourceId;
 
+/**
+ * TranslationSpec that defines how to convert between
+ * {@linkplain TestResourceIdInput} and
+ * {@linkplain TestResourceId}
+ */
 public class TestResourceIdTranslationSpec extends ProtobufTranslationSpec<TestResourceIdInput, TestResourceId> {
 
     @Override

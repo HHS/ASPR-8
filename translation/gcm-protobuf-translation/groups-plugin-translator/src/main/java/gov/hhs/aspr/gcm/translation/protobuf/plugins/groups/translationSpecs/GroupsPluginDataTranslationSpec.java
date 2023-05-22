@@ -23,6 +23,11 @@ import plugins.groups.support.GroupTypeId;
 import plugins.people.support.PersonId;
 import plugins.util.properties.PropertyDefinition;
 
+/**
+ * TranslationSpec that defines how to convert between
+ * {@linkplain GroupsPluginDataInput} and
+ * {@linkplain GroupsPluginData}
+ */
 public class GroupsPluginDataTranslationSpec extends ProtobufTranslationSpec<GroupsPluginDataInput, GroupsPluginData> {
 
     @Override

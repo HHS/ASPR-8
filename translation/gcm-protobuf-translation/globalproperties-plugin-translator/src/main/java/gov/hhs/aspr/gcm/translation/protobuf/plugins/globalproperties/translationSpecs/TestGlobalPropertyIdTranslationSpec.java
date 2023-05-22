@@ -4,6 +4,11 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.globalproperties.input.Test
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 import plugins.globalproperties.testsupport.TestGlobalPropertyId;
 
+/**
+ * TranslationSpec that defines how to convert between
+ * {@linkplain TestGlobalPropertyIdInput} and
+ * {@linkplain TestGlobalPropertyId}
+ */
 public class TestGlobalPropertyIdTranslationSpec
         extends ProtobufTranslationSpec<TestGlobalPropertyIdInput, TestGlobalPropertyId> {
 

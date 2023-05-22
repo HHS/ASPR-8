@@ -6,6 +6,11 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.input.PersonRangeInp
 import plugins.people.PeoplePluginData;
 import plugins.people.support.PersonRange;
 
+/**
+ * TranslationSpec that defines how to convert between
+ * {@linkplain PeoplePluginDataInput} and
+ * {@linkplain PeoplePluginData}
+ */
 public class PeoplePluginDataTranslationSpec
         extends ProtobufTranslationSpec<PeoplePluginDataInput, PeoplePluginData> {
 

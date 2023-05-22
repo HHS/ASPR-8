@@ -9,6 +9,11 @@ import plugins.stochastics.StochasticsPluginData;
 import plugins.stochastics.support.RandomNumberGeneratorId;
 import plugins.stochastics.support.WellState;
 
+/**
+ * TranslationSpec that defines how to convert between
+ * {@linkplain StochasticsPluginDataInput} and
+ * {@linkplain StochasticsPluginData}
+ */
 public class StochasticsPluginDataTranslationSpec
         extends ProtobufTranslationSpec<StochasticsPluginDataInput, StochasticsPluginData> {
 
