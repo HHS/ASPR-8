@@ -14,6 +14,15 @@ public final class AndFilter extends Filter {
 		this.a = a;
 		this.b = b;
 	}
+	
+	public Filter getFirstFilter() {
+		return a;
+	}
+	
+	public Filter getSecondFilter() {
+		return b;
+	}
+
 
 	@Override
 	public boolean evaluate(SimulationContext simulationContext, PersonId personId) {

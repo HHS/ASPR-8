@@ -12,6 +12,12 @@ public final class NotFilter extends Filter {
 	public NotFilter(Filter a) {
 		this.a = a;
 	}
+	
+	public Filter getSubFilter() {
+		return a;
+	}
+	
+	
 
 	@Override
 	public void validate(SimulationContext simulationContext) {
