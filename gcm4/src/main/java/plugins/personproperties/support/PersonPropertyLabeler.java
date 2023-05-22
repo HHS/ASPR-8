@@ -26,7 +26,11 @@ public abstract class PersonPropertyLabeler implements Labeler {
 
 	private final PersonPropertyId personPropertyId;	
 	private PersonPropertiesDataManager personPropertiesDataManager;
-
+	
+	public PersonPropertyId getPersonPropertyId() {
+		return personPropertyId;
+	}
+	 
 	public PersonPropertyLabeler(PersonPropertyId personPropertyId) {
 		this.personPropertyId = personPropertyId;		
 	}

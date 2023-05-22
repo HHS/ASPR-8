@@ -29,6 +29,11 @@ public abstract class ResourceLabeler implements Labeler {
 	protected abstract Object getLabelFromAmount(long amount);
 	
 	private ResourcesDataManager resourcesDataManager;
+	
+	
+	public ResourceId getResourceId() {
+		return resourceId;
+	}
 
 	public ResourceLabeler(ResourceId resourceId) {
 		this.resourceId = resourceId;		

@@ -24,8 +24,6 @@ import util.errors.ContractException;
  */
 public abstract class RegionLabeler implements Labeler {
 
-	
-	
 	protected abstract Object getLabelFromRegionId(RegionId regionId);
 
 	private RegionsDataManager regionsDataManager;

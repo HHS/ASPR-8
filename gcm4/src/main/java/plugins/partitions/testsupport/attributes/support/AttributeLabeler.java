@@ -28,6 +28,10 @@ public abstract class AttributeLabeler implements Labeler {
 	private AttributesDataManager attributesDataManager;
 
 	protected abstract Object getLabelFromValue(Object value);
+	
+	public AttributeId getAttributeId() {
+		return attributeId;
+	}
 
 	public AttributeLabeler(AttributeId attributeId) {
 		this.attributeId = attributeId;
