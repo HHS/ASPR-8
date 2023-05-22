@@ -35,17 +35,28 @@ import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 
 public class AT_RegionLabeler {
+	private static class LocalRegionLabeler extends RegionLabeler {
+		private final Function<RegionId, Object> regionLabelingFunction;
 
+		public LocalRegionLabeler( Function<RegionId, Object> regionLabelingFunction) {			
+			this.regionLabelingFunction = regionLabelingFunction;
+		}
+
+		@Override
+		protected Object getLabelFromRegionId(RegionId regionId) {
+			return regionLabelingFunction.apply(regionId);
+		}
+	}
 	@Test
 	@UnitTestConstructor(target = RegionLabeler.class,args = { Function.class })
 	public void testConstructor() {
-		assertNotNull(new RegionLabeler((c) -> null));
+		assertNotNull(new LocalRegionLabeler((c) -> null));
 	}
 
 	@Test
 	@UnitTestMethod(target = RegionLabeler.class,name = "getId", args = {})
 	public void testGetId() {
-		assertEquals(RegionId.class, new RegionLabeler((c) -> null).getId());
+		assertEquals(RegionId.class, new LocalRegionLabeler((c) -> null).getId());
 	}
 
 	@Test
@@ -67,7 +78,7 @@ public class AT_RegionLabeler {
 			return testRegionId.ordinal();
 		};
 
-		RegionLabeler regionLabeler = new RegionLabeler(function);
+		RegionLabeler regionLabeler = new LocalRegionLabeler(function);
 
 		// add a few people to the simulation spread across the various
 		// regions
@@ -139,7 +150,7 @@ public class AT_RegionLabeler {
 		 * their documented behaviors.
 		 */
 
-		RegionLabeler regionLabeler = new RegionLabeler((c) -> null);
+		RegionLabeler regionLabeler = new LocalRegionLabeler((c) -> null);
 
 		Set<LabelerSensitivity<?>> labelerSensitivities = regionLabeler.getLabelerSensitivities();
 
@@ -175,7 +186,7 @@ public class AT_RegionLabeler {
 				return testRegionId.ordinal();
 			};
 
-			RegionLabeler regionLabeler = new RegionLabeler(func);
+			RegionLabeler regionLabeler = new LocalRegionLabeler(func);
 			List<RegionId> regions = new ArrayList<>(regionsDataManager.getRegionIds());
 
 			// Person region update event

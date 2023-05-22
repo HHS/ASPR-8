@@ -36,11 +36,23 @@ import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 
 public final class AT_ResourceLabeler {
+	private static class LocalResourceLabeler extends ResourceLabeler {
+		private final Function<Long, Object> resourceLabelingFunction;
 
+		public LocalResourceLabeler(ResourceId resourceId, Function<Long, Object> resourceLabelingFunction) {
+			super(resourceId);
+			this.resourceLabelingFunction = resourceLabelingFunction;
+		}
+
+		@Override
+		protected Object getLabelFromAmount(long amount) {		
+			return resourceLabelingFunction.apply(amount);
+		}
+	}
 	@Test
 	@UnitTestConstructor(target = ResourceLabeler.class, args = { ResourceId.class, Function.class })
 	public void testConstructor() {
-		assertNotNull(new ResourceLabeler(TestResourceId.RESOURCE_3, (v) -> null));
+		assertNotNull(new LocalResourceLabeler(TestResourceId.RESOURCE_3, (v) -> null));
 	}
 
 	@Test
@@ -50,7 +62,7 @@ public final class AT_ResourceLabeler {
 		 * Get the labeler sensitivities and show that they are consistent with
 		 * their documented behaviors.
 		 */
-		ResourceLabeler resourceLabeler = new ResourceLabeler(TestResourceId.RESOURCE_1, (c) -> null);
+		ResourceLabeler resourceLabeler = new LocalResourceLabeler(TestResourceId.RESOURCE_1, (c) -> null);
 
 		Set<LabelerSensitivity<?>> labelerSensitivities = resourceLabeler.getLabelerSensitivities();
 
@@ -98,7 +110,7 @@ public final class AT_ResourceLabeler {
 			return v % 2;
 		};
 
-		ResourceLabeler resourceLabeler = new ResourceLabeler(TestResourceId.RESOURCE_1, function);
+		ResourceLabeler resourceLabeler = new LocalResourceLabeler(TestResourceId.RESOURCE_1, function);
 
 		// distribute random resources across people
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
@@ -164,7 +176,7 @@ public final class AT_ResourceLabeler {
 	@UnitTestMethod(target = ResourceLabeler.class, name = "getId", args = {})
 	public void testGetId() {
 		for (TestResourceId testResourceId : TestResourceId.values()) {
-			assertEquals(testResourceId, new ResourceLabeler(testResourceId, (c) -> null).getId());
+			assertEquals(testResourceId, new LocalResourceLabeler(testResourceId, (c) -> null).getId());
 		}
 	}
 
@@ -182,7 +194,7 @@ public final class AT_ResourceLabeler {
 				return v % 2;
 			};
 
-			ResourceLabeler resourceLabeler = new ResourceLabeler(TestResourceId.RESOURCE_1, function);
+			ResourceLabeler resourceLabeler = new LocalResourceLabeler(TestResourceId.RESOURCE_1, function);
 
 			for (int i = 0; i < 10; i++) {
 				previousResourceLevel = i;

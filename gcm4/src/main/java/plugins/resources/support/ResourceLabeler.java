@@ -3,7 +3,6 @@ package plugins.resources.support;
 import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Function;
 
 import nucleus.Event;
 import nucleus.NucleusError;
@@ -23,17 +22,16 @@ import util.errors.ContractException;
  * 
  *
  */
-public final class ResourceLabeler implements Labeler {
+public abstract class ResourceLabeler implements Labeler {
 
 	private final ResourceId resourceId;
-
-	private final Function<Long, Object> resourceLabelingFunction;
-
+	
+	protected abstract Object getLabelFromAmount(long amount);
+	
 	private ResourcesDataManager resourcesDataManager;
 
-	public ResourceLabeler(ResourceId resourceId, Function<Long, Object> resourceLabelingFunction) {
-		this.resourceId = resourceId;
-		this.resourceLabelingFunction = resourceLabelingFunction;
+	public ResourceLabeler(ResourceId resourceId) {
+		this.resourceId = resourceId;		
 	}
 
 	private Optional<PersonId> getPersonId(PersonResourceUpdateEvent personResourceUpdateEvent) {
@@ -45,14 +43,14 @@ public final class ResourceLabeler implements Labeler {
 	}
 
 	@Override
-	public Set<LabelerSensitivity<?>> getLabelerSensitivities() {
+	public final Set<LabelerSensitivity<?>> getLabelerSensitivities() {
 		Set<LabelerSensitivity<?>> result = new LinkedHashSet<>();
 		result.add(new LabelerSensitivity<PersonResourceUpdateEvent>(PersonResourceUpdateEvent.class, this::getPersonId));
 		return result;
 	}
 
 	@Override
-	public Object getCurrentLabel(SimulationContext simulationContext, PersonId personId) {
+	public final Object getCurrentLabel(SimulationContext simulationContext, PersonId personId) {
 		if (simulationContext == null) {
 			throw new ContractException(NucleusError.NULL_SIMULATION_CONTEXT);
 		}
@@ -61,18 +59,18 @@ public final class ResourceLabeler implements Labeler {
 			resourcesDataManager = simulationContext.getDataManager(ResourcesDataManager.class);
 		}
 		long personResourceLevel = resourcesDataManager.getPersonResourceLevel(resourceId, personId);
-		return resourceLabelingFunction.apply(personResourceLevel);
+		return getLabelFromAmount(personResourceLevel);
 	}
 
 	@Override
-	public Object getId() {
+	public final Object getId() {
 		return resourceId;
 	}
 
 	@Override
-	public Object getPastLabel(SimulationContext simulationContext, Event event) {
+	public final Object getPastLabel(SimulationContext simulationContext, Event event) {
 		PersonResourceUpdateEvent personResourceUpdateEvent = (PersonResourceUpdateEvent)event;
-		return resourceLabelingFunction.apply(personResourceUpdateEvent.previousResourceLevel());
+		return getLabelFromAmount(personResourceUpdateEvent.previousResourceLevel());
 	}
 
 }
