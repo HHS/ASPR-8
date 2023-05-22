@@ -49,7 +49,7 @@ public abstract class PersonPropertyLabeler implements Labeler {
 	}
 
 	@Override
-	public final Object getLabel(SimulationContext simulationContext, PersonId personId) {
+	public final Object getCurrentLabel(SimulationContext simulationContext, PersonId personId) {
 		if(simulationContext == null) {
 			throw new ContractException(NucleusError.NULL_SIMULATION_CONTEXT);
 		}
@@ -61,7 +61,7 @@ public abstract class PersonPropertyLabeler implements Labeler {
 	}
 
 	@Override
-	public final Object getDimension() {
+	public final Object getId() {
 		return personPropertyId;
 	}
 

@@ -43,9 +43,9 @@ public class AT_RegionLabeler {
 	}
 
 	@Test
-	@UnitTestMethod(target = RegionLabeler.class,name = "getDimension", args = {})
-	public void testGetDimension() {
-		assertEquals(RegionId.class, new RegionLabeler((c) -> null).getDimension());
+	@UnitTestMethod(target = RegionLabeler.class,name = "getId", args = {})
+	public void testGetId() {
+		assertEquals(RegionId.class, new RegionLabeler((c) -> null).getId());
 	}
 
 	@Test
@@ -102,7 +102,7 @@ public class AT_RegionLabeler {
 				Object expectedLabel = function.apply(regionId);
 
 				// get the label from the person id
-				Object actualLabel = regionLabeler.getLabel(c, personId);
+				Object actualLabel = regionLabeler.getCurrentLabel(c, personId);
 
 				// show that the two labels are equal
 				assertEquals(expectedLabel, actualLabel);
@@ -115,11 +115,11 @@ public class AT_RegionLabeler {
 
 			// if the person does not exist
 			ContractException contractException = assertThrows(ContractException.class,
-					() -> regionLabeler.getLabel(c, new PersonId(100000)));
+					() -> regionLabeler.getCurrentLabel(c, new PersonId(100000)));
 			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
 
 			// if the person id is null
-			contractException = assertThrows(ContractException.class, () -> regionLabeler.getLabel(c, null));
+			contractException = assertThrows(ContractException.class, () -> regionLabeler.getCurrentLabel(c, null));
 			assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
 
 		}));

@@ -133,7 +133,7 @@ public final class AT_ResourceLabeler {
 				Object expectedLabel = function.apply(personResourceLevel);
 
 				// get the label from the person id
-				Object actualLabel = resourceLabeler.getLabel(c, personId);
+				Object actualLabel = resourceLabeler.getCurrentLabel(c, personId);
 
 				// show that the two labels are equal
 				assertEquals(expectedLabel, actualLabel);
@@ -145,11 +145,11 @@ public final class AT_ResourceLabeler {
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(2, (c) -> {
 
 			// if the person does not exist
-			ContractException contractException = assertThrows(ContractException.class, () -> resourceLabeler.getLabel(c, new PersonId(10000)));
+			ContractException contractException = assertThrows(ContractException.class, () -> resourceLabeler.getCurrentLabel(c, new PersonId(10000)));
 			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
 
 			// if the person id is null
-			contractException = assertThrows(ContractException.class, () -> resourceLabeler.getLabel(c, null));
+			contractException = assertThrows(ContractException.class, () -> resourceLabeler.getCurrentLabel(c, null));
 			assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
 
 		}));
@@ -161,10 +161,10 @@ public final class AT_ResourceLabeler {
 	}
 
 	@Test
-	@UnitTestMethod(target = ResourceLabeler.class, name = "getDimension", args = {})
-	public void testGetDimension() {
+	@UnitTestMethod(target = ResourceLabeler.class, name = "getId", args = {})
+	public void testGetId() {
 		for (TestResourceId testResourceId : TestResourceId.values()) {
-			assertEquals(testResourceId, new ResourceLabeler(testResourceId, (c) -> null).getDimension());
+			assertEquals(testResourceId, new ResourceLabeler(testResourceId, (c) -> null).getId());
 		}
 	}
 

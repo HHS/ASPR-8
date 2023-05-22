@@ -23,12 +23,12 @@ import nucleus.ActorContext;
 import nucleus.Event;
 import nucleus.SimulationContext;
 import nucleus.testsupport.testplugin.TestSimulation;
+import plugins.partitions.testsupport.FunctionalAttributeLabeler;
 import plugins.partitions.testsupport.PartitionsTestPluginFactory;
 import plugins.partitions.testsupport.PartitionsTestPluginFactory.Factory;
 import plugins.partitions.testsupport.attributes.AttributesDataManager;
 import plugins.partitions.testsupport.attributes.events.AttributeUpdateEvent;
 import plugins.partitions.testsupport.attributes.support.AttributeFilter;
-import plugins.partitions.testsupport.attributes.support.AttributeLabeler;
 import plugins.partitions.testsupport.attributes.support.TestAttributeId;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonConstructionData;
@@ -198,7 +198,7 @@ public class AT_PopulationPartitionImpl {
 			 */
 			
 			Filter filter = new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, true);
-			Partition partition = Partition.builder().addLabeler(new AttributeLabeler(TestAttributeId.BOOLEAN_1, (v) -> v)).setFilter(filter).build();
+			Partition partition = Partition.builder().addLabeler(new FunctionalAttributeLabeler(TestAttributeId.BOOLEAN_1, (v) -> v)).setFilter(filter).build();
 			PopulationPartition populationPartition = new PopulationPartitionImpl(c, partition);
 
 			for (PersonId personId : peopleDataManager.getPeople()) {
@@ -236,8 +236,8 @@ public class AT_PopulationPartitionImpl {
 			 * = true
 			 */
 			Filter filter = new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, true);
-			Partition partition = Partition	.builder().setFilter(filter).addLabeler(new AttributeLabeler(TestAttributeId.BOOLEAN_1, (v) -> 1))
-											.addLabeler(new AttributeLabeler(TestAttributeId.INT_0, (i) -> "value")).build();
+			Partition partition = Partition	.builder().setFilter(filter).addLabeler(new FunctionalAttributeLabeler(TestAttributeId.BOOLEAN_1, (v) -> 1))
+											.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.INT_0, (i) -> "value")).build();
 			PopulationPartition populationPartition = new PopulationPartitionImpl(c, partition);
 
 			LabelSet labelSet = LabelSet.builder().setLabel(TestAttributeId.BOOLEAN_1, 2).build();
@@ -430,10 +430,10 @@ public class AT_PopulationPartitionImpl {
 			Filter filter_0 = new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, true);
 			Filter filter_1 = new AttributeFilter(TestAttributeId.BOOLEAN_1, Equality.EQUAL, false);
 			Filter filter = filter_0.and(filter_1);
-			Partition partition = Partition	.builder().addLabeler(new AttributeLabeler(TestAttributeId.INT_0, INT_0_LABELFUNCTION))//
-											.addLabeler(new AttributeLabeler(TestAttributeId.INT_1, INT_1_LABELFUNCTION))//
-											.addLabeler(new AttributeLabeler(TestAttributeId.DOUBLE_0, DOUBLE_0_LABELFUNCTION))//
-											.addLabeler(new AttributeLabeler(TestAttributeId.DOUBLE_1, DOUBLE_1_LABELFUNCTION))//
+			Partition partition = Partition	.builder().addLabeler(new FunctionalAttributeLabeler(TestAttributeId.INT_0, INT_0_LABELFUNCTION))//
+											.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.INT_1, INT_1_LABELFUNCTION))//
+											.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.DOUBLE_0, DOUBLE_0_LABELFUNCTION))//
+											.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.DOUBLE_1, DOUBLE_1_LABELFUNCTION))//
 											.setFilter(filter)//
 											.build();//
 
@@ -471,10 +471,10 @@ public class AT_PopulationPartitionImpl {
 			Filter filter_0 = new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, true);
 			Filter filter_1 = new AttributeFilter(TestAttributeId.BOOLEAN_1, Equality.EQUAL, false);
 			Filter filter = filter_0.and(filter_1);
-			Partition partition = Partition	.builder().addLabeler(new AttributeLabeler(TestAttributeId.INT_0, INT_0_LABELFUNCTION))//
-											.addLabeler(new AttributeLabeler(TestAttributeId.INT_1, INT_1_LABELFUNCTION))//
-											.addLabeler(new AttributeLabeler(TestAttributeId.DOUBLE_0, DOUBLE_0_LABELFUNCTION))//
-											.addLabeler(new AttributeLabeler(TestAttributeId.DOUBLE_1, DOUBLE_1_LABELFUNCTION))//
+			Partition partition = Partition	.builder().addLabeler(new FunctionalAttributeLabeler(TestAttributeId.INT_0, INT_0_LABELFUNCTION))//
+											.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.INT_1, INT_1_LABELFUNCTION))//
+											.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.DOUBLE_0, DOUBLE_0_LABELFUNCTION))//
+											.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.DOUBLE_1, DOUBLE_1_LABELFUNCTION))//
 											.setFilter(filter)//
 											.build();//
 
@@ -613,10 +613,10 @@ public class AT_PopulationPartitionImpl {
 			Filter filter_0 = new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, true);
 			Filter filter_1 = new AttributeFilter(TestAttributeId.BOOLEAN_1, Equality.EQUAL, false);
 			Filter filter = filter_0.and(filter_1);
-			Partition partition = Partition	.builder().addLabeler(new AttributeLabeler(TestAttributeId.INT_0, INT_0_LABELFUNCTION))//
-											.addLabeler(new AttributeLabeler(TestAttributeId.INT_1, INT_1_LABELFUNCTION))//
-											.addLabeler(new AttributeLabeler(TestAttributeId.DOUBLE_0, DOUBLE_0_LABELFUNCTION))//
-											.addLabeler(new AttributeLabeler(TestAttributeId.DOUBLE_1, DOUBLE_1_LABELFUNCTION))//
+			Partition partition = Partition	.builder().addLabeler(new FunctionalAttributeLabeler(TestAttributeId.INT_0, INT_0_LABELFUNCTION))//
+											.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.INT_1, INT_1_LABELFUNCTION))//
+											.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.DOUBLE_0, DOUBLE_0_LABELFUNCTION))//
+											.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.DOUBLE_1, DOUBLE_1_LABELFUNCTION))//
 											.setFilter(filter)//
 											.build();//
 
@@ -663,10 +663,10 @@ public class AT_PopulationPartitionImpl {
 			Filter filter_0 = new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, true);
 			Filter filter_1 = new AttributeFilter(TestAttributeId.BOOLEAN_1, Equality.EQUAL, false);
 			Filter filter = filter_0.and(filter_1);
-			Partition partition = Partition	.builder().addLabeler(new AttributeLabeler(TestAttributeId.INT_0, INT_0_LABELFUNCTION))//
-											.addLabeler(new AttributeLabeler(TestAttributeId.INT_1, INT_1_LABELFUNCTION))//
-											.addLabeler(new AttributeLabeler(TestAttributeId.DOUBLE_0, DOUBLE_0_LABELFUNCTION))//
-											.addLabeler(new AttributeLabeler(TestAttributeId.DOUBLE_1, DOUBLE_1_LABELFUNCTION))//
+			Partition partition = Partition	.builder().addLabeler(new FunctionalAttributeLabeler(TestAttributeId.INT_0, INT_0_LABELFUNCTION))//
+											.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.INT_1, INT_1_LABELFUNCTION))//
+											.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.DOUBLE_0, DOUBLE_0_LABELFUNCTION))//
+											.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.DOUBLE_1, DOUBLE_1_LABELFUNCTION))//
 											.setFilter(filter)//
 											.build();//
 
@@ -720,7 +720,7 @@ public class AT_PopulationPartitionImpl {
 			 * = true
 			 */
 			Filter filter = new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, true);
-			Partition partition = Partition.builder().addLabeler(new AttributeLabeler(TestAttributeId.BOOLEAN_1, (v) -> v)).setFilter(filter).build();
+			Partition partition = Partition.builder().addLabeler(new FunctionalAttributeLabeler(TestAttributeId.BOOLEAN_1, (v) -> v)).setFilter(filter).build();
 			PopulationPartition populationPartition = new PopulationPartitionImpl(c, partition);
 
 			// show that the person data view contains the people we expect
@@ -900,10 +900,10 @@ public class AT_PopulationPartitionImpl {
 								.setFilter(new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, true));//
 			}
 			partitionBuilder//
-							.addLabeler(new AttributeLabeler(TestAttributeId.INT_0, int_0_labelFunction))//
-							.addLabeler(new AttributeLabeler(TestAttributeId.INT_1, int_1_labelFunction))//
-							.addLabeler(new AttributeLabeler(TestAttributeId.DOUBLE_0, double_0_labelFunction))//
-							.addLabeler(new AttributeLabeler(TestAttributeId.DOUBLE_1, double_1_labelFunction));
+							.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.INT_0, int_0_labelFunction))//
+							.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.INT_1, int_1_labelFunction))//
+							.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.DOUBLE_0, double_0_labelFunction))//
+							.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.DOUBLE_1, double_1_labelFunction));
 
 			Partition partition = partitionBuilder.build();
 

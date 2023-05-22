@@ -10,7 +10,7 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
-import plugins.partitions.testsupport.attributes.support.AttributeLabeler;
+import plugins.partitions.testsupport.FunctionalAttributeLabeler;
 import plugins.partitions.testsupport.attributes.support.TestAttributeId;
 import util.annotations.UnitTestMethod;
 
@@ -37,9 +37,9 @@ public class AT_Partition {
 	public void testGetLabelers() {
 
 		Set<Labeler> expectedLabelers = new LinkedHashSet<>();
-		expectedLabelers.add(new AttributeLabeler(TestAttributeId.BOOLEAN_0, (v) -> new Object()));
-		expectedLabelers.add(new AttributeLabeler(TestAttributeId.BOOLEAN_1, (v) -> new Object()));
-		expectedLabelers.add(new AttributeLabeler(TestAttributeId.DOUBLE_0, (v) -> new Object()));
+		expectedLabelers.add(new FunctionalAttributeLabeler(TestAttributeId.BOOLEAN_0, (v) -> new Object()));
+		expectedLabelers.add(new FunctionalAttributeLabeler(TestAttributeId.BOOLEAN_1, (v) -> new Object()));
+		expectedLabelers.add(new FunctionalAttributeLabeler(TestAttributeId.DOUBLE_0, (v) -> new Object()));
 
 		Partition.Builder builder = Partition.builder();
 		for (Labeler labeler : expectedLabelers) {
@@ -79,7 +79,7 @@ public class AT_Partition {
 		Partition partition = Partition.builder().build();//
 		assertTrue(partition.isDegenerate());
 
-		partition = Partition.builder().addLabeler(new AttributeLabeler(TestAttributeId.BOOLEAN_0, (v) -> new Object())).build();
+		partition = Partition.builder().addLabeler(new FunctionalAttributeLabeler(TestAttributeId.BOOLEAN_0, (v) -> new Object())).build();
 		assertFalse(partition.isDegenerate());
 	}
 
@@ -127,9 +127,9 @@ public class AT_Partition {
 	@UnitTestMethod(target = Partition.Builder.class, name = "addLabeler", args = { Labeler.class })
 	public void testAddlabeler() {
 		Set<Labeler> expectedLabelers = new LinkedHashSet<>();
-		expectedLabelers.add(new AttributeLabeler(TestAttributeId.BOOLEAN_0, (v) -> new Object()));
-		expectedLabelers.add(new AttributeLabeler(TestAttributeId.BOOLEAN_1, (v) -> new Object()));
-		expectedLabelers.add(new AttributeLabeler(TestAttributeId.DOUBLE_0, (v) -> new Object()));
+		expectedLabelers.add(new FunctionalAttributeLabeler(TestAttributeId.BOOLEAN_0, (v) -> new Object()));
+		expectedLabelers.add(new FunctionalAttributeLabeler(TestAttributeId.BOOLEAN_1, (v) -> new Object()));
+		expectedLabelers.add(new FunctionalAttributeLabeler(TestAttributeId.DOUBLE_0, (v) -> new Object()));
 
 		Partition.Builder builder = Partition.builder();
 		for (Labeler labeler : expectedLabelers) {

@@ -32,10 +32,10 @@ import util.errors.ContractException;
 
 public class AT_PersonPropertyLabeler {
 
-	private static class PersonPropertyLabelerImpl extends PersonPropertyLabeler {
+	private static class LocalPersonPropertyLabeler extends PersonPropertyLabeler {
 		private final Function<Object, Object> labelingFunction;
 
-		public PersonPropertyLabelerImpl(PersonPropertyId personPropertyId, Function<Object, Object> labelingFunction) {
+		public LocalPersonPropertyLabeler(PersonPropertyId personPropertyId, Function<Object, Object> labelingFunction) {
 			super(personPropertyId);
 			this.labelingFunction = labelingFunction;
 		}
@@ -62,7 +62,7 @@ public class AT_PersonPropertyLabeler {
 		 */
 
 		PersonPropertyId personPropertyId = TestPersonPropertyId.PERSON_PROPERTY_4_BOOLEAN_MUTABLE_TRACK;
-		PersonPropertyLabeler personPropertyLabeler = new PersonPropertyLabelerImpl(personPropertyId, (c) -> null);
+		PersonPropertyLabeler personPropertyLabeler = new LocalPersonPropertyLabeler(personPropertyId, (c) -> null);
 
 		Set<LabelerSensitivity<?>> labelerSensitivities = personPropertyLabeler.getLabelerSensitivities();
 
@@ -137,7 +137,7 @@ public class AT_PersonPropertyLabeler {
 				return "B";
 			};
 
-			PersonPropertyLabeler personPropertyLabeler = new PersonPropertyLabelerImpl(personPropertyId, function);
+			PersonPropertyLabeler personPropertyLabeler = new LocalPersonPropertyLabeler(personPropertyId, function);
 
 			/*
 			 * Apply the labeler to each person and compare it to the more
@@ -151,7 +151,7 @@ public class AT_PersonPropertyLabeler {
 				Object expectedLabel = function.apply(value);
 
 				// get the label from the person id
-				Object actualLabel = personPropertyLabeler.getLabel(c, personId);
+				Object actualLabel = personPropertyLabeler.getCurrentLabel(c, personId);
 
 				// show that the two labels are equal
 				assertEquals(expectedLabel, actualLabel);
@@ -161,11 +161,11 @@ public class AT_PersonPropertyLabeler {
 			// precondition tests
 
 			// if the person does not exist
-			ContractException contractException = assertThrows(ContractException.class, () -> personPropertyLabeler.getLabel(c, new PersonId(100000)));
+			ContractException contractException = assertThrows(ContractException.class, () -> personPropertyLabeler.getCurrentLabel(c, new PersonId(100000)));
 			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
 
 			// if the person id is null
-			contractException = assertThrows(ContractException.class, () -> personPropertyLabeler.getLabel(c, null));
+			contractException = assertThrows(ContractException.class, () -> personPropertyLabeler.getCurrentLabel(c, null));
 			assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
 		});
 
@@ -173,10 +173,10 @@ public class AT_PersonPropertyLabeler {
 	}
 
 	@Test
-	@UnitTestMethod(target = PersonPropertyLabeler.class, name = "getDimension", args = {})
-	public void testGetDimension() {
+	@UnitTestMethod(target = PersonPropertyLabeler.class, name = "getId", args = {})
+	public void testGetId() {
 		for (TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.values()) {
-			assertEquals(testPersonPropertyId, new PersonPropertyLabelerImpl(testPersonPropertyId, (c) -> null).getDimension());
+			assertEquals(testPersonPropertyId, new LocalPersonPropertyLabeler(testPersonPropertyId, (c) -> null).getId());
 		}
 	}
 
@@ -211,7 +211,7 @@ public class AT_PersonPropertyLabeler {
 				return integer;
 			};
 
-			PersonPropertyLabeler personPropertyLabeler = new PersonPropertyLabelerImpl(personPropertyId, function);
+			PersonPropertyLabeler personPropertyLabeler = new LocalPersonPropertyLabeler(personPropertyId, function);
 
 			/*
 			 * Apply the labeler to each person and compare it to the more

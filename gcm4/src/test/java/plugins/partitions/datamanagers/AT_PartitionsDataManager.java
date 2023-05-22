@@ -35,11 +35,11 @@ import plugins.partitions.support.LabelSetWeightingFunction;
 import plugins.partitions.support.Partition;
 import plugins.partitions.support.PartitionError;
 import plugins.partitions.support.PartitionSampler;
+import plugins.partitions.testsupport.FunctionalAttributeLabeler;
 import plugins.partitions.testsupport.PartitionsTestPluginFactory;
 import plugins.partitions.testsupport.PartitionsTestPluginFactory.Factory;
 import plugins.partitions.testsupport.attributes.AttributesDataManager;
 import plugins.partitions.testsupport.attributes.support.AttributeFilter;
-import plugins.partitions.testsupport.attributes.support.AttributeLabeler;
 import plugins.partitions.testsupport.attributes.support.TestAttributeId;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.events.PersonImminentRemovalEvent;
@@ -55,6 +55,9 @@ import util.wrappers.MutableInteger;
 
 public final class AT_PartitionsDataManager {
 
+	
+	
+	
 	@Test
 	@UnitTestConstructor(target = PartitionsDataManager.class, args = {})
 	public void testConstructor() {
@@ -270,10 +273,10 @@ public final class AT_PartitionsDataManager {
 			final Filter filter = filter0.and(filter1);
 			final Partition partition = Partition	.builder()//
 													.setFilter(filter)//
-													.addLabeler(new AttributeLabeler(TestAttributeId.INT_0, INT_0_LABELFUNCTION))//
-													.addLabeler(new AttributeLabeler(TestAttributeId.INT_1, INT_1_LABELFUNCTION))//
-													.addLabeler(new AttributeLabeler(TestAttributeId.DOUBLE_0, DOUBLE_0_LABELFUNCTION))//
-													.addLabeler(new AttributeLabeler(TestAttributeId.DOUBLE_1, DOUBLE_1_LABELFUNCTION))//
+													.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.INT_0, INT_0_LABELFUNCTION))//
+													.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.INT_1, INT_1_LABELFUNCTION))//
+													.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.DOUBLE_0, DOUBLE_0_LABELFUNCTION))//
+													.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.DOUBLE_1, DOUBLE_1_LABELFUNCTION))//
 													.build();//
 
 			partitionsDataManager.addPartition(partition, key);
@@ -438,7 +441,7 @@ public final class AT_PartitionsDataManager {
 			Object key = new Object();
 			Partition partition = Partition	.builder()//
 											.setFilter(new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, true))//
-											.addLabeler(new AttributeLabeler(TestAttributeId.INT_0, (v) -> 3)).build();//
+											.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.INT_0, (v) -> 3)).build();//
 
 			partitionsDataManager.addPartition(partition, key);
 
@@ -516,9 +519,10 @@ public final class AT_PartitionsDataManager {
 			Object key = new Object();
 			Partition partition = Partition	.builder()//
 											.setFilter(new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, true))//
-											.addLabeler(new AttributeLabeler(TestAttributeId.INT_0, int_0_labelFunction)).addLabeler(new AttributeLabeler(TestAttributeId.INT_1, int_1_labelFunction))
-											.addLabeler(new AttributeLabeler(TestAttributeId.DOUBLE_0, double_0_labelFunction))
-											.addLabeler(new AttributeLabeler(TestAttributeId.DOUBLE_1, double_1_labelFunction)).build();//
+											.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.INT_0, int_0_labelFunction))//
+											.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.INT_1, int_1_labelFunction))
+											.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.DOUBLE_0, double_0_labelFunction))
+											.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.DOUBLE_1, double_1_labelFunction)).build();//
 
 			partitionsDataManager.addPartition(partition, key);
 
@@ -645,7 +649,7 @@ public final class AT_PartitionsDataManager {
 			Object key = new Object();
 			Partition partition = Partition	.builder()//
 											.setFilter(new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, true))//
-											.addLabeler(new AttributeLabeler(TestAttributeId.INT_0, (value) -> {
+											.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.INT_0, (value) -> {
 												int v = (Integer) value;
 												return v / 10;
 											}))//
@@ -700,7 +704,7 @@ public final class AT_PartitionsDataManager {
 			Object key = new Object();
 			Partition partition = Partition	.builder()//
 											.setFilter(new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, true))//
-											.addLabeler(new AttributeLabeler(TestAttributeId.INT_0, attributeValueLabelingFunction))//
+											.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.INT_0, attributeValueLabelingFunction))//
 											.build();
 
 			partitionsDataManager.addPartition(partition, key);
@@ -834,10 +838,10 @@ public final class AT_PartitionsDataManager {
 			Object key = new Object();
 			Partition partition = Partition	.builder()//
 											.setFilter(new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, true))//
-											.addLabeler(new AttributeLabeler(TestAttributeId.INT_0, int_0_labelFunction))//
-											.addLabeler(new AttributeLabeler(TestAttributeId.INT_1, int_1_labelFunction))//
-											.addLabeler(new AttributeLabeler(TestAttributeId.DOUBLE_0, double_0_labelFunction))//
-											.addLabeler(new AttributeLabeler(TestAttributeId.DOUBLE_1, double_1_labelFunction))//
+											.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.INT_0, int_0_labelFunction))//
+											.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.INT_1, int_1_labelFunction))//
+											.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.DOUBLE_0, double_0_labelFunction))//
+											.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.DOUBLE_1, double_1_labelFunction))//
 											.build();
 
 			partitionsDataManager.addPartition(partition, key);
@@ -992,7 +996,7 @@ public final class AT_PartitionsDataManager {
 			Object key = new Object();
 			Partition partition = Partition	.builder()//
 											.setFilter(new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, true))//
-											.addLabeler(new AttributeLabeler(TestAttributeId.INT_0, (value) -> {
+											.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.INT_0, (value) -> {
 												int v = (Integer) value;
 												return v / 10;
 											}))//
@@ -1045,7 +1049,7 @@ public final class AT_PartitionsDataManager {
 			Object key = new Object();
 			Partition partition = Partition	.builder()//
 											.setFilter(new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, true))//
-											.addLabeler(new AttributeLabeler(TestAttributeId.INT_0, attributeValueLabelingFunction))//
+											.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.INT_0, attributeValueLabelingFunction))//
 											.build();
 
 			partitionsDataManager.addPartition(partition, key);
@@ -1266,10 +1270,10 @@ public final class AT_PartitionsDataManager {
 								.setFilter(new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, true));//
 			}
 			partitionBuilder//
-							.addLabeler(new AttributeLabeler(TestAttributeId.INT_0, int_0_labelFunction))//
-							.addLabeler(new AttributeLabeler(TestAttributeId.INT_1, int_1_labelFunction))//
-							.addLabeler(new AttributeLabeler(TestAttributeId.DOUBLE_0, double_0_labelFunction))//
-							.addLabeler(new AttributeLabeler(TestAttributeId.DOUBLE_1, double_1_labelFunction));
+							.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.INT_0, int_0_labelFunction))//
+							.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.INT_1, int_1_labelFunction))//
+							.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.DOUBLE_0, double_0_labelFunction))//
+							.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.DOUBLE_1, double_1_labelFunction));
 
 			Partition partition = partitionBuilder.build();
 

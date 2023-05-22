@@ -20,12 +20,12 @@ import org.junit.jupiter.api.Test;
 import nucleus.Event;
 import nucleus.SimulationContext;
 import nucleus.testsupport.testplugin.TestSimulation;
+import plugins.partitions.testsupport.FunctionalAttributeLabeler;
 import plugins.partitions.testsupport.PartitionsTestPluginFactory;
 import plugins.partitions.testsupport.PartitionsTestPluginFactory.Factory;
 import plugins.partitions.testsupport.attributes.AttributesDataManager;
 import plugins.partitions.testsupport.attributes.events.AttributeUpdateEvent;
 import plugins.partitions.testsupport.attributes.support.AttributeFilter;
-import plugins.partitions.testsupport.attributes.support.AttributeLabeler;
 import plugins.partitions.testsupport.attributes.support.TestAttributeId;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonConstructionData;
@@ -81,7 +81,7 @@ public class AT_DegeneratePopulationPartitionImpl {
 
 			// if the partition is not degenerate
 			ContractException contractException = assertThrows(ContractException.class,
-					() -> new DegeneratePopulationPartitionImpl(c, Partition.builder().addLabeler(new AttributeLabeler(TestAttributeId.BOOLEAN_0, (v) -> v)).build()));
+					() -> new DegeneratePopulationPartitionImpl(c, Partition.builder().addLabeler(new FunctionalAttributeLabeler(TestAttributeId.BOOLEAN_0, (v) -> v)).build()));
 			assertEquals(PartitionError.NON_DEGENERATE_PARTITION, contractException.getErrorType());
 
 		});
@@ -713,10 +713,10 @@ public class AT_DegeneratePopulationPartitionImpl {
 								.setFilter(new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, true));//
 			}
 			partitionBuilder//
-							.addLabeler(new AttributeLabeler(TestAttributeId.INT_0, int_0_labelFunction))//
-							.addLabeler(new AttributeLabeler(TestAttributeId.INT_1, int_1_labelFunction))//
-							.addLabeler(new AttributeLabeler(TestAttributeId.DOUBLE_0, double_0_labelFunction))//
-							.addLabeler(new AttributeLabeler(TestAttributeId.DOUBLE_1, double_1_labelFunction));
+							.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.INT_0, int_0_labelFunction))//
+							.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.INT_1, int_1_labelFunction))//
+							.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.DOUBLE_0, double_0_labelFunction))//
+							.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.DOUBLE_1, double_1_labelFunction));
 
 			Partition partition = partitionBuilder.build();
 

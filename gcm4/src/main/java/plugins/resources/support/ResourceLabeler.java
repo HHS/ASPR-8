@@ -52,7 +52,7 @@ public final class ResourceLabeler implements Labeler {
 	}
 
 	@Override
-	public Object getLabel(SimulationContext simulationContext, PersonId personId) {
+	public Object getCurrentLabel(SimulationContext simulationContext, PersonId personId) {
 		if (simulationContext == null) {
 			throw new ContractException(NucleusError.NULL_SIMULATION_CONTEXT);
 		}
@@ -65,7 +65,7 @@ public final class ResourceLabeler implements Labeler {
 	}
 
 	@Override
-	public Object getDimension() {
+	public Object getId() {
 		return resourceId;
 	}
 
