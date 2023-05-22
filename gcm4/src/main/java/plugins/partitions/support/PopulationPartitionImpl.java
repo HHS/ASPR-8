@@ -473,7 +473,7 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 
 	private void aquireEventHandlingLock() {
 		if (eventHandlingLocked) {
-			throw new ContractException(NucleusError.ACCESS_VIOLATION, "cannot access event handling during the execution of a event");
+			throw new ContractException(NucleusError.ACCESS_VIOLATION, "cannot access event handling during the execution of an event");
 		}
 		eventHandlingLocked = true;
 	}
