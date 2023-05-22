@@ -6,6 +6,7 @@ import java.util.Set;
 
 import net.jcip.annotations.Immutable;
 import net.jcip.annotations.NotThreadSafe;
+import plugins.partitions.support.filters.Filter;
 
 /**
  * A {@linkplain Partition} is the general description of a partitioning of the

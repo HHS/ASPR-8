@@ -29,12 +29,13 @@ import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestSimulation;
 import plugins.partitions.support.Equality;
-import plugins.partitions.support.Filter;
 import plugins.partitions.support.LabelSet;
 import plugins.partitions.support.LabelSetWeightingFunction;
 import plugins.partitions.support.Partition;
 import plugins.partitions.support.PartitionError;
 import plugins.partitions.support.PartitionSampler;
+import plugins.partitions.support.filters.Filter;
+import plugins.partitions.support.filters.TrueFilter;
 import plugins.partitions.testsupport.FunctionalAttributeLabeler;
 import plugins.partitions.testsupport.PartitionsTestPluginFactory;
 import plugins.partitions.testsupport.PartitionsTestPluginFactory.Factory;
@@ -55,9 +56,6 @@ import util.wrappers.MutableInteger;
 
 public final class AT_PartitionsDataManager {
 
-	
-	
-	
 	@Test
 	@UnitTestConstructor(target = PartitionsDataManager.class, args = {})
 	public void testConstructor() {
@@ -318,10 +316,9 @@ public final class AT_PartitionsDataManager {
 
 		});
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
-		
-		
+
 		// if the key is already allocated to another population partition
-		ContractException contractException = assertThrows(ContractException.class, () ->{
+		ContractException contractException = assertThrows(ContractException.class, () -> {
 			Factory factory2 = PartitionsTestPluginFactory.factory(0, 1137046131619466337L, (c) -> {
 				PartitionsDataManager partitionsDataManager = c.getDataManager(PartitionsDataManager.class);
 				Object key = new Object();
@@ -331,10 +328,9 @@ public final class AT_PartitionsDataManager {
 			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
 		});
 		assertEquals(PartitionError.DUPLICATE_PARTITION, contractException.getErrorType());
-		
 
 		// precondition: if the partition is null
-		contractException = assertThrows(ContractException.class, () ->{
+		contractException = assertThrows(ContractException.class, () -> {
 			Factory factory2 = PartitionsTestPluginFactory.factory(0, 7407325994321033161L, (c) -> {
 				PartitionsDataManager partitionsDataManager = new PartitionsDataManager();
 				Object key = new Object();
@@ -343,10 +339,9 @@ public final class AT_PartitionsDataManager {
 			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
 		});
 		assertEquals(PartitionError.NULL_PARTITION, contractException.getErrorType());
-		
 
 		// precondition: if the key is null
-		contractException = assertThrows(ContractException.class, () ->{
+		contractException = assertThrows(ContractException.class, () -> {
 			Factory factory2 = PartitionsTestPluginFactory.factory(0, 530075900162852558L, (c) -> {
 				PartitionsDataManager partitionsDataManager = new PartitionsDataManager();
 				partitionsDataManager.addPartition(Partition.builder().build(), null);
@@ -354,7 +349,6 @@ public final class AT_PartitionsDataManager {
 			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
 		});
 		assertEquals(PartitionError.NULL_PARTITION_KEY, contractException.getErrorType());
-		
 
 	}
 
@@ -1422,7 +1416,7 @@ public final class AT_PartitionsDataManager {
 			Factory factory = PartitionsTestPluginFactory.factory(10, 8368182028203057994L, (c) -> {
 				PartitionsDataManager partitionsDataManager = c.getDataManager(PartitionsDataManager.class);
 				Object key = new Object();
-				Partition partition = Partition.builder().setFilter(Filter.allPeople()).build();
+				Partition partition = Partition.builder().setFilter(new TrueFilter()).build();
 				partitionsDataManager.addPartition(partition, key);
 				PartitionSampler partitionSampler = PartitionSampler.builder().build();
 				// first we show that the values we will be using are valid
@@ -1438,7 +1432,7 @@ public final class AT_PartitionsDataManager {
 			Factory factory = PartitionsTestPluginFactory.factory(10, 2301450217287059237L, (c) -> {
 				PartitionsDataManager partitionsDataManager = c.getDataManager(PartitionsDataManager.class);
 				Object key = new Object();
-				Partition partition = Partition.builder().setFilter(Filter.allPeople()).build();
+				Partition partition = Partition.builder().setFilter(new TrueFilter()).build();
 				partitionsDataManager.addPartition(partition, key);
 				PartitionSampler partitionSampler = PartitionSampler.builder().build();
 				Object unknownKey = new Object();
@@ -1454,7 +1448,7 @@ public final class AT_PartitionsDataManager {
 			Factory factory = PartitionsTestPluginFactory.factory(10, 8837909864261179707L, (c) -> {
 				PartitionsDataManager partitionsDataManager = c.getDataManager(PartitionsDataManager.class);
 				Object key = new Object();
-				Partition partition = Partition.builder().setFilter(Filter.allPeople()).build();
+				Partition partition = Partition.builder().setFilter(new TrueFilter()).build();
 				partitionsDataManager.addPartition(partition, key);
 				PartitionSampler partitionSampler = PartitionSampler.builder().build();
 				// first we show that the values we will be using are valid
@@ -1465,7 +1459,6 @@ public final class AT_PartitionsDataManager {
 			TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 		});
 		assertEquals(PartitionError.NULL_PARTITION_SAMPLER, contractException.getErrorType());
-		
 
 		/*
 		 * precondition: if the partition sampler has a label set containing
@@ -1475,7 +1468,7 @@ public final class AT_PartitionsDataManager {
 			Factory factory = PartitionsTestPluginFactory.factory(10, 1697817005173536231L, (c) -> {
 				PartitionsDataManager partitionsDataManager = c.getDataManager(PartitionsDataManager.class);
 				Object key = new Object();
-				Partition partition = Partition.builder().setFilter(Filter.allPeople()).build();
+				Partition partition = Partition.builder().setFilter(new TrueFilter()).build();
 				partitionsDataManager.addPartition(partition, key);
 				PartitionSampler partitionSampler = PartitionSampler.builder().build();
 				LabelSet labelSet = LabelSet.builder().setLabel(TestAttributeId.INT_0, 15).build();
@@ -1487,8 +1480,6 @@ public final class AT_PartitionsDataManager {
 			TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 		});
 		assertEquals(PartitionError.INCOMPATIBLE_LABEL_SET, contractException.getErrorType());
-		
-		
 
 		/*
 		 * precondition: if the partition sampler has an excluded person that
@@ -1498,7 +1489,7 @@ public final class AT_PartitionsDataManager {
 			Factory factory = PartitionsTestPluginFactory.factory(10, 624346712512051803L, (c) -> {
 				PartitionsDataManager partitionsDataManager = c.getDataManager(PartitionsDataManager.class);
 				Object key = new Object();
-				Partition partition = Partition.builder().setFilter(Filter.allPeople()).build();
+				Partition partition = Partition.builder().setFilter(new TrueFilter()).build();
 				partitionsDataManager.addPartition(partition, key);
 				PartitionSampler partitionSampler = PartitionSampler.builder().build();
 				PartitionSampler partitionSamplerWithUnknownExcludedPerson = PartitionSampler.builder().setExcludedPerson(new PersonId(10000)).build();

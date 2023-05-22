@@ -6,8 +6,8 @@ import java.util.Set;
 
 import nucleus.NucleusError;
 import nucleus.SimulationContext;
-import plugins.partitions.support.Filter;
 import plugins.partitions.support.FilterSensitivity;
+import plugins.partitions.support.filters.Filter;
 import plugins.people.support.PersonId;
 import plugins.regions.datamanagers.RegionsDataManager;
 import plugins.regions.events.PersonRegionUpdateEvent;

@@ -19,6 +19,8 @@ import nucleus.NucleusError;
 import nucleus.SimulationContext;
 import plugins.partitions.support.containers.BasePeopleContainer;
 import plugins.partitions.support.containers.PeopleContainer;
+import plugins.partitions.support.filters.Filter;
+import plugins.partitions.support.filters.TrueFilter;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonId;
 import plugins.stochastics.StochasticsDataManager;
@@ -335,7 +337,7 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 			personMembership = new BitSet(peopleDataManager.getPersonIdLimit());
 		}
 
-		filter = partition.getFilter().orElse(Filter.allPeople());
+		filter = partition.getFilter().orElse(new TrueFilter());
 		for (final FilterSensitivity<? extends Event> filterSensitivity : filter.getFilterSensitivities()) {
 			List<FilterSensitivity<? extends Event>> list = eventClassToFilterSensitivityMap.get(filterSensitivity.getEventClass());
 			if (list == null) {

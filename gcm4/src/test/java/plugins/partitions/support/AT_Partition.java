@@ -10,6 +10,8 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
+import plugins.partitions.support.filters.Filter;
+import plugins.partitions.support.filters.TrueFilter;
 import plugins.partitions.testsupport.FunctionalAttributeLabeler;
 import plugins.partitions.testsupport.attributes.support.TestAttributeId;
 import util.annotations.UnitTestMethod;
@@ -64,7 +66,7 @@ public class AT_Partition {
 		Partition partition = Partition.builder().build();//
 		assertFalse(partition.getFilter().isPresent());
 
-		partition = Partition.builder().setFilter(Filter.allPeople()).build();//
+		partition = Partition.builder().setFilter(new TrueFilter()).build();//
 		assertTrue(partition.getFilter().isPresent());
 
 	}
@@ -104,7 +106,7 @@ public class AT_Partition {
 	@UnitTestMethod(target = Partition.Builder.class, name = "setFilter", args = { Filter.class })
 	public void testSetFilter() {
 		Partition.Builder builder = Partition.builder();
-		Filter filter = Filter.allPeople();
+		Filter filter = new TrueFilter();
 		builder.setFilter(filter);
 
 		Partition partition = builder.build();

@@ -20,6 +20,7 @@ import org.junit.jupiter.api.Test;
 import nucleus.Event;
 import nucleus.SimulationContext;
 import nucleus.testsupport.testplugin.TestSimulation;
+import plugins.partitions.support.filters.Filter;
 import plugins.partitions.testsupport.FunctionalAttributeLabeler;
 import plugins.partitions.testsupport.PartitionsTestPluginFactory;
 import plugins.partitions.testsupport.PartitionsTestPluginFactory.Factory;

@@ -12,7 +12,6 @@ import nucleus.DataManager;
 import nucleus.DataManagerContext;
 import nucleus.Event;
 import plugins.partitions.support.DegeneratePopulationPartitionImpl;
-import plugins.partitions.support.Filter;
 import plugins.partitions.support.FilterSensitivity;
 import plugins.partitions.support.LabelSet;
 import plugins.partitions.support.Labeler;
@@ -22,6 +21,8 @@ import plugins.partitions.support.PartitionError;
 import plugins.partitions.support.PartitionSampler;
 import plugins.partitions.support.PopulationPartition;
 import plugins.partitions.support.PopulationPartitionImpl;
+import plugins.partitions.support.filters.Filter;
+import plugins.partitions.support.filters.TrueFilter;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.events.PersonAdditionEvent;
 import plugins.people.events.PersonRemovalEvent;
@@ -453,7 +454,7 @@ public final class PartitionsDataManager extends DataManager {
 		 */
 		final Set<Class<? extends Event>> eventClasses = new LinkedHashSet<>();
 
-		final Filter filter = partition.getFilter().orElse(Filter.allPeople());
+		final Filter filter = partition.getFilter().orElse(new TrueFilter());
 		filter.validate(dataManagerContext);
 		for (final FilterSensitivity<?> filterSensitivity : filter.getFilterSensitivities()) {
 			eventClasses.add(filterSensitivity.getEventClass());

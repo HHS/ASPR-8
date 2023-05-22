@@ -9,8 +9,8 @@ import nucleus.SimulationContext;
 import plugins.groups.datamanagers.GroupsDataManager;
 import plugins.groups.events.GroupMembershipAdditionEvent;
 import plugins.groups.events.GroupMembershipRemovalEvent;
-import plugins.partitions.support.Filter;
 import plugins.partitions.support.FilterSensitivity;
+import plugins.partitions.support.filters.Filter;
 import plugins.people.support.PersonId;
 import util.errors.ContractException;
 
