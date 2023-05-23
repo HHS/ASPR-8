@@ -159,6 +159,7 @@ public class AT_WellState {
     @Test
     @UnitTestMethod(target = WellState.class, name = "equals", args = {Object.class}, tags = UnitTag.INCOMPLETE)
     public void testEquals() {
+        RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7242512295369848202L);
         Set<WellState> wellStates = new LinkedHashSet<>();
         Long seed = 2864116845603920430L;
         WellState wellState1 = createWellState(seed);
@@ -170,7 +171,11 @@ public class AT_WellState {
             assertEquals(wellState1, wellState);
         }
 
-        RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7242512295369848202L);
+        for (int i = 0; i < 5; i++) {
+            WellState wellState = createWellState(randomGenerator.nextLong());
+            assertNotEquals(wellState1, wellState);
+        }
+
         wellStates = new LinkedHashSet<>();
         for (int i = 0; i < 100; i++) {
             Long stateSeed = randomGenerator.nextLong();
