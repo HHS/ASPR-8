@@ -4,6 +4,11 @@ import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.input.ReportPeriodInput;
 import plugins.reports.support.ReportPeriod;
 
+/**
+ * TranslationSpec that defines how to convert between
+ * {@linkplain ReportPeriodInput} and
+ * {@linkplain ReportPeriod}
+ */
 public class ReportPeriodTranslationSpec extends ProtobufTranslationSpec<ReportPeriodInput, ReportPeriod> {
 
     @Override

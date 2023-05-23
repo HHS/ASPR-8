@@ -6,6 +6,11 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.input.ReportLabelIn
 import plugins.materials.reports.MaterialsProducerPropertyReportPluginData;
 import plugins.reports.support.ReportLabel;
 
+/**
+ * TranslationSpec that defines how to convert between
+ * {@linkplain MaterialsProducerPropertyReportPluginDataInput} and
+ * {@linkplain MaterialsProducerPropertyReportPluginData}
+ */
 public class MaterialsProducerPropertyReportPluginDataTranslationSpec
         extends
         ProtobufTranslationSpec<MaterialsProducerPropertyReportPluginDataInput, MaterialsProducerPropertyReportPluginData> {

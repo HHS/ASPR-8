@@ -210,7 +210,7 @@ public final class MaterialsDataManager extends DataManager {
 
 	private final Map<MaterialId, Map<BatchPropertyId, PropertyDefinition>> batchPropertyDefinitions = new LinkedHashMap<>();
 
-	private final Map<MaterialId, Set<BatchPropertyId>> batchPropertyIdMap = new LinkedHashMap<>();
+	
 
 	private final Map<BatchId, Map<BatchPropertyId, Object>> batchPropertyMap = new LinkedHashMap<>();
 
@@ -1361,7 +1361,7 @@ public final class MaterialsDataManager extends DataManager {
 		validateMaterialId(materialId);
 		validateNewBatchPropertyId(materialId, batchPropertyId);
 		validateBatchPropertyDefinition(propertyDefinition);
-		batchPropertyIdMap.get(materialId).add(batchPropertyId);
+		
 		batchPropertyDefinitions.get(materialId).put(batchPropertyId, propertyDefinition);
 		
 
@@ -1584,7 +1584,7 @@ public final class MaterialsDataManager extends DataManager {
 		validateNewMaterialId(materialId);
 
 		materialIds.add(materialId);
-		batchPropertyIdMap.put(materialId, new LinkedHashSet<>());
+		
 		batchPropertyDefinitions.put(materialId, new LinkedHashMap<>());		
 		nonDefaultBearingBatchPropertyIds.put(materialId, new LinkedHashMap<>());
 		nonDefaultChecksForBatches.put(materialId, new boolean[0]);
@@ -1965,12 +1965,12 @@ public final class MaterialsDataManager extends DataManager {
 
 		for (final MaterialId materialId : materialsPluginData.getMaterialIds()) {
 			materialIds.add(materialId);
-			batchPropertyIdMap.put(materialId, new LinkedHashSet<>());
+			
 			batchPropertyDefinitions.put(materialId, new LinkedHashMap<>());			
 			nonDefaultBearingBatchPropertyIds.put(materialId, new LinkedHashMap<>());
 			for (final BatchPropertyId batchPropertyId : materialsPluginData.getBatchPropertyIds(materialId)) {
 				final PropertyDefinition propertyDefinition = materialsPluginData.getBatchPropertyDefinition(materialId, batchPropertyId);
-				batchPropertyIdMap.get(materialId).add(batchPropertyId);
+				
 				batchPropertyDefinitions.get(materialId).put(batchPropertyId, propertyDefinition);				
 				Map<BatchPropertyId, Integer> map = nonDefaultBearingBatchPropertyIds.get(materialId);
 				if (propertyDefinition.getDefaultValue().isEmpty()) {

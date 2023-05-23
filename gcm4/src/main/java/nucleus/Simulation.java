@@ -890,41 +890,39 @@ public class Simulation {
 			if (planRec.isActive) {
 				activePlanCount++;
 			}
-
-			Map<Object, PlanRec> map;
-			if (planRec.key != null) {
-				switch (planner) {
-				case ACTOR:
-					map = actorPlanMap.get(planRec.actorId);
-					if (map == null) {
-						map = new LinkedHashMap<>();
-						actorPlanMap.put(planRec.actorId, map);
-					}
-					map.put(planRec.key, planRec);
-					break;
-				case DATA_MANAGER:
-					map = dataManagerPlanMap.get(planRec.dataManagerId);
-					if (map == null) {
-						map = new LinkedHashMap<>();
-						dataManagerPlanMap.put(planRec.dataManagerId, map);
-					}
-					map.put(planRec.key, planRec);
-					break;
-				case REPORT:
-					map = reportPlanMap.get(planRec.reportId);
-					if (map == null) {
-						map = new LinkedHashMap<>();
-						reportPlanMap.put(planRec.reportId, map);
-					}
-					map.put(planRec.key, planRec);
-					break;
-				default:
-					throw new RuntimeException("unhandled case " + planner);
-				}
-
-			}
 			if (planRec.plan.getCallbackConsumer() != null) {
 				planningQueue.add(planRec);
+				Map<Object, PlanRec> map;
+				if (planRec.key != null) {
+					switch (planner) {
+					case ACTOR:
+						map = actorPlanMap.get(planRec.actorId);
+						if (map == null) {
+							map = new LinkedHashMap<>();
+							actorPlanMap.put(planRec.actorId, map);
+						}
+						map.put(planRec.key, planRec);
+						break;
+					case DATA_MANAGER:
+						map = dataManagerPlanMap.get(planRec.dataManagerId);
+						if (map == null) {
+							map = new LinkedHashMap<>();
+							dataManagerPlanMap.put(planRec.dataManagerId, map);
+						}
+						map.put(planRec.key, planRec);
+						break;
+					case REPORT:
+						map = reportPlanMap.get(planRec.reportId);
+						if (map == null) {
+							map = new LinkedHashMap<>();
+							reportPlanMap.put(planRec.reportId, map);
+						}
+						map.put(planRec.key, planRec);
+						break;
+					default:
+						throw new RuntimeException("unhandled case " + planner);
+					}
+				}
 			}
 		}
 	}

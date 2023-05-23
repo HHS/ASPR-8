@@ -1,11 +1,15 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.translationSpecs;
 
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.input.ResourceIdInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.input.ResourceInitializationInput;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 import plugins.resources.support.ResourceId;
 import plugins.resources.support.ResourceInitialization;
 
+/**
+ * TranslationSpec that defines how to convert between
+ * {@linkplain ResourceInitializationInput} and
+ * {@linkplain ResourceInitialization}
+ */
 public class ResourceInitializationTranslationSpec
         extends ProtobufTranslationSpec<ResourceInitializationInput, ResourceInitialization> {
 
@@ -18,10 +22,10 @@ public class ResourceInitializationTranslationSpec
 
     @Override
     protected ResourceInitializationInput convertAppObject(ResourceInitialization appObject) {
-        ResourceIdInput resourceIdInput = this.translationEngine.convertObjectAsSafeClass(appObject.getResourceId(),
-                ResourceId.class);
-        return ResourceInitializationInput.newBuilder().setAmount(appObject.getAmount()).setResourceId(
-                resourceIdInput).build();
+        return ResourceInitializationInput
+                .newBuilder()
+                .setAmount(appObject.getAmount())
+                .setResourceId(this.translationEngine.getAnyFromObject(appObject.getResourceId())).build();
     }
 
     @Override

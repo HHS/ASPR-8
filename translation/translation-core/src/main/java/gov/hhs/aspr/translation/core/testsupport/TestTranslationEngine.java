@@ -21,12 +21,24 @@ public class TestTranslationEngine extends TranslationEngine {
         this.data = data;
     }
 
-    private static class Data extends TranslationEngine.Data {
+    protected static class Data extends TranslationEngine.Data {
         Gson gson = new Gson();
 
-        private Data() {
+        protected Data() {
             super();
         }
+
+        @Override
+        public int hashCode() {
+            return super.hashCode();
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            return super.equals(obj);
+        }
+
+        
     }
 
     public static class Builder extends TranslationEngine.Builder {
@@ -79,6 +91,16 @@ public class TestTranslationEngine extends TranslationEngine {
         JsonObject jsonObject = JsonParser.parseReader(new JsonReader(reader)).getAsJsonObject();
 
         return convertObject(this.data.gson.fromJson(jsonObject.toString(), inputClassRef));
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj);
     }
 
 }

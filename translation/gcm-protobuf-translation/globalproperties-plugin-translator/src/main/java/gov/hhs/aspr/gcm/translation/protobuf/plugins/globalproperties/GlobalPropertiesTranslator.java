@@ -9,12 +9,26 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.ReportsTranslatorId
 import gov.hhs.aspr.translation.core.Translator;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
 
+/**
+ * Translator for the GlobalProperties Plugin.
+ * <li>Using this Translator will add
+ * all the necessary TanslationSpecs needed to read and write
+ * GlobalPropertiesPluginData
+ */
 public class GlobalPropertiesTranslator {
 
     private GlobalPropertiesTranslator() {
     }
 
-    public static Translator.Builder builder(boolean withReport) {
+    /**
+     * Returns a Translator Builder that already includes the necessary
+     * TranslationSpecs needed to read and write GlobalPropertiesPluginData
+     * 
+     * <li>the parameter withReport controls whether to add TranslationSpecs for the
+     * GlobalPropertyReportPluginData and also add a dependency on the
+     * ReportsTranslator
+     */
+    private static Translator.Builder builder(boolean withReport) {
 
         Translator.Builder builder = Translator.builder()
                 .setTranslatorId(GlobalPropertiesTranslatorId.TRANSLATOR_ID)
@@ -23,9 +37,11 @@ public class GlobalPropertiesTranslator {
                     ProtobufTranslationEngine.Builder translationEngineBuilder = translatorContext
                             .getTranslationEngineBuilder(ProtobufTranslationEngine.Builder.class);
 
-                    translationEngineBuilder.addTranslationSpec(new GlobalPropertiesPluginDataTranslationSpec());
-                    translationEngineBuilder.addTranslationSpec(new GlobalPropertyIdTranslationSpec());
-                    translationEngineBuilder.addTranslationSpec(new TestGlobalPropertyIdTranslationSpec());
+                    translationEngineBuilder
+                            .addTranslationSpec(new GlobalPropertiesPluginDataTranslationSpec())
+                            .addTranslationSpec(new GlobalPropertyIdTranslationSpec())
+                            .addTranslationSpec(new TestGlobalPropertyIdTranslationSpec());
+
                     if (withReport) {
                         translationEngineBuilder
                                 .addTranslationSpec(new GlobalPropertyReportPluginDataTranslationSpec());
@@ -39,10 +55,21 @@ public class GlobalPropertiesTranslator {
         return builder;
     }
 
+    /**
+     * Returns a GlobalPropertiesTranslator that includes TranslationSpecs for the
+     * GlobalPropertiesPluginData and GlobalPropertyReportPluginData and has a
+     * dependency on the ReportsTranslator.
+     * <li>Equivalent to calling builder(true).build()
+     */
     public static Translator getTranslatorWithReport() {
         return builder(true).build();
     }
 
+    /**
+     * Returns a GlobalPropertiesTranslator that includes TranslationSpecs for the
+     * GlobalPropertiesPluginData.
+     * <li>Equivalent to calling builder(false).build()
+     */
     public static Translator getTranslator() {
         return builder(false).build();
     }

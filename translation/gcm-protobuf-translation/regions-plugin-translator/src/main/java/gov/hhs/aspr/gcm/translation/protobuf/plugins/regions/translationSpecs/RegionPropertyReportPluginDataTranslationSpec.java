@@ -9,6 +9,11 @@ import plugins.regions.reports.RegionPropertyReportPluginData;
 import plugins.regions.support.RegionPropertyId;
 import plugins.reports.support.ReportLabel;
 
+/**
+ * TranslationSpec that defines how to convert between
+ * {@linkplain RegionPropertyReportPluginDataInput} and
+ * {@linkplain RegionPropertyReportPluginData}
+ */
 public class RegionPropertyReportPluginDataTranslationSpec
         extends ProtobufTranslationSpec<RegionPropertyReportPluginDataInput, RegionPropertyReportPluginData> {
 

@@ -4,6 +4,11 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.input.RegionIdInput
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 import plugins.regions.support.RegionId;
 
+/**
+ * TranslationSpec that defines how to convert between
+ * {@linkplain RegionIdInput} and
+ * {@linkplain RegionId}
+ */
 public class RegionIdTranslationSpec extends ProtobufTranslationSpec<RegionIdInput, RegionId> {
 
     @Override

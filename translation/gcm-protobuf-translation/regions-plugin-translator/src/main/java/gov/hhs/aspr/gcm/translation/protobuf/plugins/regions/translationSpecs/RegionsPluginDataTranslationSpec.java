@@ -20,6 +20,11 @@ import plugins.regions.support.RegionId;
 import plugins.regions.support.RegionPropertyId;
 import plugins.util.properties.PropertyDefinition;
 
+/**
+ * TranslationSpec that defines how to convert between
+ * {@linkplain RegionsPluginDataInput} and
+ * {@linkplain RegionsPluginData}
+ */
 public class RegionsPluginDataTranslationSpec
         extends ProtobufTranslationSpec<RegionsPluginDataInput, RegionsPluginData> {
 
@@ -130,26 +135,24 @@ public class RegionsPluginDataTranslationSpec
         for (int i = 0; i < appObject.getPersonCount(); i++) {
             PersonId personId = new PersonId(i);
 
-            if (appObject.getPersonRegion(personId).isPresent()) {
-                RegionId regionId = appObject.getPersonRegion(personId).get();
-                RegionIdInput regionIdInput = this.translationEngine.convertObjectAsSafeClass(regionId, RegionId.class);
-                List<RegionPersonInfo> peopleInRegion = regionMembershipMap.get(regionIdInput);
+            RegionId regionId = appObject.getPersonRegion(personId).get();
+            RegionIdInput regionIdInput = this.translationEngine.convertObjectAsSafeClass(regionId, RegionId.class);
+            List<RegionPersonInfo> peopleInRegion = regionMembershipMap.get(regionIdInput);
 
-                if (peopleInRegion == null) {
-                    peopleInRegion = new ArrayList<>();
+            if (peopleInRegion == null) {
+                peopleInRegion = new ArrayList<>();
 
-                    regionMembershipMap.put(regionIdInput, peopleInRegion);
-                }
-
-                RegionPersonInfo.Builder regionPersonInfoBuilder = RegionPersonInfo.newBuilder()
-                        .setPersonId(i);
-                if (trackRegionArrivalTimes) {
-                    // can safely assume this because the person region exists
-                    regionPersonInfoBuilder.setArrivalTime(appObject.getPersonRegionArrivalTime(personId).get());
-                }
-
-                peopleInRegion.add(regionPersonInfoBuilder.build());
+                regionMembershipMap.put(regionIdInput, peopleInRegion);
             }
+
+            RegionPersonInfo.Builder regionPersonInfoBuilder = RegionPersonInfo.newBuilder()
+                    .setPersonId(i);
+            if (trackRegionArrivalTimes) {
+                // can safely assume this because the person region exists
+                regionPersonInfoBuilder.setArrivalTime(appObject.getPersonRegionArrivalTime(personId).get());
+            }
+
+            peopleInRegion.add(regionPersonInfoBuilder.build());
         }
 
         for (RegionIdInput regionIdInput : regionMembershipMap.keySet()) {

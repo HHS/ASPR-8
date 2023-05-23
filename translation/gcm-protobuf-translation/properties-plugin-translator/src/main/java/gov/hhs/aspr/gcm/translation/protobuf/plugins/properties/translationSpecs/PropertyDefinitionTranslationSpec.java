@@ -6,6 +6,11 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.input.PropertyDe
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 import plugins.util.properties.PropertyDefinition;
 
+/**
+ * TranslationSpec that defines how to convert between
+ * {@linkplain PropertyDefinitionInput} and
+ * {@linkplain PropertyDefinition}
+ */
 public class PropertyDefinitionTranslationSpec
         extends ProtobufTranslationSpec<PropertyDefinitionInput, PropertyDefinition> {
 
@@ -26,8 +31,7 @@ public class PropertyDefinitionTranslationSpec
                 classType = Class.forName(type);
                 builder.setType(classType);
             } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-                throw new RuntimeException("Unable to find class for type: " + type);
+                throw new RuntimeException("Unable to find class for type: " + type, e);
             }
         }
 

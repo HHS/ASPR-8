@@ -4,6 +4,11 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.input.TestBatchPr
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 import plugins.materials.testsupport.TestBatchPropertyId;
 
+/**
+ * TranslationSpec that defines how to convert between
+ * {@linkplain TestBatchPropertyIdInput} and
+ * {@linkplain TestBatchPropertyId}
+ */
 public class TestBatchPropertyIdTranslationSpec
         extends ProtobufTranslationSpec<TestBatchPropertyIdInput, TestBatchPropertyId> {
 

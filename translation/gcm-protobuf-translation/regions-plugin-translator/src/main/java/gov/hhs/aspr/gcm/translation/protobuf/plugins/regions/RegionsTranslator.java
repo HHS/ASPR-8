@@ -16,12 +16,18 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.translationSpecs.Te
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.translationSpecs.TestRegionPropertyIdTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.ReportsTranslatorId;
 
+/**
+ * Translator for the Regions Plugin.
+ * <li>Using this Translator will add
+ * all the necessary TanslationSpecs needed to read and write
+ * RegionsPlugin
+ */
 public class RegionsTranslator {
 
     private RegionsTranslator() {
     }
 
-    public static Translator.Builder builder(boolean withReport) {
+    private static Translator.Builder builder(boolean withReport) {
         Translator.Builder builder = Translator.builder()
                 .setTranslatorId(RegionsTranslatorId.TRANSLATOR_ID)
                 .addDependency(PeopleTranslatorId.TRANSLATOR_ID)
@@ -30,21 +36,21 @@ public class RegionsTranslator {
                     ProtobufTranslationEngine.Builder translationEngineBuilder = translatorContext
                             .getTranslationEngineBuilder(ProtobufTranslationEngine.Builder.class);
 
-                    translationEngineBuilder.addTranslationSpec(new RegionsPluginDataTranslationSpec());
-                    translationEngineBuilder.addTranslationSpec(new RegionIdTranslationSpec());
-                    translationEngineBuilder.addTranslationSpec(new RegionPropertyIdTranslationSpec());
-                    translationEngineBuilder.addTranslationSpec(new SimpleRegionIdTranslationSpec());
-                    translationEngineBuilder.addTranslationSpec(new SimpleRegionPropertyIdTranslationSpec());
-                    translationEngineBuilder.addTranslationSpec(new TestRegionIdTranslationSpec());
-                    translationEngineBuilder.addTranslationSpec(new TestRegionPropertyIdTranslationSpec());
+                    translationEngineBuilder
+                            .addTranslationSpec(new RegionsPluginDataTranslationSpec())
+                            .addTranslationSpec(new RegionIdTranslationSpec())
+                            .addTranslationSpec(new RegionPropertyIdTranslationSpec())
+                            .addTranslationSpec(new SimpleRegionIdTranslationSpec())
+                            .addTranslationSpec(new SimpleRegionPropertyIdTranslationSpec())
+                            .addTranslationSpec(new TestRegionIdTranslationSpec())
+                            .addTranslationSpec(new TestRegionPropertyIdTranslationSpec());
 
                     translationEngineBuilder.addFieldToIncludeDefaultValue(
                             RegionPersonInfo.getDescriptor().findFieldByName("personId"));
 
                     if (withReport) {
                         translationEngineBuilder
-                                .addTranslationSpec(new RegionPropertyReportPluginDataTranslationSpec());
-                        translationEngineBuilder
+                                .addTranslationSpec(new RegionPropertyReportPluginDataTranslationSpec())
                                 .addTranslationSpec(new RegionTransferReportPluginDataTranslationSpec());
                     }
                 });
