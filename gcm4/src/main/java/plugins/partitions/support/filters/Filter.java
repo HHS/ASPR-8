@@ -23,9 +23,6 @@ public abstract class Filter {
 	 *             null</li>
 	 */
 	public final Filter and(Filter filter) {
-		if (filter == null) {
-			throw new ContractException(PartitionError.NULL_FILTER);
-		}
 		return new AndFilter(this, filter);
 	}
 
@@ -37,9 +34,6 @@ public abstract class Filter {
 	 *             null</li>
 	 */
 	public final Filter or(Filter filter) {
-		if (filter == null) {
-			throw new ContractException(PartitionError.NULL_FILTER);
-		}
 		return new OrFilter(this, filter);
 	}
 
@@ -51,9 +45,8 @@ public abstract class Filter {
 	}
 
 	/**
-	 * Evaluates the person against the filter.
-	 * 
-	 * Preconditions :
+	 * Evaluates the person against the filter. 
+	 *
 	 * 
 	 * @throws ContractException
 	 *             <li>{@linkplain NucleusError#NULL_SIMULATION_CONTEXT} if the

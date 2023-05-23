@@ -21,6 +21,7 @@ public enum PartitionError implements ContractError {
 	NULL_LABEL_SET("Null label set"),
 	NULL_PARTITION("Null partition"),
 	NULL_PARTITION_PLUGIN("null partitions plugin"),
+	NULL_PARTITION_PLUGIN_DATA("null partitions plugin date"),
 	NULL_PARTITION_LABEL("Null partition label"),
 	NULL_PARTITION_LABEL_DIMENSION("Null partition label dimension"),
 	NULL_FILTER("Null filter"),

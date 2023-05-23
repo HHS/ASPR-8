@@ -20,6 +20,7 @@ import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestSimulation;
 import plugins.partitions.PartitionsPlugin;
+import plugins.partitions.datamanagers.PartitionsPluginData;
 import plugins.partitions.support.Equality;
 import plugins.partitions.support.FilterSensitivity;
 import plugins.partitions.support.PartitionError;
@@ -101,6 +102,13 @@ public final class AT_AttributeFilter {
 		attributesBuilder.defineAttribute(LocalAttributeId.DATA_ID, attributeDefinition);
 
 		Plugin attributesPlugin = AttributesPlugin.getAttributesPlugin(attributesBuilder.build());
+		
+		
+		Plugin partitionsPlugin = PartitionsPlugin.builder()//		
+				.setPartitionsPluginData(PartitionsPluginData.builder().build())//
+				//.addPluginDependency(AttributesPluginId.PLUGIN_ID)//
+				.getPartitionsPlugin();
+
 
 		plugins.add(attributesPlugin);
 
@@ -115,7 +123,7 @@ public final class AT_AttributeFilter {
 		WellState wellState = WellState.builder().setSeed(7698506335486677498L).build();
 		plugins.add(StochasticsPlugin.getStochasticsPlugin(StochasticsPluginData.builder().setMainRNGState(wellState).build()));
 
-		plugins.add(PartitionsPlugin.getPartitionsPlugin());
+		plugins.add(partitionsPlugin);
 
 		// and add the action plugin to the engine
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();

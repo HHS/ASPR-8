@@ -28,6 +28,7 @@ import plugins.materials.MaterialsPluginData;
 import plugins.materials.MaterialsPluginId;
 import plugins.partitions.PartitionsPlugin;
 import plugins.partitions.PartitionsPluginId;
+import plugins.partitions.datamanagers.PartitionsPluginData;
 import plugins.people.PeoplePlugin;
 import plugins.people.PeoplePluginData;
 import plugins.people.PeoplePluginId;
@@ -289,10 +290,12 @@ public class PluginDependencyInfoGenerator {
 		// create a graph of the plugin dependencies
 		MutableGraph<PluginId, Object> pluginDependencyGraph = new MutableGraph<>();
 
+		
+		
 		addToGraph(pluginDependencyGraph, GlobalPropertiesPlugin.builder().setGlobalPropertiesPluginData(GlobalPropertiesPluginData.builder().build()).getGlobalPropertiesPlugin());
 		addToGraph(pluginDependencyGraph, GroupsPlugin.builder().setGroupsPluginData(GroupsPluginData.builder().build()).getGroupsPlugin());
 		addToGraph(pluginDependencyGraph, MaterialsPlugin.builder().setMaterialsPluginData(MaterialsPluginData.builder().build()).getMaterialsPlugin());
-		addToGraph(pluginDependencyGraph, PartitionsPlugin.getPartitionsPlugin());
+		addToGraph(pluginDependencyGraph, PartitionsPlugin.builder().setPartitionsPluginData(PartitionsPluginData.builder().build()).getPartitionsPlugin());
 		addToGraph(pluginDependencyGraph, PeoplePlugin.getPeoplePlugin(PeoplePluginData.builder().build()));
 		addToGraph(pluginDependencyGraph, PersonPropertiesPlugin.builder().setPersonPropertiesPluginData(PersonPropertiesPluginData.builder().build()).getPersonPropertyPlugin());
 

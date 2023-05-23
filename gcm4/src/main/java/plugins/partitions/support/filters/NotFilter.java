@@ -4,19 +4,30 @@ import java.util.Set;
 
 import nucleus.SimulationContext;
 import plugins.partitions.support.FilterSensitivity;
+import plugins.partitions.support.PartitionError;
 import plugins.people.support.PersonId;
+import util.errors.ContractException;
 
 public final class NotFilter extends Filter {
 	final Filter a;
 
+	/**
+	 * Constructs a filter that negates another filter.
+	 * 
+	 * @throws ContractException
+	 *             <li>{@linkplain PartitionError#NULL_FILTER} if the filter is
+	 *             null</li>
+	 */
 	public NotFilter(Filter a) {
+		if (a == null) {
+			throw new ContractException(PartitionError.NULL_FILTER);
+		}
 		this.a = a;
 	}
-	
+
 	public Filter getSubFilter() {
 		return a;
 	}
-		
 
 	@Override
 	public void validate(SimulationContext simulationContext) {
