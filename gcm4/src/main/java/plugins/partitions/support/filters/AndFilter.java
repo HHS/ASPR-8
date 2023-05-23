@@ -68,4 +68,21 @@ public final class AndFilter extends Filter {
 		b.validate(simulationContext);
 	}
 
+	@Override
+	public int hashCode() {
+		return a.hashCode() + b.hashCode();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!(obj instanceof AndFilter)) {
+			return false;
+		}
+		AndFilter other = (AndFilter) obj;
+		return a.equals(other.a) && b.equals(other.b) || a.equals(other.b) && b.equals(other.a);
+	}
+
 }

@@ -95,4 +95,39 @@ public final class GroupsForPersonAndGroupTypeFilter extends Filter {
 		return result;
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((equality == null) ? 0 : equality.hashCode());
+		result = prime * result + groupCount;
+		result = prime * result + ((groupTypeId == null) ? 0 : groupTypeId.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!(obj instanceof GroupsForPersonAndGroupTypeFilter)) {
+			return false;
+		}
+		GroupsForPersonAndGroupTypeFilter other = (GroupsForPersonAndGroupTypeFilter) obj;
+		if (equality != other.equality) {
+			return false;
+		}
+		if (groupCount != other.groupCount) {
+			return false;
+		}
+		if (groupTypeId == null) {
+			if (other.groupTypeId != null) {
+				return false;
+			}
+		} else if (!groupTypeId.equals(other.groupTypeId)) {
+			return false;
+		}
+		return true;
+	}
+
 }

@@ -48,4 +48,16 @@ public interface Labeler {
 	 * Returns the id for this labeler.
 	 */
 	public Object getId();
+	
+	/**
+	 * Labelers are equal if they label every person identically
+	 */
+	@Override
+	public int hashCode();
+
+	/**
+	 * Labelers are equal if they label every person identically
+	 */
+	@Override
+	public boolean equals(Object obj);
 }

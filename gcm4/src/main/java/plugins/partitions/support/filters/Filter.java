@@ -45,7 +45,7 @@ public abstract class Filter {
 	}
 
 	/**
-	 * Evaluates the person against the filter. 
+	 * Evaluates the person against the filter.
 	 *
 	 * 
 	 * @throws ContractException
@@ -74,5 +74,17 @@ public abstract class Filter {
 	 * Returns the filter sensitivities
 	 */
 	public abstract Set<FilterSensitivity<?>> getFilterSensitivities();
+
+	/**
+	 * Filters are equal if they represent the same logical operation
+	 */
+	@Override
+	public abstract int hashCode();
+
+	/**
+	 * Filters are equal if they represent the same logical operation
+	 */
+	@Override
+	public abstract boolean equals(Object obj); 
 
 }

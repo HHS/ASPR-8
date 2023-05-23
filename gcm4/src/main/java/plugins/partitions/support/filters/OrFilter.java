@@ -55,4 +55,21 @@ public final class OrFilter extends Filter {
 		a.validate(simulationContext);
 		b.validate(simulationContext);
 	}
+	
+	@Override
+	public int hashCode() {
+		return a.hashCode() + b.hashCode();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!(obj instanceof OrFilter)) {
+			return false;
+		}
+		OrFilter other = (OrFilter) obj;
+		return a.equals(other.a) && b.equals(other.b) || a.equals(other.b) && b.equals(other.a);
+	}
 }

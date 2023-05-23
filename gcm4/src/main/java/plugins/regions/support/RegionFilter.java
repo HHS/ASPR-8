@@ -93,4 +93,33 @@ public final class RegionFilter extends Filter {
 		return result;
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((regionIds == null) ? 0 : regionIds.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!(obj instanceof RegionFilter)) {
+			return false;
+		}
+		RegionFilter other = (RegionFilter) obj;
+		if (regionIds == null) {
+			if (other.regionIds != null) {
+				return false;
+			}
+		} else if (!regionIds.equals(other.regionIds)) {
+			return false;
+		}
+		return true;
+	}
+	
+	
+
 }

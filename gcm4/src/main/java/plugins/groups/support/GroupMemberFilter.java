@@ -68,4 +68,31 @@ public class GroupMemberFilter extends Filter {
 		return groupsDataManager.isPersonInGroup(personId,groupId);
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((groupId == null) ? 0 : groupId.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!(obj instanceof GroupMemberFilter)) {
+			return false;
+		}
+		GroupMemberFilter other = (GroupMemberFilter) obj;
+		if (groupId == null) {
+			if (other.groupId != null) {
+				return false;
+			}
+		} else if (!groupId.equals(other.groupId)) {
+			return false;
+		}
+		return true;
+	}
+
 }

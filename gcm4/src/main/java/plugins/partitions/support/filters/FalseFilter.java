@@ -37,4 +37,22 @@ public final class FalseFilter extends Filter {
 
 	}
 
+	@Override
+	public int hashCode() {
+		return 0;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!(obj instanceof FalseFilter)) {
+			return false;
+		}
+		return true;
+	}
+	
+	
+
 }

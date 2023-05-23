@@ -51,6 +51,35 @@ public class AT_Filter {
 			// do nothing
 
 		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + ((filterSensitivities == null) ? 0 : filterSensitivities.hashCode());
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (!(obj instanceof LocalFilter)) {
+				return false;
+			}
+			LocalFilter other = (LocalFilter) obj;
+			if (filterSensitivities == null) {
+				if (other.filterSensitivities != null) {
+					return false;
+				}
+			} else if (!filterSensitivities.equals(other.filterSensitivities)) {
+				return false;
+			}
+			return true;
+		}
+
+		
 	}
 
 	private static Optional<PersonId> eventPredicate(SimulationContext context, Event event) {

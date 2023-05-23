@@ -35,4 +35,22 @@ public final class TrueFilter extends Filter {
 	public void validate(SimulationContext simulationContext) {
 
 	}
+
+	@Override
+	public int hashCode() {
+		return 0;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!(obj instanceof TrueFilter)) {
+			return false;
+		}
+		return true;
+	}
+	
+	
 }

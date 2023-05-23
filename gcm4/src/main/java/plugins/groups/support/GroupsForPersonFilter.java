@@ -67,4 +67,31 @@ public class GroupsForPersonFilter extends Filter {
 		return result;
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((equality == null) ? 0 : equality.hashCode());
+		result = prime * result + groupCount;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!(obj instanceof GroupsForPersonFilter)) {
+			return false;
+		}
+		GroupsForPersonFilter other = (GroupsForPersonFilter) obj;
+		if (equality != other.equality) {
+			return false;
+		}
+		if (groupCount != other.groupCount) {
+			return false;
+		}
+		return true;
+	}
+
 }

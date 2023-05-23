@@ -53,4 +53,27 @@ public final class NotFilter extends Filter {
 		return a.getFilterSensitivities();
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + a.hashCode();
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!(obj instanceof NotFilter)) {
+			return false;
+		}
+		NotFilter other = (NotFilter) obj;
+		if (!a.equals(other.a)) {
+			return false;
+		}
+		return true;
+	}
+
 }
