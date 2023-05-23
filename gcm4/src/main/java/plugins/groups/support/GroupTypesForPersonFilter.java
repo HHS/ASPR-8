@@ -10,9 +10,9 @@ import plugins.groups.datamanagers.GroupsDataManager;
 import plugins.groups.events.GroupMembershipAdditionEvent;
 import plugins.groups.events.GroupMembershipRemovalEvent;
 import plugins.partitions.support.Equality;
-import plugins.partitions.support.Filter;
 import plugins.partitions.support.FilterSensitivity;
 import plugins.partitions.support.PartitionError;
+import plugins.partitions.support.filters.Filter;
 import plugins.people.support.PersonId;
 import util.errors.ContractException;
 
@@ -66,5 +66,34 @@ public final class GroupTypesForPersonFilter extends Filter {
 
 		return result;
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((equality == null) ? 0 : equality.hashCode());
+		result = prime * result + groupTypeCount;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!(obj instanceof GroupTypesForPersonFilter)) {
+			return false;
+		}
+		GroupTypesForPersonFilter other = (GroupTypesForPersonFilter) obj;
+		if (equality != other.equality) {
+			return false;
+		}
+		if (groupTypeCount != other.groupTypeCount) {
+			return false;
+		}
+		return true;
+	}
+	
+	
 
 }

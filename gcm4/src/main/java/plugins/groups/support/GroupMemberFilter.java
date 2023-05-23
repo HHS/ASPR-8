@@ -9,8 +9,8 @@ import nucleus.SimulationContext;
 import plugins.groups.datamanagers.GroupsDataManager;
 import plugins.groups.events.GroupMembershipAdditionEvent;
 import plugins.groups.events.GroupMembershipRemovalEvent;
-import plugins.partitions.support.Filter;
 import plugins.partitions.support.FilterSensitivity;
+import plugins.partitions.support.filters.Filter;
 import plugins.people.support.PersonId;
 import util.errors.ContractException;
 
@@ -66,6 +66,33 @@ public class GroupMemberFilter extends Filter {
 			groupsDataManager = simulationContext.getDataManager(GroupsDataManager.class);
 		}
 		return groupsDataManager.isPersonInGroup(personId,groupId);
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((groupId == null) ? 0 : groupId.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!(obj instanceof GroupMemberFilter)) {
+			return false;
+		}
+		GroupMemberFilter other = (GroupMemberFilter) obj;
+		if (groupId == null) {
+			if (other.groupId != null) {
+				return false;
+			}
+		} else if (!groupId.equals(other.groupId)) {
+			return false;
+		}
+		return true;
 	}
 
 }

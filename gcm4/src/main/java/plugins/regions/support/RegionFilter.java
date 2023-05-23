@@ -6,8 +6,8 @@ import java.util.Set;
 
 import nucleus.NucleusError;
 import nucleus.SimulationContext;
-import plugins.partitions.support.Filter;
 import plugins.partitions.support.FilterSensitivity;
+import plugins.partitions.support.filters.Filter;
 import plugins.people.support.PersonId;
 import plugins.regions.datamanagers.RegionsDataManager;
 import plugins.regions.events.PersonRegionUpdateEvent;
@@ -92,5 +92,34 @@ public final class RegionFilter extends Filter {
 		result.add(new FilterSensitivity<PersonRegionUpdateEvent>(PersonRegionUpdateEvent.class, this::requiresRefresh));
 		return result;
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((regionIds == null) ? 0 : regionIds.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!(obj instanceof RegionFilter)) {
+			return false;
+		}
+		RegionFilter other = (RegionFilter) obj;
+		if (regionIds == null) {
+			if (other.regionIds != null) {
+				return false;
+			}
+		} else if (!regionIds.equals(other.regionIds)) {
+			return false;
+		}
+		return true;
+	}
+	
+	
 
 }

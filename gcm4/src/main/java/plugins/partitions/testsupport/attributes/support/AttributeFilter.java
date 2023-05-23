@@ -7,9 +7,9 @@ import java.util.Set;
 import nucleus.NucleusError;
 import nucleus.SimulationContext;
 import plugins.partitions.support.Equality;
-import plugins.partitions.support.Filter;
 import plugins.partitions.support.FilterSensitivity;
 import plugins.partitions.support.PartitionError;
+import plugins.partitions.support.filters.Filter;
 import plugins.partitions.testsupport.attributes.AttributesDataManager;
 import plugins.partitions.testsupport.attributes.events.AttributeUpdateEvent;
 import plugins.people.support.PersonId;
@@ -165,5 +165,46 @@ public final class AttributeFilter extends Filter {
 		result.add(new FilterSensitivity<AttributeUpdateEvent>(AttributeUpdateEvent.class, this::requiresRefresh));
 		return result;
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((attributeId == null) ? 0 : attributeId.hashCode());
+		result = prime * result + ((equality == null) ? 0 : equality.hashCode());
+		result = prime * result + ((value == null) ? 0 : value.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!(obj instanceof AttributeFilter)) {
+			return false;
+		}
+		AttributeFilter other = (AttributeFilter) obj;
+		if (attributeId == null) {
+			if (other.attributeId != null) {
+				return false;
+			}
+		} else if (!attributeId.equals(other.attributeId)) {
+			return false;
+		}
+		if (equality != other.equality) {
+			return false;
+		}
+		if (value == null) {
+			if (other.value != null) {
+				return false;
+			}
+		} else if (!value.equals(other.value)) {
+			return false;
+		}
+		return true;
+	}
+	
+	
 
 }

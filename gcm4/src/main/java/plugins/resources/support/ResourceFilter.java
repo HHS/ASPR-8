@@ -7,9 +7,9 @@ import java.util.Set;
 import nucleus.NucleusError;
 import nucleus.SimulationContext;
 import plugins.partitions.support.Equality;
-import plugins.partitions.support.Filter;
 import plugins.partitions.support.FilterSensitivity;
 import plugins.partitions.support.PartitionError;
+import plugins.partitions.support.filters.Filter;
 import plugins.people.support.PersonId;
 import plugins.resources.datamanagers.ResourcesDataManager;
 import plugins.resources.events.PersonResourceUpdateEvent;
@@ -88,5 +88,42 @@ public final class ResourceFilter extends Filter {
 		result.add(new FilterSensitivity<PersonResourceUpdateEvent>(PersonResourceUpdateEvent.class, this::requiresRefresh));
 		return result;
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((equality == null) ? 0 : equality.hashCode());
+		result = prime * result + ((resourceId == null) ? 0 : resourceId.hashCode());
+		result = prime * result + (int) (resourceValue ^ (resourceValue >>> 32));
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!(obj instanceof ResourceFilter)) {
+			return false;
+		}
+		ResourceFilter other = (ResourceFilter) obj;
+		if (equality != other.equality) {
+			return false;
+		}
+		if (resourceId == null) {
+			if (other.resourceId != null) {
+				return false;
+			}
+		} else if (!resourceId.equals(other.resourceId)) {
+			return false;
+		}
+		if (resourceValue != other.resourceValue) {
+			return false;
+		}
+		return true;
+	}
+	
+	
 
 }

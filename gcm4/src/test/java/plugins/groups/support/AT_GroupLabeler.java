@@ -35,18 +35,30 @@ import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 
 public final class AT_GroupLabeler {
+	private static class LocalGroupLabeler extends GroupLabeler {
+		private final Function<GroupTypeCountMap, Object> labelingFunction;
 
+		public LocalGroupLabeler(Function<GroupTypeCountMap, Object> labelingFunction) {			
+			this.labelingFunction = labelingFunction;
+		}
+
+		@Override
+		protected Object getLabelFromGroupTypeCountMap(GroupTypeCountMap groupTypeCountMap) {
+			return labelingFunction.apply(groupTypeCountMap);
+		}
+
+	}
 	@Test
 	@UnitTestConstructor(target = GroupLabeler.class, args = { Function.class })
 	public void testConstructor() {
-		assertNotNull(new GroupLabeler((g) -> null));
+		assertNotNull(new LocalGroupLabeler((g) -> null));
 	}
 
 	@Test
 	@UnitTestMethod(target = GroupLabeler.class, name = "getLabelerSensitivities", args = {})
 	public void testGetLabelerSensitivities() {
 
-		Set<LabelerSensitivity<?>> labelerSensitivities = new GroupLabeler((g) -> null).getLabelerSensitivities();
+		Set<LabelerSensitivity<?>> labelerSensitivities = new LocalGroupLabeler((g) -> null).getLabelerSensitivities();
 
 		// show that we get back some labeler sensitivities
 		assertNotNull(labelerSensitivities);
@@ -103,7 +115,7 @@ public final class AT_GroupLabeler {
 				return result;
 			};
 
-			GroupLabeler groupLabeler = new GroupLabeler(func);
+			GroupLabeler groupLabeler = new LocalGroupLabeler(func);
 
 			for (PersonId personId : peopleDataManager.getPeople()) {
 				GroupTypeCountMap.Builder builder = GroupTypeCountMap.builder();
@@ -112,18 +124,18 @@ public final class AT_GroupLabeler {
 				}
 				GroupTypeCountMap groupTypeCountMap = builder.build();
 				Object expectedLabel = func.apply(groupTypeCountMap);
-				Object actualLabel = groupLabeler.getLabel(c, personId);
+				Object actualLabel = groupLabeler.getCurrentLabel(c, personId);
 				assertEquals(expectedLabel, actualLabel);
 			}
 
 			// precondition tests
 
 			// if the person id is null
-			ContractException contractException = assertThrows(ContractException.class, () -> groupLabeler.getLabel(c, null));
+			ContractException contractException = assertThrows(ContractException.class, () -> groupLabeler.getCurrentLabel(c, null));
 			assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
 
 			// if the person id is unknown
-			contractException = assertThrows(ContractException.class, () -> groupLabeler.getLabel(c, new PersonId(100000)));
+			contractException = assertThrows(ContractException.class, () -> groupLabeler.getCurrentLabel(c, new PersonId(100000)));
 			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
 
 		};
@@ -134,10 +146,10 @@ public final class AT_GroupLabeler {
 	}
 
 	@Test
-	@UnitTestMethod(target = GroupLabeler.class, name = "getDimension", args = {})
-	public void testGetDimension() {
+	@UnitTestMethod(target = GroupLabeler.class, name = "getId", args = {})
+	public void testGetId() {
 		Function<GroupTypeCountMap, Object> f = (g) -> null;
-		assertEquals(GroupTypeId.class, new GroupLabeler(f).getDimension());
+		assertEquals(GroupTypeId.class, new LocalGroupLabeler(f).getId());
 	}
 
 	@Test
@@ -161,7 +173,7 @@ public final class AT_GroupLabeler {
 				return result;
 			};
 
-			GroupLabeler groupLabeler = new GroupLabeler(func);
+			GroupLabeler groupLabeler = new LocalGroupLabeler(func);
 
 			// Addition Events
 			GroupMembershipAdditionEvent groupMembershipAdditionEvent;

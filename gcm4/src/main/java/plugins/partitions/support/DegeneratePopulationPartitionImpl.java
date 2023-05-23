@@ -12,6 +12,8 @@ import nucleus.Event;
 import nucleus.SimulationContext;
 import plugins.partitions.support.containers.BasePeopleContainer;
 import plugins.partitions.support.containers.PeopleContainer;
+import plugins.partitions.support.filters.Filter;
+import plugins.partitions.support.filters.TrueFilter;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonId;
 import plugins.stochastics.StochasticsDataManager;
@@ -51,7 +53,7 @@ public class DegeneratePopulationPartitionImpl implements PopulationPartition {
 
 		this.simulationContext = simulationContext;
 		stochasticsDataManager = simulationContext.getDataManager(StochasticsDataManager.class);
-		filter = partition.getFilter().orElse(Filter.allPeople());
+		filter = partition.getFilter().orElse(new TrueFilter());
 
 		if (!partition.isDegenerate()) {
 			throw new ContractException(PartitionError.NON_DEGENERATE_PARTITION);

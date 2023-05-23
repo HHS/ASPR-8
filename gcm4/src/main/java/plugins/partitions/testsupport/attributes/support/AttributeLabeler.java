@@ -3,7 +3,6 @@ package plugins.partitions.testsupport.attributes.support;
 import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Function;
 
 import nucleus.Event;
 import nucleus.SimulationContext;
@@ -17,20 +16,25 @@ import plugins.people.support.PersonId;
 /**
  * A labeler for attributes. The dimension of the labeler is the given
  * {@linkplain AttributeId}, the event that stimulates a label update is
- * {@linkplain AttributeUpdateEvent} and the labeling function is
- * composed from the given Function.
+ * {@linkplain AttributeUpdateEvent} and the labeling function is composed from
+ * the given Function.
  * 
  *
  */
-public final class AttributeLabeler implements Labeler {
+public abstract class AttributeLabeler implements Labeler {
 
 	private final AttributeId attributeId;
-	private final Function<Object, Object> attributeValueLabelingFunction;
+	
 	private AttributesDataManager attributesDataManager;
 
-	public AttributeLabeler(AttributeId attributeId, Function<Object, Object> attributeValueLabelingFunction) {
+	protected abstract Object getLabelFromValue(Object value);
+	
+	public AttributeId getAttributeId() {
+		return attributeId;
+	}
+
+	public AttributeLabeler(AttributeId attributeId) {
 		this.attributeId = attributeId;
-		this.attributeValueLabelingFunction = attributeValueLabelingFunction;
 	}
 
 	private Optional<PersonId> getPersonId(AttributeUpdateEvent attributeUpdateEvent) {
@@ -45,7 +49,7 @@ public final class AttributeLabeler implements Labeler {
 	 * Returns one LabelerSensitivity of AttributeUpdateEvent
 	 */
 	@Override
-	public Set<LabelerSensitivity<?>> getLabelerSensitivities() {
+	public final Set<LabelerSensitivity<?>> getLabelerSensitivities() {
 		Set<LabelerSensitivity<?>> result = new LinkedHashSet<>();
 		result.add(new LabelerSensitivity<AttributeUpdateEvent>(AttributeUpdateEvent.class, this::getPersonId));
 		return result;
@@ -63,26 +67,26 @@ public final class AttributeLabeler implements Labeler {
 	 *                          if the person id is unknown
 	 */
 	@Override
-	public Object getLabel(SimulationContext simulationContext, PersonId personId) {
+	public final Object getCurrentLabel(SimulationContext simulationContext, PersonId personId) {
 		if (attributesDataManager == null) {
 			attributesDataManager = simulationContext.getDataManager(AttributesDataManager.class);
 		}
 		Object value = attributesDataManager.getAttributeValue(personId, attributeId);
-		return attributeValueLabelingFunction.apply(value);
+		return getLabelFromValue(value);
 	}
 
 	/**
 	 * Returns the attribute id as the dimension
 	 */
 	@Override
-	public Object getDimension() {
+	public final Object getId() {
 		return attributeId;
 	}
 
 	@Override
-	public Object getPastLabel(SimulationContext simulationContext, Event event) {
-		AttributeUpdateEvent attributeUpdateEvent = (AttributeUpdateEvent)event;
-		return attributeValueLabelingFunction.apply(attributeUpdateEvent.previousValue());
+	public final Object getPastLabel(SimulationContext simulationContext, Event event) {
+		AttributeUpdateEvent attributeUpdateEvent = (AttributeUpdateEvent) event;
+		return getLabelFromValue(attributeUpdateEvent.previousValue());
 	}
 
 }
