@@ -36,6 +36,7 @@ import plugins.regions.testsupport.TestRegionId;
 import plugins.resources.ResourcesPlugin;
 import plugins.resources.ResourcesPluginData;
 import plugins.resources.support.ResourceError;
+import plugins.resources.support.ResourceId;
 import plugins.resources.testsupport.TestResourceId;
 import plugins.resources.testsupport.TestResourcePropertyId;
 import plugins.stochastics.StochasticsPlugin;
@@ -481,6 +482,12 @@ public class MaterialsTestPluginFactory {
 			}
 			materialsBuilder.addMaterialsProducerId(testMaterialsProducerId);
 
+			for (ResourceId resourceId : TestResourceId.values()) {
+                if (randomGenerator.nextBoolean()) {
+                    materialsBuilder.setMaterialsProducerResourceLevel(testMaterialsProducerId, resourceId,
+                            randomGenerator.nextInt(10));
+                }
+            }
 		}
 
 		for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId.values()) {

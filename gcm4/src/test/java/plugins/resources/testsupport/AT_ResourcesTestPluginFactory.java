@@ -39,7 +39,6 @@ import plugins.regions.testsupport.TestRegionPropertyId;
 import plugins.resources.ResourcesPluginData;
 import plugins.resources.ResourcesPluginId;
 import plugins.resources.support.ResourceError;
-import plugins.resources.support.ResourceId;
 import plugins.resources.testsupport.ResourcesTestPluginFactory.Factory;
 import plugins.stochastics.StochasticsPluginData;
 import plugins.stochastics.StochasticsPluginId;
@@ -78,7 +77,7 @@ public class AT_ResourcesTestPluginFactory {
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, c -> executed.setValue(true)));
 		TestPluginData testPluginData = pluginBuilder.build();
 
-		Factory factory = ResourcesTestPluginFactory.factory(100, 5785172948650781925L, testPluginData);		
+		Factory factory = ResourcesTestPluginFactory.factory(100, 5785172948650781925L, testPluginData);
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 		assertTrue(executed.getValue());
 
@@ -140,7 +139,7 @@ public class AT_ResourcesTestPluginFactory {
 			PeoplePluginData.class })
 	public void testSetPeoplePluginData() {
 		PeoplePluginData.Builder builder = PeoplePluginData.builder();
-		builder.addPersonRange(new PersonRange(0,99));		
+		builder.addPersonRange(new PersonRange(0, 99));
 
 		PeoplePluginData peoplePluginData = builder.build();
 
@@ -195,7 +194,7 @@ public class AT_ResourcesTestPluginFactory {
 
 		TestRegionId testRegionId = TestRegionId.REGION_1;
 		for (PersonId personId : people) {
-			regionPluginBuilder.addPerson(personId, testRegionId,0.0);			
+			regionPluginBuilder.addPerson(personId, testRegionId, 0.0);
 			testRegionId = testRegionId.next();
 		}
 
@@ -307,41 +306,50 @@ public class AT_ResourcesTestPluginFactory {
 	public void testGetStandardResourcesPluginData() {
 
 		long seed = 4800551796983227153L;
-		ResourcesPluginData resourcesPluginData = ResourcesTestPluginFactory
-				.getStandardResourcesPluginData(seed);
-
-		Set<TestResourceId> expectedResourceIds = EnumSet.allOf(TestResourceId.class);
-		assertFalse(expectedResourceIds.isEmpty());
-
-		Set<ResourceId> actualResourceIds = resourcesPluginData.getResourceIds();
-		assertEquals(expectedResourceIds, actualResourceIds);
-
-		for (TestResourceId resourceId : TestResourceId.values()) {
-			boolean expectedPolicy = resourceId.getTimeTrackingPolicy();
-			boolean actualPolicy = resourcesPluginData.getResourceTimeTrackingPolicy(resourceId);
-			assertEquals(expectedPolicy, actualPolicy);
+		List<PersonId> people = new ArrayList<>();
+		for (int i = 0; i < 100; i++) {
+			people.add(new PersonId(i));
 		}
 
-		Set<TestResourcePropertyId> expectedResourcePropertyIds = EnumSet.allOf(TestResourcePropertyId.class);
-		assertFalse(expectedResourcePropertyIds.isEmpty());
+		ResourcesPluginData actualPluginData = ResourcesTestPluginFactory
+				.getStandardResourcesPluginData(people, seed);
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
-		for (TestResourcePropertyId resourcePropertyId : TestResourcePropertyId.values()) {
-			TestResourceId expectedResourceId = resourcePropertyId.getTestResourceId();
-			PropertyDefinition expectedPropertyDefinition = resourcePropertyId.getPropertyDefinition();
-			Object expectedPropertyValue = resourcePropertyId.getRandomPropertyValue(randomGenerator);
 
-			assertTrue(resourcesPluginData.getResourcePropertyIds(expectedResourceId).contains(resourcePropertyId));
+		ResourcesPluginData.Builder resourcesBuilder = ResourcesPluginData.builder();
 
-			PropertyDefinition actualPropertyDefinition = resourcesPluginData
-					.getResourcePropertyDefinition(expectedResourceId, resourcePropertyId);
-			assertEquals(expectedPropertyDefinition, actualPropertyDefinition);
+		for (TestResourceId testResourceId : TestResourceId.values()) {
+			resourcesBuilder.addResource(testResourceId, 0.0);
+			resourcesBuilder.setResourceTimeTracking(testResourceId, testResourceId.getTimeTrackingPolicy());
+			for (PersonId personId : people) {
+				if (randomGenerator.nextBoolean()) {
+					resourcesBuilder.setPersonResourceLevel(personId, testResourceId, randomGenerator.nextInt(10));
+				}
+				if (randomGenerator.nextBoolean()) {
+					resourcesBuilder.setPersonResourceTime(personId, testResourceId, 0.0);
+				}
+			}
 
-			Object actualPropertyValue = resourcesPluginData.getResourcePropertyValue(expectedResourceId,
-					resourcePropertyId);
-			assertEquals(expectedPropertyValue, actualPropertyValue);
+			for (RegionId regionId : TestRegionId.values()) {
+				if (randomGenerator.nextBoolean()) {
+					resourcesBuilder.setRegionResourceLevel(regionId, testResourceId, randomGenerator.nextInt(10));
+				} else {
+					resourcesBuilder.setRegionResourceLevel(regionId, testResourceId, 0);
+				}
+			}
 		}
 
+		for (TestResourcePropertyId testResourcePropertyId : TestResourcePropertyId.values()) {
+			TestResourceId testResourceId = testResourcePropertyId.getTestResourceId();
+			PropertyDefinition propertyDefinition = testResourcePropertyId.getPropertyDefinition();
+			Object propertyValue = testResourcePropertyId.getRandomPropertyValue(randomGenerator);
+			resourcesBuilder.defineResourceProperty(testResourceId, testResourcePropertyId, propertyDefinition);
+			resourcesBuilder.setResourcePropertyValue(testResourceId, testResourcePropertyId, propertyValue);
+		}
+
+		ResourcesPluginData expectedPluginData = resourcesBuilder.build();
+
+		assertEquals(expectedPluginData, actualPluginData);
 	}
 
 	@Test

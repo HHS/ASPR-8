@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.PeopleTranslator;
@@ -18,16 +17,11 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.input.ResourcesPl
 import gov.hhs.aspr.translation.core.TranslationController;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
 import plugins.people.support.PersonId;
-import plugins.regions.support.RegionId;
-import plugins.regions.testsupport.TestRegionId;
 import plugins.resources.ResourcesPluginData;
-import plugins.resources.testsupport.TestResourceId;
-import plugins.resources.testsupport.TestResourcePropertyId;
-import plugins.util.properties.PropertyDefinition;
+import plugins.resources.testsupport.ResourcesTestPluginFactory;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestForCoverage;
 import util.annotations.UnitTestMethod;
-import util.random.RandomGeneratorProvider;
 
 public class AT_ResourcesPluginDataTranslationSpec {
 
@@ -64,40 +58,7 @@ public class AT_ResourcesPluginDataTranslationSpec {
             people.add(new PersonId(i));
         }
 
-        RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
-
-        ResourcesPluginData.Builder builder = ResourcesPluginData.builder();
-
-        for (TestResourceId testResourceId : TestResourceId.values()) {
-            builder.addResource(testResourceId, 0.0);
-            builder.setResourceTimeTracking(testResourceId, testResourceId.getTimeTrackingPolicy());
-            for (PersonId personId : people) {
-                if (randomGenerator.nextBoolean()) {
-                    builder.setPersonResourceLevel(personId, testResourceId, randomGenerator.nextInt(10));
-                }
-                if (randomGenerator.nextBoolean()) {
-                    builder.setPersonResourceTime(personId, testResourceId, 0.0);
-                }
-            }
-
-            for (RegionId regionId : TestRegionId.values()) {
-                if (randomGenerator.nextBoolean()) {
-                    builder.setRegionResourceLevel(regionId, testResourceId, randomGenerator.nextInt(10));
-                } else {
-                    builder.setRegionResourceLevel(regionId, testResourceId, 0);
-                }
-            }
-        }
-
-        for (TestResourcePropertyId testResourcePropertyId : TestResourcePropertyId.values()) {
-            TestResourceId testResourceId = testResourcePropertyId.getTestResourceId();
-            PropertyDefinition propertyDefinition = testResourcePropertyId.getPropertyDefinition();
-            Object propertyValue = testResourcePropertyId.getRandomPropertyValue(randomGenerator);
-            builder.defineResourceProperty(testResourceId, testResourcePropertyId, propertyDefinition);
-            builder.setResourcePropertyValue(testResourceId, testResourcePropertyId, propertyValue);
-        }
-
-        ResourcesPluginData expectedAppValue = builder.build();
+        ResourcesPluginData expectedAppValue = ResourcesTestPluginFactory.getStandardResourcesPluginData(people, seed);
 
         ResourcesPluginDataInput inputValue = translationSpec.convertAppObject(expectedAppValue);
 

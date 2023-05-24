@@ -12,8 +12,6 @@ import gov.hhs.aspr.translation.core.TranslationController;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
 import plugins.globalproperties.GlobalPropertiesPluginData;
 import plugins.globalproperties.testsupport.GlobalPropertiesTestPluginFactory;
-import plugins.globalproperties.testsupport.TestGlobalPropertyId;
-import plugins.util.properties.PropertyDefinition;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestForCoverage;
 import util.annotations.UnitTestMethod;
@@ -42,24 +40,7 @@ public class AT_GlobalPropertiesPluginDataTranslationSpec {
         translationSpec.init(protobufTranslationEngine);
 
         GlobalPropertiesPluginData expectedValue = GlobalPropertiesTestPluginFactory
-                .getStandardGlobalPropertiesPluginData();
-
-        GlobalPropertiesPluginData.Builder expectedValueBuilder = (GlobalPropertiesPluginData.Builder) expectedValue
-                .getCloneBuilder();
-
-        expectedValueBuilder
-                .setGlobalPropertyValue(TestGlobalPropertyId.GLOBAL_PROPERTY_2_INTEGER_MUTABLE, 1500, 0)
-                .defineGlobalProperty(TestGlobalPropertyId.GLOBAL_PROPERTY_3_DOUBLE_MUTABLE,
-                        PropertyDefinition.builder()//
-                                .setType(Double.class)//
-                                .setPropertyValueMutability(true)//
-                                .build(),
-                        0)
-                .setGlobalPropertyValue(TestGlobalPropertyId.GLOBAL_PROPERTY_3_DOUBLE_MUTABLE, 500.0, 0)
-                .setGlobalPropertyValue(TestGlobalPropertyId.GLOBAL_PROPERTY_1_BOOLEAN_MUTABLE, false,
-                        0);
-
-        expectedValue = expectedValueBuilder.build();
+                .getStandardGlobalPropertiesPluginData(8368397106493368066L);
 
         GlobalPropertiesPluginDataInput globalPropertiesPluginDataInput = translationSpec
                 .convertAppObject(expectedValue);
