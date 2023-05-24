@@ -20,6 +20,7 @@ import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestPluginData.Builder;
 import nucleus.testsupport.testplugin.TestSimulation;
 import plugins.partitions.PartitionsPlugin;
+import plugins.partitions.datamanagers.PartitionsPluginData;
 import plugins.people.PeoplePlugin;
 import plugins.people.PeoplePluginData;
 import plugins.people.PeoplePluginId;
@@ -40,6 +41,12 @@ public class AT_AttributesPlugin {
 		AttributesPluginData attributesPluginData = AttributesPluginData.builder().build();
 		Plugin attributesPlugin = AttributesPlugin.getAttributesPlugin(attributesPluginData);
 
+		Plugin partitionsPlugin = PartitionsPlugin.builder()//		
+				.setPartitionsPluginData(PartitionsPluginData.builder().build())//
+				//.addPluginDependency(AttributesPluginId.PLUGIN_ID)//
+				.getPartitionsPlugin();
+
+		
 		// show that the plugin data is present
 		List<PluginData> pluginDatas = attributesPlugin.getPluginDatas();
 		assertNotNull(pluginDatas);
@@ -72,7 +79,7 @@ public class AT_AttributesPlugin {
 		WellState wellState = WellState.builder().setSeed(435346454564566L).build();
 		plugins.add(StochasticsPlugin.getStochasticsPlugin(StochasticsPluginData.builder().setMainRNGState(wellState).build()));
 		plugins.add(PeoplePlugin.getPeoplePlugin(PeoplePluginData.builder().build()));
-		plugins.add(PartitionsPlugin.getPartitionsPlugin());
+		plugins.add(partitionsPlugin);
 		plugins.add(attributesPlugin);
 		
 		TestSimulation.builder().addPlugins(plugins).build().execute();

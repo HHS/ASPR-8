@@ -1,4 +1,4 @@
-package plugins.partitions.support;
+package plugins.partitions.support.filters;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -14,6 +14,8 @@ import org.junit.jupiter.api.Test;
 import nucleus.Event;
 import nucleus.SimulationContext;
 import nucleus.testsupport.testplugin.TestSimulation;
+import plugins.partitions.support.FilterSensitivity;
+import plugins.partitions.support.PartitionError;
 import plugins.partitions.testsupport.PartitionsTestPluginFactory;
 import plugins.partitions.testsupport.PartitionsTestPluginFactory.Factory;
 import plugins.people.datamanagers.PeopleDataManager;
@@ -49,6 +51,35 @@ public class AT_Filter {
 			// do nothing
 
 		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + ((filterSensitivities == null) ? 0 : filterSensitivities.hashCode());
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (!(obj instanceof LocalFilter)) {
+				return false;
+			}
+			LocalFilter other = (LocalFilter) obj;
+			if (filterSensitivities == null) {
+				if (other.filterSensitivities != null) {
+					return false;
+				}
+			} else if (!filterSensitivities.equals(other.filterSensitivities)) {
+				return false;
+			}
+			return true;
+		}
+
+		
 	}
 
 	private static Optional<PersonId> eventPredicate(SimulationContext context, Event event) {
@@ -70,22 +101,22 @@ public class AT_Filter {
 			assertEquals(100, peopleDataManager.getPopulationCount());
 
 			// create the filters
-			Filter filter = Filter.allPeople().and(Filter.allPeople());
+			Filter filter = new TrueFilter().and(new TrueFilter());
 			for (PersonId personId : peopleDataManager.getPeople()) {
 				assertTrue(filter.evaluate(c, personId));
 			}
 
-			filter = Filter.allPeople().and(Filter.noPeople());
+			filter = new TrueFilter().and(new FalseFilter());
 			for (PersonId personId : peopleDataManager.getPeople()) {
 				assertFalse(filter.evaluate(c, personId));
 			}
 
-			filter = Filter.noPeople().and(Filter.allPeople());
+			filter = new FalseFilter().and(new TrueFilter());
 			for (PersonId personId : peopleDataManager.getPeople()) {
 				assertFalse(filter.evaluate(c, personId));
 			}
 
-			filter = Filter.noPeople().and(Filter.noPeople());
+			filter = new FalseFilter().and(new FalseFilter());
 			for (PersonId personId : peopleDataManager.getPeople()) {
 				assertFalse(filter.evaluate(c, personId));
 			}
@@ -107,7 +138,7 @@ public class AT_Filter {
 			// precondition tests
 
 			// if the filter is null
-			ContractException contractException = assertThrows(ContractException.class, () -> Filter.allPeople().and(null));
+			ContractException contractException = assertThrows(ContractException.class, () -> new TrueFilter().and(null));
 			assertEquals(PartitionError.NULL_FILTER, contractException.getErrorType());
 		});
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
@@ -131,22 +162,22 @@ public class AT_Filter {
 			assertEquals(100, peopleDataManager.getPopulationCount());
 
 			// create the filters
-			Filter filter = Filter.allPeople().or(Filter.allPeople());
+			Filter filter = new TrueFilter().or(new TrueFilter());
 			for (PersonId personId : peopleDataManager.getPeople()) {
 				assertTrue(filter.evaluate(c, personId));
 			}
 
-			filter = Filter.allPeople().or(Filter.noPeople());
+			filter = new TrueFilter().or(new FalseFilter());
 			for (PersonId personId : peopleDataManager.getPeople()) {
 				assertTrue(filter.evaluate(c, personId));
 			}
 
-			filter = Filter.noPeople().or(Filter.allPeople());
+			filter = new FalseFilter().or(new TrueFilter());
 			for (PersonId personId : peopleDataManager.getPeople()) {
 				assertTrue(filter.evaluate(c, personId));
 			}
 
-			filter = Filter.noPeople().or(Filter.noPeople());
+			filter = new FalseFilter().or(new FalseFilter());
 			for (PersonId personId : peopleDataManager.getPeople()) {
 				assertFalse(filter.evaluate(c, personId));
 			}
@@ -169,7 +200,7 @@ public class AT_Filter {
 
 			// if the filter is null
 
-			ContractException contractException = assertThrows(ContractException.class, () -> Filter.allPeople().or(null));
+			ContractException contractException = assertThrows(ContractException.class, () -> new TrueFilter().or(null));
 			assertEquals(PartitionError.NULL_FILTER, contractException.getErrorType());
 
 		});
@@ -178,11 +209,11 @@ public class AT_Filter {
 	}
 
 	/**
-	 * Tests {@link Filter#negate()}
+	 * Tests {@link Filter#not()}
 	 */
 	@Test
-	@UnitTestMethod(target = Filter.class, name = "negate", args = {})
-	public void testNegate() {
+	@UnitTestMethod(target = Filter.class, name = "not", args = {})
+	public void testNot() {
 		Factory factory = PartitionsTestPluginFactory.factory(100, 4038710674336002107L, (c) -> {
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			/*
@@ -191,13 +222,13 @@ public class AT_Filter {
 			 */
 			assertEquals(100, peopleDataManager.getPopulationCount());
 
-			Filter filter = Filter.allPeople().negate();
+			Filter filter = new TrueFilter().not();
 
 			for (PersonId personId : peopleDataManager.getPeople()) {
 				assertFalse(filter.evaluate(c, personId));
 			}
 
-			filter = Filter.noPeople().negate();
+			filter = new FalseFilter().not();
 			for (PersonId personId : peopleDataManager.getPeople()) {
 				assertTrue(filter.evaluate(c, personId));
 			}
@@ -205,49 +236,5 @@ public class AT_Filter {
 			assertEquals(filter.getFilterSensitivities().size(), 0);
 		});
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
-	}
-
-	/**
-	 * Tests {@link Filter#allPeople()}
-	 */
-	@Test
-	@UnitTestMethod(target = Filter.class, name = "allPeople", args = {})
-	public void testAllPeople() {
-		Factory factory = PartitionsTestPluginFactory.factory(30, 847391904888351863L, (c) -> {
-			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
-			// show that the test is valid
-			assertTrue(peopleDataManager.getPopulationCount() > 0);
-
-			final Filter filter = Filter.allPeople();
-
-			for (PersonId personId : peopleDataManager.getPeople()) {
-				assertTrue(filter.evaluate(c, personId));
-			}
-			assertEquals(filter.getFilterSensitivities().size(), 0);
-		});
-		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
-	}
-
-	/**
-	 * Tests {@link Filter#noPeople()}
-	 */
-	@Test
-	@UnitTestMethod(target = Filter.class, name = "noPeople", args = {})
-	public void testNoPeople() {
-		Factory factory = PartitionsTestPluginFactory.factory(100, 6400633994679307999L, (c) -> {
-			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
-			assertEquals(100, peopleDataManager.getPopulationCount());
-
-			final Filter filter = Filter.noPeople();
-
-			for (PersonId personId : peopleDataManager.getPeople()) {
-				assertFalse(filter.evaluate(c, personId));
-			}
-
-			assertEquals(filter.getFilterSensitivities().size(), 0);
-		});
-		
-		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
-
 	}
 }

@@ -1,10 +1,16 @@
 package plugins.partitions;
 
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 import nucleus.Plugin;
 import nucleus.PluginId;
 import plugins.partitions.datamanagers.PartitionsDataManager;
+import plugins.partitions.datamanagers.PartitionsPluginData;
+import plugins.partitions.support.PartitionError;
 import plugins.people.PeoplePluginId;
 import plugins.stochastics.StochasticsPluginId;
+import util.errors.ContractException;
 
 /**
  *
@@ -13,7 +19,17 @@ import plugins.stochastics.StochasticsPluginId;
  * simulation.
  */
 public final class PartitionsPlugin {
+
+	private static class Data {
+		private Set<PluginId> pluginDependencies = new LinkedHashSet<>();
+		private PartitionsPluginData partitionsPluginData;
+	}
+
 	private PartitionsPlugin() {
+	}
+
+	public static Builder builder() {
+		return new Builder();
 	}
 
 	/**
@@ -39,24 +55,57 @@ public final class PartitionsPlugin {
 	 * </P>
 	 * 
 	 * <P>
-	 * Provides not actors:
+	 * Provides no actors:
 	 * </P>
 	 * 
 	 */
-	public static Plugin getPartitionsPlugin(PluginId... pluginDependencies) {
-
-		Plugin.Builder builder = Plugin	.builder()//
-										.setPluginId(PartitionsPluginId.PLUGIN_ID)//
-										.setInitializer((c) -> {
-											c.addDataManager(new PartitionsDataManager());
-										})//
-										.addPluginDependency(PeoplePluginId.PLUGIN_ID)//
-										.addPluginDependency(StochasticsPluginId.PLUGIN_ID);//
-
-		for (PluginId pluginId : pluginDependencies) {
-			builder.addPluginDependency(pluginId);//
+	public static class Builder {
+		private Builder() {
 		}
-		return builder.build();
+
+		private Data data = new Data();
+
+		private void validate() {
+			if (data.partitionsPluginData == null) {
+				throw new ContractException(PartitionError.NULL_PARTITION_PLUGIN_DATA);
+			}
+		}
+
+		/**
+		 * Builds the PartitionsPlugin from the collected inputs
+		 * 
+		 * @throws ContractException
+		 *             <li>{@linkplain PartitionError#NULL_PARTITION_PLUGIN_DATA}
+		 *             if the partitionsPluginData is null</li>
+		 */
+		public Plugin getPartitionsPlugin() {
+
+			validate();
+			Plugin.Builder builder = Plugin.builder();//
+			builder.setPluginId(PartitionsPluginId.PLUGIN_ID);//
+			builder.addPluginData(data.partitionsPluginData);//
+			builder.addPluginDependency(PeoplePluginId.PLUGIN_ID);//
+			builder.addPluginDependency(StochasticsPluginId.PLUGIN_ID);//
+			for (PluginId pluginId : data.pluginDependencies) {
+				builder.addPluginDependency(pluginId);//
+			}
+
+			builder.setInitializer((c) -> {
+				c.addDataManager(new PartitionsDataManager());
+			});//
+
+			return builder.build();
+		}
+
+		public Builder setPartitionsPluginData(PartitionsPluginData partitionsPluginData) {
+			data.partitionsPluginData = partitionsPluginData;
+			return this;
+		}
+
+		public Builder addPluginDependency(PluginId pluginId) {
+			data.pluginDependencies.add(pluginId);
+			return this;
+		}
 
 	}
 

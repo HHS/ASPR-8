@@ -269,9 +269,7 @@ public final class GlobalPropertiesPluginData implements PluginData {
 				return false;
 			}
 
-			if (locked != other.locked) {
-				return false;
-			}
+			
 			return true;
 		}
 

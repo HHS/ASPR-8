@@ -19,6 +19,8 @@ import nucleus.NucleusError;
 import nucleus.SimulationContext;
 import plugins.partitions.support.containers.BasePeopleContainer;
 import plugins.partitions.support.containers.PeopleContainer;
+import plugins.partitions.support.filters.Filter;
+import plugins.partitions.support.filters.TrueFilter;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonId;
 import plugins.stochastics.StochasticsDataManager;
@@ -285,7 +287,7 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 
 	private final LabelManager[] labelManagers;
 
-	private final Map<Object, Integer> dimensions = new LinkedHashMap<>();
+	private final Map<Object, Integer> labelerIds = new LinkedHashMap<>();
 
 	private final Filter filter;
 
@@ -335,7 +337,7 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 			personMembership = new BitSet(peopleDataManager.getPersonIdLimit());
 		}
 
-		filter = partition.getFilter().orElse(Filter.allPeople());
+		filter = partition.getFilter().orElse(new TrueFilter());
 		for (final FilterSensitivity<? extends Event> filterSensitivity : filter.getFilterSensitivities()) {
 			List<FilterSensitivity<? extends Event>> list = eventClassToFilterSensitivityMap.get(filterSensitivity.getEventClass());
 			if (list == null) {
@@ -374,7 +376,7 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 		labelManagers = new LabelManager[keySize];
 		for (int i = 0; i < keySize; i++) {
 			final Labeler labeler = labelers.get(i);
-			dimensions.put(labeler.getDimension(), i);
+			labelerIds.put(labeler.getId(), i);
 			labelManagers[i] = new LabelManager(labeler);
 		}
 
@@ -412,7 +414,7 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 		final int n = labelManagers.length;
 		for (int i = 0; i < n; i++) {
 			final LabelManager labelManager = labelManagers[i];
-			final Object label = labelManager.labeler.getLabel(simulationContext, personId);
+			final Object label = labelManager.labeler.getCurrentLabel(simulationContext, personId);
 			// unsafe mutation add person
 			key.keys[i] = label;
 		}
@@ -473,7 +475,7 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 
 	private void aquireEventHandlingLock() {
 		if (eventHandlingLocked) {
-			throw new ContractException(NucleusError.ACCESS_VIOLATION, "cannot access event handling during the execution of a event");
+			throw new ContractException(NucleusError.ACCESS_VIOLATION, "cannot access event handling during the execution of an event");
 		}
 		eventHandlingLocked = true;
 	}
@@ -549,7 +551,7 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 		}
 
 		for (final Object dimension : labelSet.getDimensions()) {
-			final Integer index = dimensions.get(dimension);
+			final Integer index = labelerIds.get(dimension);
 			if (index == null) {
 				return false;
 			}
@@ -599,8 +601,8 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 		final Key key = tempKeyForLabelSets;
 		
 		for (int i = 0; i < keySize; i++) {
-			final Object dimension = labelManagers[i].labeler.getDimension();
-			final Object label = labelSet.getLabel(dimension).orElse(null);
+			final Object labelerId = labelManagers[i].labeler.getId();
+			final Object label = labelSet.getLabel(labelerId).orElse(null);
 			// unsafe mutation get key
 			key.keys[i] = label;
 		}
@@ -637,7 +639,7 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 			final int n = labelManagers.length;
 			for (int i = 0; i < n; i++) {
 				final LabelManager labelManager = labelManagers[i];
-				final Object label = labelManager.labeler.getLabel(simulationContext, personId);
+				final Object label = labelManager.labeler.getCurrentLabel(simulationContext, personId);
 				// unsafe mutation add person
 				key.keys[i] = label;
 			}
@@ -663,9 +665,9 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 	private LabelSet getLabelSet(final Key key) {
 		final LabelSet.Builder builder = LabelSet.builder();
 		for (int i = 0; i < keySize; i++) {
-			final Object dimension = labelManagers[i].labeler.getDimension();
+			final Object labelerId = labelManagers[i].labeler.getId();
 			final Object label = key.keys[i];
-			builder.setLabel(dimension, label);
+			builder.setLabel(labelerId, label);
 		}
 		return builder.build();
 	}
@@ -851,7 +853,7 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 				final int n = labelManagers.length;
 				for (int i = 0; i < n; i++) {
 					final LabelManager labelManager = labelManagers[i];
-					final Object label = labelManager.labeler.getLabel(simulationContext, personId);
+					final Object label = labelManager.labeler.getCurrentLabel(simulationContext, personId);
 					// unsafe mutation add person
 					currentKeyForPerson.keys[i] = label;
 				}
@@ -859,8 +861,8 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 					LabelerSensitivity<? extends Event> labelerSensitivity = labelerSensitivities[i];
 					final Labeler labeler = labelerSensitivityToLabelerMap.get(labelerSensitivity);
 					final Object pastLabel = labeler.getPastLabel(simulationContext, event);
-					final Object dimension = labeler.getDimension();
-					final int dimensionIndex = dimensions.get(dimension);
+					final Object labelerId = labeler.getId();
+					final int dimensionIndex = labelerIds.get(labelerId);
 					// unsafe mutation
 					currentKeyForPerson.keys[dimensionIndex] = pastLabel;
 				}
@@ -900,9 +902,9 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 						// for (final LabelerSensitivity<? extends Event>
 						// labelerSensitivity : labelerSensitivities) {
 						final Labeler labeler = labelerSensitivityToLabelerMap.get(labelerSensitivity);
-						final Object newLabel = labeler.getLabel(simulationContext, personId);
-						final Object dimension = labeler.getDimension();
-						final int dimensionIndex = dimensions.get(dimension);
+						final Object newLabel = labeler.getCurrentLabel(simulationContext, personId);
+						final Object labelerId = labeler.getId();
+						final int dimensionIndex = labelerIds.get(labelerId);
 						final LabelManager labelManager = labelManagers[dimensionIndex];
 						labelManager.removeLabel(newKey.keys[dimensionIndex]);
 						labelManager.addLabel(newLabel);
@@ -1147,7 +1149,7 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 	@Override
 	public boolean validateLabelSetInfo(final LabelSet labelSet) {
 		for (final Object dimension : labelSet.getDimensions()) {
-			if (!dimensions.containsKey(dimension)) {
+			if (!labelerIds.containsKey(dimension)) {
 				return false;
 			}
 		}

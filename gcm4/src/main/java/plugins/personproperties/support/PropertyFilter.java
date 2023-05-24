@@ -7,9 +7,9 @@ import java.util.Set;
 import nucleus.NucleusError;
 import nucleus.SimulationContext;
 import plugins.partitions.support.Equality;
-import plugins.partitions.support.Filter;
 import plugins.partitions.support.FilterSensitivity;
 import plugins.partitions.support.PartitionError;
+import plugins.partitions.support.filters.Filter;
 import plugins.people.support.PersonId;
 import plugins.personproperties.datamanagers.PersonPropertiesDataManager;
 import plugins.personproperties.events.PersonPropertyUpdateEvent;
@@ -152,6 +152,45 @@ public final class PropertyFilter extends Filter {
 		Set<FilterSensitivity<?>> result = new LinkedHashSet<>();
 		result.add(new FilterSensitivity<PersonPropertyUpdateEvent>(PersonPropertyUpdateEvent.class, this::requiresRefresh));
 		return result;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((equality == null) ? 0 : equality.hashCode());
+		result = prime * result + ((personPropertyId == null) ? 0 : personPropertyId.hashCode());
+		result = prime * result + ((personPropertyValue == null) ? 0 : personPropertyValue.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!(obj instanceof PropertyFilter)) {
+			return false;
+		}
+		PropertyFilter other = (PropertyFilter) obj;
+		if (equality != other.equality) {
+			return false;
+		}
+		if (personPropertyId == null) {
+			if (other.personPropertyId != null) {
+				return false;
+			}
+		} else if (!personPropertyId.equals(other.personPropertyId)) {
+			return false;
+		}
+		if (personPropertyValue == null) {
+			if (other.personPropertyValue != null) {
+				return false;
+			}
+		} else if (!personPropertyValue.equals(other.personPropertyValue)) {
+			return false;
+		}
+		return true;
 	}
 
 }

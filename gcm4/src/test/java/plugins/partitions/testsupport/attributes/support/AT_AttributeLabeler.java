@@ -18,6 +18,7 @@ import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestSimulation;
 import plugins.partitions.support.LabelerSensitivity;
+import plugins.partitions.testsupport.FunctionalAttributeLabeler;
 import plugins.partitions.testsupport.PartitionsTestPluginFactory;
 import plugins.partitions.testsupport.PartitionsTestPluginFactory.Factory;
 import plugins.partitions.testsupport.attributes.AttributesDataManager;
@@ -46,7 +47,7 @@ public final class AT_AttributeLabeler {
 		 * their documented behaviors.
 		 */
 
-		AttributeLabeler attributeLabeler = new AttributeLabeler(TestAttributeId.BOOLEAN_0, (c) -> null);
+		AttributeLabeler attributeLabeler = new FunctionalAttributeLabeler(TestAttributeId.BOOLEAN_0, (c) -> null);
 
 		Set<LabelerSensitivity<?>> labelerSensitivities = attributeLabeler.getLabelerSensitivities();
 
@@ -80,7 +81,7 @@ public final class AT_AttributeLabeler {
 			return "B";
 		};
 
-		AttributeLabeler attributeLabeler = new AttributeLabeler(TestAttributeId.BOOLEAN_0, function);
+		AttributeLabeler attributeLabeler = new FunctionalAttributeLabeler(TestAttributeId.BOOLEAN_0, function);
 
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
@@ -99,7 +100,7 @@ public final class AT_AttributeLabeler {
 				Object expectedLabel = function.apply(b0);
 
 				// get the label from the person id
-				Object actualLabel = attributeLabeler.getLabel(c, personId);
+				Object actualLabel = attributeLabeler.getCurrentLabel(c, personId);
 
 				// show that the two labels are equal
 				assertEquals(expectedLabel, actualLabel);
@@ -111,17 +112,17 @@ public final class AT_AttributeLabeler {
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
 
 			// if the person does not exist
-			ContractException contractException = assertThrows(ContractException.class, () -> attributeLabeler.getLabel(c, new PersonId(100000)));
+			ContractException contractException = assertThrows(ContractException.class, () -> attributeLabeler.getCurrentLabel(c, new PersonId(100000)));
 			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
 
 			// if the person id is null
-			contractException = assertThrows(ContractException.class, () -> attributeLabeler.getLabel(c, null));
+			contractException = assertThrows(ContractException.class, () -> attributeLabeler.getCurrentLabel(c, null));
 			assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
 
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		
+
 		Factory factory = PartitionsTestPluginFactory.factory(10, 4676319446289433016L, testPluginData);
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
@@ -134,7 +135,7 @@ public final class AT_AttributeLabeler {
 			return c;
 		};
 
-		AttributeLabeler attributeLabeler = new AttributeLabeler(TestAttributeId.INT_0, function);
+		AttributeLabeler attributeLabeler = new FunctionalAttributeLabeler(TestAttributeId.INT_0, function);
 
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8705700576614764378L);
@@ -173,10 +174,10 @@ public final class AT_AttributeLabeler {
 	}
 
 	@Test
-	@UnitTestMethod(target = AttributeLabeler.class, name = "getDimension", args = {})
-	public void testGetDimension() {
+	@UnitTestMethod(target = AttributeLabeler.class, name = "getId", args = {})
+	public void testGetId() {
 		for (TestAttributeId testAttributeId : TestAttributeId.values()) {
-			assertEquals(testAttributeId, new AttributeLabeler(testAttributeId, (c) -> null).getDimension());
+			assertEquals(testAttributeId, new FunctionalAttributeLabeler(testAttributeId, (c) -> null).getId());
 		}
 	}
 
