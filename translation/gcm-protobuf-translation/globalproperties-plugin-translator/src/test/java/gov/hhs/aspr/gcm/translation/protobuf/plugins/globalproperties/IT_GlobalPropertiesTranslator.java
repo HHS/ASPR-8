@@ -44,7 +44,7 @@ public class IT_GlobalPropertiesTranslator {
                 .build();
 
         GlobalPropertiesPluginData expectedPluginData = GlobalPropertiesTestPluginFactory
-                .getStandardGlobalPropertiesPluginData();
+                .getStandardGlobalPropertiesPluginData(8368397106493368066L);
 
         translatorController.writeOutput(expectedPluginData);
 
