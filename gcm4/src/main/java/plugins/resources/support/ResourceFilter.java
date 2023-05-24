@@ -45,6 +45,18 @@ public final class ResourceFilter extends Filter {
 		}
 	}
 
+	public ResourceId getResourceId() {
+		return resourceId;
+	}
+	
+	public Equality getEquality() {
+		return equality;
+	}
+	
+	public long getResourceValue() {
+		return resourceValue;
+	}
+	
 	public ResourceFilter(final ResourceId resourceId, final Equality equality, final long resourceValue) {
 		this.resourceId = resourceId;
 		this.resourceValue = resourceValue;

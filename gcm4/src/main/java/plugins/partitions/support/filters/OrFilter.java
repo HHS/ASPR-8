@@ -72,4 +72,17 @@ public final class OrFilter extends Filter {
 		OrFilter other = (OrFilter) obj;
 		return a.equals(other.a) && b.equals(other.b) || a.equals(other.b) && b.equals(other.a);
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("OrFilter [a=");
+		builder.append(a);
+		builder.append(", b=");
+		builder.append(b);
+		builder.append("]");
+		return builder.toString();
+	}
+	
+	
 }

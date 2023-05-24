@@ -51,6 +51,10 @@ public final class RegionFilter extends Filter {
 		}
 
 	}
+	
+	public Set<RegionId> getRegionIds(){
+		return new LinkedHashSet<>(regionIds);
+	}
 
 	public RegionFilter(final Set<RegionId> regionIds) {
 		this.regionIds.addAll(regionIds);

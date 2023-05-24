@@ -22,7 +22,7 @@ public final class TrueFilter extends Filter {
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("AllPeopleFilter []");
+		builder.append("TrueFilter []");
 		return builder.toString();
 	}
 

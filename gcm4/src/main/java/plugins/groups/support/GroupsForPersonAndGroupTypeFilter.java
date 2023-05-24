@@ -40,6 +40,18 @@ public final class GroupsForPersonAndGroupTypeFilter extends Filter {
 			throw new ContractException(GroupError.UNKNOWN_GROUP_TYPE_ID, groupTypeId);
 		}
 	}
+	
+	public GroupTypeId getGroupTypeId() {
+		return groupTypeId;
+	}
+	
+	public Equality getEquality() {
+		return equality;
+	}
+	
+	public int getGroupCount() {
+		return groupCount;
+	}
 
 	public GroupsForPersonAndGroupTypeFilter(final GroupTypeId groupTypeId, final Equality equality, final int groupCount) {
 		this.equality = equality;

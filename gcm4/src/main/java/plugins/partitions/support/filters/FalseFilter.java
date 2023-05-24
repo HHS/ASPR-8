@@ -23,7 +23,7 @@ public final class FalseFilter extends Filter {
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("NoPeopleFilter []");
+		builder.append("FalseFilter []");
 		return builder.toString();
 	}
 

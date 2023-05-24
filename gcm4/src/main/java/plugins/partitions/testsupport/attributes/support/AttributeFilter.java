@@ -68,6 +68,18 @@ public final class AttributeFilter extends Filter {
 		}
 	}
 
+	public AttributeId getAttributeId() {
+		return attributeId;
+	}
+
+	public Equality getEquality() {
+		return equality;
+	}
+
+	public Object getValue() {
+		return value;
+	}
+
 	public AttributeFilter(final AttributeId attributeId, final Equality equality, final Object value) {
 		this.attributeId = attributeId;
 		this.value = value;
@@ -114,15 +126,15 @@ public final class AttributeFilter extends Filter {
 
 	@Override
 	public boolean evaluate(PartitionsContext partitionsContext, PersonId personId) {
-		
-		if(partitionsContext == null) {
+
+		if (partitionsContext == null) {
 			throw new ContractException(NucleusError.NULL_SIMULATION_CONTEXT);
 		}
-		
+
 		if (attributesDataManager == null) {
 			attributesDataManager = partitionsContext.getDataManager(AttributesDataManager.class);
 		}
-		
+
 		// we do not assume that the returned attribute value is
 		// comparable unless we are forced to.
 		final Object attValue = attributesDataManager.getAttributeValue(personId, attributeId);
@@ -154,10 +166,10 @@ public final class AttributeFilter extends Filter {
 	}
 
 	/**
-	 * Returns a single filter sensitivity for AttributeUpdateEvent
-	 * events. This sensitivity will require refreshes for events with the same
-	 * attribute id and where the event where the event has different previous
-	 * and current values.
+	 * Returns a single filter sensitivity for AttributeUpdateEvent events. This
+	 * sensitivity will require refreshes for events with the same attribute id
+	 * and where the event where the event has different previous and current
+	 * values.
 	 */
 	@Override
 	public Set<FilterSensitivity<?>> getFilterSensitivities() {
@@ -204,7 +216,5 @@ public final class AttributeFilter extends Filter {
 		}
 		return true;
 	}
-	
-	
 
 }

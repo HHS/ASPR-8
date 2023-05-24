@@ -23,7 +23,11 @@ public class GroupMemberFilter extends Filter {
 			throw new ContractException(GroupError.NULL_GROUP_ID);
 		}
 	}
-
+	
+	public GroupId getGroupId() {
+		return groupId;
+	}
+	
 	public GroupMemberFilter(final GroupId groupId) {
 		this.groupId = groupId;
 	}
