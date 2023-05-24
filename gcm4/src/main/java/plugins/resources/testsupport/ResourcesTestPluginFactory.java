@@ -22,6 +22,7 @@ import plugins.people.support.PersonRange;
 import plugins.regions.RegionsPlugin;
 import plugins.regions.RegionsPluginData;
 import plugins.regions.support.RegionError;
+import plugins.regions.support.RegionId;
 import plugins.regions.testsupport.TestRegionId;
 import plugins.resources.ResourcesPlugin;
 import plugins.resources.ResourcesPluginData;
@@ -67,8 +68,8 @@ public class ResourcesTestPluginFactory {
 
 		private Data(int initialPopulation, long seed, TestPluginData testPluginData) {
 			RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
-			this.resourcesPluginData = getStandardResourcesPluginData(randomGenerator.nextLong());
 			this.peoplePluginData = getStandardPeoplePluginData(initialPopulation);
+			this.resourcesPluginData = getStandardResourcesPluginData(this.peoplePluginData.getPersonIds(), randomGenerator.nextLong());
 			this.regionsPluginData = getStandardRegionsPluginData(this.peoplePluginData.getPersonIds(), randomGenerator.nextLong());
 			this.stochasticsPluginData = getStandardStochasticsPluginData(randomGenerator.nextLong());
 			this.testPluginData = testPluginData;
@@ -384,7 +385,7 @@ public class ResourcesTestPluginFactory {
 	 * </ul>
 	 * </ul>
 	 */
-	public static ResourcesPluginData getStandardResourcesPluginData(long seed) {
+	public static ResourcesPluginData getStandardResourcesPluginData(List<PersonId> people, long seed) {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
 
 		ResourcesPluginData.Builder resourcesBuilder = ResourcesPluginData.builder();
@@ -392,6 +393,22 @@ public class ResourcesTestPluginFactory {
 		for (TestResourceId testResourceId : TestResourceId.values()) {
 			resourcesBuilder.addResource(testResourceId, 0.0);
 			resourcesBuilder.setResourceTimeTracking(testResourceId, testResourceId.getTimeTrackingPolicy());
+			for (PersonId personId : people) {
+                if (randomGenerator.nextBoolean()) {
+                    resourcesBuilder.setPersonResourceLevel(personId, testResourceId, randomGenerator.nextInt(10));
+                }
+                if (randomGenerator.nextBoolean()) {
+                    resourcesBuilder.setPersonResourceTime(personId, testResourceId, 0.0);
+                }
+            }
+
+			for (RegionId regionId : TestRegionId.values()) {
+                if (randomGenerator.nextBoolean()) {
+                    resourcesBuilder.setRegionResourceLevel(regionId, testResourceId, randomGenerator.nextInt(10));
+                } else {
+                    resourcesBuilder.setRegionResourceLevel(regionId, testResourceId, 0);
+                }
+            }
 		}
 
 		for (TestResourcePropertyId testResourcePropertyId : TestResourcePropertyId.values()) {

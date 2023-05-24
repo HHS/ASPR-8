@@ -329,8 +329,13 @@ public class PersonPropertiesTestPluginFactory {
 	 * </ul>
 	 * </ul>
 	 */
-	public static PersonPropertiesPluginData getStandardPersonPropertiesPluginData(List<PersonId> people, long seed) {
+	public static PersonPropertiesPluginData getStandardPersonPropertiesPluginData(List<PersonId> people, long seed, double ...propertyTime) {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
+
+		double actualPropertyTime = 0;
+		if(propertyTime.length > 0) {
+			actualPropertyTime = propertyTime[0];
+		}
 
 		PersonPropertiesPluginData.Builder personPropertyBuilder = PersonPropertiesPluginData.builder();
 
@@ -347,12 +352,11 @@ public class PersonPropertiesTestPluginFactory {
 				if (doesNotHaveDefaultValue || randomGenerator.nextBoolean()) {
 					Object randomPropertyValue = testPersonPropertyId.getRandomPropertyValue(randomGenerator);
 					personPropertyBuilder.setPersonPropertyValue(personId, testPersonPropertyId, randomPropertyValue);
-
-					if(testPersonPropertyId.isTimeTracked()) {
-						personPropertyBuilder.setPersonPropertyTime(personId, testPersonPropertyId, 0.0);
-					}
 				}
 	
+				if(testPersonPropertyId.isTimeTracked() && personId.getValue() % 5 == 0) {
+					personPropertyBuilder.setPersonPropertyTime(personId, testPersonPropertyId, actualPropertyTime);
+				}
 			}
 		}
 		return personPropertyBuilder.build();

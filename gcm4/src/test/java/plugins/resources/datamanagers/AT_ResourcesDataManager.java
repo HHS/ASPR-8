@@ -250,7 +250,8 @@ public final class AT_ResourcesDataManager {
 			Set<PersonId> expectedPeople = new LinkedHashSet<>();
 			// give about half of the people the resource
 			for (PersonId personId : peopleDataManager.getPeople()) {
-				if (randomGenerator.nextBoolean()) {
+				long resourceLevel = resourcesDataManager.getPersonResourceLevel(TestResourceId.RESOURCE_5, personId);
+				if (randomGenerator.nextBoolean() || resourceLevel > 0) {
 					RegionId regionId = regionsDataManager.getPersonRegion(personId);
 					resourcesDataManager.addResourceToRegion(TestResourceId.RESOURCE_5, regionId, 5);
 					resourcesDataManager.transferResourceToPersonFromRegion(TestResourceId.RESOURCE_5, personId, 5);
@@ -319,7 +320,8 @@ public final class AT_ResourcesDataManager {
 			Set<PersonId> expectedPeople = new LinkedHashSet<>();
 			// give about half of the people the resource
 			for (PersonId personId : peopleDataManager.getPeople()) {
-				if (randomGenerator.nextBoolean()) {
+				long resourceLevel = resourcesDataManager.getPersonResourceLevel(TestResourceId.RESOURCE_5, personId);
+				if (randomGenerator.nextBoolean() || resourceLevel > 0) {
 					RegionId regionId = regionsDataManager.getPersonRegion(personId);
 					resourcesDataManager.addResourceToRegion(TestResourceId.RESOURCE_5, regionId, 5);
 					resourcesDataManager.transferResourceToPersonFromRegion(TestResourceId.RESOURCE_5, personId, 5);
@@ -1826,8 +1828,9 @@ public final class AT_ResourcesDataManager {
 			// add resources to all the regions
 			for (TestRegionId testRegionId : TestRegionId.values()) {
 				for (TestResourceId testResourceId : TestResourceId.values()) {
+					long resourceLevel = resourcesDataManager.getRegionResourceLevel(testRegionId, testResourceId);
 					resourcesDataManager.addResourceToRegion(testResourceId, testRegionId, 100L);
-					expectedObservations.add(new MultiKey(testRegionId, testResourceId, 0L, 100L));
+					expectedObservations.add(new MultiKey(testRegionId, testResourceId, resourceLevel, 100L + resourceLevel));
 				}
 			}
 
