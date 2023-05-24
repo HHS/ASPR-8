@@ -255,7 +255,7 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 
 		@Override
 		public Key next() {
-			if (nextKey == null) {				
+			if (nextKey == null) {
 				throw new NoSuchElementException();
 			}
 			final Key result = nextKey;
@@ -326,7 +326,7 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 	 */
 	public PopulationPartitionImpl(final PartitionsContext partitionsContext, final Partition partition) {
 		this.partitionsContext = partitionsContext;
-		
+
 		retainPersonKeys = partition.retainPersonKeys();
 		peopleDataManager = partitionsContext.getDataManager(PeopleDataManager.class);
 
@@ -371,7 +371,6 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 		tempKeyForLabelSets = new Key(keySize);
 		tempKeyForPeople = new Key(keySize);
 
-		
 		labelManagers = new LabelManager[keySize];
 		for (int i = 0; i < keySize; i++) {
 			final Labeler labeler = labelers.get(i);
@@ -392,8 +391,7 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 				}
 			}
 		}
-		
-	
+
 	}
 
 	/*
@@ -408,7 +406,6 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 			}
 		}
 
-		
 		final Key key = tempKeyForPeople;
 		final int n = labelManagers.length;
 		for (int i = 0; i < n; i++) {
@@ -422,7 +419,7 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 
 		Key cleanedKey = keyMap.get(key);
 		if (cleanedKey == null) {
-			//key construction -- for add person
+			// key construction -- for add person
 			cleanedKey = new Key(key);
 			cleanedKey.calculateHashCode();
 			keyMap.put(cleanedKey, cleanedKey);
@@ -529,16 +526,15 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 
 	@Override
 	public boolean contains(final PersonId personId) {
+		int id = personId.getValue();
 		if (retainPersonKeys) {
-			int id = personId.getValue();
 			if (personToKeyMap.size() <= id) {
 				return false;
 			}
 			return personToKeyMap.get(id) != null;
 		} else {
-
+			return personMembership.get(id);
 		}
-		return getKeyForPerson(personId) != null;
 	}
 
 	@Override
@@ -587,7 +583,7 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 		}
 		return low;
 	}
-	
+
 	private Key tempKeyForLabelSets;
 	private Key tempKeyForPeople;
 
@@ -596,9 +592,9 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 	}
 
 	private Key getKeyForLabelSet(final LabelSet labelSet) {
-		
+
 		final Key key = tempKeyForLabelSets;
-		
+
 		for (int i = 0; i < keySize; i++) {
 			final Object labelerId = labelManagers[i].labeler.getId();
 			final Object label = labelSet.getLabel(labelerId).orElse(null);
@@ -633,7 +629,6 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 				return null;
 			}
 
-			
 			Key key = tempKeyForPeople;
 			final int n = labelManagers.length;
 			for (int i = 0; i < n; i++) {
@@ -677,14 +672,14 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 		if (retainPersonKeys) {
 			int n = personToKeyMap.size();
 			for (int i = 0; i < n; i++) {
-				if(personToKeyMap.get(i)!=null) {
+				if (personToKeyMap.get(i) != null) {
 					result.add(peopleDataManager.getBoxedPersonId(i).get());
 				}
-			}			
+			}
 		} else {
 			int n = peopleDataManager.getPersonIdLimit();
 			for (int i = 0; i < n; i++) {
-				if(personMembership.get(i)) {
+				if (personMembership.get(i)) {
 					result.add(peopleDataManager.getBoxedPersonId(i).get());
 				}
 			}
@@ -847,7 +842,7 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 				currentKeyForPerson = personToKeyMap.get(personId.getValue());
 			}
 		} else {
-			if (personMembership.get(personId.getValue())) {				
+			if (personMembership.get(personId.getValue())) {
 				currentKeyForPerson = tempKeyForPeople;
 				final int n = labelManagers.length;
 				for (int i = 0; i < n; i++) {
@@ -866,7 +861,46 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 					currentKeyForPerson.keys[dimensionIndex] = pastLabel;
 				}
 				currentKeyForPerson.calculateHashCode();
-				currentKeyForPerson = keyMap.get(currentKeyForPerson);				
+				currentKeyForPerson = keyMap.get(currentKeyForPerson);
+
+				PeopleContainer peopleContainer = keyToPeopleMap.get(currentKeyForPerson);
+				if (!peopleContainer.contains(personId)) {
+
+					Key actualKey = null;
+					for (Key key : keyToPeopleMap.keySet()) {
+						peopleContainer = keyToPeopleMap.get(key);
+						if (peopleContainer.contains(personId)) {
+							actualKey = key;
+							break;
+						}
+					}
+
+					StringBuilder sb = new StringBuilder();
+					sb.append("[");
+					boolean firstElement = true;
+					for (int i = 0; i < keySize; i++) {
+						Object calculatedValue = currentKeyForPerson.keys[i];
+						Object actualValue = actualKey.keys[i];
+						if (!calculatedValue.equals(actualValue)) {
+							if (firstElement) {
+								firstElement = false;
+							} else {
+								sb.append(",");
+							}
+							Object labelerId = labelManagers[i].labeler.getId();
+							sb.append("(");
+							sb.append("labelerId=");
+							sb.append(labelerId);
+							sb.append(" calculated value ='");
+							sb.append(calculatedValue);
+							sb.append("' actual value ='");
+							sb.append(actualValue);
+							sb.append("')");
+						}
+					}
+					sb.append("]");
+					throw new ContractException(PartitionError.PAST_LABEL_FAILURE, sb.toString());
+				}
 			}
 		}
 
@@ -894,7 +928,7 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 				// personShouldBeInPartition == true
 				// personIsCurrentlyInPartition == true
 				if (labelerSensitivityCount > 0) {
-					//key construction -- (copy) handle event
+					// key construction -- (copy) handle event
 					final Key newKey = new Key(currentKeyForPerson);
 					for (int i = 0; i < labelerSensitivityCount; i++) {
 						LabelerSensitivity<? extends Event> labelerSensitivity = labelerSensitivities[i];
@@ -1011,7 +1045,7 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 
 	private void releaseWeightsLock() {
 		if (!weightsAreLocked) {
-			
+
 			throw new RuntimeException("cannot release sample locking when lock not present");
 		}
 		weightsAreLocked = false;

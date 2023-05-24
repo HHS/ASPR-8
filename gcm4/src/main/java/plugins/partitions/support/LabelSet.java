@@ -83,7 +83,8 @@ public final class LabelSet {
 		}
 
 		/**
-		 * Sets the dimension label
+		 * Sets the label value for the given label id. Replaces any existing
+		 * label value for the same id.
 		 * 
 		 * @throws ContractException
 		 *             <li>{@linkplain PartitionError#NULL_PARTITION_LABEL_DIMENSION}
@@ -91,14 +92,14 @@ public final class LabelSet {
 		 *             <li>{@linkplain PartitionError#NULL_PARTITION_LABEL} if
 		 *             the label is null</li>
 		 */
-		public Builder setLabel(Object dimension, Object label) {
-			if (dimension == null) {
+		public Builder setLabel(Object id, Object label) {
+			if (id == null) {
 				throw new ContractException(PartitionError.NULL_PARTITION_LABEL_DIMENSION);
 			}
 			if (label == null) {
 				throw new ContractException(PartitionError.NULL_PARTITION_LABEL);
 			}
-			data.labels.put(dimension, label);
+			data.labels.put(id, label);
 			return this;
 		}
 

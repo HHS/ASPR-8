@@ -84,7 +84,7 @@ public final class GroupsPlugin {
 
 			builder.addPluginData(data.groupsPluginData);//
 			builder.addPluginDependency(PeoplePluginId.PLUGIN_ID);//
-			builder	.addPluginDependency(StochasticsPluginId.PLUGIN_ID)//
+			builder.addPluginDependency(StochasticsPluginId.PLUGIN_ID)//
 					.setInitializer((c) -> {
 						GroupsPluginData pluginData = c.getPluginData(GroupsPluginData.class).get();
 						c.addDataManager(new GroupsDataManager(pluginData));

@@ -502,7 +502,7 @@ public final class PartitionsDataManager extends DataManager {
 		// create the population partition
 
 		PopulationPartition populationPartition;
-		if (partition.isDegenerate()) {
+		if (partition.isDegenerate()) {			
 			populationPartition = new DegeneratePopulationPartitionImpl(partitionsContext, partition);
 		} else {
 			populationPartition = new PopulationPartitionImpl(partitionsContext, partition);
