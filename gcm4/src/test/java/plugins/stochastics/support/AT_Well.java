@@ -53,37 +53,23 @@ public class AT_Well {
     @Test
     @UnitTestMethod(target = Well.class, name = "hashCode", args = {})
     public void testHashCode() {
-        Set<Integer> hashCodes = new LinkedHashSet<>();
-        Long seed = 6559152513645047938L;
-        WellState wellState1 = createWellState(seed);
-        Well well1 = new Well(wellState1);
-        Integer wellHash1 = well1.hashCode();
-        for (int i = 0; i < 5; i++) {
-            WellState wellState = createWellState(seed);
-            Well well = new Well(wellState);
-            Integer wellHash = well.hashCode();
-            hashCodes.add(wellHash);
-            // show that when called multiple times on the same object, the same hash code is returned
-            assertEquals(wellHash, well.hashCode());
+        RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(3103545448276048549L);
+        // show that equal well states have equal hash codes
+        for (int i = 0; i < 30; i++) {
+            long seed = randomGenerator.nextLong();
+            WellState wellState1 = createWellState(seed);
+            WellState wellState2 = createWellState(seed);
+            assertEquals(wellState1, wellState2);
+            assertEquals(wellState1.hashCode(), wellState2.hashCode());
         }
-        for (Integer hashCode : hashCodes) {
-            assertEquals(wellHash1, hashCode);
-        }
-
-        WellState differentWellState = createWellState(5887805138861262404L);
-        Well differentWell = new Well(differentWellState);
-        Integer differentHash = differentWell.hashCode();
-        assertNotEquals(differentHash, wellHash1);
 
         // show that hash codes are reasonably distributed
-        RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(4898576492932415902L);
-        hashCodes = new LinkedHashSet<>();
+        Set<Integer> hashCodes = new LinkedHashSet<>();
         for (int i = 0; i < 100; i++) {
             Long stateSeed = randomGenerator.nextLong();
             WellState wellState = createWellState(stateSeed);
             Well well = new Well(wellState);
-            int wellHash = well.hashCode();
-            hashCodes.add(wellHash);
+            hashCodes.add(well.hashCode());
         }
         assertTrue(hashCodes.size() >= 90);
     }
@@ -92,33 +78,46 @@ public class AT_Well {
     @UnitTestMethod(target = Well.class, name = "equals", args = {Object.class})
     public void testEquals() {
         RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7242512295369848202L);
-        Set<Well> wells = new LinkedHashSet<>();
-        Long seed = 2864116845603920430L;
-        WellState wellState1 = createWellState(seed);
-        Well well1 = new Well(wellState1);
-        for (int i = 0; i < 5; i++) {
+        // no object equals null
+        for (int i = 0; i < 30; i++) {
+            long seed = randomGenerator.nextLong();
             WellState wellState = createWellState(seed);
             Well well = new Well(wellState);
-            wells.add(well);
-        }
-        for (Well well : wells) {
-            assertEquals(well1, well);
+            assertFalse(well.equals(null));
         }
 
-        for (int i = 0; i < 5; i++) {
-            WellState wellState = createWellState(randomGenerator.nextLong());
+        // reflexive
+        for (int i = 0; i < 30; i++) {
+            long seed = randomGenerator.nextLong();
+            WellState wellState = createWellState(seed);
             Well well = new Well(wellState);
-            assertNotEquals(well1, well);
+            assertTrue(well.equals(well));
         }
 
-        wells = new LinkedHashSet<>();
-        for (int i = 0; i < 100; i++) {
-            Long wellSeed = randomGenerator.nextLong();
-            WellState wellState = createWellState(wellSeed);
-            Well well = new Well(wellState);
-            wells.add(well);
+        // symmetric
+        for (int i = 0; i < 30; i++) {
+            long seed = randomGenerator.nextLong();
+            WellState wellState1 = createWellState(seed);
+            Well well1 = new Well(wellState1);
+            WellState wellState2 = createWellState(seed);
+            Well well2 = new Well(wellState2);
+            assertTrue(well1.equals(well2));
+            assertTrue(well2.equals(well1));
         }
-        assertTrue(wells.size() >= 95);
+
+        // transitive
+        for (int i = 0; i < 30; i++) {
+            long seed = randomGenerator.nextLong();
+            WellState wellState1 = createWellState(seed);
+            Well well1 = new Well(wellState1);
+            WellState wellState2 = createWellState(seed);
+            Well well2 = new Well(wellState2);
+            WellState wellState3 = createWellState(seed);
+            Well well3 = new Well(wellState3);
+            assertTrue(well1.equals(well2));
+            assertTrue(well2.equals(well3));
+            assertTrue(well1.equals(well3));
+        }
     }
 
     private WellState createWellState(Long seed) {
