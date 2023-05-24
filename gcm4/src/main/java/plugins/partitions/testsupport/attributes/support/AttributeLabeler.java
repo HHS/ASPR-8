@@ -5,9 +5,9 @@ import java.util.Optional;
 import java.util.Set;
 
 import nucleus.Event;
-import nucleus.SimulationContext;
 import plugins.partitions.support.Labeler;
 import plugins.partitions.support.LabelerSensitivity;
+import plugins.partitions.support.PartitionsContext;
 import plugins.partitions.testsupport.attributes.AttributesDataManager;
 import plugins.partitions.testsupport.attributes.events.AttributeUpdateEvent;
 import plugins.people.support.PersonError;
@@ -67,9 +67,9 @@ public abstract class AttributeLabeler implements Labeler {
 	 *                          if the person id is unknown
 	 */
 	@Override
-	public final Object getCurrentLabel(SimulationContext simulationContext, PersonId personId) {
+	public final Object getCurrentLabel(PartitionsContext partitionsContext, PersonId personId) {
 		if (attributesDataManager == null) {
-			attributesDataManager = simulationContext.getDataManager(AttributesDataManager.class);
+			attributesDataManager = partitionsContext.getDataManager(AttributesDataManager.class);
 		}
 		Object value = attributesDataManager.getAttributeValue(personId, attributeId);
 		return getLabelFromValue(value);
@@ -84,7 +84,7 @@ public abstract class AttributeLabeler implements Labeler {
 	}
 
 	@Override
-	public final Object getPastLabel(SimulationContext simulationContext, Event event) {
+	public final Object getPastLabel(PartitionsContext partitionsContext, Event event) {
 		AttributeUpdateEvent attributeUpdateEvent = (AttributeUpdateEvent) event;
 		return getLabelFromValue(attributeUpdateEvent.previousValue());
 	}

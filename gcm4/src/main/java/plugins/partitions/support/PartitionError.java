@@ -11,6 +11,7 @@ import util.errors.ContractException;
  */
 public enum PartitionError implements ContractError {
 
+	PAST_LABEL_FAILURE("A labeler has failed to properly identify a person's past label from an event"),
 	DUPLICATE_PARTITION("Duplicate partition key"),
 	NON_DEGENERATE_PARTITION("Requires a degenerate partition"),
 	INCOMPATIBLE_LABEL_SET("The label set is incompatible with the selected population partition definition"),

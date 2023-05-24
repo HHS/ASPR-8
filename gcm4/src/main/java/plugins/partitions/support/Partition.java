@@ -1,6 +1,8 @@
 package plugins.partitions.support;
 
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -98,10 +100,10 @@ public final class Partition {
 		}
 
 		/**
-		 * Adds a labeler.
+		 * Adds a labeler. Replaces any existing labeler with the same id.
 		 */
 		public Builder addLabeler(Labeler labeler) {
-			data.labelers.add(labeler);
+			data.labelers.put(labeler.getId(), labeler);
 			return this;
 		}
 
@@ -115,7 +117,7 @@ public final class Partition {
 		}
 
 		/**
-		 * Set the retention policy for derived partition cell keys for people
+		 * Set the retention policy for derived partition cell keys for people. Defaults to true.
 		 */
 		public Builder setRetainPersonKeys(boolean retainPersonKeys) {
 			data.retainPersonKeys = retainPersonKeys;
@@ -124,10 +126,10 @@ public final class Partition {
 
 	}
 
+	private final Data data;
+
 	private Partition(Data data) {
-		this.labelers = data.labelers;
-		this.filter = data.filter;
-		this.retainPersonKeys = data.retainPersonKeys;
+		this.data = data;
 	}
 
 	/**
@@ -135,7 +137,7 @@ public final class Partition {
 	 * labeling functions.
 	 */
 	public boolean isDegenerate() {
-		return labelers.isEmpty();
+		return data.labelers.isEmpty();
 	}
 
 	/**
@@ -143,13 +145,13 @@ public final class Partition {
 	 * partition for faster performance at the cost of higher memory usage.
 	 */
 	public boolean retainPersonKeys() {
-		return retainPersonKeys;
+		return data.retainPersonKeys;
 	}
 
 	private static class Data {
 		private boolean retainPersonKeys = true;
 
-		private Set<Labeler> labelers = new LinkedHashSet<>();
+		private Map<Object, Labeler> labelers = new LinkedHashMap<>();
 
 		private Filter filter;
 
@@ -158,36 +160,70 @@ public final class Partition {
 
 		public Data(Data data) {
 			retainPersonKeys = data.retainPersonKeys;
-			labelers.addAll(data.labelers);
+			labelers.putAll(data.labelers);
 			filter = data.filter;
 		}
 
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + ((filter == null) ? 0 : filter.hashCode());
+			result = prime * result + ((labelers == null) ? 0 : labelers.hashCode());
+			result = prime * result + (retainPersonKeys ? 1231 : 1237);
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (!(obj instanceof Data)) {
+				return false;
+			}
+			Data other = (Data) obj;
+			if (filter == null) {
+				if (other.filter != null) {
+					return false;
+				}
+			} else if (!filter.equals(other.filter)) {
+				return false;
+			}
+			if (labelers == null) {
+				if (other.labelers != null) {
+					return false;
+				}
+			} else if (!labelers.equals(other.labelers)) {
+				return false;
+			}
+			if (retainPersonKeys != other.retainPersonKeys) {
+				return false;
+			}
+			return true;
+		}
+
 	}
-
-	private final Set<Labeler> labelers;
-
-	private final Filter filter;
-
-	private final boolean retainPersonKeys;
 
 	/**
 	 * Returns the filter contained in this {@linkplain Partition}
 	 */
 	public Optional<Filter> getFilter() {
-		return Optional.ofNullable(filter);
+		return Optional.ofNullable(data.filter);
 	}
 
+	/**
+	 * Returns the collected labelsers. Each labelers will have a unique id.
+	 */
 	public Set<Labeler> getLabelers() {
-		return new LinkedHashSet<>(labelers);
+		return new LinkedHashSet<>(data.labelers.values());
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((filter == null) ? 0 : filter.hashCode());
-		result = prime * result + ((labelers == null) ? 0 : labelers.hashCode());
-		result = prime * result + (retainPersonKeys ? 1231 : 1237);
+		result = prime * result + ((data == null) ? 0 : data.hashCode());
 		return result;
 	}
 
@@ -200,26 +236,14 @@ public final class Partition {
 			return false;
 		}
 		Partition other = (Partition) obj;
-		if (filter == null) {
-			if (other.filter != null) {
+		if (data == null) {
+			if (other.data != null) {
 				return false;
 			}
-		} else if (!filter.equals(other.filter)) {
-			return false;
-		}
-		if (labelers == null) {
-			if (other.labelers != null) {
-				return false;
-			}
-		} else if (!labelers.equals(other.labelers)) {
-			return false;
-		}
-		if (retainPersonKeys != other.retainPersonKeys) {
+		} else if (!data.equals(other.data)) {
 			return false;
 		}
 		return true;
 	}
-	
-	
 
 }

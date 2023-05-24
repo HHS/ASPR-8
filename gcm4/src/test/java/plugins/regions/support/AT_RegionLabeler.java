@@ -14,11 +14,12 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import nucleus.Event;
-import nucleus.SimulationContext;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestSimulation;
 import plugins.partitions.support.LabelerSensitivity;
+import plugins.partitions.support.PartitionsContext;
+import plugins.partitions.testsupport.TestPartitionsContext;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonConstructionData;
 import plugins.people.support.PersonError;
@@ -60,7 +61,7 @@ public class AT_RegionLabeler {
 	}
 
 	@Test
-	@UnitTestMethod(target = RegionLabeler.class,name = "getLabel", args = { SimulationContext.class, PersonId.class })
+	@UnitTestMethod(target = RegionLabeler.class,name = "getLabel", args = { PartitionsContext.class, PersonId.class })
 	public void testGetLabel() {
 
 		/*
@@ -102,6 +103,9 @@ public class AT_RegionLabeler {
 		 * passed to the region labeler.
 		 */
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
+			
+			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
+			
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 
@@ -113,7 +117,7 @@ public class AT_RegionLabeler {
 				Object expectedLabel = function.apply(regionId);
 
 				// get the label from the person id
-				Object actualLabel = regionLabeler.getCurrentLabel(c, personId);
+				Object actualLabel = regionLabeler.getCurrentLabel(testPartitionsContext, personId);
 
 				// show that the two labels are equal
 				assertEquals(expectedLabel, actualLabel);
@@ -124,13 +128,15 @@ public class AT_RegionLabeler {
 		// test preconditions
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(2, (c) -> {
 
+			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
+			
 			// if the person does not exist
 			ContractException contractException = assertThrows(ContractException.class,
-					() -> regionLabeler.getCurrentLabel(c, new PersonId(100000)));
+					() -> regionLabeler.getCurrentLabel(testPartitionsContext, new PersonId(100000)));
 			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
 
 			// if the person id is null
-			contractException = assertThrows(ContractException.class, () -> regionLabeler.getCurrentLabel(c, null));
+			contractException = assertThrows(ContractException.class, () -> regionLabeler.getCurrentLabel(testPartitionsContext, null));
 			assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
 
 		}));
@@ -172,10 +178,13 @@ public class AT_RegionLabeler {
 	}
 
 	@Test
-	@UnitTestMethod(target = RegionLabeler.class,name = "getPastLabel", args = { SimulationContext.class, Event.class })
+	@UnitTestMethod(target = RegionLabeler.class,name = "getPastLabel", args = { PartitionsContext.class, Event.class })
 	public void testGetPastLabel() {
 
 		Factory factory = RegionsTestPluginFactory.factory(30, 349819763474394472L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
+			
+			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
+			
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
@@ -197,7 +206,7 @@ public class AT_RegionLabeler {
 				PersonRegionUpdateEvent personRegionUpdateEvent = new PersonRegionUpdateEvent(personId,
 						personRegion, nextRegion);
 				Object expectedLabel = func.apply(personRegion);
-				Object actualLabel = regionLabeler.getPastLabel(c, personRegionUpdateEvent);
+				Object actualLabel = regionLabeler.getPastLabel(testPartitionsContext, personRegionUpdateEvent);
 				assertEquals(expectedLabel, actualLabel);
 			}
 

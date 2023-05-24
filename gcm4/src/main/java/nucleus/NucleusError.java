@@ -78,7 +78,7 @@ public enum NucleusError implements ContractError {
 	NULL_PRIMARY_KEY_VALUE("Null primary key value"),
 	NULL_SCENARIO_ID("Null scenario id"),
 	NULL_SCENARIO_PROGRESS_FILE("Null scenario progress file"),
-	NULL_SIMULATION_CONTEXT("Null simulation context"),
+NULL_SIMULATION_CONTEXT("Null simulation context"),
 	NULL_SIMULATION_TIME("Null simulation time"),
 	PAST_PLANNING_TIME("Plan execution time is in the past"),
 	PLANNING_QUEUE_CLOSED("The planning phase of the simulation is over and plans may not be added"),

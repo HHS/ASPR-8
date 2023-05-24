@@ -5,8 +5,8 @@ import java.util.Optional;
 import java.util.Set;
 
 import nucleus.NucleusError;
-import nucleus.SimulationContext;
 import plugins.partitions.support.FilterSensitivity;
+import plugins.partitions.support.PartitionsContext;
 import plugins.partitions.support.filters.Filter;
 import plugins.people.support.PersonId;
 import plugins.regions.datamanagers.RegionsDataManager;
@@ -37,13 +37,13 @@ public final class RegionFilter extends Filter {
 	}
 
 	@Override
-	public void validate(SimulationContext simulationContext) {
-		if (simulationContext == null) {
+	public void validate(PartitionsContext partitionsContext) {
+		if (partitionsContext == null) {
 			throw new ContractException(NucleusError.NULL_SIMULATION_CONTEXT);
 		}
 
 		if (regionsDataManager == null) {
-			regionsDataManager = simulationContext.getDataManager(RegionsDataManager.class);
+			regionsDataManager = partitionsContext.getDataManager(RegionsDataManager.class);
 		}
 		
 		for (RegionId regionId : regionIds) {
@@ -57,13 +57,13 @@ public final class RegionFilter extends Filter {
 	}
 
 	@Override
-	public boolean evaluate(SimulationContext simulationContext, PersonId personId) {
-		if (simulationContext == null) {
+	public boolean evaluate(PartitionsContext partitionsContext, PersonId personId) {
+		if (partitionsContext == null) {
 			throw new ContractException(NucleusError.NULL_SIMULATION_CONTEXT);
 		}
 
 		if (regionsDataManager == null) {
-			regionsDataManager = simulationContext.getDataManager(RegionsDataManager.class);
+			regionsDataManager = partitionsContext.getDataManager(RegionsDataManager.class);
 		}
 		return regionIds.contains(regionsDataManager.getPersonRegion(personId));
 	}
@@ -77,7 +77,7 @@ public final class RegionFilter extends Filter {
 		return builder.toString();
 	}
 
-	private Optional<PersonId> requiresRefresh(SimulationContext simulationContext, PersonRegionUpdateEvent event) {
+	private Optional<PersonId> requiresRefresh(PartitionsContext partitionsContext, PersonRegionUpdateEvent event) {
 		boolean previousRegionIdContained = regionIds.contains(event.previousRegionId());
 		boolean currentRegionIdContained = regionIds.contains(event.currentRegionId());
 		if (previousRegionIdContained != currentRegionIdContained) {

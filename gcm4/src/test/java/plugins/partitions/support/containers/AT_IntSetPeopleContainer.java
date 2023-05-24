@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import nucleus.SimulationContext;
+import plugins.partitions.support.PartitionsContext;
 import plugins.people.support.PersonId;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestField;
@@ -20,7 +20,7 @@ public class AT_IntSetPeopleContainer {
 		assertEquals(80, IntSetPeopleContainer.DEFAULT_TARGET_DEPTH);
 	}
 
-	private PeopleContainer getPeopleContainer(SimulationContext context) {
+	private PeopleContainer getPeopleContainer(PartitionsContext context) {
 		return new IntSetPeopleContainer();
 	}
 

@@ -6,9 +6,9 @@ import java.util.Set;
 
 import nucleus.Event;
 import nucleus.NucleusError;
-import nucleus.SimulationContext;
 import plugins.partitions.support.Labeler;
 import plugins.partitions.support.LabelerSensitivity;
+import plugins.partitions.support.PartitionsContext;
 import plugins.people.support.PersonId;
 import plugins.personproperties.datamanagers.PersonPropertiesDataManager;
 import plugins.personproperties.events.PersonPropertyUpdateEvent;
@@ -53,12 +53,12 @@ public abstract class PersonPropertyLabeler implements Labeler {
 	}
 
 	@Override
-	public final Object getCurrentLabel(SimulationContext simulationContext, PersonId personId) {
-		if(simulationContext == null) {
+	public final Object getCurrentLabel(PartitionsContext partitionsContext, PersonId personId) {
+		if(partitionsContext == null) {
 			throw new ContractException(NucleusError.NULL_SIMULATION_CONTEXT);
 		}
 		if (personPropertiesDataManager == null) {
-			personPropertiesDataManager = simulationContext.getDataManager(PersonPropertiesDataManager.class);
+			personPropertiesDataManager = partitionsContext.getDataManager(PersonPropertiesDataManager.class);
 		}
 		Object personPropertyValue = personPropertiesDataManager.getPersonPropertyValue(personId, personPropertyId);
 		return getLabelFromValue(personPropertyValue);
@@ -70,7 +70,7 @@ public abstract class PersonPropertyLabeler implements Labeler {
 	}
 
 	@Override
-	public final Object getPastLabel(SimulationContext simulationContext, Event event) {
+	public final Object getPastLabel(PartitionsContext partitionsContext, Event event) {
 		PersonPropertyUpdateEvent personPropertyUpdateEvent =(PersonPropertyUpdateEvent)event;
 		return getLabelFromValue(personPropertyUpdateEvent.previousPropertyValue());
 	}

@@ -16,10 +16,11 @@ import java.util.function.Function;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.util.FastMath;
 
-import nucleus.SimulationContext;
 import nucleus.testsupport.testplugin.TestSimulation;
+import plugins.partitions.support.PartitionsContext;
 import plugins.partitions.testsupport.PartitionsTestPluginFactory;
 import plugins.partitions.testsupport.PartitionsTestPluginFactory.Factory;
+import plugins.partitions.testsupport.TestPartitionsContext;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonId;
 import plugins.stochastics.StochasticsDataManager;
@@ -32,11 +33,11 @@ public class PeopleContainerTester {
 
 
 
-	public static void testGetPeople(Function<SimulationContext, PeopleContainer> provider, long seed) {
+	public static void testGetPeople(Function<PartitionsContext, PeopleContainer> provider, long seed) {
 		Factory factory = PartitionsTestPluginFactory.factory(100, seed, (c) -> {
-
+			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
 			// get the people container to test
-			PeopleContainer peopleContainer = provider.apply(c);
+			PeopleContainer peopleContainer = provider.apply(testPartitionsContext);
 
 			// get some data views that will be needed below
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
@@ -85,11 +86,13 @@ public class PeopleContainerTester {
 
 	}
 
-	public static void testSafeAdd(Function<SimulationContext, PeopleContainer> provider, long seed) {
+	public static void testSafeAdd(Function<PartitionsContext, PeopleContainer> provider, long seed) {
 		Factory factory = PartitionsTestPluginFactory.factory(100, seed, (c) -> {
 
+			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
+			
 			// get the people container to test
-			PeopleContainer peopleContainer = provider.apply(c);
+			PeopleContainer peopleContainer = provider.apply(testPartitionsContext);
 
 			// get some data views that will be needed below
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
@@ -129,11 +132,11 @@ public class PeopleContainerTester {
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
-	public static void testUnsafeAdd(Function<SimulationContext, PeopleContainer> provider, long seed) {
+	public static void testUnsafeAdd(Function<PartitionsContext, PeopleContainer> provider, long seed) {
 		Factory factory = PartitionsTestPluginFactory.factory(100, seed, (c) -> {
-
+			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
 			// get the people container to test
-			PeopleContainer peopleContainer = provider.apply(c);
+			PeopleContainer peopleContainer = provider.apply(testPartitionsContext);
 
 			// get some data views that will be needed below
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
@@ -167,11 +170,13 @@ public class PeopleContainerTester {
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
-	public static void testRemove(Function<SimulationContext, PeopleContainer> provider, long seed) {
+	public static void testRemove(Function<PartitionsContext, PeopleContainer> provider, long seed) {
 		Factory factory = PartitionsTestPluginFactory.factory(100, seed, (c) -> {
 
+			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
+			
 			// get the people container to test
-			PeopleContainer peopleContainer = provider.apply(c);
+			PeopleContainer peopleContainer = provider.apply(testPartitionsContext);
 
 			// get some data views that will be needed below
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
@@ -212,11 +217,11 @@ public class PeopleContainerTester {
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
-	public static void testSize(Function<SimulationContext, PeopleContainer> provider, long seed) {
+	public static void testSize(Function<PartitionsContext, PeopleContainer> provider, long seed) {
 		Factory factory = PartitionsTestPluginFactory.factory(100, seed, (c) -> {
-
+			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
 			// get the people container to test
-			PeopleContainer peopleContainer = provider.apply(c);
+			PeopleContainer peopleContainer = provider.apply(testPartitionsContext);
 
 			// get some data views that will be needed below
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
@@ -256,11 +261,11 @@ public class PeopleContainerTester {
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
-	public static void testContains(Function<SimulationContext, PeopleContainer> provider, long seed) {
+	public static void testContains(Function<PartitionsContext, PeopleContainer> provider, long seed) {
 		Factory factory = PartitionsTestPluginFactory.factory(100, seed, (c) -> {
-
+			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
 			// get the people container to test
-			PeopleContainer peopleContainer = provider.apply(c);
+			PeopleContainer peopleContainer = provider.apply(testPartitionsContext);
 
 			// get some data views that will be needed below
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
@@ -305,11 +310,11 @@ public class PeopleContainerTester {
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
-	public static void testGetRandomPersonId(Function<SimulationContext, PeopleContainer> provider, long seed) {
+	public static void testGetRandomPersonId(Function<PartitionsContext, PeopleContainer> provider, long seed) {
 		Factory factory = PartitionsTestPluginFactory.factory(100, seed, (c) -> {
-
+			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
 			// get the people container to test
-			PeopleContainer peopleContainer = provider.apply(c);
+			PeopleContainer peopleContainer = provider.apply(testPartitionsContext);
 
 			// get some data views that will be needed below
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);

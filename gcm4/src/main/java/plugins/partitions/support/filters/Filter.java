@@ -3,9 +3,9 @@ package plugins.partitions.support.filters;
 import java.util.Set;
 
 import nucleus.NucleusError;
-import nucleus.SimulationContext;
 import plugins.partitions.support.FilterSensitivity;
 import plugins.partitions.support.PartitionError;
+import plugins.partitions.support.PartitionsContext;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
 import util.errors.ContractException;
@@ -59,7 +59,7 @@ public abstract class Filter {
 	 *             <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if the person
 	 *             id is unknown</li>
 	 */
-	public abstract boolean evaluate(SimulationContext simulationContext, PersonId personId);
+	public abstract boolean evaluate(PartitionsContext partitionsContext, PersonId personId);
 
 	/**
 	 * Validates the filter from the given context.
@@ -68,7 +68,7 @@ public abstract class Filter {
 	 * 
 	 * <li>the context is not null</li>
 	 */
-	public abstract void validate(SimulationContext simulationContext);
+	public abstract void validate(PartitionsContext partitionsContext);
 
 	/**
 	 * Returns the filter sensitivities

@@ -16,7 +16,6 @@ import org.apache.commons.math3.util.FastMath;
 
 import nucleus.Event;
 import nucleus.NucleusError;
-import nucleus.SimulationContext;
 import plugins.partitions.support.containers.BasePeopleContainer;
 import plugins.partitions.support.containers.PeopleContainer;
 import plugins.partitions.support.filters.Filter;
@@ -256,7 +255,7 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 
 		@Override
 		public Key next() {
-			if (nextKey == null) {				
+			if (nextKey == null) {
 				throw new NoSuchElementException();
 			}
 			final Key result = nextKey;
@@ -302,7 +301,7 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 
 	private final StochasticsDataManager stochasticsDataManager;
 
-	private final SimulationContext simulationContext;
+	private final PartitionsContext partitionsContext;
 	private final Map<Class<? extends Event>, List<FilterSensitivity<? extends Event>>> eventClassToFilterSensitivityMap = new LinkedHashMap<>();
 	private final Map<Class<? extends Event>, List<LabelerSensitivity<? extends Event>>> eventClassToLabelerSensitivityMap = new LinkedHashMap<>();
 
@@ -325,11 +324,11 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 	 *             <li>if partition is null</li>
 	 *             <li>if the partition contains labelers</li>
 	 */
-	public PopulationPartitionImpl(final SimulationContext simulationContext, final Partition partition) {
-		this.simulationContext = simulationContext;
-		
+	public PopulationPartitionImpl(final PartitionsContext partitionsContext, final Partition partition) {
+		this.partitionsContext = partitionsContext;
+
 		retainPersonKeys = partition.retainPersonKeys();
-		peopleDataManager = simulationContext.getDataManager(PeopleDataManager.class);
+		peopleDataManager = partitionsContext.getDataManager(PeopleDataManager.class);
 
 		if (retainPersonKeys) {
 			personToKeyMap = new ArrayList<>(peopleDataManager.getPersonIdLimit());
@@ -366,13 +365,12 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 		}
 		labelerSensitivities = new LabelerSensitivity<?>[maxLabelerSensitivityCount];
 
-		stochasticsDataManager = simulationContext.getDataManager(StochasticsDataManager.class);
+		stochasticsDataManager = partitionsContext.getDataManager(StochasticsDataManager.class);
 
 		keySize = labelers.size();
 		tempKeyForLabelSets = new Key(keySize);
 		tempKeyForPeople = new Key(keySize);
 
-		
 		labelManagers = new LabelManager[keySize];
 		for (int i = 0; i < keySize; i++) {
 			final Labeler labeler = labelers.get(i);
@@ -384,7 +382,7 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 		for (int i = 0; i < personIdLimit; i++) {
 			if (peopleDataManager.personIndexExists(i)) {
 				final PersonId personId = peopleDataManager.getBoxedPersonId(i).get();
-				if (filter.evaluate(simulationContext, personId)) {
+				if (filter.evaluate(partitionsContext, personId)) {
 					/*
 					 * By contract, we know that the person id should not
 					 * already be a member of this container
@@ -393,8 +391,7 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 				}
 			}
 		}
-		
-	
+
 	}
 
 	/*
@@ -409,12 +406,11 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 			}
 		}
 
-		
 		final Key key = tempKeyForPeople;
 		final int n = labelManagers.length;
 		for (int i = 0; i < n; i++) {
 			final LabelManager labelManager = labelManagers[i];
-			final Object label = labelManager.labeler.getCurrentLabel(simulationContext, personId);
+			final Object label = labelManager.labeler.getCurrentLabel(partitionsContext, personId);
 			// unsafe mutation add person
 			key.keys[i] = label;
 		}
@@ -423,11 +419,11 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 
 		Key cleanedKey = keyMap.get(key);
 		if (cleanedKey == null) {
-			//key construction -- for add person
+			// key construction -- for add person
 			cleanedKey = new Key(key);
 			cleanedKey.calculateHashCode();
 			keyMap.put(cleanedKey, cleanedKey);
-			final BasePeopleContainer basePeopleContainer = new BasePeopleContainer(simulationContext);
+			final BasePeopleContainer basePeopleContainer = new BasePeopleContainer(partitionsContext);
 			keyToPeopleMap.put(cleanedKey, basePeopleContainer);
 			final LabelSet labelSet = getLabelSet(cleanedKey);
 			labelSetInfoMap.put(cleanedKey, labelSet);
@@ -485,7 +481,7 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 	 */
 	@Override
 	public void attemptPersonAddition(final PersonId personId) {
-		if (filter.evaluate(simulationContext, personId)) {
+		if (filter.evaluate(partitionsContext, personId)) {
 			/*
 			 * By contract, we know that the person id should not already be a
 			 * member of this container
@@ -530,16 +526,15 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 
 	@Override
 	public boolean contains(final PersonId personId) {
+		int id = personId.getValue();
 		if (retainPersonKeys) {
-			int id = personId.getValue();
 			if (personToKeyMap.size() <= id) {
 				return false;
 			}
 			return personToKeyMap.get(id) != null;
 		} else {
-
+			return personMembership.get(id);
 		}
-		return getKeyForPerson(personId) != null;
 	}
 
 	@Override
@@ -588,18 +583,18 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 		}
 		return low;
 	}
-	
+
 	private Key tempKeyForLabelSets;
 	private Key tempKeyForPeople;
 
-	private double getDefaultWeight(final SimulationContext simulationContext, final LabelSet labelSet) {
+	private double getDefaultWeight(final PartitionsContext partitionsContext, final LabelSet labelSet) {
 		return 1;
 	}
 
 	private Key getKeyForLabelSet(final LabelSet labelSet) {
-		
+
 		final Key key = tempKeyForLabelSets;
-		
+
 		for (int i = 0; i < keySize; i++) {
 			final Object labelerId = labelManagers[i].labeler.getId();
 			final Object label = labelSet.getLabel(labelerId).orElse(null);
@@ -634,12 +629,11 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 				return null;
 			}
 
-			
 			Key key = tempKeyForPeople;
 			final int n = labelManagers.length;
 			for (int i = 0; i < n; i++) {
 				final LabelManager labelManager = labelManagers[i];
-				final Object label = labelManager.labeler.getCurrentLabel(simulationContext, personId);
+				final Object label = labelManager.labeler.getCurrentLabel(partitionsContext, personId);
 				// unsafe mutation add person
 				key.keys[i] = label;
 			}
@@ -678,14 +672,14 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 		if (retainPersonKeys) {
 			int n = personToKeyMap.size();
 			for (int i = 0; i < n; i++) {
-				if(personToKeyMap.get(i)!=null) {
+				if (personToKeyMap.get(i) != null) {
 					result.add(peopleDataManager.getBoxedPersonId(i).get());
 				}
-			}			
+			}
 		} else {
 			int n = peopleDataManager.getPersonIdLimit();
 			for (int i = 0; i < n; i++) {
-				if(personMembership.get(i)) {
+				if (personMembership.get(i)) {
 					result.add(peopleDataManager.getBoxedPersonId(i).get());
 				}
 			}
@@ -799,7 +793,7 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 		final List<FilterSensitivity<? extends Event>> filterSensitivities = eventClassToFilterSensitivityMap.get(event.getClass());
 		if (filterSensitivities != null) {
 			for (final FilterSensitivity<? extends Event> filterSensitivity : filterSensitivities) {
-				final Optional<PersonId> optionalPersonId = filterSensitivity.requiresRefresh(simulationContext, event);
+				final Optional<PersonId> optionalPersonId = filterSensitivity.requiresRefresh(partitionsContext, event);
 				if (optionalPersonId.isPresent()) {
 					personId = optionalPersonId.get();
 					break;
@@ -848,26 +842,65 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 				currentKeyForPerson = personToKeyMap.get(personId.getValue());
 			}
 		} else {
-			if (personMembership.get(personId.getValue())) {				
+			if (personMembership.get(personId.getValue())) {
 				currentKeyForPerson = tempKeyForPeople;
 				final int n = labelManagers.length;
 				for (int i = 0; i < n; i++) {
 					final LabelManager labelManager = labelManagers[i];
-					final Object label = labelManager.labeler.getCurrentLabel(simulationContext, personId);
+					final Object label = labelManager.labeler.getCurrentLabel(partitionsContext, personId);
 					// unsafe mutation add person
 					currentKeyForPerson.keys[i] = label;
 				}
 				for (int i = 0; i < labelerSensitivityCount; i++) {
 					LabelerSensitivity<? extends Event> labelerSensitivity = labelerSensitivities[i];
 					final Labeler labeler = labelerSensitivityToLabelerMap.get(labelerSensitivity);
-					final Object pastLabel = labeler.getPastLabel(simulationContext, event);
+					final Object pastLabel = labeler.getPastLabel(partitionsContext, event);
 					final Object labelerId = labeler.getId();
 					final int dimensionIndex = labelerIds.get(labelerId);
 					// unsafe mutation
 					currentKeyForPerson.keys[dimensionIndex] = pastLabel;
 				}
 				currentKeyForPerson.calculateHashCode();
-				currentKeyForPerson = keyMap.get(currentKeyForPerson);				
+				currentKeyForPerson = keyMap.get(currentKeyForPerson);
+
+				PeopleContainer peopleContainer = keyToPeopleMap.get(currentKeyForPerson);
+				if (!peopleContainer.contains(personId)) {
+
+					Key actualKey = null;
+					for (Key key : keyToPeopleMap.keySet()) {
+						peopleContainer = keyToPeopleMap.get(key);
+						if (peopleContainer.contains(personId)) {
+							actualKey = key;
+							break;
+						}
+					}
+
+					StringBuilder sb = new StringBuilder();
+					sb.append("[");
+					boolean firstElement = true;
+					for (int i = 0; i < keySize; i++) {
+						Object calculatedValue = currentKeyForPerson.keys[i];
+						Object actualValue = actualKey.keys[i];
+						if (!calculatedValue.equals(actualValue)) {
+							if (firstElement) {
+								firstElement = false;
+							} else {
+								sb.append(",");
+							}
+							Object labelerId = labelManagers[i].labeler.getId();
+							sb.append("(");
+							sb.append("labelerId=");
+							sb.append(labelerId);
+							sb.append(" calculated value ='");
+							sb.append(calculatedValue);
+							sb.append("' actual value ='");
+							sb.append(actualValue);
+							sb.append("')");
+						}
+					}
+					sb.append("]");
+					throw new ContractException(PartitionError.PAST_LABEL_FAILURE, sb.toString());
+				}
 			}
 		}
 
@@ -881,7 +914,7 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 		// determine whether the person should be in the partition
 		boolean personShouldBeInPartition;
 		if (filterSensitivityFound) {
-			personShouldBeInPartition = filter.evaluate(simulationContext, personId);
+			personShouldBeInPartition = filter.evaluate(partitionsContext, personId);
 		} else {
 			personShouldBeInPartition = personIsCurrentlyInPartition;
 		}
@@ -895,14 +928,14 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 				// personShouldBeInPartition == true
 				// personIsCurrentlyInPartition == true
 				if (labelerSensitivityCount > 0) {
-					//key construction -- (copy) handle event
+					// key construction -- (copy) handle event
 					final Key newKey = new Key(currentKeyForPerson);
 					for (int i = 0; i < labelerSensitivityCount; i++) {
 						LabelerSensitivity<? extends Event> labelerSensitivity = labelerSensitivities[i];
 						// for (final LabelerSensitivity<? extends Event>
 						// labelerSensitivity : labelerSensitivities) {
 						final Labeler labeler = labelerSensitivityToLabelerMap.get(labelerSensitivity);
-						final Object newLabel = labeler.getCurrentLabel(simulationContext, personId);
+						final Object newLabel = labeler.getCurrentLabel(partitionsContext, personId);
 						final Object labelerId = labeler.getId();
 						final int dimensionIndex = labelerIds.get(labelerId);
 						final LabelManager labelManager = labelManagers[dimensionIndex];
@@ -986,7 +1019,7 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 		if (cleanedNewKey == null) {
 			cleanedNewKey = newKey;
 			keyMap.put(cleanedNewKey, cleanedNewKey);
-			keyToPeopleMap.put(cleanedNewKey, new BasePeopleContainer(simulationContext));
+			keyToPeopleMap.put(cleanedNewKey, new BasePeopleContainer(partitionsContext));
 			final LabelSet labelSet = getLabelSet(cleanedNewKey);
 			labelSetInfoMap.put(cleanedNewKey, labelSet);
 		}
@@ -1012,7 +1045,7 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 
 	private void releaseWeightsLock() {
 		if (!weightsAreLocked) {
-			
+
 			throw new RuntimeException("cannot release sample locking when lock not present");
 		}
 		weightsAreLocked = false;
@@ -1072,7 +1105,7 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 				final Key fullKey = keyIterator.next();
 				final LabelSet fullLableSet = labelSetInfoMap.get(fullKey);
 				final PeopleContainer peopleContainer = keyToPeopleMap.get(fullKey);
-				double weight = labelSetWeightingFunction.getWeight(simulationContext, fullLableSet);
+				double weight = labelSetWeightingFunction.getWeight(partitionsContext, fullLableSet);
 				if (fullKey != keyForExcludedPersonId) {
 					weight *= peopleContainer.size();
 				} else {

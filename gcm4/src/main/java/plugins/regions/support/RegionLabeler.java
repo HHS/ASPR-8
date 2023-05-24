@@ -6,9 +6,9 @@ import java.util.Set;
 
 import nucleus.Event;
 import nucleus.NucleusError;
-import nucleus.SimulationContext;
 import plugins.partitions.support.Labeler;
 import plugins.partitions.support.LabelerSensitivity;
+import plugins.partitions.support.PartitionsContext;
 import plugins.people.support.PersonId;
 import plugins.regions.datamanagers.RegionsDataManager;
 import plugins.regions.events.PersonRegionUpdateEvent;
@@ -42,12 +42,12 @@ public abstract class RegionLabeler implements Labeler {
 	}
 
 	@Override
-	public final Object getCurrentLabel(SimulationContext simulationContext, PersonId personId) {
-		if (simulationContext == null) {
+	public final Object getCurrentLabel(PartitionsContext partitionsContext, PersonId personId) {
+		if (partitionsContext == null) {
 			throw new ContractException(NucleusError.NULL_SIMULATION_CONTEXT);
 		}
 		if (regionsDataManager == null) {
-			regionsDataManager = simulationContext.getDataManager(RegionsDataManager.class);
+			regionsDataManager = partitionsContext.getDataManager(RegionsDataManager.class);
 		}
 		RegionId regionId = regionsDataManager.getPersonRegion(personId);
 		return getLabelFromRegionId(regionId);
@@ -59,7 +59,7 @@ public abstract class RegionLabeler implements Labeler {
 	}
 
 	@Override
-	public final Object getPastLabel(SimulationContext simulationContext, Event event) {
+	public final Object getPastLabel(PartitionsContext partitionsContext, Event event) {
 		PersonRegionUpdateEvent personRegionUpdateEvent = (PersonRegionUpdateEvent) event;
 		return getLabelFromRegionId(personRegionUpdateEvent.previousRegionId());
 	}

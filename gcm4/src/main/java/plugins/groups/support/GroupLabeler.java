@@ -5,12 +5,12 @@ import java.util.Optional;
 import java.util.Set;
 
 import nucleus.Event;
-import nucleus.SimulationContext;
 import plugins.groups.datamanagers.GroupsDataManager;
 import plugins.groups.events.GroupMembershipAdditionEvent;
 import plugins.groups.events.GroupMembershipRemovalEvent;
 import plugins.partitions.support.Labeler;
 import plugins.partitions.support.LabelerSensitivity;
+import plugins.partitions.support.PartitionsContext;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
 
@@ -62,9 +62,9 @@ public abstract class GroupLabeler implements Labeler {
 	 *                          if the person id is unknown
 	 */
 	@Override
-	public final Object getCurrentLabel(SimulationContext simulationContext, PersonId personId) {
+	public final Object getCurrentLabel(PartitionsContext partitionsContext, PersonId personId) {
 		if (groupsDataManager == null) {
-			groupsDataManager = simulationContext.getDataManager(GroupsDataManager.class);
+			groupsDataManager = partitionsContext.getDataManager(GroupsDataManager.class);
 		}
 
 		GroupTypeCountMap.Builder groupTypeCountMapBuilder = GroupTypeCountMap.builder();
@@ -85,9 +85,9 @@ public abstract class GroupLabeler implements Labeler {
 	}
 
 	@Override
-	public final Object getPastLabel(SimulationContext simulationContext, Event event) {
+	public final Object getPastLabel(PartitionsContext partitionsContext, Event event) {
 		if (groupsDataManager == null) {
-			groupsDataManager = simulationContext.getDataManager(GroupsDataManager.class);
+			groupsDataManager = partitionsContext.getDataManager(GroupsDataManager.class);
 		}
 
 		PersonId personId;

@@ -5,10 +5,10 @@ import java.util.Optional;
 import java.util.Set;
 
 import nucleus.NucleusError;
-import nucleus.SimulationContext;
 import plugins.partitions.support.Equality;
 import plugins.partitions.support.FilterSensitivity;
 import plugins.partitions.support.PartitionError;
+import plugins.partitions.support.PartitionsContext;
 import plugins.partitions.support.filters.Filter;
 import plugins.people.support.PersonId;
 import plugins.resources.datamanagers.ResourcesDataManager;
@@ -21,17 +21,17 @@ public final class ResourceFilter extends Filter {
 	private final Equality equality;
 	private ResourcesDataManager resourcesDataManager;
 
-	private void validateResourceId(SimulationContext simulationContext, final ResourceId resourceId) {
+	private void validateResourceId(PartitionsContext partitionsContext, final ResourceId resourceId) {
 		if (resourceId == null) {
 			throw new ContractException(ResourceError.NULL_RESOURCE_ID);
 		}
 		
-		if (simulationContext == null) {
+		if (partitionsContext == null) {
 			throw new ContractException(NucleusError.NULL_SIMULATION_CONTEXT);
 		}
 
 		if (resourcesDataManager == null) {
-			resourcesDataManager = simulationContext.getDataManager(ResourcesDataManager.class);
+			resourcesDataManager = partitionsContext.getDataManager(ResourcesDataManager.class);
 		}
 
 		if (!resourcesDataManager.resourceIdExists(resourceId)) {
@@ -39,7 +39,7 @@ public final class ResourceFilter extends Filter {
 		}
 	}
 
-	private void validateEquality(SimulationContext simulationContext, final Equality equality) {
+	private void validateEquality(PartitionsContext partitionsContext, final Equality equality) {
 		if (equality == null) {
 			throw new ContractException(PartitionError.NULL_EQUALITY_OPERATOR);
 		}
@@ -52,26 +52,26 @@ public final class ResourceFilter extends Filter {
 	}
 
 	@Override
-	public void validate(SimulationContext simulationContext) {
-		validateEquality(simulationContext, equality);
-		validateResourceId(simulationContext, resourceId);
+	public void validate(PartitionsContext partitionsContext) {
+		validateEquality(partitionsContext, equality);
+		validateResourceId(partitionsContext, resourceId);
 	}
 
 	@Override
-	public boolean evaluate(SimulationContext simulationContext, PersonId personId) {
-		if (simulationContext == null) {
+	public boolean evaluate(PartitionsContext partitionsContext, PersonId personId) {
+		if (partitionsContext == null) {
 			throw new ContractException(NucleusError.NULL_SIMULATION_CONTEXT);
 		}
 
 		if (resourcesDataManager == null) {
-			resourcesDataManager = simulationContext.getDataManager(ResourcesDataManager.class);
+			resourcesDataManager = partitionsContext.getDataManager(ResourcesDataManager.class);
 		}
 		
 		final long level = resourcesDataManager.getPersonResourceLevel(resourceId, personId);
 		return equality.isCompatibleComparisonValue(Long.compare(level, resourceValue));
 	}
 
-	private Optional<PersonId> requiresRefresh(SimulationContext simulationContext, PersonResourceUpdateEvent event) {
+	private Optional<PersonId> requiresRefresh(PartitionsContext partitionsContext, PersonResourceUpdateEvent event) {
 		if (event.resourceId().equals(resourceId)) {
 			long previousResourceLevel = event.previousResourceLevel();
 			long currentResourceLevel = event.currentResourceLevel();
