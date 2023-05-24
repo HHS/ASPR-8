@@ -109,19 +109,21 @@ public class PersonPropertiesPluginDataTranslationSpec
 
             if (appObject.propertyAssignmentTimesTracked(propertyId)) {
                 for (int i = 0; i < propertyTimes.size(); i++) {
-                    PersonPropertyValueInput.Builder personPropertyValueInputBuilder = PersonPropertyValueInput
-                            .newBuilder();
-                    // check for and use existing builder, if there is one
-                    if (personPropertyValueInputBuilders.get(i) != null) {
-                        personPropertyValueInputBuilder = personPropertyValueInputBuilders.get(i);
+                    if (propertyTimes.get(i) != null) {
+                        PersonPropertyValueInput.Builder personPropertyValueInputBuilder = PersonPropertyValueInput
+                                .newBuilder();
+                        // check for and use existing builder, if there is one
+                        if (personPropertyValueInputBuilders.get(i) != null) {
+                            personPropertyValueInputBuilder = personPropertyValueInputBuilders.get(i);
 
-                        personPropertyValueInputBuilder.setPropertyValueTime(propertyTimes.get(i));
-                    } else {
-                        personPropertyValueInputBuilder.setPId(i)
-                                .setPropertyValueTime(propertyTimes.get(i));
+                            personPropertyValueInputBuilder.setPropertyValueTime(propertyTimes.get(i));
+                        } else {
+                            personPropertyValueInputBuilder.setPId(i)
+                                    .setPropertyValueTime(propertyTimes.get(i));
+                        }
+
+                        personPropertyValueInputBuilders.set(i, personPropertyValueInputBuilder);
                     }
-
-                    personPropertyValueInputBuilders.set(i, personPropertyValueInputBuilder);
                 }
             }
 
