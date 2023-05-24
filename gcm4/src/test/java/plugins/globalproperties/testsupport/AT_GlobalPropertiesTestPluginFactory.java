@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
 
+import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import nucleus.ActorContext;
@@ -32,6 +33,7 @@ import plugins.globalproperties.testsupport.GlobalPropertiesTestPluginFactory.Fa
 import plugins.util.properties.PropertyDefinition;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
+import util.random.RandomGeneratorProvider;
 import util.wrappers.MutableBoolean;
 
 public class AT_GlobalPropertiesTestPluginFactory {
@@ -40,15 +42,15 @@ public class AT_GlobalPropertiesTestPluginFactory {
 	@UnitTestMethod(target = GlobalPropertiesTestPluginFactory.class, name = "factory", args = { Consumer.class })
 	public void testFactory_Consumer() {
 		MutableBoolean executed = new MutableBoolean();
-		Factory factory = GlobalPropertiesTestPluginFactory.factory(c -> executed.setValue(true));
+		Factory factory = GlobalPropertiesTestPluginFactory.factory(2050026532065791481L, c -> executed.setValue(true));
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
-		
+
 		assertTrue(executed.getValue());
 
 		// precondition: consumer is null
 		Consumer<ActorContext> nullConsumer = null;
 		ContractException contractException = assertThrows(ContractException.class,
-				() -> GlobalPropertiesTestPluginFactory.factory(nullConsumer));
+				() -> GlobalPropertiesTestPluginFactory.factory(0, nullConsumer));
 		assertEquals(NucleusError.NULL_ACTOR_CONTEXT_CONSUMER, contractException.getErrorType());
 	}
 
@@ -59,14 +61,14 @@ public class AT_GlobalPropertiesTestPluginFactory {
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, c -> executed.setValue(true)));
 		TestPluginData testPluginData = pluginBuilder.build();
-		Factory factory = GlobalPropertiesTestPluginFactory.factory(testPluginData);
+		Factory factory = GlobalPropertiesTestPluginFactory.factory(2050026532065791481L, testPluginData);
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 		assertTrue(executed.getValue());
 
 		// precondition: testPluginData is null
 		TestPluginData nullTestPluginData = null;
 		ContractException contractException = assertThrows(ContractException.class,
-				() -> GlobalPropertiesTestPluginFactory.factory(nullTestPluginData));
+				() -> GlobalPropertiesTestPluginFactory.factory(0, nullTestPluginData));
 		assertEquals(NucleusError.NULL_PLUGIN_DATA, contractException.getErrorType());
 
 	}
@@ -96,7 +98,7 @@ public class AT_GlobalPropertiesTestPluginFactory {
 	private <T extends PluginData> void checkPluginDataExists(List<Plugin> plugins, T expectedPluginData,
 			PluginId pluginId) {
 		Plugin actualPlugin = checkPluginExists(plugins, pluginId);
-		List<PluginData> actualPluginDatas =  actualPlugin.getPluginDatas();
+		List<PluginData> actualPluginDatas = actualPlugin.getPluginDatas();
 		assertNotNull(actualPluginDatas);
 		assertEquals(1, actualPluginDatas.size());
 		PluginData actualPluginData = actualPluginDatas.get(0);
@@ -107,7 +109,7 @@ public class AT_GlobalPropertiesTestPluginFactory {
 	@UnitTestMethod(target = GlobalPropertiesTestPluginFactory.Factory.class, name = "getPlugins", args = {})
 	public void testGetPlugins() {
 
-		List<Plugin> plugins = GlobalPropertiesTestPluginFactory.factory(t -> {
+		List<Plugin> plugins = GlobalPropertiesTestPluginFactory.factory(2050026532065791481L, t -> {
 		}).getPlugins();
 		assertEquals(2, plugins.size());
 
@@ -124,26 +126,26 @@ public class AT_GlobalPropertiesTestPluginFactory {
 		GlobalPropertyId globalPropertyId_1 = new SimpleGlobalPropertyId("id_1");
 		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(3)
 				.build();
-		initialDatabuilder.defineGlobalProperty(globalPropertyId_1, propertyDefinition,0);
+		initialDatabuilder.defineGlobalProperty(globalPropertyId_1, propertyDefinition, 0);
 
 		GlobalPropertyId globalPropertyId_2 = new SimpleGlobalPropertyId("id_2");
 		propertyDefinition = PropertyDefinition.builder().setType(Double.class).setDefaultValue(6.78).build();
-		initialDatabuilder.defineGlobalProperty(globalPropertyId_2, propertyDefinition,0);
+		initialDatabuilder.defineGlobalProperty(globalPropertyId_2, propertyDefinition, 0);
 
 		GlobalPropertyId globalPropertyId_3 = new SimpleGlobalPropertyId("id_3");
 		propertyDefinition = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(true).build();
-		initialDatabuilder.defineGlobalProperty(globalPropertyId_3, propertyDefinition,0);
+		initialDatabuilder.defineGlobalProperty(globalPropertyId_3, propertyDefinition, 0);
 
 		GlobalPropertiesPluginData globalPropertiesPluginData = initialDatabuilder.build();
 
-		List<Plugin> plugins = GlobalPropertiesTestPluginFactory.factory(t -> {
+		List<Plugin> plugins = GlobalPropertiesTestPluginFactory.factory(2050026532065791481L, t -> {
 		}).setGlobalPropertiesPluginData(globalPropertiesPluginData).getPlugins();
 
 		checkPluginDataExists(plugins, globalPropertiesPluginData, GlobalPropertiesPluginId.PLUGIN_ID);
 
 		// precondition: globalPropertiesPluginData is not null
 		ContractException contractException = assertThrows(ContractException.class,
-				() -> GlobalPropertiesTestPluginFactory.factory(t -> {
+				() -> GlobalPropertiesTestPluginFactory.factory(2050026532065791481L, t -> {
 				}).setGlobalPropertiesPluginData(null));
 		assertEquals(GlobalPropertiesError.NULL_GLOBAL_PLUGIN_DATA, contractException.getErrorType());
 	}
@@ -151,22 +153,46 @@ public class AT_GlobalPropertiesTestPluginFactory {
 	@Test
 	@UnitTestMethod(target = GlobalPropertiesTestPluginFactory.class, name = "getStandardGlobalPropertiesPluginData", args = {})
 	public void testGetStandardGlobalPropertiesPluginData() {
-		GlobalPropertiesPluginData globalPropertiesPluginData = GlobalPropertiesTestPluginFactory
-				.getStandardGlobalPropertiesPluginData();
+		long seed = 2376369840099946020L;
+
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
+
+		GlobalPropertiesPluginData actualPluginData = GlobalPropertiesTestPluginFactory
+				.getStandardGlobalPropertiesPluginData(seed);
 
 		Set<TestGlobalPropertyId> expectedPropertyIds = EnumSet.allOf(TestGlobalPropertyId.class);
 		assertFalse(expectedPropertyIds.isEmpty());
 
-		Set<GlobalPropertyId> actualGlobalPropertyIds = globalPropertiesPluginData.getGlobalPropertyIds();
+		Set<GlobalPropertyId> actualGlobalPropertyIds = actualPluginData.getGlobalPropertyIds();
 		assertEquals(expectedPropertyIds, actualGlobalPropertyIds);
+
+		GlobalPropertiesPluginData.Builder builder = GlobalPropertiesPluginData.builder();
 
 		for (TestGlobalPropertyId testGlobalPropertyId : TestGlobalPropertyId.values()) {
 			PropertyDefinition expectedPropertyDefinition = testGlobalPropertyId.getPropertyDefinition();
-			PropertyDefinition actualPropertyDefinition = globalPropertiesPluginData
-					.getGlobalPropertyDefinition(testGlobalPropertyId);
-			assertNotNull(expectedPropertyDefinition);
-			assertEquals(expectedPropertyDefinition, actualPropertyDefinition);
+			builder.defineGlobalProperty(testGlobalPropertyId, expectedPropertyDefinition, 0);
+
+			boolean hasDefaultValue = testGlobalPropertyId.getPropertyDefinition().getDefaultValue().isPresent();
+
+			if(!hasDefaultValue) {
+				builder.setGlobalPropertyValue(testGlobalPropertyId, testGlobalPropertyId.getRandomPropertyValue(randomGenerator), 0);
+			}
+
+			// set a value to the default
+			if(randomGenerator.nextBoolean() && hasDefaultValue) {
+				builder.setGlobalPropertyValue(testGlobalPropertyId, testGlobalPropertyId.getPropertyDefinition().getDefaultValue().get(), 0);
+			}
+
+			// set a value to not the default
+			if(randomGenerator.nextBoolean() && hasDefaultValue) {
+				builder.setGlobalPropertyValue(testGlobalPropertyId, testGlobalPropertyId.getRandomPropertyValue(randomGenerator), 0);
+			}
+
 		}
+
+		GlobalPropertiesPluginData expectedPluginData = builder.build();
+
+		assertEquals(expectedPluginData, actualPluginData);
 
 	}
 

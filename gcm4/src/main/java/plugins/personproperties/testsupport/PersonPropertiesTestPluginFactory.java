@@ -6,6 +6,11 @@ import java.util.function.Consumer;
 
 import org.apache.commons.math3.random.RandomGenerator;
 
+import plugins.personproperties.PersonPropertiesPlugin;
+import plugins.personproperties.PersonPropertiesPluginData;
+import plugins.personproperties.reports.PersonPropertyInteractionReportPluginData;
+import plugins.personproperties.reports.PersonPropertyReportPluginData;
+import plugins.personproperties.support.PersonPropertyError;
 import nucleus.ActorContext;
 import nucleus.NucleusError;
 import nucleus.Plugin;
@@ -19,11 +24,6 @@ import plugins.people.PeoplePluginData;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
 import plugins.people.support.PersonRange;
-import plugins.personproperties.PersonPropertiesPlugin;
-import plugins.personproperties.PersonPropertiesPluginData;
-import plugins.personproperties.reports.PersonPropertyInteractionReportPluginData;
-import plugins.personproperties.reports.PersonPropertyReportPluginData;
-import plugins.personproperties.support.PersonPropertyError;
 import plugins.regions.RegionsPlugin;
 import plugins.regions.RegionsPluginData;
 import plugins.regions.support.RegionError;
@@ -333,18 +333,26 @@ public class PersonPropertiesTestPluginFactory {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
 
 		PersonPropertiesPluginData.Builder personPropertyBuilder = PersonPropertiesPluginData.builder();
+
 		for (TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.values()) {
 			personPropertyBuilder.definePersonProperty(testPersonPropertyId, testPersonPropertyId.getPropertyDefinition(), 0.0, testPersonPropertyId.isTimeTracked());
 		}
+
 		for (PersonId personId : people) {
 
 			for (TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.values()) {
 
 				boolean doesNotHaveDefaultValue = testPersonPropertyId.getPropertyDefinition().getDefaultValue().isEmpty();
+
 				if (doesNotHaveDefaultValue || randomGenerator.nextBoolean()) {
 					Object randomPropertyValue = testPersonPropertyId.getRandomPropertyValue(randomGenerator);
 					personPropertyBuilder.setPersonPropertyValue(personId, testPersonPropertyId, randomPropertyValue);
+
+					if(testPersonPropertyId.isTimeTracked()) {
+						personPropertyBuilder.setPersonPropertyTime(personId, testPersonPropertyId, 0.0);
+					}
 				}
+	
 			}
 		}
 		return personPropertyBuilder.build();

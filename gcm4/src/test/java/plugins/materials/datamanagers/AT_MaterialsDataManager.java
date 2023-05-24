@@ -1848,12 +1848,14 @@ public class AT_MaterialsDataManager {
 	public void testGetMaterialsProducerResourceLevel() {
 
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+		long seed = 1633676078121550637L;
 
+		MaterialsPluginData standardPluginData = MaterialsTestPluginFactory.getStandardMaterialsPluginData(0, 0, 0, seed);
 		// create a structure to hold expected resource levels for producers
 		Map<MultiKey, MutableLong> expectedLevelsMap = new LinkedHashMap<>();
 		for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
 			for (TestResourceId testResourceId : TestResourceId.values()) {
-				expectedLevelsMap.put(new MultiKey(testMaterialsProducerId, testResourceId), new MutableLong());
+				expectedLevelsMap.put(new MultiKey(testMaterialsProducerId, testResourceId), new MutableLong(standardPluginData.getMaterialsProducerResourceLevel(testMaterialsProducerId, testResourceId)));
 			}
 		}
 
@@ -1893,7 +1895,7 @@ public class AT_MaterialsDataManager {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		Factory factory = MaterialsTestPluginFactory.factory(0, 0, 0, 1633676078121550637L, testPluginData);
+		Factory factory = MaterialsTestPluginFactory.factory(0, 0, 0, seed, testPluginData);
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 		/* precondition test: if the materials producerId id is null */
@@ -3956,9 +3958,10 @@ public class AT_MaterialsDataManager {
 				for (TestResourceId testResourceId : TestResourceId.values()) {
 					if (randomGenerator.nextBoolean()) {
 						StageId stageId = materialsDataManager.addStage(testMaterialsProducerId);
+						long existingAmount =  materialsDataManager.getMaterialsProducerResourceLevel(testMaterialsProducerId, testResourceId);
 						long amount = (randomGenerator.nextInt(1000) + 100);
 						materialsDataManager.convertStageToResource(stageId, testResourceId, amount);
-						MultiKey multiKey = new MultiKey(c.getTime(), testResourceId, testMaterialsProducerId, 0L, amount);
+						MultiKey multiKey = new MultiKey(c.getTime(), testResourceId, testMaterialsProducerId, existingAmount, amount + existingAmount);
 						expectedObservations.add(multiKey);
 					}
 				}

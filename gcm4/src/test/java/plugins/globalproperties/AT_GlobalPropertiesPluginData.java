@@ -683,7 +683,7 @@ public class AT_GlobalPropertiesPluginData {
 					double time = randomGenerator.nextDouble();					
 					builder.defineGlobalProperty(testGlobalPropertyId, testGlobalPropertyId.getPropertyDefinition(), time);
 					
-					if (randomGenerator.nextBoolean()) {												
+					if (randomGenerator.nextBoolean() || testGlobalPropertyId.getPropertyDefinition().getDefaultValue().isEmpty()) {												
 						time += 0.1;												
 						builder.setGlobalPropertyValue(testGlobalPropertyId, testGlobalPropertyId.getRandomPropertyValue(randomGenerator), time);
 					}
