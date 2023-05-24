@@ -28,6 +28,14 @@ public class GroupsForPersonFilter extends Filter {
 		}
 	}
 
+	public Equality getEquality() {
+		return equality;
+	}
+	
+	public int getGroupCount() {
+		return groupCount;
+	}
+	
 	public GroupsForPersonFilter(final Equality equality, final int groupCount) {
 		this.equality = equality;
 		this.groupCount = groupCount;

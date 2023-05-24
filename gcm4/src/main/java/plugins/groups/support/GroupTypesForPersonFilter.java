@@ -27,6 +27,14 @@ public final class GroupTypesForPersonFilter extends Filter {
 			throw new ContractException(PartitionError.NULL_EQUALITY_OPERATOR);
 		}
 	}
+	
+	public Equality getEquality() {
+		return equality;
+	}
+	
+	public int getGroupTypeCount() {
+		return groupTypeCount;
+	}
 
 	public GroupTypesForPersonFilter(final Equality equality, final int groupTypeCount) {
 		this.equality = equality;

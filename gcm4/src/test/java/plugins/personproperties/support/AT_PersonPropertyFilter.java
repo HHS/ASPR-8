@@ -31,36 +31,36 @@ import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 
-public class AT_PropertyFilter {
+public class AT_PersonPropertyFilter {
 
 	@Test
-	@UnitTestConstructor(target = PropertyFilter.class, args = { PersonPropertyId.class, Equality.class, Object.class })
+	@UnitTestConstructor(target = PersonPropertyFilter.class, args = { PersonPropertyId.class, Equality.class, Object.class })
 	public void testConstructor() {
 		// nothing to test
 	}
 
 	@Test
-	@UnitTestMethod(target = PropertyFilter.class, name = "validate", args = { PartitionsContext.class })
+	@UnitTestMethod(target = PersonPropertyFilter.class, name = "validate", args = { PartitionsContext.class })
 	public void testValidate() {
 
 		Factory factory = PersonPropertiesTestPluginFactory.factory(100, 7889475921077680704L, (c) -> {
 			
 			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
 			
-			final Filter filter = new PropertyFilter(TestPersonPropertyId.PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK, Equality.EQUAL, 12);
+			final Filter filter = new PersonPropertyFilter(TestPersonPropertyId.PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK, Equality.EQUAL, 12);
 			assertNotNull(filter);
 
-			ContractException contractException = assertThrows(ContractException.class, () -> new PropertyFilter(TestPersonPropertyId.getUnknownPersonPropertyId(), Equality.EQUAL, 12).validate(testPartitionsContext));
+			ContractException contractException = assertThrows(ContractException.class, () -> new PersonPropertyFilter(TestPersonPropertyId.getUnknownPersonPropertyId(), Equality.EQUAL, 12).validate(testPartitionsContext));
 			assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
 
-			contractException = assertThrows(ContractException.class, () -> new PropertyFilter(null, Equality.EQUAL, 12L).validate(testPartitionsContext));
+			contractException = assertThrows(ContractException.class, () -> new PersonPropertyFilter(null, Equality.EQUAL, 12L).validate(testPartitionsContext));
 			assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
 
-			contractException = assertThrows(ContractException.class, () -> new PropertyFilter(TestPersonPropertyId.PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK, null, 12).validate(testPartitionsContext));
+			contractException = assertThrows(ContractException.class, () -> new PersonPropertyFilter(TestPersonPropertyId.PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK, null, 12).validate(testPartitionsContext));
 			assertEquals(PartitionError.NULL_EQUALITY_OPERATOR, contractException.getErrorType());
 
 			contractException = assertThrows(ContractException.class,
-					() -> new PropertyFilter(TestPersonPropertyId.PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK, Equality.EQUAL, "bad value").validate(testPartitionsContext));
+					() -> new PersonPropertyFilter(TestPersonPropertyId.PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK, Equality.EQUAL, "bad value").validate(testPartitionsContext));
 			assertEquals(PropertyError.INCOMPATIBLE_VALUE, contractException.getErrorType());
 
 		});
@@ -69,13 +69,13 @@ public class AT_PropertyFilter {
 	}
 
 	/**
-	 * Tests {@link PropertyFilter#getFilterSensitivities()}
+	 * Tests {@link PersonPropertyFilter#getFilterSensitivities()}
 	 */
 	@Test
-	@UnitTestMethod(target = PropertyFilter.class, name = "getFilterSensitivities", args = {})
+	@UnitTestMethod(target = PersonPropertyFilter.class, name = "getFilterSensitivities", args = {})
 	public void testGetFilterSensitivities() {
 
-		Filter filter = new PropertyFilter(TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK, Equality.EQUAL, 12);
+		Filter filter = new PersonPropertyFilter(TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK, Equality.EQUAL, 12);
 
 		Set<FilterSensitivity<?>> filterSensitivities = filter.getFilterSensitivities();
 		assertNotNull(filterSensitivities);
@@ -86,7 +86,7 @@ public class AT_PropertyFilter {
 	}
 
 	@Test
-	@UnitTestMethod(target = PropertyFilter.class, name = "evaluate", args = { PartitionsContext.class, PersonId.class })
+	@UnitTestMethod(target = PersonPropertyFilter.class, name = "evaluate", args = { PartitionsContext.class, PersonId.class })
 	public void testEvaluate() {
 
 		Factory factory = PersonPropertiesTestPluginFactory.factory(100, 9037413907425227057L, (c) -> {
@@ -100,7 +100,7 @@ public class AT_PropertyFilter {
 
 			TestPersonPropertyId testPersonPropertyId = TestPersonPropertyId.PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK;
 
-			Filter filter = new PropertyFilter(testPersonPropertyId, Equality.GREATER_THAN, 12);
+			Filter filter = new PersonPropertyFilter(testPersonPropertyId, Equality.GREATER_THAN, 12);
 
 			for (PersonId personId : peopleDataManager.getPeople()) {
 				int value = randomGenerator.nextInt(10) + 7;
@@ -130,9 +130,9 @@ public class AT_PropertyFilter {
 	}
 
 	@Test
-	@UnitTestMethod(target = PropertyFilter.class, name = "toString", args = {})
+	@UnitTestMethod(target = PersonPropertyFilter.class, name = "toString", args = {})
 	public void testToString() {
-		Filter filter = new PropertyFilter(TestPersonPropertyId.PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK, Equality.GREATER_THAN, 12);
+		Filter filter = new PersonPropertyFilter(TestPersonPropertyId.PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK, Equality.GREATER_THAN, 12);
 		String expectedString = "PropertyFilter [personPropertyId=PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK, personPropertyValue=12, equality=GREATER_THAN]";
 
 		assertEquals(expectedString, filter.toString());

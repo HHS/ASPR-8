@@ -17,7 +17,7 @@ import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
 import util.errors.ContractException;
 
-public final class PropertyFilter extends Filter {
+public final class PersonPropertyFilter extends Filter {
 
 	private final PersonPropertyId personPropertyId;
 	private final Object personPropertyValue;
@@ -72,7 +72,19 @@ public final class PropertyFilter extends Filter {
 		}
 	}
 
-	public PropertyFilter(final PersonPropertyId personPropertyId, final Equality equality, final Object personPropertyValue) {
+	public PersonPropertyId getPersonPropertyId() {
+		return personPropertyId;
+	}
+	
+	public Equality getEquality() {
+		return equality;
+	}
+	
+	public Object getPersonPropertyValue() {
+		return personPropertyValue;
+	}
+	
+	public PersonPropertyFilter(final PersonPropertyId personPropertyId, final Equality equality, final Object personPropertyValue) {
 		this.personPropertyId = personPropertyId;
 		this.personPropertyValue = personPropertyValue;
 		this.equality = equality;
@@ -170,10 +182,10 @@ public final class PropertyFilter extends Filter {
 		if (this == obj) {
 			return true;
 		}
-		if (!(obj instanceof PropertyFilter)) {
+		if (!(obj instanceof PersonPropertyFilter)) {
 			return false;
 		}
-		PropertyFilter other = (PropertyFilter) obj;
+		PersonPropertyFilter other = (PersonPropertyFilter) obj;
 		if (equality != other.equality) {
 			return false;
 		}
