@@ -4,13 +4,13 @@ import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Set;
 
-import nucleus.SimulationContext;
 import plugins.groups.datamanagers.GroupsDataManager;
 import plugins.groups.events.GroupMembershipAdditionEvent;
 import plugins.groups.events.GroupMembershipRemovalEvent;
 import plugins.partitions.support.Equality;
 import plugins.partitions.support.FilterSensitivity;
 import plugins.partitions.support.PartitionError;
+import plugins.partitions.support.PartitionsContext;
 import plugins.partitions.support.filters.Filter;
 import plugins.people.support.PersonId;
 import util.errors.ContractException;
@@ -21,19 +21,19 @@ public final class GroupsForPersonAndGroupTypeFilter extends Filter {
 	private final int groupCount;
 	private GroupsDataManager groupsDataManager;
 
-	private void validateEquality(final SimulationContext simulationContext, final Equality equality) {
+	private void validateEquality(final PartitionsContext partitionsContext, final Equality equality) {
 		if (equality == null) {
 			throw new ContractException(PartitionError.NULL_EQUALITY_OPERATOR);
 		}
 	}
 
-	private void validateGroupTypeId(final SimulationContext simulationContext, final GroupTypeId groupTypeId) {
+	private void validateGroupTypeId(final PartitionsContext partitionsContext, final GroupTypeId groupTypeId) {
 		if (groupTypeId == null) {
 			throw new ContractException(GroupError.NULL_GROUP_TYPE_ID);
 		}
-		
+
 		if (groupsDataManager == null) {
-			groupsDataManager = simulationContext.getDataManager(GroupsDataManager.class);
+			groupsDataManager = partitionsContext.getDataManager(GroupsDataManager.class);
 		}
 
 		if (!groupsDataManager.groupTypeIdExists(groupTypeId)) {
@@ -48,15 +48,15 @@ public final class GroupsForPersonAndGroupTypeFilter extends Filter {
 	}
 
 	@Override
-	public void validate(SimulationContext simulationContext) {
-		validateEquality(simulationContext, equality);
-		validateGroupTypeId(simulationContext, groupTypeId);
+	public void validate(PartitionsContext partitionsContext) {
+		validateEquality(partitionsContext, equality);
+		validateGroupTypeId(partitionsContext, groupTypeId);
 	}
 
 	@Override
-	public boolean evaluate(SimulationContext simulationContext, PersonId personId) {
+	public boolean evaluate(PartitionsContext partitionsContext, PersonId personId) {
 		if (groupsDataManager == null) {
-			groupsDataManager = simulationContext.getDataManager(GroupsDataManager.class);
+			groupsDataManager = partitionsContext.getDataManager(GroupsDataManager.class);
 		}
 		final int count = groupsDataManager.getGroupCountForGroupTypeAndPerson(groupTypeId, personId);
 		return evaluate(count);
@@ -66,9 +66,9 @@ public final class GroupsForPersonAndGroupTypeFilter extends Filter {
 		return equality.isCompatibleComparisonValue(Integer.compare(count, groupCount));
 	}
 
-	private Optional<PersonId> additionRequiresRefresh(SimulationContext simulationContext, GroupMembershipAdditionEvent event) {
+	private Optional<PersonId> additionRequiresRefresh(PartitionsContext partitionsContext, GroupMembershipAdditionEvent event) {
 		if (groupsDataManager == null) {
-			groupsDataManager = simulationContext.getDataManager(GroupsDataManager.class);
+			groupsDataManager = partitionsContext.getDataManager(GroupsDataManager.class);
 		}
 		if (groupsDataManager.getGroupType(event.groupId()).equals(groupTypeId)) {
 			return Optional.of(event.personId());
@@ -76,9 +76,9 @@ public final class GroupsForPersonAndGroupTypeFilter extends Filter {
 		return Optional.empty();
 	}
 
-	private Optional<PersonId> removalRequiresRefresh(SimulationContext simulationContext, GroupMembershipRemovalEvent event) {
+	private Optional<PersonId> removalRequiresRefresh(PartitionsContext partitionsContext, GroupMembershipRemovalEvent event) {
 		if (groupsDataManager == null) {
-			groupsDataManager = simulationContext.getDataManager(GroupsDataManager.class);
+			groupsDataManager = partitionsContext.getDataManager(GroupsDataManager.class);
 		}
 		if (groupsDataManager.getGroupType(event.groupId()).equals(groupTypeId)) {
 			return Optional.of(event.personId());

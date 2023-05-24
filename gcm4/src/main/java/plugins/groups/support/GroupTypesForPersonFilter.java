@@ -5,13 +5,13 @@ import java.util.Optional;
 import java.util.Set;
 
 import nucleus.NucleusError;
-import nucleus.SimulationContext;
 import plugins.groups.datamanagers.GroupsDataManager;
 import plugins.groups.events.GroupMembershipAdditionEvent;
 import plugins.groups.events.GroupMembershipRemovalEvent;
 import plugins.partitions.support.Equality;
 import plugins.partitions.support.FilterSensitivity;
 import plugins.partitions.support.PartitionError;
+import plugins.partitions.support.PartitionsContext;
 import plugins.partitions.support.filters.Filter;
 import plugins.people.support.PersonId;
 import util.errors.ContractException;
@@ -22,7 +22,7 @@ public final class GroupTypesForPersonFilter extends Filter {
 	private final int groupTypeCount;
 	private GroupsDataManager groupsDataManager;
 
-	private void validateEquality(final SimulationContext simulationContext, final Equality equality) {
+	private void validateEquality(final PartitionsContext partitionsContext, final Equality equality) {
 		if (equality == null) {
 			throw new ContractException(PartitionError.NULL_EQUALITY_OPERATOR);
 		}
@@ -34,27 +34,27 @@ public final class GroupTypesForPersonFilter extends Filter {
 	}
 
 	@Override
-	public void validate(SimulationContext simulationContext) {
-		validateEquality(simulationContext, equality);
+	public void validate(PartitionsContext partitionsContext) {
+		validateEquality(partitionsContext, equality);
 	}
 
 	@Override
-	public boolean evaluate(SimulationContext simulationContext, PersonId personId) {
-		if(simulationContext == null) {
+	public boolean evaluate(PartitionsContext partitionsContext, PersonId personId) {
+		if (partitionsContext == null) {
 			throw new ContractException(NucleusError.NULL_SIMULATION_CONTEXT);
 		}
 		if (groupsDataManager == null) {
-			groupsDataManager = simulationContext.getDataManager(GroupsDataManager.class);
+			groupsDataManager = partitionsContext.getDataManager(GroupsDataManager.class);
 		}
 		final int count = groupsDataManager.getGroupTypeCountForPersonId(personId);
 		return equality.isCompatibleComparisonValue(Integer.compare(count, groupTypeCount));
 	}
 
-	private Optional<PersonId> additionRequiresRefresh(SimulationContext simulationContext, GroupMembershipAdditionEvent event) {
+	private Optional<PersonId> additionRequiresRefresh(PartitionsContext partitionsContext, GroupMembershipAdditionEvent event) {
 		return Optional.of(event.personId());
 	}
 
-	private Optional<PersonId> removalRequiresRefresh(SimulationContext simulationContext, GroupMembershipRemovalEvent event) {
+	private Optional<PersonId> removalRequiresRefresh(PartitionsContext partitionsContext, GroupMembershipRemovalEvent event) {
 		return Optional.of(event.personId());
 	}
 
@@ -93,7 +93,5 @@ public final class GroupTypesForPersonFilter extends Filter {
 		}
 		return true;
 	}
-	
-	
 
 }

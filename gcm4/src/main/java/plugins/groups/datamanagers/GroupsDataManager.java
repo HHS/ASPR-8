@@ -36,6 +36,7 @@ import plugins.groups.support.GroupPropertyValue;
 import plugins.groups.support.GroupSampler;
 import plugins.groups.support.GroupTypeId;
 import plugins.groups.support.GroupWeightingFunction;
+import plugins.groups.support.GroupsContext;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.events.PersonRemovalEvent;
 import plugins.people.support.PersonError;
@@ -133,6 +134,7 @@ public final class GroupsDataManager extends DataManager {
 	private StochasticsDataManager stochasticsDataManager;
 
 	private DataManagerContext dataManagerContext;
+	private GroupsContext groupsContext;
 
 	private final GroupsPluginData groupsPluginData;
 
@@ -200,6 +202,8 @@ public final class GroupsDataManager extends DataManager {
 		}
 
 		this.dataManagerContext = dataManagerContext;
+		groupsContext = new GroupsContextImpl(dataManagerContext);
+		
 		stochasticsDataManager = dataManagerContext.getDataManager(StochasticsDataManager.class);
 		peopleDataManager = dataManagerContext.getDataManager(PeopleDataManager.class);
 
@@ -1640,7 +1644,7 @@ public final class GroupsDataManager extends DataManager {
 						 * immediately since no person may be legitimately
 						 * selected.
 						 */
-						final double weight = groupWeightingFunction.getWeight(dataManagerContext, personId, groupId);
+						final double weight = groupWeightingFunction.getWeight(groupsContext, personId, groupId);
 						if (!Double.isFinite(weight) || (weight < 0)) {
 							throw new ContractException(GroupError.MALFORMED_GROUP_SAMPLE_WEIGHTING_FUNCTION);
 
@@ -2234,5 +2238,25 @@ public final class GroupsDataManager extends DataManager {
 	public EventFilter<GroupTypeAdditionEvent> getEventFilterForGroupTypeAdditionEvent() {
 		return EventFilter	.builder(GroupTypeAdditionEvent.class)//
 							.build();
+	}
+	
+	
+	private static class GroupsContextImpl implements GroupsContext{
+		
+		private final DataManagerContext dataManagerContext;
+		public GroupsContextImpl(DataManagerContext dataManagerContext) {
+			this.dataManagerContext = dataManagerContext;
+		}
+
+		@Override
+		public <T extends DataManager> T getDataManager(Class<T> dataManagerClass) {
+			return dataManagerContext.getDataManager(dataManagerClass);
+		}
+
+		@Override
+		public double getTime() {
+			return dataManagerContext.getTime();
+		}
+		
 	}
 }

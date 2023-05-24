@@ -3,7 +3,6 @@ package plugins.partitions.support;
 import java.util.Set;
 
 import nucleus.Event;
-import nucleus.SimulationContext;
 import plugins.people.support.PersonId;
 
 /**
@@ -25,7 +24,7 @@ public interface Labeler {
 	 * Returns the label for the person based on the person's current
 	 * information
 	 */
-	public Object getCurrentLabel(SimulationContext simulationContext, PersonId personId);
+	public Object getCurrentLabel(PartitionsContext partitionsContext, PersonId personId);
 
 	/**
 	 * Returns the label for the person based on the previous value recorded in
@@ -42,7 +41,7 @@ public interface Labeler {
 	 * Person related events are expected to always carry the associated recent 
 	 * value that was just updated.
 	 */
-	public Object getPastLabel(SimulationContext simulationContext, Event event);
+	public Object getPastLabel(PartitionsContext partitionsContext, Event event);
 
 	/**
 	 * Returns the id for this labeler.

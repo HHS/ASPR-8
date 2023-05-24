@@ -9,7 +9,6 @@ import java.util.Optional;
 import org.apache.commons.math3.random.RandomGenerator;
 
 import nucleus.Event;
-import nucleus.SimulationContext;
 import plugins.partitions.support.containers.BasePeopleContainer;
 import plugins.partitions.support.containers.PeopleContainer;
 import plugins.partitions.support.filters.Filter;
@@ -31,7 +30,7 @@ public class DegeneratePopulationPartitionImpl implements PopulationPartition {
 
 	private final PeopleContainer peopleContainer;
 
-	private final SimulationContext simulationContext;
+	private final PartitionsContext partitionsContext;
 
 	private final Filter filter;
 
@@ -49,10 +48,10 @@ public class DegeneratePopulationPartitionImpl implements PopulationPartition {
 	 *             <li>if partition is null</li>
 	 *             <li>if the partition contains labelers</li>
 	 */
-	public DegeneratePopulationPartitionImpl(final SimulationContext simulationContext, final Partition partition) {
+	public DegeneratePopulationPartitionImpl(final PartitionsContext partitionsContext, final Partition partition) {
 
-		this.simulationContext = simulationContext;
-		stochasticsDataManager = simulationContext.getDataManager(StochasticsDataManager.class);
+		this.partitionsContext = partitionsContext;
+		stochasticsDataManager = partitionsContext.getDataManager(StochasticsDataManager.class);
 		filter = partition.getFilter().orElse(new TrueFilter());
 
 		if (!partition.isDegenerate()) {
@@ -68,14 +67,14 @@ public class DegeneratePopulationPartitionImpl implements PopulationPartition {
 			list.add(filterSensitivity);
 		}
 
-		peopleContainer = new BasePeopleContainer(simulationContext);
+		peopleContainer = new BasePeopleContainer(partitionsContext);
 
-		final PeopleDataManager peopleDataManager = simulationContext.getDataManager(PeopleDataManager.class);
+		final PeopleDataManager peopleDataManager = partitionsContext.getDataManager(PeopleDataManager.class);
 		final int personIdLimit = peopleDataManager.getPersonIdLimit();
 		for (int i = 0; i < personIdLimit; i++) {
 			if (peopleDataManager.personIndexExists(i)) {
 				final PersonId personId = peopleDataManager.getBoxedPersonId(i).get();
-				if (filter.evaluate(simulationContext, personId)) {
+				if (filter.evaluate(partitionsContext, personId)) {
 					/*
 					 * Using unsafe add since this is in the constructor, we are
 					 * sure that the person is not already contained
@@ -89,7 +88,7 @@ public class DegeneratePopulationPartitionImpl implements PopulationPartition {
 
 	@Override
 	public void attemptPersonAddition(final PersonId personId) {
-		if (filter.evaluate(simulationContext, personId)) {
+		if (filter.evaluate(partitionsContext, personId)) {
 			/*
 			 * By contract, this method is only invoked with person ids that are
 			 * new to the simulation or new to this population partition and
@@ -156,7 +155,7 @@ public class DegeneratePopulationPartitionImpl implements PopulationPartition {
 		final List<FilterSensitivity<? extends Event>> filterSensitivities = eventClassToFilterSensitivityMap.get(event.getClass());
 		if (filterSensitivities != null) {
 			for (final FilterSensitivity<? extends Event> filterSensitivity : filterSensitivities) {
-				final Optional<PersonId> optionalPersonId = filterSensitivity.requiresRefresh(simulationContext, event);
+				final Optional<PersonId> optionalPersonId = filterSensitivity.requiresRefresh(partitionsContext, event);
 				if (optionalPersonId.isPresent()) {
 					personId = optionalPersonId.get();
 					break;
@@ -165,7 +164,7 @@ public class DegeneratePopulationPartitionImpl implements PopulationPartition {
 		}
 
 		if (personId != null) {
-			if (filter.evaluate(simulationContext, personId)) {
+			if (filter.evaluate(partitionsContext, personId)) {
 				peopleContainer.safeAdd(personId);				
 			} else {
 				peopleContainer.remove(personId);

@@ -2,9 +2,9 @@ package plugins.partitions.support.filters;
 
 import java.util.Set;
 
-import nucleus.SimulationContext;
 import plugins.partitions.support.FilterSensitivity;
 import plugins.partitions.support.PartitionError;
+import plugins.partitions.support.PartitionsContext;
 import plugins.people.support.PersonId;
 import util.errors.ContractException;
 
@@ -30,13 +30,13 @@ public final class NotFilter extends Filter {
 	}
 
 	@Override
-	public void validate(SimulationContext simulationContext) {
-		a.validate(simulationContext);
+	public void validate(PartitionsContext partitionsContext) {
+		a.validate(partitionsContext);
 	}
 
 	@Override
-	public boolean evaluate(SimulationContext simulationContext, PersonId personId) {
-		return !a.evaluate(simulationContext, personId);
+	public boolean evaluate(PartitionsContext partitionsContext, PersonId personId) {
+		return !a.evaluate(partitionsContext, personId);
 	}
 
 	@Override

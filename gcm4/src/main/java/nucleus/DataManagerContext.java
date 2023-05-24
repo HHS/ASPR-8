@@ -16,7 +16,7 @@ import util.errors.ContractException;
  *
  */
 
-public final class DataManagerContext implements SimulationContext {
+public final class DataManagerContext  {
 
 	private final Simulation simulation;
 	protected final DataManagerId dataManagerId;
@@ -223,22 +223,18 @@ public final class DataManagerContext implements SimulationContext {
 		return simulation.addActor(consumer);
 	}
 
-	@Override
 	public boolean actorExists(final ActorId actorId) {
 		return simulation.actorExists(actorId);
 	}
 
-	@Override
 	public <T extends DataManager> T getDataManager(Class<T> dataManagerClass) {
 		return simulation.getDataManagerForDataManager(dataManagerId, dataManagerClass);
 	}
 
-	@Override
 	public double getTime() {
 		return simulation.time;
 	}
 
-	@Override
 	public void halt() {
 		simulation.halt();
 	}
@@ -257,7 +253,6 @@ public final class DataManagerContext implements SimulationContext {
 		simulation.removeActor(actorId);
 	}
 
-	@Override
 	public void releaseOutput(Object output) {
 		simulation.releaseOutput(output);
 	}

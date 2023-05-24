@@ -3,8 +3,8 @@ package plugins.partitions.support.filters;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import nucleus.SimulationContext;
 import plugins.partitions.support.FilterSensitivity;
+import plugins.partitions.support.PartitionsContext;
 import plugins.people.support.PersonId;
 
 /**
@@ -16,7 +16,7 @@ import plugins.people.support.PersonId;
 public final class FalseFilter extends Filter {
 
 	@Override
-	public boolean evaluate(SimulationContext simulationContext, PersonId personId) {
+	public boolean evaluate(PartitionsContext partitionsContext, PersonId personId) {
 		return false;
 	}
 
@@ -33,7 +33,7 @@ public final class FalseFilter extends Filter {
 	}
 
 	@Override
-	public void validate(SimulationContext simulationContext) {
+	public void validate(PartitionsContext partitionsContext) {
 
 	}
 
