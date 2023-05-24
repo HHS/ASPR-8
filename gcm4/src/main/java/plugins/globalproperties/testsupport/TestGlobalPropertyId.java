@@ -30,7 +30,6 @@ public enum TestGlobalPropertyId implements GlobalPropertyId {
 	GLOBAL_PROPERTY_3_DOUBLE_MUTABLE(
 			PropertyDefinition	.builder()//
 								.setType(Double.class)//
-								.setDefaultValue(0.0)//
 								.setPropertyValueMutability(true)//
 								.build() //
 	), //

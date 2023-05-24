@@ -171,7 +171,7 @@ public class AT_GlobalPropertyReport {
 		expectedReportItems.put(getReportItem(3.0, globalPropertyId_3, true), 1);
 		expectedReportItems.put(getReportItem(3.0, globalPropertyId_5, 199.16), 1);
 
-		Factory factory = GlobalPropertiesTestPluginFactory	.factory(testPluginData)//
+		Factory factory = GlobalPropertiesTestPluginFactory	.factory(5359348175134903328L, testPluginData)//
 															.setGlobalPropertiesPluginData(globalPropertiesPluginData)//
 															.setGlobalPropertyReportPluginData(globalPropertyReportPluginData);//
 
@@ -246,7 +246,7 @@ public class AT_GlobalPropertyReport {
 		TestPluginData testPluginData = pluginDataBuilder.build();
 		GlobalPropertiesTestPluginFactory.Factory factory = //
 				GlobalPropertiesTestPluginFactory//
-													.factory(testPluginData)//
+													.factory(7732209566614544073L, testPluginData)//
 													.setGlobalPropertyReportPluginData(globalPropertyReportPluginData);
 
 		WellState wellState = WellState.builder().setSeed(4059891083116386869L).build();
@@ -317,7 +317,7 @@ public class AT_GlobalPropertyReport {
 			// build the global plugin using the report plugin data and the
 			// standard global plugin data build
 			Plugin globalPropertiesPlugin = GlobalPropertiesPlugin	.builder()//
-																	.setGlobalPropertiesPluginData(GlobalPropertiesTestPluginFactory.getStandardGlobalPropertiesPluginData())//
+																	.setGlobalPropertiesPluginData(GlobalPropertiesTestPluginFactory.getStandardGlobalPropertiesPluginData(2724159492705609113L))//
 																	.setGlobalPropertyReportPluginData(globalPropertyReportPluginData)//
 																	.getGlobalPropertiesPlugin();//
 
@@ -375,7 +375,7 @@ public class AT_GlobalPropertyReport {
 												.build();
 
 		Plugin globalPropertiesPlugin = GlobalPropertiesPlugin	.builder()//
-																.setGlobalPropertiesPluginData(GlobalPropertiesTestPluginFactory.getStandardGlobalPropertiesPluginData())
+																.setGlobalPropertiesPluginData(GlobalPropertiesTestPluginFactory.getStandardGlobalPropertiesPluginData(3725147417442242772L))
 																.setGlobalPropertyReportPluginData(globalPropertyReportPluginData).getGlobalPropertiesPlugin();
 
 		TestOutputConsumer testOutputConsumer = new TestOutputConsumer();
@@ -450,7 +450,7 @@ public class AT_GlobalPropertyReport {
 		TestPluginData testPluginData = pluginDataBuilder.build();
 		GlobalPropertiesTestPluginFactory.Factory factory = //
 				GlobalPropertiesTestPluginFactory//
-													.factory(testPluginData)//
+													.factory(5412964944403149023L, testPluginData)//
 													.setGlobalPropertyReportPluginData(globalPropertyReportPluginData);
 
 		WellState wellState = WellState.builder().setSeed(4059891083116386869L).build();
@@ -493,7 +493,7 @@ public class AT_GlobalPropertyReport {
 												.build();
 
 		Plugin globalPropertiesPlugin = GlobalPropertiesPlugin	.builder()//
-																.setGlobalPropertiesPluginData(GlobalPropertiesTestPluginFactory.getStandardGlobalPropertiesPluginData())
+																.setGlobalPropertiesPluginData(GlobalPropertiesTestPluginFactory.getStandardGlobalPropertiesPluginData(6242589534933962341L))
 																.setGlobalPropertyReportPluginData(globalPropertyReportPluginData).getGlobalPropertiesPlugin();
 
 		TestOutputConsumer testOutputConsumer = new TestOutputConsumer();
@@ -612,7 +612,7 @@ public class AT_GlobalPropertyReport {
 		 * Collect the expected report items. Note that order does not matter. *
 		 */
 
-		Factory factory = GlobalPropertiesTestPluginFactory	.factory(testPluginData)//
+		Factory factory = GlobalPropertiesTestPluginFactory	.factory(7510926938098915111L, testPluginData)//
 															.setGlobalPropertiesPluginData(globalPropertiesPluginData)//
 															.setGlobalPropertyReportPluginData(globalPropertyReportPluginData);//
 

@@ -4,7 +4,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.math3.random.RandomGenerator;
@@ -21,6 +23,7 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.input.ResourcesPl
 import gov.hhs.aspr.translation.core.TranslationController;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
 import gov.hhs.aspr.translation.core.testsupport.TestResourceHelper;
+import plugins.people.support.PersonId;
 import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportPeriod;
 import plugins.reports.support.SimpleReportLabel;
@@ -56,9 +59,15 @@ public class IT_ResourcesTranslator {
                 .build();
 
         long seed = 524805676405822016L;
+        int initialPopulation = 100;
+        List<PersonId> people = new ArrayList<>();
 
+        for (int i = 0; i < initialPopulation; i++) {
+            people.add(new PersonId(i));
+        }
+        
         ResourcesPluginData expectedPluginData = ResourcesTestPluginFactory
-                .getStandardResourcesPluginData(seed);
+                .getStandardResourcesPluginData(people, seed);
 
         translatorController.writeOutput(expectedPluginData);
         translatorController.readInput();

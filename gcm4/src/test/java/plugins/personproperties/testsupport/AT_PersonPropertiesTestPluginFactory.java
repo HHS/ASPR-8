@@ -273,18 +273,26 @@ public class AT_PersonPropertiesTestPluginFactory {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
 
 		PersonPropertiesPluginData.Builder personPropertyBuilder = PersonPropertiesPluginData.builder();
+		
 		for (TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.values()) {
 			personPropertyBuilder.definePersonProperty(testPersonPropertyId, testPersonPropertyId.getPropertyDefinition(), 0.0, testPersonPropertyId.isTimeTracked());
 		}
+
 		for (PersonId personId : people) {
 			for (TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.values()) {
 				boolean doesNotHaveDefaultValue = testPersonPropertyId.getPropertyDefinition().getDefaultValue().isEmpty();
 				if (doesNotHaveDefaultValue || randomGenerator.nextBoolean()) {
 					Object randomPropertyValue = testPersonPropertyId.getRandomPropertyValue(randomGenerator);
 					personPropertyBuilder.setPersonPropertyValue(personId, testPersonPropertyId, randomPropertyValue);
+
+					if(testPersonPropertyId.isTimeTracked()) {
+						personPropertyBuilder.setPersonPropertyTime(personId, testPersonPropertyId, 0.0);
+					}
 				}
+
 			}
 		}
+
 		PersonPropertiesPluginData expectedPluginData = personPropertyBuilder.build();
 
 		assertEquals(expectedPluginData, actualPluginData);
