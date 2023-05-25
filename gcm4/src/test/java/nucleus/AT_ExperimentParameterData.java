@@ -3,8 +3,8 @@ package nucleus;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -17,6 +17,7 @@ import org.junit.jupiter.api.Test;
 
 import util.annotations.UnitTag;
 import util.annotations.UnitTestMethod;
+import util.errors.ContractException;
 import util.random.RandomGeneratorProvider;
 
 public class AT_ExperimentParameterData {
@@ -84,7 +85,20 @@ public class AT_ExperimentParameterData {
 	@UnitTestMethod(target = ExperimentParameterData.Builder.class, name = "setThreadCount", args = { int.class })
 	public void testSetThreadCount() {
 
-		fail();
+		for (int i = 0; i < 10; i++) {
+			int expectedThreadCount = i;
+
+			ExperimentParameterData experimentParameterData = ExperimentParameterData	.builder()//
+																						.setThreadCount(expectedThreadCount)//
+																						.build();
+
+			int actualThreadCount = experimentParameterData.getThreadCount();
+			assertEquals(expectedThreadCount, actualThreadCount);
+		}
+
+		// precondition test: if the thread count is negative
+		ContractException contractException = assertThrows(ContractException.class, () -> ExperimentParameterData.builder().setThreadCount(-1).build());
+		assertEquals(NucleusError.NEGATIVE_THREAD_COUNT, contractException.getErrorType());
 
 	}
 
@@ -97,7 +111,17 @@ public class AT_ExperimentParameterData {
 	@Test
 	@UnitTestMethod(target = ExperimentParameterData.Builder.class, name = "setHaltOnException", args = { boolean.class })
 	public void testSetHaltOnException() {
-		fail();
+		ExperimentParameterData experimentParameterData = ExperimentParameterData	.builder()//
+																					.setHaltOnException(true)//
+																					.build();
+
+		assertTrue(experimentParameterData.haltOnException());
+
+		experimentParameterData = ExperimentParameterData	.builder()//
+															.setHaltOnException(false)//
+															.build();
+
+		assertFalse(experimentParameterData.haltOnException());
 	}
 
 	@Test
@@ -133,7 +157,17 @@ public class AT_ExperimentParameterData {
 	@Test
 	@UnitTestMethod(target = ExperimentParameterData.Builder.class, name = "setRecordState", args = { boolean.class })
 	public void testSetRecordState() {
-		fail();
+		ExperimentParameterData experimentParameterData = ExperimentParameterData	.builder()//
+																					.setRecordState(true)//
+																					.build();
+
+		assertTrue(experimentParameterData.haltOnException());
+
+		experimentParameterData = ExperimentParameterData	.builder()//
+															.setRecordState(false)//
+															.build();
+
+		assertFalse(experimentParameterData.stateRecordingIsScheduled());
 	}
 
 	@Test
@@ -270,19 +304,66 @@ public class AT_ExperimentParameterData {
 	@Test
 	@UnitTestMethod(target = ExperimentParameterData.class, name = "getThreadCount", args = {})
 	public void testGetThreadCount() {
-		fail();
+
+		ExperimentParameterData experimentParameterData = ExperimentParameterData	.builder()//
+																					.build();
+
+		assertEquals(0, experimentParameterData.getThreadCount());
+
+		for (int i = 0; i < 10; i++) {
+			int expectedThreadCount = i;
+
+			experimentParameterData = ExperimentParameterData	.builder()//
+																.setThreadCount(expectedThreadCount)//
+																.build();
+
+			int actualThreadCount = experimentParameterData.getThreadCount();
+			assertEquals(expectedThreadCount, actualThreadCount);
+		}
+
 	}
 
 	@Test
 	@UnitTestMethod(target = ExperimentParameterData.class, name = "haltOnException", args = {})
 	public void testHaltOnException() {
-		fail();
+
+		ExperimentParameterData experimentParameterData = ExperimentParameterData	.builder()//
+																					.build();
+		assertTrue(experimentParameterData.haltOnException());
+
+		experimentParameterData = ExperimentParameterData	.builder()//
+															.setHaltOnException(true)//
+															.build();
+
+		assertTrue(experimentParameterData.haltOnException());
+
+		experimentParameterData = ExperimentParameterData	.builder()//
+															.setHaltOnException(false)//
+															.build();
+
+		assertFalse(experimentParameterData.haltOnException());
+
 	}
 
 	@Test
 	@UnitTestMethod(target = ExperimentParameterData.class, name = "stateRecordingIsScheduled", args = {})
 	public void testStateRecordingIsScheduled() {
-		fail();
+		ExperimentParameterData experimentParameterData = ExperimentParameterData	.builder()//
+																					.build();
+
+		assertFalse(experimentParameterData.stateRecordingIsScheduled());
+
+		experimentParameterData = ExperimentParameterData	.builder()//
+															.setRecordState(true)//
+															.build();
+
+		assertTrue(experimentParameterData.stateRecordingIsScheduled());
+
+		experimentParameterData = ExperimentParameterData	.builder()//
+															.setRecordState(false)//
+															.build();
+
+		assertFalse(experimentParameterData.stateRecordingIsScheduled());
 	}
 
 }

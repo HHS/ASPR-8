@@ -969,8 +969,11 @@ public class Simulation {
 
 		masterPlanningArrivalId = data.simulationState.getPlanningQueueArrivalId();
 
-		simulationHaltTime = data.simulationHaltTime;
-		forcedHaltPresent = simulationHaltTime >= 0;
+		forcedHaltPresent = false;
+		if (data.simulationHaltTime != null) {
+			simulationHaltTime = data.simulationHaltTime;
+			forcedHaltPresent = true;
+		}
 
 		// set the output consumer
 		outputConsumer = data.outputConsumer;

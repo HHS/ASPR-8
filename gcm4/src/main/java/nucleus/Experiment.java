@@ -171,14 +171,14 @@ public final class Experiment {
 		private final List<Plugin> plugins;
 		private final Integer scenarioId;
 		private final boolean produceSimulationStateOnHalt;
-		private final double simulationHaltTime;
+		private final Double simulationHaltTime;
 		private final SimulationState simulationState;
 
 		/*
 		 * All construction arguments are thread safe implementations.
 		 */
 		private SimulationCallable(final Integer scenarioId, final ExperimentStateManager experimentStateManager, final List<Plugin> plugins, final boolean produceSimulationStateOnHalt,
-				final double simulationHaltTime, final SimulationState simulationState) {
+				final Double simulationHaltTime, final SimulationState simulationState) {
 			this.scenarioId = scenarioId;
 			this.experimentStateManager = experimentStateManager;
 			this.plugins = new ArrayList<>(plugins);
@@ -350,8 +350,14 @@ public final class Experiment {
 		while (jobIndex < (Math.min(threadCount, jobs.size()) - 1)) {
 			final Integer scenarioId = jobs.get(jobIndex);
 			List<Plugin> plugins = getNewPluginInstancesFromScenarioId(scenarioId);
-			completionService.submit(new SimulationCallable(scenarioId, experimentStateManager, plugins, data.experimentParameterData.stateRecordingIsScheduled(),
-					data.experimentParameterData.getSimulationHaltTime(), data.simulationState));
+			completionService.submit(new SimulationCallable(
+					scenarioId,
+					experimentStateManager,
+					plugins,
+					data.experimentParameterData.stateRecordingIsScheduled(),
+					data.experimentParameterData.getSimulationHaltTime().orElse(null),
+					data.simulationState)
+					);
 			jobIndex++;
 		}
 
@@ -365,8 +371,14 @@ public final class Experiment {
 			if (jobIndex < jobs.size()) {
 				final Integer scenarioId = jobs.get(jobIndex);
 				List<Plugin> plugins = getNewPluginInstancesFromScenarioId(scenarioId);
-				completionService.submit(new SimulationCallable(scenarioId, experimentStateManager, plugins, data.experimentParameterData.stateRecordingIsScheduled(),
-						data.experimentParameterData.getSimulationHaltTime(), data.simulationState));
+				completionService.submit(new SimulationCallable(
+						scenarioId,
+						experimentStateManager,
+						plugins,
+						data.experimentParameterData.stateRecordingIsScheduled(),
+						data.experimentParameterData.getSimulationHaltTime().orElse(null),
+						data.simulationState)
+						);
 				jobIndex++;
 			}
 
@@ -422,7 +434,7 @@ public final class Experiment {
 			}
 
 			simBuilder.setRecordState(data.experimentParameterData.stateRecordingIsScheduled());
-			simBuilder.setSimulationHaltTime(data.experimentParameterData.getSimulationHaltTime());
+			simBuilder.setSimulationHaltTime(data.experimentParameterData.getSimulationHaltTime().orElse(null));
 			simBuilder.setSimulationState(data.simulationState);
 			// direct output from the simulation to the subscribed consumers
 			simBuilder.setOutputConsumer(experimentStateManager.getOutputConsumer(scenarioId));
