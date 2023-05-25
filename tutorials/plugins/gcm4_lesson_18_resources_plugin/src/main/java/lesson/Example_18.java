@@ -17,6 +17,7 @@ import lesson.plugins.model.Region;
 import lesson.plugins.model.Resource;
 import nucleus.Dimension;
 import nucleus.Experiment;
+import nucleus.ExperimentParameterData;
 import nucleus.Plugin;
 import plugins.globalproperties.GlobalPropertiesPlugin;
 import plugins.globalproperties.GlobalPropertiesPluginData;
@@ -264,6 +265,10 @@ public final class Example_18 {
 	/* start code_ref=resources_execute */
 	private void execute() {
 
+		ExperimentParameterData experimentParameterData = ExperimentParameterData.builder()//
+				.setThreadCount(8)//				
+				.build();
+		
 		Experiment	.builder()
 
 					.addPlugin(getResourcesPlugin())//
@@ -284,7 +289,7 @@ public final class Example_18 {
 					.addDimension(getHospitalStayDurationDimension())//
 
 					.addExperimentContextConsumer(getNIOReportItemHandler())//
-					.setThreadCount(8)//
+					.setExperimentParameterData(experimentParameterData)//
 					.build()//
 					.execute();//
 	}

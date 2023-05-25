@@ -55,12 +55,17 @@ public class MT_ProgressFileTest {
 
 										.build();
 
+		ExperimentParameterData experimentParameterData = ExperimentParameterData	.builder()//
+																					.setContinueFromProgressLog(true)//
+																					.setExperimentProgressLog(experimentProgressPath)//
+																					.build();//
+
 		Experiment//
 					.builder()//
 					.addDimension(dimension1)//
 					.addDimension(dimension2)//
-					.setContinueFromProgressLog(true)//
-					.setExperimentProgressLog(experimentProgressPath).build()//
+					.setExperimentParameterData(experimentParameterData)//
+					.build()//
 					.execute();//
 
 	}

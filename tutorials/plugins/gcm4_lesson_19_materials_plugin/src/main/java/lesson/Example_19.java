@@ -21,6 +21,7 @@ import lesson.plugins.model.support.Region;
 import lesson.plugins.model.support.Resource;
 import nucleus.Dimension;
 import nucleus.Experiment;
+import nucleus.ExperimentParameterData;
 import nucleus.Plugin;
 import plugins.globalproperties.GlobalPropertiesPlugin;
 import plugins.globalproperties.GlobalPropertiesPluginData;
@@ -76,6 +77,10 @@ public final class Example_19 {
 
 	private void execute() {
 
+		ExperimentParameterData experimentParameterData = ExperimentParameterData.builder()//
+				.setThreadCount(8)//
+				.build();
+		
 		Experiment	.builder()//
 					.addPlugin(getMaterialsPlugin())//
 					.addPlugin(getResourcesPlugin())//
@@ -93,7 +98,7 @@ public final class Example_19 {
 					.addDimension(getR0Dimension())//
 
 					.addExperimentContextConsumer(getNIOReportItemHandler())//
-					.setThreadCount(8)//
+					.setExperimentParameterData(experimentParameterData)
 					.build()//
 					.execute();//
 

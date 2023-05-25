@@ -298,7 +298,7 @@ public class AT_Simulation {
 					.setSimulationState(startingSimulationState)//
 					.setOutputConsumer(testOutputConsumer)//
 					.setRecordState(true)//
-					.setSimulationHaltTime(20)//
+					.setSimulationHaltTime(20.0)//
 					.build()//
 					.execute();//
 
