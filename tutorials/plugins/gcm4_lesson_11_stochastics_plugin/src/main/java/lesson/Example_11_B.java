@@ -12,6 +12,7 @@ import lesson.plugins.policy.PolicyPlugin;
 import lesson.plugins.policy.PolicyPluginData;
 import nucleus.Dimension;
 import nucleus.Experiment;
+import nucleus.ExperimentParameterData;
 import nucleus.Plugin;
 import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.StochasticsPluginData;
@@ -112,6 +113,11 @@ public final class Example_11_B {
 		Dimension policyDimension = getPolicyDimension();
 		Dimension stochasticsDimension = getStochasticsDimension(539847398756272L);
 
+		ExperimentParameterData experimentParameterData = ExperimentParameterData.builder()//
+				.setThreadCount(4)//				
+				.build();
+		
+		
 		Experiment	.builder()//
 					.addPlugin(stochasticsPlugin)//
 					.addPlugin(diseasePlugin)//
@@ -120,7 +126,7 @@ public final class Example_11_B {
 					.addDimension(policyDimension)//
 					.addDimension(stochasticsDimension)//
 					.addExperimentContextConsumer(new SimpleOutputConsumer())//
-					.setThreadCount(4)//
+					.setExperimentParameterData(experimentParameterData)//
 					.build()//
 					.execute();
 	}

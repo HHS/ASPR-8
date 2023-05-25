@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -299,22 +298,16 @@ public class AT_Experiment {
 		// Other aspects of the build are covered in the remaining capability
 		// specific tests
 	}
+	
 
 	@Test
-	@UnitTestMethod(target = Experiment.Builder.class, name = "setExperimentProgressLog", args = { Path.class }, tags = { UnitTag.MANUAL })
-	public void testSetExperimentProgressLog() {
-		// should be manually tested
+	@UnitTestMethod(target = Experiment.Builder.class, name = "setExperimentParameterData", args = { ExperimentParameterData.class }, tags={UnitTag.INCOMPLETE})
+	public void testSetExperimentParameterData() {		
+		testSetHaltOnException();
+		testThreadCount();	
 	}
-
-	@Test
-	@UnitTestMethod(target = Experiment.Builder.class, name = "setContinueFromProgressLog", args = { boolean.class }, tags = { UnitTag.MANUAL })
-	public void testSetContinueFromProgressLog() {
-		// should be manually tested
-	}
-
-	@Test
-	@UnitTestMethod(target = Experiment.Builder.class, name = "setThreadCount", args = { int.class })
-	public void testSetThreadCount() {
+	
+    private void testThreadCount() {	
 
 		// add two dimensions that will cause the experiment to execute 40
 		// simulation instances
@@ -358,13 +351,17 @@ public class AT_Experiment {
 										threadIds.add(Thread.currentThread().getId());
 									});
 								}).build();//
+		ExperimentParameterData experimentParameterData = ExperimentParameterData.builder()//
+				.setThreadCount(6)//
+				.build();
 
 		// Run the experiment using several threads
 		Experiment	.builder()//
 					.addPlugin(plugin)//
 					.addDimension(dimension1)//
 					.addDimension(dimension2)//
-					.setThreadCount(6).build()//
+					.setExperimentParameterData(experimentParameterData)//
+					.build()//
 					.execute();//
 
 		// We show that more than one thread was used. It is very difficult,
@@ -390,9 +387,8 @@ public class AT_Experiment {
 		// Covered by remaining tests that execute the experiment.
 	}
 
-	@Test
-	@UnitTestMethod(target = Experiment.Builder.class, name = "setHaltOnException", args = { boolean.class })
-	public void testSetHaltOnException() {
+	
+	private void testSetHaltOnException() {
 		testSetHaltOnException_Explicit_True();
 		testSetHaltOnException_Explicit_False();
 		testSetHaltOnException_Implicit();
@@ -440,12 +436,15 @@ public class AT_Experiment {
 		 * exception bubbling out of the execute() invocation
 		 */
 		
+		
+		ExperimentParameterData experimentParameterData = ExperimentParameterData.builder().setHaltOnException(true).build();
+		
 		//Explicitly setting the haltOnException to true
 		assertThrows(RuntimeException.class, () -> Experiment	.builder()//
 																.addDimension(dimension)//
 																.addPlugin(plugin)//
 																.addExperimentContextConsumer(experimentContextConsumer)//
-																.setHaltOnException(true)//
+																.setExperimentParameterData(experimentParameterData)//
 																.build()//
 																.execute());
 
@@ -493,12 +492,16 @@ public class AT_Experiment {
 			experimentContext.setValue(c);
 		};
 
+		ExperimentParameterData experimentParameterData = ExperimentParameterData.builder()//
+				.setHaltOnException(false)//
+				.build();
+		
 		//Explicitly setting the haltOnException to false 
 		Experiment	.builder()//
 					.addDimension(dimension)//
 					.addPlugin(plugin)//
 					.addExperimentContextConsumer(experimentContextConsumer)//
-					.setHaltOnException(false)//
+					.setExperimentParameterData(experimentParameterData)//
 					.build()//
 					.execute();
 		assertEquals(4, actorInitializationCounter.getValue());

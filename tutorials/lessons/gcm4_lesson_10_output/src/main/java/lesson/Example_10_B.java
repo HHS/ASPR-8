@@ -10,6 +10,7 @@ import lesson.plugins.policy.PolicyPlugin;
 import lesson.plugins.policy.PolicyPluginData;
 import nucleus.Dimension;
 import nucleus.Experiment;
+import nucleus.ExperimentParameterData;
 import nucleus.Plugin;
 
 public final class Example_10_B {
@@ -102,6 +103,10 @@ public final class Example_10_B {
 
 		Dimension policyDimension = getPolicyDimension();
 		
+		ExperimentParameterData experimentParameterData = ExperimentParameterData.builder()//
+				.setThreadCount(4)//
+				.build();
+		
 		Experiment	.builder()//
 					.addPlugin(diseasePlugin)//
 					.addPlugin(modelPlugin)//
@@ -109,7 +114,7 @@ public final class Example_10_B {
 					.addDimension(r0Dimension)//
 					.addDimension(policyDimension)//
 					.addExperimentContextConsumer(new OutputConsumer_B())//
-					.setThreadCount(4)//
+					.setExperimentParameterData(experimentParameterData)//
 					.build()//
 					.execute();
 	}

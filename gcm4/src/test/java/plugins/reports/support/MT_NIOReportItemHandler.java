@@ -18,6 +18,7 @@ import java.util.Map;
 
 import nucleus.Dimension;
 import nucleus.Experiment;
+import nucleus.ExperimentParameterData;
 import nucleus.ExperimentStatusConsole;
 import nucleus.Plugin;
 import nucleus.testsupport.testplugin.TestActorPlan;
@@ -553,15 +554,19 @@ public final class MT_NIOReportItemHandler {
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
 		ExperimentStatusConsole experimentStatusConsole = ExperimentStatusConsole.builder().build();
+		
+		ExperimentParameterData experimentParameterData = ExperimentParameterData.builder()//
+		.setExperimentProgressLog(subPath.resolve("progresslog.txt"))//
+		.setContinueFromProgressLog(false)//
+		.build();
 
 		Experiment	.builder()//
 					.addPlugin(testPlugin)//
 					.addDimension(dimension1)//
 					.addDimension(dimension2)//
 					.addExperimentContextConsumer(nioReportItemHandler)//
-					.setExperimentProgressLog(subPath.resolve("progresslog.txt"))//
-					.setContinueFromProgressLog(false)//
 					.addExperimentContextConsumer(experimentStatusConsole)//
+					.setExperimentParameterData(experimentParameterData)//
 					.build()//
 					.execute();
 	}
@@ -663,15 +668,19 @@ public final class MT_NIOReportItemHandler {
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
 		ExperimentStatusConsole experimentStatusConsole = ExperimentStatusConsole.builder().build();
+		
+		ExperimentParameterData experimentParameterData = ExperimentParameterData.builder()//
+		.setExperimentProgressLog(subPath.resolve("progresslog.txt"))//
+		.setContinueFromProgressLog(true)//
+		.build();
 
 		Experiment	.builder()//
 					.addPlugin(testPlugin)//
 					.addDimension(dimension1)//
 					.addDimension(dimension2)//
 					.addExperimentContextConsumer(nioReportItemHandler)//
-					.setExperimentProgressLog(subPath.resolve("progresslog.txt"))//
-					.setContinueFromProgressLog(true)//
 					.addExperimentContextConsumer(experimentStatusConsole)//
+					.setExperimentParameterData(experimentParameterData)//
 					.build()//
 					.execute();
 
@@ -753,15 +762,19 @@ public final class MT_NIOReportItemHandler {
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
 		ExperimentStatusConsole experimentStatusConsole = ExperimentStatusConsole.builder().build();
+		
+		ExperimentParameterData experimentParameterData = ExperimentParameterData.builder()//
+				.setExperimentProgressLog(subPath.resolve("progresslog.txt"))//
+				.setContinueFromProgressLog(true)//
+				.build();
 
 		Experiment	.builder()//
 					.addPlugin(testPlugin)//
 					.addDimension(dimension1)//
 					.addDimension(dimension2)//
 					.addExperimentContextConsumer(nioReportItemHandler)//
-					.setExperimentProgressLog(subPath.resolve("progresslog.txt"))//
-					.setContinueFromProgressLog(true)//
 					.addExperimentContextConsumer(experimentStatusConsole)//
+					.setExperimentParameterData(experimentParameterData)//
 					.build()//
 					.execute();
 
