@@ -1,8 +1,6 @@
 package nucleus;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
 
 /**
  * A Dimension represents a single independent dimension of an experiment.
