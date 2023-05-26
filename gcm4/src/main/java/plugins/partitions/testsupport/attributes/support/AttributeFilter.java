@@ -5,10 +5,10 @@ import java.util.Optional;
 import java.util.Set;
 
 import nucleus.NucleusError;
-import nucleus.SimulationContext;
 import plugins.partitions.support.Equality;
 import plugins.partitions.support.FilterSensitivity;
 import plugins.partitions.support.PartitionError;
+import plugins.partitions.support.PartitionsContext;
 import plugins.partitions.support.filters.Filter;
 import plugins.partitions.testsupport.attributes.AttributesDataManager;
 import plugins.partitions.testsupport.attributes.events.AttributeUpdateEvent;
@@ -22,12 +22,12 @@ public final class AttributeFilter extends Filter {
 	private final Equality equality;
 	private AttributesDataManager attributesDataManager;
 
-	private void validateAttributeId(SimulationContext simulationContext, final AttributeId attributeId) {
+	private void validateAttributeId(PartitionsContext partitionsContext, final AttributeId attributeId) {
 		if (attributeId == null) {
 			throw new ContractException(AttributeError.NULL_ATTRIBUTE_ID);
 		}
 		if (attributesDataManager == null) {
-			attributesDataManager = simulationContext.getDataManager(AttributesDataManager.class);
+			attributesDataManager = partitionsContext.getDataManager(AttributesDataManager.class);
 		}
 
 		if (!attributesDataManager.attributeExists(attributeId)) {
@@ -35,26 +35,26 @@ public final class AttributeFilter extends Filter {
 		}
 	}
 
-	private void validateEquality(SimulationContext simulationContext, final Equality equality) {
+	private void validateEquality(PartitionsContext partitionsContext, final Equality equality) {
 		if (equality == null) {
 			throw new ContractException(PartitionError.NULL_EQUALITY_OPERATOR);
 		}
 	}
 
-	private void validateValueNotNull(SimulationContext simulationContext, final Object value) {
+	private void validateValueNotNull(PartitionsContext partitionsContext, final Object value) {
 		if (value == null) {
 			throw new ContractException(AttributeError.NULL_ATTRIBUTE_VALUE);
 		}
 	}
 
-	private void validateValueCompatibility(SimulationContext simulationContext, final AttributeId attributeId, final AttributeDefinition attributeDefinition, final Object value) {
+	private void validateValueCompatibility(PartitionsContext partitionsContext, final AttributeId attributeId, final AttributeDefinition attributeDefinition, final Object value) {
 		if (!attributeDefinition.getType().isAssignableFrom(value.getClass())) {
 			throw new ContractException(AttributeError.INCOMPATIBLE_VALUE,
 					"Attribute value " + value + " is not of type " + attributeDefinition.getType().getName() + " and does not match definition of " + attributeId);
 		}
 	}
 
-	private void validateEqualityCompatibility(SimulationContext simulationContext, final AttributeId attributeId, final AttributeDefinition attributeDefinition, final Equality equality) {
+	private void validateEqualityCompatibility(PartitionsContext partitionsContext, final AttributeId attributeId, final AttributeDefinition attributeDefinition, final Equality equality) {
 
 		if (equality == Equality.EQUAL) {
 			return;
@@ -66,6 +66,18 @@ public final class AttributeFilter extends Filter {
 		if (!Comparable.class.isAssignableFrom(attributeDefinition.getType())) {
 			throw new ContractException(PartitionError.NON_COMPARABLE_ATTRIBUTE, "Values for " + attributeId + " are not comparable via " + equality);
 		}
+	}
+
+	public AttributeId getAttributeId() {
+		return attributeId;
+	}
+
+	public Equality getEquality() {
+		return equality;
+	}
+
+	public Object getValue() {
+		return value;
 	}
 
 	public AttributeFilter(final AttributeId attributeId, final Equality equality, final Object value) {
@@ -100,29 +112,29 @@ public final class AttributeFilter extends Filter {
 	 * 
 	 */
 	@Override
-	public void validate(SimulationContext simulationContext) {
-		validateAttributeId(simulationContext, attributeId);
-		validateEquality(simulationContext, equality);
-		validateValueNotNull(simulationContext, value);
+	public void validate(PartitionsContext partitionsContext) {
+		validateAttributeId(partitionsContext, attributeId);
+		validateEquality(partitionsContext, equality);
+		validateValueNotNull(partitionsContext, value);
 		if (attributesDataManager == null) {
-			attributesDataManager = simulationContext.getDataManager(AttributesDataManager.class);
+			attributesDataManager = partitionsContext.getDataManager(AttributesDataManager.class);
 		}
 		final AttributeDefinition attributeDefinition = attributesDataManager.getAttributeDefinition(attributeId);
-		validateValueCompatibility(simulationContext, attributeId, attributeDefinition, value);
-		validateEqualityCompatibility(simulationContext, attributeId, attributeDefinition, equality);
+		validateValueCompatibility(partitionsContext, attributeId, attributeDefinition, value);
+		validateEqualityCompatibility(partitionsContext, attributeId, attributeDefinition, equality);
 	}
 
 	@Override
-	public boolean evaluate(SimulationContext simulationContext, PersonId personId) {
-		
-		if(simulationContext == null) {
+	public boolean evaluate(PartitionsContext partitionsContext, PersonId personId) {
+
+		if (partitionsContext == null) {
 			throw new ContractException(NucleusError.NULL_SIMULATION_CONTEXT);
 		}
-		
+
 		if (attributesDataManager == null) {
-			attributesDataManager = simulationContext.getDataManager(AttributesDataManager.class);
+			attributesDataManager = partitionsContext.getDataManager(AttributesDataManager.class);
 		}
-		
+
 		// we do not assume that the returned attribute value is
 		// comparable unless we are forced to.
 		final Object attValue = attributesDataManager.getAttributeValue(personId, attributeId);
@@ -144,7 +156,7 @@ public final class AttributeFilter extends Filter {
 		}
 	}
 
-	private Optional<PersonId> requiresRefresh(SimulationContext simulationContext, AttributeUpdateEvent event) {
+	private Optional<PersonId> requiresRefresh(PartitionsContext partitionsContext, AttributeUpdateEvent event) {
 		if (event.attributeId().equals(attributeId)) {
 			if (evaluate(event.previousValue()) != evaluate(event.currentValue())) {
 				return Optional.of(event.personId());
@@ -154,10 +166,10 @@ public final class AttributeFilter extends Filter {
 	}
 
 	/**
-	 * Returns a single filter sensitivity for AttributeUpdateEvent
-	 * events. This sensitivity will require refreshes for events with the same
-	 * attribute id and where the event where the event has different previous
-	 * and current values.
+	 * Returns a single filter sensitivity for AttributeUpdateEvent events. This
+	 * sensitivity will require refreshes for events with the same attribute id
+	 * and where the event where the event has different previous and current
+	 * values.
 	 */
 	@Override
 	public Set<FilterSensitivity<?>> getFilterSensitivities() {
@@ -204,7 +216,5 @@ public final class AttributeFilter extends Filter {
 		}
 		return true;
 	}
-	
-	
 
 }

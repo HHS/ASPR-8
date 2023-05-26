@@ -2,9 +2,9 @@ package plugins.partitions.support.filters;
 
 import java.util.Set;
 
-import nucleus.SimulationContext;
 import plugins.partitions.support.FilterSensitivity;
 import plugins.partitions.support.PartitionError;
+import plugins.partitions.support.PartitionsContext;
 import plugins.people.support.PersonId;
 import util.errors.ContractException;
 
@@ -39,8 +39,8 @@ public final class OrFilter extends Filter {
 	}
 
 	@Override
-	public boolean evaluate(SimulationContext simulationContext, PersonId personId) {
-		return a.evaluate(simulationContext, personId) || b.evaluate(simulationContext, personId);
+	public boolean evaluate(PartitionsContext partitionsContext, PersonId personId) {
+		return a.evaluate(partitionsContext, personId) || b.evaluate(partitionsContext, personId);
 	}
 
 	@Override
@@ -51,9 +51,9 @@ public final class OrFilter extends Filter {
 	}
 
 	@Override
-	public void validate(SimulationContext simulationContext) {
-		a.validate(simulationContext);
-		b.validate(simulationContext);
+	public void validate(PartitionsContext partitionsContext) {
+		a.validate(partitionsContext);
+		b.validate(partitionsContext);
 	}
 	
 	@Override
@@ -72,4 +72,17 @@ public final class OrFilter extends Filter {
 		OrFilter other = (OrFilter) obj;
 		return a.equals(other.a) && b.equals(other.b) || a.equals(other.b) && b.equals(other.a);
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("OrFilter [a=");
+		builder.append(a);
+		builder.append(", b=");
+		builder.append(b);
+		builder.append("]");
+		return builder.toString();
+	}
+	
+	
 }

@@ -407,6 +407,10 @@ public class AT_ExperimentContext {
 
 		// create a container for observed scenario status values
 		Set<MultiKey> observedScenarioStatusInfo = new LinkedHashSet<>();
+		
+		ExperimentParameterData experimentParameterData = ExperimentParameterData.builder()//
+				.setHaltOnException(false)//
+				.build();
 
 		/*
 		 * Execute an experiment that uses the dimension and plugin. Add an
@@ -456,7 +460,7 @@ public class AT_ExperimentContext {
 
 						});
 					})//
-					.setHaltOnException(false)//
+					.setExperimentParameterData(experimentParameterData)//
 					.build()//
 					.execute();//
 
@@ -704,10 +708,14 @@ public class AT_ExperimentContext {
 			});
 		};
 
+		ExperimentParameterData experimentParameterData = ExperimentParameterData.builder()//
+				.setHaltOnException(false)//
+				.build();
+		
 		Experiment	.builder()//
 					.addPlugin(testPlugin)//
 					.addExperimentContextConsumer(experimentContestConsumer)//
-					.setHaltOnException(false)//
+					.setExperimentParameterData(experimentParameterData)//
 					.build()//
 					.execute();
 

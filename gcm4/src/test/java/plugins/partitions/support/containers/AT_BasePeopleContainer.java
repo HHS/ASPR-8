@@ -3,19 +3,19 @@ package plugins.partitions.support.containers;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import nucleus.SimulationContext;
+import plugins.partitions.support.PartitionsContext;
 import plugins.people.support.PersonId;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
 
 public class AT_BasePeopleContainer {
 
-	private PeopleContainer getPeopleContainer(SimulationContext context) {
-		return new BasePeopleContainer(context);
+	private PeopleContainer getPeopleContainer(PartitionsContext partitionsContext) {
+		return new BasePeopleContainer(partitionsContext);
 	}
 
 	@Test
-	@UnitTestConstructor(target = BasePeopleContainer.class, args = { SimulationContext.class })
+	@UnitTestConstructor(target = BasePeopleContainer.class, args = { PartitionsContext.class })
 	public void testConstructor() {
 		// nothing to test
 	}

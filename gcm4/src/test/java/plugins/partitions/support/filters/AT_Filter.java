@@ -12,12 +12,13 @@ import java.util.Set;
 import org.junit.jupiter.api.Test;
 
 import nucleus.Event;
-import nucleus.SimulationContext;
 import nucleus.testsupport.testplugin.TestSimulation;
 import plugins.partitions.support.FilterSensitivity;
 import plugins.partitions.support.PartitionError;
+import plugins.partitions.support.PartitionsContext;
 import plugins.partitions.testsupport.PartitionsTestPluginFactory;
 import plugins.partitions.testsupport.PartitionsTestPluginFactory.Factory;
+import plugins.partitions.testsupport.TestPartitionsContext;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonId;
 import util.annotations.UnitTestMethod;
@@ -37,7 +38,7 @@ public class AT_Filter {
 		}
 
 		@Override
-		public boolean evaluate(SimulationContext context, PersonId personId) {
+		public boolean evaluate(PartitionsContext partitionsContext, PersonId personId) {
 			return false;
 		}
 
@@ -47,7 +48,7 @@ public class AT_Filter {
 		}
 
 		@Override
-		public void validate(SimulationContext context) {
+		public void validate(PartitionsContext partitionsContext) {
 			// do nothing
 
 		}
@@ -82,7 +83,7 @@ public class AT_Filter {
 		
 	}
 
-	private static Optional<PersonId> eventPredicate(SimulationContext context, Event event) {
+	private static Optional<PersonId> eventPredicate(PartitionsContext partitionsContext, Event event) {
 		return Optional.of(new PersonId(4));
 	}
 
@@ -98,27 +99,29 @@ public class AT_Filter {
 			 * Show that there are enough people in the simulation to make a
 			 * valid test
 			 */
+			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
+			
 			assertEquals(100, peopleDataManager.getPopulationCount());
 
 			// create the filters
 			Filter filter = new TrueFilter().and(new TrueFilter());
 			for (PersonId personId : peopleDataManager.getPeople()) {
-				assertTrue(filter.evaluate(c, personId));
+				assertTrue(filter.evaluate(testPartitionsContext, personId));
 			}
 
 			filter = new TrueFilter().and(new FalseFilter());
 			for (PersonId personId : peopleDataManager.getPeople()) {
-				assertFalse(filter.evaluate(c, personId));
+				assertFalse(filter.evaluate(testPartitionsContext, personId));
 			}
 
 			filter = new FalseFilter().and(new TrueFilter());
 			for (PersonId personId : peopleDataManager.getPeople()) {
-				assertFalse(filter.evaluate(c, personId));
+				assertFalse(filter.evaluate(testPartitionsContext, personId));
 			}
 
 			filter = new FalseFilter().and(new FalseFilter());
 			for (PersonId personId : peopleDataManager.getPeople()) {
-				assertFalse(filter.evaluate(c, personId));
+				assertFalse(filter.evaluate(testPartitionsContext, personId));
 			}
 
 			FilterSensitivity<Event> fsA = new FilterSensitivity<>(Event.class, AT_Filter::eventPredicate);
@@ -154,7 +157,7 @@ public class AT_Filter {
 		Factory factory = PartitionsTestPluginFactory.factory(100, 921279696119043098L, (c) -> {
 
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
-
+			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
 			/*
 			 * Show that there are enough people in the simulation to make a
 			 * valid test
@@ -164,22 +167,22 @@ public class AT_Filter {
 			// create the filters
 			Filter filter = new TrueFilter().or(new TrueFilter());
 			for (PersonId personId : peopleDataManager.getPeople()) {
-				assertTrue(filter.evaluate(c, personId));
+				assertTrue(filter.evaluate(testPartitionsContext, personId));
 			}
 
 			filter = new TrueFilter().or(new FalseFilter());
 			for (PersonId personId : peopleDataManager.getPeople()) {
-				assertTrue(filter.evaluate(c, personId));
+				assertTrue(filter.evaluate(testPartitionsContext, personId));
 			}
 
 			filter = new FalseFilter().or(new TrueFilter());
 			for (PersonId personId : peopleDataManager.getPeople()) {
-				assertTrue(filter.evaluate(c, personId));
+				assertTrue(filter.evaluate(testPartitionsContext, personId));
 			}
 
 			filter = new FalseFilter().or(new FalseFilter());
 			for (PersonId personId : peopleDataManager.getPeople()) {
-				assertFalse(filter.evaluate(c, personId));
+				assertFalse(filter.evaluate(testPartitionsContext, personId));
 			}
 
 			FilterSensitivity<Event> fsA = new FilterSensitivity<>(Event.class, AT_Filter::eventPredicate);
@@ -216,6 +219,7 @@ public class AT_Filter {
 	public void testNot() {
 		Factory factory = PartitionsTestPluginFactory.factory(100, 4038710674336002107L, (c) -> {
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
 			/*
 			 * Show that there are enough people in the simulation to make a
 			 * valid test
@@ -225,12 +229,12 @@ public class AT_Filter {
 			Filter filter = new TrueFilter().not();
 
 			for (PersonId personId : peopleDataManager.getPeople()) {
-				assertFalse(filter.evaluate(c, personId));
+				assertFalse(filter.evaluate(testPartitionsContext, personId));
 			}
 
 			filter = new FalseFilter().not();
 			for (PersonId personId : peopleDataManager.getPeople()) {
-				assertTrue(filter.evaluate(c, personId));
+				assertTrue(filter.evaluate(testPartitionsContext, personId));
 			}
 
 			assertEquals(filter.getFilterSensitivities().size(), 0);

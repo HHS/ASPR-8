@@ -12,7 +12,6 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import nucleus.NucleusError;
-import nucleus.SimulationContext;
 import nucleus.testsupport.testplugin.TestSimulation;
 import plugins.groups.datamanagers.GroupsDataManager;
 import plugins.groups.events.GroupMembershipAdditionEvent;
@@ -23,7 +22,9 @@ import plugins.groups.testsupport.TestGroupTypeId;
 import plugins.partitions.support.Equality;
 import plugins.partitions.support.FilterSensitivity;
 import plugins.partitions.support.PartitionError;
+import plugins.partitions.support.PartitionsContext;
 import plugins.partitions.support.filters.Filter;
+import plugins.partitions.testsupport.TestPartitionsContext;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonId;
 import plugins.stochastics.StochasticsDataManager;
@@ -40,14 +41,16 @@ public class AT_GroupsForPersonFilter {
 	}
 
 	@Test
-	@UnitTestMethod(target = GroupsForPersonFilter.class, name = "validate", args = { SimulationContext.class })
+	@UnitTestMethod(target = GroupsForPersonFilter.class, name = "validate", args = { PartitionsContext.class })
 	public void testValidate() {
 		Factory factory = GroupsTestPluginFactory.factory(100, 3, 10, 5329703278551588697L, (c) -> {
 			// precondition tests
+			
+			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
 
 			// if the equality operator is null
 			ContractException contractException = assertThrows(ContractException.class,
-					() -> new GroupsForPersonFilter(null, 5).validate(c));
+					() -> new GroupsForPersonFilter(null, 5).validate(testPartitionsContext));
 			assertEquals(PartitionError.NULL_EQUALITY_OPERATOR, contractException.getErrorType());
 
 		});
@@ -82,11 +85,14 @@ public class AT_GroupsForPersonFilter {
 	}
 
 	@Test
-	@UnitTestMethod(target = GroupsForPersonFilter.class, name = "evaluate", args = { SimulationContext.class,
+	@UnitTestMethod(target = GroupsForPersonFilter.class, name = "evaluate", args = { PartitionsContext.class,
 			PersonId.class })
 	public void testEvaluate() {
 
 		Factory factory = GroupsTestPluginFactory.factory(100, 0, 10, 6164158277278234559L, (c) -> {
+			
+			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
+			
 			RandomGenerator randomGenerator = c.getDataManager(StochasticsDataManager.class).getRandomGenerator();
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
@@ -124,7 +130,7 @@ public class AT_GroupsForPersonFilter {
 
 			for (PersonId personId : people) {
 				boolean expected = groupsDataManager.getGroupCountForPerson(personId) == 2;
-				boolean actual = filter.evaluate(c, personId);
+				boolean actual = filter.evaluate(testPartitionsContext, personId);
 				assertEquals(expected, actual);
 			}
 
@@ -134,10 +140,10 @@ public class AT_GroupsForPersonFilter {
 			assertEquals(NucleusError.NULL_SIMULATION_CONTEXT, contractException.getErrorType());
 
 			/* precondition: if the person id is null */
-			assertThrows(RuntimeException.class, () -> filter.evaluate(c, null));
+			assertThrows(RuntimeException.class, () -> filter.evaluate(testPartitionsContext, null));
 
 			/* precondition: if the person id is unknown */
-			assertThrows(RuntimeException.class, () -> filter.evaluate(c, new PersonId(123412342)));
+			assertThrows(RuntimeException.class, () -> filter.evaluate(testPartitionsContext, new PersonId(123412342)));
 
 		});
 

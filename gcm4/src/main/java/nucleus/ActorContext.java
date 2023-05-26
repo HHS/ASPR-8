@@ -17,7 +17,7 @@ import util.errors.ContractException;
  *
  */
 
-public final class ActorContext implements SimulationContext {
+public final class ActorContext {
 
 	private final Simulation simulation;
 
@@ -149,27 +149,22 @@ public final class ActorContext implements SimulationContext {
 		simulation.unsubscribeActorFromEventByFilter(eventFilter);
 	}
 
-	@Override
 	public boolean actorExists(final ActorId actorId) {
 		return simulation.actorExists(actorId);
 	}
 
-	@Override
 	public <T extends DataManager> T getDataManager(Class<T> dataManagerClass) {
 		return simulation.getDataManagerForActor(dataManagerClass);
 	}
 
-	@Override
 	public double getTime() {
 		return simulation.time;
 	}
 
-	@Override
 	public void halt() {
 		simulation.halt();
 	}
 
-	@Override
 	public void releaseOutput(Object output) {
 		simulation.releaseOutput(output);
 	}

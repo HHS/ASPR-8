@@ -5,10 +5,10 @@ import java.util.Optional;
 import java.util.Set;
 
 import nucleus.NucleusError;
-import nucleus.SimulationContext;
 import plugins.partitions.support.Equality;
 import plugins.partitions.support.FilterSensitivity;
 import plugins.partitions.support.PartitionError;
+import plugins.partitions.support.PartitionsContext;
 import plugins.partitions.support.filters.Filter;
 import plugins.people.support.PersonId;
 import plugins.personproperties.datamanagers.PersonPropertiesDataManager;
@@ -17,19 +17,19 @@ import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
 import util.errors.ContractException;
 
-public final class PropertyFilter extends Filter {
+public final class PersonPropertyFilter extends Filter {
 
 	private final PersonPropertyId personPropertyId;
 	private final Object personPropertyValue;
 	private final Equality equality;
 	private PersonPropertiesDataManager personPropertiesDataManager;
 
-	private void validatePersonPropertyId(SimulationContext simulationContext, final PersonPropertyId personPropertyId) {
-		
+	private void validatePersonPropertyId(PartitionsContext partitionsContext, final PersonPropertyId personPropertyId) {
+
 		if (personPropertiesDataManager == null) {
-			personPropertiesDataManager = simulationContext.getDataManager(PersonPropertiesDataManager.class);
+			personPropertiesDataManager = partitionsContext.getDataManager(PersonPropertiesDataManager.class);
 		}
-		
+
 		if (personPropertyId == null) {
 			throw new ContractException(PropertyError.NULL_PROPERTY_ID);
 		}
@@ -39,25 +39,26 @@ public final class PropertyFilter extends Filter {
 		}
 	}
 
-	private void validateEquality(SimulationContext simulationContext, final Equality equality) {
+	private void validateEquality(PartitionsContext partitionsContext, final Equality equality) {
 		if (equality == null) {
 			throw new ContractException(PartitionError.NULL_EQUALITY_OPERATOR);
 		}
 	}
 
-	private void validatePersonPropertyValueNotNull(SimulationContext simulationContext, final Object propertyValue) {
+	private void validatePersonPropertyValueNotNull(PartitionsContext partitionsContext, final Object propertyValue) {
 		if (propertyValue == null) {
 			throw new ContractException(PropertyError.NULL_PROPERTY_VALUE);
 		}
 	}
 
-	private void validateValueCompatibility(SimulationContext simulationContext, final Object propertyId, final PropertyDefinition propertyDefinition, final Object propertyValue) {
+	private void validateValueCompatibility(PartitionsContext partitionsContext, final Object propertyId, final PropertyDefinition propertyDefinition, final Object propertyValue) {
 		if (!propertyDefinition.getType().isAssignableFrom(propertyValue.getClass())) {
-			throw new ContractException(PropertyError.INCOMPATIBLE_VALUE, "Property value " + propertyValue + " is not of type " + propertyDefinition.getType().getName() + " and does not match definition of " + propertyId);
+			throw new ContractException(PropertyError.INCOMPATIBLE_VALUE,
+					"Property value " + propertyValue + " is not of type " + propertyDefinition.getType().getName() + " and does not match definition of " + propertyId);
 		}
 	}
 
-	private void validateEqualityCompatibility(SimulationContext simulationContext, final Object propertyId, final PropertyDefinition propertyDefinition, final Equality equality) {
+	private void validateEqualityCompatibility(PartitionsContext partitionsContext, final Object propertyId, final PropertyDefinition propertyDefinition, final Equality equality) {
 
 		if (equality == Equality.EQUAL) {
 			return;
@@ -71,39 +72,51 @@ public final class PropertyFilter extends Filter {
 		}
 	}
 
-	public PropertyFilter(final PersonPropertyId personPropertyId, final Equality equality, final Object personPropertyValue) {
+	public PersonPropertyId getPersonPropertyId() {
+		return personPropertyId;
+	}
+	
+	public Equality getEquality() {
+		return equality;
+	}
+	
+	public Object getPersonPropertyValue() {
+		return personPropertyValue;
+	}
+	
+	public PersonPropertyFilter(final PersonPropertyId personPropertyId, final Equality equality, final Object personPropertyValue) {
 		this.personPropertyId = personPropertyId;
 		this.personPropertyValue = personPropertyValue;
 		this.equality = equality;
 	}
 
 	@Override
-	public void validate(SimulationContext simulationContext) {
-		if(simulationContext == null) {
+	public void validate(PartitionsContext partitionsContext) {
+		if (partitionsContext == null) {
 			throw new ContractException(NucleusError.NULL_SIMULATION_CONTEXT);
 		}
 		if (personPropertiesDataManager == null) {
-			personPropertiesDataManager = simulationContext.getDataManager(PersonPropertiesDataManager.class);
+			personPropertiesDataManager = partitionsContext.getDataManager(PersonPropertiesDataManager.class);
 		}
-		
-		validatePersonPropertyId(simulationContext, personPropertyId);
-		validateEquality(simulationContext, equality);
-		validatePersonPropertyValueNotNull(simulationContext, personPropertyValue);		
+
+		validatePersonPropertyId(partitionsContext, personPropertyId);
+		validateEquality(partitionsContext, equality);
+		validatePersonPropertyValueNotNull(partitionsContext, personPropertyValue);
 		final PropertyDefinition propertyDefinition = personPropertiesDataManager.getPersonPropertyDefinition(personPropertyId);
-		validateValueCompatibility(simulationContext, personPropertyId, propertyDefinition, personPropertyValue);
-		validateEqualityCompatibility(simulationContext, personPropertyId, propertyDefinition, equality);
+		validateValueCompatibility(partitionsContext, personPropertyId, propertyDefinition, personPropertyValue);
+		validateEqualityCompatibility(partitionsContext, personPropertyId, propertyDefinition, equality);
 	}
 
 	@Override
-	public boolean evaluate(SimulationContext simulationContext, PersonId personId) {
-		
-		if(simulationContext == null) {
+	public boolean evaluate(PartitionsContext partitionsContext, PersonId personId) {
+
+		if (partitionsContext == null) {
 			throw new ContractException(NucleusError.NULL_SIMULATION_CONTEXT);
 		}
 		if (personPropertiesDataManager == null) {
-			personPropertiesDataManager = simulationContext.getDataManager(PersonPropertiesDataManager.class);
+			personPropertiesDataManager = partitionsContext.getDataManager(PersonPropertiesDataManager.class);
 		}
-		
+
 		// we do not assume that the returned property value is
 		// comparable unless we are forced to.
 		final Object propVal = personPropertiesDataManager.getPersonPropertyValue(personId, personPropertyId);
@@ -138,7 +151,7 @@ public final class PropertyFilter extends Filter {
 		return builder.toString();
 	}
 
-	private Optional<PersonId> requiresRefresh(SimulationContext simulationContext, PersonPropertyUpdateEvent event) {
+	private Optional<PersonId> requiresRefresh(PartitionsContext partitionsContext, PersonPropertyUpdateEvent event) {
 		if (event.personPropertyId().equals(personPropertyId)) {
 			if (evaluate(event.previousPropertyValue()) != evaluate(event.currentPropertyValue())) {
 				return Optional.of(event.personId());
@@ -169,10 +182,10 @@ public final class PropertyFilter extends Filter {
 		if (this == obj) {
 			return true;
 		}
-		if (!(obj instanceof PropertyFilter)) {
+		if (!(obj instanceof PersonPropertyFilter)) {
 			return false;
 		}
-		PropertyFilter other = (PropertyFilter) obj;
+		PersonPropertyFilter other = (PersonPropertyFilter) obj;
 		if (equality != other.equality) {
 			return false;
 		}

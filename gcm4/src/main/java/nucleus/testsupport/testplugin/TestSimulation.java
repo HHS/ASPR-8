@@ -18,7 +18,7 @@ import util.errors.ContractException;
 public class TestSimulation {
 
 	private static class Data {
-		private double simulationHaltTime = -1;
+		private Double simulationHaltTime;
 		private boolean produceSimulationStateOnHalt;
 		private List<Plugin> plugins = new ArrayList<>();
 		private TestOutputConsumer testOutputConsumer = new TestOutputConsumer();

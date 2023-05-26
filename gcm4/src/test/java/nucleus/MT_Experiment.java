@@ -62,13 +62,17 @@ public class MT_Experiment {
 										.setReportScenarioProgress(false)//
 										.setStackTraceReportLimit(3)//
 										.build();//
+		
+		ExperimentParameterData experimentParameterData = ExperimentParameterData.builder()//
+				.setHaltOnException(false)//
+				.setThreadCount(10)//
+				.build();
 
 		Experiment	.builder()//
 					.addPlugin(testPlugin)//
 					.addDimension(getDimension(100))//					
 					.addExperimentContextConsumer(experimentStatusConsole)//
-					.setHaltOnException(false)//
-					.setThreadCount(10)//
+					.setExperimentParameterData(experimentParameterData)//					
 					.build()//
 					.execute();//
 	}

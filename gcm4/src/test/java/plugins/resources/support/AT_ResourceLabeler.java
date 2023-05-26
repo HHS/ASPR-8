@@ -15,11 +15,12 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import nucleus.Event;
-import nucleus.SimulationContext;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestSimulation;
 import plugins.partitions.support.LabelerSensitivity;
+import plugins.partitions.support.PartitionsContext;
+import plugins.partitions.testsupport.TestPartitionsContext;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
@@ -94,7 +95,7 @@ public final class AT_ResourceLabeler {
 	}
 
 	@Test
-	@UnitTestMethod(target = ResourceLabeler.class, name = "getLabel", args = { SimulationContext.class, PersonId.class })
+	@UnitTestMethod(target = ResourceLabeler.class, name = "getLabel", args = { PartitionsContext.class, PersonId.class })
 	public void testGetLabel() {
 		/*
 		 * Create a resource labeler from a function. Have an agent apply the
@@ -135,6 +136,9 @@ public final class AT_ResourceLabeler {
 		 * to the resource labeler.
 		 */
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
+			
+			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
+			
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 			List<PersonId> people = peopleDataManager.getPeople();
@@ -145,7 +149,7 @@ public final class AT_ResourceLabeler {
 				Object expectedLabel = function.apply(personResourceLevel);
 
 				// get the label from the person id
-				Object actualLabel = resourceLabeler.getCurrentLabel(c, personId);
+				Object actualLabel = resourceLabeler.getCurrentLabel(testPartitionsContext, personId);
 
 				// show that the two labels are equal
 				assertEquals(expectedLabel, actualLabel);
@@ -155,13 +159,15 @@ public final class AT_ResourceLabeler {
 
 		// test preconditions
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(2, (c) -> {
+			
+			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
 
 			// if the person does not exist
-			ContractException contractException = assertThrows(ContractException.class, () -> resourceLabeler.getCurrentLabel(c, new PersonId(10000)));
+			ContractException contractException = assertThrows(ContractException.class, () -> resourceLabeler.getCurrentLabel(testPartitionsContext, new PersonId(10000)));
 			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
 
 			// if the person id is null
-			contractException = assertThrows(ContractException.class, () -> resourceLabeler.getCurrentLabel(c, null));
+			contractException = assertThrows(ContractException.class, () -> resourceLabeler.getCurrentLabel(testPartitionsContext, null));
 			assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
 
 		}));
@@ -181,10 +187,12 @@ public final class AT_ResourceLabeler {
 	}
 
 	@Test
-	@UnitTestMethod(target = ResourceLabeler.class, name = "getPastLabel", args = { SimulationContext.class, Event.class })
+	@UnitTestMethod(target = ResourceLabeler.class, name = "getPastLabel", args = { PartitionsContext.class, Event.class })
 	public void testGetPastLabel() {
 		Factory factory = ResourcesTestPluginFactory.factory(10, 6601261985382450295L, (c) -> {
 
+			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
+			
 			final PersonId personId = new PersonId(45);
 			final ResourceId resourceId = TestResourceId.RESOURCE_4;
 			long previousResourceLevel = 14L;
@@ -200,7 +208,7 @@ public final class AT_ResourceLabeler {
 				previousResourceLevel = i;
 				Object expectedLabel = function.apply(previousResourceLevel);
 				PersonResourceUpdateEvent personResourceUpdateEvent = new PersonResourceUpdateEvent(personId, resourceId, previousResourceLevel, currentResourceLevel);
-				Object actualLabel = resourceLabeler.getPastLabel(c, personResourceUpdateEvent);
+				Object actualLabel = resourceLabeler.getPastLabel(testPartitionsContext, personResourceUpdateEvent);
 				assertEquals(expectedLabel, actualLabel);
 			}
 		});
