@@ -1,6 +1,7 @@
 package nucleus;
 
 import java.util.List;
+import java.util.function.Function;
 
 /**
  * A Dimension represents a single independent dimension of an experiment.
@@ -33,5 +34,8 @@ public interface Dimension2 {
 	 */
 
 	public List<String> executeLevel(DimensionContext dimensionContext, int level);
+	
+	
+	public Function<DimensionContext, List<String>> getLevel(int index);
 
 }
