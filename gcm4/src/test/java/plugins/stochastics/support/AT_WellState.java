@@ -1,23 +1,15 @@
 package plugins.stochastics.support;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import java.util.Arrays;
-import java.util.LinkedHashSet;
-import java.util.Set;
-
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
-
 import util.annotations.UnitTag;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.random.RandomGeneratorProvider;
+
+import java.util.*;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class AT_WellState {
 
@@ -51,39 +43,40 @@ public class AT_WellState {
 	@Test
 	@UnitTestMethod(target = WellState.class, name = "getSeed", args = {})
 	public void testGetSeed() {
-		Long expectedSeed = 764258969836004163L;
-
-		WellState wellState = WellState.builder().setSeed(expectedSeed).build();
-
-		Long actualSeed = wellState.getSeed();
-		assertEquals(expectedSeed, actualSeed);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(4710925545909840517L);
+		for (int i = 0; i < 30; i++) {
+			Long seed = randomGenerator.nextLong();
+			WellState wellState = createWellState(seed);
+			Long actualSeed = wellState.getSeed();
+			assertEquals(seed, actualSeed);
+		}
 	}
 
 	@Test
 	@UnitTestMethod(target = WellState.class, name = "getIndex", args = {})
 	public void testGetIndex() {
-		WellState.Builder builder = WellState.builder();
-		Long seed = 6559152513645047938L;
-		int expectedIndex = 13;
-		int[] vArray = new int[1391];
-
-		WellState wellState = builder.setInternals(expectedIndex, vArray).setSeed(seed).build();
-		int actualIndex = wellState.getIndex();
-		assertEquals(expectedIndex, actualIndex);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(3907591903339469675L);
+		for (int i = 0; i < 30; i++) {
+			Long seed = randomGenerator.nextLong();
+			Integer index = randomGenerator.nextInt(1390);
+			WellState wellState = createWellState(seed, index);
+			assertEquals(index, wellState.getIndex());
+		}
 	}
 
 	@Test
 	@UnitTestMethod(target = WellState.class, name = "getVArray", args = {})
 	public void testGetVArray() {
-		WellState.Builder builder = WellState.builder();
-		Long seed = 6559152513645047938L;
-		int index = 13;
-		int[] expectedVArray = new int[1391];
-
-		WellState wellState = builder.setInternals(index, expectedVArray).setSeed(seed).build();
-		int[] actualVArray = wellState.getVArray();
-
-		assertTrue(Arrays.equals(expectedVArray, actualVArray));
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7474457766232034059L);
+		for (int i = 0; i < 30; i++) {
+			Long seed = randomGenerator.nextLong();
+			int[] vArray = new int[1391];
+			for (int j = 0; j < 1391; j++) {
+				vArray[j] = randomGenerator.nextInt();
+			}
+			WellState wellState = createWellState(seed, vArray);
+			assertTrue(Arrays.equals(vArray, wellState.getVArray()));
+		}
 	}
 
 	@Test
@@ -112,18 +105,22 @@ public class AT_WellState {
 	@UnitTestMethod(target = WellState.Builder.class, name = "setInternals", args = { int.class, int[].class }, tags = UnitTag.INCOMPLETE)
 	public void testSetInternals() {
 		WellState.Builder builder = WellState.builder();
-		Long seed = 6559152513645047938L;
-		int index = 13;
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(5209481424678049863L);
+
+		for (int i = 0; i < 30; i++) {
+			Long seed = randomGenerator.nextLong();
+			int index = randomGenerator.nextInt(1391);
+			int[] vArray = new int[1391];
+			for (int j = 0; j < 1391; j++) {
+				vArray[j] = randomGenerator.nextInt();
+			}
+			WellState wellState = builder.setInternals(index, vArray).setSeed(seed).build();
+			assertEquals(index, wellState.getIndex());
+			assertTrue(Arrays.equals(vArray, wellState.getVArray()));
+		}
+
+		int index = 15;
 		int[] vArray = new int[1391];
-
-		WellState wellState = builder.setInternals(index, vArray).setSeed(seed).build();
-
-		int actualIndex = wellState.getIndex();
-		int[] actualVArray = wellState.getVArray();
-
-		assertEquals(index, actualIndex);
-		assertTrue(Arrays.equals(vArray, actualVArray));
-
 		// precondition test: null vArray
 		ContractException contractException = assertThrows(ContractException.class, () -> builder.setInternals(index, null));
 		assertEquals(StochasticsError.ILLEGAL_SEED_ININITIAL_STATE, contractException.getErrorType());
@@ -210,6 +207,31 @@ public class AT_WellState {
 		for (int i = 0; i < 1391; i++) {
 			vArray[i] = randomGenerator.nextInt();
 		}
+		WellState wellState = WellState.builder().setInternals(stateIndex, vArray).setSeed(seed).build();
+		return wellState;
+	}
+
+	private WellState createWellState(Long seed, Integer index) {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
+		int stateIndex = index;
+		int[] vArray = new int[1391];
+
+		for (int i = 0; i < 1391; i++) {
+			vArray[i] = randomGenerator.nextInt();
+		}
+		WellState wellState = WellState.builder().setInternals(stateIndex, vArray).setSeed(seed).build();
+		return wellState;
+	}
+
+	private WellState createWellState(Long seed, int[] vArray) {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
+		int stateIndex = randomGenerator.nextInt(1390);
+		WellState wellState = WellState.builder().setInternals(stateIndex, vArray).setSeed(seed).build();
+		return wellState;
+	}
+
+	private WellState createWellState(Long seed, Integer index, int[] vArray) {
+		int stateIndex = index;
 		WellState wellState = WellState.builder().setInternals(stateIndex, vArray).setSeed(seed).build();
 		return wellState;
 	}

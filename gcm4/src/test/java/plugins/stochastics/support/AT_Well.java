@@ -16,38 +16,28 @@ public class AT_Well {
     @Test
     @UnitTestConstructor(target = Well.class, args = {WellState.class})
     public void testWell() {
-        Long seed = 6559152513645047938L;
-        int index = 13;
-        int[] vArray = new int[1391];
-
-        WellState wellState = WellState.builder()
-                .setInternals(index, vArray)
-                .setSeed(seed)
-                .build();
-
-        Well well = new Well(wellState);
-        WellState actualWellState = well.getWellState();
-
-        assertNotNull(well);
-        assertEquals(wellState, actualWellState);
+        RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(3201733256995562119L);
+        for (int i = 0; i < 30; i++) {
+            Long seed = randomGenerator.nextLong();
+            WellState wellState = createWellState(seed);
+            Well well = new Well(wellState);
+            WellState actualWellState = well.getWellState();
+            assertNotNull(well);
+            assertEquals(wellState, actualWellState);
+        }
     }
 
     @Test
     @UnitTestMethod(target = Well.class, name = "getWellState", args = {})
     public void testGetWellState() {
-        Long seed = 6559152513645047938L;
-        int index = 13;
-        int[] vArray = new int[1391];
-
-        WellState wellState = WellState.builder()
-                .setInternals(index, vArray)
-                .setSeed(seed)
-                .build();
-
-        Well well = new Well(wellState);
-        WellState actualWellState = well.getWellState();
-
-        assertEquals(wellState, actualWellState);
+        RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(3201733256995562119L);
+        for (int i = 0; i < 30; i++) {
+            Long seed = randomGenerator.nextLong();
+            WellState wellState = createWellState(seed);
+            Well well = new Well(wellState);
+            WellState actualWellState = well.getWellState();
+            assertEquals(wellState, actualWellState);
+        }
     }
 
     @Test
