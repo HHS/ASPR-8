@@ -14,6 +14,7 @@ import lesson.plugins.model.ModelReportLabel;
 import lesson.plugins.model.support.GlobalProperty;
 import nucleus.Dimension;
 import nucleus.Experiment;
+import nucleus.FunctionalDimension;
 import nucleus.Plugin;
 import plugins.globalproperties.GlobalPropertiesPlugin;
 import plugins.globalproperties.GlobalPropertiesPluginData;
@@ -64,7 +65,7 @@ public final class Example_13 {
 		alphaBetaPairs.add(new Pair<>(45.0, 70.0));
 		alphaBetaPairs.add(new Pair<>(80.0, 100.0));
 
-		Dimension.Builder dimensionBuilder = Dimension.builder();
+		FunctionalDimension.Builder dimensionBuilder = FunctionalDimension.builder();
 
 		for (Pair<Double, Double> pair : alphaBetaPairs) {
 			dimensionBuilder.addLevel((c) -> {
