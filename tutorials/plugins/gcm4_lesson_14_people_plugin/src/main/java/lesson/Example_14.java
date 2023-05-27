@@ -15,6 +15,7 @@ import lesson.plugins.model.ModelReportLabel;
 import lesson.plugins.vaccine.VaccinePlugin;
 import nucleus.Dimension;
 import nucleus.Experiment;
+import nucleus.FunctionalDimension;
 import nucleus.Plugin;
 import plugins.people.PeoplePlugin;
 import plugins.people.PeoplePluginData;
@@ -32,7 +33,7 @@ public final class Example_14 {
 	}
 
 	private static Dimension getStochasticsDimension(int replicationCount, long seed) {
-		Dimension.Builder builder = Dimension.builder();//
+		FunctionalDimension.Builder builder = FunctionalDimension.builder();//
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
 

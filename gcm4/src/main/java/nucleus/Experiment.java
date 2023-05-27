@@ -12,7 +12,6 @@ import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 import net.jcip.annotations.Immutable;
 import util.errors.ContractException;
@@ -37,6 +36,53 @@ import util.errors.ContractException;
  */
 
 public final class Experiment {
+	
+	
+	private static class DimensionRec {
+		private final int index;
+		private final int levelCount;
+		private final Dimension dimension;
+		private List<String> experimentMetaData = new ArrayList<>();
+		private Map<Integer, List<String>> scenarioMetaData = new LinkedHashMap<>();
+		
+		
+		public List<String> getExperimentMetaData(){
+			return experimentMetaData;
+		}
+
+		public DimensionRec(Dimension dimension, int index) {
+			this.dimension = dimension;
+			this.index = index;
+			for (int i = 0; i < dimension.levelCount(); i++) {
+				scenarioMetaData.put(i, null);
+			}
+			experimentMetaData.addAll(dimension.getExperimentMetaData());
+			levelCount = dimension.levelCount();
+		}
+
+		public List<String> executeLevel(DimensionContext dimensionContext, int level) {
+			List<String> list = dimension.executeLevel(dimensionContext, level);
+			if (list.size() != experimentMetaData.size()) {
+				throw new ContractException(NucleusError.DIMENSION_LABEL_MISMATCH,
+						"dimension[" + index + "] has meta data: " + experimentMetaData + " that does not match scenario meta data: " + list + " at level " + level);
+			}
+
+			List<String> baseList = scenarioMetaData.get(level);
+			if (baseList == null) {
+				scenarioMetaData.put(level, list);
+			} else {
+				if (!baseList.equals(list)) {
+					throw new ContractException(NucleusError.DIMENSION_LABEL_MISMATCH, "execution of level " + level + " of dimension[" + index + "] resulted in inconsistent meta scenario data");
+				}
+			}
+			return list;
+		}
+
+		public int getLevelCount() {
+			return levelCount;
+		}
+	}
+	
 
 	public static class Builder {
 		private Data data = new Data();
@@ -48,7 +94,7 @@ public final class Experiment {
 		 * Adds a non-empty dimension to the experiment
 		 */
 		public Builder addDimension(final Dimension dimension) {
-			if (dimension.size() > 0) {
+			if (dimension.levelCount() > 0) {
 				data.dimensions.add(dimension);
 			}
 			return this;
@@ -121,14 +167,6 @@ public final class Experiment {
 		private final List<Dimension> dimensions = new ArrayList<>();
 		private final List<Plugin> plugins = new ArrayList<>();
 		private final List<Consumer<ExperimentContext>> experimentContextConsumers = new ArrayList<>();
-
-		// private int threadCount;
-		// private boolean stateRecordingIsScheduled;
-		// private double simulationHaltTime = -1;
-		// private boolean haltOnException = true;
-		// private Path experimentProgressLogPath;
-		// private boolean continueFromProgressLog;
-		// private Set<Integer> explicitScenarioIds = new LinkedHashSet<>();
 
 		private SimulationState simulationState = SimulationState.builder().build();
 
@@ -233,6 +271,8 @@ public final class Experiment {
 	}
 
 	private final Data data;
+	
+	private List<DimensionRec> dimensionRecs = new ArrayList<>();
 
 	private ExperimentStateManager experimentStateManager;
 
@@ -247,8 +287,11 @@ public final class Experiment {
 	public void execute() {
 
 		int scenarioCount = 1;
-		for (final Dimension dimension : data.dimensions) {
-			scenarioCount *= dimension.size();
+		for (int i = 0;i< data.dimensions.size();i++) {
+			Dimension dimension = data.dimensions.get(i);
+			DimensionRec dimensionRec = new DimensionRec(dimension,i);
+			dimensionRecs.add(dimensionRec);
+			scenarioCount *= dimensionRec.getLevelCount();
 		}
 
 		ExperimentStateManager.Builder builder = ExperimentStateManager.builder();
@@ -260,8 +303,8 @@ public final class Experiment {
 		}
 
 		final List<String> experimentMetaData = new ArrayList<>();
-		for (final Dimension dimension : data.dimensions) {
-			experimentMetaData.addAll(dimension.getMetaData());
+		for (final DimensionRec dimensionRec : dimensionRecs) {
+			experimentMetaData.addAll(dimensionRec.getExperimentMetaData());
 		}
 
 		builder.setExperimentMetaData(experimentMetaData);
@@ -501,30 +544,21 @@ public final class Experiment {
 		 * the functions mutate the plugin builders and return meta data.
 		 */
 		int modulus = 1;
-		for (int i = 0; i < data.dimensions.size(); i++) {
-			Dimension dimension = data.dimensions.get(i);
-			int metaDataSize = dimension.getMetaDataSize();
+		for (int i = 0; i < dimensionRecs.size(); i++) {			
+			DimensionRec dimensionRec = dimensionRecs.get(i);
 
 			/*
 			 * Determine for the dimension the level within the dimension that
 			 * corresponds to the scenario id
 			 */
-			final int level = (scenarioId / modulus) % dimension.size();
-			modulus *= dimension.size();
+			int levelCount = dimensionRec.getLevelCount();
+			final int level = (scenarioId / modulus) % levelCount;
+			modulus *= levelCount;
 
 			// get the function from the dimension
-			final Function<DimensionContext, List<String>> levelFunction = dimension.getLevel(level);
-
-			// apply the function that will update the plugin builders and
-			// return the meta data for this function
-
-			List<String> list = levelFunction.apply(dimensionContext);
-			if (list.size() != metaDataSize) {
-				throw new ContractException(NucleusError.DIMENSION_LABEL_MISMATCH,
-						"dimension " + i + " has meta data: " + dimension.getMetaData() + " that does not match scenario labels: " + list + " at level " + level);
-			}
-			scenarioMetaData.addAll(list);
-
+			List<String> dimensionMetaData = dimensionRec.executeLevel(dimensionContext, level);
+			
+			scenarioMetaData.addAll(dimensionMetaData);
 		}
 
 		// update the experiment state manager with the meta data for the

@@ -7,7 +7,7 @@ public class MT_ExperimentStatusConsole {
 	}
 
 	private Dimension getDimension(int size) {
-		Dimension.Builder builder = Dimension.builder();
+		FunctionalDimension.Builder builder = FunctionalDimension.builder();
 		for (int i = 0; i < size; i++) {
 			builder.addLevel((c) -> new ArrayList<>());
 		}
