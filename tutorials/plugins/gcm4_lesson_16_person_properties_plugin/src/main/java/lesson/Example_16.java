@@ -17,6 +17,7 @@ import lesson.plugins.model.Region;
 import nucleus.Dimension;
 import nucleus.Experiment;
 import nucleus.ExperimentParameterData;
+import nucleus.FunctionalDimension;
 import nucleus.Plugin;
 import plugins.globalproperties.GlobalPropertiesPlugin;
 import plugins.globalproperties.GlobalPropertiesPluginData;
@@ -113,7 +114,7 @@ public final class Example_16 {
 	}
 
 	private Dimension getGlobalPropertyDimension(GlobalPropertyId globalPropertyId, String header, double[] values) {
-		Dimension.Builder dimensionBuilder = Dimension.builder();//
+		FunctionalDimension.Builder dimensionBuilder = FunctionalDimension.builder();//
 		IntStream.range(0, values.length).forEach((i) -> {
 			dimensionBuilder.addLevel((context) -> {
 				GlobalPropertiesPluginData.Builder builder = context.get(GlobalPropertiesPluginData.Builder.class);

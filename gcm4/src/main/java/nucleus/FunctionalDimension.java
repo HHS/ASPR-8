@@ -5,22 +5,18 @@ import java.util.List;
 import java.util.function.Function;
 
 /**
- * A Dimension represents a single independent dimension of an experiment.
- * Dimensions are composed of a finite number of levels. Each level in a
- * dimension is a function that 1) consumes a type map of plugin data builders,
- * 2) updates those builders to create alternate inputs for each scenario and 3)
- * returns a list of strings representing the variant values in the scenario.
- * 
- *
+ * A Dimension implementation based on Functions as level implementations.
  */
 
-public final class FunctionalDimension {
+public final class FunctionalDimension implements Dimension {
 
 	private static class Data {
 		List<String> metaData = new ArrayList<>();
 		List<Function<DimensionContext, List<String>>> levels = new ArrayList<>();
-		
-		public Data() {}
+
+		public Data() {
+		}
+
 		public Data(Data data) {
 			metaData.addAll(data.metaData);
 			levels.addAll(data.levels);
@@ -82,31 +78,19 @@ public final class FunctionalDimension {
 
 	private final Data data;
 
-	/**
-	 * Returns the meta data for the experiment that describes the
-	 * scenario-level meta data.
-	 */
-	public List<String> getMetaData() {
+	@Override
+	public List<String> getExperimentMetaData() {
 		return new ArrayList<>(data.metaData);
 	}
 
-	public int getMetaDataSize() {
-		return data.metaData.size();
-	}
-
-	/**
-	 * Returns the number of levels in this dimension
-	 */
-	public int size() {
+	@Override
+	public int levelCount() {
 		return data.levels.size();
 	}
 
-	/**
-	 * Returns the function(level) for the given index. Valid indexes are zero
-	 * through size()-1 inclusive.
-	 */
-	public Function<DimensionContext, List<String>> getLevel(int index) {
-		return data.levels.get(index);
+	@Override
+	public List<String> executeLevel(DimensionContext dimensionContext, int level) {
+		return data.levels.get(level).apply(dimensionContext);
 	}
 
 }

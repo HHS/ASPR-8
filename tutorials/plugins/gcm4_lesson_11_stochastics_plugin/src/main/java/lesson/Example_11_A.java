@@ -11,6 +11,7 @@ import lesson.plugins.policy.PolicyPluginData;
 import nucleus.Dimension;
 import nucleus.Experiment;
 import nucleus.ExperimentParameterData;
+import nucleus.FunctionalDimension;
 import nucleus.Plugin;
 import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.StochasticsPluginData;
@@ -37,7 +38,7 @@ public final class Example_11_A {
 	}
 
 	private static Dimension getPolicyDimension() {
-		Dimension.Builder builder = Dimension.builder();//
+		FunctionalDimension.Builder builder = FunctionalDimension.builder();//
 
 		List<Double> schoolClosingInfectionRates = new ArrayList<>();
 		schoolClosingInfectionRates.add(0.05);
