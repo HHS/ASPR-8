@@ -230,9 +230,4 @@ public class AT_WellState {
 		return wellState;
 	}
 
-	private WellState createWellState(Long seed, Integer index, int[] vArray) {
-		int stateIndex = index;
-		WellState wellState = WellState.builder().setInternals(stateIndex, vArray).setSeed(seed).build();
-		return wellState;
-	}
 }
