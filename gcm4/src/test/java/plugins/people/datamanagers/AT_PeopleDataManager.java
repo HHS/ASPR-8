@@ -670,7 +670,7 @@ public final class AT_PeopleDataManager {
 
 	/*
 	 * Returns the people plugin data resulting from several people events over
-	 * several days. Attempt to stop and start the simulation by the given
+	 * several days. Attempts to stop and start the simulation by the given
 	 * number of increments.
 	 */
 	private PeoplePluginData testStateContinuity(int incrementCount) {
