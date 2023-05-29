@@ -1,15 +1,30 @@
 package plugins.stochastics;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
 
 import org.apache.commons.math3.random.RandomGenerator;
+import org.apache.commons.math3.util.FastMath;
+import org.apache.commons.math3.util.Pair;
 import org.junit.jupiter.api.Test;
 
+import nucleus.ActorContext;
 import nucleus.DataManagerContext;
+import nucleus.Plugin;
+import nucleus.Simulation;
+import nucleus.SimulationState;
+import nucleus.testsupport.runcontinuityplugin.RunContinuityPlugin;
+import nucleus.testsupport.runcontinuityplugin.RunContinuityPluginData;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestOutputConsumer;
 import nucleus.testsupport.testplugin.TestPluginData;
@@ -24,118 +39,302 @@ import plugins.stochastics.testsupport.TestRandomGeneratorId;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
-
-import static org.junit.jupiter.api.Assertions.*;
+import util.random.RandomGeneratorProvider;
 
 public class AT_StochasticsDataManager {
 
+	/**
+	 * Demonstrates that the data manager exhibits run continuity. The state of
+	 * the data manager is not effected by repeatedly starting and stopping the
+	 * simulation.
+	 */
 	@Test
 	@UnitTestMethod(target = StochasticsDataManager.class, name = "init", args = { DataManagerContext.class })
-	public void testInit() {
-		// nothing to test
+	public void testStateContinuity() {
+
+		/*
+		 * Note that we are not testing the content of the plugin datas -- that
+		 * is covered by the other state tests. We show here only that the
+		 * resulting plugin data state is the same without regard to how we
+		 * break up the run.
+		 */
+
+		Set<StochasticsPluginData> pluginDatas = new LinkedHashSet<>();
+		pluginDatas.add(testStateContinuity(1));
+		pluginDatas.add(testStateContinuity(6));
+		pluginDatas.add(testStateContinuity(15));
+
+		assertEquals(1, pluginDatas.size());
+
 	}
 
+	/*
+	 * Returns the StochasticsPluginData resulting from several random draws
+	 * over several days. Attempt to stop and start the simulation by the given
+	 * number of increments.
+	 */
+	private StochasticsPluginData testStateContinuity(int incrementCount) {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(4693559432563807708L);
+		/*
+		 * Build the RunContinuityPluginData with five context consumers that
+		 * will add and remove people over several days
+		 */
+		RunContinuityPluginData.Builder continuityBuilder = RunContinuityPluginData.builder();
+
+		for (int i = 0; i < 15; i++) {
+			double time = randomGenerator.nextDouble() * 10;
+			continuityBuilder.addContextConsumer(time, (c) -> {
+				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
+
+				// attempt to add a new rng
+				List<TestRandomGeneratorId> candidates = new ArrayList<>();
+				for (TestRandomGeneratorId id : TestRandomGeneratorId.values()) {
+					if (!stochasticsDataManager.randomNumberGeneratorIdExists(id)) {
+						candidates.add(id);
+					}
+				}
+				if (!candidates.isEmpty()) {
+					TestRandomGeneratorId testRandomGeneratorId = candidates.get(randomGenerator.nextInt(candidates.size()));
+					stochasticsDataManager.addRandomNumberGenerator(testRandomGeneratorId, getRandomWellState(randomGenerator));
+				}
+
+				// randomly stimulate the existing rngs
+				RandomGenerator rng = stochasticsDataManager.getRandomGenerator();
+				if (randomGenerator.nextBoolean()) {
+					rng.nextDouble();
+				}
+				for (RandomNumberGeneratorId id : stochasticsDataManager.getRandomNumberGeneratorIds()) {
+					if (randomGenerator.nextBoolean()) {
+						rng = stochasticsDataManager.getRandomGeneratorFromId(id);
+						rng.nextDouble();
+					}
+				}
+
+			});
+		}
+
+		RunContinuityPluginData runContinuityPluginData = continuityBuilder.build();
+
+		StochasticsPluginData stochasticsPluginData = StochasticsPluginData	.builder()//
+																			.setMainRNGState(getRandomWellState(randomGenerator))//
+																			.build();
+
+		// build the initial simulation state data -- time starts at zero
+		SimulationState simulationState = SimulationState.builder().build();
+
+		/*
+		 * Run the simulation in one day increments until all the plans in the
+		 * run continuity plugin data have been executed
+		 */
+		double haltTime = 0;
+		double maxTime = Double.NEGATIVE_INFINITY;
+		for (Pair<Double, Consumer<ActorContext>> pair : runContinuityPluginData.getConsumers()) {
+			Double time = pair.getFirst();
+			maxTime = FastMath.max(maxTime, time);
+		}
+		double timeIncrement = maxTime / incrementCount;
+		while (!runContinuityPluginData.allPlansComplete()) {
+			haltTime += timeIncrement;
+
+			// build the run continuity plugin
+			Plugin runContinuityPlugin = RunContinuityPlugin.builder()//
+															.setRunContinuityPluginData(runContinuityPluginData)//
+															.build();
+
+			Plugin stochasticsPlugin = StochasticsPlugin.getStochasticsPlugin(stochasticsPluginData);
+
+			TestOutputConsumer outputConsumer = new TestOutputConsumer();
+
+			// execute the simulation so that it produces a people plugin data
+			Simulation simulation = Simulation	.builder()//
+												.addPlugin(runContinuityPlugin)//
+												.addPlugin(stochasticsPlugin)//
+												.setSimulationHaltTime(haltTime)//
+												.setRecordState(true)//
+												.setOutputConsumer(outputConsumer)//
+												.setSimulationState(simulationState)//
+												.build();//
+			simulation.execute();
+
+			// retrieve the people plugin data
+			stochasticsPluginData = outputConsumer.getOutputItem(StochasticsPluginData.class).get();
+
+			// retrieve the simulation state
+			simulationState = outputConsumer.getOutputItem(SimulationState.class).get();
+
+			// retrieve the run continuity plugin data
+			runContinuityPluginData = outputConsumer.getOutputItem(RunContinuityPluginData.class).get();
+		}
+
+		return stochasticsPluginData;
+
+	}
+
+	/**
+	 * Demonstrates that the data manager's initial state reflects its plugin
+	 * data
+	 */
 	@Test
-	@UnitTestMethod(target = StochasticsDataManager.class, name = "init", args = {DataManagerContext.class})
-	public void testInit_State() {
-		testInit_StateSingle();
-		testInit_StateMulti();
-	}
+	@UnitTestMethod(target = StochasticsDataManager.class, name = "init", args = { DataManagerContext.class })
+	public void testStateInitialization() {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(2051947783068799322L);
 
-	private void testInit_StateSingle() {
-		// create initial plugin data
-		WellState wellState = WellState.builder().build();
-		Well well = new Well(wellState);
-		
-		WellState wellState2 = well.getWellState();
-		StochasticsPluginData stochasticsPluginData = StochasticsPluginData.builder()
-				.setMainRNGState(wellState2)
-				.addRNG(TestRandomGeneratorId.BLITZEN, wellState2)
-				.build();
-		List<WellState> expectedWellStates = new ArrayList<>();
+		// Generate a few random well states
+		WellState wellState_MAIN = getRandomWellState(randomGenerator);
+		WellState wellState_BLITZEN = getRandomWellState(randomGenerator);
+		WellState wellState_CUPID = getRandomWellState(randomGenerator);
+		WellState wellState_DANCER = getRandomWellState(randomGenerator);
+
+		// create the initial plugin data with only BLITZEN
+		StochasticsPluginData stochasticsPluginData = StochasticsPluginData	.builder()//
+																			.setMainRNGState(wellState_MAIN)//
+																			.addRNG(TestRandomGeneratorId.BLITZEN, wellState_BLITZEN)//
+																			.addRNG(TestRandomGeneratorId.CUPID, wellState_CUPID)//
+																			.addRNG(TestRandomGeneratorId.DANCER, wellState_DANCER)//
+																			.build();
+
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
-		// add rng within test actor
+		// Have an actor add CUPID and use the various random generators
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
-			WellState wellState3 = WellState.builder().build();
-			Well actorWell = new Well(wellState3);
-			WellState actorWellState = actorWell.getWellState();
-			stochasticsDataManager.addRandomNumberGenerator(TestRandomGeneratorId.CUPID, actorWellState);
-			expectedWellStates.add(actorWellState);
+
+			// show that the rng ids are as expected
+			Set<RandomNumberGeneratorId> expectedIds = new LinkedHashSet<>();
+			expectedIds.add(TestRandomGeneratorId.BLITZEN);
+			expectedIds.add(TestRandomGeneratorId.CUPID);
+			expectedIds.add(TestRandomGeneratorId.DANCER);
+			Set<RandomNumberGeneratorId> actualIds = stochasticsDataManager.getRandomNumberGeneratorIds();
+			assertEquals(expectedIds, actualIds);
+
+			// show that the state of the rngs are correct
+			Well well = (Well) stochasticsDataManager.getRandomGenerator();
+			assertEquals(wellState_MAIN, well.getWellState());
+
+			well = (Well) stochasticsDataManager.getRandomGeneratorFromId(TestRandomGeneratorId.BLITZEN);
+			assertEquals(wellState_BLITZEN, well.getWellState());
+
+			well = (Well) stochasticsDataManager.getRandomGeneratorFromId(TestRandomGeneratorId.CUPID);
+			assertEquals(wellState_CUPID, well.getWellState());
+
+			well = (Well) stochasticsDataManager.getRandomGeneratorFromId(TestRandomGeneratorId.DANCER);
+			assertEquals(wellState_DANCER, well.getWellState());
+
 		}));
 
-		// show that the plugin data contains what we defined
+		// run the simulation
 		TestPluginData testPluginData = pluginBuilder.build();
-		Factory factory = StochasticsTestPluginFactory.factory(3078336459131759089L, testPluginData)
-				.setStochasticsPluginData(stochasticsPluginData);
-		TestOutputConsumer testOutputConsumer = TestSimulation.builder().addPlugins(factory.getPlugins())
-				.setProduceSimulationStateOnHalt(true)
-				.setSimulationHaltTime(2)
-				.build()
-				.execute();
-		Map<StochasticsPluginData, Integer> outputItems = testOutputConsumer.getOutputItems(StochasticsPluginData.class);
-		assertEquals(1, outputItems.size());
-		StochasticsPluginData actualPluginData = outputItems.keySet().iterator().next();
-		StochasticsPluginData expectedPluginData = StochasticsPluginData.builder()
-				.setMainRNGState(wellState2)
-				.addRNG(TestRandomGeneratorId.BLITZEN, wellState2)
-				.addRNG(TestRandomGeneratorId.CUPID, expectedWellStates.get(0))
-				.build();
-		assertEquals(expectedPluginData, actualPluginData);
+		Factory factory = StochasticsTestPluginFactory	.factory(2244108072445615171L, testPluginData)//
+														.setStochasticsPluginData(stochasticsPluginData);
+		TestSimulation	.builder().addPlugins(factory.getPlugins())//
+						.setProduceSimulationStateOnHalt(true)//
+						.setSimulationHaltTime(2)//
+						.build()//
+						.execute();
+
 	}
 
-	private void testInit_StateMulti() {
-		// create initial plugin data
-		WellState wellState = WellState.builder().build();
-		Well well = new Well(wellState);		
-		WellState wellState2 = well.getWellState();
-		StochasticsPluginData stochasticsPluginData = StochasticsPluginData.builder()
-				.setMainRNGState(wellState2)
-				.addRNG(TestRandomGeneratorId.BLITZEN, wellState2)
-				.build();
-		List<WellState> expectedWellStates = new ArrayList<>();
+	/**
+	 * Demonstrates that the data manager produces plugin data that reflects its
+	 * final state
+	 */
+	@Test
+	@UnitTestMethod(target = StochasticsDataManager.class, name = "init", args = { DataManagerContext.class })
+	public void testStateFinalization() {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(2051947783068799322L);
+
+		// Generate a few random well states
+		WellState wellState_MAIN = getRandomWellState(randomGenerator);
+		WellState wellState_BLITZEN = getRandomWellState(randomGenerator);
+		WellState wellState_CUPID = getRandomWellState(randomGenerator);
+		WellState wellState_DANCER = getRandomWellState(randomGenerator);
+
+		// create the initial plugin data with only BLITZEN
+		StochasticsPluginData stochasticsPluginData = StochasticsPluginData	.builder()//
+																			.setMainRNGState(wellState_MAIN)//
+																			.addRNG(TestRandomGeneratorId.BLITZEN, wellState_BLITZEN)//
+																			.build();
+
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
-		// show that the plugin data persists after multiple actions
+		// Have an actor add CUPID and use the various random generators
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
-			WellState wellState3 = WellState.builder().build();
-			Well actorWell = new Well(wellState3);
-			
-			WellState actorWellState = actorWell.getWellState();
-			stochasticsDataManager.addRandomNumberGenerator(TestRandomGeneratorId.CUPID, actorWellState);
-			expectedWellStates.add(actorWellState);
+			stochasticsDataManager.addRandomNumberGenerator(TestRandomGeneratorId.CUPID, wellState_CUPID);
+			RandomGenerator rng = stochasticsDataManager.getRandomGenerator();
+			rng.nextBoolean();
+			rng.nextInt();
+			rng = stochasticsDataManager.getRandomGeneratorFromId(TestRandomGeneratorId.CUPID);
+			rng.nextDouble();
+			rng.nextDouble();
+			rng.nextDouble();
 		}));
 
+		// Have an actor add DANCER and use the various random generators
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
-			WellState wellState3 = WellState.builder().build();
-			Well actorWell = new Well(wellState3);
-			
-			WellState actorWellState = actorWell.getWellState();
-			stochasticsDataManager.addRandomNumberGenerator(TestRandomGeneratorId.DANCER, actorWellState);
-			expectedWellStates.add(actorWellState);
+			stochasticsDataManager.addRandomNumberGenerator(TestRandomGeneratorId.DANCER, wellState_DANCER);
+			RandomGenerator rng = stochasticsDataManager.getRandomGenerator();
+			rng.nextInt();
+			rng.nextLong();
+			rng = stochasticsDataManager.getRandomGeneratorFromId(TestRandomGeneratorId.DANCER);
+			rng.nextBoolean();
+			rng.nextBoolean();
+			rng.nextFloat();
+			rng = stochasticsDataManager.getRandomGeneratorFromId(TestRandomGeneratorId.CUPID);
+			rng.nextLong();
+			rng.nextDouble();
+			rng.nextDouble();
+
 		}));
 
-		// show that the plugin data contains what we defined
+		// run the simulation
 		TestPluginData testPluginData = pluginBuilder.build();
-		Factory factory = StochasticsTestPluginFactory.factory(3078336459131759089L, testPluginData)
-				.setStochasticsPluginData(stochasticsPluginData);
-		TestOutputConsumer testOutputConsumer = TestSimulation.builder().addPlugins(factory.getPlugins())
-				.setProduceSimulationStateOnHalt(true)
-				.setSimulationHaltTime(2)
-				.build()
-				.execute();
+		Factory factory = StochasticsTestPluginFactory	.factory(3078336459131759089L, testPluginData)//
+														.setStochasticsPluginData(stochasticsPluginData);
+		TestOutputConsumer testOutputConsumer = TestSimulation	.builder().addPlugins(factory.getPlugins())//
+																.setProduceSimulationStateOnHalt(true)//
+																.setSimulationHaltTime(2)//
+																.build()//
+																.execute();
+		// Get the resulting StochasticsPluginData
 		Map<StochasticsPluginData, Integer> outputItems = testOutputConsumer.getOutputItems(StochasticsPluginData.class);
 		assertEquals(1, outputItems.size());
 		StochasticsPluginData actualPluginData = outputItems.keySet().iterator().next();
-		StochasticsPluginData expectedPluginData = StochasticsPluginData.builder()
-				.setMainRNGState(wellState2)
-				.addRNG(TestRandomGeneratorId.BLITZEN, wellState2)
-				.addRNG(TestRandomGeneratorId.CUPID, expectedWellStates.get(0))
-				.addRNG(TestRandomGeneratorId.DANCER, expectedWellStates.get(1))
-				.build();
+
+		/*
+		 * Build the expected StochasticsPluginData by repeating the actions of
+		 * the actors for each well
+		 */
+		StochasticsPluginData.Builder builder = StochasticsPluginData.builder();//
+		Well well = new Well(wellState_MAIN);
+		well.nextBoolean();
+		well.nextInt();
+		well.nextInt();
+		well.nextLong();
+		builder.setMainRNGState(well.getWellState());
+
+		well = new Well(wellState_BLITZEN);
+		builder.addRNG(TestRandomGeneratorId.BLITZEN, well.getWellState());
+
+		well = new Well(wellState_CUPID);
+		well.nextDouble();
+		well.nextDouble();
+		well.nextDouble();
+		well.nextLong();
+		well.nextDouble();
+		well.nextDouble();
+		builder.addRNG(TestRandomGeneratorId.CUPID, well.getWellState());
+
+		well = new Well(wellState_DANCER);
+		well.nextBoolean();
+		well.nextBoolean();
+		well.nextFloat();
+		builder.addRNG(TestRandomGeneratorId.DANCER, well.getWellState());
+
+		StochasticsPluginData expectedPluginData = builder.build();
+
+		// show the resulting plugin data are equal
 		assertEquals(expectedPluginData, actualPluginData);
 	}
 
@@ -187,13 +386,12 @@ public class AT_StochasticsDataManager {
 		});
 
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
-		
-		
+
 		// precondition test : if the random number generator is null
-		ContractException contractException = assertThrows(ContractException.class, () ->{
+		ContractException contractException = assertThrows(ContractException.class, () -> {
 			Factory factory2 = StochasticsTestPluginFactory.factory(1893848105389404535L, (c) -> {
 				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
-				stochasticsDataManager.getRandomGeneratorFromId(null);			
+				stochasticsDataManager.getRandomGeneratorFromId(null);
 			});
 			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
 		});
@@ -250,6 +448,18 @@ public class AT_StochasticsDataManager {
 		// test of constructor is covered by the method tests
 	}
 
-	
+	private WellState getRandomWellState(RandomGenerator randomGenerator) {
+		int stateIndex = randomGenerator.nextInt(1390);
+		int[] vArray = new int[1391];
+
+		for (int i = 0; i < 1391; i++) {
+			vArray[i] = randomGenerator.nextInt();
+		}
+		WellState wellState = WellState	.builder()//
+										.setInternals(stateIndex, vArray)//
+										.setSeed(randomGenerator.nextLong())//
+										.build();
+		return wellState;
+	}
 
 }

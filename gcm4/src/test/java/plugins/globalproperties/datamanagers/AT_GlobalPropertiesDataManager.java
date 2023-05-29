@@ -12,18 +12,27 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.stream.IntStream;
 
-import nucleus.testsupport.testplugin.TestOutputConsumer;
 import org.apache.commons.math3.random.RandomGenerator;
+import org.apache.commons.math3.util.FastMath;
+import org.apache.commons.math3.util.Pair;
 import org.junit.jupiter.api.Test;
 
+import nucleus.ActorContext;
 import nucleus.DataManagerContext;
 import nucleus.EventFilter;
 import nucleus.Plugin;
+import nucleus.Simulation;
+import nucleus.SimulationState;
+import nucleus.testsupport.runcontinuityplugin.RunContinuityPlugin;
+import nucleus.testsupport.runcontinuityplugin.RunContinuityPluginData;
 import nucleus.testsupport.testplugin.TestActorPlan;
+import nucleus.testsupport.testplugin.TestOutputConsumer;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestSimulation;
+import plugins.globalproperties.GlobalPropertiesPlugin;
 import plugins.globalproperties.GlobalPropertiesPluginData;
 import plugins.globalproperties.events.GlobalPropertyDefinitionEvent;
 import plugins.globalproperties.events.GlobalPropertyUpdateEvent;
@@ -44,10 +53,144 @@ import util.random.RandomGeneratorProvider;
 import util.wrappers.MultiKey;
 
 public final class AT_GlobalPropertiesDataManager {
+	/**
+	 * Demonstrates that the data manager exhibits run continuity. The state of
+	 * the data manager is not effected by repeatedly starting and stopping the
+	 * simulation.
+	 */
+	@Test
+	@UnitTestMethod(target = GlobalPropertiesDataManager.class, name = "init", args = { DataManagerContext.class })
+	public void testStateContinuity() {
 
-	/////////////////////////////////
-	// from the resolver
-	////////////////////
+		/*
+		 * Note that we are not testing the content of the plugin datas -- that
+		 * is covered by the other state tests. We show here only that the
+		 * resulting plugin data state is the same without regard to how we
+		 * break up the run.
+		 */
+
+		Set<GlobalPropertiesPluginData> pluginDatas = new LinkedHashSet<>();
+		pluginDatas.add(testStateContinuity(1));
+		pluginDatas.add(testStateContinuity(5));
+		pluginDatas.add(testStateContinuity(10));
+
+		assertEquals(1, pluginDatas.size());
+
+	}
+
+	/*
+	 * Returns the GlobalPropertiesPluginData resulting from several global
+	 * properties related events over several days. Attempt to stop and start
+	 * the simulation by the given number of increments.
+	 */
+	private GlobalPropertiesPluginData testStateContinuity(int incrementCount) {
+
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(5369912793633438426L);
+
+		/*
+		 * Build the RunContinuityPluginData with context consumers that will
+		 * add and set global property values
+		 */
+		RunContinuityPluginData.Builder continuityBuilder = RunContinuityPluginData.builder();
+
+		for (int i = 0; i < 10; i++) {
+			double time = randomGenerator.nextDouble() * 10;
+			continuityBuilder.addContextConsumer(time, (c) -> {
+				GlobalPropertiesDataManager globalPropertiesDataManager = c.getDataManager(GlobalPropertiesDataManager.class);
+
+				// attempt to add a new property definition
+				for (TestGlobalPropertyId testGlobalPropertyId : TestGlobalPropertyId.values()) {
+					if (!globalPropertiesDataManager.globalPropertyIdExists(testGlobalPropertyId)) {
+						PropertyDefinition propertyDefinition = testGlobalPropertyId.getPropertyDefinition();
+						Object propertyValue = testGlobalPropertyId.getRandomPropertyValue(randomGenerator);
+						GlobalPropertyInitialization globalPropertyInitialization = //
+								GlobalPropertyInitialization.builder()//
+															.setGlobalPropertyId(testGlobalPropertyId)//
+															.setPropertyDefinition(propertyDefinition)//
+															.setValue(propertyValue)//
+															.build();
+						globalPropertiesDataManager.defineGlobalProperty(globalPropertyInitialization);
+
+					}
+				}
+
+				// find a global property to update
+				Set<TestGlobalPropertyId> globalPropertyIds = globalPropertiesDataManager.getGlobalPropertyIds();
+				
+				List<TestGlobalPropertyId> candidates = new ArrayList<>();
+				
+				for (TestGlobalPropertyId globalPropertyId : globalPropertyIds) {
+					if(globalPropertiesDataManager.getGlobalPropertyDefinition(globalPropertyId).propertyValuesAreMutable()) {
+						candidates.add(globalPropertyId);
+					}
+				}
+				if(!candidates.isEmpty()) {
+					TestGlobalPropertyId testGlobalPropertyId = candidates.get(randomGenerator.nextInt(candidates.size()));
+					Object propertyValue = testGlobalPropertyId.getRandomPropertyValue(randomGenerator);
+					globalPropertiesDataManager.setGlobalPropertyValue(testGlobalPropertyId, propertyValue);
+				}
+			});
+		}
+
+		RunContinuityPluginData runContinuityPluginData = continuityBuilder.build();
+
+		// Build an empty global properties plugin data for time zero
+		GlobalPropertiesPluginData globalPropertiesPluginData = GlobalPropertiesPluginData.builder().build();
+
+		// build the initial simulation state data -- time starts at zero
+		SimulationState simulationState = SimulationState.builder().build();
+
+		/*
+		 * Run the simulation in one day increments until all the plans in the
+		 * run continuity plugin data have been executed
+		 */
+		double haltTime = 0;
+		double maxTime = Double.NEGATIVE_INFINITY;
+		for (Pair<Double, Consumer<ActorContext>> pair : runContinuityPluginData.getConsumers()) {
+			Double time = pair.getFirst();
+			maxTime = FastMath.max(maxTime, time);
+		}
+		double timeIncrement = maxTime / incrementCount;
+		while (!runContinuityPluginData.allPlansComplete()) {
+			haltTime += timeIncrement;
+
+			// build the run continuity plugin
+			Plugin runContinuityPlugin = RunContinuityPlugin.builder()//
+															.setRunContinuityPluginData(runContinuityPluginData)//
+															.build();
+
+			// build the people plugin
+			Plugin globalPropertiesPlugin = GlobalPropertiesPlugin	.builder()//
+																	.setGlobalPropertiesPluginData(globalPropertiesPluginData)//
+																	.getGlobalPropertiesPlugin();
+
+			TestOutputConsumer outputConsumer = new TestOutputConsumer();
+
+			// execute the simulation so that it produces a people plugin data
+			Simulation simulation = Simulation	.builder()//
+												.addPlugin(globalPropertiesPlugin)//
+												.addPlugin(runContinuityPlugin)//
+												.setSimulationHaltTime(haltTime)//
+												.setRecordState(true)//
+												.setOutputConsumer(outputConsumer)//
+												.setSimulationState(simulationState)//
+												.build();//
+			simulation.execute();
+
+			// retrieve the people plugin data
+			globalPropertiesPluginData = outputConsumer.getOutputItem(GlobalPropertiesPluginData.class).get();
+
+			// retrieve the simulation state
+			simulationState = outputConsumer.getOutputItem(SimulationState.class).get();
+
+			// retrieve the run continuity plugin data
+			runContinuityPluginData = outputConsumer.getOutputItem(RunContinuityPluginData.class).get();
+		}
+
+		return globalPropertiesPluginData;
+
+	}
+
 	@Test
 	@UnitTestConstructor(target = GlobalPropertiesDataManager.class, args = { GlobalPropertiesPluginData.class })
 	public void testConstructor() {
@@ -55,9 +198,13 @@ public final class AT_GlobalPropertiesDataManager {
 		assertEquals(GlobalPropertiesError.NULL_GLOBAL_PLUGIN_DATA, contractException.getErrorType());
 	}
 
+	/**
+	 * Demonstrates that the data manager's initial state reflects its plugin
+	 * data
+	 */
 	@Test
 	@UnitTestMethod(target = GlobalPropertiesDataManager.class, name = "init", args = { DataManagerContext.class })
-	public void testInit() {
+	public void testStateInitialization() {
 
 		Map<GlobalPropertyId, Object> expectedPropertyValues = new LinkedHashMap<>();
 		GlobalPropertiesPluginData.Builder globalsPluginBuilder = GlobalPropertiesPluginData.builder();
@@ -67,10 +214,10 @@ public final class AT_GlobalPropertiesDataManager {
 		for (TestGlobalPropertyId testGlobalPropertyId : TestGlobalPropertyId.values()) {
 			PropertyDefinition propertyDefinition = testGlobalPropertyId.getPropertyDefinition();
 			globalsPluginBuilder.defineGlobalProperty(testGlobalPropertyId, propertyDefinition, 0);
-			if(propertyDefinition.getDefaultValue().isPresent()) {
+			if (propertyDefinition.getDefaultValue().isPresent()) {
 				expectedPropertyValues.put(testGlobalPropertyId, propertyDefinition.getDefaultValue().get());
 			} else {
-				Object value =  testGlobalPropertyId.getRandomPropertyValue(randomGenerator);
+				Object value = testGlobalPropertyId.getRandomPropertyValue(randomGenerator);
 				globalsPluginBuilder.setGlobalPropertyValue(testGlobalPropertyId, value, 0);
 				expectedPropertyValues.put(testGlobalPropertyId, value);
 			}
@@ -113,9 +260,13 @@ public final class AT_GlobalPropertiesDataManager {
 
 	}
 
+	/**
+	 * Demonstrates that the data manager produces plugin data that reflects its
+	 * final state
+	 */
 	@Test
 	@UnitTestMethod(target = GlobalPropertiesDataManager.class, name = "init", args = { DataManagerContext.class })
-	public void testInit_State() {
+	public void testStateFinalization() {
 
 		GlobalPropertiesPluginData.Builder globalsPluginBuilder = GlobalPropertiesPluginData.builder();
 		GlobalPropertiesPluginData globalPropertiesPluginData = globalsPluginBuilder.build();
@@ -153,8 +304,7 @@ public final class AT_GlobalPropertiesDataManager {
 																									.setPropertyDefinition(propertyDefinition2).build();
 
 		PropertyDefinition propertyDefinition3 = TestGlobalPropertyId.GLOBAL_PROPERTY_3_DOUBLE_MUTABLE.getPropertyDefinition();
-		GlobalPropertyInitialization globalPropertyInitialization3 = GlobalPropertyInitialization	.builder().setGlobalPropertyId(TestGlobalPropertyId.GLOBAL_PROPERTY_3_DOUBLE_MUTABLE)
-																									.setValue(10.0)
+		GlobalPropertyInitialization globalPropertyInitialization3 = GlobalPropertyInitialization	.builder().setGlobalPropertyId(TestGlobalPropertyId.GLOBAL_PROPERTY_3_DOUBLE_MUTABLE).setValue(10.0)
 																									.setPropertyDefinition(propertyDefinition3).build();
 
 		testPluginDataBuilder = TestPluginData.builder();
