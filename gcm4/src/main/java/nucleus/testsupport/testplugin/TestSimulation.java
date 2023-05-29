@@ -159,9 +159,14 @@ public class TestSimulation {
 		Map<TestScenarioReport, Integer> outputItems = data.testOutputConsumer.getOutputItems(TestScenarioReport.class);
 		boolean complete = false;
 
+		if (outputItems.size() < 1) {
+			throw new ContractException(TestError.MISSING_TEST_SCENARIO_REPORTS);
+		}
+		
 		if (outputItems.size() > 1) {
 			throw new ContractException(TestError.DUPLICATE_TEST_SCENARIO_REPORTS);
 		}
+		
 
 		TestScenarioReport testScenarioReport = outputItems.keySet().iterator().next();
 		Integer count = outputItems.get(testScenarioReport);
