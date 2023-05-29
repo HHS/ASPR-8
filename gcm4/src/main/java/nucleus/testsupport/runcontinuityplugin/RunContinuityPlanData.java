@@ -2,10 +2,10 @@ package nucleus.testsupport.runcontinuityplugin;
 
 import nucleus.PlanData;
 
-public final class ContinuityPlanData implements PlanData {
+public final class RunContinuityPlanData implements PlanData {
 	private final int id;
 
-	public ContinuityPlanData(int id) {
+	public RunContinuityPlanData(int id) {
 		this.id = id;
 	}
 	

@@ -20,7 +20,7 @@ public class RunContinuityActor implements Consumer<ActorContext>{
 	
 	public void accept(ActorContext actorContext) {
 		this.actorContext = actorContext;
-		actorContext.setPlanDataConverter(ContinuityPlanData.class, this::getConsumerFromPlanData);
+		actorContext.setPlanDataConverter(RunContinuityPlanData.class, this::getConsumerFromPlanData);
 		
 		completionCount.setValue(runContinuityPluginData.getCompletionCount());
 		
@@ -31,7 +31,7 @@ public class RunContinuityActor implements Consumer<ActorContext>{
 				double time = pair.getFirst();
 				Consumer<ActorContext> consumer = pair.getSecond();
 				
-				ContinuityPlanData continuityPluginData = new ContinuityPlanData(i); 
+				RunContinuityPlanData continuityPluginData = new RunContinuityPlanData(i); 
 				
 				Plan<ActorContext> plan = Plan	.builder(ActorContext.class)//
 						.setTime(time)//
@@ -45,8 +45,8 @@ public class RunContinuityActor implements Consumer<ActorContext>{
 		actorContext.subscribeToSimulationClose(this::recordState);
 	}
 	
-	private Consumer<ActorContext> getConsumerFromPlanData(ContinuityPlanData continuityPlanData){
-		 Consumer<ActorContext> consumer = runContinuityPluginData.getConsumers().get(continuityPlanData.getId()).getSecond();
+	private Consumer<ActorContext> getConsumerFromPlanData(RunContinuityPlanData runContinuityPlanData){
+		 Consumer<ActorContext> consumer = runContinuityPluginData.getConsumers().get(runContinuityPlanData.getId()).getSecond();
 		 return (c)->executePlan(consumer);
 	}
 	

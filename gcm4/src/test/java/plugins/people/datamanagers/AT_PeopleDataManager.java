@@ -652,13 +652,27 @@ public final class AT_PeopleDataManager {
 	@UnitTestMethod(target = PeopleDataManager.class, name = "init", args = { DataManagerContext.class })
 	public void testStateContinuity() {
 
-		PeoplePluginData peoplePluginData1 = testStateContinuity(1);
-		PeoplePluginData peoplePluginData2 = testStateContinuity(10);
+		/*
+		 * Note that we are not testing the content of the plugin datas -- that
+		 * is covered by the other state tests. We show here only that the
+		 * resulting plugin data state is the same without regard to how we
+		 * break up the run.
+		 */
 
-		assertEquals(peoplePluginData1, peoplePluginData2);
+		Set<PeoplePluginData> pluginDatas = new LinkedHashSet<>();
+		pluginDatas.add(testStateContinuity(1));
+		pluginDatas.add(testStateContinuity(5));
+		pluginDatas.add(testStateContinuity(10));
+
+		assertEquals(1, pluginDatas.size());
 
 	}
 
+	/*
+	 * Returns the people plugin data resulting from several people events over
+	 * several days. Attempt to stop and start the simulation by the given
+	 * number of increments.
+	 */
 	private PeoplePluginData testStateContinuity(int incrementCount) {
 
 		/*
@@ -758,32 +772,6 @@ public final class AT_PeopleDataManager {
 			// retrieve the run continuity plugin data
 			runContinuityPluginData = outputConsumer.getOutputItem(RunContinuityPluginData.class).get();
 		}
-
-		/*
-		 * We need to show that at least some changes were made to people plugin
-		 * data to avoid a false positive test
-		 * 
-		 * Build the expected people plugin data having:
-		 * 
-		 * people 2,5,7,8,9,11,12,13,14,15,16
-		 * 
-		 * last person action at time 4.2
-		 * 
-		 * a total of 17 people positions used
-		 * 
-		 * 
-		 */
-
-		PeoplePluginData expectedPeoplePluginData = PeoplePluginData.builder()//
-																	.addPersonRange(new PersonRange(2, 2))//
-																	.addPersonRange(new PersonRange(5, 5))//
-																	.addPersonRange(new PersonRange(7, 9))//
-																	.addPersonRange(new PersonRange(11, 16))//
-																	.setAssignmentTime(4.2)//
-																	.setPersonCount(17)//
-																	.build();
-		// compare this to the expected state
-		assertEquals(expectedPeoplePluginData, peoplePluginData);
 
 		return peoplePluginData;
 
