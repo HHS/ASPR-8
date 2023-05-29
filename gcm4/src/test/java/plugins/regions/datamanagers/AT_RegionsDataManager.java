@@ -2571,7 +2571,7 @@ public class AT_RegionsDataManager {
 	 * simulation.
 	 */
 	@Test
-	@UnitTestMethod(target = PeopleDataManager.class, name = "init", args = { DataManagerContext.class })
+	@UnitTestMethod(target = RegionsDataManager.class, name = "init", args = { DataManagerContext.class })
 	public void testStateContinuity() {
 
 		/*
