@@ -1,4 +1,4 @@
-package plugins.people.datamanagers;
+package nucleus.testsupport.runcontinuityplugin;
 
 import java.util.List;
 import java.util.function.Consumer;

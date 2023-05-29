@@ -1,4 +1,4 @@
-package plugins.people.datamanagers;
+package nucleus.testsupport.runcontinuityplugin;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -23,6 +23,8 @@ import nucleus.EventFilter;
 import nucleus.Plugin;
 import nucleus.Simulation;
 import nucleus.SimulationState;
+import nucleus.testsupport.runcontinuityplugin.RunContinuityPlugin;
+import nucleus.testsupport.runcontinuityplugin.RunContinuityPluginData;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestOutputConsumer;
 import nucleus.testsupport.testplugin.TestPluginData;

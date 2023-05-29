@@ -1,4 +1,4 @@
-package plugins.people.datamanagers;
+package nucleus.testsupport.runcontinuityplugin;
 
 import net.jcip.annotations.ThreadSafe;
 import nucleus.Plugin;
