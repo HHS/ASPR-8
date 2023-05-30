@@ -20,26 +20,32 @@ public final class Translator {
         this.data = data;
     }
 
-    private static class Data {
+    protected static class Data {
         private TranslatorId translatorId;
         private Consumer<TranslatorContext> initializer;
         private final Set<TranslatorId> dependencies = new LinkedHashSet<>();
 
-        private Data() {
+        protected Data() {
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(translatorId, initializer, dependencies);
+            return Objects.hash(translatorId, dependencies);
         }
 
         @Override
         public boolean equals(Object obj) {
-            // Objects.equals will automatically return if a == b, so not need for check
-
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null) {
+                return false;
+            }
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
             Data other = (Data) obj;
-            return Objects.equals(translatorId, other.translatorId) && Objects.equals(initializer, other.initializer)
-                    && Objects.equals(dependencies, other.dependencies);
+            return Objects.equals(translatorId, other.translatorId) && Objects.equals(dependencies, other.dependencies);
         }
 
     }
@@ -183,7 +189,4 @@ public final class Translator {
         return Objects.equals(data, other.data);
     }
 
-    protected Builder cloneBuilder() {
-        return new Builder(data);
-    }
 }

@@ -8,6 +8,11 @@ import plugins.globalproperties.reports.GlobalPropertyReportPluginData;
 import plugins.globalproperties.support.GlobalPropertyId;
 import plugins.reports.support.ReportLabel;
 
+/**
+ * TranslationSpec that defines how to convert between
+ * {@linkplain GlobalPropertyReportPluginDataInput} and
+ * {@linkplain GlobalPropertyReportPluginData}
+ */
 public class GlobalPropertyReportPluginDataTranslationSpec
         extends ProtobufTranslationSpec<GlobalPropertyReportPluginDataInput, GlobalPropertyReportPluginData> {
 

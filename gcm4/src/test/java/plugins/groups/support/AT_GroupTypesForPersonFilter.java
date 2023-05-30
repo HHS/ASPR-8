@@ -12,7 +12,6 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import nucleus.NucleusError;
-import nucleus.SimulationContext;
 import nucleus.testsupport.testplugin.TestSimulation;
 import plugins.groups.datamanagers.GroupsDataManager;
 import plugins.groups.events.GroupMembershipAdditionEvent;
@@ -21,9 +20,11 @@ import plugins.groups.testsupport.GroupsTestPluginFactory;
 import plugins.groups.testsupport.GroupsTestPluginFactory.Factory;
 import plugins.groups.testsupport.TestGroupTypeId;
 import plugins.partitions.support.Equality;
-import plugins.partitions.support.Filter;
 import plugins.partitions.support.FilterSensitivity;
 import plugins.partitions.support.PartitionError;
+import plugins.partitions.support.PartitionsContext;
+import plugins.partitions.support.filters.Filter;
+import plugins.partitions.testsupport.TestPartitionsContext;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
@@ -41,14 +42,15 @@ public class AT_GroupTypesForPersonFilter {
 	}
 
 	@Test
-	@UnitTestMethod(target = GroupTypesForPersonFilter.class, name = "validate", args = { SimulationContext.class })
+	@UnitTestMethod(target = GroupTypesForPersonFilter.class, name = "validate", args = { PartitionsContext.class })
 	public void testValidate() {
 		// precondition tests
 
 		// if the equality operator is null
 		Factory factory = GroupsTestPluginFactory.factory(100, 3, 10, 1499199255771310930L, (c) -> {
+			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
 			ContractException contractException = assertThrows(ContractException.class,
-					() -> new GroupTypesForPersonFilter(null, 5).validate(c));
+					() -> new GroupTypesForPersonFilter(null, 5).validate(testPartitionsContext));
 			assertEquals(PartitionError.NULL_EQUALITY_OPERATOR, contractException.getErrorType());
 		});
 		
@@ -84,12 +86,12 @@ public class AT_GroupTypesForPersonFilter {
 	}
 
 	@Test
-	@UnitTestMethod(target = GroupTypesForPersonFilter.class, name = "evaluate", args = { SimulationContext.class,
+	@UnitTestMethod(target = GroupTypesForPersonFilter.class, name = "evaluate", args = { PartitionsContext.class,
 			PersonId.class })
 	public void testEvaluate() {
 
 		Factory factory = GroupsTestPluginFactory.factory(100, 3, 10, 2954287333801626073L, (c) -> {
-
+			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
 			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			List<PersonId> people = peopleDataManager.getPeople();
@@ -125,7 +127,7 @@ public class AT_GroupTypesForPersonFilter {
 
 			for (PersonId personId : people) {
 				boolean expected = groupsDataManager.getGroupTypeCountForPersonId(personId) == 2;
-				boolean actual = filter.evaluate(c, personId);
+				boolean actual = filter.evaluate(testPartitionsContext, personId);
 				assertEquals(expected, actual);
 			}
 
@@ -135,12 +137,12 @@ public class AT_GroupTypesForPersonFilter {
 			assertEquals(NucleusError.NULL_SIMULATION_CONTEXT, contractException.getErrorType());
 
 			/* precondition: if the person id is null */
-			contractException = assertThrows(ContractException.class, () -> filter.evaluate(c, null));
+			contractException = assertThrows(ContractException.class, () -> filter.evaluate(testPartitionsContext, null));
 			assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
 
 			/* precondition: if the person id is unknown */
 			contractException = assertThrows(ContractException.class,
-					() -> filter.evaluate(c, new PersonId(123412342)));
+					() -> filter.evaluate(testPartitionsContext, new PersonId(123412342)));
 			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
 
 		});

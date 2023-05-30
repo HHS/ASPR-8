@@ -3,13 +3,12 @@ package plugins.regions.support;
 import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Function;
 
 import nucleus.Event;
 import nucleus.NucleusError;
-import nucleus.SimulationContext;
 import plugins.partitions.support.Labeler;
 import plugins.partitions.support.LabelerSensitivity;
+import plugins.partitions.support.PartitionsContext;
 import plugins.people.support.PersonId;
 import plugins.regions.datamanagers.RegionsDataManager;
 import plugins.regions.events.PersonRegionUpdateEvent;
@@ -23,53 +22,46 @@ import util.errors.ContractException;
  * 
  *
  */
-public final class RegionLabeler implements Labeler {
+public abstract class RegionLabeler implements Labeler {
 
-	private final Function<RegionId, Object> regionLabelingFunction;
+	protected abstract Object getLabelFromRegionId(RegionId regionId);
 
 	private RegionsDataManager regionsDataManager;
 
-	/**
-	 * Creates the Region labeler from the given labeling function
-	 * 
-	 * 
-	 */
-	public RegionLabeler(Function<RegionId, Object> regionLabelingFunction) {
-		this.regionLabelingFunction = regionLabelingFunction;
-	}
+	
 
 	private Optional<PersonId> getPersonId(PersonRegionUpdateEvent personRegionUpdateEvent) {
 		return Optional.of(personRegionUpdateEvent.personId());
 	}
 
 	@Override
-	public Set<LabelerSensitivity<?>> getLabelerSensitivities() {
+	public final Set<LabelerSensitivity<?>> getLabelerSensitivities() {
 		Set<LabelerSensitivity<?>> result = new LinkedHashSet<>();
 		result.add(new LabelerSensitivity<PersonRegionUpdateEvent>(PersonRegionUpdateEvent.class, this::getPersonId));
 		return result;
 	}
 
 	@Override
-	public Object getLabel(SimulationContext simulationContext, PersonId personId) {
-		if (simulationContext == null) {
+	public final Object getCurrentLabel(PartitionsContext partitionsContext, PersonId personId) {
+		if (partitionsContext == null) {
 			throw new ContractException(NucleusError.NULL_SIMULATION_CONTEXT);
 		}
 		if (regionsDataManager == null) {
-			regionsDataManager = simulationContext.getDataManager(RegionsDataManager.class);
+			regionsDataManager = partitionsContext.getDataManager(RegionsDataManager.class);
 		}
 		RegionId regionId = regionsDataManager.getPersonRegion(personId);
-		return regionLabelingFunction.apply(regionId);
+		return getLabelFromRegionId(regionId);
 	}
 
 	@Override
-	public Object getDimension() {
+	public final Object getId() {
 		return RegionId.class;
 	}
 
 	@Override
-	public Object getPastLabel(SimulationContext simulationContext, Event event) {
+	public final Object getPastLabel(PartitionsContext partitionsContext, Event event) {
 		PersonRegionUpdateEvent personRegionUpdateEvent = (PersonRegionUpdateEvent) event;
-		return regionLabelingFunction.apply(personRegionUpdateEvent.previousRegionId());
+		return getLabelFromRegionId(personRegionUpdateEvent.previousRegionId());
 	}
 
 }

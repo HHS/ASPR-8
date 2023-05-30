@@ -16,6 +16,8 @@ import lesson.plugins.model.PersonProperty;
 import lesson.plugins.model.Region;
 import nucleus.Dimension;
 import nucleus.Experiment;
+import nucleus.ExperimentParameterData;
+import nucleus.FunctionalDimension;
 import nucleus.Plugin;
 import plugins.globalproperties.GlobalPropertiesPlugin;
 import plugins.globalproperties.GlobalPropertiesPluginData;
@@ -112,7 +114,7 @@ public final class Example_16 {
 	}
 
 	private Dimension getGlobalPropertyDimension(GlobalPropertyId globalPropertyId, String header, double[] values) {
-		Dimension.Builder dimensionBuilder = Dimension.builder();//
+		FunctionalDimension.Builder dimensionBuilder = FunctionalDimension.builder();//
 		IntStream.range(0, values.length).forEach((i) -> {
 			dimensionBuilder.addLevel((context) -> {
 				GlobalPropertiesPluginData.Builder builder = context.get(GlobalPropertiesPluginData.Builder.class);
@@ -233,6 +235,10 @@ public final class Example_16 {
 		/*
 		 * Assemble and execute the experiment
 		 */
+		
+		ExperimentParameterData experimentParameterData = ExperimentParameterData.builder()//
+				.setThreadCount(8)//				
+				.build();
 
 		Experiment	.builder()//
 
@@ -251,7 +257,7 @@ public final class Example_16 {
 					.addDimension(getEducationSuccessRatedimension())//
 					.addDimension(getVaccineRefusalProbabilityDimension())//
 					.addExperimentContextConsumer(nioReportItemHandler)//
-					.setThreadCount(8)//
+					.setExperimentParameterData(experimentParameterData)//
 					.build()//
 					.execute();//
 

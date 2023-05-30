@@ -10,6 +10,8 @@ import util.errors.ContractException;
  *
  */
 public enum TestError implements ContractError {
+	MULTIPLE_MATCHING_ITEMS("Multiple items were found matching "),
+	MISSING_TEST_SCENARIO_REPORTS("Missing test scenario report likely due to not including a TestPlugin"),
 	DUPLICATE_TEST_SCENARIO_REPORTS("Duplicate test scenario reports"),
 	NULL_ALIAS("Null alias value"),
 	NULL_OUTPUT_ITEM("Null released output item"),

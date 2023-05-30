@@ -7,7 +7,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.LinkedHashMap;
@@ -76,13 +75,11 @@ import plugins.resources.testsupport.TestResourceId;
 import plugins.stochastics.StochasticsDataManager;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
-import plugins.util.properties.TimeTrackingPolicy;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.random.RandomGeneratorProvider;
 import util.wrappers.MultiKey;
-import util.wrappers.MutableDouble;
 import util.wrappers.MutableLong;
 
 public class AT_MaterialsDataManager {
@@ -1225,159 +1222,6 @@ public class AT_MaterialsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(target = MaterialsDataManager.class, name = "getBatchPropertyTime", args = { BatchId.class, BatchPropertyId.class })
-	public void testGetBatchPropertyTime() {
-		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
-
-		// create a data structure to hold the assignments we expect to
-		// retrieve.
-		Map<MultiKey, MutableDouble> expectedAssignmentTimes = new LinkedHashMap<>();
-
-		// create an actor
-
-		/*
-		 * Have the actor add 50 randomized batches and record the assignment
-		 * times for all properties
-		 */
-		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
-			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
-
-			// create a few batches
-			for (int i = 0; i < 50; i++) {
-				MaterialId materialId = TestMaterialId.getRandomMaterialId(randomGenerator);
-				double amount = randomGenerator.nextDouble();
-				BatchConstructionInfo batchConstructionInfo = TestBatchConstructionInfo.getBatchConstructionInfo(TestMaterialsProducerId.MATERIALS_PRODUCER_3, materialId, amount, randomGenerator);
-				BatchId batchId = materialsDataManager.addBatch(batchConstructionInfo);
-				Set<TestBatchPropertyId> batchPropertyIds = materialsDataManager.getBatchPropertyIds(materialId);
-				for (TestBatchPropertyId batchPropertyId : batchPropertyIds) {
-					expectedAssignmentTimes.put(new MultiKey(batchId, batchPropertyId), new MutableDouble(c.getTime()));
-				}
-			}
-		}));
-
-		/*
-		 * Have the actor alter about 1/3 of batch property values at 10
-		 * distinct times, recording the new assignment times as we go.
-		 */
-		for (int i = 1; i < 10; i++) {
-			double actionTime = i;
-			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(actionTime, (c) -> {
-				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
-				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
-				RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
-
-				// plan several times to alter some of the batch properties
-
-				// alter the batch properties
-
-				List<BatchId> inventoryBatches = materialsDataManager.getInventoryBatches(TestMaterialsProducerId.MATERIALS_PRODUCER_3);
-				for (BatchId batchId : inventoryBatches) {
-					MaterialId materialId = materialsDataManager.getBatchMaterial(batchId);
-					Set<TestBatchPropertyId> batchPropertyIds = materialsDataManager.getBatchPropertyIds(materialId);
-					for (TestBatchPropertyId batchPropertyId : batchPropertyIds) {
-						if (batchPropertyId.getPropertyDefinition().propertyValuesAreMutable()) {
-							if (randomGenerator.nextDouble() < 0.5) {
-								Object value = batchPropertyId.getRandomPropertyValue(randomGenerator);
-								materialsDataManager.setBatchPropertyValue(batchId, batchPropertyId, value);
-								MutableDouble mutableDouble = expectedAssignmentTimes.get(new MultiKey(batchId, batchPropertyId));
-								mutableDouble.setValue(c.getTime());
-							}
-						}
-					}
-				}
-
-			}));
-		}
-
-		/*
-		 * Have the actor compare the assignment times at time = 10 to the
-		 * expected values.
-		 */
-		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(10, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
-			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
-
-			for (MaterialsProducerId materialsProducerId : materialsDataManager.getMaterialsProducerIds()) {
-				List<BatchId> inventoryBatches = materialsDataManager.getInventoryBatches(materialsProducerId);
-				for (BatchId batchId : inventoryBatches) {
-					MaterialId materialId = materialsDataManager.getBatchMaterial(batchId);
-					Set<TestBatchPropertyId> batchPropertyIds = materialsDataManager.getBatchPropertyIds(materialId);
-					for (TestBatchPropertyId batchPropertyId : batchPropertyIds) {
-						if (randomGenerator.nextDouble() < 0.33) {
-							MutableDouble mutableDouble = expectedAssignmentTimes.get(new MultiKey(batchId, batchPropertyId));
-							double expectedAssignmentTime = mutableDouble.getValue();
-							double actualAssignmentTime = materialsDataManager.getBatchPropertyTime(batchId, batchPropertyId);
-							assertEquals(expectedAssignmentTime, actualAssignmentTime);
-						}
-					}
-				}
-			}
-
-		}));
-
-		TestPluginData testPluginData = pluginBuilder.build();
-		Factory factory = MaterialsTestPluginFactory.factory(0, 0, 0, 1470041164645430466L, testPluginData);
-		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
-
-		/* precondition test: if the batch id is null */
-		ContractException contractException = assertThrows(ContractException.class, () -> {
-			Factory factory2 = MaterialsTestPluginFactory.factory(0, 0, 0, 411385203720638722L, (c) -> {
-				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
-				BatchPropertyId batchPropertyId = TestBatchPropertyId.BATCH_PROPERTY_1_1_BOOLEAN_IMMUTABLE_NO_TRACK;
-				materialsDataManager.getBatchPropertyTime(null, batchPropertyId);
-			});
-
-			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
-		});
-		assertEquals(MaterialsError.NULL_BATCH_ID, contractException.getErrorType());
-
-		/* precondition test: if the batch id is unknown */
-		contractException = assertThrows(ContractException.class, () -> {
-			Factory factory2 = MaterialsTestPluginFactory.factory(0, 0, 0, 6352485251167807955L, (c) -> {
-				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
-				BatchPropertyId batchPropertyId = TestBatchPropertyId.BATCH_PROPERTY_1_1_BOOLEAN_IMMUTABLE_NO_TRACK;
-				materialsDataManager.getBatchPropertyTime(new BatchId(100000), batchPropertyId);
-			});
-			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
-		});
-		assertEquals(MaterialsError.UNKNOWN_BATCH_ID, contractException.getErrorType());
-
-		/* precondition test: if the batch property id is null */
-		contractException = assertThrows(ContractException.class, () -> {
-			Factory factory2 = MaterialsTestPluginFactory.factory(0, 0, 0, 3856953954489485161L, (c) -> {
-				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
-				RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
-				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
-				BatchConstructionInfo batchConstructionInfo = TestBatchConstructionInfo.getBatchConstructionInfo(TestMaterialsProducerId.MATERIALS_PRODUCER_3, TestMaterialId.MATERIAL_2, 15L,
-						randomGenerator);
-				BatchId batchId = materialsDataManager.addBatch(batchConstructionInfo);
-				materialsDataManager.getBatchPropertyTime(batchId, null);
-			});
-			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
-		});
-		assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
-
-		/* precondition test: if the batch property id is unknown */
-		contractException = assertThrows(ContractException.class, () -> {
-			Factory factory2 = MaterialsTestPluginFactory.factory(0, 0, 0, 2978468228127714889L, (c) -> {
-				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
-				RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
-				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
-				BatchConstructionInfo batchConstructionInfo = TestBatchConstructionInfo.getBatchConstructionInfo(TestMaterialsProducerId.MATERIALS_PRODUCER_1, TestMaterialId.MATERIAL_2, 65L,
-						randomGenerator);
-				BatchId batchId = materialsDataManager.addBatch(batchConstructionInfo);
-				materialsDataManager.getBatchPropertyTime(batchId, TestBatchPropertyId.getUnknownBatchPropertyId());
-			});
-			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
-		});
-		assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
-
-	}
-
-	@Test
 	@UnitTestMethod(target = MaterialsDataManager.class, name = "getBatchPropertyValue", args = { BatchId.class, BatchPropertyId.class })
 	public void testGetBatchPropertyValue() {
 
@@ -1560,76 +1404,6 @@ public class AT_MaterialsDataManager {
 			Factory factory2 = MaterialsTestPluginFactory.factory(0, 0, 0, 3682958492574276233L, (c) -> {
 				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 				materialsDataManager.getBatchStageId(new BatchId(100000));
-			});
-			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
-		});
-		assertEquals(MaterialsError.UNKNOWN_BATCH_ID, contractException.getErrorType());
-	}
-
-	@Test
-	@UnitTestMethod(target = MaterialsDataManager.class, name = "getBatchTime", args = { BatchId.class })
-	public void testGetBatchTime() {
-
-		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
-		Map<BatchId, Double> expectedBatchTimes = new LinkedHashMap<>();
-
-		Arrays.asList(TestMaterialsProducerId.values()).stream().forEach((mpid) -> {
-
-		});
-		;
-
-		// build batches at several times
-		for (int i = 1; i <= 10; i++) {
-
-			double planTime = i;
-			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(planTime, (c) -> {
-				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
-				RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
-				TestMaterialsProducerId materialsProducerId = TestMaterialsProducerId.getRandomMaterialsProducerId(randomGenerator);
-				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
-
-				// build a few batches
-				int numberOfBatches = randomGenerator.nextInt(5) + 1;
-				for (int j = 0; j < numberOfBatches; j++) {
-
-					TestMaterialId materialId = TestMaterialId.getRandomMaterialId(randomGenerator);
-					double amount = randomGenerator.nextDouble();
-					BatchConstructionInfo batchConstructionInfo = TestBatchConstructionInfo.getBatchConstructionInfo(materialsProducerId, materialId, amount, randomGenerator);
-					BatchId batchId = materialsDataManager.addBatch(batchConstructionInfo);
-					expectedBatchTimes.put(batchId, c.getTime());
-				}
-
-				// show that all batches have the expected batch times
-
-				List<BatchId> inventoryBatches = materialsDataManager.getInventoryBatches(materialsProducerId);
-
-				for (BatchId batchId : inventoryBatches) {
-					double expectedBatchTime = expectedBatchTimes.get(batchId);
-					double actualBatchTime = materialsDataManager.getBatchTime(batchId);
-					assertEquals(expectedBatchTime, actualBatchTime);
-				}
-
-			}));
-
-		}
-		TestPluginData testPluginData = pluginBuilder.build();
-		Factory factory = MaterialsTestPluginFactory.factory(0, 0, 0, 8449887495666455982L, testPluginData);
-		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
-		/* precondition test: if the batch id is null */
-		ContractException contractException = assertThrows(ContractException.class, () -> {
-			Factory factory2 = MaterialsTestPluginFactory.factory(0, 0, 0, 2942652850143901549L, (c) -> {
-				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
-				materialsDataManager.getBatchTime(null);
-			});
-			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
-		});
-		assertEquals(MaterialsError.NULL_BATCH_ID, contractException.getErrorType());
-
-		/* precondition test: if the batch id is unknown */
-		contractException = assertThrows(ContractException.class, () -> {
-			Factory factory2 = MaterialsTestPluginFactory.factory(0, 0, 0, 8578067293001466760L, (c) -> {
-				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
-				materialsDataManager.getBatchTime(new BatchId(1000000));
 			});
 			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
 		});
@@ -1965,103 +1739,6 @@ public class AT_MaterialsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(target = MaterialsDataManager.class, name = "getMaterialsProducerPropertyTime", args = { MaterialsProducerId.class, MaterialsProducerPropertyId.class })
-	public void testGetMaterialsProducerPropertyTime() {
-
-		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
-
-		// create a structure to hold expected assignment times for materials
-		// producer property values
-		Map<MultiKey, MutableDouble> expectedTimesMap = new LinkedHashMap<>();
-		for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
-			for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId.values()) {
-				expectedTimesMap.put(new MultiKey(testMaterialsProducerId, testMaterialsProducerPropertyId), new MutableDouble());
-			}
-		}
-
-		// determine a reasonable number of changes per time
-		int propertyChangeCount = TestMaterialsProducerId.size() * TestMaterialsProducerPropertyId.size() / 10;
-
-		// update several random property values at various times
-		for (int i = 0; i < 10; i++) {
-			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
-				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
-				RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
-				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
-
-				for (int j = 0; j < propertyChangeCount; j++) {
-					TestMaterialsProducerId materialsProducerId = TestMaterialsProducerId.getRandomMaterialsProducerId(randomGenerator);
-					TestMaterialsProducerPropertyId materialsProducerPropertyId = TestMaterialsProducerPropertyId.getRandomMutableMaterialsProducerPropertyId(randomGenerator);
-					Object propertyValue = materialsProducerPropertyId.getRandomPropertyValue(randomGenerator);
-					materialsDataManager.setMaterialsProducerPropertyValue(materialsProducerId, materialsProducerPropertyId, propertyValue);
-					MultiKey multiKey = new MultiKey(materialsProducerId, materialsProducerPropertyId);
-					expectedTimesMap.get(multiKey).setValue(c.getTime());
-				}
-			}));
-		}
-
-		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(10, (c) -> {
-			MaterialsDataManager materialsDaView = c.getDataManager(MaterialsDataManager.class);
-			for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
-				for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId.values()) {
-					MultiKey multiKey = new MultiKey(testMaterialsProducerId, testMaterialsProducerPropertyId);
-					double expectedTime = expectedTimesMap.get(multiKey).getValue();
-					double actualTime = materialsDaView.getMaterialsProducerPropertyTime(testMaterialsProducerId, testMaterialsProducerPropertyId);
-					assertEquals(expectedTime, actualTime);
-				}
-			}
-		}));
-
-		TestPluginData testPluginData = pluginBuilder.build();
-		Factory factory = MaterialsTestPluginFactory.factory(0, 0, 0, 4362229716953652532L, testPluginData);
-		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
-
-		/* precondition test: if the materials producerId id is null */
-		ContractException contractException = assertThrows(ContractException.class, () -> {
-			Factory factory2 = MaterialsTestPluginFactory.factory(0, 0, 0, 8047663013308359028L, (c) -> {
-				MaterialsDataManager materialsDaView = c.getDataManager(MaterialsDataManager.class);
-				materialsDaView.getMaterialsProducerPropertyTime(null, TestMaterialsProducerPropertyId.MATERIALS_PRODUCER_PROPERTY_4_BOOLEAN_MUTABLE_TRACK);
-			});
-			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
-		});
-		assertEquals(MaterialsError.NULL_MATERIALS_PRODUCER_ID, contractException.getErrorType());
-
-		/* precondition test: if the materials producerId id is unknown */
-		contractException = assertThrows(ContractException.class, () -> {
-			Factory factory2 = MaterialsTestPluginFactory.factory(0, 0, 0, 7076209560671384217L, (c) -> {
-				MaterialsDataManager materialsDaView = c.getDataManager(MaterialsDataManager.class);
-				materialsDaView.getMaterialsProducerPropertyTime(TestMaterialsProducerId.getUnknownMaterialsProducerId(),
-						TestMaterialsProducerPropertyId.MATERIALS_PRODUCER_PROPERTY_4_BOOLEAN_MUTABLE_TRACK);
-			});
-			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
-		});
-		assertEquals(MaterialsError.UNKNOWN_MATERIALS_PRODUCER_ID, contractException.getErrorType());
-
-		/* precondition test: if the materials producerId property id is null */
-		contractException = assertThrows(ContractException.class, () -> {
-			Factory factory2 = MaterialsTestPluginFactory.factory(0, 0, 0, 8444324674368897195L, (c) -> {
-				MaterialsDataManager materialsDaView = c.getDataManager(MaterialsDataManager.class);
-				materialsDaView.getMaterialsProducerPropertyTime(TestMaterialsProducerId.MATERIALS_PRODUCER_1, null);
-			});
-			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
-		});
-		assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
-
-		/*
-		 * precondition test: if the materials producerId property id is unknown
-		 */
-		contractException = assertThrows(ContractException.class, () -> {
-			Factory factory2 = MaterialsTestPluginFactory.factory(0, 0, 0, 3195486517854831744L, (c) -> {
-				MaterialsDataManager materialsDaView = c.getDataManager(MaterialsDataManager.class);
-				materialsDaView.getMaterialsProducerPropertyTime(TestMaterialsProducerId.MATERIALS_PRODUCER_1, TestMaterialsProducerPropertyId.getUnknownMaterialsProducerPropertyId());
-			});
-			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
-		});
-		assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
-
-	}
-
-	@Test
 	@UnitTestMethod(target = MaterialsDataManager.class, name = "getMaterialsProducerPropertyValue", args = { MaterialsProducerId.class, MaterialsProducerPropertyId.class })
 	public void testGetMaterialsProducerPropertyValue() {
 
@@ -2171,12 +1848,14 @@ public class AT_MaterialsDataManager {
 	public void testGetMaterialsProducerResourceLevel() {
 
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+		long seed = 1633676078121550637L;
 
+		MaterialsPluginData standardPluginData = MaterialsTestPluginFactory.getStandardMaterialsPluginData(0, 0, 0, seed);
 		// create a structure to hold expected resource levels for producers
 		Map<MultiKey, MutableLong> expectedLevelsMap = new LinkedHashMap<>();
 		for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
 			for (TestResourceId testResourceId : TestResourceId.values()) {
-				expectedLevelsMap.put(new MultiKey(testMaterialsProducerId, testResourceId), new MutableLong());
+				expectedLevelsMap.put(new MultiKey(testMaterialsProducerId, testResourceId), new MutableLong(standardPluginData.getMaterialsProducerResourceLevel(testMaterialsProducerId, testResourceId)));
 			}
 		}
 
@@ -2216,7 +1895,7 @@ public class AT_MaterialsDataManager {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		Factory factory = MaterialsTestPluginFactory.factory(0, 0, 0, 1633676078121550637L, testPluginData);
+		Factory factory = MaterialsTestPluginFactory.factory(0, 0, 0, seed, testPluginData);
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 		/* precondition test: if the materials producerId id is null */
@@ -2258,97 +1937,6 @@ public class AT_MaterialsDataManager {
 			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
 		});
 		assertEquals(ResourceError.UNKNOWN_RESOURCE_ID, contractException.getErrorType());
-	}
-
-	@Test
-	@UnitTestMethod(target = MaterialsDataManager.class, name = "getMaterialsProducerResourceTime", args = { MaterialsProducerId.class, ResourceId.class })
-	public void testGetMaterialsProducerResourceTime() {
-
-		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
-
-		// create a structure to hold expected assignment times for producer
-		// resource levels
-		Map<MultiKey, MutableDouble> expectedTimesMap = new LinkedHashMap<>();
-		for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
-			for (TestResourceId testResourceId : TestResourceId.values()) {
-				expectedTimesMap.put(new MultiKey(testMaterialsProducerId, testResourceId), new MutableDouble());
-			}
-		}
-
-		// update several random resource levels at various times
-		double plantime = 0;
-		for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
-			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(plantime++, (c) -> {
-				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
-				RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
-				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
-				for (int j = 0; j < 5; j++) {
-					TestResourceId testResourceId = TestResourceId.getRandomResourceId(randomGenerator);
-					Integer resourceLevel = randomGenerator.nextInt(100) + 1;
-					StageId stageId = materialsDataManager.addStage(testMaterialsProducerId);
-					materialsDataManager.convertStageToResource(stageId, testResourceId, resourceLevel);
-					MultiKey multiKey = new MultiKey(testMaterialsProducerId, testResourceId);
-					expectedTimesMap.get(multiKey).setValue(c.getTime());
-				}
-			}));
-		}
-
-		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(10, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
-			for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
-				for (TestResourceId testResourceId : TestResourceId.values()) {
-					MultiKey multiKey = new MultiKey(testMaterialsProducerId, testResourceId);
-					double expectedTime = expectedTimesMap.get(multiKey).getValue();
-					double actualTime = materialsDataManager.getMaterialsProducerResourceTime(testMaterialsProducerId, testResourceId);
-					assertEquals(expectedTime, actualTime);
-				}
-			}
-		}));
-
-		TestPluginData testPluginData = pluginBuilder.build();
-		Factory factory = MaterialsTestPluginFactory.factory(0, 0, 0, 102509608008549692L, testPluginData);
-		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
-
-		/* precondition test: if the materials producerId id is null */
-		ContractException contractException = assertThrows(ContractException.class, () -> {
-			Factory factory2 = MaterialsTestPluginFactory.factory(0, 0, 0, 5802266741184871831L, (c) -> {
-				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
-				materialsDataManager.getMaterialsProducerResourceTime(null, TestResourceId.RESOURCE_1);
-			});
-			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
-		});
-		assertEquals(MaterialsError.NULL_MATERIALS_PRODUCER_ID, contractException.getErrorType());
-
-		/* precondition test: if the materials producerId id is unknown */
-		contractException = assertThrows(ContractException.class, () -> {
-			Factory factory2 = MaterialsTestPluginFactory.factory(0, 0, 0, 4254859094661916110L, (c) -> {
-				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
-				materialsDataManager.getMaterialsProducerResourceTime(TestMaterialsProducerId.getUnknownMaterialsProducerId(), TestResourceId.RESOURCE_1);
-			});
-			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
-		});
-		assertEquals(MaterialsError.UNKNOWN_MATERIALS_PRODUCER_ID, contractException.getErrorType());
-
-		/* precondition test: if the resource id is null */
-		contractException = assertThrows(ContractException.class, () -> {
-			Factory factory2 = MaterialsTestPluginFactory.factory(0, 0, 0, 3911919336328300644L, (c) -> {
-				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
-				materialsDataManager.getMaterialsProducerResourceTime(TestMaterialsProducerId.MATERIALS_PRODUCER_1, null);
-			});
-			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
-		});
-		assertEquals(ResourceError.NULL_RESOURCE_ID, contractException.getErrorType());
-
-		/* precondition test: if the resource id is unknown */
-		contractException = assertThrows(ContractException.class, () -> {
-			Factory factory2 = MaterialsTestPluginFactory.factory(0, 0, 0, 2654216033515042203L, (c) -> {
-				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
-				materialsDataManager.getMaterialsProducerResourceTime(TestMaterialsProducerId.MATERIALS_PRODUCER_1, TestResourceId.getUnknownResourceId());
-			});
-			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
-		});
-		assertEquals(ResourceError.UNKNOWN_RESOURCE_ID, contractException.getErrorType());
-
 	}
 
 	@Test
@@ -4370,9 +3958,10 @@ public class AT_MaterialsDataManager {
 				for (TestResourceId testResourceId : TestResourceId.values()) {
 					if (randomGenerator.nextBoolean()) {
 						StageId stageId = materialsDataManager.addStage(testMaterialsProducerId);
+						long existingAmount =  materialsDataManager.getMaterialsProducerResourceLevel(testMaterialsProducerId, testResourceId);
 						long amount = (randomGenerator.nextInt(1000) + 100);
 						materialsDataManager.convertStageToResource(stageId, testResourceId, amount);
-						MultiKey multiKey = new MultiKey(c.getTime(), testResourceId, testMaterialsProducerId, 0L, amount);
+						MultiKey multiKey = new MultiKey(c.getTime(), testResourceId, testMaterialsProducerId, existingAmount, amount + existingAmount);
 						expectedObservations.add(multiKey);
 					}
 				}
@@ -4602,7 +4191,7 @@ public class AT_MaterialsDataManager {
 		Factory factory = MaterialsTestPluginFactory.factory(0, 0, 0, 7336173642619419311L, (c) -> {
 			ResourceId newResourceId = TestResourceId.getUnknownResourceId();
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
-			resourcesDataManager.addResourceId(newResourceId, TimeTrackingPolicy.TRACK_TIME);
+			resourcesDataManager.addResourceId(newResourceId, true);
 
 			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			Set<MaterialsProducerId> materialsProducerIds = materialsDataManager.getMaterialsProducerIds();
@@ -4818,32 +4407,18 @@ public class AT_MaterialsDataManager {
 			materialsDataManager.addMaterialsProducer(materialsProducerConstructionData);
 			assertTrue(materialsDataManager.materialsProducerIdExists(newMaterialsProducerId));
 
-			double expectedTime = c.getTime();
-			int propertyTimeIsCurrentTimeCount = 0;
+			
+			
 			for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId.values()) {
 				Object expectedValue = expectedPropertyValues.get(testMaterialsProducerPropertyId);
 				Object actualValue = materialsDataManager.getMaterialsProducerPropertyValue(newMaterialsProducerId, testMaterialsProducerPropertyId);
 				assertEquals(expectedValue, actualValue);
-
-				double actualTime = materialsDataManager.getMaterialsProducerPropertyTime(newMaterialsProducerId, testMaterialsProducerPropertyId);
-
-				boolean defaultValueExists = testMaterialsProducerPropertyId.getPropertyDefinition().getDefaultValue().isPresent();
-
-				if (defaultValueExists) {
-					assertEquals(0.0, actualTime);
-				} else {
-					propertyTimeIsCurrentTimeCount++;
-					assertEquals(expectedTime, actualTime);
-				}
 			}
-
-			assertTrue(propertyTimeIsCurrentTimeCount > 0);
+			
 			long expectedLevel = 0;
 			for (TestResourceId testResourceId : TestResourceId.values()) {
 				long actualLevel = materialsDataManager.getMaterialsProducerResourceLevel(newMaterialsProducerId, testResourceId);
-				assertEquals(expectedLevel, actualLevel);
-				double actualTime = materialsDataManager.getMaterialsProducerResourceTime(newMaterialsProducerId, testResourceId);
-				assertEquals(expectedTime, actualTime);
+				assertEquals(expectedLevel, actualLevel);				
 			}
 
 			MultiKey multiKey = new MultiKey(c.getTime(), newMaterialsProducerId);

@@ -29,6 +29,11 @@ public enum TestAttributeId implements AttributeId {
 		return new AttributeId() {};
 	}
 	
+	public static AttributeId getRandomAttributeId(RandomGenerator randomGenerator) {
+		int index = randomGenerator.nextInt(TestAttributeId.values().length);
+		return TestAttributeId.values()[index];
+	}
+	
 	public Object getRandomPropertyValue(final RandomGenerator randomGenerator) {
 		switch (this) {
 		case INT_0,INT_1:

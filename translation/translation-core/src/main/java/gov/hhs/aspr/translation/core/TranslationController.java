@@ -326,6 +326,28 @@ public class TranslationController {
     }
 
     /**
+     * Returns the initialized TranslationEngine
+     * 
+     * @throws RuntimeException  if the Translation Engine has not been initialized
+     * @throws ContractException
+     *                           <ul>
+     *                           <li>{@linkplain CoreTranslationError#NULL_TRANSLATION_ENGINE}
+     *                           if translationEngine is null</li>
+     *                           <li>{@linkplain CoreTranslationError#INVALID_TRANSLATION_ENGINE}
+     *                           if the classRef does not match the class of the translationEngine</li>
+     *                           </ul>
+     */
+    public <T extends TranslationEngine> T getTranslationEngine(Class<T> classRef) {
+        validateTranslationEngine();
+
+        if (this.translationEngine.getClass() == classRef) {
+            return classRef.cast(this.translationEngine);
+        }
+
+        throw new ContractException(CoreTranslationError.INVALID_TRANSLATION_ENGINE);
+    }
+
+    /**
      * Adds the given child parent class relationship
      * Only callable through a {@link TranslatorContext} via the
      * {@link Translator#getInitializer()} consumer

@@ -14,9 +14,10 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import nucleus.Event;
-import nucleus.SimulationContext;
 import nucleus.testsupport.testplugin.TestSimulation;
 import plugins.partitions.support.LabelerSensitivity;
+import plugins.partitions.support.PartitionsContext;
+import plugins.partitions.testsupport.TestPartitionsContext;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
@@ -31,6 +32,20 @@ import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 
 public class AT_PersonPropertyLabeler {
+
+	private static class LocalPersonPropertyLabeler extends PersonPropertyLabeler {
+		private final Function<Object, Object> labelingFunction;
+
+		public LocalPersonPropertyLabeler(PersonPropertyId personPropertyId, Function<Object, Object> labelingFunction) {
+			super(personPropertyId);
+			this.labelingFunction = labelingFunction;
+		}
+
+		@Override
+		protected Object getLabelFromValue(Object value) {
+			return labelingFunction.apply(value);
+		}
+	}
 
 	@Test
 	@UnitTestConstructor(target = PersonPropertyLabeler.class, args = { PersonPropertyId.class, Function.class })
@@ -48,7 +63,7 @@ public class AT_PersonPropertyLabeler {
 		 */
 
 		PersonPropertyId personPropertyId = TestPersonPropertyId.PERSON_PROPERTY_4_BOOLEAN_MUTABLE_TRACK;
-		PersonPropertyLabeler personPropertyLabeler = new PersonPropertyLabeler(personPropertyId, (c) -> null);
+		PersonPropertyLabeler personPropertyLabeler = new LocalPersonPropertyLabeler(personPropertyId, (c) -> null);
 
 		Set<LabelerSensitivity<?>> labelerSensitivities = personPropertyLabeler.getLabelerSensitivities();
 
@@ -85,7 +100,7 @@ public class AT_PersonPropertyLabeler {
 	}
 
 	@Test
-	@UnitTestMethod(target = PersonPropertyLabeler.class, name = "getLabel", args = { SimulationContext.class, PersonId.class })
+	@UnitTestMethod(target = PersonPropertyLabeler.class, name = "getLabel", args = { PartitionsContext.class, PersonId.class })
 	public void testGetLabel() {
 		/*
 		 * Have the agent show that the person property labeler produces a label
@@ -93,6 +108,9 @@ public class AT_PersonPropertyLabeler {
 		 * person property labeler.
 		 */
 		Factory factory = PersonPropertiesTestPluginFactory.factory(10, 6445109933336671672L, (c) -> {
+			
+			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
+			
 			// establish data views
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
@@ -123,7 +141,7 @@ public class AT_PersonPropertyLabeler {
 				return "B";
 			};
 
-			PersonPropertyLabeler personPropertyLabeler = new PersonPropertyLabeler(personPropertyId, function);
+			PersonPropertyLabeler personPropertyLabeler = new LocalPersonPropertyLabeler(personPropertyId, function);
 
 			/*
 			 * Apply the labeler to each person and compare it to the more
@@ -137,7 +155,7 @@ public class AT_PersonPropertyLabeler {
 				Object expectedLabel = function.apply(value);
 
 				// get the label from the person id
-				Object actualLabel = personPropertyLabeler.getLabel(c, personId);
+				Object actualLabel = personPropertyLabeler.getCurrentLabel(testPartitionsContext, personId);
 
 				// show that the two labels are equal
 				assertEquals(expectedLabel, actualLabel);
@@ -147,29 +165,32 @@ public class AT_PersonPropertyLabeler {
 			// precondition tests
 
 			// if the person does not exist
-			ContractException contractException = assertThrows(ContractException.class, () -> personPropertyLabeler.getLabel(c, new PersonId(100000)));
+			ContractException contractException = assertThrows(ContractException.class, () -> personPropertyLabeler.getCurrentLabel(testPartitionsContext, new PersonId(100000)));
 			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
 
 			// if the person id is null
-			contractException = assertThrows(ContractException.class, () -> personPropertyLabeler.getLabel(c, null));
+			contractException = assertThrows(ContractException.class, () -> personPropertyLabeler.getCurrentLabel(testPartitionsContext, null));
 			assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
 		});
-		
+
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
 	@Test
-	@UnitTestMethod(target = PersonPropertyLabeler.class, name = "getDimension", args = {})
-	public void testGetDimension() {
+	@UnitTestMethod(target = PersonPropertyLabeler.class, name = "getId", args = {})
+	public void testGetId() {
 		for (TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.values()) {
-			assertEquals(testPersonPropertyId, new PersonPropertyLabeler(testPersonPropertyId, (c) -> null).getDimension());
+			assertEquals(testPersonPropertyId, new LocalPersonPropertyLabeler(testPersonPropertyId, (c) -> null).getId());
 		}
 	}
 
 	@Test
-	@UnitTestMethod(target = PersonPropertyLabeler.class, name = "getPastLabel", args = { SimulationContext.class, Event.class })
+	@UnitTestMethod(target = PersonPropertyLabeler.class, name = "getPastLabel", args = { PartitionsContext.class, Event.class })
 	public void testGetPastLabel() {
 		Factory factory = PersonPropertiesTestPluginFactory.factory(10, 770141763380713425L, (c) -> {
+			
+			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
+			
 			// establish data views
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
@@ -197,7 +218,7 @@ public class AT_PersonPropertyLabeler {
 				return integer;
 			};
 
-			PersonPropertyLabeler personPropertyLabeler = new PersonPropertyLabeler(personPropertyId, function);
+			PersonPropertyLabeler personPropertyLabeler = new LocalPersonPropertyLabeler(personPropertyId, function);
 
 			/*
 			 * Apply the labeler to each person and compare it to the more
@@ -215,7 +236,7 @@ public class AT_PersonPropertyLabeler {
 				Object expectedLabel = function.apply(oldValue);
 
 				// get the label
-				Object actualLabel = personPropertyLabeler.getPastLabel(c, new PersonPropertyUpdateEvent(personId, personPropertyId, oldValue, newValue));
+				Object actualLabel = personPropertyLabeler.getPastLabel(testPartitionsContext, new PersonPropertyUpdateEvent(personId, personPropertyId, oldValue, newValue));
 
 				// show that the two labels are equal
 				assertEquals(expectedLabel, actualLabel);

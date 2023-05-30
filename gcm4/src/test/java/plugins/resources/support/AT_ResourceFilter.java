@@ -10,12 +10,13 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import nucleus.NucleusError;
-import nucleus.SimulationContext;
 import nucleus.testsupport.testplugin.TestSimulation;
 import plugins.partitions.support.Equality;
-import plugins.partitions.support.Filter;
 import plugins.partitions.support.FilterSensitivity;
 import plugins.partitions.support.PartitionError;
+import plugins.partitions.support.PartitionsContext;
+import plugins.partitions.support.filters.Filter;
+import plugins.partitions.testsupport.TestPartitionsContext;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonId;
 import plugins.regions.datamanagers.RegionsDataManager;
@@ -50,16 +51,19 @@ public class AT_ResourceFilter {
 	}
 
 	@Test
-	@UnitTestMethod(target = ResourceFilter.class, name = "validate", args = { SimulationContext.class })
+	@UnitTestMethod(target = ResourceFilter.class, name = "validate", args = { PartitionsContext.class })
 	public void testValidate() {
 
 		Factory factory = ResourcesTestPluginFactory.factory(12, 6989281647149803633L, (c) -> {
+			
+			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
+			
 			// if the equality operator is null
-			ContractException contractException = assertThrows(ContractException.class, () -> new ResourceFilter(TestResourceId.RESOURCE_1, null, 12L).validate(c));
+			ContractException contractException = assertThrows(ContractException.class, () -> new ResourceFilter(TestResourceId.RESOURCE_1, null, 12L).validate(testPartitionsContext));
 			assertEquals(PartitionError.NULL_EQUALITY_OPERATOR, contractException.getErrorType());
 
 			// ResourceError.NULL_RESOURCE_ID
-			contractException = assertThrows(ContractException.class, () -> new ResourceFilter(null, Equality.GREATER_THAN, 12L).validate(c));
+			contractException = assertThrows(ContractException.class, () -> new ResourceFilter(null, Equality.GREATER_THAN, 12L).validate(testPartitionsContext));
 			assertEquals(ResourceError.NULL_RESOURCE_ID, contractException.getErrorType());
 
 			// NucleusError.NULL_CONTEXT
@@ -67,17 +71,20 @@ public class AT_ResourceFilter {
 			assertEquals(NucleusError.NULL_SIMULATION_CONTEXT, contractException.getErrorType());
 
 			// ResourceError.UNKNOWN_RESOURCE_ID
-			contractException = assertThrows(ContractException.class, () -> new ResourceFilter(TestResourceId.getUnknownResourceId(), Equality.GREATER_THAN, 12L).validate(c));
+			contractException = assertThrows(ContractException.class, () -> new ResourceFilter(TestResourceId.getUnknownResourceId(), Equality.GREATER_THAN, 12L).validate(testPartitionsContext));
 			assertEquals(ResourceError.UNKNOWN_RESOURCE_ID, contractException.getErrorType());
 		});
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
 	@Test
-	@UnitTestMethod(target = ResourceFilter.class, name = "evaluate", args = { SimulationContext.class, PersonId.class })
+	@UnitTestMethod(target = ResourceFilter.class, name = "evaluate", args = { PartitionsContext.class, PersonId.class })
 	public void testEvaluate() {
 
 		Factory factory = ResourcesTestPluginFactory.factory(100, 5313696152098995059L, (c) -> {
+			
+			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
+			
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
@@ -96,7 +103,7 @@ public class AT_ResourceFilter {
 			for (PersonId personId : peopleDataManager.getPeople()) {
 				long personResourceLevel = resourcesDataManager.getPersonResourceLevel(TestResourceId.RESOURCE_1, personId);
 				boolean expected = personResourceLevel > 12L;
-				boolean actual = filter.evaluate(c, personId);
+				boolean actual = filter.evaluate(testPartitionsContext, personId);
 				assertEquals(expected, actual);
 			}
 
@@ -104,10 +111,10 @@ public class AT_ResourceFilter {
 			assertThrows(RuntimeException.class, () -> filter.evaluate(null, new PersonId(0)));
 
 			/* precondition: if the person id is null */
-			assertThrows(RuntimeException.class, () -> filter.evaluate(c, null));
+			assertThrows(RuntimeException.class, () -> filter.evaluate(testPartitionsContext, null));
 
 			/* precondition: if the person id is unknown */
-			assertThrows(RuntimeException.class, () -> filter.evaluate(c, new PersonId(123412342)));
+			assertThrows(RuntimeException.class, () -> filter.evaluate(testPartitionsContext, new PersonId(123412342)));
 		});
 		
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();	

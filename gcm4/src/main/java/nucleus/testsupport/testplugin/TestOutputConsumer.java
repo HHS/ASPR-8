@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 import util.errors.ContractException;
@@ -16,7 +17,6 @@ import util.wrappers.MutableInteger;
 public class TestOutputConsumer implements Consumer<Object> {
 	private List<Object> outputItems;
 
-
 	public TestOutputConsumer() {
 		this.outputItems = new ArrayList<>();
 	}
@@ -25,7 +25,7 @@ public class TestOutputConsumer implements Consumer<Object> {
 	 * Handles all output from a simulation, but processes only
 	 * TestScenarioReport items.
 	 * 
-	 * @throws ContractException             
+	 * @throws ContractException
 	 * 
 	 *             <li>{@linkplain TestError#NULL_OUTPUT_ITEM} if the obj is
 	 *             null</li>
@@ -52,7 +52,7 @@ public class TestOutputConsumer implements Consumer<Object> {
 	 * 
 	 * 
 	 * @return - returns a {@link Map} containing the output items as keys and
-	 *         the number of occurances as the value
+	 *         the number of occurrences as the value
 	 */
 	@SuppressWarnings("unchecked")
 	public <T> Map<T, Integer> getOutputItems(Class<T> classRef) {
@@ -73,5 +73,40 @@ public class TestOutputConsumer implements Consumer<Object> {
 
 		return retMap;
 	}
-	
+
+	/**
+	 * Returns the output from a Simulation based on the Class Parameter.
+	 * 
+	 * @param <T>
+	 *            This type is derived from the class parameter and also
+	 *            determines the return type of this method.
+	 * @param classRef
+	 *            The class for which you want to get output items of
+	 * 
+	 * 
+	 * @return - returns a {@link Map} containing the output items as keys and
+	 *         the number of occurrences as the value
+	 * 
+	 * @throws ContractException
+	 *             <li>{@linkplain TestError#MULTIPLE_MATCHING_ITEMS} if there
+	 *             are multiple items matching the given class reference</li>
+	 * 
+	 */
+	@SuppressWarnings("unchecked")
+	public <T> Optional<T> getOutputItem(Class<T> classRef) {
+		T result = null;
+
+		for (Object item : outputItems) {
+			if (classRef.isAssignableFrom(item.getClass())) {
+				if (result == null) {
+					result = (T) item;
+				} else {
+					throw new ContractException(TestError.MULTIPLE_MATCHING_ITEMS);
+				}
+			}
+		}
+
+		return Optional.ofNullable(result);
+
+	}
 }

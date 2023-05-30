@@ -20,6 +20,8 @@ import lesson.plugins.model.support.Region;
 import lesson.plugins.model.support.SchoolStatus;
 import nucleus.Dimension;
 import nucleus.Experiment;
+import nucleus.ExperimentParameterData;
+import nucleus.FunctionalDimension;
 import nucleus.Plugin;
 import plugins.globalproperties.GlobalPropertiesPlugin;
 import plugins.globalproperties.GlobalPropertiesPluginData;
@@ -203,7 +205,7 @@ public final class Example_17 {
 	}
 
 	private Dimension getGlobalPropertyDimension(GlobalPropertyId globalPropertyId, String header, double[] values) {
-		Dimension.Builder dimensionBuilder = Dimension.builder();//
+		FunctionalDimension.Builder dimensionBuilder = FunctionalDimension.builder();//
 		IntStream.range(0, values.length).forEach((i) -> {
 			dimensionBuilder.addLevel((context) -> {
 				GlobalPropertiesPluginData.Builder builder = context.get(GlobalPropertiesPluginData.Builder.class);
@@ -220,6 +222,10 @@ public final class Example_17 {
 
 	private void execute() {
 
+		ExperimentParameterData experimentParameterData = ExperimentParameterData.builder()//
+				.setThreadCount(8)//				
+				.build();
+		
 		Experiment	.builder()
 
 					.addPlugin(getGlobalPropertiesPlugin())//
@@ -235,7 +241,7 @@ public final class Example_17 {
 					.addDimension(getSchoolDimension())//
 
 					.addExperimentContextConsumer(getNIOReportItemHandler())//
-					.setThreadCount(8)//
+					.setExperimentParameterData(experimentParameterData)//
 					.build()//
 					.execute();//
 	}
@@ -270,7 +276,7 @@ public final class Example_17 {
 		double[] cohortValues = { 0.001, 0.01, 0.1 };
 		double[] closureValues = { 0.01, 0.02, 0.2 };
 
-		Dimension.Builder dimensionBuilder = Dimension.builder();//
+		FunctionalDimension.Builder dimensionBuilder = FunctionalDimension.builder();//
 		IntStream.range(0, cohortValues.length).forEach((i) -> {
 			dimensionBuilder.addLevel((context) -> {
 				GlobalPropertiesPluginData.Builder builder = context.get(GlobalPropertiesPluginData.Builder.class);

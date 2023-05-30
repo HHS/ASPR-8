@@ -9,10 +9,10 @@ import java.util.Optional;
 import org.junit.jupiter.api.Test;
 
 import nucleus.Event;
-import nucleus.SimulationContext;
 import nucleus.testsupport.testplugin.TestSimulation;
 import plugins.partitions.testsupport.PartitionsTestPluginFactory;
 import plugins.partitions.testsupport.PartitionsTestPluginFactory.Factory;
+import plugins.partitions.testsupport.TestPartitionsContext;
 import plugins.people.support.PersonId;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
@@ -49,17 +49,20 @@ public class AT_FilterSensitivity {
 	}
 
 	@Test
-	@UnitTestMethod(target = FilterSensitivity.class,name = "requiresRefresh", args = { SimulationContext.class, Event.class })
+	@UnitTestMethod(target = FilterSensitivity.class,name = "requiresRefresh", args = { PartitionsContext.class, Event.class })
 	public void testRequiresRefresh() {
 		Factory factory = PartitionsTestPluginFactory.factory(10, 8678712526990350206L, (context)->{
+			
+			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(context);
+			
 			FilterSensitivity<Event> filterSensitivity = new FilterSensitivity<>(Event.class, (c, e) -> Optional.empty());
-			Optional<PersonId> optional = filterSensitivity.requiresRefresh(context, new Event() {
+			Optional<PersonId> optional = filterSensitivity.requiresRefresh(testPartitionsContext, new Event() {
 			});
 			assertFalse(optional.isPresent());
 
 			PersonId personId = new PersonId(0);
 			filterSensitivity = new FilterSensitivity<>(Event.class, (c, e) -> Optional.of(personId));
-			optional = filterSensitivity.requiresRefresh(context, new Event() {
+			optional = filterSensitivity.requiresRefresh(testPartitionsContext, new Event() {
 			});
 			assertTrue(optional.isPresent());
 			assertEquals(personId, optional.get());			

@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -31,38 +30,38 @@ public class AT_Experiment {
 	@UnitTestMethod(target = Experiment.Builder.class, name = "addDimension", args = { Dimension.class })
 	public void testAddDimension() {
 
-		Dimension dimension1 = Dimension.builder()//
-										.addMetaDatum("Alpha")//
-										.addLevel((context) -> {
-											List<String> result = new ArrayList<>();
-											result.add("alpha1");
-											return result;
-										})//
-										.addLevel((context) -> {
-											List<String> result = new ArrayList<>();
-											result.add("alpha2");
-											return result;
-										})//
-										.build();//
+		Dimension dimension1 = FunctionalDimension	.builder()//
+													.addMetaDatum("Alpha")//
+													.addLevel((context) -> {
+														List<String> result = new ArrayList<>();
+														result.add("alpha1");
+														return result;
+													})//
+													.addLevel((context) -> {
+														List<String> result = new ArrayList<>();
+														result.add("alpha2");
+														return result;
+													})//
+													.build();//
 
-		Dimension dimension2 = Dimension.builder()//
-										.addMetaDatum("Beta")//
-										.addLevel((context) -> {
-											List<String> result = new ArrayList<>();
-											result.add("beta1");
-											return result;
-										})//
-										.addLevel((context) -> {
-											List<String> result = new ArrayList<>();
-											result.add("beta2");
-											return result;
-										})//
-										.addLevel((context) -> {
-											List<String> result = new ArrayList<>();
-											result.add("beta3");
-											return result;
-										})//
-										.build();//
+		Dimension dimension2 = FunctionalDimension	.builder()//
+													.addMetaDatum("Beta")//
+													.addLevel((context) -> {
+														List<String> result = new ArrayList<>();
+														result.add("beta1");
+														return result;
+													})//
+													.addLevel((context) -> {
+														List<String> result = new ArrayList<>();
+														result.add("beta2");
+														return result;
+													})//
+													.addLevel((context) -> {
+														List<String> result = new ArrayList<>();
+														result.add("beta3");
+														return result;
+													})//
+													.build();//
 
 		Set<MultiKey> expectedExperimentInstances = new LinkedHashSet<>();
 		expectedExperimentInstances.add(new MultiKey("alpha1", "beta1"));
@@ -164,33 +163,33 @@ public class AT_Experiment {
 			});
 		};
 
-		Dimension dimension1 = Dimension.builder()//
-										.addMetaDatum("dim1")//
-										.addLevel((tmap) -> {
-											List<String> result = new ArrayList<>();
-											result.add("var_1_1");
-											return result;
-										})//
-										.addLevel((tmap) -> {
-											List<String> result = new ArrayList<>();
-											result.add("var_1_2");
-											return result;
-										})//
-										.build();//
+		Dimension dimension1 = FunctionalDimension	.builder()//
+													.addMetaDatum("dim1")//
+													.addLevel((tmap) -> {
+														List<String> result = new ArrayList<>();
+														result.add("var_1_1");
+														return result;
+													})//
+													.addLevel((tmap) -> {
+														List<String> result = new ArrayList<>();
+														result.add("var_1_2");
+														return result;
+													})//
+													.build();//
 
-		Dimension dimension2 = Dimension.builder()//
-										.addMetaDatum("dim2")//
-										.addLevel((tmap) -> {
-											List<String> result = new ArrayList<>();
-											result.add("var_2_1");
-											return result;
-										})//
-										.addLevel((tmap) -> {
-											List<String> result = new ArrayList<>();
-											result.add("var_2_2");
-											return result;
-										})//
-										.build();//
+		Dimension dimension2 = FunctionalDimension	.builder()//
+													.addMetaDatum("dim2")//
+													.addLevel((tmap) -> {
+														List<String> result = new ArrayList<>();
+														result.add("var_2_1");
+														return result;
+													})//
+													.addLevel((tmap) -> {
+														List<String> result = new ArrayList<>();
+														result.add("var_2_2");
+														return result;
+													})//
+													.build();//
 
 		Experiment	.builder()//
 					.addDimension(dimension1)//
@@ -301,24 +300,17 @@ public class AT_Experiment {
 	}
 
 	@Test
-	@UnitTestMethod(target = Experiment.Builder.class, name = "setExperimentProgressLog", args = { Path.class }, tags = { UnitTag.MANUAL })
-	public void testSetExperimentProgressLog() {
-		// should be manually tested
+	@UnitTestMethod(target = Experiment.Builder.class, name = "setExperimentParameterData", args = { ExperimentParameterData.class }, tags = { UnitTag.INCOMPLETE })
+	public void testSetExperimentParameterData() {
+		testSetHaltOnException();
+		testThreadCount();
 	}
 
-	@Test
-	@UnitTestMethod(target = Experiment.Builder.class, name = "setContinueFromProgressLog", args = { boolean.class }, tags = { UnitTag.MANUAL })
-	public void testSetContinueFromProgressLog() {
-		// should be manually tested
-	}
-
-	@Test
-	@UnitTestMethod(target = Experiment.Builder.class, name = "setThreadCount", args = { int.class })
-	public void testSetThreadCount() {
+	private void testThreadCount() {
 
 		// add two dimensions that will cause the experiment to execute 40
 		// simulation instances
-		Dimension.Builder dimBuilder = Dimension.builder().addMetaDatum("alpha");//
+		FunctionalDimension.Builder dimBuilder = FunctionalDimension.builder().addMetaDatum("alpha");//
 		IntStream.range(0, 5).forEach((i) -> {
 			dimBuilder.addLevel((context) -> {
 				List<String> result = new ArrayList<>();
@@ -329,8 +321,7 @@ public class AT_Experiment {
 
 		Dimension dimension1 = dimBuilder.build();
 
-		
-		Dimension.Builder dimBuilder2 = Dimension.builder();
+		FunctionalDimension.Builder dimBuilder2 = FunctionalDimension.builder();
 		IntStream.range(0, 8).forEach((i) -> {
 			dimBuilder2.addLevel((context) -> {
 				List<String> result = new ArrayList<>();
@@ -358,13 +349,17 @@ public class AT_Experiment {
 										threadIds.add(Thread.currentThread().getId());
 									});
 								}).build();//
+		ExperimentParameterData experimentParameterData = ExperimentParameterData	.builder()//
+																					.setThreadCount(6)//
+																					.build();
 
 		// Run the experiment using several threads
 		Experiment	.builder()//
 					.addPlugin(plugin)//
 					.addDimension(dimension1)//
 					.addDimension(dimension2)//
-					.setThreadCount(6).build()//
+					.setExperimentParameterData(experimentParameterData)//
+					.build()//
 					.execute();//
 
 		// We show that more than one thread was used. It is very difficult,
@@ -390,15 +385,13 @@ public class AT_Experiment {
 		// Covered by remaining tests that execute the experiment.
 	}
 
-	@Test
-	@UnitTestMethod(target = Experiment.Builder.class, name = "setHaltOnException", args = { boolean.class })
-	public void testSetHaltOnException() {
+	private void testSetHaltOnException() {
 		testSetHaltOnException_Explicit_True();
 		testSetHaltOnException_Explicit_False();
 		testSetHaltOnException_Implicit();
 	}
-	
-	@Test	
+
+	@Test
 	private void testSetHaltOnException_Explicit_True() {
 		// This test will run the experiment two times in single thread mode
 
@@ -408,10 +401,10 @@ public class AT_Experiment {
 		MutableObject<ExperimentContext> experimentContext = new MutableObject<>();
 
 		// we create a dimension with two levels
-		Dimension dimension = Dimension	.builder()//
-										.addLevel((c) -> new ArrayList<>())//
-										.addLevel((c) -> new ArrayList<>())//
-										.build();
+		Dimension dimension = FunctionalDimension	.builder()//
+													.addLevel((c) -> new ArrayList<>())//
+													.addLevel((c) -> new ArrayList<>())//
+													.build();
 
 		// we create a plugin that will instantiate three actors, with the
 		// second actor throwing a runtime exception
@@ -439,13 +432,15 @@ public class AT_Experiment {
 		 * equal to four after the experiment executes and that there will be no
 		 * exception bubbling out of the execute() invocation
 		 */
-		
-		//Explicitly setting the haltOnException to true
+
+		ExperimentParameterData experimentParameterData = ExperimentParameterData.builder().setHaltOnException(true).build();
+
+		// Explicitly setting the haltOnException to true
 		assertThrows(RuntimeException.class, () -> Experiment	.builder()//
 																.addDimension(dimension)//
 																.addPlugin(plugin)//
 																.addExperimentContextConsumer(experimentContextConsumer)//
-																.setHaltOnException(true)//
+																.setExperimentParameterData(experimentParameterData)//
 																.build()//
 																.execute());
 
@@ -459,7 +454,6 @@ public class AT_Experiment {
 		assertEquals(ScenarioStatus.READY, experimentContext.getValue().getScenarioStatus(1).get());
 	}
 
-		
 	private void testSetHaltOnException_Explicit_False() {
 		// This test will run the experiment two times in single thread mode
 
@@ -469,10 +463,10 @@ public class AT_Experiment {
 		MutableObject<ExperimentContext> experimentContext = new MutableObject<>();
 
 		// we create a dimension with two levels
-		Dimension dimension = Dimension	.builder()//
-										.addLevel((c) -> new ArrayList<>())//
-										.addLevel((c) -> new ArrayList<>())//
-										.build();
+		Dimension dimension = FunctionalDimension	.builder()//
+													.addLevel((c) -> new ArrayList<>())//
+													.addLevel((c) -> new ArrayList<>())//
+													.build();
 
 		// we create a plugin that will instantiate three actors, with the
 		// second actor throwing a runtime exception
@@ -493,12 +487,16 @@ public class AT_Experiment {
 			experimentContext.setValue(c);
 		};
 
-		//Explicitly setting the haltOnException to false 
+		ExperimentParameterData experimentParameterData = ExperimentParameterData	.builder()//
+																					.setHaltOnException(false)//
+																					.build();
+
+		// Explicitly setting the haltOnException to false
 		Experiment	.builder()//
 					.addDimension(dimension)//
 					.addPlugin(plugin)//
 					.addExperimentContextConsumer(experimentContextConsumer)//
-					.setHaltOnException(false)//
+					.setExperimentParameterData(experimentParameterData)//
 					.build()//
 					.execute();
 		assertEquals(4, actorInitializationCounter.getValue());
@@ -507,9 +505,8 @@ public class AT_Experiment {
 		assertEquals(ScenarioStatus.FAILED, experimentContext.getValue().getScenarioStatus(0).get());
 		assertEquals(ScenarioStatus.FAILED, experimentContext.getValue().getScenarioStatus(1).get());
 
-
 	}
-	
+
 	private void testSetHaltOnException_Implicit() {
 		// This test will run the experiment two times in single thread mode
 
@@ -519,10 +516,10 @@ public class AT_Experiment {
 		MutableObject<ExperimentContext> experimentContext = new MutableObject<>();
 
 		// we create a dimension with two levels
-		Dimension dimension = Dimension	.builder()//
-										.addLevel((c) -> new ArrayList<>())//
-										.addLevel((c) -> new ArrayList<>())//
-										.build();
+		Dimension dimension = FunctionalDimension	.builder()//
+													.addLevel((c) -> new ArrayList<>())//
+													.addLevel((c) -> new ArrayList<>())//
+													.build();
 
 		// we create a plugin that will instantiate three actors, with the
 		// second actor throwing a runtime exception
@@ -551,11 +548,11 @@ public class AT_Experiment {
 		 * exception bubbling out of the execute() invocation
 		 */
 
-		//Implicitly setting the haltOnException to true
+		// Implicitly setting the haltOnException to true
 		assertThrows(RuntimeException.class, () -> Experiment	.builder()//
 																.addDimension(dimension)//
 																.addPlugin(plugin)//
-																.addExperimentContextConsumer(experimentContextConsumer)//																
+																.addExperimentContextConsumer(experimentContextConsumer)//
 																.build()//
 																.execute());
 
@@ -569,7 +566,5 @@ public class AT_Experiment {
 		assertEquals(ScenarioStatus.READY, experimentContext.getValue().getScenarioStatus(1).get());
 
 	}
-
-
 
 }

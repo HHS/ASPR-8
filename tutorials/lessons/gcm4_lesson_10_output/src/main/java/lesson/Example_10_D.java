@@ -10,6 +10,8 @@ import lesson.plugins.policy.PolicyPlugin;
 import lesson.plugins.policy.PolicyPluginData;
 import nucleus.Dimension;
 import nucleus.Experiment;
+import nucleus.ExperimentParameterData;
+import nucleus.FunctionalDimension;
 import nucleus.Plugin;
 
 public final class Example_10_D {
@@ -34,7 +36,7 @@ public final class Example_10_D {
 
 	private static Dimension getR0Dimension() {
 
-		Dimension.Builder builder = Dimension.builder();//
+		FunctionalDimension.Builder builder = FunctionalDimension.builder();//
 
 		List<Double> r0Values = new ArrayList<>();
 		r0Values.add(1.5);
@@ -57,7 +59,7 @@ public final class Example_10_D {
 	}
 
 	private static Dimension getPolicyDimension() {
-		Dimension.Builder builder = Dimension.builder();//
+		FunctionalDimension.Builder builder = FunctionalDimension.builder();//
 
 		List<Double> schoolClosingInfectionRates = new ArrayList<>();
 		schoolClosingInfectionRates.add(0.05);
@@ -102,6 +104,10 @@ public final class Example_10_D {
 
 		Dimension policyDimension = getPolicyDimension();
 		
+		ExperimentParameterData experimentParameterData = ExperimentParameterData.builder()//
+				.setThreadCount(4)//
+				.build();
+		
 		Experiment	.builder()//
 					.addPlugin(diseasePlugin)//
 					.addPlugin(modelPlugin)//
@@ -109,7 +115,7 @@ public final class Example_10_D {
 					.addDimension(r0Dimension)//
 					.addDimension(policyDimension)//
 					.addExperimentContextConsumer(new OutputConsumer_D())//
-					.setThreadCount(4)//
+					.setExperimentParameterData(experimentParameterData)//
 					.build()//
 					.execute();
 	}

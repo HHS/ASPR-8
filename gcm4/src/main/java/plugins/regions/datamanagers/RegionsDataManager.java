@@ -94,7 +94,6 @@ public final class RegionsDataManager extends DataManager {
 	 */
 	private DoubleValueContainer regionArrivalTimes;
 
-
 	/**
 	 * Creates a Region Data Manager from the given resolver context.
 	 * Preconditions: The context must be a valid and non-null.
@@ -535,82 +534,23 @@ public final class RegionsDataManager extends DataManager {
 	}
 
 	/**
-	 *
-	 * <P>
-	 * Initializes all event labelers defined by
-	 * {@linkplain RegionPropertyUpdateEvent} and
-	 * {@linkplain PersonRegionUpdateEvent}
-	 * </P>
+	 * Initializes the state of regions related data from the RegionsPluginData.
+	 * 
+	 * 
 	 *
 	 * @throws ContractException
-	 *             <li>{@linkplain RegionError#UNKNOWN_REGION_ID} if no region
-	 *             id is provided for a person id</li>
-	 *
-	 *
-	 *
-	 *             <P>
-	 *             Subscribes the following events:
-	 *             <ul>
-	 *
-	 *             <li>{@linkplain PersonImminentAdditionEvent}<blockquote> Sets
-	 *             the person's initial region in the
-	 *             {@linkplain RegionLocationDataView} from the region reference
-	 *             in the auxiliary data of the event.
-	 *
-	 *             <BR>
-	 *             <BR>
-	 *             Throws {@link ContractException}
-	 *             <ul>
-	 *             <li>{@linkplain PersonError.UNKNOWN_PERSON_ID} if the person
-	 *             does not exist</li>
-	 *             <li>{@linkplain RegionError#NULL_REGION_ID} if no region data
-	 *             was included in the event</li>
-	 *             <li>{@linkplain RegionError#UNKNOWN_REGION_ID} if the region
-	 *             in the event is unknown</li>
-	 *             <li>{@linkplain RegionError#DUPLICATE_PERSON_ADDITION} if the
-	 *             person was previously added</li>
-	 *             </ul>
-	 * 
-	 *             </blockquote></li>
-	 *
-	 *             <li>{@linkplain PersonRemovalEvent}<blockquote> Removes the
-	 *             region assignment data for the person from the
-	 *             {@linkplain RegionDataView} <BR>
-	 *             <BR>
-	 *             Throws {@linkplain ContractException}
-	 *             <ul>
-	 *             <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if the person
-	 *             id is not currently tracked by the regions data manager</li>
-	 *
 	 * 
 	 *             <li>{@linkplain RegionError#UNKNOWN_REGION_ID} if a person in
 	 *             the people plugin does not have an assigned region id in the
 	 *             region plugin data</li>
 	 *
-	 *             <li>{@linkplain RegionError#UNKNOWN_REGION_ARRIVAL_TIME} if
-	 *             the person id person region arrival time cannot be found in
-	 *             the plugin data when the arrival tracking policy is true</li>
-	 *
 	 *             <li>{@linkplain RegionError#REGION_ARRIVAL_TIME_EXCEEDS_SIM_TIME}
 	 *             if a person's region arrival time exceeds the current
-	 *             simulation time</li>
-	 * 
+	 *             simulation time</li> 
 	 * 
 	 *             <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if the regions
 	 *             plugin data contains information for an unknown person
 	 *             id</li>
-	 * 
-	 * 
-	 *             );
-	 * 
-	 *
-	 *             </ul>
-	 *
-	 *             </blockquote></li>
-	 *             <ul>
-	 *             </p>
-	 *
-	 *
 	 */
 	@Override
 	public void init(final DataManagerContext dataManagerContext) {
@@ -631,7 +571,7 @@ public final class RegionsDataManager extends DataManager {
 		regionValues = new IntValueContainer(0);
 
 		boolean trackRegionArrivals = regionsPluginData.getPersonRegionArrivalTrackingPolicy();
-		if (trackRegionArrivals) {			
+		if (trackRegionArrivals) {
 			regionArrivalTimes = new DoubleValueContainer(0);
 		}
 
@@ -682,9 +622,8 @@ public final class RegionsDataManager extends DataManager {
 
 			if (regionArrivalTimes != null) {
 				Optional<Double> optionalTime = regionsPluginData.getPersonRegionArrivalTime(personId);
-				if (optionalTime.isEmpty()) {
-					throw new ContractException(RegionError.UNKNOWN_REGION_ARRIVAL_TIME);
-				}
+				// we know that since the person exists, the regionsPluginData
+				// guarantees that the arrival time will be present
 				double arrivalTime = optionalTime.get();
 				if (arrivalTime > currentTime) {
 					throw new ContractException(RegionError.REGION_ARRIVAL_TIME_EXCEEDS_SIM_TIME);
@@ -734,15 +673,15 @@ public final class RegionsDataManager extends DataManager {
 			}
 		}
 		List<PersonId> people = peopleDataManager.getPeople();
-		
+
 		if (regionArrivalTimes != null) {
 			builder.setPersonRegionArrivalTracking(true);
 			for (PersonId personId : people) {
 				RegionId regionId = getPersonRegion(personId);
 				double arrivalTime = regionArrivalTimes.getValue(personId.getValue());
-				builder.addPerson(personId, regionId,arrivalTime);
+				builder.addPerson(personId, regionId, arrivalTime);
 			}
-		}else {
+		} else {
 			builder.setPersonRegionArrivalTracking(false);
 			for (PersonId personId : people) {
 				RegionId regionId = getPersonRegion(personId);

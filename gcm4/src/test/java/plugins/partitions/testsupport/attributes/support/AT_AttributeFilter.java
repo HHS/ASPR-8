@@ -14,18 +14,20 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import nucleus.Plugin;
-import nucleus.SimulationContext;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestSimulation;
 import plugins.partitions.PartitionsPlugin;
+import plugins.partitions.datamanagers.PartitionsPluginData;
 import plugins.partitions.support.Equality;
-import plugins.partitions.support.Filter;
 import plugins.partitions.support.FilterSensitivity;
 import plugins.partitions.support.PartitionError;
+import plugins.partitions.support.PartitionsContext;
+import plugins.partitions.support.filters.Filter;
 import plugins.partitions.testsupport.PartitionsTestPluginFactory;
 import plugins.partitions.testsupport.PartitionsTestPluginFactory.Factory;
+import plugins.partitions.testsupport.TestPartitionsContext;
 import plugins.partitions.testsupport.attributes.AttributesDataManager;
 import plugins.partitions.testsupport.attributes.AttributesPlugin;
 import plugins.partitions.testsupport.attributes.AttributesPluginData;
@@ -87,7 +89,7 @@ public final class AT_AttributeFilter {
 	}
 
 	@Test
-	@UnitTestMethod(target = AttributeFilter.class, name = "validate", args = { SimulationContext.class })
+	@UnitTestMethod(target = AttributeFilter.class, name = "validate", args = { PartitionsContext.class })
 	public void testValidate() {
 		int initialPopulation = 100;
 
@@ -101,6 +103,13 @@ public final class AT_AttributeFilter {
 		attributesBuilder.defineAttribute(LocalAttributeId.DATA_ID, attributeDefinition);
 
 		Plugin attributesPlugin = AttributesPlugin.getAttributesPlugin(attributesBuilder.build());
+		
+		
+		Plugin partitionsPlugin = PartitionsPlugin.builder()//		
+				.setPartitionsPluginData(PartitionsPluginData.builder().build())//
+				//.addPluginDependency(AttributesPluginId.PLUGIN_ID)//
+				.getPartitionsPlugin();
+
 
 		plugins.add(attributesPlugin);
 
@@ -115,33 +124,35 @@ public final class AT_AttributeFilter {
 		WellState wellState = WellState.builder().setSeed(7698506335486677498L).build();
 		plugins.add(StochasticsPlugin.getStochasticsPlugin(StochasticsPluginData.builder().setMainRNGState(wellState).build()));
 
-		plugins.add(PartitionsPlugin.getPartitionsPlugin());
+		plugins.add(partitionsPlugin);
 
 		// and add the action plugin to the engine
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
+			
+			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
 			// if the filter's attribute id is null
-			ContractException contractException = assertThrows(ContractException.class, () -> new AttributeFilter(null, Equality.EQUAL, false).validate(c));
+			ContractException contractException = assertThrows(ContractException.class, () -> new AttributeFilter(null, Equality.EQUAL, false).validate(testPartitionsContext));
 			assertEquals(AttributeError.NULL_ATTRIBUTE_ID, contractException.getErrorType());
 
 			// if the filter's equality operator is null
-			contractException = assertThrows(ContractException.class, () -> new AttributeFilter(TestAttributeId.BOOLEAN_0, null, false).validate(c));
+			contractException = assertThrows(ContractException.class, () -> new AttributeFilter(TestAttributeId.BOOLEAN_0, null, false).validate(testPartitionsContext));
 			assertEquals(PartitionError.NULL_EQUALITY_OPERATOR, contractException.getErrorType());
 
 			// if the filter's value is null
-			contractException = assertThrows(ContractException.class, () -> new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, null).validate(c));
+			contractException = assertThrows(ContractException.class, () -> new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, null).validate(testPartitionsContext));
 			assertEquals(AttributeError.NULL_ATTRIBUTE_VALUE, contractException.getErrorType());
 
 			// if the filter's value is incompatible with the attribute
 			// definition associated with the filter's attribute id.
-			contractException = assertThrows(ContractException.class, () -> new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, 5).validate(c));
+			contractException = assertThrows(ContractException.class, () -> new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, 5).validate(testPartitionsContext));
 			assertEquals(AttributeError.INCOMPATIBLE_VALUE, contractException.getErrorType());
 
 			// if the filter's value is not a COMPARABLE when the filter's
 			// equality operator is not EQUALS or NOT_EQUALS.
 
-			contractException = assertThrows(ContractException.class, () -> new AttributeFilter(LocalAttributeId.DATA_ID, Equality.GREATER_THAN, new Data(12)).validate(c));
+			contractException = assertThrows(ContractException.class, () -> new AttributeFilter(LocalAttributeId.DATA_ID, Equality.GREATER_THAN, new Data(12)).validate(testPartitionsContext));
 			assertEquals(PartitionError.NON_COMPARABLE_ATTRIBUTE, contractException.getErrorType());
 
 		}));
@@ -154,9 +165,11 @@ public final class AT_AttributeFilter {
 	}
 
 	@Test
-	@UnitTestMethod(target = AttributeFilter.class, name = "evaluate", args = { SimulationContext.class, PersonId.class })
+	@UnitTestMethod(target = AttributeFilter.class, name = "evaluate", args = { PartitionsContext.class, PersonId.class })
 	public void testEvaluate() {
 		Factory factory = PartitionsTestPluginFactory.factory(100, 2853953940626718331L, (c) -> {
+			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
+			
 			Filter filter = new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, true);
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
@@ -167,7 +180,7 @@ public final class AT_AttributeFilter {
 				boolean value = randomGenerator.nextBoolean();
 				attributesDataManager.setAttributeValue(personId, TestAttributeId.BOOLEAN_0, value);
 				boolean expected = attributesDataManager.getAttributeValue(personId, TestAttributeId.BOOLEAN_0);
-				boolean actual = filter.evaluate(c, personId);
+				boolean actual = filter.evaluate(testPartitionsContext, personId);
 				assertEquals(expected, actual);
 			}
 
@@ -185,9 +198,12 @@ public final class AT_AttributeFilter {
 
 		/* precondition: if the person id is null */
 		assertThrows(RuntimeException.class, () ->{
+			
+			
 			Factory factory2 = PartitionsTestPluginFactory.factory(100, 6858667758520667469L, (c) -> {
+				TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
 				Filter filter = new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, true);
-				filter.evaluate(c, null);
+				filter.evaluate(testPartitionsContext, null);
 			});
 			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
 		});
@@ -196,8 +212,9 @@ public final class AT_AttributeFilter {
 		/* precondition: if the person id is unknown */
 		assertThrows(RuntimeException.class, () ->{
 			Factory factory2 = PartitionsTestPluginFactory.factory(100, 9106972672436024633L, (c) -> {
+				TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
 				Filter filter = new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, true);
-				filter.evaluate(c, new PersonId(123412342));
+				filter.evaluate(testPartitionsContext, new PersonId(123412342));
 			});
 			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
 		});
@@ -209,7 +226,7 @@ public final class AT_AttributeFilter {
 	public void testGetFilterSensitivities() {
 
 		Factory factory = PartitionsTestPluginFactory.factory(100, 3455263917994200075L, (c) -> {
-
+			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
 			// create an attribute filter
 			Filter filter = new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, false);
 
@@ -236,15 +253,15 @@ public final class AT_AttributeFilter {
 
 			AttributeUpdateEvent attributeUpdateEvent = new AttributeUpdateEvent(personId, TestAttributeId.BOOLEAN_0, false, true);
 
-			assertTrue(filterSensitivity.requiresRefresh(c, attributeUpdateEvent).isPresent());
+			assertTrue(filterSensitivity.requiresRefresh(testPartitionsContext, attributeUpdateEvent).isPresent());
 
 			attributeUpdateEvent = new AttributeUpdateEvent(personId, TestAttributeId.BOOLEAN_0, false, false);
 
-			assertFalse(filterSensitivity.requiresRefresh(c, attributeUpdateEvent).isPresent());
+			assertFalse(filterSensitivity.requiresRefresh(testPartitionsContext, attributeUpdateEvent).isPresent());
 
 			attributeUpdateEvent = new AttributeUpdateEvent(personId, TestAttributeId.BOOLEAN_1, false, true);
 
-			assertFalse(filterSensitivity.requiresRefresh(c, attributeUpdateEvent).isPresent());
+			assertFalse(filterSensitivity.requiresRefresh(testPartitionsContext, attributeUpdateEvent).isPresent());
 
 		});
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();

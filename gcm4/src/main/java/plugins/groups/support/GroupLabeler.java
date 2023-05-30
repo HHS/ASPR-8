@@ -3,15 +3,14 @@ package plugins.groups.support;
 import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Function;
 
 import nucleus.Event;
-import nucleus.SimulationContext;
 import plugins.groups.datamanagers.GroupsDataManager;
 import plugins.groups.events.GroupMembershipAdditionEvent;
 import plugins.groups.events.GroupMembershipRemovalEvent;
 import plugins.partitions.support.Labeler;
 import plugins.partitions.support.LabelerSensitivity;
+import plugins.partitions.support.PartitionsContext;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
 
@@ -24,18 +23,13 @@ import plugins.people.support.PersonId;
  * 
  *
  */
-public final class GroupLabeler implements Labeler {
-
-	private final Function<GroupTypeCountMap, Object> groupTypeCountLabelingFunction;
+public abstract class GroupLabeler implements Labeler {
+	
+	protected abstract Object getLabelFromGroupTypeCountMap(GroupTypeCountMap groupTypeCountMap);
+	
 	private GroupsDataManager groupsDataManager;
 
-	/**
-	 * Creates the Group labeler from the given labeling function
-	 */
-	public GroupLabeler(Function<GroupTypeCountMap, Object> groupTypeCountLabelingFunction) {
-		this.groupTypeCountLabelingFunction = groupTypeCountLabelingFunction;
-	}
-
+	
 	private Optional<PersonId> getPersonId(GroupMembershipAdditionEvent groupMembershipAdditionEvent) {
 		return Optional.of(groupMembershipAdditionEvent.personId());
 	}
@@ -51,7 +45,7 @@ public final class GroupLabeler implements Labeler {
 	 * partition.
 	 */
 	@Override
-	public Set<LabelerSensitivity<?>> getLabelerSensitivities() {
+	public final Set<LabelerSensitivity<?>> getLabelerSensitivities() {
 		Set<LabelerSensitivity<?>> result = new LinkedHashSet<>();
 		result.add(new LabelerSensitivity<GroupMembershipAdditionEvent>(GroupMembershipAdditionEvent.class, this::getPersonId));
 		result.add(new LabelerSensitivity<GroupMembershipRemovalEvent>(GroupMembershipRemovalEvent.class, this::getPersonId));
@@ -68,9 +62,9 @@ public final class GroupLabeler implements Labeler {
 	 *                          if the person id is unknown
 	 */
 	@Override
-	public Object getLabel(SimulationContext simulationContext, PersonId personId) {
+	public final Object getCurrentLabel(PartitionsContext partitionsContext, PersonId personId) {
 		if (groupsDataManager == null) {
-			groupsDataManager = simulationContext.getDataManager(GroupsDataManager.class);
+			groupsDataManager = partitionsContext.getDataManager(GroupsDataManager.class);
 		}
 
 		GroupTypeCountMap.Builder groupTypeCountMapBuilder = GroupTypeCountMap.builder();
@@ -79,21 +73,21 @@ public final class GroupLabeler implements Labeler {
 			groupTypeCountMapBuilder.setCount(groupTypeId, count);
 		}
 		GroupTypeCountMap groupTypeCountMap = groupTypeCountMapBuilder.build();
-		return groupTypeCountLabelingFunction.apply(groupTypeCountMap);
+		return getLabelFromGroupTypeCountMap(groupTypeCountMap);
 	}
 
 	/**
 	 * Returns {@link GroupTypeId} class as the dimension.
 	 */
 	@Override
-	public Object getDimension() {
+	public final Object getId() {
 		return GroupTypeId.class;
 	}
 
 	@Override
-	public Object getPastLabel(SimulationContext simulationContext, Event event) {
+	public final Object getPastLabel(PartitionsContext partitionsContext, Event event) {
 		if (groupsDataManager == null) {
-			groupsDataManager = simulationContext.getDataManager(GroupsDataManager.class);
+			groupsDataManager = partitionsContext.getDataManager(GroupsDataManager.class);
 		}
 
 		PersonId personId;
@@ -122,7 +116,7 @@ public final class GroupLabeler implements Labeler {
 			groupTypeCountMapBuilder.setCount(groupTypeId, count);
 		}
 		GroupTypeCountMap groupTypeCountMap = groupTypeCountMapBuilder.build();
-		return groupTypeCountLabelingFunction.apply(groupTypeCountMap);
+		return getLabelFromGroupTypeCountMap(groupTypeCountMap);
 	}
 
 }

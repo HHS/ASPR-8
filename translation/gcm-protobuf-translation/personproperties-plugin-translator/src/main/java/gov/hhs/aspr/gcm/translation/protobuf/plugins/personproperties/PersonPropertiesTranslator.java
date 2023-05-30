@@ -12,12 +12,18 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.translatio
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.PropertiesTranslatorId;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.ReportsTranslatorId;
 
+/**
+ * Translator for the PersonProperties Plugin.
+ * <li>Using this Translator will add
+ * all the necessary TanslationSpecs needed to read and write
+ * PersonPropertiesPluginData
+ */
 public class PersonPropertiesTranslator {
 
     private PersonPropertiesTranslator() {
     }
 
-    public static Translator.Builder builder(boolean withReport) {
+    private static Translator.Builder builder(boolean withReport) {
         Translator.Builder builder = Translator.builder()
                 .setTranslatorId(PersonPropertiesTranslatorId.TRANSLATOR_ID)
                 .addDependency(PropertiesTranslatorId.TRANSLATOR_ID)
@@ -26,17 +32,17 @@ public class PersonPropertiesTranslator {
                     ProtobufTranslationEngine.Builder translationEngineBuilder = translatorContext
                             .getTranslationEngineBuilder(ProtobufTranslationEngine.Builder.class);
 
-                    translationEngineBuilder.addTranslationSpec(new PersonPropertyIdTranslationSpec());
-                    translationEngineBuilder.addTranslationSpec(new PersonPropertiesPluginDataTranslationSpec());
-                    translationEngineBuilder.addTranslationSpec(new TestPersonPropertyIdTranslationSpec());
+                    translationEngineBuilder
+                            .addTranslationSpec(new PersonPropertyIdTranslationSpec())
+                            .addTranslationSpec(new PersonPropertiesPluginDataTranslationSpec())
+                            .addTranslationSpec(new TestPersonPropertyIdTranslationSpec());
 
                     translationEngineBuilder.addFieldToIncludeDefaultValue(
                             PersonPropertyValueInput.getDescriptor().findFieldByName("personId"));
 
                     if (withReport) {
                         translationEngineBuilder
-                                .addTranslationSpec(new PersonPropertyReportPluginDataTranslationSpec());
-                        translationEngineBuilder
+                                .addTranslationSpec(new PersonPropertyReportPluginDataTranslationSpec())
                                 .addTranslationSpec(new PersonPropertyInteractionReportPluginDataTranslationSpec());
                     }
 

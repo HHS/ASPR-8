@@ -4,7 +4,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 
 import org.junit.jupiter.api.Test;
@@ -14,9 +16,9 @@ import util.annotations.UnitTestMethod;
 public class AT_Dimension {
 
 	@Test
-	@UnitTestMethod(target = Dimension.class, name = "builder", args = {})
+	@UnitTestMethod(target = FunctionalDimension.class, name = "builder", args = {})
 	public void testBuilder() {
-		assertNotNull(Dimension.builder());
+		assertNotNull(FunctionalDimension.builder());
 	}
 
 	private void testGetMetaDataValues(String... values) {
@@ -25,18 +27,18 @@ public class AT_Dimension {
 			expectedMetaData.add(value);
 		}
 
-		Dimension.Builder builder = Dimension.builder();
+		FunctionalDimension.Builder builder = FunctionalDimension.builder();
 		for (String metaDatum : expectedMetaData) {
 			builder.addMetaDatum(metaDatum);
 		}
-		Dimension dimension = builder.build();
-		List<String> actualMetaData = dimension.getMetaData();
+		FunctionalDimension dimension = builder.build();
+		List<String> actualMetaData = dimension.getExperimentMetaData();
 		assertEquals(expectedMetaData, actualMetaData);
 	}
 
 	@Test
-	@UnitTestMethod(target = Dimension.class, name = "getMetaData", args = {})
-	public void testGetMetatData() {
+	@UnitTestMethod(target = FunctionalDimension.class, name = "getExperimentMetaData", args = {})
+	public void testGetExperimentMetaData() {
 		// test several numbers and duplications of meta data
 		testGetMetaDataValues();
 		testGetMetaDataValues("A");
@@ -45,79 +47,68 @@ public class AT_Dimension {
 		testGetMetaDataValues("A", "B", "C", "A");
 	}
 
-	private void testGetMetaDataSizeValue(String... values) {
-		Dimension.Builder builder = Dimension.builder();
+	private List<String> getValuesAsList(String... values) {
+		List<String> result = new ArrayList<>();
 		for (String value : values) {
-			builder.addMetaDatum(value);
+			result.add(value);
 		}
-		Dimension dimension = builder.build();
-		List<String> actualMetaData = dimension.getMetaData();
-		assertEquals(values.length, actualMetaData.size());
+		return result;
 	}
 
 	@Test
-	@UnitTestMethod(target = Dimension.class, name = "getMetaDataSize", args = {})
-	public void testGetMetatDataSize() {
-		// test several numbers and duplications of meta data
-		testGetMetaDataSizeValue();
-		testGetMetaDataSizeValue("A");
-		testGetMetaDataSizeValue("B", "A");
-		testGetMetaDataSizeValue("B", "B", "Z");
-		testGetMetaDataSizeValue("A", "B", "C", "A");
-	}
+	@UnitTestMethod(target = FunctionalDimension.class, name = "executeLevel", args = { DimensionContext.class, int.class })
+	public void testExecuteLevel() {
 
-	@Test
-	@UnitTestMethod(target = Dimension.class, name = "getLevel", args = { int.class })
-	public void testGetLevel() {
+		Map<Integer, List<String>> expectedScenarioMetaData = new LinkedHashMap<>();
+		expectedScenarioMetaData.put(0, getValuesAsList("A"));
+		expectedScenarioMetaData.put(1, getValuesAsList("A", "B"));
+		expectedScenarioMetaData.put(2, getValuesAsList("A", "B", "C"));
+		expectedScenarioMetaData.put(3, getValuesAsList("A", "B", "C", "D"));
 
-		Dimension.Builder builder = Dimension.builder();
-		builder.addLevel((map) -> {
-			return new ArrayList<>();
-		});
-		builder.addLevel((map) -> {
-			return new ArrayList<>();
-		});
-		builder.addLevel((map) -> {
-			return new ArrayList<>();
-		});
-		builder.addLevel((map) -> {
-			return new ArrayList<>();
-		});
-		Dimension dimension = builder.build();
+		FunctionalDimension.Builder builder = FunctionalDimension.builder();
+		for (Integer i : expectedScenarioMetaData.keySet()) {
+			builder.addLevel((map) -> {
+				return expectedScenarioMetaData.get(i);
+			});
+		}
 
-		for (int i = 0; i < dimension.size(); i++) {
-			assertNotNull(dimension.getLevel(i));
+		FunctionalDimension dimension = builder.build();
+
+		for (int i = 0; i < dimension.levelCount(); i++) {
+			List<String> expectedValues = expectedScenarioMetaData.get(i);
+			List<String> actualValues = dimension.executeLevel(null, i);
+			assertEquals(expectedValues, actualValues);
 		}
 
 	}
 
 	@Test
-	@UnitTestMethod(target = Dimension.class, name = "size", args = {})
-	public void testSize() {
+	@UnitTestMethod(target = FunctionalDimension.class, name = "levelCount", args = {})
+	public void testLevelCount() {
 
-		Dimension dimension = Dimension.builder().build();
-		assertEquals(0, dimension.size());
+		FunctionalDimension dimension = FunctionalDimension.builder().build();
+		assertEquals(0, dimension.levelCount());
 
-		dimension = Dimension	.builder()//
-								.addLevel((map) -> {
-									return new ArrayList<>();
-								})//
-								.build();
-		assertEquals(1, dimension.size());
+		dimension = FunctionalDimension	.builder()//
+										.addLevel((map) -> {
+											return new ArrayList<>();
+										})//
+										.build();
+		assertEquals(1, dimension.levelCount());
 
-		dimension = Dimension	.builder()//
-								.addLevel((map) -> {
-									return new ArrayList<>();
-								})//
-								.addLevel((map) -> {
-									return new ArrayList<>();
-								})//
-								.build();
-		assertEquals(2, dimension.size());
+		dimension = FunctionalDimension	.builder()//
+										.addLevel((map) -> {
+											return new ArrayList<>();
+										})//
+										.addLevel((map) -> {
+											return new ArrayList<>();
+										})//
+										.build();
+		assertEquals(2, dimension.levelCount());
 	}
 
 	@Test
-	@UnitTestMethod(target = Dimension.Builder.class, name = "addMetaDatum", args = { String.class })
+	@UnitTestMethod(target = FunctionalDimension.Builder.class, name = "addMetaDatum", args = { String.class })
 	public void testAddMetaDatum() {
 		// test several numbers and duplications of meta data
 		testGetMetaDataValues();
@@ -128,33 +119,34 @@ public class AT_Dimension {
 	}
 
 	@Test
-	@UnitTestMethod(target = Dimension.Builder.class, name = "addLevel", args = { Function.class })
+	@UnitTestMethod(target = FunctionalDimension.Builder.class, name = "addLevel", args = { Function.class })
 	public void testAddLevel() {
-		Dimension.Builder builder = Dimension.builder();
-		builder.addLevel((map) -> {
-			return new ArrayList<>();
-		});
-		builder.addLevel((map) -> {
-			return new ArrayList<>();
-		});
-		builder.addLevel((map) -> {
-			return new ArrayList<>();
-		});
-		builder.addLevel((map) -> {
-			return new ArrayList<>();
-		});
-		Dimension dimension = builder.build();
+		Map<Integer, List<String>> expectedScenarioMetaData = new LinkedHashMap<>();
+		expectedScenarioMetaData.put(0, getValuesAsList("A"));
+		expectedScenarioMetaData.put(1, getValuesAsList("A", "B"));
+		expectedScenarioMetaData.put(2, getValuesAsList("A", "B", "C"));
+		expectedScenarioMetaData.put(3, getValuesAsList("A", "B", "C", "D"));
 
-		for (int i = 0; i < dimension.size(); i++) {
-			assertNotNull(dimension.getLevel(i));
+		FunctionalDimension.Builder builder = FunctionalDimension.builder();
+		for (Integer i : expectedScenarioMetaData.keySet()) {
+			builder.addLevel((map) -> {
+				return expectedScenarioMetaData.get(i);
+			});
 		}
 
+		FunctionalDimension dimension = builder.build();
+
+		for (int i = 0; i < dimension.levelCount(); i++) {
+			List<String> expectedValues = expectedScenarioMetaData.get(i);
+			List<String> actualValues = dimension.executeLevel(null, i);
+			assertEquals(expectedValues, actualValues);
+		}
 	}
 
 	@Test
-	@UnitTestMethod(target = Dimension.Builder.class, name = "build", args = {})
+	@UnitTestMethod(target = FunctionalDimension.Builder.class, name = "build", args = {})
 	public void testBuild() {
-		// covered by other tests
+		assertNotNull(FunctionalDimension.builder().build());
 	}
 
 }

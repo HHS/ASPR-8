@@ -20,42 +20,50 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.translationSpecs.
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.translationSpecs.TestMaterialsProducerIdTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.translationSpecs.TestMaterialsProducerPropertyIdTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.PropertiesTranslatorId;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.RegionsTranslatorId;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.ReportsTranslatorId;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.ResourcesTranslatorId;
 
+/**
+ * Translator for the Materials Plugin.
+ * <li>Using this Translator will add
+ * all the necessary TanslationSpecs needed to read and write
+ * MaterialsPluginData
+ */
 public class MaterialsTranslator {
 
     private MaterialsTranslator() {
     }
 
-    public static Translator.Builder builder(boolean withReport) {
+    private static Translator.Builder builder(boolean withReport) {
         Translator.Builder builder = Translator.builder()
                 .setTranslatorId(MaterialsTranslatorId.TRANSLATOR_ID)
                 .addDependency(PropertiesTranslatorId.TRANSLATOR_ID)
                 .addDependency(ResourcesTranslatorId.TRANSLATOR_ID)
+                .addDependency(RegionsTranslatorId.TRANSLATOR_ID)
                 .setInitializer((translatorContext) -> {
                     ProtobufTranslationEngine.Builder translationEngineBuilder = translatorContext
                             .getTranslationEngineBuilder(ProtobufTranslationEngine.Builder.class);
 
-                    translationEngineBuilder.addTranslationSpec(new MaterialsPluginDataTranslationSpec());
-                    translationEngineBuilder.addTranslationSpec(new MaterialIdTranslationSpec());
-                    translationEngineBuilder.addTranslationSpec(new MaterialsProducerIdTranslationSpec());
-                    translationEngineBuilder.addTranslationSpec(new MaterialsProducerPropertyIdTranslationSpec());
-                    translationEngineBuilder.addTranslationSpec(new BatchIdTranslationSpec());
-                    translationEngineBuilder.addTranslationSpec(new StageIdTranslationSpec());
-                    translationEngineBuilder.addTranslationSpec(new BatchPropertyIdTranslationSpec());
-                    translationEngineBuilder.addTranslationSpec(new TestBatchPropertyIdTranslationSpec());
-                    translationEngineBuilder.addTranslationSpec(new TestMaterialIdTranslationSpec());
-                    translationEngineBuilder.addTranslationSpec(new TestMaterialsProducerIdTranslationSpec());
-                    translationEngineBuilder.addTranslationSpec(new TestMaterialsProducerPropertyIdTranslationSpec());
+                    translationEngineBuilder
+                            .addTranslationSpec(new MaterialsPluginDataTranslationSpec())
+                            .addTranslationSpec(new MaterialIdTranslationSpec())
+                            .addTranslationSpec(new MaterialsProducerIdTranslationSpec())
+                            .addTranslationSpec(new MaterialsProducerPropertyIdTranslationSpec())
+                            .addTranslationSpec(new BatchIdTranslationSpec())
+                            .addTranslationSpec(new StageIdTranslationSpec())
+                            .addTranslationSpec(new BatchPropertyIdTranslationSpec())
+                            .addTranslationSpec(new TestBatchPropertyIdTranslationSpec())
+                            .addTranslationSpec(new TestMaterialIdTranslationSpec())
+                            .addTranslationSpec(new TestMaterialsProducerIdTranslationSpec())
+                            .addTranslationSpec(new TestMaterialsProducerPropertyIdTranslationSpec());
 
                     if (withReport) {
-                        translationEngineBuilder.addTranslationSpec(new BatchStatusReportPluginDataTranslationSpec());
                         translationEngineBuilder
-                                .addTranslationSpec(new MaterialsProducerPropertyReportPluginDataTranslationSpec());
-                        translationEngineBuilder
-                                .addTranslationSpec(new MaterialsProducerResourceReportPluginDataTranslationSpec());
-                        translationEngineBuilder.addTranslationSpec(new StageReportPluginDataTranslationSpec());
+                                .addTranslationSpec(new BatchStatusReportPluginDataTranslationSpec())
+                                .addTranslationSpec(new MaterialsProducerPropertyReportPluginDataTranslationSpec())
+                                .addTranslationSpec(new MaterialsProducerResourceReportPluginDataTranslationSpec())
+                                .addTranslationSpec(new StageReportPluginDataTranslationSpec());
                     }
 
                     translationEngineBuilder

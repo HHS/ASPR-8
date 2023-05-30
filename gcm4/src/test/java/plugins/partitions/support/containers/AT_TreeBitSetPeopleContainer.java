@@ -6,8 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import nucleus.SimulationContext;
 import plugins.partitions.support.PartitionError;
+import plugins.partitions.support.PartitionsContext;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonId;
 import util.annotations.UnitTestConstructor;
@@ -18,7 +18,7 @@ import util.errors.ContractException;
 public class AT_TreeBitSetPeopleContainer {
 
 	
-	private PeopleContainer getPeopleContainer(SimulationContext context) {
+	private PeopleContainer getPeopleContainer(PartitionsContext context) {
 		return new TreeBitSetPeopleContainer(context.getDataManager(PeopleDataManager.class));
 	}
 	

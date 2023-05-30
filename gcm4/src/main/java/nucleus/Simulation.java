@@ -165,14 +165,14 @@ public class Simulation {
 		}
 
 		/**
-		 * Sets the halt time for the simulation. Defaults to -1, which is
+		 * Sets the halt time for the simulation. Defaults to null, which is
 		 * equivalent to not halting. If the simulation has been instructed to
 		 * produce its state at halt, then the halt time must be set to a
-		 * positive value. Setting this to a non-negative value that is less
-		 * than the simulation time used to start the simulation will result in
-		 * an exception.
+		 * positive value. Setting this to a value that is less than the
+		 * simulation time used to start the simulation will result in an
+		 * exception.
 		 */
-		public Builder setSimulationHaltTime(double simulationHaltTime) {
+		public Builder setSimulationHaltTime(Double simulationHaltTime) {
 			data.simulationHaltTime = simulationHaltTime;
 			return this;
 		}
@@ -213,11 +213,11 @@ public class Simulation {
 
 		private void validate() {
 			if (data.stateRecordingIsScheduled) {
-				if (data.simulationHaltTime < 0) {
+				if (data.simulationHaltTime == null) {
 					throw new ContractException(NucleusError.MISSING_SIM_HALT_TIME);
 				}
 			}
-			if (data.simulationHaltTime >= 0) {
+			if (data.simulationHaltTime != null) {
 				if (data.simulationHaltTime < data.simulationState.getStartTime()) {
 					throw new ContractException(NucleusError.SIM_HALT_TIME_TOO_EARLY);
 				}
@@ -243,7 +243,7 @@ public class Simulation {
 	}
 
 	private static class Data {
-		private double simulationHaltTime = -1;
+		private Double simulationHaltTime = null;
 		private boolean stateRecordingIsScheduled;
 		private List<Plugin> plugins = new ArrayList<>();
 		private Consumer<Object> outputConsumer;
@@ -890,41 +890,39 @@ public class Simulation {
 			if (planRec.isActive) {
 				activePlanCount++;
 			}
-
-			Map<Object, PlanRec> map;
-			if (planRec.key != null) {
-				switch (planner) {
-				case ACTOR:
-					map = actorPlanMap.get(planRec.actorId);
-					if (map == null) {
-						map = new LinkedHashMap<>();
-						actorPlanMap.put(planRec.actorId, map);
-					}
-					map.put(planRec.key, planRec);
-					break;
-				case DATA_MANAGER:
-					map = dataManagerPlanMap.get(planRec.dataManagerId);
-					if (map == null) {
-						map = new LinkedHashMap<>();
-						dataManagerPlanMap.put(planRec.dataManagerId, map);
-					}
-					map.put(planRec.key, planRec);
-					break;
-				case REPORT:
-					map = reportPlanMap.get(planRec.reportId);
-					if (map == null) {
-						map = new LinkedHashMap<>();
-						reportPlanMap.put(planRec.reportId, map);
-					}
-					map.put(planRec.key, planRec);
-					break;
-				default:
-					throw new RuntimeException("unhandled case " + planner);
-				}
-
-			}
 			if (planRec.plan.getCallbackConsumer() != null) {
 				planningQueue.add(planRec);
+				Map<Object, PlanRec> map;
+				if (planRec.key != null) {
+					switch (planner) {
+					case ACTOR:
+						map = actorPlanMap.get(planRec.actorId);
+						if (map == null) {
+							map = new LinkedHashMap<>();
+							actorPlanMap.put(planRec.actorId, map);
+						}
+						map.put(planRec.key, planRec);
+						break;
+					case DATA_MANAGER:
+						map = dataManagerPlanMap.get(planRec.dataManagerId);
+						if (map == null) {
+							map = new LinkedHashMap<>();
+							dataManagerPlanMap.put(planRec.dataManagerId, map);
+						}
+						map.put(planRec.key, planRec);
+						break;
+					case REPORT:
+						map = reportPlanMap.get(planRec.reportId);
+						if (map == null) {
+							map = new LinkedHashMap<>();
+							reportPlanMap.put(planRec.reportId, map);
+						}
+						map.put(planRec.key, planRec);
+						break;
+					default:
+						throw new RuntimeException("unhandled case " + planner);
+					}
+				}
 			}
 		}
 	}
@@ -971,8 +969,11 @@ public class Simulation {
 
 		masterPlanningArrivalId = data.simulationState.getPlanningQueueArrivalId();
 
-		simulationHaltTime = data.simulationHaltTime;
-		forcedHaltPresent = simulationHaltTime >= 0;
+		forcedHaltPresent = false;
+		if (data.simulationHaltTime != null) {
+			simulationHaltTime = data.simulationHaltTime;
+			forcedHaltPresent = true;
+		}
 
 		// set the output consumer
 		outputConsumer = data.outputConsumer;

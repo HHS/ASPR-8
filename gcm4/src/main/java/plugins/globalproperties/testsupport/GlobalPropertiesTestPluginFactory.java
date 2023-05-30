@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
+import org.apache.commons.math3.random.RandomGenerator;
+
 import nucleus.ActorContext;
 import nucleus.NucleusError;
 import nucleus.Plugin;
@@ -17,6 +19,7 @@ import plugins.globalproperties.GlobalPropertiesPluginData;
 import plugins.globalproperties.reports.GlobalPropertyReportPluginData;
 import plugins.globalproperties.support.GlobalPropertiesError;
 import util.errors.ContractException;
+import util.random.RandomGeneratorProvider;
 
 /**
  * A static test support class for the {@linkplain GlobalPropertiesPlugin}.
@@ -40,8 +43,8 @@ public final class GlobalPropertiesTestPluginFactory {
 		private GlobalPropertyReportPluginData globalPropertyReportPluginData;
 		private TestPluginData testPluginData;
 
-		private Data(TestPluginData testPluginData) {
-			this.globalPropertiesPluginData = getStandardGlobalPropertiesPluginData();
+		private Data(long seed, TestPluginData testPluginData) {
+			this.globalPropertiesPluginData = getStandardGlobalPropertiesPluginData(seed);
 			this.testPluginData = testPluginData;
 		}
 	}
@@ -142,11 +145,11 @@ public final class GlobalPropertiesTestPluginFactory {
 	 *             {@linkplain NucleusError#NULL_PLUGIN_DATA} if testPluginData
 	 *             is null
 	 */
-	public static Factory factory(TestPluginData testPluginData) {
+	public static Factory factory(long seed, TestPluginData testPluginData) {
 		if (testPluginData == null) {
 			throw new ContractException(NucleusError.NULL_PLUGIN_DATA);
 		}
-		return new Factory(new Data(testPluginData));
+		return new Factory(new Data(seed, testPluginData));
 	}
 
 	/**
@@ -170,14 +173,14 @@ public final class GlobalPropertiesTestPluginFactory {
 	 *             {@linkplain NucleusError#NULL_ACTOR_CONTEXT_CONSUMER} if
 	 *             consumer is null
 	 */
-	public static Factory factory(Consumer<ActorContext> consumer) {
+	public static Factory factory(long seed, Consumer<ActorContext> consumer) {
 		if (consumer == null) {
 			throw new ContractException(NucleusError.NULL_ACTOR_CONTEXT_CONSUMER);
 		}
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, consumer));
 		TestPluginData testPluginData = pluginBuilder.build();
-		return factory(testPluginData);
+		return factory(seed, testPluginData);
 	}
 
 	/**
@@ -191,10 +194,28 @@ public final class GlobalPropertiesTestPluginFactory {
 	 * </ul>
 	 * </ul>
 	 */
-	public static GlobalPropertiesPluginData getStandardGlobalPropertiesPluginData() {
+	public static GlobalPropertiesPluginData getStandardGlobalPropertiesPluginData(long seed) {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
+
 		GlobalPropertiesPluginData.Builder globalsPluginBuilder = GlobalPropertiesPluginData.builder();
+
 		for (TestGlobalPropertyId testGlobalPropertyId : TestGlobalPropertyId.values()) {
 			globalsPluginBuilder.defineGlobalProperty(testGlobalPropertyId, testGlobalPropertyId.getPropertyDefinition(),0);
+
+			boolean hasDefaultValue = testGlobalPropertyId.getPropertyDefinition().getDefaultValue().isPresent();
+			if(!hasDefaultValue) {
+				globalsPluginBuilder.setGlobalPropertyValue(testGlobalPropertyId, testGlobalPropertyId.getRandomPropertyValue(randomGenerator), 0);
+			}
+
+			// set a value to the default
+			if(randomGenerator.nextBoolean() && hasDefaultValue) {
+				globalsPluginBuilder.setGlobalPropertyValue(testGlobalPropertyId,testGlobalPropertyId.getPropertyDefinition().getDefaultValue().get() , 0);
+			}
+
+			// set a value to not the default
+			if(randomGenerator.nextBoolean() && hasDefaultValue) {
+				globalsPluginBuilder.setGlobalPropertyValue(testGlobalPropertyId,testGlobalPropertyId.getRandomPropertyValue(randomGenerator) , 0);
+			}
 		}
 
 		return globalsPluginBuilder.build();

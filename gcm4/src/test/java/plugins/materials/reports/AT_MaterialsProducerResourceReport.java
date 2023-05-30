@@ -19,6 +19,7 @@ import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestOutputConsumer;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestSimulation;
+import plugins.materials.MaterialsPluginData;
 import plugins.materials.datamangers.MaterialsDataManager;
 import plugins.materials.support.MaterialsProducerConstructionData;
 import plugins.materials.support.MaterialsProducerId;
@@ -36,7 +37,6 @@ import plugins.resources.datamanagers.ResourcesDataManager;
 import plugins.resources.support.ResourceId;
 import plugins.resources.testsupport.TestResourceId;
 import plugins.stochastics.StochasticsDataManager;
-import plugins.util.properties.TimeTrackingPolicy;
 import util.annotations.UnitTag;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
@@ -60,33 +60,40 @@ public final class AT_MaterialsProducerResourceReport {
 	}
 
 	@Test
-	@UnitTestConstructor(target = MaterialsProducerResourceReport.class, args = { MaterialsProducerResourceReportPluginData.class })
+	@UnitTestConstructor(target = MaterialsProducerResourceReport.class, args = {
+			MaterialsProducerResourceReportPluginData.class })
 	public void testConstructor() {
-		MaterialsProducerResourceReport report = new MaterialsProducerResourceReport(MaterialsProducerResourceReportPluginData.builder().setReportLabel(REPORT_LABEL).build());
+		MaterialsProducerResourceReport report = new MaterialsProducerResourceReport(
+				MaterialsProducerResourceReportPluginData.builder().setReportLabel(REPORT_LABEL).build());
 		assertNotNull(report);
 	}
 
 	@Test
-	@UnitTestMethod(target = MaterialsProducerResourceReport.class, name = "init", args = {ReportContext.class }, tags = { UnitTag.INCOMPLETE })
+	@UnitTestMethod(target = MaterialsProducerResourceReport.class, name = "init", args = {
+			ReportContext.class }, tags = { UnitTag.INCOMPLETE })
 	public void testInit() {
 		Map<ReportItem, Integer> expectedReportItems = new LinkedHashMap<>();
 
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
 		MaterialsProducerId newMaterialsProducerId = TestMaterialsProducerId.getUnknownMaterialsProducerId();
+		long seed = 6081341958178733565L;
+		MaterialsPluginData standardPluginData = MaterialsTestPluginFactory.getStandardMaterialsPluginData(0, 0, 0,
+				seed);
 
 		double actionTime = 0;
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(actionTime++, (c) -> {
 			for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
 				for (TestResourceId testResourceId : TestResourceId.values()) {
-					expectedReportItems.put(getReportItemFromResourceId(c, testMaterialsProducerId, testResourceId, 0L),
+					long existingAmount = standardPluginData.getMaterialsProducerResourceLevel(testMaterialsProducerId, testResourceId);
+					expectedReportItems.put(getReportItemFromResourceId(c, testMaterialsProducerId, testResourceId, existingAmount),
 							1);
 				}
 			}
 
 			ResourceId newResourceId = TestResourceId.getUnknownResourceId();
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
-			resourcesDataManager.addResourceId(newResourceId, TimeTrackingPolicy.TRACK_TIME);
+			resourcesDataManager.addResourceId(newResourceId, true);
 
 			for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
 				expectedReportItems.put(getReportItemFromResourceId(c, testMaterialsProducerId, newResourceId, 0L), 1);
@@ -156,12 +163,13 @@ public final class AT_MaterialsProducerResourceReport {
 
 		TestPluginData testPluginData = pluginBuilder.build();
 
-
-		MaterialsTestPluginFactory.Factory factory = MaterialsTestPluginFactory.factory(0, 0, 0, 6081341958178733565L, testPluginData);
-		MaterialsProducerResourceReportPluginData materialsProducerResourceReportPluginData = MaterialsProducerResourceReportPluginData.builder().setReportLabel(REPORT_LABEL).build();
+		MaterialsTestPluginFactory.Factory factory = MaterialsTestPluginFactory.factory(0, 0, 0, seed,
+				testPluginData);
+		MaterialsProducerResourceReportPluginData materialsProducerResourceReportPluginData = MaterialsProducerResourceReportPluginData
+				.builder().setReportLabel(REPORT_LABEL).build();
 		factory.setMaterialsProducerResourceReportPluginData(materialsProducerResourceReportPluginData);
-		
-		TestOutputConsumer testOutputConsumer = TestSimulation	.builder()//
+
+		TestOutputConsumer testOutputConsumer = TestSimulation.builder()//
 				.addPlugins(factory.getPlugins())//
 				.build()//
 				.execute();
@@ -170,7 +178,7 @@ public final class AT_MaterialsProducerResourceReport {
 	}
 
 	@Test
-	@UnitTestMethod(target = MaterialsProducerResourceReport.class, name = "init", args = {ReportContext.class })
+	@UnitTestMethod(target = MaterialsProducerResourceReport.class, name = "init", args = { ReportContext.class })
 	public void testInit_State() {
 		// Test with producing simulation state
 
@@ -182,7 +190,7 @@ public final class AT_MaterialsProducerResourceReport {
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(actionTime++, (c) -> {
 			ResourceId newResourceId = TestResourceId.getUnknownResourceId();
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
-			resourcesDataManager.addResourceId(newResourceId, TimeTrackingPolicy.TRACK_TIME);
+			resourcesDataManager.addResourceId(newResourceId, true);
 		}));
 
 		// add a new materials producer just before time 20
@@ -243,24 +251,27 @@ public final class AT_MaterialsProducerResourceReport {
 				.setReportLabel(REPORT_LABEL)
 				.build();
 
-		MaterialsTestPluginFactory.Factory factory = MaterialsTestPluginFactory.factory(0, 0, 0, 6081341958178733565L, testPluginData);
+		MaterialsTestPluginFactory.Factory factory = MaterialsTestPluginFactory.factory(0, 0, 0, 6081341958178733565L,
+				testPluginData);
 		factory.setMaterialsProducerResourceReportPluginData(materialsProducerResourceReportPluginData);
 
-		TestOutputConsumer testOutputConsumer = TestSimulation	.builder()//
+		TestOutputConsumer testOutputConsumer = TestSimulation.builder()//
 				.addPlugins(factory.getPlugins())//
 				.setProduceSimulationStateOnHalt(true)//
 				.setSimulationHaltTime(150)//
 				.build()//
 				.execute();
 
-		Map<MaterialsProducerResourceReportPluginData, Integer> outputItems = testOutputConsumer.getOutputItems(MaterialsProducerResourceReportPluginData.class);
+		Map<MaterialsProducerResourceReportPluginData, Integer> outputItems = testOutputConsumer
+				.getOutputItems(MaterialsProducerResourceReportPluginData.class);
 		assertEquals(1, outputItems.size());
-		MaterialsProducerResourceReportPluginData materialsProducerResourceReportPluginData2 = outputItems.keySet().iterator().next();
+		MaterialsProducerResourceReportPluginData materialsProducerResourceReportPluginData2 = outputItems.keySet()
+				.iterator().next();
 		assertEquals(materialsProducerResourceReportPluginData, materialsProducerResourceReportPluginData2);
 
 		// Test without producing simulation state
 
-		testOutputConsumer = TestSimulation	.builder()//
+		testOutputConsumer = TestSimulation.builder()//
 				.addPlugins(factory.getPlugins())//
 				.setProduceSimulationStateOnHalt(false)//
 				.setSimulationHaltTime(150)//

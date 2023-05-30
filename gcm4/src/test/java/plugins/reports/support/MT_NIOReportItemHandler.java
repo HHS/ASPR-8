@@ -18,7 +18,9 @@ import java.util.Map;
 
 import nucleus.Dimension;
 import nucleus.Experiment;
+import nucleus.ExperimentParameterData;
 import nucleus.ExperimentStatusConsole;
+import nucleus.FunctionalDimension;
 import nucleus.Plugin;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPlugin;
@@ -344,7 +346,7 @@ public final class MT_NIOReportItemHandler {
 			}
 		}));
 
-		Dimension dimension1 = Dimension.builder()//
+		Dimension dimension1 = FunctionalDimension.builder()//
 										.addMetaDatum("xxx")//
 										.addLevel((c) -> {
 											List<String> result = new ArrayList<>();
@@ -356,7 +358,7 @@ public final class MT_NIOReportItemHandler {
 											return result;
 										}).build();
 
-		Dimension dimension2 = Dimension.builder()//
+		Dimension dimension2 = FunctionalDimension.builder()//
 										.addMetaDatum("xyz").addLevel((c) -> {
 											List<String> result = new ArrayList<>();
 											result.add("x");
@@ -425,7 +427,7 @@ public final class MT_NIOReportItemHandler {
 			}
 		}));
 
-		Dimension dimension1 = Dimension.builder()//
+		FunctionalDimension dimension1 = FunctionalDimension.builder()//
 										.addMetaDatum("xxx")//
 										.addLevel((c) -> {
 											List<String> result = new ArrayList<>();
@@ -439,7 +441,7 @@ public final class MT_NIOReportItemHandler {
 										})//
 										.build();
 
-		Dimension dimension2 = Dimension.builder()//
+		Dimension dimension2 = FunctionalDimension.builder()//
 										.addMetaDatum("xyz")//
 										.addLevel((c) -> {
 											List<String> result = new ArrayList<>();
@@ -511,7 +513,7 @@ public final class MT_NIOReportItemHandler {
 			}
 		}));
 
-		Dimension dimension1 = Dimension.builder()//
+		Dimension dimension1 = FunctionalDimension.builder()//
 										.addMetaDatum("xxx")//
 										.addLevel((c) -> {
 											List<String> result = new ArrayList<>();
@@ -525,7 +527,7 @@ public final class MT_NIOReportItemHandler {
 										})//
 										.build();
 
-		Dimension dimension2 = Dimension.builder()//
+		Dimension dimension2 = FunctionalDimension.builder()//
 										.addMetaDatum("xyz")//
 										.addLevel((c) -> {
 											List<String> result = new ArrayList<>();
@@ -553,15 +555,19 @@ public final class MT_NIOReportItemHandler {
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
 		ExperimentStatusConsole experimentStatusConsole = ExperimentStatusConsole.builder().build();
+		
+		ExperimentParameterData experimentParameterData = ExperimentParameterData.builder()//
+		.setExperimentProgressLog(subPath.resolve("progresslog.txt"))//
+		.setContinueFromProgressLog(false)//
+		.build();
 
 		Experiment	.builder()//
 					.addPlugin(testPlugin)//
 					.addDimension(dimension1)//
 					.addDimension(dimension2)//
 					.addExperimentContextConsumer(nioReportItemHandler)//
-					.setExperimentProgressLog(subPath.resolve("progresslog.txt"))//
-					.setContinueFromProgressLog(false)//
 					.addExperimentContextConsumer(experimentStatusConsole)//
+					.setExperimentParameterData(experimentParameterData)//
 					.build()//
 					.execute();
 	}
@@ -625,7 +631,7 @@ public final class MT_NIOReportItemHandler {
 			}
 		}));
 
-		Dimension dimension1 = Dimension.builder()//
+		Dimension dimension1 = FunctionalDimension.builder()//
 										.addMetaDatum("xxx")//
 										.addLevel((c) -> {
 											List<String> result = new ArrayList<>();
@@ -639,7 +645,7 @@ public final class MT_NIOReportItemHandler {
 										})//
 										.build();//
 
-		Dimension dimension2 = Dimension.builder()//
+		Dimension dimension2 = FunctionalDimension.builder()//
 										.addMetaDatum("xyz").addLevel((c) -> {
 											List<String> result = new ArrayList<>();
 											result.add("x");
@@ -663,15 +669,19 @@ public final class MT_NIOReportItemHandler {
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
 		ExperimentStatusConsole experimentStatusConsole = ExperimentStatusConsole.builder().build();
+		
+		ExperimentParameterData experimentParameterData = ExperimentParameterData.builder()//
+		.setExperimentProgressLog(subPath.resolve("progresslog.txt"))//
+		.setContinueFromProgressLog(true)//
+		.build();
 
 		Experiment	.builder()//
 					.addPlugin(testPlugin)//
 					.addDimension(dimension1)//
 					.addDimension(dimension2)//
 					.addExperimentContextConsumer(nioReportItemHandler)//
-					.setExperimentProgressLog(subPath.resolve("progresslog.txt"))//
-					.setContinueFromProgressLog(true)//
 					.addExperimentContextConsumer(experimentStatusConsole)//
+					.setExperimentParameterData(experimentParameterData)//
 					.build()//
 					.execute();
 
@@ -711,7 +721,7 @@ public final class MT_NIOReportItemHandler {
 			}
 		}));
 
-		Dimension dimension1 = Dimension.builder()//
+		Dimension dimension1 = FunctionalDimension.builder()//
 		.addMetaDatum("xxx")//
 		.addLevel((c) -> {
 			List<String> result = new ArrayList<>();
@@ -725,7 +735,7 @@ public final class MT_NIOReportItemHandler {
 		})//
 		.build();
 
-		Dimension dimension2 = Dimension.builder()//
+		Dimension dimension2 = FunctionalDimension.builder()//
 		.addMetaDatum("xyz")
 		.addLevel((c) -> {
 			List<String> result = new ArrayList<>();
@@ -753,15 +763,19 @@ public final class MT_NIOReportItemHandler {
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
 		ExperimentStatusConsole experimentStatusConsole = ExperimentStatusConsole.builder().build();
+		
+		ExperimentParameterData experimentParameterData = ExperimentParameterData.builder()//
+				.setExperimentProgressLog(subPath.resolve("progresslog.txt"))//
+				.setContinueFromProgressLog(true)//
+				.build();
 
 		Experiment	.builder()//
 					.addPlugin(testPlugin)//
 					.addDimension(dimension1)//
 					.addDimension(dimension2)//
 					.addExperimentContextConsumer(nioReportItemHandler)//
-					.setExperimentProgressLog(subPath.resolve("progresslog.txt"))//
-					.setContinueFromProgressLog(true)//
 					.addExperimentContextConsumer(experimentStatusConsole)//
+					.setExperimentParameterData(experimentParameterData)//
 					.build()//
 					.execute();
 
@@ -803,7 +817,7 @@ public final class MT_NIOReportItemHandler {
 			}
 		}));
 
-		Dimension dimension1 = Dimension.builder()//
+		Dimension dimension1 = FunctionalDimension.builder()//
 				.addMetaDatum("xxx")//
 				.addLevel((c) -> {
 					List<String> result = new ArrayList<>();
@@ -815,7 +829,7 @@ public final class MT_NIOReportItemHandler {
 					return result;
 				}).build();
 
-		Dimension dimension2 = Dimension.builder()//
+		Dimension dimension2 = FunctionalDimension.builder()//
 				.addMetaDatum("xyz").addLevel((c) -> {
 					List<String> result = new ArrayList<>();
 					result.add("x");

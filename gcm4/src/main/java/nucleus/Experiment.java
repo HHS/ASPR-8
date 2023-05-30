@@ -3,18 +3,15 @@ package nucleus;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 import net.jcip.annotations.Immutable;
 import util.errors.ContractException;
@@ -39,6 +36,53 @@ import util.errors.ContractException;
  */
 
 public final class Experiment {
+	
+	
+	private static class DimensionRec {
+		private final int index;
+		private final int levelCount;
+		private final Dimension dimension;
+		private List<String> experimentMetaData = new ArrayList<>();
+		private Map<Integer, List<String>> scenarioMetaData = new LinkedHashMap<>();
+		
+		
+		public List<String> getExperimentMetaData(){
+			return experimentMetaData;
+		}
+
+		public DimensionRec(Dimension dimension, int index) {
+			this.dimension = dimension;
+			this.index = index;
+			for (int i = 0; i < dimension.levelCount(); i++) {
+				scenarioMetaData.put(i, null);
+			}
+			experimentMetaData.addAll(dimension.getExperimentMetaData());
+			levelCount = dimension.levelCount();
+		}
+
+		public List<String> executeLevel(DimensionContext dimensionContext, int level) {
+			List<String> list = dimension.executeLevel(dimensionContext, level);
+			if (list.size() != experimentMetaData.size()) {
+				throw new ContractException(NucleusError.DIMENSION_LABEL_MISMATCH,
+						"dimension[" + index + "] has meta data: " + experimentMetaData + " that does not match scenario meta data: " + list + " at level " + level);
+			}
+
+			List<String> baseList = scenarioMetaData.get(level);
+			if (baseList == null) {
+				scenarioMetaData.put(level, list);
+			} else {
+				if (!baseList.equals(list)) {
+					throw new ContractException(NucleusError.DIMENSION_LABEL_MISMATCH, "execution of level " + level + " of dimension[" + index + "] resulted in inconsistent meta scenario data");
+				}
+			}
+			return list;
+		}
+
+		public int getLevelCount() {
+			return levelCount;
+		}
+	}
+	
 
 	public static class Builder {
 		private Data data = new Data();
@@ -50,18 +94,9 @@ public final class Experiment {
 		 * Adds a non-empty dimension to the experiment
 		 */
 		public Builder addDimension(final Dimension dimension) {
-			if (dimension.size() > 0) {
+			if (dimension.levelCount() > 0) {
 				data.dimensions.add(dimension);
 			}
-			return this;
-		}
-
-		/**
-		 * Marks the scenario to be explicitly run. All other scenarios will be
-		 * ignored.
-		 */
-		public Builder addExplicitScenarioId(Integer scenarioId) {
-			data.explicitScenarioIds.add(scenarioId);
 			return this;
 		}
 
@@ -98,41 +133,11 @@ public final class Experiment {
 		}
 
 		/**
-		 * Sets the path for experiment progress log. A null path turns off
-		 * logging and run resumption. Default value is null.
+		 * Sets the experiment parameters. Defaults to the default build of
+		 * ExperimentParameterData.
 		 */
-		public Builder setExperimentProgressLog(final Path path) {
-			data.experimentProgressLogPath = path;
-			return this;
-		}
-
-		/**
-		 * Instructs the experiment to continue experiment progress from the
-		 * experiment progress log. Defaults to false;
-		 * 
-		 */
-		public Builder setContinueFromProgressLog(boolean continueFromProgressLog) {
-			data.continueFromProgressLog = continueFromProgressLog;
-			return this;
-		}
-
-		/**
-		 * Sets the number of scenarios that may run concurrently. Generally
-		 * this should be set to one less than the number of virtual processors
-		 * on the machine that is running the experiment. Setting the thread
-		 * count to zero causes the simulations to execute in the main thread.
-		 *
-		 * @throws ContractException
-		 *             <li>{@linkplain NucleusError#NEGATIVE_THREAD_COUNT} if
-		 *             the thread count is negative</li>
-		 *
-		 * 
-		 */
-		public Builder setThreadCount(final int threadCount) {
-			if (threadCount < 0) {
-				throw new ContractException(NucleusError.NEGATIVE_THREAD_COUNT);
-			}
-			data.threadCount = threadCount;
+		public Builder setExperimentParameterData(ExperimentParameterData experimentParameterData) {
+			data.experimentParameterData = experimentParameterData;
 			return this;
 		}
 
@@ -153,41 +158,6 @@ public final class Experiment {
 			return this;
 		}
 
-		/**
-		 * Signals to simulation components to record their state as plugin data
-		 * as output to the experiment Defaults to false.
-		 */
-		public Builder setRecordState(boolean recordState) {
-			data.stateRecordingIsScheduled = recordState;
-			return this;
-		}
-
-		/**
-		 * Sets the halt time for the simulation. Defaults to -1, which is
-		 * equivalent to not halting. If the simulation has been instructed to
-		 * produce its state at halt, then the halt time must be set to a
-		 * positive value. Setting this to a non-negative value that is less
-		 * than the simulation time used to start the simulation will result in
-		 * an exception.
-		 */
-		public Builder setSimulationHaltTime(double simulationHaltTime) {
-			data.simulationHaltTime = simulationHaltTime;
-			return this;
-		}
-
-		/**
-		 * When true, the experiment halts on any exception thrown by any of the
-		 * simulation instances. The experiment will attempt to gracefully
-		 * terminate, halting any ongoing simulation instances and completing
-		 * the experiment. When false, the experiment logs the failure with the
-		 * experiment context and continues with the remaining simulation
-		 * instances. Defaulted to true.
-		 */
-		public Builder setHaltOnException(final boolean haltOnException) {
-			data.haltOnException = haltOnException;
-			return this;
-		}
-
 	}
 
 	/*
@@ -197,14 +167,10 @@ public final class Experiment {
 		private final List<Dimension> dimensions = new ArrayList<>();
 		private final List<Plugin> plugins = new ArrayList<>();
 		private final List<Consumer<ExperimentContext>> experimentContextConsumers = new ArrayList<>();
-		private int threadCount;
-		private boolean stateRecordingIsScheduled;
-		private double simulationHaltTime = -1;
-		private boolean haltOnException = true;
-		private Path experimentProgressLogPath;
-		private boolean continueFromProgressLog;
-		private Set<Integer> explicitScenarioIds = new LinkedHashSet<>();
+
 		private SimulationState simulationState = SimulationState.builder().build();
+
+		private ExperimentParameterData experimentParameterData = ExperimentParameterData.builder().build();
 
 		public Data() {
 		}
@@ -213,13 +179,7 @@ public final class Experiment {
 			dimensions.addAll(data.dimensions);
 			plugins.addAll(data.plugins);
 			experimentContextConsumers.addAll(data.experimentContextConsumers);
-			threadCount = data.threadCount;
-			stateRecordingIsScheduled = data.stateRecordingIsScheduled;
-			simulationHaltTime = data.simulationHaltTime;
-			haltOnException = data.haltOnException;
-			experimentProgressLogPath = data.experimentProgressLogPath;
-			continueFromProgressLog = data.continueFromProgressLog;
-			explicitScenarioIds.addAll(data.explicitScenarioIds);
+			experimentParameterData = data.experimentParameterData;
 			simulationState = data.simulationState;
 		}
 	}
@@ -249,14 +209,14 @@ public final class Experiment {
 		private final List<Plugin> plugins;
 		private final Integer scenarioId;
 		private final boolean produceSimulationStateOnHalt;
-		private final double simulationHaltTime;
+		private final Double simulationHaltTime;
 		private final SimulationState simulationState;
 
 		/*
 		 * All construction arguments are thread safe implementations.
 		 */
 		private SimulationCallable(final Integer scenarioId, final ExperimentStateManager experimentStateManager, final List<Plugin> plugins, final boolean produceSimulationStateOnHalt,
-				final double simulationHaltTime, final SimulationState simulationState) {
+				final Double simulationHaltTime, final SimulationState simulationState) {
 			this.scenarioId = scenarioId;
 			this.experimentStateManager = experimentStateManager;
 			this.plugins = new ArrayList<>(plugins);
@@ -311,6 +271,8 @@ public final class Experiment {
 	}
 
 	private final Data data;
+	
+	private List<DimensionRec> dimensionRecs = new ArrayList<>();
 
 	private ExperimentStateManager experimentStateManager;
 
@@ -325,18 +287,24 @@ public final class Experiment {
 	public void execute() {
 
 		int scenarioCount = 1;
-		for (final Dimension dimension : data.dimensions) {
-			scenarioCount *= dimension.size();
+		for (int i = 0;i< data.dimensions.size();i++) {
+			Dimension dimension = data.dimensions.get(i);
+			DimensionRec dimensionRec = new DimensionRec(dimension,i);
+			dimensionRecs.add(dimensionRec);
+			scenarioCount *= dimensionRec.getLevelCount();
 		}
 
 		ExperimentStateManager.Builder builder = ExperimentStateManager.builder();
 		builder.setScenarioCount(scenarioCount);
-		builder.setContinueFromProgressLog(data.continueFromProgressLog);
-		builder.setScenarioProgressLogFile(data.experimentProgressLogPath);
+		builder.setContinueFromProgressLog(data.experimentParameterData.continueFromProgressLog());
+		Optional<Path> optionalExperimentProgressLogPath = data.experimentParameterData.getExperimentProgressLogPath();
+		if (optionalExperimentProgressLogPath.isPresent()) {
+			builder.setScenarioProgressLogFile(optionalExperimentProgressLogPath.get());
+		}
 
 		final List<String> experimentMetaData = new ArrayList<>();
-		for (final Dimension dimension : data.dimensions) {
-			experimentMetaData.addAll(dimension.getMetaData());
+		for (final DimensionRec dimensionRec : dimensionRecs) {
+			experimentMetaData.addAll(dimensionRec.getExperimentMetaData());
 		}
 
 		builder.setExperimentMetaData(experimentMetaData);
@@ -346,7 +314,7 @@ public final class Experiment {
 		for (final Consumer<ExperimentContext> consumer : data.experimentContextConsumers) {
 			builder.addExperimentContextConsumer(consumer);
 		}
-		for (Integer scenarioId : data.explicitScenarioIds) {
+		for (Integer scenarioId : data.experimentParameterData.getExplicitScenarioIds()) {
 			builder.addExplicitScenarioId(scenarioId);
 		}
 
@@ -355,8 +323,10 @@ public final class Experiment {
 		experimentStateManager.openExperiment();
 
 		try {
-			if (data.threadCount > 0) {
-				ExecutorService executorService = Executors.newFixedThreadPool(data.threadCount);
+
+			int threadCount = data.experimentParameterData.getThreadCount();
+			if (threadCount > 0) {
+				ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
 				try {
 					executeMultiThreaded(executorService);
 					executorService.shutdown();
@@ -419,10 +389,18 @@ public final class Experiment {
 		 * processed through the CompletionService until we run out of
 		 * simulations to run.
 		 */
-		while (jobIndex < (Math.min(data.threadCount, jobs.size()) - 1)) {
+		int threadCount = data.experimentParameterData.getThreadCount();
+		while (jobIndex < (Math.min(threadCount, jobs.size()) - 1)) {
 			final Integer scenarioId = jobs.get(jobIndex);
 			List<Plugin> plugins = getNewPluginInstancesFromScenarioId(scenarioId);
-			completionService.submit(new SimulationCallable(scenarioId, experimentStateManager, plugins, data.stateRecordingIsScheduled, data.simulationHaltTime, data.simulationState));
+			completionService.submit(new SimulationCallable(
+					scenarioId,
+					experimentStateManager,
+					plugins,
+					data.experimentParameterData.stateRecordingIsScheduled(),
+					data.experimentParameterData.getSimulationHaltTime().orElse(null),
+					data.simulationState)
+					);
 			jobIndex++;
 		}
 
@@ -436,7 +414,14 @@ public final class Experiment {
 			if (jobIndex < jobs.size()) {
 				final Integer scenarioId = jobs.get(jobIndex);
 				List<Plugin> plugins = getNewPluginInstancesFromScenarioId(scenarioId);
-				completionService.submit(new SimulationCallable(scenarioId, experimentStateManager, plugins, data.stateRecordingIsScheduled, data.simulationHaltTime, data.simulationState));
+				completionService.submit(new SimulationCallable(
+						scenarioId,
+						experimentStateManager,
+						plugins,
+						data.experimentParameterData.stateRecordingIsScheduled(),
+						data.experimentParameterData.getSimulationHaltTime().orElse(null),
+						data.simulationState)
+						);
 				jobIndex++;
 			}
 
@@ -451,7 +436,7 @@ public final class Experiment {
 			} else {
 				experimentStateManager.closeScenarioAsFailure(simResult.scenarioId, simResult.failureCause);
 
-				if (data.haltOnException) {
+				if (data.experimentParameterData.haltOnException()) {
 					throw simResult.failureCause;
 				}
 			}
@@ -491,8 +476,8 @@ public final class Experiment {
 				simBuilder.addPlugin(plugin);
 			}
 
-			simBuilder.setRecordState(data.stateRecordingIsScheduled);
-			simBuilder.setSimulationHaltTime(data.simulationHaltTime);
+			simBuilder.setRecordState(data.experimentParameterData.stateRecordingIsScheduled());
+			simBuilder.setSimulationHaltTime(data.experimentParameterData.getSimulationHaltTime().orElse(null));
 			simBuilder.setSimulationState(data.simulationState);
 			// direct output from the simulation to the subscribed consumers
 			simBuilder.setOutputConsumer(experimentStateManager.getOutputConsumer(scenarioId));
@@ -516,7 +501,7 @@ public final class Experiment {
 			} else {
 				experimentStateManager.closeScenarioAsFailure(scenarioId, failureCause);
 
-				if (data.haltOnException) {
+				if (data.experimentParameterData.haltOnException()) {
 					throw failureCause;
 				}
 			}
@@ -559,30 +544,21 @@ public final class Experiment {
 		 * the functions mutate the plugin builders and return meta data.
 		 */
 		int modulus = 1;
-		for (int i = 0; i < data.dimensions.size(); i++) {
-			Dimension dimension = data.dimensions.get(i);
-			int metaDataSize = dimension.getMetaDataSize();
+		for (int i = 0; i < dimensionRecs.size(); i++) {			
+			DimensionRec dimensionRec = dimensionRecs.get(i);
 
 			/*
 			 * Determine for the dimension the level within the dimension that
 			 * corresponds to the scenario id
 			 */
-			final int level = (scenarioId / modulus) % dimension.size();
-			modulus *= dimension.size();
+			int levelCount = dimensionRec.getLevelCount();
+			final int level = (scenarioId / modulus) % levelCount;
+			modulus *= levelCount;
 
 			// get the function from the dimension
-			final Function<DimensionContext, List<String>> levelFunction = dimension.getLevel(level);
-
-			// apply the function that will update the plugin builders and
-			// return the meta data for this function
-
-			List<String> list = levelFunction.apply(dimensionContext);
-			if (list.size() != metaDataSize) {
-				throw new ContractException(NucleusError.DIMENSION_LABEL_MISMATCH,
-						"dimension " + i + " has meta data: " + dimension.getMetaData() + " that does not match scenario labels: " + list + " at level " + level);
-			}
-			scenarioMetaData.addAll(list);
-
+			List<String> dimensionMetaData = dimensionRec.executeLevel(dimensionContext, level);
+			
+			scenarioMetaData.addAll(dimensionMetaData);
 		}
 
 		// update the experiment state manager with the meta data for the
@@ -598,7 +574,7 @@ public final class Experiment {
 		for (PluginId pluginId : pluginMap.keySet()) {
 			Plugin plugin = pluginMap.get(pluginId);
 			List<PluginDataBuilder> pluginDataBuilders = dataBuilderMap.get(pluginId);
-			
+
 			Plugin.Builder pluginBuilder = Plugin.builder();
 			pluginBuilder.setPluginId(plugin.getPluginId());
 
@@ -611,7 +587,6 @@ public final class Experiment {
 				pluginBuilder.addPluginDependency(dependencyPluginId);
 			}
 
-			
 			for (PluginDataBuilder pluginDataBuilder : pluginDataBuilders) {
 				pluginBuilder.addPluginData(pluginDataBuilder.build());
 			}

@@ -12,6 +12,8 @@ import lesson.plugins.policy.PolicyPlugin;
 import lesson.plugins.policy.PolicyPluginData;
 import nucleus.Dimension;
 import nucleus.Experiment;
+import nucleus.ExperimentParameterData;
+import nucleus.FunctionalDimension;
 import nucleus.Plugin;
 import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.StochasticsPluginData;
@@ -38,7 +40,7 @@ public final class Example_11_B {
 	}
 
 	private static Dimension getPolicyDimension() {
-		Dimension.Builder builder = Dimension.builder();//
+		FunctionalDimension.Builder builder = FunctionalDimension.builder();//
 
 		List<Double> schoolClosingInfectionRates = new ArrayList<>();
 		schoolClosingInfectionRates.add(0.05);
@@ -65,7 +67,7 @@ public final class Example_11_B {
 	}
 
 	private static Dimension getStochasticsDimension(long seed) {
-		Dimension.Builder builder = Dimension.builder();//
+		FunctionalDimension.Builder builder = FunctionalDimension.builder();//
 
 		Random random = new Random(seed);
 
@@ -112,6 +114,11 @@ public final class Example_11_B {
 		Dimension policyDimension = getPolicyDimension();
 		Dimension stochasticsDimension = getStochasticsDimension(539847398756272L);
 
+		ExperimentParameterData experimentParameterData = ExperimentParameterData.builder()//
+				.setThreadCount(4)//				
+				.build();
+		
+		
 		Experiment	.builder()//
 					.addPlugin(stochasticsPlugin)//
 					.addPlugin(diseasePlugin)//
@@ -120,7 +127,7 @@ public final class Example_11_B {
 					.addDimension(policyDimension)//
 					.addDimension(stochasticsDimension)//
 					.addExperimentContextConsumer(new SimpleOutputConsumer())//
-					.setThreadCount(4)//
+					.setExperimentParameterData(experimentParameterData)//
 					.build()//
 					.execute();
 	}

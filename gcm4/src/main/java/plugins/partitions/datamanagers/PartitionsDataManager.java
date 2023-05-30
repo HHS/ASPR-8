@@ -11,8 +11,8 @@ import java.util.Set;
 import nucleus.DataManager;
 import nucleus.DataManagerContext;
 import nucleus.Event;
+import nucleus.NucleusError;
 import plugins.partitions.support.DegeneratePopulationPartitionImpl;
-import plugins.partitions.support.Filter;
 import plugins.partitions.support.FilterSensitivity;
 import plugins.partitions.support.LabelSet;
 import plugins.partitions.support.Labeler;
@@ -20,8 +20,11 @@ import plugins.partitions.support.LabelerSensitivity;
 import plugins.partitions.support.Partition;
 import plugins.partitions.support.PartitionError;
 import plugins.partitions.support.PartitionSampler;
+import plugins.partitions.support.PartitionsContext;
 import plugins.partitions.support.PopulationPartition;
 import plugins.partitions.support.PopulationPartitionImpl;
+import plugins.partitions.support.filters.Filter;
+import plugins.partitions.support.filters.TrueFilter;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.events.PersonAdditionEvent;
 import plugins.people.events.PersonRemovalEvent;
@@ -68,6 +71,9 @@ public final class PartitionsDataManager extends DataManager {
 	private final Map<Class<? extends Event>, Set<Object>> eventClassToKeyMap = new LinkedHashMap<>();
 
 	private DataManagerContext dataManagerContext;
+	
+	private PartitionsContext partitionsContext;
+	
 	private PeopleDataManager peopleDataManager;
 
 	private final Map<Object, PopulationPartition> keyToPopulationPartitionMap = new LinkedHashMap<>();
@@ -363,6 +369,9 @@ public final class PartitionsDataManager extends DataManager {
 	public void init(DataManagerContext dataManagerContext) {
 		super.init(dataManagerContext);
 		this.dataManagerContext = dataManagerContext;
+		
+		this.partitionsContext = new PartitionsContextImpl(dataManagerContext);
+		
 		peopleDataManager = dataManagerContext.getDataManager(PeopleDataManager.class);
 
 		dataManagerContext.subscribe(PersonAdditionEvent.class, this::handlePersonAdditionEvent);
@@ -453,8 +462,8 @@ public final class PartitionsDataManager extends DataManager {
 		 */
 		final Set<Class<? extends Event>> eventClasses = new LinkedHashSet<>();
 
-		final Filter filter = partition.getFilter().orElse(Filter.allPeople());
-		filter.validate(dataManagerContext);
+		final Filter filter = partition.getFilter().orElse(new TrueFilter());
+		filter.validate(partitionsContext);
 		for (final FilterSensitivity<?> filterSensitivity : filter.getFilterSensitivities()) {
 			eventClasses.add(filterSensitivity.getEventClass());
 		}
@@ -493,10 +502,10 @@ public final class PartitionsDataManager extends DataManager {
 		// create the population partition
 
 		PopulationPartition populationPartition;
-		if (partition.isDegenerate()) {
-			populationPartition = new DegeneratePopulationPartitionImpl(dataManagerContext, partition);
+		if (partition.isDegenerate()) {			
+			populationPartition = new DegeneratePopulationPartitionImpl(partitionsContext, partition);
 		} else {
-			populationPartition = new PopulationPartitionImpl(dataManagerContext, partition);
+			populationPartition = new PopulationPartitionImpl(partitionsContext, partition);
 		}
 		keyToPopulationPartitionMap.put(key, populationPartition);
 
@@ -539,6 +548,35 @@ public final class PartitionsDataManager extends DataManager {
 				eventClassToKeyMap.remove(eventClass);
 				dataManagerContext.unsubscribe(eventClass);
 			}
+		}
+	}
+	
+	public final class PartitionsContextImpl implements PartitionsContext{
+		private final DataManagerContext dataManagerContext;
+
+		public PartitionsContextImpl(DataManagerContext dataManagerContext) {
+			this.dataManagerContext = dataManagerContext;
+		}
+
+		/**
+		 * Returns the data manager from the given class reference
+		 * 
+		 * @throws ContractException
+		 *             <li>{@linkplain NucleusError#NULL_DATA_MANAGER_CLASS} if data
+		 *             manager class is null</li>
+		 *             <li>{@linkplain NucleusError#AMBIGUOUS_DATA_MANAGER_CLASS} if
+		 *             more than one data manager matches the given class</li>
+		 * 
+		 */
+		public <T extends DataManager> T getDataManager(Class<T> dataManagerClass) {
+			return dataManagerContext.getDataManager(dataManagerClass);
+		}
+
+		/**
+		 * Returns the current time in the simulation
+		 */
+		public double getTime() {
+			return dataManagerContext.getTime();
 		}
 	}
 

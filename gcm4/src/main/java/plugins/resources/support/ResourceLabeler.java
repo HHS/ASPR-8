@@ -3,13 +3,12 @@ package plugins.resources.support;
 import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Function;
 
 import nucleus.Event;
 import nucleus.NucleusError;
-import nucleus.SimulationContext;
 import plugins.partitions.support.Labeler;
 import plugins.partitions.support.LabelerSensitivity;
+import plugins.partitions.support.PartitionsContext;
 import plugins.people.support.PersonId;
 import plugins.resources.datamanagers.ResourcesDataManager;
 import plugins.resources.events.PersonResourceUpdateEvent;
@@ -23,17 +22,21 @@ import util.errors.ContractException;
  * 
  *
  */
-public final class ResourceLabeler implements Labeler {
+public abstract class ResourceLabeler implements Labeler {
 
 	private final ResourceId resourceId;
-
-	private final Function<Long, Object> resourceLabelingFunction;
-
+	
+	protected abstract Object getLabelFromAmount(long amount);
+	
 	private ResourcesDataManager resourcesDataManager;
+	
+	
+	public ResourceId getResourceId() {
+		return resourceId;
+	}
 
-	public ResourceLabeler(ResourceId resourceId, Function<Long, Object> resourceLabelingFunction) {
-		this.resourceId = resourceId;
-		this.resourceLabelingFunction = resourceLabelingFunction;
+	public ResourceLabeler(ResourceId resourceId) {
+		this.resourceId = resourceId;		
 	}
 
 	private Optional<PersonId> getPersonId(PersonResourceUpdateEvent personResourceUpdateEvent) {
@@ -45,34 +48,34 @@ public final class ResourceLabeler implements Labeler {
 	}
 
 	@Override
-	public Set<LabelerSensitivity<?>> getLabelerSensitivities() {
+	public final Set<LabelerSensitivity<?>> getLabelerSensitivities() {
 		Set<LabelerSensitivity<?>> result = new LinkedHashSet<>();
 		result.add(new LabelerSensitivity<PersonResourceUpdateEvent>(PersonResourceUpdateEvent.class, this::getPersonId));
 		return result;
 	}
 
 	@Override
-	public Object getLabel(SimulationContext simulationContext, PersonId personId) {
-		if (simulationContext == null) {
+	public final Object getCurrentLabel(PartitionsContext partitionsContext, PersonId personId) {
+		if (partitionsContext == null) {
 			throw new ContractException(NucleusError.NULL_SIMULATION_CONTEXT);
 		}
 
 		if (resourcesDataManager == null) {
-			resourcesDataManager = simulationContext.getDataManager(ResourcesDataManager.class);
+			resourcesDataManager = partitionsContext.getDataManager(ResourcesDataManager.class);
 		}
 		long personResourceLevel = resourcesDataManager.getPersonResourceLevel(resourceId, personId);
-		return resourceLabelingFunction.apply(personResourceLevel);
+		return getLabelFromAmount(personResourceLevel);
 	}
 
 	@Override
-	public Object getDimension() {
+	public final Object getId() {
 		return resourceId;
 	}
 
 	@Override
-	public Object getPastLabel(SimulationContext simulationContext, Event event) {
+	public final Object getPastLabel(PartitionsContext partitionsContext, Event event) {
 		PersonResourceUpdateEvent personResourceUpdateEvent = (PersonResourceUpdateEvent)event;
-		return resourceLabelingFunction.apply(personResourceUpdateEvent.previousResourceLevel());
+		return getLabelFromAmount(personResourceUpdateEvent.previousResourceLevel());
 	}
 
 }

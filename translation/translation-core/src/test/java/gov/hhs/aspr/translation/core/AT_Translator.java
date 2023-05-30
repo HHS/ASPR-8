@@ -77,8 +77,7 @@ public class AT_Translator {
         };
         Consumer<TranslatorContext> consumerA = (translatorConext) -> {
         };
-        Consumer<TranslatorContext> consumerB = (translatorConext) -> {
-        };
+
         Translator translatorA = Translator.builder()
                 .setInitializer(consumerA)
                 .setTranslatorId(translatorIdA)
@@ -90,22 +89,12 @@ public class AT_Translator {
                 .build();
 
         Translator translatorC = Translator.builder()
-                .setInitializer(consumerB)
-                .setTranslatorId(translatorIdA)
-                .build();
-
-        Translator translatorD = Translator.builder()
-                .setInitializer(consumerB)
-                .setTranslatorId(translatorIdB)
-                .build();
-
-        Translator translatorE = Translator.builder()
                 .setInitializer(consumerA)
                 .setTranslatorId(translatorIdA)
                 .addDependency(translatorIdB)
                 .build();
 
-        Translator translatorF = Translator.builder()
+        Translator translatorD = Translator.builder()
                 .setInitializer(consumerA)
                 .setTranslatorId(translatorIdA)
                 .addDependency(translatorIdB)
@@ -117,23 +106,14 @@ public class AT_Translator {
         // if different class, not equal
         assertNotEquals(translatorA.hashCode(), new Object().hashCode());
 
-        // if cloned (same data instance), then equal
-        assertEquals(translatorA.hashCode(), translatorA.cloneBuilder().build().hashCode());
-
         // if different translator id, not equal
         assertNotEquals(translatorA.hashCode(), translatorB.hashCode());
 
-        // if different initializer, not equal
+        // if same id, but different dependencies, not equal
         assertNotEquals(translatorA.hashCode(), translatorC.hashCode());
 
-        // if different intializer and id, not equal
-        assertNotEquals(translatorA.hashCode(), translatorD.hashCode());
-
-        // if same initializer and id, but different dependencies, not equal
-        assertNotEquals(translatorA.hashCode(), translatorE.hashCode());
-
-        // if same initilizer, id and dependecies, equal
-        assertEquals(translatorE.hashCode(), translatorF.hashCode());
+        // if same id and dependecies, equal
+        assertEquals(translatorC.hashCode(), translatorD.hashCode());
     }
 
     @Test
@@ -144,8 +124,6 @@ public class AT_Translator {
         TranslatorId translatorIdB = new TranslatorId() {
         };
         Consumer<TranslatorContext> consumerA = (translatorConext) -> {
-        };
-        Consumer<TranslatorContext> consumerB = (translatorConext) -> {
         };
         Translator translatorA = Translator.builder()
                 .setInitializer(consumerA)
@@ -158,22 +136,12 @@ public class AT_Translator {
                 .build();
 
         Translator translatorC = Translator.builder()
-                .setInitializer(consumerB)
-                .setTranslatorId(translatorIdA)
-                .build();
-
-        Translator translatorD = Translator.builder()
-                .setInitializer(consumerB)
-                .setTranslatorId(translatorIdB)
-                .build();
-
-        Translator translatorE = Translator.builder()
                 .setInitializer(consumerA)
                 .setTranslatorId(translatorIdA)
                 .addDependency(translatorIdB)
                 .build();
 
-        Translator translatorF = Translator.builder()
+        Translator translatorD = Translator.builder()
                 .setInitializer(consumerA)
                 .setTranslatorId(translatorIdA)
                 .addDependency(translatorIdB)
@@ -188,23 +156,19 @@ public class AT_Translator {
         // if different class, not equal
         assertNotEquals(translatorA, new Object());
 
-        // if cloned (same data instance), then equal
-        assertEquals(translatorA, translatorA.cloneBuilder().build());
-
         // if different translator id, not equal
         assertNotEquals(translatorA, translatorB);
 
-        // if different initializer, not equal
+        // if same id, but different dependencies, not equal
         assertNotEquals(translatorA, translatorC);
 
-        // if different intializer and id, not equal
-        assertNotEquals(translatorA, translatorD);
+        // if same id and dependecies, equal
+        assertEquals(translatorC, translatorD);
 
-        // if same initializer and id, but different dependencies, not equal
-        assertNotEquals(translatorA, translatorE);
-
-        // if same initilizer, id and dependecies, equal
-        assertEquals(translatorE, translatorF);
+        Translator.Data data = new Translator.Data();
+        assertEquals(data, data);
+        assertNotEquals(data, null);
+        assertNotEquals(data, new Object());
     }
 
     @Test

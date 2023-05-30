@@ -6,6 +6,11 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.input.ResourcePro
 import plugins.reports.support.ReportLabel;
 import plugins.resources.reports.ResourcePropertyReportPluginData;
 
+/**
+ * TranslationSpec that defines how to convert between
+ * {@linkplain ResourcePropertyReportPluginDataInput} and
+ * {@linkplain ResourcePropertyReportPluginData}
+ */
 public class ResourcePropertyReportPluginDataTranslationSpec
         extends ProtobufTranslationSpec<ResourcePropertyReportPluginDataInput, ResourcePropertyReportPluginData> {
 

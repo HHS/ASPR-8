@@ -14,11 +14,12 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import nucleus.Event;
-import nucleus.SimulationContext;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestSimulation;
 import plugins.partitions.support.LabelerSensitivity;
+import plugins.partitions.support.PartitionsContext;
+import plugins.partitions.testsupport.TestPartitionsContext;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonConstructionData;
 import plugins.people.support.PersonError;
@@ -35,21 +36,32 @@ import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 
 public class AT_RegionLabeler {
+	private static class LocalRegionLabeler extends RegionLabeler {
+		private final Function<RegionId, Object> regionLabelingFunction;
 
+		public LocalRegionLabeler( Function<RegionId, Object> regionLabelingFunction) {			
+			this.regionLabelingFunction = regionLabelingFunction;
+		}
+
+		@Override
+		protected Object getLabelFromRegionId(RegionId regionId) {
+			return regionLabelingFunction.apply(regionId);
+		}
+	}
 	@Test
 	@UnitTestConstructor(target = RegionLabeler.class,args = { Function.class })
 	public void testConstructor() {
-		assertNotNull(new RegionLabeler((c) -> null));
+		assertNotNull(new LocalRegionLabeler((c) -> null));
 	}
 
 	@Test
-	@UnitTestMethod(target = RegionLabeler.class,name = "getDimension", args = {})
-	public void testGetDimension() {
-		assertEquals(RegionId.class, new RegionLabeler((c) -> null).getDimension());
+	@UnitTestMethod(target = RegionLabeler.class,name = "getId", args = {})
+	public void testGetId() {
+		assertEquals(RegionId.class, new LocalRegionLabeler((c) -> null).getId());
 	}
 
 	@Test
-	@UnitTestMethod(target = RegionLabeler.class,name = "getLabel", args = { SimulationContext.class, PersonId.class })
+	@UnitTestMethod(target = RegionLabeler.class,name = "getLabel", args = { PartitionsContext.class, PersonId.class })
 	public void testGetLabel() {
 
 		/*
@@ -67,7 +79,7 @@ public class AT_RegionLabeler {
 			return testRegionId.ordinal();
 		};
 
-		RegionLabeler regionLabeler = new RegionLabeler(function);
+		RegionLabeler regionLabeler = new LocalRegionLabeler(function);
 
 		// add a few people to the simulation spread across the various
 		// regions
@@ -91,6 +103,9 @@ public class AT_RegionLabeler {
 		 * passed to the region labeler.
 		 */
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
+			
+			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
+			
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 
@@ -102,7 +117,7 @@ public class AT_RegionLabeler {
 				Object expectedLabel = function.apply(regionId);
 
 				// get the label from the person id
-				Object actualLabel = regionLabeler.getLabel(c, personId);
+				Object actualLabel = regionLabeler.getCurrentLabel(testPartitionsContext, personId);
 
 				// show that the two labels are equal
 				assertEquals(expectedLabel, actualLabel);
@@ -113,13 +128,15 @@ public class AT_RegionLabeler {
 		// test preconditions
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(2, (c) -> {
 
+			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
+			
 			// if the person does not exist
 			ContractException contractException = assertThrows(ContractException.class,
-					() -> regionLabeler.getLabel(c, new PersonId(100000)));
+					() -> regionLabeler.getCurrentLabel(testPartitionsContext, new PersonId(100000)));
 			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
 
 			// if the person id is null
-			contractException = assertThrows(ContractException.class, () -> regionLabeler.getLabel(c, null));
+			contractException = assertThrows(ContractException.class, () -> regionLabeler.getCurrentLabel(testPartitionsContext, null));
 			assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
 
 		}));
@@ -139,7 +156,7 @@ public class AT_RegionLabeler {
 		 * their documented behaviors.
 		 */
 
-		RegionLabeler regionLabeler = new RegionLabeler((c) -> null);
+		RegionLabeler regionLabeler = new LocalRegionLabeler((c) -> null);
 
 		Set<LabelerSensitivity<?>> labelerSensitivities = regionLabeler.getLabelerSensitivities();
 
@@ -161,10 +178,13 @@ public class AT_RegionLabeler {
 	}
 
 	@Test
-	@UnitTestMethod(target = RegionLabeler.class,name = "getPastLabel", args = { SimulationContext.class, Event.class })
+	@UnitTestMethod(target = RegionLabeler.class,name = "getPastLabel", args = { PartitionsContext.class, Event.class })
 	public void testGetPastLabel() {
 
 		Factory factory = RegionsTestPluginFactory.factory(30, 349819763474394472L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
+			
+			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
+			
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
@@ -175,7 +195,7 @@ public class AT_RegionLabeler {
 				return testRegionId.ordinal();
 			};
 
-			RegionLabeler regionLabeler = new RegionLabeler(func);
+			RegionLabeler regionLabeler = new LocalRegionLabeler(func);
 			List<RegionId> regions = new ArrayList<>(regionsDataManager.getRegionIds());
 
 			// Person region update event
@@ -186,7 +206,7 @@ public class AT_RegionLabeler {
 				PersonRegionUpdateEvent personRegionUpdateEvent = new PersonRegionUpdateEvent(personId,
 						personRegion, nextRegion);
 				Object expectedLabel = func.apply(personRegion);
-				Object actualLabel = regionLabeler.getPastLabel(c, personRegionUpdateEvent);
+				Object actualLabel = regionLabeler.getPastLabel(testPartitionsContext, personRegionUpdateEvent);
 				assertEquals(expectedLabel, actualLabel);
 			}
 

@@ -13,6 +13,7 @@ import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestSimulation;
 import plugins.partitions.PartitionsPlugin;
+import plugins.partitions.datamanagers.PartitionsPluginData;
 import plugins.partitions.support.PartitionError;
 import plugins.partitions.testsupport.attributes.AttributesPlugin;
 import plugins.partitions.testsupport.attributes.AttributesPluginData;
@@ -289,7 +290,11 @@ public class PartitionsTestPluginFactory {
 	 * </ul>
 	 */
 	public static Plugin getStandardPartitionsPlugin() {
-		return PartitionsPlugin.getPartitionsPlugin(AttributesPluginId.PLUGIN_ID);
+		
+		return PartitionsPlugin.builder()//
+		.addPluginDependency(AttributesPluginId.PLUGIN_ID)//
+		.setPartitionsPluginData(PartitionsPluginData.builder().build())//
+		.getPartitionsPlugin();		
 	}
 
 	/**

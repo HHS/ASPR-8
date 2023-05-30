@@ -10,10 +10,11 @@ import java.util.Set;
 import org.junit.jupiter.api.Test;
 
 import nucleus.NucleusError;
-import nucleus.SimulationContext;
 import nucleus.testsupport.testplugin.TestSimulation;
-import plugins.partitions.support.Filter;
 import plugins.partitions.support.FilterSensitivity;
+import plugins.partitions.support.PartitionsContext;
+import plugins.partitions.support.filters.Filter;
+import plugins.partitions.testsupport.TestPartitionsContext;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonId;
 import plugins.regions.datamanagers.RegionsDataManager;
@@ -33,17 +34,19 @@ public class AT_RegionFilter {
 	public void testConstructorWithArray() {
 		Factory factory = RegionsTestPluginFactory.factory(100, 4602637405159227338L, TimeTrackingPolicy.DO_NOT_TRACK_TIME, (c) -> {
 
+			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
+			
 			/* precondition: if the set is null */
 			Set<RegionId> regionIds = null;
 
 			assertThrows(RuntimeException.class, () -> new RegionFilter(regionIds));
 
 			/* precondition: if the region is unknown */
-			ContractException contractException = assertThrows(ContractException.class, () -> new RegionFilter(TestRegionId.getUnknownRegionId()).validate(c));
+			ContractException contractException = assertThrows(ContractException.class, () -> new RegionFilter(TestRegionId.getUnknownRegionId()).validate(testPartitionsContext));
 			assertEquals(RegionError.UNKNOWN_REGION_ID, contractException.getErrorType());
 
 			// precondition: null region id
-			contractException = assertThrows(ContractException.class, () -> new RegionFilter(null, TestRegionId.REGION_1).validate(c));
+			contractException = assertThrows(ContractException.class, () -> new RegionFilter(null, TestRegionId.REGION_1).validate(testPartitionsContext));
 			assertEquals(RegionError.NULL_REGION_ID, contractException.getErrorType());
 
 		});
@@ -55,18 +58,20 @@ public class AT_RegionFilter {
 	@UnitTestConstructor(target = RegionFilter.class, args = { Set.class })
 	public void testConstructorWithSet() {
 		Factory factory = RegionsTestPluginFactory.factory(100, 4602637405159227338L, TimeTrackingPolicy.DO_NOT_TRACK_TIME, (c) -> {
-
+			
+			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
+			
 			/* precondition: if the set is null */
 			Set<RegionId> regionIds = null;
 
 			assertThrows(RuntimeException.class, () -> new RegionFilter(regionIds));
 
 			/* precondition: if the region is unknown */
-			ContractException contractException = assertThrows(ContractException.class, () -> new RegionFilter(TestRegionId.getUnknownRegionId()).validate(c));
+			ContractException contractException = assertThrows(ContractException.class, () -> new RegionFilter(TestRegionId.getUnknownRegionId()).validate(testPartitionsContext));
 			assertEquals(RegionError.UNKNOWN_REGION_ID, contractException.getErrorType());
 
 			// precondition: null region id
-			contractException = assertThrows(ContractException.class, () -> new RegionFilter(null, TestRegionId.REGION_1).validate(c));
+			contractException = assertThrows(ContractException.class, () -> new RegionFilter(null, TestRegionId.REGION_1).validate(testPartitionsContext));
 			assertEquals(RegionError.NULL_REGION_ID, contractException.getErrorType());
 
 		});
@@ -92,10 +97,12 @@ public class AT_RegionFilter {
 	}
 
 	@Test
-	@UnitTestMethod(target = RegionFilter.class, name = "evaluate", args = { SimulationContext.class, PersonId.class })
+	@UnitTestMethod(target = RegionFilter.class, name = "evaluate", args = { PartitionsContext.class, PersonId.class })
 	public void testEvaluate() {
 		Factory factory = RegionsTestPluginFactory.factory(100, 28072097989345652L, TimeTrackingPolicy.DO_NOT_TRACK_TIME, (c) -> {
 
+			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
+			
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 
@@ -103,7 +110,7 @@ public class AT_RegionFilter {
 
 			for (PersonId personId : peopleDataManager.getPeople()) {
 				boolean expected = regionsDataManager.getPersonRegion(personId).equals(TestRegionId.REGION_1) || regionsDataManager.getPersonRegion(personId).equals(TestRegionId.REGION_2);
-				boolean actual = filter.evaluate(c, personId);
+				boolean actual = filter.evaluate(testPartitionsContext, personId);
 				assertEquals(expected, actual);
 			}
 
@@ -111,10 +118,10 @@ public class AT_RegionFilter {
 			assertThrows(RuntimeException.class, () -> filter.evaluate(null, new PersonId(0)));
 
 			/* precondition: if the person id is null */
-			assertThrows(RuntimeException.class, () -> filter.evaluate(c, null));
+			assertThrows(RuntimeException.class, () -> filter.evaluate(testPartitionsContext, null));
 
 			/* precondition: if the person id is unknown */
-			assertThrows(RuntimeException.class, () -> filter.evaluate(c, new PersonId(123412342)));
+			assertThrows(RuntimeException.class, () -> filter.evaluate(testPartitionsContext, new PersonId(123412342)));
 
 		});
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
@@ -132,12 +139,15 @@ public class AT_RegionFilter {
 	}
 
 	@Test
-	@UnitTestMethod(target = RegionFilter.class, name = "validate", args = { SimulationContext.class })
+	@UnitTestMethod(target = RegionFilter.class, name = "validate", args = { PartitionsContext.class })
 	public void testValidate() {
 		Factory factory = RegionsTestPluginFactory.factory(100, 28072097989345652L, TimeTrackingPolicy.DO_NOT_TRACK_TIME, (c) -> {
+			
+			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
+			
 			Filter filter = new RegionFilter(TestRegionId.REGION_1, TestRegionId.REGION_2);
 
-			assertDoesNotThrow(() -> filter.validate(c));
+			assertDoesNotThrow(() -> filter.validate(testPartitionsContext));
 
 			// precondition: null simulation context
 			ContractException contractException = assertThrows(ContractException.class, () -> filter.validate(null));
@@ -146,12 +156,12 @@ public class AT_RegionFilter {
 			RegionId badRegion = null;
 			// precondition: region id is null
 			Filter badFilter1 = new RegionFilter(badRegion);
-			contractException = assertThrows(ContractException.class, () -> badFilter1.validate(c));
+			contractException = assertThrows(ContractException.class, () -> badFilter1.validate(testPartitionsContext));
 			assertEquals(RegionError.NULL_REGION_ID, contractException.getErrorType());
 
 			// precondition: region id is unknown
 			Filter badFilter2 = new RegionFilter(TestRegionId.getUnknownRegionId());
-			contractException = assertThrows(ContractException.class, () -> badFilter2.validate(c));
+			contractException = assertThrows(ContractException.class, () -> badFilter2.validate(testPartitionsContext));
 			assertEquals(RegionError.UNKNOWN_REGION_ID, contractException.getErrorType());
 		});
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();

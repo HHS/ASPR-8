@@ -21,6 +21,8 @@ import lesson.plugins.model.support.Region;
 import lesson.plugins.model.support.Resource;
 import nucleus.Dimension;
 import nucleus.Experiment;
+import nucleus.ExperimentParameterData;
+import nucleus.FunctionalDimension;
 import nucleus.Plugin;
 import plugins.globalproperties.GlobalPropertiesPlugin;
 import plugins.globalproperties.GlobalPropertiesPluginData;
@@ -76,6 +78,10 @@ public final class Example_19 {
 
 	private void execute() {
 
+		ExperimentParameterData experimentParameterData = ExperimentParameterData.builder()//
+				.setThreadCount(8)//
+				.build();
+		
 		Experiment	.builder()//
 					.addPlugin(getMaterialsPlugin())//
 					.addPlugin(getResourcesPlugin())//
@@ -93,7 +99,7 @@ public final class Example_19 {
 					.addDimension(getR0Dimension())//
 
 					.addExperimentContextConsumer(getNIOReportItemHandler())//
-					.setThreadCount(8)//
+					.setExperimentParameterData(experimentParameterData)
 					.build()//
 					.execute();//
 
@@ -160,7 +166,7 @@ public final class Example_19 {
 	}
 
 	private Dimension getGlobalPropertyDimension(final GlobalPropertyId globalPropertyId, final String header, final Object[] values) {
-		final Dimension.Builder dimensionBuilder = Dimension.builder();//
+		final FunctionalDimension.Builder dimensionBuilder = FunctionalDimension.builder();//
 		IntStream.range(0, values.length).forEach((i) -> {
 			dimensionBuilder.addLevel((context) -> {
 				final GlobalPropertiesPluginData.Builder builder = context.get(GlobalPropertiesPluginData.Builder.class);
@@ -280,7 +286,7 @@ public final class Example_19 {
 	private Plugin getResourcesPlugin() {
 		final ResourcesPluginData.Builder builder = ResourcesPluginData.builder();
 		for (final ResourceId resourcId : Resource.values()) {
-			builder.addResource(resourcId);
+			builder.addResource(resourcId,0.0);
 		}
 		final ResourcesPluginData resourcesPluginData = builder.build();
 		return ResourcesPlugin.builder().setResourcesPluginData(resourcesPluginData).getResourcesPlugin();

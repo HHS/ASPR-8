@@ -9,6 +9,7 @@ import lesson.plugins.policy.PolicyPlugin;
 import lesson.plugins.policy.PolicyPluginData;
 import nucleus.Dimension;
 import nucleus.Experiment;
+import nucleus.FunctionalDimension;
 import nucleus.Plugin;
 
 public final class Example_9_B {
@@ -41,7 +42,7 @@ public final class Example_9_B {
 
 		Plugin modelPlugin = ModelPlugin.getModelPlugin();
 
-		Dimension dimension = Dimension	.builder()//
+		Dimension dimension = FunctionalDimension	.builder()//
 										.addLevel((context) -> {
 											DiseasePluginData.Builder builder = 
 													context.get(DiseasePluginData.Builder.class);

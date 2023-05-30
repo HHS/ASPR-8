@@ -4,6 +4,11 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.input.MaterialIdI
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 import plugins.materials.support.MaterialId;
 
+/**
+ * TranslationSpec that defines how to convert between
+ * {@linkplain MaterialIdInput} and
+ * {@linkplain MaterialId}
+ */
 public class MaterialIdTranslationSpec extends ProtobufTranslationSpec<MaterialIdInput, MaterialId> {
 
     @Override

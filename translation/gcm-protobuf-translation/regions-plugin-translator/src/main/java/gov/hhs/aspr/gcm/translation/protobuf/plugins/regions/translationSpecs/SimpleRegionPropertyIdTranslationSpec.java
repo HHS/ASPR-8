@@ -4,6 +4,11 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.input.SimpleRegionP
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 import plugins.regions.support.SimpleRegionPropertyId;
 
+/**
+ * TranslationSpec that defines how to convert between
+ * {@linkplain SimpleRegionPropertyIdInput} and
+ * {@linkplain SimpleRegionPropertyId}
+ */
 public class SimpleRegionPropertyIdTranslationSpec
         extends ProtobufTranslationSpec<SimpleRegionPropertyIdInput, SimpleRegionPropertyId> {
 

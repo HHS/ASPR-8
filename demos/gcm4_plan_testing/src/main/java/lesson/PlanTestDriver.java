@@ -26,6 +26,7 @@ import lesson.plugins.model.support.PersonProperty;
 import lesson.plugins.model.support.Region;
 import lesson.plugins.model.support.Resource;
 import nucleus.Experiment;
+import nucleus.ExperimentParameterData;
 import nucleus.Plugin;
 import nucleus.SimulationState;
 import plugins.globalproperties.GlobalPropertiesPlugin;
@@ -236,11 +237,15 @@ public final class PlanTestDriver {
 		}
 		StateCollector stateCollector = new StateCollector();
 
+		ExperimentParameterData experimentParameterData = ExperimentParameterData.builder()//
+				.setRecordState(true)//
+				.setSimulationHaltTime(simulationState.getStartTime() + 10)//
+				.build();
+		
 		Experiment experiment = builder	.setSimulationState(simulationState)//
 										.addExperimentContextConsumer(getNIOReportItemHandler(outputDirectory))//
 										.addExperimentContextConsumer(stateCollector)//
-										.setRecordState(true)//
-										.setSimulationHaltTime(simulationState.getStartTime() + 10)//
+										.setExperimentParameterData(experimentParameterData)										
 										.build();//
 
 		experiment.execute();//
@@ -417,7 +422,7 @@ public final class PlanTestDriver {
 	private Plugin getResourcesPlugin() {
 		final ResourcesPluginData.Builder builder = ResourcesPluginData.builder();
 		for (final ResourceId resourcId : Resource.values()) {
-			builder.addResource(resourcId);
+			builder.addResource(resourcId,0.0);
 		}
 		final ResourcesPluginData resourcesPluginData = builder.build();
 		return ResourcesPlugin.builder().setResourcesPluginData(resourcesPluginData).getResourcesPlugin();

@@ -5,12 +5,12 @@ import java.util.Optional;
 import java.util.Set;
 
 import nucleus.NucleusError;
-import nucleus.SimulationContext;
 import plugins.groups.datamanagers.GroupsDataManager;
 import plugins.groups.events.GroupMembershipAdditionEvent;
 import plugins.groups.events.GroupMembershipRemovalEvent;
-import plugins.partitions.support.Filter;
 import plugins.partitions.support.FilterSensitivity;
+import plugins.partitions.support.PartitionsContext;
+import plugins.partitions.support.filters.Filter;
 import plugins.people.support.PersonId;
 import util.errors.ContractException;
 
@@ -18,29 +18,33 @@ public class GroupMemberFilter extends Filter {
 	final GroupId groupId;
 	private GroupsDataManager groupsDataManager;
 
-	private void validateGroupIdNotNull(SimulationContext simulationContext, final GroupId groupId) {
+	private void validateGroupIdNotNull(PartitionsContext partitionsContext, final GroupId groupId) {
 		if (groupId == null) {
 			throw new ContractException(GroupError.NULL_GROUP_ID);
 		}
 	}
-
+	
+	public GroupId getGroupId() {
+		return groupId;
+	}
+	
 	public GroupMemberFilter(final GroupId groupId) {
 		this.groupId = groupId;
 	}
 
 	@Override
-	public void validate(SimulationContext simulationContext) {
-		validateGroupIdNotNull(simulationContext, groupId);
+	public void validate(PartitionsContext partitionsContext) {
+		validateGroupIdNotNull(partitionsContext, groupId);
 	}
 
-	private Optional<PersonId> additionRequiresRefresh(SimulationContext simulationContext, GroupMembershipAdditionEvent event) {
+	private Optional<PersonId> additionRequiresRefresh(PartitionsContext partitionsContext, GroupMembershipAdditionEvent event) {
 		if (event.groupId().equals(groupId)) {
 			return Optional.of(event.personId());
 		}
 		return Optional.empty();
 	}
 
-	private Optional<PersonId> removalRequiresRefresh(SimulationContext simulationContext, GroupMembershipRemovalEvent event) {
+	private Optional<PersonId> removalRequiresRefresh(PartitionsContext partitionsContext, GroupMembershipRemovalEvent event) {
 		if (event.groupId().equals(groupId)) {
 			return Optional.of(event.personId());
 		}
@@ -58,14 +62,41 @@ public class GroupMemberFilter extends Filter {
 	}
 
 	@Override
-	public boolean evaluate(SimulationContext simulationContext, PersonId personId) {
-		if(simulationContext == null) {
+	public boolean evaluate(PartitionsContext partitionsContext, PersonId personId) {
+		if(partitionsContext == null) {
 			throw new ContractException(NucleusError.NULL_SIMULATION_CONTEXT);
 		}
 		if (groupsDataManager == null) {
-			groupsDataManager = simulationContext.getDataManager(GroupsDataManager.class);
+			groupsDataManager = partitionsContext.getDataManager(GroupsDataManager.class);
 		}
 		return groupsDataManager.isPersonInGroup(personId,groupId);
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((groupId == null) ? 0 : groupId.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!(obj instanceof GroupMemberFilter)) {
+			return false;
+		}
+		GroupMemberFilter other = (GroupMemberFilter) obj;
+		if (groupId == null) {
+			if (other.groupId != null) {
+				return false;
+			}
+		} else if (!groupId.equals(other.groupId)) {
+			return false;
+		}
+		return true;
 	}
 
 }

@@ -1,7 +1,5 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.resources;
 
-import gov.hhs.aspr.translation.core.Translator;
-import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.PeopleTranslatorId;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.PropertiesTranslatorId;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.RegionsTranslatorId;
@@ -15,13 +13,21 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.translationSpecs.
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.translationSpecs.ResourcesPluginDataTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.translationSpecs.TestResourceIdTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.translationSpecs.TestResourcePropertyIdTranslationSpec;
+import gov.hhs.aspr.translation.core.Translator;
+import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
 
+/**
+ * Translator for the Resources Plugin.
+ * <li>Using this Translator will add
+ * all the necessary TanslationSpecs needed to read and write
+ * ResourcesPlugin
+ */
 public class ResourcesTranslator {
 
     private ResourcesTranslator() {
     }
 
-    public static Translator.Builder builder(boolean withReport) {
+    private static Translator.Builder builder(boolean withReport) {
         Translator.Builder builder = Translator.builder()
                 .setTranslatorId(ResourcesTranslatorId.TRANSLATOR_ID)
                 .addDependency(PeopleTranslatorId.TRANSLATOR_ID)
@@ -31,19 +37,19 @@ public class ResourcesTranslator {
                     ProtobufTranslationEngine.Builder translationEngineBuilder = translatorContext
                             .getTranslationEngineBuilder(ProtobufTranslationEngine.Builder.class);
 
-                    translationEngineBuilder.addTranslationSpec(new ResourcesPluginDataTranslationSpec());
-                    translationEngineBuilder.addTranslationSpec(new ResourceIdTranslationSpec());
-                    translationEngineBuilder.addTranslationSpec(new ResourcePropertyIdTranslationSpec());
-                    translationEngineBuilder.addTranslationSpec(new ResourceInitializationTranslationSpec());
-                    translationEngineBuilder.addTranslationSpec(new TestResourceIdTranslationSpec());
-                    translationEngineBuilder.addTranslationSpec(new TestResourcePropertyIdTranslationSpec());
+                    translationEngineBuilder
+                            .addTranslationSpec(new ResourcesPluginDataTranslationSpec())
+                            .addTranslationSpec(new ResourceIdTranslationSpec())
+                            .addTranslationSpec(new ResourcePropertyIdTranslationSpec())
+                            .addTranslationSpec(new ResourceInitializationTranslationSpec())
+                            .addTranslationSpec(new TestResourceIdTranslationSpec())
+                            .addTranslationSpec(new TestResourcePropertyIdTranslationSpec());
 
                     if (withReport) {
                         translationEngineBuilder
-                                .addTranslationSpec(new PersonResourceReportPluginDataTranslationSpec());
-                        translationEngineBuilder
-                                .addTranslationSpec(new ResourcePropertyReportPluginDataTranslationSpec());
-                        translationEngineBuilder.addTranslationSpec(new ResourceReportPluginDataTranslationSpec());
+                                .addTranslationSpec(new PersonResourceReportPluginDataTranslationSpec())
+                                .addTranslationSpec(new ResourcePropertyReportPluginDataTranslationSpec())
+                                .addTranslationSpec(new ResourceReportPluginDataTranslationSpec());
                     }
                 });
 

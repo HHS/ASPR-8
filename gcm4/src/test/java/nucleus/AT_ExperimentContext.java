@@ -61,31 +61,31 @@ public class AT_ExperimentContext {
 
 		// create an experiment with two dimensions with some experiment meta
 		// data
-		Dimension dimension1 = Dimension.builder()//
-										.addMetaDatum("A")//
-										.addMetaDatum("B")//
-										.addLevel((c) -> {
-											List<String> result = new ArrayList<>();
-											result.add("a");
-											result.add("b");
-											return result;
-										})//
-										.build();
-		Dimension dimension2 = Dimension.builder()//
-										.addMetaDatum("C")//
-										.addMetaDatum("D")//
-										.build();
+		Dimension dimension1 = FunctionalDimension	.builder()//
+													.addMetaDatum("A")//
+													.addMetaDatum("B")//
+													.addLevel((c) -> {
+														List<String> result = new ArrayList<>();
+														result.add("a");
+														result.add("b");
+														return result;
+													})//
+													.build();
+		Dimension dimension2 = FunctionalDimension	.builder()//
+													.addMetaDatum("C")//
+													.addMetaDatum("D")//
+													.build();
 
-		Dimension dimension3 = Dimension.builder()//
-										.addMetaDatum("E")//
-										.addMetaDatum("F")//
-										.addLevel((c) -> {
-											List<String> result = new ArrayList<>();
-											result.add("e");
-											result.add("f");
-											return result;
-										})//
-										.build();
+		Dimension dimension3 = FunctionalDimension	.builder()//
+													.addMetaDatum("E")//
+													.addMetaDatum("F")//
+													.addLevel((c) -> {
+														List<String> result = new ArrayList<>();
+														result.add("e");
+														result.add("f");
+														return result;
+													})//
+													.build();
 
 		Experiment	.builder()//
 					.addDimension(dimension1)//
@@ -152,7 +152,7 @@ public class AT_ExperimentContext {
 		assertEquals(1, scenarioCount.getValue());
 
 		// create an experiment with two dimensions, having 10 and 7 levels each
-		Dimension.Builder dimBuilder = Dimension.builder().addMetaDatum("A").addMetaDatum("B");
+		FunctionalDimension.Builder dimBuilder = FunctionalDimension.builder().addMetaDatum("A").addMetaDatum("B");
 		IntStream.range(0, 10).forEach((i) -> {
 			dimBuilder.addLevel((context) -> {
 				List<String> result = new ArrayList<>();
@@ -163,7 +163,7 @@ public class AT_ExperimentContext {
 		});
 		Dimension dimension1 = dimBuilder.build();
 
-		Dimension.Builder dimBuilder2 = Dimension.builder();
+		FunctionalDimension.Builder dimBuilder2 = FunctionalDimension.builder();
 		dimBuilder2.addMetaDatum("X");
 		IntStream.range(0, 7).forEach((i) -> {
 			dimBuilder2.addLevel((context) -> {
@@ -194,7 +194,7 @@ public class AT_ExperimentContext {
 
 		// create an experiment with two dimensions with some experiment meta
 		// data
-		Dimension.Builder dimBuilder = Dimension.builder().addMetaDatum("A").addMetaDatum("B");
+		FunctionalDimension.Builder dimBuilder = FunctionalDimension.builder().addMetaDatum("A").addMetaDatum("B");
 		IntStream.range(0, 10).forEach((i) -> {
 			dimBuilder.addLevel((context) -> {
 				List<String> result = new ArrayList<>();
@@ -205,7 +205,7 @@ public class AT_ExperimentContext {
 		});
 		Dimension dimension1 = dimBuilder.build();
 
-		Dimension.Builder dimBuilder2 = Dimension.builder();
+		FunctionalDimension.Builder dimBuilder2 = FunctionalDimension.builder();
 		dimBuilder2.addMetaDatum("X");
 		IntStream.range(0, 7).forEach((i) -> {
 			dimBuilder2.addLevel((context) -> {
@@ -255,9 +255,9 @@ public class AT_ExperimentContext {
 					.execute();//
 
 		/*
-		 * There is no guarantee provided by the experiment that any particular
-		 * scenario id will be associated with any particular values from the
-		 * dimensions.
+		 * There is no black-box contract provided by the experiment that any
+		 * particular scenario id will be associated with any particular values
+		 * from the dimensions.
 		 */
 
 		// First, we will show that the scenario ids were 0 to 69, inclusive
@@ -295,9 +295,9 @@ public class AT_ExperimentContext {
 	public void testGetScenarios() {
 		// create an experiment with two dimensions with some experiment meta
 		// data
-		Dimension.Builder dimBuilder = Dimension.builder()//
-				.addMetaDatum("A")//
-				.addMetaDatum("B");
+		FunctionalDimension.Builder dimBuilder = FunctionalDimension.builder()//
+																	.addMetaDatum("A")//
+																	.addMetaDatum("B");
 		IntStream.range(0, 10).forEach((i) -> {
 			dimBuilder.addLevel((context) -> {
 				List<String> result = new ArrayList<>();
@@ -308,7 +308,7 @@ public class AT_ExperimentContext {
 		});
 		Dimension dimension1 = dimBuilder.build();
 
-		Dimension.Builder dimBuilder2 = Dimension.builder();
+		FunctionalDimension.Builder dimBuilder2 = FunctionalDimension.builder();
 		dimBuilder2.addMetaDatum("X");
 		IntStream.range(0, 7).forEach((i) -> {
 			dimBuilder2.addLevel((context) -> {
@@ -395,7 +395,7 @@ public class AT_ExperimentContext {
 
 		// Create a dimension with integer values. We expect these values to
 		// match the scenario id.
-		Dimension.Builder dimBuilder = Dimension.builder().addMetaDatum("value");
+		FunctionalDimension.Builder dimBuilder = FunctionalDimension.builder().addMetaDatum("value");
 		IntStream.range(0, 10).forEach((i) -> {
 			dimBuilder.addLevel((context) -> {
 				List<String> result = new ArrayList<>();
@@ -407,6 +407,10 @@ public class AT_ExperimentContext {
 
 		// create a container for observed scenario status values
 		Set<MultiKey> observedScenarioStatusInfo = new LinkedHashSet<>();
+
+		ExperimentParameterData experimentParameterData = ExperimentParameterData	.builder()//
+																					.setHaltOnException(false)//
+																					.build();
 
 		/*
 		 * Execute an experiment that uses the dimension and plugin. Add an
@@ -456,7 +460,7 @@ public class AT_ExperimentContext {
 
 						});
 					})//
-					.setHaltOnException(false)//
+					.setExperimentParameterData(experimentParameterData)//
 					.build()//
 					.execute();//
 
@@ -465,7 +469,7 @@ public class AT_ExperimentContext {
 		 */
 
 		Set<MultiKey> expectedScenarioStatusInfo = new LinkedHashSet<>();
-		for (int i = 0; i < dimension.size(); i++) {
+		for (int i = 0; i < dimension.levelCount(); i++) {
 			ScenarioStatus finalStatus = ScenarioStatus.SUCCEDED;
 			if (i % 2 == 0) {
 				finalStatus = ScenarioStatus.FAILED;
@@ -704,10 +708,14 @@ public class AT_ExperimentContext {
 			});
 		};
 
+		ExperimentParameterData experimentParameterData = ExperimentParameterData	.builder()//
+																					.setHaltOnException(false)//
+																					.build();
+
 		Experiment	.builder()//
 					.addPlugin(testPlugin)//
 					.addExperimentContextConsumer(experimentContestConsumer)//
-					.setHaltOnException(false)//
+					.setExperimentParameterData(experimentParameterData)//
 					.build()//
 					.execute();
 

@@ -17,6 +17,8 @@ import lesson.plugins.model.Region;
 import lesson.plugins.model.Resource;
 import nucleus.Dimension;
 import nucleus.Experiment;
+import nucleus.ExperimentParameterData;
+import nucleus.FunctionalDimension;
 import nucleus.Plugin;
 import plugins.globalproperties.GlobalPropertiesPlugin;
 import plugins.globalproperties.GlobalPropertiesPluginData;
@@ -54,7 +56,7 @@ public final class Example_18 {
 	private Plugin getResourcesPlugin() {
 		ResourcesPluginData.Builder builder = ResourcesPluginData.builder();
 		for (ResourceId resourcId : Resource.values()) {
-			builder.addResource(resourcId);
+			builder.addResource(resourcId,0.0);
 		}
 		ResourcesPluginData resourcesPluginData = builder.build();
 
@@ -170,7 +172,7 @@ public final class Example_18 {
 	/* end */
 
 	private Dimension getGlobalPropertyDimension(GlobalPropertyId globalPropertyId, String header, double[] values) {
-		Dimension.Builder dimensionBuilder = Dimension.builder();//
+		FunctionalDimension.Builder dimensionBuilder = FunctionalDimension.builder();//
 		IntStream.range(0, values.length).forEach((i) -> {
 			dimensionBuilder.addLevel((context) -> {
 				GlobalPropertiesPluginData.Builder builder = context.get(GlobalPropertiesPluginData.Builder.class);
@@ -189,7 +191,7 @@ public final class Example_18 {
 		double[] minValues = { 2.0, 5.0 };
 		double[] maxValues = { 5.0, 10.0 };
 
-		Dimension.Builder dimensionBuilder = Dimension.builder();//
+		FunctionalDimension.Builder dimensionBuilder = FunctionalDimension.builder();//
 		IntStream.range(0, minValues.length).forEach((i) -> {
 			dimensionBuilder.addLevel((context) -> {
 				GlobalPropertiesPluginData.Builder builder = context.get(GlobalPropertiesPluginData.Builder.class);
@@ -222,7 +224,7 @@ public final class Example_18 {
 		double[] minValues = { 0.30, 5.0 };
 		double[] maxValues = { 0.50, 0.75 };
 
-		Dimension.Builder dimensionBuilder = Dimension.builder();//
+		FunctionalDimension.Builder dimensionBuilder = FunctionalDimension.builder();//
 		IntStream.range(0, minValues.length).forEach((i) -> {
 			dimensionBuilder.addLevel((context) -> {
 				GlobalPropertiesPluginData.Builder builder = context.get(GlobalPropertiesPluginData.Builder.class);
@@ -264,6 +266,10 @@ public final class Example_18 {
 	/* start code_ref=resources_execute */
 	private void execute() {
 
+		ExperimentParameterData experimentParameterData = ExperimentParameterData.builder()//
+				.setThreadCount(8)//				
+				.build();
+		
 		Experiment	.builder()
 
 					.addPlugin(getResourcesPlugin())//
@@ -284,7 +290,7 @@ public final class Example_18 {
 					.addDimension(getHospitalStayDurationDimension())//
 
 					.addExperimentContextConsumer(getNIOReportItemHandler())//
-					.setThreadCount(8)//
+					.setExperimentParameterData(experimentParameterData)//
 					.build()//
 					.execute();//
 	}

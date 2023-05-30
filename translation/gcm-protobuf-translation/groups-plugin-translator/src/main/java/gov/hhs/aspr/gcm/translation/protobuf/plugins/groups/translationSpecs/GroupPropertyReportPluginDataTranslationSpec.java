@@ -11,6 +11,11 @@ import plugins.groups.support.GroupPropertyId;
 import plugins.groups.support.GroupTypeId;
 import plugins.reports.support.ReportLabel;
 
+/**
+ * TranslationSpec that defines how to convert between
+ * {@linkplain GroupPropertyReportPluginDataInput} and
+ * {@linkplain GroupPropertyReportPluginData}
+ */
 public class GroupPropertyReportPluginDataTranslationSpec
         extends ProtobufTranslationSpec<GroupPropertyReportPluginDataInput, GroupPropertyReportPluginData> {
 

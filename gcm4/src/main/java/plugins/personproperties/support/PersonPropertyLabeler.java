@@ -3,13 +3,12 @@ package plugins.personproperties.support;
 import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Function;
 
 import nucleus.Event;
 import nucleus.NucleusError;
-import nucleus.SimulationContext;
 import plugins.partitions.support.Labeler;
 import plugins.partitions.support.LabelerSensitivity;
+import plugins.partitions.support.PartitionsContext;
 import plugins.people.support.PersonId;
 import plugins.personproperties.datamanagers.PersonPropertiesDataManager;
 import plugins.personproperties.events.PersonPropertyUpdateEvent;
@@ -23,16 +22,20 @@ import util.errors.ContractException;
  * 
  *
  */
-public final class PersonPropertyLabeler implements Labeler {
+public abstract class PersonPropertyLabeler implements Labeler {
 
-	private final PersonPropertyId personPropertyId;
-	private final Function<Object, Object> personPropertyValueLabelingFunction;
+	private final PersonPropertyId personPropertyId;	
 	private PersonPropertiesDataManager personPropertiesDataManager;
-
-	public PersonPropertyLabeler(PersonPropertyId personPropertyId, Function<Object, Object> personPropertyValueLabelingFunction) {
-		this.personPropertyId = personPropertyId;
-		this.personPropertyValueLabelingFunction = personPropertyValueLabelingFunction;
+	
+	public PersonPropertyId getPersonPropertyId() {
+		return personPropertyId;
 	}
+	 
+	public PersonPropertyLabeler(PersonPropertyId personPropertyId) {
+		this.personPropertyId = personPropertyId;		
+	}
+	
+	protected abstract Object getLabelFromValue(Object value);
 
 	private Optional<PersonId> getPersonId(PersonPropertyUpdateEvent personPropertyUpdateEvent) {
 		PersonId result = null;
@@ -43,33 +46,33 @@ public final class PersonPropertyLabeler implements Labeler {
 	}
 
 	@Override
-	public Set<LabelerSensitivity<?>> getLabelerSensitivities() {
+	public final Set<LabelerSensitivity<?>> getLabelerSensitivities() {
 		Set<LabelerSensitivity<?>> result = new LinkedHashSet<>();
 		result.add(new LabelerSensitivity<PersonPropertyUpdateEvent>(PersonPropertyUpdateEvent.class, this::getPersonId));
 		return result;
 	}
 
 	@Override
-	public Object getLabel(SimulationContext simulationContext, PersonId personId) {
-		if(simulationContext == null) {
+	public final Object getCurrentLabel(PartitionsContext partitionsContext, PersonId personId) {
+		if(partitionsContext == null) {
 			throw new ContractException(NucleusError.NULL_SIMULATION_CONTEXT);
 		}
 		if (personPropertiesDataManager == null) {
-			personPropertiesDataManager = simulationContext.getDataManager(PersonPropertiesDataManager.class);
+			personPropertiesDataManager = partitionsContext.getDataManager(PersonPropertiesDataManager.class);
 		}
 		Object personPropertyValue = personPropertiesDataManager.getPersonPropertyValue(personId, personPropertyId);
-		return personPropertyValueLabelingFunction.apply(personPropertyValue);
+		return getLabelFromValue(personPropertyValue);
 	}
 
 	@Override
-	public Object getDimension() {
+	public final Object getId() {
 		return personPropertyId;
 	}
 
 	@Override
-	public Object getPastLabel(SimulationContext simulationContext, Event event) {
+	public final Object getPastLabel(PartitionsContext partitionsContext, Event event) {
 		PersonPropertyUpdateEvent personPropertyUpdateEvent =(PersonPropertyUpdateEvent)event;
-		return personPropertyValueLabelingFunction.apply(personPropertyUpdateEvent.previousPropertyValue());
+		return getLabelFromValue(personPropertyUpdateEvent.previousPropertyValue());
 	}
 
 }

@@ -21,37 +21,18 @@ import plugins.people.support.PersonId;
  */
 @Immutable
 public final class LabelerSensitivity<T extends Event> {
-
-	/*
-	 * Private wrapper class over the person function that properly casts events
-	 */
-	private class MetaFunction<K extends Event> {
-
-		private final Function<K, Optional<PersonId>> personFunction;
-
-		public MetaFunction(Function<K, Optional<PersonId>> personFunction) {
-			this.personFunction = personFunction;
-		}
-
-		@SuppressWarnings("unchecked")
-		public Optional<PersonId> requiresRefresh(Event event) {
-			return personFunction.apply((K) event);
-		}
-	}
-
 	private final Class<T> eventClass;
-
-	private final MetaFunction<T> metaFunction;
+	private final Function<T, Optional<PersonId>> personFunction;
 
 	/**
 	 * Creates the labeler sensitivity from the event type and person function.
 	 * The person function should return and empty optional if an event will not
-	 * effect a person's label and an optional of the person id otherwise.	
+	 * effect a person's label and an optional of the person id otherwise.
 	 */
 	public LabelerSensitivity(Class<T> eventClass, Function<T, Optional<PersonId>> personFunction) {
 		super();
-		this.eventClass = eventClass;
-		this.metaFunction = new MetaFunction<>(personFunction);
+		this.eventClass = eventClass;		
+		this.personFunction = personFunction;
 	}
 
 	/**
@@ -64,14 +45,15 @@ public final class LabelerSensitivity<T extends Event> {
 
 	/**
 	 * Returns the person id from the event if the event will effect that
-	 * person's label value and an empty optional otherwise. The partition resolver is not able to determine from
-	 * an event the person id of an event that possibly changes the label cell
-	 * of a person in a partition. The person id returned is the person that
-	 * will trigger the refresh and is thus the person id associated with the
-	 * event.
+	 * person's label value and an empty optional otherwise. The partition
+	 * resolver is not able to determine from an event the person id of an event
+	 * that possibly changes the label cell of a person in a partition. The
+	 * person id returned is the person that will trigger the refresh and is
+	 * thus the person id associated with the event.
 	 */
+	@SuppressWarnings("unchecked")
 	public Optional<PersonId> getPersonId(Event event) {
-		return metaFunction.requiresRefresh(event);
+		return personFunction.apply((T)event);
 	}
 
 }

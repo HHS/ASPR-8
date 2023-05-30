@@ -4,6 +4,11 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.input.Pers
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 import plugins.personproperties.support.PersonPropertyId;
 
+/**
+ * TranslationSpec that defines how to convert between
+ * {@linkplain PersonPropertyIdInput} and
+ * {@linkplain PersonPropertyId}
+ */
 public class PersonPropertyIdTranslationSpec extends ProtobufTranslationSpec<PersonPropertyIdInput, PersonPropertyId> {
 
     @Override
