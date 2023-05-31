@@ -58,7 +58,7 @@ enum EqualityInput {
 message PartitionInput {
     bool retainPersonKeys = 1;
     repeated LabelerInput labelers = 2;
-    FilterInput filter = 3;
+    optional FilterInput filter = 3;
 }
 
 message PartitionMapInput {

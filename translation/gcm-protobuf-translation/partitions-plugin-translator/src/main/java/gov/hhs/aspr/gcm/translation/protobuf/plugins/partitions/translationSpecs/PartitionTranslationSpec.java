@@ -21,9 +21,11 @@ public class PartitionTranslationSpec extends ProtobufTranslationSpec<PartitionI
 
         builder.setRetainPersonKeys(inputObject.getRetainPersonKeys());
 
-        Filter filter = this.translationEngine.convertObject(inputObject.getFilter());
+        if (inputObject.hasFilter()) {
+            Filter filter = this.translationEngine.convertObject(inputObject.getFilter());
 
-        builder.setFilter(filter);
+            builder.setFilter(filter);
+        }
 
         for (LabelerInput labelerInput : inputObject.getLabelersList()) {
             Labeler labeler = this.translationEngine.convertObject(labelerInput);
