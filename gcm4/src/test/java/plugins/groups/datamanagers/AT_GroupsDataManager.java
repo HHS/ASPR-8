@@ -26,10 +26,16 @@ import org.junit.jupiter.api.Test;
 import nucleus.ActorContext;
 import nucleus.DataManagerContext;
 import nucleus.EventFilter;
+import nucleus.Plugin;
+import nucleus.Simulation;
+import nucleus.SimulationState;
+import nucleus.testsupport.runcontinuityplugin.RunContinuityPlugin;
+import nucleus.testsupport.runcontinuityplugin.RunContinuityPluginData;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestOutputConsumer;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestSimulation;
+import plugins.groups.GroupsPlugin;
 import plugins.groups.GroupsPluginData;
 import plugins.groups.events.GroupAdditionEvent;
 import plugins.groups.events.GroupImminentRemovalEvent;
@@ -53,11 +59,16 @@ import plugins.groups.testsupport.TestAuxiliaryGroupPropertyId;
 import plugins.groups.testsupport.TestAuxiliaryGroupTypeId;
 import plugins.groups.testsupport.TestGroupPropertyId;
 import plugins.groups.testsupport.TestGroupTypeId;
+import plugins.people.PeoplePlugin;
+import plugins.people.PeoplePluginData;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonConstructionData;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
 import plugins.stochastics.StochasticsDataManager;
+import plugins.stochastics.StochasticsPlugin;
+import plugins.stochastics.StochasticsPluginData;
+import plugins.stochastics.support.WellState;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
 import util.annotations.UnitTestConstructor;
@@ -69,10 +80,13 @@ import util.wrappers.MutableInteger;
 import util.wrappers.MutableObject;
 
 public class AT_GroupsDataManager {
-
+	/**
+	 * Demonstrates that the data manager produces plugin data that reflects its
+	 * final state
+	 */
 	@Test
-	@UnitTestMethod(target = GroupsDataManager.class, name = "init", args = { GroupId.class })
-	public void testInit_State() {
+	@UnitTestMethod(target = GroupsDataManager.class, name = "init", args = { DataManagerContext.class })
+	public void testStateFinalization() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(385296335335709376L);
 		GroupsPluginData.Builder builder = GroupsPluginData.builder();
@@ -80,11 +94,13 @@ public class AT_GroupsDataManager {
 
 		// add a property definition
 		PropertyDefinition propertyDefinition = TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK.getPropertyDefinition();
+
 		GroupPropertyDefinitionInitialization groupPropertyDefinitionInitialization = GroupPropertyDefinitionInitialization	.builder().setGroupTypeId(TestGroupTypeId.GROUP_TYPE_1)
 																															.setPropertyDefinition(propertyDefinition)
 																															.setPropertyId(
 																																	TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK)
 																															.build();
+
 		List<GroupId> expectedGroupIds = new ArrayList<>();
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
@@ -2554,9 +2570,13 @@ public class AT_GroupsDataManager {
 
 	}
 
+	/**
+	 * Demonstrates that the data manager's initial state reflects its plugin
+	 * data
+	 */
 	@Test
 	@UnitTestMethod(target = GroupsDataManager.class, name = "init", args = { DataManagerContext.class })
-	public void testGroupDataManagerInitialization() {
+	public void testStateInitialization() {
 		long seed = 7212690164088198082L;
 
 		int initialPopulation = 30;
@@ -5045,6 +5065,164 @@ public class AT_GroupsDataManager {
 
 		Factory factory = GroupsTestPluginFactory.factory(100, 3, 10, 7349170569580375646L, testPluginData);
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
+	}
+
+	/**
+	 * Demonstrates that the data manager exhibits run continuity. The state of
+	 * the data manager is not effected by repeatedly starting and stopping the
+	 * simulation.
+	 */
+	@Test
+	@UnitTestMethod(target = PeopleDataManager.class, name = "init", args = { DataManagerContext.class })
+	public void testStateContinuity() {
+
+		/*
+		 * Note that we are not testing the content of the plugin datas -- that
+		 * is covered by the other state tests. We show here only that the
+		 * resulting plugin data state is the same without regard to how we
+		 * break up the run.
+		 */
+
+		Set<GroupsPluginData> pluginDatas = new LinkedHashSet<>();
+		pluginDatas.add(testStateContinuity(1));
+		pluginDatas.add(testStateContinuity(5));
+		pluginDatas.add(testStateContinuity(10));
+
+		assertEquals(1, pluginDatas.size());
+
+		System.out.println(pluginDatas.iterator().next());
+
+	}
+
+	private void performRandomGroupAction(ActorContext actorContext) {
+		GroupsDataManager groupsDataManager = actorContext.getDataManager(GroupsDataManager.class);
+		PeopleDataManager peopleDataManager = actorContext.getDataManager(PeopleDataManager.class);
+		StochasticsDataManager stochasticsDataManager = actorContext.getDataManager(StochasticsDataManager.class);
+
+		// addGroup(GroupConstructionInfo)
+		// addGroup(GroupTypeId)
+		// addGroupType(GroupTypeId)
+		// addPersonToGroup(PersonId, GroupId)
+		// defineGroupProperty(GroupPropertyDefinitionInitialization)
+		// removeGroup(GroupId)
+		// removePersonFromGroup(PersonId, GroupId)
+		// setGroupPropertyValue(GroupId, GroupPropertyId, Object)
+		//
+		//
+		// sampleGroup(GroupId, GroupSampler)
+
+	}
+
+	private void performRandomGroupActions(ActorContext actorContext) {
+		StochasticsDataManager stochasticsDataManager = actorContext.getDataManager(StochasticsDataManager.class);
+		RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
+		int actionCount = randomGenerator.nextInt(15) + 1;
+		for (int i = 0; i < actionCount; i++) {
+			performRandomGroupAction(actorContext);
+		}
+	}
+
+	/*
+	 * Returns the people plugin data resulting from several people events over
+	 * several days. Attempts to stop and start the simulation by the given
+	 * number of increments.
+	 */
+	private GroupsPluginData testStateContinuity(int incrementCount) {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6160901456257930728L);
+		/*
+		 * Build the RunContinuityPluginData with five context consumers that
+		 * will add and remove people over several days
+		 */
+		RunContinuityPluginData.Builder continuityBuilder = RunContinuityPluginData.builder();
+		double actionTime = 0;
+		for (int i = 0; i < 100; i++) {
+			actionTime += randomGenerator.nextDouble();
+			continuityBuilder.addContextConsumer(actionTime, (c) -> {
+				performRandomGroupActions(c);
+			});
+		}
+
+		RunContinuityPluginData runContinuityPluginData = continuityBuilder.build();
+
+		// Build an empty people plugin data for time zero
+		PeoplePluginData peoplePluginData = PeoplePluginData.builder().build();
+
+		// Build a simple stochastics plugin data
+		StochasticsPluginData stochasticsPluginData = //
+				StochasticsPluginData	.builder()//
+										.setMainRNGState(//
+												WellState	.builder()//
+															.setSeed(randomGenerator.nextLong())//
+															.build())
+										.build();//
+
+		// Build an empty groups plugin data
+		GroupsPluginData groupsPluginData = GroupsPluginData.builder().build();
+
+		// build the initial simulation state data -- time starts at zero
+		SimulationState simulationState = SimulationState.builder().build();
+
+		/*
+		 * Run the simulation in one day increments until all the plans in the
+		 * run continuity plugin data have been executed
+		 */
+		double haltTime = 0;
+		double maxTime = Double.NEGATIVE_INFINITY;
+		for (Pair<Double, Consumer<ActorContext>> pair : runContinuityPluginData.getConsumers()) {
+			Double time = pair.getFirst();
+			maxTime = FastMath.max(maxTime, time);
+		}
+		double timeIncrement = maxTime / incrementCount;
+		while (!runContinuityPluginData.allPlansComplete()) {
+			haltTime += timeIncrement;
+
+			// build the run continuity plugin
+			Plugin runContinuityPlugin = RunContinuityPlugin.builder()//
+															.setRunContinuityPluginData(runContinuityPluginData)//
+															.build();
+
+			// build the people plugin
+			Plugin peoplePlugin = PeoplePlugin.getPeoplePlugin(peoplePluginData);
+
+			// build the stochastics plugin
+			Plugin stochasticsPlugin = StochasticsPlugin.getStochasticsPlugin(stochasticsPluginData);
+
+			// build the groups plugin
+			Plugin groupsPlugin = GroupsPlugin.builder().setGroupsPluginData(groupsPluginData).getGroupsPlugin();
+
+			TestOutputConsumer outputConsumer = new TestOutputConsumer();
+
+			// execute the simulation so that it produces a people plugin data
+			Simulation simulation = Simulation	.builder()//
+												.addPlugin(peoplePlugin)//
+												.addPlugin(stochasticsPlugin)//
+												.addPlugin(runContinuityPlugin)//
+												.addPlugin(groupsPlugin)//
+												.setSimulationHaltTime(haltTime)//
+												.setRecordState(true)//
+												.setOutputConsumer(outputConsumer)//
+												.setSimulationState(simulationState)//
+												.build();//
+			simulation.execute();
+
+			// retrieve the people plugin data
+			peoplePluginData = outputConsumer.getOutputItem(PeoplePluginData.class).get();
+
+			// retrieve the groups plugin data
+			groupsPluginData = outputConsumer.getOutputItem(GroupsPluginData.class).get();
+
+			// retrieve the stochastics plugin data
+			stochasticsPluginData = outputConsumer.getOutputItem(StochasticsPluginData.class).get();
+
+			// retrieve the simulation state
+			simulationState = outputConsumer.getOutputItem(SimulationState.class).get();
+
+			// retrieve the run continuity plugin data
+			runContinuityPluginData = outputConsumer.getOutputItem(RunContinuityPluginData.class).get();
+		}
+
+		return groupsPluginData;
+
 	}
 
 }
