@@ -506,6 +506,12 @@
             </modules>
         </profile>
         <profile>
+            <id>partitions</id>
+            <modules>
+                <module>partitions-plugin-translator</module>
+            </modules>
+        </profile>
+        <profile>
             <id>global-props</id>
             <modules>
                 <module>reports-plugin-translator</module>
