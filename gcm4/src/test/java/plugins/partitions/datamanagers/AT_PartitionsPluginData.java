@@ -98,11 +98,11 @@ public class AT_PartitionsPluginData {
 		Partition partition4 = getRandomPartition(randomGenerator);
 
 		PartitionsPluginData partitionsPluginData = PartitionsPluginData.builder()//
-																		.setPartition(key1, partition4)//
-																		.setPartition(key1, partition1)//
-																		.setPartition(key2, partition2)//
-																		.setPartition(key3, partition3)//
-																		.setPartition(key4, partition4)//
+																		.addPartition(key1, partition4)//
+																		.addPartition(key1, partition1)//
+																		.addPartition(key2, partition2)//
+																		.addPartition(key3, partition3)//
+																		.addPartition(key4, partition4)//
 																		.build();
 
 		assertEquals(partition1, partitionsPluginData.getPartition(key1));
@@ -139,11 +139,11 @@ public class AT_PartitionsPluginData {
 		Partition partition4 = getRandomPartition(randomGenerator);
 
 		PartitionsPluginData partitionsPluginData = PartitionsPluginData.builder()//
-																		.setPartition(key1, partition4)//
-																		.setPartition(key1, partition1)//
-																		.setPartition(key2, partition2)//
-																		.setPartition(key3, partition3)//
-																		.setPartition(key4, partition4)//
+																		.addPartition(key1, partition4)//
+																		.addPartition(key1, partition1)//
+																		.addPartition(key2, partition2)//
+																		.addPartition(key3, partition3)//
+																		.addPartition(key4, partition4)//
 																		.build();
 
 		Set<Object> expectedKeys = new LinkedHashSet<>();
@@ -212,7 +212,7 @@ public class AT_PartitionsPluginData {
 		PartitionsPluginData.Builder partitionsPluginDataBuilder = PartitionsPluginData.builder();
 		int n = randomGenerator.nextInt(20);
 		for (int i = 0; i < n; i++) {
-			partitionsPluginDataBuilder.setPartition(randomGenerator.nextInt(), getRandomPartition(randomGenerator));
+			partitionsPluginDataBuilder.addPartition(randomGenerator.nextInt(), getRandomPartition(randomGenerator));
 		}
 		return partitionsPluginDataBuilder.build();
 	}
@@ -317,11 +317,11 @@ public class AT_PartitionsPluginData {
 		Partition partition4 = getRandomPartition(randomGenerator);
 
 		PartitionsPluginData partitionsPluginData = PartitionsPluginData.builder()//
-																		.setPartition(key1, partition4)//
-																		.setPartition(key1, partition1)//
-																		.setPartition(key2, partition2)//
-																		.setPartition(key3, partition3)//
-																		.setPartition(key4, partition4)//
+																		.addPartition(key1, partition4)//
+																		.addPartition(key1, partition1)//
+																		.addPartition(key2, partition2)//
+																		.addPartition(key3, partition3)//
+																		.addPartition(key4, partition4)//
 																		.build();
 
 		assertEquals(partition1, partitionsPluginData.getPartition(key1));
@@ -330,12 +330,12 @@ public class AT_PartitionsPluginData {
 		assertEquals(partition4, partitionsPluginData.getPartition(key4));
 
 		// precondition test: if the key is null
-		ContractException contractException = assertThrows(ContractException.class, () -> PartitionsPluginData.builder().setPartition(null,getRandomPartition(randomGenerator)));
+		ContractException contractException = assertThrows(ContractException.class, () -> PartitionsPluginData.builder().addPartition(null,getRandomPartition(randomGenerator)));
 		assertEquals(PartitionError.NULL_PARTITION_KEY, contractException.getErrorType());
 
 		// precondition test: if the partition null
 		Object key5 = "key5";
-		contractException = assertThrows(ContractException.class, () -> PartitionsPluginData.builder().setPartition(key5,null));
+		contractException = assertThrows(ContractException.class, () -> PartitionsPluginData.builder().addPartition(key5,null));
 		assertEquals(PartitionError.NULL_PARTITION, contractException.getErrorType());
 
 		
