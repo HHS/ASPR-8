@@ -6,6 +6,11 @@ import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 import plugins.partitions.support.filters.Filter;
 import plugins.partitions.support.filters.OrFilter;
 
+/**
+ * TranslationSpec that defines how to convert between
+ * {@linkplain OrFilterInput} and
+ * {@linkplain OrFilter}
+ */
 public class OrFilterTranslationSpec extends ProtobufTranslationSpec<OrFilterInput, OrFilter> {
 
     @Override

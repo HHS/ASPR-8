@@ -4,6 +4,11 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.partitions.input.TrueFilter
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 import plugins.partitions.support.filters.TrueFilter;
 
+/**
+ * TranslationSpec that defines how to convert between
+ * {@linkplain TrueFilterInput} and
+ * {@linkplain TrueFilter}
+ */
 public class TrueFilterTranslationSpec extends ProtobufTranslationSpec<TrueFilterInput, TrueFilter> {
 
     @Override

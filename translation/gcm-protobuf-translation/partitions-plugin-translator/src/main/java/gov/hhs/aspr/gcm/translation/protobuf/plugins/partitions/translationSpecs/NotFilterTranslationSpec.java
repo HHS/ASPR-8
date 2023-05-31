@@ -6,6 +6,11 @@ import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 import plugins.partitions.support.filters.Filter;
 import plugins.partitions.support.filters.NotFilter;
 
+/**
+ * TranslationSpec that defines how to convert between
+ * {@linkplain NotFilterInput} and
+ * {@linkplain NotFilter}
+ */
 public class NotFilterTranslationSpec extends ProtobufTranslationSpec<NotFilterInput, NotFilter> {
 
     @Override

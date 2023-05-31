@@ -4,6 +4,11 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.partitions.input.FalseFilte
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 import plugins.partitions.support.filters.FalseFilter;
 
+/**
+ * TranslationSpec that defines how to convert between
+ * {@linkplain FalseFilterInput} and
+ * {@linkplain FalseFilter}
+ */
 public class FalseFilterTranslationSpec extends ProtobufTranslationSpec<FalseFilterInput, FalseFilter> {
 
     @Override

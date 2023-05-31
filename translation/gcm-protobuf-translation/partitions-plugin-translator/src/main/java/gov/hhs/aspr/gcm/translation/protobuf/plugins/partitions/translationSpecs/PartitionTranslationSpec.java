@@ -8,6 +8,11 @@ import plugins.partitions.support.Labeler;
 import plugins.partitions.support.Partition;
 import plugins.partitions.support.filters.Filter;
 
+/**
+ * TranslationSpec that defines how to convert between
+ * {@linkplain PartitionInput} and
+ * {@linkplain Partition}
+ */
 public class PartitionTranslationSpec extends ProtobufTranslationSpec<PartitionInput, Partition> {
 
     @Override

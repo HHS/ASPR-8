@@ -9,6 +9,11 @@ import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 import plugins.partitions.datamanagers.PartitionsPluginData;
 import plugins.partitions.support.Partition;
 
+/**
+ * TranslationSpec that defines how to convert between
+ * {@linkplain PartitionsPluginDataInput} and
+ * {@linkplain PartitionsPluginData}
+ */
 public class PartitionsPluginDataTranslationSpec
         extends ProtobufTranslationSpec<PartitionsPluginDataInput, PartitionsPluginData> {
 

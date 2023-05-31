@@ -4,6 +4,11 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.partitions.input.FilterInpu
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 import plugins.partitions.support.filters.Filter;
 
+/**
+ * TranslationSpec that defines how to convert between
+ * {@linkplain FilterInput} and
+ * {@linkplain Filter}
+ */
 public class FilterTranslationSpec extends ProtobufTranslationSpec<FilterInput, Filter> {
 
     @Override

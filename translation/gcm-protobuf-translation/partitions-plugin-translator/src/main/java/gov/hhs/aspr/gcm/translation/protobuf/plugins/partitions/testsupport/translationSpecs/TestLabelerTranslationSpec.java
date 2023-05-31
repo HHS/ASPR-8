@@ -4,6 +4,11 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.partitions.input.TestLabele
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.partitions.testsupport.TestLabeler;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 
+/**
+ * TranslationSpec that defines how to convert between
+ * {@linkplain TestLabelerInput} and
+ * {@linkplain TestLabeler}
+ */
 public class TestLabelerTranslationSpec extends ProtobufTranslationSpec<TestLabelerInput, TestLabeler> {
 
     @Override

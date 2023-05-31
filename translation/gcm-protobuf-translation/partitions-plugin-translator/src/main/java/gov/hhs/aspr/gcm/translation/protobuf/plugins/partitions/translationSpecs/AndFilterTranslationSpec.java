@@ -6,6 +6,11 @@ import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 import plugins.partitions.support.filters.AndFilter;
 import plugins.partitions.support.filters.Filter;
 
+/**
+ * TranslationSpec that defines how to convert between
+ * {@linkplain AndFilterInput} and
+ * {@linkplain AndFilter}
+ */
 public class AndFilterTranslationSpec extends ProtobufTranslationSpec<AndFilterInput, AndFilter> {
 
     @Override
