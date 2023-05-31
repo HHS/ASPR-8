@@ -687,6 +687,7 @@ public final class AT_PeopleDataManager {
 				peopleDataManager.addPerson(PersonConstructionData.builder().build());
 			}
 		});
+		
 		continuityBuilder.addContextConsumer(1.2, (c) -> {
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			peopleDataManager.removePerson(new PersonId(0));
@@ -694,6 +695,7 @@ public final class AT_PeopleDataManager {
 				peopleDataManager.addPerson(PersonConstructionData.builder().build());
 			}
 		});
+		
 		continuityBuilder.addContextConsumer(1.8, (c) -> {
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			peopleDataManager.removePerson(new PersonId(3));
@@ -702,6 +704,7 @@ public final class AT_PeopleDataManager {
 				peopleDataManager.addPerson(PersonConstructionData.builder().build());
 			}
 		});
+		
 		continuityBuilder.addContextConsumer(2.05, (c) -> {
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			peopleDataManager.removePerson(new PersonId(1));
@@ -712,6 +715,7 @@ public final class AT_PeopleDataManager {
 				peopleDataManager.addPerson(PersonConstructionData.builder().build());
 			}
 		});
+		
 		continuityBuilder.addContextConsumer(4.2, (c) -> {
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 

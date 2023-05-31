@@ -103,6 +103,31 @@ public final class ResourcesPluginData implements PluginData {
 
 			locked = data.locked;
 		}
+		
+		
+
+		@Override
+		public String toString() {
+			StringBuilder builder = new StringBuilder();
+			builder.append("Data [resourceIds=");
+			builder.append(resourceIds);
+			builder.append(", resourceTimeTrackingPolicies=");
+			builder.append(resourceTimeTrackingPolicies);
+			builder.append(", resourcePropertyDefinitions=");
+			builder.append(resourcePropertyDefinitions);
+			builder.append(", resourcePropertyValues=");
+			builder.append(resourcePropertyValues);
+			builder.append(", personResourceLevels=");
+			builder.append(personResourceLevels);
+			builder.append(", personResourceTimes=");
+			builder.append(personResourceTimes);
+			builder.append(", regionResourceLevels=");
+			builder.append(regionResourceLevels);
+			builder.append(", locked=");
+			builder.append(locked);
+			builder.append("]");
+			return builder.toString();
+		}
 
 		/**
 		 * 
@@ -1165,4 +1190,17 @@ public final class ResourcesPluginData implements PluginData {
 		}
 		return true;
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder2 = new StringBuilder();
+		builder2.append("ResourcesPluginData [data=");
+		builder2.append(data);
+		builder2.append("]");
+		return builder2.toString();
+	}
+	
+	
+	
+	
 }

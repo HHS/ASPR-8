@@ -11,26 +11,39 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
 
-import nucleus.testsupport.testplugin.TestOutputConsumer;
 import org.apache.commons.math3.random.RandomGenerator;
+import org.apache.commons.math3.util.FastMath;
 import org.apache.commons.math3.util.Pair;
 import org.junit.jupiter.api.Test;
 
+import nucleus.ActorContext;
 import nucleus.DataManagerContext;
 import nucleus.EventFilter;
+import nucleus.Plugin;
+import nucleus.Simulation;
+import nucleus.SimulationState;
+import nucleus.testsupport.runcontinuityplugin.RunContinuityPlugin;
+import nucleus.testsupport.runcontinuityplugin.RunContinuityPluginData;
 import nucleus.testsupport.testplugin.TestActorPlan;
+import nucleus.testsupport.testplugin.TestOutputConsumer;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestSimulation;
+import plugins.people.PeoplePlugin;
+import plugins.people.PeoplePluginData;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonConstructionData;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
+import plugins.regions.RegionsPlugin;
+import plugins.regions.RegionsPluginData;
 import plugins.regions.datamanagers.RegionsDataManager;
 import plugins.regions.support.RegionConstructionData;
 import plugins.regions.support.RegionError;
 import plugins.regions.support.RegionId;
 import plugins.regions.testsupport.TestRegionId;
+import plugins.resources.ResourcesPlugin;
 import plugins.resources.ResourcesPluginData;
 import plugins.resources.events.PersonResourceUpdateEvent;
 import plugins.resources.events.RegionResourceUpdateEvent;
@@ -60,9 +73,15 @@ import util.wrappers.MutableInteger;
 import util.wrappers.MutableObject;
 
 public final class AT_ResourcesDataManager {
+
+	/**
+	 * Demonstrates that the data manager produces plugin data that reflects its
+	 * final state
+	 */
 	@Test
 	@UnitTestMethod(target = ResourcesDataManager.class, name = "init", args = { DataManagerContext.class })
-	public void testInit_State() {
+	public void testStateFinalization() {
+
 		testInit_State_1();
 		testInit_State_2();
 	}
@@ -116,7 +135,7 @@ public final class AT_ResourcesDataManager {
 	private void testInit_State_2() {
 		// show that the plugin data persists after multiple actions
 		List<RegionId> expectedRegionIds = new ArrayList<>();
-		
+
 		ResourcesPluginData resourcesPluginData2 = ResourcesPluginData	.builder()
 																		.defineResourceProperty(TestResourceId.RESOURCE_1, TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE,
 																				TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE.getPropertyDefinition())
@@ -151,8 +170,8 @@ public final class AT_ResourcesDataManager {
 		}));
 
 		TestPluginData testPluginData2 = pluginBuilder.build();
-		Factory factory2 = ResourcesTestPluginFactory.factory(2, 7939130943360648501L, testPluginData2)//
-				.setResourcesPluginData(resourcesPluginData2);
+		Factory factory2 = ResourcesTestPluginFactory	.factory(2, 7939130943360648501L, testPluginData2)//
+														.setResourcesPluginData(resourcesPluginData2);
 		TestOutputConsumer testOutputConsumer2 = TestSimulation	.builder()//
 																.addPlugins(factory2.getPlugins())//
 																.setProduceSimulationStateOnHalt(true)//
@@ -162,25 +181,24 @@ public final class AT_ResourcesDataManager {
 		Map<ResourcesPluginData, Integer> outputItems2 = testOutputConsumer2.getOutputItems(ResourcesPluginData.class);
 		assertEquals(1, outputItems2.size());
 		ResourcesPluginData actualPluginData = outputItems2.keySet().iterator().next();
-		ResourcesPluginData expectedPluginData = ResourcesPluginData	.builder()
-																		.defineResourceProperty(TestResourceId.RESOURCE_1, TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE,
-																				TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE.getPropertyDefinition())
-																		.defineResourceProperty(TestResourceId.RESOURCE_2, TestResourcePropertyId.ResourceProperty_1_1_BOOLEAN_MUTABLE,
-																				TestResourcePropertyId.ResourceProperty_1_1_BOOLEAN_MUTABLE.getPropertyDefinition())
-																		.addResource(TestResourceId.RESOURCE_1, 0.0)//
-																		.addResource(TestResourceId.RESOURCE_2, 0.0)//
-																		.addResource(TestResourceId.RESOURCE_3, 1.0)//
-																		.setResourceTimeTracking(TestResourceId.RESOURCE_2, true)
-																		.setResourcePropertyValue(TestResourceId.RESOURCE_1, TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE, 45)
-																		.setResourcePropertyValue(TestResourceId.RESOURCE_2, TestResourcePropertyId.ResourceProperty_1_1_BOOLEAN_MUTABLE, false)
-																		.setRegionResourceLevel(TestRegionId.REGION_1, TestResourceId.RESOURCE_1, 55)
-																		.setRegionResourceLevel(expectedRegionIds.get(0), TestResourceId.RESOURCE_2, 8)
-																		.setRegionResourceLevel(TestRegionId.REGION_2, TestResourceId.RESOURCE_2, 5)
-																		.setRegionResourceLevel(TestRegionId.REGION_2, TestResourceId.RESOURCE_3, 73)
-																		.setPersonResourceLevel(new PersonId(0), TestResourceId.RESOURCE_2, 20L)//
-																		.setPersonResourceTime(new PersonId(0), TestResourceId.RESOURCE_2, 1.0)
-																		.build();
-		
+		ResourcesPluginData expectedPluginData = ResourcesPluginData.builder()
+																	.defineResourceProperty(TestResourceId.RESOURCE_1, TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE,
+																			TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE.getPropertyDefinition())
+																	.defineResourceProperty(TestResourceId.RESOURCE_2, TestResourcePropertyId.ResourceProperty_1_1_BOOLEAN_MUTABLE,
+																			TestResourcePropertyId.ResourceProperty_1_1_BOOLEAN_MUTABLE.getPropertyDefinition())
+																	.addResource(TestResourceId.RESOURCE_1, 0.0)//
+																	.addResource(TestResourceId.RESOURCE_2, 0.0)//
+																	.addResource(TestResourceId.RESOURCE_3, 1.0)//
+																	.setResourceTimeTracking(TestResourceId.RESOURCE_2, true)
+																	.setResourcePropertyValue(TestResourceId.RESOURCE_1, TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE, 45)
+																	.setResourcePropertyValue(TestResourceId.RESOURCE_2, TestResourcePropertyId.ResourceProperty_1_1_BOOLEAN_MUTABLE, false)
+																	.setRegionResourceLevel(TestRegionId.REGION_1, TestResourceId.RESOURCE_1, 55)
+																	.setRegionResourceLevel(expectedRegionIds.get(0), TestResourceId.RESOURCE_2, 8)
+																	.setRegionResourceLevel(TestRegionId.REGION_2, TestResourceId.RESOURCE_2, 5)
+																	.setRegionResourceLevel(TestRegionId.REGION_2, TestResourceId.RESOURCE_3, 73)
+																	.setPersonResourceLevel(new PersonId(0), TestResourceId.RESOURCE_2, 20L)//
+																	.setPersonResourceTime(new PersonId(0), TestResourceId.RESOURCE_2, 1.0).build();
+
 		assertEquals(expectedPluginData, actualPluginData);
 	}
 
@@ -2850,9 +2868,13 @@ public final class AT_ResourcesDataManager {
 		});
 	}
 
+	/**
+	 * Demonstrates that the data manager's initial state reflects its plugin
+	 * data
+	 */
 	@Test
 	@UnitTestMethod(target = ResourcesDataManager.class, name = "init", args = { DataManagerContext.class })
-	public void testInitializeResourceDataManager() {
+	public void testStateInitialization() {
 
 		int initialPopulation = 10;
 
@@ -3995,6 +4017,296 @@ public final class AT_ResourcesDataManager {
 		TestPluginData testPluginData = pluginBuilder.build();
 		Factory factory = ResourcesTestPluginFactory.factory(5, 1942435631952524244L, testPluginData);
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
+
+	}
+
+	/**
+	 * Demonstrates that the data manager exhibits run continuity. The state of
+	 * the data manager is not effected by repeatedly starting and stopping the
+	 * simulation.
+	 */
+	@Test
+	@UnitTestMethod(target = ResourcesDataManager.class, name = "init", args = { DataManagerContext.class })
+	public void testStateContinuity() {
+
+		/*
+		 * Note that we are not testing the content of the plugin datas -- that
+		 * is covered by the other state tests. We show here only that the
+		 * resulting plugin data state is the same without regard to how we
+		 * break up the run.
+		 */
+
+		Set<ResourcesPluginData> pluginDatas = new LinkedHashSet<>();
+		pluginDatas.add(testStateContinuity(1));
+		pluginDatas.add(testStateContinuity(5));
+		pluginDatas.add(testStateContinuity(10));
+
+		assertEquals(1, pluginDatas.size());
+	}
+
+	/*
+	 * Returns the resources plugin data resulting from various resource related
+	 * events over several days. Attempts to stop and start the simulation by
+	 * the given number of increments.
+	 */
+	private ResourcesPluginData testStateContinuity(int incrementCount) {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(177404262666515111L);
+
+		/*
+		 * Build the RunContinuityPluginData with five context consumers that
+		 * will add and remove people over several days
+		 */
+		RunContinuityPluginData.Builder continuityBuilder = RunContinuityPluginData.builder();
+
+		/*
+		 * Add some resource ids. Add some people with one of the resources
+		 * added to the people.
+		 */
+		continuityBuilder.addContextConsumer(0.5, (c) -> {
+			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+
+			boolean trackResources = false;
+			for (TestResourceId testResourceId : TestResourceId.values()) {
+				resourcesDataManager.addResourceId(testResourceId, trackResources);
+				trackResources = !trackResources;
+			}
+
+			for (int i = 0; i < 10; i++) {
+				TestRegionId regionId = TestRegionId.getRandomRegionId(randomGenerator);
+				ResourceId resourceId = TestResourceId.RESOURCE_3;
+				long resourceLevel = randomGenerator.nextInt(5);
+				ResourceInitialization resourceInitialization = new ResourceInitialization(resourceId, resourceLevel);
+				PersonConstructionData personConstructionData = PersonConstructionData	.builder()//
+																						.add(regionId)//
+																						.add(resourceInitialization)//
+																						.build();//
+				peopleDataManager.addPerson(personConstructionData);
+			}
+
+		});
+
+		/*
+		 * Add 300 to 1300 units of each resource to each region
+		 */
+		continuityBuilder.addContextConsumer(1.2, (c) -> {
+			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+			for (TestRegionId testRegionId : TestRegionId.values()) {
+				for (TestResourceId testResourceId : TestResourceId.values()) {
+					long amount = randomGenerator.nextInt(10) * 100 + 300;
+					resourcesDataManager.addResourceToRegion(testResourceId, testRegionId, amount);
+				}
+			}
+
+		});
+
+		// add some more resources to some regions
+		continuityBuilder.addContextConsumer(1.5, (c) -> {
+			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+			for (int i = 0; i < 30; i++) {
+				TestRegionId testRegionId = TestRegionId.getRandomRegionId(randomGenerator);
+				TestResourceId testResourceId = TestResourceId.getRandomResourceId(randomGenerator);
+				long amount = randomGenerator.nextInt(1000) + 1;
+				resourcesDataManager.addResourceToRegion(testResourceId, testRegionId, amount);
+			}
+		});
+
+		/*
+		 * define some resource properties
+		 */
+		continuityBuilder.addContextConsumer(1.6, (c) -> {
+			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+			for (TestResourcePropertyId testResourcePropertyId : TestResourcePropertyId.values()) {
+				ResourcePropertyInitialization resourcePropertyInitialization = //
+						ResourcePropertyInitialization	.builder()//
+														.setPropertyDefinition(testResourcePropertyId.getPropertyDefinition())//
+														.setResourceId(testResourcePropertyId.getTestResourceId()).setResourcePropertyId(testResourcePropertyId).build();
+				resourcesDataManager.defineResourceProperty(resourcePropertyInitialization);
+			}
+
+		});
+
+		// set some resource properties
+		continuityBuilder.addContextConsumer(2.2, (c) -> {
+			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+			for (TestResourcePropertyId testResourcePropertyId : TestResourcePropertyId.values()) {
+				PropertyDefinition propertyDefinition = resourcesDataManager.getResourcePropertyDefinition(testResourcePropertyId.getTestResourceId(), testResourcePropertyId);
+				if (propertyDefinition.propertyValuesAreMutable()) {
+					resourcesDataManager.setResourcePropertyValue(testResourcePropertyId.getTestResourceId(), testResourcePropertyId, testResourcePropertyId.getRandomPropertyValue(randomGenerator));
+				}
+			}
+		});
+
+		// transfer resources between regions
+		continuityBuilder.addContextConsumer(2.5, (c) -> {
+			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+
+			for (int i = 0; i < 50; i++) {
+				TestResourceId resourceId = TestResourceId.getRandomResourceId(randomGenerator);
+				TestRegionId sourceRegionId = TestRegionId.getRandomRegionId(randomGenerator);
+				TestRegionId destinationRegionId = TestRegionId.getRandomRegionId(randomGenerator);
+
+				if (sourceRegionId != destinationRegionId) {
+
+					long regionResourceLevel = resourcesDataManager.getRegionResourceLevel(sourceRegionId, resourceId);
+
+					long amountToTransfer = regionResourceLevel / 10;
+
+					if (amountToTransfer > 0) {
+						resourcesDataManager.transferResourceBetweenRegions(resourceId, sourceRegionId, destinationRegionId, amountToTransfer);
+					}
+				}
+			}
+
+		});
+
+		// transfer resource from regions to people
+		continuityBuilder.addContextConsumer(4.6, (c) -> {
+			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
+
+			for (PersonId personId : peopleDataManager.getPeople()) {
+				TestResourceId testResourceId = TestResourceId.getRandomResourceId(randomGenerator);
+				RegionId regionId = regionsDataManager.getPersonRegion(personId);
+				long avaialableAmount = resourcesDataManager.getRegionResourceLevel(regionId, testResourceId);
+				long amount = randomGenerator.nextInt(15);
+				amount = FastMath.min(amount, avaialableAmount);
+				if (amount > 0) {
+					resourcesDataManager.transferResourceToPersonFromRegion(testResourceId, personId, amount);
+				}
+			}
+
+		});
+
+		// transfer resources from people to regions
+		continuityBuilder.addContextConsumer(4.7, (c) -> {
+			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+
+			for (PersonId personId : peopleDataManager.getPeople()) {
+				TestResourceId testResourceId = TestResourceId.getRandomResourceId(randomGenerator);
+				long avaialableAmount = resourcesDataManager.getPersonResourceLevel(testResourceId, personId);
+				long amount = randomGenerator.nextInt(15);
+				amount = FastMath.min(amount, avaialableAmount);
+				if (amount > 0) {
+					resourcesDataManager.transferResourceFromPersonToRegion(testResourceId, personId, amount);
+				}
+			}
+
+		});
+
+		// remove resource from people
+		continuityBuilder.addContextConsumer(5.3, (c) -> {
+			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+
+			for (PersonId personId : peopleDataManager.getPeople()) {
+				TestResourceId testResourceId = TestResourceId.getRandomResourceId(randomGenerator);
+				long avaialableAmount = resourcesDataManager.getPersonResourceLevel(testResourceId, personId);
+				long amount = randomGenerator.nextInt(15);
+				amount = FastMath.min(amount, avaialableAmount);
+				if (amount > 0) {
+					resourcesDataManager.removeResourceFromPerson(testResourceId, personId, amount);
+				}
+			}
+
+		});
+
+		// remove resources from regions
+		continuityBuilder.addContextConsumer(5.5, (c) -> {
+			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
+
+			for (RegionId regionId : regionsDataManager.getRegionIds()) {
+				TestResourceId testResourceId = TestResourceId.getRandomResourceId(randomGenerator);
+				long avaialableAmount = resourcesDataManager.getRegionResourceLevel(regionId, testResourceId);
+				long amount = randomGenerator.nextInt(15);
+				amount = FastMath.min(amount, avaialableAmount);
+				if (amount > 0) {
+					resourcesDataManager.removeResourceFromRegion(testResourceId, regionId, amount);
+				}
+			}
+		});
+
+		RunContinuityPluginData runContinuityPluginData = continuityBuilder.build();
+
+		// Build an empty people plugin data for time zero
+		PeoplePluginData peoplePluginData = PeoplePluginData.builder().build();
+
+		// Build a regions plugin data with the test regions
+		RegionsPluginData.Builder regionsBuilder = RegionsPluginData.builder();
+		for (TestRegionId testRegionId : TestRegionId.values()) {
+			regionsBuilder.addRegion(testRegionId);
+		}
+		RegionsPluginData regionsPluginData = regionsBuilder.build();
+
+		// Build an empty resources plugin data
+		ResourcesPluginData resourcesPluginData = ResourcesPluginData.builder().build();
+
+		// Build the initial simulation state data -- time starts at zero
+		SimulationState simulationState = SimulationState.builder().build();
+
+		/*
+		 * Run the simulation in one day increments until all the plans in the
+		 * run continuity plugin data have been executed
+		 */
+		double haltTime = 0;
+		double maxTime = Double.NEGATIVE_INFINITY;
+		for (Pair<Double, Consumer<ActorContext>> pair : runContinuityPluginData.getConsumers()) {
+			Double time = pair.getFirst();
+			maxTime = FastMath.max(maxTime, time);
+		}
+		double timeIncrement = maxTime / incrementCount;
+		while (!runContinuityPluginData.allPlansComplete()) {
+			haltTime += timeIncrement;
+
+			// build the run continuity plugin
+			Plugin runContinuityPlugin = RunContinuityPlugin.builder()//
+															.setRunContinuityPluginData(runContinuityPluginData)//
+															.build();
+
+			// build the people plugin
+			Plugin peoplePlugin = PeoplePlugin.getPeoplePlugin(peoplePluginData);
+
+			// build the regions plugin
+			Plugin regionsPlugin = RegionsPlugin.builder().setRegionsPluginData(regionsPluginData).getRegionsPlugin();
+
+			// build the resources plugin
+			Plugin resourcesPlugin = ResourcesPlugin.builder().setResourcesPluginData(resourcesPluginData).getResourcesPlugin();
+
+			TestOutputConsumer outputConsumer = new TestOutputConsumer();
+
+			// execute the simulation so that it produces a people plugin data
+			Simulation simulation = Simulation	.builder()//
+												.addPlugin(peoplePlugin)//
+												.addPlugin(regionsPlugin)//
+												.addPlugin(runContinuityPlugin)//
+												.addPlugin(resourcesPlugin)//
+												.setSimulationHaltTime(haltTime)//
+												.setRecordState(true)//
+												.setOutputConsumer(outputConsumer)//
+												.setSimulationState(simulationState)//
+												.build();//
+			simulation.execute();
+
+			// retrieve the people plugin data
+			peoplePluginData = outputConsumer.getOutputItem(PeoplePluginData.class).get();
+
+			// retrieve the regions plugin data
+			regionsPluginData = outputConsumer.getOutputItem(RegionsPluginData.class).get();
+
+			// retrieve the resources plugin data
+			resourcesPluginData = outputConsumer.getOutputItem(ResourcesPluginData.class).get();
+
+			// retrieve the simulation state
+			simulationState = outputConsumer.getOutputItem(SimulationState.class).get();
+
+			// retrieve the run continuity plugin data
+			runContinuityPluginData = outputConsumer.getOutputItem(RunContinuityPluginData.class).get();
+		}
+		
+		return resourcesPluginData;
 
 	}
 }
