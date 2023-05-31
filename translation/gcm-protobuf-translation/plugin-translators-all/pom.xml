@@ -31,6 +31,11 @@
         </dependency>
         <dependency>
             <groupId>gov.hhs.aspr.gcm.translation.protobuf</groupId>
+            <artifactId>partitions-plugin-translator</artifactId>
+            <version>${revision}</version>
+        </dependency>
+        <dependency>
+            <groupId>gov.hhs.aspr.gcm.translation.protobuf</groupId>
             <artifactId>globalproperties-plugin-translator</artifactId>
             <version>${revision}</version>
         </dependency>
