@@ -14,16 +14,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.stream.IntStream;
 
 import org.apache.commons.math3.random.RandomGenerator;
+import org.apache.commons.math3.util.FastMath;
 import org.apache.commons.math3.util.Pair;
 import org.junit.jupiter.api.Test;
 
+import nucleus.ActorContext;
 import nucleus.DataManagerContext;
 import nucleus.EventFilter;
 import nucleus.Plugin;
+import nucleus.Simulation;
 import nucleus.SimulationState;
+import nucleus.testsupport.runcontinuityplugin.RunContinuityPlugin;
+import nucleus.testsupport.runcontinuityplugin.RunContinuityPluginData;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestOutputConsumer;
 import nucleus.testsupport.testplugin.TestPlugin;
@@ -70,9 +76,13 @@ import util.wrappers.MutableInteger;
 
 public final class AT_PersonPropertyDataManager {
 
+	/**
+	 * Demonstrates that the data manager produces plugin data that reflects its
+	 * final state
+	 */
 	@Test
-	@UnitTestMethod(target = PersonPropertiesDataManager.class, name = "init", args = { PersonPropertyId.class, Object.class })
-	public void testInit_State() {
+	@UnitTestMethod(target = PersonPropertiesDataManager.class, name = "init", args = { DataManagerContext.class })
+	public void testStateFinalization() {
 		/*
 		 * Plan for test:
 		 * 
@@ -138,8 +148,8 @@ public final class AT_PersonPropertyDataManager {
 		PropertyDefinition def3 = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(true).build();
 
 		PersonPropertiesPluginData.Builder propBuilder = PersonPropertiesPluginData.builder();
-		propBuilder.definePersonProperty(prop1, def1,1.2,true);
-		propBuilder.definePersonProperty(prop2, def2,0,false);		
+		propBuilder.definePersonProperty(prop1, def1, 1.2, true);
+		propBuilder.definePersonProperty(prop2, def2, 0, false);
 		propBuilder.setPersonPropertyValue(new PersonId(1), prop1, 18);
 		propBuilder.setPersonPropertyTime(new PersonId(1), prop1, 1.5);
 		propBuilder.setPersonPropertyTime(new PersonId(2), prop1, 1.3);
@@ -187,19 +197,19 @@ public final class AT_PersonPropertyDataManager {
 			// update some values
 			personPropertiesDataManager.setPersonPropertyValue(new PersonId(4), prop3, false);
 			personPropertiesDataManager.setPersonPropertyValue(new PersonId(4), prop1, 13);
-			
+
 		}));
 
 		testPluginBuilder.addTestActorPlan("actor", new TestActorPlan(6.7, (c) -> {
 			// update some values
 			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
-			
+
 			personPropertiesDataManager.setPersonPropertyValue(new PersonId(2), prop1, 17);
 			personPropertiesDataManager.setPersonPropertyValue(new PersonId(2), prop3, false);
 			personPropertiesDataManager.setPersonPropertyValue(new PersonId(3), prop2, 123.31);
 			personPropertiesDataManager.setPersonPropertyValue(new PersonId(3), prop3, true);
 			personPropertiesDataManager.setPersonPropertyValue(new PersonId(4), prop1, 88);
-			
+
 		}));
 
 		TestPluginData testPluginData = testPluginBuilder.build();
@@ -232,13 +242,13 @@ public final class AT_PersonPropertyDataManager {
 		 * Generate the expected person properties plugin data
 		 */
 		propBuilder = PersonPropertiesPluginData.builder();
-		propBuilder.definePersonProperty(prop1, def1,1.2,true);
-		propBuilder.definePersonProperty(prop2, def2,0,false);
-		propBuilder.definePersonProperty(prop3, def3,3.4,true);				
-		propBuilder.setPersonPropertyTime(new PersonId(2), prop1, 6.7);		
+		propBuilder.definePersonProperty(prop1, def1, 1.2, true);
+		propBuilder.definePersonProperty(prop2, def2, 0, false);
+		propBuilder.definePersonProperty(prop3, def3, 3.4, true);
+		propBuilder.setPersonPropertyTime(new PersonId(2), prop1, 6.7);
 		propBuilder.setPersonPropertyValue(new PersonId(2), prop2, 88.7);
 		propBuilder.setPersonPropertyValue(new PersonId(2), prop3, false);
-		propBuilder.setPersonPropertyTime(new PersonId(2), prop3, 6.7);		
+		propBuilder.setPersonPropertyTime(new PersonId(2), prop3, 6.7);
 		propBuilder.setPersonPropertyValue(new PersonId(3), prop1, 99);
 		propBuilder.setPersonPropertyTime(new PersonId(3), prop1, 2.3);
 		propBuilder.setPersonPropertyValue(new PersonId(3), prop2, 123.31);
@@ -246,11 +256,12 @@ public final class AT_PersonPropertyDataManager {
 		propBuilder.setPersonPropertyValue(new PersonId(4), prop1, 88);
 		propBuilder.setPersonPropertyTime(new PersonId(4), prop1, 6.7);
 		propBuilder.setPersonPropertyValue(new PersonId(4), prop2, 456.6);
-		propBuilder.setPersonPropertyValue(new PersonId(4), prop3,false);
-		//the following property time is extraneous, but should not effect equality
+		propBuilder.setPersonPropertyValue(new PersonId(4), prop3, false);
+		// the following property time is extraneous, but should not effect
+		// equality
 		propBuilder.setPersonPropertyTime(new PersonId(4), prop3, 3.4);
 		PersonPropertiesPluginData expectedPersonPropertiesPluginData = propBuilder.build();
-		
+
 		// compare the expected and actual plugin datas
 		assertEquals(expectedPersonPropertiesPluginData, actualPersonPropertiesPluginData);
 
@@ -693,9 +704,13 @@ public final class AT_PersonPropertyDataManager {
 
 	}
 
+	/**
+	 * Demonstrates that the data manager's initial state reflects its plugin
+	 * data
+	 */
 	@Test
 	@UnitTestMethod(target = PersonPropertiesDataManager.class, name = "init", args = { DataManagerContext.class })
-	public void testPersonPropertyDataManagerInitialization() {
+	public void testStateInitialization() {
 
 		int totalPeople = 10;
 
@@ -1906,6 +1921,237 @@ public final class AT_PersonPropertyDataManager {
 		TestPluginData testPluginData = pluginBuilder.build();
 		Factory factory = PersonPropertiesTestPluginFactory.factory(10, 3804034702019855460L, testPluginData);
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
+
+	}
+
+	/**
+	 * Demonstrates that the data manager exhibits run continuity. The state of
+	 * the data manager is not effected by repeatedly starting and stopping the
+	 * simulation.
+	 */
+	@Test
+	@UnitTestMethod(target = PersonPropertiesDataManager.class, name = "init", args = { DataManagerContext.class })
+	public void testStateContinuity() {
+		
+		
+
+		/*
+		 * Note that we are not testing the content of the plugin datas -- that
+		 * is covered by the other state tests. We show here only that the
+		 * resulting plugin data state is the same without regard to how we
+		 * break up the run.
+		 */
+
+		Set<PersonPropertiesPluginData> pluginDatas = new LinkedHashSet<>();
+		pluginDatas.add(testStateContinuity(1));
+		pluginDatas.add(testStateContinuity(5));
+		pluginDatas.add(testStateContinuity(10));
+
+		assertEquals(1, pluginDatas.size());
+
+	}
+
+	/*
+	 * Returns the person properties plugin data resulting from several person
+	 * property events over several days. Attempts to stop and start the
+	 * simulation by the given number of increments.
+	 */
+	private PersonPropertiesPluginData testStateContinuity(int incrementCount) {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(2767991670068250768L);
+		
+		/*
+		 * Build the RunContinuityPluginData with several context consumers that
+		 * will add people, person properties and set some person properties
+		 */
+		RunContinuityPluginData.Builder continuityBuilder = RunContinuityPluginData.builder();
+
+		// Add a few people
+		continuityBuilder.addContextConsumer(0.5, (c) -> {
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+
+			peopleDataManager.addPerson(PersonConstructionData.builder().add(TestRegionId.REGION_1).build());
+			peopleDataManager.addPerson(PersonConstructionData.builder().add(TestRegionId.REGION_2).build());
+			peopleDataManager.addPerson(PersonConstructionData.builder().add(TestRegionId.REGION_3).build());
+			peopleDataManager.addPerson(PersonConstructionData.builder().add(TestRegionId.REGION_4).build());
+			peopleDataManager.addPerson(PersonConstructionData.builder().add(TestRegionId.REGION_3).build());
+			peopleDataManager.addPerson(PersonConstructionData.builder().add(TestRegionId.REGION_2).build());
+			peopleDataManager.addPerson(PersonConstructionData.builder().add(TestRegionId.REGION_1).build());
+
+		});
+
+		// define a few person properties
+		continuityBuilder.addContextConsumer(1.2, (c) -> {
+			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
+			TestPersonPropertyId testPersonPropertyId = TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK;
+
+			PersonPropertyDefinitionInitialization personPropertyDefinitionInitialization = //
+					PersonPropertyDefinitionInitialization	.builder()//
+															.setPersonPropertyId(testPersonPropertyId)//
+															.setPropertyDefinition(testPersonPropertyId.getPropertyDefinition())//
+															.setTrackTimes(true)//
+															.build();
+			personPropertiesDataManager.definePersonProperty(personPropertyDefinitionInitialization);
+
+			testPersonPropertyId = TestPersonPropertyId.PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK;
+
+			personPropertyDefinitionInitialization = //
+					PersonPropertyDefinitionInitialization	.builder()//
+															.setPersonPropertyId(testPersonPropertyId)//
+															.setPropertyDefinition(testPersonPropertyId.getPropertyDefinition())//
+															.setTrackTimes(true)//
+															.build();
+			personPropertiesDataManager.definePersonProperty(personPropertyDefinitionInitialization);
+
+		});
+
+		// set some person properties
+		continuityBuilder.addContextConsumer(1.8, (c) -> {
+
+			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
+
+			TestPersonPropertyId testPersonPropertyId = TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK;
+			personPropertiesDataManager.setPersonPropertyValue(new PersonId(0), testPersonPropertyId, true);
+			personPropertiesDataManager.setPersonPropertyValue(new PersonId(3), testPersonPropertyId, true);
+
+			testPersonPropertyId = TestPersonPropertyId.PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK;
+			personPropertiesDataManager.setPersonPropertyValue(new PersonId(4), testPersonPropertyId, 14);
+			personPropertiesDataManager.setPersonPropertyValue(new PersonId(6), testPersonPropertyId, 88);
+
+		});
+
+		// define another property without a default, add a few more people
+		continuityBuilder.addContextConsumer(2.05, (c) -> {
+			
+			
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
+
+			TestPersonPropertyId testPersonPropertyId = TestPersonPropertyId.PERSON_PROPERTY_9_DOUBLE_IMMUTABLE_NO_TRACK;
+					PersonPropertyDefinitionInitialization	.Builder builder =
+					PersonPropertyDefinitionInitialization	.builder();//
+					builder.setPersonPropertyId(testPersonPropertyId);//
+					builder.setPropertyDefinition(testPersonPropertyId.getPropertyDefinition());//
+					builder.setTrackTimes(true);//
+			for(PersonId personId : peopleDataManager.getPeople()) {
+				builder.addPropertyValue(personId, testPersonPropertyId.getRandomPropertyValue(randomGenerator));
+			}				
+															
+			PersonPropertyDefinitionInitialization personPropertyDefinitionInitialization = builder.build();
+			personPropertiesDataManager.definePersonProperty(personPropertyDefinitionInitialization);
+
+			PersonConstructionData personConstructionData = PersonConstructionData.builder()//
+					.add(TestRegionId.REGION_1)//
+					.add(new PersonPropertyValueInitialization(testPersonPropertyId, 2.7))//
+					.build();
+			
+			peopleDataManager.addPerson(personConstructionData);
+			
+			personConstructionData = PersonConstructionData.builder()//
+					.add(TestRegionId.REGION_2)//
+					.add(new PersonPropertyValueInitialization(testPersonPropertyId, 4.7))//
+					.build();
+			
+			peopleDataManager.addPerson(personConstructionData);
+			
+			personConstructionData = PersonConstructionData.builder()//
+					.add(TestRegionId.REGION_3)//
+					.add(new PersonPropertyValueInitialization(testPersonPropertyId, 8.9))//
+					.build();
+			
+			peopleDataManager.addPerson(personConstructionData);
+
+		});
+
+		// set some more properties
+		continuityBuilder.addContextConsumer(4.2, (c) -> {
+			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
+
+			TestPersonPropertyId testPersonPropertyId = TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK;
+			personPropertiesDataManager.setPersonPropertyValue(new PersonId(5), testPersonPropertyId, false);
+			personPropertiesDataManager.setPersonPropertyValue(new PersonId(9), testPersonPropertyId, true);
+
+			testPersonPropertyId = TestPersonPropertyId.PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK;
+			personPropertiesDataManager.setPersonPropertyValue(new PersonId(2), testPersonPropertyId, 124);
+			personPropertiesDataManager.setPersonPropertyValue(new PersonId(9), testPersonPropertyId, 555);
+		});
+
+		RunContinuityPluginData runContinuityPluginData = continuityBuilder.build();
+
+		// Build an empty people plugin data for time zero
+		PeoplePluginData peoplePluginData = PeoplePluginData.builder().build();
+
+		// Build a regions plugin data with just a few regions
+		RegionsPluginData.Builder regionsBuilder = RegionsPluginData.builder();
+		for (TestRegionId testRegionId : TestRegionId.values()) {
+			regionsBuilder.addRegion(testRegionId);
+		}
+		RegionsPluginData regionsPluginData = regionsBuilder.build();
+
+		// build an empty person properties plugin data
+		PersonPropertiesPluginData personPropertiesPluginData = PersonPropertiesPluginData.builder().build();
+
+		// build the initial simulation state data -- time starts at zero
+		SimulationState simulationState = SimulationState.builder().build();
+
+		/*
+		 * Run the simulation in one day increments until all the plans in the
+		 * run continuity plugin data have been executed
+		 */
+		double haltTime = 0;
+		double maxTime = Double.NEGATIVE_INFINITY;
+		for (Pair<Double, Consumer<ActorContext>> pair : runContinuityPluginData.getConsumers()) {
+			Double time = pair.getFirst();
+			maxTime = FastMath.max(maxTime, time);
+		}
+		double timeIncrement = maxTime / incrementCount;
+		while (!runContinuityPluginData.allPlansComplete()) {
+			haltTime += timeIncrement;
+
+			// build the run continuity plugin
+			Plugin runContinuityPlugin = RunContinuityPlugin.builder()//
+															.setRunContinuityPluginData(runContinuityPluginData)//
+															.build();
+
+			// build the people plugin
+			Plugin peoplePlugin = PeoplePlugin.getPeoplePlugin(peoplePluginData);
+
+			// build the regions plugin
+			Plugin regionsPlugin = RegionsPlugin.builder().setRegionsPluginData(regionsPluginData).getRegionsPlugin();
+
+			// build the person properties plugin
+			Plugin personPropertyPlugin = PersonPropertiesPlugin.builder().setPersonPropertiesPluginData(personPropertiesPluginData).getPersonPropertyPlugin();
+
+			TestOutputConsumer outputConsumer = new TestOutputConsumer();
+
+			// execute the simulation so that it produces a people plugin data
+			Simulation simulation = Simulation	.builder()//
+												.addPlugin(peoplePlugin)//
+												.addPlugin(runContinuityPlugin)//
+												.addPlugin(regionsPlugin)//
+												.addPlugin(personPropertyPlugin).setSimulationHaltTime(haltTime)//
+												.setRecordState(true)//
+												.setOutputConsumer(outputConsumer)//
+												.setSimulationState(simulationState)//
+												.build();//
+			simulation.execute();
+
+			// retrieve the people plugin data
+			peoplePluginData = outputConsumer.getOutputItem(PeoplePluginData.class).get();
+
+			// retrieve the simulation state
+			simulationState = outputConsumer.getOutputItem(SimulationState.class).get();
+
+			// retrieve the region plugin data
+			regionsPluginData = outputConsumer.getOutputItem(RegionsPluginData.class).get();
+
+			// retrieve the person properties plugin data
+			personPropertiesPluginData = outputConsumer.getOutputItem(PersonPropertiesPluginData.class).get();
+
+			// retrieve the run continuity plugin data
+			runContinuityPluginData = outputConsumer.getOutputItem(RunContinuityPluginData.class).get();
+		}
+
+		return personPropertiesPluginData;
 
 	}
 
