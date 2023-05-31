@@ -1,0 +1,34 @@
+package gov.hhs.aspr.gcm.translation.protobuf.plugins.partitions.translationSpecs;
+
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.partitions.input.OrFilterInput;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.partitions.input.FilterInput;
+import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
+import plugins.partitions.support.filters.Filter;
+import plugins.partitions.support.filters.OrFilter;
+
+public class OrFilterTranslationSpec extends ProtobufTranslationSpec<OrFilterInput, OrFilter> {
+
+    @Override
+    protected OrFilter convertInputObject(OrFilterInput inputObject) {
+        return new OrFilter(this.translationEngine.convertObject(inputObject.getA()),
+                this.translationEngine.convertObject(inputObject.getB()));
+    }
+
+    @Override
+    protected OrFilterInput convertAppObject(OrFilter appObject) {
+        FilterInput a = this.translationEngine.convertObjectAsSafeClass(appObject.getFirstFilter(), Filter.class);
+        FilterInput b = this.translationEngine.convertObjectAsSafeClass(appObject.getSecondFilter(), Filter.class);
+        return OrFilterInput.newBuilder().setA(a).setB(b).build();
+    }
+
+    @Override
+    public Class<OrFilter> getAppObjectClass() {
+        return OrFilter.class;
+    }
+
+    @Override
+    public Class<OrFilterInput> getInputObjectClass() {
+        return OrFilterInput.class;
+    }
+
+}

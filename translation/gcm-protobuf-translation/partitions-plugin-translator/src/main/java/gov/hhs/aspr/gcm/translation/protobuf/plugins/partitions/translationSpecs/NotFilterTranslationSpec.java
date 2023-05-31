@@ -1,0 +1,32 @@
+package gov.hhs.aspr.gcm.translation.protobuf.plugins.partitions.translationSpecs;
+
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.partitions.input.NotFilterInput;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.partitions.input.FilterInput;
+import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
+import plugins.partitions.support.filters.Filter;
+import plugins.partitions.support.filters.NotFilter;
+
+public class NotFilterTranslationSpec extends ProtobufTranslationSpec<NotFilterInput, NotFilter> {
+
+    @Override
+    protected NotFilter convertInputObject(NotFilterInput inputObject) {
+        return new NotFilter(this.translationEngine.convertObject(inputObject.getA()));
+    }
+
+    @Override
+    protected NotFilterInput convertAppObject(NotFilter appObject) {
+        FilterInput a = this.translationEngine.convertObjectAsSafeClass(appObject.getSubFilter(), Filter.class);
+        return NotFilterInput.newBuilder().setA(a).build();
+    }
+
+    @Override
+    public Class<NotFilter> getAppObjectClass() {
+        return NotFilter.class;
+    }
+
+    @Override
+    public Class<NotFilterInput> getInputObjectClass() {
+        return NotFilterInput.class;
+    }
+
+}
