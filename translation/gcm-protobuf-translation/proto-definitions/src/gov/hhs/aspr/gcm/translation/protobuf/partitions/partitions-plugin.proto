@@ -35,6 +35,12 @@ message TestFilterInput {
     int32 filterId = 1;
 }
 
+message AttributeFilterInput {
+    AttributeIdInput attributeId = 1;
+    EqualityInput equality = 2;
+    google.protobuf.Any value = 3;
+}
+
 // Labelers
 message LabelerInput {
     google.protobuf.Any labeler = 1;
@@ -52,6 +58,20 @@ enum EqualityInput {
     NOT_EQUAL = 3;
     GREATER_THAN_EQUAL = 4;
     GREATER_THAN = 5;
+}
+
+// Attribute
+message AttributeIdInput {
+    google.protobuf.Any id = 1;
+}
+
+enum TestAttributeIdInput {
+    INT_0 = 0;
+    INT_1 = 1;
+    DOUBLE_0 = 2;
+    DOUBLE_1 = 3;
+    BOOLEAN_0 = 4;
+    BOOLEAN_1 = 5;
 }
 
 // Partition

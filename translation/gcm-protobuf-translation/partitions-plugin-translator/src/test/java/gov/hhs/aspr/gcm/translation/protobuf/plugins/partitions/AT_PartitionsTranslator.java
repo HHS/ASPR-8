@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.partitions.translationSpecs.AndFilterTranslationSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.partitions.translationSpecs.EqualityTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.partitions.translationSpecs.FalseFilterTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.partitions.translationSpecs.FilterTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.partitions.translationSpecs.LabelerTranslationSpec;
@@ -38,6 +39,7 @@ public class AT_PartitionsTranslator {
                             .addTranslationSpec(new TrueFilterTranslationSpec())
                             .addTranslationSpec(new FilterTranslationSpec())
                             .addTranslationSpec(new LabelerTranslationSpec())
+                            .addTranslationSpec(new EqualityTranslationSpec())
                             .addTranslationSpec(new PartitionTranslationSpec())
                             .addTranslationSpec(new PartitionsPluginDataTranslationSpec());
                 }).build();
