@@ -10,7 +10,6 @@ import nucleus.PluginData;
 import nucleus.PluginDataBuilder;
 import plugins.partitions.support.Partition;
 import plugins.partitions.support.PartitionError;
-import plugins.util.properties.PropertyError;
 import util.errors.ContractException;
 
 /**

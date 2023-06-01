@@ -5095,9 +5095,9 @@ public class AT_GroupsDataManager {
 	}
 
 	private void performRandomGroupAction(ActorContext actorContext) {
-		GroupsDataManager groupsDataManager = actorContext.getDataManager(GroupsDataManager.class);
-		PeopleDataManager peopleDataManager = actorContext.getDataManager(PeopleDataManager.class);
-		StochasticsDataManager stochasticsDataManager = actorContext.getDataManager(StochasticsDataManager.class);
+//		GroupsDataManager groupsDataManager = actorContext.getDataManager(GroupsDataManager.class);
+//		PeopleDataManager peopleDataManager = actorContext.getDataManager(PeopleDataManager.class);
+//		StochasticsDataManager stochasticsDataManager = actorContext.getDataManager(StochasticsDataManager.class);
 
 		// addGroup(GroupConstructionInfo)
 		// addGroup(GroupTypeId)
