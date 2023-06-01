@@ -76,3 +76,7 @@ message RegionTransferReportPluginDataInput {
     ReportLabelInput reportLabel = 1;
     ReportPeriodInput reportPeriod = 2;
 }
+
+message RegionFilterInput {
+    repeated RegionIdInput regionIds = 1;
+}

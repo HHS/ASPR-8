@@ -227,11 +227,16 @@ public abstract class TranslationEngine {
      * 
      * @throws ContractException
      *                           <ul>
+     *                           <li>{@linkplain CoreTranslationError#NULL_OBJECT_FOR_TRANSLATION}
+     *                           if the passed in object is null
      *                           <li>{@linkplain CoreTranslationError#UNKNOWN_TRANSLATION_SPEC}
      *                           if no translationSpec was provided for the given
      *                           objects class
      */
     public <T> T convertObject(Object object) {
+        if(object == null) {
+            throw new ContractException(CoreTranslationError.NULL_OBJECT_FOR_TRANSLATION);
+        }
         return getTranslationSpecForClass(object.getClass()).convert(object);
     }
 
@@ -251,11 +256,23 @@ public abstract class TranslationEngine {
      * 
      * @throws ContractException
      *                           <ul>
+     *                           <li>{@linkplain CoreTranslationError#NULL_OBJECT_FOR_TRANSLATION}
+     *                           if the passed in object is null 
+     *                           <li>{@linkplain CoreTranslationError#NULL_CLASS_REF}
+     *                           if the passed in parentClassRef is null 
      *                           <li>{@linkplain CoreTranslationError#UNKNOWN_TRANSLATION_SPEC}
      *                           if no translationSpec was provided for the given
      *                           objects class
      */
     public <T, M extends U, U> T convertObjectAsSafeClass(M object, Class<U> parentClassRef) {
+        if(object == null) {
+            throw new ContractException(CoreTranslationError.NULL_OBJECT_FOR_TRANSLATION);
+        }
+
+        if(parentClassRef == null) {
+            throw new ContractException(CoreTranslationError.NULL_CLASS_REF);
+        }
+
         return getTranslationSpecForClass(parentClassRef).convert(object);
     }
 
@@ -278,11 +295,23 @@ public abstract class TranslationEngine {
      * 
      * @throws ContractException
      *                           <ul>
+     *                           <li>{@linkplain CoreTranslationError#NULL_OBJECT_FOR_TRANSLATION}
+     *                           if the passed in object is null 
+     *                           <li>{@linkplain CoreTranslationError#NULL_CLASS_REF}
+     *                           if the passed in objectClassRef is null 
      *                           <li>{@linkplain CoreTranslationError#UNKNOWN_TRANSLATION_SPEC}
      *                           if no translationSpec was provided for the given
      *                           objects class
      */
     public <T, M, U> T convertObjectAsUnsafeClass(M object, Class<U> objectClassRef) {
+        if(object == null) {
+            throw new ContractException(CoreTranslationError.NULL_OBJECT_FOR_TRANSLATION);
+        }
+
+        if(objectClassRef == null) {
+            throw new ContractException(CoreTranslationError.NULL_CLASS_REF);
+        }
+
         return getTranslationSpecForClass(objectClassRef).convert(object);
     }
 

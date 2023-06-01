@@ -11,7 +11,7 @@
 
     <properties>
         <!-- basic project properties -->
-        <revision>2.3.0</revision>
+        <revision>2.4.0-SNAPSHOT</revision>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
@@ -28,8 +28,8 @@
         <maven-replacer-plugin.version>1.3.2</maven-replacer-plugin.version>
 
         <!-- dependency versions -->
-        <protobuf-translation-core.version>2.3.0</protobuf-translation-core.version>
-        <proto-definitions.version>1.6.1</proto-definitions.version>
+        <protobuf-translation-core.version>2.4.0-SNAPSHOT</protobuf-translation-core.version>
+        <proto-definitions.version>1.7.0</proto-definitions.version>
         <gcm.version>4.0.0-SNAPSHOT</gcm.version>
         <protoc.version>3.21.12</protoc.version>
         <junit-jupiter-engine.version>5.8.2</junit-jupiter-engine.version>
@@ -450,6 +450,7 @@
                 <module>nucleus-translator</module>
                 <module>properties-plugin-translator</module>
                 <module>stochastics-plugin-translator</module>
+                <module>partitions-plugin-translator</module>
                 <module>globalproperties-plugin-translator</module>
                 <module>people-plugin-translator</module>
                 <module>groups-plugin-translator</module>
@@ -468,6 +469,7 @@
                 <module>nucleus-translator</module>
                 <module>properties-plugin-translator</module>
                 <module>stochastics-plugin-translator</module>
+                <module>partitions-plugin-translator</module>
                 <module>globalproperties-plugin-translator</module>
                 <module>people-plugin-translator</module>
                 <module>groups-plugin-translator</module>
@@ -503,6 +505,12 @@
             <id>people</id>
             <modules>
                 <module>people-plugin-translator</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>partitions</id>
+            <modules>
+                <module>partitions-plugin-translator</module>
             </modules>
         </profile>
         <profile>

@@ -112,6 +112,13 @@ public class AT_TranslationEngine {
         // preconditions
         // the contract exception for CoreTranslationError.UNKNOWN_TRANSLATION_SPEC is
         // covered by the test - testGetTranslationSpecForClass
+
+        // the passed in object is null
+        ContractException contractException = assertThrows(ContractException.class, () -> {
+            testTranslationEngine.convertObject(null);
+        });
+
+        assertEquals(CoreTranslationError.NULL_OBJECT_FOR_TRANSLATION, contractException.getErrorType());
     }
 
     @Test
@@ -147,6 +154,20 @@ public class AT_TranslationEngine {
         // preconditions
         // the contract exception for CoreTranslationError.UNKNOWN_TRANSLATION_SPEC is
         // covered by the test - testGetTranslationSpecForClass
+
+        // the passed in object is null
+        ContractException contractException = assertThrows(ContractException.class, () -> {
+            testTranslationEngine.convertObjectAsSafeClass(null, Object.class);
+        });
+
+        assertEquals(CoreTranslationError.NULL_OBJECT_FOR_TRANSLATION, contractException.getErrorType());
+
+        // the passed in parentClassRef is null
+        contractException = assertThrows(ContractException.class, () -> {
+            testTranslationEngine.convertObjectAsSafeClass(expectedAppChildObject, null);
+        });
+
+        assertEquals(CoreTranslationError.NULL_CLASS_REF, contractException.getErrorType());
     }
 
     @Test
@@ -210,6 +231,20 @@ public class AT_TranslationEngine {
         // preconditions
         // the contract exception for CoreTranslationError.UNKNOWN_TRANSLATION_SPEC is
         // covered by the test - testGetTranslationSpecForClass
+
+        // the passed in object is null
+        ContractException contractException = assertThrows(ContractException.class, () -> {
+            testTranslationEngine.convertObjectAsUnsafeClass(null, Object.class);
+        });
+
+        assertEquals(CoreTranslationError.NULL_OBJECT_FOR_TRANSLATION, contractException.getErrorType());
+
+        // the passed in parentClassRef is null
+        contractException = assertThrows(ContractException.class, () -> {
+            testTranslationEngine.convertObjectAsUnsafeClass(expectedAppObject, null);
+        });
+
+        assertEquals(CoreTranslationError.NULL_CLASS_REF, contractException.getErrorType());
     }
 
     @Test
