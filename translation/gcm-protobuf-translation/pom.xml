@@ -468,6 +468,7 @@
                 <module>nucleus-translator</module>
                 <module>properties-plugin-translator</module>
                 <module>stochastics-plugin-translator</module>
+                <module>partitions-plugin-translator</module>
                 <module>globalproperties-plugin-translator</module>
                 <module>people-plugin-translator</module>
                 <module>groups-plugin-translator</module>
