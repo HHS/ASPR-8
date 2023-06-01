@@ -5090,7 +5090,7 @@ public class AT_GroupsDataManager {
 
 		assertEquals(1, pluginDatas.size());
 
-		System.out.println(pluginDatas.iterator().next());
+		//System.out.println(pluginDatas.iterator().next());
 
 	}
 
