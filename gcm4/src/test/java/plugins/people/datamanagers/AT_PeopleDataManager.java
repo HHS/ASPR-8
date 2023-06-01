@@ -5,18 +5,31 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.function.Consumer;
 
-import nucleus.testsupport.testplugin.TestOutputConsumer;
 import org.apache.commons.math3.util.FastMath;
+import org.apache.commons.math3.util.Pair;
 import org.junit.jupiter.api.Test;
 
+import nucleus.ActorContext;
 import nucleus.DataManagerContext;
 import nucleus.EventFilter;
+import nucleus.Plugin;
+import nucleus.Simulation;
 import nucleus.SimulationState;
+import nucleus.testsupport.runcontinuityplugin.RunContinuityPlugin;
+import nucleus.testsupport.runcontinuityplugin.RunContinuityPluginData;
 import nucleus.testsupport.testplugin.TestActorPlan;
+import nucleus.testsupport.testplugin.TestOutputConsumer;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestSimulation;
+import plugins.people.PeoplePlugin;
 import plugins.people.PeoplePluginData;
 import plugins.people.events.PersonAdditionEvent;
 import plugins.people.events.PersonImminentAdditionEvent;
@@ -34,16 +47,13 @@ import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 
 public final class AT_PeopleDataManager {
-
-	// the initial data is not being used correctly and will lead to errors,
-	// this is due to there not being a test for init(). That test will need to
-	// demonstrate that a non-contiguous set of person id values will work.
-
-	// init(DataManagerContext)
-
+	/**
+	 * Demonstrates that the data manager's initial state reflects its plugin
+	 * data
+	 */
 	@Test
 	@UnitTestMethod(target = PeopleDataManager.class, name = "init", args = { DataManagerContext.class })
-	public void testInit() {
+	public void testStateInitialization() {
 
 		// add a few people with gaps between id values
 		int numberOfPeople = 5;
@@ -58,7 +68,7 @@ public final class AT_PeopleDataManager {
 		PeoplePluginData peoplePluginData = peoplePluginDataBuilder.build();
 
 		// add an actor to test the people were properly loaded into the person
-		// data manger
+		// data manager
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
@@ -86,14 +96,18 @@ public final class AT_PeopleDataManager {
 		}));
 		TestPluginData testPluginData = pluginBuilder.build();
 
-		Factory factory = PeopleTestPluginFactory.factory(6970812715559334185L, testPluginData).setPeoplePluginData(peoplePluginData);
-		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
+		Factory factory = PeopleTestPluginFactory//
+													.factory(6970812715559334185L, testPluginData)//
+													.setPeoplePluginData(peoplePluginData);
+
+		TestSimulation	.builder()//
+						.addPlugins(factory.getPlugins())//
+						.build()//
+						.execute();
 
 		/**
 		 * precondition test: if the plugin data person assignment time exceeds
 		 * the start time of the simulation
-		 * 
-		 * 
 		 */
 
 		ContractException contractException = assertThrows(ContractException.class, () -> {
@@ -103,7 +117,7 @@ public final class AT_PeopleDataManager {
 
 			Factory factory2 = PeopleTestPluginFactory	.factory(1054042752863257441L, testPluginData)//
 														.setPeoplePluginData(peoplePluginData2);
-			
+
 			SimulationState simulationState = SimulationState	.builder()//
 																.setStartTime(1.0)//
 																.build();
@@ -118,9 +132,13 @@ public final class AT_PeopleDataManager {
 
 	}
 
+	/**
+	 * Demonstrates that the data manager produces plugin data that reflects its
+	 * final state
+	 */
 	@Test
 	@UnitTestMethod(target = PeopleDataManager.class, name = "init", args = { DataManagerContext.class })
-	public void testInit_State() {
+	public void testStateFinalization() {
 
 		PeoplePluginData.Builder peoplePluginDataBuilder = PeoplePluginData.builder();
 		PeoplePluginData peoplePluginData = peoplePluginDataBuilder.build();
@@ -140,16 +158,27 @@ public final class AT_PeopleDataManager {
 
 		// show that the plugin data contains what we defined
 		TestPluginData testPluginData = pluginBuilder.build();
-		Factory factory = PeopleTestPluginFactory.factory(6970812715559334185L, testPluginData).setPeoplePluginData(peoplePluginData);
-		TestOutputConsumer testOutputConsumer = TestSimulation.builder().addPlugins(factory.getPlugins()).setProduceSimulationStateOnHalt(true).setSimulationHaltTime(2).build().execute();
+		Factory factory = PeopleTestPluginFactory//
+													.factory(6970812715559334185L, testPluginData)//
+													.setPeoplePluginData(peoplePluginData);
+
+		TestOutputConsumer testOutputConsumer = TestSimulation	.builder()//
+																.addPlugins(factory.getPlugins())//
+																.setProduceSimulationStateOnHalt(true)//
+																.setSimulationHaltTime(2)//
+																.build()//
+																.execute();
+
 		Map<PeoplePluginData, Integer> outputItems = testOutputConsumer.getOutputItems(PeoplePluginData.class);
 		assertEquals(1, outputItems.size());
+		PeoplePluginData actualPluginData = outputItems.keySet().iterator().next();
+
 		PeoplePluginData.Builder expectedBuilder = PeoplePluginData.builder();
 		for (PersonId personId : expectedPersonIds) {
 			expectedBuilder.addPersonRange(new PersonRange(personId.getValue(), personId.getValue()));
 		}
 		PeoplePluginData expectedPluginData = expectedBuilder.build();
-		PeoplePluginData actualPluginData = outputItems.keySet().iterator().next();
+
 		assertEquals(expectedPluginData, actualPluginData);
 
 		// show that the plugin data persists after multiple actions
@@ -177,18 +206,28 @@ public final class AT_PeopleDataManager {
 		}));
 
 		testPluginData = pluginBuilder.build();
-		factory = PeopleTestPluginFactory.factory(6970812715559334185L, testPluginData).setPeoplePluginData(peoplePluginData);
-		testOutputConsumer = TestSimulation.builder().addPlugins(factory.getPlugins()).setProduceSimulationStateOnHalt(true).setSimulationHaltTime(2).build().execute();
+
+		factory = PeopleTestPluginFactory//
+											.factory(6970812715559334185L, testPluginData)//
+											.setPeoplePluginData(peoplePluginData);
+
+		testOutputConsumer = TestSimulation	.builder()//
+											.addPlugins(factory.getPlugins())//
+											.setProduceSimulationStateOnHalt(true)//
+											.setSimulationHaltTime(2).build()//
+											.execute();
+
 		outputItems = testOutputConsumer.getOutputItems(PeoplePluginData.class);
 		assertEquals(1, outputItems.size());
-		expectedBuilder = PeoplePluginData.builder();
+		actualPluginData = outputItems.keySet().iterator().next();
 
+		expectedBuilder = PeoplePluginData.builder();
 		for (PersonId personId : expectedPersonIds2) {
 			expectedBuilder.addPersonRange(new PersonRange(personId.getValue(), personId.getValue()));
 		}
 		expectedBuilder.setAssignmentTime(1.0);
 		expectedPluginData = expectedBuilder.build();
-		actualPluginData = outputItems.keySet().iterator().next();
+
 		assertEquals(expectedPluginData, actualPluginData);
 	}
 
@@ -601,6 +640,144 @@ public final class AT_PeopleDataManager {
 
 		Factory factory = PeopleTestPluginFactory.factory(3387041999627132151L, testPluginData);
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
+
+	}
+
+	/**
+	 * Demonstrates that the data manager exhibits run continuity. The state of
+	 * the data manager is not effected by repeatedly starting and stopping the
+	 * simulation.
+	 */
+	@Test
+	@UnitTestMethod(target = PeopleDataManager.class, name = "init", args = { DataManagerContext.class })
+	public void testStateContinuity() {
+
+		/*
+		 * Note that we are not testing the content of the plugin datas -- that
+		 * is covered by the other state tests. We show here only that the
+		 * resulting plugin data state is the same without regard to how we
+		 * break up the run.
+		 */
+
+		Set<PeoplePluginData> pluginDatas = new LinkedHashSet<>();
+		pluginDatas.add(testStateContinuity(1));
+		pluginDatas.add(testStateContinuity(5));
+		pluginDatas.add(testStateContinuity(10));
+
+		assertEquals(1, pluginDatas.size());
+
+	}
+
+	/*
+	 * Returns the people plugin data resulting from several people events over
+	 * several days. Attempts to stop and start the simulation by the given
+	 * number of increments.
+	 */
+	private PeoplePluginData testStateContinuity(int incrementCount) {
+
+		/*
+		 * Build the RunContinuityPluginData with five context consumers that
+		 * will add and remove people over several days
+		 */
+		RunContinuityPluginData.Builder continuityBuilder = RunContinuityPluginData.builder();
+
+		continuityBuilder.addContextConsumer(0.5, (c) -> {
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			for (int i = 0; i < 3; i++) {
+				peopleDataManager.addPerson(PersonConstructionData.builder().build());
+			}
+		});
+		
+		continuityBuilder.addContextConsumer(1.2, (c) -> {
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			peopleDataManager.removePerson(new PersonId(0));
+			for (int i = 0; i < 3; i++) {
+				peopleDataManager.addPerson(PersonConstructionData.builder().build());
+			}
+		});
+		
+		continuityBuilder.addContextConsumer(1.8, (c) -> {
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			peopleDataManager.removePerson(new PersonId(3));
+			peopleDataManager.removePerson(new PersonId(4));
+			for (int i = 0; i < 5; i++) {
+				peopleDataManager.addPerson(PersonConstructionData.builder().build());
+			}
+		});
+		
+		continuityBuilder.addContextConsumer(2.05, (c) -> {
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			peopleDataManager.removePerson(new PersonId(1));
+			peopleDataManager.removePerson(new PersonId(6));
+			peopleDataManager.removePerson(new PersonId(10));
+
+			for (int i = 0; i < 3; i++) {
+				peopleDataManager.addPerson(PersonConstructionData.builder().build());
+			}
+		});
+		
+		continuityBuilder.addContextConsumer(4.2, (c) -> {
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+
+			for (int i = 0; i < 3; i++) {
+				peopleDataManager.addPerson(PersonConstructionData.builder().build());
+			}
+		});
+
+		RunContinuityPluginData runContinuityPluginData = continuityBuilder.build();
+
+		// Build an empty people plugin data for time zero
+		PeoplePluginData peoplePluginData = PeoplePluginData.builder().build();
+
+		// build the initial simulation state data -- time starts at zero
+		SimulationState simulationState = SimulationState.builder().build();
+
+		/*
+		 * Run the simulation in one day increments until all the plans in the
+		 * run continuity plugin data have been executed
+		 */
+		double haltTime = 0;
+		double maxTime = Double.NEGATIVE_INFINITY;
+		for (Pair<Double, Consumer<ActorContext>> pair : runContinuityPluginData.getConsumers()) {
+			Double time = pair.getFirst();
+			maxTime = FastMath.max(maxTime, time);
+		}
+		double timeIncrement = maxTime / incrementCount;
+		while (!runContinuityPluginData.allPlansComplete()) {
+			haltTime += timeIncrement;
+
+			// build the run continuity plugin
+			Plugin runContinuityPlugin = RunContinuityPlugin.builder()//
+															.setRunContinuityPluginData(runContinuityPluginData)//
+															.build();
+
+			// build the people plugin
+			Plugin peoplePlugin = PeoplePlugin.getPeoplePlugin(peoplePluginData);
+
+			TestOutputConsumer outputConsumer = new TestOutputConsumer();
+
+			// execute the simulation so that it produces a people plugin data
+			Simulation simulation = Simulation	.builder()//
+												.addPlugin(peoplePlugin)//
+												.addPlugin(runContinuityPlugin)//
+												.setSimulationHaltTime(haltTime)//
+												.setRecordState(true)//
+												.setOutputConsumer(outputConsumer)//
+												.setSimulationState(simulationState)//
+												.build();//
+			simulation.execute();
+
+			// retrieve the people plugin data
+			peoplePluginData = outputConsumer.getOutputItem(PeoplePluginData.class).get();
+
+			// retrieve the simulation state
+			simulationState = outputConsumer.getOutputItem(SimulationState.class).get();
+
+			// retrieve the run continuity plugin data
+			runContinuityPluginData = outputConsumer.getOutputItem(RunContinuityPluginData.class).get();
+		}
+
+		return peoplePluginData;
 
 	}
 

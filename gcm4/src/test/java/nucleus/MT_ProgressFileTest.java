@@ -9,7 +9,7 @@ public class MT_ProgressFileTest {
 	public static void main(String[] args) {
 
 		Path experimentProgressPath = Paths.get(args[0]);
-		Dimension dimension1 = Dimension.builder()//
+		Dimension dimension1 = FunctionalDimension.builder()//
 										.addMetaDatum("alpha")//
 										.addMetaDatum("beta")//
 										.addLevel((t) -> {
@@ -27,7 +27,7 @@ public class MT_ProgressFileTest {
 
 										.build();
 
-		Dimension dimension2 = Dimension.builder()//
+		Dimension dimension2 = FunctionalDimension.builder()//
 										.addMetaDatum("comet")//
 										.addMetaDatum("cupid")//
 										.addMetaDatum("vixen")//

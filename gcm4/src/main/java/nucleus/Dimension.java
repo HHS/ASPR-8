@@ -1,112 +1,35 @@
 package nucleus;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
 
 /**
  * A Dimension represents a single independent dimension of an experiment.
  * Dimensions are composed of a finite number of levels. Each level in a
- * dimension is a function that 1) consumes a type map of plugin data builders,
- * 2) updates those builders to create alternate inputs for each scenario and 3)
- * returns a list of strings representing the variant values in the scenario.
- * 
- *
+ * dimension updates the plugin data builders as alternate inputs for each
+ * scenario.
  */
 
-public final class Dimension {
-
-	private static class Data {
-		List<String> metaData = new ArrayList<>();
-		List<Function<DimensionContext, List<String>>> levels = new ArrayList<>();
-		
-		public Data() {}
-		public Data(Data data) {
-			metaData.addAll(data.metaData);
-			levels.addAll(data.levels);
-		}
-	}
-
-	/**
-	 * Returns a builder class for Dimension
-	 */
-	public static Builder builder() {
-		return new Builder();
-	}
-
-	/**
-	 * A builder class for Dimension
-	 */
-
-	public static class Builder {
-
-		private Data data = new Data();
-
-		private Builder() {
-		}
-
-		/**
-		 * Returns a Dimension from the collected data
-		 */
-		public Dimension build() {
-			return new Dimension(new Data(data));
-		}
-
-		/**
-		 * Adds a level function to the dimension. Each such function consumes a
-		 * DimensionContext of PluginDataBuilders and returns a list of
-		 * scenario-level meta data that describes the changes performed on the
-		 * PluginDataBuilders. The list of meta data is aligned to the
-		 * experiment level meta data contained in the dimension and must
-		 * contain the same number of elements.
-		 */
-		public Builder addLevel(Function<DimensionContext, List<String>> memberGenerator) {
-			data.levels.add(memberGenerator);
-			return this;
-		}
-
-		/**
-		 * Adds an experiment-level string meta datum value that describes the
-		 * corresponding scenario-level meta data returned by the individual
-		 * levels of this dimension.
-		 */
-		public Builder addMetaDatum(String idValue) {
-			data.metaData.add(idValue);
-			return this;
-		}
-	}
-
-	private Dimension(Data data) {
-		this.data = data;
-	}
-
-	private final Data data;
+public interface Dimension {
 
 	/**
 	 * Returns the meta data for the experiment that describes the
 	 * scenario-level meta data.
 	 */
-	public List<String> getMetaData() {
-		return new ArrayList<>(data.metaData);
-	}
-
-	public int getMetaDataSize() {
-		return data.metaData.size();
-	}
+	public List<String> getExperimentMetaData();
 
 	/**
 	 * Returns the number of levels in this dimension
 	 */
-	public int size() {
-		return data.levels.size();
-	}
+	public int levelCount();
 
 	/**
-	 * Returns the function(level) for the given index. Valid indexes are zero
-	 * through size()-1 inclusive.
+	 * Executes mutations on the plugin data builders contained in the
+	 * DimensionContext. Returns the scenario level meta data associated with
+	 * the level. The length of the returned list must match the length of the
+	 * list returned by the getExperimentMetaData() method. The content of the
+	 * returned list must be identical for each invocation of the given level.
 	 */
-	public Function<DimensionContext, List<String>> getLevel(int index) {
-		return data.levels.get(index);
-	}
+
+	public List<String> executeLevel(DimensionContext dimensionContext, int level);
 
 }

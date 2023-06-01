@@ -15,6 +15,7 @@ import lesson.plugins.person.PersonPlugin;
 import lesson.plugins.vaccine.VaccinePlugin;
 import nucleus.Dimension;
 import nucleus.Experiment;
+import nucleus.FunctionalDimension;
 import nucleus.Plugin;
 import plugins.reports.support.NIOReportItemHandler;
 import plugins.stochastics.StochasticsPlugin;
@@ -27,7 +28,7 @@ public final class Example_12 {
 	}
 	
 	private static Dimension getFamilySizeDimension() {
-		Dimension.Builder builder = Dimension.builder();//
+		FunctionalDimension.Builder builder = FunctionalDimension.builder();//
 
 		List<Integer> maxFamilySizes = new ArrayList<>();
 		

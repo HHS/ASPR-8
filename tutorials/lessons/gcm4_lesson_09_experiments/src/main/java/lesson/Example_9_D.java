@@ -10,6 +10,7 @@ import lesson.plugins.policy.PolicyPlugin;
 import lesson.plugins.policy.PolicyPluginData;
 import nucleus.Dimension;
 import nucleus.Experiment;
+import nucleus.FunctionalDimension;
 import nucleus.Plugin;
 
 public final class Example_9_D {
@@ -34,7 +35,7 @@ public final class Example_9_D {
 
 	private static Dimension getR0Dimension() {
 
-		Dimension.Builder builder = Dimension.builder();//
+		FunctionalDimension.Builder builder = FunctionalDimension.builder();//
 
 		List<Double> r0Values = new ArrayList<>();
 		r0Values.add(1.5);
@@ -57,7 +58,7 @@ public final class Example_9_D {
 	}
 
 	private static Dimension getPolicyDimension() {
-		Dimension.Builder builder = Dimension.builder();//
+		FunctionalDimension.Builder builder = FunctionalDimension.builder();//
 
 		List<Double> schoolClosingInfectionRates = new ArrayList<>();
 		schoolClosingInfectionRates.add(0.05);
