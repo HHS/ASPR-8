@@ -21,6 +21,12 @@
         </dependency>
         <dependency>
             <groupId>gov.hhs.aspr.gcm.translation.protobuf</groupId>
+            <artifactId>partitions-plugin-translator</artifactId>
+            <version>${revision}</version>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>gov.hhs.aspr.gcm.translation.protobuf</groupId>
             <artifactId>people-plugin-translator</artifactId>
             <version>${revision}</version>
             <optional>true</optional>
@@ -56,6 +62,7 @@
                     <protocArtifact>com.google.protobuf:protoc:${protoc.version}:exe:${os.detected.classifier}</protocArtifact>
                     <protoSourceRoot>${project.build.outputDirectory}/gov/hhs/aspr/gcm/translation/protobuf/resources</protoSourceRoot>
                     <additionalProtoPathElements>
+                        <additionalProtoPathElement>${project.build.outputDirectory}/gov/hhs/aspr/gcm/translation/protobuf/partitions</additionalProtoPathElement>
                         <additionalProtoPathElement>${project.build.outputDirectory}/gov/hhs/aspr/gcm/translation/protobuf/properties</additionalProtoPathElement>
                         <additionalProtoPathElement>${project.build.outputDirectory}/gov/hhs/aspr/gcm/translation/protobuf/people</additionalProtoPathElement>
                         <additionalProtoPathElement>${project.build.outputDirectory}/gov/hhs/aspr/gcm/translation/protobuf/regions</additionalProtoPathElement>

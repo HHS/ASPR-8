@@ -6,9 +6,13 @@ import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.input.GroupIdInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.translationSpecs.GroupIdTranslationSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.translationSpecs.GroupMemberFilterTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.translationSpecs.GroupPropertyIdTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.translationSpecs.GroupPropertyReportPluginDataTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.translationSpecs.GroupTypeIdTranslationSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.translationSpecs.GroupTypesForPersonFilterTranslationSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.translationSpecs.GroupsForPersonAndGroupTypeFilterTranslationSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.translationSpecs.GroupsForPersonFilterTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.translationSpecs.GroupsPluginDataTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.translationSpecs.TestGroupPropertyIdTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.translationSpecs.TestGroupTypeIdTranslationSpec;
@@ -38,6 +42,10 @@ public class AT_GroupsTranslator {
                             .addTranslationSpec(new GroupTypeIdTranslationSpec())
                             .addTranslationSpec(new GroupPropertyIdTranslationSpec())
                             .addTranslationSpec(new TestGroupTypeIdTranslationSpec())
+                            .addTranslationSpec(new GroupMemberFilterTranslationSpec())
+                            .addTranslationSpec(new GroupsForPersonAndGroupTypeFilterTranslationSpec())
+                            .addTranslationSpec(new GroupsForPersonFilterTranslationSpec())
+                            .addTranslationSpec(new GroupTypesForPersonFilterTranslationSpec())
                             .addTranslationSpec(new TestGroupPropertyIdTranslationSpec());
 
                     translationEngineBuilder
@@ -64,6 +72,10 @@ public class AT_GroupsTranslator {
                             .addTranslationSpec(new GroupTypeIdTranslationSpec())
                             .addTranslationSpec(new GroupPropertyIdTranslationSpec())
                             .addTranslationSpec(new TestGroupTypeIdTranslationSpec())
+                            .addTranslationSpec(new GroupMemberFilterTranslationSpec())
+                            .addTranslationSpec(new GroupsForPersonAndGroupTypeFilterTranslationSpec())
+                            .addTranslationSpec(new GroupsForPersonFilterTranslationSpec())
+                            .addTranslationSpec(new GroupTypesForPersonFilterTranslationSpec())
                             .addTranslationSpec(new TestGroupPropertyIdTranslationSpec())
                             .addTranslationSpec(new GroupPropertyReportPluginDataTranslationSpec());
 

@@ -1,0 +1,22 @@
+{
+  "partitions": [{
+    "key": {
+      "@type": "type.googleapis.com/google.protobuf.StringValue",
+      "value": "testPartition"
+    },
+    "partition": {
+      "retainPersonKeys": true,
+      "labelers": [{
+        "labeler": {
+          "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.TestLabelerInput",
+          "id": "Test"
+        }
+      }],
+      "filter": {
+        "filter": {
+          "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.TestFilterInput"
+        }
+      }
+    }
+  }]
+}
