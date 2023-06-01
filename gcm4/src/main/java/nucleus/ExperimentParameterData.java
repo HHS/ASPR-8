@@ -2,6 +2,7 @@ package nucleus;
 
 import java.nio.file.Path;
 import java.util.LinkedHashSet;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -153,6 +154,32 @@ public final class ExperimentParameterData {
 			explicitScenarioIds.addAll(data.explicitScenarioIds);
 		}
 
+		@Override
+		public int hashCode() {
+			return Objects.hash(threadCount, stateRecordingIsScheduled, simulationHaltTime, haltOnException,
+					experimentProgressLogPath, continueFromProgressLog, explicitScenarioIds);
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (obj == null) {
+				return false;
+			}
+			if (getClass() != obj.getClass()) {
+				return false;
+			}
+			Data other = (Data) obj;
+			return threadCount == other.threadCount && stateRecordingIsScheduled == other.stateRecordingIsScheduled
+					&& Objects.equals(simulationHaltTime, other.simulationHaltTime)
+					&& haltOnException == other.haltOnException
+					&& Objects.equals(experimentProgressLogPath, other.experimentProgressLogPath)
+					&& continueFromProgressLog == other.continueFromProgressLog
+					&& Objects.equals(explicitScenarioIds, other.explicitScenarioIds);
+		}
+
 	}
 
 	/**
@@ -228,4 +255,25 @@ public final class ExperimentParameterData {
 	public Set<Integer> getExplicitScenarioIds() {
 		return new LinkedHashSet<>(data.explicitScenarioIds);
 	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(data);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		ExperimentParameterData other = (ExperimentParameterData) obj;
+		return Objects.equals(data, other.data);
+	}
+
 }
