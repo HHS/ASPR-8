@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 
+import gov.hhs.aspr.gcm.translation.protobuf.nucleus.input.ExperimentParameterDataInput;
 import gov.hhs.aspr.gcm.translation.protobuf.nucleus.input.PlanQueueDataInput;
 import gov.hhs.aspr.gcm.translation.protobuf.nucleus.input.SimulationStateInput;
 import gov.hhs.aspr.gcm.translation.protobuf.nucleus.simObjects.translationSpecs.ExamplePlanDataTranslationSpec;
@@ -33,7 +34,8 @@ public class AT_NucleusTranslator {
                             .addTranslationSpec(new ExamplePlanDataTranslationSpec())
                             .addTranslationSpec(new PlanQueueDataTranslationSpec())
                             .addTranslationSpec(new PlannerTranslationSpec())
-                            .addTranslationSpec(new PlanDataTranslationSpec());
+                            .addTranslationSpec(new PlanDataTranslationSpec())
+                            .addTranslationSpec(new ExamplePlanDataTranslationSpec());
 
                     translationEngineBuilder
                             .addFieldToIncludeDefaultValue(
@@ -47,7 +49,11 @@ public class AT_NucleusTranslator {
                                             .findFieldByName("plannerId"))
                             .addFieldToIncludeDefaultValue(
                                     PlanQueueDataInput.getDescriptor()
-                                            .findFieldByName("active"));
+                                            .findFieldByName("active"))
+                            .addFieldToIncludeDefaultValue(
+                                    ExperimentParameterDataInput.getDescriptor()
+                                            .findFieldByName(
+                                                    "experimentProgressLogPath"));
                 }).build();
 
         assertEquals(expectedTranslator, NucleusTranslator.getTranslator());
