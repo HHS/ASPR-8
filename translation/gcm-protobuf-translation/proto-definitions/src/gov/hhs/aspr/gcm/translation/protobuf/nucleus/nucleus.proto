@@ -33,3 +33,13 @@ message SimulationStateInput {
     int64 planningQueueArrivalId = 3;
     repeated PlanQueueDataInput planQueueDatas = 4;
 }
+
+message ExperimentParameterDataInput {
+    int32 threadCount = 1;
+    bool startRecordingIsScheduled = 2;
+    optional double simulationHaltTime = 3;
+    bool haltOnException = 4;
+    optional string experimentProgressLogPath = 5;
+    bool continueFromProgressLog = 6;
+    repeated int32 explictScenarioIds = 7;
+}

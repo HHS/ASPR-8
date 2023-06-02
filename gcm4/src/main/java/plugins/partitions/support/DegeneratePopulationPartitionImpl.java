@@ -213,4 +213,9 @@ public class DegeneratePopulationPartitionImpl implements PopulationPartition {
 		return labelSet.isEmpty();
 	}
 
+	@Override
+	public <T> Optional<T> getPersonValue(LabelSetFunction<T> labelSetFunction, PersonId personId) {		
+		return Optional.ofNullable(null);
+	}
+
 }

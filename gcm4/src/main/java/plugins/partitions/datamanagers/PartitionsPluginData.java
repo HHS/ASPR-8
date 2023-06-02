@@ -10,7 +10,6 @@ import nucleus.PluginData;
 import nucleus.PluginDataBuilder;
 import plugins.partitions.support.Partition;
 import plugins.partitions.support.PartitionError;
-import plugins.util.properties.PropertyError;
 import util.errors.ContractException;
 
 /**
@@ -49,20 +48,20 @@ public final class PartitionsPluginData implements PluginData {
 		}
 
 		/**
-		 * Set a global property Duplicate inputs override previous inputs.
+		 * add a partition Duplicate inputs override previous inputs.
 		 * 
 		 * @throws ContractException
 		 * 
 		 * 
-		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID}</li> if
-		 *             the global property id is null
+		 *             <li>{@linkplain PartitionError#NULL_PARTITION_KEY}</li> if
+		 *             the key is null
 		 * 
-		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION}
-		 *             </li> if the property definition is null
+		 *             <li>{@linkplain PartitionError#NULL_PARTITION}
+		 *             </li> if the partition is null
 		 *
 		 * 
 		 */
-		public Builder setPartition(final Object key, final Partition partition) {
+		public Builder addPartition(final Object key, final Partition partition) {
 			ensureDataMutability();
 			validateKeyNotNull(key);
 			validatePartitionNotNull(partition);

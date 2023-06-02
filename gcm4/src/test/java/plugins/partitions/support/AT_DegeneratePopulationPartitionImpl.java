@@ -44,9 +44,9 @@ public class AT_DegeneratePopulationPartitionImpl {
 	public void testConstructor() {
 
 		Factory factory = PartitionsTestPluginFactory.factory(100, 3760806761100897313L, (c) -> {
-			
+
 			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
-			
+
 			// establish data view
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
@@ -97,9 +97,9 @@ public class AT_DegeneratePopulationPartitionImpl {
 	public void testAttemptPersonAddition() {
 
 		Factory factory = PartitionsTestPluginFactory.factory(100, 2545018253500191849L, (c) -> {
-			
+
 			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
-			
+
 			// establish data views
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
@@ -142,9 +142,9 @@ public class AT_DegeneratePopulationPartitionImpl {
 	@UnitTestMethod(target = DegeneratePopulationPartitionImpl.class, name = "attemptPersonRemoval", args = { PersonId.class })
 	public void testAttemptPersonRemoval() {
 		Factory factory = PartitionsTestPluginFactory.factory(100, 1924419629240381672L, (c) -> {
-			
+
 			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
-			
+
 			// establish data views
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
@@ -197,9 +197,9 @@ public class AT_DegeneratePopulationPartitionImpl {
 	public void testHandleEvent() {
 
 		Factory factory = PartitionsTestPluginFactory.factory(100, 5331854470768144150L, (c) -> {
-			
+
 			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
-			
+
 			// establish data views
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
@@ -236,9 +236,9 @@ public class AT_DegeneratePopulationPartitionImpl {
 	@UnitTestMethod(target = DegeneratePopulationPartitionImpl.class, name = "validateLabelSetInfo", args = { LabelSet.class })
 	public void testValidateLabelSetInfo() {
 		Factory factory = PartitionsTestPluginFactory.factory(100, 7896267308674363012L, (c) -> {
-			
+
 			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
-			
+
 			/*
 			 * Create the population partition filtering on attribute BOOLEAN_0
 			 * = true
@@ -261,9 +261,9 @@ public class AT_DegeneratePopulationPartitionImpl {
 	public void testGetPeopleCount() {
 
 		Factory factory = PartitionsTestPluginFactory.factory(100, 2295886123984917407L, (c) -> {
-			
+
 			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
-			
+
 			// establish data views
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
@@ -317,7 +317,7 @@ public class AT_DegeneratePopulationPartitionImpl {
 		Factory factory = PartitionsTestPluginFactory.factory(1000, 1957059921486084637L, (c) -> {
 
 			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
-			
+
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
@@ -366,7 +366,7 @@ public class AT_DegeneratePopulationPartitionImpl {
 		Factory factory = PartitionsTestPluginFactory.factory(1000, 5254073186909000918L, (c) -> {
 
 			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
-			
+
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
@@ -396,9 +396,9 @@ public class AT_DegeneratePopulationPartitionImpl {
 	@UnitTestMethod(target = DegeneratePopulationPartitionImpl.class, name = "contains", args = { PersonId.class })
 	public void testContains() {
 		Factory factory = PartitionsTestPluginFactory.factory(100, 2907418341194860848L, (c) -> {
-			
+
 			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
-			
+
 			// establish data views
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
@@ -441,9 +441,9 @@ public class AT_DegeneratePopulationPartitionImpl {
 	@UnitTestMethod(target = DegeneratePopulationPartitionImpl.class, name = "contains", args = { PersonId.class, LabelSet.class })
 	public void testContains_LabelSet() {
 		Factory factory = PartitionsTestPluginFactory.factory(100, 2888054511830289156L, (c) -> {
-			
+
 			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
-			
+
 			// establish data views
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
@@ -488,7 +488,7 @@ public class AT_DegeneratePopulationPartitionImpl {
 	@UnitTestMethod(target = DegeneratePopulationPartitionImpl.class, name = "getPeople", args = { LabelSet.class })
 	public void testGetPeople_LabelSet() {
 		Factory factory = PartitionsTestPluginFactory.factory(1000, 8577028018353363458L, (c) -> {
-			
+
 			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
 
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
@@ -538,9 +538,9 @@ public class AT_DegeneratePopulationPartitionImpl {
 	@UnitTestMethod(target = DegeneratePopulationPartitionImpl.class, name = "getPeople", args = {})
 	public void testGetPeople() {
 		Factory factory = PartitionsTestPluginFactory.factory(100, 3706541397073246652L, (c) -> {
-			
+
 			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
-			
+
 			// establish data views
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
@@ -666,7 +666,7 @@ public class AT_DegeneratePopulationPartitionImpl {
 	private void executeSamplingTest(long seed, Boolean useFilter, ExcludedPersonType excludedPersonType, Boolean useWeightingFunction, boolean useLabelSet) {
 
 		Factory factory = PartitionsTestPluginFactory.factory(1000, seed, (c) -> {
-			
+
 			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
 
 			// remember to test with general and COMET to show they get
@@ -869,6 +869,48 @@ public class AT_DegeneratePopulationPartitionImpl {
 		});
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
+	}
+
+	@Test
+	@UnitTestMethod(target = DegeneratePopulationPartitionImpl.class, name = "getPersonValue", args = { LabelSetFunction.class, PersonId.class })
+	public void testGetPersonValue() {
+		Factory factory = PartitionsTestPluginFactory.factory(100, 3706541397073246652L, (c) -> {
+
+			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
+
+			// establish data views
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
+			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
+
+			
+
+			// select about half of the people to have attribute BOOLEAN_0 value
+			// of true
+			for (PersonId personId : peopleDataManager.getPeople()) {
+				if (randomGenerator.nextBoolean()) {
+					attributesDataManager.setAttributeValue(personId, TestAttributeId.BOOLEAN_0, true);			
+				}
+			}
+
+			/*
+			 * Create the population partition filtering on attribute BOOLEAN_0
+			 * = true
+			 */
+			Filter filter = new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, true);
+			Partition partition = Partition.builder().setFilter(filter).build();
+			PopulationPartition populationPartition = new DegeneratePopulationPartitionImpl(testPartitionsContext, partition);
+
+			LabelSetFunction<Integer> f = (pc, ls) -> 5;
+
+			for (PersonId personId : peopleDataManager.getPeople()) {
+				Optional<Integer> optional = populationPartition.getPersonValue(f, personId);
+				assertTrue(optional.isEmpty());
+			}
+
+		});
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
 }

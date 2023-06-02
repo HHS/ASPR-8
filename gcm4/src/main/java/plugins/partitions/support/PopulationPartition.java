@@ -113,4 +113,14 @@ public interface PopulationPartition {
 	 */
 	public Optional<PersonId> samplePartition(final PartitionSampler partitionSampler);
 
+	/**
+	 * Returns an optional value by applying the given function to the label set
+	 * associated with the person. If the person is not contained in the
+	 * population partition the method returns an empty optional. Note that the
+	 * labelSetFunction must be consistent with the partition definition used to
+	 * create this population partition. No precondition tests will be
+	 * performed.
+	 */
+	public <T> Optional<T> getPersonValue(LabelSetFunction<T> labelSetFunction, PersonId personId);
+
 }

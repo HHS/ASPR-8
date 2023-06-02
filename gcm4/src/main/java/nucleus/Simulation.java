@@ -1455,6 +1455,7 @@ public class Simulation {
 		}
 
 		DataManagerContext dataManagerContext = dataManagerIdToDataManagerContextMap.get(dataManagerId);
+		
 		DataManagerEventConsumer dataManagerEventConsumer = new DataManagerEventConsumer(dataManagerId, event -> eventConsumer.accept(dataManagerContext, (T) event));
 
 		list.add(dataManagerEventConsumer);
@@ -1569,7 +1570,7 @@ public class Simulation {
 
 				DataManagerContentRec dataManagerContentRec = new DataManagerContentRec();
 				dataManagerContentRec.event = event;
-				dataManagerContentRec.consumer = dataManagerEventConsumer;
+				dataManagerContentRec.consumer = dataManagerEventConsumer.consumer;
 				dataManagerContentRec.dataManagerId = dataManagerEventConsumer.dataManagerId;
 				dataManagerQueue.add(dataManagerContentRec);
 
@@ -1598,7 +1599,7 @@ public class Simulation {
 
 				DataManagerContentRec dataManagerContentRec = new DataManagerContentRec();
 				dataManagerContentRec.event = event;
-				dataManagerContentRec.consumer = dataManagerEventConsumer;
+				dataManagerContentRec.consumer = dataManagerEventConsumer.consumer;
 				dataManagerContentRec.dataManagerId = dataManagerEventConsumer.dataManagerId;
 				dataManagerQueue.add(dataManagerContentRec);
 
@@ -1772,12 +1773,17 @@ public class Simulation {
 		}
 		return (T) dataManager;
 	}
+
 	/////////////////////////////////
 	// data manager support
 	/////////////////////////////////
-
-	private static class DataManagerEventConsumer implements Consumer<Event>, Comparable<DataManagerEventConsumer> {
-
+	/*
+	 * Combines a consumer of event with a data manager id so that the event
+	 * consumers can be sorted to comply with the dependency DAG. Note that the
+	 * consumer is itself a wrapper around another consumer that takes in a
+	 * context and a specific event type.
+	 */
+	private static class DataManagerEventConsumer implements Comparable<DataManagerEventConsumer> {
 		private final Consumer<Event> consumer;
 		private final DataManagerId dataManagerId;
 
@@ -1789,11 +1795,6 @@ public class Simulation {
 		@Override
 		public int compareTo(DataManagerEventConsumer other) {
 			return this.dataManagerId.compareTo(other.dataManagerId);
-		}
-
-		@Override
-		public void accept(Event event) {
-			consumer.accept(event);
 		}
 	}
 

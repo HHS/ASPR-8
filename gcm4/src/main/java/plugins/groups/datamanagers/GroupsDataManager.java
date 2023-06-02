@@ -306,9 +306,6 @@ public final class GroupsDataManager extends DataManager {
 				Map<GroupPropertyId, IndexedPropertyManager> managerMap = groupPropertyManagerMap.get(groupTypeId);
 				final IndexedPropertyManager indexedPropertyManager = getIndexedPropertyManager( propertyDefinition, 0);
 				managerMap.put(groupPropertyId, indexedPropertyManager);
-				
-				
-				
 			}
 		}
 		for (GroupTypeId groupTypeId : nonDefaultBearingPropertyIds.keySet()) {
