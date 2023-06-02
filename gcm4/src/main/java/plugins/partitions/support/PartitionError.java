@@ -16,6 +16,7 @@ public enum PartitionError implements ContractError {
 	NON_DEGENERATE_PARTITION("Requires a degenerate partition"),
 	INCOMPATIBLE_LABEL_SET("The label set is incompatible with the selected population partition definition"),
 	MALFORMED_PARTITION_SAMPLE_WEIGHTING_FUNCTION("Data used to form an enumerated distribution for partition sampling was malformed"),
+	NULL_LABEL_SET_FUNCTION("Null labelset function"),
 	RESERVED_PARTITION_TRIGGER("An event class is being used to trigger refreshes as part of a partition that is reserved for the partition resolver"),
 	NON_COMPARABLE_ATTRIBUTE("The attribute definition is not compatible with innequality comparisons"),
 	NULL_EQUALITY_OPERATOR("Null equality operator"),
