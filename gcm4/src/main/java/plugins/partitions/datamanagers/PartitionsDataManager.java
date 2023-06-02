@@ -15,6 +15,7 @@ import nucleus.NucleusError;
 import plugins.partitions.support.DegeneratePopulationPartitionImpl;
 import plugins.partitions.support.FilterSensitivity;
 import plugins.partitions.support.LabelSet;
+import plugins.partitions.support.LabelSetFunction;
 import plugins.partitions.support.Labeler;
 import plugins.partitions.support.LabelerSensitivity;
 import plugins.partitions.support.Partition;
@@ -46,10 +47,10 @@ import util.errors.ContractException;
  * relevant population partitions after event validation and execution phases
  * are complete. </blockquote></li>
  *
- * <li>{@linkplain PersonRemovalEvent} <blockquote>Removes the person
- * from all population partitions by scheduling the removal for the current
- * time. This allows references and partition memberships to remain long enough
- * for resolvers, agents and reports to have final reference to the person while
+ * <li>{@linkplain PersonRemovalEvent} <blockquote>Removes the person from all
+ * population partitions by scheduling the removal for the current time. This
+ * allows references and partition memberships to remain long enough for
+ * resolvers, agents and reports to have final reference to the person while
  * still associated with any relevant partitions. </blockquote></li>
  * </ul>
  * 
@@ -71,9 +72,9 @@ public final class PartitionsDataManager extends DataManager {
 	private final Map<Class<? extends Event>, Set<Object>> eventClassToKeyMap = new LinkedHashMap<>();
 
 	private DataManagerContext dataManagerContext;
-	
+
 	private PartitionsContext partitionsContext;
-	
+
 	private PeopleDataManager peopleDataManager;
 
 	private final Map<Object, PopulationPartition> keyToPopulationPartitionMap = new LinkedHashMap<>();
@@ -238,6 +239,41 @@ public final class PartitionsDataManager extends DataManager {
 	}
 
 	/**
+	 * Returns an optional value by applying the given function to the label set
+	 * associated with the person. If the person is not contained in the
+	 * population partition the method returns an empty optional. Note that the
+	 * labelSetFunction must be consistent with the partition definition used to
+	 * create this population partition. No precondition tests will be
+	 * performed.
+	 * 
+	 * @throws ContractException
+	 * 
+	 *             <li>{@link PartitionError#NULL_PARTITION_KEY} if the key is
+	 *             null</li>
+	 * 
+	 *             <li>{@link PartitionError#UNKNOWN_POPULATION_PARTITION_KEY}
+	 *             if the key is unknown</li>
+	 * 
+	 *             <li>{@link PersonError#UNKNOWN_PERSON_ID} if the person does
+	 *             not exist</li>
+	 * 
+	 *             
+	 *             <li>{@link PartitionError.NULL_LABEL_SET_FUNCTION} if the
+	 *             label set function is null</li>
+	 * 
+	 * 
+	 * 
+	 * 
+	 */
+	public <T> Optional<T> getPersonValue(Object key, LabelSetFunction<T> labelSetFunction, PersonId personId) {
+		validateKeyExists(key);
+		validatePersonExists(personId);
+		validateLabelSetFunction(labelSetFunction);
+		PopulationPartition populationPartition = getPopulationPartition(key);		
+		return populationPartition.getPersonValue(labelSetFunction, personId);
+	}
+
+	/**
 	 * Returns true if and only if the person is contained in the population
 	 * partition corresponding to the key.
 	 * 
@@ -349,6 +385,12 @@ public final class PartitionsDataManager extends DataManager {
 		}
 	}
 
+	private void validateLabelSetFunction(LabelSetFunction<?> labelSetFunction) {
+		if (labelSetFunction == null) {
+			throw new ContractException(PartitionError.NULL_LABEL_SET_FUNCTION);
+		}
+	}
+
 	private void validatePersonNotNull(final PersonId personId) {
 		if (personId == null) {
 			throw new ContractException(PersonError.NULL_PERSON_ID);
@@ -369,15 +411,15 @@ public final class PartitionsDataManager extends DataManager {
 	public void init(DataManagerContext dataManagerContext) {
 		super.init(dataManagerContext);
 		this.dataManagerContext = dataManagerContext;
-		
+
 		this.partitionsContext = new PartitionsContextImpl(dataManagerContext);
-		
+
 		peopleDataManager = dataManagerContext.getDataManager(PeopleDataManager.class);
 
 		dataManagerContext.subscribe(PersonAdditionEvent.class, this::handlePersonAdditionEvent);
 
 		dataManagerContext.subscribe(PersonRemovalEvent.class, this::handlePersonRemovalEvent);
-		
+
 		reservedEventClasses.add(PersonAdditionEvent.class);
 		reservedEventClasses.add(PersonRemovalEvent.class);
 
@@ -502,7 +544,7 @@ public final class PartitionsDataManager extends DataManager {
 		// create the population partition
 
 		PopulationPartition populationPartition;
-		if (partition.isDegenerate()) {			
+		if (partition.isDegenerate()) {
 			populationPartition = new DegeneratePopulationPartitionImpl(partitionsContext, partition);
 		} else {
 			populationPartition = new PopulationPartitionImpl(partitionsContext, partition);
@@ -550,8 +592,8 @@ public final class PartitionsDataManager extends DataManager {
 			}
 		}
 	}
-	
-	public final class PartitionsContextImpl implements PartitionsContext{
+
+	public final class PartitionsContextImpl implements PartitionsContext {
 		private final DataManagerContext dataManagerContext;
 
 		public PartitionsContextImpl(DataManagerContext dataManagerContext) {
@@ -562,10 +604,11 @@ public final class PartitionsDataManager extends DataManager {
 		 * Returns the data manager from the given class reference
 		 * 
 		 * @throws ContractException
-		 *             <li>{@linkplain NucleusError#NULL_DATA_MANAGER_CLASS} if data
-		 *             manager class is null</li>
-		 *             <li>{@linkplain NucleusError#AMBIGUOUS_DATA_MANAGER_CLASS} if
-		 *             more than one data manager matches the given class</li>
+		 *             <li>{@linkplain NucleusError#NULL_DATA_MANAGER_CLASS} if
+		 *             data manager class is null</li>
+		 *             <li>{@linkplain NucleusError#AMBIGUOUS_DATA_MANAGER_CLASS}
+		 *             if more than one data manager matches the given
+		 *             class</li>
 		 * 
 		 */
 		public <T extends DataManager> T getDataManager(Class<T> dataManagerClass) {

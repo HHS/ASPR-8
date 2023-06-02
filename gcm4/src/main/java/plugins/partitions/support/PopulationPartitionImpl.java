@@ -1188,5 +1188,19 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 		}
 		return true;
 	}
+	
+	@Override
+	public <T> Optional<T> getPersonValue(LabelSetFunction<T> labelSetFunction, PersonId personId) {		
+		if (isEmpty()) {
+			return Optional.empty();
+		}				
+		Key keyForPerson = getKeyForPerson(personId);
+		if(keyForPerson == null) {
+			return Optional.empty();
+		}
+		LabelSet labelSet = labelSetInfoMap.get(keyForPerson);
+		T value = labelSetFunction.getValue(partitionsContext, labelSet);
+		return Optional.of(value);
+	}
 
 }
