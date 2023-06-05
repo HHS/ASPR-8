@@ -177,7 +177,7 @@ public class AT_GlobalPropertyReport {
 
 		TestOutputConsumer outputConsumer = TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
-		assertEquals(expectedReportItems, outputConsumer.getOutputItems(ReportItem.class));
+		assertEquals(expectedReportItems, outputConsumer.getOutputItemMap(ReportItem.class));
 
 	}
 
@@ -261,7 +261,7 @@ public class AT_GlobalPropertyReport {
 																.execute();
 
 		// show that our report items include the chosen property id
-		Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItems(ReportItem.class);
+		Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItemMap(ReportItem.class);
 		assertFalse(outputItems.isEmpty());
 
 		Set<String> outputPropertyStrings = new LinkedHashSet<>();
@@ -333,7 +333,7 @@ public class AT_GlobalPropertyReport {
 			// gather from the report items the property ids that were actually
 			// included in the report
 			Set<GlobalPropertyId> actualPropertyIds = new LinkedHashSet<>();
-			Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItems(ReportItem.class);
+			Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItemMap(ReportItem.class);
 			for (ReportItem reportItem : outputItems.keySet()) {
 				Integer count = outputItems.get(reportItem);
 				assertEquals(1, count);
@@ -387,7 +387,7 @@ public class AT_GlobalPropertyReport {
 					.execute();
 
 		// show that the report labels are what we expect for each report item
-		Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItems(ReportItem.class);
+		Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItemMap(ReportItem.class);
 		assertFalse(outputItems.isEmpty());
 
 		for (ReportItem reportItem : outputItems.keySet()) {
@@ -465,7 +465,7 @@ public class AT_GlobalPropertyReport {
 																.execute();
 
 		// show that our report items exclude the chosen property id
-		Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItems(ReportItem.class);
+		Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItemMap(ReportItem.class);
 		assertFalse(outputItems.isEmpty());
 
 		Set<String> outputPropertyStrings = new LinkedHashSet<>();
@@ -505,7 +505,7 @@ public class AT_GlobalPropertyReport {
 					.execute();
 
 		// show that the report labels are what we expect for each report item
-		Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItems(ReportItem.class);
+		Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItemMap(ReportItem.class);
 		assertFalse(outputItems.isEmpty());
 
 		for (ReportItem reportItem : outputItems.keySet()) {
@@ -625,7 +625,7 @@ public class AT_GlobalPropertyReport {
 
 		// show that the GlobalPropertyReportPluginData produced by the
 		// simulation is equal to the one used to form the report
-		Map<GlobalPropertyReportPluginData, Integer> outputItems = outputConsumer.getOutputItems(GlobalPropertyReportPluginData.class);
+		Map<GlobalPropertyReportPluginData, Integer> outputItems = outputConsumer.getOutputItemMap(GlobalPropertyReportPluginData.class);
 		assertEquals(1,outputItems.size());
 		GlobalPropertyReportPluginData globalPropertyReportPluginData2 = outputItems.keySet().iterator().next();
 		assertEquals(globalPropertyReportPluginData, globalPropertyReportPluginData2);

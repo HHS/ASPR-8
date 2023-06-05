@@ -114,7 +114,7 @@ public final class AT_ResourcesDataManager {
 		TestPluginData testPluginData = pluginBuilder.build();
 		Factory factory = ResourcesTestPluginFactory.factory(1, 7939130943360648501L, testPluginData).setResourcesPluginData(resourcesPluginData);
 		TestOutputConsumer testOutputConsumer = TestSimulation.builder().addPlugins(factory.getPlugins()).setProduceSimulationStateOnHalt(true).setSimulationHaltTime(2).build().execute();
-		Map<ResourcesPluginData, Integer> outputItems = testOutputConsumer.getOutputItems(ResourcesPluginData.class);
+		Map<ResourcesPluginData, Integer> outputItems = testOutputConsumer.getOutputItemMap(ResourcesPluginData.class);
 		assertEquals(1, outputItems.size());
 		ResourcesPluginData actualPluginData = outputItems.keySet().iterator().next();
 		ResourcesPluginData expectedPluginData = ResourcesPluginData.builder()
@@ -178,7 +178,7 @@ public final class AT_ResourcesDataManager {
 																.setSimulationHaltTime(2)//
 																.build()//
 																.execute();
-		Map<ResourcesPluginData, Integer> outputItems2 = testOutputConsumer2.getOutputItems(ResourcesPluginData.class);
+		Map<ResourcesPluginData, Integer> outputItems2 = testOutputConsumer2.getOutputItemMap(ResourcesPluginData.class);
 		assertEquals(1, outputItems2.size());
 		ResourcesPluginData actualPluginData = outputItems2.keySet().iterator().next();
 		ResourcesPluginData expectedPluginData = ResourcesPluginData.builder()

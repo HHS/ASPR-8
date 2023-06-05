@@ -175,7 +175,7 @@ public class AT_MaterialsDataManager {
 		Factory factory = MaterialsTestPluginFactory.factory(0, 0, 0, 5818867905165255006L, testPluginData);
 		factory.setMaterialsPluginData(materialsPluginData);
 		TestOutputConsumer testOutputConsumer = TestSimulation.builder().addPlugins(factory.getPlugins()).setProduceSimulationStateOnHalt(true).setSimulationHaltTime(2).build().execute();
-		Map<MaterialsPluginData, Integer> outputItems = testOutputConsumer.getOutputItems(MaterialsPluginData.class);
+		Map<MaterialsPluginData, Integer> outputItems = testOutputConsumer.getOutputItemMap(MaterialsPluginData.class);
 		assertEquals(1, outputItems.size());
 		// build the expected materials plugin data
 		MaterialsPluginData materialsPluginData2 = outputItems.keySet().iterator().next();
@@ -289,7 +289,7 @@ public class AT_MaterialsDataManager {
 		factory = MaterialsTestPluginFactory.factory(0, 0, 0, 5818867905165255006L, testPluginData);
 		factory.setMaterialsPluginData(materialsPluginData);
 		testOutputConsumer = TestSimulation.builder().addPlugins(factory.getPlugins()).setProduceSimulationStateOnHalt(true).setSimulationHaltTime(2).build().execute();
-		outputItems = testOutputConsumer.getOutputItems(MaterialsPluginData.class);
+		outputItems = testOutputConsumer.getOutputItemMap(MaterialsPluginData.class);
 		assertEquals(1, outputItems.size());
 		// build the expected materials plugin data
 		materialsPluginData2 = outputItems.keySet().iterator().next();

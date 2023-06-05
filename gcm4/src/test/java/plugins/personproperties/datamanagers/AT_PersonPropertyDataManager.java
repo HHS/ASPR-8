@@ -234,7 +234,7 @@ public final class AT_PersonPropertyDataManager {
 																.build()//
 																.execute();
 
-		Map<PersonPropertiesPluginData, Integer> outputItems = testOutputConsumer.getOutputItems(PersonPropertiesPluginData.class);
+		Map<PersonPropertiesPluginData, Integer> outputItems = testOutputConsumer.getOutputItemMap(PersonPropertiesPluginData.class);
 		assertTrue(outputItems.size() == 1);
 		PersonPropertiesPluginData actualPersonPropertiesPluginData = outputItems.keySet().iterator().next();
 

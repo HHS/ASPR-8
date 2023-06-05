@@ -205,7 +205,7 @@ public final class AT_StageReport {
 				.execute();
 
 		
-		assertEquals(expectedReportItems, testOutputConsumer.getOutputItems(ReportItem.class));
+		assertEquals(expectedReportItems, testOutputConsumer.getOutputItemMap(ReportItem.class));
 	}
 
 	@Test
@@ -325,7 +325,7 @@ public final class AT_StageReport {
 				.build()//
 				.execute();
 
-		Map<StageReportPluginData, Integer> outputItems = testOutputConsumer.getOutputItems(StageReportPluginData.class);
+		Map<StageReportPluginData, Integer> outputItems = testOutputConsumer.getOutputItemMap(StageReportPluginData.class);
 		assertEquals(1, outputItems.size());
 		StageReportPluginData stageReportPluginData2 = outputItems.keySet().iterator().next();
 		assertEquals(stageReportPluginData, stageReportPluginData2);
@@ -339,7 +339,7 @@ public final class AT_StageReport {
 				.build()//
 				.execute();
 
-		outputItems = testOutputConsumer.getOutputItems(StageReportPluginData.class);
+		outputItems = testOutputConsumer.getOutputItemMap(StageReportPluginData.class);
 		assertEquals(0, outputItems.size());
 	}
 

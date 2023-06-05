@@ -131,7 +131,7 @@ public class AT_ResourceReport {
 				.build()//
 				.execute();
 
-		Map<ResourceReportPluginData, Integer> outputItems = testOutputConsumer.getOutputItems(ResourceReportPluginData.class);
+		Map<ResourceReportPluginData, Integer> outputItems = testOutputConsumer.getOutputItemMap(ResourceReportPluginData.class);
 		assertEquals(1, outputItems.size());
 		ResourceReportPluginData resourceReportPluginData2 = outputItems.keySet().iterator().next();
 		assertEquals(resourceReportPluginData, resourceReportPluginData2);
@@ -145,7 +145,7 @@ public class AT_ResourceReport {
 				.build()//
 				.execute();
 
-		outputItems = testOutputConsumer.getOutputItems(ResourceReportPluginData.class);
+		outputItems = testOutputConsumer.getOutputItemMap(ResourceReportPluginData.class);
 		assertEquals(0, outputItems.size());
 	}
 

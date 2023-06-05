@@ -121,7 +121,7 @@ public class AT_GroupsDataManager {
 		Long seed = randomGenerator.nextLong();
 		Factory factory = GroupsTestPluginFactory.factory(30, 1, 10, seed, testPluginData).setGroupsPluginData(groupsPluginData);
 		TestOutputConsumer testOutputConsumer = TestSimulation.builder().addPlugins(factory.getPlugins()).setSimulationHaltTime(2).setProduceSimulationStateOnHalt(true).build().execute();
-		Map<GroupsPluginData, Integer> outputItems = testOutputConsumer.getOutputItems(GroupsPluginData.class);
+		Map<GroupsPluginData, Integer> outputItems = testOutputConsumer.getOutputItemMap(GroupsPluginData.class);
 		assertEquals(1, outputItems.size());
 		GroupsPluginData actualPluginData = outputItems.keySet().iterator().next();
 		GroupsPluginData expectedPluginData = GroupsPluginData	.builder()
@@ -173,7 +173,7 @@ public class AT_GroupsDataManager {
 		seed = randomGenerator.nextLong();
 		factory = GroupsTestPluginFactory.factory(30, 1, 10, seed, testPluginData).setGroupsPluginData(groupsPluginData);
 		testOutputConsumer = TestSimulation.builder().addPlugins(factory.getPlugins()).setSimulationHaltTime(2).setProduceSimulationStateOnHalt(true).build().execute();
-		outputItems = testOutputConsumer.getOutputItems(GroupsPluginData.class);
+		outputItems = testOutputConsumer.getOutputItemMap(GroupsPluginData.class);
 		assertEquals(1, outputItems.size());
 		actualPluginData = outputItems.keySet().iterator().next();
 		expectedPluginData = GroupsPluginData	.builder()

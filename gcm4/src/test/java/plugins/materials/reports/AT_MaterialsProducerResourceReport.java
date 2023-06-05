@@ -174,7 +174,7 @@ public final class AT_MaterialsProducerResourceReport {
 				.build()//
 				.execute();
 
-		assertEquals(expectedReportItems, testOutputConsumer.getOutputItems(ReportItem.class));
+		assertEquals(expectedReportItems, testOutputConsumer.getOutputItemMap(ReportItem.class));
 	}
 
 	@Test
@@ -263,7 +263,7 @@ public final class AT_MaterialsProducerResourceReport {
 				.execute();
 
 		Map<MaterialsProducerResourceReportPluginData, Integer> outputItems = testOutputConsumer
-				.getOutputItems(MaterialsProducerResourceReportPluginData.class);
+				.getOutputItemMap(MaterialsProducerResourceReportPluginData.class);
 		assertEquals(1, outputItems.size());
 		MaterialsProducerResourceReportPluginData materialsProducerResourceReportPluginData2 = outputItems.keySet()
 				.iterator().next();
@@ -278,7 +278,7 @@ public final class AT_MaterialsProducerResourceReport {
 				.build()//
 				.execute();
 
-		outputItems = testOutputConsumer.getOutputItems(MaterialsProducerResourceReportPluginData.class);
+		outputItems = testOutputConsumer.getOutputItemMap(MaterialsProducerResourceReportPluginData.class);
 		assertEquals(0, outputItems.size());
 	}
 

@@ -219,7 +219,7 @@ public class AT_PersonPropertyInteractionReport {
 																.build()//
 																.execute();
 
-		Map<PersonPropertyInteractionReportPluginData, Integer> outputItems = testOutputConsumer.getOutputItems(PersonPropertyInteractionReportPluginData.class);
+		Map<PersonPropertyInteractionReportPluginData, Integer> outputItems = testOutputConsumer.getOutputItemMap(PersonPropertyInteractionReportPluginData.class);
 		assertEquals(1, outputItems.size());
 		PersonPropertyInteractionReportPluginData personPropertyInteractionReportPluginData2 = outputItems.keySet().iterator().next();
 		assertEquals(personPropertyInteractionReportPluginData, personPropertyInteractionReportPluginData2);
@@ -233,7 +233,7 @@ public class AT_PersonPropertyInteractionReport {
 											.build()//
 											.execute();
 
-		outputItems = testOutputConsumer.getOutputItems(PersonPropertyInteractionReportPluginData.class);
+		outputItems = testOutputConsumer.getOutputItemMap(PersonPropertyInteractionReportPluginData.class);
 		assertEquals(0, outputItems.size());
 	}
 

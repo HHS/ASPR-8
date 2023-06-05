@@ -196,8 +196,8 @@ public class AT_RegionPropertyReport {
 																.build()//
 																.execute();
 
-		Map<ReportItem, Integer> expectedReportItems = expectedOutputConsumer.getOutputItems(ReportItem.class);
-		Map<ReportItem, Integer> actualReportItems = testOutputConsumer.getOutputItems(ReportItem.class);
+		Map<ReportItem, Integer> expectedReportItems = expectedOutputConsumer.getOutputItemMap(ReportItem.class);
+		Map<ReportItem, Integer> actualReportItems = testOutputConsumer.getOutputItemMap(ReportItem.class);
 
 		assertEquals(expectedReportItems, actualReportItems);
 
@@ -278,7 +278,7 @@ public class AT_RegionPropertyReport {
 																.execute();
 
 		// show that our report items include the chosen property id
-		Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItems(ReportItem.class);
+		Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItemMap(ReportItem.class);
 		assertFalse(outputItems.isEmpty());
 
 		Set<String> outputPropertyStrings = new LinkedHashSet<>();
@@ -347,7 +347,7 @@ public class AT_RegionPropertyReport {
 			// gather from the report items the property ids that were actually
 			// included in the report
 			Set<TestRegionPropertyId> actualPropertyIds = new LinkedHashSet<>();
-			Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItems(ReportItem.class);
+			Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItemMap(ReportItem.class);
 			for (ReportItem reportItem : outputItems.keySet()) {
 				Integer count = outputItems.get(reportItem);
 				assertEquals(1, count);
@@ -399,7 +399,7 @@ public class AT_RegionPropertyReport {
 																.execute();
 
 		// show that the report labels are what we expect for each report item
-		Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItems(ReportItem.class);
+		Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItemMap(ReportItem.class);
 		assertFalse(outputItems.isEmpty());
 
 		for (ReportItem reportItem : outputItems.keySet()) {
@@ -473,7 +473,7 @@ public class AT_RegionPropertyReport {
 																.execute();
 
 		// show that our report items exclude the chosen property id
-		Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItems(ReportItem.class);
+		Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItemMap(ReportItem.class);
 		assertFalse(outputItems.isEmpty());
 
 		Set<String> outputPropertyStrings = new LinkedHashSet<>();
@@ -511,7 +511,7 @@ public class AT_RegionPropertyReport {
 																.execute();
 
 		// show that the report labels are what we expect for each report item
-		Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItems(ReportItem.class);
+		Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItemMap(ReportItem.class);
 		assertFalse(outputItems.isEmpty());
 
 		for (ReportItem reportItem : outputItems.keySet()) {
@@ -626,7 +626,7 @@ public class AT_RegionPropertyReport {
 				.build()//
 				.execute();
 
-		Map<RegionPropertyReportPluginData, Integer> outputItems = testOutputConsumer.getOutputItems(RegionPropertyReportPluginData.class);
+		Map<RegionPropertyReportPluginData, Integer> outputItems = testOutputConsumer.getOutputItemMap(RegionPropertyReportPluginData.class);
 		assertEquals(1, outputItems.size());
 		RegionPropertyReportPluginData regionPropertyReportPluginData2 = outputItems.keySet().iterator().next();
 		assertEquals(regionPropertyReportPluginData, regionPropertyReportPluginData2);
@@ -640,7 +640,7 @@ public class AT_RegionPropertyReport {
 				.build()//
 				.execute();
 
-		outputItems = testOutputConsumer.getOutputItems(RegionPropertyReportPluginData.class);
+		outputItems = testOutputConsumer.getOutputItemMap(RegionPropertyReportPluginData.class);
 		assertEquals(0, outputItems.size());
 	}
 

@@ -128,7 +128,7 @@ public class AT_RegionsDataManager {
 																.setProduceSimulationStateOnHalt(true)//
 																.setSimulationHaltTime(2).build()//
 																.execute();
-		Map<RegionsPluginData, Integer> outputItems = testOutputConsumer.getOutputItems(RegionsPluginData.class);
+		Map<RegionsPluginData, Integer> outputItems = testOutputConsumer.getOutputItemMap(RegionsPluginData.class);
 		assertEquals(1, outputItems.size());
 
 		RegionsPluginData expectedPluginData = RegionsPluginData.builder().addRegion(TestRegionId.REGION_1)
@@ -175,7 +175,7 @@ public class AT_RegionsDataManager {
 		testPluginData = pluginBuilder.build();
 		factory = RegionsTestPluginFactory.factory(0, 3347423560010833899L, TimeTrackingPolicy.TRACK_TIME, testPluginData).setRegionsPluginData(regionsPluginData);
 		testOutputConsumer = TestSimulation.builder().addPlugins(factory.getPlugins()).setProduceSimulationStateOnHalt(true).setSimulationHaltTime(2).build().execute();
-		outputItems = testOutputConsumer.getOutputItems(RegionsPluginData.class);
+		outputItems = testOutputConsumer.getOutputItemMap(RegionsPluginData.class);
 		assertEquals(1, outputItems.size());
 		expectedPluginData = RegionsPluginData	.builder().addRegion(TestRegionId.REGION_2).addRegion(TestRegionId.REGION_3)
 												.defineRegionProperty(regionPropertyDefinitionInitialization2.getRegionPropertyId(), regionPropertyDefinitionInitialization2.getPropertyDefinition())

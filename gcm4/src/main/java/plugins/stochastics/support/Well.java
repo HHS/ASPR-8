@@ -1,5 +1,7 @@
 package plugins.stochastics.support;
 
+import java.util.Arrays;
+
 import org.apache.commons.math3.random.Well44497b;
 
 public class Well extends Well44497b {
@@ -47,5 +49,20 @@ public class Well extends Well44497b {
 		return getWellState().equals(other.getWellState());
 
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("Well [seed=");
+		builder.append(seed);
+		builder.append(", index=");
+		builder.append(index);
+		builder.append(", v=");
+		builder.append(Arrays.toString(v));
+		builder.append("]");
+		return builder.toString();
+	}
+	
+	
 
 }

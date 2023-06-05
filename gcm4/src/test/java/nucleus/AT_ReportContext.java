@@ -367,7 +367,7 @@ public class AT_ReportContext {
 		 */
 		TestOutputConsumer testOutputConsumer = TestSimulation.builder().addPlugin(testPlugin).build().execute();
 
-		Map<Object, Integer> outputItems = testOutputConsumer.getOutputItems(Object.class);
+		Map<Object, Integer> outputItems = testOutputConsumer.getOutputItemMap(Object.class);
 		for (Object key : outputItems.keySet()) {
 			Integer count = outputItems.get(key);
 			assertEquals(1, count.intValue());

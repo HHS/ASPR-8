@@ -109,7 +109,7 @@ public class AT_GroupPropertyReport {
 																.execute();
 
 		// show that the report items have the chosen property ids
-		Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItems(ReportItem.class);
+		Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItemMap(ReportItem.class);
 		Set<MultiKey> actualOutput = new LinkedHashSet<>();
 		for (ReportItem reportItem : outputItems.keySet()) {
 			actualOutput.add(new MultiKey(reportItem.getValue(2), reportItem.getValue(3)));
@@ -219,7 +219,7 @@ public class AT_GroupPropertyReport {
 																.execute();
 
 		// show that the report items have the chosen property ids
-		Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItems(ReportItem.class);
+		Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItemMap(ReportItem.class);
 		Set<MultiKey> actualOutput = new LinkedHashSet<>();
 		for (ReportItem reportItem : outputItems.keySet()) {
 			actualOutput.add(new MultiKey(reportItem.getValue(1), reportItem.getValue(2)));
@@ -303,7 +303,7 @@ public class AT_GroupPropertyReport {
 			// gather from the report items the property ids that were actually
 			// included in the report
 			Set<TestGroupPropertyId> actualPropertyIds = new LinkedHashSet<>();
-			Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItems(ReportItem.class);
+			Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItemMap(ReportItem.class);
 			for (ReportItem reportItem : outputItems.keySet()) {
 				TestGroupPropertyId testGroupPropertyId = TestGroupPropertyId.valueOf(reportItem.getValue(2));
 				actualPropertyIds.add(testGroupPropertyId);
@@ -390,7 +390,7 @@ public class AT_GroupPropertyReport {
 																	.build()//
 																	.execute();
 			// show that the report items have the chosen property ids
-			Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItems(ReportItem.class);
+			Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItemMap(ReportItem.class);
 
 			for (ReportItem reportItem : outputItems.keySet()) {
 				ReportHeader reportHeader = reportItem.getReportHeader();
@@ -457,7 +457,7 @@ public class AT_GroupPropertyReport {
 																	.build()//
 																	.execute();
 			// show that the report items have the chosen property ids
-			Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItems(ReportItem.class);
+			Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItemMap(ReportItem.class);
 			assertFalse(outputItems.isEmpty());
 			for (ReportItem reportItem : outputItems.keySet()) {
 				assertEquals(reportLabel, reportItem.getReportLabel());
@@ -601,8 +601,8 @@ public class AT_GroupPropertyReport {
 																.build()//
 																.execute();
 
-		Map<ReportItem, Integer> expectedReportItems = expectedOutputConsumer.getOutputItems(ReportItem.class);
-		Map<ReportItem, Integer> actualReportItems = testOutputConsumer.getOutputItems(ReportItem.class);
+		Map<ReportItem, Integer> expectedReportItems = expectedOutputConsumer.getOutputItemMap(ReportItem.class);
+		Map<ReportItem, Integer> actualReportItems = testOutputConsumer.getOutputItemMap(ReportItem.class);
 		assertEquals(expectedReportItems, actualReportItems);
 
 	}
@@ -774,8 +774,8 @@ public class AT_GroupPropertyReport {
 																.build()//
 																.execute();
 
-		Map<ReportItem, Integer> expectedReportItems = expectedOutputConsumer.getOutputItems(ReportItem.class);
-		Map<ReportItem, Integer> actualReportItems = testOutputConsumer.getOutputItems(ReportItem.class);
+		Map<ReportItem, Integer> expectedReportItems = expectedOutputConsumer.getOutputItemMap(ReportItem.class);
+		Map<ReportItem, Integer> actualReportItems = testOutputConsumer.getOutputItemMap(ReportItem.class);
 
 		assertEquals(expectedReportItems, actualReportItems);
 	}
@@ -842,7 +842,7 @@ public class AT_GroupPropertyReport {
 																	.execute();
 
 			// show that the report items have the chosen property ids
-			Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItems(ReportItem.class);
+			Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItemMap(ReportItem.class);
 
 			for (ReportItem reportItem : outputItems.keySet()) {
 				ReportHeader reportHeader = reportItem.getReportHeader();
@@ -935,7 +935,7 @@ public class AT_GroupPropertyReport {
 				.execute();
 
 		// show that the plugin data persists after simulation
-		Map<GroupPropertyReportPluginData, Integer> outputItems = testOutputConsumer.getOutputItems(GroupPropertyReportPluginData.class);
+		Map<GroupPropertyReportPluginData, Integer> outputItems = testOutputConsumer.getOutputItemMap(GroupPropertyReportPluginData.class);
 		assertEquals(1, outputItems.size());
 		GroupPropertyReportPluginData groupPropertyReportPluginData2 = outputItems.keySet().iterator().next();
 		assertEquals(groupPropertyReportPluginData, groupPropertyReportPluginData2);
@@ -950,7 +950,7 @@ public class AT_GroupPropertyReport {
 				.execute();
 
 		// show that when the simulation state is not being produced, there is no output plugin data+
-		outputItems = testOutputConsumer.getOutputItems(GroupPropertyReportPluginData.class);
+		outputItems = testOutputConsumer.getOutputItemMap(GroupPropertyReportPluginData.class);
 		assertEquals(0, outputItems.size());
 	}
 

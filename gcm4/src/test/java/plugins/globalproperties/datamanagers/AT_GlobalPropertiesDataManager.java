@@ -289,7 +289,7 @@ public final class AT_GlobalPropertiesDataManager {
 		TestPluginData testPluginData = testPluginDataBuilder.build();
 		Factory factory = GlobalPropertiesTestPluginFactory.factory(5100286389011347218L, testPluginData).setGlobalPropertiesPluginData(globalPropertiesPluginData);
 		TestOutputConsumer testOutputConsumer = TestSimulation.builder().addPlugins(factory.getPlugins()).setSimulationHaltTime(2).setProduceSimulationStateOnHalt(true).build().execute();
-		Map<GlobalPropertiesPluginData, Integer> outputItems = testOutputConsumer.getOutputItems(GlobalPropertiesPluginData.class);
+		Map<GlobalPropertiesPluginData, Integer> outputItems = testOutputConsumer.getOutputItemMap(GlobalPropertiesPluginData.class);
 		assertEquals(1, outputItems.size());
 		GlobalPropertiesPluginData actualPluginData = outputItems.keySet().iterator().next();
 		GlobalPropertiesPluginData expectedPluginData = GlobalPropertiesPluginData	.builder()
@@ -328,7 +328,7 @@ public final class AT_GlobalPropertiesDataManager {
 		testPluginData = testPluginDataBuilder.build();
 		factory = GlobalPropertiesTestPluginFactory.factory(5100286389011347218L, testPluginData).setGlobalPropertiesPluginData(globalPropertiesPluginData);
 		testOutputConsumer = TestSimulation.builder().addPlugins(factory.getPlugins()).setSimulationHaltTime(2).setProduceSimulationStateOnHalt(true).build().execute();
-		outputItems = testOutputConsumer.getOutputItems(GlobalPropertiesPluginData.class);
+		outputItems = testOutputConsumer.getOutputItemMap(GlobalPropertiesPluginData.class);
 		assertEquals(1, outputItems.size());
 		actualPluginData = outputItems.keySet().iterator().next();
 		expectedPluginData = GlobalPropertiesPluginData	.builder().defineGlobalProperty(globalPropertyInitialization2.getGlobalPropertyId(), globalPropertyInitialization2.getPropertyDefinition(), 0)

@@ -263,8 +263,8 @@ public class AT_PersonPropertyReport {
 		expectedOutputConsumer.accept(getReportItem(ReportPeriod.DAILY, 3, TestRegionId.REGION_2, unknownIdToInclude, true, 1));
 
 		// compare the expected and actual report items
-		Map<ReportItem, Integer> expectedReportItems = expectedOutputConsumer.getOutputItems(ReportItem.class);
-		Map<ReportItem, Integer> actualReportItems = testOutputConsumer.getOutputItems(ReportItem.class);
+		Map<ReportItem, Integer> expectedReportItems = expectedOutputConsumer.getOutputItemMap(ReportItem.class);
+		Map<ReportItem, Integer> actualReportItems = testOutputConsumer.getOutputItemMap(ReportItem.class);
 		assertEquals(expectedReportItems, actualReportItems);
 	}
 
@@ -302,7 +302,7 @@ public class AT_PersonPropertyReport {
 				.build()//
 				.execute();
 		// show that the report labels are what we expect for each report item
-		Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItems(ReportItem.class);
+		Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItemMap(ReportItem.class);
 		assertFalse(outputItems.isEmpty());
 		for (ReportItem reportItem : outputItems.keySet()) {
 			assertEquals(reportItem.getReportLabel(), reportLabel);
@@ -353,7 +353,7 @@ public class AT_PersonPropertyReport {
 				.execute();
 
 		// show that the report labels are what we expect for each report item
-		Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItems(ReportItem.class);
+		Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItemMap(ReportItem.class);
 		assertFalse(outputItems.isEmpty());
 		
 		ReportHeader expectedReportHeader;
@@ -422,7 +422,7 @@ public class AT_PersonPropertyReport {
 				.execute();
 
 		// show that the report periods are what we expect for each report item
-		Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItems(ReportItem.class);
+		Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItemMap(ReportItem.class);
 		assertFalse(outputItems.isEmpty());
 		for (ReportItem reportItem : outputItems.keySet()) {
 			assertEquals(reportItem.getReportHeader().getHeaderStrings().get(0), "day");
@@ -460,7 +460,7 @@ public class AT_PersonPropertyReport {
 				.execute();
 
 		// show that the report periods are what we expect for each report item
-		Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItems(ReportItem.class);
+		Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItemMap(ReportItem.class);
 		assertFalse(outputItems.isEmpty());
 		for (ReportItem reportItem : outputItems.keySet()) {
 			assertEquals(reportItem.getReportHeader().getHeaderStrings().get(0), "day");
@@ -497,7 +497,7 @@ public class AT_PersonPropertyReport {
 				.execute();
 
 		// show that the report periods are what we expect for each report item
-		Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItems(ReportItem.class);
+		Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItemMap(ReportItem.class);
 		assertFalse(outputItems.isEmpty());
 		for (ReportItem reportItem : outputItems.keySet()) {
 			assertFalse(reportItem.getReportHeader().getHeaderStrings().contains("day"));
@@ -572,7 +572,7 @@ public class AT_PersonPropertyReport {
 				.addPlugins(plugins)//
 				.build()//
 				.execute();
-		Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItems(ReportItem.class);		
+		Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItemMap(ReportItem.class);		
 		assertTrue(outputItems.isEmpty());
 	}
 
@@ -640,7 +640,7 @@ public class AT_PersonPropertyReport {
 				.execute();
 
 		// show that whe find the expected person property ids
-		Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItems(ReportItem.class);
+		Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItemMap(ReportItem.class);
 		assertFalse(outputItems.isEmpty());
 		Set<String> outputPropertyStrings = new LinkedHashSet<>();
 		for (ReportItem reportItem : outputItems.keySet()) {
@@ -714,7 +714,7 @@ public class AT_PersonPropertyReport {
 				.execute();
 
 		// show that when the default inclusion is unset, it defaults to true
-		Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItems(ReportItem.class);
+		Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItemMap(ReportItem.class);
 		assertFalse(outputItems.isEmpty());
 		Set<String> outputPropertyStrings = new LinkedHashSet<>();
 		for (ReportItem reportItem : outputItems.keySet()) {
@@ -795,7 +795,7 @@ public class AT_PersonPropertyReport {
 				.execute();
 
 		// show that our report items include the chosen property id
-		Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItems(ReportItem.class);
+		Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItemMap(ReportItem.class);
 		assertFalse(outputItems.isEmpty());
 		Set<String> outputPropertyStrings = new LinkedHashSet<>();
 		for (ReportItem reportItem : outputItems.keySet()) {
@@ -874,7 +874,7 @@ public class AT_PersonPropertyReport {
 
 
 		// show that our report items do not include the chosen property id
-		Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItems(ReportItem.class);
+		Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItemMap(ReportItem.class);
 		assertFalse(outputItems.isEmpty());
 		Set<String> outputPropertyStrings = new LinkedHashSet<>();
 		for (ReportItem reportItem : outputItems.keySet()) {
@@ -1068,7 +1068,7 @@ public class AT_PersonPropertyReport {
 				.build()//
 				.execute();
 
-		Map<PersonPropertyReportPluginData, Integer> outputItems = testOutputConsumer.getOutputItems(PersonPropertyReportPluginData.class);
+		Map<PersonPropertyReportPluginData, Integer> outputItems = testOutputConsumer.getOutputItemMap(PersonPropertyReportPluginData.class);
 		assertEquals(1, outputItems.size());
 		PersonPropertyReportPluginData personPropertyReportPluginData2 = outputItems.keySet().iterator().next();
 		assertEquals(personPropertyReportPluginData, personPropertyReportPluginData2);
@@ -1082,7 +1082,7 @@ public class AT_PersonPropertyReport {
 				.build()//
 				.execute();
 
-		outputItems = testOutputConsumer.getOutputItems(PersonPropertyReportPluginData.class);
+		outputItems = testOutputConsumer.getOutputItemMap(PersonPropertyReportPluginData.class);
 		assertEquals(0, outputItems.size());
 	}
 
