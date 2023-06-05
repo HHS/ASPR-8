@@ -9,7 +9,7 @@ import util.errors.ContractException;
  * 
  *
  */
-public final class ObjectPropertyManager extends AbstractIndexedPropertyManager {
+public final class ObjectPropertyManager implements IndexedPropertyManager {
 
 	/*
 	 * A container, indexed by person id, that stores Objects as an array.
@@ -28,7 +28,13 @@ public final class ObjectPropertyManager extends AbstractIndexedPropertyManager 
 	 * 
 	 */
 	public ObjectPropertyManager(PropertyDefinition propertyDefinition, int initialSize) {
-		super(propertyDefinition, initialSize);
+		if (propertyDefinition == null) {
+			throw new ContractException(PropertyError.NULL_PROPERTY_DEFINITION);
+		}
+		
+		if (initialSize < 0) {
+			throw new ContractException(PropertyError.NEGATIVE_INITIAL_SIZE);
+		}
 		
 		if (propertyDefinition.getDefaultValue().isPresent()) {
 			defaultValue = propertyDefinition.getDefaultValue().get();			
@@ -50,7 +56,9 @@ public final class ObjectPropertyManager extends AbstractIndexedPropertyManager 
 
 	@Override
 	public void setPropertyValue(int id, Object propertyValue) {
-		super.setPropertyValue(id, propertyValue);
+		if (id < 0) {
+			throw new ContractException(PropertyError.NEGATIVE_INDEX);
+		}
 		objectValueContainer.setValue(id, propertyValue);
 	}
 
@@ -58,14 +66,32 @@ public final class ObjectPropertyManager extends AbstractIndexedPropertyManager 
 	public void removeId(int id) {
 		// dropping reference to the currently stored value for potential
 		// garbage collection
-		super.removeId(id);
+		if (id < 0) {
+			throw new ContractException(PropertyError.NEGATIVE_INDEX);
+		}
 		objectValueContainer.setValue(id, defaultValue);
 	}
 	
 	@Override
 	public void incrementCapacity(int count) {
-		super.incrementCapacity(count);
+		if (count < 0) {
+			throw new ContractException(PropertyError.NEGATIVE_CAPACITY_INCREMENT);
+		}
 		objectValueContainer.setCapacity(objectValueContainer.getCapacity()+count);		
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("ObjectPropertyManager [objectValueContainer=");
+		builder.append(objectValueContainer);
+		builder.append(", defaultValue=");
+		builder.append(defaultValue);
+		builder.append("]");
+		return builder.toString();
+	}
+
+	
+	
 
 }

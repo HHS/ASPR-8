@@ -1932,8 +1932,6 @@ public final class AT_PersonPropertyDataManager {
 	@Test
 	@UnitTestMethod(target = PersonPropertiesDataManager.class, name = "init", args = { DataManagerContext.class })
 	public void testStateContinuity() {
-		
-		
 
 		/*
 		 * Note that we are not testing the content of the plugin datas -- that
@@ -1942,7 +1940,7 @@ public final class AT_PersonPropertyDataManager {
 		 * break up the run.
 		 */
 
-		Set<PersonPropertiesPluginData> pluginDatas = new LinkedHashSet<>();
+		Set<String> pluginDatas = new LinkedHashSet<>();
 		pluginDatas.add(testStateContinuity(1));
 		pluginDatas.add(testStateContinuity(5));
 		pluginDatas.add(testStateContinuity(10));
@@ -1956,7 +1954,9 @@ public final class AT_PersonPropertyDataManager {
 	 * property events over several days. Attempts to stop and start the
 	 * simulation by the given number of increments.
 	 */
-	private PersonPropertiesPluginData testStateContinuity(int incrementCount) {
+	private String testStateContinuity(int incrementCount) {
+		String result = null;
+		
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(2767991670068250768L);
 		
 		/*
@@ -2073,6 +2073,8 @@ public final class AT_PersonPropertyDataManager {
 			testPersonPropertyId = TestPersonPropertyId.PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK;
 			personPropertiesDataManager.setPersonPropertyValue(new PersonId(2), testPersonPropertyId, 124);
 			personPropertiesDataManager.setPersonPropertyValue(new PersonId(9), testPersonPropertyId, 555);
+			
+			c.releaseOutput(personPropertiesDataManager.toString());
 		});
 
 		RunContinuityPluginData runContinuityPluginData = continuityBuilder.build();
@@ -2149,9 +2151,20 @@ public final class AT_PersonPropertyDataManager {
 
 			// retrieve the run continuity plugin data
 			runContinuityPluginData = outputConsumer.getOutputItem(RunContinuityPluginData.class).get();
+			
+			Optional<String> optional = outputConsumer.getOutputItem(String.class);
+			if(optional.isPresent()) {
+				result = optional.get();
+			}
+			
 		}
+		
+		
+		assertNotNull(result);
+		
+		System.out.println(result);
 
-		return personPropertiesPluginData;
+		return result;
 
 	}
 

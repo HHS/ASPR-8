@@ -10,7 +10,7 @@ import util.errors.ContractException;
  * 
  *
  */
-public final class IntPropertyManager extends AbstractIndexedPropertyManager {
+public final class IntPropertyManager implements IndexedPropertyManager {
 
 	/*
 	 * A container, indexed by person id, that stores the various Boxed integral
@@ -37,7 +37,13 @@ public final class IntPropertyManager extends AbstractIndexedPropertyManager {
 	 *             Integer or Long</li>
 	 */
 	public IntPropertyManager(PropertyDefinition propertyDefinition, int initialSize) {
-		super(propertyDefinition, initialSize);
+		if (propertyDefinition == null) {
+			throw new ContractException(PropertyError.NULL_PROPERTY_DEFINITION);
+		}
+		
+		if (initialSize < 0) {
+			throw new ContractException(PropertyError.NEGATIVE_INITIAL_SIZE);
+		}
 
 		long longDefaultValue = 0L;
 		if (propertyDefinition.getType() == Byte.class) {
@@ -106,7 +112,9 @@ public final class IntPropertyManager extends AbstractIndexedPropertyManager {
 
 	@Override
 	public void setPropertyValue(int id, Object propertyValue) {
-		super.setPropertyValue(id, propertyValue);
+		if (id < 0) {
+			throw new ContractException(PropertyError.NEGATIVE_INDEX);
+		}
 
 		switch (intValueType) {
 		case BYTE:
@@ -132,8 +140,30 @@ public final class IntPropertyManager extends AbstractIndexedPropertyManager {
 
 	@Override
 	public void incrementCapacity(int count) {
-		super.incrementCapacity(count);
+		if (count < 0) {
+			throw new ContractException(PropertyError.NEGATIVE_CAPACITY_INCREMENT);
+		}
 		intValueContainer.setCapacity(intValueContainer.getCapacity() + count);
 	}
+	
+	@Override
+	public void removeId(int id) {
+		if (id < 0) {
+			throw new ContractException(PropertyError.NEGATIVE_INDEX);
+		}
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("IntPropertyManager [intValueContainer=");
+		builder.append(intValueContainer);
+		builder.append(", intValueType=");
+		builder.append(intValueType);
+		builder.append("]");
+		return builder.toString();
+	}
+	
+	
 
 }

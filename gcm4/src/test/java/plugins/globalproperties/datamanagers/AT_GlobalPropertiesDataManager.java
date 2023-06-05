@@ -201,7 +201,7 @@ public final class AT_GlobalPropertiesDataManager {
 				result = optional.get();
 			}
 		}
-
+		assertNotNull(result);
 		return result;
 
 	}

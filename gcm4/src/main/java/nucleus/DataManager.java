@@ -43,7 +43,7 @@ public class DataManager {
 	 */
 	@Override
 	public String toString() {
-		return "";
+		return "DataManager[]";
 	}
 
 }

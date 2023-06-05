@@ -54,4 +54,9 @@ public interface IndexedPropertyManager {
 	 */
 	public void incrementCapacity(int count);
 
+	/**
+	 * Returns the string version of this indexed property manager
+	 */
+	public String toString();
+
 }

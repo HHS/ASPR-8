@@ -181,7 +181,7 @@ public class AT_StochasticsDataManager {
 				result = optional.get();
 			}
 		}
-
+		assertNotNull(result);
 		return result;
 
 	}

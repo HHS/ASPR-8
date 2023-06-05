@@ -613,8 +613,9 @@ public final class PersonPropertiesDataManager extends DataManager {
 		final IndexedPropertyManager propertyManager = getIndexedPropertyManager(propertyDefinition, 0);
 		personPropertyManagerMap.put(personPropertyId, propertyManager);
 
+		DoubleValueContainer doubleValueContainer = null;
 		if (propertyDefinitionInitialization.trackTimes()) {
-			DoubleValueContainer doubleValueContainer = new DoubleValueContainer(dataManagerContext.getTime());
+			doubleValueContainer = new DoubleValueContainer(dataManagerContext.getTime());
 			personPropertyTimeMap.put(personPropertyId, doubleValueContainer);
 		}
 
@@ -626,7 +627,7 @@ public final class PersonPropertiesDataManager extends DataManager {
 			 * consistent with the property definition by contract.
 			 */
 			Object value = pair.getSecond();
-			propertyManager.setPropertyValue(pId, value);
+			propertyManager.setPropertyValue(pId, value);			
 		}
 
 		if (dataManagerContext.subscribersExist(PersonPropertyDefinitionEvent.class)) {
@@ -1031,5 +1032,22 @@ public final class PersonPropertiesDataManager extends DataManager {
 			throw new ContractException(PropertyError.INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT, sb.toString());
 		}
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+//		builder.append("PersonPropertiesDataManager [personPropertyDefinitions=");
+//		builder.append(personPropertyDefinitions);
+//		builder.append(", personPropertyDefinitionTimes=");
+//		builder.append(personPropertyDefinitionTimes);
+//		builder.append(", personPropertyManagerMap=");
+//		builder.append(personPropertyManagerMap);
+//		builder.append(", personPropertyTimeMap=");
+		builder.append(personPropertyTimeMap);
+//		builder.append("]");
+		return builder.toString();
+	}
+	
+	
 
 }
