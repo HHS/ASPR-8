@@ -347,7 +347,8 @@ public final class RegionsDataManager extends DataManager {
 
 		final List<PersonId> result = new ArrayList<>();
 
-		final int n = regionValues.size();
+		
+		final int n = peopleDataManager.getPersonIdLimit();
 		for (int personIndex = 0; personIndex < n; personIndex++) {
 			final int regionIndex = regionValues.getValueAsInt(personIndex);
 			/*

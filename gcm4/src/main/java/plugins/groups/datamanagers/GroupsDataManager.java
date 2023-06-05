@@ -475,7 +475,7 @@ public final class GroupsDataManager extends DataManager {
 			 * create a bit set for tracking which groups received a property
 			 * value
 			 */
-			int idLimit = groupsToTypesMap.size();
+			int idLimit = masterGroupId;
 			BitSet coverageSet = new BitSet(idLimit);
 
 			/*
