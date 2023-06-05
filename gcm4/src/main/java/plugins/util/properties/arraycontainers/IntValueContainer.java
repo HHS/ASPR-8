@@ -81,6 +81,8 @@ public final class IntValueContainer {
 		public void setCapacity(int capacity);
 
 		public int getCapacity();
+		
+		public String toString();
 
 	}
 
@@ -168,6 +170,21 @@ public final class IntValueContainer {
 			return values.length;
 		}
 
+		@Override
+		public String toString() {
+			StringBuilder builder = new StringBuilder();
+			builder.append("LongArray [values=");
+			builder.append(Arrays.toString(values));
+			builder.append(", defaultValue=");
+			builder.append(defaultValue);
+			builder.append(", size=");
+			builder.append(size);
+			builder.append("]");
+			return builder.toString();
+		}
+		
+		
+
 	}
 	/*
 	 * SubTypeArray implementor for ints
@@ -252,6 +269,21 @@ public final class IntValueContainer {
 		public int getCapacity() {
 			return values.length;
 		}
+
+		@Override
+		public String toString() {
+			StringBuilder builder = new StringBuilder();
+			builder.append("IntArray [values=");
+			builder.append(Arrays.toString(values));
+			builder.append(", defaultValue=");
+			builder.append(defaultValue);
+			builder.append(", size=");
+			builder.append(size);
+			builder.append("]");
+			return builder.toString();
+		}
+		
+		
 
 	}
 
@@ -338,6 +370,21 @@ public final class IntValueContainer {
 			return values.length;
 		}
 
+		@Override
+		public String toString() {
+			StringBuilder builder = new StringBuilder();
+			builder.append("ShortArray [values=");
+			builder.append(Arrays.toString(values));
+			builder.append(", defaultValue=");
+			builder.append(defaultValue);
+			builder.append(", size=");
+			builder.append(size);
+			builder.append("]");
+			return builder.toString();
+		}
+		
+		
+
 	}
 
 	/*
@@ -411,6 +458,21 @@ public final class IntValueContainer {
 		public int getCapacity() {
 			return values.length;
 		}
+
+		@Override
+		public String toString() {
+			StringBuilder builder = new StringBuilder();
+			builder.append("ByteArray [values=");
+			builder.append(Arrays.toString(values));
+			builder.append(", defaultValue=");
+			builder.append(defaultValue);
+			builder.append(", size=");
+			builder.append(size);
+			builder.append("]");
+			return builder.toString();
+		}
+		
+		
 
 	}
 
@@ -835,5 +897,16 @@ public final class IntValueContainer {
 		long decrementedValue = Math.subtractExact(getValueAsLong(index), value);
 		setLongValue(index, decrementedValue);
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("IntValueContainer [subTypeArray=");
+		builder.append(subTypeArray);
+		builder.append("]");
+		return builder.toString();
+	}
+	
+	
 
 }

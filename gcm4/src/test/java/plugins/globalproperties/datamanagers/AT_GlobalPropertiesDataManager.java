@@ -11,6 +11,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.IntStream;
@@ -69,7 +70,8 @@ public final class AT_GlobalPropertiesDataManager {
 		 * break up the run.
 		 */
 
-		Set<GlobalPropertiesPluginData> pluginDatas = new LinkedHashSet<>();
+		Set<String> pluginDatas = new LinkedHashSet<>();
+
 		pluginDatas.add(testStateContinuity(1));
 		pluginDatas.add(testStateContinuity(5));
 		pluginDatas.add(testStateContinuity(10));
@@ -83,7 +85,9 @@ public final class AT_GlobalPropertiesDataManager {
 	 * properties related events over several days. Attempt to stop and start
 	 * the simulation by the given number of increments.
 	 */
-	private GlobalPropertiesPluginData testStateContinuity(int incrementCount) {
+	private String testStateContinuity(int incrementCount) {
+
+		String result = null;
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(5369912793633438426L);
 
@@ -93,7 +97,9 @@ public final class AT_GlobalPropertiesDataManager {
 		 */
 		RunContinuityPluginData.Builder continuityBuilder = RunContinuityPluginData.builder();
 
-		for (int i = 0; i < 10; i++) {
+		int n = 10;
+		IntStream.range(0, n).forEach((i) -> {
+
 			double time = randomGenerator.nextDouble() * 10;
 			continuityBuilder.addContextConsumer(time, (c) -> {
 				GlobalPropertiesDataManager globalPropertiesDataManager = c.getDataManager(GlobalPropertiesDataManager.class);
@@ -116,21 +122,25 @@ public final class AT_GlobalPropertiesDataManager {
 
 				// find a global property to update
 				Set<TestGlobalPropertyId> globalPropertyIds = globalPropertiesDataManager.getGlobalPropertyIds();
-				
+
 				List<TestGlobalPropertyId> candidates = new ArrayList<>();
-				
+
 				for (TestGlobalPropertyId globalPropertyId : globalPropertyIds) {
-					if(globalPropertiesDataManager.getGlobalPropertyDefinition(globalPropertyId).propertyValuesAreMutable()) {
+					if (globalPropertiesDataManager.getGlobalPropertyDefinition(globalPropertyId).propertyValuesAreMutable()) {
 						candidates.add(globalPropertyId);
 					}
 				}
-				if(!candidates.isEmpty()) {
+				if (!candidates.isEmpty()) {
 					TestGlobalPropertyId testGlobalPropertyId = candidates.get(randomGenerator.nextInt(candidates.size()));
 					Object propertyValue = testGlobalPropertyId.getRandomPropertyValue(randomGenerator);
 					globalPropertiesDataManager.setGlobalPropertyValue(testGlobalPropertyId, propertyValue);
 				}
+				
+				if(i==(n-1)) {
+					c.releaseOutput(globalPropertiesDataManager.toString());
+				}
 			});
-		}
+		});
 
 		RunContinuityPluginData runContinuityPluginData = continuityBuilder.build();
 
@@ -185,9 +195,14 @@ public final class AT_GlobalPropertiesDataManager {
 
 			// retrieve the run continuity plugin data
 			runContinuityPluginData = outputConsumer.getOutputItem(RunContinuityPluginData.class).get();
+
+			Optional<String> optional = outputConsumer.getOutputItem(String.class);
+			if (optional.isPresent()) {
+				result = optional.get();
+			}
 		}
 
-		return globalPropertiesPluginData;
+		return result;
 
 	}
 

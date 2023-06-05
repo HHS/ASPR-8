@@ -1108,4 +1108,29 @@ public final class RegionsDataManager extends DataManager {
 							.build();
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("RegionsDataManager [regionPropertyMap=");
+		builder.append(regionPropertyMap);
+		builder.append(", regionPropertyIds=");
+		builder.append(regionPropertyIds);
+		builder.append(", regionPropertyDefinitions=");
+		builder.append(regionPropertyDefinitions);
+		builder.append(", regionPopulationRecordMap=");
+		builder.append(regionPopulationRecordMap);
+		builder.append(", regionToIndexMap=");
+		builder.append(regionToIndexMap);
+		builder.append(", indexToRegionMap=");
+		builder.append(indexToRegionMap);
+		builder.append(", regionValues=");
+		builder.append(regionValues);
+		builder.append(", regionArrivalTimes=");
+		builder.append(regionArrivalTimes);
+		builder.append("]");
+		return builder.toString();
+	}
+	
+	
+
 }

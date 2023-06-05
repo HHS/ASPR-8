@@ -2581,7 +2581,7 @@ public class AT_RegionsDataManager {
 		 * break up the run.
 		 */
 
-		Set<RegionsPluginData> pluginDatas = new LinkedHashSet<>();
+		Set<String> pluginDatas = new LinkedHashSet<>();
 		pluginDatas.add(testStateContinuity(1));
 		pluginDatas.add(testStateContinuity(5));
 		pluginDatas.add(testStateContinuity(10));
@@ -2595,7 +2595,9 @@ public class AT_RegionsDataManager {
 	 * events over several days. Attempts to stop and start the simulation by
 	 * the given number of increments.
 	 */
-	private RegionsPluginData testStateContinuity(int incrementCount) {
+	private String testStateContinuity(int incrementCount) {
+		String result = null;
+		
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(4401967199145357368L);
 
 		/*
@@ -2688,6 +2690,8 @@ public class AT_RegionsDataManager {
 			regionsDataManager.setRegionPropertyValue(TestRegionId.REGION_1, testRegionPropertyId, testRegionPropertyId.getRandomPropertyValue(randomGenerator));
 			regionsDataManager.setRegionPropertyValue(TestRegionId.REGION_2, testRegionPropertyId, testRegionPropertyId.getRandomPropertyValue(randomGenerator));
 
+			c.releaseOutput(regionsDataManager.toString());
+			
 		});
 
 		
@@ -2759,10 +2763,15 @@ public class AT_RegionsDataManager {
 
 			// retrieve the run continuity plugin data
 			runContinuityPluginData = outputConsumer.getOutputItem(RunContinuityPluginData.class).get();
+			
+			Optional<String> optional = outputConsumer.getOutputItem(String.class);
+			if(optional.isPresent()) {
+				result = optional.get();
+			}
+			
 		}
-
 		
-		return regionsPluginData;
+		return result;
 
 	}
 

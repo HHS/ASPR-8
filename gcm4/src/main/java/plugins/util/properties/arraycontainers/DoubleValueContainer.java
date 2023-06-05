@@ -153,4 +153,19 @@ public final class DoubleValueContainer {
 		values[index] = value;
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("DoubleValueContainer [values=");
+		builder.append(Arrays.toString(values));
+		builder.append(", size=");
+		builder.append(size);
+		builder.append(", defaultValue=");
+		builder.append(defaultValue);
+		builder.append("]");
+		return builder.toString();
+	}
+	
+	
+
 }

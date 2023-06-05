@@ -36,4 +36,14 @@ public class DataManager {
 		initialized = true;
 	}
 
+	/**
+	 * Returns the string representation of a data manager's internal DATA state
+	 * that can be accessed via public methods. Note that this is not to include
+	 * external references and is used primarily to test run continuity.
+	 */
+	@Override
+	public String toString() {
+		return "";
+	}
+
 }

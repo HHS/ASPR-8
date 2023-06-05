@@ -73,6 +73,19 @@ public final class GlobalPropertiesDataManager extends DataManager {
 		public double getAssignmentTime() {
 			return assignmentTime;
 		}
+
+		@Override
+		public String toString() {
+			StringBuilder builder = new StringBuilder();
+			builder.append("PropertyValueRecord [propertyValue=");
+			builder.append(propertyValue);
+			builder.append(", assignmentTime=");
+			builder.append(assignmentTime);
+			builder.append("]");
+			return builder.toString();
+		}
+		
+		
 	}
 	
 	private static enum EventFunctionId {
@@ -439,5 +452,20 @@ public final class GlobalPropertiesDataManager extends DataManager {
 			}
 		}
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("GlobalPropertiesDataManager [globalPropertyMap=");
+		builder.append(globalPropertyMap);
+		builder.append(", globalPropertyDefinitions=");
+		builder.append(globalPropertyDefinitions);
+		builder.append(", globalPropertyDefinitionTimes=");
+		builder.append(globalPropertyDefinitionTimes);
+		builder.append("]");
+		return builder.toString();
+	}
+	
+	
 
 }
