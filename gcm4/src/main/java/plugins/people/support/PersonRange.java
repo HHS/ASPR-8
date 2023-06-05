@@ -39,14 +39,24 @@ public class PersonRange implements Comparable<PersonRange> {
 		this.highPersonId = highPersonId;
 	}
 
+	/**
+	 * Returns the lowest person id (inclusive) of this range
+	 */
 	public int getLowPersonId() {
 		return lowPersonId;
 	}
 
+	/**
+	 * Returns the highest person id (inclusive) of this range
+	 */
 	public int getHighPersonId() {
 		return highPersonId;
 	}
 
+	/**
+	 * Compares to another person range by ascending order for lower bound and
+	 * then ascending order by upper bound
+	 */
 	@Override
 	public int compareTo(PersonRange personRange) {
 		int result = Integer.compare(this.lowPersonId, personRange.lowPersonId);
@@ -56,6 +66,10 @@ public class PersonRange implements Comparable<PersonRange> {
 		return result;
 	}
 
+	
+	/**
+	 * Boiler plate implementation of hash code
+	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -65,6 +79,9 @@ public class PersonRange implements Comparable<PersonRange> {
 		return result;
 	}
 
+	/**
+	 * Two person ranges are equal if and only if they have the same upper and lower bounds.
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
@@ -83,6 +100,11 @@ public class PersonRange implements Comparable<PersonRange> {
 		return true;
 	}
 
+	/**
+	 * Returns the string version of a person range in the form:
+	 * 
+	 * PersonRange [lowPersonId=4, highPersonId=10]
+	 */
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
