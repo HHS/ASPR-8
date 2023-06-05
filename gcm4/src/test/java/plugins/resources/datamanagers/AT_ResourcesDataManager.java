@@ -2,6 +2,7 @@ package plugins.resources.datamanagers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -10,6 +11,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
 
@@ -4036,7 +4038,7 @@ public final class AT_ResourcesDataManager {
 		 * break up the run.
 		 */
 
-		Set<ResourcesPluginData> pluginDatas = new LinkedHashSet<>();
+		Set<String> pluginDatas = new LinkedHashSet<>();
 		pluginDatas.add(testStateContinuity(1));
 		pluginDatas.add(testStateContinuity(5));
 		pluginDatas.add(testStateContinuity(10));
@@ -4049,7 +4051,9 @@ public final class AT_ResourcesDataManager {
 	 * events over several days. Attempts to stop and start the simulation by
 	 * the given number of increments.
 	 */
-	private ResourcesPluginData testStateContinuity(int incrementCount) {
+	private String testStateContinuity(int incrementCount) {
+		String result = null;
+		
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(177404262666515111L);
 
 		/*
@@ -4227,6 +4231,8 @@ public final class AT_ResourcesDataManager {
 					resourcesDataManager.removeResourceFromRegion(testResourceId, regionId, amount);
 				}
 			}
+			
+			c.releaseOutput(resourcesDataManager.toString());
 		});
 
 		RunContinuityPluginData runContinuityPluginData = continuityBuilder.build();
@@ -4304,9 +4310,20 @@ public final class AT_ResourcesDataManager {
 
 			// retrieve the run continuity plugin data
 			runContinuityPluginData = outputConsumer.getOutputItem(RunContinuityPluginData.class).get();
+			
+			Optional<String> optional = outputConsumer.getOutputItem(String.class);
+			if(optional.isPresent()) {
+				result = optional.get();
+			}
+			
 		}
 		
-		return resourcesPluginData;
+		assertNotNull(result);
+		System.out.println(result);
+		
+		//System.out.println(resourcesPluginData);
+		//result = resourcesPluginData.toString();
+		return result;
 
 	}
 }

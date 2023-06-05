@@ -97,6 +97,19 @@ public final class ResourcesDataManager extends DataManager {
 		public double getAssignmentTime() {
 			return assignmentTime;
 		}
+
+		@Override
+		public String toString() {
+			StringBuilder builder = new StringBuilder();
+			builder.append("PropertyValueRecord [propertyValue=");
+			builder.append(propertyValue);
+			builder.append(", assignmentTime=");
+			builder.append(assignmentTime);
+			builder.append("]");
+			return builder.toString();
+		}
+		
+		
 	}
 	
 	private PeopleDataManager peopleDataManager;
@@ -1729,5 +1742,26 @@ public final class ResourcesDataManager extends DataManager {
 		return EventFilter	.builder(ResourcePropertyDefinitionEvent.class)//
 							.build();
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+//		builder.append("ResourcesDataManager [resourcePropertyMap=");
+		builder.append(resourcePropertyMap);
+//		builder.append(", personResourceValues=");
+//		builder.append(personResourceValues);
+//		builder.append(", resourcePropertyDefinitions=");
+//		builder.append(resourcePropertyDefinitions);
+//		builder.append(", resourceDefinitionTimes=");
+//		builder.append(resourceDefinitionTimes);
+//		builder.append(", personResourceTimes=");
+//		builder.append(personResourceTimes);
+//		builder.append(", regionResources=");
+//		builder.append(regionResources);
+//		builder.append("]");
+		return builder.toString();
+	}
+	
+	
 
 }
