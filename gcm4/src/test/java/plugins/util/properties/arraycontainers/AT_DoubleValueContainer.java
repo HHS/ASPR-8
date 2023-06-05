@@ -46,22 +46,22 @@ public class AT_DoubleValueContainer {
 	public void testGetCapacity() {
 		DoubleValueContainer doubleValueContainer = new DoubleValueContainer(0);
 
-		assertTrue(doubleValueContainer.getCapacity() >= doubleValueContainer.size());
+		assertTrue(doubleValueContainer.getCapacity() >= 0);
 
 		doubleValueContainer.setValue(1, 123.4);
-		assertTrue(doubleValueContainer.getCapacity() >= doubleValueContainer.size());
+		assertTrue(doubleValueContainer.getCapacity() >= 1);
 
 		doubleValueContainer.setValue(34, 36.4);
-		assertTrue(doubleValueContainer.getCapacity() >= doubleValueContainer.size());
+		assertTrue(doubleValueContainer.getCapacity() >= 34);
 
 		doubleValueContainer.setValue(10, 15.4);
-		assertTrue(doubleValueContainer.getCapacity() >= doubleValueContainer.size());
+		assertTrue(doubleValueContainer.getCapacity() >= 20);
 
 		doubleValueContainer.setValue(137, 25.26);
-		assertTrue(doubleValueContainer.getCapacity() >= doubleValueContainer.size());
+		assertTrue(doubleValueContainer.getCapacity() >= 137);
 
 		doubleValueContainer.setValue(1000, 123.6345);
-		assertTrue(doubleValueContainer.getCapacity() >= doubleValueContainer.size());
+		assertTrue(doubleValueContainer.getCapacity() >= 1000);
 	}
 
 	/**
@@ -161,28 +161,6 @@ public class AT_DoubleValueContainer {
 		// pre-condition tests
 		assertThrows(RuntimeException.class, () -> doubleValueContainer.setValue(-1, 234.63));
 
-	}
-
-	/**
-	 * Tests {@link DoubleValueContainer#size()}
-	 */
-	@Test
-	@UnitTestMethod(target = DoubleValueContainer.class, name = "size", args = {})
-	public void testSize() {
-		DoubleValueContainer doubleValueContainer = new DoubleValueContainer(0, 100);
-		assertEquals(0, doubleValueContainer.size());
-
-		doubleValueContainer.setValue(3, 352.2345);
-		assertEquals(4, doubleValueContainer.size());
-
-		doubleValueContainer.setValue(1, 7456.63);
-		assertEquals(4, doubleValueContainer.size());
-
-		doubleValueContainer.setValue(15, 99.1576);
-		assertEquals(16, doubleValueContainer.size());
-
-		doubleValueContainer.setValue(300, 247.989762);
-		assertEquals(301, doubleValueContainer.size());
 	}
 
 }

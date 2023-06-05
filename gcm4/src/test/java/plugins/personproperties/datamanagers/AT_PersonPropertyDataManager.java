@@ -2157,13 +2157,10 @@ public final class AT_PersonPropertyDataManager {
 				result = optional.get();
 			}
 			
-		}
-		
+		}		
 		
 		assertNotNull(result);
 		
-		System.out.println(result);
-
 		return result;
 
 	}

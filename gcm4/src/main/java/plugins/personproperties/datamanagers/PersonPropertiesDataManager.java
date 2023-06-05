@@ -1036,15 +1036,15 @@ public final class PersonPropertiesDataManager extends DataManager {
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-//		builder.append("PersonPropertiesDataManager [personPropertyDefinitions=");
-//		builder.append(personPropertyDefinitions);
-//		builder.append(", personPropertyDefinitionTimes=");
-//		builder.append(personPropertyDefinitionTimes);
-//		builder.append(", personPropertyManagerMap=");
-//		builder.append(personPropertyManagerMap);
-//		builder.append(", personPropertyTimeMap=");
+		builder.append("PersonPropertiesDataManager [personPropertyDefinitions=");
+		builder.append(personPropertyDefinitions);
+		builder.append(", personPropertyDefinitionTimes=");
+		builder.append(personPropertyDefinitionTimes);
+		builder.append(", personPropertyManagerMap=");
+		builder.append(personPropertyManagerMap);
+		builder.append(", personPropertyTimeMap=");
 		builder.append(personPropertyTimeMap);
-//		builder.append("]");
+		builder.append("]");
 		return builder.toString();
 	}
 	
