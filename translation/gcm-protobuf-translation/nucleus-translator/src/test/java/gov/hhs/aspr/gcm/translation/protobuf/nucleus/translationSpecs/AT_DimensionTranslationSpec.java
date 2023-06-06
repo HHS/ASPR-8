@@ -6,21 +6,21 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.gcm.translation.protobuf.nucleus.NucleusTranslator;
-import gov.hhs.aspr.gcm.translation.protobuf.nucleus.input.PlanDataInput;
-import gov.hhs.aspr.gcm.translation.protobuf.nucleus.testsupport.ExamplePlanData;
+import gov.hhs.aspr.gcm.translation.protobuf.nucleus.input.DimensionInput;
+import gov.hhs.aspr.gcm.translation.protobuf.nucleus.testsupport.ExampleDimension;
 import gov.hhs.aspr.translation.core.TranslationController;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
-import nucleus.PlanData;
+import nucleus.Dimension;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestForCoverage;
 import util.annotations.UnitTestMethod;
 
-public class AT_PlanDataTranslationSpec {
+public class AT_DimensionTranslationSpec {
     
     @Test
-    @UnitTestConstructor(target = PlanDataTranslationSpec.class, args = {})
+    @UnitTestConstructor(target = DimensionTranslationSpec.class, args = {})
     public void testConstructor() {
-        assertNotNull(new PlanDataTranslationSpec());
+        assertNotNull(new DimensionTranslationSpec());
     }
 
     @Test
@@ -34,31 +34,31 @@ public class AT_PlanDataTranslationSpec {
         ProtobufTranslationEngine protobufTranslationEngine = translationController
                 .getTranslationEngine(ProtobufTranslationEngine.class);
 
-        PlanDataTranslationSpec translationSpec = new PlanDataTranslationSpec();
+        DimensionTranslationSpec translationSpec = new DimensionTranslationSpec();
         translationSpec.init(protobufTranslationEngine);
 
-        PlanData expectedAppValue = new ExamplePlanData(15);
+        Dimension expectedAppValue = new ExampleDimension("test");
 
-        PlanDataInput inputValue = translationSpec.convertAppObject(expectedAppValue);
+        DimensionInput inputValue = translationSpec.convertAppObject(expectedAppValue);
 
-        PlanData actualAppValue = translationSpec.convertInputObject(inputValue);
+        Dimension actualAppValue = translationSpec.convertInputObject(inputValue);
 
         assertEquals(expectedAppValue, actualAppValue);
     }
 
     @Test
-    @UnitTestMethod(target = PlanDataTranslationSpec.class, name = "getAppObjectClass", args = {})
+    @UnitTestMethod(target = DimensionTranslationSpec.class, name = "getAppObjectClass", args = {})
     public void testGetAppObjectClass() {
-        PlanDataTranslationSpec translationSpec = new PlanDataTranslationSpec();
+        DimensionTranslationSpec translationSpec = new DimensionTranslationSpec();
 
-        assertEquals(PlanData.class, translationSpec.getAppObjectClass());
+        assertEquals(Dimension.class, translationSpec.getAppObjectClass());
     }
 
     @Test
-    @UnitTestMethod(target = PlanDataTranslationSpec.class, name = "getInputObjectClass", args = {})
+    @UnitTestMethod(target = DimensionTranslationSpec.class, name = "getInputObjectClass", args = {})
     public void testGetInputObjectClass() {
-        PlanDataTranslationSpec translationSpec = new PlanDataTranslationSpec();
+        DimensionTranslationSpec translationSpec = new DimensionTranslationSpec();
 
-        assertEquals(PlanDataInput.class, translationSpec.getInputObjectClass());
+        assertEquals(DimensionInput.class, translationSpec.getInputObjectClass());
     }
 }

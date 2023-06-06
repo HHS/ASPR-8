@@ -4,7 +4,9 @@ import gov.hhs.aspr.translation.core.Translator;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
 import gov.hhs.aspr.gcm.translation.protobuf.nucleus.input.PlanQueueDataInput;
 import gov.hhs.aspr.gcm.translation.protobuf.nucleus.input.SimulationStateInput;
-import gov.hhs.aspr.gcm.translation.protobuf.nucleus.simObjects.translationSpecs.ExamplePlanDataTranslationSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.nucleus.testsupport.translationSpecs.ExampleDimensionTranslationSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.nucleus.testsupport.translationSpecs.ExamplePlanDataTranslationSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.nucleus.translationSpecs.DimensionTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.nucleus.translationSpecs.PlanDataTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.nucleus.translationSpecs.PlanQueueDataTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.nucleus.translationSpecs.PlannerTranslationSpec;
@@ -34,6 +36,8 @@ public class NucleusTranslator {
                             .addTranslationSpec(new ExamplePlanDataTranslationSpec())
                             .addTranslationSpec(new PlanQueueDataTranslationSpec())
                             .addTranslationSpec(new PlannerTranslationSpec())
+                            .addTranslationSpec(new DimensionTranslationSpec())
+                            .addTranslationSpec(new ExampleDimensionTranslationSpec())
                             .addTranslationSpec(new PlanDataTranslationSpec());
 
                     translationEngineBuilder

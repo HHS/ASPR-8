@@ -1,4 +1,4 @@
-package gov.hhs.aspr.gcm.translation.protobuf.nucleus.simObjects;
+package gov.hhs.aspr.gcm.translation.protobuf.nucleus.testsupport;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;

@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import gov.hhs.aspr.gcm.translation.protobuf.nucleus.input.ExperimentParameterDataInput;
 import gov.hhs.aspr.gcm.translation.protobuf.nucleus.input.PlanQueueDataInput;
 import gov.hhs.aspr.gcm.translation.protobuf.nucleus.input.SimulationStateInput;
-import gov.hhs.aspr.gcm.translation.protobuf.nucleus.simObjects.translationSpecs.ExamplePlanDataTranslationSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.nucleus.testsupport.translationSpecs.ExamplePlanDataTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.nucleus.translationSpecs.PlanDataTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.nucleus.translationSpecs.PlanQueueDataTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.nucleus.translationSpecs.PlannerTranslationSpec;
