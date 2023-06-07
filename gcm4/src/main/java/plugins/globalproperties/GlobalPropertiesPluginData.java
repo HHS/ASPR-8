@@ -207,6 +207,25 @@ public final class GlobalPropertiesPluginData implements PluginData {
 			result = prime * result + getGlobalPropertyValuesHashCode();
 			return result;
 		}
+		
+		
+
+		@Override
+		public String toString() {
+			StringBuilder builder = new StringBuilder();
+			builder.append("Data [globalPropertyDefinitions=");
+			builder.append(globalPropertyDefinitions);
+			builder.append(", globalPropertyDefinitionTimes=");
+			builder.append(globalPropertyDefinitionTimes);
+			builder.append(", globalPropertyValues=");
+			builder.append(globalPropertyValues);
+			builder.append(", globalPropertyTimes=");
+			builder.append(globalPropertyTimes);
+			builder.append(", locked=");
+			builder.append(locked);
+			builder.append("]");
+			return builder.toString();
+		}
 
 		private int getGlobalPropertyTimesHashCode() {
 			int result = 0;
@@ -463,4 +482,13 @@ public final class GlobalPropertiesPluginData implements PluginData {
 		return true;
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder builder2 = new StringBuilder();
+		builder2.append("GlobalPropertiesPluginData [data=");
+		builder2.append(data);
+		builder2.append("]");
+		return builder2.toString();
+	}	
+	
 }
