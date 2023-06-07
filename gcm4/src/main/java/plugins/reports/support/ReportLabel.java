@@ -16,4 +16,7 @@ public interface ReportLabel {
 
 	@Override
 	public boolean equals(Object obj);
+	
+	@Override
+	public String toString();
 }
