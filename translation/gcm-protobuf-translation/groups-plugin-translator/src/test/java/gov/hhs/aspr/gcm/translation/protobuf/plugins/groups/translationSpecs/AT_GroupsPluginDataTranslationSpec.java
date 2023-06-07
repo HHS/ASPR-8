@@ -12,6 +12,7 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.GroupsTranslator;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.input.GroupsPluginDataInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.PeopleTranslator;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.PropertiesTranslator;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.ReportsTranslator;
 import gov.hhs.aspr.translation.core.TranslationController;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
 import plugins.groups.GroupsPluginData;
@@ -37,6 +38,7 @@ public class AT_GroupsPluginDataTranslationSpec {
                 .addTranslator(GroupsTranslator.getTranslator())
                 .addTranslator(PropertiesTranslator.getTranslator())
                 .addTranslator(PeopleTranslator.getTranslator())
+                .addTranslator(ReportsTranslator.getTranslator())
                 .build();
 
         ProtobufTranslationEngine protobufTranslationEngine = translationController

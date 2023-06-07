@@ -1,8 +1,12 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.groups;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.input.GroupIdInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.translationSpecs.GroupIdTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.translationSpecs.GroupMemberFilterTranslationSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.translationSpecs.GroupPropertyDimensionTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.translationSpecs.GroupPropertyIdTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.translationSpecs.GroupPropertyReportPluginDataTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.translationSpecs.GroupTypeIdTranslationSpec;
@@ -15,6 +19,7 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.translationSpecs.Tes
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.PeopleTranslatorId;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.PropertiesTranslatorId;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.ReportsTranslatorId;
+import gov.hhs.aspr.translation.core.TranslationSpec;
 import gov.hhs.aspr.translation.core.Translator;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
 
@@ -29,47 +34,47 @@ public class GroupsTranslator {
     private GroupsTranslator() {
     }
 
-    private static Translator.Builder builder(boolean withReport) {
+    protected static List<TranslationSpec<?, ?>> getTranslationSpecs() {
+        List<TranslationSpec<?, ?>> list = new ArrayList<>();
+
+        list.add(new GroupsPluginDataTranslationSpec());
+        list.add(new GroupIdTranslationSpec());
+        list.add(new GroupTypeIdTranslationSpec());
+        list.add(new GroupPropertyIdTranslationSpec());
+        list.add(new TestGroupTypeIdTranslationSpec());
+        list.add(new GroupMemberFilterTranslationSpec());
+        list.add(new GroupsForPersonAndGroupTypeFilterTranslationSpec());
+        list.add(new GroupsForPersonFilterTranslationSpec());
+        list.add(new GroupTypesForPersonFilterTranslationSpec());
+        list.add(new GroupPropertyDimensionTranslationSpec());
+        list.add(new TestGroupPropertyIdTranslationSpec());
+        list.add(new GroupPropertyReportPluginDataTranslationSpec());
+
+        return list;
+    };
+
+    private static Translator.Builder builder() {
         Translator.Builder builder = Translator.builder()
                 .setTranslatorId(GroupsTranslatorId.TRANSLATOR_ID)
                 .addDependency(PropertiesTranslatorId.TRANSLATOR_ID)
                 .addDependency(PeopleTranslatorId.TRANSLATOR_ID)
+                .addDependency(ReportsTranslatorId.TRANSLATOR_ID)
                 .setInitializer((translatorContext) -> {
                     ProtobufTranslationEngine.Builder translationEngineBuilder = translatorContext
                             .getTranslationEngineBuilder(ProtobufTranslationEngine.Builder.class);
 
-                    translationEngineBuilder
-                            .addTranslationSpec(new GroupsPluginDataTranslationSpec())
-                            .addTranslationSpec(new GroupIdTranslationSpec())
-                            .addTranslationSpec(new GroupTypeIdTranslationSpec())
-                            .addTranslationSpec(new GroupPropertyIdTranslationSpec())
-                            .addTranslationSpec(new TestGroupTypeIdTranslationSpec())
-                            .addTranslationSpec(new GroupMemberFilterTranslationSpec())
-                            .addTranslationSpec(new GroupsForPersonAndGroupTypeFilterTranslationSpec())
-                            .addTranslationSpec(new GroupsForPersonFilterTranslationSpec())
-                            .addTranslationSpec(new GroupTypesForPersonFilterTranslationSpec())
-                            .addTranslationSpec(new TestGroupPropertyIdTranslationSpec());
-
-                    if (withReport) {
-                        translationEngineBuilder.addTranslationSpec(new GroupPropertyReportPluginDataTranslationSpec());
+                    for (TranslationSpec<?, ?> translationSpec : getTranslationSpecs()) {
+                        translationEngineBuilder.addTranslationSpec(translationSpec);
                     }
 
                     translationEngineBuilder
                             .addFieldToIncludeDefaultValue(GroupIdInput.getDescriptor().findFieldByName("id"));
                 });
 
-        if (withReport) {
-            builder.addDependency(ReportsTranslatorId.TRANSLATOR_ID);
-        }
-
         return builder;
     }
 
-    public static Translator getTranslatorWithReport() {
-        return builder(true).build();
-    }
-
     public static Translator getTranslator() {
-        return builder(false).build();
+        return builder().build();
     }
 }
