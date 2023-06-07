@@ -529,9 +529,7 @@ public final class Experiment {
 			pluginMap.put(plugin.getPluginId(), plugin);
 			dataBuilderMap.put(plugin.getPluginId(), list);
 			for (final PluginData pluginData : plugin.getPluginDatas()) {
-				PluginDataBuilder pluginDataBuilder = pluginData.getCloneBuilder();
-				list.add(pluginDataBuilder);
-				contextBuilder.add(pluginDataBuilder);
+				list.add(contextBuilder.add(pluginData));
 			}
 		}
 		final DimensionContext dimensionContext = contextBuilder.build();
