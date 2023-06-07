@@ -1119,6 +1119,57 @@ public final class MaterialsPluginData implements PluginData {
 			return true;
 		}
 
+		@Override
+		public String toString() {
+			StringBuilder builder = new StringBuilder();
+			builder.append("Data [materialsProducerIds=");
+			builder.append(materialsProducerIds);
+			builder.append(", materialIds=");
+			builder.append(materialIds);
+			builder.append(", batchPropertyDefinitions=");
+			builder.append(batchPropertyDefinitions);
+			builder.append(", materialsProducerPropertyDefinitions=");
+			builder.append(materialsProducerPropertyDefinitions);
+			builder.append(", materialsProducerPropertyValues=");
+			builder.append(materialsProducerPropertyValues);
+			builder.append(", emptyMaterialsProducerPropertyValuesMap=");
+			builder.append(emptyMaterialsProducerPropertyValuesMap);
+			builder.append(", materialsProducerResourceLevels=");
+			builder.append(materialsProducerResourceLevels);
+			builder.append(", batchIds=");
+			builder.append(batchIds);
+			builder.append(", batchMaterials=");
+			builder.append(batchMaterials);
+			builder.append(", batchAmounts=");
+			builder.append(batchAmounts);
+			builder.append(", batchMaterialsProducers=");
+			builder.append(batchMaterialsProducers);
+			builder.append(", batchPropertyValues=");
+			builder.append(batchPropertyValues);
+			builder.append(", emptyBatchPropertyValues=");
+			builder.append(emptyBatchPropertyValues);
+			builder.append(", stageIds=");
+			builder.append(stageIds);
+			builder.append(", stageOffers=");
+			builder.append(stageOffers);
+			builder.append(", stageMaterialsProducers=");
+			builder.append(stageMaterialsProducers);
+			builder.append(", stageBatches=");
+			builder.append(stageBatches);
+			builder.append(", batchStages=");
+			builder.append(batchStages);
+			builder.append(", nextBatchRecordId=");
+			builder.append(nextBatchRecordId);
+			builder.append(", nextStageRecordId=");
+			builder.append(nextStageRecordId);
+			builder.append(", locked=");
+			builder.append(locked);
+			builder.append("]");
+			return builder.toString();
+		}
+		
+		
+
 	}
 
 	/**
@@ -1593,4 +1644,15 @@ public final class MaterialsPluginData implements PluginData {
 	public int hashCode() {
 		return Objects.hash(data);
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder2 = new StringBuilder();
+		builder2.append("MaterialsPluginData [data=");
+		builder2.append(data);
+		builder2.append("]");
+		return builder2.toString();
+	}
+	
+	
 }
