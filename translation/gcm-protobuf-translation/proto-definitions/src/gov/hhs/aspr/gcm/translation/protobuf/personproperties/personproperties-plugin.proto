@@ -37,6 +37,12 @@ message PersonPropertyValueMapInput {
     repeated PersonPropertyValueInput propertyValues = 2;
 }
 
+message PersonPropertyDimensionInput {
+    PersonPropertyIdInput personPropertyId = 1;
+    bool trackTimes = 2;
+    repeated google.protobuf.Any values = 3;
+}
+
 message PersonPropertiesPluginDataInput {
     repeated PropertyDefinitionMapInput personPropertyDefinitions = 1;
     repeated PersonPropertyValueMapInput personPropertyValues = 2;

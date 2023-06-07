@@ -63,6 +63,12 @@ message GroupInput {
     GroupTypeIdInput groupTypeId = 2;
 }
 
+message GroupPropertyDimensionInput {
+    GroupIdInput groupId = 1;
+    GroupPropertyIdInput groupPropertyId = 2;
+    repeated google.protobuf.Any values = 3;
+}
+
 message GroupsPluginDataInput {
     repeated GroupTypeIdInput groupTypeIds = 1;
     repeated GroupInput groups = 2;

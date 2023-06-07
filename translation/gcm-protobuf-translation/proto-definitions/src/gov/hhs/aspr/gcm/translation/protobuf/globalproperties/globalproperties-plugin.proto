@@ -21,6 +21,12 @@ enum TestGlobalPropertyIdInput {
     GLOBAL_PROPERTY_6_DOUBLE_IMMUTABLE = 5;
 }
 
+message GlobalPropertyDimensionInput {
+    GlobalPropertyIdInput globalPropertyId = 1;
+    double assignmentTime = 2;
+    repeated google.protobuf.Any values = 3;
+}
+
 message GlobalPropertiesPluginDataInput {
     repeated PropertyDefinitionMapInput globalPropertyDefinitinions = 1;
     repeated PropertyValueMapInput globalPropertyValues = 2;
