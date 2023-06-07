@@ -2,6 +2,7 @@ package plugins.globalproperties.support;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import nucleus.Dimension;
 import nucleus.DimensionContext;
@@ -27,6 +28,29 @@ public final class GlobalPropertyDimension implements Dimension {
 			values.addAll(data.values);
 			assignmentTime = data.assignmentTime;
 		}
+
+		@Override
+		public int hashCode() {
+			return Objects.hash(globalPropertyId, values, assignmentTime);
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (obj == null) {
+				return false;
+			}
+			if (getClass() != obj.getClass()) {
+				return false;
+			}
+			Data other = (Data) obj;
+			return Objects.equals(globalPropertyId, other.globalPropertyId)
+					&& Objects.equals(values, other.values)
+					&& assignmentTime == other.assignmentTime;
+		}
+
 	}
 
 	/**
@@ -48,8 +72,9 @@ public final class GlobalPropertyDimension implements Dimension {
 		 * Returns the GlobalPropertyDimension from the collected data.
 		 * 
 		 * @throws ContractException
-		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
-		 *             global property id was not assigned</li>
+		 *                           <ul>
+		 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
+		 *                           the global property id was not assigned</li>
 		 * 
 		 * 
 		 */
@@ -68,8 +93,9 @@ public final class GlobalPropertyDimension implements Dimension {
 		 * Sets the global property for the dimension. Defaults to null.
 		 * 
 		 * @throws ContractException
-		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
-		 *             value is null</li>
+		 *                           <ul>
+		 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
+		 *                           the global property id is null</li>
 		 * 
 		 */
 		public Builder setGlobalPropertyId(GlobalPropertyId globalPropertyId) {
@@ -82,8 +108,9 @@ public final class GlobalPropertyDimension implements Dimension {
 		 * Adds a value to the dimension.
 		 * 
 		 * @throws ContractException
-		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE} if the
-		 *             value is null</li>
+		 *                           <ul>
+		 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE}
+		 *                           if the value is null</li>
 		 * 
 		 */
 		public Builder addValue(Object value) {
@@ -122,7 +149,7 @@ public final class GlobalPropertyDimension implements Dimension {
 
 	@Override
 	public List<String> executeLevel(DimensionContext dimensionContext, int level) {
-		GlobalPropertiesPluginData.Builder builder = dimensionContext.get(GlobalPropertiesPluginData.Builder.class);
+		GlobalPropertiesPluginData.Builder builder = dimensionContext.getPluginDataBuilder(GlobalPropertiesPluginData.Builder.class);
 		Object value = data.values.get(level);
 		builder.setGlobalPropertyValue(data.globalPropertyId, value, data.assignmentTime);
 		List<String> result = new ArrayList<>();
@@ -162,4 +189,25 @@ public final class GlobalPropertyDimension implements Dimension {
 			throw new ContractException(PropertyError.NULL_PROPERTY_ID);
 		}
 	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(data);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		GlobalPropertyDimension other = (GlobalPropertyDimension) obj;
+		return Objects.equals(data, other.data);
+	}
+
 }
