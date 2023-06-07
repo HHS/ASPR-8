@@ -48,6 +48,20 @@ public final class GroupsPluginData implements PluginData {
 		private GroupId groupId;
 		private GroupTypeId groupTypeId;
 		private List<GroupPropertyValue> groupPropertyValues;
+		@Override
+		public String toString() {
+			StringBuilder builder = new StringBuilder();
+			builder.append("GroupSpecification [groupId=");
+			builder.append(groupId);
+			builder.append(", groupTypeId=");
+			builder.append(groupTypeId);
+			builder.append(", groupPropertyValues=");
+			builder.append(groupPropertyValues);
+			builder.append("]");
+			return builder.toString();
+		}
+		
+		
 	}
 
 	private static class Data {
@@ -273,8 +287,23 @@ public final class GroupsPluginData implements PluginData {
 
 		@Override
 		public String toString() {
-			return "Data{" + "groupPropertyDefinitions=" + groupPropertyDefinitions + ", groupTypeIds=" + groupTypeIds + ", emptyGroupList=" + emptyGroupList + ", personCount=" + personCount
-					+ ", locked=" + locked + ", groupSpecifications=" + groupSpecifications + ", emptyGroupPropertyValues=" + emptyGroupPropertyValues + ", groupMemberships=" + groupMemberships + '}';
+			StringBuilder builder = new StringBuilder();
+			builder.append("Data [nextGroupIdValue=");
+			builder.append(nextGroupIdValue);
+			builder.append(", groupPropertyDefinitions=");
+			builder.append(groupPropertyDefinitions);
+			builder.append(", groupTypeIds=");
+			builder.append(groupTypeIds);
+			builder.append(", personCount=");
+			builder.append(personCount);
+			builder.append(", locked=");
+			builder.append(locked);
+			builder.append(", groupSpecifications=");
+			builder.append(groupSpecifications);
+			builder.append(", groupMemberships=");
+			builder.append(groupMemberships);
+			builder.append("]");
+			return builder.toString();
 		}
 
 		public Data() {

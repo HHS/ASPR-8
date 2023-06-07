@@ -187,6 +187,7 @@ public class AT_GroupsDataManager {
 												.setGroupPropertyValue(expectedGroupIds.get(0), groupPropertyDefinitionInitialization2.getPropertyId(), 57)
 												.setGroupPropertyValue(expectedGroupIds.get(1), groupPropertyDefinitionInitialization3.getPropertyId(), 34.2).build();
 		assertEquals(expectedPluginData, actualPluginData);
+		
 	}
 
 	@Test
@@ -5089,9 +5090,6 @@ public class AT_GroupsDataManager {
 		pluginDatas.add(testStateContinuity(10));
 
 		assertEquals(1, pluginDatas.size());
-
-		//System.out.println(pluginDatas.iterator().next());
-
 	}
 
 	private void performRandomGroupAction(ActorContext actorContext) {
