@@ -182,6 +182,7 @@ public class AT_StochasticsDataManager {
 			}
 		}
 		assertNotNull(result);
+		
 		return result;
 
 	}
