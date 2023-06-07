@@ -2,6 +2,7 @@ package plugins.people.datamanagers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -169,7 +170,7 @@ public final class AT_PeopleDataManager {
 																.build()//
 																.execute();
 
-		Map<PeoplePluginData, Integer> outputItems = testOutputConsumer.getOutputItems(PeoplePluginData.class);
+		Map<PeoplePluginData, Integer> outputItems = testOutputConsumer.getOutputItemMap(PeoplePluginData.class);
 		assertEquals(1, outputItems.size());
 		PeoplePluginData actualPluginData = outputItems.keySet().iterator().next();
 
@@ -217,7 +218,7 @@ public final class AT_PeopleDataManager {
 											.setSimulationHaltTime(2).build()//
 											.execute();
 
-		outputItems = testOutputConsumer.getOutputItems(PeoplePluginData.class);
+		outputItems = testOutputConsumer.getOutputItemMap(PeoplePluginData.class);
 		assertEquals(1, outputItems.size());
 		actualPluginData = outputItems.keySet().iterator().next();
 
@@ -659,7 +660,7 @@ public final class AT_PeopleDataManager {
 		 * break up the run.
 		 */
 
-		Set<PeoplePluginData> pluginDatas = new LinkedHashSet<>();
+		Set<String> pluginDatas = new LinkedHashSet<>();
 		pluginDatas.add(testStateContinuity(1));
 		pluginDatas.add(testStateContinuity(5));
 		pluginDatas.add(testStateContinuity(10));
@@ -673,7 +674,8 @@ public final class AT_PeopleDataManager {
 	 * several days. Attempts to stop and start the simulation by the given
 	 * number of increments.
 	 */
-	private PeoplePluginData testStateContinuity(int incrementCount) {
+	private String testStateContinuity(int incrementCount) {
+		String result = null;
 
 		/*
 		 * Build the RunContinuityPluginData with five context consumers that
@@ -687,7 +689,7 @@ public final class AT_PeopleDataManager {
 				peopleDataManager.addPerson(PersonConstructionData.builder().build());
 			}
 		});
-		
+
 		continuityBuilder.addContextConsumer(1.2, (c) -> {
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			peopleDataManager.removePerson(new PersonId(0));
@@ -695,7 +697,7 @@ public final class AT_PeopleDataManager {
 				peopleDataManager.addPerson(PersonConstructionData.builder().build());
 			}
 		});
-		
+
 		continuityBuilder.addContextConsumer(1.8, (c) -> {
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			peopleDataManager.removePerson(new PersonId(3));
@@ -704,7 +706,7 @@ public final class AT_PeopleDataManager {
 				peopleDataManager.addPerson(PersonConstructionData.builder().build());
 			}
 		});
-		
+
 		continuityBuilder.addContextConsumer(2.05, (c) -> {
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			peopleDataManager.removePerson(new PersonId(1));
@@ -715,13 +717,15 @@ public final class AT_PeopleDataManager {
 				peopleDataManager.addPerson(PersonConstructionData.builder().build());
 			}
 		});
-		
+
 		continuityBuilder.addContextConsumer(4.2, (c) -> {
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 
 			for (int i = 0; i < 3; i++) {
 				peopleDataManager.addPerson(PersonConstructionData.builder().build());
 			}
+
+			c.releaseOutput(peopleDataManager.toString());
 		});
 
 		RunContinuityPluginData runContinuityPluginData = continuityBuilder.build();
@@ -775,9 +779,16 @@ public final class AT_PeopleDataManager {
 
 			// retrieve the run continuity plugin data
 			runContinuityPluginData = outputConsumer.getOutputItem(RunContinuityPluginData.class).get();
+			
+			Optional<String> optional = outputConsumer.getOutputItem(String.class);
+			if(optional.isPresent()) {
+				result = optional.get();
+			}
+			
 		}
 
-		return peoplePluginData;
+		assertNotNull(result);
+		return result;
 
 	}
 

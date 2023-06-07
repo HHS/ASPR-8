@@ -76,11 +76,11 @@ public final class IntValueContainer {
 
 		public void setValue(int index, long value);
 
-		public int size();
-
 		public void setCapacity(int capacity);
 
 		public int getCapacity();
+		
+		public String toString();
 
 	}
 
@@ -90,7 +90,6 @@ public final class IntValueContainer {
 	private static class LongArray implements SubTypeArray {
 		private long[] values;
 		private long defaultValue;
-		private int size;
 
 		public LongArray(int capacity, long defaultValue) {
 			values = new long[capacity];
@@ -99,17 +98,15 @@ public final class IntValueContainer {
 					values[i] = defaultValue;
 				}
 			}
-			size = values.length;
 			this.defaultValue = defaultValue;
 		}
 
 		public LongArray(SubTypeArray subTypeArray) {
 			this.defaultValue = subTypeArray.getDefaultValue();
-			values = new long[subTypeArray.size()];
+			values = new long[subTypeArray.getCapacity()];
 			for (int i = 0; i < values.length; i++) {
 				values[i] = (int) subTypeArray.getValue(i);
 			}
-			size = values.length;
 		}
 
 		private void grow(int capacity) {
@@ -133,18 +130,11 @@ public final class IntValueContainer {
 			if (index >= values.length) {
 				grow(index + 1);
 			}
-			if (index >= size) {
-				size = index + 1;
-			}
 
 			values[index] = value;
 
 		}
 
-		@Override
-		public int size() {
-			return size;
-		}
 
 		@Override
 		public IntValueType getIntValueType() {
@@ -168,6 +158,19 @@ public final class IntValueContainer {
 			return values.length;
 		}
 
+		@Override
+		public String toString() {
+			StringBuilder builder = new StringBuilder();
+			builder.append("LongArray [values=");
+			builder.append(Arrays.toString(values));
+			builder.append(", defaultValue=");
+			builder.append(defaultValue);
+			builder.append("]");
+			return builder.toString();
+		}
+		
+		
+
 	}
 	/*
 	 * SubTypeArray implementor for ints
@@ -176,7 +179,6 @@ public final class IntValueContainer {
 	private static class IntArray implements SubTypeArray {
 		private int[] values;
 		private int defaultValue;
-		private int size;
 
 		public IntArray(int capacity, int defaultValue) {
 			values = new int[capacity];
@@ -185,17 +187,15 @@ public final class IntValueContainer {
 					values[i] = defaultValue;
 				}
 			}
-			size = values.length;
 			this.defaultValue = defaultValue;
 		}
 
 		public IntArray(SubTypeArray subTypeArray) {
 			this.defaultValue = (int) subTypeArray.getDefaultValue();
-			values = new int[subTypeArray.size()];
+			values = new int[subTypeArray.getCapacity()];
 			for (int i = 0; i < values.length; i++) {
 				values[i] = (int) subTypeArray.getValue(i);
 			}
-			size = values.length;
 		}
 
 		private void grow(int capacity) {
@@ -219,16 +219,8 @@ public final class IntValueContainer {
 			if (index >= values.length) {
 				grow(index + 1);
 			}
-			if (index >= size) {
-				size = index + 1;
-			}
 
 			values[index] = (int) value;
-		}
-
-		@Override
-		public int size() {
-			return size;
 		}
 
 		@Override
@@ -253,6 +245,19 @@ public final class IntValueContainer {
 			return values.length;
 		}
 
+		@Override
+		public String toString() {
+			StringBuilder builder = new StringBuilder();
+			builder.append("IntArray [values=");
+			builder.append(Arrays.toString(values));
+			builder.append(", defaultValue=");
+			builder.append(defaultValue);
+			builder.append("]");
+			return builder.toString();
+		}
+		
+		
+
 	}
 
 	/*
@@ -261,7 +266,6 @@ public final class IntValueContainer {
 	private static class ShortArray implements SubTypeArray {
 		private short[] values;
 		private short defaultValue;
-		private int size;
 
 		public ShortArray(int capacity, short defaultValue) {
 			values = new short[capacity];
@@ -270,17 +274,15 @@ public final class IntValueContainer {
 					values[i] = defaultValue;
 				}
 			}
-			size = values.length;
 			this.defaultValue = defaultValue;
 		}
 
 		public ShortArray(SubTypeArray subTypeArray) {
 			this.defaultValue = (short) subTypeArray.getDefaultValue();
-			values = new short[subTypeArray.size()];
+			values = new short[subTypeArray.getCapacity()];
 			for (int i = 0; i < values.length; i++) {
 				values[i] = (short) subTypeArray.getValue(i);
 			}
-			size = values.length;
 		}
 
 		private void grow(int capacity) {
@@ -304,17 +306,10 @@ public final class IntValueContainer {
 			if (index >= values.length) {
 				grow(index + 1);
 			}
-			if (index >= size) {
-				size = index + 1;
-			}
 
 			values[index] = (short) value;
 		}
 
-		@Override
-		public int size() {
-			return size;
-		}
 
 		@Override
 		public IntValueType getIntValueType() {
@@ -338,6 +333,16 @@ public final class IntValueContainer {
 			return values.length;
 		}
 
+		@Override
+		public String toString() {
+			StringBuilder builder = new StringBuilder();
+			builder.append("ShortArray [values=");
+			builder.append(Arrays.toString(values));
+			builder.append(", defaultValue=");
+			builder.append(defaultValue);
+			builder.append("]");
+			return builder.toString();
+		}
 	}
 
 	/*
@@ -346,7 +351,7 @@ public final class IntValueContainer {
 	private static class ByteArray implements SubTypeArray {
 		private byte[] values;
 		private byte defaultValue;
-		private int size;
+		
 
 		public ByteArray(int capacity, byte defaultValue) {
 			values = new byte[capacity];
@@ -368,9 +373,6 @@ public final class IntValueContainer {
 			if (index >= values.length) {
 				grow(index + 1);
 			}
-			if (index >= size) {
-				size = index + 1;
-			}
 			values[index] = (byte) value;
 		}
 
@@ -383,11 +385,6 @@ public final class IntValueContainer {
 					values[i] = defaultValue;
 				}
 			}
-		}
-
-		@Override
-		public int size() {
-			return size;
 		}
 
 		@Override
@@ -411,6 +408,19 @@ public final class IntValueContainer {
 		public int getCapacity() {
 			return values.length;
 		}
+
+		@Override
+		public String toString() {
+			StringBuilder builder = new StringBuilder();
+			builder.append("ByteArray [values=");
+			builder.append(Arrays.toString(values));
+			builder.append(", defaultValue=");
+			builder.append(defaultValue);
+			builder.append("]");
+			return builder.toString();
+		}
+		
+		
 
 	}
 
@@ -530,7 +540,7 @@ public final class IntValueContainer {
 			throw new ContractException(PropertyError.NEGATIVE_INDEX);
 		}
 		long result;
-		if (index < subTypeArray.size()) {
+		if (index < subTypeArray.getCapacity()) {
 			result = subTypeArray.getValue(index);
 		} else {
 			result = subTypeArray.getDefaultValue();
@@ -559,7 +569,7 @@ public final class IntValueContainer {
 			throw new ContractException(PropertyError.NEGATIVE_INDEX);
 		}
 		long result;
-		if (index < subTypeArray.size()) {
+		if (index < subTypeArray.getCapacity()) {
 			result = subTypeArray.getValue(index);
 		} else {
 			result = subTypeArray.getDefaultValue();
@@ -584,7 +594,7 @@ public final class IntValueContainer {
 	 */
 	public int getValueAsInt(int index) {
 		long result;
-		if (index < subTypeArray.size()) {
+		if (index < subTypeArray.getCapacity()) {
 			result = subTypeArray.getValue(index);
 		} else {
 			result = subTypeArray.getDefaultValue();
@@ -609,7 +619,7 @@ public final class IntValueContainer {
 			throw new ContractException(PropertyError.NEGATIVE_INDEX);
 		}
 		long result;
-		if (index < subTypeArray.size()) {
+		if (index < subTypeArray.getCapacity()) {
 			result = subTypeArray.getValue(index);
 		} else {
 			result = subTypeArray.getDefaultValue();
@@ -683,14 +693,6 @@ public final class IntValueContainer {
 			subTypeArray = rebuildSubTypeArray(value);
 		}
 		subTypeArray.setValue(index, value);
-	}
-
-	/**
-	 * Returns the size of this container, determined by the highest index for
-	 * which a value assignment has occurred.
-	 */
-	public int size() {
-		return subTypeArray.size();
 	}
 
 	/**
@@ -835,5 +837,16 @@ public final class IntValueContainer {
 		long decrementedValue = Math.subtractExact(getValueAsLong(index), value);
 		setLongValue(index, decrementedValue);
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("IntValueContainer [subTypeArray=");
+		builder.append(subTypeArray);
+		builder.append("]");
+		return builder.toString();
+	}
+	
+	
 
 }

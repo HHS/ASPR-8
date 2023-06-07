@@ -43,7 +43,7 @@ public class AT_TestSimulationOutputConsumer {
 		ContractException contractException = assertThrows(ContractException.class, () -> outputConsumer.accept(null));
 		assertEquals(TestError.NULL_OUTPUT_ITEM, contractException.getErrorType());
 
-		Map<Boolean, Integer> actualOutput = outputConsumer.getOutputItems(Boolean.class);
+		Map<Boolean, Integer> actualOutput = outputConsumer.getOutputItemMap(Boolean.class);
 		assertEquals(expectedOutput, actualOutput);
 
 
@@ -108,10 +108,10 @@ public class AT_TestSimulationOutputConsumer {
 			expectedLongValues.put(i, expectedLongValuesM.get(i).getValue());
 		}
 
-		assertEquals(expectedIntValues, outputConsumer.getOutputItems(Integer.class));
-		assertEquals(expectedDoubleValues, outputConsumer.getOutputItems(Double.class));
-		assertEquals(expectedFloatValues, outputConsumer.getOutputItems(Float.class));
-		assertEquals(expectedLongValues, outputConsumer.getOutputItems(Long.class));
+		assertEquals(expectedIntValues, outputConsumer.getOutputItemMap(Integer.class));
+		assertEquals(expectedDoubleValues, outputConsumer.getOutputItemMap(Double.class));
+		assertEquals(expectedFloatValues, outputConsumer.getOutputItemMap(Float.class));
+		assertEquals(expectedLongValues, outputConsumer.getOutputItemMap(Long.class));
 	}
 
 }

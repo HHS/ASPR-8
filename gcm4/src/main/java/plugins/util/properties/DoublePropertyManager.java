@@ -9,7 +9,7 @@ import util.errors.ContractException;
  * 
  *
  */
-public final class DoublePropertyManager extends AbstractIndexedPropertyManager {
+public final class DoublePropertyManager implements IndexedPropertyManager {
 
 	/*
 	 * A container, indexed by person id, that stores Double values as an array
@@ -31,7 +31,13 @@ public final class DoublePropertyManager extends AbstractIndexedPropertyManager 
 	 * 
 	 */
 	public DoublePropertyManager(PropertyDefinition propertyDefinition, int initialSize) {
-		super(propertyDefinition, initialSize);
+		if (propertyDefinition == null) {
+			throw new ContractException(PropertyError.NULL_PROPERTY_DEFINITION);
+		}
+		
+		if (initialSize < 0) {
+			throw new ContractException(PropertyError.NEGATIVE_INITIAL_SIZE);
+		}
 
 		if (propertyDefinition.getType() != Double.class) {
 			throw new ContractException(PropertyError.PROPERTY_DEFINITION_IMPROPER_TYPE, "Requires a property definition with Double type ");
@@ -55,15 +61,37 @@ public final class DoublePropertyManager extends AbstractIndexedPropertyManager 
 
 	@Override
 	public void setPropertyValue(int id, Object propertyValue) {
-		super.setPropertyValue(id, propertyValue);
+		if (id < 0) {
+			throw new ContractException(PropertyError.NEGATIVE_INDEX);
+		}
 		Double d = (Double) propertyValue;
 		doubleValueContainer.setValue(id, d);
 	}
 
 	@Override
 	public void incrementCapacity(int count) {
-		super.incrementCapacity(count);
+		if (count < 0) {
+			throw new ContractException(PropertyError.NEGATIVE_CAPACITY_INCREMENT);
+		}
 		doubleValueContainer.setCapacity(doubleValueContainer.getCapacity() + count);
 	}
+	
+	@Override
+	public void removeId(int id) {
+		if (id < 0) {
+			throw new ContractException(PropertyError.NEGATIVE_INDEX);
+		}
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("DoublePropertyManager [doubleValueContainer=");
+		builder.append(doubleValueContainer);
+		builder.append("]");
+		return builder.toString();
+	}
+	
+	
 
 }

@@ -204,22 +204,22 @@ public class AT_IntValueContainer {
 
 		IntValueContainer intValueContainer = new IntValueContainer(0);
 
-		assertTrue(intValueContainer.getCapacity() >= intValueContainer.size());
+		assertTrue(intValueContainer.getCapacity() >= 0);
 
 		intValueContainer.setIntValue(1, 1234);
-		assertTrue(intValueContainer.getCapacity() >= intValueContainer.size());
+		assertTrue(intValueContainer.getCapacity() >= 1);
 
 		intValueContainer.setIntValue(34, 364);
-		assertTrue(intValueContainer.getCapacity() >= intValueContainer.size());
+		assertTrue(intValueContainer.getCapacity() >= 34);
 
 		intValueContainer.setIntValue(10, 154);
-		assertTrue(intValueContainer.getCapacity() >= intValueContainer.size());
+		assertTrue(intValueContainer.getCapacity() >= 10);
 
 		intValueContainer.setIntValue(137, 2526);
-		assertTrue(intValueContainer.getCapacity() >= intValueContainer.size());
+		assertTrue(intValueContainer.getCapacity() >= 137);
 
 		intValueContainer.setLongValue(1000, 1234534234234234234L);
-		assertTrue(intValueContainer.getCapacity() >= intValueContainer.size());
+		assertTrue(intValueContainer.getCapacity() >= 1000);
 
 	}
 
@@ -513,29 +513,6 @@ public class AT_IntValueContainer {
 	}
 
 	/**
-	 * Test for {@link IntValueContainer#size()}
-	 */
-	@Test
-	@UnitTestMethod(target = IntValueContainer.class, name = "size", args = {})
-	public void testSize() {
-
-		IntValueContainer intValueContainer = new IntValueContainer(0, 100);
-		assertEquals(0, intValueContainer.size());
-
-		intValueContainer.setIntValue(3, 352);
-		assertEquals(4, intValueContainer.size());
-
-		intValueContainer.setIntValue(1, 7456);
-		assertEquals(4, intValueContainer.size());
-
-		intValueContainer.setIntValue(15, 99);
-		assertEquals(16, intValueContainer.size());
-
-		intValueContainer.setIntValue(300, 247);
-		assertEquals(301, intValueContainer.size());
-	}
-
-	/**
 	 * Test for {@link IntValueContainer#getDefaultValueAsByte()}
 	 */
 	@Test
@@ -620,24 +597,19 @@ public class AT_IntValueContainer {
 		assertEquals(IntValueType.BYTE, intValueContainer.getIntValueType());
 
 		intValueContainer.setIntValue(0, 1);
-		assertEquals(1, intValueContainer.size());
 		assertEquals(IntValueType.BYTE, intValueContainer.getIntValueType());
 
 		intValueContainer.setIntValue(1, 130);
 		assertEquals(IntValueType.SHORT, intValueContainer.getIntValueType());
-		assertEquals(2, intValueContainer.size());
 
 		intValueContainer.setIntValue(2, 70000);
 		assertEquals(IntValueType.INT, intValueContainer.getIntValueType());
-		assertEquals(3, intValueContainer.size());
 
 		intValueContainer.setLongValue(3, 123123123123123123L);
 		assertEquals(IntValueType.LONG, intValueContainer.getIntValueType());
-		assertEquals(4, intValueContainer.size());
 
 		intValueContainer.setIntValue(4, 1);
 		assertEquals(IntValueType.LONG, intValueContainer.getIntValueType());
-		assertEquals(5, intValueContainer.size());
 
 	}
 

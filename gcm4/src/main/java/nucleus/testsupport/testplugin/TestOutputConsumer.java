@@ -55,7 +55,7 @@ public class TestOutputConsumer implements Consumer<Object> {
 	 *         the number of occurrences as the value
 	 */
 	@SuppressWarnings("unchecked")
-	public <T> Map<T, Integer> getOutputItems(Class<T> classRef) {
+	public <T> Map<T, Integer> getOutputItemMap(Class<T> classRef) {
 		Map<T, MutableInteger> sourceMap = new LinkedHashMap<>();
 		Map<T, Integer> retMap = new LinkedHashMap<>();
 
@@ -107,6 +107,38 @@ public class TestOutputConsumer implements Consumer<Object> {
 		}
 
 		return Optional.ofNullable(result);
+
+	}
+	
+	/**
+	 * Returns the output from a Simulation based on the Class Parameter.
+	 * 
+	 * @param <T>
+	 *            This type is derived from the class parameter and also
+	 *            determines the return type of this method.
+	 * @param classRef
+	 *            The class for which you want to get output items of
+	 * 
+	 * 
+	 * @return - returns a {@link Map} containing the output items as keys and
+	 *         the number of occurrences as the value
+	 * 
+	 * @throws ContractException
+	 *             <li>{@linkplain TestError#MULTIPLE_MATCHING_ITEMS} if there
+	 *             are multiple items matching the given class reference</li>
+	 * 
+	 */
+	@SuppressWarnings("unchecked")
+	public <T> List<T> getOutputItems(Class<T> classRef) {
+		List<T> result = new ArrayList<>();
+
+		for (Object item : outputItems) {
+			if (classRef.isAssignableFrom(item.getClass())) {
+				result.add((T) item);				 
+			}
+		}
+
+		return result;
 
 	}
 }

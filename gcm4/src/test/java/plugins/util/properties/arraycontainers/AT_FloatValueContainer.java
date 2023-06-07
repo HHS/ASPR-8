@@ -45,22 +45,22 @@ public class AT_FloatValueContainer {
 	public void testGetCapacity() {
 		FloatValueContainer floatValueContainer = new FloatValueContainer(0);
 
-		assertTrue(floatValueContainer.getCapacity() >= floatValueContainer.size());
+		assertTrue(floatValueContainer.getCapacity() >= 0);
 
 		floatValueContainer.setValue(1, 123.4f);
-		assertTrue(floatValueContainer.getCapacity() >= floatValueContainer.size());
+		assertTrue(floatValueContainer.getCapacity() >= 1);
 
 		floatValueContainer.setValue(34, 36.4f);
-		assertTrue(floatValueContainer.getCapacity() >= floatValueContainer.size());
+		assertTrue(floatValueContainer.getCapacity() >= 34);
 
 		floatValueContainer.setValue(10, 15.4f);
-		assertTrue(floatValueContainer.getCapacity() >= floatValueContainer.size());
+		assertTrue(floatValueContainer.getCapacity() >= 10);
 
 		floatValueContainer.setValue(137, 25.26f);
-		assertTrue(floatValueContainer.getCapacity() >= floatValueContainer.size());
+		assertTrue(floatValueContainer.getCapacity() >= 137);
 
 		floatValueContainer.setValue(1000, 123.6345f);
-		assertTrue(floatValueContainer.getCapacity() >= floatValueContainer.size());
+		assertTrue(floatValueContainer.getCapacity() >= 1000);
 	}
 
 	/**
@@ -160,28 +160,6 @@ public class AT_FloatValueContainer {
 		// pre-condition tests
 		assertThrows(RuntimeException.class, () -> floatValueContainer.setValue(-1, 234.63f));
 
-	}
-
-	/**
-	 * Tests {@link FloatValueContainer#size()}
-	 */
-	@Test
-	@UnitTestMethod(target = FloatValueContainer.class, name = "size", args = {})
-	public void testSize() {
-		FloatValueContainer floatValueContainer = new FloatValueContainer(0, 100);
-		assertEquals(0, floatValueContainer.size());
-
-		floatValueContainer.setValue(3, 352.2345f);
-		assertEquals(4, floatValueContainer.size());
-
-		floatValueContainer.setValue(1, 7456.63f);
-		assertEquals(4, floatValueContainer.size());
-
-		floatValueContainer.setValue(15, 99.1576f);
-		assertEquals(16, floatValueContainer.size());
-
-		floatValueContainer.setValue(300, 247.989762f);
-		assertEquals(301, floatValueContainer.size());
 	}
 
 }

@@ -214,7 +214,7 @@ public class AT_ResourcePropertyReport {
 				.build()//
 				.execute();
 		
-		Map<ReportItem, Integer> actualReportItems = testOutputConsumer.getOutputItems(ReportItem.class);
+		Map<ReportItem, Integer> actualReportItems = testOutputConsumer.getOutputItemMap(ReportItem.class);
 		
 		assertEquals(expectedReportItems, actualReportItems);
 	}
@@ -309,7 +309,7 @@ public class AT_ResourcePropertyReport {
 				.build()//
 				.execute();
 
-		Map<ResourcePropertyReportPluginData, Integer> outputItems = testOutputConsumer.getOutputItems(ResourcePropertyReportPluginData.class);
+		Map<ResourcePropertyReportPluginData, Integer> outputItems = testOutputConsumer.getOutputItemMap(ResourcePropertyReportPluginData.class);
 		assertEquals(1, outputItems.size());
 		ResourcePropertyReportPluginData resourcePropertyReportPluginData2 = outputItems.keySet().iterator().next();
 		assertEquals(resourcePropertyReportPluginData, resourcePropertyReportPluginData2);
@@ -323,7 +323,7 @@ public class AT_ResourcePropertyReport {
 				.build()//
 				.execute();
 
-		outputItems = testOutputConsumer.getOutputItems(ResourcePropertyReportPluginData.class);
+		outputItems = testOutputConsumer.getOutputItemMap(ResourcePropertyReportPluginData.class);
 		assertEquals(0, outputItems.size());
 	}
 

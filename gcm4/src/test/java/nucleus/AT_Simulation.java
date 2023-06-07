@@ -303,7 +303,7 @@ public class AT_Simulation {
 					.execute();//
 
 		// show that the simulation time data is correct
-		Map<SimulationState, Integer> simulationStateItems = testOutputConsumer.getOutputItems(SimulationState.class);
+		Map<SimulationState, Integer> simulationStateItems = testOutputConsumer.getOutputItemMap(SimulationState.class);
 		assertEquals(1, simulationStateItems.size());
 		SimulationState simulationTime = simulationStateItems.keySet().iterator().next();
 		Integer count = simulationStateItems.get(simulationTime);
@@ -313,7 +313,7 @@ public class AT_Simulation {
 
 		// show that there are two plugins and that the AlphaPluginData contains
 		// the last value of x
-		Map<AlphaPluginData, Integer> pluginDataItems = testOutputConsumer.getOutputItems(AlphaPluginData.class);
+		Map<AlphaPluginData, Integer> pluginDataItems = testOutputConsumer.getOutputItemMap(AlphaPluginData.class);
 		
 		assertEquals(1, pluginDataItems.size());
 		AlphaPluginData outputAlphaPluginData = pluginDataItems.keySet().iterator().next();
@@ -331,8 +331,8 @@ public class AT_Simulation {
 					.build()//
 					.execute();//
 
-		assertTrue(testOutputConsumer.getOutputItems(SimulationState.class).isEmpty());
-		assertTrue(testOutputConsumer.getOutputItems(Plugin.class).isEmpty());
+		assertTrue(testOutputConsumer.getOutputItemMap(SimulationState.class).isEmpty());
+		assertTrue(testOutputConsumer.getOutputItemMap(Plugin.class).isEmpty());
 
 		// show that if we do not set the production to false that nothing
 		// is produced
@@ -345,8 +345,8 @@ public class AT_Simulation {
 					.build()//
 					.execute();//
 
-		assertTrue(testOutputConsumer.getOutputItems(SimulationState.class).isEmpty());
-		assertTrue(testOutputConsumer.getOutputItems(Plugin.class).isEmpty());
+		assertTrue(testOutputConsumer.getOutputItemMap(SimulationState.class).isEmpty());
+		assertTrue(testOutputConsumer.getOutputItemMap(Plugin.class).isEmpty());
 
 	}
 

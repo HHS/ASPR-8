@@ -263,7 +263,7 @@ public class AT_PeriodicReport {
 		}
 
 		Set<Integer> actualDays = new LinkedHashSet<>();
-		Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItems(ReportItem.class);
+		Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItemMap(ReportItem.class);
 		for (ReportItem reportItem : outputItems.keySet()) {
 			assertEquals(1, outputItems.get(reportItem));
 			actualDays.add(Integer.parseInt(reportItem.getValue(0)));
@@ -312,7 +312,7 @@ public class AT_PeriodicReport {
 		}
 
 		Set<Integer> actualHours = new LinkedHashSet<>();
-		Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItems(ReportItem.class);
+		Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItemMap(ReportItem.class);
 		for (ReportItem reportItem : outputItems.keySet()) {
 			Integer count = outputItems.get(reportItem);
 			assertEquals(1, count);

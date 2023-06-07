@@ -99,4 +99,17 @@ public final class ObjectValueContainer {
 		}
 		return (T) elements[index];
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("ObjectValueContainer [elements=");
+		builder.append(Arrays.toString(elements));
+		builder.append(", defaultValue=");
+		builder.append(defaultValue);
+		builder.append("]");
+		return builder.toString();
+	}
+	
+	
 }

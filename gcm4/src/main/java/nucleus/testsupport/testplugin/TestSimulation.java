@@ -156,7 +156,7 @@ public class TestSimulation {
 				.build().execute();
 
 		// show that all actions were executed
-		Map<TestScenarioReport, Integer> outputItems = data.testOutputConsumer.getOutputItems(TestScenarioReport.class);
+		Map<TestScenarioReport, Integer> outputItems = data.testOutputConsumer.getOutputItemMap(TestScenarioReport.class);
 		boolean complete = false;
 
 		if (outputItems.size() < 1) {

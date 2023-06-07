@@ -240,7 +240,7 @@ public final class AT_BatchStatusReport {
 				.build()//
 				.execute();
 		
-		assertEquals(expectedReportItems, testOutputConsumer.getOutputItems(ReportItem.class));
+		assertEquals(expectedReportItems, testOutputConsumer.getOutputItemMap(ReportItem.class));
 	}
 
 	@Test
@@ -390,7 +390,7 @@ public final class AT_BatchStatusReport {
 				.execute();
 
 		// show that the plugin data persists after simulation
-		Map<BatchStatusReportPluginData, Integer> outputItems = testOutputConsumer.getOutputItems(BatchStatusReportPluginData.class);
+		Map<BatchStatusReportPluginData, Integer> outputItems = testOutputConsumer.getOutputItemMap(BatchStatusReportPluginData.class);
 		assertEquals(1, outputItems.size());
 		BatchStatusReportPluginData batchStatusReportPluginData2 = outputItems.keySet().iterator().next();
 		assertEquals(batchStatusReportPluginData, batchStatusReportPluginData2);
@@ -403,7 +403,7 @@ public final class AT_BatchStatusReport {
 				.build()//
 				.execute();
 
-		outputItems = testOutputConsumer.getOutputItems(BatchStatusReportPluginData.class);
+		outputItems = testOutputConsumer.getOutputItemMap(BatchStatusReportPluginData.class);
 		assertEquals(0, outputItems.size());
 	}
 

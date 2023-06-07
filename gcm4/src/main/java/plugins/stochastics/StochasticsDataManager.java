@@ -152,4 +152,18 @@ public final class StochasticsDataManager extends DataManager {
 		builder.setMainRNGState(randomGenerator.getWellState());		
 		dataManagerContext.releaseOutput(builder.build());
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("StochasticsDataManager [randomGeneratorMap=");
+		builder.append(randomGeneratorMap);
+		builder.append(", randomGenerator=");
+		builder.append(randomGenerator);
+		builder.append("]");
+		return builder.toString();
+	}
+	
+	
+	
 }

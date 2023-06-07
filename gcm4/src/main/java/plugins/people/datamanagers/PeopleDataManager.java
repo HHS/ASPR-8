@@ -30,6 +30,17 @@ public final class PeopleDataManager extends DataManager {
 	private static class PopulationRecord {
 		private int populationCount;
 		private double assignmentTime;
+		@Override
+		public String toString() {
+			StringBuilder builder = new StringBuilder();
+			builder.append("PopulationRecord [populationCount=");
+			builder.append(populationCount);
+			builder.append(", assignmentTime=");
+			builder.append(assignmentTime);
+			builder.append("]");
+			return builder.toString();
+		}
+		
 	}
 
 	private static record PersonAdditionMutationEvent(PersonId personId, PersonConstructionData personConstructionData) implements Event {
@@ -326,5 +337,18 @@ public final class PeopleDataManager extends DataManager {
 			throw new ContractException(PersonError.UNKNOWN_PERSON_ID);
 		}
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("PeopleDataManager [personIds=");
+		builder.append(personIds);
+		builder.append(", globalPopulationRecord=");
+		builder.append(globalPopulationRecord);
+		builder.append("]");
+		return builder.toString();
+	}
+	
+	
 
 }

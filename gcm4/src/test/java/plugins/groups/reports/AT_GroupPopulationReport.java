@@ -166,8 +166,8 @@ public class AT_GroupPopulationReport {
 																.build()//
 																.execute();
 
-		Map<ReportItem, Integer> expectedReportItems = expectedConsumer.getOutputItems(ReportItem.class);
-		Map<ReportItem, Integer> actualReportItems = testOutputConsumer.getOutputItems(ReportItem.class);
+		Map<ReportItem, Integer> expectedReportItems = expectedConsumer.getOutputItemMap(ReportItem.class);
+		Map<ReportItem, Integer> actualReportItems = testOutputConsumer.getOutputItemMap(ReportItem.class);
 
 		assertEquals(expectedReportItems, actualReportItems);
 
@@ -284,8 +284,8 @@ public class AT_GroupPopulationReport {
 																.build()//
 																.execute();
 
-		Map<ReportItem, Integer> expectedReportItems = expectedConsumer.getOutputItems(ReportItem.class);
-		Map<ReportItem, Integer> actualReportItems = testOutputConsumer.getOutputItems(ReportItem.class);
+		Map<ReportItem, Integer> expectedReportItems = expectedConsumer.getOutputItemMap(ReportItem.class);
+		Map<ReportItem, Integer> actualReportItems = testOutputConsumer.getOutputItemMap(ReportItem.class);
 
 		assertEquals(expectedReportItems, actualReportItems);
 
@@ -364,8 +364,8 @@ public class AT_GroupPopulationReport {
 																.build()//
 																.execute();
 
-		Map<ReportItem, Integer> expectedReportItems = expectedConsumer.getOutputItems(ReportItem.class);
-		Map<ReportItem, Integer> actualReportItems = testOutputConsumer.getOutputItems(ReportItem.class);
+		Map<ReportItem, Integer> expectedReportItems = expectedConsumer.getOutputItemMap(ReportItem.class);
+		Map<ReportItem, Integer> actualReportItems = testOutputConsumer.getOutputItemMap(ReportItem.class);
 		assertEquals(expectedReportItems, actualReportItems);
 	}
 
@@ -445,7 +445,7 @@ public class AT_GroupPopulationReport {
 																.execute();
 
 		// show that the output plugin data is similar to the input plugin data
-		Map<GroupPopulationReportPluginData, Integer> outputItems = testOutputConsumer.getOutputItems(GroupPopulationReportPluginData.class);
+		Map<GroupPopulationReportPluginData, Integer> outputItems = testOutputConsumer.getOutputItemMap(GroupPopulationReportPluginData.class);
 		assertEquals(1, outputItems.size());
 		GroupPopulationReportPluginData groupPopulationReportPluginData2 = outputItems.keySet().iterator().next();
 		assertEquals(groupPopulationReportPluginData, groupPopulationReportPluginData2);
@@ -461,7 +461,7 @@ public class AT_GroupPopulationReport {
 
 		// show that when the simulation state is not being produced, there is
 		// no output plugin data+
-		outputItems = testOutputConsumer.getOutputItems(GroupPopulationReportPluginData.class);
+		outputItems = testOutputConsumer.getOutputItemMap(GroupPopulationReportPluginData.class);
 		assertEquals(0, outputItems.size());
 	}
 

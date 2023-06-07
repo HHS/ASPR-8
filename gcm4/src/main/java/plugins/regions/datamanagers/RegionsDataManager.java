@@ -347,7 +347,8 @@ public final class RegionsDataManager extends DataManager {
 
 		final List<PersonId> result = new ArrayList<>();
 
-		final int n = regionValues.size();
+		
+		final int n = peopleDataManager.getPersonIdLimit();
 		for (int personIndex = 0; personIndex < n; personIndex++) {
 			final int regionIndex = regionValues.getValueAsInt(personIndex);
 			/*
@@ -1107,5 +1108,30 @@ public final class RegionsDataManager extends DataManager {
 		return EventFilter	.builder(RegionPropertyDefinitionEvent.class)//
 							.build();
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("RegionsDataManager [regionPropertyMap=");
+		builder.append(regionPropertyMap);
+		builder.append(", regionPropertyIds=");
+		builder.append(regionPropertyIds);
+		builder.append(", regionPropertyDefinitions=");
+		builder.append(regionPropertyDefinitions);
+		builder.append(", regionPopulationRecordMap=");
+		builder.append(regionPopulationRecordMap);
+		builder.append(", regionToIndexMap=");
+		builder.append(regionToIndexMap);
+		builder.append(", indexToRegionMap=");
+		builder.append(indexToRegionMap);
+		builder.append(", regionValues=");
+		builder.append(regionValues);
+		builder.append(", regionArrivalTimes=");
+		builder.append(regionArrivalTimes);
+		builder.append("]");
+		return builder.toString();
+	}
+	
+	
 
 }

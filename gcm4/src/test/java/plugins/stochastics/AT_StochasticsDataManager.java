@@ -10,8 +10,10 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.stream.IntStream;
 
 import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.util.FastMath;
@@ -59,7 +61,7 @@ public class AT_StochasticsDataManager {
 		 * break up the run.
 		 */
 
-		Set<StochasticsPluginData> pluginDatas = new LinkedHashSet<>();
+		Set<String> pluginDatas = new LinkedHashSet<>();
 		pluginDatas.add(testStateContinuity(1));
 		pluginDatas.add(testStateContinuity(6));
 		pluginDatas.add(testStateContinuity(15));
@@ -73,7 +75,10 @@ public class AT_StochasticsDataManager {
 	 * over several days. Attempt to stop and start the simulation by the given
 	 * number of increments.
 	 */
-	private StochasticsPluginData testStateContinuity(int incrementCount) {
+	private String testStateContinuity(int incrementCount) {
+
+		String result = null;
+
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(4693559432563807708L);
 		/*
 		 * Build the RunContinuityPluginData with five context consumers that
@@ -81,7 +86,9 @@ public class AT_StochasticsDataManager {
 		 */
 		RunContinuityPluginData.Builder continuityBuilder = RunContinuityPluginData.builder();
 
-		for (int i = 0; i < 15; i++) {
+		int n = 15;
+
+		IntStream.range(0, n).forEach((i) -> {
 			double time = randomGenerator.nextDouble() * 10;
 			continuityBuilder.addContextConsumer(time, (c) -> {
 				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
@@ -110,8 +117,12 @@ public class AT_StochasticsDataManager {
 					}
 				}
 
+				if (i == (n - 1)) {
+					c.releaseOutput(stochasticsDataManager.toString());
+				}
+
 			});
-		}
+		});
 
 		RunContinuityPluginData runContinuityPluginData = continuityBuilder.build();
 
@@ -164,9 +175,15 @@ public class AT_StochasticsDataManager {
 
 			// retrieve the run continuity plugin data
 			runContinuityPluginData = outputConsumer.getOutputItem(RunContinuityPluginData.class).get();
-		}
 
-		return stochasticsPluginData;
+			Optional<String> optional = outputConsumer.getOutputItem(String.class);
+			if (optional.isPresent()) {
+				result = optional.get();
+			}
+		}
+		assertNotNull(result);
+		
+		return result;
 
 	}
 
@@ -298,7 +315,7 @@ public class AT_StochasticsDataManager {
 																.build()//
 																.execute();
 		// Get the resulting StochasticsPluginData
-		Map<StochasticsPluginData, Integer> outputItems = testOutputConsumer.getOutputItems(StochasticsPluginData.class);
+		Map<StochasticsPluginData, Integer> outputItems = testOutputConsumer.getOutputItemMap(StochasticsPluginData.class);
 		assertEquals(1, outputItems.size());
 		StochasticsPluginData actualPluginData = outputItems.keySet().iterator().next();
 

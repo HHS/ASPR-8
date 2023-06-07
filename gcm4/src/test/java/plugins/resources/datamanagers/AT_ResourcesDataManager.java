@@ -2,6 +2,7 @@ package plugins.resources.datamanagers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -10,6 +11,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
 
@@ -114,7 +116,7 @@ public final class AT_ResourcesDataManager {
 		TestPluginData testPluginData = pluginBuilder.build();
 		Factory factory = ResourcesTestPluginFactory.factory(1, 7939130943360648501L, testPluginData).setResourcesPluginData(resourcesPluginData);
 		TestOutputConsumer testOutputConsumer = TestSimulation.builder().addPlugins(factory.getPlugins()).setProduceSimulationStateOnHalt(true).setSimulationHaltTime(2).build().execute();
-		Map<ResourcesPluginData, Integer> outputItems = testOutputConsumer.getOutputItems(ResourcesPluginData.class);
+		Map<ResourcesPluginData, Integer> outputItems = testOutputConsumer.getOutputItemMap(ResourcesPluginData.class);
 		assertEquals(1, outputItems.size());
 		ResourcesPluginData actualPluginData = outputItems.keySet().iterator().next();
 		ResourcesPluginData expectedPluginData = ResourcesPluginData.builder()
@@ -178,7 +180,7 @@ public final class AT_ResourcesDataManager {
 																.setSimulationHaltTime(2)//
 																.build()//
 																.execute();
-		Map<ResourcesPluginData, Integer> outputItems2 = testOutputConsumer2.getOutputItems(ResourcesPluginData.class);
+		Map<ResourcesPluginData, Integer> outputItems2 = testOutputConsumer2.getOutputItemMap(ResourcesPluginData.class);
 		assertEquals(1, outputItems2.size());
 		ResourcesPluginData actualPluginData = outputItems2.keySet().iterator().next();
 		ResourcesPluginData expectedPluginData = ResourcesPluginData.builder()
@@ -806,174 +808,6 @@ public final class AT_ResourcesDataManager {
 			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
 		});
 		assertEquals(ResourceError.UNKNOWN_RESOURCE_ID, contractException.getErrorType());
-	}
-
-	@Test
-	@UnitTestMethod(target = ResourcesDataManager.class, name = "getResourcePropertyTime", args = { ResourceId.class, ResourcePropertyId.class })
-	public void testGetResourcePropertyTime() {
-
-		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
-
-		Map<MultiKey, MutableDouble> expectedTimes = new LinkedHashMap<>();
-
-		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
-			// establish data views
-			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
-
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
-			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
-
-			// establish the resources
-			Set<ResourceId> resourceIds = resourcesDataManager.getResourceIds();
-
-			// initialize the expected times
-			for (TestResourceId testResourceId : TestResourceId.values()) {
-				for (TestResourcePropertyId testResourcePropertyId : TestResourcePropertyId.getTestResourcePropertyIds(testResourceId)) {
-					expectedTimes.put(new MultiKey(testResourceId, testResourcePropertyId), new MutableDouble());
-				}
-			}
-
-			// set random values to the resource properties
-			for (int i = 0; i < resourceIds.size(); i++) {
-				TestResourceId testResourceId = TestResourceId.getRandomResourceId(randomGenerator);
-				TestResourcePropertyId testResourcePropertyId = TestResourcePropertyId.getRandomResourcePropertyId(testResourceId, randomGenerator);
-				PropertyDefinition propertyDefinition = resourcesDataManager.getResourcePropertyDefinition(testResourceId, testResourcePropertyId);
-				if (propertyDefinition.propertyValuesAreMutable()) {
-					Object value = testResourcePropertyId.getRandomPropertyValue(randomGenerator);
-					resourcesDataManager.setResourcePropertyValue(testResourceId, testResourcePropertyId, value);
-					expectedTimes.get(new MultiKey(testResourceId, testResourcePropertyId)).setValue(c.getTime());
-				}
-			}
-
-		}));
-
-		// make more resource property updates at time 1
-		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
-			// establish data views
-			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
-			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
-
-			// establish the resources
-			Set<ResourceId> resourceIds = resourcesDataManager.getResourceIds();
-
-			// set random values to the resource properties
-			for (int i = 0; i < resourceIds.size(); i++) {
-				TestResourceId testResourceId = TestResourceId.getRandomResourceId(randomGenerator);
-				TestResourcePropertyId testResourcePropertyId = TestResourcePropertyId.getRandomResourcePropertyId(testResourceId, randomGenerator);
-				PropertyDefinition propertyDefinition = resourcesDataManager.getResourcePropertyDefinition(testResourceId, testResourcePropertyId);
-				if (propertyDefinition.propertyValuesAreMutable()) {
-					Object value = testResourcePropertyId.getRandomPropertyValue(randomGenerator);
-					resourcesDataManager.setResourcePropertyValue(testResourceId, testResourcePropertyId, value);
-					expectedTimes.get(new MultiKey(testResourceId, testResourcePropertyId)).setValue(c.getTime());
-				}
-			}
-
-		}));
-
-		// make more resource property updates at time 2
-		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(2, (c) -> {
-			// establish data views
-			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
-			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
-
-			// establish the resources
-			Set<ResourceId> resourceIds = resourcesDataManager.getResourceIds();
-
-			// set random values to the resource properties
-			for (int i = 0; i < resourceIds.size(); i++) {
-				TestResourceId testResourceId = TestResourceId.getRandomResourceId(randomGenerator);
-				TestResourcePropertyId testResourcePropertyId = TestResourcePropertyId.getRandomResourcePropertyId(testResourceId, randomGenerator);
-				PropertyDefinition propertyDefinition = resourcesDataManager.getResourcePropertyDefinition(testResourceId, testResourcePropertyId);
-				if (propertyDefinition.propertyValuesAreMutable()) {
-					Object value = testResourcePropertyId.getRandomPropertyValue(randomGenerator);
-					resourcesDataManager.setResourcePropertyValue(testResourceId, testResourcePropertyId, value);
-					expectedTimes.get(new MultiKey(testResourceId, testResourcePropertyId)).setValue(c.getTime());
-				}
-			}
-
-		}));
-
-		// test the person resource times
-		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(3, (c) -> {
-			// establish data views
-
-			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
-
-			// show that the person resource times match expectations
-			int actualAssertionsCount = 0;
-			for (MultiKey multiKey : expectedTimes.keySet()) {
-				ResourceId resourceId = multiKey.getKey(0);
-				ResourcePropertyId resourcePropertyId = multiKey.getKey(1);
-				double expectedTime = expectedTimes.get(multiKey).getValue();
-				double actualTime = resourcesDataManager.getResourcePropertyTime(resourceId, resourcePropertyId);
-				assertEquals(expectedTime, actualTime);
-				actualAssertionsCount++;
-			}
-			/*
-			 * Show that the number of time values that were tested is equal to
-			 * the number of properties
-			 */
-
-			int expectedAssertionsCount = TestResourcePropertyId.values().length;
-			assertEquals(expectedAssertionsCount, actualAssertionsCount);
-		}));
-
-		TestPluginData testPluginData = pluginBuilder.build();
-		Factory factory = ResourcesTestPluginFactory.factory(10, 9211924242349528396L, testPluginData);
-		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
-
-		/* precondition test: if the resource id is null */
-		ContractException contractException = assertThrows(ContractException.class, () -> {
-			Factory factory2 = ResourcesTestPluginFactory.factory(10, 1319950978123668303L, (c) -> {
-				ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
-				resourcesDataManager.getResourcePropertyTime(null, TestResourcePropertyId.ResourceProperty_1_1_BOOLEAN_MUTABLE);
-			});
-			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
-		});
-		assertEquals(ResourceError.NULL_RESOURCE_ID, contractException.getErrorType());
-
-		/* precondition test: if the resource id is unknown */
-		contractException = assertThrows(ContractException.class, () -> {
-			Factory factory2 = ResourcesTestPluginFactory.factory(10, 250698207522319222L, (c) -> {
-				ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
-				resourcesDataManager.getResourcePropertyTime(TestResourceId.getUnknownResourceId(), TestResourcePropertyId.ResourceProperty_1_1_BOOLEAN_MUTABLE);
-			});
-			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
-		});
-		assertEquals(ResourceError.UNKNOWN_RESOURCE_ID, contractException.getErrorType());
-
-		/* precondition test: if the resource property id is null */
-		contractException = assertThrows(ContractException.class, () -> {
-			Factory factory2 = ResourcesTestPluginFactory.factory(10, 5885550428859775099L, (c) -> {
-				ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
-				resourcesDataManager.getResourcePropertyTime(TestResourceId.RESOURCE_1, null);
-			});
-			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
-		});
-		assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
-
-		/* precondition test: if the resource property id is unknown */
-		contractException = assertThrows(ContractException.class, () -> {
-			Factory factory2 = ResourcesTestPluginFactory.factory(10, 6053540186403572061L, (c) -> {
-				ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
-				resourcesDataManager.getResourcePropertyTime(TestResourceId.RESOURCE_1, TestResourcePropertyId.ResourceProperty_2_1_BOOLEAN_MUTABLE);
-			});
-			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
-		});
-		assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
-
-		/* precondition test: if the resource property id is unknown */
-		contractException = assertThrows(ContractException.class, () -> {
-			Factory factory2 = ResourcesTestPluginFactory.factory(10, 6439495795797811534L, (c) -> {
-				ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
-				resourcesDataManager.getResourcePropertyTime(TestResourceId.RESOURCE_1, TestResourcePropertyId.getUnknownResourcePropertyId());
-			});
-			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
-		});
-		assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
-
 	}
 
 	@Test
@@ -4036,7 +3870,7 @@ public final class AT_ResourcesDataManager {
 		 * break up the run.
 		 */
 
-		Set<ResourcesPluginData> pluginDatas = new LinkedHashSet<>();
+		Set<String> pluginDatas = new LinkedHashSet<>();
 		pluginDatas.add(testStateContinuity(1));
 		pluginDatas.add(testStateContinuity(5));
 		pluginDatas.add(testStateContinuity(10));
@@ -4049,7 +3883,9 @@ public final class AT_ResourcesDataManager {
 	 * events over several days. Attempts to stop and start the simulation by
 	 * the given number of increments.
 	 */
-	private ResourcesPluginData testStateContinuity(int incrementCount) {
+	private String testStateContinuity(int incrementCount) {
+		String result = null;
+		
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(177404262666515111L);
 
 		/*
@@ -4227,6 +4063,8 @@ public final class AT_ResourcesDataManager {
 					resourcesDataManager.removeResourceFromRegion(testResourceId, regionId, amount);
 				}
 			}
+			
+			c.releaseOutput(resourcesDataManager.toString());
 		});
 
 		RunContinuityPluginData runContinuityPluginData = continuityBuilder.build();
@@ -4304,9 +4142,17 @@ public final class AT_ResourcesDataManager {
 
 			// retrieve the run continuity plugin data
 			runContinuityPluginData = outputConsumer.getOutputItem(RunContinuityPluginData.class).get();
+			
+			Optional<String> optional = outputConsumer.getOutputItem(String.class);
+			if(optional.isPresent()) {
+				result = optional.get();
+			}
+			
 		}
 		
-		return resourcesPluginData;
+		assertNotNull(result);
+		
+		return result;
 
 	}
 }

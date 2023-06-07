@@ -2,6 +2,7 @@ package plugins.regions.datamanagers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -128,7 +129,7 @@ public class AT_RegionsDataManager {
 																.setProduceSimulationStateOnHalt(true)//
 																.setSimulationHaltTime(2).build()//
 																.execute();
-		Map<RegionsPluginData, Integer> outputItems = testOutputConsumer.getOutputItems(RegionsPluginData.class);
+		Map<RegionsPluginData, Integer> outputItems = testOutputConsumer.getOutputItemMap(RegionsPluginData.class);
 		assertEquals(1, outputItems.size());
 
 		RegionsPluginData expectedPluginData = RegionsPluginData.builder().addRegion(TestRegionId.REGION_1)
@@ -175,7 +176,7 @@ public class AT_RegionsDataManager {
 		testPluginData = pluginBuilder.build();
 		factory = RegionsTestPluginFactory.factory(0, 3347423560010833899L, TimeTrackingPolicy.TRACK_TIME, testPluginData).setRegionsPluginData(regionsPluginData);
 		testOutputConsumer = TestSimulation.builder().addPlugins(factory.getPlugins()).setProduceSimulationStateOnHalt(true).setSimulationHaltTime(2).build().execute();
-		outputItems = testOutputConsumer.getOutputItems(RegionsPluginData.class);
+		outputItems = testOutputConsumer.getOutputItemMap(RegionsPluginData.class);
 		assertEquals(1, outputItems.size());
 		expectedPluginData = RegionsPluginData	.builder().addRegion(TestRegionId.REGION_2).addRegion(TestRegionId.REGION_3)
 												.defineRegionProperty(regionPropertyDefinitionInitialization2.getRegionPropertyId(), regionPropertyDefinitionInitialization2.getPropertyDefinition())
@@ -2581,7 +2582,7 @@ public class AT_RegionsDataManager {
 		 * break up the run.
 		 */
 
-		Set<RegionsPluginData> pluginDatas = new LinkedHashSet<>();
+		Set<String> pluginDatas = new LinkedHashSet<>();
 		pluginDatas.add(testStateContinuity(1));
 		pluginDatas.add(testStateContinuity(5));
 		pluginDatas.add(testStateContinuity(10));
@@ -2595,7 +2596,9 @@ public class AT_RegionsDataManager {
 	 * events over several days. Attempts to stop and start the simulation by
 	 * the given number of increments.
 	 */
-	private RegionsPluginData testStateContinuity(int incrementCount) {
+	private String testStateContinuity(int incrementCount) {
+		String result = null;
+		
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(4401967199145357368L);
 
 		/*
@@ -2688,6 +2691,8 @@ public class AT_RegionsDataManager {
 			regionsDataManager.setRegionPropertyValue(TestRegionId.REGION_1, testRegionPropertyId, testRegionPropertyId.getRandomPropertyValue(randomGenerator));
 			regionsDataManager.setRegionPropertyValue(TestRegionId.REGION_2, testRegionPropertyId, testRegionPropertyId.getRandomPropertyValue(randomGenerator));
 
+			c.releaseOutput(regionsDataManager.toString());
+			
 		});
 
 		
@@ -2759,10 +2764,16 @@ public class AT_RegionsDataManager {
 
 			// retrieve the run continuity plugin data
 			runContinuityPluginData = outputConsumer.getOutputItem(RunContinuityPluginData.class).get();
+			
+			Optional<String> optional = outputConsumer.getOutputItem(String.class);
+			if(optional.isPresent()) {
+				result = optional.get();
+			}
+			
 		}
-
-		
-		return regionsPluginData;
+	
+		assertNotNull(result);
+		return result;
 
 	}
 

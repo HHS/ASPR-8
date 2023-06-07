@@ -18,11 +18,7 @@ public final class FloatValueContainer {
 	 * The array for storing the values
 	 */
 	private float[] values;
-	/*
-	 * Holds the logical size of the values array based on the highest index
-	 * used in invocations of setValue().
-	 */
-	private int size;
+	
 	/*
 	 * The value returned for any non-negative index that has not been set via
 	 * an invocation of setValue().
@@ -70,9 +66,6 @@ public final class FloatValueContainer {
 		return result;
 	}
 
-	public int size() {
-		return size;
-	}
 
 	/**
 	 * Sets the capacity to the given capacity if the current capacity is less
@@ -143,10 +136,21 @@ public final class FloatValueContainer {
 		if (index >= values.length) {
 			grow(index + 1);
 		}
-		if (index >= size) {
-			size = index + 1;
-		}
 		values[index] = value;
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("FloatValueContainer [values=");
+		builder.append(Arrays.toString(values));
+		builder.append(", defaultValue=");
+		builder.append(defaultValue);
+		builder.append("]");
+		return builder.toString();
+	}
+	
+	
+	
 
 }

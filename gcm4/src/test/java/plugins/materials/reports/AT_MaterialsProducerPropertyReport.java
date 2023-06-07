@@ -143,7 +143,7 @@ public final class AT_MaterialsProducerPropertyReport {
 				.build()//
 				.execute();
 		
-		Map<ReportItem, Integer> acutualReportItems = testOutputConsumer.getOutputItems(ReportItem.class);
+		Map<ReportItem, Integer> acutualReportItems = testOutputConsumer.getOutputItemMap(ReportItem.class);
 		assertEquals(expectedReportItems, acutualReportItems);
 	}
 
@@ -215,7 +215,7 @@ public final class AT_MaterialsProducerPropertyReport {
 				.build()//
 				.execute();
 
-		Map<MaterialsProducerPropertyReportPluginData, Integer> outputItems = testOutputConsumer.getOutputItems(MaterialsProducerPropertyReportPluginData.class);
+		Map<MaterialsProducerPropertyReportPluginData, Integer> outputItems = testOutputConsumer.getOutputItemMap(MaterialsProducerPropertyReportPluginData.class);
 		assertEquals(1, outputItems.size());
 		MaterialsProducerPropertyReportPluginData materialsProducerPropertyReportPluginData2 = outputItems.keySet().iterator().next();
 		assertEquals(materialsProducerPropertyReportPluginData, materialsProducerPropertyReportPluginData2);
@@ -229,7 +229,7 @@ public final class AT_MaterialsProducerPropertyReport {
 				.build()//
 				.execute();
 
-		outputItems = testOutputConsumer.getOutputItems(MaterialsProducerPropertyReportPluginData.class);
+		outputItems = testOutputConsumer.getOutputItemMap(MaterialsProducerPropertyReportPluginData.class);
 		assertEquals(0, outputItems.size());
 	}
 

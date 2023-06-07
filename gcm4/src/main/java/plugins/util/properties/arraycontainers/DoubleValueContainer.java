@@ -19,12 +19,7 @@ public final class DoubleValueContainer {
 	 * The array for storing the values
 	 */
 	private double[] values;
-
-	/*
-	 * Holds the logical size of the values array based on the highest index
-	 * used in invocations of setValue().
-	 */
-	private int size;
+	
 
 	/*
 	 * The value returned for any non-negative index that has not been set via
@@ -72,10 +67,7 @@ public final class DoubleValueContainer {
 
 		return result;
 	}
-
-	public int size() {
-		return size;
-	}
+	
 
 	/**
 	 * Sets the capacity to the given capacity if the current capacity is less
@@ -146,11 +138,21 @@ public final class DoubleValueContainer {
 		}
 		if (index >= values.length) {
 			grow(index + 1);
-		}
-		if (index >= size) {
-			size = index + 1;
-		}
+		}		
 		values[index] = value;
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("DoubleValueContainer [values=");
+		builder.append(Arrays.toString(values));
+		builder.append(", defaultValue=");
+		builder.append(defaultValue);
+		builder.append("]");
+		return builder.toString();
+	}
+	
+	
 
 }

@@ -9,7 +9,7 @@ import util.errors.ContractException;
  * 
  *
  */
-public final class EnumPropertyManager extends AbstractIndexedPropertyManager {
+public final class EnumPropertyManager implements IndexedPropertyManager {
 	/*
 	 * The storage container.
 	 */
@@ -28,7 +28,13 @@ public final class EnumPropertyManager extends AbstractIndexedPropertyManager {
 	 * 
 	 */
 	public EnumPropertyManager(PropertyDefinition propertyDefinition, int initialSize) {
-		super(propertyDefinition, initialSize);
+		if (propertyDefinition == null) {
+			throw new ContractException(PropertyError.NULL_PROPERTY_DEFINITION);
+		}
+		
+		if (initialSize < 0) {
+			throw new ContractException(PropertyError.NEGATIVE_INITIAL_SIZE);
+		}
 
 		
 		Object defaultValue = null;
@@ -54,14 +60,36 @@ public final class EnumPropertyManager extends AbstractIndexedPropertyManager {
 
 	@Override
 	public void setPropertyValue(int id, Object propertyValue) {
-		super.setPropertyValue(id, propertyValue);
+		if (id < 0) {
+			throw new ContractException(PropertyError.NEGATIVE_INDEX);
+		}
 		enumContainer.setValue(id, propertyValue);
 	}
 
 	@Override
 	public void incrementCapacity(int count) {
-		super.incrementCapacity(count);
+		if (count < 0) {
+			throw new ContractException(PropertyError.NEGATIVE_CAPACITY_INCREMENT);
+		}
 		enumContainer.setCapacity(enumContainer.getCapacity() + count);
 	}
+	
+	@Override
+	public void removeId(int id) {
+		if (id < 0) {
+			throw new ContractException(PropertyError.NEGATIVE_INDEX);
+		}
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("EnumPropertyManager [enumContainer=");
+		builder.append(enumContainer);
+		builder.append("]");
+		return builder.toString();
+	}
+	
+	
 
 }

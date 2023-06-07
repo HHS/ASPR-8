@@ -120,5 +120,18 @@ public final class EnumContainer {
 		intValueContainer.setCapacity(capacity);
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("EnumContainer [intValueContainer=");
+		builder.append(intValueContainer);
+		builder.append(", objectValueContainer=");
+		builder.append(objectValueContainer);
+		builder.append(", enumClass=");
+		builder.append(enumClass);
+		builder.append("]");
+		return builder.toString();
+	}
+
 
 }

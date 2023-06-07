@@ -153,7 +153,7 @@ public class AT_PersonResourceReport {
 				.build()//
 				.execute();
 
-		Map<PersonResourceReportPluginData, Integer> outputItems = testOutputConsumer.getOutputItems(PersonResourceReportPluginData.class);
+		Map<PersonResourceReportPluginData, Integer> outputItems = testOutputConsumer.getOutputItemMap(PersonResourceReportPluginData.class);
 		assertEquals(1, outputItems.size());
 		PersonResourceReportPluginData personResourceReportPluginData2 = outputItems.keySet().iterator().next();
 		assertEquals(personResourceReportPluginData, personResourceReportPluginData2);
@@ -167,7 +167,7 @@ public class AT_PersonResourceReport {
 				.build()//
 				.execute();
 
-		outputItems = testOutputConsumer.getOutputItems(PersonResourceReportPluginData.class);
+		outputItems = testOutputConsumer.getOutputItemMap(PersonResourceReportPluginData.class);
 		assertEquals(0, outputItems.size());
 	}
 

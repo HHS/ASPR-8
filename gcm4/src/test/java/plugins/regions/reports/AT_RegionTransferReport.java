@@ -167,8 +167,8 @@ public class AT_RegionTransferReport {
 				.build()//
 				.execute();
 
-		Map<ReportItem, Integer> expectedReportItems = expectedConsumer.getOutputItems(ReportItem.class);
-		Map<ReportItem, Integer> actualReportItems = actualConsumer.getOutputItems(ReportItem.class);
+		Map<ReportItem, Integer> expectedReportItems = expectedConsumer.getOutputItemMap(ReportItem.class);
+		Map<ReportItem, Integer> actualReportItems = actualConsumer.getOutputItemMap(ReportItem.class);
 
 		assertEquals(expectedReportItems, actualReportItems);
 
@@ -275,7 +275,7 @@ public class AT_RegionTransferReport {
 				.build()//
 				.execute();
 
-		Map<RegionTransferReportPluginData, Integer> outputItems = actualConsumer.getOutputItems(RegionTransferReportPluginData.class);
+		Map<RegionTransferReportPluginData, Integer> outputItems = actualConsumer.getOutputItemMap(RegionTransferReportPluginData.class);
 		assertEquals(1, outputItems.size());
 		RegionTransferReportPluginData regionTransferReportPluginData2 = outputItems.keySet().iterator().next();
 		assertEquals(regionTransferReportPluginData, regionTransferReportPluginData2);
@@ -289,7 +289,7 @@ public class AT_RegionTransferReport {
 				.build()//
 				.execute();
 
-		outputItems = actualConsumer.getOutputItems(RegionTransferReportPluginData.class);
+		outputItems = actualConsumer.getOutputItemMap(RegionTransferReportPluginData.class);
 		assertEquals(0, outputItems.size());
 	}
 

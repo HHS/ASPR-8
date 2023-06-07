@@ -53,57 +53,11 @@ import util.wrappers.MutableLong;
 
 public final class ResourcesDataManager extends DataManager {
 	
-	/**
-	 * A utility class for holding the value and assignment time for a property. On
-	 * value assignment, this PropertyValueRecord records the current simulation
-	 * time.
-	 */
-	public class PropertyValueRecord {
-
-		private Object propertyValue;
-		private double assignmentTime;
-		private final DataManagerContext dataManagerContext;
-
-		public PropertyValueRecord(DataManagerContext dataManagerContext) {
-			this.dataManagerContext = dataManagerContext;
-		}
-
-		/**
-		 * Returns the last assigned value
-		 */
-		public Object getValue() {		
-			return propertyValue;
-		}
-
-		/**
-		 * Sets the current value and records the assignment time to the current time
-		 */
-		public void setPropertyValue(Object propertyValue) {
-			this.propertyValue = propertyValue;
-			assignmentTime = dataManagerContext.getTime();
-		}
-		
-		/**
-		 * Sets the current value and assignment time 
-		 */
-		public void setPropertyValue(Object propertyValue, double assignmentTime) {
-			this.propertyValue = propertyValue;
-			this.assignmentTime = assignmentTime;
-		}
-
-		/**
-		 * Returns the time of the last assignment
-		 */
-		public double getAssignmentTime() {
-			return assignmentTime;
-		}
-	}
-	
 	private PeopleDataManager peopleDataManager;
 	private RegionsDataManager regionsDataManager;
 
 	// resources
-	private final Map<ResourceId, Map<ResourcePropertyId, PropertyValueRecord>> resourcePropertyMap = new LinkedHashMap<>();
+	private final Map<ResourceId, Map<ResourcePropertyId, Object>> resourcePropertyMap = new LinkedHashMap<>();
 
 	/*
 	 * Stores resource amounts per person keyed by the resourceId
@@ -409,7 +363,7 @@ public final class ResourcesDataManager extends DataManager {
 	 */
 	private void validateNewResourcePropertyId(final ResourceId resourceId, final ResourcePropertyId resourcePropertyId) {
 
-		final Map<ResourcePropertyId, PropertyValueRecord> map = resourcePropertyMap.get(resourceId);
+		final Map<ResourcePropertyId, Object> map = resourcePropertyMap.get(resourceId);
 
 		if ((map != null) && map.containsKey(resourcePropertyId)) {
 			throw new ContractException(PropertyError.DUPLICATE_PROPERTY_DEFINITION, resourcePropertyId);
@@ -452,7 +406,7 @@ public final class ResourcesDataManager extends DataManager {
 			resourcePropertyDefinitions.put(resourceId, defMap);
 		}
 		defMap.put(resourcePropertyId, propertyDefinition);
-		Map<ResourcePropertyId, PropertyValueRecord> map = resourcePropertyMap.get(resourceId);
+		Map<ResourcePropertyId, Object> map = resourcePropertyMap.get(resourceId);
 		if (map == null) {
 			map = new LinkedHashMap<>();
 			resourcePropertyMap.put(resourceId, map);
@@ -466,9 +420,8 @@ public final class ResourcesDataManager extends DataManager {
 			propertyValue = propertyDefinition.getDefaultValue().get();
 		}
 
-		final PropertyValueRecord propertyValueRecord = new PropertyValueRecord(dataManagerContext);
-		propertyValueRecord.setPropertyValue(propertyValue);
-		map.put(resourcePropertyId, propertyValueRecord);
+		
+		map.put(resourcePropertyId, propertyValue);
 
 		if (dataManagerContext.subscribersExist(ResourcePropertyDefinitionEvent.class)) {
 			dataManagerContext.releaseObservationEvent(new ResourcePropertyDefinitionEvent(resourceId, resourcePropertyId, propertyValue));
@@ -571,25 +524,7 @@ public final class ResourcesDataManager extends DataManager {
 		return result;
 	}
 
-	/**
-	 * Returns the last assignment time for the resource property
-	 *
-	 * @throws ContractException
-	 *             <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if the
-	 *             resource id is null</li>
-	 *             <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID} if the
-	 *             resource id is unknown</li>
-	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
-	 *             resource property id is null</li>
-	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if the
-	 *             resource property id is unknown</li>
-	 */
 
-	public double getResourcePropertyTime(final ResourceId resourceId, final ResourcePropertyId resourcePropertyId) {
-		validateResourceId(resourceId);
-		validateResourcePropertyId(resourceId, resourcePropertyId);
-		return resourcePropertyMap.get(resourceId).get(resourcePropertyId).getAssignmentTime();
-	}
 
 	/**
 	 * Returns the value of the resource property.
@@ -608,7 +543,7 @@ public final class ResourcesDataManager extends DataManager {
 	public <T> T getResourcePropertyValue(final ResourceId resourceId, final ResourcePropertyId resourcePropertyId) {
 		validateResourceId(resourceId);
 		validateResourcePropertyId(resourceId, resourcePropertyId);
-		return (T) resourcePropertyMap.get(resourceId).get(resourcePropertyId).getValue();
+		return (T) resourcePropertyMap.get(resourceId).get(resourcePropertyId);
 	}
 
 	/**
@@ -667,13 +602,11 @@ public final class ResourcesDataManager extends DataManager {
 
 	private void loadResourcePropertyValues() {
 		for (ResourceId resourceId : resourcesPluginData.getResourceIds()) {
-			Map<ResourcePropertyId, PropertyValueRecord> map = new LinkedHashMap<>();
+			Map<ResourcePropertyId, Object> map = new LinkedHashMap<>();
 			resourcePropertyMap.put(resourceId, map);
 			for (ResourcePropertyId resourcePropertyId : resourcesPluginData.getResourcePropertyIds(resourceId)) {
 				Object resourcePropertyValue = resourcesPluginData.getResourcePropertyValue(resourceId, resourcePropertyId);
-				final PropertyValueRecord propertyValueRecord = new PropertyValueRecord(dataManagerContext);
-				propertyValueRecord.setPropertyValue(resourcePropertyValue);
-				map.put(resourcePropertyId, propertyValueRecord);
+				map.put(resourcePropertyId, resourcePropertyValue);
 			}
 		}
 	}
@@ -958,7 +891,7 @@ public final class ResourcesDataManager extends DataManager {
 			return false;
 		}
 
-		final Map<ResourcePropertyId, PropertyValueRecord> map = resourcePropertyMap.get(resourceId);
+		final Map<ResourcePropertyId, Object> map = resourcePropertyMap.get(resourceId);
 
 		if (map == null) {
 			return false;
@@ -1018,7 +951,7 @@ public final class ResourcesDataManager extends DataManager {
 			throw new ContractException(PropertyError.NULL_PROPERTY_ID);
 		}
 
-		final Map<ResourcePropertyId, PropertyValueRecord> map = resourcePropertyMap.get(resourceId);
+		final Map<ResourcePropertyId, Object> map = resourcePropertyMap.get(resourceId);
 
 		if ((map == null) || !map.containsKey(resourcePropertyId)) {
 			throw new ContractException(PropertyError.UNKNOWN_PROPERTY_ID, resourcePropertyId);
@@ -1331,8 +1264,8 @@ public final class ResourcesDataManager extends DataManager {
 		final PropertyDefinition propertyDefinition = resourcePropertyDefinitions.get(resourceId).get(resourcePropertyId);
 		validateValueCompatibility(resourcePropertyId, propertyDefinition, resourcePropertyValue);
 		validatePropertyMutability(propertyDefinition);
-		final Object oldPropertyValue = resourcePropertyMap.get(resourceId).get(resourcePropertyId).getValue();
-		resourcePropertyMap.get(resourceId).get(resourcePropertyId).setPropertyValue(resourcePropertyValue);
+		final Object oldPropertyValue = resourcePropertyMap.get(resourceId).get(resourcePropertyId);
+		resourcePropertyMap.get(resourceId).put(resourcePropertyId,resourcePropertyValue);
 		if (dataManagerContext.subscribersExist(ResourcePropertyUpdateEvent.class)) {
 			dataManagerContext.releaseObservationEvent(new ResourcePropertyUpdateEvent(resourceId, resourcePropertyId, oldPropertyValue, resourcePropertyValue));
 		}
@@ -1729,5 +1662,26 @@ public final class ResourcesDataManager extends DataManager {
 		return EventFilter	.builder(ResourcePropertyDefinitionEvent.class)//
 							.build();
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("ResourcesDataManager [resourcePropertyMap=");
+		builder.append(resourcePropertyMap);
+		builder.append(", personResourceValues=");
+		builder.append(personResourceValues);
+		builder.append(", resourcePropertyDefinitions=");
+		builder.append(resourcePropertyDefinitions);
+		builder.append(", resourceDefinitionTimes=");
+		builder.append(resourceDefinitionTimes);
+		builder.append(", personResourceTimes=");
+		builder.append(personResourceTimes);
+		builder.append(", regionResources=");
+		builder.append(regionResources);
+		builder.append("]");
+		return builder.toString();
+	}
+	
+	
 
 }

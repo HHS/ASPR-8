@@ -99,4 +99,19 @@ public final class BooleanContainer {
 		bitSet.set(index, value);
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("BooleanContainer [defaultValue=");
+		builder.append(defaultValue);
+		builder.append(", boundingIndex=");
+		builder.append(boundingIndex);
+		builder.append(", bitSet=");
+		builder.append(bitSet);
+		builder.append("]");
+		return builder.toString();
+	}
+	
+	
+
 }

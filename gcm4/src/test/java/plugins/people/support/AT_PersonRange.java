@@ -166,8 +166,8 @@ public class AT_PersonRange {
 	@UnitTestMethod(target = PersonRange.class, name = "toString", args = {})
 	public void testToString() {
 		assertEquals(new PersonRange(2, 100).toString(), "PersonRange [lowPersonId=2, highPersonId=100]");
-		assertEquals(new PersonRange(4, 10), "PersonRange [lowPersonId=4, highPersonId=10]");
-		assertEquals(new PersonRange(5, 5), "PersonRange [lowPersonId=5, highPersonId=5]");
-		assertEquals(new PersonRange(12, 19), "PersonRange [lowPersonId=12, highPersonId=19]");
+		assertEquals(new PersonRange(4, 10).toString(), "PersonRange [lowPersonId=4, highPersonId=10]");
+		assertEquals(new PersonRange(5, 5).toString(), "PersonRange [lowPersonId=5, highPersonId=5]");
+		assertEquals(new PersonRange(12, 19).toString(), "PersonRange [lowPersonId=12, highPersonId=19]");
 	}
 }

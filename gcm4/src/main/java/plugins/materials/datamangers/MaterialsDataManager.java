@@ -75,7 +75,7 @@ public final class MaterialsDataManager extends DataManager {
 		 */
 		private double amount;
 		private final BatchId batchId;
-		
+
 		/*
 		 * The non-null material for this batch
 		 */
@@ -92,6 +92,30 @@ public final class MaterialsDataManager extends DataManager {
 		private BatchRecord(BatchId batchId) {
 			this.batchId = batchId;
 		}
+
+		@Override
+		public String toString() {
+			StringBuilder builder = new StringBuilder();
+//			builder.append("BatchRecord [amount=");
+			builder.append(amount);
+//			builder.append(", batchId=");
+//			builder.append(batchId);
+//			builder.append(", materialId=");
+//			builder.append(materialId);
+//			builder.append(", materialsProducerRecord=");
+//			builder.append(materialsProducerRecord.materialProducerId);
+//
+//			builder.append(", stageRecord=");
+//			if (stageRecord != null) {
+//				builder.append(stageRecord.stageId);
+//			} else {
+//				builder.append("null");
+//			}
+//
+//			builder.append("]");
+			return builder.toString();
+		}
+
 	}
 
 	/*
@@ -117,6 +141,26 @@ public final class MaterialsDataManager extends DataManager {
 		private StageRecord(StageId stageId) {
 			this.stageId = stageId;
 		}
+
+		@Override
+		public String toString() {
+			StringBuilder builder = new StringBuilder();
+//			builder.append("StageRecord [offered=");
+			builder.append(offered);
+//			builder.append(", stageId=");
+			builder.append(stageId);
+//			builder.append(", materialsProducerRecord=");
+//			builder.append(materialsProducerRecord.materialProducerId);
+//			builder.append(", batchRecords=");
+//			List<BatchId> batchIds = new ArrayList<>();
+//			for (BatchRecord batchRecord : batchRecords) {
+//				batchIds.add(batchRecord.batchId);
+//			}
+//			builder.append(batchIds);
+//			builder.append("]");
+			return builder.toString();
+		}
+
 	}
 
 	private static record MaterialsProducerPropertyDefinitionMutationEvent(MaterialsProducerPropertyDefinitionInitialization materialsProducerPropertyDefinitionInitialization) implements Event {
@@ -136,6 +180,7 @@ public final class MaterialsDataManager extends DataManager {
 
 	private static record BatchRemovalMutationEvent(BatchId batchId) implements Event {
 	}
+
 	private static record BatchPropertyUpdateMutationEvent(BatchId batchId, BatchPropertyId batchPropertyId, Object batchPropertyValue) implements Event {
 	}
 
@@ -163,8 +208,10 @@ public final class MaterialsDataManager extends DataManager {
 
 	private static record StageOfferUpdateMutationEvent(StageId stageId, boolean offer) implements Event {
 	}
+
 	private static record ConvertStageToBatchMutationEvent(StageConversionInfo stageConversionInfo, BatchId batchId) implements Event {
 	}
+
 	private static record ConvertStageToResourceMutationEvent(StageId stageId, ResourceId resourceId, long amount) implements Event {
 	}
 
@@ -184,15 +231,40 @@ public final class MaterialsDataManager extends DataManager {
 		 * Those batches owned by this materials producer that are not staged
 		 */
 		private final Set<BatchRecord> inventory = new LinkedHashSet<>();
-		
+
 		private MaterialsProducerId materialProducerId;
 
 		private final Map<ResourceId, MutableLong> materialProducerResources = new LinkedHashMap<>();
-		
+
 		/*
 		 * Those batches owned by this materials producer that are staged
 		 */
 		private final Set<StageRecord> stageRecords = new LinkedHashSet<>();
+
+		@Override
+		public String toString() {
+			StringBuilder builder = new StringBuilder();
+			builder.append("MaterialsProducerRecord [materialProducerId=");
+			builder.append(materialProducerId);
+			builder.append(", materialProducerResources=");
+			builder.append(materialProducerResources);
+			builder.append(", stageRecords=");
+
+			List<StageId> stageIds = new ArrayList<>();
+			for (StageRecord stageRecord : stageRecords) {
+				stageIds.add(stageRecord.stageId);
+			}
+			builder.append(stageIds);
+			builder.append(", inventory=");
+
+			List<BatchId> batchIds = new ArrayList<>();
+//			for (BatchRecord batchRecord : inventory) {
+//				batchIds.add(batchRecord.batchId);
+//			}
+			builder.append(batchIds);
+			builder.append("]");
+			return builder.toString();
+		}
 
 	}
 
@@ -209,8 +281,6 @@ public final class MaterialsDataManager extends DataManager {
 	}
 
 	private final Map<MaterialId, Map<BatchPropertyId, PropertyDefinition>> batchPropertyDefinitions = new LinkedHashMap<>();
-
-	
 
 	private final Map<BatchId, Map<BatchPropertyId, Object>> batchPropertyMap = new LinkedHashMap<>();
 
@@ -665,8 +735,6 @@ public final class MaterialsDataManager extends DataManager {
 		return result;
 	}
 
-	
-
 	/**
 	 * Returns the value of the batch property. It is the caller's
 	 * responsibility to validate the inputs.
@@ -717,7 +785,6 @@ public final class MaterialsDataManager extends DataManager {
 		}
 		return Optional.ofNullable(stageId);
 	}
-
 
 	/**
 	 * Returns an event filter used to subscribe to {@link BatchAdditionEvent}
@@ -1114,8 +1181,6 @@ public final class MaterialsDataManager extends DataManager {
 		return result;
 	}
 
-	
-
 	/**
 	 * Returns the value of the materials producer property.
 	 * 
@@ -1162,7 +1227,6 @@ public final class MaterialsDataManager extends DataManager {
 		MutableLong mutableLong = materialsProducerRecord.materialProducerResources.get(resourceId);
 		return mutableLong.getValue();
 	}
-
 
 	/**
 	 * Returns as a list the set of stage ids owned by the material producer
@@ -1300,7 +1364,7 @@ public final class MaterialsDataManager extends DataManager {
 
 		final MaterialsProducerRecord materialsProducerRecord = materialsProducerMap.get(materialsProducerId);
 		final BatchRecord batchRecord = new BatchRecord(batchId);
-		batchRecord.amount = amount;		
+		batchRecord.amount = amount;
 		batchRecord.materialId = materialId;
 		batchRecord.materialsProducerRecord = materialsProducerRecord;
 		materialsProducerRecord.inventory.add(batchRecord);
@@ -1361,9 +1425,8 @@ public final class MaterialsDataManager extends DataManager {
 		validateMaterialId(materialId);
 		validateNewBatchPropertyId(materialId, batchPropertyId);
 		validateBatchPropertyDefinition(propertyDefinition);
-		
+
 		batchPropertyDefinitions.get(materialId).put(batchPropertyId, propertyDefinition);
-		
 
 		// validate the <batchid, property> value assignments
 		for (Pair<BatchId, Object> pair : batchPropertyDefinitionInitialization.getPropertyValues()) {
@@ -1437,15 +1500,15 @@ public final class MaterialsDataManager extends DataManager {
 		validateBatchIsNotOnOfferedStage(batchId);
 		final Map<BatchPropertyId, Object> map = batchPropertyMap.get(batchId);
 
-		if (dataManagerContext.subscribersExist(BatchPropertyUpdateEvent.class)) {			
+		if (dataManagerContext.subscribersExist(BatchPropertyUpdateEvent.class)) {
 			Object previousPropertyValue = map.get(batchPropertyId);
-			if (previousPropertyValue == null) {				
+			if (previousPropertyValue == null) {
 				previousPropertyValue = propertyDefinition.getDefaultValue().get();
 			}
-			map.put(batchPropertyId,batchPropertyValue);
+			map.put(batchPropertyId, batchPropertyValue);
 			dataManagerContext.releaseObservationEvent(new BatchPropertyUpdateEvent(batchId, batchPropertyId, previousPropertyValue, batchPropertyValue));
 		} else {
-			map.put(batchPropertyId,batchPropertyValue);
+			map.put(batchPropertyId, batchPropertyValue);
 		}
 	}
 
@@ -1499,7 +1562,7 @@ public final class MaterialsDataManager extends DataManager {
 		final MaterialsProducerRecord materialsProducerRecord = materialsProducerMap.get(materialsProducerId);
 
 		final BatchRecord newBatchRecord = new BatchRecord(batchId);
-		newBatchRecord.amount = amount;		
+		newBatchRecord.amount = amount;
 		newBatchRecord.materialId = materialId;
 		newBatchRecord.materialsProducerRecord = materialsProducerRecord;
 		materialsProducerRecord.inventory.add(newBatchRecord);
@@ -1584,8 +1647,8 @@ public final class MaterialsDataManager extends DataManager {
 		validateNewMaterialId(materialId);
 
 		materialIds.add(materialId);
-		
-		batchPropertyDefinitions.put(materialId, new LinkedHashMap<>());		
+
+		batchPropertyDefinitions.put(materialId, new LinkedHashMap<>());
 		nonDefaultBearingBatchPropertyIds.put(materialId, new LinkedHashMap<>());
 		nonDefaultChecksForBatches.put(materialId, new boolean[0]);
 
@@ -1703,7 +1766,7 @@ public final class MaterialsDataManager extends DataManager {
 			}
 		}
 
-		materialsProducerPropertyDefinitions.put(materialsProducerPropertyId, propertyDefinition);		
+		materialsProducerPropertyDefinitions.put(materialsProducerPropertyId, propertyDefinition);
 		materialsProducerPropertyIds.add(materialsProducerPropertyId);
 
 		if (checkAllProducersHaveValues) {
@@ -1745,10 +1808,10 @@ public final class MaterialsDataManager extends DataManager {
 			if (currentPopertyValue == null) {
 				currentPopertyValue = propertyDefinition.getDefaultValue().get();
 			}
-			propertyValueMap.put(materialsProducerPropertyId,materialsProducerPropertyValue);
+			propertyValueMap.put(materialsProducerPropertyId, materialsProducerPropertyValue);
 			dataManagerContext.releaseObservationEvent(new MaterialsProducerPropertyUpdateEvent(materialsProducerId, materialsProducerPropertyId, currentPopertyValue, materialsProducerPropertyValue));
-		} else {			
-			propertyValueMap.put(materialsProducerPropertyId,materialsProducerPropertyValue);
+		} else {
+			propertyValueMap.put(materialsProducerPropertyId, materialsProducerPropertyValue);
 		}
 
 	}
@@ -1965,13 +2028,13 @@ public final class MaterialsDataManager extends DataManager {
 
 		for (final MaterialId materialId : materialsPluginData.getMaterialIds()) {
 			materialIds.add(materialId);
-			
-			batchPropertyDefinitions.put(materialId, new LinkedHashMap<>());			
+
+			Map<BatchPropertyId,PropertyDefinition> propMap = new LinkedHashMap<>();
+			batchPropertyDefinitions.put(materialId, propMap);
 			nonDefaultBearingBatchPropertyIds.put(materialId, new LinkedHashMap<>());
 			for (final BatchPropertyId batchPropertyId : materialsPluginData.getBatchPropertyIds(materialId)) {
 				final PropertyDefinition propertyDefinition = materialsPluginData.getBatchPropertyDefinition(materialId, batchPropertyId);
-				
-				batchPropertyDefinitions.get(materialId).put(batchPropertyId, propertyDefinition);				
+				propMap.put(batchPropertyId, propertyDefinition);
 				Map<BatchPropertyId, Integer> map = nonDefaultBearingBatchPropertyIds.get(materialId);
 				if (propertyDefinition.getDefaultValue().isEmpty()) {
 					map.put(batchPropertyId, map.size());
@@ -1993,7 +2056,7 @@ public final class MaterialsDataManager extends DataManager {
 		for (MaterialsProducerPropertyId materialsProducerPropertyId : materialsPluginData.getMaterialsProducerPropertyIds()) {
 			materialsProducerPropertyIds.add(materialsProducerPropertyId);
 			PropertyDefinition propertyDefinition = materialsPluginData.getMaterialsProducerPropertyDefinition(materialsProducerPropertyId);
-			materialsProducerPropertyDefinitions.put(materialsProducerPropertyId, propertyDefinition);			
+			materialsProducerPropertyDefinitions.put(materialsProducerPropertyId, propertyDefinition);
 			if (propertyDefinition.getDefaultValue().isEmpty()) {
 				nonDefaultBearingProducerPropertyIds.put(materialsProducerPropertyId, nonDefaultBearingProducerPropertyIds.size());
 			}
@@ -2019,11 +2082,10 @@ public final class MaterialsDataManager extends DataManager {
 			}
 		}
 
-		
 		for (final StageId stageId : materialsPluginData.getStageIds()) {
 			final MaterialsProducerId materialsProducerId = materialsPluginData.getStageMaterialsProducer(stageId);
 			final MaterialsProducerRecord materialsProducerRecord = materialsProducerMap.get(materialsProducerId);
-			final StageRecord stageRecord = new StageRecord(stageId);			
+			final StageRecord stageRecord = new StageRecord(stageId);
 			stageRecord.materialsProducerRecord = materialsProducerRecord;
 			stageRecord.offered = materialsPluginData.isStageOffered(stageId);
 			materialsProducerRecord.stageRecords.add(stageRecord);
@@ -2031,15 +2093,14 @@ public final class MaterialsDataManager extends DataManager {
 		}
 		nextStageRecordId = materialsPluginData.getNextStageRecordId();
 
-		
 		for (final BatchId batchId : materialsPluginData.getBatchIds()) {
 			final MaterialsProducerId materialsProducerId = materialsPluginData.getBatchMaterialsProducer(batchId);
 			final MaterialId materialId = materialsPluginData.getBatchMaterial(batchId);
 			final double amount = materialsPluginData.getBatchAmount(batchId);
 			final MaterialsProducerRecord materialsProducerRecord = materialsProducerMap.get(materialsProducerId);
 
-			final BatchRecord batchRecord = new BatchRecord(batchId);			
-			batchRecord.amount = amount;			
+			final BatchRecord batchRecord = new BatchRecord(batchId);
+			batchRecord.amount = amount;
 			batchRecord.materialId = materialId;
 			batchRecord.materialsProducerRecord = materialsProducerRecord;
 			materialsProducerRecord.inventory.add(batchRecord);
@@ -2049,8 +2110,8 @@ public final class MaterialsDataManager extends DataManager {
 
 			Map<BatchPropertyId, Object> batchPropertyValues = materialsPluginData.getBatchPropertyValues(batchId);
 			for (BatchPropertyId batchPropertyId : batchPropertyValues.keySet()) {
-				final Object batchPropertyValue = batchPropertyValues.get(batchPropertyId);				
-				map.put(batchPropertyId, batchPropertyValue);				
+				final Object batchPropertyValue = batchPropertyValues.get(batchPropertyId);
+				map.put(batchPropertyId, batchPropertyValue);
 			}
 
 		}
@@ -2194,65 +2255,63 @@ public final class MaterialsDataManager extends DataManager {
 	private void recordSimulationState(DataManagerContext dataManagerContext) {
 
 		MaterialsPluginData.Builder builder = MaterialsPluginData.builder();
-		
+
 		builder.setNextBatchRecordId(nextBatchRecordId);
 		builder.setNextStageRecordId(nextStageRecordId);
 
-		Set<MaterialsProducerPropertyId> materialsProducerPropertyIds = getMaterialsProducerPropertyIds();
+		for (MaterialsProducerId materialsProducerId : materialsProducerPropertyMap.keySet()) {
+			Map<MaterialsProducerPropertyId, Object> map = materialsProducerPropertyMap.get(materialsProducerId);
+			for (MaterialsProducerPropertyId materialsProducerPropertyId : map.keySet()) {
+				Object propertyValue = map.get(materialsProducerPropertyId);
+				builder.setMaterialsProducerPropertyValue(materialsProducerId, materialsProducerPropertyId, propertyValue);
+			}
+		}
 
 		for (MaterialsProducerId materialsProducerId : getMaterialsProducerIds()) {
 			builder.addMaterialsProducerId(materialsProducerId);
-			for (MaterialsProducerPropertyId materialsProducerPropertyId : materialsProducerPropertyIds) {
-				Object propertyValue = getMaterialsProducerPropertyValue(materialsProducerId, materialsProducerPropertyId);
-				builder.setMaterialsProducerPropertyValue(materialsProducerId, materialsProducerPropertyId, propertyValue);
-			}
-
 			final MaterialsProducerRecord materialsProducerRecord = materialsProducerMap.get(materialsProducerId);
 			for (ResourceId resourId : materialsProducerRecord.materialProducerResources.keySet()) {
 				MutableLong mutableLong = materialsProducerRecord.materialProducerResources.get(resourId);
 				builder.setMaterialsProducerResourceLevel(materialsProducerId, resourId, mutableLong.getValue());
 			}
-
 		}
 
-		for (MaterialsProducerPropertyId materialsProducerPropertyId : materialsProducerPropertyIds) {
-			PropertyDefinition propertyDefinition = getMaterialsProducerPropertyDefinition(materialsProducerPropertyId);
+		for (MaterialsProducerPropertyId materialsProducerPropertyId : materialsProducerPropertyDefinitions.keySet()) {
+			PropertyDefinition propertyDefinition = materialsProducerPropertyDefinitions.get(materialsProducerPropertyId);
 			builder.defineMaterialsProducerProperty(materialsProducerPropertyId, propertyDefinition);
 		}
-
-		for (MaterialId materialId : getMaterialIds()) {
+		
+		for (MaterialId materialId : materialIds) {
 			builder.addMaterial(materialId);
-			for (BatchPropertyId batchPropertyId : getBatchPropertyIds(materialId)) {
-				PropertyDefinition propertyDefinition = getBatchPropertyDefinition(materialId, batchPropertyId);
+		}
+		
+
+		for (MaterialId materialId : batchPropertyDefinitions.keySet()) {			
+			Map<BatchPropertyId, PropertyDefinition> map = batchPropertyDefinitions.get(materialId);			
+			for (BatchPropertyId batchPropertyId : map.keySet()) {
+				PropertyDefinition propertyDefinition = map.get(batchPropertyId);
 				builder.defineBatchProperty(materialId, batchPropertyId, propertyDefinition);
 			}
 		}
-		for (MaterialsProducerId materialsProducerId : getMaterialsProducerIds()) {
-			for (StageId stageId : getStages(materialsProducerId)) {
-				boolean offered = isStageOffered(stageId);
-				builder.addStage(stageId, offered, materialsProducerId);
 
-				for (BatchId batchId : getStageBatches(stageId)) {
-					MaterialId batchMaterial = getBatchMaterial(batchId);
-					double batchAmount = getBatchAmount(batchId);
-					builder.addBatch(batchId, batchMaterial, batchAmount, materialsProducerId);
-					builder.addBatchToStage(stageId, batchId);
+		for (BatchId batchId : batchRecords.keySet()) {
+			BatchRecord batchRecord = batchRecords.get(batchId);
+			builder.addBatch(batchId, batchRecord.materialId, batchRecord.amount, batchRecord.materialsProducerRecord.materialProducerId);
+		}
 
-					for (BatchPropertyId batchPropertyId : getBatchPropertyIds(batchMaterial)) {
-						Object propertyValue = getBatchPropertyValue(batchId, batchPropertyId);
-						builder.setBatchPropertyValue(batchId, batchPropertyId, propertyValue);
-					}
-				}
-
+		for (BatchId batchId : batchPropertyMap.keySet()) {
+			Map<BatchPropertyId, Object> map = batchPropertyMap.get(batchId);
+			for (BatchPropertyId batchPropertyId : map.keySet()) {
+				Object propertyValue = map.get(batchPropertyId);
+				builder.setBatchPropertyValue(batchId, batchPropertyId, propertyValue);
 			}
-			for (BatchId batchId : getInventoryBatches(materialsProducerId)) {
-				MaterialId batchMaterial = getBatchMaterial(batchId);
-				double batchAmount = getBatchAmount(batchId);
-				builder.addBatch(batchId, batchMaterial, batchAmount, materialsProducerId);
-				for (BatchPropertyId batchPropertyId : getBatchPropertyIds(batchMaterial)) {
-					Object propertyValue = getBatchPropertyValue(batchId, batchPropertyId);
-					builder.setBatchPropertyValue(batchId, batchPropertyId, propertyValue);
-				}
+		}
+
+		for (StageId stageId : stageRecords.keySet()) {
+			StageRecord stageRecord = stageRecords.get(stageId);
+			builder.addStage(stageId, stageRecord.offered, stageRecord.materialsProducerRecord.materialProducerId);
+			for (BatchId batchId : getStageBatches(stageId)) {
+				builder.addBatchToStage(stageId, batchId);
 			}
 		}
 
@@ -2498,6 +2557,7 @@ public final class MaterialsDataManager extends DataManager {
 	public void transferResourceToRegion(MaterialsProducerId materialsProducerId, ResourceId resourceId, RegionId regionId, long amount) {
 		dataManagerContext.releaseMutationEvent(new TransferResourceToRegionMutationEvent(materialsProducerId, resourceId, regionId, amount));
 	}
+
 	private void validateBatchAndStageOwnersMatch(final BatchId batchId, final StageId stageId) {
 		final MaterialsProducerId batchProducerId = batchRecords.get(batchId).materialsProducerRecord.materialProducerId;
 		final MaterialsProducerId stageProducerId = stageRecords.get(stageId).materialsProducerRecord.materialProducerId;
@@ -2505,11 +2565,13 @@ public final class MaterialsDataManager extends DataManager {
 			throw new ContractException(MaterialsError.BATCH_STAGED_TO_DIFFERENT_OWNER);
 		}
 	}
+
 	private void validateBatchConstructionInfoNotNull(final BatchConstructionInfo batchConstructionInfo) {
 		if (batchConstructionInfo == null) {
 			throw new ContractException(MaterialsError.NULL_BATCH_CONSTRUCTION_INFO);
 		}
 	}
+
 	/*
 	 * Precondition : batch must exist
 	 */
@@ -2518,11 +2580,13 @@ public final class MaterialsDataManager extends DataManager {
 			throw new ContractException(MaterialsError.INSUFFICIENT_MATERIAL_AVAILABLE);
 		}
 	}
+
 	private void validateBatchHasSufficientUllage(BatchId batchId, double amount) {
 		if (!Double.isFinite(batchRecords.get(batchId).amount + amount)) {
 			throw new ContractException(MaterialsError.MATERIAL_ARITHMETIC_EXCEPTION);
 		}
 	}
+
 	private void validateBatchId(final BatchId batchId) {
 
 		if (batchId == null) {
@@ -2533,6 +2597,7 @@ public final class MaterialsDataManager extends DataManager {
 			throw new ContractException(MaterialsError.UNKNOWN_BATCH_ID, batchId);
 		}
 	}
+
 	/*
 	 * Preconditions : batch must exist
 	 */
@@ -2860,6 +2925,54 @@ public final class MaterialsDataManager extends DataManager {
 			}
 			throw new ContractException(PropertyError.INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT, sb.toString());
 		}
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+//		builder.append("MaterialsDataManager [batchPropertyDefinitions=");
+//		builder.append(batchPropertyDefinitions);
+		
+		
+//		builder.append(", batchPropertyMap=");//bad
+//		builder.append(batchPropertyMap);//bad
+		
+//		builder.append(", batchRecords=")//bad;
+//		builder.append(batchRecords);//bad
+		
+//		for(BatchId batchId : batchRecords.keySet()) {
+//			BatchRecord batchRecord = batchRecords.get(batchId);
+//			builder.append(batchId);
+//			builder.append("\t");
+//			builder.append(batchRecord);
+//			builder.append("\n");
+//		}
+		
+//		builder.append(", materialIds=");
+//		builder.append(materialIds);
+		
+		
+//		builder.append(", materialsProducerMap=");//bad
+//		builder.append(materialsProducerMap);//bad
+		
+		
+		
+//		builder.append(", materialsProducerPropertyDefinitions=");
+//		builder.append(materialsProducerPropertyDefinitions);
+//		builder.append(", materialsProducerPropertyIds=");
+//		builder.append(materialsProducerPropertyIds);
+//		builder.append(", materialsProducerPropertyMap=");
+//		builder.append(materialsProducerPropertyMap);
+//		builder.append(", nextBatchRecordId=");
+//		builder.append(nextBatchRecordId);
+//		builder.append(", nextStageRecordId=");
+//		builder.append(nextStageRecordId);
+//		builder.append(", resourceIds=");
+//		builder.append(resourceIds);
+//		builder.append(", stageRecords=");
+		builder.append(stageRecords);
+//		builder.append("]");
+		return builder.toString();
 	}
 
 }

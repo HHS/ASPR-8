@@ -9,7 +9,7 @@ import util.errors.ContractException;
  * 
  *
  */
-public final class FloatPropertyManager extends AbstractIndexedPropertyManager {
+public final class FloatPropertyManager implements IndexedPropertyManager {
 	/*
 	 * A container, indexed by person id, that stores Double values as an array
 	 * of float.
@@ -28,7 +28,13 @@ public final class FloatPropertyManager extends AbstractIndexedPropertyManager {
 	 *             if the property definition's type is not Boolean</li>
 	 */
 	public FloatPropertyManager(PropertyDefinition propertyDefinition, int initialSize) {
-		super(propertyDefinition, initialSize);
+		if (propertyDefinition == null) {
+			throw new ContractException(PropertyError.NULL_PROPERTY_DEFINITION);
+		}
+		
+		if (initialSize < 0) {
+			throw new ContractException(PropertyError.NEGATIVE_INITIAL_SIZE);
+		}
 		if (propertyDefinition.getType() != Float.class) {
 			throw new ContractException(PropertyError.PROPERTY_DEFINITION_IMPROPER_TYPE,"Requires a property definition with float type");
 		}
@@ -51,15 +57,37 @@ public final class FloatPropertyManager extends AbstractIndexedPropertyManager {
 
 	@Override
 	public void setPropertyValue(int id, Object propertyValue) {
-		super.setPropertyValue(id, propertyValue);
+		if (id < 0) {
+			throw new ContractException(PropertyError.NEGATIVE_INDEX);
+		}
 		Float f = (Float) propertyValue;
 		floatValueContainer.setValue(id, f);
 	}
 
 	@Override
 	public void incrementCapacity(int count) {
-		super.incrementCapacity(count);
+		if (count < 0) {
+			throw new ContractException(PropertyError.NEGATIVE_CAPACITY_INCREMENT);
+		}
 		floatValueContainer.setCapacity(floatValueContainer.getCapacity() + count);
 	}
+	
+	@Override
+	public void removeId(int id) {
+		if (id < 0) {
+			throw new ContractException(PropertyError.NEGATIVE_INDEX);
+		}
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("FloatPropertyManager [floatValueContainer=");
+		builder.append(floatValueContainer);
+		builder.append("]");
+		return builder.toString();
+	}
+	
+	
 
 }
