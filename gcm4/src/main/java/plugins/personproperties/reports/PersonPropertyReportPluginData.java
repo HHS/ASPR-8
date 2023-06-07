@@ -34,6 +34,25 @@ public final class PersonPropertyReportPluginData implements PluginData {
 		private Data() {
 		}
 
+		@Override
+		public String toString() {
+			StringBuilder builder = new StringBuilder();
+			builder.append("Data [reportLabel=");
+			builder.append(reportLabel);
+			builder.append(", reportPeriod=");
+			builder.append(reportPeriod);
+			builder.append(", includedProperties=");
+			builder.append(includedProperties);
+			builder.append(", excludedProperties=");
+			builder.append(excludedProperties);
+			builder.append(", defaultInclusionPolicy=");
+			builder.append(defaultInclusionPolicy);
+			builder.append(", locked=");
+			builder.append(locked);
+			builder.append("]");
+			return builder.toString();
+		}
+
 		private Data(Data data) {
 			reportLabel = data.reportLabel;
 			reportPeriod = data.reportPeriod;
@@ -295,6 +314,15 @@ public final class PersonPropertyReportPluginData implements PluginData {
 			return false;
 		}
 		return true;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder2 = new StringBuilder();
+		builder2.append("PersonPropertyReportPluginData [data=");
+		builder2.append(data);
+		builder2.append("]");
+		return builder2.toString();
 	}
 	
 	
