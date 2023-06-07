@@ -60,6 +60,18 @@ public class PersonPropertyInteractionReportPluginData implements PluginData {
 			}
 			return true;
 		}
+		@Override
+		public String toString() {
+			StringBuilder builder = new StringBuilder();
+			builder.append("Data [reportLabel=");
+			builder.append(reportLabel);
+			builder.append(", reportPeriod=");
+			builder.append(reportPeriod);
+			builder.append(", personPropertyIds=");
+			builder.append(personPropertyIds);
+			builder.append("]");
+			return builder.toString();
+		}
 		
 		
 	}
@@ -152,6 +164,15 @@ public class PersonPropertyInteractionReportPluginData implements PluginData {
 			return false;
 		}
 		return true;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder2 = new StringBuilder();
+		builder2.append("PersonPropertyInteractionReportPluginData [data=");
+		builder2.append(data);
+		builder2.append("]");
+		return builder2.toString();
 	}
 
 	
