@@ -1,11 +1,16 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.globalproperties;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.globalproperties.translationSpecs.GlobalPropertiesPluginDataTranslationSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.globalproperties.translationSpecs.GlobalPropertyDimensionTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.globalproperties.translationSpecs.GlobalPropertyIdTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.globalproperties.translationSpecs.GlobalPropertyReportPluginDataTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.globalproperties.translationSpecs.TestGlobalPropertyIdTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.PropertiesTranslatorId;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.ReportsTranslatorId;
+import gov.hhs.aspr.translation.core.TranslationSpec;
 import gov.hhs.aspr.translation.core.Translator;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
 
@@ -20,6 +25,17 @@ public class GlobalPropertiesTranslator {
     private GlobalPropertiesTranslator() {
     }
 
+    protected static List<TranslationSpec<?,?>> getTranslationSpecs() {
+        List<TranslationSpec<?,?>> list = new ArrayList<>();
+
+        list.add(new GlobalPropertiesPluginDataTranslationSpec());
+        list.add(new GlobalPropertyIdTranslationSpec());
+        list.add(new GlobalPropertyDimensionTranslationSpec());
+        list.add(new TestGlobalPropertyIdTranslationSpec());
+        list.add(new GlobalPropertyReportPluginDataTranslationSpec());
+
+        return list;
+    }
     /**
      * Returns a Translator Builder that already includes the necessary
      * TranslationSpecs needed to read and write GlobalPropertiesPluginData
@@ -28,41 +44,22 @@ public class GlobalPropertiesTranslator {
      * GlobalPropertyReportPluginData and also add a dependency on the
      * ReportsTranslator
      */
-    private static Translator.Builder builder(boolean withReport) {
+    private static Translator.Builder builder() {
 
         Translator.Builder builder = Translator.builder()
                 .setTranslatorId(GlobalPropertiesTranslatorId.TRANSLATOR_ID)
                 .addDependency(PropertiesTranslatorId.TRANSLATOR_ID)
+                .addDependency(ReportsTranslatorId.TRANSLATOR_ID)
                 .setInitializer((translatorContext) -> {
                     ProtobufTranslationEngine.Builder translationEngineBuilder = translatorContext
                             .getTranslationEngineBuilder(ProtobufTranslationEngine.Builder.class);
 
-                    translationEngineBuilder
-                            .addTranslationSpec(new GlobalPropertiesPluginDataTranslationSpec())
-                            .addTranslationSpec(new GlobalPropertyIdTranslationSpec())
-                            .addTranslationSpec(new TestGlobalPropertyIdTranslationSpec());
-
-                    if (withReport) {
-                        translationEngineBuilder
-                                .addTranslationSpec(new GlobalPropertyReportPluginDataTranslationSpec());
+                    for(TranslationSpec<?,?> translationSpec : getTranslationSpecs()) {
+                        translationEngineBuilder.addTranslationSpec(translationSpec);
                     }
                 });
 
-        if (withReport) {
-            builder.addDependency(ReportsTranslatorId.TRANSLATOR_ID);
-        }
-
         return builder;
-    }
-
-    /**
-     * Returns a GlobalPropertiesTranslator that includes TranslationSpecs for the
-     * GlobalPropertiesPluginData and GlobalPropertyReportPluginData and has a
-     * dependency on the ReportsTranslator.
-     * <li>Equivalent to calling builder(true).build()
-     */
-    public static Translator getTranslatorWithReport() {
-        return builder(true).build();
     }
 
     /**
@@ -71,6 +68,6 @@ public class GlobalPropertiesTranslator {
      * <li>Equivalent to calling builder(false).build()
      */
     public static Translator getTranslator() {
-        return builder(false).build();
+        return builder().build();
     }
 }
