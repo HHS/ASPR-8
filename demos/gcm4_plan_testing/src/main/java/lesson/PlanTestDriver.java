@@ -12,9 +12,13 @@ import java.util.Optional;
 import org.apache.commons.math3.random.RandomGenerator;
 
 import lesson.plugins.model.ModelPlugin;
+import lesson.plugins.model.actors.antigenproducer.AntigenProducer;
 import lesson.plugins.model.actors.antigenproducer.AntigenProducerPluginData;
+import lesson.plugins.model.actors.contactmanager.ContactManager;
 import lesson.plugins.model.actors.contactmanager.ContactManagerPluginData;
+import lesson.plugins.model.actors.vaccinator.Vaccinator;
 import lesson.plugins.model.actors.vaccinator.VaccinatorPluginData;
+import lesson.plugins.model.actors.vaccineproducer.VaccineProducer;
 import lesson.plugins.model.actors.vaccineproducer.VaccineProducerPluginData;
 import lesson.plugins.model.support.DiseaseState;
 import lesson.plugins.model.support.GlobalProperty;
@@ -27,6 +31,7 @@ import lesson.plugins.model.support.Region;
 import lesson.plugins.model.support.Resource;
 import nucleus.Experiment;
 import nucleus.ExperimentParameterData;
+import nucleus.PlanQueueData;
 import nucleus.Plugin;
 import nucleus.SimulationState;
 import plugins.globalproperties.GlobalPropertiesPlugin;
@@ -52,20 +57,34 @@ import plugins.stochastics.StochasticsPluginData;
 import plugins.stochastics.support.WellState;
 import plugins.util.properties.PropertyDefinition;
 import util.random.RandomGeneratorProvider;
+import util.time.TimeElapser;
 
 public final class PlanTestDriver {
 	private int iterationCount = 0;
-	private final static boolean executeFull = false;
+	private static boolean EXECUTE_FULL;
+	private static double SIMULATION_DURATION_TIME;
 
 	public static void main(final String[] args) throws IOException {
 		Path baseOutputDirectory = Paths.get(args[0]);
 		PlanTestDriver planTestDriver = new PlanTestDriver(baseOutputDirectory);
 
-		if (executeFull) {
+		SIMULATION_DURATION_TIME = 10;
+		AntigenProducer.LOG_ACTIVE = true;
+		ContactManager.LOG_ACTIVE = true;
+		Vaccinator.LOG_ACTIVE = true;
+		VaccineProducer.LOG_ACTIVE = true;
+		EXECUTE_FULL = false;
+		
+		TimeElapser timeElapser = new TimeElapser();
+
+
+		if (EXECUTE_FULL) {
 			planTestDriver.executeFull();
 		} else {
 			planTestDriver.executeByParts();
 		}
+		
+		System.out.println("Elapsed milliseconds = "+timeElapser.getElapsedMilliSeconds());
 
 	}
 
@@ -198,6 +217,7 @@ public final class PlanTestDriver {
 										.addExperimentContextConsumer(getNIOReportItemHandler(outputDirectory))//
 										.build();//
 
+	
 		experiment.execute();//
 
 	}
@@ -208,10 +228,24 @@ public final class PlanTestDriver {
 		SimulationState simulationState = SimulationState.builder().build();
 		List<Plugin> plugins = getStartingPlugins();
 
-		for (int i = 0; i < 45; i++) {						
+		while(true) {
+//		for (int i = 0; i < 45; i++) {						
 			StateCollector stateCollector = executeSim(simulationState, plugins);
 			plugins = getPlugins(stateCollector);
 			simulationState = stateCollector.get(0, SimulationState.class).get();
+			
+			List<PlanQueueData> planQueueDatas = simulationState.getPlanQueueDatas();
+			boolean activePlanFound = false;
+			for(PlanQueueData planQueueData : planQueueDatas) {
+				
+				if(planQueueData.isActive()) {
+					activePlanFound = true;
+					break;
+				}
+			}
+			if(!activePlanFound) {
+				break;
+			}
 		}		
 	}
 
@@ -239,7 +273,7 @@ public final class PlanTestDriver {
 
 		ExperimentParameterData experimentParameterData = ExperimentParameterData.builder()//
 				.setRecordState(true)//
-				.setSimulationHaltTime(simulationState.getStartTime() + 10)//
+				.setSimulationHaltTime(simulationState.getStartTime() + SIMULATION_DURATION_TIME)//
 				.build();
 		
 		Experiment experiment = builder	.setSimulationState(simulationState)//
@@ -289,7 +323,7 @@ public final class PlanTestDriver {
 												.build();
 		builder.defineGlobalProperty(GlobalProperty.MANUFACTURE_VACCINE, propertyDefinition,0);
 
-		builder.setGlobalPropertyValue(GlobalProperty.POPULATION_SIZE, 10_000,0);
+		builder.setGlobalPropertyValue(GlobalProperty.POPULATION_SIZE, 100_000,0);
 		builder.setGlobalPropertyValue(GlobalProperty.SUSCEPTIBLE_POPULATION_PROPORTION, 1.0,0);
 		builder.setGlobalPropertyValue(GlobalProperty.INITIAL_INFECTIONS, 1,0);
 		builder.setGlobalPropertyValue(GlobalProperty.MIN_INFECTIOUS_PERIOD, 7,0);
@@ -394,7 +428,7 @@ public final class PlanTestDriver {
 
 		return PersonPropertiesPlugin	.builder()//
 										.setPersonPropertiesPluginData(personPropertiesPluginData)//
-										// .setPersonPropertyReportPluginData(personPropertyReportPluginData)//
+										//.setPersonPropertyReportPluginData(personPropertyReportPluginData)//
 										.getPersonPropertyPlugin();
 
 	}

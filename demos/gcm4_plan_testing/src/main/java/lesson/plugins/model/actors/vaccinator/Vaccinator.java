@@ -28,7 +28,7 @@ import util.wrappers.MutableDouble;
 import util.wrappers.MutableLong;
 
 public class Vaccinator {
-	private boolean logActive = true;
+	public static boolean LOG_ACTIVE = true;
 	
 	private boolean selfProduceVaccine = false;
 	
@@ -256,7 +256,7 @@ public class Vaccinator {
 
 
 	private void log(Object... values) {
-		if (logActive) {
+		if (LOG_ACTIVE) {
 			StringBuilder sb = new StringBuilder();
 			sb.append("Vaccinator : ");
 			sb.append(actorContext.getTime());
