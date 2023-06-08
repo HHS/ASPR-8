@@ -205,6 +205,10 @@ public abstract class TranslationEngine {
 
     }
 
+    public Set<BaseTranslationSpec> getTranslationSpecs() {
+        return this.data.translationSpecs;
+    }
+
     /**
      * abstract method that must be implemented by child TranslatorCores that
      * defines how to write to output files

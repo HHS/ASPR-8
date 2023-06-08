@@ -51,7 +51,7 @@ public class GroupsTranslator {
         list.add(new GroupPropertyReportPluginDataTranslationSpec());
 
         return list;
-    };
+    }
 
     private static Translator.Builder builder() {
         Translator.Builder builder = Translator.builder()
