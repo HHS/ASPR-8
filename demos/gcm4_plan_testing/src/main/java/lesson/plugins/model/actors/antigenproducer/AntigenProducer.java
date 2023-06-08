@@ -24,11 +24,11 @@ import plugins.materials.support.StageConversionInfo;
 import plugins.materials.support.StageId;
 
 public final class AntigenProducer {
-	private boolean logActive = true;
+	public static boolean LOG_ACTIVE = true;
 	
 
 	private void log(Object... values) {
-		if (logActive) {
+		if (LOG_ACTIVE) {
 			StringBuilder sb = new StringBuilder();
 			sb.append("Antigen Producer : ");
 			sb.append(actorContext.getTime());

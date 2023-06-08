@@ -28,11 +28,12 @@ import plugins.materials.support.StageId;
 
 public final class VaccineProducer {
 
-	private boolean logActive = true;
+	public static boolean LOG_ACTIVE = true;
+	
 	private boolean selfProduceAntigen = false;
 
 	private void log(Object... values) {
-		if (logActive) {
+		if (LOG_ACTIVE) {
 			StringBuilder sb = new StringBuilder();
 			sb.append("Vaccine Producer : ");
 			sb.append(actorContext.getTime());

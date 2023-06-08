@@ -35,10 +35,10 @@ public class ContactManager {
 	private double infectionInterval;
 	private double communityContactRate;
 
-	private boolean logActive = true;
+	public static boolean LOG_ACTIVE = true;
 
 	private void log(Object... values) {
-		if (logActive) {
+		if (LOG_ACTIVE) {
 			StringBuilder sb = new StringBuilder();
 			sb.append("Contact Manager : ");
 			sb.append(actorContext.getTime());
