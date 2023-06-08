@@ -35,11 +35,12 @@ public class AT_MaterialsTranslator {
         ClassLoader classLoader = ClassLoader.getSystemClassLoader();
         URL packageURL;
 
-        packageURL = classLoader.getResource(packageName);
+        packageURL = classLoader.getResource(packageName.replaceAll("[.]", "/"));
 
         if (packageURL != null) {
             String packagePath = packageURL.getPath();
             if (packagePath != null) {
+                packagePath = packagePath.replaceAll("test-classes", "classes");
                 File packageDir = new File(packagePath);
                 if (packageDir.isDirectory()) {
                     File[] files = packageDir.listFiles();
