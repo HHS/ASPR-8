@@ -78,4 +78,15 @@ public abstract class ResourceLabeler implements Labeler {
 		return getLabelFromAmount(personResourceUpdateEvent.previousResourceLevel());
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("ResourceLabeler [resourceId=");
+		builder.append(resourceId);
+		builder.append("]");
+		return builder.toString();
+	}
+	
+	
+
 }

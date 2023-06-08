@@ -89,4 +89,15 @@ public abstract class AttributeLabeler implements Labeler {
 		return getLabelFromValue(attributeUpdateEvent.previousValue());
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("AttributeLabeler [attributeId=");
+		builder.append(attributeId);
+		builder.append("]");
+		return builder.toString();
+	}
+	
+	
+
 }

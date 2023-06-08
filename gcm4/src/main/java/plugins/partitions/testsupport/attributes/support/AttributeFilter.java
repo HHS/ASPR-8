@@ -217,4 +217,21 @@ public final class AttributeFilter extends Filter {
 		return true;
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("AttributeFilter [attributeId=");
+		builder.append(attributeId);
+		builder.append(", value=");
+		builder.append(value);
+		builder.append(", equality=");
+		builder.append(equality);
+		builder.append(", attributesDataManager=");
+		builder.append(attributesDataManager);
+		builder.append("]");
+		return builder.toString();
+	}
+	
+	
+
 }

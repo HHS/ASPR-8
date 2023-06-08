@@ -79,8 +79,11 @@ public class AT_Filter {
 			}
 			return true;
 		}
-
 		
+		@Override
+		public String toString() {
+			return "LocalFilter[]";
+		}		
 	}
 
 	private static Optional<PersonId> eventPredicate(PartitionsContext partitionsContext, Event event) {

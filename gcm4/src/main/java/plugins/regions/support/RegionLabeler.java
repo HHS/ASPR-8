@@ -17,8 +17,8 @@ import util.errors.ContractException;
 /**
  * A labeler for regions. The dimension of the labeler is the
  * {@linkplain RegionId} class, the event that stimulates a label update is
- * {@linkplain PersonRegionUpdateEvent} and the labeling function is
- * composed from the given Function.
+ * {@linkplain PersonRegionUpdateEvent} and the labeling function is composed
+ * from the given Function.
  * 
  *
  */
@@ -27,8 +27,6 @@ public abstract class RegionLabeler implements Labeler {
 	protected abstract Object getLabelFromRegionId(RegionId regionId);
 
 	private RegionsDataManager regionsDataManager;
-
-	
 
 	private Optional<PersonId> getPersonId(PersonRegionUpdateEvent personRegionUpdateEvent) {
 		return Optional.of(personRegionUpdateEvent.personId());
@@ -62,6 +60,11 @@ public abstract class RegionLabeler implements Labeler {
 	public final Object getPastLabel(PartitionsContext partitionsContext, Event event) {
 		PersonRegionUpdateEvent personRegionUpdateEvent = (PersonRegionUpdateEvent) event;
 		return getLabelFromRegionId(personRegionUpdateEvent.previousRegionId());
+	}
+
+	@Override
+	public String toString() {
+		return "RegionLabeler []";
 	}
 
 }

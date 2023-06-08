@@ -152,4 +152,15 @@ public class WellState {
 		return true;
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder builder2 = new StringBuilder();
+		builder2.append("WellState [data=");
+		builder2.append(data);
+		builder2.append("]");
+		return builder2.toString();
+	}
+	
+	
+
 }

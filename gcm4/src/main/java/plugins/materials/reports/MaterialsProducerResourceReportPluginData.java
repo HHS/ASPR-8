@@ -56,6 +56,17 @@ public final class MaterialsProducerResourceReportPluginData implements PluginDa
 			return true;
 		}
 
+		@Override
+		public String toString() {
+			StringBuilder builder = new StringBuilder();
+			builder.append("Data [reportLabel=");
+			builder.append(reportLabel);
+			builder.append(", locked=");
+			builder.append(locked);
+			builder.append("]");
+			return builder.toString();
+		}
+
 		
 	}
 
@@ -174,6 +185,15 @@ public final class MaterialsProducerResourceReportPluginData implements PluginDa
 			return false;
 		}
 		return true;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder2 = new StringBuilder();
+		builder2.append("MaterialsProducerResourceReportPluginData [data=");
+		builder2.append(data);
+		builder2.append("]");
+		return builder2.toString();
 	}
 	
 	

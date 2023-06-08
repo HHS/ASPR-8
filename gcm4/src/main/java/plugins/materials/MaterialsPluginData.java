@@ -1131,9 +1131,7 @@ public final class MaterialsPluginData implements PluginData {
 			builder.append(", materialsProducerPropertyDefinitions=");
 			builder.append(materialsProducerPropertyDefinitions);
 			builder.append(", materialsProducerPropertyValues=");
-			builder.append(materialsProducerPropertyValues);
-			builder.append(", emptyMaterialsProducerPropertyValuesMap=");
-			builder.append(emptyMaterialsProducerPropertyValuesMap);
+			builder.append(materialsProducerPropertyValues);			
 			builder.append(", materialsProducerResourceLevels=");
 			builder.append(materialsProducerResourceLevels);
 			builder.append(", batchIds=");
@@ -1145,9 +1143,7 @@ public final class MaterialsPluginData implements PluginData {
 			builder.append(", batchMaterialsProducers=");
 			builder.append(batchMaterialsProducers);
 			builder.append(", batchPropertyValues=");
-			builder.append(batchPropertyValues);
-			builder.append(", emptyBatchPropertyValues=");
-			builder.append(emptyBatchPropertyValues);
+			builder.append(batchPropertyValues);			
 			builder.append(", stageIds=");
 			builder.append(stageIds);
 			builder.append(", stageOffers=");

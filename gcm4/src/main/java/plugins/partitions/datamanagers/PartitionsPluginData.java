@@ -135,6 +135,17 @@ public final class PartitionsPluginData implements PluginData {
 			return true;
 		}
 
+		@Override
+		public String toString() {
+			StringBuilder builder = new StringBuilder();
+			builder.append("Data [partitions=");
+			builder.append(partitions);
+			builder.append(", locked=");
+			builder.append(locked);
+			builder.append("]");
+			return builder.toString();
+		}
+
 	}
 
 	/**
@@ -222,5 +233,16 @@ public final class PartitionsPluginData implements PluginData {
 		}
 		return true;
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder2 = new StringBuilder();
+		builder2.append("PartitionsPluginData [data=");
+		builder2.append(data);
+		builder2.append("]");
+		return builder2.toString();
+	}
+	
+	
 
 }

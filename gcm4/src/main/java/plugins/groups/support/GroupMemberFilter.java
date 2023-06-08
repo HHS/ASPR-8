@@ -99,4 +99,15 @@ public class GroupMemberFilter extends Filter {
 		return true;
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("GroupMemberFilter [groupId=");
+		builder.append(groupId);
+		builder.append("]");
+		return builder.toString();
+	}
+	
+	
+
 }
