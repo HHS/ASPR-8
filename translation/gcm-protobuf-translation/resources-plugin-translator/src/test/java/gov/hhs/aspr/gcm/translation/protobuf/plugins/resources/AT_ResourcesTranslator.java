@@ -1,6 +1,7 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.resources;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.net.URL;
@@ -50,10 +51,7 @@ public class AT_ResourcesTranslator {
                                     className.length() - 6);
                             Class<?> classRef = classLoader.loadClass(className);
 
-                            if (!translationSpecClasses.contains(classRef)) {
-                                // use this assertion to make it clear which spec is missing
-                                assertEquals("", classRef.getSimpleName());
-                            }
+                            assertTrue(translationSpecClasses.contains(classRef), classRef.getSimpleName());
                         }
                     }
                 }
