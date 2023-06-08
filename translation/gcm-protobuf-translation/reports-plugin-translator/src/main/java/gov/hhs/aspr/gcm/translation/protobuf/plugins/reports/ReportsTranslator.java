@@ -1,8 +1,12 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.reports;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.translationSpecs.ReportLabelTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.translationSpecs.ReportPeriodTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.translationSpecs.SimpleReportLabelTranslationSpec;
+import gov.hhs.aspr.translation.core.TranslationSpec;
 import gov.hhs.aspr.translation.core.Translator;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
 import plugins.reports.support.ReportLabel;
@@ -19,6 +23,16 @@ public class ReportsTranslator {
     private ReportsTranslator() {
     }
 
+    protected static List<TranslationSpec<?, ?>> getTranslationSpecs() {
+        List<TranslationSpec<?, ?>> list = new ArrayList<>();
+
+        list.add(new ReportLabelTranslationSpec());
+        list.add(new ReportPeriodTranslationSpec());
+        list.add(new SimpleReportLabelTranslationSpec());
+
+        return list;
+    }
+
     private static Translator.Builder builder() {
         Translator.Builder builder = Translator.builder()
                 .setTranslatorId(ReportsTranslatorId.TRANSLATOR_ID)
@@ -26,10 +40,9 @@ public class ReportsTranslator {
                     ProtobufTranslationEngine.Builder translationEngineBuilder = translatorContext
                             .getTranslationEngineBuilder(ProtobufTranslationEngine.Builder.class);
 
-                    translationEngineBuilder
-                            .addTranslationSpec(new ReportLabelTranslationSpec())
-                            .addTranslationSpec(new ReportPeriodTranslationSpec())
-                            .addTranslationSpec(new SimpleReportLabelTranslationSpec());
+                    for (TranslationSpec<?, ?> translationSpec : getTranslationSpecs()) {
+                        translationEngineBuilder.addTranslationSpec(translationSpec);
+                    }
 
                     translatorContext.addParentChildClassRelationship(SimpleReportLabel.class, ReportLabel.class);
                 });

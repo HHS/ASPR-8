@@ -1,7 +1,12 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.people;
 
+import gov.hhs.aspr.translation.core.TranslationSpec;
 import gov.hhs.aspr.translation.core.Translator;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.input.PersonIdInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.translationSpecs.PeoplePluginDataTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.translationSpecs.PersonIdTranslationSpec;
@@ -16,6 +21,16 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.translationSpecs.Per
 public class PeopleTranslator {
 
     private PeopleTranslator() {
+    }
+
+    protected static List<TranslationSpec<?, ?>> getTranslationSpecs() {
+        List<TranslationSpec<?, ?>> list = new ArrayList<>();
+
+        list.add(new PeoplePluginDataTranslationSpec());
+        list.add(new PersonIdTranslationSpec());
+        list.add(new PersonRangeTranslationSpec());
+
+        return list;
     }
 
     private static Translator.Builder builder() {

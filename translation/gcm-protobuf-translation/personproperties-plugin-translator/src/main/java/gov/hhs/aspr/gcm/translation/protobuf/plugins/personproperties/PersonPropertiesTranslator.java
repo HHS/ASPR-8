@@ -11,6 +11,7 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.PeopleTranslatorId;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.input.PersonPropertyValueInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.translationSpecs.PersonPropertiesPluginDataTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.translationSpecs.PersonPropertyDimensionTranslationSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.translationSpecs.PersonPropertyFilterTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.translationSpecs.PersonPropertyIdTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.translationSpecs.PersonPropertyInteractionReportPluginDataTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.translationSpecs.PersonPropertyReportPluginDataTranslationSpec;
@@ -32,12 +33,13 @@ public class PersonPropertiesTranslator {
     protected static List<TranslationSpec<?, ?>> getTranslationSpecs() {
         List<TranslationSpec<?, ?>> list = new ArrayList<>();
 
-        list.add(new PersonPropertyIdTranslationSpec());
         list.add(new PersonPropertiesPluginDataTranslationSpec());
         list.add(new PersonPropertyDimensionTranslationSpec());
-        list.add(new TestPersonPropertyIdTranslationSpec());
-        list.add(new PersonPropertyReportPluginDataTranslationSpec());
+        list.add(new PersonPropertyFilterTranslationSpec());
+        list.add(new PersonPropertyIdTranslationSpec());
         list.add(new PersonPropertyInteractionReportPluginDataTranslationSpec());
+        list.add(new PersonPropertyReportPluginDataTranslationSpec());
+        list.add(new TestPersonPropertyIdTranslationSpec());
 
         return list;
     }

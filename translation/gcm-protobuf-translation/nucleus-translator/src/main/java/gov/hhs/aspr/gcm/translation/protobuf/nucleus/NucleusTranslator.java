@@ -1,12 +1,18 @@
 package gov.hhs.aspr.gcm.translation.protobuf.nucleus;
 
+import gov.hhs.aspr.translation.core.TranslationSpec;
 import gov.hhs.aspr.translation.core.Translator;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import gov.hhs.aspr.gcm.translation.protobuf.nucleus.input.PlanQueueDataInput;
 import gov.hhs.aspr.gcm.translation.protobuf.nucleus.input.SimulationStateInput;
 import gov.hhs.aspr.gcm.translation.protobuf.nucleus.testsupport.translationSpecs.ExampleDimensionTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.nucleus.testsupport.translationSpecs.ExamplePlanDataTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.nucleus.translationSpecs.DimensionTranslationSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.nucleus.translationSpecs.ExperimentParameterDataTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.nucleus.translationSpecs.PlanDataTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.nucleus.translationSpecs.PlanQueueDataTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.nucleus.translationSpecs.PlannerTranslationSpec;
@@ -23,6 +29,21 @@ public class NucleusTranslator {
     private NucleusTranslator() {
     }
 
+    protected static List<TranslationSpec<?, ?>> getTranslationSpecs() {
+        List<TranslationSpec<?, ?>> list = new ArrayList<>();
+
+        list.add(new SimulationStateTranslationSpec());
+        list.add(new ExamplePlanDataTranslationSpec());
+        list.add(new PlanQueueDataTranslationSpec());
+        list.add(new PlannerTranslationSpec());
+        list.add(new DimensionTranslationSpec());
+        list.add(new ExampleDimensionTranslationSpec());
+        list.add(new PlanDataTranslationSpec());
+        list.add(new ExperimentParameterDataTranslationSpec());
+
+        return list;
+    }
+
     private static Translator.Builder builder() {
         Translator.Builder builder = Translator.builder()
                 .setTranslatorId(NucleusTranslatorId.TRANSLATOR_ID)
@@ -31,14 +52,9 @@ public class NucleusTranslator {
                             .getTranslationEngineBuilder(
                                     ProtobufTranslationEngine.Builder.class);
 
-                    translationEngineBuilder
-                            .addTranslationSpec(new SimulationStateTranslationSpec())
-                            .addTranslationSpec(new ExamplePlanDataTranslationSpec())
-                            .addTranslationSpec(new PlanQueueDataTranslationSpec())
-                            .addTranslationSpec(new PlannerTranslationSpec())
-                            .addTranslationSpec(new DimensionTranslationSpec())
-                            .addTranslationSpec(new ExampleDimensionTranslationSpec())
-                            .addTranslationSpec(new PlanDataTranslationSpec());
+                    for (TranslationSpec<?, ?> translationSpec : getTranslationSpecs()) {
+                        translationEngineBuilder.addTranslationSpec(translationSpec);
+                    }
 
                     translationEngineBuilder
                             .addFieldToIncludeDefaultValue(

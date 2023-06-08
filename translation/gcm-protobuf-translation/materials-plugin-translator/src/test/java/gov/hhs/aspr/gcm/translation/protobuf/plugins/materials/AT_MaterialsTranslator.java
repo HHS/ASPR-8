@@ -1,7 +1,6 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.materials;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.net.URL;
@@ -49,8 +48,12 @@ public class AT_MaterialsTranslator {
                         if (className.endsWith(".class")) {
                             className = packageName + "." + className.substring(0,
                                     className.length() - 6);
-                            assertTrue(translationSpecClasses
-                                    .contains(classLoader.loadClass(className)));
+                            Class<?> classRef = classLoader.loadClass(className);
+
+                            if (!translationSpecClasses.contains(classRef)) {
+                                // use this assertion to make it clear which spec is missing
+                                assertEquals("", classRef.getSimpleName());
+                            }
                         }
                     }
                 }
@@ -67,7 +70,8 @@ public class AT_MaterialsTranslator {
                 .addDependency(ResourcesTranslatorId.TRANSLATOR_ID)
                 .addDependency(RegionsTranslatorId.TRANSLATOR_ID)
                 .addDependency(ReportsTranslatorId.TRANSLATOR_ID)
-                .setInitializer((translatorContext) -> {}).build();
+                .setInitializer((translatorContext) -> {
+                }).build();
 
         assertEquals(expectedTranslator, MaterialsTranslator.getTranslator());
     }

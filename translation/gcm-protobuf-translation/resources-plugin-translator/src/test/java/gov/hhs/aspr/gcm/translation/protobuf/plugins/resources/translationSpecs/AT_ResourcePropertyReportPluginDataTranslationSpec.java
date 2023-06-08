@@ -33,7 +33,7 @@ public class AT_ResourcePropertyReportPluginDataTranslationSpec {
     public void testConvertObject() {
         TranslationController translationController = TranslationController.builder()
                 .setTranslationEngineBuilder(ProtobufTranslationEngine.builder())
-                .addTranslator(ResourcesTranslator.getTranslatorWithReport())
+                .addTranslator(ResourcesTranslator.getTranslator())
                 .addTranslator(PropertiesTranslator.getTranslator())
                 .addTranslator(PeopleTranslator.getTranslator())
                 .addTranslator(RegionsTranslator.getTranslator())

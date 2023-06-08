@@ -62,7 +62,7 @@ public class MaterialsTranslator {
         return list;
     }
 
-    private static Translator.Builder builder(boolean withReport) {
+    private static Translator.Builder builder() {
         Translator.Builder builder = Translator.builder()
                 .setTranslatorId(MaterialsTranslatorId.TRANSLATOR_ID)
                 .addDependency(PropertiesTranslatorId.TRANSLATOR_ID)
@@ -85,11 +85,7 @@ public class MaterialsTranslator {
         return builder;
     }
 
-    public static Translator getTranslatorWithReport() {
-        return builder(true).build();
-    }
-
     public static Translator getTranslator() {
-        return builder(false).build();
+        return builder().build();
     }
 }
