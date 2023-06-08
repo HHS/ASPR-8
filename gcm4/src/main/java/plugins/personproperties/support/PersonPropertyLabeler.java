@@ -75,4 +75,15 @@ public abstract class PersonPropertyLabeler implements Labeler {
 		return getLabelFromValue(personPropertyUpdateEvent.previousPropertyValue());
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("PersonPropertyLabeler [personPropertyId=");
+		builder.append(personPropertyId);
+		builder.append("]");
+		return builder.toString();
+	}
+	
+	
+
 }

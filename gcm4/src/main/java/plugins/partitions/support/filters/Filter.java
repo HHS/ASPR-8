@@ -85,6 +85,9 @@ public abstract class Filter {
 	 * Filters are equal if they represent the same logical operation
 	 */
 	@Override
-	public abstract boolean equals(Object obj); 
+	public abstract boolean equals(Object obj);
+	
+	@Override
+	public abstract String toString();
 
 }

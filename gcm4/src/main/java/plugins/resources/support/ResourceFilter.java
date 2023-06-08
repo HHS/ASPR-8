@@ -135,6 +135,21 @@ public final class ResourceFilter extends Filter {
 		}
 		return true;
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("ResourceFilter [resourceId=");
+		builder.append(resourceId);
+		builder.append(", resourceValue=");
+		builder.append(resourceValue);
+		builder.append(", equality=");
+		builder.append(equality);
+		builder.append("]");
+		return builder.toString();
+	}
+
+	
 	
 	
 

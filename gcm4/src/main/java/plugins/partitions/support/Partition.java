@@ -203,6 +203,19 @@ public final class Partition {
 			return true;
 		}
 
+		@Override
+		public String toString() {
+			StringBuilder builder = new StringBuilder();
+			builder.append("Data [filter=");
+			builder.append(filter);
+			builder.append(", labelers=");
+			builder.append(labelers);
+			builder.append(", retainPersonKeys=");
+			builder.append(retainPersonKeys);
+			builder.append("]");
+			return builder.toString();
+		}
+
 	}
 
 	/**
@@ -245,5 +258,16 @@ public final class Partition {
 		}
 		return true;
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder2 = new StringBuilder();
+		builder2.append("Partition [data=");
+		builder2.append(data);
+		builder2.append("]");
+		return builder2.toString();
+	}
+	
+	
 
 }

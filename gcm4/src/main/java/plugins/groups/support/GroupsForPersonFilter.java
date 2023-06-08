@@ -102,4 +102,17 @@ public class GroupsForPersonFilter extends Filter {
 		return true;
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("GroupsForPersonFilter [equality=");
+		builder.append(equality);
+		builder.append(", groupCount=");
+		builder.append(groupCount);
+		builder.append("]");
+		return builder.toString();
+	}
+	
+	
+
 }

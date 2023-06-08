@@ -45,4 +45,19 @@ public class TestPersonPropertyLabeler extends PersonPropertyLabeler {
 		}
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("TestPersonPropertyLabeler [equality=");
+		builder.append(equality);
+		builder.append(", value=");
+		builder.append(value);
+		builder.append(", personPropertyId=");
+		builder.append(getPersonPropertyId());
+		builder.append("]");
+		return builder.toString();
+	}
+	
+	
+
 }

@@ -119,4 +119,11 @@ public abstract class GroupLabeler implements Labeler {
 		return getLabelFromGroupTypeCountMap(groupTypeCountMap);
 	}
 
+	@Override
+	public String toString() {
+		return "GroupLabeler []";
+	}
+	
+	
+
 }

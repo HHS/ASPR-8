@@ -142,4 +142,19 @@ public final class GroupsForPersonAndGroupTypeFilter extends Filter {
 		return true;
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("GroupsForPersonAndGroupTypeFilter [groupTypeId=");
+		builder.append(groupTypeId);
+		builder.append(", equality=");
+		builder.append(equality);
+		builder.append(", groupCount=");
+		builder.append(groupCount);
+		builder.append("]");
+		return builder.toString();
+	}
+	
+	
+
 }

@@ -59,4 +59,8 @@ public interface Labeler {
 	 */
 	@Override
 	public boolean equals(Object obj);
+	
+	
+	@Override
+	public String toString();
 }
