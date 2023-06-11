@@ -245,7 +245,7 @@ public final class AT_BatchStatusReport {
 
 	@Test
 	@UnitTestMethod(target = BatchStatusReport.class, name = "init", args = { ReportContext.class })
-	public void testInit_State() {
+	public void testStateFinalization() {
 		// Test with producing simulation
 
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
