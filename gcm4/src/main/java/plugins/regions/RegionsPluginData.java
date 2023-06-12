@@ -95,7 +95,9 @@ public class RegionsPluginData implements PluginData {
 
 			result = prime * result + regionIds.hashCode();
 			result = prime * result + regionPropertyDefinitions.hashCode();
-			result = prime * result + getRegionPropertyValuesHashCode();
+			result = prime * result + regionPropertyValues.hashCode();
+		
+			//result = prime * result + getRegionPropertyValuesHashCode();
 			return result;
 		}
 
@@ -166,9 +168,14 @@ public class RegionsPluginData implements PluginData {
 			if (!regionPropertyDefinitions.equals(other.regionPropertyDefinitions)) {
 				return false;
 			}
-			if (!compartRegionPropertyValues(this, other)) {
+			
+			if(!regionPropertyValues.equals(other.regionPropertyValues)){
 				return false;
 			}
+			
+//			if (!compartRegionPropertyValues(this, other)) {
+//				return false;
+//			}
 
 			return true;
 		}
