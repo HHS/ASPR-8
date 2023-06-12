@@ -295,10 +295,11 @@ public final class GlobalPropertiesDataManager extends DataManager {
 			globalPropertyValue = propertyDefinition.getDefaultValue().get();
 		} else {
 			globalPropertyValue = optional.get();
+			globalPropertyValues.put(globalPropertyId, globalPropertyValue);
+			globalPropertyTimes.put(globalPropertyId, dataManagerContext.getTime());
 		}
 
-		globalPropertyValues.put(globalPropertyId, globalPropertyValue);
-		globalPropertyTimes.put(globalPropertyId, dataManagerContext.getTime());
+		
 
 		if (dataManagerContext.subscribersExist(GlobalPropertyDefinitionEvent.class)) {
 			dataManagerContext.releaseObservationEvent(new GlobalPropertyDefinitionEvent(globalPropertyId, globalPropertyValue));
