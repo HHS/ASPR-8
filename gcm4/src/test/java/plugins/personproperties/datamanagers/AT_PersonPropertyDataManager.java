@@ -246,23 +246,26 @@ public final class AT_PersonPropertyDataManager {
 		propBuilder.definePersonProperty(prop2, def2, 0, false);
 		propBuilder.definePersonProperty(prop3, def3, 3.4, true);
 		propBuilder.setPersonPropertyTime(new PersonId(2), prop1, 6.7);
+		propBuilder.setPersonPropertyValue(new PersonId(2), prop1, 17);
 		propBuilder.setPersonPropertyValue(new PersonId(2), prop2, 88.7);
 		propBuilder.setPersonPropertyValue(new PersonId(2), prop3, false);
 		propBuilder.setPersonPropertyTime(new PersonId(2), prop3, 6.7);
 		propBuilder.setPersonPropertyValue(new PersonId(3), prop1, 99);
 		propBuilder.setPersonPropertyTime(new PersonId(3), prop1, 2.3);
 		propBuilder.setPersonPropertyValue(new PersonId(3), prop2, 123.31);
+		propBuilder.setPersonPropertyValue(new PersonId(3), prop3, true);
 		propBuilder.setPersonPropertyTime(new PersonId(3), prop3, 6.7);
 		propBuilder.setPersonPropertyValue(new PersonId(4), prop1, 88);
 		propBuilder.setPersonPropertyTime(new PersonId(4), prop1, 6.7);
 		propBuilder.setPersonPropertyValue(new PersonId(4), prop2, 456.6);
-		propBuilder.setPersonPropertyValue(new PersonId(4), prop3, false);
+		propBuilder.setPersonPropertyValue(new PersonId(4), prop3, false);	
 		// the following property time is extraneous, but should not effect
 		// equality
 		propBuilder.setPersonPropertyTime(new PersonId(4), prop3, 3.4);
 		PersonPropertiesPluginData expectedPersonPropertiesPluginData = propBuilder.build();
 
 		// compare the expected and actual plugin datas
+		
 		assertEquals(expectedPersonPropertiesPluginData, actualPersonPropertiesPluginData);
 
 	}

@@ -627,7 +627,7 @@ public final class PersonPropertiesDataManager extends DataManager {
 			 * consistent with the property definition by contract.
 			 */
 			Object value = pair.getSecond();
-			propertyManager.setPropertyValue(pId, value);			
+			propertyManager.setPropertyValue(pId, value);
 		}
 
 		if (dataManagerContext.subscribersExist(PersonPropertyDefinitionEvent.class)) {
@@ -871,37 +871,24 @@ public final class PersonPropertiesDataManager extends DataManager {
 		for (PersonPropertyId personPropertyId : personPropertyDefinitions.keySet()) {
 			PropertyDefinition personPropertyDefinition = personPropertyDefinitions.get(personPropertyId);
 			Double definitionTime = personPropertyDefinitionTimes.get(personPropertyId);
-			
 
 			DoubleValueContainer doubleValueContainer = personPropertyTimeMap.get(personPropertyId);
-			boolean tracked = doubleValueContainer!=null;
-			builder.definePersonProperty(personPropertyId, personPropertyDefinition,definitionTime,tracked);
-			
+			boolean tracked = doubleValueContainer != null;
+			builder.definePersonProperty(personPropertyId, personPropertyDefinition, definitionTime, tracked);
+
 			if (doubleValueContainer != null) {
-				Double defaultValue = definitionTime;				
 				for (PersonId personId : people) {
 					Double propertyTime = doubleValueContainer.getValue(personId.getValue());
-					if (!propertyTime.equals(defaultValue)) {
-						builder.setPersonPropertyTime(personId, personPropertyId, propertyTime);
-					}
+					builder.setPersonPropertyTime(personId, personPropertyId, propertyTime);
 				}
 			}
 			IndexedPropertyManager indexedPropertyManager = personPropertyManagerMap.get(personPropertyId);
-			Optional<Object> optional = personPropertyDefinition.getDefaultValue();
-			if (optional.isPresent()) {
-				Object defaultValue = optional.get();
-				for (PersonId personId : people) {
-					Object propertyValue = indexedPropertyManager.getPropertyValue(personId.getValue());
-					if (!propertyValue.equals(defaultValue)) {
-						builder.setPersonPropertyValue(personId, personPropertyId, propertyValue);
-					}
-				}
-			} else {
-				for (PersonId personId : people) {
-					Object propertyValue = indexedPropertyManager.getPropertyValue(personId.getValue());
-					builder.setPersonPropertyValue(personId, personPropertyId, propertyValue);
-				}
+
+			for (PersonId personId : people) {
+				Object propertyValue = indexedPropertyManager.getPropertyValue(personId.getValue());
+				builder.setPersonPropertyValue(personId, personPropertyId, propertyValue);
 			}
+
 		}
 
 		dataManagerContext.releaseOutput(builder.build());
@@ -1047,7 +1034,5 @@ public final class PersonPropertiesDataManager extends DataManager {
 		builder.append("]");
 		return builder.toString();
 	}
-	
-	
 
 }
