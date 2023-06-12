@@ -6,11 +6,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
-
-import org.apache.commons.math3.util.FastMath;
 
 import net.jcip.annotations.Immutable;
 import nucleus.PluginData;
@@ -83,74 +79,6 @@ public class PersonPropertiesPluginData implements PluginData {
 			result = prime * result + propertyTrackingPolicies.hashCode();
 			result = prime * result + personPropertyValues.hashCode();
 			result = prime * result + personPropertyTimes.hashCode();
-			
-//			result = prime * result + getPersonPropertyValuesHashCode();
-//			result = prime * result + getPersonPropertyTimesHashCode();
-			return result;
-		}
-
-		private int getPersonPropertyTimesHashCode() {
-			int result = 0;
-			for (PersonPropertyId personPropertyId : propertyTrackingPolicies.keySet()) {
-				Boolean tracked = propertyTrackingPolicies.get(personPropertyId);
-				if (tracked) {
-					result += getPersonPropertyTimesHashCode(personPropertyId);
-				}
-			}
-			return result;
-		}
-
-		private int getPersonPropertyTimesHashCode(PersonPropertyId personPropertyId) {
-			int result = 0;
-			Double defaultTime = propertyDefinitionTimes.get(personPropertyId);
-
-			List<Double> list = personPropertyTimes.get(personPropertyId);
-			int prime = 31;
-			result = 1;
-			for (Double time : list) {
-				if (time != null) {
-					if (!time.equals(defaultTime)) {
-						result = result * prime + time.hashCode();
-					}
-				}
-			}
-
-			return result;
-		}
-
-		private int getPersonPropertyValuesHashCode(PersonPropertyId personPropertyId) {
-			int prime = 31;
-			int result = 1;
-			PropertyDefinition propertyDefinition = personPropertyDefinitions.get(personPropertyId);
-			Optional<Object> optional = propertyDefinition.getDefaultValue();
-			List<Object> list = personPropertyValues.get(personPropertyId);
-
-			if (optional.isPresent()) {
-				Object defaultValue = optional.get();
-
-				for (Object value : list) {
-					if (value != null && !value.equals(defaultValue)) {
-						result = result * prime + value.hashCode();
-					}
-				}
-			} else {
-				for (Object value : list) {
-					if (value != null) {
-						result = result * prime + value.hashCode();
-					}
-				}
-			}
-			return result;
-		}
-
-		private int getPersonPropertyValuesHashCode() {
-			int result = 0;
-
-			for (PersonPropertyId personPropertyId : personPropertyValues.keySet()) {
-				result += getPersonPropertyValuesHashCode(personPropertyId);
-
-			}
-
 			return result;
 		}
 
@@ -213,90 +141,7 @@ public class PersonPropertiesPluginData implements PluginData {
 
 	}
 
-	private static boolean comparePersonPropertyValues(Data a, Data b) {
-		for (PersonPropertyId personPropertyId : a.personPropertyDefinitions.keySet()) {
-			List<Object> alist = a.personPropertyValues.get(personPropertyId);
-			List<Object> blist = b.personPropertyValues.get(personPropertyId);
 
-			PropertyDefinition propertyDefinition = a.personPropertyDefinitions.get(personPropertyId);
-			int n = FastMath.max(alist.size(), blist.size());
-			Optional<Object> optional = propertyDefinition.getDefaultValue();
-			if (optional.isPresent()) {
-				Object defaultValue = optional.get();
-
-				for (int i = 0; i < n; i++) {
-					Object aValue = null;
-					if (i < alist.size()) {
-						aValue = alist.get(i);
-					}
-					if (aValue == null) {
-						aValue = defaultValue;
-					}
-					Object bValue = null;
-					if (i < blist.size()) {
-						bValue = blist.get(i);
-					}
-					if (bValue == null) {
-						bValue = defaultValue;
-					}
-
-					if (!aValue.equals(bValue)) {
-						return false;
-					}
-				}
-			} else {
-				for (int i = 0; i < n; i++) {
-					Object aValue = null;
-					if (i < alist.size()) {
-						aValue = alist.get(i);
-					}
-
-					Object bValue = null;
-					if (i < blist.size()) {
-						bValue = blist.get(i);
-					}
-
-					if (!Objects.equals(aValue, bValue)) {
-						return false;
-					}
-				}
-			}
-		}
-		return true;
-	}
-
-	private static boolean comparePersonPropertyTimes(Data a, Data b) {
-		for (PersonPropertyId personPropertyId : a.propertyTrackingPolicies.keySet()) {
-			Boolean tracked = a.propertyTrackingPolicies.get(personPropertyId);
-			if (tracked) {
-				Double defaultTime = a.propertyDefinitionTimes.get(personPropertyId);
-				List<Double> alist = a.personPropertyTimes.get(personPropertyId);
-				List<Double> blist = b.personPropertyTimes.get(personPropertyId);
-				int n = FastMath.max(alist.size(), blist.size());
-				for (int i = 0; i < n; i++) {
-					Double aTime = null;
-					if (i < alist.size()) {
-						aTime = alist.get(i);
-					}
-					if (aTime == null) {
-						aTime = defaultTime;
-					}
-					Double bTime = null;
-					if (i < blist.size()) {
-						bTime = blist.get(i);
-					}
-					if (bTime == null) {
-						bTime = defaultTime;
-					}
-
-					if (!aTime.equals(bTime)) {
-						return false;
-					}
-				}
-			}
-		}
-		return true;
-	}
 
 	/**
 	 * Returns a new builder instance
