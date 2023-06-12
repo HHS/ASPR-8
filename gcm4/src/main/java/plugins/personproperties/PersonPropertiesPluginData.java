@@ -375,6 +375,18 @@ public class PersonPropertiesPluginData implements PluginData {
 					}
 				}
 			}
+
+			// reorder datasets to match propDef ordering to work with pluginData.getPersonPropertyIds()
+			Map<PersonPropertyId, List<Object>> personPropertyValues = new LinkedHashMap<>();
+			Map<PersonPropertyId, List<Double>> personPropertyTimes = new LinkedHashMap<>();
+
+			for(PersonPropertyId personPropertyId : data.personPropertyDefinitions.keySet()) {
+				personPropertyValues.put(personPropertyId, data.personPropertyValues.get(personPropertyId));
+				personPropertyTimes.put(personPropertyId, data.personPropertyTimes.get(personPropertyId));
+			}
+
+			data.personPropertyValues = personPropertyValues;
+			data.personPropertyTimes = personPropertyTimes;
 		}
 	}
 

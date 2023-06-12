@@ -115,13 +115,11 @@ public class PersonPropertiesPluginDataTranslationSpec
                         // check for and use existing builder, if there is one
                         if (personPropertyValueInputBuilders.get(i) != null) {
                             personPropertyValueInputBuilder = personPropertyValueInputBuilders.get(i);
-
-                            personPropertyValueInputBuilder.setPropertyValueTime(propertyTimes.get(i));
                         } else {
-                            personPropertyValueInputBuilder.setPId(i)
-                                    .setPropertyValueTime(propertyTimes.get(i));
+                            personPropertyValueInputBuilder.setPId(i);
                         }
 
+                        personPropertyValueInputBuilder.setPropertyValueTime(propertyTimes.get(i));
                         personPropertyValueInputBuilders.set(i, personPropertyValueInputBuilder);
                     }
                 }

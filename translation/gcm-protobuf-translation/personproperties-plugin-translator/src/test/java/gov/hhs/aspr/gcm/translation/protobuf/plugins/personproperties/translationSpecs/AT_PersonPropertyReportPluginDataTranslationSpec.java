@@ -80,6 +80,7 @@ public class AT_PersonPropertyReportPluginDataTranslationSpec {
         PersonPropertyReportPluginData actualAppValue = translationSpec.convertInputObject(inputValue);
 
         assertEquals(expectedAppValue, actualAppValue);
+        assertEquals(expectedAppValue.toString(), actualAppValue.toString());
     }
 
     @Test
