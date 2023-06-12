@@ -39,6 +39,7 @@ public class IT_GlobalPropertiesTranslator {
                 .addTranslator(
                         GlobalPropertiesTranslator.getTranslator())
                 .addTranslator(PropertiesTranslator.getTranslator())
+                .addTranslator(ReportsTranslator.getTranslator())
                 .addInputFilePath(filePath.resolve(fileName), GlobalPropertiesPluginDataInput.class)
                 .addOutputFilePath(filePath.resolve(fileName), GlobalPropertiesPluginData.class)
                 .build();
@@ -66,7 +67,7 @@ public class IT_GlobalPropertiesTranslator {
 
         TranslationController translatorController = TranslationController.builder()
                 .setTranslationEngineBuilder(ProtobufTranslationEngine.builder())
-                .addTranslator(GlobalPropertiesTranslator.getTranslatorWithReport())
+                .addTranslator(GlobalPropertiesTranslator.getTranslator())
                 .addTranslator(PropertiesTranslator.getTranslator())
                 .addTranslator(ReportsTranslator.getTranslator())
                 .addInputFilePath(filePath.resolve(fileName), GlobalPropertyReportPluginDataInput.class)

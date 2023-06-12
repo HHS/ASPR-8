@@ -1,26 +1,62 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.regions;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.io.File;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.PeopleTranslatorId;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.PropertiesTranslatorId;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.translationSpecs.RegionIdTranslationSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.translationSpecs.RegionPropertyIdTranslationSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.translationSpecs.RegionPropertyReportPluginDataTranslationSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.translationSpecs.RegionTransferReportPluginDataTranslationSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.translationSpecs.RegionsPluginDataTranslationSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.translationSpecs.SimpleRegionIdTranslationSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.translationSpecs.SimpleRegionPropertyIdTranslationSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.translationSpecs.TestRegionIdTranslationSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.translationSpecs.TestRegionPropertyIdTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.ReportsTranslatorId;
+import gov.hhs.aspr.translation.core.TranslationSpec;
 import gov.hhs.aspr.translation.core.Translator;
-import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
+import util.annotations.UnitTestForCoverage;
 import util.annotations.UnitTestMethod;
 
 public class AT_RegionsTranslator {
+
+    @Test
+    @UnitTestForCoverage
+    public void testGetTranslationSpecs() throws ClassNotFoundException {
+        List<TranslationSpec<?, ?>> translationSpecs = RegionsTranslator.getTranslationSpecs();
+        List<Class<?>> translationSpecClasses = new ArrayList<>();
+
+        for (TranslationSpec<?, ?> translationSpec : translationSpecs) {
+            translationSpecClasses.add(translationSpec.getClass());
+        }
+
+        String packageName = this.getClass().getPackageName() + ".translationSpecs";
+        ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+        URL packageURL;
+
+        packageURL = classLoader.getResource(packageName.replaceAll("[.]", "/"));
+
+        if (packageURL != null) {
+            String packagePath = packageURL.getPath();
+            if (packagePath != null) {
+                packagePath = packagePath.replaceAll("test-classes", "classes");
+                File packageDir = new File(packagePath);
+                if (packageDir.isDirectory()) {
+                    File[] files = packageDir.listFiles();
+                    for (File file : files) {
+                        String className = file.getName();
+                        if (className.endsWith(".class")) {
+                            className = packageName + "." + className.substring(0,
+                                    className.length() - 6);
+                            Class<?> classRef = classLoader.loadClass(className);
+
+                            assertTrue(translationSpecClasses.contains(classRef), classRef.getSimpleName());
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     @Test
     @UnitTestMethod(target = RegionsTranslator.class, name = "getTranslator", args = {})
@@ -29,47 +65,11 @@ public class AT_RegionsTranslator {
                 .setTranslatorId(RegionsTranslatorId.TRANSLATOR_ID)
                 .addDependency(PeopleTranslatorId.TRANSLATOR_ID)
                 .addDependency(PropertiesTranslatorId.TRANSLATOR_ID)
+                .addDependency(ReportsTranslatorId.TRANSLATOR_ID)
                 .setInitializer((translatorContext) -> {
-                    ProtobufTranslationEngine.Builder translationEngineBuilder = translatorContext
-                            .getTranslationEngineBuilder(ProtobufTranslationEngine.Builder.class);
-
-                    translationEngineBuilder
-                            .addTranslationSpec(new RegionsPluginDataTranslationSpec())
-                            .addTranslationSpec(new RegionIdTranslationSpec())
-                            .addTranslationSpec(new RegionPropertyIdTranslationSpec())
-                            .addTranslationSpec(new SimpleRegionIdTranslationSpec())
-                            .addTranslationSpec(new SimpleRegionPropertyIdTranslationSpec())
-                            .addTranslationSpec(new TestRegionIdTranslationSpec())
-                            .addTranslationSpec(new TestRegionPropertyIdTranslationSpec());
                 }).build();
 
         assertEquals(expectedTranslator, RegionsTranslator.getTranslator());
     }
 
-    @Test
-    @UnitTestMethod(target = RegionsTranslator.class, name = "getTranslatorWithReport", args = {})
-    public void testGetTranslatorWithReport() {
-        Translator expectedTranslator = Translator.builder()
-                .setTranslatorId(RegionsTranslatorId.TRANSLATOR_ID)
-                .addDependency(PeopleTranslatorId.TRANSLATOR_ID)
-                .addDependency(PropertiesTranslatorId.TRANSLATOR_ID)
-                .addDependency(ReportsTranslatorId.TRANSLATOR_ID)
-                .setInitializer((translatorContext) -> {
-                    ProtobufTranslationEngine.Builder translationEngineBuilder = translatorContext
-                            .getTranslationEngineBuilder(ProtobufTranslationEngine.Builder.class);
-
-                    translationEngineBuilder
-                            .addTranslationSpec(new RegionsPluginDataTranslationSpec())
-                            .addTranslationSpec(new RegionIdTranslationSpec())
-                            .addTranslationSpec(new RegionPropertyIdTranslationSpec())
-                            .addTranslationSpec(new SimpleRegionIdTranslationSpec())
-                            .addTranslationSpec(new SimpleRegionPropertyIdTranslationSpec())
-                            .addTranslationSpec(new TestRegionIdTranslationSpec())
-                            .addTranslationSpec(new RegionPropertyReportPluginDataTranslationSpec())
-                            .addTranslationSpec(new RegionTransferReportPluginDataTranslationSpec())
-                            .addTranslationSpec(new TestRegionPropertyIdTranslationSpec());
-                }).build();
-
-        assertEquals(expectedTranslator, RegionsTranslator.getTranslatorWithReport());
-    }
 }

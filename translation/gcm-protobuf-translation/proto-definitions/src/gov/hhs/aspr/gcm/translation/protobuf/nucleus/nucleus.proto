@@ -43,3 +43,7 @@ message ExperimentParameterDataInput {
     bool continueFromProgressLog = 6;
     repeated int32 explictScenarioIds = 7;
 }
+
+message DimensionInput {
+    google.protobuf.Any dimension = 1;
+}

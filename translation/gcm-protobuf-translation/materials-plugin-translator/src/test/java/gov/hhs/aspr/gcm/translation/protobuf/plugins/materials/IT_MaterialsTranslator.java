@@ -47,6 +47,7 @@ public class IT_MaterialsTranslator {
 				.addTranslator(ResourcesTranslator.getTranslator())
 				.addTranslator(RegionsTranslator.getTranslator())
 				.addTranslator(PeopleTranslator.getTranslator())
+				.addTranslator(ReportsTranslator.getTranslator())
 				.addInputFilePath(filePath.resolve(fileName), MaterialsPluginDataInput.class)
 				.addOutputFilePath(filePath.resolve(fileName), MaterialsPluginData.class)
 
@@ -76,7 +77,7 @@ public class IT_MaterialsTranslator {
 
 		TranslationController translatorController = TranslationController.builder()
 				.setTranslationEngineBuilder(ProtobufTranslationEngine.builder())
-				.addTranslator(MaterialsTranslator.getTranslatorWithReport())
+				.addTranslator(MaterialsTranslator.getTranslator())
 				.addTranslator(ReportsTranslator.getTranslator())
 				.addTranslator(PropertiesTranslator.getTranslator())
 				.addTranslator(ResourcesTranslator.getTranslator())
@@ -114,7 +115,7 @@ public class IT_MaterialsTranslator {
 
 		TranslationController translatorController = TranslationController.builder()
 				.setTranslationEngineBuilder(ProtobufTranslationEngine.builder())
-				.addTranslator(MaterialsTranslator.getTranslatorWithReport())
+				.addTranslator(MaterialsTranslator.getTranslator())
 				.addTranslator(ReportsTranslator.getTranslator())
 				.addTranslator(PropertiesTranslator.getTranslator())
 				.addTranslator(ResourcesTranslator.getTranslator())
@@ -151,7 +152,7 @@ public class IT_MaterialsTranslator {
 
 		TranslationController translatorController = TranslationController.builder()
 				.setTranslationEngineBuilder(ProtobufTranslationEngine.builder())
-				.addTranslator(MaterialsTranslator.getTranslatorWithReport())
+				.addTranslator(MaterialsTranslator.getTranslator())
 				.addTranslator(ReportsTranslator.getTranslator())
 				.addTranslator(PropertiesTranslator.getTranslator())
 				.addTranslator(ResourcesTranslator.getTranslator())
@@ -187,7 +188,7 @@ public class IT_MaterialsTranslator {
 
 		TranslationController translatorController = TranslationController.builder()
 				.setTranslationEngineBuilder(ProtobufTranslationEngine.builder())
-				.addTranslator(MaterialsTranslator.getTranslatorWithReport())
+				.addTranslator(MaterialsTranslator.getTranslator())
 				.addTranslator(ReportsTranslator.getTranslator())
 				.addTranslator(PropertiesTranslator.getTranslator())
 				.addTranslator(ResourcesTranslator.getTranslator())

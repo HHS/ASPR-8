@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.globalproperties.GlobalPropertiesTranslator;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.globalproperties.input.GlobalPropertyIdInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.PropertiesTranslator;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.ReportsTranslator;
 import gov.hhs.aspr.translation.core.TranslationController;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
 import plugins.globalproperties.support.GlobalPropertyId;
@@ -31,6 +32,7 @@ public class AT_GlobalPropertyIdTranslationSpec {
                 .setTranslationEngineBuilder(ProtobufTranslationEngine.builder())
                 .addTranslator(GlobalPropertiesTranslator.getTranslator())
                 .addTranslator(PropertiesTranslator.getTranslator())
+                .addTranslator(ReportsTranslator.getTranslator())
                 .build();
 
         ProtobufTranslationEngine protobufTranslationEngine = translationController

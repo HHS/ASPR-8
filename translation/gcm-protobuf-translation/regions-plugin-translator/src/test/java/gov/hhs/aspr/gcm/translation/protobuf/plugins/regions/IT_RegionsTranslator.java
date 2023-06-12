@@ -51,6 +51,7 @@ public class IT_RegionsTranslator {
                 .addTranslator(RegionsTranslator.getTranslator())
                 .addTranslator(PropertiesTranslator.getTranslator())
                 .addTranslator(PeopleTranslator.getTranslator())
+                .addTranslator(ReportsTranslator.getTranslator())
                 .addInputFilePath(filePath.resolve(fileName), RegionsPluginDataInput.class)
                 .addOutputFilePath(filePath.resolve(fileName), RegionsPluginData.class)
                 .build();
@@ -83,7 +84,7 @@ public class IT_RegionsTranslator {
 
         TranslationController translatorController = TranslationController.builder()
                 .setTranslationEngineBuilder(ProtobufTranslationEngine.builder())
-                .addTranslator(RegionsTranslator.getTranslatorWithReport())
+                .addTranslator(RegionsTranslator.getTranslator())
                 .addTranslator(PropertiesTranslator.getTranslator())
                 .addTranslator(PeopleTranslator.getTranslator())
                 .addTranslator(ReportsTranslator.getTranslator())
@@ -133,7 +134,7 @@ public class IT_RegionsTranslator {
 
         TranslationController translatorController = TranslationController.builder()
                 .setTranslationEngineBuilder(ProtobufTranslationEngine.builder())
-                .addTranslator(RegionsTranslator.getTranslatorWithReport())
+                .addTranslator(RegionsTranslator.getTranslator())
                 .addTranslator(PropertiesTranslator.getTranslator())
                 .addTranslator(PeopleTranslator.getTranslator())
                 .addTranslator(ReportsTranslator.getTranslator())

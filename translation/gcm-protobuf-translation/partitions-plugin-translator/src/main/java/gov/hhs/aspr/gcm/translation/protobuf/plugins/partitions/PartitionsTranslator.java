@@ -1,5 +1,8 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.partitions;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.partitions.translationSpecs.AndFilterTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.partitions.translationSpecs.AttributeFilterTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.partitions.translationSpecs.AttributeIdTranslationSpec;
@@ -13,6 +16,7 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.partitions.translationSpecs
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.partitions.translationSpecs.PartitionsPluginDataTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.partitions.translationSpecs.TestAttributeIdTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.partitions.translationSpecs.TrueFilterTranslationSpec;
+import gov.hhs.aspr.translation.core.TranslationSpec;
 import gov.hhs.aspr.translation.core.Translator;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
 
@@ -27,6 +31,26 @@ public class PartitionsTranslator {
     private PartitionsTranslator() {
     }
 
+    protected static List<TranslationSpec<?, ?>> getTranslationSpecs() {
+        List<TranslationSpec<?, ?>> list = new ArrayList<>();
+
+        list.add(new AttributeIdTranslationSpec());
+        list.add(new TestAttributeIdTranslationSpec());
+        list.add(new AndFilterTranslationSpec());
+        list.add(new FalseFilterTranslationSpec());
+        list.add(new NotFilterTranslationSpec());
+        list.add(new OrFilterTranslationSpec());
+        list.add(new TrueFilterTranslationSpec());
+        list.add(new AttributeFilterTranslationSpec());
+        list.add(new FilterTranslationSpec());
+        list.add(new LabelerTranslationSpec());
+        list.add(new EqualityTranslationSpec());
+        list.add(new PartitionTranslationSpec());
+        list.add(new PartitionsPluginDataTranslationSpec());
+
+        return list;
+    }
+
     private static Translator.Builder builder() {
         Translator.Builder builder = Translator.builder()
                 .setTranslatorId(PartitionsTranslatorId.TRANSLATOR_ID)
@@ -34,20 +58,9 @@ public class PartitionsTranslator {
                     ProtobufTranslationEngine.Builder translationEngineBuilder = translatorContext
                             .getTranslationEngineBuilder(ProtobufTranslationEngine.Builder.class);
 
-                    translationEngineBuilder
-                            .addTranslationSpec(new AttributeIdTranslationSpec())
-                            .addTranslationSpec(new TestAttributeIdTranslationSpec())
-                            .addTranslationSpec(new AndFilterTranslationSpec())
-                            .addTranslationSpec(new FalseFilterTranslationSpec())
-                            .addTranslationSpec(new NotFilterTranslationSpec())
-                            .addTranslationSpec(new OrFilterTranslationSpec())
-                            .addTranslationSpec(new TrueFilterTranslationSpec())
-                            .addTranslationSpec(new AttributeFilterTranslationSpec())
-                            .addTranslationSpec(new FilterTranslationSpec())
-                            .addTranslationSpec(new LabelerTranslationSpec())
-                            .addTranslationSpec(new EqualityTranslationSpec())
-                            .addTranslationSpec(new PartitionTranslationSpec())
-                            .addTranslationSpec(new PartitionsPluginDataTranslationSpec());
+                    for (TranslationSpec<?, ?> translationSpec : getTranslationSpecs()) {
+                        translationEngineBuilder.addTranslationSpec(translationSpec);
+                    }
                 });
 
         return builder;

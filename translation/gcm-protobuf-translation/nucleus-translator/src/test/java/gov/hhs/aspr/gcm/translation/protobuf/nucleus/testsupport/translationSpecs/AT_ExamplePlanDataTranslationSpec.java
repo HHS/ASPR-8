@@ -1,4 +1,4 @@
-package gov.hhs.aspr.gcm.translation.protobuf.nucleus.simObjects.translationSpecs;
+package gov.hhs.aspr.gcm.translation.protobuf.nucleus.testsupport.translationSpecs;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.gcm.translation.protobuf.nucleus.NucleusTranslator;
 import gov.hhs.aspr.gcm.translation.protobuf.nucleus.example.input.ExamplePlanDataInput;
-import gov.hhs.aspr.gcm.translation.protobuf.nucleus.simObjects.ExamplePlanData;
+import gov.hhs.aspr.gcm.translation.protobuf.nucleus.testsupport.ExamplePlanData;
 import gov.hhs.aspr.translation.core.TranslationController;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
 import util.annotations.UnitTestConstructor;

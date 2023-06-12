@@ -56,6 +56,12 @@ message RegionPropertyValueMapInput {
    repeated PropertyValueMapInput propertyValueMap = 2;
 }
 
+message RegionPropertyDimensionInput {
+    RegionIdInput regionId = 1;
+    RegionPropertyIdInput regionPropertyId = 2;
+    repeated google.protobuf.Any values = 3;
+}
+
 message RegionsPluginDataInput {
     repeated RegionIdInput regionIds = 1;
     repeated PropertyDefinitionMapInput regionPropertyDefinitions = 2;

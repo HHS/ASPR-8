@@ -30,8 +30,8 @@ public class AT_GlobalPropertyDimension {
 		for (int i = 0; i < 50; i++) {
 			List<Object> expectedValues = new ArrayList<>();
 
-			GlobalPropertyDimension.Builder builder = GlobalPropertyDimension	.builder()//
-																				.setGlobalPropertyId(TestGlobalPropertyId.GLOBAL_PROPERTY_6_DOUBLE_IMMUTABLE);
+			GlobalPropertyDimension.Builder builder = GlobalPropertyDimension.builder()//
+					.setGlobalPropertyId(TestGlobalPropertyId.GLOBAL_PROPERTY_6_DOUBLE_IMMUTABLE);
 			int n = randomGenerator.nextInt(10);
 			for (int j = 0; j < n; j++) {
 				double value = randomGenerator.nextDouble();
@@ -45,7 +45,8 @@ public class AT_GlobalPropertyDimension {
 		}
 
 		// precondition test : if the value is null
-		ContractException contractException = assertThrows(ContractException.class, () -> GlobalPropertyDimension.builder().addValue(null));
+		ContractException contractException = assertThrows(ContractException.class,
+				() -> GlobalPropertyDimension.builder().addValue(null));
 		assertEquals(PropertyError.NULL_PROPERTY_VALUE, contractException.getErrorType());
 	}
 
@@ -53,13 +54,14 @@ public class AT_GlobalPropertyDimension {
 	@UnitTestMethod(target = GlobalPropertyDimension.Builder.class, name = "build", args = {})
 	public void testBuild() {
 		GlobalPropertyDimension globalPropertyDimension = //
-				GlobalPropertyDimension	.builder()//
-										.setGlobalPropertyId(TestGlobalPropertyId.GLOBAL_PROPERTY_6_DOUBLE_IMMUTABLE)//
-										.build();
+				GlobalPropertyDimension.builder()//
+						.setGlobalPropertyId(TestGlobalPropertyId.GLOBAL_PROPERTY_6_DOUBLE_IMMUTABLE)//
+						.build();
 		assertNotNull(globalPropertyDimension);
 
 		// precondition test : if the global property id is not assigned
-		ContractException contractException = assertThrows(ContractException.class, () -> GlobalPropertyDimension.builder().build());
+		ContractException contractException = assertThrows(ContractException.class,
+				() -> GlobalPropertyDimension.builder().build());
 		assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
 	}
 
@@ -69,8 +71,8 @@ public class AT_GlobalPropertyDimension {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7384717734933740607L);
 
 		for (int i = 0; i < 50; i++) {
-			GlobalPropertyDimension.Builder builder = GlobalPropertyDimension	.builder()//
-																				.setGlobalPropertyId(TestGlobalPropertyId.GLOBAL_PROPERTY_6_DOUBLE_IMMUTABLE);
+			GlobalPropertyDimension.Builder builder = GlobalPropertyDimension.builder()//
+					.setGlobalPropertyId(TestGlobalPropertyId.GLOBAL_PROPERTY_6_DOUBLE_IMMUTABLE);
 			double assignmentTime = randomGenerator.nextDouble();
 			builder.setAssignmentTime(assignmentTime);
 			GlobalPropertyDimension globalPropertyDimension = builder.build();
@@ -80,19 +82,21 @@ public class AT_GlobalPropertyDimension {
 	}
 
 	@Test
-	@UnitTestMethod(target = GlobalPropertyDimension.Builder.class, name = "setGlobalPropertyId", args = { GlobalPropertyId.class })
+	@UnitTestMethod(target = GlobalPropertyDimension.Builder.class, name = "setGlobalPropertyId", args = {
+			GlobalPropertyId.class })
 	public void testSetGlobalPropertyId() {
 		for (TestGlobalPropertyId testGlobalPropertyId : TestGlobalPropertyId.values()) {
 
-			GlobalPropertyDimension.Builder builder = GlobalPropertyDimension	.builder()//
-																				.setGlobalPropertyId(testGlobalPropertyId);
+			GlobalPropertyDimension.Builder builder = GlobalPropertyDimension.builder()//
+					.setGlobalPropertyId(testGlobalPropertyId);
 
 			GlobalPropertyDimension globalPropertyDimension = builder.build();
 			assertEquals(testGlobalPropertyId, globalPropertyDimension.getGlobalPropertyId());
 		}
 
 		// precondition test : if the value is null
-		ContractException contractException = assertThrows(ContractException.class, () -> GlobalPropertyDimension.builder().setGlobalPropertyId(null));
+		ContractException contractException = assertThrows(ContractException.class,
+				() -> GlobalPropertyDimension.builder().setGlobalPropertyId(null));
 		assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
 	}
 
@@ -103,7 +107,8 @@ public class AT_GlobalPropertyDimension {
 	}
 
 	@Test
-	@UnitTestMethod(target = GlobalPropertyDimension.class, name = "executeLevel", args = { DimensionContext.class, int.class })
+	@UnitTestMethod(target = GlobalPropertyDimension.class, name = "executeLevel", args = { DimensionContext.class,
+			int.class })
 	public void testExecuteLevel() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(2924521933883974690L);
 
@@ -123,7 +128,7 @@ public class AT_GlobalPropertyDimension {
 
 			// create a GlobalPropertyDimension with the level values
 			GlobalPropertyDimension.Builder dimBuilder = GlobalPropertyDimension.builder()//
-																				.setGlobalPropertyId(targetPropertyId);
+					.setGlobalPropertyId(targetPropertyId);
 
 			for (Object value : exectedValues) {
 				dimBuilder.addValue(value);
@@ -143,13 +148,18 @@ public class AT_GlobalPropertyDimension {
 					PropertyDefinition propertyDefinition = propertyId.getPropertyDefinition();
 					pluginDataBuilder.defineGlobalProperty(propertyId, propertyDefinition, 0.0);
 					if (propertyDefinition.getDefaultValue().isEmpty()) {
-						pluginDataBuilder.setGlobalPropertyValue(propertyId, propertyId.getRandomPropertyValue(randomGenerator), 0.0);
+						pluginDataBuilder.setGlobalPropertyValue(propertyId,
+								propertyId.getRandomPropertyValue(randomGenerator), 0.0);
 					}
 				}
 
 				// Create a dimension context that contain the plugin data
 				// builder
-				DimensionContext dimensionContext = DimensionContext.builder().add(pluginDataBuilder).build();
+				DimensionContext.Builder dimensionContextBuilder = DimensionContext.builder();
+
+				pluginDataBuilder = (GlobalPropertiesPluginData.Builder) dimensionContextBuilder
+						.add(pluginDataBuilder.build());
+				DimensionContext dimensionContext = dimensionContextBuilder.build();
 
 				// execute the dimension with the level
 				globalPropertyDimension.executeLevel(dimensionContext, level);
@@ -180,8 +190,8 @@ public class AT_GlobalPropertyDimension {
 			List<String> expectedExperimentMetaData = new ArrayList<>();
 			expectedExperimentMetaData.add(testGlobalPropertyId.toString());
 
-			GlobalPropertyDimension.Builder builder = GlobalPropertyDimension	.builder()//
-																				.setGlobalPropertyId(testGlobalPropertyId);
+			GlobalPropertyDimension.Builder builder = GlobalPropertyDimension.builder()//
+					.setGlobalPropertyId(testGlobalPropertyId);
 
 			GlobalPropertyDimension globalPropertyDimension = builder.build();
 			assertEquals(expectedExperimentMetaData, globalPropertyDimension.getExperimentMetaData());
@@ -194,8 +204,8 @@ public class AT_GlobalPropertyDimension {
 	public void testGetGlobalPropertyId() {
 		for (TestGlobalPropertyId testGlobalPropertyId : TestGlobalPropertyId.values()) {
 
-			GlobalPropertyDimension.Builder builder = GlobalPropertyDimension	.builder()//
-																				.setGlobalPropertyId(testGlobalPropertyId);
+			GlobalPropertyDimension.Builder builder = GlobalPropertyDimension.builder()//
+					.setGlobalPropertyId(testGlobalPropertyId);
 
 			GlobalPropertyDimension globalPropertyDimension = builder.build();
 			assertEquals(testGlobalPropertyId, globalPropertyDimension.getGlobalPropertyId());
@@ -210,8 +220,8 @@ public class AT_GlobalPropertyDimension {
 		for (int i = 0; i < 50; i++) {
 			List<Object> expectedValues = new ArrayList<>();
 
-			GlobalPropertyDimension.Builder builder = GlobalPropertyDimension	.builder()//
-																				.setGlobalPropertyId(TestGlobalPropertyId.GLOBAL_PROPERTY_6_DOUBLE_IMMUTABLE);
+			GlobalPropertyDimension.Builder builder = GlobalPropertyDimension.builder()//
+					.setGlobalPropertyId(TestGlobalPropertyId.GLOBAL_PROPERTY_6_DOUBLE_IMMUTABLE);
 			int n = randomGenerator.nextInt(10);
 			for (int j = 0; j < n; j++) {
 				double value = randomGenerator.nextDouble();
@@ -233,8 +243,8 @@ public class AT_GlobalPropertyDimension {
 
 		for (int i = 0; i < 50; i++) {
 
-			GlobalPropertyDimension.Builder builder = GlobalPropertyDimension	.builder()//
-																				.setGlobalPropertyId(TestGlobalPropertyId.GLOBAL_PROPERTY_6_DOUBLE_IMMUTABLE);
+			GlobalPropertyDimension.Builder builder = GlobalPropertyDimension.builder()//
+					.setGlobalPropertyId(TestGlobalPropertyId.GLOBAL_PROPERTY_6_DOUBLE_IMMUTABLE);
 			int n = randomGenerator.nextInt(10);
 			for (int j = 0; j < n; j++) {
 				double value = randomGenerator.nextDouble();
@@ -252,8 +262,8 @@ public class AT_GlobalPropertyDimension {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(1528599899244176790L);
 
 		for (int i = 0; i < 50; i++) {
-			GlobalPropertyDimension.Builder builder = GlobalPropertyDimension	.builder()//
-																				.setGlobalPropertyId(TestGlobalPropertyId.GLOBAL_PROPERTY_6_DOUBLE_IMMUTABLE);
+			GlobalPropertyDimension.Builder builder = GlobalPropertyDimension.builder()//
+					.setGlobalPropertyId(TestGlobalPropertyId.GLOBAL_PROPERTY_6_DOUBLE_IMMUTABLE);
 			double assignmentTime = randomGenerator.nextDouble();
 			builder.setAssignmentTime(assignmentTime);
 			GlobalPropertyDimension globalPropertyDimension = builder.build();

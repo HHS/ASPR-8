@@ -7,3 +7,7 @@ option java_package = "gov.hhs.aspr.gcm.translation.protobuf.nucleus.example.inp
 message ExamplePlanDataInput {
     double planTime = 1;
 }
+
+message ExampleDimensionInput {
+    string levelName = 1;
+}

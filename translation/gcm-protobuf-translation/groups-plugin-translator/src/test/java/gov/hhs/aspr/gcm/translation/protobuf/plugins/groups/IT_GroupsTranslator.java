@@ -45,6 +45,7 @@ public class IT_GroupsTranslator {
                 .addTranslator(GroupsTranslator.getTranslator())
                 .addTranslator(PropertiesTranslator.getTranslator())
                 .addTranslator(PeopleTranslator.getTranslator())
+                .addTranslator(ReportsTranslator.getTranslator())
                 .addInputFilePath(filePath.resolve(fileName), GroupsPluginDataInput.class)
                 .addOutputFilePath(filePath.resolve(fileName), GroupsPluginData.class)
                 .build();
@@ -80,7 +81,7 @@ public class IT_GroupsTranslator {
 
         TranslationController translatorController = TranslationController.builder()
                 .setTranslationEngineBuilder(ProtobufTranslationEngine.builder())
-                .addTranslator(GroupsTranslator.getTranslatorWithReport())
+                .addTranslator(GroupsTranslator.getTranslator())
                 .addTranslator(PropertiesTranslator.getTranslator())
                 .addTranslator(PeopleTranslator.getTranslator())
                 .addTranslator(ReportsTranslator.getTranslator())

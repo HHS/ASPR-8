@@ -34,7 +34,7 @@ public class AT_GlobalPropertyReportPluginDataTranslationSpec {
     public void testConvertObject() {
         TranslationController translationController = TranslationController.builder()
                 .setTranslationEngineBuilder(ProtobufTranslationEngine.builder())
-                .addTranslator(GlobalPropertiesTranslator.getTranslatorWithReport())
+                .addTranslator(GlobalPropertiesTranslator.getTranslator())
                 .addTranslator(PropertiesTranslator.getTranslator())
                 .addTranslator(ReportsTranslator.getTranslator())
                 .build();

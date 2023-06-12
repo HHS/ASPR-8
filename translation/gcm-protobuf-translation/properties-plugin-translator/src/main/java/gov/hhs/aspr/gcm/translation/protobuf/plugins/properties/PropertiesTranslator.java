@@ -1,7 +1,11 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.properties;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.translationSpecs.PropertyDefinitionTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.translationSpecs.TimeTrackingPolicyTranslationSpec;
+import gov.hhs.aspr.translation.core.TranslationSpec;
 import gov.hhs.aspr.translation.core.Translator;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
 
@@ -16,6 +20,15 @@ public class PropertiesTranslator {
     private PropertiesTranslator() {
     }
 
+    protected static List<TranslationSpec<?, ?>> getTranslationSpecs() {
+        List<TranslationSpec<?, ?>> list = new ArrayList<>();
+
+        list.add(new PropertyDefinitionTranslationSpec());
+        list.add(new TimeTrackingPolicyTranslationSpec());
+
+        return list;
+    }
+
     private static Translator.Builder builder() {
         Translator.Builder builder = Translator.builder()
                 .setTranslatorId(PropertiesTranslatorId.TRANSLATOR_ID)
@@ -23,9 +36,9 @@ public class PropertiesTranslator {
                     ProtobufTranslationEngine.Builder translationEngineBuilder = translatorContext
                             .getTranslationEngineBuilder(ProtobufTranslationEngine.Builder.class);
 
-                    translationEngineBuilder
-                            .addTranslationSpec(new PropertyDefinitionTranslationSpec())
-                            .addTranslationSpec(new TimeTrackingPolicyTranslationSpec());
+                    for (TranslationSpec<?, ?> translationSpec : getTranslationSpecs()) {
+                        translationEngineBuilder.addTranslationSpec(translationSpec);
+                    }
                 });
 
         return builder;

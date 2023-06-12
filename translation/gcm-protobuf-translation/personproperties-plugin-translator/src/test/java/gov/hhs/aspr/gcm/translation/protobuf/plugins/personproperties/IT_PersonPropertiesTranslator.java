@@ -83,7 +83,7 @@ public class IT_PersonPropertiesTranslator {
 
         TranslationController translatorController = TranslationController.builder()
                 .setTranslationEngineBuilder(ProtobufTranslationEngine.builder())
-                .addTranslator(PersonPropertiesTranslator.getTranslatorWithReport())
+                .addTranslator(PersonPropertiesTranslator.getTranslator())
                 .addTranslator(PropertiesTranslator.getTranslator())
                 .addTranslator(PeopleTranslator.getTranslator())
                 .addTranslator(ReportsTranslator.getTranslator())
@@ -132,7 +132,7 @@ public class IT_PersonPropertiesTranslator {
 
         TranslationController translatorController = TranslationController.builder()
                 .setTranslationEngineBuilder(ProtobufTranslationEngine.builder())
-                .addTranslator(PersonPropertiesTranslator.getTranslatorWithReport())
+                .addTranslator(PersonPropertiesTranslator.getTranslator())
                 .addTranslator(PropertiesTranslator.getTranslator())
                 .addTranslator(PeopleTranslator.getTranslator())
                 .addTranslator(ReportsTranslator.getTranslator())

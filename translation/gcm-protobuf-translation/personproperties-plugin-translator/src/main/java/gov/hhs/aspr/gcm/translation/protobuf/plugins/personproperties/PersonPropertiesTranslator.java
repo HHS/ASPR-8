@@ -1,10 +1,17 @@
 package gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties;
 
+import gov.hhs.aspr.translation.core.TranslationSpec;
 import gov.hhs.aspr.translation.core.Translator;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.PeopleTranslatorId;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.input.PersonPropertyValueInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.translationSpecs.PersonPropertiesPluginDataTranslationSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.translationSpecs.PersonPropertyDimensionTranslationSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.translationSpecs.PersonPropertyFilterTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.translationSpecs.PersonPropertyIdTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.translationSpecs.PersonPropertyInteractionReportPluginDataTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.translationSpecs.PersonPropertyReportPluginDataTranslationSpec;
@@ -23,43 +30,43 @@ public class PersonPropertiesTranslator {
     private PersonPropertiesTranslator() {
     }
 
-    private static Translator.Builder builder(boolean withReport) {
+    protected static List<TranslationSpec<?, ?>> getTranslationSpecs() {
+        List<TranslationSpec<?, ?>> list = new ArrayList<>();
+
+        list.add(new PersonPropertiesPluginDataTranslationSpec());
+        list.add(new PersonPropertyDimensionTranslationSpec());
+        list.add(new PersonPropertyFilterTranslationSpec());
+        list.add(new PersonPropertyIdTranslationSpec());
+        list.add(new PersonPropertyInteractionReportPluginDataTranslationSpec());
+        list.add(new PersonPropertyReportPluginDataTranslationSpec());
+        list.add(new TestPersonPropertyIdTranslationSpec());
+
+        return list;
+    }
+
+    private static Translator.Builder builder() {
         Translator.Builder builder = Translator.builder()
                 .setTranslatorId(PersonPropertiesTranslatorId.TRANSLATOR_ID)
                 .addDependency(PropertiesTranslatorId.TRANSLATOR_ID)
                 .addDependency(PeopleTranslatorId.TRANSLATOR_ID)
+                .addDependency(ReportsTranslatorId.TRANSLATOR_ID)
                 .setInitializer((translatorContext) -> {
                     ProtobufTranslationEngine.Builder translationEngineBuilder = translatorContext
                             .getTranslationEngineBuilder(ProtobufTranslationEngine.Builder.class);
 
-                    translationEngineBuilder
-                            .addTranslationSpec(new PersonPropertyIdTranslationSpec())
-                            .addTranslationSpec(new PersonPropertiesPluginDataTranslationSpec())
-                            .addTranslationSpec(new TestPersonPropertyIdTranslationSpec());
+                    for (TranslationSpec<?, ?> translationSpec : getTranslationSpecs()) {
+                        translationEngineBuilder.addTranslationSpec(translationSpec);
+                    }
 
                     translationEngineBuilder.addFieldToIncludeDefaultValue(
                             PersonPropertyValueInput.getDescriptor().findFieldByName("personId"));
 
-                    if (withReport) {
-                        translationEngineBuilder
-                                .addTranslationSpec(new PersonPropertyReportPluginDataTranslationSpec())
-                                .addTranslationSpec(new PersonPropertyInteractionReportPluginDataTranslationSpec());
-                    }
-
                 });
-
-        if (withReport) {
-            builder.addDependency(ReportsTranslatorId.TRANSLATOR_ID);
-        }
 
         return builder;
     }
 
-    public static Translator getTranslatorWithReport() {
-        return builder(true).build();
-    }
-
     public static Translator getTranslator() {
-        return builder(false).build();
+        return builder().build();
     }
 }
