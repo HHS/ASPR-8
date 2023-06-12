@@ -27,11 +27,23 @@ public interface PluginData {
 	 * state such that invocation of pluginData.getCloneBuilder().build() will
 	 * generate a copy of the current plugin.
 	 */
-	public PluginDataBuilder getCloneBuilder();	
-	
+	public PluginDataBuilder getCloneBuilder();
+
 	@Override
 	public int hashCode();
 
+	/**
+	 * Plugin datas are equal if they are implicitly equal. They contain the
+	 * same implicit information without regard to order.
+	 */
 	@Override
 	public boolean equals(Object obj);
+
+	/**
+	 * A string representation of the plugin data implicit data and reflects the
+	 * order of addition of the data. Equal plugin datas have equal strings in
+	 * terms of content, but not necessarily order.
+	 */
+	@Override
+	public String toString();
 }

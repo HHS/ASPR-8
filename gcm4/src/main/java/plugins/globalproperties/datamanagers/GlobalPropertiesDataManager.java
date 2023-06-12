@@ -30,9 +30,9 @@ import util.errors.ContractException;
 public final class GlobalPropertiesDataManager extends DataManager {
 
 	/**
-	 * A utility class for holding the value and assignment time for a property. On
-	 * value assignment, this PropertyValueRecord records the current simulation
-	 * time.
+	 * A utility class for holding the value and assignment time for a property.
+	 * On value assignment, this PropertyValueRecord records the current
+	 * simulation time.
 	 */
 	public class PropertyValueRecord {
 
@@ -47,20 +47,21 @@ public final class GlobalPropertiesDataManager extends DataManager {
 		/**
 		 * Returns the last assigned value
 		 */
-		public Object getValue() {		
+		public Object getValue() {
 			return propertyValue;
 		}
 
 		/**
-		 * Sets the current value and records the assignment time to the current time
+		 * Sets the current value and records the assignment time to the current
+		 * time
 		 */
 		public void setPropertyValue(Object propertyValue) {
 			this.propertyValue = propertyValue;
 			assignmentTime = dataManagerContext.getTime();
 		}
-		
+
 		/**
-		 * Sets the current value and assignment time 
+		 * Sets the current value and assignment time
 		 */
 		public void setPropertyValue(Object propertyValue, double assignmentTime) {
 			this.propertyValue = propertyValue;
@@ -84,10 +85,9 @@ public final class GlobalPropertiesDataManager extends DataManager {
 			builder.append("]");
 			return builder.toString();
 		}
-		
-		
+
 	}
-	
+
 	private static enum EventFunctionId {
 		GLOBAL_PROPERTY_ID; //
 
@@ -101,7 +101,9 @@ public final class GlobalPropertiesDataManager extends DataManager {
 
 	private DataManagerContext dataManagerContext;
 
-	private Map<GlobalPropertyId, PropertyValueRecord> globalPropertyMap = new LinkedHashMap<>();
+	private final Map<GlobalPropertyId, Object> globalPropertyValues = new LinkedHashMap<>();
+
+	private final Map<GlobalPropertyId, Double> globalPropertyTimes = new LinkedHashMap<>();
 
 	private Map<GlobalPropertyId, PropertyDefinition> globalPropertyDefinitions = new LinkedHashMap<>();
 
@@ -242,7 +244,11 @@ public final class GlobalPropertiesDataManager extends DataManager {
 
 	public double getGlobalPropertyTime(GlobalPropertyId globalPropertyId) {
 		validateGlobalPropertyId(globalPropertyId);
-		return globalPropertyMap.get(globalPropertyId).getAssignmentTime();
+		Double result = globalPropertyTimes.get(globalPropertyId);
+		if (result == null) {
+			result = globalPropertyDefinitionTimes.get(globalPropertyId);
+		}
+		return result;
 	}
 
 	/**
@@ -258,7 +264,11 @@ public final class GlobalPropertiesDataManager extends DataManager {
 	@SuppressWarnings("unchecked")
 	public <T> T getGlobalPropertyValue(GlobalPropertyId globalPropertyId) {
 		validateGlobalPropertyId(globalPropertyId);
-		return (T) globalPropertyMap.get(globalPropertyId).getValue();
+		Object result = globalPropertyValues.get(globalPropertyId);
+		if (result == null) {
+			result = globalPropertyDefinitions.get(globalPropertyId).getDefaultValue().get();
+		}
+		return (T) result;
 	};
 
 	/**
@@ -266,15 +276,18 @@ public final class GlobalPropertiesDataManager extends DataManager {
 	 * for null input.
 	 */
 	public boolean globalPropertyIdExists(final GlobalPropertyId globalPropertyId) {
-		return globalPropertyMap.containsKey(globalPropertyId);
+		return globalPropertyDefinitions.containsKey(globalPropertyId);
 	}
 
 	private void handleGlobalPropertyInitializationMutationEvent(DataManagerContext dataManagerContext, GlobalPropertyInitializationMutationEvent globalPropertyInitializationMutationEvent) {
 		GlobalPropertyInitialization globalPropertyInitialization = globalPropertyInitializationMutationEvent.globalPropertyInitialization;
 		validateGlobalPropertyInitializationNotNull(globalPropertyInitialization);
 		GlobalPropertyId globalPropertyId = globalPropertyInitialization.getGlobalPropertyId();
-		PropertyDefinition propertyDefinition = globalPropertyInitialization.getPropertyDefinition();
 		validateGlobalPropertyIdIsUnknown(globalPropertyId);
+
+		PropertyDefinition propertyDefinition = globalPropertyInitialization.getPropertyDefinition();
+		globalPropertyDefinitions.put(globalPropertyId, propertyDefinition);
+		globalPropertyDefinitionTimes.put(globalPropertyId, dataManagerContext.getTime());
 
 		Object globalPropertyValue;
 		Optional<Object> optional = globalPropertyInitialization.getValue();
@@ -284,11 +297,8 @@ public final class GlobalPropertiesDataManager extends DataManager {
 			globalPropertyValue = optional.get();
 		}
 
-		PropertyValueRecord propertyValueRecord = new PropertyValueRecord(dataManagerContext);
-		propertyValueRecord.setPropertyValue(globalPropertyValue);
-		globalPropertyMap.put(globalPropertyId, propertyValueRecord);
-		globalPropertyDefinitions.put(globalPropertyId, propertyDefinition);
-		globalPropertyDefinitionTimes.put(globalPropertyId, dataManagerContext.getTime());
+		globalPropertyValues.put(globalPropertyId, globalPropertyValue);
+		globalPropertyTimes.put(globalPropertyId, dataManagerContext.getTime());
 
 		if (dataManagerContext.subscribersExist(GlobalPropertyDefinitionEvent.class)) {
 			dataManagerContext.releaseObservationEvent(new GlobalPropertyDefinitionEvent(globalPropertyId, globalPropertyValue));
@@ -305,7 +315,8 @@ public final class GlobalPropertiesDataManager extends DataManager {
 		validatePropertyMutability(propertyDefinition);
 		validateValueCompatibility(globalPropertyId, propertyDefinition, globalPropertyValue);
 		final Object oldPropertyValue = getGlobalPropertyValue(globalPropertyId);
-		globalPropertyMap.get(globalPropertyId).setPropertyValue(globalPropertyValue);
+		globalPropertyValues.put(globalPropertyId, globalPropertyValue);
+		globalPropertyTimes.put(globalPropertyId, dataManagerContext.getTime());
 		if (dataManagerContext.subscribersExist(GlobalPropertyUpdateEvent.class)) {
 			dataManagerContext.releaseObservationEvent(new GlobalPropertyUpdateEvent(globalPropertyId, oldPropertyValue, globalPropertyValue));
 		}
@@ -324,7 +335,7 @@ public final class GlobalPropertiesDataManager extends DataManager {
 	@Override
 	public void init(DataManagerContext dataManagerContext) {
 		super.init(dataManagerContext);
-		
+
 		this.dataManagerContext = dataManagerContext;
 		validateGlobalPropertiesPluginData();
 
@@ -333,15 +344,19 @@ public final class GlobalPropertiesDataManager extends DataManager {
 
 		for (GlobalPropertyId globalPropertyId : globalPropertiesPluginData.getGlobalPropertyIds()) {
 			PropertyDefinition globalPropertyDefinition = globalPropertiesPluginData.getGlobalPropertyDefinition(globalPropertyId);
+			globalPropertyDefinitions.put(globalPropertyId, globalPropertyDefinition);
+
 			Double globalPropertyDefinitionTime = globalPropertiesPluginData.getGlobalPropertyDefinitionTime(globalPropertyId);
 			globalPropertyDefinitionTimes.put(globalPropertyId, globalPropertyDefinitionTime);
-			validateGlobalPropertyAddition(globalPropertyId, globalPropertyDefinition);
-			Object globalPropertyValue = globalPropertiesPluginData.getGlobalPropertyValue(globalPropertyId);
-			Double propertyTime = globalPropertiesPluginData.getGlobalPropertyTime(globalPropertyId);
-			PropertyValueRecord propertyValueRecord = new PropertyValueRecord(dataManagerContext);
-			propertyValueRecord.setPropertyValue(globalPropertyValue, propertyTime);
-			globalPropertyMap.put(globalPropertyId, propertyValueRecord);
-			globalPropertyDefinitions.put(globalPropertyId, globalPropertyDefinition);
+
+			Optional<Object> optionalValue = globalPropertiesPluginData.getGlobalPropertyValue(globalPropertyId);
+			if (optionalValue.isPresent()) {
+				globalPropertyValues.put(globalPropertyId, optionalValue.get());
+				//since the optional is present for the value, we know it is present for the time
+				Optional<Double> optionalTime = globalPropertiesPluginData.getGlobalPropertyTime(globalPropertyId);
+				globalPropertyTimes.put(globalPropertyId, optionalTime.get());
+			}
+
 		}
 
 		if (dataManagerContext.stateRecordingIsScheduled()) {
@@ -356,10 +371,11 @@ public final class GlobalPropertiesDataManager extends DataManager {
 			PropertyDefinition propertyDefinition = globalPropertyDefinitions.get(globalPropertyId);
 			Double propertyDefinitionCreationTime = globalPropertyDefinitionTimes.get(globalPropertyId);
 			builder.defineGlobalProperty(globalPropertyId, propertyDefinition, propertyDefinitionCreationTime);
-			PropertyValueRecord propertyValueRecord = globalPropertyMap.get(globalPropertyId);
-			Object value = propertyValueRecord.getValue();
-			double assignmentTime = propertyValueRecord.getAssignmentTime();
-			builder.setGlobalPropertyValue(globalPropertyId, value, assignmentTime);
+			Object value = globalPropertyValues.get(globalPropertyId);
+			if (value != null) {
+				double time = globalPropertyTimes.get(globalPropertyId);
+				builder.setGlobalPropertyValue(globalPropertyId, value, time);
+			}
 		}
 		dataManagerContext.releaseOutput(builder.build());
 	}
@@ -386,35 +402,19 @@ public final class GlobalPropertiesDataManager extends DataManager {
 
 	}
 
-	private void validateGlobalPropertyAddition(GlobalPropertyId globalPropertyId, PropertyDefinition propertyDefinition) {
-
-		if (globalPropertyId == null) {
-			throw new ContractException(PropertyError.NULL_PROPERTY_ID);
-		}
-
-		if (propertyDefinition == null) {
-			throw new ContractException(PropertyError.NULL_PROPERTY_DEFINITION);
-		}
-
-		if (globalPropertyDefinitions.containsKey(globalPropertyId)) {
-			throw new ContractException(PropertyError.DUPLICATE_PROPERTY_DEFINITION);
-		}
-
-	}
-
 	private void validateGlobalPropertyId(final GlobalPropertyId globalPropertyId) {
 		if (globalPropertyId == null) {
 			throw new ContractException(PropertyError.NULL_PROPERTY_ID);
 		}
 
-		if (!globalPropertyMap.containsKey(globalPropertyId)) {
+		if (!globalPropertyDefinitions.containsKey(globalPropertyId)) {
 			throw new ContractException(PropertyError.UNKNOWN_PROPERTY_ID, globalPropertyId);
 		}
 	}
 
 	private void validateGlobalPropertyIdIsUnknown(final GlobalPropertyId globalPropertyId) {
 
-		if (globalPropertyMap.containsKey(globalPropertyId)) {
+		if (globalPropertyDefinitions.containsKey(globalPropertyId)) {
 			throw new ContractException(PropertyError.DUPLICATE_PROPERTY_DEFINITION, globalPropertyId);
 		}
 	}
@@ -456,16 +456,16 @@ public final class GlobalPropertiesDataManager extends DataManager {
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("GlobalPropertiesDataManager [globalPropertyMap=");
-		builder.append(globalPropertyMap);
-		builder.append(", globalPropertyDefinitions=");
+		builder.append("GlobalPropertiesDataManager [globalPropertyDefinitions=");
 		builder.append(globalPropertyDefinitions);
 		builder.append(", globalPropertyDefinitionTimes=");
 		builder.append(globalPropertyDefinitionTimes);
+		builder.append(", globalPropertyValues=");
+		builder.append(globalPropertyValues);
+		builder.append(", globalPropertyTimes=");
+		builder.append(globalPropertyTimes);
 		builder.append("]");
 		return builder.toString();
 	}
-	
-	
 
 }

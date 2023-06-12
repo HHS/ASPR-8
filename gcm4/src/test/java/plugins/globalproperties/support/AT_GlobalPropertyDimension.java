@@ -3,9 +3,11 @@ package plugins.globalproperties.support;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
@@ -174,7 +176,9 @@ public class AT_GlobalPropertyDimension {
 				 * show that the GlobalPropertiesPluginData has the value we
 				 * expect for the given level
 				 */
-				Object actualValue = globalPropertiesPluginData.getGlobalPropertyValue(targetPropertyId);
+				Optional<Object> optionalValue = globalPropertiesPluginData.getGlobalPropertyValue(targetPropertyId);
+				assertTrue(optionalValue.isPresent());
+				Object actualValue = optionalValue.get();
 				Object expectedValue = exectedValues.get(level);
 				assertEquals(expectedValue, actualValue);
 			}
