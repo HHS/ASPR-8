@@ -844,59 +844,6 @@ public class AT_PersonPropertyPluginData {
 		assertNotEquals(pluginData1, pluginData4);
 		assertNotEquals(pluginData1, pluginData5);
 
-		/*
-		 * Some examples of equals() being true when inputs are not identical --
-		 * note that both property definitions in these examples contain default
-		 * values of 5 and 3.0
-		 */
-		pluginData1 = PersonPropertiesPluginData.builder()//
-												.definePersonProperty(propId1, def1, 2, true)//
-												.definePersonProperty(propId2, def2, 3, true)//
-
-												.setPersonPropertyValue(new PersonId(2), propId1, 5)//
-												.setPersonPropertyTime(new PersonId(2), propId1, 6.0)//
-
-												.setPersonPropertyValue(new PersonId(5), propId2, 12.5)//
-												.setPersonPropertyTime(new PersonId(5), propId2, 3.0)//
-
-												.setPersonPropertyTime(new PersonId(8), propId2, 8.4)//
-												.setPersonPropertyTime(new PersonId(8), propId2, 12.7)//
-												.build();
-
-		// we eliminate the value of person 2 since it is the default
-		pluginData2 = PersonPropertiesPluginData.builder()//
-												.definePersonProperty(propId1, def1, 2, true)//
-												.definePersonProperty(propId2, def2, 3, true)//
-
-												.setPersonPropertyTime(new PersonId(2), propId1, 6.0)//
-
-												.setPersonPropertyValue(new PersonId(5), propId2, 12.5)//
-												.setPersonPropertyTime(new PersonId(5), propId2, 3.0)//
-
-												.setPersonPropertyTime(new PersonId(8), propId2, 8.4)//
-												.setPersonPropertyTime(new PersonId(8), propId2, 12.7)//
-												.build();
-
-		// we eliminate the property time for person 5 since it has the default
-		// time
-		pluginData3 = PersonPropertiesPluginData.builder()//
-												.definePersonProperty(propId1, def1, 2, true)//
-												.definePersonProperty(propId2, def2, 3, true)//
-
-												.setPersonPropertyValue(new PersonId(2), propId1, 5)//
-												.setPersonPropertyTime(new PersonId(2), propId1, 6.0)//
-
-												.setPersonPropertyValue(new PersonId(5), propId2, 12.5)//
-												// .setPersonPropertyTime(new
-												// PersonId(5), propId2, 3.0)//
-
-												.setPersonPropertyTime(new PersonId(8), propId2, 8.4)//
-												.setPersonPropertyTime(new PersonId(8), propId2, 12.7)//
-												.build();
-
-		assertEquals(pluginData1, pluginData2);
-		assertEquals(pluginData1, pluginData3);
-
 	}
 
 	@Test

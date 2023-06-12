@@ -81,8 +81,11 @@ public class PersonPropertiesPluginData implements PluginData {
 			result = prime * result + personPropertyDefinitions.hashCode();
 			result = prime * result + propertyDefinitionTimes.hashCode();
 			result = prime * result + propertyTrackingPolicies.hashCode();
-			result = prime * result + getPersonPropertyValuesHashCode();
-			result = prime * result + getPersonPropertyTimesHashCode();
+			result = prime * result + personPropertyValues.hashCode();
+			result = prime * result + personPropertyTimes.hashCode();
+			
+//			result = prime * result + getPersonPropertyValuesHashCode();
+//			result = prime * result + getPersonPropertyTimesHashCode();
 			return result;
 		}
 
@@ -172,14 +175,22 @@ public class PersonPropertiesPluginData implements PluginData {
 			if (!propertyTrackingPolicies.equals(other.propertyTrackingPolicies)) {
 				return false;
 			}
-
-			if (!comparePersonPropertyValues(this, other)) {
+			
+			if (!personPropertyValues.equals(other.personPropertyValues)) {
+				return false;
+			}
+			
+			if (!personPropertyTimes.equals(other.personPropertyTimes)) {
 				return false;
 			}
 
-			if (!comparePersonPropertyTimes(this, other)) {
-				return false;
-			}
+//			if (!comparePersonPropertyValues(this, other)) {
+//				return false;
+//			}
+//
+//			if (!comparePersonPropertyTimes(this, other)) {
+//				return false;
+//			}
 			return true;
 		}
 
@@ -195,13 +206,7 @@ public class PersonPropertiesPluginData implements PluginData {
 			builder.append(", personPropertyValues=");
 			builder.append(personPropertyValues);
 			builder.append(", personPropertyTimes=");
-			builder.append(personPropertyTimes);
-			builder.append(", emptyValueList=");
-			builder.append(emptyValueList);
-			builder.append(", emptyTimeList=");
-			builder.append(emptyTimeList);
-			builder.append(", locked=");
-			builder.append(locked);
+			builder.append(personPropertyTimes);			
 			builder.append("]");
 			return builder.toString();
 		}
