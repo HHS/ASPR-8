@@ -515,7 +515,7 @@ public class AT_GlobalPropertyReport {
 
 	@Test
 	@UnitTestMethod(target = GlobalPropertyReport.class, name = "init", args = { ReportContext.class })
-	public void testInit_State() {
+	public void testStateFinalization() {
 
 		/*
 		 * We will add one actor and the global property report to the engine.
