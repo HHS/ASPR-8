@@ -261,38 +261,42 @@ public class AT_PersonPropertiesTestPluginFactory {
 	@Test
 	@UnitTestMethod(target = PersonPropertiesTestPluginFactory.class, name = "getStandardPersonPropertiesPluginData", args = { List.class, long.class })
 	public void testGetStandardPersonPropertiesPluginData() {
-
+		
 		long seed = 4684903523797799712L;
 		List<PersonId> people = new ArrayList<>();
 		for (int i = 0; i < 100; i++) {
 			people.add(new PersonId(i));
 		}
-
+		
 		PersonPropertiesPluginData actualPluginData = PersonPropertiesTestPluginFactory.getStandardPersonPropertiesPluginData(people, seed);
-
+		
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
 
-		PersonPropertiesPluginData.Builder personPropertyBuilder = PersonPropertiesPluginData.builder();
+		double actualPropertyTime = 0;
 		
+
+		PersonPropertiesPluginData.Builder personPropertyBuilder = PersonPropertiesPluginData.builder();
+
 		for (TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.values()) {
 			personPropertyBuilder.definePersonProperty(testPersonPropertyId, testPersonPropertyId.getPropertyDefinition(), 0.0, testPersonPropertyId.isTimeTracked());
 		}
 
 		for (PersonId personId : people) {
+
 			for (TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.values()) {
+
 				boolean doesNotHaveDefaultValue = testPersonPropertyId.getPropertyDefinition().getDefaultValue().isEmpty();
+
 				if (doesNotHaveDefaultValue || randomGenerator.nextBoolean()) {
 					Object randomPropertyValue = testPersonPropertyId.getRandomPropertyValue(randomGenerator);
 					personPropertyBuilder.setPersonPropertyValue(personId, testPersonPropertyId, randomPropertyValue);
-
-					if(testPersonPropertyId.isTimeTracked()) {
-						personPropertyBuilder.setPersonPropertyTime(personId, testPersonPropertyId, 0.0);
-					}
 				}
-
+	
+				if(testPersonPropertyId.isTimeTracked() && personId.getValue() % 5 == 0) {
+					personPropertyBuilder.setPersonPropertyTime(personId, testPersonPropertyId, actualPropertyTime);
+				}
 			}
 		}
-
 		PersonPropertiesPluginData expectedPluginData = personPropertyBuilder.build();
 
 		assertEquals(expectedPluginData, actualPluginData);

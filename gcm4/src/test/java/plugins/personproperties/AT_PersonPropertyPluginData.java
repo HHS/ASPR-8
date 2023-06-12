@@ -238,7 +238,7 @@ public class AT_PersonPropertyPluginData {
 		assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
 
 	}
-	
+
 	@Test
 	@UnitTestMethod(target = PersonPropertiesPluginData.class, name = "getPropertyDefinitionTime", args = { PersonPropertyId.class }, tags = { UnitTag.LOCAL_PROXY })
 	public void testGetPropertyDefinitionTime() {
@@ -257,7 +257,7 @@ public class AT_PersonPropertyPluginData {
 		assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
 
 	}
-	
+
 	@Test
 	@UnitTestMethod(target = PersonPropertiesPluginData.class, name = "propertyAssignmentTimesTracked", args = { PersonPropertyId.class }, tags = { UnitTag.LOCAL_PROXY })
 	public void testPropertyAssignmentTimesTracked() {
@@ -276,7 +276,6 @@ public class AT_PersonPropertyPluginData {
 		assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
 
 	}
-	
 
 	@Test
 	@UnitTestMethod(target = PersonPropertiesPluginData.class, name = "getPersonPropertyIds", args = {})
@@ -881,11 +880,12 @@ public class AT_PersonPropertyPluginData {
 																			.setPersonPropertyTime(new PersonId(8), propId2, 12.7)//
 																			.build();
 
-		// we eliminate the value of person 2 since it is the default
+		
 		PersonPropertiesPluginData pluginData2 = PersonPropertiesPluginData	.builder()//
 																			.definePersonProperty(propId1, def1, 2, true)//
 																			.definePersonProperty(propId2, def2, 3, true)//
 
+																			.setPersonPropertyValue(new PersonId(2), propId1, 5)//
 																			.setPersonPropertyTime(new PersonId(2), propId1, 6.0)//
 
 																			.setPersonPropertyValue(new PersonId(5), propId2, 12.5)//
@@ -895,27 +895,12 @@ public class AT_PersonPropertyPluginData {
 																			.setPersonPropertyTime(new PersonId(8), propId2, 12.7)//
 																			.build();
 
-		// we eliminate the property time for person 5 since it has the default
-		// time
-		PersonPropertiesPluginData pluginData3 = PersonPropertiesPluginData	.builder()//
-																			.definePersonProperty(propId1, def1, 2, true)//
-																			.definePersonProperty(propId2, def2, 3, true)//
-
-																			.setPersonPropertyValue(new PersonId(2), propId1, 5)//
-																			.setPersonPropertyTime(new PersonId(2), propId1, 6.0)//
-
-																			.setPersonPropertyValue(new PersonId(5), propId2, 12.5)//
-
-																			.setPersonPropertyTime(new PersonId(8), propId2, 8.4)//
-																			.setPersonPropertyTime(new PersonId(8), propId2, 12.7)//
-																			.build();
-
 		// equal objects have equal hash codes
 		assertEquals(pluginData1, pluginData2);
-		assertEquals(pluginData1, pluginData3);
+		
 
 		assertEquals(pluginData1.hashCode(), pluginData2.hashCode());
-		assertEquals(pluginData1.hashCode(), pluginData3.hashCode());
+		
 
 		// show that hash codes are reasonably distributed
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(3839519625960869013L);

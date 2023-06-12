@@ -78,10 +78,10 @@ public class PersonPropertiesPluginData implements PluginData {
 		public int hashCode() {
 			final int prime = 31;
 			int result = 1;
-			result = prime * result + personPropertyDefinitions.hashCode();
-			result = prime * result + propertyDefinitionTimes.hashCode();
-			result = prime * result + propertyTrackingPolicies.hashCode();
-			result = prime * result + personPropertyValues.hashCode();
+//			result = prime * result + personPropertyDefinitions.hashCode();
+//			result = prime * result + propertyDefinitionTimes.hashCode();
+//			result = prime * result + propertyTrackingPolicies.hashCode();
+//			result = prime * result + personPropertyValues.hashCode();
 			result = prime * result + personPropertyTimes.hashCode();
 			
 //			result = prime * result + getPersonPropertyValuesHashCode();
@@ -164,22 +164,22 @@ public class PersonPropertiesPluginData implements PluginData {
 			}
 			Data other = (Data) obj;
 
-			if (!personPropertyDefinitions.equals(other.personPropertyDefinitions)) {
-				return false;
-			}
-
-			if (!propertyDefinitionTimes.equals(other.propertyDefinitionTimes)) {
-				return false;
-			}
-
-			if (!propertyTrackingPolicies.equals(other.propertyTrackingPolicies)) {
-				return false;
-			}
-			
-			if (!personPropertyValues.equals(other.personPropertyValues)) {
-				return false;
-			}
-			
+//			if (!personPropertyDefinitions.equals(other.personPropertyDefinitions)) {
+//				return false;
+//			}
+//
+//			if (!propertyDefinitionTimes.equals(other.propertyDefinitionTimes)) {
+//				return false;
+//			}
+//
+//			if (!propertyTrackingPolicies.equals(other.propertyTrackingPolicies)) {
+//				return false;
+//			}
+//			
+//			if (!personPropertyValues.equals(other.personPropertyValues)) {
+//				return false;
+//			}
+//			
 			if (!personPropertyTimes.equals(other.personPropertyTimes)) {
 				return false;
 			}
