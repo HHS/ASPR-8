@@ -112,13 +112,6 @@ public class PersonPropertiesPluginData implements PluginData {
 				return false;
 			}
 
-//			if (!comparePersonPropertyValues(this, other)) {
-//				return false;
-//			}
-//
-//			if (!comparePersonPropertyTimes(this, other)) {
-//				return false;
-//			}
 			return true;
 		}
 
