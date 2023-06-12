@@ -552,6 +552,110 @@ public class AT_GlobalPropertiesPluginData {
 
 	}
 
+//	@Test
+//	@UnitTestMethod(target = GlobalPropertiesPluginData.class, name = "equals", args = { Object.class })
+//	public void testEquals() {
+//		// we first set up a few items that will clarify the production of
+//		// plugin datas
+//
+//		Object v_5 = 5;
+//		Object v_12 = 12;
+//		Object v_25 = 15;
+//		Object v_a = "a";
+//		Object v_b = "b";
+//
+//		GlobalPropertyId p1 = TestGlobalPropertyId.getUnknownGlobalPropertyId();
+//		GlobalPropertyId p2 = TestGlobalPropertyId.getUnknownGlobalPropertyId();
+//
+//		PropertyDefinition d1 = PropertyDefinition	.builder()//
+//													.setType(Integer.class)//
+//													.setDefaultValue(v_5)//
+//													.build();
+//
+//		PropertyDefinition d2 = PropertyDefinition	.builder()//
+//													.setType(String.class)//
+//													.setDefaultValue(v_a)//
+//													.build();
+//
+//		Double t_0 = 0.0;
+//		Double t_1 = 1.0;
+//		Double t_2 = 2.0;
+//
+//		// just a single definition -- this will act as our base case
+//		GlobalPropertiesPluginData g1 = GlobalPropertiesPluginData	.builder()//
+//																	.defineGlobalProperty(p1, d1, t_0)//
+//																	.build();
+//
+//		// set the property value that has the same time and value as the
+//		// property definition
+//		GlobalPropertiesPluginData g2 = GlobalPropertiesPluginData	.builder()//
+//																	.defineGlobalProperty(p1, d1, t_0)//
+//																	.setGlobalPropertyValue(p1, v_5, t_0)//
+//																	.build();
+//
+//		GlobalPropertiesPluginData g3 = GlobalPropertiesPluginData	.builder()//
+//																	.setGlobalPropertyValue(p1, v_5, t_0)//
+//																	.defineGlobalProperty(p1, d1, t_0)//
+//																	.build();
+//
+//		// change the value of the property
+//		GlobalPropertiesPluginData g4 = GlobalPropertiesPluginData	.builder()//
+//																	.defineGlobalProperty(p1, d1, t_0)//
+//																	.setGlobalPropertyValue(p1, v_25, t_0)//
+//																	.build();
+//
+//		// change the time of the property
+//		GlobalPropertiesPluginData g5 = GlobalPropertiesPluginData	.builder()//
+//																	.defineGlobalProperty(p1, d1, t_0)//
+//																	.setGlobalPropertyValue(p1, v_5, t_1)//
+//																	.build();
+//
+//		// introduce a new property definition
+//		GlobalPropertiesPluginData g6 = GlobalPropertiesPluginData	.builder()//
+//																	.defineGlobalProperty(p1, d1, t_0)//
+//																	.defineGlobalProperty(p2, d2, t_1)//
+//																	.build();
+//
+//		// add several values and definitions
+//		GlobalPropertiesPluginData g7 = GlobalPropertiesPluginData	.builder()//
+//																	.defineGlobalProperty(p1, d1, t_0)//
+//																	.defineGlobalProperty(p2, d2, t_1)//
+//																	.setGlobalPropertyValue(p1, v_25, t_2).setGlobalPropertyValue(p2, v_b, t_2).setGlobalPropertyValue(p1, v_12, t_1).build();
+//
+//		// add the same details, but in a different order, preserving the last
+//		// assignments
+//		GlobalPropertiesPluginData g8 = GlobalPropertiesPluginData	.builder()//
+//																	.setGlobalPropertyValue(p1, v_25, t_2).defineGlobalProperty(p2, d2, t_1)//
+//																	.defineGlobalProperty(p1, d1, t_0)//
+//																	.setGlobalPropertyValue(p1, v_12, t_1).setGlobalPropertyValue(p2, v_b, t_2).build();
+//
+//		// reflexive
+//		assertEquals(g1, g1);
+//		assertEquals(g2, g2);
+//		assertEquals(g4, g4);
+//		assertEquals(g5, g5);
+//		assertEquals(g6, g6);
+//		assertEquals(g7, g7);
+//		assertEquals(g8, g8);
+//
+//		// symmetric and transitive
+//		assertEquals(g1, g2);
+//		assertEquals(g2, g1);
+//		assertEquals(g1, g3);
+//		assertEquals(g3, g1);
+//		assertEquals(g2, g3);
+//		assertEquals(g3, g2);
+//
+//		// non-equality from small changes
+//		assertNotEquals(g1, g4);
+//		assertNotEquals(g1, g5);
+//		assertNotEquals(g1, g6);
+//
+//		// ordering of action should have no effect
+//		assertEquals(g7, g8);
+//
+//	}
+
 	@Test
 	@UnitTestMethod(target = GlobalPropertiesPluginData.class, name = "equals", args = { Object.class })
 	public void testEquals() {
@@ -620,14 +724,20 @@ public class AT_GlobalPropertiesPluginData {
 		GlobalPropertiesPluginData g7 = GlobalPropertiesPluginData	.builder()//
 																	.defineGlobalProperty(p1, d1, t_0)//
 																	.defineGlobalProperty(p2, d2, t_1)//
-																	.setGlobalPropertyValue(p1, v_25, t_2).setGlobalPropertyValue(p2, v_b, t_2).setGlobalPropertyValue(p1, v_12, t_1).build();
+																	.setGlobalPropertyValue(p1, v_25, t_2)//
+																	.setGlobalPropertyValue(p2, v_b, t_2)//
+																	.setGlobalPropertyValue(p1, v_12, t_1)//
+																	.build();
 
 		// add the same details, but in a different order, preserving the last
 		// assignments
 		GlobalPropertiesPluginData g8 = GlobalPropertiesPluginData	.builder()//
-																	.setGlobalPropertyValue(p1, v_25, t_2).defineGlobalProperty(p2, d2, t_1)//
+																	.setGlobalPropertyValue(p1, v_25, t_2)//
+																	.defineGlobalProperty(p2, d2, t_1)//
 																	.defineGlobalProperty(p1, d1, t_0)//
-																	.setGlobalPropertyValue(p1, v_12, t_1).setGlobalPropertyValue(p2, v_b, t_2).build();
+																	.setGlobalPropertyValue(p1, v_12, t_1)//
+																	.setGlobalPropertyValue(p2, v_b, t_2)//
+																	.build();
 
 		// reflexive
 		assertEquals(g1, g1);
@@ -639,14 +749,13 @@ public class AT_GlobalPropertiesPluginData {
 		assertEquals(g8, g8);
 
 		// symmetric and transitive
-		assertEquals(g1, g2);
-		assertEquals(g2, g1);
-		assertEquals(g1, g3);
-		assertEquals(g3, g1);
+
 		assertEquals(g2, g3);
 		assertEquals(g3, g2);
 
 		// non-equality from small changes
+		assertNotEquals(g1, g2);
+		assertNotEquals(g1, g3);
 		assertNotEquals(g1, g4);
 		assertNotEquals(g1, g5);
 		assertNotEquals(g1, g6);
@@ -656,6 +765,7 @@ public class AT_GlobalPropertiesPluginData {
 
 	}
 
+	
 	@Test
 	@UnitTestMethod(target = GlobalPropertiesPluginData.class, name = "hashCode", args = {})
 	public void testHashCode() {

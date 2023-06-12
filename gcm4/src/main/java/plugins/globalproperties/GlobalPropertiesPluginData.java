@@ -219,16 +219,16 @@ public final class GlobalPropertiesPluginData implements PluginData {
 			locked = data.locked;
 		}
 
-		@Override
-		public int hashCode() {
-			final int prime = 31;
-			int result = 1;
-			result = prime * result + globalPropertyDefinitionTimes.hashCode();
-			result = prime * result + globalPropertyDefinitions.hashCode();
-			result = prime * result + getGlobalPropertyTimesHashCode();
-			result = prime * result + getGlobalPropertyValuesHashCode();
-			return result;
-		}
+//		@Override
+//		public int hashCode() {
+//			final int prime = 31;
+//			int result = 1;
+//			result = prime * result + globalPropertyDefinitionTimes.hashCode();
+//			result = prime * result + globalPropertyDefinitions.hashCode();
+//			result = prime * result + getGlobalPropertyTimesHashCode();
+//			result = prime * result + getGlobalPropertyValuesHashCode();
+//			return result;
+//		}
 		
 		
 
@@ -247,6 +247,61 @@ public final class GlobalPropertiesPluginData implements PluginData {
 			builder.append(locked);
 			builder.append("]");
 			return builder.toString();
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + ((globalPropertyDefinitionTimes == null) ? 0 : globalPropertyDefinitionTimes.hashCode());
+			result = prime * result + ((globalPropertyDefinitions == null) ? 0 : globalPropertyDefinitions.hashCode());
+			result = prime * result + ((globalPropertyTimes == null) ? 0 : globalPropertyTimes.hashCode());
+			result = prime * result + ((globalPropertyValues == null) ? 0 : globalPropertyValues.hashCode());
+			result = prime * result + (locked ? 1231 : 1237);
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (!(obj instanceof Data)) {
+				return false;
+			}
+			Data other = (Data) obj;
+			if (globalPropertyDefinitionTimes == null) {
+				if (other.globalPropertyDefinitionTimes != null) {
+					return false;
+				}
+			} else if (!globalPropertyDefinitionTimes.equals(other.globalPropertyDefinitionTimes)) {
+				return false;
+			}
+			if (globalPropertyDefinitions == null) {
+				if (other.globalPropertyDefinitions != null) {
+					return false;
+				}
+			} else if (!globalPropertyDefinitions.equals(other.globalPropertyDefinitions)) {
+				return false;
+			}
+			if (globalPropertyTimes == null) {
+				if (other.globalPropertyTimes != null) {
+					return false;
+				}
+			} else if (!globalPropertyTimes.equals(other.globalPropertyTimes)) {
+				return false;
+			}
+			if (globalPropertyValues == null) {
+				if (other.globalPropertyValues != null) {
+					return false;
+				}
+			} else if (!globalPropertyValues.equals(other.globalPropertyValues)) {
+				return false;
+			}
+			if (locked != other.locked) {
+				return false;
+			}
+			return true;
 		}
 
 		private int getGlobalPropertyTimesHashCode() {
@@ -273,46 +328,46 @@ public final class GlobalPropertiesPluginData implements PluginData {
 			return result;
 		}
 
-		@Override
-		public boolean equals(Object obj) {
-			if (this == obj) {
-				return true;
-			}
-			if (!(obj instanceof Data)) {
-				return false;
-			}
-			Data other = (Data) obj;
-
-			/*
-			 * We exclude: locked -- both should be locked when equals is
-			 * invoked
-			 */
-
-			/*
-			 * These are simple comparisons:
-			 */
-			if (!globalPropertyDefinitionTimes.equals(other.globalPropertyDefinitionTimes)) {
-				return false;
-			}
-			if (!globalPropertyDefinitions.equals(other.globalPropertyDefinitions)) {
-				return false;
-			}
-
-			/*
-			 * The remaining fields must be compared by disregarding assignments
-			 * of default property values and times
-			 */
-			if (!comparePropertyValues(this, other)) {
-				return false;
-			}
-
-			if (!comparePropertyTimes(this, other)) {
-				return false;
-			}
-
-			
-			return true;
-		}
+//		@Override
+//		public boolean equals(Object obj) {
+//			if (this == obj) {
+//				return true;
+//			}
+//			if (!(obj instanceof Data)) {
+//				return false;
+//			}
+//			Data other = (Data) obj;
+//
+//			/*
+//			 * We exclude: locked -- both should be locked when equals is
+//			 * invoked
+//			 */
+//
+//			/*
+//			 * These are simple comparisons:
+//			 */
+//			if (!globalPropertyDefinitionTimes.equals(other.globalPropertyDefinitionTimes)) {
+//				return false;
+//			}
+//			if (!globalPropertyDefinitions.equals(other.globalPropertyDefinitions)) {
+//				return false;
+//			}
+//
+//			/*
+//			 * The remaining fields must be compared by disregarding assignments
+//			 * of default property values and times
+//			 */
+//			if (!comparePropertyValues(this, other)) {
+//				return false;
+//			}
+//
+//			if (!comparePropertyTimes(this, other)) {
+//				return false;
+//			}
+//
+//			
+//			return true;
+//		}
 
 	}
 
