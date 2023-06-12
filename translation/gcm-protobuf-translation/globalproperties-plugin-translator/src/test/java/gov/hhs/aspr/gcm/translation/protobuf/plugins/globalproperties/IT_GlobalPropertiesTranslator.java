@@ -55,6 +55,7 @@ public class IT_GlobalPropertiesTranslator {
                 .getFirstObject(GlobalPropertiesPluginData.class);
 
         assertEquals(expectedPluginData, actualPluginData);
+        assertEquals(expectedPluginData.toString(), actualPluginData.toString());
 
     }
 
@@ -99,5 +100,6 @@ public class IT_GlobalPropertiesTranslator {
                 .getFirstObject(GlobalPropertyReportPluginData.class);
 
         assertEquals(expectedPluginData, actualPluginData);
+        assertEquals(expectedPluginData.toString(), actualPluginData.toString());
     }
 }

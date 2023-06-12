@@ -64,6 +64,7 @@ public class AT_RegionsPluginDataTranslationSpec {
         RegionsPluginData actualAppValue = translationSpec.convertInputObject(inputValue);
 
         assertEquals(expectedAppValue, actualAppValue);
+        assertEquals(expectedAppValue.toString(), actualAppValue.toString());
 
         expectedAppValue = RegionsTestPluginFactory.getStandardRegionsPluginData(people,
                 TimeTrackingPolicy.DO_NOT_TRACK_TIME, seed);
@@ -73,6 +74,7 @@ public class AT_RegionsPluginDataTranslationSpec {
         actualAppValue = translationSpec.convertInputObject(inputValue);
         
         assertEquals(expectedAppValue, actualAppValue);
+        assertEquals(expectedAppValue.toString(), actualAppValue.toString());
     }
 
     @Test

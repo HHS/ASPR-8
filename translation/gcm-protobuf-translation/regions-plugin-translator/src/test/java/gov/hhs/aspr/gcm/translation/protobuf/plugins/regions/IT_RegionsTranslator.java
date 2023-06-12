@@ -73,6 +73,7 @@ public class IT_RegionsTranslator {
         RegionsPluginData actualPluginData = translatorController.getFirstObject(RegionsPluginData.class);
 
         assertEquals(expectedPluginData, actualPluginData);
+        assertEquals(expectedPluginData.toString(), actualPluginData.toString());
     }
 
     @Test
@@ -123,6 +124,7 @@ public class IT_RegionsTranslator {
                 .getFirstObject(RegionPropertyReportPluginData.class);
 
         assertEquals(expectedPluginData, actualPluginData);
+        assertEquals(expectedPluginData.toString(), actualPluginData.toString());
     }
 
     @Test
@@ -160,6 +162,6 @@ public class IT_RegionsTranslator {
                 .getFirstObject(RegionTransferReportPluginData.class);
 
         assertEquals(expectedPluginData, actualPluginData);
-
+        assertEquals(expectedPluginData.toString(), actualPluginData.toString());
     }
 }

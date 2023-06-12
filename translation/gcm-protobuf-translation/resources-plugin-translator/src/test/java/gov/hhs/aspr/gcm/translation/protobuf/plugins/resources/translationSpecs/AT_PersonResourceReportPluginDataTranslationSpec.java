@@ -83,6 +83,7 @@ public class AT_PersonResourceReportPluginDataTranslationSpec {
         PersonResourceReportPluginData actualAppValue = translationSpec.convertInputObject(inputValue);
 
         assertEquals(expectedAppValue, actualAppValue);
+        assertEquals(expectedAppValue.toString(), actualAppValue.toString());
     }
 
     @Test

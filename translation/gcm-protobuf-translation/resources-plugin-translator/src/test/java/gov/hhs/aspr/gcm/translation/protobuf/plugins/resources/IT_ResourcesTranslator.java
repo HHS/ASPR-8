@@ -76,6 +76,7 @@ public class IT_ResourcesTranslator {
         ResourcesPluginData actualPluginData = translatorController.getFirstObject(ResourcesPluginData.class);
 
         assertEquals(expectedPluginData, actualPluginData);
+        assertEquals(expectedPluginData.toString(), actualPluginData.toString());
     }
 
     @Test
@@ -128,7 +129,7 @@ public class IT_ResourcesTranslator {
                 .getFirstObject(PersonResourceReportPluginData.class);
 
         assertEquals(expectedPluginData, actualPluginData);
-
+        assertEquals(expectedPluginData.toString(), actualPluginData.toString());
     }
 
     @Test
@@ -166,6 +167,7 @@ public class IT_ResourcesTranslator {
                 .getFirstObject(ResourcePropertyReportPluginData.class);
 
         assertEquals(expectedPluginData, actualPluginData);
+        assertEquals(expectedPluginData.toString(), actualPluginData.toString());
     }
 
     @Test
@@ -218,6 +220,7 @@ public class IT_ResourcesTranslator {
                 .getFirstObject(ResourceReportPluginData.class);
 
         assertEquals(expectedPluginData, actualPluginData);
+        assertEquals(expectedPluginData.toString(), actualPluginData.toString());
     }
 
 }

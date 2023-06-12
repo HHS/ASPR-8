@@ -52,5 +52,6 @@ public class IT_PeopleTranslator {
         PeoplePluginData actualPluginData = translatorController.getFirstObject(PeoplePluginData.class);
 
         assertEquals(expectedPluginData, actualPluginData);
+        assertEquals(expectedPluginData.toString(), actualPluginData.toString());
     }
 }

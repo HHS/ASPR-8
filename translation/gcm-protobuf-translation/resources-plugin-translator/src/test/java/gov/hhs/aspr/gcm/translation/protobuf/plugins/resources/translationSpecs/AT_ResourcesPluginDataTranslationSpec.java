@@ -65,6 +65,7 @@ public class AT_ResourcesPluginDataTranslationSpec {
         ResourcesPluginData actualAppValue = translationSpec.convertInputObject(inputValue);
 
         assertEquals(expectedAppValue, actualAppValue);
+        assertEquals(expectedAppValue.toString(), actualAppValue.toString());
     }
 
     @Test

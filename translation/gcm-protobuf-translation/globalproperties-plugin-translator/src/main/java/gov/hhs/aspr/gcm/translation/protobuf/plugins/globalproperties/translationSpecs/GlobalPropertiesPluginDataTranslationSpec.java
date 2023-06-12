@@ -52,7 +52,6 @@ public class GlobalPropertiesPluginDataTranslationSpec
 
         for (GlobalPropertyId propertyId : appObject.getGlobalPropertyIds()) {
             PropertyDefinition propertyDefinition = appObject.getGlobalPropertyDefinition(propertyId);
-            Object propertyValue = appObject.getGlobalPropertyValue(propertyId);
 
             PropertyDefinitionInput propertyDefinitionInput = this.translationEngine.convertObject(propertyDefinition);
 
@@ -67,16 +66,21 @@ public class GlobalPropertiesPluginDataTranslationSpec
 
             builder.addGlobalPropertyDefinitinions(propertyDefinitionMapInput);
 
-            if (propertyDefinition.getDefaultValue().isEmpty() || propertyValue != propertyDefinition.getDefaultValue().get()) {
-                Any propertyValueInput = this.translationEngine.getAnyFromObject(propertyValue);
+            if (appObject.getGlobalPropertyValue(propertyId).isPresent()) {
+                Any propertyValueInput = this.translationEngine
+                        .getAnyFromObject(appObject.getGlobalPropertyValue(propertyId).get());
 
-                PropertyValueMapInput propertyValueMapInput = PropertyValueMapInput
+                PropertyValueMapInput.Builder propertyValueMapInputBuilder = PropertyValueMapInput
                         .newBuilder()
                         .setPropertyId(id)
-                        .setPropertyValue(propertyValueInput)
-                        .setPropertyValueTime(appObject.getGlobalPropertyTime(propertyId))
-                        .build();
-                builder.addGlobalPropertyValues(propertyValueMapInput);
+                        .setPropertyValue(propertyValueInput);
+
+                if (appObject.getGlobalPropertyTime(propertyId).isPresent()) {
+                    propertyValueMapInputBuilder
+                            .setPropertyValueTime(appObject.getGlobalPropertyTime(propertyId).get());
+                }
+
+                builder.addGlobalPropertyValues(propertyValueMapInputBuilder.build());
             }
 
         }

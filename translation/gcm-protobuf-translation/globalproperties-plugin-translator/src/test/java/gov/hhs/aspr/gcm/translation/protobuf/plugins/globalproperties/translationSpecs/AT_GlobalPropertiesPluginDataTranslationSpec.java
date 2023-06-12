@@ -41,16 +41,17 @@ public class AT_GlobalPropertiesPluginDataTranslationSpec {
         GlobalPropertiesPluginDataTranslationSpec translationSpec = new GlobalPropertiesPluginDataTranslationSpec();
         translationSpec.init(protobufTranslationEngine);
 
-        GlobalPropertiesPluginData expectedValue = GlobalPropertiesTestPluginFactory
+        GlobalPropertiesPluginData expectedAppValue = GlobalPropertiesTestPluginFactory
                 .getStandardGlobalPropertiesPluginData(8368397106493368066L);
 
         GlobalPropertiesPluginDataInput globalPropertiesPluginDataInput = translationSpec
-                .convertAppObject(expectedValue);
+                .convertAppObject(expectedAppValue);
 
-        GlobalPropertiesPluginData actualValue = translationSpec
+        GlobalPropertiesPluginData actualAppValue = translationSpec
                 .convertInputObject(globalPropertiesPluginDataInput);
 
-        assertEquals(expectedValue, actualValue);
+        assertEquals(expectedAppValue, actualAppValue);
+        assertEquals(expectedAppValue.toString(), actualAppValue.toString());
     }
 
     @Test
