@@ -219,19 +219,6 @@ public final class GlobalPropertiesPluginData implements PluginData {
 			locked = data.locked;
 		}
 
-//		@Override
-//		public int hashCode() {
-//			final int prime = 31;
-//			int result = 1;
-//			result = prime * result + globalPropertyDefinitionTimes.hashCode();
-//			result = prime * result + globalPropertyDefinitions.hashCode();
-//			result = prime * result + getGlobalPropertyTimesHashCode();
-//			result = prime * result + getGlobalPropertyValuesHashCode();
-//			return result;
-//		}
-		
-		
-
 		@Override
 		public String toString() {
 			StringBuilder builder = new StringBuilder();
@@ -304,107 +291,9 @@ public final class GlobalPropertiesPluginData implements PluginData {
 			return true;
 		}
 
-		private int getGlobalPropertyTimesHashCode() {
-			int result = 0;
-			for (GlobalPropertyId globalPropertyId : globalPropertyDefinitions.keySet()) {				
-				Double propertyTime = globalPropertyTimes.get(globalPropertyId);
-				if (propertyTime == null) {
-					propertyTime = globalPropertyDefinitionTimes.get(globalPropertyId);
-				}
-				result += propertyTime.hashCode();
-			}
-			return result;
-		}
-
-		private int getGlobalPropertyValuesHashCode() {			
-			int result = 0;
-			for (GlobalPropertyId globalPropertyId : globalPropertyDefinitions.keySet()) {
-				Object propertyValue = globalPropertyValues.get(globalPropertyId);
-				if (propertyValue == null) {
-					propertyValue = globalPropertyDefinitions.get(globalPropertyId).getDefaultValue().get();
-				}
-				result += propertyValue.hashCode();				
-			}
-			return result;
-		}
-
-//		@Override
-//		public boolean equals(Object obj) {
-//			if (this == obj) {
-//				return true;
-//			}
-//			if (!(obj instanceof Data)) {
-//				return false;
-//			}
-//			Data other = (Data) obj;
-//
-//			/*
-//			 * We exclude: locked -- both should be locked when equals is
-//			 * invoked
-//			 */
-//
-//			/*
-//			 * These are simple comparisons:
-//			 */
-//			if (!globalPropertyDefinitionTimes.equals(other.globalPropertyDefinitionTimes)) {
-//				return false;
-//			}
-//			if (!globalPropertyDefinitions.equals(other.globalPropertyDefinitions)) {
-//				return false;
-//			}
-//
-//			/*
-//			 * The remaining fields must be compared by disregarding assignments
-//			 * of default property values and times
-//			 */
-//			if (!comparePropertyValues(this, other)) {
-//				return false;
-//			}
-//
-//			if (!comparePropertyTimes(this, other)) {
-//				return false;
-//			}
-//
-//			
-//			return true;
-//		}
-
 	}
 
-	private static boolean comparePropertyValues(Data a, Data b) {
-		for (GlobalPropertyId globalPropertyId : a.globalPropertyDefinitions.keySet()) {
-			Object propertyValue = a.globalPropertyValues.get(globalPropertyId);
-			if (propertyValue == null) {
-				propertyValue = a.globalPropertyDefinitions.get(globalPropertyId).getDefaultValue().get();
-			}
-			Object otherPropertyValue = b.globalPropertyValues.get(globalPropertyId);
-			if (otherPropertyValue == null) {
-				otherPropertyValue = b.globalPropertyDefinitions.get(globalPropertyId).getDefaultValue().get();
-			}
-			if (!propertyValue.equals(otherPropertyValue)) {
-				return false;
-			}
-		}
-		return true;
-	}
-
-	private static boolean comparePropertyTimes(Data a, Data b) {
-		for (GlobalPropertyId globalPropertyId : a.globalPropertyDefinitions.keySet()) {
-			Double propertyTime = a.globalPropertyTimes.get(globalPropertyId);
-			if (propertyTime == null) {
-				propertyTime = a.globalPropertyDefinitionTimes.get(globalPropertyId);
-			}
-			Double otherPropertyTime = b.globalPropertyTimes.get(globalPropertyId);
-			if (otherPropertyTime == null) {
-				otherPropertyTime = b.globalPropertyDefinitionTimes.get(globalPropertyId);
-			}
-			if (!propertyTime.equals(otherPropertyTime)) {
-				return false;
-			}
-		}
-		return true;
-	}
-
+	
 	/**
 	 * Returns a Builder instance
 	 */
