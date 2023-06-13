@@ -7122,7 +7122,7 @@ public class AT_MaterialsDataManager {
 		// Build the resources plugin with test resource ids
 		ResourcesPluginData.Builder resourcesBuilder = ResourcesPluginData.builder();
 		for (TestResourceId testResourceId : TestResourceId.values()) {
-			resourcesBuilder.addResource(testResourceId, 0.0);
+			resourcesBuilder.addResource(testResourceId, 0.0, false);
 		}
 		ResourcesPluginData resourcesPluginData = resourcesBuilder.build();
 
@@ -7214,8 +7214,7 @@ public class AT_MaterialsDataManager {
 
 		assertNotNull(result);
 
-		System.out.println(result);
-		System.out.println("----------------------------------------");
+		
 		return result;
 
 	}

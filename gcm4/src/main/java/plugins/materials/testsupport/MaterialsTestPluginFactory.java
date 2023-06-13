@@ -531,8 +531,7 @@ public class MaterialsTestPluginFactory {
 		ResourcesPluginData.Builder resourcesBuilder = ResourcesPluginData.builder();
 
 		for (TestResourceId testResourceId : TestResourceId.values()) {
-			resourcesBuilder.addResource(testResourceId,0.0);
-			resourcesBuilder.setResourceTimeTracking(testResourceId, testResourceId.getTimeTrackingPolicy());
+			resourcesBuilder.addResource(testResourceId,0.0,testResourceId.getTimeTrackingPolicy());			
 		}
 
 		for (TestResourcePropertyId testResourcePropertyId : TestResourcePropertyId.values()) {

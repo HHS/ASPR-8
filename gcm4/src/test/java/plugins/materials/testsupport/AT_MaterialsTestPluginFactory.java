@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -419,8 +420,9 @@ public class AT_MaterialsTestPluginFactory {
 			PropertyDefinition actualPropertyDefinition = resourcesPluginData.getResourcePropertyDefinition(expectedResourceId, resourcePropertyId);
 			assertEquals(expectedPropertyDefinition, actualPropertyDefinition);
 
-			Object actualPropertyValue = resourcesPluginData.getResourcePropertyValue(expectedResourceId, resourcePropertyId);
-			assertEquals(expectedPropertyValue, actualPropertyValue);
+			Optional<Object> optional = resourcesPluginData.getResourcePropertyValue(expectedResourceId, resourcePropertyId);
+			assertTrue(optional.isPresent());
+			assertEquals(expectedPropertyValue, optional.get());
 		}
 	}
 

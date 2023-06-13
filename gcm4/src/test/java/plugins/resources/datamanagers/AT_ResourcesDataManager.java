@@ -84,57 +84,6 @@ public final class AT_ResourcesDataManager {
 	@UnitTestMethod(target = ResourcesDataManager.class, name = "init", args = { DataManagerContext.class })
 	public void testStateFinalization() {
 
-		testInit_State_1();
-		testInit_State_2();
-	}
-
-	private void testInit_State_1() {
-
-		ResourcesPluginData resourcesPluginData = ResourcesPluginData	.builder()
-																		.defineResourceProperty(TestResourceId.RESOURCE_1, TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE,
-																				TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE.getPropertyDefinition())
-																		.defineResourceProperty(TestResourceId.RESOURCE_2, TestResourcePropertyId.ResourceProperty_1_1_BOOLEAN_MUTABLE,
-																				TestResourcePropertyId.ResourceProperty_1_1_BOOLEAN_MUTABLE.getPropertyDefinition())
-																		.addResource(TestResourceId.RESOURCE_1, 0.0).addResource(TestResourceId.RESOURCE_2, 0.0)
-																		.setResourceTimeTracking(TestResourceId.RESOURCE_2, true)
-																		.setResourcePropertyValue(TestResourceId.RESOURCE_1, TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE, 45).build();
-		List<RegionId> expectedRegionIds = new ArrayList<>();
-		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
-
-		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
-			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
-			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
-
-			resourcesDataManager.addResourceToRegion(TestResourceId.RESOURCE_1, TestRegionId.REGION_1, 55);
-
-			RegionId personRegion = regionsDataManager.getPersonRegion(new PersonId(0));
-			expectedRegionIds.add(personRegion);
-			resourcesDataManager.addResourceToRegion(TestResourceId.RESOURCE_2, personRegion, 33);
-			resourcesDataManager.transferResourceToPersonFromRegion(TestResourceId.RESOURCE_2, new PersonId(0), 30);
-		}));
-
-		TestPluginData testPluginData = pluginBuilder.build();
-		Factory factory = ResourcesTestPluginFactory.factory(1, 7939130943360648501L, testPluginData).setResourcesPluginData(resourcesPluginData);
-		TestOutputConsumer testOutputConsumer = TestSimulation.builder().addPlugins(factory.getPlugins()).setProduceSimulationStateOnHalt(true).setSimulationHaltTime(2).build().execute();
-		Map<ResourcesPluginData, Integer> outputItems = testOutputConsumer.getOutputItemMap(ResourcesPluginData.class);
-		assertEquals(1, outputItems.size());
-		ResourcesPluginData actualPluginData = outputItems.keySet().iterator().next();
-		ResourcesPluginData expectedPluginData = ResourcesPluginData.builder()
-																	.defineResourceProperty(TestResourceId.RESOURCE_1, TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE,
-																			TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE.getPropertyDefinition())
-																	.defineResourceProperty(TestResourceId.RESOURCE_2, TestResourcePropertyId.ResourceProperty_1_1_BOOLEAN_MUTABLE,
-																			TestResourcePropertyId.ResourceProperty_1_1_BOOLEAN_MUTABLE.getPropertyDefinition())
-																	.addResource(TestResourceId.RESOURCE_1, 0.0).addResource(TestResourceId.RESOURCE_2, 0.0)
-																	.setResourceTimeTracking(TestResourceId.RESOURCE_2, true)
-																	.setResourcePropertyValue(TestResourceId.RESOURCE_1, TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE, 45)
-																	.setResourcePropertyValue(TestResourceId.RESOURCE_2, TestResourcePropertyId.ResourceProperty_1_1_BOOLEAN_MUTABLE, false)
-																	.setRegionResourceLevel(TestRegionId.REGION_1, TestResourceId.RESOURCE_1, 55)
-																	.setRegionResourceLevel(expectedRegionIds.get(0), TestResourceId.RESOURCE_2, 3L)
-																	.setPersonResourceLevel(new PersonId(0), TestResourceId.RESOURCE_2, 30L).build();
-		assertEquals(expectedPluginData, actualPluginData);
-	}
-
-	private void testInit_State_2() {
 		// show that the plugin data persists after multiple actions
 		List<RegionId> expectedRegionIds = new ArrayList<>();
 
@@ -143,9 +92,10 @@ public final class AT_ResourcesDataManager {
 																				TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE.getPropertyDefinition())
 																		.defineResourceProperty(TestResourceId.RESOURCE_2, TestResourcePropertyId.ResourceProperty_1_1_BOOLEAN_MUTABLE,
 																				TestResourcePropertyId.ResourceProperty_1_1_BOOLEAN_MUTABLE.getPropertyDefinition())
-																		.addResource(TestResourceId.RESOURCE_1, 0.0).addResource(TestResourceId.RESOURCE_2, 0.0)
-																		.setResourceTimeTracking(TestResourceId.RESOURCE_2, true)
-																		.setResourcePropertyValue(TestResourceId.RESOURCE_1, TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE, 45).build();
+																		.addResource(TestResourceId.RESOURCE_1, 0.0, false)//
+																		.addResource(TestResourceId.RESOURCE_2, 0.0, true)//
+																		.setResourcePropertyValue(TestResourceId.RESOURCE_1, TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE, 45)//
+																		.build();
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
@@ -188,19 +138,20 @@ public final class AT_ResourcesDataManager {
 																			TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE.getPropertyDefinition())
 																	.defineResourceProperty(TestResourceId.RESOURCE_2, TestResourcePropertyId.ResourceProperty_1_1_BOOLEAN_MUTABLE,
 																			TestResourcePropertyId.ResourceProperty_1_1_BOOLEAN_MUTABLE.getPropertyDefinition())
-																	.addResource(TestResourceId.RESOURCE_1, 0.0)//
-																	.addResource(TestResourceId.RESOURCE_2, 0.0)//
-																	.addResource(TestResourceId.RESOURCE_3, 1.0)//
-																	.setResourceTimeTracking(TestResourceId.RESOURCE_2, true)
+																	.addResource(TestResourceId.RESOURCE_1, 0.0, false)//
+																	.addResource(TestResourceId.RESOURCE_2, 0.0, true)//
+																	.addResource(TestResourceId.RESOURCE_3, 1.0, false)//
 																	.setResourcePropertyValue(TestResourceId.RESOURCE_1, TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE, 45)
-																	.setResourcePropertyValue(TestResourceId.RESOURCE_2, TestResourcePropertyId.ResourceProperty_1_1_BOOLEAN_MUTABLE, false)
 																	.setRegionResourceLevel(TestRegionId.REGION_1, TestResourceId.RESOURCE_1, 55)
 																	.setRegionResourceLevel(expectedRegionIds.get(0), TestResourceId.RESOURCE_2, 8)
 																	.setRegionResourceLevel(TestRegionId.REGION_2, TestResourceId.RESOURCE_2, 5)
 																	.setRegionResourceLevel(TestRegionId.REGION_2, TestResourceId.RESOURCE_3, 73)
 																	.setPersonResourceLevel(new PersonId(0), TestResourceId.RESOURCE_2, 20L)//
 																	.setPersonResourceTime(new PersonId(0), TestResourceId.RESOURCE_2, 1.0).build();
-
+		
+		
+		
+		
 		assertEquals(expectedPluginData, actualPluginData);
 	}
 
@@ -2737,8 +2688,7 @@ public final class AT_ResourcesDataManager {
 		}
 
 		for (TestResourceId testResourceId : TestResourceId.values()) {
-			resourcesBuilder.addResource(testResourceId, 0.0);
-			resourcesBuilder.setResourceTimeTracking(testResourceId, testResourceId.getTimeTrackingPolicy());
+			resourcesBuilder.addResource(testResourceId, 0.0, testResourceId.getTimeTrackingPolicy());
 		}
 
 		for (TestResourcePropertyId testResourcePropertyId : TestResourcePropertyId.values()) {
@@ -2770,8 +2720,11 @@ public final class AT_ResourcesDataManager {
 				for (ResourceId resourceId : resourcesPluginData.getResourceIds()) {
 					expectedAmounts.put(resourceId, 0L);
 				}
-				for (ResourceInitialization resourceInitialization : resourcesPluginData.getRegionResourceLevels(regionId)) {
-					expectedAmounts.put(resourceInitialization.getResourceId(), resourceInitialization.getAmount());
+				for (ResourceId resourceId : resourcesPluginData.getResourceIds()) {
+					Optional<Long> optional = resourcesPluginData.getRegionResourceLevel(regionId, resourceId);
+					if (optional.isPresent()) {
+						expectedAmounts.put(resourceId, optional.get());
+					}
 				}
 				for (ResourceId resourceId : resourcesPluginData.getResourceIds()) {
 					long expectedRegionResourceLevel = expectedAmounts.get(resourceId);
@@ -2834,7 +2787,9 @@ public final class AT_ResourcesDataManager {
 					PropertyDefinition actualDefinition = resourcesDataManager.getResourcePropertyDefinition(resourceId, resourcePropertyId);
 					assertEquals(expectedDefinition, actualDefinition);
 
-					Object expectedValue = resourcesPluginData.getResourcePropertyValue(resourceId, resourcePropertyId);
+					Optional<Object> optional = resourcesPluginData.getResourcePropertyValue(resourceId, resourcePropertyId);
+					assertTrue(optional.isPresent());
+					Object expectedValue = optional.get();
 					Object actualValue = resourcesDataManager.getResourcePropertyValue(resourceId, resourcePropertyId);
 					assertEquals(expectedValue, actualValue);
 
@@ -3885,7 +3840,7 @@ public final class AT_ResourcesDataManager {
 	 */
 	private String testStateContinuity(int incrementCount) {
 		String result = null;
-		
+
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(177404262666515111L);
 
 		/*
@@ -4063,7 +4018,7 @@ public final class AT_ResourcesDataManager {
 					resourcesDataManager.removeResourceFromRegion(testResourceId, regionId, amount);
 				}
 			}
-			
+
 			c.releaseOutput(resourcesDataManager.toString());
 		});
 
@@ -4142,16 +4097,16 @@ public final class AT_ResourcesDataManager {
 
 			// retrieve the run continuity plugin data
 			runContinuityPluginData = outputConsumer.getOutputItem(RunContinuityPluginData.class).get();
-			
+
 			Optional<String> optional = outputConsumer.getOutputItem(String.class);
-			if(optional.isPresent()) {
+			if (optional.isPresent()) {
 				result = optional.get();
 			}
-			
+
 		}
-		
+
 		assertNotNull(result);
-		
+
 		return result;
 
 	}
