@@ -47,6 +47,10 @@ public final class GroupPopulationReportPluginData extends PeriodicReportPluginD
 
 			return new GroupPopulationReportPluginData(data);
 		}
+
+		protected Builder self() {
+			return this;
+		}
 	}
 
 	/**

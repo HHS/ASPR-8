@@ -4,7 +4,6 @@ import nucleus.PluginData;
 import nucleus.PluginDataBuilder;
 import util.errors.ContractException;
 
-@SuppressWarnings("unchecked")
 public abstract class PeriodicReportPluginData implements PluginData {
 
     protected final Data data;
@@ -111,6 +110,8 @@ public abstract class PeriodicReportPluginData implements PluginData {
 
         public abstract PluginData build();
 
+        protected abstract T self();
+
         /**
          * Sets the report label
          * 
@@ -125,7 +126,7 @@ public abstract class PeriodicReportPluginData implements PluginData {
                 throw new ContractException(ReportError.NULL_REPORT_LABEL);
             }
             data.reportLabel = reportLabel;
-            return (T) this;
+            return self();
         }
 
         /**
@@ -142,7 +143,7 @@ public abstract class PeriodicReportPluginData implements PluginData {
                 throw new ContractException(ReportError.NULL_REPORT_PERIOD);
             }
             data.reportPeriod = reportPeriod;
-            return (T) this;
+            return self();
         }
     }
 
