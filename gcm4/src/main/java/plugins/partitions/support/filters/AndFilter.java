@@ -2,12 +2,14 @@ package plugins.partitions.support.filters;
 
 import java.util.Set;
 
+import net.jcip.annotations.Immutable;
 import plugins.partitions.support.FilterSensitivity;
 import plugins.partitions.support.PartitionError;
 import plugins.partitions.support.PartitionsContext;
 import plugins.people.support.PersonId;
 import util.errors.ContractException;
 
+@Immutable
 public final class AndFilter extends Filter {
 	final Filter a;
 	final Filter b;

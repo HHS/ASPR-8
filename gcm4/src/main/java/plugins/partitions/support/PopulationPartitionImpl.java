@@ -301,6 +301,7 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 
 	private final StochasticsDataManager stochasticsDataManager;
 
+	private final boolean supportRunContinuity;
 	private final PartitionsContext partitionsContext;
 	private final Map<Class<? extends Event>, List<FilterSensitivity<? extends Event>>> eventClassToFilterSensitivityMap = new LinkedHashMap<>();
 	private final Map<Class<? extends Event>, List<LabelerSensitivity<? extends Event>>> eventClassToLabelerSensitivityMap = new LinkedHashMap<>();
@@ -315,6 +316,10 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 	private Key[] weightedKeys;
 	private final PeopleDataManager peopleDataManager;
 
+	public PopulationPartitionImpl(final PartitionsContext partitionsContext, final Partition partition) {
+		this(partitionsContext,partition,false);
+	}
+	
 	/**
 	 * Constructs a PopulationPartitionImpl
 	 * 
@@ -324,7 +329,8 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 	 *             <li>if partition is null</li>
 	 *             <li>if the partition contains labelers</li>
 	 */
-	public PopulationPartitionImpl(final PartitionsContext partitionsContext, final Partition partition) {
+	public PopulationPartitionImpl(final PartitionsContext partitionsContext, final Partition partition,boolean supportRunContinuity) {
+		this.supportRunContinuity = supportRunContinuity;
 		this.partitionsContext = partitionsContext;
 
 		retainPersonKeys = partition.retainPersonKeys();
@@ -423,7 +429,7 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 			cleanedKey = new Key(key);
 			cleanedKey.calculateHashCode();
 			keyMap.put(cleanedKey, cleanedKey);
-			final BasePeopleContainer basePeopleContainer = new BasePeopleContainer(partitionsContext);
+			final BasePeopleContainer basePeopleContainer = new BasePeopleContainer(partitionsContext,supportRunContinuity);
 			keyToPeopleMap.put(cleanedKey, basePeopleContainer);
 			final LabelSet labelSet = getLabelSet(cleanedKey);
 			labelSetInfoMap.put(cleanedKey, labelSet);
@@ -1019,7 +1025,7 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 		if (cleanedNewKey == null) {
 			cleanedNewKey = newKey;
 			keyMap.put(cleanedNewKey, cleanedNewKey);
-			keyToPeopleMap.put(cleanedNewKey, new BasePeopleContainer(partitionsContext));
+			keyToPeopleMap.put(cleanedNewKey, new BasePeopleContainer(partitionsContext,supportRunContinuity));
 			final LabelSet labelSet = getLabelSet(cleanedNewKey);
 			labelSetInfoMap.put(cleanedNewKey, labelSet);
 		}

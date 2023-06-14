@@ -59,8 +59,7 @@ public final class AT_PartitionsDataManager {
 	@Test
 	@UnitTestConstructor(target = PartitionsDataManager.class, args = {})
 	public void testConstructor() {
-		PartitionsDataManager dataManager = new PartitionsDataManager();
-
+		PartitionsDataManager dataManager = new PartitionsDataManager(PartitionsPluginData.builder().build());
 		assertNotNull(dataManager);
 	}
 
@@ -332,7 +331,8 @@ public final class AT_PartitionsDataManager {
 		// precondition: if the partition is null
 		contractException = assertThrows(ContractException.class, () -> {
 			Factory factory2 = PartitionsTestPluginFactory.factory(0, 7407325994321033161L, (c) -> {
-				PartitionsDataManager partitionsDataManager = new PartitionsDataManager();
+				PartitionsPluginData partitionsPluginData = PartitionsPluginData.builder().build();
+				PartitionsDataManager partitionsDataManager = new PartitionsDataManager(partitionsPluginData);
 				Object key = new Object();
 				partitionsDataManager.addPartition(null, key);
 			});
@@ -343,7 +343,8 @@ public final class AT_PartitionsDataManager {
 		// precondition: if the key is null
 		contractException = assertThrows(ContractException.class, () -> {
 			Factory factory2 = PartitionsTestPluginFactory.factory(0, 530075900162852558L, (c) -> {
-				PartitionsDataManager partitionsDataManager = new PartitionsDataManager();
+				PartitionsPluginData partitionsPluginData = PartitionsPluginData.builder().build();
+				PartitionsDataManager partitionsDataManager = new PartitionsDataManager(partitionsPluginData);
 				partitionsDataManager.addPartition(Partition.builder().build(), null);
 			});
 			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();

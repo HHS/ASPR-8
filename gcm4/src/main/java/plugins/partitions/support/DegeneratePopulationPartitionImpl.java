@@ -31,11 +31,17 @@ public class DegeneratePopulationPartitionImpl implements PopulationPartition {
 	private final PeopleContainer peopleContainer;
 
 	private final PartitionsContext partitionsContext;
+	
 
 	private final Filter filter;
 
 	private final Map<Class<? extends Event>, List<FilterSensitivity<? extends Event>>> eventClassToFilterSensitivityMap = new LinkedHashMap<>();
 
+	
+	public DegeneratePopulationPartitionImpl(final PartitionsContext partitionsContext, final Partition partition) {
+		this(partitionsContext,partition,false);
+	}
+	
 	/**
 	 * Constructs an DegeneratePopulationPartitionImpl
 	 *
@@ -48,8 +54,7 @@ public class DegeneratePopulationPartitionImpl implements PopulationPartition {
 	 *             <li>if partition is null</li>
 	 *             <li>if the partition contains labelers</li>
 	 */
-	public DegeneratePopulationPartitionImpl(final PartitionsContext partitionsContext, final Partition partition) {
-
+	public DegeneratePopulationPartitionImpl(final PartitionsContext partitionsContext, final Partition partition,boolean supportRunContinuity) {
 		this.partitionsContext = partitionsContext;
 		stochasticsDataManager = partitionsContext.getDataManager(StochasticsDataManager.class);
 		filter = partition.getFilter().orElse(new TrueFilter());
@@ -67,7 +72,7 @@ public class DegeneratePopulationPartitionImpl implements PopulationPartition {
 			list.add(filterSensitivity);
 		}
 
-		peopleContainer = new BasePeopleContainer(partitionsContext);
+		peopleContainer = new BasePeopleContainer(partitionsContext,supportRunContinuity);
 
 		final PeopleDataManager peopleDataManager = partitionsContext.getDataManager(PeopleDataManager.class);
 		final int personIdLimit = peopleDataManager.getPersonIdLimit();
