@@ -54,14 +54,13 @@ public class TestOutputConsumer implements Consumer<Object> {
 	 * @return - returns a {@link Map} containing the output items as keys and
 	 *         the number of occurrences as the value
 	 */
-	@SuppressWarnings("unchecked")
 	public <T> Map<T, Integer> getOutputItemMap(Class<T> classRef) {
 		Map<T, MutableInteger> sourceMap = new LinkedHashMap<>();
 		Map<T, Integer> retMap = new LinkedHashMap<>();
 
 		for (Object item : outputItems) {
 			if (classRef.isAssignableFrom(item.getClass())) {
-				T interestedItem = (T) item;
+				T interestedItem = classRef.cast(item);
 				sourceMap.putIfAbsent(interestedItem, new MutableInteger());
 				sourceMap.get(interestedItem).increment();
 			}
@@ -92,14 +91,13 @@ public class TestOutputConsumer implements Consumer<Object> {
 	 *             are multiple items matching the given class reference</li>
 	 * 
 	 */
-	@SuppressWarnings("unchecked")
 	public <T> Optional<T> getOutputItem(Class<T> classRef) {
 		T result = null;
 
 		for (Object item : outputItems) {
 			if (classRef.isAssignableFrom(item.getClass())) {
 				if (result == null) {
-					result = (T) item;
+					result = classRef.cast(item);
 				} else {
 					throw new ContractException(TestError.MULTIPLE_MATCHING_ITEMS);
 				}
@@ -107,7 +105,6 @@ public class TestOutputConsumer implements Consumer<Object> {
 		}
 
 		return Optional.ofNullable(result);
-
 	}
 	
 	/**
@@ -128,17 +125,15 @@ public class TestOutputConsumer implements Consumer<Object> {
 	 *             are multiple items matching the given class reference</li>
 	 * 
 	 */
-	@SuppressWarnings("unchecked")
 	public <T> List<T> getOutputItems(Class<T> classRef) {
 		List<T> result = new ArrayList<>();
 
 		for (Object item : outputItems) {
 			if (classRef.isAssignableFrom(item.getClass())) {
-				result.add((T) item);				 
+				result.add(classRef.cast(item));				 
 			}
 		}
 
 		return result;
-
 	}
 }
