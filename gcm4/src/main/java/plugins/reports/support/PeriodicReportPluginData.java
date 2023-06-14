@@ -78,7 +78,7 @@ public abstract class PeriodicReportPluginData implements PluginData {
     /**
      * Builder class for the report
      */
-    public static abstract class Builder<T extends PeriodicReportPluginData.Builder<T>> implements PluginDataBuilder {
+    public static abstract class Builder implements PluginDataBuilder {
 
         protected Data data;
 
@@ -86,7 +86,7 @@ public abstract class PeriodicReportPluginData implements PluginData {
             this.data = data;
         }
 
-        private void ensureDataMutability() {
+        protected void ensureDataMutability() {
             if (data.locked) {
                 data = new Data(data);
                 data.locked = false;
@@ -110,8 +110,6 @@ public abstract class PeriodicReportPluginData implements PluginData {
 
         public abstract PluginData build();
 
-        protected abstract T self();
-
         /**
          * Sets the report label
          * 
@@ -120,13 +118,13 @@ public abstract class PeriodicReportPluginData implements PluginData {
          *                           the
          *                           report label is null</li>
          */
-        public T setReportLabel(ReportLabel reportLabel) {
+        public Builder setReportLabel(ReportLabel reportLabel) {
             ensureDataMutability();
             if (reportLabel == null) {
                 throw new ContractException(ReportError.NULL_REPORT_LABEL);
             }
             data.reportLabel = reportLabel;
-            return self();
+            return this;
         }
 
         /**
@@ -137,13 +135,13 @@ public abstract class PeriodicReportPluginData implements PluginData {
          *                           the
          *                           report period is null</li>
          */
-        public T setReportPeriod(ReportPeriod reportPeriod) {
+        public Builder setReportPeriod(ReportPeriod reportPeriod) {
             ensureDataMutability();
             if (reportPeriod == null) {
                 throw new ContractException(ReportError.NULL_REPORT_PERIOD);
             }
             data.reportPeriod = reportPeriod;
-            return self();
+            return this;
         }
     }
 

@@ -3,6 +3,8 @@ package plugins.groups.reports;
 import net.jcip.annotations.ThreadSafe;
 import plugins.reports.support.PeriodicReportPluginData;
 import plugins.reports.support.ReportError;
+import plugins.reports.support.ReportLabel;
+import plugins.reports.support.ReportPeriod;
 import util.errors.ContractException;
 
 /**
@@ -15,11 +17,10 @@ public final class GroupPopulationReportPluginData extends PeriodicReportPluginD
 		super(data);
 	}
 
-
 	/**
 	 * Builder class for the report
 	 */
-	public final static class Builder extends PeriodicReportPluginData.Builder<Builder>{
+	public final static class Builder extends PeriodicReportPluginData.Builder {
 
 		private Builder(Data data) {
 			super(data);
@@ -39,16 +40,36 @@ public final class GroupPopulationReportPluginData extends PeriodicReportPluginD
 		 */
 		@Override
 		public GroupPopulationReportPluginData build() {
-
-			if (!data.locked) {
-				validateData();
-			}
-			ensureImmutability();
+			super.validateData();
 
 			return new GroupPopulationReportPluginData(data);
 		}
 
-		protected Builder self() {
+		/**
+		 * Sets the report label
+		 * 
+		 * @throws ContractException
+		 *                           <li>{@linkplain ReportError#NULL_REPORT_LABEL} if
+		 *                           the
+		 *                           report label is null</li>
+		 */
+		@Override
+		public Builder setReportLabel(ReportLabel reportLabel) {
+			super.setReportLabel(reportLabel);
+			return this;
+		}
+
+		/**
+		 * Sets the report period id
+		 * 
+		 * @throws ContractException
+		 *                           <li>{@linkplain ReportError#NULL_REPORT_PERIOD} if
+		 *                           the
+		 *                           report period is null</li>
+		 */
+		@Override
+		public Builder setReportPeriod(ReportPeriod reportPeriod) {
+			super.setReportPeriod(reportPeriod);
 			return this;
 		}
 	}
@@ -62,7 +83,7 @@ public final class GroupPopulationReportPluginData extends PeriodicReportPluginD
 
 	@Override
 	public Builder getCloneBuilder() {
-		return new Builder(data);
+		return new Builder(new Data(data));
 	}
 
 	@Override
