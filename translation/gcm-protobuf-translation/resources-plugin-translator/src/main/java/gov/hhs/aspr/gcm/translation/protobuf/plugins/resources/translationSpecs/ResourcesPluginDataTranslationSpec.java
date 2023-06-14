@@ -2,6 +2,7 @@ package gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.translationSpecs
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.commons.math3.util.FastMath;
 
@@ -41,10 +42,8 @@ public class ResourcesPluginDataTranslationSpec
 
         for (ResourceIdMapInput resourceIdInput : inputObject.getResourceIdsList()) {
             ResourceId resourceId = this.translationEngine.convertObject(resourceIdInput.getResourceId());
-            builder
-                    .addResource(resourceId, resourceIdInput.getResourceTime())
-                    .setResourceTimeTracking(resourceId,
-                            resourceIdInput.getResourceTimeTrackingPolicy());
+            builder.addResource(resourceId, resourceIdInput.getResourceTime(),
+                    resourceIdInput.getResourceTimeTrackingPolicy());
         }
 
         for (ResourcePropertyDefinitionMapInput resourcePropertyDefinitionMapInput : inputObject
@@ -143,21 +142,26 @@ public class ResourcesPluginDataTranslationSpec
                 resourcePropDefBuilder.setResourcePropertyDefinitionMap(propertyDefInput)
                         .setResourceId(resourceIdInput);
 
-                PropertyValueMapInput propertyValueMapInput = PropertyValueMapInput.newBuilder()
-                        .setPropertyValue(this.translationEngine
-                                .getAnyFromObject(appObject.getResourcePropertyValue(
-                                        resourceId, resourcePropertyId)))
-                        .setPropertyId(this.translationEngine
-                                .getAnyFromObject(resourcePropertyId))
-                        .build();
+                Optional<Object> propertyValue = appObject.getResourcePropertyValue(
+                        resourceId, resourcePropertyId);
+                if (propertyValue.isPresent()) {
+                    PropertyValueMapInput propertyValueMapInput = PropertyValueMapInput.newBuilder()
+                            .setPropertyValue(this.translationEngine
+                                    .getAnyFromObject(propertyValue.get()))
+                            .setPropertyId(this.translationEngine
+                                    .getAnyFromObject(resourcePropertyId))
+                            .build();
 
-                resourcePropValBuilder
-                        .setResourcePropertyValueMap(propertyValueMapInput)
-                        .setResourceId(resourceIdInput);
+                    resourcePropValBuilder
+                            .setResourcePropertyValueMap(propertyValueMapInput)
+                            .setResourceId(resourceIdInput);
+
+                    builder.addResourcePropertyValues(resourcePropValBuilder.build());
+                }
 
                 builder
-                        .addResourcePropertyDefinitions(resourcePropDefBuilder.build())
-                        .addResourcePropertyValues(resourcePropValBuilder.build());
+                        .addResourcePropertyDefinitions(resourcePropDefBuilder.build());
+
             }
 
             ResourceIdMapInput resourceIdMapInput = ResourceIdMapInput.newBuilder()
@@ -225,9 +229,6 @@ public class ResourcesPluginDataTranslationSpec
         }
 
         for (RegionId regionId : appObject.getRegionIds()) {
-            List<ResourceInitialization> regionResourceLevels = appObject.getRegionResourceLevels(regionId);
-            // do not need to check if empty because we are looping only through the regionIds in the plugindata
-
             RegionIdInput regionIdInput = this.translationEngine.convertObjectAsSafeClass(regionId,
                     RegionId.class);
 
@@ -235,14 +236,28 @@ public class ResourcesPluginDataTranslationSpec
                     .newBuilder()
                     .setRegionId(regionIdInput);
 
-            for (ResourceInitialization resourceInitialization : regionResourceLevels) {
-                ResourceInitializationInput resourceInitializationInput = this.translationEngine
-                        .convertObject(resourceInitialization);
+            for (ResourceId resourceId : appObject.getResourceIds()) {
+                Optional<Long> regionResourceLevel = appObject.getRegionResourceLevel(regionId,
+                        resourceId);
 
-                regionResourceLevelsBuilder
-                        .addRegionResourceLevels(resourceInitializationInput);
+                if (regionResourceLevel.isPresent()) {
+
+                    ResourceInitialization resourceInitialization = new ResourceInitialization(resourceId,
+                            regionResourceLevel.get());
+                    ResourceInitializationInput resourceInitializationInput = this.translationEngine
+                            .convertObject(resourceInitialization);
+                    regionResourceLevelsBuilder
+                            .addRegionResourceLevels(resourceInitializationInput);
+                }
+
             }
-            builder.addRegionResourceLevels(regionResourceLevelsBuilder.build());
+
+            RegionResourceLevelsInput regionResourceLevelsInput = regionResourceLevelsBuilder.build();
+
+            if (!regionResourceLevelsInput.getRegionResourceLevelsList().isEmpty()) {
+                builder.addRegionResourceLevels(regionResourceLevelsBuilder.build());
+            }
+
         }
 
         return builder.build();
