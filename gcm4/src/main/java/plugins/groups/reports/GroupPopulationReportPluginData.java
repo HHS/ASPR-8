@@ -13,8 +13,30 @@ import util.errors.ContractException;
 @ThreadSafe
 public final class GroupPopulationReportPluginData extends PeriodicReportPluginData {
 
+	private final Data data;
+
 	private GroupPopulationReportPluginData(Data data) {
 		super(data);
+		this.data = data;
+	}
+
+	private static class Data extends PeriodicReportPluginData.Data {
+
+		private Data() {
+			super();
+		}
+
+		private Data(Data data) {
+			super(data);
+		}
+
+		@Override
+		public String toString() {
+			StringBuilder builder = new StringBuilder();
+			builder.append(super.toString());
+			builder.append("]");
+			return builder.toString();
+		}
 	}
 
 	/**
@@ -22,8 +44,11 @@ public final class GroupPopulationReportPluginData extends PeriodicReportPluginD
 	 */
 	public final static class Builder extends PeriodicReportPluginData.Builder {
 
+		private Data data;
+
 		private Builder(Data data) {
 			super(data);
+			this.data = data;
 		}
 
 		/**
@@ -40,8 +65,6 @@ public final class GroupPopulationReportPluginData extends PeriodicReportPluginD
 		 */
 		@Override
 		public GroupPopulationReportPluginData build() {
-			super.validateData();
-
 			return new GroupPopulationReportPluginData(data);
 		}
 
@@ -84,16 +107,6 @@ public final class GroupPopulationReportPluginData extends PeriodicReportPluginD
 	@Override
 	public Builder getCloneBuilder() {
 		return new Builder(new Data(data));
-	}
-
-	@Override
-	public int hashCode() {
-		return super.hashCode();
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		return super.equals(obj);
 	}
 
 	@Override

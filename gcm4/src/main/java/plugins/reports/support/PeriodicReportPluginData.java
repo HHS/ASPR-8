@@ -9,6 +9,7 @@ public abstract class PeriodicReportPluginData implements PluginData {
     protected final Data data;
 
     protected PeriodicReportPluginData(Data data) {
+        validateBaseData();
         this.data = data;
     }
 
@@ -19,16 +20,12 @@ public abstract class PeriodicReportPluginData implements PluginData {
         public ReportLabel reportLabel;
         public ReportPeriod reportPeriod;
 
-        public boolean locked;
-
         public Data() {
         }
 
         public Data(Data data) {
             reportLabel = data.reportLabel;
             reportPeriod = data.reportPeriod;
-
-            locked = data.locked;
         }
 
         @Override
@@ -63,16 +60,14 @@ public abstract class PeriodicReportPluginData implements PluginData {
         }
 
         @Override
-		public String toString() {
-			StringBuilder builder = new StringBuilder();
-			builder.append("Data [reportLabel=");
-			builder.append(reportLabel);
-			builder.append(", reportPeriod=");
-			builder.append(reportPeriod);
-			builder.append(", locked=");
-			builder.append(locked);
-			return builder.toString();
-		}
+        public String toString() {
+            StringBuilder builder = new StringBuilder();
+            builder.append("Data [reportLabel=");
+            builder.append(reportLabel);
+            builder.append(", reportPeriod=");
+            builder.append(reportPeriod);
+            return builder.toString();
+        }
     }
 
     /**
@@ -86,28 +81,6 @@ public abstract class PeriodicReportPluginData implements PluginData {
             this.data = data;
         }
 
-        protected void ensureDataMutability() {
-            if (data.locked) {
-                data = new Data(data);
-                data.locked = false;
-            }
-        }
-
-        protected void ensureImmutability() {
-            if (!data.locked) {
-                data.locked = true;
-            }
-        }
-
-        protected void validateData() {
-            if (data.reportLabel == null) {
-                throw new ContractException(ReportError.NULL_REPORT_LABEL);
-            }
-            if (data.reportPeriod == null) {
-                throw new ContractException(ReportError.NULL_REPORT_PERIOD);
-            }
-        }
-
         public abstract PluginData build();
 
         /**
@@ -119,7 +92,6 @@ public abstract class PeriodicReportPluginData implements PluginData {
          *                           report label is null</li>
          */
         public Builder setReportLabel(ReportLabel reportLabel) {
-            ensureDataMutability();
             if (reportLabel == null) {
                 throw new ContractException(ReportError.NULL_REPORT_LABEL);
             }
@@ -136,12 +108,20 @@ public abstract class PeriodicReportPluginData implements PluginData {
          *                           report period is null</li>
          */
         public Builder setReportPeriod(ReportPeriod reportPeriod) {
-            ensureDataMutability();
             if (reportPeriod == null) {
                 throw new ContractException(ReportError.NULL_REPORT_PERIOD);
             }
             data.reportPeriod = reportPeriod;
             return this;
+        }
+    }
+
+    protected final void validateBaseData() {
+        if (data.reportLabel == null) {
+            throw new ContractException(ReportError.NULL_REPORT_LABEL);
+        }
+        if (data.reportPeriod == null) {
+            throw new ContractException(ReportError.NULL_REPORT_PERIOD);
         }
     }
 

@@ -114,8 +114,6 @@ public final class GroupPropertyReportPluginData extends PeriodicReportPluginDat
 
 	/**
 	 * Builder class for the report
-	 * 
-	 *
 	 */
 	public final static class Builder extends PeriodicReportPluginData.Builder {
 
@@ -141,8 +139,6 @@ public final class GroupPropertyReportPluginData extends PeriodicReportPluginDat
 		 * 
 		 */
 		public GroupPropertyReportPluginData build() {
-			validateData();
-
 			return new GroupPropertyReportPluginData(data);
 		}
 
@@ -152,7 +148,6 @@ public final class GroupPropertyReportPluginData extends PeriodicReportPluginDat
 		 * explicitly included or excluded. Defaulted to true.
 		 */
 		public Builder setDefaultInclusion(boolean include) {
-			ensureDataMutability();
 			data.defaultInclusionPolicy = include;
 			return this;
 		}
@@ -169,7 +164,6 @@ public final class GroupPropertyReportPluginData extends PeriodicReportPluginDat
 		 *                           group type id is null</li>
 		 */
 		public Builder includeGroupProperty(GroupTypeId groupTypeId, GroupPropertyId groupPropertyId) {
-			ensureDataMutability();
 			if (groupTypeId == null) {
 				throw new ContractException(GroupError.NULL_GROUP_TYPE_ID);
 			}
@@ -201,7 +195,6 @@ public final class GroupPropertyReportPluginData extends PeriodicReportPluginDat
 		 *                           group type id is null</li>
 		 */
 		public Builder excludeGroupProperty(GroupTypeId groupTypeId, GroupPropertyId groupPropertyId) {
-			ensureDataMutability();
 			if (groupPropertyId == null) {
 				throw new ContractException(PropertyError.NULL_PROPERTY_ID);
 			}
