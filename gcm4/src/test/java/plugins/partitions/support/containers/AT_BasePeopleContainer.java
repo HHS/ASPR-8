@@ -11,7 +11,7 @@ import util.annotations.UnitTestMethod;
 public class AT_BasePeopleContainer {
 
 	private PeopleContainer getPeopleContainer(PartitionsContext partitionsContext) {
-		return new BasePeopleContainer(partitionsContext);
+		return new BasePeopleContainer(partitionsContext,false);
 	}
 
 	@Test

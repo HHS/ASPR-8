@@ -46,7 +46,7 @@ import nucleus.Plugin;
 
 		for (Double r0 : r0Values) {
 			builder.addLevel((context) -> {
-				DiseasePluginData.Builder pluginDataBuilder = context.get(DiseasePluginData.Builder.class);				
+				DiseasePluginData.Builder pluginDataBuilder = context.getPluginDataBuilder(DiseasePluginData.Builder.class);				
 				pluginDataBuilder.setR0(r0);
 				ArrayList<String> result = new ArrayList<>();
 				result.add(Double.toString(r0));

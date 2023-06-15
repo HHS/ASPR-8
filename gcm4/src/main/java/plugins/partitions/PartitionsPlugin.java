@@ -91,7 +91,9 @@ public final class PartitionsPlugin {
 			}
 
 			builder.setInitializer((c) -> {
-				c.addDataManager(new PartitionsDataManager());
+				PartitionsPluginData partitionsPluginData = c.getPluginData(PartitionsPluginData.class).get();
+				
+				c.addDataManager(new PartitionsDataManager(partitionsPluginData));
 			});//
 
 			return builder.build();

@@ -69,7 +69,7 @@ public class AT_DegeneratePopulationPartitionImpl {
 			// create the population partition
 			Filter filter = new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, true);
 			Partition partition = Partition.builder().setFilter(filter).build();
-			PopulationPartition populationPartition = new DegeneratePopulationPartitionImpl(testPartitionsContext, partition);
+			PopulationPartition populationPartition = new DegeneratePopulationPartitionImpl(testPartitionsContext, partition,false);
 
 			// show that the population partition contains the expected people
 			List<PersonId> actualPeople = populationPartition.getPeople();
@@ -78,14 +78,15 @@ public class AT_DegeneratePopulationPartitionImpl {
 
 			// precondition tests
 			// if the context is null
-			assertThrows(RuntimeException.class, () -> new DegeneratePopulationPartitionImpl(null, partition));
+			assertThrows(RuntimeException.class, () -> new DegeneratePopulationPartitionImpl(null, partition,false));
 
 			// if the partition is null
-			assertThrows(RuntimeException.class, () -> new DegeneratePopulationPartitionImpl(testPartitionsContext, null));
+			assertThrows(RuntimeException.class, () -> new DegeneratePopulationPartitionImpl(testPartitionsContext, null,false));
 
 			// if the partition is not degenerate
 			ContractException contractException = assertThrows(ContractException.class,
-					() -> new DegeneratePopulationPartitionImpl(testPartitionsContext, Partition.builder().addLabeler(new FunctionalAttributeLabeler(TestAttributeId.BOOLEAN_0, (v) -> v)).build()));
+					() -> new DegeneratePopulationPartitionImpl(testPartitionsContext,
+							Partition.builder().addLabeler(new FunctionalAttributeLabeler(TestAttributeId.BOOLEAN_0, (v) -> v)).build(),false));
 			assertEquals(PartitionError.NON_DEGENERATE_PARTITION, contractException.getErrorType());
 
 		});

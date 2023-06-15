@@ -169,7 +169,7 @@ public final class Example_19 {
 		final FunctionalDimension.Builder dimensionBuilder = FunctionalDimension.builder();//
 		IntStream.range(0, values.length).forEach((i) -> {
 			dimensionBuilder.addLevel((context) -> {
-				final GlobalPropertiesPluginData.Builder builder = context.get(GlobalPropertiesPluginData.Builder.class);
+				final GlobalPropertiesPluginData.Builder builder = context.getPluginDataBuilder(GlobalPropertiesPluginData.Builder.class);
 				final Object value = values[i];
 				builder.setGlobalPropertyValue(globalPropertyId, value,0);
 				final ArrayList<String> result = new ArrayList<>();
@@ -286,7 +286,7 @@ public final class Example_19 {
 	private Plugin getResourcesPlugin() {
 		final ResourcesPluginData.Builder builder = ResourcesPluginData.builder();
 		for (final ResourceId resourcId : Resource.values()) {
-			builder.addResource(resourcId,0.0);
+			builder.addResource(resourcId,0.0,true);
 		}
 		final ResourcesPluginData resourcesPluginData = builder.build();
 		return ResourcesPlugin.builder().setResourcesPluginData(resourcesPluginData).getResourcesPlugin();

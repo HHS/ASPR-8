@@ -1,16 +1,8 @@
 package plugins.partitions.datamanagers;
 
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Set;
-
 import net.jcip.annotations.Immutable;
 import nucleus.PluginData;
 import nucleus.PluginDataBuilder;
-import plugins.partitions.support.Partition;
-import plugins.partitions.support.PartitionError;
-import util.errors.ContractException;
 
 /**
  * An immutable container of the initial state of partitions. It contains: <BR>
@@ -40,78 +32,45 @@ public final class PartitionsPluginData implements PluginData {
 		 * information supplied to this builder.
 		 */
 		public PartitionsPluginData build() {
-			if (!data.locked) {
-				validateData();
-			}
-			ensureImmutability();
-			return new PartitionsPluginData(data);
+			return new PartitionsPluginData(new Data(data));
 		}
 
 		/**
-		 * add a partition Duplicate inputs override previous inputs.
-		 * 
-		 * @throws ContractException
-		 * 
-		 * 
-		 *             <li>{@linkplain PartitionError#NULL_PARTITION_KEY}</li> if
-		 *             the key is null
-		 * 
-		 *             <li>{@linkplain PartitionError#NULL_PARTITION}
-		 *             </li> if the partition is null
+		 * Set the run continuity support policy. Defaults to false. Supporting
+		 * run continuity may increase the memory requirements for partitions,
+		 * but will guarantee run continuity.
 		 *
-		 * 
 		 */
-		public Builder addPartition(final Object key, final Partition partition) {
-			ensureDataMutability();
-			validateKeyNotNull(key);
-			validatePartitionNotNull(partition);
-			data.partitions.put(key, partition);
+		public Builder setRunContinuitySupport(final boolean supportRunContinuity) {
+		
+			data.supportRunContinuity = supportRunContinuity;
 			return this;
 		}
-
-		private void ensureDataMutability() {
-			if (data.locked) {
-				data = new Data(data);
-				data.locked = false;
-			}
-		}
-
-		private void ensureImmutability() {
-			if (!data.locked) {
-				data.locked = true;
-			}
-		}
-
-		private void validateData() {
-			// nothing to validate
-		}
-
 	}
 
 	private static class Data {
 
-		private final Map<Object, Partition> partitions = new LinkedHashMap<>();
-
-		private boolean locked;
+		private boolean supportRunContinuity;
 
 		private Data() {
 		}
 
 		private Data(Data data) {
-			partitions.putAll(data.partitions);
-			locked = data.locked;
+			supportRunContinuity = data.supportRunContinuity;			
 		}
 
 		@Override
 		public int hashCode() {
+
 			final int prime = 31;
 			int result = 1;
-			result = prime * result + partitions.hashCode();
+			result = prime * result + (supportRunContinuity ? 1231 : 1237);
 			return result;
 		}
 
 		@Override
 		public boolean equals(Object obj) {
+
 			if (this == obj) {
 				return true;
 			}
@@ -119,29 +78,17 @@ public final class PartitionsPluginData implements PluginData {
 				return false;
 			}
 			Data other = (Data) obj;
-
-			/*
-			 * We exclude: locked -- both should be locked when equals is
-			 * invoked
-			 */
-
-			/*
-			 * These are simple comparisons:
-			 */
-			if (!partitions.equals(other.partitions)) {
+			if (supportRunContinuity != other.supportRunContinuity) {
 				return false;
 			}
-
 			return true;
 		}
 
 		@Override
 		public String toString() {
 			StringBuilder builder = new StringBuilder();
-			builder.append("Data [partitions=");
-			builder.append(partitions);
-			builder.append(", locked=");
-			builder.append(locked);
+			builder.append("Data [supportRunContinuity=");
+			builder.append(supportRunContinuity);
 			builder.append("]");
 			return builder.toString();
 		}
@@ -154,29 +101,7 @@ public final class PartitionsPluginData implements PluginData {
 	public static Builder builder() {
 		return new Builder(new Data());
 	}
-
-	private static void validateKeyNotNull(Object key) {
-		if (key == null) {
-			throw new ContractException(PartitionError.NULL_PARTITION_KEY);
-		}
-	}
-
-	private void validateKey(Object key) {
-		if (key == null) {
-			throw new ContractException(PartitionError.NULL_PARTITION_KEY);
-		}
-		if (!data.partitions.containsKey(key)) {
-			throw new ContractException(PartitionError.UNKNOWN_POPULATION_PARTITION_KEY);
-		}
-
-	}
-
-	private static void validatePartitionNotNull(final Partition partition) {
-		if (partition == null) {
-			throw new ContractException(PartitionError.NULL_PARTITION);
-		}
-	}
-
+	
 	private final Data data;
 
 	private PartitionsPluginData(final Data data) {
@@ -184,31 +109,16 @@ public final class PartitionsPluginData implements PluginData {
 	}
 
 	/**
-	 * Returns the Partition for the given key.
-	 *
-	 * @throws ContractException
-	 * 
-	 *             <li>{@linkplain PartitionError#NULL_PARTITION_KEY}</li> if
-	 *             the key is null
-	 *             <li>{@linkplain PartitionError#UNKNOWN_POPULATION_PARTITION_KEY}</li>
-	 *             if the key is unknown
-	 */
-	public Partition getPartition(Object key) {
-		validateKey(key);
-		return data.partitions.get(key);
-	}
-
-	/**
-	 * Returns the set of partition keys
+	 * Returns the run continuity support policy
 	 * 
 	 */
-	public Set<Object> getPartitionKeys() {
-		return new LinkedHashSet<>(data.partitions.keySet());
+	public boolean supportsRunContinuity() {
+		return data.supportRunContinuity;
 	}
 
 	@Override
 	public PluginDataBuilder getCloneBuilder() {
-		return new Builder(data);
+		return new Builder(new Data(data));
 	}
 
 	@Override
@@ -242,7 +152,5 @@ public final class PartitionsPluginData implements PluginData {
 		builder2.append("]");
 		return builder2.toString();
 	}
-	
-	
 
 }

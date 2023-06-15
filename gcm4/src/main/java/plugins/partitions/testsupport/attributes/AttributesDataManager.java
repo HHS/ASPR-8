@@ -2,8 +2,11 @@ package plugins.partitions.testsupport.attributes;
 
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import org.apache.commons.math3.util.FastMath;
 
 import nucleus.DataManager;
 import nucleus.DataManagerContext;
@@ -133,18 +136,63 @@ public final class AttributesDataManager extends DataManager {
 		super.init(dataManagerContext);
 		this.dataManagerContext = dataManagerContext;
 		peopleDataManager = dataManagerContext.getDataManager(PeopleDataManager.class);
-		
-		
 
 		for (AttributeId attributeId : attributesPluginData.getAttributeIds()) {
 			AttributeDefinition attributeDefinition = attributesPluginData.getAttributeDefinition(attributeId);
 			addAttribute(attributeId, attributeDefinition);
 		}
 
+		for (AttributeId attributeId : attributesPluginData.getAttributeIds()) {
+			Map<PersonId, Object> personAttributesMap = attributeValues.get(attributeId);
+			List<Object> propertyValues = attributesPluginData.getAttributeValues(attributeId);
+			int n = FastMath.max(peopleDataManager.getPersonIdLimit(), propertyValues.size());
+			for (int i = 0; i < n; i++) {
+				if (peopleDataManager.personIndexExists(i)) {
+					if (i < propertyValues.size()) {
+						Object propertyValue = propertyValues.get(i);
+						if (propertyValue != null) {
+							PersonId personId = peopleDataManager.getBoxedPersonId(i).get();
+							personAttributesMap.put(personId, propertyValue);
+						}
+					}
+				} else {
+					if (i < propertyValues.size()) {
+						Object propertyValue = propertyValues.get(i);
+						if (propertyValue != null) {
+							throw new ContractException(AttributeError.UNKNOWN_PERSON_HAS_ATTRIBUTE_VALUE_ASSIGNMENT, "unknown person(" + i + ") has attribute value for " + attributeId);
+						}
+					}
+				}
+			}
+		}
+
 		dataManagerContext.subscribe(PersonRemovalEvent.class, this::handlePersonRemovalEvent);
 		dataManagerContext.subscribe(AttributeUpdateMutationEvent.class, this::handleAttributeUpdateMutationEvent);
-		
 
+		if (dataManagerContext.stateRecordingIsScheduled()) {
+			dataManagerContext.subscribeToSimulationClose(this::recordSimulationState);
+		}
+
+	}
+
+	private void recordSimulationState(DataManagerContext dataManagerContext) {
+
+		AttributesPluginData.Builder builder = AttributesPluginData.builder();
+
+		for (AttributeId attributeId : attributeDefinitions.keySet()) {
+			AttributeDefinition attributeDefinition = attributeDefinitions.get(attributeId);
+			builder.defineAttribute(attributeId, attributeDefinition);
+		}
+
+		for (AttributeId attributeId : attributeValues.keySet()) {
+			Map<PersonId, Object> map = attributeValues.get(attributeId);
+			for (PersonId personId : map.keySet()) {
+				Object value = map.get(personId);
+				builder.setPersonAttributeValue(personId, attributeId, value);
+			}
+		}
+
+		dataManagerContext.releaseOutput(builder.build());
 	}
 
 	private void handlePersonRemovalEvent(final DataManagerContext dataManagerContext, final PersonRemovalEvent personRemovalEvent) {
@@ -158,11 +206,14 @@ public final class AttributesDataManager extends DataManager {
 	 * 
 	 * @throws ContractException
 	 * 
-	 * <li>{@linkplain AttributeError#NULL_ATTRIBUTE_ID} if the attribute id is
-	 * null</li> <li>{@linkplain AttributeError#NULL_ATTRIBUTE_DEFINITION} if
-	 * the attribute definition is null</li> <li>{@linkplain
-	 * AttributeError#DUPLICATE_ATTRIBUTE_DEFINITION} if the attribute
-	 * definition was previously added</li>
+	 *             <li>{@linkplain AttributeError#NULL_ATTRIBUTE_ID} if the
+	 *             attribute id is null</li>
+	 *             
+	 *             <li>{@linkplain AttributeError#NULL_ATTRIBUTE_DEFINITION} if
+	 *             the attribute definition is null</li>
+	 *             
+	 *             <li>{@linkplain AttributeError#DUPLICATE_ATTRIBUTE_DEFINITION}
+	 *             if the attribute definition was previously added</li>
 	 */
 	private void addAttribute(AttributeId attributeId, AttributeDefinition attributeDefinition) {
 		if (attributeId == null) {
@@ -180,8 +231,9 @@ public final class AttributesDataManager extends DataManager {
 		attributeDefinitions.put(attributeId, attributeDefinition);
 		attributeValues.put(attributeId, new LinkedHashMap<>());
 	}
-	
-	private static record AttributeUpdateMutationEvent(PersonId personId, AttributeId attributeId, Object value) implements Event{}
+
+	private static record AttributeUpdateMutationEvent(PersonId personId, AttributeId attributeId, Object value) implements Event {
+	}
 
 	/**
 	 * Updates the person's current attribute value. Generates a corresponding
@@ -205,15 +257,15 @@ public final class AttributesDataManager extends DataManager {
 	 * </ul>
 	 */
 	public void setAttributeValue(final PersonId personId, final AttributeId attributeId, final Object value) {
-		
-		dataManagerContext.releaseMutationEvent(
-		new AttributeUpdateMutationEvent(personId, attributeId, value));
+
+		dataManagerContext.releaseMutationEvent(new AttributeUpdateMutationEvent(personId, attributeId, value));
 	}
+
 	private void handleAttributeUpdateMutationEvent(DataManagerContext dataManagerContext, AttributeUpdateMutationEvent attributeUpdateMutationEvent) {
 		AttributeId attributeId = attributeUpdateMutationEvent.attributeId();
 		PersonId personId = attributeUpdateMutationEvent.personId();
 		Object value = attributeUpdateMutationEvent.value();
-		
+
 		validatePersonExists(dataManagerContext, personId);
 		validateAttributeId(dataManagerContext, attributeId);
 		validateValueNotNull(dataManagerContext, value);
@@ -224,7 +276,7 @@ public final class AttributesDataManager extends DataManager {
 		if (dataManagerContext.subscribersExist(AttributeUpdateEvent.class)) {
 			dataManagerContext.releaseObservationEvent(new AttributeUpdateEvent(personId, attributeId, previousValue, value));
 		}
-		
+
 	}
 
 	private void validatePersonExists(final DataManagerContext dataManagerContext, final PersonId personId) {
@@ -296,6 +348,17 @@ public final class AttributesDataManager extends DataManager {
 
 		return EventFilter	.builder(AttributeUpdateEvent.class)//
 							.build();
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("AttributesDataManager [attributeDefinitions=");
+		builder.append(attributeDefinitions);
+		builder.append(", attributeValues=");
+		builder.append(attributeValues);
+		builder.append("]");
+		return builder.toString();
 	}
 
 }

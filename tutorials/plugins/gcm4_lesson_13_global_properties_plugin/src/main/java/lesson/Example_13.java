@@ -70,7 +70,7 @@ public final class Example_13 {
 		for (Pair<Double, Double> pair : alphaBetaPairs) {
 			dimensionBuilder.addLevel((c) -> {
 				List<String> result = new ArrayList<>();
-				Builder builder = c.get(GlobalPropertiesPluginData.Builder.class);
+				Builder builder = c.getPluginDataBuilder(GlobalPropertiesPluginData.Builder.class);
 				builder.setGlobalPropertyValue(GlobalProperty.ALPHA, pair.getFirst(),0);
 				builder.setGlobalPropertyValue(GlobalProperty.BETA, pair.getSecond(),0);
 				result.add(pair.getFirst().toString());
