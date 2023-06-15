@@ -45,7 +45,7 @@ public final class Example_14 {
 		IntStream.range(0, seedValues.size()).forEach((i) -> {
 			builder.addLevel((context) -> {
 				StochasticsPluginData.Builder stochasticsPluginDataBuilder = 
-						context.get(StochasticsPluginData.Builder.class);
+						context.getPluginDataBuilder(StochasticsPluginData.Builder.class);
 				long seedValue = seedValues.get(i);
 				WellState wellState = WellState.builder().setSeed(seedValue).build();
 				stochasticsPluginDataBuilder.setMainRNGState(wellState);

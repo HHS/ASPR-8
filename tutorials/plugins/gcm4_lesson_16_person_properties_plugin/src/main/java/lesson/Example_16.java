@@ -117,7 +117,7 @@ public final class Example_16 {
 		FunctionalDimension.Builder dimensionBuilder = FunctionalDimension.builder();//
 		IntStream.range(0, values.length).forEach((i) -> {
 			dimensionBuilder.addLevel((context) -> {
-				GlobalPropertiesPluginData.Builder builder = context.get(GlobalPropertiesPluginData.Builder.class);
+				GlobalPropertiesPluginData.Builder builder = context.getPluginDataBuilder(GlobalPropertiesPluginData.Builder.class);
 				double value = values[i];
 				builder.setGlobalPropertyValue(globalPropertyId, value,0);
 				ArrayList<String> result = new ArrayList<>();

@@ -50,7 +50,7 @@ public final class Example_11_B {
 
 		for (Double schoolClosingInfectionRate : schoolClosingInfectionRates) {
 			builder.addLevel((context) -> {
-				PolicyPluginData.Builder pluginDataBuilder = context.get(PolicyPluginData.Builder.class);
+				PolicyPluginData.Builder pluginDataBuilder = context.getPluginDataBuilder(PolicyPluginData.Builder.class);
 				pluginDataBuilder.setSchoolClosingInfectionRate(schoolClosingInfectionRate);
 
 				ArrayList<String> result = new ArrayList<>();
@@ -79,7 +79,7 @@ public final class Example_11_B {
 		IntStream.range(0, seedValues.size()).forEach((i) -> {
 			builder.addLevel((context) -> {
 				StochasticsPluginData.Builder stochasticsPluginDataBuilder = 
-						context.get(StochasticsPluginData.Builder.class);
+						context.getPluginDataBuilder(StochasticsPluginData.Builder.class);
 				long seedValue = seedValues.get(i);
 				WellState wellState = WellState.builder().setSeed(seedValue).build();
 				stochasticsPluginDataBuilder.setMainRNGState(wellState);

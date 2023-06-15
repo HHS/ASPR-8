@@ -41,7 +41,7 @@ public final class Example_12 {
 		for (Integer maxFamilySize : maxFamilySizes) {
 			builder.addLevel((context) -> {
 				FamilyPluginData.Builder pluginDataBuilder = 
-						context.get(FamilyPluginData.Builder.class);
+						context.getPluginDataBuilder(FamilyPluginData.Builder.class);
 				pluginDataBuilder.setMaxFamilySize(maxFamilySize);
 
 				ArrayList<String> result = new ArrayList<>();
