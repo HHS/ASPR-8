@@ -187,7 +187,7 @@ public class AT_GroupsDataManager {
 												.setGroupPropertyValue(expectedGroupIds.get(0), groupPropertyDefinitionInitialization2.getPropertyId(), 57)
 												.setGroupPropertyValue(expectedGroupIds.get(1), groupPropertyDefinitionInitialization3.getPropertyId(), 34.2).build();
 		assertEquals(expectedPluginData, actualPluginData);
-		
+
 	}
 
 	@Test
@@ -5073,7 +5073,7 @@ public class AT_GroupsDataManager {
 	 * the data manager is not effected by repeatedly starting and stopping the
 	 * simulation.
 	 */
-	@Test
+
 	@UnitTestMethod(target = PeopleDataManager.class, name = "init", args = { DataManagerContext.class })
 	public void testStateContinuity() {
 
@@ -5082,6 +5082,12 @@ public class AT_GroupsDataManager {
 		 * is covered by the other state tests. We show here only that the
 		 * resulting plugin data state is the same without regard to how we
 		 * break up the run.
+		 */
+
+		/*
+		 * THIS TEST IS BROKEN -- IT ACTUALLY DOES NOTHING SINCE
+		 * performRandomGroupAction() IS NOT YET IMPLEMENTED. IT IS WAITING FOR
+		 * A REBUILD OF THE GROUPS PLUGIN DATA
 		 */
 
 		Set<GroupsPluginData> pluginDatas = new LinkedHashSet<>();
@@ -5093,9 +5099,12 @@ public class AT_GroupsDataManager {
 	}
 
 	private void performRandomGroupAction(ActorContext actorContext) {
-//		GroupsDataManager groupsDataManager = actorContext.getDataManager(GroupsDataManager.class);
-//		PeopleDataManager peopleDataManager = actorContext.getDataManager(PeopleDataManager.class);
-//		StochasticsDataManager stochasticsDataManager = actorContext.getDataManager(StochasticsDataManager.class);
+		// GroupsDataManager groupsDataManager =
+		// actorContext.getDataManager(GroupsDataManager.class);
+		// PeopleDataManager peopleDataManager =
+		// actorContext.getDataManager(PeopleDataManager.class);
+		// StochasticsDataManager stochasticsDataManager =
+		// actorContext.getDataManager(StochasticsDataManager.class);
 
 		// addGroup(GroupConstructionInfo)
 		// addGroup(GroupTypeId)
