@@ -133,7 +133,7 @@ public final class AT_PartitionsDataManager_Continuity {
 		AttributeLabeler attributeLabeler2 = new AttributeLabeler(TestAttributeId.INT_0) {
 			protected Object getLabelFromValue(Object value) {
 				Integer i = (Integer) value;
-				if (i == 5) {
+				if (i < 3) {
 					return I0_Label.YES;
 				}
 				return I0_Label.NO;
@@ -196,7 +196,7 @@ public final class AT_PartitionsDataManager_Continuity {
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
 
-			for (int i = 0; i < 10; i++) {
+			for (int i = 0; i < 1000; i++) {
 				PersonId personId = peopleDataManager.addPerson(PersonConstructionData.builder().build());
 				attributesDataManager.setAttributeValue(personId, TestAttributeId.BOOLEAN_0, randomGenerator.nextBoolean());
 				attributesDataManager.setAttributeValue(personId, TestAttributeId.BOOLEAN_1, randomGenerator.nextBoolean());
