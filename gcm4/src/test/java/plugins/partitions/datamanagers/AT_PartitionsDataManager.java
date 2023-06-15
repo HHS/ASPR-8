@@ -25,9 +25,12 @@ import org.junit.jupiter.api.Test;
 import nucleus.ActorContext;
 import nucleus.DataManagerContext;
 import nucleus.EventFilter;
+import nucleus.Plugin;
 import nucleus.testsupport.testplugin.TestActorPlan;
+import nucleus.testsupport.testplugin.TestOutputConsumer;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestSimulation;
+import plugins.partitions.PartitionsPlugin;
 import plugins.partitions.support.Equality;
 import plugins.partitions.support.LabelSet;
 import plugins.partitions.support.LabelSetWeightingFunction;
@@ -1683,5 +1686,76 @@ public final class AT_PartitionsDataManager {
 		Factory factory = PartitionsTestPluginFactory.factory(100, 6406306513403641718L, testPluginData);
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
+
+	/**
+	 * Demonstrates that the data manager's initial state reflects its plugin
+	 * data
+	 */
+	@Test
+	@UnitTestMethod(target = PartitionsDataManager.class, name = "init", args = { DataManagerContext.class })
+	public void testStateInitialization() {
+		/*
+		 * Nothing can be demonstrated since the state of the plugin data does
+		 * not have an observable influence on the data manager
+		 */
+	}
+
+	/**
+	 * Demonstrates that the data manager produces plugin data that reflects its
+	 * final state
+	 */
+	@Test
+	@UnitTestMethod(target = PartitionsDataManager.class, name = "init", args = { DataManagerContext.class })
+	public void testStateFinalization() {
+
+		for (boolean supportRunContinuity : new boolean[] { true, false }) {
+
+			// build a plugin factory and replace the partitions plugin with one
+			// that has run continuity set to the expected state
+			Factory factory = PartitionsTestPluginFactory.factory(100, 607630153604184177L, (c) -> {
+			});
+			PartitionsPluginData inputPartitionsPluginData = PartitionsPluginData	.builder()//
+																					.setRunContinuitySupport(supportRunContinuity)//
+																					.build();
+			Plugin partitionsPlugin = PartitionsPlugin	.builder()//
+														.setPartitionsPluginData(inputPartitionsPluginData)//
+														.getPartitionsPlugin();
+			factory.setPartitionsPlugin(partitionsPlugin);
+
+			// run the simulation and tell it to produce plugin data on halt
+			TestOutputConsumer testOutputConsumer = TestSimulation	.builder()//
+																	.addPlugins(factory.getPlugins())//
+																	.setSimulationHaltTime(100)//
+																	.setProduceSimulationStateOnHalt(true)//
+																	.build()//
+																	.execute();
+
+			// retrieve the PartitionsPluginData released by the
+			// PartitionsDataManager
+			Optional<PartitionsPluginData> optional = testOutputConsumer.getOutputItem(PartitionsPluginData.class);
+			assertTrue(optional.isPresent());
+			PartitionsPluginData outputPartitionsPluginData = optional.get();
+
+			// show that the output plugin data is equal to the input plugin
+			// data
+			assertEquals(inputPartitionsPluginData, outputPartitionsPluginData);
+		}
+	}
+
+	/**
+	 * Demonstrates that the data manager exhibits run continuity. The state of
+	 * the data manager is not effected by repeatedly starting and stopping the
+	 * simulation.
+	 */
+	@Test
+	@UnitTestMethod(target = PeopleDataManager.class, name = "init", args = { DataManagerContext.class })
+	public void testStateContinuity() {
+
+		/*
+		 * See AT_PartitionsDataManager_Continuity for test of run continuity
+		 */
+		
+	}
+
 
 }

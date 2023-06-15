@@ -428,7 +428,16 @@ public final class PartitionsDataManager extends DataManager {
 
 		reservedEventClasses.add(PersonAdditionEvent.class);
 		reservedEventClasses.add(PersonRemovalEvent.class);
+		
+		if (dataManagerContext.stateRecordingIsScheduled()) {
+			dataManagerContext.subscribeToSimulationClose(this::recordSimulationState);
+		}
 
+	}
+	
+	private void recordSimulationState(DataManagerContext dataManagerContext) {
+		PartitionsPluginData partitionsPluginData = PartitionsPluginData.builder().setRunContinuitySupport(supportRunContinuity).build();
+		dataManagerContext.releaseOutput(partitionsPluginData);
 	}
 
 	/*

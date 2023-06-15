@@ -11,7 +11,7 @@ import util.errors.ContractException;
  */
 public enum AttributeError implements ContractError {
 
-	
+	UNKNOWN_PERSON_HAS_ATTRIBUTE_VALUE_ASSIGNMENT("Unknown person has attribute value assignment"),//
 	NULL_ATTRIBUTE_INITIAL_DATA("Null attribute initial data"),//
 	NULL_ATTRIBUTE_DATA_MANAGER("Null attributes data manager"),//
 	NULL_ATTRIBUTE_ID("Null attribute id"),//	
