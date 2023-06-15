@@ -75,7 +75,7 @@ public class AT_ReportContext {
 
 	@Test
 	@UnitTestMethod(target = ReportContext.class, name = "addPlan", args = { Consumer.class, double.class })
-	public void testAddPlan() {
+	public void testAddPlan_Consumer() {
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
 		/*
@@ -120,10 +120,10 @@ public class AT_ReportContext {
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
 		// run the simulation -- we do not need to show that all plans executed
-		Simulation	.builder()//
-					.addPlugin(testPlugin)//
-					.build()//
-					.execute();//
+		Simulation.builder()//
+				.addPlugin(testPlugin)//
+				.build()//
+				.execute();//
 
 		// show that the last two passive plans did not execute
 		assertEquals(expectedOutput, actualOuput);
@@ -132,12 +132,125 @@ public class AT_ReportContext {
 		ContractException contractException = assertThrows(ContractException.class, () -> testConsumer((c) -> {
 			c.addPlan(null, 0);
 		}));
-		assertEquals(NucleusError.NULL_PLAN, contractException.getErrorType());
+		assertEquals(NucleusError.NULL_PLAN_CONSUMER, contractException.getErrorType());
 
 		// precondition test : if the plan is scheduled for the past
 		contractException = assertThrows(ContractException.class, () -> testConsumer((c) -> {
 			c.addPlan((c2) -> {
 			}, -1);
+		}));
+		assertEquals(NucleusError.PAST_PLANNING_TIME, contractException.getErrorType());
+
+	}
+
+	@Test
+	@UnitTestMethod(target = ReportContext.class, name = "addPlan", args = { Plan.class })
+	public void testAddPlan_Plan() {
+		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
+
+		/*
+		 * Show that passive plans do not execute if there are no remaining
+		 * active plans. To do this, we will schedule a few passive plans, one
+		 * active plan and then a few more passive plans. We will then show that
+		 * the passive plans that come after the last active plan never execute
+		 */
+
+		// create some containers for passive keys
+		Set<Object> expectedOutput = new LinkedHashSet<>();
+		expectedOutput.add("A");
+		expectedOutput.add("B");
+		Set<Object> actualOuput = new LinkedHashSet<>();
+
+		pluginDataBuilder.addTestReportPlan("actor", new TestReportPlan(4, (context) -> {
+
+			// schedule two passive plans
+			context.addPlan(Plan.builder(ReportContext.class)//
+					.setActive(true)//
+					.setCallbackConsumer((c) -> {
+						actualOuput.add("A");
+					})//
+					.setKey(null)//
+					.setPlanData(null)//
+					.setTime(5)//
+					.build());
+
+			context.addPlan(Plan.builder(ReportContext.class)//
+					.setActive(true)//
+					.setCallbackConsumer((c) -> {
+						actualOuput.add("B");
+					})//
+					.setKey(null)//
+					.setPlanData(null)//
+					.setTime(6)//
+					.build());
+
+			// schedule two more passive plans
+			context.addPlan(Plan.builder(ReportContext.class)//
+					.setActive(true)//
+					.setCallbackConsumer((c) -> {
+						actualOuput.add("C");
+					})//
+					.setKey(null)//
+					.setPlanData(null)//
+					.setTime(8)//
+					.build());//
+
+			context.addPlan(Plan.builder(ReportContext.class)//
+					.setActive(true)//
+					.setCallbackConsumer((c) -> {
+						actualOuput.add("D");
+					})//
+					.setKey(null)//
+					.setPlanData(null)//
+					.setTime(9)//
+					.build());
+		}));
+
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(7, (context) ->
+
+		{
+			// place holder active plan that drives time to 7.0
+		}));
+
+		// build the plugin
+		TestPluginData testPluginData = pluginDataBuilder.build();
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+
+		// run the simulation -- we do not need to show that all plans executed
+		Simulation.builder()//
+				.addPlugin(testPlugin)//
+				.build()//
+				.execute();//
+
+		// show that the last two passive plans did not execute
+		assertEquals(expectedOutput, actualOuput);
+
+		// precondition test : if the plan is null
+		ContractException contractException = assertThrows(ContractException.class, () -> testConsumer((c) -> {
+			c.addPlan(Plan.builder(ReportContext.class)//
+					.setActive(true)//
+					.setCallbackConsumer(null)//
+					.setKey(null)//
+					.setPlanData(null)//
+					.setTime(9)//
+					.build());
+		}));
+		assertEquals(NucleusError.NULL_PLAN_CONSUMER, contractException.getErrorType());
+
+		contractException = assertThrows(ContractException.class, () -> testConsumer((c) -> {
+			c.addPlan(null);
+		}));
+		assertEquals(NucleusError.NULL_PLAN, contractException.getErrorType());
+
+		// precondition test : if the plan is scheduled for the past
+		contractException = assertThrows(ContractException.class, () -> testConsumer((c) -> {
+			c.addPlan(Plan.builder(ReportContext.class)//
+			.setActive(true)//
+			.setCallbackConsumer(null)//
+			.setKey(null)//
+			.setPlanData(null)//
+			.setTime(-1)//
+			.build());
 		}));
 		assertEquals(NucleusError.PAST_PLANNING_TIME, contractException.getErrorType());
 
@@ -178,7 +291,8 @@ public class AT_ReportContext {
 
 		// show that ambiguous class matching throws an exception
 		pluginDataBuilder.addTestReportPlan("report", new TestReportPlan(0, (c) -> {
-			ContractException contractException = assertThrows(ContractException.class, () -> c.getDataManager(TestDataManager3.class));
+			ContractException contractException = assertThrows(ContractException.class,
+					() -> c.getDataManager(TestDataManager3.class));
 			assertEquals(NucleusError.AMBIGUOUS_DATA_MANAGER_CLASS, contractException.getErrorType());
 		}));
 
@@ -214,19 +328,21 @@ public class AT_ReportContext {
 		testConsumer((context) -> {
 			Object key = new Object();
 			assertFalse(context.getPlan(key).isPresent());
-			
+
 			Plan<ReportContext> plan = Plan.builder(ReportContext.class)//
-					.setCallbackConsumer((c)->{})//
+					.setCallbackConsumer((c) -> {
+					})//
 					.setTime(100)//
 					.setKey(key)//
 					.build();
-			
+
 			context.addPlan(plan);
 			assertTrue(context.getPlan(key).isPresent());
 		});
 
 		// precondition test : if the plan key is null
-		ContractException contractException = assertThrows(ContractException.class, () -> testConsumer((c) -> c.getPlan(null)));
+		ContractException contractException = assertThrows(ContractException.class,
+				() -> testConsumer((c) -> c.getPlan(null)));
 		assertEquals(NucleusError.NULL_PLAN_KEY, contractException.getErrorType());
 	}
 
@@ -243,17 +359,19 @@ public class AT_ReportContext {
 
 		testConsumer((context) -> {
 			for (Object key : expectedKeys) {
-				
+
 				Plan<ReportContext> plan = Plan.builder(ReportContext.class)//
-						.setCallbackConsumer((c) -> {})//
+						.setCallbackConsumer((c) -> {
+						})//
 						.setTime(100)//
 						.setKey(key)//
 						.build();//
-				
+
 				context.addPlan(plan);
 			}
 
-			Set<Object> actualKeys = context.getPlanKeys().stream().collect(Collectors.toCollection(LinkedHashSet::new));
+			Set<Object> actualKeys = context.getPlanKeys().stream()
+					.collect(Collectors.toCollection(LinkedHashSet::new));
 			assertEquals(expectedKeys, actualKeys);
 		});
 	}
@@ -392,13 +510,15 @@ public class AT_ReportContext {
 		MutableBoolean removedPlanHasExecuted = new MutableBoolean();
 
 		// have the added test report add a plan
-		pluginDataBuilder.addTestReportPlan("report", new TestReportPlan(2, (context) -> {			
+		pluginDataBuilder.addTestReportPlan("report", new TestReportPlan(2, (context) -> {
 			Plan<ReportContext> plan = Plan.builder(ReportContext.class)//
-					.setCallbackConsumer((c2) -> {removedPlanHasExecuted.setValue(true);})//
+					.setCallbackConsumer((c2) -> {
+						removedPlanHasExecuted.setValue(true);
+					})//
 					.setTime(4)//
 					.setKey(key)//
-					.build();//			
-			
+					.build();//
+
 			context.addPlan(plan);
 		}));
 

@@ -63,6 +63,7 @@ public enum NucleusError implements ContractError {
 	NULL_OUTPUT_HANDLER("Null output item handler"),
 	NULL_OUTPUT_ITEM("Null output"),
 	NULL_PLAN("Null plan"),
+	NULL_PLAN_CONSUMER("Null plan consumer"),
 	NULL_PLAN_DATA("Null plan data"),
 	NULL_PLAN_QUEUE_DATA("Null plan queue data"),
 	NULL_PLANNER("Null planner type"),
