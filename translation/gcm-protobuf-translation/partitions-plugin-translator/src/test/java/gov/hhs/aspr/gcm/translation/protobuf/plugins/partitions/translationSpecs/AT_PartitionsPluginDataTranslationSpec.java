@@ -7,16 +7,11 @@ import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.partitions.PartitionsTranslator;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.partitions.input.PartitionsPluginDataInput;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.partitions.testsupport.TestFilter;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.partitions.testsupport.TestLabeler;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.partitions.testsupport.translationSpecs.TestFilterTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.partitions.testsupport.translationSpecs.TestLabelerTranslationSpec;
 import gov.hhs.aspr.translation.core.TranslationController;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
 import plugins.partitions.datamanagers.PartitionsPluginData;
-import plugins.partitions.support.Labeler;
-import plugins.partitions.support.Partition;
-import plugins.partitions.support.filters.Filter;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestForCoverage;
 import util.annotations.UnitTestMethod;
@@ -45,16 +40,8 @@ public class AT_PartitionsPluginDataTranslationSpec {
         PartitionsPluginDataTranslationSpec translationSpec = new PartitionsPluginDataTranslationSpec();
         translationSpec.init(protobufTranslationEngine);
 
-        Filter partitionFilter = new TestFilter(0);
-        Labeler partitionLabeler = new TestLabeler("Test");
-
-        Partition partition = Partition.builder()
-                .setFilter(partitionFilter)
-                .addLabeler(partitionLabeler)
-                .build();
-
         PartitionsPluginData expectedAppValue = PartitionsPluginData.builder()
-                .addPartition("testPartition", partition)
+                .setRunContinuitySupport(true)
                 .build();
 
         PartitionsPluginDataInput inputValue = translationSpec.convertAppObject(expectedAppValue);
@@ -62,6 +49,17 @@ public class AT_PartitionsPluginDataTranslationSpec {
         PartitionsPluginData actualAppValue = translationSpec.convertInputObject(inputValue);
 
         assertEquals(expectedAppValue, actualAppValue);
+        assertEquals(expectedAppValue.toString(), actualAppValue.toString());
+
+        expectedAppValue = PartitionsPluginData.builder()
+                .setRunContinuitySupport(false)
+                .build();
+
+        inputValue = translationSpec.convertAppObject(expectedAppValue);
+        actualAppValue = translationSpec.convertInputObject(inputValue);
+
+        assertEquals(expectedAppValue, actualAppValue);
+        assertEquals(expectedAppValue.toString(), actualAppValue.toString());
     }
 
     @Test

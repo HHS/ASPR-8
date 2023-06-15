@@ -7,17 +7,12 @@ import java.nio.file.Path;
 import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.partitions.input.PartitionsPluginDataInput;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.partitions.testsupport.TestFilter;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.partitions.testsupport.TestLabeler;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.partitions.testsupport.translationSpecs.TestFilterTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.partitions.testsupport.translationSpecs.TestLabelerTranslationSpec;
 import gov.hhs.aspr.translation.core.TranslationController;
 import gov.hhs.aspr.translation.core.testsupport.TestResourceHelper;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
 import plugins.partitions.datamanagers.PartitionsPluginData;
-import plugins.partitions.support.Labeler;
-import plugins.partitions.support.Partition;
-import plugins.partitions.support.filters.Filter;
 import util.annotations.UnitTestForCoverage;
 
 public class IT_PartitionsTranslator {
@@ -40,16 +35,8 @@ public class IT_PartitionsTranslator {
                 .addOutputFilePath(filePath.resolve(fileName), PartitionsPluginData.class)
                 .build();
 
-        Filter partitionFilter = new TestFilter(0);
-        Labeler partitionLabeler = new TestLabeler("Test");
-
-        Partition partition = Partition.builder()
-                .setFilter(partitionFilter)
-                .addLabeler(partitionLabeler)
-                .build();
-
         PartitionsPluginData expectedPluginData = PartitionsPluginData.builder()
-                .addPartition("testPartition", partition)
+                .setRunContinuitySupport(true)
                 .build();
 
         translatorController.writeOutput(expectedPluginData);
@@ -59,5 +46,6 @@ public class IT_PartitionsTranslator {
         PartitionsPluginData actualPluginData = translatorController.getFirstObject(PartitionsPluginData.class);
 
         assertEquals(expectedPluginData, actualPluginData);
+        assertEquals(expectedPluginData.toString(), actualPluginData.toString());
     }
 }
