@@ -4,34 +4,41 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import net.jcip.annotations.ThreadSafe;
-import nucleus.PluginData;
-import nucleus.PluginDataBuilder;
 import plugins.personproperties.support.PersonPropertyId;
+import plugins.reports.support.PeriodicReportPluginData;
 import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportPeriod;
 
 @ThreadSafe
-public class PersonPropertyInteractionReportPluginData implements PluginData {
+public class PersonPropertyInteractionReportPluginData extends PeriodicReportPluginData {
 
-	private static class Data {
-		private ReportLabel reportLabel;
-		private ReportPeriod reportPeriod;
+	private final Data data;
+
+	private PersonPropertyInteractionReportPluginData(Data data) {
+		super(data);
+		this.data = data;
+	}
+
+	private static class Data extends PeriodicReportPluginData.Data {
 		private final Set<PersonPropertyId> personPropertyIds = new LinkedHashSet<>();
-		public Data() {}
+
+		public Data() {
+			super();
+		}
+
 		public Data(Data data) {
-			reportLabel = data.reportLabel;
-			reportPeriod = data.reportPeriod;
+			super(data);
 			personPropertyIds.addAll(data.personPropertyIds);
 		}
+
 		@Override
 		public int hashCode() {
 			final int prime = 31;
-			int result = 1;
+			int result = super.hashCode();
 			result = prime * result + ((personPropertyIds == null) ? 0 : personPropertyIds.hashCode());
-			result = prime * result + ((reportLabel == null) ? 0 : reportLabel.hashCode());
-			result = prime * result + ((reportPeriod == null) ? 0 : reportPeriod.hashCode());
 			return result;
 		}
+
 		@Override
 		public boolean equals(Object obj) {
 			if (this == obj) {
@@ -48,48 +55,31 @@ public class PersonPropertyInteractionReportPluginData implements PluginData {
 			} else if (!personPropertyIds.equals(other.personPropertyIds)) {
 				return false;
 			}
-			if (reportLabel == null) {
-				if (other.reportLabel != null) {
-					return false;
-				}
-			} else if (!reportLabel.equals(other.reportLabel)) {
-				return false;
-			}
-			if (reportPeriod != other.reportPeriod) {
-				return false;
-			}
-			return true;
+			return super.equals(other);
 		}
+
 		@Override
 		public String toString() {
 			StringBuilder builder = new StringBuilder();
-			builder.append("Data [reportLabel=");
-			builder.append(reportLabel);
-			builder.append(", reportPeriod=");
-			builder.append(reportPeriod);
+			builder.append(super.toString());
 			builder.append(", personPropertyIds=");
 			builder.append(personPropertyIds);
 			builder.append("]");
 			return builder.toString();
 		}
-		
-		
 	}
 
-	public static Builder builder() {
-		return new Builder(new Data());
-	}
-
-	public static class Builder implements PluginDataBuilder {
+	public static class Builder extends PeriodicReportPluginData.Builder {
 		private Data data;
 
 		private Builder(Data data) {
+			super(data);
 			this.data = data;
 		}
 
 		@Override
 		public PersonPropertyInteractionReportPluginData build() {
-			return new PersonPropertyInteractionReportPluginData(new Data(data));
+			return new PersonPropertyInteractionReportPluginData(data);
 		}
 
 		public Builder addPersonPropertyId(PersonPropertyId personPropertyId) {
@@ -105,38 +95,27 @@ public class PersonPropertyInteractionReportPluginData implements PluginData {
 		}
 
 		public Builder setReportLabel(ReportLabel reportLabel) {
-			data.reportLabel = reportLabel;
+			super.setReportLabel(reportLabel);
 			return this;
 		}
 
 		public Builder setReportPeriod(ReportPeriod reportPeriod) {
-			data.reportPeriod = reportPeriod;
+			super.setReportPeriod(reportPeriod);
 			return this;
 		}
-
 	}
 
-	private final Data data;
-
-	private PersonPropertyInteractionReportPluginData(Data data) {
-		this.data = data;
-	}
-
-	public ReportLabel getReportLabel() {
-		return data.reportLabel;
-	}
-
-	public ReportPeriod getReportPeriod() {
-		return data.reportPeriod;
-	}
-
-	public Set<PersonPropertyId> getPersonPropertyIds() {
-		return new LinkedHashSet<>( data.personPropertyIds);
+	public static Builder builder() {
+		return new Builder(new Data());
 	}
 
 	@Override
-	public PluginDataBuilder getCloneBuilder() {
+	public Builder getCloneBuilder() {
 		return new Builder(new Data(data));
+	}
+
+	public Set<PersonPropertyId> getPersonPropertyIds() {
+		return new LinkedHashSet<>(data.personPropertyIds);
 	}
 
 	@Override
@@ -174,8 +153,4 @@ public class PersonPropertyInteractionReportPluginData implements PluginData {
 		builder2.append("]");
 		return builder2.toString();
 	}
-
-	
-	
-	
 }

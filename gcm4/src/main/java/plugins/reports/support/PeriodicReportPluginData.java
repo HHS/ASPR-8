@@ -9,7 +9,7 @@ public abstract class PeriodicReportPluginData implements PluginData {
     protected final Data data;
 
     protected PeriodicReportPluginData(Data data) {
-        validateBaseData();
+        validateBaseData(data);
         this.data = data;
     }
 
@@ -116,7 +116,7 @@ public abstract class PeriodicReportPluginData implements PluginData {
         }
     }
 
-    protected final void validateBaseData() {
+    protected final void validateBaseData(Data data) {
         if (data.reportLabel == null) {
             throw new ContractException(ReportError.NULL_REPORT_LABEL);
         }

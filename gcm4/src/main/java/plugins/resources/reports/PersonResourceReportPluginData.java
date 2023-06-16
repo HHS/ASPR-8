@@ -4,8 +4,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import net.jcip.annotations.ThreadSafe;
-import nucleus.PluginData;
-import nucleus.PluginDataBuilder;
+import plugins.reports.support.PeriodicReportPluginData;
 import plugins.reports.support.ReportError;
 import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportPeriod;
@@ -17,42 +16,41 @@ import util.errors.ContractException;
  * A PluginData class supporting PersonResourceReport construction.
  */
 @ThreadSafe
-public final class PersonResourceReportPluginData implements PluginData {
+public final class PersonResourceReportPluginData extends PeriodicReportPluginData {
+
+	private final Data data;
+
+	private PersonResourceReportPluginData(Data data) {
+		super(data);
+		this.data = data;
+	}
 
 	/*
 	 * Data class for collecting the inputs to the report
 	 */
-	private static class Data {
-		private ReportLabel reportLabel;
-		private ReportPeriod reportPeriod;		
-		
+	private static class Data extends PeriodicReportPluginData.Data {
 		private Set<ResourceId> includedResourceIds = new LinkedHashSet<>();
 		private Set<ResourceId> excludedResourceIds = new LinkedHashSet<>();
 		private boolean defaultInclusionPolicy = true;
 
-		private boolean locked;
-
 		private Data() {
+			super();
 		}
 
 		private Data(Data data) {
-			reportLabel = data.reportLabel;
-			reportPeriod = data.reportPeriod;
+			super(data);
 			includedResourceIds.addAll(data.includedResourceIds);
 			excludedResourceIds.addAll(data.excludedResourceIds);
 			defaultInclusionPolicy = data.defaultInclusionPolicy;
-			locked = data.locked;
 		}
 
 		@Override
 		public int hashCode() {
 			final int prime = 31;
-			int result = 1;
+			int result = super.hashCode();
 			result = prime * result + (defaultInclusionPolicy ? 1231 : 1237);
 			result = prime * result + ((excludedResourceIds == null) ? 0 : excludedResourceIds.hashCode());
 			result = prime * result + ((includedResourceIds == null) ? 0 : includedResourceIds.hashCode());
-			result = prime * result + ((reportLabel == null) ? 0 : reportLabel.hashCode());
-			result = prime * result + ((reportPeriod == null) ? 0 : reportPeriod.hashCode());
 			return result;
 		}
 
@@ -82,47 +80,23 @@ public final class PersonResourceReportPluginData implements PluginData {
 			} else if (!includedResourceIds.equals(other.includedResourceIds)) {
 				return false;
 			}
-			if (reportLabel == null) {
-				if (other.reportLabel != null) {
-					return false;
-				}
-			} else if (!reportLabel.equals(other.reportLabel)) {
-				return false;
-			}			
-			if (reportPeriod != other.reportPeriod) {
-				return false;
-			}			
-			return true;
+
+			return super.equals(other);
 		}
 
 		@Override
 		public String toString() {
 			StringBuilder builder = new StringBuilder();
-			builder.append("Data [reportLabel=");
-			builder.append(reportLabel);
-			builder.append(", reportPeriod=");
-			builder.append(reportPeriod);
+			builder.append(super.toString());
 			builder.append(", includedResourceIds=");
 			builder.append(includedResourceIds);
 			builder.append(", excludedResourceIds=");
 			builder.append(excludedResourceIds);
 			builder.append(", defaultInclusionPolicy=");
 			builder.append(defaultInclusionPolicy);
-			builder.append(", locked=");
-			builder.append(locked);
 			builder.append("]");
 			return builder.toString();
 		}
-		
-		
-		
-	}
-
-	/**
-	 * Returns a new instance of the builder class
-	 */
-	public static Builder builder() {
-		return new Builder(new Data());
 	}
 
 	/**
@@ -130,55 +104,28 @@ public final class PersonResourceReportPluginData implements PluginData {
 	 * 
 	 *
 	 */
-	public final static class Builder implements PluginDataBuilder {
+	public final static class Builder extends PeriodicReportPluginData.Builder {
+		private Data data;
+
 		private Builder(Data data) {
+			super(data);
 			this.data = data;
 		}
-
-		private void ensureDataMutability() {
-			if (data.locked) {
-				data = new Data(data);
-				data.locked = false;
-			}
-		}
-
-		private void ensureImmutability() {
-			if (!data.locked) {
-				data.locked = true;
-			}
-		}
-
-		private void validateData() {
-			if (data.reportLabel == null) {
-				throw new ContractException(ReportError.NULL_REPORT_LABEL);
-			}
-			if (data.reportPeriod == null) {
-				throw new ContractException(ReportError.NULL_REPORT_PERIOD);
-			}
-		}
-
-		private Data data;
 
 		/**
 		 * Returns a PersonPropertyReportPluginData created from the collected
 		 * inputs
 		 * 
 		 * @throws ContractException
-		 *             <li>{@linkplain ReportError#NULL_REPORT_LABEL} if the
-		 *             report label is not assigned</li>
-		 *             <li>{@linkplain ReportError#NULL_REPORT_PERIOD} if the
-		 *             report period is not assigned</li>
-		 * 
-		 * 
+		 *                           <li>{@linkplain ReportError#NULL_REPORT_LABEL} if
+		 *                           the
+		 *                           report label is not assigned</li>
+		 *                           <li>{@linkplain ReportError#NULL_REPORT_PERIOD} if
+		 *                           the
+		 *                           report period is not assigned</li>
 		 */
 		public PersonResourceReportPluginData build() {
-
-			if (!data.locked) {
-				validateData();
-			}
-			ensureImmutability();
 			return new PersonResourceReportPluginData(data);
-
 		}
 
 		/**
@@ -187,22 +134,19 @@ public final class PersonResourceReportPluginData implements PluginData {
 		 * explicitly included or excluded. Defaulted to true.
 		 */
 		public Builder setDefaultInclusion(boolean include) {
-			ensureDataMutability();
 			data.defaultInclusionPolicy = include;
 			return this;
 		}
-		
-		
 
 		/**
 		 * Selects the given resource id to be included in the report.
 		 * 
 		 * @throws ContractException
-		 *             <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if the
-		 *             resource id is null</li>
+		 *                           <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if
+		 *                           the
+		 *                           resource id is null</li>
 		 */
 		public Builder includeResource(ResourceId resourceId) {
-			ensureDataMutability();
 			if (resourceId == null) {
 				throw new ContractException(ResourceError.NULL_RESOURCE_ID);
 			}
@@ -215,11 +159,11 @@ public final class PersonResourceReportPluginData implements PluginData {
 		 * Selects the given resource id to be excluded from the report
 		 * 
 		 * @throws ContractException
-		 *             <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if the
-		 *             resource id is null</li>
+		 *                           <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if
+		 *                           the
+		 *                           resource id is null</li>
 		 */
 		public Builder excludeResource(ResourceId resourceId) {
-			ensureDataMutability();
 			if (resourceId == null) {
 				throw new ContractException(ResourceError.NULL_RESOURCE_ID);
 			}
@@ -232,15 +176,12 @@ public final class PersonResourceReportPluginData implements PluginData {
 		 * Sets the report label
 		 * 
 		 * @throws ContractException
-		 *             <li>{@linkplain ReportError#NULL_REPORT_LABEL} if the
-		 *             report label is null</li>
+		 *                           <li>{@linkplain ReportError#NULL_REPORT_LABEL} if
+		 *                           the
+		 *                           report label is null</li>
 		 */
 		public Builder setReportLabel(ReportLabel reportLabel) {
-			ensureDataMutability();
-			if (reportLabel == null) {
-				throw new ContractException(ReportError.NULL_REPORT_LABEL);
-			}
-			data.reportLabel = reportLabel;
+			super.setReportLabel(reportLabel);
 			return this;
 		}
 
@@ -248,37 +189,26 @@ public final class PersonResourceReportPluginData implements PluginData {
 		 * Sets the report period id
 		 * 
 		 * @throws ContractException
-		 *             <li>{@linkplain ReportError#NULL_REPORT_PERIOD} if the
-		 *             report period is null</li>
+		 *                           <li>{@linkplain ReportError#NULL_REPORT_PERIOD} if
+		 *                           the
+		 *                           report period is null</li>
 		 */
 		public Builder setReportPeriod(ReportPeriod reportPeriod) {
-			ensureDataMutability();
-			if (reportPeriod == null) {
-				throw new ContractException(ReportError.NULL_REPORT_PERIOD);
-			}
-			data.reportPeriod = reportPeriod;
+			super.setReportPeriod(reportPeriod);
 			return this;
 		}
-
 	}
 
-	private final Data data;
-
-	private PersonResourceReportPluginData(Data data) {
-		this.data = data;
+	/**
+	 * Returns a new instance of the builder class
+	 */
+	public static Builder builder() {
+		return new Builder(new Data());
 	}
 
 	@Override
 	public Builder getCloneBuilder() {
-		return new Builder(data);
-	}
-
-	public ReportLabel getReportLabel() {
-		return data.reportLabel;
-	}
-
-	public ReportPeriod getReportPeriod() {
-		return data.reportPeriod;
+		return new Builder(new Data(data));
 	}
 
 	public Set<ResourceId> getIncludedResourceIds() {
@@ -328,7 +258,4 @@ public final class PersonResourceReportPluginData implements PluginData {
 		builder2.append("]");
 		return builder2.toString();
 	}
-	
-	
-
 }
