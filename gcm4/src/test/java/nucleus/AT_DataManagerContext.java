@@ -608,6 +608,33 @@ public class AT_DataManagerContext {
 
 	}
 
+	@Test
+	@UnitTestMethod(target = DataManagerContext.class, name = "stateRecordingIsScheduled", args = {})
+	public void testStateRecordingIsScheduled() {
+		Set<Boolean> stateRecordingList = new LinkedHashSet<>();
+
+		stateRecordingList.add(false);
+		stateRecordingList.add(false);
+		stateRecordingList.add(true);
+		stateRecordingList.add(false);
+		stateRecordingList.add(true);
+		stateRecordingList.add(true);
+
+		for (Boolean stateRecording : stateRecordingList) {
+			TestPluginData testPluginData = TestPluginData
+					.builder()
+					.addTestDataManagerPlan("dm", new TestDataManagerPlan(0, (context) -> {
+						assertEquals(stateRecording, context.stateRecordingIsScheduled());
+					}))
+					.addTestDataManager("dm", () -> new TestDataManager1())
+					.build();
+
+			Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+
+			TestSimulation.builder().setSimulationHaltTime(1).setProduceSimulationStateOnHalt(stateRecording).addPlugin(testPlugin).build().execute();
+		}
+	}
+
 	private static class TestEvent1 implements Event {
 
 	}

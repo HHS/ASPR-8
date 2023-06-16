@@ -762,6 +762,32 @@ public class AT_ActorContext {
 	}
 
 	@Test
+	@UnitTestMethod(target = ActorContext.class, name = "stateRecordingIsScheduled", args = {})
+	public void testStateRecordingIsScheduled() {
+		Set<Boolean> stateRecordingList = new LinkedHashSet<>();
+
+		stateRecordingList.add(false);
+		stateRecordingList.add(false);
+		stateRecordingList.add(true);
+		stateRecordingList.add(false);
+		stateRecordingList.add(true);
+		stateRecordingList.add(true);
+
+		for (Boolean stateRecording : stateRecordingList) {
+			TestPluginData testPluginData = TestPluginData
+					.builder()
+					.addTestActorPlan("actor 1", new TestActorPlan(0, (context) -> {
+						assertEquals(stateRecording, context.stateRecordingIsScheduled());
+					}))
+					.build();
+
+			Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+
+			TestSimulation.builder().setSimulationHaltTime(1).setProduceSimulationStateOnHalt(stateRecording).addPlugin(testPlugin).build().execute();
+		}
+	}
+
+	@Test
 	@UnitTestMethod(target = ActorContext.class, name = "subscribeToSimulationClose", args = { Consumer.class })
 	public void testSubscribeToSimulationClose() {
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();

@@ -672,6 +672,34 @@ public class AT_ReportContext {
 	}
 
 	@Test
+	@UnitTestMethod(target = ReportContext.class, name = "stateRecordingIsScheduled", args = {})
+	public void testStateRecordingIsScheduled() {
+		Set<Boolean> stateRecordingList = new LinkedHashSet<>();
+
+		stateRecordingList.add(false);
+		stateRecordingList.add(false);
+		stateRecordingList.add(true);
+		stateRecordingList.add(false);
+		stateRecordingList.add(true);
+		stateRecordingList.add(true);
+
+		for (Boolean stateRecording : stateRecordingList) {
+			TestPluginData testPluginData = TestPluginData
+					.builder()
+					.addTestReportPlan("actor 1", new TestReportPlan(0, (context) -> {
+						assertEquals(stateRecording, context.stateRecordingIsScheduled());
+					}))
+					.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
+					}))
+					.build();
+
+			Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+
+			TestSimulation.builder().setSimulationHaltTime(2).setProduceSimulationStateOnHalt(stateRecording).addPlugin(testPlugin).build().execute();
+		}
+	}
+
+	@Test
 	@UnitTestMethod(target = ReportContext.class, name = "unsubscribe", args = { Class.class })
 	public void testUnsubscribe() {
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
