@@ -496,6 +496,32 @@ public class AT_ActorContext {
 	}
 
 	@Test
+	@UnitTestMethod(target = ActorContext.class, name = "getScheduledSimulationHaltTime", args = {})
+	public void testGetScheduledSimulationHaltTime() {
+		Set<Double> stopTimes = new LinkedHashSet<>();
+
+		stopTimes.add(4.6);
+		stopTimes.add(13.0);
+		stopTimes.add(554.3);
+		stopTimes.add(7.9);
+		stopTimes.add(400.2);
+		stopTimes.add(3000.1);
+
+		for (Double stopTime : stopTimes) {
+			TestPluginData testPluginData = TestPluginData
+					.builder()
+					.addTestActorPlan("actor 1", new TestActorPlan(0, (context) -> {
+						assertEquals(stopTime, context.getScheduledSimulationHaltTime());
+					}))
+					.build();
+
+			Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+
+			TestSimulation.builder().setSimulationHaltTime(stopTime).addPlugin(testPlugin).build().execute();
+		}
+	}
+
+	@Test
 	@UnitTestMethod(target = ActorContext.class, name = "getTime", args = {})
 	public void testGetTime() {
 
@@ -964,31 +990,5 @@ public class AT_ActorContext {
 		// show that the expected and actual event records are the same
 		assertEquals(expectedEvents, recievedEvents);
 
-	}
-
-	@Test
-	@UnitTestMethod(target = ActorContext.class, name = "getScheduledSimulationHaltTime", args = {})
-	public void testGetScheduledSimulationHaltTime() {
-		Set<Double> stopTimes = new LinkedHashSet<>();
-
-		stopTimes.add(4.6);
-		stopTimes.add(13.0);
-		stopTimes.add(554.3);
-		stopTimes.add(7.9);
-		stopTimes.add(400.2);
-		stopTimes.add(3000.1);
-
-		for (Double stopTime : stopTimes) {
-			TestPluginData testPluginData = TestPluginData
-					.builder()
-					.addTestActorPlan("actor 1", new TestActorPlan(0, (context) -> {
-						assertEquals(stopTime, context.getScheduledSimulationHaltTime());
-					}))
-					.build();
-
-			Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
-
-			TestSimulation.builder().setSimulationHaltTime(stopTime).addPlugin(testPlugin).build().execute();
-		}
 	}
 }

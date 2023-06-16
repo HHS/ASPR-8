@@ -482,6 +482,33 @@ public class AT_DataManagerContext {
 	}
 
 	@Test
+	@UnitTestMethod(target = DataManagerContext.class, name = "getScheduledSimulationHaltTime", args = {})
+	public void testGetScheduledSimulationHaltTime() {
+		Set<Double> stopTimes = new LinkedHashSet<>();
+
+		stopTimes.add(4.6);
+		stopTimes.add(13.0);
+		stopTimes.add(554.3);
+		stopTimes.add(7.9);
+		stopTimes.add(400.2);
+		stopTimes.add(3000.1);
+
+		for (Double stopTime : stopTimes) {
+			TestPluginData testPluginData = TestPluginData
+					.builder()
+					.addTestDataManagerPlan("dm", new TestDataManagerPlan(0, (context) -> {
+						assertEquals(stopTime, context.getScheduledSimulationHaltTime());
+					}))
+					.addTestDataManager("dm", () -> new TestDataManager1())
+					.build();
+
+			Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+
+			TestSimulation.builder().setSimulationHaltTime(stopTime).addPlugin(testPlugin).build().execute();
+		}
+	}
+
+	@Test
 	@UnitTestMethod(target = DataManagerContext.class, name = "releaseObservationEvent", args = { Event.class })
 	public void testReleaseObservationEvent() {
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();

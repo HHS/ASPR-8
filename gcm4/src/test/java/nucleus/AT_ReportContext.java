@@ -245,12 +245,12 @@ public class AT_ReportContext {
 		// precondition test : if the plan is scheduled for the past
 		contractException = assertThrows(ContractException.class, () -> testConsumer((c) -> {
 			c.addPlan(Plan.builder(ReportContext.class)//
-			.setActive(true)//
-			.setCallbackConsumer(null)//
-			.setKey(null)//
-			.setPlanData(null)//
-			.setTime(-1)//
-			.build());
+					.setActive(true)//
+					.setCallbackConsumer(null)//
+					.setKey(null)//
+					.setPlanData(null)//
+					.setTime(-1)//
+					.build());
 		}));
 		assertEquals(NucleusError.PAST_PLANNING_TIME, contractException.getErrorType());
 
@@ -425,6 +425,34 @@ public class AT_ReportContext {
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
 		TestSimulation.builder().addPlugin(testPlugin).build().execute();
+	}
+
+	@Test
+	@UnitTestMethod(target = ReportContext.class, name = "getScheduledSimulationHaltTime", args = {})
+	public void testGetScheduledSimulationHaltTime() {
+		Set<Double> stopTimes = new LinkedHashSet<>();
+
+		stopTimes.add(4.6);
+		stopTimes.add(13.0);
+		stopTimes.add(554.3);
+		stopTimes.add(7.9);
+		stopTimes.add(400.2);
+		stopTimes.add(3000.1);
+
+		for (Double stopTime : stopTimes) {
+			TestPluginData testPluginData = TestPluginData
+					.builder()
+					.addTestReportPlan("report plan", new TestReportPlan(0, (context) -> {
+						assertEquals(stopTime, context.getScheduledSimulationHaltTime());
+					}))
+					.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
+					}))
+					.build();
+
+			Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+
+			TestSimulation.builder().setSimulationHaltTime(stopTime).addPlugin(testPlugin).build().execute();
+		}
 	}
 
 	@Test
