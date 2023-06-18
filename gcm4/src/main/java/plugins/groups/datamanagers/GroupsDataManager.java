@@ -153,7 +153,7 @@ public final class GroupsDataManager extends DataManager {
 	 * Constructs this person group data manager
 	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain NucleusError#NULL_CONTEXT}</li>
+	 *                           <li>{@linkplain NucleusError#NULL_CONTEXT}</li>
 	 */
 	public GroupsDataManager(GroupsPluginData groupsPluginData) {
 		if (groupsPluginData == null) {
@@ -182,10 +182,10 @@ public final class GroupsDataManager extends DataManager {
 	 * <ul>
 	 * 
 	 * {@linkplain PersonRemovalEvent} Removes the person from all groups by
-	 * scheduling the removal for the current time. This allows references and
-	 * group memberships to remain long enough for resolvers, agents and reports
-	 * to have final reference to the person while still associated with any
-	 * relevant groups.
+	 * scheduling the removal for the current time. This allows references and group
+	 * memberships to remain long enough for resolvers, agents and reports to have
+	 * final reference to the person while still associated with any relevant
+	 * groups.
 	 *
 	 * 
 	 * <BR>
@@ -218,11 +218,15 @@ public final class GroupsDataManager extends DataManager {
 
 		dataManagerContext.subscribe(GroupAdditionMutationEvent.class, this::handleGroupAdditionMutationEvent);
 		dataManagerContext.subscribe(GroupTypeAdditionMutationEvent.class, this::handleGroupTypeAdditionMutationEvent);
-		dataManagerContext.subscribe(GroupMembershipAdditionMutationEvent.class, this::handleGroupMembershipAdditionMutationEvent);
-		dataManagerContext.subscribe(GroupPropertyDefinitionMutationEvent.class, this::handleGroupPropertyDefinitionMutationEvent);
+		dataManagerContext.subscribe(GroupMembershipAdditionMutationEvent.class,
+				this::handleGroupMembershipAdditionMutationEvent);
+		dataManagerContext.subscribe(GroupPropertyDefinitionMutationEvent.class,
+				this::handleGroupPropertyDefinitionMutationEvent);
 		dataManagerContext.subscribe(GroupRemovalMutationEvent.class, this::handleGroupRemovalMutationEvent);
-		dataManagerContext.subscribe(GroupMembershipRemovalMutationEvent.class, this::handleGroupMembershipRemovalMutationEvent);
-		dataManagerContext.subscribe(GroupPropertyUpdateMutationEvent.class, this::handleGroupPropertyUpdateMutationEvent);
+		dataManagerContext.subscribe(GroupMembershipRemovalMutationEvent.class,
+				this::handleGroupMembershipRemovalMutationEvent);
+		dataManagerContext.subscribe(GroupPropertyUpdateMutationEvent.class,
+				this::handleGroupPropertyUpdateMutationEvent);
 
 		loadGroupTypes();
 
@@ -267,21 +271,37 @@ public final class GroupsDataManager extends DataManager {
 			}
 		}
 
+		
+		
+		//transferring group memberships 
+		
+		List<PersonId> people = peopleDataManager.getPeople();
+		for (final PersonId personId : people) {
+			List<GroupId> list = peopleToGroupsMap.getValue(personId.getValue());
+			if (list != null) {
+				for(GroupId groupId : list) {
+				builder.addGroupToPerson(groupId, personId);
+				}
+			}
+		}
+
 		for (final GroupTypeId groupTypeId : typesToIndexesMap.keySet()) {
 			Integer typeIndex = typesToIndexesMap.get(groupTypeId);
-			final List<GroupId> groups = typesToGroupsMap.getValue(typeIndex);
-			if (groups != null) {
-				for (GroupId groupId : groups) {
-					List<PersonId> people = groupsToPeopleMap.getValue(groupId.getValue());
-					if (people != null) {
-						for (PersonId personId : people) {
-							builder.addPersonToGroup(groupId, personId);
+			List<GroupId> groupIds = typesToGroupsMap.getValue(typeIndex);
+			if (groupIds != null) {
+				for (GroupId groupId : groupIds) {
+					List<PersonId> list = groupsToPeopleMap.getValue(groupId.getValue());
+					if(list != null) {
+						for(PersonId personId : list) {
+							builder.addPersonToGroup(personId, groupId);
 						}
+						groupsToPeopleMap.setValue(groupId.getValue(), list);
 					}
 				}
 			}
 		}
 
+		//transferring group property values
 		for (final GroupTypeId groupTypeId : typesToIndexesMap.keySet()) {
 			Integer typeIndex = typesToIndexesMap.get(groupTypeId);
 			final List<GroupId> groups = typesToGroupsMap.getValue(typeIndex);
@@ -289,7 +309,8 @@ public final class GroupsDataManager extends DataManager {
 				Map<GroupPropertyId, IndexedPropertyManager> map = groupPropertyManagerMap.get(groupTypeId);
 				for (GroupPropertyId groupPropertyId : map.keySet()) {
 					IndexedPropertyManager indexedPropertyManager = map.get(groupPropertyId);
-					PropertyDefinition propertyDefinition = groupPropertyDefinitions.get(groupTypeId).get(groupPropertyId);
+					PropertyDefinition propertyDefinition = groupPropertyDefinitions.get(groupTypeId)
+							.get(groupPropertyId);
 					Optional<Object> optional = propertyDefinition.getDefaultValue();
 
 					if (optional.isPresent()) {
@@ -317,9 +338,11 @@ public final class GroupsDataManager extends DataManager {
 		for (final GroupTypeId groupTypeId : groupsPluginData.getGroupTypeIds()) {
 			final Set<GroupPropertyId> propertyIds = groupsPluginData.getGroupPropertyIds(groupTypeId);
 			for (final GroupPropertyId groupPropertyId : propertyIds) {
-				final PropertyDefinition propertyDefinition = groupsPluginData.getGroupPropertyDefinition(groupTypeId, groupPropertyId);
+				final PropertyDefinition propertyDefinition = groupsPluginData.getGroupPropertyDefinition(groupTypeId,
+						groupPropertyId);
 				if (propertyDefinition.getDefaultValue().isEmpty()) {
-					nonDefaultBearingPropertyIds.get(groupTypeId).put(groupPropertyId, nonDefaultBearingPropertyIds.size());
+					nonDefaultBearingPropertyIds.get(groupTypeId).put(groupPropertyId,
+							nonDefaultBearingPropertyIds.size());
 				}
 
 				Map<GroupPropertyId, PropertyDefinition> map = groupPropertyDefinitions.get(groupTypeId);
@@ -354,16 +377,17 @@ public final class GroupsDataManager extends DataManager {
 	 * Adds a group type id.
 	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain GroupError#NULL_GROUP_TYPE_ID} if the group
-	 *             type id is null</li>
-	 *             <li>{@linkplain GroupError#DUPLICATE_GROUP_TYPE} if the group
-	 *             type id is already present</li>
+	 *                           <li>{@linkplain GroupError#NULL_GROUP_TYPE_ID} if
+	 *                           the group type id is null</li>
+	 *                           <li>{@linkplain GroupError#DUPLICATE_GROUP_TYPE} if
+	 *                           the group type id is already present</li>
 	 */
 	public void addGroupType(GroupTypeId groupTypeId) {
 		dataManagerContext.releaseMutationEvent(new GroupTypeAdditionMutationEvent(groupTypeId));
 	}
 
-	private void handleGroupTypeAdditionMutationEvent(DataManagerContext dataManagerContext, GroupTypeAdditionMutationEvent groupTypeAdditionMutationEvent) {
+	private void handleGroupTypeAdditionMutationEvent(DataManagerContext dataManagerContext,
+			GroupTypeAdditionMutationEvent groupTypeAdditionMutationEvent) {
 		GroupTypeId groupTypeId = groupTypeAdditionMutationEvent.groupTypeId();
 		validateGroupTypeIdIsUnknown(groupTypeId);
 		final int index = typesToIndexesMap.size();
@@ -424,7 +448,8 @@ public final class GroupsDataManager extends DataManager {
 		}
 	}
 
-	private static record GroupPropertyDefinitionMutationEvent(GroupPropertyDefinitionInitialization groupPropertyDefinitionInitialization) implements Event {
+	private static record GroupPropertyDefinitionMutationEvent(
+			GroupPropertyDefinitionInitialization groupPropertyDefinitionInitialization) implements Event {
 	}
 
 	/**
@@ -433,31 +458,36 @@ public final class GroupsDataManager extends DataManager {
 	 * @throws ContractException
 	 * 
 	 * 
-	 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_TYPE_ID} if the
-	 *             group type id is unknown</li>
+	 *                           <li>{@linkplain GroupError#UNKNOWN_GROUP_TYPE_ID}
+	 *                           if the group type id is unknown</li>
 	 *
-	 *             <li>{@linkplain PropertyError#DUPLICATE_PROPERTY_DEFINITION}
-	 *             if the group property id is already known</li>
+	 *                           <li>{@linkplain PropertyError#DUPLICATE_PROPERTY_DEFINITION}
+	 *                           if the group property id is already known</li>
 	 * 
-	 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_ID} if the
-	 *             groupPropertyDefinitionInitialization contains a property
-	 *             assignment for a group that does not exist.
+	 *                           <li>{@linkplain GroupError#UNKNOWN_GROUP_ID} if the
+	 *                           groupPropertyDefinitionInitialization contains a
+	 *                           property assignment for a group that does not
+	 *                           exist.
 	 * 
-	 *             <li>{@linkplain GroupError#INCORRECT_GROUP_TYPE_ID} if the
-	 *             groupPropertyDefinitionInitialization contains a property
-	 *             assignment for a group that is not of the correct group type.
+	 *                           <li>{@linkplain GroupError#INCORRECT_GROUP_TYPE_ID}
+	 *                           if the groupPropertyDefinitionInitialization
+	 *                           contains a property assignment for a group that is
+	 *                           not of the correct group type.
 	 * 
-	 *             <li>{@linkplain PropertyError#INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT}
-	 *             if the groupPropertyDefinitionInitialization does not contain
-	 *             property value assignments for every extant group when the
-	 *             property definition does not contain a default value
+	 *                           <li>{@linkplain PropertyError#INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT}
+	 *                           if the groupPropertyDefinitionInitialization does
+	 *                           not contain property value assignments for every
+	 *                           extant group when the property definition does not
+	 *                           contain a default value
 	 * 
 	 */
 	public void defineGroupProperty(GroupPropertyDefinitionInitialization groupPropertyDefinitionInitialization) {
-		dataManagerContext.releaseMutationEvent(new GroupPropertyDefinitionMutationEvent(groupPropertyDefinitionInitialization));
+		dataManagerContext
+				.releaseMutationEvent(new GroupPropertyDefinitionMutationEvent(groupPropertyDefinitionInitialization));
 	}
 
-	private void handleGroupPropertyDefinitionMutationEvent(DataManagerContext dataManagerContext, GroupPropertyDefinitionMutationEvent groupPropertyDefinitionMutationEvent) {
+	private void handleGroupPropertyDefinitionMutationEvent(DataManagerContext dataManagerContext,
+			GroupPropertyDefinitionMutationEvent groupPropertyDefinitionMutationEvent) {
 		GroupPropertyDefinitionInitialization groupPropertyDefinitionInitialization = groupPropertyDefinitionMutationEvent.groupPropertyDefinitionInitialization;
 		GroupTypeId groupTypeId = groupPropertyDefinitionInitialization.getGroupTypeId();
 		GroupPropertyId groupPropertyId = groupPropertyDefinitionInitialization.getPropertyId();
@@ -470,9 +500,9 @@ public final class GroupsDataManager extends DataManager {
 		int requiredGroupTypeIndex = typesToIndexesMap.get(groupTypeId);
 
 		/*
-		 * Validate the contained property value assignments. We do not have to
-		 * validate the values since they are guaranteed to be consistent with
-		 * the property definition by contract.
+		 * Validate the contained property value assignments. We do not have to validate
+		 * the values since they are guaranteed to be consistent with the property
+		 * definition by contract.
 		 */
 		for (Pair<GroupId, Object> pair : groupPropertyDefinitionInitialization.getPropertyValues()) {
 			GroupId groupId = pair.getFirst();
@@ -483,26 +513,26 @@ public final class GroupsDataManager extends DataManager {
 				throw new ContractException(GroupError.UNKNOWN_GROUP_ID, groupId);
 			}
 			if (groupTypeIndex != requiredGroupTypeIndex) {
-				throw new ContractException(GroupError.INCORRECT_GROUP_TYPE_ID, groupId + " is not of type " + groupTypeId);
+				throw new ContractException(GroupError.INCORRECT_GROUP_TYPE_ID,
+						groupId + " is not of type " + groupTypeId);
 			}
 		}
 		/*
-		 * Determine whether we will need to check that every group of the given
-		 * type has been assigned a value because the property definition does
-		 * not contain a default value.
+		 * Determine whether we will need to check that every group of the given type
+		 * has been assigned a value because the property definition does not contain a
+		 * default value.
 		 */
 		boolean checkAllGroupsHaveValues = propertyDefinition.getDefaultValue().isEmpty();
 		if (checkAllGroupsHaveValues) {
 			/*
-			 * create a bit set for tracking which groups received a property
-			 * value
+			 * create a bit set for tracking which groups received a property value
 			 */
 			int idLimit = masterGroupId;
 			BitSet coverageSet = new BitSet(idLimit);
 
 			/*
-			 * record the property values and update the bit set that is
-			 * tracking assignment coverate
+			 * record the property values and update the bit set that is tracking assignment
+			 * coverate
 			 */
 			for (Pair<GroupId, Object> pair : groupPropertyDefinitionInitialization.getPropertyValues()) {
 				GroupId groupId = pair.getFirst();
@@ -511,8 +541,7 @@ public final class GroupsDataManager extends DataManager {
 			}
 
 			/*
-			 * Show that all groups of the of group type did indeed get a value
-			 * assignment
+			 * Show that all groups of the of group type did indeed get a value assignment
 			 */
 			for (int i = 0; i < idLimit; i++) {
 				// only check groups having the correct type
@@ -534,8 +563,7 @@ public final class GroupsDataManager extends DataManager {
 		map.put(groupPropertyId, propertyDefinition);
 
 		/*
-		 * update internal tracking mechanisms for properties not having default
-		 * values
+		 * update internal tracking mechanisms for properties not having default values
 		 */
 		if (checkAllGroupsHaveValues) {
 			nonDefaultBearingPropertyIds.get(groupTypeId).put(groupPropertyId, nonDefaultBearingPropertyIds.size());
@@ -590,26 +618,38 @@ public final class GroupsDataManager extends DataManager {
 		List<PersonId> people = peopleDataManager.getPeople();
 		for (final PersonId personId : people) {
 			List<GroupId> groupsForPerson = groupsPluginData.getGroupsForPerson(personId);
-			for (final GroupId groupId : groupsForPerson) {
-
-				List<PersonId> peopleForGroup = groupsToPeopleMap.getValue(groupId.getValue());
-				if (peopleForGroup == null) {
-					peopleForGroup = new ArrayList<>();
-					groupsToPeopleMap.setValue(groupId.getValue(), peopleForGroup);
+			if (!groupsForPerson.isEmpty()) {
+				List<GroupId> list = peopleToGroupsMap.getValue(personId.getValue());
+				if (list == null) {
+					list = new ArrayList<>();
+					peopleToGroupsMap.setValue(personId.getValue(), list);
 				}
-				peopleForGroup.add(personId);
-
-				List<GroupId> groups = peopleToGroupsMap.getValue(personId.getValue());
-				if (groups == null) {
-					groups = new ArrayList<>(1);
-					peopleToGroupsMap.setValue(personId.getValue(), groups);
-				}
-				groups.add(groupId);
+				list.addAll(groupsForPerson);
 			}
 		}
+
+		for (final GroupTypeId groupTypeId : typesToIndexesMap.keySet()) {
+			Integer typeIndex = typesToIndexesMap.get(groupTypeId);
+			List<GroupId> groupIds = typesToGroupsMap.getValue(typeIndex);
+			if (groupIds != null) {
+				for (GroupId groupId : groupIds) {
+					List<PersonId> peopleForGroup = groupsPluginData.getPeopleForGroup(groupId);
+					if (!peopleForGroup.isEmpty()) {
+						List<PersonId> list = groupsToPeopleMap.getValue(groupId.getValue());
+						if(list == null) {
+							list = new ArrayList<>();
+							groupsToPeopleMap.setValue(groupId.getValue(), list);
+						}
+						list.addAll(peopleForGroup);
+					}
+				}
+			}
+		}
+
 	}
 
 	private static record GroupMembershipAdditionMutationEvent(PersonId personId, GroupId groupId) implements Event {
+
 	}
 
 	/**
@@ -618,16 +658,16 @@ public final class GroupsDataManager extends DataManager {
 	 * 
 	 * @throws ContractException
 	 * 
-	 *             <li>{@link PersonError#NULL_PERSON_ID} if the person id is
-	 *             null</li>
-	 *             <li>{@link PersonError#UNKNOWN_PERSON_ID} if the person id is
-	 *             unknown</li>
-	 *             <li>{@link GroupError#NULL_GROUP_ID} if the group id is
-	 *             null</li>
-	 *             <li>{@link GroupError#UNKNOWN_GROUP_ID} if the group id is
-	 *             unknown</li>
-	 *             <li>{@link GroupError#DUPLICATE_GROUP_MEMBERSHIP} if the
-	 *             person is already a member of the group</li>
+	 *                           <li>{@link PersonError#NULL_PERSON_ID} if the
+	 *                           person id is null</li>
+	 *                           <li>{@link PersonError#UNKNOWN_PERSON_ID} if the
+	 *                           person id is unknown</li>
+	 *                           <li>{@link GroupError#NULL_GROUP_ID} if the group
+	 *                           id is null</li>
+	 *                           <li>{@link GroupError#UNKNOWN_GROUP_ID} if the
+	 *                           group id is unknown</li>
+	 *                           <li>{@link GroupError#DUPLICATE_GROUP_MEMBERSHIP}
+	 *                           if the person is already a member of the group</li>
 	 * 
 	 * 
 	 */
@@ -635,7 +675,8 @@ public final class GroupsDataManager extends DataManager {
 		dataManagerContext.releaseMutationEvent(new GroupMembershipAdditionMutationEvent(personId, groupId));
 	}
 
-	private void handleGroupMembershipAdditionMutationEvent(DataManagerContext dataManagerContext, GroupMembershipAdditionMutationEvent groupMembershipAdditionMutationEvent) {
+	private void handleGroupMembershipAdditionMutationEvent(DataManagerContext dataManagerContext,
+			GroupMembershipAdditionMutationEvent groupMembershipAdditionMutationEvent) {
 		PersonId personId = groupMembershipAdditionMutationEvent.personId();
 		GroupId groupId = groupMembershipAdditionMutationEvent.groupId();
 		validatePersonExists(personId);
@@ -668,7 +709,8 @@ public final class GroupsDataManager extends DataManager {
 	private void validatePersonNotInGroup(final PersonId personId, final GroupId groupId) {
 		final List<GroupId> groups = peopleToGroupsMap.getValue(personId.getValue());
 		if (groups != null && groups.contains(groupId)) {
-			throw new ContractException(GroupError.DUPLICATE_GROUP_MEMBERSHIP, "Person " + personId + " is already a member of group " + groupId);
+			throw new ContractException(GroupError.DUPLICATE_GROUP_MEMBERSHIP,
+					"Person " + personId + " is already a member of group " + groupId);
 		}
 	}
 
@@ -690,7 +732,8 @@ public final class GroupsDataManager extends DataManager {
 		}
 	}
 
-	private record GroupPropertyUpdateMutationEvent(GroupId groupId, GroupPropertyId groupPropertyId, Object groupPropertyValue) implements Event {
+	private record GroupPropertyUpdateMutationEvent(GroupId groupId, GroupPropertyId groupPropertyId,
+			Object groupPropertyValue) implements Event {
 	}
 
 	/**
@@ -698,29 +741,32 @@ public final class GroupsDataManager extends DataManager {
 	 * {@linkplain GroupPropertyUpdateEvent} event.
 	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain GroupError.NULL_GROUP_ID } if the group id is
-	 *             null</li>
-	 *             <li>{@linkplain GroupError.UNKNOWN_GROUP_ID } if the group id
-	 *             is unknown</li>
-	 *             <li>{@linkplain PropertyError.NULL_PROPERTY_ID } if the group
-	 *             property id is null</li>
-	 *             <li>{@linkplain PropertyError.UNKNOWN_PROPERTY_ID } if the
-	 *             group property id is unknown</li>
-	 *             <li>{@linkplain PropertyError.IMMUTABLE_VALUE } if the
-	 *             corresponding property definition defines the property as
-	 *             immutable</li>
-	 *             <li>{@linkplain PropertyError.NULL_PROPERTY_VALUE } if the
-	 *             property value is null</li>
-	 *             <li>{@linkplain PropertyError.INCOMPATIBLE_VALUE } if
-	 *             property value is incompatible with the corresponding
-	 *             property definition</li>
+	 *                           <li>{@linkplain GroupError.NULL_GROUP_ID } if the
+	 *                           group id is null</li>
+	 *                           <li>{@linkplain GroupError.UNKNOWN_GROUP_ID } if
+	 *                           the group id is unknown</li>
+	 *                           <li>{@linkplain PropertyError.NULL_PROPERTY_ID } if
+	 *                           the group property id is null</li>
+	 *                           <li>{@linkplain PropertyError.UNKNOWN_PROPERTY_ID }
+	 *                           if the group property id is unknown</li>
+	 *                           <li>{@linkplain PropertyError.IMMUTABLE_VALUE } if
+	 *                           the corresponding property definition defines the
+	 *                           property as immutable</li>
+	 *                           <li>{@linkplain PropertyError.NULL_PROPERTY_VALUE }
+	 *                           if the property value is null</li>
+	 *                           <li>{@linkplain PropertyError.INCOMPATIBLE_VALUE }
+	 *                           if property value is incompatible with the
+	 *                           corresponding property definition</li>
 	 * 
 	 */
-	public void setGroupPropertyValue(final GroupId groupId, final GroupPropertyId groupPropertyId, final Object groupPropertyValue) {
-		dataManagerContext.releaseMutationEvent(new GroupPropertyUpdateMutationEvent(groupId, groupPropertyId, groupPropertyValue));
+	public void setGroupPropertyValue(final GroupId groupId, final GroupPropertyId groupPropertyId,
+			final Object groupPropertyValue) {
+		dataManagerContext.releaseMutationEvent(
+				new GroupPropertyUpdateMutationEvent(groupId, groupPropertyId, groupPropertyValue));
 	}
 
-	private void handleGroupPropertyUpdateMutationEvent(DataManagerContext dataManagerContext, GroupPropertyUpdateMutationEvent groupPropertyUpdateMutationEvent) {
+	private void handleGroupPropertyUpdateMutationEvent(DataManagerContext dataManagerContext,
+			GroupPropertyUpdateMutationEvent groupPropertyUpdateMutationEvent) {
 		GroupId groupId = groupPropertyUpdateMutationEvent.groupId();
 		GroupPropertyId groupPropertyId = groupPropertyUpdateMutationEvent.groupPropertyId();
 		Object groupPropertyValue = groupPropertyUpdateMutationEvent.groupPropertyValue();
@@ -737,7 +783,8 @@ public final class GroupsDataManager extends DataManager {
 		if (dataManagerContext.subscribersExist(GroupPropertyUpdateEvent.class)) {
 			Object oldValue = indexedPropertyManager.getPropertyValue(groupId.getValue());
 			indexedPropertyManager.setPropertyValue(groupId.getValue(), groupPropertyValue);
-			dataManagerContext.releaseObservationEvent(new GroupPropertyUpdateEvent(groupId, groupPropertyId, oldValue, groupPropertyValue));
+			dataManagerContext.releaseObservationEvent(
+					new GroupPropertyUpdateEvent(groupId, groupPropertyId, oldValue, groupPropertyValue));
 		} else {
 			indexedPropertyManager.setPropertyValue(groupId.getValue(), groupPropertyValue);
 		}
@@ -765,35 +812,38 @@ public final class GroupsDataManager extends DataManager {
 		masterGroupId = groupsPluginData.getNextGroupIdValue();
 	}
 
-	private static record GroupAdditionMutationEvent(GroupId groupId, GroupConstructionInfo groupConstructionInfo) implements Event {
+	private static record GroupAdditionMutationEvent(GroupId groupId, GroupConstructionInfo groupConstructionInfo)
+			implements Event {
 	}
 
 	/**
-	 * Adds groups with any group property initialization that is contained in
-	 * the events's auxiliary data. Generates the corresponding
+	 * Adds groups with any group property initialization that is contained in the
+	 * events's auxiliary data. Generates the corresponding
 	 * {@linkplain GroupAdditionEvent} event. Returns the id of the first group
 	 * added.
 	 * 
 	 * 
 	 * @throws ContractException
 	 *
-	 *             <li>{@linkplain GroupError#NULL_GROUP_CONSTRUCTION_INFO} if
-	 *             the group construction info is null</li>
+	 *                           <li>{@linkplain GroupError#NULL_GROUP_CONSTRUCTION_INFO}
+	 *                           if the group construction info is null</li>
 	 *
-	 *             <li>{@link GroupError#NULL_GROUP_TYPE_ID} if the group type
-	 *             id contained in the group construction info is null</li>
+	 *                           <li>{@link GroupError#NULL_GROUP_TYPE_ID} if the
+	 *                           group type id contained in the group construction
+	 *                           info is null</li>
 	 * 
-	 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_TYPE_ID} if the
-	 *             group type id contained in the group construction info is
-	 *             unknown</li>
+	 *                           <li>{@linkplain GroupError#UNKNOWN_GROUP_TYPE_ID}
+	 *                           if the group type id contained in the group
+	 *                           construction info is unknown</li>
 	 * 
-	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if a group
-	 *             property id contained in the group construction info is
-	 *             unknown</li>
+	 *                           <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
+	 *                           if a group property id contained in the group
+	 *                           construction info is unknown</li>
 	 * 
-	 *             <li>{@linkplain PropertyError#INCOMPATIBLE_VALUE} if a group
-	 *             property value contained in the group construction info is
-	 *             incompatible with the corresponding property definition.</li>
+	 *                           <li>{@linkplain PropertyError#INCOMPATIBLE_VALUE}
+	 *                           if a group property value contained in the group
+	 *                           construction info is incompatible with the
+	 *                           corresponding property definition.</li>
 	 * 
 	 * 
 	 */
@@ -803,7 +853,8 @@ public final class GroupsDataManager extends DataManager {
 		return groupId;
 	}
 
-	private void handleGroupAdditionMutationEvent(DataManagerContext dataManagerContext, GroupAdditionMutationEvent groupAdditionMutationEvent) {
+	private void handleGroupAdditionMutationEvent(DataManagerContext dataManagerContext,
+			GroupAdditionMutationEvent groupAdditionMutationEvent) {
 		GroupConstructionInfo groupConstructionInfo = groupAdditionMutationEvent.groupConstructionInfo();
 		GroupId groupId = groupAdditionMutationEvent.groupId();
 
@@ -815,15 +866,16 @@ public final class GroupsDataManager extends DataManager {
 		final Map<GroupPropertyId, Object> propertyValues = groupConstructionInfo.getPropertyValues();
 		for (final GroupPropertyId groupPropertyId : propertyValues.keySet()) {
 			validateGroupPropertyId(groupTypeId, groupPropertyId);
-			final PropertyDefinition propertyDefinition = groupPropertyDefinitions.get(groupTypeId).get(groupPropertyId);
+			final PropertyDefinition propertyDefinition = groupPropertyDefinitions.get(groupTypeId)
+					.get(groupPropertyId);
 			final Object groupPropertyValue = propertyValues.get(groupPropertyId);
 			validateGroupPropertyValueNotNull(groupPropertyValue);
 			validateValueCompatibility(groupPropertyId, propertyDefinition, groupPropertyValue);
 		}
 
 		/*
-		 * If there are properties without default values, then the event must
-		 * include value assignments for those properties.
+		 * If there are properties without default values, then the event must include
+		 * value assignments for those properties.
 		 */
 		boolean checkPropertyCoverage = !nonDefaultBearingPropertyIds.get(groupTypeId).isEmpty();
 		if (checkPropertyCoverage) {
@@ -856,10 +908,12 @@ public final class GroupsDataManager extends DataManager {
 
 	}
 
-	private void validateValueCompatibility(final Object propertyId, final PropertyDefinition propertyDefinition, final Object propertyValue) {
+	private void validateValueCompatibility(final Object propertyId, final PropertyDefinition propertyDefinition,
+			final Object propertyValue) {
 		if (!propertyDefinition.getType().isAssignableFrom(propertyValue.getClass())) {
 			throw new ContractException(PropertyError.INCOMPATIBLE_VALUE,
-					"Property value " + propertyValue + " is not of type " + propertyDefinition.getType().getName() + " and does not match definition of " + propertyId);
+					"Property value " + propertyValue + " is not of type " + propertyDefinition.getType().getName()
+							+ " and does not match definition of " + propertyId);
 		}
 	}
 
@@ -888,25 +942,25 @@ public final class GroupsDataManager extends DataManager {
 	 * Adds a group. Generates the corresponding {@linkplain GroupAdditionEvent}
 	 * event. Returns the id of the new group.
 	 * 
-	 * @throws {@link
-	 *             ContractException}
+	 * @throws {@link ContractException}
 	 *
-	 *             <li>{@link GroupError#NULL_GROUP_TYPE_ID} if the group type
-	 *             id is null</li>
+	 *                <li>{@link GroupError#NULL_GROUP_TYPE_ID} if the group type id
+	 *                is null</li>
 	 * 
-	 *             <li>{@link GroupError#UNKNOWN_GROUP_TYPE_ID} if the group
-	 *             type id is unknown</li>
+	 *                <li>{@link GroupError#UNKNOWN_GROUP_TYPE_ID} if the group type
+	 *                id is unknown</li>
 	 *
 	 */
 	public GroupId addGroup(final GroupTypeId groupTypeId) {
 		final GroupId groupId = new GroupId(masterGroupId++);
-		dataManagerContext.releaseMutationEvent(new GroupAdditionMutationEvent(groupId, GroupConstructionInfo.builder().setGroupTypeId(groupTypeId).build()));
+		dataManagerContext.releaseMutationEvent(new GroupAdditionMutationEvent(groupId,
+				GroupConstructionInfo.builder().setGroupTypeId(groupTypeId).build()));
 		return groupId;
 	}
 
 	/*
-	 * Allocates the weights array to the given size or 50% larger than the
-	 * current size, whichever is largest. Size must be non-negative
+	 * Allocates the weights array to the given size or 50% larger than the current
+	 * size, whichever is largest. Size must be non-negative
 	 */
 	private void allocateWeights(final int size) {
 		if (weights == null) {
@@ -923,22 +977,23 @@ public final class GroupsDataManager extends DataManager {
 	/*
 	 * Attempts to acquire a lock on the sampling data structures.
 	 * 
-	 * @throws ContractException <li>{@linkplain NucleusError#ACCESS_VIOLATION}
-	 * If another sampling is ongoing</li>
+	 * @throws ContractException <li>{@linkplain NucleusError#ACCESS_VIOLATION} If
+	 * another sampling is ongoing</li>
 	 */
 	private void aquireSamplingLock() {
 		if (samplingIsLocked) {
-			throw new ContractException(NucleusError.ACCESS_VIOLATION, "cannot access weighted sampling during the execution of a previous weighted sampling");
+			throw new ContractException(NucleusError.ACCESS_VIOLATION,
+					"cannot access weighted sampling during the execution of a previous weighted sampling");
 		}
 		samplingIsLocked = true;
 	}
 
 	/*
-	 * Returns the index in the weights array that is the first to meet or
-	 * exceed the target value. Assumes a strictly increasing set of values for
-	 * indices 0 through peopleCount. Decreasing values are strictly prohibited.
-	 * Consecutive equal values may return an ambiguous result. The target value
-	 * must not exceed weights[peopleCount].
+	 * Returns the index in the weights array that is the first to meet or exceed
+	 * the target value. Assumes a strictly increasing set of values for indices 0
+	 * through peopleCount. Decreasing values are strictly prohibited. Consecutive
+	 * equal values may return an ambiguous result. The target value must not exceed
+	 * weights[peopleCount].
 	 *
 	 */
 	private int findTargetIndex(final double targetValue, final int peopleCount) {
@@ -963,10 +1018,10 @@ public final class GroupsDataManager extends DataManager {
 	 * Returns the number of groups there are for a particular group type.
 	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain GroupError#NULL_GROUP_TYPE_ID} if the group
-	 *             type id is null</li>
-	 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_TYPE_ID} if the
-	 *             group type id is unknown</li>
+	 *                           <li>{@linkplain GroupError#NULL_GROUP_TYPE_ID} if
+	 *                           the group type id is null</li>
+	 *                           <li>{@linkplain GroupError#UNKNOWN_GROUP_TYPE_ID}
+	 *                           if the group type id is unknown</li>
 	 */
 	public int getGroupCountForGroupType(final GroupTypeId groupTypeId) {
 
@@ -998,14 +1053,14 @@ public final class GroupsDataManager extends DataManager {
 	 * 
 	 * @throws ContractException
 	 * 
-	 *             <li>{@linkplain PersonError#NULL_PERSON_ID} if the person id
-	 *             is null</li>
-	 *             <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if the person
-	 *             id is unknown</li>
-	 *             <li>{@linkplain GroupError#NULL_GROUP_TYPE_ID} if the group
-	 *             type id is null</li>
-	 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_TYPE_ID} if the
-	 *             group type id is unknown</li>
+	 *                           <li>{@linkplain PersonError#NULL_PERSON_ID} if the
+	 *                           person id is null</li>
+	 *                           <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if
+	 *                           the person id is unknown</li>
+	 *                           <li>{@linkplain GroupError#NULL_GROUP_TYPE_ID} if
+	 *                           the group type id is null</li>
+	 *                           <li>{@linkplain GroupError#UNKNOWN_GROUP_TYPE_ID}
+	 *                           if the group type id is unknown</li>
 	 */
 	public int getGroupCountForGroupTypeAndPerson(final GroupTypeId groupTypeId, final PersonId personId) {
 		validatePersonExists(personId);
@@ -1034,14 +1089,14 @@ public final class GroupsDataManager extends DataManager {
 	}
 
 	/**
-	 * Returns the number of groups associated with the given person. The person
-	 * id must be non-null and non-negative.
+	 * Returns the number of groups associated with the given person. The person id
+	 * must be non-null and non-negative.
 	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain PersonError#NULL_PERSON_ID} if the person id
-	 *             is null</li>
-	 *             <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if the person
-	 *             id is unknown</li>
+	 *                           <li>{@linkplain PersonError#NULL_PERSON_ID} if the
+	 *                           person id is null</li>
+	 *                           <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if
+	 *                           the person id is unknown</li>
 	 */
 	public int getGroupCountForPerson(final PersonId personId) {
 		validatePersonExists(personId);
@@ -1068,14 +1123,14 @@ public final class GroupsDataManager extends DataManager {
 	 * property id
 	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain GroupError#NULL_GROUP_TYPE_ID} if the group
-	 *             type id is null</li>
-	 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_TYPE_ID} if the
-	 *             group type id is unknown</li>
-	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the group
-	 *             property id is null</li>
-	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if the
-	 *             group property id is unknown</li>
+	 *                           <li>{@linkplain GroupError#NULL_GROUP_TYPE_ID} if
+	 *                           the group type id is null</li>
+	 *                           <li>{@linkplain GroupError#UNKNOWN_GROUP_TYPE_ID}
+	 *                           if the group type id is unknown</li>
+	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
+	 *                           the group property id is null</li>
+	 *                           <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
+	 *                           if the group property id is unknown</li>
 	 */
 	public PropertyDefinition getGroupPropertyDefinition(GroupTypeId groupTypeId, GroupPropertyId groupPropertyId) {
 		validateGroupTypeId(groupTypeId);
@@ -1097,8 +1152,8 @@ public final class GroupsDataManager extends DataManager {
 	}
 
 	/**
-	 * Returns true if and only if there is a property definition associated
-	 * with the given group type id and group property id. Accepts all values.
+	 * Returns true if and only if there is a property definition associated with
+	 * the given group type id and group property id. Accepts all values.
 	 */
 	public boolean getGroupPropertyExists(final GroupTypeId groupTypeId, final GroupPropertyId groupPropertyId) {
 		final Map<GroupPropertyId, IndexedPropertyManager> map = groupPropertyManagerMap.get(groupTypeId);
@@ -1112,10 +1167,10 @@ public final class GroupsDataManager extends DataManager {
 	 * Returns the set of group property ids for the given group type id
 	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain GroupError#NULL_GROUP_TYPE_ID} if the group
-	 *             type id is null</li>
-	 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_TYPE_ID} if the
-	 *             group type id is unknown</li>
+	 *                           <li>{@linkplain GroupError#NULL_GROUP_TYPE_ID} if
+	 *                           the group type id is null</li>
+	 *                           <li>{@linkplain GroupError#UNKNOWN_GROUP_TYPE_ID}
+	 *                           if the group type id is unknown</li>
 	 * 
 	 */
 	@SuppressWarnings("unchecked")
@@ -1143,14 +1198,14 @@ public final class GroupsDataManager extends DataManager {
 	 * Returns the value of the group property.
 	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain GroupError#NULL_GROUP_ID} if the group id is
-	 *             null</li>
-	 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_ID} if the group id
-	 *             is unknown</li>
-	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the group
-	 *             property id is null</li>
-	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if the
-	 *             group property id is unknown</li>
+	 *                           <li>{@linkplain GroupError#NULL_GROUP_ID} if the
+	 *                           group id is null</li>
+	 *                           <li>{@linkplain GroupError#UNKNOWN_GROUP_ID} if the
+	 *                           group id is unknown</li>
+	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
+	 *                           the group property id is null</li>
+	 *                           <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
+	 *                           if the group property id is unknown</li>
 	 * 
 	 */
 
@@ -1164,14 +1219,13 @@ public final class GroupsDataManager extends DataManager {
 	}
 
 	/**
-	 * Returns the set groupIds associated with the given group type id as a
-	 * list
+	 * Returns the set groupIds associated with the given group type id as a list
 	 *
 	 * @throws ContractException
-	 *             <li>{@linkplain GroupError#NULL_GROUP_TYPE_ID} if the group
-	 *             type id is null</li>
-	 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_TYPE_ID} if the
-	 *             group type id is unknown</li>
+	 *                           <li>{@linkplain GroupError#NULL_GROUP_TYPE_ID} if
+	 *                           the group type id is null</li>
+	 *                           <li>{@linkplain GroupError#UNKNOWN_GROUP_TYPE_ID}
+	 *                           if the group type id is unknown</li>
 	 *
 	 */
 	public List<GroupId> getGroupsForGroupType(final GroupTypeId groupTypeId) {
@@ -1185,18 +1239,18 @@ public final class GroupsDataManager extends DataManager {
 	}
 
 	/**
-	 * Returns the set of group ids associated with the given person and group
-	 * type as a list.
+	 * Returns the set of group ids associated with the given person and group type
+	 * as a list.
 	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain PersonError#NULL_PERSON_ID} if the person id
-	 *             is null</li>
-	 *             <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if the person
-	 *             id is unknown</li>
-	 *             <li>{@linkplain GroupError#NULL_GROUP_TYPE_ID} if the group
-	 *             type id is null</li>
-	 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_TYPE_ID} if the
-	 *             group type id is unknown</li>
+	 *                           <li>{@linkplain PersonError#NULL_PERSON_ID} if the
+	 *                           person id is null</li>
+	 *                           <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if
+	 *                           the person id is unknown</li>
+	 *                           <li>{@linkplain GroupError#NULL_GROUP_TYPE_ID} if
+	 *                           the group type id is null</li>
+	 *                           <li>{@linkplain GroupError#UNKNOWN_GROUP_TYPE_ID}
+	 *                           if the group type id is unknown</li>
 	 * 
 	 */
 	public List<GroupId> getGroupsForGroupTypeAndPerson(final GroupTypeId groupTypeId, final PersonId personId) {
@@ -1218,10 +1272,10 @@ public final class GroupsDataManager extends DataManager {
 	 * Returns the set group ids associated the the given person as a list.
 	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain PersonError#NULL_PERSON_ID} if the person id
-	 *             is null</li>
-	 *             <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if the person
-	 *             id is unknown</li>
+	 *                           <li>{@linkplain PersonError#NULL_PERSON_ID} if the
+	 *                           person id is null</li>
+	 *                           <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if
+	 *                           the person id is unknown</li>
 	 * 
 	 */
 	public List<GroupId> getGroupsForPerson(final PersonId personId) {
@@ -1237,10 +1291,10 @@ public final class GroupsDataManager extends DataManager {
 	 * Returns the group type for the given group.
 	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain GroupError#NULL_GROUP_ID} if the group id is
-	 *             null</li>
-	 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_ID} if the group id
-	 *             is unknown</li>
+	 *                           <li>{@linkplain GroupError#NULL_GROUP_ID} if the
+	 *                           group id is null</li>
+	 *                           <li>{@linkplain GroupError#UNKNOWN_GROUP_ID} if the
+	 *                           group id is unknown</li>
 	 */
 	@SuppressWarnings("unchecked")
 	public <T extends GroupTypeId> T getGroupType(final GroupId groupId) {
@@ -1249,14 +1303,14 @@ public final class GroupsDataManager extends DataManager {
 	}
 
 	/**
-	 * Return the number of group types associated with the person via their
-	 * group memberships.
+	 * Return the number of group types associated with the person via their group
+	 * memberships.
 	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain PersonError#NULL_PERSON_ID} if the person id
-	 *             is null</li>
-	 *             <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if the person
-	 *             id is unknown</li>
+	 *                           <li>{@linkplain PersonError#NULL_PERSON_ID} if the
+	 *                           person id is null</li>
+	 *                           <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if
+	 *                           the person id is unknown</li>
 	 */
 	public int getGroupTypeCountForPersonId(final PersonId personId) {
 		validatePersonExists(personId);
@@ -1283,14 +1337,13 @@ public final class GroupsDataManager extends DataManager {
 	}
 
 	/**
-	 * Returns the set group types associated with the person's groups as a
-	 * list.
+	 * Returns the set group types associated with the person's groups as a list.
 	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain PersonError#NULL_PERSON_ID} if the person id
-	 *             is null</li>
-	 *             <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if the person
-	 *             id is unknown</li>
+	 *                           <li>{@linkplain PersonError#NULL_PERSON_ID} if the
+	 *                           person id is null</li>
+	 *                           <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if
+	 *                           the person id is unknown</li>
 	 */
 	public <T extends GroupTypeId> List<T> getGroupTypesForPerson(final PersonId personId) {
 		validatePersonExists(personId);
@@ -1304,7 +1357,8 @@ public final class GroupsDataManager extends DataManager {
 		return new ArrayList<>(types);
 	}
 
-	private IndexedPropertyManager getIndexedPropertyManager(final PropertyDefinition propertyDefinition, final int intialSize) {
+	private IndexedPropertyManager getIndexedPropertyManager(final PropertyDefinition propertyDefinition,
+			final int intialSize) {
 
 		IndexedPropertyManager indexedPropertyManager;
 		if (propertyDefinition.getType() == Boolean.class) {
@@ -1333,10 +1387,10 @@ public final class GroupsDataManager extends DataManager {
 	 * Returns the set of people who are in the given group as a list.
 	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain GroupError#NULL_GROUP_ID} if the group id is
-	 *             null</li>
-	 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_ID} if the group id
-	 *             is unknown</li>
+	 *                           <li>{@linkplain GroupError#NULL_GROUP_ID} if the
+	 *                           group id is null</li>
+	 *                           <li>{@linkplain GroupError#UNKNOWN_GROUP_ID} if the
+	 *                           group id is unknown</li>
 	 */
 	public List<PersonId> getPeopleForGroup(final GroupId groupId) {
 		validateGroupExists(groupId);
@@ -1348,15 +1402,15 @@ public final class GroupsDataManager extends DataManager {
 	}
 
 	/**
-	 * Returns a list of unique person ids for the given group type(i.e. all
-	 * people in groups having that type). Group type id must be valid.
+	 * Returns a list of unique person ids for the given group type(i.e. all people
+	 * in groups having that type). Group type id must be valid.
 	 * 
 	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain GroupError#NULL_GROUP_TYPE_ID} if the group
-	 *             type id is null</li>
-	 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_TYPE_ID} if the
-	 *             group type id is unknown</li>
+	 *                           <li>{@linkplain GroupError#NULL_GROUP_TYPE_ID} if
+	 *                           the group type id is null</li>
+	 *                           <li>{@linkplain GroupError#UNKNOWN_GROUP_TYPE_ID}
+	 *                           if the group type id is unknown</li>
 	 */
 	public List<PersonId> getPeopleForGroupType(final GroupTypeId groupTypeId) {
 		validateGroupTypeId(groupTypeId);
@@ -1378,10 +1432,10 @@ public final class GroupsDataManager extends DataManager {
 	 * Returns the number of people in the given group.
 	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain GroupError#NULL_GROUP_ID} if the group id is
-	 *             null</li>
-	 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_ID} if the group id
-	 *             is unknown</li>
+	 *                           <li>{@linkplain GroupError#NULL_GROUP_ID} if the
+	 *                           group id is null</li>
+	 *                           <li>{@linkplain GroupError#UNKNOWN_GROUP_ID} if the
+	 *                           group id is unknown</li>
 	 */
 	public int getPersonCountForGroup(final GroupId groupId) {
 		validateGroupExists(groupId);
@@ -1393,14 +1447,14 @@ public final class GroupsDataManager extends DataManager {
 	}
 
 	/**
-	 * Returns the number of people who are associated with groups having the
-	 * given group type.
+	 * Returns the number of people who are associated with groups having the given
+	 * group type.
 	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain GroupError#NULL_GROUP_TYPE_ID} if the group
-	 *             type id is null</li>
-	 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_TYPE_ID} if the
-	 *             group type id is unknown</li>
+	 *                           <li>{@linkplain GroupError#NULL_GROUP_TYPE_ID} if
+	 *                           the group type id is null</li>
+	 *                           <li>{@linkplain GroupError#UNKNOWN_GROUP_TYPE_ID}
+	 *                           if the group type id is unknown</li>
 	 */
 	public int getPersonCountForGroupType(final GroupTypeId groupTypeId) {
 		validateGroupTypeId(groupTypeId);
@@ -1439,14 +1493,14 @@ public final class GroupsDataManager extends DataManager {
 	 * Returns true if and only if the person is in the group.
 	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain GroupError#NULL_GROUP_ID} if the group id is
-	 *             null</li>
-	 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_ID} if the group id
-	 *             is unknown</li>
-	 *             <li>{@linkplain PersonError#NULL_PERSON_ID} if the person id
-	 *             is null</li>
-	 *             <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if the person
-	 *             id is unknown</li>
+	 *                           <li>{@linkplain GroupError#NULL_GROUP_ID} if the
+	 *                           group id is null</li>
+	 *                           <li>{@linkplain GroupError#UNKNOWN_GROUP_ID} if the
+	 *                           group id is unknown</li>
+	 *                           <li>{@linkplain PersonError#NULL_PERSON_ID} if the
+	 *                           person id is null</li>
+	 *                           <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if
+	 *                           the person id is unknown</li>
 	 */
 	public boolean isPersonInGroup(final PersonId personId, final GroupId groupId) {
 		validatePersonExists(personId);
@@ -1473,17 +1527,18 @@ public final class GroupsDataManager extends DataManager {
 	 * {@linkplain GroupImminentRemovalEvent} event.
 	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain GroupError#NULL_GROUP_ID} if the group id is
-	 *             null</li>
-	 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_ID} if the group id
-	 *             is unknown</li>
+	 *                           <li>{@linkplain GroupError#NULL_GROUP_ID} if the
+	 *                           group id is null</li>
+	 *                           <li>{@linkplain GroupError#UNKNOWN_GROUP_ID} if the
+	 *                           group id is unknown</li>
 	 * 
 	 */
 	public void removeGroup(final GroupId groupId) {
 		dataManagerContext.releaseMutationEvent(new GroupRemovalMutationEvent(groupId));
 	}
 
-	private void handleGroupRemovalMutationEvent(DataManagerContext dataManagerContext, GroupRemovalMutationEvent groupRemovalMutationEvent) {
+	private void handleGroupRemovalMutationEvent(DataManagerContext dataManagerContext,
+			GroupRemovalMutationEvent groupRemovalMutationEvent) {
 		GroupId groupId = groupRemovalMutationEvent.groupId();
 		validateGroupExists(groupId);
 
@@ -1529,16 +1584,16 @@ public final class GroupsDataManager extends DataManager {
 	 * 
 	 * @throws ContractException
 	 * 
-	 *             <li>{@link PersonError#NULL_PERSON_ID} if the person id is
-	 *             null</li>
-	 *             <li>{@link PersonError#UNKNOWN_PERSON_ID} if the person id is
-	 *             unknown</li>
-	 *             <li>{@link GroupError#NULL_GROUP_ID} if the group id is
-	 *             null</li>
-	 *             <li>{@link GroupError#UNKNOWN_GROUP_ID} if the group id is
-	 *             unknown</li>
-	 *             <li>{@link GroupError#NON_GROUP_MEMBERSHIP} if the person is
-	 *             not a member of the group</li>
+	 *                           <li>{@link PersonError#NULL_PERSON_ID} if the
+	 *                           person id is null</li>
+	 *                           <li>{@link PersonError#UNKNOWN_PERSON_ID} if the
+	 *                           person id is unknown</li>
+	 *                           <li>{@link GroupError#NULL_GROUP_ID} if the group
+	 *                           id is null</li>
+	 *                           <li>{@link GroupError#UNKNOWN_GROUP_ID} if the
+	 *                           group id is unknown</li>
+	 *                           <li>{@link GroupError#NON_GROUP_MEMBERSHIP} if the
+	 *                           person is not a member of the group</li>
 	 * 
 	 * 
 	 */
@@ -1546,7 +1601,8 @@ public final class GroupsDataManager extends DataManager {
 		dataManagerContext.releaseMutationEvent(new GroupMembershipRemovalMutationEvent(personId, groupId));
 	}
 
-	private void handleGroupMembershipRemovalMutationEvent(DataManagerContext dataManagerContext, GroupMembershipRemovalMutationEvent groupMembershipRemovalMutationEvent) {
+	private void handleGroupMembershipRemovalMutationEvent(DataManagerContext dataManagerContext,
+			GroupMembershipRemovalMutationEvent groupMembershipRemovalMutationEvent) {
 		PersonId personId = groupMembershipRemovalMutationEvent.personId();
 		GroupId groupId = groupMembershipRemovalMutationEvent.groupId();
 		validatePersonExists(personId);
@@ -1577,7 +1633,8 @@ public final class GroupsDataManager extends DataManager {
 	private void validatePersonInGroup(final PersonId personId, final GroupId groupId) {
 		final List<GroupId> groups = peopleToGroupsMap.getValue(personId.getValue());
 		if (groups == null || !groups.contains(groupId)) {
-			throw new ContractException(GroupError.NON_GROUP_MEMBERSHIP, "Person " + personId + " is not a member of group " + groupId);
+			throw new ContractException(GroupError.NON_GROUP_MEMBERSHIP,
+					"Person " + personId + " is not a member of group " + groupId);
 		}
 	}
 
@@ -1595,24 +1652,24 @@ public final class GroupsDataManager extends DataManager {
 	}
 
 	/**
-	 * Returns a randomly selected person from the group using the group sampler
-	 * to determine the probability for each person's selection. Returns an
-	 * empty optional if no person meets the requirements of the group sampler.
+	 * Returns a randomly selected person from the group using the group sampler to
+	 * determine the probability for each person's selection. Returns an empty
+	 * optional if no person meets the requirements of the group sampler.
 	 * 
 	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain GroupError#NULL_GROUP_ID} if the group id is
-	 *             null</li>
-	 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_ID} if the group id
-	 *             is unknown</li>
-	 *             <li>{@linkplain GroupError#NULL_GROUP_SAMPLER} if the group
-	 *             sampler is null</li>
-	 *             <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if the
-	 *             excluded person contained in the sampler is not null and is
-	 *             unknown</li>
-	 *             <li>{@linkplain StochasticsError#UNKNOWN_RANDOM_NUMBER_GENERATOR_ID}
-	 *             if the sampler contains an unknown random number generator
-	 *             id</li>
+	 *                           <li>{@linkplain GroupError#NULL_GROUP_ID} if the
+	 *                           group id is null</li>
+	 *                           <li>{@linkplain GroupError#UNKNOWN_GROUP_ID} if the
+	 *                           group id is unknown</li>
+	 *                           <li>{@linkplain GroupError#NULL_GROUP_SAMPLER} if
+	 *                           the group sampler is null</li>
+	 *                           <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if
+	 *                           the excluded person contained in the sampler is not
+	 *                           null and is unknown</li>
+	 *                           <li>{@linkplain StochasticsError#UNKNOWN_RANDOM_NUMBER_GENERATOR_ID}
+	 *                           if the sampler contains an unknown random number
+	 *                           generator id</li>
 	 */
 	public Optional<PersonId> sampleGroup(final GroupId groupId, final GroupSampler groupSampler) {
 		validateGroupExists(groupId);
@@ -1644,8 +1701,8 @@ public final class GroupsDataManager extends DataManager {
 				try {
 					allocateWeights(people.size());
 					/*
-					 * Initialize the sum of the weights to zero and set the
-					 * index in the weights and weightedPersonId to zero.
+					 * Initialize the sum of the weights to zero and set the index in the weights
+					 * and weightedPersonId to zero.
 					 */
 					double sum = 0;
 					int weightsLength = 0;
@@ -1657,9 +1714,8 @@ public final class GroupsDataManager extends DataManager {
 							continue;
 						}
 						/*
-						 * Determine the weight of the person. Any weight that
-						 * is negative , infinite or NAN is cause to return
-						 * immediately since no person may be legitimately
+						 * Determine the weight of the person. Any weight that is negative , infinite or
+						 * NAN is cause to return immediately since no person may be legitimately
 						 * selected.
 						 */
 						final double weight = groupWeightingFunction.getWeight(groupsContext, personId, groupId);
@@ -1668,8 +1724,7 @@ public final class GroupsDataManager extends DataManager {
 
 						}
 						/*
-						 * People having a zero weight are rejected for
-						 * selection
+						 * People having a zero weight are rejected for selection
 						 */
 						if (weight > 0) {
 							sum += weight;
@@ -1680,14 +1735,13 @@ public final class GroupsDataManager extends DataManager {
 					}
 
 					/*
-					 * If at least one person was accepted for selection, then
-					 * we attempt a random selection.
+					 * If at least one person was accepted for selection, then we attempt a random
+					 * selection.
 					 */
 					if (weightsLength > 0) {
 						/*
-						 * Although the individual weights may have been finite,
-						 * if the sum of those weights is not finite no
-						 * legitimate selection can be made
+						 * Although the individual weights may have been finite, if the sum of those
+						 * weights is not finite no legitimate selection can be made
 						 */
 						if (!Double.isFinite(sum)) {
 							throw new ContractException(GroupError.MALFORMED_GROUP_SAMPLE_WEIGHTING_FUNCTION);
@@ -1729,7 +1783,8 @@ public final class GroupsDataManager extends DataManager {
 	 * Removes the person from all group tracking.
 	 * 
 	 */
-	private void handlePersonRemovalEvent(final DataManagerContext dataManagerContext, PersonRemovalEvent personRemovalEvent) {
+	private void handlePersonRemovalEvent(final DataManagerContext dataManagerContext,
+			PersonRemovalEvent personRemovalEvent) {
 		PersonId personId = personRemovalEvent.personId();
 		final List<GroupId> groups = peopleToGroupsMap.getValue(personId.getValue());
 		peopleToGroupsMap.setValue(personId.getValue(), null);
@@ -1751,9 +1806,9 @@ public final class GroupsDataManager extends DataManager {
 	}
 
 	private IdentifiableFunctionMap<GroupAdditionEvent> groupAdditionFunctionMap = //
-			IdentifiableFunctionMap	.builder(GroupAdditionEvent.class)//
-									.put(GroupAdditionEventFunctionId.GROUP_TYPE, e -> getGroupType(e.groupId()))//
-									.build();//
+			IdentifiableFunctionMap.builder(GroupAdditionEvent.class)//
+					.put(GroupAdditionEventFunctionId.GROUP_TYPE, e -> getGroupType(e.groupId()))//
+					.build();//
 
 	/**
 	 * Returns an event filter used to subscribe to {@link GroupAdditionEvent}
@@ -1762,18 +1817,19 @@ public final class GroupsDataManager extends DataManager {
 	 *
 	 * @throws ContractException
 	 *
-	 *             <li>{@linkplain GroupError.NULL_GROUP_TYPE_ID} if the group
-	 *             type id is null</li>
-	 *             <li>{@linkplain GroupError.UNKNOWN_GROUP_TYPE_ID} if the
-	 *             group type id is not known</li>
+	 *                           <li>{@linkplain GroupError.NULL_GROUP_TYPE_ID} if
+	 *                           the group type id is null</li>
+	 *                           <li>{@linkplain GroupError.UNKNOWN_GROUP_TYPE_ID}
+	 *                           if the group type id is not known</li>
 	 * 
 	 * 
 	 */
 	public EventFilter<GroupAdditionEvent> getEventFilterForGroupAdditionEvent(GroupTypeId groupTypeId) {
 		validateGroupTypeId(groupTypeId);
-		return EventFilter	.builder(GroupAdditionEvent.class)//
-							.addFunctionValuePair(groupAdditionFunctionMap.get(GroupAdditionEventFunctionId.GROUP_TYPE), groupTypeId)//
-							.build();
+		return EventFilter.builder(GroupAdditionEvent.class)//
+				.addFunctionValuePair(groupAdditionFunctionMap.get(GroupAdditionEventFunctionId.GROUP_TYPE),
+						groupTypeId)//
+				.build();
 	}
 
 	/**
@@ -1782,8 +1838,8 @@ public final class GroupsDataManager extends DataManager {
 	 */
 	public EventFilter<GroupAdditionEvent> getEventFilterForGroupAdditionEvent() {
 
-		return EventFilter	.builder(GroupAdditionEvent.class)//
-							.build();
+		return EventFilter.builder(GroupAdditionEvent.class)//
+				.build();
 	}
 
 	private static enum GroupImminentRemovalEventId {
@@ -1791,10 +1847,10 @@ public final class GroupsDataManager extends DataManager {
 	}
 
 	private IdentifiableFunctionMap<GroupImminentRemovalEvent> groupImminentRemovalMap = //
-			IdentifiableFunctionMap	.builder(GroupImminentRemovalEvent.class)//
-									.put(GroupImminentRemovalEventId.GROUP_TYPE, e -> getGroupType(e.groupId()))//
-									.put(GroupImminentRemovalEventId.GROUP_ID, e -> e.groupId())//
-									.build();//
+			IdentifiableFunctionMap.builder(GroupImminentRemovalEvent.class)//
+					.put(GroupImminentRemovalEventId.GROUP_TYPE, e -> getGroupType(e.groupId()))//
+					.put(GroupImminentRemovalEventId.GROUP_ID, e -> e.groupId())//
+					.build();//
 
 	/**
 	 * Returns an event filter used to subscribe to
@@ -1803,18 +1859,18 @@ public final class GroupsDataManager extends DataManager {
 	 *
 	 * @throws ContractException
 	 *
-	 *             <li>{@linkplain GroupError#NULL_GROUP_TYPE_ID} if the group
-	 *             type id is null</li>
-	 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_TYPE_ID} if the
-	 *             group type id is not known</li>
+	 *                           <li>{@linkplain GroupError#NULL_GROUP_TYPE_ID} if
+	 *                           the group type id is null</li>
+	 *                           <li>{@linkplain GroupError#UNKNOWN_GROUP_TYPE_ID}
+	 *                           if the group type id is not known</li>
 	 * 
 	 * 
 	 */
 	public EventFilter<GroupImminentRemovalEvent> getEventFilterForGroupImminentRemovalEvent(GroupTypeId groupTypeId) {
 		validateGroupTypeId(groupTypeId);
-		return EventFilter	.builder(GroupImminentRemovalEvent.class)//
-							.addFunctionValuePair(groupImminentRemovalMap.get(GroupImminentRemovalEventId.GROUP_TYPE), groupTypeId)//
-							.build();
+		return EventFilter.builder(GroupImminentRemovalEvent.class)//
+				.addFunctionValuePair(groupImminentRemovalMap.get(GroupImminentRemovalEventId.GROUP_TYPE), groupTypeId)//
+				.build();
 	}
 
 	/**
@@ -1824,18 +1880,18 @@ public final class GroupsDataManager extends DataManager {
 	 *
 	 * @throws ContractException
 	 *
-	 *             <li>{@linkplain GroupError#NULL_GROUP_ID} if the group id is
-	 *             null</li>
-	 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_ID} if the group id
-	 *             is not known</li>
+	 *                           <li>{@linkplain GroupError#NULL_GROUP_ID} if the
+	 *                           group id is null</li>
+	 *                           <li>{@linkplain GroupError#UNKNOWN_GROUP_ID} if the
+	 *                           group id is not known</li>
 	 * 
 	 * 
 	 */
 	public EventFilter<GroupImminentRemovalEvent> getEventFilterForGroupImminentRemovalEvent(GroupId groupId) {
 		validateGroupExists(groupId);
-		return EventFilter	.builder(GroupImminentRemovalEvent.class)//
-							.addFunctionValuePair(groupImminentRemovalMap.get(GroupImminentRemovalEventId.GROUP_ID), groupId)//
-							.build();
+		return EventFilter.builder(GroupImminentRemovalEvent.class)//
+				.addFunctionValuePair(groupImminentRemovalMap.get(GroupImminentRemovalEventId.GROUP_ID), groupId)//
+				.build();
 	}
 
 	/**
@@ -1844,8 +1900,8 @@ public final class GroupsDataManager extends DataManager {
 	 * 
 	 */
 	public EventFilter<GroupImminentRemovalEvent> getEventFilterForGroupImminentRemovalEvent() {
-		return EventFilter	.builder(GroupImminentRemovalEvent.class)//
-							.build();
+		return EventFilter.builder(GroupImminentRemovalEvent.class)//
+				.build();
 	}
 
 	private static enum GroupMembershipAdditionEventId {
@@ -1853,11 +1909,11 @@ public final class GroupsDataManager extends DataManager {
 	}
 
 	private IdentifiableFunctionMap<GroupMembershipAdditionEvent> groupMembershipAdditionMap = //
-			IdentifiableFunctionMap	.builder(GroupMembershipAdditionEvent.class)//
-									.put(GroupMembershipAdditionEventId.GROUP_TYPE, e -> getGroupType(e.groupId()))//
-									.put(GroupMembershipAdditionEventId.GROUP_ID, e -> e.groupId())//
-									.put(GroupMembershipAdditionEventId.PERSON_ID, e -> e.personId())//
-									.build();//
+			IdentifiableFunctionMap.builder(GroupMembershipAdditionEvent.class)//
+					.put(GroupMembershipAdditionEventId.GROUP_TYPE, e -> getGroupType(e.groupId()))//
+					.put(GroupMembershipAdditionEventId.GROUP_ID, e -> e.groupId())//
+					.put(GroupMembershipAdditionEventId.PERSON_ID, e -> e.personId())//
+					.build();//
 
 	/**
 	 * Returns an event filter used to subscribe to
@@ -1866,45 +1922,47 @@ public final class GroupsDataManager extends DataManager {
 	 *
 	 * @throws ContractException
 	 *
-	 *             <li>{@linkplain GroupError#NULL_GROUP_ID} if the group id is
-	 *             null</li>
-	 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_ID} if the group id
-	 *             is not known</li>
+	 *                           <li>{@linkplain GroupError#NULL_GROUP_ID} if the
+	 *                           group id is null</li>
+	 *                           <li>{@linkplain GroupError#UNKNOWN_GROUP_ID} if the
+	 *                           group id is not known</li>
 	 * 
 	 */
 	public EventFilter<GroupMembershipAdditionEvent> getEventFilterForGroupMembershipAdditionEvent(GroupId groupId) {
 
 		validateGroupExists(groupId);
-		return EventFilter	.builder(GroupMembershipAdditionEvent.class)//
-							.addFunctionValuePair(groupMembershipAdditionMap.get(GroupMembershipAdditionEventId.GROUP_ID), groupId)//
-							.build();
+		return EventFilter.builder(GroupMembershipAdditionEvent.class)//
+				.addFunctionValuePair(groupMembershipAdditionMap.get(GroupMembershipAdditionEventId.GROUP_ID), groupId)//
+				.build();
 	}
 
 	/**
 	 * Returns an event filter used to subscribe to
-	 * {@link GroupMembershipAdditionEvent} events. Matches on group id and
-	 * person id.
+	 * {@link GroupMembershipAdditionEvent} events. Matches on group id and person
+	 * id.
 	 *
 	 *
 	 * @throws ContractException
 	 *
-	 *             <li>{@linkplain GroupError#NULL_GROUP_ID} if the group id is
-	 *             null</li>
-	 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_ID} if the group id
-	 *             is not known</li>
-	 *             <li>{@linkplain PersonError#NULL_PERSON_ID} if the person id
-	 *             is null</li>
-	 *             <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if the person
-	 *             id is not known</li>
+	 *                           <li>{@linkplain GroupError#NULL_GROUP_ID} if the
+	 *                           group id is null</li>
+	 *                           <li>{@linkplain GroupError#UNKNOWN_GROUP_ID} if the
+	 *                           group id is not known</li>
+	 *                           <li>{@linkplain PersonError#NULL_PERSON_ID} if the
+	 *                           person id is null</li>
+	 *                           <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if
+	 *                           the person id is not known</li>
 	 * 
 	 */
-	public EventFilter<GroupMembershipAdditionEvent> getEventFilterForGroupMembershipAdditionEvent(GroupId groupId, PersonId personId) {
+	public EventFilter<GroupMembershipAdditionEvent> getEventFilterForGroupMembershipAdditionEvent(GroupId groupId,
+			PersonId personId) {
 		validateGroupExists(groupId);
 		validatePersonExists(personId);
-		return EventFilter	.builder(GroupMembershipAdditionEvent.class)//
-							.addFunctionValuePair(groupMembershipAdditionMap.get(GroupMembershipAdditionEventId.GROUP_ID), groupId)//
-							.addFunctionValuePair(groupMembershipAdditionMap.get(GroupMembershipAdditionEventId.PERSON_ID), personId)//
-							.build();
+		return EventFilter.builder(GroupMembershipAdditionEvent.class)//
+				.addFunctionValuePair(groupMembershipAdditionMap.get(GroupMembershipAdditionEventId.GROUP_ID), groupId)//
+				.addFunctionValuePair(groupMembershipAdditionMap.get(GroupMembershipAdditionEventId.PERSON_ID),
+						personId)//
+				.build();
 	}
 
 	/**
@@ -1914,17 +1972,19 @@ public final class GroupsDataManager extends DataManager {
 	 *
 	 * @throws ContractException
 	 *
-	 *             <li>{@linkplain GroupError#NULL_GROUP_TYPE_ID} if the group
-	 *             type id is null</li>
-	 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_TYPE_ID} if the
-	 *             group type id is not known</li>
+	 *                           <li>{@linkplain GroupError#NULL_GROUP_TYPE_ID} if
+	 *                           the group type id is null</li>
+	 *                           <li>{@linkplain GroupError#UNKNOWN_GROUP_TYPE_ID}
+	 *                           if the group type id is not known</li>
 	 * 
 	 */
-	public EventFilter<GroupMembershipAdditionEvent> getEventFilterForGroupMembershipAdditionEvent(GroupTypeId groupTypeId) {
+	public EventFilter<GroupMembershipAdditionEvent> getEventFilterForGroupMembershipAdditionEvent(
+			GroupTypeId groupTypeId) {
 		validateGroupTypeId(groupTypeId);
-		return EventFilter	.builder(GroupMembershipAdditionEvent.class)//
-							.addFunctionValuePair(groupMembershipAdditionMap.get(GroupMembershipAdditionEventId.GROUP_TYPE), groupTypeId)//
-							.build();
+		return EventFilter.builder(GroupMembershipAdditionEvent.class)//
+				.addFunctionValuePair(groupMembershipAdditionMap.get(GroupMembershipAdditionEventId.GROUP_TYPE),
+						groupTypeId)//
+				.build();
 	}
 
 	/**
@@ -1935,23 +1995,26 @@ public final class GroupsDataManager extends DataManager {
 	 *
 	 * @throws ContractException
 	 *
-	 *             <li>{@linkplain GroupError#NULL_GROUP_TYPE_ID} if the group
-	 *             type id is null</li>
-	 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_TYPE_ID} if the
-	 *             group type id is not known</li>
-	 *             <li>{@linkplain PersonError#NULL_PERSON_ID} if the person id
-	 *             is null</li>
-	 *             <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if the person
-	 *             id is not known</li>
+	 *                           <li>{@linkplain GroupError#NULL_GROUP_TYPE_ID} if
+	 *                           the group type id is null</li>
+	 *                           <li>{@linkplain GroupError#UNKNOWN_GROUP_TYPE_ID}
+	 *                           if the group type id is not known</li>
+	 *                           <li>{@linkplain PersonError#NULL_PERSON_ID} if the
+	 *                           person id is null</li>
+	 *                           <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if
+	 *                           the person id is not known</li>
 	 * 
 	 */
-	public EventFilter<GroupMembershipAdditionEvent> getEventFilterForGroupMembershipAdditionEvent(GroupTypeId groupTypeId, PersonId personId) {
+	public EventFilter<GroupMembershipAdditionEvent> getEventFilterForGroupMembershipAdditionEvent(
+			GroupTypeId groupTypeId, PersonId personId) {
 		validateGroupTypeId(groupTypeId);
 		validatePersonExists(personId);
-		return EventFilter	.builder(GroupMembershipAdditionEvent.class)//
-							.addFunctionValuePair(groupMembershipAdditionMap.get(GroupMembershipAdditionEventId.GROUP_TYPE), groupTypeId)//
-							.addFunctionValuePair(groupMembershipAdditionMap.get(GroupMembershipAdditionEventId.PERSON_ID), personId)//
-							.build();
+		return EventFilter.builder(GroupMembershipAdditionEvent.class)//
+				.addFunctionValuePair(groupMembershipAdditionMap.get(GroupMembershipAdditionEventId.GROUP_TYPE),
+						groupTypeId)//
+				.addFunctionValuePair(groupMembershipAdditionMap.get(GroupMembershipAdditionEventId.PERSON_ID),
+						personId)//
+				.build();
 	}
 
 	/**
@@ -1961,17 +2024,18 @@ public final class GroupsDataManager extends DataManager {
 	 *
 	 * @throws ContractException
 	 *
-	 *             <li>{@linkplain PersonError#NULL_PERSON_ID} if the person id
-	 *             is null</li>
-	 *             <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if the person
-	 *             id is not known</li>
+	 *                           <li>{@linkplain PersonError#NULL_PERSON_ID} if the
+	 *                           person id is null</li>
+	 *                           <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if
+	 *                           the person id is not known</li>
 	 * 
 	 */
 	public EventFilter<GroupMembershipAdditionEvent> getEventFilterForGroupMembershipAdditionEvent(PersonId personId) {
 		validatePersonExists(personId);
-		return EventFilter	.builder(GroupMembershipAdditionEvent.class)//
-							.addFunctionValuePair(groupMembershipAdditionMap.get(GroupMembershipAdditionEventId.PERSON_ID), personId)//
-							.build();
+		return EventFilter.builder(GroupMembershipAdditionEvent.class)//
+				.addFunctionValuePair(groupMembershipAdditionMap.get(GroupMembershipAdditionEventId.PERSON_ID),
+						personId)//
+				.build();
 	}
 
 	/**
@@ -1982,8 +2046,8 @@ public final class GroupsDataManager extends DataManager {
 	 * 
 	 */
 	public EventFilter<GroupMembershipAdditionEvent> getEventFilterForGroupMembershipAdditionEvent() {
-		return EventFilter	.builder(GroupMembershipAdditionEvent.class)//
-							.build();
+		return EventFilter.builder(GroupMembershipAdditionEvent.class)//
+				.build();
 	}
 
 	private static enum GroupMembershipRemovalEventId {
@@ -1991,11 +2055,11 @@ public final class GroupsDataManager extends DataManager {
 	}
 
 	private IdentifiableFunctionMap<GroupMembershipRemovalEvent> groupMembershipRemovalMap = //
-			IdentifiableFunctionMap	.builder(GroupMembershipRemovalEvent.class)//
-									.put(GroupMembershipRemovalEventId.GROUP_TYPE, e -> getGroupType(e.groupId()))//
-									.put(GroupMembershipRemovalEventId.GROUP_ID, e -> e.groupId())//
-									.put(GroupMembershipRemovalEventId.PERSON_ID, e -> e.personId())//
-									.build();//
+			IdentifiableFunctionMap.builder(GroupMembershipRemovalEvent.class)//
+					.put(GroupMembershipRemovalEventId.GROUP_TYPE, e -> getGroupType(e.groupId()))//
+					.put(GroupMembershipRemovalEventId.GROUP_ID, e -> e.groupId())//
+					.put(GroupMembershipRemovalEventId.PERSON_ID, e -> e.personId())//
+					.build();//
 
 	/**
 	 * Returns an event filter used to subscribe to
@@ -2004,45 +2068,46 @@ public final class GroupsDataManager extends DataManager {
 	 *
 	 * @throws ContractException
 	 *
-	 *             <li>{@linkplain GroupError#NULL_GROUP_ID} if the group id is
-	 *             null</li>
-	 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_ID} if the group id
-	 *             is not known</li>
+	 *                           <li>{@linkplain GroupError#NULL_GROUP_ID} if the
+	 *                           group id is null</li>
+	 *                           <li>{@linkplain GroupError#UNKNOWN_GROUP_ID} if the
+	 *                           group id is not known</li>
 	 * 
 	 */
 	public EventFilter<GroupMembershipRemovalEvent> getEventFilterForGroupMembershipRemovalEvent(GroupId groupId) {
 
 		validateGroupExists(groupId);
-		return EventFilter	.builder(GroupMembershipRemovalEvent.class)//
-							.addFunctionValuePair(groupMembershipRemovalMap.get(GroupMembershipRemovalEventId.GROUP_ID), groupId)//
-							.build();
+		return EventFilter.builder(GroupMembershipRemovalEvent.class)//
+				.addFunctionValuePair(groupMembershipRemovalMap.get(GroupMembershipRemovalEventId.GROUP_ID), groupId)//
+				.build();
 	}
 
 	/**
 	 * Returns an event filter used to subscribe to
-	 * {@link GroupMembershipRemovalEvent} events. Matches on group id and
-	 * person id.
+	 * {@link GroupMembershipRemovalEvent} events. Matches on group id and person
+	 * id.
 	 *
 	 *
 	 * @throws ContractException
 	 *
-	 *             <li>{@linkplain GroupError#NULL_GROUP_ID} if the group id is
-	 *             null</li>
-	 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_ID} if the group id
-	 *             is not known</li>
-	 *             <li>{@linkplain PersonError#NULL_PERSON_ID} if the person id
-	 *             is null</li>
-	 *             <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if the person
-	 *             id is not known</li>
+	 *                           <li>{@linkplain GroupError#NULL_GROUP_ID} if the
+	 *                           group id is null</li>
+	 *                           <li>{@linkplain GroupError#UNKNOWN_GROUP_ID} if the
+	 *                           group id is not known</li>
+	 *                           <li>{@linkplain PersonError#NULL_PERSON_ID} if the
+	 *                           person id is null</li>
+	 *                           <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if
+	 *                           the person id is not known</li>
 	 * 
 	 */
-	public EventFilter<GroupMembershipRemovalEvent> getEventFilterForGroupMembershipRemovalEvent(GroupId groupId, PersonId personId) {
+	public EventFilter<GroupMembershipRemovalEvent> getEventFilterForGroupMembershipRemovalEvent(GroupId groupId,
+			PersonId personId) {
 		validateGroupExists(groupId);
 		validatePersonExists(personId);
-		return EventFilter	.builder(GroupMembershipRemovalEvent.class)//
-							.addFunctionValuePair(groupMembershipRemovalMap.get(GroupMembershipRemovalEventId.GROUP_ID), groupId)//
-							.addFunctionValuePair(groupMembershipRemovalMap.get(GroupMembershipRemovalEventId.PERSON_ID), personId)//
-							.build();
+		return EventFilter.builder(GroupMembershipRemovalEvent.class)//
+				.addFunctionValuePair(groupMembershipRemovalMap.get(GroupMembershipRemovalEventId.GROUP_ID), groupId)//
+				.addFunctionValuePair(groupMembershipRemovalMap.get(GroupMembershipRemovalEventId.PERSON_ID), personId)//
+				.build();
 	}
 
 	/**
@@ -2052,17 +2117,19 @@ public final class GroupsDataManager extends DataManager {
 	 *
 	 * @throws ContractException
 	 *
-	 *             <li>{@linkplain GroupError#NULL_GROUP_TYPE_ID} if the group
-	 *             type id is null</li>
-	 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_TYPE_ID} if the
-	 *             group type id is not known</li>
+	 *                           <li>{@linkplain GroupError#NULL_GROUP_TYPE_ID} if
+	 *                           the group type id is null</li>
+	 *                           <li>{@linkplain GroupError#UNKNOWN_GROUP_TYPE_ID}
+	 *                           if the group type id is not known</li>
 	 * 
 	 */
-	public EventFilter<GroupMembershipRemovalEvent> getEventFilterForGroupMembershipRemovalEvent(GroupTypeId groupTypeId) {
+	public EventFilter<GroupMembershipRemovalEvent> getEventFilterForGroupMembershipRemovalEvent(
+			GroupTypeId groupTypeId) {
 		validateGroupTypeId(groupTypeId);
-		return EventFilter	.builder(GroupMembershipRemovalEvent.class)//
-							.addFunctionValuePair(groupMembershipRemovalMap.get(GroupMembershipRemovalEventId.GROUP_TYPE), groupTypeId)//
-							.build();
+		return EventFilter.builder(GroupMembershipRemovalEvent.class)//
+				.addFunctionValuePair(groupMembershipRemovalMap.get(GroupMembershipRemovalEventId.GROUP_TYPE),
+						groupTypeId)//
+				.build();
 	}
 
 	/**
@@ -2073,23 +2140,25 @@ public final class GroupsDataManager extends DataManager {
 	 *
 	 * @throws ContractException
 	 *
-	 *             <li>{@linkplain GroupError#NULL_GROUP_TYPE_ID} if the group
-	 *             type id is null</li>
-	 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_TYPE_ID} if the
-	 *             group type id is not known</li>
-	 *             <li>{@linkplain PersonError#NULL_PERSON_ID} if the person id
-	 *             is null</li>
-	 *             <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if the person
-	 *             id is not known</li>
+	 *                           <li>{@linkplain GroupError#NULL_GROUP_TYPE_ID} if
+	 *                           the group type id is null</li>
+	 *                           <li>{@linkplain GroupError#UNKNOWN_GROUP_TYPE_ID}
+	 *                           if the group type id is not known</li>
+	 *                           <li>{@linkplain PersonError#NULL_PERSON_ID} if the
+	 *                           person id is null</li>
+	 *                           <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if
+	 *                           the person id is not known</li>
 	 * 
 	 */
-	public EventFilter<GroupMembershipRemovalEvent> getEventFilterForGroupMembershipRemovalEvent(GroupTypeId groupTypeId, PersonId personId) {
+	public EventFilter<GroupMembershipRemovalEvent> getEventFilterForGroupMembershipRemovalEvent(
+			GroupTypeId groupTypeId, PersonId personId) {
 		validateGroupTypeId(groupTypeId);
 		validatePersonExists(personId);
-		return EventFilter	.builder(GroupMembershipRemovalEvent.class)//
-							.addFunctionValuePair(groupMembershipRemovalMap.get(GroupMembershipRemovalEventId.GROUP_TYPE), groupTypeId)//
-							.addFunctionValuePair(groupMembershipRemovalMap.get(GroupMembershipRemovalEventId.PERSON_ID), personId)//
-							.build();
+		return EventFilter.builder(GroupMembershipRemovalEvent.class)//
+				.addFunctionValuePair(groupMembershipRemovalMap.get(GroupMembershipRemovalEventId.GROUP_TYPE),
+						groupTypeId)//
+				.addFunctionValuePair(groupMembershipRemovalMap.get(GroupMembershipRemovalEventId.PERSON_ID), personId)//
+				.build();
 	}
 
 	/**
@@ -2099,17 +2168,17 @@ public final class GroupsDataManager extends DataManager {
 	 *
 	 * @throws ContractException
 	 *
-	 *             <li>{@linkplain PersonError#NULL_PERSON_ID} if the person id
-	 *             is null</li>
-	 *             <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if the person
-	 *             id is not known</li>
+	 *                           <li>{@linkplain PersonError#NULL_PERSON_ID} if the
+	 *                           person id is null</li>
+	 *                           <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if
+	 *                           the person id is not known</li>
 	 * 
 	 */
 	public EventFilter<GroupMembershipRemovalEvent> getEventFilterForGroupMembershipRemovalEvent(PersonId personId) {
 		validatePersonExists(personId);
-		return EventFilter	.builder(GroupMembershipRemovalEvent.class)//
-							.addFunctionValuePair(groupMembershipRemovalMap.get(GroupMembershipRemovalEventId.PERSON_ID), personId)//
-							.build();
+		return EventFilter.builder(GroupMembershipRemovalEvent.class)//
+				.addFunctionValuePair(groupMembershipRemovalMap.get(GroupMembershipRemovalEventId.PERSON_ID), personId)//
+				.build();
 	}
 
 	/**
@@ -2120,8 +2189,8 @@ public final class GroupsDataManager extends DataManager {
 	 * 
 	 */
 	public EventFilter<GroupMembershipRemovalEvent> getEventFilterForGroupMembershipRemovalEvent() {
-		return EventFilter	.builder(GroupMembershipRemovalEvent.class)//
-							.build();
+		return EventFilter.builder(GroupMembershipRemovalEvent.class)//
+				.build();
 	}
 
 	private static enum GroupPropertyUpdateEventId {
@@ -2129,113 +2198,115 @@ public final class GroupsDataManager extends DataManager {
 	}
 
 	private IdentifiableFunctionMap<GroupPropertyUpdateEvent> groupPropertyUpdateMap = //
-			IdentifiableFunctionMap	.builder(GroupPropertyUpdateEvent.class)//
-									.put(GroupPropertyUpdateEventId.GROUP_PROPERTY, e -> e.groupPropertyId())//
-									.put(GroupPropertyUpdateEventId.GROUP_TYPE, e -> getGroupType(e.groupId()))//
-									.put(GroupPropertyUpdateEventId.GROUP_ID, e -> e.groupId())//
-									.build();//
+			IdentifiableFunctionMap.builder(GroupPropertyUpdateEvent.class)//
+					.put(GroupPropertyUpdateEventId.GROUP_PROPERTY, e -> e.groupPropertyId())//
+					.put(GroupPropertyUpdateEventId.GROUP_TYPE, e -> getGroupType(e.groupId()))//
+					.put(GroupPropertyUpdateEventId.GROUP_ID, e -> e.groupId())//
+					.build();//
 
 	/**
-	 * Returns an event filter used to subscribe to
-	 * {@link GroupPropertyUpdateEvent} events. Matches on group id.
+	 * Returns an event filter used to subscribe to {@link GroupPropertyUpdateEvent}
+	 * events. Matches on group id.
 	 *
 	 *
 	 * @throws ContractException
 	 *
-	 *             <li>{@linkplain GroupError#NULL_GROUP_ID} if the group id is
-	 *             null</li>
-	 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_ID} if the group id
-	 *             is not known</li>
+	 *                           <li>{@linkplain GroupError#NULL_GROUP_ID} if the
+	 *                           group id is null</li>
+	 *                           <li>{@linkplain GroupError#UNKNOWN_GROUP_ID} if the
+	 *                           group id is not known</li>
 	 */
 	public EventFilter<GroupPropertyUpdateEvent> getEventFilterForGroupPropertyUpdateEvent(GroupId groupId) {
 		validateGroupExists(groupId);
-		return EventFilter	.builder(GroupPropertyUpdateEvent.class)//
-							.addFunctionValuePair(groupPropertyUpdateMap.get(GroupPropertyUpdateEventId.GROUP_ID), groupId)//
-							.build();
+		return EventFilter.builder(GroupPropertyUpdateEvent.class)//
+				.addFunctionValuePair(groupPropertyUpdateMap.get(GroupPropertyUpdateEventId.GROUP_ID), groupId)//
+				.build();
 	}
 
 	/**
-	 * Returns an event filter used to subscribe to
-	 * {@link GroupPropertyUpdateEvent} events. Matches on group property id and
-	 * group id.
+	 * Returns an event filter used to subscribe to {@link GroupPropertyUpdateEvent}
+	 * events. Matches on group property id and group id.
 	 *
 	 *
 	 * @throws ContractException
 	 *
-	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the group
-	 *             property id is null</li>
-	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if the
-	 *             group property id is not known</li>
-	 *             <li>{@linkplain GroupError#NULL_GROUP_ID} if the group id is
-	 *             null</li>
-	 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_ID} if the group id
-	 *             is not known</li>
+	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
+	 *                           the group property id is null</li>
+	 *                           <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
+	 *                           if the group property id is not known</li>
+	 *                           <li>{@linkplain GroupError#NULL_GROUP_ID} if the
+	 *                           group id is null</li>
+	 *                           <li>{@linkplain GroupError#UNKNOWN_GROUP_ID} if the
+	 *                           group id is not known</li>
 	 */
-	public EventFilter<GroupPropertyUpdateEvent> getEventFilterForGroupPropertyUpdateEvent(GroupPropertyId groupPropertyId, GroupId groupId) {
+	public EventFilter<GroupPropertyUpdateEvent> getEventFilterForGroupPropertyUpdateEvent(
+			GroupPropertyId groupPropertyId, GroupId groupId) {
 		validateGroupExists(groupId);
 		GroupTypeId groupTypeId = indexesToTypesMap.get(groupsToTypesMap.getValueAsInt(groupId.getValue()));
 		validateGroupPropertyId(groupTypeId, groupPropertyId);
 
-		return EventFilter	.builder(GroupPropertyUpdateEvent.class)//
-							.addFunctionValuePair(groupPropertyUpdateMap.get(GroupPropertyUpdateEventId.GROUP_PROPERTY), groupPropertyId)//
-							.addFunctionValuePair(groupPropertyUpdateMap.get(GroupPropertyUpdateEventId.GROUP_ID), groupId)//
-							.build();
+		return EventFilter.builder(GroupPropertyUpdateEvent.class)//
+				.addFunctionValuePair(groupPropertyUpdateMap.get(GroupPropertyUpdateEventId.GROUP_PROPERTY),
+						groupPropertyId)//
+				.addFunctionValuePair(groupPropertyUpdateMap.get(GroupPropertyUpdateEventId.GROUP_ID), groupId)//
+				.build();
 	}
 
 	/**
-	 * Returns an event filter used to subscribe to
-	 * {@link GroupPropertyUpdateEvent} events. Matches on group type id.
+	 * Returns an event filter used to subscribe to {@link GroupPropertyUpdateEvent}
+	 * events. Matches on group type id.
 	 *
 	 *
 	 * @throws ContractException
 	 *
-	 *             <li>{@linkplain GroupError#NULL_GROUP_TYPE_ID} if the group
-	 *             type id is null</li>
-	 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_TYPE_ID} if the
-	 *             group type id is not known</li>
+	 *                           <li>{@linkplain GroupError#NULL_GROUP_TYPE_ID} if
+	 *                           the group type id is null</li>
+	 *                           <li>{@linkplain GroupError#UNKNOWN_GROUP_TYPE_ID}
+	 *                           if the group type id is not known</li>
 	 */
 	public EventFilter<GroupPropertyUpdateEvent> getEventFilterForGroupPropertyUpdateEvent(GroupTypeId groupTypeId) {
 		validateGroupTypeId(groupTypeId);
-		return EventFilter	.builder(GroupPropertyUpdateEvent.class)//
-							.addFunctionValuePair(groupPropertyUpdateMap.get(GroupPropertyUpdateEventId.GROUP_TYPE), groupTypeId)//
-							.build();
+		return EventFilter.builder(GroupPropertyUpdateEvent.class)//
+				.addFunctionValuePair(groupPropertyUpdateMap.get(GroupPropertyUpdateEventId.GROUP_TYPE), groupTypeId)//
+				.build();
 	}
 
 	/**
-	 * Returns an event filter used to subscribe to
-	 * {@link GroupPropertyUpdateEvent} events. Matches on group property id and
-	 * group type id.
+	 * Returns an event filter used to subscribe to {@link GroupPropertyUpdateEvent}
+	 * events. Matches on group property id and group type id.
 	 *
 	 *
 	 * @throws ContractException
 	 *
-	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the group
-	 *             property id is null</li>
-	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if the
-	 *             group property id is not known</li>
-	 *             <li>{@linkplain GroupError#NULL_GROUP_TYPE_ID} if the group
-	 *             type id is null</li>
-	 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_TYPE_ID} if the
-	 *             group type id is not known</li>
+	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
+	 *                           the group property id is null</li>
+	 *                           <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
+	 *                           if the group property id is not known</li>
+	 *                           <li>{@linkplain GroupError#NULL_GROUP_TYPE_ID} if
+	 *                           the group type id is null</li>
+	 *                           <li>{@linkplain GroupError#UNKNOWN_GROUP_TYPE_ID}
+	 *                           if the group type id is not known</li>
 	 */
-	public EventFilter<GroupPropertyUpdateEvent> getEventFilterForGroupPropertyUpdateEvent(GroupPropertyId groupPropertyId, GroupTypeId groupTypeId) {
+	public EventFilter<GroupPropertyUpdateEvent> getEventFilterForGroupPropertyUpdateEvent(
+			GroupPropertyId groupPropertyId, GroupTypeId groupTypeId) {
 		validateGroupTypeId(groupTypeId);
 		validateGroupPropertyId(groupTypeId, groupPropertyId);
 
-		return EventFilter	.builder(GroupPropertyUpdateEvent.class)//
-							.addFunctionValuePair(groupPropertyUpdateMap.get(GroupPropertyUpdateEventId.GROUP_PROPERTY), groupPropertyId)//
-							.addFunctionValuePair(groupPropertyUpdateMap.get(GroupPropertyUpdateEventId.GROUP_TYPE), groupTypeId)//
-							.build();
+		return EventFilter.builder(GroupPropertyUpdateEvent.class)//
+				.addFunctionValuePair(groupPropertyUpdateMap.get(GroupPropertyUpdateEventId.GROUP_PROPERTY),
+						groupPropertyId)//
+				.addFunctionValuePair(groupPropertyUpdateMap.get(GroupPropertyUpdateEventId.GROUP_TYPE), groupTypeId)//
+				.build();
 	}
 
 	/**
-	 * Returns an event filter used to subscribe to
-	 * {@link GroupPropertyUpdateEvent} events. Matches on all such events.
+	 * Returns an event filter used to subscribe to {@link GroupPropertyUpdateEvent}
+	 * events. Matches on all such events.
 	 */
 	public EventFilter<GroupPropertyUpdateEvent> getEventFilterForGroupPropertyUpdateEvent() {
 
-		return EventFilter	.builder(GroupPropertyUpdateEvent.class)//
-							.build();
+		return EventFilter.builder(GroupPropertyUpdateEvent.class)//
+				.build();
 	}
 
 	/**
@@ -2244,18 +2315,18 @@ public final class GroupsDataManager extends DataManager {
 	 * 
 	 */
 	public EventFilter<GroupPropertyDefinitionEvent> getEventFilterForGroupPropertyDefinitionEvent() {
-		return EventFilter	.builder(GroupPropertyDefinitionEvent.class)//
-							.build();
+		return EventFilter.builder(GroupPropertyDefinitionEvent.class)//
+				.build();
 	}
 
 	/**
-	 * Returns an event filter used to subscribe to
-	 * {@link GroupTypeAdditionEvent} events. Matches all such events.
+	 * Returns an event filter used to subscribe to {@link GroupTypeAdditionEvent}
+	 * events. Matches all such events.
 	 * 
 	 */
 	public EventFilter<GroupTypeAdditionEvent> getEventFilterForGroupTypeAdditionEvent() {
-		return EventFilter	.builder(GroupTypeAdditionEvent.class)//
-							.build();
+		return EventFilter.builder(GroupTypeAdditionEvent.class)//
+				.build();
 	}
 
 	private static class GroupsContextImpl implements GroupsContext {

@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -130,6 +131,7 @@ public class AT_GroupsDataManager {
 																.addGroupTypeId(groupPropertyDefinitionInitialization.getGroupTypeId())
 																.addGroup(expectedGroupIds.get(0), groupPropertyDefinitionInitialization.getGroupTypeId())
 																.setGroupPropertyValue(expectedGroupIds.get(0), groupPropertyDefinitionInitialization.getPropertyId(), true).build();
+		
 		assertEquals(expectedPluginData, actualPluginData);
 
 		// show that the plugin data persists after multiple actions
@@ -5074,6 +5076,7 @@ public class AT_GroupsDataManager {
 	 * simulation.
 	 */
 
+	@Test
 	@UnitTestMethod(target = PeopleDataManager.class, name = "init", args = { DataManagerContext.class })
 	public void testStateContinuity() {
 
@@ -5096,6 +5099,8 @@ public class AT_GroupsDataManager {
 		pluginDatas.add(testStateContinuity(10));
 
 		assertEquals(1, pluginDatas.size());
+		
+		fail();
 	}
 
 	private void performRandomGroupAction(ActorContext actorContext) {
