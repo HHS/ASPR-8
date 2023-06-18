@@ -93,17 +93,41 @@ import util.errors.ContractException;
 
 public final class GroupsDataManager extends DataManager {
 
+	// container for group property values
+	private final Map<GroupTypeId, Map<GroupPropertyId, IndexedPropertyManager>> groupPropertyManagerMap = new LinkedHashMap<>();
+
+	private final Map<GroupTypeId, Map<GroupPropertyId, PropertyDefinition>> groupPropertyDefinitions = new LinkedHashMap<>();
+
+	//////////////////////////////////////////////////
+
+	// typeIndex->List<GroupId>
+	private final ObjectValueContainer typesToGroupsMap = new ObjectValueContainer(null, 0);
+
+	// groupIndex->typeIndex
+	private final IntValueContainer groupsToTypesMap = new IntValueContainer(-1);
+
+	// groupType -> typeIndex
+	private final Map<GroupTypeId, Integer> typesToIndexesMap = new LinkedHashMap<>();
+
+	// typeIndex->groupType
+	private final List<GroupTypeId> indexesToTypesMap = new ArrayList<>();
+
+	// groupIndex->List<PersonId> by order of addition
+	private final ObjectValueContainer groupsToPeopleMap = new ObjectValueContainer(null, 0);
+
+	// personIndex->List<GroupId> by order of addition
+	private final ObjectValueContainer peopleToGroupsMap = new ObjectValueContainer(null, 0);
+
+	///////////////////////////////////////
+
 	/*
 	 * Used to generate new group id values
 	 */
 	private int masterGroupId;
 
-	// container for group property values
-	private final Map<GroupTypeId, Map<GroupPropertyId, IndexedPropertyManager>> groupPropertyManagerMap = new LinkedHashMap<>();
-	
+	private final Map<GroupTypeId, Map<GroupPropertyId, Integer>> nonDefaultBearingPropertyIds = new LinkedHashMap<>();
 
-	private final Map<GroupTypeId, Map<GroupPropertyId, PropertyDefinition>> groupPropertyDefinitions = new LinkedHashMap<>();
-
+	private Map<GroupTypeId, boolean[]> nonDefaultChecks = new LinkedHashMap<>();
 	// Guard for both weights array and weightedPersonIds array
 	private boolean samplingIsLocked;
 
@@ -115,25 +139,10 @@ public final class GroupsDataManager extends DataManager {
 	// person array that is reused during sampling
 	private PersonId[] weightedPersonIds;
 
-	private final ObjectValueContainer typesToGroupsMap = new ObjectValueContainer(null, 0);
-
-	private final ObjectValueContainer groupsToPeopleMap = new ObjectValueContainer(null, 0);
-
-	private final ObjectValueContainer peopleToGroupsMap = new ObjectValueContainer(null, 0);
-
-	private final IntValueContainer groupsToTypesMap = new IntValueContainer(-1);
-
-	private final Map<GroupTypeId, Integer> typesToIndexesMap = new LinkedHashMap<>();
-
-	private final Map<GroupTypeId, Map<GroupPropertyId, Integer>> nonDefaultBearingPropertyIds = new LinkedHashMap<>();
-
-	private Map<GroupTypeId, boolean[]> nonDefaultChecks = new LinkedHashMap<>();
-
-	private final List<GroupTypeId> indexesToTypesMap = new ArrayList<>();
-
 	private StochasticsDataManager stochasticsDataManager;
 
 	private DataManagerContext dataManagerContext;
+
 	private GroupsContext groupsContext;
 
 	private final GroupsPluginData groupsPluginData;
@@ -203,7 +212,7 @@ public final class GroupsDataManager extends DataManager {
 
 		this.dataManagerContext = dataManagerContext;
 		groupsContext = new GroupsContextImpl(dataManagerContext);
-		
+
 		stochasticsDataManager = dataManagerContext.getDataManager(StochasticsDataManager.class);
 		peopleDataManager = dataManagerContext.getDataManager(PeopleDataManager.class);
 
@@ -233,7 +242,7 @@ public final class GroupsDataManager extends DataManager {
 
 	private void recordSimulationState(DataManagerContext dataManagerContext) {
 		GroupsPluginData.Builder builder = GroupsPluginData.builder();
-		
+
 		builder.setNextGroupIdValue(masterGroupId);
 
 		for (final GroupTypeId groupTypeId : typesToIndexesMap.keySet()) {
@@ -280,9 +289,22 @@ public final class GroupsDataManager extends DataManager {
 				Map<GroupPropertyId, IndexedPropertyManager> map = groupPropertyManagerMap.get(groupTypeId);
 				for (GroupPropertyId groupPropertyId : map.keySet()) {
 					IndexedPropertyManager indexedPropertyManager = map.get(groupPropertyId);
-					for (GroupId groupId : groups) {
-						Object propertyValue = indexedPropertyManager.getPropertyValue(groupId.getValue());
-						builder.setGroupPropertyValue(groupId, groupPropertyId, propertyValue);
+					PropertyDefinition propertyDefinition = groupPropertyDefinitions.get(groupTypeId).get(groupPropertyId);
+					Optional<Object> optional = propertyDefinition.getDefaultValue();
+
+					if (optional.isPresent()) {
+						Object defaultValue = optional.get();
+						for (GroupId groupId : groups) {
+							Object propertyValue = indexedPropertyManager.getPropertyValue(groupId.getValue());
+							if (!propertyValue.equals(defaultValue)) {
+								builder.setGroupPropertyValue(groupId, groupPropertyId, propertyValue);
+							}
+						}
+					} else {
+						for (GroupId groupId : groups) {
+							Object propertyValue = indexedPropertyManager.getPropertyValue(groupId.getValue());
+							builder.setGroupPropertyValue(groupId, groupPropertyId, propertyValue);
+						}
 					}
 				}
 			}
@@ -299,12 +321,12 @@ public final class GroupsDataManager extends DataManager {
 				if (propertyDefinition.getDefaultValue().isEmpty()) {
 					nonDefaultBearingPropertyIds.get(groupTypeId).put(groupPropertyId, nonDefaultBearingPropertyIds.size());
 				}
-				
+
 				Map<GroupPropertyId, PropertyDefinition> map = groupPropertyDefinitions.get(groupTypeId);
 				map.put(groupPropertyId, propertyDefinition);
-				
+
 				Map<GroupPropertyId, IndexedPropertyManager> managerMap = groupPropertyManagerMap.get(groupTypeId);
-				final IndexedPropertyManager indexedPropertyManager = getIndexedPropertyManager( propertyDefinition, 0);
+				final IndexedPropertyManager indexedPropertyManager = getIndexedPropertyManager(propertyDefinition, 0);
 				managerMap.put(groupPropertyId, indexedPropertyManager);
 			}
 		}
@@ -319,7 +341,7 @@ public final class GroupsDataManager extends DataManager {
 			final int index = typesToIndexesMap.size();
 			typesToIndexesMap.put(groupTypeId, index);
 			indexesToTypesMap.add(groupTypeId);
-			groupPropertyManagerMap.put(groupTypeId, new LinkedHashMap<>());			
+			groupPropertyManagerMap.put(groupTypeId, new LinkedHashMap<>());
 			groupPropertyDefinitions.put(groupTypeId, new LinkedHashMap<>());
 			nonDefaultBearingPropertyIds.put(groupTypeId, new LinkedHashMap<>());
 		}
@@ -347,7 +369,7 @@ public final class GroupsDataManager extends DataManager {
 		final int index = typesToIndexesMap.size();
 		typesToIndexesMap.put(groupTypeId, index);
 		indexesToTypesMap.add(groupTypeId);
-		groupPropertyManagerMap.put(groupTypeId, new LinkedHashMap<>());		
+		groupPropertyManagerMap.put(groupTypeId, new LinkedHashMap<>());
 		groupPropertyDefinitions.put(groupTypeId, new LinkedHashMap<>());
 		nonDefaultBearingPropertyIds.put(groupTypeId, new LinkedHashMap<>());
 		nonDefaultChecks.put(groupTypeId, new boolean[0]);
@@ -711,13 +733,13 @@ public final class GroupsDataManager extends DataManager {
 		validateValueCompatibility(groupPropertyId, propertyDefinition, groupPropertyValue);
 		final Map<GroupPropertyId, IndexedPropertyManager> map = groupPropertyManagerMap.get(groupTypeId);
 		final IndexedPropertyManager indexedPropertyManager = map.get(groupPropertyId);
-		
+
 		if (dataManagerContext.subscribersExist(GroupPropertyUpdateEvent.class)) {
 			Object oldValue = indexedPropertyManager.getPropertyValue(groupId.getValue());
-			indexedPropertyManager.setPropertyValue(groupId.getValue(), groupPropertyValue);			
+			indexedPropertyManager.setPropertyValue(groupId.getValue(), groupPropertyValue);
 			dataManagerContext.releaseObservationEvent(new GroupPropertyUpdateEvent(groupId, groupPropertyId, oldValue, groupPropertyValue));
 		} else {
-			indexedPropertyManager.setPropertyValue(groupId.getValue(), groupPropertyValue);			
+			indexedPropertyManager.setPropertyValue(groupId.getValue(), groupPropertyValue);
 		}
 
 	}
@@ -1107,7 +1129,6 @@ public final class GroupsDataManager extends DataManager {
 		return result;
 	}
 
-
 	private void validateGroupExists(final GroupId groupId) {
 		if (groupId == null) {
 			throw new ContractException(GroupError.NULL_GROUP_ID);
@@ -1283,7 +1304,7 @@ public final class GroupsDataManager extends DataManager {
 		return new ArrayList<>(types);
 	}
 
-	private IndexedPropertyManager getIndexedPropertyManager( final PropertyDefinition propertyDefinition, final int intialSize) {
+	private IndexedPropertyManager getIndexedPropertyManager(final PropertyDefinition propertyDefinition, final int intialSize) {
 
 		IndexedPropertyManager indexedPropertyManager;
 		if (propertyDefinition.getType() == Boolean.class) {
@@ -2236,11 +2257,11 @@ public final class GroupsDataManager extends DataManager {
 		return EventFilter	.builder(GroupTypeAdditionEvent.class)//
 							.build();
 	}
-	
-	
-	private static class GroupsContextImpl implements GroupsContext{
-		
+
+	private static class GroupsContextImpl implements GroupsContext {
+
 		private final DataManagerContext dataManagerContext;
+
 		public GroupsContextImpl(DataManagerContext dataManagerContext) {
 			this.dataManagerContext = dataManagerContext;
 		}
@@ -2254,6 +2275,6 @@ public final class GroupsDataManager extends DataManager {
 		public double getTime() {
 			return dataManagerContext.getTime();
 		}
-		
+
 	}
 }

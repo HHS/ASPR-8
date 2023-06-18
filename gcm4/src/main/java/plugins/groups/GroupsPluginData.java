@@ -203,7 +203,7 @@ public final class GroupsPluginData implements PluginData {
 		}
 
 		private static boolean compareGroupMemberships(Data a, Data b) {
-			int personCount = FastMath.max(a.groupMemberships.size(), b.groupMemberships.size());
+			int personCount = FastMath.max(a.personToGroupsMemberships.size(), b.personToGroupsMemberships.size());
 			for (int i = 0; i < personCount; i++) {
 				Set<GroupId> aSet = getPersonGroupMemberships(a, i);
 				Set<GroupId> bSet = getPersonGroupMemberships(b, i);
@@ -216,8 +216,8 @@ public final class GroupsPluginData implements PluginData {
 
 		private static Set<GroupId> getPersonGroupMemberships(Data data, int personIndex) {
 			Set<GroupId> result = new LinkedHashSet<>();
-			if (personIndex < data.groupMemberships.size()) {
-				List<GroupId> list = data.groupMemberships.get(personIndex);
+			if (personIndex < data.personToGroupsMemberships.size()) {
+				List<GroupId> list = data.personToGroupsMemberships.get(personIndex);
 				if (list != null) {
 					result.addAll(list);
 				}
@@ -261,8 +261,8 @@ public final class GroupsPluginData implements PluginData {
 
 		private int getGroupMembershipsHashCode() {
 			int result = 0;
-			for (int i = 0; i < groupMemberships.size(); i++) {
-				List<GroupId> list = groupMemberships.get(i);
+			for (int i = 0; i < personToGroupsMemberships.size(); i++) {
+				List<GroupId> list = personToGroupsMemberships.get(i);
 				if (list != null) {
 					for (GroupId groupId : list) {
 						result += groupId.hashCode();
@@ -276,14 +276,16 @@ public final class GroupsPluginData implements PluginData {
 		private final Map<GroupTypeId, Map<GroupPropertyId, PropertyDefinition>> groupPropertyDefinitions;
 		private final Set<GroupTypeId> groupTypeIds;
 		private final List<GroupId> emptyGroupList;
-		private int personCount;
+		private final List<PersonId> emptyPersonList;
+		
 		private boolean locked;
 
 		private List<GroupSpecification> groupSpecifications;
 		private List<GroupPropertyValue> emptyGroupPropertyValues;
 
 		// indexed by person id
-		private final List<List<GroupId>> groupMemberships;
+		private final List<List<GroupId>> personToGroupsMemberships;
+		private final List<List<PersonId>> groupToPeopleMemberships;
 
 		@Override
 		public String toString() {
@@ -294,14 +296,12 @@ public final class GroupsPluginData implements PluginData {
 			builder.append(groupPropertyDefinitions);
 			builder.append(", groupTypeIds=");
 			builder.append(groupTypeIds);
-			builder.append(", personCount=");
-			builder.append(personCount);
 			builder.append(", locked=");
 			builder.append(locked);
 			builder.append(", groupSpecifications=");
 			builder.append(groupSpecifications);
 			builder.append(", groupMemberships=");
-			builder.append(groupMemberships);
+			builder.append(personToGroupsMemberships);
 			builder.append("]");
 			return builder.toString();
 		}
@@ -309,16 +309,18 @@ public final class GroupsPluginData implements PluginData {
 		public Data() {
 			groupPropertyDefinitions = new LinkedHashMap<>();
 			groupTypeIds = new LinkedHashSet<>();
-			groupMemberships = new ArrayList<>();
+			personToGroupsMemberships = new ArrayList<>();
+			groupToPeopleMemberships = new ArrayList<>();
 			groupSpecifications = new ArrayList<>();
 			emptyGroupList = Collections.unmodifiableList(new ArrayList<>());
+			emptyPersonList = Collections.unmodifiableList(new ArrayList<>());
 			emptyGroupPropertyValues = Collections.unmodifiableList(new ArrayList<>());
 		}
 
 		public Data(Data data) {
+			emptyPersonList = Collections.unmodifiableList(new ArrayList<>());
 			emptyGroupList = Collections.unmodifiableList(new ArrayList<>());
 			emptyGroupPropertyValues = Collections.unmodifiableList(new ArrayList<>());
-			personCount = data.personCount;
 			groupPropertyDefinitions = new LinkedHashMap<>();
 			for (GroupTypeId groupTypeId : data.groupPropertyDefinitions.keySet()) {
 				Map<GroupPropertyId, PropertyDefinition> map = data.groupPropertyDefinitions.get(groupTypeId);
@@ -339,18 +341,27 @@ public final class GroupsPluginData implements PluginData {
 				groupSpecifications.add(newGroupSpecification);
 			}
 
-			int n = data.groupMemberships.size();
-			groupMemberships = new ArrayList<>(n);
-
+			int n = data.personToGroupsMemberships.size();
+			personToGroupsMemberships = new ArrayList<>(n);
 			for (int i = 0; i < n; i++) {
-				List<GroupId> list = data.groupMemberships.get(i);
+				List<GroupId> list = data.personToGroupsMemberships.get(i);
 				List<GroupId> newList = null;
 				if (list != null) {
 					newList = new ArrayList<>(list);
 				}
-				groupMemberships.add(newList);
+				personToGroupsMemberships.add(newList);
 			}
-
+			n = data.groupToPeopleMemberships.size();
+			groupToPeopleMemberships = new ArrayList<>(n);
+			for (int i = 0; i < n; i++) {
+				List<PersonId> list = data.groupToPeopleMemberships.get(i);
+				List<PersonId> newList = null;
+				if (list != null) {
+					newList = new ArrayList<>(list);
+				}
+				groupToPeopleMemberships.add(newList);
+			}
+			
 			locked = data.locked;
 		}
 
@@ -494,14 +505,14 @@ public final class GroupsPluginData implements PluginData {
 			validatePersonId(personId);
 
 			int personIndex = personId.getValue();
-			data.personCount = FastMath.max(data.personCount, personIndex + 1);
-			while (personIndex >= data.groupMemberships.size()) {
-				data.groupMemberships.add(null);
+			
+			while (personIndex >= data.personToGroupsMemberships.size()) {
+				data.personToGroupsMemberships.add(null);
 			}
-			List<GroupId> groups = data.groupMemberships.get(personIndex);
+			List<GroupId> groups = data.personToGroupsMemberships.get(personIndex);
 			if (groups == null) {
 				groups = new ArrayList<>();
-				data.groupMemberships.set(personIndex, groups);
+				data.personToGroupsMemberships.set(personIndex, groups);
 			}
 			if (!groups.contains(groupId)) {
 				groups.add(groupId);
@@ -661,7 +672,7 @@ public final class GroupsPluginData implements PluginData {
 
 		private void validateData() {
 
-			for (List<GroupId> groupIds : data.groupMemberships) {
+			for (List<GroupId> groupIds : data.personToGroupsMemberships) {
 				if (groupIds != null) {
 					for (GroupId groupId : groupIds) {
 						int groupIndex = groupId.getValue();
@@ -936,12 +947,31 @@ public final class GroupsPluginData implements PluginData {
 			return data.emptyGroupList;
 		}
 		int personIndex = personId.getValue();
-		if (personIndex >= data.groupMemberships.size()) {
+		if (personIndex >= data.personToGroupsMemberships.size()) {
 			return data.emptyGroupList;
 		}
-		List<GroupId> list = data.groupMemberships.get(personIndex);
+		List<GroupId> list = data.personToGroupsMemberships.get(personIndex);
 		if (list == null) {
 			return data.emptyGroupList;
+		}
+		return Collections.unmodifiableList(list);
+	}
+	
+	/**
+	 * Returns the unmodifiable list of people associated with the group id
+	 * 
+	 */
+	public List<PersonId> getPeopleForGroup(final GroupId groupId) {
+		if (groupId == null) {
+			return data.emptyPersonList;
+		}
+		int groupIndex = groupId.getValue();
+		if (groupIndex >= data.groupToPeopleMemberships.size()) {
+			return data.emptyPersonList;
+		}
+		List<PersonId> list = data.groupToPeopleMemberships.get(groupIndex);
+		if (list == null) {
+			return data.emptyPersonList;
 		}
 		return Collections.unmodifiableList(list);
 	}
@@ -962,8 +992,8 @@ public final class GroupsPluginData implements PluginData {
 	 * Returns the int value that exceeds by one the highest person id value
 	 * encountered while associating people with groups.
 	 */
-	public int getPersonCount() {
-		return data.personCount;
+	public int getPersonCount() {		
+		return data.personToGroupsMemberships.size();
 	}
 
 	@Override
