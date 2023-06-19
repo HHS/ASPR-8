@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -94,13 +93,12 @@ public class AT_GroupsDataManager {
 		GroupsPluginData groupsPluginData = builder.build();
 
 		// add a property definition
-		PropertyDefinition propertyDefinition = TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK.getPropertyDefinition();
+		PropertyDefinition propertyDefinition = TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK
+				.getPropertyDefinition();
 
-		GroupPropertyDefinitionInitialization groupPropertyDefinitionInitialization = GroupPropertyDefinitionInitialization	.builder().setGroupTypeId(TestGroupTypeId.GROUP_TYPE_1)
-																															.setPropertyDefinition(propertyDefinition)
-																															.setPropertyId(
-																																	TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK)
-																															.build();
+		GroupPropertyDefinitionInitialization groupPropertyDefinitionInitialization = GroupPropertyDefinitionInitialization
+				.builder().setGroupTypeId(TestGroupTypeId.GROUP_TYPE_1).setPropertyDefinition(propertyDefinition)
+				.setPropertyId(TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK).build();
 
 		List<GroupId> expectedGroupIds = new ArrayList<>();
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
@@ -110,42 +108,50 @@ public class AT_GroupsDataManager {
 			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
 			groupsDataManager.addGroupType(groupPropertyDefinitionInitialization.getGroupTypeId());
 			groupsDataManager.defineGroupProperty(groupPropertyDefinitionInitialization);
-			GroupConstructionInfo groupConstructionInfo = GroupConstructionInfo	.builder().setGroupTypeId(groupPropertyDefinitionInitialization.getGroupTypeId())
-																				.setGroupPropertyValue(TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK, true).build();
+			GroupConstructionInfo groupConstructionInfo = GroupConstructionInfo.builder()
+					.setGroupTypeId(groupPropertyDefinitionInitialization.getGroupTypeId())
+					.setGroupPropertyValue(TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK, true)
+					.build();
 			GroupId groupId = groupsDataManager.addGroup(groupConstructionInfo);
 			expectedGroupIds.add(groupId);
-			groupsDataManager.setGroupPropertyValue(groupId, groupPropertyDefinitionInitialization.getPropertyId(), true);
+			groupsDataManager.setGroupPropertyValue(groupId, groupPropertyDefinitionInitialization.getPropertyId(),
+					true);
 		}));
 
 		// show that the plugin data contains what we defined
 		TestPluginData testPluginData = pluginBuilder.build();
 		Long seed = randomGenerator.nextLong();
-		Factory factory = GroupsTestPluginFactory.factory(30, 1, 10, seed, testPluginData).setGroupsPluginData(groupsPluginData);
-		TestOutputConsumer testOutputConsumer = TestSimulation.builder().addPlugins(factory.getPlugins()).setSimulationHaltTime(2).setProduceSimulationStateOnHalt(true).build().execute();
+		Factory factory = GroupsTestPluginFactory.factory(30, 1, 10, seed, testPluginData)
+				.setGroupsPluginData(groupsPluginData);
+		TestOutputConsumer testOutputConsumer = TestSimulation.builder().addPlugins(factory.getPlugins())
+				.setSimulationHaltTime(2).setProduceSimulationStateOnHalt(true).build().execute();
 		Map<GroupsPluginData, Integer> outputItems = testOutputConsumer.getOutputItemMap(GroupsPluginData.class);
 		assertEquals(1, outputItems.size());
 		GroupsPluginData actualPluginData = outputItems.keySet().iterator().next();
-		GroupsPluginData expectedPluginData = GroupsPluginData	.builder()
-																.defineGroupProperty(groupPropertyDefinitionInitialization.getGroupTypeId(), groupPropertyDefinitionInitialization.getPropertyId(),
-																		groupPropertyDefinitionInitialization.getPropertyDefinition())
-																.addGroupTypeId(groupPropertyDefinitionInitialization.getGroupTypeId())
-																.addGroup(expectedGroupIds.get(0), groupPropertyDefinitionInitialization.getGroupTypeId())
-																.setGroupPropertyValue(expectedGroupIds.get(0), groupPropertyDefinitionInitialization.getPropertyId(), true).build();
-		
+		GroupsPluginData expectedPluginData = GroupsPluginData.builder()
+				.defineGroupProperty(groupPropertyDefinitionInitialization.getGroupTypeId(),
+						groupPropertyDefinitionInitialization.getPropertyId(),
+						groupPropertyDefinitionInitialization.getPropertyDefinition())
+				.addGroupTypeId(groupPropertyDefinitionInitialization.getGroupTypeId())
+				.addGroup(expectedGroupIds.get(0), groupPropertyDefinitionInitialization.getGroupTypeId())
+				.setGroupPropertyValue(expectedGroupIds.get(0), groupPropertyDefinitionInitialization.getPropertyId(),
+						true)
+				.build();
+
 		assertEquals(expectedPluginData, actualPluginData);
 
 		// show that the plugin data persists after multiple actions
-		PropertyDefinition propertyDefinition2 = TestGroupPropertyId.GROUP_PROPERTY_2_2_INTEGER_MUTABLE_TRACK.getPropertyDefinition();
-		GroupPropertyDefinitionInitialization groupPropertyDefinitionInitialization2 = GroupPropertyDefinitionInitialization.builder().setGroupTypeId(TestGroupTypeId.GROUP_TYPE_2)
-																															.setPropertyDefinition(propertyDefinition2)
-																															.setPropertyId(TestGroupPropertyId.GROUP_PROPERTY_2_2_INTEGER_MUTABLE_TRACK)
-																															.build();
+		PropertyDefinition propertyDefinition2 = TestGroupPropertyId.GROUP_PROPERTY_2_2_INTEGER_MUTABLE_TRACK
+				.getPropertyDefinition();
+		GroupPropertyDefinitionInitialization groupPropertyDefinitionInitialization2 = GroupPropertyDefinitionInitialization
+				.builder().setGroupTypeId(TestGroupTypeId.GROUP_TYPE_2).setPropertyDefinition(propertyDefinition2)
+				.setPropertyId(TestGroupPropertyId.GROUP_PROPERTY_2_2_INTEGER_MUTABLE_TRACK).build();
 
-		PropertyDefinition propertyDefinition3 = TestGroupPropertyId.GROUP_PROPERTY_2_3_DOUBLE_MUTABLE_TRACK.getPropertyDefinition();
-		GroupPropertyDefinitionInitialization groupPropertyDefinitionInitialization3 = GroupPropertyDefinitionInitialization.builder().setGroupTypeId(TestGroupTypeId.GROUP_TYPE_3)
-																															.setPropertyDefinition(propertyDefinition3)
-																															.setPropertyId(TestGroupPropertyId.GROUP_PROPERTY_2_3_DOUBLE_MUTABLE_TRACK)
-																															.build();
+		PropertyDefinition propertyDefinition3 = TestGroupPropertyId.GROUP_PROPERTY_2_3_DOUBLE_MUTABLE_TRACK
+				.getPropertyDefinition();
+		GroupPropertyDefinitionInitialization groupPropertyDefinitionInitialization3 = GroupPropertyDefinitionInitialization
+				.builder().setGroupTypeId(TestGroupTypeId.GROUP_TYPE_3).setPropertyDefinition(propertyDefinition3)
+				.setPropertyId(TestGroupPropertyId.GROUP_PROPERTY_2_3_DOUBLE_MUTABLE_TRACK).build();
 
 		expectedGroupIds.clear();
 		pluginBuilder = TestPluginData.builder();
@@ -154,40 +160,54 @@ public class AT_GroupsDataManager {
 			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
 			groupsDataManager.addGroupType(groupPropertyDefinitionInitialization2.getGroupTypeId());
 			groupsDataManager.defineGroupProperty(groupPropertyDefinitionInitialization2);
-			GroupConstructionInfo groupConstructionInfo = GroupConstructionInfo	.builder().setGroupTypeId(groupPropertyDefinitionInitialization2.getGroupTypeId())
-																				.setGroupPropertyValue(TestGroupPropertyId.GROUP_PROPERTY_2_2_INTEGER_MUTABLE_TRACK, 43).build();
+			GroupConstructionInfo groupConstructionInfo = GroupConstructionInfo.builder()
+					.setGroupTypeId(groupPropertyDefinitionInitialization2.getGroupTypeId())
+					.setGroupPropertyValue(TestGroupPropertyId.GROUP_PROPERTY_2_2_INTEGER_MUTABLE_TRACK, 43).build();
 			GroupId groupId = groupsDataManager.addGroup(groupConstructionInfo);
 			expectedGroupIds.add(groupId);
-			groupsDataManager.setGroupPropertyValue(groupId, groupPropertyDefinitionInitialization2.getPropertyId(), 43);
-			groupsDataManager.setGroupPropertyValue(groupId, groupPropertyDefinitionInitialization2.getPropertyId(), 57);
+			groupsDataManager.setGroupPropertyValue(groupId, groupPropertyDefinitionInitialization2.getPropertyId(),
+					43);
+			groupsDataManager.setGroupPropertyValue(groupId, groupPropertyDefinitionInitialization2.getPropertyId(),
+					57);
 
 			groupsDataManager.addGroupType(groupPropertyDefinitionInitialization3.getGroupTypeId());
 			groupsDataManager.defineGroupProperty(groupPropertyDefinitionInitialization3);
-			GroupConstructionInfo groupConstructionInfo2 = GroupConstructionInfo.builder().setGroupTypeId(groupPropertyDefinitionInitialization3.getGroupTypeId())
-																				.setGroupPropertyValue(TestGroupPropertyId.GROUP_PROPERTY_2_3_DOUBLE_MUTABLE_TRACK, 15.9).build();
+			GroupConstructionInfo groupConstructionInfo2 = GroupConstructionInfo.builder()
+					.setGroupTypeId(groupPropertyDefinitionInitialization3.getGroupTypeId())
+					.setGroupPropertyValue(TestGroupPropertyId.GROUP_PROPERTY_2_3_DOUBLE_MUTABLE_TRACK, 15.9).build();
 			GroupId groupId2 = groupsDataManager.addGroup(groupConstructionInfo2);
 			expectedGroupIds.add(groupId2);
-			groupsDataManager.setGroupPropertyValue(groupId2, groupPropertyDefinitionInitialization3.getPropertyId(), 15.9);
-			groupsDataManager.setGroupPropertyValue(groupId2, groupPropertyDefinitionInitialization3.getPropertyId(), 34.2);
+			groupsDataManager.setGroupPropertyValue(groupId2, groupPropertyDefinitionInitialization3.getPropertyId(),
+					15.9);
+			groupsDataManager.setGroupPropertyValue(groupId2, groupPropertyDefinitionInitialization3.getPropertyId(),
+					34.2);
 		}));
 
 		testPluginData = pluginBuilder.build();
 		seed = randomGenerator.nextLong();
-		factory = GroupsTestPluginFactory.factory(30, 1, 10, seed, testPluginData).setGroupsPluginData(groupsPluginData);
-		testOutputConsumer = TestSimulation.builder().addPlugins(factory.getPlugins()).setSimulationHaltTime(2).setProduceSimulationStateOnHalt(true).build().execute();
+		factory = GroupsTestPluginFactory.factory(30, 1, 10, seed, testPluginData)
+				.setGroupsPluginData(groupsPluginData);
+		testOutputConsumer = TestSimulation.builder().addPlugins(factory.getPlugins()).setSimulationHaltTime(2)
+				.setProduceSimulationStateOnHalt(true).build().execute();
 		outputItems = testOutputConsumer.getOutputItemMap(GroupsPluginData.class);
 		assertEquals(1, outputItems.size());
 		actualPluginData = outputItems.keySet().iterator().next();
-		expectedPluginData = GroupsPluginData	.builder()
-												.defineGroupProperty(groupPropertyDefinitionInitialization2.getGroupTypeId(), groupPropertyDefinitionInitialization2.getPropertyId(),
-														groupPropertyDefinitionInitialization2.getPropertyDefinition())
-												.defineGroupProperty(groupPropertyDefinitionInitialization3.getGroupTypeId(), groupPropertyDefinitionInitialization3.getPropertyId(),
-														groupPropertyDefinitionInitialization3.getPropertyDefinition())
-												.addGroupTypeId(groupPropertyDefinitionInitialization2.getGroupTypeId()).addGroupTypeId(groupPropertyDefinitionInitialization3.getGroupTypeId())
-												.addGroup(expectedGroupIds.get(0), groupPropertyDefinitionInitialization2.getGroupTypeId())
-												.addGroup(expectedGroupIds.get(1), groupPropertyDefinitionInitialization3.getGroupTypeId())
-												.setGroupPropertyValue(expectedGroupIds.get(0), groupPropertyDefinitionInitialization2.getPropertyId(), 57)
-												.setGroupPropertyValue(expectedGroupIds.get(1), groupPropertyDefinitionInitialization3.getPropertyId(), 34.2).build();
+		expectedPluginData = GroupsPluginData.builder()
+				.defineGroupProperty(groupPropertyDefinitionInitialization2.getGroupTypeId(),
+						groupPropertyDefinitionInitialization2.getPropertyId(),
+						groupPropertyDefinitionInitialization2.getPropertyDefinition())
+				.defineGroupProperty(groupPropertyDefinitionInitialization3.getGroupTypeId(),
+						groupPropertyDefinitionInitialization3.getPropertyId(),
+						groupPropertyDefinitionInitialization3.getPropertyDefinition())
+				.addGroupTypeId(groupPropertyDefinitionInitialization2.getGroupTypeId())
+				.addGroupTypeId(groupPropertyDefinitionInitialization3.getGroupTypeId())
+				.addGroup(expectedGroupIds.get(0), groupPropertyDefinitionInitialization2.getGroupTypeId())
+				.addGroup(expectedGroupIds.get(1), groupPropertyDefinitionInitialization3.getGroupTypeId())
+				.setGroupPropertyValue(expectedGroupIds.get(0), groupPropertyDefinitionInitialization2.getPropertyId(),
+						57)
+				.setGroupPropertyValue(expectedGroupIds.get(1), groupPropertyDefinitionInitialization3.getPropertyId(),
+						34.2)
+				.build();
 		assertEquals(expectedPluginData, actualPluginData);
 
 	}
@@ -256,7 +276,8 @@ public class AT_GroupsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(target = GroupsDataManager.class, name = "removePersonFromGroup", args = { PersonId.class, GroupId.class })
+	@UnitTestMethod(target = GroupsDataManager.class, name = "removePersonFromGroup", args = { PersonId.class,
+			GroupId.class })
 	public void testRemovePersonFromGroup() {
 
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
@@ -410,7 +431,8 @@ public class AT_GroupsDataManager {
 				GroupConstructionInfo.Builder builder = GroupConstructionInfo.builder();
 				builder.setGroupTypeId(testGroupTypeId);
 				Map<TestGroupPropertyId, Object> expectedPropertyValues = new LinkedHashMap<>();
-				for (TestGroupPropertyId testGroupPropertyId : TestGroupPropertyId.getTestGroupPropertyIds(testGroupTypeId)) {
+				for (TestGroupPropertyId testGroupPropertyId : TestGroupPropertyId
+						.getTestGroupPropertyIds(testGroupTypeId)) {
 					Object value = testGroupPropertyId.getRandomPropertyValue(randomGenerator);
 					builder.setGroupPropertyValue(testGroupPropertyId, value);
 					expectedPropertyValues.put(testGroupPropertyId, value);
@@ -456,29 +478,30 @@ public class AT_GroupsDataManager {
 		assertEquals(GroupError.NULL_GROUP_CONSTRUCTION_INFO, contractException.getErrorType());
 
 		/*
-		 * precondition test: if the group type id contained in the group
-		 * construction info is unknown
+		 * precondition test: if the group type id contained in the group construction
+		 * info is unknown
 		 */
 		contractException = assertThrows(ContractException.class, () -> {
 			Factory factory2 = GroupsTestPluginFactory.factory(40, 5.0, 20.0, 7404840971962130072L, (c) -> {
 				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-				groupsDataManager.addGroup(GroupConstructionInfo.builder().setGroupTypeId(TestGroupTypeId.getUnknownGroupTypeId()).build());
+				groupsDataManager.addGroup(GroupConstructionInfo.builder()
+						.setGroupTypeId(TestGroupTypeId.getUnknownGroupTypeId()).build());
 			});
 			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
 		});
 		assertEquals(GroupError.UNKNOWN_GROUP_TYPE_ID, contractException.getErrorType());
 
 		/*
-		 * precondition test:if a group property id contained in the group
-		 * construction info is unknown
+		 * precondition test:if a group property id contained in the group construction
+		 * info is unknown
 		 */
 		contractException = assertThrows(ContractException.class, () -> {
 			Factory factory2 = GroupsTestPluginFactory.factory(40, 5.0, 20.0, 8782123343145389682L, (c) -> {
 				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-				GroupConstructionInfo groupConstructionInfo = GroupConstructionInfo	.builder()//
-																					.setGroupTypeId(TestGroupTypeId.GROUP_TYPE_1)//
-																					.setGroupPropertyValue(TestGroupPropertyId.getUnknownGroupPropertyId(), 1)//
-																					.build();//
+				GroupConstructionInfo groupConstructionInfo = GroupConstructionInfo.builder()//
+						.setGroupTypeId(TestGroupTypeId.GROUP_TYPE_1)//
+						.setGroupPropertyValue(TestGroupPropertyId.getUnknownGroupPropertyId(), 1)//
+						.build();//
 				groupsDataManager.addGroup(groupConstructionInfo);
 			});
 			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
@@ -487,17 +510,16 @@ public class AT_GroupsDataManager {
 
 		/*
 		 * precondition test: if a group property value contained in the group
-		 * construction info is incompatible with the corresponding property
-		 * definition
+		 * construction info is incompatible with the corresponding property definition
 		 */
 
 		contractException = assertThrows(ContractException.class, () -> {
 			Factory factory2 = GroupsTestPluginFactory.factory(40, 5.0, 20.0, 8782123343145389682L, (c) -> {
 				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-				GroupConstructionInfo groupConstructionInfo = GroupConstructionInfo	.builder()//
-																					.setGroupTypeId(TestGroupTypeId.GROUP_TYPE_1)//
-																					.setGroupPropertyValue(TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK, 1)//
-																					.build();//
+				GroupConstructionInfo groupConstructionInfo = GroupConstructionInfo.builder()//
+						.setGroupTypeId(TestGroupTypeId.GROUP_TYPE_1)//
+						.setGroupPropertyValue(TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK, 1)//
+						.build();//
 				groupsDataManager.addGroup(groupConstructionInfo);
 			});
 			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
@@ -575,7 +597,8 @@ public class AT_GroupsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(target = GroupsDataManager.class, name = "addPersonToGroup", args = { PersonId.class, GroupId.class })
+	@UnitTestMethod(target = GroupsDataManager.class, name = "addPersonToGroup", args = { PersonId.class,
+			GroupId.class })
 	public void testAddPersonToGroup() {
 
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
@@ -725,7 +748,8 @@ public class AT_GroupsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(target = GroupsDataManager.class, name = "sampleGroup", args = { GroupId.class, GroupSampler.class })
+	@UnitTestMethod(target = GroupsDataManager.class, name = "sampleGroup", args = { GroupId.class,
+			GroupSampler.class })
 	public void testSampleGroup() {
 
 		Consumer<ActorContext> consumer = (c) -> {
@@ -747,8 +771,8 @@ public class AT_GroupsDataManager {
 			weightingFunctionValues.add(true);
 
 			/*
-			 * Create a weight function that will allow us to exclude about half
-			 * of the people from any group from being selected
+			 * Create a weight function that will allow us to exclude about half of the
+			 * people from any group from being selected
 			 */
 			GroupWeightingFunction gwf = (c2, p, g) -> {
 				if (p.getValue() % 2 == 0) {
@@ -758,8 +782,8 @@ public class AT_GroupsDataManager {
 			};
 
 			/*
-			 * Test every group against every excluded person category and use
-			 * of the weighting function
+			 * Test every group against every excluded person category and use of the
+			 * weighting function
 			 */
 			for (GroupId groupId : groupIds) {
 				for (ExcludedPersonType excludedPersonType : ExcludedPersonType.values()) {
@@ -789,7 +813,8 @@ public class AT_GroupsDataManager {
 							break;
 						case NON_MEMBER:
 							if (!peopleNotInGroupList.isEmpty()) {
-								excludedPersonId = peopleNotInGroupList.get(randomGenerator.nextInt(peopleNotInGroupList.size()));
+								excludedPersonId = peopleNotInGroupList
+										.get(randomGenerator.nextInt(peopleNotInGroupList.size()));
 							}
 							break;
 						case NULL:
@@ -804,9 +829,8 @@ public class AT_GroupsDataManager {
 
 						Set<PersonId> eligiblePeople = new LinkedHashSet<>();
 						/*
-						 * If we are using the weighting function, then only
-						 * select the odd people as eligible, otherwise select
-						 * everyone in the group
+						 * If we are using the weighting function, then only select the odd people as
+						 * eligible, otherwise select everyone in the group
 						 */
 						if (useWeightingFunction) {
 							for (PersonId personId : peopleForGroup) {
@@ -822,8 +846,8 @@ public class AT_GroupsDataManager {
 						eligiblePeople.remove(excludedPersonId);
 
 						/*
-						 * If there are no eligible people, then the
-						 * sampleGroup() method should return an empty optional
+						 * If there are no eligible people, then the sampleGroup() method should return
+						 * an empty optional
 						 */
 						if (eligiblePeople.isEmpty()) {
 							Optional<PersonId> optional = groupsDataManager.sampleGroup(groupId, groupSampler);
@@ -881,7 +905,8 @@ public class AT_GroupsDataManager {
 		contractException = assertThrows(ContractException.class, () -> {
 			Factory factory2 = GroupsTestPluginFactory.factory(30, 3, 5, 7404840971962130072L, (c) -> {
 				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-				groupsDataManager.sampleGroup(new GroupId(0), GroupSampler.builder().setExcludedPersonId(new PersonId(1000000)).build());
+				groupsDataManager.sampleGroup(new GroupId(0),
+						GroupSampler.builder().setExcludedPersonId(new PersonId(1000000)).build());
 			});
 
 			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
@@ -891,7 +916,8 @@ public class AT_GroupsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(target = GroupsDataManager.class, name = "setGroupPropertyValue", args = { GroupId.class, GroupPropertyId.class, Object.class })
+	@UnitTestMethod(target = GroupsDataManager.class, name = "setGroupPropertyValue", args = { GroupId.class,
+			GroupPropertyId.class, Object.class })
 	public void testSetGroupPropertyValue() {
 
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
@@ -902,7 +928,8 @@ public class AT_GroupsDataManager {
 
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
 			c.subscribe(EventFilter.builder(GroupPropertyUpdateEvent.class).build(), (c2, e) -> {
-				actualObservations.add(new MultiKey(e.groupId(), e.groupPropertyId(), e.previousPropertyValue(), e.currentPropertyValue()));
+				actualObservations.add(new MultiKey(e.groupId(), e.groupPropertyId(), e.previousPropertyValue(),
+						e.currentPropertyValue()));
 
 			});
 		}));
@@ -920,14 +947,16 @@ public class AT_GroupsDataManager {
 
 			for (GroupId groupId : groupIds) {
 				TestGroupTypeId testGroupTypeId = groupsDataManager.getGroupType(groupId);
-				for (TestGroupPropertyId testGroupPropertyId : TestGroupPropertyId.getTestGroupPropertyIds(testGroupTypeId)) {
+				for (TestGroupPropertyId testGroupPropertyId : TestGroupPropertyId
+						.getTestGroupPropertyIds(testGroupTypeId)) {
 					if (testGroupPropertyId.getPropertyDefinition().propertyValuesAreMutable()) {
 						Object currentValue = groupsDataManager.getGroupPropertyValue(groupId, testGroupPropertyId);
 						Object expectedValue = testGroupPropertyId.getRandomPropertyValue(randomGenerator);
 						groupsDataManager.setGroupPropertyValue(groupId, testGroupPropertyId, expectedValue);
 						Object actualValue = groupsDataManager.getGroupPropertyValue(groupId, testGroupPropertyId);
 						assertEquals(expectedValue, actualValue);
-						expectedObservations.add(new MultiKey(groupId, testGroupPropertyId, currentValue, expectedValue));
+						expectedObservations
+								.add(new MultiKey(groupId, testGroupPropertyId, currentValue, expectedValue));
 
 					}
 				}
@@ -1000,8 +1029,8 @@ public class AT_GroupsDataManager {
 		assertEquals(PropertyError.NULL_PROPERTY_VALUE, contractException.getErrorType());
 
 		/*
-		 * precondition test if property value is incompatible with the
-		 * corresponding property definition
+		 * precondition test if property value is incompatible with the corresponding
+		 * property definition
 		 */
 		contractException = assertThrows(ContractException.class, () -> {
 			Factory factory2 = GroupsTestPluginFactory.factory(100, 3, 5, 3728888495166492963L, (c) -> {
@@ -1015,8 +1044,8 @@ public class AT_GroupsDataManager {
 		assertEquals(PropertyError.INCOMPATIBLE_VALUE, contractException.getErrorType());
 
 		/*
-		 * precondition test if the corresponding property definition defines
-		 * the property as immutable
+		 * precondition test if the corresponding property definition defines the
+		 * property as immutable
 		 */
 		contractException = assertThrows(ContractException.class, () -> {
 			Factory factory2 = GroupsTestPluginFactory.factory(100, 3, 5, 7440937277837294440L, (c) -> {
@@ -1084,7 +1113,8 @@ public class AT_GroupsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(target = GroupsDataManager.class, name = "getGroupCountForGroupTypeAndPerson", args = { GroupTypeId.class, PersonId.class })
+	@UnitTestMethod(target = GroupsDataManager.class, name = "getGroupCountForGroupTypeAndPerson", args = {
+			GroupTypeId.class, PersonId.class })
 	public void testGetGroupCountForGroupTypeAndPerson() {
 
 		Factory factory = GroupsTestPluginFactory.factory(100, 0, 5, 6434309925268726988L, (c) -> {
@@ -1097,8 +1127,7 @@ public class AT_GroupsDataManager {
 			List<PersonId> people = peopleDataManager.getPeople();
 
 			/*
-			 * Show that there are no groups since we selected 0 groups per
-			 * person
+			 * Show that there are no groups since we selected 0 groups per person
 			 */
 			assertEquals(0, groupIds.size());
 
@@ -1112,8 +1141,8 @@ public class AT_GroupsDataManager {
 			}
 
 			/*
-			 * For each person pick three groups at random and add the person to
-			 * each group, recording this in the expected data structure
+			 * For each person pick three groups at random and add the person to each group,
+			 * recording this in the expected data structure
 			 */
 			for (PersonId personId : people) {
 				Collections.shuffle(groupIds, new Random(randomGenerator.nextLong()));
@@ -1135,7 +1164,8 @@ public class AT_GroupsDataManager {
 			// show that the group ids match the expected group ids
 			for (TestGroupTypeId testGroupTypeId : TestGroupTypeId.values()) {
 				for (PersonId personId : people) {
-					int actualGroupCount = groupsDataManager.getGroupCountForGroupTypeAndPerson(testGroupTypeId, personId);
+					int actualGroupCount = groupsDataManager.getGroupCountForGroupTypeAndPerson(testGroupTypeId,
+							personId);
 					MultiKey multiKey = new MultiKey(testGroupTypeId, personId);
 					int expectedGroupCount = expectedDataStructure.get(multiKey).size();
 					assertEquals(expectedGroupCount, actualGroupCount);
@@ -1242,8 +1272,7 @@ public class AT_GroupsDataManager {
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			/*
-			 * Show that there are no groups since we selected 0 groups per
-			 * person
+			 * Show that there are no groups since we selected 0 groups per person
 			 */
 			assertEquals(0, groupIds.size());
 			Set<GroupId> expectedGroupIds = new LinkedHashSet<>();
@@ -1264,7 +1293,8 @@ public class AT_GroupsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(target = GroupsDataManager.class, name = "getGroupPropertyDefinition", args = { GroupTypeId.class, GroupPropertyId.class })
+	@UnitTestMethod(target = GroupsDataManager.class, name = "getGroupPropertyDefinition", args = { GroupTypeId.class,
+			GroupPropertyId.class })
 	public void testGetGroupPropertyDefinition() {
 
 		Factory factory = GroupsTestPluginFactory.factory(10, 0, 5, 4462836951642761957L, (c) -> {
@@ -1275,34 +1305,39 @@ public class AT_GroupsDataManager {
 			// definitions
 			for (TestGroupPropertyId testGroupPropertyId : TestGroupPropertyId.values()) {
 				PropertyDefinition expectedPropertyDefinition = testGroupPropertyId.getPropertyDefinition();
-				PropertyDefinition actualPropertyDefinition = groupsDataManager.getGroupPropertyDefinition(testGroupPropertyId.getTestGroupTypeId(), testGroupPropertyId);
+				PropertyDefinition actualPropertyDefinition = groupsDataManager
+						.getGroupPropertyDefinition(testGroupPropertyId.getTestGroupTypeId(), testGroupPropertyId);
 				assertEquals(expectedPropertyDefinition, actualPropertyDefinition);
 			}
 
 			// precondition tests
 
 			// if the group type id is null
-			ContractException contractException = assertThrows(ContractException.class,
-					() -> groupsDataManager.getGroupPropertyDefinition(null, TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK));
+			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager
+					.getGroupPropertyDefinition(null, TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK));
 			assertEquals(GroupError.NULL_GROUP_TYPE_ID, contractException.getErrorType());
 
 			// if the group type id is unknown
 			contractException = assertThrows(ContractException.class,
-					() -> groupsDataManager.getGroupPropertyDefinition(TestGroupTypeId.getUnknownGroupTypeId(), TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK));
+					() -> groupsDataManager.getGroupPropertyDefinition(TestGroupTypeId.getUnknownGroupTypeId(),
+							TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK));
 			assertEquals(GroupError.UNKNOWN_GROUP_TYPE_ID, contractException.getErrorType());
 
 			// if the group property id is null
-			contractException = assertThrows(ContractException.class, () -> groupsDataManager.getGroupPropertyDefinition(TestGroupTypeId.GROUP_TYPE_1, null));
+			contractException = assertThrows(ContractException.class,
+					() -> groupsDataManager.getGroupPropertyDefinition(TestGroupTypeId.GROUP_TYPE_1, null));
 			assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
 
 			// if the group property id is unknown
 			contractException = assertThrows(ContractException.class,
-					() -> groupsDataManager.getGroupPropertyDefinition(TestGroupTypeId.GROUP_TYPE_1, TestGroupPropertyId.getUnknownGroupPropertyId()));
+					() -> groupsDataManager.getGroupPropertyDefinition(TestGroupTypeId.GROUP_TYPE_1,
+							TestGroupPropertyId.getUnknownGroupPropertyId()));
 			assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
 
 			// if the group property id is unknown
 			contractException = assertThrows(ContractException.class,
-					() -> groupsDataManager.getGroupPropertyDefinition(TestGroupTypeId.GROUP_TYPE_1, TestGroupPropertyId.GROUP_PROPERTY_2_1_BOOLEAN_MUTABLE_TRACK));
+					() -> groupsDataManager.getGroupPropertyDefinition(TestGroupTypeId.GROUP_TYPE_1,
+							TestGroupPropertyId.GROUP_PROPERTY_2_1_BOOLEAN_MUTABLE_TRACK));
 			assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
 
 		});
@@ -1312,7 +1347,8 @@ public class AT_GroupsDataManager {
 		ContractException contractException = assertThrows(ContractException.class, () -> {
 			Factory factory2 = GroupsTestPluginFactory.factory(10, 0, 5, 5959643517439959298L, (c) -> {
 				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-				groupsDataManager.getGroupPropertyDefinition(null, TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK);
+				groupsDataManager.getGroupPropertyDefinition(null,
+						TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK);
 			});
 
 			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
@@ -1324,7 +1360,8 @@ public class AT_GroupsDataManager {
 		contractException = assertThrows(ContractException.class, () -> {
 			Factory factory2 = GroupsTestPluginFactory.factory(10, 0, 5, 9138791522018557245L, (c) -> {
 				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-				groupsDataManager.getGroupPropertyDefinition(TestGroupTypeId.getUnknownGroupTypeId(), TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK);
+				groupsDataManager.getGroupPropertyDefinition(TestGroupTypeId.getUnknownGroupTypeId(),
+						TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK);
 			});
 			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
 		});
@@ -1345,7 +1382,8 @@ public class AT_GroupsDataManager {
 		contractException = assertThrows(ContractException.class, () -> {
 			Factory factory2 = GroupsTestPluginFactory.factory(10, 0, 5, 9138791522018557245L, (c) -> {
 				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-				groupsDataManager.getGroupPropertyDefinition(TestGroupTypeId.GROUP_TYPE_1, TestGroupPropertyId.getUnknownGroupPropertyId());
+				groupsDataManager.getGroupPropertyDefinition(TestGroupTypeId.GROUP_TYPE_1,
+						TestGroupPropertyId.getUnknownGroupPropertyId());
 			});
 			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
 		});
@@ -1355,7 +1393,8 @@ public class AT_GroupsDataManager {
 		contractException = assertThrows(ContractException.class, () -> {
 			Factory factory2 = GroupsTestPluginFactory.factory(10, 0, 5, 9138791522018557245L, (c) -> {
 				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-				groupsDataManager.getGroupPropertyDefinition(TestGroupTypeId.GROUP_TYPE_1, TestGroupPropertyId.GROUP_PROPERTY_2_1_BOOLEAN_MUTABLE_TRACK);
+				groupsDataManager.getGroupPropertyDefinition(TestGroupTypeId.GROUP_TYPE_1,
+						TestGroupPropertyId.GROUP_PROPERTY_2_1_BOOLEAN_MUTABLE_TRACK);
 			});
 			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
 		});
@@ -1364,7 +1403,8 @@ public class AT_GroupsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(target = GroupsDataManager.class, name = "getGroupPropertyExists", args = { GroupTypeId.class, GroupPropertyId.class })
+	@UnitTestMethod(target = GroupsDataManager.class, name = "getGroupPropertyExists", args = { GroupTypeId.class,
+			GroupPropertyId.class })
 	public void testGetGroupPropertyExists() {
 
 		Factory factory = GroupsTestPluginFactory.factory(10, 0, 5, 8858123829776885259L, (c) -> {
@@ -1374,14 +1414,17 @@ public class AT_GroupsDataManager {
 			// show that the personGroupDataManger returns true for the group
 			// properties that should be present
 			for (TestGroupPropertyId testGroupPropertyId : TestGroupPropertyId.values()) {
-				assertTrue(groupsDataManager.getGroupPropertyExists(testGroupPropertyId.getTestGroupTypeId(), testGroupPropertyId));
+				assertTrue(groupsDataManager.getGroupPropertyExists(testGroupPropertyId.getTestGroupTypeId(),
+						testGroupPropertyId));
 			}
 
 			// show that other group properties do not exist
 			assertFalse(groupsDataManager.getGroupPropertyExists(null, null));
-			assertFalse(groupsDataManager.getGroupPropertyExists(null, TestGroupPropertyId.getUnknownGroupPropertyId()));
+			assertFalse(
+					groupsDataManager.getGroupPropertyExists(null, TestGroupPropertyId.getUnknownGroupPropertyId()));
 			assertFalse(groupsDataManager.getGroupPropertyExists(TestGroupTypeId.getUnknownGroupTypeId(), null));
-			assertFalse(groupsDataManager.getGroupPropertyExists(TestGroupTypeId.getUnknownGroupTypeId(), TestGroupPropertyId.getUnknownGroupPropertyId()));
+			assertFalse(groupsDataManager.getGroupPropertyExists(TestGroupTypeId.getUnknownGroupTypeId(),
+					TestGroupPropertyId.getUnknownGroupPropertyId()));
 		});
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
@@ -1397,7 +1440,8 @@ public class AT_GroupsDataManager {
 			// show that the personGroupDataManger returns the correct group
 			// property ids
 			for (TestGroupTypeId testGroupTypeId : TestGroupTypeId.values()) {
-				Set<TestGroupPropertyId> expectedPropertyIds = TestGroupPropertyId.getTestGroupPropertyIds(testGroupTypeId);
+				Set<TestGroupPropertyId> expectedPropertyIds = TestGroupPropertyId
+						.getTestGroupPropertyIds(testGroupTypeId);
 				Set<GroupPropertyId> actualPropertyIds = groupsDataManager.getGroupPropertyIds(testGroupTypeId);
 				assertEquals(expectedPropertyIds, actualPropertyIds);
 			}
@@ -1428,15 +1472,16 @@ public class AT_GroupsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(target = GroupsDataManager.class, name = "getGroupPropertyValue", args = { GroupId.class, GroupPropertyId.class })
+	@UnitTestMethod(target = GroupsDataManager.class, name = "getGroupPropertyValue", args = { GroupId.class,
+			GroupPropertyId.class })
 	public void testGetGroupPropertyValue() {
 
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
 		/*
 		 * Create a container to hold our expectations. The MultiKey will be
-		 * (GroupId,GroupPropertyId) pairs and the Object will hold the most
-		 * recent property value.
+		 * (GroupId,GroupPropertyId) pairs and the Object will hold the most recent
+		 * property value.
 		 */
 		Map<MultiKey, Object> expectedValues = new LinkedHashMap<>();
 
@@ -1477,8 +1522,8 @@ public class AT_GroupsDataManager {
 		}));
 
 		/*
-		 * At time = 2, have the agent show that the property values still have
-		 * their expected values and then set those properties to new values.
+		 * At time = 2, have the agent show that the property values still have their
+		 * expected values and then set those properties to new values.
 		 */
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(2, (c) -> {
 			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
@@ -1500,8 +1545,8 @@ public class AT_GroupsDataManager {
 		}));
 
 		/*
-		 * At time = 2, have the agent show that the property values still have
-		 * their expected values.
+		 * At time = 2, have the agent show that the property values still have their
+		 * expected values.
 		 */
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(3, (c) -> {
 			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
@@ -1526,7 +1571,8 @@ public class AT_GroupsDataManager {
 		ContractException contractException = assertThrows(ContractException.class, () -> {
 			Factory factory2 = GroupsTestPluginFactory.factory(30, 3, 5, 1071603906331418640L, (c) -> {
 				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-				groupsDataManager.getGroupPropertyValue(null, TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK);
+				groupsDataManager.getGroupPropertyValue(null,
+						TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK);
 			});
 			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
 		});
@@ -1538,7 +1584,8 @@ public class AT_GroupsDataManager {
 		contractException = assertThrows(ContractException.class, () -> {
 			Factory factory2 = GroupsTestPluginFactory.factory(30, 3, 5, 7115328473763483106L, (c) -> {
 				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-				groupsDataManager.getGroupPropertyValue(new GroupId(1000000), TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK);
+				groupsDataManager.getGroupPropertyValue(new GroupId(1000000),
+						TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK);
 			});
 			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
 		});
@@ -1576,7 +1623,8 @@ public class AT_GroupsDataManager {
 			Factory factory2 = GroupsTestPluginFactory.factory(30, 3, 5, 6994832854288891414L, (c) -> {
 				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
 				GroupId groupId = groupsDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_1);
-				groupsDataManager.getGroupPropertyValue(groupId, TestGroupPropertyId.GROUP_PROPERTY_2_1_BOOLEAN_MUTABLE_TRACK);
+				groupsDataManager.getGroupPropertyValue(groupId,
+						TestGroupPropertyId.GROUP_PROPERTY_2_1_BOOLEAN_MUTABLE_TRACK);
 			});
 			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
 		});
@@ -1596,8 +1644,7 @@ public class AT_GroupsDataManager {
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			/*
-			 * Show that there are no groups since we selected 0 groups per
-			 * person
+			 * Show that there are no groups since we selected 0 groups per person
 			 */
 			assertEquals(0, groupIds.size());
 			Map<TestGroupTypeId, Set<GroupId>> expectedTypeToGroupIds = new LinkedHashMap<>();
@@ -1621,11 +1668,13 @@ public class AT_GroupsDataManager {
 			// precondition tests
 
 			// if the group type id is null
-			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.getGroupsForGroupType(null));
+			ContractException contractException = assertThrows(ContractException.class,
+					() -> groupsDataManager.getGroupsForGroupType(null));
 			assertEquals(GroupError.NULL_GROUP_TYPE_ID, contractException.getErrorType());
 
 			// if the group type id is unknown
-			contractException = assertThrows(ContractException.class, () -> groupsDataManager.getGroupsForGroupType(TestGroupTypeId.getUnknownGroupTypeId()));
+			contractException = assertThrows(ContractException.class,
+					() -> groupsDataManager.getGroupsForGroupType(TestGroupTypeId.getUnknownGroupTypeId()));
 			assertEquals(GroupError.UNKNOWN_GROUP_TYPE_ID, contractException.getErrorType());
 
 		});
@@ -1655,7 +1704,8 @@ public class AT_GroupsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(target = GroupsDataManager.class, name = "getGroupsForGroupTypeAndPerson", args = { GroupTypeId.class, PersonId.class })
+	@UnitTestMethod(target = GroupsDataManager.class, name = "getGroupsForGroupTypeAndPerson", args = {
+			GroupTypeId.class, PersonId.class })
 	public void testGetGroupsForGroupTypeAndPerson() {
 
 		Factory factory = GroupsTestPluginFactory.factory(100, 0, 5, 4847183275886938594L, (c) -> {
@@ -1668,8 +1718,7 @@ public class AT_GroupsDataManager {
 			List<PersonId> people = peopleDataManager.getPeople();
 
 			/*
-			 * Show that there are no groups since we selected 0 groups per
-			 * person
+			 * Show that there are no groups since we selected 0 groups per person
 			 */
 			assertEquals(0, groupIds.size());
 
@@ -1683,8 +1732,8 @@ public class AT_GroupsDataManager {
 			}
 
 			/*
-			 * For each person pick three groups at random and add the person to
-			 * each group, recording this in the expected data structure
+			 * For each person pick three groups at random and add the person to each group,
+			 * recording this in the expected data structure
 			 */
 			for (PersonId personId : people) {
 				Collections.shuffle(groupIds, new Random(randomGenerator.nextLong()));
@@ -1706,7 +1755,8 @@ public class AT_GroupsDataManager {
 			// show that the group ids match the expected group ids
 			for (TestGroupTypeId testGroupTypeId : TestGroupTypeId.values()) {
 				for (PersonId personId : people) {
-					List<GroupId> actualGroupIds = groupsDataManager.getGroupsForGroupTypeAndPerson(testGroupTypeId, personId);
+					List<GroupId> actualGroupIds = groupsDataManager.getGroupsForGroupTypeAndPerson(testGroupTypeId,
+							personId);
 					MultiKey multiKey = new MultiKey(testGroupTypeId, personId);
 					Set<GroupId> expectedGroupIds = expectedDataStructure.get(multiKey);
 					assertEquals(expectedGroupIds.size(), actualGroupIds.size());
@@ -1750,7 +1800,8 @@ public class AT_GroupsDataManager {
 		contractException = assertThrows(ContractException.class, () -> {
 			Factory factory2 = GroupsTestPluginFactory.factory(100, 0, 5, 1445347293441431961L, (c) -> {
 				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-				groupsDataManager.getGroupsForGroupTypeAndPerson(TestGroupTypeId.getUnknownGroupTypeId(), new PersonId(0));
+				groupsDataManager.getGroupsForGroupTypeAndPerson(TestGroupTypeId.getUnknownGroupTypeId(),
+						new PersonId(0));
 			});
 			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
 		});
@@ -1772,8 +1823,7 @@ public class AT_GroupsDataManager {
 			List<PersonId> people = peopleDataManager.getPeople();
 
 			/*
-			 * Show that there are no groups since we selected 0 groups per
-			 * person
+			 * Show that there are no groups since we selected 0 groups per person
 			 */
 			assertEquals(0, groupIds.size());
 
@@ -1787,8 +1837,8 @@ public class AT_GroupsDataManager {
 			}
 
 			/*
-			 * For each person pick three groups at random and add the person to
-			 * each group, recording this in the expected data structure
+			 * For each person pick three groups at random and add the person to each group,
+			 * recording this in the expected data structure
 			 */
 			for (PersonId personId : people) {
 				Collections.shuffle(groupIds, new Random(randomGenerator.nextLong()));
@@ -1852,8 +1902,7 @@ public class AT_GroupsDataManager {
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			/*
-			 * Show that there are no groups since we selected 0 groups per
-			 * person
+			 * Show that there are no groups since we selected 0 groups per person
 			 */
 			assertEquals(0, groupIds.size());
 
@@ -1912,8 +1961,7 @@ public class AT_GroupsDataManager {
 			List<PersonId> people = peopleDataManager.getPeople();
 
 			/*
-			 * Show that there are no groups since we selected 0 groups per
-			 * person
+			 * Show that there are no groups since we selected 0 groups per person
 			 */
 			assertEquals(0, groupIds.size());
 
@@ -1928,8 +1976,8 @@ public class AT_GroupsDataManager {
 			}
 
 			/*
-			 * For each person pick either one two or three group types and
-			 * record the expected group type count person person.
+			 * For each person pick either one two or three group types and record the
+			 * expected group type count person person.
 			 */
 			for (PersonId personId : people) {
 				int groupTypeCount = randomGenerator.nextInt(3) + 1;
@@ -2004,8 +2052,7 @@ public class AT_GroupsDataManager {
 			List<PersonId> people = peopleDataManager.getPeople();
 
 			/*
-			 * Show that there are no groups since we selected 0 groups per
-			 * person
+			 * Show that there are no groups since we selected 0 groups per person
 			 */
 			assertEquals(0, groupIds.size());
 
@@ -2020,8 +2067,8 @@ public class AT_GroupsDataManager {
 			}
 
 			/*
-			 * For each person pick either one two or three group types and
-			 * record the expected group type count person person.
+			 * For each person pick either one two or three group types and record the
+			 * expected group type count person person.
 			 */
 			for (PersonId personId : people) {
 				Set<GroupTypeId> groupTypes = new LinkedHashSet<>();
@@ -2087,8 +2134,7 @@ public class AT_GroupsDataManager {
 			List<PersonId> people = peopleDataManager.getPeople();
 
 			/*
-			 * Show that there are no groups since we selected 0 groups per
-			 * person
+			 * Show that there are no groups since we selected 0 groups per person
 			 */
 			assertEquals(0, groupIds.size());
 
@@ -2105,8 +2151,7 @@ public class AT_GroupsDataManager {
 			groupIds = new ArrayList<>(expectedDataStructure.keySet());
 
 			/*
-			 * For each person pick either one two or three group types and
-			 * record.
+			 * For each person pick either one two or three group types and record.
 			 */
 			for (PersonId personId : people) {
 				Collections.shuffle(groupIds, new Random(randomGenerator.nextLong()));
@@ -2167,8 +2212,7 @@ public class AT_GroupsDataManager {
 			List<PersonId> people = peopleDataManager.getPeople();
 
 			/*
-			 * Show that there are no groups since we selected 0 groups per
-			 * person
+			 * Show that there are no groups since we selected 0 groups per person
 			 */
 			assertEquals(0, groupIds.size());
 
@@ -2184,8 +2228,7 @@ public class AT_GroupsDataManager {
 			}
 
 			/*
-			 * For each person pick either one two or three group types and
-			 * record.
+			 * For each person pick either one two or three group types and record.
 			 */
 			for (PersonId personId : people) {
 				Collections.shuffle(groupIds, new Random(randomGenerator.nextLong()));
@@ -2248,8 +2291,7 @@ public class AT_GroupsDataManager {
 			List<PersonId> people = peopleDataManager.getPeople();
 
 			/*
-			 * Show that there are no groups since we selected 0 groups per
-			 * person
+			 * Show that there are no groups since we selected 0 groups per person
 			 */
 			assertEquals(0, groupIds.size());
 
@@ -2265,8 +2307,7 @@ public class AT_GroupsDataManager {
 			}
 
 			/*
-			 * For each person pick either one two or three group types and
-			 * record.
+			 * For each person pick either one two or three group types and record.
 			 */
 			for (PersonId personId : people) {
 				Collections.shuffle(groupIds, new Random(randomGenerator.nextLong()));
@@ -2325,8 +2366,7 @@ public class AT_GroupsDataManager {
 			List<PersonId> people = peopleDataManager.getPeople();
 
 			/*
-			 * Show that there are no groups since we selected 0 groups per
-			 * person
+			 * Show that there are no groups since we selected 0 groups per person
 			 */
 			assertEquals(0, groupIds.size());
 
@@ -2345,8 +2385,7 @@ public class AT_GroupsDataManager {
 			}
 
 			/*
-			 * For each person pick either one two or three group types and
-			 * record.
+			 * For each person pick either one two or three group types and record.
 			 */
 			for (PersonId personId : people) {
 				Collections.shuffle(groupIds, new Random(randomGenerator.nextLong()));
@@ -2409,7 +2448,8 @@ public class AT_GroupsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(target = GroupsDataManager.class, name = "isPersonInGroup", args = { PersonId.class, GroupId.class })
+	@UnitTestMethod(target = GroupsDataManager.class, name = "isPersonInGroup", args = { PersonId.class,
+			GroupId.class })
 	public void testIsPersonInGroup() {
 
 		Factory factory = GroupsTestPluginFactory.factory(100, 0, 5, 8319627382232144625L, (c) -> {
@@ -2422,8 +2462,7 @@ public class AT_GroupsDataManager {
 			List<PersonId> people = peopleDataManager.getPeople();
 
 			/*
-			 * Show that there are no groups since we selected 0 groups per
-			 * person
+			 * Show that there are no groups since we selected 0 groups per person
 			 */
 			assertEquals(0, groupIds.size());
 
@@ -2440,8 +2479,7 @@ public class AT_GroupsDataManager {
 			groupIds = new ArrayList<>(expectedDataStructure.keySet());
 
 			/*
-			 * For each person pick either one two or three group types and
-			 * record.
+			 * For each person pick either one two or three group types and record.
 			 */
 			for (PersonId personId : people) {
 				Collections.shuffle(groupIds, new Random(randomGenerator.nextLong()));
@@ -2520,8 +2558,8 @@ public class AT_GroupsDataManager {
 		MutableObject<PersonId> pId = new MutableObject<>();
 
 		/*
-		 * Have the agent add a person and then remove it. There will be a delay
-		 * of 0 time for the person to be removed.
+		 * Have the agent add a person and then remove it. There will be a delay of 0
+		 * time for the person to be removed.
 		 */
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(2, (c) -> {
 			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
@@ -2541,8 +2579,7 @@ public class AT_GroupsDataManager {
 		}));
 
 		/*
-		 * Have the agent show that the person is no longer present in the
-		 * groups
+		 * Have the agent show that the person is no longer present in the groups
 		 * 
 		 */
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(3, (c) -> {
@@ -2574,8 +2611,7 @@ public class AT_GroupsDataManager {
 	}
 
 	/**
-	 * Demonstrates that the data manager's initial state reflects its plugin
-	 * data
+	 * Demonstrates that the data manager's initial state reflects its plugin data
 	 */
 	@Test
 	@UnitTestMethod(target = GroupsDataManager.class, name = "init", args = { DataManagerContext.class })
@@ -2594,7 +2630,8 @@ public class AT_GroupsDataManager {
 		int membershipCount = (int) FastMath.round(initialPopulation * expectedGroupsPerPerson);
 		int groupCount = (int) FastMath.round(membershipCount / expectedPeoplePerGroup);
 
-		GroupsPluginData groupsPluginData = GroupsTestPluginFactory.getStandardGroupsPluginData(groupCount, membershipCount, people, seed);
+		GroupsPluginData groupsPluginData = GroupsTestPluginFactory.getStandardGroupsPluginData(groupCount,
+				membershipCount, people, seed);
 
 		// add the action plugin
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
@@ -2642,8 +2679,10 @@ public class AT_GroupsDataManager {
 				Set<GroupPropertyId> actualGroupPropertyIds = personGroupDataManager.getGroupPropertyIds(groupTypeId);
 				assertEquals(expectedGroupPropertyIds, actualGroupPropertyIds);
 				for (GroupPropertyId groupPropertyId : actualGroupPropertyIds) {
-					PropertyDefinition expectedPropertyDefinition = groupsPluginData.getGroupPropertyDefinition(groupTypeId, groupPropertyId);
-					PropertyDefinition actualPropertyDefinition = personGroupDataManager.getGroupPropertyDefinition(groupTypeId, groupPropertyId);
+					PropertyDefinition expectedPropertyDefinition = groupsPluginData
+							.getGroupPropertyDefinition(groupTypeId, groupPropertyId);
+					PropertyDefinition actualPropertyDefinition = personGroupDataManager
+							.getGroupPropertyDefinition(groupTypeId, groupPropertyId);
 					assertEquals(expectedPropertyDefinition, actualPropertyDefinition);
 				}
 			}
@@ -2652,7 +2691,8 @@ public class AT_GroupsDataManager {
 			Set<MultiKey> expectedGroupPropertyValues = new LinkedHashSet<>();
 			for (GroupId groupId : groupsPluginData.getGroupIds()) {
 				for (GroupPropertyValue groupPropertyValue : groupsPluginData.getGroupPropertyValues(groupId)) {
-					MultiKey multiKey = new MultiKey(groupId, groupPropertyValue.groupPropertyId(), groupPropertyValue.value());
+					MultiKey multiKey = new MultiKey(groupId, groupPropertyValue.groupPropertyId(),
+							groupPropertyValue.value());
 					expectedGroupPropertyValues.add(multiKey);
 				}
 			}
@@ -2674,7 +2714,8 @@ public class AT_GroupsDataManager {
 
 		TestPluginData testPluginData = pluginBuilder.build();
 
-		Factory factory = GroupsTestPluginFactory.factory(initialPopulation, expectedGroupsPerPerson, expectedPeoplePerGroup, seed, testPluginData);
+		Factory factory = GroupsTestPluginFactory.factory(initialPopulation, expectedGroupsPerPerson,
+				expectedPeoplePerGroup, seed, testPluginData);
 		factory.setGroupsPluginData(groupsPluginData);
 		// build and execute the engine
 
@@ -2731,7 +2772,8 @@ public class AT_GroupsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(target = GroupsDataManager.class, name = "defineGroupProperty", args = { GroupPropertyDefinitionInitialization.class })
+	@UnitTestMethod(target = GroupsDataManager.class, name = "defineGroupProperty", args = {
+			GroupPropertyDefinitionInitialization.class })
 	public void testDefineGroupProperty() {
 
 		Set<MultiKey> expectedObservations = new LinkedHashSet<>();
@@ -2752,19 +2794,22 @@ public class AT_GroupsDataManager {
 			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
 			for (TestAuxiliaryGroupTypeId testAuxiliaryGroupTypeId : TestAuxiliaryGroupTypeId.values()) {
 				groupsDataManager.addGroupType(testAuxiliaryGroupTypeId);
-				for (TestAuxiliaryGroupPropertyId testAuxiliaryGroupPropertyId : TestAuxiliaryGroupPropertyId.getTestGroupPropertyIds(testAuxiliaryGroupTypeId)) {
+				for (TestAuxiliaryGroupPropertyId testAuxiliaryGroupPropertyId : TestAuxiliaryGroupPropertyId
+						.getTestGroupPropertyIds(testAuxiliaryGroupTypeId)) {
 					PropertyDefinition propertyDefinition = testAuxiliaryGroupPropertyId.getPropertyDefinition();
 					GroupPropertyDefinitionInitialization groupPropertyDefinitionInitialization = //
-							GroupPropertyDefinitionInitialization	.builder()//
-																	.setGroupTypeId(testAuxiliaryGroupTypeId)//
-																	.setPropertyId(testAuxiliaryGroupPropertyId)//
-																	.setPropertyDefinition(propertyDefinition)//
-																	.build();
+							GroupPropertyDefinitionInitialization.builder()//
+									.setGroupTypeId(testAuxiliaryGroupTypeId)//
+									.setPropertyId(testAuxiliaryGroupPropertyId)//
+									.setPropertyDefinition(propertyDefinition)//
+									.build();
 
 					groupsDataManager.defineGroupProperty(groupPropertyDefinitionInitialization);
-					MultiKey multiKey = new MultiKey(c.getTime(), testAuxiliaryGroupTypeId, testAuxiliaryGroupPropertyId);
+					MultiKey multiKey = new MultiKey(c.getTime(), testAuxiliaryGroupTypeId,
+							testAuxiliaryGroupPropertyId);
 					expectedObservations.add(multiKey);
-					PropertyDefinition actualPropertyDefinition = groupsDataManager.getGroupPropertyDefinition(testAuxiliaryGroupTypeId, testAuxiliaryGroupPropertyId);
+					PropertyDefinition actualPropertyDefinition = groupsDataManager
+							.getGroupPropertyDefinition(testAuxiliaryGroupTypeId, testAuxiliaryGroupPropertyId);
 					assertEquals(propertyDefinition, actualPropertyDefinition);
 				}
 			}
@@ -2786,13 +2831,14 @@ public class AT_GroupsDataManager {
 				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
 				GroupTypeId groupTypeId = TestAuxiliaryGroupTypeId.GROUP_AUX_TYPE_1;
 				GroupPropertyId groupPropertyId = TestAuxiliaryGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK;
-				PropertyDefinition propertyDefinition = TestAuxiliaryGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK.getPropertyDefinition();
+				PropertyDefinition propertyDefinition = TestAuxiliaryGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK
+						.getPropertyDefinition();
 				GroupPropertyDefinitionInitialization groupPropertyDefinitionInitialization = //
-						GroupPropertyDefinitionInitialization	.builder()//
-																.setGroupTypeId(groupTypeId)//
-																.setPropertyId(groupPropertyId)//
-																.setPropertyDefinition(propertyDefinition)//
-																.build();
+						GroupPropertyDefinitionInitialization.builder()//
+								.setGroupTypeId(groupTypeId)//
+								.setPropertyId(groupPropertyId)//
+								.setPropertyDefinition(propertyDefinition)//
+								.build();
 				groupsDataManager.defineGroupProperty(groupPropertyDefinitionInitialization);
 
 			});
@@ -2808,13 +2854,14 @@ public class AT_GroupsDataManager {
 				GroupTypeId groupTypeId = TestAuxiliaryGroupTypeId.GROUP_AUX_TYPE_1;
 				groupsDataManager.addGroupType(groupTypeId);
 				GroupPropertyId groupPropertyId = TestAuxiliaryGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK;
-				PropertyDefinition propertyDefinition = TestAuxiliaryGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK.getPropertyDefinition();
+				PropertyDefinition propertyDefinition = TestAuxiliaryGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK
+						.getPropertyDefinition();
 				GroupPropertyDefinitionInitialization groupPropertyDefinitionInitialization = //
-						GroupPropertyDefinitionInitialization	.builder()//
-																.setGroupTypeId(groupTypeId)//
-																.setPropertyId(groupPropertyId)//
-																.setPropertyDefinition(propertyDefinition)//
-																.build();
+						GroupPropertyDefinitionInitialization.builder()//
+								.setGroupTypeId(groupTypeId)//
+								.setPropertyId(groupPropertyId)//
+								.setPropertyDefinition(propertyDefinition)//
+								.build();
 
 				groupsDataManager.defineGroupProperty(groupPropertyDefinitionInitialization);
 				groupsDataManager.defineGroupProperty(groupPropertyDefinitionInitialization);
@@ -2824,8 +2871,8 @@ public class AT_GroupsDataManager {
 		assertEquals(PropertyError.DUPLICATE_PROPERTY_DEFINITION, contractException.getErrorType());
 
 		/*
-		 * precondition test: if the groupPropertyDefinitionInitialization
-		 * contains a property assignment for a group that does not exist.
+		 * precondition test: if the groupPropertyDefinitionInitialization contains a
+		 * property assignment for a group that does not exist.
 		 */
 		contractException = assertThrows(ContractException.class, () -> {
 			Factory factory2 = GroupsTestPluginFactory.factory(0, 3, 10, 1757700723640970863L, (c) -> {
@@ -2834,14 +2881,15 @@ public class AT_GroupsDataManager {
 				GroupTypeId groupTypeId = TestAuxiliaryGroupTypeId.GROUP_AUX_TYPE_1;
 				groupsDataManager.addGroupType(groupTypeId);
 				GroupPropertyId groupPropertyId = TestAuxiliaryGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK;
-				PropertyDefinition propertyDefinition = TestAuxiliaryGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK.getPropertyDefinition();
+				PropertyDefinition propertyDefinition = TestAuxiliaryGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK
+						.getPropertyDefinition();
 				GroupPropertyDefinitionInitialization groupPropertyDefinitionInitialization = //
-						GroupPropertyDefinitionInitialization	.builder()//
-																.setGroupTypeId(groupTypeId)//
-																.setPropertyId(groupPropertyId)//
-																.setPropertyDefinition(propertyDefinition)//
-																.addPropertyValue(new GroupId(0), true)//
-																.build();
+						GroupPropertyDefinitionInitialization.builder()//
+								.setGroupTypeId(groupTypeId)//
+								.setPropertyId(groupPropertyId)//
+								.setPropertyDefinition(propertyDefinition)//
+								.addPropertyValue(new GroupId(0), true)//
+								.build();
 				groupsDataManager.defineGroupProperty(groupPropertyDefinitionInitialization);
 			});
 
@@ -2851,8 +2899,8 @@ public class AT_GroupsDataManager {
 		assertEquals(GroupError.UNKNOWN_GROUP_ID, contractException.getErrorType());
 
 		/*
-		 * if the groupPropertyDefinitionInitialization contains a property
-		 * assignment for a group that is not of the correct group type.
+		 * if the groupPropertyDefinitionInitialization contains a property assignment
+		 * for a group that is not of the correct group type.
 		 */
 		contractException = assertThrows(ContractException.class, () -> {
 			Factory factory2 = GroupsTestPluginFactory.factory(100, 3, 10, 8541542687515887761L, (c) -> {
@@ -2863,14 +2911,15 @@ public class AT_GroupsDataManager {
 				GroupTypeId groupTypeId = TestAuxiliaryGroupTypeId.GROUP_AUX_TYPE_1;
 				groupsDataManager.addGroupType(groupTypeId);
 				GroupPropertyId groupPropertyId = TestAuxiliaryGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK;
-				PropertyDefinition propertyDefinition = TestAuxiliaryGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK.getPropertyDefinition();
+				PropertyDefinition propertyDefinition = TestAuxiliaryGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK
+						.getPropertyDefinition();
 				GroupPropertyDefinitionInitialization groupPropertyDefinitionInitialization = //
-						GroupPropertyDefinitionInitialization	.builder()//
-																.setGroupTypeId(groupTypeId)//
-																.setPropertyId(groupPropertyId)//
-																.setPropertyDefinition(propertyDefinition)//
-																.addPropertyValue(groupId, true)//
-																.build();
+						GroupPropertyDefinitionInitialization.builder()//
+								.setGroupTypeId(groupTypeId)//
+								.setPropertyId(groupPropertyId)//
+								.setPropertyDefinition(propertyDefinition)//
+								.addPropertyValue(groupId, true)//
+								.build();
 				groupsDataManager.defineGroupProperty(groupPropertyDefinitionInitialization);
 			});
 
@@ -2879,9 +2928,9 @@ public class AT_GroupsDataManager {
 		assertEquals(GroupError.INCORRECT_GROUP_TYPE_ID, contractException.getErrorType());
 
 		/*
-		 * precondition test: if the groupPropertyDefinitionInitialization does
-		 * not contain property value assignments for every extant group when
-		 * the property definition does not contain a default value
+		 * precondition test: if the groupPropertyDefinitionInitialization does not
+		 * contain property value assignments for every extant group when the property
+		 * definition does not contain a default value
 		 */
 		contractException = assertThrows(ContractException.class, () -> {
 			Factory factory2 = GroupsTestPluginFactory.factory(0, 3, 10, 244590355339669479L, (c) -> {
@@ -2893,11 +2942,11 @@ public class AT_GroupsDataManager {
 				GroupPropertyId groupPropertyId = TestAuxiliaryGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK;
 				PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Boolean.class).build();
 				GroupPropertyDefinitionInitialization groupPropertyDefinitionInitialization = //
-						GroupPropertyDefinitionInitialization	.builder()//
-																.setGroupTypeId(groupTypeId)//
-																.setPropertyId(groupPropertyId)//
-																.setPropertyDefinition(propertyDefinition)//
-																.build();
+						GroupPropertyDefinitionInitialization.builder()//
+								.setGroupTypeId(groupTypeId)//
+								.setPropertyId(groupPropertyId)//
+								.setPropertyDefinition(propertyDefinition)//
+								.build();
 				groupsDataManager.defineGroupProperty(groupPropertyDefinitionInitialization);
 			});
 			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
@@ -2907,7 +2956,8 @@ public class AT_GroupsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(target = GroupsDataManager.class, name = "getEventFilterForGroupAdditionEvent", args = { GroupTypeId.class })
+	@UnitTestMethod(target = GroupsDataManager.class, name = "getEventFilterForGroupAdditionEvent", args = {
+			GroupTypeId.class })
 	public void testGetEventFilterForGroupAdditionEvent_GroupType() {
 
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
@@ -2925,7 +2975,8 @@ public class AT_GroupsDataManager {
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
 			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
 			for (TestGroupTypeId testGroupTypeId : selectedGroupTypes) {
-				EventFilter<GroupAdditionEvent> eventFilter = groupsDataManager.getEventFilterForGroupAdditionEvent(testGroupTypeId);
+				EventFilter<GroupAdditionEvent> eventFilter = groupsDataManager
+						.getEventFilterForGroupAdditionEvent(testGroupTypeId);
 				c.subscribe(eventFilter, (c2, e) -> {
 					actualObservations.add(e.groupId());
 				});
@@ -3052,7 +3103,8 @@ public class AT_GroupsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(target = GroupsDataManager.class, name = "getEventFilterForGroupImminentRemovalEvent", args = { GroupTypeId.class })
+	@UnitTestMethod(target = GroupsDataManager.class, name = "getEventFilterForGroupImminentRemovalEvent", args = {
+			GroupTypeId.class })
 	public void testGetEventFilterForGroupImminentRemovalEvent_GroupType() {
 
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
@@ -3069,7 +3121,8 @@ public class AT_GroupsDataManager {
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
 			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
 			for (TestGroupTypeId testGroupTypeId : selectedGroupTypes) {
-				EventFilter<GroupImminentRemovalEvent> eventFilter = groupsDataManager.getEventFilterForGroupImminentRemovalEvent(testGroupTypeId);
+				EventFilter<GroupImminentRemovalEvent> eventFilter = groupsDataManager
+						.getEventFilterForGroupImminentRemovalEvent(testGroupTypeId);
 				c.subscribe(eventFilter, (c2, e) -> {
 					actualObservations.add(new MultiKey(c.getTime(), e.groupId()));
 				});
@@ -3132,7 +3185,8 @@ public class AT_GroupsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(target = GroupsDataManager.class, name = "getEventFilterForGroupImminentRemovalEvent", args = { GroupId.class })
+	@UnitTestMethod(target = GroupsDataManager.class, name = "getEventFilterForGroupImminentRemovalEvent", args = {
+			GroupId.class })
 	public void testGetEventFilterForGroupImminentRemovalEvent_GroupId() {
 
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
@@ -3165,7 +3219,8 @@ public class AT_GroupsDataManager {
 			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
 			for (GroupId groupId : selectedGroups) {
 
-				EventFilter<GroupImminentRemovalEvent> eventFilter = groupsDataManager.getEventFilterForGroupImminentRemovalEvent(groupId);
+				EventFilter<GroupImminentRemovalEvent> eventFilter = groupsDataManager
+						.getEventFilterForGroupImminentRemovalEvent(groupId);
 				c.subscribe(eventFilter, (c2, e) -> {
 					actualObservations.add(e.groupId());
 				});
@@ -3243,7 +3298,8 @@ public class AT_GroupsDataManager {
 		// have an actor observe imminent group removals
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(1, (c) -> {
 			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-			EventFilter<GroupImminentRemovalEvent> eventFilter = groupsDataManager.getEventFilterForGroupImminentRemovalEvent();
+			EventFilter<GroupImminentRemovalEvent> eventFilter = groupsDataManager
+					.getEventFilterForGroupImminentRemovalEvent();
 			c.subscribe(eventFilter, (c2, e) -> {
 				actualObservations.add(e.groupId());
 			});
@@ -3277,7 +3333,8 @@ public class AT_GroupsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(target = GroupsDataManager.class, name = "getEventFilterForGroupMembershipAdditionEvent", args = { GroupId.class })
+	@UnitTestMethod(target = GroupsDataManager.class, name = "getEventFilterForGroupMembershipAdditionEvent", args = {
+			GroupId.class })
 	public void testGetEventFilterForGroupMembershipAdditionEvent_Group() {
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
@@ -3289,8 +3346,8 @@ public class AT_GroupsDataManager {
 
 		int groupCount = 20;
 		/*
-		 * have the actor create some groups and selected about half of them
-		 * they will then be used for filtering membership addition observations
+		 * have the actor create some groups and selected about half of them they will
+		 * then be used for filtering membership addition observations
 		 */
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
 			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
@@ -3310,7 +3367,8 @@ public class AT_GroupsDataManager {
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(1, (c) -> {
 			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
 			for (GroupId groupId : selectedGroups) {
-				EventFilter<GroupMembershipAdditionEvent> eventFilter = groupsDataManager.getEventFilterForGroupMembershipAdditionEvent(groupId);
+				EventFilter<GroupMembershipAdditionEvent> eventFilter = groupsDataManager
+						.getEventFilterForGroupMembershipAdditionEvent(groupId);
 				c.subscribe(eventFilter, (c2, e) -> {
 					actualObservations.add(new MultiKey(c2.getTime(), e.groupId(), e.personId()));
 				});
@@ -3324,7 +3382,8 @@ public class AT_GroupsDataManager {
 
 			for (int i = 3; i < comparisonDay; i++) {
 				c.addPlan((c2) -> {
-					RandomGenerator randomGenerator = c.getDataManager(StochasticsDataManager.class).getRandomGenerator();
+					RandomGenerator randomGenerator = c.getDataManager(StochasticsDataManager.class)
+							.getRandomGenerator();
 					PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 					GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
 
@@ -3382,7 +3441,8 @@ public class AT_GroupsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(target = GroupsDataManager.class, name = "getEventFilterForGroupMembershipAdditionEvent", args = { GroupId.class, PersonId.class })
+	@UnitTestMethod(target = GroupsDataManager.class, name = "getEventFilterForGroupMembershipAdditionEvent", args = {
+			GroupId.class, PersonId.class })
 	public void testGetEventFilterForGroupMembershipAdditionEvent_Group_Person() {
 
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
@@ -3397,8 +3457,8 @@ public class AT_GroupsDataManager {
 		int groupCount = 20;
 		int peopleCount = 5;
 		/*
-		 * have the actor create some groups and selected about half of them
-		 * they will then be used for filtering membership addition observations
+		 * have the actor create some groups and selected about half of them they will
+		 * then be used for filtering membership addition observations
 		 */
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
@@ -3410,7 +3470,8 @@ public class AT_GroupsDataManager {
 				GroupId groupId = groupsDataManager.addGroup(groupTypeId);
 				for (int j = 0; j < peopleCount; j++) {
 					PersonId selectedPersonId = peopleDataManager.addPerson(PersonConstructionData.builder().build());
-					PersonId nonselectedPersonId = peopleDataManager.addPerson(PersonConstructionData.builder().build());
+					PersonId nonselectedPersonId = peopleDataManager
+							.addPerson(PersonConstructionData.builder().build());
 					selectedPairs.add(new Pair<>(groupId, selectedPersonId));
 					nonSelectedPairs.add(new Pair<>(groupId, nonselectedPersonId));
 				}
@@ -3424,7 +3485,8 @@ public class AT_GroupsDataManager {
 			for (Pair<GroupId, PersonId> pair : selectedPairs) {
 				GroupId groupId = pair.getFirst();
 				PersonId personId = pair.getSecond();
-				EventFilter<GroupMembershipAdditionEvent> eventFilter = groupsDataManager.getEventFilterForGroupMembershipAdditionEvent(groupId, personId);
+				EventFilter<GroupMembershipAdditionEvent> eventFilter = groupsDataManager
+						.getEventFilterForGroupMembershipAdditionEvent(groupId, personId);
 				c.subscribe(eventFilter, (c2, e) -> {
 					actualObservations.add(new MultiKey(c2.getTime(), e.groupId(), e.personId()));
 				});
@@ -3515,7 +3577,8 @@ public class AT_GroupsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(target = GroupsDataManager.class, name = "getEventFilterForGroupMembershipAdditionEvent", args = { GroupTypeId.class })
+	@UnitTestMethod(target = GroupsDataManager.class, name = "getEventFilterForGroupMembershipAdditionEvent", args = {
+			GroupTypeId.class })
 	public void testGetEventFilterForGroupMembershipAdditionEvent_GroupType() {
 
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
@@ -3533,7 +3596,8 @@ public class AT_GroupsDataManager {
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
 			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
 			for (GroupTypeId groupTypeId : selectedGroupTypes) {
-				EventFilter<GroupMembershipAdditionEvent> eventFilter = groupsDataManager.getEventFilterForGroupMembershipAdditionEvent(groupTypeId);
+				EventFilter<GroupMembershipAdditionEvent> eventFilter = groupsDataManager
+						.getEventFilterForGroupMembershipAdditionEvent(groupTypeId);
 
 				c.subscribe(eventFilter, (c2, e) -> {
 					actualObservations.add(new MultiKey(e.groupId(), e.personId()));
@@ -3601,7 +3665,8 @@ public class AT_GroupsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(target = GroupsDataManager.class, name = "getEventFilterForGroupMembershipAdditionEvent", args = { GroupTypeId.class, PersonId.class })
+	@UnitTestMethod(target = GroupsDataManager.class, name = "getEventFilterForGroupMembershipAdditionEvent", args = {
+			GroupTypeId.class, PersonId.class })
 	public void testGetEventFilterForGroupMembershipAdditionEvent_GroupType_Person() {
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
@@ -3618,8 +3683,8 @@ public class AT_GroupsDataManager {
 		int groupCount = 100;
 		int peopleCount = 5;
 		/*
-		 * have the actor create some groups and people who will eventually move
-		 * into those groups
+		 * have the actor create some groups and people who will eventually move into
+		 * those groups
 		 */
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
@@ -3648,7 +3713,8 @@ public class AT_GroupsDataManager {
 				GroupId groupId = pair.getFirst();
 				PersonId personId = pair.getSecond();
 				GroupTypeId groupTypeId = groupsDataManager.getGroupType(groupId);
-				EventFilter<GroupMembershipAdditionEvent> eventFilter = groupsDataManager.getEventFilterForGroupMembershipAdditionEvent(groupTypeId, personId);
+				EventFilter<GroupMembershipAdditionEvent> eventFilter = groupsDataManager
+						.getEventFilterForGroupMembershipAdditionEvent(groupTypeId, personId);
 				c.subscribe(eventFilter, (c2, e) -> {
 					actualObservations.add(new MultiKey(c2.getTime(), e.groupId(), e.personId()));
 				});
@@ -3738,7 +3804,8 @@ public class AT_GroupsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(target = GroupsDataManager.class, name = "getEventFilterForGroupMembershipAdditionEvent", args = { PersonId.class })
+	@UnitTestMethod(target = GroupsDataManager.class, name = "getEventFilterForGroupMembershipAdditionEvent", args = {
+			PersonId.class })
 	public void testGetEventFilterForGroupMembershipAdditionEvent_Person() {
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
@@ -3752,8 +3819,8 @@ public class AT_GroupsDataManager {
 		int groupCount = 100;
 		int peopleCount = 5;
 		/*
-		 * have the actor create some groups and people who will eventually move
-		 * into those groups
+		 * have the actor create some groups and people who will eventually move into
+		 * those groups
 		 */
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
@@ -3778,7 +3845,8 @@ public class AT_GroupsDataManager {
 			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
 			for (Pair<GroupId, PersonId> pair : selectedPairs) {
 				PersonId personId = pair.getSecond();
-				EventFilter<GroupMembershipAdditionEvent> eventFilter = groupsDataManager.getEventFilterForGroupMembershipAdditionEvent(personId);
+				EventFilter<GroupMembershipAdditionEvent> eventFilter = groupsDataManager
+						.getEventFilterForGroupMembershipAdditionEvent(personId);
 				c.subscribe(eventFilter, (c2, e) -> {
 					actualObservations.add(new MultiKey(c2.getTime(), e.groupId(), e.personId()));
 				});
@@ -3852,7 +3920,8 @@ public class AT_GroupsDataManager {
 		// selected pairs by way of the group type id
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
 			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-			EventFilter<GroupMembershipAdditionEvent> eventFilter = groupsDataManager.getEventFilterForGroupMembershipAdditionEvent();
+			EventFilter<GroupMembershipAdditionEvent> eventFilter = groupsDataManager
+					.getEventFilterForGroupMembershipAdditionEvent();
 			c.subscribe(eventFilter, (c2, e) -> {
 				actualObservations.add(new MultiKey(c2.getTime(), e.groupId(), e.personId()));
 			});
@@ -3889,7 +3958,8 @@ public class AT_GroupsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(target = GroupsDataManager.class, name = "getEventFilterForGroupMembershipRemovalEvent", args = { GroupId.class })
+	@UnitTestMethod(target = GroupsDataManager.class, name = "getEventFilterForGroupMembershipRemovalEvent", args = {
+			GroupId.class })
 	public void testGetEventFilterForGroupMembershipRemovalEvent_Group() {
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
@@ -3901,8 +3971,8 @@ public class AT_GroupsDataManager {
 
 		int groupCount = 20;
 		/*
-		 * have the actor create some groups and selected about half of them
-		 * they will then be used for filtering membership removal observations
+		 * have the actor create some groups and selected about half of them they will
+		 * then be used for filtering membership removal observations
 		 */
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
 			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
@@ -3922,7 +3992,8 @@ public class AT_GroupsDataManager {
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(1, (c) -> {
 			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
 			for (GroupId groupId : selectedGroups) {
-				EventFilter<GroupMembershipRemovalEvent> eventFilter = groupsDataManager.getEventFilterForGroupMembershipRemovalEvent(groupId);
+				EventFilter<GroupMembershipRemovalEvent> eventFilter = groupsDataManager
+						.getEventFilterForGroupMembershipRemovalEvent(groupId);
 				c.subscribe(eventFilter, (c2, e) -> {
 					actualObservations.add(new MultiKey(c2.getTime(), e.groupId(), e.personId()));
 				});
@@ -3936,7 +4007,8 @@ public class AT_GroupsDataManager {
 
 			for (int i = 3; i < comparisonDay; i++) {
 				c.addPlan((c2) -> {
-					RandomGenerator randomGenerator = c.getDataManager(StochasticsDataManager.class).getRandomGenerator();
+					RandomGenerator randomGenerator = c.getDataManager(StochasticsDataManager.class)
+							.getRandomGenerator();
 					PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 					GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
 
@@ -3993,7 +4065,8 @@ public class AT_GroupsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(target = GroupsDataManager.class, name = "getEventFilterForGroupMembershipRemovalEvent", args = { GroupId.class, PersonId.class })
+	@UnitTestMethod(target = GroupsDataManager.class, name = "getEventFilterForGroupMembershipRemovalEvent", args = {
+			GroupId.class, PersonId.class })
 	public void testGetEventFilterForGroupMembershipRemovalEvent_Group_Person() {
 
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
@@ -4008,8 +4081,8 @@ public class AT_GroupsDataManager {
 		int groupCount = 20;
 		int peopleCount = 5;
 		/*
-		 * have the actor create some groups and selected about half of them
-		 * they will then be used for filtering membership removal observations
+		 * have the actor create some groups and selected about half of them they will
+		 * then be used for filtering membership removal observations
 		 */
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
@@ -4021,7 +4094,8 @@ public class AT_GroupsDataManager {
 				GroupId groupId = groupsDataManager.addGroup(groupTypeId);
 				for (int j = 0; j < peopleCount; j++) {
 					PersonId selectedPersonId = peopleDataManager.addPerson(PersonConstructionData.builder().build());
-					PersonId nonselectedPersonId = peopleDataManager.addPerson(PersonConstructionData.builder().build());
+					PersonId nonselectedPersonId = peopleDataManager
+							.addPerson(PersonConstructionData.builder().build());
 					selectedPairs.add(new Pair<>(groupId, selectedPersonId));
 					nonSelectedPairs.add(new Pair<>(groupId, nonselectedPersonId));
 				}
@@ -4035,7 +4109,8 @@ public class AT_GroupsDataManager {
 			for (Pair<GroupId, PersonId> pair : selectedPairs) {
 				GroupId groupId = pair.getFirst();
 				PersonId personId = pair.getSecond();
-				EventFilter<GroupMembershipRemovalEvent> eventFilter = groupsDataManager.getEventFilterForGroupMembershipRemovalEvent(groupId, personId);
+				EventFilter<GroupMembershipRemovalEvent> eventFilter = groupsDataManager
+						.getEventFilterForGroupMembershipRemovalEvent(groupId, personId);
 				c.subscribe(eventFilter, (c2, e) -> {
 					actualObservations.add(new MultiKey(c2.getTime(), e.groupId(), e.personId()));
 				});
@@ -4125,7 +4200,8 @@ public class AT_GroupsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(target = GroupsDataManager.class, name = "getEventFilterForGroupMembershipRemovalEvent", args = { GroupTypeId.class })
+	@UnitTestMethod(target = GroupsDataManager.class, name = "getEventFilterForGroupMembershipRemovalEvent", args = {
+			GroupTypeId.class })
 	public void testGetEventFilterForGroupMembershipRemovalEvent_GroupType() {
 
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
@@ -4143,7 +4219,8 @@ public class AT_GroupsDataManager {
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
 			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
 			for (GroupTypeId groupTypeId : selectedGroupTypes) {
-				EventFilter<GroupMembershipRemovalEvent> eventFilter = groupsDataManager.getEventFilterForGroupMembershipRemovalEvent(groupTypeId);
+				EventFilter<GroupMembershipRemovalEvent> eventFilter = groupsDataManager
+						.getEventFilterForGroupMembershipRemovalEvent(groupTypeId);
 
 				c.subscribe(eventFilter, (c2, e) -> {
 					actualObservations.add(new MultiKey(e.groupId(), e.personId()));
@@ -4213,7 +4290,8 @@ public class AT_GroupsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(target = GroupsDataManager.class, name = "getEventFilterForGroupMembershipRemovalEvent", args = { GroupTypeId.class, PersonId.class })
+	@UnitTestMethod(target = GroupsDataManager.class, name = "getEventFilterForGroupMembershipRemovalEvent", args = {
+			GroupTypeId.class, PersonId.class })
 	public void testGetEventFilterForGroupMembershipRemovalEvent_GroupType_Person() {
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
@@ -4230,8 +4308,8 @@ public class AT_GroupsDataManager {
 		int groupCount = 100;
 		int peopleCount = 5;
 		/*
-		 * have the actor create some groups and people who will eventually move
-		 * into those groups
+		 * have the actor create some groups and people who will eventually move into
+		 * those groups
 		 */
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
@@ -4260,7 +4338,8 @@ public class AT_GroupsDataManager {
 				GroupId groupId = pair.getFirst();
 				PersonId personId = pair.getSecond();
 				GroupTypeId groupTypeId = groupsDataManager.getGroupType(groupId);
-				EventFilter<GroupMembershipRemovalEvent> eventFilter = groupsDataManager.getEventFilterForGroupMembershipRemovalEvent(groupTypeId, personId);
+				EventFilter<GroupMembershipRemovalEvent> eventFilter = groupsDataManager
+						.getEventFilterForGroupMembershipRemovalEvent(groupTypeId, personId);
 				c.subscribe(eventFilter, (c2, e) -> {
 					actualObservations.add(new MultiKey(c2.getTime(), e.groupId(), e.personId()));
 				});
@@ -4350,7 +4429,8 @@ public class AT_GroupsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(target = GroupsDataManager.class, name = "getEventFilterForGroupMembershipRemovalEvent", args = { PersonId.class })
+	@UnitTestMethod(target = GroupsDataManager.class, name = "getEventFilterForGroupMembershipRemovalEvent", args = {
+			PersonId.class })
 	public void testGetEventFilterForGroupMembershipRemovalEvent_Person() {
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
@@ -4364,8 +4444,8 @@ public class AT_GroupsDataManager {
 		int groupCount = 100;
 		int peopleCount = 5;
 		/*
-		 * have the actor create some groups and people who will eventually move
-		 * into those groups
+		 * have the actor create some groups and people who will eventually move into
+		 * those groups
 		 */
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
@@ -4390,7 +4470,8 @@ public class AT_GroupsDataManager {
 			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
 			for (Pair<GroupId, PersonId> pair : selectedPairs) {
 				PersonId personId = pair.getSecond();
-				EventFilter<GroupMembershipRemovalEvent> eventFilter = groupsDataManager.getEventFilterForGroupMembershipRemovalEvent(personId);
+				EventFilter<GroupMembershipRemovalEvent> eventFilter = groupsDataManager
+						.getEventFilterForGroupMembershipRemovalEvent(personId);
 				c.subscribe(eventFilter, (c2, e) -> {
 					actualObservations.add(new MultiKey(c2.getTime(), e.groupId(), e.personId()));
 				});
@@ -4467,7 +4548,8 @@ public class AT_GroupsDataManager {
 		// selected pairs by way of the group type id
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
 			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-			EventFilter<GroupMembershipRemovalEvent> eventFilter = groupsDataManager.getEventFilterForGroupMembershipRemovalEvent();
+			EventFilter<GroupMembershipRemovalEvent> eventFilter = groupsDataManager
+					.getEventFilterForGroupMembershipRemovalEvent();
 			c.subscribe(eventFilter, (c2, e) -> {
 				actualObservations.add(new MultiKey(c2.getTime(), e.groupId(), e.personId()));
 			});
@@ -4507,7 +4589,8 @@ public class AT_GroupsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(target = GroupsDataManager.class, name = "getEventFilterForGroupPropertyUpdateEvent", args = { GroupId.class })
+	@UnitTestMethod(target = GroupsDataManager.class, name = "getEventFilterForGroupPropertyUpdateEvent", args = {
+			GroupId.class })
 	public void testGetEventFilterForGroupPropertyUpdateEvent_Group() {
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
@@ -4536,7 +4619,8 @@ public class AT_GroupsDataManager {
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
 			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
 			for (GroupId groupId : selectedGroups) {
-				EventFilter<GroupPropertyUpdateEvent> eventFilter = groupsDataManager.getEventFilterForGroupPropertyUpdateEvent(groupId);
+				EventFilter<GroupPropertyUpdateEvent> eventFilter = groupsDataManager
+						.getEventFilterForGroupPropertyUpdateEvent(groupId);
 				c.subscribe(eventFilter, (c2, e) -> {
 					actualObservations.add(new MultiKey(e.groupId(), e.groupPropertyId()));
 				});
@@ -4553,7 +4637,8 @@ public class AT_GroupsDataManager {
 
 			for (GroupId groupId : groupIds) {
 				TestGroupTypeId testGroupTypeId = groupsDataManager.getGroupType(groupId);
-				for (TestGroupPropertyId testGroupPropertyId : TestGroupPropertyId.getTestGroupPropertyIds(testGroupTypeId)) {
+				for (TestGroupPropertyId testGroupPropertyId : TestGroupPropertyId
+						.getTestGroupPropertyIds(testGroupTypeId)) {
 					if (testGroupPropertyId.getPropertyDefinition().propertyValuesAreMutable()) {
 						Object propertyValue = testGroupPropertyId.getRandomPropertyValue(randomGenerator);
 						groupsDataManager.setGroupPropertyValue(groupId, testGroupPropertyId, propertyValue);
@@ -4599,7 +4684,8 @@ public class AT_GroupsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(target = GroupsDataManager.class, name = "getEventFilterForGroupPropertyUpdateEvent", args = { GroupPropertyId.class, GroupId.class })
+	@UnitTestMethod(target = GroupsDataManager.class, name = "getEventFilterForGroupPropertyUpdateEvent", args = {
+			GroupPropertyId.class, GroupId.class })
 	public void testGetEventFilterForGroupPropertyUpdateEvent_Property_Group() {
 
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
@@ -4641,7 +4727,8 @@ public class AT_GroupsDataManager {
 			for (Pair<GroupPropertyId, GroupId> pair : selectedPairs) {
 				GroupPropertyId groupPropertyId = pair.getFirst();
 				GroupId groupId = pair.getSecond();
-				EventFilter<GroupPropertyUpdateEvent> eventFilter = groupsDataManager.getEventFilterForGroupPropertyUpdateEvent(groupPropertyId, groupId);
+				EventFilter<GroupPropertyUpdateEvent> eventFilter = groupsDataManager
+						.getEventFilterForGroupPropertyUpdateEvent(groupPropertyId, groupId);
 				c.subscribe(eventFilter, (c2, e) -> {
 					actualObservations.add(new MultiKey(e.groupId(), e.groupPropertyId()));
 				});
@@ -4658,7 +4745,8 @@ public class AT_GroupsDataManager {
 
 			for (GroupId groupId : groupIds) {
 				TestGroupTypeId testGroupTypeId = groupsDataManager.getGroupType(groupId);
-				for (TestGroupPropertyId testGroupPropertyId : TestGroupPropertyId.getTestGroupPropertyIds(testGroupTypeId)) {
+				for (TestGroupPropertyId testGroupPropertyId : TestGroupPropertyId
+						.getTestGroupPropertyIds(testGroupTypeId)) {
 					if (testGroupPropertyId.getPropertyDefinition().propertyValuesAreMutable()) {
 						Object propertyValue = testGroupPropertyId.getRandomPropertyValue(randomGenerator);
 						groupsDataManager.setGroupPropertyValue(groupId, testGroupPropertyId, propertyValue);
@@ -4734,7 +4822,8 @@ public class AT_GroupsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(target = GroupsDataManager.class, name = "getEventFilterForGroupPropertyUpdateEvent", args = { GroupTypeId.class })
+	@UnitTestMethod(target = GroupsDataManager.class, name = "getEventFilterForGroupPropertyUpdateEvent", args = {
+			GroupTypeId.class })
 	public void testGetEventFilterForGroupPropertyUpdateEvent_GroupType() {
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
@@ -4750,7 +4839,8 @@ public class AT_GroupsDataManager {
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
 			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
 			for (GroupTypeId groupTypeId : selectedGroupTypes) {
-				EventFilter<GroupPropertyUpdateEvent> eventFilter = groupsDataManager.getEventFilterForGroupPropertyUpdateEvent(groupTypeId);
+				EventFilter<GroupPropertyUpdateEvent> eventFilter = groupsDataManager
+						.getEventFilterForGroupPropertyUpdateEvent(groupTypeId);
 				c.subscribe(eventFilter, (c2, e) -> {
 					actualObservations.add(new MultiKey(e.groupId(), e.groupPropertyId()));
 				});
@@ -4767,7 +4857,8 @@ public class AT_GroupsDataManager {
 
 			for (GroupId groupId : groupIds) {
 				TestGroupTypeId testGroupTypeId = groupsDataManager.getGroupType(groupId);
-				for (TestGroupPropertyId testGroupPropertyId : TestGroupPropertyId.getTestGroupPropertyIds(testGroupTypeId)) {
+				for (TestGroupPropertyId testGroupPropertyId : TestGroupPropertyId
+						.getTestGroupPropertyIds(testGroupTypeId)) {
 					if (testGroupPropertyId.getPropertyDefinition().propertyValuesAreMutable()) {
 						Object propertyValue = testGroupPropertyId.getRandomPropertyValue(randomGenerator);
 						groupsDataManager.setGroupPropertyValue(groupId, testGroupPropertyId, propertyValue);
@@ -4815,7 +4906,8 @@ public class AT_GroupsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(target = GroupsDataManager.class, name = "getEventFilterForGroupPropertyUpdateEvent", args = { GroupPropertyId.class, GroupTypeId.class })
+	@UnitTestMethod(target = GroupsDataManager.class, name = "getEventFilterForGroupPropertyUpdateEvent", args = {
+			GroupPropertyId.class, GroupTypeId.class })
 	public void testGetEventFilterForGroupPropertyUpdateEvent_GroupProperty_GroupType() {
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
@@ -4836,7 +4928,8 @@ public class AT_GroupsDataManager {
 					if (randomGenerator.nextBoolean()) {
 						Pair<GroupPropertyId, GroupTypeId> pair = new Pair<>(groupPropertyId, groupTypeId);
 						selectedPairs.add(pair);
-						EventFilter<GroupPropertyUpdateEvent> eventFilter = groupsDataManager.getEventFilterForGroupPropertyUpdateEvent(groupPropertyId, groupTypeId);
+						EventFilter<GroupPropertyUpdateEvent> eventFilter = groupsDataManager
+								.getEventFilterForGroupPropertyUpdateEvent(groupPropertyId, groupTypeId);
 						c.subscribe(eventFilter, (c2, e) -> {
 							actualObservations.add(new MultiKey(e.groupId(), e.groupPropertyId()));
 						});
@@ -4855,7 +4948,8 @@ public class AT_GroupsDataManager {
 
 			for (GroupId groupId : groupIds) {
 				TestGroupTypeId testGroupTypeId = groupsDataManager.getGroupType(groupId);
-				for (TestGroupPropertyId testGroupPropertyId : TestGroupPropertyId.getTestGroupPropertyIds(testGroupTypeId)) {
+				for (TestGroupPropertyId testGroupPropertyId : TestGroupPropertyId
+						.getTestGroupPropertyIds(testGroupTypeId)) {
 					if (testGroupPropertyId.getPropertyDefinition().propertyValuesAreMutable()) {
 						Object propertyValue = testGroupPropertyId.getRandomPropertyValue(randomGenerator);
 						groupsDataManager.setGroupPropertyValue(groupId, testGroupPropertyId, propertyValue);
@@ -4942,7 +5036,8 @@ public class AT_GroupsDataManager {
 		// create an actor to observe all group property changes
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
 			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-			EventFilter<GroupPropertyUpdateEvent> eventFilter = groupsDataManager.getEventFilterForGroupPropertyUpdateEvent();
+			EventFilter<GroupPropertyUpdateEvent> eventFilter = groupsDataManager
+					.getEventFilterForGroupPropertyUpdateEvent();
 			c.subscribe(eventFilter, (c2, e) -> {
 				actualObservations.add(new MultiKey(e.groupId(), e.groupPropertyId()));
 			});
@@ -4959,7 +5054,8 @@ public class AT_GroupsDataManager {
 
 			for (GroupId groupId : groupIds) {
 				TestGroupTypeId testGroupTypeId = groupsDataManager.getGroupType(groupId);
-				for (TestGroupPropertyId testGroupPropertyId : TestGroupPropertyId.getTestGroupPropertyIds(testGroupTypeId)) {
+				for (TestGroupPropertyId testGroupPropertyId : TestGroupPropertyId
+						.getTestGroupPropertyIds(testGroupTypeId)) {
 					if (testGroupPropertyId.getPropertyDefinition().propertyValuesAreMutable()) {
 						Object propertyValue = testGroupPropertyId.getRandomPropertyValue(randomGenerator);
 						groupsDataManager.setGroupPropertyValue(groupId, testGroupPropertyId, propertyValue);
@@ -4991,7 +5087,8 @@ public class AT_GroupsDataManager {
 		// have an observer observe new group property definitions being created
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
 			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-			EventFilter<GroupPropertyDefinitionEvent> eventFilter = groupsDataManager.getEventFilterForGroupPropertyDefinitionEvent();
+			EventFilter<GroupPropertyDefinitionEvent> eventFilter = groupsDataManager
+					.getEventFilterForGroupPropertyDefinitionEvent();
 			c.subscribe(eventFilter, (c2, e) -> {
 				MultiKey multiKey = new MultiKey(c2.getTime(), e.groupTypeId(), e.groupPropertyId());
 				actualObservations.add(multiKey);
@@ -5003,19 +5100,22 @@ public class AT_GroupsDataManager {
 			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
 			for (TestAuxiliaryGroupTypeId testAuxiliaryGroupTypeId : TestAuxiliaryGroupTypeId.values()) {
 				groupsDataManager.addGroupType(testAuxiliaryGroupTypeId);
-				for (TestAuxiliaryGroupPropertyId testAuxiliaryGroupPropertyId : TestAuxiliaryGroupPropertyId.getTestGroupPropertyIds(testAuxiliaryGroupTypeId)) {
+				for (TestAuxiliaryGroupPropertyId testAuxiliaryGroupPropertyId : TestAuxiliaryGroupPropertyId
+						.getTestGroupPropertyIds(testAuxiliaryGroupTypeId)) {
 					PropertyDefinition propertyDefinition = testAuxiliaryGroupPropertyId.getPropertyDefinition();
 					GroupPropertyDefinitionInitialization groupPropertyDefinitionInitialization = //
-							GroupPropertyDefinitionInitialization	.builder()//
-																	.setGroupTypeId(testAuxiliaryGroupTypeId)//
-																	.setPropertyId(testAuxiliaryGroupPropertyId)//
-																	.setPropertyDefinition(propertyDefinition)//
-																	.build();
+							GroupPropertyDefinitionInitialization.builder()//
+									.setGroupTypeId(testAuxiliaryGroupTypeId)//
+									.setPropertyId(testAuxiliaryGroupPropertyId)//
+									.setPropertyDefinition(propertyDefinition)//
+									.build();
 
 					groupsDataManager.defineGroupProperty(groupPropertyDefinitionInitialization);
-					MultiKey multiKey = new MultiKey(c.getTime(), testAuxiliaryGroupTypeId, testAuxiliaryGroupPropertyId);
+					MultiKey multiKey = new MultiKey(c.getTime(), testAuxiliaryGroupTypeId,
+							testAuxiliaryGroupPropertyId);
 					expectedObservations.add(multiKey);
-					PropertyDefinition actualPropertyDefinition = groupsDataManager.getGroupPropertyDefinition(testAuxiliaryGroupTypeId, testAuxiliaryGroupPropertyId);
+					PropertyDefinition actualPropertyDefinition = groupsDataManager
+							.getGroupPropertyDefinition(testAuxiliaryGroupTypeId, testAuxiliaryGroupPropertyId);
 					assertEquals(propertyDefinition, actualPropertyDefinition);
 				}
 			}
@@ -5045,7 +5145,8 @@ public class AT_GroupsDataManager {
 		// have an actor observe the addition of new group types
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
 			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-			EventFilter<GroupTypeAdditionEvent> eventFilter = groupsDataManager.getEventFilterForGroupTypeAdditionEvent();
+			EventFilter<GroupTypeAdditionEvent> eventFilter = groupsDataManager
+					.getEventFilterForGroupTypeAdditionEvent();
 			c.subscribe(eventFilter, (c2, e) -> {
 				actualGroupTypeIds.add(e.groupTypeId());
 			});
@@ -5070,171 +5171,6 @@ public class AT_GroupsDataManager {
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
-	/**
-	 * Demonstrates that the data manager exhibits run continuity. The state of
-	 * the data manager is not effected by repeatedly starting and stopping the
-	 * simulation.
-	 */
 
-	@Test
-	@UnitTestMethod(target = PeopleDataManager.class, name = "init", args = { DataManagerContext.class })
-	public void testStateContinuity() {
-
-		/*
-		 * Note that we are not testing the content of the plugin datas -- that
-		 * is covered by the other state tests. We show here only that the
-		 * resulting plugin data state is the same without regard to how we
-		 * break up the run.
-		 */
-
-		/*
-		 * THIS TEST IS BROKEN -- IT ACTUALLY DOES NOTHING SINCE
-		 * performRandomGroupAction() IS NOT YET IMPLEMENTED. IT IS WAITING FOR
-		 * A REBUILD OF THE GROUPS PLUGIN DATA
-		 */
-
-		Set<GroupsPluginData> pluginDatas = new LinkedHashSet<>();
-		pluginDatas.add(testStateContinuity(1));
-		pluginDatas.add(testStateContinuity(5));
-		pluginDatas.add(testStateContinuity(10));
-
-		assertEquals(1, pluginDatas.size());
-		
-		fail();
-	}
-
-	private void performRandomGroupAction(ActorContext actorContext) {
-		// GroupsDataManager groupsDataManager =
-		// actorContext.getDataManager(GroupsDataManager.class);
-		// PeopleDataManager peopleDataManager =
-		// actorContext.getDataManager(PeopleDataManager.class);
-		// StochasticsDataManager stochasticsDataManager =
-		// actorContext.getDataManager(StochasticsDataManager.class);
-
-		// addGroup(GroupConstructionInfo)
-		// addGroup(GroupTypeId)
-		// addGroupType(GroupTypeId)
-		// addPersonToGroup(PersonId, GroupId)
-		// defineGroupProperty(GroupPropertyDefinitionInitialization)
-		// removeGroup(GroupId)
-		// removePersonFromGroup(PersonId, GroupId)
-		// setGroupPropertyValue(GroupId, GroupPropertyId, Object)
-		//
-		//
-		// sampleGroup(GroupId, GroupSampler)
-
-	}
-
-	private void performRandomGroupActions(ActorContext actorContext) {
-		StochasticsDataManager stochasticsDataManager = actorContext.getDataManager(StochasticsDataManager.class);
-		RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
-		int actionCount = randomGenerator.nextInt(15) + 1;
-		for (int i = 0; i < actionCount; i++) {
-			performRandomGroupAction(actorContext);
-		}
-	}
-
-	/*
-	 * Returns the people plugin data resulting from several people events over
-	 * several days. Attempts to stop and start the simulation by the given
-	 * number of increments.
-	 */
-	private GroupsPluginData testStateContinuity(int incrementCount) {
-		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6160901456257930728L);
-		/*
-		 * Build the RunContinuityPluginData with five context consumers that
-		 * will add and remove people over several days
-		 */
-		RunContinuityPluginData.Builder continuityBuilder = RunContinuityPluginData.builder();
-		double actionTime = 0;
-		for (int i = 0; i < 100; i++) {
-			actionTime += randomGenerator.nextDouble();
-			continuityBuilder.addContextConsumer(actionTime, (c) -> {
-				performRandomGroupActions(c);
-			});
-		}
-
-		RunContinuityPluginData runContinuityPluginData = continuityBuilder.build();
-
-		// Build an empty people plugin data for time zero
-		PeoplePluginData peoplePluginData = PeoplePluginData.builder().build();
-
-		// Build a simple stochastics plugin data
-		StochasticsPluginData stochasticsPluginData = //
-				StochasticsPluginData	.builder()//
-										.setMainRNGState(//
-												WellState	.builder()//
-															.setSeed(randomGenerator.nextLong())//
-															.build())
-										.build();//
-
-		// Build an empty groups plugin data
-		GroupsPluginData groupsPluginData = GroupsPluginData.builder().build();
-
-		// build the initial simulation state data -- time starts at zero
-		SimulationState simulationState = SimulationState.builder().build();
-
-		/*
-		 * Run the simulation in one day increments until all the plans in the
-		 * run continuity plugin data have been executed
-		 */
-		double haltTime = 0;
-		double maxTime = Double.NEGATIVE_INFINITY;
-		for (Pair<Double, Consumer<ActorContext>> pair : runContinuityPluginData.getConsumers()) {
-			Double time = pair.getFirst();
-			maxTime = FastMath.max(maxTime, time);
-		}
-		double timeIncrement = maxTime / incrementCount;
-		while (!runContinuityPluginData.allPlansComplete()) {
-			haltTime += timeIncrement;
-
-			// build the run continuity plugin
-			Plugin runContinuityPlugin = RunContinuityPlugin.builder()//
-															.setRunContinuityPluginData(runContinuityPluginData)//
-															.build();
-
-			// build the people plugin
-			Plugin peoplePlugin = PeoplePlugin.getPeoplePlugin(peoplePluginData);
-
-			// build the stochastics plugin
-			Plugin stochasticsPlugin = StochasticsPlugin.getStochasticsPlugin(stochasticsPluginData);
-
-			// build the groups plugin
-			Plugin groupsPlugin = GroupsPlugin.builder().setGroupsPluginData(groupsPluginData).getGroupsPlugin();
-
-			TestOutputConsumer outputConsumer = new TestOutputConsumer();
-
-			// execute the simulation so that it produces a people plugin data
-			Simulation simulation = Simulation	.builder()//
-												.addPlugin(peoplePlugin)//
-												.addPlugin(stochasticsPlugin)//
-												.addPlugin(runContinuityPlugin)//
-												.addPlugin(groupsPlugin)//
-												.setSimulationHaltTime(haltTime)//
-												.setRecordState(true)//
-												.setOutputConsumer(outputConsumer)//
-												.setSimulationState(simulationState)//
-												.build();//
-			simulation.execute();
-
-			// retrieve the people plugin data
-			peoplePluginData = outputConsumer.getOutputItem(PeoplePluginData.class).get();
-
-			// retrieve the groups plugin data
-			groupsPluginData = outputConsumer.getOutputItem(GroupsPluginData.class).get();
-
-			// retrieve the stochastics plugin data
-			stochasticsPluginData = outputConsumer.getOutputItem(StochasticsPluginData.class).get();
-
-			// retrieve the simulation state
-			simulationState = outputConsumer.getOutputItem(SimulationState.class).get();
-
-			// retrieve the run continuity plugin data
-			runContinuityPluginData = outputConsumer.getOutputItem(RunContinuityPluginData.class).get();
-		}
-
-		return groupsPluginData;
-
-	}
 
 }

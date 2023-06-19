@@ -2346,6 +2346,33 @@ public final class GroupsDataManager extends DataManager {
 		public double getTime() {
 			return dataManagerContext.getTime();
 		}
-
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+//		builder.append("GroupsDataManager [groupPropertyManagerMap=");
+//		builder.append(groupPropertyManagerMap);
+//		builder.append(", groupPropertyDefinitions=");
+//		builder.append(groupPropertyDefinitions);
+//		builder.append(", typesToGroupsMap=");
+//		builder.append(typesToGroupsMap);
+//		builder.append(", groupsToTypesMap=");
+//		builder.append(groupsToTypesMap);
+//		builder.append(", typesToIndexesMap=");
+//		builder.append(typesToIndexesMap);
+//		builder.append(", indexesToTypesMap=");
+//		builder.append(indexesToTypesMap);
+//		builder.append(", groupsToPeopleMap=");
+		builder.append(groupsToPeopleMap);
+//		builder.append(", peopleToGroupsMap=");
+//		builder.append(peopleToGroupsMap);
+//		builder.append(", masterGroupId=");
+//		builder.append(masterGroupId);		
+//		builder.append("]");
+		return builder.toString();
+	}
+	
+	
+	
 }
