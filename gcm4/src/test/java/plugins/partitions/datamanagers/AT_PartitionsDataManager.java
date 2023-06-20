@@ -1742,20 +1742,7 @@ public final class AT_PartitionsDataManager {
 		}
 	}
 
-	/**
-	 * Demonstrates that the data manager exhibits run continuity. The state of
-	 * the data manager is not effected by repeatedly starting and stopping the
-	 * simulation.
-	 */
-	@Test
-	@UnitTestMethod(target = PeopleDataManager.class, name = "init", args = { DataManagerContext.class })
-	public void testStateContinuity() {
-
-		/*
-		 * See AT_PartitionsDataManager_Continuity for test of run continuity
-		 */
-		
-	}
+	
 
 
 }

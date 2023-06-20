@@ -343,7 +343,7 @@ public final class GroupsTestPluginFactory {
 		for (MultiKey multiKey : groupMemeberships) {
 			GroupId groupId = multiKey.getKey(0);
 			PersonId personId = multiKey.getKey(1);
-			groupBuilder.addPersonToGroup(groupId, personId);
+			groupBuilder.associatePersonToGroup(groupId, personId);
 		}
 		return groupBuilder.build();
 	}

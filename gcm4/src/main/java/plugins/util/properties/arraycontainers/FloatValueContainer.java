@@ -18,6 +18,7 @@ public final class FloatValueContainer {
 	 * The array for storing the values
 	 */
 	private float[] values;
+	private int highestNonUllageIndex = -1;
 	
 	/*
 	 * The value returned for any non-negative index that has not been set via
@@ -136,14 +137,32 @@ public final class FloatValueContainer {
 		if (index >= values.length) {
 			grow(index + 1);
 		}
+		if(index>highestNonUllageIndex) {
+			highestNonUllageIndex = index;
+		}
 		values[index] = value;
 	}
+	private String getElementsString() {
 
+		if (highestNonUllageIndex == -1) {
+			return "[]";
+		}
+
+		StringBuilder b = new StringBuilder();
+		b.append('[');
+		for (int i = 0;; i++) {
+			b.append(String.valueOf(values[i]));
+			if (i == highestNonUllageIndex) {
+				return b.append(']').toString();
+			}
+			b.append(", ");
+		}
+	}
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("FloatValueContainer [values=");
-		builder.append(Arrays.toString(values));
+		builder.append(getElementsString());
 		builder.append(", defaultValue=");
 		builder.append(defaultValue);
 		builder.append("]");

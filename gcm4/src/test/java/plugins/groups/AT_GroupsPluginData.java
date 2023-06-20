@@ -55,7 +55,7 @@ public class AT_GroupsPluginData {
 		
 
 		GroupsPluginData groupInitialData = GroupsPluginData.builder() //
-																	.addPersonToGroup(new GroupId(0), new PersonId(0))//
+																	.associatePersonToGroup(new GroupId(0), new PersonId(0))//
 																	.addGroupTypeId(TestGroupTypeId.GROUP_TYPE_1)//
 																	.addGroup(new GroupId(0), TestGroupTypeId.GROUP_TYPE_1)//
 																	.defineGroupProperty(TestGroupTypeId.GROUP_TYPE_1, TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK,
@@ -74,7 +74,7 @@ public class AT_GroupsPluginData {
 		// defined
 		ContractException contractException = assertThrows(ContractException.class, () -> {
 			GroupsPluginData.Builder builder = GroupsPluginData.builder();
-			builder.addPersonToGroup(new GroupId(0), new PersonId(0)).build();
+			builder.associatePersonToGroup(new GroupId(0), new PersonId(0)).build();
 		});
 		assertEquals(GroupError.UNKNOWN_GROUP_ID, contractException.getErrorType());
 
@@ -376,10 +376,8 @@ public class AT_GroupsPluginData {
 			// select some people and add them to the group
 			Collections.shuffle(personIds, random);
 			int count = random.nextInt(10);
-			for (int j = 0; j < count; j++) {				
-				// show that duplicated values persist
-				builder.addPersonToGroup(new GroupId(i), new PersonId(personIds.get(j)));
-				builder.addPersonToGroup(new GroupId(i), new PersonId(personIds.get(j)));
+			for (int j = 0; j < count; j++) {
+				builder.associatePersonToGroup(new GroupId(i), new PersonId(personIds.get(j)));				
 				MultiKey multiKey = new MultiKey(new GroupId(i), new PersonId(personIds.get(j)));
 				expectedGroupAssignments.putIfAbsent(multiKey, new MutableInteger());
 				expectedGroupAssignments.get(multiKey).increment();
@@ -404,11 +402,11 @@ public class AT_GroupsPluginData {
 		assertEquals(expectedGroupAssignments, actualGroupAssignments);
 
 		// precondition test: if the group id is null
-		ContractException contractException = assertThrows(ContractException.class, () -> GroupsPluginData.builder().addPersonToGroup(null, new PersonId(0)));
+		ContractException contractException = assertThrows(ContractException.class, () -> GroupsPluginData.builder().associatePersonToGroup(null, new PersonId(0)));
 		assertEquals(GroupError.NULL_GROUP_ID, contractException.getErrorType());
 
 		// precondition test: if the person id is null
-		contractException = assertThrows(ContractException.class, () -> GroupsPluginData.builder().addPersonToGroup(new GroupId(0), null));
+		contractException = assertThrows(ContractException.class, () -> GroupsPluginData.builder().associatePersonToGroup(new GroupId(0), null));
 		assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
 	}
 
@@ -644,7 +642,7 @@ public class AT_GroupsPluginData {
 			int count = random.nextInt(10);
 			for (int j = 0; j < count; j++) {
 				PersonId personId = people.get(j);
-				builder.addPersonToGroup(groupId, personId);
+				builder.associatePersonToGroup(groupId, personId);
 				MultiKey multiKey = new MultiKey(groupId, personId);
 				expectedGroupAssignments.add(multiKey);
 			}
@@ -740,7 +738,7 @@ public class AT_GroupsPluginData {
 			Collections.sort(groups);
 			for (int j = 0; j < numberOfGroups; j++) {
 				GroupId groupId = groups.get(j);
-				groupPluginDataBuilder.addPersonToGroup(groupId, personId);
+				groupPluginDataBuilder.associatePersonToGroup(groupId, personId);
 			}
 		}
 		GroupsPluginData groupsPluginData = groupPluginDataBuilder.build();
@@ -838,7 +836,7 @@ public class AT_GroupsPluginData {
 			totalPeopleCount += peopleCount;
 			for (int i = currTotalPeopleCount; i < totalPeopleCount; i++) {
 				PersonId personId = new PersonId(i);
-				groupPluginDataBuilder.addPersonToGroup(groupId, personId);
+				groupPluginDataBuilder.associatePersonToGroup(groupId, personId);
 			}
 		}
 

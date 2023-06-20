@@ -2773,6 +2773,8 @@ public class AT_RegionsDataManager {
 		}
 	
 		assertNotNull(result);
+		
+		
 		return result;
 
 	}

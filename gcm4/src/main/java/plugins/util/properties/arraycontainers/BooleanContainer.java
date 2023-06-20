@@ -103,9 +103,7 @@ public final class BooleanContainer {
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("BooleanContainer [defaultValue=");
-		builder.append(defaultValue);
-		builder.append(", boundingIndex=");
-		builder.append(boundingIndex);
+		builder.append(defaultValue);		
 		builder.append(", bitSet=");
 		builder.append(bitSet);
 		builder.append("]");
