@@ -479,7 +479,7 @@ public final class ResourcesDataManager extends DataManager {
 		// if times for this resource will be tracked, then initialize tracking
 		// times to the current time
 		if (trackTimes) {
-			final DoubleValueContainer doubleValueContainer = new DoubleValueContainer(resourceDefinitionTime);
+			final DoubleValueContainer doubleValueContainer = new DoubleValueContainer(resourceDefinitionTime,peopleDataManager::personIndexExists);
 			personResourceTimes.put(resourceId, doubleValueContainer);
 		}
 
@@ -691,7 +691,7 @@ public final class ResourcesDataManager extends DataManager {
 			boolean trackTimes = resourcesPluginData.getResourceTimeTrackingPolicy(resourceId);
 			if (trackTimes) {
 				double resourceDefinitionTime = resourceDefinitionTimes.get(resourceId);
-				final DoubleValueContainer doubleValueContainer = new DoubleValueContainer(resourceDefinitionTime);
+				final DoubleValueContainer doubleValueContainer = new DoubleValueContainer(resourceDefinitionTime,peopleDataManager::personIndexExists);
 				personResourceTimes.put(resourceId, doubleValueContainer);
 
 				List<Double> personResourceTimes = resourcesPluginData.getPersonResourceTimes(resourceId);

@@ -1,6 +1,7 @@
 package plugins.util.properties.arraycontainers;
 
 import java.util.Arrays;
+import java.util.function.IntPredicate;
 
 import plugins.util.properties.PropertyError;
 import util.errors.ContractException;
@@ -14,25 +15,24 @@ import util.errors.ContractException;
  *
  */
 public final class DoubleValueContainer {
-	
-	private int highestNonUllageIndex = -1;
 
 	/*
 	 * The array for storing the values
 	 */
 	private double[] values;
-	
+
+	private final IntPredicate indexValidator;
 
 	/*
-	 * The value returned for any non-negative index that has not been set via
-	 * an invocation of setValue().
+	 * The value returned for any non-negative index that has not been set via an
+	 * invocation of setValue().
 	 */
 	private double defaultValue;
 
 	/*
-	 * Grows the length of the values array to be the greater of the given
-	 * capacity and 125% of its current length, filling empty elements in the
-	 * array with the default value.
+	 * Grows the length of the values array to be the greater of the given capacity
+	 * and 125% of its current length, filling empty elements in the array with the
+	 * default value.
 	 */
 	private void grow(int capacity) {
 		int oldCapacity = values.length;
@@ -51,16 +51,17 @@ public final class DoubleValueContainer {
 	 * @param index
 	 * @return
 	 * @throws ContractException
-	 *             <li>{@linkplain PropertyError#NEGATIVE_INDEX} if index is negative</li>
+	 *                           <li>{@linkplain PropertyError#NEGATIVE_INDEX} if
+	 *                           index is negative</li>
 	 * 
 	 */
 	public double getValue(int index) {
 		double result;
 
-		if(index<0) {
+		if (index < 0) {
 			throw new ContractException(PropertyError.NEGATIVE_INDEX);
 		}
-		
+
 		if (index < values.length) {
 			result = values[index];
 		} else {
@@ -69,11 +70,10 @@ public final class DoubleValueContainer {
 
 		return result;
 	}
-	
 
 	/**
-	 * Sets the capacity to the given capacity if the current capacity is less
-	 * than the one given.
+	 * Sets the capacity to the given capacity if the current capacity is less than
+	 * the one given.
 	 */
 	public void setCapacity(int capacity) {
 		if (capacity > values.length) {
@@ -82,8 +82,8 @@ public final class DoubleValueContainer {
 	}
 
 	/**
-	 * Returns the capacity of this container. Capacity is guaranteed to be
-	 * greater than or equal to size.
+	 * Returns the capacity of this container. Capacity is guaranteed to be greater
+	 * than or equal to size.
 	 */
 	public int getCapacity() {
 		return values.length;
@@ -98,41 +98,26 @@ public final class DoubleValueContainer {
 	}
 
 	/**
-	 * Constructs the DoubleValueContainer with the given default value.
-	 * 
-	 * @param defaultValue
-	 */
-	public DoubleValueContainer(double defaultValue) {
-		this(defaultValue, 16);
-	}
-
-	/**
-	 * Constructs the DoubleValueContainer with the given default value and
-	 * initial capacity
+	 * Constructs the DoubleValueContainer with the given default value and initial
+	 * capacity
 	 * 
 	 * @param defaultValue
 	 * @param capacity
 	 * 
-	 * @throws NegativeArraySizeException
-	 *             if the capacity is negative
+	 * @throws NegativeArraySizeException if the capacity is negative
 	 */
-	public DoubleValueContainer(double defaultValue, int capacity) {
-		values = new double[capacity];
-		if (defaultValue != 0) {
-			for (int i = 0; i < capacity; i++) {
-				values[i] = defaultValue;
-			}
-		}
+	public DoubleValueContainer(double defaultValue, IntPredicate indexValidator) {
+		values = new double[0];
 		this.defaultValue = defaultValue;
-
+		this.indexValidator = indexValidator;
 	}
 
 	/**
 	 * Sets the value at the index to the given value
 	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain PropertyError#NEGATIVE_INDEX} if index is
-	 *             negative</li>
+	 *                           <li>{@linkplain PropertyError#NEGATIVE_INDEX} if
+	 *                           index is negative</li>
 	 */
 	public void setValue(int index, double value) {
 		if (index < 0) {
@@ -140,28 +125,30 @@ public final class DoubleValueContainer {
 		}
 		if (index >= values.length) {
 			grow(index + 1);
-		}	
-		if(index> highestNonUllageIndex) {
-			highestNonUllageIndex = index;
 		}
+
 		values[index] = value;
 	}
-	
+
 	private String getElementsString() {
 
-		if (highestNonUllageIndex == -1) {
-			return "[]";
-		}
+		StringBuilder sb = new StringBuilder();
 
-		StringBuilder b = new StringBuilder();
-		b.append('[');
-		for (int i = 0;; i++) {
-			b.append(String.valueOf(values[i]));
-			if (i == highestNonUllageIndex) {
-				return b.append(']').toString();
+		boolean first = true;
+		sb.append('[');
+		int n = values.length;
+		for (int i = 0; i < n; i++) {
+			if (indexValidator.test(i)) {
+				if(first) {
+					first = false;
+				}else {
+					sb.append(", ");
+				}
+				sb.append(String.valueOf(values[i]));
 			}
-			b.append(", ");
 		}
+		sb.append(']');
+		return sb.toString();
 	}
 
 	@Override
@@ -174,7 +161,5 @@ public final class DoubleValueContainer {
 		builder.append("]");
 		return builder.toString();
 	}
-	
-	
 
 }

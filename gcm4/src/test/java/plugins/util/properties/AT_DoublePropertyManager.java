@@ -27,6 +27,11 @@ import util.random.RandomGeneratorProvider;
  */
 
 public class AT_DoublePropertyManager {
+	
+	
+	private boolean validateIndex(int index) {
+		return true;
+	}
 
 	@Test
 	@UnitTestMethod(target = DoublePropertyManager.class,name = "getPropertyValue", args = { int.class })
@@ -37,7 +42,7 @@ public class AT_DoublePropertyManager {
 			double defaultValue = 423.645;
 			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Double.class).setDefaultValue(defaultValue).build();
 
-			DoublePropertyManager doublePropertyManager = new DoublePropertyManager(propertyDefinition, 0);
+			DoublePropertyManager doublePropertyManager = new DoublePropertyManager(propertyDefinition,this::validateIndex);
 
 			/*
 			 * We will set the first 300 values multiple times at random
@@ -83,7 +88,7 @@ public class AT_DoublePropertyManager {
 			double defaultValue = 423.645;
 			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Double.class).setDefaultValue(defaultValue).build();
 
-			DoublePropertyManager doublePropertyManager = new DoublePropertyManager(propertyDefinition, 0);
+			DoublePropertyManager doublePropertyManager = new DoublePropertyManager(propertyDefinition,this::validateIndex);
 
 			/*
 			 * We will set the first 300 values multiple times at random
@@ -133,7 +138,7 @@ public class AT_DoublePropertyManager {
 			double defaultValue = 6.2345345;
 			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Double.class).setDefaultValue(defaultValue).build();
 
-			DoublePropertyManager doublePropertyManager = new DoublePropertyManager(propertyDefinition, 0);
+			DoublePropertyManager doublePropertyManager = new DoublePropertyManager(propertyDefinition,this::validateIndex);
 
 			// initially, the value should be the default value for the manager
 			assertEquals(defaultValue, (Double) doublePropertyManager.getPropertyValue(5), 0);
@@ -153,7 +158,7 @@ public class AT_DoublePropertyManager {
 			// we will next test the manager with an initial value of true
 			propertyDefinition = PropertyDefinition.builder().setType(Double.class).setDefaultValue(defaultValue).build();
 
-			doublePropertyManager = new DoublePropertyManager(propertyDefinition, 0);
+			doublePropertyManager = new DoublePropertyManager(propertyDefinition,this::validateIndex);
 
 			// initially, the value should be the default value for the manager
 			assertEquals(defaultValue, (Double) doublePropertyManager.getPropertyValue(5), 0);
@@ -173,7 +178,7 @@ public class AT_DoublePropertyManager {
 			// precondition tests
 			ContractException contractException = assertThrows(ContractException.class, () -> {
 				PropertyDefinition def = PropertyDefinition.builder().setType(Double.class).setDefaultValue(4534.4).build();
-				DoublePropertyManager dpm = new DoublePropertyManager(def, 0);
+				DoublePropertyManager dpm = new DoublePropertyManager(def,this::validateIndex);
 				dpm.removeId(-1);
 			});
 			assertEquals(PropertyError.NEGATIVE_INDEX, contractException.getErrorType());
@@ -192,18 +197,15 @@ public class AT_DoublePropertyManager {
 			// precondition tests
 
 			// if the property definition is null
-			ContractException contractException = assertThrows(ContractException.class, () -> new DoublePropertyManager(null, 0));
+			ContractException contractException = assertThrows(ContractException.class, () -> new DoublePropertyManager(null,this::validateIndex));
 			assertEquals(PropertyError.NULL_PROPERTY_DEFINITION, contractException.getErrorType());
 
 			// if the property definition does not have a type of Double.class
-			contractException = assertThrows(ContractException.class, () -> new DoublePropertyManager(badPropertyDefinition, 0));
+			contractException = assertThrows(ContractException.class, () -> new DoublePropertyManager(badPropertyDefinition,this::validateIndex));
 			assertEquals(PropertyError.PROPERTY_DEFINITION_IMPROPER_TYPE, contractException.getErrorType());
 
-			// if the initial size is negative
-			contractException = assertThrows(ContractException.class, () -> new DoublePropertyManager(goodPropertyDefinition, -1));
-			assertEquals(PropertyError.NEGATIVE_INITIAL_SIZE, contractException.getErrorType());
 
-			DoublePropertyManager doublePropertyManager = new DoublePropertyManager(goodPropertyDefinition, 0);
+			DoublePropertyManager doublePropertyManager = new DoublePropertyManager(goodPropertyDefinition,this::validateIndex);
 			assertNotNull(doublePropertyManager);
 		});
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
@@ -216,7 +218,7 @@ public class AT_DoublePropertyManager {
 
 			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Double.class).setDefaultValue(2.42).build();
 
-			DoublePropertyManager doublePropertyManager = new DoublePropertyManager(propertyDefinition, 0);
+			DoublePropertyManager doublePropertyManager = new DoublePropertyManager(propertyDefinition,this::validateIndex);
 
 			// precondition tests
 			ContractException contractException = assertThrows(ContractException.class, () -> doublePropertyManager.incrementCapacity(-1));

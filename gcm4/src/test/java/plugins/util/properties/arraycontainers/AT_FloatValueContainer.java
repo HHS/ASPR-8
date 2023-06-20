@@ -11,6 +11,11 @@ import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
 
 public class AT_FloatValueContainer {
+	
+	
+	private boolean validateIndex(int index) {
+		return true;
+	}
 
 	/**
 	 * Tests {@link FloatValueContainer#FloatValueContainer(float, int)}
@@ -19,12 +24,8 @@ public class AT_FloatValueContainer {
 	@UnitTestConstructor(target = FloatValueContainer.class, args = { float.class, int.class })
 	public void testConstructor_FloatInt() {
 
-		FloatValueContainer floatValueContainer = new FloatValueContainer(0, 1000);
+		FloatValueContainer floatValueContainer = new FloatValueContainer(0,this::validateIndex);
 		assertNotNull(floatValueContainer);
-		assertTrue(floatValueContainer.getCapacity() >= 1000);
-
-		// pre conditions
-		assertThrows(NegativeArraySizeException.class, () -> new FloatValueContainer(0, -1));
 	}
 
 	/**
@@ -33,7 +34,7 @@ public class AT_FloatValueContainer {
 	@Test
 	@UnitTestConstructor(target = FloatValueContainer.class, args = { float.class })
 	public void testConstructor_Float() {
-		FloatValueContainer floatValueContainer = new FloatValueContainer(0);
+		FloatValueContainer floatValueContainer = new FloatValueContainer(0,this::validateIndex);
 		assertNotNull(floatValueContainer);
 	}
 
@@ -43,7 +44,7 @@ public class AT_FloatValueContainer {
 	@Test
 	@UnitTestMethod(target = FloatValueContainer.class, name = "getCapacity", args = {})
 	public void testGetCapacity() {
-		FloatValueContainer floatValueContainer = new FloatValueContainer(0);
+		FloatValueContainer floatValueContainer = new FloatValueContainer(0,this::validateIndex);
 
 		assertTrue(floatValueContainer.getCapacity() >= 0);
 
@@ -70,15 +71,15 @@ public class AT_FloatValueContainer {
 	@UnitTestMethod(target = FloatValueContainer.class, name = "getDefaultValue", args = {})
 	public void testGetDefaultValue() {
 		float defaultValue = 0;
-		FloatValueContainer floatValueContainer = new FloatValueContainer(defaultValue);
+		FloatValueContainer floatValueContainer = new FloatValueContainer(defaultValue,this::validateIndex);
 		assertEquals(defaultValue, floatValueContainer.getDefaultValue(), 0);
 
 		defaultValue = -10;
-		floatValueContainer = new FloatValueContainer(defaultValue);
+		floatValueContainer = new FloatValueContainer(defaultValue,this::validateIndex);
 		assertEquals(defaultValue, floatValueContainer.getDefaultValue(), 0);
 
 		defaultValue = 10;
-		floatValueContainer = new FloatValueContainer(defaultValue);
+		floatValueContainer = new FloatValueContainer(defaultValue,this::validateIndex);
 		assertEquals(defaultValue, floatValueContainer.getDefaultValue(), 0);
 
 	}
@@ -90,7 +91,7 @@ public class AT_FloatValueContainer {
 	@UnitTestMethod(target = FloatValueContainer.class, name = "getValue", args = { int.class })
 	public void testGetValue() {
 		float defaultValue = -345.34f;
-		FloatValueContainer floatValueContainer = new FloatValueContainer(defaultValue);
+		FloatValueContainer floatValueContainer = new FloatValueContainer(defaultValue,this::validateIndex);
 		int highIndex = 1000;
 		float delta = 2.3452346f;
 
@@ -125,7 +126,7 @@ public class AT_FloatValueContainer {
 	@Test
 	@UnitTestMethod(target = FloatValueContainer.class, name = "setCapacity", args = { int.class })
 	public void testSetCapacity() {
-		FloatValueContainer floatValueContainer = new FloatValueContainer(0);
+		FloatValueContainer floatValueContainer = new FloatValueContainer(0,this::validateIndex);
 
 		int expectedCapacity = 5;
 		floatValueContainer.setCapacity(expectedCapacity);
@@ -150,7 +151,7 @@ public class AT_FloatValueContainer {
 	@Test
 	@UnitTestMethod(target = FloatValueContainer.class, name = "setValue", args = { int.class, float.class })
 	public void testSetValue() {
-		FloatValueContainer floatValueContainer = new FloatValueContainer(0);
+		FloatValueContainer floatValueContainer = new FloatValueContainer(0,this::validateIndex);
 
 		// long value
 		float value = 12123.234f;

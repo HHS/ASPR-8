@@ -1,9 +1,7 @@
 package plugins.util.properties.arraycontainers;
 
 import java.util.BitSet;
-
-import plugins.util.properties.PropertyError;
-import util.errors.ContractException;
+import java.util.function.IntPredicate;
 
 /**
  * A container that maps non-negative int index values to booleans by storing
@@ -26,27 +24,10 @@ public final class BooleanContainer {
 	 */
 	private int boundingIndex;
 
-	public BooleanContainer(boolean defaultValue) {
+	public BooleanContainer(boolean defaultValue, IntPredicate indexValidator) {
 		this.defaultValue = defaultValue;
 		bitSet = new BitSet();
-	}
-
-	/**
-	 * 
-	 * @throws ContractException
-	 * 
-	 *             <li>{@linkplain PropertyError#NEGATIVE_INITIAL_SIZE} if the capacity is negative</li>
-	 */
-	public BooleanContainer(boolean defaultValue, int capacity) {
-		this.defaultValue = defaultValue;
-		if (capacity < 0) {
-			throw new ContractException(PropertyError.NEGATIVE_INITIAL_SIZE);
-		}
-		boundingIndex = capacity;
-		bitSet = new BitSet(boundingIndex);
-		if (defaultValue) {
-			bitSet.set(0, boundingIndex, defaultValue);
-		}
+		this.indexValidator = indexValidator;
 	}
 
 	public void expandCapacity(int count) {
@@ -59,6 +40,8 @@ public final class BooleanContainer {
 	 * The bitSet containing the bit level representation of the Booleans.
 	 */
 	private BitSet bitSet;
+	
+	private final IntPredicate indexValidator;
 
 	/**
 	 * Returns the boolean value associated with the given index
@@ -98,6 +81,28 @@ public final class BooleanContainer {
 		}
 		bitSet.set(index, value);
 	}
+	
+	
+	private String getElementsString() {
+
+		StringBuilder sb = new StringBuilder();
+
+		boolean first = true;
+		sb.append('[');
+		int n = bitSet.size();
+		for (int i = 0; i < n; i++) {
+			if (indexValidator.test(i)) {
+				if(first) {
+					first = false;
+				}else {
+					sb.append(", ");
+				}
+				sb.append(bitSet.get(i));
+			}
+		}
+		sb.append(']');
+		return sb.toString();
+	}
 
 	@Override
 	public String toString() {
@@ -105,7 +110,7 @@ public final class BooleanContainer {
 		builder.append("BooleanContainer [defaultValue=");
 		builder.append(defaultValue);		
 		builder.append(", bitSet=");
-		builder.append(bitSet);
+		builder.append(getElementsString());
 		builder.append("]");
 		return builder.toString();
 	}

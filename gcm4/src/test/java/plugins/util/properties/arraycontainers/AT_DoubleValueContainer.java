@@ -18,8 +18,12 @@ public class AT_DoubleValueContainer {
 	@Test
 	@UnitTestConstructor(target = DoubleValueContainer.class, args = { double.class })
 	public void testConstructor_Double() {
-		DoubleValueContainer doubleValueContainer = new DoubleValueContainer(0);
+		DoubleValueContainer doubleValueContainer = new DoubleValueContainer(0,this::validateIndex);
 		assertNotNull(doubleValueContainer);
+	}
+	
+	private boolean validateIndex(int index) {
+		return true;
 	}
 
 	/**
@@ -29,13 +33,8 @@ public class AT_DoubleValueContainer {
 	@UnitTestConstructor(target = DoubleValueContainer.class, args = { double.class, int.class })
 	public void testConstructor_DoubleInt() {
 
-		DoubleValueContainer doubleValueContainer = new DoubleValueContainer(0, 1000);
-		assertNotNull(doubleValueContainer);
-		assertTrue(doubleValueContainer.getCapacity() >= 1000);
-
-		// pre conditions
-		assertThrows(NegativeArraySizeException.class, () -> new DoubleValueContainer(0, -1));
-
+		DoubleValueContainer doubleValueContainer = new DoubleValueContainer(0,this::validateIndex);
+		assertNotNull(doubleValueContainer);		
 	}
 
 	/**
@@ -44,7 +43,7 @@ public class AT_DoubleValueContainer {
 	@Test
 	@UnitTestMethod(target = DoubleValueContainer.class, name = "getCapacity", args = {})
 	public void testGetCapacity() {
-		DoubleValueContainer doubleValueContainer = new DoubleValueContainer(0);
+		DoubleValueContainer doubleValueContainer = new DoubleValueContainer(0,this::validateIndex);
 
 		assertTrue(doubleValueContainer.getCapacity() >= 0);
 
@@ -71,15 +70,15 @@ public class AT_DoubleValueContainer {
 	@UnitTestMethod(target = DoubleValueContainer.class, name = "getDefaultValue", args = {})
 	public void testGetDefaultValue() {
 		double defaultValue = 0;
-		DoubleValueContainer doubleValueContainer = new DoubleValueContainer(defaultValue);
+		DoubleValueContainer doubleValueContainer = new DoubleValueContainer(defaultValue,this::validateIndex);
 		assertEquals(defaultValue, doubleValueContainer.getDefaultValue(), 0);
 
 		defaultValue = -10;
-		doubleValueContainer = new DoubleValueContainer(defaultValue);
+		doubleValueContainer = new DoubleValueContainer(defaultValue,this::validateIndex);
 		assertEquals(defaultValue, doubleValueContainer.getDefaultValue(), 0);
 
 		defaultValue = 10;
-		doubleValueContainer = new DoubleValueContainer(defaultValue);
+		doubleValueContainer = new DoubleValueContainer(defaultValue,this::validateIndex);
 		assertEquals(defaultValue, doubleValueContainer.getDefaultValue(), 0);
 
 	}
@@ -91,7 +90,7 @@ public class AT_DoubleValueContainer {
 	@UnitTestMethod(target = DoubleValueContainer.class, name = "getValue", args = { int.class })
 	public void testGetValue() {
 		double defaultValue = -345.34;
-		DoubleValueContainer doubleValueContainer = new DoubleValueContainer(defaultValue);
+		DoubleValueContainer doubleValueContainer = new DoubleValueContainer(defaultValue,this::validateIndex);
 		int highIndex = 1000;
 		double delta = 2.3452346;
 
@@ -126,7 +125,7 @@ public class AT_DoubleValueContainer {
 	@Test
 	@UnitTestMethod(target = DoubleValueContainer.class, name = "setCapacity", args = { int.class })
 	public void testSetCapacity() {
-		DoubleValueContainer doubleValueContainer = new DoubleValueContainer(0);
+		DoubleValueContainer doubleValueContainer = new DoubleValueContainer(0,this::validateIndex);
 
 		int expectedCapacity = 5;
 		doubleValueContainer.setCapacity(expectedCapacity);
@@ -151,7 +150,7 @@ public class AT_DoubleValueContainer {
 	@Test
 	@UnitTestMethod(target = DoubleValueContainer.class, name = "setValue", args = { int.class, double.class })
 	public void testSetValue() {
-		DoubleValueContainer doubleValueContainer = new DoubleValueContainer(0);
+		DoubleValueContainer doubleValueContainer = new DoubleValueContainer(0,this::validateIndex);
 
 		// long value
 		double value = 12123.234;

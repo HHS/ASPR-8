@@ -293,11 +293,11 @@ public final class PersonPropertiesDataManager extends DataManager {
 
 		IndexedPropertyManager indexedPropertyManager;
 		if (propertyDefinition.getType() == Boolean.class) {
-			indexedPropertyManager = new BooleanPropertyManager(propertyDefinition, intialSize);
+			indexedPropertyManager = new BooleanPropertyManager(propertyDefinition,peopleDataManager::personIndexExists);
 		} else if (propertyDefinition.getType() == Float.class) {
-			indexedPropertyManager = new FloatPropertyManager(propertyDefinition, intialSize);
+			indexedPropertyManager = new FloatPropertyManager(propertyDefinition,peopleDataManager::personIndexExists);
 		} else if (propertyDefinition.getType() == Double.class) {
-			indexedPropertyManager = new DoublePropertyManager(propertyDefinition, intialSize);
+			indexedPropertyManager = new DoublePropertyManager(propertyDefinition,peopleDataManager::personIndexExists);
 		} else if (propertyDefinition.getType() == Byte.class) {
 			indexedPropertyManager = new IntPropertyManager(propertyDefinition, intialSize);
 		} else if (propertyDefinition.getType() == Short.class) {
@@ -614,8 +614,8 @@ public final class PersonPropertiesDataManager extends DataManager {
 		personPropertyManagerMap.put(personPropertyId, propertyManager);
 
 		DoubleValueContainer doubleValueContainer = null;
-		if (propertyDefinitionInitialization.trackTimes()) {
-			doubleValueContainer = new DoubleValueContainer(dataManagerContext.getTime());
+		if (propertyDefinitionInitialization.trackTimes()) {			
+			doubleValueContainer = new DoubleValueContainer(dataManagerContext.getTime(),peopleDataManager::personIndexExists);
 			personPropertyTimeMap.put(personPropertyId, doubleValueContainer);
 		}
 
@@ -830,7 +830,7 @@ public final class PersonPropertiesDataManager extends DataManager {
 				if (defaultTime > dataManagerContext.getTime()) {
 					throw new ContractException(PersonPropertyError.PROPERTY_DEFAULT_TIME_EXCEEDS_SIM_TIME, personPropertyId);
 				}
-				personPropertyTimeMap.put(personPropertyId, new DoubleValueContainer(defaultTime));
+				personPropertyTimeMap.put(personPropertyId, new DoubleValueContainer(defaultTime,peopleDataManager::personIndexExists));
 			}
 		}
 

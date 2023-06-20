@@ -555,7 +555,7 @@ public final class GroupsDataManager extends DataManager {
 		Map<GroupPropertyId, IndexedPropertyManager> managerMap = groupPropertyManagerMap.get(groupTypeId);
 		IndexedPropertyManager indexedPropertyManager = getIndexedPropertyManager(propertyDefinition, 0);
 		managerMap.put(groupPropertyId, indexedPropertyManager);
-		DoubleValueContainer doubleValueContainer = new DoubleValueContainer(0);
+		DoubleValueContainer doubleValueContainer = new DoubleValueContainer(0,this::validateGroupIndex);
 		Map<GroupPropertyId, PropertyDefinition> map = groupPropertyDefinitions.get(groupTypeId);
 		map.put(groupPropertyId, propertyDefinition);
 
@@ -1359,11 +1359,11 @@ public final class GroupsDataManager extends DataManager {
 
 		IndexedPropertyManager indexedPropertyManager;
 		if (propertyDefinition.getType() == Boolean.class) {
-			indexedPropertyManager = new BooleanPropertyManager(propertyDefinition, intialSize);
+			indexedPropertyManager = new BooleanPropertyManager(propertyDefinition,this::validateGroupIndex);
 		} else if (propertyDefinition.getType() == Float.class) {
-			indexedPropertyManager = new FloatPropertyManager(propertyDefinition, intialSize);
+			indexedPropertyManager = new FloatPropertyManager(propertyDefinition,this::validateGroupIndex);
 		} else if (propertyDefinition.getType() == Double.class) {
-			indexedPropertyManager = new DoublePropertyManager(propertyDefinition, intialSize);
+			indexedPropertyManager = new DoublePropertyManager(propertyDefinition, this::validateGroupIndex);
 		} else if (propertyDefinition.getType() == Byte.class) {
 			indexedPropertyManager = new IntPropertyManager(propertyDefinition, intialSize);
 		} else if (propertyDefinition.getType() == Short.class) {
@@ -1477,6 +1477,10 @@ public final class GroupsDataManager extends DataManager {
 			return false;
 		}
 		return groupsToTypesMap.getValueAsLong(groupId.getValue()) >= 0;
+	}
+	
+	private boolean validateGroupIndex(int index) {		
+		return groupsToTypesMap.getValueAsLong(index) >= 0;
 	}
 
 	/**

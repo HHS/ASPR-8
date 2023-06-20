@@ -1,6 +1,7 @@
 package plugins.util.properties.arraycontainers;
 
 import java.util.Arrays;
+import java.util.function.IntPredicate;
 
 import plugins.util.properties.PropertyError;
 import util.errors.ContractException;
@@ -18,7 +19,8 @@ public final class FloatValueContainer {
 	 * The array for storing the values
 	 */
 	private float[] values;
-	private int highestNonUllageIndex = -1;
+	
+	private final IntPredicate indexValidator;
 	
 	/*
 	 * The value returned for any non-negative index that has not been set via
@@ -94,14 +96,7 @@ public final class FloatValueContainer {
 		return defaultValue;
 	}
 
-	/**
-	 * Constructs the floatValueContainer with the given default value.
-	 * 
-	 * @param defaultValue
-	 */
-	public FloatValueContainer(float defaultValue) {
-		this(defaultValue, 16);
-	}
+	
 
 	/**
 	 * Constructs the floatValueContainer with the given default value and
@@ -113,15 +108,10 @@ public final class FloatValueContainer {
 	 * @throws NegativeArraySizeException
 	 *             if the capacity is negative
 	 */
-	public FloatValueContainer(float defaultValue, int capacity) {
-		values = new float[capacity];
-		if (defaultValue != 0) {
-			for (int i = 0; i < capacity; i++) {
-				values[i] = defaultValue;
-			}
-		}
+	public FloatValueContainer(float defaultValue, IntPredicate indexValidator) {
+		values = new float[0];		
 		this.defaultValue = defaultValue;
-
+		this.indexValidator = indexValidator;
 	}
 
 	/**
@@ -137,26 +127,28 @@ public final class FloatValueContainer {
 		if (index >= values.length) {
 			grow(index + 1);
 		}
-		if(index>highestNonUllageIndex) {
-			highestNonUllageIndex = index;
-		}
+		
 		values[index] = value;
 	}
 	private String getElementsString() {
 
-		if (highestNonUllageIndex == -1) {
-			return "[]";
-		}
+		StringBuilder sb = new StringBuilder();
 
-		StringBuilder b = new StringBuilder();
-		b.append('[');
-		for (int i = 0;; i++) {
-			b.append(String.valueOf(values[i]));
-			if (i == highestNonUllageIndex) {
-				return b.append(']').toString();
+		boolean first = true;
+		sb.append('[');
+		int n = values.length;
+		for (int i = 0; i < n; i++) {
+			if (indexValidator.test(i)) {
+				if(first) {
+					first = false;
+				}else {
+					sb.append(", ");
+				}
+				sb.append(String.valueOf(values[i]));
 			}
-			b.append(", ");
 		}
+		sb.append(']');
+		return sb.toString();
 	}
 	@Override
 	public String toString() {
