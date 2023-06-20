@@ -64,7 +64,6 @@ import plugins.regions.testsupport.TestRegionPropertyId;
 import plugins.stochastics.StochasticsDataManager;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
-import plugins.util.properties.TimeTrackingPolicy;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
@@ -78,7 +77,7 @@ public class AT_RegionsDataManager {
 	@Test
 	@UnitTestMethod(target = RegionsDataManager.class, name = "expandCapacity", args = { int.class })
 	public void testExpandCapacity() {
-		Factory factory = RegionsTestPluginFactory.factory(20, 3161087621160007875L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
+		Factory factory = RegionsTestPluginFactory.factory(20, 3161087621160007875L, true, (c) -> {
 			// show that a negative growth causes an exception
 			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> regionsDataManager.expandCapacity(-1));
@@ -121,7 +120,7 @@ public class AT_RegionsDataManager {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		Factory factory = RegionsTestPluginFactory	.factory(0, 3347423560010833899L, TimeTrackingPolicy.TRACK_TIME, testPluginData)//
+		Factory factory = RegionsTestPluginFactory	.factory(0, 3347423560010833899L, true, testPluginData)//
 													.setRegionsPluginData(regionsPluginData);
 
 		TestOutputConsumer testOutputConsumer = TestSimulation	.builder()//
@@ -174,7 +173,7 @@ public class AT_RegionsDataManager {
 		}));
 
 		testPluginData = pluginBuilder.build();
-		factory = RegionsTestPluginFactory.factory(0, 3347423560010833899L, TimeTrackingPolicy.TRACK_TIME, testPluginData).setRegionsPluginData(regionsPluginData);
+		factory = RegionsTestPluginFactory.factory(0, 3347423560010833899L, true, testPluginData).setRegionsPluginData(regionsPluginData);
 		testOutputConsumer = TestSimulation.builder().addPlugins(factory.getPlugins()).setProduceSimulationStateOnHalt(true).setSimulationHaltTime(2).build().execute();
 		outputItems = testOutputConsumer.getOutputItemMap(RegionsPluginData.class);
 		assertEquals(1, outputItems.size());
@@ -235,12 +234,12 @@ public class AT_RegionsDataManager {
 
 		// build and add the action plugin
 		TestPluginData testPluginData = pluginBuilder.build();
-		Factory factory = RegionsTestPluginFactory.factory(0, 3347423560010833899L, TimeTrackingPolicy.TRACK_TIME, testPluginData);
+		Factory factory = RegionsTestPluginFactory.factory(0, 3347423560010833899L, true, testPluginData);
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 		// precondition test: if the region id is null
 		ContractException contractException = assertThrows(ContractException.class, () -> {
-			Factory factory2 = RegionsTestPluginFactory.factory(0, 9052181434511982170L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
+			Factory factory2 = RegionsTestPluginFactory.factory(0, 9052181434511982170L, true, (c) -> {
 				RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 				regionsDataManager.getPeopleInRegion(null);
 			});
@@ -250,7 +249,7 @@ public class AT_RegionsDataManager {
 
 		// precondition test: if the region id is unknown
 		contractException = assertThrows(ContractException.class, () -> {
-			Factory factory2 = RegionsTestPluginFactory.factory(0, 1410190102298165957L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
+			Factory factory2 = RegionsTestPluginFactory.factory(0, 1410190102298165957L, true, (c) -> {
 				RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 				// if the region id is unknown
 				regionsDataManager.getPeopleInRegion(TestRegionId.getUnknownRegionId());
@@ -334,12 +333,12 @@ public class AT_RegionsDataManager {
 		}));
 		// build and add the action plugin
 		TestPluginData testPluginData = pluginBuilder.build();
-		Factory factory = RegionsTestPluginFactory.factory(0, 5151111920517015649L, TimeTrackingPolicy.TRACK_TIME, testPluginData);
+		Factory factory = RegionsTestPluginFactory.factory(0, 5151111920517015649L, true, testPluginData);
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 		// precondition test: if the person id is null
 		ContractException contractException = assertThrows(ContractException.class, () -> {
-			Factory factory2 = RegionsTestPluginFactory.factory(0, 1490027040692903854L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
+			Factory factory2 = RegionsTestPluginFactory.factory(0, 1490027040692903854L, true, (c) -> {
 				RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 				regionsDataManager.getPersonRegion(null);
 			});
@@ -349,7 +348,7 @@ public class AT_RegionsDataManager {
 
 		// precondition test: if the person id is unknown
 		contractException = assertThrows(ContractException.class, () -> {
-			Factory factory2 = RegionsTestPluginFactory.factory(0, 2144445839100475443L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
+			Factory factory2 = RegionsTestPluginFactory.factory(0, 2144445839100475443L, true, (c) -> {
 				RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 				regionsDataManager.getPersonRegion(new PersonId(100000));
 			});
@@ -434,7 +433,7 @@ public class AT_RegionsDataManager {
 
 		// build and add the action plugin
 		TestPluginData testPluginData = pluginBuilder.build();
-		Factory factory = RegionsTestPluginFactory.factory(0, 2278422620232176214L, TimeTrackingPolicy.TRACK_TIME, testPluginData);
+		Factory factory = RegionsTestPluginFactory.factory(0, 2278422620232176214L, true, testPluginData);
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 		// precondition test: if region arrival times are not being tracked
@@ -453,12 +452,12 @@ public class AT_RegionsDataManager {
 
 		// build and add the action plugin
 		testPluginData = pluginBuilder.build();
-		factory = RegionsTestPluginFactory.factory(0, 9214210856215652451L, TimeTrackingPolicy.TRACK_TIME, testPluginData);
+		factory = RegionsTestPluginFactory.factory(0, 9214210856215652451L, true, testPluginData);
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 		// precondition test: if region arrival times are not being tracked
 		ContractException contractException = assertThrows(ContractException.class, () -> {
-			Factory factory2 = RegionsTestPluginFactory.factory(10, 1906010286127446114L, TimeTrackingPolicy.DO_NOT_TRACK_TIME, (c) -> {
+			Factory factory2 = RegionsTestPluginFactory.factory(10, 1906010286127446114L, false, (c) -> {
 				RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 				// if region arrival times are not being tracked
 				regionsDataManager.getPersonRegionArrivalTime(new PersonId(0));
@@ -469,7 +468,7 @@ public class AT_RegionsDataManager {
 
 		// precondition test: if the person id is null
 		contractException = assertThrows(ContractException.class, () -> {
-			Factory factory2 = RegionsTestPluginFactory.factory(0, 2922597221561284586L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
+			Factory factory2 = RegionsTestPluginFactory.factory(0, 2922597221561284586L, true, (c) -> {
 				RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 				regionsDataManager.getPersonRegionArrivalTime(null);
 			});
@@ -479,7 +478,7 @@ public class AT_RegionsDataManager {
 
 		// precondition test: if the person id is unknown
 		contractException = assertThrows(ContractException.class, () -> {
-			Factory factory2 = RegionsTestPluginFactory.factory(0, 9132391945335483479L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
+			Factory factory2 = RegionsTestPluginFactory.factory(0, 9132391945335483479L, true, (c) -> {
 				RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 				regionsDataManager.getPersonRegionArrivalTime(new PersonId(100000));
 			});
@@ -493,10 +492,10 @@ public class AT_RegionsDataManager {
 	@UnitTestMethod(target = RegionsDataManager.class, name = "getPersonRegionArrivalTrackingPolicy", args = {})
 	public void testGetPersonRegionArrivalTrackingPolicy() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7220786446142555493L);
-		for (TimeTrackingPolicy timeTrackingPolicy : TimeTrackingPolicy.values()) {
-			Factory factory = RegionsTestPluginFactory.factory(0, randomGenerator.nextLong(), timeTrackingPolicy, (c) -> {
+		for (boolean trackTime : new boolean[] {true,false}) {
+			Factory factory = RegionsTestPluginFactory.factory(0, randomGenerator.nextLong(), trackTime, (c) -> {
 				RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
-				assertEquals(timeTrackingPolicy == TimeTrackingPolicy.TRACK_TIME, regionsDataManager.regionArrivalsAreTracked());
+				assertEquals(trackTime, regionsDataManager.regionArrivalsAreTracked());
 			});
 			TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 		}
@@ -505,7 +504,7 @@ public class AT_RegionsDataManager {
 	@Test
 	@UnitTestMethod(target = RegionsDataManager.class, name = "getRegionIds", args = {})
 	public void testGetRegionIds() {
-		Factory factory = RegionsTestPluginFactory.factory(0, 87615823520161580L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
+		Factory factory = RegionsTestPluginFactory.factory(0, 87615823520161580L, true, (c) -> {
 			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 
 			Set<RegionId> expectedRegionIds = new LinkedHashSet<>();
@@ -566,7 +565,7 @@ public class AT_RegionsDataManager {
 
 		// build and add the action plugin
 		TestPluginData testPluginData = pluginBuilder.build();
-		Factory factory = RegionsTestPluginFactory.factory(0, 1525815460460902517L, TimeTrackingPolicy.TRACK_TIME, testPluginData);
+		Factory factory = RegionsTestPluginFactory.factory(0, 1525815460460902517L, true, testPluginData);
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 	}
@@ -574,7 +573,7 @@ public class AT_RegionsDataManager {
 	@Test
 	@UnitTestMethod(target = RegionsDataManager.class, name = "getRegionPropertyDefinition", args = { RegionPropertyId.class })
 	public void testGetRegionPropertyDefinition() {
-		Factory factory = RegionsTestPluginFactory.factory(0, 8915683065425449883L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
+		Factory factory = RegionsTestPluginFactory.factory(0, 8915683065425449883L, true, (c) -> {
 			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 			Set<TestRegionPropertyId> regionPropertyIds = regionsDataManager.getRegionPropertyIds();
 			assertEquals(TestRegionPropertyId.size(), regionPropertyIds.size());
@@ -588,7 +587,7 @@ public class AT_RegionsDataManager {
 
 		// precondition check: if the region property id is null
 		ContractException contractException = assertThrows(ContractException.class, () -> {
-			Factory factory2 = RegionsTestPluginFactory.factory(0, 4217775232224320101L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
+			Factory factory2 = RegionsTestPluginFactory.factory(0, 4217775232224320101L, true, (c) -> {
 				RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 				regionsDataManager.getRegionPropertyDefinition(null);
 			});
@@ -598,7 +597,7 @@ public class AT_RegionsDataManager {
 
 		// precondition check: if the region property id is unknown
 		contractException = assertThrows(ContractException.class, () -> {
-			Factory factory2 = RegionsTestPluginFactory.factory(0, 1425794836864585647L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
+			Factory factory2 = RegionsTestPluginFactory.factory(0, 1425794836864585647L, true, (c) -> {
 				RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 				regionsDataManager.getRegionPropertyDefinition(TestRegionPropertyId.getUnknownRegionPropertyId());
 			});
@@ -610,7 +609,7 @@ public class AT_RegionsDataManager {
 	@Test
 	@UnitTestMethod(target = RegionsDataManager.class, name = "getRegionPropertyIds", args = {})
 	public void testGetRegionPropertyIds() {
-		Factory factory = RegionsTestPluginFactory.factory(0, 2658585233315606268L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
+		Factory factory = RegionsTestPluginFactory.factory(0, 2658585233315606268L, true, (c) -> {
 			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 			Set<RegionPropertyId> expectedRegionPropertyIds = new LinkedHashSet<>();
 			for (TestRegionPropertyId testRegionPropertyId : TestRegionPropertyId.values()) {
@@ -670,12 +669,12 @@ public class AT_RegionsDataManager {
 		}
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		Factory factory = RegionsTestPluginFactory.factory(0, 8784099691519492811L, TimeTrackingPolicy.TRACK_TIME, testPluginData);
+		Factory factory = RegionsTestPluginFactory.factory(0, 8784099691519492811L, true, testPluginData);
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 		// precondition check: if the region id is null
 		ContractException contractException = assertThrows(ContractException.class, () -> {
-			Factory factory2 = RegionsTestPluginFactory.factory(0, 468427930601885944L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
+			Factory factory2 = RegionsTestPluginFactory.factory(0, 468427930601885944L, true, (c) -> {
 				RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 				RegionPropertyId knownRegionPropertyId = TestRegionPropertyId.REGION_PROPERTY_1_BOOLEAN_MUTABLE;
 				regionsDataManager.getRegionPropertyValue(null, knownRegionPropertyId);
@@ -686,7 +685,7 @@ public class AT_RegionsDataManager {
 
 		// precondition check: if the region id is not known
 		contractException = assertThrows(ContractException.class, () -> {
-			Factory factory2 = RegionsTestPluginFactory.factory(0, 6075787443228538245L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
+			Factory factory2 = RegionsTestPluginFactory.factory(0, 6075787443228538245L, true, (c) -> {
 				RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 				RegionId unknownRegionId = TestRegionId.getUnknownRegionId();
 				RegionPropertyId knownRegionPropertyId = TestRegionPropertyId.REGION_PROPERTY_1_BOOLEAN_MUTABLE;
@@ -698,7 +697,7 @@ public class AT_RegionsDataManager {
 
 		// precondition check: if the region property id is null
 		contractException = assertThrows(ContractException.class, () -> {
-			Factory factory2 = RegionsTestPluginFactory.factory(0, 2997323471294141386L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
+			Factory factory2 = RegionsTestPluginFactory.factory(0, 2997323471294141386L, true, (c) -> {
 				RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 				RegionId knownRegionId = TestRegionId.REGION_1;
 				regionsDataManager.getRegionPropertyValue(knownRegionId, null);
@@ -709,7 +708,7 @@ public class AT_RegionsDataManager {
 
 		// precondition check: if the region property id is unknown
 		contractException = assertThrows(ContractException.class, () -> {
-			Factory factory2 = RegionsTestPluginFactory.factory(0, 7980671049474262492L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
+			Factory factory2 = RegionsTestPluginFactory.factory(0, 7980671049474262492L, true, (c) -> {
 				RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 				RegionId knownRegionId = TestRegionId.REGION_1;
 				RegionPropertyId unknownRegionPropertyId = TestRegionPropertyId.getUnknownRegionPropertyId();
@@ -723,7 +722,7 @@ public class AT_RegionsDataManager {
 	@Test
 	@UnitTestMethod(target = RegionsDataManager.class, name = "regionIdExists", args = { RegionId.class })
 	public void testRegionIdExists() {
-		Factory factory = RegionsTestPluginFactory.factory(0, 8636579794186794067L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
+		Factory factory = RegionsTestPluginFactory.factory(0, 8636579794186794067L, true, (c) -> {
 			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 
 			// show that null region ids do not exist
@@ -745,7 +744,7 @@ public class AT_RegionsDataManager {
 	@Test
 	@UnitTestMethod(target = RegionsDataManager.class, name = "regionPropertyIdExists", args = { RegionPropertyId.class })
 	public void testRegionPropertyIdExists() {
-		Factory factory = RegionsTestPluginFactory.factory(0, 3797498566412748237L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
+		Factory factory = RegionsTestPluginFactory.factory(0, 3797498566412748237L, true, (c) -> {
 			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 
 			// show that the property ids exist
@@ -828,7 +827,7 @@ public class AT_RegionsDataManager {
 
 		// build the plugin
 		TestPluginData testPluginData = pluginBuilder.build();
-		Factory factory = RegionsTestPluginFactory.factory(numberOfPeople, 5655227215512656797L, TimeTrackingPolicy.TRACK_TIME, testPluginData);
+		Factory factory = RegionsTestPluginFactory.factory(numberOfPeople, 5655227215512656797L, true, testPluginData);
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 		// show that the observations were correct
@@ -838,7 +837,7 @@ public class AT_RegionsDataManager {
 		/*
 		 * precondition test: if the person id is null
 		 */
-		factory = RegionsTestPluginFactory.factory(numberOfPeople, 9048586333860290178L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
+		factory = RegionsTestPluginFactory.factory(numberOfPeople, 9048586333860290178L, true, (c) -> {
 			// Select a person at random from the simulation and create a person
 			// id outside of the simulation
 
@@ -863,7 +862,7 @@ public class AT_RegionsDataManager {
 		/*
 		 * precondition test: if the person id is unknown
 		 */
-		factory = RegionsTestPluginFactory.factory(numberOfPeople, 6693022571477538917L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
+		factory = RegionsTestPluginFactory.factory(numberOfPeople, 6693022571477538917L, true, (c) -> {
 			// Select a person at random from the simulation and create a person
 			// id outside of the simulation
 
@@ -889,7 +888,7 @@ public class AT_RegionsDataManager {
 		 * precondition test: if the region id is null
 		 */
 		ContractException contractException = assertThrows(ContractException.class, () -> {
-			Factory factory2 = RegionsTestPluginFactory.factory(numberOfPeople, 1385204599279421266L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
+			Factory factory2 = RegionsTestPluginFactory.factory(numberOfPeople, 1385204599279421266L, true, (c) -> {
 				// Select a person at random from the simulation and create a
 				// person
 				// id outside of the simulation
@@ -915,7 +914,7 @@ public class AT_RegionsDataManager {
 		 * precondition test: if the region id is unknown
 		 */
 		contractException = assertThrows(ContractException.class, () -> {
-			Factory factory2 = RegionsTestPluginFactory.factory(numberOfPeople, 6025662871362676118L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
+			Factory factory2 = RegionsTestPluginFactory.factory(numberOfPeople, 6025662871362676118L, true, (c) -> {
 				// Select a person at random from the simulation and create a
 				// person
 				// id outside of the simulation
@@ -1002,7 +1001,7 @@ public class AT_RegionsDataManager {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		Factory factory = RegionsTestPluginFactory.factory(0, 4630021532130673951L, TimeTrackingPolicy.TRACK_TIME, testPluginData);
+		Factory factory = RegionsTestPluginFactory.factory(0, 4630021532130673951L, true, testPluginData);
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 		// show that the observed changes match expectations
@@ -1012,7 +1011,7 @@ public class AT_RegionsDataManager {
 
 		// precondition check: if the region id is null
 		ContractException contractException = assertThrows(ContractException.class, () -> {
-			Factory factory2 = RegionsTestPluginFactory.factory(0, 7347707922069273812L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
+			Factory factory2 = RegionsTestPluginFactory.factory(0, 7347707922069273812L, true, (c) -> {
 				RegionPropertyId regionPropertyId = TestRegionPropertyId.REGION_PROPERTY_2_INTEGER_MUTABLE;
 				Object propertyValue = 67;
 				RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
@@ -1024,7 +1023,7 @@ public class AT_RegionsDataManager {
 
 		// precondition check: if the region id is unknown
 		contractException = assertThrows(ContractException.class, () -> {
-			Factory factory2 = RegionsTestPluginFactory.factory(0, 3075330757105736185L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
+			Factory factory2 = RegionsTestPluginFactory.factory(0, 3075330757105736185L, true, (c) -> {
 				RegionId unknownRegionId = TestRegionId.getUnknownRegionId();
 				RegionPropertyId regionPropertyId = TestRegionPropertyId.REGION_PROPERTY_2_INTEGER_MUTABLE;
 				Object propertyValue = 67;
@@ -1037,7 +1036,7 @@ public class AT_RegionsDataManager {
 
 		// precondition check: if the region property id is null
 		contractException = assertThrows(ContractException.class, () -> {
-			Factory factory2 = RegionsTestPluginFactory.factory(0, 4169934733913962790L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
+			Factory factory2 = RegionsTestPluginFactory.factory(0, 4169934733913962790L, true, (c) -> {
 				RegionId regionId = TestRegionId.REGION_1;
 				Object propertyValue = 67;
 				RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
@@ -1049,7 +1048,7 @@ public class AT_RegionsDataManager {
 
 		// precondition check: if the region property id is unknown
 		contractException = assertThrows(ContractException.class, () -> {
-			Factory factory2 = RegionsTestPluginFactory.factory(0, 5578070775436119166L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
+			Factory factory2 = RegionsTestPluginFactory.factory(0, 5578070775436119166L, true, (c) -> {
 				RegionId regionId = TestRegionId.REGION_1;
 				RegionPropertyId unknownRegionPropertyId = TestRegionPropertyId.getUnknownRegionPropertyId();
 				Object propertyValue = 67;
@@ -1062,7 +1061,7 @@ public class AT_RegionsDataManager {
 
 		// precondition check: if the region property value is null
 		contractException = assertThrows(ContractException.class, () -> {
-			Factory factory2 = RegionsTestPluginFactory.factory(0, 217279748753596418L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
+			Factory factory2 = RegionsTestPluginFactory.factory(0, 217279748753596418L, true, (c) -> {
 				RegionId regionId = TestRegionId.REGION_1;
 				RegionPropertyId regionPropertyId = TestRegionPropertyId.REGION_PROPERTY_2_INTEGER_MUTABLE;
 				RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
@@ -1075,7 +1074,7 @@ public class AT_RegionsDataManager {
 		// precondition check: if the region property value is incompatible with
 		// the defined type for the property
 		contractException = assertThrows(ContractException.class, () -> {
-			Factory factory2 = RegionsTestPluginFactory.factory(0, 7043526072670323223L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
+			Factory factory2 = RegionsTestPluginFactory.factory(0, 7043526072670323223L, true, (c) -> {
 				RegionId regionId = TestRegionId.REGION_1;
 				RegionPropertyId regionPropertyId = TestRegionPropertyId.REGION_PROPERTY_2_INTEGER_MUTABLE;
 				Object incompatiblePropertyValue = "incompatible value";
@@ -1088,7 +1087,7 @@ public class AT_RegionsDataManager {
 
 		// precondition check: if the region id is unknown
 		contractException = assertThrows(ContractException.class, () -> {
-			Factory factory2 = RegionsTestPluginFactory.factory(0, 8501593854721316109L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
+			Factory factory2 = RegionsTestPluginFactory.factory(0, 8501593854721316109L, true, (c) -> {
 				RegionId unknownRegionId = TestRegionId.getUnknownRegionId();
 				RegionPropertyId regionPropertyId = TestRegionPropertyId.REGION_PROPERTY_2_INTEGER_MUTABLE;
 				Object propertyValue = 67;
@@ -1101,7 +1100,7 @@ public class AT_RegionsDataManager {
 
 		// precondition check: if the region property value is null
 		contractException = assertThrows(ContractException.class, () -> {
-			Factory factory2 = RegionsTestPluginFactory.factory(0, 6977487076968608944L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
+			Factory factory2 = RegionsTestPluginFactory.factory(0, 6977487076968608944L, true, (c) -> {
 				RegionId regionId = TestRegionId.REGION_1;
 				RegionPropertyId immutableRegionPropertyId = TestRegionPropertyId.REGION_PROPERTY_5_INTEGER_IMMUTABLE;
 				RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
@@ -1350,7 +1349,7 @@ public class AT_RegionsDataManager {
 		 * Have the agent create some people over time and show that each person
 		 * is in the correct region at the correct time
 		 */
-		Factory factory = RegionsTestPluginFactory.factory(0, 8294774271110836859L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
+		Factory factory = RegionsTestPluginFactory.factory(0, 8294774271110836859L, true, (c) -> {
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
@@ -1383,7 +1382,7 @@ public class AT_RegionsDataManager {
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 		ContractException contractException = assertThrows(ContractException.class, () -> {
-			Factory factory2 = RegionsTestPluginFactory.factory(0, 7737810808059858455L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
+			Factory factory2 = RegionsTestPluginFactory.factory(0, 7737810808059858455L, true, (c) -> {
 				PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 				PersonConstructionData personConstructionData = PersonConstructionData.builder().build();
 				peopleDataManager.addPerson(personConstructionData);
@@ -1396,7 +1395,7 @@ public class AT_RegionsDataManager {
 
 		// precondition check: if the region in the event is unknown
 		contractException = assertThrows(ContractException.class, () -> {
-			Factory factory2 = RegionsTestPluginFactory.factory(0, 2879410509293373914L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
+			Factory factory2 = RegionsTestPluginFactory.factory(0, 2879410509293373914L, true, (c) -> {
 				PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 				PersonConstructionData personConstructionData = PersonConstructionData.builder().add(TestRegionId.getUnknownRegionId()).build();
 				peopleDataManager.addPerson(personConstructionData);
@@ -1421,7 +1420,7 @@ public class AT_RegionsDataManager {
 
 		TestPluginData testPluginData1 = pluginBuilder.build();
 		contractException = assertThrows(ContractException.class, () -> {
-			Factory factory2 = RegionsTestPluginFactory.factory(0, 5311711819224332248L, TimeTrackingPolicy.TRACK_TIME, testPluginData1);
+			Factory factory2 = RegionsTestPluginFactory.factory(0, 5311711819224332248L, true, testPluginData1);
 			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
 		});
 		assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
@@ -1447,7 +1446,7 @@ public class AT_RegionsDataManager {
 		pluginBuilder.addPluginDependency(PeoplePluginId.PLUGIN_ID);
 		TestPluginData testPluginData2 = pluginBuilder.build();
 		contractException = assertThrows(ContractException.class, () -> {
-			Factory factory2 = RegionsTestPluginFactory.factory(0, 5824136557013438265L, TimeTrackingPolicy.TRACK_TIME, testPluginData2);
+			Factory factory2 = RegionsTestPluginFactory.factory(0, 5824136557013438265L, true, testPluginData2);
 			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
 		});
 		assertEquals(RegionError.DUPLICATE_PERSON_ADDITION, contractException.getErrorType());
@@ -1540,7 +1539,7 @@ public class AT_RegionsDataManager {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		Factory factory = RegionsTestPluginFactory.factory(0, 6410427420030580842L, TimeTrackingPolicy.TRACK_TIME, testPluginData);
+		Factory factory = RegionsTestPluginFactory.factory(0, 6410427420030580842L, true, testPluginData);
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 		/*
@@ -1548,7 +1547,7 @@ public class AT_RegionsDataManager {
 		 * is null
 		 */
 		ContractException contractException = assertThrows(ContractException.class, () -> {
-			Factory factory2 = RegionsTestPluginFactory.factory(0, 755408328420621219L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
+			Factory factory2 = RegionsTestPluginFactory.factory(0, 755408328420621219L, true, (c) -> {
 				RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 				regionsDataManager.defineRegionProperty(null);
 			});
@@ -1560,7 +1559,7 @@ public class AT_RegionsDataManager {
 		 * precondition test: if the region property is already defined
 		 */
 		contractException = assertThrows(ContractException.class, () -> {
-			Factory factory2 = RegionsTestPluginFactory.factory(0, 1524991526094322535L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
+			Factory factory2 = RegionsTestPluginFactory.factory(0, 1524991526094322535L, true, (c) -> {
 				RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 				PropertyDefinition propertyDefinition = PropertyDefinition	.builder()//
 																			.setType(Integer.class)//
@@ -1585,7 +1584,7 @@ public class AT_RegionsDataManager {
 		 * 
 		 */
 		contractException = assertThrows(ContractException.class, () -> {
-			Factory factory2 = RegionsTestPluginFactory.factory(0, 737227361871382193L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
+			Factory factory2 = RegionsTestPluginFactory.factory(0, 737227361871382193L, true, (c) -> {
 				RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 				PropertyDefinition propertyDefinition = PropertyDefinition	.builder()//
 																			.setType(Integer.class)//
@@ -1657,14 +1656,14 @@ public class AT_RegionsDataManager {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		Factory factory = RegionsTestPluginFactory.factory(0, 4801681059718243112L, TimeTrackingPolicy.TRACK_TIME, testPluginData);
+		Factory factory = RegionsTestPluginFactory.factory(0, 4801681059718243112L, true, testPluginData);
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 		/*
 		 * precondition test: if the region construction data is null
 		 */
 		ContractException contractException = assertThrows(ContractException.class, () -> {
-			Factory factory2 = RegionsTestPluginFactory.factory(0, 1930072318129921567L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
+			Factory factory2 = RegionsTestPluginFactory.factory(0, 1930072318129921567L, true, (c) -> {
 				RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 				regionsDataManager.addRegion(null);
 			});
@@ -1676,7 +1675,7 @@ public class AT_RegionsDataManager {
 		 * precondition test: if the region is already present
 		 */
 		contractException = assertThrows(ContractException.class, () -> {
-			Factory factory2 = RegionsTestPluginFactory.factory(0, 4107332213003089045L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
+			Factory factory2 = RegionsTestPluginFactory.factory(0, 4107332213003089045L, true, (c) -> {
 				RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 				RegionConstructionData regionConstructionData = RegionConstructionData.builder().setRegionId(TestRegionId.REGION_1).build();
 				regionsDataManager.addRegion(regionConstructionData);
@@ -1731,7 +1730,7 @@ public class AT_RegionsDataManager {
 
 		RegionsPluginData regionsPluginData = regionPluginBuilder.build();
 
-		Factory factory = RegionsTestPluginFactory	.factory(0, seed, TimeTrackingPolicy.TRACK_TIME, testPluginData)//
+		Factory factory = RegionsTestPluginFactory	.factory(0, seed, true, testPluginData)//
 													.setRegionsPluginData(regionsPluginData);
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
@@ -1801,7 +1800,7 @@ public class AT_RegionsDataManager {
 
 		// build the plugin
 		TestPluginData testPluginData = pluginBuilder.build();
-		Factory factory = RegionsTestPluginFactory.factory(numberOfPeople, 6280260397394362229L, TimeTrackingPolicy.TRACK_TIME, testPluginData);
+		Factory factory = RegionsTestPluginFactory.factory(numberOfPeople, 6280260397394362229L, true, testPluginData);
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 		// show that the observations were correct
@@ -1812,7 +1811,7 @@ public class AT_RegionsDataManager {
 		 * precondition test: if the region id is null
 		 */
 		ContractException contractException = assertThrows(ContractException.class, () -> {
-			Factory factory2 = RegionsTestPluginFactory.factory(numberOfPeople, 8703868236194395945L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
+			Factory factory2 = RegionsTestPluginFactory.factory(numberOfPeople, 8703868236194395945L, true, (c) -> {
 				RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 				regionsDataManager.getEventFilterForPersonRegionUpdateEvent_ByArrivalRegion(null);
 			});
@@ -1823,7 +1822,7 @@ public class AT_RegionsDataManager {
 		 * precondition test: if the region id is not known
 		 */
 		contractException = assertThrows(ContractException.class, () -> {
-			Factory factory2 = RegionsTestPluginFactory.factory(numberOfPeople, 1521124301443522213L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
+			Factory factory2 = RegionsTestPluginFactory.factory(numberOfPeople, 1521124301443522213L, true, (c) -> {
 				RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 				regionsDataManager.getEventFilterForPersonRegionUpdateEvent_ByArrivalRegion(TestRegionId.getUnknownRegionId());
 			});
@@ -1898,7 +1897,7 @@ public class AT_RegionsDataManager {
 
 		// build the plugin
 		TestPluginData testPluginData = pluginBuilder.build();
-		Factory factory = RegionsTestPluginFactory.factory(numberOfPeople, 5906547765098032882L, TimeTrackingPolicy.TRACK_TIME, testPluginData);
+		Factory factory = RegionsTestPluginFactory.factory(numberOfPeople, 5906547765098032882L, true, testPluginData);
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 		// show that the observations were correct
@@ -1909,7 +1908,7 @@ public class AT_RegionsDataManager {
 		 * precondition test: if the region id is null
 		 */
 		ContractException contractException = assertThrows(ContractException.class, () -> {
-			Factory factory2 = RegionsTestPluginFactory.factory(numberOfPeople, 5941332064278474841L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
+			Factory factory2 = RegionsTestPluginFactory.factory(numberOfPeople, 5941332064278474841L, true, (c) -> {
 				RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 				regionsDataManager.getEventFilterForPersonRegionUpdateEvent_ByDepartureRegion(null);
 			});
@@ -1920,7 +1919,7 @@ public class AT_RegionsDataManager {
 		 * precondition test: if the region id is not known
 		 */
 		contractException = assertThrows(ContractException.class, () -> {
-			Factory factory2 = RegionsTestPluginFactory.factory(numberOfPeople, 5981948058533294963L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
+			Factory factory2 = RegionsTestPluginFactory.factory(numberOfPeople, 5981948058533294963L, true, (c) -> {
 				RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 				regionsDataManager.getEventFilterForPersonRegionUpdateEvent_ByDepartureRegion(TestRegionId.getUnknownRegionId());
 			});
@@ -1998,7 +1997,7 @@ public class AT_RegionsDataManager {
 
 		// build the plugin
 		TestPluginData testPluginData = pluginBuilder.build();
-		Factory factory = RegionsTestPluginFactory.factory(numberOfPeople, 3786801901191355144L, TimeTrackingPolicy.TRACK_TIME, testPluginData);
+		Factory factory = RegionsTestPluginFactory.factory(numberOfPeople, 3786801901191355144L, true, testPluginData);
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 		// show that the observations were correct
@@ -2009,7 +2008,7 @@ public class AT_RegionsDataManager {
 		 * precondition test: if the person id is null
 		 */
 		ContractException contractException = assertThrows(ContractException.class, () -> {
-			Factory factory2 = RegionsTestPluginFactory.factory(numberOfPeople, 4504604454474342921L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
+			Factory factory2 = RegionsTestPluginFactory.factory(numberOfPeople, 4504604454474342921L, true, (c) -> {
 				RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 				PersonId nullPersonId = null;
 				regionsDataManager.getEventFilterForPersonRegionUpdateEvent(nullPersonId);
@@ -2022,7 +2021,7 @@ public class AT_RegionsDataManager {
 		 * precondition test: if the person id is not known
 		 */
 		contractException = assertThrows(ContractException.class, () -> {
-			Factory factory2 = RegionsTestPluginFactory.factory(numberOfPeople, 1166492228021587827L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
+			Factory factory2 = RegionsTestPluginFactory.factory(numberOfPeople, 1166492228021587827L, true, (c) -> {
 				RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 				regionsDataManager.getEventFilterForPersonRegionUpdateEvent(new PersonId(1000000));
 			});
@@ -2091,7 +2090,7 @@ public class AT_RegionsDataManager {
 
 		// build the plugin
 		TestPluginData testPluginData = pluginBuilder.build();
-		Factory factory = RegionsTestPluginFactory.factory(numberOfPeople, 8773677547139261431L, TimeTrackingPolicy.TRACK_TIME, testPluginData);
+		Factory factory = RegionsTestPluginFactory.factory(numberOfPeople, 8773677547139261431L, true, testPluginData);
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 		// show that the observations were correct
@@ -2159,12 +2158,12 @@ public class AT_RegionsDataManager {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		Factory factory = RegionsTestPluginFactory.factory(0, 1827237237983764002L, TimeTrackingPolicy.TRACK_TIME, testPluginData);
+		Factory factory = RegionsTestPluginFactory.factory(0, 1827237237983764002L, true, testPluginData);
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 		// precondition check: if the region property id is null
 		ContractException contractException = assertThrows(ContractException.class, () -> {
-			Factory factory2 = RegionsTestPluginFactory.factory(0, 2294490256521547918L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
+			Factory factory2 = RegionsTestPluginFactory.factory(0, 2294490256521547918L, true, (c) -> {
 				RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 				regionsDataManager.getEventFilterForRegionPropertyUpdateEvent(null);
 			});
@@ -2174,7 +2173,7 @@ public class AT_RegionsDataManager {
 
 		// precondition check: if the region property id is unknown
 		contractException = assertThrows(ContractException.class, () -> {
-			Factory factory2 = RegionsTestPluginFactory.factory(0, 4878569785353296577L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
+			Factory factory2 = RegionsTestPluginFactory.factory(0, 4878569785353296577L, true, (c) -> {
 				RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 				regionsDataManager.getEventFilterForRegionPropertyUpdateEvent(TestRegionPropertyId.getUnknownRegionPropertyId());
 			});
@@ -2250,12 +2249,12 @@ public class AT_RegionsDataManager {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		Factory factory = RegionsTestPluginFactory.factory(0, 7132294759338470890L, TimeTrackingPolicy.TRACK_TIME, testPluginData);
+		Factory factory = RegionsTestPluginFactory.factory(0, 7132294759338470890L, true, testPluginData);
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 		// precondition check: if the region property id is null
 		ContractException contractException = assertThrows(ContractException.class, () -> {
-			Factory factory2 = RegionsTestPluginFactory.factory(0, 5168071523034596869L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
+			Factory factory2 = RegionsTestPluginFactory.factory(0, 5168071523034596869L, true, (c) -> {
 				RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 				regionsDataManager.getEventFilterForRegionPropertyUpdateEvent(TestRegionId.REGION_1, null);
 			});
@@ -2265,7 +2264,7 @@ public class AT_RegionsDataManager {
 
 		// precondition check: if the region property id is unknown
 		contractException = assertThrows(ContractException.class, () -> {
-			Factory factory2 = RegionsTestPluginFactory.factory(0, 5851898172389262566L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
+			Factory factory2 = RegionsTestPluginFactory.factory(0, 5851898172389262566L, true, (c) -> {
 				RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 				regionsDataManager.getEventFilterForRegionPropertyUpdateEvent(TestRegionId.REGION_1, TestRegionPropertyId.getUnknownRegionPropertyId());
 			});
@@ -2275,7 +2274,7 @@ public class AT_RegionsDataManager {
 
 		// precondition check: if the region id is null
 		contractException = assertThrows(ContractException.class, () -> {
-			Factory factory2 = RegionsTestPluginFactory.factory(0, 3683702073309702135L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
+			Factory factory2 = RegionsTestPluginFactory.factory(0, 3683702073309702135L, true, (c) -> {
 				RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 				regionsDataManager.getEventFilterForRegionPropertyUpdateEvent(null, TestRegionPropertyId.REGION_PROPERTY_2_INTEGER_MUTABLE);
 			});
@@ -2285,7 +2284,7 @@ public class AT_RegionsDataManager {
 
 		// precondition check: if the region id is unknown
 		contractException = assertThrows(ContractException.class, () -> {
-			Factory factory2 = RegionsTestPluginFactory.factory(0, 6706349084351695058L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
+			Factory factory2 = RegionsTestPluginFactory.factory(0, 6706349084351695058L, true, (c) -> {
 				RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 				regionsDataManager.getEventFilterForRegionPropertyUpdateEvent(TestRegionId.getUnknownRegionId(), TestRegionPropertyId.REGION_PROPERTY_2_INTEGER_MUTABLE);
 			});
@@ -2347,7 +2346,7 @@ public class AT_RegionsDataManager {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		Factory factory = RegionsTestPluginFactory.factory(0, 6300334142182919392L, TimeTrackingPolicy.TRACK_TIME, testPluginData);
+		Factory factory = RegionsTestPluginFactory.factory(0, 6300334142182919392L, true, testPluginData);
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
@@ -2398,7 +2397,7 @@ public class AT_RegionsDataManager {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		Factory factory = RegionsTestPluginFactory.factory(0, 6272247954838684078L, TimeTrackingPolicy.TRACK_TIME, testPluginData);
+		Factory factory = RegionsTestPluginFactory.factory(0, 6272247954838684078L, true, testPluginData);
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
@@ -2460,7 +2459,7 @@ public class AT_RegionsDataManager {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		Factory factory = RegionsTestPluginFactory.factory(0, 1033803161227361793L, TimeTrackingPolicy.TRACK_TIME, testPluginData);
+		Factory factory = RegionsTestPluginFactory.factory(0, 1033803161227361793L, true, testPluginData);
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 	}
@@ -2521,7 +2520,7 @@ public class AT_RegionsDataManager {
 
 		// build action plugin
 		TestPluginData testPluginData = pluginBuilder.build();
-		Factory factory = RegionsTestPluginFactory.factory(0, 163202760371564041L, TimeTrackingPolicy.TRACK_TIME, testPluginData);
+		Factory factory = RegionsTestPluginFactory.factory(0, 163202760371564041L, true, testPluginData);
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 		// precondition test: if the person id is unknown
@@ -2537,7 +2536,7 @@ public class AT_RegionsDataManager {
 			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
 		}));
 		testPluginData = pluginBuilder.build();
-		factory = RegionsTestPluginFactory.factory(0, 2314376445339268382L, TimeTrackingPolicy.TRACK_TIME, testPluginData);
+		factory = RegionsTestPluginFactory.factory(0, 2314376445339268382L, true, testPluginData);
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 		/*
@@ -2559,7 +2558,7 @@ public class AT_RegionsDataManager {
 		}));
 		pluginBuilder.addPluginDependency(PeoplePluginId.PLUGIN_ID);
 		ContractException contractException = assertThrows(ContractException.class, () -> {
-			Factory factory2 = RegionsTestPluginFactory.factory(0, 3490172254703369545L, TimeTrackingPolicy.TRACK_TIME, pluginBuilder.build());
+			Factory factory2 = RegionsTestPluginFactory.factory(0, 3490172254703369545L, true, pluginBuilder.build());
 			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
 		});
 		assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());

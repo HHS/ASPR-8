@@ -26,7 +26,6 @@ import plugins.regions.testsupport.TestRegionId;
 import plugins.regions.testsupport.TestRegionPropertyId;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
-import plugins.util.properties.TimeTrackingPolicy;
 import util.annotations.UnitTag;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
@@ -552,7 +551,7 @@ public class AT_RegionsPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = RegionsPluginData.Builder.class, name = "setPersonRegionArrivalTracking", args = { TimeTrackingPolicy.class })
+	@UnitTestMethod(target = RegionsPluginData.Builder.class, name = "setPersonRegionArrivalTracking", args = { boolean.class })
 	public void testSetPersonRegionArrivalTracking() {
 		assertTrue(RegionsPluginData.builder().setPersonRegionArrivalTracking(true).build().getPersonRegionArrivalTrackingPolicy());
 		assertFalse(RegionsPluginData.builder().setPersonRegionArrivalTracking(false).build().getPersonRegionArrivalTrackingPolicy());

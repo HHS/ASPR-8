@@ -22,7 +22,6 @@ import plugins.regions.events.PersonRegionUpdateEvent;
 import plugins.regions.testsupport.RegionsTestPluginFactory;
 import plugins.regions.testsupport.RegionsTestPluginFactory.Factory;
 import plugins.regions.testsupport.TestRegionId;
-import plugins.util.properties.TimeTrackingPolicy;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
@@ -32,7 +31,7 @@ public class AT_RegionFilter {
 	@Test
 	@UnitTestConstructor(target = RegionFilter.class, args = { RegionId[].class })
 	public void testConstructorWithArray() {
-		Factory factory = RegionsTestPluginFactory.factory(100, 4602637405159227338L, TimeTrackingPolicy.DO_NOT_TRACK_TIME, (c) -> {
+		Factory factory = RegionsTestPluginFactory.factory(100, 4602637405159227338L, false, (c) -> {
 
 			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
 			
@@ -57,7 +56,7 @@ public class AT_RegionFilter {
 	@Test
 	@UnitTestConstructor(target = RegionFilter.class, args = { Set.class })
 	public void testConstructorWithSet() {
-		Factory factory = RegionsTestPluginFactory.factory(100, 4602637405159227338L, TimeTrackingPolicy.DO_NOT_TRACK_TIME, (c) -> {
+		Factory factory = RegionsTestPluginFactory.factory(100, 4602637405159227338L, false, (c) -> {
 			
 			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
 			
@@ -82,7 +81,7 @@ public class AT_RegionFilter {
 	@Test
 	@UnitTestMethod(target = RegionFilter.class, name = "getFilterSensitivities", args = {})
 	public void testGetFilterSensitivities() {
-		Factory factory = RegionsTestPluginFactory.factory(100, 2916119612012950359L, TimeTrackingPolicy.DO_NOT_TRACK_TIME, (c) -> {
+		Factory factory = RegionsTestPluginFactory.factory(100, 2916119612012950359L, false, (c) -> {
 
 			Filter filter = new RegionFilter(TestRegionId.REGION_1);
 
@@ -99,7 +98,7 @@ public class AT_RegionFilter {
 	@Test
 	@UnitTestMethod(target = RegionFilter.class, name = "evaluate", args = { PartitionsContext.class, PersonId.class })
 	public void testEvaluate() {
-		Factory factory = RegionsTestPluginFactory.factory(100, 28072097989345652L, TimeTrackingPolicy.DO_NOT_TRACK_TIME, (c) -> {
+		Factory factory = RegionsTestPluginFactory.factory(100, 28072097989345652L, false, (c) -> {
 
 			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
 			
@@ -141,7 +140,7 @@ public class AT_RegionFilter {
 	@Test
 	@UnitTestMethod(target = RegionFilter.class, name = "validate", args = { PartitionsContext.class })
 	public void testValidate() {
-		Factory factory = RegionsTestPluginFactory.factory(100, 28072097989345652L, TimeTrackingPolicy.DO_NOT_TRACK_TIME, (c) -> {
+		Factory factory = RegionsTestPluginFactory.factory(100, 28072097989345652L, false, (c) -> {
 			
 			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
 			

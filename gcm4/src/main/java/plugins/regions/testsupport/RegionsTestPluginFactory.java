@@ -29,7 +29,6 @@ import plugins.stochastics.StochasticsPluginData;
 import plugins.stochastics.support.StochasticsError;
 import plugins.stochastics.support.WellState;
 import plugins.util.properties.PropertyDefinition;
-import plugins.util.properties.TimeTrackingPolicy;
 import util.errors.ContractException;
 import util.random.RandomGeneratorProvider;
 
@@ -59,10 +58,10 @@ public final class RegionsTestPluginFactory {
 		private StochasticsPluginData stochasticsPluginData;
 		private TestPluginData testPluginData;
 
-		private Data(int initialPopulation, TimeTrackingPolicy timeTrackingPolicy, long seed, TestPluginData testPluginData) {
+		private Data(int initialPopulation, boolean trackTimes, long seed, TestPluginData testPluginData) {
 			RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
 			this.peoplePluginData = getStandardPeoplePluginData(initialPopulation);
-			this.regionsPluginData = getStandardRegionsPluginData(this.peoplePluginData.getPersonIds(), timeTrackingPolicy, randomGenerator.nextLong());
+			this.regionsPluginData = getStandardRegionsPluginData(this.peoplePluginData.getPersonIds(), trackTimes, randomGenerator.nextLong());
 			this.stochasticsPluginData = getStandardStochasticsPluginData(randomGenerator.nextLong());
 			this.testPluginData = testPluginData;
 		}
@@ -223,12 +222,12 @@ public final class RegionsTestPluginFactory {
 	 *             {@linkplain NucleusError#NULL_PLUGIN_DATA} if testPluginData
 	 *             is null
 	 */
-	public static Factory factory(int initialPopulation, long seed, TimeTrackingPolicy timeTrackingPolicy, TestPluginData testPluginData) {
+	public static Factory factory(int initialPopulation, long seed, boolean trackTimes, TestPluginData testPluginData) {
 		if (testPluginData == null) {
 			throw new ContractException(NucleusError.NULL_PLUGIN_DATA);
 		}
 
-		return new Factory(new Data(initialPopulation, timeTrackingPolicy, seed, testPluginData));
+		return new Factory(new Data(initialPopulation, trackTimes, seed, testPluginData));
 
 	}
 
@@ -259,7 +258,7 @@ public final class RegionsTestPluginFactory {
 	 *             {@linkplain NucleusError#NULL_ACTOR_CONTEXT_CONSUMER} if
 	 *             consumer is null
 	 */
-	public static Factory factory(int initialPopulation, long seed, TimeTrackingPolicy timeTrackingPolicy, Consumer<ActorContext> consumer) {
+	public static Factory factory(int initialPopulation, long seed, boolean trackTimes, Consumer<ActorContext> consumer) {
 		if (consumer == null) {
 			throw new ContractException(NucleusError.NULL_ACTOR_CONTEXT_CONSUMER);
 		}
@@ -267,7 +266,7 @@ public final class RegionsTestPluginFactory {
 
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, consumer));
 		TestPluginData testPluginData = pluginBuilder.build();
-		return factory(initialPopulation, seed, timeTrackingPolicy, testPluginData);
+		return factory(initialPopulation, seed, trackTimes, testPluginData);
 	}
 
 	/**
@@ -292,7 +291,7 @@ public final class RegionsTestPluginFactory {
 	 * </ul>
 	 * </ul>
 	 */
-	public static RegionsPluginData getStandardRegionsPluginData(List<PersonId> people, TimeTrackingPolicy timeTrackingPolicy, long seed) {
+	public static RegionsPluginData getStandardRegionsPluginData(List<PersonId> people, boolean trackTimes, long seed) {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
 
 		RegionsPluginData.Builder regionPluginBuilder = RegionsPluginData.builder();
@@ -310,7 +309,7 @@ public final class RegionsTestPluginFactory {
 			}
 
 		}
-		boolean trackTimes = timeTrackingPolicy == TimeTrackingPolicy.TRACK_TIME;
+		
 		regionPluginBuilder.setPersonRegionArrivalTracking(trackTimes);
 		TestRegionId testRegionId = TestRegionId.REGION_1;
 		if (trackTimes) {

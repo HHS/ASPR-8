@@ -21,7 +21,6 @@ import plugins.regions.support.RegionId;
 import plugins.regions.support.RegionPropertyId;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
-import plugins.util.properties.TimeTrackingPolicy;
 import util.errors.ContractException;
 
 /**
@@ -576,8 +575,8 @@ public class RegionsPluginData implements PluginData {
 	}
 
 	/**
-	 * Returns the {@link TimeTrackingPolicy}. Defaulted to
-	 * {@link TimeTrackingPolicy#DO_NOT_TRACK_TIME} if not set in the builder.
+	 * Returns the time tracking Policy}. Defaulted to
+	 * false if not set in the builder.
 	 * 
 	 */
 	public boolean getPersonRegionArrivalTrackingPolicy() {

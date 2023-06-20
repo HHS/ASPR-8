@@ -41,7 +41,6 @@ import plugins.stochastics.StochasticsPluginId;
 import plugins.stochastics.support.StochasticsError;
 import plugins.stochastics.support.WellState;
 import plugins.util.properties.PropertyDefinition;
-import plugins.util.properties.TimeTrackingPolicy;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.random.RandomGeneratorProvider;
@@ -51,11 +50,11 @@ public class AT_RegionsTestPluginFactory {
 
 	@Test
 	@UnitTestMethod(target = RegionsTestPluginFactory.class, name = "factory", args = { int.class, long.class,
-			TimeTrackingPolicy.class, Consumer.class })
+			boolean.class, Consumer.class })
 	public void testFactory_Consumer() {
 		MutableBoolean executed = new MutableBoolean();
 		Factory factory = RegionsTestPluginFactory
-				.factory(100, 5785172948650781925L, TimeTrackingPolicy.TRACK_TIME, c -> executed.setValue(true));
+				.factory(100, 5785172948650781925L, true, c -> executed.setValue(true));
 				
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 		assertTrue(executed.getValue());
@@ -63,13 +62,13 @@ public class AT_RegionsTestPluginFactory {
 		// precondition: consumer is null
 		Consumer<ActorContext> nullConsumer = null;
 		ContractException contractException = assertThrows(ContractException.class,
-				() -> RegionsTestPluginFactory.factory(0, 0, TimeTrackingPolicy.TRACK_TIME, nullConsumer));
+				() -> RegionsTestPluginFactory.factory(0, 0, true, nullConsumer));
 		assertEquals(NucleusError.NULL_ACTOR_CONTEXT_CONSUMER, contractException.getErrorType());
 	}
 
 	@Test
 	@UnitTestMethod(target = RegionsTestPluginFactory.class, name = "factory", args = { int.class, long.class,
-			TimeTrackingPolicy.class, TestPluginData.class })
+			boolean.class, TestPluginData.class })
 	public void testFactory_TestPluginData() {
 		MutableBoolean executed = new MutableBoolean();
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
@@ -77,13 +76,13 @@ public class AT_RegionsTestPluginFactory {
 		TestPluginData testPluginData = pluginBuilder.build();
 
 		Factory factory = RegionsTestPluginFactory
-				.factory(100, 5166994853007999229L, TimeTrackingPolicy.TRACK_TIME, testPluginData);
+				.factory(100, 5166994853007999229L, true, testPluginData);
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 		assertTrue(executed.getValue());
 		// precondition: testPluginData is null
 		TestPluginData nullTestPluginData = null;
 		ContractException contractException = assertThrows(ContractException.class,
-				() -> RegionsTestPluginFactory.factory(0, 0, TimeTrackingPolicy.TRACK_TIME, nullTestPluginData));
+				() -> RegionsTestPluginFactory.factory(0, 0, true, nullTestPluginData));
 		assertEquals(NucleusError.NULL_PLUGIN_DATA, contractException.getErrorType());
 	}
 
@@ -122,7 +121,7 @@ public class AT_RegionsTestPluginFactory {
 	@Test
 	@UnitTestMethod(target = RegionsTestPluginFactory.Factory.class, name = "getPlugins", args = {})
 	public void testGetPlugins() {
-		List<Plugin> plugins = RegionsTestPluginFactory.factory(0, 0, TimeTrackingPolicy.TRACK_TIME, t -> {
+		List<Plugin> plugins = RegionsTestPluginFactory.factory(0, 0, true, t -> {
 		}).getPlugins();
 		assertEquals(4, plugins.size());
 
@@ -141,7 +140,7 @@ public class AT_RegionsTestPluginFactory {
 		PeoplePluginData peoplePluginData = builder.build();
 
 		List<Plugin> plugins = RegionsTestPluginFactory
-				.factory(0, 0, TimeTrackingPolicy.TRACK_TIME, t -> {
+				.factory(0, 0, true, t -> {
 				})
 				.setPeoplePluginData(peoplePluginData)
 				.getPlugins();
@@ -151,7 +150,7 @@ public class AT_RegionsTestPluginFactory {
 		// precondition: peoplePluginData is not null
 		ContractException contractException = assertThrows(ContractException.class,
 				() -> RegionsTestPluginFactory
-						.factory(0, 0, TimeTrackingPolicy.TRACK_TIME, t -> {
+						.factory(0, 0, true, t -> {
 						})
 						.setPeoplePluginData(null));
 		assertEquals(PersonError.NULL_PEOPLE_PLUGIN_DATA, contractException.getErrorType());
@@ -199,14 +198,14 @@ public class AT_RegionsTestPluginFactory {
 
 		RegionsPluginData regionsPluginData = regionPluginBuilder.build();
 
-		List<Plugin> plugins = RegionsTestPluginFactory.factory(0, 0, TimeTrackingPolicy.TRACK_TIME, t -> {
+		List<Plugin> plugins = RegionsTestPluginFactory.factory(0, 0, true, t -> {
 		}).setRegionsPluginData(regionsPluginData).getPlugins();
 
 		checkPluginDataExists(plugins, regionsPluginData, RegionsPluginId.PLUGIN_ID);
 
 		// precondition: regionsPluginData is not null
 		ContractException contractException = assertThrows(ContractException.class,
-				() -> RegionsTestPluginFactory.factory(0, 0, TimeTrackingPolicy.TRACK_TIME, t -> {
+				() -> RegionsTestPluginFactory.factory(0, 0, true, t -> {
 				}).setRegionsPluginData(null));
 		assertEquals(RegionError.NULL_REGION_PLUGIN_DATA, contractException.getErrorType());
 	}
@@ -223,7 +222,7 @@ public class AT_RegionsTestPluginFactory {
 		StochasticsPluginData stochasticsPluginData = builder.build();
 
 		List<Plugin> plugins = RegionsTestPluginFactory
-				.factory(0, 0, TimeTrackingPolicy.TRACK_TIME, t -> {
+				.factory(0, 0, true, t -> {
 				})
 				.setStochasticsPluginData(stochasticsPluginData)
 				.getPlugins();
@@ -233,7 +232,7 @@ public class AT_RegionsTestPluginFactory {
 		// precondition: stochasticsPluginData is not null
 		ContractException contractException = assertThrows(ContractException.class,
 				() -> RegionsTestPluginFactory
-						.factory(0, 0, TimeTrackingPolicy.TRACK_TIME, t -> {
+						.factory(0, 0, true, t -> {
 						})
 						.setStochasticsPluginData(null));
 		assertEquals(StochasticsError.NULL_STOCHASTICS_PLUGIN_DATA, contractException.getErrorType());
@@ -254,7 +253,7 @@ public class AT_RegionsTestPluginFactory {
 
 	@Test
 	@UnitTestMethod(target = RegionsTestPluginFactory.class, name = "getStandardRegionsPluginData", args = {
-			List.class, TimeTrackingPolicy.class, long.class })
+			List.class, boolean.class, long.class })
 	public void testGetStandardRegionsPluginData() {
 
 		long seed = 6178540698301704248L;
@@ -265,7 +264,7 @@ public class AT_RegionsTestPluginFactory {
 		}
 
 		RegionsPluginData regionsPluginData = RegionsTestPluginFactory.getStandardRegionsPluginData(people,
-				TimeTrackingPolicy.TRACK_TIME,
+				true,
 				seed);
 
 		Set<TestRegionId> expectedRegionIds = EnumSet.allOf(TestRegionId.class);

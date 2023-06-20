@@ -64,7 +64,6 @@ import plugins.resources.testsupport.TestResourcePropertyId;
 import plugins.stochastics.StochasticsDataManager;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
-import plugins.util.properties.TimeTrackingPolicy;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
@@ -1014,7 +1013,7 @@ public final class AT_ResourcesDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(target = ResourcesDataManager.class, name = "addResourceId", args = { ResourceId.class, TimeTrackingPolicy.class })
+	@UnitTestMethod(target = ResourcesDataManager.class, name = "addResourceId", args = { ResourceId.class, boolean.class })
 	public void testAddResourceId() {
 
 		ResourceId newResourceId1 = TestResourceId.getUnknownResourceId();
