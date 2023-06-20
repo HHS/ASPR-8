@@ -271,16 +271,14 @@ public final class GroupsDataManager extends DataManager {
 			}
 		}
 
-		
-		
-		//transferring group memberships 
-		
+		// transferring group memberships
+
 		List<PersonId> people = peopleDataManager.getPeople();
 		for (final PersonId personId : people) {
 			List<GroupId> list = peopleToGroupsMap.getValue(personId.getValue());
 			if (list != null) {
-				for(GroupId groupId : list) {
-				builder.addGroupToPerson(groupId, personId);
+				for (GroupId groupId : list) {
+					builder.addGroupToPerson(groupId, personId);
 				}
 			}
 		}
@@ -291,17 +289,16 @@ public final class GroupsDataManager extends DataManager {
 			if (groupIds != null) {
 				for (GroupId groupId : groupIds) {
 					List<PersonId> list = groupsToPeopleMap.getValue(groupId.getValue());
-					if(list != null) {
-						for(PersonId personId : list) {
+					if (list != null) {
+						for (PersonId personId : list) {
 							builder.addPersonToGroup(personId, groupId);
 						}
-						groupsToPeopleMap.setValue(groupId.getValue(), list);
 					}
 				}
 			}
 		}
 
-		//transferring group property values
+		// transferring group property values
 		for (final GroupTypeId groupTypeId : typesToIndexesMap.keySet()) {
 			Integer typeIndex = typesToIndexesMap.get(groupTypeId);
 			final List<GroupId> groups = typesToGroupsMap.getValue(typeIndex);
@@ -636,7 +633,7 @@ public final class GroupsDataManager extends DataManager {
 					List<PersonId> peopleForGroup = groupsPluginData.getPeopleForGroup(groupId);
 					if (!peopleForGroup.isEmpty()) {
 						List<PersonId> list = groupsToPeopleMap.getValue(groupId.getValue());
-						if(list == null) {
+						if (list == null) {
 							list = new ArrayList<>();
 							groupsToPeopleMap.setValue(groupId.getValue(), list);
 						}
@@ -1565,6 +1562,9 @@ public final class GroupsDataManager extends DataManager {
 				for (final PersonId personId : people) {
 					groups = peopleToGroupsMap.getValue(personId.getValue());
 					groups.remove(groupId);
+					if(groups.isEmpty()) {
+						peopleToGroupsMap.setValue(personId.getValue(), null);
+					}
 				}
 			}
 
@@ -1617,8 +1617,9 @@ public final class GroupsDataManager extends DataManager {
 			}
 		}
 		final List<GroupId> groups = peopleToGroupsMap.getValue(personId.getValue());
-		if (groups != null) {
-			groups.remove(groupId);
+		groups.remove(groupId);
+		if (groups.isEmpty()) {
+			 peopleToGroupsMap.setValue(personId.getValue(),null);
 		}
 
 		if (dataManagerContext.subscribersExist(GroupMembershipRemovalEvent.class)) {
@@ -2351,28 +2352,26 @@ public final class GroupsDataManager extends DataManager {
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-//		builder.append("GroupsDataManager [groupPropertyManagerMap=");
-//		builder.append(groupPropertyManagerMap);
-//		builder.append(", groupPropertyDefinitions=");
-//		builder.append(groupPropertyDefinitions);
-//		builder.append(", typesToGroupsMap=");
-//		builder.append(typesToGroupsMap);
-//		builder.append(", groupsToTypesMap=");
-//		builder.append(groupsToTypesMap);
-//		builder.append(", typesToIndexesMap=");
-//		builder.append(typesToIndexesMap);
-//		builder.append(", indexesToTypesMap=");
-//		builder.append(indexesToTypesMap);
-//		builder.append(", groupsToPeopleMap=");
+		builder.append("GroupsDataManager [groupPropertyManagerMap=");
+		builder.append(groupPropertyManagerMap);
+		builder.append(", groupPropertyDefinitions=");
+		builder.append(groupPropertyDefinitions);
+		builder.append(", typesToGroupsMap=");
+		builder.append(typesToGroupsMap);
+		builder.append(", groupsToTypesMap=");
+		builder.append(groupsToTypesMap);
+		builder.append(", typesToIndexesMap=");
+		builder.append(typesToIndexesMap);
+		builder.append(", indexesToTypesMap=");
+		builder.append(indexesToTypesMap);
+		builder.append(", groupsToPeopleMap=");
 		builder.append(groupsToPeopleMap);
-//		builder.append(", peopleToGroupsMap=");
-//		builder.append(peopleToGroupsMap);
-//		builder.append(", masterGroupId=");
-//		builder.append(masterGroupId);		
-//		builder.append("]");
+		builder.append(", peopleToGroupsMap=");
+		builder.append(peopleToGroupsMap);
+		builder.append(", masterGroupId=");
+		builder.append(masterGroupId);		
+		builder.append("]");
 		return builder.toString();
 	}
-	
-	
-	
+
 }

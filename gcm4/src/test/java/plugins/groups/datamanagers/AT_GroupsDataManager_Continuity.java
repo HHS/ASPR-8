@@ -1,6 +1,7 @@
 package plugins.groups.datamanagers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -30,6 +31,9 @@ import plugins.groups.GroupsPluginData;
 import plugins.groups.support.GroupConstructionInfo;
 import plugins.groups.support.GroupId;
 import plugins.groups.support.GroupPropertyDefinitionInitialization;
+import plugins.groups.support.GroupPropertyId;
+import plugins.groups.support.GroupSampler;
+import plugins.groups.support.GroupTypeId;
 import plugins.groups.testsupport.TestGroupPropertyId;
 import plugins.groups.testsupport.TestGroupTypeId;
 import plugins.people.PeoplePlugin;
@@ -41,6 +45,7 @@ import plugins.stochastics.StochasticsDataManager;
 import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.StochasticsPluginData;
 import plugins.stochastics.support.WellState;
+import plugins.util.properties.PropertyDefinition;
 import util.annotations.UnitTestMethod;
 
 public class AT_GroupsDataManager_Continuity {
@@ -52,7 +57,7 @@ public class AT_GroupsDataManager_Continuity {
 	 */
 
 	@Test
-	@UnitTestMethod(target = PeopleDataManager.class, name = "init", args = { DataManagerContext.class })
+	@UnitTestMethod(target = GroupsDataManager.class, name = "init", args = { DataManagerContext.class })
 	public void testStateContinuity() {
 
 		/*
@@ -182,13 +187,11 @@ public class AT_GroupsDataManager_Continuity {
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 			List<GroupId> groupIds = groupsDataManager.getGroupIds();
 
-			
-
 			int n = 100;
 			for (int i = 0; i < n; i++) {
 				PersonId personId = peopleDataManager.addPerson(PersonConstructionData.builder().build());
 				int groupCount = randomGenerator.nextInt(FastMath.min(3, groupIds.size()));
-				
+
 				Collections.shuffle(groupIds, new Random(randomGenerator.nextLong()));
 				for (int j = 0; j < groupCount; j++) {
 					GroupId groupId = groupIds.get(j);
@@ -200,26 +203,113 @@ public class AT_GroupsDataManager_Continuity {
 		// add more groups
 		continuityBuilder.addContextConsumer(actionTime++, (c) -> {
 			// addGroup(GroupTypeId)
+
+			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
+
+			Set<GroupTypeId> groupTypeIds = groupsDataManager.getGroupTypeIds();
+			Set<GroupTypeId> groupTypesWithFullDefaults = new LinkedHashSet<>();
+			for (GroupTypeId groupTypeId : groupTypeIds) {
+				Set<GroupPropertyId> groupPropertyIds = groupsDataManager.getGroupPropertyIds(groupTypeId);
+				boolean hasDefaults = true;
+				for (GroupPropertyId groupPropertyId : groupPropertyIds) {
+					PropertyDefinition propertyDefinition = groupsDataManager.getGroupPropertyDefinition(groupTypeId,
+							groupPropertyId);
+					hasDefaults &= propertyDefinition.getDefaultValue().isPresent();
+				}
+				if (hasDefaults) {
+					groupTypesWithFullDefaults.add(groupTypeId);
+				}
+			}
+
+			assertFalse(groupTypesWithFullDefaults.isEmpty());
+
+			for (GroupTypeId groupTypeId : groupTypesWithFullDefaults) {
+				int count = randomGenerator.nextInt(5) + 1;
+				for (int i = 0; i < count; i++) {
+					groupsDataManager.addGroup(groupTypeId);
+				}
+			}
+
 		});
 
 		// remove some people from groups
 		continuityBuilder.addContextConsumer(actionTime++, (c) -> {
-			// removePersonFromGroup(PersonId, GroupId)
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
+
+			for (PersonId personId : peopleDataManager.getPeople()) {
+				int groupCount = groupsDataManager.getGroupCountForPerson(personId);
+				if (groupCount > 0) {
+					int remainingRemovals = randomGenerator.nextInt(groupCount);
+					while (remainingRemovals > 0) {
+						List<GroupId> groupsForPerson = groupsDataManager.getGroupsForPerson(personId);
+						GroupId groupId = groupsForPerson.get(randomGenerator.nextInt(groupsForPerson.size()));
+						groupsDataManager.removePersonFromGroup(personId, groupId);
+						remainingRemovals--;
+					}
+				}
+			}
 		});
 
 		// remove some groups
 		continuityBuilder.addContextConsumer(actionTime++, (c) -> {
 			// removeGroup(GroupId)
+			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
+			Random random = new Random(randomGenerator.nextLong());
+
+			List<GroupId> groupIds = groupsDataManager.getGroupIds();
+			Collections.shuffle(groupIds, random);
+			int removalCount = groupIds.size() / 5;
+			for (int i = 0; i < removalCount; i++) {
+				groupsDataManager.removeGroup(groupIds.get(i));
+			}
+
 		});
 
 		// set some group properties
 		continuityBuilder.addContextConsumer(actionTime++, (c) -> {
 			// setGroupPropertyValue(GroupId, GroupPropertyId, Object)
+			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
+
+			for (GroupTypeId groupTypeId : groupsDataManager.getGroupTypeIds()) {
+				List<GroupId> groupIds = groupsDataManager.getGroupsForGroupType(groupTypeId);
+				Set<TestGroupPropertyId> groupPropertyIds = groupsDataManager.getGroupPropertyIds(groupTypeId);
+				for (TestGroupPropertyId groupPropertyId : groupPropertyIds) {
+					PropertyDefinition propertyDefinition = groupsDataManager.getGroupPropertyDefinition(groupTypeId,
+							groupPropertyId);
+					if (propertyDefinition.propertyValuesAreMutable()) {
+						for (GroupId groupId : groupIds) {
+							Object propertyValue = groupPropertyId.getRandomPropertyValue(randomGenerator);
+							groupsDataManager.setGroupPropertyValue(groupId, groupPropertyId, propertyValue);
+						}
+					}
+				}
+			}
 		});
 
 		// set some groups and remove a few people
 		continuityBuilder.addContextConsumer(actionTime++, (c) -> {
 			// sampleGroup(GroupId, GroupSampler)
+			
+			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+			
+			for (GroupId groupId : groupsDataManager.getGroupIds()) {
+				GroupSampler groupSampler = GroupSampler.builder().build();
+				Optional<PersonId> optional = groupsDataManager.sampleGroup(groupId, groupSampler);
+				if(optional.isPresent()) {
+					PersonId personId = optional.get();
+					groupsDataManager.removePersonFromGroup(personId, groupId);
+				}
+				
+			}
 		});
 
 		// release the string state of the groups data manager as output
@@ -288,12 +378,8 @@ public class AT_GroupsDataManager_Continuity {
 		// show that the groups data manager toString() is returning something
 		// reasonable
 		assertNotNull(stateData.output);
-//		assertTrue(stateData.output.length() > 1);
-
-		System.out.println(stateData.output);
-
+		assertTrue(stateData.output.length() > 100);
 		return stateData.output;
-
 	}
 
 	private static void runSimulation(StateData stateData) {

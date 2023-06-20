@@ -21,7 +21,7 @@ public final class ObjectValueContainer {
 	 * initial capacity. The default value may be null.
 	 * 
 	 * @throws IllegalArgumentException
-	 *             <li>if capacity is negative
+	 *                                  <li>if capacity is negative
 	 */
 	public ObjectValueContainer(Object defaultValue, int capacity) {
 		if (capacity < 0) {
@@ -39,29 +39,30 @@ public final class ObjectValueContainer {
 	/**
 	 * Sets the value at the index.
 	 * 
-	 * @throws IllegalArgumentException
-	 *             if the index is negative
+	 * @throws IllegalArgumentException if the index is negative
 	 * 
 	 */
 	public void setValue(int index, Object value) {
+
 		if (index < 0) {
 			throw new IllegalArgumentException("negative index: " + index);
 		}
 		if (index >= elements.length) {
 			grow(index + 1);
 		}
+
 		elements[index] = value;
 	}
-	
+
 	/**
 	 * Returns the current capacity of this container
 	 */
 	public int getCapacity() {
 		return elements.length;
 	}
-	
+
 	public void setCapacity(int capacity) {
-		if(capacity>elements.length) {
+		if (capacity > elements.length) {
 			grow(capacity);
 		}
 	}
@@ -73,7 +74,7 @@ public final class ObjectValueContainer {
 	 */
 	private void grow(int capacity) {
 		int oldCapacity = elements.length;
-		int newCapacity = Math.max(capacity, elements.length + (elements.length >> 2));
+		int newCapacity = Math.max(capacity, elements.length + (elements.length >> 2));		
 		elements = Arrays.copyOf(elements, newCapacity);
 		if (defaultValue != null) {
 			for (int i = oldCapacity; i < newCapacity; i++) {
@@ -83,8 +84,8 @@ public final class ObjectValueContainer {
 	}
 
 	/**
-	 * Returns the Object value associated with the given index. If no object
-	 * value has been associated with the index, returns the default value.
+	 * Returns the Object value associated with the given index. If no object value
+	 * has been associated with the index, returns the default value.
 	 * 
 	 * @param index
 	 * @return
@@ -100,16 +101,44 @@ public final class ObjectValueContainer {
 		return (T) elements[index];
 	}
 
+	private String getElementsString() {
+
+
+		StringBuilder sb = new StringBuilder();
+		sb.append('[');
+		boolean first = true;
+		int n = elements.length;
+		for (int i = 0;i<n; i++) {
+			Object value = elements[i];
+			if(value == null) {
+				continue;
+			}
+			if(first) {
+				first = false;
+			}else {
+				sb.append(", ");
+			}
+			sb.append(i);
+			sb.append("=");
+			sb.append(value);			
+		}
+		sb.append("]");
+		return sb.toString();
+	}
+
+	/**
+	 * Returns the string representation of this container. Excludes the ullage
+	 * values beyond the highest value that was explicitly set.
+	 */
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("ObjectValueContainer [elements=");
-		builder.append(Arrays.toString(elements));
+		builder.append(getElementsString());
 		builder.append(", defaultValue=");
 		builder.append(defaultValue);
 		builder.append("]");
 		return builder.toString();
 	}
-	
-	
+
 }
