@@ -485,7 +485,7 @@ public final class ResourcesDataManager extends DataManager {
 
 		// add a container to record person resource values, initializing all
 		// people to have 0.
-		final IntValueContainer intValueContainer = new IntValueContainer(0L);
+		final IntValueContainer intValueContainer = new IntValueContainer(0L,peopleDataManager::personIndexExists);
 		personResourceValues.put(resourceId, intValueContainer);
 
 		// release notice that a new resource id has been added
@@ -657,7 +657,7 @@ public final class ResourcesDataManager extends DataManager {
 		for (ResourceId resourceId : resourcesPluginData.getResourceIds()) {
 			// private final Map<ResourceId, IntValueContainer>
 			// personResourceValues = new LinkedHashMap<>();
-			final IntValueContainer intValueContainer = new IntValueContainer(0L);
+			final IntValueContainer intValueContainer = new IntValueContainer(0L,peopleDataManager::personIndexExists);
 			personResourceValues.put(resourceId, intValueContainer);
 			List<Long> personResourceLevels = resourcesPluginData.getPersonResourceLevels(resourceId);
 			// load the person levels here
@@ -1711,19 +1711,19 @@ public final class ResourcesDataManager extends DataManager {
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("ResourcesDataManager [resourcePropertyMap=");
-		builder.append(resourcePropertyMap);
-		builder.append(", personResourceValues=");
+//		builder.append("ResourcesDataManager [resourcePropertyMap=");
+//		builder.append(resourcePropertyMap);
+//		builder.append(", personResourceValues=");
 		builder.append(personResourceValues);
-		builder.append(", resourcePropertyDefinitions=");
-		builder.append(resourcePropertyDefinitions);
-		builder.append(", resourceDefinitionTimes=");
-		builder.append(resourceDefinitionTimes);
-		builder.append(", personResourceTimes=");
-		builder.append(personResourceTimes);
-		builder.append(", regionResources=");
-		builder.append(regionResources);
-		builder.append("]");
+//		builder.append(", resourcePropertyDefinitions=");
+//		builder.append(resourcePropertyDefinitions);
+//		builder.append(", resourceDefinitionTimes=");
+//		builder.append(resourceDefinitionTimes);
+//		builder.append(", personResourceTimes=");
+//		builder.append(personResourceTimes);
+//		builder.append(", regionResources=");
+//		builder.append(regionResources);
+//		builder.append("]");
 		return builder.toString();
 	}
 

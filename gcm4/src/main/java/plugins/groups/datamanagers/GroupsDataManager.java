@@ -104,7 +104,7 @@ public final class GroupsDataManager extends DataManager {
 	private final ObjectValueContainer typesToGroupsMap = new ObjectValueContainer(null, 0);
 
 	// groupIndex->typeIndex
-	private final IntValueContainer groupsToTypesMap = new IntValueContainer(-1);
+	private final IntValueContainer groupsToTypesMap = new IntValueContainer(-1,this::validateGroupIndex);
 
 	// groupType -> typeIndex
 	private final Map<GroupTypeId, Integer> typesToIndexesMap = new LinkedHashMap<>();
@@ -1365,13 +1365,13 @@ public final class GroupsDataManager extends DataManager {
 		} else if (propertyDefinition.getType() == Double.class) {
 			indexedPropertyManager = new DoublePropertyManager(propertyDefinition, this::validateGroupIndex);
 		} else if (propertyDefinition.getType() == Byte.class) {
-			indexedPropertyManager = new IntPropertyManager(propertyDefinition, intialSize);
+			indexedPropertyManager = new IntPropertyManager(propertyDefinition, this::validateGroupIndex);
 		} else if (propertyDefinition.getType() == Short.class) {
-			indexedPropertyManager = new IntPropertyManager(propertyDefinition, intialSize);
+			indexedPropertyManager = new IntPropertyManager(propertyDefinition, this::validateGroupIndex);
 		} else if (propertyDefinition.getType() == Integer.class) {
-			indexedPropertyManager = new IntPropertyManager(propertyDefinition, intialSize);
+			indexedPropertyManager = new IntPropertyManager(propertyDefinition, this::validateGroupIndex);
 		} else if (propertyDefinition.getType() == Long.class) {
-			indexedPropertyManager = new IntPropertyManager(propertyDefinition, intialSize);
+			indexedPropertyManager = new IntPropertyManager(propertyDefinition, this::validateGroupIndex);
 		} else if (Enum.class.isAssignableFrom(propertyDefinition.getType())) {
 			indexedPropertyManager = new EnumPropertyManager(propertyDefinition, intialSize);
 		} else {

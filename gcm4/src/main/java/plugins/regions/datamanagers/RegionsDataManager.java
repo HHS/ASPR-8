@@ -569,7 +569,7 @@ public final class RegionsDataManager extends DataManager {
 		 *
 		 *
 		 */
-		regionValues = new IntValueContainer(0);
+		regionValues = new IntValueContainer(0,peopleDataManager::personIndexExists);
 
 		boolean trackRegionArrivals = regionsPluginData.getPersonRegionArrivalTrackingPolicy();
 		if (trackRegionArrivals) {

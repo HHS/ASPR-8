@@ -54,7 +54,7 @@ public final class EnumContainer {
 		Enum<?> e = (Enum<?>) defaultValue;
 		objectValueContainer = new ObjectValueContainer(null, 16);
 		objectValueContainer.setValue(e.ordinal(), defaultValue);
-		intValueContainer = new IntValueContainer(e.ordinal(), capacity);
+		intValueContainer = new IntValueContainer(e.ordinal(), (i)->true);
 	}
 
 	public EnumContainer(Class<?> c, Object defaultValue) {

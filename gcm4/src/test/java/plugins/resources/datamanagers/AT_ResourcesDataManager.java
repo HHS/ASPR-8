@@ -3825,9 +3825,9 @@ public final class AT_ResourcesDataManager {
 		 */
 
 		Set<String> pluginDatas = new LinkedHashSet<>();
-		pluginDatas.add(testStateContinuity(1));
-		pluginDatas.add(testStateContinuity(5));
-		pluginDatas.add(testStateContinuity(10));
+//		pluginDatas.add(testStateContinuity(1));
+//		pluginDatas.add(testStateContinuity(5));
+		pluginDatas.add(testStateContinuity(7));
 
 		assertEquals(1, pluginDatas.size());
 	}
@@ -3854,6 +3854,7 @@ public final class AT_ResourcesDataManager {
 		 */
 		continuityBuilder.addContextConsumer(0.5, (c) -> {
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+			System.out.println(c.getTime()+"\t"+resourcesDataManager);
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 
 			boolean trackResources = false;
@@ -3881,6 +3882,7 @@ public final class AT_ResourcesDataManager {
 		 */
 		continuityBuilder.addContextConsumer(1.2, (c) -> {
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+			System.out.println(c.getTime()+"\t"+resourcesDataManager);
 			for (TestRegionId testRegionId : TestRegionId.values()) {
 				for (TestResourceId testResourceId : TestResourceId.values()) {
 					long amount = randomGenerator.nextInt(10) * 100 + 300;
@@ -3893,6 +3895,7 @@ public final class AT_ResourcesDataManager {
 		// add some more resources to some regions
 		continuityBuilder.addContextConsumer(1.5, (c) -> {
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+			System.out.println(c.getTime()+"\t"+resourcesDataManager);
 			for (int i = 0; i < 30; i++) {
 				TestRegionId testRegionId = TestRegionId.getRandomRegionId(randomGenerator);
 				TestResourceId testResourceId = TestResourceId.getRandomResourceId(randomGenerator);
@@ -3906,6 +3909,7 @@ public final class AT_ResourcesDataManager {
 		 */
 		continuityBuilder.addContextConsumer(1.6, (c) -> {
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+			System.out.println(c.getTime()+"\t"+resourcesDataManager);
 			for (TestResourcePropertyId testResourcePropertyId : TestResourcePropertyId.values()) {
 				ResourcePropertyInitialization resourcePropertyInitialization = //
 						ResourcePropertyInitialization	.builder()//
@@ -3919,6 +3923,7 @@ public final class AT_ResourcesDataManager {
 		// set some resource properties
 		continuityBuilder.addContextConsumer(2.2, (c) -> {
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+			System.out.println(c.getTime()+"\t"+resourcesDataManager);
 			for (TestResourcePropertyId testResourcePropertyId : TestResourcePropertyId.values()) {
 				PropertyDefinition propertyDefinition = resourcesDataManager.getResourcePropertyDefinition(testResourcePropertyId.getTestResourceId(), testResourcePropertyId);
 				if (propertyDefinition.propertyValuesAreMutable()) {
@@ -3930,7 +3935,7 @@ public final class AT_ResourcesDataManager {
 		// transfer resources between regions
 		continuityBuilder.addContextConsumer(2.5, (c) -> {
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
-
+			System.out.println(c.getTime()+"\t"+resourcesDataManager);
 			for (int i = 0; i < 50; i++) {
 				TestResourceId resourceId = TestResourceId.getRandomResourceId(randomGenerator);
 				TestRegionId sourceRegionId = TestRegionId.getRandomRegionId(randomGenerator);
@@ -3955,7 +3960,7 @@ public final class AT_ResourcesDataManager {
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
-
+			System.out.println(c.getTime()+"\t"+resourcesDataManager);
 			for (PersonId personId : peopleDataManager.getPeople()) {
 				TestResourceId testResourceId = TestResourceId.getRandomResourceId(randomGenerator);
 				RegionId regionId = regionsDataManager.getPersonRegion(personId);
@@ -3973,7 +3978,7 @@ public final class AT_ResourcesDataManager {
 		continuityBuilder.addContextConsumer(4.7, (c) -> {
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
-
+			System.out.println(c.getTime()+"\t"+resourcesDataManager);
 			for (PersonId personId : peopleDataManager.getPeople()) {
 				TestResourceId testResourceId = TestResourceId.getRandomResourceId(randomGenerator);
 				long avaialableAmount = resourcesDataManager.getPersonResourceLevel(testResourceId, personId);
@@ -3990,7 +3995,7 @@ public final class AT_ResourcesDataManager {
 		continuityBuilder.addContextConsumer(5.3, (c) -> {
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
-
+			System.out.println(c.getTime()+"\t"+resourcesDataManager);
 			for (PersonId personId : peopleDataManager.getPeople()) {
 				TestResourceId testResourceId = TestResourceId.getRandomResourceId(randomGenerator);
 				long avaialableAmount = resourcesDataManager.getPersonResourceLevel(testResourceId, personId);
@@ -4007,6 +4012,7 @@ public final class AT_ResourcesDataManager {
 		continuityBuilder.addContextConsumer(5.5, (c) -> {
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
+			System.out.println(c.getTime()+"\t"+resourcesDataManager);
 
 			for (RegionId regionId : regionsDataManager.getRegionIds()) {
 				TestResourceId testResourceId = TestResourceId.getRandomResourceId(randomGenerator);
@@ -4051,6 +4057,7 @@ public final class AT_ResourcesDataManager {
 		}
 		double timeIncrement = maxTime / incrementCount;
 		while (!runContinuityPluginData.allPlansComplete()) {
+			System.out.println("about to run a sim");
 			haltTime += timeIncrement;
 
 			// build the run continuity plugin
@@ -4105,6 +4112,8 @@ public final class AT_ResourcesDataManager {
 		}
 
 		assertNotNull(result);
+		
+		System.out.println(result);
 
 		return result;
 

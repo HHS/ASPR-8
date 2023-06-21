@@ -299,13 +299,13 @@ public final class PersonPropertiesDataManager extends DataManager {
 		} else if (propertyDefinition.getType() == Double.class) {
 			indexedPropertyManager = new DoublePropertyManager(propertyDefinition,peopleDataManager::personIndexExists);
 		} else if (propertyDefinition.getType() == Byte.class) {
-			indexedPropertyManager = new IntPropertyManager(propertyDefinition, intialSize);
+			indexedPropertyManager = new IntPropertyManager(propertyDefinition, peopleDataManager::personIndexExists);
 		} else if (propertyDefinition.getType() == Short.class) {
-			indexedPropertyManager = new IntPropertyManager(propertyDefinition, intialSize);
+			indexedPropertyManager = new IntPropertyManager(propertyDefinition, peopleDataManager::personIndexExists);
 		} else if (propertyDefinition.getType() == Integer.class) {
-			indexedPropertyManager = new IntPropertyManager(propertyDefinition, intialSize);
+			indexedPropertyManager = new IntPropertyManager(propertyDefinition, peopleDataManager::personIndexExists);
 		} else if (propertyDefinition.getType() == Long.class) {
-			indexedPropertyManager = new IntPropertyManager(propertyDefinition, intialSize);
+			indexedPropertyManager = new IntPropertyManager(propertyDefinition, peopleDataManager::personIndexExists);
 		} else if (Enum.class.isAssignableFrom(propertyDefinition.getType())) {
 			indexedPropertyManager = new EnumPropertyManager(propertyDefinition, intialSize);
 		} else {
