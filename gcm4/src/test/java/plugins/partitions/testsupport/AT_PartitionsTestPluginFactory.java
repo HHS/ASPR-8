@@ -1,15 +1,12 @@
 package plugins.partitions.testsupport;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.EnumSet;
 import java.util.List;
-import java.util.Set;
 import java.util.function.Consumer;
 
 import org.junit.jupiter.api.Test;
@@ -31,7 +28,6 @@ import plugins.partitions.testsupport.PartitionsTestPluginFactory.Factory;
 import plugins.partitions.testsupport.attributes.AttributesPluginData;
 import plugins.partitions.testsupport.attributes.AttributesPluginId;
 import plugins.partitions.testsupport.attributes.support.AttributeError;
-import plugins.partitions.testsupport.attributes.support.AttributeId;
 import plugins.partitions.testsupport.attributes.support.TestAttributeId;
 import plugins.people.PeoplePluginData;
 import plugins.people.PeoplePluginId;
@@ -48,227 +44,234 @@ import util.wrappers.MutableBoolean;
 
 public class AT_PartitionsTestPluginFactory {
 
-	@Test
-	@UnitTestMethod(target = PartitionsTestPluginFactory.class, name = "factory", args = { int.class, long.class,
-			Consumer.class })
-	public void testFtestFactory_Consumeractory1() {
-		MutableBoolean executed = new MutableBoolean();
-		Factory factory = PartitionsTestPluginFactory.factory(100, 9029198675932589278L, c -> executed.setValue(true));
-		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
-		assertTrue(executed.getValue());
+    @Test
+    @UnitTestMethod(target = PartitionsTestPluginFactory.class, name = "factory", args = { int.class, long.class,
+            Consumer.class })
+    public void testFtestFactory_Consumeractory1() {
+        MutableBoolean executed = new MutableBoolean();
+        Factory factory = PartitionsTestPluginFactory.factory(100, 9029198675932589278L, c -> executed.setValue(true));
+        TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
+        assertTrue(executed.getValue());
 
-		// precondition: consumer is null
-		Consumer<ActorContext> nullConsumer = null;
-		ContractException contractException = assertThrows(ContractException.class,
-				() -> PartitionsTestPluginFactory.factory(0, 0, nullConsumer));
-		assertEquals(NucleusError.NULL_ACTOR_CONTEXT_CONSUMER, contractException.getErrorType());
-	}
+        // precondition: consumer is null
+        Consumer<ActorContext> nullConsumer = null;
+        ContractException contractException = assertThrows(ContractException.class,
+                () -> PartitionsTestPluginFactory.factory(0, 0, nullConsumer));
+        assertEquals(NucleusError.NULL_ACTOR_CONTEXT_CONSUMER, contractException.getErrorType());
+    }
 
-	@Test
-	@UnitTestMethod(target = PartitionsTestPluginFactory.class, name = "factory", args = { int.class, long.class,
-			TestPluginData.class })
-	public void testFactory_TestPluginData() {
-		MutableBoolean executed = new MutableBoolean();
-		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
-		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, c -> executed.setValue(true)));
-		TestPluginData testPluginData = pluginBuilder.build();
+    @Test
+    @UnitTestMethod(target = PartitionsTestPluginFactory.class, name = "factory", args = { int.class, long.class,
+            TestPluginData.class })
+    public void testFactory_TestPluginData() {
+        MutableBoolean executed = new MutableBoolean();
+        TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+        pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, c -> executed.setValue(true)));
+        TestPluginData testPluginData = pluginBuilder.build();
 
-		
-		Factory factory = PartitionsTestPluginFactory.factory(100, 2990359774692004249L, testPluginData);
-		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
-		
-		assertTrue(executed.getValue());
+        Factory factory = PartitionsTestPluginFactory.factory(100, 2990359774692004249L, testPluginData);
+        TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
-		// precondition: testPluginData is null
-		TestPluginData nullTestPluginData = null;
-		ContractException contractException = assertThrows(ContractException.class,
-				() -> PartitionsTestPluginFactory.factory(0, 0, nullTestPluginData));
-		assertEquals(NucleusError.NULL_PLUGIN_DATA, contractException.getErrorType());
+        assertTrue(executed.getValue());
 
-	}
+        // precondition: testPluginData is null
+        TestPluginData nullTestPluginData = null;
+        ContractException contractException = assertThrows(ContractException.class,
+                () -> PartitionsTestPluginFactory.factory(0, 0, nullTestPluginData));
+        assertEquals(NucleusError.NULL_PLUGIN_DATA, contractException.getErrorType());
 
-	/*
-	 * Given a list of plugins, will show that the plugin with the given pluginId
-	 * exists, and exists EXACTLY once.
-	 */
-	private Plugin checkPluginExists(List<Plugin> plugins, PluginId pluginId) {
-		Plugin actualPlugin = null;
-		for (Plugin plugin : plugins) {
-			if (plugin.getPluginId().equals(pluginId)) {
-				assertNull(actualPlugin);
-				actualPlugin = plugin;
-			}
-		}
+    }
 
-		assertNotNull(actualPlugin);
+    /*
+     * Given a list of plugins, will show that the plugin with the given pluginId
+     * exists, and exists EXACTLY once.
+     */
+    private Plugin checkPluginExists(List<Plugin> plugins, PluginId pluginId) {
+        Plugin actualPlugin = null;
+        for (Plugin plugin : plugins) {
+            if (plugin.getPluginId().equals(pluginId)) {
+                assertNull(actualPlugin);
+                actualPlugin = plugin;
+            }
+        }
 
-		return actualPlugin;
-	}
+        assertNotNull(actualPlugin);
 
-	/**
-	 * Given a list of plugins, will show that the explicit plugindata for the given
-	 * pluginid exists, and exists EXACTLY once.
-	 */
-	private <T extends PluginData> void checkPluginDataExists(List<Plugin> plugins, T expectedPluginData,
-			PluginId pluginId) {
-		Plugin actualPlugin = checkPluginExists(plugins, pluginId);
-		List<PluginData> actualPluginDatas = actualPlugin.getPluginDatas();
-		assertNotNull(actualPluginDatas);
-		assertEquals(1, actualPluginDatas.size());
-		PluginData actualPluginData = actualPluginDatas.get(0);
-		assertTrue(expectedPluginData == actualPluginData);
-	}
+        return actualPlugin;
+    }
 
-	@Test
-	@UnitTestMethod(target = PartitionsTestPluginFactory.Factory.class, name = "getPlugins", args = {})
-	public void testGetPlugins() {
-		List<Plugin> plugins = PartitionsTestPluginFactory.factory(0, 0, t -> {
-		}).getPlugins();
-		assertEquals(5, plugins.size());
+    /**
+     * Given a list of plugins, will show that the explicit plugindata for the given
+     * pluginid exists, and exists EXACTLY once.
+     */
+    private <T extends PluginData> void checkPluginDataExists(List<Plugin> plugins, T expectedPluginData,
+            PluginId pluginId) {
+        Plugin actualPlugin = checkPluginExists(plugins, pluginId);
+        List<PluginData> actualPluginDatas = actualPlugin.getPluginDatas();
+        assertNotNull(actualPluginDatas);
+        assertEquals(1, actualPluginDatas.size());
+        PluginData actualPluginData = actualPluginDatas.get(0);
+        assertTrue(expectedPluginData == actualPluginData);
+    }
 
-		checkPluginExists(plugins, AttributesPluginId.PLUGIN_ID);
-		checkPluginExists(plugins, PartitionsPluginId.PLUGIN_ID);
-		checkPluginExists(plugins, PeoplePluginId.PLUGIN_ID);
-		checkPluginExists(plugins, StochasticsPluginId.PLUGIN_ID);
-		checkPluginExists(plugins, TestPluginId.PLUGIN_ID);
-	}
+    @Test
+    @UnitTestMethod(target = PartitionsTestPluginFactory.Factory.class, name = "getPlugins", args = {})
+    public void testGetPlugins() {
+        List<Plugin> plugins = PartitionsTestPluginFactory.factory(0, 0, t -> {
+        }).getPlugins();
+        assertEquals(5, plugins.size());
 
-	@Test
-	@UnitTestMethod(target = PartitionsTestPluginFactory.Factory.class, name = "setAttributesPluginData", args = {
-			AttributesPluginData.class })
-	public void testSetAttributesPluginData() {
-		AttributesPluginData.Builder attributesBuilder = AttributesPluginData.builder();
-		for (TestAttributeId testAttributeId : TestAttributeId.values()) {
-			attributesBuilder.defineAttribute(testAttributeId, testAttributeId.getAttributeDefinition());
-		}
+        checkPluginExists(plugins, AttributesPluginId.PLUGIN_ID);
+        checkPluginExists(plugins, PartitionsPluginId.PLUGIN_ID);
+        checkPluginExists(plugins, PeoplePluginId.PLUGIN_ID);
+        checkPluginExists(plugins, StochasticsPluginId.PLUGIN_ID);
+        checkPluginExists(plugins, TestPluginId.PLUGIN_ID);
+    }
 
-		AttributesPluginData attributesPluginData = attributesBuilder.build();
+    @Test
+    @UnitTestMethod(target = PartitionsTestPluginFactory.Factory.class, name = "setAttributesPluginData", args = {
+            AttributesPluginData.class })
+    public void testSetAttributesPluginData() {
+        AttributesPluginData.Builder attributesBuilder = AttributesPluginData.builder();
+        for (TestAttributeId testAttributeId : TestAttributeId.values()) {
+            attributesBuilder.defineAttribute(testAttributeId, testAttributeId.getAttributeDefinition());
+        }
 
-		List<Plugin> plugins = PartitionsTestPluginFactory.factory(0, 0, t -> {
-		}).setAttributesPluginData(attributesPluginData).getPlugins();
+        AttributesPluginData attributesPluginData = attributesBuilder.build();
 
-		checkPluginDataExists(plugins, attributesPluginData, AttributesPluginId.PLUGIN_ID);
+        List<Plugin> plugins = PartitionsTestPluginFactory.factory(0, 0, t -> {
+        }).setAttributesPluginData(attributesPluginData).getPlugins();
 
-		// precondition: attributesPluginData is not null
-		ContractException contractException = assertThrows(ContractException.class,
-				() -> PartitionsTestPluginFactory.factory(0, 0, t -> {
-				}).setAttributesPluginData(null));
-		assertEquals(AttributeError.NULL_ATTRIBUTES_PLUGIN_DATA, contractException.getErrorType());
-	}
+        checkPluginDataExists(plugins, attributesPluginData, AttributesPluginId.PLUGIN_ID);
 
-	@Test
-	@UnitTestMethod(target = PartitionsTestPluginFactory.Factory.class, name = "setPartitionsPlugin", args = {
-			Plugin.class })
-	public void testSetPartitionsPlugin() {
-		Plugin partitionsPlugin = PartitionsPlugin.builder()//		
-				.setPartitionsPluginData(PartitionsPluginData.builder().build())//
-				.addPluginDependency(AttributesPluginId.PLUGIN_ID)//
-				.getPartitionsPlugin();
+        // precondition: attributesPluginData is not null
+        ContractException contractException = assertThrows(ContractException.class,
+                () -> PartitionsTestPluginFactory.factory(0, 0, t -> {
+                }).setAttributesPluginData(null));
+        assertEquals(AttributeError.NULL_ATTRIBUTES_PLUGIN_DATA, contractException.getErrorType());
+    }
 
-		List<Plugin> plugins = PartitionsTestPluginFactory.factory(0, 0, t -> {
-		}).setPartitionsPlugin(partitionsPlugin).getPlugins();
+    @Test
+    @UnitTestMethod(target = PartitionsTestPluginFactory.Factory.class, name = "setPartitionsPlugin", args = {
+            Plugin.class })
+    public void testSetPartitionsPlugin() {
+        Plugin partitionsPlugin = PartitionsPlugin.builder()//
+                .setPartitionsPluginData(PartitionsPluginData.builder().build())//
+                .addPluginDependency(AttributesPluginId.PLUGIN_ID)//
+                .getPartitionsPlugin();
 
-		Plugin actualPlugin = checkPluginExists(plugins, PartitionsPluginId.PLUGIN_ID);
-		assertTrue(partitionsPlugin == actualPlugin);
+        List<Plugin> plugins = PartitionsTestPluginFactory.factory(0, 0, t -> {
+        }).setPartitionsPlugin(partitionsPlugin).getPlugins();
 
-		// precondition: partitionsPlugin is not null
-		ContractException contractException = assertThrows(ContractException.class,
-				() -> PartitionsTestPluginFactory.factory(0, 0, t -> {
-				}).setPartitionsPlugin(null));
-		assertEquals(PartitionError.NULL_PARTITION_PLUGIN, contractException.getErrorType());
-	}
+        Plugin actualPlugin = checkPluginExists(plugins, PartitionsPluginId.PLUGIN_ID);
+        assertTrue(partitionsPlugin == actualPlugin);
 
-	@Test
-	@UnitTestMethod(target = PartitionsTestPluginFactory.Factory.class, name = "setPeoplePluginData", args = {
-			PeoplePluginData.class })
-	public void testSetPeoplePluginData() {
-		PeoplePluginData.Builder builder = PeoplePluginData.builder();
-		builder.addPersonRange(new PersonRange(0,99));
+        // precondition: partitionsPlugin is not null
+        ContractException contractException = assertThrows(ContractException.class,
+                () -> PartitionsTestPluginFactory.factory(0, 0, t -> {
+                }).setPartitionsPlugin(null));
+        assertEquals(PartitionError.NULL_PARTITION_PLUGIN, contractException.getErrorType());
+    }
 
-		PeoplePluginData peoplePluginData = builder.build();
+    @Test
+    @UnitTestMethod(target = PartitionsTestPluginFactory.Factory.class, name = "setPeoplePluginData", args = {
+            PeoplePluginData.class })
+    public void testSetPeoplePluginData() {
+        PeoplePluginData.Builder builder = PeoplePluginData.builder();
+        builder.addPersonRange(new PersonRange(0, 99));
 
-		List<Plugin> plugins = PartitionsTestPluginFactory.factory(0, 0, t -> {
-		}).setPeoplePluginData(peoplePluginData).getPlugins();
+        PeoplePluginData peoplePluginData = builder.build();
 
-		checkPluginDataExists(plugins, peoplePluginData, PeoplePluginId.PLUGIN_ID);
+        List<Plugin> plugins = PartitionsTestPluginFactory.factory(0, 0, t -> {
+        }).setPeoplePluginData(peoplePluginData).getPlugins();
 
-		// precondition: peoplePluginData is not null
-		ContractException contractException = assertThrows(ContractException.class,
-				() -> PartitionsTestPluginFactory.factory(0, 0, t -> {
-				}).setPeoplePluginData(null));
-		assertEquals(PersonError.NULL_PEOPLE_PLUGIN_DATA, contractException.getErrorType());
-	}
+        checkPluginDataExists(plugins, peoplePluginData, PeoplePluginId.PLUGIN_ID);
 
-	@Test
-	@UnitTestMethod(target = PartitionsTestPluginFactory.Factory.class, name = "setStochasticsPluginData", args = {
-			StochasticsPluginData.class })
-	public void testSetStochasticsPluginData() {
-		StochasticsPluginData.Builder builder = StochasticsPluginData.builder();
+        // precondition: peoplePluginData is not null
+        ContractException contractException = assertThrows(ContractException.class,
+                () -> PartitionsTestPluginFactory.factory(0, 0, t -> {
+                }).setPeoplePluginData(null));
+        assertEquals(PersonError.NULL_PEOPLE_PLUGIN_DATA, contractException.getErrorType());
+    }
 
-		WellState wellState = WellState.builder().setSeed(2990359774692004249L).build();
-		builder.setMainRNGState(wellState);
-		
-		wellState = WellState.builder().setSeed(450787180090162111L).build();
-		builder.addRNG(TestRandomGeneratorId.BLITZEN,wellState);
+    @Test
+    @UnitTestMethod(target = PartitionsTestPluginFactory.Factory.class, name = "setStochasticsPluginData", args = {
+            StochasticsPluginData.class })
+    public void testSetStochasticsPluginData() {
+        StochasticsPluginData.Builder builder = StochasticsPluginData.builder();
 
-		StochasticsPluginData stochasticsPluginData = builder.build();
+        WellState wellState = WellState.builder().setSeed(2990359774692004249L).build();
+        builder.setMainRNGState(wellState);
 
-		List<Plugin> plugins = PartitionsTestPluginFactory.factory(0, 0, t -> {
-		}).setStochasticsPluginData(stochasticsPluginData).getPlugins();
+        wellState = WellState.builder().setSeed(450787180090162111L).build();
+        builder.addRNG(TestRandomGeneratorId.BLITZEN, wellState);
 
-		checkPluginDataExists(plugins, stochasticsPluginData, StochasticsPluginId.PLUGIN_ID);
+        StochasticsPluginData stochasticsPluginData = builder.build();
 
-		// precondition: stochasticsPluginData is not null
-		ContractException contractException = assertThrows(ContractException.class,
-				() -> PartitionsTestPluginFactory.factory(0, 0, t -> {
-				}).setStochasticsPluginData(null));
-		assertEquals(StochasticsError.NULL_STOCHASTICS_PLUGIN_DATA, contractException.getErrorType());
-	}
+        List<Plugin> plugins = PartitionsTestPluginFactory.factory(0, 0, t -> {
+        }).setStochasticsPluginData(stochasticsPluginData).getPlugins();
 
-	@Test
-	@UnitTestMethod(target = PartitionsTestPluginFactory.class, name = "getStandardAttributesPluginData", args = {})
-	public void testGetStandardAttributesPluginData() {
+        checkPluginDataExists(plugins, stochasticsPluginData, StochasticsPluginId.PLUGIN_ID);
 
-		AttributesPluginData attributesPluginData = PartitionsTestPluginFactory.getStandardAttributesPluginData();
+        // precondition: stochasticsPluginData is not null
+        ContractException contractException = assertThrows(ContractException.class,
+                () -> PartitionsTestPluginFactory.factory(0, 0, t -> {
+                }).setStochasticsPluginData(null));
+        assertEquals(StochasticsError.NULL_STOCHASTICS_PLUGIN_DATA, contractException.getErrorType());
+    }
 
-		Set<TestAttributeId> expectedAttributeIds = EnumSet.allOf(TestAttributeId.class);
-		assertFalse(expectedAttributeIds.isEmpty());
+    @Test
+    @UnitTestMethod(target = PartitionsTestPluginFactory.class, name = "getStandardAttributesPluginData", args = {})
+    public void testGetStandardAttributesPluginData() {
 
-		Set<AttributeId> actualAttributeIds = attributesPluginData.getAttributeIds();
-		assertEquals(expectedAttributeIds, actualAttributeIds);
+        AttributesPluginData.Builder attributesBuilder = AttributesPluginData.builder();
+        for (TestAttributeId testAttributeId : TestAttributeId.values()) {
+            attributesBuilder.defineAttribute(testAttributeId, testAttributeId.getAttributeDefinition());
+        }
 
-		for (TestAttributeId testAttributeId : expectedAttributeIds) {
-			assertEquals(testAttributeId.getAttributeDefinition(),
-					attributesPluginData.getAttributeDefinition(testAttributeId));
-		}
-	}
+        AttributesPluginData expectedPluginData = attributesBuilder.build();
+        AttributesPluginData actualPluginData = PartitionsTestPluginFactory.getStandardAttributesPluginData();
 
-	@Test
-	@UnitTestMethod(target = PartitionsTestPluginFactory.class, name = "getStandardPartitionsPlugin", args = {})
-	public void testGetStandardPartitionsPlugin() {
+        assertEquals(expectedPluginData, actualPluginData);
+    }
 
-		Plugin partitionsPlugin = PartitionsTestPluginFactory.getStandardPartitionsPlugin();
-		assertTrue(partitionsPlugin.getPluginDependencies().contains(AttributesPluginId.PLUGIN_ID));
-	}
+    @Test
+    @UnitTestMethod(target = PartitionsTestPluginFactory.class, name = "getStandardPartitionsPlugin", args = {})
+    public void testGetStandardPartitionsPlugin() {
 
-	@Test
-	@UnitTestMethod(target = PartitionsTestPluginFactory.class, name = "getStandardPeoplePluginData", args = {
-			int.class })
-	public void testGetStandardPeoplePluginData() {
+        Plugin partitionsPlugin = PartitionsTestPluginFactory.getStandardPartitionsPlugin();
+        assertTrue(partitionsPlugin.getPluginDependencies().contains(AttributesPluginId.PLUGIN_ID));
+    }
 
-		PeoplePluginData peoplePluginData = PartitionsTestPluginFactory.getStandardPeoplePluginData(100);
-		assertEquals(100, peoplePluginData.getPersonIds().size());
-	}
+    @Test
+    @UnitTestMethod(target = PartitionsTestPluginFactory.class, name = "getStandardPeoplePluginData", args = {
+            int.class })
+    public void testGetStandardPeoplePluginData() {
 
-	@Test
-	@UnitTestMethod(target = PartitionsTestPluginFactory.class, name = "getStandardStochasticsPluginData", args = {
-			long.class })
-	public void testGetStandardStochasticsPluginData() {
-		long seed = 7995349318419680542L;
-		StochasticsPluginData stochasticsPluginData = PartitionsTestPluginFactory
-				.getStandardStochasticsPluginData(seed);
+        int initialPopulation = 100;
 
-		assertEquals(seed, stochasticsPluginData.getWellState().getSeed());
-		assertEquals(0, stochasticsPluginData.getRandomNumberGeneratorIds().size());
-	}
+        PeoplePluginData.Builder peopleBuilder = PeoplePluginData.builder();
+        if (initialPopulation > 0) {
+            peopleBuilder.addPersonRange(new PersonRange(0, initialPopulation - 1));
+        }
+
+        PeoplePluginData expectedPluginData = peopleBuilder.build();
+        PeoplePluginData actualPluginData = PartitionsTestPluginFactory.getStandardPeoplePluginData(initialPopulation);
+        assertEquals(expectedPluginData, actualPluginData);
+    }
+
+    @Test
+    @UnitTestMethod(target = PartitionsTestPluginFactory.class, name = "getStandardStochasticsPluginData", args = {
+            long.class })
+    public void testGetStandardStochasticsPluginData() {
+        long seed = 7995349318419680542L;
+
+        WellState wellState = WellState.builder().setSeed(seed).build();
+
+        StochasticsPluginData expectedPluginData = StochasticsPluginData.builder().setMainRNGState(wellState).build();
+        StochasticsPluginData actualPluginData = PartitionsTestPluginFactory
+                .getStandardStochasticsPluginData(seed);
+
+        assertEquals(expectedPluginData, actualPluginData);
+    }
 }
