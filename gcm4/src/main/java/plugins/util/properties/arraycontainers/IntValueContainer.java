@@ -1,7 +1,8 @@
 package plugins.util.properties.arraycontainers;
 
 import java.util.Arrays;
-import java.util.function.IntPredicate;
+import java.util.Iterator;
+import java.util.function.Supplier;
 
 import plugins.util.properties.PropertyError;
 import util.errors.ContractException;
@@ -71,7 +72,7 @@ public final class IntValueContainer {
 	 * Common interface for the four array wrapper classes.
 	 */
 	private static interface SubTypeArray {
-		public IntPredicate getIndexValidator();
+		public Supplier<Iterator<Integer>> getIteratorSupplier();
 
 		public IntValueType getIntValueType();
 
@@ -95,17 +96,17 @@ public final class IntValueContainer {
 	private static class LongArray implements SubTypeArray {
 		private long[] values;
 		private long defaultValue;
-		private final IntPredicate indexValidator;
+		private final Supplier<Iterator<Integer>> indexIteratorSupplier;
 
-		public LongArray(long defaultValue, IntPredicate indexValidator) {
+		public LongArray(long defaultValue, Supplier<Iterator<Integer>> indexIteratorSupplier) {
 			values = new long[0];
 			this.defaultValue = defaultValue;
-			this.indexValidator = indexValidator;
+			this.indexIteratorSupplier = indexIteratorSupplier;
 		}
 
 		public LongArray(SubTypeArray subTypeArray) {
 			this.defaultValue = subTypeArray.getDefaultValue();
-			this.indexValidator = subTypeArray.getIndexValidator();
+			this.indexIteratorSupplier = subTypeArray.getIteratorSupplier();
 			values = new long[subTypeArray.getCapacity()];
 			for (int i = 0; i < values.length; i++) {
 				values[i] = (int) subTypeArray.getValue(i);
@@ -161,21 +162,28 @@ public final class IntValueContainer {
 		}
 
 		private String getElementsString() {
+			Iterator<Integer> iterator = indexIteratorSupplier.get();
 
 			StringBuilder sb = new StringBuilder();
 
 			boolean first = true;
 			sb.append('[');
 			int n = values.length;
-			for (int i = 0; i < n; i++) {
-				if (indexValidator.test(i)) {
-					if (first) {
-						first = false;
-					} else {
-						sb.append(", ");
-					}
-					sb.append(String.valueOf(values[i]));
+			while (iterator.hasNext()) {
+
+				if (first) {
+					first = false;
+				} else {
+					sb.append(", ");
 				}
+
+				Integer index = iterator.next();
+				if (index < 0 || index >= n) {
+					sb.append(defaultValue);
+				} else {
+					sb.append(values[index]);
+				}
+
 			}
 			sb.append(']');
 			return sb.toString();
@@ -193,8 +201,8 @@ public final class IntValueContainer {
 		}
 
 		@Override
-		public IntPredicate getIndexValidator() {
-			return indexValidator;
+		public Supplier<Iterator<Integer>> getIteratorSupplier() {
+			return indexIteratorSupplier;
 		}
 	}
 	/*
@@ -205,17 +213,17 @@ public final class IntValueContainer {
 
 		private int[] values;
 		private int defaultValue;
-		private final IntPredicate indexValidator;
+		private final Supplier<Iterator<Integer>> indexIteratorSupplier;
 
-		public IntArray(int defaultValue, IntPredicate indexValidator) {
+		public IntArray(int defaultValue, Supplier<Iterator<Integer>> indexIteratorSupplier) {
 			values = new int[0];
 			this.defaultValue = defaultValue;
-			this.indexValidator = indexValidator;
+			this.indexIteratorSupplier = indexIteratorSupplier;
 		}
 
 		public IntArray(SubTypeArray subTypeArray) {
 			this.defaultValue = (int) subTypeArray.getDefaultValue();
-			this.indexValidator = subTypeArray.getIndexValidator();
+			this.indexIteratorSupplier = subTypeArray.getIteratorSupplier();
 			values = new int[subTypeArray.getCapacity()];
 			for (int i = 0; i < values.length; i++) {
 				values[i] = (int) subTypeArray.getValue(i);
@@ -270,21 +278,27 @@ public final class IntValueContainer {
 		}
 
 		private String getElementsString() {
+			Iterator<Integer> iterator = indexIteratorSupplier.get();
 
 			StringBuilder sb = new StringBuilder();
 
 			boolean first = true;
 			sb.append('[');
 			int n = values.length;
-			for (int i = 0; i < n; i++) {
-				if (indexValidator.test(i)) {
-					if (first) {
-						first = false;
-					} else {
-						sb.append(", ");
-					}
-					sb.append(String.valueOf(values[i]));
+			while (iterator.hasNext()) {
+
+				if (first) {
+					first = false;
+				} else {
+					sb.append(", ");
 				}
+				Integer index = iterator.next();
+				if (index < 0 || index >= n) {
+					sb.append(defaultValue);
+				} else {
+					sb.append(values[index]);
+				}
+
 			}
 			sb.append(']');
 			return sb.toString();
@@ -302,8 +316,8 @@ public final class IntValueContainer {
 		}
 
 		@Override
-		public IntPredicate getIndexValidator() {
-			return indexValidator;
+		public Supplier<Iterator<Integer>> getIteratorSupplier() {
+			return indexIteratorSupplier;
 		}
 
 	}
@@ -315,17 +329,17 @@ public final class IntValueContainer {
 
 		private short[] values;
 		private short defaultValue;
-		private final IntPredicate indexValidator;
+		private final Supplier<Iterator<Integer>> indexIteratorSupplier;
 
-		public ShortArray(short defaultValue, IntPredicate indexValidator) {
+		public ShortArray(short defaultValue, Supplier<Iterator<Integer>> indexIteratorSupplier) {
 			values = new short[0];
 			this.defaultValue = defaultValue;
-			this.indexValidator = indexValidator;
+			this.indexIteratorSupplier = indexIteratorSupplier;
 		}
 
 		public ShortArray(SubTypeArray subTypeArray) {
 			this.defaultValue = (short) subTypeArray.getDefaultValue();
-			this.indexValidator = subTypeArray.getIndexValidator();
+			this.indexIteratorSupplier = subTypeArray.getIteratorSupplier();
 
 			values = new short[subTypeArray.getCapacity()];
 			for (int i = 0; i < values.length; i++) {
@@ -381,21 +395,28 @@ public final class IntValueContainer {
 		}
 
 		private String getElementsString() {
+			Iterator<Integer> iterator = indexIteratorSupplier.get();
 
 			StringBuilder sb = new StringBuilder();
 
 			boolean first = true;
 			sb.append('[');
 			int n = values.length;
-			for (int i = 0; i < n; i++) {
-				if (indexValidator.test(i)) {
-					if (first) {
-						first = false;
-					} else {
-						sb.append(", ");
-					}
-					sb.append(String.valueOf(values[i]));
+			while (iterator.hasNext()) {
+
+				if (first) {
+					first = false;
+				} else {
+					sb.append(", ");
 				}
+
+				Integer index = iterator.next();
+				if (index < 0 || index >= n) {
+					sb.append(defaultValue);
+				} else {
+					sb.append(values[index]);
+				}
+
 			}
 			sb.append(']');
 			return sb.toString();
@@ -414,8 +435,8 @@ public final class IntValueContainer {
 		}
 
 		@Override
-		public IntPredicate getIndexValidator() {
-			return indexValidator;
+		public Supplier<Iterator<Integer>> getIteratorSupplier() {
+			return indexIteratorSupplier;
 		}
 
 	}
@@ -427,16 +448,12 @@ public final class IntValueContainer {
 
 		private byte[] values;
 		private byte defaultValue;
-		private final IntPredicate indexValidator;
+		private final Supplier<Iterator<Integer>> indexIteratorSupplier;
 
-		public IntPredicate getIndexValidator() {
-			return indexValidator;
-		}
-
-		public ByteArray(byte defaultValue, IntPredicate indexValidator) {
+		public ByteArray(byte defaultValue, Supplier<Iterator<Integer>> indexIteratorSupplier) {
 			values = new byte[0];
 			this.defaultValue = defaultValue;
-			this.indexValidator = indexValidator;
+			this.indexIteratorSupplier = indexIteratorSupplier;
 		}
 
 		@Override
@@ -487,19 +504,24 @@ public final class IntValueContainer {
 
 		private String getElementsString() {
 
+			Iterator<Integer> iterator = indexIteratorSupplier.get();
+
 			StringBuilder sb = new StringBuilder();
 
 			boolean first = true;
 			sb.append('[');
 			int n = values.length;
-			for (int i = 0; i < n; i++) {
-				if (indexValidator.test(i)) {
-					if (first) {
-						first = false;
-					} else {
-						sb.append(", ");
-					}
-					sb.append(String.valueOf(values[i]));
+			while (iterator.hasNext()) {
+				Integer index = iterator.next();
+				if (first) {
+					first = false;
+				} else {
+					sb.append(", ");
+				}
+				if (index < 0 || index >= n) {
+					sb.append(defaultValue);
+				} else {
+					sb.append(values[index]);
 				}
 			}
 			sb.append(']');
@@ -515,6 +537,11 @@ public final class IntValueContainer {
 			builder.append(defaultValue);
 			builder.append("]");
 			return builder.toString();
+		}
+
+		@Override
+		public Supplier<Iterator<Integer>> getIteratorSupplier() {
+			return indexIteratorSupplier;
 		}
 
 	}
@@ -583,16 +610,16 @@ public final class IntValueContainer {
 	 * 
 	 * @throws NegativeArraySizeException if the capacity is negative
 	 */
-	public IntValueContainer(long defaultValue, IntPredicate indexValidator) {
+	public IntValueContainer(long defaultValue, Supplier<Iterator<Integer>> indexIteratorSupplier) {
 
 		if (IntValueType.BYTE.isCompatibleValue(defaultValue)) {
-			subTypeArray = new ByteArray((byte) defaultValue, indexValidator);
+			subTypeArray = new ByteArray((byte) defaultValue, indexIteratorSupplier);
 		} else if (IntValueType.SHORT.isCompatibleValue(defaultValue)) {
-			subTypeArray = new ShortArray((short) defaultValue, indexValidator);
+			subTypeArray = new ShortArray((short) defaultValue, indexIteratorSupplier);
 		} else if (IntValueType.INT.isCompatibleValue(defaultValue)) {
-			subTypeArray = new IntArray((int) defaultValue, indexValidator);
+			subTypeArray = new IntArray((int) defaultValue, indexIteratorSupplier);
 		} else {
-			subTypeArray = new LongArray(defaultValue, indexValidator);
+			subTypeArray = new LongArray(defaultValue, indexIteratorSupplier);
 		}
 	}
 
@@ -682,6 +709,9 @@ public final class IntValueContainer {
 	 */
 	public int getValueAsInt(int index) {
 		long result;
+		if (index < 0) {
+			throw new ContractException(PropertyError.NEGATIVE_INDEX);
+		}
 		if (index < subTypeArray.getCapacity()) {
 			result = subTypeArray.getValue(index);
 		} else {

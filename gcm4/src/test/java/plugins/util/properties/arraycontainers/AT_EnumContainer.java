@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Random;
@@ -16,6 +18,11 @@ import util.annotations.UnitTestMethod;
 
 
 public class AT_EnumContainer {
+	
+	private Iterator<Integer> getEmptyIndexIterator() {
+		return Collections.emptyIterator();				
+	}
+	
 	public enum Animal {
 		CAT, PIG, SHEEP, DOG, HORSE;
 	}
@@ -26,18 +33,18 @@ public class AT_EnumContainer {
 	@Test
 	@UnitTestConstructor(target = EnumContainer.class, args = { Class.class, Object.class })
 	public void testConstructor_ClassObject() {
-		assertNotNull(new EnumContainer(Animal.class, Animal.DOG));
+		assertNotNull(new EnumContainer(Animal.class, Animal.DOG,this::getEmptyIndexIterator));
 
 		// Test preconditions
 
 		// if the class is null
-		assertThrows(IllegalArgumentException.class, () -> new EnumContainer(null, Animal.DOG));
+		assertThrows(IllegalArgumentException.class, () -> new EnumContainer(null, Animal.DOG,this::getEmptyIndexIterator));
 
 		// if the class is not an enumeration
-		assertThrows(IllegalArgumentException.class, () -> new EnumContainer(Integer.class, Animal.DOG));
+		assertThrows(IllegalArgumentException.class, () -> new EnumContainer(Integer.class, Animal.DOG,this::getEmptyIndexIterator));
 
 		// if the default is not a member of the enum
-		assertThrows(IllegalArgumentException.class, () -> new EnumContainer(Animal.class, 234));
+		assertThrows(IllegalArgumentException.class, () -> new EnumContainer(Animal.class, 234,this::getEmptyIndexIterator));
 
 	}
 
@@ -47,21 +54,19 @@ public class AT_EnumContainer {
 	@Test
 	@UnitTestConstructor(target = EnumContainer.class, args = { Class.class, Object.class, int.class })
 	public void testConstructor_ClassObjectInt() {
-		assertNotNull(new EnumContainer(Animal.class, Animal.DOG));
+		assertNotNull(new EnumContainer(Animal.class, Animal.DOG,this::getEmptyIndexIterator));
 
 		// Test preconditions
 
 		// if the class is null
-		assertThrows(IllegalArgumentException.class, () -> new EnumContainer(null, Animal.DOG, 100));
+		assertThrows(IllegalArgumentException.class, () -> new EnumContainer(null, Animal.DOG, this::getEmptyIndexIterator));
 
 		// if the class is not an enumeration
-		assertThrows(IllegalArgumentException.class, () -> new EnumContainer(Integer.class, Animal.DOG, 100));
+		assertThrows(IllegalArgumentException.class, () -> new EnumContainer(Integer.class, Animal.DOG,this::getEmptyIndexIterator));
 
 		// if the default is not a member of the enum
-		assertThrows(IllegalArgumentException.class, () -> new EnumContainer(Animal.class, 234, 100));
+		assertThrows(IllegalArgumentException.class, () -> new EnumContainer(Animal.class, 234,this::getEmptyIndexIterator));
 
-		// if the capacity is negative
-		assertThrows(IllegalArgumentException.class, () -> new EnumContainer(Animal.class, Animal.DOG, -1));
 
 	}
 
@@ -71,7 +76,7 @@ public class AT_EnumContainer {
 	@Test
 	@UnitTestMethod(target = EnumContainer.class, name = "getValue", args = { int.class })
 	public void testGetValue() {
-		EnumContainer enumContainer = new EnumContainer(Animal.class, Animal.DOG);
+		EnumContainer enumContainer = new EnumContainer(Animal.class, Animal.DOG,this::getEmptyIndexIterator);
 		enumContainer.setValue(3, Animal.CAT);
 		enumContainer.setValue(5, Animal.CAT);
 		enumContainer.setValue(2, Animal.SHEEP);
@@ -86,7 +91,7 @@ public class AT_EnumContainer {
 		assertEquals(Animal.CAT, enumContainer.getValue(5));
 		assertEquals(Animal.DOG, enumContainer.getValue(6));
 
-		enumContainer = new EnumContainer(Animal.class, Animal.DOG, 100);
+		enumContainer = new EnumContainer(Animal.class, Animal.DOG, this::getEmptyIndexIterator);
 		enumContainer.setValue(3, Animal.CAT);
 		enumContainer.setValue(5, Animal.CAT);
 		enumContainer.setValue(2, Animal.SHEEP);
@@ -100,12 +105,6 @@ public class AT_EnumContainer {
 		assertEquals(Animal.DOG, enumContainer.getValue(4));
 		assertEquals(Animal.CAT, enumContainer.getValue(5));
 		assertEquals(Animal.DOG, enumContainer.getValue(6));
-
-		// Test pre-conditions
-
-		EnumContainer preConditionEnumContainer = enumContainer;
-		// if the index is negative
-		assertThrows(ArrayIndexOutOfBoundsException.class, () -> preConditionEnumContainer.getValue(-1));
 
 	}
 
@@ -118,7 +117,7 @@ public class AT_EnumContainer {
 
 		Map<Integer, Animal> animalMap = new LinkedHashMap<>();
 
-		EnumContainer enumContainer = new EnumContainer(Animal.class, Animal.DOG);
+		EnumContainer enumContainer = new EnumContainer(Animal.class, Animal.DOG,this::getEmptyIndexIterator);
 		Random random = new Random(4545456567994423L);
 		for (int i = 0; i < 1000; i++) {
 			int index = random.nextInt(6);
@@ -129,7 +128,7 @@ public class AT_EnumContainer {
 			assertEquals(animal, enumContainer.getValue(index));
 		}
 
-		enumContainer = new EnumContainer(Animal.class, Animal.DOG, 100);
+		enumContainer = new EnumContainer(Animal.class, Animal.DOG, this::getEmptyIndexIterator);
 		for (int i = 0; i < 1000; i++) {
 			int index = random.nextInt(6);
 			int ord = random.nextInt(Animal.values().length);

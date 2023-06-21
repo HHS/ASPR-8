@@ -1,7 +1,8 @@
 package plugins.util.properties.arraycontainers;
 
 import java.util.Arrays;
-import java.util.function.IntPredicate;
+import java.util.Iterator;
+import java.util.function.Supplier;
 
 import plugins.util.properties.PropertyError;
 import util.errors.ContractException;
@@ -11,8 +12,6 @@ import util.errors.ContractException;
  * each double in an array. Returns a default double value for every
  * non-negative int index value until the value is explicitly set by an
  * invocation to the set() method.
- * 
- *
  */
 public final class DoubleValueContainer {
 
@@ -21,7 +20,7 @@ public final class DoubleValueContainer {
 	 */
 	private double[] values;
 
-	private final IntPredicate indexValidator;
+	private final Supplier<Iterator<Integer>> indexIteratorSupplier;
 
 	/*
 	 * The value returned for any non-negative index that has not been set via an
@@ -53,7 +52,6 @@ public final class DoubleValueContainer {
 	 * @throws ContractException
 	 *                           <li>{@linkplain PropertyError#NEGATIVE_INDEX} if
 	 *                           index is negative</li>
-	 * 
 	 */
 	public double getValue(int index) {
 		double result;
@@ -91,7 +89,6 @@ public final class DoubleValueContainer {
 
 	/**
 	 * Returns the default value
-	 * 
 	 */
 	public double getDefaultValue() {
 		return defaultValue;
@@ -103,13 +100,12 @@ public final class DoubleValueContainer {
 	 * 
 	 * @param defaultValue
 	 * @param capacity
-	 * 
 	 * @throws NegativeArraySizeException if the capacity is negative
 	 */
-	public DoubleValueContainer(double defaultValue, IntPredicate indexValidator) {
+	public DoubleValueContainer(double defaultValue, Supplier<Iterator<Integer>> indexIteratorSupplier) {
 		values = new double[0];
 		this.defaultValue = defaultValue;
-		this.indexValidator = indexValidator;
+		this.indexIteratorSupplier = indexIteratorSupplier;
 	}
 
 	/**
@@ -131,21 +127,22 @@ public final class DoubleValueContainer {
 	}
 
 	private String getElementsString() {
-
+		Iterator<Integer> iterator = indexIteratorSupplier.get();
 		StringBuilder sb = new StringBuilder();
 
 		boolean first = true;
 		sb.append('[');
-		int n = values.length;
-		for (int i = 0; i < n; i++) {
-			if (indexValidator.test(i)) {
-				if(first) {
-					first = false;
-				}else {
-					sb.append(", ");
-				}
-				sb.append(String.valueOf(values[i]));
+
+		while (iterator.hasNext()) {
+			double value = getValue(iterator.next());
+
+			if (first) {
+				first = false;
+			} else {
+				sb.append(", ");
 			}
+			sb.append(value);
+
 		}
 		sb.append(']');
 		return sb.toString();

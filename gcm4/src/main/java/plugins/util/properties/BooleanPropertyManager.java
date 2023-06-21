@@ -1,6 +1,7 @@
 package plugins.util.properties;
 
-import java.util.function.IntPredicate;
+import java.util.Iterator;
+import java.util.function.Supplier;
 
 import plugins.util.properties.arraycontainers.BooleanContainer;
 import util.errors.ContractException;
@@ -28,7 +29,7 @@ public final class BooleanPropertyManager implements IndexedPropertyManager {
 	 *             if the property definition's type is not Boolean</li>
 	 */
 	
-	public BooleanPropertyManager( PropertyDefinition propertyDefinition, IntPredicate indexValidator) {
+	public BooleanPropertyManager( PropertyDefinition propertyDefinition, Supplier<Iterator<Integer>> indexIteratorSupplier) {
 		if (propertyDefinition == null) {
 			throw new ContractException(PropertyError.NULL_PROPERTY_DEFINITION);
 		}
@@ -41,7 +42,7 @@ public final class BooleanPropertyManager implements IndexedPropertyManager {
 			defaultValue = (Boolean)propertyDefinition.getDefaultValue().get();			
 		}		
 
-		boolContainer = new BooleanContainer(defaultValue,indexValidator);
+		boolContainer = new BooleanContainer(defaultValue,indexIteratorSupplier);
 	}
 
 	@Override

@@ -1,7 +1,8 @@
 package plugins.util.properties.arraycontainers;
 
 import java.util.BitSet;
-import java.util.function.IntPredicate;
+import java.util.Iterator;
+import java.util.function.Supplier;
 
 /**
  * A container that maps non-negative int index values to booleans by storing
@@ -13,8 +14,8 @@ import java.util.function.IntPredicate;
  */
 public final class BooleanContainer {
 	/*
-	 * The default value to return for all indexes that are greater than or
-	 * equal to the bounding index.
+	 * The default value to return for all indexes that are greater than or equal to
+	 * the bounding index.
 	 */
 	private final boolean defaultValue;
 
@@ -24,15 +25,15 @@ public final class BooleanContainer {
 	 */
 	private int boundingIndex;
 
-	public BooleanContainer(boolean defaultValue, IntPredicate indexValidator) {
+	public BooleanContainer(boolean defaultValue, Supplier<Iterator<Integer>> indexIteratorSupplier) {
 		this.defaultValue = defaultValue;
 		bitSet = new BitSet();
-		this.indexValidator = indexValidator;
+		this.indexIteratorSupplier = indexIteratorSupplier;
 	}
 
 	public void expandCapacity(int count) {
-		if(count>0) {
-			set(boundingIndex+count-1,defaultValue);
+		if (count > 0) {
+			set(boundingIndex + count - 1, defaultValue);
 		}
 	}
 
@@ -40,19 +41,17 @@ public final class BooleanContainer {
 	 * The bitSet containing the bit level representation of the Booleans.
 	 */
 	private BitSet bitSet;
-	
-	private final IntPredicate indexValidator;
+
+	private final Supplier<Iterator<Integer>> indexIteratorSupplier;
 
 	/**
 	 * Returns the boolean value associated with the given index
 	 * 
-	 * @throws IndexOutOfBoundsException
-	 *             if the specified index is negative
+	 * @throws IndexOutOfBoundsException if the specified index is negative
 	 */
-	public boolean get(int index) {		
+	public boolean get(int index) {
 		/*
-		 * If the index is beyond any we have had set, then return the default
-		 * value.
+		 * If the index is beyond any we have had set, then return the default value.
 		 */
 		if (index >= boundingIndex) {
 			return defaultValue;
@@ -63,13 +62,12 @@ public final class BooleanContainer {
 	/**
 	 * Set the boolean value associated with the given index
 	 * 
-	 * @throws IndexOutOfBoundsException
-	 *             if the specified index is negative
+	 * @throws IndexOutOfBoundsException if the specified index is negative
 	 * @param index
 	 * @param value
 	 */
 	public void set(int index, boolean value) {
-		if (index < 0) {			
+		if (index < 0) {
 			throw new IndexOutOfBoundsException("index = " + index);
 		}
 		// if the index is new to us, then fill the bitSet with the default from
@@ -81,25 +79,24 @@ public final class BooleanContainer {
 		}
 		bitSet.set(index, value);
 	}
-	
-	
+
 	private String getElementsString() {
-
-		StringBuilder sb = new StringBuilder();
-
+		Iterator<Integer> iterator = indexIteratorSupplier.get();
 		boolean first = true;
+		
+		StringBuilder sb = new StringBuilder();
 		sb.append('[');
-		int n = bitSet.size();
-		for (int i = 0; i < n; i++) {
-			if (indexValidator.test(i)) {
-				if(first) {
-					first = false;
-				}else {
-					sb.append(", ");
-				}
-				sb.append(bitSet.get(i));
+		
+		while (iterator.hasNext()) {
+			boolean value = get(iterator.next());
+			if (first) {
+				first = false;
+			} else {
+				sb.append(", ");
 			}
+			sb.append(value);
 		}
+		
 		sb.append(']');
 		return sb.toString();
 	}
@@ -108,13 +105,11 @@ public final class BooleanContainer {
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("BooleanContainer [defaultValue=");
-		builder.append(defaultValue);		
+		builder.append(defaultValue);
 		builder.append(", bitSet=");
 		builder.append(getElementsString());
 		builder.append("]");
 		return builder.toString();
 	}
-	
-	
 
 }

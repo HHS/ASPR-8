@@ -5,6 +5,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.Collections;
+import java.util.Iterator;
+
 import org.junit.jupiter.api.Test;
 
 import util.annotations.UnitTestConstructor;
@@ -12,10 +15,10 @@ import util.annotations.UnitTestMethod;
 
 public class AT_FloatValueContainer {
 	
-	
-	private boolean validateIndex(int index) {
-		return true;
+	private Iterator<Integer> getEmptyIndexIterator() {
+		return Collections.emptyIterator();				
 	}
+	
 
 	/**
 	 * Tests {@link FloatValueContainer#FloatValueContainer(float, int)}
@@ -24,7 +27,7 @@ public class AT_FloatValueContainer {
 	@UnitTestConstructor(target = FloatValueContainer.class, args = { float.class, int.class })
 	public void testConstructor_FloatInt() {
 
-		FloatValueContainer floatValueContainer = new FloatValueContainer(0,this::validateIndex);
+		FloatValueContainer floatValueContainer = new FloatValueContainer(0,this::getEmptyIndexIterator);
 		assertNotNull(floatValueContainer);
 	}
 
@@ -34,7 +37,7 @@ public class AT_FloatValueContainer {
 	@Test
 	@UnitTestConstructor(target = FloatValueContainer.class, args = { float.class })
 	public void testConstructor_Float() {
-		FloatValueContainer floatValueContainer = new FloatValueContainer(0,this::validateIndex);
+		FloatValueContainer floatValueContainer = new FloatValueContainer(0,this::getEmptyIndexIterator);
 		assertNotNull(floatValueContainer);
 	}
 
@@ -44,7 +47,7 @@ public class AT_FloatValueContainer {
 	@Test
 	@UnitTestMethod(target = FloatValueContainer.class, name = "getCapacity", args = {})
 	public void testGetCapacity() {
-		FloatValueContainer floatValueContainer = new FloatValueContainer(0,this::validateIndex);
+		FloatValueContainer floatValueContainer = new FloatValueContainer(0,this::getEmptyIndexIterator);
 
 		assertTrue(floatValueContainer.getCapacity() >= 0);
 
@@ -71,15 +74,15 @@ public class AT_FloatValueContainer {
 	@UnitTestMethod(target = FloatValueContainer.class, name = "getDefaultValue", args = {})
 	public void testGetDefaultValue() {
 		float defaultValue = 0;
-		FloatValueContainer floatValueContainer = new FloatValueContainer(defaultValue,this::validateIndex);
+		FloatValueContainer floatValueContainer = new FloatValueContainer(defaultValue,this::getEmptyIndexIterator);
 		assertEquals(defaultValue, floatValueContainer.getDefaultValue(), 0);
 
 		defaultValue = -10;
-		floatValueContainer = new FloatValueContainer(defaultValue,this::validateIndex);
+		floatValueContainer = new FloatValueContainer(defaultValue,this::getEmptyIndexIterator);
 		assertEquals(defaultValue, floatValueContainer.getDefaultValue(), 0);
 
 		defaultValue = 10;
-		floatValueContainer = new FloatValueContainer(defaultValue,this::validateIndex);
+		floatValueContainer = new FloatValueContainer(defaultValue,this::getEmptyIndexIterator);
 		assertEquals(defaultValue, floatValueContainer.getDefaultValue(), 0);
 
 	}
@@ -91,7 +94,7 @@ public class AT_FloatValueContainer {
 	@UnitTestMethod(target = FloatValueContainer.class, name = "getValue", args = { int.class })
 	public void testGetValue() {
 		float defaultValue = -345.34f;
-		FloatValueContainer floatValueContainer = new FloatValueContainer(defaultValue,this::validateIndex);
+		FloatValueContainer floatValueContainer = new FloatValueContainer(defaultValue,this::getEmptyIndexIterator);
 		int highIndex = 1000;
 		float delta = 2.3452346f;
 
@@ -126,7 +129,7 @@ public class AT_FloatValueContainer {
 	@Test
 	@UnitTestMethod(target = FloatValueContainer.class, name = "setCapacity", args = { int.class })
 	public void testSetCapacity() {
-		FloatValueContainer floatValueContainer = new FloatValueContainer(0,this::validateIndex);
+		FloatValueContainer floatValueContainer = new FloatValueContainer(0,this::getEmptyIndexIterator);
 
 		int expectedCapacity = 5;
 		floatValueContainer.setCapacity(expectedCapacity);
@@ -151,7 +154,7 @@ public class AT_FloatValueContainer {
 	@Test
 	@UnitTestMethod(target = FloatValueContainer.class, name = "setValue", args = { int.class, float.class })
 	public void testSetValue() {
-		FloatValueContainer floatValueContainer = new FloatValueContainer(0,this::validateIndex);
+		FloatValueContainer floatValueContainer = new FloatValueContainer(0,this::getEmptyIndexIterator);
 
 		// long value
 		float value = 12123.234f;

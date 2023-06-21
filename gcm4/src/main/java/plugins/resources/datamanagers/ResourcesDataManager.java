@@ -479,13 +479,13 @@ public final class ResourcesDataManager extends DataManager {
 		// if times for this resource will be tracked, then initialize tracking
 		// times to the current time
 		if (trackTimes) {
-			final DoubleValueContainer doubleValueContainer = new DoubleValueContainer(resourceDefinitionTime,peopleDataManager::personIndexExists);
+			final DoubleValueContainer doubleValueContainer = new DoubleValueContainer(resourceDefinitionTime,peopleDataManager::getPersonIndexIterator);
 			personResourceTimes.put(resourceId, doubleValueContainer);
 		}
 
 		// add a container to record person resource values, initializing all
 		// people to have 0.
-		final IntValueContainer intValueContainer = new IntValueContainer(0L,peopleDataManager::personIndexExists);
+		final IntValueContainer intValueContainer = new IntValueContainer(0L,peopleDataManager::getPersonIndexIterator);
 		personResourceValues.put(resourceId, intValueContainer);
 
 		// release notice that a new resource id has been added
@@ -657,7 +657,7 @@ public final class ResourcesDataManager extends DataManager {
 		for (ResourceId resourceId : resourcesPluginData.getResourceIds()) {
 			// private final Map<ResourceId, IntValueContainer>
 			// personResourceValues = new LinkedHashMap<>();
-			final IntValueContainer intValueContainer = new IntValueContainer(0L,peopleDataManager::personIndexExists);
+			final IntValueContainer intValueContainer = new IntValueContainer(0L,peopleDataManager::getPersonIndexIterator);
 			personResourceValues.put(resourceId, intValueContainer);
 			List<Long> personResourceLevels = resourcesPluginData.getPersonResourceLevels(resourceId);
 			// load the person levels here
@@ -691,7 +691,7 @@ public final class ResourcesDataManager extends DataManager {
 			boolean trackTimes = resourcesPluginData.getResourceTimeTrackingPolicy(resourceId);
 			if (trackTimes) {
 				double resourceDefinitionTime = resourceDefinitionTimes.get(resourceId);
-				final DoubleValueContainer doubleValueContainer = new DoubleValueContainer(resourceDefinitionTime,peopleDataManager::personIndexExists);
+				final DoubleValueContainer doubleValueContainer = new DoubleValueContainer(resourceDefinitionTime,peopleDataManager::getPersonIndexIterator);
 				personResourceTimes.put(resourceId, doubleValueContainer);
 
 				List<Double> personResourceTimes = resourcesPluginData.getPersonResourceTimes(resourceId);
@@ -1711,19 +1711,19 @@ public final class ResourcesDataManager extends DataManager {
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-//		builder.append("ResourcesDataManager [resourcePropertyMap=");
-//		builder.append(resourcePropertyMap);
-//		builder.append(", personResourceValues=");
+		builder.append("ResourcesDataManager [resourcePropertyMap=");
+		builder.append(resourcePropertyMap);
+		builder.append(", personResourceValues=");
 		builder.append(personResourceValues);
-//		builder.append(", resourcePropertyDefinitions=");
-//		builder.append(resourcePropertyDefinitions);
-//		builder.append(", resourceDefinitionTimes=");
-//		builder.append(resourceDefinitionTimes);
-//		builder.append(", personResourceTimes=");
-//		builder.append(personResourceTimes);
-//		builder.append(", regionResources=");
-//		builder.append(regionResources);
-//		builder.append("]");
+		builder.append(", resourcePropertyDefinitions=");
+		builder.append(resourcePropertyDefinitions);
+		builder.append(", resourceDefinitionTimes=");
+		builder.append(resourceDefinitionTimes);
+		builder.append(", personResourceTimes=");
+		builder.append(personResourceTimes);
+		builder.append(", regionResources=");
+		builder.append(regionResources);
+		builder.append("]");
 		return builder.toString();
 	}
 

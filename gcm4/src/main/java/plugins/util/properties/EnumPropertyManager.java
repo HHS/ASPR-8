@@ -1,5 +1,8 @@
 package plugins.util.properties;
 
+import java.util.Iterator;
+import java.util.function.Supplier;
+
 import plugins.util.properties.arraycontainers.EnumContainer;
 import util.errors.ContractException;
 
@@ -27,15 +30,10 @@ public final class EnumPropertyManager implements IndexedPropertyManager {
 	 *             property definition's type is not an enumeration</li>
 	 * 
 	 */
-	public EnumPropertyManager(PropertyDefinition propertyDefinition, int initialSize) {
+	public EnumPropertyManager(PropertyDefinition propertyDefinition, Supplier<Iterator<Integer>> indexIteratorSupplier) {
 		if (propertyDefinition == null) {
 			throw new ContractException(PropertyError.NULL_PROPERTY_DEFINITION);
 		}
-		
-		if (initialSize < 0) {
-			throw new ContractException(PropertyError.NEGATIVE_INITIAL_SIZE);
-		}
-
 		
 		Object defaultValue = null;
 		if (propertyDefinition.getDefaultValue().isPresent()) {
@@ -46,7 +44,7 @@ public final class EnumPropertyManager implements IndexedPropertyManager {
 			throw new ContractException(PropertyError.PROPERTY_DEFINITION_IMPROPER_TYPE, "cannot construct from class " + propertyDefinition.getClass().getName());
 		}
 
-		enumContainer = new EnumContainer(propertyDefinition.getType(),defaultValue, initialSize);
+		enumContainer = new EnumContainer(propertyDefinition.getType(),defaultValue, indexIteratorSupplier);
 	}
 
 	@Override

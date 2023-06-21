@@ -4,8 +4,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.function.Supplier;
 
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
@@ -28,9 +31,9 @@ import util.random.RandomGeneratorProvider;
  *
  */
 public class AT_IntPropertyManager {
-	
-	private boolean validateIndex(int index) {
-		return true;
+
+	private Iterator<Integer> getEmptyIndexIterator() {
+		return Collections.emptyIterator();
 	}
 
 	@Test
@@ -40,9 +43,11 @@ public class AT_IntPropertyManager {
 			RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7951361060252638380L);
 
 			int defaultValue = 423;
-			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(defaultValue).build();
+			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class)
+					.setDefaultValue(defaultValue).build();
 
-			IntPropertyManager intPropertyManager = new IntPropertyManager(propertyDefinition, this::validateIndex);
+			IntPropertyManager intPropertyManager = new IntPropertyManager(propertyDefinition,
+					this::getEmptyIndexIterator);
 
 			/*
 			 * We will set the first 300 values multiple times at random
@@ -57,9 +62,8 @@ public class AT_IntPropertyManager {
 			}
 
 			/*
-			 * if the value was set above, then it should equal the last value
-			 * place in the expected values, otherwise it will have the default
-			 * value.
+			 * if the value was set above, then it should equal the last value place in the
+			 * expected values, otherwise it will have the default value.
 			 */
 			for (int i = 0; i < 300; i++) {
 				if (expectedValues.containsKey(i)) {
@@ -71,15 +75,16 @@ public class AT_IntPropertyManager {
 			}
 
 			// precondition tests
-			ContractException contractException = assertThrows(ContractException.class, () -> intPropertyManager.getPropertyValue(-1));
+			ContractException contractException = assertThrows(ContractException.class,
+					() -> intPropertyManager.getPropertyValue(-1));
 			assertEquals(PropertyError.NEGATIVE_INDEX, contractException.getErrorType());
 		});
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
 	/*
-	 * Local data manager used to properly initialize an ObjectPropertyManager
-	 * for use in time sensitive tests
+	 * Local data manager used to properly initialize an ObjectPropertyManager for
+	 * use in time sensitive tests
 	 */
 	public static class LocalDM extends TestDataManager {
 		public IntPropertyManager intPropertyManager;
@@ -87,8 +92,12 @@ public class AT_IntPropertyManager {
 		@Override
 		public void init(DataManagerContext dataManagerContext) {
 			super.init(dataManagerContext);
-			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(342).build();
-			intPropertyManager = new IntPropertyManager(propertyDefinition, (i)->true);
+			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class)
+					.setDefaultValue(342).build();
+			
+			Supplier<Iterator<Integer>> supplier = ()->Collections.emptyIterator(); 
+			
+			intPropertyManager = new IntPropertyManager(propertyDefinition, supplier);
 		}
 	}
 
@@ -99,9 +108,11 @@ public class AT_IntPropertyManager {
 			RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(5297426971018191882L);
 
 			int defaultValue = 423;
-			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(defaultValue).build();
+			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class)
+					.setDefaultValue(defaultValue).build();
 
-			IntPropertyManager intPropertyManager = new IntPropertyManager(propertyDefinition, this::validateIndex);
+			IntPropertyManager intPropertyManager = new IntPropertyManager(propertyDefinition,
+					this::getEmptyIndexIterator);
 
 			/*
 			 * We will set the first 300 values multiple times at random
@@ -116,9 +127,8 @@ public class AT_IntPropertyManager {
 			}
 
 			/*
-			 * if the value was set above, then it should equal the last value
-			 * place in the expected values, otherwise it will have the default
-			 * value.
+			 * if the value was set above, then it should equal the last value place in the
+			 * expected values, otherwise it will have the default value.
 			 */
 			for (int i = 0; i < 300; i++) {
 				if (expectedValues.containsKey(i)) {
@@ -130,7 +140,8 @@ public class AT_IntPropertyManager {
 			}
 
 			// precondition tests
-			ContractException contractException = assertThrows(ContractException.class, () -> intPropertyManager.setPropertyValue(-1, 23));
+			ContractException contractException = assertThrows(ContractException.class,
+					() -> intPropertyManager.setPropertyValue(-1, 23));
 			assertEquals(PropertyError.NEGATIVE_INDEX, contractException.getErrorType());
 		});
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
@@ -141,15 +152,16 @@ public class AT_IntPropertyManager {
 	public void testRemoveId() {
 		Factory factory = TestPluginFactory.factory((c) -> {
 			/*
-			 * Should have no effect on the value that is stored for the sake of
-			 * efficiency.
+			 * Should have no effect on the value that is stored for the sake of efficiency.
 			 */
 
 			// we will first test the manager with an initial value of 6
 			int defaultValue = 6;
-			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(defaultValue).build();
+			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class)
+					.setDefaultValue(defaultValue).build();
 
-			IntPropertyManager intPropertyManager = new IntPropertyManager(propertyDefinition, this::validateIndex);
+			IntPropertyManager intPropertyManager = new IntPropertyManager(propertyDefinition,
+					this::getEmptyIndexIterator);
 
 			// initially, the value should be the default value for the manager
 			assertEquals(defaultValue, ((Integer) intPropertyManager.getPropertyValue(5)).intValue());
@@ -167,9 +179,10 @@ public class AT_IntPropertyManager {
 			assertEquals(newValue, ((Integer) intPropertyManager.getPropertyValue(5)).intValue());
 
 			// we will next test the manager with an initial value of true
-			propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(defaultValue).build();
+			propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(defaultValue)
+					.build();
 
-			intPropertyManager = new IntPropertyManager(propertyDefinition, this::validateIndex);
+			intPropertyManager = new IntPropertyManager(propertyDefinition, this::getEmptyIndexIterator);
 
 			// initially, the value should be the default value for the manager
 			assertEquals(defaultValue, ((Integer) intPropertyManager.getPropertyValue(5)).intValue());
@@ -188,7 +201,7 @@ public class AT_IntPropertyManager {
 
 			// precondition tests
 			PropertyDefinition def = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(3).build();
-			IntPropertyManager ipm = new IntPropertyManager(def, this::validateIndex);
+			IntPropertyManager ipm = new IntPropertyManager(def, this::getEmptyIndexIterator);
 
 			ContractException contractException = assertThrows(ContractException.class, () -> ipm.removeId(-1));
 			assertEquals(PropertyError.NEGATIVE_INDEX, contractException.getErrorType());
@@ -201,18 +214,23 @@ public class AT_IntPropertyManager {
 	public void testConstructor() {
 		Factory factory = TestPluginFactory.factory((c) -> {
 
-			PropertyDefinition goodPropertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(2).build();
-			PropertyDefinition badPropertyDefinition = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(false).build();
+			PropertyDefinition goodPropertyDefinition = PropertyDefinition.builder().setType(Integer.class)
+					.setDefaultValue(2).build();
+			PropertyDefinition badPropertyDefinition = PropertyDefinition.builder().setType(Boolean.class)
+					.setDefaultValue(false).build();
 
 			// if the property definition is null
-			ContractException contractException = assertThrows(ContractException.class, () -> new IntPropertyManager(null, this::validateIndex));
+			ContractException contractException = assertThrows(ContractException.class,
+					() -> new IntPropertyManager(null, this::getEmptyIndexIterator));
 			assertEquals(PropertyError.NULL_PROPERTY_DEFINITION, contractException.getErrorType());
 
 			// if the property definition does not have a type of Double.class
-			contractException = assertThrows(ContractException.class, () -> new IntPropertyManager(badPropertyDefinition, this::validateIndex));
+			contractException = assertThrows(ContractException.class,
+					() -> new IntPropertyManager(badPropertyDefinition, this::getEmptyIndexIterator));
 			assertEquals(PropertyError.PROPERTY_DEFINITION_IMPROPER_TYPE, contractException.getErrorType());
 
-			IntPropertyManager doublePropertyManager = new IntPropertyManager(goodPropertyDefinition, this::validateIndex);
+			IntPropertyManager doublePropertyManager = new IntPropertyManager(goodPropertyDefinition,
+					this::getEmptyIndexIterator);
 			assertNotNull(doublePropertyManager);
 		});
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
@@ -223,12 +241,15 @@ public class AT_IntPropertyManager {
 	public void testIncrementCapacity() {
 		Factory factory = TestPluginFactory.factory((c) -> {
 
-			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(234).build();
+			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class)
+					.setDefaultValue(234).build();
 
-			IntPropertyManager intPropertyManager = new IntPropertyManager(propertyDefinition, this::validateIndex);
+			IntPropertyManager intPropertyManager = new IntPropertyManager(propertyDefinition,
+					this::getEmptyIndexIterator);
 
 			// precondition tests
-			ContractException contractException = assertThrows(ContractException.class, () -> intPropertyManager.incrementCapacity(-1));
+			ContractException contractException = assertThrows(ContractException.class,
+					() -> intPropertyManager.incrementCapacity(-1));
 			assertEquals(PropertyError.NEGATIVE_CAPACITY_INCREMENT, contractException.getErrorType());
 		});
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();

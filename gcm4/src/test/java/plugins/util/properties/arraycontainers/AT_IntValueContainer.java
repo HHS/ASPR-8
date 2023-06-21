@@ -5,6 +5,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.Collections;
+import java.util.Iterator;
+
 import org.junit.jupiter.api.Test;
 
 import plugins.util.properties.arraycontainers.IntValueContainer.IntValueType;
@@ -13,10 +16,10 @@ import util.annotations.UnitTestMethod;
 
 public class AT_IntValueContainer {
 	
-	
-	private boolean validateIndex(int index) {
-		return true;
+	private Iterator<Integer> getEmptyIndexIterator() {
+		return Collections.emptyIterator();				
 	}
+	
 
 	/**
 	 * Test for {@link IntValueContainer#getValueAsByte(int)}
@@ -25,7 +28,7 @@ public class AT_IntValueContainer {
 	@UnitTestMethod(target = IntValueContainer.class, name = "getValueAsByte", args = { int.class })
 	public void testGetValueAsByte() {
 		long defaultValue = 123;
-		IntValueContainer intValueContainer = new IntValueContainer(defaultValue,this::validateIndex);
+		IntValueContainer intValueContainer = new IntValueContainer(defaultValue,this::getEmptyIndexIterator);
 		int highIndex = 1000;
 
 		byte[] bytes = new byte[highIndex];
@@ -65,7 +68,7 @@ public class AT_IntValueContainer {
 	@UnitTestMethod(target = IntValueContainer.class, name = "getValueAsInt", args = { int.class })
 	public void testGetValueAsInt() {
 		long defaultValue = 9546754;
-		IntValueContainer intValueContainer = new IntValueContainer(defaultValue,this::validateIndex);
+		IntValueContainer intValueContainer = new IntValueContainer(defaultValue,this::getEmptyIndexIterator);
 		int highIndex = 1000;
 
 		int[] ints = new int[highIndex];
@@ -103,7 +106,7 @@ public class AT_IntValueContainer {
 	@UnitTestMethod(target = IntValueContainer.class, name = "getValueAsLong", args = { int.class })
 	public void testGetValueAsLong() {
 		long defaultValue = 9546754;
-		IntValueContainer intValueContainer = new IntValueContainer(defaultValue,this::validateIndex);
+		IntValueContainer intValueContainer = new IntValueContainer(defaultValue,this::getEmptyIndexIterator);
 		int highIndex = 1000;
 
 		long[] longs = new long[highIndex];
@@ -141,7 +144,7 @@ public class AT_IntValueContainer {
 	@UnitTestMethod(target = IntValueContainer.class, name = "getValueAsShort", args = { int.class })
 	public void testGetValueAsShort() {
 		short defaultValue = 30467;
-		IntValueContainer intValueContainer = new IntValueContainer(defaultValue,this::validateIndex);
+		IntValueContainer intValueContainer = new IntValueContainer(defaultValue,this::getEmptyIndexIterator);
 		int highIndex = 1000;
 
 		short[] shorts = new short[highIndex];
@@ -180,7 +183,7 @@ public class AT_IntValueContainer {
 	@Test
 	@UnitTestMethod(target = IntValueContainer.class, name = "setCapacity", args = { int.class })
 	public void testSetCapacity() {
-		IntValueContainer intValueContainer = new IntValueContainer(0,this::validateIndex);
+		IntValueContainer intValueContainer = new IntValueContainer(0,this::getEmptyIndexIterator);
 
 		int expectedCapacity = 5;
 		intValueContainer.setCapacity(expectedCapacity);
@@ -207,7 +210,7 @@ public class AT_IntValueContainer {
 	@UnitTestMethod(target = IntValueContainer.class, name = "getCapacity", args = {})
 	public void testGetCapacity() {
 
-		IntValueContainer intValueContainer = new IntValueContainer(0,this::validateIndex);
+		IntValueContainer intValueContainer = new IntValueContainer(0,this::getEmptyIndexIterator);
 
 		assertTrue(intValueContainer.getCapacity() >= 0);
 
@@ -234,7 +237,7 @@ public class AT_IntValueContainer {
 	@Test
 	@UnitTestMethod(target = IntValueContainer.class, name = "setLongValue", args = { int.class, long.class })
 	public void testSetLongValue() {
-		IntValueContainer intValueContainer = new IntValueContainer(0,this::validateIndex);
+		IntValueContainer intValueContainer = new IntValueContainer(0,this::getEmptyIndexIterator);
 
 		// long value
 		long l = 523423463534562345L;
@@ -253,7 +256,7 @@ public class AT_IntValueContainer {
 	@Test
 	@UnitTestMethod(target = IntValueContainer.class, name = "setIntValue", args = { int.class, int.class })
 	public void testSetIntValue() {
-		IntValueContainer intValueContainer = new IntValueContainer(0,this::validateIndex);
+		IntValueContainer intValueContainer = new IntValueContainer(0,this::getEmptyIndexIterator);
 
 		// int value
 		int i = 70000;
@@ -272,7 +275,7 @@ public class AT_IntValueContainer {
 	@Test
 	@UnitTestMethod(target = IntValueContainer.class, name = "setShortValue", args = { int.class, short.class })
 	public void testSetShortValue() {
-		IntValueContainer intValueContainer = new IntValueContainer(0,this::validateIndex);
+		IntValueContainer intValueContainer = new IntValueContainer(0,this::getEmptyIndexIterator);
 
 		// short value
 		short s = 300;
@@ -292,7 +295,7 @@ public class AT_IntValueContainer {
 	@Test
 	@UnitTestMethod(target = IntValueContainer.class, name = "setByteValue", args = { int.class, byte.class })
 	public void testSetByteValue() {
-		IntValueContainer intValueContainer = new IntValueContainer(0,this::validateIndex);
+		IntValueContainer intValueContainer = new IntValueContainer(0,this::getEmptyIndexIterator);
 
 		// byte value
 		byte b = 5;
@@ -312,7 +315,7 @@ public class AT_IntValueContainer {
 	@Test
 	@UnitTestMethod(target = IntValueContainer.class, name = "incrementIntValue", args = { int.class, int.class })
 	public void testIncrementIntValue() {
-		IntValueContainer intValueContainer = new IntValueContainer(0,this::validateIndex);
+		IntValueContainer intValueContainer = new IntValueContainer(0,this::getEmptyIndexIterator);
 
 		// int value
 		int i1 = 70000;
@@ -335,7 +338,7 @@ public class AT_IntValueContainer {
 	@Test
 	@UnitTestMethod(target = IntValueContainer.class, name = "incrementLongValue", args = { int.class, long.class })
 	public void testIncrementLongValue() {
-		IntValueContainer intValueContainer = new IntValueContainer(0,this::validateIndex);
+		IntValueContainer intValueContainer = new IntValueContainer(0,this::getEmptyIndexIterator);
 
 		// long value
 		long l1 = 523423463534562345L;
@@ -358,7 +361,7 @@ public class AT_IntValueContainer {
 	@Test
 	@UnitTestMethod(target = IntValueContainer.class, name = "incrementShortValue", args = { int.class, short.class })
 	public void testIncrementShortValue() {
-		IntValueContainer intValueContainer = new IntValueContainer(0,this::validateIndex);
+		IntValueContainer intValueContainer = new IntValueContainer(0,this::getEmptyIndexIterator);
 
 		// short value
 		short s1 = 300;
@@ -381,7 +384,7 @@ public class AT_IntValueContainer {
 	@Test
 	@UnitTestMethod(target = IntValueContainer.class, name = "incrementByteValue", args = { int.class, byte.class })
 	public void testIncrementByteValue() {
-		IntValueContainer intValueContainer = new IntValueContainer(0,this::validateIndex);
+		IntValueContainer intValueContainer = new IntValueContainer(0,this::getEmptyIndexIterator);
 
 		// byte value
 		byte b1 = 5;
@@ -404,7 +407,7 @@ public class AT_IntValueContainer {
 	@Test
 	@UnitTestMethod(target = IntValueContainer.class, name = "decrementByteValue", args = { int.class, byte.class })
 	public void testDecrementByteValue() {
-		IntValueContainer intValueContainer = new IntValueContainer(0,this::validateIndex);
+		IntValueContainer intValueContainer = new IntValueContainer(0,this::getEmptyIndexIterator);
 
 		// byte value
 		byte b1 = 5;
@@ -428,7 +431,7 @@ public class AT_IntValueContainer {
 	@Test
 	@UnitTestMethod(target = IntValueContainer.class, name = "decrementShortValue", args = { int.class, short.class })
 	public void testDecrementShortValue() {
-		IntValueContainer intValueContainer = new IntValueContainer(0,this::validateIndex);
+		IntValueContainer intValueContainer = new IntValueContainer(0,this::getEmptyIndexIterator);
 
 		// short value
 		short s1 = 300;
@@ -451,7 +454,7 @@ public class AT_IntValueContainer {
 	@Test
 	@UnitTestMethod(target = IntValueContainer.class, name = "decrementIntValue", args = { int.class, int.class })
 	public void testDecrementIntValue() {
-		IntValueContainer intValueContainer = new IntValueContainer(0,this::validateIndex);
+		IntValueContainer intValueContainer = new IntValueContainer(0,this::getEmptyIndexIterator);
 
 		// int value
 		int i1 = 70000;
@@ -474,7 +477,7 @@ public class AT_IntValueContainer {
 	@Test
 	@UnitTestMethod(target = IntValueContainer.class, name = "decrementLongValue", args = { int.class, long.class })
 	public void testDecrementLongValue() {
-		IntValueContainer intValueContainer = new IntValueContainer(0,this::validateIndex);
+		IntValueContainer intValueContainer = new IntValueContainer(0,this::getEmptyIndexIterator);
 
 		// long value
 		long l1 = 523423463534562345L;
@@ -497,7 +500,7 @@ public class AT_IntValueContainer {
 	@Test
 	@UnitTestConstructor(target = IntValueContainer.class, args = { long.class })
 	public void testConstructor_Long() {
-		IntValueContainer intValueContainer = new IntValueContainer(12,this::validateIndex);
+		IntValueContainer intValueContainer = new IntValueContainer(12,this::getEmptyIndexIterator);
 		assertNotNull(intValueContainer);
 	}
 
@@ -507,10 +510,10 @@ public class AT_IntValueContainer {
 	@Test
 	@UnitTestConstructor(target = IntValueContainer.class, args = { long.class, int.class })
 	public void testConstructor_LongInt() {
-		IntValueContainer intValueContainer = new IntValueContainer(12,this::validateIndex);
+		IntValueContainer intValueContainer = new IntValueContainer(12,this::getEmptyIndexIterator);
 		assertNotNull(intValueContainer);
 
-		intValueContainer = new IntValueContainer(12,this::validateIndex);
+		intValueContainer = new IntValueContainer(12,this::getEmptyIndexIterator);
 		assertNotNull(intValueContainer);
 	}
 
@@ -521,20 +524,20 @@ public class AT_IntValueContainer {
 	@UnitTestMethod(target = IntValueContainer.class, name = "getDefaultValueAsByte", args = {})
 	public void testGetDefaultValueAsByte() {
 		byte expected = 120;
-		IntValueContainer intValueContainer = new IntValueContainer(expected,this::validateIndex);
+		IntValueContainer intValueContainer = new IntValueContainer(expected,this::getEmptyIndexIterator);
 		byte actual = intValueContainer.getDefaultValueAsByte();
 		assertEquals(expected, actual);
 
 		// pre-condition tests
 
 		// default short
-		assertThrows(RuntimeException.class, () -> new IntValueContainer(30000,this::validateIndex).getDefaultValueAsByte());
+		assertThrows(RuntimeException.class, () -> new IntValueContainer(30000,this::getEmptyIndexIterator).getDefaultValueAsByte());
 
 		// default int
-		assertThrows(RuntimeException.class, () -> new IntValueContainer(120000,this::validateIndex).getDefaultValueAsByte());
+		assertThrows(RuntimeException.class, () -> new IntValueContainer(120000,this::getEmptyIndexIterator).getDefaultValueAsByte());
 
 		// default long
-		assertThrows(RuntimeException.class, () -> new IntValueContainer(123124235123234234L,this::validateIndex).getDefaultValueAsByte());
+		assertThrows(RuntimeException.class, () -> new IntValueContainer(123124235123234234L,this::getEmptyIndexIterator).getDefaultValueAsByte());
 
 	}
 
@@ -545,17 +548,17 @@ public class AT_IntValueContainer {
 	@UnitTestMethod(target = IntValueContainer.class, name = "getDefaultValueAsShort", args = {})
 	public void testGetDefaultValueAsShort() {
 		short expected = 32000;
-		IntValueContainer intValueContainer = new IntValueContainer(expected,this::validateIndex);
+		IntValueContainer intValueContainer = new IntValueContainer(expected,this::getEmptyIndexIterator);
 		short actual = intValueContainer.getDefaultValueAsShort();
 		assertEquals(expected, actual);
 
 		// pre-condition tests
 
 		// default int
-		assertThrows(RuntimeException.class, () -> new IntValueContainer(120000,this::validateIndex).getDefaultValueAsShort());
+		assertThrows(RuntimeException.class, () -> new IntValueContainer(120000,this::getEmptyIndexIterator).getDefaultValueAsShort());
 
 		// default long
-		assertThrows(RuntimeException.class, () -> new IntValueContainer(123124235123234234L,this::validateIndex).getDefaultValueAsShort());
+		assertThrows(RuntimeException.class, () -> new IntValueContainer(123124235123234234L,this::getEmptyIndexIterator).getDefaultValueAsShort());
 	}
 
 	/**
@@ -565,14 +568,14 @@ public class AT_IntValueContainer {
 	@UnitTestMethod(target = IntValueContainer.class, name = "getDefaultValueAsInt", args = {})
 	public void testGetDefaultValueAsInt() {
 		int expected = 52000;
-		IntValueContainer intValueContainer = new IntValueContainer(expected,this::validateIndex);
+		IntValueContainer intValueContainer = new IntValueContainer(expected,this::getEmptyIndexIterator);
 		int actual = intValueContainer.getDefaultValueAsInt();
 		assertEquals(expected, actual);
 
 		// pre-condition tests
 
 		// default long
-		assertThrows(RuntimeException.class, () -> new IntValueContainer(123124235123234234L,this::validateIndex).getDefaultValueAsInt());
+		assertThrows(RuntimeException.class, () -> new IntValueContainer(123124235123234234L,this::getEmptyIndexIterator).getDefaultValueAsInt());
 	}
 
 	/**
@@ -582,7 +585,7 @@ public class AT_IntValueContainer {
 	@UnitTestMethod(target = IntValueContainer.class, name = "getDefaultValueAsLong", args = {})
 	public void testGetDefaultValueAsLong() {
 		long expected = 364534534534534345L;
-		IntValueContainer intValueContainer = new IntValueContainer(expected,this::validateIndex);
+		IntValueContainer intValueContainer = new IntValueContainer(expected,this::getEmptyIndexIterator);
 		long actual = intValueContainer.getDefaultValueAsLong();
 		assertEquals(expected, actual);
 
@@ -595,7 +598,7 @@ public class AT_IntValueContainer {
 	@Test
 	@UnitTestMethod(target = IntValueContainer.class, name = "getIntValueType", args = {})
 	public void testGetIntValueType() {
-		IntValueContainer intValueContainer = new IntValueContainer(0,this::validateIndex);
+		IntValueContainer intValueContainer = new IntValueContainer(0,this::getEmptyIndexIterator);
 		assertEquals(IntValueType.BYTE, intValueContainer.getIntValueType());
 
 		intValueContainer.setIntValue(0, 1);

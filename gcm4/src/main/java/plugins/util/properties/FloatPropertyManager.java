@@ -1,6 +1,7 @@
 package plugins.util.properties;
 
-import java.util.function.IntPredicate;
+import java.util.Iterator;
+import java.util.function.Supplier;
 
 import plugins.util.properties.arraycontainers.FloatValueContainer;
 import util.errors.ContractException;
@@ -29,7 +30,7 @@ public final class FloatPropertyManager implements IndexedPropertyManager {
 	 *             <li>{@linkplain PropertyError#PROPERTY_DEFINITION_IMPROPER_TYPE}
 	 *             if the property definition's type is not Boolean</li>
 	 */
-	public FloatPropertyManager(PropertyDefinition propertyDefinition, IntPredicate indexValidator) {
+	public FloatPropertyManager(PropertyDefinition propertyDefinition, Supplier<Iterator<Integer>> indexIteratorSupplier) {
 		if (propertyDefinition == null) {
 			throw new ContractException(PropertyError.NULL_PROPERTY_DEFINITION);
 		}
@@ -42,7 +43,7 @@ public final class FloatPropertyManager implements IndexedPropertyManager {
 		if (propertyDefinition.getDefaultValue().isPresent()) {			
 			defaultValue = (Float) propertyDefinition.getDefaultValue().get();
 		}		
-		floatValueContainer = new FloatValueContainer(defaultValue,indexValidator);
+		floatValueContainer = new FloatValueContainer(defaultValue, indexIteratorSupplier);
 	}
 
 	@Override

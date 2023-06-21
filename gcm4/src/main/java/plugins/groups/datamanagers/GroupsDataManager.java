@@ -2,12 +2,17 @@ package plugins.groups.datamanagers;
 
 import java.util.ArrayList;
 import java.util.BitSet;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.util.Pair;
@@ -104,7 +109,7 @@ public final class GroupsDataManager extends DataManager {
 	private final ObjectValueContainer typesToGroupsMap = new ObjectValueContainer(null, 0);
 
 	// groupIndex->typeIndex
-	private final IntValueContainer groupsToTypesMap = new IntValueContainer(-1,this::validateGroupIndex);
+	private final IntValueContainer groupsToTypesMap = new IntValueContainer(-1, this::getGroupIndexIterator);
 
 	// groupType -> typeIndex
 	private final Map<GroupTypeId, Integer> typesToIndexesMap = new LinkedHashMap<>();
@@ -555,7 +560,7 @@ public final class GroupsDataManager extends DataManager {
 		Map<GroupPropertyId, IndexedPropertyManager> managerMap = groupPropertyManagerMap.get(groupTypeId);
 		IndexedPropertyManager indexedPropertyManager = getIndexedPropertyManager(propertyDefinition, 0);
 		managerMap.put(groupPropertyId, indexedPropertyManager);
-		DoubleValueContainer doubleValueContainer = new DoubleValueContainer(0,this::validateGroupIndex);
+		DoubleValueContainer doubleValueContainer = new DoubleValueContainer(0, this::getGroupIndexIterator);
 		Map<GroupPropertyId, PropertyDefinition> map = groupPropertyDefinitions.get(groupTypeId);
 		map.put(groupPropertyId, propertyDefinition);
 
@@ -1356,24 +1361,25 @@ public final class GroupsDataManager extends DataManager {
 
 	private IndexedPropertyManager getIndexedPropertyManager(final PropertyDefinition propertyDefinition,
 			final int intialSize) {
+		Supplier<Iterator<Integer>> indexIteratorSupplier = this::getGroupIndexIterator;
 
 		IndexedPropertyManager indexedPropertyManager;
 		if (propertyDefinition.getType() == Boolean.class) {
-			indexedPropertyManager = new BooleanPropertyManager(propertyDefinition,this::validateGroupIndex);
+			indexedPropertyManager = new BooleanPropertyManager(propertyDefinition, indexIteratorSupplier);
 		} else if (propertyDefinition.getType() == Float.class) {
-			indexedPropertyManager = new FloatPropertyManager(propertyDefinition,this::validateGroupIndex);
+			indexedPropertyManager = new FloatPropertyManager(propertyDefinition, indexIteratorSupplier);
 		} else if (propertyDefinition.getType() == Double.class) {
-			indexedPropertyManager = new DoublePropertyManager(propertyDefinition, this::validateGroupIndex);
+			indexedPropertyManager = new DoublePropertyManager(propertyDefinition, indexIteratorSupplier);
 		} else if (propertyDefinition.getType() == Byte.class) {
-			indexedPropertyManager = new IntPropertyManager(propertyDefinition, this::validateGroupIndex);
+			indexedPropertyManager = new IntPropertyManager(propertyDefinition, indexIteratorSupplier);
 		} else if (propertyDefinition.getType() == Short.class) {
-			indexedPropertyManager = new IntPropertyManager(propertyDefinition, this::validateGroupIndex);
+			indexedPropertyManager = new IntPropertyManager(propertyDefinition, indexIteratorSupplier);
 		} else if (propertyDefinition.getType() == Integer.class) {
-			indexedPropertyManager = new IntPropertyManager(propertyDefinition, this::validateGroupIndex);
+			indexedPropertyManager = new IntPropertyManager(propertyDefinition, indexIteratorSupplier);
 		} else if (propertyDefinition.getType() == Long.class) {
-			indexedPropertyManager = new IntPropertyManager(propertyDefinition, this::validateGroupIndex);
+			indexedPropertyManager = new IntPropertyManager(propertyDefinition, indexIteratorSupplier);
 		} else if (Enum.class.isAssignableFrom(propertyDefinition.getType())) {
-			indexedPropertyManager = new EnumPropertyManager(propertyDefinition, intialSize);
+			indexedPropertyManager = new EnumPropertyManager(propertyDefinition, indexIteratorSupplier);
 		} else {
 			indexedPropertyManager = new ObjectPropertyManager(propertyDefinition, intialSize);
 		}
@@ -1478,10 +1484,6 @@ public final class GroupsDataManager extends DataManager {
 		}
 		return groupsToTypesMap.getValueAsLong(groupId.getValue()) >= 0;
 	}
-	
-	private boolean validateGroupIndex(int index) {		
-		return groupsToTypesMap.getValueAsLong(index) >= 0;
-	}
 
 	/**
 	 * Returns true if and only if the group type exists. Null tolerant.
@@ -1566,7 +1568,7 @@ public final class GroupsDataManager extends DataManager {
 				for (final PersonId personId : people) {
 					groups = peopleToGroupsMap.getValue(personId.getValue());
 					groups.remove(groupId);
-					if(groups.isEmpty()) {
+					if (groups.isEmpty()) {
 						peopleToGroupsMap.setValue(personId.getValue(), null);
 					}
 				}
@@ -1623,7 +1625,7 @@ public final class GroupsDataManager extends DataManager {
 		final List<GroupId> groups = peopleToGroupsMap.getValue(personId.getValue());
 		groups.remove(groupId);
 		if (groups.isEmpty()) {
-			 peopleToGroupsMap.setValue(personId.getValue(),null);
+			peopleToGroupsMap.setValue(personId.getValue(), null);
 		}
 
 		if (dataManagerContext.subscribersExist(GroupMembershipRemovalEvent.class)) {
@@ -2373,9 +2375,53 @@ public final class GroupsDataManager extends DataManager {
 		builder.append(", peopleToGroupsMap=");
 		builder.append(peopleToGroupsMap);
 		builder.append(", masterGroupId=");
-		builder.append(masterGroupId);		
+		builder.append(masterGroupId);
 		builder.append("]");
 		return builder.toString();
+	}
+
+	private static class GroupIndexIterator implements Iterator<Integer> {
+
+		private Integer next;
+		private final Iterator<GroupId> iterator;
+
+		public GroupIndexIterator(Iterator<GroupId> iterator) {
+			this.iterator = iterator;
+			increment();
+		}
+
+		private void increment() {
+			next = null;
+			while (iterator.hasNext()) {
+				GroupId groupId = iterator.next();
+				if (groupId != null) {
+					next = groupId.getValue();
+					break;
+				}
+			}
+		}
+
+		@Override
+		public boolean hasNext() {
+			return next != null;
+		}
+
+		@Override
+		public Integer next() {
+			if (next == null) {
+				throw new NoSuchElementException();
+			}
+			Integer result = next;
+			increment();
+			return result;
+		}
+	}
+
+	public Iterator<Integer> getGroupIndexIterator() {
+		List<GroupId> groupIds = getGroupIds();
+		Comparator<GroupId> comparator = (g1, g2) -> Integer.compare(g1.getValue(), g2.getValue());
+		Collections.sort(groupIds, comparator);
+		return new GroupIndexIterator(groupIds.iterator());
 	}
 
 }
