@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.Random;
 
 import org.junit.jupiter.api.Test;
@@ -13,6 +15,11 @@ import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
 
 public class AT_BooleanContainer {
+	
+	
+	private Iterator<Integer> getEmptyIndexIterator() {
+		return Collections.emptyIterator();				
+	}
 
 	/**
 	 * Test {@link BooleanContainer#BooleanContainer(boolean)}
@@ -20,13 +27,13 @@ public class AT_BooleanContainer {
 	@Test
 	@UnitTestConstructor(target = BooleanContainer.class, args = { boolean.class })
 	public void testConstructor_Boolean() {
-		BooleanContainer booleanContainer = new BooleanContainer(true);
+		BooleanContainer booleanContainer = new BooleanContainer(true,this::getEmptyIndexIterator);
 
 		for (int i = 0; i < 10; i++) {
 			assertTrue(booleanContainer.get(i));
 		}
 
-		booleanContainer = new BooleanContainer(false);
+		booleanContainer = new BooleanContainer(false,this::getEmptyIndexIterator);
 
 		for (int i = 0; i < 10; i++) {
 			assertFalse(booleanContainer.get(i));
@@ -41,13 +48,13 @@ public class AT_BooleanContainer {
 	@UnitTestConstructor(target = BooleanContainer.class, args = { boolean.class, int.class })
 	public void testConstructor_BooleanInt() {
 
-		BooleanContainer booleanContainer = new BooleanContainer(true, 100);
+		BooleanContainer booleanContainer = new BooleanContainer(true,this::getEmptyIndexIterator);
 
 		for (int i = 0; i < 10; i++) {
 			assertTrue(booleanContainer.get(i));
 		}
 
-		booleanContainer = new BooleanContainer(false, 100);
+		booleanContainer = new BooleanContainer(false,this::getEmptyIndexIterator);
 
 		for (int i = 0; i < 10; i++) {
 			assertFalse(booleanContainer.get(i));
@@ -68,7 +75,7 @@ public class AT_BooleanContainer {
 			array[i] = random.nextBoolean();
 		}
 
-		BooleanContainer booleanContainer = new BooleanContainer(true);
+		BooleanContainer booleanContainer = new BooleanContainer(true,this::getEmptyIndexIterator);
 
 		for (int i = 0; i < n; i++) {
 			booleanContainer.set(i, array[i]);
@@ -78,7 +85,7 @@ public class AT_BooleanContainer {
 			assertEquals(array[i], booleanContainer.get(i));
 		}
 
-		booleanContainer = new BooleanContainer(true, n);
+		booleanContainer = new BooleanContainer(true,this::getEmptyIndexIterator);
 
 		for (int i = 0; i < n; i++) {
 			booleanContainer.set(i, array[i]);

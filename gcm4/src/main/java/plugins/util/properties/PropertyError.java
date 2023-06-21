@@ -33,7 +33,7 @@ public enum PropertyError implements ContractError {
 	PROPERTY_DEFINITION_IMPROPER_TYPE("Property definition has improper data type"),//
 	
 	
-	NEGATIVE_INITIAL_SIZE("Negative initial size"),//
+NEGATIVE_INITIAL_SIZE("Negative initial size"),//
 	NEGATIVE_CAPACITY_INCREMENT("Negative capacity increment"),//
 	NEGATIVE_INDEX("Negative index"),//
 	

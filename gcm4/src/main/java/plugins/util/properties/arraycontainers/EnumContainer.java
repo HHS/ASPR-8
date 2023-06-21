@@ -1,5 +1,8 @@
 package plugins.util.properties.arraycontainers;
 
+import java.util.Iterator;
+import java.util.function.Supplier;
+
 /**
  * A container for retaining enum values from a single enumeration class indexed
  * by int index. It is designed to generally require approximately 1 byte per
@@ -33,7 +36,7 @@ public final class EnumContainer {
 	 *             <li>if the class is not an enumeration             
 	 *             <li>if the default is not null and not a member of the enumeration
 	 */
-	public EnumContainer(Class<?> c, Object defaultValue, int capacity) {
+	public EnumContainer(Class<?> c, Object defaultValue, Supplier<Iterator<Integer>> indexIteratorSupplier) {
 		if (c == null) {
 			throw new IllegalArgumentException("null class reference");
 		}
@@ -45,21 +48,15 @@ public final class EnumContainer {
 		if (defaultValue!=null && defaultValue.getClass() != c) {
 			throw new IllegalArgumentException("default value " + defaultValue + " does not match enum class " + c);
 		}
-		
-		if (capacity < 0) {
-			throw new IllegalArgumentException("capacity " + capacity + " is less than zero");
-		}
 
 		enumClass = c;
 		Enum<?> e = (Enum<?>) defaultValue;
 		objectValueContainer = new ObjectValueContainer(null, 16);
 		objectValueContainer.setValue(e.ordinal(), defaultValue);
-		intValueContainer = new IntValueContainer(e.ordinal(), capacity);
+		intValueContainer = new IntValueContainer(e.ordinal(), indexIteratorSupplier);
 	}
 
-	public EnumContainer(Class<?> c, Object defaultValue) {
-		this(c, defaultValue, 0);
-	}
+	
 
 	/**
 	 * Set the value at the given index.

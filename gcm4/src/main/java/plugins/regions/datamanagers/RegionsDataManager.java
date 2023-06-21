@@ -569,11 +569,11 @@ public final class RegionsDataManager extends DataManager {
 		 *
 		 *
 		 */
-		regionValues = new IntValueContainer(0);
+		regionValues = new IntValueContainer(0,peopleDataManager::getPersonIndexIterator);
 
 		boolean trackRegionArrivals = regionsPluginData.getPersonRegionArrivalTrackingPolicy();
 		if (trackRegionArrivals) {
-			regionArrivalTimes = new DoubleValueContainer(0);
+			regionArrivalTimes = new DoubleValueContainer(0,peopleDataManager::getPersonIndexIterator);
 		}
 
 		final Set<RegionId> regionIds = regionsPluginData.getRegionIds();

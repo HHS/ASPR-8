@@ -1,5 +1,8 @@
 package plugins.util.properties;
 
+import java.util.Iterator;
+import java.util.function.Supplier;
+
 import plugins.util.properties.arraycontainers.IntValueContainer;
 import plugins.util.properties.arraycontainers.IntValueContainer.IntValueType;
 import util.errors.ContractException;
@@ -36,15 +39,12 @@ public final class IntPropertyManager implements IndexedPropertyManager {
 	 *             if the property definition's type is not a Byte, Short,
 	 *             Integer or Long</li>
 	 */
-	public IntPropertyManager(PropertyDefinition propertyDefinition, int initialSize) {
+	public IntPropertyManager(PropertyDefinition propertyDefinition, Supplier<Iterator<Integer>> indexIteratorSupplier) {
 		if (propertyDefinition == null) {
 			throw new ContractException(PropertyError.NULL_PROPERTY_DEFINITION);
 		}
 		
-		if (initialSize < 0) {
-			throw new ContractException(PropertyError.NEGATIVE_INITIAL_SIZE);
-		}
-
+		
 		long longDefaultValue = 0L;
 		if (propertyDefinition.getType() == Byte.class) {
 			intValueType = IntValueType.BYTE;
@@ -82,7 +82,7 @@ public final class IntPropertyManager implements IndexedPropertyManager {
 			}
 		}
 
-		intValueContainer = new IntValueContainer(longDefaultValue, initialSize);
+		intValueContainer = new IntValueContainer(longDefaultValue, indexIteratorSupplier);
 	}
 
 	@Override
