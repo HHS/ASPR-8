@@ -43,9 +43,14 @@ message GroupPropertyIdInput {
     google.protobuf.Any id = 1;
 }
 
-message GroupMembershipInput {
-    PersonIdInput personId = 1;
-    repeated GroupIdInput groupIds = 2;
+message PersonToGroupMembershipInput {
+    int32 personId = 1;
+    repeated int32 groupIds = 2;
+}
+
+message GroupToPersonMembershipInput {
+    int32 groupId = 1;
+    repeated int32 personIds = 2;
 }
 
 message GroupPropertyDefinitionMapInput {
@@ -72,10 +77,11 @@ message GroupPropertyDimensionInput {
 message GroupsPluginDataInput {
     repeated GroupTypeIdInput groupTypeIds = 1;
     repeated GroupInput groups = 2;
-    repeated GroupMembershipInput groupMemberships = 3;
-    repeated GroupPropertyDefinitionMapInput groupPropertyDefinitions = 4;
-    repeated GroupPropertyValueMapInput groupPropertyValues = 5;
-    int32 nextGroupIdValue = 6;
+    repeated PersonToGroupMembershipInput personToGroupMemberships = 3;
+    repeated GroupToPersonMembershipInput groupToPersonMemberships = 4;
+    repeated GroupPropertyDefinitionMapInput groupPropertyDefinitions = 5;
+    repeated GroupPropertyValueMapInput groupPropertyValues = 6;
+    int32 nextGroupIdValue = 7;
 }
 
 message GroupPopulationReportPluginDataInput {

@@ -4,7 +4,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
@@ -61,15 +63,30 @@ public class IT_GroupsTranslator {
             people.add(new PersonId(i));
         }
 
-        GroupsPluginData expectedPluginData = GroupsTestPluginFactory.getStandardGroupsPluginData(groupCount,
-                membershipCount, people, seed);
-        translatorController.writeOutput(expectedPluginData);
+        List<GroupsPluginData> expectedPluginDatas = new ArrayList<>();
 
-        translatorController.readInput();
+        Random random = new Random(seed);
 
-        GroupsPluginData actualPluginData = translatorController.getFirstObject(GroupsPluginData.class);
+        for (int i = 0; i < 10; i++) {
+            Collections.shuffle(people, new Random(random.nextLong()));
 
-        assertEquals(expectedPluginData, actualPluginData);
+            GroupsPluginData expectedPluginData = GroupsTestPluginFactory.getStandardGroupsPluginData(groupCount,
+                    membershipCount, people, seed);
+
+            expectedPluginDatas.add(expectedPluginData);
+
+            translatorController.writeOutput(expectedPluginData);
+            translatorController.readInput();
+        }
+
+        List<GroupsPluginData> actualPluginDatas = translatorController.getObjects(GroupsPluginData.class);
+
+        assertEquals(expectedPluginDatas.size(), actualPluginDatas.size());
+
+        for (int i = 0; i < expectedPluginDatas.size(); i++) {
+            assertEquals(expectedPluginDatas.get(i), actualPluginDatas.get(i));
+            assertEquals(expectedPluginDatas.get(i).toString(), actualPluginDatas.get(i).toString());
+        }
     }
 
     @Test
@@ -117,6 +134,6 @@ public class IT_GroupsTranslator {
                 .getFirstObject(GroupPropertyReportPluginData.class);
 
         assertEquals(expectedPluginData, actualPluginData);
-
+        assertEquals(expectedPluginData.toString(), actualPluginData.toString());
     }
 }

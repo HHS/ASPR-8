@@ -1054,6 +1054,14 @@ public final class GroupsPluginData implements PluginData {
 		return data.personToGroupsMemberships.size();
 	}
 
+	/**
+	 * Returns the int value that exceeds by one the highest group id value
+	 * encountered while associating groups with people.
+	 */
+	public int getGroupCount() {
+		return data.groupToPeopleMemberships.size();
+	}
+
 	@Override
 	public PluginDataBuilder getCloneBuilder() {
 		return new Builder(data);

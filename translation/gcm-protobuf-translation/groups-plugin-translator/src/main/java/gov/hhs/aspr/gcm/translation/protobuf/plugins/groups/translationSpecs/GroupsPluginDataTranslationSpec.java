@@ -5,12 +5,12 @@ import java.util.Set;
 
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.input.GroupIdInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.input.GroupInput;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.input.GroupMembershipInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.input.GroupPropertyDefinitionMapInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.input.GroupPropertyValueMapInput;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.input.GroupToPersonMembershipInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.input.GroupTypeIdInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.input.GroupsPluginDataInput;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.input.PersonIdInput;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.input.PersonToGroupMembershipInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.input.PropertyDefinitionInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.input.PropertyDefinitionMapInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.input.PropertyValueMapInput;
@@ -79,13 +79,19 @@ public class GroupsPluginDataTranslationSpec extends ProtobufTranslationSpec<Gro
 
         }
 
-        // add people to groups
-        for (GroupMembershipInput groupMembershipInput : inputObject.getGroupMembershipsList()) {
-            PersonId personId = this.translationEngine.convertObject(groupMembershipInput.getPersonId());
+        for (PersonToGroupMembershipInput ptgMembership : inputObject.getPersonToGroupMembershipsList()) {
+            PersonId personId = new PersonId(ptgMembership.getPersonId());
 
-            for (GroupIdInput groupIdInput : groupMembershipInput.getGroupIdsList()) {
-                GroupId groupId = this.translationEngine.convertObject(groupIdInput);
-                builder.addPersonToGroup(groupId, personId);
+            for (int gId : ptgMembership.getGroupIdsList()) {
+                builder.addGroupToPerson( new GroupId(gId), personId);
+            }
+        }
+
+        for (GroupToPersonMembershipInput gtpMembership : inputObject.getGroupToPersonMembershipsList()) {
+            GroupId groupId = new GroupId(gtpMembership.getGroupId());
+
+            for (int pId : gtpMembership.getPersonIdsList()) {
+                builder.addPersonToGroup(new PersonId(pId), groupId);
             }
         }
 
@@ -176,20 +182,35 @@ public class GroupsPluginDataTranslationSpec extends ProtobufTranslationSpec<Gro
         // add people
         for (int i = 0; i < appObject.getPersonCount(); i++) {
             PersonId personId = new PersonId(i);
-            List<GroupId> groupIds = appObject.getGroupsForPerson(personId);
+            List<GroupId> groupsForPerson = appObject.getGroupsForPerson(personId);
 
-            if (!groupIds.isEmpty()) {
-                GroupMembershipInput.Builder groupMembershipBuilder = GroupMembershipInput.newBuilder();
+            if (!groupsForPerson.isEmpty()) {
+                PersonToGroupMembershipInput.Builder groupMembershipBuilder = PersonToGroupMembershipInput.newBuilder();
 
-                PersonIdInput personIdInput = this.translationEngine.convertObject(personId);
-                groupMembershipBuilder.setPersonId(personIdInput);
+                groupMembershipBuilder.setPersonId(i);
 
-                for (GroupId groupId : groupIds) {
-                    groupMembershipBuilder.addGroupIds((GroupIdInput) this.translationEngine.convertObject(groupId));
+                for (GroupId groupId : groupsForPerson) {
+                    groupMembershipBuilder.addGroupIds(groupId.getValue());
                 }
-                builder.addGroupMemberships(groupMembershipBuilder.build());
+                builder.addPersonToGroupMemberships(groupMembershipBuilder.build());
             }
 
+        }
+
+        for (int i = 0; i < appObject.getGroupCount(); i++) {
+            GroupId groupId = new GroupId(i);
+            List<PersonId> peopleInGroup = appObject.getPeopleForGroup(groupId);
+
+            if (!peopleInGroup.isEmpty()) {
+                GroupToPersonMembershipInput.Builder groupMembershipBuilder = GroupToPersonMembershipInput.newBuilder();
+
+                groupMembershipBuilder.setGroupId(i);
+
+                for (PersonId personId : peopleInGroup) {
+                    groupMembershipBuilder.addPersonIds(personId.getValue());
+                }
+                builder.addGroupToPersonMemberships(groupMembershipBuilder.build());
+            }
         }
 
         builder.setNextGroupIdValue(appObject.getNextGroupIdValue());

@@ -74,6 +74,7 @@ public class AT_GroupPropertyReportPluginDataTranslationSpec {
         GroupPropertyReportPluginData actualAppValue = translationSpec.convertInputObject(inputValue);
 
         assertEquals(expectedAppValue, actualAppValue);
+        assertEquals(expectedAppValue.toString(), actualAppValue.toString());
     }
 
     @Test
