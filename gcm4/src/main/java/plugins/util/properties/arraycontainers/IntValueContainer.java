@@ -1,6 +1,8 @@
 package plugins.util.properties.arraycontainers;
 
 import java.util.Arrays;
+import java.util.Iterator;
+import java.util.function.Supplier;
 
 import plugins.util.properties.PropertyError;
 import util.errors.ContractException;
@@ -19,13 +21,15 @@ public final class IntValueContainer {
 
 	/**
 	 * An enumeration representing the four int-based primitive data types in Java.
-	 * It
+	 * 
 	 *
 	 */
 	public static enum IntValueType {
 
-		BYTE(Byte.MIN_VALUE, Byte.MAX_VALUE), SHORT(Short.MIN_VALUE, Short.MAX_VALUE),
-		INT(Integer.MIN_VALUE, Integer.MAX_VALUE), LONG(Long.MIN_VALUE, Long.MAX_VALUE);
+		BYTE(Byte.MIN_VALUE, Byte.MAX_VALUE), //
+		SHORT(Short.MIN_VALUE, Short.MAX_VALUE), //
+		INT(Integer.MIN_VALUE, Integer.MAX_VALUE), //
+		LONG(Long.MIN_VALUE, Long.MAX_VALUE);//
 
 		private final long min;
 
@@ -68,6 +72,7 @@ public final class IntValueContainer {
 	 * Common interface for the four array wrapper classes.
 	 */
 	private static interface SubTypeArray {
+		public Supplier<Iterator<Integer>> getIteratorSupplier();
 
 		public IntValueType getIntValueType();
 
@@ -80,8 +85,6 @@ public final class IntValueContainer {
 		public void setCapacity(int capacity);
 
 		public int getCapacity();
-		
-		public int getHighestNonUllageIndex();
 
 		public String toString();
 
@@ -91,23 +94,19 @@ public final class IntValueContainer {
 	 * SubTypeArray implementor for longs
 	 */
 	private static class LongArray implements SubTypeArray {
-		private int highestNonUllageIndex = -1;
 		private long[] values;
 		private long defaultValue;
+		private final Supplier<Iterator<Integer>> indexIteratorSupplier;
 
-		public LongArray(int capacity, long defaultValue) {
-			values = new long[capacity];
-			if (defaultValue != 0) {
-				for (int i = 0; i < capacity; i++) {
-					values[i] = defaultValue;
-				}
-			}
+		public LongArray(long defaultValue, Supplier<Iterator<Integer>> indexIteratorSupplier) {
+			values = new long[0];
 			this.defaultValue = defaultValue;
+			this.indexIteratorSupplier = indexIteratorSupplier;
 		}
 
 		public LongArray(SubTypeArray subTypeArray) {
 			this.defaultValue = subTypeArray.getDefaultValue();
-			this.highestNonUllageIndex = subTypeArray.getHighestNonUllageIndex();
+			this.indexIteratorSupplier = subTypeArray.getIteratorSupplier();
 			values = new long[subTypeArray.getCapacity()];
 			for (int i = 0; i < values.length; i++) {
 				values[i] = (int) subTypeArray.getValue(i);
@@ -161,22 +160,35 @@ public final class IntValueContainer {
 		public int getCapacity() {
 			return values.length;
 		}
+
 		private String getElementsString() {
+			Iterator<Integer> iterator = indexIteratorSupplier.get();
 
-			if (highestNonUllageIndex == -1) {
-				return "[]";
-			}
+			StringBuilder sb = new StringBuilder();
 
-			StringBuilder b = new StringBuilder();
-			b.append('[');
-			for (int i = 0;; i++) {
-				b.append(String.valueOf(values[i]));
-				if (i == highestNonUllageIndex) {
-					return b.append(']').toString();
+			boolean first = true;
+			sb.append('[');
+			int n = values.length;
+			while (iterator.hasNext()) {
+
+				if (first) {
+					first = false;
+				} else {
+					sb.append(", ");
 				}
-				b.append(", ");
+
+				Integer index = iterator.next();
+				if (index < 0 || index >= n) {
+					sb.append(defaultValue);
+				} else {
+					sb.append(values[index]);
+				}
+
 			}
+			sb.append(']');
+			return sb.toString();
 		}
+
 		@Override
 		public String toString() {
 			StringBuilder builder = new StringBuilder();
@@ -189,33 +201,29 @@ public final class IntValueContainer {
 		}
 
 		@Override
-		public int getHighestNonUllageIndex() {
-			return highestNonUllageIndex;
+		public Supplier<Iterator<Integer>> getIteratorSupplier() {
+			return indexIteratorSupplier;
 		}
-
 	}
 	/*
 	 * SubTypeArray implementor for ints
 	 */
 
 	private static class IntArray implements SubTypeArray {
-		private int highestNonUllageIndex = -1;
+
 		private int[] values;
 		private int defaultValue;
+		private final Supplier<Iterator<Integer>> indexIteratorSupplier;
 
-		public IntArray(int capacity, int defaultValue) {
-			values = new int[capacity];
-			if (defaultValue != 0) {
-				for (int i = 0; i < capacity; i++) {
-					values[i] = defaultValue;
-				}
-			}
+		public IntArray(int defaultValue, Supplier<Iterator<Integer>> indexIteratorSupplier) {
+			values = new int[0];
 			this.defaultValue = defaultValue;
+			this.indexIteratorSupplier = indexIteratorSupplier;
 		}
 
 		public IntArray(SubTypeArray subTypeArray) {
 			this.defaultValue = (int) subTypeArray.getDefaultValue();
-			this.highestNonUllageIndex = subTypeArray.getHighestNonUllageIndex();
+			this.indexIteratorSupplier = subTypeArray.getIteratorSupplier();
 			values = new int[subTypeArray.getCapacity()];
 			for (int i = 0; i < values.length; i++) {
 				values[i] = (int) subTypeArray.getValue(i);
@@ -268,22 +276,32 @@ public final class IntValueContainer {
 		public int getCapacity() {
 			return values.length;
 		}
-		
+
 		private String getElementsString() {
+			Iterator<Integer> iterator = indexIteratorSupplier.get();
 
-			if (highestNonUllageIndex == -1) {
-				return "[]";
-			}
+			StringBuilder sb = new StringBuilder();
 
-			StringBuilder b = new StringBuilder();
-			b.append('[');
-			for (int i = 0;; i++) {
-				b.append(String.valueOf(values[i]));
-				if (i == highestNonUllageIndex) {
-					return b.append(']').toString();
+			boolean first = true;
+			sb.append('[');
+			int n = values.length;
+			while (iterator.hasNext()) {
+
+				if (first) {
+					first = false;
+				} else {
+					sb.append(", ");
 				}
-				b.append(", ");
+				Integer index = iterator.next();
+				if (index < 0 || index >= n) {
+					sb.append(defaultValue);
+				} else {
+					sb.append(values[index]);
+				}
+
 			}
+			sb.append(']');
+			return sb.toString();
 		}
 
 		@Override
@@ -298,8 +316,8 @@ public final class IntValueContainer {
 		}
 
 		@Override
-		public int getHighestNonUllageIndex() {
-			return highestNonUllageIndex;
+		public Supplier<Iterator<Integer>> getIteratorSupplier() {
+			return indexIteratorSupplier;
 		}
 
 	}
@@ -308,23 +326,21 @@ public final class IntValueContainer {
 	 * SubTypeArray implementor for shorts
 	 */
 	private static class ShortArray implements SubTypeArray {
-		private int highestNonUllageIndex = -1;
+
 		private short[] values;
 		private short defaultValue;
+		private final Supplier<Iterator<Integer>> indexIteratorSupplier;
 
-		public ShortArray(int capacity, short defaultValue) {
-			values = new short[capacity];
-			if (defaultValue != 0) {
-				for (int i = 0; i < capacity; i++) {
-					values[i] = defaultValue;
-				}
-			}
+		public ShortArray(short defaultValue, Supplier<Iterator<Integer>> indexIteratorSupplier) {
+			values = new short[0];
 			this.defaultValue = defaultValue;
+			this.indexIteratorSupplier = indexIteratorSupplier;
 		}
 
 		public ShortArray(SubTypeArray subTypeArray) {
 			this.defaultValue = (short) subTypeArray.getDefaultValue();
-			this.highestNonUllageIndex = subTypeArray.getHighestNonUllageIndex();
+			this.indexIteratorSupplier = subTypeArray.getIteratorSupplier();
+
 			values = new short[subTypeArray.getCapacity()];
 			for (int i = 0; i < values.length; i++) {
 				values[i] = (short) subTypeArray.getValue(i);
@@ -377,23 +393,35 @@ public final class IntValueContainer {
 		public int getCapacity() {
 			return values.length;
 		}
+
 		private String getElementsString() {
+			Iterator<Integer> iterator = indexIteratorSupplier.get();
 
-			if (highestNonUllageIndex == -1) {
-				return "[]";
-			}
+			StringBuilder sb = new StringBuilder();
 
-			StringBuilder b = new StringBuilder();
-			b.append('[');
-			for (int i = 0;; i++) {
-				b.append(String.valueOf(values[i]));
-				if (i == highestNonUllageIndex) {
-					return b.append(']').toString();
+			boolean first = true;
+			sb.append('[');
+			int n = values.length;
+			while (iterator.hasNext()) {
+
+				if (first) {
+					first = false;
+				} else {
+					sb.append(", ");
 				}
-				b.append(", ");
+
+				Integer index = iterator.next();
+				if (index < 0 || index >= n) {
+					sb.append(defaultValue);
+				} else {
+					sb.append(values[index]);
+				}
+
 			}
+			sb.append(']');
+			return sb.toString();
 		}
-		
+
 		@Override
 		public String toString() {
 			StringBuilder builder = new StringBuilder();
@@ -407,27 +435,25 @@ public final class IntValueContainer {
 		}
 
 		@Override
-		public int getHighestNonUllageIndex() {
-			return highestNonUllageIndex;
+		public Supplier<Iterator<Integer>> getIteratorSupplier() {
+			return indexIteratorSupplier;
 		}
+
 	}
 
 	/*
 	 * SubTypeArray implementor for bytes
 	 */
 	private static class ByteArray implements SubTypeArray {
-		private int highestNonUllageIndex = -1;
+
 		private byte[] values;
 		private byte defaultValue;
+		private final Supplier<Iterator<Integer>> indexIteratorSupplier;
 
-		public ByteArray(int capacity, byte defaultValue) {
-			values = new byte[capacity];
-			if (defaultValue != 0) {
-				for (int i = 0; i < capacity; i++) {
-					values[i] = defaultValue;
-				}
-			}
+		public ByteArray(byte defaultValue, Supplier<Iterator<Integer>> indexIteratorSupplier) {
+			values = new byte[0];
 			this.defaultValue = defaultValue;
+			this.indexIteratorSupplier = indexIteratorSupplier;
 		}
 
 		@Override
@@ -478,21 +504,30 @@ public final class IntValueContainer {
 
 		private String getElementsString() {
 
-			if (highestNonUllageIndex == -1) {
-				return "[]";
-			}
+			Iterator<Integer> iterator = indexIteratorSupplier.get();
 
-			StringBuilder b = new StringBuilder();
-			b.append('[');
-			for (int i = 0;; i++) {
-				b.append(String.valueOf(values[i]));
-				if (i == highestNonUllageIndex) {
-					return b.append(']').toString();
+			StringBuilder sb = new StringBuilder();
+
+			boolean first = true;
+			sb.append('[');
+			int n = values.length;
+			while (iterator.hasNext()) {
+				Integer index = iterator.next();
+				if (first) {
+					first = false;
+				} else {
+					sb.append(", ");
 				}
-				b.append(", ");
+				if (index < 0 || index >= n) {
+					sb.append(defaultValue);
+				} else {
+					sb.append(values[index]);
+				}
 			}
+			sb.append(']');
+			return sb.toString();
 		}
-		
+
 		@Override
 		public String toString() {
 			StringBuilder builder = new StringBuilder();
@@ -503,9 +538,10 @@ public final class IntValueContainer {
 			builder.append("]");
 			return builder.toString();
 		}
-		
-		public int getHighestNonUllageIndex() {
-			return highestNonUllageIndex;
+
+		@Override
+		public Supplier<Iterator<Integer>> getIteratorSupplier() {
+			return indexIteratorSupplier;
 		}
 
 	}
@@ -514,15 +550,6 @@ public final class IntValueContainer {
 	 * The array holding instance.
 	 */
 	private SubTypeArray subTypeArray;
-
-	/**
-	 * Constructs the IntValueContainer with the given default value.
-	 * 
-	 * @param defaultValue
-	 */
-	public IntValueContainer(long defaultValue) {
-		this(defaultValue, 16);
-	}
 
 	/**
 	 * Returns the default value as a byte.
@@ -583,16 +610,16 @@ public final class IntValueContainer {
 	 * 
 	 * @throws NegativeArraySizeException if the capacity is negative
 	 */
-	public IntValueContainer(long defaultValue, int capacity) {
+	public IntValueContainer(long defaultValue, Supplier<Iterator<Integer>> indexIteratorSupplier) {
 
 		if (IntValueType.BYTE.isCompatibleValue(defaultValue)) {
-			subTypeArray = new ByteArray(capacity, (byte) defaultValue);
+			subTypeArray = new ByteArray((byte) defaultValue, indexIteratorSupplier);
 		} else if (IntValueType.SHORT.isCompatibleValue(defaultValue)) {
-			subTypeArray = new ShortArray(capacity, (short) defaultValue);
+			subTypeArray = new ShortArray((short) defaultValue, indexIteratorSupplier);
 		} else if (IntValueType.INT.isCompatibleValue(defaultValue)) {
-			subTypeArray = new IntArray(capacity, (int) defaultValue);
+			subTypeArray = new IntArray((int) defaultValue, indexIteratorSupplier);
 		} else {
-			subTypeArray = new LongArray(capacity, defaultValue);
+			subTypeArray = new LongArray(defaultValue, indexIteratorSupplier);
 		}
 	}
 
@@ -682,6 +709,9 @@ public final class IntValueContainer {
 	 */
 	public int getValueAsInt(int index) {
 		long result;
+		if (index < 0) {
+			throw new ContractException(PropertyError.NEGATIVE_INDEX);
+		}
 		if (index < subTypeArray.getCapacity()) {
 			result = subTypeArray.getValue(index);
 		} else {
@@ -728,7 +758,7 @@ public final class IntValueContainer {
 	public void setByteValue(int index, byte value) {
 		if (index < 0) {
 			throw new ContractException(PropertyError.NEGATIVE_INDEX);
-		}		
+		}
 		subTypeArray.setValue(index, value);
 	}
 
@@ -748,7 +778,7 @@ public final class IntValueContainer {
 		if (!subTypeArray.getIntValueType().isCompatibleValue(value)) {
 			subTypeArray = rebuildSubTypeArray(value);
 		}
-		
+
 		subTypeArray.setValue(index, value);
 	}
 
@@ -768,7 +798,7 @@ public final class IntValueContainer {
 		if (!subTypeArray.getIntValueType().isCompatibleValue(value)) {
 			subTypeArray = rebuildSubTypeArray(value);
 		}
-		
+
 		subTypeArray.setValue(index, value);
 	}
 
@@ -787,7 +817,7 @@ public final class IntValueContainer {
 		if (!subTypeArray.getIntValueType().isCompatibleValue(value)) {
 			subTypeArray = rebuildSubTypeArray(value);
 		}
-		
+
 		subTypeArray.setValue(index, value);
 	}
 
@@ -944,8 +974,8 @@ public final class IntValueContainer {
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("IntValueContainer [subTypeArray=");		
-		builder.append(subTypeArray);		
+		builder.append("IntValueContainer [subTypeArray=");
+		builder.append(subTypeArray);
 		builder.append("]");
 		return builder.toString();
 	}

@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -28,6 +30,10 @@ import util.random.RandomGeneratorProvider;
 
 public class AT_EnumPropertyManager {
 
+	private Iterator<Integer> getEmptyIndexIterator() {
+		return Collections.emptyIterator();				
+	}
+	
 	@Test
 	@UnitTestMethod(target = EnumPropertyManager.class, name = "getPropertyValue", args = { int.class })
 	public void testGetPropertyValue() {
@@ -37,7 +43,7 @@ public class AT_EnumPropertyManager {
 			Color defaultValue = Color.YELLOW;
 			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Color.class).setDefaultValue(defaultValue).build();
 
-			EnumPropertyManager enumPropertyManager = new EnumPropertyManager(propertyDefinition, 0);
+			EnumPropertyManager enumPropertyManager = new EnumPropertyManager(propertyDefinition, this::getEmptyIndexIterator);
 
 			/*
 			 * We will set the first 300 values multiple times at random
@@ -83,7 +89,7 @@ public class AT_EnumPropertyManager {
 			Color defaultValue = Color.YELLOW;
 			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Color.class).setDefaultValue(defaultValue).build();
 
-			EnumPropertyManager enumPropertyManager = new EnumPropertyManager(propertyDefinition, 0);
+			EnumPropertyManager enumPropertyManager = new EnumPropertyManager(propertyDefinition, this::getEmptyIndexIterator);
 
 			/*
 			 * We will set the first 300 values multiple times at random
@@ -132,7 +138,7 @@ public class AT_EnumPropertyManager {
 			Color defaultValue = Color.RED;
 			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Color.class).setDefaultValue(defaultValue).build();
 
-			EnumPropertyManager enumPropertyManager = new EnumPropertyManager(propertyDefinition, 0);
+			EnumPropertyManager enumPropertyManager = new EnumPropertyManager(propertyDefinition, this::getEmptyIndexIterator);
 
 			// initially, the value should be the default value for the manager
 			assertEquals(defaultValue, (Color) enumPropertyManager.getPropertyValue(5));
@@ -152,7 +158,7 @@ public class AT_EnumPropertyManager {
 			// we will next test the manager with an initial value of true
 			propertyDefinition = PropertyDefinition.builder().setType(Color.class).setDefaultValue(defaultValue).build();
 
-			enumPropertyManager = new EnumPropertyManager(propertyDefinition, 0);
+			enumPropertyManager = new EnumPropertyManager(propertyDefinition, this::getEmptyIndexIterator);
 
 			// initially, the value should be the default value for the manager
 			assertEquals(defaultValue, (Color) enumPropertyManager.getPropertyValue(5));
@@ -172,7 +178,7 @@ public class AT_EnumPropertyManager {
 			// precondition tests
 			// precondition tests
 			PropertyDefinition def = PropertyDefinition.builder().setType(Color.class).setDefaultValue(Color.YELLOW).build();
-			EnumPropertyManager epm = new EnumPropertyManager(def, 0);
+			EnumPropertyManager epm = new EnumPropertyManager(def, this::getEmptyIndexIterator);
 
 			ContractException contractException = assertThrows(ContractException.class, () -> epm.removeId(-1));
 
@@ -190,24 +196,21 @@ public class AT_EnumPropertyManager {
 	@UnitTestConstructor(target = EnumPropertyManager.class, args = {PropertyDefinition.class, int.class })
 	public void testConstructor() {
 		Factory factory = TestPluginFactory.factory((c) -> {
-
 			PropertyDefinition goodPropertyDefinition = PropertyDefinition.builder().setType(Color.class).setDefaultValue(Color.BLUE).build();
 			PropertyDefinition badPropertyDefinition = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(false).build();
-
-			// if the property definition is null
-			ContractException contractException = assertThrows(ContractException.class, () -> new EnumPropertyManager(null, 0));
+			
+			EnumPropertyManager enumPropertyManager = new EnumPropertyManager(goodPropertyDefinition, this::getEmptyIndexIterator);
+			assertNotNull(enumPropertyManager);
+			
+			// precondition test: if the property definition is null
+			ContractException contractException = assertThrows(ContractException.class, () -> new EnumPropertyManager(null, this::getEmptyIndexIterator));
 			assertEquals(PropertyError.NULL_PROPERTY_DEFINITION, contractException.getErrorType());
 
-			// if the property definition does not have a type of Enum.class
-			contractException = assertThrows(ContractException.class, () -> new EnumPropertyManager(badPropertyDefinition, 0));
+			// precondition test: if the property definition does not have a type of Enum.class
+			contractException = assertThrows(ContractException.class, () -> new EnumPropertyManager(badPropertyDefinition, this::getEmptyIndexIterator));
 			assertEquals(PropertyError.PROPERTY_DEFINITION_IMPROPER_TYPE, contractException.getErrorType());
 
-			// if the initial size is negative
-			contractException = assertThrows(ContractException.class, () -> new EnumPropertyManager(goodPropertyDefinition, -1));
-			assertEquals(PropertyError.NEGATIVE_INITIAL_SIZE, contractException.getErrorType());
 
-			EnumPropertyManager enumPropertyManager = new EnumPropertyManager(goodPropertyDefinition, 0);
-			assertNotNull(enumPropertyManager);
 		});
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
@@ -219,7 +222,7 @@ public class AT_EnumPropertyManager {
 
 			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Color.class).setDefaultValue(Color.RED).build();
 
-			EnumPropertyManager enumPropertyManager = new EnumPropertyManager(propertyDefinition, 0);
+			EnumPropertyManager enumPropertyManager = new EnumPropertyManager(propertyDefinition, this::getEmptyIndexIterator);
 
 			// precondition tests
 			ContractException contractException = assertThrows(ContractException.class, () -> enumPropertyManager.incrementCapacity(-1));

@@ -3930,7 +3930,6 @@ public final class AT_ResourcesDataManager {
 		// transfer resources between regions
 		continuityBuilder.addContextConsumer(2.5, (c) -> {
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
-
 			for (int i = 0; i < 50; i++) {
 				TestResourceId resourceId = TestResourceId.getRandomResourceId(randomGenerator);
 				TestRegionId sourceRegionId = TestRegionId.getRandomRegionId(randomGenerator);
@@ -3955,7 +3954,6 @@ public final class AT_ResourcesDataManager {
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
-
 			for (PersonId personId : peopleDataManager.getPeople()) {
 				TestResourceId testResourceId = TestResourceId.getRandomResourceId(randomGenerator);
 				RegionId regionId = regionsDataManager.getPersonRegion(personId);
@@ -3973,7 +3971,6 @@ public final class AT_ResourcesDataManager {
 		continuityBuilder.addContextConsumer(4.7, (c) -> {
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
-
 			for (PersonId personId : peopleDataManager.getPeople()) {
 				TestResourceId testResourceId = TestResourceId.getRandomResourceId(randomGenerator);
 				long avaialableAmount = resourcesDataManager.getPersonResourceLevel(testResourceId, personId);
@@ -3990,7 +3987,6 @@ public final class AT_ResourcesDataManager {
 		continuityBuilder.addContextConsumer(5.3, (c) -> {
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
-
 			for (PersonId personId : peopleDataManager.getPeople()) {
 				TestResourceId testResourceId = TestResourceId.getRandomResourceId(randomGenerator);
 				long avaialableAmount = resourcesDataManager.getPersonResourceLevel(testResourceId, personId);
@@ -4105,6 +4101,7 @@ public final class AT_ResourcesDataManager {
 		}
 
 		assertNotNull(result);
+		
 
 		return result;
 

@@ -1,7 +1,9 @@
 package plugins.people.datamanagers;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import nucleus.DataManager;
@@ -30,6 +32,7 @@ public final class PeopleDataManager extends DataManager {
 	private static class PopulationRecord {
 		private int populationCount;
 		private double assignmentTime;
+
 		@Override
 		public String toString() {
 			StringBuilder builder = new StringBuilder();
@@ -40,10 +43,11 @@ public final class PeopleDataManager extends DataManager {
 			builder.append("]");
 			return builder.toString();
 		}
-		
+
 	}
 
-	private static record PersonAdditionMutationEvent(PersonId personId, PersonConstructionData personConstructionData) implements Event {
+	private static record PersonAdditionMutationEvent(PersonId personId, PersonConstructionData personConstructionData)
+			implements Event {
 	}
 
 	private static record PersonRemovalMutationEvent(PersonId personId) implements Event {
@@ -66,13 +70,13 @@ public final class PeopleDataManager extends DataManager {
 	}
 
 	/**
-	 * Returns a new person id that has been added to the simulation. The
-	 * returned PersonId is unique and will wrap the int value returned by
-	 * getPersonIdLimit() just prior to invoking this method.
+	 * Returns a new person id that has been added to the simulation. The returned
+	 * PersonId is unique and will wrap the int value returned by getPersonIdLimit()
+	 * just prior to invoking this method.
 	 *
 	 * @throws ContractException
-	 *             <li>{@linkplain PersonError#NULL_PERSON_CONSTRUCTION_DATA} if
-	 *             the person construction data is null</li>
+	 *                           <li>{@linkplain PersonError#NULL_PERSON_CONSTRUCTION_DATA}
+	 *                           if the person construction data is null</li>
 	 *
 	 */
 	public PersonId addPerson(final PersonConstructionData personConstructionData) {
@@ -97,8 +101,8 @@ public final class PeopleDataManager extends DataManager {
 	 * events. Matches all such events.
 	 */
 	public EventFilter<PersonAdditionEvent> getEventFilterForPersonAdditionEvent() {
-		return EventFilter	.builder(PersonAdditionEvent.class)//
-							.build();
+		return EventFilter.builder(PersonAdditionEvent.class)//
+				.build();
 	}
 
 	/**
@@ -106,8 +110,8 @@ public final class PeopleDataManager extends DataManager {
 	 * {@link PersonImminentRemovalEvent} events. Matches all such events.
 	 */
 	public EventFilter<PersonImminentRemovalEvent> getEventFilterForPersonImminentRemovalEvent() {
-		return EventFilter	.builder(PersonImminentRemovalEvent.class)//
-							.build();
+		return EventFilter.builder(PersonImminentRemovalEvent.class)//
+				.build();
 	}
 
 	/**
@@ -133,8 +137,8 @@ public final class PeopleDataManager extends DataManager {
 	}
 
 	/**
-	 * Returns the lowest int id that has yet to be associated with a person.
-	 * Lower values will correspond to existing, removed or unused id values.
+	 * Returns the lowest int id that has yet to be associated with a person. Lower
+	 * values will correspond to existing, removed or unused id values.
 	 */
 	public int getPersonIdLimit() {
 		return personIds.size();
@@ -155,7 +159,8 @@ public final class PeopleDataManager extends DataManager {
 		return globalPopulationRecord.assignmentTime;
 	}
 
-	private void handlePersonAdditionMutationEvent(DataManagerContext dataManagerContext, PersonAdditionMutationEvent personAdditionMutationEvent) {
+	private void handlePersonAdditionMutationEvent(DataManagerContext dataManagerContext,
+			PersonAdditionMutationEvent personAdditionMutationEvent) {
 		PersonConstructionData personConstructionData = personAdditionMutationEvent.personConstructionData();
 		PersonId personId = personAdditionMutationEvent.personId();
 		validatePersonConstructionDataNotNull(personConstructionData);
@@ -169,11 +174,12 @@ public final class PeopleDataManager extends DataManager {
 		globalPopulationRecord.assignmentTime = dataManagerContext.getTime();
 
 		/*
-		 * It is very likely that the PersonImminentAdditionEvent will have
-		 * subscribers, so we don't waste time asking if there are any.
+		 * It is very likely that the PersonImminentAdditionEvent will have subscribers,
+		 * so we don't waste time asking if there are any.
 		 * 
 		 */
-		final PersonImminentAdditionEvent personImminentAdditionEvent = new PersonImminentAdditionEvent(personId, personConstructionData);
+		final PersonImminentAdditionEvent personImminentAdditionEvent = new PersonImminentAdditionEvent(personId,
+				personConstructionData);
 		dataManagerContext.releaseObservationEvent(personImminentAdditionEvent);
 
 		if (dataManagerContext.subscribersExist(PersonAdditionEvent.class)) {
@@ -182,7 +188,8 @@ public final class PeopleDataManager extends DataManager {
 
 	}
 
-	private void handlePersonRemovalMutationEvent(DataManagerContext dataManagerContext, PersonRemovalMutationEvent personRemovalMutationEvent) {
+	private void handlePersonRemovalMutationEvent(DataManagerContext dataManagerContext,
+			PersonRemovalMutationEvent personRemovalMutationEvent) {
 		PersonId personId = personRemovalMutationEvent.personId();
 
 		validatePersonExists(personId);
@@ -209,13 +216,13 @@ public final class PeopleDataManager extends DataManager {
 	 * must invoke the super.
 	 *
 	 * @throws ContractException
-	 *             <li>{@linkplain NucleusError#DATA_MANAGER_DUPLICATE_INITIALIZATION}
-	 *             if init() is invoked more than once</li>
+	 *                           <li>{@linkplain NucleusError#DATA_MANAGER_DUPLICATE_INITIALIZATION}
+	 *                           if init() is invoked more than once</li>
 	 * 
 	 * 
-	 *             <li>{@linkplain PersonError#PERSON_ASSIGNMENT_TIME_IN_FUTURE}
-	 *             if the plugin data person assignment time exceeds the start
-	 *             time of the simulation</li>
+	 *                           <li>{@linkplain PersonError#PERSON_ASSIGNMENT_TIME_IN_FUTURE}
+	 *                           if the plugin data person assignment time exceeds
+	 *                           the start time of the simulation</li>
 	 *
 	 */
 	@Override
@@ -264,8 +271,8 @@ public final class PeopleDataManager extends DataManager {
 	}
 
 	/**
-	 * Returns true if and only if there is an existing person associated with
-	 * the given index. The PersonId is a wrapper around an int index.
+	 * Returns true if and only if there is an existing person associated with the
+	 * given index. The PersonId is a wrapper around an int index.
 	 */
 	public boolean personIndexExists(final int personId) {
 		boolean result = false;
@@ -310,12 +317,12 @@ public final class PeopleDataManager extends DataManager {
 	 * Removes the person from the simulation.
 	 *
 	 * @throws ContractException
-	 *             <li>{@linkplain PersonError#NULL_PERSON_ID} if the person id
-	 *             is null
-	 *             <li>
-	 *             <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if the person
-	 *             does not exist
-	 *             <li>
+	 *                           <li>{@linkplain PersonError#NULL_PERSON_ID} if the
+	 *                           person id is null
+	 *                           <li>
+	 *                           <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if
+	 *                           the person does not exist
+	 *                           <li>
 	 *
 	 *
 	 */
@@ -348,7 +355,46 @@ public final class PeopleDataManager extends DataManager {
 		builder.append("]");
 		return builder.toString();
 	}
-	
-	
+
+	private static class PersonIndexIterator implements Iterator<Integer> {
+
+		private Integer next;
+		private final Iterator<PersonId> iterator;
+
+		public PersonIndexIterator(Iterator<PersonId> iterator) {
+			this.iterator = iterator;
+			increment();
+		}
+
+		private void increment() {
+			next = null;
+			while (iterator.hasNext()) {
+				PersonId personId = iterator.next();
+				if (personId != null) {
+					next = personId.getValue();
+					break;
+				}
+			}
+		}
+
+		@Override
+		public boolean hasNext() {
+			return next != null;
+		}
+
+		@Override
+		public Integer next() {
+			if (next == null) {
+				throw new NoSuchElementException();
+			}
+			Integer result = next;			
+			increment();
+			return result;
+		}
+	}
+
+	public Iterator<Integer> getPersonIndexIterator() {
+		return new PersonIndexIterator(personIds.iterator());
+	}
 
 }

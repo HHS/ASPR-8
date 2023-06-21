@@ -76,7 +76,7 @@ public final class AT_PartitionsDataManager_Continuity {
 	 * sampling mechanism will result in a run-continuous simulation.*
 	 */
 	@Test
-	@UnitTestMethod(target = PeopleDataManager.class, name = "init", args = { DataManagerContext.class })
+	@UnitTestMethod(target = PartitionsDataManager.class, name = "init", args = { DataManagerContext.class })
 	public void testStateContinuity() {
 
 		// We will run a simulation that sample from a partition to select
@@ -463,5 +463,7 @@ public final class AT_PartitionsDataManager_Continuity {
 		 */
 		return stateData.output;
 	}
+	
+	
 
 }
