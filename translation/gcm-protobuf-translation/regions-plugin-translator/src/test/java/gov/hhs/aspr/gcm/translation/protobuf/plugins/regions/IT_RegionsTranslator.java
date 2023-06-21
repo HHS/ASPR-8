@@ -31,7 +31,6 @@ import plugins.regions.testsupport.TestRegionPropertyId;
 import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportPeriod;
 import plugins.reports.support.SimpleReportLabel;
-import plugins.util.properties.TimeTrackingPolicy;
 import util.annotations.UnitTestForCoverage;
 import util.random.RandomGeneratorProvider;
 
@@ -65,7 +64,7 @@ public class IT_RegionsTranslator {
         }
 
         RegionsPluginData expectedPluginData = RegionsTestPluginFactory.getStandardRegionsPluginData(people,
-                TimeTrackingPolicy.TRACK_TIME, seed);
+                true, seed);
 
         translatorController.writeOutput(expectedPluginData);
         translatorController.readInput();

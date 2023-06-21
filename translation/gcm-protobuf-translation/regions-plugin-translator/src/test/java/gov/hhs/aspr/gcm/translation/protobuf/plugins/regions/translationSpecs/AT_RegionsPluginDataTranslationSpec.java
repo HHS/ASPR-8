@@ -18,7 +18,6 @@ import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
 import plugins.people.support.PersonId;
 import plugins.regions.RegionsPluginData;
 import plugins.regions.testsupport.RegionsTestPluginFactory;
-import plugins.util.properties.TimeTrackingPolicy;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestForCoverage;
 import util.annotations.UnitTestMethod;
@@ -57,7 +56,7 @@ public class AT_RegionsPluginDataTranslationSpec {
         }
 
         RegionsPluginData expectedAppValue = RegionsTestPluginFactory.getStandardRegionsPluginData(people,
-                TimeTrackingPolicy.TRACK_TIME, seed);
+                true, seed);
 
         RegionsPluginDataInput inputValue = translationSpec.convertAppObject(expectedAppValue);
 
@@ -67,7 +66,7 @@ public class AT_RegionsPluginDataTranslationSpec {
         assertEquals(expectedAppValue.toString(), actualAppValue.toString());
 
         expectedAppValue = RegionsTestPluginFactory.getStandardRegionsPluginData(people,
-                TimeTrackingPolicy.DO_NOT_TRACK_TIME, seed);
+                false, seed);
 
         inputValue = translationSpec.convertAppObject(expectedAppValue);
 
