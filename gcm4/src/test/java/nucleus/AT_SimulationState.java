@@ -107,6 +107,14 @@ public class AT_SimulationState {
 
             assertEquals(localDate, simulationState.getBaseDate());
         }
+
+        // precondition:
+        // LocalDate is null
+        ContractException contractException = assertThrows(ContractException.class, () -> {
+            SimulationState.builder().setBaseDate(null);
+        });
+
+        assertEquals(NucleusError.NULL_BASE_DATE, contractException.getErrorType());
     }
 
     @Test
@@ -132,6 +140,14 @@ public class AT_SimulationState {
             List<PlanQueueData> actualPlanQueueDatas = simulationState.getPlanQueueDatas();
             assertEquals(expectedPlanQueueDatas, actualPlanQueueDatas);
         }
+
+        // precondition:
+        // LocalDate is null
+        ContractException contractException = assertThrows(ContractException.class, () -> {
+            SimulationState.builder().addPlanQueueData(null);
+        });
+
+        assertEquals(NucleusError.NULL_PLAN_QUEUE_DATA, contractException.getErrorType());
     }
 
     @Test
