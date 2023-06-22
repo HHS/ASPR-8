@@ -137,12 +137,17 @@ public final class FloatValueContainer {
 		sb.append('[');
 
 		while (iterator.hasNext()) {
-			float value = getValue(iterator.next());
+			
 			if (first) {
 				first = false;
 			} else {
 				sb.append(", ");
 			}
+			Integer index = iterator.next();
+			float value = getValue(index);
+			
+			sb.append(index);
+			sb.append("=");
 			sb.append(value);
 		}
 		sb.append(']');

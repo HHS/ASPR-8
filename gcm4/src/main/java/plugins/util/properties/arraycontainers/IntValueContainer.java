@@ -176,8 +176,9 @@ public final class IntValueContainer {
 				} else {
 					sb.append(", ");
 				}
-
 				Integer index = iterator.next();
+				sb.append(index);
+				sb.append("=");
 				if (index < 0 || index >= n) {
 					sb.append(defaultValue);
 				} else {
@@ -293,6 +294,8 @@ public final class IntValueContainer {
 					sb.append(", ");
 				}
 				Integer index = iterator.next();
+				sb.append(index);
+				sb.append("=");
 				if (index < 0 || index >= n) {
 					sb.append(defaultValue);
 				} else {
@@ -411,6 +414,8 @@ public final class IntValueContainer {
 				}
 
 				Integer index = iterator.next();
+				sb.append(index);
+				sb.append("=");
 				if (index < 0 || index >= n) {
 					sb.append(defaultValue);
 				} else {
@@ -518,6 +523,8 @@ public final class IntValueContainer {
 				} else {
 					sb.append(", ");
 				}
+				sb.append(index);
+				sb.append("=");
 				if (index < 0 || index >= n) {
 					sb.append(defaultValue);
 				} else {
@@ -846,9 +853,7 @@ public final class IntValueContainer {
 	 *
 	 */
 	public void incrementByteValue(int index, byte value) {
-		if (index < 0) {
-			throw new ContractException(PropertyError.NEGATIVE_INDEX);
-		}
+		
 
 		long incrementedValue = Math.addExact(getValueAsLong(index), value);
 		setLongValue(index, incrementedValue);
@@ -863,9 +868,7 @@ public final class IntValueContainer {
 	 *
 	 */
 	public void incrementShortValue(int index, short value) {
-		if (index < 0) {
-			throw new ContractException(PropertyError.NEGATIVE_INDEX);
-		}
+		
 		long incrementedValue = Math.addExact(getValueAsLong(index), value);
 		setLongValue(index, incrementedValue);
 	}
@@ -879,9 +882,7 @@ public final class IntValueContainer {
 	 *
 	 */
 	public void incrementIntValue(int index, int value) {
-		if (index < 0) {
-			throw new ContractException(PropertyError.NEGATIVE_INDEX);
-		}
+		
 		long incrementedValue = Math.addExact(getValueAsLong(index), value);
 		setLongValue(index, incrementedValue);
 	}
@@ -895,9 +896,7 @@ public final class IntValueContainer {
 	 *
 	 */
 	public void incrementLongValue(int index, long value) {
-		if (index < 0) {
-			throw new ContractException(PropertyError.NEGATIVE_INDEX);
-		}
+		
 		long incrementedValue = Math.addExact(getValueAsLong(index), value);
 		setLongValue(index, incrementedValue);
 	}
@@ -911,9 +910,7 @@ public final class IntValueContainer {
 	 *
 	 */
 	public void decrementByteValue(int index, byte value) {
-		if (index < 0) {
-			throw new ContractException(PropertyError.NEGATIVE_INDEX);
-		}
+		
 
 		long decrementedValue = Math.subtractExact(getValueAsLong(index), value);
 		setLongValue(index, decrementedValue);
@@ -928,9 +925,7 @@ public final class IntValueContainer {
 	 *
 	 */
 	public void decrementShortValue(int index, short value) {
-		if (index < 0) {
-			throw new ContractException(PropertyError.NEGATIVE_INDEX);
-		}
+		
 		long decrementedValue = Math.subtractExact(getValueAsLong(index), value);
 		setLongValue(index, decrementedValue);
 	}
@@ -944,9 +939,7 @@ public final class IntValueContainer {
 	 *
 	 */
 	public void decrementIntValue(int index, int value) {
-		if (index < 0) {
-			throw new ContractException(PropertyError.NEGATIVE_INDEX);
-		}
+		
 		long decrementedValue = Math.subtractExact(getValueAsLong(index), value);
 		setLongValue(index, decrementedValue);
 	}
@@ -964,9 +957,7 @@ public final class IntValueContainer {
 	 *
 	 */
 	public void decrementLongValue(int index, long value) {
-		if (index < 0) {
-			throw new ContractException(PropertyError.NEGATIVE_INDEX);
-		}
+		
 		long decrementedValue = Math.subtractExact(getValueAsLong(index), value);
 		setLongValue(index, decrementedValue);
 	}
