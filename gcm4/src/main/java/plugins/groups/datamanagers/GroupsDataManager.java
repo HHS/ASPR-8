@@ -106,7 +106,7 @@ public final class GroupsDataManager extends DataManager {
 	//////////////////////////////////////////////////
 
 	// typeIndex->List<GroupId>
-	private final ObjectValueContainer typesToGroupsMap = new ObjectValueContainer(null, 0);
+	private final ObjectValueContainer typesToGroupsMap = new ObjectValueContainer(null, this::getGroupIndexIterator);
 
 	// groupIndex->typeIndex
 	private final IntValueContainer groupsToTypesMap = new IntValueContainer(-1, this::getGroupIndexIterator);
@@ -118,10 +118,11 @@ public final class GroupsDataManager extends DataManager {
 	private final List<GroupTypeId> indexesToTypesMap = new ArrayList<>();
 
 	// groupIndex->List<PersonId> by order of addition
-	private final ObjectValueContainer groupsToPeopleMap = new ObjectValueContainer(null, 0);
+	private ObjectValueContainer groupsToPeopleMap;
+	
 
 	// personIndex->List<GroupId> by order of addition
-	private final ObjectValueContainer peopleToGroupsMap = new ObjectValueContainer(null, 0);
+	private final ObjectValueContainer peopleToGroupsMap = new ObjectValueContainer(null, this::getGroupIndexIterator);
 
 	///////////////////////////////////////
 
@@ -214,6 +215,7 @@ public final class GroupsDataManager extends DataManager {
 		if (dataManagerContext == null) {
 			throw new ContractException(NucleusError.NULL_SIMULATION_CONTEXT);
 		}
+		
 
 		this.dataManagerContext = dataManagerContext;
 		groupsContext = new GroupsContextImpl(dataManagerContext);
@@ -221,6 +223,10 @@ public final class GroupsDataManager extends DataManager {
 		stochasticsDataManager = dataManagerContext.getDataManager(StochasticsDataManager.class);
 		peopleDataManager = dataManagerContext.getDataManager(PeopleDataManager.class);
 
+		groupsToPeopleMap = new ObjectValueContainer(null, peopleDataManager::getPersonIndexIterator);
+
+		
+		
 		dataManagerContext.subscribe(GroupAdditionMutationEvent.class, this::handleGroupAdditionMutationEvent);
 		dataManagerContext.subscribe(GroupTypeAdditionMutationEvent.class, this::handleGroupTypeAdditionMutationEvent);
 		dataManagerContext.subscribe(GroupMembershipAdditionMutationEvent.class,
@@ -1381,7 +1387,7 @@ public final class GroupsDataManager extends DataManager {
 		} else if (Enum.class.isAssignableFrom(propertyDefinition.getType())) {
 			indexedPropertyManager = new EnumPropertyManager(propertyDefinition, indexIteratorSupplier);
 		} else {
-			indexedPropertyManager = new ObjectPropertyManager(propertyDefinition, intialSize);
+			indexedPropertyManager = new ObjectPropertyManager(propertyDefinition, indexIteratorSupplier);
 		}
 		return indexedPropertyManager;
 	}
