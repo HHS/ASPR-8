@@ -134,13 +134,17 @@ public final class DoubleValueContainer {
 		sb.append('[');
 
 		while (iterator.hasNext()) {
-			double value = getValue(iterator.next());
+			Integer index = iterator.next();
+			double value = getValue(index);
 
 			if (first) {
 				first = false;
 			} else {
 				sb.append(", ");
 			}
+			
+			sb.append(index);
+			sb.append("=");
 			sb.append(value);
 
 		}

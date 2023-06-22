@@ -1,6 +1,8 @@
 package plugins.util.properties.arraycontainers;
 
 import java.util.Arrays;
+import java.util.Iterator;
+import java.util.function.Supplier;
 
 /**
  * An array-based container for Objects that associates non-negative int indices
@@ -15,6 +17,8 @@ public final class ObjectValueContainer {
 	private Object[] elements;
 
 	private final Object defaultValue;
+	
+	private final Supplier<Iterator<Integer>> indexIteratorSupplier;
 
 	/**
 	 * Constructs a new ObjectValueContainer with the given default value and
@@ -23,17 +27,10 @@ public final class ObjectValueContainer {
 	 * @throws IllegalArgumentException
 	 *                                  <li>if capacity is negative
 	 */
-	public ObjectValueContainer(Object defaultValue, int capacity) {
-		if (capacity < 0) {
-			throw new IllegalArgumentException("negative capacity: " + capacity);
-		}
-		elements = new Object[capacity];
-		this.defaultValue = defaultValue;
-		if (defaultValue != null) {
-			for (int i = 0; i < capacity; i++) {
-				elements[i] = defaultValue;
-			}
-		}
+	public ObjectValueContainer(Object defaultValue, Supplier<Iterator<Integer>> indexIteratorSupplier) {
+		elements = new Object[0];
+		this.defaultValue = defaultValue;		
+		this.indexIteratorSupplier = indexIteratorSupplier;
 	}
 
 	/**
@@ -103,13 +100,14 @@ public final class ObjectValueContainer {
 
 	private String getElementsString() {
 
+		Iterator<Integer> iterator = indexIteratorSupplier.get();
 
 		StringBuilder sb = new StringBuilder();
 		sb.append('[');
 		boolean first = true;
-		int n = elements.length;
-		for (int i = 0;i<n; i++) {
-			Object value = elements[i];
+		while(iterator.hasNext()) {
+			Integer index = iterator.next();
+			Object value = getValue(index);
 			if(value == null) {
 				continue;
 			}
@@ -118,7 +116,7 @@ public final class ObjectValueContainer {
 			}else {
 				sb.append(", ");
 			}
-			sb.append(i);
+			sb.append(index);
 			sb.append("=");
 			sb.append(value);			
 		}

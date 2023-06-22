@@ -1,5 +1,8 @@
 package plugins.util.properties;
 
+import java.util.Iterator;
+import java.util.function.Supplier;
+
 import plugins.util.properties.arraycontainers.ObjectValueContainer;
 import util.errors.ContractException;
 
@@ -27,13 +30,9 @@ public final class ObjectPropertyManager implements IndexedPropertyManager {
 	 *             the property definition is null</li> 
 	 * 
 	 */
-	public ObjectPropertyManager(PropertyDefinition propertyDefinition, int initialSize) {
+	public ObjectPropertyManager(PropertyDefinition propertyDefinition, Supplier<Iterator<Integer>> indexIteratorSupplier) {
 		if (propertyDefinition == null) {
 			throw new ContractException(PropertyError.NULL_PROPERTY_DEFINITION);
-		}
-		
-		if (initialSize < 0) {
-			throw new ContractException(PropertyError.NEGATIVE_INITIAL_SIZE);
 		}
 		
 		if (propertyDefinition.getDefaultValue().isPresent()) {
@@ -43,7 +42,7 @@ public final class ObjectPropertyManager implements IndexedPropertyManager {
 		}
 
 		
-		objectValueContainer = new ObjectValueContainer(defaultValue, initialSize);
+		objectValueContainer = new ObjectValueContainer(defaultValue, indexIteratorSupplier);
 	}
 
 	@Override

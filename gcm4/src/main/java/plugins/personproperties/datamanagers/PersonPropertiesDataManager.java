@@ -323,7 +323,7 @@ public final class PersonPropertiesDataManager extends DataManager {
 		} else if (Enum.class.isAssignableFrom(propertyDefinition.getType())) {
 			indexedPropertyManager = new EnumPropertyManager(propertyDefinition, indexIteratorSupplier);
 		} else {
-			indexedPropertyManager = new ObjectPropertyManager(propertyDefinition, intialSize);
+			indexedPropertyManager = new ObjectPropertyManager(propertyDefinition, indexIteratorSupplier);
 		}
 		return indexedPropertyManager;
 	}

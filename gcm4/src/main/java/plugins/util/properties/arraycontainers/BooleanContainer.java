@@ -88,12 +88,15 @@ public final class BooleanContainer {
 		sb.append('[');
 		
 		while (iterator.hasNext()) {
-			boolean value = get(iterator.next());
+			Integer index = iterator.next();
+			boolean value = get(index);
 			if (first) {
 				first = false;
 			} else {
 				sb.append(", ");
 			}
+			sb.append(index);
+			sb.append("=");
 			sb.append(value);
 		}
 		
