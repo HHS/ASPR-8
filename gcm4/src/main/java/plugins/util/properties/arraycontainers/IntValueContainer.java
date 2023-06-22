@@ -431,8 +431,7 @@ public final class IntValueContainer {
 		public String toString() {
 			StringBuilder builder = new StringBuilder();
 			builder.append("ShortArray [values=");
-			builder.append(getElementsString());
-			builder.append(Arrays.toString(values));
+			builder.append(getElementsString());			
 			builder.append(", defaultValue=");
 			builder.append(defaultValue);
 			builder.append("]");
