@@ -248,21 +248,21 @@ public final class MaterialsDataManager extends DataManager {
 			builder.append(materialProducerId);
 			builder.append(", materialProducerResources=");
 			builder.append(materialProducerResources);
-			builder.append(", stageRecords=");
-
-			List<StageId> stageIds = new ArrayList<>();
-			for (StageRecord stageRecord : stageRecords) {
-				stageIds.add(stageRecord.stageId);
-			}
-			builder.append(stageIds);
-			builder.append(", inventory=");
-
-			List<BatchId> batchIds = new ArrayList<>();
+//			builder.append(", stageRecords=");
+//
+//			List<StageId> stageIds = new ArrayList<>();
+//			for (StageRecord stageRecord : stageRecords) {
+//				stageIds.add(stageRecord.stageId);
+//			}
+//			builder.append(stageIds);
+//			builder.append(", inventory=");
+//
+//			List<BatchId> batchIds = new ArrayList<>();
 //			for (BatchRecord batchRecord : inventory) {
 //				batchIds.add(batchRecord.batchId);
 //			}
-			builder.append(batchIds);
-			builder.append("]");
+//			builder.append(batchIds);
+//			builder.append("]");
 			return builder.toString();
 		}
 
@@ -295,8 +295,6 @@ public final class MaterialsDataManager extends DataManager {
 	private final Map<MaterialsProducerId, MaterialsProducerRecord> materialsProducerMap = new LinkedHashMap<>();
 
 	private final Map<MaterialsProducerPropertyId, PropertyDefinition> materialsProducerPropertyDefinitions = new LinkedHashMap<>();
-
-	private final Set<MaterialsProducerPropertyId> materialsProducerPropertyIds = new LinkedHashSet<>();
 
 	private final Map<MaterialsProducerId, Map<MaterialsProducerPropertyId, Object>> materialsProducerPropertyMap = new LinkedHashMap<>();
 
@@ -1767,7 +1765,7 @@ public final class MaterialsDataManager extends DataManager {
 		}
 
 		materialsProducerPropertyDefinitions.put(materialsProducerPropertyId, propertyDefinition);
-		materialsProducerPropertyIds.add(materialsProducerPropertyId);
+		
 
 		if (checkAllProducersHaveValues) {
 			addNonDefaultProducerProperty(materialsProducerPropertyId);
@@ -2054,7 +2052,6 @@ public final class MaterialsDataManager extends DataManager {
 		}
 
 		for (MaterialsProducerPropertyId materialsProducerPropertyId : materialsPluginData.getMaterialsProducerPropertyIds()) {
-			materialsProducerPropertyIds.add(materialsProducerPropertyId);
 			PropertyDefinition propertyDefinition = materialsPluginData.getMaterialsProducerPropertyDefinition(materialsProducerPropertyId);
 			materialsProducerPropertyDefinitions.put(materialsProducerPropertyId, propertyDefinition);
 			if (propertyDefinition.getDefaultValue().isEmpty()) {
@@ -2199,7 +2196,7 @@ public final class MaterialsDataManager extends DataManager {
 	 * Null tolerant.
 	 */
 	public boolean materialsProducerPropertyIdExists(final MaterialsProducerPropertyId materialsProducerPropertyId) {
-		return materialsProducerPropertyIds.contains(materialsProducerPropertyId);
+		return materialsProducerPropertyDefinitions.keySet().contains(materialsProducerPropertyId);
 	}
 
 	/**
@@ -2712,7 +2709,7 @@ public final class MaterialsDataManager extends DataManager {
 			throw new ContractException(PropertyError.NULL_PROPERTY_ID);
 		}
 
-		if (!materialsProducerPropertyIds.contains(materialsProducerPropertyId)) {
+		if (!materialsProducerPropertyDefinitions.keySet().contains(materialsProducerPropertyId)) {
 			throw new ContractException(PropertyError.UNKNOWN_PROPERTY_ID, materialsProducerPropertyId);
 		}
 	}
@@ -2930,15 +2927,38 @@ public final class MaterialsDataManager extends DataManager {
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("MaterialsDataManager [batchPropertyDefinitions=");
-		builder.append(batchPropertyDefinitions);
-		builder.append(", nextBatchRecordId=");
-		builder.append(nextBatchRecordId);
-		builder.append(", nextStageRecordId=");
-		builder.append(nextStageRecordId);
-		builder.append(", materialIds=");
-		builder.append(materialIds);
+//		builder.append("MaterialsDataManager [batchPropertyDefinitions=");//good
+//		builder.append(batchPropertyDefinitions);//good
+//		builder.append(", nextBatchRecordId=");//good
+//		builder.append(nextBatchRecordId);//good
+//		builder.append(", nextStageRecordId=");//good
+//		builder.append(nextStageRecordId);//good
+//		builder.append(", materialIds=");//good
+//		builder.append(materialIds);//good
+//		builder.append(", materialsProducerPropertyDefinitions=");//good
+//		builder.append(materialsProducerPropertyDefinitions);//good
+//		builder.append(", materialsProducerMap=");//stage and batch data is bad
+//		builder.append(materialsProducerMap);//stage and batch data is bad
+//		builder.append(", materialsProducerPropertyMap=");//bad
+//		builder.append(materialsProducerPropertyMap);//bad
+		
+		builder.append("/////////////////////////////");
+		builder.append("\n");
+		for(MaterialsProducerId materialsProducerId : materialsProducerPropertyMap.keySet()) {
+			Map<MaterialsProducerPropertyId, Object> map = materialsProducerPropertyMap.get(materialsProducerId);
+			for(MaterialsProducerPropertyId materialsProducerPropertyId : map.keySet()) {
+				Object value = map.get(materialsProducerPropertyId);
+				builder.append(materialsProducerId);
+				builder.append("\t");
+				builder.append(materialsProducerPropertyId);
+				builder.append("\t");
+				builder.append(value);				
+				builder.append("\n");
+			}
+		}
 
+		
+		
 
 //		builder.append(", batchPropertyMap=");//bad
 //		builder.append(batchPropertyMap);//bad
@@ -2953,14 +2973,8 @@ public final class MaterialsDataManager extends DataManager {
 //			builder.append(batchRecord);
 //			builder.append("\n");
 //		}
-//		builder.append(", materialsProducerMap=");//bad
-//		builder.append(materialsProducerMap);//bad
-//		builder.append(", materialsProducerPropertyDefinitions=");
-//		builder.append(materialsProducerPropertyDefinitions);
 //		builder.append(", materialsProducerPropertyIds=");
 //		builder.append(materialsProducerPropertyIds);
-//		builder.append(", materialsProducerPropertyMap=");
-//		builder.append(materialsProducerPropertyMap);
 //		builder.append(", resourceIds=");
 //		builder.append(resourceIds);
 //		builder.append(", stageRecords=");

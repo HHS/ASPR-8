@@ -688,7 +688,7 @@ public final class MaterialsPluginData implements PluginData {
 
 		private final Map<BatchId, Double> batchAmounts;
 
-		private final Map<BatchId, MaterialsProducerId> batchMaterialsProducers;
+private final Map<BatchId, MaterialsProducerId> batchMaterialsProducers;
 
 		private final Map<BatchId, Map<BatchPropertyId, Object>> batchPropertyValues;
 
@@ -698,11 +698,11 @@ public final class MaterialsPluginData implements PluginData {
 
 		private final Map<StageId, Boolean> stageOffers;
 
-		private final Map<StageId, MaterialsProducerId> stageMaterialsProducers;
+private final Map<StageId, MaterialsProducerId> stageMaterialsProducers;
 
-		private final Map<StageId, Set<BatchId>> stageBatches;
+private final Map<StageId, Set<BatchId>> stageBatches;
 
-		private final Map<BatchId, StageId> batchStages;
+private final Map<BatchId, StageId> batchStages;
 
 		private int nextBatchRecordId = -1;
 

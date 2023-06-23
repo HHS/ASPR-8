@@ -516,7 +516,7 @@ public class AT_MaterialsDataManager_Continuity {
 					MaterialId materialId = materialsDataManager.getBatchMaterial(batchId);
 					Set<TestBatchPropertyId> batchPropertyIds = materialsDataManager.getBatchPropertyIds(materialId);
 					for (TestBatchPropertyId batchPropertyId : batchPropertyIds) {
-						System.out.println("draw test " + batchId + " " + batchPropertyId);
+						System.out.println(materialsProducerId+"\t"+ batchId + "\t" + batchPropertyId);
 						PropertyDefinition propertyDefinition = materialsDataManager
 								.getBatchPropertyDefinition(materialId, batchPropertyId);
 						if (propertyDefinition.propertyValuesAreMutable()) {
@@ -637,8 +637,16 @@ public class AT_MaterialsDataManager_Continuity {
 				}
 			}
 
-			c.releaseOutput(materialsDataManager.toString());
+			
 
+		});
+	}
+	
+	private static void reportMaterialsManagerState(RunContinuityPluginData.Builder continuityBuilder) {
+		// transfer resources to regions
+		continuityBuilder.addContextConsumer(7.0, (c) -> {
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+			c.releaseOutput(materialsDataManager.toString());
 		});
 	}
 
@@ -656,11 +664,12 @@ public class AT_MaterialsDataManager_Continuity {
 		offerStages(continuityBuilder);
 		moveBatchesToInventory(continuityBuilder);
 		setSomeBatchProperties(continuityBuilder);
-		setMoreProducerProperties(continuityBuilder);
+	setMoreProducerProperties(continuityBuilder);
 		transferMaterialsBetweenBatches(continuityBuilder);
 		transferAnOfferedStage(continuityBuilder);
 		transferResourcesToRegions(continuityBuilder);
-
+		reportMaterialsManagerState(continuityBuilder);
+		
 		return continuityBuilder.build();
 
 	}
@@ -738,6 +747,8 @@ public class AT_MaterialsDataManager_Continuity {
 		// reasonable
 		assertNotNull(stateData.output);
 		// assertTrue(stateData.output.length() > 100);
+		//System.out.println(stateData.output);
+		System.out.println("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
 		return stateData.output;
 	}
 
