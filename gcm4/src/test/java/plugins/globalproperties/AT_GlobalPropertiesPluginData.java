@@ -183,7 +183,7 @@ public class AT_GlobalPropertiesPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = GlobalPropertiesPluginData.Builder.class, name = "setGlobalPropertyValue", args = { GlobalPropertyId.class, Object.class })
+	@UnitTestMethod(target = GlobalPropertiesPluginData.Builder.class, name = "setGlobalPropertyValue", args = { GlobalPropertyId.class, Object.class, double.class })
 	public void testSetGlobalPropertyValue() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(170390875787254562L);
 

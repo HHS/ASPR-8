@@ -26,10 +26,12 @@ import nucleus.testsupport.testplugin.TestPluginId;
 import nucleus.testsupport.testplugin.TestSimulation;
 import plugins.globalproperties.GlobalPropertiesPluginData;
 import plugins.globalproperties.GlobalPropertiesPluginId;
+import plugins.globalproperties.reports.GlobalPropertyReportPluginData;
 import plugins.globalproperties.support.GlobalPropertiesError;
 import plugins.globalproperties.support.GlobalPropertyId;
 import plugins.globalproperties.support.SimpleGlobalPropertyId;
 import plugins.globalproperties.testsupport.GlobalPropertiesTestPluginFactory.Factory;
+import plugins.reports.support.SimpleReportLabel;
 import plugins.util.properties.PropertyDefinition;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
@@ -39,7 +41,9 @@ import util.wrappers.MutableBoolean;
 public class AT_GlobalPropertiesTestPluginFactory {
 
     @Test
-    @UnitTestMethod(target = GlobalPropertiesTestPluginFactory.class, name = "factory", args = { Consumer.class })
+    @UnitTestMethod(target = GlobalPropertiesTestPluginFactory.Factory.class, name = "factory", args = { long.class,
+            Consumer.class })
+
     public void testFactory_Consumer() {
         MutableBoolean executed = new MutableBoolean();
         Factory factory = GlobalPropertiesTestPluginFactory.factory(2050026532065791481L, c -> executed.setValue(true));
@@ -55,7 +59,8 @@ public class AT_GlobalPropertiesTestPluginFactory {
     }
 
     @Test
-    @UnitTestMethod(target = GlobalPropertiesTestPluginFactory.class, name = "factory", args = { TestPluginData.class })
+    @UnitTestMethod(target = GlobalPropertiesTestPluginFactory.class, name = "factory", args = { long.class,
+            TestPluginData.class })
     public void testFactory_TestPluginData() {
         MutableBoolean executed = new MutableBoolean();
         TestPluginData.Builder pluginBuilder = TestPluginData.builder();
@@ -96,13 +101,33 @@ public class AT_GlobalPropertiesTestPluginFactory {
      * pluginid exists, and exists EXACTLY once.
      */
     private <T extends PluginData> void checkPluginDataExists(List<Plugin> plugins, T expectedPluginData,
-            PluginId pluginId) {
+            PluginId pluginId, int numPluginDatas) {
         Plugin actualPlugin = checkPluginExists(plugins, pluginId);
         List<PluginData> actualPluginDatas = actualPlugin.getPluginDatas();
         assertNotNull(actualPluginDatas);
-        assertEquals(1, actualPluginDatas.size());
-        PluginData actualPluginData = actualPluginDatas.get(0);
-        assertTrue(expectedPluginData == actualPluginData);
+        assertEquals(numPluginDatas, actualPluginDatas.size());
+
+        if (numPluginDatas > 1) {
+            for (PluginData pluginData : actualPluginDatas) {
+                if (expectedPluginData.getClass().isAssignableFrom(pluginData.getClass())) {
+                    assertTrue(expectedPluginData == pluginData);
+                    break;
+                }
+            }
+        } else {
+            PluginData actualPluginData = actualPluginDatas.get(0);
+            assertTrue(expectedPluginData == actualPluginData);
+        }
+
+    }
+
+    /**
+     * Given a list of plugins, will show that the explicit plugindata for the given
+     * pluginid exists, and exists EXACTLY once.
+     */
+    private <T extends PluginData> void checkPluginDataExists(List<Plugin> plugins, T expectedPluginData,
+            PluginId pluginId) {
+        checkPluginDataExists(plugins, expectedPluginData, pluginId, 1);
     }
 
     @Test
@@ -115,6 +140,38 @@ public class AT_GlobalPropertiesTestPluginFactory {
 
         checkPluginExists(plugins, GlobalPropertiesPluginId.PLUGIN_ID);
         checkPluginExists(plugins, TestPluginId.PLUGIN_ID);
+    }
+
+    @Test
+    @UnitTestMethod(target = GlobalPropertiesTestPluginFactory.Factory.class, name = "setGlobalPropertyReportPluginData", args = {
+            GlobalPropertyReportPluginData.class })
+    public void testSetGlobalPropertyReportPluginData() {
+        GlobalPropertyReportPluginData.Builder builder = GlobalPropertyReportPluginData.builder();
+
+        builder.setDefaultInclusion(false)
+                .setReportLabel(new SimpleReportLabel("global property report"));
+
+        RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(1086184935572375203L);
+        for (GlobalPropertyId globalPropertyId : TestGlobalPropertyId.values()) {
+            if (randomGenerator.nextBoolean()) {
+                builder.includeGlobalProperty(globalPropertyId);
+            } else {
+                builder.excludeGlobalProperty(globalPropertyId);
+            }
+        }
+
+        GlobalPropertyReportPluginData pluginData = builder.build();
+
+        List<Plugin> plugins = GlobalPropertiesTestPluginFactory.factory(2050026532065791481L, t -> {
+        }).setGlobalPropertyReportPluginData(pluginData).getPlugins();
+
+        checkPluginDataExists(plugins, pluginData, GlobalPropertiesPluginId.PLUGIN_ID, 2);
+
+        // precondition: globalPropReportPluginData is null
+        ContractException contractException = assertThrows(ContractException.class,
+                () -> GlobalPropertiesTestPluginFactory.factory(2050026532065791481L, t -> {
+                }).setGlobalPropertyReportPluginData(null));
+        assertEquals(GlobalPropertiesError.NULL_GLOBAL_PROPERTY_REPORT_PLUGIN_DATA, contractException.getErrorType());
     }
 
     @Test
@@ -151,7 +208,8 @@ public class AT_GlobalPropertiesTestPluginFactory {
     }
 
     @Test
-    @UnitTestMethod(target = GlobalPropertiesTestPluginFactory.class, name = "getStandardGlobalPropertiesPluginData", args = {})
+    @UnitTestMethod(target = GlobalPropertiesTestPluginFactory.class, name = "getStandardGlobalPropertiesPluginData", args = {
+            long.class })
     public void testGetStandardGlobalPropertiesPluginData() {
         long seed = 2376369840099946020L;
 
