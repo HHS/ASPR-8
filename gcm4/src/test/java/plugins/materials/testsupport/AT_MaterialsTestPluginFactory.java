@@ -365,7 +365,8 @@ public class AT_MaterialsTestPluginFactory {
                 StageId stageId = new StageId(sId++);
                 stages.add(stageId);
                 boolean offered = i % 2 == 0;
-                materialsBuilder.addStage(stageId, offered, testMaterialsProducerId);
+                materialsBuilder.addStage(stageId, offered);
+                materialsBuilder.addStageToMaterialProducer(stageId, testMaterialsProducerId);
             }
 
             Collections.shuffle(batches, new Random(randomGenerator.nextLong()));

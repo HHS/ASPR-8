@@ -2080,14 +2080,21 @@ public final class MaterialsDataManager extends DataManager {
 		}
 
 		for (final StageId stageId : materialsPluginData.getStageIds()) {
-			final MaterialsProducerId materialsProducerId = materialsPluginData.getStageMaterialsProducer(stageId);
-			final MaterialsProducerRecord materialsProducerRecord = materialsProducerMap.get(materialsProducerId);
 			final StageRecord stageRecord = new StageRecord(stageId);
-			stageRecord.materialsProducerRecord = materialsProducerRecord;
 			stageRecord.offered = materialsPluginData.isStageOffered(stageId);
-			materialsProducerRecord.stageRecords.add(stageRecord);
 			stageRecords.put(stageRecord.stageId, stageRecord);
 		}
+		
+		for (final MaterialsProducerId materialsProducerId : materialsPluginData.getMaterialsProducerIds()) {			
+			final MaterialsProducerRecord materialsProducerRecord = materialsProducerMap.get(materialsProducerId);
+			List<StageId> materialsProducerStages = materialsPluginData.getMaterialsProducerStages(materialsProducerId);
+			for(StageId stageId : materialsProducerStages) {
+				StageRecord stageRecord = stageRecords.get(stageId);
+				stageRecord.materialsProducerRecord = materialsProducerRecord;
+				materialsProducerRecord.stageRecords.add(stageRecord);
+			}
+		}
+		
 		nextStageRecordId = materialsPluginData.getNextStageRecordId();
 
 		for (final BatchId batchId : materialsPluginData.getBatchIds()) {
@@ -2306,9 +2313,18 @@ public final class MaterialsDataManager extends DataManager {
 
 		for (StageId stageId : stageRecords.keySet()) {
 			StageRecord stageRecord = stageRecords.get(stageId);
-			builder.addStage(stageId, stageRecord.offered, stageRecord.materialsProducerRecord.materialProducerId);
+			builder.addStage(stageId, stageRecord.offered);
 			for (BatchId batchId : getStageBatches(stageId)) {
 				builder.addBatchToStage(stageId, batchId);
+			}
+		}
+		
+		for (final MaterialsProducerId materialsProducerId : materialsProducerMap.keySet()) {			
+			final MaterialsProducerRecord materialsProducerRecord = materialsProducerMap.get(materialsProducerId);
+			
+			for(StageRecord stageRecord : materialsProducerRecord.stageRecords) {
+				StageId stageId = stageRecord.stageId;
+				builder.addStageToMaterialProducer(stageId, materialsProducerId);
 			}
 		}
 
