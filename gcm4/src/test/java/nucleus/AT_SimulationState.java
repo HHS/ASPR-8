@@ -11,7 +11,6 @@ import java.util.List;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import util.annotations.UnitTag;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.random.RandomGeneratorProvider;
@@ -239,14 +238,11 @@ public class AT_SimulationState {
     }
 
     @Test
-    @UnitTestMethod(target = SimulationState.class, name = "equals", args = { Object.class }, tags = {
-            UnitTag.INCOMPLETE })
     public void testEquals() {
 
     }
 
     @Test
-    @UnitTestMethod(target = SimulationState.class, name = "hashCode", args = {}, tags = { UnitTag.INCOMPLETE })
     public void testHashCode() {
 
     }
