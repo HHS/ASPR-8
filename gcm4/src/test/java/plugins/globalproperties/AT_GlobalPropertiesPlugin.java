@@ -18,7 +18,7 @@ import util.annotations.UnitTestMethod;
 public class AT_GlobalPropertiesPlugin {
 
     @Test
-    @UnitTestMethod(target = GlobalPropertiesPlugin.Builder.class, name = "builder", args = {
+    @UnitTestMethod(target = GlobalPropertiesPlugin.class, name = "builder", args = {
             GlobalPropertiesPluginData.class })
     public void testBuilder() {
         assertNotNull(GlobalPropertiesPlugin.builder());
