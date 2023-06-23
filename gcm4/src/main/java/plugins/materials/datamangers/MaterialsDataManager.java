@@ -355,7 +355,7 @@ public final class MaterialsDataManager extends DataManager {
 
 	/**
 	 * Constructs the data manager.
-	 * 
+	 *
 	 * @throws ContractException
 	 *             <li>{@linkplain MaterialsError#NULL_MATERIALS_PLUGIN_DATA} if
 	 *             the material plugin data is null</li>
@@ -371,35 +371,35 @@ public final class MaterialsDataManager extends DataManager {
 	 * Creates a batch from the {@linkplain BatchConstructionInfo} contained in
 	 * the event. Sets batch properties found in the batch construction info.
 	 * Generates a corresponding {@linkplain BatchAdditionEvent} event
-	 * 
+	 *
 	 * @throws ContractException
 	 *
-	 * 
+	 *
 	 *             <li>{@linkplain MaterialsError#UNKNOWN_MATERIALS_PRODUCER_ID}
 	 *             if the materials producer id is unknown</li>
-	 * 
+	 *
 	 *             <li>{@linkplain MaterialsError#NULL_BATCH_CONSTRUCTION_INFO}
 	 *             if the batch construction info in the event is null</li>
-	 * 
+	 *
 	 *             <li>{@linkplain MaterialsError#UNKNOWN_MATERIAL_ID} if the
 	 *             material id in the batch construction info is unknown</li>
-	 * 
+	 *
 	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if the
 	 *             batch construction info contains an unknown batch property
 	 *             id</li>
-	 * 
+	 *
 	 *             <li>{@linkplain PropertyError#INCOMPATIBLE_VALUE} if the
 	 *             batch construction info contains a batch property value that
 	 *             is incompatible with the corresponding property def</li>
-	 * 
+	 *
 	 *             <li>{@linkplain PropertyError#INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT}
 	 *             if the batch construction does not contain a batch property
 	 *             value assignment for a batch property that does not have a
 	 *             default value</li>
-	 * 
-	 * 
 	 *
-	 * 
+	 *
+	 *
+	 *
 	 */
 	public BatchId addBatch(BatchConstructionInfo batchConstructionInfo) {
 
@@ -410,13 +410,13 @@ public final class MaterialsDataManager extends DataManager {
 
 	/**
 	 * Adds a new material type
-	 * 
+	 *
 	 * @throws ContractException
 	 *             <li>{@linkplain MaterialsError#NULL_MATERIAL_ID} if the
 	 *             material id is null</li>
 	 *             <li>{@linkplain MaterialsError#DUPLICATE_MATERIAL} if the
 	 *             material id is already present</li>
-	 * 
+	 *
 	 */
 	public void addMaterialId(MaterialId materialId) {
 		dataManagerContext.releaseMutationEvent(new MaterialIdAdditionMutationEvent(materialId));
@@ -424,10 +424,10 @@ public final class MaterialsDataManager extends DataManager {
 
 	/**
 	 * Add a material producer
-	 * 
+	 *
 	 * @throws ContractException
-	 * 
-	 * 
+	 *
+	 *
 	 *             <li>{@linkplain MaterialsError#DUPLICATE_MATERIALS_PRODUCER_ID}
 	 *             if the materials producer id is already present</li>
 	 *
@@ -440,7 +440,7 @@ public final class MaterialsDataManager extends DataManager {
 	 *             materialsProducerConstructionData contains a property value
 	 *             assignment for an unknown materials producer property id.
 	 *             </li>
-	 * 
+	 *
 	 */
 	public void addMaterialsProducer(MaterialsProducerConstructionData materialsProducerConstructionData) {
 		dataManagerContext.releaseMutationEvent(new MaterialsProducerAdditionMutationEvent(materialsProducerConstructionData));
@@ -462,15 +462,15 @@ public final class MaterialsDataManager extends DataManager {
 	/**
 	 * Creates a stage. Generates a corresponding
 	 * {@linkplain StageAdditionEvent}
-	 * 
+	 *
 	 * @throws ContractException
-	 * 
+	 *
 	 *             <li>{@linkplain MaterialsError.NULL_MATERIALS_PRODUCER_ID} if
 	 *             the materials producer id is unknown</li>
-	 * 
+	 *
 	 *             <li>{@linkplain MaterialsError.UNKNOWN_MATERIALS_PRODUCER_ID}
 	 *             if the materials producer id is unknown</li>
-	 * 
+	 *
 	 */
 	public StageId addStage(final MaterialsProducerId materialsProducerId) {
 		StageId stageId = new StageId(nextStageRecordId++);
@@ -487,7 +487,7 @@ public final class MaterialsDataManager extends DataManager {
 
 	/**
 	 * Returns true if and only if the batch property exists. Null tolerant.
-	 * 
+	 *
 	 */
 	public boolean batchPropertyIdExists(final MaterialId materialId, final BatchPropertyId batchPropertyId) {
 		final Map<BatchPropertyId, PropertyDefinition> map = batchPropertyDefinitions.get(materialId);
@@ -511,44 +511,44 @@ public final class MaterialsDataManager extends DataManager {
 	}
 
 	/**
-	 * 
+	 *
 	 * Converts a non-offered stage, including its associated batches, into a
 	 * new batch of the given material. The new batch is placed into inventory.
 	 * Generates a corresponding {@linkplain BatchImminentRemovalEvent},
 	 * {@linkplain BatchAdditionEvent} and
 	 * {@linkplain StageImminentRemovalEvent} events
-	 * 
+	 *
 	 * @throws ContractException
 	 *
-	 * 
-	 * 
+	 *
+	 *
 	 *             <li>{@linkplain MaterialsError#UNKNOWN_MATERIAL_ID} if the
 	 *             material id is unknown</li>
-	 * 
+	 *
 	 *             <li>{@linkplain MaterialsError#UNKNOWN_STAGE_ID} if stage id
 	 *             is unknown</li>
-	 * 
+	 *
 	 *             <li>{@linkplain MaterialsError#OFFERED_STAGE_UNALTERABLE} if
 	 *             the stage is offered</li>
-	 * 
+	 *
 	 *             <li>{@linkplain MaterialsError#NULL_STAGE_CONVERSION_INFO} if
 	 *             the stage conversion info in the event is null</li>
-	 * 
+	 *
 	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if the
 	 *             batch construction info contains an unknown batch property
 	 *             id</li>
-	 * 
+	 *
 	 *             <li>{@linkplain PropertyError#INCOMPATIBLE_VALUE} if the
 	 *             batch construction info contains a batch property value that
 	 *             is incompatible with the corresponding property def</li>
-	 * 
+	 *
 	 *             <li>{@linkplain PropertyError#INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT}
 	 *             if the batch construction does not contain a batch property
 	 *             value assignment for a batch property that does not have a
 	 *             default value</li>
-	 * 
-	 * 
-	 * 
+	 *
+	 *
+	 *
 	 */
 	public BatchId convertStageToBatch(StageConversionInfo stageConversionInfo) {
 		BatchId batchId = new BatchId(nextBatchRecordId++);
@@ -557,18 +557,18 @@ public final class MaterialsDataManager extends DataManager {
 	}
 
 	/**
-	 * 
+	 *
 	 * Converts a non-offered stage, including its associated batches, into an
 	 * amount of resource. The resulting resource is owned by the associated
 	 * material producer. Generates the corresponding
 	 * {@linkplain BatchImminentRemovalEvent},
 	 * {@linkplain MaterialsProducerResourceUpdateEvent} and
 	 * {@linkplain StageImminentRemovalEvent} events.
-	 * 
-	 * 
+	 *
+	 *
 	 * @throws ContractException
 	 *
-	 * 
+	 *
 	 *             <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if the
 	 *             resource id is null</li>
 	 *             <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID} if the
@@ -584,8 +584,8 @@ public final class MaterialsDataManager extends DataManager {
 	 *             <li>{@linkplain ResourceError#RESOURCE_ARITHMETIC_EXCEPTION}
 	 *             if the resource amount would cause an overflow of the
 	 *             materials producer's resource level</li>
-	 * 
-	 * 
+	 *
+	 *
 	 */
 	public void convertStageToResource(StageId stageId, ResourceId resourceId, long amount) {
 		dataManagerContext.releaseMutationEvent(new ConvertStageToResourceMutationEvent(stageId, resourceId, amount));
@@ -593,9 +593,9 @@ public final class MaterialsDataManager extends DataManager {
 
 	/**
 	 * Defines a new batch property
-	 * 
+	 *
 	 * @throws ContractException
-	 * 
+	 *
 	 *             <li>{@linkplain MaterialsError#UNKNOWN_MATERIAL_ID} if the
 	 *             material id is unknown</li>
 	 *             <li>{@linkplain PropertyError#DUPLICATE_PROPERTY_DEFINITION}
@@ -605,7 +605,7 @@ public final class MaterialsDataManager extends DataManager {
 	 *             <li>{@linkplain MaterialsError#MATERIAL_TYPE_MISMATCH} if a
 	 *             batch property value assignment has a batch id associated
 	 *             with a different material id type</li>
-	 * 
+	 *
 	 *
 	 */
 	public void defineBatchProperty(BatchPropertyDefinitionInitialization batchPropertyDefinitionInitialization) {
@@ -613,18 +613,18 @@ public final class MaterialsDataManager extends DataManager {
 	}
 
 	/**
-	 * 
+	 *
 	 * Defines a new person property
-	 * 
+	 *
 	 * @throws ContractException
-	 * 
+	 *
 	 *             <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_PROPERTY_DEFINITION_INITIALIZATION}
 	 *             if the materials producer property definition initialization
 	 *             is null</li>
-	 * 
+	 *
 	 *             <li>{@linkplain PropertyError#DUPLICATE_PROPERTY_DEFINITION}
 	 *             if the person property already exists</li>
-	 * 
+	 *
 	 *             <li>{@linkplain PropertyError#INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT}
 	 *             if the property definition has no default value and there is
 	 *             no included value assignment for some extant person</li>
@@ -648,7 +648,7 @@ public final class MaterialsDataManager extends DataManager {
 
 	/**
 	 * Returns the amount of material in the batch.
-	 * 
+	 *
 	 * @throws ContractException
 	 *             <li>{@linkplain MaterialsError#NULL_BATCH_ID} if the batch id
 	 *             is null</li>
@@ -663,13 +663,13 @@ public final class MaterialsDataManager extends DataManager {
 
 	/**
 	 * Returns the type of material in the batch.
-	 * 
+	 *
 	 * @throws ContractException
 	 *             <li>{@linkplain MaterialsError#NULL_BATCH_ID} if the batch id
 	 *             is null</li>
 	 *             <li>{@linkplain MaterialsError#UNKNOWN_BATCH_ID} if the batch
 	 *             id is unknown</li>
-	 * 
+	 *
 	 */
 	@SuppressWarnings("unchecked")
 	public <T extends MaterialId> T getBatchMaterial(final BatchId batchId) {
@@ -696,7 +696,7 @@ public final class MaterialsDataManager extends DataManager {
 	/**
 	 * Returns the property definition for the given {@link MaterialId} and
 	 * {@link BatchPropertyId}
-	 * 
+	 *
 	 * @throws ContractException
 	 *             <li>{@linkplain MaterialsError#NULL_MATERIAL_ID} if the
 	 *             material id is null</li>
@@ -717,7 +717,7 @@ public final class MaterialsDataManager extends DataManager {
 	/**
 	 * Returns the {@link BatchPropertyId} values for the given
 	 * {@link MaterialId}
-	 * 
+	 *
 	 * @throws ContractException
 	 *             <li>{@linkplain MaterialsError#NULL_MATERIAL_ID} if the
 	 *             materials id is null</li>
@@ -738,7 +738,7 @@ public final class MaterialsDataManager extends DataManager {
 	/**
 	 * Returns the value of the batch property. It is the caller's
 	 * responsibility to validate the inputs.
-	 * 
+	 *
 	 * @throws ContractException
 	 *             <li>{@linkplain MaterialsError#NULL_BATCH_ID} if the batch id
 	 *             is null</li>
@@ -767,7 +767,7 @@ public final class MaterialsDataManager extends DataManager {
 	/**
 	 * Returns the stage id the batch. Returns null if the batch is not in a
 	 * stage.
-	 * 
+	 *
 	 * @throws ContractException
 	 *             <li>{@linkplain MaterialsError#NULL_BATCH_ID} if the batch id
 	 *             is null</li>
@@ -859,7 +859,7 @@ public final class MaterialsDataManager extends DataManager {
 	 *
 	 *
 	 *
-	 * 
+	 *
 	 */
 	public EventFilter<MaterialsProducerPropertyUpdateEvent> getEventFilterForMaterialsProducerPropertyUpdateEvent() {
 		return EventFilter	.builder(MaterialsProducerPropertyUpdateEvent.class)//
@@ -882,7 +882,7 @@ public final class MaterialsDataManager extends DataManager {
 	 *             materials producer property id is null</li>
 	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if the
 	 *             materials producer property id is not known</li>
-	 * 
+	 *
 	 */
 	public EventFilter<MaterialsProducerPropertyUpdateEvent> getEventFilterForMaterialsProducerPropertyUpdateEvent(MaterialsProducerId materialsProducerId,
 			MaterialsProducerPropertyId materialsProducerPropertyId) {
@@ -1086,7 +1086,7 @@ public final class MaterialsDataManager extends DataManager {
 	/**
 	 * Returns as a list the set of batch ids matching the materials producer
 	 * where the batches are not staged.
-	 * 
+	 *
 	 * @throws ContractException
 	 *             <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID} if
 	 *             the materials producer id is null</li>
@@ -1106,7 +1106,7 @@ public final class MaterialsDataManager extends DataManager {
 	/**
 	 * Returns as a list the set of batch ids matching the materials producer
 	 * and material id where the batches are not staged.
-	 * 
+	 *
 	 * @throws ContractException
 	 *             <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID} if
 	 *             the materials producer id is null</li>
@@ -1157,7 +1157,7 @@ public final class MaterialsDataManager extends DataManager {
 	/**
 	 * Returns the property definition for the given
 	 * {@link MaterialsProducerPropertyId}
-	 * 
+	 *
 	 * @throws ContractException
 	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
 	 *             materials producer property id is null</li>
@@ -1183,7 +1183,7 @@ public final class MaterialsDataManager extends DataManager {
 
 	/**
 	 * Returns the value of the materials producer property.
-	 * 
+	 *
 	 * @throws ContractException
 	 *             <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID} if
 	 *             the materials producer id is null</li>
@@ -1231,7 +1231,7 @@ public final class MaterialsDataManager extends DataManager {
 	/**
 	 * Returns as a list the set of stage ids owned by the material producer
 	 * where the stage is being offered.
-	 * 
+	 *
 	 * @throws ContractException
 	 *             <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID} if
 	 *             the materials producer id is null</li>
@@ -1252,7 +1252,7 @@ public final class MaterialsDataManager extends DataManager {
 
 	/**
 	 * Returns as a list the set of batch ids matching the stage .
-	 * 
+	 *
 	 * @throws ContractException
 	 *             <li>{@linkplain MaterialsError#NULL_STAGE_ID} if the stage id
 	 *             is null</li>
@@ -1272,7 +1272,7 @@ public final class MaterialsDataManager extends DataManager {
 	/**
 	 * Returns as a list the set of batch ids matching the stage and material
 	 * type.
-	 * 
+	 *
 	 *
 	 * @throws ContractException
 	 *             <li>{@linkplain MaterialsError#NULL_STAGE_ID} if the stage id
@@ -1299,13 +1299,13 @@ public final class MaterialsDataManager extends DataManager {
 
 	/**
 	 * Returns the materials producer id for the stage.
-	 * 
+	 *
 	 * @throws ContractException
 	 *             <li>{@linkplain MaterialsError#NULL_STAGE_ID} if the stage id
 	 *             is null</li>
 	 *             <li>{@linkplain MaterialsError#UNKNOWN_STAGE_ID} if the stage
 	 *             id is unknown</li>
-	 * 
+	 *
 	 */
 	@SuppressWarnings("unchecked")
 	public <T extends MaterialsProducerId> T getStageProducer(final StageId stageId) {
@@ -1315,8 +1315,8 @@ public final class MaterialsDataManager extends DataManager {
 
 	/**
 	 * Returns as a list the set of stage ids owned by the material producer.
-	 * 
-	 * 
+	 *
+	 *
 	 * @throws ContractException
 	 *             <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID} if
 	 *             the materials producer id is null</li>
@@ -2150,7 +2150,7 @@ public final class MaterialsDataManager extends DataManager {
 
 	/**
 	 * Returns true if and only if the stage is offered.
-	 * 
+	 *
 	 * @throws ContractException
 	 *             <li>{@linkplain MaterialsError#NULL_STAGE_ID} if the stage id
 	 *             is null</li>
@@ -2206,9 +2206,9 @@ public final class MaterialsDataManager extends DataManager {
 	 * <li>Removes a batch from a non-offered stage, placing it into the
 	 * materials producer's inventory. Generates a corresponding
 	 * {@linkplain StageMembershipRemovalEvent}
-	 * 
+	 *
 	 * @throws ContractException
-	 * 
+	 *
 	 *             <li>{@linkplain MaterialsError#NULL_BATCH_ID} if the batch id
 	 *             is null</li>
 	 *             <li>{@linkplain MaterialsError#UNKNOWN_BATCH_ID} if the batch
@@ -2217,7 +2217,7 @@ public final class MaterialsDataManager extends DataManager {
 	 *             is not staged</li>
 	 *             <li>{@linkplain MaterialsError#OFFERED_STAGE_UNALTERABLE } if
 	 *             the stage containing the batch is offered</li>
-	 * 
+	 *
 	 */
 	public void moveBatchToInventory(BatchId batchId) {
 		dataManagerContext.releaseMutationEvent(new MoveBatchToInventoryMutationEvent(batchId));
@@ -2226,10 +2226,10 @@ public final class MaterialsDataManager extends DataManager {
 	/**
 	 * Removes a batch frominventory, placing it on a stage. Generates a
 	 * corresponding {@linkplain StageMembershipAdditionEvent}
-	 * 
+	 *
 	 * @throws ContractException
 	 *
-	 * 
+	 *
 	 *             <li>{@linkplain MaterialsError#NULL_BATCH_ID} if the batch id
 	 *             is null</li>
 	 *             <li>{@linkplain MaterialsError#UNKNOWN_BATCH_ID} if the batch
@@ -2245,8 +2245,8 @@ public final class MaterialsDataManager extends DataManager {
 	 *             <li>{@linkplain MaterialsError#BATCH_STAGED_TO_DIFFERENT_OWNER}
 	 *             if batch and stage do not have the same owning materials
 	 *             producer</li>
-	 * 
-	 * 
+	 *
+	 *
 	 */
 	public void moveBatchToStage(BatchId batchId, StageId stageId) {
 		dataManagerContext.releaseMutationEvent(new MoveBatchToStageMutationEvent(batchId, stageId));
@@ -2267,7 +2267,7 @@ public final class MaterialsDataManager extends DataManager {
 			}
 		}
 
-		for (MaterialsProducerId materialsProducerId : getMaterialsProducerIds()) {
+		for (MaterialsProducerId materialsProducerId : materialsProducerMap.keySet()) {
 			builder.addMaterialsProducerId(materialsProducerId);
 			final MaterialsProducerRecord materialsProducerRecord = materialsProducerMap.get(materialsProducerId);
 			for (ResourceId resourId : materialsProducerRecord.materialProducerResources.keySet()) {
@@ -2280,14 +2280,14 @@ public final class MaterialsDataManager extends DataManager {
 			PropertyDefinition propertyDefinition = materialsProducerPropertyDefinitions.get(materialsProducerPropertyId);
 			builder.defineMaterialsProducerProperty(materialsProducerPropertyId, propertyDefinition);
 		}
-		
+
 		for (MaterialId materialId : materialIds) {
 			builder.addMaterial(materialId);
 		}
-		
 
-		for (MaterialId materialId : batchPropertyDefinitions.keySet()) {			
-			Map<BatchPropertyId, PropertyDefinition> map = batchPropertyDefinitions.get(materialId);			
+
+		for (MaterialId materialId : batchPropertyDefinitions.keySet()) {
+			Map<BatchPropertyId, PropertyDefinition> map = batchPropertyDefinitions.get(materialId);
 			for (BatchPropertyId batchPropertyId : map.keySet()) {
 				PropertyDefinition propertyDefinition = map.get(batchPropertyId);
 				builder.defineBatchProperty(materialId, batchPropertyId, propertyDefinition);
@@ -2322,30 +2322,30 @@ public final class MaterialsDataManager extends DataManager {
 	/**
 	 * Removes the given batch. Generates a corresponding
 	 * {@linkplain BatchImminentRemovalEvent}
-	 * 
+	 *
 	 * @throws ContractException
-	 * 
+	 *
 	 *             <li>{@linkplain MaterialsError#NULL_BATCH_ID} if the batch id
 	 *             is null</li>
 	 *             <li>{@linkplain MaterialsError#UNKNOWN_BATCH_ID} if the batch
 	 *             id is unknown</li>
 	 *             <li>{@linkplain MaterialsError#OFFERED_STAGE_UNALTERABLE} if
 	 *             the batch is on an offered stage</li>
-	 * 
-	 * 
-	 * 
+	 *
+	 *
+	 *
 	 */
 	public void removeBatch(BatchId batchId) {
 		dataManagerContext.releaseMutationEvent(new BatchRemovalMutationEvent(batchId));
 	}
 
 	/**
-	 * 
+	 *
 	 * Destroys a non-offered stage and optionally destroys any associated
 	 * batches. Generates the corresponding
 	 * {@linkplain BatchImminentRemovalEvent} and
 	 * {@linkplain StageImminentRemovalEvent} events.
-	 * 
+	 *
 	 * @throws ContractException
 	 *             <li>{@linkplain MaterialsError#NULL_STAGE_ID} if the stage id
 	 *             is null</li>
@@ -2359,12 +2359,12 @@ public final class MaterialsDataManager extends DataManager {
 	}
 
 	/**
-	 * 
+	 *
 	 * Set a batch's property value. Generates a corresponding
 	 * {@linkplain BatchPropertyUpdateEvent}
-	 * 
+	 *
 	 * @throws ContractException
-	 * 
+	 *
 	 *             <li>{@linkplain MaterialsError#NULL_BATCH_ID} if the batch id
 	 *             is null</li>
 	 *             <li>{@linkplain MaterialsError#UNKNOWN_BATCH_ID} if the batch
@@ -2382,9 +2382,9 @@ public final class MaterialsDataManager extends DataManager {
 	 *             property definition</li>
 	 *             <li>{@linkplain MaterialsError#OFFERED_STAGE_UNALTERABLE} if
 	 *             the batch in on an offered stage</li>
-	 * 
-	 * 
-	 * 
+	 *
+	 *
+	 *
 	 */
 	public void setBatchPropertyValue(BatchId batchId, BatchPropertyId batchPropertyId, Object batchPropertyValue) {
 		dataManagerContext.releaseMutationEvent(new BatchPropertyUpdateMutationEvent(batchId, batchPropertyId, batchPropertyValue));
@@ -2393,10 +2393,10 @@ public final class MaterialsDataManager extends DataManager {
 	/**
 	 * Assigns a property value to a materials producer. Generates a
 	 * corresponding {@linkplain MaterialsProducerPropertyUpdateEvent}
-	 * 
+	 *
 	 * @throws ContractException
 	 *
-	 * 
+	 *
 	 *             <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID} if
 	 *             the materials producer id is null</li>
 	 *             <li>{@linkplain MaterialsError#UNKNOWN_MATERIALS_PRODUCER_ID}
@@ -2412,8 +2412,8 @@ public final class MaterialsDataManager extends DataManager {
 	 *             {@linkplain PropertyError#INCOMPATIBLE_VALUE} if the property
 	 *             value is incompatible with the corresponding property
 	 *             definition</li>
-	 * 
-	 * 
+	 *
+	 *
 	 */
 	public void setMaterialsProducerPropertyValue(MaterialsProducerId materialsProducerId, MaterialsProducerPropertyId materialsProducerPropertyId, Object materialsProducerPropertyValue) {
 		dataManagerContext.releaseMutationEvent(new MaterialsProducerPropertyUpdateMutationEvent(materialsProducerId, materialsProducerPropertyId, materialsProducerPropertyValue));
@@ -2422,7 +2422,7 @@ public final class MaterialsDataManager extends DataManager {
 	/**
 	 * Sets the offer state of a stage. Generates a corresponding
 	 * {@linkplain StageOfferUpdateEvent}
-	 * 
+	 *
 	 * @throws ContractException
 	 *
 	 *
@@ -2430,7 +2430,7 @@ public final class MaterialsDataManager extends DataManager {
 	 *             id is null</li>
 	 *             <li>{@linkplain MaterialsError#UNKNOWN_STAGE_ID } if the
 	 *             stage id is unknown</li>
-	 * 
+	 *
 	 */
 	public void setStageOfferState(StageId stageId, boolean offer) {
 		dataManagerContext.releaseMutationEvent(new StageOfferUpdateMutationEvent(stageId, offer));
@@ -2447,10 +2447,10 @@ public final class MaterialsDataManager extends DataManager {
 	 * Transfers an amount of material from one batch to another batch of the
 	 * same material type and material producer. Generates a corresponding
 	 * {@linkplain BatchAmountUpdateEvent} for each batch.
-	 * 
+	 *
 	 * @throws ContractException
 	 *
-	 * 
+	 *
 	 *             <li>{@linkplain MaterialsError#NULL_BATCH_ID} if the source
 	 *             batch id is null</li>
 	 *             <li>{@linkplain MaterialsError#UNKNOWN_BATCH_ID} if the
@@ -2479,10 +2479,10 @@ public final class MaterialsDataManager extends DataManager {
 	 *             <li>{@linkplain MaterialsError#MATERIAL_ARITHMETIC_EXCEPTION}
 	 *             if the shift amount would cause an overflow on the
 	 *             destination batch</li>
-	 * 
-	 * 
+	 *
+	 *
 	 *             </blockquote></li>
-	 * 
+	 *
 	 */
 
 	public void transferMaterialBetweenBatches(BatchId sourceBatchId, BatchId destinationBatchId, double amount) {
@@ -2491,15 +2491,15 @@ public final class MaterialsDataManager extends DataManager {
 	}
 
 	/**
-	 * 
+	 *
 	 * Transfers an offered stage from the current owning materials producer to
 	 * another and marks the stage as not offered. Generates the corresponding
 	 * {@linkplain StageMaterialsProducerUpdateEvent}
 	 * {@linkplain StageOfferUpdateEvent}
-	 * 
+	 *
 	 * @throws ContractException
 	 *
-	 * 
+	 *
 	 *             <li>{@linkplain MaterialsError#NULL_STAGE_ID } if the stage
 	 *             id is null</li>
 	 *             <li>{@linkplain MaterialsError#UNKNOWN_STAGE_ID } if the
@@ -2513,23 +2513,23 @@ public final class MaterialsDataManager extends DataManager {
 	 *             <li>{@linkplain MaterialsError#REFLEXIVE_STAGE_TRANSFER } if
 	 *             the source and destination materials producers are the
 	 *             same</li>
-	 * 
-	 * 
+	 *
+	 *
 	 */
 	public void transferOfferedStage(StageId stageId, MaterialsProducerId materialsProducerId) {
 		dataManagerContext.releaseMutationEvent(new TransferOfferedStageMutationEvent(stageId, materialsProducerId));
 	}
 
 	/**
-	 * 
-	 * 
+	 *
+	 *
 	 * Transfers a resource amount from a materials producer to a region.
 	 * Generates a corresponding {@linkplain RegionResourceAdditionEvent} and
 	 * {@linkplain MaterialsProducerResourceUpdateEvent}
-	 * 
+	 *
 	 * @throws ContractException
 	 *             *
-	 * 
+	 *
 	 *             <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if the
 	 *             resource id is null</li>
 	 *             <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID} if the
@@ -2550,9 +2550,9 @@ public final class MaterialsDataManager extends DataManager {
 	 *             <li>{@linkplain ResourceError#RESOURCE_ARITHMETIC_EXCEPTION}
 	 *             if the materials amount would cause an overflow of the
 	 *             regions resource level</li>
-	 * 
-	 * 
-	 * 
+	 *
+	 *
+	 *
 	 */
 	public void transferResourceToRegion(MaterialsProducerId materialsProducerId, ResourceId resourceId, RegionId regionId, long amount) {
 		dataManagerContext.releaseMutationEvent(new TransferResourceToRegionMutationEvent(materialsProducerId, resourceId, regionId, amount));
@@ -2870,8 +2870,8 @@ public final class MaterialsDataManager extends DataManager {
 
 		boolean[] checkArray = nonDefaultChecksForBatches.get(materialId);
 
-		for (int i = 0; i < checkArray.length; i++) {
-			if (!checkArray[i]) {
+		for (boolean element : checkArray) {
+			if (!element) {
 				missingPropertyAssignments = true;
 				break;
 			}
@@ -2901,8 +2901,8 @@ public final class MaterialsDataManager extends DataManager {
 
 		boolean missingPropertyAssignments = false;
 
-		for (int i = 0; i < nonDefaultChecksForProducers.length; i++) {
-			if (!nonDefaultChecksForProducers[i]) {
+		for (boolean nonDefaultChecksForProducer : nonDefaultChecksForProducers) {
+			if (!nonDefaultChecksForProducer) {
 				missingPropertyAssignments = true;
 				break;
 			}
@@ -2930,16 +2930,22 @@ public final class MaterialsDataManager extends DataManager {
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-//		builder.append("MaterialsDataManager [batchPropertyDefinitions=");
-//		builder.append(batchPropertyDefinitions);
-		
-		
+		builder.append("MaterialsDataManager [batchPropertyDefinitions=");
+		builder.append(batchPropertyDefinitions);
+		builder.append(", nextBatchRecordId=");
+		builder.append(nextBatchRecordId);
+		builder.append(", nextStageRecordId=");
+		builder.append(nextStageRecordId);
+		builder.append(", materialIds=");
+		builder.append(materialIds);
+
+
 //		builder.append(", batchPropertyMap=");//bad
 //		builder.append(batchPropertyMap);//bad
-		
+
 //		builder.append(", batchRecords=")//bad;
 //		builder.append(batchRecords);//bad
-		
+
 //		for(BatchId batchId : batchRecords.keySet()) {
 //			BatchRecord batchRecord = batchRecords.get(batchId);
 //			builder.append(batchId);
@@ -2947,30 +2953,18 @@ public final class MaterialsDataManager extends DataManager {
 //			builder.append(batchRecord);
 //			builder.append("\n");
 //		}
-		
-//		builder.append(", materialIds=");
-//		builder.append(materialIds);
-		
-		
 //		builder.append(", materialsProducerMap=");//bad
 //		builder.append(materialsProducerMap);//bad
-		
-		
-		
 //		builder.append(", materialsProducerPropertyDefinitions=");
 //		builder.append(materialsProducerPropertyDefinitions);
 //		builder.append(", materialsProducerPropertyIds=");
 //		builder.append(materialsProducerPropertyIds);
 //		builder.append(", materialsProducerPropertyMap=");
 //		builder.append(materialsProducerPropertyMap);
-//		builder.append(", nextBatchRecordId=");
-//		builder.append(nextBatchRecordId);
-//		builder.append(", nextStageRecordId=");
-//		builder.append(nextStageRecordId);
 //		builder.append(", resourceIds=");
 //		builder.append(resourceIds);
 //		builder.append(", stageRecords=");
-		builder.append(stageRecords);
+//		builder.append(stageRecords);
 //		builder.append("]");
 		return builder.toString();
 	}
