@@ -124,7 +124,7 @@ public final class MaterialsPluginData implements PluginData {
 				data.stageBatches.put(stageId, batches);
 			}
 			batches.add(batchId);
-			data.batchStages.put(batchId, stageId);
+			
 
 			return this;
 		}
@@ -631,31 +631,27 @@ public final class MaterialsPluginData implements PluginData {
 				}
 			}
 
-			for (final BatchId batchId : data.batchStages.keySet()) {
-				if (!data.batchIds.contains(batchId)) {
-					throw new ContractException(MaterialsError.UNKNOWN_BATCH_ID, batchId + " in batch additions to stages");
-				}
-				final StageId stageId = data.batchStages.get(batchId);
-				if (!data.stageIds.contains(stageId)) {
-					throw new ContractException(MaterialsError.UNKNOWN_STAGE_ID, stageId + " in batch additions to stages");
-				}
-			}
+
+			Map<BatchId,StageId> bsMap = new LinkedHashMap<>();
 
 			for (final StageId stageId : data.stageBatches.keySet()) {
 				final Set<BatchId> batches = data.stageBatches.get(stageId);
 				for (final BatchId batchId : batches) {
-					final StageId linkedStageId = data.batchStages.get(batchId);
-					if (!linkedStageId.equals(stageId)) {
+					StageId replaceStageId = bsMap.put(batchId,stageId);
+					if (replaceStageId!=null) {
 						throw new ContractException(MaterialsError.BATCH_ALREADY_STAGED, batchId + " has been assigned to multiple stages");
 					}
 				}
-			}
-			for (final BatchId batchId : data.batchStages.keySet()) {
-				final StageId stageId = data.batchStages.get(batchId);
-				final MaterialsProducerId batchMaterialsProducerId = data.batchMaterialsProducers.get(batchId);
-				final MaterialsProducerId stageMaterialsProducerId = data.stageMaterialsProducers.get(stageId);
-				if (!batchMaterialsProducerId.equals(stageMaterialsProducerId)) {
-					throw new ContractException(MaterialsError.BATCH_STAGED_TO_DIFFERENT_OWNER, stageId + ": " + batchId);
+			}			
+			
+			for (final StageId stageId : data.stageBatches.keySet()) {
+				final Set<BatchId> batches = data.stageBatches.get(stageId);
+				for (final BatchId batchId : batches) {
+					final MaterialsProducerId batchMaterialsProducerId = data.batchMaterialsProducers.get(batchId);
+					final MaterialsProducerId stageMaterialsProducerId = data.stageMaterialsProducers.get(stageId);
+					if (!batchMaterialsProducerId.equals(stageMaterialsProducerId)) {
+						throw new ContractException(MaterialsError.BATCH_STAGED_TO_DIFFERENT_OWNER, stageId + ": " + batchId);
+					}
 				}
 			}
 
@@ -702,7 +698,7 @@ private final Map<StageId, MaterialsProducerId> stageMaterialsProducers;
 
 private final Map<StageId, Set<BatchId>> stageBatches;
 
-private final Map<BatchId, StageId> batchStages;
+
 
 		private int nextBatchRecordId = -1;
 
@@ -863,8 +859,6 @@ private final Map<BatchId, StageId> batchStages;
 
 			stageBatches = new LinkedHashMap<>();
 
-			batchStages = new LinkedHashMap<>();
-
 			emptyBatchPropertyValues = Collections.unmodifiableMap(new LinkedHashMap<>());
 		}
 
@@ -925,8 +919,6 @@ private final Map<BatchId, StageId> batchStages;
 				stageBatches.put(stageId, newSet);
 			}
 
-			batchStages = new LinkedHashMap<>(data.batchStages);
-
 			emptyBatchPropertyValues = Collections.unmodifiableMap(new LinkedHashMap<>());
 
 			locked = data.locked;
@@ -945,8 +937,7 @@ private final Map<BatchId, StageId> batchStages;
 			result = prime * result + batchIds.hashCode();
 			result = prime * result + batchMaterials.hashCode();
 			result = prime * result + batchMaterialsProducers.hashCode();
-			result = prime * result + batchPropertyDefinitions.hashCode();
-			result = prime * result + batchStages.hashCode();
+			result = prime * result + batchPropertyDefinitions.hashCode();			
 			result = prime * result + materialIds.hashCode();
 			result = prime * result + materialsProducerIds.hashCode();
 			result = prime * result + materialsProducerPropertyDefinitions.hashCode();
@@ -1050,10 +1041,6 @@ private final Map<BatchId, StageId> batchStages;
 				return false;
 			}
 
-			if (!batchStages.equals(other.batchStages)) {
-				return false;
-			}
-
 			if (!materialIds.equals(other.materialIds)) {
 				return false;
 			}
@@ -1140,9 +1127,7 @@ private final Map<BatchId, StageId> batchStages;
 			builder.append(", stageMaterialsProducers=");
 			builder.append(stageMaterialsProducers);
 			builder.append(", stageBatches=");
-			builder.append(stageBatches);
-			builder.append(", batchStages=");
-			builder.append(batchStages);
+			builder.append(stageBatches);			
 			builder.append(", nextBatchRecordId=");
 			builder.append(nextBatchRecordId);
 			builder.append(", nextStageRecordId=");
