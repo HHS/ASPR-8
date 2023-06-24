@@ -346,7 +346,7 @@ public class AT_MaterialsTestPluginFactory {
                 TestMaterialId testMaterialId = TestMaterialId.getRandomMaterialId(randomGenerator);
                 double amount = randomGenerator.nextDouble();
                 BatchId batchId = new BatchId(bId++);
-                materialsBuilder.addBatch(batchId, testMaterialId, amount, testMaterialsProducerId);
+                materialsBuilder.addBatch(batchId, testMaterialId, amount);               
                 batches.add(batchId);
                 for (TestBatchPropertyId testBatchPropertyId : TestBatchPropertyId
                         .getTestBatchPropertyIds(testMaterialId)) {
@@ -370,11 +370,15 @@ public class AT_MaterialsTestPluginFactory {
             }
 
             Collections.shuffle(batches, new Random(randomGenerator.nextLong()));
-            for (int i = 0; i < numBatchesInStage; i++) {
-                BatchId batchId = batches.get(i);
-                StageId stageId = stages.get(randomGenerator.nextInt(stages.size()));
-                materialsBuilder.addBatchToStage(stageId, batchId);
-            }
+            for (int i = 0; i < numBatches; i++) {
+            	BatchId batchId = batches.get(i);
+				if (i < numBatchesInStage) {					
+					StageId stageId = stages.get(randomGenerator.nextInt(stages.size()));
+					materialsBuilder.addBatchToStage(stageId, batchId);
+				}else {
+					materialsBuilder.addBatchToMaterialsProducerInventory(batchId, testMaterialsProducerId);
+				}				
+			}
             materialsBuilder.addMaterialsProducerId(testMaterialsProducerId);
 
             for (ResourceId resourceId : TestResourceId.values()) {

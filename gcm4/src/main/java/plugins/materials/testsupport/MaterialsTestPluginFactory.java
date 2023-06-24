@@ -90,8 +90,8 @@ public class MaterialsTestPluginFactory {
 	}
 
 	/**
-	 * Factory class that facilitates the building of {@linkplain PluginData}
-	 * with the various setter methods.
+	 * Factory class that facilitates the building of {@linkplain PluginData} with
+	 * the various setter methods.
 	 */
 	public static class Factory {
 		private Data data;
@@ -101,9 +101,8 @@ public class MaterialsTestPluginFactory {
 		}
 
 		/**
-		 * Returns a list of plugins containing a Materials, Resources, Regions,
-		 * People, Stochastic and Test Plugin built from the contributed
-		 * PluginDatas
+		 * Returns a list of plugins containing a Materials, Resources, Regions, People,
+		 * Stochastic and Test Plugin built from the contributed PluginDatas
 		 * 
 		 * <li>MaterialsPlugin is defaulted to one formed from
 		 * {@link MaterialsTestPluginFactory#getStandardMaterialsPluginData}
@@ -129,10 +128,12 @@ public class MaterialsTestPluginFactory {
 				materialsPluginBuilder.setBatchStatusReportPluginData(this.data.batchStatusReportPluginData);
 			}
 			if (data.materialsProducerPropertyReportPluginData != null) {
-				materialsPluginBuilder.setMaterialsProducerPropertyReportPluginData(this.data.materialsProducerPropertyReportPluginData);
+				materialsPluginBuilder.setMaterialsProducerPropertyReportPluginData(
+						this.data.materialsProducerPropertyReportPluginData);
 			}
 			if (data.materialsProducerResourceReportPluginData != null) {
-				materialsPluginBuilder.setMaterialsProducerResourceReportPluginData(this.data.materialsProducerResourceReportPluginData);
+				materialsPluginBuilder.setMaterialsProducerResourceReportPluginData(
+						this.data.materialsProducerResourceReportPluginData);
 			}
 			if (data.stageReportPluginData != null) {
 				materialsPluginBuilder.setStageReportPluginData(this.data.stageReportPluginData);
@@ -140,9 +141,11 @@ public class MaterialsTestPluginFactory {
 
 			Plugin materialsPlugin = materialsPluginBuilder.getMaterialsPlugin();
 
-			Plugin resourcesPlugin = ResourcesPlugin.builder().setResourcesPluginData(this.data.resourcesPluginData).getResourcesPlugin();
+			Plugin resourcesPlugin = ResourcesPlugin.builder().setResourcesPluginData(this.data.resourcesPluginData)
+					.getResourcesPlugin();
 
-			Plugin regionsPlugin = RegionsPlugin.builder().setRegionsPluginData(this.data.regionsPluginData).getRegionsPlugin();
+			Plugin regionsPlugin = RegionsPlugin.builder().setRegionsPluginData(this.data.regionsPluginData)
+					.getRegionsPlugin();
 
 			Plugin peoplePlugin = PeoplePlugin.getPeoplePlugin(this.data.peoplePluginData);
 
@@ -161,12 +164,11 @@ public class MaterialsTestPluginFactory {
 		}
 
 		/**
-		 * Sets the {@link MaterialsPluginData} in this Factory. This explicit
-		 * instance of pluginData will be used to create a MaterialsPlugin
+		 * Sets the {@link MaterialsPluginData} in this Factory. This explicit instance
+		 * of pluginData will be used to create a MaterialsPlugin
 		 * 
-		 * @throws ContractExecption
-		 *             {@linkplain MaterialsError#NULL_MATERIALS_PLUGIN_DATA} if
-		 *             the passed in pluginData is null
+		 * @throws ContractExecption {@linkplain MaterialsError#NULL_MATERIALS_PLUGIN_DATA}
+		 *                           if the passed in pluginData is null
 		 */
 		public Factory setMaterialsPluginData(MaterialsPluginData materialsPluginData) {
 			if (materialsPluginData == null) {
@@ -177,13 +179,11 @@ public class MaterialsTestPluginFactory {
 		}
 
 		/**
-		 * Sets the {@link BatchStatusReportPluginData} in this Factory. This
-		 * explicit instance of pluginData will be used to create a
-		 * MaterialsPlugin
+		 * Sets the {@link BatchStatusReportPluginData} in this Factory. This explicit
+		 * instance of pluginData will be used to create a MaterialsPlugin
 		 * 
-		 * @throws ContractExecption
-		 *             {@linkplain MaterialsError#NULL_MATERIALS_PLUGIN_DATA} if
-		 *             the passed in pluginData is null
+		 * @throws ContractExecption {@linkplain MaterialsError#NULL_MATERIALS_PLUGIN_DATA}
+		 *                           if the passed in pluginData is null
 		 */
 		public Factory setBatchStatusReportPluginData(BatchStatusReportPluginData batchStatusReportPluginData) {
 			if (batchStatusReportPluginData == null) {
@@ -194,15 +194,14 @@ public class MaterialsTestPluginFactory {
 		}
 
 		/**
-		 * Sets the {@link MaterialsProducerPropertyReportPluginData} in this
-		 * Factory. This explicit instance of pluginData will be used to create
-		 * a MaterialsPlugin
+		 * Sets the {@link MaterialsProducerPropertyReportPluginData} in this Factory.
+		 * This explicit instance of pluginData will be used to create a MaterialsPlugin
 		 * 
-		 * @throws ContractExecption
-		 *             {@linkplain MaterialsError#NULL_MATERIALS_PLUGIN_DATA} if
-		 *             the passed in pluginData is null
+		 * @throws ContractExecption {@linkplain MaterialsError#NULL_MATERIALS_PLUGIN_DATA}
+		 *                           if the passed in pluginData is null
 		 */
-		public Factory setMaterialsProducerPropertyReportPluginData(MaterialsProducerPropertyReportPluginData materialsProducerPropertyReportPluginData) {
+		public Factory setMaterialsProducerPropertyReportPluginData(
+				MaterialsProducerPropertyReportPluginData materialsProducerPropertyReportPluginData) {
 			if (materialsProducerPropertyReportPluginData == null) {
 				throw new ContractException(MaterialsError.NULL_MATERIALS_PRODUCER_PROPERTY_REPORT_PLUGIN_DATA);
 			}
@@ -211,15 +210,14 @@ public class MaterialsTestPluginFactory {
 		}
 
 		/**
-		 * Sets the {@link MaterialsProducerResourceReportPluginData} in this
-		 * Factory. This explicit instance of pluginData will be used to create
-		 * a MaterialsPlugin
+		 * Sets the {@link MaterialsProducerResourceReportPluginData} in this Factory.
+		 * This explicit instance of pluginData will be used to create a MaterialsPlugin
 		 * 
-		 * @throws ContractExecption
-		 *             {@linkplain MaterialsError#NULL_MATERIALS_PLUGIN_DATA} if
-		 *             the passed in pluginData is null
+		 * @throws ContractExecption {@linkplain MaterialsError#NULL_MATERIALS_PLUGIN_DATA}
+		 *                           if the passed in pluginData is null
 		 */
-		public Factory setMaterialsProducerResourceReportPluginData(MaterialsProducerResourceReportPluginData materialsProducerResourceReportPluginData) {
+		public Factory setMaterialsProducerResourceReportPluginData(
+				MaterialsProducerResourceReportPluginData materialsProducerResourceReportPluginData) {
 			if (materialsProducerResourceReportPluginData == null) {
 				throw new ContractException(MaterialsError.NULL_MATERIALS_PRODUCER_RESOURCE_REPORT_PLUGIN_DATA);
 			}
@@ -228,13 +226,11 @@ public class MaterialsTestPluginFactory {
 		}
 
 		/**
-		 * Sets the {@link MaterialsProducerResourceReportPluginData} in this
-		 * Factory. This explicit instance of pluginData will be used to create
-		 * a MaterialsPlugin
+		 * Sets the {@link MaterialsProducerResourceReportPluginData} in this Factory.
+		 * This explicit instance of pluginData will be used to create a MaterialsPlugin
 		 * 
-		 * @throws ContractExecption
-		 *             {@linkplain MaterialsError#NULL_MATERIALS_PLUGIN_DATA} if
-		 *             the passed in pluginData is null
+		 * @throws ContractExecption {@linkplain MaterialsError#NULL_MATERIALS_PLUGIN_DATA}
+		 *                           if the passed in pluginData is null
 		 */
 		public Factory setStageReportPluginData(StageReportPluginData stageReportPluginData) {
 			if (stageReportPluginData == null) {
@@ -245,12 +241,11 @@ public class MaterialsTestPluginFactory {
 		}
 
 		/**
-		 * Sets the {@link ResourcesPluginData} in this Factory. This explicit
-		 * instance of pluginData will be used to create a ResourcesPlugin
+		 * Sets the {@link ResourcesPluginData} in this Factory. This explicit instance
+		 * of pluginData will be used to create a ResourcesPlugin
 		 * 
-		 * @throws ContractExecption
-		 *             {@linkplain ResourceError#NULL_RESOURCE_PLUGIN_DATA} if
-		 *             the passed in pluginData is null
+		 * @throws ContractExecption {@linkplain ResourceError#NULL_RESOURCE_PLUGIN_DATA}
+		 *                           if the passed in pluginData is null
 		 */
 		public Factory setResourcesPluginData(ResourcesPluginData resourcesPluginData) {
 			if (resourcesPluginData == null) {
@@ -261,12 +256,11 @@ public class MaterialsTestPluginFactory {
 		}
 
 		/**
-		 * Sets the {@link RegionsPluginData} in this Factory. This explicit
-		 * instance of pluginData will be used to create a RegionsPlugin
+		 * Sets the {@link RegionsPluginData} in this Factory. This explicit instance of
+		 * pluginData will be used to create a RegionsPlugin
 		 * 
-		 * @throws ContractExecption
-		 *             {@linkplain RegionError#NULL_REGION_PLUGIN_DATA} if the
-		 *             passed in pluginData is null
+		 * @throws ContractExecption {@linkplain RegionError#NULL_REGION_PLUGIN_DATA} if
+		 *                           the passed in pluginData is null
 		 */
 		public Factory setRegionsPluginData(RegionsPluginData regionsPluginData) {
 			if (regionsPluginData == null) {
@@ -277,12 +271,11 @@ public class MaterialsTestPluginFactory {
 		}
 
 		/**
-		 * Sets the {@link PeoplePluginData} in this Factory. This explicit
-		 * instance of pluginData will be used to create a PeoplePlugin
+		 * Sets the {@link PeoplePluginData} in this Factory. This explicit instance of
+		 * pluginData will be used to create a PeoplePlugin
 		 * 
-		 * @throws ContractExecption
-		 *             {@linkplain PersonError#NULL_PEOPLE_PLUGIN_DATA} if the
-		 *             passed in pluginData is null
+		 * @throws ContractExecption {@linkplain PersonError#NULL_PEOPLE_PLUGIN_DATA} if
+		 *                           the passed in pluginData is null
 		 */
 		public Factory setPeoplePluginData(PeoplePluginData peoplePluginData) {
 			if (peoplePluginData == null) {
@@ -296,9 +289,8 @@ public class MaterialsTestPluginFactory {
 		 * Sets the {@link StochasticsPluginData} in this Factory. This explicit
 		 * instance of pluginData will be used to create a StochasticsPlugin
 		 * 
-		 * @throws ContractExecption
-		 *             {@linkplain StochasticsError#NULL_STOCHASTICS_PLUGIN_DATA}
-		 *             if the passed in pluginData is null
+		 * @throws ContractExecption {@linkplain StochasticsError#NULL_STOCHASTICS_PLUGIN_DATA}
+		 *                           if the passed in pluginData is null
 		 */
 		public Factory setStochasticsPluginData(StochasticsPluginData stochasticsPluginData) {
 			if (stochasticsPluginData == null) {
@@ -311,9 +303,8 @@ public class MaterialsTestPluginFactory {
 	}
 
 	/**
-	 * Creates a Factory that facilitates the creation of a minimal set of
-	 * plugins needed to adequately test the {@link MaterialsPlugin} by
-	 * generating:
+	 * Creates a Factory that facilitates the creation of a minimal set of plugins
+	 * needed to adequately test the {@link MaterialsPlugin} by generating:
 	 * <ul>
 	 * <li>{@link MaterialsPluginData}
 	 * <li>{@link ResourcesPluginData}
@@ -340,11 +331,11 @@ public class MaterialsTestPluginFactory {
 	 * 
 	 * <li>via the {@link Factory#getPlugins()} method.
 	 * 
-	 * @throws ContractExecption
-	 *             {@linkplain NucleusError#NULL_PLUGIN_DATA} if testPluginData
-	 *             is null
+	 * @throws ContractExecption {@linkplain NucleusError#NULL_PLUGIN_DATA} if
+	 *                           testPluginData is null
 	 */
-	public static Factory factory(int numBatches, int numStages, int numBatchesInStage, long seed, TestPluginData testPluginData) {
+	public static Factory factory(int numBatches, int numStages, int numBatchesInStage, long seed,
+			TestPluginData testPluginData) {
 		if (testPluginData == null) {
 			throw new ContractException(NucleusError.NULL_PLUGIN_DATA);
 		}
@@ -352,9 +343,8 @@ public class MaterialsTestPluginFactory {
 	}
 
 	/**
-	 * Creates a Factory that facilitates the creation of a minimal set of
-	 * plugins needed to adequately test the {@link MaterialsPlugin} by
-	 * generating:
+	 * Creates a Factory that facilitates the creation of a minimal set of plugins
+	 * needed to adequately test the {@link MaterialsPlugin} by generating:
 	 * <ul>
 	 * <li>{@link MaterialsPluginData}
 	 * <li>{@link ResourcesPluginData}
@@ -381,11 +371,11 @@ public class MaterialsTestPluginFactory {
 	 * 
 	 * <li>via the {@link Factory#getPlugins()} method.
 	 * 
-	 * @throws ContractExecption
-	 *             {@linkplain NucleusError#NULL_ACTOR_CONTEXT_CONSUMER} if
-	 *             consumer is null
+	 * @throws ContractExecption {@linkplain NucleusError#NULL_ACTOR_CONTEXT_CONSUMER}
+	 *                           if consumer is null
 	 */
-	public static Factory factory(int numBatches, int numStages, int numBatchesInStage, long seed, Consumer<ActorContext> consumer) {
+	public static Factory factory(int numBatches, int numStages, int numBatchesInStage, long seed,
+			Consumer<ActorContext> consumer) {
 		if (consumer == null) {
 			throw new ContractException(NucleusError.NULL_ACTOR_CONTEXT_CONSUMER);
 		}
@@ -407,35 +397,44 @@ public class MaterialsTestPluginFactory {
 	 * {@link TestBatchPropertyId#getTestBatchPropertyIds} along with the
 	 * propertyDefinition for each
 	 * </ul>
-	 * <li>Every MaterialProducerId included in {@link TestMaterialsProducerId}
-	 * With each one containing:
+	 * <li>Every MaterialProducerId included in {@link TestMaterialsProducerId} With
+	 * each one containing:
 	 * <ul>
 	 * <li>The specified number of batches. Each batch will have the following:
 	 * <ul>
 	 * <li>a random materialId gotten from
-	 * {@link TestMaterialId#getRandomMaterialId} based on a RandomGenerator
-	 * seeded by the passed in seed
+	 * {@link TestMaterialId#getRandomMaterialId} based on a RandomGenerator seeded
+	 * by the passed in seed
 	 * <li>a random amount based on the same RandomGenerator.nextDouble
-	 * <li>Every BatchPropertyId included in {@link TestBatchPropertyId} where
-	 * the batchPropertyValue will be set if the batchPropertyDefinition does
-	 * not have a default value OR if randomGenerator.nextBoolean is true.
-	 * Either way, the value will be set to the result from
+	 * <li>Every BatchPropertyId included in {@link TestBatchPropertyId} where the
+	 * batchPropertyValue will be set if the batchPropertyDefinition does not have a
+	 * default value OR if randomGenerator.nextBoolean is true. Either way, the
+	 * value will be set to the result from
 	 * {@link TestBatchPropertyId#getRandomPropertyValue}
 	 * </ul>
 	 * <li>the specified number of stages. Exactly half will be offered.
-	 * <li>the specified number of batches in a stage dervied from a shuffled
-	 * list of batches via nextLong and a random stageId via nextInt
+	 * <li>the specified number of batches in a stage dervied from a shuffled list
+	 * of batches via nextLong and a random stageId via nextInt
 	 * </ul>
 	 * <li>Every MaterialProducerPropertyId included in
 	 * {@link TestMaterialsProducerPropertyId} along with the defined
 	 * propertyDefinition for each.
 	 * <ul>
-	 * <li>The MaterialProducerPropertyIds that do not have default values will
-	 * have a property value set derived from
+	 * <li>The MaterialProducerPropertyIds that do not have default values will have
+	 * a property value set derived from
 	 * {@link TestMaterialsProducerPropertyId#getRandomPropertyValue}
 	 * </ul>
+	 * 
+	 * @throw {@link RuntimeException}
+	 * 
 	 */
-	public static MaterialsPluginData getStandardMaterialsPluginData(int numBatches, int numStages, int numBatchesInStage, long seed) {
+	public static MaterialsPluginData getStandardMaterialsPluginData(int numBatches, int numStages,
+			int numBatchesInStage, long seed) {
+
+		if (numBatches < numBatchesInStage) {
+			throw new RuntimeException("numBatchesInStage exceeds " + numBatches);
+		}
+
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
 		MaterialsPluginData.Builder materialsBuilder = MaterialsPluginData.builder();
 
@@ -454,12 +453,16 @@ public class MaterialsTestPluginFactory {
 				TestMaterialId testMaterialId = TestMaterialId.getRandomMaterialId(randomGenerator);
 				double amount = randomGenerator.nextDouble();
 				BatchId batchId = new BatchId(bId++);
-				materialsBuilder.addBatch(batchId, testMaterialId, amount, testMaterialsProducerId);
+				materialsBuilder.addBatch(batchId, testMaterialId, amount);
+				
+				
 				batches.add(batchId);
-				for (TestBatchPropertyId testBatchPropertyId : TestBatchPropertyId.getTestBatchPropertyIds(testMaterialId)) {
+				for (TestBatchPropertyId testBatchPropertyId : TestBatchPropertyId
+						.getTestBatchPropertyIds(testMaterialId)) {
 					boolean required = testBatchPropertyId.getPropertyDefinition().getDefaultValue().isEmpty();
 					if (required || randomGenerator.nextBoolean()) {
-						materialsBuilder.setBatchPropertyValue(batchId, testBatchPropertyId, testBatchPropertyId.getRandomPropertyValue(randomGenerator));
+						materialsBuilder.setBatchPropertyValue(batchId, testBatchPropertyId,
+								testBatchPropertyId.getRandomPropertyValue(randomGenerator));
 					}
 				}
 
@@ -472,40 +475,50 @@ public class MaterialsTestPluginFactory {
 				stages.add(stageId);
 				boolean offered = i % 2 == 0;
 				materialsBuilder.addStage(stageId, offered);
-				materialsBuilder.addStageToMaterialProducer(stageId, testMaterialsProducerId);				
+				materialsBuilder.addStageToMaterialProducer(stageId, testMaterialsProducerId);
 			}
 
 			Collections.shuffle(batches, new Random(randomGenerator.nextLong()));
-			for (int i = 0; i < numBatchesInStage; i++) {
+			for (int i = 0; i < numBatches; i++) {
 				BatchId batchId = batches.get(i);
-				StageId stageId = stages.get(randomGenerator.nextInt(stages.size()));
-				materialsBuilder.addBatchToStage(stageId, batchId);
+				if (i < numBatchesInStage) {					
+					StageId stageId = stages.get(randomGenerator.nextInt(stages.size()));
+					materialsBuilder.addBatchToStage(stageId, batchId);
+				}else {
+					materialsBuilder.addBatchToMaterialsProducerInventory(batchId, testMaterialsProducerId);
+				}
+				
 			}
 			materialsBuilder.addMaterialsProducerId(testMaterialsProducerId);
 
 			for (ResourceId resourceId : TestResourceId.values()) {
-                if (randomGenerator.nextBoolean()) {
-                    materialsBuilder.setMaterialsProducerResourceLevel(testMaterialsProducerId, resourceId,
-                            randomGenerator.nextInt(10));
-                }
-            }
+				if (randomGenerator.nextBoolean()) {
+					materialsBuilder.setMaterialsProducerResourceLevel(testMaterialsProducerId, resourceId,
+							randomGenerator.nextInt(10));
+				}
+			}
 		}
 
-		for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId.values()) {
-			materialsBuilder.defineMaterialsProducerProperty(testMaterialsProducerPropertyId, testMaterialsProducerPropertyId.getPropertyDefinition());
+		for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId
+				.values()) {
+			materialsBuilder.defineMaterialsProducerProperty(testMaterialsProducerPropertyId,
+					testMaterialsProducerPropertyId.getPropertyDefinition());
 		}
 
-		for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId.getPropertiesWithoutDefaultValues()) {
+		for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId
+				.getPropertiesWithoutDefaultValues()) {
 			for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
 				Object randomPropertyValue = testMaterialsProducerPropertyId.getRandomPropertyValue(randomGenerator);
-				materialsBuilder.setMaterialsProducerPropertyValue(testMaterialsProducerId, testMaterialsProducerPropertyId, randomPropertyValue);
+				materialsBuilder.setMaterialsProducerPropertyValue(testMaterialsProducerId,
+						testMaterialsProducerPropertyId, randomPropertyValue);
 			}
 		}
 
 		for (TestMaterialId testMaterialId : TestMaterialId.values()) {
 			Set<TestBatchPropertyId> testBatchPropertyIds = TestBatchPropertyId.getTestBatchPropertyIds(testMaterialId);
 			for (TestBatchPropertyId testBatchPropertyId : testBatchPropertyIds) {
-				materialsBuilder.defineBatchProperty(testMaterialId, testBatchPropertyId, testBatchPropertyId.getPropertyDefinition());
+				materialsBuilder.defineBatchProperty(testMaterialId, testBatchPropertyId,
+						testBatchPropertyId.getPropertyDefinition());
 			}
 		}
 		return materialsBuilder.build();
@@ -518,8 +531,8 @@ public class MaterialsTestPluginFactory {
 	 * <ul>
 	 * <li>Every ResourceId included in {@link TestResourceId} along with the
 	 * defined timeTrackingPolicy for each
-	 * <li>Every ResourcePropertyId included in {@link TestResourcePropertyId}
-	 * along with the defined propertyDefinition for each.
+	 * <li>Every ResourcePropertyId included in {@link TestResourcePropertyId} along
+	 * with the defined propertyDefinition for each.
 	 * <ul>
 	 * <li>Each Resource will have a random property value assigned based on a
 	 * RandomGenerator that is created with the passed in seed
@@ -532,7 +545,7 @@ public class MaterialsTestPluginFactory {
 		ResourcesPluginData.Builder resourcesBuilder = ResourcesPluginData.builder();
 
 		for (TestResourceId testResourceId : TestResourceId.values()) {
-			resourcesBuilder.addResource(testResourceId,0.0,testResourceId.getTimeTrackingPolicy());			
+			resourcesBuilder.addResource(testResourceId, 0.0, testResourceId.getTimeTrackingPolicy());
 		}
 
 		for (TestResourcePropertyId testResourcePropertyId : TestResourcePropertyId.values()) {
@@ -576,12 +589,12 @@ public class MaterialsTestPluginFactory {
 	}
 
 	/**
-	 * Returns a standardized StochasticsPluginData that is minimally adequate
-	 * for testing the MaterialsPlugin
+	 * Returns a standardized StochasticsPluginData that is minimally adequate for
+	 * testing the MaterialsPlugin
 	 * <li>The resulting StochasticsPluginData will include:
 	 * <ul>
-	 * <li>a seed based on the nextLong of a RandomGenerator seeded from the
-	 * passed in seed
+	 * <li>a seed based on the nextLong of a RandomGenerator seeded from the passed
+	 * in seed
 	 * </ul>
 	 */
 	public static StochasticsPluginData getStandardStochasticsPluginData(long seed) {

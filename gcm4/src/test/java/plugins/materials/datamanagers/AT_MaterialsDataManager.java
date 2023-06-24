@@ -121,11 +121,14 @@ public class AT_MaterialsDataManager {
 		materialsBuilder.defineBatchProperty(TestMaterialId.MATERIAL_1, bprop, bprop.getPropertyDefinition());
 		bprop = TestBatchPropertyId.BATCH_PROPERTY_2_2_INTEGER_IMMUTABLE_TRACK;
 		materialsBuilder.defineBatchProperty(TestMaterialId.MATERIAL_2, bprop, bprop.getPropertyDefinition());
-		materialsBuilder.addBatch(new BatchId(0), TestMaterialId.MATERIAL_1, 10, TestMaterialsProducerId.MATERIALS_PRODUCER_1);
-		materialsBuilder.addBatch(new BatchId(1), TestMaterialId.MATERIAL_1, 11, TestMaterialsProducerId.MATERIALS_PRODUCER_1);
-		materialsBuilder.addBatch(new BatchId(2), TestMaterialId.MATERIAL_2, 12, TestMaterialsProducerId.MATERIALS_PRODUCER_2);
-		materialsBuilder.addBatch(new BatchId(3), TestMaterialId.MATERIAL_2, 13, TestMaterialsProducerId.MATERIALS_PRODUCER_2);
-		materialsBuilder.addBatch(new BatchId(4), TestMaterialId.MATERIAL_2, 14, TestMaterialsProducerId.MATERIALS_PRODUCER_2);
+		materialsBuilder.addBatch(new BatchId(0), TestMaterialId.MATERIAL_1, 10);
+		materialsBuilder.addBatchToMaterialsProducerInventory(new BatchId(0), TestMaterialsProducerId.MATERIALS_PRODUCER_1);
+		materialsBuilder.addBatch(new BatchId(1), TestMaterialId.MATERIAL_1, 11);
+		materialsBuilder.addBatchToMaterialsProducerInventory(new BatchId(1), TestMaterialsProducerId.MATERIALS_PRODUCER_1);
+		materialsBuilder.addBatch(new BatchId(2), TestMaterialId.MATERIAL_2, 12);
+		materialsBuilder.addBatchToMaterialsProducerInventory(new BatchId(2), TestMaterialsProducerId.MATERIALS_PRODUCER_2);
+		materialsBuilder.addBatch(new BatchId(3), TestMaterialId.MATERIAL_2, 13);
+		materialsBuilder.addBatch(new BatchId(4), TestMaterialId.MATERIAL_2, 14);
 		materialsBuilder.addStage(new StageId(0), false);
 		materialsBuilder.addStageToMaterialProducer(new StageId(0), TestMaterialsProducerId.MATERIALS_PRODUCER_2);		
 		materialsBuilder.addBatchToStage(new StageId(0), new BatchId(3));
@@ -172,6 +175,13 @@ public class AT_MaterialsDataManager {
 		expectedBuilder.defineMaterialsProducerProperty(propId, propId.getPropertyDefinition());
 		expectedBuilder.setMaterialsProducerPropertyValue(TestMaterialsProducerId.MATERIALS_PRODUCER_1, propId, 345);
 		expectedBuilder.setMaterialsProducerPropertyValue(TestMaterialsProducerId.MATERIALS_PRODUCER_2, propId, 5234);
+		
+		for(TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
+			for(TestResourceId testResourceId : TestResourceId.values()) {
+				expectedBuilder.setMaterialsProducerResourceLevel(testMaterialsProducerId, testResourceId, 0L);
+			}
+		}
+		
 		expectedBuilder.setMaterialsProducerResourceLevel(TestMaterialsProducerId.MATERIALS_PRODUCER_1, TestResourceId.RESOURCE_1, 123L);
 		expectedBuilder.setMaterialsProducerResourceLevel(TestMaterialsProducerId.MATERIALS_PRODUCER_2, TestResourceId.RESOURCE_2, 55L);
 		expectedBuilder.addMaterial(TestMaterialId.MATERIAL_1);
@@ -182,11 +192,14 @@ public class AT_MaterialsDataManager {
 		expectedBuilder.defineBatchProperty(TestMaterialId.MATERIAL_1, bprop, bprop.getPropertyDefinition());
 		bprop = TestBatchPropertyId.BATCH_PROPERTY_2_2_INTEGER_IMMUTABLE_TRACK;
 		expectedBuilder.defineBatchProperty(TestMaterialId.MATERIAL_2, bprop, bprop.getPropertyDefinition());
-		expectedBuilder.addBatch(new BatchId(0), TestMaterialId.MATERIAL_1, 10, TestMaterialsProducerId.MATERIALS_PRODUCER_1);
-		expectedBuilder.addBatch(new BatchId(1), TestMaterialId.MATERIAL_1, 11, TestMaterialsProducerId.MATERIALS_PRODUCER_1);
-		expectedBuilder.addBatch(new BatchId(2), TestMaterialId.MATERIAL_2, 12, TestMaterialsProducerId.MATERIALS_PRODUCER_2);
-		expectedBuilder.addBatch(new BatchId(3), TestMaterialId.MATERIAL_2, 13, TestMaterialsProducerId.MATERIALS_PRODUCER_2);
-		expectedBuilder.addBatch(new BatchId(4), TestMaterialId.MATERIAL_2, 14, TestMaterialsProducerId.MATERIALS_PRODUCER_2);
+		expectedBuilder.addBatch(new BatchId(0), TestMaterialId.MATERIAL_1, 10);
+		expectedBuilder.addBatchToMaterialsProducerInventory(new BatchId(0), TestMaterialsProducerId.MATERIALS_PRODUCER_1);
+		expectedBuilder.addBatch(new BatchId(1), TestMaterialId.MATERIAL_1, 11);
+		expectedBuilder.addBatchToMaterialsProducerInventory(new BatchId(1), TestMaterialsProducerId.MATERIALS_PRODUCER_1);
+		expectedBuilder.addBatch(new BatchId(2), TestMaterialId.MATERIAL_2, 12);
+		expectedBuilder.addBatchToMaterialsProducerInventory(new BatchId(2), TestMaterialsProducerId.MATERIALS_PRODUCER_2);
+		expectedBuilder.addBatch(new BatchId(3), TestMaterialId.MATERIAL_2, 13);
+		expectedBuilder.addBatch(new BatchId(4), TestMaterialId.MATERIAL_2, 14);
 		expectedBuilder.addStage(new StageId(0), false);
 		expectedBuilder.addStageToMaterialProducer(new StageId(0), TestMaterialsProducerId.MATERIALS_PRODUCER_2);
 		expectedBuilder.addStage(expectedStageIds.get(0), false);
@@ -225,11 +238,14 @@ public class AT_MaterialsDataManager {
 		materialsBuilder.defineBatchProperty(TestMaterialId.MATERIAL_1, bprop, bprop.getPropertyDefinition());
 		bprop = TestBatchPropertyId.BATCH_PROPERTY_2_2_INTEGER_IMMUTABLE_TRACK;
 		materialsBuilder.defineBatchProperty(TestMaterialId.MATERIAL_2, bprop, bprop.getPropertyDefinition());
-		materialsBuilder.addBatch(new BatchId(0), TestMaterialId.MATERIAL_1, 10, TestMaterialsProducerId.MATERIALS_PRODUCER_1);
-		materialsBuilder.addBatch(new BatchId(1), TestMaterialId.MATERIAL_1, 11, TestMaterialsProducerId.MATERIALS_PRODUCER_1);
-		materialsBuilder.addBatch(new BatchId(2), TestMaterialId.MATERIAL_2, 12, TestMaterialsProducerId.MATERIALS_PRODUCER_2);
-		materialsBuilder.addBatch(new BatchId(3), TestMaterialId.MATERIAL_2, 13, TestMaterialsProducerId.MATERIALS_PRODUCER_2);
-		materialsBuilder.addBatch(new BatchId(4), TestMaterialId.MATERIAL_2, 14, TestMaterialsProducerId.MATERIALS_PRODUCER_2);
+		materialsBuilder.addBatch(new BatchId(0), TestMaterialId.MATERIAL_1, 10);
+		materialsBuilder.addBatchToMaterialsProducerInventory(new BatchId(0), TestMaterialsProducerId.MATERIALS_PRODUCER_1);
+		materialsBuilder.addBatch(new BatchId(1), TestMaterialId.MATERIAL_1, 11);
+		materialsBuilder.addBatchToMaterialsProducerInventory(new BatchId(1), TestMaterialsProducerId.MATERIALS_PRODUCER_1);
+		materialsBuilder.addBatch(new BatchId(2), TestMaterialId.MATERIAL_2, 12);
+		materialsBuilder.addBatchToMaterialsProducerInventory(new BatchId(2), TestMaterialsProducerId.MATERIALS_PRODUCER_2);
+		materialsBuilder.addBatch(new BatchId(3), TestMaterialId.MATERIAL_2, 13);
+		materialsBuilder.addBatch(new BatchId(4), TestMaterialId.MATERIAL_2, 14);
 		materialsBuilder.addStage(new StageId(0), false);
 		materialsBuilder.addStageToMaterialProducer(new StageId(0), TestMaterialsProducerId.MATERIALS_PRODUCER_2);
 		materialsBuilder.addBatchToStage(new StageId(0), new BatchId(3));
@@ -289,6 +305,13 @@ public class AT_MaterialsDataManager {
 		expectedBuilder.defineMaterialsProducerProperty(propId, propId.getPropertyDefinition());
 		expectedBuilder.setMaterialsProducerPropertyValue(TestMaterialsProducerId.MATERIALS_PRODUCER_1, propId, 73);
 		expectedBuilder.setMaterialsProducerPropertyValue(TestMaterialsProducerId.MATERIALS_PRODUCER_2, propId, 5234);
+		
+		for(TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
+			for(TestResourceId testResourceId : TestResourceId.values()) {
+				expectedBuilder.setMaterialsProducerResourceLevel(testMaterialsProducerId, testResourceId, 0L);
+			}
+		}
+		
 		expectedBuilder.setMaterialsProducerResourceLevel(TestMaterialsProducerId.MATERIALS_PRODUCER_1, TestResourceId.RESOURCE_1, 123L);
 		expectedBuilder.setMaterialsProducerResourceLevel(TestMaterialsProducerId.MATERIALS_PRODUCER_2, TestResourceId.RESOURCE_2, 55L);
 		expectedBuilder.addMaterial(TestMaterialId.MATERIAL_1);
@@ -301,11 +324,14 @@ public class AT_MaterialsDataManager {
 		expectedBuilder.defineBatchProperty(TestMaterialId.MATERIAL_2, bprop, bprop.getPropertyDefinition());
 		bprop = TestBatchPropertyId.BATCH_PROPERTY_2_1_BOOLEAN_MUTABLE_TRACK;
 		expectedBuilder.defineBatchProperty(TestMaterialId.MATERIAL_2, bprop, bprop.getPropertyDefinition());
-		expectedBuilder.addBatch(new BatchId(1), TestMaterialId.MATERIAL_1, 11, TestMaterialsProducerId.MATERIALS_PRODUCER_1);
-		expectedBuilder.addBatch(new BatchId(2), TestMaterialId.MATERIAL_2, 12, TestMaterialsProducerId.MATERIALS_PRODUCER_2);
-		expectedBuilder.addBatch(new BatchId(3), TestMaterialId.MATERIAL_2, 13, TestMaterialsProducerId.MATERIALS_PRODUCER_2);
-		expectedBuilder.addBatch(new BatchId(4), TestMaterialId.MATERIAL_2, 14, TestMaterialsProducerId.MATERIALS_PRODUCER_2);
-		expectedBuilder.addBatch(expectedBatchIds.get(0), TestMaterialId.MATERIAL_2, 58.9, TestMaterialsProducerId.MATERIALS_PRODUCER_2);
+		expectedBuilder.addBatch(new BatchId(1), TestMaterialId.MATERIAL_1, 11);
+		expectedBuilder.addBatchToMaterialsProducerInventory(new BatchId(1), TestMaterialsProducerId.MATERIALS_PRODUCER_1);
+		expectedBuilder.addBatch(new BatchId(2), TestMaterialId.MATERIAL_2, 12);
+		expectedBuilder.addBatchToMaterialsProducerInventory(new BatchId(2), TestMaterialsProducerId.MATERIALS_PRODUCER_2);
+		expectedBuilder.addBatch(new BatchId(3), TestMaterialId.MATERIAL_2, 13);
+		expectedBuilder.addBatch(new BatchId(4), TestMaterialId.MATERIAL_2, 14);
+		expectedBuilder.addBatch(expectedBatchIds.get(0), TestMaterialId.MATERIAL_2, 58.9);
+		expectedBuilder.addBatchToMaterialsProducerInventory(expectedBatchIds.get(0), TestMaterialsProducerId.MATERIALS_PRODUCER_2);
 		expectedBuilder.addStage(new StageId(0), false);
 		expectedBuilder.addStageToMaterialProducer(new StageId(0), TestMaterialsProducerId.MATERIALS_PRODUCER_2);
 		
@@ -4310,18 +4336,13 @@ public class AT_MaterialsDataManager {
 			}
 			assertEquals(expectedBatchIds, actualBatchIds);
 
-			// Show that the batches have the correct material id, materials
-			// producer and amounts
+			// Show that the batches have the correct material id, and amounts
 
 			for (BatchId batchId : materialsPluginData.getBatchIds()) {
 
 				MaterialId expectedMaterialId = materialsPluginData.getBatchMaterial(batchId);
 				MaterialId actualMaterialId = materialsDataManager.getBatchMaterial(batchId);
 				assertEquals(expectedMaterialId, actualMaterialId);
-
-				MaterialsProducerId expectedMaterialsProducerId = materialsPluginData.getBatchMaterialsProducer(batchId);
-				MaterialsProducerId actualMaterialsProducerId = materialsDataManager.getBatchProducer(batchId);
-				assertEquals(expectedMaterialsProducerId, actualMaterialsProducerId);
 
 				double expectedAmount = materialsPluginData.getBatchAmount(batchId);
 				double actualAmount = materialsDataManager.getBatchAmount(batchId);
@@ -4337,6 +4358,12 @@ public class AT_MaterialsDataManager {
 					assertEquals(expectedValue, actualValue);
 				}
 
+			}
+			// Show that the inventory batches match
+			for(MaterialsProducerId materialsProducerId : materialsPluginData.getMaterialsProducerIds()) {
+				Set<BatchId>expectedBatches = new LinkedHashSet<>(materialsPluginData.getMaterialsProducerInventoryBatches(materialsProducerId));
+				Set<BatchId>actualBatches = new LinkedHashSet<>(materialsDataManager.getInventoryBatches(materialsProducerId));
+				assertEquals(expectedBatches, actualBatches);
 			}
 
 			// Show that the correct initial stages are present with their
@@ -4379,7 +4406,7 @@ public class AT_MaterialsDataManager {
 
 		// add the test plugin
 		TestPluginData testPluginData = pluginBuilder.build();
-		Factory factory = MaterialsTestPluginFactory.factory(numBatches, numStages, numBatchesToStage, seed, testPluginData);
+		Factory factory = MaterialsTestPluginFactory.factory(numBatches, numStages, numBatchesToStage, seed, testPluginData).setMaterialsPluginData(materialsPluginData);
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 	}

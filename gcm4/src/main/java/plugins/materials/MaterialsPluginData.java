@@ -6,7 +6,6 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 
 import org.apache.commons.math3.util.FastMath;
@@ -26,7 +25,6 @@ import plugins.resources.support.ResourceId;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
 import util.errors.ContractException;
-import util.wrappers.MultiKey;
 
 /**
  * An immutable container of the initial state materials producers. It contains:
@@ -90,20 +88,39 @@ public final class MaterialsPluginData implements PluginData {
 		 *                           if the material amount is infinite</li>
 		 *                           <li>{@linkplain MaterialsError#NEGATIVE_MATERIAL_AMOUNT}
 		 *                           if the material amount is negative</li>
-		 *                           <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID}
-		 *                           if the materials producer id is null</li>
 		 */
-		public Builder addBatch(final BatchId batchId, final MaterialId materialId, final double amount,
-				final MaterialsProducerId materialsProducerId) {
+		public Builder addBatch(final BatchId batchId, final MaterialId materialId, final double amount) {
 			ensureDataMutability();
 			validateBatchIdNotNull(batchId);
 			validateMaterialIdNotNull(materialId);
 			validateBatchAmount(amount);
-			validateMaterialsProducerIdNotNull(materialsProducerId);
 			data.batchIds.add(batchId);
 			data.batchMaterials.put(batchId, materialId);
-			data.batchMaterialsProducers.put(batchId, materialsProducerId);
 			data.batchAmounts.put(batchId, amount);
+			return this;
+		}
+
+		/**
+		 * Adds the batch to inventory of the materials producer. Duplicate inputs
+		 * override previous inputs.
+		 *
+		 * @throws ContractException
+		 *                           <li>{@linkplain MaterialsError#NULL_BATCH_ID} if
+		 *                           the batch id is null</li>
+		 *                           <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID}
+		 *                           if the materials producer id is null</li>
+		 */
+		public Builder addBatchToMaterialsProducerInventory(final BatchId batchId,
+				final MaterialsProducerId materialsProducerId) {
+			ensureDataMutability();
+			validateBatchIdNotNull(batchId);
+			validateMaterialsProducerIdNotNull(materialsProducerId);
+			Set<BatchId> batches = data.materialsProducerInventoryBatches.get(materialsProducerId);
+			if (batches == null) {
+				batches = new LinkedHashSet<>();
+				data.materialsProducerInventoryBatches.put(materialsProducerId, batches);
+			}
+			batches.add(batchId);
 			return this;
 		}
 
@@ -544,11 +561,16 @@ public final class MaterialsPluginData implements PluginData {
 				}
 			}
 
-			for (final BatchId batchId : data.batchMaterialsProducers.keySet()) {
-				final MaterialsProducerId materialsProducerId = data.batchMaterialsProducers.get(batchId);
+			for (final MaterialsProducerId materialsProducerId : data.materialsProducerInventoryBatches.keySet()) {
 				if (!data.materialsProducerIds.contains(materialsProducerId)) {
 					throw new ContractException(MaterialsError.UNKNOWN_MATERIALS_PRODUCER_ID,
-							materialsProducerId + " in batch addition of " + batchId);
+							materialsProducerId + " in batch materials producer inventory batches");
+				}
+				for (BatchId batchId : data.materialsProducerInventoryBatches.get(materialsProducerId)) {
+					if (!data.batchIds.contains(batchId)) {
+						throw new ContractException(MaterialsError.UNKNOWN_BATCH_ID,
+								batchId + " in batch materials producer inventory batches");
+					}
 				}
 			}
 
@@ -576,9 +598,7 @@ public final class MaterialsPluginData implements PluginData {
 						throw new ContractException(PropertyError.INCOMPATIBLE_VALUE,
 								batchId + ": " + batchPropertyId + ": " + propertyValue);
 					}
-
 				}
-
 			}
 
 			/*
@@ -663,14 +683,12 @@ public final class MaterialsPluginData implements PluginData {
 				}
 			}
 
-			
-
 			/*
-			 * show that stage assignments to materials producers are valid. 1)Each materials
-			 * producer is known, 2)each state is known, 3)each stage is assigned to exactly one
-			 * materials producer.
+			 * show that stage assignments to materials producers are valid. 1)Each
+			 * materials producer is known, 2)each state is known, 3)each stage is assigned
+			 * to exactly one materials producer.
 			 */
-			
+
 			Map<StageId, MaterialsProducerId> smMap = new LinkedHashMap<>();
 			for (final MaterialsProducerId materialsProducerId : data.materialsProducerStages.keySet()) {
 				if (!data.materialsProducerIds.contains(materialsProducerId)) {
@@ -690,14 +708,12 @@ public final class MaterialsPluginData implements PluginData {
 					}
 				}
 			}
-			for(StageId stageId : data.stageIds) {
-				if(!smMap.containsKey(stageId)) {
-					throw new ContractException(MaterialsError.STAGE_WITHOUT_MATERIALS_PRODUCER,
-							"stage " + stageId );
+			for (StageId stageId : data.stageIds) {
+				if (!smMap.containsKey(stageId)) {
+					throw new ContractException(MaterialsError.STAGE_WITHOUT_MATERIALS_PRODUCER, "stage " + stageId);
 				}
 			}
 
-			
 			for (final StageId stageId : data.stageBatches.keySet()) {
 				if (!data.stageIds.contains(stageId)) {
 					throw new ContractException(MaterialsError.UNKNOWN_STAGE_ID,
@@ -712,8 +728,22 @@ public final class MaterialsPluginData implements PluginData {
 				}
 			}
 
-			Map<BatchId, StageId> bsMap = new LinkedHashMap<>();
+			/*
+			 * Show that every batch is in exactly one inventory or on exactly one stage
+			 */
+			Map<BatchId, MaterialsProducerId> bmMap = new LinkedHashMap<>();
+			for (MaterialsProducerId materialsProducerId : data.materialsProducerInventoryBatches.keySet()) {
+				Set<BatchId> batches = data.materialsProducerInventoryBatches.get(materialsProducerId);
+				for (BatchId batchId : batches) {
+					MaterialsProducerId replacedMaterialsProducerId = bmMap.put(batchId, materialsProducerId);
+					if (replacedMaterialsProducerId != null) {
+						throw new ContractException(MaterialsError.BATCH_ALREADY_INVENTORIED,
+								batchId + " has been assigned to multiple materials producer inventories");
+					}
+				}
+			}
 
+			Map<BatchId, StageId> bsMap = new LinkedHashMap<>();
 			for (final StageId stageId : data.stageBatches.keySet()) {
 				final Set<BatchId> batches = data.stageBatches.get(stageId);
 				for (final BatchId batchId : batches) {
@@ -725,15 +755,15 @@ public final class MaterialsPluginData implements PluginData {
 				}
 			}
 
-			for (final StageId stageId : data.stageBatches.keySet()) {
-				final Set<BatchId> batches = data.stageBatches.get(stageId);
-				for (final BatchId batchId : batches) {
-					final MaterialsProducerId batchMaterialsProducerId = data.batchMaterialsProducers.get(batchId);
-					final MaterialsProducerId stageMaterialsProducerId = smMap.get(stageId);
-					if (!batchMaterialsProducerId.equals(stageMaterialsProducerId)) {
-						throw new ContractException(MaterialsError.BATCH_STAGED_TO_DIFFERENT_OWNER,
-								stageId + ": " + batchId);
-					}
+			for (BatchId batchId : data.batchIds) {
+				boolean inventoried = bmMap.containsKey(batchId);
+				boolean staged = bsMap.containsKey(batchId);
+
+				if (!inventoried && !staged) {
+					throw new ContractException(MaterialsError.BATCH_NOT_OWNED, batchId);
+				}
+				if (inventoried && staged) {
+					throw new ContractException(MaterialsError.BATCH_IN_MULTIPLE_LOCATIONS, batchId);
 				}
 			}
 
@@ -780,147 +810,14 @@ public final class MaterialsPluginData implements PluginData {
 		private final Map<MaterialsProducerId, Set<StageId>> materialsProducerStages;
 
 		private final Map<StageId, Set<BatchId>> stageBatches;
-		//////////////////////////////
 
-		private final Map<BatchId, MaterialsProducerId> batchMaterialsProducers;
+		private final Map<MaterialsProducerId, Set<BatchId>> materialsProducerInventoryBatches;
 
 		private int nextBatchRecordId = -1;
 
 		private int nextStageRecordId = -1;
 
 		private boolean locked;
-
-		private boolean compareBatchPropertyValues(Data other) {
-			for (BatchId batchId : batchIds) {
-				MaterialId materialId = batchMaterials.get(batchId);
-				Map<BatchPropertyId, PropertyDefinition> propMap = batchPropertyDefinitions.get(materialId);
-				if (propMap != null) {
-					for (BatchPropertyId batchPropertyId : propMap.keySet()) {
-						Object propertyValue = null;
-
-						Map<BatchPropertyId, Object> map = batchPropertyValues.get(batchId);
-						if (map != null) {
-							propertyValue = map.get(batchPropertyId);
-						}
-						if (propertyValue == null) {
-							PropertyDefinition propertyDefinition = batchPropertyDefinitions.get(materialId)
-									.get(batchPropertyId);
-							propertyValue = propertyDefinition.getDefaultValue().get();
-						}
-
-						Object otherPropertyValue = null;
-						map = other.batchPropertyValues.get(batchId);
-						if (map != null) {
-							otherPropertyValue = map.get(batchPropertyId);
-						}
-						if (otherPropertyValue == null) {
-							PropertyDefinition propertyDefinition = batchPropertyDefinitions.get(materialId)
-									.get(batchPropertyId);
-							otherPropertyValue = propertyDefinition.getDefaultValue().get();
-						}
-						if (!propertyValue.equals(otherPropertyValue)) {
-							return false;
-						}
-					}
-				}
-			}
-			return true;
-		}
-
-		private boolean compareProducerPropertyValues(Data other) {
-
-			for (MaterialsProducerId materialsProducerId : materialsProducerIds) {
-				for (MaterialsProducerPropertyId materialsProducerPropertyId : materialsProducerPropertyDefinitions
-						.keySet()) {
-					Object propertyValue = null;
-					Map<MaterialsProducerPropertyId, Object> map = materialsProducerPropertyValues
-							.get(materialsProducerId);
-					if (map != null) {
-						propertyValue = map.get(materialsProducerPropertyId);
-					}
-					if (propertyValue == null) {
-						PropertyDefinition propertyDefinition = materialsProducerPropertyDefinitions
-								.get(materialsProducerPropertyId);
-						propertyValue = propertyDefinition.getDefaultValue().get();
-					}
-					Object otherPropertyValue = null;
-					map = other.materialsProducerPropertyValues.get(materialsProducerId);
-					if (map != null) {
-						otherPropertyValue = map.get(materialsProducerPropertyId);
-					}
-					if (otherPropertyValue == null) {
-						PropertyDefinition propertyDefinition = materialsProducerPropertyDefinitions
-								.get(materialsProducerPropertyId);
-						otherPropertyValue = propertyDefinition.getDefaultValue().get();
-					}
-					if (!propertyValue.equals(otherPropertyValue)) {
-						return false;
-					}
-				}
-			}
-			return true;
-		}
-
-		private int getProducerPropertyValuesHashCode() {
-			final int prime = 31;
-			int result = 1;
-			for (MaterialsProducerId materialsProducerId : materialsProducerIds) {
-				for (MaterialsProducerPropertyId materialsProducerPropertyId : materialsProducerPropertyDefinitions
-						.keySet()) {
-					Object propertyValue = null;
-					Map<MaterialsProducerPropertyId, Object> map = materialsProducerPropertyValues
-							.get(materialsProducerId);
-					if (map != null) {
-						propertyValue = map.get(materialsProducerPropertyId);
-					}
-					if (propertyValue == null) {
-						PropertyDefinition propertyDefinition = materialsProducerPropertyDefinitions
-								.get(materialsProducerPropertyId);
-						propertyValue = propertyDefinition.getDefaultValue().get();
-					}
-					int subResult = 1;
-					subResult = subResult * prime + materialsProducerId.hashCode();
-					subResult = subResult * prime + materialsProducerPropertyId.hashCode();
-					subResult = subResult * prime + propertyValue.hashCode();
-
-					result += subResult;
-				}
-			}
-			return result;
-		}
-
-		private int getBatchPropertyValuesHashCode() {
-			final int prime = 31;
-			int result = 0;
-
-			for (BatchId batchId : batchIds) {
-				MaterialId materialId = batchMaterials.get(batchId);
-				Map<BatchPropertyId, PropertyDefinition> defMap = batchPropertyDefinitions.get(materialId);
-				if (defMap != null) {
-					for (BatchPropertyId batchPropertyId : defMap.keySet()) {
-						Object propertyValue = null;
-
-						Map<BatchPropertyId, Object> valueMap = batchPropertyValues.get(batchId);
-						if (valueMap != null) {
-							propertyValue = valueMap.get(batchPropertyId);
-						}
-						if (propertyValue == null) {
-							PropertyDefinition propertyDefinition = batchPropertyDefinitions.get(materialId)
-									.get(batchPropertyId);
-							propertyValue = propertyDefinition.getDefaultValue().get();
-						}
-
-						int subResult = 1;
-						subResult = subResult * prime + batchId.hashCode();
-						subResult = subResult * prime + batchPropertyId.hashCode();
-						subResult = subResult * prime + propertyValue.hashCode();
-
-						result += subResult;
-					}
-				}
-			}
-			return result;
-		}
 
 		public Data() {
 			materialsProducerIds = new LinkedHashSet<>();
@@ -941,7 +838,7 @@ public final class MaterialsPluginData implements PluginData {
 
 			batchAmounts = new LinkedHashMap<>();
 
-			batchMaterialsProducers = new LinkedHashMap<>();
+			materialsProducerInventoryBatches = new LinkedHashMap<>();
 
 			batchPropertyValues = new LinkedHashMap<>();
 
@@ -992,7 +889,13 @@ public final class MaterialsPluginData implements PluginData {
 
 			batchAmounts = new LinkedHashMap<>(data.batchAmounts);
 
-			batchMaterialsProducers = new LinkedHashMap<>(data.batchMaterialsProducers);
+			materialsProducerInventoryBatches = new LinkedHashMap<>();
+
+			for (MaterialsProducerId materialsProducerId : data.materialsProducerInventoryBatches.keySet()) {
+				Set<BatchId> set = data.materialsProducerInventoryBatches.get(materialsProducerId);
+				Set<BatchId> newSet = new LinkedHashSet<>(set);
+				materialsProducerInventoryBatches.put(materialsProducerId, newSet);
+			}
 
 			batchPropertyValues = new LinkedHashMap<>();
 			for (BatchId batchId : data.batchPropertyValues.keySet()) {
@@ -1004,14 +907,13 @@ public final class MaterialsPluginData implements PluginData {
 			stageIds = new LinkedHashSet<>(data.stageIds);
 
 			stageOffers = new LinkedHashMap<>(data.stageOffers);
-			
+
 			materialsProducerStages = new LinkedHashMap<>();
-			for(MaterialsProducerId materialsProducerId : data.materialsProducerStages.keySet()) {
+			for (MaterialsProducerId materialsProducerId : data.materialsProducerStages.keySet()) {
 				Set<StageId> set = data.materialsProducerStages.get(materialsProducerId);
 				Set<StageId> newSet = new LinkedHashSet<>(set);
 				materialsProducerStages.put(materialsProducerId, newSet);
 			}
-			
 
 			stageBatches = new LinkedHashMap<>();
 			for (StageId stageId : data.stageBatches.keySet()) {
@@ -1036,7 +938,7 @@ public final class MaterialsPluginData implements PluginData {
 			result = prime * result + batchAmounts.hashCode();
 			result = prime * result + batchIds.hashCode();
 			result = prime * result + batchMaterials.hashCode();
-			result = prime * result + batchMaterialsProducers.hashCode();
+			result = prime * result + materialsProducerInventoryBatches.hashCode();
 			result = prime * result + batchPropertyDefinitions.hashCode();
 			result = prime * result + materialIds.hashCode();
 			result = prime * result + materialsProducerIds.hashCode();
@@ -1047,63 +949,9 @@ public final class MaterialsPluginData implements PluginData {
 			result = prime * result + stageOffers.hashCode();
 			result = prime * result + nextBatchRecordId;
 			result = prime * result + nextStageRecordId;
-
-			result = prime * result + getBatchPropertyValuesHashCode();
-			result = prime * result + getProducerPropertyValuesHashCode();
-			result = prime * result + getProducerResourceLevelsHashCode();
-
-			return result;
-		}
-
-		private boolean compareProducerResourceLevels(Data other) {
-
-			for (MaterialsProducerId materialsProducerId : materialsProducerResourceLevels.keySet()) {
-				Set<MultiKey> nonZeroValues = new LinkedHashSet<>();
-				Map<ResourceId, Long> map = materialsProducerResourceLevels.get(materialsProducerId);
-				if (map != null) {
-					for (ResourceId resourceId : map.keySet()) {
-						Long level = map.get(resourceId);
-						if (level > 0) {
-							nonZeroValues.add(new MultiKey(resourceId, level));
-						}
-					}
-				}
-
-				Set<MultiKey> otherNonZeroValues = new LinkedHashSet<>();
-				map = other.materialsProducerResourceLevels.get(materialsProducerId);
-				if (map != null) {
-					for (ResourceId resourceId : map.keySet()) {
-						Long level = map.get(resourceId);
-						if (level > 0) {
-							otherNonZeroValues.add(new MultiKey(resourceId, level));
-						}
-					}
-				}
-				if (!nonZeroValues.equals(otherNonZeroValues)) {
-					return false;
-				}
-			}
-			return true;
-		}
-
-		private int getProducerResourceLevelsHashCode() {
-			final int prime = 31;
-			int result = 1;
-			for (MaterialsProducerId materialsProducerId : materialsProducerResourceLevels.keySet()) {
-				Map<ResourceId, Long> map = materialsProducerResourceLevels.get(materialsProducerId);
-				if (map != null) {
-					for (ResourceId resourceId : map.keySet()) {
-						Long level = map.get(resourceId);
-						if (level > 0) {
-							int subResult = 1;
-							subResult = subResult * prime + materialsProducerId.hashCode();
-							subResult = subResult * prime + resourceId.hashCode();
-							subResult = subResult * prime + level.hashCode();
-							result += subResult;
-						}
-					}
-				}
-			}
+			result = prime * result + batchPropertyValues.hashCode();
+			result = prime * result + materialsProducerPropertyValues.hashCode();
+			result = prime * result + materialsProducerResourceLevels.hashCode();
 			return result;
 		}
 
@@ -1132,9 +980,25 @@ public final class MaterialsPluginData implements PluginData {
 			 */
 
 			// most of the fields use normal comparison
-			if (!batchAmounts.equals(other.batchAmounts) || !batchIds.equals(other.batchIds)
-					|| !batchMaterials.equals(other.batchMaterials)
-					|| !batchMaterialsProducers.equals(other.batchMaterialsProducers)) {
+			
+
+			
+			
+			
+			
+			if (!batchAmounts.equals(other.batchAmounts)) {
+				return false;
+			}
+
+			if (!batchIds.equals(other.batchIds)) {
+				return false;
+			}
+
+			if (!batchMaterials.equals(other.batchMaterials)) {
+				return false;
+			}
+
+			if (!materialsProducerInventoryBatches.equals(other.materialsProducerInventoryBatches)) {
 				return false;
 			}
 
@@ -1150,6 +1014,7 @@ public final class MaterialsPluginData implements PluginData {
 				return false;
 			}
 
+			
 			if (!materialsProducerPropertyDefinitions.equals(other.materialsProducerPropertyDefinitions)) {
 				return false;
 			}
@@ -1176,23 +1041,19 @@ public final class MaterialsPluginData implements PluginData {
 			if (nextStageRecordId != other.nextStageRecordId) {
 				return false;
 			}
-
-			/*
-			 * The remaining fields require special handling so that default
-			 * property/resource values and times are ignored. Note that we will rely on the
-			 * previous equalities being true.
-			 */
-
-			if (!compareBatchPropertyValues(other)) {
-				return false;
-			}
-			if (!compareProducerPropertyValues(other)) {
+			
+			if (!batchPropertyValues.equals(other.batchPropertyValues)) {
 				return false;
 			}
 
-			if (!compareProducerResourceLevels(other)) {
+			if (!materialsProducerPropertyValues.equals(other.materialsProducerPropertyValues)) {
 				return false;
 			}
+			
+			if (!materialsProducerResourceLevels.equals(other.materialsProducerResourceLevels)) {
+				return false;
+			}
+			
 			return true;
 		}
 
@@ -1217,8 +1078,8 @@ public final class MaterialsPluginData implements PluginData {
 			builder.append(batchMaterials);
 			builder.append(", batchAmounts=");
 			builder.append(batchAmounts);
-			builder.append(", batchMaterialsProducers=");
-			builder.append(batchMaterialsProducers);
+			builder.append(", materialsProducerInventoryBatches=");
+			builder.append(materialsProducerInventoryBatches);
 			builder.append(", batchPropertyValues=");
 			builder.append(batchPropertyValues);
 			builder.append(", stageIds=");
@@ -1232,7 +1093,7 @@ public final class MaterialsPluginData implements PluginData {
 			builder.append(", nextBatchRecordId=");
 			builder.append(nextBatchRecordId);
 			builder.append(", nextStageRecordId=");
-			builder.append(nextStageRecordId);		
+			builder.append(nextStageRecordId);
 			builder.append("]");
 			return builder.toString();
 		}
@@ -1430,16 +1291,18 @@ public final class MaterialsPluginData implements PluginData {
 	 * Returns the materials producer id for the given batch id.
 	 *
 	 * @throws ContractException
-	 *                           <li>{@linkplain MaterialsError#NULL_BATCH_ID} if
-	 *                           the batch id is null</li>
-	 *                           <li>{@linkplain MaterialsError#UNKNOWN_BATCH_ID} if
-	 *                           the batch id is unknown</li>
+	 *                           <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID}
+	 *                           if the materials producer id is null</li>
+	 * 
 	 */
-	@SuppressWarnings("unchecked")
-	public <T extends MaterialsProducerId> T getBatchMaterialsProducer(final BatchId batchId) {
-		validateBatchIdNotNull(batchId);
-		validateBatchExists(data, batchId);
-		return (T) data.batchMaterialsProducers.get(batchId);
+	public List<BatchId> getMaterialsProducerInventoryBatches(final MaterialsProducerId materialsProducerId) {
+		validateMaterialsProducerIdNotNull(materialsProducerId);
+		Set<BatchId> batches = data.materialsProducerInventoryBatches.get(materialsProducerId);
+		List<BatchId> result = new ArrayList<>();
+		if (batches != null) {
+			result.addAll(batches);
+		}
+		return result;
 	}
 
 	/**
@@ -1662,16 +1525,16 @@ public final class MaterialsPluginData implements PluginData {
 	 *
 	 *
 	 * @throws ContractException
-	 *                           <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID} if
-	 *                           the stage id is null</li>
-	 *                           <li>{@linkplain MaterialsError#UNKNOWN_MATERIALS_PRODUCER_ID} if
-	 *                           the stage id is unknown</li>
-	 */	
+	 *                           <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID}
+	 *                           if the stage id is null</li>
+	 *                           <li>{@linkplain MaterialsError#UNKNOWN_MATERIALS_PRODUCER_ID}
+	 *                           if the stage id is unknown</li>
+	 */
 	public List<StageId> getMaterialsProducerStages(final MaterialsProducerId materialsProducerId) {
 		validateMaterialsProducerExists(data, materialsProducerId);
 		List<StageId> result = new ArrayList<>();
 		Set<StageId> stages = data.materialsProducerStages.get(materialsProducerId);
-		if(stages!=null) {
+		if (stages != null) {
 			result.addAll(stages);
 		}
 		return result;
@@ -1711,19 +1574,31 @@ public final class MaterialsPluginData implements PluginData {
 		return data.nextStageRecordId;
 	}
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o)
-			return true;
-		if (!(o instanceof MaterialsPluginData))
-			return false;
-		MaterialsPluginData that = (MaterialsPluginData) o;
-		return data.equals(that.data);
-	}
+	
+
+	
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(data);
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + data.hashCode();
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!(obj instanceof MaterialsPluginData)) {
+			return false;
+		}
+		MaterialsPluginData other = (MaterialsPluginData) obj;
+		if (!data.equals(other.data)) {
+			return false;
+		}
+		return true;
 	}
 
 	@Override
