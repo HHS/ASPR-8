@@ -488,15 +488,81 @@ public final class MaterialsPluginData implements PluginData {
 			return this;
 		}
 
-		private void validateData() {
+		/*
+		 * Set<StageId> stageIds;
+		 * 
+		 * Defines the valid stage ids, no test needed
+		 */
+		private void validateData_StageIds() {
 
+		}
+
+		/*
+		 * Set<BatchId> batchIds;
+		 * 
+		 * Defines the valid batch ids, no test needed
+		 */
+		private void validateData_BatchIds() {
+
+		}
+
+		/*
+		 * Set<MaterialId> materialIds;
+		 * 
+		 * Defines the valid material ids, no test needed
+		 */
+		private void validateData_MaterialIds() {
+
+		}
+
+		/*
+		 * Set<MaterialsProducerId> materialsProducerIds;
+		 * 
+		 * Defines the valid materials producer ids, no test needed
+		 */
+		private void validateData_MaterialsProducerIds() {
+
+		}
+
+		/*
+		 * Map<MaterialsProducerPropertyId, PropertyDefinition>
+		 * materialsProducerPropertyDefinitions;
+		 * 
+		 * Defines the valid materials producer property ids, no test needed
+		 */
+		private void validateData_MaterialsProducerPropertyDefinitions() {
+
+		}
+
+		/*
+		 * Map<MaterialId, Map<BatchPropertyId, PropertyDefinition>>
+		 * batchPropertyDefinitions;
+		 * 
+		 * Defines the valid batch property ids.
+		 * 
+		 * Need to show that each material id is valid
+		 * 
+		 */
+		private void validateData_BatchPropertyDefinitions() {
 			for (final MaterialId materialId : data.batchPropertyDefinitions.keySet()) {
 				if (!data.materialIds.contains(materialId)) {
 					throw new ContractException(MaterialsError.UNKNOWN_MATERIAL_ID,
 							materialId + " in batch property definitions");
 				}
 			}
+		}
 
+		/*
+		 * Map<MaterialsProducerId, Map<MaterialsProducerPropertyId, Object>>
+		 * materialsProducerPropertyValues;
+		 * 
+		 * Need to show that 1)each MaterialsProducerId is valid 2)each
+		 * MaterialsProducerPropertyId is valid 3) each value is compatible with the
+		 * associated property definition and 4) that there are sufficient values to
+		 * cover any property definitions that do not have a default value
+		 * 
+		 */
+		private void validateData_MaterialsProducerPropertyValues() {
 			for (final MaterialsProducerId materialsProducerId : data.materialsProducerPropertyValues.keySet()) {
 				if (!data.materialsProducerIds.contains(materialsProducerId)) {
 					throw new ContractException(MaterialsError.UNKNOWN_MATERIALS_PRODUCER_ID,
@@ -524,7 +590,6 @@ public final class MaterialsPluginData implements PluginData {
 			 * value, ensure that all corresponding materials producer property values are
 			 * not null and repair the definition.
 			 */
-
 			for (final MaterialsProducerPropertyId materialsProducerPropertyId : data.materialsProducerPropertyDefinitions
 					.keySet()) {
 				final PropertyDefinition propertyDefinition = data.materialsProducerPropertyDefinitions
@@ -536,7 +601,6 @@ public final class MaterialsPluginData implements PluginData {
 								.get(materialsProducerId);
 						if (propertyValueMap != null) {
 							propertyValue = propertyValueMap.get(materialsProducerPropertyId);
-
 						}
 						if (propertyValue == null) {
 							throw new ContractException(PropertyError.INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT,
@@ -545,6 +609,15 @@ public final class MaterialsPluginData implements PluginData {
 					}
 				}
 			}
+		}
+
+		/*
+		 * Map<MaterialsProducerId, Map<ResourceId, Long>>
+		 * materialsProducerResourceLevels;
+		 * 
+		 * Need to show that each MaterialsProducerId is valid
+		 */
+		private void validateData_MaterialsProducerResourceLevels() {
 
 			for (final MaterialsProducerId materialsProducerId : data.materialsProducerResourceLevels.keySet()) {
 				if (!data.materialsProducerIds.contains(materialsProducerId)) {
@@ -552,15 +625,83 @@ public final class MaterialsPluginData implements PluginData {
 							materialsProducerId + " in materials producer resource levels");
 				}
 			}
+		}
 
+		/*
+		 * Map<BatchId, Double> batchAmounts;
+		 * 
+		 * Need to show that each BatchId is valid
+		 */
+		private void validateData_BatchAmounts() {
+			for (final BatchId batchId : data.batchAmounts.keySet()) {
+
+				if (!data.batchIds.contains(batchId)) {
+					throw new ContractException(MaterialsError.UNKNOWN_BATCH_ID, batchId + " in batch amounts");
+				}
+			}
+		}
+
+		/*
+		 * Map<BatchId, MaterialId> batchMaterials;
+		 * 
+		 * Need to show that 1) each BatchId is valid and 2) each material id is valid
+		 */
+		private void validateData_BatchMaterials() {
 			for (final BatchId batchId : data.batchMaterials.keySet()) {
+				if (!data.batchIds.contains(batchId)) {
+					throw new ContractException(MaterialsError.UNKNOWN_BATCH_ID, batchId + " in batch materials");
+				}
+
 				final MaterialId materialId = data.batchMaterials.get(batchId);
+
 				if (!data.materialIds.contains(materialId)) {
 					throw new ContractException(MaterialsError.UNKNOWN_MATERIAL_ID,
 							materialId + " in batch addition of " + batchId);
 				}
 			}
+		}
 
+		/*
+		 * Map<StageId, Set<BatchId>> stageBatches;
+		 * 
+		 * Need to show that 1) each stage id is valid and 2) each batch id is valid
+		 */
+		private void validateData_StageBatches() {
+			for (final StageId stageId : data.stageBatches.keySet()) {
+				if (!data.stageIds.contains(stageId)) {
+					throw new ContractException(MaterialsError.UNKNOWN_STAGE_ID,
+							stageId + " in batch additions to stages");
+				}
+				final Set<BatchId> batches = data.stageBatches.get(stageId);
+				for (final BatchId batchId : batches) {
+					if (!data.batchIds.contains(batchId)) {
+						throw new ContractException(MaterialsError.UNKNOWN_BATCH_ID,
+								stageId + ": " + batchId + " in batch additions to stages");
+					}
+				}
+			}
+		}
+
+		/*
+		 * private final Map<StageId, Boolean> stageOffers;
+		 * 
+		 * Need to show that each stage id is valid
+		 */
+		private void validateData_stageOffers() {
+			for (final StageId stageId : data.stageOffers.keySet()) {
+				if (!data.stageIds.contains(stageId)) {
+					throw new ContractException(MaterialsError.UNKNOWN_STAGE_ID, stageId + " in stage offers");
+				}
+			}
+		}
+
+		/*
+		 * Map<MaterialsProducerId, Set<BatchId>> materialsProducerInventoryBatches;
+		 * 
+		 * 
+		 * Need to validate that 1) each producer id is valid, 2) each batch id is valid
+		 */
+		private void validateData_MaterialsProducerInventoryBatches() {
 			for (final MaterialsProducerId materialsProducerId : data.materialsProducerInventoryBatches.keySet()) {
 				if (!data.materialsProducerIds.contains(materialsProducerId)) {
 					throw new ContractException(MaterialsError.UNKNOWN_MATERIALS_PRODUCER_ID,
@@ -573,7 +714,18 @@ public final class MaterialsPluginData implements PluginData {
 					}
 				}
 			}
+		}
 
+		/*
+		 * Map<BatchId, Map<BatchPropertyId, Object>> batchPropertyValues;
+		 * 
+		 * 
+		 * Need to show that 1) each batch id is valid, 2) each batch property id is
+		 * valid, 3) each value is compatible with the property definition and 4) that
+		 * there are sufficient values to cover any property definitions that do not
+		 * have a default value
+		 */
+		private void validateData_BatchPropertyValues() {
 			for (final BatchId batchId : data.batchPropertyValues.keySet()) {
 				if (!data.batchIds.contains(batchId)) {
 					throw new ContractException(MaterialsError.UNKNOWN_BATCH_ID, batchId + " in batch property values");
@@ -624,24 +776,6 @@ public final class MaterialsPluginData implements PluginData {
 				nonDefaultBatchCheckArrayMap.put(materialId, new boolean[nonDefaultBatchProperties.size()]);
 			}
 
-			/*
-			 * Ensure that each batch has property value assignments for every relevant
-			 * property definition that does not have a default value
-			 */
-
-			if (data.nextBatchRecordId < 0) {
-				for (final BatchId batchId : data.batchIds) {
-					data.nextBatchRecordId = FastMath.max(data.nextBatchRecordId, batchId.getValue());
-				}
-				data.nextBatchRecordId++;
-			} else {
-				for (final BatchId batchId : data.batchIds) {
-					if (batchId.getValue() >= data.nextBatchRecordId) {
-						throw new ContractException(MaterialsError.NEXT_BATCH_ID_TOO_SMALL);
-					}
-				}
-			}
-
 			for (final BatchId batchId : data.batchIds) {
 
 				final MaterialId materialId = data.batchMaterials.get(batchId);
@@ -669,38 +803,35 @@ public final class MaterialsPluginData implements PluginData {
 					}
 				}
 			}
+		}
 
-			if (data.nextStageRecordId < 0) {
-				for (final StageId stageId : data.stageIds) {
-					data.nextStageRecordId = FastMath.max(data.nextStageRecordId, stageId.getValue());
+		/*
+		 * Map<MaterialsProducerId, Set<StageId>> materialsProducerStages;
+		 * 
+		 * Need to show that 1) each producer id is valid 2) that each stage id is valid
+		 * and 3) that every stage id is associated with exactly one materials producer
+		 * id
+		 * 
+		 */
+		private void validateData_MaterialsProducerStages() {
+			for (final MaterialsProducerId materialsProducerId : data.materialsProducerStages.keySet()) {
+				if (!data.materialsProducerIds.contains(materialsProducerId)) {
+					throw new ContractException(MaterialsError.UNKNOWN_MATERIALS_PRODUCER_ID,
+							materialsProducerId + " in materials producer stages");
 				}
-				data.nextStageRecordId++;
-			} else {
-				for (final StageId stageId : data.stageIds) {
-					if (stageId.getValue() >= data.nextStageRecordId) {
-						throw new ContractException(MaterialsError.NEXT_STAGE_ID_TOO_SMALL);
+				for (StageId stageId : data.materialsProducerStages.get(materialsProducerId)) {
+					if (!data.stageIds.contains(stageId)) {
+						throw new ContractException(MaterialsError.UNKNOWN_STAGE_ID,
+								stageId + " in materials producer stages");
 					}
 				}
 			}
 
-			/*
-			 * show that stage assignments to materials producers are valid. 1)Each
-			 * materials producer is known, 2)each state is known, 3)each stage is assigned
-			 * to exactly one materials producer.
-			 */
-
 			Map<StageId, MaterialsProducerId> smMap = new LinkedHashMap<>();
 			for (final MaterialsProducerId materialsProducerId : data.materialsProducerStages.keySet()) {
-				if (!data.materialsProducerIds.contains(materialsProducerId)) {
-					throw new ContractException(MaterialsError.UNKNOWN_MATERIALS_PRODUCER_ID,
-							materialsProducerId + " is used in associating stages to materials producers");
-				}
+
 				Set<StageId> stages = data.materialsProducerStages.get(materialsProducerId);
 				for (StageId stageId : stages) {
-					if (!data.stageIds.contains(stageId)) {
-						throw new ContractException(MaterialsError.UNKNOWN_STAGE_ID,
-								"stage " + stageId + " is used in associating stages to materials producers");
-					}
 					MaterialsProducerId replacedMaterialsProducerId = smMap.put(stageId, materialsProducerId);
 					if (replacedMaterialsProducerId != null) {
 						throw new ContractException(MaterialsError.DUPLICATE_STAGE_ASSIGNMENT,
@@ -708,26 +839,23 @@ public final class MaterialsPluginData implements PluginData {
 					}
 				}
 			}
+
 			for (StageId stageId : data.stageIds) {
 				if (!smMap.containsKey(stageId)) {
 					throw new ContractException(MaterialsError.STAGE_WITHOUT_MATERIALS_PRODUCER, "stage " + stageId);
 				}
 			}
+		}
 
-			for (final StageId stageId : data.stageBatches.keySet()) {
-				if (!data.stageIds.contains(stageId)) {
-					throw new ContractException(MaterialsError.UNKNOWN_STAGE_ID,
-							stageId + " in batch additions to stages");
-				}
-				final Set<BatchId> batches = data.stageBatches.get(stageId);
-				for (final BatchId batchId : batches) {
-					if (!data.batchIds.contains(batchId)) {
-						throw new ContractException(MaterialsError.UNKNOWN_BATCH_ID,
-								stageId + ": " + batchId + " in batch additions to stages");
-					}
-				}
-			}
-
+		/*
+		 * Map<MaterialsProducerId, Set<BatchId>> materialsProducerInventoryBatches;
+		 * Map<StageId, Set<BatchId>> stageBatches;
+		 * 
+		 * Need to show that each batch is assigned to either a single stage or to a
+		 * single inventory
+		 * 
+		 */
+		private void validateData_BatchLocations() {
 			/*
 			 * Show that every batch is in exactly one inventory or on exactly one stage
 			 */
@@ -766,16 +894,92 @@ public final class MaterialsPluginData implements PluginData {
 					throw new ContractException(MaterialsError.BATCH_IN_MULTIPLE_LOCATIONS, batchId);
 				}
 			}
+		}
 
+		/*
+		 * int nextBatchRecordId
+		 * 
+		 * If the next batch record id has not been set (is negative), we are free to
+		 * set it to the next available int value higher than all other batch ids.
+		 * Otherwise, it must exceed those existing batch ids.
+		 * 
+		 */
+		private void validateData_NextBatchRecordId() {
+			if (data.nextBatchRecordId < 0) {
+				for (final BatchId batchId : data.batchIds) {
+					data.nextBatchRecordId = FastMath.max(data.nextBatchRecordId, batchId.getValue());
+				}
+				data.nextBatchRecordId++;
+			} else {
+				for (final BatchId batchId : data.batchIds) {
+					if (batchId.getValue() >= data.nextBatchRecordId) {
+						throw new ContractException(MaterialsError.NEXT_BATCH_ID_TOO_SMALL);
+					}
+				}
+			}
+		}
+		
+		/*
+		 * int nextStageRecordId
+		 * 
+		 * If the next batch record id has not been set (is negative), we are free to
+		 * set it to the next available int value higher than all other batch ids.
+		 * Otherwise, it must exceed those existing batch ids.
+		 * 
+		 */
+		private void validateData_NextStageRecordId() {
+			if (data.nextStageRecordId < 0) {
+				for (final StageId stageId : data.stageIds) {
+					data.nextStageRecordId = FastMath.max(data.nextStageRecordId, stageId.getValue());
+				}
+				data.nextStageRecordId++;
+			} else {
+				for (final StageId stageId : data.stageIds) {
+					if (stageId.getValue() >= data.nextStageRecordId) {
+						throw new ContractException(MaterialsError.NEXT_STAGE_ID_TOO_SMALL);
+					}
+				}
+			}
+		}
+
+		/*
+		 * 
+		 * 
+		 * Validates and makes a few adjustments to the data as needed.
+		 */
+		private void validateData() {
+
+			/*
+			 * We will work with each of the data structures, validating them in dependency
+			 * order. We will take advantage of the validation performed during data
+			 * collection, such as null checks and will assume that those checks are
+			 * functioning properly. 
+			 * 
+			 */
+			validateData_StageIds();
+			validateData_BatchIds();
+			validateData_MaterialIds();
+			validateData_MaterialsProducerIds();
+			validateData_MaterialsProducerPropertyDefinitions();
+			validateData_BatchPropertyDefinitions();
+			validateData_MaterialsProducerPropertyValues();
+			validateData_MaterialsProducerResourceLevels();
+			validateData_BatchAmounts();
+			validateData_BatchMaterials();
+			validateData_StageBatches();
+			validateData_stageOffers();
+			validateData_MaterialsProducerInventoryBatches();
+			validateData_BatchPropertyValues();
+			validateData_MaterialsProducerStages();
+			validateData_BatchLocations();
+			validateData_NextBatchRecordId();
+			validateData_NextStageRecordId();
 		}
 
 	}
 
 	private static class Data {
-		/*
-		 * The following members are arranged in dependency order to make reviewing a
-		 * bit easier
-		 */
+
 		private final Set<MaterialsProducerId> materialsProducerIds;
 
 		private final Set<MaterialId> materialIds;
@@ -790,8 +994,6 @@ public final class MaterialsPluginData implements PluginData {
 				.unmodifiableMap(new LinkedHashMap<>());
 
 		private final Map<MaterialsProducerId, Map<ResourceId, Long>> materialsProducerResourceLevels;
-
-		/////////////////////////////////
 
 		private final Set<BatchId> batchIds;
 
@@ -980,12 +1182,7 @@ public final class MaterialsPluginData implements PluginData {
 			 */
 
 			// most of the fields use normal comparison
-			
 
-			
-			
-			
-			
 			if (!batchAmounts.equals(other.batchAmounts)) {
 				return false;
 			}
@@ -1014,7 +1211,6 @@ public final class MaterialsPluginData implements PluginData {
 				return false;
 			}
 
-			
 			if (!materialsProducerPropertyDefinitions.equals(other.materialsProducerPropertyDefinitions)) {
 				return false;
 			}
@@ -1041,7 +1237,7 @@ public final class MaterialsPluginData implements PluginData {
 			if (nextStageRecordId != other.nextStageRecordId) {
 				return false;
 			}
-			
+
 			if (!batchPropertyValues.equals(other.batchPropertyValues)) {
 				return false;
 			}
@@ -1049,11 +1245,11 @@ public final class MaterialsPluginData implements PluginData {
 			if (!materialsProducerPropertyValues.equals(other.materialsProducerPropertyValues)) {
 				return false;
 			}
-			
+
 			if (!materialsProducerResourceLevels.equals(other.materialsProducerResourceLevels)) {
 				return false;
 			}
-			
+
 			return true;
 		}
 
@@ -1573,10 +1769,6 @@ public final class MaterialsPluginData implements PluginData {
 	public int getNextStageRecordId() {
 		return data.nextStageRecordId;
 	}
-
-	
-
-	
 
 	@Override
 	public int hashCode() {
