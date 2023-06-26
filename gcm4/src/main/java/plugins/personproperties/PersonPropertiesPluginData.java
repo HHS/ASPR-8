@@ -18,6 +18,7 @@ import plugins.personproperties.support.PersonPropertyId;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
 import util.errors.ContractException;
+import util.maps.MapReindexer;
 
 /**
  * An immutable container of the initial state of person properties. Contains:
@@ -195,6 +196,7 @@ public class PersonPropertiesPluginData implements PluginData {
 		public PersonPropertiesPluginData build() {
 
 			if (!data.locked) {
+				sortData();
 				validateData();
 			}
 			ensureImmutability();
@@ -369,17 +371,23 @@ public class PersonPropertiesPluginData implements PluginData {
 				}
 			}
 
-			// reorder datasets to match propDef ordering to work with pluginData.getPersonPropertyIds()
-			Map<PersonPropertyId, List<Object>> personPropertyValues = new LinkedHashMap<>();
-			Map<PersonPropertyId, List<Double>> personPropertyTimes = new LinkedHashMap<>();
-
-			for(PersonPropertyId personPropertyId : data.personPropertyDefinitions.keySet()) {
-				personPropertyValues.put(personPropertyId, data.personPropertyValues.get(personPropertyId));
-				personPropertyTimes.put(personPropertyId, data.personPropertyTimes.get(personPropertyId));
-			}
-
-			data.personPropertyValues = personPropertyValues;
-			data.personPropertyTimes = personPropertyTimes;
+//			// reorder datasets to match propDef ordering to work with pluginData.getPersonPropertyIds()
+//			Map<PersonPropertyId, List<Object>> personPropertyValues = new LinkedHashMap<>();
+//			Map<PersonPropertyId, List<Double>> personPropertyTimes = new LinkedHashMap<>();
+//
+//			for(PersonPropertyId personPropertyId : data.personPropertyDefinitions.keySet()) {
+//				personPropertyValues.put(personPropertyId, data.personPropertyValues.get(personPropertyId));
+//				personPropertyTimes.put(personPropertyId, data.personPropertyTimes.get(personPropertyId));
+//			}
+//
+//			data.personPropertyValues = personPropertyValues;
+//			data.personPropertyTimes = personPropertyTimes;
+		}
+		
+		private void sortData(){
+			Set<PersonPropertyId> indexingSet = data.personPropertyDefinitions.keySet();
+			data.personPropertyValues = MapReindexer.getReindexedMap(indexingSet, data.personPropertyValues);
+			data.personPropertyTimes = MapReindexer.getReindexedMap(indexingSet, data.personPropertyTimes);
 		}
 	}
 
