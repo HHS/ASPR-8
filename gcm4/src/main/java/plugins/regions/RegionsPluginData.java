@@ -22,6 +22,7 @@ import plugins.regions.support.RegionPropertyId;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
 import util.errors.ContractException;
+import util.maps.MapReindexer;
 
 /**
  * An immutable container of the initial state of regions. It contains: <BR>
@@ -54,7 +55,7 @@ public class RegionsPluginData implements PluginData {
 
 		private boolean trackRegionArrivalTimes;
 
-		private final Map<RegionId, Map<RegionPropertyId, Object>> regionPropertyValues = new LinkedHashMap<>();
+		private Map<RegionId, Map<RegionPropertyId, Object>> regionPropertyValues = new LinkedHashMap<>();
 
 		private final Map<RegionPropertyId, Object> emptyRegionPropertyMap = Collections.unmodifiableMap(new LinkedHashMap<>());
 
@@ -269,6 +270,7 @@ public class RegionsPluginData implements PluginData {
 		 */
 		public RegionsPluginData build() {
 			if (!data.locked) {
+				sortData();
 				validateData();
 			}
 			ensureImmutability();
@@ -432,6 +434,17 @@ public class RegionsPluginData implements PluginData {
 			validateRegionPropertyDefinitionNotNull(propertyDefinition);
 			data.regionPropertyDefinitions.put(regionPropertyId, propertyDefinition);
 			return this;
+		}
+		
+		
+		private void sortData() {
+			data.regionPropertyValues = MapReindexer.getReindexedMap(data.regionIds, data.regionPropertyValues);
+			
+			Set<RegionPropertyId> indexingSet = data.regionPropertyDefinitions.keySet();			
+			for(RegionId regionId : data.regionPropertyValues.keySet()) {
+				Map<RegionPropertyId, Object> map = data.regionPropertyValues.get(regionId);
+				data.regionPropertyValues.put(regionId,	MapReindexer.getReindexedMap(indexingSet,map));
+			}
 		}
 
 		private void validateData() {
