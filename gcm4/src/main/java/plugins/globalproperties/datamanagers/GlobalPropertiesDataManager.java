@@ -356,22 +356,6 @@ public final class GlobalPropertiesDataManager extends DataManager {
 
 		globalPropertyDefinitionTimes = globalPropertiesPluginData.getGlobalPropertyDefinitionTimes();
 
-//		for (GlobalPropertyId globalPropertyId : globalPropertiesPluginData.getGlobalPropertyIds()) {
-//			PropertyDefinition globalPropertyDefinition = globalPropertiesPluginData.getGlobalPropertyDefinition(globalPropertyId);
-//			globalPropertyDefinitions.put(globalPropertyId, globalPropertyDefinition);
-//
-//			Double globalPropertyDefinitionTime = globalPropertiesPluginData.getGlobalPropertyDefinitionTime(globalPropertyId);
-//			globalPropertyDefinitionTimes.put(globalPropertyId, globalPropertyDefinitionTime);
-//
-//			Optional<Object> optionalValue = globalPropertiesPluginData.getGlobalPropertyValue(globalPropertyId);
-//			if (optionalValue.isPresent()) {
-//				globalPropertyValues.put(globalPropertyId, optionalValue.get());
-//				//since the optional is present for the value, we know it is present for the time
-//				Optional<Double> optionalTime = globalPropertiesPluginData.getGlobalPropertyTime(globalPropertyId);
-//				globalPropertyTimes.put(globalPropertyId, optionalTime.get());
-//			}
-//
-//		}
 
 		if (dataManagerContext.stateRecordingIsScheduled()) {
 			dataManagerContext.subscribeToSimulationClose(this::recordSimulationState);
