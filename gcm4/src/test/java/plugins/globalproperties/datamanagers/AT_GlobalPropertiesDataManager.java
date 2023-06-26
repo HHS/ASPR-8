@@ -107,14 +107,23 @@ public final class AT_GlobalPropertiesDataManager {
 				// attempt to add a new property definition
 				for (TestGlobalPropertyId testGlobalPropertyId : TestGlobalPropertyId.values()) {
 					if (!globalPropertiesDataManager.globalPropertyIdExists(testGlobalPropertyId)) {
-						PropertyDefinition propertyDefinition = testGlobalPropertyId.getPropertyDefinition();
-						Object propertyValue = testGlobalPropertyId.getRandomPropertyValue(randomGenerator);
-						GlobalPropertyInitialization globalPropertyInitialization = //
-								GlobalPropertyInitialization.builder()//
-										.setGlobalPropertyId(testGlobalPropertyId)//
-										.setPropertyDefinition(propertyDefinition)//
-										.setValue(propertyValue)//
-										.build();
+						PropertyDefinition propertyDefinition = testGlobalPropertyId.getPropertyDefinition();						
+						GlobalPropertyInitialization globalPropertyInitialization;
+//						if (propertyDefinition.getDefaultValue().isEmpty()) {
+							Object propertyValue = testGlobalPropertyId.getRandomPropertyValue(randomGenerator);
+							globalPropertyInitialization = //
+									GlobalPropertyInitialization.builder()//
+											.setGlobalPropertyId(testGlobalPropertyId)//
+											.setPropertyDefinition(propertyDefinition)//
+											.setValue(propertyValue)//
+											.build();
+//						}else {
+//							globalPropertyInitialization = //
+//									GlobalPropertyInitialization.builder()//
+//											.setGlobalPropertyId(testGlobalPropertyId)//
+//											.setPropertyDefinition(propertyDefinition)//											
+//											.build();
+//						}
 						globalPropertiesDataManager.defineGlobalProperty(globalPropertyInitialization);
 
 					}
@@ -204,6 +213,12 @@ public final class AT_GlobalPropertiesDataManager {
 			}
 		}
 		assertNotNull(result);
+		
+		
+		
+		System.out.println(result);
+		System.out.println("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
+		
 		return result;
 
 	}
@@ -373,11 +388,11 @@ public final class AT_GlobalPropertiesDataManager {
 				.defineGlobalProperty(globalPropertyInitialization2.getGlobalPropertyId(),
 						globalPropertyInitialization2.getPropertyDefinition(), 0)//
 				.defineGlobalProperty(globalPropertyInitialization3.getGlobalPropertyId(),
-						globalPropertyInitialization3.getPropertyDefinition(), 0)//				
+						globalPropertyInitialization3.getPropertyDefinition(), 0)//
 				.setGlobalPropertyValue(globalPropertyInitialization3.getGlobalPropertyId(), 15.9, 1)//
 				.setGlobalPropertyValue(globalPropertyInitialization2.getGlobalPropertyId(), 15, 1)//
 				.build();
-		assertEquals(expectedPluginData, actualPluginData);		
+		assertEquals(expectedPluginData, actualPluginData);
 	}
 
 	@Test
