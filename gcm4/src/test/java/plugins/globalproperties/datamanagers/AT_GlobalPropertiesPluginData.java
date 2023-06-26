@@ -1,4 +1,4 @@
-package plugins.globalproperties;
+package plugins.globalproperties.datamanagers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -900,27 +900,30 @@ public class AT_GlobalPropertiesPluginData {
 
 		GlobalPropertiesPluginData globalPropertiesPluginData = builder.build();
 
-		String expectedValue = "GlobalPropertiesPluginData [data=Data [globalPropertyDefinitions="
-				+ "{GLOBAL_PROPERTY_1_BOOLEAN_MUTABLE=PropertyDefinition [type=class java.lang.Boolean,"
-				+ " propertyValuesAreMutable=true, defaultValue=false], "
-				+ "GLOBAL_PROPERTY_2_INTEGER_MUTABLE=PropertyDefinition [type=class java.lang.Integer,"
-				+ " propertyValuesAreMutable=true, defaultValue=0], GLOBAL_PROPERTY_3_DOUBLE_MUTABLE="
-				+ "PropertyDefinition [type=class java.lang.Double, propertyValuesAreMutable=true, "
-				+ "defaultValue=null], GLOBAL_PROPERTY_4_BOOLEAN_IMMUTABLE=PropertyDefinition "
-				+ "[type=class java.lang.Boolean, propertyValuesAreMutable=false, defaultValue=false],"
-				+ " GLOBAL_PROPERTY_5_INTEGER_IMMUTABLE=PropertyDefinition [type=class java.lang.Integer"
-				+ ", propertyValuesAreMutable=false, defaultValue=0], GLOBAL_PROPERTY_6_DOUBLE_IMMUTABLE"
-				+ "=PropertyDefinition [type=class java.lang.Double, propertyValuesAreMutable=false, "
-				+ "defaultValue=0.0]}, globalPropertyDefinitionTimes={GLOBAL_PROPERTY_1_BOOLEAN_MUTABLE"
-				+ "=852.0, GLOBAL_PROPERTY_2_INTEGER_MUTABLE=835.0, GLOBAL_PROPERTY_3_DOUBLE_MUTABLE="
-				+ "156.0, GLOBAL_PROPERTY_4_BOOLEAN_IMMUTABLE=505.0, GLOBAL_PROPERTY_5_INTEGER_IMMUTABLE="
-				+ "956.0, GLOBAL_PROPERTY_6_DOUBLE_IMMUTABLE=191.0}, globalPropertyValues={"
-				+ "GLOBAL_PROPERTY_1_BOOLEAN_MUTABLE=false, GLOBAL_PROPERTY_3_DOUBLE_MUTABLE="
-				+ "0.07709107250291058, GLOBAL_PROPERTY_6_DOUBLE_IMMUTABLE=0.09917206486092223}, "
-				+ "globalPropertyTimes={GLOBAL_PROPERTY_1_BOOLEAN_MUTABLE=877.0, GLOBAL_PROPERTY_3_DOUBLE_MUTABLE"
-				+ "=168.0, GLOBAL_PROPERTY_6_DOUBLE_IMMUTABLE=255.0}, locked=true]]";
+		String expectedValue = 	"GlobalPropertiesPluginData [data=Data [globalPropertyDefinitions"
+				+ "={GLOBAL_PROPERTY_1_BOOLEAN_MUTABLE=PropertyDefinition [type=class java.lang.Boolean"
+				+ ", propertyValuesAreMutable=true, defaultValue=false], GLOBAL_PROPERTY_2_INTEGER_MUTABLE"
+				+ "=PropertyDefinition [type=class java.lang.Integer, propertyValuesAreMutable=true, "
+				+ "defaultValue=0], GLOBAL_PROPERTY_3_DOUBLE_MUTABLE=PropertyDefinition [type=class "
+				+ "java.lang.Double, propertyValuesAreMutable=true, defaultValue=null], "
+				+ "GLOBAL_PROPERTY_4_BOOLEAN_IMMUTABLE=PropertyDefinition [type=class java.lang.Boolean, "
+				+ "propertyValuesAreMutable=false, defaultValue=false], GLOBAL_PROPERTY_5_INTEGER_IMMUTABLE="
+				+ "PropertyDefinition [type=class java.lang.Integer, propertyValuesAreMutable=false"
+				+ ", defaultValue=0], GLOBAL_PROPERTY_6_DOUBLE_IMMUTABLE=PropertyDefinition [type=class "
+				+ "java.lang.Double, propertyValuesAreMutable=false, defaultValue=0.0]}, "
+				+ "globalPropertyDefinitionTimes={GLOBAL_PROPERTY_1_BOOLEAN_MUTABLE=852.0, "
+				+ "GLOBAL_PROPERTY_2_INTEGER_MUTABLE=835.0, GLOBAL_PROPERTY_3_DOUBLE_MUTABLE=156.0, "
+				+ "GLOBAL_PROPERTY_4_BOOLEAN_IMMUTABLE=505.0, GLOBAL_PROPERTY_5_INTEGER_IMMUTABLE=956.0, "
+				+ "GLOBAL_PROPERTY_6_DOUBLE_IMMUTABLE=191.0}, globalPropertyValues={"
+				+ "GLOBAL_PROPERTY_6_DOUBLE_IMMUTABLE=0.09917206486092223, GLOBAL_PROPERTY_3_DOUBLE_MUTABLE="
+				+ "0.07709107250291058, GLOBAL_PROPERTY_1_BOOLEAN_MUTABLE=false}, globalPropertyTimes={"
+				+ "GLOBAL_PROPERTY_6_DOUBLE_IMMUTABLE=255.0, GLOBAL_PROPERTY_3_DOUBLE_MUTABLE=168.0, "
+				+ "GLOBAL_PROPERTY_1_BOOLEAN_MUTABLE=877.0}, locked=true]]";
+
 
 		String actualValue = globalPropertiesPluginData.toString();
+		
+		
 
 		assertEquals(expectedValue, actualValue);
 	}

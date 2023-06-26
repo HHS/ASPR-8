@@ -15,7 +15,7 @@ import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestSimulation;
 import plugins.globalproperties.GlobalPropertiesPlugin;
-import plugins.globalproperties.GlobalPropertiesPluginData;
+import plugins.globalproperties.datamanagers.GlobalPropertiesPluginData;
 import plugins.globalproperties.reports.GlobalPropertyReportPluginData;
 import plugins.globalproperties.support.GlobalPropertiesError;
 import util.errors.ContractException;

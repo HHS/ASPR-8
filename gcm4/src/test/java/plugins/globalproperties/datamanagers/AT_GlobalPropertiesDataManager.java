@@ -34,7 +34,6 @@ import nucleus.testsupport.testplugin.TestOutputConsumer;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestSimulation;
 import plugins.globalproperties.GlobalPropertiesPlugin;
-import plugins.globalproperties.GlobalPropertiesPluginData;
 import plugins.globalproperties.events.GlobalPropertyDefinitionEvent;
 import plugins.globalproperties.events.GlobalPropertyUpdateEvent;
 import plugins.globalproperties.support.GlobalPropertiesError;
@@ -96,50 +95,60 @@ public final class AT_GlobalPropertiesDataManager {
 		 */
 		RunContinuityPluginData.Builder continuityBuilder = RunContinuityPluginData.builder();
 
-		int n = 10;
-		IntStream.range(0, n).forEach((i) -> {
+		int taskTime = 0;
 
-			double time = randomGenerator.nextDouble() * 10;
-			continuityBuilder.addContextConsumer(time, (c) -> {
+		for (int i = 0; i < 50; i++) {
+			continuityBuilder.addContextConsumer(taskTime++, (c) -> {
+				
+				
 				GlobalPropertiesDataManager globalPropertiesDataManager = c
 						.getDataManager(GlobalPropertiesDataManager.class);
 
-				// attempt to add a new property definition
-				for (TestGlobalPropertyId testGlobalPropertyId : TestGlobalPropertyId.values()) {
-					if (!globalPropertiesDataManager.globalPropertyIdExists(testGlobalPropertyId)) {
-						PropertyDefinition propertyDefinition = testGlobalPropertyId.getPropertyDefinition();						
-						GlobalPropertyInitialization globalPropertyInitialization;
-//						if (propertyDefinition.getDefaultValue().isEmpty()) {
-							Object propertyValue = testGlobalPropertyId.getRandomPropertyValue(randomGenerator);
-							globalPropertyInitialization = //
-									GlobalPropertyInitialization.builder()//
-											.setGlobalPropertyId(testGlobalPropertyId)//
-											.setPropertyDefinition(propertyDefinition)//
-											.setValue(propertyValue)//
-											.build();
-//						}else {
-//							globalPropertyInitialization = //
-//									GlobalPropertyInitialization.builder()//
-//											.setGlobalPropertyId(testGlobalPropertyId)//
-//											.setPropertyDefinition(propertyDefinition)//											
-//											.build();
-//						}
-						globalPropertiesDataManager.defineGlobalProperty(globalPropertyInitialization);
-
-					}
-				}
-
-				// find a global property to update
-				Set<TestGlobalPropertyId> globalPropertyIds = globalPropertiesDataManager.getGlobalPropertyIds();
-
+				// try to add a new property definition
 				List<TestGlobalPropertyId> candidates = new ArrayList<>();
-
-				for (TestGlobalPropertyId globalPropertyId : globalPropertyIds) {
-					if (globalPropertiesDataManager.getGlobalPropertyDefinition(globalPropertyId)
-							.propertyValuesAreMutable()) {
+				for (TestGlobalPropertyId globalPropertyId : TestGlobalPropertyId.values()) {
+					if (!globalPropertiesDataManager.globalPropertyIdExists(globalPropertyId)) {
 						candidates.add(globalPropertyId);
 					}
 				}
+
+				if (!candidates.isEmpty()) {
+					TestGlobalPropertyId testGlobalPropertyId = candidates
+							.get(randomGenerator.nextInt(candidates.size()));
+					PropertyDefinition propertyDefinition = testGlobalPropertyId.getPropertyDefinition();
+					GlobalPropertyInitialization globalPropertyInitialization;
+					if (propertyDefinition.getDefaultValue().isEmpty()) {
+						Object propertyValue = testGlobalPropertyId.getRandomPropertyValue(randomGenerator);
+						globalPropertyInitialization = //
+								GlobalPropertyInitialization.builder()//
+										.setGlobalPropertyId(testGlobalPropertyId)//
+										.setPropertyDefinition(propertyDefinition)//
+										.setValue(propertyValue)//
+										.build();
+					} else {
+						globalPropertyInitialization = //
+								GlobalPropertyInitialization.builder()//
+										.setGlobalPropertyId(testGlobalPropertyId)//
+										.setPropertyDefinition(propertyDefinition)//
+										.build();
+					}
+					globalPropertiesDataManager.defineGlobalProperty(globalPropertyInitialization);
+
+				}
+
+				// find a global property to update
+
+				candidates.clear();				
+
+				for (TestGlobalPropertyId globalPropertyId : TestGlobalPropertyId.values()) {
+					if (globalPropertiesDataManager.globalPropertyIdExists(globalPropertyId)) {
+						if (globalPropertiesDataManager.getGlobalPropertyDefinition(globalPropertyId)
+								.propertyValuesAreMutable()) {
+							candidates.add(globalPropertyId);
+						}
+					}
+				}
+				
 				if (!candidates.isEmpty()) {
 					TestGlobalPropertyId testGlobalPropertyId = candidates
 							.get(randomGenerator.nextInt(candidates.size()));
@@ -147,10 +156,13 @@ public final class AT_GlobalPropertiesDataManager {
 					globalPropertiesDataManager.setGlobalPropertyValue(testGlobalPropertyId, propertyValue);
 				}
 
-				if (i == (n - 1)) {
-					c.releaseOutput(globalPropertiesDataManager.toString());
-				}
 			});
+		}
+
+		continuityBuilder.addContextConsumer(taskTime++, (c) -> {
+			GlobalPropertiesDataManager globalPropertiesDataManager = c
+					.getDataManager(GlobalPropertiesDataManager.class);
+			c.releaseOutput(globalPropertiesDataManager.toString());
 		});
 
 		RunContinuityPluginData runContinuityPluginData = continuityBuilder.build();
@@ -212,13 +224,12 @@ public final class AT_GlobalPropertiesDataManager {
 				result = optional.get();
 			}
 		}
+		
+		//show that the result is a large string
 		assertNotNull(result);
-		
-		
-		
-		System.out.println(result);
-		System.out.println("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
-		
+		assertTrue(result.length()>100);
+
+	
 		return result;
 
 	}

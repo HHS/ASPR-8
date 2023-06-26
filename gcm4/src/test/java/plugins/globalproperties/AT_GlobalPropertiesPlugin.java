@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 
 import nucleus.Plugin;
 import nucleus.PluginId;
+import plugins.globalproperties.datamanagers.GlobalPropertiesPluginData;
 import plugins.globalproperties.reports.GlobalPropertyReportPluginData;
 import plugins.reports.support.SimpleReportLabel;
 import util.annotations.UnitTestMethod;

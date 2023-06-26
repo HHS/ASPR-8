@@ -5,6 +5,7 @@ import java.util.Optional;
 import nucleus.Plugin;
 import nucleus.PluginContext;
 import plugins.globalproperties.datamanagers.GlobalPropertiesDataManager;
+import plugins.globalproperties.datamanagers.GlobalPropertiesPluginData;
 import plugins.globalproperties.reports.GlobalPropertyReport;
 import plugins.globalproperties.reports.GlobalPropertyReportPluginData;
 import plugins.globalproperties.support.GlobalPropertiesError;

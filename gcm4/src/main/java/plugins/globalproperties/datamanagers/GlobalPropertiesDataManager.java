@@ -1,6 +1,5 @@
 package plugins.globalproperties.datamanagers;
 
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Optional;
@@ -11,7 +10,6 @@ import nucleus.DataManagerContext;
 import nucleus.Event;
 import nucleus.EventFilter;
 import nucleus.IdentifiableFunctionMap;
-import plugins.globalproperties.GlobalPropertiesPluginData;
 import plugins.globalproperties.events.GlobalPropertyDefinitionEvent;
 import plugins.globalproperties.events.GlobalPropertyUpdateEvent;
 import plugins.globalproperties.support.GlobalPropertiesError;
@@ -30,9 +28,9 @@ import util.errors.ContractException;
 public final class GlobalPropertiesDataManager extends DataManager {
 
 	/**
-	 * A utility class for holding the value and assignment time for a property.
-	 * On value assignment, this PropertyValueRecord records the current
-	 * simulation time.
+	 * A utility class for holding the value and assignment time for a property. On
+	 * value assignment, this PropertyValueRecord records the current simulation
+	 * time.
 	 */
 	public class PropertyValueRecord {
 
@@ -52,8 +50,7 @@ public final class GlobalPropertiesDataManager extends DataManager {
 		}
 
 		/**
-		 * Sets the current value and records the assignment time to the current
-		 * time
+		 * Sets the current value and records the assignment time to the current time
 		 */
 		public void setPropertyValue(Object propertyValue) {
 			this.propertyValue = propertyValue;
@@ -93,35 +90,37 @@ public final class GlobalPropertiesDataManager extends DataManager {
 
 	}
 
-	private static record GlobalPropertyUpdateMutationEvent(GlobalPropertyId globalPropertyId, Object globalPropertyValue) implements Event {
+	private static record GlobalPropertyUpdateMutationEvent(GlobalPropertyId globalPropertyId,
+			Object globalPropertyValue) implements Event {
 	}
 
-	private static record GlobalPropertyInitializationMutationEvent(GlobalPropertyInitialization globalPropertyInitialization) implements Event {
+	private static record GlobalPropertyInitializationMutationEvent(
+			GlobalPropertyInitialization globalPropertyInitialization) implements Event {
 	}
 
 	private DataManagerContext dataManagerContext;
 
-	private final Map<GlobalPropertyId, Object> globalPropertyValues = new LinkedHashMap<>();
+	private Map<GlobalPropertyId, Object> globalPropertyValues;
 
-	private final Map<GlobalPropertyId, Double> globalPropertyTimes = new LinkedHashMap<>();
+	private Map<GlobalPropertyId, Double> globalPropertyTimes;
 
-	private Map<GlobalPropertyId, PropertyDefinition> globalPropertyDefinitions = new LinkedHashMap<>();
+	private Map<GlobalPropertyId, PropertyDefinition> globalPropertyDefinitions;
 
-	private Map<GlobalPropertyId, Double> globalPropertyDefinitionTimes = new LinkedHashMap<>();
+	private Map<GlobalPropertyId, Double> globalPropertyDefinitionTimes;
 
 	private final GlobalPropertiesPluginData globalPropertiesPluginData;
 
 	private IdentifiableFunctionMap<GlobalPropertyUpdateEvent> functionMap = //
-			IdentifiableFunctionMap	.builder(GlobalPropertyUpdateEvent.class)//
-									.put(EventFunctionId.GLOBAL_PROPERTY_ID, e -> e.globalPropertyId())//
-									.build();//
+			IdentifiableFunctionMap.builder(GlobalPropertyUpdateEvent.class)//
+					.put(EventFunctionId.GLOBAL_PROPERTY_ID, e -> e.globalPropertyId())//
+					.build();//
 
 	/**
 	 * Constructs the data manager
 	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain GlobalPropertiesError#NULL_GLOBAL_PLUGIN_DATA}
-	 *             if the global plugin data is null</li>
+	 *                           <li>{@linkplain GlobalPropertiesError#NULL_GLOBAL_PLUGIN_DATA}
+	 *                           if the global plugin data is null</li>
 	 */
 	public GlobalPropertiesDataManager(GlobalPropertiesPluginData globalPropertiesPluginData) {
 		if (globalPropertiesPluginData == null) {
@@ -137,16 +136,17 @@ public final class GlobalPropertiesDataManager extends DataManager {
 	 * 
 	 * @throws ContractException
 	 * 
-	 *             <li>{@linkplain GlobalPropertiesError#NULL_GLOBAL_PROPERTY_INITIALIZATION}
-	 *             if the global property initialization is null</li>
+	 *                           <li>{@linkplain GlobalPropertiesError#NULL_GLOBAL_PROPERTY_INITIALIZATION}
+	 *                           if the global property initialization is null</li>
 	 * 
-	 *             <li>{@linkplain PropertyError#DUPLICATE_PROPERTY_DEFINITION}
-	 *             if the global property already exists</li>
+	 *                           <li>{@linkplain PropertyError#DUPLICATE_PROPERTY_DEFINITION}
+	 *                           if the global property already exists</li>
 	 * 
 	 * 
 	 */
 	public void defineGlobalProperty(GlobalPropertyInitialization globalPropertyInitialization) {
-		dataManagerContext.releaseMutationEvent(new GlobalPropertyInitializationMutationEvent(globalPropertyInitialization));
+		dataManagerContext
+				.releaseMutationEvent(new GlobalPropertyInitializationMutationEvent(globalPropertyInitialization));
 	}
 
 	/**
@@ -155,8 +155,8 @@ public final class GlobalPropertiesDataManager extends DataManager {
 	 *
 	 */
 	public EventFilter<GlobalPropertyDefinitionEvent> getEventFilterForGlobalPropertyDefinitionEvent() {
-		return EventFilter	.builder(GlobalPropertyDefinitionEvent.class)//
-							.build();
+		return EventFilter.builder(GlobalPropertyDefinitionEvent.class)//
+				.build();
 	}
 
 	/**
@@ -165,8 +165,8 @@ public final class GlobalPropertiesDataManager extends DataManager {
 	 *
 	 */
 	public EventFilter<GlobalPropertyUpdateEvent> getEventFilterForGlobalPropertyUpdateEvent() {
-		return EventFilter	.builder(GlobalPropertyUpdateEvent.class)//
-							.build();
+		return EventFilter.builder(GlobalPropertyUpdateEvent.class)//
+				.build();
 	}
 
 	/**
@@ -175,27 +175,28 @@ public final class GlobalPropertiesDataManager extends DataManager {
 	 *
 	 *
 	 * @throws ContractException
-	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the global
-	 *             property id is null</li>
-	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if the
-	 *             global property id is not known</li>
+	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
+	 *                           the global property id is null</li>
+	 *                           <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
+	 *                           if the global property id is not known</li>
 	 * 
 	 */
-	public EventFilter<GlobalPropertyUpdateEvent> getEventFilterForGlobalPropertyUpdateEvent(GlobalPropertyId globalPropertyId) {
+	public EventFilter<GlobalPropertyUpdateEvent> getEventFilterForGlobalPropertyUpdateEvent(
+			GlobalPropertyId globalPropertyId) {
 		validateGlobalPropertyId(globalPropertyId);
-		return EventFilter	.builder(GlobalPropertyUpdateEvent.class)//
-							.addFunctionValuePair(functionMap.get(EventFunctionId.GLOBAL_PROPERTY_ID), globalPropertyId)//
-							.build();
+		return EventFilter.builder(GlobalPropertyUpdateEvent.class)//
+				.addFunctionValuePair(functionMap.get(EventFunctionId.GLOBAL_PROPERTY_ID), globalPropertyId)//
+				.build();
 	}
 
 	/**
 	 * Returns the property definition for the given {@link GlobalPropertyId}
 	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the global
-	 *             property id is null</li>
-	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if the
-	 *             global property id is unknown</li>
+	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
+	 *                           the global property id is null</li>
+	 *                           <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
+	 *                           if the global property id is unknown</li>
 	 * 
 	 */
 
@@ -208,10 +209,10 @@ public final class GlobalPropertiesDataManager extends DataManager {
 	 * Returns the property definition for the given {@link GlobalPropertyId}
 	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the global
-	 *             property id is null</li>
-	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if the
-	 *             global property id is unknown</li>
+	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
+	 *                           the global property id is null</li>
+	 *                           <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
+	 *                           if the global property id is unknown</li>
 	 * 
 	 */
 
@@ -236,10 +237,10 @@ public final class GlobalPropertiesDataManager extends DataManager {
 	 * Returns the time when the of the global property was last assigned.
 	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the global
-	 *             property id is null</li>
-	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if the
-	 *             global property id is unknown</li>
+	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
+	 *                           the global property id is null</li>
+	 *                           <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
+	 *                           if the global property id is unknown</li>
 	 */
 
 	public double getGlobalPropertyTime(GlobalPropertyId globalPropertyId) {
@@ -255,10 +256,10 @@ public final class GlobalPropertiesDataManager extends DataManager {
 	 * Returns the value of the global property.
 	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the global
-	 *             property id is null</li>
-	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if the
-	 *             global property id is unknown</li>
+	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
+	 *                           the global property id is null</li>
+	 *                           <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
+	 *                           if the global property id is unknown</li>
 	 * 
 	 */
 	@SuppressWarnings("unchecked")
@@ -272,14 +273,15 @@ public final class GlobalPropertiesDataManager extends DataManager {
 	};
 
 	/**
-	 * Returns true if and only if the global property id exists. Returns false
-	 * for null input.
+	 * Returns true if and only if the global property id exists. Returns false for
+	 * null input.
 	 */
 	public boolean globalPropertyIdExists(final GlobalPropertyId globalPropertyId) {
 		return globalPropertyDefinitions.containsKey(globalPropertyId);
 	}
 
-	private void handleGlobalPropertyInitializationMutationEvent(DataManagerContext dataManagerContext, GlobalPropertyInitializationMutationEvent globalPropertyInitializationMutationEvent) {
+	private void handleGlobalPropertyInitializationMutationEvent(DataManagerContext dataManagerContext,
+			GlobalPropertyInitializationMutationEvent globalPropertyInitializationMutationEvent) {
 		GlobalPropertyInitialization globalPropertyInitialization = globalPropertyInitializationMutationEvent.globalPropertyInitialization;
 		validateGlobalPropertyInitializationNotNull(globalPropertyInitialization);
 		GlobalPropertyId globalPropertyId = globalPropertyInitialization.getGlobalPropertyId();
@@ -299,15 +301,15 @@ public final class GlobalPropertiesDataManager extends DataManager {
 			globalPropertyTimes.put(globalPropertyId, dataManagerContext.getTime());
 		}
 
-		
-
 		if (dataManagerContext.subscribersExist(GlobalPropertyDefinitionEvent.class)) {
-			dataManagerContext.releaseObservationEvent(new GlobalPropertyDefinitionEvent(globalPropertyId, globalPropertyValue));
+			dataManagerContext
+					.releaseObservationEvent(new GlobalPropertyDefinitionEvent(globalPropertyId, globalPropertyValue));
 		}
 
 	}
 
-	private void handleGlobalPropertyUpdateMutationEvent(DataManagerContext dataManagerContext, GlobalPropertyUpdateMutationEvent globalPropertyUpdateMutationEvent) {
+	private void handleGlobalPropertyUpdateMutationEvent(DataManagerContext dataManagerContext,
+			GlobalPropertyUpdateMutationEvent globalPropertyUpdateMutationEvent) {
 		GlobalPropertyId globalPropertyId = globalPropertyUpdateMutationEvent.globalPropertyId();
 		Object globalPropertyValue = globalPropertyUpdateMutationEvent.globalPropertyValue();
 		validateGlobalPropertyId(globalPropertyId);
@@ -319,7 +321,8 @@ public final class GlobalPropertiesDataManager extends DataManager {
 		globalPropertyValues.put(globalPropertyId, globalPropertyValue);
 		globalPropertyTimes.put(globalPropertyId, dataManagerContext.getTime());
 		if (dataManagerContext.subscribersExist(GlobalPropertyUpdateEvent.class)) {
-			dataManagerContext.releaseObservationEvent(new GlobalPropertyUpdateEvent(globalPropertyId, oldPropertyValue, globalPropertyValue));
+			dataManagerContext.releaseObservationEvent(
+					new GlobalPropertyUpdateEvent(globalPropertyId, oldPropertyValue, globalPropertyValue));
 		}
 	}
 
@@ -328,10 +331,10 @@ public final class GlobalPropertiesDataManager extends DataManager {
 	 * 
 	 * @throws ContractException
 	 * 
-	 *             <li>{@linkplain PropertyError#INCOMPATIBLE_DEF_TIME} if the
-	 *             Global Properties Plugin Data contains a property definition
-	 *             with a creation time that exceeds the current simulation
-	 *             time</li>
+	 *                           <li>{@linkplain PropertyError#INCOMPATIBLE_DEF_TIME}
+	 *                           if the Global Properties Plugin Data contains a
+	 *                           property definition with a creation time that
+	 *                           exceeds the current simulation time</li>
 	 */
 	@Override
 	public void init(DataManagerContext dataManagerContext) {
@@ -340,25 +343,35 @@ public final class GlobalPropertiesDataManager extends DataManager {
 		this.dataManagerContext = dataManagerContext;
 		validateGlobalPropertiesPluginData();
 
-		dataManagerContext.subscribe(GlobalPropertyInitializationMutationEvent.class, this::handleGlobalPropertyInitializationMutationEvent);
-		dataManagerContext.subscribe(GlobalPropertyUpdateMutationEvent.class, this::handleGlobalPropertyUpdateMutationEvent);
+		dataManagerContext.subscribe(GlobalPropertyInitializationMutationEvent.class,
+				this::handleGlobalPropertyInitializationMutationEvent);
+		dataManagerContext.subscribe(GlobalPropertyUpdateMutationEvent.class,
+				this::handleGlobalPropertyUpdateMutationEvent);
 
-		for (GlobalPropertyId globalPropertyId : globalPropertiesPluginData.getGlobalPropertyIds()) {
-			PropertyDefinition globalPropertyDefinition = globalPropertiesPluginData.getGlobalPropertyDefinition(globalPropertyId);
-			globalPropertyDefinitions.put(globalPropertyId, globalPropertyDefinition);
+		globalPropertyValues = globalPropertiesPluginData.getGlobalPropertyValues();
 
-			Double globalPropertyDefinitionTime = globalPropertiesPluginData.getGlobalPropertyDefinitionTime(globalPropertyId);
-			globalPropertyDefinitionTimes.put(globalPropertyId, globalPropertyDefinitionTime);
+		globalPropertyTimes = globalPropertiesPluginData.getGlobalPropertyTimes();
 
-			Optional<Object> optionalValue = globalPropertiesPluginData.getGlobalPropertyValue(globalPropertyId);
-			if (optionalValue.isPresent()) {
-				globalPropertyValues.put(globalPropertyId, optionalValue.get());
-				//since the optional is present for the value, we know it is present for the time
-				Optional<Double> optionalTime = globalPropertiesPluginData.getGlobalPropertyTime(globalPropertyId);
-				globalPropertyTimes.put(globalPropertyId, optionalTime.get());
-			}
+		globalPropertyDefinitions = globalPropertiesPluginData.getGlobalPropertyDefinitions();
 
-		}
+		globalPropertyDefinitionTimes = globalPropertiesPluginData.getGlobalPropertyDefinitionTimes();
+
+//		for (GlobalPropertyId globalPropertyId : globalPropertiesPluginData.getGlobalPropertyIds()) {
+//			PropertyDefinition globalPropertyDefinition = globalPropertiesPluginData.getGlobalPropertyDefinition(globalPropertyId);
+//			globalPropertyDefinitions.put(globalPropertyId, globalPropertyDefinition);
+//
+//			Double globalPropertyDefinitionTime = globalPropertiesPluginData.getGlobalPropertyDefinitionTime(globalPropertyId);
+//			globalPropertyDefinitionTimes.put(globalPropertyId, globalPropertyDefinitionTime);
+//
+//			Optional<Object> optionalValue = globalPropertiesPluginData.getGlobalPropertyValue(globalPropertyId);
+//			if (optionalValue.isPresent()) {
+//				globalPropertyValues.put(globalPropertyId, optionalValue.get());
+//				//since the optional is present for the value, we know it is present for the time
+//				Optional<Double> optionalTime = globalPropertiesPluginData.getGlobalPropertyTime(globalPropertyId);
+//				globalPropertyTimes.put(globalPropertyId, optionalTime.get());
+//			}
+//
+//		}
 
 		if (dataManagerContext.stateRecordingIsScheduled()) {
 			dataManagerContext.subscribeToSimulationClose(this::recordSimulationState);
@@ -368,17 +381,20 @@ public final class GlobalPropertiesDataManager extends DataManager {
 
 	private void recordSimulationState(DataManagerContext dataManagerContext) {
 		GlobalPropertiesPluginData.Builder builder = GlobalPropertiesPluginData.builder();
+
 		for (GlobalPropertyId globalPropertyId : globalPropertyDefinitions.keySet()) {
 			PropertyDefinition propertyDefinition = globalPropertyDefinitions.get(globalPropertyId);
 			Double propertyDefinitionCreationTime = globalPropertyDefinitionTimes.get(globalPropertyId);
 			builder.defineGlobalProperty(globalPropertyId, propertyDefinition, propertyDefinitionCreationTime);
-			Object value = globalPropertyValues.get(globalPropertyId);
-			if (value != null) {
-				double time = globalPropertyTimes.get(globalPropertyId);
-				builder.setGlobalPropertyValue(globalPropertyId, value, time);
-			}
 		}
+		for (GlobalPropertyId globalPropertyId : globalPropertyValues.keySet()) {
+			Object value = globalPropertyValues.get(globalPropertyId);
+			double time = globalPropertyTimes.get(globalPropertyId);
+			builder.setGlobalPropertyValue(globalPropertyId, value, time);
+		}
+
 		dataManagerContext.releaseOutput(builder.build());
+
 	}
 
 	/**
@@ -386,20 +402,21 @@ public final class GlobalPropertiesDataManager extends DataManager {
 	 * time.
 	 *
 	 * @throw {@link ContractException}
-	 *        <li>{@link PropertyError.NULL_PROPERTY_ID} if the global property
-	 *        id is null
-	 *        <li>{@link PropertyError.UNKNOWN_PROPERTY_ID} if the global
-	 *        property id is unknown
-	 *        <li>{@link PropertyError.NULL_PROPERTY_VALUE} if the property
-	 *        value is null
+	 *        <li>{@link PropertyError.NULL_PROPERTY_ID} if the global property id
+	 *        is null
+	 *        <li>{@link PropertyError.UNKNOWN_PROPERTY_ID} if the global property
+	 *        id is unknown
+	 *        <li>{@link PropertyError.NULL_PROPERTY_VALUE} if the property value is
+	 *        null
 	 *        <li>{@link PropertyError.IMMUTABLE_VALUE} if the global property
 	 *        definition indicates the property is not mutable
-	 *        <li>{@link PropertyError.INCOMPATIBLE_VALUE} if the property value
-	 *        is incompatible with the property definition </blockquote></li>
+	 *        <li>{@link PropertyError.INCOMPATIBLE_VALUE} if the property value is
+	 *        incompatible with the property definition </blockquote></li>
 	 */
 	public void setGlobalPropertyValue(GlobalPropertyId globalPropertyId, Object globalPropertyValue) {
 
-		dataManagerContext.releaseMutationEvent(new GlobalPropertyUpdateMutationEvent(globalPropertyId, globalPropertyValue));
+		dataManagerContext
+				.releaseMutationEvent(new GlobalPropertyUpdateMutationEvent(globalPropertyId, globalPropertyValue));
 
 	}
 
@@ -420,7 +437,8 @@ public final class GlobalPropertiesDataManager extends DataManager {
 		}
 	}
 
-	private void validateGlobalPropertyInitializationNotNull(GlobalPropertyInitialization globalPropertyInitialization) {
+	private void validateGlobalPropertyInitializationNotNull(
+			GlobalPropertyInitialization globalPropertyInitialization) {
 		if (globalPropertyInitialization == null) {
 			throw new ContractException(GlobalPropertiesError.NULL_GLOBAL_PROPERTY_INITIALIZATION);
 		}
@@ -438,10 +456,12 @@ public final class GlobalPropertiesDataManager extends DataManager {
 		}
 	}
 
-	private void validateValueCompatibility(final Object propertyId, final PropertyDefinition propertyDefinition, final Object propertyValue) {
+	private void validateValueCompatibility(final Object propertyId, final PropertyDefinition propertyDefinition,
+			final Object propertyValue) {
 		if (!propertyDefinition.getType().isAssignableFrom(propertyValue.getClass())) {
 			throw new ContractException(PropertyError.INCOMPATIBLE_VALUE,
-					"Property value " + propertyValue + " is not of type " + propertyDefinition.getType().getName() + " and does not match definition of " + propertyId);
+					"Property value " + propertyValue + " is not of type " + propertyDefinition.getType().getName()
+							+ " and does not match definition of " + propertyId);
 		}
 	}
 
