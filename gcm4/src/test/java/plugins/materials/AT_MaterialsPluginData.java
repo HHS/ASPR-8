@@ -6,13 +6,11 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.EnumSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.Set;
 
 import org.apache.commons.math3.random.RandomGenerator;
@@ -65,37 +63,38 @@ public class AT_MaterialsPluginData {
 		assertTrue(materialsInitialData.getStageIds().isEmpty());
 
 		/*
-		 * precondition test: if a batch property is associated with a material
-		 * id that was not properly added
+		 * precondition test: if a batch property is associated with a material id that
+		 * was not properly added
 		 */
 		ContractException contractException = assertThrows(ContractException.class, () -> {
 			MaterialId materialId = TestMaterialId.MATERIAL_1;
 			TestBatchPropertyId propertyId = TestBatchPropertyId.BATCH_PROPERTY_1_1_BOOLEAN_IMMUTABLE_NO_TRACK;
 			PropertyDefinition propertyDefinition = propertyId.getPropertyDefinition();
-			MaterialsPluginData	.builder()//
-								.defineBatchProperty(materialId, propertyId, propertyDefinition)//
-								.build();//
+			MaterialsPluginData.builder()//
+					.defineBatchProperty(materialId, propertyId, propertyDefinition)//
+					.build();//
 		});
 		assertEquals(MaterialsError.UNKNOWN_MATERIAL_ID, contractException.getErrorType());
 
 		/*
-		 * precondition test: if a batch is added without assigned property
-		 * values for each property definition that lacks a default value
+		 * precondition test: if a batch is added without assigned property values for
+		 * each property definition that lacks a default value
 		 */
 		contractException = assertThrows(ContractException.class, () -> {
 			MaterialsProducerId materialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_1;
 			MaterialId materialId = TestMaterialId.MATERIAL_1;
 			TestBatchPropertyId propertyId = TestBatchPropertyId.BATCH_PROPERTY_1_1_BOOLEAN_IMMUTABLE_NO_TRACK;
-			PropertyDefinition propertyDefinition = PropertyDefinition	.builder()//
-																		.setType(Boolean.class)//
-																		.setPropertyValueMutability(false)//																		
-																		.build();//
+			PropertyDefinition propertyDefinition = PropertyDefinition.builder()//
+					.setType(Boolean.class)//
+					.setPropertyValueMutability(false)//
+					.build();//
 
-			MaterialsPluginData	.builder()//
-								.addMaterial(materialId)//
-								.addMaterialsProducerId(materialsProducerId)//
-								.addBatch(new BatchId(12), materialId, 12.3, materialsProducerId)//
-								.defineBatchProperty(materialId, propertyId, propertyDefinition).build();//
+			MaterialsPluginData.builder()//
+					.addMaterial(materialId)//
+					.addMaterialsProducerId(materialsProducerId)//
+					.addBatch(new BatchId(12), materialId, 12.3)//
+					.addBatchToMaterialsProducerInventory(new BatchId(12), materialsProducerId)//
+					.defineBatchProperty(materialId, propertyId, propertyDefinition).build();//
 		});
 		assertEquals(PropertyError.INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT, contractException.getErrorType());
 
@@ -109,10 +108,10 @@ public class AT_MaterialsPluginData {
 			PropertyDefinition propertyDefinition = propertyId.getPropertyDefinition();//
 			Object value = propertyId.getRandomPropertyValue(randomGenerator);
 
-			MaterialsPluginData	.builder()//
-								.defineMaterialsProducerProperty(propertyId, propertyDefinition)//
-								.setMaterialsProducerPropertyValue(materialsProducerId, propertyId, value)//
-								.build();//
+			MaterialsPluginData.builder()//
+					.defineMaterialsProducerProperty(propertyId, propertyDefinition)//
+					.setMaterialsProducerPropertyValue(materialsProducerId, propertyId, value)//
+					.build();//
 		});
 		assertEquals(MaterialsError.UNKNOWN_MATERIALS_PRODUCER_ID, contractException.getErrorType());
 
@@ -125,17 +124,16 @@ public class AT_MaterialsPluginData {
 			TestMaterialsProducerPropertyId propertyId = TestMaterialsProducerPropertyId.MATERIALS_PRODUCER_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK;
 			Object value = propertyId.getRandomPropertyValue(randomGenerator);
 
-			MaterialsPluginData	.builder()//
-								.addMaterialsProducerId(materialsProducerId)//
-								.setMaterialsProducerPropertyValue(materialsProducerId, propertyId, value)//
-								.build();//
+			MaterialsPluginData.builder()//
+					.addMaterialsProducerId(materialsProducerId)//
+					.setMaterialsProducerPropertyValue(materialsProducerId, propertyId, value)//
+					.build();//
 		});
 		assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
 
 		/*
-		 * precondition test: if a materials property value is associated with a
-		 * value that is not compatible with the corresponding property
-		 * definition
+		 * precondition test: if a materials property value is associated with a value
+		 * that is not compatible with the corresponding property definition
 		 * 
 		 */
 		contractException = assertThrows(ContractException.class, () -> {
@@ -144,38 +142,37 @@ public class AT_MaterialsPluginData {
 			PropertyDefinition propertyDefinition = propertyId.getPropertyDefinition();//
 			Object value = 12;
 
-			MaterialsPluginData	.builder()//
-								.addMaterialsProducerId(materialsProducerId)//
-								.defineMaterialsProducerProperty(propertyId, propertyDefinition)//
-								.setMaterialsProducerPropertyValue(materialsProducerId, propertyId, value)//
-								.build();//
+			MaterialsPluginData.builder()//
+					.addMaterialsProducerId(materialsProducerId)//
+					.defineMaterialsProducerProperty(propertyId, propertyDefinition)//
+					.setMaterialsProducerPropertyValue(materialsProducerId, propertyId, value)//
+					.build();//
 		});
 		assertEquals(PropertyError.INCOMPATIBLE_VALUE, contractException.getErrorType());
 
 		/*
-		 * precondition test: if a materials property is defined without a
-		 * default value and there is not an assigned property value for each
-		 * added materials producer
+		 * precondition test: if a materials property is defined without a default value
+		 * and there is not an assigned property value for each added materials producer
 		 */
 		contractException = assertThrows(ContractException.class, () -> {
 			MaterialsProducerId materialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_1;
 			TestMaterialsProducerPropertyId propertyId = TestMaterialsProducerPropertyId.MATERIALS_PRODUCER_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK;
 
-			PropertyDefinition propertyDefinition = PropertyDefinition	.builder()//
-																		.setType(Boolean.class)//
-																		.setPropertyValueMutability(true)//																		
-																		.build();
+			PropertyDefinition propertyDefinition = PropertyDefinition.builder()//
+					.setType(Boolean.class)//
+					.setPropertyValueMutability(true)//
+					.build();
 
-			MaterialsPluginData	.builder()//
-								.addMaterialsProducerId(materialsProducerId)//
-								.defineMaterialsProducerProperty(propertyId, propertyDefinition)//
-								.build();//
+			MaterialsPluginData.builder()//
+					.addMaterialsProducerId(materialsProducerId)//
+					.defineMaterialsProducerProperty(propertyId, propertyDefinition)//
+					.build();//
 		});
 		assertEquals(PropertyError.INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT, contractException.getErrorType());
 
 		/*
-		 * precondition test: if a materials resource level is set for a
-		 * material producer id that was not properly added
+		 * precondition test: if a materials resource level is set for a material
+		 * producer id that was not properly added
 		 */
 
 		contractException = assertThrows(ContractException.class, () -> {
@@ -183,15 +180,15 @@ public class AT_MaterialsPluginData {
 			TestResourceId testResourceId = TestResourceId.RESOURCE_2;
 			Long resourceLevel = 10L;
 
-			MaterialsPluginData	.builder()//
-								.setMaterialsProducerResourceLevel(materialsProducerId, testResourceId, resourceLevel) //
-								.build();//
+			MaterialsPluginData.builder()//
+					.setMaterialsProducerResourceLevel(materialsProducerId, testResourceId, resourceLevel) //
+					.build();//
 		});
 		assertEquals(MaterialsError.UNKNOWN_MATERIALS_PRODUCER_ID, contractException.getErrorType());
 
 		/*
-		 * precondition test: if a batch is associated with at material that was
-		 * not properly added
+		 * precondition test: if a batch is associated with a material that was not
+		 * properly added
 		 */
 		contractException = assertThrows(ContractException.class, () -> {
 			MaterialsProducerId materialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_1;
@@ -199,16 +196,17 @@ public class AT_MaterialsPluginData {
 			BatchId batchId = new BatchId(67);
 			double amount = 345.543;
 
-			MaterialsPluginData	.builder()//
-								.addBatch(batchId, testMaterialId, amount, materialsProducerId)//
-								.addMaterialsProducerId(materialsProducerId)//
-								.build();//
+			MaterialsPluginData.builder()//
+					.addBatch(batchId, testMaterialId, amount)//
+					.addBatchToMaterialsProducerInventory(batchId, materialsProducerId)//
+					.addMaterialsProducerId(materialsProducerId)//
+					.build();//
 		});
 		assertEquals(MaterialsError.UNKNOWN_MATERIAL_ID, contractException.getErrorType());
 
 		/*
-		 * precondition test: if a batch is associated with at material producer
-		 * that was not properly added
+		 * precondition test: if a batch is associated with at material producer that
+		 * was not properly added
 		 */
 		contractException = assertThrows(ContractException.class, () -> {
 			MaterialsProducerId materialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_1;
@@ -216,16 +214,17 @@ public class AT_MaterialsPluginData {
 			BatchId batchId = new BatchId(67);
 			double amount = 345.543;
 
-			MaterialsPluginData	.builder()//
-								.addBatch(batchId, testMaterialId, amount, materialsProducerId)//
-								.addMaterial(testMaterialId)//
-								.build();//
+			MaterialsPluginData.builder()//
+					.addBatch(batchId, testMaterialId, amount)//
+					.addBatchToMaterialsProducerInventory(batchId, materialsProducerId)//
+					.addMaterial(testMaterialId)//
+					.build();//
 		});
 		assertEquals(MaterialsError.UNKNOWN_MATERIALS_PRODUCER_ID, contractException.getErrorType());
 
 		/*
-		 * precondition test: if a batch property is associated with batch id
-		 * that was not properly added
+		 * precondition test: if a batch property is associated with batch id that was
+		 * not properly added
 		 */
 		contractException = assertThrows(ContractException.class, () -> {
 
@@ -236,17 +235,17 @@ public class AT_MaterialsPluginData {
 
 			BatchId batchId = new BatchId(67);
 
-			MaterialsPluginData	.builder()//
-								.defineBatchProperty(testMaterialId, testBatchPropertyId, propertyDefinition)//
-								.addMaterial(testMaterialId)//
-								.setBatchPropertyValue(batchId, testBatchPropertyId, batchId)//
-								.build();//
+			MaterialsPluginData.builder()//
+					.defineBatchProperty(testMaterialId, testBatchPropertyId, propertyDefinition)//
+					.addMaterial(testMaterialId)//
+					.setBatchPropertyValue(batchId, testBatchPropertyId, batchId)//
+					.build();//
 		});
 		assertEquals(MaterialsError.UNKNOWN_BATCH_ID, contractException.getErrorType());
 
 		/*
-		 * precondition test: if a batch property is associated with batch
-		 * property id that was not properly defined
+		 * precondition test: if a batch property is associated with batch property id
+		 * that was not properly defined
 		 */
 		contractException = assertThrows(ContractException.class, () -> {
 			TestMaterialsProducerId testMaterialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_2;
@@ -257,12 +256,13 @@ public class AT_MaterialsPluginData {
 			BatchId batchId = new BatchId(67);
 			double amount = 345.54;
 
-			MaterialsPluginData	.builder()//
-								.addBatch(batchId, testMaterialId, amount, testMaterialsProducerId)//
-								.addMaterial(testMaterialId)//
-								.setBatchPropertyValue(batchId, testBatchPropertyId, value)//
-								.addMaterialsProducerId(testMaterialsProducerId)//
-								.build();//
+			MaterialsPluginData.builder()//
+					.addBatch(batchId, testMaterialId, amount)//
+					.addBatchToMaterialsProducerInventory(batchId, testMaterialsProducerId)//
+					.addMaterial(testMaterialId)//
+					.setBatchPropertyValue(batchId, testBatchPropertyId, value)//
+					.addMaterialsProducerId(testMaterialsProducerId)//
+					.build();//
 		});
 		assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
 
@@ -281,34 +281,36 @@ public class AT_MaterialsPluginData {
 			BatchId batchId = new BatchId(67);
 			double amount = 345.54;
 
-			MaterialsPluginData	.builder()//
-								.addBatch(batchId, testMaterialId, amount, testMaterialsProducerId)//
-								.addMaterial(testMaterialId)//
-								.setBatchPropertyValue(batchId, testBatchPropertyId, incompatibleValue)//
-								.addMaterialsProducerId(testMaterialsProducerId)//
-								.defineBatchProperty(testMaterialId, testBatchPropertyId, propertyDefinition)//
-								.build();//
+			MaterialsPluginData.builder()//
+					.addBatch(batchId, testMaterialId, amount)//
+					.addBatchToMaterialsProducerInventory(batchId, testMaterialsProducerId)//
+					.addMaterial(testMaterialId)//
+					.setBatchPropertyValue(batchId, testBatchPropertyId, incompatibleValue)//
+					.addMaterialsProducerId(testMaterialsProducerId)//
+					.defineBatchProperty(testMaterialId, testBatchPropertyId, propertyDefinition)//
+					.build();//
 		});
 		assertEquals(PropertyError.INCOMPATIBLE_VALUE, contractException.getErrorType());
 
 		/*
-		 * precondition test: if a stage is associated with a materials producer
-		 * id that was not properly added
+		 * precondition test: if a stage is associated with a materials producer id that
+		 * was not properly added
 		 */
 		contractException = assertThrows(ContractException.class, () -> {
 			TestMaterialsProducerId testMaterialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_2;
 			StageId stageId = new StageId(543);
 			boolean offered = false;
 
-			MaterialsPluginData	.builder()//
-								.addStage(stageId, offered, testMaterialsProducerId)//
-								.build();//
+			MaterialsPluginData.builder()//
+					.addStage(stageId, offered)//
+					.addStageToMaterialProducer(stageId, testMaterialsProducerId)//
+					.build();//
 		});
 		assertEquals(MaterialsError.UNKNOWN_MATERIALS_PRODUCER_ID, contractException.getErrorType());
 
 		/*
-		 * precondition test: if a batch is associated with a stage id that was
-		 * not properly added
+		 * precondition test: if a batch is associated with a stage id that was not
+		 * properly added
 		 */
 
 		contractException = assertThrows(ContractException.class, () -> {
@@ -318,18 +320,18 @@ public class AT_MaterialsPluginData {
 			double amount = 86.0;
 			TestMaterialId testMaterialId = TestMaterialId.MATERIAL_3;
 
-			MaterialsPluginData	.builder()//
-								.addBatch(batchId, testMaterialId, amount, testMaterialsProducerId)//
-								.addBatchToStage(stageId, batchId)//
-								.addMaterial(testMaterialId)//
-								.addMaterialsProducerId(testMaterialsProducerId)//
-								.build();//
+			MaterialsPluginData.builder()//
+					.addBatch(batchId, testMaterialId, amount)//
+					.addBatchToStage(stageId, batchId)//
+					.addMaterial(testMaterialId)//
+					.addMaterialsProducerId(testMaterialsProducerId)//
+					.build();//
 		});
 		assertEquals(MaterialsError.UNKNOWN_STAGE_ID, contractException.getErrorType());
 
 		/*
-		 * precondition test: if a stage is associated with a batch id that was
-		 * not properly added
+		 * precondition test: if a stage is associated with a batch id that was not
+		 * properly added
 		 */
 		contractException = assertThrows(ContractException.class, () -> {
 			TestMaterialsProducerId testMaterialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_2;
@@ -338,12 +340,13 @@ public class AT_MaterialsPluginData {
 			TestMaterialId testMaterialId = TestMaterialId.MATERIAL_3;
 			boolean offered = false;
 
-			MaterialsPluginData	.builder()//
-								.addStage(stageId, offered, testMaterialsProducerId)//
-								.addBatchToStage(stageId, batchId)//
-								.addMaterial(testMaterialId)//
-								.addMaterialsProducerId(testMaterialsProducerId)//
-								.build();//
+			MaterialsPluginData.builder()//
+					.addStage(stageId, offered)//
+					.addStageToMaterialProducer(stageId, testMaterialsProducerId)//
+					.addBatchToStage(stageId, batchId)//
+					.addMaterial(testMaterialId)//
+					.addMaterialsProducerId(testMaterialsProducerId)//
+					.build();//
 		});
 		assertEquals(MaterialsError.UNKNOWN_BATCH_ID, contractException.getErrorType());
 
@@ -359,45 +362,25 @@ public class AT_MaterialsPluginData {
 			boolean offered = false;
 			double amount = 765.87;
 
-			MaterialsPluginData	.builder()//
-								.addBatch(batchId, testMaterialId, amount, testMaterialsProducerId)//
-								.addStage(stageId1, offered, testMaterialsProducerId)//
-								.addStage(stageId2, offered, testMaterialsProducerId)//
-								.addBatchToStage(stageId1, batchId)//
-								.addBatchToStage(stageId2, batchId)//
-								.addMaterial(testMaterialId)//
-								.addMaterialsProducerId(testMaterialsProducerId)//
-								.build();//
+			MaterialsPluginData.builder()//
+					.addBatch(batchId, testMaterialId, amount)//
+					.addStage(stageId1, offered)//
+					.addStageToMaterialProducer(stageId1, testMaterialsProducerId)//
+					.addStage(stageId2, offered)//
+					.addStageToMaterialProducer(stageId2, testMaterialsProducerId)//
+					.addBatchToStage(stageId1, batchId)//
+					.addBatchToStage(stageId2, batchId)//
+					.addMaterial(testMaterialId)//
+					.addMaterialsProducerId(testMaterialsProducerId)//
+					.build();//
 		});
 		assertEquals(MaterialsError.BATCH_ALREADY_STAGED, contractException.getErrorType());
 
-		/*
-		 * precondition test: if a batch is associated with a stage that is not
-		 * owned by the same materials producer as the batch
-		 */
-		contractException = assertThrows(ContractException.class, () -> {
-			TestMaterialsProducerId testMaterialsProducerId1 = TestMaterialsProducerId.MATERIALS_PRODUCER_1;
-			TestMaterialsProducerId testMaterialsProducerId2 = TestMaterialsProducerId.MATERIALS_PRODUCER_2;
-			StageId stageId = new StageId(543);
-			BatchId batchId = new BatchId(55);
-			TestMaterialId testMaterialId = TestMaterialId.MATERIAL_3;
-			boolean offered = false;
-			double amount = 765.87;
-
-			MaterialsPluginData	.builder()//
-								.addBatch(batchId, testMaterialId, amount, testMaterialsProducerId1)//
-								.addStage(stageId, offered, testMaterialsProducerId2)//
-								.addBatchToStage(stageId, batchId)//
-								.addMaterial(testMaterialId)//
-								.addMaterialsProducerId(testMaterialsProducerId1)//
-								.addMaterialsProducerId(testMaterialsProducerId2)//
-								.build();//
-		});
-		assertEquals(MaterialsError.BATCH_STAGED_TO_DIFFERENT_OWNER, contractException.getErrorType());
 	}
 
 	@Test
-	@UnitTestMethod(target = MaterialsPluginData.Builder.class, name = "addBatch", args = { BatchId.class, MaterialId.class, double.class, MaterialsProducerId.class })
+	@UnitTestMethod(target = MaterialsPluginData.Builder.class, name = "addBatch", args = { BatchId.class,
+			MaterialId.class, double.class, MaterialsProducerId.class })
 	public void testAddBatch() {
 		BatchId batchId = new BatchId(456);
 		MaterialId materialId = TestMaterialId.MATERIAL_1;
@@ -407,60 +390,67 @@ public class AT_MaterialsPluginData {
 		/*
 		 * adding duplicate data to show that the value persists
 		 */
-		MaterialsPluginData materialsInitialData = MaterialsPluginData	.builder()//
-																		.addBatch(batchId, materialId, amount, materialsProducerId)//
+		MaterialsPluginData materialsInitialData = MaterialsPluginData.builder()//
+				.addBatch(batchId, materialId, amount)//
+				.addBatchToMaterialsProducerInventory(batchId, materialsProducerId)//
 
-																		.addBatch(batchId, materialId, amount, materialsProducerId).addMaterial(materialId)//
-																		.addMaterialsProducerId(materialsProducerId).build();//
+				.addBatch(batchId, materialId, amount)//
+				.addBatchToMaterialsProducerInventory(batchId, materialsProducerId)//
+				.addMaterial(materialId)//
+				.addMaterialsProducerId(materialsProducerId).build();//
 
 		assertTrue(materialsInitialData.getBatchIds().contains(batchId));
 		assertEquals(materialId, materialsInitialData.getBatchMaterial(batchId));
 		assertEquals(amount, materialsInitialData.getBatchAmount(batchId));
-		assertEquals(materialsProducerId, materialsInitialData.getBatchMaterialsProducer(batchId));
+		assertTrue(materialsInitialData.getMaterialsProducerInventoryBatches(materialsProducerId).contains(batchId));
 
 		// idempotency tests
 
 		MaterialId materialId2 = TestMaterialId.MATERIAL_2;
 		double amount2 = 76.1;
 
-		materialsInitialData = MaterialsPluginData	.builder()//
-													.addBatch(batchId, materialId, amount, materialsProducerId)//
-													// replacing data to show
-													// that the value persists
-													.addBatch(batchId, materialId2, amount2, materialsProducerId).addMaterial(materialId2)//
-													.addMaterialsProducerId(materialsProducerId).build();//
+		materialsInitialData = MaterialsPluginData.builder()//
+				.addBatch(batchId, materialId, amount)//
+				.addBatchToMaterialsProducerInventory(batchId, materialsProducerId)//
+				// replacing data to show
+				// that the value persists
+				.addBatch(batchId, materialId2, amount2)//
+				.addBatchToMaterialsProducerInventory(batchId, materialsProducerId)//
+				.addMaterial(materialId2)//
+				.addMaterialsProducerId(materialsProducerId).build();//
 
 		assertTrue(materialsInitialData.getBatchIds().contains(batchId));
 		assertEquals(materialId2, materialsInitialData.getBatchMaterial(batchId));
 		assertEquals(amount2, materialsInitialData.getBatchAmount(batchId));
-		assertEquals(materialsProducerId, materialsInitialData.getBatchMaterialsProducer(batchId));
+		assertTrue(materialsInitialData.getMaterialsProducerInventoryBatches(materialsProducerId).contains(batchId));
 
 		// precondition tests
 
 		// if the batch id is null
-		ContractException contractException = assertThrows(ContractException.class, () -> MaterialsPluginData.builder().addBatch(null, materialId, amount, materialsProducerId));
+		ContractException contractException = assertThrows(ContractException.class,
+				() -> MaterialsPluginData.builder().addBatch(null, materialId, amount));
 		assertEquals(MaterialsError.NULL_BATCH_ID, contractException.getErrorType());
 
 		// if the material id is null
-		contractException = assertThrows(ContractException.class, () -> MaterialsPluginData.builder().addBatch(batchId, null, amount, materialsProducerId));
+		contractException = assertThrows(ContractException.class,
+				() -> MaterialsPluginData.builder().addBatch(batchId, null, amount));
 		assertEquals(MaterialsError.NULL_MATERIAL_ID, contractException.getErrorType());
 
 		// if the material amount is infinite
-		contractException = assertThrows(ContractException.class, () -> MaterialsPluginData.builder().addBatch(batchId, materialId, Double.POSITIVE_INFINITY, materialsProducerId));
+		contractException = assertThrows(ContractException.class,
+				() -> MaterialsPluginData.builder().addBatch(batchId, materialId, Double.POSITIVE_INFINITY));
 		assertEquals(MaterialsError.NON_FINITE_MATERIAL_AMOUNT, contractException.getErrorType());
 
 		// if the material amount is negative
-		contractException = assertThrows(ContractException.class, () -> MaterialsPluginData.builder().addBatch(batchId, materialId, -1, materialsProducerId));
+		contractException = assertThrows(ContractException.class,
+				() -> MaterialsPluginData.builder().addBatch(batchId, materialId, -1));
 		assertEquals(MaterialsError.NEGATIVE_MATERIAL_AMOUNT, contractException.getErrorType());
-
-		// if the materials producer id is null
-		contractException = assertThrows(ContractException.class, () -> MaterialsPluginData.builder().addBatch(batchId, materialId, amount, null));
-		assertEquals(MaterialsError.NULL_MATERIALS_PRODUCER_ID, contractException.getErrorType());
 
 	}
 
 	@Test
-	@UnitTestMethod(target = MaterialsPluginData.Builder.class, name = "addBatchToStage", args = { StageId.class, BatchId.class })
+	@UnitTestMethod(target = MaterialsPluginData.Builder.class, name = "addBatchToStage", args = { StageId.class,
+			BatchId.class })
 	public void testAddBatchToStage() {
 		BatchId batchId = new BatchId(456);
 		StageId stageId = new StageId(543);
@@ -468,33 +458,32 @@ public class AT_MaterialsPluginData {
 		double amount = 16.7;
 		MaterialsProducerId materialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_3;
 
-		MaterialsPluginData materialsInitialData = MaterialsPluginData	.builder()//
-																		.addBatch(batchId, materialId, amount, materialsProducerId)//
-																		.addBatchToStage(stageId, batchId)//
-																		// adding
-																		// duplicate
-																		// data
-																		// to
-																		// show
-																		// that
-																		// the
-																		// value
-																		// persists
-																		.addBatchToStage(stageId, batchId).addStage(stageId, false, materialsProducerId)//
-																		.addMaterial(materialId)//
-																		.addMaterialsProducerId(materialsProducerId)//
-																		.build();//
+		/*
+		 * adding duplicate data to show that the value persists
+		 */
+
+		MaterialsPluginData materialsInitialData = MaterialsPluginData.builder()//
+				.addBatch(batchId, materialId, amount)//
+				.addBatchToStage(stageId, batchId)//
+				.addBatchToStage(stageId, batchId)//
+				.addStage(stageId, false)//
+				.addStageToMaterialProducer(stageId, materialsProducerId)//
+				.addMaterial(materialId)//
+				.addMaterialsProducerId(materialsProducerId)//
+				.build();//
 
 		assertTrue(materialsInitialData.getStageBatches(stageId).contains(batchId));
 
 		// precondition tests
 
 		// if the stage id is null
-		ContractException contractException = assertThrows(ContractException.class, () -> MaterialsPluginData.builder().addBatchToStage(null, batchId));
+		ContractException contractException = assertThrows(ContractException.class,
+				() -> MaterialsPluginData.builder().addBatchToStage(null, batchId));
 		assertEquals(MaterialsError.NULL_STAGE_ID, contractException.getErrorType());
 
 		// if the batch id is null
-		contractException = assertThrows(ContractException.class, () -> MaterialsPluginData.builder().addBatchToStage(stageId, null));
+		contractException = assertThrows(ContractException.class,
+				() -> MaterialsPluginData.builder().addBatchToStage(stageId, null));
 		assertEquals(MaterialsError.NULL_BATCH_ID, contractException.getErrorType());
 
 	}
@@ -505,24 +494,25 @@ public class AT_MaterialsPluginData {
 
 		MaterialId materialId = TestMaterialId.MATERIAL_1;
 
-		MaterialsPluginData materialsInitialData = MaterialsPluginData	.builder()//
-																		.addMaterial(materialId)
-																		// adding
-																		// duplicate
-																		// data
-																		// to
-																		// show
-																		// that
-																		// the
-																		// value
-																		// persists
-																		.addMaterial(materialId)//
-																		.build();//
+		MaterialsPluginData materialsInitialData = MaterialsPluginData.builder()//
+				.addMaterial(materialId)
+				// adding
+				// duplicate
+				// data
+				// to
+				// show
+				// that
+				// the
+				// value
+				// persists
+				.addMaterial(materialId)//
+				.build();//
 
 		assertTrue(materialsInitialData.getMaterialIds().contains(materialId));
 
 		// if the material id is null
-		ContractException contractException = assertThrows(ContractException.class, () -> MaterialsPluginData.builder().addMaterial(null));
+		ContractException contractException = assertThrows(ContractException.class,
+				() -> MaterialsPluginData.builder().addMaterial(null));
 		assertEquals(MaterialsError.NULL_MATERIAL_ID, contractException.getErrorType());
 
 		// show that duplicated values persist
@@ -538,24 +528,25 @@ public class AT_MaterialsPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = MaterialsPluginData.Builder.class, name = "addMaterialsProducerId", args = { MaterialsProducerId.class })
+	@UnitTestMethod(target = MaterialsPluginData.Builder.class, name = "addMaterialsProducerId", args = {
+			MaterialsProducerId.class })
 	public void testAddMaterialsProducerId() {
 		MaterialsProducerId materialsProducerId1 = TestMaterialsProducerId.MATERIALS_PRODUCER_1;
 		MaterialsProducerId materialsProducerId2 = TestMaterialsProducerId.MATERIALS_PRODUCER_2;
 
-		MaterialsPluginData materialsInitialData = MaterialsPluginData	.builder()//
-																		.addMaterialsProducerId(materialsProducerId1)//
-																		// adding
-																		// duplicate
-																		// data
-																		// to
-																		// show
-																		// that
-																		// the
-																		// value
-																		// persists
-																		.addMaterialsProducerId(materialsProducerId1).addMaterialsProducerId(materialsProducerId2)//
-																		.build();//
+		MaterialsPluginData materialsInitialData = MaterialsPluginData.builder()//
+				.addMaterialsProducerId(materialsProducerId1)//
+				// adding
+				// duplicate
+				// data
+				// to
+				// show
+				// that
+				// the
+				// value
+				// persists
+				.addMaterialsProducerId(materialsProducerId1).addMaterialsProducerId(materialsProducerId2)//
+				.build();//
 
 		// show that the materials producer ids were added
 		assertTrue(materialsInitialData.getMaterialsProducerIds().contains(materialsProducerId1));
@@ -565,79 +556,87 @@ public class AT_MaterialsPluginData {
 		// precondition tests
 
 		// if the material id is null
-		ContractException contractException = assertThrows(ContractException.class, () -> MaterialsPluginData.builder().addMaterialsProducerId(null));
+		ContractException contractException = assertThrows(ContractException.class,
+				() -> MaterialsPluginData.builder().addMaterialsProducerId(null));
 		assertEquals(MaterialsError.NULL_MATERIALS_PRODUCER_ID, contractException.getErrorType());
 
 	}
 
 	@Test
-	@UnitTestMethod(target = MaterialsPluginData.Builder.class, name = "addStage", args = { StageId.class, boolean.class, MaterialsProducerId.class })
+	@UnitTestMethod(target = MaterialsPluginData.Builder.class, name = "addStage", args = { StageId.class,
+			boolean.class, MaterialsProducerId.class })
 	public void testAddStage() {
 		StageId stageId = new StageId(456);
 		boolean offered = true;
 		MaterialsProducerId materialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_3;
 
-		MaterialsPluginData materialsInitialData = MaterialsPluginData	.builder()//
-																		.addStage(stageId, offered, materialsProducerId)//
-																		.addStage(stageId, offered, materialsProducerId)//
-																		.addMaterialsProducerId(materialsProducerId)//
-																		.build();//
+		MaterialsPluginData materialsInitialData = MaterialsPluginData.builder()//
+				.addStage(stageId, offered)//
+				.addStageToMaterialProducer(stageId, materialsProducerId)//
+				.addStage(stageId, offered)//
+				.addStageToMaterialProducer(stageId, materialsProducerId)//
+				.addMaterialsProducerId(materialsProducerId)//
+				.build();//
 		assertTrue(materialsInitialData.getStageIds().contains(stageId));
 		assertEquals(offered, materialsInitialData.isStageOffered(stageId));
-		assertEquals(materialsProducerId, materialsInitialData.getStageMaterialsProducer(stageId));
+		assertTrue(materialsInitialData.getMaterialsProducerStages(materialsProducerId).contains(stageId));
 
 		offered = false;
-		materialsInitialData = MaterialsPluginData	.builder()//
-													.addStage(stageId, offered, materialsProducerId)//
-													.addStage(stageId, offered, materialsProducerId).addMaterialsProducerId(materialsProducerId)//
-													.build();//
+		materialsInitialData = MaterialsPluginData.builder()//
+				.addStage(stageId, offered)//
+				.addStageToMaterialProducer(stageId, materialsProducerId)//
+				.addStage(stageId, offered)//
+				.addStageToMaterialProducer(stageId, materialsProducerId)//
+				.addMaterialsProducerId(materialsProducerId)//
+				.build();//
 
 		assertTrue(materialsInitialData.getStageIds().contains(stageId));
 		assertEquals(offered, materialsInitialData.isStageOffered(stageId));
-		assertEquals(materialsProducerId, materialsInitialData.getStageMaterialsProducer(stageId));
+		assertTrue(materialsInitialData.getMaterialsProducerStages(materialsProducerId).contains(stageId));
 
 		// idempotency tests
 
 		boolean offered2 = true;
 		MaterialsProducerId materialsProducerId2 = TestMaterialsProducerId.MATERIALS_PRODUCER_2;
 
-		materialsInitialData = MaterialsPluginData	.builder()//
-													.addStage(stageId, offered, materialsProducerId)//
-													// replacing data to show
-													// that the value persists
-													.addStage(stageId, offered2, materialsProducerId2).addMaterialsProducerId(materialsProducerId2)//
-													.build();//
+		/*
+		 * replacing data to show that the value persists
+		 * 
+		 */
+		materialsInitialData = MaterialsPluginData.builder()//
+				.addStage(stageId, offered)//
+				.addStageToMaterialProducer(stageId, materialsProducerId2)//
+				.addStage(stageId, offered2)//
+				.addStageToMaterialProducer(stageId, materialsProducerId2)//
+				.addMaterialsProducerId(materialsProducerId2)//
+				.build();//
 		assertTrue(materialsInitialData.getStageIds().contains(stageId));
 		assertEquals(offered2, materialsInitialData.isStageOffered(stageId));
-		assertEquals(materialsProducerId2, materialsInitialData.getStageMaterialsProducer(stageId));
+		assertTrue(materialsInitialData.getMaterialsProducerStages(materialsProducerId2).contains(stageId));
 
 		offered = true;
 		offered2 = false;
-		materialsInitialData = MaterialsPluginData	.builder()//
-													.addStage(stageId, offered, materialsProducerId)//
-													// replacing data to show
-													// that the value persists
-													.addStage(stageId, offered2, materialsProducerId2).addMaterialsProducerId(materialsProducerId2)//
-													.build();//
+		materialsInitialData = MaterialsPluginData.builder()//
+				.addStage(stageId, offered) //
+				.addStageToMaterialProducer(stageId, materialsProducerId2)//
+				.addStage(stageId, offered2)//
+				.addStageToMaterialProducer(stageId, materialsProducerId2)//
+				.addMaterialsProducerId(materialsProducerId2)//
+				.build();//
 
 		assertTrue(materialsInitialData.getStageIds().contains(stageId));
 		assertEquals(offered2, materialsInitialData.isStageOffered(stageId));
-		assertEquals(materialsProducerId2, materialsInitialData.getStageMaterialsProducer(stageId));
+		assertTrue(materialsInitialData.getMaterialsProducerStages(materialsProducerId2).contains(stageId));
 
-		// precondition tests
-
-		// if the stage id is null
-		ContractException contractException = assertThrows(ContractException.class, () -> MaterialsPluginData.builder().addStage(null, true, materialsProducerId));
+		// precondition test: if the stage id is null
+		ContractException contractException = assertThrows(ContractException.class,
+				() -> MaterialsPluginData.builder().addStage(null, true));
 		assertEquals(MaterialsError.NULL_STAGE_ID, contractException.getErrorType());
-
-		// if the materials producer id is null
-		contractException = assertThrows(ContractException.class, () -> MaterialsPluginData.builder().addStage(stageId, true, null));
-		assertEquals(MaterialsError.NULL_MATERIALS_PRODUCER_ID, contractException.getErrorType());
-
 	}
 
 	@Test
-	@UnitTestMethod(target = MaterialsPluginData.Builder.class, name = "defineBatchProperty", args = { MaterialId.class, BatchPropertyId.class, PropertyDefinition.class })
+	@UnitTestMethod(target = MaterialsPluginData.Builder.class, name = "defineBatchProperty", args = { MaterialId.class,
+			BatchPropertyId.class, PropertyDefinition.class })
 	public void testDefineBatchProperty() {
 
 		MaterialsPluginData.Builder builder = MaterialsPluginData.builder();//
@@ -646,15 +645,18 @@ public class AT_MaterialsPluginData {
 		}
 		for (TestBatchPropertyId testBatchPropertyId : TestBatchPropertyId.values()) {
 			// adding duplicate data to show that the value persists
-			builder	.defineBatchProperty(testBatchPropertyId.getTestMaterialId(), testBatchPropertyId, testBatchPropertyId.getPropertyDefinition())
-					.defineBatchProperty(testBatchPropertyId.getTestMaterialId(), testBatchPropertyId, testBatchPropertyId.getPropertyDefinition());
+			builder.defineBatchProperty(testBatchPropertyId.getTestMaterialId(), testBatchPropertyId,
+					testBatchPropertyId.getPropertyDefinition())
+					.defineBatchProperty(testBatchPropertyId.getTestMaterialId(), testBatchPropertyId,
+							testBatchPropertyId.getPropertyDefinition());
 		}
 		MaterialsPluginData materialsInitialData = builder.build();//
 
 		for (TestBatchPropertyId testBatchPropertyId : TestBatchPropertyId.values()) {
 			TestMaterialId testMaterialId = testBatchPropertyId.getTestMaterialId();
 			assertTrue(materialsInitialData.getBatchPropertyIds(testMaterialId).contains(testBatchPropertyId));
-			PropertyDefinition actualPropertyDefinition = materialsInitialData.getBatchPropertyDefinition(testMaterialId, testBatchPropertyId);
+			PropertyDefinition actualPropertyDefinition = materialsInitialData
+					.getBatchPropertyDefinition(testMaterialId, testBatchPropertyId);
 			PropertyDefinition expectedPropertyDefinition = testBatchPropertyId.getPropertyDefinition();
 			assertEquals(expectedPropertyDefinition, actualPropertyDefinition);
 		}
@@ -668,42 +670,53 @@ public class AT_MaterialsPluginData {
 		TestBatchPropertyId testBatchPropertyId2 = TestBatchPropertyId.BATCH_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK;
 		PropertyDefinition propertyDefinition2 = testBatchPropertyId2.getPropertyDefinition();
 		builder.addMaterial(testMaterialId);
-		builder.defineBatchProperty(testMaterialId, testBatchPropertyId, propertyDefinition).defineBatchProperty(testMaterialId, testBatchPropertyId2, propertyDefinition2);
+		builder.defineBatchProperty(testMaterialId, testBatchPropertyId, propertyDefinition)
+				.defineBatchProperty(testMaterialId, testBatchPropertyId2, propertyDefinition2);
 		materialsInitialData = builder.build();
 		assertTrue(materialsInitialData.getBatchPropertyIds(testMaterialId).contains(testBatchPropertyId2));
-		PropertyDefinition actualPropertyDefinition2 = materialsInitialData.getBatchPropertyDefinition(testMaterialId, testBatchPropertyId2);
+		PropertyDefinition actualPropertyDefinition2 = materialsInitialData.getBatchPropertyDefinition(testMaterialId,
+				testBatchPropertyId2);
 		PropertyDefinition expectedPropertyDefinition2 = testBatchPropertyId2.getPropertyDefinition();
 		assertEquals(expectedPropertyDefinition2, actualPropertyDefinition2);
 
 		// precondition test: if the batch property id is null
-		ContractException contractException = assertThrows(ContractException.class, () -> MaterialsPluginData.builder().defineBatchProperty(testMaterialId, null, propertyDefinition));
+		ContractException contractException = assertThrows(ContractException.class,
+				() -> MaterialsPluginData.builder().defineBatchProperty(testMaterialId, null, propertyDefinition));
 		assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
 
 		// precondition test: if the material id is null
-		contractException = assertThrows(ContractException.class, () -> MaterialsPluginData.builder().defineBatchProperty(null, testBatchPropertyId, propertyDefinition));
+		contractException = assertThrows(ContractException.class,
+				() -> MaterialsPluginData.builder().defineBatchProperty(null, testBatchPropertyId, propertyDefinition));
 		assertEquals(MaterialsError.NULL_MATERIAL_ID, contractException.getErrorType());
 
 		// precondition test: if the property definition is null
-		contractException = assertThrows(ContractException.class, () -> MaterialsPluginData.builder().defineBatchProperty(testMaterialId, testBatchPropertyId, null));
+		contractException = assertThrows(ContractException.class,
+				() -> MaterialsPluginData.builder().defineBatchProperty(testMaterialId, testBatchPropertyId, null));
 		assertEquals(PropertyError.NULL_PROPERTY_DEFINITION, contractException.getErrorType());
 
 	}
 
 	@Test
-	@UnitTestMethod(target = MaterialsPluginData.Builder.class, name = "defineMaterialsProducerProperty", args = { MaterialsProducerPropertyId.class, PropertyDefinition.class })
+	@UnitTestMethod(target = MaterialsPluginData.Builder.class, name = "defineMaterialsProducerProperty", args = {
+			MaterialsProducerPropertyId.class, PropertyDefinition.class })
 	public void testDefineMaterialsProducerProperty() {
 		MaterialsPluginData.Builder builder = MaterialsPluginData.builder();//
 
-		for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId.values()) {
+		for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId
+				.values()) {
 			// adding duplicate data to show that the value persists
-			builder	.defineMaterialsProducerProperty(testMaterialsProducerPropertyId, testMaterialsProducerPropertyId.getPropertyDefinition())
-					.defineMaterialsProducerProperty(testMaterialsProducerPropertyId, testMaterialsProducerPropertyId.getPropertyDefinition());
+			builder.defineMaterialsProducerProperty(testMaterialsProducerPropertyId,
+					testMaterialsProducerPropertyId.getPropertyDefinition()).defineMaterialsProducerProperty(
+							testMaterialsProducerPropertyId, testMaterialsProducerPropertyId.getPropertyDefinition());
 		}
 		MaterialsPluginData materialsInitialData = builder.build();//
 
-		for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId.values()) {
-			assertTrue(materialsInitialData.getMaterialsProducerPropertyIds().contains(testMaterialsProducerPropertyId));
-			PropertyDefinition actualPropertyDefinition = materialsInitialData.getMaterialsProducerPropertyDefinition(testMaterialsProducerPropertyId);
+		for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId
+				.values()) {
+			assertTrue(
+					materialsInitialData.getMaterialsProducerPropertyIds().contains(testMaterialsProducerPropertyId));
+			PropertyDefinition actualPropertyDefinition = materialsInitialData
+					.getMaterialsProducerPropertyDefinition(testMaterialsProducerPropertyId);
 			PropertyDefinition expectedPropertyDefinition = testMaterialsProducerPropertyId.getPropertyDefinition();
 			assertEquals(expectedPropertyDefinition, actualPropertyDefinition);
 		}
@@ -716,32 +729,37 @@ public class AT_MaterialsPluginData {
 		// show that replaced values persist
 		builder = MaterialsPluginData.builder();
 		PropertyDefinition propertyDefinition2 = testMaterialsProducerPropertyId.getPropertyDefinition();
-		builder.defineMaterialsProducerProperty(testMaterialsProducerPropertyId, propertyDefinition).defineMaterialsProducerProperty(testMaterialsProducerPropertyId, propertyDefinition2);
+		builder.defineMaterialsProducerProperty(testMaterialsProducerPropertyId, propertyDefinition)
+				.defineMaterialsProducerProperty(testMaterialsProducerPropertyId, propertyDefinition2);
 		materialsInitialData = builder.build();
 		assertTrue(materialsInitialData.getMaterialsProducerPropertyIds().contains(testMaterialsProducerPropertyId));
-		PropertyDefinition actualPropertyDefinition2 = materialsInitialData.getMaterialsProducerPropertyDefinition(testMaterialsProducerPropertyId);
+		PropertyDefinition actualPropertyDefinition2 = materialsInitialData
+				.getMaterialsProducerPropertyDefinition(testMaterialsProducerPropertyId);
 		assertEquals(propertyDefinition2, actualPropertyDefinition2);
 
 		// precondition test: if the materials producer property id is null
-		ContractException contractException = assertThrows(ContractException.class, () -> MaterialsPluginData.builder().defineMaterialsProducerProperty(null, propertyDefinition));
+		ContractException contractException = assertThrows(ContractException.class,
+				() -> MaterialsPluginData.builder().defineMaterialsProducerProperty(null, propertyDefinition));
 		assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
 
 		// precondition test: if the property definition is null
-		contractException = assertThrows(ContractException.class, () -> MaterialsPluginData.builder().defineMaterialsProducerProperty(testMaterialsProducerPropertyId, null));
+		contractException = assertThrows(ContractException.class, () -> MaterialsPluginData.builder()
+				.defineMaterialsProducerProperty(testMaterialsProducerPropertyId, null));
 		assertEquals(PropertyError.NULL_PROPERTY_DEFINITION, contractException.getErrorType());
 
 	}
 
 	@Test
-	@UnitTestMethod(target = MaterialsPluginData.Builder.class, name = "setBatchPropertyValue", args = { BatchId.class, BatchPropertyId.class, Object.class })
+	@UnitTestMethod(target = MaterialsPluginData.Builder.class, name = "setBatchPropertyValue", args = { BatchId.class,
+			BatchPropertyId.class, Object.class })
 	public void testSetBatchPropertyValue() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8767111011954878165L);
 
 		/*
 		 * Add 30 batches with about half of the batch properties being set to
-		 * randomized values and the other half set to the default for the
-		 * property definition
+		 * randomized values and the other half set to the default for the property
+		 * definition
 		 */
 		MaterialsPluginData.Builder builder = MaterialsPluginData.builder();//
 
@@ -749,7 +767,8 @@ public class AT_MaterialsPluginData {
 			builder.addMaterial(testMaterialId);
 		}
 		for (TestBatchPropertyId testBatchPropertyId : TestBatchPropertyId.values()) {
-			builder.defineBatchProperty(testBatchPropertyId.getTestMaterialId(), testBatchPropertyId, testBatchPropertyId.getPropertyDefinition());
+			builder.defineBatchProperty(testBatchPropertyId.getTestMaterialId(), testBatchPropertyId,
+					testBatchPropertyId.getPropertyDefinition());
 		}
 		for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
 			builder.addMaterialsProducerId(testMaterialsProducerId);
@@ -762,14 +781,18 @@ public class AT_MaterialsPluginData {
 		for (int i = 0; i < 30; i++) {
 			BatchId batchId = new BatchId(i);
 			TestMaterialId testMaterialId = TestMaterialId.getRandomMaterialId(randomGenerator);
-			builder.addBatch(batchId, testMaterialId, randomGenerator.nextDouble(), TestMaterialsProducerId.getRandomMaterialsProducerId(randomGenerator));
-			for (TestBatchPropertyId testBatchPropertyId : TestBatchPropertyId.getTestBatchPropertyIds(testMaterialId)) {
+			builder.addBatch(batchId, testMaterialId, randomGenerator.nextDouble());
+			builder.addBatchToMaterialsProducerInventory(batchId,
+					TestMaterialsProducerId.getRandomMaterialsProducerId(randomGenerator));
+
+			for (TestBatchPropertyId testBatchPropertyId : TestBatchPropertyId
+					.getTestBatchPropertyIds(testMaterialId)) {
 				MultiKey multiKey = new MultiKey(batchId, testBatchPropertyId);
 				boolean required = testBatchPropertyId.getPropertyDefinition().getDefaultValue().isEmpty();
 				if (required || randomGenerator.nextBoolean()) {
 					Object propertyValue = testBatchPropertyId.getRandomPropertyValue(randomGenerator);
 					// adding duplicate data to show that the value persists
-					builder	.setBatchPropertyValue(batchId, testBatchPropertyId, propertyValue)//
+					builder.setBatchPropertyValue(batchId, testBatchPropertyId, propertyValue)//
 							.setBatchPropertyValue(batchId, testBatchPropertyId, propertyValue);
 					expectedBatchPropertyValues.put(multiKey, propertyValue);
 				}
@@ -797,7 +820,8 @@ public class AT_MaterialsPluginData {
 			builder.addMaterial(testMaterialId);
 		}
 		for (TestBatchPropertyId testBatchPropertyId : TestBatchPropertyId.values()) {
-			builder.defineBatchProperty(testBatchPropertyId.getTestMaterialId(), testBatchPropertyId, testBatchPropertyId.getPropertyDefinition());
+			builder.defineBatchProperty(testBatchPropertyId.getTestMaterialId(), testBatchPropertyId,
+					testBatchPropertyId.getPropertyDefinition());
 		}
 		for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
 			builder.addMaterialsProducerId(testMaterialsProducerId);
@@ -810,8 +834,12 @@ public class AT_MaterialsPluginData {
 		for (int i = 0; i < 30; i++) {
 			BatchId batchId = new BatchId(i);
 			TestMaterialId testMaterialId = TestMaterialId.getRandomMaterialId(randomGenerator);
-			builder.addBatch(batchId, testMaterialId, randomGenerator.nextDouble(), TestMaterialsProducerId.getRandomMaterialsProducerId(randomGenerator));
-			for (TestBatchPropertyId testBatchPropertyId : TestBatchPropertyId.getTestBatchPropertyIds(testMaterialId)) {
+			builder.addBatch(batchId, testMaterialId, randomGenerator.nextDouble());
+			builder.addBatchToMaterialsProducerInventory(batchId,
+					TestMaterialsProducerId.getRandomMaterialsProducerId(randomGenerator));
+
+			for (TestBatchPropertyId testBatchPropertyId : TestBatchPropertyId
+					.getTestBatchPropertyIds(testMaterialId)) {
 				MultiKey multiKey = new MultiKey(batchId, testBatchPropertyId);
 				boolean required = testBatchPropertyId.getPropertyDefinition().getDefaultValue().isEmpty();
 				if (required || randomGenerator.nextBoolean()) {
@@ -847,41 +875,50 @@ public class AT_MaterialsPluginData {
 		Object propertyValue = 17;
 
 		// if the batch id is null
-		ContractException contractException = assertThrows(ContractException.class, () -> MaterialsPluginData.builder().setBatchPropertyValue(null, testBatchPropertyId, propertyValue));
+		ContractException contractException = assertThrows(ContractException.class,
+				() -> MaterialsPluginData.builder().setBatchPropertyValue(null, testBatchPropertyId, propertyValue));
 		assertEquals(MaterialsError.NULL_BATCH_ID, contractException.getErrorType());
 
 		// if the batch property id is null
-		contractException = assertThrows(ContractException.class, () -> MaterialsPluginData.builder().setBatchPropertyValue(batchId, null, propertyValue));
+		contractException = assertThrows(ContractException.class,
+				() -> MaterialsPluginData.builder().setBatchPropertyValue(batchId, null, propertyValue));
 		assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
 
 		// if the batch property value is null
-		contractException = assertThrows(ContractException.class, () -> MaterialsPluginData.builder().setBatchPropertyValue(batchId, testBatchPropertyId, null));
+		contractException = assertThrows(ContractException.class,
+				() -> MaterialsPluginData.builder().setBatchPropertyValue(batchId, testBatchPropertyId, null));
 		assertEquals(PropertyError.NULL_PROPERTY_VALUE, contractException.getErrorType());
 	}
 
 	@Test
-	@UnitTestMethod(target = MaterialsPluginData.Builder.class, name = "setMaterialsProducerPropertyValue", args = { MaterialsProducerId.class, MaterialsProducerPropertyId.class, Object.class })
+	@UnitTestMethod(target = MaterialsPluginData.Builder.class, name = "setMaterialsProducerPropertyValue", args = {
+			MaterialsProducerId.class, MaterialsProducerPropertyId.class, Object.class })
 	public void testSetMaterialsProducerPropertyValue() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(5680332692938057510L);
 		MaterialsPluginData.Builder builder = MaterialsPluginData.builder();//
 
-		for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId.values()) {
-			builder.defineMaterialsProducerProperty(testMaterialsProducerPropertyId, testMaterialsProducerPropertyId.getPropertyDefinition());
+		for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId
+				.values()) {
+			builder.defineMaterialsProducerProperty(testMaterialsProducerPropertyId,
+					testMaterialsProducerPropertyId.getPropertyDefinition());
 		}
 
 		Map<MultiKey, Object> expectedPropertyValues = new LinkedHashMap<>();
 
 		for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
 			builder.addMaterialsProducerId(testMaterialsProducerId);
-			for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId.values()) {
+			for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId
+					.values()) {
 				boolean required = testMaterialsProducerPropertyId.getPropertyDefinition().getDefaultValue().isEmpty();
 				MultiKey multiKey = new MultiKey(testMaterialsProducerId, testMaterialsProducerPropertyId);
 				if (required || randomGenerator.nextBoolean()) {
 					Object propertyValue = testMaterialsProducerPropertyId.getRandomPropertyValue(randomGenerator);
 					// adding duplicate data to show that the value persists
-					builder.setMaterialsProducerPropertyValue(testMaterialsProducerId, testMaterialsProducerPropertyId, propertyValue);
-					builder.setMaterialsProducerPropertyValue(testMaterialsProducerId, testMaterialsProducerPropertyId, propertyValue);
+					builder.setMaterialsProducerPropertyValue(testMaterialsProducerId, testMaterialsProducerPropertyId,
+							propertyValue);
+					builder.setMaterialsProducerPropertyValue(testMaterialsProducerId, testMaterialsProducerPropertyId,
+							propertyValue);
 					expectedPropertyValues.put(multiKey, propertyValue);
 				}
 
@@ -894,30 +931,36 @@ public class AT_MaterialsPluginData {
 			Object expectedValue = expectedPropertyValues.get(multiKey);
 			TestMaterialsProducerId testMaterialsProducerId = multiKey.getKey(0);
 			TestMaterialsProducerPropertyId testMaterialsProducerPropertyId = multiKey.getKey(1);
-			Map<MaterialsProducerPropertyId, Object> materialsProducerPropertyValues = materialsInitialData.getMaterialsProducerPropertyValues(testMaterialsProducerId);
+			Map<MaterialsProducerPropertyId, Object> materialsProducerPropertyValues = materialsInitialData
+					.getMaterialsProducerPropertyValues(testMaterialsProducerId);
 			Object actualValue = materialsProducerPropertyValues.get(testMaterialsProducerPropertyId);
 			assertEquals(expectedValue, actualValue);
 		}
 
 		// idempotency test(replacement)
 		builder = MaterialsPluginData.builder();
-		for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId.values()) {
-			builder.defineMaterialsProducerProperty(testMaterialsProducerPropertyId, testMaterialsProducerPropertyId.getPropertyDefinition());
+		for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId
+				.values()) {
+			builder.defineMaterialsProducerProperty(testMaterialsProducerPropertyId,
+					testMaterialsProducerPropertyId.getPropertyDefinition());
 		}
 
 		expectedPropertyValues = new LinkedHashMap<>();
 
 		for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
 			builder.addMaterialsProducerId(testMaterialsProducerId);
-			for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId.values()) {
+			for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId
+					.values()) {
 				boolean required = testMaterialsProducerPropertyId.getPropertyDefinition().getDefaultValue().isEmpty();
 				MultiKey multiKey = new MultiKey(testMaterialsProducerId, testMaterialsProducerPropertyId);
 				if (required || randomGenerator.nextBoolean()) {
 					Object propertyValue = testMaterialsProducerPropertyId.getRandomPropertyValue(randomGenerator);
 					// replacing data to show that the value persists
-					builder.setMaterialsProducerPropertyValue(testMaterialsProducerId, testMaterialsProducerPropertyId, propertyValue);
+					builder.setMaterialsProducerPropertyValue(testMaterialsProducerId, testMaterialsProducerPropertyId,
+							propertyValue);
 					propertyValue = testMaterialsProducerPropertyId.getRandomPropertyValue(randomGenerator);
-					builder.setMaterialsProducerPropertyValue(testMaterialsProducerId, testMaterialsProducerPropertyId, propertyValue);
+					builder.setMaterialsProducerPropertyValue(testMaterialsProducerId, testMaterialsProducerPropertyId,
+							propertyValue);
 					expectedPropertyValues.put(multiKey, propertyValue);
 				}
 
@@ -930,7 +973,8 @@ public class AT_MaterialsPluginData {
 			Object expectedValue = expectedPropertyValues.get(multiKey);
 			TestMaterialsProducerId testMaterialsProducerId = multiKey.getKey(0);
 			TestMaterialsProducerPropertyId testMaterialsProducerPropertyId = multiKey.getKey(1);
-			Map<MaterialsProducerPropertyId, Object> materialsProducerPropertyValues = materialsInitialData.getMaterialsProducerPropertyValues(testMaterialsProducerId);
+			Map<MaterialsProducerPropertyId, Object> materialsProducerPropertyValues = materialsInitialData
+					.getMaterialsProducerPropertyValues(testMaterialsProducerId);
 			Object actualValue = materialsProducerPropertyValues.get(testMaterialsProducerPropertyId);
 			assertEquals(expectedValue, actualValue);
 		}
@@ -942,22 +986,24 @@ public class AT_MaterialsPluginData {
 		Object propertyValue = 45.6;
 
 		// if the materials producer id is null
-		ContractException contractException = assertThrows(ContractException.class,
-				() -> MaterialsPluginData.builder().setMaterialsProducerPropertyValue(null, testMaterialsProducerPropertyId, propertyValue));
+		ContractException contractException = assertThrows(ContractException.class, () -> MaterialsPluginData.builder()
+				.setMaterialsProducerPropertyValue(null, testMaterialsProducerPropertyId, propertyValue));
 		assertEquals(MaterialsError.NULL_MATERIALS_PRODUCER_ID, contractException.getErrorType());
 
 		// if the materials producer property id is null
-		contractException = assertThrows(ContractException.class, () -> MaterialsPluginData.builder().setMaterialsProducerPropertyValue(testMaterialsProducerId, null, propertyValue));
+		contractException = assertThrows(ContractException.class, () -> MaterialsPluginData.builder()
+				.setMaterialsProducerPropertyValue(testMaterialsProducerId, null, propertyValue));
 		assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
 
 		// if the materials producer property value is null
-		contractException = assertThrows(ContractException.class,
-				() -> MaterialsPluginData.builder().setMaterialsProducerPropertyValue(testMaterialsProducerId, testMaterialsProducerPropertyId, null));
+		contractException = assertThrows(ContractException.class, () -> MaterialsPluginData.builder()
+				.setMaterialsProducerPropertyValue(testMaterialsProducerId, testMaterialsProducerPropertyId, null));
 		assertEquals(PropertyError.NULL_PROPERTY_VALUE, contractException.getErrorType());
 	}
 
 	@Test
-	@UnitTestMethod(target = MaterialsPluginData.Builder.class, name = "setMaterialsProducerResourceLevel", args = { MaterialsProducerId.class, ResourceId.class, long.class })
+	@UnitTestMethod(target = MaterialsPluginData.Builder.class, name = "setMaterialsProducerResourceLevel", args = {
+			MaterialsProducerId.class, ResourceId.class, long.class })
 	public void testSetMaterialsProducerResourceLevel() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(3277582868385203332L);
@@ -987,7 +1033,8 @@ public class AT_MaterialsPluginData {
 			long expectedValue = expectedResourceLevels.get(multiKey);
 			TestMaterialsProducerId testMaterialsProducerId = multiKey.getKey(0);
 			TestResourceId testResourceId = multiKey.getKey(1);
-			Long actualValue = materialsInitialData.getMaterialsProducerResourceLevel(testMaterialsProducerId, testResourceId);
+			Long actualValue = materialsInitialData.getMaterialsProducerResourceLevel(testMaterialsProducerId,
+					testResourceId);
 			assertEquals(expectedValue, actualValue);
 		}
 
@@ -1017,7 +1064,8 @@ public class AT_MaterialsPluginData {
 			long expectedValue = expectedResourceLevels.get(multiKey);
 			TestMaterialsProducerId testMaterialsProducerId = multiKey.getKey(0);
 			TestResourceId testResourceId = multiKey.getKey(1);
-			Long actualValue = materialsInitialData.getMaterialsProducerResourceLevel(testMaterialsProducerId, testResourceId);
+			Long actualValue = materialsInitialData.getMaterialsProducerResourceLevel(testMaterialsProducerId,
+					testResourceId);
 			assertEquals(expectedValue, actualValue);
 		}
 
@@ -1028,15 +1076,18 @@ public class AT_MaterialsPluginData {
 		long level = 345;
 
 		// if the materials producer id is null
-		ContractException contractException = assertThrows(ContractException.class, () -> MaterialsPluginData.builder().setMaterialsProducerResourceLevel(null, testResourceId, level));
+		ContractException contractException = assertThrows(ContractException.class,
+				() -> MaterialsPluginData.builder().setMaterialsProducerResourceLevel(null, testResourceId, level));
 		assertEquals(MaterialsError.NULL_MATERIALS_PRODUCER_ID, contractException.getErrorType());
 
 		// if the resource id is null
-		contractException = assertThrows(ContractException.class, () -> MaterialsPluginData.builder().setMaterialsProducerResourceLevel(testMaterialsProducerId, null, level));
+		contractException = assertThrows(ContractException.class, () -> MaterialsPluginData.builder()
+				.setMaterialsProducerResourceLevel(testMaterialsProducerId, null, level));
 		assertEquals(ResourceError.NULL_RESOURCE_ID, contractException.getErrorType());
 
 		// if the resource amount is negative
-		contractException = assertThrows(ContractException.class, () -> MaterialsPluginData.builder().setMaterialsProducerResourceLevel(testMaterialsProducerId, testResourceId, -1));
+		contractException = assertThrows(ContractException.class, () -> MaterialsPluginData.builder()
+				.setMaterialsProducerResourceLevel(testMaterialsProducerId, testResourceId, -1));
 		assertEquals(ResourceError.NEGATIVE_RESOURCE_AMOUNT, contractException.getErrorType());
 	}
 
@@ -1054,8 +1105,10 @@ public class AT_MaterialsPluginData {
 			BatchId batchId = new BatchId(i);
 			MaterialId materialId = TestMaterialId.getRandomMaterialId(randomGenerator);
 			double amount = randomGenerator.nextDouble();
-			TestMaterialsProducerId testMaterialsProducerId = TestMaterialsProducerId.getRandomMaterialsProducerId(randomGenerator);
-			builder.addBatch(batchId, materialId, amount, testMaterialsProducerId);
+			TestMaterialsProducerId testMaterialsProducerId = TestMaterialsProducerId
+					.getRandomMaterialsProducerId(randomGenerator);
+			builder.addBatch(batchId, materialId, amount);
+			builder.addBatchToMaterialsProducerInventory(batchId, testMaterialsProducerId);
 			expectedBatchAmounts.put(batchId, amount);
 		}
 
@@ -1078,11 +1131,13 @@ public class AT_MaterialsPluginData {
 		// precondition tests
 
 		// if the batch id is null
-		ContractException contractException = assertThrows(ContractException.class, () -> materialsInitialData.getBatchAmount(null));
+		ContractException contractException = assertThrows(ContractException.class,
+				() -> materialsInitialData.getBatchAmount(null));
 		assertEquals(MaterialsError.NULL_BATCH_ID, contractException.getErrorType());
 
 		// if the batch id is unknown
-		contractException = assertThrows(ContractException.class, () -> materialsInitialData.getBatchAmount(new BatchId(10000000)));
+		contractException = assertThrows(ContractException.class,
+				() -> materialsInitialData.getBatchAmount(new BatchId(10000000)));
 		assertEquals(MaterialsError.UNKNOWN_BATCH_ID, contractException.getErrorType());
 
 	}
@@ -1101,8 +1156,10 @@ public class AT_MaterialsPluginData {
 			BatchId batchId = new BatchId(i);
 			MaterialId materialId = TestMaterialId.getRandomMaterialId(randomGenerator);
 			double amount = randomGenerator.nextDouble();
-			TestMaterialsProducerId testMaterialsProducerId = TestMaterialsProducerId.getRandomMaterialsProducerId(randomGenerator);
-			builder.addBatch(batchId, materialId, amount, testMaterialsProducerId);
+			TestMaterialsProducerId testMaterialsProducerId = TestMaterialsProducerId
+					.getRandomMaterialsProducerId(randomGenerator);
+			builder.addBatch(batchId, materialId, amount);
+			builder.addBatchToMaterialsProducerInventory(batchId, testMaterialsProducerId);
 			expectedBatchIds.add(batchId);
 		}
 
@@ -1133,8 +1190,10 @@ public class AT_MaterialsPluginData {
 			BatchId batchId = new BatchId(i);
 			MaterialId materialId = TestMaterialId.getRandomMaterialId(randomGenerator);
 			double amount = randomGenerator.nextDouble();
-			TestMaterialsProducerId testMaterialsProducerId = TestMaterialsProducerId.getRandomMaterialsProducerId(randomGenerator);
-			builder.addBatch(batchId, materialId, amount, testMaterialsProducerId);
+			TestMaterialsProducerId testMaterialsProducerId = TestMaterialsProducerId
+					.getRandomMaterialsProducerId(randomGenerator);
+			builder.addBatch(batchId, materialId, amount);
+			builder.addBatchToMaterialsProducerInventory(batchId, testMaterialsProducerId);
 			expectedMaterialIds.put(batchId, materialId);
 		}
 
@@ -1157,11 +1216,13 @@ public class AT_MaterialsPluginData {
 		// precondition tests
 
 		// if the batch id is null
-		ContractException contractException = assertThrows(ContractException.class, () -> materialsInitialData.getBatchMaterial(null));
+		ContractException contractException = assertThrows(ContractException.class,
+				() -> materialsInitialData.getBatchMaterial(null));
 		assertEquals(MaterialsError.NULL_BATCH_ID, contractException.getErrorType());
 
 		// if the batch id is unknown
-		contractException = assertThrows(ContractException.class, () -> materialsInitialData.getBatchMaterial(new BatchId(10000)));
+		contractException = assertThrows(ContractException.class,
+				() -> materialsInitialData.getBatchMaterial(new BatchId(10000)));
 		assertEquals(MaterialsError.UNKNOWN_BATCH_ID, contractException.getErrorType());
 
 	}
@@ -1174,15 +1235,20 @@ public class AT_MaterialsPluginData {
 
 		MaterialsPluginData.Builder builder = MaterialsPluginData.builder();
 
-		Map<BatchId, MaterialsProducerId> expectedMaterialProducerIds = new LinkedHashMap<>();
+		Map<MaterialsProducerId, Set<BatchId>> expectedBatchMap = new LinkedHashMap<>();
+		for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
+			expectedBatchMap.put(testMaterialsProducerId, new LinkedHashSet<>());
+		}
 
 		for (int i = 0; i < 20; i++) {
 			BatchId batchId = new BatchId(i);
 			MaterialId materialId = TestMaterialId.getRandomMaterialId(randomGenerator);
 			double amount = randomGenerator.nextDouble();
-			TestMaterialsProducerId testMaterialsProducerId = TestMaterialsProducerId.getRandomMaterialsProducerId(randomGenerator);
-			builder.addBatch(batchId, materialId, amount, testMaterialsProducerId);
-			expectedMaterialProducerIds.put(batchId, testMaterialsProducerId);
+			TestMaterialsProducerId testMaterialsProducerId = TestMaterialsProducerId
+					.getRandomMaterialsProducerId(randomGenerator);
+			builder.addBatch(batchId, materialId, amount);
+			builder.addBatchToMaterialsProducerInventory(batchId, testMaterialsProducerId);
+			expectedBatchMap.get(testMaterialsProducerId).add(batchId);
 		}
 
 		for (TestMaterialId testMaterialId : TestMaterialId.values()) {
@@ -1195,25 +1261,29 @@ public class AT_MaterialsPluginData {
 
 		MaterialsPluginData materialsInitialData = builder.build();
 
-		for (BatchId batchId : expectedMaterialProducerIds.keySet()) {
-			MaterialsProducerId expectedMaterialsProducerId = expectedMaterialProducerIds.get(batchId);
-			Object actualMaterialsProducerId = materialsInitialData.getBatchMaterialsProducer(batchId);
-			assertEquals(expectedMaterialsProducerId, actualMaterialsProducerId);
+		for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
+			Set<BatchId> expectedBatches = expectedBatchMap.get(testMaterialsProducerId);
+			Set<BatchId> actualBatches = new LinkedHashSet<>(
+					materialsInitialData.getMaterialsProducerInventoryBatches(testMaterialsProducerId));
+			assertEquals(expectedBatches, actualBatches);
 		}
 
 		// precondition tests
 
 		// if the batch id is null
-		ContractException contractException = assertThrows(ContractException.class, () -> materialsInitialData.getBatchMaterial(null));
+		ContractException contractException = assertThrows(ContractException.class,
+				() -> materialsInitialData.getBatchMaterial(null));
 		assertEquals(MaterialsError.NULL_BATCH_ID, contractException.getErrorType());
 
 		// if the batch id is unknown
-		contractException = assertThrows(ContractException.class, () -> materialsInitialData.getBatchMaterial(new BatchId(10000)));
+		contractException = assertThrows(ContractException.class,
+				() -> materialsInitialData.getBatchMaterial(new BatchId(10000)));
 		assertEquals(MaterialsError.UNKNOWN_BATCH_ID, contractException.getErrorType());
 	}
 
 	@Test
-	@UnitTestMethod(target = MaterialsPluginData.class, name = "getBatchPropertyDefinition", args = { MaterialId.class, BatchPropertyId.class })
+	@UnitTestMethod(target = MaterialsPluginData.class, name = "getBatchPropertyDefinition", args = { MaterialId.class,
+			BatchPropertyId.class })
 	public void testGetBatchPropertyDefinition() {
 
 		MaterialsPluginData.Builder builder = MaterialsPluginData.builder();//
@@ -1223,7 +1293,8 @@ public class AT_MaterialsPluginData {
 		}
 
 		for (TestBatchPropertyId testBatchPropertyId : TestBatchPropertyId.values()) {
-			builder.defineBatchProperty(testBatchPropertyId.getTestMaterialId(), testBatchPropertyId, testBatchPropertyId.getPropertyDefinition());
+			builder.defineBatchProperty(testBatchPropertyId.getTestMaterialId(), testBatchPropertyId,
+					testBatchPropertyId.getPropertyDefinition());
 		}
 
 		// build the MaterialsInitialization
@@ -1234,7 +1305,8 @@ public class AT_MaterialsPluginData {
 		for (TestBatchPropertyId testBatchPropertyId : TestBatchPropertyId.values()) {
 			PropertyDefinition expectedPropertyDefinition = testBatchPropertyId.getPropertyDefinition();
 			TestMaterialId testMaterialId = testBatchPropertyId.getTestMaterialId();
-			PropertyDefinition actualPropertyDefinition = materialsInitialData.getBatchPropertyDefinition(testMaterialId, testBatchPropertyId);
+			PropertyDefinition actualPropertyDefinition = materialsInitialData
+					.getBatchPropertyDefinition(testMaterialId, testBatchPropertyId);
 			assertEquals(expectedPropertyDefinition, actualPropertyDefinition);
 		}
 
@@ -1244,19 +1316,23 @@ public class AT_MaterialsPluginData {
 		TestBatchPropertyId testBatchPropertyId = TestBatchPropertyId.BATCH_PROPERTY_2_2_INTEGER_IMMUTABLE_TRACK;
 
 		// if the material id is null
-		ContractException contractException = assertThrows(ContractException.class, () -> materialsInitialData.getBatchPropertyDefinition(null, testBatchPropertyId));
+		ContractException contractException = assertThrows(ContractException.class,
+				() -> materialsInitialData.getBatchPropertyDefinition(null, testBatchPropertyId));
 		assertEquals(MaterialsError.NULL_MATERIAL_ID, contractException.getErrorType());
 
 		// if the material id is unknown
-		contractException = assertThrows(ContractException.class, () -> materialsInitialData.getBatchPropertyDefinition(TestMaterialId.getUnknownMaterialId(), testBatchPropertyId));
+		contractException = assertThrows(ContractException.class, () -> materialsInitialData
+				.getBatchPropertyDefinition(TestMaterialId.getUnknownMaterialId(), testBatchPropertyId));
 		assertEquals(MaterialsError.UNKNOWN_MATERIAL_ID, contractException.getErrorType());
 
 		// if the batch property id is null
-		contractException = assertThrows(ContractException.class, () -> materialsInitialData.getBatchPropertyDefinition(testMaterialId, null));
+		contractException = assertThrows(ContractException.class,
+				() -> materialsInitialData.getBatchPropertyDefinition(testMaterialId, null));
 		assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
 
 		// if the batch property id is unknown
-		contractException = assertThrows(ContractException.class, () -> materialsInitialData.getBatchPropertyDefinition(testMaterialId, TestBatchPropertyId.getUnknownBatchPropertyId()));
+		contractException = assertThrows(ContractException.class, () -> materialsInitialData
+				.getBatchPropertyDefinition(testMaterialId, TestBatchPropertyId.getUnknownBatchPropertyId()));
 		assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
 
 	}
@@ -1272,7 +1348,8 @@ public class AT_MaterialsPluginData {
 		}
 
 		for (TestBatchPropertyId testBatchPropertyId : TestBatchPropertyId.values()) {
-			builder.defineBatchProperty(testBatchPropertyId.getTestMaterialId(), testBatchPropertyId, testBatchPropertyId.getPropertyDefinition());
+			builder.defineBatchProperty(testBatchPropertyId.getTestMaterialId(), testBatchPropertyId,
+					testBatchPropertyId.getPropertyDefinition());
 		}
 
 		// build the MaterialsInitialization
@@ -1282,7 +1359,8 @@ public class AT_MaterialsPluginData {
 		// property ids
 
 		for (TestMaterialId testMaterialId : TestMaterialId.values()) {
-			Set<TestBatchPropertyId> expectedBatchPropertyIds = TestBatchPropertyId.getTestBatchPropertyIds(testMaterialId);
+			Set<TestBatchPropertyId> expectedBatchPropertyIds = TestBatchPropertyId
+					.getTestBatchPropertyIds(testMaterialId);
 			Set<BatchPropertyId> actualBatchPropertyIds = materialsInitialData.getBatchPropertyIds(testMaterialId);
 			assertEquals(expectedBatchPropertyIds, actualBatchPropertyIds);
 		}
@@ -1290,11 +1368,13 @@ public class AT_MaterialsPluginData {
 		// precondition tests
 
 		// if the material id is null
-		ContractException contractException = assertThrows(ContractException.class, () -> materialsInitialData.getBatchPropertyIds(null));
+		ContractException contractException = assertThrows(ContractException.class,
+				() -> materialsInitialData.getBatchPropertyIds(null));
 		assertEquals(MaterialsError.NULL_MATERIAL_ID, contractException.getErrorType());
 
 		// if the material id is unknown
-		contractException = assertThrows(ContractException.class, () -> materialsInitialData.getBatchPropertyIds(TestMaterialId.getUnknownMaterialId()));
+		contractException = assertThrows(ContractException.class,
+				() -> materialsInitialData.getBatchPropertyIds(TestMaterialId.getUnknownMaterialId()));
 		assertEquals(MaterialsError.UNKNOWN_MATERIAL_ID, contractException.getErrorType());
 
 	}
@@ -1307,8 +1387,8 @@ public class AT_MaterialsPluginData {
 
 		/*
 		 * Add 30 batches with about half of the batch properties being set to
-		 * randomized values and the other half set to the default for the
-		 * property definition
+		 * randomized values and the other half set to the default for the property
+		 * definition
 		 */
 		MaterialsPluginData.Builder builder = MaterialsPluginData.builder();//
 
@@ -1316,7 +1396,8 @@ public class AT_MaterialsPluginData {
 			builder.addMaterial(testMaterialId);
 		}
 		for (TestBatchPropertyId testBatchPropertyId : TestBatchPropertyId.values()) {
-			builder.defineBatchProperty(testBatchPropertyId.getTestMaterialId(), testBatchPropertyId, testBatchPropertyId.getPropertyDefinition());
+			builder.defineBatchProperty(testBatchPropertyId.getTestMaterialId(), testBatchPropertyId,
+					testBatchPropertyId.getPropertyDefinition());
 		}
 		for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
 			builder.addMaterialsProducerId(testMaterialsProducerId);
@@ -1329,8 +1410,12 @@ public class AT_MaterialsPluginData {
 		for (int i = 0; i < 30; i++) {
 			BatchId batchId = new BatchId(i);
 			TestMaterialId testMaterialId = TestMaterialId.getRandomMaterialId(randomGenerator);
-			builder.addBatch(batchId, testMaterialId, randomGenerator.nextDouble(), TestMaterialsProducerId.getRandomMaterialsProducerId(randomGenerator));
-			for (TestBatchPropertyId testBatchPropertyId : TestBatchPropertyId.getTestBatchPropertyIds(testMaterialId)) {
+			builder.addBatch(batchId, testMaterialId, randomGenerator.nextDouble());
+			builder.addBatchToMaterialsProducerInventory(batchId,
+					TestMaterialsProducerId.getRandomMaterialsProducerId(randomGenerator));
+
+			for (TestBatchPropertyId testBatchPropertyId : TestBatchPropertyId
+					.getTestBatchPropertyIds(testMaterialId)) {
 				MultiKey multiKey = new MultiKey(batchId, testBatchPropertyId);
 
 				boolean required = testBatchPropertyId.getPropertyDefinition().getDefaultValue().isEmpty();
@@ -1356,11 +1441,13 @@ public class AT_MaterialsPluginData {
 		}
 
 		// precondition test: if the batch id is null
-		ContractException contractException = assertThrows(ContractException.class, () -> materialsInitialData.getBatchPropertyValues(null));
+		ContractException contractException = assertThrows(ContractException.class,
+				() -> materialsInitialData.getBatchPropertyValues(null));
 		assertEquals(MaterialsError.NULL_BATCH_ID, contractException.getErrorType());
 
 		// precondition test: if the batch id is unknown
-		contractException = assertThrows(ContractException.class, () -> materialsInitialData.getBatchPropertyValues(new BatchId(10000)));
+		contractException = assertThrows(ContractException.class,
+				() -> materialsInitialData.getBatchPropertyValues(new BatchId(10000)));
 		assertEquals(MaterialsError.UNKNOWN_BATCH_ID, contractException.getErrorType());
 
 	}
@@ -1395,19 +1482,25 @@ public class AT_MaterialsPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = MaterialsPluginData.class, name = "getMaterialsProducerPropertyDefinition", args = { MaterialsProducerPropertyId.class })
+	@UnitTestMethod(target = MaterialsPluginData.class, name = "getMaterialsProducerPropertyDefinition", args = {
+			MaterialsProducerPropertyId.class })
 	public void testGetMaterialsProducerPropertyDefinition() {
 
 		MaterialsPluginData.Builder builder = MaterialsPluginData.builder();//
 
-		for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId.values()) {
-			builder.defineMaterialsProducerProperty(testMaterialsProducerPropertyId, testMaterialsProducerPropertyId.getPropertyDefinition());
+		for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId
+				.values()) {
+			builder.defineMaterialsProducerProperty(testMaterialsProducerPropertyId,
+					testMaterialsProducerPropertyId.getPropertyDefinition());
 		}
 		MaterialsPluginData materialsInitialData = builder.build();//
 
-		for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId.values()) {
-			assertTrue(materialsInitialData.getMaterialsProducerPropertyIds().contains(testMaterialsProducerPropertyId));
-			PropertyDefinition actualPropertyDefinition = materialsInitialData.getMaterialsProducerPropertyDefinition(testMaterialsProducerPropertyId);
+		for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId
+				.values()) {
+			assertTrue(
+					materialsInitialData.getMaterialsProducerPropertyIds().contains(testMaterialsProducerPropertyId));
+			PropertyDefinition actualPropertyDefinition = materialsInitialData
+					.getMaterialsProducerPropertyDefinition(testMaterialsProducerPropertyId);
 			PropertyDefinition expectedPropertyDefinition = testMaterialsProducerPropertyId.getPropertyDefinition();
 			assertEquals(expectedPropertyDefinition, actualPropertyDefinition);
 		}
@@ -1415,12 +1508,14 @@ public class AT_MaterialsPluginData {
 		// precondition tests
 
 		// if the materials producer property id is null
-		ContractException contractException = assertThrows(ContractException.class, () -> materialsInitialData.getMaterialsProducerPropertyDefinition(null));
+		ContractException contractException = assertThrows(ContractException.class,
+				() -> materialsInitialData.getMaterialsProducerPropertyDefinition(null));
 		assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
 
 		// if the materials producer property id is unknown
 		contractException = assertThrows(ContractException.class,
-				() -> materialsInitialData.getMaterialsProducerPropertyDefinition(TestMaterialsProducerPropertyId.getUnknownMaterialsProducerPropertyId()));
+				() -> materialsInitialData.getMaterialsProducerPropertyDefinition(
+						TestMaterialsProducerPropertyId.getUnknownMaterialsProducerPropertyId()));
 		assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
 
 	}
@@ -1430,30 +1525,37 @@ public class AT_MaterialsPluginData {
 	public void testGetMaterialsProducerPropertyIds() {
 		MaterialsPluginData.Builder builder = MaterialsPluginData.builder();//
 
-		for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId.values()) {
-			builder.defineMaterialsProducerProperty(testMaterialsProducerPropertyId, testMaterialsProducerPropertyId.getPropertyDefinition());
+		for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId
+				.values()) {
+			builder.defineMaterialsProducerProperty(testMaterialsProducerPropertyId,
+					testMaterialsProducerPropertyId.getPropertyDefinition());
 		}
 		MaterialsPluginData materialsInitialData = builder.build();//
-		assertEquals(EnumSet.allOf(TestMaterialsProducerPropertyId.class), materialsInitialData.getMaterialsProducerPropertyIds());
+		assertEquals(EnumSet.allOf(TestMaterialsProducerPropertyId.class),
+				materialsInitialData.getMaterialsProducerPropertyIds());
 
 	}
 
 	@Test
-	@UnitTestMethod(target = MaterialsPluginData.class, name = "getMaterialsProducerPropertyValues", args = { MaterialsProducerId.class })
+	@UnitTestMethod(target = MaterialsPluginData.class, name = "getMaterialsProducerPropertyValues", args = {
+			MaterialsProducerId.class })
 	public void testGetMaterialsProducerPropertyValues() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(175219330466509056L);
 		MaterialsPluginData.Builder builder = MaterialsPluginData.builder();//
 
-		for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId.values()) {
-			builder.defineMaterialsProducerProperty(testMaterialsProducerPropertyId, testMaterialsProducerPropertyId.getPropertyDefinition());
+		for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId
+				.values()) {
+			builder.defineMaterialsProducerProperty(testMaterialsProducerPropertyId,
+					testMaterialsProducerPropertyId.getPropertyDefinition());
 		}
 
 		Map<MultiKey, Object> expectedPropertyValues = new LinkedHashMap<>();
 
 		for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
 			builder.addMaterialsProducerId(testMaterialsProducerId);
-			for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId.values()) {
+			for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId
+					.values()) {
 				MultiKey multiKey = new MultiKey(testMaterialsProducerId, testMaterialsProducerPropertyId);
 				Object propertyValue;
 
@@ -1461,7 +1563,8 @@ public class AT_MaterialsPluginData {
 
 				if (required || randomGenerator.nextBoolean()) {
 					propertyValue = testMaterialsProducerPropertyId.getRandomPropertyValue(randomGenerator);
-					builder.setMaterialsProducerPropertyValue(testMaterialsProducerId, testMaterialsProducerPropertyId, propertyValue);
+					builder.setMaterialsProducerPropertyValue(testMaterialsProducerId, testMaterialsProducerPropertyId,
+							propertyValue);
 					expectedPropertyValues.put(multiKey, propertyValue);
 				}
 			}
@@ -1473,23 +1576,27 @@ public class AT_MaterialsPluginData {
 			Object expectedValue = expectedPropertyValues.get(multiKey);
 			TestMaterialsProducerId testMaterialsProducerId = multiKey.getKey(0);
 			TestMaterialsProducerPropertyId testMaterialsProducerPropertyId = multiKey.getKey(1);
-			Map<MaterialsProducerPropertyId, Object> materialsProducerPropertyValues = materialsInitialData.getMaterialsProducerPropertyValues(testMaterialsProducerId);
+			Map<MaterialsProducerPropertyId, Object> materialsProducerPropertyValues = materialsInitialData
+					.getMaterialsProducerPropertyValues(testMaterialsProducerId);
 			Object actualValue = materialsProducerPropertyValues.get(testMaterialsProducerPropertyId);
 			assertEquals(expectedValue, actualValue);
 		}
 
 		// precondition test: if the materials producer id is null
-		ContractException contractException = assertThrows(ContractException.class, () -> materialsInitialData.getMaterialsProducerPropertyValues(null));
+		ContractException contractException = assertThrows(ContractException.class,
+				() -> materialsInitialData.getMaterialsProducerPropertyValues(null));
 		assertEquals(MaterialsError.NULL_MATERIALS_PRODUCER_ID, contractException.getErrorType());
 
 		// precondition test: if the materials producer id is unknown
-		contractException = assertThrows(ContractException.class, () -> materialsInitialData.getMaterialsProducerPropertyValues(TestMaterialsProducerId.getUnknownMaterialsProducerId()));
+		contractException = assertThrows(ContractException.class, () -> materialsInitialData
+				.getMaterialsProducerPropertyValues(TestMaterialsProducerId.getUnknownMaterialsProducerId()));
 		assertEquals(MaterialsError.UNKNOWN_MATERIALS_PRODUCER_ID, contractException.getErrorType());
 
 	}
 
 	@Test
-	@UnitTestMethod(target = MaterialsPluginData.class, name = "getMaterialsProducerResourceLevel", args = { MaterialsProducerId.class, ResourceId.class })
+	@UnitTestMethod(target = MaterialsPluginData.class, name = "getMaterialsProducerResourceLevel", args = {
+			MaterialsProducerId.class, ResourceId.class })
 	public void testGetMaterialsProducerResourceLevel() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(4448010834982849838L);
@@ -1516,7 +1623,8 @@ public class AT_MaterialsPluginData {
 			long expectedValue = expectedResourceLevels.get(multiKey);
 			TestMaterialsProducerId testMaterialsProducerId = multiKey.getKey(0);
 			TestResourceId testResourceId = multiKey.getKey(1);
-			Long actualValue = materialsInitialData.getMaterialsProducerResourceLevel(testMaterialsProducerId, testResourceId);
+			Long actualValue = materialsInitialData.getMaterialsProducerResourceLevel(testMaterialsProducerId,
+					testResourceId);
 			assertEquals(expectedValue, actualValue);
 		}
 
@@ -1526,16 +1634,19 @@ public class AT_MaterialsPluginData {
 		TestResourceId testResourceId = TestResourceId.RESOURCE_3;
 
 		// if the materials producer id is null
-		ContractException contractException = assertThrows(ContractException.class, () -> materialsInitialData.getMaterialsProducerResourceLevel(null, testResourceId));
+		ContractException contractException = assertThrows(ContractException.class,
+				() -> materialsInitialData.getMaterialsProducerResourceLevel(null, testResourceId));
 		assertEquals(MaterialsError.NULL_MATERIALS_PRODUCER_ID, contractException.getErrorType());
 
 		// if the materials producer id is unknown
 		contractException = assertThrows(ContractException.class,
-				() -> materialsInitialData.getMaterialsProducerResourceLevel(TestMaterialsProducerId.getUnknownMaterialsProducerId(), testResourceId));
+				() -> materialsInitialData.getMaterialsProducerResourceLevel(
+						TestMaterialsProducerId.getUnknownMaterialsProducerId(), testResourceId));
 		assertEquals(MaterialsError.UNKNOWN_MATERIALS_PRODUCER_ID, contractException.getErrorType());
 
 		// if the resource id is unknown
-		contractException = assertThrows(ContractException.class, () -> materialsInitialData.getMaterialsProducerResourceLevel(testMaterialsProducerId, null));
+		contractException = assertThrows(ContractException.class,
+				() -> materialsInitialData.getMaterialsProducerResourceLevel(testMaterialsProducerId, null));
 		assertEquals(ResourceError.NULL_RESOURCE_ID, contractException.getErrorType());
 
 	}
@@ -1546,7 +1657,7 @@ public class AT_MaterialsPluginData {
 
 		MaterialsPluginData.Builder builder = MaterialsPluginData.builder();
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(273625089589349694L);
-		Random random = new Random(randomGenerator.nextLong());
+		
 
 		// construct a container to hold the expected stage/batch relationships
 
@@ -1565,13 +1676,21 @@ public class AT_MaterialsPluginData {
 
 			builder.addMaterialsProducerId(testMaterialsProducerId);
 
-			List<BatchId> batchIds = new ArrayList<>();
-			for (int i = 0; i < 50; i++) {
+			List<BatchId> stagedBatchIds = new ArrayList<>();
+			for (int i = 0; i < 30; i++) {
 				BatchId batchId = new BatchId(batchIndex++);
-				batchIds.add(batchId);
+				stagedBatchIds.add(batchId);
 				TestMaterialId testMaterialId = TestMaterialId.getRandomMaterialId(randomGenerator);
 				double amount = randomGenerator.nextDouble();
-				builder.addBatch(batchId, testMaterialId, amount, testMaterialsProducerId);
+				builder.addBatch(batchId, testMaterialId, amount);				
+			}
+			
+			for (int i = 0; i < 20; i++) {
+				BatchId batchId = new BatchId(batchIndex++);				
+				TestMaterialId testMaterialId = TestMaterialId.getRandomMaterialId(randomGenerator);
+				double amount = randomGenerator.nextDouble();
+				builder.addBatch(batchId, testMaterialId, amount);
+				builder.addBatchToMaterialsProducerInventory(batchId, testMaterialsProducerId);
 			}
 
 			List<StageId> stageIds = new ArrayList<>();
@@ -1580,12 +1699,11 @@ public class AT_MaterialsPluginData {
 				stageIds.add(stageId);
 				expectedRelationships.put(stageId, new LinkedHashSet<>());
 				boolean offered = randomGenerator.nextBoolean();
-				builder.addStage(stageId, offered, testMaterialsProducerId);
+				builder.addStage(stageId, offered);
+				builder.addStageToMaterialProducer(stageId, testMaterialsProducerId);
 			}
-
-			Collections.shuffle(batchIds, random);
-			for (int i = 0; i < 30; i++) {
-				BatchId batchId = batchIds.get(i);
+			
+			for (BatchId batchId : stagedBatchIds) {				
 				StageId stageId = stageIds.get(randomGenerator.nextInt(stageIds.size()));
 				expectedRelationships.get(stageId).add(batchId);
 				builder.addBatchToStage(stageId, batchId);
@@ -1603,11 +1721,13 @@ public class AT_MaterialsPluginData {
 		// precondition tests
 
 		// if the stage id is null
-		ContractException contractException = assertThrows(ContractException.class, () -> materialsInitialData.getStageBatches(null));
+		ContractException contractException = assertThrows(ContractException.class,
+				() -> materialsInitialData.getStageBatches(null));
 		assertEquals(MaterialsError.NULL_STAGE_ID, contractException.getErrorType());
 
 		// if the batch id is null
-		contractException = assertThrows(ContractException.class, () -> materialsInitialData.getStageBatches(new StageId(10000000)));
+		contractException = assertThrows(ContractException.class,
+				() -> materialsInitialData.getStageBatches(new StageId(10000000)));
 		assertEquals(MaterialsError.UNKNOWN_STAGE_ID, contractException.getErrorType());
 
 	}
@@ -1628,8 +1748,10 @@ public class AT_MaterialsPluginData {
 			StageId stageId = new StageId(i);
 			expectedStageIds.add(stageId);
 			boolean offered = randomGenerator.nextBoolean();
-			TestMaterialsProducerId testMaterialsProducerId = TestMaterialsProducerId.getRandomMaterialsProducerId(randomGenerator);
-			builder.addStage(stageId, offered, testMaterialsProducerId);
+			TestMaterialsProducerId testMaterialsProducerId = TestMaterialsProducerId
+					.getRandomMaterialsProducerId(randomGenerator);
+			builder.addStage(stageId, offered);
+			builder.addStageToMaterialProducer(stageId, testMaterialsProducerId);
 		}
 
 		MaterialsPluginData materialsInitialData = builder.build();//
@@ -1639,43 +1761,50 @@ public class AT_MaterialsPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = MaterialsPluginData.class, name = "getStageMaterialsProducer", args = { StageId.class })
-	public void testGetStageMaterialsProducer() {
+	@UnitTestMethod(target = MaterialsPluginData.class, name = "getMaterialsProducerStages", args = { StageId.class })
+	public void testGetMaterialsProducerStages() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(4722411464538864709L);
 
 		MaterialsPluginData.Builder builder = MaterialsPluginData.builder();
 
+		Map<MaterialsProducerId, List<StageId>> expectedMap = new LinkedHashMap<>();
+
 		for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
 			builder.addMaterialsProducerId(testMaterialsProducerId);
+			expectedMap.put(testMaterialsProducerId, new ArrayList<>());
 		}
 
-		Map<StageId, MaterialsProducerId> expectedMaterialsProducerIds = new LinkedHashMap<>();
 		for (int i = 0; i < 100; i++) {
 			StageId stageId = new StageId(i);
 			boolean offered = randomGenerator.nextBoolean();
-			TestMaterialsProducerId testMaterialsProducerId = TestMaterialsProducerId.getRandomMaterialsProducerId(randomGenerator);
-			expectedMaterialsProducerIds.put(stageId, testMaterialsProducerId);
-			builder.addStage(stageId, offered, testMaterialsProducerId);
+			TestMaterialsProducerId testMaterialsProducerId = TestMaterialsProducerId
+					.getRandomMaterialsProducerId(randomGenerator);
+
+			builder.addStage(stageId, offered);
+			builder.addStageToMaterialProducer(stageId, testMaterialsProducerId);
+
+			expectedMap.get(testMaterialsProducerId).add(stageId);
 		}
 
 		MaterialsPluginData materialsInitialData = builder.build();//
 
-		for (StageId stageId : expectedMaterialsProducerIds.keySet()) {
-			MaterialsProducerId expectedMaterialsProducerId = expectedMaterialsProducerIds.get(stageId);
-			MaterialsProducerId actualMaterialsProducerId = materialsInitialData.getStageMaterialsProducer(stageId);
-			assertEquals(expectedMaterialsProducerId, actualMaterialsProducerId);
+		for (MaterialsProducerId materialsProducerId : expectedMap.keySet()) {
+			List<StageId> expectedStages = expectedMap.get(materialsProducerId);
+			assertEquals(expectedStages, materialsInitialData.getMaterialsProducerStages(materialsProducerId));
 		}
 
 		// precondition tests
 
 		// if the stage id is null
-		ContractException contractException = assertThrows(ContractException.class, () -> materialsInitialData.getStageMaterialsProducer(null));
-		assertEquals(MaterialsError.NULL_STAGE_ID, contractException.getErrorType());
+		ContractException contractException = assertThrows(ContractException.class,
+				() -> materialsInitialData.getMaterialsProducerStages(null));
+		assertEquals(MaterialsError.NULL_MATERIALS_PRODUCER_ID, contractException.getErrorType());
 
 		// if the stage id is unknown
-		contractException = assertThrows(ContractException.class, () -> materialsInitialData.getStageMaterialsProducer(new StageId(10000000)));
-		assertEquals(MaterialsError.UNKNOWN_STAGE_ID, contractException.getErrorType());
+		contractException = assertThrows(ContractException.class, () -> materialsInitialData
+				.getMaterialsProducerStages(TestMaterialsProducerId.getUnknownMaterialsProducerId()));
+		assertEquals(MaterialsError.UNKNOWN_MATERIALS_PRODUCER_ID, contractException.getErrorType());
 
 	}
 
@@ -1695,9 +1824,11 @@ public class AT_MaterialsPluginData {
 		for (int i = 0; i < 100; i++) {
 			StageId stageId = new StageId(i);
 			boolean offered = randomGenerator.nextBoolean();
-			TestMaterialsProducerId testMaterialsProducerId = TestMaterialsProducerId.getRandomMaterialsProducerId(randomGenerator);
+			TestMaterialsProducerId testMaterialsProducerId = TestMaterialsProducerId
+					.getRandomMaterialsProducerId(randomGenerator);
 			expectedStageOffers.put(stageId, offered);
-			builder.addStage(stageId, offered, testMaterialsProducerId);
+			builder.addStage(stageId, offered);
+			builder.addStageToMaterialProducer(stageId, testMaterialsProducerId);
 		}
 
 		MaterialsPluginData materialsInitialData = builder.build();//
@@ -1711,11 +1842,13 @@ public class AT_MaterialsPluginData {
 		// precondition tests
 
 		// if the stage id is null
-		ContractException contractException = assertThrows(ContractException.class, () -> materialsInitialData.isStageOffered(null));
+		ContractException contractException = assertThrows(ContractException.class,
+				() -> materialsInitialData.isStageOffered(null));
 		assertEquals(MaterialsError.NULL_STAGE_ID, contractException.getErrorType());
 
 		// if the stage id is unknown
-		contractException = assertThrows(ContractException.class, () -> materialsInitialData.isStageOffered(new StageId(10000000)));
+		contractException = assertThrows(ContractException.class,
+				() -> materialsInitialData.isStageOffered(new StageId(10000000)));
 		assertEquals(MaterialsError.UNKNOWN_STAGE_ID, contractException.getErrorType());
 	}
 
@@ -1755,14 +1888,19 @@ public class AT_MaterialsPluginData {
 		for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
 			builder.addMaterialsProducerId(testMaterialsProducerId);
 		}
-		for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId.values()) {
-			builder.defineMaterialsProducerProperty(testMaterialsProducerPropertyId, testMaterialsProducerPropertyId.getPropertyDefinition());
+		for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId
+				.values()) {
+			builder.defineMaterialsProducerProperty(testMaterialsProducerPropertyId,
+					testMaterialsProducerPropertyId.getPropertyDefinition());
 		}
 		for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
-			for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId.values()) {
-				boolean requiredProperty = testMaterialsProducerPropertyId.getPropertyDefinition().getDefaultValue().isEmpty();
+			for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId
+					.values()) {
+				boolean requiredProperty = testMaterialsProducerPropertyId.getPropertyDefinition().getDefaultValue()
+						.isEmpty();
 				if (requiredProperty || randomGenerator.nextBoolean()) {
-					builder.setMaterialsProducerPropertyValue(testMaterialsProducerId, testMaterialsProducerPropertyId, testMaterialsProducerPropertyId.getRandomPropertyValue(randomGenerator));
+					builder.setMaterialsProducerPropertyValue(testMaterialsProducerId, testMaterialsProducerPropertyId,
+							testMaterialsProducerPropertyId.getRandomPropertyValue(randomGenerator));
 				}
 			}
 		}
@@ -1770,8 +1908,10 @@ public class AT_MaterialsPluginData {
 		for (int i = 0; i < 30; i++) {
 			boolean offered = i % 2 == 0;
 			StageId stageId = new StageId(i);
-			TestMaterialsProducerId materialsProducerId = TestMaterialsProducerId.getRandomMaterialsProducerId(randomGenerator);
-			builder.addStage(stageId, offered, materialsProducerId);
+			TestMaterialsProducerId materialsProducerId = TestMaterialsProducerId
+					.getRandomMaterialsProducerId(randomGenerator);
+			builder.addStage(stageId, offered);
+			builder.addStageToMaterialProducer(stageId, materialsProducerId);
 			List<StageId> list = stageMap.get(materialsProducerId);
 			if (list == null) {
 				list = new ArrayList<>();
@@ -1781,7 +1921,8 @@ public class AT_MaterialsPluginData {
 		}
 
 		for (TestBatchPropertyId testBatchPropertyId : TestBatchPropertyId.values()) {
-			builder.defineBatchProperty(testBatchPropertyId.getTestMaterialId(), testBatchPropertyId, testBatchPropertyId.getPropertyDefinition());
+			builder.defineBatchProperty(testBatchPropertyId.getTestMaterialId(), testBatchPropertyId,
+					testBatchPropertyId.getPropertyDefinition());
 		}
 
 		for (TestMaterialId testMaterialId : TestMaterialId.values()) {
@@ -1790,21 +1931,30 @@ public class AT_MaterialsPluginData {
 
 		for (int i = 0; i < 150; i++) {
 			BatchId batchId = new BatchId(i);
-			TestMaterialsProducerId materialsProducerId = TestMaterialsProducerId.getRandomMaterialsProducerId(randomGenerator);
+			TestMaterialsProducerId materialsProducerId = TestMaterialsProducerId
+					.getRandomMaterialsProducerId(randomGenerator);
 			TestMaterialId randomMaterialId = TestMaterialId.getRandomMaterialId(randomGenerator);
-			builder.addBatch(batchId, randomMaterialId, randomGenerator.nextDouble(), materialsProducerId);
+			builder.addBatch(batchId, randomMaterialId, randomGenerator.nextDouble());
+
+			boolean stageFound = false;
 			if (randomGenerator.nextBoolean()) {
 				List<StageId> stages = stageMap.get(materialsProducerId);
 				if (!stages.isEmpty()) {
 					StageId stageId = stages.get(randomGenerator.nextInt(stages.size()));
 					builder.addBatchToStage(stageId, batchId);
+					stageFound = true;
 				}
 			}
+			if (!stageFound) {
+				builder.addBatchToMaterialsProducerInventory(batchId, materialsProducerId);
+			}
 
-			for (TestBatchPropertyId testBatchPropertyId : TestBatchPropertyId.getTestBatchPropertyIds(randomMaterialId)) {
+			for (TestBatchPropertyId testBatchPropertyId : TestBatchPropertyId
+					.getTestBatchPropertyIds(randomMaterialId)) {
 				boolean required = testBatchPropertyId.getPropertyDefinition().getDefaultValue().isEmpty();
 				if (required || randomGenerator.nextBoolean()) {
-					builder.setBatchPropertyValue(batchId, testBatchPropertyId, testBatchPropertyId.getRandomPropertyValue(randomGenerator));
+					builder.setBatchPropertyValue(batchId, testBatchPropertyId,
+							testBatchPropertyId.getRandomPropertyValue(randomGenerator));
 				}
 			}
 		}
@@ -1824,117 +1974,14 @@ public class AT_MaterialsPluginData {
 		assertNotNull(cloneBuilder);
 		// show that the clone plugin data is not null
 		PluginData pluginData = cloneBuilder.build();
-		assertNotNull(false);
+		assertNotNull(pluginData);
 
 		// show that the clone plugin data has the correct type
 		assertTrue(pluginData instanceof MaterialsPluginData);
 
 		MaterialsPluginData clonePluginData = (MaterialsPluginData) pluginData;
 
-		// show that the two plugin datas have the same material producer ids
-		assertEquals(materialsPluginData.getMaterialsProducerIds(), clonePluginData.getMaterialsProducerIds());
-
-		// show that the two plugin datas have the same material producer
-		// property ids
-		assertEquals(materialsPluginData.getMaterialsProducerPropertyIds(), clonePluginData.getMaterialsProducerPropertyIds());
-
-		// show that the two plugin datas have the same material producer
-		// property definitions
-		for (MaterialsProducerPropertyId materialsProducerPropertyId : materialsPluginData.getMaterialsProducerPropertyIds()) {
-			PropertyDefinition expectedPropertyDefinition = materialsPluginData.getMaterialsProducerPropertyDefinition(materialsProducerPropertyId);
-			PropertyDefinition actualPropertyDefinition = clonePluginData.getMaterialsProducerPropertyDefinition(materialsProducerPropertyId);
-			assertEquals(expectedPropertyDefinition, actualPropertyDefinition);
-		}
-
-		// show that the two plugin datas have the same material producer
-		// property values
-		for (MaterialsProducerId materialsProducerId : materialsPluginData.getMaterialsProducerIds()) {
-			for (MaterialsProducerPropertyId materialsProducerPropertyId : materialsPluginData.getMaterialsProducerPropertyIds()) {
-				Map<MaterialsProducerPropertyId, Object> materialsProducerPropertyValues = materialsPluginData.getMaterialsProducerPropertyValues(materialsProducerId);
-				Object expectedValue = materialsProducerPropertyValues.get(materialsProducerPropertyId);
-				materialsProducerPropertyValues = clonePluginData.getMaterialsProducerPropertyValues(materialsProducerId);
-				Object actualValue = materialsProducerPropertyValues.get(materialsProducerPropertyId);
-				assertEquals(expectedValue, actualValue);
-			}
-		}
-
-		// show that the two plugin datas have the same resource ids
-		assertEquals(materialsPluginData.getResourceIds(), clonePluginData.getResourceIds());
-
-		// show that the two plugin datas have the same stage ids
-		assertEquals(materialsPluginData.getStageIds(), clonePluginData.getStageIds());
-
-		// show that the two plugin datas have the same stage offer states
-		for (StageId stageId : materialsPluginData.getStageIds()) {
-			assertEquals(materialsPluginData.isStageOffered(stageId), clonePluginData.isStageOffered(stageId));
-		}
-
-		// show that the two plugin datas have the same stage material producers
-		for (StageId stageId : materialsPluginData.getStageIds()) {
-			MaterialsProducerId expectedMaterialsProducerId = materialsPluginData.getStageMaterialsProducer(stageId);
-			MaterialsProducerId actualMaterialsProducerId = clonePluginData.getStageMaterialsProducer(stageId);
-			assertEquals(expectedMaterialsProducerId, actualMaterialsProducerId);
-		}
-
-		// show that the two plugin datas have the same stage batches
-		for (StageId stageId : materialsPluginData.getStageIds()) {
-			Set<BatchId> expectedStageBatches = materialsPluginData.getStageBatches(stageId);
-			Set<BatchId> actualStageBatches = clonePluginData.getStageBatches(stageId);
-			assertEquals(expectedStageBatches, actualStageBatches);
-		}
-
-		// show that the two plugin datas have the same material ids
-		assertEquals(materialsPluginData.getMaterialIds(), clonePluginData.getMaterialIds());
-
-		// show that the two plugin datas have the same material producer
-		// resource levels
-		for (TestResourceId testResourceId : TestResourceId.values()) {
-			for (MaterialsProducerId materialsProducerId : materialsPluginData.getMaterialsProducerIds()) {
-				Long expectedLevel = materialsPluginData.getMaterialsProducerResourceLevel(materialsProducerId, testResourceId);
-				Long actualLevel = clonePluginData.getMaterialsProducerResourceLevel(materialsProducerId, testResourceId);
-				assertEquals(expectedLevel, actualLevel);
-			}
-		}
-
-		// show that the two plugin datas have the same batch property ids
-		for (TestMaterialId testMaterialId : TestMaterialId.values()) {
-			assertEquals(materialsPluginData.getBatchPropertyIds(testMaterialId), clonePluginData.getBatchPropertyIds(testMaterialId));
-		}
-
-		// show that the two plugin datas have the same batch property
-		// definitions
-		for (TestMaterialId testMaterialId : TestMaterialId.values()) {
-			for (BatchPropertyId batchPropertyId : materialsPluginData.getBatchPropertyIds(testMaterialId)) {
-				PropertyDefinition expectedPropertyDefinition = materialsPluginData.getBatchPropertyDefinition(testMaterialId, batchPropertyId);
-				PropertyDefinition actualPropertyDefinition = clonePluginData.getBatchPropertyDefinition(testMaterialId, batchPropertyId);
-				assertEquals(expectedPropertyDefinition, actualPropertyDefinition);
-			}
-		}
-
-		// show that the two plugin datas have the same batch ids
-		assertEquals(materialsPluginData.getBatchIds(), clonePluginData.getBatchIds());
-		for (BatchId batchId : materialsPluginData.getBatchIds()) {
-			// show that the amounts are equal
-			Double expectedAmount = materialsPluginData.getBatchAmount(batchId);
-			Double actualAmount = clonePluginData.getBatchAmount(batchId);
-			assertEquals(expectedAmount, actualAmount);
-
-			// show that the materials are equal
-			MaterialId expectedMaterialId = materialsPluginData.getBatchMaterial(batchId);
-			MaterialId actualMaterialId = clonePluginData.getBatchMaterial(batchId);
-			assertEquals(expectedMaterialId, actualMaterialId);
-
-			// show that the materials producers
-			MaterialsProducerId expectedMaterialsProducerId = materialsPluginData.getBatchMaterialsProducer(batchId);
-			MaterialsProducerId actualMaterialsProducerId = clonePluginData.getBatchMaterialsProducer(batchId);
-			assertEquals(expectedMaterialsProducerId, actualMaterialsProducerId);
-
-			for (BatchPropertyId batchPropertyId : materialsPluginData.getBatchPropertyIds(expectedMaterialId)) {
-				Object expectedValue = materialsPluginData.getBatchPropertyValues(batchId).get(batchPropertyId);
-				Object actualValue = clonePluginData.getBatchPropertyValues(batchId).get(batchPropertyId);
-				assertEquals(expectedValue, actualValue);
-			}
-		}
+		assertEquals(materialsPluginData, clonePluginData);
 
 	}
 
