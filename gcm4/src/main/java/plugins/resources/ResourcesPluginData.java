@@ -22,6 +22,7 @@ import plugins.resources.support.ResourcePropertyId;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
 import util.errors.ContractException;
+import util.maps.MapReindexer;
 
 /**
  * An immutable container of the initial state of resources. It contains: <BR>
@@ -155,8 +156,8 @@ public final class ResourcesPluginData implements PluginData {
 			/*
 			 * We exclude the following fields:
 			 * 
-			 * locked -- two Datas are only compared when they are both locked
-			 * -- there are no equality comparisons in this class.
+			 * locked -- two Datas are only compared when they are both locked -- there are
+			 * no equality comparisons in this class.
 			 * 
 			 * 
 			 */
@@ -281,46 +282,47 @@ public final class ResourcesPluginData implements PluginData {
 		 * @throws ContractException
 		 *
 		 * 
-		 *             <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID} if a
-		 *             resource tracking policy was collected for a resource
-		 *             that was not added</li>
+		 *                           <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID}
+		 *                           if a resource tracking policy was collected for a
+		 *                           resource that was not added</li>
 		 * 
-		 *             <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID} if a
-		 *             resource property definition was collected for a resource
-		 *             that was not added</li>
+		 *                           <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID}
+		 *                           if a resource property definition was collected for
+		 *                           a resource that was not added</li>
 		 * 
-		 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if a
-		 *             resource property value was collected for a resource that
-		 *             was not added</li>
+		 *                           <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
+		 *                           if a resource property value was collected for a
+		 *                           resource that was not added</li>
 		 * 
-		 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if a
-		 *             resource property value was collected for a resource
-		 *             property that is not associated with the given resource
-		 *             id</li>
+		 *                           <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
+		 *                           if a resource property value was collected for a
+		 *                           resource property that is not associated with the
+		 *                           given resource id</li>
 		 * 
-		 *             <li>{@linkplain PropertyError#INCOMPATIBLE_VALUE} if a
-		 *             resource property value was collected for a resource
-		 *             property that is not compatible with the associated
-		 *             resource property definition</li>
+		 *                           <li>{@linkplain PropertyError#INCOMPATIBLE_VALUE}
+		 *                           if a resource property value was collected for a
+		 *                           resource property that is not compatible with the
+		 *                           associated resource property definition</li>
 		 * 
-		 *             <li>{@linkplain PropertyError#INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT}
-		 *             if a resource property definition has a null default
-		 *             value and there is no assigned resource property value
-		 *             for that resource</li>
+		 *                           <li>{@linkplain PropertyError#INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT}
+		 *                           if a resource property definition has a null
+		 *                           default value and there is no assigned resource
+		 *                           property value for that resource</li>
 		 * 
 		 * 
-		 *             <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID} if a
-		 *             resource level was collected for a person that is an
-		 *             unknown resource id</li>
+		 *                           <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID}
+		 *                           if a resource level was collected for a person that
+		 *                           is an unknown resource id</li>
 		 * 
-		 *             <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID} if a
-		 *             resource level was collected for a region that is an
-		 *             unknown resource id</li>
+		 *                           <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID}
+		 *                           if a resource level was collected for a region that
+		 *                           is an unknown resource id</li>
 		 * 
 		 */
 		public ResourcesPluginData build() {
 
 			if (!data.locked) {
+				sortData();
 				validateData();
 			}
 			ensureImmutability();
@@ -328,15 +330,14 @@ public final class ResourcesPluginData implements PluginData {
 		}
 
 		/**
-		 * Adds the given resouce id with default time value. Sets the time
-		 * tracking policy for a resource. Duplicate inputs override previous
-		 * inputs.
+		 * Adds the given resouce id with default time value. Sets the time tracking
+		 * policy for a resource. Duplicate inputs override previous inputs.
 		 * 
 		 * @throws ContractException
-		 *             <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if the
-		 *             resource id is null</li>
-		 *             <li>{@linkplain ResourceError#NULL_TIME} if the time is
-		 *             null</li>
+		 *                           <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if
+		 *                           the resource id is null</li>
+		 *                           <li>{@linkplain ResourceError#NULL_TIME} if the
+		 *                           time is null</li>
 		 *
 		 */
 		public Builder addResource(final ResourceId resourceId, Double time, final boolean trackValueAssignmentTimes) {
@@ -349,22 +350,22 @@ public final class ResourcesPluginData implements PluginData {
 		}
 
 		/**
-		 * Defines a resource property Duplicate inputs override previous
-		 * inputs.
+		 * Defines a resource property Duplicate inputs override previous inputs.
 		 * 
 		 * @throws ContractException
-		 *             <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if the
-		 *             resource id is null</li>
+		 *                           <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if
+		 *                           the resource id is null</li>
 		 * 
-		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID}</li> if
-		 *             the resource property id is null
+		 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID}</li>
+		 *                           if the resource property id is null
 		 * 
-		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION}
-		 *             </li> if the property definition is null
+		 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION}
+		 *                           </li> if the property definition is null
 		 *
 		 * 
 		 */
-		public Builder defineResourceProperty(final ResourceId resourceId, final ResourcePropertyId resourcePropertyId, final PropertyDefinition propertyDefinition) {
+		public Builder defineResourceProperty(final ResourceId resourceId, final ResourcePropertyId resourcePropertyId,
+				final PropertyDefinition propertyDefinition) {
 			ensureDataMutability();
 			validateResourceIdNotNull(resourceId);
 			validateResourcePropertyIdNotNull(resourcePropertyId);
@@ -379,19 +380,19 @@ public final class ResourcesPluginData implements PluginData {
 		}
 
 		/**
-		 * Sets a resource property value. Duplicate inputs override previous
-		 * inputs.
+		 * Sets a resource property value. Duplicate inputs override previous inputs.
 		 * 
 		 * @throws ContractException
-		 *             <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if the
-		 *             resource id is null</li>
-		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
-		 *             resource property id is null</li>
-		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE} if the
-		 *             resource property value is null</li>
+		 *                           <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if
+		 *                           the resource id is null</li>
+		 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
+		 *                           the resource property id is null</li>
+		 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE}
+		 *                           if the resource property value is null</li>
 		 *
 		 */
-		public Builder setResourcePropertyValue(final ResourceId resourceId, final ResourcePropertyId resourcePropertyId, final Object resourcePropertyValue) {
+		public Builder setResourcePropertyValue(final ResourceId resourceId,
+				final ResourcePropertyId resourcePropertyId, final Object resourcePropertyValue) {
 			ensureDataMutability();
 			validateResourceIdNotNull(resourceId);
 			validateResourcePropertyIdNotNull(resourcePropertyId);
@@ -407,16 +408,16 @@ public final class ResourcesPluginData implements PluginData {
 		}
 
 		/**
-		 * Sets a person's initial resource level. Duplicate inputs override
-		 * previous inputs.
+		 * Sets a person's initial resource level. Duplicate inputs override previous
+		 * inputs.
 		 * 
 		 * @throws ContractException
-		 *             <li>{@linkplain PersonError#NULL_PERSON_ID} if the person
-		 *             id is null</li>
-		 *             <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if the
-		 *             resource id is null</li>
-		 *             <li>{@linkplain ResourceError#NEGATIVE_RESOURCE_AMOUNT}
-		 *             if the resource amount is negative</li>
+		 *                           <li>{@linkplain PersonError#NULL_PERSON_ID} if the
+		 *                           person id is null</li>
+		 *                           <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if
+		 *                           the resource id is null</li>
+		 *                           <li>{@linkplain ResourceError#NEGATIVE_RESOURCE_AMOUNT}
+		 *                           if the resource amount is negative</li>
 		 */
 
 		public Builder setPersonResourceLevel(final PersonId personId, final ResourceId resourceId, final long amount) {
@@ -442,16 +443,16 @@ public final class ResourcesPluginData implements PluginData {
 		}
 
 		/**
-		 * Sets a person's initial resource time. Duplicate inputs override
-		 * previous inputs.
+		 * Sets a person's initial resource time. Duplicate inputs override previous
+		 * inputs.
 		 * 
 		 * @throws ContractException
-		 *             <li>{@linkplain PersonError#NULL_PERSON_ID} if the person
-		 *             id is null</li>
-		 *             <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if the
-		 *             resource id is null</li>
-		 *             <li>{@linkplain ResourceError#NULL_TIME} if the time is
-		 *             null</li>
+		 *                           <li>{@linkplain PersonError#NULL_PERSON_ID} if the
+		 *                           person id is null</li>
+		 *                           <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if
+		 *                           the resource id is null</li>
+		 *                           <li>{@linkplain ResourceError#NULL_TIME} if the
+		 *                           time is null</li>
 		 */
 		public Builder setPersonResourceTime(final PersonId personId, final ResourceId resourceId, final Double time) {
 			ensureDataMutability();
@@ -476,16 +477,16 @@ public final class ResourcesPluginData implements PluginData {
 		}
 
 		/**
-		 * Sets a region's initial resource level. Duplicate inputs override
-		 * previous inputs.
+		 * Sets a region's initial resource level. Duplicate inputs override previous
+		 * inputs.
 		 * 
 		 * @throws ContractException
-		 *             <li>{@linkplain RegionError#NULL_REGION_ID} if the region
-		 *             id is null</li>
-		 *             <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if the
-		 *             resource id is null</li>
-		 *             <li>{@linkplain ResourceError#NEGATIVE_RESOURCE_AMOUNT}
-		 *             if the resource amount is negative</li> *
+		 *                           <li>{@linkplain RegionError#NULL_REGION_ID} if the
+		 *                           region id is null</li>
+		 *                           <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if
+		 *                           the resource id is null</li>
+		 *                           <li>{@linkplain ResourceError#NEGATIVE_RESOURCE_AMOUNT}
+		 *                           if the resource amount is negative</li> *
 		 *
 		 */
 
@@ -510,7 +511,8 @@ public final class ResourcesPluginData implements PluginData {
 			 */
 			for (ResourceId resourceId : data.resourcePropertyDefinitions.keySet()) {
 				if (!data.resourceIds.containsKey(resourceId)) {
-					throw new ContractException(ResourceError.UNKNOWN_RESOURCE_ID, resourceId + " has a property definitions but is not a known resource id");
+					throw new ContractException(ResourceError.UNKNOWN_RESOURCE_ID,
+							resourceId + " has a property definitions but is not a known resource id");
 				}
 			}
 
@@ -526,20 +528,24 @@ public final class ResourcesPluginData implements PluginData {
 			 */
 			for (ResourceId resourceId : data.resourcePropertyValues.keySet()) {
 				if (!data.resourceIds.containsKey(resourceId)) {
-					throw new ContractException(ResourceError.UNKNOWN_RESOURCE_ID, resourceId + " for a collected resource property value");
+					throw new ContractException(ResourceError.UNKNOWN_RESOURCE_ID,
+							resourceId + " for a collected resource property value");
 				}
 				Map<ResourcePropertyId, PropertyDefinition> propMap = data.resourcePropertyDefinitions.get(resourceId);
 				Map<ResourcePropertyId, Object> map = data.resourcePropertyValues.get(resourceId);
 				for (ResourcePropertyId resourcePropertyId : map.keySet()) {
 					if (propMap == null || !propMap.containsKey(resourcePropertyId)) {
 						throw new ContractException(PropertyError.UNKNOWN_PROPERTY_ID,
-								resourcePropertyId + " has a resource property value under resource " + resourceId + " but there is no corresponding property definition");
+								resourcePropertyId + " has a resource property value under resource " + resourceId
+										+ " but there is no corresponding property definition");
 					}
 					Object propertyValue = map.get(resourcePropertyId);
 					PropertyDefinition propertyDefinition = propMap.get(resourcePropertyId);
 					if (!propertyDefinition.getType().isAssignableFrom(propertyValue.getClass())) {
-						throw new ContractException(PropertyError.INCOMPATIBLE_VALUE, resourcePropertyId + " has a resource property value of " + propertyValue + " under resource " + resourceId
-								+ " that is incompatible with the corresponding property definition");
+						throw new ContractException(PropertyError.INCOMPATIBLE_VALUE,
+								resourcePropertyId + " has a resource property value of " + propertyValue
+										+ " under resource " + resourceId
+										+ " that is incompatible with the corresponding property definition");
 					}
 				}
 			}
@@ -547,7 +553,8 @@ public final class ResourcesPluginData implements PluginData {
 			// show that property definitions without default values have
 			// complete value coverage
 			for (ResourceId resourceId : data.resourcePropertyDefinitions.keySet()) {
-				Map<ResourcePropertyId, PropertyDefinition> propertyDefinitionMap = data.resourcePropertyDefinitions.get(resourceId);
+				Map<ResourcePropertyId, PropertyDefinition> propertyDefinitionMap = data.resourcePropertyDefinitions
+						.get(resourceId);
 				for (ResourcePropertyId resourcePropertyId : propertyDefinitionMap.keySet()) {
 					PropertyDefinition propertyDefinition = propertyDefinitionMap.get(resourcePropertyId);
 					if (!propertyDefinition.getDefaultValue().isPresent()) {
@@ -557,7 +564,8 @@ public final class ResourcesPluginData implements PluginData {
 							propertyValue = propertyValueMap.get(resourcePropertyId);
 						}
 						if (propertyValue == null) {
-							throw new ContractException(PropertyError.INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT, resourceId + ": " + resourcePropertyId);
+							throw new ContractException(PropertyError.INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT,
+									resourceId + ": " + resourcePropertyId);
 						}
 					}
 				}
@@ -570,7 +578,8 @@ public final class ResourcesPluginData implements PluginData {
 				Map<ResourceId, Long> map = data.regionResourceLevels.get(regionId);
 				for (ResourceId resourceId : map.keySet()) {
 					if (!data.resourceIds.containsKey(resourceId)) {
-						throw new ContractException(ResourceError.UNKNOWN_RESOURCE_ID, resourceId + " for region " + regionId + " has a level, but is not a known resource");
+						throw new ContractException(ResourceError.UNKNOWN_RESOURCE_ID,
+								resourceId + " for region " + regionId + " has a level, but is not a known resource");
 					}
 				}
 			}
@@ -580,7 +589,8 @@ public final class ResourcesPluginData implements PluginData {
 			 */
 			for (ResourceId resourceId : data.personResourceLevels.keySet()) {
 				if (!data.resourceIds.containsKey(resourceId)) {
-					throw new ContractException(ResourceError.UNKNOWN_RESOURCE_ID, resourceId + " has person resource levels, but is not a known resource id");
+					throw new ContractException(ResourceError.UNKNOWN_RESOURCE_ID,
+							resourceId + " has person resource levels, but is not a known resource id");
 				}
 			}
 
@@ -591,7 +601,8 @@ public final class ResourcesPluginData implements PluginData {
 			// private final Map<ResourceId, List<Double>> personResourceTimes;
 			for (ResourceId resourceId : data.personResourceTimes.keySet()) {
 				if (!data.resourceIds.containsKey(resourceId)) {
-					throw new ContractException(ResourceError.UNKNOWN_RESOURCE_ID, resourceId + " has person resource times, but is not a known resource id");
+					throw new ContractException(ResourceError.UNKNOWN_RESOURCE_ID,
+							resourceId + " has person resource times, but is not a known resource id");
 				}
 			}
 
@@ -601,86 +612,53 @@ public final class ResourcesPluginData implements PluginData {
 				for (Double time : times) {
 					if (time != null) {
 						if (time < creationTime) {
-							throw new ContractException(ResourceError.RESOURCE_ASSIGNMENT_TIME_PRECEEDS_RESOURCE_CREATION_TIME);
+							throw new ContractException(
+									ResourceError.RESOURCE_ASSIGNMENT_TIME_PRECEEDS_RESOURCE_CREATION_TIME);
 						}
 					}
 				}
 			}
 
-			//////////////////////////////////////////////////////////////////////
+			
+		}
 
-			// organize data.resourcePropertyDefinitions
-			Map<ResourceId, Map<ResourcePropertyId, PropertyDefinition>> temp1 = new LinkedHashMap<>();
+		private void sortData() {
+			// the data.resourceIds provides the order for resource ids
+			Set<ResourceId> resourceIndexingSet = data.resourceIds.keySet();
 
-			for (ResourceId resourceId : data.resourceIds.keySet()) {
-				if (data.resourcePropertyDefinitions.containsKey(resourceId)) {
-					Map<ResourcePropertyId, PropertyDefinition> map = data.resourcePropertyDefinitions.get(resourceId);
-					temp1.put(resourceId, map);
-				}
-			}
-			data.resourcePropertyDefinitions = temp1;
+			// we sort the personResourceLevels and personResourceTimes by the resource
+			// order
+			data.personResourceLevels = MapReindexer.getReindexedMap(resourceIndexingSet, data.personResourceLevels);
+			data.personResourceTimes = MapReindexer.getReindexedMap(resourceIndexingSet, data.personResourceTimes);
 
-			// organize data.resourcePropertyValues
-			Map<ResourceId, Map<ResourcePropertyId, Object>> temp2 = new LinkedHashMap<>();
-			for (ResourceId resourceId : data.resourceIds.keySet()) {
-				if (data.resourcePropertyValues.containsKey(resourceId)) {
-					Map<ResourcePropertyId, Object> map = data.resourcePropertyValues.get(resourceId);
-					temp2.put(resourceId, map);
-				}
-			}
-			data.resourcePropertyValues = temp2;
-
-			// organize data.resourcePropertyValues continued
-			for (ResourceId resourceId : data.resourceIds.keySet()) {
-				Map<ResourcePropertyId, PropertyDefinition> map1 = data.resourcePropertyDefinitions.get(resourceId);
-				if (map1 != null) {
-					Map<ResourcePropertyId, Object> map2 = data.resourcePropertyValues.get(resourceId);
-					if (map2 != null) {
-						Map<ResourcePropertyId, Object> temp3 = new LinkedHashMap<>();
-						for (ResourcePropertyId resourcePropertyId : map1.keySet()) {
-							if (map2.containsKey(resourcePropertyId)) {
-								Object value = map2.get(resourcePropertyId);
-								temp3.put(resourcePropertyId, value);
-							}
-						}
-						data.resourcePropertyValues.put(resourceId, temp3);
-					}
-				}
-			}
-
-			// organize data.personResourceLevels
-			Map<ResourceId, List<Long>> temp4 = new LinkedHashMap<>();
-			for (ResourceId resourceId : data.resourceIds.keySet()) {
-				if (data.personResourceLevels.containsKey(resourceId)) {
-					List<Long> list = data.personResourceLevels.get(resourceId);
-					temp4.put(resourceId, list);
-				}
-			}
-			data.personResourceLevels = temp4;
-
-			// organize data.personResourceTimes
-			Map<ResourceId, List<Double>> temp5 = new LinkedHashMap<>();
-			for (ResourceId resourceId : data.resourceIds.keySet()) {
-				if (data.personResourceTimes.containsKey(resourceId)) {
-					List<Double> list = data.personResourceTimes.get(resourceId);
-					temp5.put(resourceId, list);
-				}
-			}
-			data.personResourceTimes = temp5;
-
-			// organize data.regionResourceLevels
+			// we apply the resource order to each region of the region resource levels
 			for (RegionId regionId : data.regionResourceLevels.keySet()) {
 				Map<ResourceId, Long> map = data.regionResourceLevels.get(regionId);
-				Map<ResourceId, Long> temp = new LinkedHashMap<>();
-				for (ResourceId resourceId : data.resourceIds.keySet()) {
-					if (map.containsKey(resourceId)) {
-						Long amount = map.get(resourceId);
-						temp.put(resourceId, amount);
-					}
-				}
-				data.regionResourceLevels.put(regionId, temp);
+				Map<ResourceId, Long> replacementMap = MapReindexer.getReindexedMap(resourceIndexingSet, map);
+				data.regionResourceLevels.put(regionId, replacementMap);
 			}
 
+			// we sort the resource property definitions by the resource id
+			data.resourcePropertyDefinitions = MapReindexer.getReindexedMap(resourceIndexingSet,
+					data.resourcePropertyDefinitions);
+
+			// we sort the resource property values by the resource id
+			data.resourcePropertyValues = MapReindexer.getReindexedMap(resourceIndexingSet,
+					data.resourcePropertyValues);
+
+			/*
+			 * for each resource in the resource property value map, we must sort the
+			 * property values by the order defined by the property definitions
+			 */
+			for (ResourceId resourceId : data.resourcePropertyValues.keySet()) {
+				if (data.resourcePropertyDefinitions.containsKey(resourceId)) {
+					Set<ResourcePropertyId> propertyIndexingSet = data.resourcePropertyDefinitions.get(resourceId)
+							.keySet();
+					Map<ResourcePropertyId, Object> map = data.resourcePropertyValues.get(resourceId);
+					Map<ResourcePropertyId, Object> newMap = MapReindexer.getReindexedMap(propertyIndexingSet, map);
+					data.resourcePropertyValues.put(resourceId, newMap);
+				}
+			}
 		}
 
 	}
@@ -691,7 +669,8 @@ public final class ResourcesPluginData implements PluginData {
 		}
 	}
 
-	private static void validateResourcePropertyIsDefined(final Data data, final ResourceId resourceId, final ResourcePropertyId resourcePropertyId) {
+	private static void validateResourcePropertyIsDefined(final Data data, final ResourceId resourceId,
+			final ResourcePropertyId resourcePropertyId) {
 		Map<ResourcePropertyId, PropertyDefinition> map = data.resourcePropertyDefinitions.get(resourceId);
 		if (map == null) {
 			throw new ContractException(PropertyError.UNKNOWN_PROPERTY_ID, resourceId);
@@ -703,21 +682,22 @@ public final class ResourcesPluginData implements PluginData {
 	}
 
 	/**
-	 * Returns the property definition associated with the resource id and
-	 * resource property id.
+	 * Returns the property definition associated with the resource id and resource
+	 * property id.
 	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if the
-	 *             resource id is null</li>
-	 *             <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID} if the
-	 *             resource id is unknown</li>
-	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
-	 *             resource property id is null</li>
-	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if the
-	 *             resource property id is unknown</li>
+	 *                           <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if
+	 *                           the resource id is null</li>
+	 *                           <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID}
+	 *                           if the resource id is unknown</li>
+	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
+	 *                           the resource property id is null</li>
+	 *                           <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
+	 *                           if the resource property id is unknown</li>
 	 * 
 	 */
-	public PropertyDefinition getResourcePropertyDefinition(final ResourceId resourceId, final ResourcePropertyId resourcePropertyId) {
+	public PropertyDefinition getResourcePropertyDefinition(final ResourceId resourceId,
+			final ResourcePropertyId resourcePropertyId) {
 		validateResourceExists(resourceId);
 		validateResourcePropertyIdNotNull(resourcePropertyId);
 		validateResourcePropertyIsDefined(data, resourceId, resourcePropertyId);
@@ -730,10 +710,10 @@ public final class ResourcesPluginData implements PluginData {
 	 * Returns the resource property id associated with the resource.
 	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if the
-	 *             resource id is null</li>
-	 *             <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID} if the
-	 *             resource id is unknown</li>
+	 *                           <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if
+	 *                           the resource id is null</li>
+	 *                           <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID}
+	 *                           if the resource id is unknown</li>
 	 */
 	@SuppressWarnings("unchecked")
 	public <T extends ResourcePropertyId> Set<T> getResourcePropertyIds(final ResourceId resourceId) {
@@ -759,21 +739,22 @@ public final class ResourcesPluginData implements PluginData {
 
 	/**
 	 * Returns the resource property value associated with the resource id and
-	 * resource property id. Returns the default value of the associated
-	 * property definition if now value was assigned.
+	 * resource property id. Returns the default value of the associated property
+	 * definition if now value was assigned.
 	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if the
-	 *             resource id is null</li>
-	 *             <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID} if the *
-	 *             resource id is unknown</li>
-	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
-	 *             resource property id is null</li>
-	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if the
-	 *             resource property id is unknown</li>
+	 *                           <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if
+	 *                           the resource id is null</li>
+	 *                           <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID}
+	 *                           if the * resource id is unknown</li>
+	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
+	 *                           the resource property id is null</li>
+	 *                           <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
+	 *                           if the resource property id is unknown</li>
 	 */
 	@SuppressWarnings("unchecked")
-	public <T> Optional<T> getResourcePropertyValue(final ResourceId resourceId, final ResourcePropertyId resourcePropertyId) {
+	public <T> Optional<T> getResourcePropertyValue(final ResourceId resourceId,
+			final ResourcePropertyId resourcePropertyId) {
 		validateResourceExists(resourceId);
 		validateResourcePropertyIdNotNull(resourcePropertyId);
 		validateResourcePropertyIsDefined(data, resourceId, resourcePropertyId);
@@ -792,10 +773,10 @@ public final class ResourcesPluginData implements PluginData {
 	 * 
 	 * @throws ContractException
 	 * 
-	 *             <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if the
-	 *             resource id is null</li>
-	 *             <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID} if the
-	 *             resource id is unknown</li>
+	 *                           <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if
+	 *                           the resource id is null</li>
+	 *                           <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID}
+	 *                           if the resource id is unknown</li>
 	 * 
 	 */
 	public List<Long> getPersonResourceLevels(final ResourceId resourcId) {
@@ -813,10 +794,10 @@ public final class ResourcesPluginData implements PluginData {
 	 * 
 	 * @throws ContractException
 	 * 
-	 *             <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if the
-	 *             resource id is null</li>
-	 *             <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID} if the
-	 *             resource id is unknown</li>
+	 *                           <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if
+	 *                           the resource id is null</li>
+	 *                           <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID}
+	 *                           if the resource id is unknown</li>
 	 * 
 	 */
 	public List<Double> getPersonResourceTimes(final ResourceId resourcId) {
@@ -844,10 +825,10 @@ public final class ResourcesPluginData implements PluginData {
 	 * Returns the resource ids
 	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain ResourceError.NULL_RESOURCE_ID} if the
-	 *             resource id is null</li>
-	 *             <li>{@linkplain ResourceError.UNKNOWN_RESOURCE_ID} if the
-	 *             resource id is unknown</li>
+	 *                           <li>{@linkplain ResourceError.NULL_RESOURCE_ID} if
+	 *                           the resource id is null</li>
+	 *                           <li>{@linkplain ResourceError.UNKNOWN_RESOURCE_ID}
+	 *                           if the resource id is unknown</li>
 	 * 
 	 */
 	public Double getResourceDefaultTime(ResourceId resourceId) {
@@ -860,14 +841,14 @@ public final class ResourcesPluginData implements PluginData {
 	 * assigned during the build process.
 	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain RegionError#NULL_REGION_ID} if the region id
-	 *             is null</li>
+	 *                           <li>{@linkplain RegionError#NULL_REGION_ID} if the
+	 *                           region id is null</li>
 	 * 
-	 *             <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if the
-	 *             resource id is null</li>
+	 *                           <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if
+	 *                           the resource id is null</li>
 	 * 
-	 *             <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID} if the
-	 *             resource id is unknown</li>
+	 *                           <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID}
+	 *                           if the resource id is unknown</li>
 	 */
 	public Optional<Long> getRegionResourceLevel(final RegionId regionId, final ResourceId resourceId) {
 		validateRegionIdNotNull(regionId);
@@ -884,10 +865,10 @@ public final class ResourcesPluginData implements PluginData {
 	 * Returns the tracking policy associated with the resource.
 	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if the
-	 *             resource id is null</li>
-	 *             <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID} if the
-	 *             resource id is unknown</li>
+	 *                           <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if
+	 *                           the resource id is null</li>
+	 *                           <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID}
+	 *                           if the resource id is unknown</li>
 	 */
 	public boolean getResourceTimeTrackingPolicy(final ResourceId resourceId) {
 		validateResourceExists(resourceId);
