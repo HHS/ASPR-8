@@ -313,7 +313,7 @@ public final class MaterialsPluginData implements PluginData {
 		public MaterialsPluginData build() {
 
 			if (!data.locked) {
-				//sortData();
+				sortData();
 				validateData();
 			}
 			ensureImmutability();
