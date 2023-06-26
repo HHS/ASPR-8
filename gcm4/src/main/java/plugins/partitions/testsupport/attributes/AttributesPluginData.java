@@ -19,6 +19,7 @@ import plugins.people.support.PersonId;
 import plugins.personproperties.support.PersonPropertyError;
 
 import util.errors.ContractException;
+import util.maps.MapReindexer;
 
 @Immutable
 public class AttributesPluginData implements PluginData {
@@ -113,6 +114,11 @@ public class AttributesPluginData implements PluginData {
 				data.locked = true;
 			}
 		}
+		
+		
+		private void sortData() {
+			data.personAttributeValues = MapReindexer.getReindexedMap(data.attributeDefinitions.keySet(), data.personAttributeValues);
+		}
 
 		private void validateData() {
 
@@ -177,6 +183,7 @@ public class AttributesPluginData implements PluginData {
 		 */
 		public AttributesPluginData build() {
 			if (!data.locked) {
+				sortData();
 				validateData();
 			}
 			ensureImmutability();

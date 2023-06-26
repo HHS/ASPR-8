@@ -25,6 +25,7 @@ import plugins.resources.support.ResourceId;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
 import util.errors.ContractException;
+import util.maps.MapReindexer;
 
 /**
  * An immutable container of the initial state materials producers. It contains:
@@ -312,6 +313,7 @@ public final class MaterialsPluginData implements PluginData {
 		public MaterialsPluginData build() {
 
 			if (!data.locked) {
+				//sortData();
 				validateData();
 			}
 			ensureImmutability();
@@ -918,7 +920,7 @@ public final class MaterialsPluginData implements PluginData {
 				}
 			}
 		}
-		
+
 		/*
 		 * int nextStageRecordId
 		 * 
@@ -942,6 +944,40 @@ public final class MaterialsPluginData implements PluginData {
 			}
 		}
 
+		private void sortData() {
+
+			data.stageBatches = MapReindexer.getReindexedMap(data.stageIds, data.stageBatches);
+			data.batchPropertyDefinitions = MapReindexer.getReindexedMap(data.materialIds,
+					data.batchPropertyDefinitions);
+			
+			data.batchPropertyValues = MapReindexer.getReindexedMap(data.batchIds, data.batchPropertyValues);
+			for (BatchId batchId : data.batchPropertyValues.keySet()) {
+				MaterialId materialId = data.batchMaterials.get(batchId);
+				if (materialId != null) {
+					Map<BatchPropertyId, PropertyDefinition> defMap = data.batchPropertyDefinitions.get(materialId);
+					if (defMap != null) {
+						Set<BatchPropertyId> batchPropertyIndexingSet = defMap.keySet();
+						Map<BatchPropertyId, Object> map = data.batchPropertyValues.get(batchId);
+						Map<BatchPropertyId, Object> reindexedMap = MapReindexer.getReindexedMap(batchPropertyIndexingSet, map);
+						data.batchPropertyValues.put(batchId,reindexedMap);						
+					}
+				}				
+			}
+			
+			data.materialsProducerPropertyValues = MapReindexer.getReindexedMap(data.materialsProducerIds, data.materialsProducerPropertyValues);
+			data.materialsProducerResourceLevels = MapReindexer.getReindexedMap(data.materialsProducerIds, data.materialsProducerResourceLevels);
+			data.materialsProducerStages = MapReindexer.getReindexedMap(data.materialsProducerIds, data.materialsProducerStages);
+			data.materialsProducerInventoryBatches = MapReindexer.getReindexedMap(data.materialsProducerIds, data.materialsProducerInventoryBatches);
+			
+			Set<MaterialsProducerPropertyId> indexingSet = data.materialsProducerPropertyDefinitions.keySet();
+			for(MaterialsProducerId materialsProducerId : data.materialsProducerPropertyValues.keySet()) {
+				Map<MaterialsProducerPropertyId, Object> map = data.materialsProducerPropertyValues.get(materialsProducerId);
+				Map<MaterialsProducerPropertyId, Object> reindexedMap = MapReindexer.getReindexedMap(indexingSet, map);
+				data.materialsProducerPropertyValues.put(materialsProducerId,reindexedMap);
+			}
+			
+		}
+
 		/*
 		 * 
 		 * 
@@ -953,7 +989,7 @@ public final class MaterialsPluginData implements PluginData {
 			 * We will work with each of the data structures, validating them in dependency
 			 * order. We will take advantage of the validation performed during data
 			 * collection, such as null checks and will assume that those checks are
-			 * functioning properly. 
+			 * functioning properly.
 			 * 
 			 */
 			validateData_StageIds();
@@ -984,22 +1020,22 @@ public final class MaterialsPluginData implements PluginData {
 
 		private final Set<MaterialId> materialIds;
 
-		private final Map<MaterialId, Map<BatchPropertyId, PropertyDefinition>> batchPropertyDefinitions;
+		private Map<MaterialId, Map<BatchPropertyId, PropertyDefinition>> batchPropertyDefinitions;
 
 		private final Map<MaterialsProducerPropertyId, PropertyDefinition> materialsProducerPropertyDefinitions;
 
-		private final Map<MaterialsProducerId, Map<MaterialsProducerPropertyId, Object>> materialsProducerPropertyValues;
+		private Map<MaterialsProducerId, Map<MaterialsProducerPropertyId, Object>> materialsProducerPropertyValues;
 
 		private final Map<MaterialsProducerPropertyId, Object> emptyMaterialsProducerPropertyValuesMap = Collections
 				.unmodifiableMap(new LinkedHashMap<>());
 
-		private final Map<MaterialsProducerId, Map<ResourceId, Long>> materialsProducerResourceLevels;
+		private Map<MaterialsProducerId, Map<ResourceId, Long>> materialsProducerResourceLevels;
 
 		private final Set<BatchId> batchIds;
 
 		private final Set<StageId> stageIds;
 
-		private final Map<BatchId, Map<BatchPropertyId, Object>> batchPropertyValues;
+		private Map<BatchId, Map<BatchPropertyId, Object>> batchPropertyValues;
 
 		private final Map<BatchPropertyId, Object> emptyBatchPropertyValues;
 
@@ -1009,11 +1045,11 @@ public final class MaterialsPluginData implements PluginData {
 
 		private final Map<BatchId, Double> batchAmounts;
 
-		private final Map<MaterialsProducerId, Set<StageId>> materialsProducerStages;
+		private Map<MaterialsProducerId, Set<StageId>> materialsProducerStages;
 
-		private final Map<StageId, Set<BatchId>> stageBatches;
+		private Map<StageId, Set<BatchId>> stageBatches;
 
-		private final Map<MaterialsProducerId, Set<BatchId>> materialsProducerInventoryBatches;
+		private Map<MaterialsProducerId, Set<BatchId>> materialsProducerInventoryBatches;
 
 		private int nextBatchRecordId = -1;
 

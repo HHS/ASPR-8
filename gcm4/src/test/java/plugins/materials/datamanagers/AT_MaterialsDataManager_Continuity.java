@@ -710,6 +710,10 @@ public class AT_MaterialsDataManager_Continuity {
 		// reasonable
 		assertNotNull(stateData.output);
 		assertTrue(stateData.output.length() > 100);
+		
+//		System.out.println("AT_MaterialsDataManager_Continuity.testStateContinuity()");
+//		System.out.println(stateData.output);
+//		System.out.println("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
 
 		return stateData.output;
 	}
@@ -780,6 +784,7 @@ public class AT_MaterialsDataManager_Continuity {
 		Optional<String> optional = outputConsumer.getOutputItem(String.class);
 		if (optional.isPresent()) {
 			stateData.output = optional.get();
+			//stateData.output = stateData.materialsPluginData.toString();
 		}
 
 	}
