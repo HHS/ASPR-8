@@ -9,6 +9,7 @@ import plugins.globalproperties.support.GlobalPropertyId;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
 import util.errors.ContractException;
+import util.maps.MapReindexer;
 
 /**
  * An immutable container of the initial state of global components and global
@@ -66,6 +67,7 @@ public final class GlobalPropertiesPluginData implements PluginData {
 		 */
 		public GlobalPropertiesPluginData build() {
 			if (!data.locked) {
+				sortData();
 				validateData();
 			}
 			ensureImmutability();
@@ -134,6 +136,12 @@ public final class GlobalPropertiesPluginData implements PluginData {
 			data.globalPropertyTimes.put(globalPropertyId, assignmentTime);
 			return this;
 		}
+		
+		private void sortData() {
+			Set<GlobalPropertyId> indexingSet = data.globalPropertyDefinitions.keySet();			
+			data.globalPropertyValues = MapReindexer.getReindexedMap(indexingSet, data.globalPropertyValues);
+			data.globalPropertyTimes = MapReindexer.getReindexedMap(indexingSet, data.globalPropertyTimes);
+		}
 
 		private void validateData() {
 
@@ -200,11 +208,11 @@ public final class GlobalPropertiesPluginData implements PluginData {
 
 		private final Map<GlobalPropertyId, PropertyDefinition> globalPropertyDefinitions = new LinkedHashMap<>();
 
-		private final Map<GlobalPropertyId, Double> globalPropertyDefinitionTimes = new LinkedHashMap<>();
+		private Map<GlobalPropertyId, Double> globalPropertyDefinitionTimes = new LinkedHashMap<>();
 
-		private final Map<GlobalPropertyId, Object> globalPropertyValues = new LinkedHashMap<>();
+		private Map<GlobalPropertyId, Object> globalPropertyValues = new LinkedHashMap<>();
 
-		private final Map<GlobalPropertyId, Double> globalPropertyTimes = new LinkedHashMap<>();
+		private Map<GlobalPropertyId, Double> globalPropertyTimes = new LinkedHashMap<>();
 
 		private boolean locked;
 

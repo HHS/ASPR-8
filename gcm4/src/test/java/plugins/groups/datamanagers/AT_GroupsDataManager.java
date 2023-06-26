@@ -188,8 +188,9 @@ public class AT_GroupsDataManager {
 				.defineGroupProperty(groupPropertyDefinitionInitialization3.getGroupTypeId(),
 						groupPropertyDefinitionInitialization3.getPropertyId(),
 						groupPropertyDefinitionInitialization3.getPropertyDefinition())
-				.addGroupTypeId(groupPropertyDefinitionInitialization2.getGroupTypeId())
 				.addGroupTypeId(groupPropertyDefinitionInitialization3.getGroupTypeId())
+				.addGroupTypeId(groupPropertyDefinitionInitialization2.getGroupTypeId())
+				
 				.addGroup(expectedGroupIds.get(0), groupPropertyDefinitionInitialization2.getGroupTypeId())
 				.addGroup(expectedGroupIds.get(1), groupPropertyDefinitionInitialization3.getGroupTypeId())
 				.setGroupPropertyValue(expectedGroupIds.get(0), groupPropertyDefinitionInitialization2.getPropertyId(),
@@ -198,7 +199,7 @@ public class AT_GroupsDataManager {
 						34.2)
 				.build();
 		assertEquals(expectedPluginData, actualPluginData);
-
+		
 	}
 
 	@Test

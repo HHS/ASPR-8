@@ -25,6 +25,7 @@ import plugins.people.support.PersonId;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
 import util.errors.ContractException;
+import util.maps.MapReindexer;
 import util.wrappers.MultiKey;
 
 /**
@@ -38,7 +39,7 @@ import util.wrappers.MultiKey;
  * <li>group property values</li>
  * <li>person group assignments</li>
  * </ul>
- * 
+ *
  *
  */
 @Immutable
@@ -104,7 +105,7 @@ public final class GroupsPluginData implements PluginData {
 			}
 			return true;
 		}
-		
+
 
 	}
 
@@ -151,16 +152,7 @@ public final class GroupsPluginData implements PluginData {
 				return false;
 			}
 			Data other = (Data) obj;
-			if (!groupPropertyDefinitions.equals(other.groupPropertyDefinitions)) {
-				return false;
-			}
-			if (!groupSpecifications.equals(other.groupSpecifications)) {
-				return false;
-			}
-			if (!groupToPeopleMemberships.equals(other.groupToPeopleMemberships)) {
-				return false;
-			}
-			if (!groupTypeIds.equals(other.groupTypeIds)) {
+			if (!groupPropertyDefinitions.equals(other.groupPropertyDefinitions) || !groupSpecifications.equals(other.groupSpecifications) || !groupToPeopleMemberships.equals(other.groupToPeopleMemberships) || !groupTypeIds.equals(other.groupTypeIds)) {
 				return false;
 			}
 			if (nextGroupIdValue != other.nextGroupIdValue) {
@@ -173,7 +165,7 @@ public final class GroupsPluginData implements PluginData {
 		}
 
 		private int nextGroupIdValue = -1;
-		private final Map<GroupTypeId, Map<GroupPropertyId, PropertyDefinition>> groupPropertyDefinitions;
+		private Map<GroupTypeId, Map<GroupPropertyId, PropertyDefinition>> groupPropertyDefinitions;
 		private final Set<GroupTypeId> groupTypeIds;
 		private final List<GroupId> emptyGroupList;
 		private final List<PersonId> emptyPersonList;
@@ -188,7 +180,7 @@ public final class GroupsPluginData implements PluginData {
 		private final List<List<GroupId>> personToGroupsMemberships;
 		private final List<List<PersonId>> groupToPeopleMemberships;
 
-		
+
 
 		public Data() {
 			groupPropertyDefinitions = new LinkedHashMap<>();
@@ -245,9 +237,9 @@ public final class GroupsPluginData implements PluginData {
 				}
 				groupToPeopleMemberships.add(newList);
 			}
-			
+
 			nextGroupIdValue = data.nextGroupIdValue;
-			
+
 			asymmetricMemberships = data.asymmetricMemberships;
 
 			locked = data.locked;
@@ -301,7 +293,7 @@ public final class GroupsPluginData implements PluginData {
 
 	/**
 	 * Builder class for GroupInitialData
-	 * 
+	 *
 	 *
 	 */
 	public static class Builder implements PluginDataBuilder {
@@ -328,23 +320,23 @@ public final class GroupsPluginData implements PluginData {
 
 		/**
 		 * Return the GroupInitialData from the data collected by this builder.
-		 * 
+		 *
 		 * @throws ContractException
-		 * 
+		 *
 		 *                           <li>{@linkplain GroupError#DUPLICATE_GROUP_MEMBERSHIP}</li>
 		 *                           if a person was assigned to a group more than once
-		 * 
-		 * 
+		 *
+		 *
 		 *                           <li>{@linkplain GroupError#DUPLICATE_GROUP_MEMBERSHIP}</li>
 		 *                           if a group was assigned to a person more than once
-		 *                           
+		 *
 		 *                           <li>{@linkplain GroupError#GROUP_MEMBERSHIP_ASYMMETRY}</li>
 		 *                           if groups and people are not symmetrically assigned
-		 * 
+		 *
 		 *                           <li>{@linkplain GroupError#UNKNOWN_GROUP_TYPE_ID}</li>
 		 *                           if a group was added with a group type id that was
 		 *                           not defined
-		 * 
+		 *
 		 *                           <li>{@linkplain GroupError#UNKNOWN_GROUP_TYPE_ID}</li>
 		 *                           if a group property definition was defined for a
 		 *                           group type id that was not defined.
@@ -352,29 +344,31 @@ public final class GroupsPluginData implements PluginData {
 		 *                           <li>{@linkplain GroupError#UNKNOWN_GROUP_ID}</li>
 		 *                           if a group property value was set for a group id
 		 *                           that was not defined.
-		 * 
+		 *
 		 *                           <li>{@linkplain GroupError#UNKNOWN_GROUP_ID}</li>
 		 *                           if a group membership was set for a group id that
 		 *                           was not defined.
-		 * 
+		 *
 		 *                           <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}</li>
 		 *                           if a group property value is added for a group
 		 *                           property id that is not associated with the group.
-		 * 
+		 *
 		 *                           <li>{@linkplain PropertyError#INCOMPATIBLE_VALUE}</li>
 		 *                           if a group property value is added that is
 		 *                           incompatible with the corresponding property
 		 *                           definition
-		 * 
+		 *
 		 *                           <li>{@linkplain PropertyError#INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT}</li>
 		 *                           if a group does not have a group property value
 		 *                           assigned when the corresponding property definition
 		 *                           lacks a default value.
-		 * 
+		 *
 		 */
+		@Override
 		public GroupsPluginData build() {
 
 			if (!data.locked) {
+				sortData();
 				validateData();
 			}
 			ensureImmutability();
@@ -385,12 +379,12 @@ public final class GroupsPluginData implements PluginData {
 		/**
 		 * Adds a person to a group and the group to the person. Use this method when
 		 * order within memberships is not important.
-		 * 
+		 *
 		 * @throws ContractException
-		 * 
+		 *
 		 *                           <li>{@linkplain GroupError#NULL_GROUP_ID}</li> if
 		 *                           the group id is null
-		 * 
+		 *
 		 *                           <li>{@linkplain PersonError#NULL_PERSON_ID}</li> if
 		 *                           the person id is null
 		 *
@@ -415,7 +409,7 @@ public final class GroupsPluginData implements PluginData {
 
 			groups.add(groupId);
 
-			
+
 
 			int groupIndex = groupId.getValue();
 
@@ -435,12 +429,12 @@ public final class GroupsPluginData implements PluginData {
 
 		/**
 		 * Adds the group to the person, but not the person to the group.
-		 * 
+		 *
 		 * @throws ContractException
-		 * 
+		 *
 		 *                           <li>{@linkplain GroupError#NULL_GROUP_ID}</li> if
 		 *                           the group id is null
-		 * 
+		 *
 		 *                           <li>{@linkplain PersonError#NULL_PERSON_ID}</li> if
 		 *                           the person id is null
 		 *
@@ -471,12 +465,12 @@ public final class GroupsPluginData implements PluginData {
 
 		/**
 		 * Adds the group to the person, but not the person to the group.
-		 * 
+		 *
 		 * @throws ContractException
-		 * 
+		 *
 		 *                           <li>{@linkplain GroupError#NULL_GROUP_ID}</li> if
 		 *                           the group id is null
-		 * 
+		 *
 		 *                           <li>{@linkplain PersonError#NULL_PERSON_ID}</li> if
 		 *                           the person id is null
 		 *
@@ -506,12 +500,12 @@ public final class GroupsPluginData implements PluginData {
 
 		/**
 		 * Adds a group type id Duplicate inputs override previous inputs
-		 * 
+		 *
 		 * @throws ContractException
-		 * 
+		 *
 		 *                           <li>{@linkplain GroupError#NULL_GROUP_TYPE_ID}</li>
 		 *                           if the group type id is null
-		 * 
+		 *
 		 */
 		public Builder addGroupTypeId(final GroupTypeId groupTypeId) {
 			ensureDataMutability();
@@ -523,14 +517,14 @@ public final class GroupsPluginData implements PluginData {
 		/**
 		 * Adds a group with the given group type Duplicate inputs override previous
 		 * inputs
-		 * 
+		 *
 		 * @throws ContractException
 		 *                           <li>{@linkplain GroupError#NULL_GROUP_ID}</li> if
 		 *                           the group id is null
-		 * 
+		 *
 		 *                           <li>{@linkplain GroupError#NULL_GROUP_TYPE_ID}</li>
 		 *                           if the group type id is null
-		 * 
+		 *
 		 */
 		public Builder addGroup(final GroupId groupId, final GroupTypeId groupTypeId) {
 			ensureDataMutability();
@@ -553,18 +547,18 @@ public final class GroupsPluginData implements PluginData {
 
 		/**
 		 * Defines a group property Duplicate inputs override previous inputs
-		 * 
+		 *
 		 * @throws ContractException
 		 *                           <li>{@linkplain GroupError#NULL_GROUP_TYPE_ID}</li>
 		 *                           if the group type id is null
-		 * 
+		 *
 		 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID}</li>
 		 *                           if the group property id is null
-		 * 
+		 *
 		 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION}</li>
 		 *                           if the property definition is null
 		 *
-		 * 
+		 *
 		 */
 		public Builder defineGroupProperty(final GroupTypeId groupTypeId, final GroupPropertyId groupPropertyId,
 				final PropertyDefinition propertyDefinition) {
@@ -585,18 +579,18 @@ public final class GroupsPluginData implements PluginData {
 		/**
 		 * Sets the group property value that overrides the default value of the
 		 * corresponding property definition Duplicate inputs override previous inputs
-		 * 
+		 *
 		 * @throws ContractException
-		 * 
+		 *
 		 *                           <li>{@linkplain GroupError#NULL_GROUP_ID}</li>if
 		 *                           the group id is null
-		 * 
+		 *
 		 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID}</li>if
 		 *                           the group property id is null
-		 * 
+		 *
 		 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE}</li>if
 		 *                           the group property value is null
-		 * 
+		 *
 		 */
 		public Builder setGroupPropertyValue(final GroupId groupId, final GroupPropertyId groupPropertyId,
 				final Object value) {
@@ -643,17 +637,21 @@ public final class GroupsPluginData implements PluginData {
 		 * ids. If the nextGroupRecordId is not set explicitly, the nextGroupRecordId is
 		 * assigned to either zero or the next integer value that exceeds the highest
 		 * valued group added to this builder.
-		 * 
+		 *
 		 * @throws ContractException
 		 *                           <li>{@linkplain GroupError#NEGATIVE_GROUP_ID} if
 		 *                           the next group record id is negative</li>
-		 * 
+		 *
 		 */
 		public Builder setNextGroupIdValue(int nextGroupIdValue) {
 			ensureDataMutability();
 			validateGroupIdValue(nextGroupIdValue);
 			data.nextGroupIdValue = nextGroupIdValue;
 			return this;
+		}
+
+		private void sortData() {
+			data.groupPropertyDefinitions = MapReindexer.getReindexedMap(data.groupTypeIds, data.groupPropertyDefinitions);
 		}
 
 		private void validateData() {
@@ -871,7 +869,7 @@ public final class GroupsPluginData implements PluginData {
 	/**
 	 * Returns the property definition for the given group type id and group
 	 * property id
-	 * 
+	 *
 	 * @throws ContractException
 	 *                           <li>{@linkplain GroupError#NULL_GROUP_TYPE_ID} if
 	 *                           the group type id is null</li>
@@ -895,7 +893,7 @@ public final class GroupsPluginData implements PluginData {
 
 	/**
 	 * Returns the set of group property ids for the given group type id
-	 * 
+	 *
 	 * @throws ContractException
 	 *                           <li>{@linkplain GroupError#NULL_GROUP_TYPE_ID} if
 	 *                           the group type id is null</li>
@@ -933,13 +931,13 @@ public final class GroupsPluginData implements PluginData {
 	/**
 	 * Returns the property value associated with the given group id and group
 	 * property id
-	 * 
+	 *
 	 * @throws ContractException
 	 *                           <li>{@linkplain GroupError#NULL_GROUP_ID} if the
 	 *                           group id is null</li>
 	 *                           <li>{@linkplain GroupError#UNKNOWN_GROUP_ID} if the
 	 *                           group id is unknown</li>
-	 * 
+	 *
 	 */
 	public List<GroupPropertyValue> getGroupPropertyValues(final GroupId groupId) {
 		validateGroupExists(data, groupId);
@@ -953,7 +951,7 @@ public final class GroupsPluginData implements PluginData {
 
 	/**
 	 * Returns the set of group type ids
-	 * 
+	 *
 	 */
 	@SuppressWarnings("unchecked")
 	public <T extends GroupTypeId> Set<T> getGroupTypeIds() {
@@ -979,7 +977,7 @@ public final class GroupsPluginData implements PluginData {
 
 	/**
 	 * Returns the group type id associated with the given group id
-	 * 
+	 *
 	 * @throws ContractException
 	 *                           <li>{@linkplain GroupError#NULL_GROUP_ID} if the
 	 *                           group id is null</li>
@@ -997,8 +995,8 @@ public final class GroupsPluginData implements PluginData {
 
 	/**
 	 * Returns the unmodifiable list of groups associated with the person id
-	 * 
-	 * 
+	 *
+	 *
 	 */
 	public List<GroupId> getGroupsForPerson(final PersonId personId) {
 		if (personId == null) {
@@ -1017,7 +1015,7 @@ public final class GroupsPluginData implements PluginData {
 
 	/**
 	 * Returns the unmodifiable list of people associated with the group id
-	 * 
+	 *
 	 */
 	public List<PersonId> getPeopleForGroup(final GroupId groupId) {
 		if (groupId == null) {
@@ -1067,9 +1065,9 @@ public final class GroupsPluginData implements PluginData {
 		return new Builder(data);
 	}
 
-	
 
-	
+
+
 
 	@Override
 	public int hashCode() {
