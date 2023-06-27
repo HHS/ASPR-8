@@ -148,8 +148,7 @@ public class AT_GlobalPropertiesTestPluginFactory {
     public void testSetGlobalPropertyReportPluginData() {
         GlobalPropertyReportPluginData.Builder builder = GlobalPropertyReportPluginData.builder();
 
-        builder.setDefaultInclusion(false)
-                .setReportLabel(new SimpleReportLabel("global property report"));
+        builder.setDefaultInclusion(false).setReportLabel(new SimpleReportLabel("global property report"));
 
         RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(1086184935572375203L);
         for (GlobalPropertyId globalPropertyId : TestGlobalPropertyId.values()) {
@@ -226,29 +225,30 @@ public class AT_GlobalPropertiesTestPluginFactory {
 
         GlobalPropertiesPluginData.Builder builder = GlobalPropertiesPluginData.builder();
 
-        for (TestGlobalPropertyId testGlobalPropertyId : TestGlobalPropertyId.values()) {
-            PropertyDefinition expectedPropertyDefinition = testGlobalPropertyId.getPropertyDefinition();
-            builder.defineGlobalProperty(testGlobalPropertyId, expectedPropertyDefinition, 0);
-
+        for (TestGlobalPropertyId testGlobalPropertyId : TestGlobalPropertyId.getGlobalPropertyIds()) {
+            builder.defineGlobalProperty(testGlobalPropertyId,
+                    testGlobalPropertyId.getPropertyDefinition(), 0);
             boolean hasDefaultValue = testGlobalPropertyId.getPropertyDefinition().getDefaultValue().isPresent();
-
             if (!hasDefaultValue) {
                 builder.setGlobalPropertyValue(testGlobalPropertyId,
                         testGlobalPropertyId.getRandomPropertyValue(randomGenerator), 0);
             }
+        }
 
-            // set a value to the default
-            if (randomGenerator.nextBoolean() && hasDefaultValue) {
+        for (TestGlobalPropertyId testGlobalPropertyId : TestGlobalPropertyId
+                .getShuffeledGlobalPropertyIds(randomGenerator)) {
+
+            boolean hasDefaultValue = testGlobalPropertyId.getPropertyDefinition().getDefaultValue().isPresent();
+            boolean setValue = randomGenerator.nextBoolean();
+            if (hasDefaultValue && setValue) {
+                // set a value to the default
                 builder.setGlobalPropertyValue(testGlobalPropertyId,
                         testGlobalPropertyId.getPropertyDefinition().getDefaultValue().get(), 0);
-            }
-
-            // set a value to not the default
-            if (randomGenerator.nextBoolean() && hasDefaultValue) {
+            } else if (setValue) {
+                // set a value to not the default
                 builder.setGlobalPropertyValue(testGlobalPropertyId,
                         testGlobalPropertyId.getRandomPropertyValue(randomGenerator), 0);
             }
-
         }
 
         GlobalPropertiesPluginData expectedPluginData = builder.build();

@@ -125,12 +125,12 @@ public enum TestGlobalPropertyId implements GlobalPropertyId {
 		};
 	}
 	
-	public List<GlobalPropertyId> getProperties(){
+	public static List<TestGlobalPropertyId> getGlobalPropertyIds(){
 		return Arrays.asList(TestGlobalPropertyId.values());
 	}
 	
-	public List<GlobalPropertyId> getProperties(RandomGenerator randomGenerator){
-		List<GlobalPropertyId> result = getProperties();
+	public static List<TestGlobalPropertyId> getShuffeledGlobalPropertyIds(RandomGenerator randomGenerator){
+		List<TestGlobalPropertyId> result = getGlobalPropertyIds();
 		Random random = new Random(randomGenerator.nextLong());
 		Collections.shuffle(result,random);
 		return result;

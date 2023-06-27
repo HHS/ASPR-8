@@ -50,39 +50,33 @@ public class GlobalPropertiesPluginDataTranslationSpec
     protected GlobalPropertiesPluginDataInput convertAppObject(GlobalPropertiesPluginData appObject) {
         GlobalPropertiesPluginDataInput.Builder builder = GlobalPropertiesPluginDataInput.newBuilder();
 
-        for (GlobalPropertyId propertyId : appObject.getGlobalPropertyIds()) {
-            PropertyDefinition propertyDefinition = appObject.getGlobalPropertyDefinition(propertyId);
+        for (GlobalPropertyId globalPropertyId : appObject.getGlobalPropertyDefinitions().keySet()) {
+            PropertyDefinition propertyDefinition = appObject.getGlobalPropertyDefinition(globalPropertyId);
 
             PropertyDefinitionInput propertyDefinitionInput = this.translationEngine.convertObject(propertyDefinition);
 
-            Any id = this.translationEngine.getAnyFromObject(propertyId);
             PropertyDefinitionMapInput propertyDefinitionMapInput = PropertyDefinitionMapInput
                     .newBuilder()
                     .setPropertyDefinition(propertyDefinitionInput)
-                    .setPropertyId(id)
-                    .setPropertyDefinitionTime(appObject.getGlobalPropertyDefinitionTime(propertyId))
+                    .setPropertyId(this.translationEngine.getAnyFromObject(globalPropertyId))
+                    .setPropertyDefinitionTime(appObject.getGlobalPropertyDefinitionTime(globalPropertyId))
                     .setPropertyTrackingPolicy(true)
                     .build();
 
             builder.addGlobalPropertyDefinitinions(propertyDefinitionMapInput);
+        }
 
-            if (appObject.getGlobalPropertyValue(propertyId).isPresent()) {
-                Any propertyValueInput = this.translationEngine
-                        .getAnyFromObject(appObject.getGlobalPropertyValue(propertyId).get());
+        for (GlobalPropertyId globalPropertyId : appObject.getGlobalPropertyValues().keySet()) {
+            Any propertyValueInput = this.translationEngine
+                    .getAnyFromObject(appObject.getGlobalPropertyValue(globalPropertyId).get());
 
-                PropertyValueMapInput.Builder propertyValueMapInputBuilder = PropertyValueMapInput
-                        .newBuilder()
-                        .setPropertyId(id)
-                        .setPropertyValue(propertyValueInput);
+            PropertyValueMapInput.Builder propertyValueMapInputBuilder = PropertyValueMapInput
+                    .newBuilder()
+                    .setPropertyId(this.translationEngine.getAnyFromObject(globalPropertyId))
+                    .setPropertyValue(propertyValueInput)
+                    .setPropertyValueTime(appObject.getGlobalPropertyTime(globalPropertyId).get());
 
-                if (appObject.getGlobalPropertyTime(propertyId).isPresent()) {
-                    propertyValueMapInputBuilder
-                            .setPropertyValueTime(appObject.getGlobalPropertyTime(propertyId).get());
-                }
-
-                builder.addGlobalPropertyValues(propertyValueMapInputBuilder.build());
-            }
-
+            builder.addGlobalPropertyValues(propertyValueMapInputBuilder.build());
         }
 
         return builder.build();
