@@ -8,7 +8,7 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.globalproperties.input.Glob
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.input.PropertyDefinitionInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.input.PropertyDefinitionMapInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.input.PropertyValueMapInput;
-import plugins.globalproperties.GlobalPropertiesPluginData;
+import plugins.globalproperties.datamanagers.GlobalPropertiesPluginData;
 import plugins.globalproperties.support.GlobalPropertyId;
 import plugins.util.properties.PropertyDefinition;
 

@@ -11,7 +11,7 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.PropertiesTransl
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.ReportsTranslator;
 import gov.hhs.aspr.translation.core.TranslationController;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
-import plugins.globalproperties.GlobalPropertiesPluginData;
+import plugins.globalproperties.datamanagers.GlobalPropertiesPluginData;
 import plugins.globalproperties.testsupport.GlobalPropertiesTestPluginFactory;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestForCoverage;
