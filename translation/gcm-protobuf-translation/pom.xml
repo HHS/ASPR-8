@@ -29,7 +29,7 @@
 
         <!-- dependency versions -->
         <protobuf-translation-core.version>2.4.0-SNAPSHOT</protobuf-translation-core.version>
-        <proto-definitions.version>1.9.0</proto-definitions.version>
+        <proto-definitions.version>1.10.0</proto-definitions.version>
         <gcm.version>4.0.0-SNAPSHOT</gcm.version>
         <protoc.version>3.21.12</protoc.version>
         <junit-jupiter-engine.version>5.8.2</junit-jupiter-engine.version>
