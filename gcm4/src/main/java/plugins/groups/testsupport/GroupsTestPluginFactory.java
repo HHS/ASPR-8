@@ -18,7 +18,7 @@ import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestSimulation;
 import plugins.groups.GroupsPlugin;
-import plugins.groups.GroupsPluginData;
+import plugins.groups.datamanagers.GroupsPluginData;
 import plugins.groups.reports.GroupPopulationReportPluginData;
 import plugins.groups.reports.GroupPropertyReportPluginData;
 import plugins.groups.support.GroupError;

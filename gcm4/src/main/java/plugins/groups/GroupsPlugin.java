@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import nucleus.Plugin;
 import plugins.groups.datamanagers.GroupsDataManager;
+import plugins.groups.datamanagers.GroupsPluginData;
 import plugins.groups.reports.GroupPopulationReport;
 import plugins.groups.reports.GroupPopulationReportPluginData;
 import plugins.groups.reports.GroupPropertyReport;

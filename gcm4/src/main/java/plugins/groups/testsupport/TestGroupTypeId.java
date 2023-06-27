@@ -1,5 +1,10 @@
 package plugins.groups.testsupport;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
+
 import org.apache.commons.math3.random.RandomGenerator;
 
 import plugins.groups.support.GroupTypeId;
@@ -41,6 +46,17 @@ public enum TestGroupTypeId implements GroupTypeId {
 	public static GroupTypeId getUnknownGroupTypeId() {
 		return new GroupTypeId() {
 		};
+	}
+	
+	public static List<TestGroupTypeId> getProperties(){
+		return Arrays.asList(TestGroupTypeId.values());
+	}
+	
+	public static List<TestGroupTypeId> getProperties(RandomGenerator randomGenerator){
+		List<TestGroupTypeId> result = getProperties();
+		Random random = new Random(randomGenerator.nextLong());
+		Collections.shuffle(result,random);
+		return result;
 	}
 
 }

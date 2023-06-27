@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 
 import nucleus.Plugin;
 import nucleus.PluginId;
+import plugins.groups.datamanagers.GroupsPluginData;
 import plugins.groups.reports.GroupPopulationReportPluginData;
 import plugins.groups.reports.GroupPropertyReportPluginData;
 import plugins.people.PeoplePluginId;

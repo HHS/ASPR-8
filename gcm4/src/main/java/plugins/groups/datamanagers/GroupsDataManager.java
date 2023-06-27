@@ -24,7 +24,6 @@ import nucleus.Event;
 import nucleus.EventFilter;
 import nucleus.IdentifiableFunctionMap;
 import nucleus.NucleusError;
-import plugins.groups.GroupsPluginData;
 import plugins.groups.events.GroupAdditionEvent;
 import plugins.groups.events.GroupImminentRemovalEvent;
 import plugins.groups.events.GroupMembershipAdditionEvent;
@@ -101,7 +100,7 @@ public final class GroupsDataManager extends DataManager {
 	// container for group property values
 	private final Map<GroupTypeId, Map<GroupPropertyId, IndexedPropertyManager>> groupPropertyManagerMap = new LinkedHashMap<>();
 
-	private final Map<GroupTypeId, Map<GroupPropertyId, PropertyDefinition>> groupPropertyDefinitions = new LinkedHashMap<>();
+	private Map<GroupTypeId, Map<GroupPropertyId, PropertyDefinition>> groupPropertyDefinitions = new LinkedHashMap<>();
 
 	//////////////////////////////////////////////////
 
@@ -343,24 +342,45 @@ public final class GroupsDataManager extends DataManager {
 	}
 
 	private void loadGroupPropertyDefinitions() {
-		for (final GroupTypeId groupTypeId : groupsPluginData.getGroupTypeIds()) {
-			final Set<GroupPropertyId> propertyIds = groupsPluginData.getGroupPropertyIds(groupTypeId);
-			for (final GroupPropertyId groupPropertyId : propertyIds) {
-				final PropertyDefinition propertyDefinition = groupsPluginData.getGroupPropertyDefinition(groupTypeId,
-						groupPropertyId);
-				if (propertyDefinition.getDefaultValue().isEmpty()) {
-					nonDefaultBearingPropertyIds.get(groupTypeId).put(groupPropertyId,
-							nonDefaultBearingPropertyIds.size());
-				}
+		
+		groupPropertyDefinitions = groupsPluginData.getGroupPropertyDefinitions();
 
-				Map<GroupPropertyId, PropertyDefinition> map = groupPropertyDefinitions.get(groupTypeId);
-				map.put(groupPropertyId, propertyDefinition);
+		for (final GroupTypeId groupTypeId : groupPropertyDefinitions.keySet()) {
+			Map<GroupPropertyId, PropertyDefinition> propMap = groupPropertyDefinitions.get(groupTypeId);
+		
+		for (final GroupPropertyId groupPropertyId : propMap.keySet()) {
+			final PropertyDefinition propertyDefinition = propMap.get(groupPropertyId);
 
-				Map<GroupPropertyId, IndexedPropertyManager> managerMap = groupPropertyManagerMap.get(groupTypeId);
-				final IndexedPropertyManager indexedPropertyManager = getIndexedPropertyManager(propertyDefinition, 0);
-				managerMap.put(groupPropertyId, indexedPropertyManager);
+			if (propertyDefinition.getDefaultValue().isEmpty()) {
+				nonDefaultBearingPropertyIds.get(groupTypeId).put(groupPropertyId,
+						nonDefaultBearingPropertyIds.size());
 			}
+
+			Map<GroupPropertyId, IndexedPropertyManager> managerMap = groupPropertyManagerMap.get(groupTypeId);
+			final IndexedPropertyManager indexedPropertyManager = getIndexedPropertyManager(propertyDefinition, 0);
+			managerMap.put(groupPropertyId, indexedPropertyManager);
 		}
+	}
+
+		
+//		for (final GroupTypeId groupTypeId : groupsPluginData.getGroupTypeIds()) {
+//			final Set<GroupPropertyId> propertyIds = groupsPluginData.getGroupPropertyIds(groupTypeId);
+//			for (final GroupPropertyId groupPropertyId : propertyIds) {
+//				final PropertyDefinition propertyDefinition = groupsPluginData.getGroupPropertyDefinition(groupTypeId,
+//						groupPropertyId);
+//				if (propertyDefinition.getDefaultValue().isEmpty()) {
+//					nonDefaultBearingPropertyIds.get(groupTypeId).put(groupPropertyId,
+//							nonDefaultBearingPropertyIds.size());
+//				}
+//
+//				Map<GroupPropertyId, PropertyDefinition> map = groupPropertyDefinitions.get(groupTypeId);
+//				map.put(groupPropertyId, propertyDefinition);
+//
+//				Map<GroupPropertyId, IndexedPropertyManager> managerMap = groupPropertyManagerMap.get(groupTypeId);
+//				final IndexedPropertyManager indexedPropertyManager = getIndexedPropertyManager(propertyDefinition, 0);
+//				managerMap.put(groupPropertyId, indexedPropertyManager);
+//			}
+//		}
 		for (GroupTypeId groupTypeId : nonDefaultBearingPropertyIds.keySet()) {
 			Map<GroupPropertyId, Integer> map = nonDefaultBearingPropertyIds.get(groupTypeId);
 			nonDefaultChecks.put(groupTypeId, new boolean[map.size()]);
@@ -373,7 +393,7 @@ public final class GroupsDataManager extends DataManager {
 			typesToIndexesMap.put(groupTypeId, index);
 			indexesToTypesMap.add(groupTypeId);
 			groupPropertyManagerMap.put(groupTypeId, new LinkedHashMap<>());
-			groupPropertyDefinitions.put(groupTypeId, new LinkedHashMap<>());
+//			groupPropertyDefinitions.put(groupTypeId, new LinkedHashMap<>());
 			nonDefaultBearingPropertyIds.put(groupTypeId, new LinkedHashMap<>());
 		}
 	}
@@ -401,8 +421,7 @@ public final class GroupsDataManager extends DataManager {
 		final int index = typesToIndexesMap.size();
 		typesToIndexesMap.put(groupTypeId, index);
 		indexesToTypesMap.add(groupTypeId);
-		groupPropertyManagerMap.put(groupTypeId, new LinkedHashMap<>());
-		groupPropertyDefinitions.put(groupTypeId, new LinkedHashMap<>());
+		groupPropertyManagerMap.put(groupTypeId, new LinkedHashMap<>());		
 		nonDefaultBearingPropertyIds.put(groupTypeId, new LinkedHashMap<>());
 		nonDefaultChecks.put(groupTypeId, new boolean[0]);
 
@@ -568,6 +587,10 @@ public final class GroupsDataManager extends DataManager {
 		managerMap.put(groupPropertyId, indexedPropertyManager);
 		DoubleValueContainer doubleValueContainer = new DoubleValueContainer(0, this::getGroupIndexIterator);
 		Map<GroupPropertyId, PropertyDefinition> map = groupPropertyDefinitions.get(groupTypeId);
+		if(map == null) {
+			map = new LinkedHashMap<>();
+			groupPropertyDefinitions.put(groupTypeId,map);
+		}
 		map.put(groupPropertyId, propertyDefinition);
 
 		/*
