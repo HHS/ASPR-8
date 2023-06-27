@@ -322,7 +322,7 @@ public final class ResourcesPluginData implements PluginData {
 		public ResourcesPluginData build() {
 
 			if (!data.locked) {
-				sortData();
+				//sortData();
 				validateData();
 			}
 			ensureImmutability();
@@ -917,6 +917,17 @@ public final class ResourcesPluginData implements PluginData {
 		builder2.append(data);
 		builder2.append("]");
 		return builder2.toString();
+	}
+	
+	
+	public Map<RegionId, Map<ResourceId, Long>> getRegionResourceLevels(){
+		Map<RegionId, Map<ResourceId, Long>> result = new LinkedHashMap<>();
+		for(RegionId regionId : data.regionResourceLevels.keySet()) {
+			Map<ResourceId, Long> map = data.regionResourceLevels.get(regionId);
+			Map<ResourceId, Long> newMap = new LinkedHashMap<>(map);
+			result.put(regionId, newMap);
+		}
+		return result;
 	}
 
 }

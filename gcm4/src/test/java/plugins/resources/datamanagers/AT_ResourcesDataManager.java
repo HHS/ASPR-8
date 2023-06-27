@@ -4013,7 +4013,11 @@ public final class AT_ResourcesDataManager {
 					resourcesDataManager.removeResourceFromRegion(testResourceId, regionId, amount);
 				}
 			}
-
+			
+		});
+		
+		continuityBuilder.addContextConsumer(6.0, (c) -> {
+			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 			c.releaseOutput(resourcesDataManager.toString());
 		});
 
