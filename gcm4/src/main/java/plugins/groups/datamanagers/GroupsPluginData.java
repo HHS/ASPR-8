@@ -25,7 +25,6 @@ import plugins.people.support.PersonId;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
 import util.errors.ContractException;
-import util.maps.MapReindexer;
 import util.wrappers.MultiKey;
 
 /**
@@ -368,7 +367,6 @@ public final class GroupsPluginData implements PluginData {
 		public GroupsPluginData build() {
 
 			if (!data.locked) {
-//				sortData();
 				validateData();
 			}
 			ensureImmutability();
@@ -650,9 +648,7 @@ public final class GroupsPluginData implements PluginData {
 			return this;
 		}
 
-		private void sortData() {
-			data.groupPropertyDefinitions = MapReindexer.getReindexedMap(data.groupTypeIds, data.groupPropertyDefinitions);
-		}
+		
 
 		private void validateData() {
 
