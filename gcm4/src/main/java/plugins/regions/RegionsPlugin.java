@@ -5,6 +5,7 @@ import java.util.Optional;
 import nucleus.Plugin;
 import plugins.people.PeoplePluginId;
 import plugins.regions.datamanagers.RegionsDataManager;
+import plugins.regions.datamanagers.RegionsPluginData;
 import plugins.regions.reports.RegionPropertyReport;
 import plugins.regions.reports.RegionPropertyReportPluginData;
 import plugins.regions.reports.RegionTransferReport;

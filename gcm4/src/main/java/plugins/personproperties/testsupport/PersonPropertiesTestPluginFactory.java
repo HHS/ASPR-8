@@ -25,7 +25,7 @@ import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
 import plugins.people.support.PersonRange;
 import plugins.regions.RegionsPlugin;
-import plugins.regions.RegionsPluginData;
+import plugins.regions.datamanagers.RegionsPluginData;
 import plugins.regions.support.RegionError;
 import plugins.regions.testsupport.TestRegionId;
 import plugins.stochastics.StochasticsPlugin;

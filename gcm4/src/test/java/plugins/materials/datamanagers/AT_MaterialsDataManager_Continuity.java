@@ -44,7 +44,7 @@ import plugins.people.PeoplePluginData;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonConstructionData;
 import plugins.regions.RegionsPlugin;
-import plugins.regions.RegionsPluginData;
+import plugins.regions.datamanagers.RegionsPluginData;
 import plugins.regions.testsupport.TestRegionId;
 import plugins.resources.ResourcesPlugin;
 import plugins.resources.ResourcesPluginData;

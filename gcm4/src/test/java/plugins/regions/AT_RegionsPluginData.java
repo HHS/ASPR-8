@@ -19,6 +19,7 @@ import org.junit.jupiter.api.Test;
 import nucleus.PluginData;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
+import plugins.regions.datamanagers.RegionsPluginData;
 import plugins.regions.support.RegionError;
 import plugins.regions.support.RegionId;
 import plugins.regions.support.RegionPropertyId;

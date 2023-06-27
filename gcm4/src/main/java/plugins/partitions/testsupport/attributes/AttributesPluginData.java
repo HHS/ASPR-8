@@ -17,9 +17,8 @@ import plugins.partitions.testsupport.attributes.support.AttributeId;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
 import plugins.personproperties.support.PersonPropertyError;
-
+import plugins.util.properties.PropertyError;
 import util.errors.ContractException;
-import util.maps.MapReindexer;
 
 @Immutable
 public class AttributesPluginData implements PluginData {
@@ -40,7 +39,7 @@ public class AttributesPluginData implements PluginData {
 				List<Object> list = data.personAttributeValues.get(attributeId);
 				List<Object> newList = new ArrayList<>(list);
 				personAttributeValues.put(attributeId, newList);
-			}			
+			}
 		}
 
 		@Override
@@ -114,11 +113,8 @@ public class AttributesPluginData implements PluginData {
 				data.locked = true;
 			}
 		}
+
 		
-		
-		private void sortData() {
-			data.personAttributeValues = MapReindexer.getReindexedMap(data.attributeDefinitions.keySet(), data.personAttributeValues);
-		}
 
 		private void validateData() {
 
@@ -171,19 +167,18 @@ public class AttributesPluginData implements PluginData {
 		 * 
 		 * @throws ContractException
 		 * 
-		 *             <li>{@linkplain AttributeError#UNKNOWN_ATTRIBUTE_ID} if a
-		 *             person attribute value was recorded for an unknown
-		 *             attribute id</li>
+		 *                           <li>{@linkplain AttributeError#UNKNOWN_ATTRIBUTE_ID}
+		 *                           if a person attribute value was recorded for an
+		 *                           unknown attribute id</li>
 		 * 
-		 *             <li>{@linkplain AttributeError#INCOMPATIBLE_VALUE} if a
-		 *             person attribute value was recorded that is not
-		 *             compatible witht he corresponding attribute definition
-		 *             </li>
+		 *                           <li>{@linkplain AttributeError#INCOMPATIBLE_VALUE}
+		 *                           if a person attribute value was recorded that is
+		 *                           not compatible witht he corresponding attribute
+		 *                           definition</li>
 		 * 
 		 */
 		public AttributesPluginData build() {
 			if (!data.locked) {
-				sortData();
 				validateData();
 			}
 			ensureImmutability();
@@ -194,12 +189,12 @@ public class AttributesPluginData implements PluginData {
 		 * Adds an attribute definition.
 		 *
 		 * @throws ContractException
-		 *             <li>{@linkplain AttributeError#NULL_ATTRIBUTE_ID} if the
-		 *             attribute id is null</li>
-		 *             <li>{@linkplain AttributeError#NULL_ATTRIBUTE_DEFINITION}
-		 *             if the attribute definition is null</li>
-		 *             <li>{@linkplain AttributeError#DUPLICATE_ATTRIBUTE_DEFINITION}
-		 *             if the attribute id was previously added</li>
+		 *                           <li>{@linkplain AttributeError#NULL_ATTRIBUTE_ID}
+		 *                           if the attribute id is null</li>
+		 *                           <li>{@linkplain AttributeError#NULL_ATTRIBUTE_DEFINITION}
+		 *                           if the attribute definition is null</li>
+		 *                           <li>{@linkplain AttributeError#DUPLICATE_ATTRIBUTE_DEFINITION}
+		 *                           if the attribute id was previously added</li>
 		 */
 		public Builder defineAttribute(final AttributeId attributeId, final AttributeDefinition attributeDefinition) {
 			ensureDataMutability();
@@ -211,18 +206,18 @@ public class AttributesPluginData implements PluginData {
 		}
 
 		/**
-		 * Sets the person's attribute value. Duplicate inputs override previous
-		 * inputs.
+		 * Sets the person's attribute value. Duplicate inputs override previous inputs.
 		 * 
 		 * @throws ContractException
-		 *             <li>{@linkplain PersonError#NULL_PERSON_ID} if the person
-		 *             id is null</li>
-		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
-		 *             person property id is null</li>
-		 *             <li>{@linkplain PersonPropertyError#NULL_PROPERTY_VALUE}
-		 *             if the person property value is null</li>
+		 *                           <li>{@linkplain PersonError#NULL_PERSON_ID} if the
+		 *                           person id is null</li>
+		 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
+		 *                           the person property id is null</li>
+		 *                           <li>{@linkplain PersonPropertyError#NULL_PROPERTY_VALUE}
+		 *                           if the person property value is null</li>
 		 */
-		public Builder setPersonAttributeValue(final PersonId personId, final AttributeId attributeId, final Object attributeValue) {
+		public Builder setPersonAttributeValue(final PersonId personId, final AttributeId attributeId,
+				final Object attributeValue) {
 			ensureDataMutability();
 			validatePersonId(personId);
 			validateAttributeIdNotNull(attributeId);
@@ -274,10 +269,10 @@ public class AttributesPluginData implements PluginData {
 	 * Returns the attribute definition for the given attribute id
 	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain AttributeError#NULL_ATTRIBUTE_ID} if the
-	 *             attribute id is null</li>
-	 *             <li>{@linkplain AttributeError#UNKNOWN_ATTRIBUTE_ID} if the
-	 *             attribute id is unknown</li>
+	 *                           <li>{@linkplain AttributeError#NULL_ATTRIBUTE_ID}
+	 *                           if the attribute id is null</li>
+	 *                           <li>{@linkplain AttributeError#UNKNOWN_ATTRIBUTE_ID}
+	 *                           if the attribute id is unknown</li>
 	 */
 	public AttributeDefinition getAttributeDefinition(final AttributeId attributeId) {
 		validateAttributeIdNotNull(attributeId);
@@ -356,15 +351,15 @@ public class AttributesPluginData implements PluginData {
 	}
 
 	/**
-	 * Returns the attribute values for the given attribute id as an
-	 * unmodifiable list. Each object in the list corresponds to a PersonId in
-	 * ascending order starting from zero.
+	 * Returns the attribute values for the given attribute id as an unmodifiable
+	 * list. Each object in the list corresponds to a PersonId in ascending order
+	 * starting from zero.
 	 *
 	 * @throws ContractException
-	 *             <li>{@linkplain AttributeError#NULL_ATTRIBUTE_ID} if the
-	 *             attribute id is null</li>
-	 *             <li>{@linkplain AttributeError#UNKNOWN_ATTRIBUTE_ID} if the
-	 *             attribute id is unknown</li>
+	 *                           <li>{@linkplain AttributeError#NULL_ATTRIBUTE_ID}
+	 *                           if the attribute id is null</li>
+	 *                           <li>{@linkplain AttributeError#UNKNOWN_ATTRIBUTE_ID}
+	 *                           if the attribute id is unknown</li>
 	 * 
 	 */
 	public List<Object> getAttributeValues(AttributeId attributeId) {
@@ -383,5 +378,22 @@ public class AttributesPluginData implements PluginData {
 		if (!data.attributeDefinitions.containsKey(attributeId)) {
 			throw new ContractException(AttributeError.UNKNOWN_ATTRIBUTE_ID);
 		}
+	}
+
+	public Map<AttributeId, AttributeDefinition> getAttributeDefinitions() {
+		return new LinkedHashMap<>(data.attributeDefinitions);
+	}
+
+	public Map<AttributeId, List<Object>> getAttributeValues() {
+
+		Map<AttributeId, List<Object>> result = new LinkedHashMap<>();
+
+		for (AttributeId attributeId : data.personAttributeValues.keySet()) {
+			List<Object> list = data.personAttributeValues.get(attributeId);
+			List<Object> newList = new ArrayList<>(list);
+			result.put(attributeId, newList);
+		}
+
+		return result;
 	}
 }

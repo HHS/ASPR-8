@@ -55,8 +55,8 @@ import plugins.personproperties.testsupport.PersonPropertiesTestPluginFactory.Fa
 import plugins.personproperties.testsupport.TestAuxiliaryPersonPropertyId;
 import plugins.personproperties.testsupport.TestPersonPropertyId;
 import plugins.regions.RegionsPlugin;
-import plugins.regions.RegionsPluginData;
 import plugins.regions.datamanagers.RegionsDataManager;
+import plugins.regions.datamanagers.RegionsPluginData;
 import plugins.regions.support.RegionError;
 import plugins.regions.support.RegionId;
 import plugins.regions.testsupport.TestRegionId;

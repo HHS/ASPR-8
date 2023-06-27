@@ -47,7 +47,6 @@ import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
 import plugins.people.support.PersonRange;
 import plugins.regions.RegionsPlugin;
-import plugins.regions.RegionsPluginData;
 import plugins.regions.events.PersonRegionUpdateEvent;
 import plugins.regions.events.RegionAdditionEvent;
 import plugins.regions.events.RegionPropertyDefinitionEvent;
@@ -210,14 +209,11 @@ public class AT_RegionsDataManager {
 						regionPropertyDefinitionInitialization2.getRegionPropertyId(), 5)
 				.setRegionPropertyValue(TestRegionId.REGION_3,
 						regionPropertyDefinitionInitialization2.getRegionPropertyId(), 67)
-				.setRegionPropertyValue(TestRegionId.REGION_2,
-						regionPropertyDefinitionInitialization3.getRegionPropertyId(), 0.0)
 				.setRegionPropertyValue(TestRegionId.REGION_3,
 						regionPropertyDefinitionInitialization3.getRegionPropertyId(), 123.5)
 				.build();
 		actualPluginData = outputItems.keySet().iterator().next();
 		assertEquals(expectedPluginData, actualPluginData);
-
 	}
 
 	@Test
@@ -2746,14 +2742,14 @@ public class AT_RegionsDataManager {
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 
 			PersonConstructionData personConstructionData = PersonConstructionData.builder()//
-					.add(TestRegionId.REGION_1)//
+					.add(TestRegionId.REGION_2)//
 					.build();
 			peopleDataManager.addPerson(personConstructionData);
 			peopleDataManager.addPerson(personConstructionData);
 			peopleDataManager.addPerson(personConstructionData);
 
 			personConstructionData = PersonConstructionData.builder()//
-					.add(TestRegionId.REGION_2)//
+					.add(TestRegionId.REGION_1)//
 					.build();
 			peopleDataManager.addPerson(personConstructionData);
 			peopleDataManager.addPerson(personConstructionData);
@@ -2770,9 +2766,9 @@ public class AT_RegionsDataManager {
 					RegionPropertyDefinitionInitialization.builder()//
 							.setPropertyDefinition(testRegionPropertyId.getPropertyDefinition())//
 							.setRegionPropertyId(testRegionPropertyId)//
-							.addPropertyValue(TestRegionId.REGION_1,
-									testRegionPropertyId.getRandomPropertyValue(randomGenerator))
 							.addPropertyValue(TestRegionId.REGION_2,
+									testRegionPropertyId.getRandomPropertyValue(randomGenerator))
+							.addPropertyValue(TestRegionId.REGION_1,
 									testRegionPropertyId.getRandomPropertyValue(randomGenerator))//
 							.build();
 
@@ -2801,13 +2797,13 @@ public class AT_RegionsDataManager {
 		continuityBuilder.addContextConsumer(5.8, (c) -> {
 			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 
-			TestRegionPropertyId testRegionPropertyId = TestRegionPropertyId.REGION_PROPERTY_2_INTEGER_MUTABLE;
+			TestRegionPropertyId testRegionPropertyId = TestRegionPropertyId.REGION_PROPERTY_3_DOUBLE_MUTABLE;
 			regionsDataManager.setRegionPropertyValue(TestRegionId.REGION_1, testRegionPropertyId,
 					testRegionPropertyId.getRandomPropertyValue(randomGenerator));
 			regionsDataManager.setRegionPropertyValue(TestRegionId.REGION_2, testRegionPropertyId,
 					testRegionPropertyId.getRandomPropertyValue(randomGenerator));
 
-			testRegionPropertyId = TestRegionPropertyId.REGION_PROPERTY_3_DOUBLE_MUTABLE;
+			testRegionPropertyId = TestRegionPropertyId.REGION_PROPERTY_2_INTEGER_MUTABLE;
 			regionsDataManager.setRegionPropertyValue(TestRegionId.REGION_1, testRegionPropertyId,
 					testRegionPropertyId.getRandomPropertyValue(randomGenerator));
 			regionsDataManager.setRegionPropertyValue(TestRegionId.REGION_2, testRegionPropertyId,

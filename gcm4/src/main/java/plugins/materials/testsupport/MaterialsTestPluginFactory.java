@@ -30,7 +30,7 @@ import plugins.people.PeoplePlugin;
 import plugins.people.PeoplePluginData;
 import plugins.people.support.PersonError;
 import plugins.regions.RegionsPlugin;
-import plugins.regions.RegionsPluginData;
+import plugins.regions.datamanagers.RegionsPluginData;
 import plugins.regions.support.RegionError;
 import plugins.regions.testsupport.TestRegionId;
 import plugins.resources.ResourcesPlugin;

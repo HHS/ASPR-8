@@ -1,4 +1,4 @@
-package plugins.regions;
+package plugins.regions.datamanagers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -11,6 +11,8 @@ import org.junit.jupiter.api.Test;
 import nucleus.Plugin;
 import nucleus.PluginId;
 import plugins.people.PeoplePluginId;
+import plugins.regions.RegionsPlugin;
+import plugins.regions.RegionsPluginId;
 import util.annotations.UnitTestMethod;
 
 public class AT_RegionPlugin {
