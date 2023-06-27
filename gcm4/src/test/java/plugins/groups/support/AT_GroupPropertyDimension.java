@@ -12,7 +12,7 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import nucleus.DimensionContext;
-import plugins.groups.GroupsPluginData;
+import plugins.groups.datamanagers.GroupsPluginData;
 import plugins.groups.testsupport.TestGroupPropertyId;
 import plugins.groups.testsupport.TestGroupTypeId;
 import plugins.util.properties.PropertyDefinition;

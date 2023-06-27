@@ -6,7 +6,7 @@ import java.util.Objects;
 
 import nucleus.Dimension;
 import nucleus.DimensionContext;
-import plugins.groups.GroupsPluginData;
+import plugins.groups.datamanagers.GroupsPluginData;
 import plugins.util.properties.PropertyError;
 import util.errors.ContractException;
 

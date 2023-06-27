@@ -1,4 +1,4 @@
-package plugins.groups;
+package plugins.groups.datamanagers;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -368,7 +368,7 @@ public final class GroupsPluginData implements PluginData {
 		public GroupsPluginData build() {
 
 			if (!data.locked) {
-				sortData();
+//				sortData();
 				validateData();
 			}
 			ensureImmutability();
@@ -1102,6 +1102,19 @@ public final class GroupsPluginData implements PluginData {
 	 */
 	public int getNextGroupIdValue() {
 		return data.nextGroupIdValue;
+	}
+	
+	
+	
+
+	public Map<GroupTypeId, Map<GroupPropertyId, PropertyDefinition>> getGroupPropertyDefinitions(){
+		Map<GroupTypeId, Map<GroupPropertyId, PropertyDefinition>> result = new LinkedHashMap<>();
+		for(GroupTypeId groupTypeId : data.groupPropertyDefinitions.keySet()) {
+			Map<GroupPropertyId, PropertyDefinition> map = data.groupPropertyDefinitions.get(groupTypeId);
+			Map<GroupPropertyId, PropertyDefinition> newMap =new LinkedHashMap<>(map);
+			result.put(groupTypeId, newMap);
+		}
+		return result;
 	}
 
 }
