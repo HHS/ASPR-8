@@ -22,7 +22,7 @@ import gov.hhs.aspr.translation.core.TranslationController;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
 import gov.hhs.aspr.translation.core.testsupport.TestResourceHelper;
 import plugins.people.support.PersonId;
-import plugins.regions.RegionsPluginData;
+import plugins.regions.datamanagers.RegionsPluginData;
 import plugins.regions.reports.RegionPropertyReportPluginData;
 import plugins.regions.reports.RegionTransferReportPluginData;
 import plugins.regions.support.RegionPropertyId;

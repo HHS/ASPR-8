@@ -22,7 +22,7 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.input.ResourcesPl
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 import plugins.people.support.PersonId;
 import plugins.regions.support.RegionId;
-import plugins.resources.ResourcesPluginData;
+import plugins.resources.datamanagers.ResourcesPluginData;
 import plugins.resources.support.ResourceId;
 import plugins.resources.support.ResourceInitialization;
 import plugins.resources.support.ResourcePropertyId;

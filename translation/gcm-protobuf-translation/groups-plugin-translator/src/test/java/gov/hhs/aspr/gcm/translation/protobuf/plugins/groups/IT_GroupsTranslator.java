@@ -19,7 +19,7 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.ReportsTranslator;
 import gov.hhs.aspr.translation.core.TranslationController;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
 import gov.hhs.aspr.translation.core.testsupport.TestResourceHelper;
-import plugins.groups.GroupsPluginData;
+import plugins.groups.datamanagers.GroupsPluginData;
 import plugins.groups.reports.GroupPropertyReportPluginData;
 import plugins.groups.testsupport.GroupsTestPluginFactory;
 import plugins.groups.testsupport.TestGroupPropertyId;

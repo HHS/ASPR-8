@@ -17,7 +17,7 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.input.ResourcesPl
 import gov.hhs.aspr.translation.core.TranslationController;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
 import plugins.people.support.PersonId;
-import plugins.resources.ResourcesPluginData;
+import plugins.resources.datamanagers.ResourcesPluginData;
 import plugins.resources.testsupport.ResourcesTestPluginFactory;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestForCoverage;

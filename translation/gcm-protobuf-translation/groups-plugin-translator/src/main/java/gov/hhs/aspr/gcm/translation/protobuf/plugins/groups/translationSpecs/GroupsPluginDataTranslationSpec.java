@@ -15,7 +15,7 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.input.PropertyDe
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.input.PropertyDefinitionMapInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.input.PropertyValueMapInput;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
-import plugins.groups.GroupsPluginData;
+import plugins.groups.datamanagers.GroupsPluginData;
 import plugins.groups.support.GroupId;
 import plugins.groups.support.GroupPropertyId;
 import plugins.groups.support.GroupPropertyValue;

@@ -16,7 +16,7 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.ReportsTranslator;
 import gov.hhs.aspr.translation.core.TranslationController;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
 import plugins.people.support.PersonId;
-import plugins.regions.RegionsPluginData;
+import plugins.regions.datamanagers.RegionsPluginData;
 import plugins.regions.testsupport.RegionsTestPluginFactory;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestForCoverage;
