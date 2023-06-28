@@ -22,7 +22,6 @@ import plugins.resources.support.ResourcePropertyId;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
 import util.errors.ContractException;
-import util.maps.MapReindexer;
 
 /**
  * An immutable container of the initial state of resources. It contains: <BR>
@@ -40,7 +39,7 @@ public final class ResourcesPluginData implements PluginData {
 
 	private static class Data {
 
-		private final Map<ResourceId, Double> resourceIds;
+		private final Map<ResourceId, Double> resourceDefaultTimes;
 		private Map<ResourceId, Boolean> resourceTimeTrackingPolicies;
 		private Map<ResourceId, Map<ResourcePropertyId, PropertyDefinition>> resourcePropertyDefinitions;
 		private Map<ResourceId, Map<ResourcePropertyId, Object>> resourcePropertyValues;
@@ -51,7 +50,7 @@ public final class ResourcesPluginData implements PluginData {
 		private boolean locked;
 
 		public Data() {
-			resourceIds = new LinkedHashMap<>();
+			resourceDefaultTimes = new LinkedHashMap<>();
 			resourceTimeTrackingPolicies = new LinkedHashMap<>();
 			resourcePropertyDefinitions = new LinkedHashMap<>();
 			resourcePropertyValues = new LinkedHashMap<>();
@@ -61,7 +60,7 @@ public final class ResourcesPluginData implements PluginData {
 		}
 
 		public Data(Data data) {
-			resourceIds = new LinkedHashMap<>(data.resourceIds);
+			resourceDefaultTimes = new LinkedHashMap<>(data.resourceDefaultTimes);
 			resourceTimeTrackingPolicies = new LinkedHashMap<>(data.resourceTimeTrackingPolicies);
 			resourcePropertyDefinitions = new LinkedHashMap<>();
 			for (ResourceId resourceId : data.resourcePropertyDefinitions.keySet()) {
@@ -104,8 +103,8 @@ public final class ResourcesPluginData implements PluginData {
 		@Override
 		public String toString() {
 			StringBuilder builder = new StringBuilder();
-			builder.append("Data [resourceIds=");
-			builder.append(resourceIds);
+			builder.append("Data [resourceDefaultTimes=");
+			builder.append(resourceDefaultTimes);
 			builder.append(", resourceTimeTrackingPolicies=");
 			builder.append(resourceTimeTrackingPolicies);
 			builder.append(", resourcePropertyDefinitions=");
@@ -129,7 +128,7 @@ public final class ResourcesPluginData implements PluginData {
 		public int hashCode() {
 			final int prime = 31;
 			int result = 1;
-			result = prime * result + resourceIds.hashCode();
+			result = prime * result + resourceDefaultTimes.hashCode();
 			result = prime * result + resourceTimeTrackingPolicies.hashCode();
 			result = prime * result + resourcePropertyDefinitions.hashCode();
 			result = prime * result + resourcePropertyValues.hashCode();
@@ -163,7 +162,7 @@ public final class ResourcesPluginData implements PluginData {
 			 */
 
 			// These are simply compared:
-			if (!resourceIds.equals(other.resourceIds)) {
+			if (!resourceDefaultTimes.equals(other.resourceDefaultTimes)) {
 				return false;
 			}
 
@@ -322,7 +321,6 @@ public final class ResourcesPluginData implements PluginData {
 		public ResourcesPluginData build() {
 
 			if (!data.locked) {
-				//sortData();
 				validateData();
 			}
 			ensureImmutability();
@@ -344,7 +342,7 @@ public final class ResourcesPluginData implements PluginData {
 			ensureDataMutability();
 			validateResourceIdNotNull(resourceId);
 			validateTime(time);
-			data.resourceIds.put(resourceId, time);
+			data.resourceDefaultTimes.put(resourceId, time);
 			data.resourceTimeTrackingPolicies.put(resourceId, trackValueAssignmentTimes);
 			return this;
 		}
@@ -510,7 +508,7 @@ public final class ResourcesPluginData implements PluginData {
 			 * validate resourcePropertyDefinitions
 			 */
 			for (ResourceId resourceId : data.resourcePropertyDefinitions.keySet()) {
-				if (!data.resourceIds.containsKey(resourceId)) {
+				if (!data.resourceDefaultTimes.containsKey(resourceId)) {
 					throw new ContractException(ResourceError.UNKNOWN_RESOURCE_ID,
 							resourceId + " has a property definitions but is not a known resource id");
 				}
@@ -527,7 +525,7 @@ public final class ResourcesPluginData implements PluginData {
 			 * show that the values are compatible with the property definitions
 			 */
 			for (ResourceId resourceId : data.resourcePropertyValues.keySet()) {
-				if (!data.resourceIds.containsKey(resourceId)) {
+				if (!data.resourceDefaultTimes.containsKey(resourceId)) {
 					throw new ContractException(ResourceError.UNKNOWN_RESOURCE_ID,
 							resourceId + " for a collected resource property value");
 				}
@@ -577,7 +575,7 @@ public final class ResourcesPluginData implements PluginData {
 			for (RegionId regionId : data.regionResourceLevels.keySet()) {
 				Map<ResourceId, Long> map = data.regionResourceLevels.get(regionId);
 				for (ResourceId resourceId : map.keySet()) {
-					if (!data.resourceIds.containsKey(resourceId)) {
+					if (!data.resourceDefaultTimes.containsKey(resourceId)) {
 						throw new ContractException(ResourceError.UNKNOWN_RESOURCE_ID,
 								resourceId + " for region " + regionId + " has a level, but is not a known resource");
 					}
@@ -588,7 +586,7 @@ public final class ResourcesPluginData implements PluginData {
 			 * validate personResourceLevels
 			 */
 			for (ResourceId resourceId : data.personResourceLevels.keySet()) {
-				if (!data.resourceIds.containsKey(resourceId)) {
+				if (!data.resourceDefaultTimes.containsKey(resourceId)) {
 					throw new ContractException(ResourceError.UNKNOWN_RESOURCE_ID,
 							resourceId + " has person resource levels, but is not a known resource id");
 				}
@@ -600,14 +598,14 @@ public final class ResourcesPluginData implements PluginData {
 
 			// private final Map<ResourceId, List<Double>> personResourceTimes;
 			for (ResourceId resourceId : data.personResourceTimes.keySet()) {
-				if (!data.resourceIds.containsKey(resourceId)) {
+				if (!data.resourceDefaultTimes.containsKey(resourceId)) {
 					throw new ContractException(ResourceError.UNKNOWN_RESOURCE_ID,
 							resourceId + " has person resource times, but is not a known resource id");
 				}
 			}
 
 			for (ResourceId resourceId : data.personResourceTimes.keySet()) {
-				Double creationTime = data.resourceIds.get(resourceId);
+				Double creationTime = data.resourceDefaultTimes.get(resourceId);
 				List<Double> times = data.personResourceTimes.get(resourceId);
 				for (Double time : times) {
 					if (time != null) {
@@ -619,46 +617,6 @@ public final class ResourcesPluginData implements PluginData {
 				}
 			}
 
-			
-		}
-
-		private void sortData() {
-			// the data.resourceIds provides the order for resource ids
-			Set<ResourceId> resourceIndexingSet = data.resourceIds.keySet();
-
-			// we sort the personResourceLevels and personResourceTimes by the resource
-			// order
-			data.personResourceLevels = MapReindexer.getReindexedMap(resourceIndexingSet, data.personResourceLevels);
-			data.personResourceTimes = MapReindexer.getReindexedMap(resourceIndexingSet, data.personResourceTimes);
-
-			// we apply the resource order to each region of the region resource levels
-			for (RegionId regionId : data.regionResourceLevels.keySet()) {
-				Map<ResourceId, Long> map = data.regionResourceLevels.get(regionId);
-				Map<ResourceId, Long> replacementMap = MapReindexer.getReindexedMap(resourceIndexingSet, map);
-				data.regionResourceLevels.put(regionId, replacementMap);
-			}
-
-			// we sort the resource property definitions by the resource id
-			data.resourcePropertyDefinitions = MapReindexer.getReindexedMap(resourceIndexingSet,
-					data.resourcePropertyDefinitions);
-
-			// we sort the resource property values by the resource id
-			data.resourcePropertyValues = MapReindexer.getReindexedMap(resourceIndexingSet,
-					data.resourcePropertyValues);
-
-			/*
-			 * for each resource in the resource property value map, we must sort the
-			 * property values by the order defined by the property definitions
-			 */
-			for (ResourceId resourceId : data.resourcePropertyValues.keySet()) {
-				if (data.resourcePropertyDefinitions.containsKey(resourceId)) {
-					Set<ResourcePropertyId> propertyIndexingSet = data.resourcePropertyDefinitions.get(resourceId)
-							.keySet();
-					Map<ResourcePropertyId, Object> map = data.resourcePropertyValues.get(resourceId);
-					Map<ResourcePropertyId, Object> newMap = MapReindexer.getReindexedMap(propertyIndexingSet, map);
-					data.resourcePropertyValues.put(resourceId, newMap);
-				}
-			}
 		}
 
 	}
@@ -732,7 +690,7 @@ public final class ResourcesPluginData implements PluginData {
 		if (resourceId == null) {
 			throw new ContractException(ResourceError.NULL_RESOURCE_ID);
 		}
-		if (!data.resourceIds.containsKey(resourceId)) {
+		if (!data.resourceDefaultTimes.containsKey(resourceId)) {
 			throw new ContractException(ResourceError.UNKNOWN_RESOURCE_ID, resourceId);
 		}
 	}
@@ -814,8 +772,8 @@ public final class ResourcesPluginData implements PluginData {
 	 */
 	@SuppressWarnings("unchecked")
 	public <T extends ResourceId> Set<T> getResourceIds() {
-		Set<T> result = new LinkedHashSet<>(data.resourceIds.size());
-		for (ResourceId resourceId : data.resourceIds.keySet()) {
+		Set<T> result = new LinkedHashSet<>(data.resourceDefaultTimes.size());
+		for (ResourceId resourceId : data.resourceDefaultTimes.keySet()) {
 			result.add((T) resourceId);
 		}
 		return result;
@@ -833,7 +791,7 @@ public final class ResourcesPluginData implements PluginData {
 	 */
 	public Double getResourceDefaultTime(ResourceId resourceId) {
 		validateResourceExists(resourceId);
-		return data.resourceIds.get(resourceId);
+		return data.resourceDefaultTimes.get(resourceId);
 	}
 
 	/**
@@ -918,11 +876,10 @@ public final class ResourcesPluginData implements PluginData {
 		builder2.append("]");
 		return builder2.toString();
 	}
-	
-	
-	public Map<RegionId, Map<ResourceId, Long>> getRegionResourceLevels(){
+
+	public Map<RegionId, Map<ResourceId, Long>> getRegionResourceLevels() {
 		Map<RegionId, Map<ResourceId, Long>> result = new LinkedHashMap<>();
-		for(RegionId regionId : data.regionResourceLevels.keySet()) {
+		for (RegionId regionId : data.regionResourceLevels.keySet()) {
 			Map<ResourceId, Long> map = data.regionResourceLevels.get(regionId);
 			Map<ResourceId, Long> newMap = new LinkedHashMap<>(map);
 			result.put(regionId, newMap);
@@ -930,4 +887,54 @@ public final class ResourcesPluginData implements PluginData {
 		return result;
 	}
 
+	public Map<ResourceId, Double> getResourceDefaultTimes() {
+		return new LinkedHashMap<>(data.resourceDefaultTimes);
+	}
+
+	public Map<ResourceId, Boolean> getResourceTimeTrackingPolicies() {
+		return new LinkedHashMap<>(data.resourceTimeTrackingPolicies);
+	}
+
+	public Map<ResourceId, List<Double>> getPersonResourceTimes() {
+		Map<ResourceId, List<Double>> result = new LinkedHashMap<>();
+		for (ResourceId resourceId : data.personResourceTimes.keySet()) {
+			List<Double> values = data.personResourceTimes.get(resourceId);
+			List<Double> newValues = new ArrayList<>(values);
+			result.put(resourceId, newValues);
+		}
+		return result;
+	}
+	
+	public Map<ResourceId, List<Long>> getPersonResourceLevels() {
+		Map<ResourceId, List<Long>> result = new LinkedHashMap<>();
+		for (ResourceId resourceId : data.personResourceLevels.keySet()) {
+			List<Long> values = data.personResourceLevels.get(resourceId);
+			List<Long> newValues = new ArrayList<>(values);
+			result.put(resourceId, newValues);
+		}
+		return result;
+	}
+	
+	public Map<ResourceId, Map<ResourcePropertyId, PropertyDefinition>> getResourcePropertyDefinitions(){
+		Map<ResourceId, Map<ResourcePropertyId, PropertyDefinition>> result = new LinkedHashMap<>();
+		
+		for(ResourceId resourceId : data.resourcePropertyDefinitions.keySet()) {
+			Map<ResourcePropertyId, PropertyDefinition> map = data.resourcePropertyDefinitions.get(resourceId);
+			Map<ResourcePropertyId, PropertyDefinition> newMap = new LinkedHashMap<>(map);
+			result.put(resourceId, newMap);
+		}		
+		return result;
+	}
+	
+	public Map<ResourceId, Map<ResourcePropertyId, Object>> getResourcePropertyValues(){		
+		Map<ResourceId, Map<ResourcePropertyId, Object>> result = new LinkedHashMap<>();
+		
+		for(ResourceId resourceId : data.resourcePropertyValues.keySet()) {
+			Map<ResourcePropertyId, Object> map = data.resourcePropertyValues.get(resourceId);
+			Map<ResourcePropertyId, Object> newMap = new LinkedHashMap<>(map);
+			result.put(resourceId, newMap);
+		}		
+		return result;		
+	}
+	
 }

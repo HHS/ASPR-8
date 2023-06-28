@@ -57,21 +57,23 @@ public final class ResourcesDataManager extends DataManager {
 	private RegionsDataManager regionsDataManager;
 
 	// resources
-	private final Map<ResourceId, Map<ResourcePropertyId, Object>> resourcePropertyMap = new LinkedHashMap<>();
+	private Map<ResourceId, Map<ResourcePropertyId, Object>> resourcePropertyValues = new LinkedHashMap<>();
 
 	/*
 	 * Stores resource amounts per person keyed by the resourceId
 	 */
-	private final Map<ResourceId, IntValueContainer> personResourceValues = new LinkedHashMap<>();
+	private final Map<ResourceId, IntValueContainer> personResourceLevels = new LinkedHashMap<>();
 
-	private final Map<ResourceId, Map<ResourcePropertyId, PropertyDefinition>> resourcePropertyDefinitions = new LinkedHashMap<>();
+	private Map<ResourceId, Map<ResourcePropertyId, PropertyDefinition>> resourcePropertyDefinitions = new LinkedHashMap<>();
 
 	/*
 	 * Stores resource assignment times per person keyed by the resourceId. Key
 	 * existence subject to time recording policies specified by the scenario.
 	 */
 
-	private Map<ResourceId, Double> resourceDefinitionTimes = new LinkedHashMap<>();
+	private Map<ResourceId, Double> resourceDefaultTimes = new LinkedHashMap<>();
+
+	private Map<ResourceId, Boolean> resourceTimeTrackingPolicies = new LinkedHashMap<>();
 
 	private final Map<ResourceId, DoubleValueContainer> personResourceTimes = new LinkedHashMap<>();
 
@@ -106,13 +108,13 @@ public final class ResourcesDataManager extends DataManager {
 	 */
 	private void decrementPersonResourceLevel(final ResourceId resourceId, final PersonId personId,
 			final long resourceAmount) {
-		personResourceValues.get(resourceId).decrementLongValue(personId.getValue(), resourceAmount);
+		personResourceLevels.get(resourceId).decrementLongValue(personId.getValue(), resourceAmount);
 		/*
 		 * if the resource assignment times are being tracked, then record the resource
 		 * time.
 		 */
 		final DoubleValueContainer doubleValueContainer = personResourceTimes.get(resourceId);
-		if (doubleValueContainer != null) {
+		if (doubleValueContainer != null) {			
 			doubleValueContainer.setValue(personId.getValue(), dataManagerContext.getTime());
 		}
 	}
@@ -161,13 +163,15 @@ public final class ResourcesDataManager extends DataManager {
 			throw new ContractException(PersonError.NEGATIVE_GROWTH_PROJECTION);
 		}
 		if (count > 0) {
-			for (final ResourceId resourceId : personResourceValues.keySet()) {
-				final IntValueContainer intValueContainer = personResourceValues.get(resourceId);
+
+			for (final ResourceId resourceId : personResourceLevels.keySet()) {
+				final IntValueContainer intValueContainer = personResourceLevels.get(resourceId);
 				intValueContainer.setCapacity(intValueContainer.getCapacity() + count);
+			}
+
+			for (final ResourceId resourceId : personResourceTimes.keySet()) {
 				final DoubleValueContainer doubleValueContainer = personResourceTimes.get(resourceId);
-				if (doubleValueContainer != null) {
-					doubleValueContainer.setCapacity(doubleValueContainer.getCapacity() + count);
-				}
+				doubleValueContainer.setCapacity(doubleValueContainer.getCapacity() + count);
 			}
 		}
 	}
@@ -188,8 +192,13 @@ public final class ResourcesDataManager extends DataManager {
 		 * First, we loop through all possible person id values and determine the exact
 		 * size of the returned list.
 		 */
+
+		final IntValueContainer intValueContainer = personResourceLevels.get(resourceId);
+		if (intValueContainer == null) {
+			return new ArrayList<>();
+		}
+
 		int count = 0;
-		final IntValueContainer intValueContainer = personResourceValues.get(resourceId);
 		final int n = peopleDataManager.getPersonIdLimit();
 		for (int personIndex = 0; personIndex < n; personIndex++) {
 			if (peopleDataManager.personIndexExists(personIndex)) {
@@ -235,8 +244,14 @@ public final class ResourcesDataManager extends DataManager {
 		 * First, we loop through all possible person id values and determine the exact
 		 * size of the returned list.
 		 */
+
+		final IntValueContainer intValueContainer = personResourceLevels.get(resourceId);
+
+		if (intValueContainer == null) {
+			return new ArrayList<>();
+		}
+
 		int count = 0;
-		final IntValueContainer intValueContainer = personResourceValues.get(resourceId);
 		final int n = peopleDataManager.getPersonIdLimit();
 		for (int personId = 0; personId < n; personId++) {
 			if (peopleDataManager.personIndexExists(personId)) {
@@ -281,7 +296,24 @@ public final class ResourcesDataManager extends DataManager {
 	public long getPersonResourceLevel(final ResourceId resourceId, final PersonId personId) {
 		validatePersonExists(personId);
 		validateResourceId(resourceId);
-		return personResourceValues.get(resourceId).getValueAsLong(personId.getValue());
+		long result = 0;
+		IntValueContainer intValueContainer = personResourceLevels.get(resourceId);
+		if (intValueContainer != null) {
+			result = intValueContainer.getValueAsLong(personId.getValue());
+		}
+		return result;
+
+	}
+
+	public long _getPersonResourceLevel(final ResourceId resourceId, final PersonId personId) {
+
+		long result = 0;
+		IntValueContainer intValueContainer = personResourceLevels.get(resourceId);
+		if (intValueContainer != null) {
+			result = intValueContainer.getValueAsLong(personId.getValue());
+		}
+		return result;
+
 	}
 
 	/**
@@ -306,8 +338,11 @@ public final class ResourcesDataManager extends DataManager {
 		validateResourceId(resourceId);
 		validatePersonResourceTimesTracked(resourceId);
 		final DoubleValueContainer doubleValueContainer = personResourceTimes.get(resourceId);
-		return doubleValueContainer.getValue(personId.getValue());
-
+		if (doubleValueContainer == null) {
+			return resourceDefaultTimes.get(resourceId);
+		} else {
+			return doubleValueContainer.getValue(personId.getValue());
+		}
 	}
 
 	/**
@@ -321,8 +356,7 @@ public final class ResourcesDataManager extends DataManager {
 	 */
 	public boolean getPersonResourceTimeTrackingPolicy(final ResourceId resourceId) {
 		validateResourceId(resourceId);
-		DoubleValueContainer doubleValueContainer = personResourceTimes.get(resourceId);
-		return doubleValueContainer != null;
+		return resourceTimeTrackingPolicies.get(resourceId);
 	}
 
 	/**
@@ -364,8 +398,8 @@ public final class ResourcesDataManager extends DataManager {
 	 */
 	@SuppressWarnings("unchecked")
 	public <T extends ResourceId> Set<T> getResourceIds() {
-		final Set<T> result = new LinkedHashSet<>(personResourceValues.size());
-		for (final ResourceId resourceId : personResourceValues.keySet()) {
+		final Set<T> result = new LinkedHashSet<>(resourceDefaultTimes.size());
+		for (final ResourceId resourceId : resourceDefaultTimes.keySet()) {
 			result.add((T) resourceId);
 		}
 		return result;
@@ -375,7 +409,7 @@ public final class ResourcesDataManager extends DataManager {
 		if (resourceId == null) {
 			throw new ContractException(ResourceError.NULL_RESOURCE_ID);
 		}
-		if (personResourceValues.containsKey(resourceId)) {
+		if (resourceDefaultTimes.containsKey(resourceId)) {
 			throw new ContractException(ResourceError.DUPLICATE_RESOURCE_ID, resourceId);
 		}
 	}
@@ -386,7 +420,7 @@ public final class ResourcesDataManager extends DataManager {
 	private void validateNewResourcePropertyId(final ResourceId resourceId,
 			final ResourcePropertyId resourcePropertyId) {
 
-		final Map<ResourcePropertyId, Object> map = resourcePropertyMap.get(resourceId);
+		final Map<ResourcePropertyId, PropertyDefinition> map = resourcePropertyDefinitions.get(resourceId);
 
 		if ((map != null) && map.containsKey(resourcePropertyId)) {
 			throw new ContractException(PropertyError.DUPLICATE_PROPERTY_DEFINITION, resourcePropertyId);
@@ -433,16 +467,16 @@ public final class ResourcesDataManager extends DataManager {
 			resourcePropertyDefinitions.put(resourceId, defMap);
 		}
 		defMap.put(resourcePropertyId, propertyDefinition);
-		Map<ResourcePropertyId, Object> map = resourcePropertyMap.get(resourceId);
-		if (map == null) {
-			map = new LinkedHashMap<>();
-			resourcePropertyMap.put(resourceId, map);
-		}
 
 		Object propertyValue;
 		Optional<Object> optionalValue = resourcePropertyInitialization.getValue();
 		if (optionalValue.isPresent()) {
 			propertyValue = optionalValue.get();
+			Map<ResourcePropertyId, Object> map = resourcePropertyValues.get(resourceId);
+			if (map == null) {
+				map = new LinkedHashMap<>();
+				resourcePropertyValues.put(resourceId, map);
+			}
 			map.put(resourcePropertyId, propertyValue);
 		} else {
 			propertyValue = propertyDefinition.getDefaultValue().get();
@@ -478,21 +512,10 @@ public final class ResourcesDataManager extends DataManager {
 		validateResourceTypeIsUnknown(resourceId);
 		boolean trackTimes = resourceIdAdditionMutationEvent.timeTrackingPolicy();
 		double resourceDefinitionTime = dataManagerContext.getTime();
-		resourceDefinitionTimes.put(resourceId, resourceDefinitionTime);
+		resourceDefaultTimes.put(resourceId, resourceDefinitionTime);
 
-		// if times for this resource will be tracked, then initialize tracking
-		// times to the current time
-		if (trackTimes) {
-			final DoubleValueContainer doubleValueContainer = new DoubleValueContainer(resourceDefinitionTime,
-					peopleDataManager::getPersonIndexIterator);
-			personResourceTimes.put(resourceId, doubleValueContainer);
-		}
-
-		// add a container to record person resource values, initializing all
-		// people to have 0.
-		final IntValueContainer intValueContainer = new IntValueContainer(0L,
-				peopleDataManager::getPersonIndexIterator);
-		personResourceValues.put(resourceId, intValueContainer);
+		
+		resourceTimeTrackingPolicies.put(resourceId, trackTimes);
 
 		// release notice that a new resource id has been added
 		if (dataManagerContext.subscribersExist(ResourceIdAdditionEvent.class)) {
@@ -564,10 +587,14 @@ public final class ResourcesDataManager extends DataManager {
 	public <T> T getResourcePropertyValue(final ResourceId resourceId, final ResourcePropertyId resourcePropertyId) {
 		validateResourceId(resourceId);
 		validateResourcePropertyId(resourceId, resourcePropertyId);
-		Object result = resourcePropertyMap.get(resourceId).get(resourcePropertyId);
+		Object result = null;
+		Map<ResourcePropertyId, Object> valueMap = resourcePropertyValues.get(resourceId);
+		if (valueMap != null) {
+			result = valueMap.get(resourcePropertyId);
+		}
 		if (result == null) {
-			Map<ResourcePropertyId, PropertyDefinition> map = resourcePropertyDefinitions.get(resourceId);
-			PropertyDefinition propertyDefinition = map.get(resourcePropertyId);
+			Map<ResourcePropertyId, PropertyDefinition> defMap = resourcePropertyDefinitions.get(resourceId);
+			PropertyDefinition propertyDefinition = defMap.get(resourcePropertyId);
 			result = propertyDefinition.getDefaultValue().get();
 		}
 		return (T) result;
@@ -584,12 +611,27 @@ public final class ResourcesDataManager extends DataManager {
 	 */
 	private void incrementPersonResourceLevel(final ResourceId resourceId, final PersonId personId,
 			final long resourceAmount) {
-		personResourceValues.get(resourceId).incrementLongValue(personId.getValue(), resourceAmount);
+		IntValueContainer intValueContainer = personResourceLevels.get(resourceId);
+		if (intValueContainer == null) {
+			intValueContainer = new IntValueContainer(0L, peopleDataManager::getPersonIndexIterator);
+			personResourceLevels.put(resourceId, intValueContainer);
+		}
+		intValueContainer.incrementLongValue(personId.getValue(), resourceAmount);
 		/*
 		 * if the resource assignment times are being tracked, then record the resource
 		 * time.
 		 */
-		final DoubleValueContainer doubleValueContainer = personResourceTimes.get(resourceId);
+		DoubleValueContainer doubleValueContainer = personResourceTimes.get(resourceId);
+		if (doubleValueContainer == null) {
+			Boolean track = resourceTimeTrackingPolicies.get(resourceId);
+			if (track) {
+				double resourceDefinitionTime = resourceDefaultTimes.get(resourceId);
+				doubleValueContainer = new DoubleValueContainer(resourceDefinitionTime,
+						peopleDataManager::getPersonIndexIterator);
+				personResourceTimes.put(resourceId, doubleValueContainer);
+			}
+		}
+
 		if (doubleValueContainer != null) {
 			doubleValueContainer.setValue(personId.getValue(), dataManagerContext.getTime());
 		}
@@ -626,49 +668,37 @@ public final class ResourcesDataManager extends DataManager {
 	}
 
 	private void loadResourcePropertyDefinitions() {
-		for (ResourceId resourceId : resourcesPluginData.getResourceIds()) {
-			Map<ResourcePropertyId, PropertyDefinition> defMap = new LinkedHashMap<>();
-			resourcePropertyDefinitions.put(resourceId, defMap);
-			for (ResourcePropertyId resourcePropertyId : resourcesPluginData.getResourcePropertyIds(resourceId)) {
-				PropertyDefinition propertyDefinition = resourcesPluginData.getResourcePropertyDefinition(resourceId,
-						resourcePropertyId);
-				defMap.put(resourcePropertyId, propertyDefinition);
-			}
-		}
+		resourcePropertyDefinitions = resourcesPluginData.getResourcePropertyDefinitions();
 	}
 
 	private void loadResourcePropertyValues() {
-		for (ResourceId resourceId : resourcesPluginData.getResourceIds()) {
-			Map<ResourcePropertyId, Object> map = new LinkedHashMap<>();
-			resourcePropertyMap.put(resourceId, map);
-			for (ResourcePropertyId resourcePropertyId : resourcesPluginData.getResourcePropertyIds(resourceId)) {
-				Optional<Object> optional = resourcesPluginData.getResourcePropertyValue(resourceId,
-						resourcePropertyId);
-				if (optional.isPresent()) {
-					map.put(resourcePropertyId, optional.get());
-				}
+		resourcePropertyValues = resourcesPluginData.getResourcePropertyValues();
+	}
+
+	private void loadResourceDefaultTimes() {
+		resourceDefaultTimes = resourcesPluginData.getResourceDefaultTimes();
+		for (ResourceId resourceId : resourceDefaultTimes.keySet()) {
+			Double resourceDefaultTime = resourceDefaultTimes.get(resourceId);
+			if (resourceDefaultTime > dataManagerContext.getTime()) {
+				throw new ContractException(ResourceError.RESOURCE_CREATION_TIME_EXCEEDS_SIM_TIME);
 			}
 		}
 	}
 
-	private void loadResourceDefinitionTimes() {
-		for (ResourceId resourceId : resourcesPluginData.getResourceIds()) {
-			Double resourceDefinitionTime = resourcesPluginData.getResourceDefaultTime(resourceId);
-			if (resourceDefinitionTime > dataManagerContext.getTime()) {
-				throw new ContractException(ResourceError.RESOURCE_CREATION_TIME_EXCEEDS_SIM_TIME);
-			}
-			resourceDefinitionTimes.put(resourceId, resourceDefinitionTime);
-		}
+	private void loadResourceTimeTrackingPolicies() {
+		resourceTimeTrackingPolicies = resourcesPluginData.getResourceTimeTrackingPolicies();
 	}
 
 	private void loadPersonResourceLevels() {
-		for (ResourceId resourceId : resourcesPluginData.getResourceIds()) {
-			// private final Map<ResourceId, IntValueContainer>
-			// personResourceValues = new LinkedHashMap<>();
+
+		Map<ResourceId, List<Long>> map = resourcesPluginData.getPersonResourceLevels();
+
+		for (ResourceId resourceId : map.keySet()) {
+
 			final IntValueContainer intValueContainer = new IntValueContainer(0L,
 					peopleDataManager::getPersonIndexIterator);
-			personResourceValues.put(resourceId, intValueContainer);
-			List<Long> personResourceLevels = resourcesPluginData.getPersonResourceLevels(resourceId);
+			personResourceLevels.put(resourceId, intValueContainer);
+			List<Long> personResourceLevels = map.get(resourceId);
 			// load the person levels here
 			int n = FastMath.max(personResourceLevels.size(), peopleDataManager.getPersonIdLimit());
 			for (int i = 0; i < n; i++) {
@@ -697,43 +727,43 @@ public final class ResourcesDataManager extends DataManager {
 	}
 
 	private void loadPersonResourceTimes() {
-		for (ResourceId resourceId : resourcesPluginData.getResourceIds()) {
-			boolean trackTimes = resourcesPluginData.getResourceTimeTrackingPolicy(resourceId);
-			if (trackTimes) {
-				double resourceDefinitionTime = resourceDefinitionTimes.get(resourceId);
-				final DoubleValueContainer doubleValueContainer = new DoubleValueContainer(resourceDefinitionTime,
-						peopleDataManager::getPersonIndexIterator);
-				personResourceTimes.put(resourceId, doubleValueContainer);
 
-				List<Double> personResourceTimes = resourcesPluginData.getPersonResourceTimes(resourceId);
-				int n = FastMath.max(personResourceTimes.size(), peopleDataManager.getPersonIdLimit());
-				for (int i = 0; i < n; i++) {
+		Map<ResourceId, List<Double>> map = resourcesPluginData.getPersonResourceTimes();
+		for (ResourceId resourceId : map.keySet()) {
+			double resourceDefinitionTime = resourceDefaultTimes.get(resourceId);
+			final DoubleValueContainer doubleValueContainer = new DoubleValueContainer(resourceDefinitionTime,
+					peopleDataManager::getPersonIndexIterator);
+			personResourceTimes.put(resourceId, doubleValueContainer);
 
-					Double value = null;
-					if (i < personResourceTimes.size()) {
-						value = personResourceTimes.get(i);
-					}
+			List<Double> personResourceTimes = map.get(resourceId);
+			int n = FastMath.max(personResourceTimes.size(), peopleDataManager.getPersonIdLimit());
+			for (int i = 0; i < n; i++) {
 
-					if (value != null && resourceDefinitionTime > value) {
-						throw new ContractException(ResourceError.RESOURCE_CREATION_TIME_EXCEEDS_SIM_TIME);
-					}
+				Double value = null;
+				if (i < personResourceTimes.size()) {
+					value = personResourceTimes.get(i);
+				}
 
-					if (peopleDataManager.personIndexExists(i)) {
-						if (value != null) {
-							if (value != 0) {
-								doubleValueContainer.setValue(i, value);
-							}
+				if (value != null && resourceDefinitionTime > value) {
+					throw new ContractException(ResourceError.RESOURCE_CREATION_TIME_EXCEEDS_SIM_TIME);
+				}
+
+				if (peopleDataManager.personIndexExists(i)) {
+					if (value != null) {
+						if (value != 0) {
+							doubleValueContainer.setValue(i, value);
 						}
-					} else {
-						if (value != null) {
-							throw new ContractException(PersonError.UNKNOWN_PERSON_ID,
-									"A non-null resource assignment time for person " + i + " for resource "
-											+ resourceId + " was found, but that person does not exist");
-						}
-
 					}
+				} else {
+					if (value != null) {
+						throw new ContractException(PersonError.UNKNOWN_PERSON_ID,
+								"A non-null resource assignment time for person " + i + " for resource " + resourceId
+										+ " was found, but that person does not exist");
+					}
+
 				}
 			}
+
 		}
 	}
 
@@ -825,12 +855,13 @@ public final class ResourcesDataManager extends DataManager {
 		peopleDataManager = dataManagerContext.getDataManager(PeopleDataManager.class);
 		regionsDataManager = dataManagerContext.getDataManager(RegionsDataManager.class);
 
+		loadResourceDefaultTimes();
+		loadResourceTimeTrackingPolicies();
+		loadRegionResourceLevels();
+		loadPersonResourceTimes();
+		loadPersonResourceLevels();
 		loadResourcePropertyDefinitions();
 		loadResourcePropertyValues();
-		loadResourceDefinitionTimes();
-		loadPersonResourceLevels();
-		loadPersonResourceTimes();
-		loadRegionResourceLevels();
 
 		dataManagerContext.subscribe(RegionAdditionEvent.class, this::handleRegionAdditionEvent);
 		dataManagerContext.subscribe(PersonImminentAdditionEvent.class, this::handlePersonAdditionEvent);
@@ -861,8 +892,43 @@ public final class ResourcesDataManager extends DataManager {
 
 	private void recordSimulationState(DataManagerContext dataManagerContext) {
 		ResourcesPluginData.Builder builder = ResourcesPluginData.builder();
-		Set<RegionId> regionIds = regionsDataManager.getRegionIds();
+
+		for (ResourceId resourceId : resourceDefaultTimes.keySet()) {
+			Boolean trackTimes = resourceTimeTrackingPolicies.get(resourceId);
+			Double defaultResourceTime = resourceDefaultTimes.get(resourceId);
+			builder.addResource(resourceId, defaultResourceTime, trackTimes);
+		}
+
 		List<PersonId> people = peopleDataManager.getPeople();
+
+		for (ResourceId resourceId : personResourceTimes.keySet()) {
+			Double defaultResourceTime = resourceDefaultTimes.get(resourceId);
+			DoubleValueContainer doubleValueContainer = personResourceTimes.get(resourceId);
+			for (PersonId personId : people) {
+				double personResourceTime = doubleValueContainer.getValue(personId.getValue());
+				if (personResourceTime != defaultResourceTime) {
+					builder.setPersonResourceTime(personId, resourceId, personResourceTime);
+				}
+			}
+		}
+
+		for (ResourceId resourceId : personResourceLevels.keySet()) {
+			IntValueContainer intValueContainer = personResourceLevels.get(resourceId);
+			for (PersonId personId : people) {
+				long resourceLevel = intValueContainer.getValueAsLong(personId.getValue());
+				if (resourceLevel != 0) {
+					builder.setPersonResourceLevel(personId, resourceId, resourceLevel);
+				}
+			}
+		}
+
+		for (ResourceId resourceId : resourcePropertyDefinitions.keySet()) {
+			Map<ResourcePropertyId, PropertyDefinition> map = resourcePropertyDefinitions.get(resourceId);
+			for (ResourcePropertyId resourcePropertyId : map.keySet()) {
+				PropertyDefinition propertyDefinition = map.get(resourcePropertyId);
+				builder.defineResourceProperty(resourceId, resourcePropertyId, propertyDefinition);
+			}
+		}
 
 		for (RegionId regionId : regionResources.keySet()) {
 			Map<ResourceId, MutableLong> map = regionResources.get(regionId);
@@ -872,35 +938,11 @@ public final class ResourcesDataManager extends DataManager {
 			}
 		}
 
-		for (ResourceId resourceId : getResourceIds()) {
-
-			Double defaultResourceTime = resourceDefinitionTimes.get(resourceId);
-			boolean trackTimes = getPersonResourceTimeTrackingPolicy(resourceId);
-			builder.addResource(resourceId, defaultResourceTime, trackTimes);
-			Map<ResourcePropertyId, Object> propertyMap = resourcePropertyMap.get(resourceId);
-			for (ResourcePropertyId resourcePropertyId : getResourcePropertyIds(resourceId)) {
-				PropertyDefinition propertyDefinition = getResourcePropertyDefinition(resourceId, resourcePropertyId);
-				builder.defineResourceProperty(resourceId, resourcePropertyId, propertyDefinition);
-				Object propertyValue = propertyMap.get(resourcePropertyId);
-				if (propertyValue != null) {
-					builder.setResourcePropertyValue(resourceId, resourcePropertyId, propertyValue);
-				}
-			}
-
-			for (PersonId personId : people) {
-				long personResourceLevel = getPersonResourceLevel(resourceId, personId);
-				if (personResourceLevel != 0) {
-					builder.setPersonResourceLevel(personId, resourceId, personResourceLevel);
-				}
-			}
-
-			if (trackTimes) {
-				for (PersonId personId : people) {
-					double personResourceTime = getPersonResourceTime(resourceId, personId);
-					if (personResourceTime != defaultResourceTime) {
-						builder.setPersonResourceTime(personId, resourceId, personResourceTime);
-					}
-				}
+		for (ResourceId resourceId : resourcePropertyValues.keySet()) {
+			Map<ResourcePropertyId, Object> map = resourcePropertyValues.get(resourceId);
+			for (ResourcePropertyId resourcePropertyId : map.keySet()) {
+				Object propertyValue = map.get(resourcePropertyId);
+				builder.setResourcePropertyValue(resourceId, resourcePropertyId, propertyValue);
 			}
 		}
 
@@ -929,7 +971,7 @@ public final class ResourcesDataManager extends DataManager {
 	 * Returns true if and only if the given resource id is known
 	 */
 	public boolean resourceIdExists(final ResourceId resourceId) {
-		return personResourceValues.containsKey(resourceId);
+		return resourceDefaultTimes.containsKey(resourceId);
 	}
 
 	/**
@@ -947,12 +989,7 @@ public final class ResourcesDataManager extends DataManager {
 			return false;
 		}
 
-		if (!map.containsKey(resourcePropertyId)) {
-			return false;
-		}
-
-		return true;
-
+		return map.containsKey(resourcePropertyId);
 	}
 
 	private void validatePersonExists(final PersonId personId) {
@@ -968,7 +1005,8 @@ public final class ResourcesDataManager extends DataManager {
 	 * Preconditions: the resource id must exist
 	 */
 	private void validatePersonResourceTimesTracked(final ResourceId resourceId) {
-		if (!personResourceTimes.containsKey(resourceId)) {
+		Boolean tracked = resourceTimeTrackingPolicies.get(resourceId);
+		if (!tracked) {
 			throw new ContractException(ResourceError.RESOURCE_ASSIGNMENT_TIME_NOT_TRACKED);
 		}
 	}
@@ -988,7 +1026,7 @@ public final class ResourcesDataManager extends DataManager {
 		if (resourceId == null) {
 			throw new ContractException(ResourceError.NULL_RESOURCE_ID);
 		}
-		if (!personResourceValues.containsKey(resourceId)) {
+		if (!resourceDefaultTimes.containsKey(resourceId)) {
 			throw new ContractException(ResourceError.UNKNOWN_RESOURCE_ID, resourceId);
 		}
 	}
@@ -1164,15 +1202,20 @@ public final class ResourcesDataManager extends DataManager {
 		validatePersonHasSufficientResources(resourceId, personId, amount);
 
 		if (dataManagerContext.subscribersExist(PersonResourceUpdateEvent.class)) {
-			final long oldLevel = personResourceValues.get(resourceId).getValueAsLong(personId.getValue());
-			decrementPersonResourceLevel(resourceId, personId, amount);
-			final long newLevel = personResourceValues.get(resourceId).getValueAsLong(personId.getValue());
-			dataManagerContext
-					.releaseObservationEvent(new PersonResourceUpdateEvent(personId, resourceId, oldLevel, newLevel));
+			IntValueContainer intValueContainer = personResourceLevels.get(resourceId);
+			if (intValueContainer != null) {
+				final long oldLevel = personResourceLevels.get(resourceId).getValueAsLong(personId.getValue());
+				decrementPersonResourceLevel(resourceId, personId, amount);
+				final long newLevel = personResourceLevels.get(resourceId).getValueAsLong(personId.getValue());
+				dataManagerContext.releaseObservationEvent(
+						new PersonResourceUpdateEvent(personId, resourceId, oldLevel, newLevel));
+			} else {
+				// validation above guarantees that the values are all zero
+				dataManagerContext.releaseObservationEvent(new PersonResourceUpdateEvent(personId, resourceId, 0, 0));
+			}
 		} else {
 			decrementPersonResourceLevel(resourceId, personId, amount);
 		}
-
 	}
 
 	/*
@@ -1180,8 +1223,13 @@ public final class ResourcesDataManager extends DataManager {
 	 */
 	private void validatePersonHasSufficientResources(final ResourceId resourceId, final PersonId personId,
 			final long amount) {
-		final long oldValue = personResourceValues.get(resourceId).getValueAsLong(personId.getValue());
-		if (oldValue < amount) {
+
+		long value = 0;
+		IntValueContainer intValueContainer = personResourceLevels.get(resourceId);
+		if (intValueContainer != null) {
+			value = intValueContainer.getValueAsLong(personId.getValue());
+		}
+		if (value < amount) {
 			throw new ContractException(ResourceError.INSUFFICIENT_RESOURCES_AVAILABLE);
 		}
 	}
@@ -1339,11 +1387,20 @@ public final class ResourcesDataManager extends DataManager {
 				.get(resourcePropertyId);
 		validateValueCompatibility(resourcePropertyId, propertyDefinition, resourcePropertyValue);
 		validatePropertyMutability(propertyDefinition);
-		Object oldPropertyValue = resourcePropertyMap.get(resourceId).get(resourcePropertyId);
+
+		Map<ResourcePropertyId, Object> map = resourcePropertyValues.get(resourceId);
+		if (map == null) {
+			map = new LinkedHashMap<>();
+			resourcePropertyValues.put(resourceId, map);
+		}
+
+		Object oldPropertyValue = map.get(resourcePropertyId);
+
 		if (oldPropertyValue == null) {
 			oldPropertyValue = propertyDefinition.getDefaultValue().get();
 		}
-		resourcePropertyMap.get(resourceId).put(resourcePropertyId, resourcePropertyValue);
+
+		map.put(resourcePropertyId, resourcePropertyValue);
 		if (dataManagerContext.subscribersExist(ResourcePropertyUpdateEvent.class)) {
 			dataManagerContext.releaseObservationEvent(new ResourcePropertyUpdateEvent(resourceId, resourcePropertyId,
 					oldPropertyValue, resourcePropertyValue));
@@ -1416,9 +1473,9 @@ public final class ResourcesDataManager extends DataManager {
 		final RegionId regionId = regionsDataManager.getPersonRegion(personId);
 		final long previousRegionResourceLevel = _getRegionResourceLevel(regionId, resourceId);
 		validateResourceAdditionValue(previousRegionResourceLevel, amount);
-		final long oldLevel = personResourceValues.get(resourceId).getValueAsLong(personId.getValue());
+		final long oldLevel = _getPersonResourceLevel(resourceId, personId);
 		decrementPersonResourceLevel(resourceId, personId, amount);
-		final long newLevel = personResourceValues.get(resourceId).getValueAsLong(personId.getValue());
+		final long newLevel = _getPersonResourceLevel(resourceId, personId);
 		incrementRegionResourceLevel(regionId, resourceId, amount);
 		long currentRegionResourceLevel = _getRegionResourceLevel(regionId, resourceId);
 		if (dataManagerContext.subscribersExist(PersonResourceUpdateEvent.class)) {
@@ -1478,14 +1535,14 @@ public final class ResourcesDataManager extends DataManager {
 		validateNonnegativeResourceAmount(amount);
 		final RegionId regionId = regionsDataManager.getPersonRegion(personId);
 		validateRegionHasSufficientResources(resourceId, regionId, amount);
-		final long personResourceLevel = personResourceValues.get(resourceId).getValueAsLong(personId.getValue());
+		final long personResourceLevel = _getPersonResourceLevel(resourceId, personId);
 		validateResourceAdditionValue(personResourceLevel, amount);
 
 		final long previousRegionResourceLevel = _getRegionResourceLevel(regionId, resourceId);
 
 		decrementRegionResourceLevel(regionId, resourceId, amount);
 		incrementPersonResourceLevel(resourceId, personId, amount);
-		final long newLevel = personResourceValues.get(resourceId).getValueAsLong(personId.getValue());
+		final long newLevel = _getPersonResourceLevel(resourceId, personId);
 		long currentRegionResourceLevel = _getRegionResourceLevel(regionId, resourceId);
 
 		if (dataManagerContext.subscribersExist(RegionResourceUpdateEvent.class)) {
@@ -1521,7 +1578,7 @@ public final class ResourcesDataManager extends DataManager {
 			final PersonRemovalEvent personRemovalEvent) {
 
 		PersonId personId = personRemovalEvent.personId();
-		for (final IntValueContainer intValueContainer : personResourceValues.values()) {
+		for (final IntValueContainer intValueContainer : personResourceLevels.values()) {
 			intValueContainer.setLongValue(personId.getValue(), 0);
 		}
 
@@ -1773,18 +1830,29 @@ public final class ResourcesDataManager extends DataManager {
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("ResourcesDataManager [resourcePropertyMap=");
-		builder.append(resourcePropertyMap);
-		builder.append(", personResourceValues=");
-		builder.append(personResourceValues);
+		builder.append("ResourcesDataManager [");
+
+		builder.append("resourceDefaultTimes=");
+		builder.append(resourceDefaultTimes);
+
+		builder.append(", resourcePropertyValues=");
+		builder.append(resourcePropertyValues);
+
+		builder.append(", personResourceLevels=");
+		builder.append(personResourceLevels);
+
 		builder.append(", resourcePropertyDefinitions=");
 		builder.append(resourcePropertyDefinitions);
-		builder.append(", resourceDefinitionTimes=");
-		builder.append(resourceDefinitionTimes);
+
+		builder.append(", resourceTimeTrackingPolicies=");
+		builder.append(resourceTimeTrackingPolicies);
+
 		builder.append(", personResourceTimes=");
-		builder.append(personResourceTimes);
+		builder.append(personResourceTimes.keySet());
+
 		builder.append(", regionResources=");
 		builder.append(regionResources);
+
 		builder.append("]");
 		return builder.toString();
 	}

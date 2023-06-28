@@ -7,11 +7,14 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Random;
 import java.util.Set;
 import java.util.function.Consumer;
 
@@ -86,15 +89,18 @@ public final class AT_ResourcesDataManager {
 		// show that the plugin data persists after multiple actions
 		List<RegionId> expectedRegionIds = new ArrayList<>();
 
-		ResourcesPluginData resourcesPluginData2 = ResourcesPluginData	.builder()
-																		.defineResourceProperty(TestResourceId.RESOURCE_1, TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE,
-																				TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE.getPropertyDefinition())
-																		.defineResourceProperty(TestResourceId.RESOURCE_2, TestResourcePropertyId.ResourceProperty_1_1_BOOLEAN_MUTABLE,
-																				TestResourcePropertyId.ResourceProperty_1_1_BOOLEAN_MUTABLE.getPropertyDefinition())
-																		.addResource(TestResourceId.RESOURCE_1, 0.0, false)//
-																		.addResource(TestResourceId.RESOURCE_2, 0.0, true)//
-																		.setResourcePropertyValue(TestResourceId.RESOURCE_1, TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE, 45)//
-																		.build();
+		ResourcesPluginData resourcesPluginData2 = ResourcesPluginData.builder()
+				.defineResourceProperty(TestResourceId.RESOURCE_1,
+						TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE,
+						TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE.getPropertyDefinition())
+				.defineResourceProperty(TestResourceId.RESOURCE_2,
+						TestResourcePropertyId.ResourceProperty_1_1_BOOLEAN_MUTABLE,
+						TestResourcePropertyId.ResourceProperty_1_1_BOOLEAN_MUTABLE.getPropertyDefinition())
+				.addResource(TestResourceId.RESOURCE_1, 0.0, false)//
+				.addResource(TestResourceId.RESOURCE_2, 0.0, true)//
+				.setResourcePropertyValue(TestResourceId.RESOURCE_1,
+						TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE, 45)//
+				.build();
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
@@ -115,42 +121,44 @@ public final class AT_ResourcesDataManager {
 			resourcesDataManager.addResourceId(TestResourceId.RESOURCE_3, false);
 			resourcesDataManager.addResourceToRegion(TestResourceId.RESOURCE_3, TestRegionId.REGION_2, 73);
 			resourcesDataManager.transferResourceFromPersonToRegion(TestResourceId.RESOURCE_2, new PersonId(0), 10);
-			resourcesDataManager.transferResourceBetweenRegions(TestResourceId.RESOURCE_2, TestRegionId.REGION_1, TestRegionId.REGION_2, 5);
+			resourcesDataManager.transferResourceBetweenRegions(TestResourceId.RESOURCE_2, TestRegionId.REGION_1,
+					TestRegionId.REGION_2, 5);
 			resourcesDataManager.expandCapacity(5);
 
 		}));
 
 		TestPluginData testPluginData2 = pluginBuilder.build();
-		Factory factory2 = ResourcesTestPluginFactory	.factory(2, 7939130943360648501L, testPluginData2)//
-														.setResourcesPluginData(resourcesPluginData2);
-		TestOutputConsumer testOutputConsumer2 = TestSimulation	.builder()//
-																.addPlugins(factory2.getPlugins())//
-																.setProduceSimulationStateOnHalt(true)//
-																.setSimulationHaltTime(2)//
-																.build()//
-																.execute();
-		Map<ResourcesPluginData, Integer> outputItems2 = testOutputConsumer2.getOutputItemMap(ResourcesPluginData.class);
+		Factory factory2 = ResourcesTestPluginFactory.factory(2, 7939130943360648501L, testPluginData2)//
+				.setResourcesPluginData(resourcesPluginData2);
+		TestOutputConsumer testOutputConsumer2 = TestSimulation.builder()//
+				.addPlugins(factory2.getPlugins())//
+				.setProduceSimulationStateOnHalt(true)//
+				.setSimulationHaltTime(2)//
+				.build()//
+				.execute();
+		Map<ResourcesPluginData, Integer> outputItems2 = testOutputConsumer2
+				.getOutputItemMap(ResourcesPluginData.class);
 		assertEquals(1, outputItems2.size());
 		ResourcesPluginData actualPluginData = outputItems2.keySet().iterator().next();
 		ResourcesPluginData expectedPluginData = ResourcesPluginData.builder()
-																	.defineResourceProperty(TestResourceId.RESOURCE_1, TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE,
-																			TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE.getPropertyDefinition())
-																	.defineResourceProperty(TestResourceId.RESOURCE_2, TestResourcePropertyId.ResourceProperty_1_1_BOOLEAN_MUTABLE,
-																			TestResourcePropertyId.ResourceProperty_1_1_BOOLEAN_MUTABLE.getPropertyDefinition())
-																	.addResource(TestResourceId.RESOURCE_1, 0.0, false)//
-																	.addResource(TestResourceId.RESOURCE_2, 0.0, true)//
-																	.addResource(TestResourceId.RESOURCE_3, 1.0, false)//
-																	.setResourcePropertyValue(TestResourceId.RESOURCE_1, TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE, 45)
-																	.setRegionResourceLevel(TestRegionId.REGION_1, TestResourceId.RESOURCE_1, 55)
-																	.setRegionResourceLevel(expectedRegionIds.get(0), TestResourceId.RESOURCE_2, 8)
-																	.setRegionResourceLevel(TestRegionId.REGION_2, TestResourceId.RESOURCE_2, 5)
-																	.setRegionResourceLevel(TestRegionId.REGION_2, TestResourceId.RESOURCE_3, 73)
-																	.setPersonResourceLevel(new PersonId(0), TestResourceId.RESOURCE_2, 20L)//
-																	.setPersonResourceTime(new PersonId(0), TestResourceId.RESOURCE_2, 1.0).build();
-		
-		
-		
-		
+				.defineResourceProperty(TestResourceId.RESOURCE_1,
+						TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE,
+						TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE.getPropertyDefinition())
+				.defineResourceProperty(TestResourceId.RESOURCE_2,
+						TestResourcePropertyId.ResourceProperty_1_1_BOOLEAN_MUTABLE,
+						TestResourcePropertyId.ResourceProperty_1_1_BOOLEAN_MUTABLE.getPropertyDefinition())
+				.addResource(TestResourceId.RESOURCE_1, 0.0, false)//
+				.addResource(TestResourceId.RESOURCE_2, 0.0, true)//
+				.addResource(TestResourceId.RESOURCE_3, 1.0, false)//
+				.setResourcePropertyValue(TestResourceId.RESOURCE_1,
+						TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE, 45)
+				.setRegionResourceLevel(TestRegionId.REGION_1, TestResourceId.RESOURCE_1, 55)
+				.setRegionResourceLevel(expectedRegionIds.get(0), TestResourceId.RESOURCE_2, 8)
+				.setRegionResourceLevel(TestRegionId.REGION_2, TestResourceId.RESOURCE_2, 5)
+				.setRegionResourceLevel(TestRegionId.REGION_2, TestResourceId.RESOURCE_3, 73)
+				.setPersonResourceLevel(new PersonId(0), TestResourceId.RESOURCE_2, 20L)//
+				.setPersonResourceTime(new PersonId(0), TestResourceId.RESOURCE_2, 1.0).build();
+
 		assertEquals(expectedPluginData, actualPluginData);
 	}
 
@@ -169,7 +177,8 @@ public final class AT_ResourcesDataManager {
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 
 			// create a person and set their resources
-			PersonConstructionData personConstructionData = PersonConstructionData.builder().add(TestRegionId.REGION_1).build();
+			PersonConstructionData personConstructionData = PersonConstructionData.builder().add(TestRegionId.REGION_1)
+					.build();
 			PersonId personId = peopleDataManager.addPerson(personConstructionData);
 			mutablePersonId.setValue(personId);
 
@@ -197,7 +206,8 @@ public final class AT_ResourcesDataManager {
 			assertFalse(peopleDataManager.personExists(personId));
 
 			for (TestResourceId testResourceId : TestResourceId.values()) {
-				assertThrows(ContractException.class, () -> resourcesDataManager.getPersonResourceLevel(testResourceId, personId));
+				assertThrows(ContractException.class,
+						() -> resourcesDataManager.getPersonResourceLevel(testResourceId, personId));
 			}
 
 		}));
@@ -262,7 +272,8 @@ public final class AT_ResourcesDataManager {
 	@Test
 	@UnitTestConstructor(target = ResourcesDataManager.class, args = { ResourcesPluginData.class })
 	public void testConstructor() {
-		ContractException contractException = assertThrows(ContractException.class, () -> new ResourcesDataManager(null));
+		ContractException contractException = assertThrows(ContractException.class,
+				() -> new ResourcesDataManager(null));
 		assertEquals(ResourceError.NULL_RESOURCE_PLUGIN_DATA, contractException.getErrorType());
 	}
 
@@ -271,7 +282,8 @@ public final class AT_ResourcesDataManager {
 	public void testExpandCapacity() {
 		Factory factory = ResourcesTestPluginFactory.factory(100, 9107703044214388523L, (c) -> {
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
-			ContractException contractException = assertThrows(ContractException.class, () -> resourcesDataManager.expandCapacity(-1));
+			ContractException contractException = assertThrows(ContractException.class,
+					() -> resourcesDataManager.expandCapacity(-1));
 			assertEquals(PersonError.NEGATIVE_GROWTH_PROJECTION, contractException.getErrorType());
 		});
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
@@ -329,7 +341,8 @@ public final class AT_ResourcesDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(target = ResourcesDataManager.class, name = "getPersonResourceLevel", args = { ResourceId.class, PersonId.class })
+	@UnitTestMethod(target = ResourcesDataManager.class, name = "getPersonResourceLevel", args = { ResourceId.class,
+			PersonId.class })
 	public void testGetPersonResourceLevel() {
 
 		Factory factory = ResourcesTestPluginFactory.factory(20, 110987310555566746L, (c) -> {
@@ -392,7 +405,8 @@ public final class AT_ResourcesDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(target = ResourcesDataManager.class, name = "getPersonResourceTime", args = { ResourceId.class, PersonId.class })
+	@UnitTestMethod(target = ResourcesDataManager.class, name = "getPersonResourceTime", args = { ResourceId.class,
+			PersonId.class })
 	public void testGetPersonResourceTime() {
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
@@ -421,7 +435,8 @@ public final class AT_ResourcesDataManager {
 			// tracked
 			int trackedResourceCount = 0;
 			for (ResourceId resourceId : resourceIds) {
-				boolean personResourceTimeTrackingPolicy = resourcesDataManager.getPersonResourceTimeTrackingPolicy(resourceId);
+				boolean personResourceTimeTrackingPolicy = resourcesDataManager
+						.getPersonResourceTimeTrackingPolicy(resourceId);
 				if (personResourceTimeTrackingPolicy) {
 					trackedResourceCount++;
 				}
@@ -517,9 +532,8 @@ public final class AT_ResourcesDataManager {
 				}
 			}
 			/*
-			 * Show that the number of time values that were tested is equal to
-			 * the size of the population times the number of time-tracked
-			 * resources
+			 * Show that the number of time values that were tested is equal to the size of
+			 * the population times the number of time-tracked resources
 			 */
 
 			int trackedResourceCount = 0;
@@ -538,8 +552,7 @@ public final class AT_ResourcesDataManager {
 		Factory factory = ResourcesTestPluginFactory.factory(30, 3274189520478045515L, testPluginData);
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 		/*
-		 * precondition test: if the assignment times for the resource are not
-		 * tracked
+		 * precondition test: if the assignment times for the resource are not tracked
 		 */
 		ContractException contractException = assertThrows(ContractException.class, () -> {
 			Factory factory2 = ResourcesTestPluginFactory.factory(30, 4631279382559646912L, (c) -> {
@@ -583,7 +596,8 @@ public final class AT_ResourcesDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(target = ResourcesDataManager.class, name = "getPersonResourceTimeTrackingPolicy", args = { ResourceId.class })
+	@UnitTestMethod(target = ResourcesDataManager.class, name = "getPersonResourceTimeTrackingPolicy", args = {
+			ResourceId.class })
 	public void testGetPersonResourceTimeTrackingPolicy() {
 
 		Factory factory = ResourcesTestPluginFactory.factory(5, 757175164544632409L, (c) -> {
@@ -620,7 +634,8 @@ public final class AT_ResourcesDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(target = ResourcesDataManager.class, name = "getRegionResourceLevel", args = { RegionId.class, ResourceId.class })
+	@UnitTestMethod(target = ResourcesDataManager.class, name = "getRegionResourceLevel", args = { RegionId.class,
+			ResourceId.class })
 	public void testGetRegionResourceLevel() {
 
 		Factory factory = ResourcesTestPluginFactory.factory(20, 6606932435911201728L, (c) -> {
@@ -660,7 +675,8 @@ public final class AT_ResourcesDataManager {
 		contractException = assertThrows(ContractException.class, () -> {
 			Factory factory2 = ResourcesTestPluginFactory.factory(20, 7954290176104108412L, (c) -> {
 				ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
-				resourcesDataManager.getRegionResourceLevel(TestRegionId.REGION_1, TestResourceId.getUnknownResourceId());
+				resourcesDataManager.getRegionResourceLevel(TestRegionId.REGION_1,
+						TestResourceId.getUnknownResourceId());
 			});
 			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
 		});
@@ -680,7 +696,8 @@ public final class AT_ResourcesDataManager {
 		contractException = assertThrows(ContractException.class, () -> {
 			Factory factory2 = ResourcesTestPluginFactory.factory(20, 8256630838791330328L, (c) -> {
 				ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
-				resourcesDataManager.getRegionResourceLevel(TestRegionId.getUnknownRegionId(), TestResourceId.RESOURCE_1);
+				resourcesDataManager.getRegionResourceLevel(TestRegionId.getUnknownRegionId(),
+						TestResourceId.RESOURCE_1);
 			});
 			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
 		});
@@ -706,7 +723,8 @@ public final class AT_ResourcesDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(target = ResourcesDataManager.class, name = "getResourcePropertyDefinition", args = { ResourceId.class, ResourcePropertyId.class })
+	@UnitTestMethod(target = ResourcesDataManager.class, name = "getResourcePropertyDefinition", args = {
+			ResourceId.class, ResourcePropertyId.class })
 	public void testGetResourcePropertyDefinition() {
 
 		Factory factory = ResourcesTestPluginFactory.factory(5, 7619546908709928867L, (c) -> {
@@ -715,7 +733,8 @@ public final class AT_ResourcesDataManager {
 			// resource property enum are present
 			for (TestResourcePropertyId testResourcePropertyId : TestResourcePropertyId.values()) {
 				PropertyDefinition expectedPropertyDefinition = testResourcePropertyId.getPropertyDefinition();
-				PropertyDefinition actualPropertyDefinition = resourcesDataManager.getResourcePropertyDefinition(testResourcePropertyId.getTestResourceId(), testResourcePropertyId);
+				PropertyDefinition actualPropertyDefinition = resourcesDataManager.getResourcePropertyDefinition(
+						testResourcePropertyId.getTestResourceId(), testResourcePropertyId);
 				assertEquals(expectedPropertyDefinition, actualPropertyDefinition);
 			}
 		});
@@ -731,7 +750,8 @@ public final class AT_ResourcesDataManager {
 			// show that the resource property ids are the test resource
 			// property ids
 			for (TestResourceId testResourceId : TestResourceId.values()) {
-				Set<TestResourcePropertyId> expectedPropertyIds = TestResourcePropertyId.getTestResourcePropertyIds(testResourceId);
+				Set<TestResourcePropertyId> expectedPropertyIds = TestResourcePropertyId
+						.getTestResourcePropertyIds(testResourceId);
 				Set<ResourcePropertyId> actualPropertyIds = resourcesDataManager.getResourcePropertyIds(testResourceId);
 				assertEquals(expectedPropertyIds, actualPropertyIds);
 			}
@@ -761,7 +781,8 @@ public final class AT_ResourcesDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(target = ResourcesDataManager.class, name = "getResourcePropertyValue", args = { ResourceId.class, ResourcePropertyId.class })
+	@UnitTestMethod(target = ResourcesDataManager.class, name = "getResourcePropertyValue", args = { ResourceId.class,
+			ResourcePropertyId.class })
 	public void testGetResourcePropertyValue() {
 
 		Factory factory = ResourcesTestPluginFactory.factory(10, 8757871520559824784L, (c) -> {
@@ -772,8 +793,10 @@ public final class AT_ResourcesDataManager {
 			// establish the expected values of all resource properties
 			Map<MultiKey, Object> expectedValues = new LinkedHashMap<>();
 			for (TestResourceId testResourceId : TestResourceId.values()) {
-				for (TestResourcePropertyId testResourcePropertyId : TestResourcePropertyId.getTestResourcePropertyIds(testResourceId)) {
-					Object propertyValue = resourcesDataManager.getResourcePropertyValue(testResourceId, testResourcePropertyId);
+				for (TestResourcePropertyId testResourcePropertyId : TestResourcePropertyId
+						.getTestResourcePropertyIds(testResourceId)) {
+					Object propertyValue = resourcesDataManager.getResourcePropertyValue(testResourceId,
+							testResourcePropertyId);
 					expectedValues.put(new MultiKey(testResourceId, testResourcePropertyId), propertyValue);
 				}
 			}
@@ -782,19 +805,22 @@ public final class AT_ResourcesDataManager {
 			int updateCount = 0;
 			for (int i = 0; i < 1000; i++) {
 				TestResourceId testResourceId = TestResourceId.getRandomResourceId(randomGenerator);
-				TestResourcePropertyId testResourcePropertyId = TestResourcePropertyId.getRandomResourcePropertyId(testResourceId, randomGenerator);
-				PropertyDefinition resourcePropertyDefinition = resourcesDataManager.getResourcePropertyDefinition(testResourceId, testResourcePropertyId);
+				TestResourcePropertyId testResourcePropertyId = TestResourcePropertyId
+						.getRandomResourcePropertyId(testResourceId, randomGenerator);
+				PropertyDefinition resourcePropertyDefinition = resourcesDataManager
+						.getResourcePropertyDefinition(testResourceId, testResourcePropertyId);
 				if (resourcePropertyDefinition.propertyValuesAreMutable()) {
 					Object propertyValue = testResourcePropertyId.getRandomPropertyValue(randomGenerator);
-					resourcesDataManager.setResourcePropertyValue(testResourceId, testResourcePropertyId, propertyValue);
+					resourcesDataManager.setResourcePropertyValue(testResourceId, testResourcePropertyId,
+							propertyValue);
 					expectedValues.put(new MultiKey(testResourceId, testResourcePropertyId), propertyValue);
 					updateCount++;
 				}
 			}
 
 			/*
-			 * Show that the number of updates was reasonable - some of the
-			 * properties are not mutable so it will be <1000
+			 * Show that the number of updates was reasonable - some of the properties are
+			 * not mutable so it will be <1000
 			 */
 			assertTrue(updateCount > 500);
 
@@ -803,7 +829,8 @@ public final class AT_ResourcesDataManager {
 				TestResourceId testResourceId = multiKey.getKey(0);
 				TestResourcePropertyId testResourcePropertyId = multiKey.getKey(1);
 				Object expectedValue = expectedValues.get(multiKey);
-				Object actualValue = resourcesDataManager.getResourcePropertyValue(testResourceId, testResourcePropertyId);
+				Object actualValue = resourcesDataManager.getResourcePropertyValue(testResourceId,
+						testResourcePropertyId);
 				assertEquals(expectedValue, actualValue);
 			}
 
@@ -815,7 +842,8 @@ public final class AT_ResourcesDataManager {
 		ContractException contractException = assertThrows(ContractException.class, () -> {
 			Factory factory2 = ResourcesTestPluginFactory.factory(10, 5856579804289926491L, (c) -> {
 				ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
-				resourcesDataManager.getResourcePropertyValue(null, TestResourcePropertyId.ResourceProperty_1_1_BOOLEAN_MUTABLE);
+				resourcesDataManager.getResourcePropertyValue(null,
+						TestResourcePropertyId.ResourceProperty_1_1_BOOLEAN_MUTABLE);
 			});
 			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
 		});
@@ -825,7 +853,8 @@ public final class AT_ResourcesDataManager {
 		contractException = assertThrows(ContractException.class, () -> {
 			Factory factory2 = ResourcesTestPluginFactory.factory(10, 1735955680485266104L, (c) -> {
 				ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
-				resourcesDataManager.getResourcePropertyValue(TestResourceId.getUnknownResourceId(), TestResourcePropertyId.ResourceProperty_1_1_BOOLEAN_MUTABLE);
+				resourcesDataManager.getResourcePropertyValue(TestResourceId.getUnknownResourceId(),
+						TestResourcePropertyId.ResourceProperty_1_1_BOOLEAN_MUTABLE);
 			});
 			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
 		});
@@ -845,7 +874,8 @@ public final class AT_ResourcesDataManager {
 		contractException = assertThrows(ContractException.class, () -> {
 			Factory factory2 = ResourcesTestPluginFactory.factory(10, 3394498124288646142L, (c) -> {
 				ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
-				resourcesDataManager.getResourcePropertyValue(TestResourceId.RESOURCE_1, TestResourcePropertyId.ResourceProperty_2_1_BOOLEAN_MUTABLE);
+				resourcesDataManager.getResourcePropertyValue(TestResourceId.RESOURCE_1,
+						TestResourcePropertyId.ResourceProperty_2_1_BOOLEAN_MUTABLE);
 			});
 			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
 		});
@@ -855,7 +885,8 @@ public final class AT_ResourcesDataManager {
 		contractException = assertThrows(ContractException.class, () -> {
 			Factory factory2 = ResourcesTestPluginFactory.factory(10, 2505584646755789288L, (c) -> {
 				ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
-				resourcesDataManager.getResourcePropertyValue(TestResourceId.RESOURCE_1, TestResourcePropertyId.getUnknownResourcePropertyId());
+				resourcesDataManager.getResourcePropertyValue(TestResourceId.RESOURCE_1,
+						TestResourcePropertyId.getUnknownResourcePropertyId());
 			});
 			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
 		});
@@ -883,7 +914,8 @@ public final class AT_ResourcesDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(target = ResourcesDataManager.class, name = "resourcePropertyIdExists", args = { ResourceId.class, ResourcePropertyId.class })
+	@UnitTestMethod(target = ResourcesDataManager.class, name = "resourcePropertyIdExists", args = { ResourceId.class,
+			ResourcePropertyId.class })
 	public void testResourcePropertyIdExists() {
 
 		Factory factory = ResourcesTestPluginFactory.factory(5, 8074706630609416041L, (c) -> {
@@ -893,22 +925,29 @@ public final class AT_ResourcesDataManager {
 			// resource property ids
 
 			for (TestResourcePropertyId testResourcePropertyId : TestResourcePropertyId.values()) {
-				assertTrue(resourcesDataManager.resourcePropertyIdExists(testResourcePropertyId.getTestResourceId(), testResourcePropertyId));
+				assertTrue(resourcesDataManager.resourcePropertyIdExists(testResourcePropertyId.getTestResourceId(),
+						testResourcePropertyId));
 			}
 
-			assertFalse(resourcesDataManager.resourcePropertyIdExists(TestResourceId.RESOURCE_1, TestResourcePropertyId.ResourceProperty_2_1_BOOLEAN_MUTABLE));
-			assertFalse(resourcesDataManager.resourcePropertyIdExists(null, TestResourcePropertyId.ResourceProperty_2_1_BOOLEAN_MUTABLE));
+			assertFalse(resourcesDataManager.resourcePropertyIdExists(TestResourceId.RESOURCE_1,
+					TestResourcePropertyId.ResourceProperty_2_1_BOOLEAN_MUTABLE));
+			assertFalse(resourcesDataManager.resourcePropertyIdExists(null,
+					TestResourcePropertyId.ResourceProperty_2_1_BOOLEAN_MUTABLE));
 			assertFalse(resourcesDataManager.resourcePropertyIdExists(TestResourceId.RESOURCE_1, null));
-			assertFalse(resourcesDataManager.resourcePropertyIdExists(TestResourceId.RESOURCE_1, TestResourcePropertyId.getUnknownResourcePropertyId()));
-			assertFalse(resourcesDataManager.resourcePropertyIdExists(TestResourceId.getUnknownResourceId(), TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE));
-			assertFalse(resourcesDataManager.resourcePropertyIdExists(TestResourceId.getUnknownResourceId(), TestResourcePropertyId.getUnknownResourcePropertyId()));
+			assertFalse(resourcesDataManager.resourcePropertyIdExists(TestResourceId.RESOURCE_1,
+					TestResourcePropertyId.getUnknownResourcePropertyId()));
+			assertFalse(resourcesDataManager.resourcePropertyIdExists(TestResourceId.getUnknownResourceId(),
+					TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE));
+			assertFalse(resourcesDataManager.resourcePropertyIdExists(TestResourceId.getUnknownResourceId(),
+					TestResourcePropertyId.getUnknownResourcePropertyId()));
 
 		});
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
 	@Test
-	@UnitTestMethod(target = ResourcesDataManager.class, name = "defineResourceProperty", args = { ResourcePropertyInitialization.class })
+	@UnitTestMethod(target = ResourcesDataManager.class, name = "defineResourceProperty", args = {
+			ResourcePropertyInitialization.class })
 
 	public void testDefineResourceProperty() {
 
@@ -920,7 +959,8 @@ public final class AT_ResourcesDataManager {
 		// have an actor observe the ResourcePropertyAdditionEvent events
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
 			c.subscribe(EventFilter.builder(ResourcePropertyDefinitionEvent.class).build(), (c2, e) -> {
-				MultiKey multiKey = new MultiKey(c2.getTime(), e.resourceId(), e.resourcePropertyId(), e.resourcePropertyValue());
+				MultiKey multiKey = new MultiKey(c2.getTime(), e.resourceId(), e.resourcePropertyId(),
+						e.resourcePropertyValue());
 				actualObservations.add(multiKey);
 			});
 		}));
@@ -929,18 +969,21 @@ public final class AT_ResourcesDataManager {
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 			ResourcePropertyId newResourcePropertyId = TestResourcePropertyId.getUnknownResourcePropertyId();
-			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Double.class).setDefaultValue(34.6).build();
+			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Double.class)
+					.setDefaultValue(34.6).build();
 			ResourcePropertyInitialization resourcePropertyInitialization = //
-					ResourcePropertyInitialization	.builder()//
-													.setPropertyDefinition(propertyDefinition)//
-													.setResourceId(TestResourceId.RESOURCE_1)//
-													.setResourcePropertyId(newResourcePropertyId)//
-													.build();
+					ResourcePropertyInitialization.builder()//
+							.setPropertyDefinition(propertyDefinition)//
+							.setResourceId(TestResourceId.RESOURCE_1)//
+							.setResourcePropertyId(newResourcePropertyId)//
+							.build();
 			resourcesDataManager.defineResourceProperty(resourcePropertyInitialization);
 			assertTrue(resourcesDataManager.resourcePropertyIdExists(TestResourceId.RESOURCE_1, newResourcePropertyId));
-			PropertyDefinition actualDefinition = resourcesDataManager.getResourcePropertyDefinition(TestResourceId.RESOURCE_1, newResourcePropertyId);
+			PropertyDefinition actualDefinition = resourcesDataManager
+					.getResourcePropertyDefinition(TestResourceId.RESOURCE_1, newResourcePropertyId);
 			assertEquals(propertyDefinition, actualDefinition);
-			MultiKey multiKey = new MultiKey(c.getTime(), TestResourceId.RESOURCE_1, newResourcePropertyId, propertyDefinition.getDefaultValue().get());
+			MultiKey multiKey = new MultiKey(c.getTime(), TestResourceId.RESOURCE_1, newResourcePropertyId,
+					propertyDefinition.getDefaultValue().get());
 			expectedObservations.add(multiKey);
 		}));
 
@@ -948,20 +991,23 @@ public final class AT_ResourcesDataManager {
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(2, (c) -> {
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 			ResourcePropertyId newResourcePropertyId = TestResourcePropertyId.getUnknownResourcePropertyId();
-			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(String.class).setDefaultValue("default").build();
+			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(String.class)
+					.setDefaultValue("default").build();
 
 			ResourcePropertyInitialization resourcePropertyInitialization = //
-					ResourcePropertyInitialization	.builder()//
-													.setPropertyDefinition(propertyDefinition)//
-													.setResourceId(TestResourceId.RESOURCE_2)//
-													.setResourcePropertyId(newResourcePropertyId)//
-													.build();
+					ResourcePropertyInitialization.builder()//
+							.setPropertyDefinition(propertyDefinition)//
+							.setResourceId(TestResourceId.RESOURCE_2)//
+							.setResourcePropertyId(newResourcePropertyId)//
+							.build();
 			resourcesDataManager.defineResourceProperty(resourcePropertyInitialization);
 
 			assertTrue(resourcesDataManager.resourcePropertyIdExists(TestResourceId.RESOURCE_2, newResourcePropertyId));
-			PropertyDefinition actualDefinition = resourcesDataManager.getResourcePropertyDefinition(TestResourceId.RESOURCE_2, newResourcePropertyId);
+			PropertyDefinition actualDefinition = resourcesDataManager
+					.getResourcePropertyDefinition(TestResourceId.RESOURCE_2, newResourcePropertyId);
 			assertEquals(propertyDefinition, actualDefinition);
-			MultiKey multiKey = new MultiKey(c.getTime(), TestResourceId.RESOURCE_2, newResourcePropertyId, propertyDefinition.getDefaultValue().get());
+			MultiKey multiKey = new MultiKey(c.getTime(), TestResourceId.RESOURCE_2, newResourcePropertyId,
+					propertyDefinition.getDefaultValue().get());
 			expectedObservations.add(multiKey);
 		}));
 
@@ -979,13 +1025,14 @@ public final class AT_ResourcesDataManager {
 		ContractException contractException = assertThrows(ContractException.class, () -> {
 			Factory factory2 = ResourcesTestPluginFactory.factory(5, 6361316703720629700L, (c) -> {
 				ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
-				PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(1).build();
+				PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class)
+						.setDefaultValue(1).build();
 				ResourcePropertyInitialization resourcePropertyInitialization = //
-						ResourcePropertyInitialization	.builder()//
-														.setPropertyDefinition(propertyDefinition)//
-														.setResourceId(TestResourceId.getUnknownResourceId())//
-														.setResourcePropertyId(TestResourcePropertyId.getUnknownResourcePropertyId())//
-														.build();
+						ResourcePropertyInitialization.builder()//
+								.setPropertyDefinition(propertyDefinition)//
+								.setResourceId(TestResourceId.getUnknownResourceId())//
+								.setResourcePropertyId(TestResourcePropertyId.getUnknownResourcePropertyId())//
+								.build();
 				resourcesDataManager.defineResourceProperty(resourcePropertyInitialization);
 			});
 
@@ -997,13 +1044,14 @@ public final class AT_ResourcesDataManager {
 		contractException = assertThrows(ContractException.class, () -> {
 			Factory factory2 = ResourcesTestPluginFactory.factory(5, 3114198987897928160L, (c) -> {
 				ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
-				PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(1).build();
+				PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class)
+						.setDefaultValue(1).build();
 				ResourcePropertyInitialization resourcePropertyInitialization = //
-						ResourcePropertyInitialization	.builder()//
-														.setPropertyDefinition(propertyDefinition)//
-														.setResourceId(TestResourceId.RESOURCE_1)//
-														.setResourcePropertyId(TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE)//
-														.build();
+						ResourcePropertyInitialization.builder()//
+								.setPropertyDefinition(propertyDefinition)//
+								.setResourceId(TestResourceId.RESOURCE_1)//
+								.setResourcePropertyId(TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE)//
+								.build();
 				resourcesDataManager.defineResourceProperty(resourcePropertyInitialization);
 			});
 			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
@@ -1013,7 +1061,8 @@ public final class AT_ResourcesDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(target = ResourcesDataManager.class, name = "addResourceId", args = { ResourceId.class, boolean.class })
+	@UnitTestMethod(target = ResourcesDataManager.class, name = "addResourceId", args = { ResourceId.class,
+			boolean.class })
 	public void testAddResourceId() {
 
 		ResourceId newResourceId1 = TestResourceId.getUnknownResourceId();
@@ -1082,7 +1131,8 @@ public final class AT_ResourcesDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(target = ResourcesDataManager.class, name = "setResourcePropertyValue", args = { ResourceId.class, ResourcePropertyId.class, Object.class })
+	@UnitTestMethod(target = ResourcesDataManager.class, name = "setResourcePropertyValue", args = { ResourceId.class,
+			ResourcePropertyId.class, Object.class })
 	public void testSetResourcePropertyValue() {
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
@@ -1094,11 +1144,14 @@ public final class AT_ResourcesDataManager {
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 			for (TestResourceId testResourceId : TestResourceId.values()) {
-				Set<TestResourcePropertyId> testResourcePropertyIds = TestResourcePropertyId.getTestResourcePropertyIds(testResourceId);
+				Set<TestResourcePropertyId> testResourcePropertyIds = TestResourcePropertyId
+						.getTestResourcePropertyIds(testResourceId);
 				for (TestResourcePropertyId testResourcePropertyId : testResourcePropertyIds) {
-					EventFilter<ResourcePropertyUpdateEvent> eventFilter = resourcesDataManager.getEventFilterForResourcePropertyUpdateEvent(testResourceId, testResourcePropertyId);
+					EventFilter<ResourcePropertyUpdateEvent> eventFilter = resourcesDataManager
+							.getEventFilterForResourcePropertyUpdateEvent(testResourceId, testResourcePropertyId);
 					c.subscribe(eventFilter, (c2, e) -> {
-						actualObservations.add(new MultiKey(e.resourceId(), e.resourcePropertyId(), e.previousPropertyValue(), e.currentPropertyValue()));
+						actualObservations.add(new MultiKey(e.resourceId(), e.resourcePropertyId(),
+								e.previousPropertyValue(), e.currentPropertyValue()));
 					});
 				}
 			}
@@ -1113,19 +1166,25 @@ public final class AT_ResourcesDataManager {
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 
 			for (TestResourceId testResourceId : TestResourceId.values()) {
-				Set<TestResourcePropertyId> testResourcePropertyIds = TestResourcePropertyId.getTestResourcePropertyIds(testResourceId);
+				Set<TestResourcePropertyId> testResourcePropertyIds = TestResourcePropertyId
+						.getTestResourcePropertyIds(testResourceId);
 				for (TestResourcePropertyId testResourcePropertyId : testResourcePropertyIds) {
-					PropertyDefinition propertyDefinition = resourcesDataManager.getResourcePropertyDefinition(testResourceId, testResourcePropertyId);
+					PropertyDefinition propertyDefinition = resourcesDataManager
+							.getResourcePropertyDefinition(testResourceId, testResourcePropertyId);
 					if (propertyDefinition.propertyValuesAreMutable()) {
 						// update the property value
-						Object resourcePropertyValue = resourcesDataManager.getResourcePropertyValue(testResourceId, testResourcePropertyId);
+						Object resourcePropertyValue = resourcesDataManager.getResourcePropertyValue(testResourceId,
+								testResourcePropertyId);
 						Object expectedValue = testResourcePropertyId.getRandomPropertyValue(randomGenerator);
-						resourcesDataManager.setResourcePropertyValue(testResourceId, testResourcePropertyId, expectedValue);
+						resourcesDataManager.setResourcePropertyValue(testResourceId, testResourcePropertyId,
+								expectedValue);
 						// show that the property value was changed
-						Object actualValue = resourcesDataManager.getResourcePropertyValue(testResourceId, testResourcePropertyId);
+						Object actualValue = resourcesDataManager.getResourcePropertyValue(testResourceId,
+								testResourcePropertyId);
 						assertEquals(expectedValue, actualValue);
 
-						expectedObservations.add(new MultiKey(testResourceId, testResourcePropertyId, resourcePropertyValue, expectedValue));
+						expectedObservations.add(new MultiKey(testResourceId, testResourcePropertyId,
+								resourcePropertyValue, expectedValue));
 					}
 				}
 			}
@@ -1159,7 +1218,8 @@ public final class AT_ResourcesDataManager {
 				ResourcePropertyId resourcePropertyId = TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE;
 				ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 				Object value = 10;
-				resourcesDataManager.setResourcePropertyValue(TestResourceId.getUnknownResourceId(), resourcePropertyId, value);
+				resourcesDataManager.setResourcePropertyValue(TestResourceId.getUnknownResourceId(), resourcePropertyId,
+						value);
 			});
 			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
 		});
@@ -1183,7 +1243,8 @@ public final class AT_ResourcesDataManager {
 				ResourceId resourceId = TestResourceId.RESOURCE_1;
 				ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 				Object value = 10;
-				resourcesDataManager.setResourcePropertyValue(resourceId, TestResourcePropertyId.getUnknownResourcePropertyId(), value);
+				resourcesDataManager.setResourcePropertyValue(resourceId,
+						TestResourcePropertyId.getUnknownResourcePropertyId(), value);
 			});
 			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
 		});
@@ -1202,8 +1263,8 @@ public final class AT_ResourcesDataManager {
 		assertEquals(PropertyError.NULL_PROPERTY_VALUE, contractException.getErrorType());
 
 		/*
-		 * precondition test: if the resource property value is incompatible
-		 * with the corresponding property definition
+		 * precondition test: if the resource property value is incompatible with the
+		 * corresponding property definition
 		 */
 		contractException = assertThrows(ContractException.class, () -> {
 			Factory factory2 = ResourcesTestPluginFactory.factory(0, 8731358919842250070L, (c) -> {
@@ -1221,7 +1282,8 @@ public final class AT_ResourcesDataManager {
 			Factory factory2 = ResourcesTestPluginFactory.factory(0, 2773568485593496806L, (c) -> {
 				ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 				Object value = 10;
-				resourcesDataManager.setResourcePropertyValue(TestResourceId.RESOURCE_5, TestResourcePropertyId.ResourceProperty_5_1_INTEGER_IMMUTABLE, value);
+				resourcesDataManager.setResourcePropertyValue(TestResourceId.RESOURCE_5,
+						TestResourcePropertyId.ResourceProperty_5_1_INTEGER_IMMUTABLE, value);
 			});
 			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
 		});
@@ -1230,7 +1292,8 @@ public final class AT_ResourcesDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(target = ResourcesDataManager.class, name = "removeResourceFromPerson", args = { ResourceId.class, PersonId.class, long.class })
+	@UnitTestMethod(target = ResourcesDataManager.class, name = "removeResourceFromPerson", args = { ResourceId.class,
+			PersonId.class, long.class })
 	public void testPersonResourceRemovalEvent() {
 
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
@@ -1260,9 +1323,11 @@ public final class AT_ResourcesDataManager {
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(1, (c) -> {
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 			for (TestResourceId testResourceId : TestResourceId.values()) {
-				EventFilter<PersonResourceUpdateEvent> eventFilter = resourcesDataManager.getEventFilterForPersonResourceUpdateEvent(testResourceId);
+				EventFilter<PersonResourceUpdateEvent> eventFilter = resourcesDataManager
+						.getEventFilterForPersonResourceUpdateEvent(testResourceId);
 				c.subscribe(eventFilter, (c2, e) -> {
-					actualObservations.add(new MultiKey(e.personId(), e.resourceId(), e.previousResourceLevel(), e.currentResourceLevel()));
+					actualObservations.add(new MultiKey(e.personId(), e.resourceId(), e.previousResourceLevel(),
+							e.currentResourceLevel()));
 				});
 			}
 		}));
@@ -1298,7 +1363,8 @@ public final class AT_ResourcesDataManager {
 					long actualPersonResourceLevel = resourcesDataManager.getPersonResourceLevel(resourceId, personId);
 					assertEquals(expectedPersonResourceLevel, actualPersonResourceLevel);
 
-					expectedObservations.add(new MultiKey(personId, resourceId, personResourceLevel, expectedPersonResourceLevel));
+					expectedObservations
+							.add(new MultiKey(personId, resourceId, personResourceLevel, expectedPersonResourceLevel));
 
 				}
 
@@ -1418,8 +1484,8 @@ public final class AT_ResourcesDataManager {
 		assertEquals(ResourceError.NEGATIVE_RESOURCE_AMOUNT, contractException.getErrorType());
 
 		/*
-		 * precondition test: if the person does not have the required amount of
-		 * the resource
+		 * precondition test: if the person does not have the required amount of the
+		 * resource
 		 */
 		contractException = assertThrows(ContractException.class, () -> {
 			Factory factory2 = ResourcesTestPluginFactory.factory(50, 6668079690803354725L, (c) -> {
@@ -1442,7 +1508,8 @@ public final class AT_ResourcesDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(target = ResourcesDataManager.class, name = "removeResourceFromRegion", args = { ResourceId.class, RegionId.class, long.class })
+	@UnitTestMethod(target = ResourcesDataManager.class, name = "removeResourceFromRegion", args = { ResourceId.class,
+			RegionId.class, long.class })
 	public void testRegionResourceRemovalEvent() {
 
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
@@ -1468,9 +1535,11 @@ public final class AT_ResourcesDataManager {
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 			for (TestRegionId testRegionId : TestRegionId.values()) {
 				for (TestResourceId testResourceId : TestResourceId.values()) {
-					EventFilter<RegionResourceUpdateEvent> eventFilter = resourcesDataManager.getEventFilterForRegionResourceUpdateEvent(testResourceId, testRegionId);
+					EventFilter<RegionResourceUpdateEvent> eventFilter = resourcesDataManager
+							.getEventFilterForRegionResourceUpdateEvent(testResourceId, testRegionId);
 					c.subscribe(eventFilter, (c2, e) -> {
-						actualObservations.add(new MultiKey(e.regionId(), e.resourceId(), e.previousResourceLevel(), e.currentResourceLevel()));
+						actualObservations.add(new MultiKey(e.regionId(), e.resourceId(), e.previousResourceLevel(),
+								e.currentResourceLevel()));
 					});
 				}
 			}
@@ -1582,8 +1651,8 @@ public final class AT_ResourcesDataManager {
 		assertEquals(ResourceError.NEGATIVE_RESOURCE_AMOUNT, contractException.getErrorType());
 
 		/*
-		 * precondition test: if the region does not have the required amount of
-		 * the resource
+		 * precondition test: if the region does not have the required amount of the
+		 * resource
 		 */
 		contractException = assertThrows(ContractException.class, () -> {
 			Factory factory2 = ResourcesTestPluginFactory.factory(0, 4875324598998641428L, (c) -> {
@@ -1599,7 +1668,8 @@ public final class AT_ResourcesDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(target = ResourcesDataManager.class, name = "transferResourceBetweenRegions", args = { ResourceId.class, RegionId.class, RegionId.class, long.class })
+	@UnitTestMethod(target = ResourcesDataManager.class, name = "transferResourceBetweenRegions", args = {
+			ResourceId.class, RegionId.class, RegionId.class, long.class })
 	public void testTransferResourceBetweenRegions() {
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
@@ -1612,9 +1682,11 @@ public final class AT_ResourcesDataManager {
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 			for (TestRegionId testRegionId : TestRegionId.values()) {
 				for (TestResourceId testResourceId : TestResourceId.values()) {
-					EventFilter<RegionResourceUpdateEvent> eventFilter = resourcesDataManager.getEventFilterForRegionResourceUpdateEvent(testResourceId, testRegionId);
+					EventFilter<RegionResourceUpdateEvent> eventFilter = resourcesDataManager
+							.getEventFilterForRegionResourceUpdateEvent(testResourceId, testRegionId);
 					c.subscribe(eventFilter, (c2, e) -> {
-						actualObservations.add(new MultiKey(e.regionId(), e.resourceId(), e.previousResourceLevel(), e.currentResourceLevel()));
+						actualObservations.add(new MultiKey(e.regionId(), e.resourceId(), e.previousResourceLevel(),
+								e.currentResourceLevel()));
 					});
 				}
 			}
@@ -1632,7 +1704,8 @@ public final class AT_ResourcesDataManager {
 				for (TestResourceId testResourceId : TestResourceId.values()) {
 					long resourceLevel = resourcesDataManager.getRegionResourceLevel(testRegionId, testResourceId);
 					resourcesDataManager.addResourceToRegion(testResourceId, testRegionId, 100L);
-					expectedObservations.add(new MultiKey(testRegionId, testResourceId, resourceLevel, 100L + resourceLevel));
+					expectedObservations
+							.add(new MultiKey(testRegionId, testResourceId, resourceLevel, 100L + resourceLevel));
 				}
 			}
 
@@ -1665,8 +1738,10 @@ public final class AT_ResourcesDataManager {
 						assertEquals(expectedRegion1Level, actualRegion1Level);
 						assertEquals(expectedRegion2Level, actualRegion2Level);
 
-						expectedObservations.add(new MultiKey(regionId1, resourceId, region1Level, expectedRegion1Level));
-						expectedObservations.add(new MultiKey(regionId2, resourceId, region2Level, expectedRegion2Level));
+						expectedObservations
+								.add(new MultiKey(regionId1, resourceId, region1Level, expectedRegion1Level));
+						expectedObservations
+								.add(new MultiKey(regionId2, resourceId, region2Level, expectedRegion2Level));
 
 					}
 				}
@@ -1723,7 +1798,8 @@ public final class AT_ResourcesDataManager {
 						resourcesDataManager.addResourceToRegion(testResourceId, testRegionId, 100L);
 					}
 				}
-				resourcesDataManager.transferResourceBetweenRegions(resourceId, TestRegionId.getUnknownRegionId(), regionId2, amount);
+				resourcesDataManager.transferResourceBetweenRegions(resourceId, TestRegionId.getUnknownRegionId(),
+						regionId2, amount);
 			});
 			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
 		});
@@ -1765,7 +1841,8 @@ public final class AT_ResourcesDataManager {
 						resourcesDataManager.addResourceToRegion(testResourceId, testRegionId, 100L);
 					}
 				}
-				resourcesDataManager.transferResourceBetweenRegions(resourceId, regionId1, TestRegionId.getUnknownRegionId(), amount);
+				resourcesDataManager.transferResourceBetweenRegions(resourceId, regionId1,
+						TestRegionId.getUnknownRegionId(), amount);
 			});
 			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
 		});
@@ -1807,7 +1884,8 @@ public final class AT_ResourcesDataManager {
 						resourcesDataManager.addResourceToRegion(testResourceId, testRegionId, 100L);
 					}
 				}
-				resourcesDataManager.transferResourceBetweenRegions(TestResourceId.getUnknownResourceId(), regionId1, regionId2, amount);
+				resourcesDataManager.transferResourceBetweenRegions(TestResourceId.getUnknownResourceId(), regionId1,
+						regionId2, amount);
 			});
 			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
 		});
@@ -1856,8 +1934,8 @@ public final class AT_ResourcesDataManager {
 		assertEquals(ResourceError.REFLEXIVE_RESOURCE_TRANSFER, contractException.getErrorType());
 
 		/*
-		 * precondition test: if the source region does not have sufficient
-		 * resources to support the transfer
+		 * precondition test: if the source region does not have sufficient resources to
+		 * support the transfer
 		 */
 		contractException = assertThrows(ContractException.class, () -> {
 			Factory factory2 = ResourcesTestPluginFactory.factory(0, 9136536902267748610L, (c) -> {
@@ -1880,8 +1958,8 @@ public final class AT_ResourcesDataManager {
 		assertEquals(ResourceError.INSUFFICIENT_RESOURCES_AVAILABLE, contractException.getErrorType());
 
 		/*
-		 * precondition test: if the transfer will cause a numeric overflow in
-		 * the destination region
+		 * precondition test: if the transfer will cause a numeric overflow in the
+		 * destination region
 		 */
 		contractException = assertThrows(ContractException.class, () -> {
 			Factory factory2 = ResourcesTestPluginFactory.factory(0, 342832088592207841L, (c) -> {
@@ -1910,7 +1988,8 @@ public final class AT_ResourcesDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(target = ResourcesDataManager.class, name = "transferResourceFromPersonToRegion", args = { ResourceId.class, PersonId.class, long.class })
+	@UnitTestMethod(target = ResourcesDataManager.class, name = "transferResourceFromPersonToRegion", args = {
+			ResourceId.class, PersonId.class, long.class })
 	public void testResourceTransferFromPersonEvent() {
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
@@ -1941,16 +2020,20 @@ public final class AT_ResourcesDataManager {
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 			for (TestRegionId testRegionId : TestRegionId.values()) {
 				for (TestResourceId testResourceId : TestResourceId.values()) {
-					EventFilter<RegionResourceUpdateEvent> eventFilter = resourcesDataManager.getEventFilterForRegionResourceUpdateEvent(testResourceId, testRegionId);
+					EventFilter<RegionResourceUpdateEvent> eventFilter = resourcesDataManager
+							.getEventFilterForRegionResourceUpdateEvent(testResourceId, testRegionId);
 					c.subscribe(eventFilter, (c2, e) -> {
-						actualObservations.add(new MultiKey(e.regionId(), e.resourceId(), e.previousResourceLevel(), e.currentResourceLevel()));
+						actualObservations.add(new MultiKey(e.regionId(), e.resourceId(), e.previousResourceLevel(),
+								e.currentResourceLevel()));
 					});
 				}
 			}
 			for (TestResourceId testResourceId : TestResourceId.values()) {
-				EventFilter<PersonResourceUpdateEvent> eventFilter = resourcesDataManager.getEventFilterForPersonResourceUpdateEvent(testResourceId);
+				EventFilter<PersonResourceUpdateEvent> eventFilter = resourcesDataManager
+						.getEventFilterForPersonResourceUpdateEvent(testResourceId);
 				c.subscribe(eventFilter, (c2, e) -> {
-					actualObservations.add(new MultiKey(e.personId(), e.resourceId(), e.previousResourceLevel(), e.currentResourceLevel()));
+					actualObservations.add(new MultiKey(e.personId(), e.resourceId(), e.previousResourceLevel(),
+							e.currentResourceLevel()));
 				});
 			}
 
@@ -1987,8 +2070,10 @@ public final class AT_ResourcesDataManager {
 					assertEquals(expectedPersonResourceLevel, actualPersonResourceLevel);
 					assertEquals(expectedRegionResourceLevel, actualRegionResourceLevel);
 
-					expectedObservations.add(new MultiKey(regionId, resourceId, regionResourceLevel, expectedRegionResourceLevel));
-					expectedObservations.add(new MultiKey(personId, resourceId, personResourceLevel, expectedPersonResourceLevel));
+					expectedObservations
+							.add(new MultiKey(regionId, resourceId, regionResourceLevel, expectedRegionResourceLevel));
+					expectedObservations
+							.add(new MultiKey(personId, resourceId, personResourceLevel, expectedPersonResourceLevel));
 
 				}
 			}
@@ -2023,27 +2108,33 @@ public final class AT_ResourcesDataManager {
 
 			// if the person id is null
 
-			ContractException contractException = assertThrows(ContractException.class, () -> resourcesDataManager.transferResourceFromPersonToRegion(resourceId, null, amount));
+			ContractException contractException = assertThrows(ContractException.class,
+					() -> resourcesDataManager.transferResourceFromPersonToRegion(resourceId, null, amount));
 			assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
 
 			// if the person does not exist
-			contractException = assertThrows(ContractException.class, () -> resourcesDataManager.transferResourceFromPersonToRegion(resourceId, new PersonId(3434), amount));
+			contractException = assertThrows(ContractException.class, () -> resourcesDataManager
+					.transferResourceFromPersonToRegion(resourceId, new PersonId(3434), amount));
 			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
 
 			// if the resource id is null
-			contractException = assertThrows(ContractException.class, () -> resourcesDataManager.transferResourceFromPersonToRegion(null, personId, amount));
+			contractException = assertThrows(ContractException.class,
+					() -> resourcesDataManager.transferResourceFromPersonToRegion(null, personId, amount));
 			assertEquals(ResourceError.NULL_RESOURCE_ID, contractException.getErrorType());
 
 			// if the resource id is unknown
-			contractException = assertThrows(ContractException.class, () -> resourcesDataManager.transferResourceFromPersonToRegion(TestResourceId.getUnknownResourceId(), personId, amount));
+			contractException = assertThrows(ContractException.class, () -> resourcesDataManager
+					.transferResourceFromPersonToRegion(TestResourceId.getUnknownResourceId(), personId, amount));
 			assertEquals(ResourceError.UNKNOWN_RESOURCE_ID, contractException.getErrorType());
 
 			// if the amount is negative
-			contractException = assertThrows(ContractException.class, () -> resourcesDataManager.transferResourceFromPersonToRegion(resourceId, personId, -1L));
+			contractException = assertThrows(ContractException.class,
+					() -> resourcesDataManager.transferResourceFromPersonToRegion(resourceId, personId, -1L));
 			assertEquals(ResourceError.NEGATIVE_RESOURCE_AMOUNT, contractException.getErrorType());
 
 			// if the person does not have the required amount of the resource
-			contractException = assertThrows(ContractException.class, () -> resourcesDataManager.transferResourceFromPersonToRegion(resourceId, personId, 1000000));
+			contractException = assertThrows(ContractException.class,
+					() -> resourcesDataManager.transferResourceFromPersonToRegion(resourceId, personId, 1000000));
 			assertEquals(ResourceError.INSUFFICIENT_RESOURCES_AVAILABLE, contractException.getErrorType());
 
 			// if the transfer results in an overflow of the region's resource
@@ -2066,7 +2157,8 @@ public final class AT_ResourcesDataManager {
 
 			// attempt to transfer the person's inventory back to the region
 
-			contractException = assertThrows(ContractException.class, () -> resourcesDataManager.transferResourceFromPersonToRegion(resourceId, personId, Long.MAX_VALUE));
+			contractException = assertThrows(ContractException.class, () -> resourcesDataManager
+					.transferResourceFromPersonToRegion(resourceId, personId, Long.MAX_VALUE));
 			assertEquals(ResourceError.RESOURCE_ARITHMETIC_EXCEPTION, contractException.getErrorType());
 
 		}));
@@ -2079,7 +2171,8 @@ public final class AT_ResourcesDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(target = ResourcesDataManager.class, name = "transferResourceToPersonFromRegion", args = { ResourceId.class, PersonId.class, long.class })
+	@UnitTestMethod(target = ResourcesDataManager.class, name = "transferResourceToPersonFromRegion", args = {
+			ResourceId.class, PersonId.class, long.class })
 	public void testResourceTransferToPersonEvent() {
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
@@ -2110,17 +2203,21 @@ public final class AT_ResourcesDataManager {
 
 			for (TestRegionId testRegionId : TestRegionId.values()) {
 				for (TestResourceId testResourceId : TestResourceId.values()) {
-					EventFilter<RegionResourceUpdateEvent> eventFilter = resourcesDataManager.getEventFilterForRegionResourceUpdateEvent(testResourceId, testRegionId);
+					EventFilter<RegionResourceUpdateEvent> eventFilter = resourcesDataManager
+							.getEventFilterForRegionResourceUpdateEvent(testResourceId, testRegionId);
 					c.subscribe(eventFilter, (c2, e) -> {
-						actualObservations.add(new MultiKey(e.regionId(), e.resourceId(), e.previousResourceLevel(), e.currentResourceLevel()));
+						actualObservations.add(new MultiKey(e.regionId(), e.resourceId(), e.previousResourceLevel(),
+								e.currentResourceLevel()));
 					});
 				}
 			}
 
 			for (TestResourceId testResourceId : TestResourceId.values()) {
-				EventFilter<PersonResourceUpdateEvent> eventFilter = resourcesDataManager.getEventFilterForPersonResourceUpdateEvent(testResourceId);
+				EventFilter<PersonResourceUpdateEvent> eventFilter = resourcesDataManager
+						.getEventFilterForPersonResourceUpdateEvent(testResourceId);
 				c.subscribe(eventFilter, (c2, e) -> {
-					actualObservations.add(new MultiKey(e.personId(), e.resourceId(), e.previousResourceLevel(), e.currentResourceLevel()));
+					actualObservations.add(new MultiKey(e.personId(), e.resourceId(), e.previousResourceLevel(),
+							e.currentResourceLevel()));
 
 				});
 			}
@@ -2158,8 +2255,10 @@ public final class AT_ResourcesDataManager {
 					assertEquals(expectedPersonResourceLevel, actualPersonResourceLevel);
 					assertEquals(expectedRegionResourceLevel, actualRegionResourceLevel);
 
-					expectedObservations.add(new MultiKey(regionId, resourceId, regionResourceLevel, expectedRegionResourceLevel));
-					expectedObservations.add(new MultiKey(personId, resourceId, personResourceLevel, expectedPersonResourceLevel));
+					expectedObservations
+							.add(new MultiKey(regionId, resourceId, regionResourceLevel, expectedRegionResourceLevel));
+					expectedObservations
+							.add(new MultiKey(personId, resourceId, personResourceLevel, expectedPersonResourceLevel));
 
 				}
 			}
@@ -2246,7 +2345,8 @@ public final class AT_ResourcesDataManager {
 				for (TestResourceId testResourceId : TestResourceId.values()) {
 					resourcesDataManager.addResourceToRegion(testResourceId, regionId, 100L);
 				}
-				resourcesDataManager.transferResourceToPersonFromRegion(TestResourceId.getUnknownResourceId(), personId, amount);
+				resourcesDataManager.transferResourceToPersonFromRegion(TestResourceId.getUnknownResourceId(), personId,
+						amount);
 			});
 			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
 		});
@@ -2271,8 +2371,8 @@ public final class AT_ResourcesDataManager {
 		assertEquals(ResourceError.NEGATIVE_RESOURCE_AMOUNT, contractException.getErrorType());
 
 		/*
-		 * precondition test: if the region does not have the required amount of
-		 * the resource
+		 * precondition test: if the region does not have the required amount of the
+		 * resource
 		 */
 		contractException = assertThrows(ContractException.class, () -> {
 			Factory factory2 = ResourcesTestPluginFactory.factory(30, 1022333582572896703L, (c) -> {
@@ -2292,8 +2392,8 @@ public final class AT_ResourcesDataManager {
 		assertEquals(ResourceError.INSUFFICIENT_RESOURCES_AVAILABLE, contractException.getErrorType());
 
 		/*
-		 * precondition test: if the transfer results in an overflow of the
-		 * person's resource level
+		 * precondition test: if the transfer results in an overflow of the person's
+		 * resource level
 		 */
 		contractException = assertThrows(ContractException.class, () -> {
 			Factory factory2 = ResourcesTestPluginFactory.factory(30, 1989550065510462161L, (c) -> {
@@ -2334,7 +2434,8 @@ public final class AT_ResourcesDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(target = ResourcesDataManager.class, name = "addResourceToRegion", args = { ResourceId.class, RegionId.class, long.class })
+	@UnitTestMethod(target = ResourcesDataManager.class, name = "addResourceToRegion", args = { ResourceId.class,
+			RegionId.class, long.class })
 	public void testAddResourceToRegion() {
 
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
@@ -2348,9 +2449,11 @@ public final class AT_ResourcesDataManager {
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 			for (TestRegionId testRegionId : TestRegionId.values()) {
 				for (TestResourceId testResourceId : TestResourceId.values()) {
-					EventFilter<RegionResourceUpdateEvent> eventFilter = resourcesDataManager.getEventFilterForRegionResourceUpdateEvent(testResourceId, testRegionId);
+					EventFilter<RegionResourceUpdateEvent> eventFilter = resourcesDataManager
+							.getEventFilterForRegionResourceUpdateEvent(testResourceId, testRegionId);
 					c.subscribe(eventFilter, (c2, e) -> {
-						actualObservations.add(new MultiKey(e.regionId(), e.resourceId(), e.previousResourceLevel(), e.currentResourceLevel()));
+						actualObservations.add(new MultiKey(e.regionId(), e.resourceId(), e.previousResourceLevel(),
+								e.currentResourceLevel()));
 					});
 				}
 			}
@@ -2502,7 +2605,8 @@ public final class AT_ResourcesDataManager {
 					if (randomGenerator.nextBoolean()) {
 						int amount = randomGenerator.nextInt(30) + 1;
 						mutableInteger.setValue(amount);
-						ResourceInitialization resourceInitialization = new ResourceInitialization(testResourceId, (long) amount);
+						ResourceInitialization resourceInitialization = new ResourceInitialization(testResourceId,
+								(long) amount);
 						builder.add(resourceInitialization);
 					}
 				}
@@ -2513,7 +2617,8 @@ public final class AT_ResourcesDataManager {
 
 				// show that the person has the correct resource levels
 				for (TestResourceId testResourceId : TestResourceId.values()) {
-					int actualPersonResourceLevel = (int) resourcesDataManager.getPersonResourceLevel(testResourceId, personId);
+					int actualPersonResourceLevel = (int) resourcesDataManager.getPersonResourceLevel(testResourceId,
+							personId);
 					int expectedPersonResourceLevel = expectedResources.get(testResourceId).getValue();
 					assertEquals(expectedPersonResourceLevel, actualPersonResourceLevel);
 				}
@@ -2527,15 +2632,16 @@ public final class AT_ResourcesDataManager {
 			Factory factory2 = ResourcesTestPluginFactory.factory(0, 3508334533286675130L, (c) -> {
 				PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 				/*
-				 * Precondition tests for the validity of the person id are
-				 * shadowed by other plugins and cannot be easily tested
+				 * Precondition tests for the validity of the person id are shadowed by other
+				 * plugins and cannot be easily tested
 				 */
 
 				/*
-				 * if the auxiliary data contains a ResourceInitialization that
-				 * has a null resource id
+				 * if the auxiliary data contains a ResourceInitialization that has a null
+				 * resource id
 				 */
-				peopleDataManager.addPerson(PersonConstructionData.builder().add(TestRegionId.REGION_1).add(new ResourceInitialization(null, 15L)).build());
+				peopleDataManager.addPerson(PersonConstructionData.builder().add(TestRegionId.REGION_1)
+						.add(new ResourceInitialization(null, 15L)).build());
 			});
 			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
 		});
@@ -2548,19 +2654,19 @@ public final class AT_ResourcesDataManager {
 				PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 
 				/*
-				 * Precondition tests for the validity of the person id are
-				 * shadowed by other plugins and cannot be easily tested
+				 * Precondition tests for the validity of the person id are shadowed by other
+				 * plugins and cannot be easily tested
 				 */
 
 				/*
-				 * if the auxiliary data contains a ResourceInitialization that
-				 * has an unknown resource id
+				 * if the auxiliary data contains a ResourceInitialization that has an unknown
+				 * resource id
 				 */
 
-				peopleDataManager.addPerson(PersonConstructionData	.builder()//
-																	.add(TestRegionId.REGION_2)//
-																	.add(new ResourceInitialization(TestResourceId.getUnknownResourceId(), 15L))//
-																	.build());
+				peopleDataManager.addPerson(PersonConstructionData.builder()//
+						.add(TestRegionId.REGION_2)//
+						.add(new ResourceInitialization(TestResourceId.getUnknownResourceId(), 15L))//
+						.build());
 
 			});
 			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
@@ -2573,19 +2679,19 @@ public final class AT_ResourcesDataManager {
 				PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 
 				/*
-				 * Precondition tests for the validity of the person id are
-				 * shadowed by other plugins and cannot be easily tested
+				 * Precondition tests for the validity of the person id are shadowed by other
+				 * plugins and cannot be easily tested
 				 */
 
 				/*
-				 * if the auxiliary data contains a ResourceInitialization that
-				 * has a negative resource level
+				 * if the auxiliary data contains a ResourceInitialization that has a negative
+				 * resource level
 				 */
 
-				peopleDataManager.addPerson(PersonConstructionData	.builder()//
-																	.add(TestRegionId.REGION_3)//
-																	.add(new ResourceInitialization(TestResourceId.RESOURCE_1, -15L))//
-																	.build());//
+				peopleDataManager.addPerson(PersonConstructionData.builder()//
+						.add(TestRegionId.REGION_3)//
+						.add(new ResourceInitialization(TestResourceId.RESOURCE_1, -15L))//
+						.build());//
 
 			});
 			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
@@ -2599,8 +2705,8 @@ public final class AT_ResourcesDataManager {
 	public void testRegionAdditionEvent() {
 
 		/*
-		 * show that a newly added region will cause the resource data manager
-		 * to return the expected levels from the event.
+		 * show that a newly added region will cause the resource data manager to return
+		 * the expected levels from the event.
 		 */
 
 		Factory factory = ResourcesTestPluginFactory.factory(0, 7471968091128250788L, (c) -> {
@@ -2615,8 +2721,8 @@ public final class AT_ResourcesDataManager {
 			expectedValues.put(TestResourceId.RESOURCE_2, 432L);
 
 			RegionConstructionData.Builder regionConstructionDataBuilder = //
-					RegionConstructionData	.builder()//
-											.setRegionId(newRegionId);
+					RegionConstructionData.builder()//
+							.setRegionId(newRegionId);
 
 			for (TestResourceId testResourceId : TestResourceId.values()) {
 				Long amount = expectedValues.get(testResourceId);
@@ -2639,8 +2745,8 @@ public final class AT_ResourcesDataManager {
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 		/*
-		 * show that an unknown region will cause the resource data manager to
-		 * throw an exception when retrieving a resource level for that region
+		 * show that an unknown region will cause the resource data manager to throw an
+		 * exception when retrieving a resource level for that region
 		 */
 		assertThrows(ContractException.class, () -> {
 			Factory factory2 = ResourcesTestPluginFactory.factory(0, 4192802703078518338L, (c) -> {
@@ -2653,8 +2759,7 @@ public final class AT_ResourcesDataManager {
 	}
 
 	/**
-	 * Demonstrates that the data manager's initial state reflects its plugin
-	 * data
+	 * Demonstrates that the data manager's initial state reflects its plugin data
 	 */
 	@Test
 	@UnitTestMethod(target = ResourcesDataManager.class, name = "init", args = { DataManagerContext.class })
@@ -2777,16 +2882,21 @@ public final class AT_ResourcesDataManager {
 			}
 
 			for (ResourceId resourceId : resourcesPluginData.getResourceIds()) {
-				Set<ResourcePropertyId> expectedResourcePropertyIds = resourcesPluginData.getResourcePropertyIds(resourceId);
-				Set<ResourcePropertyId> actualResourcePropertyIds = resourcesDataManager.getResourcePropertyIds(resourceId);
+				Set<ResourcePropertyId> expectedResourcePropertyIds = resourcesPluginData
+						.getResourcePropertyIds(resourceId);
+				Set<ResourcePropertyId> actualResourcePropertyIds = resourcesDataManager
+						.getResourcePropertyIds(resourceId);
 				assertEquals(expectedResourcePropertyIds, actualResourcePropertyIds);
 
 				for (ResourcePropertyId resourcePropertyId : expectedResourcePropertyIds) {
-					PropertyDefinition expectedDefinition = resourcesPluginData.getResourcePropertyDefinition(resourceId, resourcePropertyId);
-					PropertyDefinition actualDefinition = resourcesDataManager.getResourcePropertyDefinition(resourceId, resourcePropertyId);
+					PropertyDefinition expectedDefinition = resourcesPluginData
+							.getResourcePropertyDefinition(resourceId, resourcePropertyId);
+					PropertyDefinition actualDefinition = resourcesDataManager.getResourcePropertyDefinition(resourceId,
+							resourcePropertyId);
 					assertEquals(expectedDefinition, actualDefinition);
 
-					Optional<Object> optional = resourcesPluginData.getResourcePropertyValue(resourceId, resourcePropertyId);
+					Optional<Object> optional = resourcesPluginData.getResourcePropertyValue(resourceId,
+							resourcePropertyId);
 					assertTrue(optional.isPresent());
 					Object expectedValue = optional.get();
 					Object actualValue = resourcesDataManager.getResourcePropertyValue(resourceId, resourcePropertyId);
@@ -2798,13 +2908,15 @@ public final class AT_ResourcesDataManager {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		Factory factory = ResourcesTestPluginFactory.factory(initialPopulation, initialPopulation, testPluginData).setResourcesPluginData(resourcesPluginData);
+		Factory factory = ResourcesTestPluginFactory.factory(initialPopulation, initialPopulation, testPluginData)
+				.setResourcesPluginData(resourcesPluginData);
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 	}
 
 	@Test
-	@UnitTestMethod(target = ResourcesDataManager.class, name = "getEventFilterForPersonResourceUpdateEvent", args = { ResourceId.class })
+	@UnitTestMethod(target = ResourcesDataManager.class, name = "getEventFilterForPersonResourceUpdateEvent", args = {
+			ResourceId.class })
 	public void testGetEventFilterForPersonResourceUpdateEvent_Resource() {
 
 		Set<TestResourceId> selectedResources = new LinkedHashSet<>();
@@ -2841,7 +2953,8 @@ public final class AT_ResourcesDataManager {
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 
 			for (TestResourceId testResourceId : selectedResources) {
-				EventFilter<PersonResourceUpdateEvent> eventFilter = resourcesDataManager.getEventFilterForPersonResourceUpdateEvent(testResourceId);
+				EventFilter<PersonResourceUpdateEvent> eventFilter = resourcesDataManager
+						.getEventFilterForPersonResourceUpdateEvent(testResourceId);
 				c.subscribe(eventFilter, (c2, e) -> {
 					actualObservations.add(new MultiKey(c.getTime(), e.personId(), e.resourceId()));
 				});
@@ -2910,7 +3023,8 @@ public final class AT_ResourcesDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(target = ResourcesDataManager.class, name = "getEventFilterForPersonResourceUpdateEvent", args = { ResourceId.class, PersonId.class })
+	@UnitTestMethod(target = ResourcesDataManager.class, name = "getEventFilterForPersonResourceUpdateEvent", args = {
+			ResourceId.class, PersonId.class })
 	public void testGetEventFilterForPersonResourceUpdateEvent_Resource_Person() {
 
 		Set<TestResourceId> selectedResources = new LinkedHashSet<>();
@@ -2954,7 +3068,8 @@ public final class AT_ResourcesDataManager {
 
 			for (TestResourceId testResourceId : selectedResources) {
 				for (PersonId personId : selectedPeople) {
-					EventFilter<PersonResourceUpdateEvent> eventFilter = resourcesDataManager.getEventFilterForPersonResourceUpdateEvent(testResourceId, personId);
+					EventFilter<PersonResourceUpdateEvent> eventFilter = resourcesDataManager
+							.getEventFilterForPersonResourceUpdateEvent(testResourceId, personId);
 					c.subscribe(eventFilter, (c2, e) -> {
 						actualObservations.add(new MultiKey(c.getTime(), e.personId(), e.resourceId()));
 					});
@@ -3015,7 +3130,8 @@ public final class AT_ResourcesDataManager {
 		contractException = assertThrows(ContractException.class, () -> {
 			Factory factory2 = ResourcesTestPluginFactory.factory(30, 4146350189128134907L, (c) -> {
 				ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
-				resourcesDataManager.getEventFilterForPersonResourceUpdateEvent(TestResourceId.getUnknownResourceId(), new PersonId(0));
+				resourcesDataManager.getEventFilterForPersonResourceUpdateEvent(TestResourceId.getUnknownResourceId(),
+						new PersonId(0));
 			});
 			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
 		});
@@ -3026,7 +3142,8 @@ public final class AT_ResourcesDataManager {
 			Factory factory2 = ResourcesTestPluginFactory.factory(30, 8356399638914398643L, (c) -> {
 				ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 				PersonId nullPersonId = null;
-				resourcesDataManager.getEventFilterForPersonResourceUpdateEvent(TestResourceId.RESOURCE_1, nullPersonId);
+				resourcesDataManager.getEventFilterForPersonResourceUpdateEvent(TestResourceId.RESOURCE_1,
+						nullPersonId);
 			});
 			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
 		});
@@ -3037,7 +3154,8 @@ public final class AT_ResourcesDataManager {
 			Factory factory2 = ResourcesTestPluginFactory.factory(30, 3890936504108305392L, (c) -> {
 				ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 				PersonId unknownPersonId = new PersonId(100000);
-				resourcesDataManager.getEventFilterForPersonResourceUpdateEvent(TestResourceId.RESOURCE_1, unknownPersonId);
+				resourcesDataManager.getEventFilterForPersonResourceUpdateEvent(TestResourceId.RESOURCE_1,
+						unknownPersonId);
 			});
 			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
 		});
@@ -3046,7 +3164,8 @@ public final class AT_ResourcesDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(target = ResourcesDataManager.class, name = "getEventFilterForPersonResourceUpdateEvent", args = { ResourceId.class, RegionId.class })
+	@UnitTestMethod(target = ResourcesDataManager.class, name = "getEventFilterForPersonResourceUpdateEvent", args = {
+			ResourceId.class, RegionId.class })
 	public void testGetEventFilterForPersonResourceUpdateEvent_Resource_Region() {
 		Set<TestResourceId> selectedResources = new LinkedHashSet<>();
 		selectedResources.add(TestResourceId.RESOURCE_1);
@@ -3089,7 +3208,8 @@ public final class AT_ResourcesDataManager {
 
 			for (TestResourceId testResourceId : selectedResources) {
 				for (RegionId regionId : selectedRegions) {
-					EventFilter<PersonResourceUpdateEvent> eventFilter = resourcesDataManager.getEventFilterForPersonResourceUpdateEvent(testResourceId, regionId);
+					EventFilter<PersonResourceUpdateEvent> eventFilter = resourcesDataManager
+							.getEventFilterForPersonResourceUpdateEvent(testResourceId, regionId);
 					c.subscribe(eventFilter, (c2, e) -> {
 						actualObservations.add(new MultiKey(c.getTime(), e.personId(), e.resourceId()));
 					});
@@ -3150,7 +3270,8 @@ public final class AT_ResourcesDataManager {
 		contractException = assertThrows(ContractException.class, () -> {
 			Factory factory2 = ResourcesTestPluginFactory.factory(30, 693173450564289263L, (c) -> {
 				ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
-				resourcesDataManager.getEventFilterForPersonResourceUpdateEvent(TestResourceId.getUnknownResourceId(), new PersonId(0));
+				resourcesDataManager.getEventFilterForPersonResourceUpdateEvent(TestResourceId.getUnknownResourceId(),
+						new PersonId(0));
 			});
 			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
 		});
@@ -3161,7 +3282,8 @@ public final class AT_ResourcesDataManager {
 			Factory factory2 = ResourcesTestPluginFactory.factory(30, 9201364062172125070L, (c) -> {
 				ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 				RegionId nullRegionId = null;
-				resourcesDataManager.getEventFilterForPersonResourceUpdateEvent(TestResourceId.RESOURCE_1, nullRegionId);
+				resourcesDataManager.getEventFilterForPersonResourceUpdateEvent(TestResourceId.RESOURCE_1,
+						nullRegionId);
 			});
 			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
 		});
@@ -3172,7 +3294,8 @@ public final class AT_ResourcesDataManager {
 			Factory factory2 = ResourcesTestPluginFactory.factory(30, 5569918148190340272L, (c) -> {
 				ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 				RegionId unknownRegionId = TestRegionId.getUnknownRegionId();
-				resourcesDataManager.getEventFilterForPersonResourceUpdateEvent(TestResourceId.RESOURCE_1, unknownRegionId);
+				resourcesDataManager.getEventFilterForPersonResourceUpdateEvent(TestResourceId.RESOURCE_1,
+						unknownRegionId);
 			});
 			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
 		});
@@ -3213,7 +3336,8 @@ public final class AT_ResourcesDataManager {
 
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 
-			EventFilter<PersonResourceUpdateEvent> eventFilter = resourcesDataManager.getEventFilterForPersonResourceUpdateEvent();
+			EventFilter<PersonResourceUpdateEvent> eventFilter = resourcesDataManager
+					.getEventFilterForPersonResourceUpdateEvent();
 			c.subscribe(eventFilter, (c2, e) -> {
 				actualObservations.add(new MultiKey(c.getTime(), e.personId(), e.resourceId()));
 			});
@@ -3259,7 +3383,8 @@ public final class AT_ResourcesDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(target = ResourcesDataManager.class, name = "getEventFilterForRegionResourceUpdateEvent", args = { ResourceId.class })
+	@UnitTestMethod(target = ResourcesDataManager.class, name = "getEventFilterForRegionResourceUpdateEvent", args = {
+			ResourceId.class })
 	public void testGetEventFilterForRegionResourceUpdateEvent_Resource() {
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
@@ -3276,9 +3401,11 @@ public final class AT_ResourcesDataManager {
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 			for (TestResourceId testResourceId : selectedResources) {
-				EventFilter<RegionResourceUpdateEvent> eventFilter = resourcesDataManager.getEventFilterForRegionResourceUpdateEvent(testResourceId);
+				EventFilter<RegionResourceUpdateEvent> eventFilter = resourcesDataManager
+						.getEventFilterForRegionResourceUpdateEvent(testResourceId);
 				c.subscribe(eventFilter, (c2, e) -> {
-					actualObservations.add(new MultiKey(e.regionId(), e.resourceId(), e.previousResourceLevel(), e.currentResourceLevel()));
+					actualObservations.add(new MultiKey(e.regionId(), e.resourceId(), e.previousResourceLevel(),
+							e.currentResourceLevel()));
 				});
 			}
 		}));
@@ -3348,7 +3475,8 @@ public final class AT_ResourcesDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(target = ResourcesDataManager.class, name = "getEventFilterForRegionResourceUpdateEvent", args = { ResourceId.class, RegionId.class })
+	@UnitTestMethod(target = ResourcesDataManager.class, name = "getEventFilterForRegionResourceUpdateEvent", args = {
+			ResourceId.class, RegionId.class })
 	public void testGetEventFilterForRegionResourceUpdateEvent_Resource_Region() {
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
@@ -3370,9 +3498,11 @@ public final class AT_ResourcesDataManager {
 			for (Pair<TestRegionId, TestResourceId> pair : selectedRegionResourcePairs) {
 				TestRegionId regionId = pair.getFirst();
 				TestResourceId resourceId = pair.getSecond();
-				EventFilter<RegionResourceUpdateEvent> eventFilter = resourcesDataManager.getEventFilterForRegionResourceUpdateEvent(resourceId, regionId);
+				EventFilter<RegionResourceUpdateEvent> eventFilter = resourcesDataManager
+						.getEventFilterForRegionResourceUpdateEvent(resourceId, regionId);
 				c.subscribe(eventFilter, (c2, e) -> {
-					actualObservations.add(new MultiKey(e.regionId(), e.resourceId(), e.previousResourceLevel(), e.currentResourceLevel()));
+					actualObservations.add(new MultiKey(e.regionId(), e.resourceId(), e.previousResourceLevel(),
+							e.currentResourceLevel()));
 				});
 			}
 		}));
@@ -3454,9 +3584,11 @@ public final class AT_ResourcesDataManager {
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 
-			EventFilter<RegionResourceUpdateEvent> eventFilter = resourcesDataManager.getEventFilterForRegionResourceUpdateEvent();
+			EventFilter<RegionResourceUpdateEvent> eventFilter = resourcesDataManager
+					.getEventFilterForRegionResourceUpdateEvent();
 			c.subscribe(eventFilter, (c2, e) -> {
-				actualObservations.add(new MultiKey(e.regionId(), e.resourceId(), e.previousResourceLevel(), e.currentResourceLevel()));
+				actualObservations.add(new MultiKey(e.regionId(), e.resourceId(), e.previousResourceLevel(),
+						e.currentResourceLevel()));
 			});
 
 		}));
@@ -3500,7 +3632,8 @@ public final class AT_ResourcesDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(target = ResourcesDataManager.class, name = "getEventFilterForResourcePropertyUpdateEvent", args = { ResourceId.class, ResourcePropertyId.class })
+	@UnitTestMethod(target = ResourcesDataManager.class, name = "getEventFilterForResourcePropertyUpdateEvent", args = {
+			ResourceId.class, ResourcePropertyId.class })
 	public void testGetEventFilterForResourcePropertyUpdateEvent_Resource_Property() {
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
@@ -3508,12 +3641,18 @@ public final class AT_ResourcesDataManager {
 		Set<MultiKey> actualObservations = new LinkedHashSet<>();
 
 		Set<Pair<TestResourceId, TestResourcePropertyId>> selectedResourcePropertyPairs = new LinkedHashSet<>();
-		selectedResourcePropertyPairs.add(new Pair<>(TestResourceId.RESOURCE_1, TestResourcePropertyId.ResourceProperty_1_3_DOUBLE_MUTABLE));
-		selectedResourcePropertyPairs.add(new Pair<>(TestResourceId.RESOURCE_1, TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE));
-		selectedResourcePropertyPairs.add(new Pair<>(TestResourceId.RESOURCE_2, TestResourcePropertyId.ResourceProperty_2_2_INTEGER_MUTABLE));
-		selectedResourcePropertyPairs.add(new Pair<>(TestResourceId.RESOURCE_3, TestResourcePropertyId.ResourceProperty_3_2_STRING_MUTABLE));
-		selectedResourcePropertyPairs.add(new Pair<>(TestResourceId.RESOURCE_3, TestResourcePropertyId.ResourceProperty_3_1_BOOLEAN_MUTABLE));
-		selectedResourcePropertyPairs.add(new Pair<>(TestResourceId.RESOURCE_5, TestResourcePropertyId.ResourceProperty_5_2_DOUBLE_IMMUTABLE));
+		selectedResourcePropertyPairs
+				.add(new Pair<>(TestResourceId.RESOURCE_1, TestResourcePropertyId.ResourceProperty_1_3_DOUBLE_MUTABLE));
+		selectedResourcePropertyPairs.add(
+				new Pair<>(TestResourceId.RESOURCE_1, TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE));
+		selectedResourcePropertyPairs.add(
+				new Pair<>(TestResourceId.RESOURCE_2, TestResourcePropertyId.ResourceProperty_2_2_INTEGER_MUTABLE));
+		selectedResourcePropertyPairs
+				.add(new Pair<>(TestResourceId.RESOURCE_3, TestResourcePropertyId.ResourceProperty_3_2_STRING_MUTABLE));
+		selectedResourcePropertyPairs.add(
+				new Pair<>(TestResourceId.RESOURCE_3, TestResourcePropertyId.ResourceProperty_3_1_BOOLEAN_MUTABLE));
+		selectedResourcePropertyPairs.add(
+				new Pair<>(TestResourceId.RESOURCE_5, TestResourcePropertyId.ResourceProperty_5_2_DOUBLE_IMMUTABLE));
 
 		// Have an actor observe the selected resource property changes
 
@@ -3522,10 +3661,12 @@ public final class AT_ResourcesDataManager {
 			for (Pair<TestResourceId, TestResourcePropertyId> pair : selectedResourcePropertyPairs) {
 				TestResourceId testResourceId = pair.getFirst();
 				TestResourcePropertyId testResourcePropertyId = pair.getSecond();
-				EventFilter<ResourcePropertyUpdateEvent> eventFilter = resourcesDataManager.getEventFilterForResourcePropertyUpdateEvent(testResourceId, testResourcePropertyId);
+				EventFilter<ResourcePropertyUpdateEvent> eventFilter = resourcesDataManager
+						.getEventFilterForResourcePropertyUpdateEvent(testResourceId, testResourcePropertyId);
 
 				c.subscribe(eventFilter, (c2, e) -> {
-					actualObservations.add(new MultiKey(c.getTime(), e.resourceId(), e.resourcePropertyId(), e.previousPropertyValue(), e.currentPropertyValue()));
+					actualObservations.add(new MultiKey(c.getTime(), e.resourceId(), e.resourcePropertyId(),
+							e.previousPropertyValue(), e.currentPropertyValue()));
 				});
 
 			}
@@ -3542,20 +3683,26 @@ public final class AT_ResourcesDataManager {
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 
 			TestResourceId testResourceId = TestResourceId.getRandomResourceId(randomGenerator);
-			TestResourcePropertyId testResourcePropertyId = TestResourcePropertyId.getRandomResourcePropertyId(testResourceId, randomGenerator);
+			TestResourcePropertyId testResourcePropertyId = TestResourcePropertyId
+					.getRandomResourcePropertyId(testResourceId, randomGenerator);
 
 			for (int i = 1; i < comparisonDay; i++) {
 				c.addPlan((c2) -> {
-					PropertyDefinition propertyDefinition = resourcesDataManager.getResourcePropertyDefinition(testResourceId, testResourcePropertyId);
+					PropertyDefinition propertyDefinition = resourcesDataManager
+							.getResourcePropertyDefinition(testResourceId, testResourcePropertyId);
 					if (propertyDefinition.propertyValuesAreMutable()) {
 						// update the property value
-						Object resourcePropertyValue = resourcesDataManager.getResourcePropertyValue(testResourceId, testResourcePropertyId);
+						Object resourcePropertyValue = resourcesDataManager.getResourcePropertyValue(testResourceId,
+								testResourcePropertyId);
 						Object expectedValue = testResourcePropertyId.getRandomPropertyValue(randomGenerator);
-						resourcesDataManager.setResourcePropertyValue(testResourceId, testResourcePropertyId, expectedValue);
+						resourcesDataManager.setResourcePropertyValue(testResourceId, testResourcePropertyId,
+								expectedValue);
 
-						Pair<TestResourceId, TestResourcePropertyId> pair = new Pair<>(testResourceId, testResourcePropertyId);
+						Pair<TestResourceId, TestResourcePropertyId> pair = new Pair<>(testResourceId,
+								testResourcePropertyId);
 						if (selectedResourcePropertyPairs.contains(pair)) {
-							expectedObservations.add(new MultiKey(c2.getTime(), testResourceId, testResourcePropertyId, resourcePropertyValue, expectedValue));
+							expectedObservations.add(new MultiKey(c2.getTime(), testResourceId, testResourcePropertyId,
+									resourcePropertyValue, expectedValue));
 						}
 					}
 				}, i);
@@ -3621,8 +3768,8 @@ public final class AT_ResourcesDataManager {
 		assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
 
 		/*
-		 * precondition test: if the resource property id is unknown -- in this
-		 * case it is linked to a different resource
+		 * precondition test: if the resource property id is unknown -- in this case it
+		 * is linked to a different resource
 		 */
 		contractException = assertThrows(ContractException.class, () -> {
 			Factory factory2 = ResourcesTestPluginFactory.factory(0, 107265130769422979L, (c) -> {
@@ -3650,10 +3797,12 @@ public final class AT_ResourcesDataManager {
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 
-			EventFilter<ResourcePropertyUpdateEvent> eventFilter = resourcesDataManager.getEventFilterForResourcePropertyUpdateEvent();
+			EventFilter<ResourcePropertyUpdateEvent> eventFilter = resourcesDataManager
+					.getEventFilterForResourcePropertyUpdateEvent();
 
 			c.subscribe(eventFilter, (c2, e) -> {
-				actualObservations.add(new MultiKey(c.getTime(), e.resourceId(), e.resourcePropertyId(), e.previousPropertyValue(), e.currentPropertyValue()));
+				actualObservations.add(new MultiKey(c.getTime(), e.resourceId(), e.resourcePropertyId(),
+						e.previousPropertyValue(), e.currentPropertyValue()));
 			});
 
 		}));
@@ -3669,17 +3818,22 @@ public final class AT_ResourcesDataManager {
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 
 			TestResourceId testResourceId = TestResourceId.getRandomResourceId(randomGenerator);
-			TestResourcePropertyId testResourcePropertyId = TestResourcePropertyId.getRandomResourcePropertyId(testResourceId, randomGenerator);
+			TestResourcePropertyId testResourcePropertyId = TestResourcePropertyId
+					.getRandomResourcePropertyId(testResourceId, randomGenerator);
 
 			for (int i = 1; i < comparisonDay; i++) {
 				c.addPlan((c2) -> {
-					PropertyDefinition propertyDefinition = resourcesDataManager.getResourcePropertyDefinition(testResourceId, testResourcePropertyId);
+					PropertyDefinition propertyDefinition = resourcesDataManager
+							.getResourcePropertyDefinition(testResourceId, testResourcePropertyId);
 					if (propertyDefinition.propertyValuesAreMutable()) {
 						// update the property value
-						Object resourcePropertyValue = resourcesDataManager.getResourcePropertyValue(testResourceId, testResourcePropertyId);
+						Object resourcePropertyValue = resourcesDataManager.getResourcePropertyValue(testResourceId,
+								testResourcePropertyId);
 						Object expectedValue = testResourcePropertyId.getRandomPropertyValue(randomGenerator);
-						resourcesDataManager.setResourcePropertyValue(testResourceId, testResourcePropertyId, expectedValue);
-						expectedObservations.add(new MultiKey(c2.getTime(), testResourceId, testResourcePropertyId, resourcePropertyValue, expectedValue));
+						resourcesDataManager.setResourcePropertyValue(testResourceId, testResourcePropertyId,
+								expectedValue);
+						expectedObservations.add(new MultiKey(c2.getTime(), testResourceId, testResourcePropertyId,
+								resourcePropertyValue, expectedValue));
 					}
 				}, i);
 			}
@@ -3709,7 +3863,8 @@ public final class AT_ResourcesDataManager {
 
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
-			EventFilter<ResourceIdAdditionEvent> eventFilter = resourcesDataManager.getEventFilterForResourceIdAdditionEvent();
+			EventFilter<ResourceIdAdditionEvent> eventFilter = resourcesDataManager
+					.getEventFilterForResourceIdAdditionEvent();
 			c.subscribe(eventFilter, (c2, e) -> {
 				MultiKey multiKey = new MultiKey(c2.getTime(), e.resourceId(), e.timeTrackingPolicy());
 				actualObservations.add(multiKey);
@@ -3755,7 +3910,8 @@ public final class AT_ResourcesDataManager {
 		// have an actor observe the resource property definition events
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
-			EventFilter<ResourcePropertyDefinitionEvent> eventFilter = resourcesDataManager.getEventFilterForResourcePropertyDefinitionEvent();
+			EventFilter<ResourcePropertyDefinitionEvent> eventFilter = resourcesDataManager
+					.getEventFilterForResourcePropertyDefinitionEvent();
 			c.subscribe(eventFilter, (c2, e) -> {
 				MultiKey multiKey = new MultiKey(c2.getTime(), e.resourceId(), e.resourcePropertyId());
 				actualObservations.add(multiKey);
@@ -3766,13 +3922,14 @@ public final class AT_ResourcesDataManager {
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 			ResourcePropertyId newResourcePropertyId = TestResourcePropertyId.getUnknownResourcePropertyId();
-			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Double.class).setDefaultValue(34.6).build();
+			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Double.class)
+					.setDefaultValue(34.6).build();
 			ResourcePropertyInitialization resourcePropertyInitialization = //
-					ResourcePropertyInitialization	.builder()//
-													.setPropertyDefinition(propertyDefinition)//
-													.setResourceId(TestResourceId.RESOURCE_1)//
-													.setResourcePropertyId(newResourcePropertyId)//
-													.build();
+					ResourcePropertyInitialization.builder()//
+							.setPropertyDefinition(propertyDefinition)//
+							.setResourceId(TestResourceId.RESOURCE_1)//
+							.setResourcePropertyId(newResourcePropertyId)//
+							.build();
 			resourcesDataManager.defineResourceProperty(resourcePropertyInitialization);
 			MultiKey multiKey = new MultiKey(c.getTime(), TestResourceId.RESOURCE_1, newResourcePropertyId);
 			expectedObservations.add(multiKey);
@@ -3782,14 +3939,15 @@ public final class AT_ResourcesDataManager {
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(2, (c) -> {
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 			ResourcePropertyId newResourcePropertyId = TestResourcePropertyId.getUnknownResourcePropertyId();
-			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(String.class).setDefaultValue("default").build();
+			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(String.class)
+					.setDefaultValue("default").build();
 
 			ResourcePropertyInitialization resourcePropertyInitialization = //
-					ResourcePropertyInitialization	.builder()//
-													.setPropertyDefinition(propertyDefinition)//
-													.setResourceId(TestResourceId.RESOURCE_2)//
-													.setResourcePropertyId(newResourcePropertyId)//
-													.build();
+					ResourcePropertyInitialization.builder()//
+							.setPropertyDefinition(propertyDefinition)//
+							.setResourceId(TestResourceId.RESOURCE_2)//
+							.setResourcePropertyId(newResourcePropertyId)//
+							.build();
 			resourcesDataManager.defineResourceProperty(resourcePropertyInitialization);
 
 			MultiKey multiKey = new MultiKey(c.getTime(), TestResourceId.RESOURCE_2, newResourcePropertyId);
@@ -3809,8 +3967,8 @@ public final class AT_ResourcesDataManager {
 	}
 
 	/**
-	 * Demonstrates that the data manager exhibits run continuity. The state of
-	 * the data manager is not effected by repeatedly starting and stopping the
+	 * Demonstrates that the data manager exhibits run continuity. The state of the
+	 * data manager is not effected by repeatedly starting and stopping the
 	 * simulation.
 	 */
 	@Test
@@ -3818,10 +3976,9 @@ public final class AT_ResourcesDataManager {
 	public void testStateContinuity() {
 
 		/*
-		 * Note that we are not testing the content of the plugin datas -- that
-		 * is covered by the other state tests. We show here only that the
-		 * resulting plugin data state is the same without regard to how we
-		 * break up the run.
+		 * Note that we are not testing the content of the plugin datas -- that is
+		 * covered by the other state tests. We show here only that the resulting plugin
+		 * data state is the same without regard to how we break up the run.
 		 */
 
 		Set<String> pluginDatas = new LinkedHashSet<>();
@@ -3834,8 +3991,8 @@ public final class AT_ResourcesDataManager {
 
 	/*
 	 * Returns the resources plugin data resulting from various resource related
-	 * events over several days. Attempts to stop and start the simulation by
-	 * the given number of increments.
+	 * events over several days. Attempts to stop and start the simulation by the
+	 * given number of increments.
 	 */
 	private String testStateContinuity(int incrementCount) {
 		String result = null;
@@ -3843,14 +4000,14 @@ public final class AT_ResourcesDataManager {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(177404262666515111L);
 
 		/*
-		 * Build the RunContinuityPluginData with five context consumers that
-		 * will add and remove people over several days
+		 * Build the RunContinuityPluginData with five context consumers that will add
+		 * and remove people over several days
 		 */
 		RunContinuityPluginData.Builder continuityBuilder = RunContinuityPluginData.builder();
 
 		/*
-		 * Add some resource ids. Add some people with one of the resources
-		 * added to the people.
+		 * Add some resource ids. Add some people with one of the resources added to the
+		 * people.
 		 */
 		continuityBuilder.addContextConsumer(0.5, (c) -> {
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
@@ -3867,10 +4024,10 @@ public final class AT_ResourcesDataManager {
 				ResourceId resourceId = TestResourceId.RESOURCE_3;
 				long resourceLevel = randomGenerator.nextInt(5);
 				ResourceInitialization resourceInitialization = new ResourceInitialization(resourceId, resourceLevel);
-				PersonConstructionData personConstructionData = PersonConstructionData	.builder()//
-																						.add(regionId)//
-																						.add(resourceInitialization)//
-																						.build();//
+				PersonConstructionData personConstructionData = PersonConstructionData.builder()//
+						.add(regionId)//
+						.add(resourceInitialization)//
+						.build();//
 				peopleDataManager.addPerson(personConstructionData);
 			}
 
@@ -3881,13 +4038,23 @@ public final class AT_ResourcesDataManager {
 		 */
 		continuityBuilder.addContextConsumer(1.2, (c) -> {
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+
+			List<MultiKey> list = new ArrayList<>();
+			Random random = new Random(randomGenerator.nextLong());
+
 			for (TestRegionId testRegionId : TestRegionId.values()) {
 				for (TestResourceId testResourceId : TestResourceId.values()) {
-					long amount = randomGenerator.nextInt(10) * 100 + 300;
-					resourcesDataManager.addResourceToRegion(testResourceId, testRegionId, amount);
+					list.add(new MultiKey(testRegionId, testResourceId));
 				}
 			}
+			Collections.shuffle(list, random);
 
+			for (MultiKey multiKey : list) {
+				TestRegionId testRegionId = multiKey.getKey(0);
+				TestResourceId testResourceId = multiKey.getKey(1);
+				long amount = randomGenerator.nextInt(10) * 100 + 300;
+				resourcesDataManager.addResourceToRegion(testResourceId, testRegionId, amount);
+			}
 		});
 
 		// add some more resources to some regions
@@ -3908,9 +4075,10 @@ public final class AT_ResourcesDataManager {
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 			for (TestResourcePropertyId testResourcePropertyId : TestResourcePropertyId.values()) {
 				ResourcePropertyInitialization resourcePropertyInitialization = //
-						ResourcePropertyInitialization	.builder()//
-														.setPropertyDefinition(testResourcePropertyId.getPropertyDefinition())//
-														.setResourceId(testResourcePropertyId.getTestResourceId()).setResourcePropertyId(testResourcePropertyId).build();
+						ResourcePropertyInitialization.builder()//
+								.setPropertyDefinition(testResourcePropertyId.getPropertyDefinition())//
+								.setResourceId(testResourcePropertyId.getTestResourceId())
+								.setResourcePropertyId(testResourcePropertyId).build();
 				resourcesDataManager.defineResourceProperty(resourcePropertyInitialization);
 			}
 
@@ -3919,12 +4087,20 @@ public final class AT_ResourcesDataManager {
 		// set some resource properties
 		continuityBuilder.addContextConsumer(2.2, (c) -> {
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
-			for (TestResourcePropertyId testResourcePropertyId : TestResourcePropertyId.values()) {
-				PropertyDefinition propertyDefinition = resourcesDataManager.getResourcePropertyDefinition(testResourcePropertyId.getTestResourceId(), testResourcePropertyId);
+
+			List<TestResourcePropertyId> testResourcePropertyIds = Arrays.asList(TestResourcePropertyId.values());
+			Collections.reverse(testResourcePropertyIds);
+
+			for (TestResourcePropertyId testResourcePropertyId : testResourcePropertyIds) {
+
+				PropertyDefinition propertyDefinition = resourcesDataManager.getResourcePropertyDefinition(
+						testResourcePropertyId.getTestResourceId(), testResourcePropertyId);
 				if (propertyDefinition.propertyValuesAreMutable()) {
-					resourcesDataManager.setResourcePropertyValue(testResourcePropertyId.getTestResourceId(), testResourcePropertyId, testResourcePropertyId.getRandomPropertyValue(randomGenerator));
+					resourcesDataManager.setResourcePropertyValue(testResourcePropertyId.getTestResourceId(),
+							testResourcePropertyId, testResourcePropertyId.getRandomPropertyValue(randomGenerator));
 				}
 			}
+
 		});
 
 		// transfer resources between regions
@@ -3942,7 +4118,8 @@ public final class AT_ResourcesDataManager {
 					long amountToTransfer = regionResourceLevel / 10;
 
 					if (amountToTransfer > 0) {
-						resourcesDataManager.transferResourceBetweenRegions(resourceId, sourceRegionId, destinationRegionId, amountToTransfer);
+						resourcesDataManager.transferResourceBetweenRegions(resourceId, sourceRegionId,
+								destinationRegionId, amountToTransfer);
 					}
 				}
 			}
@@ -3954,7 +4131,11 @@ public final class AT_ResourcesDataManager {
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
-			for (PersonId personId : peopleDataManager.getPeople()) {
+
+			List<PersonId> people = peopleDataManager.getPeople();
+
+			for (int i = 0; i < people.size(); i++) {
+				PersonId personId = people.get(randomGenerator.nextInt(people.size()));
 				TestResourceId testResourceId = TestResourceId.getRandomResourceId(randomGenerator);
 				RegionId regionId = regionsDataManager.getPersonRegion(personId);
 				long avaialableAmount = resourcesDataManager.getRegionResourceLevel(regionId, testResourceId);
@@ -3971,7 +4152,9 @@ public final class AT_ResourcesDataManager {
 		continuityBuilder.addContextConsumer(4.7, (c) -> {
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
-			for (PersonId personId : peopleDataManager.getPeople()) {
+			List<PersonId> people = peopleDataManager.getPeople();
+			for (int i = 0; i < people.size(); i++) {
+				PersonId personId = people.get(randomGenerator.nextInt(people.size()));
 				TestResourceId testResourceId = TestResourceId.getRandomResourceId(randomGenerator);
 				long avaialableAmount = resourcesDataManager.getPersonResourceLevel(testResourceId, personId);
 				long amount = randomGenerator.nextInt(15);
@@ -3987,7 +4170,9 @@ public final class AT_ResourcesDataManager {
 		continuityBuilder.addContextConsumer(5.3, (c) -> {
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
-			for (PersonId personId : peopleDataManager.getPeople()) {
+			List<PersonId> people = peopleDataManager.getPeople();
+			for (int i = 0; i < people.size(); i++) {
+				PersonId personId = people.get(randomGenerator.nextInt(people.size()));
 				TestResourceId testResourceId = TestResourceId.getRandomResourceId(randomGenerator);
 				long avaialableAmount = resourcesDataManager.getPersonResourceLevel(testResourceId, personId);
 				long amount = randomGenerator.nextInt(15);
@@ -4004,7 +4189,10 @@ public final class AT_ResourcesDataManager {
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 
-			for (RegionId regionId : regionsDataManager.getRegionIds()) {
+			List<RegionId> regionIds = new ArrayList<>(regionsDataManager.getRegionIds());
+
+			for (int i = 0; i < regionIds.size(); i++) {
+				RegionId regionId = regionIds.get(randomGenerator.nextInt(regionIds.size()));
 				TestResourceId testResourceId = TestResourceId.getRandomResourceId(randomGenerator);
 				long avaialableAmount = resourcesDataManager.getRegionResourceLevel(regionId, testResourceId);
 				long amount = randomGenerator.nextInt(15);
@@ -4013,9 +4201,9 @@ public final class AT_ResourcesDataManager {
 					resourcesDataManager.removeResourceFromRegion(testResourceId, regionId, amount);
 				}
 			}
-			
+
 		});
-		
+
 		continuityBuilder.addContextConsumer(6.0, (c) -> {
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 			c.releaseOutput(resourcesDataManager.toString());
@@ -4040,8 +4228,8 @@ public final class AT_ResourcesDataManager {
 		SimulationState simulationState = SimulationState.builder().build();
 
 		/*
-		 * Run the simulation in one day increments until all the plans in the
-		 * run continuity plugin data have been executed
+		 * Run the simulation in one day increments until all the plans in the run
+		 * continuity plugin data have been executed
 		 */
 		double haltTime = 0;
 		double maxTime = Double.NEGATIVE_INFINITY;
@@ -4055,8 +4243,8 @@ public final class AT_ResourcesDataManager {
 
 			// build the run continuity plugin
 			Plugin runContinuityPlugin = RunContinuityPlugin.builder()//
-															.setRunContinuityPluginData(runContinuityPluginData)//
-															.build();
+					.setRunContinuityPluginData(runContinuityPluginData)//
+					.build();
 
 			// build the people plugin
 			Plugin peoplePlugin = PeoplePlugin.getPeoplePlugin(peoplePluginData);
@@ -4065,21 +4253,22 @@ public final class AT_ResourcesDataManager {
 			Plugin regionsPlugin = RegionsPlugin.builder().setRegionsPluginData(regionsPluginData).getRegionsPlugin();
 
 			// build the resources plugin
-			Plugin resourcesPlugin = ResourcesPlugin.builder().setResourcesPluginData(resourcesPluginData).getResourcesPlugin();
+			Plugin resourcesPlugin = ResourcesPlugin.builder().setResourcesPluginData(resourcesPluginData)
+					.getResourcesPlugin();
 
 			TestOutputConsumer outputConsumer = new TestOutputConsumer();
 
 			// execute the simulation so that it produces a people plugin data
-			Simulation simulation = Simulation	.builder()//
-												.addPlugin(peoplePlugin)//
-												.addPlugin(regionsPlugin)//
-												.addPlugin(runContinuityPlugin)//
-												.addPlugin(resourcesPlugin)//
-												.setSimulationHaltTime(haltTime)//
-												.setRecordState(true)//
-												.setOutputConsumer(outputConsumer)//
-												.setSimulationState(simulationState)//
-												.build();//
+			Simulation simulation = Simulation.builder()//
+					.addPlugin(peoplePlugin)//
+					.addPlugin(regionsPlugin)//
+					.addPlugin(runContinuityPlugin)//
+					.addPlugin(resourcesPlugin)//
+					.setSimulationHaltTime(haltTime)//
+					.setRecordState(true)//
+					.setOutputConsumer(outputConsumer)//
+					.setSimulationState(simulationState)//
+					.build();//
 			simulation.execute();
 
 			// retrieve the people plugin data
@@ -4104,8 +4293,9 @@ public final class AT_ResourcesDataManager {
 
 		}
 
+		//show that the result is a reasonably long string
 		assertNotNull(result);
-		
+		assertTrue(result.length()>100);
 
 		return result;
 
