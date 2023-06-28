@@ -140,20 +140,15 @@ public class AT_ResourcesTestPluginFactory {
 
         PeoplePluginData peoplePluginData = builder.build();
 
-        List<Plugin> plugins = ResourcesTestPluginFactory
-                .factory(0, 0, t -> {
-                })
-                .setPeoplePluginData(peoplePluginData)
-                .getPlugins();
+        List<Plugin> plugins = ResourcesTestPluginFactory.factory(0, 0, t -> {
+        }).setPeoplePluginData(peoplePluginData).getPlugins();
 
         checkPluginDataExists(plugins, peoplePluginData, PeoplePluginId.PLUGIN_ID);
 
         // precondition: peoplePluginData is not null
         ContractException contractException = assertThrows(ContractException.class,
-                () -> ResourcesTestPluginFactory
-                        .factory(0, 0, t -> {
-                        })
-                        .setPeoplePluginData(null));
+                () -> ResourcesTestPluginFactory.factory(0, 0, t -> {
+                }).setPeoplePluginData(null));
         assertEquals(PersonError.NULL_PEOPLE_PLUGIN_DATA, contractException.getErrorType());
     }
 
@@ -278,8 +273,7 @@ public class AT_ResourcesTestPluginFactory {
         }
 
         RegionsPluginData expectedPluginData = regionBuilder.build();
-        RegionsPluginData actualPluginData = ResourcesTestPluginFactory.getStandardRegionsPluginData(people,
-                seed);
+        RegionsPluginData actualPluginData = ResourcesTestPluginFactory.getStandardRegionsPluginData(people, seed);
 
         assertEquals(expectedPluginData, actualPluginData);
     }
@@ -339,17 +333,36 @@ public class AT_ResourcesTestPluginFactory {
             }
         }
 
-        for (TestResourcePropertyId testResourcePropertyId : TestResourcePropertyId.values()) {
+        for (TestResourcePropertyId testResourcePropertyId : TestResourcePropertyId.getTestResourcePropertyIds()) {
             TestResourceId testResourceId = testResourcePropertyId.getTestResourceId();
             PropertyDefinition propertyDefinition = testResourcePropertyId.getPropertyDefinition();
-            Object propertyValue = testResourcePropertyId.getRandomPropertyValue(randomGenerator);
+            boolean hasDeaultValue = propertyDefinition.getDefaultValue().isPresent();
+
             resourcesBuilder.defineResourceProperty(testResourceId, testResourcePropertyId, propertyDefinition);
-            resourcesBuilder.setResourcePropertyValue(testResourceId, testResourcePropertyId, propertyValue);
+
+            if(!hasDeaultValue) {
+                Object propertyValue = testResourcePropertyId.getRandomPropertyValue(randomGenerator);
+                resourcesBuilder.setResourcePropertyValue(testResourceId, testResourcePropertyId, propertyValue);
+            }
+        }
+
+        for (TestResourcePropertyId testResourcePropertyId : TestResourcePropertyId
+                .getShuffledTestResourcePropertyIds(randomGenerator)) {
+            TestResourceId testResourceId = testResourcePropertyId.getTestResourceId();
+            PropertyDefinition propertyDefinition = testResourcePropertyId.getPropertyDefinition();
+            boolean hasDefault = propertyDefinition.getDefaultValue().isPresent();
+            boolean setValue = randomGenerator.nextBoolean();
+            if (hasDefault && setValue) {
+                resourcesBuilder.setResourcePropertyValue(testResourceId, testResourcePropertyId,
+                        propertyDefinition.getDefaultValue().get());
+            } else if (setValue) {
+                Object propertyValue = testResourcePropertyId.getRandomPropertyValue(randomGenerator);
+                resourcesBuilder.setResourcePropertyValue(testResourceId, testResourcePropertyId, propertyValue);
+            }
         }
 
         ResourcesPluginData expectedPluginData = resourcesBuilder.build();
-        ResourcesPluginData actualPluginData = ResourcesTestPluginFactory
-                .getStandardResourcesPluginData(people, seed);
+        ResourcesPluginData actualPluginData = ResourcesTestPluginFactory.getStandardResourcesPluginData(people, seed);
 
         assertEquals(expectedPluginData, actualPluginData);
     }
@@ -363,8 +376,7 @@ public class AT_ResourcesTestPluginFactory {
         WellState wellState = WellState.builder().setSeed(seed).build();
 
         StochasticsPluginData expectedPluginData = StochasticsPluginData.builder().setMainRNGState(wellState).build();
-        StochasticsPluginData actualPluginData = ResourcesTestPluginFactory
-                .getStandardStochasticsPluginData(seed);
+        StochasticsPluginData actualPluginData = ResourcesTestPluginFactory.getStandardStochasticsPluginData(seed);
 
         assertEquals(expectedPluginData, actualPluginData);
     }

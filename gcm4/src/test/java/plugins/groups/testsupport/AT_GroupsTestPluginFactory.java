@@ -41,6 +41,7 @@ import plugins.stochastics.StochasticsPluginId;
 import plugins.stochastics.support.StochasticsError;
 import plugins.stochastics.support.WellState;
 import plugins.stochastics.testsupport.TestRandomGeneratorId;
+import plugins.util.properties.PropertyDefinition;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.random.RandomGeneratorProvider;
@@ -256,9 +257,17 @@ public class AT_GroupsTestPluginFactory {
             GroupId groupId = new GroupId(i);
             groups.add(groupId);
             groupBuilder.addGroup(groupId, testGroupTypeId);
-            for (TestGroupPropertyId testGroupPropertyId : TestGroupPropertyId.getShuffledTestGroupPropertyIds(testGroupTypeId, randomGenerator)) {
-				groupBuilder.setGroupPropertyValue(groupId, testGroupPropertyId, testGroupPropertyId.getRandomPropertyValue(randomGenerator));
-			}
+            for (TestGroupPropertyId testGroupPropertyId : TestGroupPropertyId
+                    .getShuffledTestGroupPropertyIds(testGroupTypeId, randomGenerator)) {
+                // PropertyDefinition propertyDefinition = testGroupPropertyId.getPropertyDefinition();
+                // boolean hasDefaultValue = propertyDefinition.getDefaultValue().isPresent();
+                // boolean setValue = randomGenerator.nextBoolean();
+
+                // if (!hasDefaultValue || setValue) {
+                    groupBuilder.setGroupPropertyValue(groupId, testGroupPropertyId,
+                            testGroupPropertyId.getRandomPropertyValue(randomGenerator));
+                // }
+            }
             testGroupTypeId = testGroupTypeId.next();
         }
 

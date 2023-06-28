@@ -271,16 +271,36 @@ public class AT_RegionsTestPluginFactory {
             regionPluginBuilder.addRegion(regionId);
         }
 
-        for (TestRegionPropertyId testRegionPropertyId : TestRegionPropertyId.values()) {
+        for (TestRegionPropertyId testRegionPropertyId : TestRegionPropertyId.getTestRegionPropertyIds()) {
             PropertyDefinition propertyDefinition = testRegionPropertyId.getPropertyDefinition();
             regionPluginBuilder.defineRegionProperty(testRegionPropertyId, propertyDefinition);
-            if (propertyDefinition.getDefaultValue().isEmpty()) {
+            boolean hasDeaultValue = propertyDefinition.getDefaultValue().isPresent();
+
+            if(!hasDeaultValue) {
                 for (TestRegionId regionId : TestRegionId.values()) {
                     regionPluginBuilder.setRegionPropertyValue(regionId, testRegionPropertyId,
                             testRegionPropertyId.getRandomPropertyValue(randomGenerator));
                 }
             }
+        }
 
+        for (TestRegionPropertyId testRegionPropertyId : TestRegionPropertyId
+                .getTestShuffledRegionPropertyIds(randomGenerator)) {
+            PropertyDefinition propertyDefinition = testRegionPropertyId.getPropertyDefinition();
+            boolean hasDeaultValue = propertyDefinition.getDefaultValue().isPresent();
+            boolean setValue = randomGenerator.nextBoolean();
+
+            if (hasDeaultValue && setValue) {
+                for (TestRegionId regionId : TestRegionId.values()) {
+                    regionPluginBuilder.setRegionPropertyValue(regionId, testRegionPropertyId,
+                            propertyDefinition.getDefaultValue().get());
+                }
+            } else if (setValue) {
+                for (TestRegionId regionId : TestRegionId.values()) {
+                    regionPluginBuilder.setRegionPropertyValue(regionId, testRegionPropertyId,
+                            testRegionPropertyId.getRandomPropertyValue(randomGenerator));
+                }
+            }
         }
 
         regionPluginBuilder.setPersonRegionArrivalTracking(trackTimes);
