@@ -256,11 +256,9 @@ public class AT_GroupsTestPluginFactory {
             GroupId groupId = new GroupId(i);
             groups.add(groupId);
             groupBuilder.addGroup(groupId, testGroupTypeId);
-            for (TestGroupPropertyId testGroupPropertyId : TestGroupPropertyId
-                    .getTestGroupPropertyIds(testGroupTypeId)) {
-                groupBuilder.setGroupPropertyValue(groupId, testGroupPropertyId,
-                        testGroupPropertyId.getRandomPropertyValue(randomGenerator));
-            }
+            for (TestGroupPropertyId testGroupPropertyId : TestGroupPropertyId.getShuffledTestGroupPropertyIds(testGroupTypeId, randomGenerator)) {
+				groupBuilder.setGroupPropertyValue(groupId, testGroupPropertyId, testGroupPropertyId.getRandomPropertyValue(randomGenerator));
+			}
             testGroupTypeId = testGroupTypeId.next();
         }
 
