@@ -19,7 +19,6 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 import org.apache.commons.math3.random.RandomGenerator;
-import org.apache.commons.math3.util.FastMath;
 import org.apache.commons.math3.util.Pair;
 import org.junit.jupiter.api.Test;
 
@@ -2616,11 +2615,10 @@ public class AT_GroupsDataManager {
 		for (int i = 0; i < initialPopulation; i++) {
 			people.add(new PersonId(i));
 		}
-		int membershipCount = (int) FastMath.round(initialPopulation * expectedGroupsPerPerson);
-		int groupCount = (int) FastMath.round(membershipCount / expectedPeoplePerGroup);
+		
 
-		GroupsPluginData groupsPluginData = GroupsTestPluginFactory.getStandardGroupsPluginData(groupCount,
-				membershipCount, people, seed);
+		GroupsPluginData groupsPluginData = GroupsTestPluginFactory.getStandardGroupsPluginData(expectedGroupsPerPerson,
+				expectedPeoplePerGroup, people, seed);
 
 		// add the action plugin
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();

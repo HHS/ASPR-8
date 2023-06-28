@@ -1,9 +1,9 @@
 package plugins.groups.testsupport;
 
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
+import java.util.Collections;
 import java.util.List;
-import java.util.Set;
+import java.util.Random;
 import java.util.function.Consumer;
 
 import org.apache.commons.math3.random.RandomGenerator;
@@ -67,12 +67,8 @@ public final class GroupsTestPluginFactory {
 
 			RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
 
-			int membershipCount = (int) FastMath.round(initialPopulation * expectedGroupsPerPerson);
-			int groupCount = expectedPeoplePerGroup == 0 ? 0
-					: (int) FastMath.round(membershipCount / expectedPeoplePerGroup);
-
 			this.peoplePluginData = getStandardPeoplePluginData(initialPopulation);
-			this.groupsPluginData = getStandardGroupsPluginData(groupCount, membershipCount,
+			this.groupsPluginData = getStandardGroupsPluginData(expectedGroupsPerPerson, expectedPeoplePerGroup,
 					this.peoplePluginData.getPersonIds(), randomGenerator.nextLong());
 			this.stochasticsPluginData = getStandardStochasticsPluginData(randomGenerator.nextLong());
 			this.testPluginData = testPluginData;
@@ -306,8 +302,15 @@ public final class GroupsTestPluginFactory {
 	 * </ul>
 	 * </ul>
 	 */
-	public static GroupsPluginData getStandardGroupsPluginData(int groupCount, int membershipCount,
-			List<PersonId> people, long seed) {
+	public static GroupsPluginData getStandardGroupsPluginData(double expectedGroupsPerPerson,
+			double expectedPeoplePerGroup, List<PersonId> people, long seed) {
+
+		
+		
+		
+		int membershipCount = (int) FastMath.round(people.size() * expectedGroupsPerPerson);
+		int groupCount = (int) FastMath.round(membershipCount / expectedPeoplePerGroup);
+		membershipCount = FastMath.min(membershipCount,	groupCount*people.size());
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
 		GroupsPluginData.Builder groupBuilder = GroupsPluginData.builder();
@@ -329,8 +332,7 @@ public final class GroupsTestPluginFactory {
 			GroupId groupId = new GroupId(i);
 			groups.add(groupId);
 			groupBuilder.addGroup(groupId, testGroupTypeId);
-			
-			
+
 			for (TestGroupPropertyId testGroupPropertyId : TestGroupPropertyId
 					.getShuffledTestGroupPropertyIds(testGroupTypeId, randomGenerator)) {
 				PropertyDefinition propertyDefinition = testGroupPropertyId.getPropertyDefinition();
@@ -345,14 +347,16 @@ public final class GroupsTestPluginFactory {
 			testGroupTypeId = testGroupTypeId.next();
 		}
 
-		Set<MultiKey> groupMemeberships = new LinkedHashSet<>();
-		while (groupMemeberships.size() < membershipCount) {
-			PersonId personId = people.get(randomGenerator.nextInt(people.size()));
-			GroupId groupId = groups.get(randomGenerator.nextInt(groups.size()));
-			groupMemeberships.add(new MultiKey(groupId, personId));
+		List<MultiKey> groupMemeberships = new ArrayList<>();
+		for (PersonId personId : people) {
+			for (GroupId groupId : groups) {
+				groupMemeberships.add(new MultiKey(groupId, personId));
+			}
 		}
+		Collections.shuffle(groupMemeberships,new Random(randomGenerator.nextLong()));
 
-		for (MultiKey multiKey : groupMemeberships) {
+		for (int i=0;i<membershipCount;i++) {
+			MultiKey multiKey = groupMemeberships.get(i);
 			GroupId groupId = multiKey.getKey(0);
 			PersonId personId = multiKey.getKey(1);
 			groupBuilder.associatePersonToGroup(groupId, personId);

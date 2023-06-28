@@ -7,9 +7,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
+import java.util.Collections;
 import java.util.List;
-import java.util.Set;
+import java.util.Random;
 import java.util.function.Consumer;
 
 import org.apache.commons.math3.random.RandomGenerator;
@@ -214,13 +214,14 @@ public class AT_GroupsTestPluginFactory {
 		int expectedGroupsPerPerson = 3;
 		int expectedPeoplePerGroup = 5;
 
-		int membershipCount = (int) FastMath.round(initialPopulation * expectedGroupsPerPerson);
-		int groupCount = (int) FastMath.round(membershipCount / expectedPeoplePerGroup);
-
 		List<PersonId> people = new ArrayList<>();
-		for (int i = 0; i < 100; i++) {
+		for (int i = 0; i < initialPopulation; i++) {
 			people.add(new PersonId(i));
 		}
+		int membershipCount = (int) FastMath.round(people.size() * expectedGroupsPerPerson);
+		int groupCount = (int) FastMath.round(membershipCount / expectedPeoplePerGroup);
+		membershipCount = FastMath.min(membershipCount,	groupCount*people.size());
+
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
 		GroupsPluginData.Builder groupBuilder = GroupsPluginData.builder();
@@ -255,23 +256,24 @@ public class AT_GroupsTestPluginFactory {
 			testGroupTypeId = testGroupTypeId.next();
 		}
 
-		Set<MultiKey> groupMemeberships = new LinkedHashSet<>();
-		while (groupMemeberships.size() < membershipCount) {
-			PersonId personId = people.get(randomGenerator.nextInt(people.size()));
-			GroupId groupId = groups.get(randomGenerator.nextInt(groups.size()));
-			groupMemeberships.add(new MultiKey(groupId, personId));
+		List<MultiKey> groupMemeberships = new ArrayList<>();
+		for (PersonId personId : people) {
+			for (GroupId groupId : groups) {
+				groupMemeberships.add(new MultiKey(groupId, personId));
+			}
 		}
+		Collections.shuffle(groupMemeberships,new Random(randomGenerator.nextLong()));
 
-		for (MultiKey multiKey : groupMemeberships) {
+		for (int i=0;i<membershipCount;i++) {
+			MultiKey multiKey = groupMemeberships.get(i);
 			GroupId groupId = multiKey.getKey(0);
 			PersonId personId = multiKey.getKey(1);
 			groupBuilder.associatePersonToGroup(groupId, personId);
 		}
-
 		GroupsPluginData expectedPluginData = groupBuilder.build();
 
-		GroupsPluginData actualPluginData = GroupsTestPluginFactory.getStandardGroupsPluginData(groupCount,
-				membershipCount, people, seed);
+		GroupsPluginData actualPluginData = GroupsTestPluginFactory.getStandardGroupsPluginData(expectedGroupsPerPerson,
+				expectedPeoplePerGroup, people, seed);
 
 		assertEquals(expectedPluginData, actualPluginData);
 	}
