@@ -25,7 +25,7 @@ import plugins.regions.support.RegionError;
 import plugins.regions.support.RegionId;
 import plugins.regions.testsupport.TestRegionId;
 import plugins.resources.ResourcesPlugin;
-import plugins.resources.ResourcesPluginData;
+import plugins.resources.datamanagers.ResourcesPluginData;
 import plugins.resources.reports.PersonResourceReportPluginData;
 import plugins.resources.reports.ResourcePropertyReportPluginData;
 import plugins.resources.reports.ResourceReportPluginData;

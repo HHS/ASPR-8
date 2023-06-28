@@ -49,7 +49,6 @@ import plugins.regions.support.RegionError;
 import plugins.regions.support.RegionId;
 import plugins.regions.testsupport.TestRegionId;
 import plugins.resources.ResourcesPlugin;
-import plugins.resources.ResourcesPluginData;
 import plugins.resources.events.PersonResourceUpdateEvent;
 import plugins.resources.events.RegionResourceUpdateEvent;
 import plugins.resources.events.ResourceIdAdditionEvent;

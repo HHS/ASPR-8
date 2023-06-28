@@ -26,7 +26,6 @@ import plugins.regions.datamanagers.RegionsDataManager;
 import plugins.regions.events.RegionAdditionEvent;
 import plugins.regions.support.RegionError;
 import plugins.regions.support.RegionId;
-import plugins.resources.ResourcesPluginData;
 import plugins.resources.events.PersonResourceUpdateEvent;
 import plugins.resources.events.RegionResourceUpdateEvent;
 import plugins.resources.events.ResourceIdAdditionEvent;

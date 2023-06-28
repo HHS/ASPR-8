@@ -1,4 +1,4 @@
-package plugins.resources;
+package plugins.resources.datamanagers;
 
 import java.util.ArrayList;
 import java.util.Collections;

@@ -34,7 +34,7 @@ import plugins.regions.datamanagers.RegionsPluginData;
 import plugins.regions.support.RegionError;
 import plugins.regions.testsupport.TestRegionId;
 import plugins.resources.ResourcesPlugin;
-import plugins.resources.ResourcesPluginData;
+import plugins.resources.datamanagers.ResourcesPluginData;
 import plugins.resources.support.ResourceError;
 import plugins.resources.support.ResourceId;
 import plugins.resources.testsupport.TestResourceId;

@@ -6,6 +6,7 @@ import nucleus.Plugin;
 import plugins.people.PeoplePluginId;
 import plugins.regions.RegionsPluginId;
 import plugins.resources.datamanagers.ResourcesDataManager;
+import plugins.resources.datamanagers.ResourcesPluginData;
 import plugins.resources.reports.PersonResourceReport;
 import plugins.resources.reports.PersonResourceReportPluginData;
 import plugins.resources.reports.ResourcePropertyReport;
