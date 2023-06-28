@@ -189,7 +189,7 @@ public class AT_GroupsDataManager {
 						groupPropertyDefinitionInitialization3.getPropertyDefinition())
 				.addGroupTypeId(groupPropertyDefinitionInitialization3.getGroupTypeId())
 				.addGroupTypeId(groupPropertyDefinitionInitialization2.getGroupTypeId())
-				
+
 				.addGroup(expectedGroupIds.get(0), groupPropertyDefinitionInitialization2.getGroupTypeId())
 				.addGroup(expectedGroupIds.get(1), groupPropertyDefinitionInitialization3.getGroupTypeId())
 				.setGroupPropertyValue(expectedGroupIds.get(0), groupPropertyDefinitionInitialization2.getPropertyId(),
@@ -198,7 +198,7 @@ public class AT_GroupsDataManager {
 						34.2)
 				.build();
 		assertEquals(expectedPluginData, actualPluginData);
-		
+
 	}
 
 	@Test
@@ -2607,7 +2607,7 @@ public class AT_GroupsDataManager {
 	public void testStateInitialization() {
 		long seed = 7212690164088198082L;
 
-		int initialPopulation = 30;
+		int initialPopulation = 40;
 		double expectedGroupsPerPerson = 3;
 		double expectedPeoplePerGroup = 5;
 
@@ -2677,26 +2677,40 @@ public class AT_GroupsDataManager {
 			}
 
 			// show that the group property values are the same
-			Set<MultiKey> expectedGroupPropertyValues = new LinkedHashSet<>();
+			Map<MultiKey,Object> expectedGroupPropertyValues = new LinkedHashMap<>();
+			
+			//fill in the default values
+			for (GroupId groupId : groupsPluginData.getGroupIds()) {
+				GroupTypeId groupTypeId = groupsPluginData.getGroupTypeId(groupId);
+				Set<GroupPropertyId> groupPropertyIds = groupsPluginData.getGroupPropertyIds(groupTypeId);
+				for(GroupPropertyId groupPropertyId : groupPropertyIds) {
+					PropertyDefinition propertyDefinition = groupsPluginData.getGroupPropertyDefinition(groupTypeId, groupPropertyId);
+					Optional<Object> optional = propertyDefinition.getDefaultValue();
+					if(optional.isPresent()) {
+						expectedGroupPropertyValues.put(new MultiKey(groupId,groupPropertyId), optional.get());
+					}
+				}
+			}
+			//overwrite the default values with the values from the plugin data
 			for (GroupId groupId : groupsPluginData.getGroupIds()) {
 				for (GroupPropertyValue groupPropertyValue : groupsPluginData.getGroupPropertyValues(groupId)) {
-					MultiKey multiKey = new MultiKey(groupId, groupPropertyValue.groupPropertyId(),
-							groupPropertyValue.value());
-					expectedGroupPropertyValues.add(multiKey);
+					MultiKey multiKey = new MultiKey(groupId, groupPropertyValue.groupPropertyId());							
+					expectedGroupPropertyValues.put(multiKey,groupPropertyValue.value());
 				}
 			}
 
-			Set<MultiKey> actualGroupPropertyValues = new LinkedHashSet<>();
+			//retrieve the actual values -- this will include defaults
+			Map<MultiKey,Object> actualGroupPropertyValues = new LinkedHashMap<>();
 			for (GroupId groupId : personGroupDataManager.getGroupIds()) {
 				GroupTypeId groupTypeId = personGroupDataManager.getGroupType(groupId);
 				Set<GroupPropertyId> groupPropertyIds = personGroupDataManager.getGroupPropertyIds(groupTypeId);
 				for (GroupPropertyId groupPropertyId : groupPropertyIds) {
 					Object actualValue = personGroupDataManager.getGroupPropertyValue(groupId, groupPropertyId);
-					MultiKey multiKey = new MultiKey(groupId, groupPropertyId, actualValue);
-					actualGroupPropertyValues.add(multiKey);
+					MultiKey multiKey = new MultiKey(groupId, groupPropertyId);
+					actualGroupPropertyValues.put(multiKey, actualValue);
 				}
 			}
-
+			
 			assertEquals(expectedGroupPropertyValues, actualGroupPropertyValues);
 
 		}));
@@ -5159,7 +5173,5 @@ public class AT_GroupsDataManager {
 		Factory factory = GroupsTestPluginFactory.factory(100, 3, 10, 7349170569580375646L, testPluginData);
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
-
-
 
 }
