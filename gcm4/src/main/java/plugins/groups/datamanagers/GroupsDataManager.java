@@ -1724,6 +1724,10 @@ public final class GroupsDataManager extends DataManager {
 		final boolean exclude = (excludedPersonId != null) && isPersonInGroup(excludedPersonId, groupId);
 		PersonId selectedPersonId = null;
 		final List<PersonId> people = groupsToPeopleMap.getValue(groupId.getValue());
+		if(people==null || people.isEmpty()) {
+			return Optional.empty();
+		}
+		
 
 		if (groupWeightingFunction != null) {
 
