@@ -605,6 +605,14 @@ public final class ResourcesPluginData implements PluginData {
 			}
 
 			for (ResourceId resourceId : data.personResourceTimes.keySet()) {
+				Boolean trackTimes = data.resourceTimeTrackingPolicies.get(resourceId);
+				if (!trackTimes) {
+					throw new ContractException(ResourceError.RESOURCE_ASSIGNMENT_TIME_NOT_TRACKED,
+							resourceId + " has person resource times, but the time tracking policy is false");
+				}
+			}
+
+			for (ResourceId resourceId : data.personResourceTimes.keySet()) {
 				Double creationTime = data.resourceDefaultTimes.get(resourceId);
 				List<Double> times = data.personResourceTimes.get(resourceId);
 				for (Double time : times) {
@@ -904,7 +912,7 @@ public final class ResourcesPluginData implements PluginData {
 		}
 		return result;
 	}
-	
+
 	public Map<ResourceId, List<Long>> getPersonResourceLevels() {
 		Map<ResourceId, List<Long>> result = new LinkedHashMap<>();
 		for (ResourceId resourceId : data.personResourceLevels.keySet()) {
@@ -914,27 +922,27 @@ public final class ResourcesPluginData implements PluginData {
 		}
 		return result;
 	}
-	
-	public Map<ResourceId, Map<ResourcePropertyId, PropertyDefinition>> getResourcePropertyDefinitions(){
+
+	public Map<ResourceId, Map<ResourcePropertyId, PropertyDefinition>> getResourcePropertyDefinitions() {
 		Map<ResourceId, Map<ResourcePropertyId, PropertyDefinition>> result = new LinkedHashMap<>();
-		
-		for(ResourceId resourceId : data.resourcePropertyDefinitions.keySet()) {
+
+		for (ResourceId resourceId : data.resourcePropertyDefinitions.keySet()) {
 			Map<ResourcePropertyId, PropertyDefinition> map = data.resourcePropertyDefinitions.get(resourceId);
 			Map<ResourcePropertyId, PropertyDefinition> newMap = new LinkedHashMap<>(map);
 			result.put(resourceId, newMap);
-		}		
+		}
 		return result;
 	}
-	
-	public Map<ResourceId, Map<ResourcePropertyId, Object>> getResourcePropertyValues(){		
+
+	public Map<ResourceId, Map<ResourcePropertyId, Object>> getResourcePropertyValues() {
 		Map<ResourceId, Map<ResourcePropertyId, Object>> result = new LinkedHashMap<>();
-		
-		for(ResourceId resourceId : data.resourcePropertyValues.keySet()) {
+
+		for (ResourceId resourceId : data.resourcePropertyValues.keySet()) {
 			Map<ResourcePropertyId, Object> map = data.resourcePropertyValues.get(resourceId);
 			Map<ResourcePropertyId, Object> newMap = new LinkedHashMap<>(map);
 			result.put(resourceId, newMap);
-		}		
-		return result;		
+		}
+		return result;
 	}
-	
+
 }

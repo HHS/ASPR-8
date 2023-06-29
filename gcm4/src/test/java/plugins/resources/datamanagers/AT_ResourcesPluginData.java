@@ -44,7 +44,7 @@ public final class AT_ResourcesPluginData {
 		// add the resources
 		ResourcesPluginData.Builder builder = ResourcesPluginData.builder();
 		for (TestResourceId testResourceId : TestResourceId.values()) {
-			builder.addResource(testResourceId, 0.0, false);
+			builder.addResource(testResourceId, 0.0, true);
 		}
 
 		Set<MultiKey> expectedValues = new LinkedHashSet<>();
@@ -87,7 +87,8 @@ public final class AT_ResourcesPluginData {
 		assertEquals(expectedValues, actualValues);
 
 		// precondition test: if the person id is null
-		ContractException contractException = assertThrows(ContractException.class, () -> resourceInitialData.getPersonResourceTimes(null));
+		ContractException contractException = assertThrows(ContractException.class,
+				() -> resourceInitialData.getPersonResourceTimes(null));
 		assertEquals(ResourceError.NULL_RESOURCE_ID, contractException.getErrorType());
 	}
 
@@ -115,7 +116,8 @@ public final class AT_ResourcesPluginData {
 		assertEquals(expectedValues, actualValues);
 
 		// precondition test: if the person id is null
-		ContractException contractException = assertThrows(ContractException.class, () -> resourceInitialData.getResourceDefaultTime(null));
+		ContractException contractException = assertThrows(ContractException.class,
+				() -> resourceInitialData.getResourceDefaultTime(null));
 		assertEquals(ResourceError.NULL_RESOURCE_ID, contractException.getErrorType());
 
 	}
@@ -162,9 +164,14 @@ public final class AT_ResourcesPluginData {
 			}
 		}
 
+		Set<TestResourceId> timeTrackedResourceIds = new LinkedHashSet<>();
+		
 		for (TestResourceId testResourceId : selectedTestResourceIds) {
 			double time = randomGenerator.nextDouble();
 			boolean timeTrackingPolicy = randomGenerator.nextBoolean();
+			if(timeTrackingPolicy) {
+				timeTrackedResourceIds.add(testResourceId);
+			}
 			pluginDataBuilder.addResource(testResourceId, time, timeTrackingPolicy);
 		}
 
@@ -180,12 +187,14 @@ public final class AT_ResourcesPluginData {
 		}
 
 		for (TestResourcePropertyId testResourcePropertyId : selectedTestResourcePropertyIds) {
-			pluginDataBuilder.defineResourceProperty(testResourcePropertyId.getTestResourceId(), testResourcePropertyId, testResourcePropertyId.getPropertyDefinition());
+			pluginDataBuilder.defineResourceProperty(testResourcePropertyId.getTestResourceId(), testResourcePropertyId,
+					testResourcePropertyId.getPropertyDefinition());
 		}
 
 		for (TestResourcePropertyId testResourcePropertyId : selectedTestResourcePropertyIds) {
 			if (randomGenerator.nextBoolean()) {
-				pluginDataBuilder.setResourcePropertyValue(testResourcePropertyId.getTestResourceId(), testResourcePropertyId, testResourcePropertyId.getRandomPropertyValue(randomGenerator));
+				pluginDataBuilder.setResourcePropertyValue(testResourcePropertyId.getTestResourceId(),
+						testResourcePropertyId, testResourcePropertyId.getRandomPropertyValue(randomGenerator));
 			}
 		}
 
@@ -215,7 +224,7 @@ public final class AT_ResourcesPluginData {
 					long value = randomGenerator.nextInt(5);
 					pluginDataBuilder.setPersonResourceLevel(personId, testResourceId, value);
 				}
-				if (randomGenerator.nextBoolean()) {
+				if (timeTrackedResourceIds.contains(testResourceId) && randomGenerator.nextBoolean()) {
 					double time = randomGenerator.nextDouble() + 1.0;
 					pluginDataBuilder.setPersonResourceTime(personId, testResourceId, time);
 				}
@@ -258,14 +267,15 @@ public final class AT_ResourcesPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = ResourcesPluginData.class, name = "setPersonResourceTime", args = { PersonId.class, ResourceId.class, Double.class })
+	@UnitTestMethod(target = ResourcesPluginData.class, name = "setPersonResourceTime", args = { PersonId.class,
+			ResourceId.class, Double.class })
 	public void testSetPersonResourceTime() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(2121375123528875466L);
 
 		// add the resources
 		ResourcesPluginData.Builder builder = ResourcesPluginData.builder();
 		for (TestResourceId testResourceId : TestResourceId.values()) {
-			builder.addResource(testResourceId, 0.0, false);
+			builder.addResource(testResourceId, 0.0, true);
 		}
 
 		Set<MultiKey> expectedValues = new LinkedHashSet<>();
@@ -308,15 +318,18 @@ public final class AT_ResourcesPluginData {
 		assertEquals(expectedValues, actualValues);
 
 		// precondition test: if the person id is null
-		ContractException contractException = assertThrows(ContractException.class, () -> ResourcesPluginData.builder().setPersonResourceTime(null, TestResourceId.RESOURCE_1, 0.0));
+		ContractException contractException = assertThrows(ContractException.class,
+				() -> ResourcesPluginData.builder().setPersonResourceTime(null, TestResourceId.RESOURCE_1, 0.0));
 		assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
 
 		// precondition test: if the resource id is null
-		contractException = assertThrows(ContractException.class, () -> ResourcesPluginData.builder().setPersonResourceTime(new PersonId(0), null, 0.0));
+		contractException = assertThrows(ContractException.class,
+				() -> ResourcesPluginData.builder().setPersonResourceTime(new PersonId(0), null, 0.0));
 		assertEquals(ResourceError.NULL_RESOURCE_ID, contractException.getErrorType());
 
 		// precondition test: if the time is null
-		contractException = assertThrows(ContractException.class, () -> ResourcesPluginData.builder().setPersonResourceTime(new PersonId(0), TestResourceId.RESOURCE_1, null));
+		contractException = assertThrows(ContractException.class, () -> ResourcesPluginData.builder()
+				.setPersonResourceTime(new PersonId(0), TestResourceId.RESOURCE_1, null));
 		assertEquals(ResourceError.NULL_TIME, contractException.getErrorType());
 	}
 
@@ -335,20 +348,21 @@ public final class AT_ResourcesPluginData {
 		// precondition tests
 
 		/*
-		 * if a resource property definition was collected for a resource that
-		 * was not added
+		 * if a resource property definition was collected for a resource that was not
+		 * added
 		 */
 		ContractException contractException = assertThrows(ContractException.class, () -> {
 			ResourceId resourceId = TestResourceId.RESOURCE_1;
 			ResourcePropertyId resourcePropertyId = TestResourcePropertyId.ResourceProperty_1_1_BOOLEAN_MUTABLE;
-			PropertyDefinition propertyDefinition = TestResourcePropertyId.ResourceProperty_1_1_BOOLEAN_MUTABLE.getPropertyDefinition();
-			ResourcesPluginData.builder().defineResourceProperty(resourceId, resourcePropertyId, propertyDefinition).build();
+			PropertyDefinition propertyDefinition = TestResourcePropertyId.ResourceProperty_1_1_BOOLEAN_MUTABLE
+					.getPropertyDefinition();
+			ResourcesPluginData.builder().defineResourceProperty(resourceId, resourcePropertyId, propertyDefinition)
+					.build();
 		});//
 		assertEquals(ResourceError.UNKNOWN_RESOURCE_ID, contractException.getErrorType());
 
 		/*
-		 * if a resource property value was collected for a resource that was
-		 * not added
+		 * if a resource property value was collected for a resource that was not added
 		 */
 		contractException = assertThrows(ContractException.class, () -> {
 			ResourceId resourceId = TestResourceId.RESOURCE_1;
@@ -359,55 +373,54 @@ public final class AT_ResourcesPluginData {
 		assertEquals(ResourceError.UNKNOWN_RESOURCE_ID, contractException.getErrorType());
 
 		/*
-		 * if a resource property value was collected for a resource property
-		 * that is not associated with the given resource id
+		 * if a resource property value was collected for a resource property that is
+		 * not associated with the given resource id
 		 */
 		contractException = assertThrows(ContractException.class, () -> {
 			ResourceId resourceId = TestResourceId.RESOURCE_1;
 			ResourcePropertyId resourcePropertyId = TestResourcePropertyId.ResourceProperty_1_1_BOOLEAN_MUTABLE;
 			Boolean value = false;
-			ResourcesPluginData	.builder()//
-								.addResource(resourceId, 0.0, false)//
-								.setResourcePropertyValue(resourceId, resourcePropertyId, value)//
-								.build();//
+			ResourcesPluginData.builder()//
+					.addResource(resourceId, 0.0, false)//
+					.setResourcePropertyValue(resourceId, resourcePropertyId, value)//
+					.build();//
 		});//
 		assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
 
 		/*
-		 * if a resource property value was collected for a resource property
-		 * that is not compatible with the associated resource property
-		 * definition
+		 * if a resource property value was collected for a resource property that is
+		 * not compatible with the associated resource property definition
 		 */
 		contractException = assertThrows(ContractException.class, () -> {
 			ResourceId resourceId = TestResourceId.RESOURCE_1;
 			ResourcePropertyId resourcePropertyId = TestResourcePropertyId.ResourceProperty_1_1_BOOLEAN_MUTABLE;
-			PropertyDefinition propertyDefinition = TestResourcePropertyId.ResourceProperty_1_1_BOOLEAN_MUTABLE.getPropertyDefinition();
+			PropertyDefinition propertyDefinition = TestResourcePropertyId.ResourceProperty_1_1_BOOLEAN_MUTABLE
+					.getPropertyDefinition();
 			Integer value = 5;
-			ResourcesPluginData	.builder()//
-								.addResource(resourceId, 0.0, false)//
-								.defineResourceProperty(resourceId, resourcePropertyId, propertyDefinition)//
-								.setResourcePropertyValue(resourceId, resourcePropertyId, value)//
-								.build();
+			ResourcesPluginData.builder()//
+					.addResource(resourceId, 0.0, false)//
+					.defineResourceProperty(resourceId, resourcePropertyId, propertyDefinition)//
+					.setResourcePropertyValue(resourceId, resourcePropertyId, value)//
+					.build();
 		});//
 		assertEquals(PropertyError.INCOMPATIBLE_VALUE, contractException.getErrorType());
 
 		/*
-		 * if a resource property definition has a null default value and there
-		 * is no assigned resource property value for that resource
+		 * if a resource property definition has a null default value and there is no
+		 * assigned resource property value for that resource
 		 */
 		contractException = assertThrows(ContractException.class, () -> {
 			ResourceId resourceId = TestResourceId.RESOURCE_1;
 			ResourcePropertyId resourcePropertyId = TestResourcePropertyId.ResourceProperty_1_1_BOOLEAN_MUTABLE;
 			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Boolean.class).build();
-			ResourcesPluginData	.builder()//
-								.addResource(resourceId, 0.0, false)//
-								.defineResourceProperty(resourceId, resourcePropertyId, propertyDefinition)//
-								.build();
+			ResourcesPluginData.builder()//
+					.addResource(resourceId, 0.0, false)//
+					.defineResourceProperty(resourceId, resourcePropertyId, propertyDefinition)//
+					.build();
 		});//
 		assertEquals(PropertyError.INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT, contractException.getErrorType());
 		/*
-		 * if a resource level was collected for a person that is an unknown
-		 * resource id
+		 * if a resource level was collected for a person that is an unknown resource id
 		 */
 		contractException = assertThrows(ContractException.class, () -> {
 			ResourceId resourceId = TestResourceId.RESOURCE_1;
@@ -417,8 +430,7 @@ public final class AT_ResourcesPluginData {
 		assertEquals(ResourceError.UNKNOWN_RESOURCE_ID, contractException.getErrorType());
 
 		/*
-		 * if a resource level was collected for a region that is an unknown
-		 * resource id
+		 * if a resource level was collected for a region that is an unknown resource id
 		 */
 		contractException = assertThrows(ContractException.class, () -> {
 			ResourceId resourceId = TestResourceId.RESOURCE_1;
@@ -430,7 +442,8 @@ public final class AT_ResourcesPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = ResourcesPluginData.Builder.class, name = "addResource", args = { ResourceId.class, Double.class })
+	@UnitTestMethod(target = ResourcesPluginData.Builder.class, name = "addResource", args = { ResourceId.class,
+			Double.class })
 	public void testAddResource() {
 
 		ResourcesPluginData.Builder builder = ResourcesPluginData.builder();
@@ -449,19 +462,22 @@ public final class AT_ResourcesPluginData {
 		// precondition tests
 
 		// if the resource id is null
-		ContractException contractException = assertThrows(ContractException.class, () -> ResourcesPluginData.builder().addResource(null, 0.0, false));
+		ContractException contractException = assertThrows(ContractException.class,
+				() -> ResourcesPluginData.builder().addResource(null, 0.0, false));
 		assertEquals(ResourceError.NULL_RESOURCE_ID, contractException.getErrorType());
 
 	}
 
 	@Test
-	@UnitTestMethod(target = ResourcesPluginData.Builder.class, name = "defineResourceProperty", args = { ResourceId.class, ResourcePropertyId.class, PropertyDefinition.class })
+	@UnitTestMethod(target = ResourcesPluginData.Builder.class, name = "defineResourceProperty", args = {
+			ResourceId.class, ResourcePropertyId.class, PropertyDefinition.class })
 	public void testDefineResourceProperty() {
 
 		ResourcesPluginData.Builder builder = ResourcesPluginData.builder();
 		for (TestResourceId testResourceId : TestResourceId.values()) {
 			builder.addResource(testResourceId, 0.0, false);
-			Set<TestResourcePropertyId> testResourcePropertyIds = TestResourcePropertyId.getTestResourcePropertyIds(testResourceId);
+			Set<TestResourcePropertyId> testResourcePropertyIds = TestResourcePropertyId
+					.getTestResourcePropertyIds(testResourceId);
 			for (TestResourcePropertyId testResourcePropertyId : testResourcePropertyIds) {
 				PropertyDefinition propertyDefinition = testResourcePropertyId.getPropertyDefinition();
 				PropertyDefinition propertyDefinition2 = testResourcePropertyId.next().getPropertyDefinition();
@@ -476,10 +492,12 @@ public final class AT_ResourcesPluginData {
 		ResourcesPluginData resourceInitialData = builder.build();
 
 		for (TestResourceId testResourceId : TestResourceId.values()) {
-			Set<TestResourcePropertyId> testResourcePropertyIds = TestResourcePropertyId.getTestResourcePropertyIds(testResourceId);
+			Set<TestResourcePropertyId> testResourcePropertyIds = TestResourcePropertyId
+					.getTestResourcePropertyIds(testResourceId);
 			for (TestResourcePropertyId testResourcePropertyId : testResourcePropertyIds) {
 				PropertyDefinition expectedPropertyDefinition = testResourcePropertyId.getPropertyDefinition();
-				PropertyDefinition actualPropertyDefinition = resourceInitialData.getResourcePropertyDefinition(testResourceId, testResourcePropertyId);
+				PropertyDefinition actualPropertyDefinition = resourceInitialData
+						.getResourcePropertyDefinition(testResourceId, testResourcePropertyId);
 				assertEquals(expectedPropertyDefinition, actualPropertyDefinition);
 			}
 		}
@@ -488,7 +506,8 @@ public final class AT_ResourcesPluginData {
 
 		ResourceId resourceId = TestResourceId.RESOURCE_2;
 		ResourcePropertyId resourcePropertyId = TestResourcePropertyId.ResourceProperty_2_2_INTEGER_MUTABLE;
-		PropertyDefinition propertyDefinition = TestResourcePropertyId.ResourceProperty_2_2_INTEGER_MUTABLE.getPropertyDefinition();
+		PropertyDefinition propertyDefinition = TestResourcePropertyId.ResourceProperty_2_2_INTEGER_MUTABLE
+				.getPropertyDefinition();
 
 		// if the resource id is null
 		ContractException contractException = assertThrows(ContractException.class, () -> {
@@ -510,7 +529,8 @@ public final class AT_ResourcesPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = ResourcesPluginData.Builder.class, name = "setPersonResourceLevel", args = { PersonId.class, ResourceId.class, long.class })
+	@UnitTestMethod(target = ResourcesPluginData.Builder.class, name = "setPersonResourceLevel", args = {
+			PersonId.class, ResourceId.class, long.class })
 	public void testSetPersonResourceLevel() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6539895160899665826L);
@@ -569,20 +589,24 @@ public final class AT_ResourcesPluginData {
 		long amount = 678;
 
 		// if the person id is null
-		ContractException contractException = assertThrows(ContractException.class, () -> builder.setPersonResourceLevel(null, resourceId, amount));
+		ContractException contractException = assertThrows(ContractException.class,
+				() -> builder.setPersonResourceLevel(null, resourceId, amount));
 		assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
 
 		// if the resource id is null
-		contractException = assertThrows(ContractException.class, () -> builder.setPersonResourceLevel(personId, null, amount));
+		contractException = assertThrows(ContractException.class,
+				() -> builder.setPersonResourceLevel(personId, null, amount));
 		assertEquals(ResourceError.NULL_RESOURCE_ID, contractException.getErrorType());
 
 		// if the resource amount is negative
-		contractException = assertThrows(ContractException.class, () -> builder.setPersonResourceLevel(personId, resourceId, -5L));
+		contractException = assertThrows(ContractException.class,
+				() -> builder.setPersonResourceLevel(personId, resourceId, -5L));
 		assertEquals(ResourceError.NEGATIVE_RESOURCE_AMOUNT, contractException.getErrorType());
 	}
 
 	@Test
-	@UnitTestMethod(target = ResourcesPluginData.Builder.class, name = "setRegionResourceLevel", args = { RegionId.class, ResourceId.class, long.class })
+	@UnitTestMethod(target = ResourcesPluginData.Builder.class, name = "setRegionResourceLevel", args = {
+			RegionId.class, ResourceId.class, long.class })
 	public void testSetRegionResourceLevel() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8877834706249831995L);
@@ -631,20 +655,24 @@ public final class AT_ResourcesPluginData {
 		long amount = 678;
 
 		// if the region id is null
-		ContractException contractException = assertThrows(ContractException.class, () -> builder.setRegionResourceLevel(null, resourceId, amount));
+		ContractException contractException = assertThrows(ContractException.class,
+				() -> builder.setRegionResourceLevel(null, resourceId, amount));
 		assertEquals(RegionError.NULL_REGION_ID, contractException.getErrorType());
 
 		// if the resource id is null
-		contractException = assertThrows(ContractException.class, () -> builder.setRegionResourceLevel(regionId, null, amount));
+		contractException = assertThrows(ContractException.class,
+				() -> builder.setRegionResourceLevel(regionId, null, amount));
 		assertEquals(ResourceError.NULL_RESOURCE_ID, contractException.getErrorType());
 
 		// if the resource amount is negative
-		contractException = assertThrows(ContractException.class, () -> builder.setRegionResourceLevel(regionId, resourceId, -5L));
+		contractException = assertThrows(ContractException.class,
+				() -> builder.setRegionResourceLevel(regionId, resourceId, -5L));
 		assertEquals(ResourceError.NEGATIVE_RESOURCE_AMOUNT, contractException.getErrorType());
 	}
 
 	@Test
-	@UnitTestMethod(target = ResourcesPluginData.Builder.class, name = "setResourcePropertyValue", args = { ResourceId.class, ResourcePropertyId.class, Object.class })
+	@UnitTestMethod(target = ResourcesPluginData.Builder.class, name = "setResourcePropertyValue", args = {
+			ResourceId.class, ResourcePropertyId.class, Object.class })
 	public void testSetResourcePropertyValue() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7516798209205913252L);
@@ -654,7 +682,8 @@ public final class AT_ResourcesPluginData {
 		ResourcesPluginData.Builder builder = ResourcesPluginData.builder();
 		for (TestResourceId testResourceId : TestResourceId.values()) {
 			builder.addResource(testResourceId, 0.0, false);
-			Set<TestResourcePropertyId> testResourcePropertyIds = TestResourcePropertyId.getTestResourcePropertyIds(testResourceId);
+			Set<TestResourcePropertyId> testResourcePropertyIds = TestResourcePropertyId
+					.getTestResourcePropertyIds(testResourceId);
 			for (TestResourcePropertyId testResourcePropertyId : testResourcePropertyIds) {
 				MultiKey multiKey = new MultiKey(testResourceId, testResourcePropertyId);
 				PropertyDefinition propertyDefinition = testResourcePropertyId.getPropertyDefinition();
@@ -678,11 +707,13 @@ public final class AT_ResourcesPluginData {
 		ResourcesPluginData resourceInitialData = builder.build();
 
 		for (TestResourceId testResourceId : TestResourceId.values()) {
-			Set<TestResourcePropertyId> testResourcePropertyIds = TestResourcePropertyId.getTestResourcePropertyIds(testResourceId);
+			Set<TestResourcePropertyId> testResourcePropertyIds = TestResourcePropertyId
+					.getTestResourcePropertyIds(testResourceId);
 			for (TestResourcePropertyId testResourcePropertyId : testResourcePropertyIds) {
 				MultiKey multiKey = new MultiKey(testResourceId, testResourcePropertyId);
 				Object expectedValue = expectedValues.get(multiKey);
-				Optional<Object> optional = resourceInitialData.getResourcePropertyValue(testResourceId, testResourcePropertyId);
+				Optional<Object> optional = resourceInitialData.getResourcePropertyValue(testResourceId,
+						testResourcePropertyId);
 				if (expectedValue == null) {
 					assertTrue(optional.isEmpty());
 				} else {
@@ -697,27 +728,32 @@ public final class AT_ResourcesPluginData {
 		ResourcePropertyId resourcePropertyId = TestResourcePropertyId.ResourceProperty_2_2_INTEGER_MUTABLE;
 
 		// if the resource id is null
-		ContractException contractException = assertThrows(ContractException.class, () -> builder.setResourcePropertyValue(null, resourcePropertyId, 5));
+		ContractException contractException = assertThrows(ContractException.class,
+				() -> builder.setResourcePropertyValue(null, resourcePropertyId, 5));
 		assertEquals(ResourceError.NULL_RESOURCE_ID, contractException.getErrorType());
 
 		// if the resource property id is null</li>
-		contractException = assertThrows(ContractException.class, () -> builder.setResourcePropertyValue(resourceId, null, 5));
+		contractException = assertThrows(ContractException.class,
+				() -> builder.setResourcePropertyValue(resourceId, null, 5));
 		assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
 
 		// if the resource property value is null
-		contractException = assertThrows(ContractException.class, () -> builder.setResourcePropertyValue(resourceId, null, 5));
+		contractException = assertThrows(ContractException.class,
+				() -> builder.setResourcePropertyValue(resourceId, null, 5));
 		assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
 	}
 
 	@Test
-	@UnitTestMethod(target = ResourcesPluginData.class, name = "getResourcePropertyDefinition", args = { ResourceId.class, ResourcePropertyId.class })
+	@UnitTestMethod(target = ResourcesPluginData.class, name = "getResourcePropertyDefinition", args = {
+			ResourceId.class, ResourcePropertyId.class })
 	public void testGetResourcePropertyDefinition() {
 		// 1866861448895276970L
 
 		ResourcesPluginData.Builder builder = ResourcesPluginData.builder();
 		for (TestResourceId testResourceId : TestResourceId.values()) {
 			builder.addResource(testResourceId, 0.0, false);
-			Set<TestResourcePropertyId> testResourcePropertyIds = TestResourcePropertyId.getTestResourcePropertyIds(testResourceId);
+			Set<TestResourcePropertyId> testResourcePropertyIds = TestResourcePropertyId
+					.getTestResourcePropertyIds(testResourceId);
 			for (TestResourcePropertyId testResourcePropertyId : testResourcePropertyIds) {
 				PropertyDefinition propertyDefinition = testResourcePropertyId.getPropertyDefinition();
 				builder.defineResourceProperty(testResourceId, testResourcePropertyId, propertyDefinition);
@@ -727,10 +763,12 @@ public final class AT_ResourcesPluginData {
 		ResourcesPluginData resourceInitialData = builder.build();
 
 		for (TestResourceId testResourceId : TestResourceId.values()) {
-			Set<TestResourcePropertyId> testResourcePropertyIds = TestResourcePropertyId.getTestResourcePropertyIds(testResourceId);
+			Set<TestResourcePropertyId> testResourcePropertyIds = TestResourcePropertyId
+					.getTestResourcePropertyIds(testResourceId);
 			for (TestResourcePropertyId testResourcePropertyId : testResourcePropertyIds) {
 				PropertyDefinition expectedPropertyDefinition = testResourcePropertyId.getPropertyDefinition();
-				PropertyDefinition actualPropertyDefinition = resourceInitialData.getResourcePropertyDefinition(testResourceId, testResourcePropertyId);
+				PropertyDefinition actualPropertyDefinition = resourceInitialData
+						.getResourcePropertyDefinition(testResourceId, testResourcePropertyId);
 				assertEquals(expectedPropertyDefinition, actualPropertyDefinition);
 			}
 		}
@@ -739,13 +777,15 @@ public final class AT_ResourcesPluginData {
 
 		// if the resource id is null
 		ContractException contractException = assertThrows(ContractException.class, () -> {
-			resourceInitialData.getResourcePropertyDefinition(null, TestResourcePropertyId.ResourceProperty_1_1_BOOLEAN_MUTABLE);
+			resourceInitialData.getResourcePropertyDefinition(null,
+					TestResourcePropertyId.ResourceProperty_1_1_BOOLEAN_MUTABLE);
 		});
 		assertEquals(ResourceError.NULL_RESOURCE_ID, contractException.getErrorType());
 
 		// if the resource id is unknown
 		contractException = assertThrows(ContractException.class, () -> {
-			resourceInitialData.getResourcePropertyDefinition(TestResourceId.getUnknownResourceId(), TestResourcePropertyId.ResourceProperty_1_1_BOOLEAN_MUTABLE);
+			resourceInitialData.getResourcePropertyDefinition(TestResourceId.getUnknownResourceId(),
+					TestResourcePropertyId.ResourceProperty_1_1_BOOLEAN_MUTABLE);
 		});
 		assertEquals(ResourceError.UNKNOWN_RESOURCE_ID, contractException.getErrorType());
 
@@ -757,12 +797,14 @@ public final class AT_ResourcesPluginData {
 
 		// if the resource property id is unknown
 		contractException = assertThrows(ContractException.class, () -> {
-			resourceInitialData.getResourcePropertyDefinition(TestResourceId.RESOURCE_1, TestResourcePropertyId.getUnknownResourcePropertyId());
+			resourceInitialData.getResourcePropertyDefinition(TestResourceId.RESOURCE_1,
+					TestResourcePropertyId.getUnknownResourcePropertyId());
 		});
 		assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
 
 		contractException = assertThrows(ContractException.class, () -> {
-			resourceInitialData.getResourcePropertyDefinition(TestResourceId.RESOURCE_1, TestResourcePropertyId.ResourceProperty_2_2_INTEGER_MUTABLE);
+			resourceInitialData.getResourcePropertyDefinition(TestResourceId.RESOURCE_1,
+					TestResourcePropertyId.ResourceProperty_2_2_INTEGER_MUTABLE);
 		});
 		assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
 
@@ -775,7 +817,8 @@ public final class AT_ResourcesPluginData {
 		ResourcesPluginData.Builder builder = ResourcesPluginData.builder();
 		for (TestResourceId testResourceId : TestResourceId.values()) {
 			builder.addResource(testResourceId, 0.0, false);
-			Set<TestResourcePropertyId> testResourcePropertyIds = TestResourcePropertyId.getTestResourcePropertyIds(testResourceId);
+			Set<TestResourcePropertyId> testResourcePropertyIds = TestResourcePropertyId
+					.getTestResourcePropertyIds(testResourceId);
 			for (TestResourcePropertyId testResourcePropertyId : testResourcePropertyIds) {
 				PropertyDefinition propertyDefinition = testResourcePropertyId.getPropertyDefinition();
 				builder.defineResourceProperty(testResourceId, testResourcePropertyId, propertyDefinition);
@@ -786,25 +829,30 @@ public final class AT_ResourcesPluginData {
 
 		for (TestResourceId testResourceId : TestResourceId.values()) {
 
-			Set<TestResourcePropertyId> expectedResourcePropertyIds = TestResourcePropertyId.getTestResourcePropertyIds(testResourceId);
-			Set<TestResourcePropertyId> actualResourcePropertyIds = resourceInitialData.getResourcePropertyIds(testResourceId);
+			Set<TestResourcePropertyId> expectedResourcePropertyIds = TestResourcePropertyId
+					.getTestResourcePropertyIds(testResourceId);
+			Set<TestResourcePropertyId> actualResourcePropertyIds = resourceInitialData
+					.getResourcePropertyIds(testResourceId);
 			assertEquals(expectedResourcePropertyIds, actualResourcePropertyIds);
 		}
 
 		// precondition tests
 
 		// if the resource id is null
-		ContractException contractException = assertThrows(ContractException.class, () -> resourceInitialData.getResourcePropertyIds(null));
+		ContractException contractException = assertThrows(ContractException.class,
+				() -> resourceInitialData.getResourcePropertyIds(null));
 		assertEquals(ResourceError.NULL_RESOURCE_ID, contractException.getErrorType());
 
 		// if the resource id is unknown
-		contractException = assertThrows(ContractException.class, () -> resourceInitialData.getResourcePropertyIds(TestResourceId.getUnknownResourceId()));
+		contractException = assertThrows(ContractException.class,
+				() -> resourceInitialData.getResourcePropertyIds(TestResourceId.getUnknownResourceId()));
 		assertEquals(ResourceError.UNKNOWN_RESOURCE_ID, contractException.getErrorType());
 
 	}
 
 	@Test
-	@UnitTestMethod(target = ResourcesPluginData.class, name = "getResourcePropertyValue", args = { ResourceId.class, ResourcePropertyId.class })
+	@UnitTestMethod(target = ResourcesPluginData.class, name = "getResourcePropertyValue", args = { ResourceId.class,
+			ResourcePropertyId.class })
 	public void testGetResourcePropertyValue() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(1876340540126853882L);
@@ -814,7 +862,8 @@ public final class AT_ResourcesPluginData {
 		ResourcesPluginData.Builder builder = ResourcesPluginData.builder();
 		for (TestResourceId testResourceId : TestResourceId.values()) {
 			builder.addResource(testResourceId, 0.0, false);
-			Set<TestResourcePropertyId> testResourcePropertyIds = TestResourcePropertyId.getTestResourcePropertyIds(testResourceId);
+			Set<TestResourcePropertyId> testResourcePropertyIds = TestResourcePropertyId
+					.getTestResourcePropertyIds(testResourceId);
 			for (TestResourcePropertyId testResourcePropertyId : testResourcePropertyIds) {
 				MultiKey multiKey = new MultiKey(testResourceId, testResourcePropertyId);
 				PropertyDefinition propertyDefinition = testResourcePropertyId.getPropertyDefinition();
@@ -830,11 +879,13 @@ public final class AT_ResourcesPluginData {
 		ResourcesPluginData resourceInitialData = builder.build();
 
 		for (TestResourceId testResourceId : TestResourceId.values()) {
-			Set<TestResourcePropertyId> testResourcePropertyIds = TestResourcePropertyId.getTestResourcePropertyIds(testResourceId);
+			Set<TestResourcePropertyId> testResourcePropertyIds = TestResourcePropertyId
+					.getTestResourcePropertyIds(testResourceId);
 			for (TestResourcePropertyId testResourcePropertyId : testResourcePropertyIds) {
 				MultiKey multiKey = new MultiKey(testResourceId, testResourcePropertyId);
 				Object expectedValue = expectedValues.get(multiKey);
-				Optional<Object> optional = resourceInitialData.getResourcePropertyValue(testResourceId, testResourcePropertyId);
+				Optional<Object> optional = resourceInitialData.getResourcePropertyValue(testResourceId,
+						testResourcePropertyId);
 				if (expectedValue == null) {
 					assertTrue(optional.isEmpty());
 				} else {
@@ -849,22 +900,27 @@ public final class AT_ResourcesPluginData {
 		ResourcePropertyId resourcePropertyId = TestResourcePropertyId.ResourceProperty_2_2_INTEGER_MUTABLE;
 
 		// if the resource id is null
-		ContractException contractException = assertThrows(ContractException.class, () -> resourceInitialData.getResourcePropertyValue(null, resourcePropertyId));
+		ContractException contractException = assertThrows(ContractException.class,
+				() -> resourceInitialData.getResourcePropertyValue(null, resourcePropertyId));
 		assertEquals(ResourceError.NULL_RESOURCE_ID, contractException.getErrorType());
 
 		// if the resource id is unknown
-		contractException = assertThrows(ContractException.class, () -> resourceInitialData.getResourcePropertyValue(TestResourceId.getUnknownResourceId(), resourcePropertyId));
+		contractException = assertThrows(ContractException.class, () -> resourceInitialData
+				.getResourcePropertyValue(TestResourceId.getUnknownResourceId(), resourcePropertyId));
 		assertEquals(ResourceError.UNKNOWN_RESOURCE_ID, contractException.getErrorType());
 
 		// if the resource property id is null
-		contractException = assertThrows(ContractException.class, () -> resourceInitialData.getResourcePropertyValue(resourceId, null));
+		contractException = assertThrows(ContractException.class,
+				() -> resourceInitialData.getResourcePropertyValue(resourceId, null));
 		assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
 
 		// if the resource property id is unknown
-		contractException = assertThrows(ContractException.class, () -> resourceInitialData.getResourcePropertyValue(resourceId, TestResourcePropertyId.getUnknownResourcePropertyId()));
+		contractException = assertThrows(ContractException.class, () -> resourceInitialData
+				.getResourcePropertyValue(resourceId, TestResourcePropertyId.getUnknownResourcePropertyId()));
 		assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
 
-		contractException = assertThrows(ContractException.class, () -> resourceInitialData.getResourcePropertyValue(resourceId, TestResourcePropertyId.ResourceProperty_5_1_INTEGER_IMMUTABLE));
+		contractException = assertThrows(ContractException.class, () -> resourceInitialData
+				.getResourcePropertyValue(resourceId, TestResourcePropertyId.ResourceProperty_5_1_INTEGER_IMMUTABLE));
 		assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
 
 	}
@@ -920,7 +976,8 @@ public final class AT_ResourcesPluginData {
 		assertEquals(expectedValues, actualValues);
 
 		// precondition test: if the person id is null
-		ContractException contractException = assertThrows(ContractException.class, () -> resourceInitialData.getPersonResourceLevels(null));
+		ContractException contractException = assertThrows(ContractException.class,
+				() -> resourceInitialData.getPersonResourceLevels(null));
 		assertEquals(ResourceError.NULL_RESOURCE_ID, contractException.getErrorType());
 
 	}
@@ -941,7 +998,8 @@ public final class AT_ResourcesPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = ResourcesPluginData.class, name = "getRegionResourceLevel", args = { RegionId.class, ResourceId.class })
+	@UnitTestMethod(target = ResourcesPluginData.class, name = "getRegionResourceLevel", args = { RegionId.class,
+			ResourceId.class })
 	public void testGetRegionResourceLevel() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6794457915874374469L);
@@ -985,20 +1043,24 @@ public final class AT_ResourcesPluginData {
 		assertEquals(expectedValues, actualValues);
 
 		// precondition test: if the region id is null
-		ContractException contractException = assertThrows(ContractException.class, () -> resourceInitialData.getRegionResourceLevel(null, TestResourceId.RESOURCE_1));
+		ContractException contractException = assertThrows(ContractException.class,
+				() -> resourceInitialData.getRegionResourceLevel(null, TestResourceId.RESOURCE_1));
 		assertEquals(RegionError.NULL_REGION_ID, contractException.getErrorType());
 
 		// precondition test: if the resource id is null
-		contractException = assertThrows(ContractException.class, () -> resourceInitialData.getRegionResourceLevel(TestRegionId.REGION_1, null));
+		contractException = assertThrows(ContractException.class,
+				() -> resourceInitialData.getRegionResourceLevel(TestRegionId.REGION_1, null));
 		assertEquals(ResourceError.NULL_RESOURCE_ID, contractException.getErrorType());
 
 		// precondition test: if the resource id is unknown
-		contractException = assertThrows(ContractException.class, () -> resourceInitialData.getRegionResourceLevel(TestRegionId.REGION_1, TestResourceId.getUnknownResourceId()));
+		contractException = assertThrows(ContractException.class, () -> resourceInitialData
+				.getRegionResourceLevel(TestRegionId.REGION_1, TestResourceId.getUnknownResourceId()));
 		assertEquals(ResourceError.UNKNOWN_RESOURCE_ID, contractException.getErrorType());
 	}
 
 	@Test
-	@UnitTestMethod(target = ResourcesPluginData.class, name = "getResourceTimeTrackingPolicy", args = { ResourceId.class })
+	@UnitTestMethod(target = ResourcesPluginData.class, name = "getResourceTimeTrackingPolicy", args = {
+			ResourceId.class })
 	public void testGetResourceTimeTrackingPolicy() {
 
 		Map<TestResourceId, Boolean> expectedValues = new LinkedHashMap<>();
@@ -1021,11 +1083,13 @@ public final class AT_ResourcesPluginData {
 		}
 
 		// precondition test: if the resource id is null
-		ContractException contractException = assertThrows(ContractException.class, () -> resourceInitialData.getResourceTimeTrackingPolicy(null));
+		ContractException contractException = assertThrows(ContractException.class,
+				() -> resourceInitialData.getResourceTimeTrackingPolicy(null));
 		assertEquals(ResourceError.NULL_RESOURCE_ID, contractException.getErrorType());
 
 		// precondition test: if the resource id is unknown
-		contractException = assertThrows(ContractException.class, () -> resourceInitialData.getResourceTimeTrackingPolicy(TestResourceId.getUnknownResourceId()));
+		contractException = assertThrows(ContractException.class,
+				() -> resourceInitialData.getResourceTimeTrackingPolicy(TestResourceId.getUnknownResourceId()));
 		assertEquals(ResourceError.UNKNOWN_RESOURCE_ID, contractException.getErrorType());
 
 	}
@@ -1068,17 +1132,19 @@ public final class AT_ResourcesPluginData {
 
 		for (TestResourceId testResourceId : TestResourceId.values()) {
 			double time = randomGenerator.nextDouble();
-			boolean timeTrackingPolicy = randomGenerator.nextBoolean();
+			boolean timeTrackingPolicy = testResourceId.getTimeTrackingPolicy();
 			pluginDataBuilder.addResource(testResourceId, time, timeTrackingPolicy);
 		}
 
 		for (TestResourcePropertyId testResourcePropertyId : TestResourcePropertyId.values()) {
-			pluginDataBuilder.defineResourceProperty(testResourcePropertyId.getTestResourceId(), testResourcePropertyId, testResourcePropertyId.getPropertyDefinition());
+			pluginDataBuilder.defineResourceProperty(testResourcePropertyId.getTestResourceId(), testResourcePropertyId,
+					testResourcePropertyId.getPropertyDefinition());
 		}
 
 		for (TestResourcePropertyId testResourcePropertyId : TestResourcePropertyId.values()) {
 			if (randomGenerator.nextBoolean()) {
-				pluginDataBuilder.setResourcePropertyValue(testResourcePropertyId.getTestResourceId(), testResourcePropertyId, testResourcePropertyId.getRandomPropertyValue(randomGenerator));
+				pluginDataBuilder.setResourcePropertyValue(testResourcePropertyId.getTestResourceId(),
+						testResourcePropertyId, testResourcePropertyId.getRandomPropertyValue(randomGenerator));
 			}
 		}
 
@@ -1098,7 +1164,9 @@ public final class AT_ResourcesPluginData {
 					long value = randomGenerator.nextInt(5);
 					double time = randomGenerator.nextDouble() + 1.0;
 					pluginDataBuilder.setPersonResourceLevel(personId, testResourceId, value);
-					pluginDataBuilder.setPersonResourceTime(personId, testResourceId, time);
+					if (testResourceId.getTimeTrackingPolicy()) {
+						pluginDataBuilder.setPersonResourceTime(personId, testResourceId, time);
+					}
 				}
 			}
 		}

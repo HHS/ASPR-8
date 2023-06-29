@@ -387,7 +387,8 @@ public class ResourcesTestPluginFactory {
                 if (randomGenerator.nextBoolean()) {
                     resourcesBuilder.setPersonResourceLevel(personId, testResourceId, randomGenerator.nextInt(10));
                 }
-                if (randomGenerator.nextBoolean()) {
+                boolean trackTimes = testResourceId.getTimeTrackingPolicy();
+                if (trackTimes &&  randomGenerator.nextBoolean()) {
                     resourcesBuilder.setPersonResourceTime(personId, testResourceId, 0.0);
                 }
             }
