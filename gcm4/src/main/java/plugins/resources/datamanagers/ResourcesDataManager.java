@@ -112,10 +112,18 @@ public final class ResourcesDataManager extends DataManager {
 		 * if the resource assignment times are being tracked, then record the resource
 		 * time.
 		 */
-		final DoubleValueContainer doubleValueContainer = personResourceTimes.get(resourceId);
-		if (doubleValueContainer != null) {			
+		Boolean trackTimes = resourceTimeTrackingPolicies.get(resourceId);
+		if (trackTimes) {
+			DoubleValueContainer doubleValueContainer = personResourceTimes.get(resourceId);
+			if (doubleValueContainer == null) {
+				double resourceDefinitionTime = resourceDefaultTimes.get(resourceId);
+				doubleValueContainer = new DoubleValueContainer(resourceDefinitionTime,
+						peopleDataManager::getPersonIndexIterator);
+				personResourceTimes.put(resourceId, doubleValueContainer);
+			}
 			doubleValueContainer.setValue(personId.getValue(), dataManagerContext.getTime());
 		}
+		
 	}
 
 	/**
@@ -513,7 +521,6 @@ public final class ResourcesDataManager extends DataManager {
 		double resourceDefinitionTime = dataManagerContext.getTime();
 		resourceDefaultTimes.put(resourceId, resourceDefinitionTime);
 
-		
 		resourceTimeTrackingPolicies.put(resourceId, trackTimes);
 
 		// release notice that a new resource id has been added
@@ -620,20 +627,19 @@ public final class ResourcesDataManager extends DataManager {
 		 * if the resource assignment times are being tracked, then record the resource
 		 * time.
 		 */
-		DoubleValueContainer doubleValueContainer = personResourceTimes.get(resourceId);
-		if (doubleValueContainer == null) {
-			Boolean track = resourceTimeTrackingPolicies.get(resourceId);
-			if (track) {
+
+		Boolean trackTimes = resourceTimeTrackingPolicies.get(resourceId);
+		if (trackTimes) {
+			DoubleValueContainer doubleValueContainer = personResourceTimes.get(resourceId);
+			if (doubleValueContainer == null) {
 				double resourceDefinitionTime = resourceDefaultTimes.get(resourceId);
 				doubleValueContainer = new DoubleValueContainer(resourceDefinitionTime,
 						peopleDataManager::getPersonIndexIterator);
 				personResourceTimes.put(resourceId, doubleValueContainer);
 			}
-		}
-
-		if (doubleValueContainer != null) {
 			doubleValueContainer.setValue(personId.getValue(), dataManagerContext.getTime());
 		}
+
 	}
 
 	/**
@@ -1847,7 +1853,7 @@ public final class ResourcesDataManager extends DataManager {
 		builder.append(resourceTimeTrackingPolicies);
 
 		builder.append(", personResourceTimes=");
-		builder.append(personResourceTimes.keySet());
+		builder.append(personResourceTimes);
 
 		builder.append(", regionResources=");
 		builder.append(regionResources);
