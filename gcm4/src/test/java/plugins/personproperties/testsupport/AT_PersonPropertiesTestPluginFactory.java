@@ -87,8 +87,8 @@ public class AT_PersonPropertiesTestPluginFactory {
     }
 
     /*
-     * Given a list of plugins, will show that the plugin with the given
-     * pluginId exists, and exists EXACTLY once.
+     * Given a list of plugins, will show that the plugin with the given pluginId
+     * exists, and exists EXACTLY once.
      */
     private Plugin checkPluginExists(List<Plugin> plugins, PluginId pluginId) {
         Plugin actualPlugin = null;
@@ -105,8 +105,8 @@ public class AT_PersonPropertiesTestPluginFactory {
     }
 
     /**
-     * Given a list of plugins, will show that the explicit plugindata for the
-     * given pluginid exists, and exists EXACTLY once.
+     * Given a list of plugins, will show that the explicit plugindata for the given
+     * pluginid exists, and exists EXACTLY once.
      */
     private <T extends PluginData> void checkPluginDataExists(List<Plugin> plugins, T expectedPluginData,
             PluginId pluginId) {
@@ -300,14 +300,18 @@ public class AT_PersonPropertiesTestPluginFactory {
 
         for (PersonId personId : people) {
 
-            for (TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.values()) {
+            for (TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId
+                    .getShuffledPersonPropertyIds(randomGenerator)) {
 
-                boolean doesNotHaveDefaultValue = testPersonPropertyId.getPropertyDefinition().getDefaultValue()
-                        .isEmpty();
+                boolean hasDefault = testPersonPropertyId.getPropertyDefinition().getDefaultValue().isPresent();
+                boolean setValue = randomGenerator.nextBoolean();
 
-                if (doesNotHaveDefaultValue || randomGenerator.nextBoolean()) {
+                if (!hasDefault || setValue) {
                     Object randomPropertyValue = testPersonPropertyId.getRandomPropertyValue(randomGenerator);
                     personPropertyBuilder.setPersonPropertyValue(personId, testPersonPropertyId, randomPropertyValue);
+                } else if (hasDefault && personId.getValue() % 5 == 0) {
+                    personPropertyBuilder.setPersonPropertyValue(personId, testPersonPropertyId,
+                            testPersonPropertyId.getPropertyDefinition().getDefaultValue().get());
                 }
 
                 if (testPersonPropertyId.isTimeTracked() && personId.getValue() % 5 == 0) {
