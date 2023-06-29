@@ -2,17 +2,17 @@ package gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.translationSpecs
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-
-import org.apache.commons.math3.util.FastMath;
+import java.util.Map;
 
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.input.PropertyDefinitionInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.input.PropertyDefinitionMapInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.input.PropertyValueMapInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.input.RegionIdInput;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.input.PersonResourceInput;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.input.PersonResourceLevelsInput;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.input.RegionResourceLevelsInput;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.input.PersonResourceLevelInput;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.input.PersonResourceLevelMapInput;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.input.PersonResourceTimeInput;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.input.PersonResourceTimeMapInput;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.input.RegionResourceLevelMapInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.input.ResourceIdInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.input.ResourceIdMapInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.input.ResourceInitializationInput;
@@ -77,27 +77,37 @@ public class ResourcesPluginDataTranslationSpec
             builder.setResourcePropertyValue(resourceId, resourcePropertyId, propertyValue);
         }
 
-        for (PersonResourceLevelsInput personResourceLevelsInput : inputObject.getPersonResourceLevelsList()) {
+        for (PersonResourceLevelMapInput personResourceLevelsInput : inputObject
+                .getPersonResourceLevelsList()) {
             ResourceId resourceId = this.translationEngine
                     .convertObject(personResourceLevelsInput.getResourceId());
 
-            for (PersonResourceInput personResourceInput : personResourceLevelsInput
+            for (PersonResourceLevelInput personResourceInput : personResourceLevelsInput
                     .getPersonResourceLevelsList()) {
                 PersonId personId = new PersonId(personResourceInput.getPersonId());
 
-                if (personResourceInput.hasAmount()) {
-                    builder.setPersonResourceLevel(personId, resourceId,
-                            personResourceInput.getAmount());
-                }
+                builder.setPersonResourceLevel(personId, resourceId,
+                        personResourceInput.getAmount());
 
-                if (personResourceInput.hasResourceTime()) {
-                    builder.setPersonResourceTime(personId, resourceId,
-                            personResourceInput.getResourceTime());
-                }
             }
         }
 
-        for (RegionResourceLevelsInput regionResourceLevelsInput : inputObject.getRegionResourceLevelsList()) {
+        for (PersonResourceTimeMapInput personResourceTimesInput : inputObject.getPersonResourceTimesList()) {
+            ResourceId resourceId = this.translationEngine
+                    .convertObject(personResourceTimesInput.getResourceId());
+
+            for (PersonResourceTimeInput personResourceInput : personResourceTimesInput
+                    .getPersonResourceTimesList()) {
+                PersonId personId = new PersonId(personResourceInput.getPersonId());
+
+                builder.setPersonResourceTime(personId, resourceId,
+                        personResourceInput.getResourceTime());
+
+            }
+        }
+
+        for (RegionResourceLevelMapInput regionResourceLevelsInput : inputObject
+                .getRegionResourceLevelsList()) {
             RegionId regionId = this.translationEngine
                     .convertObject(regionResourceLevelsInput.getRegionId());
 
@@ -118,15 +128,38 @@ public class ResourcesPluginDataTranslationSpec
     protected ResourcesPluginDataInput convertAppObject(ResourcesPluginData appObject) {
         ResourcesPluginDataInput.Builder builder = ResourcesPluginDataInput.newBuilder();
 
-        for (ResourceId resourceId : appObject.getResourceIds()) {
+        Map<ResourceId, Double> resourceDefaultTimes = appObject.getResourceDefaultTimes();
+        Map<ResourceId, Map<ResourcePropertyId, PropertyDefinition>> resourcePropDefs = appObject
+                .getResourcePropertyDefinitions();
+        Map<ResourceId, Map<ResourcePropertyId, Object>> resourcePropValues = appObject
+                .getResourcePropertyValues();
+        Map<RegionId, Map<ResourceId, Long>> regionResourceLevels = appObject.getRegionResourceLevels();
+        Map<ResourceId, List<Long>> personResourceLevels = appObject.getPersonResourceLevels();
+        Map<ResourceId, List<Double>> personResourceTimes = appObject.getPersonResourceTimes();
+
+        // Resource Ids
+        for (ResourceId resourceId : resourceDefaultTimes.keySet()) {
             ResourceIdInput resourceIdInput = this.translationEngine.convertObjectAsSafeClass(resourceId,
                     ResourceId.class);
 
-            for (ResourcePropertyId resourcePropertyId : appObject.getResourcePropertyIds(resourceId)) {
-                ResourcePropertyDefinitionMapInput.Builder resourcePropDefBuilder = ResourcePropertyDefinitionMapInput
-                        .newBuilder();
+            ResourceIdMapInput resourceIdMapInput = ResourceIdMapInput.newBuilder()
+                    .setResourceId(resourceIdInput)
+                    .setResourceTime(appObject.getResourceDefaultTime(resourceId))
+                    .setResourceTimeTrackingPolicy(
+                            appObject.getResourceTimeTrackingPolicy(resourceId))
+                    .build();
 
-                ResourcePropertyValueMapInput.Builder resourcePropValBuilder = ResourcePropertyValueMapInput
+            builder.addResourceIds(resourceIdMapInput);
+        }
+
+        // Resource Property Defs
+        for (ResourceId resourceId : resourcePropDefs.keySet()) {
+            ResourceIdInput resourceIdInput = this.translationEngine.convertObjectAsSafeClass(resourceId,
+                    ResourceId.class);
+
+            for (ResourcePropertyId resourcePropertyId : resourcePropDefs.get(resourceId)
+                    .keySet()) {
+                ResourcePropertyDefinitionMapInput.Builder resourcePropDefBuilder = ResourcePropertyDefinitionMapInput
                         .newBuilder();
 
                 PropertyDefinitionInput propertyDefinitionInput = this.translationEngine
@@ -139,54 +172,87 @@ public class ResourcesPluginDataTranslationSpec
                                 .getAnyFromObject(resourcePropertyId))
                         .build();
 
-                resourcePropDefBuilder.setResourcePropertyDefinitionMap(propertyDefInput)
+                resourcePropDefBuilder
+                        .setResourcePropertyDefinitionMap(propertyDefInput)
                         .setResourceId(resourceIdInput);
 
-                Optional<Object> propertyValue = appObject.getResourcePropertyValue(
-                        resourceId, resourcePropertyId);
-                if (propertyValue.isPresent()) {
-                    PropertyValueMapInput propertyValueMapInput = PropertyValueMapInput.newBuilder()
-                            .setPropertyValue(this.translationEngine
-                                    .getAnyFromObject(propertyValue.get()))
-                            .setPropertyId(this.translationEngine
-                                    .getAnyFromObject(resourcePropertyId))
-                            .build();
+                builder.addResourcePropertyDefinitions(resourcePropDefBuilder.build());
 
-                    resourcePropValBuilder
-                            .setResourcePropertyValueMap(propertyValueMapInput)
-                            .setResourceId(resourceIdInput);
+            }
+        }
 
-                    builder.addResourcePropertyValues(resourcePropValBuilder.build());
-                }
+        // Resource Property Values
+        for (ResourceId resourceId : resourcePropValues.keySet()) {
+            ResourceIdInput resourceIdInput = this.translationEngine.convertObjectAsSafeClass(resourceId,
+                    ResourceId.class);
 
-                builder
-                        .addResourcePropertyDefinitions(resourcePropDefBuilder.build());
+            for (ResourcePropertyId resourcePropertyId : resourcePropValues.get(resourceId)
+                    .keySet()) {
+
+                ResourcePropertyValueMapInput.Builder resourcePropValBuilder = ResourcePropertyValueMapInput
+                        .newBuilder();
+                Object propertyValue = appObject
+                        .getResourcePropertyValue(resourceId, resourcePropertyId).get();
+
+                PropertyValueMapInput propertyValueMapInput = PropertyValueMapInput.newBuilder()
+                        .setPropertyValue(this.translationEngine
+                                .getAnyFromObject(propertyValue))
+                        .setPropertyId(this.translationEngine
+                                .getAnyFromObject(resourcePropertyId))
+                        .build();
+
+                resourcePropValBuilder
+                        .setResourcePropertyValueMap(propertyValueMapInput)
+                        .setResourceId(resourceIdInput);
+
+                builder.addResourcePropertyValues(resourcePropValBuilder.build());
+            }
+        }
+
+        // Region Resource Values
+        for (RegionId regionId : regionResourceLevels.keySet()) {
+            RegionIdInput regionIdInput = this.translationEngine.convertObjectAsSafeClass(regionId,
+                    RegionId.class);
+
+            RegionResourceLevelMapInput.Builder regionResourceLevelsBuilder = RegionResourceLevelMapInput
+                    .newBuilder()
+                    .setRegionId(regionIdInput);
+
+            for (ResourceId resourceId : regionResourceLevels.get(regionId).keySet()) {
+                Long regionResourceLevel = appObject.getRegionResourceLevel(regionId,
+                        resourceId).get();
+
+                ResourceInitialization resourceInitialization = new ResourceInitialization(
+                        resourceId,
+                        regionResourceLevel);
+                ResourceInitializationInput resourceInitializationInput = this.translationEngine
+                        .convertObject(resourceInitialization);
+                regionResourceLevelsBuilder
+                        .addRegionResourceLevels(resourceInitializationInput);
 
             }
 
-            ResourceIdMapInput resourceIdMapInput = ResourceIdMapInput.newBuilder()
-                    .setResourceId(resourceIdInput)
-                    .setResourceTime(appObject.getResourceDefaultTime(resourceId))
-                    .setResourceTimeTrackingPolicy(
-                            appObject.getResourceTimeTrackingPolicy(resourceId))
-                    .build();
-            builder.addResourceIds(resourceIdMapInput);
+            RegionResourceLevelMapInput regionResourceLevelsInput = regionResourceLevelsBuilder.build();
 
-            List<PersonResourceInput.Builder> personResourceInputBuilders = new ArrayList<>();
+            if (!regionResourceLevelsInput.getRegionResourceLevelsList().isEmpty()) {
+                builder.addRegionResourceLevels(regionResourceLevelsBuilder.build());
+            }
+        }
 
-            List<Long> resourceLevels = appObject.getPersonResourceLevels(resourceId);
-            List<Double> resourceTimes = appObject.getPersonResourceTimes(resourceId);
+        // Person Resource Levels
+        for (ResourceId resourceId : personResourceLevels.keySet()) {
+            ResourceIdInput resourceIdInput = this.translationEngine.convertObjectAsSafeClass(resourceId,
+                    ResourceId.class);
+            List<Long> resourceLevels = personResourceLevels.get(resourceId);
 
-            int maxPersonId = FastMath.max(resourceLevels.size(), resourceTimes.size());
-
-            // prepopulate nulls based on max personId
-            for (int i = 0; i < maxPersonId; i++) {
+            List<PersonResourceLevelInput.Builder> personResourceInputBuilders = new ArrayList<>();
+            for (int i = 0; i < resourceLevels.size(); i++) {
                 personResourceInputBuilders.add(null);
             }
 
             for (int i = 0; i < resourceLevels.size(); i++) {
                 if (resourceLevels.get(i) != null) {
-                    PersonResourceInput.Builder personResourceInputBuilder = PersonResourceInput
+                    PersonResourceLevelInput.Builder personResourceInputBuilder = PersonResourceLevelInput
                             .newBuilder()
                             .setAmount(resourceLevels.get(i))
                             .setPersonId(i);
@@ -195,69 +261,51 @@ public class ResourcesPluginDataTranslationSpec
                 }
             }
 
-            for (int i = 0; i < resourceTimes.size(); i++) {
-                if (resourceTimes.get(i) != null) {
-                    PersonResourceInput.Builder personResourceInputBuilder = PersonResourceInput
-                            .newBuilder();
-                    // check for and use existing builder, if there is one
-                    if (personResourceInputBuilders.get(i) != null) {
-                        personResourceInputBuilder = personResourceInputBuilders.get(i);
-
-                        personResourceInputBuilder.setResourceTime(resourceTimes.get(i));
-
-                    } else {
-                        personResourceInputBuilder
-                                .setPersonId(i)
-                                .setResourceTime(resourceTimes.get(i));
-                    }
-
-                    personResourceInputBuilders.set(i, personResourceInputBuilder);
-                }
-            }
-
-            PersonResourceLevelsInput.Builder personLevelsInput = PersonResourceLevelsInput.newBuilder()
+            PersonResourceLevelMapInput.Builder personLevelsInput = PersonResourceLevelMapInput.newBuilder()
                     .setResourceId(resourceIdInput);
 
-            for (PersonResourceInput.Builder personResourceBuilder : personResourceInputBuilders) {
+            for (PersonResourceLevelInput.Builder personResourceBuilder : personResourceInputBuilders) {
                 if (personResourceBuilder != null) {
                     personLevelsInput.addPersonResourceLevels(personResourceBuilder.build());
                 }
             }
 
             builder.addPersonResourceLevels(personLevelsInput.build());
-
         }
 
-        for (RegionId regionId : appObject.getRegionIds()) {
-            RegionIdInput regionIdInput = this.translationEngine.convertObjectAsSafeClass(regionId,
-                    RegionId.class);
+        // Person Resource Times
+        for (ResourceId resourceId : personResourceTimes.keySet()) {
+            ResourceIdInput resourceIdInput = this.translationEngine.convertObjectAsSafeClass(resourceId,
+                    ResourceId.class);
 
-            RegionResourceLevelsInput.Builder regionResourceLevelsBuilder = RegionResourceLevelsInput
-                    .newBuilder()
-                    .setRegionId(regionIdInput);
+            List<Double> resourceTimes = appObject.getPersonResourceTimes(resourceId);
 
-            for (ResourceId resourceId : appObject.getResourceIds()) {
-                Optional<Long> regionResourceLevel = appObject.getRegionResourceLevel(regionId,
-                        resourceId);
+            List<PersonResourceTimeInput.Builder> personResourceInputBuilders = new ArrayList<>();
+            for (int i = 0; i < resourceTimes.size(); i++) {
+                personResourceInputBuilders.add(null);
+            }
 
-                if (regionResourceLevel.isPresent()) {
+            for (int i = 0; i < resourceTimes.size(); i++) {
+                if (resourceTimes.get(i) != null) {
+                    PersonResourceTimeInput.Builder personResourceInputBuilder = PersonResourceTimeInput
+                            .newBuilder()
+                            .setPersonId(i)
+                            .setResourceTime(resourceTimes.get(i));
 
-                    ResourceInitialization resourceInitialization = new ResourceInitialization(resourceId,
-                            regionResourceLevel.get());
-                    ResourceInitializationInput resourceInitializationInput = this.translationEngine
-                            .convertObject(resourceInitialization);
-                    regionResourceLevelsBuilder
-                            .addRegionResourceLevels(resourceInitializationInput);
+                    personResourceInputBuilders.set(i, personResourceInputBuilder);
                 }
-
             }
 
-            RegionResourceLevelsInput regionResourceLevelsInput = regionResourceLevelsBuilder.build();
+            PersonResourceTimeMapInput.Builder personLevelsInput = PersonResourceTimeMapInput.newBuilder()
+                    .setResourceId(resourceIdInput);
 
-            if (!regionResourceLevelsInput.getRegionResourceLevelsList().isEmpty()) {
-                builder.addRegionResourceLevels(regionResourceLevelsBuilder.build());
+            for (PersonResourceTimeInput.Builder personResourceBuilder : personResourceInputBuilders) {
+                if (personResourceBuilder != null) {
+                    personLevelsInput.addPersonResourceTimes(personResourceBuilder.build());
+                }
             }
 
+            builder.addPersonResourceTimes(personLevelsInput.build());
         }
 
         return builder.build();

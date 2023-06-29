@@ -35,10 +35,24 @@ message ResourceInitializationInput {
     int64 amount = 2;
 }
 
-message PersonResourceInput {
+message PersonResourceLevelInput {
     int32 personId = 1;
-    optional int64 amount = 2;
-    optional double resourceTime = 3;
+    int64 amount = 2;
+}
+
+message PersonResourceLevelMapInput {
+    ResourceIdInput resourceId = 1;
+    repeated PersonResourceLevelInput personResourceLevels = 2;
+}
+
+message PersonResourceTimeInput {
+    int32 personId = 1;
+    double resourceTime = 2;
+}
+
+message PersonResourceTimeMapInput {
+    ResourceIdInput resourceId = 1;
+    repeated PersonResourceTimeInput personResourceTimes = 2;
 }
 
 message ResourcePropertyValueMapInput {
@@ -46,12 +60,7 @@ message ResourcePropertyValueMapInput {
     PropertyValueMapInput resourcePropertyValueMap = 2;
 }
 
-message PersonResourceLevelsInput {
-    ResourceIdInput resourceId = 1;
-    repeated PersonResourceInput personResourceLevels = 2;
-}
-
-message RegionResourceLevelsInput {
+message RegionResourceLevelMapInput {
     RegionIdInput regionId = 1;
     repeated ResourceInitializationInput regionResourceLevels = 2;
 }
@@ -60,8 +69,9 @@ message ResourcesPluginDataInput {
     repeated ResourceIdMapInput resourceIds = 1;
     repeated ResourcePropertyDefinitionMapInput resourcePropertyDefinitions = 2;
     repeated ResourcePropertyValueMapInput resourcePropertyValues = 3;
-    repeated PersonResourceLevelsInput personResourceLevels = 4;
-    repeated RegionResourceLevelsInput regionResourceLevels = 5;
+    repeated PersonResourceLevelMapInput personResourceLevels = 4;
+    repeated PersonResourceTimeMapInput personResourceTimes = 5;
+    repeated RegionResourceLevelMapInput regionResourceLevels = 6;
 }
 
 message PersonResourceReportPluginDataInput {

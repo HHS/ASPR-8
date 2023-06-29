@@ -29,12 +29,21 @@ enum TestPersonPropertyIdInput {
 message PersonPropertyValueInput {
     int32 pId = 1;
     optional google.protobuf.Any value = 2;
-    optional double propertyValueTime = 3;
 }
 
 message PersonPropertyValueMapInput {
     PersonPropertyIdInput personPropertyId = 1;
     repeated PersonPropertyValueInput propertyValues = 2;
+}
+
+message PersonPropertyTimeInput {
+    int32 pId = 1;
+    double propertyValueTime = 2;
+}
+
+message PersonPropertyTimeMapInput {
+    PersonPropertyIdInput personPropertyId = 1;
+    repeated PersonPropertyTimeInput propertyTimes = 2;
 }
 
 message PersonPropertyDimensionInput {
@@ -46,6 +55,7 @@ message PersonPropertyDimensionInput {
 message PersonPropertiesPluginDataInput {
     repeated PropertyDefinitionMapInput personPropertyDefinitions = 1;
     repeated PersonPropertyValueMapInput personPropertyValues = 2;
+    repeated PersonPropertyTimeMapInput personPropertyTimes = 3;
 }
 
 message PersonPropertyReportPluginDataInput {
