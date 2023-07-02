@@ -24,11 +24,10 @@ import nucleus.ExperimentParameterData;
 import nucleus.FunctionalDimension;
 import nucleus.Plugin;
 import plugins.globalproperties.GlobalPropertiesPlugin;
-import plugins.globalproperties.GlobalPropertiesPluginData;
-import plugins.globalproperties.GlobalPropertiesPluginData.Builder;
+import plugins.globalproperties.datamanagers.GlobalPropertiesPluginData;
 import plugins.globalproperties.support.GlobalPropertyId;
 import plugins.groups.GroupsPlugin;
-import plugins.groups.GroupsPluginData;
+import plugins.groups.datamanagers.GroupsPluginData;
 import plugins.groups.reports.GroupPopulationReportPluginData;
 import plugins.people.PeoplePlugin;
 import plugins.people.PeoplePluginData;
@@ -36,7 +35,7 @@ import plugins.personproperties.PersonPropertiesPlugin;
 import plugins.personproperties.PersonPropertiesPluginData;
 import plugins.personproperties.reports.PersonPropertyReportPluginData;
 import plugins.regions.RegionsPlugin;
-import plugins.regions.RegionsPluginData;
+import plugins.regions.datamanagers.RegionsPluginData;
 import plugins.reports.support.NIOReportItemHandler;
 import plugins.reports.support.ReportPeriod;
 import plugins.stochastics.StochasticsPlugin;
@@ -149,7 +148,7 @@ public final class Example_17 {
 	}
 
 	private Plugin getGlobalPropertiesPlugin() {
-		Builder builder = GlobalPropertiesPluginData.builder();//
+		GlobalPropertiesPluginData.Builder builder = GlobalPropertiesPluginData.builder();//
 
 		PropertyDefinition propertyDefinition = PropertyDefinition	.builder()//
 																	.setType(Double.class)//

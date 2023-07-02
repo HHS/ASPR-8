@@ -24,7 +24,7 @@ import plugins.people.PeoplePluginData;
 import plugins.people.support.PersonId;
 import plugins.people.support.PersonRange;
 import plugins.regions.RegionsPlugin;
-import plugins.regions.RegionsPluginData;
+import plugins.regions.datamanagers.RegionsPluginData;
 import plugins.regions.reports.RegionPropertyReportPluginData;
 import plugins.regions.reports.RegionTransferReportPluginData;
 import plugins.reports.support.NIOReportItemHandler;
