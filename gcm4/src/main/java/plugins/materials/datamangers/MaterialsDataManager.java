@@ -74,6 +74,7 @@ public final class MaterialsDataManager extends DataManager {
 		 * The non-negative amount of this batch
 		 */
 		private double amount;
+		
 		private final BatchId batchId;
 
 		/*
@@ -96,23 +97,23 @@ public final class MaterialsDataManager extends DataManager {
 		@Override
 		public String toString() {
 			StringBuilder builder = new StringBuilder();
-//			builder.append("BatchRecord [amount=");
+			builder.append("BatchRecord [amount=");
 			builder.append(amount);
-//			builder.append(", batchId=");
-//			builder.append(batchId);
-//			builder.append(", materialId=");
-//			builder.append(materialId);
-//			builder.append(", materialsProducerRecord=");
-//			builder.append(materialsProducerRecord.materialProducerId);
-//
-//			builder.append(", stageRecord=");
-//			if (stageRecord != null) {
-//				builder.append(stageRecord.stageId);
-//			} else {
-//				builder.append("null");
-//			}
-//
-//			builder.append("]");
+			builder.append(", batchId=");
+			builder.append(batchId);
+			builder.append(", materialId=");
+			builder.append(materialId);
+			builder.append(", materialsProducerRecord=");
+			builder.append(materialsProducerRecord.materialProducerId);
+
+			builder.append(", stageRecord=");
+			if (stageRecord != null) {
+				builder.append(stageRecord.stageId);
+			} else {
+				builder.append("null");
+			}
+
+			builder.append("]");
 			return builder.toString();
 		}
 
@@ -145,19 +146,19 @@ public final class MaterialsDataManager extends DataManager {
 		@Override
 		public String toString() {
 			StringBuilder builder = new StringBuilder();
-//			builder.append("StageRecord [offered=");
+			builder.append("StageRecord [offered=");
 			builder.append(offered);
-//			builder.append(", stageId=");
+			builder.append(", stageId=");
 			builder.append(stageId);
-//			builder.append(", materialsProducerRecord=");
-//			builder.append(materialsProducerRecord.materialProducerId);
-//			builder.append(", batchRecords=");
-//			List<BatchId> batchIds = new ArrayList<>();
-//			for (BatchRecord batchRecord : batchRecords) {
-//				batchIds.add(batchRecord.batchId);
-//			}
-//			builder.append(batchIds);
-//			builder.append("]");
+			builder.append(", materialsProducerRecord=");
+			builder.append(materialsProducerRecord.materialProducerId);
+			builder.append(", batchRecords=");
+			List<BatchId> batchIds = new ArrayList<>();
+			for (BatchRecord batchRecord : batchRecords) {
+				batchIds.add(batchRecord.batchId);
+			}
+			builder.append(batchIds);
+			builder.append("]");
 			return builder.toString();
 		}
 
@@ -261,21 +262,21 @@ public final class MaterialsDataManager extends DataManager {
 			builder.append(materialProducerId);
 			builder.append(", materialProducerResources=");
 			builder.append(materialProducerResources);
-//			builder.append(", stageRecords=");
-//
-//			List<StageId> stageIds = new ArrayList<>();
-//			for (StageRecord stageRecord : stageRecords) {
-//				stageIds.add(stageRecord.stageId);
-//			}
-//			builder.append(stageIds);
-//			builder.append(", inventory=");
-//
-//			List<BatchId> batchIds = new ArrayList<>();
-//			for (BatchRecord batchRecord : inventory) {
-//				batchIds.add(batchRecord.batchId);
-//			}
-//			builder.append(batchIds);
-//			builder.append("]");
+			builder.append(", stageRecords=");
+
+			List<StageId> stageIds = new ArrayList<>();
+			for (StageRecord stageRecord : stageRecords) {
+				stageIds.add(stageRecord.stageId);
+			}
+			builder.append(stageIds);
+			builder.append(", inventory=");
+
+			List<BatchId> batchIds = new ArrayList<>();
+			for (BatchRecord batchRecord : inventory) {
+				batchIds.add(batchRecord.batchId);
+			}
+			builder.append(batchIds);
+			builder.append("]");
 			return builder.toString();
 		}
 
@@ -2437,9 +2438,9 @@ public final class MaterialsDataManager extends DataManager {
 		for (StageId stageId : stageRecords.keySet()) {
 			StageRecord stageRecord = stageRecords.get(stageId);
 			builder.addStage(stageId, stageRecord.offered);
-			for (BatchId batchId : getStageBatches(stageId)) {
-				builder.addBatchToStage(stageId, batchId);
-			}
+			for(BatchRecord batchRecord :	stageRecord.batchRecords) {
+				builder.addBatchToStage(stageId, batchRecord.batchId);
+			}			
 		}
 
 		for (final MaterialsProducerId materialsProducerId : materialsProducerMap.keySet()) {
