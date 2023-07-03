@@ -1803,4 +1803,92 @@ public final class MaterialsPluginData implements PluginData {
 		return builder2.toString();
 	}
 
+
+	public Map<MaterialId, Map<BatchPropertyId, PropertyDefinition>> getBatchPropertyDefinitions(){
+		Map<MaterialId, Map<BatchPropertyId, PropertyDefinition>> result = new LinkedHashMap<>();
+		for(MaterialId materialId :	data.batchPropertyDefinitions.keySet()) {
+			Map<BatchPropertyId, PropertyDefinition> map = data.batchPropertyDefinitions.get(materialId);
+			Map<BatchPropertyId, PropertyDefinition> newMap = new LinkedHashMap<>(map);
+			result.put(materialId, newMap);
+		}		
+		return result;
+	}
+
+	public Map<MaterialsProducerPropertyId, PropertyDefinition> getMaterialsProducerPropertyDefinitions(){
+		return new LinkedHashMap<>(data.materialsProducerPropertyDefinitions);
+	}
+
+	public Map<MaterialsProducerId, Map<MaterialsProducerPropertyId, Object>> getMaterialsProducerPropertyValues(){
+		Map<MaterialsProducerId, Map<MaterialsProducerPropertyId, Object>> result = new LinkedHashMap<>();
+		for(MaterialsProducerId materialsProducerId : data.materialsProducerPropertyValues.keySet()) {
+			Map<MaterialsProducerPropertyId, Object> map = data.materialsProducerPropertyValues.get(materialsProducerId);
+			Map<MaterialsProducerPropertyId, Object> newMap = new LinkedHashMap<>(map);
+			result.put(materialsProducerId, newMap);			
+		}		
+		return result;
+	}
+
+	public Map<MaterialsProducerId, Map<ResourceId, Long>> getMaterialsProducerResourceLevels(){
+		Map<MaterialsProducerId, Map<ResourceId, Long>> result = new LinkedHashMap<>();
+		for(MaterialsProducerId materialsProducerId : data.materialsProducerResourceLevels.keySet()) {
+			Map<ResourceId, Long> map = data.materialsProducerResourceLevels.get(materialsProducerId);
+			Map<ResourceId, Long> newMap = new LinkedHashMap<>(map);
+			result.put(materialsProducerId, newMap);
+		}		
+		return result;
+	}
+
+	public Map<BatchId, Map<BatchPropertyId, Object>> getBatchPropertyValues(){
+		Map<BatchId, Map<BatchPropertyId, Object>> result = new LinkedHashMap<>();
+		for(BatchId batchId : data.batchPropertyValues.keySet()) {
+			Map<BatchPropertyId, Object> map = data.batchPropertyValues.get(batchId);
+			Map<BatchPropertyId, Object> newMap = new LinkedHashMap<>(map);
+			result.put(batchId, newMap);
+		}
+		return result;
+	}
+
+	public Map<StageId, Boolean> getStageOffers(){
+		return new LinkedHashMap<>(data.stageOffers);
+	}
+
+	public Map<BatchId, MaterialId> getBatchMaterials(){
+		return new LinkedHashMap<>(data.batchMaterials);
+	}
+
+	public Map<BatchId, Double> getBatchAmounts(){
+		return new LinkedHashMap<>(data.batchAmounts);
+	}
+
+	public Map<MaterialsProducerId, Set<StageId>> getMaterialsProducerStages(){
+		 Map<MaterialsProducerId, Set<StageId>> result = new LinkedHashMap<>();
+		 
+		 for(MaterialsProducerId materialsProducerId : data.materialsProducerStages.keySet()) {
+			 Set<StageId> set = data.materialsProducerStages.get(materialsProducerId);
+			 Set<StageId> newSet = new LinkedHashSet<>(set);
+			 result.put(materialsProducerId, newSet);
+		 }		 
+		 return result;
+	}
+
+	public Map<StageId, Set<BatchId>> getStageBatches(){
+		Map<StageId, Set<BatchId>> result = new LinkedHashMap<>();
+		for(StageId stageId : data.stageBatches.keySet()) {
+			Set<BatchId> set = data.stageBatches.get(stageId);
+			Set<BatchId> newSet = new LinkedHashSet<>(set);
+			result.put(stageId, newSet);
+		}
+		return result;
+	}
+
+	public Map<MaterialsProducerId, Set<BatchId>> getMaterialsProducerInventoryBatches(){
+		Map<MaterialsProducerId, Set<BatchId>> result = new LinkedHashMap<>();
+		for(MaterialsProducerId materialsProducerId : data.materialsProducerInventoryBatches.keySet()) {
+			Set<BatchId> set = data.materialsProducerInventoryBatches.get(materialsProducerId);
+			Set<BatchId> newSet = new LinkedHashSet<>(set);
+			result.put(materialsProducerId, newSet);
+		}
+		return result;
+	}
+	
 }
