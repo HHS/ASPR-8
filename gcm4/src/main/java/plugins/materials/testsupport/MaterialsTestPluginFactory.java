@@ -18,7 +18,7 @@ import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestSimulation;
 import plugins.materials.MaterialsPlugin;
-import plugins.materials.MaterialsPluginData;
+import plugins.materials.datamangers.MaterialsPluginData;
 import plugins.materials.reports.BatchStatusReportPluginData;
 import plugins.materials.reports.MaterialsProducerPropertyReportPluginData;
 import plugins.materials.reports.MaterialsProducerResourceReportPluginData;

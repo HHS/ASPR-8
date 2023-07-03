@@ -1,4 +1,4 @@
-package plugins.materials;
+package plugins.materials.datamangers;
 
 import java.util.ArrayList;
 import java.util.Collections;

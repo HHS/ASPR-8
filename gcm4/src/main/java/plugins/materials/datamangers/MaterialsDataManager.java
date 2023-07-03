@@ -17,7 +17,6 @@ import nucleus.Event;
 import nucleus.EventFilter;
 import nucleus.IdentifiableFunctionMap;
 import nucleus.NucleusError;
-import plugins.materials.MaterialsPluginData;
 import plugins.materials.events.BatchAdditionEvent;
 import plugins.materials.events.BatchAmountUpdateEvent;
 import plugins.materials.events.BatchImminentRemovalEvent;

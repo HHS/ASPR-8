@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import nucleus.Plugin;
 import plugins.materials.datamangers.MaterialsDataManager;
+import plugins.materials.datamangers.MaterialsPluginData;
 import plugins.materials.reports.BatchStatusReport;
 import plugins.materials.reports.BatchStatusReportPluginData;
 import plugins.materials.reports.MaterialsProducerPropertyReport;

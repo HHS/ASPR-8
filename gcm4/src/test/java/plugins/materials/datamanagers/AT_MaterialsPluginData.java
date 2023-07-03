@@ -1,4 +1,4 @@
-package plugins.materials;
+package plugins.materials.datamanagers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -18,6 +18,7 @@ import org.junit.jupiter.api.Test;
 
 import nucleus.PluginData;
 import nucleus.PluginDataBuilder;
+import plugins.materials.datamangers.MaterialsPluginData;
 import plugins.materials.support.BatchId;
 import plugins.materials.support.BatchPropertyId;
 import plugins.materials.support.MaterialId;
