@@ -19,7 +19,7 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.ResourcesTranslat
 import gov.hhs.aspr.translation.core.TranslationController;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
 import gov.hhs.aspr.translation.core.testsupport.TestResourceHelper;
-import plugins.materials.MaterialsPluginData;
+import plugins.materials.datamangers.MaterialsPluginData;
 import plugins.materials.reports.BatchStatusReportPluginData;
 import plugins.materials.reports.MaterialsProducerPropertyReportPluginData;
 import plugins.materials.reports.MaterialsProducerResourceReportPluginData;
@@ -66,6 +66,7 @@ public class IT_MaterialsTranslator {
 		MaterialsPluginData actualPluginData = translatorController.getFirstObject(MaterialsPluginData.class);
 
 		assertEquals(expectedPluginData, actualPluginData);
+		assertEquals(expectedPluginData.toString(), actualPluginData.toString());
 	}
 
 	@Test
@@ -103,7 +104,7 @@ public class IT_MaterialsTranslator {
 				.getFirstObject(BatchStatusReportPluginData.class);
 
 		assertEquals(expectedPluginData, actualPluginData);
-
+		assertEquals(expectedPluginData.toString(), actualPluginData.toString());
 	}
 
 	@Test
@@ -141,6 +142,7 @@ public class IT_MaterialsTranslator {
 				.getFirstObject(MaterialsProducerPropertyReportPluginData.class);
 
 		assertEquals(expectedPluginData, actualPluginData);
+		assertEquals(expectedPluginData.toString(), actualPluginData.toString());
 	}
 
 	@Test
@@ -177,6 +179,7 @@ public class IT_MaterialsTranslator {
 				.getFirstObject(MaterialsProducerResourceReportPluginData.class);
 
 		assertEquals(expectedPluginData, actualPluginData);
+		assertEquals(expectedPluginData.toString(), actualPluginData.toString());
 	}
 
 	@Test
@@ -212,7 +215,7 @@ public class IT_MaterialsTranslator {
 		StageReportPluginData actualPluginData = translatorController.getFirstObject(StageReportPluginData.class);
 
 		assertEquals(expectedPluginData, actualPluginData);
-
+		assertEquals(expectedPluginData.toString(), actualPluginData.toString());
 	}
 
 }

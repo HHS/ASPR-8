@@ -44,11 +44,15 @@ message BatchPropertyDefinitionMapInput {
     repeated PropertyDefinitionMapInput propertyDefinitions = 2;
 }
 
-message BatchMapInput {
+message BatchInput {
     BatchIdInput batchId = 1;
     MaterialIdInput materialId = 2;
     double amount = 3;
-    repeated PropertyValueMapInput propertyValues = 4;
+}
+
+message BatchPropertyValueInput {
+    BatchIdInput batchId = 1;
+    repeated PropertyValueMapInput propertyValues = 2;
 }
 
 message MaterialsProducerInventoryBatchesInput {
@@ -60,10 +64,14 @@ message StageIdInput {
     int32 id = 1;
 }
 
-message StageMapInput {
+message StageInput {
     StageIdInput stageId = 1;
     bool offered = 2;
-    repeated BatchIdInput batchesInStage = 3;
+}
+
+message StageBatchInput {
+    StageIdInput stageId = 1;
+    repeated BatchIdInput batchesInStage = 2;
 }
 
 message MaterialsProducerStagesInput {
@@ -78,12 +86,14 @@ message MaterialsPluginDataInput {
     repeated PropertyDefinitionMapInput materialsProducerPropertyDefinitions = 4;
     repeated MaterialsProducerPropertyValueMapInput materialsProducerPropertyValues = 5;
     repeated MaterialsProducerResourceLevelMapInput materialsProducerResourceLevels = 6;
-    repeated BatchMapInput batchIds = 7;
-    repeated MaterialsProducerInventoryBatchesInput materialsProducerInverntoryBatches = 8;
-    repeated StageMapInput stageIds = 9;
-    repeated MaterialsProducerStagesInput materialsProducerStages = 10;
-    int32 nextBatchRecordId = 11;
-	int32 nextStageRecordId = 12;
+    repeated BatchInput batchIds = 7;
+    repeated BatchPropertyValueInput batchPropertyValues = 8;
+    repeated MaterialsProducerInventoryBatchesInput materialsProducerInverntoryBatches = 9;
+    repeated StageInput stageIds = 10;
+    repeated StageBatchInput stageBatches = 11;
+    repeated MaterialsProducerStagesInput materialsProducerStages = 12;
+    int32 nextBatchRecordId = 13;
+	int32 nextStageRecordId = 14;
 }
 
 enum TestBatchPropertyIdInput {
