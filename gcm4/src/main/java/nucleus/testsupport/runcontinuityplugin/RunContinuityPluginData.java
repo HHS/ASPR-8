@@ -35,6 +35,8 @@ public class RunContinuityPluginData implements PluginData {
 			consumers.addAll(data.consumers);
 			locked = data.locked;
 		}
+		
+		
 
 	}
 
@@ -157,5 +159,7 @@ public class RunContinuityPluginData implements PluginData {
 		return data.completionCount >= data.consumers.size();
 
 	}
+	
+	
 
 }

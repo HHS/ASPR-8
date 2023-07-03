@@ -16,15 +16,15 @@ public class AT_TestError {
 	@UnitTestMethod(target = TestError.class,name = "getDescription", args = {})
 	public void testGetDescription() {
 		// show that each ErrorType has a non-null, non-empty description
-		for (TestError nucleusError : TestError.values()) {
-			assertNotNull(nucleusError.getDescription());
-			assertTrue(nucleusError.getDescription().length() > 0);
+		for (TestError testError : TestError.values()) {
+			assertNotNull(testError.getDescription());
+			assertTrue(testError.getDescription().length() > 0);
 		}
 
 		// show that each description is unique (ignoring case as well)
 		Set<String> descriptions = new LinkedHashSet<>();
-		for (TestError nucleusError : TestError.values()) {
-			assertTrue(descriptions.add(nucleusError.getDescription().toLowerCase()), nucleusError+": "+"Duplicate ErrorType description: " + nucleusError.getDescription());
+		for (TestError testError : TestError.values()) {
+			assertTrue(descriptions.add(testError.getDescription().toLowerCase()), testError+": "+"Duplicate ErrorType description: " + testError.getDescription());
 		}
 	}
 
