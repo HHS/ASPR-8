@@ -111,7 +111,7 @@ public class AT_PartitionsPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = PartitionsPluginData.Builder.class, name = "supportsRunContinuity", args = {})
+	@UnitTestMethod(target = PartitionsPluginData.class, name = "supportsRunContinuity", args = {})
 	public void testSupportsRunContinuity() {
 		PartitionsPluginData p = PartitionsPluginData.builder().setRunContinuitySupport(true).build();
 		assertTrue(p.supportsRunContinuity());
@@ -136,7 +136,7 @@ public class AT_PartitionsPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = PartitionsPluginData.Builder.class, name = "toString", args = {})
+	@UnitTestMethod(target = PartitionsPluginData.class, name = "toString", args = {})
 	public void testToString() {
 		PartitionsPluginData p = PartitionsPluginData.builder().build();
 		assertEquals("PartitionsPluginData [data=Data [supportRunContinuity=false]]",p.toString());
