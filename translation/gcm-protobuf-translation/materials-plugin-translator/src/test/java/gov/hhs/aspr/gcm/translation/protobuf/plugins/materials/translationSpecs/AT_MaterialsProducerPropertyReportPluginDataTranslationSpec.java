@@ -60,6 +60,7 @@ public class AT_MaterialsProducerPropertyReportPluginDataTranslationSpec {
         MaterialsProducerPropertyReportPluginData actualAppValue = translationSpec.convertInputObject(inputValue);
 
         assertEquals(expectedAppValue, actualAppValue);
+        assertEquals(expectedAppValue.toString(), actualAppValue.toString());
     }
 
     @Test

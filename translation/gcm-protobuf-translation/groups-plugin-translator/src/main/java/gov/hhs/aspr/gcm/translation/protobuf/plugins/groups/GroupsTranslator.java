@@ -6,6 +6,7 @@ import java.util.List;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.input.GroupIdInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.translationSpecs.GroupIdTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.translationSpecs.GroupMemberFilterTranslationSpec;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.translationSpecs.GroupPopulationReportPluginDataTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.translationSpecs.GroupPropertyDimensionTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.translationSpecs.GroupPropertyIdTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.translationSpecs.GroupPropertyReportPluginDataTranslationSpec;
@@ -49,6 +50,7 @@ public class GroupsTranslator {
         list.add(new GroupPropertyDimensionTranslationSpec());
         list.add(new TestGroupPropertyIdTranslationSpec());
         list.add(new GroupPropertyReportPluginDataTranslationSpec());
+        list.add(new GroupPopulationReportPluginDataTranslationSpec());
 
         return list;
     }

@@ -14,7 +14,7 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.ReportsTranslator;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.ResourcesTranslator;
 import gov.hhs.aspr.translation.core.TranslationController;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
-import plugins.materials.MaterialsPluginData;
+import plugins.materials.datamangers.MaterialsPluginData;
 import plugins.materials.testsupport.MaterialsTestPluginFactory;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestForCoverage;
@@ -59,6 +59,7 @@ public class AT_MaterialsPluginDataTranslationSpec {
         MaterialsPluginData actualAppValue = translationSpec.convertInputObject(inputValue);
 
         assertEquals(expectedAppValue, actualAppValue);
+        assertEquals(expectedAppValue.toString(), actualAppValue.toString());
     }
 
     @Test

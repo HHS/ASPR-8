@@ -11,7 +11,7 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.PropertiesTransl
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.ReportsTranslator;
 import gov.hhs.aspr.translation.core.TranslationController;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
-import plugins.globalproperties.GlobalPropertiesPluginData;
+import plugins.globalproperties.datamanagers.GlobalPropertiesPluginData;
 import plugins.globalproperties.testsupport.GlobalPropertiesTestPluginFactory;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestForCoverage;
@@ -41,16 +41,17 @@ public class AT_GlobalPropertiesPluginDataTranslationSpec {
         GlobalPropertiesPluginDataTranslationSpec translationSpec = new GlobalPropertiesPluginDataTranslationSpec();
         translationSpec.init(protobufTranslationEngine);
 
-        GlobalPropertiesPluginData expectedValue = GlobalPropertiesTestPluginFactory
+        GlobalPropertiesPluginData expectedAppValue = GlobalPropertiesTestPluginFactory
                 .getStandardGlobalPropertiesPluginData(8368397106493368066L);
 
         GlobalPropertiesPluginDataInput globalPropertiesPluginDataInput = translationSpec
-                .convertAppObject(expectedValue);
+                .convertAppObject(expectedAppValue);
 
-        GlobalPropertiesPluginData actualValue = translationSpec
+        GlobalPropertiesPluginData actualAppValue = translationSpec
                 .convertInputObject(globalPropertiesPluginDataInput);
 
-        assertEquals(expectedValue, actualValue);
+        assertEquals(expectedAppValue, actualAppValue);
+        assertEquals(expectedAppValue.toString(), actualAppValue.toString());
     }
 
     @Test

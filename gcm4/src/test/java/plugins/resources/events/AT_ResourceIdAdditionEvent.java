@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 
 import plugins.resources.support.ResourceError;
 import plugins.resources.support.ResourceId;
-import plugins.util.properties.TimeTrackingPolicy;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
@@ -15,7 +14,7 @@ import util.errors.ContractException;
 public class AT_ResourceIdAdditionEvent {
 
 	@Test
-	@UnitTestConstructor(target = ResourceIdAdditionEvent.class, args = { ResourceId.class, TimeTrackingPolicy.class })
+	@UnitTestConstructor(target = ResourceIdAdditionEvent.class, args = { ResourceId.class, boolean.class })
 	public void testConstructor() {
 		
 		// test case: null resource id

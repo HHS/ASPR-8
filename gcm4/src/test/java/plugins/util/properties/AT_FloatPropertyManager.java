@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -28,6 +30,10 @@ import util.random.RandomGeneratorProvider;
 
 public class AT_FloatPropertyManager {
 
+	private Iterator<Integer> getEmptyIndexIterator() {
+		return Collections.emptyIterator();				
+	}
+	
 	@Test
 	@UnitTestMethod(target = FloatPropertyManager.class,name = "getPropertyValue", args = { int.class })
 	public void testGetPropertyValue() {
@@ -39,7 +45,7 @@ public class AT_FloatPropertyManager {
 			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Float.class).setDefaultValue(defaultValue)
 					.build();
 
-			FloatPropertyManager floatPropertyManager = new FloatPropertyManager(propertyDefinition, 0);
+			FloatPropertyManager floatPropertyManager = new FloatPropertyManager(propertyDefinition,this::getEmptyIndexIterator);
 
 			/*
 			 * We will set the first 300 values multiple times at random
@@ -85,7 +91,7 @@ public class AT_FloatPropertyManager {
 			float defaultValue = 423.645F;
 			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Float.class).setDefaultValue(defaultValue).build();
 
-			FloatPropertyManager floatPropertyManager = new FloatPropertyManager(propertyDefinition, 0);
+			FloatPropertyManager floatPropertyManager = new FloatPropertyManager(propertyDefinition,this::getEmptyIndexIterator);
 
 			/*
 			 * We will set the first 300 values multiple times at random
@@ -135,7 +141,7 @@ public class AT_FloatPropertyManager {
 			float defaultValue = 6.2345345F;
 			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Float.class).setDefaultValue(defaultValue).build();
 
-			FloatPropertyManager floatPropertyManager = new FloatPropertyManager(propertyDefinition, 0);
+			FloatPropertyManager floatPropertyManager = new FloatPropertyManager(propertyDefinition,this::getEmptyIndexIterator);
 
 			// initially, the value should be the default value for the manager
 			assertEquals(defaultValue, (Float) floatPropertyManager.getPropertyValue(5), 0);
@@ -155,7 +161,7 @@ public class AT_FloatPropertyManager {
 			// we will next test the manager with an initial value of true
 			propertyDefinition = PropertyDefinition.builder().setType(Float.class).setDefaultValue(defaultValue).build();
 
-			floatPropertyManager = new FloatPropertyManager(propertyDefinition, 0);
+			floatPropertyManager = new FloatPropertyManager(propertyDefinition,this::getEmptyIndexIterator);
 
 			// initially, the value should be the default value for the manager
 			assertEquals(defaultValue, (Float) floatPropertyManager.getPropertyValue(5), 0);
@@ -174,7 +180,7 @@ public class AT_FloatPropertyManager {
 
 			// precondition tests
 			PropertyDefinition def = PropertyDefinition.builder().setType(Float.class).setDefaultValue(4.5F).build();
-			FloatPropertyManager fpm = new FloatPropertyManager(def, 0);
+			FloatPropertyManager fpm = new FloatPropertyManager(def,this::getEmptyIndexIterator);
 
 			ContractException contractException = assertThrows(ContractException.class, () -> fpm.removeId(-1));
 			assertEquals(PropertyError.NEGATIVE_INDEX, contractException.getErrorType());
@@ -191,18 +197,15 @@ public class AT_FloatPropertyManager {
 			PropertyDefinition badPropertyDefinition = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(false).build();
 
 			// if the property definition is null
-			ContractException contractException = assertThrows(ContractException.class, () -> new FloatPropertyManager( null, 0));
+			ContractException contractException = assertThrows(ContractException.class, () -> new FloatPropertyManager(null,this::getEmptyIndexIterator));
 			assertEquals(PropertyError.NULL_PROPERTY_DEFINITION, contractException.getErrorType());
 
 			// if the property definition does not have a type of Float.class
-			contractException = assertThrows(ContractException.class, () -> new FloatPropertyManager(badPropertyDefinition, 0));
+			contractException = assertThrows(ContractException.class, () -> new FloatPropertyManager(badPropertyDefinition,this::getEmptyIndexIterator));
 			assertEquals(PropertyError.PROPERTY_DEFINITION_IMPROPER_TYPE, contractException.getErrorType());
 
-			// if the initial size is negative
-			contractException = assertThrows(ContractException.class, () -> new FloatPropertyManager(goodPropertyDefinition, -1));
-			assertEquals(PropertyError.NEGATIVE_INITIAL_SIZE, contractException.getErrorType());
 
-			FloatPropertyManager doublePropertyManager = new FloatPropertyManager(goodPropertyDefinition, 0);
+			FloatPropertyManager doublePropertyManager = new FloatPropertyManager(goodPropertyDefinition,this::getEmptyIndexIterator);
 			assertNotNull(doublePropertyManager);
 		});
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
@@ -215,7 +218,7 @@ public class AT_FloatPropertyManager {
 
 			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Float.class).setDefaultValue(234.42F).build();
 
-			FloatPropertyManager floatPropertyManager = new FloatPropertyManager(propertyDefinition, 0);
+			FloatPropertyManager floatPropertyManager = new FloatPropertyManager(propertyDefinition,this::getEmptyIndexIterator);
 
 			// precondition tests
 			ContractException contractException = assertThrows(ContractException.class, () -> floatPropertyManager.incrementCapacity(-1));

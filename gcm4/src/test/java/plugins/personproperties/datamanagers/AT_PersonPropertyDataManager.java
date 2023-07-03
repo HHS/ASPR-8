@@ -7,12 +7,14 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Random;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.IntStream;
@@ -55,8 +57,8 @@ import plugins.personproperties.testsupport.PersonPropertiesTestPluginFactory.Fa
 import plugins.personproperties.testsupport.TestAuxiliaryPersonPropertyId;
 import plugins.personproperties.testsupport.TestPersonPropertyId;
 import plugins.regions.RegionsPlugin;
-import plugins.regions.RegionsPluginData;
 import plugins.regions.datamanagers.RegionsDataManager;
+import plugins.regions.datamanagers.RegionsPluginData;
 import plugins.regions.support.RegionError;
 import plugins.regions.support.RegionId;
 import plugins.regions.testsupport.TestRegionId;
@@ -246,23 +248,26 @@ public final class AT_PersonPropertyDataManager {
 		propBuilder.definePersonProperty(prop2, def2, 0, false);
 		propBuilder.definePersonProperty(prop3, def3, 3.4, true);
 		propBuilder.setPersonPropertyTime(new PersonId(2), prop1, 6.7);
+		propBuilder.setPersonPropertyValue(new PersonId(2), prop1, 17);
 		propBuilder.setPersonPropertyValue(new PersonId(2), prop2, 88.7);
 		propBuilder.setPersonPropertyValue(new PersonId(2), prop3, false);
 		propBuilder.setPersonPropertyTime(new PersonId(2), prop3, 6.7);
 		propBuilder.setPersonPropertyValue(new PersonId(3), prop1, 99);
 		propBuilder.setPersonPropertyTime(new PersonId(3), prop1, 2.3);
 		propBuilder.setPersonPropertyValue(new PersonId(3), prop2, 123.31);
+		propBuilder.setPersonPropertyValue(new PersonId(3), prop3, true);
 		propBuilder.setPersonPropertyTime(new PersonId(3), prop3, 6.7);
 		propBuilder.setPersonPropertyValue(new PersonId(4), prop1, 88);
 		propBuilder.setPersonPropertyTime(new PersonId(4), prop1, 6.7);
 		propBuilder.setPersonPropertyValue(new PersonId(4), prop2, 456.6);
-		propBuilder.setPersonPropertyValue(new PersonId(4), prop3, false);
+		propBuilder.setPersonPropertyValue(new PersonId(4), prop3, false);	
 		// the following property time is extraneous, but should not effect
 		// equality
 		propBuilder.setPersonPropertyTime(new PersonId(4), prop3, 3.4);
 		PersonPropertiesPluginData expectedPersonPropertiesPluginData = propBuilder.build();
 
 		// compare the expected and actual plugin datas
+		
 		assertEquals(expectedPersonPropertiesPluginData, actualPersonPropertiesPluginData);
 
 	}
@@ -2008,14 +2013,19 @@ public final class AT_PersonPropertyDataManager {
 		continuityBuilder.addContextConsumer(1.8, (c) -> {
 
 			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
+			TestPersonPropertyId testPersonPropertyId;
 
-			TestPersonPropertyId testPersonPropertyId = TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK;
-			personPropertiesDataManager.setPersonPropertyValue(new PersonId(0), testPersonPropertyId, true);
-			personPropertiesDataManager.setPersonPropertyValue(new PersonId(3), testPersonPropertyId, true);
-
+			
+			
 			testPersonPropertyId = TestPersonPropertyId.PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK;
 			personPropertiesDataManager.setPersonPropertyValue(new PersonId(4), testPersonPropertyId, 14);
 			personPropertiesDataManager.setPersonPropertyValue(new PersonId(6), testPersonPropertyId, 88);
+			
+			
+			testPersonPropertyId = TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK;
+			personPropertiesDataManager.setPersonPropertyValue(new PersonId(0), testPersonPropertyId, true);
+			personPropertiesDataManager.setPersonPropertyValue(new PersonId(3), testPersonPropertyId, true);
+
 
 		});
 
@@ -2031,8 +2041,10 @@ public final class AT_PersonPropertyDataManager {
 					PersonPropertyDefinitionInitialization	.builder();//
 					builder.setPersonPropertyId(testPersonPropertyId);//
 					builder.setPropertyDefinition(testPersonPropertyId.getPropertyDefinition());//
-					builder.setTrackTimes(true);//
-			for(PersonId personId : peopleDataManager.getPeople()) {
+					builder.setTrackTimes(false);//
+			List<PersonId> people = peopleDataManager.getPeople();
+			Collections.shuffle(people,new Random(randomGenerator.nextLong()));
+			for(PersonId personId : people) {
 				builder.addPropertyValue(personId, testPersonPropertyId.getRandomPropertyValue(randomGenerator));
 			}				
 															
@@ -2130,7 +2142,8 @@ public final class AT_PersonPropertyDataManager {
 												.addPlugin(peoplePlugin)//
 												.addPlugin(runContinuityPlugin)//
 												.addPlugin(regionsPlugin)//
-												.addPlugin(personPropertyPlugin).setSimulationHaltTime(haltTime)//
+												.addPlugin(personPropertyPlugin)//
+												.setSimulationHaltTime(haltTime)//
 												.setRecordState(true)//
 												.setOutputConsumer(outputConsumer)//
 												.setSimulationState(simulationState)//
@@ -2159,7 +2172,9 @@ public final class AT_PersonPropertyDataManager {
 			
 		}		
 		
+		//show that the resulting string is relatively large
 		assertNotNull(result);
+		assertTrue(result.length()>100);
 		
 		return result;
 

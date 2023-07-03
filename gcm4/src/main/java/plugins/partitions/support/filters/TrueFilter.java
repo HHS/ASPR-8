@@ -3,6 +3,7 @@ package plugins.partitions.support.filters;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import net.jcip.annotations.Immutable;
 import plugins.partitions.support.FilterSensitivity;
 import plugins.partitions.support.PartitionsContext;
 import plugins.people.support.PersonId;
@@ -12,6 +13,8 @@ import plugins.people.support.PersonId;
  * AndFilter over a loop of filters that might be empty. AND operating over an
  * empty set should always be true.
  */
+
+@Immutable
 public final class TrueFilter extends Filter {
 
 	@Override

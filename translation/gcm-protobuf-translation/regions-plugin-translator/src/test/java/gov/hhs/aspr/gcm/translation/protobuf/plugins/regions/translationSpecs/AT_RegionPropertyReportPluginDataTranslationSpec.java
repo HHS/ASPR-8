@@ -79,6 +79,7 @@ public class AT_RegionPropertyReportPluginDataTranslationSpec {
         RegionPropertyReportPluginData actualAppValue = translationSpec.convertInputObject(inputValue);
 
         assertEquals(expectedAppValue, actualAppValue);
+        assertEquals(expectedAppValue.toString(), actualAppValue.toString());
     }
 
     @Test

@@ -78,6 +78,7 @@ public class AT_PersonPropertyInteractionReportPluginDataTranslationSpec {
         PersonPropertyInteractionReportPluginData actualAppValue = translationSpec.convertInputObject(inputValue);
 
         assertEquals(expectedAppValue, actualAppValue);
+        assertEquals(expectedAppValue.toString(), actualAppValue.toString());
     }
 
     @Test

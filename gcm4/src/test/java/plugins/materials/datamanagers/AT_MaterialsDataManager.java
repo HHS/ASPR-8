@@ -3,7 +3,6 @@ package plugins.materials.datamanagers;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -17,28 +16,19 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
-import java.util.function.Consumer;
 
 import org.apache.commons.math3.random.RandomGenerator;
-import org.apache.commons.math3.util.FastMath;
 import org.apache.commons.math3.util.Pair;
 import org.junit.jupiter.api.Test;
 
-import nucleus.ActorContext;
 import nucleus.DataManagerContext;
 import nucleus.EventFilter;
-import nucleus.Plugin;
-import nucleus.Simulation;
-import nucleus.SimulationState;
-import nucleus.testsupport.runcontinuityplugin.RunContinuityPlugin;
-import nucleus.testsupport.runcontinuityplugin.RunContinuityPluginData;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestOutputConsumer;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestSimulation;
-import plugins.materials.MaterialsPlugin;
-import plugins.materials.MaterialsPluginData;
 import plugins.materials.datamangers.MaterialsDataManager;
+import plugins.materials.datamangers.MaterialsPluginData;
 import plugins.materials.events.BatchAdditionEvent;
 import plugins.materials.events.BatchAmountUpdateEvent;
 import plugins.materials.events.BatchImminentRemovalEvent;
@@ -74,27 +64,15 @@ import plugins.materials.testsupport.TestBatchPropertyId;
 import plugins.materials.testsupport.TestMaterialId;
 import plugins.materials.testsupport.TestMaterialsProducerId;
 import plugins.materials.testsupport.TestMaterialsProducerPropertyId;
-import plugins.people.PeoplePlugin;
-import plugins.people.PeoplePluginData;
-import plugins.people.datamanagers.PeopleDataManager;
-import plugins.people.support.PersonConstructionData;
-import plugins.regions.RegionsPlugin;
-import plugins.regions.RegionsPluginData;
 import plugins.regions.support.RegionError;
 import plugins.regions.support.RegionId;
 import plugins.regions.testsupport.TestRegionId;
-import plugins.resources.ResourcesPlugin;
-import plugins.resources.ResourcesPluginData;
 import plugins.resources.datamanagers.ResourcesDataManager;
 import plugins.resources.events.RegionResourceUpdateEvent;
 import plugins.resources.support.ResourceError;
 import plugins.resources.support.ResourceId;
 import plugins.resources.testsupport.TestResourceId;
 import plugins.stochastics.StochasticsDataManager;
-import plugins.stochastics.StochasticsPlugin;
-import plugins.stochastics.StochasticsPluginData;
-import plugins.stochastics.support.Well;
-import plugins.stochastics.support.WellState;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
 import util.annotations.UnitTestConstructor;
@@ -143,12 +121,16 @@ public class AT_MaterialsDataManager {
 		materialsBuilder.defineBatchProperty(TestMaterialId.MATERIAL_1, bprop, bprop.getPropertyDefinition());
 		bprop = TestBatchPropertyId.BATCH_PROPERTY_2_2_INTEGER_IMMUTABLE_TRACK;
 		materialsBuilder.defineBatchProperty(TestMaterialId.MATERIAL_2, bprop, bprop.getPropertyDefinition());
-		materialsBuilder.addBatch(new BatchId(0), TestMaterialId.MATERIAL_1, 10, TestMaterialsProducerId.MATERIALS_PRODUCER_1);
-		materialsBuilder.addBatch(new BatchId(1), TestMaterialId.MATERIAL_1, 11, TestMaterialsProducerId.MATERIALS_PRODUCER_1);
-		materialsBuilder.addBatch(new BatchId(2), TestMaterialId.MATERIAL_2, 12, TestMaterialsProducerId.MATERIALS_PRODUCER_2);
-		materialsBuilder.addBatch(new BatchId(3), TestMaterialId.MATERIAL_2, 13, TestMaterialsProducerId.MATERIALS_PRODUCER_2);
-		materialsBuilder.addBatch(new BatchId(4), TestMaterialId.MATERIAL_2, 14, TestMaterialsProducerId.MATERIALS_PRODUCER_2);
-		materialsBuilder.addStage(new StageId(0), false, TestMaterialsProducerId.MATERIALS_PRODUCER_2);
+		materialsBuilder.addBatch(new BatchId(0), TestMaterialId.MATERIAL_1, 10);
+		materialsBuilder.addBatchToMaterialsProducerInventory(new BatchId(0), TestMaterialsProducerId.MATERIALS_PRODUCER_1);
+		materialsBuilder.addBatch(new BatchId(1), TestMaterialId.MATERIAL_1, 11);
+		materialsBuilder.addBatchToMaterialsProducerInventory(new BatchId(1), TestMaterialsProducerId.MATERIALS_PRODUCER_1);
+		materialsBuilder.addBatch(new BatchId(2), TestMaterialId.MATERIAL_2, 12);
+		materialsBuilder.addBatchToMaterialsProducerInventory(new BatchId(2), TestMaterialsProducerId.MATERIALS_PRODUCER_2);
+		materialsBuilder.addBatch(new BatchId(3), TestMaterialId.MATERIAL_2, 13);
+		materialsBuilder.addBatch(new BatchId(4), TestMaterialId.MATERIAL_2, 14);
+		materialsBuilder.addStage(new StageId(0), false);
+		materialsBuilder.addStageToMaterialProducer(new StageId(0), TestMaterialsProducerId.MATERIALS_PRODUCER_2);		
 		materialsBuilder.addBatchToStage(new StageId(0), new BatchId(3));
 		materialsBuilder.addBatchToStage(new StageId(0), new BatchId(4));
 		materialsBuilder.setBatchPropertyValue(new BatchId(0), TestBatchPropertyId.BATCH_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK, 77);
@@ -193,6 +175,13 @@ public class AT_MaterialsDataManager {
 		expectedBuilder.defineMaterialsProducerProperty(propId, propId.getPropertyDefinition());
 		expectedBuilder.setMaterialsProducerPropertyValue(TestMaterialsProducerId.MATERIALS_PRODUCER_1, propId, 345);
 		expectedBuilder.setMaterialsProducerPropertyValue(TestMaterialsProducerId.MATERIALS_PRODUCER_2, propId, 5234);
+		
+		for(TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
+			for(TestResourceId testResourceId : TestResourceId.values()) {
+				expectedBuilder.setMaterialsProducerResourceLevel(testMaterialsProducerId, testResourceId, 0L);
+			}
+		}
+		
 		expectedBuilder.setMaterialsProducerResourceLevel(TestMaterialsProducerId.MATERIALS_PRODUCER_1, TestResourceId.RESOURCE_1, 123L);
 		expectedBuilder.setMaterialsProducerResourceLevel(TestMaterialsProducerId.MATERIALS_PRODUCER_2, TestResourceId.RESOURCE_2, 55L);
 		expectedBuilder.addMaterial(TestMaterialId.MATERIAL_1);
@@ -203,13 +192,18 @@ public class AT_MaterialsDataManager {
 		expectedBuilder.defineBatchProperty(TestMaterialId.MATERIAL_1, bprop, bprop.getPropertyDefinition());
 		bprop = TestBatchPropertyId.BATCH_PROPERTY_2_2_INTEGER_IMMUTABLE_TRACK;
 		expectedBuilder.defineBatchProperty(TestMaterialId.MATERIAL_2, bprop, bprop.getPropertyDefinition());
-		expectedBuilder.addBatch(new BatchId(0), TestMaterialId.MATERIAL_1, 10, TestMaterialsProducerId.MATERIALS_PRODUCER_1);
-		expectedBuilder.addBatch(new BatchId(1), TestMaterialId.MATERIAL_1, 11, TestMaterialsProducerId.MATERIALS_PRODUCER_1);
-		expectedBuilder.addBatch(new BatchId(2), TestMaterialId.MATERIAL_2, 12, TestMaterialsProducerId.MATERIALS_PRODUCER_2);
-		expectedBuilder.addBatch(new BatchId(3), TestMaterialId.MATERIAL_2, 13, TestMaterialsProducerId.MATERIALS_PRODUCER_2);
-		expectedBuilder.addBatch(new BatchId(4), TestMaterialId.MATERIAL_2, 14, TestMaterialsProducerId.MATERIALS_PRODUCER_2);
-		expectedBuilder.addStage(new StageId(0), false, TestMaterialsProducerId.MATERIALS_PRODUCER_2);
-		expectedBuilder.addStage(expectedStageIds.get(0), false, TestMaterialsProducerId.MATERIALS_PRODUCER_3);
+		expectedBuilder.addBatch(new BatchId(0), TestMaterialId.MATERIAL_1, 10);
+		expectedBuilder.addBatchToMaterialsProducerInventory(new BatchId(0), TestMaterialsProducerId.MATERIALS_PRODUCER_1);
+		expectedBuilder.addBatch(new BatchId(1), TestMaterialId.MATERIAL_1, 11);
+		expectedBuilder.addBatchToMaterialsProducerInventory(new BatchId(1), TestMaterialsProducerId.MATERIALS_PRODUCER_1);
+		expectedBuilder.addBatch(new BatchId(2), TestMaterialId.MATERIAL_2, 12);
+		expectedBuilder.addBatchToMaterialsProducerInventory(new BatchId(2), TestMaterialsProducerId.MATERIALS_PRODUCER_2);
+		expectedBuilder.addBatch(new BatchId(3), TestMaterialId.MATERIAL_2, 13);
+		expectedBuilder.addBatch(new BatchId(4), TestMaterialId.MATERIAL_2, 14);
+		expectedBuilder.addStage(new StageId(0), false);
+		expectedBuilder.addStageToMaterialProducer(new StageId(0), TestMaterialsProducerId.MATERIALS_PRODUCER_2);
+		expectedBuilder.addStage(expectedStageIds.get(0), false);
+		expectedBuilder.addStageToMaterialProducer(expectedStageIds.get(0), TestMaterialsProducerId.MATERIALS_PRODUCER_3);
 		expectedBuilder.addBatchToStage(new StageId(0), new BatchId(3));
 		expectedBuilder.addBatchToStage(new StageId(0), new BatchId(4));
 		expectedBuilder.setBatchPropertyValue(new BatchId(0), TestBatchPropertyId.BATCH_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK, 77);
@@ -244,12 +238,16 @@ public class AT_MaterialsDataManager {
 		materialsBuilder.defineBatchProperty(TestMaterialId.MATERIAL_1, bprop, bprop.getPropertyDefinition());
 		bprop = TestBatchPropertyId.BATCH_PROPERTY_2_2_INTEGER_IMMUTABLE_TRACK;
 		materialsBuilder.defineBatchProperty(TestMaterialId.MATERIAL_2, bprop, bprop.getPropertyDefinition());
-		materialsBuilder.addBatch(new BatchId(0), TestMaterialId.MATERIAL_1, 10, TestMaterialsProducerId.MATERIALS_PRODUCER_1);
-		materialsBuilder.addBatch(new BatchId(1), TestMaterialId.MATERIAL_1, 11, TestMaterialsProducerId.MATERIALS_PRODUCER_1);
-		materialsBuilder.addBatch(new BatchId(2), TestMaterialId.MATERIAL_2, 12, TestMaterialsProducerId.MATERIALS_PRODUCER_2);
-		materialsBuilder.addBatch(new BatchId(3), TestMaterialId.MATERIAL_2, 13, TestMaterialsProducerId.MATERIALS_PRODUCER_2);
-		materialsBuilder.addBatch(new BatchId(4), TestMaterialId.MATERIAL_2, 14, TestMaterialsProducerId.MATERIALS_PRODUCER_2);
-		materialsBuilder.addStage(new StageId(0), false, TestMaterialsProducerId.MATERIALS_PRODUCER_2);
+		materialsBuilder.addBatch(new BatchId(0), TestMaterialId.MATERIAL_1, 10);
+		materialsBuilder.addBatchToMaterialsProducerInventory(new BatchId(0), TestMaterialsProducerId.MATERIALS_PRODUCER_1);
+		materialsBuilder.addBatch(new BatchId(1), TestMaterialId.MATERIAL_1, 11);
+		materialsBuilder.addBatchToMaterialsProducerInventory(new BatchId(1), TestMaterialsProducerId.MATERIALS_PRODUCER_1);
+		materialsBuilder.addBatch(new BatchId(2), TestMaterialId.MATERIAL_2, 12);
+		materialsBuilder.addBatchToMaterialsProducerInventory(new BatchId(2), TestMaterialsProducerId.MATERIALS_PRODUCER_2);
+		materialsBuilder.addBatch(new BatchId(3), TestMaterialId.MATERIAL_2, 13);
+		materialsBuilder.addBatch(new BatchId(4), TestMaterialId.MATERIAL_2, 14);
+		materialsBuilder.addStage(new StageId(0), false);
+		materialsBuilder.addStageToMaterialProducer(new StageId(0), TestMaterialsProducerId.MATERIALS_PRODUCER_2);
 		materialsBuilder.addBatchToStage(new StageId(0), new BatchId(3));
 		materialsBuilder.addBatchToStage(new StageId(0), new BatchId(4));
 		materialsBuilder.defineBatchProperty(TestMaterialId.MATERIAL_2, TestBatchPropertyId.BATCH_PROPERTY_2_1_BOOLEAN_MUTABLE_TRACK,
@@ -307,6 +305,13 @@ public class AT_MaterialsDataManager {
 		expectedBuilder.defineMaterialsProducerProperty(propId, propId.getPropertyDefinition());
 		expectedBuilder.setMaterialsProducerPropertyValue(TestMaterialsProducerId.MATERIALS_PRODUCER_1, propId, 73);
 		expectedBuilder.setMaterialsProducerPropertyValue(TestMaterialsProducerId.MATERIALS_PRODUCER_2, propId, 5234);
+		
+		for(TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
+			for(TestResourceId testResourceId : TestResourceId.values()) {
+				expectedBuilder.setMaterialsProducerResourceLevel(testMaterialsProducerId, testResourceId, 0L);
+			}
+		}
+		
 		expectedBuilder.setMaterialsProducerResourceLevel(TestMaterialsProducerId.MATERIALS_PRODUCER_1, TestResourceId.RESOURCE_1, 123L);
 		expectedBuilder.setMaterialsProducerResourceLevel(TestMaterialsProducerId.MATERIALS_PRODUCER_2, TestResourceId.RESOURCE_2, 55L);
 		expectedBuilder.addMaterial(TestMaterialId.MATERIAL_1);
@@ -319,16 +324,23 @@ public class AT_MaterialsDataManager {
 		expectedBuilder.defineBatchProperty(TestMaterialId.MATERIAL_2, bprop, bprop.getPropertyDefinition());
 		bprop = TestBatchPropertyId.BATCH_PROPERTY_2_1_BOOLEAN_MUTABLE_TRACK;
 		expectedBuilder.defineBatchProperty(TestMaterialId.MATERIAL_2, bprop, bprop.getPropertyDefinition());
-		expectedBuilder.addBatch(new BatchId(1), TestMaterialId.MATERIAL_1, 11, TestMaterialsProducerId.MATERIALS_PRODUCER_1);
-		expectedBuilder.addBatch(new BatchId(2), TestMaterialId.MATERIAL_2, 12, TestMaterialsProducerId.MATERIALS_PRODUCER_2);
-		expectedBuilder.addBatch(new BatchId(3), TestMaterialId.MATERIAL_2, 13, TestMaterialsProducerId.MATERIALS_PRODUCER_2);
-		expectedBuilder.addBatch(new BatchId(4), TestMaterialId.MATERIAL_2, 14, TestMaterialsProducerId.MATERIALS_PRODUCER_2);
-		expectedBuilder.addBatch(expectedBatchIds.get(0), TestMaterialId.MATERIAL_2, 58.9, TestMaterialsProducerId.MATERIALS_PRODUCER_2);
-		expectedBuilder.addStage(new StageId(0), false, TestMaterialsProducerId.MATERIALS_PRODUCER_2);
-		expectedBuilder.addStage(expectedStageIds.get(0), false, TestMaterialsProducerId.MATERIALS_PRODUCER_3);
+		expectedBuilder.addBatch(new BatchId(1), TestMaterialId.MATERIAL_1, 11);
+		expectedBuilder.addBatchToMaterialsProducerInventory(new BatchId(1), TestMaterialsProducerId.MATERIALS_PRODUCER_1);
+		expectedBuilder.addBatch(new BatchId(2), TestMaterialId.MATERIAL_2, 12);
+		expectedBuilder.addBatchToMaterialsProducerInventory(new BatchId(2), TestMaterialsProducerId.MATERIALS_PRODUCER_2);
+		expectedBuilder.addBatch(new BatchId(3), TestMaterialId.MATERIAL_2, 13);
+		expectedBuilder.addBatch(new BatchId(4), TestMaterialId.MATERIAL_2, 14);
+		expectedBuilder.addBatch(expectedBatchIds.get(0), TestMaterialId.MATERIAL_2, 58.9);
+		expectedBuilder.addBatchToMaterialsProducerInventory(expectedBatchIds.get(0), TestMaterialsProducerId.MATERIALS_PRODUCER_2);
+		expectedBuilder.addStage(new StageId(0), false);
+		expectedBuilder.addStageToMaterialProducer(new StageId(0), TestMaterialsProducerId.MATERIALS_PRODUCER_2);
+		
+		expectedBuilder.addStage(expectedStageIds.get(0), false);
+		expectedBuilder.addStageToMaterialProducer(expectedStageIds.get(0), TestMaterialsProducerId.MATERIALS_PRODUCER_3);
+		
 		expectedBuilder.addBatchToStage(new StageId(0), new BatchId(3));
 		expectedBuilder.addBatchToStage(new StageId(0), new BatchId(4));
-		;
+		
 		expectedBuilder.setBatchPropertyValue(new BatchId(1), TestBatchPropertyId.BATCH_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK, 56);
 		expectedBuilder.setBatchPropertyValue(new BatchId(4), TestBatchPropertyId.BATCH_PROPERTY_2_2_INTEGER_IMMUTABLE_TRACK, 534);
 		expectedBuilder.setBatchPropertyValue(new BatchId(3), TestBatchPropertyId.BATCH_PROPERTY_2_1_BOOLEAN_MUTABLE_TRACK, true);
@@ -4324,18 +4336,13 @@ public class AT_MaterialsDataManager {
 			}
 			assertEquals(expectedBatchIds, actualBatchIds);
 
-			// Show that the batches have the correct material id, materials
-			// producer and amounts
+			// Show that the batches have the correct material id, and amounts
 
 			for (BatchId batchId : materialsPluginData.getBatchIds()) {
 
 				MaterialId expectedMaterialId = materialsPluginData.getBatchMaterial(batchId);
 				MaterialId actualMaterialId = materialsDataManager.getBatchMaterial(batchId);
 				assertEquals(expectedMaterialId, actualMaterialId);
-
-				MaterialsProducerId expectedMaterialsProducerId = materialsPluginData.getBatchMaterialsProducer(batchId);
-				MaterialsProducerId actualMaterialsProducerId = materialsDataManager.getBatchProducer(batchId);
-				assertEquals(expectedMaterialsProducerId, actualMaterialsProducerId);
 
 				double expectedAmount = materialsPluginData.getBatchAmount(batchId);
 				double actualAmount = materialsDataManager.getBatchAmount(batchId);
@@ -4351,6 +4358,12 @@ public class AT_MaterialsDataManager {
 					assertEquals(expectedValue, actualValue);
 				}
 
+			}
+			// Show that the inventory batches match
+			for(MaterialsProducerId materialsProducerId : materialsPluginData.getMaterialsProducerIds()) {
+				Set<BatchId>expectedBatches = new LinkedHashSet<>(materialsPluginData.getMaterialsProducerInventoryBatches(materialsProducerId));
+				Set<BatchId>actualBatches = new LinkedHashSet<>(materialsDataManager.getInventoryBatches(materialsProducerId));
+				assertEquals(expectedBatches, actualBatches);
 			}
 
 			// Show that the correct initial stages are present with their
@@ -4369,10 +4382,6 @@ public class AT_MaterialsDataManager {
 
 			for (StageId stageId : materialsPluginData.getStageIds()) {
 
-				MaterialsProducerId expectedMaterialsProducerId = materialsPluginData.getStageMaterialsProducer(stageId);
-				MaterialsProducerId actualMaterialsProducerId = materialsDataManager.getStageProducer(stageId);
-				assertEquals(expectedMaterialsProducerId, actualMaterialsProducerId);
-
 				boolean expectedOfferState = materialsPluginData.isStageOffered(stageId);
 				boolean actualOfferStage = materialsDataManager.isStageOffered(stageId);
 				assertEquals(expectedOfferState, actualOfferStage);
@@ -4384,12 +4393,20 @@ public class AT_MaterialsDataManager {
 				Set<BatchId> actualBatches = new LinkedHashSet<>(materialsDataManager.getStageBatches(stageId));
 				assertEquals(expectedBatches, actualBatches);
 			}
+			
+			for(MaterialsProducerId materialsProducerId : materialsPluginData.getMaterialsProducerIds()) {				
+				Set<StageId> actualStagesForProducer = new LinkedHashSet<>( materialsDataManager.getStages(materialsProducerId));
+				Set<StageId> expectedStagesForProducer = new LinkedHashSet<>(materialsPluginData.getMaterialsProducerStages(materialsProducerId));
+				assertEquals(expectedStagesForProducer, actualStagesForProducer);				
+			}
+			
+			
 
 		}));
 
 		// add the test plugin
 		TestPluginData testPluginData = pluginBuilder.build();
-		Factory factory = MaterialsTestPluginFactory.factory(numBatches, numStages, numBatchesToStage, seed, testPluginData);
+		Factory factory = MaterialsTestPluginFactory.factory(numBatches, numStages, numBatchesToStage, seed, testPluginData).setMaterialsPluginData(materialsPluginData);
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 	}
@@ -6612,612 +6629,4 @@ public class AT_MaterialsDataManager {
 		});
 		assertEquals(ResourceError.RESOURCE_ARITHMETIC_EXCEPTION, contractException.getErrorType());
 	}
-
-	/**
-	 * Demonstrates that the data manager exhibits run continuity. The state of
-	 * the data manager is not effected by repeatedly starting and stopping the
-	 * simulation.
-	 */
-
-	@UnitTestMethod(target = MaterialsDataManager.class, name = "init", args = { DataManagerContext.class })
-	public void testStateContinuity() {
-
-		/*
-		 * Note that we are not testing the content of the plugin datas -- that
-		 * is covered by the other state tests. We show here only that the
-		 * resulting plugin data state is the same without regard to how we
-		 * break up the run.
-		 */
-
-		Set<String> pluginDatas = new LinkedHashSet<>();
-		pluginDatas.add(testStateContinuity(1));
-		pluginDatas.add(testStateContinuity(5));
-		pluginDatas.add(testStateContinuity(10));
-
-		assertEquals(1, pluginDatas.size());
-
-	}
-
-	private static void reportStochasticsState(ActorContext c) {
-		RandomGenerator randomGenerator = c.getDataManager(StochasticsDataManager.class).getRandomGenerator();
-		Well well = (Well) randomGenerator;
-		WellState wellState = well.getWellState();
-		int[] vArray = wellState.getVArray();
-		int checkSum = 0;
-		for (int value : vArray) {
-			checkSum += value;
-		}
-		System.out.println("time = " + c.getTime() + "\t" + wellState.getSeed() + "\t" + wellState.getIndex() + "\t" + checkSum);
-	}
-
-	/*
-	 * Returns the materials plugin data resulting from various materials
-	 * related events over several days. Attempts to stop and start the
-	 * simulation by the given number of increments.
-	 */
-	private String testStateContinuity(int incrementCount) {
-		String result = null;
-
-		int baseBatchCount = 50;
-		int baseStageCount = baseBatchCount/2;
-
-		/*
-		 * Build the RunContinuityPluginData with several context consumers that
-		 * will execute various mutations on the materials data
-		 */
-		RunContinuityPluginData.Builder continuityBuilder = RunContinuityPluginData.builder();
-
-		// add a few people
-		continuityBuilder.addContextConsumer(0.5, (c) -> {
-			reportStochasticsState(c);
-			RandomGenerator randomGenerator = c.getDataManager(StochasticsDataManager.class).getRandomGenerator();
-
-			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
-			for (int i = 0; i < 10; i++) {
-				TestRegionId regionId = TestRegionId.getRandomRegionId(randomGenerator);
-				peopleDataManager.addPerson(PersonConstructionData.builder().add(regionId).build());
-			}
-		});
-
-		/*
-		 * define some of the material ids
-		 * 
-		 * add some materials producers
-		 * 
-		 * define batch Properties
-		 * 
-		 * define materials producer properties
-		 */
-		continuityBuilder.addContextConsumer(0.67, (c) -> {
-			reportStochasticsState(c);
-			RandomGenerator randomGenerator = c.getDataManager(StochasticsDataManager.class).getRandomGenerator();
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
-			materialsDataManager.addMaterialId(TestMaterialId.MATERIAL_1);
-			materialsDataManager.addMaterialId(TestMaterialId.MATERIAL_2);
-			for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
-
-				TestResourceId resourceId = TestResourceId.getRandomResourceId(randomGenerator);
-				long resourceAmount = randomGenerator.nextInt(1000) + 1;
-
-				MaterialsProducerConstructionData materialsProducerConstructionData = MaterialsProducerConstructionData	.builder()//
-																														.setMaterialsProducerId(testMaterialsProducerId)//
-																														.setResourceLevel(resourceId, resourceAmount)//
-																														.build();//
-				materialsDataManager.addMaterialsProducer(materialsProducerConstructionData);
-			}
-
-			for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId.values()) {
-
-				MaterialsProducerPropertyDefinitionInitialization.Builder defbuilder = MaterialsProducerPropertyDefinitionInitialization.builder();
-
-				defbuilder.setMaterialsProducerPropertyId(testMaterialsProducerPropertyId);
-				PropertyDefinition propertyDefinition = testMaterialsProducerPropertyId.getPropertyDefinition();
-				defbuilder.setPropertyDefinition(propertyDefinition);
-				if (propertyDefinition.getDefaultValue().isEmpty()) {
-					for (MaterialsProducerId materialsProducerId : materialsDataManager.getMaterialsProducerIds()) {
-						defbuilder.addPropertyValue(materialsProducerId, testMaterialsProducerPropertyId.getRandomPropertyValue(randomGenerator));
-					}
-				}
-				MaterialsProducerPropertyDefinitionInitialization materialsProducerPropertyDefinitionInitialization = defbuilder.build();
-
-				materialsDataManager.defineMaterialsProducerProperty(materialsProducerPropertyDefinitionInitialization);
-			}
-
-			for (TestBatchPropertyId testBatchPropertyId : TestBatchPropertyId.values()) {
-
-				// we only defined materials 1 and 2 above
-				if (testBatchPropertyId.getTestMaterialId() != TestMaterialId.MATERIAL_3) {
-					BatchPropertyDefinitionInitialization batchPropertyDefinitionInitialization = //
-							BatchPropertyDefinitionInitialization	.builder()//
-																	.setPropertyId(testBatchPropertyId)//
-																	.setPropertyDefinition(testBatchPropertyId.getPropertyDefinition())//
-																	.setMaterialId(testBatchPropertyId.getTestMaterialId())//
-																	.build();//
-					materialsDataManager.defineBatchProperty(batchPropertyDefinitionInitialization);
-				}
-			}
-
-		});
-
-		// create some batches
-		continuityBuilder.addContextConsumer(0.95, (c) -> {
-			reportStochasticsState(c);
-			RandomGenerator randomGenerator = c.getDataManager(StochasticsDataManager.class).getRandomGenerator();
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
-
-			for (int i = 0; i < baseBatchCount; i++) {
-				double amount = randomGenerator.nextDouble() * 100;
-				TestMaterialId testMaterialId;
-				while (true) {
-					testMaterialId = TestMaterialId.getRandomMaterialId(randomGenerator);
-					if (testMaterialId != TestMaterialId.MATERIAL_3) {
-						break;
-					}
-				}
-
-				TestMaterialsProducerId materialsProducerId = TestMaterialsProducerId.getRandomMaterialsProducerId(randomGenerator);
-				BatchConstructionInfo.Builder batchBuilder = BatchConstructionInfo.builder();//
-				batchBuilder.setAmount(amount);//
-				batchBuilder.setMaterialId(testMaterialId);//
-				batchBuilder.setMaterialsProducerId(materialsProducerId);//
-
-				for (TestBatchPropertyId testBatchPropertyId : TestBatchPropertyId.getTestBatchPropertyIds(testMaterialId)) {
-					if (testBatchPropertyId.getPropertyDefinition().getDefaultValue().isEmpty()) {
-						Object propertyValue = testBatchPropertyId.getRandomBatchPropertyValue(randomGenerator);
-						batchBuilder.setPropertyValue(testBatchPropertyId, propertyValue);
-					}
-				}
-
-				BatchConstructionInfo batchConstructionInfo = batchBuilder.build();
-
-				materialsDataManager.addBatch(batchConstructionInfo);
-			}
-
-		});
-
-		// define the remaining material ids and batch Properties, adding a few
-		// more batches
-		continuityBuilder.addContextConsumer(1.34, (c) -> {
-			reportStochasticsState(c);
-			RandomGenerator randomGenerator = c.getDataManager(StochasticsDataManager.class).getRandomGenerator();
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
-			materialsDataManager.addMaterialId(TestMaterialId.MATERIAL_3);
-
-			for (TestBatchPropertyId testBatchPropertyId : TestBatchPropertyId.values()) {
-
-				// we already defined properties for materials 1 and 2
-				if (testBatchPropertyId.getTestMaterialId() == TestMaterialId.MATERIAL_3) {
-					BatchPropertyDefinitionInitialization batchPropertyDefinitionInitialization = //
-							BatchPropertyDefinitionInitialization	.builder()//
-																	.setPropertyId(testBatchPropertyId)//
-																	.setPropertyDefinition(testBatchPropertyId.getPropertyDefinition())//
-																	.setMaterialId(testBatchPropertyId.getTestMaterialId())//
-																	.build();//
-					materialsDataManager.defineBatchProperty(batchPropertyDefinitionInitialization);
-				}
-			}
-
-			TestMaterialId testMaterialId = TestMaterialId.MATERIAL_3;
-
-			for (int i = 0; i < baseBatchCount / 2; i++) {
-				double amount = randomGenerator.nextDouble() * 100;
-
-				TestMaterialsProducerId materialsProducerId = TestMaterialsProducerId.getRandomMaterialsProducerId(randomGenerator);
-				BatchConstructionInfo.Builder batchBuilder = BatchConstructionInfo.builder();//
-				batchBuilder.setAmount(amount);//
-				batchBuilder.setMaterialId(testMaterialId);//
-				batchBuilder.setMaterialsProducerId(materialsProducerId);//
-
-				for (TestBatchPropertyId testBatchPropertyId : TestBatchPropertyId.getTestBatchPropertyIds(testMaterialId)) {
-					if (testBatchPropertyId.getPropertyDefinition().getDefaultValue().isEmpty()) {
-						Object propertyValue = testBatchPropertyId.getRandomBatchPropertyValue(randomGenerator);
-						batchBuilder.setPropertyValue(testBatchPropertyId, propertyValue);
-					}
-				}
-
-				BatchConstructionInfo batchConstructionInfo = batchBuilder.build();
-
-				materialsDataManager.addBatch(batchConstructionInfo);
-			}
-
-		});
-
-		// create some stages
-		continuityBuilder.addContextConsumer(1.8, (c) -> {
-			reportStochasticsState(c);
-			RandomGenerator randomGenerator = c.getDataManager(StochasticsDataManager.class).getRandomGenerator();
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
-			for (int i = 0; i < baseStageCount; i++) {
-				TestMaterialsProducerId materialsProducerId = TestMaterialsProducerId.getRandomMaterialsProducerId(randomGenerator);
-				materialsDataManager.addStage(materialsProducerId);
-			}
-		});
-
-		// move some batches to stages
-		continuityBuilder.addContextConsumer(2.1, (c) -> {
-			reportStochasticsState(c);
-			RandomGenerator randomGenerator = c.getDataManager(StochasticsDataManager.class).getRandomGenerator();
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
-
-			for (MaterialsProducerId materialsProducerId : materialsDataManager.getMaterialsProducerIds()) {
-				List<BatchId> inventoryBatches = materialsDataManager.getInventoryBatches(materialsProducerId);
-				List<StageId> stages = materialsDataManager.getStages(materialsProducerId);
-
-				if (!stages.isEmpty()) {
-					// move about two thirds of the batches out of inventory and
-					// onto stages
-					Collections.shuffle(inventoryBatches, new Random(randomGenerator.nextLong()));
-					int n = 2 * inventoryBatches.size() / 3;
-					for (int i = 0; i < n; i++) {
-						BatchId batchId = inventoryBatches.get(i);
-						StageId stageId = stages.get(randomGenerator.nextInt(stages.size()));
-						materialsDataManager.moveBatchToStage(batchId, stageId);
-					}
-				}
-			}
-		});
-
-		// remove some stages and batches
-		continuityBuilder.addContextConsumer(2.4, (c) -> {
-			reportStochasticsState(c);
-			RandomGenerator randomGenerator = c.getDataManager(StochasticsDataManager.class).getRandomGenerator();
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
-			for (MaterialsProducerId materialsProducerId : materialsDataManager.getMaterialsProducerIds()) {
-				List<BatchId> inventoryBatches = materialsDataManager.getInventoryBatches(materialsProducerId);
-				List<StageId> stages = materialsDataManager.getStages(materialsProducerId);
-
-				Collections.shuffle(inventoryBatches, new Random(randomGenerator.nextLong()));
-				int n = inventoryBatches.size() / 10;
-				for (int i = 0; i < n; i++) {
-					materialsDataManager.removeBatch(inventoryBatches.get(i));
-				}
-
-				Collections.shuffle(stages, new Random(randomGenerator.nextLong()));
-				n = stages.size() / 10;
-				for (int i = 0; i < n; i++) {
-					materialsDataManager.removeStage(stages.get(i), randomGenerator.nextBoolean());
-				}
-			}
-		});
-
-		// convert some stages to batches or resources
-		continuityBuilder.addContextConsumer(2.7, (c) -> {
-			reportStochasticsState(c);
-			RandomGenerator randomGenerator = c.getDataManager(StochasticsDataManager.class).getRandomGenerator();
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
-
-			for (MaterialsProducerId materialsProducerId : materialsDataManager.getMaterialsProducerIds()) {
-
-				List<StageId> stages = materialsDataManager.getStages(materialsProducerId);
-
-				Collections.shuffle(stages, new Random(randomGenerator.nextLong()));
-				int n = stages.size() / 10;
-				for (int i = 0; i < n; i++) {
-					if (randomGenerator.nextBoolean()) {
-						double amount = randomGenerator.nextDouble() * 100;
-						TestMaterialId materialId = TestMaterialId.getRandomMaterialId(randomGenerator);
-						StageConversionInfo.Builder builder = StageConversionInfo.builder();//
-						builder.setAmount(amount);//
-						builder.setMaterialId(materialId);//
-						builder.setStageId(stages.get(i));//
-
-						Set<TestBatchPropertyId> batchPropertyIds = materialsDataManager.getBatchPropertyIds(materialId);
-
-						for (TestBatchPropertyId batchPropertyId : batchPropertyIds) {
-							PropertyDefinition propertyDefinition = materialsDataManager.getBatchPropertyDefinition(materialId, batchPropertyId);
-							if (propertyDefinition.getDefaultValue().isEmpty()) {
-								Object propertyValue = batchPropertyId.getRandomBatchPropertyValue(randomGenerator);
-								builder.setPropertyValue(batchPropertyId, propertyValue);
-							}
-						}
-
-						StageConversionInfo stageConversionInfo = builder.build();
-						materialsDataManager.convertStageToBatch(stageConversionInfo);
-					} else {
-						TestResourceId resourceId = TestResourceId.getRandomResourceId(randomGenerator);
-						long amount = randomGenerator.nextInt(100) + 1;
-						materialsDataManager.convertStageToResource(stages.get(i), resourceId, amount);
-					}
-				}
-			}
-
-		});
-
-		// offer a few stages
-		continuityBuilder.addContextConsumer(2.9, (c) -> {
-			reportStochasticsState(c);
-			RandomGenerator randomGenerator = c.getDataManager(StochasticsDataManager.class).getRandomGenerator();
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
-			for (MaterialsProducerId materialsProducerId : materialsDataManager.getMaterialsProducerIds()) {
-				List<StageId> stages = materialsDataManager.getStages(materialsProducerId);
-				Collections.shuffle(stages, new Random(randomGenerator.nextLong()));
-				int n = stages.size() / 6;
-				for (int i = 0; i < n; i++) {
-					StageId stageId = stages.get(i);
-					if (randomGenerator.nextDouble() < 0.15) {
-						materialsDataManager.setStageOfferState(stageId, true);
-					}
-				}
-			}
-		});
-
-		// move some batches to inventory
-		continuityBuilder.addContextConsumer(3.1, (c) -> {
-			reportStochasticsState(c);
-			RandomGenerator randomGenerator = c.getDataManager(StochasticsDataManager.class).getRandomGenerator();
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
-			for (MaterialsProducerId materialsProducerId : materialsDataManager.getMaterialsProducerIds()) {
-				List<StageId> stages = materialsDataManager.getStages(materialsProducerId);
-
-				for (StageId stageId : stages) {
-					if (!materialsDataManager.isStageOffered(stageId)) {
-						List<BatchId> batches = materialsDataManager.getStageBatches(stageId);
-						for (BatchId batchId : batches) {
-							if (randomGenerator.nextDouble() < 0.3) {
-								materialsDataManager.moveBatchToInventory(batchId);
-							}
-						}
-					}
-				}
-			}
-
-		});
-
-		// set some batch properties
-		continuityBuilder.addContextConsumer(3.5, (c) -> {
-			reportStochasticsState(c);
-			int drawCount = 0;
-			RandomGenerator randomGenerator = c.getDataManager(StochasticsDataManager.class).getRandomGenerator();
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
-			for (MaterialsProducerId materialsProducerId : materialsDataManager.getMaterialsProducerIds()) {
-				List<StageId> stages = materialsDataManager.getStages(materialsProducerId);
-				for (StageId stageId : stages) {
-					if (!materialsDataManager.isStageOffered(stageId)) {
-						List<BatchId> batches = materialsDataManager.getStageBatches(stageId);
-						for (BatchId batchId : batches) {
-							MaterialId materialId = materialsDataManager.getBatchMaterial(batchId);
-							Set<TestBatchPropertyId> batchPropertyIds = materialsDataManager.getBatchPropertyIds(materialId);
-							for (TestBatchPropertyId batchPropertyId : batchPropertyIds) {
-								PropertyDefinition propertyDefinition = materialsDataManager.getBatchPropertyDefinition(materialId, batchPropertyId);
-								if (propertyDefinition.propertyValuesAreMutable()) {
-//									drawCount++;
-									if (randomGenerator.nextDouble() < 0.25) {
-//										drawCount++;
-										Object propertyValue = batchPropertyId.getRandomPropertyValue(randomGenerator);
-										materialsDataManager.setBatchPropertyValue(batchId, batchPropertyId, propertyValue);
-									}
-								}
-							}
-						}
-					}
-				}
-
-				for (BatchId batchId : materialsDataManager.getInventoryBatches(materialsProducerId)) {
-					MaterialId materialId = materialsDataManager.getBatchMaterial(batchId);
-					Set<TestBatchPropertyId> batchPropertyIds = materialsDataManager.getBatchPropertyIds(materialId);
-					for (TestBatchPropertyId batchPropertyId : batchPropertyIds) {
-						System.out.println("draw test "+batchId+" "+batchPropertyId);
-						PropertyDefinition propertyDefinition = materialsDataManager.getBatchPropertyDefinition(materialId, batchPropertyId);
-						if (propertyDefinition.propertyValuesAreMutable()) {
-							drawCount++;
-							if (randomGenerator.nextDouble() < 0.25) {
-								drawCount++;
-								Object propertyValue = batchPropertyId.getRandomPropertyValue(randomGenerator);
-								materialsDataManager.setBatchPropertyValue(batchId, batchPropertyId, propertyValue);
-							}
-						}
-					}
-				}
-			}
-			System.out.println("drawCount = "+drawCount);
-		});
-
-		// set some materials producer properties, add a new resource
-		continuityBuilder.addContextConsumer(5.5, (c) -> {
-			reportStochasticsState(c);
-			RandomGenerator randomGenerator = c.getDataManager(StochasticsDataManager.class).getRandomGenerator();
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
-			for (MaterialsProducerId materialsProducerId : materialsDataManager.getMaterialsProducerIds()) {
-				Set<TestMaterialsProducerPropertyId> materialsProducerPropertyIds = materialsDataManager.getMaterialsProducerPropertyIds();
-				for (TestMaterialsProducerPropertyId materialsProducerPropertyId : materialsProducerPropertyIds) {
-					PropertyDefinition propertyDefinition = materialsDataManager.getMaterialsProducerPropertyDefinition(materialsProducerPropertyId);
-					if (propertyDefinition.propertyValuesAreMutable()) {
-						Object propertyValue = materialsProducerPropertyId.getRandomPropertyValue(randomGenerator);
-						materialsDataManager.setMaterialsProducerPropertyValue(materialsProducerId, materialsProducerPropertyId, propertyValue);
-					}
-				}
-			}
-			ResourceId newResourceId = new ResourceId() {
-				@Override
-				public String toString() {
-					return "RESOURCE_6";
-				}
-			};
-
-			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
-			resourcesDataManager.addResourceId(newResourceId, false);
-		});
-
-		// transfer materials between batches
-		continuityBuilder.addContextConsumer(5.6, (c) -> {
-			reportStochasticsState(c);
-			RandomGenerator randomGenerator = c.getDataManager(StochasticsDataManager.class).getRandomGenerator();
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
-			for (MaterialsProducerId materialsProducerId : materialsDataManager.getMaterialsProducerIds()) {
-				for (MaterialId materialId : materialsDataManager.getMaterialIds()) {
-					List<BatchId> batches = materialsDataManager.getInventoryBatchesByMaterialId(materialsProducerId, materialId);
-					//System.out.println("material transfers for " + "\t" + materialsProducerId + "\t" + materialId + "\t" + batches);
-					if (batches.size() > 1) {
-
-						int n = batches.size();
-
-						for (int i = 0; i < n; i++) {
-							BatchId sourceBatchId = batches.get(randomGenerator.nextInt(batches.size()));
-							BatchId destinationBatchId = sourceBatchId;
-							while (destinationBatchId.equals(sourceBatchId)) {
-								destinationBatchId = batches.get(randomGenerator.nextInt(batches.size()));
-							}
-							double amount = materialsDataManager.getBatchAmount(sourceBatchId);
-							amount /= 2;
-							materialsDataManager.transferMaterialBetweenBatches(sourceBatchId, destinationBatchId, amount);
-						}
-					}
-				}
-			}
-		});
-
-		// transfer an offered stage
-		continuityBuilder.addContextConsumer(5.9, (c) -> {
-			reportStochasticsState(c);
-			RandomGenerator randomGenerator = c.getDataManager(StochasticsDataManager.class).getRandomGenerator();
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
-			Set<TestMaterialsProducerId> materialsProducerIds = materialsDataManager.getMaterialsProducerIds();
-			for (TestMaterialsProducerId materialsProducerId : materialsProducerIds) {
-				List<StageId> offeredStages = materialsDataManager.getOfferedStages(materialsProducerId);
-				for (StageId stageId : offeredStages) {
-					if (randomGenerator.nextBoolean()) {
-						TestMaterialsProducerId nextMaterialsProducerId = materialsProducerId.next();
-						materialsDataManager.transferOfferedStage(stageId, nextMaterialsProducerId);
-					}
-				}
-			}
-
-		});
-
-		// transfer resources to regions
-		continuityBuilder.addContextConsumer(6.34, (c) -> {
-			reportStochasticsState(c);
-			RandomGenerator randomGenerator = c.getDataManager(StochasticsDataManager.class).getRandomGenerator();
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
-			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
-
-			for (ResourceId resourceId : resourcesDataManager.getResourceIds()) {
-				for (MaterialsProducerId materialsProducerId : materialsDataManager.getMaterialsProducerIds()) {
-					TestRegionId regionId = TestRegionId.getRandomRegionId(randomGenerator);
-					long amount = materialsDataManager.getMaterialsProducerResourceLevel(materialsProducerId, resourceId);
-					amount /= 2;
-					materialsDataManager.transferResourceToRegion(materialsProducerId, resourceId, regionId, amount);
-				}
-			}
-
-			c.releaseOutput(materialsDataManager.toString());
-
-		});
-
-		RunContinuityPluginData runContinuityPluginData = continuityBuilder.build();
-
-		// Build an empty people plugin data for time zero
-		PeoplePluginData peoplePluginData = PeoplePluginData.builder().build();
-
-		// Build the regions plugin with the test regions
-		RegionsPluginData.Builder regionsBuilder = RegionsPluginData.builder();
-		for (TestRegionId testRegionId : TestRegionId.values()) {
-			regionsBuilder.addRegion(testRegionId);
-		}
-		RegionsPluginData regionsPluginData = regionsBuilder.build();
-
-		// Build an empty materials plugin data
-		MaterialsPluginData materialsPluginData = MaterialsPluginData.builder().build();
-
-		// Build the resources plugin with test resource ids
-		ResourcesPluginData.Builder resourcesBuilder = ResourcesPluginData.builder();
-		for (TestResourceId testResourceId : TestResourceId.values()) {
-			resourcesBuilder.addResource(testResourceId, 0.0);
-		}
-		ResourcesPluginData resourcesPluginData = resourcesBuilder.build();
-
-		// Build the stochastics plugin data
-		StochasticsPluginData stochasticsPluginData = StochasticsPluginData.builder().setMainRNGState(WellState.builder().setSeed(1347391862469572673L).build()).build();
-
-		// build the initial simulation state data -- time starts at zero
-		SimulationState simulationState = SimulationState.builder().build();
-
-		/*
-		 * Run the simulation in one day increments until all the plans in the
-		 * run continuity plugin data have been executed
-		 */
-		double haltTime = 0;
-		double maxTime = Double.NEGATIVE_INFINITY;
-		for (Pair<Double, Consumer<ActorContext>> pair : runContinuityPluginData.getConsumers()) {
-			Double time = pair.getFirst();
-			maxTime = FastMath.max(maxTime, time);
-		}
-		double timeIncrement = maxTime / incrementCount;
-		while (!runContinuityPluginData.allPlansComplete()) {
-			haltTime += timeIncrement;
-
-			// build the run continuity plugin
-			Plugin runContinuityPlugin = RunContinuityPlugin.builder()//
-															.setRunContinuityPluginData(runContinuityPluginData)//
-															.build();
-
-			// build the people plugin
-			Plugin peoplePlugin = PeoplePlugin.getPeoplePlugin(peoplePluginData);
-
-			// build the materials plugin
-			Plugin materialsPlugin = MaterialsPlugin.builder().setMaterialsPluginData(materialsPluginData).getMaterialsPlugin();
-
-			// build the materials plugin
-			Plugin regionsPlugin = RegionsPlugin.builder().setRegionsPluginData(regionsPluginData).getRegionsPlugin();
-
-			// build the resource plugin
-			Plugin resourcesPlugin = ResourcesPlugin.builder().setResourcesPluginData(resourcesPluginData).getResourcesPlugin();
-
-			// build the stochastics plugin
-			Plugin stochasticsPlugin = StochasticsPlugin.getStochasticsPlugin(stochasticsPluginData);
-
-			TestOutputConsumer outputConsumer = new TestOutputConsumer();
-
-			// execute the simulation so that it produces a people plugin data
-			Simulation simulation = Simulation	.builder()//
-												.addPlugin(peoplePlugin)//
-												.addPlugin(materialsPlugin)//
-												.addPlugin(runContinuityPlugin)//
-												.addPlugin(regionsPlugin)//
-												.addPlugin(resourcesPlugin)//
-												.addPlugin(stochasticsPlugin)//
-												.setSimulationHaltTime(haltTime)//
-												.setRecordState(true)//
-												.setOutputConsumer(outputConsumer)//
-												.setSimulationState(simulationState)//
-												.build();//
-			simulation.execute();
-
-			// retrieve the people plugin data
-			peoplePluginData = outputConsumer.getOutputItem(PeoplePluginData.class).get();
-
-			// retrieve the materials plugin data
-			materialsPluginData = outputConsumer.getOutputItem(MaterialsPluginData.class).get();
-
-			// retrieve the regions plugin data
-			regionsPluginData = outputConsumer.getOutputItem(RegionsPluginData.class).get();
-
-			// retrieve the resources plugin data
-			resourcesPluginData = outputConsumer.getOutputItem(ResourcesPluginData.class).get();
-
-			// retrieve the simulation state
-			simulationState = outputConsumer.getOutputItem(SimulationState.class).get();
-
-			// retrieve the run continuity plugin data
-			runContinuityPluginData = outputConsumer.getOutputItem(RunContinuityPluginData.class).get();
-
-			// retrieve the stochastics plugin data
-			stochasticsPluginData = outputConsumer.getOutputItem(StochasticsPluginData.class).get();
-
-			Optional<String> optional = outputConsumer.getOutputItem(String.class);
-			if (optional.isPresent()) {
-				result = optional.get();
-			}
-		}
-
-		// result = materialsPluginData.toString();
-
-		assertNotNull(result);
-
-		System.out.println(result);
-		System.out.println("----------------------------------------");
-		return result;
-
-	}
-
 }

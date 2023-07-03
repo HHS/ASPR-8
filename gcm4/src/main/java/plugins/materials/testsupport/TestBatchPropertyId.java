@@ -1,6 +1,10 @@
 package plugins.materials.testsupport;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Random;
 import java.util.Set;
 
 import org.apache.commons.math3.random.RandomGenerator;
@@ -214,5 +218,15 @@ public enum TestBatchPropertyId implements BatchPropertyId {
 			throw new RuntimeException("unhandled case: " + this);
 
 		}
+	}
+	public static List<TestBatchPropertyId> getBatchPropertyIds(){
+		return Arrays.asList(TestBatchPropertyId.values());		
+	}
+	
+	public static List<TestBatchPropertyId> getBatchPropertyIds(RandomGenerator randomGenerator){
+		List<TestBatchPropertyId> result = getBatchPropertyIds();
+		Random random = new Random(randomGenerator.nextLong());
+		Collections.shuffle(result,random);
+		return result;
 	}
 }

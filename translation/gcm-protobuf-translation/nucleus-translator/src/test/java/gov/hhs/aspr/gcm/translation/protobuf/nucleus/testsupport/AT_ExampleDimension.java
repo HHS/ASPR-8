@@ -8,6 +8,7 @@ import java.util.ArrayList;
 
 import org.junit.jupiter.api.Test;
 
+import nucleus.DimensionContext;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
 
@@ -23,7 +24,8 @@ public class AT_ExampleDimension {
     }
 
     @Test
-    @UnitTestMethod(target = ExampleDimension.class, name = "executeLevel", args = {})
+    @UnitTestMethod(target = ExampleDimension.class, name = "executeLevel", args = { DimensionContext.class,
+            int.class })
     public void testExecuteLevel() {
         ExampleDimension exampleDimension = new ExampleDimension("test");
 
@@ -47,7 +49,7 @@ public class AT_ExampleDimension {
     }
 
     @Test
-    @UnitTestMethod(target = ExampleDimension.class, name = "getAppObjectClass", args = {})
+    @UnitTestMethod(target = ExampleDimension.class, name = "levelCount", args = {})
     public void testLevelCount() {
         ExampleDimension exampleDimension = new ExampleDimension("test");
 
@@ -55,7 +57,7 @@ public class AT_ExampleDimension {
     }
 
     @Test
-    @UnitTestMethod(target = ExampleDimension.class, name = "getAppObjectClass", args = {})
+    @UnitTestMethod(target = ExampleDimension.class, name = "hashCode", args = {})
     public void testHashCode() {
         ExampleDimension exampleDimension1 = new ExampleDimension("test1");
         ExampleDimension exampleDimension2 = new ExampleDimension("test2");
@@ -73,7 +75,7 @@ public class AT_ExampleDimension {
     }
 
     @Test
-    @UnitTestMethod(target = ExampleDimension.class, name = "getAppObjectClass", args = {})
+    @UnitTestMethod(target = ExampleDimension.class, name = "equals", args = { Object.class })
     public void testEquals() {
         ExampleDimension exampleDimension1 = new ExampleDimension("test1");
         ExampleDimension exampleDimension2 = new ExampleDimension("test2");

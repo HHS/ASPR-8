@@ -24,12 +24,14 @@ import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestPluginId;
 import nucleus.testsupport.testplugin.TestSimulation;
-import plugins.globalproperties.GlobalPropertiesPluginData;
 import plugins.globalproperties.GlobalPropertiesPluginId;
+import plugins.globalproperties.datamanagers.GlobalPropertiesPluginData;
+import plugins.globalproperties.reports.GlobalPropertyReportPluginData;
 import plugins.globalproperties.support.GlobalPropertiesError;
 import plugins.globalproperties.support.GlobalPropertyId;
 import plugins.globalproperties.support.SimpleGlobalPropertyId;
 import plugins.globalproperties.testsupport.GlobalPropertiesTestPluginFactory.Factory;
+import plugins.reports.support.SimpleReportLabel;
 import plugins.util.properties.PropertyDefinition;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
@@ -38,162 +40,221 @@ import util.wrappers.MutableBoolean;
 
 public class AT_GlobalPropertiesTestPluginFactory {
 
-	@Test
-	@UnitTestMethod(target = GlobalPropertiesTestPluginFactory.class, name = "factory", args = { Consumer.class })
-	public void testFactory_Consumer() {
-		MutableBoolean executed = new MutableBoolean();
-		Factory factory = GlobalPropertiesTestPluginFactory.factory(2050026532065791481L, c -> executed.setValue(true));
-		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
+    @Test
+    @UnitTestMethod(target = GlobalPropertiesTestPluginFactory.Factory.class, name = "factory", args = { long.class,
+            Consumer.class })
 
-		assertTrue(executed.getValue());
+    public void testFactory_Consumer() {
+        MutableBoolean executed = new MutableBoolean();
+        Factory factory = GlobalPropertiesTestPluginFactory.factory(2050026532065791481L, c -> executed.setValue(true));
+        TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
-		// precondition: consumer is null
-		Consumer<ActorContext> nullConsumer = null;
-		ContractException contractException = assertThrows(ContractException.class,
-				() -> GlobalPropertiesTestPluginFactory.factory(0, nullConsumer));
-		assertEquals(NucleusError.NULL_ACTOR_CONTEXT_CONSUMER, contractException.getErrorType());
-	}
+        assertTrue(executed.getValue());
 
-	@Test
-	@UnitTestMethod(target = GlobalPropertiesTestPluginFactory.class, name = "factory", args = { TestPluginData.class })
-	public void testFactory_TestPluginData() {
-		MutableBoolean executed = new MutableBoolean();
-		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
-		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, c -> executed.setValue(true)));
-		TestPluginData testPluginData = pluginBuilder.build();
-		Factory factory = GlobalPropertiesTestPluginFactory.factory(2050026532065791481L, testPluginData);
-		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
-		assertTrue(executed.getValue());
+        // precondition: consumer is null
+        Consumer<ActorContext> nullConsumer = null;
+        ContractException contractException = assertThrows(ContractException.class,
+                () -> GlobalPropertiesTestPluginFactory.factory(0, nullConsumer));
+        assertEquals(NucleusError.NULL_ACTOR_CONTEXT_CONSUMER, contractException.getErrorType());
+    }
 
-		// precondition: testPluginData is null
-		TestPluginData nullTestPluginData = null;
-		ContractException contractException = assertThrows(ContractException.class,
-				() -> GlobalPropertiesTestPluginFactory.factory(0, nullTestPluginData));
-		assertEquals(NucleusError.NULL_PLUGIN_DATA, contractException.getErrorType());
+    @Test
+    @UnitTestMethod(target = GlobalPropertiesTestPluginFactory.class, name = "factory", args = { long.class,
+            TestPluginData.class })
+    public void testFactory_TestPluginData() {
+        MutableBoolean executed = new MutableBoolean();
+        TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+        pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, c -> executed.setValue(true)));
+        TestPluginData testPluginData = pluginBuilder.build();
+        Factory factory = GlobalPropertiesTestPluginFactory.factory(2050026532065791481L, testPluginData);
+        TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
+        assertTrue(executed.getValue());
 
-	}
+        // precondition: testPluginData is null
+        TestPluginData nullTestPluginData = null;
+        ContractException contractException = assertThrows(ContractException.class,
+                () -> GlobalPropertiesTestPluginFactory.factory(0, nullTestPluginData));
+        assertEquals(NucleusError.NULL_PLUGIN_DATA, contractException.getErrorType());
 
-	/*
-	 * Given a list of plugins, will show that the plugin with the given pluginId
-	 * exists, and exists EXACTLY once.
-	 */
-	private Plugin checkPluginExists(List<Plugin> plugins, PluginId pluginId) {
-		Plugin actualPlugin = null;
-		for (Plugin plugin : plugins) {
-			if (plugin.getPluginId().equals(pluginId)) {
-				assertNull(actualPlugin);
-				actualPlugin = plugin;
-			}
-		}
+    }
 
-		assertNotNull(actualPlugin);
+    /*
+     * Given a list of plugins, will show that the plugin with the given pluginId
+     * exists, and exists EXACTLY once.
+     */
+    private Plugin checkPluginExists(List<Plugin> plugins, PluginId pluginId) {
+        Plugin actualPlugin = null;
+        for (Plugin plugin : plugins) {
+            if (plugin.getPluginId().equals(pluginId)) {
+                assertNull(actualPlugin);
+                actualPlugin = plugin;
+            }
+        }
 
-		return actualPlugin;
-	}
+        assertNotNull(actualPlugin);
 
-	/**
-	 * Given a list of plugins, will show that the explicit plugindata for the given
-	 * pluginid exists, and exists EXACTLY once.
-	 */
-	private <T extends PluginData> void checkPluginDataExists(List<Plugin> plugins, T expectedPluginData,
-			PluginId pluginId) {
-		Plugin actualPlugin = checkPluginExists(plugins, pluginId);
-		List<PluginData> actualPluginDatas = actualPlugin.getPluginDatas();
-		assertNotNull(actualPluginDatas);
-		assertEquals(1, actualPluginDatas.size());
-		PluginData actualPluginData = actualPluginDatas.get(0);
-		assertTrue(expectedPluginData == actualPluginData);
-	}
+        return actualPlugin;
+    }
 
-	@Test
-	@UnitTestMethod(target = GlobalPropertiesTestPluginFactory.Factory.class, name = "getPlugins", args = {})
-	public void testGetPlugins() {
+    /**
+     * Given a list of plugins, will show that the explicit plugindata for the given
+     * pluginid exists, and exists EXACTLY once.
+     */
+    private <T extends PluginData> void checkPluginDataExists(List<Plugin> plugins, T expectedPluginData,
+            PluginId pluginId, int numPluginDatas) {
+        Plugin actualPlugin = checkPluginExists(plugins, pluginId);
+        List<PluginData> actualPluginDatas = actualPlugin.getPluginDatas();
+        assertNotNull(actualPluginDatas);
+        assertEquals(numPluginDatas, actualPluginDatas.size());
 
-		List<Plugin> plugins = GlobalPropertiesTestPluginFactory.factory(2050026532065791481L, t -> {
-		}).getPlugins();
-		assertEquals(2, plugins.size());
+        if (numPluginDatas > 1) {
+            for (PluginData pluginData : actualPluginDatas) {
+                if (expectedPluginData.getClass().isAssignableFrom(pluginData.getClass())) {
+                    assertTrue(expectedPluginData == pluginData);
+                    break;
+                }
+            }
+        } else {
+            PluginData actualPluginData = actualPluginDatas.get(0);
+            assertTrue(expectedPluginData == actualPluginData);
+        }
 
-		checkPluginExists(plugins, GlobalPropertiesPluginId.PLUGIN_ID);
-		checkPluginExists(plugins, TestPluginId.PLUGIN_ID);
-	}
+    }
 
-	@Test
-	@UnitTestMethod(target = GlobalPropertiesTestPluginFactory.Factory.class, name = "setGlobalPropertiesPluginData", args = {
-			GlobalPropertiesPluginData.class })
-	public void testSetGlobalPropertiesPluginData() {
-		GlobalPropertiesPluginData.Builder initialDatabuilder = GlobalPropertiesPluginData.builder();
+    /**
+     * Given a list of plugins, will show that the explicit plugindata for the given
+     * pluginid exists, and exists EXACTLY once.
+     */
+    private <T extends PluginData> void checkPluginDataExists(List<Plugin> plugins, T expectedPluginData,
+            PluginId pluginId) {
+        checkPluginDataExists(plugins, expectedPluginData, pluginId, 1);
+    }
 
-		GlobalPropertyId globalPropertyId_1 = new SimpleGlobalPropertyId("id_1");
-		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(3)
-				.build();
-		initialDatabuilder.defineGlobalProperty(globalPropertyId_1, propertyDefinition, 0);
+    @Test
+    @UnitTestMethod(target = GlobalPropertiesTestPluginFactory.Factory.class, name = "getPlugins", args = {})
+    public void testGetPlugins() {
 
-		GlobalPropertyId globalPropertyId_2 = new SimpleGlobalPropertyId("id_2");
-		propertyDefinition = PropertyDefinition.builder().setType(Double.class).setDefaultValue(6.78).build();
-		initialDatabuilder.defineGlobalProperty(globalPropertyId_2, propertyDefinition, 0);
+        List<Plugin> plugins = GlobalPropertiesTestPluginFactory.factory(2050026532065791481L, t -> {
+        }).getPlugins();
+        assertEquals(2, plugins.size());
 
-		GlobalPropertyId globalPropertyId_3 = new SimpleGlobalPropertyId("id_3");
-		propertyDefinition = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(true).build();
-		initialDatabuilder.defineGlobalProperty(globalPropertyId_3, propertyDefinition, 0);
+        checkPluginExists(plugins, GlobalPropertiesPluginId.PLUGIN_ID);
+        checkPluginExists(plugins, TestPluginId.PLUGIN_ID);
+    }
 
-		GlobalPropertiesPluginData globalPropertiesPluginData = initialDatabuilder.build();
+    @Test
+    @UnitTestMethod(target = GlobalPropertiesTestPluginFactory.Factory.class, name = "setGlobalPropertyReportPluginData", args = {
+            GlobalPropertyReportPluginData.class })
+    public void testSetGlobalPropertyReportPluginData() {
+        GlobalPropertyReportPluginData.Builder builder = GlobalPropertyReportPluginData.builder();
 
-		List<Plugin> plugins = GlobalPropertiesTestPluginFactory.factory(2050026532065791481L, t -> {
-		}).setGlobalPropertiesPluginData(globalPropertiesPluginData).getPlugins();
+        builder.setDefaultInclusion(false).setReportLabel(new SimpleReportLabel("global property report"));
 
-		checkPluginDataExists(plugins, globalPropertiesPluginData, GlobalPropertiesPluginId.PLUGIN_ID);
+        RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(1086184935572375203L);
+        for (GlobalPropertyId globalPropertyId : TestGlobalPropertyId.values()) {
+            if (randomGenerator.nextBoolean()) {
+                builder.includeGlobalProperty(globalPropertyId);
+            } else {
+                builder.excludeGlobalProperty(globalPropertyId);
+            }
+        }
 
-		// precondition: globalPropertiesPluginData is not null
-		ContractException contractException = assertThrows(ContractException.class,
-				() -> GlobalPropertiesTestPluginFactory.factory(2050026532065791481L, t -> {
-				}).setGlobalPropertiesPluginData(null));
-		assertEquals(GlobalPropertiesError.NULL_GLOBAL_PLUGIN_DATA, contractException.getErrorType());
-	}
+        GlobalPropertyReportPluginData pluginData = builder.build();
 
-	@Test
-	@UnitTestMethod(target = GlobalPropertiesTestPluginFactory.class, name = "getStandardGlobalPropertiesPluginData", args = {})
-	public void testGetStandardGlobalPropertiesPluginData() {
-		long seed = 2376369840099946020L;
+        List<Plugin> plugins = GlobalPropertiesTestPluginFactory.factory(2050026532065791481L, t -> {
+        }).setGlobalPropertyReportPluginData(pluginData).getPlugins();
 
-		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
+        checkPluginDataExists(plugins, pluginData, GlobalPropertiesPluginId.PLUGIN_ID, 2);
 
-		GlobalPropertiesPluginData actualPluginData = GlobalPropertiesTestPluginFactory
-				.getStandardGlobalPropertiesPluginData(seed);
+        // precondition: globalPropReportPluginData is null
+        ContractException contractException = assertThrows(ContractException.class,
+                () -> GlobalPropertiesTestPluginFactory.factory(2050026532065791481L, t -> {
+                }).setGlobalPropertyReportPluginData(null));
+        assertEquals(GlobalPropertiesError.NULL_GLOBAL_PROPERTY_REPORT_PLUGIN_DATA, contractException.getErrorType());
+    }
 
-		Set<TestGlobalPropertyId> expectedPropertyIds = EnumSet.allOf(TestGlobalPropertyId.class);
-		assertFalse(expectedPropertyIds.isEmpty());
+    @Test
+    @UnitTestMethod(target = GlobalPropertiesTestPluginFactory.Factory.class, name = "setGlobalPropertiesPluginData", args = {
+            GlobalPropertiesPluginData.class })
+    public void testSetGlobalPropertiesPluginData() {
+        GlobalPropertiesPluginData.Builder initialDatabuilder = GlobalPropertiesPluginData.builder();
 
-		Set<GlobalPropertyId> actualGlobalPropertyIds = actualPluginData.getGlobalPropertyIds();
-		assertEquals(expectedPropertyIds, actualGlobalPropertyIds);
+        GlobalPropertyId globalPropertyId_1 = new SimpleGlobalPropertyId("id_1");
+        PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(3)
+                .build();
+        initialDatabuilder.defineGlobalProperty(globalPropertyId_1, propertyDefinition, 0);
 
-		GlobalPropertiesPluginData.Builder builder = GlobalPropertiesPluginData.builder();
+        GlobalPropertyId globalPropertyId_2 = new SimpleGlobalPropertyId("id_2");
+        propertyDefinition = PropertyDefinition.builder().setType(Double.class).setDefaultValue(6.78).build();
+        initialDatabuilder.defineGlobalProperty(globalPropertyId_2, propertyDefinition, 0);
 
-		for (TestGlobalPropertyId testGlobalPropertyId : TestGlobalPropertyId.values()) {
-			PropertyDefinition expectedPropertyDefinition = testGlobalPropertyId.getPropertyDefinition();
-			builder.defineGlobalProperty(testGlobalPropertyId, expectedPropertyDefinition, 0);
+        GlobalPropertyId globalPropertyId_3 = new SimpleGlobalPropertyId("id_3");
+        propertyDefinition = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(true).build();
+        initialDatabuilder.defineGlobalProperty(globalPropertyId_3, propertyDefinition, 0);
 
-			boolean hasDefaultValue = testGlobalPropertyId.getPropertyDefinition().getDefaultValue().isPresent();
+        GlobalPropertiesPluginData globalPropertiesPluginData = initialDatabuilder.build();
 
-			if(!hasDefaultValue) {
-				builder.setGlobalPropertyValue(testGlobalPropertyId, testGlobalPropertyId.getRandomPropertyValue(randomGenerator), 0);
-			}
+        List<Plugin> plugins = GlobalPropertiesTestPluginFactory.factory(2050026532065791481L, t -> {
+        }).setGlobalPropertiesPluginData(globalPropertiesPluginData).getPlugins();
 
-			// set a value to the default
-			if(randomGenerator.nextBoolean() && hasDefaultValue) {
-				builder.setGlobalPropertyValue(testGlobalPropertyId, testGlobalPropertyId.getPropertyDefinition().getDefaultValue().get(), 0);
-			}
+        checkPluginDataExists(plugins, globalPropertiesPluginData, GlobalPropertiesPluginId.PLUGIN_ID);
 
-			// set a value to not the default
-			if(randomGenerator.nextBoolean() && hasDefaultValue) {
-				builder.setGlobalPropertyValue(testGlobalPropertyId, testGlobalPropertyId.getRandomPropertyValue(randomGenerator), 0);
-			}
+        // precondition: globalPropertiesPluginData is not null
+        ContractException contractException = assertThrows(ContractException.class,
+                () -> GlobalPropertiesTestPluginFactory.factory(2050026532065791481L, t -> {
+                }).setGlobalPropertiesPluginData(null));
+        assertEquals(GlobalPropertiesError.NULL_GLOBAL_PLUGIN_DATA, contractException.getErrorType());
+    }
 
-		}
+    @Test
+    @UnitTestMethod(target = GlobalPropertiesTestPluginFactory.class, name = "getStandardGlobalPropertiesPluginData", args = {
+            long.class })
+    public void testGetStandardGlobalPropertiesPluginData() {
+        long seed = 2376369840099946020L;
 
-		GlobalPropertiesPluginData expectedPluginData = builder.build();
+        RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
 
-		assertEquals(expectedPluginData, actualPluginData);
+        GlobalPropertiesPluginData actualPluginData = GlobalPropertiesTestPluginFactory
+                .getStandardGlobalPropertiesPluginData(seed);
 
-	}
+        Set<TestGlobalPropertyId> expectedPropertyIds = EnumSet.allOf(TestGlobalPropertyId.class);
+        assertFalse(expectedPropertyIds.isEmpty());
+
+        Set<GlobalPropertyId> actualGlobalPropertyIds = actualPluginData.getGlobalPropertyIds();
+        assertEquals(expectedPropertyIds, actualGlobalPropertyIds);
+
+        GlobalPropertiesPluginData.Builder builder = GlobalPropertiesPluginData.builder();
+
+        for (TestGlobalPropertyId testGlobalPropertyId : TestGlobalPropertyId.getGlobalPropertyIds()) {
+            builder.defineGlobalProperty(testGlobalPropertyId,
+                    testGlobalPropertyId.getPropertyDefinition(), 0);
+            boolean hasDefaultValue = testGlobalPropertyId.getPropertyDefinition().getDefaultValue().isPresent();
+            if (!hasDefaultValue) {
+                builder.setGlobalPropertyValue(testGlobalPropertyId,
+                        testGlobalPropertyId.getRandomPropertyValue(randomGenerator), 0);
+            }
+        }
+
+        for (TestGlobalPropertyId testGlobalPropertyId : TestGlobalPropertyId
+                .getShuffeledGlobalPropertyIds(randomGenerator)) {
+
+            boolean hasDefaultValue = testGlobalPropertyId.getPropertyDefinition().getDefaultValue().isPresent();
+            boolean setValue = randomGenerator.nextBoolean();
+            if (hasDefaultValue && setValue) {
+                // set a value to the default
+                builder.setGlobalPropertyValue(testGlobalPropertyId,
+                        testGlobalPropertyId.getPropertyDefinition().getDefaultValue().get(), 0);
+            } else if (setValue) {
+                // set a value to not the default
+                builder.setGlobalPropertyValue(testGlobalPropertyId,
+                        testGlobalPropertyId.getRandomPropertyValue(randomGenerator), 0);
+            }
+        }
+
+        GlobalPropertiesPluginData expectedPluginData = builder.build();
+
+        assertEquals(expectedPluginData, actualPluginData);
+
+    }
 
 }

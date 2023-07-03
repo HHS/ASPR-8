@@ -65,6 +65,12 @@ import util.errors.ContractException;
 
 public final class PartitionsDataManager extends DataManager {
 
+	private final boolean supportRunContinuity;
+
+	public PartitionsDataManager(PartitionsPluginData partitionsPluginData) {
+		this.supportRunContinuity = partitionsPluginData.supportsRunContinuity();
+	}
+
 	private final Map<Object, Set<Class<? extends Event>>> keyToEventClassesMap = new LinkedHashMap<>();
 
 	private final Set<Class<? extends Event>> reservedEventClasses = new LinkedHashSet<>();
@@ -257,7 +263,7 @@ public final class PartitionsDataManager extends DataManager {
 	 *             <li>{@link PersonError#UNKNOWN_PERSON_ID} if the person does
 	 *             not exist</li>
 	 * 
-	 *             
+	 * 
 	 *             <li>{@link PartitionError.NULL_LABEL_SET_FUNCTION} if the
 	 *             label set function is null</li>
 	 * 
@@ -269,7 +275,7 @@ public final class PartitionsDataManager extends DataManager {
 		validateKeyExists(key);
 		validatePersonExists(personId);
 		validateLabelSetFunction(labelSetFunction);
-		PopulationPartition populationPartition = getPopulationPartition(key);		
+		PopulationPartition populationPartition = getPopulationPartition(key);
 		return populationPartition.getPersonValue(labelSetFunction, personId);
 	}
 
@@ -422,7 +428,16 @@ public final class PartitionsDataManager extends DataManager {
 
 		reservedEventClasses.add(PersonAdditionEvent.class);
 		reservedEventClasses.add(PersonRemovalEvent.class);
+		
+		if (dataManagerContext.stateRecordingIsScheduled()) {
+			dataManagerContext.subscribeToSimulationClose(this::recordSimulationState);
+		}
 
+	}
+	
+	private void recordSimulationState(DataManagerContext dataManagerContext) {
+		PartitionsPluginData partitionsPluginData = PartitionsPluginData.builder().setRunContinuitySupport(supportRunContinuity).build();
+		dataManagerContext.releaseOutput(partitionsPluginData);
 	}
 
 	/*
@@ -545,9 +560,9 @@ public final class PartitionsDataManager extends DataManager {
 
 		PopulationPartition populationPartition;
 		if (partition.isDegenerate()) {
-			populationPartition = new DegeneratePopulationPartitionImpl(partitionsContext, partition);
+			populationPartition = new DegeneratePopulationPartitionImpl(partitionsContext, partition, supportRunContinuity);
 		} else {
-			populationPartition = new PopulationPartitionImpl(partitionsContext, partition);
+			populationPartition = new PopulationPartitionImpl(partitionsContext, partition,supportRunContinuity);
 		}
 		keyToPopulationPartitionMap.put(key, populationPartition);
 

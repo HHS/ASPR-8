@@ -22,7 +22,7 @@ import gov.hhs.aspr.translation.core.TranslationController;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
 import gov.hhs.aspr.translation.core.testsupport.TestResourceHelper;
 import plugins.people.support.PersonId;
-import plugins.regions.RegionsPluginData;
+import plugins.regions.datamanagers.RegionsPluginData;
 import plugins.regions.reports.RegionPropertyReportPluginData;
 import plugins.regions.reports.RegionTransferReportPluginData;
 import plugins.regions.support.RegionPropertyId;
@@ -31,7 +31,6 @@ import plugins.regions.testsupport.TestRegionPropertyId;
 import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportPeriod;
 import plugins.reports.support.SimpleReportLabel;
-import plugins.util.properties.TimeTrackingPolicy;
 import util.annotations.UnitTestForCoverage;
 import util.random.RandomGeneratorProvider;
 
@@ -65,7 +64,7 @@ public class IT_RegionsTranslator {
         }
 
         RegionsPluginData expectedPluginData = RegionsTestPluginFactory.getStandardRegionsPluginData(people,
-                TimeTrackingPolicy.TRACK_TIME, seed);
+                true, seed);
 
         translatorController.writeOutput(expectedPluginData);
         translatorController.readInput();
@@ -73,6 +72,7 @@ public class IT_RegionsTranslator {
         RegionsPluginData actualPluginData = translatorController.getFirstObject(RegionsPluginData.class);
 
         assertEquals(expectedPluginData, actualPluginData);
+        assertEquals(expectedPluginData.toString(), actualPluginData.toString());
     }
 
     @Test
@@ -123,6 +123,7 @@ public class IT_RegionsTranslator {
                 .getFirstObject(RegionPropertyReportPluginData.class);
 
         assertEquals(expectedPluginData, actualPluginData);
+        assertEquals(expectedPluginData.toString(), actualPluginData.toString());
     }
 
     @Test
@@ -160,6 +161,6 @@ public class IT_RegionsTranslator {
                 .getFirstObject(RegionTransferReportPluginData.class);
 
         assertEquals(expectedPluginData, actualPluginData);
-
+        assertEquals(expectedPluginData.toString(), actualPluginData.toString());
     }
 }

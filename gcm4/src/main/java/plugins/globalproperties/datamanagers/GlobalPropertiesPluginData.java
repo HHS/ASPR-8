@@ -1,6 +1,10 @@
-package plugins.globalproperties;
+package plugins.globalproperties.datamanagers;
 
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 import net.jcip.annotations.Immutable;
 import nucleus.PluginData;
@@ -36,26 +40,31 @@ public final class GlobalPropertiesPluginData implements PluginData {
 		}
 
 		/**
-		 * Returns the {@link GlobalPropertiesPluginData} from the collected
-		 * information supplied to this builder. Clears the builder's state.
+		 * Returns the {@link GlobalPropertiesPluginData} from the collected information
+		 * supplied to this builder. Clears the builder's state.
 		 * 
 		 * @throws ContractException
-		 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}</li>
-		 *             if a global property value was associated with a global
-		 *             property id that was not defined
+		 *                           <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}</li>
+		 *                           if a global property value was associated with a
+		 *                           global property id that was not defined
 		 * 
-		 *             <li>{@linkplain PropertyError#INCOMPATIBLE_VALUE}</li> if
-		 *             a global property value was associated with a global
-		 *             property id that is incompatible with the corresponding
-		 *             property definition.
+		 *                           <li>{@linkplain PropertyError#INCOMPATIBLE_VALUE}</li>
+		 *                           if a global property value was associated with a
+		 *                           global property id that is incompatible with the
+		 *                           corresponding property definition.
 		 * 
-		 *             <li>{@linkplain PropertyError#INCOMPATIBLE_TIME}</li> if
-		 *             a global property assignment time was less than the
-		 *             associated property definition creation time.
+		 *                           <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}</li>
+		 *                           if a global property time was associated with a
+		 *                           global property id that was not defined
 		 * 
-		 *             <li>{@linkplain PropertyError#INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT}</li>
-		 *             if a global property definition has no default value and
-		 *             there is also no corresponding property value assignment.
+		 *                           <li>{@linkplain PropertyError#INCOMPATIBLE_TIME}</li>
+		 *                           if a global property assignment time was less than
+		 *                           the associated property definition creation time.
+		 * 
+		 *                           <li>{@linkplain PropertyError#INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT}</li>
+		 *                           if a global property definition has no default
+		 *                           value and there is also no corresponding property
+		 *                           value assignment.
 		 * 
 		 * 
 		 * 
@@ -74,15 +83,16 @@ public final class GlobalPropertiesPluginData implements PluginData {
 		 * @throws ContractException
 		 * 
 		 * 
-		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID}</li> if
-		 *             the global property id is null
+		 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID}</li>
+		 *                           if the global property id is null
 		 * 
-		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION}
-		 *             </li> if the property definition is null
+		 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION}
+		 *                           </li> if the property definition is null
 		 *
 		 * 
 		 */
-		public Builder defineGlobalProperty(final GlobalPropertyId globalPropertyId, final PropertyDefinition propertyDefinition, final double time) {
+		public Builder defineGlobalProperty(final GlobalPropertyId globalPropertyId,
+				final PropertyDefinition propertyDefinition, final double time) {
 			ensureDataMutability();
 			validateGlobalPropertyIdNotNull(globalPropertyId);
 			validateGlobalPropertyDefinitionNotNull(propertyDefinition);
@@ -105,24 +115,24 @@ public final class GlobalPropertiesPluginData implements PluginData {
 		}
 
 		/**
-		 * Sets the global property value that overrides the default value of
-		 * the corresponding property definition. Duplicate inputs override
-		 * previous inputs.
+		 * Sets the global property value that overrides the default value of the
+		 * corresponding property definition. Duplicate inputs override previous inputs.
 		 * 
 		 * @throws ContractException
 		 * 
-		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID}</li>if
-		 *             the global property id is null
+		 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID}</li>if
+		 *                           the global property id is null
 		 * 
-		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE}</li>if
-		 *             the global property value is null
+		 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE}</li>if
+		 *                           the global property value is null
 		 * 
 		 * 
 		 * 
 		 *
 		 * 
 		 */
-		public Builder setGlobalPropertyValue(final GlobalPropertyId globalPropertyId, final Object propertyValue, final double assignmentTime) {
+		public Builder setGlobalPropertyValue(final GlobalPropertyId globalPropertyId, final Object propertyValue,
+				final double assignmentTime) {
 			ensureDataMutability();
 			validateGlobalPropertyIdNotNull(globalPropertyId);
 			validateGlobalPropertyValueNotNull(propertyValue);
@@ -133,32 +143,55 @@ public final class GlobalPropertiesPluginData implements PluginData {
 
 		private void validateData() {
 
+			/*
+			 * show that each recorded property value corresponds to a known property
+			 * definition
+			 */
 			for (final GlobalPropertyId globalPropertyId : data.globalPropertyValues.keySet()) {
 				if (!data.globalPropertyDefinitions.containsKey(globalPropertyId)) {
 					throw new ContractException(PropertyError.UNKNOWN_PROPERTY_ID, globalPropertyId);
 				}
 			}
 
+			/*
+			 * show that each property value is compatible with the corresponding property
+			 * definition
+			 */
 			for (final GlobalPropertyId globalPropertyId : data.globalPropertyValues.keySet()) {
 				final Object propertyValue = data.globalPropertyValues.get(globalPropertyId);
 				final PropertyDefinition propertyDefinition = data.globalPropertyDefinitions.get(globalPropertyId);
 				if (!propertyDefinition.getType().isAssignableFrom(propertyValue.getClass())) {
-					throw new ContractException(PropertyError.INCOMPATIBLE_VALUE, globalPropertyId + " = " + propertyValue);
-				}
-			}
-
-			for (final GlobalPropertyId globalPropertyId : data.globalPropertyValues.keySet()) {
-				final Double propertyTime = data.globalPropertyTimes.get(globalPropertyId);
-				final Double definitionTime = data.globalPropertyDefinitionTimes.get(globalPropertyId);
-				if (propertyTime < definitionTime) {
-					throw new ContractException(PropertyError.INCOMPATIBLE_TIME, globalPropertyId + " at " + propertyTime);
+					throw new ContractException(PropertyError.INCOMPATIBLE_VALUE,
+							globalPropertyId + " = " + propertyValue);
 				}
 			}
 
 			/*
-			 * For every global property definition that has a null default
-			 * value, ensure that there is a corresponding global property value
-			 * assignment
+			 * Show that each recorded property time corresponds to a known property
+			 * definition
+			 */
+			for (final GlobalPropertyId globalPropertyId : data.globalPropertyTimes.keySet()) {
+				if (!data.globalPropertyDefinitions.containsKey(globalPropertyId)) {
+					throw new ContractException(PropertyError.UNKNOWN_PROPERTY_ID, globalPropertyId);
+				}
+			}
+
+			/*
+			 * Show that each recorded property time is compatible with the property
+			 * definition's time
+			 */
+			for (final GlobalPropertyId globalPropertyId : data.globalPropertyTimes.keySet()) {
+				final Double propertyTime = data.globalPropertyTimes.get(globalPropertyId);
+				final Double definitionTime = data.globalPropertyDefinitionTimes.get(globalPropertyId);
+				if (propertyTime < definitionTime) {
+					throw new ContractException(PropertyError.INCOMPATIBLE_TIME,
+							globalPropertyId + " at " + propertyTime);
+				}
+			}
+
+			/*
+			 * For every global property definition that has no default value, ensure that
+			 * there is a corresponding global property value assignment
 			 * 
 			 */
 			for (GlobalPropertyId globalPropertyId : data.globalPropertyDefinitions.keySet()) {
@@ -166,7 +199,8 @@ public final class GlobalPropertiesPluginData implements PluginData {
 				if (!propertyDefinition.getDefaultValue().isPresent()) {
 					Object propertyValue = data.globalPropertyValues.get(globalPropertyId);
 					if (propertyValue == null) {
-						throw new ContractException(PropertyError.INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT, globalPropertyId);
+						throw new ContractException(PropertyError.INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT,
+								globalPropertyId);
 					}
 				}
 			}
@@ -178,11 +212,11 @@ public final class GlobalPropertiesPluginData implements PluginData {
 
 		private final Map<GlobalPropertyId, PropertyDefinition> globalPropertyDefinitions = new LinkedHashMap<>();
 
-		private final Map<GlobalPropertyId, Double> globalPropertyDefinitionTimes = new LinkedHashMap<>();
+		private Map<GlobalPropertyId, Double> globalPropertyDefinitionTimes = new LinkedHashMap<>();
 
-		private final Map<GlobalPropertyId, Object> globalPropertyValues = new LinkedHashMap<>();
+		private Map<GlobalPropertyId, Object> globalPropertyValues = new LinkedHashMap<>();
 
-		private final Map<GlobalPropertyId, Double> globalPropertyTimes = new LinkedHashMap<>();
+		private Map<GlobalPropertyId, Double> globalPropertyTimes = new LinkedHashMap<>();
 
 		private boolean locked;
 
@@ -196,19 +230,6 @@ public final class GlobalPropertiesPluginData implements PluginData {
 			globalPropertyTimes.putAll(data.globalPropertyTimes);
 			locked = data.locked;
 		}
-
-		@Override
-		public int hashCode() {
-			final int prime = 31;
-			int result = 1;
-			result = prime * result + globalPropertyDefinitionTimes.hashCode();
-			result = prime * result + globalPropertyDefinitions.hashCode();
-			result = prime * result + getGlobalPropertyTimesHashCode();
-			result = prime * result + getGlobalPropertyValuesHashCode();
-			return result;
-		}
-		
-		
 
 		@Override
 		public String toString() {
@@ -227,27 +248,16 @@ public final class GlobalPropertiesPluginData implements PluginData {
 			return builder.toString();
 		}
 
-		private int getGlobalPropertyTimesHashCode() {
-			int result = 0;
-			for (GlobalPropertyId globalPropertyId : globalPropertyDefinitions.keySet()) {				
-				Double propertyTime = globalPropertyTimes.get(globalPropertyId);
-				if (propertyTime == null) {
-					propertyTime = globalPropertyDefinitionTimes.get(globalPropertyId);
-				}
-				result += propertyTime.hashCode();
-			}
-			return result;
-		}
-
-		private int getGlobalPropertyValuesHashCode() {			
-			int result = 0;
-			for (GlobalPropertyId globalPropertyId : globalPropertyDefinitions.keySet()) {
-				Object propertyValue = globalPropertyValues.get(globalPropertyId);
-				if (propertyValue == null) {
-					propertyValue = globalPropertyDefinitions.get(globalPropertyId).getDefaultValue().get();
-				}
-				result += propertyValue.hashCode();				
-			}
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result
+					+ ((globalPropertyDefinitionTimes == null) ? 0 : globalPropertyDefinitionTimes.hashCode());
+			result = prime * result + ((globalPropertyDefinitions == null) ? 0 : globalPropertyDefinitions.hashCode());
+			result = prime * result + ((globalPropertyTimes == null) ? 0 : globalPropertyTimes.hashCode());
+			result = prime * result + ((globalPropertyValues == null) ? 0 : globalPropertyValues.hashCode());
+			result = prime * result + (locked ? 1231 : 1237);
 			return result;
 		}
 
@@ -260,72 +270,40 @@ public final class GlobalPropertiesPluginData implements PluginData {
 				return false;
 			}
 			Data other = (Data) obj;
-
-			/*
-			 * We exclude: locked -- both should be locked when equals is
-			 * invoked
-			 */
-
-			/*
-			 * These are simple comparisons:
-			 */
-			if (!globalPropertyDefinitionTimes.equals(other.globalPropertyDefinitionTimes)) {
+			if (globalPropertyDefinitionTimes == null) {
+				if (other.globalPropertyDefinitionTimes != null) {
+					return false;
+				}
+			} else if (!globalPropertyDefinitionTimes.equals(other.globalPropertyDefinitionTimes)) {
 				return false;
 			}
-			if (!globalPropertyDefinitions.equals(other.globalPropertyDefinitions)) {
+			if (globalPropertyDefinitions == null) {
+				if (other.globalPropertyDefinitions != null) {
+					return false;
+				}
+			} else if (!globalPropertyDefinitions.equals(other.globalPropertyDefinitions)) {
 				return false;
 			}
-
-			/*
-			 * The remaining fields must be compared by disregarding assignments
-			 * of default property values and times
-			 */
-			if (!comparePropertyValues(this, other)) {
+			if (globalPropertyTimes == null) {
+				if (other.globalPropertyTimes != null) {
+					return false;
+				}
+			} else if (!globalPropertyTimes.equals(other.globalPropertyTimes)) {
 				return false;
 			}
-
-			if (!comparePropertyTimes(this, other)) {
+			if (globalPropertyValues == null) {
+				if (other.globalPropertyValues != null) {
+					return false;
+				}
+			} else if (!globalPropertyValues.equals(other.globalPropertyValues)) {
 				return false;
 			}
-
-			
+			if (locked != other.locked) {
+				return false;
+			}
 			return true;
 		}
 
-	}
-
-	private static boolean comparePropertyValues(Data a, Data b) {
-		for (GlobalPropertyId globalPropertyId : a.globalPropertyDefinitions.keySet()) {
-			Object propertyValue = a.globalPropertyValues.get(globalPropertyId);
-			if (propertyValue == null) {
-				propertyValue = a.globalPropertyDefinitions.get(globalPropertyId).getDefaultValue().get();
-			}
-			Object otherPropertyValue = b.globalPropertyValues.get(globalPropertyId);
-			if (otherPropertyValue == null) {
-				otherPropertyValue = b.globalPropertyDefinitions.get(globalPropertyId).getDefaultValue().get();
-			}
-			if (!propertyValue.equals(otherPropertyValue)) {
-				return false;
-			}
-		}
-		return true;
-	}
-
-	private static boolean comparePropertyTimes(Data a, Data b) {
-		for (GlobalPropertyId globalPropertyId : a.globalPropertyDefinitions.keySet()) {
-			Double propertyTime = a.globalPropertyTimes.get(globalPropertyId);
-			if (propertyTime == null) {
-				propertyTime = a.globalPropertyDefinitionTimes.get(globalPropertyId);
-			}
-			Double otherPropertyTime = b.globalPropertyTimes.get(globalPropertyId);
-			if (otherPropertyTime == null) {
-				otherPropertyTime = b.globalPropertyDefinitionTimes.get(globalPropertyId);
-			}
-			if (!propertyTime.equals(otherPropertyTime)) {
-				return false;
-			}
-		}
-		return true;
 	}
 
 	/**
@@ -365,10 +343,10 @@ public final class GlobalPropertiesPluginData implements PluginData {
 	 * 
 	 * @throws ContractException
 	 * 
-	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID}</li> if the
-	 *             global property id is null
-	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}</li> if
-	 *             the global property id is known
+	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID}</li>
+	 *                           if the global property id is null
+	 *                           <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}</li>
+	 *                           if the global property id is known
 	 */
 	public PropertyDefinition getGlobalPropertyDefinition(final GlobalPropertyId globalPropertyId) {
 		validateGlobalPropertyIdExists(data, globalPropertyId);
@@ -380,10 +358,10 @@ public final class GlobalPropertiesPluginData implements PluginData {
 	 * 
 	 * @throws ContractException
 	 * 
-	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID}</li> if the
-	 *             global property id is null
-	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}</li> if
-	 *             the global property id is known
+	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID}</li>
+	 *                           if the global property id is null
+	 *                           <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}</li>
+	 *                           if the global property id is known
 	 */
 	public Double getGlobalPropertyDefinitionTime(final GlobalPropertyId globalPropertyId) {
 		validateGlobalPropertyIdExists(data, globalPropertyId);
@@ -404,45 +382,38 @@ public final class GlobalPropertiesPluginData implements PluginData {
 	}
 
 	/**
-	 * Returns the property value for the given {@link GlobalPropertyId}.
+	 * Returns the optional property value for the given property id
 	 * 
 	 * @throws ContractException
 	 * 
 	 * 
-	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID}</li> if the
-	 *             global property id is null
-	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}</li> if
-	 *             the global property id is known
+	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID}</li>
+	 *                           if the global property id is null
+	 *                           <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}</li>
+	 *                           if the global property id is known
 	 */
 	@SuppressWarnings("unchecked")
-	public <T> T getGlobalPropertyValue(final GlobalPropertyId globalPropertyId) {
+	public <T> Optional<T> getGlobalPropertyValue(final GlobalPropertyId globalPropertyId) {
 		validateGlobalPropertyIdExists(data, globalPropertyId);
 		T result = (T) data.globalPropertyValues.get(globalPropertyId);
-		if (result == null) {
-			result = (T) data.globalPropertyDefinitions.get(globalPropertyId).getDefaultValue().get();
-		}
-		return result;
+		return Optional.ofNullable(result);
 	}
 
 	/**
-	 * Returns the property assignment time for the given
-	 * {@link GlobalPropertyId}.
+	 * Returns the optional property assignment time for the given property id
 	 * 
 	 * @throws ContractException
 	 * 
 	 * 
-	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID}</li> if the
-	 *             global property id is null
-	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}</li> if
-	 *             the global property id is known
+	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID}</li>
+	 *                           if the global property id is null
+	 *                           <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}</li>
+	 *                           if the global property id is known
 	 */
-	public Double getGlobalPropertyTime(final GlobalPropertyId globalPropertyId) {
+	public Optional<Double> getGlobalPropertyTime(final GlobalPropertyId globalPropertyId) {
 		validateGlobalPropertyIdExists(data, globalPropertyId);
 		Double result = data.globalPropertyTimes.get(globalPropertyId);
-		if (result == null) {
-			result = data.globalPropertyDefinitionTimes.get(globalPropertyId);
-		}
-		return result;
+		return Optional.ofNullable(result);
 	}
 
 	private static void validateGlobalPropertyIdExists(final Data data, final GlobalPropertyId globalPropertyId) {
@@ -463,7 +434,7 @@ public final class GlobalPropertiesPluginData implements PluginData {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result +data.hashCode();
+		result = prime * result + data.hashCode();
 		return result;
 	}
 
@@ -482,6 +453,22 @@ public final class GlobalPropertiesPluginData implements PluginData {
 		return true;
 	}
 
+	public Map<GlobalPropertyId, PropertyDefinition> getGlobalPropertyDefinitions() {
+		return new LinkedHashMap<>(data.globalPropertyDefinitions);
+	}
+
+	public Map<GlobalPropertyId, Double> getGlobalPropertyDefinitionTimes() {
+		return new LinkedHashMap<>(data.globalPropertyDefinitionTimes);
+	}
+
+	public Map<GlobalPropertyId, Object> getGlobalPropertyValues() {
+		return new LinkedHashMap<>(data.globalPropertyValues);
+	}
+
+	public Map<GlobalPropertyId, Double> getGlobalPropertyTimes() {
+		return new LinkedHashMap<>(data.globalPropertyTimes);
+	}
+
 	@Override
 	public String toString() {
 		StringBuilder builder2 = new StringBuilder();
@@ -489,6 +476,6 @@ public final class GlobalPropertiesPluginData implements PluginData {
 		builder2.append(data);
 		builder2.append("]");
 		return builder2.toString();
-	}	
-	
+	}
+
 }

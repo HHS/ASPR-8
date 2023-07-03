@@ -72,6 +72,7 @@ public class IT_PersonPropertiesTranslator {
                 .getFirstObject(PersonPropertiesPluginData.class);
 
         assertEquals(expectedPluginData, actualPluginData);
+        assertEquals(expectedPluginData.toString(), actualPluginData.toString());
     }
 
     @Test
@@ -121,6 +122,7 @@ public class IT_PersonPropertiesTranslator {
                 .getFirstObject(PersonPropertyReportPluginData.class);
 
         assertEquals(expectedPluginData, actualPluginData);
+        assertEquals(expectedPluginData.toString(), actualPluginData.toString());
     }
 
     @Test
@@ -168,5 +170,6 @@ public class IT_PersonPropertiesTranslator {
                 .getFirstObject(PersonPropertyInteractionReportPluginData.class);
 
         assertEquals(expectedPluginData, actualPluginData);
+        assertEquals(expectedPluginData.toString(), actualPluginData.toString());
     }
 }

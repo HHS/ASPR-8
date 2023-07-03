@@ -16,7 +16,7 @@ import util.errors.ContractException;
  *
  */
 
-public final class DataManagerContext  {
+public final class DataManagerContext {
 
 	private final Simulation simulation;
 	protected final DataManagerId dataManagerId;
@@ -30,23 +30,27 @@ public final class DataManagerContext  {
 	 * Schedules a plan that will be executed at the given time.
 	 * 
 	 * @throws ContractException
-	 *             <li>{@link NucleusError#NULL_PLAN} if the plan is null
-	 *             <li>{@link NucleusError#PAST_PLANNING_TIME} if the plan is
-	 *             scheduled for a time in the past *
-	 *             <li>{@link NucleusError#PLANNING_QUEUE_CLOSED} if the plan is
-	 *             added to the simulation after event processing is finished
+	 *                           <li>{@link NucleusError#NULL_PLAN} if the plan is
+	 *                           null
+	 *                           <li>{@link NucleusError#PAST_PLANNING_TIME} if the
+	 *                           plan is
+	 *                           scheduled for a time in the past *
+	 *                           <li>{@link NucleusError#PLANNING_QUEUE_CLOSED} if
+	 *                           the plan is
+	 *                           added to the simulation after event processing is
+	 *                           finished
 	 * 
 	 */
 
 	public void addPlan(final Consumer<DataManagerContext> consumer, final double planTime) {
 
 		Plan<DataManagerContext> plan = Plan.builder(DataManagerContext.class)//
-											.setActive(true)//
-											.setCallbackConsumer(consumer)//
-											.setKey(null)//
-											.setPlanData(null)//
-											.setTime(planTime)//
-											.build();//
+				.setActive(true)//
+				.setCallbackConsumer(consumer)//
+				.setKey(null)//
+				.setPlanData(null)//
+				.setTime(planTime)//
+				.build();//
 
 		simulation.addDataManagerPlan(dataManagerId, plan);
 	}
@@ -55,16 +59,23 @@ public final class DataManagerContext  {
 	 * Schedules a plan.
 	 * 
 	 * @throws ContractException
-	 *             <li>{@link NucleusError#NULL_PLAN} if the plan is null
-	 *             <li>{@link NucleusError#PAST_PLANNING_TIME} if the plan is
-	 *             scheduled for a time in the past *
-	 *             <li>{@link NucleusError#PLANNING_QUEUE_CLOSED} if the plan is
-	 *             added to the simulation after event processing is finished
+	 *                           <li>{@link NucleusError#NULL_PLAN} if the plan is
+	 *                           null
+	 *                           <li>{@link NucleusError#PAST_PLANNING_TIME} if the
+	 *                           plan is
+	 *                           scheduled for a time in the past *
+	 *                           <li>{@link NucleusError#PLANNING_QUEUE_CLOSED} if
+	 *                           the plan is
+	 *                           added to the simulation after event processing is
+	 *                           finished
 	 * 
 	 * 
 	 * 
 	 */
 	public void addPlan(Plan<DataManagerContext> plan) {
+		if (plan == null) {
+			throw new ContractException(NucleusError.NULL_PLAN);
+		}
 		simulation.addDataManagerPlan(dataManagerId, plan);
 	}
 
@@ -74,8 +85,8 @@ public final class DataManagerContext  {
 	 * state and releasing output.
 	 * 
 	 * @throws ContractException
-	 *             <li>{@link NucleusError#NULL_DATA_MANAGER_CONTEXT_CONSUMER}
-	 *             if the consumer is null</li>
+	 *                           <li>{@link NucleusError#NULL_DATA_MANAGER_CONTEXT_CONSUMER}
+	 *                           if the consumer is null</li>
 	 */
 	public void subscribeToSimulationClose(Consumer<DataManagerContext> consumer) {
 		simulation.subscribeDataManagerToSimulationClose(dataManagerId, consumer);
@@ -109,8 +120,9 @@ public final class DataManagerContext  {
 	 * Retrieves a plan for the given key.
 	 * 
 	 * @throws ContractException
-	 *             <li>{@link NucleusError#NULL_PLAN_KEY} if the plan key is
-	 *             null
+	 *                           <li>{@link NucleusError#NULL_PLAN_KEY} if the plan
+	 *                           key is
+	 *                           null
 	 */
 	public Optional<Plan<DataManagerContext>> getPlan(final Object key) {
 		return simulation.getDataManagerPlan(dataManagerId, key);
@@ -127,7 +139,8 @@ public final class DataManagerContext  {
 	 * instead.
 	 * 
 	 * @throws ContractException
-	 *             <li>{@link NucleusError#NULL_EVENT} if the event is null
+	 *                           <li>{@link NucleusError#NULL_EVENT} if the event is
+	 *                           null
 	 */
 	public void releaseObservationEvent(final Event event) {
 		simulation.releaseObservationEventForDataManager(event);
@@ -139,7 +152,8 @@ public final class DataManagerContext  {
 	 * This is used for MUTATION events.
 	 * 
 	 * @throws ContractException
-	 *             <li>{@link NucleusError#NULL_EVENT} if the event is null
+	 *                           <li>{@link NucleusError#NULL_EVENT} if the event is
+	 *                           null
 	 */
 	public void releaseMutationEvent(final Event event) {
 		simulation.releaseMutationEventForDataManager(event);
@@ -149,8 +163,9 @@ public final class DataManagerContext  {
 	 * Removes and returns the plan associated with the given key.
 	 * 
 	 * @throws ContractException
-	 *             <li>{@link NucleusError#NULL_PLAN_KEY} if the plan key is
-	 *             null
+	 *                           <li>{@link NucleusError#NULL_PLAN_KEY} if the plan
+	 *                           key is
+	 *                           null
 	 */
 	public Optional<Plan<DataManagerContext>> removePlan(final Object key) {
 		return simulation.removeDataManagerPlan(dataManagerId, key);
@@ -169,12 +184,15 @@ public final class DataManagerContext  {
 	 * of execution of data changes.
 	 * 
 	 * @throws ContractException
-	 *             <li>{@link NucleusError#NULL_EVENT_CLASS} if the event class
-	 *             is null
-	 *             <li>{@link NucleusError#NULL_EVENT_CONSUMER} if the event
-	 *             consumer is null
-	 *             <li>{@link NucleusError#DUPLICATE_EVENT_SUBSCRIPTION} if the
-	 *             data manager is already subscribed
+	 *                           <li>{@link NucleusError#NULL_EVENT_CLASS} if the
+	 *                           event class
+	 *                           is null
+	 *                           <li>{@link NucleusError#NULL_EVENT_CONSUMER} if the
+	 *                           event
+	 *                           consumer is null
+	 *                           <li>{@link NucleusError#DUPLICATE_EVENT_SUBSCRIPTION}
+	 *                           if the
+	 *                           data manager is already subscribed
 	 * 
 	 */
 	public <T extends Event> void subscribe(Class<T> eventClass, BiConsumer<DataManagerContext, T> eventConsumer) {
@@ -186,8 +204,9 @@ public final class DataManagerContext  {
 	 * phases of event handling.
 	 * 
 	 * @throws ContractException
-	 *             <li>{@link NucleusError#NULL_EVENT_CLASS} if the event class
-	 *             is null
+	 *                           <li>{@link NucleusError#NULL_EVENT_CLASS} if the
+	 *                           event class
+	 *                           is null
 	 */
 	public void unsubscribe(Class<? extends Event> eventClass) {
 		simulation.unsubscribeDataManagerFromEvent(dataManagerId, eventClass);
@@ -215,8 +234,9 @@ public final class DataManagerContext  {
 	 * 
 	 * @throws ContractException
 	 * 
-	 *             <li>{@link NucleusError#NULL_ACTOR_CONTEXT_CONSUMER} if the
-	 *             actor context consumer is null
+	 *                           <li>{@link NucleusError#NULL_ACTOR_CONTEXT_CONSUMER}
+	 *                           if the
+	 *                           actor context consumer is null
 	 * 
 	 */
 	public ActorId addActor(Consumer<ActorContext> consumer) {
@@ -243,11 +263,14 @@ public final class DataManagerContext  {
 	 * Removes the given actor from the simulation.
 	 * 
 	 * @throws ContractException
-	 *             <li>{@link NucleusError#NULL_ACTOR_ID} if the actorId is null
-	 *             <li>{@link NucleusError#NEGATIVE_ACTOR_ID} if the actor id is
-	 *             negative
-	 *             <li>{@link NucleusError#UNKNOWN_ACTOR_ID} if the actor id
-	 *             does not correspond to a known actor
+	 *                           <li>{@link NucleusError#NULL_ACTOR_ID} if the
+	 *                           actorId is null
+	 *                           <li>{@link NucleusError#NEGATIVE_ACTOR_ID} if the
+	 *                           actor id is
+	 *                           negative
+	 *                           <li>{@link NucleusError#UNKNOWN_ACTOR_ID} if the
+	 *                           actor id
+	 *                           does not correspond to a known actor
 	 */
 	public void removeActor(final ActorId actorId) {
 		simulation.removeActor(actorId);
@@ -263,7 +286,8 @@ public final class DataManagerContext  {
 	 * simulation execution into current plans. Only used during the
 	 * initialization of the simulation before time flows.
 	 */
-	public <T extends PlanData> void setPlanDataConverter(Class<T> planDataClass, Function<T, Consumer<DataManagerContext>> conversionFunction) {
+	public <T extends PlanData> void setPlanDataConverter(Class<T> planDataClass,
+			Function<T, Consumer<DataManagerContext>> conversionFunction) {
 		simulation.setDataManagerPlanDataConverter(dataManagerId, planDataClass, conversionFunction);
 	}
 

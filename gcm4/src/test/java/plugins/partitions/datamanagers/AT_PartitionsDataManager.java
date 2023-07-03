@@ -25,9 +25,12 @@ import org.junit.jupiter.api.Test;
 import nucleus.ActorContext;
 import nucleus.DataManagerContext;
 import nucleus.EventFilter;
+import nucleus.Plugin;
 import nucleus.testsupport.testplugin.TestActorPlan;
+import nucleus.testsupport.testplugin.TestOutputConsumer;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestSimulation;
+import plugins.partitions.PartitionsPlugin;
 import plugins.partitions.support.Equality;
 import plugins.partitions.support.LabelSet;
 import plugins.partitions.support.LabelSetWeightingFunction;
@@ -59,8 +62,7 @@ public final class AT_PartitionsDataManager {
 	@Test
 	@UnitTestConstructor(target = PartitionsDataManager.class, args = {})
 	public void testConstructor() {
-		PartitionsDataManager dataManager = new PartitionsDataManager();
-
+		PartitionsDataManager dataManager = new PartitionsDataManager(PartitionsPluginData.builder().build());
 		assertNotNull(dataManager);
 	}
 
@@ -332,7 +334,8 @@ public final class AT_PartitionsDataManager {
 		// precondition: if the partition is null
 		contractException = assertThrows(ContractException.class, () -> {
 			Factory factory2 = PartitionsTestPluginFactory.factory(0, 7407325994321033161L, (c) -> {
-				PartitionsDataManager partitionsDataManager = new PartitionsDataManager();
+				PartitionsPluginData partitionsPluginData = PartitionsPluginData.builder().build();
+				PartitionsDataManager partitionsDataManager = new PartitionsDataManager(partitionsPluginData);
 				Object key = new Object();
 				partitionsDataManager.addPartition(null, key);
 			});
@@ -343,7 +346,8 @@ public final class AT_PartitionsDataManager {
 		// precondition: if the key is null
 		contractException = assertThrows(ContractException.class, () -> {
 			Factory factory2 = PartitionsTestPluginFactory.factory(0, 530075900162852558L, (c) -> {
-				PartitionsDataManager partitionsDataManager = new PartitionsDataManager();
+				PartitionsPluginData partitionsPluginData = PartitionsPluginData.builder().build();
+				PartitionsDataManager partitionsDataManager = new PartitionsDataManager(partitionsPluginData);
 				partitionsDataManager.addPartition(Partition.builder().build(), null);
 			});
 			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
@@ -1682,5 +1686,63 @@ public final class AT_PartitionsDataManager {
 		Factory factory = PartitionsTestPluginFactory.factory(100, 6406306513403641718L, testPluginData);
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
+
+	/**
+	 * Demonstrates that the data manager's initial state reflects its plugin
+	 * data
+	 */
+	@Test
+	@UnitTestMethod(target = PartitionsDataManager.class, name = "init", args = { DataManagerContext.class })
+	public void testStateInitialization() {
+		/*
+		 * Nothing can be demonstrated since the state of the plugin data does
+		 * not have an observable influence on the data manager
+		 */
+	}
+
+	/**
+	 * Demonstrates that the data manager produces plugin data that reflects its
+	 * final state
+	 */
+	@Test
+	@UnitTestMethod(target = PartitionsDataManager.class, name = "init", args = { DataManagerContext.class })
+	public void testStateFinalization() {
+
+		for (boolean supportRunContinuity : new boolean[] { true, false }) {
+
+			// build a plugin factory and replace the partitions plugin with one
+			// that has run continuity set to the expected state
+			Factory factory = PartitionsTestPluginFactory.factory(100, 607630153604184177L, (c) -> {
+			});
+			PartitionsPluginData inputPartitionsPluginData = PartitionsPluginData	.builder()//
+																					.setRunContinuitySupport(supportRunContinuity)//
+																					.build();
+			Plugin partitionsPlugin = PartitionsPlugin	.builder()//
+														.setPartitionsPluginData(inputPartitionsPluginData)//
+														.getPartitionsPlugin();
+			factory.setPartitionsPlugin(partitionsPlugin);
+
+			// run the simulation and tell it to produce plugin data on halt
+			TestOutputConsumer testOutputConsumer = TestSimulation	.builder()//
+																	.addPlugins(factory.getPlugins())//
+																	.setSimulationHaltTime(100)//
+																	.setProduceSimulationStateOnHalt(true)//
+																	.build()//
+																	.execute();
+
+			// retrieve the PartitionsPluginData released by the
+			// PartitionsDataManager
+			Optional<PartitionsPluginData> optional = testOutputConsumer.getOutputItem(PartitionsPluginData.class);
+			assertTrue(optional.isPresent());
+			PartitionsPluginData outputPartitionsPluginData = optional.get();
+
+			// show that the output plugin data is equal to the input plugin
+			// data
+			assertEquals(inputPartitionsPluginData, outputPartitionsPluginData);
+		}
+	}
+
+	
+
 
 }

@@ -5,6 +5,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.util.Collections;
+import java.util.Iterator;
+
 import org.junit.jupiter.api.Test;
 
 import util.annotations.UnitTag;
@@ -12,7 +15,9 @@ import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
 
 public class AT_ObjectValueContainer {
-
+	private Iterator<Integer> getEmptyIndexIterator() {
+		return Collections.emptyIterator();				
+	}
 	/**
 	 * Tests {@link ObjectValueContainer#ObjectValueContainer(Object, int)}
 	 */
@@ -20,14 +25,12 @@ public class AT_ObjectValueContainer {
 	@UnitTestConstructor(target = ObjectValueContainer.class,args = { Object.class, int.class })
 	public void testConstructor() {
 		String defaultValue = "default";
-		ObjectValueContainer objectValueContainer = new ObjectValueContainer(defaultValue, 20);
+		ObjectValueContainer objectValueContainer = new ObjectValueContainer(defaultValue, this::getEmptyIndexIterator);
 		assertNotNull(objectValueContainer);
 
-		objectValueContainer = new ObjectValueContainer(null, 20);
+		objectValueContainer = new ObjectValueContainer(null, this::getEmptyIndexIterator);
 		assertNotNull(objectValueContainer);
 
-		// pre-condition tests
-		assertThrows(IllegalArgumentException.class, () -> new ObjectValueContainer(null, -4));
 
 	}
 
@@ -38,7 +41,7 @@ public class AT_ObjectValueContainer {
 	@UnitTestMethod(target = ObjectValueContainer.class,name = "setValue", args = { int.class, Object.class })
 	public void testSetValue() {
 		String defaultValue = "default";
-		ObjectValueContainer objectValueContainer = new ObjectValueContainer(defaultValue, 20);
+		ObjectValueContainer objectValueContainer = new ObjectValueContainer(defaultValue,this::getEmptyIndexIterator);
 		objectValueContainer.setValue(3, "dog");
 		objectValueContainer.setValue(1, "cat");
 		objectValueContainer.setValue(4, "pig");
@@ -69,7 +72,7 @@ public class AT_ObjectValueContainer {
 	public void testGetValue() {
 
 		String defaultValue = "default";
-		ObjectValueContainer objectValueContainer = new ObjectValueContainer(defaultValue, 20);
+		ObjectValueContainer objectValueContainer = new ObjectValueContainer(defaultValue, this::getEmptyIndexIterator);
 		objectValueContainer.setValue(3, "dog");
 		objectValueContainer.setValue(1, "cat");
 		objectValueContainer.setValue(4, "pig");

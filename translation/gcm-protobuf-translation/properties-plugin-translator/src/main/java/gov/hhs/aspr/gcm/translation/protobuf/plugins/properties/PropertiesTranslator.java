@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.translationSpecs.PropertyDefinitionTranslationSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.translationSpecs.TimeTrackingPolicyTranslationSpec;
 import gov.hhs.aspr.translation.core.TranslationSpec;
 import gov.hhs.aspr.translation.core.Translator;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
@@ -24,7 +23,6 @@ public class PropertiesTranslator {
         List<TranslationSpec<?, ?>> list = new ArrayList<>();
 
         list.add(new PropertyDefinitionTranslationSpec());
-        list.add(new TimeTrackingPolicyTranslationSpec());
 
         return list;
     }

@@ -66,5 +66,6 @@ public class IT_StochasticsTranslator {
         StochasticsPluginData actualPluginData = translatorController.getFirstObject(StochasticsPluginData.class);
 
         assertEquals(expectedPluginData, actualPluginData);
+        assertEquals(expectedPluginData.toString(), actualPluginData.toString());
     }
 }

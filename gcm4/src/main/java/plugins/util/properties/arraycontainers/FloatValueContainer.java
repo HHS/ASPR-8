@@ -1,6 +1,8 @@
 package plugins.util.properties.arraycontainers;
 
 import java.util.Arrays;
+import java.util.Iterator;
+import java.util.function.Supplier;
 
 import plugins.util.properties.PropertyError;
 import util.errors.ContractException;
@@ -18,17 +20,19 @@ public final class FloatValueContainer {
 	 * The array for storing the values
 	 */
 	private float[] values;
-	
+
+	private Supplier<Iterator<Integer>> indexIteratorSupplier;
+
 	/*
-	 * The value returned for any non-negative index that has not been set via
-	 * an invocation of setValue().
+	 * The value returned for any non-negative index that has not been set via an
+	 * invocation of setValue().
 	 */
 	private float defaultValue;
 
 	/*
-	 * Grows the length of the values array to be the greater of the given
-	 * capacity and 125% of its current length, filling empty elements in the
-	 * array with the default value.
+	 * Grows the length of the values array to be the greater of the given capacity
+	 * and 125% of its current length, filling empty elements in the array with the
+	 * default value.
 	 */
 	private void grow(int capacity) {
 		int oldCapacity = values.length;
@@ -47,8 +51,8 @@ public final class FloatValueContainer {
 	 * @param index
 	 * @return
 	 * @throws ContractException
-	 *             <li>{@linkplain PropertyError#NEGATIVE_INDEX} if index is
-	 *             negative</li>
+	 *                           <li>{@linkplain PropertyError#NEGATIVE_INDEX} if
+	 *                           index is negative</li>
 	 * 
 	 */
 	public float getValue(int index) {
@@ -66,10 +70,9 @@ public final class FloatValueContainer {
 		return result;
 	}
 
-
 	/**
-	 * Sets the capacity to the given capacity if the current capacity is less
-	 * than the one given.
+	 * Sets the capacity to the given capacity if the current capacity is less than
+	 * the one given.
 	 */
 	public void setCapacity(int capacity) {
 		if (capacity > values.length) {
@@ -78,8 +81,8 @@ public final class FloatValueContainer {
 	}
 
 	/**
-	 * Returns the capacity of this container. Capacity is guaranteed to be
-	 * greater than or equal to size.
+	 * Returns the capacity of this container. Capacity is guaranteed to be greater
+	 * than or equal to size.
 	 */
 	public int getCapacity() {
 		return values.length;
@@ -94,63 +97,72 @@ public final class FloatValueContainer {
 	}
 
 	/**
-	 * Constructs the floatValueContainer with the given default value.
-	 * 
-	 * @param defaultValue
-	 */
-	public FloatValueContainer(float defaultValue) {
-		this(defaultValue, 16);
-	}
-
-	/**
-	 * Constructs the floatValueContainer with the given default value and
-	 * initial capacity
+	 * Constructs the floatValueContainer with the given default value and initial
+	 * capacity
 	 * 
 	 * @param defaultValue
 	 * @param capacity
 	 * 
-	 * @throws NegativeArraySizeException
-	 *             if the capacity is negative
+	 * @throws NegativeArraySizeException if the capacity is negative
 	 */
-	public FloatValueContainer(float defaultValue, int capacity) {
-		values = new float[capacity];
-		if (defaultValue != 0) {
-			for (int i = 0; i < capacity; i++) {
-				values[i] = defaultValue;
-			}
-		}
+	public FloatValueContainer(float defaultValue, Supplier<Iterator<Integer>> indexIteratorSupplier) {
+		values = new float[0];
 		this.defaultValue = defaultValue;
-
+		this.indexIteratorSupplier = indexIteratorSupplier;
 	}
 
 	/**
 	 * Sets the value at the index to the given value
 	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain PropertyError#NEGATIVE_INDEX} if index is negative</li>
+	 *                           <li>{@linkplain PropertyError#NEGATIVE_INDEX} if
+	 *                           index is negative</li>
 	 */
 	public void setValue(int index, float value) {
-		if(index<0) {
+		if (index < 0) {
 			throw new ContractException(PropertyError.NEGATIVE_INDEX);
 		}
 		if (index >= values.length) {
 			grow(index + 1);
 		}
+
 		values[index] = value;
+	}
+
+	private String getElementsString() {
+		Iterator<Integer> iterator = indexIteratorSupplier.get();
+		StringBuilder sb = new StringBuilder();
+
+		boolean first = true;
+		sb.append('[');
+
+		while (iterator.hasNext()) {
+			
+			if (first) {
+				first = false;
+			} else {
+				sb.append(", ");
+			}
+			Integer index = iterator.next();
+			float value = getValue(index);
+			
+			sb.append(index);
+			sb.append("=");
+			sb.append(value);
+		}
+		sb.append(']');
+		return sb.toString();
 	}
 
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("FloatValueContainer [values=");
-		builder.append(Arrays.toString(values));
+		builder.append(getElementsString());
 		builder.append(", defaultValue=");
 		builder.append(defaultValue);
 		builder.append("]");
 		return builder.toString();
 	}
-	
-	
-	
 
 }

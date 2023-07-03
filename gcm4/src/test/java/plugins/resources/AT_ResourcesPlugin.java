@@ -12,6 +12,7 @@ import nucleus.Plugin;
 import nucleus.PluginId;
 import plugins.people.PeoplePluginId;
 import plugins.regions.RegionsPluginId;
+import plugins.resources.datamanagers.ResourcesPluginData;
 import util.annotations.UnitTestMethod;
 
 public class AT_ResourcesPlugin {

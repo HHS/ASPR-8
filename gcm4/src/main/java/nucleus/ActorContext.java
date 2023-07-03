@@ -31,8 +31,9 @@ public final class ActorContext {
 	 * state and releasing output.
 	 * 
 	 * @throws ContractException
-	 *             <li>{@link NucleusError#NULL_ACTOR_CONTEXT_CONSUMER} if the
-	 *             consumer is null</li>
+	 *                           <li>{@link NucleusError#NULL_ACTOR_CONTEXT_CONSUMER}
+	 *                           if the
+	 *                           consumer is null</li>
 	 */
 
 	public void subscribeToSimulationClose(Consumer<ActorContext> consumer) {
@@ -43,11 +44,15 @@ public final class ActorContext {
 	 * Schedules a plan that will be executed at the given time.
 	 * 
 	 * @throws ContractException
-	 *             <li>{@link NucleusError#NULL_PLAN} if the plan is null
-	 *             <li>{@link NucleusError#PAST_PLANNING_TIME} if the plan is
-	 *             scheduled for a time in the past
-	 *             <li>{@link NucleusError#PLANNING_QUEUE_CLOSED} if the plan is
-	 *             added to the simulation after event processing is finished
+	 *                           <li>{@link NucleusError#NULL_PLAN} if the plan is
+	 *                           null
+	 *                           <li>{@link NucleusError#PAST_PLANNING_TIME} if the
+	 *                           plan is
+	 *                           scheduled for a time in the past
+	 *                           <li>{@link NucleusError#PLANNING_QUEUE_CLOSED} if
+	 *                           the plan is
+	 *                           added to the simulation after event processing is
+	 *                           finished
 	 * 
 	 * 
 	 * 
@@ -55,13 +60,13 @@ public final class ActorContext {
 	 */
 
 	public void addPlan(final Consumer<ActorContext> consumer, final double planTime) {
-		Plan<ActorContext> plan = Plan	.builder(ActorContext.class)//
-										.setActive(true)//
-										.setCallbackConsumer(consumer)//
-										.setKey(null)//
-										.setPlanData(null)//
-										.setTime(planTime)//
-										.build();//
+		Plan<ActorContext> plan = Plan.builder(ActorContext.class)//
+				.setActive(true)//
+				.setCallbackConsumer(consumer)//
+				.setKey(null)//
+				.setPlanData(null)//
+				.setTime(planTime)//
+				.build();//
 		simulation.addActorPlan(plan);
 	}
 
@@ -69,17 +74,24 @@ public final class ActorContext {
 	 * Schedules a plan.
 	 * 
 	 * @throws ContractException
-	 *             <li>{@link NucleusError#NULL_PLAN} if the plan is null
-	 *             <li>{@link NucleusError#PAST_PLANNING_TIME} if the plan is
-	 *             scheduled for a time in the past
-	 *             <li>{@link NucleusError#PLANNING_QUEUE_CLOSED} if the plan is
-	 *             added to the simulation after event processing is finished
+	 *                           <li>{@link NucleusError#NULL_PLAN} if the plan is
+	 *                           null
+	 *                           <li>{@link NucleusError#PAST_PLANNING_TIME} if the
+	 *                           plan is
+	 *                           scheduled for a time in the past
+	 *                           <li>{@link NucleusError#PLANNING_QUEUE_CLOSED} if
+	 *                           the plan is
+	 *                           added to the simulation after event processing is
+	 *                           finished
 	 * 
 	 * 
 	 * 
 	 * 
 	 */
 	public void addPlan(final Plan<ActorContext> plan) {
+		if (plan == null) {
+			throw new ContractException(NucleusError.NULL_PLAN);
+		}
 		simulation.addActorPlan(plan);
 	}
 
@@ -87,8 +99,9 @@ public final class ActorContext {
 	 * Retrieves a plan stored for the given key.
 	 * 
 	 * @throws ContractException
-	 *             <li>{@link NucleusError#NULL_PLAN_KEY} if the plan key is
-	 *             null
+	 *                           <li>{@link NucleusError#NULL_PLAN_KEY} if the plan
+	 *                           key is
+	 *                           null
 	 */
 	public Optional<Plan<ActorContext>> getPlan(final Object key) {
 		return simulation.getActorPlan(key);
@@ -98,8 +111,9 @@ public final class ActorContext {
 	 * Removes and returns the plan associated with the given key.
 	 * 
 	 * @throws ContractException
-	 *             <li>{@link NucleusError#NULL_PLAN_KEY} if the plan key is
-	 *             null
+	 *                           <li>{@link NucleusError#NULL_PLAN_KEY} if the plan
+	 *                           key is
+	 *                           null
 	 */
 
 	public Optional<Plan<ActorContext>> removePlan(final Object key) {
@@ -128,10 +142,12 @@ public final class ActorContext {
 	 * 
 	 * 
 	 * @throws ContractException
-	 *             <li>{@link NucleusError#NULL_EVENT_FILTER} if the event
-	 *             filter is null
-	 *             <li>{@link NucleusError#NULL_EVENT_CONSUMER} if the event
-	 *             consumer is null
+	 *                           <li>{@link NucleusError#NULL_EVENT_FILTER} if the
+	 *                           event
+	 *                           filter is null
+	 *                           <li>{@link NucleusError#NULL_EVENT_CONSUMER} if the
+	 *                           event
+	 *                           consumer is null
 	 */
 	public <T extends Event> void subscribe(EventFilter<T> eventFilter, BiConsumer<ActorContext, T> eventConsumer) {
 		simulation.subscribeActorToEventByFilter(eventFilter, eventConsumer);
@@ -141,8 +157,9 @@ public final class ActorContext {
 	 * Unsubscribes the current actor from the given event filter.
 	 * 
 	 * @throws ContractException
-	 *             <li>{@link NucleusError#NULL_EVENT_FILTER} if the event
-	 *             filter is null
+	 *                           <li>{@link NucleusError#NULL_EVENT_FILTER} if the
+	 *                           event
+	 *                           filter is null
 	 *
 	 */
 	public <T extends Event> void unsubscribe(EventFilter<T> eventFilter) {
@@ -176,8 +193,9 @@ public final class ActorContext {
 	 * 
 	 * @throws ContractException
 	 * 
-	 *             <li>{@link NucleusError#NULL_ACTOR_CONTEXT_CONSUMER} if the
-	 *             actor context consumer is null
+	 *                           <li>{@link NucleusError#NULL_ACTOR_CONTEXT_CONSUMER}
+	 *                           if the
+	 *                           actor context consumer is null
 	 * 
 	 */
 	public ActorId addActor(Consumer<ActorContext> consumer) {
@@ -212,11 +230,14 @@ public final class ActorContext {
 	 * Removes the given actor from the simulation.
 	 * 
 	 * @throws ContractException
-	 *             <li>{@link NucleusError#NULL_ACTOR_ID} if the actorId is null
-	 *             <li>{@link NucleusError#NEGATIVE_ACTOR_ID} if the actor id is
-	 *             negative
-	 *             <li>{@link NucleusError#UNKNOWN_ACTOR_ID} if the actor id
-	 *             does not correspond to a known actor
+	 *                           <li>{@link NucleusError#NULL_ACTOR_ID} if the
+	 *                           actorId is null
+	 *                           <li>{@link NucleusError#NEGATIVE_ACTOR_ID} if the
+	 *                           actor id is
+	 *                           negative
+	 *                           <li>{@link NucleusError#UNKNOWN_ACTOR_ID} if the
+	 *                           actor id
+	 *                           does not correspond to a known actor
 	 */
 	public void removeActor(ActorId actorId) {
 		simulation.removeActor(actorId);
@@ -228,7 +249,8 @@ public final class ActorContext {
 	 * simulation execution into current plans. Only used during the
 	 * initialization of the simulation before time flows.
 	 */
-	public <T extends PlanData> void setPlanDataConverter(Class<T> planDataClass, Function<T, Consumer<ActorContext>> conversionFunction) {
+	public <T extends PlanData> void setPlanDataConverter(Class<T> planDataClass,
+			Function<T, Consumer<ActorContext>> conversionFunction) {
 		simulation.setActorPlanDataConverter(planDataClass, conversionFunction);
 	}
 

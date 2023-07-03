@@ -20,6 +20,7 @@ public enum GroupError implements ContractError {
 	NULL_GROUP_POPULATION_REPORT_PLUGIN_DATA("Null group population report plugin data"),
 	NULL_GROUP_PROPERTY_REPORT_PLUGIN_DATA("Null group property report plugin data"),	
 	DUPLICATE_GROUP_MEMBERSHIP("Person was previously assigned to group"),
+	GROUP_MEMBERSHIP_ASYMMETRY("Person-group relationships are asymmetric"),
 	DUPLICATE_GROUP_TYPE("Duplicate group type"),
 	MALFORMED_GROUP_SAMPLE_WEIGHTING_FUNCTION("Data used to form an enumerated distribution for group sampling was malformed"),
 	NON_GROUP_MEMBERSHIP("Person is not currently assigned to group"),

@@ -17,8 +17,8 @@ import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestOutputConsumer;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestSimulation;
-import plugins.regions.RegionsPluginData;
 import plugins.regions.datamanagers.RegionsDataManager;
+import plugins.regions.datamanagers.RegionsPluginData;
 import plugins.regions.support.RegionError;
 import plugins.regions.support.RegionId;
 import plugins.regions.support.RegionPropertyDefinitionInitialization;
@@ -35,7 +35,6 @@ import plugins.reports.support.ReportLabel;
 import plugins.reports.support.SimpleReportLabel;
 import plugins.stochastics.StochasticsDataManager;
 import plugins.util.properties.PropertyDefinition;
-import plugins.util.properties.TimeTrackingPolicy;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
@@ -187,7 +186,7 @@ public class AT_RegionPropertyReport {
 		expectedOutputConsumer.accept(getReportItem(3.0, regionB, regionPropertyId_5, 199.16));
 		expectedOutputConsumer.accept(getReportItem(3.0, regionC, regionPropertyId_5, 199.16));
 
-		Factory factory = RegionsTestPluginFactory	.factory(0, 3558607823596502222L, TimeTrackingPolicy.TRACK_TIME, testPluginData)//
+		Factory factory = RegionsTestPluginFactory	.factory(0, 3558607823596502222L, true, testPluginData)//
 													.setRegionsPluginData(regionsPluginData)//
 													.setRegionPropertyReportPluginData(regionPropertyReportPluginData);//
 
@@ -267,7 +266,7 @@ public class AT_RegionPropertyReport {
 		TestPluginData testPluginData = pluginDataBuilder.build();
 
 		Factory factory = RegionsTestPluginFactory//
-													.factory(0, 424190079221645034L, TimeTrackingPolicy.TRACK_TIME, testPluginData)//
+													.factory(0, 424190079221645034L, true, testPluginData)//
 													.setRegionPropertyReportPluginData(regionPropertyReportPluginData);//
 
 		// tell the builder to include a specific region property id
@@ -334,7 +333,7 @@ public class AT_RegionPropertyReport {
 			// build the region plugin using the report plugin data and the
 			// standard region plugin data build
 			Factory factory = RegionsTestPluginFactory//
-														.factory(0, 6198510650051666838L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
+														.factory(0, 6198510650051666838L, true, (c) -> {
 														})//
 														.setRegionPropertyReportPluginData(regionPropertyReportPluginData);//
 
@@ -389,7 +388,7 @@ public class AT_RegionPropertyReport {
 												.build();
 
 		Factory factory = RegionsTestPluginFactory//
-													.factory(0, 2608710368019720039L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
+													.factory(0, 2608710368019720039L, true, (c) -> {
 													})//
 													.setRegionPropertyReportPluginData(regionPropertyReportPluginData);//
 
@@ -462,7 +461,7 @@ public class AT_RegionPropertyReport {
 		TestPluginData testPluginData = pluginDataBuilder.build();
 
 		Factory factory = RegionsTestPluginFactory//
-													.factory(0, 4660368916694613140L, TimeTrackingPolicy.TRACK_TIME, testPluginData)//
+													.factory(0, 4660368916694613140L, true, testPluginData)//
 													.setRegionPropertyReportPluginData(regionPropertyReportPluginData);//
 
 		// tell the builder to include a specific region property id
@@ -501,7 +500,7 @@ public class AT_RegionPropertyReport {
 												.build();
 
 		Factory factory = RegionsTestPluginFactory//
-													.factory(0, 6305425169353361697L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
+													.factory(0, 6305425169353361697L, true, (c) -> {
 													})//
 													.setRegionPropertyReportPluginData(regionPropertyReportPluginData);//
 
@@ -615,7 +614,7 @@ public class AT_RegionPropertyReport {
 
 		TestPluginData testPluginData = pluginBuilder.build();
 
-		Factory factory = RegionsTestPluginFactory	.factory(0, 3558607823596502222L, TimeTrackingPolicy.TRACK_TIME, testPluginData)//
+		Factory factory = RegionsTestPluginFactory	.factory(0, 3558607823596502222L, true, testPluginData)//
 				.setRegionsPluginData(regionsPluginData)//
 				.setRegionPropertyReportPluginData(regionPropertyReportPluginData);//
 

@@ -3,6 +3,7 @@ package plugins.partitions.support.filters;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import net.jcip.annotations.Immutable;
 import plugins.partitions.support.FilterSensitivity;
 import plugins.partitions.support.PartitionsContext;
 import plugins.people.support.PersonId;
@@ -13,6 +14,7 @@ import plugins.people.support.PersonId;
  * empty set should always be false.
  */
 
+@Immutable
 public final class FalseFilter extends Filter {
 
 	@Override

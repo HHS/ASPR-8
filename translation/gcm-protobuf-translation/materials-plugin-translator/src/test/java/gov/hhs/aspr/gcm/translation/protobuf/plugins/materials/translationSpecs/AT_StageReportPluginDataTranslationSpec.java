@@ -61,6 +61,7 @@ public class AT_StageReportPluginDataTranslationSpec {
         StageReportPluginData actualAppValue = translationSpec.convertInputObject(inputValue);
 
         assertEquals(expectedAppValue, actualAppValue);
+        assertEquals(expectedAppValue.toString(), actualAppValue.toString());
     }
 
     @Test

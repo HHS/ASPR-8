@@ -24,7 +24,7 @@ import plugins.people.PeoplePluginData;
 import plugins.people.support.PersonId;
 import plugins.people.support.PersonRange;
 import plugins.regions.RegionsPlugin;
-import plugins.regions.RegionsPluginData;
+import plugins.regions.datamanagers.RegionsPluginData;
 import plugins.regions.reports.RegionPropertyReportPluginData;
 import plugins.regions.reports.RegionTransferReportPluginData;
 import plugins.reports.support.NIOReportItemHandler;
@@ -143,7 +143,7 @@ public final class Example_15 {
 
 		IntStream.range(0, seedValues.size()).forEach((i) -> {
 			builder.addLevel((context) -> {
-				StochasticsPluginData.Builder stochasticsPluginDataBuilder = context.get(StochasticsPluginData.Builder.class);
+				StochasticsPluginData.Builder stochasticsPluginDataBuilder = context.getPluginDataBuilder(StochasticsPluginData.Builder.class);
 				long seedValue = seedValues.get(i);
 				WellState wellState = WellState.builder().setSeed(seedValue).build();
 				stochasticsPluginDataBuilder.setMainRNGState(wellState);

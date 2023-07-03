@@ -29,7 +29,7 @@ import plugins.personproperties.support.PersonPropertyDefinitionInitialization;
 import plugins.personproperties.support.PersonPropertyId;
 import plugins.personproperties.testsupport.TestPersonPropertyId;
 import plugins.regions.RegionsPlugin;
-import plugins.regions.RegionsPluginData;
+import plugins.regions.datamanagers.RegionsPluginData;
 import plugins.regions.testsupport.TestRegionId;
 import plugins.reports.support.ReportError;
 import plugins.reports.support.ReportLabel;

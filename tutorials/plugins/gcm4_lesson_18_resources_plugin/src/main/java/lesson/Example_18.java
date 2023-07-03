@@ -21,19 +21,18 @@ import nucleus.ExperimentParameterData;
 import nucleus.FunctionalDimension;
 import nucleus.Plugin;
 import plugins.globalproperties.GlobalPropertiesPlugin;
-import plugins.globalproperties.GlobalPropertiesPluginData;
-import plugins.globalproperties.GlobalPropertiesPluginData.Builder;
+import plugins.globalproperties.datamanagers.GlobalPropertiesPluginData;
 import plugins.globalproperties.support.GlobalPropertyId;
 import plugins.people.PeoplePlugin;
 import plugins.people.PeoplePluginData;
 import plugins.personproperties.PersonPropertiesPlugin;
 import plugins.personproperties.PersonPropertiesPluginData;
 import plugins.regions.RegionsPlugin;
-import plugins.regions.RegionsPluginData;
+import plugins.regions.datamanagers.RegionsPluginData;
 import plugins.reports.support.NIOReportItemHandler;
 import plugins.reports.support.ReportPeriod;
 import plugins.resources.ResourcesPlugin;
-import plugins.resources.ResourcesPluginData;
+import plugins.resources.datamanagers.ResourcesPluginData;
 import plugins.resources.reports.PersonResourceReportPluginData;
 import plugins.resources.support.ResourceId;
 import plugins.stochastics.StochasticsPlugin;
@@ -56,7 +55,7 @@ public final class Example_18 {
 	private Plugin getResourcesPlugin() {
 		ResourcesPluginData.Builder builder = ResourcesPluginData.builder();
 		for (ResourceId resourcId : Resource.values()) {
-			builder.addResource(resourcId,0.0);
+			builder.addResource(resourcId,0.0,true);
 		}
 		ResourcesPluginData resourcesPluginData = builder.build();
 
@@ -138,7 +137,7 @@ public final class Example_18 {
 
 	/* start code_ref=resources_getGlobalPropertiesPlugin */
 	private Plugin getGlobalPropertiesPlugin() {
-		Builder builder = GlobalPropertiesPluginData.builder();//
+		GlobalPropertiesPluginData.Builder builder = GlobalPropertiesPluginData.builder();//
 
 		PropertyDefinition propertyDefinition = PropertyDefinition	.builder()//
 																	.setType(Double.class)//
@@ -175,7 +174,7 @@ public final class Example_18 {
 		FunctionalDimension.Builder dimensionBuilder = FunctionalDimension.builder();//
 		IntStream.range(0, values.length).forEach((i) -> {
 			dimensionBuilder.addLevel((context) -> {
-				GlobalPropertiesPluginData.Builder builder = context.get(GlobalPropertiesPluginData.Builder.class);
+				GlobalPropertiesPluginData.Builder builder = context.getPluginDataBuilder(GlobalPropertiesPluginData.Builder.class);
 				double value = values[i];
 				builder.setGlobalPropertyValue(globalPropertyId, value,0);
 				ArrayList<String> result = new ArrayList<>();
@@ -194,7 +193,7 @@ public final class Example_18 {
 		FunctionalDimension.Builder dimensionBuilder = FunctionalDimension.builder();//
 		IntStream.range(0, minValues.length).forEach((i) -> {
 			dimensionBuilder.addLevel((context) -> {
-				GlobalPropertiesPluginData.Builder builder = context.get(GlobalPropertiesPluginData.Builder.class);
+				GlobalPropertiesPluginData.Builder builder = context.getPluginDataBuilder(GlobalPropertiesPluginData.Builder.class);
 				double minValue = minValues[i];
 				builder.setGlobalPropertyValue(GlobalProperty.HOSPITAL_STAY_DURATION_MIN, minValue,0);
 				double maxValue = maxValues[i];
@@ -227,7 +226,7 @@ public final class Example_18 {
 		FunctionalDimension.Builder dimensionBuilder = FunctionalDimension.builder();//
 		IntStream.range(0, minValues.length).forEach((i) -> {
 			dimensionBuilder.addLevel((context) -> {
-				GlobalPropertiesPluginData.Builder builder = context.get(GlobalPropertiesPluginData.Builder.class);
+				GlobalPropertiesPluginData.Builder builder = context.getPluginDataBuilder(GlobalPropertiesPluginData.Builder.class);
 				double minValue = minValues[i];
 				builder.setGlobalPropertyValue(GlobalProperty.HOSPITAL_SUCCESS_WITHOUT_ANTIVIRAL, minValue,0);
 				double maxValue = maxValues[i];

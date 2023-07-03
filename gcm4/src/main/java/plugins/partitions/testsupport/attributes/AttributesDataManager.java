@@ -2,8 +2,11 @@ package plugins.partitions.testsupport.attributes;
 
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import org.apache.commons.math3.util.FastMath;
 
 import nucleus.DataManager;
 import nucleus.DataManagerContext;
@@ -30,7 +33,7 @@ public final class AttributesDataManager extends DataManager {
 
 	private DataManagerContext dataManagerContext;
 
-	private final Map<AttributeId, AttributeDefinition> attributeDefinitions = new LinkedHashMap<>();
+	private Map<AttributeId, AttributeDefinition> attributeDefinitions = new LinkedHashMap<>();
 
 	private final Map<AttributeId, Map<PersonId, Object>> attributeValues = new LinkedHashMap<>();
 
@@ -39,10 +42,10 @@ public final class AttributesDataManager extends DataManager {
 	 * without validation.
 	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain AttributeError#NULL_ATTRIBUTE_ID} if the
-	 *             attribute id is null</li>
-	 *             <li>{@linkplain AttributeError#UNKNOWN_ATTRIBUTE_ID} if the
-	 *             attribute id unknown</li>
+	 *                           <li>{@linkplain AttributeError#NULL_ATTRIBUTE_ID}
+	 *                           if the attribute id is null</li>
+	 *                           <li>{@linkplain AttributeError#UNKNOWN_ATTRIBUTE_ID}
+	 *                           if the attribute id unknown</li>
 	 */
 	public AttributeDefinition getAttributeDefinition(final AttributeId attributeId) {
 		validateAttributeId(attributeId);
@@ -77,20 +80,24 @@ public final class AttributesDataManager extends DataManager {
 	 * 
 	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain AttributeError#NULL_ATTRIBUTE_ID} if the
-	 *             attribute id is null</li>
-	 *             <li>{@linkplain AttributeError#UNKNOWN_ATTRIBUTE_ID} if the
-	 *             attribute id unknown</li>
-	 *             <li>{@linkplain PersonError#NULL_PERSON_ID} if the person id
-	 *             is null</li>
-	 *             <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if the person
-	 *             id unknown</li>
+	 *                           <li>{@linkplain AttributeError#NULL_ATTRIBUTE_ID}
+	 *                           if the attribute id is null</li>
+	 *                           <li>{@linkplain AttributeError#UNKNOWN_ATTRIBUTE_ID}
+	 *                           if the attribute id unknown</li>
+	 *                           <li>{@linkplain PersonError#NULL_PERSON_ID} if the
+	 *                           person id is null</li>
+	 *                           <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if
+	 *                           the person id unknown</li>
 	 */
 	@SuppressWarnings("unchecked")
 	public <T> T getAttributeValue(final PersonId personId, final AttributeId attributeId) {
 		validateAttributeId(attributeId);
 		validatePersonId(personId);
-		Object value = attributeValues.get(attributeId).get(personId);
+		Object value = null;
+		Map<PersonId, Object> map = attributeValues.get(attributeId);
+		if (map != null) {
+			value = attributeValues.get(attributeId).get(personId);
+		}
 		if (value == null) {
 			value = attributeDefinitions.get(attributeId).getDefaultValue();
 		}
@@ -133,55 +140,81 @@ public final class AttributesDataManager extends DataManager {
 		super.init(dataManagerContext);
 		this.dataManagerContext = dataManagerContext;
 		peopleDataManager = dataManagerContext.getDataManager(PeopleDataManager.class);
-		
-		
 
-		for (AttributeId attributeId : attributesPluginData.getAttributeIds()) {
-			AttributeDefinition attributeDefinition = attributesPluginData.getAttributeDefinition(attributeId);
-			addAttribute(attributeId, attributeDefinition);
+		attributeDefinitions = attributesPluginData.getAttributeDefinitions();
+
+		Map<AttributeId, List<Object>> attributeValues2 = attributesPluginData.getAttributeValues();
+
+		for (AttributeId attributeId : attributeValues2.keySet()) {
+			Map<PersonId, Object> personAttributesMap = new LinkedHashMap<>();
+			attributeValues.put(attributeId, personAttributesMap);
+			List<Object> propertyValues = attributeValues2.get(attributeId);
+			int n = FastMath.max(peopleDataManager.getPersonIdLimit(), propertyValues.size());
+			for (int i = 0; i < n; i++) {
+				if (peopleDataManager.personIndexExists(i)) {
+					if (i < propertyValues.size()) {
+						Object propertyValue = propertyValues.get(i);
+						if (propertyValue != null) {
+							PersonId personId = peopleDataManager.getBoxedPersonId(i).get();
+							personAttributesMap.put(personId, propertyValue);
+						}
+					}
+				} else {
+					if (i < propertyValues.size()) {
+						Object propertyValue = propertyValues.get(i);
+						if (propertyValue != null) {
+							throw new ContractException(AttributeError.UNKNOWN_PERSON_HAS_ATTRIBUTE_VALUE_ASSIGNMENT,
+									"unknown person(" + i + ") has attribute value for " + attributeId);
+						}
+					}
+				}
+			}
 		}
 
 		dataManagerContext.subscribe(PersonRemovalEvent.class, this::handlePersonRemovalEvent);
 		dataManagerContext.subscribe(AttributeUpdateMutationEvent.class, this::handleAttributeUpdateMutationEvent);
-		
+
+		if (dataManagerContext.stateRecordingIsScheduled()) {
+			dataManagerContext.subscribeToSimulationClose(this::recordSimulationState);
+		}
 
 	}
 
-	private void handlePersonRemovalEvent(final DataManagerContext dataManagerContext, final PersonRemovalEvent personRemovalEvent) {
+	private void recordSimulationState(DataManagerContext dataManagerContext) {
+
+		AttributesPluginData.Builder builder = AttributesPluginData.builder();
+
+		for (AttributeId attributeId : attributeDefinitions.keySet()) {
+			AttributeDefinition attributeDefinition = attributeDefinitions.get(attributeId);
+			builder.defineAttribute(attributeId, attributeDefinition);
+		}
+
 		for (AttributeId attributeId : attributeValues.keySet()) {
-			attributeValues.get(attributeId).remove(personRemovalEvent.personId());
+			Map<PersonId, Object> map = attributeValues.get(attributeId);
+			if (map != null) {
+				for (PersonId personId : map.keySet()) {
+					Object value = map.get(personId);
+					builder.setPersonAttributeValue(personId, attributeId, value);
+				}
+			}
+		}
+
+		dataManagerContext.releaseOutput(builder.build());
+	}
+
+	private void handlePersonRemovalEvent(final DataManagerContext dataManagerContext,
+			final PersonRemovalEvent personRemovalEvent) {
+		for (AttributeId attributeId : attributeValues.keySet()) {
+			Map<PersonId, Object> map = attributeValues.get(attributeId);
+			if (map != null) {
+				map.remove(personRemovalEvent.personId());
+			}
 		}
 	}
 
-	/*
-	 * Adds an attribute definition
-	 * 
-	 * @throws ContractException
-	 * 
-	 * <li>{@linkplain AttributeError#NULL_ATTRIBUTE_ID} if the attribute id is
-	 * null</li> <li>{@linkplain AttributeError#NULL_ATTRIBUTE_DEFINITION} if
-	 * the attribute definition is null</li> <li>{@linkplain
-	 * AttributeError#DUPLICATE_ATTRIBUTE_DEFINITION} if the attribute
-	 * definition was previously added</li>
-	 */
-	private void addAttribute(AttributeId attributeId, AttributeDefinition attributeDefinition) {
-		if (attributeId == null) {
-			throw new ContractException(AttributeError.NULL_ATTRIBUTE_ID);
-		}
-
-		if (attributeDefinition == null) {
-			throw new ContractException(AttributeError.NULL_ATTRIBUTE_DEFINITION);
-		}
-
-		if (attributeDefinitions.containsKey(attributeId)) {
-			throw new ContractException(AttributeError.DUPLICATE_ATTRIBUTE_DEFINITION);
-		}
-
-		attributeDefinitions.put(attributeId, attributeDefinition);
-		attributeValues.put(attributeId, new LinkedHashMap<>());
+	private static record AttributeUpdateMutationEvent(PersonId personId, AttributeId attributeId, Object value)
+			implements Event {
 	}
-	
-	private static record AttributeUpdateMutationEvent(PersonId personId, AttributeId attributeId, Object value) implements Event{}
 
 	/**
 	 * Updates the person's current attribute value. Generates a corresponding
@@ -192,10 +225,8 @@ public final class AttributesDataManager extends DataManager {
 	 *
 	 * <ul>
 	 * <li>{@link PersonError#NULL_PERSON_ID} if the person id is null</li>
-	 * <li>{@link PersonError#UNKNOWN_PERSON_ID} if the person id is
-	 * unknown</li>
-	 * <li>{@link AttributeError#NULL_ATTRIBUTE_ID} if the attribute id is
-	 * null</li>
+	 * <li>{@link PersonError#UNKNOWN_PERSON_ID} if the person id is unknown</li>
+	 * <li>{@link AttributeError#NULL_ATTRIBUTE_ID} if the attribute id is null</li>
 	 * <li>{@link AttributeError#UNKNOWN_ATTRIBUTE_ID} if the attribute id is
 	 * unknown</li>
 	 * <li>{@link AttributeError#NULL_ATTRIBUTE_VALUE} if the attribute value is
@@ -205,26 +236,33 @@ public final class AttributesDataManager extends DataManager {
 	 * </ul>
 	 */
 	public void setAttributeValue(final PersonId personId, final AttributeId attributeId, final Object value) {
-		
-		dataManagerContext.releaseMutationEvent(
-		new AttributeUpdateMutationEvent(personId, attributeId, value));
+
+		dataManagerContext.releaseMutationEvent(new AttributeUpdateMutationEvent(personId, attributeId, value));
 	}
-	private void handleAttributeUpdateMutationEvent(DataManagerContext dataManagerContext, AttributeUpdateMutationEvent attributeUpdateMutationEvent) {
+
+	private void handleAttributeUpdateMutationEvent(DataManagerContext dataManagerContext,
+			AttributeUpdateMutationEvent attributeUpdateMutationEvent) {
 		AttributeId attributeId = attributeUpdateMutationEvent.attributeId();
 		PersonId personId = attributeUpdateMutationEvent.personId();
 		Object value = attributeUpdateMutationEvent.value();
-		
+
 		validatePersonExists(dataManagerContext, personId);
 		validateAttributeId(dataManagerContext, attributeId);
 		validateValueNotNull(dataManagerContext, value);
 		final AttributeDefinition attributeDefinition = getAttributeDefinition(attributeId);
 		validateValueCompatibility(dataManagerContext, attributeId, attributeDefinition, value);
 		Object previousValue = getAttributeValue(personId, attributeId);
-		attributeValues.get(attributeId).put(personId, value);
-		if (dataManagerContext.subscribersExist(AttributeUpdateEvent.class)) {
-			dataManagerContext.releaseObservationEvent(new AttributeUpdateEvent(personId, attributeId, previousValue, value));
+		Map<PersonId, Object> map = attributeValues.get(attributeId);
+		if (map == null) {
+			map = new LinkedHashMap<>();
+			attributeValues.put(attributeId, map);
 		}
-		
+		map.put(personId, value);
+		if (dataManagerContext.subscribersExist(AttributeUpdateEvent.class)) {
+			dataManagerContext
+					.releaseObservationEvent(new AttributeUpdateEvent(personId, attributeId, previousValue, value));
+		}
+
 	}
 
 	private void validatePersonExists(final DataManagerContext dataManagerContext, final PersonId personId) {
@@ -242,10 +280,12 @@ public final class AttributesDataManager extends DataManager {
 		}
 	}
 
-	private static void validateValueCompatibility(final DataManagerContext dataManagerContext, final AttributeId attributeId, final AttributeDefinition attributeDefinition, final Object value) {
+	private static void validateValueCompatibility(final DataManagerContext dataManagerContext,
+			final AttributeId attributeId, final AttributeDefinition attributeDefinition, final Object value) {
 		if (!attributeDefinition.getType().isAssignableFrom(value.getClass())) {
 			throw new ContractException(AttributeError.INCOMPATIBLE_VALUE,
-					"Attribute value " + value + " is not of type " + attributeDefinition.getType().getName() + " and does not match definition of " + attributeId);
+					"Attribute value " + value + " is not of type " + attributeDefinition.getType().getName()
+							+ " and does not match definition of " + attributeId);
 		}
 	}
 
@@ -263,9 +303,9 @@ public final class AttributesDataManager extends DataManager {
 	}
 
 	private IdentifiableFunctionMap<AttributeUpdateEvent> functionMap = //
-			IdentifiableFunctionMap	.builder(AttributeUpdateEvent.class)//
-									.put(EventFunctionId.ATTRIBUTE_ID, e -> e.attributeId())//
-									.build();//
+			IdentifiableFunctionMap.builder(AttributeUpdateEvent.class)//
+					.put(EventFunctionId.ATTRIBUTE_ID, e -> e.attributeId())//
+					.build();//
 
 	/**
 	 * Returns an event filter used to subscribe to {@link AttributeUpdateEvent}
@@ -275,17 +315,17 @@ public final class AttributesDataManager extends DataManager {
 	 * 
 	 * @throws ContractException
 	 * 
-	 *             <li>{@linkplain AttributeError#NULL_ATTRIBUTE_ID} if the
-	 *             attribute id is null</li>
-	 *             <li>{@linkplain AttributeError#UNKNOWN_ATTRIBUTE_ID} if the
-	 *             attribute id is not known</li>
+	 *                           <li>{@linkplain AttributeError#NULL_ATTRIBUTE_ID}
+	 *                           if the attribute id is null</li>
+	 *                           <li>{@linkplain AttributeError#UNKNOWN_ATTRIBUTE_ID}
+	 *                           if the attribute id is not known</li>
 	 * 
 	 */
 	public EventFilter<AttributeUpdateEvent> getEventFilterForAttributeUpdateEvent(AttributeId attributeId) {
 		validateAttributeId(attributeId);
-		return EventFilter	.builder(AttributeUpdateEvent.class)//
-							.addFunctionValuePair(functionMap.get(EventFunctionId.ATTRIBUTE_ID), attributeId)//
-							.build();
+		return EventFilter.builder(AttributeUpdateEvent.class)//
+				.addFunctionValuePair(functionMap.get(EventFunctionId.ATTRIBUTE_ID), attributeId)//
+				.build();
 	}
 
 	/**
@@ -294,8 +334,19 @@ public final class AttributesDataManager extends DataManager {
 	 */
 	public EventFilter<AttributeUpdateEvent> getEventFilterForAttributeUpdateEvent() {
 
-		return EventFilter	.builder(AttributeUpdateEvent.class)//
-							.build();
+		return EventFilter.builder(AttributeUpdateEvent.class)//
+				.build();
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("AttributesDataManager [attributeDefinitions=");
+		builder.append(attributeDefinitions);
+		builder.append(", attributeValues=");
+		builder.append(attributeValues);
+		builder.append("]");
+		return builder.toString();
 	}
 
 }

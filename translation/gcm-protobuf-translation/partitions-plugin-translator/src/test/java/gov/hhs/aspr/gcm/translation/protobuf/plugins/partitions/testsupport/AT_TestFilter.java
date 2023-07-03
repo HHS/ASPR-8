@@ -100,4 +100,16 @@ public class AT_TestFilter {
 
         assertEquals(testFilter1, testFilter5);
     }
+
+    @Test
+    @UnitTestMethod(target = TestFilter.class, name = "toString", args = {})
+    public void testToString() {
+
+        for (int i = 0; i < 10; i++) {
+            TestFilter testFilter = new TestFilter(i);
+
+            assertEquals("TestFilter [filterId=" + i + "]", testFilter.toString());
+        }
+
+    }
 }

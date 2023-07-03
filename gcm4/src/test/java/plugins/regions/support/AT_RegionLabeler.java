@@ -30,7 +30,6 @@ import plugins.regions.testsupport.RegionsTestPluginFactory;
 import plugins.regions.testsupport.RegionsTestPluginFactory.Factory;
 import plugins.regions.testsupport.TestRegionId;
 import plugins.stochastics.StochasticsDataManager;
-import plugins.util.properties.TimeTrackingPolicy;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
@@ -142,7 +141,7 @@ public class AT_RegionLabeler {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		Factory factory = RegionsTestPluginFactory.factory(0, 4893773537497436066L, TimeTrackingPolicy.DO_NOT_TRACK_TIME, testPluginData);
+		Factory factory = RegionsTestPluginFactory.factory(0, 4893773537497436066L, false, testPluginData);
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 	}
@@ -181,7 +180,7 @@ public class AT_RegionLabeler {
 	@UnitTestMethod(target = RegionLabeler.class,name = "getPastLabel", args = { PartitionsContext.class, Event.class })
 	public void testGetPastLabel() {
 
-		Factory factory = RegionsTestPluginFactory.factory(30, 349819763474394472L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
+		Factory factory = RegionsTestPluginFactory.factory(30, 349819763474394472L, true, (c) -> {
 			
 			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
 			

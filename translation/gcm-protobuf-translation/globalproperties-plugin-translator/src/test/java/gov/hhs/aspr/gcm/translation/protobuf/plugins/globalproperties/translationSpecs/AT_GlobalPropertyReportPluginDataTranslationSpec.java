@@ -60,15 +60,16 @@ public class AT_GlobalPropertyReportPluginDataTranslationSpec {
             }
         }
 
-        GlobalPropertyReportPluginData expectedValue = builder.build();
+        GlobalPropertyReportPluginData expectedAppValue = builder.build();
 
         GlobalPropertyReportPluginDataInput globalPropertiesPluginDataInput = translationSpec
-                .convertAppObject(expectedValue);
+                .convertAppObject(expectedAppValue);
 
-        GlobalPropertyReportPluginData actualValue = translationSpec
+        GlobalPropertyReportPluginData actualAppValue = translationSpec
                 .convertInputObject(globalPropertiesPluginDataInput);
 
-        assertEquals(expectedValue, actualValue);
+        assertEquals(expectedAppValue, actualAppValue);
+        assertEquals(expectedAppValue.toString(), actualAppValue.toString());
     }
 
     @Test

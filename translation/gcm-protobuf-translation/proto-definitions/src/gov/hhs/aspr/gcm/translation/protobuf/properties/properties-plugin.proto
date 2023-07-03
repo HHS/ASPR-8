@@ -19,11 +19,6 @@ message PropertyDefinitionMapInput {
   bool propertyTrackingPolicy = 4;
 }
 
-enum TimeTrackingPolicyInput {
-  DO_NOT_TRACK_TIME = 0;
-  TRACK_TIME = 1;
-}
-
 message PropertyDefinitionInput {
   string type = 1;
   bool propertyValuesAreMutable = 2;

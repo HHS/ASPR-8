@@ -1,5 +1,8 @@
 package plugins.util.properties;
 
+import java.util.Iterator;
+import java.util.function.Supplier;
+
 import plugins.util.properties.arraycontainers.BooleanContainer;
 import util.errors.ContractException;
 
@@ -20,22 +23,17 @@ public final class BooleanPropertyManager implements IndexedPropertyManager {
 	 * Constructs this BooleanPropertyManager.
 	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain PropertyError#NEGATIVE_INITIAL_SIZE} if the
-	 *             initial size is negative</li>
 	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION} if
 	 *             the property definition is null</li>
 	 *             <li>{@linkplain PropertyError#PROPERTY_DEFINITION_IMPROPER_TYPE}
 	 *             if the property definition's type is not Boolean</li>
 	 */
 	
-	public BooleanPropertyManager( PropertyDefinition propertyDefinition, int initialSize) {
+	public BooleanPropertyManager( PropertyDefinition propertyDefinition, Supplier<Iterator<Integer>> indexIteratorSupplier) {
 		if (propertyDefinition == null) {
 			throw new ContractException(PropertyError.NULL_PROPERTY_DEFINITION);
 		}
 		
-		if (initialSize < 0) {
-			throw new ContractException(PropertyError.NEGATIVE_INITIAL_SIZE);
-		}
 		if (propertyDefinition.getType() != Boolean.class) {
 			throw new ContractException(PropertyError.PROPERTY_DEFINITION_IMPROPER_TYPE, "Requires a property definition with Boolean type ");
 		}
@@ -44,7 +42,7 @@ public final class BooleanPropertyManager implements IndexedPropertyManager {
 			defaultValue = (Boolean)propertyDefinition.getDefaultValue().get();			
 		}		
 
-		boolContainer = new BooleanContainer(defaultValue, initialSize);
+		boolContainer = new BooleanContainer(defaultValue,indexIteratorSupplier);
 	}
 
 	@Override

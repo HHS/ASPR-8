@@ -48,7 +48,7 @@ public final class Example_11_A {
 
 		for (Double schoolClosingInfectionRate : schoolClosingInfectionRates) {
 			builder.addLevel((context) -> {
-				PolicyPluginData.Builder pluginDataBuilder = context.get(PolicyPluginData.Builder.class);
+				PolicyPluginData.Builder pluginDataBuilder = context.getPluginDataBuilder(PolicyPluginData.Builder.class);
 				pluginDataBuilder.setSchoolClosingInfectionRate(schoolClosingInfectionRate);
 
 				ArrayList<String> result = new ArrayList<>();

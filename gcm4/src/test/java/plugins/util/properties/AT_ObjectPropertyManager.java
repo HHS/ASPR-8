@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -27,6 +29,11 @@ import util.random.RandomGeneratorProvider;
  */
 
 public class AT_ObjectPropertyManager {
+	
+	
+	private Iterator<Integer> getEmptyIndexIterator() {
+		return Collections.emptyIterator();
+	}
 
 	@Test
 	@UnitTestMethod(target = ObjectPropertyManager.class, name = "getPropertyValue", args = { int.class })
@@ -37,7 +44,7 @@ public class AT_ObjectPropertyManager {
 			String defaultValue = "YELLOW";
 			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(String.class).setDefaultValue(defaultValue).build();
 
-			ObjectPropertyManager objectPropertyManager = new ObjectPropertyManager(propertyDefinition, 0);
+			ObjectPropertyManager objectPropertyManager = new ObjectPropertyManager(propertyDefinition, this::getEmptyIndexIterator);
 
 			/*
 			 * We will set the first 300 values multiple times at random
@@ -93,7 +100,7 @@ public class AT_ObjectPropertyManager {
 			String defaultValue = "YELLOW";
 			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(String.class).setDefaultValue(defaultValue).build();
 
-			ObjectPropertyManager objectPropertyManager = new ObjectPropertyManager( propertyDefinition, 0);
+			ObjectPropertyManager objectPropertyManager = new ObjectPropertyManager( propertyDefinition, this::getEmptyIndexIterator);
 
 			/*
 			 * We will set the first 300 values multiple times at random
@@ -143,7 +150,7 @@ public class AT_ObjectPropertyManager {
 			String defaultValue = "RED";
 			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(String.class).setDefaultValue(defaultValue).build();
 
-			ObjectPropertyManager objectPropertyManager = new ObjectPropertyManager(propertyDefinition, 0);
+			ObjectPropertyManager objectPropertyManager = new ObjectPropertyManager(propertyDefinition, this::getEmptyIndexIterator);
 
 			// initially, the value should be the default value for the manager
 			assertEquals(defaultValue, (String) objectPropertyManager.getPropertyValue(5));
@@ -162,7 +169,7 @@ public class AT_ObjectPropertyManager {
 			// we will next test the manager with an initial value of true
 			propertyDefinition = PropertyDefinition.builder().setType(String.class).setDefaultValue(defaultValue).build();
 
-			objectPropertyManager = new ObjectPropertyManager(propertyDefinition, 0);
+			objectPropertyManager = new ObjectPropertyManager(propertyDefinition, this::getEmptyIndexIterator);
 
 			// initially, the value should be the default value for the manager
 			assertEquals(defaultValue, (String) objectPropertyManager.getPropertyValue(5));
@@ -180,7 +187,7 @@ public class AT_ObjectPropertyManager {
 
 			// precondition tests
 			PropertyDefinition def = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(true).build();
-			ObjectPropertyManager opm = new ObjectPropertyManager( def, 0);
+			ObjectPropertyManager opm = new ObjectPropertyManager( def, this::getEmptyIndexIterator);
 
 			ContractException contractException = assertThrows(ContractException.class, () -> opm.removeId(-1));
 			assertEquals(PropertyError.NEGATIVE_INDEX, contractException.getErrorType());
@@ -196,14 +203,11 @@ public class AT_ObjectPropertyManager {
 			PropertyDefinition goodPropertyDefinition = PropertyDefinition.builder().setType(Object.class).setDefaultValue("BLUE").build();
 
 			// if the property definition is null
-			ContractException contractException = assertThrows(ContractException.class, () -> new ObjectPropertyManager(null, 0));
+			ContractException contractException = assertThrows(ContractException.class, () -> new ObjectPropertyManager(null, this::getEmptyIndexIterator));
 			assertEquals(PropertyError.NULL_PROPERTY_DEFINITION, contractException.getErrorType());
 
-			// if the initial size is negative
-			contractException = assertThrows(ContractException.class, () -> new ObjectPropertyManager(goodPropertyDefinition, -1));
-			assertEquals(PropertyError.NEGATIVE_INITIAL_SIZE, contractException.getErrorType());
 
-			ObjectPropertyManager objectPropertyManager = new ObjectPropertyManager(goodPropertyDefinition, 0);
+			ObjectPropertyManager objectPropertyManager = new ObjectPropertyManager(goodPropertyDefinition, this::getEmptyIndexIterator);
 			assertNotNull(objectPropertyManager);
 		});
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
@@ -216,7 +220,7 @@ public class AT_ObjectPropertyManager {
 
 			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(234).build();
 
-			ObjectPropertyManager objectPropertyManager = new ObjectPropertyManager(propertyDefinition, 0);
+			ObjectPropertyManager objectPropertyManager = new ObjectPropertyManager(propertyDefinition, this::getEmptyIndexIterator);
 
 			// precondition tests
 			ContractException contractException = assertThrows(ContractException.class, () -> objectPropertyManager.incrementCapacity(-1));

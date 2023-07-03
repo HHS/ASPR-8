@@ -20,8 +20,8 @@ import nucleus.testsupport.testplugin.TestSimulation;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonConstructionData;
 import plugins.people.support.PersonId;
-import plugins.regions.RegionsPluginData;
 import plugins.regions.datamanagers.RegionsDataManager;
+import plugins.regions.datamanagers.RegionsPluginData;
 import plugins.regions.support.RegionId;
 import plugins.regions.support.RegionPropertyId;
 import plugins.regions.support.SimpleRegionId;
@@ -36,7 +36,6 @@ import plugins.reports.support.ReportPeriod;
 import plugins.reports.support.SimpleReportLabel;
 import plugins.stochastics.StochasticsDataManager;
 import plugins.util.properties.PropertyDefinition;
-import plugins.util.properties.TimeTrackingPolicy;
 import util.annotations.UnitTag;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
@@ -158,7 +157,7 @@ public class AT_RegionTransferReport {
 		RegionTransferReportPluginData regionTransferReportPluginData = RegionTransferReportPluginData.builder().setReportLabel(REPORT_LABEL).setReportPeriod(ReportPeriod.DAILY).build();
 		
 		Factory factory = RegionsTestPluginFactory//
-				.factory(0, 3054641152904904632L, TimeTrackingPolicy.TRACK_TIME, testPluginData)
+				.factory(0, 3054641152904904632L, true, testPluginData)
 				.setRegionsPluginData(regionsPluginData)//
 				.setRegionTransferReportPluginData(regionTransferReportPluginData);
 
@@ -265,7 +264,7 @@ public class AT_RegionTransferReport {
 				.build();
 
 		Factory factory = RegionsTestPluginFactory//
-				.factory(0, 3054641152904904632L, TimeTrackingPolicy.TRACK_TIME, testPluginData).setRegionsPluginData(regionsPluginData)//
+				.factory(0, 3054641152904904632L, true, testPluginData).setRegionsPluginData(regionsPluginData)//
 				.setRegionTransferReportPluginData(regionTransferReportPluginData);
 
 		TestOutputConsumer actualConsumer = TestSimulation	.builder()//

@@ -11,8 +11,8 @@ import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestOutputConsumer;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestSimulation;
-import plugins.groups.GroupsPluginData;
 import plugins.groups.datamanagers.GroupsDataManager;
+import plugins.groups.datamanagers.GroupsPluginData;
 import plugins.groups.support.GroupId;
 import plugins.groups.testsupport.GroupsTestPluginFactory;
 import plugins.groups.testsupport.GroupsTestPluginFactory.Factory;
@@ -388,13 +388,13 @@ public class AT_GroupPopulationReport {
 
 		// add a few of the people to the groups
 
-		groupBuilder.addPersonToGroup(new GroupId(0), new PersonId(0));
-		groupBuilder.addPersonToGroup(new GroupId(0), new PersonId(1));
-		groupBuilder.addPersonToGroup(new GroupId(0), new PersonId(2));
+		groupBuilder.associatePersonToGroup(new GroupId(0), new PersonId(0));
+		groupBuilder.associatePersonToGroup(new GroupId(0), new PersonId(1));
+		groupBuilder.associatePersonToGroup(new GroupId(0), new PersonId(2));
 
-		groupBuilder.addPersonToGroup(new GroupId(1), new PersonId(1));
-		groupBuilder.addPersonToGroup(new GroupId(1), new PersonId(2));
-		groupBuilder.addPersonToGroup(new GroupId(1), new PersonId(3));
+		groupBuilder.associatePersonToGroup(new GroupId(1), new PersonId(1));
+		groupBuilder.associatePersonToGroup(new GroupId(1), new PersonId(2));
+		groupBuilder.associatePersonToGroup(new GroupId(1), new PersonId(3));
 		return groupBuilder.build();
 	}
 

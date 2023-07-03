@@ -16,8 +16,8 @@ import plugins.reports.support.ReportHeader;
 import plugins.reports.support.ReportItem;
 import plugins.reports.support.ReportLabel;
 import plugins.reports.support.SimpleReportLabel;
-import plugins.resources.ResourcesPluginData;
 import plugins.resources.datamanagers.ResourcesDataManager;
+import plugins.resources.datamanagers.ResourcesPluginData;
 import plugins.resources.support.ResourcePropertyId;
 import plugins.resources.support.ResourcePropertyInitialization;
 import plugins.resources.testsupport.ResourcesTestPluginFactory;
@@ -191,8 +191,7 @@ public class AT_ResourcePropertyReport {
 		ResourcesPluginData.Builder resourcesBuilder = ResourcesPluginData.builder();
 
 		for (TestResourceId testResourceId : TestResourceId.values()) {
-			resourcesBuilder.addResource(testResourceId,0.0);
-			resourcesBuilder.setResourceTimeTracking(testResourceId, testResourceId.getTimeTrackingPolicy());
+			resourcesBuilder.addResource(testResourceId,0.0, testResourceId.getTimeTrackingPolicy());			
 		}
 
 		for (TestResourcePropertyId testResourcePropertyId : TestResourcePropertyId.values()) {

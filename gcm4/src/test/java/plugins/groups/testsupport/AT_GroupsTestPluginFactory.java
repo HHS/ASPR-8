@@ -1,17 +1,15 @@
 package plugins.groups.testsupport;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.LinkedHashSet;
+import java.util.Collections;
 import java.util.List;
-import java.util.Set;
+import java.util.Random;
 import java.util.function.Consumer;
 
 import org.apache.commons.math3.random.RandomGenerator;
@@ -28,12 +26,10 @@ import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestPluginId;
 import nucleus.testsupport.testplugin.TestSimulation;
-import plugins.groups.GroupsPluginData;
 import plugins.groups.GroupsPluginId;
+import plugins.groups.datamanagers.GroupsPluginData;
 import plugins.groups.support.GroupError;
 import plugins.groups.support.GroupId;
-import plugins.groups.support.GroupPropertyValue;
-import plugins.groups.support.GroupTypeId;
 import plugins.groups.testsupport.GroupsTestPluginFactory.Factory;
 import plugins.people.PeoplePluginData;
 import plugins.people.PeoplePluginId;
@@ -60,9 +56,10 @@ public class AT_GroupsTestPluginFactory {
 			double.class, long.class, Consumer.class })
 	public void testFactory_Consumer() {
 		MutableBoolean executed = new MutableBoolean();
-		Factory factory = GroupsTestPluginFactory.factory(100, 3, 5, 3765548905828391577L, c -> executed.setValue(true));
+		Factory factory = GroupsTestPluginFactory.factory(100, 3, 5, 3765548905828391577L,
+				c -> executed.setValue(true));
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
-		
+
 		assertTrue(executed.getValue());
 
 		// precondition: consumer is null
@@ -81,9 +78,9 @@ public class AT_GroupsTestPluginFactory {
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, c -> executed.setValue(true)));
 		TestPluginData testPluginData = pluginBuilder.build();
 
-		Factory factory = GroupsTestPluginFactory.factory(100, 3, 5, 1937810385546394605L, testPluginData);		
+		Factory factory = GroupsTestPluginFactory.factory(100, 3, 5, 1937810385546394605L, testPluginData);
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
-		
+
 		assertTrue(executed.getValue());
 
 		// precondition: testPluginData is null
@@ -146,26 +143,20 @@ public class AT_GroupsTestPluginFactory {
 
 		builder.addGroup(new GroupId(0), TestGroupTypeId.GROUP_TYPE_1)
 				.addGroup(new GroupId(1), TestGroupTypeId.GROUP_TYPE_2)
-				.addGroup(new GroupId(2), TestGroupTypeId.GROUP_TYPE_1)
-				.addGroupTypeId(TestGroupTypeId.GROUP_TYPE_1)
+				.addGroup(new GroupId(2), TestGroupTypeId.GROUP_TYPE_1).addGroupTypeId(TestGroupTypeId.GROUP_TYPE_1)
 				.addGroupTypeId(TestGroupTypeId.GROUP_TYPE_2);
 
 		GroupsPluginData groupsPluginData = builder.build();
 
-		List<Plugin> plugins = GroupsTestPluginFactory
-				.factory(0, 0, 0, 0, t -> {
-				})
-				.setGroupsPluginData(groupsPluginData)
-				.getPlugins();
+		List<Plugin> plugins = GroupsTestPluginFactory.factory(0, 0, 0, 0, t -> {
+		}).setGroupsPluginData(groupsPluginData).getPlugins();
 
 		checkPluginDataExists(plugins, groupsPluginData, GroupsPluginId.PLUGIN_ID);
 
 		// precondition: groupsPluginData is not null
 		ContractException contractException = assertThrows(ContractException.class,
-				() -> GroupsTestPluginFactory
-						.factory(0, 0, 0, 0, t -> {
-						})
-						.setGroupsPluginData(null));
+				() -> GroupsTestPluginFactory.factory(0, 0, 0, 0, t -> {
+				}).setGroupsPluginData(null));
 		assertEquals(GroupError.NULL_GROUP_PLUGIN_DATA, contractException.getErrorType());
 	}
 
@@ -174,23 +165,18 @@ public class AT_GroupsTestPluginFactory {
 			PeoplePluginData.class })
 	public void testSetPeoplePluginData() {
 		PeoplePluginData.Builder builder = PeoplePluginData.builder();
-		builder.addPersonRange(new PersonRange(0,99));
+		builder.addPersonRange(new PersonRange(0, 99));
 		PeoplePluginData peoplePluginData = builder.build();
 
-		List<Plugin> plugins = GroupsTestPluginFactory
-				.factory(0, 0, 0, 0, t -> {
-				})
-				.setPeoplePluginData(peoplePluginData)
-				.getPlugins();
+		List<Plugin> plugins = GroupsTestPluginFactory.factory(0, 0, 0, 0, t -> {
+		}).setPeoplePluginData(peoplePluginData).getPlugins();
 
 		checkPluginDataExists(plugins, peoplePluginData, PeoplePluginId.PLUGIN_ID);
 
 		// precondition: peoplePluginData is not null
 		ContractException contractException = assertThrows(ContractException.class,
-				() -> GroupsTestPluginFactory
-						.factory(0, 0, 0, 0, t -> {
-						})
-						.setPeoplePluginData(null));
+				() -> GroupsTestPluginFactory.factory(0, 0, 0, 0, t -> {
+				}).setPeoplePluginData(null));
 		assertEquals(PersonError.NULL_PEOPLE_PLUGIN_DATA, contractException.getErrorType());
 	}
 
@@ -202,24 +188,19 @@ public class AT_GroupsTestPluginFactory {
 		WellState wellState = WellState.builder().setSeed(8478739978811865148L).build();
 		builder.setMainRNGState(wellState);
 		wellState = WellState.builder().setSeed(1336318114409771694L).build();
-		builder.addRNG(TestRandomGeneratorId.BLITZEN,wellState);
+		builder.addRNG(TestRandomGeneratorId.BLITZEN, wellState);
 
 		StochasticsPluginData stochasticsPluginData = builder.build();
 
-		List<Plugin> plugins = GroupsTestPluginFactory
-				.factory(0, 0, 0, 0, t -> {
-				})
-				.setStochasticsPluginData(stochasticsPluginData)
-				.getPlugins();
+		List<Plugin> plugins = GroupsTestPluginFactory.factory(0, 0, 0, 0, t -> {
+		}).setStochasticsPluginData(stochasticsPluginData).getPlugins();
 
 		checkPluginDataExists(plugins, stochasticsPluginData, StochasticsPluginId.PLUGIN_ID);
 
 		// precondition: stochasticsPluginData is not null
 		ContractException contractException = assertThrows(ContractException.class,
-				() -> GroupsTestPluginFactory
-						.factory(0, 0, 0, 0, t -> {
-						})
-						.setStochasticsPluginData(null));
+				() -> GroupsTestPluginFactory.factory(0, 0, 0, 0, t -> {
+				}).setStochasticsPluginData(null));
 		assertEquals(StochasticsError.NULL_STOCHASTICS_PLUGIN_DATA, contractException.getErrorType());
 	}
 
@@ -233,88 +214,68 @@ public class AT_GroupsTestPluginFactory {
 		int expectedGroupsPerPerson = 3;
 		int expectedPeoplePerGroup = 5;
 
-		int membershipCount = (int) FastMath.round(initialPopulation * expectedGroupsPerPerson);
-		int groupCount = (int) FastMath.round(membershipCount / expectedPeoplePerGroup);
-
 		List<PersonId> people = new ArrayList<>();
-		for (int i = 0; i < 100; i++) {
+		for (int i = 0; i < initialPopulation; i++) {
 			people.add(new PersonId(i));
 		}
+		int membershipCount = (int) FastMath.round(people.size() * expectedGroupsPerPerson);
+		int groupCount = (int) FastMath.round(membershipCount / expectedPeoplePerGroup);
+		membershipCount = FastMath.min(membershipCount,	groupCount*people.size());
 
-		GroupsPluginData groupsPluginData = GroupsTestPluginFactory.getStandardGroupsPluginData(groupCount,
-				membershipCount, people, seed);
-
-		Set<TestGroupTypeId> expectedGroupTypeIds = EnumSet.allOf(TestGroupTypeId.class);
-		assertFalse(expectedGroupTypeIds.isEmpty());
-
-		Set<GroupTypeId> actualGroupTypeIds = groupsPluginData.getGroupTypeIds();
-		assertEquals(expectedGroupTypeIds, actualGroupTypeIds);
-
-		Set<TestGroupPropertyId> expectedGroupPropertyIds = EnumSet.allOf(TestGroupPropertyId.class);
-		assertFalse(expectedGroupPropertyIds.isEmpty());
-
-		for (TestGroupPropertyId expectedPropertyId : TestGroupPropertyId.values()) {
-			TestGroupTypeId expectedGroupTypeId = expectedPropertyId.getTestGroupTypeId();
-			PropertyDefinition expectedPropertyDefinition = expectedPropertyId.getPropertyDefinition();
-
-			assertTrue(groupsPluginData.getGroupPropertyIds(expectedGroupTypeId).contains(expectedPropertyId));
-			PropertyDefinition actualPropertyDefinition = groupsPluginData
-					.getGroupPropertyDefinition(expectedGroupTypeId, expectedPropertyId);
-			assertEquals(expectedPropertyDefinition, actualPropertyDefinition);
-		}
-
-		assertEquals(groupCount, groupsPluginData.getGroupIds().size());
-		assertEquals(initialPopulation, groupsPluginData.getPersonCount());
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
-		TestGroupTypeId expectedGroupTypeId = TestGroupTypeId.GROUP_TYPE_1;
-		for (GroupId groupId : groupsPluginData.getGroupIds()) {			
-			GroupTypeId actualGroupTypeId = groupsPluginData.getGroupTypeId(groupId);
-			assertEquals(expectedGroupTypeId, actualGroupTypeId);
+		GroupsPluginData.Builder groupBuilder = GroupsPluginData.builder();
 
-			List<GroupPropertyValue> expectedGroupPropertyValues = new ArrayList<>();
+		for (TestGroupTypeId testGroupTypeId : TestGroupTypeId.values()) {
+			groupBuilder.addGroupTypeId(testGroupTypeId);
+		}
+
+		for (TestGroupPropertyId testGroupPropertyId : TestGroupPropertyId.values()) {
+			groupBuilder.defineGroupProperty(testGroupPropertyId.getTestGroupTypeId(), testGroupPropertyId,
+					testGroupPropertyId.getPropertyDefinition());
+		}
+
+		List<GroupId> groups = new ArrayList<>();
+
+		TestGroupTypeId testGroupTypeId = TestGroupTypeId.GROUP_TYPE_1;
+		for (int i = 0; i < groupCount; i++) {
+			GroupId groupId = new GroupId(i);
+			groups.add(groupId);
+			groupBuilder.addGroup(groupId, testGroupTypeId);
 			for (TestGroupPropertyId testGroupPropertyId : TestGroupPropertyId
-					.getTestGroupPropertyIds(expectedGroupTypeId)) {
-				GroupPropertyValue expectedValue = new GroupPropertyValue(testGroupPropertyId,
-						testGroupPropertyId.getRandomPropertyValue(randomGenerator));
-				expectedGroupPropertyValues.add(expectedValue);
+					.getShuffledTestGroupPropertyIds(testGroupTypeId, randomGenerator)) {
+				PropertyDefinition propertyDefinition = testGroupPropertyId.getPropertyDefinition();
+				boolean hasDefaultValue = propertyDefinition.getDefaultValue().isPresent();
+				boolean setValue = randomGenerator.nextBoolean();
+
+				if (!hasDefaultValue || setValue) {
+					groupBuilder.setGroupPropertyValue(groupId, testGroupPropertyId,
+							testGroupPropertyId.getRandomPropertyValue(randomGenerator));
+				}
 			}
+			testGroupTypeId = testGroupTypeId.next();
+		}
 
-			assertEquals(expectedGroupPropertyValues.size(), groupsPluginData.getGroupPropertyValues(groupId).size());
-			for (int i = 0; i < expectedGroupPropertyValues.size(); i++) {
-				assertEquals(expectedGroupPropertyValues.get(i),
-						groupsPluginData.getGroupPropertyValues(groupId).get(i));
+		List<MultiKey> groupMemeberships = new ArrayList<>();
+		for (PersonId personId : people) {
+			for (GroupId groupId : groups) {
+				groupMemeberships.add(new MultiKey(groupId, personId));
 			}
-			expectedGroupTypeId = expectedGroupTypeId.next();
 		}
+		Collections.shuffle(groupMemeberships,new Random(randomGenerator.nextLong()));
 
-		Set<MultiKey> groupMemeberships = new LinkedHashSet<>();
-		List<GroupId> groups = groupsPluginData.getGroupIds();
-		while (groupMemeberships.size() < membershipCount) {
-			PersonId personId = people.get(randomGenerator.nextInt(people.size()));
-			GroupId groupId = groups.get(randomGenerator.nextInt(groups.size()));
-			groupMemeberships.add(new MultiKey(groupId, personId));
+		for (int i=0;i<membershipCount;i++) {
+			MultiKey multiKey = groupMemeberships.get(i);
+			GroupId groupId = multiKey.getKey(0);
+			PersonId personId = multiKey.getKey(1);
+			groupBuilder.associatePersonToGroup(groupId, personId);
 		}
+		GroupsPluginData expectedPluginData = groupBuilder.build();
 
-		for (MultiKey multiKey : groupMemeberships) {
-			GroupId expectedGroupId = multiKey.getKey(0);
-			PersonId expectedPersonId = multiKey.getKey(1);
+		GroupsPluginData actualPluginData = GroupsTestPluginFactory.getStandardGroupsPluginData(expectedGroupsPerPerson,
+				expectedPeoplePerGroup, people, seed);
 
-			assertTrue(groupsPluginData.getGroupsForPerson(expectedPersonId).contains(expectedGroupId));
-		}
-
-		double numGroups = 0;
-		for (PersonId person : people) {
-			numGroups += groupsPluginData.getGroupsForPerson(person).size();
-		}
-
-		double actualGroupsPerPerson = numGroups / initialPopulation;
-
-		double lowerBound = expectedGroupsPerPerson * 0.9;
-		double upperBound = expectedGroupsPerPerson * 1.1;
-
-		assertTrue(actualGroupsPerPerson <= upperBound);
-		assertTrue(actualGroupsPerPerson > lowerBound);
+		assertEquals(expectedPluginData, actualPluginData);
 	}
 
 	@Test
@@ -322,9 +283,17 @@ public class AT_GroupsTestPluginFactory {
 	public void testGetStandardPeoplePluginData() {
 
 		int initialPopulation = 100;
-		PeoplePluginData peoplePluginData = GroupsTestPluginFactory.getStandardPeoplePluginData(initialPopulation);
 
-		assertEquals(initialPopulation, peoplePluginData.getPersonIds().size());
+		PeoplePluginData.Builder peopleBuilder = PeoplePluginData.builder();
+
+		if (initialPopulation > 0) {
+			peopleBuilder.addPersonRange(new PersonRange(0, initialPopulation - 1));
+		}
+
+		PeoplePluginData expectedPluginData = peopleBuilder.build();
+		PeoplePluginData actualPluginData = GroupsTestPluginFactory.getStandardPeoplePluginData(initialPopulation);
+
+		assertEquals(expectedPluginData, actualPluginData);
 	}
 
 	@Test
@@ -332,10 +301,12 @@ public class AT_GroupsTestPluginFactory {
 			long.class })
 	public void testGetStandardStochasticsPluginData() {
 		long seed = 6072871729256538807L;
-		StochasticsPluginData stochasticsPluginData = GroupsTestPluginFactory
-				.getStandardStochasticsPluginData(seed);
-		assertEquals(seed, stochasticsPluginData.getWellState().getSeed());
-		assertEquals(0, stochasticsPluginData.getRandomNumberGeneratorIds().size());
+		WellState wellState = WellState.builder().setSeed(seed).build();
+
+		StochasticsPluginData expectedPluginData = StochasticsPluginData.builder().setMainRNGState(wellState).build();
+		StochasticsPluginData actualPluginData = GroupsTestPluginFactory.getStandardStochasticsPluginData(seed);
+
+		assertEquals(expectedPluginData, actualPluginData);
 	}
 
 }

@@ -88,5 +88,5 @@ message PartitionMapInput {
 
 // PluginData
 message PartitionsPluginDataInput {
-    repeated PartitionMapInput partitions = 1;
+    bool supportRunContinuity = 1;
 }

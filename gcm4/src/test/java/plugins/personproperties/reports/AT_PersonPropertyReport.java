@@ -34,7 +34,7 @@ import plugins.personproperties.support.PersonPropertyId;
 import plugins.personproperties.testsupport.PersonPropertiesTestPluginFactory;
 import plugins.personproperties.testsupport.TestPersonPropertyId;
 import plugins.regions.RegionsPlugin;
-import plugins.regions.RegionsPluginData;
+import plugins.regions.datamanagers.RegionsPluginData;
 import plugins.regions.testsupport.TestRegionId;
 //import plugins.reports.ReportsPlugin;
 //import plugins.reports.ReportsPluginData;

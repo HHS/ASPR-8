@@ -18,7 +18,7 @@ public class BasePeopleContainer implements PeopleContainer {
 	 * Enumeration for the two ways that people are stored in a partition
 	 */
 	private static enum PeopleContainerMode {
-		INTSET, TREE_BIT_SET_SLOW;
+		INTSET, TREE_BIT_SET;
 	}
 
 	private static final int TREE_BIT_SET_SLOW_THRESHOLD = 28;
@@ -31,10 +31,19 @@ public class BasePeopleContainer implements PeopleContainer {
 
 	private PeopleContainer internalPeopleContainer;
 
-	public BasePeopleContainer(PartitionsContext partitionsContext) {
+	private final boolean supportRunContinuity;
+
+	public BasePeopleContainer(PartitionsContext partitionsContext, boolean supportRunContinuity) {
 		this.peopleDataManager = partitionsContext.getDataManager(PeopleDataManager.class);
-		mode = PeopleContainerMode.INTSET;
-		internalPeopleContainer = new IntSetPeopleContainer();
+		this.supportRunContinuity = supportRunContinuity;
+
+		if (supportRunContinuity) {
+			internalPeopleContainer = new TreeBitSetPeopleContainer(peopleDataManager);
+			mode = PeopleContainerMode.TREE_BIT_SET;
+		} else {
+			mode = PeopleContainerMode.INTSET;
+			internalPeopleContainer = new IntSetPeopleContainer();
+		}
 
 	}
 
@@ -46,12 +55,17 @@ public class BasePeopleContainer implements PeopleContainer {
 	 * size of the container is greater than 1% of the total world population,
 	 * then the BooleanPeopleContainer should be chosen. By setting two separate
 	 * thresholds, we avoid modality thrash.
+	 * 
+	 * If supportRunContinuity is true, then the mode remains fixed at
+	 * TREE_BIT_SET without regard to the relative size of the cell
 	 */
 	private void determineMode(int size) {
-
+		if (supportRunContinuity) {
+			return;
+		}
 		switch (mode) {
 
-		case TREE_BIT_SET_SLOW:
+		case TREE_BIT_SET:
 			if (size <= peopleDataManager.getPersonIdLimit() / INT_SET_THRESHOLD) {
 				mode = PeopleContainerMode.INTSET;
 				List<PersonId> people = internalPeopleContainer.getPeople();
@@ -67,7 +81,7 @@ public class BasePeopleContainer implements PeopleContainer {
 			break;
 		case INTSET:
 			if (size >= peopleDataManager.getPersonIdLimit() / TREE_BIT_SET_SLOW_THRESHOLD) {
-				mode = PeopleContainerMode.TREE_BIT_SET_SLOW;
+				mode = PeopleContainerMode.TREE_BIT_SET;
 				List<PersonId> people = internalPeopleContainer.getPeople();
 				internalPeopleContainer = new TreeBitSetPeopleContainer(peopleDataManager);
 				for (PersonId personId : people) {

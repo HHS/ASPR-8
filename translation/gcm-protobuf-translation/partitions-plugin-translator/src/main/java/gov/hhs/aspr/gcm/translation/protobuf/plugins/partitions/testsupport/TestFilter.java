@@ -59,4 +59,9 @@ public class TestFilter extends Filter {
         return Objects.equals(this.filterId, other.filterId);
     }
 
+    @Override
+    public String toString() {
+        return "TestFilter [filterId=" + filterId + "]";
+    }
+
 }

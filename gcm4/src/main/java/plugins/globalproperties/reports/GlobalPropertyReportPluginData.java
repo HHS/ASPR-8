@@ -152,8 +152,6 @@ public final class GlobalPropertyReportPluginData implements PluginData {
 		 * @throws ContractException
 		 *             <li>{@linkplain ReportError#NULL_REPORT_LABEL} if the
 		 *             report label is not assigned</li>
-		 *             <li>{@linkplain ReportError#NULL_REPORT_PERIOD} if the
-		 *             report period is not assigned</li>
 		 * 
 		 * 
 		 */

@@ -35,51 +35,61 @@ public final class ReportContext {
 	 * only passive plans remain on the planning schedule.
 	 * 
 	 * @throws ContractException
-	 *             <li>{@link NucleusError#NULL_PLAN} if the plan is null
-	 *             <li>{@link NucleusError#PAST_PLANNING_TIME} if the plan is
-	 *             scheduled for a time in the past *
-	 *             <li>{@link NucleusError#PLANNING_QUEUE_CLOSED} if the plan is
-	 *             added to the simulation after event processing is finished
+	 *                           <li>{@link NucleusError#NULL_PLAN} if the plan is
+	 *                           null
+	 *                           <li>{@link NucleusError#PAST_PLANNING_TIME} if the
+	 *                           plan is
+	 *                           scheduled for a time in the past *
+	 *                           <li>{@link NucleusError#PLANNING_QUEUE_CLOSED} if
+	 *                           the plan is
+	 *                           added to the simulation after event processing is
+	 *                           finished
 	 * 
 	 * 
 	 * 
 	 */
 	public void addPlan(final Consumer<ReportContext> consumer, final double planTime) {
-		Plan<ReportContext> plan = Plan	.builder(ReportContext.class)//
-										.setActive(false)//
-										.setCallbackConsumer(consumer)//
-										.setKey(null)//
-										.setPlanData(null)//										
-										.setTime(planTime)//
-										.build();//
+		Plan<ReportContext> plan = Plan.builder(ReportContext.class)//
+				.setActive(false)//
+				.setCallbackConsumer(consumer)//
+				.setKey(null)//
+				.setPlanData(null)//
+				.setTime(planTime)//
+				.build();//
 		simulation.addReportPlan(plan);
 	}
-	
+
 	/**
 	 * Schedules a plan.
 	 * 
 	 * @throws ContractException
-	 *             <li>{@link NucleusError#NULL_PLAN} if the plan is null
-	 *             <li>{@link NucleusError#PAST_PLANNING_TIME} if the plan is
-	 *             scheduled for a time in the past *
-	 *             <li>{@link NucleusError#PLANNING_QUEUE_CLOSED} if the plan is
-	 *             added to the simulation after event processing is finished
+	 *                           <li>{@link NucleusError#NULL_PLAN} if the plan is
+	 *                           null
+	 *                           <li>{@link NucleusError#PAST_PLANNING_TIME} if the
+	 *                           plan is
+	 *                           scheduled for a time in the past *
+	 *                           <li>{@link NucleusError#PLANNING_QUEUE_CLOSED} if
+	 *                           the plan is
+	 *                           added to the simulation after event processing is
+	 *                           finished
 	 * 
 	 * 
 	 * 
 	 */
-	public void addPlan(Plan<ReportContext> plan) {		
+	public void addPlan(Plan<ReportContext> plan) {
+		if (plan == null) {
+			throw new ContractException(NucleusError.NULL_PLAN);
+		}
 		simulation.addReportPlan(plan);
 	}
-
-	
 
 	/**
 	 * Retrieves a plan stored for the given key.
 	 * 
 	 * @throws ContractException
-	 *             <li>{@link NucleusError#NULL_PLAN_KEY} if the plan key is
-	 *             null
+	 *                           <li>{@link NucleusError#NULL_PLAN_KEY} if the plan
+	 *                           key is
+	 *                           null
 	 */
 	public Optional<Plan<ReportContext>> getPlan(final Object key) {
 		return simulation.getReportPlan(key);
@@ -92,6 +102,7 @@ public final class ReportContext {
 	public boolean stateRecordingIsScheduled() {
 		return simulation.stateRecordingIsScheduled();
 	}
+
 	/**
 	 * Returns the scheduled simulation halt time. Negative values indicate
 	 * there is no scheduled halt time.
@@ -99,7 +110,7 @@ public final class ReportContext {
 	public double getScheduledSimulationHaltTime() {
 		return simulation.getScheduledSimulationHaltTime();
 	}
-	
+
 	/**
 	 * Returns true if and only if there a state recording is scheduled and the
 	 * given time exceeds the recording time.
@@ -107,12 +118,14 @@ public final class ReportContext {
 	protected boolean plansRequirePlanData(double time) {
 		return simulation.plansRequirePlanData(time);
 	}
+
 	/**
 	 * Removes and returns the plan associated with the given key.
 	 * 
 	 * @throws ContractException
-	 *             <li>{@link NucleusError#NULL_PLAN_KEY} if the plan key is
-	 *             null
+	 *                           <li>{@link NucleusError#NULL_PLAN_KEY} if the plan
+	 *                           key is
+	 *                           null
 	 */
 
 	public Optional<Plan<ReportContext>> removePlan(final Object key) {
@@ -133,12 +146,15 @@ public final class ReportContext {
 	 * execution of data changes.
 	 * 
 	 * @throws ContractException
-	 *             <li>{@link NucleusError#NULL_EVENT_CLASS} if the event class
-	 *             is null
-	 *             <li>{@link NucleusError#NULL_EVENT_CONSUMER} if the event
-	 *             consumer is null
-	 *             <li>{@link NucleusError#DUPLICATE_EVENT_SUBSCRIPTION} if the
-	 *             data manager is already subscribed
+	 *                           <li>{@link NucleusError#NULL_EVENT_CLASS} if the
+	 *                           event class
+	 *                           is null
+	 *                           <li>{@link NucleusError#NULL_EVENT_CONSUMER} if the
+	 *                           event
+	 *                           consumer is null
+	 *                           <li>{@link NucleusError#DUPLICATE_EVENT_SUBSCRIPTION}
+	 *                           if the
+	 *                           data manager is already subscribed
 	 * 
 	 */
 	public <T extends Event> void subscribe(Class<T> eventClass, BiConsumer<ReportContext, T> eventConsumer) {
@@ -150,8 +166,9 @@ public final class ReportContext {
 	 * event handling.
 	 * 
 	 * @throws ContractException
-	 *             <li>{@link NucleusError#NULL_EVENT_CLASS} if the event class
-	 *             is null
+	 *                           <li>{@link NucleusError#NULL_EVENT_CLASS} if the
+	 *                           event class
+	 *                           is null
 	 */
 	public void unsubscribe(Class<? extends Event> eventClass) {
 		simulation.unsubscribeReportFromEvent(eventClass);
@@ -161,8 +178,9 @@ public final class ReportContext {
 	 * Registers the given consumer to be executed at the end of the simulation.
 	 * 
 	 * @throws ContractException
-	 *             <li>{@link NucleusError#NULL_REPORT_CONTEXT_CONSUMER} if the
-	 *             consumer is null</li>
+	 *                           <li>{@link NucleusError#NULL_REPORT_CONTEXT_CONSUMER}
+	 *                           if the
+	 *                           consumer is null</li>
 	 */
 	public void subscribeToSimulationClose(Consumer<ReportContext> consumer) {
 		simulation.subscribeReportToSimulationClose(consumer);
@@ -172,10 +190,13 @@ public final class ReportContext {
 	 * Returns the DataManger instance from the given class reference
 	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain NucleusError#NULL_DATA_VIEW_CLASS} if the
-	 *             class reference is null</li>
-	 *             <li>{@linkplain NucleusError#UNKNOWN_DATA_VIEW} if the class
-	 *             reference does not correspond to a contained data view</li>
+	 *                           <li>{@linkplain NucleusError#NULL_DATA_VIEW_CLASS}
+	 *                           if the
+	 *                           class reference is null</li>
+	 *                           <li>{@linkplain NucleusError#UNKNOWN_DATA_VIEW} if
+	 *                           the class
+	 *                           reference does not correspond to a contained data
+	 *                           view</li>
 	 * 
 	 */
 
@@ -190,14 +211,15 @@ public final class ReportContext {
 	public void releaseOutput(Object output) {
 		simulation.releaseOutput(output);
 	}
-	
+
 	/**
 	 * Sets a function for converting plan data instances into consumers of
 	 * actor context that will be used to convert stored plans from a previous
 	 * simulation execution into current plans. Only used during the
 	 * initialization of the simulation before time flows.
 	 */
-	public <T extends PlanData> void setPlanDataConverter(Class<T> planDataClass, Function<T, Consumer<ReportContext>> conversionFunction) {
+	public <T extends PlanData> void setPlanDataConverter(Class<T> planDataClass,
+			Function<T, Consumer<ReportContext>> conversionFunction) {
 		simulation.setReportPlanDataConverter(planDataClass, conversionFunction);
 	}
 

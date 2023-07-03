@@ -1,7 +1,10 @@
 package plugins.globalproperties.testsupport;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 import org.apache.commons.math3.random.RandomGenerator;
 
@@ -120,6 +123,17 @@ public enum TestGlobalPropertyId implements GlobalPropertyId {
 	public static GlobalPropertyId getUnknownGlobalPropertyId() {
 		return new GlobalPropertyId() {
 		};
+	}
+	
+	public static List<TestGlobalPropertyId> getGlobalPropertyIds(){
+		return Arrays.asList(TestGlobalPropertyId.values());
+	}
+	
+	public static List<TestGlobalPropertyId> getShuffeledGlobalPropertyIds(RandomGenerator randomGenerator){
+		List<TestGlobalPropertyId> result = getGlobalPropertyIds();
+		Random random = new Random(randomGenerator.nextLong());
+		Collections.shuffle(result,random);
+		return result;
 	}
 
 }

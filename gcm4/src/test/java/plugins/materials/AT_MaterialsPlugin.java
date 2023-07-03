@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import nucleus.Plugin;
 import nucleus.PluginId;
+import plugins.materials.datamangers.MaterialsPluginData;
 import plugins.regions.RegionsPluginId;
 import plugins.resources.ResourcesPluginId;
 import util.annotations.UnitTestMethod;

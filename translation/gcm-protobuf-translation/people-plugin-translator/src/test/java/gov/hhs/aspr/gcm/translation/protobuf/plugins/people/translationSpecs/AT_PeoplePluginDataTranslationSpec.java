@@ -56,12 +56,14 @@ public class AT_PeoplePluginDataTranslationSpec {
         PeoplePluginData actualAppValue = translationSpec.convertInputObject(inputValue);
 
         assertEquals(expectedAppValue, actualAppValue);
+        assertEquals(expectedAppValue.toString(), actualAppValue.toString());
 
         inputValue = inputValue.toBuilder().clearPersonCount().build();
 
         actualAppValue = translationSpec.convertInputObject(inputValue);
 
         assertEquals(expectedAppValue, actualAppValue);
+        assertEquals(expectedAppValue.toString(), actualAppValue.toString());
     }
 
     @Test

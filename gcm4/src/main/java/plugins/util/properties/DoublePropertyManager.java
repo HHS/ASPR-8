@@ -1,5 +1,8 @@
 package plugins.util.properties;
 
+import java.util.Iterator;
+import java.util.function.Supplier;
+
 import plugins.util.properties.arraycontainers.DoubleValueContainer;
 import util.errors.ContractException;
 
@@ -30,13 +33,9 @@ public final class DoublePropertyManager implements IndexedPropertyManager {
 	 *            
 	 * 
 	 */
-	public DoublePropertyManager(PropertyDefinition propertyDefinition, int initialSize) {
+	public DoublePropertyManager(PropertyDefinition propertyDefinition, Supplier<Iterator<Integer>> indexIteratorSupplier) {
 		if (propertyDefinition == null) {
 			throw new ContractException(PropertyError.NULL_PROPERTY_DEFINITION);
-		}
-		
-		if (initialSize < 0) {
-			throw new ContractException(PropertyError.NEGATIVE_INITIAL_SIZE);
 		}
 
 		if (propertyDefinition.getType() != Double.class) {
@@ -46,7 +45,7 @@ public final class DoublePropertyManager implements IndexedPropertyManager {
 		if (propertyDefinition.getDefaultValue().isPresent()) {			
 			defaultValue = (Double) propertyDefinition.getDefaultValue().get();
 		}
-		doubleValueContainer = new DoubleValueContainer(defaultValue, initialSize);
+		doubleValueContainer = new DoubleValueContainer(defaultValue,indexIteratorSupplier);
 	}
 
 	@Override

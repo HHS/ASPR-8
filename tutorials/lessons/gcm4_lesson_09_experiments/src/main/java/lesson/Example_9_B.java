@@ -45,7 +45,7 @@ public final class Example_9_B {
 		Dimension dimension = FunctionalDimension	.builder()//
 										.addLevel((context) -> {
 											DiseasePluginData.Builder builder = 
-													context.get(DiseasePluginData.Builder.class);
+													context.getPluginDataBuilder(DiseasePluginData.Builder.class);
 											double r0 = 2.5;
 											builder.setR0(r0);
 											ArrayList<String> result = new ArrayList<>();
@@ -55,7 +55,7 @@ public final class Example_9_B {
 										
 										.addLevel((context) -> {
 											DiseasePluginData.Builder builder = 
-													context.get(DiseasePluginData.Builder.class);
+													context.getPluginDataBuilder(DiseasePluginData.Builder.class);
 											double r0 = 2.0;
 											builder.setR0(r0);
 											ArrayList<String> result = new ArrayList<>();
