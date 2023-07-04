@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Random;
+import java.util.function.Supplier;
 
 import org.junit.jupiter.api.Test;
 
@@ -31,7 +32,7 @@ public class AT_EnumContainer {
 	 * Tests {@link EnumContainer#EnumContainer(Class, Object)}
 	 */
 	@Test
-	@UnitTestConstructor(target = EnumContainer.class, args = { Class.class, Object.class })
+	@UnitTestConstructor(target = EnumContainer.class, args = { Class.class, Object.class, Supplier.class})
 	public void testConstructor_ClassObject() {
 		assertNotNull(new EnumContainer(Animal.class, Animal.DOG,this::getEmptyIndexIterator));
 
@@ -48,27 +49,7 @@ public class AT_EnumContainer {
 
 	}
 
-	/**
-	 * Tests {@link EnumContainer#EnumContainer(Class, Object, int)}
-	 */
-	@Test
-	@UnitTestConstructor(target = EnumContainer.class, args = { Class.class, Object.class, int.class })
-	public void testConstructor_ClassObjectInt() {
-		assertNotNull(new EnumContainer(Animal.class, Animal.DOG,this::getEmptyIndexIterator));
-
-		// Test preconditions
-
-		// if the class is null
-		assertThrows(IllegalArgumentException.class, () -> new EnumContainer(null, Animal.DOG, this::getEmptyIndexIterator));
-
-		// if the class is not an enumeration
-		assertThrows(IllegalArgumentException.class, () -> new EnumContainer(Integer.class, Animal.DOG,this::getEmptyIndexIterator));
-
-		// if the default is not a member of the enum
-		assertThrows(IllegalArgumentException.class, () -> new EnumContainer(Animal.class, 234,this::getEmptyIndexIterator));
-
-
-	}
+	
 
 	/**
 	 * Tests {@link EnumContainer#getValue(int)}

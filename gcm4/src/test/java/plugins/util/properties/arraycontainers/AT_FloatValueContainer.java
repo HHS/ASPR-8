@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.function.Supplier;
 
 import org.junit.jupiter.api.Test;
 
@@ -19,23 +20,11 @@ public class AT_FloatValueContainer {
 		return Collections.emptyIterator();				
 	}
 	
-
-	/**
-	 * Tests {@link FloatValueContainer#FloatValueContainer(float, int)}
-	 */
-	@Test
-	@UnitTestConstructor(target = FloatValueContainer.class, args = { float.class, int.class })
-	public void testConstructor_FloatInt() {
-
-		FloatValueContainer floatValueContainer = new FloatValueContainer(0,this::getEmptyIndexIterator);
-		assertNotNull(floatValueContainer);
-	}
-
 	/**
 	 * Tests {@link FloatValueContainer#FloatValueContainer(float)}
 	 */
 	@Test
-	@UnitTestConstructor(target = FloatValueContainer.class, args = { float.class })
+	@UnitTestConstructor(target = FloatValueContainer.class, args = { float.class, Supplier.class })
 	public void testConstructor_Float() {
 		FloatValueContainer floatValueContainer = new FloatValueContainer(0,this::getEmptyIndexIterator);
 		assertNotNull(floatValueContainer);

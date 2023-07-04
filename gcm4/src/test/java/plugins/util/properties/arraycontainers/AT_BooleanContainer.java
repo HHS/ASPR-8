@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Random;
+import java.util.function.Supplier;
 
 import org.junit.jupiter.api.Test;
 
@@ -25,7 +26,7 @@ public class AT_BooleanContainer {
 	 * Test {@link BooleanContainer#BooleanContainer(boolean)}
 	 */
 	@Test
-	@UnitTestConstructor(target = BooleanContainer.class, args = { boolean.class })
+	@UnitTestConstructor(target = BooleanContainer.class, args = { boolean.class, Supplier.class })
 	public void testConstructor_Boolean() {
 		BooleanContainer booleanContainer = new BooleanContainer(true,this::getEmptyIndexIterator);
 
@@ -41,26 +42,7 @@ public class AT_BooleanContainer {
 
 	}
 
-	/**
-	 * Test {@link BooleanContainer#BooleanContainer(boolean, int)}
-	 */
-	@Test
-	@UnitTestConstructor(target = BooleanContainer.class, args = { boolean.class, int.class })
-	public void testConstructor_BooleanInt() {
-
-		BooleanContainer booleanContainer = new BooleanContainer(true,this::getEmptyIndexIterator);
-
-		for (int i = 0; i < 10; i++) {
-			assertTrue(booleanContainer.get(i));
-		}
-
-		booleanContainer = new BooleanContainer(false,this::getEmptyIndexIterator);
-
-		for (int i = 0; i < 10; i++) {
-			assertFalse(booleanContainer.get(i));
-		}
-
-	}
+	
 
 	/**
 	 * Test {@link BooleanContainer#get(int)}

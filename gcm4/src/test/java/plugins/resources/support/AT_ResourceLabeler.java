@@ -51,7 +51,7 @@ public final class AT_ResourceLabeler {
 		}
 	}
 	@Test
-	@UnitTestConstructor(target = ResourceLabeler.class, args = { ResourceId.class, Function.class })
+	@UnitTestConstructor(target = ResourceLabeler.class, args = { ResourceId.class })
 	public void testConstructor() {
 		assertNotNull(new LocalResourceLabeler(TestResourceId.RESOURCE_3, (v) -> null));
 	}

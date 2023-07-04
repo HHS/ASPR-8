@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.function.Supplier;
 
 import org.junit.jupiter.api.Test;
 
@@ -498,24 +499,13 @@ public class AT_IntValueContainer {
 	 * Test for {@link IntValueContainer#IntValueContainer(long)}
 	 */
 	@Test
-	@UnitTestConstructor(target = IntValueContainer.class, args = { long.class })
-	public void testConstructor_Long() {
+	@UnitTestConstructor(target = IntValueContainer.class, args = { long.class, Supplier.class })
+	public void testConstructor() {
 		IntValueContainer intValueContainer = new IntValueContainer(12,this::getEmptyIndexIterator);
 		assertNotNull(intValueContainer);
 	}
 
-	/**
-	 * Test for {@link IntValueContainer#IntValueContainer(long, int)}
-	 */
-	@Test
-	@UnitTestConstructor(target = IntValueContainer.class, args = { long.class, int.class })
-	public void testConstructor_LongInt() {
-		IntValueContainer intValueContainer = new IntValueContainer(12,this::getEmptyIndexIterator);
-		assertNotNull(intValueContainer);
-
-		intValueContainer = new IntValueContainer(12,this::getEmptyIndexIterator);
-		assertNotNull(intValueContainer);
-	}
+	
 
 	/**
 	 * Test for {@link IntValueContainer#getDefaultValueAsByte()}

@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class AT_PersonRange {
 
 	@Test
-	@UnitTestConstructor(target = PersonRange.class, args = {})
+	@UnitTestConstructor(target = PersonRange.class, args = {int.class, int.class})
 	public void testPersonRange() {
 
 		// precondition test: illegal person range

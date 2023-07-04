@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.function.Supplier;
 
 import org.junit.jupiter.api.Test;
 
@@ -19,7 +20,7 @@ public class AT_DoubleValueContainer {
 	 * Tests {@link DoubleValueContainer#DoubleValueContainer(double)}
 	 */
 	@Test
-	@UnitTestConstructor(target = DoubleValueContainer.class, args = { double.class })
+	@UnitTestConstructor(target = DoubleValueContainer.class, args = { double.class, Supplier.class })
 	public void testConstructor_Double() {
 		DoubleValueContainer doubleValueContainer = new DoubleValueContainer(0,this::getEmptyIndexIterator);
 		assertNotNull(doubleValueContainer);
@@ -30,16 +31,7 @@ public class AT_DoubleValueContainer {
 		return Collections.emptyIterator();				
 	}
 	
-	/**
-	 * Tests {@link DoubleValueContainer#DoubleValueContainer(double, int)}
-	 */
-	@Test
-	@UnitTestConstructor(target = DoubleValueContainer.class, args = { double.class, int.class })
-	public void testConstructor_DoubleInt() {
-
-		DoubleValueContainer doubleValueContainer = new DoubleValueContainer(0,this::getEmptyIndexIterator);
-		assertNotNull(doubleValueContainer);		
-	}
+	
 
 	/**
 	 * Tests {@link DoubleValueContainer#getCapacity()}

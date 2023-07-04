@@ -10,8 +10,8 @@ import java.nio.file.Path;
 
 public class AT_ExperimentLineWriter {
 
-    @Test
-    @UnitTestConstructor(target = ExperimentLineWriter.class, args = { ExperimentContext.class, Path.class, boolean.class,String.class}, tags = { UnitTag.MANUAL , UnitTag.CLASS_PROXY})
+    @Test    
+    @UnitTestConstructor(target = ExperimentLineWriter.class, args = { ExperimentContext.class, Path.class, String.class}, tags = { UnitTag.MANUAL , UnitTag.CLASS_PROXY})
     public void testConstructor() {
         // covered by manual test of NIOReportItemHandler
     }

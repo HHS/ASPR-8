@@ -48,7 +48,7 @@ public class AT_PersonPropertyLabeler {
 	}
 
 	@Test
-	@UnitTestConstructor(target = PersonPropertyLabeler.class, args = { PersonPropertyId.class, Function.class })
+	@UnitTestConstructor(target = PersonPropertyLabeler.class, args = { PersonPropertyId.class})
 	public void testConstructor() {
 		// nothing to test
 	}

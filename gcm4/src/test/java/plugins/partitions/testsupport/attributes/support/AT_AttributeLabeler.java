@@ -35,7 +35,7 @@ import util.random.RandomGeneratorProvider;
 public final class AT_AttributeLabeler {
 
 	@Test
-	@UnitTestConstructor(target = AttributeLabeler.class, args = { AttributeId.class, Function.class })
+	@UnitTestConstructor(target = AttributeLabeler.class, args = { AttributeId.class })
 	public void testConstructor() {
 		// nothing to test
 	}

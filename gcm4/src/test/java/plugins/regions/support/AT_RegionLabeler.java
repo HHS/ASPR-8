@@ -48,7 +48,7 @@ public class AT_RegionLabeler {
 		}
 	}
 	@Test
-	@UnitTestConstructor(target = RegionLabeler.class,args = { Function.class })
+	@UnitTestConstructor(target = RegionLabeler.class,args = {})
 	public void testConstructor() {
 		assertNotNull(new LocalRegionLabeler((c) -> null));
 	}
