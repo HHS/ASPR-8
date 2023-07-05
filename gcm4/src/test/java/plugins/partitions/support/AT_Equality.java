@@ -4,9 +4,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import util.annotations.UnitTestMethod;
+import util.random.RandomGeneratorProvider;
+import util.wrappers.MutableInteger;
 
 public class AT_Equality {
 
@@ -51,9 +57,7 @@ public class AT_Equality {
 		}
 	}
 
-	/**
-	 * Tests {@link Equality#getNegation(Equality)}
-	 */
+	
 	@Test
 	@UnitTestMethod(target = Equality.class, name = "getNegation", args = { Equality.class })
 	public void testGetNegation() {
@@ -64,6 +68,29 @@ public class AT_Equality {
 		assertEquals(Equality.LESS_THAN, Equality.getNegation(Equality.GREATER_THAN_EQUAL));
 		assertEquals(Equality.GREATER_THAN_EQUAL, Equality.getNegation(Equality.LESS_THAN));
 		assertEquals(Equality.GREATER_THAN, Equality.getNegation(Equality.LESS_THAN_EQUAL));
+	}
+	
+	
+	@Test
+	@UnitTestMethod(target = Equality.class, name = "getRandomEquality", args = { RandomGenerator.class })
+	public void testGetRandomEquality() {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(81893850178162700L);
+		Map<Equality,MutableInteger> map = new LinkedHashMap<>();
+		for(Equality equality : Equality.values()) {
+			map.put(equality, new MutableInteger());
+		}
+		
+		for(int i =0;i<6000;i++) {
+			Equality equality = Equality.getRandomEquality(randomGenerator);
+			map.get(equality).increment();
+		}
+		for(Equality equality : Equality.values()) {
+			int count = map.get(equality).getValue();			
+			assertTrue(count>900);
+			assertTrue(count<1100);
+		}
+		
+		
 	}
 
 }

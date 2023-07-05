@@ -1,10 +1,16 @@
 package plugins.stochastics.support;
 
+import plugins.globalproperties.support.SimpleGlobalPropertyId;
 import util.errors.ContractException;
 
 public class SimpleRandomNumberGeneratorId implements RandomNumberGeneratorId {
     private final Object value;
 
+    /**
+     * @throws ContractException
+     * <li> {@linkplain StochasticsError#NULL_RANDOM_NUMBER_GENERATOR_ID} if the value is null </li> 
+     * 
+     */
     public SimpleRandomNumberGeneratorId(Object value) {
         if (value == null) {
             throw new ContractException(StochasticsError.NULL_RANDOM_NUMBER_GENERATOR_ID);
@@ -49,7 +55,10 @@ public class SimpleRandomNumberGeneratorId implements RandomNumberGeneratorId {
         }
         return true;
     }
-
+    /**
+	 * Returns the string representation of the generator's input
+	 * 
+	 */
     @Override
     public String toString() {
         return value.toString();
