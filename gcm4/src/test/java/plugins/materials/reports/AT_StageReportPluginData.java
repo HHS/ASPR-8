@@ -35,8 +35,8 @@ public class AT_StageReportPluginData {
 
 		// precondition test: if the report label is not assigned
 		ContractException contractException = assertThrows(ContractException.class, () -> //
-		StageReportPluginData	.builder()//
-								.build());
+		StageReportPluginData.builder()//
+				.build());
 		assertEquals(ReportError.NULL_REPORT_LABEL, contractException.getErrorType());
 
 	}
@@ -48,9 +48,9 @@ public class AT_StageReportPluginData {
 		for (int i = 0; i < 30; i++) {
 			ReportLabel expectedReportLabel = new SimpleReportLabel(i);
 			StageReportPluginData stageReportPluginData = //
-					StageReportPluginData	.builder()//
-											.setReportLabel(expectedReportLabel)//
-											.build();
+					StageReportPluginData.builder()//
+							.setReportLabel(expectedReportLabel)//
+							.build();
 
 			assertEquals(expectedReportLabel, stageReportPluginData.getReportLabel());
 		}
@@ -68,9 +68,9 @@ public class AT_StageReportPluginData {
 		for (int i = 0; i < 30; i++) {
 			ReportLabel expectedReportLabel = new SimpleReportLabel(i);
 			StageReportPluginData stageReportPluginData = //
-					StageReportPluginData	.builder()//
-											.setReportLabel(expectedReportLabel)//
-											.build();
+					StageReportPluginData.builder()//
+							.setReportLabel(expectedReportLabel)//
+							.build();
 
 			assertEquals(expectedReportLabel, stageReportPluginData.getReportLabel());
 		}
@@ -88,8 +88,8 @@ public class AT_StageReportPluginData {
 			ReportLabel reportLabel = new SimpleReportLabel(randomGenerator.nextInt());
 
 			StageReportPluginData.Builder builder = //
-					StageReportPluginData	.builder()//
-											.setReportLabel(reportLabel);
+					StageReportPluginData.builder()//
+							.setReportLabel(reportLabel);
 
 			StageReportPluginData stageReportPluginData = builder.build();
 
@@ -128,9 +128,9 @@ public class AT_StageReportPluginData {
 			// change the report label
 			reportLabel = new SimpleReportLabel(1000);
 			stageReportPluginData2 = //
-					stageReportPluginData1	.getCloneBuilder()//
-											.setReportLabel(reportLabel)//
-											.build();
+					stageReportPluginData1.getCloneBuilder()//
+							.setReportLabel(reportLabel)//
+							.build();
 			assertNotEquals(stageReportPluginData2, stageReportPluginData1);
 		}
 
@@ -170,10 +170,22 @@ public class AT_StageReportPluginData {
 		}
 
 		/*
-		 * The hash codes should be dispersed -- we only show that they are
-		 * unique values -- this is dependent on the random seed
+		 * The hash codes should be dispersed -- we only show that they are unique
+		 * values -- this is dependent on the random seed
 		 */
 		assertTrue(observedHashCodes.size() > 40);
+
+	}
+
+	@Test
+	@UnitTestMethod(target = StageReportPluginData.class, name = "toString", args = {})
+	public void testToString() {
+
+		StageReportPluginData stageReportPluginData = StageReportPluginData.builder().setReportLabel(new SimpleReportLabel("some label")).build();
+		
+		String expectedValue = "StageReportPluginData [data=Data [reportLabel=SimpleReportLabel [value=some label], locked=true]]";
+		String actualValue = stageReportPluginData.toString();
+		assertEquals(expectedValue, actualValue);
 
 	}
 
