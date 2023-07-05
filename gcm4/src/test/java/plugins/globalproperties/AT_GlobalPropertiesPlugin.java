@@ -19,8 +19,7 @@ import util.annotations.UnitTestMethod;
 public class AT_GlobalPropertiesPlugin {
 
     @Test
-    @UnitTestMethod(target = GlobalPropertiesPlugin.class, name = "builder", args = {
-            GlobalPropertiesPluginData.class })
+    @UnitTestMethod(target = GlobalPropertiesPlugin.class, name = "builder", args = {})
     public void testBuilder() {
         assertNotNull(GlobalPropertiesPlugin.builder());
     }
@@ -46,8 +45,7 @@ public class AT_GlobalPropertiesPlugin {
                 .setReportLabel(new SimpleReportLabel("test")).build();
         Plugin globalsPlugin = GlobalPropertiesPlugin.builder()
                 .setGlobalPropertiesPluginData(globalPropertiesPluginData)
-                .setGlobalPropertyReportPluginData(globalPropertyReportPluginData)
-                .getGlobalPropertiesPlugin();
+                .setGlobalPropertyReportPluginData(globalPropertyReportPluginData).getGlobalPropertiesPlugin();
 
         assertTrue(globalsPlugin.getPluginDatas().contains(globalPropertyReportPluginData));
     }
@@ -56,8 +54,8 @@ public class AT_GlobalPropertiesPlugin {
     @UnitTestMethod(target = GlobalPropertiesPlugin.Builder.class, name = "getGlobalPropertiesPlugin", args = {})
     public void testGetGlobalPropertiesPlugin() {
         /*
-         * Show that the plugin contains the plugin data and has the property id
-         * and dependencies
+         * Show that the plugin contains the plugin data and has the property id and
+         * dependencies
          */
 
         GlobalPropertiesPluginData globalPropertiesPluginData = GlobalPropertiesPluginData.builder().build();
