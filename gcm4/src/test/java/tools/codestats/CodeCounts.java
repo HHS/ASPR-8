@@ -1,5 +1,7 @@
 package tools.codestats;
 
+import util.meta.codecount.CodeCountReport;
+
 public class CodeCounts {
 	public static void main(String[] args) {
 		CodeCountReport.Builder codeCountReportBuilder = CodeCountReport.builder();
@@ -7,8 +9,6 @@ public class CodeCounts {
 			codeCountReportBuilder.addDirectory(arg);
 		}
 		CodeCountReport codeCountReport = codeCountReportBuilder.build();
-
 		System.out.println(codeCountReport.getDetailsReport());
-
 	}
 }

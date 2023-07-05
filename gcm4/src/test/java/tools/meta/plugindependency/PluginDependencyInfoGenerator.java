@@ -47,11 +47,11 @@ import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.StochasticsPluginData;
 import plugins.stochastics.StochasticsPluginId;
 import plugins.stochastics.support.WellState;
-import tools.meta.packagedependency.PackageDependencyData;
 import util.graph.Graph;
 import util.graph.GraphDepthEvaluator;
 import util.graph.Graphs;
 import util.graph.MutableGraph;
+import util.meta.packagedependency.PackageDependencyData;
 import util.path.MapPathSolver;
 
 /**

@@ -30,7 +30,7 @@ import plugins.globalproperties.support.GlobalPropertyId;
 import plugins.groups.GroupsPlugin;
 import plugins.groups.datamanagers.GroupsPluginData;
 import plugins.materials.MaterialsPlugin;
-import plugins.materials.MaterialsPluginData;
+import plugins.materials.datamangers.MaterialsPluginData;
 import plugins.people.PeoplePlugin;
 import plugins.people.PeoplePluginData;
 import plugins.personproperties.PersonPropertiesPlugin;

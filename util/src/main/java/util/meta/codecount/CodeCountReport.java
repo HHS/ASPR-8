@@ -1,4 +1,4 @@
-package tools.codestats;
+package util.meta.codecount;
 
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
