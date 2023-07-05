@@ -159,7 +159,7 @@ public final class AT_PeoplePluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = PeoplePluginData.class, name = "setPersonCount", args = {})
+	@UnitTestMethod(target = PeoplePluginData.Builder.class, name = "setPersonCount", args = {int.class})
 	public void testSetPersonCount() {
 
 		// if the builder is empty

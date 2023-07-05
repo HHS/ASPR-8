@@ -60,7 +60,7 @@ public class AT_RegionLabeler {
 	}
 
 	@Test
-	@UnitTestMethod(target = RegionLabeler.class,name = "getLabel", args = { PartitionsContext.class, PersonId.class })
+	@UnitTestMethod(target = RegionLabeler.class,name = "getCurrentLabel", args = { PartitionsContext.class, PersonId.class })
 	public void testGetLabel() {
 
 		/*

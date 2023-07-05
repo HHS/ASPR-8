@@ -54,7 +54,7 @@ public class AT_PersonRange {
 	}
 
 	@Test
-	@UnitTestMethod(target = PersonRange.class, name = "compareTo", args = {})
+	@UnitTestMethod(target = PersonRange.class, name = "compareTo", args = {PersonRange.class})
 	public void testCompareTo() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(2964674930895304415L);
 		for (int i = 0; i < 30; i++) {
@@ -106,7 +106,7 @@ public class AT_PersonRange {
 	}
 
 	@Test
-	@UnitTestMethod(target = PersonRange.class, name = "equals", args = {})
+	@UnitTestMethod(target = PersonRange.class, name = "equals", args = {Object.class})
 	public void testEquals() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(4375612914105986895L);
 		// show that no object is null

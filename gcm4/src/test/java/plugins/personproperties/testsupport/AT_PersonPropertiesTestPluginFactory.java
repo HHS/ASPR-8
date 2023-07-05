@@ -274,7 +274,7 @@ public class AT_PersonPropertiesTestPluginFactory {
 
     @Test
     @UnitTestMethod(target = PersonPropertiesTestPluginFactory.class, name = "getStandardPersonPropertiesPluginData", args = {
-            List.class, long.class })
+            List.class, long.class, double[].class})
     public void testGetStandardPersonPropertiesPluginData() {
 
         long seed = 4684903523797799712L;

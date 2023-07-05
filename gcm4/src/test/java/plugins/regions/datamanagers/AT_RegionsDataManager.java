@@ -516,8 +516,8 @@ public class AT_RegionsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(target = RegionsDataManager.class, name = "getPersonRegionArrivalTrackingPolicy", args = {})
-	public void testGetPersonRegionArrivalTrackingPolicy() {
+	@UnitTestMethod(target = RegionsDataManager.class, name = "regionArrivalsAreTracked", args = {})
+	public void testRegionArrivalsAreTracked() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7220786446142555493L);
 		for (boolean trackTime : new boolean[] { true, false }) {
 			Factory factory = RegionsTestPluginFactory.factory(0, randomGenerator.nextLong(), trackTime, (c) -> {

@@ -95,8 +95,8 @@ public final class AT_ResourceLabeler {
 	}
 
 	@Test
-	@UnitTestMethod(target = ResourceLabeler.class, name = "getLabel", args = { PartitionsContext.class, PersonId.class })
-	public void testGetLabel() {
+	@UnitTestMethod(target = ResourceLabeler.class, name = "getCurrentLabel", args = { PartitionsContext.class, PersonId.class })
+	public void testGetCurrentLabel() {
 		/*
 		 * Create a resource labeler from a function. Have an agent apply the
 		 * function directly to a person's resource to get a label for that

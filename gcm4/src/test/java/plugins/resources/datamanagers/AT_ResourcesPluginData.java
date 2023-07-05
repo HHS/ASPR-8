@@ -267,7 +267,7 @@ public final class AT_ResourcesPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = ResourcesPluginData.class, name = "setPersonResourceTime", args = { PersonId.class,
+	@UnitTestMethod(target = ResourcesPluginData.Builder.class, name = "setPersonResourceTime", args = { PersonId.class,
 			ResourceId.class, Double.class })
 	public void testSetPersonResourceTime() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(2121375123528875466L);
@@ -443,7 +443,7 @@ public final class AT_ResourcesPluginData {
 
 	@Test
 	@UnitTestMethod(target = ResourcesPluginData.Builder.class, name = "addResource", args = { ResourceId.class,
-			Double.class })
+			Double.class, boolean.class })
 	public void testAddResource() {
 
 		ResourcesPluginData.Builder builder = ResourcesPluginData.builder();

@@ -17,7 +17,7 @@ public class AT_ExperimentLineWriter {
     }
 
     @Test
-    @UnitTestMethod(target = ExperimentLineWriter.class, name = "write", args = { ExperimentContext.class, int.class, ReportItem.class }, tags = { UnitTag.MANUAL , UnitTag.CLASS_PROXY})
+    @UnitTestMethod(target = ExperimentLineWriter.class, name = "write", args = { ExperimentContext.class, int.class}, tags = { UnitTag.MANUAL , UnitTag.CLASS_PROXY})
     public void testWrite() {
         // covered by manual test of NIOReportItemHandler
     }

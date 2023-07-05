@@ -41,7 +41,7 @@ public final class TrueFilter extends Filter {
 
 	@Override
 	public int hashCode() {
-		return 0;
+		return 1;
 	}
 
 	@Override

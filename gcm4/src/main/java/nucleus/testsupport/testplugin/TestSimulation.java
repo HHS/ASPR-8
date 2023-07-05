@@ -89,8 +89,7 @@ public class TestSimulation {
 		 * @throws ContractException
 		 *             <li>{@link NucleusError#NULL_PLUGINS} if the plugin
 		 *             collection is null
-		 *             <li>{@link NucleusError#NULL_PLUGIN} if the plugin
-		 *             collection contains a null null plugin
+		 *             
 		 * 
 		 */
 

@@ -608,7 +608,7 @@ public final class PartitionsDataManager extends DataManager {
 		}
 	}
 
-	public final class PartitionsContextImpl implements PartitionsContext {
+	private final class PartitionsContextImpl implements PartitionsContext {
 		private final DataManagerContext dataManagerContext;
 
 		public PartitionsContextImpl(DataManagerContext dataManagerContext) {

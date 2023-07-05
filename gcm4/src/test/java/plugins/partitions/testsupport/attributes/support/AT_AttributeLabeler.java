@@ -71,8 +71,8 @@ public final class AT_AttributeLabeler {
 	}
 
 	@Test
-	@UnitTestMethod(target = AttributeLabeler.class, name = "getLabel", args = { PartitionsContext.class, PersonId.class })
-	public void testGetLabel() {
+	@UnitTestMethod(target = AttributeLabeler.class, name = "getCurrentLabel", args = { PartitionsContext.class, PersonId.class })
+	public void testGetCurrentLabel() {
 		// build an attribute function
 		Function<Object, Object> function = (c) -> {
 			Boolean value = (Boolean) c;
