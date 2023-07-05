@@ -3,7 +3,6 @@ package plugins.partitions.support.filters;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -24,7 +23,7 @@ import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.random.RandomGeneratorProvider;
 
-public class AT_AndFilter {
+public class AT_NotFilter {
 
 	private final static FilterSensitivity<Type2Event> FILTER_SENSITIVITY_2 = new FilterSensitivity<>(Type2Event.class,
 			(c, e) -> {
@@ -84,67 +83,49 @@ public class AT_AndFilter {
 	}
 
 	@Test
-	@UnitTestConstructor(target = AndFilter.class, args = { Filter.class, Filter.class })
-	public void testAndFilter() {
+	@UnitTestConstructor(target = NotFilter.class, args = { Filter.class})
+	public void testNotFilter() {
 
-		// precondition test: if either child filter is null
+		// precondition test: if the child filter is null
 		ContractException contractException = assertThrows(ContractException.class, () -> {
-			new AndFilter(new TrueFilter(), null);
+			new NotFilter(null);
 		});
 		assertEquals(PartitionError.NULL_FILTER, contractException.getErrorType());
-
-		contractException = assertThrows(ContractException.class, () -> {
-			new AndFilter(null, new TrueFilter());
-		});
-		assertEquals(PartitionError.NULL_FILTER, contractException.getErrorType());
-
 	}
 
-	private AndFilter getRandomAndFilter(long seed) {
+	private NotFilter getRandomNotFilter(long seed) {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
 		Filter a = new TestFilter(randomGenerator.nextInt());
-		Filter b = new TestFilter(randomGenerator.nextInt());
-		return new AndFilter(a, b);
+		return new NotFilter(a);
 	}
 
 	@Test
-	@UnitTestMethod(target = AndFilter.class, name = "equals", args = { Object.class })
+	@UnitTestMethod(target = NotFilter.class, name = "equals", args = { Object.class })
 	public void testEquals() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(5725831217415880484L);
 
 		// is never equal to null
 		for (int i = 0; i < 30; i++) {
-			assertFalse(getRandomAndFilter(randomGenerator.nextLong()).equals(null));
+			assertFalse(getRandomNotFilter(randomGenerator.nextLong()).equals(null));
 		}
 
 		// reflexive
 		for (int i = 0; i < 30; i++) {
 			long seed = randomGenerator.nextLong();
-			AndFilter f = getRandomAndFilter(seed);
+			NotFilter f = getRandomNotFilter(seed);
 			assertTrue(f.equals(f));
 		}
 
 		// symmetric, transitive, consistent
 		for (int i = 0; i < 30; i++) {
 			long seed = randomGenerator.nextLong();
-			AndFilter f1 = getRandomAndFilter(seed);
-			AndFilter f2 = getRandomAndFilter(seed);
+			NotFilter f1 = getRandomNotFilter(seed);
+			NotFilter f2 = getRandomNotFilter(seed);
 			for (int j = 0; j < 10; j++) {
 				assertTrue(f1.equals(f2));
 				assertTrue(f2.equals(f1));
 			}
 		}
-
-		AndFilter f1 = new AndFilter(new TestFilter(3), new TestFilter(5));
-		AndFilter f2 = new AndFilter(new TestFilter(5), new TestFilter(3));
-		AndFilter f3 = new AndFilter(new TestFilter(3), new TestFilter(4));
-
-		// return true when arguments are equal in some order
-		assertEquals(f1, f2);
-
-		// returns false when filter inputs are different in any order
-		assertNotEquals(f1, f3);
-		assertNotEquals(f2, f3);
 
 	}
 
@@ -219,152 +200,120 @@ public class AT_AndFilter {
 	}
 
 	@Test
-	@UnitTestMethod(target = AndFilter.class, name = "hashCode", args = {})
+	@UnitTestMethod(target = NotFilter.class, name = "hashCode", args = {})
 	public void testHashCode() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(9151412325951204846L);
 
 		// equal objects have equal hash codes, note that argument order does not matter
 		for (int i = 0; i < 30; i++) {
-			int seed1 = randomGenerator.nextInt();
-			int seed2 = randomGenerator.nextInt();
-			AndFilter f12 = new AndFilter(new TestFilter(seed1), new TestFilter(seed2));
-			AndFilter f21 = new AndFilter(new TestFilter(seed2), new TestFilter(seed1));
-			assertEquals(f12, f21);
-			assertEquals(f12.hashCode(), f21.hashCode());
+			int seed = randomGenerator.nextInt();
+			NotFilter f1 = new NotFilter(new TestFilter(seed));
+			NotFilter f2 = new NotFilter(new TestFilter(seed));
+			assertEquals(f1, f2);
+			assertEquals(f1.hashCode(), f2.hashCode());
 		}
 
 		// hash codes are reasonably distributed
 		Set<Integer> hashCodes = new LinkedHashSet<>();
 
 		for (int i = 0; i < 100; i++) {
-			TestFilter f1 = new TestFilter(randomGenerator.nextInt());
-			TestFilter f2 = new TestFilter(randomGenerator.nextInt());
-			AndFilter andFilter = new AndFilter(f1, f2);
-			hashCodes.add(andFilter.hashCode());
+			TestFilter f = new TestFilter(randomGenerator.nextInt());
+			NotFilter notFilter = new NotFilter(f);
+			hashCodes.add(notFilter.hashCode());
 		}
 
 		assertTrue(hashCodes.size() > 95);
 
 	}
 
-	private AndFilter getAndFilter(int a, int b) {
-		return new AndFilter(new TestFilter(a), new TestFilter(b));
+	private NotFilter getNotFilter(int a) {
+		return new NotFilter(new TestFilter(a));
 	}
 
 	@Test
-	@UnitTestMethod(target = AndFilter.class, name = "evaluate", args = { PartitionsContext.class, PersonId.class })
+	@UnitTestMethod(target = NotFilter.class, name = "evaluate", args = { PartitionsContext.class, PersonId.class })
 	public void testEvaluate() {
 		PartitionsContext partitionsContext = null;
 		PersonId personId = new PersonId(56);
 
-		// using AND over TestFilters, evaluate should return true if and only if both
-		// arguments are even
-		assertFalse(getAndFilter(20, 5).evaluate(partitionsContext, personId));
-		assertTrue(getAndFilter(20, 10).evaluate(partitionsContext, personId));
-		assertFalse(getAndFilter(3, 2).evaluate(partitionsContext, personId));
-		assertFalse(getAndFilter(3, 5).evaluate(partitionsContext, personId));
-		assertTrue(getAndFilter(0, 4).evaluate(partitionsContext, personId));
+		// using NOT over TestFilters, evaluate should return the opposite of the test
+		// filter
+		assertFalse(getNotFilter(20).evaluate(partitionsContext, personId));
+		assertTrue(getNotFilter(17).evaluate(partitionsContext, personId));
+		assertTrue(getNotFilter(3).evaluate(partitionsContext, personId));
+		assertFalse(getNotFilter(8).evaluate(partitionsContext, personId));
+		assertFalse(getNotFilter(0).evaluate(partitionsContext, personId));
 	}
 
 	@Test
-	@UnitTestMethod(target = AndFilter.class, name = "getFilterSensitivities", args = {})
+	@UnitTestMethod(target = NotFilter.class, name = "getFilterSensitivities", args = {})
 	public void testGetFilterSensitivities() {
 		// Filter sensitivities for the TestFilter class are based on index modulo 2, 3
 		// and 5
 
 		for (int i = 0; i < 30; i++) {
-			TestFilter testFilter1 = new TestFilter(i);
-			for (int j = 0; j < 30; j++) {
-				TestFilter testFilter2 = new TestFilter(j);
-				AndFilter andFilter = new AndFilter(testFilter1, testFilter2);
-				Set<FilterSensitivity<?>> actualFilterSensitivities = andFilter.getFilterSensitivities();
+			TestFilter testFilter = new TestFilter(i);
+			NotFilter notFilter = new NotFilter(testFilter);
+			Set<FilterSensitivity<?>> actualFilterSensitivities = notFilter.getFilterSensitivities();
 
-				Set<FilterSensitivity<?>> expectedFilterSensitivities = new LinkedHashSet<>();
-				if (i % 2 == 0 || j % 2 == 0) {
-					expectedFilterSensitivities.add(FILTER_SENSITIVITY_2);
-				}
-				if (i % 3 == 0 || j % 3 == 0) {
-					expectedFilterSensitivities.add(FILTER_SENSITIVITY_3);
-				}
-				if (i % 5 == 0 || j % 5 == 0) {
-					expectedFilterSensitivities.add(FILTER_SENSITIVITY_5);
-				}
-				assertEquals(expectedFilterSensitivities, actualFilterSensitivities);
+			Set<FilterSensitivity<?>> expectedFilterSensitivities = new LinkedHashSet<>();
+			if (i % 2 == 0) {
+				expectedFilterSensitivities.add(FILTER_SENSITIVITY_2);
 			}
+			if (i % 3 == 0) {
+				expectedFilterSensitivities.add(FILTER_SENSITIVITY_3);
+			}
+			if (i % 5 == 0) {
+				expectedFilterSensitivities.add(FILTER_SENSITIVITY_5);
+			}
+			assertEquals(expectedFilterSensitivities, actualFilterSensitivities);
+
 		}
 	}
 
 	@Test
-	@UnitTestMethod(target = AndFilter.class, name = "getFirstFilter", args = {})
-	public void testGetFirstFilter() {
+	@UnitTestMethod(target = NotFilter.class, name = "getSubFilter", args = {})
+	public void testGetSubFilter() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7492542318245868773L);
 
 		for (int i = 0; i < 30; i++) {
-			TestFilter testFilter1 = new TestFilter(randomGenerator.nextInt());
-			TestFilter testFilter2 = new TestFilter(randomGenerator.nextInt());
-
-			AndFilter andFilter = new AndFilter(testFilter1, testFilter2);
-			assertEquals(testFilter1, andFilter.getFirstFilter());
+			TestFilter testFilter = new TestFilter(randomGenerator.nextInt());
+			NotFilter notFilter = new NotFilter(testFilter);
+			assertEquals(testFilter, notFilter.getSubFilter());
 		}
 	}
 
 	@Test
-	@UnitTestMethod(target = AndFilter.class, name = "getSecondFilter", args = {})
-	public void testGetSecondFilter() {
-		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(710120811220020778L);
-
-		for (int i = 0; i < 30; i++) {
-			TestFilter testFilter1 = new TestFilter(randomGenerator.nextInt());
-			TestFilter testFilter2 = new TestFilter(randomGenerator.nextInt());
-
-			AndFilter andFilter = new AndFilter(testFilter1, testFilter2);
-			assertEquals(testFilter2, andFilter.getSecondFilter());
-		}
-
-	}
-
-	@Test
-	@UnitTestMethod(target = AndFilter.class, name = "toString", args = {})
+	@UnitTestMethod(target = NotFilter.class, name = "toString", args = {})
 	public void testToString() {
-		TestFilter testFilter1 = new TestFilter(32);
-		TestFilter testFilter2 = new TestFilter(17);
-		AndFilter andFilter = new AndFilter(testFilter1, testFilter2);
-		String actualValue = andFilter.toString();
-		String expectedValue = "AndFilter [a=TestFilter [index=32], b=TestFilter [index=17]]";
+		TestFilter testFilter = new TestFilter(32);
+		NotFilter notFilter = new NotFilter(testFilter);
+		String actualValue = notFilter.toString();
+		String expectedValue = "NotFilter [a=TestFilter [index=32]]";
 		assertEquals(expectedValue, actualValue);
 	}
 
 	@Test
-	@UnitTestMethod(target = AndFilter.class, name = "validate", args = { PartitionsContext.class })
+	@UnitTestMethod(target = NotFilter.class, name = "validate", args = { PartitionsContext.class })
 	public void testValidate() {
 		PartitionsContext partitionsContext = null;
 
 		/*
 		 * TestFilters throw an exception when validate is invoked when their index is
-		 * negative. We show here that the AndFilter is invoking the validate for both
-		 * of its child filters.
+		 * negative. We show here that the NotFilter is invoking the validate for its
+		 * child filter.
 		 * 
 		 */
 
 		assertDoesNotThrow(() -> {
-			AndFilter andFilter = new AndFilter(new TestFilter(0), new TestFilter(3));
-			andFilter.validate(partitionsContext);
+			NotFilter notFilter = new NotFilter(new TestFilter(0));
+			notFilter.validate(partitionsContext);
 		});
 
 		assertThrows(RuntimeException.class, () -> {
-			AndFilter andFilter = new AndFilter(new TestFilter(-1), new TestFilter(3));
-			andFilter.validate(partitionsContext);
-		});
-
-		assertThrows(RuntimeException.class, () -> {
-			AndFilter andFilter = new AndFilter(new TestFilter(0), new TestFilter(-1));
-			andFilter.validate(partitionsContext);
-		});
-
-		assertThrows(RuntimeException.class, () -> {
-			AndFilter andFilter = new AndFilter(new TestFilter(-1), new TestFilter(-1));
-			andFilter.validate(partitionsContext);
+			NotFilter notFilter = new NotFilter(new TestFilter(-1));
+			notFilter.validate(partitionsContext);
 		});
 
 	}
