@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.function.Supplier;
 
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
@@ -189,7 +190,7 @@ public class AT_DoublePropertyManager {
 	}
 
 	@Test
-	@UnitTestConstructor(target = DoublePropertyManager.class,args = {PropertyDefinition.class, int.class })
+	@UnitTestConstructor(target = DoublePropertyManager.class,args = {PropertyDefinition.class, Supplier.class })
 	public void testConstructor() {
 		Factory factory = TestPluginFactory.factory((c) -> {
 

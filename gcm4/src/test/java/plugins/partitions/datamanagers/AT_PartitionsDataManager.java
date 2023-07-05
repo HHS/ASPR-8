@@ -60,7 +60,7 @@ import util.wrappers.MutableInteger;
 public final class AT_PartitionsDataManager {
 
 	@Test
-	@UnitTestConstructor(target = PartitionsDataManager.class, args = {})
+	@UnitTestConstructor(target = PartitionsDataManager.class, args = {PartitionsPluginData.class})
 	public void testConstructor() {
 		PartitionsDataManager dataManager = new PartitionsDataManager(PartitionsPluginData.builder().build());
 		assertNotNull(dataManager);

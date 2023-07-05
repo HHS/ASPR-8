@@ -198,7 +198,7 @@ public class AT_PersonPropertyDimension {
     }
 
     @Test
-    @UnitTestMethod(target = PersonPropertyDimension.Builder.class, name = "getTrackTimes", args = {})
+    @UnitTestMethod(target = PersonPropertyDimension.class, name = "getTrackTimes", args = {})
     public void testGetTrackTimes() {
         for (int i = 0; i < 10; i++) {
             boolean trackTimes = i % 2 == 0;

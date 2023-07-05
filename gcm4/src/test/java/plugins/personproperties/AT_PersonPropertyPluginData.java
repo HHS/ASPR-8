@@ -135,7 +135,8 @@ public class AT_PersonPropertyPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = PersonPropertiesPluginData.Builder.class, name = "definePersonProperty", args = { PersonPropertyId.class, PropertyDefinition.class })
+	@UnitTestMethod(target = PersonPropertiesPluginData.Builder.class, name = "definePersonProperty", args = { 
+			PersonPropertyId.class, PropertyDefinition.class,double.class, boolean.class})
 	public void testDefinePersonProperty() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7695820040353096191L);
@@ -426,7 +427,7 @@ public class AT_PersonPropertyPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = PersonPropertiesPluginData.class, name = "getPropertyValues", args = { int.class })
+	@UnitTestMethod(target = PersonPropertiesPluginData.class, name = "getPropertyValues", args = { PersonPropertyId.class })
 	public void testGetPropertyValues() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6340277988168121078L);
 
@@ -577,7 +578,7 @@ public class AT_PersonPropertyPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = PersonPropertiesPluginData.class, name = "setPersonPropertyTime", args = { PersonId.class, PersonPropertyId.class, Double.class })
+	@UnitTestMethod(target = PersonPropertiesPluginData.Builder.class, name = "setPersonPropertyTime", args = {PersonId.class, PersonPropertyId.class, Double.class })	
 	public void testSetPersonPropertyTime() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7969263718268675163L);
 

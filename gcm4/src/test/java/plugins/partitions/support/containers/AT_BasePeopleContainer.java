@@ -15,7 +15,7 @@ public class AT_BasePeopleContainer {
 	}
 
 	@Test
-	@UnitTestConstructor(target = BasePeopleContainer.class, args = { PartitionsContext.class })
+	@UnitTestConstructor(target = BasePeopleContainer.class, args = { PartitionsContext.class, boolean.class})
 	public void testConstructor() {
 		// nothing to test
 	}

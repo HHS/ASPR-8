@@ -3,6 +3,7 @@ package plugins.partitions;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import nucleus.NucleusError;
 import nucleus.Plugin;
 import nucleus.PluginId;
 import plugins.partitions.datamanagers.PartitionsDataManager;
@@ -77,6 +78,10 @@ public final class PartitionsPlugin {
 		 * @throws ContractException
 		 *             <li>{@linkplain PartitionError#NULL_PARTITION_PLUGIN_DATA}
 		 *             if the partitionsPluginData is null</li>
+		 *             
+		 *              <li>{@linkplain NucleusError#NULL_PLUGIN_ID}
+		 *             if an included plugin dependency id null</li>
+		 *            
 		 */
 		public Plugin getPartitionsPlugin() {
 

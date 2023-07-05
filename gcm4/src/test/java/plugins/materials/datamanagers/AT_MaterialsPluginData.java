@@ -381,7 +381,7 @@ public class AT_MaterialsPluginData {
 
 	@Test
 	@UnitTestMethod(target = MaterialsPluginData.Builder.class, name = "addBatch", args = { BatchId.class,
-			MaterialId.class, double.class, MaterialsProducerId.class })
+			MaterialId.class, double.class})
 	public void testAddBatch() {
 		BatchId batchId = new BatchId(456);
 		MaterialId materialId = TestMaterialId.MATERIAL_1;
@@ -565,7 +565,7 @@ public class AT_MaterialsPluginData {
 
 	@Test
 	@UnitTestMethod(target = MaterialsPluginData.Builder.class, name = "addStage", args = { StageId.class,
-			boolean.class, MaterialsProducerId.class })
+			boolean.class })
 	public void testAddStage() {
 		StageId stageId = new StageId(456);
 		boolean offered = true;
@@ -1229,8 +1229,8 @@ public class AT_MaterialsPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = MaterialsPluginData.class, name = "getBatchMaterialsProducer", args = { BatchId.class })
-	public void testGetBatchMaterialsProducer() {
+	@UnitTestMethod(target = MaterialsPluginData.class, name = "getMaterialsProducerInventoryBatches", args = { MaterialsProducerId.class })
+	public void testGetMaterialsProducerInventoryBatches() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(4201153583410535220L);
 
@@ -1271,15 +1271,11 @@ public class AT_MaterialsPluginData {
 
 		// precondition tests
 
-		// if the batch id is null
+		// if the materials producer id is null
 		ContractException contractException = assertThrows(ContractException.class,
-				() -> materialsInitialData.getBatchMaterial(null));
-		assertEquals(MaterialsError.NULL_BATCH_ID, contractException.getErrorType());
+				() -> materialsInitialData.getMaterialsProducerInventoryBatches(null));
+		assertEquals(MaterialsError.NULL_MATERIALS_PRODUCER_ID, contractException.getErrorType());
 
-		// if the batch id is unknown
-		contractException = assertThrows(ContractException.class,
-				() -> materialsInitialData.getBatchMaterial(new BatchId(10000)));
-		assertEquals(MaterialsError.UNKNOWN_BATCH_ID, contractException.getErrorType());
 	}
 
 	@Test
@@ -1762,7 +1758,7 @@ public class AT_MaterialsPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = MaterialsPluginData.class, name = "getMaterialsProducerStages", args = { StageId.class })
+	@UnitTestMethod(target = MaterialsPluginData.class, name = "getMaterialsProducerStages", args = { MaterialsProducerId.class })
 	public void testGetMaterialsProducerStages() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(4722411464538864709L);

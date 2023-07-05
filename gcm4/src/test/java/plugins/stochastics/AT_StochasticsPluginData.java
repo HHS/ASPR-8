@@ -79,7 +79,7 @@ public class AT_StochasticsPluginData {
 	}
 	
 	@Test
-	@UnitTestMethod(target = StochasticsPluginData.class, name = "getRandomNumberGeneratorIds", args = {RandomNumberGeneratorId.class})
+	@UnitTestMethod(target = StochasticsPluginData.class, name = "getWellState", args = {RandomNumberGeneratorId.class})
 	public void testGetWellState_randomNumberGeneratorId() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(1644320989680923741L);
 		Map<RandomNumberGeneratorId, WellState> expectedRandomNumberGeneratorIds = new LinkedHashMap<>();
@@ -117,8 +117,8 @@ public class AT_StochasticsPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = StochasticsPluginData.Builder.class, name = "setMainRNG", args = { WellState.class })
-	public void testSetMainRNG() {
+	@UnitTestMethod(target = StochasticsPluginData.Builder.class, name = "setMainRNGState", args = { WellState.class })
+	public void testSetMainRNGState() {
 		long seed = 235234623445234756L;
 		WellState wellState = WellState.builder().setSeed(seed).build();
 		StochasticsPluginData stochasticsPluginData = StochasticsPluginData	.builder()//
@@ -128,7 +128,7 @@ public class AT_StochasticsPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = StochasticsPluginData.Builder.class, name = "addRNG", args = { RandomNumberGeneratorId.class })
+	@UnitTestMethod(target = StochasticsPluginData.Builder.class, name = "addRNG", args = { RandomNumberGeneratorId.class , WellState.class})
 	public void testAddRNG() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(4300202782621809065L);
 

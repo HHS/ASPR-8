@@ -298,8 +298,7 @@ public class AT_ResourcesTestPluginFactory {
     }
 
     @Test
-    @UnitTestMethod(target = ResourcesTestPluginFactory.class, name = "getStandardResourcesPluginData", args = {
-            long.class })
+    @UnitTestMethod(target = ResourcesTestPluginFactory.class, name = "getStandardResourcesPluginData", args = {List.class,long.class })
     public void testGetStandardResourcesPluginData() {
 
         long seed = 4800551796983227153L;

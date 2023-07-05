@@ -35,7 +35,7 @@ import util.random.RandomGeneratorProvider;
 public final class AT_AttributeLabeler {
 
 	@Test
-	@UnitTestConstructor(target = AttributeLabeler.class, args = { AttributeId.class, Function.class })
+	@UnitTestConstructor(target = AttributeLabeler.class, args = { AttributeId.class })
 	public void testConstructor() {
 		// nothing to test
 	}
@@ -71,8 +71,8 @@ public final class AT_AttributeLabeler {
 	}
 
 	@Test
-	@UnitTestMethod(target = AttributeLabeler.class, name = "getLabel", args = { PartitionsContext.class, PersonId.class })
-	public void testGetLabel() {
+	@UnitTestMethod(target = AttributeLabeler.class, name = "getCurrentLabel", args = { PartitionsContext.class, PersonId.class })
+	public void testGetCurrentLabel() {
 		// build an attribute function
 		Function<Object, Object> function = (c) -> {
 			Boolean value = (Boolean) c;

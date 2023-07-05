@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.function.Supplier;
 
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
@@ -193,7 +194,7 @@ public class AT_EnumPropertyManager {
 	}
 
 	@Test
-	@UnitTestConstructor(target = EnumPropertyManager.class, args = {PropertyDefinition.class, int.class })
+	@UnitTestConstructor(target = EnumPropertyManager.class, args = {PropertyDefinition.class, Supplier.class })
 	public void testConstructor() {
 		Factory factory = TestPluginFactory.factory((c) -> {
 			PropertyDefinition goodPropertyDefinition = PropertyDefinition.builder().setType(Color.class).setDefaultValue(Color.BLUE).build();

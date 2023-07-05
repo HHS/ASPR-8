@@ -48,7 +48,7 @@ public class AT_RegionLabeler {
 		}
 	}
 	@Test
-	@UnitTestConstructor(target = RegionLabeler.class,args = { Function.class })
+	@UnitTestConstructor(target = RegionLabeler.class,args = {})
 	public void testConstructor() {
 		assertNotNull(new LocalRegionLabeler((c) -> null));
 	}
@@ -60,7 +60,7 @@ public class AT_RegionLabeler {
 	}
 
 	@Test
-	@UnitTestMethod(target = RegionLabeler.class,name = "getLabel", args = { PartitionsContext.class, PersonId.class })
+	@UnitTestMethod(target = RegionLabeler.class,name = "getCurrentLabel", args = { PartitionsContext.class, PersonId.class })
 	public void testGetLabel() {
 
 		/*

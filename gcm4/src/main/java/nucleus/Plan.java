@@ -21,6 +21,26 @@ public class Plan<T> {
 			planData = data.planData;
 			key = data.key;
 		}
+
+		@Override
+		public String toString() {
+			StringBuilder builder = new StringBuilder();
+			builder.append("Data [time=");
+			builder.append(time);
+			builder.append(", callbackConsumer=");
+			builder.append(callbackConsumer);
+			builder.append(", active=");
+			builder.append(active);
+			builder.append(", planData=");
+			builder.append(planData);
+			builder.append(", key=");
+			builder.append(key);
+			builder.append("]");
+			return builder.toString();
+		}
+		
+		
+		
 	}
 
 	/**

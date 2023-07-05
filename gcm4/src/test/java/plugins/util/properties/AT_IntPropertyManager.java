@@ -210,7 +210,7 @@ public class AT_IntPropertyManager {
 	}
 
 	@Test
-	@UnitTestConstructor(target = IntPropertyManager.class, args = { PropertyDefinition.class, int.class })
+	@UnitTestConstructor(target = IntPropertyManager.class, args = { PropertyDefinition.class, Supplier.class })
 	public void testConstructor() {
 		Factory factory = TestPluginFactory.factory((c) -> {
 

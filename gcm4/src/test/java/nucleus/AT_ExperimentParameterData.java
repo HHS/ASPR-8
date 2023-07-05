@@ -171,7 +171,7 @@ public class AT_ExperimentParameterData {
 	}
 
 	@Test
-	@UnitTestMethod(target = ExperimentParameterData.Builder.class, name = "setSimulationHaltTime", args = { double.class })
+	@UnitTestMethod(target = ExperimentParameterData.Builder.class, name = "setSimulationHaltTime", args = { Double.class })
 	public void testSetSimulationHaltTime() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(4483845375009238350L);
 

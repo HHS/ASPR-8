@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.function.Supplier;
 
 import org.junit.jupiter.api.Test;
 
@@ -22,7 +23,7 @@ public class AT_ObjectValueContainer {
 	 * Tests {@link ObjectValueContainer#ObjectValueContainer(Object, int)}
 	 */
 	@Test
-	@UnitTestConstructor(target = ObjectValueContainer.class,args = { Object.class, int.class })
+	@UnitTestConstructor(target = ObjectValueContainer.class,args = { Object.class, Supplier.class })
 	public void testConstructor() {
 		String defaultValue = "default";
 		ObjectValueContainer objectValueContainer = new ObjectValueContainer(defaultValue, this::getEmptyIndexIterator);

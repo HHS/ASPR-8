@@ -48,7 +48,7 @@ public class AT_PersonPropertyLabeler {
 	}
 
 	@Test
-	@UnitTestConstructor(target = PersonPropertyLabeler.class, args = { PersonPropertyId.class, Function.class })
+	@UnitTestConstructor(target = PersonPropertyLabeler.class, args = { PersonPropertyId.class})
 	public void testConstructor() {
 		// nothing to test
 	}
@@ -100,8 +100,8 @@ public class AT_PersonPropertyLabeler {
 	}
 
 	@Test
-	@UnitTestMethod(target = PersonPropertyLabeler.class, name = "getLabel", args = { PartitionsContext.class, PersonId.class })
-	public void testGetLabel() {
+	@UnitTestMethod(target = PersonPropertyLabeler.class, name = "getCurrentLabel", args = { PartitionsContext.class, PersonId.class })
+	public void testGetCurrentLabel() {
 		/*
 		 * Have the agent show that the person property labeler produces a label
 		 * for each person that is consistent with the function passed to the
