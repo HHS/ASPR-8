@@ -15,7 +15,7 @@ import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestSimulation;
 import plugins.stochastics.StochasticsPlugin;
-import plugins.stochastics.StochasticsPluginData;
+import plugins.stochastics.datamanagers.StochasticsPluginData;
 import plugins.stochastics.support.StochasticsError;
 import plugins.stochastics.support.WellState;
 import util.errors.ContractException;

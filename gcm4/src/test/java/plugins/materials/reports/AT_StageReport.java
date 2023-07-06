@@ -27,7 +27,7 @@ import plugins.reports.support.ReportHeader;
 import plugins.reports.support.ReportItem;
 import plugins.reports.support.ReportLabel;
 import plugins.reports.support.SimpleReportLabel;
-import plugins.stochastics.StochasticsDataManager;
+import plugins.stochastics.datamanagers.StochasticsDataManager;
 import util.annotations.UnitTag;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;

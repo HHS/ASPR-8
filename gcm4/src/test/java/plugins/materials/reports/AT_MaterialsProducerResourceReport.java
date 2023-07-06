@@ -36,7 +36,7 @@ import plugins.reports.support.SimpleReportLabel;
 import plugins.resources.datamanagers.ResourcesDataManager;
 import plugins.resources.support.ResourceId;
 import plugins.resources.testsupport.TestResourceId;
-import plugins.stochastics.StochasticsDataManager;
+import plugins.stochastics.datamanagers.StochasticsDataManager;
 import util.annotations.UnitTag;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;

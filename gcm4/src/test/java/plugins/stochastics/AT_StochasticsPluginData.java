@@ -11,6 +11,7 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import nucleus.PluginDataBuilder;
+import plugins.stochastics.datamanagers.StochasticsPluginData;
 import plugins.stochastics.support.RandomNumberGeneratorId;
 import plugins.stochastics.support.StochasticsError;
 import plugins.stochastics.support.WellState;

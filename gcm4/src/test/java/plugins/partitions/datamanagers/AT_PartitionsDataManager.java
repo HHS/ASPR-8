@@ -50,7 +50,7 @@ import plugins.people.events.PersonImminentRemovalEvent;
 import plugins.people.support.PersonConstructionData;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
-import plugins.stochastics.StochasticsDataManager;
+import plugins.stochastics.datamanagers.StochasticsDataManager;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;

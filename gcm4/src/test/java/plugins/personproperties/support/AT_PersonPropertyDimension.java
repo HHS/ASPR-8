@@ -12,7 +12,7 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import nucleus.DimensionContext;
-import plugins.personproperties.PersonPropertiesPluginData;
+import plugins.personproperties.datamanagers.PersonPropertiesPluginData;
 import plugins.personproperties.testsupport.TestPersonPropertyId;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;

@@ -22,10 +22,10 @@ import nucleus.testsupport.testplugin.TestSimulation;
 import plugins.partitions.PartitionsPlugin;
 import plugins.partitions.datamanagers.PartitionsPluginData;
 import plugins.people.PeoplePlugin;
-import plugins.people.PeoplePluginData;
 import plugins.people.PeoplePluginId;
+import plugins.people.datamanagers.PeoplePluginData;
 import plugins.stochastics.StochasticsPlugin;
-import plugins.stochastics.StochasticsPluginData;
+import plugins.stochastics.datamanagers.StochasticsPluginData;
 import plugins.stochastics.support.WellState;
 import util.annotations.UnitTestMethod;
 

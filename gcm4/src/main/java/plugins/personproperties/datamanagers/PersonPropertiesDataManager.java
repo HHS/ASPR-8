@@ -25,7 +25,6 @@ import plugins.people.events.PersonRemovalEvent;
 import plugins.people.support.PersonConstructionData;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
-import plugins.personproperties.PersonPropertiesPluginData;
 import plugins.personproperties.events.PersonPropertyDefinitionEvent;
 import plugins.personproperties.events.PersonPropertyUpdateEvent;
 import plugins.personproperties.support.PersonPropertyDefinitionInitialization;

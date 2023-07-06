@@ -126,5 +126,27 @@ public class AT_SimpleReportLabel {
 		assertNotEquals(id_5, null);
 		assertNotEquals(id_6, null);
 	}
+	
+	@Test
+	@UnitTestMethod(target = SimpleReportLabel.class, name = "getValue", args = {})
+	public void testGetValue() {
+		Object value = "some value";
+		SimpleReportLabel simpleReportLabel = new SimpleReportLabel(value);
+		assertEquals(value, simpleReportLabel.getValue());
+		
+		value = 678;
+		simpleReportLabel = new SimpleReportLabel(value);
+		assertEquals(value, simpleReportLabel.getValue());
+		
+		
+		value = false;
+		simpleReportLabel = new SimpleReportLabel(value);
+		assertEquals(value, simpleReportLabel.getValue());
+		
+		value = 2.98;
+		simpleReportLabel = new SimpleReportLabel(value);
+		assertEquals(value, simpleReportLabel.getValue());
+
+	}
 
 }
