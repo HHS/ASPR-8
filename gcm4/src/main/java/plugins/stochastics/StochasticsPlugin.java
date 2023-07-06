@@ -2,6 +2,8 @@ package plugins.stochastics;
 
 import net.jcip.annotations.ThreadSafe;
 import nucleus.Plugin;
+import plugins.stochastics.datamanagers.StochasticsDataManager;
+import plugins.stochastics.datamanagers.StochasticsPluginData;
 import util.errors.ContractError;
 
 /**

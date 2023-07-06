@@ -1,4 +1,4 @@
-package plugins.people;
+package plugins.people.datamanagers;
 
 import java.util.ArrayList;
 import java.util.Collections;

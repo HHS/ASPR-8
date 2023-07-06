@@ -1,4 +1,4 @@
-package plugins.stochastics;
+package plugins.stochastics.datamanagers;
 
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;

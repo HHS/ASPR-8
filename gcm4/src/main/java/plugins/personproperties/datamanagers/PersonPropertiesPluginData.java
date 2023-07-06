@@ -1,4 +1,4 @@
-package plugins.personproperties;
+package plugins.personproperties.datamanagers;
 
 import java.util.ArrayList;
 import java.util.Collections;

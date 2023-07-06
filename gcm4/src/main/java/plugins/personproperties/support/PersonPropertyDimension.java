@@ -6,7 +6,7 @@ import java.util.Objects;
 
 import nucleus.Dimension;
 import nucleus.DimensionContext;
-import plugins.personproperties.PersonPropertiesPluginData;
+import plugins.personproperties.datamanagers.PersonPropertiesPluginData;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
 import util.errors.ContractException;
