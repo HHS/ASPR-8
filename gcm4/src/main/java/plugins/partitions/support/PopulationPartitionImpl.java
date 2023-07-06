@@ -22,7 +22,7 @@ import plugins.partitions.support.filters.Filter;
 import plugins.partitions.support.filters.TrueFilter;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonId;
-import plugins.stochastics.StochasticsDataManager;
+import plugins.stochastics.datamanagers.StochasticsDataManager;
 import plugins.stochastics.support.RandomNumberGeneratorId;
 import util.errors.ContractException;
 

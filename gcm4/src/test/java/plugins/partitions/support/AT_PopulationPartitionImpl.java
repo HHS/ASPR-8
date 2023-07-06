@@ -37,7 +37,7 @@ import plugins.partitions.testsupport.attributes.support.TestAttributeId;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonConstructionData;
 import plugins.people.support.PersonId;
-import plugins.stochastics.StochasticsDataManager;
+import plugins.stochastics.datamanagers.StochasticsDataManager;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
 import util.random.RandomGeneratorProvider;

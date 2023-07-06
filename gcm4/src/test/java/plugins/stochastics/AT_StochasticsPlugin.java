@@ -10,6 +10,7 @@ import nucleus.Plugin;
 import nucleus.Simulation;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
+import plugins.stochastics.datamanagers.StochasticsPluginData;
 import plugins.stochastics.support.WellState;
 import util.annotations.UnitTestMethod;
 

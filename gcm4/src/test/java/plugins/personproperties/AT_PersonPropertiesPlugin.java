@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import nucleus.Plugin;
 import nucleus.PluginId;
 import plugins.people.PeoplePluginId;
+import plugins.personproperties.datamanagers.PersonPropertiesPluginData;
 import plugins.regions.RegionsPluginId;
 import util.annotations.UnitTestMethod;
 

@@ -6,6 +6,7 @@ import net.jcip.annotations.ThreadSafe;
 import nucleus.Plugin;
 import plugins.people.PeoplePluginId;
 import plugins.personproperties.datamanagers.PersonPropertiesDataManager;
+import plugins.personproperties.datamanagers.PersonPropertiesPluginData;
 import plugins.personproperties.reports.PersonPropertyInteractionReport;
 import plugins.personproperties.reports.PersonPropertyInteractionReportPluginData;
 import plugins.personproperties.reports.PersonPropertyReport;

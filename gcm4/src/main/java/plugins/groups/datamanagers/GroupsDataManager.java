@@ -45,7 +45,7 @@ import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.events.PersonRemovalEvent;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
-import plugins.stochastics.StochasticsDataManager;
+import plugins.stochastics.datamanagers.StochasticsDataManager;
 import plugins.stochastics.support.RandomNumberGeneratorId;
 import plugins.stochastics.support.StochasticsError;
 import plugins.util.properties.BooleanPropertyManager;

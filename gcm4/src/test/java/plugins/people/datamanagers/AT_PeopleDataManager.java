@@ -31,7 +31,6 @@ import nucleus.testsupport.testplugin.TestOutputConsumer;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestSimulation;
 import plugins.people.PeoplePlugin;
-import plugins.people.PeoplePluginData;
 import plugins.people.events.PersonAdditionEvent;
 import plugins.people.events.PersonImminentAdditionEvent;
 import plugins.people.events.PersonImminentRemovalEvent;
