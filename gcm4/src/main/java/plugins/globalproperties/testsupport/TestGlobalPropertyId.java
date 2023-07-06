@@ -129,7 +129,7 @@ public enum TestGlobalPropertyId implements GlobalPropertyId {
 		return Arrays.asList(TestGlobalPropertyId.values());
 	}
 	
-	public static List<TestGlobalPropertyId> getShuffeledGlobalPropertyIds(RandomGenerator randomGenerator){
+	public static List<TestGlobalPropertyId> getShuffledGlobalPropertyIds(RandomGenerator randomGenerator){
 		List<TestGlobalPropertyId> result = getGlobalPropertyIds();
 		Random random = new Random(randomGenerator.nextLong());
 		Collections.shuffle(result,random);

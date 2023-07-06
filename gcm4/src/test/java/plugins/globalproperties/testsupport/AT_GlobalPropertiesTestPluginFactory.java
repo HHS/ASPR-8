@@ -234,7 +234,7 @@ public class AT_GlobalPropertiesTestPluginFactory {
         }
 
         for (TestGlobalPropertyId testGlobalPropertyId : TestGlobalPropertyId
-                .getShuffeledGlobalPropertyIds(randomGenerator)) {
+                .getShuffledGlobalPropertyIds(randomGenerator)) {
 
             boolean hasDefaultValue = testGlobalPropertyId.getPropertyDefinition().getDefaultValue().isPresent();
             boolean setValue = randomGenerator.nextBoolean();
