@@ -18,12 +18,12 @@ import nucleus.Experiment;
 import nucleus.FunctionalDimension;
 import nucleus.Plugin;
 import plugins.people.PeoplePlugin;
-import plugins.people.PeoplePluginData;
+import plugins.people.datamanagers.PeoplePluginData;
 import plugins.people.support.PersonId;
 import plugins.people.support.PersonRange;
 import plugins.reports.support.NIOReportItemHandler;
 import plugins.stochastics.StochasticsPlugin;
-import plugins.stochastics.StochasticsPluginData;
+import plugins.stochastics.datamanagers.StochasticsPluginData;
 import plugins.stochastics.support.WellState;
 import util.random.RandomGeneratorProvider;
 

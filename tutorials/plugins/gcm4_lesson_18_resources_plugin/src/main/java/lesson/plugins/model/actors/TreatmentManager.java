@@ -14,7 +14,7 @@ import plugins.personproperties.datamanagers.PersonPropertiesDataManager;
 import plugins.regions.datamanagers.RegionsDataManager;
 import plugins.regions.support.RegionId;
 import plugins.resources.datamanagers.ResourcesDataManager;
-import plugins.stochastics.StochasticsDataManager;
+import plugins.stochastics.datamanagers.StochasticsDataManager;
 
 public class TreatmentManager {
 	

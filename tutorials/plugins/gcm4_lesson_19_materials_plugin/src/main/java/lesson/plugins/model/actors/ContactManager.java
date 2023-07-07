@@ -20,7 +20,7 @@ import plugins.groups.support.GroupSampler;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonId;
 import plugins.personproperties.datamanagers.PersonPropertiesDataManager;
-import plugins.stochastics.StochasticsDataManager;
+import plugins.stochastics.datamanagers.StochasticsDataManager;
 
 public class ContactManager {
 	private ActorContext actorContext;

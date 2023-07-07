@@ -14,7 +14,7 @@ import plugins.people.support.PersonConstructionData;
 import plugins.personproperties.support.PersonPropertyValueInitialization;
 import plugins.regions.datamanagers.RegionsDataManager;
 import plugins.regions.support.RegionId;
-import plugins.stochastics.StochasticsDataManager;
+import plugins.stochastics.datamanagers.StochasticsDataManager;
 import util.wrappers.MutableDouble;
 
 public class PopulationLoader {

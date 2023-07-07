@@ -14,7 +14,7 @@ import nucleus.ExperimentParameterData;
 import nucleus.FunctionalDimension;
 import nucleus.Plugin;
 import plugins.stochastics.StochasticsPlugin;
-import plugins.stochastics.StochasticsPluginData;
+import plugins.stochastics.datamanagers.StochasticsPluginData;
 import plugins.stochastics.support.WellState;
 
 public final class Example_11_A {

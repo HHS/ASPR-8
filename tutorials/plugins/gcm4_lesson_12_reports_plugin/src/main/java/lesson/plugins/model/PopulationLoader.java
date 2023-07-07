@@ -8,7 +8,7 @@ import lesson.plugins.family.support.FamilyId;
 import lesson.plugins.person.datamanagers.PersonDataManager;
 import lesson.plugins.person.support.PersonId;
 import nucleus.ActorContext;
-import plugins.stochastics.StochasticsDataManager;
+import plugins.stochastics.datamanagers.StochasticsDataManager;
 
 public final class PopulationLoader {
 
