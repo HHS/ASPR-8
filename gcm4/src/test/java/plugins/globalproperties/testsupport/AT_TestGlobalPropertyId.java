@@ -5,8 +5,12 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Random;
 import java.util.Set;
 
 import org.apache.commons.math3.random.RandomGenerator;
@@ -124,5 +128,20 @@ public class AT_TestGlobalPropertyId {
 		}
 	}
 
+    @Test
+    @UnitTestMethod(target = TestGlobalPropertyId.class, name = "getGlobalPropertyIds", args={})
+    public void testGetGlobalPropertyIds() {
+        assertEquals(Arrays.asList(TestGlobalPropertyId.values()), TestGlobalPropertyId.getGlobalPropertyIds());
+    }
+
+    @Test
+    @UnitTestMethod(target = TestGlobalPropertyId.class, name = "getShuffledGlobalPropertyIds", args={RandomGenerator.class})
+    public void testGetShuffledGlobalPropertyIds() {
+        RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(503706897966130759L);
+        List<TestGlobalPropertyId> ids = TestGlobalPropertyId.getGlobalPropertyIds();
+        Collections.shuffle(ids, new Random(randomGenerator.nextLong()));
+
+        assertEquals(ids, TestGlobalPropertyId.getShuffledGlobalPropertyIds(RandomGeneratorProvider.getRandomGenerator(503706897966130759L)));
+    }
 	
 }

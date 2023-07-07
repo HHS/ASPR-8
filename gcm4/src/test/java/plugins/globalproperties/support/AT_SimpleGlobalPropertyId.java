@@ -25,7 +25,7 @@ public class AT_SimpleGlobalPropertyId {
     }
 
     @Test
-    @UnitTestMethod(target = SimpleGlobalPropertyId.class, name = "toString", args = {})
+    @UnitTestMethod(target = SimpleGlobalPropertyId.class, name = "getValue", args = {})
     public void testGetValue() {
         for (int i = 0; i < 10; i++) {
             Object value = i * 10 % 5;

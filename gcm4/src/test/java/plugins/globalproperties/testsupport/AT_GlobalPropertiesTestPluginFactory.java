@@ -41,9 +41,8 @@ import util.wrappers.MutableBoolean;
 public class AT_GlobalPropertiesTestPluginFactory {
 
     @Test
-    @UnitTestMethod(target = GlobalPropertiesTestPluginFactory.Factory.class, name = "factory", args = { long.class,
+    @UnitTestMethod(target = GlobalPropertiesTestPluginFactory.class, name = "factory", args = { long.class,
             Consumer.class })
-
     public void testFactory_Consumer() {
         MutableBoolean executed = new MutableBoolean();
         Factory factory = GlobalPropertiesTestPluginFactory.factory(2050026532065791481L, c -> executed.setValue(true));
@@ -226,8 +225,7 @@ public class AT_GlobalPropertiesTestPluginFactory {
         GlobalPropertiesPluginData.Builder builder = GlobalPropertiesPluginData.builder();
 
         for (TestGlobalPropertyId testGlobalPropertyId : TestGlobalPropertyId.getGlobalPropertyIds()) {
-            builder.defineGlobalProperty(testGlobalPropertyId,
-                    testGlobalPropertyId.getPropertyDefinition(), 0);
+            builder.defineGlobalProperty(testGlobalPropertyId, testGlobalPropertyId.getPropertyDefinition(), 0);
             boolean hasDefaultValue = testGlobalPropertyId.getPropertyDefinition().getDefaultValue().isPresent();
             if (!hasDefaultValue) {
                 builder.setGlobalPropertyValue(testGlobalPropertyId,
@@ -236,7 +234,7 @@ public class AT_GlobalPropertiesTestPluginFactory {
         }
 
         for (TestGlobalPropertyId testGlobalPropertyId : TestGlobalPropertyId
-                .getShuffeledGlobalPropertyIds(randomGenerator)) {
+                .getShuffledGlobalPropertyIds(randomGenerator)) {
 
             boolean hasDefaultValue = testGlobalPropertyId.getPropertyDefinition().getDefaultValue().isPresent();
             boolean setValue = randomGenerator.nextBoolean();
