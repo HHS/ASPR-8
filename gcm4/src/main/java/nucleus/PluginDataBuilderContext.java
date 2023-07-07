@@ -8,11 +8,9 @@ import java.util.Map;
 import util.errors.ContractException;
 
 /**
- * A context containing PluginData and PluginDataBuilder instances that are used
- * to build a
- * particular scenario within an experiment.
+ * An implementor of PluginDataBuilderContainer.
  */
-public final class PluginDataBuilderContext {
+public final class PluginDataBuilderContext implements PluginDataBuilderContainer{
 
 	private Map<Class<?>, PluginDataBuilder> pluginDataBuilderBaseMap = new LinkedHashMap<>();
 	private Map<Class<?>, PluginDataBuilder> pluginDataBuilderWorkingMap = new LinkedHashMap<>();
@@ -68,20 +66,8 @@ public final class PluginDataBuilderContext {
 		return new Builder();
 	}
 
-	/**
-	 * Returns the stored item matching the given class reference.
-	 * 
-	 * @throws ContractException
-	 *                           <ul>
-	 *                           <li>{@linkplain NucleusError#AMBIGUOUS_PLUGIN_DATA_BUILDER_CLASS}
-	 *                           if more than one plugin data builder matches the
-	 *                           given class
-	 *                           reference</li>
-	 * 
-	 *                           <li>{@linkplain NucleusError#UNKNOWN_PLUGIN_DATA_BUILDER_CLASS}
-	 *                           if no plugin data builder matches the given class
-	 *                           reference</li>
-	 */
+	
+	@Override
 	public <T extends PluginDataBuilder> T getPluginDataBuilder(Class<T> classRef) {
 
 		PluginDataBuilder pluginDataBuilder = pluginDataBuilderWorkingMap.get(classRef);

@@ -9,10 +9,9 @@ import util.errors.ContractException;
 
 /**
  * A context containing PluginData and PluginDataBuilder instances that are used
- * to build a
- * particular scenario within an experiment.
+ * to build a particular scenario within an experiment.
  */
-public final class DimensionContext {
+public final class DimensionContext implements PluginDataBuilderContainer {
 
 	private Map<Class<?>, PluginDataBuilder> pluginDataBuilderBaseMap = new LinkedHashMap<>();
 	private Map<Class<?>, PluginDataBuilder> pluginDataBuilderWorkingMap = new LinkedHashMap<>();
@@ -35,8 +34,8 @@ public final class DimensionContext {
 		private Map<Class<?>, PluginData> pluginDataMap = new LinkedHashMap<>();
 
 		/**
-		 * Returns the DimensionContext instance composed from the inputs to
-		 * this builder.
+		 * Returns the DimensionContext instance composed from the inputs to this
+		 * builder.
 		 */
 		public DimensionContext build() {
 			DimensionContext result = new DimensionContext();
@@ -74,20 +73,8 @@ public final class DimensionContext {
 		return new Builder();
 	}
 
-	/**
-	 * Returns the stored item matching the given class reference.
-	 * 
-	 * @throws ContractException
-	 *                           <ul>
-	 *                           <li>{@linkplain NucleusError#AMBIGUOUS_PLUGIN_DATA_BUILDER_CLASS}
-	 *                           if more than one plugin data builder matches the
-	 *                           given class
-	 *                           reference</li>
-	 * 
-	 *                           <li>{@linkplain NucleusError#UNKNOWN_PLUGIN_DATA_BUILDER_CLASS}
-	 *                           if no plugin data builder matches the given class
-	 *                           reference</li>
-	 */
+	
+	@Override
 	public <T extends PluginDataBuilder> T getPluginDataBuilder(Class<T> classRef) {
 
 		PluginDataBuilder pluginDataBuilder = pluginDataBuilderWorkingMap.get(classRef);
@@ -118,9 +105,8 @@ public final class DimensionContext {
 	 * @throws ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain NucleusError#AMBIGUOUS_PLUGIN_DATA_CLASS}
-	 *                           if more than one plugin data matches the
-	 *                           given class
-	 *                           reference</li>
+	 *                           if more than one plugin data matches the given
+	 *                           class reference</li>
 	 * 
 	 *                           <li>{@linkplain NucleusError#UNKNOWN_PLUGIN_DATA_CLASS}
 	 *                           if no plugin data matches the given class
