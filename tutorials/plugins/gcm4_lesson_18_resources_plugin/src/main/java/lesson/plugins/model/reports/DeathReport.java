@@ -9,8 +9,8 @@ import plugins.personproperties.datamanagers.PersonPropertiesDataManager;
 import plugins.regions.datamanagers.RegionsDataManager;
 import plugins.regions.support.RegionId;
 import plugins.reports.support.ReportHeader;
-import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportItem;
+import plugins.reports.support.ReportLabel;
 
 /**
  * A report that groups people at the end of the simulation by their shared

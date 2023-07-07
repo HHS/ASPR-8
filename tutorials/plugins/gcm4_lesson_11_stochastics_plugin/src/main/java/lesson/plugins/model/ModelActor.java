@@ -4,7 +4,7 @@ import org.apache.commons.math3.random.RandomGenerator;
 
 import lesson.plugins.disease.DiseaseDataManager;
 import nucleus.ActorContext;
-import plugins.stochastics.StochasticsDataManager;
+import plugins.stochastics.datamanagers.StochasticsDataManager;
 
 public final class ModelActor {
 

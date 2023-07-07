@@ -23,7 +23,7 @@ import plugins.groups.support.GroupSampler;
 import plugins.groups.support.GroupTypeId;
 import plugins.people.support.PersonId;
 import plugins.personproperties.datamanagers.PersonPropertiesDataManager;
-import plugins.stochastics.StochasticsDataManager;
+import plugins.stochastics.datamanagers.StochasticsDataManager;
 
 public class InfectionManager {
 	private ActorContext actorContext;

@@ -12,7 +12,7 @@ import plugins.people.support.PersonId;
 import plugins.regions.datamanagers.RegionsDataManager;
 import plugins.regions.support.RegionId;
 import plugins.regions.support.RegionPropertyDefinitionInitialization;
-import plugins.stochastics.StochasticsDataManager;
+import plugins.stochastics.datamanagers.StochasticsDataManager;
 import plugins.util.properties.PropertyDefinition;
 
 public final class Vaccinator {

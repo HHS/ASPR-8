@@ -8,7 +8,7 @@ import lesson.plugins.vaccine.datamanagers.VaccinationDataManager;
 import nucleus.ActorContext;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonId;
-import plugins.stochastics.StochasticsDataManager;
+import plugins.stochastics.datamanagers.StochasticsDataManager;
 
 public final class Vaccinator {
 

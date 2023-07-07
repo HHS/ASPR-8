@@ -17,8 +17,8 @@ import plugins.regions.datamanagers.RegionsDataManager;
 import plugins.regions.support.RegionId;
 import plugins.reports.support.PeriodicReport;
 import plugins.reports.support.ReportHeader;
-import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportItem;
+import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportPeriod;
 import plugins.resources.datamanagers.ResourcesDataManager;
 

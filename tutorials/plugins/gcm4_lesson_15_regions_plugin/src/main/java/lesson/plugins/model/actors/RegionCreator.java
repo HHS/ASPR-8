@@ -11,7 +11,7 @@ import nucleus.ActorContext;
 import plugins.regions.datamanagers.RegionsDataManager;
 import plugins.regions.support.RegionConstructionData;
 import plugins.regions.support.RegionConstructionData.Builder;
-import plugins.stochastics.StochasticsDataManager;
+import plugins.stochastics.datamanagers.StochasticsDataManager;
 
 public class RegionCreator {
 

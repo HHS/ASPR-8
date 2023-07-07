@@ -11,8 +11,8 @@ import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonId;
 import plugins.reports.support.PeriodicReport;
 import plugins.reports.support.ReportHeader;
-import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportItem;
+import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportPeriod;
 import util.wrappers.MutableInteger;
 

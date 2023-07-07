@@ -31,7 +31,7 @@ public final class StochasticsDataManager extends DataManager {
 	 * the {@linkplain StochasticsPluginData} or reset via
 	 * {@linkplain StochasticsDataManager#resetSeeds(long)}
 	 */
-	public RandomGenerator getRandomGenerator() {
+	public Well getRandomGenerator() {
 		return randomGenerator;
 	}
 
@@ -44,7 +44,7 @@ public final class StochasticsDataManager extends DataManager {
 	 *             <li>{@linkplain StochasticsError#UNKNOWN_RANDOM_NUMBER_GENERATOR_ID}
 	 *             if the random number generator is unknown</li>
 	 */
-	public RandomGenerator getRandomGeneratorFromId(RandomNumberGeneratorId randomNumberGeneratorId) {
+	public Well getRandomGeneratorFromId(RandomNumberGeneratorId randomNumberGeneratorId) {
 		validateRandomNumberGeneratorId(randomNumberGeneratorId);
 		return randomGeneratorMap.get(randomNumberGeneratorId);
 	}

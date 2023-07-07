@@ -16,7 +16,7 @@ import plugins.groups.datamanagers.GroupsDataManager;
 import plugins.groups.support.GroupId;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.personproperties.datamanagers.PersonPropertiesDataManager;
-import plugins.stochastics.StochasticsDataManager;
+import plugins.stochastics.datamanagers.StochasticsDataManager;
 
 public class TeleworkManager {
 
