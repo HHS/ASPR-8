@@ -15,7 +15,29 @@ import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
 
 public class AT_SimpleRegionPropertyId {
+	@Test
+	@UnitTestMethod(target = SimpleRegionPropertyId.class, name = "getValue", args = {})
+	public void testGetValue() {
 
+		Object value = "some value";
+		SimpleRegionPropertyId simpleRegionPropertyId = new SimpleRegionPropertyId(value);
+		assertEquals(value, simpleRegionPropertyId.getValue());
+		
+		value = 678;
+		simpleRegionPropertyId = new SimpleRegionPropertyId(value);
+		assertEquals(value, simpleRegionPropertyId.getValue());
+		
+		
+		value = false;
+		simpleRegionPropertyId = new SimpleRegionPropertyId(value);
+		assertEquals(value, simpleRegionPropertyId.getValue());
+		
+		value = 2.98;
+		simpleRegionPropertyId = new SimpleRegionPropertyId(value);
+		assertEquals(value, simpleRegionPropertyId.getValue());
+		
+
+	}
 	@Test
 	@UnitTestConstructor(target = SimpleRegionPropertyId.class, args = { Object.class })
 	public void testConstructor() {

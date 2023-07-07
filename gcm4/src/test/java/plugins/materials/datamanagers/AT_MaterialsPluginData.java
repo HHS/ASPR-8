@@ -2672,8 +2672,7 @@ public class AT_MaterialsPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = MaterialsPluginData.Builder.class, name = "equals", args = { Object.class,
-			MaterialId.class, double.class })
+	@UnitTestMethod(target = MaterialsPluginData.class, name = "equals", args = { Object.class })
 	public void testEquals() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(215284709954874816L);
 
@@ -2711,8 +2710,7 @@ public class AT_MaterialsPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = MaterialsPluginData.Builder.class, name = "hashCode", args = { Object.class,
-			MaterialId.class, double.class })
+	@UnitTestMethod(target = MaterialsPluginData.class, name = "hashCode", args = {})
 	public void testHashCode() {
 		// equal objects have equal hash codes
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7949697829968462056L);
@@ -2735,8 +2733,7 @@ public class AT_MaterialsPluginData {
 
  
 	@Test
-	@UnitTestMethod(target = MaterialsPluginData.Builder.class, name = "toString", args = { Object.class,
-			MaterialId.class, double.class })
+	@UnitTestMethod(target = MaterialsPluginData.class, name = "toString", args = {})
 	public void testToString() {
 		MaterialsPluginData randomMaterialsPluginData = getRandomMaterialsPluginData(8064459530862960720L);
 

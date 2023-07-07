@@ -16,7 +16,7 @@ import util.errors.ContractException;
 import util.random.RandomGeneratorProvider;
 import util.wrappers.MutableInteger;
 
-public class AT_TestSimulationOutputConsumer {
+public class AT_TestOutputConsumer {
 
 	@Test
 	@UnitTestConstructor(target = TestOutputConsumer.class, args = {})
@@ -113,5 +113,9 @@ public class AT_TestSimulationOutputConsumer {
 		assertEquals(expectedFloatValues, outputConsumer.getOutputItemMap(Float.class));
 		assertEquals(expectedLongValues, outputConsumer.getOutputItemMap(Long.class));
 	}
+	
+//	TestOutputConsumer	public java.util.Map nucleus.testsupport.testplugin.TestOutputConsumer.getOutputItemMap(java.lang.Class) 
+//	TestOutputConsumer	public java.util.Optional nucleus.testsupport.testplugin.TestOutputConsumer.getOutputItem(java.lang.Class) 
+
 
 }

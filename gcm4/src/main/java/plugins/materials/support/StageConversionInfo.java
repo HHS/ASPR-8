@@ -71,8 +71,8 @@ public class StageConversionInfo {
 		 * @throws ContractException
 		 *             <li>{@linkplain MaterialsError#NULL_MATERIAL_ID} if the
 		 *             material id was not set</li>
-		 *             <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID}
-		 *             if the materials producer id was not set</li>
+		 *             <li>{@linkplain MaterialsError#NULL_STAGE_ID}
+		 *             if the stage id was not set</li>
 		 * 
 		 */
 		public StageConversionInfo build() {
@@ -90,12 +90,13 @@ public class StageConversionInfo {
 		 *             if the amount is not finite</li>
 		 */
 		public Builder setAmount(double amount) {
-			if (amount < 0) {
-				throw new ContractException(MaterialsError.NEGATIVE_MATERIAL_AMOUNT);
-			}
 			if (!Double.isFinite(amount)) {
 				throw new ContractException(MaterialsError.NON_FINITE_MATERIAL_AMOUNT);
 			}
+			if (amount < 0) {
+				throw new ContractException(MaterialsError.NEGATIVE_MATERIAL_AMOUNT);
+			}
+			
 			data.amount = amount;
 			return this;
 		}
@@ -119,8 +120,8 @@ public class StageConversionInfo {
 		 * Sets the stager id. Defaulted to null.
 		 * 
 		 * @throws ContractException
-		 *             <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID}
-		 *             if the materials producer id is null</li>
+		 *             <li>{@linkplain MaterialsError#NULL_STAGE_ID}
+		 *             if the stage id is null</li>
 		 * 
 		 */
 		public Builder setStageId(StageId stageId) {

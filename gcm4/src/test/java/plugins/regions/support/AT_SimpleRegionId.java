@@ -23,7 +23,30 @@ public class AT_SimpleRegionId {
 
 		assertThrows(NullPointerException.class, () -> new SimpleRegionId(null));
 	}
+	
+	@Test
+	@UnitTestMethod(target = SimpleRegionId.class, name = "getValue", args = {})
+	public void testGetValue() {
 
+		Object value = "some value";
+		SimpleRegionId simpleRegionId = new SimpleRegionId(value);
+		assertEquals(value, simpleRegionId.getValue());
+		
+		value = 678;
+		simpleRegionId = new SimpleRegionId(value);
+		assertEquals(value, simpleRegionId.getValue());
+		
+		
+		value = false;
+		simpleRegionId = new SimpleRegionId(value);
+		assertEquals(value, simpleRegionId.getValue());
+		
+		value = 2.98;
+		simpleRegionId = new SimpleRegionId(value);
+		assertEquals(value, simpleRegionId.getValue());
+		
+
+	}
 	@Test
 	@UnitTestMethod(target = SimpleRegionId.class, name = "toString", args = {})
 	public void testToString() {
