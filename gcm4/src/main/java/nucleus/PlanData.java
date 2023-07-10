@@ -10,4 +10,7 @@ public interface PlanData {
 
 	@Override
 	public boolean equals(Object obj);
+	
+	@Override 
+	public String toString();
 }

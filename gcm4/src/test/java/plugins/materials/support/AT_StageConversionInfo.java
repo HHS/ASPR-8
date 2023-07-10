@@ -76,7 +76,7 @@ public class AT_StageConversionInfo {
 
 			for (TestBatchPropertyId testBatchPropertyId : TestBatchPropertyId.values()) {
 				if (randomGenerator.nextBoolean()) {
-					Object propertyValue = testBatchPropertyId.getRandomBatchPropertyValue(randomGenerator);
+					Object propertyValue = testBatchPropertyId.getRandomPropertyValue(randomGenerator);
 					builder.setPropertyValue(testBatchPropertyId, propertyValue);
 					expectedPropertyValues.put(testBatchPropertyId, propertyValue);
 				}
@@ -189,7 +189,8 @@ public class AT_StageConversionInfo {
 	}
 
 	@Test
-	@UnitTestMethod(target = StageConversionInfo.Builder.class, name = "setPropertyValue", args = {})
+	@UnitTestMethod(target = StageConversionInfo.Builder.class, name = "setPropertyValue", args = {
+			BatchPropertyId.class, Object.class })
 	public void testSetPropertyValue() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(4143317260505344550L);
 
@@ -204,7 +205,7 @@ public class AT_StageConversionInfo {
 
 			for (TestBatchPropertyId testBatchPropertyId : TestBatchPropertyId.values()) {
 				if (randomGenerator.nextBoolean()) {
-					Object propertyValue = testBatchPropertyId.getRandomBatchPropertyValue(randomGenerator);
+					Object propertyValue = testBatchPropertyId.getRandomPropertyValue(randomGenerator);
 					builder.setPropertyValue(testBatchPropertyId, propertyValue);
 					expectedPropertyValues.put(testBatchPropertyId, propertyValue);
 				}

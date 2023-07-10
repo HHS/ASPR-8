@@ -1082,7 +1082,7 @@ public class AT_PopulationPartitionImpl {
 	}
 
 	@Test
-	@UnitTestMethod(target = DegeneratePopulationPartitionImpl.class, name = "getPersonValue", args = { LabelSetFunction.class, PersonId.class })
+	@UnitTestMethod(target = PopulationPartitionImpl.class, name = "getPersonValue", args = { LabelSetFunction.class, PersonId.class })
 	public void testGetPersonValue() {
 		RandomGenerator rng = RandomGeneratorProvider.getRandomGenerator(1889608169419896318L);
 		long seed = rng.nextLong();

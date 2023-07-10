@@ -35,22 +35,23 @@ public class AT_MaterialsProducerPropertyReportPluginData {
 
 		// precondition test: if the report label is not assigned
 		ContractException contractException = assertThrows(ContractException.class, () -> //
-		MaterialsProducerPropertyReportPluginData	.builder()//
-													.build());
+		MaterialsProducerPropertyReportPluginData.builder()//
+				.build());
 		assertEquals(ReportError.NULL_REPORT_LABEL, contractException.getErrorType());
 
 	}
 
 	@Test
-	@UnitTestMethod(target = MaterialsProducerPropertyReportPluginData.Builder.class, name = "setReportLabel", args = { ReportLabel.class })
+	@UnitTestMethod(target = MaterialsProducerPropertyReportPluginData.Builder.class, name = "setReportLabel", args = {
+			ReportLabel.class })
 	public void testSetReportLabel() {
 
 		for (int i = 0; i < 30; i++) {
 			ReportLabel expectedReportLabel = new SimpleReportLabel(i);
 			MaterialsProducerPropertyReportPluginData materialsProducerPropertyReportPluginData = //
-					MaterialsProducerPropertyReportPluginData	.builder()//
-																.setReportLabel(expectedReportLabel)//
-																.build();
+					MaterialsProducerPropertyReportPluginData.builder()//
+							.setReportLabel(expectedReportLabel)//
+							.build();
 
 			assertEquals(expectedReportLabel, materialsProducerPropertyReportPluginData.getReportLabel());
 		}
@@ -68,9 +69,9 @@ public class AT_MaterialsProducerPropertyReportPluginData {
 		for (int i = 0; i < 30; i++) {
 			ReportLabel expectedReportLabel = new SimpleReportLabel(i);
 			MaterialsProducerPropertyReportPluginData materialsProducerPropertyReportPluginData = //
-					MaterialsProducerPropertyReportPluginData	.builder()//
-																.setReportLabel(expectedReportLabel)//
-																.build();
+					MaterialsProducerPropertyReportPluginData.builder()//
+							.setReportLabel(expectedReportLabel)//
+							.build();
 
 			assertEquals(expectedReportLabel, materialsProducerPropertyReportPluginData.getReportLabel());
 		}
@@ -89,13 +90,14 @@ public class AT_MaterialsProducerPropertyReportPluginData {
 			ReportLabel reportLabel = new SimpleReportLabel(randomGenerator.nextInt());
 
 			MaterialsProducerPropertyReportPluginData.Builder builder = //
-					MaterialsProducerPropertyReportPluginData	.builder()//
-																.setReportLabel(reportLabel);
+					MaterialsProducerPropertyReportPluginData.builder()//
+							.setReportLabel(reportLabel);
 
 			MaterialsProducerPropertyReportPluginData materialsProducerPropertyReportPluginData = builder.build();
 
 			// create the clone builder and have it build
-			MaterialsProducerPropertyReportPluginData cloneMaterialsProducerPropertyReportPluginData = materialsProducerPropertyReportPluginData.getCloneBuilder().build();
+			MaterialsProducerPropertyReportPluginData cloneMaterialsProducerPropertyReportPluginData = materialsProducerPropertyReportPluginData
+					.getCloneBuilder().build();
 
 			// the result should equal the original if the clone builder was
 			// initialized with the correct state
@@ -113,8 +115,10 @@ public class AT_MaterialsProducerPropertyReportPluginData {
 			// build a MaterialsProducerPropertyReportPluginData from the same
 			// random
 			// inputs
-			MaterialsProducerPropertyReportPluginData.Builder builder1 = MaterialsProducerPropertyReportPluginData.builder();
-			MaterialsProducerPropertyReportPluginData.Builder builder2 = MaterialsProducerPropertyReportPluginData.builder();
+			MaterialsProducerPropertyReportPluginData.Builder builder1 = MaterialsProducerPropertyReportPluginData
+					.builder();
+			MaterialsProducerPropertyReportPluginData.Builder builder2 = MaterialsProducerPropertyReportPluginData
+					.builder();
 
 			ReportLabel reportLabel = new SimpleReportLabel(randomGenerator.nextInt(100));
 			builder1.setReportLabel(reportLabel);
@@ -130,9 +134,9 @@ public class AT_MaterialsProducerPropertyReportPluginData {
 			// change the report label
 			reportLabel = new SimpleReportLabel(1000);
 			materialsProducerPropertyReportPluginData2 = //
-					materialsProducerPropertyReportPluginData1	.getCloneBuilder()//
-																.setReportLabel(reportLabel)//
-																.build();
+					materialsProducerPropertyReportPluginData1.getCloneBuilder()//
+							.setReportLabel(reportLabel)//
+							.build();
 			assertNotEquals(materialsProducerPropertyReportPluginData2, materialsProducerPropertyReportPluginData1);
 		}
 
@@ -148,8 +152,10 @@ public class AT_MaterialsProducerPropertyReportPluginData {
 			// build a MaterialsProducerPropertyReportPluginData from the same
 			// random
 			// inputs
-			MaterialsProducerPropertyReportPluginData.Builder builder1 = MaterialsProducerPropertyReportPluginData.builder();
-			MaterialsProducerPropertyReportPluginData.Builder builder2 = MaterialsProducerPropertyReportPluginData.builder();
+			MaterialsProducerPropertyReportPluginData.Builder builder1 = MaterialsProducerPropertyReportPluginData
+					.builder();
+			MaterialsProducerPropertyReportPluginData.Builder builder2 = MaterialsProducerPropertyReportPluginData
+					.builder();
 
 			ReportLabel reportLabel = new SimpleReportLabel(randomGenerator.nextInt(100));
 			builder1.setReportLabel(reportLabel);
@@ -166,18 +172,31 @@ public class AT_MaterialsProducerPropertyReportPluginData {
 			assertEquals(hashCode, materialsProducerPropertyReportPluginData1.hashCode());
 
 			// show that equal objects have equal hash codes
-			assertEquals(materialsProducerPropertyReportPluginData1.hashCode(), materialsProducerPropertyReportPluginData2.hashCode());
+			assertEquals(materialsProducerPropertyReportPluginData1.hashCode(),
+					materialsProducerPropertyReportPluginData2.hashCode());
 
 			// collect the hashcode
 			observedHashCodes.add(materialsProducerPropertyReportPluginData1.hashCode());
 		}
 
 		/*
-		 * The hash codes should be dispersed -- we only show that they are
-		 * unique values -- this is dependent on the random seed
+		 * The hash codes should be dispersed -- we only show that they are unique
+		 * values -- this is dependent on the random seed
 		 */
 		assertTrue(observedHashCodes.size() > 40);
 
+	}
+
+	@Test
+	@UnitTestMethod(target = MaterialsProducerPropertyReportPluginData.class, name = "toString", args = {})
+	public void testToString() {
+		MaterialsProducerPropertyReportPluginData materialsProducerPropertyReportPluginData = //
+				MaterialsProducerPropertyReportPluginData.builder()//
+						.setReportLabel(new SimpleReportLabel("report label"))//
+						.build();
+		String actualValue = materialsProducerPropertyReportPluginData.toString();
+		String expectedValue = "MaterialsProducerPropertyReportPluginData [data=Data [reportLabel=SimpleReportLabel [value=report label], locked=true]]";
+		assertEquals(expectedValue, actualValue);
 	}
 
 }

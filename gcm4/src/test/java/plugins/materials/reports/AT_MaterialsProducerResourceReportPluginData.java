@@ -177,5 +177,18 @@ public class AT_MaterialsProducerResourceReportPluginData {
 		assertTrue(observedHashCodes.size()>40);
 
 	}
+	
+	@Test
+	@UnitTestMethod(target = MaterialsProducerResourceReportPluginData.class, name = "toString", args = {})
+	public void testToString() {
+		MaterialsProducerResourceReportPluginData materialsProducerResourceReportPluginData = //
+				MaterialsProducerResourceReportPluginData.builder()//
+						.setReportLabel(new SimpleReportLabel("report label"))//						
+						.build();
+		String actualValue = materialsProducerResourceReportPluginData.toString();	
+		String expectedValue = "MaterialsProducerResourceReportPluginData [data=Data [reportLabel=SimpleReportLabel [value=report label], locked=true]]";
+		assertEquals(expectedValue, actualValue);
+	}
+
 
 }

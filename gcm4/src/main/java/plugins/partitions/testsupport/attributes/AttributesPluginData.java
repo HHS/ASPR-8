@@ -16,8 +16,6 @@ import plugins.partitions.testsupport.attributes.support.AttributeError;
 import plugins.partitions.testsupport.attributes.support.AttributeId;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
-import plugins.personproperties.support.PersonPropertyError;
-import plugins.util.properties.PropertyError;
 import util.errors.ContractException;
 
 @Immutable
@@ -211,10 +209,10 @@ public class AttributesPluginData implements PluginData {
 		 * @throws ContractException
 		 *                           <li>{@linkplain PersonError#NULL_PERSON_ID} if the
 		 *                           person id is null</li>
-		 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
-		 *                           the person property id is null</li>
-		 *                           <li>{@linkplain PersonPropertyError#NULL_PROPERTY_VALUE}
-		 *                           if the person property value is null</li>
+		 *                           <li>{@linkplain AttributeError#NULL_ATTRIBUTE_ID} if
+		 *                           the attribute property id is null</li>
+		 *                           <li>{@linkplain AttributeError#NULL_ATTRIBUTE_VALUE}
+		 *                           if the attribute property value is null</li>
 		 */
 		public Builder setPersonAttributeValue(final PersonId personId, final AttributeId attributeId,
 				final Object attributeValue) {

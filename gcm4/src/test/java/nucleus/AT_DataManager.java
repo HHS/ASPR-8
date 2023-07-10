@@ -27,4 +27,10 @@ public class AT_DataManager {
 	public void testConstructor() {
 		//nothing to test
 	}
+	
+	@Test
+	@UnitTestMethod(target = DataManager.class ,name = "toString", args = {})
+	public void testToString() {
+		//nothing to test
+	}
 }

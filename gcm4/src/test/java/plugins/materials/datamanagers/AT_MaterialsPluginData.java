@@ -2656,7 +2656,7 @@ public class AT_MaterialsPluginData {
 				MaterialId mat = batchIds.get(batchId);
 				if (mat.equals(materialId)) {
 					if (valueRequired || randomGenerator.nextBoolean()) {
-						Object propertyValue = testBatchPropertyId.getRandomBatchPropertyValue(randomGenerator);
+						Object propertyValue = testBatchPropertyId.getRandomPropertyValue(randomGenerator);
 						builder.setBatchPropertyValue(batchId, testBatchPropertyId, propertyValue);
 					}
 				}
