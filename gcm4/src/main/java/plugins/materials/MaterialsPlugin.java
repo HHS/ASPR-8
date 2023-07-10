@@ -16,7 +16,6 @@ import plugins.materials.reports.StageReportPluginData;
 import plugins.materials.support.MaterialsError;
 import plugins.regions.RegionsPluginId;
 import plugins.resources.ResourcesPluginId;
-import plugins.resources.support.ResourceError;
 import util.errors.ContractException;
 
 /**
@@ -57,8 +56,8 @@ public final class MaterialsPlugin {
 		 * Builds the PersonPropertiesPlugin from the collected inputs
 		 * 
 		 * @throws ContractException
-		 *             <li>{@linkplain ResourceError#NULL_RESOURCE_PLUGIN_DATA}
-		 *             if the personPropertiesPluginData is null</li>
+		 *             <li>{@linkplain MaterialsError#NULL_MATERIALS_PLUGIN_DATA}
+		 *             if the materials plugin data is null</li>
 		 */
 		public Plugin getMaterialsPlugin() {
 
