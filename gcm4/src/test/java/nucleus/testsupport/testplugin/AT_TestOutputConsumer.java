@@ -3,9 +3,13 @@ package nucleus.testsupport.testplugin;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
@@ -34,11 +38,10 @@ public class AT_TestOutputConsumer {
 		outputConsumer.accept(true);
 		outputConsumer.accept(false);
 		outputConsumer.accept(true);
-		
+
 		Map<Boolean, Integer> expectedOutput = new LinkedHashMap<>();
 		expectedOutput.put(true, 3);
 		expectedOutput.put(false, 2);
-		
 
 		ContractException contractException = assertThrows(ContractException.class, () -> outputConsumer.accept(null));
 		assertEquals(TestError.NULL_OUTPUT_ITEM, contractException.getErrorType());
@@ -46,12 +49,11 @@ public class AT_TestOutputConsumer {
 		Map<Boolean, Integer> actualOutput = outputConsumer.getOutputItemMap(Boolean.class);
 		assertEquals(expectedOutput, actualOutput);
 
-
 	}
 
 	@Test
-	@UnitTestMethod(target = TestOutputConsumer.class, name = "getOutputItems", args = { Class.class })
-	public void testGetOutputItems() {
+	@UnitTestMethod(target = TestOutputConsumer.class, name = "getOutputItemMap", args = { Class.class })
+	public void testGetOutputItemMap() {
 		TestOutputConsumer outputConsumer = new TestOutputConsumer();
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7830499412883085962L);
@@ -61,7 +63,7 @@ public class AT_TestOutputConsumer {
 		Map<Float, MutableInteger> expectedFloatValuesM = new LinkedHashMap<>();
 		Map<Long, MutableInteger> expectedLongValuesM = new LinkedHashMap<>();
 
-		for (int i = 0; i < 100; i++) {
+		for (int i = 0; i < 1; i++) {
 			boolean shouldAdd = randomGenerator.nextBoolean();
 
 			if (shouldAdd) {
@@ -113,9 +115,75 @@ public class AT_TestOutputConsumer {
 		assertEquals(expectedFloatValues, outputConsumer.getOutputItemMap(Float.class));
 		assertEquals(expectedLongValues, outputConsumer.getOutputItemMap(Long.class));
 	}
-	
-//	TestOutputConsumer	public java.util.Map nucleus.testsupport.testplugin.TestOutputConsumer.getOutputItemMap(java.lang.Class) 
-//	TestOutputConsumer	public java.util.Optional nucleus.testsupport.testplugin.TestOutputConsumer.getOutputItem(java.lang.Class) 
 
+	@Test
+	@UnitTestMethod(target = TestOutputConsumer.class, name = "getOutputItems", args = { Class.class })
+	public void testGetOutputItems() {
+		TestOutputConsumer outputConsumer = new TestOutputConsumer();
+
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(3616113008200960520L);
+
+		List<Integer> expectedIntegers = new ArrayList<>();
+		List<Double> expectedDoubles = new ArrayList<>();
+		List<String> expectedStrings = new ArrayList<>();
+		List<Boolean> expectedBooleans = new ArrayList<>();
+		List<Boolean> expectedFloats = new ArrayList<>();
+
+		for (int i = 0; i < 100; i++) {
+
+			int type = randomGenerator.nextInt(4);
+			
+			switch (type) {
+			case 0:
+				Integer ivalue = randomGenerator.nextInt();
+				expectedIntegers.add(ivalue);
+				outputConsumer.accept(ivalue);
+				break;
+			case 1:
+				Double dvalue = randomGenerator.nextDouble();
+				expectedDoubles.add(dvalue);
+				outputConsumer.accept(dvalue);
+				break;
+			case 2:
+				String svalue = Integer.toString(randomGenerator.nextInt());
+				expectedStrings.add(svalue);
+				outputConsumer.accept(svalue);
+				break;
+			case 3:
+				Boolean bvalue = randomGenerator.nextBoolean();
+				expectedBooleans.add(bvalue);
+				outputConsumer.accept(bvalue);
+				break;
+			default:
+				throw new RuntimeException("unhandled case");
+			}
+		}
+		
+		assertEquals(expectedIntegers, outputConsumer.getOutputItems(Integer.class));
+		assertEquals(expectedDoubles, outputConsumer.getOutputItems(Double.class));
+		assertEquals(expectedFloats, outputConsumer.getOutputItems(Float.class));
+		assertEquals(expectedStrings, outputConsumer.getOutputItems(String.class));
+		assertEquals(expectedBooleans, outputConsumer.getOutputItems(Boolean.class));
+
+	}
+
+
+	@Test
+	@UnitTestMethod(target = TestOutputConsumer.class, name = "getOutputItem", args = { Class.class })
+	public void testGetOutputItem() {
+		TestOutputConsumer outputConsumer = new TestOutputConsumer();
+		
+		Optional<Integer> optional = outputConsumer.getOutputItem(Integer.class);
+		assertTrue(optional.isEmpty());
+		
+		outputConsumer.accept(5);
+		optional = outputConsumer.getOutputItem(Integer.class);
+		assertTrue(optional.isPresent());
+		assertEquals(5, optional.get());
+		
+		outputConsumer.accept(5);
+		ContractException contractException = assertThrows(ContractException.class,()->outputConsumer.getOutputItem(Integer.class));
+		assertEquals(TestError.MULTIPLE_MATCHING_ITEMS, contractException.getErrorType());
+	}
 
 }

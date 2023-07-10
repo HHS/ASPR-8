@@ -253,7 +253,7 @@ public class AT_MaterialsDataManager_Continuity {
 				for (TestBatchPropertyId testBatchPropertyId : TestBatchPropertyId
 						.getTestBatchPropertyIds(testMaterialId)) {
 					if (testBatchPropertyId.getPropertyDefinition().getDefaultValue().isEmpty()) {
-						Object propertyValue = testBatchPropertyId.getRandomBatchPropertyValue(randomGenerator);
+						Object propertyValue = testBatchPropertyId.getRandomPropertyValue(randomGenerator);
 						batchBuilder.setPropertyValue(testBatchPropertyId, propertyValue);
 					}
 				}
@@ -316,7 +316,7 @@ public class AT_MaterialsDataManager_Continuity {
 				Collections.shuffle(propertyIds, new Random(randomGenerator.nextLong()));
 				for (TestBatchPropertyId testBatchPropertyId : propertyIds) {
 					if (testBatchPropertyId.getPropertyDefinition().getDefaultValue().isEmpty()) {
-						Object propertyValue = testBatchPropertyId.getRandomBatchPropertyValue(randomGenerator);
+						Object propertyValue = testBatchPropertyId.getRandomPropertyValue(randomGenerator);
 						batchBuilder.setPropertyValue(testBatchPropertyId, propertyValue);
 					}
 				}
@@ -432,7 +432,7 @@ public class AT_MaterialsDataManager_Continuity {
 							PropertyDefinition propertyDefinition = materialsDataManager
 									.getBatchPropertyDefinition(materialId, batchPropertyId);
 							if (propertyDefinition.getDefaultValue().isEmpty()) {
-								Object propertyValue = batchPropertyId.getRandomBatchPropertyValue(randomGenerator);
+								Object propertyValue = batchPropertyId.getRandomPropertyValue(randomGenerator);
 								builder.setPropertyValue(batchPropertyId, propertyValue);
 							}
 						}

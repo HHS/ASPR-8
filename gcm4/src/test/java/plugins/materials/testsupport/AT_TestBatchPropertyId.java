@@ -5,7 +5,9 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.Arrays;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.math3.random.RandomGenerator;
@@ -86,4 +88,28 @@ public class AT_TestBatchPropertyId {
 			}
 		}
 	}
+	
+
+	@Test
+	@UnitTestMethod(target = TestBatchPropertyId.class, name = "getBatchPropertyIds", args = {})
+	public void testGetBatchPropertyIds() {
+		assertEquals(Arrays.asList(TestBatchPropertyId.values()),TestBatchPropertyId.getBatchPropertyIds());		
+	}
+
+	@Test
+	@UnitTestMethod(target = TestBatchPropertyId.class, name = "getBatchPropertyIds", args = { RandomGenerator.class })
+	public void testGetBatchPropertyIds_RandomGenerator() {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(2272120777807498806L);
+		LinkedHashSet<TestBatchPropertyId> expectedSet = new LinkedHashSet<>(Arrays.asList(TestBatchPropertyId.values()));
+		Set<List<TestBatchPropertyId>> actualLists =  new LinkedHashSet<>();
+		for(int i = 0;i<1000;i++) {
+			List<TestBatchPropertyId> batchPropertyIds = TestBatchPropertyId.getBatchPropertyIds(randomGenerator);
+			actualLists.add(batchPropertyIds);
+			//show that the generated list has all the property ids
+			assertEquals(expectedSet,new LinkedHashSet<>(batchPropertyIds));		
+		}
+		//show that the 1000 lists of the 362880 = 9! possible arrangements result in nearly no duplicates		
+		assertTrue(actualLists.size()>990);
+	}
+
 }

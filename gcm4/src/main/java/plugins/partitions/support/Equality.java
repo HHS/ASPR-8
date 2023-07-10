@@ -24,7 +24,7 @@ public enum Equality {
 
 	EQUAL {
 		@Override
-		public boolean isCompatibleComparisonValue(final int comparisonValue) {
+		public boolean isCompatibleComparisonValue(final int comparisonValue) {			
 			return comparisonValue == 0;
 		}
 	},

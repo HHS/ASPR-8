@@ -27,7 +27,7 @@ import util.errors.ContractException;
 public class AT_MaterialsPlugin {
 
 	@Test
-	@UnitTestMethod(target = MaterialsPlugin.Builder.class, name = "builder", args = {})
+	@UnitTestMethod(target = MaterialsPlugin.class, name = "builder", args = {})
 	public void testBuilder() {
 		assertNotNull(MaterialsPlugin.builder());
 	}
