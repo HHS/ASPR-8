@@ -251,7 +251,7 @@ public final class PeoplePluginData implements PluginData {
 		 */
 		public Builder addPersonRange(PersonRange personRange) {
 			ensureDataMutability();
-			validatePersonRandgeIsValid(personRange);
+			validatePersonRangeIsValid(personRange);
 			data.personRanges.add(personRange);
 			return this;
 		}
@@ -275,10 +275,7 @@ public final class PeoplePluginData implements PluginData {
 		/**
 		 * Sets the time for the last person added to the population. Defaults
 		 * to zero.
-		 * 
-		 * @throws ContractException
-		 *             <li>{@linkplain PersonError#NEGATIVE_TIME} if the
-		 *             assignment time is negative</li>
+		 *		 
 		 */
 
 		public Builder setAssignmentTime(double assignmentTime) {
@@ -313,7 +310,7 @@ public final class PeoplePluginData implements PluginData {
 		return new Builder(data);
 	}
 
-	private static void validatePersonRandgeIsValid(PersonRange personRange) {
+	private static void validatePersonRangeIsValid(PersonRange personRange) {
 		if (personRange == null) {
 			throw new ContractException(PersonError.NULL_PERSON_RANGE);
 		}

@@ -33,6 +33,7 @@ import nucleus.testsupport.testplugin.TestSimulation;
 import plugins.partitions.PartitionsPlugin;
 import plugins.partitions.support.Equality;
 import plugins.partitions.support.LabelSet;
+import plugins.partitions.support.LabelSetFunction;
 import plugins.partitions.support.LabelSetWeightingFunction;
 import plugins.partitions.support.Partition;
 import plugins.partitions.support.PartitionError;
@@ -1741,8 +1742,207 @@ public final class AT_PartitionsDataManager {
 			assertEquals(inputPartitionsPluginData, outputPartitionsPluginData);
 		}
 	}
-
 	
+	@Test
+	@UnitTestMethod(target = PartitionsDataManager.class, name = "getPersonValue", args = {Object.class, LabelSetFunction.class, PersonId.class })
+	public void testGetPersonValue() {
+		RandomGenerator rng = RandomGeneratorProvider.getRandomGenerator(1889608169419896318L);
+		long seed = rng.nextLong();
 
+		String key = "key";
+
+		/*
+		 * Define functions that will convert attribute values into labels for
+		 * attributes INT_0, INT_1, DOUBLE_0, and DOUBLE_1. We will use these in
+		 * the partition's labeling
+		 */
+		Function<Object, Object> int_0_labelFunction = (value) -> {
+			int v = (Integer) value;
+			return v % 3;
+		};
+
+		Function<Object, Object> int_1_labelFunction = (value) -> {
+			int v = (Integer) value;
+			if (v < 40) {
+				return true;
+			}
+			return false;
+		};
+
+		Function<Object, Object> double_0_labelFunction = (value) -> {
+			double v = (Double) value;
+			if (v < 33) {
+				return "A";
+			}
+			if (v < 67) {
+				return "B";
+			}
+			return "C";
+		};
+
+		Function<Object, Object> double_1_labelFunction = (value) -> {
+			double v = (Double) value;
+			return v < 90;
+		};
+
+		TestPluginData.Builder testPluginDataBuilder = TestPluginData.builder();
+
+		/*
+		 * Have the actor set the attribute values for each person to random
+		 * values
+		 */
+		testPluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
+			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
+			// determine the people in the world
+			List<PersonId> peopleInTheWorld = peopleDataManager.getPeople();
+
+			// alter people's attributes randomly
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
+			for (PersonId personId : peopleInTheWorld) {
+				int intValue = (int) (randomGenerator.nextDouble() * 100);
+				attributesDataManager.setAttributeValue(personId, TestAttributeId.INT_0, intValue);
+
+				intValue = (int) (randomGenerator.nextDouble() * 100);
+				attributesDataManager.setAttributeValue(personId, TestAttributeId.INT_1, intValue);
+
+				double doubleValue = randomGenerator.nextDouble() * 100;
+				attributesDataManager.setAttributeValue(personId, TestAttributeId.DOUBLE_0, doubleValue);
+
+				doubleValue = randomGenerator.nextDouble() * 100;
+				attributesDataManager.setAttributeValue(personId, TestAttributeId.DOUBLE_1, doubleValue);
+
+				boolean booleanValue = randomGenerator.nextBoolean();
+				attributesDataManager.setAttributeValue(personId, TestAttributeId.BOOLEAN_0, booleanValue);
+
+				booleanValue = randomGenerator.nextBoolean();
+				attributesDataManager.setAttributeValue(personId, TestAttributeId.BOOLEAN_1, booleanValue);
+			}
+		}));
+
+		/*
+		 * Have the actor add a partition under the key that has four labelers
+		 * corresponding to the functions above and a simple filter based on
+		 * TestAttributeId.BOOLEAN_0.
+		 */
+		testPluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
+			PartitionsDataManager partitionsDataManager = c.getDataManager(PartitionsDataManager.class);
+
+			/*
+			 * Create a partition that may filter about half of the population
+			 * on BOOLEAN_0. We will partition on INT_0, INT_1, DOUBLE_0 and
+			 * DOUBLE_1. Note that we do not use BOOLEAN_1 as part of the
+			 * partition.
+			 */
+			Partition.Builder partitionBuilder = Partition.builder();
+
+			partitionBuilder.setFilter(new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, true));//
+
+			partitionBuilder//
+							.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.INT_0, int_0_labelFunction))//
+							.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.INT_1, int_1_labelFunction))//
+							.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.DOUBLE_0, double_0_labelFunction))//
+							.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.DOUBLE_1, double_1_labelFunction));
+
+			Partition partition = partitionBuilder.build();
+			partitionsDataManager.addPartition(partition, key);
+		}));
+
+		// Have the actor get person values using a labeling function and show
+		// that the result of the function matches expectations.
+		testPluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(2, (c) -> {
+
+			// establish data views
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
+			PartitionsDataManager partitionsDataManager = c.getDataManager(PartitionsDataManager.class);
+
+			for (PersonId personId : peopleDataManager.getPeople()) {
+
+				
+				
+				LabelSetFunction<Integer> f = (pc, labelset) -> {
+					Integer i = (Integer) labelset.getLabel(TestAttributeId.INT_0).get();
+					Boolean b1 = (Boolean) labelset.getLabel(TestAttributeId.INT_1).get();
+					String s = (String) labelset.getLabel(TestAttributeId.DOUBLE_0).get();
+					Boolean b2 = (Boolean) labelset.getLabel(TestAttributeId.DOUBLE_1).get();
+					int result = i;
+					if (b1) {
+						result += 20;
+					}
+					switch (s) {
+					case "A":
+						result *= 2;
+						break;
+					case "B":
+						result *= 3;
+						break;
+					default:
+						result *= 4;
+						break;
+					}
+					if (b2) {
+						result += 17;
+					}										
+					return result;
+				};
+				
+
+				Optional<Integer> optional = partitionsDataManager.getPersonValue(key, f, personId);
+
+				// the person should be in the partition if and only if the
+				// optional is present
+				Boolean expectedInclusion = attributesDataManager.getAttributeValue(personId, TestAttributeId.BOOLEAN_0);
+				assertEquals(expectedInclusion, optional.isPresent());
+
+				if (optional.isPresent()) {
+					// determine the expected value of the function
+					
+					//first, get the attribute values of the person
+					int i0 = attributesDataManager.getAttributeValue(personId, TestAttributeId.INT_0);
+					int i1 = attributesDataManager.getAttributeValue(personId, TestAttributeId.INT_1);
+					double d0 = attributesDataManager.getAttributeValue(personId, TestAttributeId.DOUBLE_0);
+					double d1 = attributesDataManager.getAttributeValue(personId, TestAttributeId.DOUBLE_1);
+					
+					//now determine what the labelers will do with those values
+					int i = (Integer)int_0_labelFunction.apply(i0);
+					boolean b1 = (Boolean)int_1_labelFunction.apply(i1);
+					String s = (String)double_0_labelFunction.apply(d0);
+					boolean b2 = (Boolean)double_1_labelFunction.apply(d1);
+					
+					//finally calculate what the label function will do with the label values
+					int expectedValue = i;
+					if (b1) {
+						expectedValue += 20;
+					}
+					switch (s) {
+					case "A":
+						expectedValue *= 2;
+						break;
+					case "B":
+						expectedValue *= 3;
+						break;
+					default:
+						expectedValue *= 4;
+						break;
+					}
+					if (b2) {
+						expectedValue += 17;
+					}
+
+					// show the values are equal
+					assertEquals(expectedValue, optional.get().intValue());
+				}
+
+			}
+		}));
+
+		TestPluginData testPluginData = testPluginDataBuilder.build();
+
+		Factory factory = PartitionsTestPluginFactory.factory(1000, seed, testPluginData);
+
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
+	}
 
 }

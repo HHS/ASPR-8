@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -41,15 +42,13 @@ import plugins.people.support.PersonId;
 import plugins.people.support.PersonRange;
 import plugins.people.testsupport.PeopleTestPluginFactory;
 import plugins.people.testsupport.PeopleTestPluginFactory.Factory;
-import util.annotations.UnitTag;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 
 public final class AT_PeopleDataManager {
 	/**
-	 * Demonstrates that the data manager's initial state reflects its plugin
-	 * data
+	 * Demonstrates that the data manager's initial state reflects its plugin data
 	 */
 	@Test
 	@UnitTestMethod(target = PeopleDataManager.class, name = "init", args = { DataManagerContext.class })
@@ -97,36 +96,36 @@ public final class AT_PeopleDataManager {
 		TestPluginData testPluginData = pluginBuilder.build();
 
 		Factory factory = PeopleTestPluginFactory//
-													.factory(6970812715559334185L, testPluginData)//
-													.setPeoplePluginData(peoplePluginData);
+				.factory(6970812715559334185L, testPluginData)//
+				.setPeoplePluginData(peoplePluginData);
 
-		TestSimulation	.builder()//
-						.addPlugins(factory.getPlugins())//
-						.build()//
-						.execute();
+		TestSimulation.builder()//
+				.addPlugins(factory.getPlugins())//
+				.build()//
+				.execute();
 
 		/**
-		 * precondition test: if the plugin data person assignment time exceeds
-		 * the start time of the simulation
+		 * precondition test: if the plugin data person assignment time exceeds the
+		 * start time of the simulation
 		 */
 
 		ContractException contractException = assertThrows(ContractException.class, () -> {
-			PeoplePluginData peoplePluginData2 = PeoplePluginData	.builder()//
-																	.setAssignmentTime(2.0)//
-																	.build();
+			PeoplePluginData peoplePluginData2 = PeoplePluginData.builder()//
+					.setAssignmentTime(2.0)//
+					.build();
 
-			Factory factory2 = PeopleTestPluginFactory	.factory(1054042752863257441L, testPluginData)//
-														.setPeoplePluginData(peoplePluginData2);
+			Factory factory2 = PeopleTestPluginFactory.factory(1054042752863257441L, testPluginData)//
+					.setPeoplePluginData(peoplePluginData2);
 
-			SimulationState simulationState = SimulationState	.builder()//
-																.setStartTime(1.0)//
-																.build();
+			SimulationState simulationState = SimulationState.builder()//
+					.setStartTime(1.0)//
+					.build();
 
-			TestSimulation	.builder()//
-							.addPlugins(factory2.getPlugins())//
-							.setSimulationState(simulationState)//
-							.build()//
-							.execute();
+			TestSimulation.builder()//
+					.addPlugins(factory2.getPlugins())//
+					.setSimulationState(simulationState)//
+					.build()//
+					.execute();
 		});
 		assertEquals(PersonError.PERSON_ASSIGNMENT_TIME_IN_FUTURE, contractException.getErrorType());
 
@@ -159,15 +158,15 @@ public final class AT_PeopleDataManager {
 		// show that the plugin data contains what we defined
 		TestPluginData testPluginData = pluginBuilder.build();
 		Factory factory = PeopleTestPluginFactory//
-													.factory(6970812715559334185L, testPluginData)//
-													.setPeoplePluginData(peoplePluginData);
+				.factory(6970812715559334185L, testPluginData)//
+				.setPeoplePluginData(peoplePluginData);
 
-		TestOutputConsumer testOutputConsumer = TestSimulation	.builder()//
-																.addPlugins(factory.getPlugins())//
-																.setProduceSimulationStateOnHalt(true)//
-																.setSimulationHaltTime(2)//
-																.build()//
-																.execute();
+		TestOutputConsumer testOutputConsumer = TestSimulation.builder()//
+				.addPlugins(factory.getPlugins())//
+				.setProduceSimulationStateOnHalt(true)//
+				.setSimulationHaltTime(2)//
+				.build()//
+				.execute();
 
 		Map<PeoplePluginData, Integer> outputItems = testOutputConsumer.getOutputItemMap(PeoplePluginData.class);
 		assertEquals(1, outputItems.size());
@@ -208,14 +207,14 @@ public final class AT_PeopleDataManager {
 		testPluginData = pluginBuilder.build();
 
 		factory = PeopleTestPluginFactory//
-											.factory(6970812715559334185L, testPluginData)//
-											.setPeoplePluginData(peoplePluginData);
+				.factory(6970812715559334185L, testPluginData)//
+				.setPeoplePluginData(peoplePluginData);
 
-		testOutputConsumer = TestSimulation	.builder()//
-											.addPlugins(factory.getPlugins())//
-											.setProduceSimulationStateOnHalt(true)//
-											.setSimulationHaltTime(2).build()//
-											.execute();
+		testOutputConsumer = TestSimulation.builder()//
+				.addPlugins(factory.getPlugins())//
+				.setProduceSimulationStateOnHalt(true)//
+				.setSimulationHaltTime(2).build()//
+				.execute();
 
 		outputItems = testOutputConsumer.getOutputItemMap(PeoplePluginData.class);
 		assertEquals(1, outputItems.size());
@@ -267,8 +266,8 @@ public final class AT_PeopleDataManager {
 		Factory factory = PeopleTestPluginFactory.factory(2489565009155477444L, (c) -> {
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			/*
-			 * Initially there are no people despite the initial size, so we
-			 * expect the limit to be zero.
+			 * Initially there are no people despite the initial size, so we expect the
+			 * limit to be zero.
 			 */
 			assertEquals(0, peopleDataManager.getPersonIdLimit());
 
@@ -321,8 +320,10 @@ public final class AT_PeopleDataManager {
 		}
 
 		pluginDataBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
-			c.subscribe(EventFilter.builder(PersonImminentAdditionEvent.class).build(), (c2, e) -> observedImminentPersonIds.add(e.personId()));
-			c.subscribe(EventFilter.builder(PersonAdditionEvent.class).build(), (c2, e) -> observedPersonIds.add(e.personId()));
+			c.subscribe(EventFilter.builder(PersonImminentAdditionEvent.class).build(),
+					(c2, e) -> observedImminentPersonIds.add(e.personId()));
+			c.subscribe(EventFilter.builder(PersonAdditionEvent.class).build(),
+					(c2, e) -> observedPersonIds.add(e.personId()));
 		}));
 
 		// have the agent add a few people and show they were added
@@ -338,7 +339,8 @@ public final class AT_PeopleDataManager {
 		// precondition tests
 		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(2, (c) -> {
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
-			ContractException contractException = assertThrows(ContractException.class, () -> peopleDataManager.addPerson(null));
+			ContractException contractException = assertThrows(ContractException.class,
+					() -> peopleDataManager.addPerson(null));
 			assertEquals(PersonError.NULL_PERSON_CONSTRUCTION_DATA, contractException.getErrorType());
 		}));
 
@@ -445,8 +447,10 @@ public final class AT_PeopleDataManager {
 		// have the observer subscribe to the removals and record them onto the
 		// observed removals
 		pluginDataBuilder.addTestActorPlan("observer", new TestActorPlan(1, (c) -> {
-			c.subscribe(EventFilter.builder(PersonRemovalEvent.class).build(), (c2, e) -> observedRemovals.add(e.personId()));
-			c.subscribe(EventFilter.builder(PersonImminentRemovalEvent.class).build(), (c2, e) -> observedImminentRemovals.add(e.personId()));
+			c.subscribe(EventFilter.builder(PersonRemovalEvent.class).build(),
+					(c2, e) -> observedRemovals.add(e.personId()));
+			c.subscribe(EventFilter.builder(PersonImminentRemovalEvent.class).build(),
+					(c2, e) -> observedImminentRemovals.add(e.personId()));
 		}));
 
 		// have the agent add a few people
@@ -470,10 +474,12 @@ public final class AT_PeopleDataManager {
 
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 
-			ContractException contractException = assertThrows(ContractException.class, () -> peopleDataManager.removePerson(null));
+			ContractException contractException = assertThrows(ContractException.class,
+					() -> peopleDataManager.removePerson(null));
 			assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
 
-			contractException = assertThrows(ContractException.class, () -> peopleDataManager.removePerson(new PersonId(1000)));
+			contractException = assertThrows(ContractException.class,
+					() -> peopleDataManager.removePerson(new PersonId(1000)));
 			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
 
 		}));
@@ -493,26 +499,22 @@ public final class AT_PeopleDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(target = PeopleDataManager.class, name = "getPopulationCount", args = {}, tags = { UnitTag.INCOMPLETE })
+	@UnitTestMethod(target = PeopleDataManager.class, name = "getPopulationCount", args = {})
 	public void testGetPopulationCount() {
-
-		/*
-		 * INCOMPLETE TEST The test is incomplete since it does not start with a
-		 * population present in the plugin data -- it failed to catch a bug in
-		 * the people data manager's init
-		 */
-
 		Factory factory = PeopleTestPluginFactory.factory(8471595108422434117L, (c) -> {
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			// show the population count grows as we add people
 			for (int i = 0; i < 10; i++) {
-				assertEquals(i, peopleDataManager.getPopulationCount());
+				assertEquals(i + 24, peopleDataManager.getPopulationCount());
 				peopleDataManager.addPerson(PersonConstructionData.builder().build());
-				assertEquals(i + 1, peopleDataManager.getPopulationCount());
 			}
 		});
-		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
+		// start with a 24 people
+		PeoplePluginData peoplePluginData = PeoplePluginData.builder().addPersonRange(new PersonRange(12, 35)).build();
+		factory.setPeoplePluginData(peoplePluginData);
+
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
 	@Test
@@ -608,7 +610,8 @@ public final class AT_PeopleDataManager {
 		// observed removals
 		pluginDataBuilder.addTestActorPlan("observer", new TestActorPlan(1, (c) -> {
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
-			EventFilter<PersonImminentRemovalEvent> eventFilter = peopleDataManager.getEventFilterForPersonImminentRemovalEvent();
+			EventFilter<PersonImminentRemovalEvent> eventFilter = peopleDataManager
+					.getEventFilterForPersonImminentRemovalEvent();
 			c.subscribe(eventFilter, (c2, e) -> observedRemovals.add(e.personId()));
 		}));
 
@@ -644,8 +647,8 @@ public final class AT_PeopleDataManager {
 	}
 
 	/**
-	 * Demonstrates that the data manager exhibits run continuity. The state of
-	 * the data manager is not effected by repeatedly starting and stopping the
+	 * Demonstrates that the data manager exhibits run continuity. The state of the
+	 * data manager is not effected by repeatedly starting and stopping the
 	 * simulation.
 	 */
 	@Test
@@ -653,10 +656,9 @@ public final class AT_PeopleDataManager {
 	public void testStateContinuity() {
 
 		/*
-		 * Note that we are not testing the content of the plugin datas -- that
-		 * is covered by the other state tests. We show here only that the
-		 * resulting plugin data state is the same without regard to how we
-		 * break up the run.
+		 * Note that we are not testing the content of the plugin datas -- that is
+		 * covered by the other state tests. We show here only that the resulting plugin
+		 * data state is the same without regard to how we break up the run.
 		 */
 
 		Set<String> pluginDatas = new LinkedHashSet<>();
@@ -670,15 +672,15 @@ public final class AT_PeopleDataManager {
 
 	/*
 	 * Returns the people plugin data resulting from several people events over
-	 * several days. Attempts to stop and start the simulation by the given
-	 * number of increments.
+	 * several days. Attempts to stop and start the simulation by the given number
+	 * of increments.
 	 */
 	private String testStateContinuity(int incrementCount) {
 		String result = null;
 
 		/*
-		 * Build the RunContinuityPluginData with five context consumers that
-		 * will add and remove people over several days
+		 * Build the RunContinuityPluginData with five context consumers that will add
+		 * and remove people over several days
 		 */
 		RunContinuityPluginData.Builder continuityBuilder = RunContinuityPluginData.builder();
 
@@ -736,8 +738,8 @@ public final class AT_PeopleDataManager {
 		SimulationState simulationState = SimulationState.builder().build();
 
 		/*
-		 * Run the simulation in one day increments until all the plans in the
-		 * run continuity plugin data have been executed
+		 * Run the simulation in one day increments until all the plans in the run
+		 * continuity plugin data have been executed
 		 */
 		double haltTime = 0;
 		double maxTime = Double.NEGATIVE_INFINITY;
@@ -751,8 +753,8 @@ public final class AT_PeopleDataManager {
 
 			// build the run continuity plugin
 			Plugin runContinuityPlugin = RunContinuityPlugin.builder()//
-															.setRunContinuityPluginData(runContinuityPluginData)//
-															.build();
+					.setRunContinuityPluginData(runContinuityPluginData)//
+					.build();
 
 			// build the people plugin
 			Plugin peoplePlugin = PeoplePlugin.getPeoplePlugin(peoplePluginData);
@@ -760,14 +762,14 @@ public final class AT_PeopleDataManager {
 			TestOutputConsumer outputConsumer = new TestOutputConsumer();
 
 			// execute the simulation so that it produces a people plugin data
-			Simulation simulation = Simulation	.builder()//
-												.addPlugin(peoplePlugin)//
-												.addPlugin(runContinuityPlugin)//
-												.setSimulationHaltTime(haltTime)//
-												.setRecordState(true)//
-												.setOutputConsumer(outputConsumer)//
-												.setSimulationState(simulationState)//
-												.build();//
+			Simulation simulation = Simulation.builder()//
+					.addPlugin(peoplePlugin)//
+					.addPlugin(runContinuityPlugin)//
+					.setSimulationHaltTime(haltTime)//
+					.setRecordState(true)//
+					.setOutputConsumer(outputConsumer)//
+					.setSimulationState(simulationState)//
+					.build();//
 			simulation.execute();
 
 			// retrieve the people plugin data
@@ -778,17 +780,83 @@ public final class AT_PeopleDataManager {
 
 			// retrieve the run continuity plugin data
 			runContinuityPluginData = outputConsumer.getOutputItem(RunContinuityPluginData.class).get();
-			
+
 			Optional<String> optional = outputConsumer.getOutputItem(String.class);
-			if(optional.isPresent()) {
+			if (optional.isPresent()) {
 				result = optional.get();
 			}
-			
+
 		}
 
 		assertNotNull(result);
 		return result;
 
 	}
+
+	@Test
+	@UnitTestMethod(target = PeopleDataManager.class, name = "getPersonIndexIterator", args = {})
+	public void testGetPersonIndexIterator() {
+		Factory factory = PeopleTestPluginFactory.factory(8471595108422434117L, (c) -> {
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			
+			//show that the iterator yields the list of existing people in the usual order
+			List<PersonId> expectedPeople = peopleDataManager.getPeople();
+			List<PersonId> actualPeople = new ArrayList<>();
+			Iterator<Integer> personIndexIterator = peopleDataManager.getPersonIndexIterator();
+			while(personIndexIterator.hasNext()) {
+				Integer id = personIndexIterator.next();
+				Optional<PersonId> optional = peopleDataManager.getBoxedPersonId(id);
+				assertTrue(optional.isPresent());
+				actualPeople.add(optional.get());
+			}
+			assertEquals(expectedPeople, actualPeople);
+			
+		});
+
+		// start with a few people that are not in a contiguous group
+		PeoplePluginData peoplePluginData = PeoplePluginData.builder()//
+				.addPersonRange(new PersonRange(12, 35))//
+				.addPersonRange(new PersonRange(67, 90))//
+				.build();
+		factory.setPeoplePluginData(peoplePluginData);
+
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
+	}
+	@Test
+	@UnitTestMethod(target = PeopleDataManager.class, name = "toString", args = {})
+	public void testToString() {
+		
+		TestPluginData.Builder testPluginDataBuilder = TestPluginData.builder();
+		
+		testPluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(1,(c)->{
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			peopleDataManager.addPerson(PersonConstructionData.builder().build());
+		}));
+		testPluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(5,(c)->{
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			String actualValue = peopleDataManager.toString();			
+			String expectedValue = "PeopleDataManager ["
+					+ "personIds=[null, null, null, null, null, null, null, null, null, null, null, null, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91], "
+					+ "globalPopulationRecord=PopulationRecord [populationCount=49, assignmentTime=1.0]]";
+			assertEquals(expectedValue, actualValue);
+		}));
+		
+		TestPluginData testPluginData = testPluginDataBuilder.build();
+		
+		Factory factory = PeopleTestPluginFactory.factory(7149069907708379711L, testPluginData);
+		
+		// start with a few people that are not in a contiguous group
+		PeoplePluginData peoplePluginData = PeoplePluginData.builder()//
+				.addPersonRange(new PersonRange(12, 35))//
+				.addPersonRange(new PersonRange(67, 90))//
+				.build();
+		factory.setPeoplePluginData(peoplePluginData);
+
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
+	}
+
+	
+
+
 
 }
