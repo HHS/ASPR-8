@@ -1,8 +1,6 @@
 package plugins.stochastics.testsupport;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -15,8 +13,6 @@ import org.junit.jupiter.api.Test;
 import nucleus.ActorContext;
 import nucleus.NucleusError;
 import nucleus.Plugin;
-import nucleus.PluginData;
-import nucleus.PluginId;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestPluginId;
@@ -26,6 +22,7 @@ import plugins.stochastics.datamanagers.StochasticsPluginData;
 import plugins.stochastics.support.StochasticsError;
 import plugins.stochastics.support.WellState;
 import plugins.stochastics.testsupport.StochasticsTestPluginFactory.Factory;
+import plugins.util.TestFactoryUtil;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.random.RandomGeneratorProvider;
@@ -71,38 +68,6 @@ public class AT_StochasticsTestPluginFactory {
         assertEquals(NucleusError.NULL_PLUGIN_DATA, contractException.getErrorType());
     }
 
-    /*
-     * Given a list of plugins, will show that the plugin with the given pluginId
-     * exists, and exists EXACTLY once.
-     */
-    private Plugin checkPluginExists(List<Plugin> plugins, PluginId pluginId) {
-        Plugin actualPlugin = null;
-        for (Plugin plugin : plugins) {
-            if (plugin.getPluginId().equals(pluginId)) {
-                assertNull(actualPlugin);
-                actualPlugin = plugin;
-            }
-        }
-
-        assertNotNull(actualPlugin);
-
-        return actualPlugin;
-    }
-
-    /**
-     * Given a list of plugins, will show that the explicit plugindata for the given
-     * pluginid exists, and exists EXACTLY once.
-     */
-    private <T extends PluginData> void checkPluginDataExists(List<Plugin> plugins, T expectedPluginData,
-            PluginId pluginId) {
-        Plugin actualPlugin =TestFactoryUtil.checkPluginExists(plugins, pluginId);
-        List<PluginData> actualPluginDatas = actualPlugin.getPluginDatas();
-        assertNotNull(actualPluginDatas);
-        assertEquals(1, actualPluginDatas.size());
-        PluginData actualPluginData = actualPluginDatas.get(0);
-        assertTrue(expectedPluginData == actualPluginData);
-    }
-
     @Test
     @UnitTestMethod(target = StochasticsTestPluginFactory.Factory.class, name = "getPlugins", args = {})
     public void testGetPlugins() {
@@ -111,8 +76,8 @@ public class AT_StochasticsTestPluginFactory {
         }).getPlugins();
         assertEquals(2, plugins.size());
 
-       TestFactoryUtil.checkPluginExists(plugins, StochasticsPluginId.PLUGIN_ID);
-       TestFactoryUtil.checkPluginExists(plugins, TestPluginId.PLUGIN_ID);
+        TestFactoryUtil.checkPluginExists(plugins, StochasticsPluginId.PLUGIN_ID);
+        TestFactoryUtil.checkPluginExists(plugins, TestPluginId.PLUGIN_ID);
     }
 
     @Test
@@ -129,7 +94,7 @@ public class AT_StochasticsTestPluginFactory {
         List<Plugin> plugins = StochasticsTestPluginFactory.factory(5433603767451466687L, t -> {
         }).setStochasticsPluginData(stochasticsPluginData).getPlugins();
 
-       TestFactoryUtil.checkPluginDataExists(plugins, stochasticsPluginData, StochasticsPluginId.PLUGIN_ID);
+        TestFactoryUtil.checkPluginDataExists(plugins, stochasticsPluginData, StochasticsPluginId.PLUGIN_ID);
 
         // precondition: stochasticsPluginData is not null
         ContractException contractException = assertThrows(ContractException.class,
@@ -154,8 +119,7 @@ public class AT_StochasticsTestPluginFactory {
         }
 
         StochasticsPluginData expectedPluginData = builder.build();
-        StochasticsPluginData actualPluginData = StochasticsTestPluginFactory
-                .getStandardStochasticsPluginData(seed);
+        StochasticsPluginData actualPluginData = StochasticsTestPluginFactory.getStandardStochasticsPluginData(seed);
 
         assertEquals(expectedPluginData, actualPluginData);
     }
