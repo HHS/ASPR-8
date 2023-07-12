@@ -1,8 +1,6 @@
 package plugins.materials.testsupport;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -19,8 +17,6 @@ import org.junit.jupiter.api.Test;
 import nucleus.ActorContext;
 import nucleus.NucleusError;
 import nucleus.Plugin;
-import nucleus.PluginData;
-import nucleus.PluginId;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestPluginId;
@@ -52,6 +48,7 @@ import plugins.stochastics.datamanagers.StochasticsPluginData;
 import plugins.stochastics.support.StochasticsError;
 import plugins.stochastics.support.WellState;
 import plugins.stochastics.testsupport.TestRandomGeneratorId;
+import plugins.util.TestFactoryUtil;
 import plugins.util.properties.PropertyDefinition;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
@@ -100,38 +97,6 @@ public class AT_MaterialsTestPluginFactory {
 
     }
 
-    /*
-     * Given a list of plugins, will show that the plugin with the given
-     * pluginId exists, and exists EXACTLY once.
-     */
-    private Plugin checkPluginExists(List<Plugin> plugins, PluginId pluginId) {
-        Plugin actualPlugin = null;
-        for (Plugin plugin : plugins) {
-            if (plugin.getPluginId().equals(pluginId)) {
-                assertNull(actualPlugin);
-                actualPlugin = plugin;
-            }
-        }
-
-        assertNotNull(actualPlugin);
-
-        return actualPlugin;
-    }
-
-    /**
-     * Given a list of plugins, will show that the explicit plugindata for the
-     * given pluginid exists, and exists EXACTLY once.
-     */
-    private <T extends PluginData> void checkPluginDataExists(List<Plugin> plugins, T expectedPluginData,
-            PluginId pluginId) {
-        Plugin actualPlugin = checkPluginExists(plugins, pluginId);
-        List<PluginData> actualPluginDatas = actualPlugin.getPluginDatas();
-        assertNotNull(actualPluginDatas);
-        assertEquals(1, actualPluginDatas.size());
-        PluginData actualPluginData = actualPluginDatas.get(0);
-        assertTrue(expectedPluginData == actualPluginData);
-    }
-
     @Test
     @UnitTestMethod(target = MaterialsTestPluginFactory.Factory.class, name = "getPlugins", args = {})
     public void testGetPlugins() {
@@ -139,12 +104,12 @@ public class AT_MaterialsTestPluginFactory {
         }).getPlugins();
         assertEquals(6, plugins.size());
 
-        checkPluginExists(plugins, MaterialsPluginId.PLUGIN_ID);
-        checkPluginExists(plugins, ResourcesPluginId.PLUGIN_ID);
-        checkPluginExists(plugins, PeoplePluginId.PLUGIN_ID);
-        checkPluginExists(plugins, RegionsPluginId.PLUGIN_ID);
-        checkPluginExists(plugins, StochasticsPluginId.PLUGIN_ID);
-        checkPluginExists(plugins, TestPluginId.PLUGIN_ID);
+        TestFactoryUtil.checkPluginExists(plugins, MaterialsPluginId.PLUGIN_ID);
+        TestFactoryUtil.checkPluginExists(plugins, ResourcesPluginId.PLUGIN_ID);
+        TestFactoryUtil.checkPluginExists(plugins, PeoplePluginId.PLUGIN_ID);
+        TestFactoryUtil.checkPluginExists(plugins, RegionsPluginId.PLUGIN_ID);
+        TestFactoryUtil.checkPluginExists(plugins, StochasticsPluginId.PLUGIN_ID);
+        TestFactoryUtil.checkPluginExists(plugins, TestPluginId.PLUGIN_ID);
     }
 
     @Test
@@ -190,7 +155,7 @@ public class AT_MaterialsTestPluginFactory {
         List<Plugin> plugins = MaterialsTestPluginFactory.factory(0, 0, 0, 0, t -> {
         }).setMaterialsPluginData(materialsPluginData).getPlugins();
 
-        checkPluginDataExists(plugins, materialsPluginData, MaterialsPluginId.PLUGIN_ID);
+        TestFactoryUtil.checkPluginDataExists(plugins, materialsPluginData, MaterialsPluginId.PLUGIN_ID);
 
         // precondition: materialsPluginData is not null
         ContractException contractException = assertThrows(ContractException.class,
@@ -211,7 +176,7 @@ public class AT_MaterialsTestPluginFactory {
         List<Plugin> plugins = MaterialsTestPluginFactory.factory(0, 0, 0, 0, t -> {
         }).setResourcesPluginData(resourcesPluginData).getPlugins();
 
-        checkPluginDataExists(plugins, resourcesPluginData, ResourcesPluginId.PLUGIN_ID);
+        TestFactoryUtil.checkPluginDataExists(plugins, resourcesPluginData, ResourcesPluginId.PLUGIN_ID);
 
         // precondition: resourcesPluginData is not null
         ContractException contractException = assertThrows(ContractException.class,
@@ -264,7 +229,7 @@ public class AT_MaterialsTestPluginFactory {
         List<Plugin> plugins = MaterialsTestPluginFactory.factory(0, 0, 0, 0, t -> {
         }).setRegionsPluginData(regionsPluginData).getPlugins();
 
-        checkPluginDataExists(plugins, regionsPluginData, RegionsPluginId.PLUGIN_ID);
+        TestFactoryUtil.checkPluginDataExists(plugins, regionsPluginData, RegionsPluginId.PLUGIN_ID);
 
         // precondition: regionsPluginData is not null
         ContractException contractException = assertThrows(ContractException.class,
@@ -284,7 +249,7 @@ public class AT_MaterialsTestPluginFactory {
         List<Plugin> plugins = MaterialsTestPluginFactory.factory(0, 0, 0, 0, t -> {
         }).setPeoplePluginData(peoplePluginData).getPlugins();
 
-        checkPluginDataExists(plugins, peoplePluginData, PeoplePluginId.PLUGIN_ID);
+        TestFactoryUtil.checkPluginDataExists(plugins, peoplePluginData, PeoplePluginId.PLUGIN_ID);
 
         // precondition: peoplePluginData is not null
         ContractException contractException = assertThrows(ContractException.class,
@@ -310,7 +275,7 @@ public class AT_MaterialsTestPluginFactory {
         List<Plugin> plugins = MaterialsTestPluginFactory.factory(0, 0, 0, 0, t -> {
         }).setStochasticsPluginData(stochasticsPluginData).getPlugins();
 
-        checkPluginDataExists(plugins, stochasticsPluginData, StochasticsPluginId.PLUGIN_ID);
+        TestFactoryUtil.checkPluginDataExists(plugins, stochasticsPluginData, StochasticsPluginId.PLUGIN_ID);
 
         // precondition: stochasticsPluginData is not null
         ContractException contractException = assertThrows(ContractException.class,
@@ -346,7 +311,7 @@ public class AT_MaterialsTestPluginFactory {
                 TestMaterialId testMaterialId = TestMaterialId.getRandomMaterialId(randomGenerator);
                 double amount = randomGenerator.nextDouble();
                 BatchId batchId = new BatchId(bId++);
-                materialsBuilder.addBatch(batchId, testMaterialId, amount);               
+                materialsBuilder.addBatch(batchId, testMaterialId, amount);
                 batches.add(batchId);
                 for (TestBatchPropertyId testBatchPropertyId : TestBatchPropertyId
                         .getTestBatchPropertyIds(testMaterialId)) {
@@ -371,14 +336,14 @@ public class AT_MaterialsTestPluginFactory {
 
             Collections.shuffle(batches, new Random(randomGenerator.nextLong()));
             for (int i = 0; i < numBatches; i++) {
-            	BatchId batchId = batches.get(i);
-				if (i < numBatchesInStage) {					
-					StageId stageId = stages.get(randomGenerator.nextInt(stages.size()));
-					materialsBuilder.addBatchToStage(stageId, batchId);
-				}else {
-					materialsBuilder.addBatchToMaterialsProducerInventory(batchId, testMaterialsProducerId);
-				}				
-			}
+                BatchId batchId = batches.get(i);
+                if (i < numBatchesInStage) {
+                    StageId stageId = stages.get(randomGenerator.nextInt(stages.size()));
+                    materialsBuilder.addBatchToStage(stageId, batchId);
+                } else {
+                    materialsBuilder.addBatchToMaterialsProducerInventory(batchId, testMaterialsProducerId);
+                }
+            }
             materialsBuilder.addMaterialsProducerId(testMaterialsProducerId);
 
             for (ResourceId resourceId : TestResourceId.values()) {

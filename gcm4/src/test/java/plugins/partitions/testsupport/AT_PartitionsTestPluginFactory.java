@@ -1,8 +1,6 @@
 package plugins.partitions.testsupport;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -14,8 +12,6 @@ import org.junit.jupiter.api.Test;
 import nucleus.ActorContext;
 import nucleus.NucleusError;
 import nucleus.Plugin;
-import nucleus.PluginData;
-import nucleus.PluginId;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestPluginId;
@@ -38,6 +34,7 @@ import plugins.stochastics.datamanagers.StochasticsPluginData;
 import plugins.stochastics.support.StochasticsError;
 import plugins.stochastics.support.WellState;
 import plugins.stochastics.testsupport.TestRandomGeneratorId;
+import plugins.util.TestFactoryUtil;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.wrappers.MutableBoolean;
@@ -82,38 +79,6 @@ public class AT_PartitionsTestPluginFactory {
 
     }
 
-    /*
-     * Given a list of plugins, will show that the plugin with the given pluginId
-     * exists, and exists EXACTLY once.
-     */
-    private Plugin checkPluginExists(List<Plugin> plugins, PluginId pluginId) {
-        Plugin actualPlugin = null;
-        for (Plugin plugin : plugins) {
-            if (plugin.getPluginId().equals(pluginId)) {
-                assertNull(actualPlugin);
-                actualPlugin = plugin;
-            }
-        }
-
-        assertNotNull(actualPlugin);
-
-        return actualPlugin;
-    }
-
-    /**
-     * Given a list of plugins, will show that the explicit plugindata for the given
-     * pluginid exists, and exists EXACTLY once.
-     */
-    private <T extends PluginData> void checkPluginDataExists(List<Plugin> plugins, T expectedPluginData,
-            PluginId pluginId) {
-        Plugin actualPlugin = checkPluginExists(plugins, pluginId);
-        List<PluginData> actualPluginDatas = actualPlugin.getPluginDatas();
-        assertNotNull(actualPluginDatas);
-        assertEquals(1, actualPluginDatas.size());
-        PluginData actualPluginData = actualPluginDatas.get(0);
-        assertTrue(expectedPluginData == actualPluginData);
-    }
-
     @Test
     @UnitTestMethod(target = PartitionsTestPluginFactory.Factory.class, name = "getPlugins", args = {})
     public void testGetPlugins() {
@@ -121,11 +86,11 @@ public class AT_PartitionsTestPluginFactory {
         }).getPlugins();
         assertEquals(5, plugins.size());
 
-        checkPluginExists(plugins, AttributesPluginId.PLUGIN_ID);
-        checkPluginExists(plugins, PartitionsPluginId.PLUGIN_ID);
-        checkPluginExists(plugins, PeoplePluginId.PLUGIN_ID);
-        checkPluginExists(plugins, StochasticsPluginId.PLUGIN_ID);
-        checkPluginExists(plugins, TestPluginId.PLUGIN_ID);
+        TestFactoryUtil.checkPluginExists(plugins, AttributesPluginId.PLUGIN_ID);
+        TestFactoryUtil.checkPluginExists(plugins, PartitionsPluginId.PLUGIN_ID);
+        TestFactoryUtil.checkPluginExists(plugins, PeoplePluginId.PLUGIN_ID);
+        TestFactoryUtil.checkPluginExists(plugins, StochasticsPluginId.PLUGIN_ID);
+        TestFactoryUtil.checkPluginExists(plugins, TestPluginId.PLUGIN_ID);
     }
 
     @Test
@@ -142,7 +107,7 @@ public class AT_PartitionsTestPluginFactory {
         List<Plugin> plugins = PartitionsTestPluginFactory.factory(0, 0, t -> {
         }).setAttributesPluginData(attributesPluginData).getPlugins();
 
-        checkPluginDataExists(plugins, attributesPluginData, AttributesPluginId.PLUGIN_ID);
+        TestFactoryUtil.checkPluginDataExists(plugins, attributesPluginData, AttributesPluginId.PLUGIN_ID);
 
         // precondition: attributesPluginData is not null
         ContractException contractException = assertThrows(ContractException.class,
@@ -163,7 +128,7 @@ public class AT_PartitionsTestPluginFactory {
         List<Plugin> plugins = PartitionsTestPluginFactory.factory(0, 0, t -> {
         }).setPartitionsPlugin(partitionsPlugin).getPlugins();
 
-        Plugin actualPlugin = checkPluginExists(plugins, PartitionsPluginId.PLUGIN_ID);
+        Plugin actualPlugin = TestFactoryUtil.checkPluginExists(plugins, PartitionsPluginId.PLUGIN_ID);
         assertTrue(partitionsPlugin == actualPlugin);
 
         // precondition: partitionsPlugin is not null
@@ -185,7 +150,7 @@ public class AT_PartitionsTestPluginFactory {
         List<Plugin> plugins = PartitionsTestPluginFactory.factory(0, 0, t -> {
         }).setPeoplePluginData(peoplePluginData).getPlugins();
 
-        checkPluginDataExists(plugins, peoplePluginData, PeoplePluginId.PLUGIN_ID);
+        TestFactoryUtil.checkPluginDataExists(plugins, peoplePluginData, PeoplePluginId.PLUGIN_ID);
 
         // precondition: peoplePluginData is not null
         ContractException contractException = assertThrows(ContractException.class,
@@ -211,7 +176,7 @@ public class AT_PartitionsTestPluginFactory {
         List<Plugin> plugins = PartitionsTestPluginFactory.factory(0, 0, t -> {
         }).setStochasticsPluginData(stochasticsPluginData).getPlugins();
 
-        checkPluginDataExists(plugins, stochasticsPluginData, StochasticsPluginId.PLUGIN_ID);
+        TestFactoryUtil.checkPluginDataExists(plugins, stochasticsPluginData, StochasticsPluginId.PLUGIN_ID);
 
         // precondition: stochasticsPluginData is not null
         ContractException contractException = assertThrows(ContractException.class,
@@ -269,8 +234,7 @@ public class AT_PartitionsTestPluginFactory {
         WellState wellState = WellState.builder().setSeed(seed).build();
 
         StochasticsPluginData expectedPluginData = StochasticsPluginData.builder().setMainRNGState(wellState).build();
-        StochasticsPluginData actualPluginData = PartitionsTestPluginFactory
-                .getStandardStochasticsPluginData(seed);
+        StochasticsPluginData actualPluginData = PartitionsTestPluginFactory.getStandardStochasticsPluginData(seed);
 
         assertEquals(expectedPluginData, actualPluginData);
     }

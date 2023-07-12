@@ -1,8 +1,6 @@
 package plugins.regions.testsupport;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -16,8 +14,6 @@ import org.junit.jupiter.api.Test;
 import nucleus.ActorContext;
 import nucleus.NucleusError;
 import nucleus.Plugin;
-import nucleus.PluginData;
-import nucleus.PluginId;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestPluginId;
@@ -35,6 +31,7 @@ import plugins.stochastics.StochasticsPluginId;
 import plugins.stochastics.datamanagers.StochasticsPluginData;
 import plugins.stochastics.support.StochasticsError;
 import plugins.stochastics.support.WellState;
+import plugins.util.TestFactoryUtil;
 import plugins.util.properties.PropertyDefinition;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
@@ -48,8 +45,8 @@ public class AT_RegionsTestPluginFactory {
             boolean.class, Consumer.class })
     public void testFactory_Consumer() {
         MutableBoolean executed = new MutableBoolean();
-        Factory factory = RegionsTestPluginFactory
-                .factory(100, 5785172948650781925L, true, c -> executed.setValue(true));
+        Factory factory = RegionsTestPluginFactory.factory(100, 5785172948650781925L, true,
+                c -> executed.setValue(true));
 
         TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
         assertTrue(executed.getValue());
@@ -70,8 +67,7 @@ public class AT_RegionsTestPluginFactory {
         pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, c -> executed.setValue(true)));
         TestPluginData testPluginData = pluginBuilder.build();
 
-        Factory factory = RegionsTestPluginFactory
-                .factory(100, 5166994853007999229L, true, testPluginData);
+        Factory factory = RegionsTestPluginFactory.factory(100, 5166994853007999229L, true, testPluginData);
         TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
         assertTrue(executed.getValue());
         // precondition: testPluginData is null
@@ -81,38 +77,6 @@ public class AT_RegionsTestPluginFactory {
         assertEquals(NucleusError.NULL_PLUGIN_DATA, contractException.getErrorType());
     }
 
-    /*
-     * Given a list of plugins, will show that the plugin with the given pluginId
-     * exists, and exists EXACTLY once.
-     */
-    private Plugin checkPluginExists(List<Plugin> plugins, PluginId pluginId) {
-        Plugin actualPlugin = null;
-        for (Plugin plugin : plugins) {
-            if (plugin.getPluginId().equals(pluginId)) {
-                assertNull(actualPlugin);
-                actualPlugin = plugin;
-            }
-        }
-
-        assertNotNull(actualPlugin);
-
-        return actualPlugin;
-    }
-
-    /**
-     * Given a list of plugins, will show that the explicit plugindata for the given
-     * pluginid exists, and exists EXACTLY once.
-     */
-    private <T extends PluginData> void checkPluginDataExists(List<Plugin> plugins, T expectedPluginData,
-            PluginId pluginId) {
-        Plugin actualPlugin = checkPluginExists(plugins, pluginId);
-        List<PluginData> actualPluginDatas = actualPlugin.getPluginDatas();
-        assertNotNull(actualPluginDatas);
-        assertEquals(1, actualPluginDatas.size());
-        PluginData actualPluginData = actualPluginDatas.get(0);
-        assertTrue(expectedPluginData == actualPluginData);
-    }
-
     @Test
     @UnitTestMethod(target = RegionsTestPluginFactory.Factory.class, name = "getPlugins", args = {})
     public void testGetPlugins() {
@@ -120,10 +84,10 @@ public class AT_RegionsTestPluginFactory {
         }).getPlugins();
         assertEquals(4, plugins.size());
 
-        checkPluginExists(plugins, RegionsPluginId.PLUGIN_ID);
-        checkPluginExists(plugins, PeoplePluginId.PLUGIN_ID);
-        checkPluginExists(plugins, StochasticsPluginId.PLUGIN_ID);
-        checkPluginExists(plugins, TestPluginId.PLUGIN_ID);
+        TestFactoryUtil.checkPluginExists(plugins, RegionsPluginId.PLUGIN_ID);
+        TestFactoryUtil.checkPluginExists(plugins, PeoplePluginId.PLUGIN_ID);
+        TestFactoryUtil.checkPluginExists(plugins, StochasticsPluginId.PLUGIN_ID);
+        TestFactoryUtil.checkPluginExists(plugins, TestPluginId.PLUGIN_ID);
     }
 
     @Test
@@ -134,20 +98,15 @@ public class AT_RegionsTestPluginFactory {
         builder.addPersonRange(new PersonRange(0, 99));
         PeoplePluginData peoplePluginData = builder.build();
 
-        List<Plugin> plugins = RegionsTestPluginFactory
-                .factory(0, 0, true, t -> {
-                })
-                .setPeoplePluginData(peoplePluginData)
-                .getPlugins();
+        List<Plugin> plugins = RegionsTestPluginFactory.factory(0, 0, true, t -> {
+        }).setPeoplePluginData(peoplePluginData).getPlugins();
 
-        checkPluginDataExists(plugins, peoplePluginData, PeoplePluginId.PLUGIN_ID);
+        TestFactoryUtil.checkPluginDataExists(plugins, peoplePluginData, PeoplePluginId.PLUGIN_ID);
 
         // precondition: peoplePluginData is not null
         ContractException contractException = assertThrows(ContractException.class,
-                () -> RegionsTestPluginFactory
-                        .factory(0, 0, true, t -> {
-                        })
-                        .setPeoplePluginData(null));
+                () -> RegionsTestPluginFactory.factory(0, 0, true, t -> {
+                }).setPeoplePluginData(null));
         assertEquals(PersonError.NULL_PEOPLE_PLUGIN_DATA, contractException.getErrorType());
     }
 
@@ -196,7 +155,7 @@ public class AT_RegionsTestPluginFactory {
         List<Plugin> plugins = RegionsTestPluginFactory.factory(0, 0, true, t -> {
         }).setRegionsPluginData(regionsPluginData).getPlugins();
 
-        checkPluginDataExists(plugins, regionsPluginData, RegionsPluginId.PLUGIN_ID);
+        TestFactoryUtil.checkPluginDataExists(plugins, regionsPluginData, RegionsPluginId.PLUGIN_ID);
 
         // precondition: regionsPluginData is not null
         ContractException contractException = assertThrows(ContractException.class,
@@ -216,26 +175,20 @@ public class AT_RegionsTestPluginFactory {
 
         StochasticsPluginData stochasticsPluginData = builder.build();
 
-        List<Plugin> plugins = RegionsTestPluginFactory
-                .factory(0, 0, true, t -> {
-                })
-                .setStochasticsPluginData(stochasticsPluginData)
-                .getPlugins();
+        List<Plugin> plugins = RegionsTestPluginFactory.factory(0, 0, true, t -> {
+        }).setStochasticsPluginData(stochasticsPluginData).getPlugins();
 
-        checkPluginDataExists(plugins, stochasticsPluginData, StochasticsPluginId.PLUGIN_ID);
+        TestFactoryUtil.checkPluginDataExists(plugins, stochasticsPluginData, StochasticsPluginId.PLUGIN_ID);
 
         // precondition: stochasticsPluginData is not null
         ContractException contractException = assertThrows(ContractException.class,
-                () -> RegionsTestPluginFactory
-                        .factory(0, 0, true, t -> {
-                        })
-                        .setStochasticsPluginData(null));
+                () -> RegionsTestPluginFactory.factory(0, 0, true, t -> {
+                }).setStochasticsPluginData(null));
         assertEquals(StochasticsError.NULL_STOCHASTICS_PLUGIN_DATA, contractException.getErrorType());
     }
 
     @Test
-    @UnitTestMethod(target = RegionsTestPluginFactory.class, name = "getStandardPeoplePluginData", args = {
-            int.class })
+    @UnitTestMethod(target = RegionsTestPluginFactory.class, name = "getStandardPeoplePluginData", args = { int.class })
     public void testGetStandardPeoplePluginData() {
 
         int initialPopulation = 100;
@@ -252,8 +205,8 @@ public class AT_RegionsTestPluginFactory {
     }
 
     @Test
-    @UnitTestMethod(target = RegionsTestPluginFactory.class, name = "getStandardRegionsPluginData", args = {
-            List.class, boolean.class, long.class })
+    @UnitTestMethod(target = RegionsTestPluginFactory.class, name = "getStandardRegionsPluginData", args = { List.class,
+            boolean.class, long.class })
     public void testGetStandardRegionsPluginData() {
 
         long seed = 6178540698301704248L;
@@ -276,7 +229,7 @@ public class AT_RegionsTestPluginFactory {
             regionPluginBuilder.defineRegionProperty(testRegionPropertyId, propertyDefinition);
             boolean hasDeaultValue = propertyDefinition.getDefaultValue().isPresent();
 
-            if(!hasDeaultValue) {
+            if (!hasDeaultValue) {
                 for (TestRegionId regionId : TestRegionId.values()) {
                     regionPluginBuilder.setRegionPropertyValue(regionId, testRegionPropertyId,
                             testRegionPropertyId.getRandomPropertyValue(randomGenerator));
@@ -318,8 +271,7 @@ public class AT_RegionsTestPluginFactory {
         }
 
         RegionsPluginData expectedPluginData = regionPluginBuilder.build();
-        RegionsPluginData actualPluginData = RegionsTestPluginFactory.getStandardRegionsPluginData(people,
-                trackTimes,
+        RegionsPluginData actualPluginData = RegionsTestPluginFactory.getStandardRegionsPluginData(people, trackTimes,
                 seed);
 
         assertEquals(expectedPluginData, actualPluginData);
@@ -334,8 +286,7 @@ public class AT_RegionsTestPluginFactory {
         WellState wellState = WellState.builder().setSeed(seed).build();
 
         StochasticsPluginData expectedPluginData = StochasticsPluginData.builder().setMainRNGState(wellState).build();
-        StochasticsPluginData actualPluginData = RegionsTestPluginFactory
-                .getStandardStochasticsPluginData(seed);
+        StochasticsPluginData actualPluginData = RegionsTestPluginFactory.getStandardStochasticsPluginData(seed);
 
         assertEquals(expectedPluginData, actualPluginData);
     }

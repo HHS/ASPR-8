@@ -95,7 +95,7 @@ public class AT_StochasticsTestPluginFactory {
      */
     private <T extends PluginData> void checkPluginDataExists(List<Plugin> plugins, T expectedPluginData,
             PluginId pluginId) {
-        Plugin actualPlugin = checkPluginExists(plugins, pluginId);
+        Plugin actualPlugin =TestFactoryUtil.checkPluginExists(plugins, pluginId);
         List<PluginData> actualPluginDatas = actualPlugin.getPluginDatas();
         assertNotNull(actualPluginDatas);
         assertEquals(1, actualPluginDatas.size());
@@ -111,8 +111,8 @@ public class AT_StochasticsTestPluginFactory {
         }).getPlugins();
         assertEquals(2, plugins.size());
 
-        checkPluginExists(plugins, StochasticsPluginId.PLUGIN_ID);
-        checkPluginExists(plugins, TestPluginId.PLUGIN_ID);
+       TestFactoryUtil.checkPluginExists(plugins, StochasticsPluginId.PLUGIN_ID);
+       TestFactoryUtil.checkPluginExists(plugins, TestPluginId.PLUGIN_ID);
     }
 
     @Test
@@ -129,7 +129,7 @@ public class AT_StochasticsTestPluginFactory {
         List<Plugin> plugins = StochasticsTestPluginFactory.factory(5433603767451466687L, t -> {
         }).setStochasticsPluginData(stochasticsPluginData).getPlugins();
 
-        checkPluginDataExists(plugins, stochasticsPluginData, StochasticsPluginId.PLUGIN_ID);
+       TestFactoryUtil.checkPluginDataExists(plugins, stochasticsPluginData, StochasticsPluginId.PLUGIN_ID);
 
         // precondition: stochasticsPluginData is not null
         ContractException contractException = assertThrows(ContractException.class,
