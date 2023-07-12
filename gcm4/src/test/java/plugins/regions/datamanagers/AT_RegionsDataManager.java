@@ -7,11 +7,13 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Random;
 import java.util.Set;
 import java.util.function.Consumer;
 
@@ -58,9 +60,9 @@ import plugins.regions.support.RegionPropertyDefinitionInitialization;
 import plugins.regions.support.RegionPropertyId;
 import plugins.regions.testsupport.RegionsTestPluginFactory;
 import plugins.regions.testsupport.RegionsTestPluginFactory.Factory;
-import plugins.stochastics.datamanagers.StochasticsDataManager;
 import plugins.regions.testsupport.TestRegionId;
 import plugins.regions.testsupport.TestRegionPropertyId;
+import plugins.stochastics.datamanagers.StochasticsDataManager;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
 import util.annotations.UnitTestConstructor;
@@ -198,9 +200,8 @@ public class AT_RegionsDataManager {
 		outputItems = testOutputConsumer.getOutputItemMap(RegionsPluginData.class);
 		assertEquals(1, outputItems.size());
 		expectedPluginData = RegionsPluginData.builder()//
-				
-				.addRegion(TestRegionId.REGION_3)
-				.addRegion(TestRegionId.REGION_2)//
+
+				.addRegion(TestRegionId.REGION_3).addRegion(TestRegionId.REGION_2)//
 				.defineRegionProperty(regionPropertyDefinitionInitialization2.getRegionPropertyId(),
 						regionPropertyDefinitionInitialization2.getPropertyDefinition())
 				.defineRegionProperty(regionPropertyDefinitionInitialization3.getRegionPropertyId(),
@@ -1185,7 +1186,6 @@ public class AT_RegionsDataManager {
 			} else {
 				firstRegionAdded = true;
 				selectedRegions.add(regionId);
-
 			}
 		}
 		for (TestRegionId regionId : selectedRegions) {
@@ -2891,6 +2891,98 @@ public class AT_RegionsDataManager {
 		assertNotNull(result);
 
 		return result;
+
+	}
+
+	@Test
+	@UnitTestMethod(target = RegionsDataManager.class, name = "toString", args = {})
+	public void testToString() {
+		
+		//we will build a custom, slightly randomized regions plugin data with 10 people, tracking times and person assignments to regions up to day 12.
+		int populationSize = 10;
+		double maxTime =12.0;
+		
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(941941179564965001L);
+		Random random = new Random(randomGenerator.nextLong());
+	
+
+		RegionsPluginData.Builder regionPluginBuilder = RegionsPluginData.builder();
+
+		// pick about half of the test regions, with at least one selected
+		boolean firstRegionAdded = false;
+		List<TestRegionId> selectedRegions = new ArrayList<>();
+		for (TestRegionId regionId : TestRegionId.values()) {
+			if (firstRegionAdded) {
+				if (randomGenerator.nextBoolean()) {
+					selectedRegions.add(regionId);
+
+				}
+			} else {
+				firstRegionAdded = true;
+				selectedRegions.add(regionId);
+			}
+		}
+		for (TestRegionId regionId : selectedRegions) {
+			regionPluginBuilder.addRegion(regionId);
+		}
+
+		Collections.shuffle(selectedRegions, random);
+
+		// pick about half of the properties and assign non-default values to
+		// about half of the regions
+		for (TestRegionPropertyId testRegionPropertyId : TestRegionPropertyId.values()) {
+			PropertyDefinition propertyDefinition = testRegionPropertyId.getPropertyDefinition();
+			regionPluginBuilder.defineRegionProperty(testRegionPropertyId, propertyDefinition);
+			boolean noDefaultValuePresent = propertyDefinition.getDefaultValue().isEmpty();
+			for (TestRegionId regionId : selectedRegions) {
+				if (noDefaultValuePresent || randomGenerator.nextBoolean()) {
+					regionPluginBuilder.setRegionPropertyValue(regionId, testRegionPropertyId,
+							testRegionPropertyId.getRandomPropertyValue(randomGenerator));
+				}
+			}
+		}
+
+		regionPluginBuilder.setPersonRegionArrivalTracking(true);
+
+		for (int i = 0; i < populationSize; i++) {
+			PersonId personId = new PersonId(i);
+			RegionId regionId = selectedRegions.get(randomGenerator.nextInt(selectedRegions.size()));
+			regionPluginBuilder.addPerson(personId, regionId, randomGenerator.nextDouble()*maxTime);
+		}
+
+		RegionsPluginData regionsPluginData = regionPluginBuilder.build();
+		Plugin regionsPlugin = RegionsPlugin.builder().setRegionsPluginData(regionsPluginData).getRegionsPlugin();
+
+		
+		//build the people plugin
+		PeoplePluginData peoplePluginData = PeoplePluginData.builder()
+				.addPersonRange(new PersonRange(0, populationSize - 1)).build();
+		Plugin peoplePlugin = PeoplePlugin.getPeoplePlugin(peoplePluginData);
+		
+		//build the test plugin
+		TestPluginData testPluginData = TestPluginData.builder().addTestActorPlan("actor", new TestActorPlan(16.0, (c) -> {
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
+			String actualValue = regionsDataManager.toString();
+			
+			//expected value verified by inspection
+			String expectedValue = "RegionsDataManager [regionPropertyMap={REGION_1={REGION_PROPERTY_2_INTEGER_MUTABLE=-430271448, REGION_PROPERTY_4_BOOLEAN_IMMUTABLE=true, REGION_PROPERTY_5_INTEGER_IMMUTABLE=1638462445}, REGION_5={REGION_PROPERTY_2_INTEGER_MUTABLE=-2096012126, REGION_PROPERTY_4_BOOLEAN_IMMUTABLE=false}}, regionPropertyIds=[REGION_PROPERTY_1_BOOLEAN_MUTABLE, REGION_PROPERTY_2_INTEGER_MUTABLE, REGION_PROPERTY_3_DOUBLE_MUTABLE, REGION_PROPERTY_4_BOOLEAN_IMMUTABLE, REGION_PROPERTY_5_INTEGER_IMMUTABLE, REGION_PROPERTY_6_DOUBLE_IMMUTABLE], regionPropertyDefinitions={REGION_PROPERTY_1_BOOLEAN_MUTABLE=PropertyDefinition [type=class java.lang.Boolean, propertyValuesAreMutable=true, defaultValue=false], REGION_PROPERTY_2_INTEGER_MUTABLE=PropertyDefinition [type=class java.lang.Integer, propertyValuesAreMutable=true, defaultValue=null], REGION_PROPERTY_3_DOUBLE_MUTABLE=PropertyDefinition [type=class java.lang.Double, propertyValuesAreMutable=true, defaultValue=0.0], REGION_PROPERTY_4_BOOLEAN_IMMUTABLE=PropertyDefinition [type=class java.lang.Boolean, propertyValuesAreMutable=false, defaultValue=false], REGION_PROPERTY_5_INTEGER_IMMUTABLE=PropertyDefinition [type=class java.lang.Integer, propertyValuesAreMutable=false, defaultValue=0], REGION_PROPERTY_6_DOUBLE_IMMUTABLE=PropertyDefinition [type=class java.lang.Double, propertyValuesAreMutable=false, defaultValue=0.0]}, regionPopulationRecordMap={REGION_1=MutableInteger [value=7], REGION_5=MutableInteger [value=3]}, regionToIndexMap={REGION_1=1, REGION_5=2}, indexToRegionMap=[null, REGION_1, REGION_5], regionValues=IntValueContainer [subTypeArray=ByteArray [values=[0=1, 1=1, 2=1, 3=2, 4=2, 5=1, 6=1, 7=2, 8=1, 9=1], defaultValue=0]], regionArrivalTimes=DoubleValueContainer [values=[0=2.9821860216608798, 1=5.560111134433853, 2=0.3295343049347226, 3=2.169800585537338, 4=7.7567431186187985, 5=10.575349160340982, 6=2.2839626031304086, 7=11.011496468201365, 8=11.009859589871265, 9=9.25188153533573], defaultValue=0.0]]";
+			assertEquals(expectedValue, actualValue);
+			
+		})).build();
+
+		
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+		
+		//have the simulation start after the last person arrived in their region, but before the test actor plan
+		SimulationState simulationState = SimulationState.builder().setStartTime(15.0).build();
+
+		TestSimulation.builder()//
+				.addPlugin(regionsPlugin)//
+				.addPlugin(peoplePlugin)//
+				.addPlugin(testPlugin)//
+				.setSimulationState(simulationState)//
+				.build()//
+				.execute();
 
 	}
 

@@ -2,11 +2,20 @@ package plugins.regions.support;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Random;
 import java.util.Set;
 
+import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import nucleus.NucleusError;
@@ -25,6 +34,7 @@ import plugins.regions.testsupport.TestRegionId;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
+import util.random.RandomGeneratorProvider;
 
 public class AT_RegionFilter {
 
@@ -34,18 +44,20 @@ public class AT_RegionFilter {
 		Factory factory = RegionsTestPluginFactory.factory(100, 4602637405159227338L, false, (c) -> {
 
 			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
-			
+
 			/* precondition: if the set is null */
 			Set<RegionId> regionIds = null;
 
 			assertThrows(RuntimeException.class, () -> new RegionFilter(regionIds));
 
 			/* precondition: if the region is unknown */
-			ContractException contractException = assertThrows(ContractException.class, () -> new RegionFilter(TestRegionId.getUnknownRegionId()).validate(testPartitionsContext));
+			ContractException contractException = assertThrows(ContractException.class,
+					() -> new RegionFilter(TestRegionId.getUnknownRegionId()).validate(testPartitionsContext));
 			assertEquals(RegionError.UNKNOWN_REGION_ID, contractException.getErrorType());
 
 			// precondition: null region id
-			contractException = assertThrows(ContractException.class, () -> new RegionFilter(null, TestRegionId.REGION_1).validate(testPartitionsContext));
+			contractException = assertThrows(ContractException.class,
+					() -> new RegionFilter(null, TestRegionId.REGION_1).validate(testPartitionsContext));
 			assertEquals(RegionError.NULL_REGION_ID, contractException.getErrorType());
 
 		});
@@ -57,20 +69,22 @@ public class AT_RegionFilter {
 	@UnitTestConstructor(target = RegionFilter.class, args = { Set.class })
 	public void testConstructorWithSet() {
 		Factory factory = RegionsTestPluginFactory.factory(100, 4602637405159227338L, false, (c) -> {
-			
+
 			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
-			
+
 			/* precondition: if the set is null */
 			Set<RegionId> regionIds = null;
 
 			assertThrows(RuntimeException.class, () -> new RegionFilter(regionIds));
 
 			/* precondition: if the region is unknown */
-			ContractException contractException = assertThrows(ContractException.class, () -> new RegionFilter(TestRegionId.getUnknownRegionId()).validate(testPartitionsContext));
+			ContractException contractException = assertThrows(ContractException.class,
+					() -> new RegionFilter(TestRegionId.getUnknownRegionId()).validate(testPartitionsContext));
 			assertEquals(RegionError.UNKNOWN_REGION_ID, contractException.getErrorType());
 
 			// precondition: null region id
-			contractException = assertThrows(ContractException.class, () -> new RegionFilter(null, TestRegionId.REGION_1).validate(testPartitionsContext));
+			contractException = assertThrows(ContractException.class,
+					() -> new RegionFilter(null, TestRegionId.REGION_1).validate(testPartitionsContext));
 			assertEquals(RegionError.NULL_REGION_ID, contractException.getErrorType());
 
 		});
@@ -101,14 +115,15 @@ public class AT_RegionFilter {
 		Factory factory = RegionsTestPluginFactory.factory(100, 28072097989345652L, false, (c) -> {
 
 			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
-			
+
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 
 			Filter filter = new RegionFilter(TestRegionId.REGION_1, TestRegionId.REGION_2);
 
 			for (PersonId personId : peopleDataManager.getPeople()) {
-				boolean expected = regionsDataManager.getPersonRegion(personId).equals(TestRegionId.REGION_1) || regionsDataManager.getPersonRegion(personId).equals(TestRegionId.REGION_2);
+				boolean expected = regionsDataManager.getPersonRegion(personId).equals(TestRegionId.REGION_1)
+						|| regionsDataManager.getPersonRegion(personId).equals(TestRegionId.REGION_2);
 				boolean actual = filter.evaluate(testPartitionsContext, personId);
 				assertEquals(expected, actual);
 			}
@@ -141,9 +156,9 @@ public class AT_RegionFilter {
 	@UnitTestMethod(target = RegionFilter.class, name = "validate", args = { PartitionsContext.class })
 	public void testValidate() {
 		Factory factory = RegionsTestPluginFactory.factory(100, 28072097989345652L, false, (c) -> {
-			
+
 			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
-			
+
 			Filter filter = new RegionFilter(TestRegionId.REGION_1, TestRegionId.REGION_2);
 
 			assertDoesNotThrow(() -> filter.validate(testPartitionsContext));
@@ -165,4 +180,112 @@ public class AT_RegionFilter {
 		});
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
+
+	@Test
+	@UnitTestMethod(target = RegionFilter.class, name = "getRegionIds", args = {})
+	public void testGetRegionIds() {
+
+		// test against both constructors
+		RegionFilter regionFilter = new RegionFilter(TestRegionId.REGION_1, TestRegionId.REGION_3,
+				TestRegionId.REGION_6);
+		Set<RegionId> expectedRegionIds = new LinkedHashSet<>();
+		expectedRegionIds.add(TestRegionId.REGION_1);
+		expectedRegionIds.add(TestRegionId.REGION_3);
+		expectedRegionIds.add(TestRegionId.REGION_6);
+		Set<RegionId> actualRegionIds = regionFilter.getRegionIds();
+		assertEquals(expectedRegionIds, actualRegionIds);
+
+		regionFilter = new RegionFilter(expectedRegionIds);
+		actualRegionIds = regionFilter.getRegionIds();
+		assertEquals(expectedRegionIds, actualRegionIds);
+	}
+
+	private RegionFilter getRandomRegionFilter(long seed) {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
+		Random random = new Random(randomGenerator.nextLong());
+		List<TestRegionId> list = Arrays.asList(TestRegionId.values());
+		Collections.shuffle(list, random);
+		int count = randomGenerator.nextInt(list.size()) + 1;
+		Set<RegionId> selectedRegions = new LinkedHashSet<>();
+		for (int i = 0; i < count; i++) {
+			selectedRegions.add(list.get(i));
+		}
+		return new RegionFilter(selectedRegions);
+	}
+
+	@Test
+	@UnitTestMethod(target = RegionFilter.class, name = "equals", args = { Object.class })
+	public void testEquals() {
+
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8665861319201143941L);
+
+		// never equal to null
+		for (int i = 0; i < 30; i++) {
+			RegionFilter regionFilter = getRandomRegionFilter(randomGenerator.nextLong());
+			assertFalse(regionFilter.equals(null));
+		}
+
+		// reflexive
+		for (int i = 0; i < 30; i++) {
+			RegionFilter regionFilter = getRandomRegionFilter(randomGenerator.nextLong());
+			assertTrue(regionFilter.equals(regionFilter));
+		}
+
+		// symmetric, transitive, consistent
+		for (int i = 0; i < 30; i++) {
+			long seed = randomGenerator.nextLong();
+			RegionFilter regionFilter1 = getRandomRegionFilter(seed);
+			RegionFilter regionFilter2 = getRandomRegionFilter(seed);
+			for (int j = 0; j < 5; j++) {
+				assertTrue(regionFilter1.equals(regionFilter2));
+				assertTrue(regionFilter2.equals(regionFilter1));
+			}
+		}
+
+		// different inputs yield non-equal objects
+		for (int i = 0; i < 100; i++) {
+			RegionFilter regionFilter1 = getRandomRegionFilter(randomGenerator.nextLong());
+			RegionFilter regionFilter2 = getRandomRegionFilter(randomGenerator.nextLong());
+
+			if (!regionFilter1.getRegionIds().equals(regionFilter2.getRegionIds())) {
+				assertNotEquals(regionFilter1, regionFilter2);
+			}
+		}
+
+	}
+
+	@Test
+	@UnitTestMethod(target = RegionFilter.class, name = "hashCode", args = {})
+	public void testHashCode() {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7083246786855409948L);
+
+		// equal objects have equal hash codes
+		for (int i = 0; i < 30; i++) {
+			long seed = randomGenerator.nextLong();
+			RegionFilter regionFilter1 = getRandomRegionFilter(seed);
+			RegionFilter regionFilter2 = getRandomRegionFilter(seed);
+
+			assertEquals(regionFilter1, regionFilter2);
+			assertEquals(regionFilter1.hashCode(), regionFilter2.hashCode());
+
+		}
+
+		// hash codes are reasonably distributed -- there are only 64 possible values
+		// returned by the random function, so our approach is to eliminate collisions.
+		Set<RegionFilter> regionFilters = new LinkedHashSet<>();
+		for (int i = 0; i < 300; i++) {
+			RegionFilter regionFilter = getRandomRegionFilter(randomGenerator.nextLong());
+			regionFilters.add(regionFilter);
+		}
+		
+		assertTrue(regionFilters.size()>50);
+		
+		Set<Integer> hashCodes = new LinkedHashSet<>();
+		for(RegionFilter regionFilter : regionFilters) {
+			hashCodes.add(regionFilter.hashCode());
+		}
+		assertEquals(hashCodes.size(), regionFilters.size());
+		
+	}
+
 }

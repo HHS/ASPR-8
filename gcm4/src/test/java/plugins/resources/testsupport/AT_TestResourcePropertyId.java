@@ -5,9 +5,11 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -55,8 +57,17 @@ public class AT_TestResourcePropertyId {
 	}
 
 	@Test
-	@UnitTestMethod(target = TestResourcePropertyId.class, name = "getTestResourcePropertyIds", args = { TestResourceId.class })
+	@UnitTestMethod(target = TestResourcePropertyId.class, name = "getTestResourcePropertyIds", args = {})
 	public void testGetTestResourcePropertyIds() {
+		assertEquals(Arrays.asList(TestResourcePropertyId.values()),
+				TestResourcePropertyId.getTestResourcePropertyIds());
+
+	}
+
+	@Test
+	@UnitTestMethod(target = TestResourcePropertyId.class, name = "getTestResourcePropertyIds", args = {
+			TestResourceId.class })
+	public void testGetTestResourcePropertyIds_ResourceId() {
 
 		for (TestResourceId testResourceId : TestResourceId.values()) {
 			Set<TestResourcePropertyId> expectedIds = new LinkedHashSet<>();
@@ -71,7 +82,8 @@ public class AT_TestResourcePropertyId {
 	}
 
 	@Test
-	@UnitTestMethod(target = TestResourcePropertyId.class, name = "getRandomResourcePropertyId", args = { TestResourceId.class, RandomGenerator.class })
+	@UnitTestMethod(target = TestResourcePropertyId.class, name = "getRandomResourcePropertyId", args = {
+			TestResourceId.class, RandomGenerator.class })
 	public void testGetRandomResourcePropertyId() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7615402310345074403L);
 
@@ -95,7 +107,8 @@ public class AT_TestResourcePropertyId {
 			// sample a reasonable number of invocations
 			int sampleCount = 10 * expectedTestResourcePropertyIds.size();
 			for (int i = 0; i < sampleCount; i++) {
-				TestResourcePropertyId testResourcePropertyId = TestResourcePropertyId.getRandomResourcePropertyId(testResourceId, randomGenerator);
+				TestResourcePropertyId testResourcePropertyId = TestResourcePropertyId
+						.getRandomResourcePropertyId(testResourceId, randomGenerator);
 				assertTrue(expectedTestResourcePropertyIds.contains(testResourcePropertyId));
 				propertyIdCounter.get(testResourcePropertyId).increment();
 			}
@@ -112,13 +125,13 @@ public class AT_TestResourcePropertyId {
 	}
 
 	@Test
-	@UnitTestMethod(target = TestResourcePropertyId.class, name = "getRandomPropertyValue", args = { RandomGenerator.class })
+	@UnitTestMethod(target = TestResourcePropertyId.class, name = "getRandomPropertyValue", args = {
+			RandomGenerator.class })
 	public void testGetRandomPropertyValue() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7615402310345074403L);
 		/*
-		 * Show that randomly generated values are compatible with the
-		 * associated property definition. Show that the values are reasonably
-		 * unique
+		 * Show that randomly generated values are compatible with the associated
+		 * property definition. Show that the values are reasonably unique
 		 */
 		for (TestResourcePropertyId testResourcePropertyId : TestResourcePropertyId.values()) {
 			PropertyDefinition propertyDefinition = testResourcePropertyId.getPropertyDefinition();
@@ -137,7 +150,7 @@ public class AT_TestResourcePropertyId {
 			}
 		}
 	}
-	
+
 	@Test
 	@UnitTestMethod(target = TestResourcePropertyId.class, name = "next", args = {})
 	public void testNext() {
@@ -149,5 +162,40 @@ public class AT_TestResourcePropertyId {
 			assertEquals(expectedNextTestResourcePropertyId, testResourcePropertyId.next());
 		}
 	}
+
+//	TestResourcePropertyId	public static java.util.List plugins.resources.testsupport.TestResourcePropertyId.getShuffledTestResourcePropertyIds(org.apache.commons.math3.random.RandomGenerator)
+	
+	@Test
+	@UnitTestMethod(target = TestResourcePropertyId.class, name = "getShuffledTestResourcePropertyIds", args = {RandomGenerator.class})
+	public void testGetTestShuffledRegionPropertyIds() {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8246696863539332004L);
+
+		Set<TestResourcePropertyId> baseSet = new LinkedHashSet<>();
+		for (TestResourcePropertyId testResourcePropertyId : TestResourcePropertyId.values()) {
+			baseSet.add(testResourcePropertyId);
+		}
+
+		Set<List<TestResourcePropertyId>> lists = new LinkedHashSet<>();
+
+		/*
+		 * Generate a few thousand random lists and show that each list contains all the
+		 * expected region property ids
+		 * 
+		 */
+		for (int i = 0; i < 3000; i++) {
+			List<TestResourcePropertyId> list = TestResourcePropertyId.getShuffledTestResourcePropertyIds(randomGenerator);
+			lists.add(list);
+			assertEquals(baseSet, new LinkedHashSet<>(list));
+
+		}
+		
+		
+
+		//There are 10! possible lists, so we don't expect many collsions
+		assertTrue(lists.size() > 2900);
+		
+
+	}
+
 
 }

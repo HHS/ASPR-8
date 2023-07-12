@@ -5,7 +5,9 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.math3.random.RandomGenerator;
@@ -13,6 +15,7 @@ import org.junit.jupiter.api.Test;
 
 import util.annotations.UnitTestMethod;
 import util.random.RandomGeneratorProvider;
+import util.wrappers.MutableInteger;
 
 public class AT_TestAttributeId {
 
@@ -34,6 +37,29 @@ public class AT_TestAttributeId {
 			}
 		}
 	}
+	
+	@Test
+	@UnitTestMethod(target = TestAttributeId.class,name = "getRandomAttributeId", args = {RandomGenerator.class})
+	public void testGetRandomAttributeId() {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8197974538085999024L);
+		Map<AttributeId,MutableInteger> counters = new LinkedHashMap<>();
+		for(TestAttributeId testAttributeId : TestAttributeId.values()) {
+			counters.put(testAttributeId, new MutableInteger());
+		}
+		
+		for (int i = 0; i < 6000; i++) {
+			AttributeId attributeId = TestAttributeId.getRandomAttributeId(randomGenerator);
+			counters.get(attributeId).increment();			
+		}
+		
+		for(TestAttributeId testAttributeId : TestAttributeId.values()) {
+			int count = counters.get(testAttributeId).getValue();
+			assertTrue(count>900);
+			assertTrue(count<1100);
+		}
+		
+	}
+	 
 
 	@Test
 	@UnitTestMethod(target = TestAttributeId.class,name = "getAttributeDefinition", args = {})

@@ -29,7 +29,7 @@ public enum TestAttributeId implements AttributeId {
 		return new AttributeId() {};
 	}
 	
-	public static AttributeId getRandomAttributeId(RandomGenerator randomGenerator) {
+	public static TestAttributeId getRandomAttributeId(RandomGenerator randomGenerator) {
 		int index = randomGenerator.nextInt(TestAttributeId.values().length);
 		return TestAttributeId.values()[index];
 	}

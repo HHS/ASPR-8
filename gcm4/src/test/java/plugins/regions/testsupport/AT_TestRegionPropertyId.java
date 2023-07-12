@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -65,14 +66,14 @@ public class AT_TestRegionPropertyId {
 	}
 
 	@Test
-	@UnitTestMethod(target = TestRegionPropertyId.class, name = "getRandomPropertyValue", args = { RandomGenerator.class })
+	@UnitTestMethod(target = TestRegionPropertyId.class, name = "getRandomPropertyValue", args = {
+			RandomGenerator.class })
 	public void testGetRandomPropertyValue() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(9052754083757003238L);
 
 		/*
-		 * Show that randomly generated values are compatible with the
-		 * associated property definition. Show that the values are reasonably
-		 * unique
+		 * Show that randomly generated values are compatible with the associated
+		 * property definition. Show that the values are reasonably unique
 		 */
 		for (TestRegionPropertyId testRegionPropertyId : TestRegionPropertyId.values()) {
 			PropertyDefinition propertyDefinition = testRegionPropertyId.getPropertyDefinition();
@@ -136,11 +137,13 @@ public class AT_TestRegionPropertyId {
 	}
 
 	@Test
-	@UnitTestMethod(target = TestRegionPropertyId.class, name = "getRandomMutableRegionPropertyId", args = { RandomGenerator.class })
+	@UnitTestMethod(target = TestRegionPropertyId.class, name = "getRandomMutableRegionPropertyId", args = {
+			RandomGenerator.class })
 	public void testGetRandomMutableRegionPropertyId() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(4772298816496492540L);
 
-		Set<TestRegionPropertyId> applicableValues = Set.of(TestRegionPropertyId.REGION_PROPERTY_2_INTEGER_MUTABLE, TestRegionPropertyId.REGION_PROPERTY_3_DOUBLE_MUTABLE,
+		Set<TestRegionPropertyId> applicableValues = Set.of(TestRegionPropertyId.REGION_PROPERTY_2_INTEGER_MUTABLE,
+				TestRegionPropertyId.REGION_PROPERTY_3_DOUBLE_MUTABLE,
 				TestRegionPropertyId.REGION_PROPERTY_1_BOOLEAN_MUTABLE);
 
 		for (int i = 0; i < 15; i++) {
@@ -152,7 +155,8 @@ public class AT_TestRegionPropertyId {
 	}
 
 	@Test
-	@UnitTestMethod(target = TestRegionPropertyId.class, name = "getRandomRegionPropertyId", args = { RandomGenerator.class })
+	@UnitTestMethod(target = TestRegionPropertyId.class, name = "getRandomRegionPropertyId", args = {
+			RandomGenerator.class })
 	public void testGetRandomRegionPropertyId() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8246696863539332004L);
 
@@ -178,4 +182,41 @@ public class AT_TestRegionPropertyId {
 			assertTrue(numTimes < 150);
 		}
 	}
+
+	@Test
+	@UnitTestMethod(target = TestRegionPropertyId.class, name = "getTestRegionPropertyIds", args = {})
+	public void testGetTestRegionPropertyIds() {
+		assertEquals(Arrays.asList(TestRegionPropertyId.values()), TestRegionPropertyId.getTestRegionPropertyIds());
+	}
+
+	@Test
+	@UnitTestMethod(target = TestRegionPropertyId.class, name = "getTestShuffledRegionPropertyIds", args = {})
+	public void testGetTestShuffledRegionPropertyIds() {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8246696863539332004L);
+
+		Set<TestRegionPropertyId> baseSet = new LinkedHashSet<>();
+		for (TestRegionPropertyId testRegionPropertyId : TestRegionPropertyId.values()) {
+			baseSet.add(testRegionPropertyId);
+		}
+
+		Set<List<TestRegionPropertyId>> lists = new LinkedHashSet<>();
+
+		/*
+		 * Generate a few thousand random lists and show that each list contains all the
+		 * expected region property ids
+		 * 
+		 */
+		for (int i = 0; i < 3000; i++) {
+			List<TestRegionPropertyId> list = TestRegionPropertyId.getTestShuffledRegionPropertyIds(randomGenerator);
+			lists.add(list);
+			assertEquals(baseSet, new LinkedHashSet<>(list));
+
+		}
+
+		//show that the results of the method hit most of the 720(=6!) possible lists
+		assertTrue(lists.size() > 700);
+		assertTrue(lists.size() <= 720);
+
+	}
+
 }

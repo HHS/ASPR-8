@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -44,6 +45,8 @@ import plugins.stochastics.support.WellState;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
+import util.random.RandomGeneratorProvider;
+import util.wrappers.MultiKey;
 
 public final class AT_AttributeFilter {
 
@@ -99,30 +102,29 @@ public final class AT_AttributeFilter {
 		for (final TestAttributeId testAttributeId : TestAttributeId.values()) {
 			attributesBuilder.defineAttribute(testAttributeId, testAttributeId.getAttributeDefinition());
 		}
-		AttributeDefinition attributeDefinition = AttributeDefinition.builder().setDefaultValue(new Data(7)).setType(Data.class).build();
+		AttributeDefinition attributeDefinition = AttributeDefinition.builder().setDefaultValue(new Data(7))
+				.setType(Data.class).build();
 		attributesBuilder.defineAttribute(LocalAttributeId.DATA_ID, attributeDefinition);
 
 		Plugin attributesPlugin = AttributesPlugin.getAttributesPlugin(attributesBuilder.build());
-		
-		
-		Plugin partitionsPlugin = PartitionsPlugin.builder()//		
-				.setPartitionsPluginData(PartitionsPluginData.builder().build())//
-				//.addPluginDependency(AttributesPluginId.PLUGIN_ID)//
-				.getPartitionsPlugin();
 
+		Plugin partitionsPlugin = PartitionsPlugin.builder()//
+				.setPartitionsPluginData(PartitionsPluginData.builder().build())//
+				// .addPluginDependency(AttributesPluginId.PLUGIN_ID)//
+				.getPartitionsPlugin();
 
 		plugins.add(attributesPlugin);
 
 		final PeoplePluginData.Builder peopleBuilder = PeoplePluginData.builder();
-		peopleBuilder.addPersonRange(new PersonRange(0, initialPopulation-1));
-		
+		peopleBuilder.addPersonRange(new PersonRange(0, initialPopulation - 1));
 
 		PeoplePluginData peoplePluginData = peopleBuilder.build();
 		Plugin peoplePlugin = PeoplePlugin.getPeoplePlugin(peoplePluginData);
 		plugins.add(peoplePlugin);
 
 		WellState wellState = WellState.builder().setSeed(7698506335486677498L).build();
-		plugins.add(StochasticsPlugin.getStochasticsPlugin(StochasticsPluginData.builder().setMainRNGState(wellState).build()));
+		plugins.add(StochasticsPlugin
+				.getStochasticsPlugin(StochasticsPluginData.builder().setMainRNGState(wellState).build()));
 
 		plugins.add(partitionsPlugin);
 
@@ -130,46 +132,55 @@ public final class AT_AttributeFilter {
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
-			
+
 			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
 			// if the filter's attribute id is null
-			ContractException contractException = assertThrows(ContractException.class, () -> new AttributeFilter(null, Equality.EQUAL, false).validate(testPartitionsContext));
+			ContractException contractException = assertThrows(ContractException.class,
+					() -> new AttributeFilter(null, Equality.EQUAL, false).validate(testPartitionsContext));
 			assertEquals(AttributeError.NULL_ATTRIBUTE_ID, contractException.getErrorType());
 
 			// if the filter's equality operator is null
-			contractException = assertThrows(ContractException.class, () -> new AttributeFilter(TestAttributeId.BOOLEAN_0, null, false).validate(testPartitionsContext));
+			contractException = assertThrows(ContractException.class,
+					() -> new AttributeFilter(TestAttributeId.BOOLEAN_0, null, false).validate(testPartitionsContext));
 			assertEquals(PartitionError.NULL_EQUALITY_OPERATOR, contractException.getErrorType());
 
 			// if the filter's value is null
-			contractException = assertThrows(ContractException.class, () -> new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, null).validate(testPartitionsContext));
+			contractException = assertThrows(ContractException.class,
+					() -> new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, null)
+							.validate(testPartitionsContext));
 			assertEquals(AttributeError.NULL_ATTRIBUTE_VALUE, contractException.getErrorType());
 
 			// if the filter's value is incompatible with the attribute
 			// definition associated with the filter's attribute id.
-			contractException = assertThrows(ContractException.class, () -> new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, 5).validate(testPartitionsContext));
+			contractException = assertThrows(ContractException.class,
+					() -> new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, 5)
+							.validate(testPartitionsContext));
 			assertEquals(AttributeError.INCOMPATIBLE_VALUE, contractException.getErrorType());
 
 			// if the filter's value is not a COMPARABLE when the filter's
 			// equality operator is not EQUALS or NOT_EQUALS.
 
-			contractException = assertThrows(ContractException.class, () -> new AttributeFilter(LocalAttributeId.DATA_ID, Equality.GREATER_THAN, new Data(12)).validate(testPartitionsContext));
+			contractException = assertThrows(ContractException.class,
+					() -> new AttributeFilter(LocalAttributeId.DATA_ID, Equality.GREATER_THAN, new Data(12))
+							.validate(testPartitionsContext));
 			assertEquals(PartitionError.NON_COMPARABLE_ATTRIBUTE, contractException.getErrorType());
 
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
 		plugins.add(TestPlugin.getTestPlugin(testPluginData));
-		
+
 		TestSimulation.builder().addPlugins(plugins).build().execute();
 
 	}
 
 	@Test
-	@UnitTestMethod(target = AttributeFilter.class, name = "evaluate", args = { PartitionsContext.class, PersonId.class })
+	@UnitTestMethod(target = AttributeFilter.class, name = "evaluate", args = { PartitionsContext.class,
+			PersonId.class })
 	public void testEvaluate() {
 		Factory factory = PartitionsTestPluginFactory.factory(100, 2853953940626718331L, (c) -> {
 			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
-			
+
 			Filter filter = new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, true);
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
@@ -188,7 +199,7 @@ public final class AT_AttributeFilter {
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
 		/* precondition: if the context is null */
-		assertThrows(RuntimeException.class, () ->{
+		assertThrows(RuntimeException.class, () -> {
 			Factory factory2 = PartitionsTestPluginFactory.factory(100, 1011872226453537614L, (c) -> {
 				Filter filter = new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, true);
 				filter.evaluate(null, new PersonId(0));
@@ -197,9 +208,8 @@ public final class AT_AttributeFilter {
 		});
 
 		/* precondition: if the person id is null */
-		assertThrows(RuntimeException.class, () ->{
-			
-			
+		assertThrows(RuntimeException.class, () -> {
+
 			Factory factory2 = PartitionsTestPluginFactory.factory(100, 6858667758520667469L, (c) -> {
 				TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
 				Filter filter = new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, true);
@@ -207,10 +217,9 @@ public final class AT_AttributeFilter {
 			});
 			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();
 		});
-		
 
 		/* precondition: if the person id is unknown */
-		assertThrows(RuntimeException.class, () ->{
+		assertThrows(RuntimeException.class, () -> {
 			Factory factory2 = PartitionsTestPluginFactory.factory(100, 9106972672436024633L, (c) -> {
 				TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
 				Filter filter = new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, true);
@@ -238,20 +247,20 @@ public final class AT_AttributeFilter {
 			assertEquals(filterSensitivities.size(), 1);
 
 			/*
-			 * show that this sensitivity is associated with
-			 * AttributeUpdateEvent events.
+			 * show that this sensitivity is associated with AttributeUpdateEvent events.
 			 */
 			FilterSensitivity<?> filterSensitivity = filterSensitivities.iterator().next();
 			assertEquals(AttributeUpdateEvent.class, filterSensitivity.getEventClass());
 
 			/*
-			 * Show that the sensitivity requires refresh for
-			 * AttributeUpdateEvent events if and only if the attribute ids are
-			 * equal and the event has different previous and current values.
+			 * Show that the sensitivity requires refresh for AttributeUpdateEvent events if
+			 * and only if the attribute ids are equal and the event has different previous
+			 * and current values.
 			 */
 			PersonId personId = new PersonId(0);
 
-			AttributeUpdateEvent attributeUpdateEvent = new AttributeUpdateEvent(personId, TestAttributeId.BOOLEAN_0, false, true);
+			AttributeUpdateEvent attributeUpdateEvent = new AttributeUpdateEvent(personId, TestAttributeId.BOOLEAN_0,
+					false, true);
 
 			assertTrue(filterSensitivity.requiresRefresh(testPartitionsContext, attributeUpdateEvent).isPresent());
 
@@ -265,6 +274,111 @@ public final class AT_AttributeFilter {
 
 		});
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
+	}
+
+	@Test
+	@UnitTestMethod(target = AttributeFilter.class, name = "getValue", args = {})
+	public void testGetValue() {
+		for (int i = 0; i < 10; i++) {
+			AttributeFilter attributeFilter = new AttributeFilter(TestAttributeId.INT_0, Equality.EQUAL, i);
+			assertEquals(i, attributeFilter.getValue());
+		}
+	}
+
+	@Test
+	@UnitTestMethod(target = AttributeFilter.class, name = "getEquality", args = {})
+	public void testGetEquality() {
+		for (Equality equality : Equality.values()) {
+			AttributeFilter attributeFilter = new AttributeFilter(TestAttributeId.INT_0, equality, 25);
+			assertEquals(equality, attributeFilter.getEquality());
+		}
+	}
+
+	@Test
+	@UnitTestMethod(target = AttributeFilter.class, name = "getAttributeId", args = {})
+	public void testGetAttributeId() {
+		for (TestAttributeId testAttributeId : TestAttributeId.values()) {
+			AttributeFilter attributeFilter = new AttributeFilter(testAttributeId, Equality.EQUAL, 25);
+			assertEquals(testAttributeId, attributeFilter.getAttributeId());
+		}
+	}
+
+	private AttributeFilter getRandomAttributeFilter(long seed) {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
+		TestAttributeId testAttributeId = TestAttributeId.getRandomAttributeId(randomGenerator);
+		Object propertyValue = testAttributeId.getRandomPropertyValue(randomGenerator);
+		Equality randomEquality = Equality.getRandomEquality(randomGenerator);
+		return new AttributeFilter(testAttributeId, randomEquality, propertyValue);
+	}
+
+	@Test
+	@UnitTestMethod(target = AttributeFilter.class, name = "equals", args = { Object.class })
+	public void testEquals() {
+
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6412971079328158580L);
+
+		// never equal to null
+		for (int i = 0; i < 30; i++) {
+			AttributeFilter attributeFilter = getRandomAttributeFilter(randomGenerator.nextLong());
+			assertFalse(attributeFilter.equals(null));
+		}
+
+		// reflexive
+		for (int i = 0; i < 30; i++) {
+			AttributeFilter attributeFilter = getRandomAttributeFilter(randomGenerator.nextLong());
+			assertTrue(attributeFilter.equals(attributeFilter));
+		}
+
+		// symmetric, transitive, consistent
+		for (int i = 0; i < 30; i++) {
+			long seed = randomGenerator.nextLong();
+			AttributeFilter attributeFilter1 = getRandomAttributeFilter(seed);
+			AttributeFilter attributeFilter2 = getRandomAttributeFilter(seed);
+			for (int j = 0; j < 5; j++) {
+				assertTrue(attributeFilter1.equals(attributeFilter2));
+				assertTrue(attributeFilter2.equals(attributeFilter1));
+			}
+		}
+
+		// different inputs yield non-equal objects
+		Set<AttributeFilter> attributeFilters = new LinkedHashSet<>();
+		Set<MultiKey> multiKeys = new LinkedHashSet<>();
+		for (int i = 0; i < 100; i++) {
+			AttributeFilter attributeFilter = getRandomAttributeFilter(randomGenerator.nextLong());
+			attributeFilters.add(attributeFilter);
+			MultiKey multiKey = new MultiKey(attributeFilter.getAttributeId(), attributeFilter.getEquality(),
+					attributeFilter.getValue());
+			multiKeys.add(multiKey);
+		}
+
+		assertEquals(multiKeys.size(), attributeFilters.size());
+
+	}
+
+	@Test
+	@UnitTestMethod(target = AttributeFilter.class, name = "hashCode", args = {})
+	public void testHashCode() {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(5562725555946491304L);
+		
+		// equal objects have equal hash codes
+		for (int i = 0; i < 30; i++) {
+			long seed = randomGenerator.nextLong();
+			AttributeFilter attributeFilter1 = getRandomAttributeFilter(seed);
+			AttributeFilter attributeFilter2 = getRandomAttributeFilter(seed);
+			assertEquals(attributeFilter1,attributeFilter2);
+			assertEquals(attributeFilter1.hashCode(),attributeFilter2.hashCode());
+		}
+		
+		//hash codes are reasonably distributed
+		Set<AttributeFilter> attributeFilters = new LinkedHashSet<>();
+		for (int i = 0; i < 1000; i++) {			
+			AttributeFilter attributeFilter = getRandomAttributeFilter(randomGenerator.nextLong());
+			attributeFilters.add(attributeFilter);
+		}
+		
+		//There will be a fairly high collision rate since 1/3 of the attribute properties are Booleans
+		assertTrue(attributeFilters.size()>675);
+
 	}
 
 }
