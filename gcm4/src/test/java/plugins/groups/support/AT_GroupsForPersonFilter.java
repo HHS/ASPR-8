@@ -1,6 +1,7 @@
 package plugins.groups.support;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -31,122 +32,221 @@ import plugins.stochastics.datamanagers.StochasticsDataManager;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
+import util.random.RandomGeneratorProvider;
 
 public class AT_GroupsForPersonFilter {
 
-	@Test
-	@UnitTestConstructor(target = GroupsForPersonFilter.class, args = { Equality.class, int.class })
-	public void testConstructor() {
-		// nothing to test
-	}
+    @Test
+    @UnitTestConstructor(target = GroupsForPersonFilter.class, args = { Equality.class, int.class })
+    public void testConstructor() {
+        // nothing to test
+    }
 
-	@Test
-	@UnitTestMethod(target = GroupsForPersonFilter.class, name = "validate", args = { PartitionsContext.class })
-	public void testValidate() {
-		Factory factory = GroupsTestPluginFactory.factory(100, 3, 10, 5329703278551588697L, (c) -> {
-			// precondition tests
-			
-			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
+    @Test
+    @UnitTestMethod(target = GroupsForPersonFilter.class, name = "validate", args = { PartitionsContext.class })
+    public void testValidate() {
+        Factory factory = GroupsTestPluginFactory.factory(100, 3, 10, 5329703278551588697L, (c) -> {
+            // precondition tests
 
-			// if the equality operator is null
-			ContractException contractException = assertThrows(ContractException.class,
-					() -> new GroupsForPersonFilter(null, 5).validate(testPartitionsContext));
-			assertEquals(PartitionError.NULL_EQUALITY_OPERATOR, contractException.getErrorType());
+            TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
 
-		});
-		
-		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
-	}
+            // if the equality operator is null
+            ContractException contractException = assertThrows(ContractException.class,
+                    () -> new GroupsForPersonFilter(null, 5).validate(testPartitionsContext));
+            assertEquals(PartitionError.NULL_EQUALITY_OPERATOR, contractException.getErrorType());
 
-	@Test
-	@UnitTestMethod(target = GroupsForPersonFilter.class, name = "getFilterSensitivities", args = {})
-	public void testGetFilterSensitivities() {
-		Factory factory = GroupsTestPluginFactory.factory(100, 3, 10, 8314387061888020596L, (c) -> {
-			Filter filter = new GroupsForPersonFilter(Equality.EQUAL, 5);
+        });
 
-			Set<Class<?>> expected = new LinkedHashSet<>();
-			expected.add(GroupMembershipAdditionEvent.class);
-			expected.add(GroupMembershipRemovalEvent.class);
+        TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
+    }
 
-			Set<FilterSensitivity<?>> filterSensitivities = filter.getFilterSensitivities();
-			assertNotNull(filterSensitivities);
-			assertEquals(filterSensitivities.size(), 2);
+    @Test
+    @UnitTestMethod(target = GroupsForPersonFilter.class, name = "getFilterSensitivities", args = {})
+    public void testGetFilterSensitivities() {
+        Factory factory = GroupsTestPluginFactory.factory(100, 3, 10, 8314387061888020596L, (c) -> {
+            Filter filter = new GroupsForPersonFilter(Equality.EQUAL, 5);
 
-			Set<Class<?>> actual = new LinkedHashSet<>();
-			for (FilterSensitivity<?> filterSensitivity : filterSensitivities) {
-				Class<?> eventClass = filterSensitivity.getEventClass();
-				actual.add(eventClass);
-			}
-			assertEquals(expected, actual);
+            Set<Class<?>> expected = new LinkedHashSet<>();
+            expected.add(GroupMembershipAdditionEvent.class);
+            expected.add(GroupMembershipRemovalEvent.class);
 
-		});
-		
-		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
-	}
+            Set<FilterSensitivity<?>> filterSensitivities = filter.getFilterSensitivities();
+            assertNotNull(filterSensitivities);
+            assertEquals(filterSensitivities.size(), 2);
 
-	@Test
-	@UnitTestMethod(target = GroupsForPersonFilter.class, name = "evaluate", args = { PartitionsContext.class,
-			PersonId.class })
-	public void testEvaluate() {
+            Set<Class<?>> actual = new LinkedHashSet<>();
+            for (FilterSensitivity<?> filterSensitivity : filterSensitivities) {
+                Class<?> eventClass = filterSensitivity.getEventClass();
+                actual.add(eventClass);
+            }
+            assertEquals(expected, actual);
 
-		Factory factory = GroupsTestPluginFactory.factory(100, 0, 10, 6164158277278234559L, (c) -> {
-			
-			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
-			
-			RandomGenerator randomGenerator = c.getDataManager(StochasticsDataManager.class).getRandomGenerator();
-			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
-			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+        });
 
-			List<PersonId> people = peopleDataManager.getPeople();
+        TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
+    }
 
-			GroupId groupId1 = groupsDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_1);
-			GroupId groupId2 = groupsDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_2);
-			GroupId groupId3 = groupsDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_3);
+    @Test
+    @UnitTestMethod(target = GroupsForPersonFilter.class, name = "evaluate", args = { PartitionsContext.class,
+            PersonId.class })
+    public void testEvaluate() {
 
-			Filter filter = new GroupsForPersonFilter(Equality.EQUAL, 2);
+        Factory factory = GroupsTestPluginFactory.factory(100, 0, 10, 6164158277278234559L, (c) -> {
 
-			assertEquals(100, people.size());
+            TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
 
-			for (PersonId personId : people) {
-				int typeCount = randomGenerator.nextInt(4);
-				switch (typeCount) {
-					case 0:
-						break;
-					case 1:
-						groupsDataManager.addPersonToGroup(personId, groupId1);
-						break;
-					case 2:
-						groupsDataManager.addPersonToGroup(personId, groupId1);
-						groupsDataManager.addPersonToGroup(personId, groupId2);
-						break;
-					default:
-						groupsDataManager.addPersonToGroup(personId, groupId1);
-						groupsDataManager.addPersonToGroup(personId, groupId2);
-						groupsDataManager.addPersonToGroup(personId, groupId3);
-						break;
-				}
+            RandomGenerator randomGenerator = c.getDataManager(StochasticsDataManager.class).getRandomGenerator();
+            PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+            GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
 
-			}
+            List<PersonId> people = peopleDataManager.getPeople();
 
-			for (PersonId personId : people) {
-				boolean expected = groupsDataManager.getGroupCountForPerson(personId) == 2;
-				boolean actual = filter.evaluate(testPartitionsContext, personId);
-				assertEquals(expected, actual);
-			}
+            GroupId groupId1 = groupsDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_1);
+            GroupId groupId2 = groupsDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_2);
+            GroupId groupId3 = groupsDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_3);
 
-			/* precondition: if the context is null */
-			ContractException contractException = assertThrows(ContractException.class,
-					() -> filter.evaluate(null, new PersonId(0)));
-			assertEquals(NucleusError.NULL_SIMULATION_CONTEXT, contractException.getErrorType());
+            Filter filter = new GroupsForPersonFilter(Equality.EQUAL, 2);
 
-			/* precondition: if the person id is null */
-			assertThrows(RuntimeException.class, () -> filter.evaluate(testPartitionsContext, null));
+            assertEquals(100, people.size());
 
-			/* precondition: if the person id is unknown */
-			assertThrows(RuntimeException.class, () -> filter.evaluate(testPartitionsContext, new PersonId(123412342)));
+            for (PersonId personId : people) {
+                int typeCount = randomGenerator.nextInt(4);
+                switch (typeCount) {
+                case 0:
+                    break;
+                case 1:
+                    groupsDataManager.addPersonToGroup(personId, groupId1);
+                    break;
+                case 2:
+                    groupsDataManager.addPersonToGroup(personId, groupId1);
+                    groupsDataManager.addPersonToGroup(personId, groupId2);
+                    break;
+                default:
+                    groupsDataManager.addPersonToGroup(personId, groupId1);
+                    groupsDataManager.addPersonToGroup(personId, groupId2);
+                    groupsDataManager.addPersonToGroup(personId, groupId3);
+                    break;
+                }
 
-		});
+            }
 
-		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
-	}
+            for (PersonId personId : people) {
+                boolean expected = groupsDataManager.getGroupCountForPerson(personId) == 2;
+                boolean actual = filter.evaluate(testPartitionsContext, personId);
+                assertEquals(expected, actual);
+            }
+
+            /* precondition: if the context is null */
+            ContractException contractException = assertThrows(ContractException.class,
+                    () -> filter.evaluate(null, new PersonId(0)));
+            assertEquals(NucleusError.NULL_SIMULATION_CONTEXT, contractException.getErrorType());
+
+            /* precondition: if the person id is null */
+            assertThrows(RuntimeException.class, () -> filter.evaluate(testPartitionsContext, null));
+
+            /* precondition: if the person id is unknown */
+            assertThrows(RuntimeException.class, () -> filter.evaluate(testPartitionsContext, new PersonId(123412342)));
+
+        });
+
+        TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
+    }
+
+    @Test
+    @UnitTestMethod(target = GroupsForPersonFilter.class, name = "getEquality", args = {})
+    public void testGetEquality() {
+        RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8284890603319105493L);
+
+        for (int i = 0; i < 10; i++) {
+            Equality equality = Equality.getRandomEquality(randomGenerator);
+            int groupCount = randomGenerator.nextInt(10);
+            GroupsForPersonFilter filter = new GroupsForPersonFilter(equality, groupCount);
+
+            assertEquals(equality, filter.getEquality());
+        }
+    }
+
+    @Test
+    @UnitTestMethod(target = GroupsForPersonFilter.class, name = "getGroupCount", args = {})
+    public void testGetGroupCount() {
+        RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(5425834828181361952L);
+
+        for (int i = 0; i < 10; i++) {
+            Equality equality = Equality.getRandomEquality(randomGenerator);
+            int groupCount = randomGenerator.nextInt(10);
+            GroupsForPersonFilter filter = new GroupsForPersonFilter(equality, groupCount);
+
+            assertEquals(groupCount, filter.getGroupCount());
+        }
+    }
+
+    @Test
+    @UnitTestMethod(target = GroupsForPersonFilter.class, name = "hashCode", args = {})
+    public void testHashCode() {
+        GroupsForPersonFilter filter1 = new GroupsForPersonFilter(Equality.EQUAL, 1);
+        GroupsForPersonFilter filter2 = new GroupsForPersonFilter(Equality.EQUAL, 0);
+        GroupsForPersonFilter filter3 = new GroupsForPersonFilter(Equality.NOT_EQUAL, 1);
+        GroupsForPersonFilter filter4 = new GroupsForPersonFilter(Equality.NOT_EQUAL, 0);
+        GroupsForPersonFilter filter5 = new GroupsForPersonFilter(Equality.EQUAL, 1);
+
+        assertEquals(filter1.hashCode(), filter1.hashCode());
+
+        assertNotEquals(filter1.hashCode(), filter2.hashCode());
+        assertNotEquals(filter1.hashCode(), filter3.hashCode());
+        assertNotEquals(filter1.hashCode(), filter4.hashCode());
+
+        assertNotEquals(filter2.hashCode(), filter3.hashCode());
+        assertNotEquals(filter2.hashCode(), filter4.hashCode());
+
+        assertNotEquals(filter3.hashCode(), filter4.hashCode());
+
+        assertEquals(filter1.hashCode(), filter5.hashCode());
+    }
+
+    @Test
+    @UnitTestMethod(target = GroupsForPersonFilter.class, name = "equals", args = { Object.class })
+    public void testEquals() {
+        GroupsForPersonFilter filter1 = new GroupsForPersonFilter(Equality.EQUAL, 1);
+        GroupsForPersonFilter filter2 = new GroupsForPersonFilter(Equality.EQUAL, 0);
+        GroupsForPersonFilter filter3 = new GroupsForPersonFilter(Equality.NOT_EQUAL, 1);
+        GroupsForPersonFilter filter4 = new GroupsForPersonFilter(Equality.NOT_EQUAL, 0);
+        GroupsForPersonFilter filter5 = new GroupsForPersonFilter(Equality.EQUAL, 1);
+
+        assertEquals(filter1, filter1);
+
+        assertNotEquals(filter1, null);
+
+        assertNotEquals(filter1, new Object());
+
+        assertNotEquals(filter1, filter2);
+        assertNotEquals(filter1, filter3);
+        assertNotEquals(filter1, filter4);
+
+        assertNotEquals(filter2, filter3);
+        assertNotEquals(filter2, filter4);
+
+        assertNotEquals(filter3, filter4);
+
+        assertEquals(filter1, filter5);
+    }
+
+    @Test
+    @UnitTestMethod(target = GroupsForPersonFilter.class, name = "toString", args = {})
+    public void testToString() {
+        RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(2394011517139293620L);
+        for (int i = 0; i < 10; i++) {
+            Equality equality = Equality.getRandomEquality(randomGenerator);
+            int groupCount = randomGenerator.nextInt(10);
+            GroupsForPersonFilter filter = new GroupsForPersonFilter(equality, groupCount);
+
+            StringBuilder builder = new StringBuilder();
+            builder.append("GroupsForPersonFilter [equality=");
+            builder.append(equality);
+            builder.append(", groupCount=");
+            builder.append(groupCount);
+            builder.append("]");
+
+            assertEquals(builder.toString(), filter.toString());
+        }
+    }
 }

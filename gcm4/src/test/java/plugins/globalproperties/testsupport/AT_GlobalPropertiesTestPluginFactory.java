@@ -2,8 +2,6 @@ package plugins.globalproperties.testsupport;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -18,8 +16,6 @@ import org.junit.jupiter.api.Test;
 import nucleus.ActorContext;
 import nucleus.NucleusError;
 import nucleus.Plugin;
-import nucleus.PluginData;
-import nucleus.PluginId;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestPluginId;
@@ -32,6 +28,7 @@ import plugins.globalproperties.support.GlobalPropertyId;
 import plugins.globalproperties.support.SimpleGlobalPropertyId;
 import plugins.globalproperties.testsupport.GlobalPropertiesTestPluginFactory.Factory;
 import plugins.reports.support.SimpleReportLabel;
+import plugins.util.TestFactoryUtil;
 import plugins.util.properties.PropertyDefinition;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
@@ -77,58 +74,6 @@ public class AT_GlobalPropertiesTestPluginFactory {
 
     }
 
-    /*
-     * Given a list of plugins, will show that the plugin with the given pluginId
-     * exists, and exists EXACTLY once.
-     */
-    private Plugin checkPluginExists(List<Plugin> plugins, PluginId pluginId) {
-        Plugin actualPlugin = null;
-        for (Plugin plugin : plugins) {
-            if (plugin.getPluginId().equals(pluginId)) {
-                assertNull(actualPlugin);
-                actualPlugin = plugin;
-            }
-        }
-
-        assertNotNull(actualPlugin);
-
-        return actualPlugin;
-    }
-
-    /**
-     * Given a list of plugins, will show that the explicit plugindata for the given
-     * pluginid exists, and exists EXACTLY once.
-     */
-    private <T extends PluginData> void checkPluginDataExists(List<Plugin> plugins, T expectedPluginData,
-            PluginId pluginId, int numPluginDatas) {
-        Plugin actualPlugin = checkPluginExists(plugins, pluginId);
-        List<PluginData> actualPluginDatas = actualPlugin.getPluginDatas();
-        assertNotNull(actualPluginDatas);
-        assertEquals(numPluginDatas, actualPluginDatas.size());
-
-        if (numPluginDatas > 1) {
-            for (PluginData pluginData : actualPluginDatas) {
-                if (expectedPluginData.getClass().isAssignableFrom(pluginData.getClass())) {
-                    assertTrue(expectedPluginData == pluginData);
-                    break;
-                }
-            }
-        } else {
-            PluginData actualPluginData = actualPluginDatas.get(0);
-            assertTrue(expectedPluginData == actualPluginData);
-        }
-
-    }
-
-    /**
-     * Given a list of plugins, will show that the explicit plugindata for the given
-     * pluginid exists, and exists EXACTLY once.
-     */
-    private <T extends PluginData> void checkPluginDataExists(List<Plugin> plugins, T expectedPluginData,
-            PluginId pluginId) {
-        checkPluginDataExists(plugins, expectedPluginData, pluginId, 1);
-    }
-
     @Test
     @UnitTestMethod(target = GlobalPropertiesTestPluginFactory.Factory.class, name = "getPlugins", args = {})
     public void testGetPlugins() {
@@ -137,8 +82,8 @@ public class AT_GlobalPropertiesTestPluginFactory {
         }).getPlugins();
         assertEquals(2, plugins.size());
 
-        checkPluginExists(plugins, GlobalPropertiesPluginId.PLUGIN_ID);
-        checkPluginExists(plugins, TestPluginId.PLUGIN_ID);
+        TestFactoryUtil.checkPluginExists(plugins, GlobalPropertiesPluginId.PLUGIN_ID);
+        TestFactoryUtil.checkPluginExists(plugins, TestPluginId.PLUGIN_ID);
     }
 
     @Test
@@ -163,7 +108,7 @@ public class AT_GlobalPropertiesTestPluginFactory {
         List<Plugin> plugins = GlobalPropertiesTestPluginFactory.factory(2050026532065791481L, t -> {
         }).setGlobalPropertyReportPluginData(pluginData).getPlugins();
 
-        checkPluginDataExists(plugins, pluginData, GlobalPropertiesPluginId.PLUGIN_ID, 2);
+        TestFactoryUtil.checkPluginDataExists(plugins, pluginData, GlobalPropertiesPluginId.PLUGIN_ID, 2);
 
         // precondition: globalPropReportPluginData is null
         ContractException contractException = assertThrows(ContractException.class,
@@ -196,7 +141,7 @@ public class AT_GlobalPropertiesTestPluginFactory {
         List<Plugin> plugins = GlobalPropertiesTestPluginFactory.factory(2050026532065791481L, t -> {
         }).setGlobalPropertiesPluginData(globalPropertiesPluginData).getPlugins();
 
-        checkPluginDataExists(plugins, globalPropertiesPluginData, GlobalPropertiesPluginId.PLUGIN_ID);
+        TestFactoryUtil.checkPluginDataExists(plugins, globalPropertiesPluginData, GlobalPropertiesPluginId.PLUGIN_ID);
 
         // precondition: globalPropertiesPluginData is not null
         ContractException contractException = assertThrows(ContractException.class,

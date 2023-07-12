@@ -115,7 +115,6 @@ public final class GroupPopulationReportPluginData extends PeriodicReportPluginD
 		builder.append("GroupPopulationReportPluginData [data=");
 		builder.append(data);
 		builder.append("]");
-		builder.append("]");
 		return builder.toString();
 	}
 }
