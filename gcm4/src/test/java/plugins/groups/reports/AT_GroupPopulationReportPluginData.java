@@ -245,4 +245,38 @@ public class AT_GroupPopulationReportPluginData {
 
 	}
 
+    @Test
+    @UnitTestMethod(target = GroupPopulationReportPluginData.class, name = "toString", args = {})
+    public void testToString() {
+        RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(2394011517139293620L);
+        for (int i = 0; i < 10; i++) {
+            GroupPopulationReportPluginData.Builder builder = GroupPopulationReportPluginData.builder();
+
+            ReportLabel reportLabel = new SimpleReportLabel(randomGenerator.nextInt(100));
+            builder.setReportLabel(reportLabel);
+
+            ReportPeriod reportPeriod = ReportPeriod.values()[randomGenerator.nextInt(ReportPeriod.values().length)];
+            builder.setReportPeriod(reportPeriod);
+
+            GroupPopulationReportPluginData groupPopulationReportPluginData = builder.build();
+
+            StringBuilder sb = new StringBuilder();
+            sb.append("GroupPopulationReportPluginData [data=");
+
+            StringBuilder superDataBuilder = new StringBuilder();
+            superDataBuilder.append("Data [reportLabel=");
+            superDataBuilder.append(reportLabel);
+            superDataBuilder.append(", reportPeriod=");
+            superDataBuilder.append(reportPeriod);
+
+            StringBuilder dataBuilder = new StringBuilder();
+            dataBuilder.append(superDataBuilder.toString());
+            dataBuilder.append("]");
+
+            sb.append(dataBuilder.toString());
+            sb.append("]");
+
+            assertEquals(sb.toString(), groupPopulationReportPluginData.toString());
+        }
+    }
 }
