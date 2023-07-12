@@ -1,7 +1,8 @@
-package plugins.groups;
+package plugins.groups.datamanagers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -9,6 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -17,15 +19,17 @@ import java.util.Random;
 import java.util.Set;
 
 import org.apache.commons.math3.random.RandomGenerator;
+import org.apache.commons.math3.util.FastMath;
 import org.junit.jupiter.api.Test;
 
 import nucleus.PluginData;
-import plugins.groups.datamanagers.GroupsPluginData;
+import plugins.groups.datamanagers.GroupsPluginData.GroupSpecification;
 import plugins.groups.support.GroupError;
 import plugins.groups.support.GroupId;
 import plugins.groups.support.GroupPropertyId;
 import plugins.groups.support.GroupPropertyValue;
 import plugins.groups.support.GroupTypeId;
+import plugins.groups.testsupport.GroupsTestPluginFactory;
 import plugins.groups.testsupport.TestGroupPropertyId;
 import plugins.groups.testsupport.TestGroupTypeId;
 import plugins.people.support.PersonError;
@@ -154,9 +158,8 @@ public class AT_GroupsPluginData {
         assertEquals(PropertyError.INCOMPATIBLE_VALUE, contractException.getErrorType());
 
         /*
-         * precondition test: if a group does not have a group property value
-         * assigned when the corresponding property definition lacks a default
-         * value.
+         * precondition test: if a group does not have a group property value assigned
+         * when the corresponding property definition lacks a default value.
          */
         contractException = assertThrows(ContractException.class, () -> {
             GroupsPluginData.Builder builder = GroupsPluginData.builder();
@@ -314,9 +317,9 @@ public class AT_GroupsPluginData {
         Set<MultiKey> expectedValues = new LinkedHashSet<>();
 
         /*
-         * Add a few groups and set about half of the property values, leaving
-         * the other half to be defined by the default values of the
-         * corresponding property definitions.
+         * Add a few groups and set about half of the property values, leaving the other
+         * half to be defined by the default values of the corresponding property
+         * definitions.
          */
         TestGroupTypeId testGroupTypeId = TestGroupTypeId.GROUP_TYPE_1;
         for (int i = 0; i < 10; i++) {
@@ -423,8 +426,8 @@ public class AT_GroupsPluginData {
         }
 
         /*
-         * Add a few groups and add to those groups 0 to 9 randomly selected
-         * people. Record the assignments in the expected data structure.
+         * Add a few groups and add to those groups 0 to 9 randomly selected people.
+         * Record the assignments in the expected data structure.
          */
         TestGroupTypeId testGroupTypeId = TestGroupTypeId.GROUP_TYPE_1;
         for (int i = 0; i < 20; i++) {
@@ -502,9 +505,8 @@ public class AT_GroupsPluginData {
         // precondition tests
 
         // if the group type id is null
-        ContractException contractException = assertThrows(ContractException.class,
-                () -> groupInitialData.getGroupPropertyDefinition(null,
-                        TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK));
+        ContractException contractException = assertThrows(ContractException.class, () -> groupInitialData
+                .getGroupPropertyDefinition(null, TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK));
         assertEquals(GroupError.NULL_GROUP_TYPE_ID, contractException.getErrorType());
 
         // if the group type id is unknown
@@ -594,9 +596,9 @@ public class AT_GroupsPluginData {
         Set<MultiKey> expectedValues = new LinkedHashSet<>();
 
         /*
-         * Add a few groups and set about half of the property values, leaving
-         * the other half to be defined by the default values of the
-         * corresponding property definitions.
+         * Add a few groups and set about half of the property values, leaving the other
+         * half to be defined by the default values of the corresponding property
+         * definitions.
          */
         int groupCount = 10;
 
@@ -705,8 +707,8 @@ public class AT_GroupsPluginData {
         }
 
         /*
-         * Add a few groups and add to those groups 0 to 9 randomly selected
-         * people. Record the assignments in the expected data structure.
+         * Add a few groups and add to those groups 0 to 9 randomly selected people.
+         * Record the assignments in the expected data structure.
          */
         TestGroupTypeId testGroupTypeId = TestGroupTypeId.GROUP_TYPE_1;
         for (int i = 0; i < 20; i++) {
@@ -970,5 +972,443 @@ public class AT_GroupsPluginData {
         pluginData = groupPluginDataBuilder.setNextGroupIdValue(groupCount + 10).build();
 
         assertEquals(groupCount + 10, pluginData.getNextGroupIdValue());
+    }
+
+    @Test
+    @UnitTestMethod(target = GroupsPluginData.class, name = "getGroupCount", args = {})
+    public void testGetGroupCount() {
+        RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(669154335225022584L);
+
+        for (int i = 0; i < 10; i++) {
+            GroupsPluginData.Builder groupPluginDataBuilder = GroupsPluginData.builder();
+
+            for (TestGroupTypeId testGroupTypeId : TestGroupTypeId.getShuffledTestGroupTypeIds(randomGenerator)) {
+                groupPluginDataBuilder.addGroupTypeId(testGroupTypeId);
+            }
+
+            int groupCount = randomGenerator.nextInt(50) + 10;
+            List<GroupId> groups = new ArrayList<>();
+            for (int j = 0; j < groupCount; j++) {
+                GroupId groupId = new GroupId(j);
+                groups.add(groupId);
+                TestGroupTypeId groupTypeId = TestGroupTypeId.getRandomGroupTypeId(randomGenerator);
+                groupPluginDataBuilder.addGroup(groupId, groupTypeId);
+            }
+
+            int totalPeopleCount = 0;
+            for (GroupId groupId : groups) {
+                int peopleCount = randomGenerator.nextInt(100);
+                int currTotalPeopleCount = totalPeopleCount;
+                totalPeopleCount += peopleCount;
+                for (int j = currTotalPeopleCount; j < totalPeopleCount; j++) {
+                    PersonId personId = new PersonId(j);
+                    groupPluginDataBuilder.associatePersonToGroup(groupId, personId);
+                }
+            }
+
+            GroupsPluginData pluginData = groupPluginDataBuilder.build();
+
+            assertEquals(groupCount, pluginData.getGroupCount());
+        }
+    }
+
+    @Test
+    @UnitTestMethod(target = GroupsPluginData.class, name = "getPeopleForGroup", args = { GroupId.class })
+    public void testGetPeopleForGroup() {
+        RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(4825370554814301264L);
+
+        for (int i = 0; i < 10; i++) {
+            GroupsPluginData.Builder groupPluginDataBuilder = GroupsPluginData.builder();
+
+            List<List<PersonId>> groupToPeopleMemberships = new ArrayList<>();
+
+            for (TestGroupTypeId testGroupTypeId : TestGroupTypeId.getShuffledTestGroupTypeIds(randomGenerator)) {
+                groupPluginDataBuilder.addGroupTypeId(testGroupTypeId);
+            }
+
+            int groupCount = 10;
+            List<GroupId> groups = new ArrayList<>();
+            for (int j = 0; j < groupCount; j++) {
+                GroupId groupId = new GroupId(j);
+                groups.add(groupId);
+                TestGroupTypeId groupTypeId = TestGroupTypeId.getRandomGroupTypeId(randomGenerator);
+                groupPluginDataBuilder.addGroup(groupId, groupTypeId);
+            }
+
+            int totalPeopleCount = 0;
+            for (GroupId groupId : groups) {
+                int peopleCount = randomGenerator.nextInt(100);
+                int currTotalPeopleCount = totalPeopleCount;
+                totalPeopleCount += peopleCount;
+                for (int j = currTotalPeopleCount; j < totalPeopleCount; j++) {
+                    PersonId personId = new PersonId(j);
+                    groupPluginDataBuilder.associatePersonToGroup(groupId, personId);
+
+                    int groupIndex = groupId.getValue();
+
+                    while (groupIndex >= groupToPeopleMemberships.size()) {
+                        groupToPeopleMemberships.add(null);
+                    }
+
+                    List<PersonId> people = groupToPeopleMemberships.get(groupIndex);
+                    if (people == null) {
+                        people = new ArrayList<>();
+                        groupToPeopleMemberships.set(groupIndex, people);
+                    }
+
+                    people.add(personId);
+                }
+            }
+
+            GroupsPluginData pluginData = groupPluginDataBuilder.build();
+
+            for (int j = 0; j < groupToPeopleMemberships.size(); j++) {
+                List<PersonId> personIds = groupToPeopleMemberships.get(j);
+
+                if (personIds == null) {
+                    assertEquals(Collections.unmodifiableList(new ArrayList<>()),
+                            pluginData.getPeopleForGroup(new GroupId(j)));
+                } else {
+                    assertEquals(personIds, pluginData.getPeopleForGroup(new GroupId(j)));
+                }
+            }
+        }
+    }
+
+    @Test
+    @UnitTestMethod(target = GroupsPluginData.class, name = "getGroupPropertyDefinitions", args = {})
+    public void testGetPropertyDefinitions() {
+        RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(9107021630953219230L);
+
+        for (int i = 0; i < 10; i++) {
+            GroupsPluginData.Builder groupPluginDataBuilder = GroupsPluginData.builder();
+
+            Map<GroupTypeId, Map<GroupPropertyId, PropertyDefinition>> groupPropertyDefinitions = new LinkedHashMap<>();
+
+            for (TestGroupTypeId testGroupTypeId : TestGroupTypeId.getShuffledTestGroupTypeIds(randomGenerator)) {
+                groupPluginDataBuilder.addGroupTypeId(testGroupTypeId);
+
+                for (TestGroupPropertyId testGroupPropertyId : TestGroupPropertyId
+                        .getShuffledTestGroupPropertyIds(testGroupTypeId, randomGenerator)) {
+                    groupPluginDataBuilder.defineGroupProperty(testGroupPropertyId.getTestGroupTypeId(),
+                            testGroupPropertyId, testGroupPropertyId.getPropertyDefinition());
+
+                    Map<GroupPropertyId, PropertyDefinition> propertyDefinitionsMap = groupPropertyDefinitions
+                            .get(testGroupTypeId);
+                    if (propertyDefinitionsMap == null) {
+                        propertyDefinitionsMap = new LinkedHashMap<>();
+                        groupPropertyDefinitions.put(testGroupTypeId, propertyDefinitionsMap);
+                    }
+                    propertyDefinitionsMap.put(testGroupPropertyId, testGroupPropertyId.getPropertyDefinition());
+                }
+            }
+
+            GroupsPluginData pluginData = groupPluginDataBuilder.build();
+
+            assertEquals(groupPropertyDefinitions, pluginData.getGroupPropertyDefinitions());
+        }
+    }
+
+    @Test
+    @UnitTestMethod(target = GroupsPluginData.class, name = "hashCode", args = {})
+    public void testHashCode() {
+        RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(386194196593528301L);
+
+        List<PersonId> people = new ArrayList<>();
+
+        for (int i = 0; i < 100; i++) {
+            people.add(new PersonId(i));
+        }
+
+        long sameSeed = randomGenerator.nextLong();
+        GroupsPluginData groupsPluginData1 = GroupsTestPluginFactory.getStandardGroupsPluginData(2, 10, people,
+                sameSeed);
+        GroupsPluginData groupsPluginData2 = GroupsTestPluginFactory.getStandardGroupsPluginData(2, 10, people,
+                randomGenerator.nextLong());
+        GroupsPluginData groupsPluginData3 = GroupsTestPluginFactory.getStandardGroupsPluginData(2, 5, people,
+                sameSeed);
+        GroupsPluginData groupsPluginData4 = GroupsTestPluginFactory.getStandardGroupsPluginData(2, 5, people,
+                randomGenerator.nextLong());
+        GroupsPluginData groupsPluginData5 = GroupsTestPluginFactory.getStandardGroupsPluginData(1, 10, people,
+                sameSeed);
+        GroupsPluginData groupsPluginData6 = GroupsTestPluginFactory.getStandardGroupsPluginData(3, 10, people,
+                randomGenerator.nextLong());
+        GroupsPluginData groupsPluginData7 = GroupsTestPluginFactory.getStandardGroupsPluginData(3, 5, people,
+                sameSeed);
+        GroupsPluginData groupsPluginData8 = GroupsTestPluginFactory.getStandardGroupsPluginData(3, 5, people,
+                randomGenerator.nextLong());
+        GroupsPluginData groupsPluginData9 = GroupsTestPluginFactory.getStandardGroupsPluginData(2, 10, people,
+                sameSeed);
+
+        assertEquals(groupsPluginData1.hashCode(), groupsPluginData1.hashCode());
+
+        assertNotEquals(groupsPluginData1.hashCode(), groupsPluginData2.hashCode());
+        assertNotEquals(groupsPluginData1.hashCode(), groupsPluginData3.hashCode());
+        assertNotEquals(groupsPluginData1.hashCode(), groupsPluginData4.hashCode());
+        assertNotEquals(groupsPluginData1.hashCode(), groupsPluginData5.hashCode());
+        assertNotEquals(groupsPluginData1.hashCode(), groupsPluginData6.hashCode());
+        assertNotEquals(groupsPluginData1.hashCode(), groupsPluginData7.hashCode());
+        assertNotEquals(groupsPluginData1.hashCode(), groupsPluginData8.hashCode());
+
+        assertNotEquals(groupsPluginData1.hashCode(), groupsPluginData3.hashCode());
+        assertNotEquals(groupsPluginData1.hashCode(), groupsPluginData4.hashCode());
+        assertNotEquals(groupsPluginData1.hashCode(), groupsPluginData5.hashCode());
+        assertNotEquals(groupsPluginData1.hashCode(), groupsPluginData6.hashCode());
+        assertNotEquals(groupsPluginData1.hashCode(), groupsPluginData7.hashCode());
+        assertNotEquals(groupsPluginData1.hashCode(), groupsPluginData8.hashCode());
+
+        assertNotEquals(groupsPluginData3.hashCode(), groupsPluginData4.hashCode());
+        assertNotEquals(groupsPluginData3.hashCode(), groupsPluginData5.hashCode());
+        assertNotEquals(groupsPluginData3.hashCode(), groupsPluginData6.hashCode());
+        assertNotEquals(groupsPluginData3.hashCode(), groupsPluginData7.hashCode());
+        assertNotEquals(groupsPluginData3.hashCode(), groupsPluginData8.hashCode());
+
+        assertNotEquals(groupsPluginData4.hashCode(), groupsPluginData5.hashCode());
+        assertNotEquals(groupsPluginData4.hashCode(), groupsPluginData6.hashCode());
+        assertNotEquals(groupsPluginData4.hashCode(), groupsPluginData7.hashCode());
+        assertNotEquals(groupsPluginData4.hashCode(), groupsPluginData8.hashCode());
+
+        assertNotEquals(groupsPluginData5.hashCode(), groupsPluginData6.hashCode());
+        assertNotEquals(groupsPluginData5.hashCode(), groupsPluginData7.hashCode());
+        assertNotEquals(groupsPluginData5.hashCode(), groupsPluginData8.hashCode());
+
+        assertNotEquals(groupsPluginData6.hashCode(), groupsPluginData7.hashCode());
+        assertNotEquals(groupsPluginData6.hashCode(), groupsPluginData8.hashCode());
+
+        assertNotEquals(groupsPluginData7.hashCode(), groupsPluginData8.hashCode());
+
+        assertEquals(groupsPluginData1.hashCode(), groupsPluginData9.hashCode());
+    }
+
+    @Test
+    @UnitTestMethod(target = GroupsPluginData.class, name = "equals", args = { Object.class })
+    public void testEquals() {
+        RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(1974882207275712576L);
+
+        List<PersonId> people = new ArrayList<>();
+
+        for (int i = 0; i < 100; i++) {
+            people.add(new PersonId(i));
+        }
+
+        long sameSeed = randomGenerator.nextLong();
+        GroupsPluginData groupsPluginData1 = GroupsTestPluginFactory.getStandardGroupsPluginData(2, 10, people,
+                sameSeed);
+        GroupsPluginData groupsPluginData2 = GroupsTestPluginFactory.getStandardGroupsPluginData(2, 10, people,
+                randomGenerator.nextLong());
+        GroupsPluginData groupsPluginData3 = GroupsTestPluginFactory.getStandardGroupsPluginData(2, 5, people,
+                sameSeed);
+        GroupsPluginData groupsPluginData4 = GroupsTestPluginFactory.getStandardGroupsPluginData(2, 5, people,
+                randomGenerator.nextLong());
+        GroupsPluginData groupsPluginData5 = GroupsTestPluginFactory.getStandardGroupsPluginData(1, 10, people,
+                sameSeed);
+        GroupsPluginData groupsPluginData6 = GroupsTestPluginFactory.getStandardGroupsPluginData(3, 10, people,
+                randomGenerator.nextLong());
+        GroupsPluginData groupsPluginData7 = GroupsTestPluginFactory.getStandardGroupsPluginData(3, 5, people,
+                sameSeed);
+        GroupsPluginData groupsPluginData8 = GroupsTestPluginFactory.getStandardGroupsPluginData(3, 5, people,
+                randomGenerator.nextLong());
+        GroupsPluginData groupsPluginData9 = GroupsTestPluginFactory.getStandardGroupsPluginData(2, 10, people,
+                sameSeed);
+
+        assertEquals(groupsPluginData1, groupsPluginData1);
+
+        assertNotEquals(groupsPluginData1, null);
+
+        assertNotEquals(groupsPluginData1, new Object());
+
+        assertNotEquals(groupsPluginData1, groupsPluginData2);
+        assertNotEquals(groupsPluginData1, groupsPluginData3);
+        assertNotEquals(groupsPluginData1, groupsPluginData4);
+        assertNotEquals(groupsPluginData1, groupsPluginData5);
+        assertNotEquals(groupsPluginData1, groupsPluginData6);
+        assertNotEquals(groupsPluginData1, groupsPluginData7);
+        assertNotEquals(groupsPluginData1, groupsPluginData8);
+
+        assertNotEquals(groupsPluginData1, groupsPluginData3);
+        assertNotEquals(groupsPluginData1, groupsPluginData4);
+        assertNotEquals(groupsPluginData1, groupsPluginData5);
+        assertNotEquals(groupsPluginData1, groupsPluginData6);
+        assertNotEquals(groupsPluginData1, groupsPluginData7);
+        assertNotEquals(groupsPluginData1, groupsPluginData8);
+
+        assertNotEquals(groupsPluginData3, groupsPluginData4);
+        assertNotEquals(groupsPluginData3, groupsPluginData5);
+        assertNotEquals(groupsPluginData3, groupsPluginData6);
+        assertNotEquals(groupsPluginData3, groupsPluginData7);
+        assertNotEquals(groupsPluginData3, groupsPluginData8);
+
+        assertNotEquals(groupsPluginData4, groupsPluginData5);
+        assertNotEquals(groupsPluginData4, groupsPluginData6);
+        assertNotEquals(groupsPluginData4, groupsPluginData7);
+        assertNotEquals(groupsPluginData4, groupsPluginData8);
+
+        assertNotEquals(groupsPluginData5, groupsPluginData6);
+        assertNotEquals(groupsPluginData5, groupsPluginData7);
+        assertNotEquals(groupsPluginData5, groupsPluginData8);
+
+        assertNotEquals(groupsPluginData6, groupsPluginData7);
+        assertNotEquals(groupsPluginData6, groupsPluginData8);
+
+        assertNotEquals(groupsPluginData7, groupsPluginData8);
+
+        assertEquals(groupsPluginData1, groupsPluginData9);
+
+    }
+
+    @Test
+    @UnitTestMethod(target = GroupsPluginData.class, name = "toString", args = {})
+    public void testToString() {
+        RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(523034536833646355L);
+
+        for (int i = 0; i < 10; i++) {
+            GroupsPluginData.Builder groupPluginDataBuilder = GroupsPluginData.builder();
+
+            int nextGroupIdValue = -1;
+            Map<GroupTypeId, Map<GroupPropertyId, PropertyDefinition>> groupPropertyDefinitions = new LinkedHashMap<>();
+            Set<GroupTypeId> groupTypeIds = new LinkedHashSet<>();
+            List<List<GroupId>> personToGroupsMemberships = new ArrayList<>();
+            List<List<PersonId>> groupToPeopleMemberships = new ArrayList<>();
+            List<GroupSpecification> groupSpecifications = new ArrayList<>();
+
+            for (TestGroupTypeId testGroupTypeId : TestGroupTypeId.getShuffledTestGroupTypeIds(randomGenerator)) {
+                groupPluginDataBuilder.addGroupTypeId(testGroupTypeId);
+                groupTypeIds.add(testGroupTypeId);
+
+                for (TestGroupPropertyId testGroupPropertyId : TestGroupPropertyId
+                        .getShuffledTestGroupPropertyIds(testGroupTypeId, randomGenerator)) {
+                    groupPluginDataBuilder.defineGroupProperty(testGroupPropertyId.getTestGroupTypeId(),
+                            testGroupPropertyId, testGroupPropertyId.getPropertyDefinition());
+
+                    Map<GroupPropertyId, PropertyDefinition> propertyDefinitionsMap = groupPropertyDefinitions
+                            .get(testGroupTypeId);
+                    if (propertyDefinitionsMap == null) {
+                        propertyDefinitionsMap = new LinkedHashMap<>();
+                        groupPropertyDefinitions.put(testGroupTypeId, propertyDefinitionsMap);
+                    }
+                    propertyDefinitionsMap.put(testGroupPropertyId, testGroupPropertyId.getPropertyDefinition());
+                }
+            }
+
+            int groupCount = 10;
+            List<GroupId> groups = new ArrayList<>();
+            for (int j = 0; j < groupCount; j++) {
+                GroupId groupId = new GroupId(j);
+                groups.add(groupId);
+                TestGroupTypeId groupTypeId = TestGroupTypeId.getRandomGroupTypeId(randomGenerator);
+                groupPluginDataBuilder.addGroup(groupId, groupTypeId);
+
+                while (j >= groupSpecifications.size()) {
+                    groupSpecifications.add(null);
+                }
+
+                GroupSpecification groupSpecification = groupSpecifications.get(j);
+                if (groupSpecification == null) {
+                    groupSpecification = new GroupSpecification();
+                    groupSpecification.groupId = groupId;
+                    groupSpecifications.set(j, groupSpecification);
+                }
+                groupSpecification.groupTypeId = groupTypeId;
+
+                for (TestGroupPropertyId testGroupPropertyId : TestGroupPropertyId
+                        .getTestGroupPropertyIds(groupTypeId)) {
+                    if (randomGenerator.nextBoolean()) {
+                        Object randomPropertyValue = testGroupPropertyId.getRandomPropertyValue(randomGenerator);
+                        groupPluginDataBuilder.setGroupPropertyValue(groupId, testGroupPropertyId, randomPropertyValue);
+
+                        while (j >= groupSpecifications.size()) {
+                            groupSpecifications.add(null);
+                        }
+
+                        List<GroupPropertyValue> groupPropertyValues = groupSpecification.groupPropertyValues;
+                        if (groupPropertyValues == null) {
+                            groupPropertyValues = new ArrayList<>();
+                            groupSpecification.groupPropertyValues = groupPropertyValues;
+                        }
+
+                        Iterator<GroupPropertyValue> iterator = groupSpecification.groupPropertyValues.iterator();
+                        while (iterator.hasNext()) {
+                            GroupPropertyValue next = iterator.next();
+                            if (next.groupPropertyId().equals(testGroupPropertyId)) {
+                                iterator.remove();
+                                break;
+                            }
+                        }
+
+                        GroupPropertyValue groupPropertyValue = new GroupPropertyValue(testGroupPropertyId,
+                                randomPropertyValue);
+                        groupPropertyValues.add(groupPropertyValue);
+                    }
+                }
+            }
+
+            int totalPeopleCount = 0;
+            for (GroupId groupId : groups) {
+                int peopleCount = randomGenerator.nextInt(100);
+                int currTotalPeopleCount = totalPeopleCount;
+                totalPeopleCount += peopleCount;
+                for (int j = currTotalPeopleCount; j < totalPeopleCount; j++) {
+                    PersonId personId = new PersonId(j);
+                    groupPluginDataBuilder.associatePersonToGroup(groupId, personId);
+
+                    while (j >= personToGroupsMemberships.size()) {
+                        personToGroupsMemberships.add(null);
+                    }
+
+                    List<GroupId> personToGroupMembership = personToGroupsMemberships.get(j);
+                    if (personToGroupMembership == null) {
+                        personToGroupMembership = new ArrayList<>();
+                        personToGroupsMemberships.set(j, personToGroupMembership);
+                    }
+
+                    personToGroupMembership.add(groupId);
+
+                    int groupIndex = groupId.getValue();
+
+                    while (groupIndex >= groupToPeopleMemberships.size()) {
+                        groupToPeopleMemberships.add(null);
+                    }
+
+                    List<PersonId> people = groupToPeopleMemberships.get(groupIndex);
+                    if (people == null) {
+                        people = new ArrayList<>();
+                        groupToPeopleMemberships.set(groupIndex, people);
+                    }
+
+                    people.add(personId);
+                }
+            }
+
+            for (GroupSpecification groupSpecification : groupSpecifications) {
+                if (groupSpecification != null) {
+                    nextGroupIdValue = FastMath.max(nextGroupIdValue, groupSpecification.groupId.getValue());
+                }
+            }
+            nextGroupIdValue++;
+
+            GroupsPluginData pluginData = groupPluginDataBuilder.build();
+
+            StringBuilder dataSb = new StringBuilder();
+            dataSb.append("Data [nextGroupIdValue=");
+            dataSb.append(nextGroupIdValue);
+            dataSb.append(", groupPropertyDefinitions=");
+            dataSb.append(groupPropertyDefinitions);
+            dataSb.append(", groupTypeIds=");
+            dataSb.append(groupTypeIds);
+            dataSb.append(", groupSpecifications=");
+            dataSb.append(groupSpecifications);
+            dataSb.append(", personToGroupsMemberships=");
+            dataSb.append(personToGroupsMemberships);
+            dataSb.append(", groupToPeopleMemberships=");
+            dataSb.append(groupToPeopleMemberships);
+            dataSb.append("]");
+
+            StringBuilder pluginDataSb = new StringBuilder();
+            pluginDataSb.append("GroupsPluginData [data=");
+            pluginDataSb.append(dataSb.toString());
+            pluginDataSb.append("]");
+
+            assertEquals(pluginDataSb.toString(), pluginData.toString());
+        }
     }
 }
