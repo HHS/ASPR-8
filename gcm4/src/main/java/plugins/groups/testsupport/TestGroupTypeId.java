@@ -48,12 +48,12 @@ public enum TestGroupTypeId implements GroupTypeId {
 		};
 	}
 	
-	public static List<TestGroupTypeId> getProperties(){
+	public static List<TestGroupTypeId> getTestGroupTypeIds(){
 		return Arrays.asList(TestGroupTypeId.values());
 	}
 	
-	public static List<TestGroupTypeId> getProperties(RandomGenerator randomGenerator){
-		List<TestGroupTypeId> result = getProperties();
+	public static List<TestGroupTypeId> getShuffledTestGroupTypeIds(RandomGenerator randomGenerator){
+		List<TestGroupTypeId> result = getTestGroupTypeIds();
 		Random random = new Random(randomGenerator.nextLong());
 		Collections.shuffle(result,random);
 		return result;
