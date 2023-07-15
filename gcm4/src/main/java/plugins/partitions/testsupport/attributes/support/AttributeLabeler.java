@@ -29,10 +29,6 @@ public abstract class AttributeLabeler implements Labeler {
 
 	protected abstract Object getLabelFromValue(Object value);
 	
-	public AttributeId getAttributeId() {
-		return attributeId;
-	}
-
 	public AttributeLabeler(AttributeId attributeId) {
 		this.attributeId = attributeId;
 	}
@@ -97,7 +93,5 @@ public abstract class AttributeLabeler implements Labeler {
 		builder.append("]");
 		return builder.toString();
 	}
-	
-	
 
 }

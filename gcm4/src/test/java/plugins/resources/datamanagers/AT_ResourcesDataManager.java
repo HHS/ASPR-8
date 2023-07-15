@@ -33,6 +33,7 @@ import nucleus.testsupport.runcontinuityplugin.RunContinuityPlugin;
 import nucleus.testsupport.runcontinuityplugin.RunContinuityPluginData;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestOutputConsumer;
+import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestSimulation;
 import plugins.people.PeoplePlugin;
@@ -41,6 +42,7 @@ import plugins.people.datamanagers.PeoplePluginData;
 import plugins.people.support.PersonConstructionData;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
+import plugins.people.support.PersonRange;
 import plugins.regions.RegionsPlugin;
 import plugins.regions.datamanagers.RegionsDataManager;
 import plugins.regions.datamanagers.RegionsPluginData;
@@ -61,7 +63,10 @@ import plugins.resources.support.ResourcePropertyId;
 import plugins.resources.support.ResourcePropertyInitialization;
 import plugins.resources.testsupport.ResourcesTestPluginFactory;
 import plugins.resources.testsupport.ResourcesTestPluginFactory.Factory;
+import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.datamanagers.StochasticsDataManager;
+import plugins.stochastics.datamanagers.StochasticsPluginData;
+import plugins.stochastics.support.WellState;
 import plugins.resources.testsupport.TestResourceId;
 import plugins.resources.testsupport.TestResourcePropertyId;
 import plugins.util.properties.PropertyDefinition;
@@ -4292,11 +4297,203 @@ public final class AT_ResourcesDataManager {
 
 		}
 
-		//show that the result is a reasonably long string
+		// show that the result is a reasonably long string
 		assertNotNull(result);
-		assertTrue(result.length()>100);
+		assertTrue(result.length() > 100);
 
 		return result;
+
+	}
+
+	@Test
+	@UnitTestMethod(target = ResourcesDataManager.class, name = "toString", args = {})
+	public void testToString() {	
+		
+
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7634125044092781695L);
+		Random random = new Random(randomGenerator.nextLong());
+		
+		//build the people plugin
+		
+		PeoplePluginData.Builder peoplePluginDataBuilder = PeoplePluginData.builder();
+		for(int i = 0;i<10;i++) {
+			int id = 2*i+1;
+			peoplePluginDataBuilder.addPersonRange(new PersonRange(id, id));
+		}
+		PeoplePluginData peoplePluginData = peoplePluginDataBuilder.build();
+		Plugin peoplePlugin = PeoplePlugin.getPeoplePlugin(peoplePluginData);
+		
+		List<PersonId> people = peoplePluginData.getPersonIds();
+		
+		//build the resources plugin
+		ResourcesPluginData.Builder resourcesPluginDataBuilder = ResourcesPluginData.builder();
+
+		List<TestResourceId> selectedTestResourceIds = new ArrayList<>();
+
+		for (TestResourceId testResourceId : TestResourceId.values()) {
+			selectedTestResourceIds.add(testResourceId);
+		}
+		Collections.shuffle(selectedTestResourceIds, random);
+
+		Set<TestResourceId> timeTrackedResourceIds = new LinkedHashSet<>();
+
+		for (TestResourceId testResourceId : selectedTestResourceIds) {
+			double time = randomGenerator.nextDouble();
+			boolean timeTrackingPolicy = randomGenerator.nextBoolean();
+			if (timeTrackingPolicy) {
+				timeTrackedResourceIds.add(testResourceId);
+			}
+			resourcesPluginDataBuilder.addResource(testResourceId, time, timeTrackingPolicy);
+		}
+
+		List<TestResourcePropertyId> selectedTestResourcePropertyIds = new ArrayList<>();
+
+		for (TestResourcePropertyId testResourcePropertyId : TestResourcePropertyId.values()) {
+			selectedTestResourcePropertyIds.add(testResourcePropertyId);
+		}
+
+		Collections.shuffle(selectedTestResourcePropertyIds, random);
+
+		for (TestResourcePropertyId testResourcePropertyId : selectedTestResourcePropertyIds) {
+			resourcesPluginDataBuilder.defineResourceProperty(testResourcePropertyId.getTestResourceId(),
+					testResourcePropertyId, testResourcePropertyId.getPropertyDefinition());
+		}
+
+		for (TestResourcePropertyId testResourcePropertyId : selectedTestResourcePropertyIds) {
+			boolean required = testResourcePropertyId.getPropertyDefinition().getDefaultValue().isEmpty();
+			if (required || randomGenerator.nextBoolean()) {
+				resourcesPluginDataBuilder.setResourcePropertyValue(testResourcePropertyId.getTestResourceId(),
+						testResourcePropertyId, testResourcePropertyId.getRandomPropertyValue(randomGenerator));
+			}
+		}
+
+		List<TestRegionId> selectedRegionIds = new ArrayList<>();
+
+		for (TestRegionId testRegionId : TestRegionId.values()) {
+			selectedRegionIds.add(testRegionId);
+		}
+		Collections.shuffle(selectedRegionIds,random);
+
+		for (TestRegionId testRegionId : selectedRegionIds) {
+			Collections.shuffle(selectedTestResourceIds,random);
+			for (TestResourceId testResourceId : selectedTestResourceIds) {
+				if (randomGenerator.nextBoolean()) {
+					long value = randomGenerator.nextInt(1000);
+					resourcesPluginDataBuilder.setRegionResourceLevel(testRegionId, testResourceId, value);
+				}
+			}
+		}
+		
+		
+		
+
+		for (PersonId personId: people) {		
+			Collections.shuffle(selectedTestResourceIds,random);
+			for (TestResourceId testResourceId : selectedTestResourceIds) {
+				if (randomGenerator.nextBoolean()) {
+					long value = randomGenerator.nextInt(5);
+					resourcesPluginDataBuilder.setPersonResourceLevel(personId, testResourceId, value);
+				}
+				if (timeTrackedResourceIds.contains(testResourceId) && randomGenerator.nextBoolean()) {
+					double time = randomGenerator.nextDouble() + 1.0;
+					resourcesPluginDataBuilder.setPersonResourceTime(personId, testResourceId, time);
+				}
+			}
+		}
+		ResourcesPluginData resourcesPluginData = resourcesPluginDataBuilder.build();
+		Plugin resourcesPlugin = ResourcesPlugin.builder().setResourcesPluginData(resourcesPluginData)
+				.getResourcesPlugin();
+		
+		//build the regions plugin
+		
+		RegionsPluginData.Builder regionsPluginDataBuilder  = RegionsPluginData.builder();
+		for(TestRegionId testRegionId : TestRegionId.values()) {
+			regionsPluginDataBuilder.addRegion(testRegionId);
+		}
+		
+		for(PersonId personId : people) {
+			regionsPluginDataBuilder.addPerson(personId, TestRegionId.getRandomRegionId(randomGenerator));
+		}
+		
+		RegionsPluginData regionsPluginData = regionsPluginDataBuilder.build();
+		Plugin regionsPlugin = RegionsPlugin.builder().setRegionsPluginData(regionsPluginData).getRegionsPlugin();
+		
+		//generate the stochastics plugin
+		StochasticsPluginData stochasticsPluginData = StochasticsPluginData.builder().setMainRNGState(WellState.builder().setSeed(randomGenerator.nextLong()).build()).build();
+		Plugin stochasticsPlugin = StochasticsPlugin.getStochasticsPlugin(stochasticsPluginData);
+	
+		//generate the test plugin
+		TestPluginData.Builder testPluginDataBuilder = TestPluginData.builder();
+		testPluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(3,(c)->{
+			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+			String actualValue = resourcesDataManager.toString();
+			//Expected value vaidated by inspection
+			String expectedValue = "ResourcesDataManager ["
+					+ "resourceDefaultTimes={"
+					+ "RESOURCE_4=0.217564152372538, "
+					+ "RESOURCE_3=0.8830727840178094, "
+					+ "RESOURCE_1=0.33699001981033283, "
+					+ "RESOURCE_2=0.6084446874416862, "
+					+ "RESOURCE_5=0.2584192617810743}, "
+					
+					+ "resourcePropertyValues={"
+					+ "RESOURCE_2={ResourceProperty_2_2_INTEGER_MUTABLE=-1872626629, ResourceProperty_2_1_BOOLEAN_MUTABLE=true}, "
+					+ "RESOURCE_3={ResourceProperty_3_1_BOOLEAN_MUTABLE=true}, "
+					+ "RESOURCE_5={ResourceProperty_5_1_INTEGER_IMMUTABLE=1952440069}}, "
+					
+					+ "personResourceLevels={"
+					+ "RESOURCE_1=IntValueContainer [subTypeArray=ByteArray [values=[1=0, 3=0, 5=2, 7=0, 9=0, 11=2, 13=4, 15=0, 17=1, 19=0], defaultValue=0]], "
+					+ "RESOURCE_3=IntValueContainer [subTypeArray=ByteArray [values=[1=1, 3=0, 5=2, 7=4, 9=0, 11=0, 13=4, 15=0, 17=0, 19=0], defaultValue=0]], "
+					+ "RESOURCE_2=IntValueContainer [subTypeArray=ByteArray [values=[1=0, 3=0, 5=3, 7=3, 9=0, 11=0, 13=0, 15=0, 17=0, 19=0], defaultValue=0]], "
+					+ "RESOURCE_5=IntValueContainer [subTypeArray=ByteArray [values=[1=0, 3=0, 5=0, 7=2, 9=0, 11=0, 13=3, 15=0, 17=0, 19=0], defaultValue=0]], "
+					+ "RESOURCE_4=IntValueContainer [subTypeArray=ByteArray [values=[1=0, 3=0, 5=0, 7=0, 9=0, 11=0, 13=2, 15=0, 17=0, 19=1], defaultValue=0]]}, "
+					
+					+ "resourcePropertyDefinitions={"
+					+ "RESOURCE_2={ResourceProperty_2_2_INTEGER_MUTABLE=PropertyDefinition [type=class java.lang.Integer, propertyValuesAreMutable=true, defaultValue=5], ResourceProperty_2_1_BOOLEAN_MUTABLE=PropertyDefinition [type=class java.lang.Boolean, propertyValuesAreMutable=true, defaultValue=true]}, "
+					+ "RESOURCE_1={ResourceProperty_1_3_DOUBLE_MUTABLE=PropertyDefinition [type=class java.lang.Double, propertyValuesAreMutable=true, defaultValue=0.0], ResourceProperty_1_1_BOOLEAN_MUTABLE=PropertyDefinition [type=class java.lang.Boolean, propertyValuesAreMutable=true, defaultValue=false], ResourceProperty_1_2_INTEGER_MUTABLE=PropertyDefinition [type=class java.lang.Integer, propertyValuesAreMutable=true, defaultValue=0]}, "
+					+ "RESOURCE_3={ResourceProperty_3_1_BOOLEAN_MUTABLE=PropertyDefinition [type=class java.lang.Boolean, propertyValuesAreMutable=true, defaultValue=false], ResourceProperty_3_2_STRING_MUTABLE=PropertyDefinition [type=class java.lang.String, propertyValuesAreMutable=true, defaultValue=]}, "
+					+ "RESOURCE_5={ResourceProperty_5_1_INTEGER_IMMUTABLE=PropertyDefinition [type=class java.lang.Integer, propertyValuesAreMutable=false, defaultValue=7], ResourceProperty_5_2_DOUBLE_IMMUTABLE=PropertyDefinition [type=class java.lang.Double, propertyValuesAreMutable=false, defaultValue=2.7]}, "
+					+ "RESOURCE_4={ResourceProperty_4_1_BOOLEAN_MUTABLE=PropertyDefinition [type=class java.lang.Boolean, propertyValuesAreMutable=true, defaultValue=true]}}, "
+					
+					+ "resourceTimeTrackingPolicies={"
+					+ "RESOURCE_4=false, "
+					+ "RESOURCE_3=true, "
+					+ "RESOURCE_1=true, "
+					+ "RESOURCE_2=true, "
+					+ "RESOURCE_5=true}, "
+					
+					+ "personResourceTimes={"
+					+ "RESOURCE_1=DoubleValueContainer [values=[1=1.4101040879057936, 3=0.33699001981033283, 5=0.33699001981033283, 7=1.671063001388121, 9=1.8031941854939413, 11=1.17923883714124, 13=0.33699001981033283, 15=0.33699001981033283, 17=0.33699001981033283, 19=0.33699001981033283], defaultValue=0.33699001981033283], "
+					+ "RESOURCE_3=DoubleValueContainer [values=[1=1.1385628625362318, 3=0.8830727840178094, 5=1.991978622923995, 7=0.8830727840178094, 9=1.3511645237538967, 11=0.8830727840178094, 13=1.4140228511404762, 15=1.1216048964167127, 17=0.8830727840178094, 19=0.8830727840178094], defaultValue=0.8830727840178094], "
+					+ "RESOURCE_5=DoubleValueContainer [values=[1=0.2584192617810743, 3=1.200541444517943, 5=0.2584192617810743, 7=0.2584192617810743, 9=1.543391403912596, 11=0.2584192617810743, 13=0.2584192617810743, 15=1.9944181030137489, 17=0.2584192617810743, 19=1.542836102920688], defaultValue=0.2584192617810743], "
+					+ "RESOURCE_2=DoubleValueContainer [values=[1=0.6084446874416862, 3=0.6084446874416862, 5=1.413709876061411, 7=1.6431364543995068, 9=1.4748673882603254, 11=0.6084446874416862, 13=1.9264298147324626, 15=1.3054658380301465, 17=0.6084446874416862, 19=0.6084446874416862], defaultValue=0.6084446874416862]}, "
+					
+					+ "regionResources={"
+					+ "REGION_3={RESOURCE_4=MutableLong [value=973], RESOURCE_1=MutableLong [value=10], RESOURCE_3=MutableLong [value=216], RESOURCE_2=MutableLong [value=267]}, "
+					+ "REGION_4={RESOURCE_3=MutableLong [value=22], RESOURCE_5=MutableLong [value=720], RESOURCE_1=MutableLong [value=705], RESOURCE_2=MutableLong [value=877]}, "
+					+ "REGION_2={RESOURCE_1=MutableLong [value=121], RESOURCE_4=MutableLong [value=216], RESOURCE_2=MutableLong [value=244], RESOURCE_3=MutableLong [value=502]}, "
+					+ "REGION_1={RESOURCE_4=MutableLong [value=0], RESOURCE_5=MutableLong [value=719]}, "
+					+ "REGION_5={RESOURCE_4=MutableLong [value=954], RESOURCE_2=MutableLong [value=598], RESOURCE_5=MutableLong [value=347], RESOURCE_1=MutableLong [value=865]}, "
+					+ "REGION_6={RESOURCE_2=MutableLong [value=868], RESOURCE_3=MutableLong [value=831], RESOURCE_5=MutableLong [value=643]}}]";
+			
+			assertEquals(expectedValue, actualValue);
+			
+		}));
+		TestPluginData testPluginData = testPluginDataBuilder.build();
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+		
+		
+		SimulationState simulationState = SimulationState.builder().setStartTime(2).build();
+
+		TestSimulation.builder()//
+				.addPlugin(resourcesPlugin)//
+				.addPlugin(peoplePlugin)//
+				.addPlugin(regionsPlugin)//
+				.addPlugin(stochasticsPlugin)//
+				.addPlugin(testPlugin)//
+				.setSimulationState(simulationState)//
+				.build()//
+				.execute();
 
 	}
 }

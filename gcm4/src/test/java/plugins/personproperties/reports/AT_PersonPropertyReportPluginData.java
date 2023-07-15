@@ -53,6 +53,8 @@ public class AT_PersonPropertyReportPluginData {
 
 	}
 
+
+	
 	@Test
 	@UnitTestMethod(target = PersonPropertyReportPluginData.Builder.class, name = "setReportLabel", args = { ReportLabel.class })
 	public void testSetReportLabel() {

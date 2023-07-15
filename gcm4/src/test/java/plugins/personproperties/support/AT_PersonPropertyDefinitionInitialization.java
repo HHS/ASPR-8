@@ -35,12 +35,11 @@ public class AT_PersonPropertyDefinitionInitialization {
 	@UnitTestMethod(target = PersonPropertyDefinitionInitialization.class, name = "getPropertyDefinition", args = {})
 	public void testGetPropertyDefinition() {
 		PersonPropertyDefinitionInitialization.Builder builder = PersonPropertyDefinitionInitialization.builder();
-		PropertyDefinition propertyDefinition = PropertyDefinition	.builder().setType(Integer.class).setDefaultValue(100).setPropertyValueMutability(true)
-																	.build();
+		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(100)
+				.setPropertyValueMutability(true).build();
 
 		builder.setPropertyDefinition(propertyDefinition);
 		builder.setPersonPropertyId(TestPersonPropertyId.PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK);
-		
 
 		PersonPropertyDefinitionInitialization propertyDefinitionInitialization = builder.build();
 
@@ -54,8 +53,8 @@ public class AT_PersonPropertyDefinitionInitialization {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(2754843240208076356L);
 
 		PersonPropertyDefinitionInitialization.Builder builder = PersonPropertyDefinitionInitialization.builder();
-		PropertyDefinition propertyDefinition = PropertyDefinition	.builder().setType(Integer.class).setDefaultValue(100).setPropertyValueMutability(true)
-																	.build();
+		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(100)
+				.setPropertyValueMutability(true).build();
 
 		builder.setPropertyDefinition(propertyDefinition);
 		builder.setPersonPropertyId(TestPersonPropertyId.PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK);
@@ -83,8 +82,8 @@ public class AT_PersonPropertyDefinitionInitialization {
 	@UnitTestMethod(target = PersonPropertyDefinitionInitialization.class, name = "getPersonPropertyId", args = {})
 	public void testGetPersonPropertyId() {
 		PersonPropertyDefinitionInitialization.Builder builder = PersonPropertyDefinitionInitialization.builder();
-		PropertyDefinition propertyDefinition = PropertyDefinition	.builder().setType(Integer.class).setDefaultValue(100).setPropertyValueMutability(true)
-																	.build();
+		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(100)
+				.setPropertyValueMutability(true).build();
 		PersonPropertyId personPropertyId = TestPersonPropertyId.PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK;
 		builder.setPropertyDefinition(propertyDefinition);
 		builder.setPersonPropertyId(personPropertyId);
@@ -98,8 +97,8 @@ public class AT_PersonPropertyDefinitionInitialization {
 	@UnitTestMethod(target = PersonPropertyDefinitionInitialization.Builder.class, name = "build", args = {})
 	public void testBuild() {
 		PersonPropertyDefinitionInitialization.Builder builder = PersonPropertyDefinitionInitialization.builder();
-		PropertyDefinition propertyDefinition = PropertyDefinition	.builder().setType(Integer.class).setDefaultValue(100).setPropertyValueMutability(true)
-																	.build();
+		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(100)
+				.setPropertyValueMutability(true).build();
 		PersonPropertyId personPropertyId = TestPersonPropertyId.PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK;
 		builder.setPropertyDefinition(propertyDefinition);
 		builder.setPersonPropertyId(personPropertyId);
@@ -121,17 +120,19 @@ public class AT_PersonPropertyDefinitionInitialization {
 
 		// precondition: incomaptible value
 		contractException = assertThrows(ContractException.class, () -> {
-			PersonPropertyDefinitionInitialization.builder().setPropertyDefinition(propertyDefinition).setPersonPropertyId(personPropertyId).addPropertyValue(new PersonId(1000), "100").build();
+			PersonPropertyDefinitionInitialization.builder().setPropertyDefinition(propertyDefinition)
+					.setPersonPropertyId(personPropertyId).addPropertyValue(new PersonId(1000), "100").build();
 		});
 		assertEquals(PropertyError.INCOMPATIBLE_VALUE, contractException.getErrorType());
 	}
 
 	@Test
-	@UnitTestMethod(target = PersonPropertyDefinitionInitialization.Builder.class, name = "setPropertyDefinition", args = { PropertyDefinition.class })
+	@UnitTestMethod(target = PersonPropertyDefinitionInitialization.Builder.class, name = "setPropertyDefinition", args = {
+			PropertyDefinition.class })
 	public void testSetPropertyDefinition() {
 		PersonPropertyDefinitionInitialization.Builder builder = PersonPropertyDefinitionInitialization.builder();
-		PropertyDefinition propertyDefinition = PropertyDefinition	.builder().setType(Double.class).setDefaultValue(100.0).setPropertyValueMutability(true)
-																	.build();
+		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Double.class)
+				.setDefaultValue(100.0).setPropertyValueMutability(true).build();
 		PersonPropertyId personPropertyId = TestPersonPropertyId.PERSON_PROPERTY_3_DOUBLE_MUTABLE_NO_TRACK;
 		builder.setPropertyDefinition(propertyDefinition);
 		builder.setPersonPropertyId(personPropertyId);
@@ -148,13 +149,14 @@ public class AT_PersonPropertyDefinitionInitialization {
 	}
 
 	@Test
-	@UnitTestMethod(target = PersonPropertyDefinitionInitialization.Builder.class, name = "addPropertyValue", args = { PersonId.class, Object.class })
+	@UnitTestMethod(target = PersonPropertyDefinitionInitialization.Builder.class, name = "addPropertyValue", args = {
+			PersonId.class, Object.class })
 	public void testAddPropertyValue() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(2816191091329528844L);
 
 		PersonPropertyDefinitionInitialization.Builder builder = PersonPropertyDefinitionInitialization.builder();
-		PropertyDefinition propertyDefinition = PropertyDefinition	.builder().setType(Double.class).setDefaultValue(100.0).setPropertyValueMutability(true)
-																	.build();
+		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Double.class)
+				.setDefaultValue(100.0).setPropertyValueMutability(true).build();
 
 		builder.setPropertyDefinition(propertyDefinition);
 		builder.setPersonPropertyId(TestPersonPropertyId.PERSON_PROPERTY_3_DOUBLE_MUTABLE_NO_TRACK);
@@ -187,11 +189,12 @@ public class AT_PersonPropertyDefinitionInitialization {
 	}
 
 	@Test
-	@UnitTestMethod(target = PersonPropertyDefinitionInitialization.Builder.class, name = "setPersonPropertyId", args = { PersonPropertyId.class })
+	@UnitTestMethod(target = PersonPropertyDefinitionInitialization.Builder.class, name = "setPersonPropertyId", args = {
+			PersonPropertyId.class })
 	public void testSetPersonPropertyId() {
 		PersonPropertyDefinitionInitialization.Builder builder = PersonPropertyDefinitionInitialization.builder();
-		PropertyDefinition propertyDefinition = PropertyDefinition	.builder().setType(Double.class).setDefaultValue(100.0).setPropertyValueMutability(true)
-																	.build();
+		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Double.class)
+				.setDefaultValue(100.0).setPropertyValueMutability(true).build();
 		PersonPropertyId personPropertyId = TestPersonPropertyId.PERSON_PROPERTY_3_DOUBLE_MUTABLE_NO_TRACK;
 		builder.setPropertyDefinition(propertyDefinition);
 		builder.setPersonPropertyId(personPropertyId);
@@ -205,5 +208,58 @@ public class AT_PersonPropertyDefinitionInitialization {
 			PersonPropertyDefinitionInitialization.builder().setPersonPropertyId(null);
 		});
 		assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
+	}
+	
+	@Test
+	@UnitTestMethod(target = PersonPropertyDefinitionInitialization.class, name = "trackTimes", args = {})
+	public void testTrackTimes() {
+
+		for (boolean trackTimes : new boolean[] { true, false }) {
+			PropertyDefinition propertyDefinition = PropertyDefinition.builder()//
+					.setType(Double.class)//
+					.setDefaultValue(100.0)//
+					.setPropertyValueMutability(true)//
+					.build();//
+			PersonPropertyId personPropertyId = TestPersonPropertyId.PERSON_PROPERTY_3_DOUBLE_MUTABLE_NO_TRACK;
+
+			PersonPropertyDefinitionInitialization.Builder builder = PersonPropertyDefinitionInitialization.builder();
+			builder.setPropertyDefinition(propertyDefinition);
+			builder.setPersonPropertyId(personPropertyId);
+			builder.setTrackTimes(trackTimes);
+			PersonPropertyDefinitionInitialization propertyDefinitionInitialization = builder.build();
+
+			assertNotNull(propertyDefinitionInitialization);
+			assertEquals(trackTimes, propertyDefinitionInitialization.trackTimes());
+
+		}
+		
+		
+	}
+	
+ 	@Test
+	@UnitTestMethod(target = PersonPropertyDefinitionInitialization.Builder.class, name = "setTrackTimes", args = {
+			boolean.class })
+	public void testSetTrackTimes() {
+
+		for (boolean trackTimes : new boolean[] { true, false }) {
+			PropertyDefinition propertyDefinition = PropertyDefinition.builder()//
+					.setType(Double.class)//
+					.setDefaultValue(100.0)//
+					.setPropertyValueMutability(true)//
+					.build();//
+			PersonPropertyId personPropertyId = TestPersonPropertyId.PERSON_PROPERTY_3_DOUBLE_MUTABLE_NO_TRACK;
+
+			PersonPropertyDefinitionInitialization.Builder builder = PersonPropertyDefinitionInitialization.builder();
+			builder.setPropertyDefinition(propertyDefinition);
+			builder.setPersonPropertyId(personPropertyId);
+			builder.setTrackTimes(trackTimes);
+			PersonPropertyDefinitionInitialization propertyDefinitionInitialization = builder.build();
+
+			assertNotNull(propertyDefinitionInitialization);
+			assertEquals(trackTimes, propertyDefinitionInitialization.trackTimes());
+
+		}
+		
+		
 	}
 }

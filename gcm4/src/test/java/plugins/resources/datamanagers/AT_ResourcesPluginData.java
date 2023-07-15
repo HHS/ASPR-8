@@ -228,7 +228,7 @@ public final class AT_ResourcesPluginData {
 	 * Returns a randomly generated resources plugin data
 	 */
 	private ResourcesPluginData getRandomResourcesPluginData(long seed) {
-		// equal objects have equal hashCodes
+		
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
 		ResourcesPluginData.Builder pluginDataBuilder = ResourcesPluginData.builder();
 

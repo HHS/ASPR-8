@@ -7,7 +7,6 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.function.Supplier;
 
@@ -517,22 +516,17 @@ public final class PersonPropertiesDataManager extends DataManager {
 	}
 
 	/**
-	 * Returns an optional of the default property assignment time
-	 *
+	 * Returns the default property definition time
+	 * 
 	 * @throws ContractException
 	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
 	 *                           the person property id is null</li>
 	 *                           <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
 	 *                           if the person property id is unknown</li>
 	 */
-	public Optional<Double> getDefaultPropertyTime(final PersonPropertyId personPropertyId) {
+	public double getPropertyDefinitionTime(final PersonPropertyId personPropertyId) {
 		validatePersonPropertyId(personPropertyId);
-		Double result = null;
-		DoubleValueContainer doubleValueContainer = propertyTimes.get(personPropertyId);
-		if (doubleValueContainer != null) {
-			result = doubleValueContainer.getDefaultValue();
-		}
-		return Optional.ofNullable(result);
+		return propertyDefinitionTimes.get(personPropertyId);
 	}
 
 	/**
@@ -710,12 +704,12 @@ public final class PersonPropertiesDataManager extends DataManager {
 
 		int pId = personId.getValue();
 		IndexedPropertyManager propertyManager = propertyValues.get(personPropertyId);
-		
-		if(propertyManager == null) {
+
+		if (propertyManager == null) {
 			propertyManager = getIndexedPropertyManager(propertyDefinition);
 			propertyValues.put(personPropertyId, propertyManager);
 		}
-		
+
 		Object oldValue = propertyManager.getPropertyValue(pId);
 		propertyManager.setPropertyValue(pId, personPropertyValue);
 
@@ -749,6 +743,14 @@ public final class PersonPropertiesDataManager extends DataManager {
 
 	private void loadPropertyDefinitionTimes() {
 		propertyDefinitionTimes = personPropertiesPluginData.getPropertyDefinitionTimes();
+
+		for (PersonPropertyId personPropertyId : propertyDefinitionTimes.keySet()) {
+			Double defaultTime = propertyDefinitionTimes.get(personPropertyId);
+			if (defaultTime > dataManagerContext.getTime()) {
+				throw new ContractException(PersonPropertyError.PROPERTY_DEFAULT_TIME_EXCEEDS_SIM_TIME,
+						personPropertyId);
+			}
+		}
 	}
 
 	private void loadPropertyValues() {
@@ -823,11 +825,8 @@ public final class PersonPropertiesDataManager extends DataManager {
 		Map<PersonPropertyId, List<Double>> map = personPropertiesPluginData.getPropertyTimes();
 		for (PersonPropertyId personPropertyId : map.keySet()) {
 			List<Double> list = map.get(personPropertyId);
-			Double defaultTime = propertyDefinitionTimes.get(personPropertyId);
-			if (defaultTime > dataManagerContext.getTime()) {
-				throw new ContractException(PersonPropertyError.PROPERTY_DEFAULT_TIME_EXCEEDS_SIM_TIME,
-						personPropertyId);
-			}
+			double defaultTime = propertyDefinitionTimes.get(personPropertyId);
+
 			DoubleValueContainer doubleValueContainer = new DoubleValueContainer(defaultTime,
 					peopleDataManager::getPersonIndexIterator);
 			propertyTimes.put(personPropertyId, doubleValueContainer);

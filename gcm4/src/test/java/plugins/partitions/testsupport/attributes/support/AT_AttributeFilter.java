@@ -359,26 +359,36 @@ public final class AT_AttributeFilter {
 	@UnitTestMethod(target = AttributeFilter.class, name = "hashCode", args = {})
 	public void testHashCode() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(5562725555946491304L);
-		
+
 		// equal objects have equal hash codes
 		for (int i = 0; i < 30; i++) {
 			long seed = randomGenerator.nextLong();
 			AttributeFilter attributeFilter1 = getRandomAttributeFilter(seed);
 			AttributeFilter attributeFilter2 = getRandomAttributeFilter(seed);
-			assertEquals(attributeFilter1,attributeFilter2);
-			assertEquals(attributeFilter1.hashCode(),attributeFilter2.hashCode());
+			assertEquals(attributeFilter1, attributeFilter2);
+			assertEquals(attributeFilter1.hashCode(), attributeFilter2.hashCode());
 		}
-		
-		//hash codes are reasonably distributed
+
+		// hash codes are reasonably distributed
 		Set<AttributeFilter> attributeFilters = new LinkedHashSet<>();
-		for (int i = 0; i < 1000; i++) {			
+		for (int i = 0; i < 1000; i++) {
 			AttributeFilter attributeFilter = getRandomAttributeFilter(randomGenerator.nextLong());
 			attributeFilters.add(attributeFilter);
 		}
-		
-		//There will be a fairly high collision rate since 1/3 of the attribute properties are Booleans
-		assertTrue(attributeFilters.size()>675);
 
+		// There will be a fairly high collision rate since 1/3 of the attribute
+		// properties are Booleans
+		assertTrue(attributeFilters.size() > 675);
+
+	}
+
+	@Test
+	@UnitTestMethod(target = AttributeFilter.class, name = "toString", args = {})
+	public void testToString() {
+		AttributeFilter attributeFilter = new AttributeFilter(TestAttributeId.INT_0, Equality.EQUAL, 25);
+		String actualValue = attributeFilter.toString();		
+		String expectedValue = "AttributeFilter [attributeId=INT_0, value=25, equality=EQUAL, attributesDataManager=null]";
+		assertEquals(expectedValue, actualValue);
 	}
 
 }

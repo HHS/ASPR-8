@@ -190,7 +190,7 @@ public class AT_TestRegionPropertyId {
 	}
 
 	@Test
-	@UnitTestMethod(target = TestRegionPropertyId.class, name = "getTestShuffledRegionPropertyIds", args = {})
+	@UnitTestMethod(target = TestRegionPropertyId.class, name = "getTestShuffledRegionPropertyIds", args = {RandomGenerator.class})
 	public void testGetTestShuffledRegionPropertyIds() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8246696863539332004L);
 

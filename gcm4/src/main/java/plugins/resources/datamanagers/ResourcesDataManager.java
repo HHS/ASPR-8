@@ -312,7 +312,7 @@ public final class ResourcesDataManager extends DataManager {
 
 	}
 
-	public long _getPersonResourceLevel(final ResourceId resourceId, final PersonId personId) {
+	private long _getPersonResourceLevel(final ResourceId resourceId, final PersonId personId) {
 
 		long result = 0;
 		IntValueContainer intValueContainer = personResourceLevels.get(resourceId);

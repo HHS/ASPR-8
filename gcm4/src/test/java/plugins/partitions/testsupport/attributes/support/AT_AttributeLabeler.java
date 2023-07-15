@@ -44,8 +44,8 @@ public final class AT_AttributeLabeler {
 	@UnitTestMethod(target = AttributeLabeler.class, name = "getLabelerSensitivities", args = {})
 	public void testGetLabelerSensitivities() {
 		/*
-		 * Get the labeler sensitivities and show that they are consistent with
-		 * their documented behaviors.
+		 * Get the labeler sensitivities and show that they are consistent with their
+		 * documented behaviors.
 		 */
 
 		AttributeLabeler attributeLabeler = new FunctionalAttributeLabeler(TestAttributeId.BOOLEAN_0, (c) -> null);
@@ -63,7 +63,8 @@ public final class AT_AttributeLabeler {
 		// show that the sensitivity will return the person id from a
 		// AttributeUpdateEvent
 		PersonId personId = new PersonId(56);
-		AttributeUpdateEvent attributeUpdateEvent = new AttributeUpdateEvent(personId, TestAttributeId.BOOLEAN_0, false, true);
+		AttributeUpdateEvent attributeUpdateEvent = new AttributeUpdateEvent(personId, TestAttributeId.BOOLEAN_0, false,
+				true);
 		Optional<PersonId> optional = labelerSensitivity.getPersonId(attributeUpdateEvent);
 		assertTrue(optional.isPresent());
 		assertEquals(personId, optional.get());
@@ -71,7 +72,8 @@ public final class AT_AttributeLabeler {
 	}
 
 	@Test
-	@UnitTestMethod(target = AttributeLabeler.class, name = "getCurrentLabel", args = { PartitionsContext.class, PersonId.class })
+	@UnitTestMethod(target = AttributeLabeler.class, name = "getCurrentLabel", args = { PartitionsContext.class,
+			PersonId.class })
 	public void testGetCurrentLabel() {
 		// build an attribute function
 		Function<Object, Object> function = (c) -> {
@@ -90,9 +92,9 @@ public final class AT_AttributeLabeler {
 		 * 
 		 */
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
-			
+
 			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
-			
+
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
 			List<PersonId> people = peopleDataManager.getPeople();
@@ -114,15 +116,17 @@ public final class AT_AttributeLabeler {
 
 		// test preconditions
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
-			
+
 			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
 
 			// if the person does not exist
-			ContractException contractException = assertThrows(ContractException.class, () -> attributeLabeler.getCurrentLabel(testPartitionsContext, new PersonId(100000)));
+			ContractException contractException = assertThrows(ContractException.class,
+					() -> attributeLabeler.getCurrentLabel(testPartitionsContext, new PersonId(100000)));
 			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
 
 			// if the person id is null
-			contractException = assertThrows(ContractException.class, () -> attributeLabeler.getCurrentLabel(testPartitionsContext, null));
+			contractException = assertThrows(ContractException.class,
+					() -> attributeLabeler.getCurrentLabel(testPartitionsContext, null));
 			assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
 
 		}));
@@ -135,7 +139,8 @@ public final class AT_AttributeLabeler {
 	}
 
 	@Test
-	@UnitTestMethod(target = AttributeLabeler.class, name = "getPastLabel", args = { PartitionsContext.class, Event.class })
+	@UnitTestMethod(target = AttributeLabeler.class, name = "getPastLabel", args = { PartitionsContext.class,
+			Event.class })
 	public void testGetPastLabel() {
 		Function<Object, Object> function = (c) -> {
 			return c;
@@ -150,9 +155,9 @@ public final class AT_AttributeLabeler {
 		 * 
 		 */
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
-			
+
 			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
-			
+
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
 			List<PersonId> people = peopleDataManager.getPeople();
@@ -188,6 +193,18 @@ public final class AT_AttributeLabeler {
 		for (TestAttributeId testAttributeId : TestAttributeId.values()) {
 			assertEquals(testAttributeId, new FunctionalAttributeLabeler(testAttributeId, (c) -> null).getId());
 		}
+	}
+
+	@Test
+	@UnitTestMethod(target = AttributeLabeler.class, name = "toString", args = {})
+	public void testToString() {
+		FunctionalAttributeLabeler functionalAttributeLabeler = new FunctionalAttributeLabeler(
+				TestAttributeId.BOOLEAN_0, (c) -> null);
+		String actualValue = functionalAttributeLabeler.toString();
+
+		String expectedValue = "AttributeLabeler [attributeId=BOOLEAN_0]";
+
+		assertEquals(expectedValue, actualValue);
 	}
 
 }
