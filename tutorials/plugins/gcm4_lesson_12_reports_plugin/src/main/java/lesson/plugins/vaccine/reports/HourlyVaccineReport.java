@@ -23,7 +23,7 @@ import plugins.reports.support.ReportPeriod;
 import util.wrappers.MutableInteger;
 
 public class HourlyVaccineReport extends PeriodicReport {
-
+	/* start code_ref=reports_plugin_hourly_vaccine_constructor */
 	public HourlyVaccineReport(ReportLabel reportLabel, ReportPeriod reportPeriod) {
 		super(reportLabel, reportPeriod);
 
@@ -37,6 +37,7 @@ public class HourlyVaccineReport extends PeriodicReport {
 		}
 		reportHeader = builder.build();
 	}
+	/* end */
 
 	private VaccinationDataManager vaccinationDataManager;
 
@@ -123,6 +124,7 @@ public class HourlyVaccineReport extends PeriodicReport {
 
 	}
 
+	/* start code_ref=reports_plugin_hourly_vaccine_initialization */
 	protected void prepare(ReportContext reportContext) {
 
 		/*
@@ -134,9 +136,11 @@ public class HourlyVaccineReport extends PeriodicReport {
 		reportContext.subscribe(FamilyMemberShipAdditionEvent.class, this::handleFamilyMemberShipAdditionEvent);
 		reportContext.subscribe(PersonAdditionEvent.class, this::handlePersonAdditionEvent);
 
+		/* end */
+
 		/*
-		 * Some of the events may have already occurred before we initialize
-		 * this report, so we will need to build up out status maps
+		 * Some of the events may have already occurred before we initialize this
+		 * report, so we will need to build up out status maps
 		 */
 
 		familyDataManager = reportContext.getDataManager(FamilyDataManager.class);
@@ -193,7 +197,8 @@ public class HourlyVaccineReport extends PeriodicReport {
 		refreshFamilyStatus(familyAdditionEvent.getFamilyId());
 	}
 
-	private void handleFamilyMemberShipAdditionEvent(ReportContext reportContext, FamilyMemberShipAdditionEvent familyMemberShipAdditionEvent) {
+	private void handleFamilyMemberShipAdditionEvent(ReportContext reportContext,
+			FamilyMemberShipAdditionEvent familyMemberShipAdditionEvent) {
 		individualToStatusMap.remove(familyMemberShipAdditionEvent.getPersonId());
 		refreshFamilyStatus(familyMemberShipAdditionEvent.getFamilyId());
 	}
@@ -201,10 +206,11 @@ public class HourlyVaccineReport extends PeriodicReport {
 	private ReportHeader reportHeader;
 
 	@Override
+	/* start code_ref=reports_plugin_hourly_vaccine_flush */
 	protected void flush(ReportContext reportContext) {
-		ReportItem.Builder builder = ReportItem	.builder()//
-												.setReportLabel(getReportLabel())//
-												.setReportHeader(reportHeader);
+		ReportItem.Builder builder = ReportItem.builder()//
+				.setReportLabel(getReportLabel())//
+				.setReportHeader(reportHeader);
 		fillTimeFields(builder);
 		for (FamilyVaccineStatus familyVaccineStatus : statusToFamiliesMap.keySet()) {
 			MutableInteger mutableInteger = statusToFamiliesMap.get(familyVaccineStatus);
@@ -217,5 +223,5 @@ public class HourlyVaccineReport extends PeriodicReport {
 		ReportItem reportItem = builder.build();
 		reportContext.releaseOutput(reportItem);
 	}
-
+	/* end */
 }

@@ -13,7 +13,7 @@ import lesson.plugins.people.PersonId;
 import lesson.plugins.people.PersonRemovalEvent;
 import nucleus.DataManager;
 import nucleus.DataManagerContext;
-
+/* start code_ref=plugin_dependencies_family_data_manager*/
  public final class FamilyDataManager extends DataManager {
 
 	private int masterFamilyId;
@@ -81,5 +81,5 @@ import nucleus.DataManagerContext;
 	}
 
  }
- 
+ /* end */
  

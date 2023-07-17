@@ -16,7 +16,7 @@ public final class Example_4 {
 	 * Alpha and Beta. We also introduce the ability of the Actor to plan.
 	 */
 	
-	
+	/* start code_ref=data_managers_intro_to_data_managers*/
 	public static void main(String[] args) {
 
 		PluginId pluginId = new SimplePluginId("example plugin");
@@ -34,6 +34,6 @@ public final class Example_4 {
 					.build()//
 					.execute();
 	}
-	
+	/* end */
 	
 }

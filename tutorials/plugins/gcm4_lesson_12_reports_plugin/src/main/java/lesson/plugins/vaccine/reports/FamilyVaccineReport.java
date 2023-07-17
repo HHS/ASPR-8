@@ -22,6 +22,7 @@ import util.wrappers.MutableInteger;
 
 public class FamilyVaccineReport {
 
+	/* start code_ref=reports_plugin_family_vaccine_report_enums*/
 	private static enum FamilyVaccineStatus {
 		NONE("unvacinated_families"), //
 		PARTIAL("partially_vaccinated_families"), //
@@ -44,7 +45,10 @@ public class FamilyVaccineReport {
 			this.description = description;
 		}
 	}
+	/* end */
 
+	
+	/* start code_ref=reports_plugin_family_vaccine_report_fields*/
 	private final ReportLabel reportLabel;
 	
 	private ReportHeader reportHeader;
@@ -62,9 +66,9 @@ public class FamilyVaccineReport {
 	private final Map<IndividualVaccineStatus, MutableInteger> statusToIndividualsMap = new LinkedHashMap<>();
 
 	private final Map<PersonId, IndividualVaccineStatus> individualToStatusMap = new LinkedHashMap<>();
-
+	/* end */
 	
-
+	/* start code_ref=reports_plugin_family_vaccine_report_constructor*/
 	public FamilyVaccineReport(final ReportLabel reportLabel) {
 		this.reportLabel = reportLabel;
 		
@@ -78,9 +82,9 @@ public class FamilyVaccineReport {
 		}
 		reportHeader = builder.build();
 	}
-
+	/* end */
 	
-
+	/* start code_ref=reports_plugin_family_vaccine_report_handling_events*/
 	private void handleFamilyAdditionEvent(final ReportContext reportContext, final FamilyAdditionEvent familyAdditionEvent) {
 		refreshFamilyStatus(familyAdditionEvent.getFamilyId());
 	}
@@ -113,7 +117,9 @@ public class FamilyVaccineReport {
 			refreshFamilyStatus(familyId);
 		}
 	}
-
+	/* end */
+	
+	/* start code_ref=reports_plugin_family_vaccine_report_init_subscriptions*/
 	public void init(final ReportContext reportContext) {
 		this.reportContext = reportContext;
 		/*
@@ -123,12 +129,15 @@ public class FamilyVaccineReport {
 		reportContext.subscribe(FamilyAdditionEvent.class, this::handleFamilyAdditionEvent);
 		reportContext.subscribe(FamilyMemberShipAdditionEvent.class, this::handleFamilyMemberShipAdditionEvent);
 		reportContext.subscribe(PersonAdditionEvent.class, this::handlePersonAdditionEvent);
-
+		/* end */
+		
+		
 		/*
 		 * Some of the events may have already occurred before we initialize
 		 * this report, so we will need to build up out status maps
 		 */
 
+		/* start code_ref=reports_plugin_family_vaccine_report_init_setup*/
 		familyDataManager = reportContext.getDataManager(FamilyDataManager.class);
 		vaccinationDataManager = reportContext.getDataManager(VaccinationDataManager.class);
 		PersonDataManager personDataManager = reportContext.getDataManager(PersonDataManager.class);
@@ -140,9 +149,11 @@ public class FamilyVaccineReport {
 		for (final IndividualVaccineStatus individualVaccineStatus : IndividualVaccineStatus.values()) {
 			statusToIndividualsMap.put(individualVaccineStatus, new MutableInteger());
 		}
+		/* end */
+		
 
 		// determine the family vaccine status for every family
-		
+		/* start code_ref=reports_plugin_family_vaccine_report_init_family_status*/
 		for (final FamilyId familyId : familyDataManager.getFamilyIds()) {
 			
 			final int familySize = familyDataManager.getFamilySize(familyId);
@@ -167,10 +178,11 @@ public class FamilyVaccineReport {
 			familyToStatusMap.put(familyId, status);
 			
 		}
+		/* end */
 
 		// ensure that any person not assigned to a family is still counted
 		
-		
+		/* start code_ref=reports_plugin_family_vaccine_report_init_person_status*/
 		for (final PersonId personId : personDataManager.getPeople()) {
 			if (familyDataManager.getFamilyId(personId).isEmpty()) {
 				
@@ -184,10 +196,13 @@ public class FamilyVaccineReport {
 				individualToStatusMap.put(personId, status);
 			}
 		}
+		/* end */
 		
+		/* start code_ref=reports_plugin_family_vaccine_report_init_releasing_output*/
 		releaseReportItem();
+		/* end */
 	}
-
+	/* start code_ref=reports_plugin_family_vaccine_report_refeshing_family_status*/
 	private void refreshFamilyStatus(final FamilyId familyId) {
 
 		final int familySize = familyDataManager.getFamilySize(familyId);
@@ -219,7 +234,9 @@ public class FamilyVaccineReport {
 		familyToStatusMap.put(familyId, newStatus);
 		releaseReportItem();
 	}
-
+	/* end */
+	
+	/* start code_ref=reports_plugin_family_vaccine_report_refeshing_individual_status*/
 	private void refreshIndividualStatus(final PersonId personId) {
 		IndividualVaccineStatus newStatus;
 		if (vaccinationDataManager.isPersonVaccinated(personId)) {
@@ -241,7 +258,10 @@ public class FamilyVaccineReport {
 		individualToStatusMap.put(personId, newStatus);
 		releaseReportItem();
 	}
-
+	/* end */
+	
+	
+	/* start code_ref=reports_plugin_family_vaccine_report_init_releasing_report_item*/
 	private void releaseReportItem() {
 		final ReportItem.Builder builder = ReportItem.builder().setReportLabel(reportLabel).setReportHeader(reportHeader);
 		builder.addValue(reportContext.getTime());
@@ -256,4 +276,5 @@ public class FamilyVaccineReport {
 		final ReportItem reportItem = builder.build();
 		reportContext.releaseOutput(reportItem);
 	}
+	/* end */
 }

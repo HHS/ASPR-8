@@ -20,10 +20,8 @@ import util.wrappers.MutableInteger;
 public class StatelessVaccineReport extends PeriodicReport {
 
 	private static enum VaccineStatus {
-		FAMILY_NONE("unvacinated_families"),
-		FAMILY_PARTIAL("partially_vaccinated_families"),
-		FAMILY_FULL("fully_vaccinated_families"),
-		INDIVIDUAL_NONE("unvaccinated_individuals"),
+		FAMILY_NONE("unvacinated_families"), FAMILY_PARTIAL("partially_vaccinated_families"),
+		FAMILY_FULL("fully_vaccinated_families"), INDIVIDUAL_NONE("unvaccinated_individuals"),
 		INDIVIDUAL_FULL("vaccinated_individuals");
 
 		private final String description;
@@ -32,12 +30,13 @@ public class StatelessVaccineReport extends PeriodicReport {
 			this.description = description;
 		}
 	}
-	
+
 	public StatelessVaccineReport(ReportLabel reportLabel, ReportPeriod reportPeriod) {
 		super(reportLabel, reportPeriod);
 	}
 
 	@Override
+	/* start code_ref=reports_plugin_stateless_vaccine_flush */
 	protected void flush(ReportContext reportContext) {
 
 		FamilyDataManager familyDataManager = reportContext.getDataManager(FamilyDataManager.class);
@@ -68,10 +67,10 @@ public class StatelessVaccineReport extends PeriodicReport {
 			headerBuilder.add(vaccineStatus.description);
 		}
 		ReportHeader reportHeader = headerBuilder.build();
-		
-		ReportItem.Builder builder = ReportItem	.builder()//
-												.setReportLabel(getReportLabel())//
-												.setReportHeader(reportHeader);
+
+		ReportItem.Builder builder = ReportItem.builder()//
+				.setReportLabel(getReportLabel())//
+				.setReportHeader(reportHeader);
 		fillTimeFields(builder);
 		for (VaccineStatus vaccineStatus : VaccineStatus.values()) {
 			int value = statusMap.get(vaccineStatus).getValue();
@@ -82,10 +81,10 @@ public class StatelessVaccineReport extends PeriodicReport {
 		reportContext.releaseOutput(reportItem);
 
 	}
+	/* end */
 
-	
-
-	private VaccineStatus getFamilyStatus(FamilyId familyId, VaccinationDataManager vaccinationDataManager, FamilyDataManager familyDataManager) {
+	private VaccineStatus getFamilyStatus(FamilyId familyId, VaccinationDataManager vaccinationDataManager,
+			FamilyDataManager familyDataManager) {
 
 		int familySize = familyDataManager.getFamilySize(familyId);
 		List<PersonId> familyMembers = familyDataManager.getFamilyMembers(familyId);

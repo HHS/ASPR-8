@@ -31,7 +31,7 @@ public final class Example_14 {
 
 	private Example_14() {
 	}
-
+	/* start code_ref= people_plugin_stochastics_dimension*/
 	private static Dimension getStochasticsDimension(int replicationCount, long seed) {
 		FunctionalDimension.Builder builder = FunctionalDimension.builder();//
 
@@ -63,7 +63,9 @@ public final class Example_14 {
 
 		return builder.build();
 	}
-
+	/* end */
+	
+	/* start code_ref= people_plugin_example_14_init*/
 	public static void main(String[] args) throws IOException {
 		if (args.length == 0) {
 			throw new RuntimeException("One output directory argument is required");
@@ -85,7 +87,10 @@ public final class Example_14 {
 									.addReport(ModelReportLabel.VACCINATION, //
 											outputDirectory.resolve("vaccination_report.xls"))//
 									.build();
-
+		
+		/* end */
+		/* start code_ref= people_plugin_example_14_adding_plugins*/
+		
 		// create the people plugin with an initial population of ten people,
 		// numbered 1, 3, 5,...,19
 		PeoplePluginData.Builder peoplePluginDataBuilder = PeoplePluginData.builder();
@@ -118,5 +123,6 @@ public final class Example_14 {
 					.build()//
 					.execute();//
 	}
+	/* end */
 
 }

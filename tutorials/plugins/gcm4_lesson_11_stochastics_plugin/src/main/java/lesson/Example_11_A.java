@@ -37,6 +37,7 @@ public final class Example_11_A {
 								.build();
 	}
 
+	/* start code_ref=stochastics_plugin_policy_dimension */
 	private static Dimension getPolicyDimension() {
 		FunctionalDimension.Builder builder = FunctionalDimension.builder();//
 
@@ -63,7 +64,9 @@ public final class Example_11_A {
 		return builder.build();
 
 	}
+	/* end */
 
+	/* start code_ref=stochastics_plugin_example_11_A */
 	public static void main(String[] args) {
 
 		DiseasePluginData diseasePluginData = getDiseasePluginData();
@@ -97,5 +100,5 @@ public final class Example_11_A {
 					.build()//
 					.execute();
 	}
-	
+	/* end */
 }

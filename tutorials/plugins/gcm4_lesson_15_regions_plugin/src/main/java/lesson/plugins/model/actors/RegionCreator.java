@@ -14,7 +14,7 @@ import plugins.regions.support.RegionConstructionData.Builder;
 import plugins.stochastics.datamanagers.StochasticsDataManager;
 
 public class RegionCreator {
-
+	/* start code_ref= regions_plugin_region_creator_add_region*/
 	private void addRegion(ActorContext actorContext) {
 		RegionsDataManager regionsDataManager = actorContext.getDataManager(RegionsDataManager.class);
 		StochasticsDataManager stochasticsDataManager = actorContext.getDataManager(StochasticsDataManager.class);
@@ -37,12 +37,13 @@ public class RegionCreator {
 		RegionConstructionData regionConstructionData = regionBuilder.build();
 		regionsDataManager.addRegion(regionConstructionData);
 	}
-
+	/* end */
+	/* start code_ref= regions_plugin_region_creator_init*/
 	public void init(ActorContext actorContext) {
 		for (int i = 0; i < 5; i++) {
 			double planTime = 20 * i + 1;
 			actorContext.addPlan(this::addRegion, planTime);
 		}
 	}
-
+	/* end */
 }

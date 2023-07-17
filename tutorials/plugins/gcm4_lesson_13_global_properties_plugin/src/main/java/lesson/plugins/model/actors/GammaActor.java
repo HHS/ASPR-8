@@ -5,7 +5,7 @@ import java.util.stream.IntStream;
 import lesson.plugins.model.support.GlobalProperty;
 import nucleus.ActorContext;
 import plugins.globalproperties.datamanagers.GlobalPropertiesDataManager;
-
+/* start code_ref= global_proerties_plugin_gamma_actor*/
  public final class GammaActor {
 
 	public void init(ActorContext actorContext) {
@@ -21,3 +21,4 @@ import plugins.globalproperties.datamanagers.GlobalPropertiesDataManager;
 		});
 	}
  } 
+ /* end */

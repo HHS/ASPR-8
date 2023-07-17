@@ -2,7 +2,7 @@ package lesson;
 
 import nucleus.DataManager;
 import nucleus.DataManagerContext;
-
+/* start code_ref=data_managers_example_data_manager*/
 public final class ExampleDataManager extends DataManager {
 	
 	private int alpha = 7;
@@ -37,5 +37,5 @@ public final class ExampleDataManager extends DataManager {
 	}
 	
 }
-
+/* end */
 

@@ -3,6 +3,7 @@ package lesson.plugins.family;
 import net.jcip.annotations.Immutable;
 
  @Immutable
+ /* start code_ref=plugin_dependencies_defining_a_family_id*/
  public final class FamilyId implements Comparable<FamilyId> {
 
 	private final int id;
@@ -45,6 +46,7 @@ import net.jcip.annotations.Immutable;
 		return Integer.toString(id);
 	}
  }
+ /* end */
  
  
  

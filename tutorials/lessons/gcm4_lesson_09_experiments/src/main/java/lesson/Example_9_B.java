@@ -31,7 +31,7 @@ public final class Example_9_B {
 								.setSchoolClosingInfectionRate(0.05)//
 								.build();
 	}
-
+	/* start code_ref=experiements_example_9_ B */
 	public static void main(String[] args) {
 
 		DiseasePluginData diseasePluginData = getDiseasePluginData();
@@ -76,6 +76,6 @@ public final class Example_9_B {
 					.build()//
 					.execute();
 	}
-	
+	/* end */
 	
 }

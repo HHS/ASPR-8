@@ -26,17 +26,17 @@ public final class Example_11_B {
 
 	private static DiseasePluginData getDiseasePluginData() {
 		return DiseasePluginData.builder()//
-								.setR0(1.5)//
-								.setAsymptomaticDays(4.0)//
-								.setSymptomaticDays(12.0)//
-								.build();
+				.setR0(1.5)//
+				.setAsymptomaticDays(4.0)//
+				.setSymptomaticDays(12.0)//
+				.build();
 	}
 
 	private static PolicyPluginData getPolicyPluginData() {
-		return PolicyPluginData	.builder()//
-								.setDistributeVaccineLocally(true)//
-								.setSchoolClosingInfectionRate(0.05)//
-								.build();
+		return PolicyPluginData.builder()//
+				.setDistributeVaccineLocally(true)//
+				.setSchoolClosingInfectionRate(0.05)//
+				.build();
 	}
 
 	private static Dimension getPolicyDimension() {
@@ -50,7 +50,8 @@ public final class Example_11_B {
 
 		for (Double schoolClosingInfectionRate : schoolClosingInfectionRates) {
 			builder.addLevel((context) -> {
-				PolicyPluginData.Builder pluginDataBuilder = context.getPluginDataBuilder(PolicyPluginData.Builder.class);
+				PolicyPluginData.Builder pluginDataBuilder = context
+						.getPluginDataBuilder(PolicyPluginData.Builder.class);
 				pluginDataBuilder.setSchoolClosingInfectionRate(schoolClosingInfectionRate);
 
 				ArrayList<String> result = new ArrayList<>();
@@ -66,6 +67,7 @@ public final class Example_11_B {
 
 	}
 
+	/* start code_ref=stochastics_plugin_stochastics_dimension */
 	private static Dimension getStochasticsDimension(long seed) {
 		FunctionalDimension.Builder builder = FunctionalDimension.builder();//
 
@@ -78,15 +80,15 @@ public final class Example_11_B {
 
 		IntStream.range(0, seedValues.size()).forEach((i) -> {
 			builder.addLevel((context) -> {
-				StochasticsPluginData.Builder stochasticsPluginDataBuilder = 
-						context.getPluginDataBuilder(StochasticsPluginData.Builder.class);
+				StochasticsPluginData.Builder stochasticsPluginDataBuilder = context
+						.getPluginDataBuilder(StochasticsPluginData.Builder.class);
 				long seedValue = seedValues.get(i);
 				WellState wellState = WellState.builder().setSeed(seedValue).build();
 				stochasticsPluginDataBuilder.setMainRNGState(wellState);
 
 				ArrayList<String> result = new ArrayList<>();
 				result.add(Integer.toString(i));
-				result.add(Long.toString(seedValue)+"L");
+				result.add(Long.toString(seedValue) + "L");
 
 				return result;
 			});
@@ -98,6 +100,9 @@ public final class Example_11_B {
 		return builder.build();
 	}
 
+	/* end */
+	
+	/* start code_ref=stochastics_plugin_example_11_D */
 	public static void main(String[] args) {
 
 		DiseasePluginData diseasePluginData = getDiseasePluginData();
@@ -108,27 +113,28 @@ public final class Example_11_B {
 
 		Plugin modelPlugin = ModelPlugin.getModelPlugin();
 		WellState wellState = WellState.builder().setSeed(0).build();
-		StochasticsPluginData stochasticsPluginData = StochasticsPluginData.builder().setMainRNGState(wellState).build();
+		StochasticsPluginData stochasticsPluginData = StochasticsPluginData.builder().setMainRNGState(wellState)
+				.build();
 		Plugin stochasticsPlugin = StochasticsPlugin.getStochasticsPlugin(stochasticsPluginData);
 
 		Dimension policyDimension = getPolicyDimension();
 		Dimension stochasticsDimension = getStochasticsDimension(539847398756272L);
 
 		ExperimentParameterData experimentParameterData = ExperimentParameterData.builder()//
-				.setThreadCount(4)//				
+				.setThreadCount(4)//
 				.build();
-		
-		
-		Experiment	.builder()//
-					.addPlugin(stochasticsPlugin)//
-					.addPlugin(diseasePlugin)//
-					.addPlugin(modelPlugin)//
-					.addPlugin(policyPlugin)//
-					.addDimension(policyDimension)//
-					.addDimension(stochasticsDimension)//
-					.addExperimentContextConsumer(new SimpleOutputConsumer())//
-					.setExperimentParameterData(experimentParameterData)//
-					.build()//
-					.execute();
+
+		Experiment.builder()//
+				.addPlugin(stochasticsPlugin)//
+				.addPlugin(diseasePlugin)//
+				.addPlugin(modelPlugin)//
+				.addPlugin(policyPlugin)//
+				.addDimension(policyDimension)//
+				.addDimension(stochasticsDimension)//
+				.addExperimentContextConsumer(new SimpleOutputConsumer())//
+				.setExperimentParameterData(experimentParameterData)//
+				.build()//
+				.execute();
 	}
+	/* end */
 }

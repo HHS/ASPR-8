@@ -56,7 +56,7 @@ public final class Example_9_D {
 		return builder.build();
 
 	}
-
+	/* start code_ref=experiements_policy_dimension */
 	private static Dimension getPolicyDimension() {
 		FunctionalDimension.Builder builder = FunctionalDimension.builder();//
 
@@ -87,7 +87,9 @@ public final class Example_9_D {
 
 		return builder.build();
 	}
+	/* end */
 
+	/* start code_ref=experiements_example_9_D */
 	public static void main(String[] args) {
 
 		DiseasePluginData diseasePluginData = getDiseasePluginData();
@@ -111,6 +113,6 @@ public final class Example_9_D {
 					.build()//
 					.execute();
 	}
-	
+	/* end */
 	
 }

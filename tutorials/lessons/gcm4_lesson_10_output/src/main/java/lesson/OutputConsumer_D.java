@@ -4,7 +4,7 @@ import java.util.StringJoiner;
 import java.util.function.Consumer;
 
 import nucleus.ExperimentContext;
-
+/* start code_ref=output_consumer_D */
  public class OutputConsumer_D implements Consumer<ExperimentContext> {
 
 	@Override
@@ -32,6 +32,7 @@ import nucleus.ExperimentContext;
 	}
 
  }
+ /* end */
 
 
 

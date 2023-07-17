@@ -89,7 +89,7 @@ public final class Example_10_B {
 		return builder.build();
 
 	}
-
+	/* start code_ref=output_example_10_B */
 	public static void main(String[] args) {
 
 		DiseasePluginData diseasePluginData = getDiseasePluginData();
@@ -119,5 +119,6 @@ public final class Example_10_B {
 					.build()//
 					.execute();
 	}
+	/* end */
 	
 }

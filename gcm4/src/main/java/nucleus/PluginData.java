@@ -18,7 +18,7 @@ import net.jcip.annotations.ThreadSafe;
  * 
  *
  */
-
+/* start code_ref=plugin_data_interface */
 @ThreadSafe
 public interface PluginData {
 	/**
@@ -47,3 +47,4 @@ public interface PluginData {
 	@Override
 	public String toString();
 }
+/* end */

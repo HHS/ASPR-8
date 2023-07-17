@@ -8,6 +8,7 @@ import lesson.plugins.policy.PolicyPluginData;
 import nucleus.Plugin;
 import nucleus.Simulation;
 
+/* start code_ref=plugin_data_example_runner */
  public final class Example_8 {
 
 	private Example_8() {
@@ -46,5 +47,5 @@ import nucleus.Simulation;
 					.execute();
 	}
  }
- 
+ /* end */
  

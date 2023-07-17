@@ -20,14 +20,16 @@ import util.errors.ContractException;
 import util.wrappers.MutableInteger;
 
 public final class VaccinationDataManager extends DataManager {
-
+	/* start code_ref= people_plugin_vaccine_counts*/
 	private Map<PersonId, MutableInteger> vaccinationCounts = new LinkedHashMap<>();
-
+	/* end */
 	private PeopleDataManager personDataManager;
 
 	private DataManagerContext dataManagerContext;
 
+	
 	@Override
+	/* start code_ref= people_plugin_vaccination_data_manager*/
 	public void init(DataManagerContext dataManagerContext) {
 		super.init(dataManagerContext);
 		dataManagerContext.subscribe(PersonRemovalEvent.class, this::handlePersonRemovalEvent);
@@ -40,7 +42,10 @@ public final class VaccinationDataManager extends DataManager {
 		dataManagerContext.subscribe(VaccinationMutationEvent.class, this::handleVaccinationMutationEvent);
 
 	}
-
+	/* end */
+	
+	/* start code_ref= people_plugin_vaccination_handling_person_removal*/
+	
 	private void handlePersonRemovalEvent(DataManagerContext dataManagerContext, PersonRemovalEvent personRemovalEvent) {
 		PersonId personId = personRemovalEvent.personId();
 		vaccinationCounts.remove(personId);
@@ -61,7 +66,8 @@ public final class VaccinationDataManager extends DataManager {
 			mutableInteger.setValue(vaccineCount);
 		}
 	}
-
+	/* end */
+	
 	private void validateInitialVaccineCount(int initialVaccineCount) {
 		if (initialVaccineCount < 0) {
 			throw new ContractException(VaccineError.NEGATIVE_VACCINE_COUNT);

@@ -25,7 +25,7 @@ public final class ExampleDataManager extends DataManager {
 	public double getBeta() {
 		return beta;
 	}
-
+	/* start code_ref=events_intro_to_event_generation*/
 	private static record AlphaChangeMutationEvent(int alpha) implements Event {
 	}
 
@@ -53,5 +53,5 @@ public final class ExampleDataManager extends DataManager {
 		this.beta = beta;
 		dataManagerContext.releaseObservationEvent(new BetaChangeEvent(previousValue, this.beta));
 	}
-
+	/* end */
 }

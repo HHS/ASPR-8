@@ -4,7 +4,7 @@ import nucleus.Plugin;
 import nucleus.PluginId;
 import nucleus.SimplePluginId;
 import nucleus.Simulation;
-
+/*start code_ref=plugins_intro_to_plugins*/
 public final class Example_2 {
 
 	private Example_2() {
@@ -25,5 +25,6 @@ public final class Example_2 {
 	}
 	
 }
+/* end */
 
 

@@ -9,6 +9,7 @@ import lesson.plugins.people.PersonRemovalEvent;
 import nucleus.DataManager;
 import nucleus.DataManagerContext;
 
+/* start code_ref=plugin_dependencies_vaccine_data_manager*/
  public final class VaccinationDataManager extends DataManager {
 
 	private Set<PersonId> vaccinatedPeople = new LinkedHashSet<>();
@@ -56,6 +57,6 @@ import nucleus.DataManagerContext;
 	}
 
  }
-
+ /* end */
  
  

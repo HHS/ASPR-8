@@ -6,7 +6,7 @@ import nucleus.PluginDataBuilder;
 
 @Immutable
 public final class DiseasePluginData implements PluginData {
-
+	/* start code_ref=plugin_data_internal_data */
 	private static class Data {
 
 		private double r0;
@@ -23,6 +23,7 @@ public final class DiseasePluginData implements PluginData {
 			asymptomaticDays = data.asymptomaticDays;
 			symptomaticDays = data.symptomaticDays;
 		}
+		/* end */
 
 		@Override
 		public int hashCode() {
@@ -58,13 +59,12 @@ public final class DiseasePluginData implements PluginData {
 			}
 			return true;
 		}
-		
-		
-	}
 
+	}
+	
+	/* start code_ref=plugin_data_builder_class */
 	public static class Builder implements PluginDataBuilder {
 		private Data data;
-		
 
 		private Builder(final Data data) {
 			this.data = data;
@@ -77,12 +77,12 @@ public final class DiseasePluginData implements PluginData {
 
 		}
 
-		public Builder setAsymptomaticDays(final double asymptomaticDays) {		
+		public Builder setAsymptomaticDays(final double asymptomaticDays) {
 			data.asymptomaticDays = asymptomaticDays;
 			return this;
 		}
 
-		public Builder setR0(final double r0) {		
+		public Builder setR0(final double r0) {
 			data.r0 = r0;
 			return this;
 		}
@@ -96,13 +96,16 @@ public final class DiseasePluginData implements PluginData {
 	public static Builder builder() {
 		return new Builder(new Data());
 	}
+	/* end */
 
+	/* start code_ref=plugin_data_private_constructor */
 	private final Data data;
 
 	private DiseasePluginData(final Data data) {
 		this.data = data;
 	}
-
+	/* end */
+	/* start code_ref=plugin_data_accessor_methods */
 	public double getAsymptomaticDays() {
 		return data.asymptomaticDays;
 	}
@@ -114,11 +117,14 @@ public final class DiseasePluginData implements PluginData {
 	public double getSymptomaticDays() {
 		return data.symptomaticDays;
 	}
-
+	/* end */
+	
+	/* start code_ref=plugin_data_clone_builder */
 	@Override
 	public PluginDataBuilder getCloneBuilder() {
 		return new Builder(new Data(data));
 	}
+	/* end */
 
 	@Override
 	public int hashCode() {

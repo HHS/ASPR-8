@@ -59,7 +59,7 @@ public final class VaccinationDataManager extends DataManager {
 		vaccinatedPeople.add(personId);
 
 	}
-
+	/* start code_ref=dag_dependent_query*/
 	public List<PersonId> getUnvaccinatedFamilyMembers(PersonId personId) {		
 		if (!personDataManager.personExists(personId)) {
 			throw new RuntimeException("unknown person " + personId);
@@ -77,5 +77,5 @@ public final class VaccinationDataManager extends DataManager {
 		}
 		return result;
 	}
-
+	 /* end */
 }

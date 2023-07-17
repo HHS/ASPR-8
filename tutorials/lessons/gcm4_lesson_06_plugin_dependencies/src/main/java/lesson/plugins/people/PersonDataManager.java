@@ -6,7 +6,7 @@ import java.util.Set;
 import nucleus.DataManager;
 import nucleus.DataManagerContext;
 import nucleus.Event;
-
+/* start code_ref=plugin_dependencies_defining_a_person_data_manager*/
 public final class PersonDataManager extends DataManager {
 
 	private int masterPersonId;
@@ -52,3 +52,4 @@ public final class PersonDataManager extends DataManager {
 		dataManagerContext.releaseObservationEvent(new PersonRemovalEvent(personId));
 	}
 }
+/* end */

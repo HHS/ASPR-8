@@ -11,6 +11,7 @@ import util.errors.ContractException;
  */
 
  @Immutable
+ /* start code_ref= regions_plugin_implementing_regionId*/
  public final class Region implements RegionId {
 
 	private final int id;
@@ -57,3 +58,4 @@ import util.errors.ContractException;
 		return "Region_"+id;
 	}
  }
+ /* end */

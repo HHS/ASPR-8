@@ -13,7 +13,7 @@ import plugins.stochastics.datamanagers.StochasticsDataManager;
 
 public final class PopulationManager {
 
-	
+	/* start code_ref= people_plugin_population_manager*/
 	public void init(ActorContext actorContext) {
 		StochasticsDataManager stochasticsDataManager = 
 				actorContext.getDataManager(StochasticsDataManager.class);
@@ -41,5 +41,5 @@ public final class PopulationManager {
 			planTime += randomGenerator.nextDouble();
 		}
 	}
-	
+	/* end */
 }

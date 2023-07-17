@@ -14,7 +14,7 @@ import plugins.stochastics.datamanagers.StochasticsDataManager;
 
 public class PersonMover {
 	
-	
+	/* start code_ref= regions_plugin_person_mover_move_person*/
 	private void moveRandomPerson(ActorContext actorContext) {
 		StochasticsDataManager stochasticsDataManager = actorContext.getDataManager(StochasticsDataManager.class);
 		RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
@@ -40,12 +40,15 @@ public class PersonMover {
 		//assign the region to the person
 		regionsDataManager.setPersonRegion(personId, newPersonRegion);		
 	}
-
+	/* end */
+	
+	/* start code_ref= regions_plugin_person_mover_init*/
 	public void init(ActorContext actorContext) {
 		for(int i = 0;i<1000;i++) {
 			double planTime = ((double)i)*0.1;
 			actorContext.addPlan(this::moveRandomPerson, planTime);			
 		}		
 	}
+	/* end */
 	
 }

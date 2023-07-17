@@ -14,7 +14,7 @@ public final class Example_6 {
 	private Example_6() {
 	}
 
-	
+	/* start code_ref=plugin_dependencies_connecting_the_plugins*/
 	public static void main(String[] args) {
 
 		PluginId peoplePluginId = new SimplePluginId("people plugin");
@@ -60,7 +60,7 @@ public final class Example_6 {
 					.build()//
 					.execute();
 	}
-	
+	 /* end */
 	
 }
 

@@ -26,7 +26,7 @@ public final class Example_12 {
 
 	private Example_12() {
 	}
-	
+	/* start code_ref=reports_plugin_family_dimension*/
 	private static Dimension getFamilySizeDimension() {
 		FunctionalDimension.Builder builder = FunctionalDimension.builder();//
 
@@ -56,8 +56,9 @@ public final class Example_12 {
 		return builder.build();
 
 	}
+	/* end */
 
-	
+	/* start code_ref=reports_plugin_example_12_plugins*/
 	public static void main(String[] args) throws IOException {
 		if (args.length == 0) {
 			throw new RuntimeException("One output directory argument is required");
@@ -87,15 +88,19 @@ public final class Example_12 {
 															.build();
 		Plugin familyPlugin = FamilyPlugin.getFamilyPlugin(familyPluginData);		
 
+		/* end */
 		
+		/* start code_ref=reports_plugin_nio*/
 		NIOReportItemHandler nioReportItemHandler = NIOReportItemHandler.builder()//
 				.addReport(ModelLabel.FAMILY_VACCINE_REPORT, outputDirectory.resolve("family_vaccine_report.xls"))//
 				.addReport(ModelLabel.HOURLY_VACCINE_REPORT, outputDirectory.resolve("hourly_vaccine_report.xls"))//
 				.addReport(ModelLabel.STATELESS_VACCINE_REPORT, outputDirectory.resolve("stateless_vaccine_report.xls"))//
 				.addExperimentReport(outputDirectory.resolve("experiment_report.xls"))
 				.build();
-
+		/* end */
 		
+		
+		/* start code_ref=reports_plugin_example_12_execution*/
 		Dimension familySizeDimension = getFamilySizeDimension();
 		
 		Experiment	.builder()//
@@ -108,5 +113,6 @@ public final class Example_12 {
 					.addExperimentContextConsumer(nioReportItemHandler)//					
 					.build()//
 					.execute();
+		/* end */
 	}
 }

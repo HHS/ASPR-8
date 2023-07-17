@@ -12,7 +12,7 @@ import nucleus.Dimension;
 import nucleus.Experiment;
 import nucleus.FunctionalDimension;
 import nucleus.Plugin;
-
+/* start code_ref=experiments_example_steamlined_dimension */
  public final class Example_9_C {
 
 	private Example_9_C() {
@@ -57,7 +57,9 @@ import nucleus.Plugin;
 
 		return builder.build();
 	}
-
+	/*end*/
+	
+	/* start code_ref=experiements_example_9_ C */
 	public static void main(String[] args) {
 
 		DiseasePluginData diseasePluginData = getDiseasePluginData();
@@ -79,5 +81,5 @@ import nucleus.Plugin;
 					.execute();
 	}
 	
-	
+	/*end*/
  }

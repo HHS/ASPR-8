@@ -47,27 +47,32 @@ public final class Example_15 {
 	private List<Region> initialRegions = new ArrayList<>();
 	private RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(524055747550937602L);
 
-
+	/* start code_ref= regions_plugin_example_15_nio */
 	private NIOReportItemHandler getNIOReportItemHandler() {
-		return NIOReportItemHandler	.builder()//
-									.addReport(ModelReportLabel.REGION_PROPERTY_REPORT, //
-											outputDirectory.resolve("region_property_report.xls"))//
-									.addReport(ModelReportLabel.REGION_TRANSFER_REPORT, //
-											outputDirectory.resolve("region_transfer_report.xls"))//
-									.addReport(ModelReportLabel.VACCINATION, //
-											outputDirectory.resolve("vaccine_report.xls"))//
-									.build();
+		return NIOReportItemHandler.builder()//
+				.addReport(ModelReportLabel.REGION_PROPERTY_REPORT, //
+						outputDirectory.resolve("region_property_report.xls"))//
+				.addReport(ModelReportLabel.REGION_TRANSFER_REPORT, //
+						outputDirectory.resolve("region_transfer_report.xls"))//
+				.addReport(ModelReportLabel.VACCINATION, //
+						outputDirectory.resolve("vaccine_report.xls"))//
+				.build();
 	}
 
+
+	
+	/* start code_ref= regions_plugin_example_getting_people_plugin */
 	private Plugin getPeoplePlugin() {
 		PeoplePluginData.Builder peoplePluginDataBuilder = PeoplePluginData.builder();
 		for (PersonId personId : initialPeople) {
-			peoplePluginDataBuilder.addPersonRange(new PersonRange(personId.getValue(),personId.getValue()));
+			peoplePluginDataBuilder.addPersonRange(new PersonRange(personId.getValue(), personId.getValue()));
 		}
 		PeoplePluginData peoplePluginData = peoplePluginDataBuilder.build();
 		return PeoplePlugin.getPeoplePlugin(peoplePluginData);
 	}
-
+	/* end */
+	
+	/* start code_ref= regions_plugin_example_getting_regions_plugin */
 	private Plugin getRegionsPlugin() {
 		// create the region plugin with an initial five regions, each region
 		// having 200 people
@@ -81,39 +86,41 @@ public final class Example_15 {
 			regionsPluginDataBuilder.addPerson(personId, region);
 		}
 
-		PropertyDefinition propertyDefinition = PropertyDefinition	.builder()//
-																	.setType(Double.class)//
-																	.setPropertyValueMutability(false)//
-																	.build();
+		PropertyDefinition propertyDefinition = PropertyDefinition.builder()//
+				.setType(Double.class)//
+				.setPropertyValueMutability(false)//
+				.build();
 		regionsPluginDataBuilder.defineRegionProperty(RegionProperty.LAT, propertyDefinition);
 		regionsPluginDataBuilder.defineRegionProperty(RegionProperty.LON, propertyDefinition);
 
 		for (Region region : initialRegions) {
-			regionsPluginDataBuilder.setRegionPropertyValue(region, RegionProperty.LAT, randomGenerator.nextDouble() + 45.0);
-			regionsPluginDataBuilder.setRegionPropertyValue(region, RegionProperty.LON, randomGenerator.nextDouble() + 128.0);
+			regionsPluginDataBuilder.setRegionPropertyValue(region, RegionProperty.LAT,
+					randomGenerator.nextDouble() + 45.0);
+			regionsPluginDataBuilder.setRegionPropertyValue(region, RegionProperty.LON,
+					randomGenerator.nextDouble() + 128.0);
 		}
 
 		RegionsPluginData regionsPluginData = regionsPluginDataBuilder.build();
-			
-		
+
 		RegionPropertyReportPluginData regionPropertyReportPluginData = //
 				RegionPropertyReportPluginData.builder()//
-				.setReportLabel(ModelReportLabel.REGION_PROPERTY_REPORT)//
-				.build();
-		
-		RegionTransferReportPluginData regionTransferReportPluginData = RegionTransferReportPluginData	.builder()//
-		.setReportLabel(ModelReportLabel.REGION_TRANSFER_REPORT)//
-		.setReportPeriod(ReportPeriod.END_OF_SIMULATION)//
-		.build();//
-		
-		
+						.setReportLabel(ModelReportLabel.REGION_PROPERTY_REPORT)//
+						.build();
+
+		RegionTransferReportPluginData regionTransferReportPluginData = RegionTransferReportPluginData.builder()//
+				.setReportLabel(ModelReportLabel.REGION_TRANSFER_REPORT)//
+				.setReportPeriod(ReportPeriod.END_OF_SIMULATION)//
+				.build();//
+
 		return RegionsPlugin.builder()//
 				.setRegionsPluginData(regionsPluginData)//
 				.setRegionPropertyReportPluginData(regionPropertyReportPluginData)//
 				.setRegionTransferReportPluginData(regionTransferReportPluginData)//
 				.getRegionsPlugin();
 	}
-
+	/* end */
+	
+	/* start code_ref= regions_plugin_example_15_intialize_people_regions */
 	private void initializePeopleAndRegions() {
 		for (int i = 0; i < 1000; i++) {
 			initialPeople.add(new PersonId(i));
@@ -122,12 +129,14 @@ public final class Example_15 {
 			initialRegions.add(new Region(i));
 		}
 	}
-
+	/* end */
+	
+	/* start code_ref= regions_plugin_example_15_stochastics */
 	private Plugin getStochasticsPlugin() {
-		
+
 		WellState wellState = WellState.builder().setSeed(randomGenerator.nextLong()).build();
-		StochasticsPluginData stochasticsPluginData = StochasticsPluginData	.builder()//
-																			.setMainRNGState(wellState).build();
+		StochasticsPluginData stochasticsPluginData = StochasticsPluginData.builder()//
+				.setMainRNGState(wellState).build();
 		return StochasticsPlugin.getStochasticsPlugin(stochasticsPluginData);
 	}
 
@@ -143,7 +152,8 @@ public final class Example_15 {
 
 		IntStream.range(0, seedValues.size()).forEach((i) -> {
 			builder.addLevel((context) -> {
-				StochasticsPluginData.Builder stochasticsPluginDataBuilder = context.getPluginDataBuilder(StochasticsPluginData.Builder.class);
+				StochasticsPluginData.Builder stochasticsPluginDataBuilder = context
+						.getPluginDataBuilder(StochasticsPluginData.Builder.class);
 				long seedValue = seedValues.get(i);
 				WellState wellState = WellState.builder().setSeed(seedValue).build();
 				stochasticsPluginDataBuilder.setMainRNGState(wellState);
@@ -161,7 +171,9 @@ public final class Example_15 {
 
 		return builder.build();
 	}
-
+	/* end */
+	
+	/* start code_ref= regions_plugin_example_15_execute */
 	private void execute() {
 		/*
 		 * Create person ids and region ids that are shared across the plugins
@@ -171,7 +183,7 @@ public final class Example_15 {
 		/*
 		 * Create the reports
 		 */
-		
+
 		NIOReportItemHandler nioReportItemHandler = getNIOReportItemHandler();
 
 		/*
@@ -180,15 +192,14 @@ public final class Example_15 {
 		Plugin peoplePlugin = getPeoplePlugin();
 
 		/*
-		 * Create the region plugin 5 regions, each having a lat and lon and
-		 * assign the people to random regions.
+		 * Create the region plugin 5 regions, each having a lat and lon and assign the
+		 * people to random regions.
 		 * 
 		 */
 		Plugin regionsPlugin = getRegionsPlugin();
 
 		/*
-		 * create the stochastics plugin and build a dimension with 5 seed
-		 * values
+		 * create the stochastics plugin and build a dimension with 5 seed values
 		 */
 		Plugin stochasticsPlugin = getStochasticsPlugin();
 		Dimension stochasticsDimension = getStochasticsDimension(5, randomGenerator.nextLong());
@@ -200,22 +211,26 @@ public final class Example_15 {
 
 		Plugin modelPlugin = ModelPlugin.getModelPlugin();
 
+		/* end */
+
 		/*
 		 * Assemble and execute the experiment
 		 */
-		Experiment	.builder()//
-					.addPlugin(modelPlugin)//
-					.addPlugin(regionsPlugin)//
-					.addPlugin(peoplePlugin)//
-					.addPlugin(stochasticsPlugin)//
-					.addPlugin(vaccinePlugin)//					
-					.addExperimentContextConsumer(nioReportItemHandler)//
-					.addDimension(stochasticsDimension)//
-					.build()//
-					.execute();//
-
+		/* start code_ref= regions_plugin_example_15_executing_experiment */
+		Experiment.builder()//
+				.addPlugin(modelPlugin)//
+				.addPlugin(regionsPlugin)//
+				.addPlugin(peoplePlugin)//
+				.addPlugin(stochasticsPlugin)//
+				.addPlugin(vaccinePlugin)//
+				.addExperimentContextConsumer(nioReportItemHandler)//
+				.addDimension(stochasticsDimension)//
+				.build()//
+				.execute();//
+		/* end */
 	}
 
+	/* start code_ref= regions_plugin_example_15_main */
 	public static void main(String[] args) throws IOException {
 		if (args.length == 0) {
 			throw new RuntimeException("One output directory argument is required");
@@ -231,5 +246,5 @@ public final class Example_15 {
 
 		new Example_15(outputDirectory).execute();
 	}
-
+	/* end */
 }

@@ -26,7 +26,9 @@ public final class Example_13 {
 
 	private Example_13() {
 	}
-
+	
+	
+	/* start code_ref= global_proerties_plugin_get_property_data*/
 	private static GlobalPropertiesPluginData getGlobalPropertiesPluginData() {
 		GlobalPropertiesPluginData.Builder builder = GlobalPropertiesPluginData.builder();//
 
@@ -55,7 +57,10 @@ public final class Example_13 {
 
 		return builder.build();
 	}
+	/* end */
 
+	
+	/* start code_ref= global_proerties_plugin_alpha_beta_dimension*/
 	private static Dimension getAlphaBetaDimension() {
 		List<Pair<Double, Double>> alphaBetaPairs = new ArrayList<>();
 		alphaBetaPairs.add(new Pair<>(3.0, 10.0));
@@ -83,7 +88,10 @@ public final class Example_13 {
 
 		return dimensionBuilder.build();
 	}
-
+	
+	/* end */
+	
+	/* start code_ref= global_proerties_plugin_example_13*/
 	public static void main(String[] args) throws IOException {
 		if (args.length == 0) {
 			throw new RuntimeException("One output directory argument is required");
@@ -133,6 +141,6 @@ public final class Example_13 {
 					.execute();//
 
 	}
-	
+	/* end */
 	
 }

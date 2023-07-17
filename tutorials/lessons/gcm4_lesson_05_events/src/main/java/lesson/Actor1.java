@@ -2,7 +2,7 @@
 package lesson;
 
 import nucleus.ActorContext;
-
+/* start code_ref=events_actor_1_mutates_values*/
 public final class Actor1 {
 
 	public void init(ActorContext actorContext) {
@@ -27,6 +27,6 @@ public final class Actor1 {
 
 	}
 }
-
+/* end */
 
 
