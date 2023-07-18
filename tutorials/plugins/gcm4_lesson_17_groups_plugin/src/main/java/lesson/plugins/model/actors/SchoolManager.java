@@ -25,6 +25,7 @@ public class SchoolManager {
 	private double closureThreshold;
 	private final double reviewInterval = 7;
 
+	/* start code_ref= groups_plugin_school_manager_init */
 	public void init(ActorContext actorContext) {
 		this.actorContext = actorContext;
 		personPropertiesDataManager = actorContext.getDataManager(PersonPropertiesDataManager.class);
@@ -56,6 +57,9 @@ public class SchoolManager {
 		planNextReview();
 	}
 
+	/* end */
+
+	/* start code_ref= groups_plugin_school_manager_review_school */
 	private void reviewSchool(GroupId groupId) {
 
 		int infectiousCount = 0;
@@ -94,6 +98,9 @@ public class SchoolManager {
 		}
 	}
 
+	/* end */
+	
+	/* start code_ref= groups_plugin_school_manager_close_schools */
 	private void closeSchool(GroupId groupId) {
 		groupsDataManager.setGroupPropertyValue(groupId, GroupProperty.SCHOOL_STATUS, SchoolStatus.CLOSED);
 		List<PersonId> people = groupsDataManager.getPeopleForGroup(groupId);
@@ -101,7 +108,9 @@ public class SchoolManager {
 			groupsDataManager.removePersonFromGroup(personId, groupId);
 		}
 	}
+	/* end */
 
+	/* start code_ref= groups_plugin_school_manager_split_schools */
 	private void splitSchoolIntoCohorts(GroupId groupId) {
 		GroupConstructionInfo groupConstructionInfo = GroupConstructionInfo.builder().setGroupTypeId(GroupType.SCHOOL)
 				.build();
@@ -120,5 +129,5 @@ public class SchoolManager {
 		groupsDataManager.setGroupPropertyValue(groupId, GroupProperty.SCHOOL_STATUS, SchoolStatus.COHORT);
 
 	}
-
+	/* end */
 }
