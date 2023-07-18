@@ -2,6 +2,7 @@
 package lesson;
 
 import nucleus.ActorContext;
+
 /* start code_ref=events_actor_1_mutates_values*/
 public final class Actor1 {
 
@@ -20,7 +21,7 @@ public final class Actor1 {
 			double planTime = i * 3.5;
 			actorContext.addPlan((context) -> {
 				double beta = exampleDataManager.getBeta();
-				beta *=2;
+				beta *= 2;
 				exampleDataManager.setBeta(beta);
 			}, planTime);
 		}
@@ -28,5 +29,3 @@ public final class Actor1 {
 	}
 }
 /* end */
-
-

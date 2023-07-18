@@ -31,7 +31,8 @@ public final class Example_14 {
 
 	private Example_14() {
 	}
-	/* start code_ref= people_plugin_stochastics_dimension*/
+
+	/* start code_ref= people_plugin_stochastics_dimension */
 	private static Dimension getStochasticsDimension(int replicationCount, long seed) {
 		FunctionalDimension.Builder builder = FunctionalDimension.builder();//
 
@@ -44,8 +45,8 @@ public final class Example_14 {
 
 		IntStream.range(0, seedValues.size()).forEach((i) -> {
 			builder.addLevel((context) -> {
-				StochasticsPluginData.Builder stochasticsPluginDataBuilder = 
-						context.getPluginDataBuilder(StochasticsPluginData.Builder.class);
+				StochasticsPluginData.Builder stochasticsPluginDataBuilder = context
+						.getPluginDataBuilder(StochasticsPluginData.Builder.class);
 				long seedValue = seedValues.get(i);
 				WellState wellState = WellState.builder().setSeed(seedValue).build();
 				stochasticsPluginDataBuilder.setMainRNGState(wellState);
@@ -64,8 +65,8 @@ public final class Example_14 {
 		return builder.build();
 	}
 	/* end */
-	
-	/* start code_ref= people_plugin_example_14_init*/
+
+	/* start code_ref= people_plugin_example_14_init */
 	public static void main(String[] args) throws IOException {
 		if (args.length == 0) {
 			throw new RuntimeException("One output directory argument is required");
@@ -82,15 +83,15 @@ public final class Example_14 {
 		// reports
 		NIOReportItemHandler nioReportItemHandler = //
 				NIOReportItemHandler.builder()//
-									.addReport(ModelReportLabel.POPULATION_TRACE, //
-											outputDirectory.resolve("population_trace_report.xls"))//
-									.addReport(ModelReportLabel.VACCINATION, //
-											outputDirectory.resolve("vaccination_report.xls"))//
-									.build();
-		
+						.addReport(ModelReportLabel.POPULATION_TRACE, //
+								outputDirectory.resolve("population_trace_report.xls"))//
+						.addReport(ModelReportLabel.VACCINATION, //
+								outputDirectory.resolve("vaccination_report.xls"))//
+						.build();
+
 		/* end */
-		/* start code_ref= people_plugin_example_14_adding_plugins*/
-		
+		/* start code_ref= people_plugin_example_14_adding_plugins */
+
 		// create the people plugin with an initial population of ten people,
 		// numbered 1, 3, 5,...,19
 		PeoplePluginData.Builder peoplePluginDataBuilder = PeoplePluginData.builder();
@@ -104,7 +105,8 @@ public final class Example_14 {
 		// create the stochastics plugin and build a dimension with 5 seed
 		// values
 		WellState wellState = WellState.builder().setSeed(463390897335624435L).build();
-		StochasticsPluginData stochasticsPluginData = StochasticsPluginData.builder().setMainRNGState(wellState).build();
+		StochasticsPluginData stochasticsPluginData = StochasticsPluginData.builder().setMainRNGState(wellState)
+				.build();
 		Plugin stochasticsPlugin = StochasticsPlugin.getStochasticsPlugin(stochasticsPluginData);
 
 		Dimension stochasticsDimension = getStochasticsDimension(5, 8265427588292179209L);
@@ -113,15 +115,15 @@ public final class Example_14 {
 		Plugin vaccinePlugin = VaccinePlugin.getVaccinePlugin();
 		Plugin modelPlugin = ModelPlugin.getModelPlugin();
 
-		Experiment	.builder()//
-					.addPlugin(modelPlugin)//
-					.addPlugin(peoplePlugin)//
-					.addPlugin(stochasticsPlugin)//
-					.addPlugin(vaccinePlugin)//
-					.addExperimentContextConsumer(nioReportItemHandler)//
-					.addDimension(stochasticsDimension)//
-					.build()//
-					.execute();//
+		Experiment.builder()//
+				.addPlugin(modelPlugin)//
+				.addPlugin(peoplePlugin)//
+				.addPlugin(stochasticsPlugin)//
+				.addPlugin(vaccinePlugin)//
+				.addExperimentContextConsumer(nioReportItemHandler)//
+				.addDimension(stochasticsDimension)//
+				.build()//
+				.execute();//
 	}
 	/* end */
 

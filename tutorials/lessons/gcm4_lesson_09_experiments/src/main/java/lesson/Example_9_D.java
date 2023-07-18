@@ -20,17 +20,17 @@ public final class Example_9_D {
 
 	private static DiseasePluginData getDiseasePluginData() {
 		return DiseasePluginData.builder()//
-								.setR0(1.5)//
-								.setAsymptomaticDays(4.0)//
-								.setSymptomaticDays(12.0)//
-								.build();
+				.setR0(1.5)//
+				.setAsymptomaticDays(4.0)//
+				.setSymptomaticDays(12.0)//
+				.build();
 	}
 
 	private static PolicyPluginData getPolicyPluginData() {
-		return PolicyPluginData	.builder()//
-								.setDistributeVaccineLocally(true)//
-								.setSchoolClosingInfectionRate(0.05)//
-								.build();
+		return PolicyPluginData.builder()//
+				.setDistributeVaccineLocally(true)//
+				.setSchoolClosingInfectionRate(0.05)//
+				.build();
 	}
 
 	private static Dimension getR0Dimension() {
@@ -44,7 +44,8 @@ public final class Example_9_D {
 
 		for (Double r0 : r0Values) {
 			builder.addLevel((context) -> {
-				DiseasePluginData.Builder pluginDataBuilder = context.getPluginDataBuilder(DiseasePluginData.Builder.class);
+				DiseasePluginData.Builder pluginDataBuilder = context
+						.getPluginDataBuilder(DiseasePluginData.Builder.class);
 				pluginDataBuilder.setR0(r0);
 				ArrayList<String> result = new ArrayList<>();
 				result.add(Double.toString(r0));
@@ -56,6 +57,7 @@ public final class Example_9_D {
 		return builder.build();
 
 	}
+
 	/* start code_ref=experiements_policy_dimension */
 	private static Dimension getPolicyDimension() {
 		FunctionalDimension.Builder builder = FunctionalDimension.builder();//
@@ -71,7 +73,8 @@ public final class Example_9_D {
 		for (Boolean localVaccineDistribution : localVaccineDistributionValues) {
 			for (Double schoolClosingInfectionRate : schoolClosingInfectionRates) {
 				builder.addLevel((context) -> {
-					PolicyPluginData.Builder pluginDataBuilder = context.getPluginDataBuilder(PolicyPluginData.Builder.class);
+					PolicyPluginData.Builder pluginDataBuilder = context
+							.getPluginDataBuilder(PolicyPluginData.Builder.class);
 					pluginDataBuilder.setSchoolClosingInfectionRate(schoolClosingInfectionRate);
 					pluginDataBuilder.setDistributeVaccineLocally(localVaccineDistribution);
 
@@ -104,15 +107,15 @@ public final class Example_9_D {
 
 		Dimension policyDimension = getPolicyDimension();
 
-		Experiment	.builder()//
-					.addPlugin(diseasePlugin)//
-					.addPlugin(modelPlugin)//
-					.addPlugin(policyPlugin)//
-					.addDimension(r0Dimension)//
-					.addDimension(policyDimension)//
-					.build()//
-					.execute();
+		Experiment.builder()//
+				.addPlugin(diseasePlugin)//
+				.addPlugin(modelPlugin)//
+				.addPlugin(policyPlugin)//
+				.addDimension(r0Dimension)//
+				.addDimension(policyDimension)//
+				.build()//
+				.execute();
 	}
 	/* end */
-	
+
 }

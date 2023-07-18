@@ -2,6 +2,7 @@
 package lesson;
 
 import nucleus.ActorContext;
+
 /* start code_ref=data_managers_example_actor*/
 public final class ExampleActor {
 
@@ -20,7 +21,3 @@ public final class ExampleActor {
 	}
 }
 /* end */
-
-
-
-

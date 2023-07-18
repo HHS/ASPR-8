@@ -2,13 +2,13 @@ package lesson.plugins.family;
 
 import net.jcip.annotations.Immutable;
 
- @Immutable
- /* start code_ref=plugin_dependencies_defining_a_family_id*/
- public final class FamilyId implements Comparable<FamilyId> {
+@Immutable
+/* start code_ref=plugin_dependencies_defining_a_family_id */
+public final class FamilyId implements Comparable<FamilyId> {
 
 	private final int id;
 
-	public FamilyId(int id) {		
+	public FamilyId(int id) {
 		this.id = id;
 	}
 
@@ -45,8 +45,5 @@ import net.jcip.annotations.Immutable;
 	public String toString() {
 		return Integer.toString(id);
 	}
- }
- /* end */
- 
- 
- 
+}
+/* end */

@@ -5,7 +5,7 @@ import net.jcip.annotations.Immutable;
 import nucleus.Event;
 
 @Immutable
-public final class FamilyAdditionEvent implements Event{
+public final class FamilyAdditionEvent implements Event {
 
 	private final FamilyId familyId;
 
@@ -26,5 +26,5 @@ public final class FamilyAdditionEvent implements Event{
 		builder.append("]");
 		return builder.toString();
 	}
-	
+
 }

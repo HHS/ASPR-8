@@ -61,47 +61,43 @@ public class PopulationLoader {
 		return defaultRegionId;
 	}
 
-	/*start code_ref=resources_population_loader_init*/
+	/* start code_ref=resources_population_loader_init */
 	public void init(ActorContext actorContext) {
 
-		StochasticsDataManager stochasticsDataManager = 
-				actorContext.getDataManager(StochasticsDataManager.class);
+		StochasticsDataManager stochasticsDataManager = actorContext.getDataManager(StochasticsDataManager.class);
 		randomGenerator = stochasticsDataManager.getRandomGenerator();
-		PeopleDataManager peopleDataManager = 
-				actorContext.getDataManager(PeopleDataManager.class);
-		GlobalPropertiesDataManager globalPropertiesDataManager = 
-				actorContext.getDataManager(GlobalPropertiesDataManager.class);
+		PeopleDataManager peopleDataManager = actorContext.getDataManager(PeopleDataManager.class);
+		GlobalPropertiesDataManager globalPropertiesDataManager = actorContext
+				.getDataManager(GlobalPropertiesDataManager.class);
 		regionsDataManager = actorContext.getDataManager(RegionsDataManager.class);
 
-		int populationSize = globalPropertiesDataManager
-				.getGlobalPropertyValue(GlobalProperty.POPULATION_SIZE);
+		int populationSize = globalPropertiesDataManager.getGlobalPropertyValue(GlobalProperty.POPULATION_SIZE);
 		double susceptibleProbability = globalPropertiesDataManager
 				.getGlobalPropertyValue(GlobalProperty.SUSCEPTIBLE_POPULATION_PROPORTION);
 		double immuneProbabilty = 1 - susceptibleProbability;
-		
+
 		/*
-		 * Derive mapping from region to probability that a person will be
-		 * assigned to that region that will likely not put the same number of
-		 * people in each region.
+		 * Derive mapping from region to probability that a person will be assigned to
+		 * that region that will likely not put the same number of people in each
+		 * region.
 		 */
 		buildUnbalancedRegions();
 
 		/*
-		 * Add each person to the simulation. Determine their region id and the
-		 * immune state. The other person properties will have default values.
+		 * Add each person to the simulation. Determine their region id and the immune
+		 * state. The other person properties will have default values.
 		 */
 		for (int i = 0; i < populationSize; i++) {
 			RegionId regionId = getRandomRegionId();
 			boolean immune = randomGenerator.nextDouble() < immuneProbabilty;
-			PersonPropertyValueInitialization personPropertyInitialization = 
-					new PersonPropertyValueInitialization(PersonProperty.IMMUNE, immune);
-			PersonConstructionData personConstructionData = 
-					PersonConstructionData	.builder()//
-						.add(personPropertyInitialization)//
-						.add(regionId)//
-						.build();
+			PersonPropertyValueInitialization personPropertyInitialization = new PersonPropertyValueInitialization(
+					PersonProperty.IMMUNE, immune);
+			PersonConstructionData personConstructionData = PersonConstructionData.builder()//
+					.add(personPropertyInitialization)//
+					.add(regionId)//
+					.build();
 			peopleDataManager.addPerson(personConstructionData);
 		}
 	}
-	/*end*/
+	/* end */
 }

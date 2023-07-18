@@ -38,7 +38,8 @@ public final class VaccineProductionReport extends PeriodicReport {
 		INV, STAGED
 	}
 
-	private String getMaterialHeader(MaterialsProducerId materialsProducerId, MaterialId materialId, MaterialMode materialMode) {
+	private String getMaterialHeader(MaterialsProducerId materialsProducerId, MaterialId materialId,
+			MaterialMode materialMode) {
 		String result = materialsProducerId.toString() + "_" + materialId.toString() + "_" + materialMode;
 		return result.toLowerCase();
 	}
@@ -53,24 +54,37 @@ public final class VaccineProductionReport extends PeriodicReport {
 		final ReportHeader.Builder reportHeaderBuilder = ReportHeader.builder();
 		addTimeFieldHeaders(reportHeaderBuilder);//
 
-		reportHeaderBuilder.add(getMaterialHeader(MaterialsProducer.ANTIGEN_PRODUCER, Material.VIRUS, MaterialMode.INV));
-		reportHeaderBuilder.add(getMaterialHeader(MaterialsProducer.ANTIGEN_PRODUCER, Material.GROWTH_MEDIUM, MaterialMode.INV));
+		reportHeaderBuilder
+				.add(getMaterialHeader(MaterialsProducer.ANTIGEN_PRODUCER, Material.VIRUS, MaterialMode.INV));
+		reportHeaderBuilder
+				.add(getMaterialHeader(MaterialsProducer.ANTIGEN_PRODUCER, Material.GROWTH_MEDIUM, MaterialMode.INV));
 
-		reportHeaderBuilder.add(getMaterialHeader(MaterialsProducer.ANTIGEN_PRODUCER, Material.VIRUS, MaterialMode.STAGED));
-		reportHeaderBuilder.add(getMaterialHeader(MaterialsProducer.ANTIGEN_PRODUCER, Material.GROWTH_MEDIUM, MaterialMode.STAGED));
-		reportHeaderBuilder.add(getMaterialHeader(MaterialsProducer.ANTIGEN_PRODUCER, Material.ANTIGEN, MaterialMode.STAGED));
+		reportHeaderBuilder
+				.add(getMaterialHeader(MaterialsProducer.ANTIGEN_PRODUCER, Material.VIRUS, MaterialMode.STAGED));
+		reportHeaderBuilder.add(
+				getMaterialHeader(MaterialsProducer.ANTIGEN_PRODUCER, Material.GROWTH_MEDIUM, MaterialMode.STAGED));
+		reportHeaderBuilder
+				.add(getMaterialHeader(MaterialsProducer.ANTIGEN_PRODUCER, Material.ANTIGEN, MaterialMode.STAGED));
 
 		reportHeaderBuilder.add("antigen production");
-		
-		reportHeaderBuilder.add(getMaterialHeader(MaterialsProducer.VACCINE_PRODUCER, Material.ANTIGEN, MaterialMode.INV));
-		reportHeaderBuilder.add(getMaterialHeader(MaterialsProducer.VACCINE_PRODUCER, Material.ADJUVANT, MaterialMode.INV));
-		reportHeaderBuilder.add(getMaterialHeader(MaterialsProducer.VACCINE_PRODUCER, Material.PRESERVATIVE, MaterialMode.INV));
-		reportHeaderBuilder.add(getMaterialHeader(MaterialsProducer.VACCINE_PRODUCER, Material.STABILIZER, MaterialMode.INV));
 
-		reportHeaderBuilder.add(getMaterialHeader(MaterialsProducer.VACCINE_PRODUCER, Material.ANTIGEN, MaterialMode.STAGED));
-		reportHeaderBuilder.add(getMaterialHeader(MaterialsProducer.VACCINE_PRODUCER, Material.ADJUVANT, MaterialMode.STAGED));
-		reportHeaderBuilder.add(getMaterialHeader(MaterialsProducer.VACCINE_PRODUCER, Material.PRESERVATIVE, MaterialMode.STAGED));
-		reportHeaderBuilder.add(getMaterialHeader(MaterialsProducer.VACCINE_PRODUCER, Material.STABILIZER, MaterialMode.STAGED));
+		reportHeaderBuilder
+				.add(getMaterialHeader(MaterialsProducer.VACCINE_PRODUCER, Material.ANTIGEN, MaterialMode.INV));
+		reportHeaderBuilder
+				.add(getMaterialHeader(MaterialsProducer.VACCINE_PRODUCER, Material.ADJUVANT, MaterialMode.INV));
+		reportHeaderBuilder
+				.add(getMaterialHeader(MaterialsProducer.VACCINE_PRODUCER, Material.PRESERVATIVE, MaterialMode.INV));
+		reportHeaderBuilder
+				.add(getMaterialHeader(MaterialsProducer.VACCINE_PRODUCER, Material.STABILIZER, MaterialMode.INV));
+
+		reportHeaderBuilder
+				.add(getMaterialHeader(MaterialsProducer.VACCINE_PRODUCER, Material.ANTIGEN, MaterialMode.STAGED));
+		reportHeaderBuilder
+				.add(getMaterialHeader(MaterialsProducer.VACCINE_PRODUCER, Material.ADJUVANT, MaterialMode.STAGED));
+		reportHeaderBuilder
+				.add(getMaterialHeader(MaterialsProducer.VACCINE_PRODUCER, Material.PRESERVATIVE, MaterialMode.STAGED));
+		reportHeaderBuilder
+				.add(getMaterialHeader(MaterialsProducer.VACCINE_PRODUCER, Material.STABILIZER, MaterialMode.STAGED));
 
 		String header = MaterialsProducer.VACCINE_PRODUCER + "_" + "vaccine";
 		header = header.toLowerCase();
@@ -91,15 +105,15 @@ public final class VaccineProductionReport extends PeriodicReport {
 	}
 
 	private double periodAntigenProduction;
-	
+
 	private void handleStageOfferUpdateEvent(ReportContext reportContext, StageOfferUpdateEvent stageOfferUpdateEvent) {
 		if (stageOfferUpdateEvent.currentOfferState()) {
 			StageId stageId = stageOfferUpdateEvent.stageId();
 			MaterialsProducerId materialsProducerId = materialsDataManager.getStageProducer(stageId);
-			if(materialsProducerId.equals(MaterialsProducer.ANTIGEN_PRODUCER)) {
-				for(BatchId batchId : materialsDataManager.getStageBatches(stageId)) {
+			if (materialsProducerId.equals(MaterialsProducer.ANTIGEN_PRODUCER)) {
+				for (BatchId batchId : materialsDataManager.getStageBatches(stageId)) {
 					MaterialId batchMaterial = materialsDataManager.getBatchMaterial(batchId);
-					if(batchMaterial.equals(Material.ANTIGEN)) {
+					if (batchMaterial.equals(Material.ANTIGEN)) {
 						double batchAmount = materialsDataManager.getBatchAmount(batchId);
 						periodAntigenProduction += batchAmount;
 					}
@@ -149,7 +163,8 @@ public final class VaccineProductionReport extends PeriodicReport {
 		reportItemBuilder.addValue(getMaterialInventory(MaterialsProducer.ANTIGEN_PRODUCER, Material.GROWTH_MEDIUM));
 
 		reportItemBuilder.addValue(getStagedMaterialInventory(MaterialsProducer.ANTIGEN_PRODUCER, Material.VIRUS));
-		reportItemBuilder.addValue(getStagedMaterialInventory(MaterialsProducer.ANTIGEN_PRODUCER, Material.GROWTH_MEDIUM));
+		reportItemBuilder
+				.addValue(getStagedMaterialInventory(MaterialsProducer.ANTIGEN_PRODUCER, Material.GROWTH_MEDIUM));
 		reportItemBuilder.addValue(getStagedMaterialInventory(MaterialsProducer.ANTIGEN_PRODUCER, Material.ANTIGEN));
 		reportItemBuilder.addValue(periodAntigenProduction);
 		periodAntigenProduction = 0;
@@ -161,10 +176,12 @@ public final class VaccineProductionReport extends PeriodicReport {
 
 		reportItemBuilder.addValue(getStagedMaterialInventory(MaterialsProducer.VACCINE_PRODUCER, Material.ANTIGEN));
 		reportItemBuilder.addValue(getStagedMaterialInventory(MaterialsProducer.VACCINE_PRODUCER, Material.ADJUVANT));
-		reportItemBuilder.addValue(getStagedMaterialInventory(MaterialsProducer.VACCINE_PRODUCER, Material.PRESERVATIVE));
+		reportItemBuilder
+				.addValue(getStagedMaterialInventory(MaterialsProducer.VACCINE_PRODUCER, Material.PRESERVATIVE));
 		reportItemBuilder.addValue(getStagedMaterialInventory(MaterialsProducer.VACCINE_PRODUCER, Material.STABILIZER));
 
-		reportItemBuilder.addValue(materialsDataManager.getMaterialsProducerResourceLevel(MaterialsProducer.VACCINE_PRODUCER, Resource.VACCINE));
+		reportItemBuilder.addValue(materialsDataManager
+				.getMaterialsProducerResourceLevel(MaterialsProducer.VACCINE_PRODUCER, Resource.VACCINE));
 
 		for (RegionId regionId : regionsDataManager.getRegionIds()) {
 			reportItemBuilder.addValue(resourcesDataManager.getRegionResourceLevel(regionId, Resource.VACCINE));

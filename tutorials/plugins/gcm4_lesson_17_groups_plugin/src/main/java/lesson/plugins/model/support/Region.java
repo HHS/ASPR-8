@@ -10,8 +10,8 @@ import util.errors.ContractException;
  *
  */
 
- @Immutable
- public final class Region implements RegionId {
+@Immutable
+public final class Region implements RegionId {
 
 	private final int id;
 
@@ -19,7 +19,7 @@ import util.errors.ContractException;
 	 * Constructs the region
 	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain ModelError#NEGATIVE_REGION_ID}</li>
+	 *                           <li>{@linkplain ModelError#NEGATIVE_REGION_ID}</li>
 	 */
 	public Region(int id) {
 		if (id < 0) {
@@ -54,6 +54,6 @@ import util.errors.ContractException;
 
 	@Override
 	public String toString() {
-		return "Region_"+id;
+		return "Region_" + id;
 	}
- }
+}

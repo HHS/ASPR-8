@@ -9,19 +9,19 @@ import nucleus.Plugin;
 import nucleus.Simulation;
 
 /* start code_ref=plugin_data_example_runner */
- public final class Example_8 {
+public final class Example_8 {
 
 	private Example_8() {
 	}
 
 	private static DiseasePluginData getDiseasePluginData() {
 		return DiseasePluginData.builder()//
-								.setR0(1.5)//
-								.setAsymptomaticDays(4.0)//
-								.setSymptomaticDays(12.0)//
-								.build();
+				.setR0(1.5)//
+				.setAsymptomaticDays(4.0)//
+				.setSymptomaticDays(12.0)//
+				.build();
 	}
-	
+
 	private static PolicyPluginData getPolicyPluginData() {
 		return PolicyPluginData.builder()//
 				.setDistributeVaccineLocally(true)//
@@ -31,21 +31,20 @@ import nucleus.Simulation;
 
 	public static void main(String[] args) {
 
-		DiseasePluginData diseasePluginData = getDiseasePluginData();		
+		DiseasePluginData diseasePluginData = getDiseasePluginData();
 		Plugin diseasePlugin = DiseasePlugin.getDiseasePlugin(diseasePluginData);
-		
+
 		PolicyPluginData policyPluginData = getPolicyPluginData();
 		Plugin policyPlugin = PolicyPlugin.getPolicyPlugin(policyPluginData);
-		
+
 		Plugin modelPlugin = ModelPlugin.getModelPlugin();
 
-		Simulation	.builder()//
-					.addPlugin(diseasePlugin)//
-					.addPlugin(modelPlugin)//
-					.addPlugin(policyPlugin)//
-					.build()//
-					.execute();
+		Simulation.builder()//
+				.addPlugin(diseasePlugin)//
+				.addPlugin(modelPlugin)//
+				.addPlugin(policyPlugin)//
+				.build()//
+				.execute();
 	}
- }
- /* end */
- 
+}
+/* end */

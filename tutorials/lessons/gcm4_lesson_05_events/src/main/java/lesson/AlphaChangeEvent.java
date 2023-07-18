@@ -4,11 +4,11 @@ import net.jcip.annotations.Immutable;
 import nucleus.Event;
 
 @Immutable
-/* start code_ref=events_alpha_change_event*/
-public final class AlphaChangeEvent implements Event{
-	
+/* start code_ref=events_alpha_change_event */
+public final class AlphaChangeEvent implements Event {
+
 	private final int previousAlpha;
-	
+
 	private final int currentAlpha;
 
 	public AlphaChangeEvent(int previousAlpha, int currentAlpha) {
@@ -38,4 +38,3 @@ public final class AlphaChangeEvent implements Event{
 
 }
 /* end */
-

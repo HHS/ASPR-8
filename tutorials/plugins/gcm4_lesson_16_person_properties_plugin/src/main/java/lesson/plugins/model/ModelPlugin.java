@@ -12,12 +12,12 @@ public final class ModelPlugin {
 	}
 
 	public static Plugin getModelPlugin() {
-		return Plugin	.builder()//						
-						.setPluginId(ModelPluginId.PLUGIN_ID).setInitializer((c) -> {
-							c.addActor(new VaccineEducator()::init);
-							c.addActor(new Vaccinator()::init);
-							c.addActor(new PopulationLoader()::init);	
-							c.addReport(new VaccineReport(ModelReportLabel.VACCINATION)::init);
-						}).build();
+		return Plugin.builder()//
+				.setPluginId(ModelPluginId.PLUGIN_ID).setInitializer((c) -> {
+					c.addActor(new VaccineEducator()::init);
+					c.addActor(new Vaccinator()::init);
+					c.addActor(new PopulationLoader()::init);
+					c.addReport(new VaccineReport(ModelReportLabel.VACCINATION)::init);
+				}).build();
 	}
 }

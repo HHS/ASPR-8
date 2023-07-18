@@ -3,12 +3,12 @@ package lesson.plugins.people;
 import net.jcip.annotations.Immutable;
 
 @Immutable
-/* start code_ref=plugin_dependencies_defining_a_person_id*/
+/* start code_ref=plugin_dependencies_defining_a_person_id */
 public final class PersonId implements Comparable<PersonId> {
 
 	private final int id;
 
-	public PersonId(int id) {		
+	public PersonId(int id) {
 		this.id = id;
 	}
 
@@ -47,5 +47,3 @@ public final class PersonId implements Comparable<PersonId> {
 	}
 }
 /* end */
-
-

@@ -4,11 +4,11 @@ import net.jcip.annotations.Immutable;
 import nucleus.Event;
 
 @Immutable
-/* start code_ref=events_beta_change_event*/
+/* start code_ref=events_beta_change_event */
 public final class BetaChangeEvent implements Event {
-	
+
 	private final double previousBeta;
-	
+
 	private final double currentBeta;
 
 	public BetaChangeEvent(double previousBeta, double currentBeta) {
@@ -38,4 +38,3 @@ public final class BetaChangeEvent implements Event {
 
 }
 /* end */
-

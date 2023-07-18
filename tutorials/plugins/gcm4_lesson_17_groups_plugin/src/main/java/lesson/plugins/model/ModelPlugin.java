@@ -15,14 +15,15 @@ public final class ModelPlugin {
 	}
 
 	public static Plugin getModelPlugin() {
-		return Plugin	.builder()//						
-						.setPluginId(ModelPluginId.PLUGIN_ID).setInitializer((c) -> {							
-							c.addActor(new PopulationLoader()::init);
-							c.addActor(new InfectionManager()::init);
-							c.addActor(new TeleworkManager()::init);
-							c.addActor(new SchoolManager()::init);		
-							c.addReport(new DiseaseStateReport(ModelReportLabel.DISEASE_STATE, ReportPeriod.END_OF_SIMULATION)::init);//
-							c.addReport(new ContagionReport(ModelReportLabel.CONTAGION)::init);//							
-						}).build();
+		return Plugin.builder()//
+				.setPluginId(ModelPluginId.PLUGIN_ID).setInitializer((c) -> {
+					c.addActor(new PopulationLoader()::init);
+					c.addActor(new InfectionManager()::init);
+					c.addActor(new TeleworkManager()::init);
+					c.addActor(new SchoolManager()::init);
+					c.addReport(new DiseaseStateReport(ModelReportLabel.DISEASE_STATE,
+							ReportPeriod.END_OF_SIMULATION)::init);//
+					c.addReport(new ContagionReport(ModelReportLabel.CONTAGION)::init);//
+				}).build();
 	}
 }

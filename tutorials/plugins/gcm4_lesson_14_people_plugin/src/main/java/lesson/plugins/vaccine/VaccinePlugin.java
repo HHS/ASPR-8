@@ -14,14 +14,14 @@ public class VaccinePlugin {
 
 	public static Plugin getVaccinePlugin() {
 
-		return Plugin	.builder()//
-						.setPluginId(VaccinePluginId.PLUGIN_ID)//
-						.addPluginDependency(PeoplePluginId.PLUGIN_ID)//						
-						.setInitializer((c) -> {
-							c.addDataManager(new VaccinationDataManager());
-							c.addReport(new VaccineReport(ModelReportLabel.VACCINATION, ReportPeriod.DAILY, 6)::init);
-						})//
-						.build();
+		return Plugin.builder()//
+				.setPluginId(VaccinePluginId.PLUGIN_ID)//
+				.addPluginDependency(PeoplePluginId.PLUGIN_ID)//
+				.setInitializer((c) -> {
+					c.addDataManager(new VaccinationDataManager());
+					c.addReport(new VaccineReport(ModelReportLabel.VACCINATION, ReportPeriod.DAILY, 6)::init);
+				})//
+				.build();
 
 	}
 }

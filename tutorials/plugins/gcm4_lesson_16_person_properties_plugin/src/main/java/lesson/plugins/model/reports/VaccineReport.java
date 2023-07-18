@@ -24,15 +24,16 @@ public final class VaccineReport {
 	}
 
 	private ReportHeader reportHeader = ReportHeader.builder()//
-													.add("vaccinated_immune")//
-													.add("vaccinated_susceptible")//
-													.add("unvaccinated_immune")//
-													.add("unvaccinated_susceptible")//
-													.build();
+			.add("vaccinated_immune")//
+			.add("vaccinated_susceptible")//
+			.add("unvaccinated_immune")//
+			.add("unvaccinated_susceptible")//
+			.build();
 
 	private void report(ReportContext reportContext) {
 		PeopleDataManager peopleDataManager = reportContext.getDataManager(PeopleDataManager.class);
-		PersonPropertiesDataManager personPropertiesDataManager = reportContext.getDataManager(PersonPropertiesDataManager.class);
+		PersonPropertiesDataManager personPropertiesDataManager = reportContext
+				.getDataManager(PersonPropertiesDataManager.class);
 
 		int vaccinated_immune = 0;
 		int vaccinated_susceptible = 0;
@@ -41,7 +42,8 @@ public final class VaccineReport {
 
 		List<PersonId> people = peopleDataManager.getPeople();
 		for (PersonId personId : people) {
-			boolean vaccinated = personPropertiesDataManager.getPersonPropertyValue(personId, PersonProperty.VACCINATED);
+			boolean vaccinated = personPropertiesDataManager.getPersonPropertyValue(personId,
+					PersonProperty.VACCINATED);
 			boolean immune = personPropertiesDataManager.getPersonPropertyValue(personId, PersonProperty.IS_IMMUNE);
 			if (vaccinated) {
 				if (immune) {
@@ -58,9 +60,9 @@ public final class VaccineReport {
 			}
 		}
 
-		ReportItem.Builder builder = ReportItem	.builder()//
-												.setReportLabel(reportLabel)//
-												.setReportHeader(reportHeader);
+		ReportItem.Builder builder = ReportItem.builder()//
+				.setReportLabel(reportLabel)//
+				.setReportHeader(reportHeader);
 
 		builder.addValue(vaccinated_immune);
 		builder.addValue(vaccinated_susceptible);

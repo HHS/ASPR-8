@@ -24,17 +24,17 @@ public final class Example_11_A {
 
 	private static DiseasePluginData getDiseasePluginData() {
 		return DiseasePluginData.builder()//
-								.setR0(1.5)//
-								.setAsymptomaticDays(4.0)//
-								.setSymptomaticDays(12.0)//
-								.build();
+				.setR0(1.5)//
+				.setAsymptomaticDays(4.0)//
+				.setSymptomaticDays(12.0)//
+				.build();
 	}
 
 	private static PolicyPluginData getPolicyPluginData() {
-		return PolicyPluginData	.builder()//
-								.setDistributeVaccineLocally(true)//
-								.setSchoolClosingInfectionRate(0.05)//
-								.build();
+		return PolicyPluginData.builder()//
+				.setDistributeVaccineLocally(true)//
+				.setSchoolClosingInfectionRate(0.05)//
+				.build();
 	}
 
 	/* start code_ref=stochastics_plugin_policy_dimension */
@@ -49,7 +49,8 @@ public final class Example_11_A {
 
 		for (Double schoolClosingInfectionRate : schoolClosingInfectionRates) {
 			builder.addLevel((context) -> {
-				PolicyPluginData.Builder pluginDataBuilder = context.getPluginDataBuilder(PolicyPluginData.Builder.class);
+				PolicyPluginData.Builder pluginDataBuilder = context
+						.getPluginDataBuilder(PolicyPluginData.Builder.class);
 				pluginDataBuilder.setSchoolClosingInfectionRate(schoolClosingInfectionRate);
 
 				ArrayList<String> result = new ArrayList<>();
@@ -78,27 +79,27 @@ public final class Example_11_A {
 		Plugin modelPlugin = ModelPlugin.getModelPlugin();
 
 		WellState wellState = WellState.builder().setSeed(0).build();
-		StochasticsPluginData stochasticsPluginData = StochasticsPluginData.builder().setMainRNGState(wellState).build();
+		StochasticsPluginData stochasticsPluginData = StochasticsPluginData.builder().setMainRNGState(wellState)
+				.build();
 		Plugin stochasticsPlugin = StochasticsPlugin.getStochasticsPlugin(stochasticsPluginData);
 
 		Dimension policyDimension = getPolicyDimension();
 
-		
 		ExperimentParameterData experimentParameterData = ExperimentParameterData.builder()//
 				.setThreadCount(4)//
 				.setHaltOnException(true)//
 				.build();
-		
-		Experiment	.builder()//
-					.addPlugin(stochasticsPlugin)//
-					.addPlugin(diseasePlugin)//
-					.addPlugin(modelPlugin)//
-					.addPlugin(policyPlugin)//
-					.addDimension(policyDimension)//
-					.addExperimentContextConsumer(new SimpleOutputConsumer())//
-					.setExperimentParameterData(experimentParameterData)//					
-					.build()//
-					.execute();
+
+		Experiment.builder()//
+				.addPlugin(stochasticsPlugin)//
+				.addPlugin(diseasePlugin)//
+				.addPlugin(modelPlugin)//
+				.addPlugin(policyPlugin)//
+				.addDimension(policyDimension)//
+				.addExperimentContextConsumer(new SimpleOutputConsumer())//
+				.setExperimentParameterData(experimentParameterData)//
+				.build()//
+				.execute();
 	}
 	/* end */
 }

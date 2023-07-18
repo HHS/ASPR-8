@@ -7,7 +7,7 @@ public final class PersonId implements Comparable<PersonId> {
 
 	private final int id;
 
-	public PersonId(int id) {		
+	public PersonId(int id) {
 		this.id = id;
 	}
 

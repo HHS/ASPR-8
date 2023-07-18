@@ -11,11 +11,11 @@ public final class ModelPlugin {
 	}
 
 	public static Plugin getModelPlugin() {
-		return Plugin	.builder()//						
-						.setPluginId(ModelPluginId.PLUGIN_ID).setInitializer((c) -> {
-							c.addActor(new Vaccinator()::init);
-							c.addActor(new PopulationManager()::init);
-							c.addReport( new PopulationTraceReport(ModelReportLabel.POPULATION_TRACE)::init);
-						}).build();
+		return Plugin.builder()//
+				.setPluginId(ModelPluginId.PLUGIN_ID).setInitializer((c) -> {
+					c.addActor(new Vaccinator()::init);
+					c.addActor(new PopulationManager()::init);
+					c.addReport(new PopulationTraceReport(ModelReportLabel.POPULATION_TRACE)::init);
+				}).build();
 	}
 }

@@ -43,7 +43,8 @@ public final class PolicyPluginData implements PluginData {
 			if (distributeVaccineLocally != other.distributeVaccineLocally) {
 				return false;
 			}
-			if (Double.doubleToLongBits(schoolClosingInfectionRate) != Double.doubleToLongBits(other.schoolClosingInfectionRate)) {
+			if (Double.doubleToLongBits(schoolClosingInfectionRate) != Double
+					.doubleToLongBits(other.schoolClosingInfectionRate)) {
 				return false;
 			}
 			return true;

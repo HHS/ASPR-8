@@ -58,8 +58,7 @@ public final class DiseasePluginData implements PluginData {
 			}
 			return true;
 		}
-		
-		
+
 	}
 
 	public static class Builder implements PluginDataBuilder {
@@ -73,8 +72,6 @@ public final class DiseasePluginData implements PluginData {
 		public DiseasePluginData build() {
 			return new DiseasePluginData(new Data(data));
 		}
-
-		
 
 		public Builder setAsymptomaticDays(final double asymptomaticDays) {
 			data.asymptomaticDays = asymptomaticDays;
@@ -146,7 +143,5 @@ public final class DiseasePluginData implements PluginData {
 		}
 		return true;
 	}
-	
-	
 
 }

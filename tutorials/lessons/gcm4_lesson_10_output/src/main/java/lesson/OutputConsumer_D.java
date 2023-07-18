@@ -4,8 +4,9 @@ import java.util.StringJoiner;
 import java.util.function.Consumer;
 
 import nucleus.ExperimentContext;
+
 /* start code_ref=output_consumer_D */
- public class OutputConsumer_D implements Consumer<ExperimentContext> {
+public class OutputConsumer_D implements Consumer<ExperimentContext> {
 
 	@Override
 	public void accept(ExperimentContext experimentContext) {
@@ -31,10 +32,5 @@ import nucleus.ExperimentContext;
 		System.out.println(joiner);
 	}
 
- }
- /* end */
-
-
-
-
-
+}
+/* end */

@@ -48,10 +48,11 @@ public final class Example_16 {
 	private RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(524055747550937602L);
 
 	private NIOReportItemHandler getNIOReportItemHandler() {
-		return NIOReportItemHandler	.builder()//
-									.addReport(ModelReportLabel.PERSON_PROPERTY_REPORT, outputDirectory.resolve("person_property_report.xls"))//
-									.addReport(ModelReportLabel.VACCINATION, outputDirectory.resolve("vaccination_report.xls"))//
-									.build();
+		return NIOReportItemHandler.builder()//
+				.addReport(ModelReportLabel.PERSON_PROPERTY_REPORT,
+						outputDirectory.resolve("person_property_report.xls"))//
+				.addReport(ModelReportLabel.VACCINATION, outputDirectory.resolve("vaccination_report.xls"))//
+				.build();
 	}
 
 	private Plugin getPeoplePlugin() {
@@ -68,46 +69,48 @@ public final class Example_16 {
 		RegionsPluginData regionsPluginData = regionsPluginDataBuilder.build();
 		return RegionsPlugin.builder().setRegionsPluginData(regionsPluginData).getRegionsPlugin();
 	}
-
+	
+	/* start code_ref= person_properties_get_person_properties_plugin */
 	private Plugin getPersonPropertiesPlugin() {
 		PersonPropertiesPluginData.Builder builder = PersonPropertiesPluginData.builder();
-		PropertyDefinition propertyDefinition = PropertyDefinition	.builder()//
-																	.setType(Integer.class)//
-																	.setDefaultValue(0)//
-																	.build();
-		builder.definePersonProperty(PersonProperty.EDUCATION_ATTEMPTS, propertyDefinition,0,false);
+		PropertyDefinition propertyDefinition = PropertyDefinition.builder()//
+				.setType(Integer.class)//
+				.setDefaultValue(0)//
+				.build();
+		builder.definePersonProperty(PersonProperty.EDUCATION_ATTEMPTS, propertyDefinition, 0, false);
 		builder.definePersonProperty(PersonProperty.VACCINE_ATTEMPTS, propertyDefinition, 0, false);
 
-		propertyDefinition = PropertyDefinition	.builder()//
-												.setType(Boolean.class)//
-												.build();
-		builder.definePersonProperty(PersonProperty.REFUSES_VACCINE, propertyDefinition,0,false);
+		propertyDefinition = PropertyDefinition.builder()//
+				.setType(Boolean.class)//
+				.build();
+		builder.definePersonProperty(PersonProperty.REFUSES_VACCINE, propertyDefinition, 0, false);
 
-		propertyDefinition = PropertyDefinition	.builder()//
-												.setType(Boolean.class)//
-												.setDefaultValue(false)//
-												.build();
-		builder.definePersonProperty(PersonProperty.VACCINATED, propertyDefinition,0,false);
+		propertyDefinition = PropertyDefinition.builder()//
+				.setType(Boolean.class)//
+				.setDefaultValue(false)//
+				.build();
+		builder.definePersonProperty(PersonProperty.VACCINATED, propertyDefinition, 0, false);
 
 		PersonPropertiesPluginData personPropertiesPluginData = builder.build();
 
-		PersonPropertyReportPluginData personPropertyReportPluginData = PersonPropertyReportPluginData	.builder()//
-																										.setReportLabel(ModelReportLabel.PERSON_PROPERTY_REPORT)//
-																										.setReportPeriod(ReportPeriod.END_OF_SIMULATION)//
-																										.setDefaultInclusion(true)//
-																										.build();//
+		PersonPropertyReportPluginData personPropertyReportPluginData = PersonPropertyReportPluginData.builder()//
+				.setReportLabel(ModelReportLabel.PERSON_PROPERTY_REPORT)//
+				.setReportPeriod(ReportPeriod.END_OF_SIMULATION)//
+				.setDefaultInclusion(true)//
+				.build();//
 
-		return PersonPropertiesPlugin	.builder()//
-										.setPersonPropertiesPluginData(personPropertiesPluginData)//
-										.setPersonPropertyReportPluginData(personPropertyReportPluginData)//
-										.getPersonPropertyPlugin();
+		return PersonPropertiesPlugin.builder()//
+				.setPersonPropertiesPluginData(personPropertiesPluginData)//
+				.setPersonPropertyReportPluginData(personPropertyReportPluginData)//
+				.getPersonPropertyPlugin();
 	}
+	/* end */
 
 	private Plugin getStochasticsPlugin() {
 		WellState wellState = WellState.builder().setSeed(randomGenerator.nextLong()).build();
-		StochasticsPluginData stochasticsPluginData = StochasticsPluginData	.builder()//
-																			.setMainRNGState(wellState)//
-																			.build();
+		StochasticsPluginData stochasticsPluginData = StochasticsPluginData.builder()//
+				.setMainRNGState(wellState)//
+				.build();
 
 		return StochasticsPlugin.getStochasticsPlugin(stochasticsPluginData);
 	}
@@ -116,9 +119,10 @@ public final class Example_16 {
 		FunctionalDimension.Builder dimensionBuilder = FunctionalDimension.builder();//
 		IntStream.range(0, values.length).forEach((i) -> {
 			dimensionBuilder.addLevel((context) -> {
-				GlobalPropertiesPluginData.Builder builder = context.getPluginDataBuilder(GlobalPropertiesPluginData.Builder.class);
+				GlobalPropertiesPluginData.Builder builder = context
+						.getPluginDataBuilder(GlobalPropertiesPluginData.Builder.class);
 				double value = values[i];
-				builder.setGlobalPropertyValue(globalPropertyId, value,0);
+				builder.setGlobalPropertyValue(globalPropertyId, value, 0);
 				ArrayList<String> result = new ArrayList<>();
 				result.add(Double.toString(value));
 				return result;
@@ -130,7 +134,8 @@ public final class Example_16 {
 
 	private Dimension getVaccineRefusalProbabilityDimension() {
 		double[] values = new double[] { 0.0, 0.25, 0.5, 0.75, 1.0 };
-		return getGlobalPropertyDimension(GlobalProperty.VACCINE_REFUSAL_PROBABILITY, "intial_refusal_probability", values);
+		return getGlobalPropertyDimension(GlobalProperty.VACCINE_REFUSAL_PROBABILITY, "intial_refusal_probability",
+				values);
 	}
 
 	private Dimension getImmunityStartTimeDimension() {
@@ -151,51 +156,54 @@ public final class Example_16 {
 
 	private Dimension getEducationAttemptIntervalDimension() {
 		double[] values = new double[] { 30.0, 60.0, 180.0 };
-		return getGlobalPropertyDimension(GlobalProperty.EDUCATION_ATTEMPT_INTERVAL, "education_attempt_interval", values);
+		return getGlobalPropertyDimension(GlobalProperty.EDUCATION_ATTEMPT_INTERVAL, "education_attempt_interval",
+				values);
 	}
 
 	private Dimension getEducationSuccessRatedimension() {
 		double[] values = new double[] { 0.0, 0.1, 0.2 };
 		return getGlobalPropertyDimension(GlobalProperty.EDUCATION_SUCCESS_RATE, "education_success_rate", values);
 	}
-
+	/* start code_ref= person_properties_get_global_properties_plugin */
 	private Plugin getGlobalPropertiesPlugin() {
 		GlobalPropertiesPluginData.Builder builder = GlobalPropertiesPluginData.builder();//
 
-		PropertyDefinition propertyDefinition = PropertyDefinition	.builder()//
-																	.setType(Double.class)//
-																	.setDefaultValue(0.0)//
-																	.setPropertyValueMutability(false)//
-																	.build();
+		PropertyDefinition propertyDefinition = PropertyDefinition.builder()//
+				.setType(Double.class)//
+				.setDefaultValue(0.0)//
+				.setPropertyValueMutability(false)//
+				.build();
 
-		builder.defineGlobalProperty(GlobalProperty.IMMUNITY_START_TIME, propertyDefinition,0);
-		builder.defineGlobalProperty(GlobalProperty.VACCINE_ATTEMPT_INTERVAL, propertyDefinition,0);
-		builder.defineGlobalProperty(GlobalProperty.EDUCATION_ATTEMPT_INTERVAL, propertyDefinition,0);
-		builder.defineGlobalProperty(GlobalProperty.EDUCATION_SUCCESS_RATE, propertyDefinition,0);
-		builder.defineGlobalProperty(GlobalProperty.VACCINE_REFUSAL_PROBABILITY, propertyDefinition,0);
-		builder.defineGlobalProperty(GlobalProperty.IMMUNITY_PROBABILITY, propertyDefinition,0);
+		builder.defineGlobalProperty(GlobalProperty.IMMUNITY_START_TIME, propertyDefinition, 0);
+		builder.defineGlobalProperty(GlobalProperty.VACCINE_ATTEMPT_INTERVAL, propertyDefinition, 0);
+		builder.defineGlobalProperty(GlobalProperty.EDUCATION_ATTEMPT_INTERVAL, propertyDefinition, 0);
+		builder.defineGlobalProperty(GlobalProperty.EDUCATION_SUCCESS_RATE, propertyDefinition, 0);
+		builder.defineGlobalProperty(GlobalProperty.VACCINE_REFUSAL_PROBABILITY, propertyDefinition, 0);
+		builder.defineGlobalProperty(GlobalProperty.IMMUNITY_PROBABILITY, propertyDefinition, 0);
 
-		propertyDefinition = PropertyDefinition	.builder()//
-												.setType(Double.class)//
-												.setDefaultValue(365.0)//
-												.setPropertyValueMutability(false)//
-												.build();
-		builder.defineGlobalProperty(GlobalProperty.SIMULATION_DURATION, propertyDefinition,0);
+		propertyDefinition = PropertyDefinition.builder()//
+				.setType(Double.class)//
+				.setDefaultValue(365.0)//
+				.setPropertyValueMutability(false)//
+				.build();
+		builder.defineGlobalProperty(GlobalProperty.SIMULATION_DURATION, propertyDefinition, 0);
 
-		propertyDefinition = PropertyDefinition	.builder()//
-												.setType(Integer.class)//
-												.setDefaultValue(1000)//
-												.setPropertyValueMutability(false)//
-												.build();
+		propertyDefinition = PropertyDefinition.builder()//
+				.setType(Integer.class)//
+				.setDefaultValue(1000)//
+				.setPropertyValueMutability(false)//
+				.build();
 
-		builder.defineGlobalProperty(GlobalProperty.POPULATION_SIZE, propertyDefinition,0);
+		builder.defineGlobalProperty(GlobalProperty.POPULATION_SIZE, propertyDefinition, 0);
 
 		GlobalPropertiesPluginData globalPropertiesPluginData = builder.build();
 
-		return GlobalPropertiesPlugin.builder().setGlobalPropertiesPluginData(globalPropertiesPluginData).getGlobalPropertiesPlugin();
+		return GlobalPropertiesPlugin.builder().setGlobalPropertiesPluginData(globalPropertiesPluginData)
+				.getGlobalPropertiesPlugin();
 
 	}
-
+	/* end */
+	/* start code_ref= person_properties_example_16_execute */
 	private void execute() {
 
 		/*
@@ -206,7 +214,7 @@ public final class Example_16 {
 		/*
 		 * Create the reports
 		 */
-		
+
 		NIOReportItemHandler nioReportItemHandler = getNIOReportItemHandler();
 
 		/*
@@ -215,8 +223,8 @@ public final class Example_16 {
 		Plugin peoplePlugin = getPeoplePlugin();
 
 		/*
-		 * Create the region plugin 5 regions, each having a lat and lon and
-		 * assign the people to random regions.
+		 * Create the region plugin 5 regions, each having a lat and lon and assign the
+		 * people to random regions.
 		 * 
 		 */
 		Plugin regionsPlugin = getRegionsPlugin();
@@ -230,38 +238,42 @@ public final class Example_16 {
 		Plugin stochasticsPlugin = getStochasticsPlugin();
 
 		Plugin modelPlugin = ModelPlugin.getModelPlugin();
+		/* end */
 
 		/*
 		 * Assemble and execute the experiment
 		 */
+
+		/* start code_ref= person_properties_execute_experiment */
 		
 		ExperimentParameterData experimentParameterData = ExperimentParameterData.builder()//
-				.setThreadCount(8)//				
+				.setThreadCount(8)//
 				.build();
 
-		Experiment	.builder()//
+		
+		Experiment.builder()//
 
-					.addPlugin(personPropertiesPlugin)//
-					.addPlugin(globalPropertiesPlugin)//
-					.addPlugin(modelPlugin)//
-					.addPlugin(regionsPlugin)//
-					.addPlugin(peoplePlugin)//
-					.addPlugin(stochasticsPlugin)//
-					
+				.addPlugin(personPropertiesPlugin)//
+				.addPlugin(globalPropertiesPlugin)//
+				.addPlugin(modelPlugin)//
+				.addPlugin(regionsPlugin)//
+				.addPlugin(peoplePlugin)//
+				.addPlugin(stochasticsPlugin)//
 
-					.addDimension(getImmunityStartTimeDimension())//
-					.addDimension(getImmunityProbabilityDimension())//
-					.addDimension(getVaccineAttemptIntervalDimension())//
-					.addDimension(getEducationAttemptIntervalDimension())//
-					.addDimension(getEducationSuccessRatedimension())//
-					.addDimension(getVaccineRefusalProbabilityDimension())//
-					.addExperimentContextConsumer(nioReportItemHandler)//
-					.setExperimentParameterData(experimentParameterData)//
-					.build()//
-					.execute();//
-
+				.addDimension(getImmunityStartTimeDimension())//
+				.addDimension(getImmunityProbabilityDimension())//
+				.addDimension(getVaccineAttemptIntervalDimension())//
+				.addDimension(getEducationAttemptIntervalDimension())//
+				.addDimension(getEducationSuccessRatedimension())//
+				.addDimension(getVaccineRefusalProbabilityDimension())//
+				.addExperimentContextConsumer(nioReportItemHandler)//
+				.setExperimentParameterData(experimentParameterData)//
+				.build()//
+				.execute();//
+		/* end */
 	}
 
+	/* start code_ref= person_properties_example_16_main */
 	public static void main(String[] args) throws IOException {
 		if (args.length == 0) {
 			throw new RuntimeException("One output directory argument is required");
@@ -276,5 +288,5 @@ public final class Example_16 {
 		}
 		new Example_16(outputPath).execute();
 	}
-
+	/* end */
 }

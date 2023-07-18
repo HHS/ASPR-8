@@ -101,7 +101,7 @@ public final class Example_11_B {
 	}
 
 	/* end */
-	
+
 	/* start code_ref=stochastics_plugin_example_11_D */
 	public static void main(String[] args) {
 

@@ -43,7 +43,7 @@ public final class DiseaseDataManager extends DataManager {
 
 	public void setR0(double r0) {
 		this.r0 = r0;
-		dataManagerContext.releaseOutput("setting R0 to "+r0+" at time = "+dataManagerContext.getTime());
+		dataManagerContext.releaseOutput("setting R0 to " + r0 + " at time = " + dataManagerContext.getTime());
 	}
 
 	public void setAsymptomaticDays(double asymptomaticDays) {

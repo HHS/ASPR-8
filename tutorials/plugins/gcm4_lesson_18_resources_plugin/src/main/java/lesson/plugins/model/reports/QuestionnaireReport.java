@@ -29,24 +29,27 @@ public final class QuestionnaireReport {
 	}
 
 	private void report(ReportContext reportContext) {
-		PersonPropertiesDataManager personPropertiesDataManager = reportContext.getDataManager(PersonPropertiesDataManager.class);
+		PersonPropertiesDataManager personPropertiesDataManager = reportContext
+				.getDataManager(PersonPropertiesDataManager.class);
 
 		ReportHeader reportHeader = ReportHeader.builder()//
-												.add("delivery rate")//
-												.add("mean delivery time")//
-												.add("stdev delivery time")//
-												.build();
+				.add("delivery rate")//
+				.add("mean delivery time")//
+				.add("stdev delivery time")//
+				.build();
 
 		ReportItem.Builder reportItemBuilder = ReportItem.builder();
-		List<PersonId> infectedPeople = personPropertiesDataManager.getPeopleWithPropertyValue(PersonProperty.INFECTED, true);
-		
+		List<PersonId> infectedPeople = personPropertiesDataManager.getPeopleWithPropertyValue(PersonProperty.INFECTED,
+				true);
 
 		MutableStat mutableStat = new MutableStat();
 
 		for (PersonId personId : infectedPeople) {
-			Boolean receivedQuestionnaire = personPropertiesDataManager.getPersonPropertyValue(personId, PersonProperty.RECEIVED_QUESTIONNAIRE);
+			Boolean receivedQuestionnaire = personPropertiesDataManager.getPersonPropertyValue(personId,
+					PersonProperty.RECEIVED_QUESTIONNAIRE);
 			if (receivedQuestionnaire) {
-				double questionnaireTime = personPropertiesDataManager.getPersonPropertyTime(personId, PersonProperty.RECEIVED_QUESTIONNAIRE);
+				double questionnaireTime = personPropertiesDataManager.getPersonPropertyTime(personId,
+						PersonProperty.RECEIVED_QUESTIONNAIRE);
 				mutableStat.add(questionnaireTime);
 			}
 		}

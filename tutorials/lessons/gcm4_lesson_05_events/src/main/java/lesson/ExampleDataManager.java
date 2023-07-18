@@ -25,7 +25,8 @@ public final class ExampleDataManager extends DataManager {
 	public double getBeta() {
 		return beta;
 	}
-	/* start code_ref=events_intro_to_event_generation*/
+
+	/* start code_ref=events_intro_to_event_generation */
 	private static record AlphaChangeMutationEvent(int alpha) implements Event {
 	}
 
@@ -33,7 +34,8 @@ public final class ExampleDataManager extends DataManager {
 		dataManagerContext.releaseMutationEvent(new AlphaChangeMutationEvent(alpha));
 	}
 
-	private void handleAlphaChangeMutationEvent(DataManagerContext dataManagerContext, AlphaChangeMutationEvent alphaChangeMutationEvent) {
+	private void handleAlphaChangeMutationEvent(DataManagerContext dataManagerContext,
+			AlphaChangeMutationEvent alphaChangeMutationEvent) {
 		int alpha = alphaChangeMutationEvent.alpha();
 		int previousValue = this.alpha;
 		this.alpha = alpha;
@@ -47,7 +49,8 @@ public final class ExampleDataManager extends DataManager {
 		dataManagerContext.releaseMutationEvent(new BetaChangeMutationEvent(beta));
 	}
 
-	private void handleBetaChangeMutationEvent(DataManagerContext dataManagerContext, BetaChangeMutationEvent betaChangeMutationEvent) {
+	private void handleBetaChangeMutationEvent(DataManagerContext dataManagerContext,
+			BetaChangeMutationEvent betaChangeMutationEvent) {
 		double beta = betaChangeMutationEvent.beta();
 		double previousValue = this.beta;
 		this.beta = beta;

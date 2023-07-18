@@ -13,8 +13,9 @@ import lesson.plugins.people.PersonId;
 import lesson.plugins.people.PersonRemovalEvent;
 import nucleus.DataManager;
 import nucleus.DataManagerContext;
+
 /* start code_ref=plugin_dependencies_family_data_manager*/
- public final class FamilyDataManager extends DataManager {
+public final class FamilyDataManager extends DataManager {
 
 	private int masterFamilyId;
 	private Map<FamilyId, Set<PersonId>> familyMap = new LinkedHashMap<>();
@@ -35,8 +36,8 @@ import nucleus.DataManagerContext;
 		if (familyId != null) {
 			familyMap.get(familyId).remove(personId);
 		}
-		System.out.println("Family Data Manager is removing person " + personId +
-				" at time = " + dataManagerContext.getTime());
+		System.out.println(
+				"Family Data Manager is removing person " + personId + " at time = " + dataManagerContext.getTime());
 	}
 
 	public FamilyId addFamily() {
@@ -73,13 +74,11 @@ import nucleus.DataManagerContext;
 		}
 		FamilyId currentFamilyId = personMap.get(personId);
 		if (currentFamilyId != null) {
-			throw new RuntimeException("person " + personId + 
-					" is already assigned to family " + currentFamilyId);
+			throw new RuntimeException("person " + personId + " is already assigned to family " + currentFamilyId);
 		}
 		familyMap.get(familyId).add(personId);
 		personMap.put(personId, familyId);
 	}
 
- }
- /* end */
- 
+}
+/* end */

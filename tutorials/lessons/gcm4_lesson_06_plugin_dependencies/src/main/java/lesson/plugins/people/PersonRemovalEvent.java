@@ -3,9 +3,9 @@ package lesson.plugins.people;
 import net.jcip.annotations.Immutable;
 import nucleus.Event;
 
- @Immutable
- /* start code_ref=plugin_dependencies_person_removal_event*/
- public final class PersonRemovalEvent implements Event {
+@Immutable
+/* start code_ref=plugin_dependencies_person_removal_event */
+public final class PersonRemovalEvent implements Event {
 
 	private final PersonId personId;
 
@@ -17,8 +17,5 @@ import nucleus.Event;
 		return personId;
 	}
 
- }
- /* end */
- 
- 
- 
+}
+/* end */

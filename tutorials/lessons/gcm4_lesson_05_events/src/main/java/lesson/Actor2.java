@@ -2,6 +2,7 @@ package lesson;
 
 import nucleus.ActorContext;
 import nucleus.EventFilter;
+
 /* start code_ref=events_actor_2_reacts_to_AlphaChangeEvent*/
 public final class Actor2 {
 	public void init(ActorContext actorContext) {

@@ -29,13 +29,15 @@ public final class FamilyDataManager extends DataManager {
 		dataManagerContext.subscribe(PersonRemovalEvent.class, this::handlePersonRemovalEvent);
 	}
 
-	private void handlePersonRemovalEvent(DataManagerContext dataManagerContext, PersonRemovalEvent personRemovalEvent) {
+	private void handlePersonRemovalEvent(DataManagerContext dataManagerContext,
+			PersonRemovalEvent personRemovalEvent) {
 		PersonId personId = personRemovalEvent.getPersonId();
 		FamilyId familyId = personMap.remove(personId);
 		if (familyId != null) {
 			familyMap.get(familyId).remove(personId);
 		}
-		System.out.println("Family Data Manager is removing person " + personId + " at time = " + dataManagerContext.getTime());
+		System.out.println(
+				"Family Data Manager is removing person " + personId + " at time = " + dataManagerContext.getTime());
 	}
 
 	public FamilyId addFamily() {

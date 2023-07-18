@@ -2,6 +2,7 @@ package lesson.plugins.person;
 
 import nucleus.PluginId;
 import nucleus.SimplePluginId;
+
 /**
  * Static plugin id implementation for the Model Plugin
  * 
@@ -9,7 +10,9 @@ import nucleus.SimplePluginId;
  */
 
 public final class PersonPluginId implements PluginId {
-	private PersonPluginId() {};
+	private PersonPluginId() {
+	};
+
 	public final static PluginId PLUGIN_ID = new SimplePluginId("person plugin id");
-	
+
 }

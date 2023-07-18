@@ -15,17 +15,17 @@ public final class ModelPlugin {
 	}
 
 	public static Plugin getModelPlugin() {
-		return Plugin	.builder()//						
-						.setPluginId(ModelPluginId.PLUGIN_ID).setInitializer((c) -> {							
-							c.addActor(new PopulationLoader()::init);
-							c.addActor(new ResourceLoader()::init);
-							c.addActor(new TreatmentManager()::init);
-							c.addActor(new QuestionnaireDistributor()::init);
-							
-							c.addReport(new TreatmentReport(ModelReportLabel.TREATMENT_REPORT)::init);//
-							c.addReport(new DeathReport(ModelReportLabel.DEATH_REPORT)::init);//
-							c.addReport(new QuestionnaireReport(ModelReportLabel.QUESTIONNAIRE_REPORT)::init);//
-							
-						}).build();
+		return Plugin.builder()//
+				.setPluginId(ModelPluginId.PLUGIN_ID).setInitializer((c) -> {
+					c.addActor(new PopulationLoader()::init);
+					c.addActor(new ResourceLoader()::init);
+					c.addActor(new TreatmentManager()::init);
+					c.addActor(new QuestionnaireDistributor()::init);
+
+					c.addReport(new TreatmentReport(ModelReportLabel.TREATMENT_REPORT)::init);//
+					c.addReport(new DeathReport(ModelReportLabel.DEATH_REPORT)::init);//
+					c.addReport(new QuestionnaireReport(ModelReportLabel.QUESTIONNAIRE_REPORT)::init);//
+
+				}).build();
 	}
 }

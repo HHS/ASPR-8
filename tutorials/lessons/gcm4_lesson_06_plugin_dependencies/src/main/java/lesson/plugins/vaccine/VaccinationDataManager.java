@@ -10,7 +10,7 @@ import nucleus.DataManager;
 import nucleus.DataManagerContext;
 
 /* start code_ref=plugin_dependencies_vaccine_data_manager*/
- public final class VaccinationDataManager extends DataManager {
+public final class VaccinationDataManager extends DataManager {
 
 	private Set<PersonId> vaccinatedPeople = new LinkedHashSet<>();
 
@@ -19,8 +19,7 @@ import nucleus.DataManagerContext;
 	@Override
 	public void init(DataManagerContext dataManagerContext) {
 		super.init(dataManagerContext);
-		dataManagerContext.subscribe(PersonRemovalEvent.class,
-				this::handlePersonRemovalEvent);
+		dataManagerContext.subscribe(PersonRemovalEvent.class, this::handlePersonRemovalEvent);
 		personDataManager = dataManagerContext.getDataManager(PersonDataManager.class);
 	}
 
@@ -28,8 +27,8 @@ import nucleus.DataManagerContext;
 			PersonRemovalEvent personRemovalEvent) {
 		PersonId personId = personRemovalEvent.getPersonId();
 		vaccinatedPeople.remove(personId);
-		System.out.println("Vaccination Data Manager is removing person " +
-		personId + " at time = " + dataManagerContext.getTime());
+		System.out.println("Vaccination Data Manager is removing person " + personId + " at time = "
+				+ dataManagerContext.getTime());
 	}
 
 	public Set<PersonId> getVaccinatedPeople() {
@@ -56,7 +55,5 @@ import nucleus.DataManagerContext;
 		vaccinatedPeople.add(personId);
 	}
 
- }
- /* end */
- 
- 
+}
+/* end */

@@ -55,30 +55,31 @@ public final class Example_18 {
 	private Plugin getResourcesPlugin() {
 		ResourcesPluginData.Builder builder = ResourcesPluginData.builder();
 		for (ResourceId resourcId : Resource.values()) {
-			builder.addResource(resourcId,0.0,true);
+			builder.addResource(resourcId, 0.0, true);
 		}
 		ResourcesPluginData resourcesPluginData = builder.build();
 
 		PersonResourceReportPluginData personResourceReportPluginData = PersonResourceReportPluginData//
-																										.builder()//
-																										.setReportLabel(ModelReportLabel.PERSON_RESOURCE_REPORT)//
-																										.setReportPeriod(ReportPeriod.END_OF_SIMULATION)//
-																										.build();
+				.builder()//
+				.setReportLabel(ModelReportLabel.PERSON_RESOURCE_REPORT)//
+				.setReportPeriod(ReportPeriod.END_OF_SIMULATION)//
+				.build();
 
-		return ResourcesPlugin	.builder()//
-								.setResourcesPluginData(resourcesPluginData)//
-								.setPersonResourceReportPluginData(personResourceReportPluginData)//
-								.getResourcesPlugin();//
+		return ResourcesPlugin.builder()//
+				.setResourcesPluginData(resourcesPluginData)//
+				.setPersonResourceReportPluginData(personResourceReportPluginData)//
+				.getResourcesPlugin();//
 	}
 	/* end */
 
 	private NIOReportItemHandler getNIOReportItemHandler() {
-		return NIOReportItemHandler	.builder()//
-									.addReport(ModelReportLabel.PERSON_RESOURCE_REPORT, outputDirectory.resolve("person_resource_report.xls"))//
-									.addReport(ModelReportLabel.TREATMENT_REPORT,outputDirectory.resolve("treatment_report.xls"))//
-									.addReport(ModelReportLabel.DEATH_REPORT, outputDirectory.resolve("death_report.xls"))//
-									.addReport(ModelReportLabel.QUESTIONNAIRE_REPORT, outputDirectory.resolve("questionnaire_report.xls"))//
-									.build();
+		return NIOReportItemHandler.builder()//
+				.addReport(ModelReportLabel.PERSON_RESOURCE_REPORT,
+						outputDirectory.resolve("person_resource_report.xls"))//
+				.addReport(ModelReportLabel.TREATMENT_REPORT, outputDirectory.resolve("treatment_report.xls"))//
+				.addReport(ModelReportLabel.DEATH_REPORT, outputDirectory.resolve("death_report.xls"))//
+				.addReport(ModelReportLabel.QUESTIONNAIRE_REPORT, outputDirectory.resolve("questionnaire_report.xls"))//
+				.build();
 	}
 
 	private Plugin getPeoplePlugin() {
@@ -98,75 +99,77 @@ public final class Example_18 {
 
 	private Plugin getStochasticsPlugin() {
 		WellState wellState = WellState.builder().setSeed(randomGenerator.nextLong()).build();
-		StochasticsPluginData stochasticsPluginData = StochasticsPluginData	.builder()//
+		StochasticsPluginData stochasticsPluginData = StochasticsPluginData.builder()//
 
-																			.setMainRNGState(wellState)//
-																			.build();
+				.setMainRNGState(wellState)//
+				.build();
 
 		return StochasticsPlugin.getStochasticsPlugin(stochasticsPluginData);
 	}
-	/*start code_ref=resources_getPersonPropertiesPlugin*/	
+
+	/* start code_ref=resources_getPersonPropertiesPlugin */
 	private Plugin getPersonPropertiesPlugin() {
 
 		PersonPropertiesPluginData.Builder builder = PersonPropertiesPluginData.builder();
 
-		PropertyDefinition propertyDefinition = PropertyDefinition	.builder()//
-																	.setType(Boolean.class)//
-																	.setDefaultValue(false)//
-																	.build();
+		PropertyDefinition propertyDefinition = PropertyDefinition.builder()//
+				.setType(Boolean.class)//
+				.setDefaultValue(false)//
+				.build();
 
-		builder.definePersonProperty(PersonProperty.IMMUNE, propertyDefinition,0,false);//
-		builder.definePersonProperty(PersonProperty.INFECTED, propertyDefinition,0,false);//
-		builder.definePersonProperty(PersonProperty.HOSPITALIZED, propertyDefinition,0,false);//
-		builder.definePersonProperty(PersonProperty.TREATED_WITH_ANTIVIRAL, propertyDefinition,0,false);//
-		builder.definePersonProperty(PersonProperty.DEAD_IN_HOME, propertyDefinition,0,false);//
-		builder.definePersonProperty(PersonProperty.DEAD_IN_HOSPITAL, propertyDefinition,0,false);//
+		builder.definePersonProperty(PersonProperty.IMMUNE, propertyDefinition, 0, false);//
+		builder.definePersonProperty(PersonProperty.INFECTED, propertyDefinition, 0, false);//
+		builder.definePersonProperty(PersonProperty.HOSPITALIZED, propertyDefinition, 0, false);//
+		builder.definePersonProperty(PersonProperty.TREATED_WITH_ANTIVIRAL, propertyDefinition, 0, false);//
+		builder.definePersonProperty(PersonProperty.DEAD_IN_HOME, propertyDefinition, 0, false);//
+		builder.definePersonProperty(PersonProperty.DEAD_IN_HOSPITAL, propertyDefinition, 0, false);//
 
-		propertyDefinition = PropertyDefinition	.builder()//
-												.setType(Boolean.class)//
-												.setDefaultValue(false)//												
-												.build();
-		builder.definePersonProperty(PersonProperty.RECEIVED_QUESTIONNAIRE, propertyDefinition,0,true);//
-		
+		propertyDefinition = PropertyDefinition.builder()//
+				.setType(Boolean.class)//
+				.setDefaultValue(false)//
+				.build();
+		builder.definePersonProperty(PersonProperty.RECEIVED_QUESTIONNAIRE, propertyDefinition, 0, true);//
 
 		PersonPropertiesPluginData personPropertiesPluginData = builder.build();
 
-		return PersonPropertiesPlugin.builder().setPersonPropertiesPluginData(personPropertiesPluginData).getPersonPropertyPlugin();
+		return PersonPropertiesPlugin.builder().setPersonPropertiesPluginData(personPropertiesPluginData)
+				.getPersonPropertyPlugin();
 	}
-	/*end*/
+	/* end */
 
 	/* start code_ref=resources_getGlobalPropertiesPlugin */
 	private Plugin getGlobalPropertiesPlugin() {
 		GlobalPropertiesPluginData.Builder builder = GlobalPropertiesPluginData.builder();//
 
-		PropertyDefinition propertyDefinition = PropertyDefinition	.builder()//
-																	.setType(Double.class)//
-																	.setDefaultValue(0.0)//
-																	.setPropertyValueMutability(false)//
-																	.build();
+		PropertyDefinition propertyDefinition = PropertyDefinition.builder()//
+				.setType(Double.class)//
+				.setDefaultValue(0.0)//
+				.setPropertyValueMutability(false)//
+				.build();
 
-		builder.defineGlobalProperty(GlobalProperty.SUSCEPTIBLE_POPULATION_PROPORTION, propertyDefinition,0);
-		builder.defineGlobalProperty(GlobalProperty.MAXIMUM_SYMPTOM_ONSET_TIME, propertyDefinition,0);
-		builder.defineGlobalProperty(GlobalProperty.ANTIVIRAL_COVERAGE_TIME, propertyDefinition,0);
-		builder.defineGlobalProperty(GlobalProperty.ANTIVIRAL_SUCCESS_RATE, propertyDefinition,0);
-		builder.defineGlobalProperty(GlobalProperty.HOSPITAL_SUCCESS_WITH_ANTIVIRAL, propertyDefinition,0);
-		builder.defineGlobalProperty(GlobalProperty.HOSPITAL_SUCCESS_WITHOUT_ANTIVIRAL, propertyDefinition,0);
-		builder.defineGlobalProperty(GlobalProperty.HOSPITAL_BEDS_PER_PERSON, propertyDefinition,0);
-		builder.defineGlobalProperty(GlobalProperty.ANTIVIRAL_DOSES_PER_PERSON, propertyDefinition,0);
-		builder.defineGlobalProperty(GlobalProperty.HOSPITAL_STAY_DURATION_MIN, propertyDefinition,0);
-		builder.defineGlobalProperty(GlobalProperty.HOSPITAL_STAY_DURATION_MAX, propertyDefinition,0);
+		builder.defineGlobalProperty(GlobalProperty.SUSCEPTIBLE_POPULATION_PROPORTION, propertyDefinition, 0);
+		builder.defineGlobalProperty(GlobalProperty.MAXIMUM_SYMPTOM_ONSET_TIME, propertyDefinition, 0);
+		builder.defineGlobalProperty(GlobalProperty.ANTIVIRAL_COVERAGE_TIME, propertyDefinition, 0);
+		builder.defineGlobalProperty(GlobalProperty.ANTIVIRAL_SUCCESS_RATE, propertyDefinition, 0);
+		builder.defineGlobalProperty(GlobalProperty.HOSPITAL_SUCCESS_WITH_ANTIVIRAL, propertyDefinition, 0);
+		builder.defineGlobalProperty(GlobalProperty.HOSPITAL_SUCCESS_WITHOUT_ANTIVIRAL, propertyDefinition, 0);
+		builder.defineGlobalProperty(GlobalProperty.HOSPITAL_BEDS_PER_PERSON, propertyDefinition, 0);
+		builder.defineGlobalProperty(GlobalProperty.ANTIVIRAL_DOSES_PER_PERSON, propertyDefinition, 0);
+		builder.defineGlobalProperty(GlobalProperty.HOSPITAL_STAY_DURATION_MIN, propertyDefinition, 0);
+		builder.defineGlobalProperty(GlobalProperty.HOSPITAL_STAY_DURATION_MAX, propertyDefinition, 0);
 
-		propertyDefinition = PropertyDefinition	.builder()//
-												.setType(Integer.class)//
-												.setDefaultValue(10000)//
-												.setPropertyValueMutability(false)//
-												.build();
+		propertyDefinition = PropertyDefinition.builder()//
+				.setType(Integer.class)//
+				.setDefaultValue(10000)//
+				.setPropertyValueMutability(false)//
+				.build();
 
-		builder.defineGlobalProperty(GlobalProperty.POPULATION_SIZE, propertyDefinition,0);
+		builder.defineGlobalProperty(GlobalProperty.POPULATION_SIZE, propertyDefinition, 0);
 
 		GlobalPropertiesPluginData globalPropertiesPluginData = builder.build();
 
-		return GlobalPropertiesPlugin.builder().setGlobalPropertiesPluginData(globalPropertiesPluginData).getGlobalPropertiesPlugin();
+		return GlobalPropertiesPlugin.builder().setGlobalPropertiesPluginData(globalPropertiesPluginData)
+				.getGlobalPropertiesPlugin();
 	}
 	/* end */
 
@@ -174,9 +177,10 @@ public final class Example_18 {
 		FunctionalDimension.Builder dimensionBuilder = FunctionalDimension.builder();//
 		IntStream.range(0, values.length).forEach((i) -> {
 			dimensionBuilder.addLevel((context) -> {
-				GlobalPropertiesPluginData.Builder builder = context.getPluginDataBuilder(GlobalPropertiesPluginData.Builder.class);
+				GlobalPropertiesPluginData.Builder builder = context
+						.getPluginDataBuilder(GlobalPropertiesPluginData.Builder.class);
 				double value = values[i];
-				builder.setGlobalPropertyValue(globalPropertyId, value,0);
+				builder.setGlobalPropertyValue(globalPropertyId, value, 0);
 				ArrayList<String> result = new ArrayList<>();
 				result.add(Double.toString(value));
 				return result;
@@ -193,11 +197,12 @@ public final class Example_18 {
 		FunctionalDimension.Builder dimensionBuilder = FunctionalDimension.builder();//
 		IntStream.range(0, minValues.length).forEach((i) -> {
 			dimensionBuilder.addLevel((context) -> {
-				GlobalPropertiesPluginData.Builder builder = context.getPluginDataBuilder(GlobalPropertiesPluginData.Builder.class);
+				GlobalPropertiesPluginData.Builder builder = context
+						.getPluginDataBuilder(GlobalPropertiesPluginData.Builder.class);
 				double minValue = minValues[i];
-				builder.setGlobalPropertyValue(GlobalProperty.HOSPITAL_STAY_DURATION_MIN, minValue,0);
+				builder.setGlobalPropertyValue(GlobalProperty.HOSPITAL_STAY_DURATION_MIN, minValue, 0);
 				double maxValue = maxValues[i];
-				builder.setGlobalPropertyValue(GlobalProperty.HOSPITAL_STAY_DURATION_MAX, maxValue,0);
+				builder.setGlobalPropertyValue(GlobalProperty.HOSPITAL_STAY_DURATION_MAX, maxValue, 0);
 				ArrayList<String> result = new ArrayList<>();
 				result.add(Double.toString(minValue));
 				result.add(Double.toString(maxValue));
@@ -211,7 +216,8 @@ public final class Example_18 {
 
 	private Dimension getAntiviralDosesPerPersonDimension() {
 		double[] values = new double[] { .10, 0.20, 0.5 };
-		return getGlobalPropertyDimension(GlobalProperty.ANTIVIRAL_DOSES_PER_PERSON, "antiviral_doses_per_person", values);
+		return getGlobalPropertyDimension(GlobalProperty.ANTIVIRAL_DOSES_PER_PERSON, "antiviral_doses_per_person",
+				values);
 	}
 
 	private Dimension getHospitalBedsPerPersonDimension() {
@@ -226,11 +232,12 @@ public final class Example_18 {
 		FunctionalDimension.Builder dimensionBuilder = FunctionalDimension.builder();//
 		IntStream.range(0, minValues.length).forEach((i) -> {
 			dimensionBuilder.addLevel((context) -> {
-				GlobalPropertiesPluginData.Builder builder = context.getPluginDataBuilder(GlobalPropertiesPluginData.Builder.class);
+				GlobalPropertiesPluginData.Builder builder = context
+						.getPluginDataBuilder(GlobalPropertiesPluginData.Builder.class);
 				double minValue = minValues[i];
-				builder.setGlobalPropertyValue(GlobalProperty.HOSPITAL_SUCCESS_WITHOUT_ANTIVIRAL, minValue,0);
+				builder.setGlobalPropertyValue(GlobalProperty.HOSPITAL_SUCCESS_WITHOUT_ANTIVIRAL, minValue, 0);
 				double maxValue = maxValues[i];
-				builder.setGlobalPropertyValue(GlobalProperty.HOSPITAL_SUCCESS_WITH_ANTIVIRAL, maxValue,0);
+				builder.setGlobalPropertyValue(GlobalProperty.HOSPITAL_SUCCESS_WITH_ANTIVIRAL, maxValue, 0);
 				ArrayList<String> result = new ArrayList<>();
 				result.add(Double.toString(minValue));
 				result.add(Double.toString(maxValue));
@@ -254,44 +261,46 @@ public final class Example_18 {
 
 	private Dimension getMaximumSymptomOnsetTimeDimension() {
 		double[] values = new double[] { 60, 120 };
-		return getGlobalPropertyDimension(GlobalProperty.MAXIMUM_SYMPTOM_ONSET_TIME, "maximum_symptom_onset_time", values);
+		return getGlobalPropertyDimension(GlobalProperty.MAXIMUM_SYMPTOM_ONSET_TIME, "maximum_symptom_onset_time",
+				values);
 	}
 
 	private Dimension getSusceptiblePopulationProportionDimension() {
 		double[] values = new double[] { 0.25, 0.5, 0.75 };
-		return getGlobalPropertyDimension(GlobalProperty.SUSCEPTIBLE_POPULATION_PROPORTION, "susceptible_population_proportion", values);
+		return getGlobalPropertyDimension(GlobalProperty.SUSCEPTIBLE_POPULATION_PROPORTION,
+				"susceptible_population_proportion", values);
 	}
 
 	/* start code_ref=resources_execute */
 	private void execute() {
 
 		ExperimentParameterData experimentParameterData = ExperimentParameterData.builder()//
-				.setThreadCount(8)//				
+				.setThreadCount(8)//
 				.build();
-		
-		Experiment	.builder()
 
-					.addPlugin(getResourcesPlugin())//
-					.addPlugin(getGlobalPropertiesPlugin())//
-					.addPlugin(getPersonPropertiesPlugin())//
-					.addPlugin(getRegionsPlugin())//
-					.addPlugin(getPeoplePlugin())//
-					.addPlugin(getStochasticsPlugin())//
-					.addPlugin(ModelPlugin.getModelPlugin())//
+		Experiment.builder()
 
-					.addDimension(getMaximumSymptomOnsetTimeDimension())//
-					.addDimension(getSusceptiblePopulationProportionDimension())//
-					.addDimension(getAntiviralCoverageTimeDimension())//
-					.addDimension(getAntiviralSuccessRateDimension())//
-					.addDimension(getHospitalSuccessDimension())//
-					.addDimension(getHospitalBedsPerPersonDimension())//
-					.addDimension(getAntiviralDosesPerPersonDimension())//
-					.addDimension(getHospitalStayDurationDimension())//
+				.addPlugin(getResourcesPlugin())//
+				.addPlugin(getGlobalPropertiesPlugin())//
+				.addPlugin(getPersonPropertiesPlugin())//
+				.addPlugin(getRegionsPlugin())//
+				.addPlugin(getPeoplePlugin())//
+				.addPlugin(getStochasticsPlugin())//
+				.addPlugin(ModelPlugin.getModelPlugin())//
 
-					.addExperimentContextConsumer(getNIOReportItemHandler())//
-					.setExperimentParameterData(experimentParameterData)//
-					.build()//
-					.execute();//
+				.addDimension(getMaximumSymptomOnsetTimeDimension())//
+				.addDimension(getSusceptiblePopulationProportionDimension())//
+				.addDimension(getAntiviralCoverageTimeDimension())//
+				.addDimension(getAntiviralSuccessRateDimension())//
+				.addDimension(getHospitalSuccessDimension())//
+				.addDimension(getHospitalBedsPerPersonDimension())//
+				.addDimension(getAntiviralDosesPerPersonDimension())//
+				.addDimension(getHospitalStayDurationDimension())//
+
+				.addExperimentContextConsumer(getNIOReportItemHandler())//
+				.setExperimentParameterData(experimentParameterData)//
+				.build()//
+				.execute();//
 	}
 	/* end */
 

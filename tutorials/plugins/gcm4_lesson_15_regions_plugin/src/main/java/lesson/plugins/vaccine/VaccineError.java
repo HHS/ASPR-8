@@ -10,9 +10,9 @@ import util.errors.ContractException;
  *
  */
 public enum VaccineError implements ContractError {
-	 
+
 	NEGATIVE_VACCINE_COUNT("Negative vaccine count for person initialization"),
-	
+
 	;
 
 	private final String description;

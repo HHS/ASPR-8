@@ -12,25 +12,26 @@ import nucleus.Dimension;
 import nucleus.Experiment;
 import nucleus.FunctionalDimension;
 import nucleus.Plugin;
+
 /* start code_ref=experiments_example_steamlined_dimension */
- public final class Example_9_C {
+public final class Example_9_C {
 
 	private Example_9_C() {
 	}
 
 	private static DiseasePluginData getDiseasePluginData() {
 		return DiseasePluginData.builder()//
-								.setR0(1.5)//
-								.setAsymptomaticDays(4.0)//
-								.setSymptomaticDays(12.0)//
-								.build();
+				.setR0(1.5)//
+				.setAsymptomaticDays(4.0)//
+				.setSymptomaticDays(12.0)//
+				.build();
 	}
 
 	private static PolicyPluginData getPolicyPluginData() {
-		return PolicyPluginData	.builder()//
-								.setDistributeVaccineLocally(true)//
-								.setSchoolClosingInfectionRate(0.05)//
-								.build();
+		return PolicyPluginData.builder()//
+				.setDistributeVaccineLocally(true)//
+				.setSchoolClosingInfectionRate(0.05)//
+				.build();
 	}
 
 	private static Dimension getDimension() {
@@ -46,7 +47,8 @@ import nucleus.Plugin;
 
 		for (Double r0 : r0Values) {
 			builder.addLevel((context) -> {
-				DiseasePluginData.Builder pluginDataBuilder = context.getPluginDataBuilder(DiseasePluginData.Builder.class);				
+				DiseasePluginData.Builder pluginDataBuilder = context
+						.getPluginDataBuilder(DiseasePluginData.Builder.class);
 				pluginDataBuilder.setR0(r0);
 				ArrayList<String> result = new ArrayList<>();
 				result.add(Double.toString(r0));
@@ -57,8 +59,8 @@ import nucleus.Plugin;
 
 		return builder.build();
 	}
-	/*end*/
-	
+	/* end */
+
 	/* start code_ref=experiements_example_9_ C */
 	public static void main(String[] args) {
 
@@ -72,14 +74,14 @@ import nucleus.Plugin;
 
 		Dimension dimension = getDimension();
 
-		Experiment	.builder()//
-					.addPlugin(diseasePlugin)//
-					.addPlugin(modelPlugin)//
-					.addPlugin(policyPlugin)//
-					.addDimension(dimension)//
-					.build()//
-					.execute();
+		Experiment.builder()//
+				.addPlugin(diseasePlugin)//
+				.addPlugin(modelPlugin)//
+				.addPlugin(policyPlugin)//
+				.addDimension(dimension)//
+				.build()//
+				.execute();
 	}
-	
-	/*end*/
- }
+
+	/* end */
+}

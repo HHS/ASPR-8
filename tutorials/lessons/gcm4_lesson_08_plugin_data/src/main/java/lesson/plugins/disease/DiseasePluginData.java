@@ -61,7 +61,7 @@ public final class DiseasePluginData implements PluginData {
 		}
 
 	}
-	
+
 	/* start code_ref=plugin_data_builder_class */
 	public static class Builder implements PluginDataBuilder {
 		private Data data;
@@ -104,6 +104,7 @@ public final class DiseasePluginData implements PluginData {
 	private DiseasePluginData(final Data data) {
 		this.data = data;
 	}
+
 	/* end */
 	/* start code_ref=plugin_data_accessor_methods */
 	public double getAsymptomaticDays() {
@@ -118,7 +119,7 @@ public final class DiseasePluginData implements PluginData {
 		return data.symptomaticDays;
 	}
 	/* end */
-	
+
 	/* start code_ref=plugin_data_clone_builder */
 	@Override
 	public PluginDataBuilder getCloneBuilder() {

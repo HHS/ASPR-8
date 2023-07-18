@@ -24,39 +24,45 @@ public final class Vaccinator {
 	private GlobalPropertiesDataManager globalPropertiesDataManager;
 	private double vaccineAttemptInterval;
 	private ActorContext actorContext;
-
+	/* start code_ref= person_properties_vaccinator_vaccinate_person */
 	private void vaccinatePerson(PersonId personId) {
-		int vaccineAttempts = personPropertiesDataManager.getPersonPropertyValue(personId, PersonProperty.VACCINE_ATTEMPTS);
-		personPropertiesDataManager.setPersonPropertyValue(personId, PersonProperty.VACCINE_ATTEMPTS, vaccineAttempts + 1);
+		int vaccineAttempts = personPropertiesDataManager.getPersonPropertyValue(personId,
+				PersonProperty.VACCINE_ATTEMPTS);
+		personPropertiesDataManager.setPersonPropertyValue(personId, PersonProperty.VACCINE_ATTEMPTS,
+				vaccineAttempts + 1);
 
 		boolean isImmune = false;
 		if (personPropertiesDataManager.personPropertyIdExists(PersonProperty.IS_IMMUNE)) {
 			isImmune = personPropertiesDataManager.getPersonPropertyValue(personId, PersonProperty.IS_IMMUNE);
 		}
 
-		Boolean refusesVaccine = personPropertiesDataManager.getPersonPropertyValue(personId, PersonProperty.REFUSES_VACCINE);
+		Boolean refusesVaccine = personPropertiesDataManager.getPersonPropertyValue(personId,
+				PersonProperty.REFUSES_VACCINE);
 		if (!isImmune) {
 			if (refusesVaccine) {
 				double planTime = actorContext.getTime() + randomGenerator.nextDouble() * vaccineAttemptInterval;
 				Object planKey = personId;
-				
-				Plan<ActorContext> plan = Plan	.builder(ActorContext.class)//
+
+				Plan<ActorContext> plan = Plan.builder(ActorContext.class)//
 						.setCallbackConsumer((c) -> vaccinatePerson(personId))//
 						.setKey(planKey)//
 						.setTime(planTime)//
 						.build();//
-				
+
 				actorContext.addPlan(plan);
 			} else {
 				personPropertiesDataManager.setPersonPropertyValue(personId, PersonProperty.VACCINATED, true);
 			}
 		}
 	}
-
-	private void handleVaccineAcceptance(ActorContext actorContext, PersonPropertyUpdateEvent personPropertyUpdateEvent) {
+	/* end */
+	
+	/* start code_ref= person_properties_vaccinator_handle_vaccine_acceptance */
+	private void handleVaccineAcceptance(ActorContext actorContext,
+			PersonPropertyUpdateEvent personPropertyUpdateEvent) {
 		/*
-		 * We know that the person property is PersonProperty.REFUSES_VACCINE
-		 * since we used an event filter when subscribing
+		 * We know that the person property is PersonProperty.REFUSES_VACCINE since we
+		 * used an event filter when subscribing
 		 */
 		Boolean refusesVaccine = personPropertyUpdateEvent.getCurrentPropertyValue();
 		if (!refusesVaccine) {
@@ -66,15 +72,17 @@ public final class Vaccinator {
 			vaccinatePerson(personId);
 		}
 	}
-
+	/* end */
+	
+	/* start code_ref= person_properties_vaccinator_handle_new_person */
 	private void planVaccination(PersonId personId) {
 		double planTime = actorContext.getTime() + randomGenerator.nextDouble() * vaccineAttemptInterval;
 		Object planKey = personId;
-		Plan<ActorContext> plan = Plan	.builder(ActorContext.class)//
-										.setCallbackConsumer((c) -> vaccinatePerson(personId))//
-										.setKey(planKey)//
-										.setTime(planTime)//
-										.build();//
+		Plan<ActorContext> plan = Plan.builder(ActorContext.class)//
+				.setCallbackConsumer((c) -> vaccinatePerson(personId))//
+				.setKey(planKey)//
+				.setTime(planTime)//
+				.build();//
 		actorContext.addPlan(plan);
 	}
 
@@ -84,7 +92,9 @@ public final class Vaccinator {
 			planVaccination(personId);
 		}
 	}
-
+	/* end */
+	
+	/* start code_ref= person_properties_vaccinator_init */
 	public void init(ActorContext actorContext) {
 		this.actorContext = actorContext;
 		StochasticsDataManager stochasticsDataManager = actorContext.getDataManager(StochasticsDataManager.class);
@@ -93,14 +103,16 @@ public final class Vaccinator {
 		personPropertiesDataManager = actorContext.getDataManager(PersonPropertiesDataManager.class);
 		globalPropertiesDataManager = actorContext.getDataManager(GlobalPropertiesDataManager.class);
 
-		List<PersonId> unvaccinatedPeople = personPropertiesDataManager.getPeopleWithPropertyValue(PersonProperty.VACCINATED, false);
-		vaccineAttemptInterval = globalPropertiesDataManager.getGlobalPropertyValue(GlobalProperty.VACCINE_ATTEMPT_INTERVAL);
+		List<PersonId> unvaccinatedPeople = personPropertiesDataManager
+				.getPeopleWithPropertyValue(PersonProperty.VACCINATED, false);
+		vaccineAttemptInterval = globalPropertiesDataManager
+				.getGlobalPropertyValue(GlobalProperty.VACCINE_ATTEMPT_INTERVAL);
 		for (PersonId personId : unvaccinatedPeople) {
 			planVaccination(personId);
 		}
 
 		EventFilter<PersonPropertyUpdateEvent> eventFilter = personPropertiesDataManager//
-																						.getEventFilterForPersonPropertyUpdateEvent(PersonProperty.REFUSES_VACCINE);
+				.getEventFilterForPersonPropertyUpdateEvent(PersonProperty.REFUSES_VACCINE);
 
 		actorContext.subscribe(eventFilter, this::handleVaccineAcceptance);
 
@@ -109,5 +121,5 @@ public final class Vaccinator {
 		});
 
 	}
-
+	/* end */
 }

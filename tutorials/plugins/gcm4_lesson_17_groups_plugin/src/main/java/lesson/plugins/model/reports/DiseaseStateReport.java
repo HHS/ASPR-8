@@ -17,9 +17,9 @@ import plugins.reports.support.ReportPeriod;
  *
  */
 public final class DiseaseStateReport extends PeriodicReport {
-	
+
 	public DiseaseStateReport(ReportLabel reportLabel, ReportPeriod reportPeriod) {
-		super(reportLabel, reportPeriod);		
+		super(reportLabel, reportPeriod);
 	}
 
 	private ReportHeader reportHeader;
@@ -36,8 +36,6 @@ public final class DiseaseStateReport extends PeriodicReport {
 		return reportHeader;
 	}
 
-	
-
 	@Override
 	protected void flush(ReportContext reportContext) {
 		ReportItem.Builder reportItemBuilder = ReportItem.builder();
@@ -45,9 +43,11 @@ public final class DiseaseStateReport extends PeriodicReport {
 		reportItemBuilder.setReportHeader(getReportHeader());
 		fillTimeFields(reportItemBuilder);
 
-		PersonPropertiesDataManager personPropertiesDataManager = reportContext.getDataManager(PersonPropertiesDataManager.class);
+		PersonPropertiesDataManager personPropertiesDataManager = reportContext
+				.getDataManager(PersonPropertiesDataManager.class);
 		for (DiseaseState diseaseState : DiseaseState.values()) {
-			int count = personPropertiesDataManager.getPersonCountForPropertyValue(PersonProperty.DISEASE_STATE, diseaseState);
+			int count = personPropertiesDataManager.getPersonCountForPropertyValue(PersonProperty.DISEASE_STATE,
+					diseaseState);
 			reportItemBuilder.addValue(count);
 		}
 

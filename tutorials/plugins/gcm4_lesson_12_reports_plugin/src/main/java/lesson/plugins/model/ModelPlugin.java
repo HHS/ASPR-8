@@ -9,12 +9,12 @@ public class ModelPlugin {
 
 	public static Plugin getModelPlugin() {
 
-		return Plugin	.builder()//				
-						.setPluginId(ModelPluginId.PLUGIN_ID)//						
-						.setInitializer((c) -> {
-							c.addActor(new PopulationLoader()::init);
-							c.addActor(new VaccineScheduler()::init);
-						})//
-						.build();
+		return Plugin.builder()//
+				.setPluginId(ModelPluginId.PLUGIN_ID)//
+				.setInitializer((c) -> {
+					c.addActor(new PopulationLoader()::init);
+					c.addActor(new VaccineScheduler()::init);
+				})//
+				.build();
 	}
 }

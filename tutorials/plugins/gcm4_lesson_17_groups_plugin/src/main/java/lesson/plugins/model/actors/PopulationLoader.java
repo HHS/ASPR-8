@@ -41,20 +41,19 @@ public class PopulationLoader {
 	private double averageSchoolSize;
 	private double averageWorkSize;
 
+	/* start code_ref= groups_plugin_population_loader_init_region_population */
 	private void initializeRegionPopulation(RegionId regionId, int populationSize) {
 
 		double n = populationSize;
-		int homeCount = (int) (n / averageHomeSize)+1;
+		int homeCount = (int) (n / averageHomeSize) + 1;
 		int childCount = (int) (n * childPopulationProportion);
 		int adultCount = populationSize - childCount;
 		homeCount = FastMath.min(homeCount, adultCount);
 		int seniorCount = (int) (n * seniorPopulationProportion);
 		seniorCount = FastMath.min(seniorCount, adultCount);
 		int workingAdultCount = adultCount - seniorCount;
-		int workCount = (int) ((double) workingAdultCount / averageWorkSize)+1;
-		int schoolCount = (int) ((double) childCount / averageSchoolSize)+1;
-		
-		
+		int workCount = (int) ((double) workingAdultCount / averageWorkSize) + 1;
+		int schoolCount = (int) ((double) childCount / averageSchoolSize) + 1;
 
 		// create the population
 		for (int i = 0; i < populationSize; i++) {
@@ -66,32 +65,30 @@ public class PopulationLoader {
 			} else {
 				age = randomGenerator.nextInt(18);
 			}
-			PersonPropertyValueInitialization ageInitialization = 
-					new PersonPropertyValueInitialization(PersonProperty.AGE, age);
+			PersonPropertyValueInitialization ageInitialization = new PersonPropertyValueInitialization(
+					PersonProperty.AGE, age);
 
 			DiseaseState diseaseState = DiseaseState.IMMUNE;
 			if (randomGenerator.nextDouble() < susceptibleProbability) {
 				diseaseState = DiseaseState.SUSCEPTIBLE;
 			}
 
-			PersonPropertyValueInitialization diseaseInitialization = 
-					new PersonPropertyValueInitialization(PersonProperty.DISEASE_STATE, diseaseState);
-			PersonConstructionData personConstructionData = 
-					PersonConstructionData	.builder()//
-											.add(ageInitialization)//
-											.add(diseaseInitialization)//
-											.add(regionId)//
-											.build();
+			PersonPropertyValueInitialization diseaseInitialization = new PersonPropertyValueInitialization(
+					PersonProperty.DISEASE_STATE, diseaseState);
+			PersonConstructionData personConstructionData = PersonConstructionData.builder()//
+					.add(ageInitialization)//
+					.add(diseaseInitialization)//
+					.add(regionId)//
+					.build();
 			peopleDataManager.addPerson(personConstructionData);
 		}
-
-		
-
+		/* end */
+		/* start code_ref= groups_plugin_population_loader_adding_groups */
 		// create the home groups
 		List<GroupId> homeGroupIds = new ArrayList<>();
 		for (int i = 0; i < homeCount; i++) {
-			GroupConstructionInfo groupConstructionInfo = GroupConstructionInfo.builder()
-					.setGroupTypeId(GroupType.HOME).build();
+			GroupConstructionInfo groupConstructionInfo = GroupConstructionInfo.builder().setGroupTypeId(GroupType.HOME)
+					.build();
 			GroupId groupId = groupsDataManager.addGroup(groupConstructionInfo);
 			homeGroupIds.add(groupId);
 		}
@@ -99,8 +96,8 @@ public class PopulationLoader {
 		// create the work groups
 		List<GroupId> workGroupIds = new ArrayList<>();
 		for (int i = 0; i < workCount; i++) {
-			GroupConstructionInfo groupConstructionInfo = GroupConstructionInfo.builder()
-					.setGroupTypeId(GroupType.WORK).build();
+			GroupConstructionInfo groupConstructionInfo = GroupConstructionInfo.builder().setGroupTypeId(GroupType.WORK)
+					.build();
 			GroupId groupId = groupsDataManager.addGroup(groupConstructionInfo);
 			workGroupIds.add(groupId);
 		}
@@ -113,15 +110,18 @@ public class PopulationLoader {
 			GroupId groupId = groupsDataManager.addGroup(groupConstructionInfo);
 			schoolGroupIds.add(groupId);
 		}
-
+		/* end */
+		
+		
+		
 		// determine the subsets of people by age
+		/* start code_ref= groups_plugin_population_loader_age_subsets */
 		List<PersonId> peopleInRegion = regionsDataManager.getPeopleInRegion(regionId);
 		List<PersonId> adults = new ArrayList<>();
 		List<PersonId> children = new ArrayList<>();
 		List<PersonId> workingAdults = new ArrayList<>();
 		for (PersonId personId : peopleInRegion) {
-			int age = personPropertiesDataManager.
-					getPersonPropertyValue(personId, PersonProperty.AGE);
+			int age = personPropertiesDataManager.getPersonPropertyValue(personId, PersonProperty.AGE);
 			if (age < 18) {
 				children.add(personId);
 			} else {
@@ -131,11 +131,12 @@ public class PopulationLoader {
 				}
 			}
 		}
-
+		/* end */
+		/* start code_ref= groups_plugin_population_loader_group_assignments */
 		Random random = new Random(randomGenerator.nextLong());
 		/*
-		 * Randomize the adults and assign them to the home groups such that
-		 * there is at least one adult in each home
+		 * Randomize the adults and assign them to the home groups such that there is at
+		 * least one adult in each home
 		 */
 		Collections.shuffle(adults, random);
 		// put one adult in each home
@@ -166,7 +167,6 @@ public class PopulationLoader {
 			groupsDataManager.addPersonToGroup(personId, groupId);
 		}
 
-		
 		// assign children to home groups
 		for (int i = 0; i < children.size(); i++) {
 			PersonId personId = children.get(i);
@@ -174,35 +174,28 @@ public class PopulationLoader {
 			groupsDataManager.addPersonToGroup(personId, groupId);
 		}
 	}
-
+	/* end */
+	/* start code_ref= groups_plugin_population_loader_init */
 	public void init(ActorContext actorContext) {
-		personPropertiesDataManager = actorContext
-				.getDataManager(PersonPropertiesDataManager.class);
-		groupsDataManager = actorContext
-				.getDataManager(GroupsDataManager.class);
-		StochasticsDataManager stochasticsDataManager = 
-				actorContext.getDataManager(StochasticsDataManager.class);
+		personPropertiesDataManager = actorContext.getDataManager(PersonPropertiesDataManager.class);
+		groupsDataManager = actorContext.getDataManager(GroupsDataManager.class);
+		StochasticsDataManager stochasticsDataManager = actorContext.getDataManager(StochasticsDataManager.class);
 		randomGenerator = stochasticsDataManager.getRandomGenerator();
-		peopleDataManager = actorContext
-				.getDataManager(PeopleDataManager.class);
-		GlobalPropertiesDataManager globalPropertiesDataManager = 
-				actorContext.getDataManager(GlobalPropertiesDataManager.class);
+		peopleDataManager = actorContext.getDataManager(PeopleDataManager.class);
+		GlobalPropertiesDataManager globalPropertiesDataManager = actorContext
+				.getDataManager(GlobalPropertiesDataManager.class);
 		regionsDataManager = actorContext.getDataManager(RegionsDataManager.class);
 
-		int populationSize = globalPropertiesDataManager
-				.getGlobalPropertyValue(GlobalProperty.POPULATION_SIZE);
+		int populationSize = globalPropertiesDataManager.getGlobalPropertyValue(GlobalProperty.POPULATION_SIZE);
 		susceptibleProbability = globalPropertiesDataManager
 				.getGlobalPropertyValue(GlobalProperty.SUSCEPTIBLE_POPULATION_PROPORTION);
 		childPopulationProportion = globalPropertiesDataManager
 				.getGlobalPropertyValue(GlobalProperty.CHILD_POPULATION_PROPORTION);
 		seniorPopulationProportion = globalPropertiesDataManager
 				.getGlobalPropertyValue(GlobalProperty.SENIOR_POPULATION_PROPORTION);
-		averageHomeSize = globalPropertiesDataManager
-				.getGlobalPropertyValue(GlobalProperty.AVERAGE_HOME_SIZE);
-		averageSchoolSize = globalPropertiesDataManager
-				.getGlobalPropertyValue(GlobalProperty.AVERAGE_SCHOOL_SIZE);
-		averageWorkSize = globalPropertiesDataManager
-				.getGlobalPropertyValue(GlobalProperty.AVERAGE_WORK_SIZE);
+		averageHomeSize = globalPropertiesDataManager.getGlobalPropertyValue(GlobalProperty.AVERAGE_HOME_SIZE);
+		averageSchoolSize = globalPropertiesDataManager.getGlobalPropertyValue(GlobalProperty.AVERAGE_SCHOOL_SIZE);
+		averageWorkSize = globalPropertiesDataManager.getGlobalPropertyValue(GlobalProperty.AVERAGE_WORK_SIZE);
 
 		Set<RegionId> regionIds = regionsDataManager.getRegionIds();
 		int regionSize = populationSize / regionIds.size();
@@ -217,4 +210,5 @@ public class PopulationLoader {
 			initializeRegionPopulation(regionId, regionPopulation);
 		}
 	}
+	/* end */
 }

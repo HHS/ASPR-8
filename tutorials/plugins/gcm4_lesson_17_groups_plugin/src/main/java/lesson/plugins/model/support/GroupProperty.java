@@ -3,7 +3,5 @@ package lesson.plugins.model.support;
 import plugins.groups.support.GroupPropertyId;
 
 public enum GroupProperty implements GroupPropertyId {
-	TELEWORK,
-	SCHOOL_STATUS,
-	;
+	TELEWORK, SCHOOL_STATUS,;
 }

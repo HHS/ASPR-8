@@ -26,22 +26,22 @@ public final class Example_12 {
 
 	private Example_12() {
 	}
-	/* start code_ref=reports_plugin_family_dimension*/
+
+	/* start code_ref=reports_plugin_family_dimension */
 	private static Dimension getFamilySizeDimension() {
 		FunctionalDimension.Builder builder = FunctionalDimension.builder();//
 
 		List<Integer> maxFamilySizes = new ArrayList<>();
-		
+
 		maxFamilySizes.add(3);
 		maxFamilySizes.add(5);
 		maxFamilySizes.add(7);
 		maxFamilySizes.add(10);
-		
 
 		for (Integer maxFamilySize : maxFamilySizes) {
 			builder.addLevel((context) -> {
-				FamilyPluginData.Builder pluginDataBuilder = 
-						context.getPluginDataBuilder(FamilyPluginData.Builder.class);
+				FamilyPluginData.Builder pluginDataBuilder = context
+						.getPluginDataBuilder(FamilyPluginData.Builder.class);
 				pluginDataBuilder.setMaxFamilySize(maxFamilySize);
 
 				ArrayList<String> result = new ArrayList<>();
@@ -58,7 +58,7 @@ public final class Example_12 {
 	}
 	/* end */
 
-	/* start code_ref=reports_plugin_example_12_plugins*/
+	/* start code_ref=reports_plugin_example_12_plugins */
 	public static void main(String[] args) throws IOException {
 		if (args.length == 0) {
 			throw new RuntimeException("One output directory argument is required");
@@ -75,44 +75,43 @@ public final class Example_12 {
 		Plugin personPlugin = PersonPlugin.getPersonPlugin();
 
 		Plugin vaccinePlugin = VaccinePlugin.getVaccinePlugin();
-		
+
 		Plugin modelPlugin = ModelPlugin.getModelPlugin();
-		
+
 		WellState wellState = WellState.builder().setSeed(452363456L).build();
-		StochasticsPluginData stochasticsPluginData = StochasticsPluginData.builder().setMainRNGState(wellState).build();
+		StochasticsPluginData stochasticsPluginData = StochasticsPluginData.builder().setMainRNGState(wellState)
+				.build();
 		Plugin stochasticsPlugin = StochasticsPlugin.getStochasticsPlugin(stochasticsPluginData);
 
 		FamilyPluginData familyPluginData = FamilyPluginData.builder()//
-															.setFamilyCount(30)//
-															.setMaxFamilySize(5)//
-															.build();
-		Plugin familyPlugin = FamilyPlugin.getFamilyPlugin(familyPluginData);		
+				.setFamilyCount(30)//
+				.setMaxFamilySize(5)//
+				.build();
+		Plugin familyPlugin = FamilyPlugin.getFamilyPlugin(familyPluginData);
 
 		/* end */
-		
-		/* start code_ref=reports_plugin_nio*/
+
+		/* start code_ref=reports_plugin_nio */
 		NIOReportItemHandler nioReportItemHandler = NIOReportItemHandler.builder()//
 				.addReport(ModelLabel.FAMILY_VACCINE_REPORT, outputDirectory.resolve("family_vaccine_report.xls"))//
 				.addReport(ModelLabel.HOURLY_VACCINE_REPORT, outputDirectory.resolve("hourly_vaccine_report.xls"))//
 				.addReport(ModelLabel.STATELESS_VACCINE_REPORT, outputDirectory.resolve("stateless_vaccine_report.xls"))//
-				.addExperimentReport(outputDirectory.resolve("experiment_report.xls"))
-				.build();
+				.addExperimentReport(outputDirectory.resolve("experiment_report.xls")).build();
 		/* end */
-		
-		
-		/* start code_ref=reports_plugin_example_12_execution*/
+
+		/* start code_ref=reports_plugin_example_12_execution */
 		Dimension familySizeDimension = getFamilySizeDimension();
-		
-		Experiment	.builder()//
-					.addPlugin(vaccinePlugin)//
-					.addPlugin(familyPlugin)//
-					.addPlugin(personPlugin)//
-					.addPlugin(modelPlugin)//
-					.addPlugin(stochasticsPlugin)//
-					.addDimension(familySizeDimension)//
-					.addExperimentContextConsumer(nioReportItemHandler)//					
-					.build()//
-					.execute();
+
+		Experiment.builder()//
+				.addPlugin(vaccinePlugin)//
+				.addPlugin(familyPlugin)//
+				.addPlugin(personPlugin)//
+				.addPlugin(modelPlugin)//
+				.addPlugin(stochasticsPlugin)//
+				.addDimension(familySizeDimension)//
+				.addExperimentContextConsumer(nioReportItemHandler)//
+				.build()//
+				.execute();
 		/* end */
 	}
 }

@@ -33,23 +33,29 @@ public final class TreatmentReport {
 
 	private void report(ReportContext reportContext) {
 		PeopleDataManager peopleDataManager = reportContext.getDataManager(PeopleDataManager.class);
-		PersonPropertiesDataManager personPropertiesDataManager = reportContext.getDataManager(PersonPropertiesDataManager.class);
+		PersonPropertiesDataManager personPropertiesDataManager = reportContext
+				.getDataManager(PersonPropertiesDataManager.class);
 		/*
-		 * Build a map from a multikey to a counter. Each person's ordered
-		 * person property values will form the multikey. The counter is
-		 * incremented for each person matching the unique multikeys.
+		 * Build a map from a multikey to a counter. Each person's ordered person
+		 * property values will form the multikey. The counter is incremented for each
+		 * person matching the unique multikeys.
 		 */
 		Map<MultiKey, MutableInteger> map = new LinkedHashMap<>();
 		for (PersonId personId : peopleDataManager.getPeople()) {
 
 			Boolean immune = personPropertiesDataManager.getPersonPropertyValue(personId, PersonProperty.IMMUNE);
 			Boolean infected = personPropertiesDataManager.getPersonPropertyValue(personId, PersonProperty.INFECTED);
-			Boolean treatedWithAntiviral = personPropertiesDataManager.getPersonPropertyValue(personId, PersonProperty.TREATED_WITH_ANTIVIRAL);
-			Boolean hospitalized = personPropertiesDataManager.getPersonPropertyValue(personId, PersonProperty.HOSPITALIZED);
-			Boolean deadInHospital = personPropertiesDataManager.getPersonPropertyValue(personId, PersonProperty.DEAD_IN_HOSPITAL);
-			Boolean deadInHome = personPropertiesDataManager.getPersonPropertyValue(personId, PersonProperty.DEAD_IN_HOME);
+			Boolean treatedWithAntiviral = personPropertiesDataManager.getPersonPropertyValue(personId,
+					PersonProperty.TREATED_WITH_ANTIVIRAL);
+			Boolean hospitalized = personPropertiesDataManager.getPersonPropertyValue(personId,
+					PersonProperty.HOSPITALIZED);
+			Boolean deadInHospital = personPropertiesDataManager.getPersonPropertyValue(personId,
+					PersonProperty.DEAD_IN_HOSPITAL);
+			Boolean deadInHome = personPropertiesDataManager.getPersonPropertyValue(personId,
+					PersonProperty.DEAD_IN_HOME);
 
-			MultiKey multiKey = new MultiKey(immune, infected, treatedWithAntiviral, hospitalized, deadInHospital, deadInHome);
+			MultiKey multiKey = new MultiKey(immune, infected, treatedWithAntiviral, hospitalized, deadInHospital,
+					deadInHome);
 			MutableInteger mutableInteger = map.get(multiKey);
 			if (mutableInteger == null) {
 				mutableInteger = new MutableInteger();
@@ -59,24 +65,22 @@ public final class TreatmentReport {
 		}
 
 		/*
-		 * Build the header of the report using the headers that correspond to
-		 * the ordered key values in the multikeys.
+		 * Build the header of the report using the headers that correspond to the
+		 * ordered key values in the multikeys.
 		 */
 		ReportHeader reportHeader = ReportHeader.builder()//
-												.add("immune")//
-												.add("infected")//
-												.add("treated_with_antiviral")//
-												.add("hospitalized")//
-												.add("dead_in_hospital")//
-												.add("dead_in_home")//
-												.add("people")//
-												.build();
-
-		
+				.add("immune")//
+				.add("infected")//
+				.add("treated_with_antiviral")//
+				.add("hospitalized")//
+				.add("dead_in_hospital")//
+				.add("dead_in_home")//
+				.add("people")//
+				.build();
 
 		/*
-		 * Form a report item for each multikey, taking the ordered property
-		 * values from the multikey and using them as inputs to the report item
+		 * Form a report item for each multikey, taking the ordered property values from
+		 * the multikey and using them as inputs to the report item
 		 */
 		for (MultiKey multiKey : map.keySet()) {
 			ReportItem.Builder reportItemBuilder = ReportItem.builder();

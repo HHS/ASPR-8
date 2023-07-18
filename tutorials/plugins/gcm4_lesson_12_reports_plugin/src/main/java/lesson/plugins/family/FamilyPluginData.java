@@ -65,7 +65,7 @@ public final class FamilyPluginData implements PluginData {
 		 * Sets the family count
 		 * 
 		 * @throws IllegalArgumentException
-		 *             <li>if the family count is negative</li>
+		 *                                  <li>if the family count is negative</li>
 		 */
 		public Builder setFamilyCount(final int familyCount) {
 			if (familyCount < 0) {
@@ -79,7 +79,7 @@ public final class FamilyPluginData implements PluginData {
 		 * Sets the maximum family size
 		 * 
 		 * @throws IllegalArgumentException
-		 *             <li>if the max family size is negative</li>
+		 *                                  <li>if the max family size is negative</li>
 		 */
 		public Builder setMaxFamilySize(final int maxFamilySize) {
 			if (maxFamilySize < 0) {

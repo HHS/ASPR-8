@@ -29,14 +29,17 @@ public final class ContagionReport {
 	}
 
 	private void report(ReportContext reportContext) {
-		PersonPropertiesDataManager personPropertiesDataManager = reportContext.getDataManager(PersonPropertiesDataManager.class);
-		List<PersonId> people = personPropertiesDataManager.getPeopleWithPropertyValue(PersonProperty.DISEASE_STATE, DiseaseState.RECOVERED);
+		PersonPropertiesDataManager personPropertiesDataManager = reportContext
+				.getDataManager(PersonPropertiesDataManager.class);
+		List<PersonId> people = personPropertiesDataManager.getPeopleWithPropertyValue(PersonProperty.DISEASE_STATE,
+				DiseaseState.RECOVERED);
 
 		Map<Integer, MutableInteger> countMap = new TreeMap<>();
 
 		int maxInfectedCount = 0;
 		for (PersonId personId : people) {
-			int infectedCount = personPropertiesDataManager.getPersonPropertyValue(personId, PersonProperty.INFECTED_COUNT);
+			int infectedCount = personPropertiesDataManager.getPersonPropertyValue(personId,
+					PersonProperty.INFECTED_COUNT);
 			maxInfectedCount = FastMath.max(maxInfectedCount, infectedCount);
 			MutableInteger mutableInteger = countMap.get(infectedCount);
 			if (mutableInteger == null) {
@@ -51,7 +54,7 @@ public final class ContagionReport {
 				countMap.put(i, new MutableInteger());
 			}
 		}
-		
+
 		for (Integer i : countMap.keySet()) {
 			ReportItem.Builder reportItemBuilder = ReportItem.builder();
 			MutableInteger mutableInteger = countMap.get(i);

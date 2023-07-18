@@ -24,10 +24,13 @@ public final class VaccineReport extends PeriodicReport {
 		reportItemBuilder.setReportHeader(getReportHeader());
 		fillTimeFields(reportItemBuilder);
 
-		final PersonPropertiesDataManager personPropertiesDataManager = reportContext.getDataManager(PersonPropertiesDataManager.class);
-		int vaccinatedCount = personPropertiesDataManager.getPersonCountForPropertyValue(PersonProperty.VACCINATED, true);
+		final PersonPropertiesDataManager personPropertiesDataManager = reportContext
+				.getDataManager(PersonPropertiesDataManager.class);
+		int vaccinatedCount = personPropertiesDataManager.getPersonCountForPropertyValue(PersonProperty.VACCINATED,
+				true);
 		reportItemBuilder.addValue(vaccinatedCount);
-		int vaccineScheduledCount = personPropertiesDataManager.getPersonCountForPropertyValue(PersonProperty.VACCINE_SCHEDULED, true);
+		int vaccineScheduledCount = personPropertiesDataManager
+				.getPersonCountForPropertyValue(PersonProperty.VACCINE_SCHEDULED, true);
 		reportItemBuilder.addValue(vaccineScheduledCount);
 
 		final ReportItem reportItem = reportItemBuilder.build();
@@ -44,7 +47,5 @@ public final class VaccineReport extends PeriodicReport {
 		}
 		return reportHeader;
 	}
-
-	
 
 }

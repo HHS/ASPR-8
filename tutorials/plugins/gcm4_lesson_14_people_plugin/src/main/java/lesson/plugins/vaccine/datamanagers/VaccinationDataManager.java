@@ -20,16 +20,15 @@ import util.errors.ContractException;
 import util.wrappers.MutableInteger;
 
 public final class VaccinationDataManager extends DataManager {
-	/* start code_ref= people_plugin_vaccine_counts*/
+	/* start code_ref= people_plugin_vaccine_counts */
 	private Map<PersonId, MutableInteger> vaccinationCounts = new LinkedHashMap<>();
 	/* end */
 	private PeopleDataManager personDataManager;
 
 	private DataManagerContext dataManagerContext;
 
-	
 	@Override
-	/* start code_ref= people_plugin_vaccination_data_manager*/
+	/* start code_ref= people_plugin_vaccination_data_manager */
 	public void init(DataManagerContext dataManagerContext) {
 		super.init(dataManagerContext);
 		dataManagerContext.subscribe(PersonRemovalEvent.class, this::handlePersonRemovalEvent);
@@ -43,22 +42,24 @@ public final class VaccinationDataManager extends DataManager {
 
 	}
 	/* end */
-	
-	/* start code_ref= people_plugin_vaccination_handling_person_removal*/
-	
-	private void handlePersonRemovalEvent(DataManagerContext dataManagerContext, PersonRemovalEvent personRemovalEvent) {
+
+	/* start code_ref= people_plugin_vaccination_handling_person_removal */
+
+	private void handlePersonRemovalEvent(DataManagerContext dataManagerContext,
+			PersonRemovalEvent personRemovalEvent) {
 		PersonId personId = personRemovalEvent.personId();
 		vaccinationCounts.remove(personId);
 	}
 
-	private void handlePersonImminentAdditionEvent(DataManagerContext dataManagerContext, PersonImminentAdditionEvent personImminentAdditionEvent) {
+	private void handlePersonImminentAdditionEvent(DataManagerContext dataManagerContext,
+			PersonImminentAdditionEvent personImminentAdditionEvent) {
 		PersonId personId = personImminentAdditionEvent.personId();
 		validateNewPersonId(personId);
 		MutableInteger mutableInteger = new MutableInteger();
 		vaccinationCounts.put(personId, mutableInteger);
 		Optional<VaccineInitialization> optional = personImminentAdditionEvent//
-																				.personConstructionData()//
-																				.getValue(VaccineInitialization.class);
+				.personConstructionData()//
+				.getValue(VaccineInitialization.class);
 		if (optional.isPresent()) {
 			VaccineInitialization vaccineInitialization = optional.get();
 			int vaccineCount = vaccineInitialization.getVaccineCount();
@@ -67,7 +68,7 @@ public final class VaccinationDataManager extends DataManager {
 		}
 	}
 	/* end */
-	
+
 	private void validateInitialVaccineCount(int initialVaccineCount) {
 		if (initialVaccineCount < 0) {
 			throw new ContractException(VaccineError.NEGATIVE_VACCINE_COUNT);
@@ -115,10 +116,10 @@ public final class VaccinationDataManager extends DataManager {
 	 * Returns true if and only if the person is vaccinated
 	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain PersonError#NULL_PERSON_ID} if the person id
-	 *             is null</li>
-	 *             <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if the person
-	 *             id is unknown</li>
+	 *                           <li>{@linkplain PersonError#NULL_PERSON_ID} if the
+	 *                           person id is null</li>
+	 *                           <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if
+	 *                           the person id is unknown</li>
 	 */
 	public boolean isPersonVaccinated(PersonId personId) {
 		validatePersonId(personId);
@@ -132,17 +133,18 @@ public final class VaccinationDataManager extends DataManager {
 	 * Increases the vaccine count for a person
 	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain PersonError#NULL_PERSON_ID} if the person id
-	 *             is null</li>
-	 *             <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if the person
-	 *             id is unknown</li>
+	 *                           <li>{@linkplain PersonError#NULL_PERSON_ID} if the
+	 *                           person id is null</li>
+	 *                           <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if
+	 *                           the person id is unknown</li>
 	 * 
 	 */
 	public void vaccinatePerson(PersonId personId) {
 		dataManagerContext.releaseMutationEvent(new VaccinationMutationEvent(personId));
 	}
 
-	private void handleVaccinationMutationEvent(DataManagerContext dataManagerContext, VaccinationMutationEvent vaccinationMutationEvent) {
+	private void handleVaccinationMutationEvent(DataManagerContext dataManagerContext,
+			VaccinationMutationEvent vaccinationMutationEvent) {
 		PersonId personId = vaccinationMutationEvent.personId();
 		validatePersonId(personId);
 		vaccinationCounts.get(personId).increment();
@@ -152,10 +154,10 @@ public final class VaccinationDataManager extends DataManager {
 	 * Returns the number of vaccines a person has recieved
 	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain PersonError#NULL_PERSON_ID} if the person id
-	 *             is null</li>
-	 *             <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if the person
-	 *             id is unknown</li>
+	 *                           <li>{@linkplain PersonError#NULL_PERSON_ID} if the
+	 *                           person id is null</li>
+	 *                           <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if
+	 *                           the person id is unknown</li>
 	 * 
 	 */
 	public int getPersonVaccinationCount(PersonId personId) {

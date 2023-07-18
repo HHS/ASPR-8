@@ -26,41 +26,39 @@ public final class Example_13 {
 
 	private Example_13() {
 	}
-	
-	
-	/* start code_ref= global_proerties_plugin_get_property_data*/
+
+	/* start code_ref= global_proerties_plugin_get_property_data */
 	private static GlobalPropertiesPluginData getGlobalPropertiesPluginData() {
 		GlobalPropertiesPluginData.Builder builder = GlobalPropertiesPluginData.builder();//
 
-		PropertyDefinition propertyDefinition = PropertyDefinition	.builder()//
-																	.setType(Double.class)//
-																	.setDefaultValue(2.0)//																	
-																	.setPropertyValueMutability(false)//
-																	.build();
-		builder.defineGlobalProperty(GlobalProperty.ALPHA, propertyDefinition,0);
+		PropertyDefinition propertyDefinition = PropertyDefinition.builder()//
+				.setType(Double.class)//
+				.setDefaultValue(2.0)//
+				.setPropertyValueMutability(false)//
+				.build();
+		builder.defineGlobalProperty(GlobalProperty.ALPHA, propertyDefinition, 0);
 
-		propertyDefinition = PropertyDefinition	.builder()//
-												.setType(Double.class)//
-												.setDefaultValue(5.0)//												
-												.setPropertyValueMutability(false)//
-												.build();
+		propertyDefinition = PropertyDefinition.builder()//
+				.setType(Double.class)//
+				.setDefaultValue(5.0)//
+				.setPropertyValueMutability(false)//
+				.build();
 
-		builder.defineGlobalProperty(GlobalProperty.BETA, propertyDefinition,0);
+		builder.defineGlobalProperty(GlobalProperty.BETA, propertyDefinition, 0);
 
-		propertyDefinition = PropertyDefinition	.builder()//
-												.setType(Double.class)//
-												.setDefaultValue(1.0)//												
-												.setPropertyValueMutability(true)//
-												.build();
+		propertyDefinition = PropertyDefinition.builder()//
+				.setType(Double.class)//
+				.setDefaultValue(1.0)//
+				.setPropertyValueMutability(true)//
+				.build();
 
-		builder.defineGlobalProperty(GlobalProperty.GAMMA, propertyDefinition,0);
+		builder.defineGlobalProperty(GlobalProperty.GAMMA, propertyDefinition, 0);
 
 		return builder.build();
 	}
 	/* end */
 
-	
-	/* start code_ref= global_proerties_plugin_alpha_beta_dimension*/
+	/* start code_ref= global_proerties_plugin_alpha_beta_dimension */
 	private static Dimension getAlphaBetaDimension() {
 		List<Pair<Double, Double>> alphaBetaPairs = new ArrayList<>();
 		alphaBetaPairs.add(new Pair<>(3.0, 10.0));
@@ -74,9 +72,10 @@ public final class Example_13 {
 		for (Pair<Double, Double> pair : alphaBetaPairs) {
 			dimensionBuilder.addLevel((c) -> {
 				List<String> result = new ArrayList<>();
-				GlobalPropertiesPluginData.Builder builder = c.getPluginDataBuilder(GlobalPropertiesPluginData.Builder.class);
-				builder.setGlobalPropertyValue(GlobalProperty.ALPHA, pair.getFirst(),0);
-				builder.setGlobalPropertyValue(GlobalProperty.BETA, pair.getSecond(),0);
+				GlobalPropertiesPluginData.Builder builder = c
+						.getPluginDataBuilder(GlobalPropertiesPluginData.Builder.class);
+				builder.setGlobalPropertyValue(GlobalProperty.ALPHA, pair.getFirst(), 0);
+				builder.setGlobalPropertyValue(GlobalProperty.BETA, pair.getSecond(), 0);
 				result.add(pair.getFirst().toString());
 				result.add(pair.getSecond().toString());
 				return result;
@@ -88,10 +87,10 @@ public final class Example_13 {
 
 		return dimensionBuilder.build();
 	}
-	
+
 	/* end */
-	
-	/* start code_ref= global_proerties_plugin_example_13*/
+
+	/* start code_ref= global_proerties_plugin_example_13 */
 	public static void main(String[] args) throws IOException {
 		if (args.length == 0) {
 			throw new RuntimeException("One output directory argument is required");
@@ -106,41 +105,35 @@ public final class Example_13 {
 		}
 
 		GlobalPropertiesPluginData globalPropertiesPluginData = getGlobalPropertiesPluginData();
-		
-		
-		GlobalPropertyReportPluginData globalPropertyReportPluginData = GlobalPropertyReportPluginData	.builder()//
-				.setReportLabel(ModelReportLabel.GLOBAL_PROPERTY_REPORT)//				
+
+		GlobalPropertyReportPluginData globalPropertyReportPluginData = GlobalPropertyReportPluginData.builder()//
+				.setReportLabel(ModelReportLabel.GLOBAL_PROPERTY_REPORT)//
 				.setDefaultInclusion(true)//
 				.build();
-		
-		Plugin globalPropertiesPlugin = GlobalPropertiesPlugin. builder()
+
+		Plugin globalPropertiesPlugin = GlobalPropertiesPlugin.builder()
 				.setGlobalPropertiesPluginData(globalPropertiesPluginData)
-				.setGlobalPropertyReportPluginData(globalPropertyReportPluginData)
-				.getGlobalPropertiesPlugin();
+				.setGlobalPropertyReportPluginData(globalPropertyReportPluginData).getGlobalPropertiesPlugin();
 
 		Plugin modelPlugin = ModelPlugin.getModelPlugin();
 
-		
-
-		
-
 		NIOReportItemHandler nioReportItemHandler = //
 				NIOReportItemHandler.builder()//
-									.addReport(ModelReportLabel.GLOBAL_PROPERTY_REPORT, //
-											outputDirectory.resolve("global property report.xls"))//
-									.build();
+						.addReport(ModelReportLabel.GLOBAL_PROPERTY_REPORT, //
+								outputDirectory.resolve("global property report.xls"))//
+						.build();
 
 		Dimension alphaBetaDimension = getAlphaBetaDimension();
 
-		Experiment	.builder()//
-					.addPlugin(globalPropertiesPlugin)//
-					.addPlugin(modelPlugin)//					
-					.addExperimentContextConsumer(nioReportItemHandler)//
-					.addDimension(alphaBetaDimension)//
-					.build()//
-					.execute();//
+		Experiment.builder()//
+				.addPlugin(globalPropertiesPlugin)//
+				.addPlugin(modelPlugin)//
+				.addExperimentContextConsumer(nioReportItemHandler)//
+				.addDimension(alphaBetaDimension)//
+				.build()//
+				.execute();//
 
 	}
 	/* end */
-	
+
 }

@@ -9,9 +9,9 @@ public final class ModelPlugin {
 	}
 
 	public static Plugin getModelPlugin() {
-		return Plugin	.builder()//
-						.setPluginId(ModelPluginId.PLUGIN_ID).setInitializer((c) -> {
-							c.addActor(new GammaActor()::init);
-						}).build();
+		return Plugin.builder()//
+				.setPluginId(ModelPluginId.PLUGIN_ID).setInitializer((c) -> {
+					c.addActor(new GammaActor()::init);
+				}).build();
 	}
 }

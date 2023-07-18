@@ -36,7 +36,8 @@ public final class VaccinationDataManager extends DataManager {
 
 	}
 
-	private void handlePersonRemovalEvent(DataManagerContext dataManagerContext, PersonRemovalEvent personRemovalEvent) {
+	private void handlePersonRemovalEvent(DataManagerContext dataManagerContext,
+			PersonRemovalEvent personRemovalEvent) {
 		PersonId personId = personRemovalEvent.getPersonId();
 		vaccinatedPeople.remove(personId);
 	}
@@ -65,7 +66,8 @@ public final class VaccinationDataManager extends DataManager {
 		dataManagerContext.releaseMutationEvent(new VaccinationMutationEvent(personId));
 	}
 
-	private void handleVaccinationMutationEvent(DataManagerContext dataManagerContext, VaccinationMutationEvent vaccinationMutationEvent) {
+	private void handleVaccinationMutationEvent(DataManagerContext dataManagerContext,
+			VaccinationMutationEvent vaccinationMutationEvent) {
 		PersonId personId = vaccinationMutationEvent.personId();
 		if (!personDataManager.personExists(personId)) {
 			throw new RuntimeException("unknown person " + personId);

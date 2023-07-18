@@ -26,7 +26,7 @@ public final class Vaccinator {
 					vaccinationDataManager.vaccinatePerson(personId);
 				}
 			}, planTime);
-			planTime += randomGenerator.nextDouble()/3;
+			planTime += randomGenerator.nextDouble() / 3;
 		}
 	}
 }

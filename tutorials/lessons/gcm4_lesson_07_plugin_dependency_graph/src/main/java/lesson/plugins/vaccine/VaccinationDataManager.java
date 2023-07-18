@@ -20,6 +20,7 @@ public final class VaccinationDataManager extends DataManager {
 
 	private PersonDataManager personDataManager;
 	private FamilyDataManager familyDataManager;
+
 	@Override
 	public void init(DataManagerContext dataManagerContext) {
 		super.init(dataManagerContext);
@@ -28,10 +29,12 @@ public final class VaccinationDataManager extends DataManager {
 		familyDataManager = dataManagerContext.getDataManager(FamilyDataManager.class);
 	}
 
-	private void handlePersonRemovalEvent(DataManagerContext dataManagerContext, PersonRemovalEvent personRemovalEvent) {
+	private void handlePersonRemovalEvent(DataManagerContext dataManagerContext,
+			PersonRemovalEvent personRemovalEvent) {
 		PersonId personId = personRemovalEvent.getPersonId();
 		vaccinatedPeople.remove(personId);
-		System.out.println("Vaccination Data Manager is removing person " + personId + " at time = " + dataManagerContext.getTime());
+		System.out.println("Vaccination Data Manager is removing person " + personId + " at time = "
+				+ dataManagerContext.getTime());
 	}
 
 	public Set<PersonId> getVaccinatedPeople() {
@@ -59,23 +62,24 @@ public final class VaccinationDataManager extends DataManager {
 		vaccinatedPeople.add(personId);
 
 	}
-	/* start code_ref=dag_dependent_query*/
-	public List<PersonId> getUnvaccinatedFamilyMembers(PersonId personId) {		
+
+	/* start code_ref=dag_dependent_query */
+	public List<PersonId> getUnvaccinatedFamilyMembers(PersonId personId) {
 		if (!personDataManager.personExists(personId)) {
 			throw new RuntimeException("unknown person " + personId);
 		}
 		List<PersonId> result = new ArrayList<>();
 		Optional<FamilyId> optional = familyDataManager.getFamilyId(personId);
-		if(optional.isPresent()) {
+		if (optional.isPresent()) {
 			FamilyId familyId = optional.get();
 			List<PersonId> familyMembers = familyDataManager.getFamilyMembers(familyId);
-			for(PersonId familyMemeberId : familyMembers) {
-				if(!isPersonVaccinated(familyMemeberId)) {
+			for (PersonId familyMemeberId : familyMembers) {
+				if (!isPersonVaccinated(familyMemeberId)) {
 					result.add(personId);
 				}
 			}
 		}
 		return result;
 	}
-	 /* end */
+	/* end */
 }

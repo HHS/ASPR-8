@@ -16,7 +16,7 @@ public final class Example_3 {
 	 * Introducing the addition of a plugin and an actor
 	 */
 	public static void main(String[] args) {
-		/* start code_ref=actors_actor_context_using_lambdas*/
+		/* start code_ref=actors_actor_context_using_lambdas */
 		PluginId pluginId = new SimplePluginId("example plugin");
 
 		Plugin plugin = Plugin.builder()//
@@ -44,7 +44,7 @@ public final class Example_3 {
 		pluginContext.addActor(Example_3::actorInit);
 	}
 	/* end */
-	
+
 	/* start code_ref=actors_actor_init */
 	public static void actorInit(ActorContext actorContext) {
 		System.out.println("actor being initialized");

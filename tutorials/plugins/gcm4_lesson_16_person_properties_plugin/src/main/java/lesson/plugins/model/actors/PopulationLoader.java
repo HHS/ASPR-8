@@ -27,13 +27,15 @@ public class PopulationLoader {
 	private PersonPropertiesDataManager personPropertiesDataManager;
 	private GlobalPropertiesDataManager globalPropertiesDataManager;
 
+	/* start code_ref= person_properties_population_loader_add_immunity_property */
 	private void addImmunityProperty() {
 		PersonPropertyDefinitionInitialization.Builder builder = PersonPropertyDefinitionInitialization.builder();
 		builder.setPersonPropertyId(PersonProperty.IS_IMMUNE);
 		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Boolean.class).build();
 		builder.setPropertyDefinition(propertyDefinition);
-		double immunityProbability = globalPropertiesDataManager.getGlobalPropertyValue(GlobalProperty.IMMUNITY_PROBABILITY);
-		
+		double immunityProbability = globalPropertiesDataManager
+				.getGlobalPropertyValue(GlobalProperty.IMMUNITY_PROBABILITY);
+
 		for (PersonId personId : peopleDataManager.getPeople()) {
 			boolean isImmune = randomGenerator.nextDouble() < immunityProbability;
 			builder.addPropertyValue(personId, isImmune);
@@ -41,12 +43,13 @@ public class PopulationLoader {
 		PersonPropertyDefinitionInitialization personPropertyDefinitionInitialization = builder.build();
 		personPropertiesDataManager.definePersonProperty(personPropertyDefinitionInitialization);
 	}
+	/* end */
 
+	/* start code_ref= person_properties_population_loader_init */
 	public void init(ActorContext actorContext) {
 		peopleDataManager = actorContext.getDataManager(PeopleDataManager.class);
 		personPropertiesDataManager = actorContext.getDataManager(PersonPropertiesDataManager.class);
-		globalPropertiesDataManager =
-				actorContext.getDataManager(GlobalPropertiesDataManager.class);
+		globalPropertiesDataManager = actorContext.getDataManager(GlobalPropertiesDataManager.class);
 		RegionsDataManager regionsDataManager = actorContext.getDataManager(RegionsDataManager.class);
 		StochasticsDataManager stochasticsDataManager = actorContext.getDataManager(StochasticsDataManager.class);
 		randomGenerator = stochasticsDataManager.getRandomGenerator();
@@ -62,18 +65,20 @@ public class PopulationLoader {
 			personConstructionDataBuilder.add(regionId);
 
 			boolean refusesVaccine = randomGenerator.nextDouble() < refusalProbability;
-			PersonPropertyValueInitialization personPropertyInitialization = 
-					new PersonPropertyValueInitialization(PersonProperty.REFUSES_VACCINE, refusesVaccine);
+			PersonPropertyValueInitialization personPropertyInitialization = new PersonPropertyValueInitialization(
+					PersonProperty.REFUSES_VACCINE, refusesVaccine);
 			personConstructionDataBuilder.add(personPropertyInitialization);
 			PersonConstructionData personConstructionData = personConstructionDataBuilder.build();
 			peopleDataManager.addPerson(personConstructionData);
 		}
 
-		double simulationDuration = globalPropertiesDataManager.getGlobalPropertyValue(GlobalProperty.SIMULATION_DURATION);
+		double simulationDuration = globalPropertiesDataManager
+				.getGlobalPropertyValue(GlobalProperty.SIMULATION_DURATION);
 		actorContext.addPlan((c) -> c.halt(), simulationDuration);
 
-		double immunityStartTime = globalPropertiesDataManager.getGlobalPropertyValue(GlobalProperty.IMMUNITY_START_TIME);
+		double immunityStartTime = globalPropertiesDataManager
+				.getGlobalPropertyValue(GlobalProperty.IMMUNITY_START_TIME);
 		actorContext.addPlan((c) -> addImmunityProperty(), immunityStartTime);
 	}
-	
+	/* end */
 }

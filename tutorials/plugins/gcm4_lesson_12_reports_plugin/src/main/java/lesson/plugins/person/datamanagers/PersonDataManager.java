@@ -35,7 +35,8 @@ public final class PersonDataManager extends DataManager {
 		return personId;
 	}
 
-	private void handlePersonAdditionMutationEvent(DataManagerContext dataManagerContext, PersonAdditionMutationEvent personAdditionMutationEvent) {
+	private void handlePersonAdditionMutationEvent(DataManagerContext dataManagerContext,
+			PersonAdditionMutationEvent personAdditionMutationEvent) {
 		PersonId personId = personAdditionMutationEvent.personId();
 		people.add(personId);
 		dataManagerContext.releaseObservationEvent(new PersonAdditionEvent(personId));
@@ -56,7 +57,8 @@ public final class PersonDataManager extends DataManager {
 		dataManagerContext.releaseMutationEvent(new PersonRemovalMutationEvent(personId));
 	}
 
-	private void handlePersonRemovalMutationEvent(DataManagerContext dataManagerContext, PersonRemovalMutationEvent personRemovalMutationEvent) {
+	private void handlePersonRemovalMutationEvent(DataManagerContext dataManagerContext,
+			PersonRemovalMutationEvent personRemovalMutationEvent) {
 		PersonId personId = personRemovalMutationEvent.personId();
 		if (!personExists(personId)) {
 			throw new RuntimeException("person " + personId + " does not exist");

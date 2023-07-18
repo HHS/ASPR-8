@@ -17,7 +17,7 @@ public final class PolicyPluginData implements PluginData {
 
 		private Data(final Data data) {
 			schoolClosingInfectionRate = data.schoolClosingInfectionRate;
-			distributeVaccineLocally = data.distributeVaccineLocally;			
+			distributeVaccineLocally = data.distributeVaccineLocally;
 		}
 
 		@Override
@@ -43,12 +43,13 @@ public final class PolicyPluginData implements PluginData {
 			if (distributeVaccineLocally != other.distributeVaccineLocally) {
 				return false;
 			}
-			if (Double.doubleToLongBits(schoolClosingInfectionRate) != Double.doubleToLongBits(other.schoolClosingInfectionRate)) {
+			if (Double.doubleToLongBits(schoolClosingInfectionRate) != Double
+					.doubleToLongBits(other.schoolClosingInfectionRate)) {
 				return false;
 			}
 			return true;
 		}
-		
+
 	}
 
 	public static class Builder implements PluginDataBuilder {
@@ -59,10 +60,9 @@ public final class PolicyPluginData implements PluginData {
 		}
 
 		@Override
-		public PolicyPluginData build() {		
-			return new PolicyPluginData(new Data(data));			
+		public PolicyPluginData build() {
+			return new PolicyPluginData(new Data(data));
 		}
-
 
 		public Builder setSchoolClosingInfectionRate(double schoolClosingInfectionRate) {
 			data.schoolClosingInfectionRate = schoolClosingInfectionRate;

@@ -51,8 +51,10 @@ public final class MaterialManufactureSpecification {
 		private double deliveryDelay;
 		private double stageAmount;
 		private BatchId batchId;
-		
-		public Data() {}
+
+		public Data() {
+		}
+
 		public Data(Data data) {
 			materialId = data.materialId;
 			onOrder = data.onOrder;

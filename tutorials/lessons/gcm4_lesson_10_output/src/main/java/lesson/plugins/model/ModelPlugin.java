@@ -10,12 +10,12 @@ public final class ModelPlugin {
 
 	public static Plugin getModelPlugin() {
 
-		return Plugin	.builder()//
-						.setPluginId(ModelPluginId.PLUGIN_ID)//						
-						.setInitializer((c) -> {
-							c.addActor(new ModelActor()::init);
-						})//
-						.build();
+		return Plugin.builder()//
+				.setPluginId(ModelPluginId.PLUGIN_ID)//
+				.setInitializer((c) -> {
+					c.addActor(new ModelActor()::init);
+				})//
+				.build();
 	}
 
 }

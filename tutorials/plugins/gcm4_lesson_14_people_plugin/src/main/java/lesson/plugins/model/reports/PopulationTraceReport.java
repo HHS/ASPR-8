@@ -19,10 +19,10 @@ public final class PopulationTraceReport {
 	private ReportContext reportContext;
 
 	private ReportHeader reportHeader = ReportHeader.builder()//
-													.add("time")//
-													.add("personId")//
-													.add("action")//
-													.build();
+			.add("time")//
+			.add("personId")//
+			.add("action")//
+			.build();
 
 	public PopulationTraceReport(ReportLabel reportLabel) {
 		this.reportLabel = reportLabel;
@@ -41,7 +41,8 @@ public final class PopulationTraceReport {
 
 	}
 
-	private void handlePersonImminentRemovalEvent(ReportContext reportContext, PersonImminentRemovalEvent personImminentRemovalEvent) {
+	private void handlePersonImminentRemovalEvent(ReportContext reportContext,
+			PersonImminentRemovalEvent personImminentRemovalEvent) {
 		generateReportItem(Action.REMOVAL, personImminentRemovalEvent.personId());
 	}
 
@@ -50,13 +51,13 @@ public final class PopulationTraceReport {
 	}
 
 	private void generateReportItem(Action action, PersonId personId) {
-		ReportItem reportItem = ReportItem	.builder()//
-											.setReportLabel(reportLabel)//
-											.setReportHeader(reportHeader)//
-											.addValue(reportContext.getTime())//
-											.addValue(personId)//
-											.addValue(action)//
-											.build();
+		ReportItem reportItem = ReportItem.builder()//
+				.setReportLabel(reportLabel)//
+				.setReportHeader(reportHeader)//
+				.addValue(reportContext.getTime())//
+				.addValue(personId)//
+				.addValue(action)//
+				.build();
 		reportContext.releaseOutput(reportItem);
 	}
 

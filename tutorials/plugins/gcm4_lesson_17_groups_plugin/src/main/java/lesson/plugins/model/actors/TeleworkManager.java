@@ -23,11 +23,12 @@ public class TeleworkManager {
 	private final double reviewInterval = 7;
 	private ActorContext actorContext;
 	
+	/* start code_ref= groups_plugin_telework_manager_init */
 	public void init(ActorContext actorContext) {
 		this.actorContext = actorContext;
 		scheduleNextReview();
 	}
-	
+
 	private void scheduleNextReview() {
 		double planTime = actorContext.getTime() + reviewInterval;
 		Plan<ActorContext> plan = Plan.builder(ActorContext.class)//
@@ -35,50 +36,42 @@ public class TeleworkManager {
 				.setActive(false)//
 				.setTime(planTime)//
 				.build();
-		
+
 		actorContext.addPlan(plan);
 	}
-
+	/* end */
+	/* start code_ref= groups_plugin_telework_review_status */
 	private void reviewTeleworkStatus(ActorContext actorContext) {
-		StochasticsDataManager stochasticsDataManager = 
-				actorContext.getDataManager(StochasticsDataManager.class);
-		RandomGenerator randomGenerator = stochasticsDataManager
-				.getRandomGenerator();
-		PeopleDataManager peopleDataManager = actorContext
-				.getDataManager(PeopleDataManager.class);
+		StochasticsDataManager stochasticsDataManager = actorContext.getDataManager(StochasticsDataManager.class);
+		RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
+		PeopleDataManager peopleDataManager = actorContext.getDataManager(PeopleDataManager.class);
 		PersonPropertiesDataManager personPropertiesDataManager = actorContext
 				.getDataManager(PersonPropertiesDataManager.class);
-		GroupsDataManager groupsDataManager = actorContext
-				.getDataManager(GroupsDataManager.class);
+		GroupsDataManager groupsDataManager = actorContext.getDataManager(GroupsDataManager.class);
 		GlobalPropertiesDataManager globalPropertiesDataManager = actorContext
 				.getDataManager(GlobalPropertiesDataManager.class);
 		double threshold = globalPropertiesDataManager
-				.getGlobalPropertyValue(
-						GlobalProperty.TELEWORK_INFECTION_THRESHOLD);
+				.getGlobalPropertyValue(GlobalProperty.TELEWORK_INFECTION_THRESHOLD);
 		double teleworkProbability = globalPropertiesDataManager
 				.getGlobalPropertyValue(GlobalProperty.TELEWORK_PROBABILTY);
 
-		int infectiousCount = personPropertiesDataManager
-				.getPersonCountForPropertyValue(PersonProperty.DISEASE_STATE
-						, DiseaseState.INFECTIOUS);
+		int infectiousCount = personPropertiesDataManager.getPersonCountForPropertyValue(PersonProperty.DISEASE_STATE,
+				DiseaseState.INFECTIOUS);
 		int populationCount = peopleDataManager.getPopulationCount();
 
 		double infectiousFraction = infectiousCount;
 		infectiousFraction /= populationCount;
 
 		if (infectiousFraction >= threshold) {
-			List<GroupId> workGroupIds = groupsDataManager
-					.getGroupsForGroupType(GroupType.WORK);
+			List<GroupId> workGroupIds = groupsDataManager.getGroupsForGroupType(GroupType.WORK);
 			for (GroupId groupId : workGroupIds) {
 				if (randomGenerator.nextDouble() < teleworkProbability) {
-					groupsDataManager
-					.setGroupPropertyValue(groupId, 
-							GroupProperty.TELEWORK, true);
+					groupsDataManager.setGroupPropertyValue(groupId, GroupProperty.TELEWORK, true);
 				}
 			}
 		} else {
 			scheduleNextReview();
 		}
 	}
-	
+	/* end */
 }

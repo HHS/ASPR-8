@@ -59,8 +59,6 @@ public final class Example_15 {
 				.build();
 	}
 
-
-	
 	/* start code_ref= regions_plugin_example_getting_people_plugin */
 	private Plugin getPeoplePlugin() {
 		PeoplePluginData.Builder peoplePluginDataBuilder = PeoplePluginData.builder();
@@ -71,7 +69,7 @@ public final class Example_15 {
 		return PeoplePlugin.getPeoplePlugin(peoplePluginData);
 	}
 	/* end */
-	
+
 	/* start code_ref= regions_plugin_example_getting_regions_plugin */
 	private Plugin getRegionsPlugin() {
 		// create the region plugin with an initial five regions, each region
@@ -119,7 +117,7 @@ public final class Example_15 {
 				.getRegionsPlugin();
 	}
 	/* end */
-	
+
 	/* start code_ref= regions_plugin_example_15_intialize_people_regions */
 	private void initializePeopleAndRegions() {
 		for (int i = 0; i < 1000; i++) {
@@ -130,7 +128,7 @@ public final class Example_15 {
 		}
 	}
 	/* end */
-	
+
 	/* start code_ref= regions_plugin_example_15_stochastics */
 	private Plugin getStochasticsPlugin() {
 
@@ -172,7 +170,7 @@ public final class Example_15 {
 		return builder.build();
 	}
 	/* end */
-	
+
 	/* start code_ref= regions_plugin_example_15_execute */
 	private void execute() {
 		/*

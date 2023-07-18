@@ -19,7 +19,7 @@ public final class Region implements RegionId {
 	 * Constructs the region
 	 *
 	 * @throws ContractException
-	 *             <li>{@linkplain ModelError#NEGATIVE_REGION_ID}</li>
+	 *                           <li>{@linkplain ModelError#NEGATIVE_REGION_ID}</li>
 	 */
 	public Region(final int id) {
 		if (id < 0) {

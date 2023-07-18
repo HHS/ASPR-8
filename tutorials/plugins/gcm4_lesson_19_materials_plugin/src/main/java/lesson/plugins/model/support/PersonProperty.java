@@ -8,5 +8,5 @@ public enum PersonProperty implements PersonPropertyId {
 	VACCINE_SCHEDULED, // boolean indicating whether a vaccination is scheduled for a person
 	DISEASE_STATE, // IMMUNE,SUSCEPTIBLE, INFECTIOUS or RECOVERED
 	;
-	
+
 }

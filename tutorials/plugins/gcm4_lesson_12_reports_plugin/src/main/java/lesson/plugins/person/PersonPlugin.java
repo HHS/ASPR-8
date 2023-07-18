@@ -10,11 +10,11 @@ public class PersonPlugin {
 
 	public static Plugin getPersonPlugin() {
 
-		return Plugin	.builder()//
-						.setPluginId(PersonPluginId.PLUGIN_ID)//
-						.setInitializer((c) -> {
-							c.addDataManager(new PersonDataManager());
-						})//
-						.build();
+		return Plugin.builder()//
+				.setPluginId(PersonPluginId.PLUGIN_ID)//
+				.setInitializer((c) -> {
+					c.addDataManager(new PersonDataManager());
+				})//
+				.build();
 	}
 }

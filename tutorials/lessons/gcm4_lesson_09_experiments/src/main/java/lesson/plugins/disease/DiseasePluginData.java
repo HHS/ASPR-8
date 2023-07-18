@@ -58,13 +58,11 @@ public final class DiseasePluginData implements PluginData {
 			}
 			return true;
 		}
-		
-		
+
 	}
 
 	public static class Builder implements PluginDataBuilder {
 		private Data data;
-		
 
 		private Builder(final Data data) {
 			this.data = data;
@@ -145,7 +143,5 @@ public final class DiseasePluginData implements PluginData {
 		}
 		return true;
 	}
-	
-	
 
 }

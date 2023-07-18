@@ -25,6 +25,5 @@ public final class VaccinationEvent implements Event {
 		builder.append("]");
 		return builder.toString();
 	}
-	
-	
+
 }

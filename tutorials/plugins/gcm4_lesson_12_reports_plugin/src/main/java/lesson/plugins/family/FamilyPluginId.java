@@ -2,6 +2,7 @@ package lesson.plugins.family;
 
 import nucleus.PluginId;
 import nucleus.SimplePluginId;
+
 /**
  * Static plugin id implementation for the Family Plugin
  * 
@@ -9,7 +10,9 @@ import nucleus.SimplePluginId;
  */
 
 public final class FamilyPluginId implements PluginId {
-	private FamilyPluginId() {};
+	private FamilyPluginId() {
+	};
+
 	public final static PluginId PLUGIN_ID = new SimplePluginId("family plugin id");
-	
+
 }

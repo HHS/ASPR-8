@@ -37,12 +37,13 @@ public final class VaccinationDataManager extends DataManager {
 		for (PersonId personId : people) {
 			vaccinationCounts.put(personId, new MutableInteger());
 		}
-		
+
 		dataManagerContext.subscribe(VaccinationMutationEvent.class, this::handleVaccinationEvent);
 
 	}
 
-	private void handlePersonRemovalEvent(DataManagerContext dataManagerContext, PersonRemovalEvent personRemovalEvent) {
+	private void handlePersonRemovalEvent(DataManagerContext dataManagerContext,
+			PersonRemovalEvent personRemovalEvent) {
 		PersonId personId = personRemovalEvent.personId();
 		vaccinationCounts.remove(personId);
 	}
@@ -55,14 +56,14 @@ public final class VaccinationDataManager extends DataManager {
 		vaccinationCounts.put(personId, mutableInteger);
 		Optional<VaccineInitialization> optional = //
 				personImminentAdditionEvent//
-											.personConstructionData()//
-											.getValue(VaccineInitialization.class);
+						.personConstructionData()//
+						.getValue(VaccineInitialization.class);
 		if (optional.isPresent()) {
 			VaccineInitialization vaccineInitialization = optional.get();
 			int vaccineCount = vaccineInitialization.getVaccineCount();
 			validateInitialVaccineCount(vaccineCount);
 			mutableInteger.setValue(vaccineCount);
-		}		
+		}
 	}
 
 	private void validateInitialVaccineCount(int initialVaccineCount) {
@@ -112,47 +113,49 @@ public final class VaccinationDataManager extends DataManager {
 	 * Returns true if and only if the person is vaccinated
 	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain PersonError#NULL_PERSON_ID} if the person id
-	 *             is null</li>
-	 *             <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if the person
-	 *             id is unknown</li>
+	 *                           <li>{@linkplain PersonError#NULL_PERSON_ID} if the
+	 *                           person id is null</li>
+	 *                           <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if
+	 *                           the person id is unknown</li>
 	 */
 	public boolean isPersonVaccinated(PersonId personId) {
 		validatePersonId(personId);
 		return vaccinationCounts.get(personId).getValue() > 0;
 	}
-	private static record VaccinationMutationEvent(PersonId personId) implements Event{}
+
+	private static record VaccinationMutationEvent(PersonId personId) implements Event {
+	}
+
 	/**
 	 * Increases the vaccine count for a person
 	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain PersonError#NULL_PERSON_ID} if the person id
-	 *             is null</li>
-	 *             <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if the person
-	 *             id is unknown</li>
+	 *                           <li>{@linkplain PersonError#NULL_PERSON_ID} if the
+	 *                           person id is null</li>
+	 *                           <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if
+	 *                           the person id is unknown</li>
 	 * 
 	 */
-	
-	
-	public void vaccinatePerson(PersonId personId) {		
-		dataManagerContext.releaseMutationEvent(new VaccinationMutationEvent(personId));	
+
+	public void vaccinatePerson(PersonId personId) {
+		dataManagerContext.releaseMutationEvent(new VaccinationMutationEvent(personId));
 	}
-	
-	private void handleVaccinationEvent(DataManagerContext dataManagerContext, VaccinationMutationEvent vaccinationMutationEvent) {
+
+	private void handleVaccinationEvent(DataManagerContext dataManagerContext,
+			VaccinationMutationEvent vaccinationMutationEvent) {
 		PersonId personId = vaccinationMutationEvent.personId();
 		validatePersonId(personId);
 		vaccinationCounts.get(personId).increment();
 	}
-	
 
 	/**
 	 * Returns the number of vaccines a person has recieved
 	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain PersonError#NULL_PERSON_ID} if the person id
-	 *             is null</li>
-	 *             <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if the person
-	 *             id is unknown</li>
+	 *                           <li>{@linkplain PersonError#NULL_PERSON_ID} if the
+	 *                           person id is null</li>
+	 *                           <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if
+	 *                           the person id is unknown</li>
 	 * 
 	 */
 	public int getPersonVaccinationCount(PersonId personId) {

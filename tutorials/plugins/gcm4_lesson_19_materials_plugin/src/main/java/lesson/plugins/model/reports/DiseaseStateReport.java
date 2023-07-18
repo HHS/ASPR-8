@@ -31,13 +31,15 @@ public final class DiseaseStateReport extends PeriodicReport {
 		reportItemBuilder.setReportHeader(getReportHeader());
 		fillTimeFields(reportItemBuilder);
 		reportItemBuilder.addValue(reportContext.getTime());
-		
-		
-		final PersonPropertiesDataManager personPropertiesDataManager = reportContext.getDataManager(PersonPropertiesDataManager.class);
-		int vaccinatedCount = personPropertiesDataManager.getPersonCountForPropertyValue(PersonProperty.VACCINATED, true);
+
+		final PersonPropertiesDataManager personPropertiesDataManager = reportContext
+				.getDataManager(PersonPropertiesDataManager.class);
+		int vaccinatedCount = personPropertiesDataManager.getPersonCountForPropertyValue(PersonProperty.VACCINATED,
+				true);
 		reportItemBuilder.addValue(vaccinatedCount);
 		for (final DiseaseState diseaseState : DiseaseState.values()) {
-			final int count = personPropertiesDataManager.getPersonCountForPropertyValue(PersonProperty.DISEASE_STATE, diseaseState);
+			final int count = personPropertiesDataManager.getPersonCountForPropertyValue(PersonProperty.DISEASE_STATE,
+					diseaseState);
 			reportItemBuilder.addValue(count);
 		}
 
@@ -59,7 +61,5 @@ public final class DiseaseStateReport extends PeriodicReport {
 		}
 		return reportHeader;
 	}
-
-	
 
 }

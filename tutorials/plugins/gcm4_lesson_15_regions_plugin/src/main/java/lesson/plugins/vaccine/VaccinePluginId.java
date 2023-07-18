@@ -2,6 +2,7 @@ package lesson.plugins.vaccine;
 
 import nucleus.PluginId;
 import nucleus.SimplePluginId;
+
 /**
  * Static plugin id implementation for the Vaccine Plugin
  * 
@@ -9,7 +10,9 @@ import nucleus.SimplePluginId;
  */
 
 public final class VaccinePluginId implements PluginId {
-	private VaccinePluginId() {};
+	private VaccinePluginId() {
+	};
+
 	public final static PluginId PLUGIN_ID = new SimplePluginId("vaccine plugin id");
-	
+
 }

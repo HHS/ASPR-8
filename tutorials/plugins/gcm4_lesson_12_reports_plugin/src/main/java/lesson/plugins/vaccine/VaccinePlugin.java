@@ -17,17 +17,18 @@ public class VaccinePlugin {
 
 	public static Plugin getVaccinePlugin() {
 
-		return Plugin	.builder()//
-						.setPluginId(VaccinePluginId.PLUGIN_ID)//
-						.addPluginDependency(PersonPluginId.PLUGIN_ID)//
-						.addPluginDependency(FamilyPluginId.PLUGIN_ID)//
-						.setInitializer((c) -> {
-							c.addDataManager(new VaccinationDataManager());
-							c.addReport(new FamilyVaccineReport(ModelLabel.FAMILY_VACCINE_REPORT)::init);//
-							c.addReport(new HourlyVaccineReport(ModelLabel.HOURLY_VACCINE_REPORT, ReportPeriod.HOURLY)::init);//
-							c.addReport(new StatelessVaccineReport(ModelLabel.STATELESS_VACCINE_REPORT, ReportPeriod.HOURLY)::init);//
-						})//
-						.build();
+		return Plugin.builder()//
+				.setPluginId(VaccinePluginId.PLUGIN_ID)//
+				.addPluginDependency(PersonPluginId.PLUGIN_ID)//
+				.addPluginDependency(FamilyPluginId.PLUGIN_ID)//
+				.setInitializer((c) -> {
+					c.addDataManager(new VaccinationDataManager());
+					c.addReport(new FamilyVaccineReport(ModelLabel.FAMILY_VACCINE_REPORT)::init);//
+					c.addReport(new HourlyVaccineReport(ModelLabel.HOURLY_VACCINE_REPORT, ReportPeriod.HOURLY)::init);//
+					c.addReport(
+							new StatelessVaccineReport(ModelLabel.STATELESS_VACCINE_REPORT, ReportPeriod.HOURLY)::init);//
+				})//
+				.build();
 
 	}
 }

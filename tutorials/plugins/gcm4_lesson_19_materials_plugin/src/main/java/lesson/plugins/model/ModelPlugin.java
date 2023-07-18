@@ -12,17 +12,19 @@ import plugins.reports.support.ReportPeriod;
 
 public final class ModelPlugin {
 	public static Plugin getModelPlugin() {
-		return Plugin	.builder()//
-						.setPluginId(ModelPluginId.PLUGIN_ID).setInitializer((c) -> {
-							c.addActor(new PopulationLoader()::init);
-							c.addActor(new ContactManager()::init);
-							c.addActor(new Vaccinator()::init);
-							
-							c.addReport(new DiseaseStateReport(ModelReportLabel.DISEASE_STATE_REPORT, ReportPeriod.END_OF_SIMULATION)::init);//
-							c.addReport(new VaccineReport(ModelReportLabel.VACCINE_REPORT, ReportPeriod.DAILY)::init);//
-							c.addReport(new VaccineProductionReport(ModelReportLabel.VACCINE_PRODUCTION_REPORT, ReportPeriod.DAILY)::init);//
+		return Plugin.builder()//
+				.setPluginId(ModelPluginId.PLUGIN_ID).setInitializer((c) -> {
+					c.addActor(new PopulationLoader()::init);
+					c.addActor(new ContactManager()::init);
+					c.addActor(new Vaccinator()::init);
 
-						}).build();
+					c.addReport(new DiseaseStateReport(ModelReportLabel.DISEASE_STATE_REPORT,
+							ReportPeriod.END_OF_SIMULATION)::init);//
+					c.addReport(new VaccineReport(ModelReportLabel.VACCINE_REPORT, ReportPeriod.DAILY)::init);//
+					c.addReport(new VaccineProductionReport(ModelReportLabel.VACCINE_PRODUCTION_REPORT,
+							ReportPeriod.DAILY)::init);//
+
+				}).build();
 	}
 
 	private ModelPlugin() {

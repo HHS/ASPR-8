@@ -69,9 +69,9 @@ public final class ModelActor {
 		if (personDataManager.personExists(personId)) {
 			VaccinationDataManager vaccinationDataManager = actorContext.getDataManager(VaccinationDataManager.class);
 			vaccinationDataManager.vaccinatePerson(personId);
-			System.out.println("Person "+personId+" was vaccinated at time = "+actorContext.getTime());
-		}else {
-			System.out.println("Failed to vaccinate Person "+personId+" at time = "+actorContext.getTime());
+			System.out.println("Person " + personId + " was vaccinated at time = " + actorContext.getTime());
+		} else {
+			System.out.println("Failed to vaccinate Person " + personId + " at time = " + actorContext.getTime());
 		}
 	}
 }

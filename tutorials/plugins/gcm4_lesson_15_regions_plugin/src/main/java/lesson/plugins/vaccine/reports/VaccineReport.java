@@ -60,9 +60,9 @@ public final class VaccineReport extends PeriodicReport {
 			}
 			mutableInteger.increment();
 		}
-		ReportItem.Builder builder = ReportItem	.builder()//
-												.setReportLabel(getReportLabel())//
-												.setReportHeader(reportHeader);
+		ReportItem.Builder builder = ReportItem.builder()//
+				.setReportLabel(getReportLabel())//
+				.setReportHeader(reportHeader);
 		fillTimeFields(builder);
 
 		for (int i = 0; i <= maxVaccinedCount; i++) {
