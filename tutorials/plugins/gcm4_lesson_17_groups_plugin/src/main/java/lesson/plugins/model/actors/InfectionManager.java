@@ -33,7 +33,7 @@ public class InfectionManager {
 	private int minInfectiousPeriod;
 	private int maxInfectiousPeriod;
 	private double infectionInterval;
-
+	/* start code_ref= groups_plugin_infection_manager_init */
 	public void init(ActorContext actorContext) {
 		this.actorContext = actorContext;
 
@@ -71,7 +71,9 @@ public class InfectionManager {
 			actorContext.addPlan((c) -> infectPerson(personId), planTime);
 		}
 	}
+	/* end */
 
+	/* start code_ref= groups_plugin_infection_manager_infect_person */
 	private void infectPerson(PersonId personId) {
 		personPropertiesDataManager.setPersonPropertyValue(personId, PersonProperty.DISEASE_STATE,
 				DiseaseState.INFECTIOUS);
@@ -84,7 +86,9 @@ public class InfectionManager {
 		}
 		actorContext.addPlan((c) -> endInfectiousness(personId), planTime);
 	}
-
+	/* end */
+	
+	/* start code_ref= groups_plugin_infection_manager_infect_contact */
 	private void infectContact(PersonId personId) {
 		List<GroupId> groupsForPerson = groupsDataManager.getGroupsForPerson(personId);
 		GroupId groupId = groupsForPerson.get(randomGenerator.nextInt(groupsForPerson.size()));
@@ -134,6 +138,7 @@ public class InfectionManager {
 			}
 		}
 	}
+	/* end */
 
 	private void endInfectiousness(PersonId personId) {
 		personPropertiesDataManager.setPersonPropertyValue(personId, PersonProperty.DISEASE_STATE,
