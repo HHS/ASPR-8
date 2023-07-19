@@ -67,7 +67,7 @@ public final class Example_17 {
 		PeoplePluginData peoplePluginData = PeoplePluginData.builder().build();
 		return PeoplePlugin.getPeoplePlugin(peoplePluginData);
 	}
-	
+
 	/* start code_ref= groups_plugin_example_17_groups_plugin */
 	private Plugin getGroupsPlugin() {
 		GroupsPluginData.Builder builder = GroupsPluginData.builder();
@@ -100,7 +100,8 @@ public final class Example_17 {
 				.setGroupPopulationReportPluginData(groupPopulationReportPluginData)//
 				.getGroupsPlugin();
 	}
-/*end*/
+
+	/* end */
 	private Plugin getStochasticsPlugin() {
 
 		WellState wellState = WellState.builder().setSeed(randomGenerator.nextLong()).build();

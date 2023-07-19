@@ -78,10 +78,12 @@ public final class VaccineProducer {
 		materialsDataManager.removeStage(stageId, true);
 	}
 
+	/* start code_ref=materials_plugin_vaccine_producer_end_vaccine_preparation */
 	private void endVaccinePreparation(final StageId stageId) {
 		materialsDataManager.convertStageToResource(stageId, Resource.VACCINE, vaccineUnits);
 		planVaccinePrepartion();
 	}
+	/* end */
 
 	private void handleStageOfferUpdateEvent(final ActorContext actorContext,
 			final StageOfferUpdateEvent stageOfferUpdateEvent) {
@@ -105,6 +107,7 @@ public final class VaccineProducer {
 
 	}
 
+	/* start code_ref=materials_plugin_vaccine_producer_init */
 	public void init(final ActorContext actorContext) {
 		this.actorContext = actorContext;
 		materialsDataManager = actorContext.getDataManager(MaterialsDataManager.class);
@@ -139,6 +142,7 @@ public final class VaccineProducer {
 
 		planVaccinePrepartion();
 	}
+	/* end */
 
 	private boolean isCapturableStage(final StageOfferUpdateEvent stageOfferUpdateEvent) {
 		// the stage must be offered
@@ -221,6 +225,7 @@ public final class VaccineProducer {
 		}
 	}
 
+	/* start code_ref=materials_plugin_vaccine_producer_plan_vaccine_preparation */
 	private void planVaccinePrepartion() {
 		final Boolean continueManufature = globalPropertiesDataManager
 				.getGlobalPropertyValue(GlobalProperty.MANUFACTURE_VACCINE);
@@ -252,6 +257,7 @@ public final class VaccineProducer {
 			actorContext.addPlan((c) -> endVaccinePreparation(stageId), planTime);
 		}
 	}
+	/* end */
 
 	private void receiveMaterial(final MaterialId materialId, final double amount) {
 		final MaterialManufactureSpecification materialRec = materialRecs.get(materialId);

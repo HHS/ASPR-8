@@ -240,8 +240,7 @@ public class FamilyVaccineReport {
 	/* end */
 
 	/*
-	 * start
-	 * code_ref=reports_plugin_family_vaccine_report_refeshing_individual_status
+	 * start code_ref=reports_plugin_family_vaccine_report_refeshing_individual_status
 	 */
 	private void refreshIndividualStatus(final PersonId personId) {
 		IndividualVaccineStatus newStatus;
@@ -267,8 +266,7 @@ public class FamilyVaccineReport {
 	/* end */
 
 	/*
-	 * start
-	 * code_ref=reports_plugin_family_vaccine_report_init_releasing_report_item
+	 * start code_ref=reports_plugin_family_vaccine_report_init_releasing_report_item
 	 */
 	private void releaseReportItem() {
 		final ReportItem.Builder builder = ReportItem.builder().setReportLabel(reportLabel)

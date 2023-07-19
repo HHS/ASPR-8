@@ -24,6 +24,7 @@ public final class Vaccinator {
 	private GlobalPropertiesDataManager globalPropertiesDataManager;
 	private double vaccineAttemptInterval;
 	private ActorContext actorContext;
+
 	/* start code_ref= person_properties_vaccinator_vaccinate_person */
 	private void vaccinatePerson(PersonId personId) {
 		int vaccineAttempts = personPropertiesDataManager.getPersonPropertyValue(personId,
@@ -56,7 +57,7 @@ public final class Vaccinator {
 		}
 	}
 	/* end */
-	
+
 	/* start code_ref= person_properties_vaccinator_handle_vaccine_acceptance */
 	private void handleVaccineAcceptance(ActorContext actorContext,
 			PersonPropertyUpdateEvent personPropertyUpdateEvent) {
@@ -73,7 +74,7 @@ public final class Vaccinator {
 		}
 	}
 	/* end */
-	
+
 	/* start code_ref= person_properties_vaccinator_handle_new_person */
 	private void planVaccination(PersonId personId) {
 		double planTime = actorContext.getTime() + randomGenerator.nextDouble() * vaccineAttemptInterval;
@@ -93,7 +94,7 @@ public final class Vaccinator {
 		}
 	}
 	/* end */
-	
+
 	/* start code_ref= person_properties_vaccinator_init */
 	public void init(ActorContext actorContext) {
 		this.actorContext = actorContext;

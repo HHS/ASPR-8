@@ -99,7 +99,7 @@ public class SchoolManager {
 	}
 
 	/* end */
-	
+
 	/* start code_ref= groups_plugin_school_manager_close_schools */
 	private void closeSchool(GroupId groupId) {
 		groupsDataManager.setGroupPropertyValue(groupId, GroupProperty.SCHOOL_STATUS, SchoolStatus.CLOSED);

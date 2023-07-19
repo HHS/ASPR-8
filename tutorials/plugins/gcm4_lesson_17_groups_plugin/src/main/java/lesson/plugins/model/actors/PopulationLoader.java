@@ -111,9 +111,7 @@ public class PopulationLoader {
 			schoolGroupIds.add(groupId);
 		}
 		/* end */
-		
-		
-		
+
 		// determine the subsets of people by age
 		/* start code_ref= groups_plugin_population_loader_age_subsets */
 		List<PersonId> peopleInRegion = regionsDataManager.getPeopleInRegion(regionId);
@@ -174,6 +172,7 @@ public class PopulationLoader {
 			groupsDataManager.addPersonToGroup(personId, groupId);
 		}
 	}
+
 	/* end */
 	/* start code_ref= groups_plugin_population_loader_init */
 	public void init(ActorContext actorContext) {

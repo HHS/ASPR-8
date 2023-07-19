@@ -69,7 +69,7 @@ public final class Example_16 {
 		RegionsPluginData regionsPluginData = regionsPluginDataBuilder.build();
 		return RegionsPlugin.builder().setRegionsPluginData(regionsPluginData).getRegionsPlugin();
 	}
-	
+
 	/* start code_ref= person_properties_get_person_properties_plugin */
 	private Plugin getPersonPropertiesPlugin() {
 		PersonPropertiesPluginData.Builder builder = PersonPropertiesPluginData.builder();
@@ -164,6 +164,7 @@ public final class Example_16 {
 		double[] values = new double[] { 0.0, 0.1, 0.2 };
 		return getGlobalPropertyDimension(GlobalProperty.EDUCATION_SUCCESS_RATE, "education_success_rate", values);
 	}
+
 	/* start code_ref= person_properties_get_global_properties_plugin */
 	private Plugin getGlobalPropertiesPlugin() {
 		GlobalPropertiesPluginData.Builder builder = GlobalPropertiesPluginData.builder();//
@@ -202,6 +203,7 @@ public final class Example_16 {
 				.getGlobalPropertiesPlugin();
 
 	}
+
 	/* end */
 	/* start code_ref= person_properties_example_16_execute */
 	private void execute() {
@@ -245,12 +247,11 @@ public final class Example_16 {
 		 */
 
 		/* start code_ref= person_properties_execute_experiment */
-		
+
 		ExperimentParameterData experimentParameterData = ExperimentParameterData.builder()//
 				.setThreadCount(8)//
 				.build();
 
-		
 		Experiment.builder()//
 
 				.addPlugin(personPropertiesPlugin)//

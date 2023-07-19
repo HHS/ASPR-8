@@ -33,6 +33,7 @@ public class InfectionManager {
 	private int minInfectiousPeriod;
 	private int maxInfectiousPeriod;
 	private double infectionInterval;
+
 	/* start code_ref= groups_plugin_infection_manager_init */
 	public void init(ActorContext actorContext) {
 		this.actorContext = actorContext;
@@ -87,7 +88,7 @@ public class InfectionManager {
 		actorContext.addPlan((c) -> endInfectiousness(personId), planTime);
 	}
 	/* end */
-	
+
 	/* start code_ref= groups_plugin_infection_manager_infect_contact */
 	private void infectContact(PersonId personId) {
 		List<GroupId> groupsForPerson = groupsDataManager.getGroupsForPerson(personId);

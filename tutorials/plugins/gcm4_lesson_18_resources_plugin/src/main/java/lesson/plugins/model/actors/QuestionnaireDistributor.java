@@ -45,8 +45,7 @@ public class QuestionnaireDistributor {
 	/* end */
 
 	/*
-	 * start
-	 * code_ref=resources_QuestionnaireDistributor_handleAntiHospitalBedDistribution
+	 * start code_ref=resources_QuestionnaireDistributor_handleAntiHospitalBedDistribution
 	 */
 	private void handleAntiHospitalBedDistribution(ActorContext actorContext,
 			PersonResourceUpdateEvent personResourceUpdateEvent) {

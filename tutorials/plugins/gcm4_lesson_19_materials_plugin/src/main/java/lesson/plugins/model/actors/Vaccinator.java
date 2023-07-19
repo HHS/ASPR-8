@@ -52,6 +52,7 @@ public class Vaccinator {
 
 	private boolean manufactureStarted;
 
+	/* start code_ref=materials_plugin_vaccinator_manufacture_start */
 	private void determineVaccineManufacutureStart() {
 		if (!manufactureStarted) {
 			if (infectedPersonCount >= infectionPersonCountThreshold) {
@@ -63,6 +64,8 @@ public class Vaccinator {
 		}
 	}
 
+	/* end */
+	/* start code_ref=materials_plugin_vaccinator_producer_resource_update */
 	private void handleMaterialsProducerResourceUpdateEvent(final ActorContext actorContext,
 			final MaterialsProducerResourceUpdateEvent materialsProducerResourceUpdateEvent) {
 		if (isCapturableResource(materialsProducerResourceUpdateEvent)) {
@@ -93,6 +96,8 @@ public class Vaccinator {
 		}
 	}
 
+	/* end */
+	/* start code_ref=materials_plugin_vaccinator_person_property_update */
 	private void handlePersonPropertyUpdateEvent(final ActorContext actorContext,
 			final PersonPropertyUpdateEvent personPropertyUpdateEvent) {
 
@@ -103,6 +108,8 @@ public class Vaccinator {
 		}
 	}
 
+	/* end */
+	/* start code_ref=materials_plugin_vaccinator_init */
 	public void init(final ActorContext actorContext) {
 		this.actorContext = actorContext;
 		actorContext.addActor(new VaccineProducer(MaterialsProducer.VACCINE_PRODUCER)::init);
@@ -135,6 +142,8 @@ public class Vaccinator {
 		scheduleVaccinations();
 	}
 
+	/* end */
+	/* start code_ref=materials_plugin_vaccinator_producer_capturable_resource */
 	private boolean isCapturableResource(
 			final MaterialsProducerResourceUpdateEvent materialsProducerResourceUpdateEvent) {
 		if (!materialsProducerResourceUpdateEvent.resourceId().equals(Resource.VACCINE)) {
@@ -158,6 +167,8 @@ public class Vaccinator {
 		return true;
 	}
 
+	/* end */
+	/* start code_ref=materials_plugin_vaccinator_producer_schedule_vaccinations */
 	private void scheduleVaccinations() {
 		final double delayTime = 1 / (double) vaccinationsPerRegionPerDay;
 
@@ -191,10 +202,13 @@ public class Vaccinator {
 			globalPropertiesDataManager.setGlobalPropertyValue(GlobalProperty.MANUFACTURE_VACCINE, false);
 		}
 	}
+	/* end */
 
+	/* start code_ref=materials_plugin_vaccinator_producer_vaccinate_person */
 	private void vaccinatePerson(final PersonId personId) {
 		personPropertiesDataManager.setPersonPropertyValue(personId, PersonProperty.VACCINATED, true);
 		resourcesDataManager.transferResourceToPersonFromRegion(Resource.VACCINE, personId, 1L);
 	}
+	/* end */
 
 }
