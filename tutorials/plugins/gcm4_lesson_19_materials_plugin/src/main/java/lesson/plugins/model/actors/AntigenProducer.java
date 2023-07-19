@@ -58,6 +58,7 @@ public final class AntigenProducer {
 		materialRecs.put(materialId, materialManufactureSpecification);
 	}
 
+	/* start code_ref=materials_plugin_antigen_producer_end_fermentation */
 	private void endFermentationStage(final StageId stageId) {
 		final BatchId batch = materialsDataManager.convertStageToBatch(//
 				StageConversionInfo.builder()//
@@ -71,6 +72,7 @@ public final class AntigenProducer {
 		materialsDataManager.setStageOfferState(antigenStage, true);
 		planFermentation();
 	}
+	/* end */
 
 	private boolean hasSufficientMaterialsForNewStage() {
 		for (final MaterialId materialId : materialRecs.keySet()) {
@@ -84,6 +86,7 @@ public final class AntigenProducer {
 		return true;
 	}
 
+	/* start code_ref=materials_plugin_antigen_producer_init */
 	public void init(final ActorContext actorContext) {
 		this.actorContext = actorContext;
 		materialsDataManager = actorContext.getDataManager(MaterialsDataManager.class);
@@ -110,6 +113,7 @@ public final class AntigenProducer {
 		planFermentation();
 	}
 
+	/* end */
 	private void orderMaterial(final MaterialId materialId) {
 		final MaterialManufactureSpecification materialRec = materialRecs.get(materialId);
 		if (materialRec.isOnOrder()) {
@@ -146,6 +150,7 @@ public final class AntigenProducer {
 		}
 	}
 
+	/* start code_ref=materials_plugin_antigen_producer_plan_fermentation */
 	private void planFermentation() {
 
 		final Boolean continueManufature = globalPropertiesDataManager
@@ -172,6 +177,7 @@ public final class AntigenProducer {
 			actorContext.addPlan((c) -> endFermentationStage(stageId), planTime);
 		}
 	}
+	/* end */
 
 	private void receiveMaterial(final MaterialId materialId, final double amount) {
 		final MaterialManufactureSpecification materialRec = materialRecs.get(materialId);

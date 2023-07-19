@@ -22,7 +22,7 @@ public class TeleworkManager {
 
 	private final double reviewInterval = 7;
 	private ActorContext actorContext;
-	
+
 	/* start code_ref= groups_plugin_telework_manager_init */
 	public void init(ActorContext actorContext) {
 		this.actorContext = actorContext;
@@ -39,6 +39,7 @@ public class TeleworkManager {
 
 		actorContext.addPlan(plan);
 	}
+
 	/* end */
 	/* start code_ref= groups_plugin_telework_review_status */
 	private void reviewTeleworkStatus(ActorContext actorContext) {

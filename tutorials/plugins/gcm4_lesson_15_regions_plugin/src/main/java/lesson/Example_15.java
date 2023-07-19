@@ -58,6 +58,7 @@ public final class Example_15 {
 						outputDirectory.resolve("vaccine_report.xls"))//
 				.build();
 	}
+	/* end */
 
 	/* start code_ref= regions_plugin_example_getting_people_plugin */
 	private Plugin getPeoplePlugin() {

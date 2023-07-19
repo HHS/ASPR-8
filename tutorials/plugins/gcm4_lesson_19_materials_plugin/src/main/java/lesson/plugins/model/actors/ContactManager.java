@@ -38,6 +38,7 @@ public class ContactManager {
 				DiseaseState.RECOVERED);
 	}
 
+	/* start code_ref=materials_plugin_contact_manager_infect_contact */
 	private void infectContact(final PersonId personId) {
 
 		if (randomGenerator.nextDouble() < communityContactRate) {
@@ -70,7 +71,9 @@ public class ContactManager {
 			}
 		}
 	}
+	/* end */
 
+	/* start code_ref=materials_plugin_contact_manager_infect_person */
 	private void infectPerson(final PersonId personId) {
 		personPropertiesDataManager.setPersonPropertyValue(personId, PersonProperty.DISEASE_STATE,
 				DiseaseState.INFECTIOUS);
@@ -87,6 +90,8 @@ public class ContactManager {
 		actorContext.addPlan((c) -> endInfectiousness(personId), planTime);
 	}
 
+	/* end */
+	/* start code_ref=materials_plugin_contact_manager_init */
 	public void init(final ActorContext actorContext) {
 		this.actorContext = actorContext;
 
@@ -129,5 +134,6 @@ public class ContactManager {
 			actorContext.addPlan((c) -> infectPerson(personId), planTime);
 		}
 	}
+	/* end */
 
 }

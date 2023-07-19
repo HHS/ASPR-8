@@ -22,6 +22,7 @@ public class VaccineEducator {
 	private double educationSuccessRate;
 	private RandomGenerator randomGenerator;
 	private ActorContext actorContext;
+
 	/* start code_ref= person_properties_vaccine_educator_educate_person */
 	private void educatePerson(PersonId personId) {
 		int educationAttempts = personPropertiesDataManager.getPersonPropertyValue(personId,
@@ -36,7 +37,7 @@ public class VaccineEducator {
 		}
 	}
 	/* end */
-	
+
 	/* start code_ref= person_properties_vaccine_educator_handle_new_person */
 	private void planEducation(PersonId personId) {
 		double planTime = actorContext.getTime() + randomGenerator.nextDouble() * educationAttemptInterval;
@@ -55,7 +56,7 @@ public class VaccineEducator {
 		}
 	}
 	/* end */
-	
+
 	/* start code_ref= person_properties_vaccine_educator_init */
 	public void init(ActorContext actorContext) {
 		this.actorContext = actorContext;

@@ -74,6 +74,7 @@ public final class Example_19 {
 	private Example_19(Path outputDirectory) {
 		this.outputDirectory = outputDirectory;
 	}
+	/* start code_ref=materials_plugin_example_19_execute */
 
 	private void execute() {
 
@@ -103,11 +104,13 @@ public final class Example_19 {
 
 	}
 
+	/* end */
 	private Dimension getCommunityContactRateDimension() {
 		final Double[] values = new Double[] { 0.0, 0.01, 0.05 };
 		return getGlobalPropertyDimension(GlobalProperty.COMMUNITY_CONTACT_RATE, "community_contact_rate", values);
 	}
 
+	/* start code_ref=materials_plugin_example_19_global_properties_plugin */
 	private Plugin getGlobalPropertiesPlugin() {
 		final GlobalPropertiesPluginData.Builder builder = GlobalPropertiesPluginData.builder();//
 
@@ -163,6 +166,7 @@ public final class Example_19 {
 				.getGlobalPropertiesPlugin();
 
 	}
+	/* end */
 
 	private Dimension getGlobalPropertyDimension(final GlobalPropertyId globalPropertyId, final String header,
 			final Object[] values) {
@@ -196,6 +200,7 @@ public final class Example_19 {
 		return getGlobalPropertyDimension(GlobalProperty.INITIAL_INFECTIONS, "initial_infections", values);
 	}
 
+	/* start code_ref=materials_plugin_example_19_materials_plugin */
 	private Plugin getMaterialsPlugin() {
 		final MaterialsPluginData.Builder builder = MaterialsPluginData.builder();
 		for (final MaterialsProducer materialsProducer : MaterialsProducer.values()) {
@@ -207,12 +212,14 @@ public final class Example_19 {
 		final MaterialsPluginData materialsPluginData = builder.build();
 		return MaterialsPlugin.builder().setMaterialsPluginData(materialsPluginData).getMaterialsPlugin();
 	}
+	/* end */
 
 	private Plugin getPeoplePlugin() {
 		final PeoplePluginData peoplePluginData = PeoplePluginData.builder().build();
 		return PeoplePlugin.getPeoplePlugin(peoplePluginData);
 	}
 
+	/* start code_ref=materials_plugin_example_19_person_properties_plugin */
 	private Plugin getPersonPropertiesPlugin() {
 
 		final PersonPropertiesPluginData.Builder builder = PersonPropertiesPluginData.builder();
@@ -253,6 +260,7 @@ public final class Example_19 {
 				.getPersonPropertyPlugin();
 
 	}
+	/* end */
 
 	private Dimension getR0Dimension() {
 		final Double[] values = new Double[] { 2.0, 2.5, 3.0 };
@@ -285,6 +293,7 @@ public final class Example_19 {
 				.build();
 	}
 
+	/* start code_ref=materials_plugin_example_19_resources_plugin */
 	private Plugin getResourcesPlugin() {
 		final ResourcesPluginData.Builder builder = ResourcesPluginData.builder();
 		for (final ResourceId resourcId : Resource.values()) {
@@ -293,6 +302,7 @@ public final class Example_19 {
 		final ResourcesPluginData resourcesPluginData = builder.build();
 		return ResourcesPlugin.builder().setResourcesPluginData(resourcesPluginData).getResourcesPlugin();
 	}
+	/* end */
 
 	private Plugin getStochasticsPlugin() {
 		WellState wellState = WellState.builder().setSeed(randomGenerator.nextLong()).build();
