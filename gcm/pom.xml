@@ -4,6 +4,14 @@
 
 	<!-- Properties -->
 	<modelVersion>4.0.0</modelVersion>
+
+	<!-- Artifact -->
+	<groupId>gov.hhs.aspr</groupId>
+	<artifactId>gcm</artifactId>
+	<name>General Compartmental Model</name>
+	<packaging>jar</packaging>
+	<version>4.0.0-SNAPSHOT</version>
+
 	<properties>
 		<!-- basic project properties -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -29,12 +37,6 @@
 		<url>https://www.phe.gov</url>
 	</organization>
 
-	<!-- Artifact -->
-	<groupId>gov.hhs.aspr</groupId>
-	<artifactId>gcm4</artifactId>
-	<name>General Compartmental Model</name>
-	<packaging>jar</packaging>
-	<version>4.0.0-SNAPSHOT</version>
 
 	<!-- Dependencies -->
 	<dependencies>
@@ -100,16 +102,9 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>${maven-surefire-plugin.version}</version>
 				<configuration>
-
 					<includes>
 						<include>AT_*.java</include>
 					</includes>
-					<!-- <excludes> -->
-					<!-- <exclude>AT_EnvironmentImpl_01.java</exclude> -->
-					<!-- <exclude>AT_EnvironmentImpl_02.java</exclude> -->
-					<!-- </excludes> -->
-
-					<excludedGroups>manual</excludedGroups>
 				</configuration>
 			</plugin>
 			<plugin>
