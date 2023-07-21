@@ -96,9 +96,7 @@ public final class RegionPropertyReportPluginData implements PluginData {
 			builder.append(", excludedProperties=");
 			builder.append(excludedProperties);
 			builder.append(", defaultInclusionPolicy=");
-			builder.append(defaultInclusionPolicy);
-			builder.append(", locked=");
-			builder.append(locked);
+			builder.append(defaultInclusionPolicy);			
 			builder.append("]");
 			return builder.toString();
 		}

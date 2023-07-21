@@ -38,7 +38,7 @@ public class AT_RegionLabeler {
 	private static class LocalRegionLabeler extends RegionLabeler {
 		private final Function<RegionId, Object> regionLabelingFunction;
 
-		public LocalRegionLabeler( Function<RegionId, Object> regionLabelingFunction) {			
+		public LocalRegionLabeler(Function<RegionId, Object> regionLabelingFunction) {
 			this.regionLabelingFunction = regionLabelingFunction;
 		}
 
@@ -47,27 +47,29 @@ public class AT_RegionLabeler {
 			return regionLabelingFunction.apply(regionId);
 		}
 	}
+
 	@Test
-	@UnitTestConstructor(target = RegionLabeler.class,args = {})
+	@UnitTestConstructor(target = RegionLabeler.class, args = {})
 	public void testConstructor() {
 		assertNotNull(new LocalRegionLabeler((c) -> null));
 	}
 
 	@Test
-	@UnitTestMethod(target = RegionLabeler.class,name = "getId", args = {})
+	@UnitTestMethod(target = RegionLabeler.class, name = "getId", args = {})
 	public void testGetId() {
 		assertEquals(RegionId.class, new LocalRegionLabeler((c) -> null).getId());
 	}
 
 	@Test
-	@UnitTestMethod(target = RegionLabeler.class,name = "getCurrentLabel", args = { PartitionsContext.class, PersonId.class })
+	@UnitTestMethod(target = RegionLabeler.class, name = "getCurrentLabel", args = { PartitionsContext.class,
+			PersonId.class })
 	public void testGetLabel() {
 
 		/*
-		 * Create a region labeler from a function. Have an agent apply the
-		 * function directly to a person's region to get a label for that
-		 * person. Get the label from the region labeler from the person id
-		 * alone. Compare the two labels for equality.
+		 * Create a region labeler from a function. Have an agent apply the function
+		 * directly to a person's region to get a label for that person. Get the label
+		 * from the region labeler from the person id alone. Compare the two labels for
+		 * equality.
 		 */
 
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
@@ -97,14 +99,14 @@ public class AT_RegionLabeler {
 		}));
 
 		/*
-		 * Have the agent show that the region labeler created above
-		 * produces a label for each person that is consistent with the function
-		 * passed to the region labeler.
+		 * Have the agent show that the region labeler created above produces a label
+		 * for each person that is consistent with the function passed to the region
+		 * labeler.
 		 */
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
-			
+
 			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
-			
+
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 
@@ -128,14 +130,15 @@ public class AT_RegionLabeler {
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(2, (c) -> {
 
 			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
-			
+
 			// if the person does not exist
 			ContractException contractException = assertThrows(ContractException.class,
 					() -> regionLabeler.getCurrentLabel(testPartitionsContext, new PersonId(100000)));
 			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
 
 			// if the person id is null
-			contractException = assertThrows(ContractException.class, () -> regionLabeler.getCurrentLabel(testPartitionsContext, null));
+			contractException = assertThrows(ContractException.class,
+					() -> regionLabeler.getCurrentLabel(testPartitionsContext, null));
 			assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
 
 		}));
@@ -147,12 +150,12 @@ public class AT_RegionLabeler {
 	}
 
 	@Test
-	@UnitTestMethod(target = RegionLabeler.class,name = "getLabelerSensitivities", args = {})
+	@UnitTestMethod(target = RegionLabeler.class, name = "getLabelerSensitivities", args = {})
 	public void testGetLabelerSensitivities() {
 
 		/*
-		 * Get the labeler sensitivities and show that they are consistent with
-		 * their documented behaviors.
+		 * Get the labeler sensitivities and show that they are consistent with their
+		 * documented behaviors.
 		 */
 
 		RegionLabeler regionLabeler = new LocalRegionLabeler((c) -> null);
@@ -177,13 +180,14 @@ public class AT_RegionLabeler {
 	}
 
 	@Test
-	@UnitTestMethod(target = RegionLabeler.class,name = "getPastLabel", args = { PartitionsContext.class, Event.class })
+	@UnitTestMethod(target = RegionLabeler.class, name = "getPastLabel", args = { PartitionsContext.class,
+			Event.class })
 	public void testGetPastLabel() {
 
 		Factory factory = RegionsTestPluginFactory.factory(30, 349819763474394472L, true, (c) -> {
-			
+
 			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
-			
+
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
@@ -202,8 +206,8 @@ public class AT_RegionLabeler {
 				RegionId personRegion = regionsDataManager.getPersonRegion(personId);
 				RegionId nextRegion = regions.get(randomGenerator.nextInt(regions.size()));
 				regionsDataManager.setPersonRegion(personId, nextRegion);
-				PersonRegionUpdateEvent personRegionUpdateEvent = new PersonRegionUpdateEvent(personId,
-						personRegion, nextRegion);
+				PersonRegionUpdateEvent personRegionUpdateEvent = new PersonRegionUpdateEvent(personId, personRegion,
+						nextRegion);
 				Object expectedLabel = func.apply(personRegion);
 				Object actualLabel = regionLabeler.getPastLabel(testPartitionsContext, personRegionUpdateEvent);
 				assertEquals(expectedLabel, actualLabel);
@@ -211,5 +215,14 @@ public class AT_RegionLabeler {
 
 		});
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
+	}
+
+	@Test
+	@UnitTestMethod(target = RegionLabeler.class, name = "toString", args = {})
+	public void testToString() {
+		RegionLabeler regionLabeler = new LocalRegionLabeler((r) -> null);
+		String actualValue = regionLabeler.toString();
+		String expectedValue = "RegionLabeler []";
+		assertEquals(expectedValue, actualValue);
 	}
 }

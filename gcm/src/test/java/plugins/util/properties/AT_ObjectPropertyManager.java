@@ -4,9 +4,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -229,5 +231,35 @@ public class AT_ObjectPropertyManager {
 		});
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
+	@Test
+	@UnitTestMethod(target = ObjectPropertyManager.class, name = "toString", args = {})
+	public void testToString() {
+		Factory factory = TestPluginFactory.factory((c) -> {
 
+			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Object.class)
+					.setDefaultValue("C").build();
+
+			List<Integer> list = new ArrayList<>();
+			list.add(1);
+			list.add(2);
+			list.add(5);
+			list.add(6);
+			list.add(7);
+
+			ObjectPropertyManager objectPropertyManager = new ObjectPropertyManager(propertyDefinition,
+					() -> list.iterator());
+
+			objectPropertyManager.setPropertyValue(5, 2);
+			objectPropertyManager.setPropertyValue(7, "A");
+			objectPropertyManager.setPropertyValue(1, 3.4);
+			objectPropertyManager.setPropertyValue(8, "B");
+
+			String actualValue = objectPropertyManager.toString();			
+			String expectedValue = "ObjectPropertyManager [objectValueContainer=ObjectValueContainer [elements=[1=3.4, 2=C, 5=2, 6=C, 7=A], defaultValue=C], defaultValue=C]";
+
+			assertEquals(expectedValue, actualValue);
+		});
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
+
+	}
 }

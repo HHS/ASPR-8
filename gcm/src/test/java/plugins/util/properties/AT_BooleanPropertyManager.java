@@ -6,9 +6,11 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -32,9 +34,9 @@ import util.random.RandomGeneratorProvider;
  */
 
 public class AT_BooleanPropertyManager {
-	
+
 	private Iterator<Integer> getEmptyIndexIterator() {
-		return Collections.emptyIterator();				
+		return Collections.emptyIterator();
 	}
 
 	@Test
@@ -43,9 +45,11 @@ public class AT_BooleanPropertyManager {
 		Factory factory = TestPluginFactory.factory((c) -> {
 			RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(4879223247393954289L);
 
-			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(false).build();
+			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Boolean.class)
+					.setDefaultValue(false).build();
 
-			BooleanPropertyManager booleanPropertyManager = new BooleanPropertyManager(propertyDefinition,this::getEmptyIndexIterator);
+			BooleanPropertyManager booleanPropertyManager = new BooleanPropertyManager(propertyDefinition,
+					this::getEmptyIndexIterator);
 
 			/*
 			 * We will set the first 300 values multiple times at random
@@ -60,9 +64,8 @@ public class AT_BooleanPropertyManager {
 			}
 
 			/*
-			 * if the value was set above, then it should equal the last value
-			 * place in the expected values, otherwise it will have the default
-			 * value.
+			 * if the value was set above, then it should equal the last value place in the
+			 * expected values, otherwise it will have the default value.
 			 */
 			for (int i = 0; i < 300; i++) {
 				if (expectedValues.containsKey(i)) {
@@ -75,7 +78,8 @@ public class AT_BooleanPropertyManager {
 			}
 
 			// precondition tests
-			ContractException contractException = assertThrows(ContractException.class, () -> booleanPropertyManager.getPropertyValue(-1));
+			ContractException contractException = assertThrows(ContractException.class,
+					() -> booleanPropertyManager.getPropertyValue(-1));
 			assertEquals(PropertyError.NEGATIVE_INDEX, contractException.getErrorType());
 		});
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
@@ -83,14 +87,17 @@ public class AT_BooleanPropertyManager {
 	}
 
 	@Test
-	@UnitTestMethod(target = BooleanPropertyManager.class, name = "setPropertyValue", args = { int.class, Object.class })
+	@UnitTestMethod(target = BooleanPropertyManager.class, name = "setPropertyValue", args = { int.class,
+			Object.class })
 	public void testSetPropertyValue() {
 		Factory factory = TestPluginFactory.factory((c) -> {
 			RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(4827517950755837724L);
 
-			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(false).build();
+			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Boolean.class)
+					.setDefaultValue(false).build();
 
-			BooleanPropertyManager booleanPropertyManager = new BooleanPropertyManager(propertyDefinition,this::getEmptyIndexIterator);
+			BooleanPropertyManager booleanPropertyManager = new BooleanPropertyManager(propertyDefinition,
+					this::getEmptyIndexIterator);
 
 			/*
 			 * We will set the first 300 values multiple times at random
@@ -105,9 +112,8 @@ public class AT_BooleanPropertyManager {
 			}
 
 			/*
-			 * if the value was set above, then it should equal the last value
-			 * place in the expected values, otherwise it will have the default
-			 * value.
+			 * if the value was set above, then it should equal the last value place in the
+			 * expected values, otherwise it will have the default value.
 			 */
 			for (int i = 0; i < 300; i++) {
 				if (expectedValues.containsKey(i)) {
@@ -120,7 +126,8 @@ public class AT_BooleanPropertyManager {
 			}
 
 			// precondition tests
-			ContractException contractException = assertThrows(ContractException.class, () -> booleanPropertyManager.setPropertyValue(-1, false));
+			ContractException contractException = assertThrows(ContractException.class,
+					() -> booleanPropertyManager.setPropertyValue(-1, false));
 			assertEquals(PropertyError.NEGATIVE_INDEX, contractException.getErrorType());
 		});
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
@@ -132,9 +139,11 @@ public class AT_BooleanPropertyManager {
 		Factory factory = TestPluginFactory.factory((c) -> {
 
 			// we will first test the manager with an initial value of false
-			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(false).build();
+			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Boolean.class)
+					.setDefaultValue(false).build();
 
-			BooleanPropertyManager booleanPropertyManager = new BooleanPropertyManager(propertyDefinition,this::getEmptyIndexIterator);
+			BooleanPropertyManager booleanPropertyManager = new BooleanPropertyManager(propertyDefinition,
+					this::getEmptyIndexIterator);
 
 			// initially, the value should be the default value for the manager
 			assertFalse((Boolean) booleanPropertyManager.getPropertyValue(5));
@@ -154,7 +163,7 @@ public class AT_BooleanPropertyManager {
 			// we will next test the manager with an initial value of true
 			propertyDefinition = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(true).build();
 
-			booleanPropertyManager = new BooleanPropertyManager(propertyDefinition,this::getEmptyIndexIterator);
+			booleanPropertyManager = new BooleanPropertyManager(propertyDefinition, this::getEmptyIndexIterator);
 
 			// initially, the value should be the default value for the manager
 			assertTrue((Boolean) booleanPropertyManager.getPropertyValue(5));
@@ -173,7 +182,7 @@ public class AT_BooleanPropertyManager {
 
 			// precondition tests
 			PropertyDefinition def = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(true).build();
-			BooleanPropertyManager bpm = new BooleanPropertyManager(def,this::getEmptyIndexIterator);
+			BooleanPropertyManager bpm = new BooleanPropertyManager(def, this::getEmptyIndexIterator);
 
 			ContractException contractException = assertThrows(ContractException.class, () -> bpm.removeId(-1));
 			assertEquals(PropertyError.NEGATIVE_INDEX, contractException.getErrorType());
@@ -186,21 +195,25 @@ public class AT_BooleanPropertyManager {
 	public void testConstructor() {
 		Factory factory = TestPluginFactory.factory((c) -> {
 
-			PropertyDefinition goodPropertyDefinition = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(false).build();
-			PropertyDefinition badPropertyDefinition = PropertyDefinition.builder().setType(Double.class).setDefaultValue(2.3).build();
+			PropertyDefinition goodPropertyDefinition = PropertyDefinition.builder().setType(Boolean.class)
+					.setDefaultValue(false).build();
+			PropertyDefinition badPropertyDefinition = PropertyDefinition.builder().setType(Double.class)
+					.setDefaultValue(2.3).build();
 
 			// precondition tests
 
 			// if the property definition is null
-			ContractException contractException = assertThrows(ContractException.class, () -> new BooleanPropertyManager(null,this::getEmptyIndexIterator));
+			ContractException contractException = assertThrows(ContractException.class,
+					() -> new BooleanPropertyManager(null, this::getEmptyIndexIterator));
 			assertEquals(PropertyError.NULL_PROPERTY_DEFINITION, contractException.getErrorType());
 
 			// if the property definition does not have a type of Boolean.class
-			contractException = assertThrows(ContractException.class, () -> new BooleanPropertyManager(badPropertyDefinition,this::getEmptyIndexIterator));
+			contractException = assertThrows(ContractException.class,
+					() -> new BooleanPropertyManager(badPropertyDefinition, this::getEmptyIndexIterator));
 			assertEquals(PropertyError.PROPERTY_DEFINITION_IMPROPER_TYPE, contractException.getErrorType());
 
-
-			BooleanPropertyManager booleanPropertyManager = new BooleanPropertyManager(goodPropertyDefinition,this::getEmptyIndexIterator);
+			BooleanPropertyManager booleanPropertyManager = new BooleanPropertyManager(goodPropertyDefinition,
+					this::getEmptyIndexIterator);
 			assertNotNull(booleanPropertyManager);
 		});
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
@@ -211,15 +224,50 @@ public class AT_BooleanPropertyManager {
 	public void testIncrementCapacity() {
 		Factory factory = TestPluginFactory.factory((c) -> {
 
-			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(false).build();
+			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Boolean.class)
+					.setDefaultValue(false).build();
 
-			BooleanPropertyManager booleanPropertyManager = new BooleanPropertyManager(propertyDefinition,this::getEmptyIndexIterator);
+			BooleanPropertyManager booleanPropertyManager = new BooleanPropertyManager(propertyDefinition,
+					this::getEmptyIndexIterator);
 
 			// precondition tests
-			ContractException contractException = assertThrows(ContractException.class, () -> booleanPropertyManager.incrementCapacity(-1));
+			ContractException contractException = assertThrows(ContractException.class,
+					() -> booleanPropertyManager.incrementCapacity(-1));
 			assertEquals(PropertyError.NEGATIVE_CAPACITY_INCREMENT, contractException.getErrorType());
 		});
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
+	}
+
+	@Test
+	@UnitTestMethod(target = BooleanPropertyManager.class, name = "toString", args = {})
+	public void testToString() {
+		Factory factory = TestPluginFactory.factory((c) -> {
+
+			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Boolean.class)
+					.setDefaultValue(false).build();
+
+			List<Integer> list = new ArrayList<>();
+			list.add(1);
+			list.add(2);
+			list.add(5);
+			list.add(6);
+			list.add(7);
+
+			BooleanPropertyManager booleanPropertyManager = new BooleanPropertyManager(propertyDefinition,
+					() -> list.iterator());
+
+			booleanPropertyManager.setPropertyValue(5, true);
+			booleanPropertyManager.setPropertyValue(7, true);
+			booleanPropertyManager.setPropertyValue(1, true);
+			booleanPropertyManager.setPropertyValue(8, true);
+
+			String actualValue = booleanPropertyManager.toString();
+
+			String expectedValue = "BooleanPropertyManager [boolContainer=BooleanContainer [defaultValue=false, bitSet=[1=true, 2=false, 5=true, 6=false, 7=true]]]";
+			assertEquals(expectedValue, actualValue);
+		});
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
+
 	}
 
 }
