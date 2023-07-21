@@ -9,7 +9,7 @@
 	</organization>
 
 	<!-- Artifact -->
-	<groupId>gov.hhs.aspr</groupId>
+	<groupId>gov.hhs.aspr.ms.gcm.tutorials</groupId>
 	<artifactId>lesson_07_plugin_dependency_graph</artifactId>
 	<version>${revision}</version>
 	<packaging>jar</packaging>
@@ -31,7 +31,7 @@
 	<!-- Dependencies -->
 	<dependencies>
 		<dependency>
-			<groupId>gov.hhs.aspr</groupId>
+			<groupId>gov.hhs.aspr.ms</groupId>
 			<artifactId>gcm</artifactId>
 			<version>${gcm.version}</version>
 		</dependency>
