@@ -4,13 +4,13 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>gov.hhs.aspr.gcm.translation.protobuf</groupId>
+        <groupId>gov.hhs.aspr.ms.gcm.taskit.protobuf</groupId>
         <artifactId>protobuf-parent</artifactId>
         <version>${revision}</version>
     </parent>
 
     <artifactId>reports-plugin-translator</artifactId>
-    <name>gcm.translation :: protobuf :: reports-plugin-translator</name>
+    <name>gcm :: taskit :: protobuf :: reports-plugin-translator</name>
     <packaging>jar</packaging>
 
     <build>
@@ -28,7 +28,7 @@
                 </executions>
                 <configuration>
                     <protocArtifact>com.google.protobuf:protoc:${protoc.version}:exe:${os.detected.classifier}</protocArtifact>
-                    <protoSourceRoot>${project.build.outputDirectory}/gov/hhs/aspr/gcm/translation/protobuf/reports</protoSourceRoot>
+                    <protoSourceRoot>${project.build.outputDirectory}/gov/hhs/aspr/gcm/taskit/protobuf/reports</protoSourceRoot>
                     <attachProtoSources>false</attachProtoSources>
                 </configuration>
             </plugin>

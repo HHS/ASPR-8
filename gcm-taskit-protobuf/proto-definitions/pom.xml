@@ -3,10 +3,10 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>gov.hhs.aspr.gcm.translation.protobuf</groupId>
+    <groupId>gov.hhs.aspr.ms.gcm.taskit.protobuf</groupId>
     <artifactId>proto-definitions</artifactId>
     <version>1.12.0</version>
-    <name>gcm.translation :: protobuf :: proto-definitions</name>
+    <name>gcm :: taskit :: protobuf :: proto-definitions</name>
     <packaging>jar</packaging>
 
     <properties>
@@ -33,18 +33,18 @@
                                 <resource>
                                     <directory>${project.basedir}/src</directory>
                                     <includes>
-                                        <include>gov/hhs/aspr/gcm/translation/protobuf/nucleus/*.proto</include>
-                                        <include>gov/hhs/aspr/gcm/translation/protobuf/properties/*.proto</include>
-                                        <include>gov/hhs/aspr/gcm/translation/protobuf/stochastics/*.proto</include>
-                                        <include>gov/hhs/aspr/gcm/translation/protobuf/partitions/*.proto</include>
-                                        <include>gov/hhs/aspr/gcm/translation/protobuf/globalproperties/*.proto</include>
-                                        <include>gov/hhs/aspr/gcm/translation/protobuf/people/*.proto</include>
-                                        <include>gov/hhs/aspr/gcm/translation/protobuf/groups/*.proto</include>
-                                        <include>gov/hhs/aspr/gcm/translation/protobuf/regions/*.proto</include>
-                                        <include>gov/hhs/aspr/gcm/translation/protobuf/personproperties/*.proto</include>
-                                        <include>gov/hhs/aspr/gcm/translation/protobuf/resources/*.proto</include>
-                                        <include>gov/hhs/aspr/gcm/translation/protobuf/materials/*.proto</include>
-                                        <include>gov/hhs/aspr/gcm/translation/protobuf/reports/*.proto</include>
+                                        <include>gov/hhs/aspr/gcm/taskit/protobuf/nucleus/*.proto</include>
+                                        <include>gov/hhs/aspr/gcm/taskit/protobuf/properties/*.proto</include>
+                                        <include>gov/hhs/aspr/gcm/taskit/protobuf/stochastics/*.proto</include>
+                                        <include>gov/hhs/aspr/gcm/taskit/protobuf/partitions/*.proto</include>
+                                        <include>gov/hhs/aspr/gcm/taskit/protobuf/globalproperties/*.proto</include>
+                                        <include>gov/hhs/aspr/gcm/taskit/protobuf/people/*.proto</include>
+                                        <include>gov/hhs/aspr/gcm/taskit/protobuf/groups/*.proto</include>
+                                        <include>gov/hhs/aspr/gcm/taskit/protobuf/regions/*.proto</include>
+                                        <include>gov/hhs/aspr/gcm/taskit/protobuf/personproperties/*.proto</include>
+                                        <include>gov/hhs/aspr/gcm/taskit/protobuf/resources/*.proto</include>
+                                        <include>gov/hhs/aspr/gcm/taskit/protobuf/materials/*.proto</include>
+                                        <include>gov/hhs/aspr/gcm/taskit/protobuf/reports/*.proto</include>
                                     </includes>
                                 </resource>
                             </resources>

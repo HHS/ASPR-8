@@ -3,11 +3,11 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>gov.hhs.aspr.gcm.translation.protobuf</groupId>
+    <groupId>gov.hhs.aspr.ms.gcm.taskit.protobuf</groupId>
     <artifactId>protobuf-parent</artifactId>
     <version>${revision}</version>
     <packaging>pom</packaging>
-    <name>gcm.translation :: protobuf :: protobuf-parent</name>
+    <name>gcm :: taskit :: protobuf :: protobuf-parent</name>
 
     <properties>
         <!-- basic project properties -->
@@ -28,7 +28,7 @@
         <maven-replacer-plugin.version>1.3.2</maven-replacer-plugin.version>
 
         <!-- dependency versions -->
-        <protobuf-translation-core.version>2.4.0-SNAPSHOT</protobuf-translation-core.version>
+        <protobuf-taskit-core.version>2.4.0-SNAPSHOT</protobuf-taskit-core.version>
         <proto-definitions.version>1.12.0</proto-definitions.version>
         <gcm.version>4.0.0-SNAPSHOT</gcm.version>
         <protoc.version>3.21.12</protoc.version>
@@ -45,16 +45,16 @@
     -->
     <dependencyManagement>
         <dependencies>
-            <!-- core protobuf translation dependency  -->
+            <!-- core protobuf taskit dependency  -->
             <dependency>
-                <groupId>gov.hhs.aspr.translation</groupId>
-                <artifactId>protobuf-translation-core</artifactId>
-                <version>${protobuf-translation-core.version}</version>
+                <groupId>gov.hhs.aspr.ms.taskit.protobuf</groupId>
+                <artifactId>core</artifactId>
+                <version>${protobuf-taskit-core.version}</version>
             </dependency>
 
             <!-- gcm dependency -->
             <dependency>
-                <groupId>gov.hhs.aspr</groupId>
+                <groupId>gov.hhs.aspr.ms</groupId>
                 <artifactId>gcm</artifactId>
                 <version>${gcm.version}</version>
                 <!--
@@ -101,8 +101,8 @@
     -->
     <dependencies>
         <dependency>
-            <groupId>gov.hhs.aspr.translation</groupId>
-            <artifactId>protobuf-translation-core</artifactId>
+            <groupId>gov.hhs.aspr.ms.taskit</groupId>
+            <artifactId>protobuf-taskit-core</artifactId>
         </dependency>
         <dependency>
             <groupId>gov.hhs.aspr</groupId>
@@ -231,7 +231,7 @@
                         <configuration>
                             <artifactItems>
                                 <artifactItem>
-                                    <groupId>gov.hhs.aspr.gcm.translation.protobuf</groupId>
+                                    <groupId>gov.hhs.aspr.ms.gcm.taskit.protobuf</groupId>
                                     <artifactId>proto-definitions</artifactId>
                                     <version>${proto-definitions.version}</version>
                                     <overWrite>true</overWrite>
@@ -239,11 +239,11 @@
                                     <includes>**/*.proto</includes>
                                 </artifactItem>
                                 <artifactItem>
-                                    <groupId>gov.hhs.aspr.translation</groupId>
-                                    <artifactId>protobuf-translation-core</artifactId>
-                                    <version>${protobuf-translation-core.version}</version>
+                                    <groupId>gov.hhs.aspr.ms.taskit</groupId>
+                                    <artifactId>protobuf-taskit-core</artifactId>
+                                    <version>${protobuf-taskit-core.version}</version>
                                     <overWrite>true</overWrite>
-                                    <outputDirectory>${project.build.outputDirectory}/gov/hhs/aspr/translation/core</outputDirectory>
+                                    <outputDirectory>${project.build.outputDirectory}/gov/hhs/aspr/taskit/core</outputDirectory>
                                     <includes>**/*.proto</includes>
                                 </artifactItem>
                             </artifactItems>

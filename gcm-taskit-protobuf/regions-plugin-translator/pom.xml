@@ -3,30 +3,30 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>gov.hhs.aspr.gcm.translation.protobuf</groupId>
+        <groupId>gov.hhs.aspr.ms.gcm.taskit.protobuf</groupId>
         <artifactId>protobuf-parent</artifactId>
         <version>${revision}</version>
     </parent>
 
     <artifactId>regions-plugin-translator</artifactId>
     <packaging>jar</packaging>
-    <name>gcm.translation :: protobuf :: regions-plugin-translator</name>
+    <name>gcm :: taskit :: protobuf :: regions-plugin-translator</name>
 
     <dependencies>
         <dependency>
-            <groupId>gov.hhs.aspr.gcm.translation.protobuf</groupId>
+            <groupId>gov.hhs.aspr.ms.gcm.taskit.protobuf</groupId>
             <artifactId>properties-plugin-translator</artifactId>
             <version>${revision}</version>
             <optional>true</optional>
         </dependency>
         <dependency>
-            <groupId>gov.hhs.aspr.gcm.translation.protobuf</groupId>
+            <groupId>gov.hhs.aspr.ms.gcm.taskit.protobuf</groupId>
             <artifactId>people-plugin-translator</artifactId>
             <version>${revision}</version>
             <optional>true</optional>
         </dependency>
         <dependency>
-            <groupId>gov.hhs.aspr.gcm.translation.protobuf</groupId>
+            <groupId>gov.hhs.aspr.ms.gcm.taskit.protobuf</groupId>
             <artifactId>reports-plugin-translator</artifactId>
             <version>${revision}</version>
             <optional>true</optional>
@@ -48,11 +48,11 @@
                 </executions>
                 <configuration>
                     <protocArtifact>com.google.protobuf:protoc:${protoc.version}:exe:${os.detected.classifier}</protocArtifact>
-                    <protoSourceRoot>${project.build.outputDirectory}/gov/hhs/aspr/gcm/translation/protobuf/regions</protoSourceRoot>
+                    <protoSourceRoot>${project.build.outputDirectory}/gov/hhs/aspr/gcm/taskit/protobuf/regions</protoSourceRoot>
                     <additionalProtoPathElements>
-                        <additionalProtoPathElement>${project.build.outputDirectory}/gov/hhs/aspr/gcm/translation/protobuf/properties</additionalProtoPathElement>
-                        <additionalProtoPathElement>${project.build.outputDirectory}/gov/hhs/aspr/gcm/translation/protobuf/people</additionalProtoPathElement>
-                        <additionalProtoPathElement>${project.build.outputDirectory}/gov/hhs/aspr/gcm/translation/protobuf/reports</additionalProtoPathElement>
+                        <additionalProtoPathElement>${project.build.outputDirectory}/gov/hhs/aspr/gcm/taskit/protobuf/properties</additionalProtoPathElement>
+                        <additionalProtoPathElement>${project.build.outputDirectory}/gov/hhs/aspr/gcm/taskit/protobuf/people</additionalProtoPathElement>
+                        <additionalProtoPathElement>${project.build.outputDirectory}/gov/hhs/aspr/gcm/taskit/protobuf/reports</additionalProtoPathElement>
                     </additionalProtoPathElements>
                     <attachProtoSources>false</attachProtoSources>
                 </configuration>

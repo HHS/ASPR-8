@@ -4,73 +4,73 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>gov.hhs.aspr.gcm.translation.protobuf</groupId>
+        <groupId>gov.hhs.aspr.ms.gcm.taskit.protobuf</groupId>
         <artifactId>protobuf-parent</artifactId>
         <version>${revision}</version>
     </parent>
 
     <artifactId>plugin-translators-all</artifactId>
     <packaging>pom</packaging>
-    <name>gcm.translation :: protobuf :: plugin-translators-all</name>
+    <name>gcm :: taskit :: protobuf :: plugin-translators-all</name>
 
     <dependencies>
         <dependency>
-            <groupId>gov.hhs.aspr.gcm.translation.protobuf</groupId>
+            <groupId>gov.hhs.aspr.ms.gcm.taskit.protobuf</groupId>
             <artifactId>nucleus-translator</artifactId>
             <version>${revision}</version>
         </dependency>
         <dependency>
-            <groupId>gov.hhs.aspr.gcm.translation.protobuf</groupId>
+            <groupId>gov.hhs.aspr.ms.gcm.taskit.protobuf</groupId>
             <artifactId>stochastics-plugin-translator</artifactId>
             <version>${revision}</version>
         </dependency>
         <dependency>
-            <groupId>gov.hhs.aspr.gcm.translation.protobuf</groupId>
+            <groupId>gov.hhs.aspr.ms.gcm.taskit.protobuf</groupId>
             <artifactId>properties-plugin-translator</artifactId>
             <version>${revision}</version>
         </dependency>
         <dependency>
-            <groupId>gov.hhs.aspr.gcm.translation.protobuf</groupId>
+            <groupId>gov.hhs.aspr.ms.gcm.taskit.protobuf</groupId>
             <artifactId>partitions-plugin-translator</artifactId>
             <version>${revision}</version>
         </dependency>
         <dependency>
-            <groupId>gov.hhs.aspr.gcm.translation.protobuf</groupId>
+            <groupId>gov.hhs.aspr.ms.gcm.taskit.protobuf</groupId>
             <artifactId>globalproperties-plugin-translator</artifactId>
             <version>${revision}</version>
         </dependency>
         <dependency>
-            <groupId>gov.hhs.aspr.gcm.translation.protobuf</groupId>
+            <groupId>gov.hhs.aspr.ms.gcm.taskit.protobuf</groupId>
             <artifactId>people-plugin-translator</artifactId>
             <version>${revision}</version>
         </dependency>
         <dependency>
-            <groupId>gov.hhs.aspr.gcm.translation.protobuf</groupId>
+            <groupId>gov.hhs.aspr.ms.gcm.taskit.protobuf</groupId>
             <artifactId>groups-plugin-translator</artifactId>
             <version>${revision}</version>
         </dependency>
         <dependency>
-            <groupId>gov.hhs.aspr.gcm.translation.protobuf</groupId>
+            <groupId>gov.hhs.aspr.ms.gcm.taskit.protobuf</groupId>
             <artifactId>personproperties-plugin-translator</artifactId>
             <version>${revision}</version>
         </dependency>
         <dependency>
-            <groupId>gov.hhs.aspr.gcm.translation.protobuf</groupId>
+            <groupId>gov.hhs.aspr.ms.gcm.taskit.protobuf</groupId>
             <artifactId>regions-plugin-translator</artifactId>
             <version>${revision}</version>
         </dependency>
         <dependency>
-            <groupId>gov.hhs.aspr.gcm.translation.protobuf</groupId>
+            <groupId>gov.hhs.aspr.ms.gcm.taskit.protobuf</groupId>
             <artifactId>resources-plugin-translator</artifactId>
             <version>${revision}</version>
         </dependency>
         <dependency>
-            <groupId>gov.hhs.aspr.gcm.translation.protobuf</groupId>
+            <groupId>gov.hhs.aspr.ms.gcm.taskit.protobuf</groupId>
             <artifactId>materials-plugin-translator</artifactId>
             <version>${revision}</version>
         </dependency>
         <dependency>
-            <groupId>gov.hhs.aspr.gcm.translation.protobuf</groupId>
+            <groupId>gov.hhs.aspr.ms.gcm.taskit.protobuf</groupId>
             <artifactId>reports-plugin-translator</artifactId>
             <version>${revision}</version>
         </dependency>
