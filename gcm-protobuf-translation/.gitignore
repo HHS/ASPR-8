@@ -1,0 +1,2 @@
+proto-definitions/outDir/*
+**/output/*.json
