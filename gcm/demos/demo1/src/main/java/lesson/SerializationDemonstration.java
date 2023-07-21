@@ -7,34 +7,47 @@ import java.util.List;
 
 import org.apache.commons.math3.random.RandomGenerator;
 
-import gov.hhs.aspr.gcm.translation.protobuf.core.Translator;
-import gov.hhs.aspr.gcm.translation.protobuf.core.TranslatorController;
+import gov.hhs.aspr.gcm.translation.protobuf.nucleus.NucleusTranslator;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.globalproperties.GlobalPropertiesTranslator;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.globalproperties.input.GlobalPropertiesPluginDataInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.PeopleTranslator;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.input.PeoplePluginDataInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.PersonPropertiesTranslator;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.PropertiesTranslator;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.RegionsTranslator;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.input.RegionsPluginDataInput;
+import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.ReportsTranslator;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.stochastics.StochasticsTranslator;
-import gov.hss.aspr.gcm.translation.protobuf.nucleus.NucleusTranslator;
+import gov.hhs.aspr.translation.core.TranslationController;
+import gov.hhs.aspr.translation.core.Translator;
+import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
+import lesson.plugins.model.GlobalProperty;
 import lesson.plugins.model.ModelPlugin;
 import lesson.plugins.model.ModelReportLabel;
+import lesson.plugins.model.PersonProperty;
 import lesson.plugins.model.Region;
 import lesson.translatorSpecs.GlobalPropertyTranslatorSpec;
 import lesson.translatorSpecs.PersonPropertyTranslatorSpec;
 import lesson.translatorSpecs.RegionTranslatorSpec;
+import nucleus.Dimension;
 import nucleus.Experiment;
 import nucleus.ExperimentContext;
+import nucleus.ExperimentParameterData;
 import nucleus.Plugin;
 import nucleus.PluginData;
+import nucleus.SimulationState;
 import nucleus.SimulationStateCollector;
 import plugins.globalproperties.GlobalPropertiesPlugin;
 import plugins.globalproperties.datamanagers.GlobalPropertiesPluginData;
+import plugins.globalproperties.support.GlobalPropertyDimension;
+import plugins.globalproperties.support.GlobalPropertyId;
 import plugins.people.PeoplePlugin;
 import plugins.people.datamanagers.PeoplePluginData;
 import plugins.personproperties.PersonPropertiesPlugin;
 import plugins.personproperties.datamanagers.PersonPropertiesPluginData;
 import plugins.regions.RegionsPlugin;
 import plugins.regions.datamanagers.RegionsPluginData;
+import plugins.reports.ReportsPlugin;
 import plugins.reports.support.NIOReportItemHandler;
 import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.datamanagers.StochasticsPluginData;
@@ -50,27 +63,33 @@ public final class SerializationDemonstration {
 	private final String regionsFileName = "regionsOutput.json";
 	private final String peopleFileName = "peopleOutput.json";
 	private final String stochasticsFileName = "stochasticsOutput.json";
-	private final String simTimeFileName = "simTimeOutput.json";
+	private final String simStateFileName = "simStateOutput.json";
 
 	private final Path outputDirectory;
-	private TranslatorController writingTranslatorController;
-	private TranslatorController readingTranslatorController;
+	private TranslationController writingTranslationController;
+	private TranslationController readingTranslationController;
 
 	private SerializationDemonstration(Path outputDirectory) {
 		this.outputDirectory = outputDirectory;
 
-		this.readingTranslatorController = TranslatorController
+		this.readingTranslationController = TranslationController
 				.builder()
 				.addTranslator(
 						PersonPropertiesTranslator.getTranslator())
 				.addTranslator(PropertiesTranslator.getTranslator())
-				.addTranslator(PeopleTranslator.getTranslatorR("./src/main/resources/peopleInput.json"))
-				.addTranslator(RegionsTranslator.getTranslatorR("./src/main/resources/regionsInput.json"))
+				.addTranslator(PeopleTranslator.getTranslator())
+				.addTranslator(RegionsTranslator.getTranslator())
 				.addTranslator(
-						GlobalPropertiesTranslator.getTranslatorR("./src/main/resources/globalPropertiesInput.json"))
-				.addTranslatorSpec(new PersonPropertyTranslatorSpec())
-				.addTranslatorSpec(new GlobalPropertyTranslatorSpec())
-				.addTranslatorSpec(new RegionTranslatorSpec())
+						GlobalPropertiesTranslator.getTranslator())
+				.addTranslator(ReportsTranslator.getTranslator())
+				.setTranslationEngineBuilder(ProtobufTranslationEngine.builder()
+						.addTranslationSpec(new PersonPropertyTranslatorSpec())
+						.addTranslationSpec(new GlobalPropertyTranslatorSpec())
+						.addTranslationSpec(new RegionTranslatorSpec()))
+				.addInputFilePath(Paths.get("./src/main/resources/peopleInput.json"), PeoplePluginDataInput.class)
+				.addInputFilePath(Paths.get("./src/main/resources/regionsInput.json"), RegionsPluginDataInput.class)
+				.addInputFilePath(Paths.get("./src/main/resources/globalPropertiesInput.json"),
+						GlobalPropertiesPluginDataInput.class)
 				.build();
 	}
 
@@ -106,19 +125,22 @@ public final class SerializationDemonstration {
 				.setType(Integer.class)//
 				.setDefaultValue(0)//
 				.build();
-		// builder.definePersonProperty(PersonProperty.EDUCATION_ATTEMPTS, propertyDefinition);
-		// builder.definePersonProperty(PersonProperty.VACCINE_ATTEMPTS, propertyDefinition);
+		builder.definePersonProperty(PersonProperty.EDUCATION_ATTEMPTS,
+				propertyDefinition, 0.0, false);
+		// builder.definePersonProperty(PersonProperty.VACCINE_ATTEMPTS,
+		// propertyDefinition);
 
 		propertyDefinition = PropertyDefinition.builder()//
 				.setType(Boolean.class)//
 				.build();
-		// builder.definePersonProperty(PersonProperty.REFUSES_VACCINE, propertyDefinition);
+		builder.definePersonProperty(PersonProperty.REFUSES_VACCINE,
+				propertyDefinition, 0.0, false);
 
 		propertyDefinition = PropertyDefinition.builder()//
 				.setType(Boolean.class)//
 				.setDefaultValue(false)//
 				.build();
-		// builder.definePersonProperty(PersonProperty.VACCINATED, propertyDefinition);
+		builder.definePersonProperty(PersonProperty.VACCINATED, propertyDefinition, 0.0, false);
 
 		PersonPropertiesPluginData personPropertiesPluginData = builder.build();
 		return PersonPropertiesPlugin.builder().setPersonPropertiesPluginData(personPropertiesPluginData)
@@ -134,54 +156,56 @@ public final class SerializationDemonstration {
 		return StochasticsPlugin.getStochasticsPlugin(stochasticsPluginData);
 	}
 
-	/* private Dimension getGlobalPropertyDimension(GlobalPropertyId globalPropertyId, String header, double[] values) {
-		Dimension.Builder dimensionBuilder = Dimension.builder();//
-		IntStream.range(0, values.length).forEach((i) -> {
-			dimensionBuilder.addLevel((context) -> {
-				GlobalPropertiesPluginData.Builder builder = context.get(GlobalPropertiesPluginData.Builder.class);
-				double value = values[i];
-				builder.setGlobalPropertyValue(globalPropertyId, value);
-				ArrayList<String> result = new ArrayList<>();
-				result.add(Double.toString(value));
-				return result;
-			});//
-		});
-		dimensionBuilder.addMetaDatum(header);//
+	private Dimension getGlobalPropertyDimension(GlobalPropertyId globalPropertyId, String header, double[] values) {
+		GlobalPropertyDimension.Builder dimensionBuilder = GlobalPropertyDimension.builder();//
+
+		dimensionBuilder.setGlobalPropertyId(globalPropertyId)
+				.setAssignmentTime(0.0);
+
+		for (Double val : values) {
+			dimensionBuilder.addValue(val);
+		}
 		return dimensionBuilder.build();
-	} */
+	}
 
-	/* private Dimension getVaccineRefusalProbabilityDimension() {
+	private Dimension getVaccineRefusalProbabilityDimension() {
 		double[] values = new double[] { 0.0, 0.25, 0.5, 0.75, 1.0 };
-		return getGlobalPropertyDimension(GlobalProperty.VACCINE_REFUSAL_PROBABILITY, "intial_refusal_probability",
+		return getGlobalPropertyDimension(GlobalProperty.VACCINE_REFUSAL_PROBABILITY,
+				"intial_refusal_probability",
 				values);
-	} */
+	}
 
-	/* private Dimension getImmunityStartTimeDimension() {
+	private Dimension getImmunityStartTimeDimension() {
 		double[] values = new double[] { 120.0, 180.0 };
-		return getGlobalPropertyDimension(GlobalProperty.IMMUNITY_START_TIME, "immunity_start_time", values);
-	} */
+		return getGlobalPropertyDimension(GlobalProperty.IMMUNITY_START_TIME,
+				"immunity_start_time", values);
+	}
 
-	/* private Dimension getImmunityProbabilityDimension() {
+	private Dimension getImmunityProbabilityDimension() {
 		double[] values = new double[] { 0.0, 0.1, 0.2, 0.5 };
-		return getGlobalPropertyDimension(GlobalProperty.IMMUNITY_PROBABILITY, "immunity_probabilty", values);
-	} */
+		return getGlobalPropertyDimension(GlobalProperty.IMMUNITY_PROBABILITY,
+				"immunity_probabilty", values);
+	}
 
-	/* private Dimension getVaccineAttemptIntervalDimension() {
+	private Dimension getVaccineAttemptIntervalDimension() {
 		double[] values = new double[] { 30.0, 45.0, 60.0 };
 
-		return getGlobalPropertyDimension(GlobalProperty.VACCINE_ATTEMPT_INTERVAL, "vaccine_atttempt_interval", values);
-	} */
+		return getGlobalPropertyDimension(GlobalProperty.VACCINE_ATTEMPT_INTERVAL,
+				"vaccine_atttempt_interval", values);
+	}
 
-	/* private Dimension getEducationAttemptIntervalDimension() {
+	private Dimension getEducationAttemptIntervalDimension() {
 		double[] values = new double[] { 30.0, 60.0, 180.0 };
-		return getGlobalPropertyDimension(GlobalProperty.EDUCATION_ATTEMPT_INTERVAL, "education_attempt_interval",
+		return getGlobalPropertyDimension(GlobalProperty.EDUCATION_ATTEMPT_INTERVAL,
+				"education_attempt_interval",
 				values);
-	} */
+	}
 
-	/* private Dimension getEducationSuccessRatedimension() {
+	private Dimension getEducationSuccessRatedimension() {
 		double[] values = new double[] { 0.0, 0.1, 0.2 };
-		return getGlobalPropertyDimension(GlobalProperty.EDUCATION_SUCCESS_RATE, "education_success_rate", values);
-	} */
+		return getGlobalPropertyDimension(GlobalProperty.EDUCATION_SUCCESS_RATE,
+				"education_success_rate", values);
+	}
 
 	private Plugin getGlobalPropertiesPlugin() {
 		GlobalPropertiesPluginData.Builder builder = GlobalPropertiesPluginData.builder();//
@@ -192,19 +216,26 @@ public final class SerializationDemonstration {
 				.setPropertyValueMutability(false)//
 				.build();
 
-		// builder.defineGlobalProperty(GlobalProperty.IMMUNITY_START_TIME, propertyDefinition);
-		// builder.defineGlobalProperty(GlobalProperty.VACCINE_ATTEMPT_INTERVAL, propertyDefinition);
-		// builder.defineGlobalProperty(GlobalProperty.EDUCATION_ATTEMPT_INTERVAL, propertyDefinition);
-		// builder.defineGlobalProperty(GlobalProperty.EDUCATION_SUCCESS_RATE, propertyDefinition);
-		// builder.defineGlobalProperty(GlobalProperty.VACCINE_REFUSAL_PROBABILITY, propertyDefinition);
-		// builder.defineGlobalProperty(GlobalProperty.IMMUNITY_PROBABILITY, propertyDefinition);
+		builder.defineGlobalProperty(GlobalProperty.IMMUNITY_START_TIME,
+				propertyDefinition, 0.0);
+		builder.defineGlobalProperty(GlobalProperty.VACCINE_ATTEMPT_INTERVAL,
+				propertyDefinition, 0.0);
+		builder.defineGlobalProperty(GlobalProperty.EDUCATION_ATTEMPT_INTERVAL,
+				propertyDefinition, 0.0);
+		builder.defineGlobalProperty(GlobalProperty.EDUCATION_SUCCESS_RATE,
+				propertyDefinition, 0.0);
+		builder.defineGlobalProperty(GlobalProperty.VACCINE_REFUSAL_PROBABILITY,
+				propertyDefinition, 0.0);
+		builder.defineGlobalProperty(GlobalProperty.IMMUNITY_PROBABILITY,
+				propertyDefinition, 0.0);
 
 		propertyDefinition = PropertyDefinition.builder()//
 				.setType(Double.class)//
 				.setDefaultValue(365.0)//
 				.setPropertyValueMutability(false)//
 				.build();
-		// builder.defineGlobalProperty(GlobalProperty.SIMULATION_DURATION, propertyDefinition);
+		builder.defineGlobalProperty(GlobalProperty.SIMULATION_DURATION,
+				propertyDefinition, 0.0);
 
 		propertyDefinition = PropertyDefinition.builder()//
 				.setType(Integer.class)//
@@ -212,7 +243,8 @@ public final class SerializationDemonstration {
 				.setPropertyValueMutability(false)//
 				.build();
 
-		// builder.defineGlobalProperty(GlobalProperty.POPULATION_SIZE, propertyDefinition);
+		builder.defineGlobalProperty(GlobalProperty.POPULATION_SIZE,
+				propertyDefinition, 0.0);
 
 		GlobalPropertiesPluginData globalPropertiesPluginData = builder.build();
 
@@ -250,11 +282,12 @@ public final class SerializationDemonstration {
 
 		stopwatch.start();
 
-		List<PluginData> pluginDatas = this.readingTranslatorController.readInputParrallel().getPluginDatas();
+		this.readingTranslationController.readInput();
 
 		stopwatch.stop();
-
 		System.out.println(stopwatch.getElapsedMilliSeconds());
+
+		List<PluginData> pluginDatas = this.readingTranslationController.getObjects(PluginData.class);
 
 		for (PluginData pluginData : pluginDatas) {
 			if (pluginData instanceof PeoplePluginData) {
@@ -269,7 +302,8 @@ public final class SerializationDemonstration {
 			}
 
 			if (pluginData instanceof RegionsPluginData) {
-				regionsPlugin = RegionsPlugin.builder().setRegionsPluginData((RegionsPluginData) pluginData).getRegionsPlugin();
+				regionsPlugin = RegionsPlugin.builder().setRegionsPluginData((RegionsPluginData) pluginData)
+						.getRegionsPlugin();
 				continue;
 			}
 
@@ -306,19 +340,22 @@ public final class SerializationDemonstration {
 				.addPlugin(regionsPlugin)//
 				.addPlugin(peoplePlugin)//
 				.addPlugin(stochasticsPlugin)//
+				.addPlugin(ReportsPlugin.getReportsPlugin())
 
-				// .addDimension(getImmunityStartTimeDimension())//
-				// .addDimension(getImmunityProbabilityDimension())//
-				// .addDimension(getVaccineAttemptIntervalDimension())//
-				// .addDimension(getEducationAttemptIntervalDimension())//
-				// .addDimension(getEducationSuccessRatedimension())//
-				// .addDimension(getVaccineRefusalProbabilityDimension())//
+				.addDimension(getImmunityStartTimeDimension())//
+				.addDimension(getImmunityProbabilityDimension())//
+				.addDimension(getVaccineAttemptIntervalDimension())//
+				.addDimension(getEducationAttemptIntervalDimension())//
+				.addDimension(getEducationSuccessRatedimension())//
+				.addDimension(getVaccineRefusalProbabilityDimension())//
 				.addExperimentContextConsumer(nioReportItemHandler)//
-				// .setRecordState(true)
+				.setExperimentParameterData(ExperimentParameterData.builder()
+						.setRecordState(true)
+						.setSimulationHaltTime(10.0)
+						.setThreadCount(8)
+						.build())
 				.addExperimentContextConsumer(new SimulationStateCollector(this::handleSimulationStateCollection,
 						this::handleExperiementOpen))
-
-				// .setThreadCount(8)//
 				.build()//
 				.execute();//
 
@@ -326,14 +363,14 @@ public final class SerializationDemonstration {
 
 	private void handleExperiementOpen(ExperimentContext experimentContext) {
 
-		TranslatorController.Builder translatorControllerBuilder = TranslatorController.builder();
+		TranslationController.Builder translationControllerBuilder = TranslationController.builder();
 
-		Translator.Builder personPropertiesTranslator = PersonPropertiesTranslator.builder();
-		Translator.Builder globalPropertiesTranslator = GlobalPropertiesTranslator.builder();
-		Translator.Builder regionsTranslator = RegionsTranslator.builder();
-		Translator.Builder peopleTranslator = PeopleTranslator.builder();
-		Translator.Builder stochasticsTranslator = StochasticsTranslator.builder();
-		Translator.Builder nucleusTranslator = NucleusTranslator.builder();
+		Translator personPropertiesTranslator = PersonPropertiesTranslator.getTranslator();
+		Translator globalPropertiesTranslator = GlobalPropertiesTranslator.getTranslator();
+		Translator regionsTranslator = RegionsTranslator.getTranslator();
+		Translator peopleTranslator = PeopleTranslator.getTranslator();
+		Translator stochasticsTranslator = StochasticsTranslator.getTranslator();
+		Translator nucleusTranslator = NucleusTranslator.getTranslator();
 
 		for (int i = 0; i < experimentContext.getScenarioCount(); i++) {
 			File outputDir = this.outputDirectory.resolve("scenario" + i).toFile();
@@ -344,32 +381,34 @@ public final class SerializationDemonstration {
 			Path regionsPath = Paths.get(outputDir.getAbsolutePath()).resolve(regionsFileName);
 			Path peoplePath = Paths.get(outputDir.getAbsolutePath()).resolve(peopleFileName);
 			Path stochasticsPath = Paths.get(outputDir.getAbsolutePath()).resolve(stochasticsFileName);
-			Path simTimePath = Paths.get(outputDir.getAbsolutePath()).resolve(simTimeFileName);
+			Path simStatepath = Paths.get(outputDir.getAbsolutePath()).resolve(simStateFileName);
 
-			personPropertiesTranslator
-					.addOutputFile(personPropertiesPath.toString(), PersonPropertiesPluginData.class, i);
-			globalPropertiesTranslator
-					.addOutputFile(globalPropertiesPath.toString(), GlobalPropertiesPluginData.class, i);
-			regionsTranslator.addOutputFile(regionsPath.toString(), RegionsPluginData.class, i);
-			peopleTranslator.addOutputFile(peoplePath.toString(), PeoplePluginData.class, i);
-			stochasticsTranslator.addOutputFile(stochasticsPath.toString(), StochasticsPluginData.class, i);
-			// nucleusTranslator.addOutputFile(simTimePath.toString(), SimulationTime.class, i);
+			translationControllerBuilder
+					.addOutputFilePath(personPropertiesPath, PersonPropertiesPluginData.class, i)
+					.addOutputFilePath(globalPropertiesPath, GlobalPropertiesPluginData.class, i)
+					.addOutputFilePath(regionsPath, RegionsPluginData.class, i)
+					.addOutputFilePath(peoplePath, PeoplePluginData.class, i)
+					.addOutputFilePath(stochasticsPath, StochasticsPluginData.class, i)
+					.addOutputFilePath(simStatepath, SimulationState.class,
+							i);
 
 		}
 
-		translatorControllerBuilder
-				.addTranslator(personPropertiesTranslator.build())
-				.addTranslator(globalPropertiesTranslator.build())
-				.addTranslator(regionsTranslator.build())
-				.addTranslator(peopleTranslator.build())
-				.addTranslator(stochasticsTranslator.build())
-				.addTranslator(nucleusTranslator.build())
+		translationControllerBuilder
+				.addTranslator(personPropertiesTranslator)
+				.addTranslator(globalPropertiesTranslator)
+				.addTranslator(regionsTranslator)
+				.addTranslator(peopleTranslator)
+				.addTranslator(stochasticsTranslator)
+				.addTranslator(nucleusTranslator)
 				.addTranslator(PropertiesTranslator.getTranslator())
-				.addTranslatorSpec(new PersonPropertyTranslatorSpec())
-				.addTranslatorSpec(new GlobalPropertyTranslatorSpec())
-				.addTranslatorSpec(new RegionTranslatorSpec());
+				.addTranslator(ReportsTranslator.getTranslator())
+				.setTranslationEngineBuilder(ProtobufTranslationEngine.builder()
+						.addTranslationSpec(new PersonPropertyTranslatorSpec())
+						.addTranslationSpec(new GlobalPropertyTranslatorSpec())
+						.addTranslationSpec(new RegionTranslatorSpec()));
 
-		this.writingTranslatorController = translatorControllerBuilder.build();
+		this.writingTranslationController = translationControllerBuilder.build();
 	}
 
 	private void handleSimulationStateCollection(Integer scenarioId, List<Object> output) {
@@ -378,11 +417,13 @@ public final class SerializationDemonstration {
 
 		for (Object object : output) {
 			if (object instanceof PluginData) {
-				writingTranslatorController.writePluginDataOutput((PluginData) object, scenarioId);
+				writingTranslationController.writeOutput((PluginData) object, scenarioId);
 			}
-/* 			if (object instanceof SimulationTime) {
-				writingTranslatorController.writeObjectOutput(object, scenarioId);
-			} */
+			/*
+			 * if (object instanceof SimulationTime) {
+			 * writingTranslationController.writeObjectOutput(object, scenarioId);
+			 * }
+			 */
 		}
 
 	}

@@ -1,10 +1,10 @@
 package lesson.translatorSpecs;
 
-import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractTranslatorSpec;
+import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 import lesson.input.PersonPropertyInput;
 import lesson.plugins.model.PersonProperty;
 
-public class PersonPropertyTranslatorSpec extends AbstractTranslatorSpec<PersonPropertyInput, PersonProperty> {
+public class PersonPropertyTranslatorSpec extends ProtobufTranslationSpec<PersonPropertyInput, PersonProperty> {
 
     @Override
     protected PersonProperty convertInputObject(PersonPropertyInput inputObject) {
@@ -14,11 +14,6 @@ public class PersonPropertyTranslatorSpec extends AbstractTranslatorSpec<PersonP
     @Override
     protected PersonPropertyInput convertAppObject(PersonProperty simObject) {
         return PersonPropertyInput.valueOf(simObject.name());
-    }
-
-    @Override
-    public PersonPropertyInput getDefaultInstanceForInputObject() {
-        return PersonPropertyInput.forNumber(0);
     }
 
     @Override

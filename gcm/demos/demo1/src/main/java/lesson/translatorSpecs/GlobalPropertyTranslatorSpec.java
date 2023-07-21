@@ -1,10 +1,10 @@
 package lesson.translatorSpecs;
 
-import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractTranslatorSpec;
+import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 import lesson.input.GlobalPropertyInput;
 import lesson.plugins.model.GlobalProperty;
 
-public class GlobalPropertyTranslatorSpec extends AbstractTranslatorSpec<GlobalPropertyInput, GlobalProperty> {
+public class GlobalPropertyTranslatorSpec extends ProtobufTranslationSpec<GlobalPropertyInput, GlobalProperty> {
 
     @Override
     protected GlobalProperty convertInputObject(GlobalPropertyInput inputObject) {
@@ -14,11 +14,6 @@ public class GlobalPropertyTranslatorSpec extends AbstractTranslatorSpec<GlobalP
     @Override
     protected GlobalPropertyInput convertAppObject(GlobalProperty simObject) {
         return GlobalPropertyInput.valueOf(simObject.name());
-    }
-
-    @Override
-    public GlobalPropertyInput getDefaultInstanceForInputObject() {
-        return GlobalPropertyInput.forNumber(0);
     }
 
     @Override

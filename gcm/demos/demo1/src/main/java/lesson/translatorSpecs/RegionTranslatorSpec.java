@@ -1,10 +1,10 @@
 package lesson.translatorSpecs;
 
-import gov.hhs.aspr.gcm.translation.protobuf.core.AbstractTranslatorSpec;
+import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 import lesson.input.RegionInput;
 import lesson.plugins.model.Region;
 
-public class RegionTranslatorSpec extends AbstractTranslatorSpec<RegionInput, Region> {
+public class RegionTranslatorSpec extends ProtobufTranslationSpec<RegionInput, Region> {
 
     @Override
     protected Region convertInputObject(RegionInput inputObject) {
@@ -14,11 +14,6 @@ public class RegionTranslatorSpec extends AbstractTranslatorSpec<RegionInput, Re
     @Override
     protected RegionInput convertAppObject(Region simObject) {
         return RegionInput.newBuilder().setId(simObject.getValue()).build();
-    }
-
-    @Override
-    public RegionInput getDefaultInstanceForInputObject() {
-        return RegionInput.getDefaultInstance();
     }
 
     @Override
