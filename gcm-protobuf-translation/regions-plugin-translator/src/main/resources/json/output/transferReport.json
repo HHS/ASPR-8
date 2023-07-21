@@ -1,0 +1,12 @@
+{
+  "reportLabel": {
+    "label": {
+      "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.SimpleReportLabelInput",
+      "value": {
+        "@type": "type.googleapis.com/google.protobuf.StringValue",
+        "value": "region transfer report label"
+      }
+    }
+  },
+  "reportPeriod": "DAILY"
+}

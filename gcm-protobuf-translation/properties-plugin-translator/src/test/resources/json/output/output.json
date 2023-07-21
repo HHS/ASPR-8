@@ -1,0 +1,13 @@
+{
+  "propertyId": {
+    "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.TestMessage",
+    "layer1": {
+      "y": 1.0,
+      "z": 2.0
+    }
+  },
+  "propertyValue": {
+    "@type": "type.googleapis.com/google.protobuf.StringValue",
+    "value": "50"
+  }
+}

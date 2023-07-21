@@ -1,0 +1,170 @@
+{
+  "startTime": 5.0,
+  "baseDate": {
+    "year": 2023,
+    "month": 4,
+    "day": 12
+  },
+  "planningQueueArrivalId": "1472330797969573521",
+  "planQueueDatas": [
+    {
+      "time": 10.0,
+      "active": true,
+      "key": {
+        "@type": "type.googleapis.com/google.protobuf.StringValue",
+        "value": "key0"
+      },
+      "planData": {
+        "data": {
+          "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.ExamplePlanDataInput"
+        }
+      },
+      "plannerId": 0,
+      "arrivalId": "1472330797969573511"
+    },
+    {
+      "time": 11.0,
+      "active": true,
+      "key": {
+        "@type": "type.googleapis.com/google.protobuf.StringValue",
+        "value": "key1"
+      },
+      "planData": {
+        "data": {
+          "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.ExamplePlanDataInput",
+          "planTime": 15.0
+        }
+      },
+      "plannerId": 0,
+      "arrivalId": "1472330797969573512"
+    },
+    {
+      "time": 12.0,
+      "active": true,
+      "key": {
+        "@type": "type.googleapis.com/google.protobuf.StringValue",
+        "value": "key2"
+      },
+      "planData": {
+        "data": {
+          "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.ExamplePlanDataInput",
+          "planTime": 30.0
+        }
+      },
+      "plannerId": 0,
+      "arrivalId": "1472330797969573513"
+    },
+    {
+      "time": 13.0,
+      "active": true,
+      "key": {
+        "@type": "type.googleapis.com/google.protobuf.StringValue",
+        "value": "key3"
+      },
+      "planData": {
+        "data": {
+          "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.ExamplePlanDataInput",
+          "planTime": 45.0
+        }
+      },
+      "plannerId": 0,
+      "arrivalId": "1472330797969573514"
+    },
+    {
+      "time": 14.0,
+      "active": true,
+      "key": {
+        "@type": "type.googleapis.com/google.protobuf.StringValue",
+        "value": "key4"
+      },
+      "planData": {
+        "data": {
+          "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.ExamplePlanDataInput",
+          "planTime": 60.0
+        }
+      },
+      "plannerId": 0,
+      "arrivalId": "1472330797969573515"
+    },
+    {
+      "time": 15.0,
+      "active": true,
+      "key": {
+        "@type": "type.googleapis.com/google.protobuf.StringValue",
+        "value": "key5"
+      },
+      "planData": {
+        "data": {
+          "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.ExamplePlanDataInput",
+          "planTime": 75.0
+        }
+      },
+      "plannerId": 0,
+      "arrivalId": "1472330797969573516"
+    },
+    {
+      "time": 16.0,
+      "active": true,
+      "key": {
+        "@type": "type.googleapis.com/google.protobuf.StringValue",
+        "value": "key6"
+      },
+      "planData": {
+        "data": {
+          "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.ExamplePlanDataInput",
+          "planTime": 90.0
+        }
+      },
+      "plannerId": 0,
+      "arrivalId": "1472330797969573517"
+    },
+    {
+      "time": 17.0,
+      "active": true,
+      "key": {
+        "@type": "type.googleapis.com/google.protobuf.StringValue",
+        "value": "key7"
+      },
+      "planData": {
+        "data": {
+          "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.ExamplePlanDataInput",
+          "planTime": 105.0
+        }
+      },
+      "plannerId": 0,
+      "arrivalId": "1472330797969573518"
+    },
+    {
+      "time": 18.0,
+      "active": true,
+      "key": {
+        "@type": "type.googleapis.com/google.protobuf.StringValue",
+        "value": "key8"
+      },
+      "planData": {
+        "data": {
+          "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.ExamplePlanDataInput",
+          "planTime": 120.0
+        }
+      },
+      "plannerId": 0,
+      "arrivalId": "1472330797969573519"
+    },
+    {
+      "time": 19.0,
+      "active": true,
+      "key": {
+        "@type": "type.googleapis.com/google.protobuf.StringValue",
+        "value": "key9"
+      },
+      "planData": {
+        "data": {
+          "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.ExamplePlanDataInput",
+          "planTime": 135.0
+        }
+      },
+      "plannerId": 0,
+      "arrivalId": "1472330797969573520"
+    }
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "reportLabel": {
+    "label": {
+      "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.SimpleReportLabelInput",
+      "value": {
+        "@type": "type.googleapis.com/google.protobuf.StringValue",
+        "value": "person resource report label"
+      }
+    }
+  },
+  "reportPeriod": "DAILY",
+  "includedProperties": [
+    {
+      "id": {
+        "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+        "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestResourceIdInput",
+        "value": "RESOURCE_2"
+      }
+    },
+    {
+      "id": {
+        "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+        "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestResourceIdInput",
+        "value": "RESOURCE_3"
+      }
+    },
+    {
+      "id": {
+        "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+        "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestResourceIdInput",
+        "value": "RESOURCE_4"
+      }
+    },
+    {
+      "id": {
+        "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+        "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestResourceIdInput",
+        "value": "RESOURCE_5"
+      }
+    }
+  ],
+  "excludedProperties": [
+    {
+      "id": {
+        "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
+        "enumTypeUrl": "gov.hhs.aspr.gcm.translation.protobuf.TestResourceIdInput",
+        "value": "RESOURCE_1"
+      }
+    }
+  ]
+}
