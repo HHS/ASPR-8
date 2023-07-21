@@ -1,0 +1,123 @@
+syntax = "proto3";
+package gov.hhs.aspr.gcm.translation.protobuf;
+
+option java_multiple_files = true;
+option java_package = "gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.input";
+
+import "partitions-plugin.proto";
+import "properties-plugin.proto";
+import "people-plugin.proto";
+import "reports-plugin.proto";
+import "google/protobuf/any.proto";
+
+message GroupIdInput {
+    int32 id = 1;
+}
+
+message SimpleGroupTypeIdInput {
+    string value = 1;
+}
+
+enum TestGroupTypeIdInput {
+    GROUP_TYPE_1 = 0;
+    GROUP_TYPE_2 = 1;
+    GROUP_TYPE_3 = 2;
+}
+
+enum TestGroupPropertyIdInput {
+    GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK = 0;
+    GROUP_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK = 1;
+    GROUP_PROPERTY_1_3_DOUBLE_MUTABLE_NO_TRACK = 2;
+    GROUP_PROPERTY_2_1_BOOLEAN_MUTABLE_TRACK = 3;
+    GROUP_PROPERTY_2_2_INTEGER_MUTABLE_TRACK = 4;
+    GROUP_PROPERTY_2_3_DOUBLE_MUTABLE_TRACK = 5;
+    GROUP_PROPERTY_3_1_BOOLEAN_IMMUTABLE_NO_TRACK = 6;
+    GROUP_PROPERTY_3_2_INTEGER_IMMUTABLE_NO_TRACK = 7;
+    GROUP_PROPERTY_3_3_DOUBLE_IMMUTABLE_NO_TRACK = 8;
+}
+message GroupTypeIdInput {
+    google.protobuf.Any id = 1;
+}
+
+message GroupPropertyIdInput {
+    google.protobuf.Any id = 1;
+}
+
+message PersonToGroupMembershipInput {
+    int32 personId = 1;
+    repeated int32 groupIds = 2;
+}
+
+message GroupToPersonMembershipInput {
+    int32 groupId = 1;
+    repeated int32 personIds = 2;
+}
+
+message GroupPropertyDefinitionMapInput {
+    GroupTypeIdInput groupTypeId = 1;
+    repeated PropertyDefinitionMapInput propertyDefinitions = 2;
+}
+
+message GroupPropertyValueMapInput {
+   GroupIdInput groupId = 1;
+   repeated PropertyValueMapInput propertyValueMap = 2;
+}
+
+message GroupInput {
+    GroupIdInput groupId = 1;
+    GroupTypeIdInput groupTypeId = 2;
+}
+
+message GroupPropertyDimensionInput {
+    GroupIdInput groupId = 1;
+    GroupPropertyIdInput groupPropertyId = 2;
+    repeated google.protobuf.Any values = 3;
+}
+
+message GroupsPluginDataInput {
+    repeated GroupTypeIdInput groupTypeIds = 1;
+    repeated GroupInput groups = 2;
+    repeated PersonToGroupMembershipInput personToGroupMemberships = 3;
+    repeated GroupToPersonMembershipInput groupToPersonMemberships = 4;
+    repeated GroupPropertyDefinitionMapInput groupPropertyDefinitions = 5;
+    repeated GroupPropertyValueMapInput groupPropertyValues = 6;
+    int32 nextGroupIdValue = 7;
+}
+
+message GroupPopulationReportPluginDataInput {
+    ReportLabelInput reportLabel = 1;
+    ReportPeriodInput reportPeriod = 2;
+}
+
+message GroupPropertyReportPropertyMap {
+    GroupTypeIdInput groupTypeId = 1;
+    repeated GroupPropertyIdInput groupProperties = 2;
+}
+
+message GroupPropertyReportPluginDataInput {
+    ReportLabelInput reportLabel = 1;
+    ReportPeriodInput reportPeriod = 2;
+    repeated GroupPropertyReportPropertyMap includedProperties = 3;
+    repeated GroupPropertyReportPropertyMap excludedProperties = 4;
+    bool defaultInclusionPolicy = 5;
+}
+
+message GroupMemberFilterInput {
+    GroupIdInput groupId = 1;
+}
+
+message GroupTypesForPersonFilterInput {
+    EqualityInput equality = 1;
+    int32 groupTypeCount = 2;
+}
+
+message GroupsForPersonAndGroupTypeFilterInput {
+    GroupTypeIdInput groupTypeId = 1;
+    EqualityInput equality = 2;
+    int32 groupCount = 3;
+}
+
+message GroupsForPersonFilterInput {
+    EqualityInput equality = 1;
+    int32 groupCount = 2;
+}
