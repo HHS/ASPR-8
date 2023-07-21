@@ -5,8 +5,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 import java.util.function.Supplier;
 
 import org.junit.jupiter.api.Test;
@@ -106,6 +108,29 @@ public class AT_ObjectValueContainer {
 	@UnitTestMethod(target = ObjectValueContainer.class,name = "getCapacity", args = {}, tags = {UnitTag.INCOMPLETE})
 	public void testGetCapacity() {
 		// requires a manual performance test
+	}
+	
+	@Test
+	@UnitTestMethod(target = ObjectValueContainer.class, name = "toString", args = {})
+	public void testToString() {
+
+		List<Integer> list = new ArrayList<>();
+		list.add(1);
+		list.add(2);
+		list.add(5);
+		list.add(6);
+		list.add(7);
+
+		ObjectValueContainer objectValueContainer = new ObjectValueContainer(0, () -> list.iterator());
+		objectValueContainer.setValue(5, 2);
+		objectValueContainer.setValue(7, "A");
+		objectValueContainer.setValue(1, 3.8);
+		objectValueContainer.setValue(8, "B");
+		String actualValue = objectValueContainer.toString();
+		
+
+		String expectedValue = "ObjectValueContainer [elements=[1=3.8, 2=0, 5=2, 6=0, 7=A], defaultValue=0]";
+		assertEquals(expectedValue, actualValue);
 	}
 
 }

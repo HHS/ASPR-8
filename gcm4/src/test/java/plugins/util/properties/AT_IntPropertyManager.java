@@ -4,9 +4,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -253,6 +255,39 @@ public class AT_IntPropertyManager {
 			assertEquals(PropertyError.NEGATIVE_CAPACITY_INCREMENT, contractException.getErrorType());
 		});
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
+	}
+	
+	
+	@Test
+	@UnitTestMethod(target = IntPropertyManager.class, name = "toString", args = {})
+	public void testToString() {
+		Factory factory = TestPluginFactory.factory((c) -> {
+
+			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class)
+					.setDefaultValue(0).build();
+
+			List<Integer> list = new ArrayList<>();
+			list.add(1);
+			list.add(2);
+			list.add(5);
+			list.add(6);
+			list.add(7);
+
+			IntPropertyManager intPropertyManager = new IntPropertyManager(propertyDefinition,
+					() -> list.iterator());
+
+			intPropertyManager.setPropertyValue(5, 2);
+			intPropertyManager.setPropertyValue(7, 3);
+			intPropertyManager.setPropertyValue(1, 0);
+			intPropertyManager.setPropertyValue(8, 4);
+
+			String actualValue = intPropertyManager.toString();
+			String expectedValue = "IntPropertyManager [intValueContainer=IntValueContainer [subTypeArray=ByteArray [values=[1=0, 2=0, 5=2, 6=0, 7=3], defaultValue=0]], intValueType=INT]";
+
+			assertEquals(expectedValue, actualValue);
+		});
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
+
 	}
 
 }

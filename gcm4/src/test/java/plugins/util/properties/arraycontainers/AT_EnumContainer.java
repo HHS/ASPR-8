@@ -4,9 +4,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.function.Supplier;
@@ -141,6 +143,29 @@ public class AT_EnumContainer {
 	@UnitTestMethod(target = EnumContainer.class, name = "setCapacity", args = { int.class }, tags = { UnitTag.INCOMPLETE })
 	public void testSetCapacity() {
 		// requires a manual performance test
+	}
+	
+	
+	@Test
+	@UnitTestMethod(target = EnumContainer.class, name = "toString", args = {})
+	public void testToString() {
+
+		List<Integer> list = new ArrayList<>();
+		list.add(1);
+		list.add(2);
+		list.add(5);
+		list.add(6);
+		list.add(7);
+
+		EnumContainer enumContainer = new EnumContainer(Animal.class,Animal.HORSE, () -> list.iterator());
+		enumContainer.setValue(5, Animal.DOG);
+		enumContainer.setValue(7, Animal.CAT);
+		enumContainer.setValue(1, Animal.PIG);
+		enumContainer.setValue(8, Animal.SHEEP);
+		String actualValue = enumContainer.toString();
+
+		String expectedValue = "EnumContainer [values=[1=PIG, 2=HORSE, 5=DOG, 6=HORSE, 7=CAT], enumClass=class plugins.util.properties.arraycontainers.AT_EnumContainer$Animal]";
+		assertEquals(expectedValue, actualValue);
 	}
 
 }

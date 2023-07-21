@@ -67,6 +67,8 @@ public class RegionPropertyDimension implements Dimension {
      *
      */
     public static class Builder {
+    	
+    	private Builder() {}
 
         private Data data = new Data();
 

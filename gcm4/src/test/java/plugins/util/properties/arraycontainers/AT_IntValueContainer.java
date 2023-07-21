@@ -5,8 +5,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 import java.util.function.Supplier;
 
 import org.junit.jupiter.api.Test;
@@ -605,6 +607,42 @@ public class AT_IntValueContainer {
 
 		intValueContainer.setIntValue(4, 1);
 		assertEquals(IntValueType.LONG, intValueContainer.getIntValueType());
+
+	}
+	
+	@Test
+	@UnitTestMethod(target = IntValueContainer.class, name = "toString", args = {})
+	public void testToString() {
+
+		List<Integer> list = new ArrayList<>();
+		list.add(1);
+		list.add(2);
+		list.add(5);
+		list.add(6);
+		list.add(7);
+
+		IntValueContainer intValueContainer = new IntValueContainer(0, () -> list.iterator());
+		intValueContainer.setIntValue(5, 2);
+		intValueContainer.setIntValue(7, 3);
+		intValueContainer.setIntValue(1, 1);
+		intValueContainer.setIntValue(8, 4);
+		String actualValue = intValueContainer.toString();
+		
+
+		String expectedValue = "IntValueContainer [subTypeArray=ByteArray [values=[1=1, 2=0, 5=2, 6=0, 7=3], defaultValue=0]]";
+		assertEquals(expectedValue, actualValue);
+		
+		
+		//demonstration with larger values
+		intValueContainer = new IntValueContainer(0, () -> list.iterator());
+		intValueContainer.setIntValue(5, 2000);
+		intValueContainer.setIntValue(7, 3000);
+		intValueContainer.setIntValue(1, 1);
+		intValueContainer.setIntValue(8, 4);
+		actualValue = intValueContainer.toString();		
+
+		expectedValue = "IntValueContainer [subTypeArray=ShortArray [values=[1=1, 2=0, 5=2000, 6=0, 7=3000], defaultValue=0]]";
+		assertEquals(expectedValue, actualValue);
 
 	}
 

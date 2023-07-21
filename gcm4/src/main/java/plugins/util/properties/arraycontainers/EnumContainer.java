@@ -27,7 +27,7 @@ public final class EnumContainer {
 	 * The class reference for the enum type
 	 */
 	private final Class<?> enumClass;
-
+	private final Supplier<Iterator<Integer>> indexIteratorSupplier;
 	/**
 	 * Constructs an instance of EnumContainer.
 	 * 
@@ -48,12 +48,14 @@ public final class EnumContainer {
 		if (defaultValue!=null && defaultValue.getClass() != c) {
 			throw new IllegalArgumentException("default value " + defaultValue + " does not match enum class " + c);
 		}
+		
+		this.indexIteratorSupplier = indexIteratorSupplier;
 
 		enumClass = c;
 		Enum<?> e = (Enum<?>) defaultValue;
-		objectValueContainer = new ObjectValueContainer(null, indexIteratorSupplier);
+		objectValueContainer = new ObjectValueContainer(null, null);
 		objectValueContainer.setValue(e.ordinal(), defaultValue);
-		intValueContainer = new IntValueContainer(e.ordinal(), indexIteratorSupplier);
+		intValueContainer = new IntValueContainer(e.ordinal(), null);
 	}
 
 	
@@ -117,13 +119,37 @@ public final class EnumContainer {
 		intValueContainer.setCapacity(capacity);
 	}
 
+	private String getElementsString() {
+		Iterator<Integer> iterator = indexIteratorSupplier.get();
+		StringBuilder sb = new StringBuilder();
+
+		boolean first = true;
+		sb.append('[');
+
+		while (iterator.hasNext()) {
+			Integer index = iterator.next();
+			Object value = getValue(index);
+
+			if (first) {
+				first = false;
+			} else {
+				sb.append(", ");
+			}
+			
+			sb.append(index);
+			sb.append("=");
+			sb.append(value);
+
+		}
+		sb.append(']');
+		return sb.toString();
+	}
+	
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("EnumContainer [intValueContainer=");
-		builder.append(intValueContainer);
-		builder.append(", objectValueContainer=");
-		builder.append(objectValueContainer);
+		builder.append("EnumContainer [values=");		
+		builder.append(getElementsString());		
 		builder.append(", enumClass=");
 		builder.append(enumClass);
 		builder.append("]");

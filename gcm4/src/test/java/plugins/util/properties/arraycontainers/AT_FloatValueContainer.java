@@ -5,8 +5,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 import java.util.function.Supplier;
 
 import org.junit.jupiter.api.Test;
@@ -155,4 +157,27 @@ public class AT_FloatValueContainer {
 
 	}
 
+	@Test
+	@UnitTestMethod(target = FloatValueContainer.class, name = "toString", args = {})
+	public void testToString() {
+
+		List<Integer> list = new ArrayList<>();
+		list.add(1);
+		list.add(2);
+		list.add(5);
+		list.add(6);
+		list.add(7);
+
+		FloatValueContainer floatValueContainer = new FloatValueContainer(0.0F, () -> list.iterator());
+		floatValueContainer.setValue(5, 2.5F);
+		floatValueContainer.setValue(7, 3.5F);
+		floatValueContainer.setValue(1, 0.5F);
+		floatValueContainer.setValue(8, 4.0F);
+		String actualValue = floatValueContainer.toString();
+
+		String expectedValue = "FloatValueContainer [values=[1=0.5, 2=0.0, 5=2.5, 6=0.0, 7=3.5], defaultValue=0.0]";
+		assertEquals(expectedValue, actualValue);
+
+	}
+	
 }

@@ -4,9 +4,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -228,6 +230,39 @@ public class AT_DoublePropertyManager {
 			assertEquals(PropertyError.NEGATIVE_CAPACITY_INCREMENT, contractException.getErrorType());
 		});
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
+	}
+	
+	
+	@Test
+	@UnitTestMethod(target = DoublePropertyManager.class, name = "toString", args = {})
+	public void testToString() {
+		Factory factory = TestPluginFactory.factory((c) -> {
+
+			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Double.class)
+					.setDefaultValue(0.0).build();
+
+			List<Integer> list = new ArrayList<>();
+			list.add(1);
+			list.add(2);
+			list.add(5);
+			list.add(6);
+			list.add(7);
+
+			DoublePropertyManager doublePropertyManager = new DoublePropertyManager(propertyDefinition,
+					() -> list.iterator());
+
+			doublePropertyManager.setPropertyValue(5, 2.5);
+			doublePropertyManager.setPropertyValue(7, 3.5);
+			doublePropertyManager.setPropertyValue(1, 0.5);
+			doublePropertyManager.setPropertyValue(8, 4.0);
+
+			String actualValue = doublePropertyManager.toString();
+
+			String expectedValue = "DoublePropertyManager [doubleValueContainer=DoubleValueContainer [values=[1=0.5, 2=0.0, 5=2.5, 6=0.0, 7=3.5], defaultValue=0.0]]";
+			assertEquals(expectedValue, actualValue);
+		});
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
+
 	}
 
 }

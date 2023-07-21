@@ -36,31 +36,32 @@ public class AT_RegionTransferReportPluginData {
 
 		// precondition test: if the report period is not assigned
 		ContractException contractException = assertThrows(ContractException.class, () -> //
-		RegionTransferReportPluginData	.builder()//
-										.setReportLabel(new SimpleReportLabel(getClass()))//
-										.build());
+		RegionTransferReportPluginData.builder()//
+				.setReportLabel(new SimpleReportLabel(getClass()))//
+				.build());
 		assertEquals(ReportError.NULL_REPORT_PERIOD, contractException.getErrorType());
 
 		// precondition test: if the report label is not assigned
 		contractException = assertThrows(ContractException.class, () -> //
-		RegionTransferReportPluginData	.builder()//
-										.setReportPeriod(ReportPeriod.DAILY)//
-										.build());
+		RegionTransferReportPluginData.builder()//
+				.setReportPeriod(ReportPeriod.DAILY)//
+				.build());
 		assertEquals(ReportError.NULL_REPORT_LABEL, contractException.getErrorType());
 
 	}
 
 	@Test
-	@UnitTestMethod(target = RegionTransferReportPluginData.Builder.class, name = "setReportLabel", args = { ReportLabel.class })
+	@UnitTestMethod(target = RegionTransferReportPluginData.Builder.class, name = "setReportLabel", args = {
+			ReportLabel.class })
 	public void testSetReportLabel() {
 
 		for (int i = 0; i < 30; i++) {
 			ReportLabel expectedReportLabel = new SimpleReportLabel(i);
 			RegionTransferReportPluginData regionTransferReportPluginData = //
-					RegionTransferReportPluginData	.builder()//
-													.setReportPeriod(ReportPeriod.DAILY)//
-													.setReportLabel(expectedReportLabel)//
-													.build();
+					RegionTransferReportPluginData.builder()//
+							.setReportPeriod(ReportPeriod.DAILY)//
+							.setReportLabel(expectedReportLabel)//
+							.build();
 
 			assertEquals(expectedReportLabel, regionTransferReportPluginData.getReportLabel());
 		}
@@ -73,17 +74,18 @@ public class AT_RegionTransferReportPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = RegionTransferReportPluginData.Builder.class, name = "setReportPeriod", args = { ReportPeriod.class })
+	@UnitTestMethod(target = RegionTransferReportPluginData.Builder.class, name = "setReportPeriod", args = {
+			ReportPeriod.class })
 	public void testSetReportPeriod() {
 
 		ReportLabel reportLabel = new SimpleReportLabel("report label");
 		for (ReportPeriod reportPeriod : ReportPeriod.values()) {
 
 			RegionTransferReportPluginData regionTransferReportPluginData = //
-					RegionTransferReportPluginData	.builder()//
-													.setReportPeriod(reportPeriod)//
-													.setReportLabel(reportLabel)//
-													.build();
+					RegionTransferReportPluginData.builder()//
+							.setReportPeriod(reportPeriod)//
+							.setReportLabel(reportLabel)//
+							.build();
 
 			assertEquals(reportPeriod, regionTransferReportPluginData.getReportPeriod());
 		}
@@ -101,10 +103,10 @@ public class AT_RegionTransferReportPluginData {
 		for (int i = 0; i < 30; i++) {
 			ReportLabel expectedReportLabel = new SimpleReportLabel(i);
 			RegionTransferReportPluginData regionTransferReportPluginData = //
-					RegionTransferReportPluginData	.builder()//
-													.setReportPeriod(ReportPeriod.DAILY)//
-													.setReportLabel(expectedReportLabel)//
-													.build();
+					RegionTransferReportPluginData.builder()//
+							.setReportPeriod(ReportPeriod.DAILY)//
+							.setReportLabel(expectedReportLabel)//
+							.build();
 
 			assertEquals(expectedReportLabel, regionTransferReportPluginData.getReportLabel());
 		}
@@ -118,10 +120,10 @@ public class AT_RegionTransferReportPluginData {
 		for (ReportPeriod reportPeriod : ReportPeriod.values()) {
 
 			RegionTransferReportPluginData regionTransferReportPluginData = //
-					RegionTransferReportPluginData	.builder()//
-													.setReportPeriod(reportPeriod)//
-													.setReportLabel(reportLabel)//
-													.build();
+					RegionTransferReportPluginData.builder()//
+							.setReportPeriod(reportPeriod)//
+							.setReportLabel(reportLabel)//
+							.build();
 
 			assertEquals(reportPeriod, regionTransferReportPluginData.getReportPeriod());
 		}
@@ -139,14 +141,15 @@ public class AT_RegionTransferReportPluginData {
 			ReportPeriod reportPeriod = ReportPeriod.values()[randomGenerator.nextInt(ReportPeriod.values().length)];
 
 			RegionTransferReportPluginData.Builder builder = //
-					RegionTransferReportPluginData	.builder()//
-													.setReportPeriod(reportPeriod)//
-													.setReportLabel(reportLabel);
+					RegionTransferReportPluginData.builder()//
+							.setReportPeriod(reportPeriod)//
+							.setReportLabel(reportLabel);
 
 			RegionTransferReportPluginData regionTransferReportPluginData = builder.build();
 
 			// create the clone builder and have it build
-			RegionTransferReportPluginData cloneRegionTransferReportPluginData = regionTransferReportPluginData.getCloneBuilder().build();
+			RegionTransferReportPluginData cloneRegionTransferReportPluginData = regionTransferReportPluginData
+					.getCloneBuilder().build();
 
 			// the result should equal the original if the clone builder was
 			// initialized with the correct state
@@ -186,17 +189,17 @@ public class AT_RegionTransferReportPluginData {
 			ord = ord % ReportPeriod.values().length;
 			reportPeriod = ReportPeriod.values()[ord];
 			regionTransferReportPluginData2 = //
-					regionTransferReportPluginData1	.getCloneBuilder()//
-													.setReportPeriod(reportPeriod)//
-													.build();
+					regionTransferReportPluginData1.getCloneBuilder()//
+							.setReportPeriod(reportPeriod)//
+							.build();
 			assertNotEquals(regionTransferReportPluginData2, regionTransferReportPluginData1);
 
 			// change the report label
 			reportLabel = new SimpleReportLabel(1000);
 			regionTransferReportPluginData2 = //
-					regionTransferReportPluginData1	.getCloneBuilder()//
-													.setReportLabel(reportLabel)//
-													.build();
+					regionTransferReportPluginData1.getCloneBuilder()//
+							.setReportLabel(reportLabel)//
+							.build();
 			assertNotEquals(regionTransferReportPluginData2, regionTransferReportPluginData1);
 
 		}
@@ -241,10 +244,27 @@ public class AT_RegionTransferReportPluginData {
 		}
 
 		/*
-		 * The hash codes should be dispersed -- we only show that they are
-		 * unique values -- this is dependent on the random seed
+		 * The hash codes should be dispersed -- we only show that they are unique
+		 * values -- this is dependent on the random seed
 		 */
-		assertTrue(observedHashCodes.size()>45);
+		assertTrue(observedHashCodes.size() > 45);
+
+	}
+
+	@Test
+	@UnitTestMethod(target = RegionTransferReportPluginData.class, name = "toString", args = {})
+	public void testToString() {
+		RegionTransferReportPluginData regionTransferReportPluginData = RegionTransferReportPluginData.builder()//
+				.setReportLabel(new SimpleReportLabel("RegionTransferReport"))//
+				.setReportPeriod(ReportPeriod.DAILY)//
+				.build();
+
+		String actualValue = regionTransferReportPluginData.toString();
+
+		String expectedValue = "RegionTransferReportPluginData [data=Data ["
+				+ "reportLabel=SimpleReportLabel [value=RegionTransferReport], "
+				+ "reportPeriod=DAILY]]";
+		assertEquals(expectedValue, actualValue);
 
 	}
 
