@@ -3,9 +3,9 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>gov.hhs.aspr.translation</groupId>
-    <artifactId>protobuf-translation-core</artifactId>
-    <name>translation :: protobuf-translation-core</name>
+    <groupId>gov.hhs.aspr.ms.taskit.protobuf</groupId>
+    <artifactId>core</artifactId>
+    <name>taskit :: protobuf :: core</name>
     <version>${revision}</version>
     <packaging>jar</packaging>
 
@@ -27,7 +27,7 @@
         <maven-replacer-plugin.version>1.3.2</maven-replacer-plugin.version>
 
         <!-- dependency versions -->
-        <translation-core.version>2.4.0-SNAPSHOT</translation-core.version>
+        <taskit-core.version>2.4.0-SNAPSHOT</taskit-core.version>
         <protobuf.version>3.21.12</protobuf.version>
         <protoc.version>3.21.12</protoc.version>
         <util.version>4.0.0-SNAPSHOT</util.version>
@@ -38,9 +38,9 @@
     <dependencies>
         <!-- core translation dependency -->
         <dependency>
-            <groupId>gov.hhs.aspr.translation</groupId>
-            <artifactId>translation-core</artifactId>
-            <version>${translation-core.version}</version>
+            <groupId>gov.hhs.aspr.ms.taskit</groupId>
+            <artifactId>core</artifactId>
+            <version>${taskit-core.version}</version>
         </dependency>
 
         <!-- protobuf dependencies -->
@@ -56,7 +56,7 @@
         </dependency>
 
         <dependency>
-            <groupId>gov.hhs.aspr</groupId>
+            <groupId>gov.hhs.aspr.ms</groupId>
             <artifactId>util</artifactId>
             <version>${util.version}</version>
             <scope>provided</scope>

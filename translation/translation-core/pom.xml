@@ -3,11 +3,11 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>gov.hhs.aspr.translation</groupId>
-    <artifactId>translation-core</artifactId>
+    <groupId>gov.hhs.aspr.ms.taskit</groupId>
+    <artifactId>core</artifactId>
     <version>${revision}</version>
     <packaging>jar</packaging>
-    <name>translation :: core</name>
+    <name>taskit :: core</name>
 
     <properties>
         <revision>2.4.0-SNAPSHOT</revision>
