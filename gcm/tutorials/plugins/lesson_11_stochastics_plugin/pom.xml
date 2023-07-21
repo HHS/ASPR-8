@@ -1,55 +1,41 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-
 	<modelVersion>4.0.0</modelVersion>
-
 	<!-- Organization -->
 	<organization>
 		<name>ASPR</name>
 		<url>https://www.phe.gov</url>
 	</organization>
 
-
 	<!-- Artifact -->
 	<groupId>gov.hhs.aspr</groupId>
-	<artifactId>gcm4_lesson_11_stochastics_plugin</artifactId>
-	<version>4.0.0-SNAPSHOT</version>
+	<artifactId>lesson_11_stochastics_plugin</artifactId>
+	<version>${revision}</version>
 	<packaging>jar</packaging>
-	<name>gcm4 lesson 11 stochastic plugin</name>
+	<name>gcm lesson 11 stochastic plugin</name>
 	<description>Tutorial introducing the stochastics plugin</description>
+
+	<properties>
+		<!-- basic project properties -->
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<maven.compiler.source>17</maven.compiler.source>
+		<maven.compiler.target>17</maven.compiler.target>
+		<revision>${gcm.version}</revision>
+		<!-- plugin versions -->
+		<flatten-maven-plugin.version>1.3.0</flatten-maven-plugin.version>
+		<!-- dependency versions -->
+		<gcm.version>4.0.0-SNAPSHOT</gcm.version>
+	</properties>
 
 	<!-- Dependencies -->
 	<dependencies>
 		<dependency>
 			<groupId>gov.hhs.aspr</groupId>
-			<artifactId>gcm4</artifactId>
-			<version>4.0.0-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-math3</artifactId>
-			<version>3.6.1</version>
-		</dependency>
-		<dependency>
-			<groupId>net.jcip</groupId>
-			<artifactId>jcip-annotations</artifactId>
-			<version>1.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.junit.jupiter</groupId>
-			<artifactId>junit-jupiter-api</artifactId>
-			<version>5.7.0</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.junit.jupiter</groupId>
-			<artifactId>junit-jupiter-engine</artifactId>
-			<version>5.7.0</version>
-			<scope>test</scope>
+			<artifactId>gcm</artifactId>
+			<version>${gcm.version}</version>
 		</dependency>
 	</dependencies>
-
 	<!-- Developers -->
 	<developers>
 		<developer>
@@ -58,53 +44,36 @@
 			<organizationUrl>https://www.leidos.com</organizationUrl>
 		</developer>
 	</developers>
-
-	<!-- Configure Build -->
 	<build>
 		<plugins>
+			<!-- used with the ${revision} for versioning, creates a pom that has the version replaced with the value of ${revision} -->
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.8.1</version>
-				<configuration>
-					<source>17</source>
-					<target>17</target>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-source-plugin</artifactId>
-				<version>3.2.1</version>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>flatten-maven-plugin</artifactId>
+				<version>${flatten-maven-plugin.version}</version>
 				<executions>
+					<!-- enable flattening -->
 					<execution>
-						<id>attach-sources</id>
-						<phase>verify</phase>
+						<id>flatten</id>
+						<phase>process-resources</phase>
 						<goals>
-							<goal>jar-no-fork</goal>
+							<goal>flatten</goal>
+						</goals>
+						<configuration>
+							<updatePomFile>true</updatePomFile>
+						</configuration>
+					</execution>
+					<!-- ensure proper cleanup -->
+					<execution>
+						<id>flatten.clean</id>
+						<phase>clean</phase>
+						<goals>
+							<goal>clean</goal>
 						</goals>
 					</execution>
 				</executions>
 			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<version>3.0.0-M5</version>
-				<configuration>
-
-					<includes>
-						<include>*.java</include>
-					</includes>
-					<!-- <excludes> -->
-					<!-- <exclude>AT_EnvironmentImpl_01.java</exclude> -->
-					<!-- <exclude>AT_EnvironmentImpl_02.java</exclude> -->
-					<!-- </excludes> -->
-
-					<excludedGroups>manual</excludedGroups>
-				</configuration>
-			</plugin>
 		</plugins>
 	</build>
-
-
 
 </project>
