@@ -37,7 +37,7 @@
         </dependency>
 
         <dependency>
-            <groupId>gov.hhs.aspr</groupId>
+            <groupId>gov.hhs.aspr.ms</groupId>
             <artifactId>util</artifactId>
             <version>${util.version}</version>
             <scope>provided</scope>
