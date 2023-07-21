@@ -55,9 +55,9 @@ public class AT_NIOReportItemHandler {
 		
 		// the existence of the report file is covered by a manual test
 	}
-
+	
 	@Test
-	@UnitTestMethod(target = NIOReportItemHandler.Builder.class, name = "addReport", args = { ReportLabel.class, Path.class }, tags = { UnitTag.MANUAL })
+	@UnitTestMethod(target = NIOReportItemHandler.Builder.class, name = "addExperimentReport", args = { Path.class }, tags = { UnitTag.MANUAL })
 	public void testAddExperimentReport() {
 		NIOReportItemHandler.Builder builder = NIOReportItemHandler.builder();
 
@@ -94,5 +94,4 @@ public class AT_NIOReportItemHandler {
 	public void testAccept() {
 		// covered by test for accept in manual test
 	}
-
 }

@@ -5,8 +5,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 import java.util.function.Supplier;
 
 import org.junit.jupiter.api.Test;
@@ -155,6 +157,30 @@ public class AT_DoubleValueContainer {
 
 		// pre-condition tests
 		assertThrows(RuntimeException.class, () -> doubleValueContainer.setValue(-1, 234.63));
+
+	}
+	
+	@Test
+	@UnitTestMethod(target = DoubleValueContainer.class, name = "toString", args = {})
+	public void testToString() {
+
+		List<Integer> list = new ArrayList<>();
+		list.add(1);
+		list.add(2);
+		list.add(5);
+		list.add(6);
+		list.add(7);
+
+		DoubleValueContainer doubleValueContainer = new DoubleValueContainer(0.0, () -> list.iterator());
+		doubleValueContainer.setValue(5, 2.5);
+		doubleValueContainer.setValue(7, 3.5);
+		doubleValueContainer.setValue(1, 0.5);
+		doubleValueContainer.setValue(8, 4);
+		String actualValue = doubleValueContainer.toString();
+				
+
+		String expectedValue = "DoubleValueContainer [values=[1=0.5, 2=0.0, 5=2.5, 6=0.0, 7=3.5], defaultValue=0.0]";
+		assertEquals(expectedValue, actualValue);
 
 	}
 

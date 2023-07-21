@@ -4,9 +4,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -230,6 +232,39 @@ public class AT_EnumPropertyManager {
 			assertEquals(PropertyError.NEGATIVE_CAPACITY_INCREMENT, contractException.getErrorType());
 		});
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
+	}
+	
+	@Test
+	@UnitTestMethod(target = EnumPropertyManager.class, name = "toString", args = {})
+	public void testToString() {
+		Factory factory = TestPluginFactory.factory((c) -> {
+
+			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Color.class)
+					.setDefaultValue(Color.BLUE).build();
+
+			List<Integer> list = new ArrayList<>();
+			list.add(1);
+			list.add(2);
+			list.add(5);
+			list.add(6);
+			list.add(7);
+
+			EnumPropertyManager enumPropertyManager = new EnumPropertyManager(propertyDefinition,
+					() -> list.iterator());
+
+			enumPropertyManager.setPropertyValue(5, Color.RED);
+			enumPropertyManager.setPropertyValue(7, Color.YELLOW);
+			enumPropertyManager.setPropertyValue(1, Color.RED);
+			enumPropertyManager.setPropertyValue(8, Color.BLUE);
+
+			String actualValue = enumPropertyManager.toString();
+			
+			String expectedValue = "EnumPropertyManager [enumContainer=EnumContainer [values=[1=RED, 2=BLUE, 5=RED, 6=BLUE, 7=YELLOW], enumClass=class plugins.util.properties.AT_EnumPropertyManager$Color]]";
+
+			assertEquals(expectedValue, actualValue);
+		});
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
+
 	}
 
 }
