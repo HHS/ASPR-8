@@ -11,7 +11,7 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.input.PeoplePluginDa
 import gov.hhs.aspr.translation.core.TranslationController;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
 import gov.hhs.aspr.translation.core.testsupport.TestResourceHelper;
-import plugins.people.PeoplePluginData;
+import plugins.people.datamanagers.PeoplePluginData;
 import plugins.people.support.PersonRange;
 import util.annotations.UnitTestForCoverage;
 import util.random.RandomGeneratorProvider;

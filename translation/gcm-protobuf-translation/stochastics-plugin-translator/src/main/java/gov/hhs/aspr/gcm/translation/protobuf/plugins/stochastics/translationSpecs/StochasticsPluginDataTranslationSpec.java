@@ -5,7 +5,7 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.stochastics.input.RandomNum
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.stochastics.input.StochasticsPluginDataInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.stochastics.input.WellStateInput;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
-import plugins.stochastics.StochasticsPluginData;
+import plugins.stochastics.datamanagers.StochasticsPluginData;
 import plugins.stochastics.support.RandomNumberGeneratorId;
 import plugins.stochastics.support.WellState;
 

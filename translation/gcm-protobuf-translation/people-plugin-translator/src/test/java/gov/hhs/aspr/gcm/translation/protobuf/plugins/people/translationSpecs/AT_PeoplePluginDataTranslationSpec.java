@@ -10,7 +10,7 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.PeopleTranslator;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.input.PeoplePluginDataInput;
 import gov.hhs.aspr.translation.core.TranslationController;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
-import plugins.people.PeoplePluginData;
+import plugins.people.datamanagers.PeoplePluginData;
 import plugins.people.support.PersonRange;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestForCoverage;

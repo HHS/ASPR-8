@@ -14,11 +14,11 @@ import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonId;
 import plugins.personproperties.datamanagers.PersonPropertiesDataManager;
 import plugins.personproperties.events.PersonPropertyUpdateEvent;
-import plugins.stochastics.StochasticsDataManager;
+import plugins.stochastics.datamanagers.StochasticsDataManager;
 
 public final class Vaccinator {
 
-	private PeopleDataManager peopleDataManager;	
+	private PeopleDataManager peopleDataManager;
 	private RandomGenerator randomGenerator;
 	private PersonPropertiesDataManager personPropertiesDataManager;
 	private GlobalPropertiesDataManager globalPropertiesDataManager;
@@ -27,9 +27,9 @@ public final class Vaccinator {
 
 	private void vaccinatePerson(PersonId personId) {
 		int vaccineAttempts = personPropertiesDataManager
-			.getPersonPropertyValue(personId, PersonProperty.VACCINE_ATTEMPTS);
+				.getPersonPropertyValue(personId, PersonProperty.VACCINE_ATTEMPTS);
 		personPropertiesDataManager
-			.setPersonPropertyValue(personId, PersonProperty.VACCINE_ATTEMPTS, vaccineAttempts + 1);
+				.setPersonPropertyValue(personId, PersonProperty.VACCINE_ATTEMPTS, vaccineAttempts + 1);
 
 		boolean isImmune = false;
 		if (personPropertiesDataManager.personPropertyIdExists(PersonProperty.IS_IMMUNE)) {
@@ -41,18 +41,17 @@ public final class Vaccinator {
 				.getPersonPropertyValue(personId, PersonProperty.REFUSES_VACCINE);
 		if (!isImmune) {
 			if (refusesVaccine) {
-				double planTime = actorContext.getTime() 
+				double planTime = actorContext.getTime()
 						+ randomGenerator.nextDouble() * vaccineAttemptInterval;
 				Object planKey = personId;
 				Consumer<ActorContext> plan = (c) -> vaccinatePerson(personId);
-				actorContext.addKeyedPlan(plan, planTime, planKey);				
+				// actorContext.addKeyedPlan(plan, planTime, planKey);
 			} else {
 				personPropertiesDataManager
-					.setPersonPropertyValue(personId, PersonProperty.VACCINATED, true);				
+						.setPersonPropertyValue(personId, PersonProperty.VACCINATED, true);
 			}
 		}
 	}
-
 
 	private void handleVaccineAcceptance(ActorContext actorContext,
 			PersonPropertyUpdateEvent personPropertyUpdateEvent) {
@@ -70,16 +69,15 @@ public final class Vaccinator {
 	}
 
 	private void planVaccination(PersonId personId) {
-		double planTime = actorContext.getTime() 
+		double planTime = actorContext.getTime()
 				+ randomGenerator.nextDouble() * vaccineAttemptInterval;
 		Object planKey = personId;
 		Consumer<ActorContext> plan = (c) -> vaccinatePerson(personId);
-		actorContext.addKeyedPlan(plan, planTime, planKey);
+		// actorContext.addKeyedPlan(plan, planTime, planKey);
 	}
-	
+
 	private void handleNewPerson(PersonId personId) {
-		boolean vaccinated = personPropertiesDataManager.
-				getPersonPropertyValue(personId, PersonProperty.VACCINATED);		
+		boolean vaccinated = personPropertiesDataManager.getPersonPropertyValue(personId, PersonProperty.VACCINATED);
 		if (!vaccinated) {
 			planVaccination(personId);
 		}
@@ -87,10 +85,9 @@ public final class Vaccinator {
 
 	public void init(ActorContext actorContext) {
 		this.actorContext = actorContext;
-		StochasticsDataManager stochasticsDataManager = 
-				actorContext.getDataManager(StochasticsDataManager.class);
+		StochasticsDataManager stochasticsDataManager = actorContext.getDataManager(StochasticsDataManager.class);
 		randomGenerator = stochasticsDataManager.getRandomGenerator();
-		peopleDataManager = actorContext.getDataManager(PeopleDataManager.class);		
+		peopleDataManager = actorContext.getDataManager(PeopleDataManager.class);
 		personPropertiesDataManager = actorContext
 				.getDataManager(PersonPropertiesDataManager.class);
 		globalPropertiesDataManager = actorContext
@@ -112,8 +109,8 @@ public final class Vaccinator {
 		actorContext.subscribe(
 				peopleDataManager.getEventFilterForPersonAdditionEvent(), (c, e) -> {
 					handleNewPerson(e.personId());
-		});
+				});
 
 	}
-	
+
 }

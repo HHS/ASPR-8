@@ -25,8 +25,8 @@ public class GlobalPropertiesTranslator {
     private GlobalPropertiesTranslator() {
     }
 
-    protected static List<TranslationSpec<?,?>> getTranslationSpecs() {
-        List<TranslationSpec<?,?>> list = new ArrayList<>();
+    protected static List<TranslationSpec<?, ?>> getTranslationSpecs() {
+        List<TranslationSpec<?, ?>> list = new ArrayList<>();
 
         list.add(new GlobalPropertiesPluginDataTranslationSpec());
         list.add(new GlobalPropertyIdTranslationSpec());
@@ -36,13 +36,11 @@ public class GlobalPropertiesTranslator {
 
         return list;
     }
+
     /**
      * Returns a Translator Builder that already includes the necessary
-     * TranslationSpecs needed to read and write GlobalPropertiesPluginData
-     * 
-     * <li>the parameter withReport controls whether to add TranslationSpecs for the
-     * GlobalPropertyReportPluginData and also add a dependency on the
-     * ReportsTranslator
+     * TranslationSpecs needed to read and write GlobalPropertiesPluginData and its
+     * respective reports - GlobalPropertyReportPluginData
      */
     private static Translator.Builder builder() {
 
@@ -54,7 +52,7 @@ public class GlobalPropertiesTranslator {
                     ProtobufTranslationEngine.Builder translationEngineBuilder = translatorContext
                             .getTranslationEngineBuilder(ProtobufTranslationEngine.Builder.class);
 
-                    for(TranslationSpec<?,?> translationSpec : getTranslationSpecs()) {
+                    for (TranslationSpec<?, ?> translationSpec : getTranslationSpecs()) {
                         translationEngineBuilder.addTranslationSpec(translationSpec);
                     }
                 });

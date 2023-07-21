@@ -35,25 +35,24 @@ import nucleus.PlanQueueData;
 import nucleus.Plugin;
 import nucleus.SimulationState;
 import plugins.globalproperties.GlobalPropertiesPlugin;
-import plugins.globalproperties.GlobalPropertiesPluginData;
-import plugins.globalproperties.GlobalPropertiesPluginData.Builder;
+import plugins.globalproperties.datamanagers.GlobalPropertiesPluginData;
 import plugins.groups.GroupsPlugin;
-import plugins.groups.GroupsPluginData;
+import plugins.groups.datamanagers.GroupsPluginData;
 import plugins.materials.MaterialsPlugin;
-import plugins.materials.MaterialsPluginData;
+import plugins.materials.datamangers.MaterialsPluginData;
 import plugins.people.PeoplePlugin;
-import plugins.people.PeoplePluginData;
+import plugins.people.datamanagers.PeoplePluginData;
 import plugins.personproperties.PersonPropertiesPlugin;
-import plugins.personproperties.PersonPropertiesPluginData;
+import plugins.personproperties.datamanagers.PersonPropertiesPluginData;
 import plugins.personproperties.reports.PersonPropertyReportPluginData;
 import plugins.regions.RegionsPlugin;
-import plugins.regions.RegionsPluginData;
+import plugins.regions.datamanagers.RegionsPluginData;
 import plugins.reports.support.NIOReportItemHandler;
 import plugins.resources.ResourcesPlugin;
-import plugins.resources.ResourcesPluginData;
+import plugins.resources.datamanagers.ResourcesPluginData;
 import plugins.resources.support.ResourceId;
 import plugins.stochastics.StochasticsPlugin;
-import plugins.stochastics.StochasticsPluginData;
+import plugins.stochastics.datamanagers.StochasticsPluginData;
 import plugins.stochastics.support.WellState;
 import plugins.util.properties.PropertyDefinition;
 import util.random.RandomGeneratorProvider;
@@ -289,7 +288,7 @@ public final class PlanTestDriver {
 	}
 
 	private Plugin getGlobalPropertiesPlugin() {
-		final Builder builder = GlobalPropertiesPluginData.builder();//
+		final GlobalPropertiesPluginData.Builder builder = GlobalPropertiesPluginData.builder();//
 
 		PropertyDefinition propertyDefinition = PropertyDefinition	.builder()//
 																	.setType(Double.class)//

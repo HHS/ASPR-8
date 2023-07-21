@@ -15,10 +15,9 @@ import plugins.people.support.PersonConstructionData.Builder;
 import plugins.people.support.PersonId;
 import plugins.personproperties.datamanagers.PersonPropertiesDataManager;
 import plugins.personproperties.support.PersonPropertyDefinitionInitialization;
-import plugins.personproperties.support.PersonPropertyInitialization;
 import plugins.regions.datamanagers.RegionsDataManager;
 import plugins.regions.support.RegionId;
-import plugins.stochastics.StochasticsDataManager;
+import plugins.stochastics.datamanagers.StochasticsDataManager;
 import plugins.util.properties.PropertyDefinition;
 
 public class PopulationLoader {
@@ -69,7 +68,7 @@ public class PopulationLoader {
 			personConstructionDataBuilder.add(regionId);
 
 			boolean refusesVaccine = randomGenerator.nextDouble() < refusalProbability;
-			PersonPropertyInitialization personPropertyInitialization = 
+			/* PersonPropertyInitialization personPropertyInitialization = 
 					new PersonPropertyInitialization(PersonProperty.REFUSES_VACCINE, refusesVaccine);
 			personConstructionDataBuilder.add(personPropertyInitialization);
 
@@ -79,7 +78,7 @@ public class PopulationLoader {
 				personConstructionDataBuilder.add(new PersonPropertyInitialization(PersonProperty.IS_IMMUNE, isImmune));
 			}
 			PersonConstructionData personConstructionData = personConstructionDataBuilder.build();
-			peopleDataManager.addPerson(personConstructionData);
+			peopleDataManager.addPerson(personConstructionData); */
 		}
 
 		double simulationDuration = globalPropertiesDataManager.getGlobalPropertyValue(GlobalProperty.SIMULATION_DURATION);

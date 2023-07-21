@@ -12,7 +12,7 @@ import plugins.globalproperties.datamanagers.GlobalPropertiesDataManager;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonId;
 import plugins.personproperties.datamanagers.PersonPropertiesDataManager;
-import plugins.stochastics.StochasticsDataManager;
+import plugins.stochastics.datamanagers.StochasticsDataManager;
 
 public class VaccineEducator {
 

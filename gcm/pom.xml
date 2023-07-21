@@ -8,7 +8,7 @@
 	<!-- Artifact -->
 	<groupId>gov.hhs.aspr</groupId>
 	<artifactId>gcm</artifactId>
-	<name>General Compartmental Model</name>
+	<name>General Computational Model</name>
 	<packaging>jar</packaging>
 	<version>4.0.0-SNAPSHOT</version>
 
@@ -19,7 +19,6 @@
 		<maven.compiler.target>17</maven.compiler.target>
 
 		<!-- plugin versions -->
-		<flatten-maven-plugin.version>1.3.0</flatten-maven-plugin.version>
 		<maven-surefire-plugin.version>3.0.0-M5</maven-surefire-plugin.version>
 		<maven-failsafe-plugin.version>3.0.0-M5</maven-failsafe-plugin.version>
 		<maven-source-plugin.version>3.2.1</maven-source-plugin.version>
@@ -45,16 +44,17 @@
 			<artifactId>util</artifactId>
 			<version>${util.version}</version>
 		</dependency>
-
 		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-core</artifactId>
 			<version>${mockito-core.version}</version>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.jacoco</groupId>
 			<artifactId>jacoco-maven-plugin</artifactId>
 			<version>${jacoco-maven-plugin.version}</version>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
@@ -97,6 +97,7 @@
 	<!-- Configure Build -->
 	<build>
 		<plugins>
+			<!-- Runs unit tests -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
@@ -107,6 +108,8 @@
 					</includes>
 				</configuration>
 			</plugin>
+
+			<!-- runs a jacoco process -->
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
@@ -156,6 +159,8 @@
 					</execution>
 				</executions>
 			</plugin>
+
+			<!-- attaches java source to jar -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>

@@ -3,7 +3,7 @@ package gov.hhs.aspr.gcm.translation.protobuf.plugins.people.translationSpecs;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.input.PeoplePluginDataInput;
 import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.input.PersonRangeInput;
-import plugins.people.PeoplePluginData;
+import plugins.people.datamanagers.PeoplePluginData;
 import plugins.people.support.PersonRange;
 
 /**

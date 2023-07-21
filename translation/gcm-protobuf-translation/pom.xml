@@ -32,9 +32,8 @@
         <proto-definitions.version>1.12.0</proto-definitions.version>
         <gcm.version>4.0.0-SNAPSHOT</gcm.version>
         <protoc.version>3.21.12</protoc.version>
-        <junit-jupiter-engine.version>5.8.2</junit-jupiter-engine.version>
         <jacoco-maven-plugin.version>0.8.9</jacoco-maven-plugin.version>
-
+        <junit-jupiter-engine.version>5.8.2</junit-jupiter-engine.version>
     </properties>
 
     <!--
@@ -56,15 +55,8 @@
             <!-- gcm dependency -->
             <dependency>
                 <groupId>gov.hhs.aspr</groupId>
-                <artifactId>gcm4</artifactId>
+                <artifactId>gcm</artifactId>
                 <version>${gcm.version}</version>
-                <exclusions>
-                    <!-- exclude util since protobuf-core includes it -->
-                    <exclusion>
-                        <groupId>gov.hhs.aspr</groupId>
-                        <artifactId>util</artifactId>
-                    </exclusion>
-                </exclusions>
                 <!--
                     A scope of provided means that the resulting jar file will not include this in its dependencies
                     instead, must be provided by the project that uses this dependecy
@@ -84,6 +76,7 @@
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>${jacoco-maven-plugin.version}</version>
+                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.junit.jupiter</groupId>
@@ -113,7 +106,7 @@
         </dependency>
         <dependency>
             <groupId>gov.hhs.aspr</groupId>
-            <artifactId>gcm4</artifactId>
+            <artifactId>gcm</artifactId>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>

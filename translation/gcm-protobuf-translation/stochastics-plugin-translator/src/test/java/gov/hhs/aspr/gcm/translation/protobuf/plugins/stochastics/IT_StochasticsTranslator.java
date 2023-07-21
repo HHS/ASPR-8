@@ -10,8 +10,8 @@ import gov.hhs.aspr.gcm.translation.protobuf.plugins.stochastics.input.Stochasti
 import gov.hhs.aspr.translation.core.TranslationController;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
 import gov.hhs.aspr.translation.core.testsupport.TestResourceHelper;
-import plugins.stochastics.StochasticsDataManager;
-import plugins.stochastics.StochasticsPluginData;
+import plugins.stochastics.datamanagers.StochasticsDataManager;
+import plugins.stochastics.datamanagers.StochasticsPluginData;
 import plugins.stochastics.support.RandomNumberGeneratorId;
 import plugins.stochastics.support.Well;
 import plugins.stochastics.support.WellState;

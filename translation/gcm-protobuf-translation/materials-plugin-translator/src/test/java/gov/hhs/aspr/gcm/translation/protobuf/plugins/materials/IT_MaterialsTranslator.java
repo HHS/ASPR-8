@@ -50,7 +50,6 @@ public class IT_MaterialsTranslator {
 				.addTranslator(ReportsTranslator.getTranslator())
 				.addInputFilePath(filePath.resolve(fileName), MaterialsPluginDataInput.class)
 				.addOutputFilePath(filePath.resolve(fileName), MaterialsPluginData.class)
-
 				.build();
 
 		int numBatches = 50;
