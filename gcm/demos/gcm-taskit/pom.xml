@@ -12,7 +12,7 @@
 
 	<!-- Artifact -->
 	<groupId>gov.hhs.aspr.ms.gcm.demos</groupId>
-	<artifactId>demo1</artifactId>
+	<artifactId>gcm-taskit</artifactId>
 	<version>${revision}</version>
 	<packaging>jar</packaging>
 	<name>serialization demo</name>
