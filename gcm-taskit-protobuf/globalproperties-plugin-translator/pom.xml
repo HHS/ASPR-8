@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>gov.hhs.aspr.ms.ms.gcm.taskit.protobuf</groupId>
+        <groupId>gov.hhs.aspr.ms.gcm.taskit.protobuf</groupId>
         <artifactId>protobuf-parent</artifactId>
         <version>${revision}</version>
     </parent>

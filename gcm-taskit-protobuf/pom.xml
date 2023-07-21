@@ -101,11 +101,11 @@
     -->
     <dependencies>
         <dependency>
-            <groupId>gov.hhs.aspr.ms.taskit</groupId>
-            <artifactId>protobuf-taskit-core</artifactId>
+            <groupId>gov.hhs.aspr.ms.taskit.protobuf</groupId>
+            <artifactId>core</artifactId>
         </dependency>
         <dependency>
-            <groupId>gov.hhs.aspr</groupId>
+            <groupId>gov.hhs.aspr.ms</groupId>
             <artifactId>gcm</artifactId>
         </dependency>
         <dependency>
@@ -239,8 +239,8 @@
                                     <includes>**/*.proto</includes>
                                 </artifactItem>
                                 <artifactItem>
-                                    <groupId>gov.hhs.aspr.ms.taskit</groupId>
-                                    <artifactId>protobuf-taskit-core</artifactId>
+                                    <groupId>gov.hhs.aspr.ms.taskit.protobuf</groupId>
+                                    <artifactId>core</artifactId>
                                     <version>${protobuf-taskit-core.version}</version>
                                     <overWrite>true</overWrite>
                                     <outputDirectory>${project.build.outputDirectory}/gov/hhs/aspr/taskit/core</outputDirectory>
