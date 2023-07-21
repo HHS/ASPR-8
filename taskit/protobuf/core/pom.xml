@@ -3,8 +3,8 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>gov.hhs.aspr.ms.taskit.protobuf</groupId>
-    <artifactId>core</artifactId>
+    <groupId>gov.hhs.aspr.ms.taskit</groupId>
+    <artifactId>protobuf</artifactId>
     <name>taskit :: protobuf :: core</name>
     <version>${revision}</version>
     <packaging>jar</packaging>
