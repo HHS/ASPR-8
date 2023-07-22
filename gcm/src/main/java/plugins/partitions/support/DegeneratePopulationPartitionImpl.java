@@ -31,30 +31,25 @@ public class DegeneratePopulationPartitionImpl implements PopulationPartition {
 	private final PeopleContainer peopleContainer;
 
 	private final PartitionsContext partitionsContext;
-	
 
 	private final Filter filter;
 
 	private final Map<Class<? extends Event>, List<FilterSensitivity<? extends Event>>> eventClassToFilterSensitivityMap = new LinkedHashMap<>();
 
-	
-	public DegeneratePopulationPartitionImpl(final PartitionsContext partitionsContext, final Partition partition) {
-		this(partitionsContext,partition,false);
-	}
-	
 	/**
 	 * Constructs an DegeneratePopulationPartitionImpl
 	 *
 	 * @throws ContractException
-	 *             <li>{@linkplain PartitionError#NON_DEGENERATE_PARTITION} if
-	 *             the partition contains labelers</li>
+	 *                           <li>{@linkplain PartitionError#NON_DEGENERATE_PARTITION}
+	 *                           if the partition contains labelers</li>
 	 *
 	 * @throws RuntimeException
-	 *             <li>if context is null</li>
-	 *             <li>if partition is null</li>
-	 *             <li>if the partition contains labelers</li>
+	 *                           <li>if context is null</li>
+	 *                           <li>if partition is null</li>
+	 *                           <li>if the partition contains labelers</li>
 	 */
-	public DegeneratePopulationPartitionImpl(final PartitionsContext partitionsContext, final Partition partition,boolean supportRunContinuity) {
+	public DegeneratePopulationPartitionImpl(final PartitionsContext partitionsContext, final Partition partition,
+			boolean supportRunContinuity) {
 		this.partitionsContext = partitionsContext;
 		stochasticsDataManager = partitionsContext.getDataManager(StochasticsDataManager.class);
 		filter = partition.getFilter().orElse(new TrueFilter());
@@ -64,7 +59,8 @@ public class DegeneratePopulationPartitionImpl implements PopulationPartition {
 		}
 
 		for (final FilterSensitivity<? extends Event> filterSensitivity : filter.getFilterSensitivities()) {
-			List<FilterSensitivity<? extends Event>> list = eventClassToFilterSensitivityMap.get(filterSensitivity.getEventClass());
+			List<FilterSensitivity<? extends Event>> list = eventClassToFilterSensitivityMap
+					.get(filterSensitivity.getEventClass());
 			if (list == null) {
 				list = new ArrayList<>();
 				eventClassToFilterSensitivityMap.put(filterSensitivity.getEventClass(), list);
@@ -72,7 +68,7 @@ public class DegeneratePopulationPartitionImpl implements PopulationPartition {
 			list.add(filterSensitivity);
 		}
 
-		peopleContainer = new BasePeopleContainer(partitionsContext,supportRunContinuity);
+		peopleContainer = new BasePeopleContainer(partitionsContext, supportRunContinuity);
 
 		final PeopleDataManager peopleDataManager = partitionsContext.getDataManager(PeopleDataManager.class);
 		final int personIdLimit = peopleDataManager.getPersonIdLimit();
@@ -81,8 +77,8 @@ public class DegeneratePopulationPartitionImpl implements PopulationPartition {
 				final PersonId personId = peopleDataManager.getBoxedPersonId(i).get();
 				if (filter.evaluate(partitionsContext, personId)) {
 					/*
-					 * Using unsafe add since this is in the constructor, we are
-					 * sure that the person is not already contained
+					 * Using unsafe add since this is in the constructor, we are sure that the
+					 * person is not already contained
 					 */
 					peopleContainer.unsafeAdd(personId);
 				}
@@ -95,9 +91,9 @@ public class DegeneratePopulationPartitionImpl implements PopulationPartition {
 	public void attemptPersonAddition(final PersonId personId) {
 		if (filter.evaluate(partitionsContext, personId)) {
 			/*
-			 * By contract, this method is only invoked with person ids that are
-			 * new to the simulation or new to this population partition and
-			 * thus cannot already in members of this population partition.
+			 * By contract, this method is only invoked with person ids that are new to the
+			 * simulation or new to this population partition and thus cannot already in
+			 * members of this population partition.
 			 */
 			peopleContainer.unsafeAdd(personId);
 		}
@@ -142,8 +138,8 @@ public class DegeneratePopulationPartitionImpl implements PopulationPartition {
 	}
 
 	/**
-	 * Returns a map whose single key is an empty label set and whose single
-	 * value is the number of people in the population partition.
+	 * Returns a map whose single key is an empty label set and whose single value
+	 * is the number of people in the population partition.
 	 * 
 	 * Precondition: the label set should be empty or null.
 	 */
@@ -157,7 +153,8 @@ public class DegeneratePopulationPartitionImpl implements PopulationPartition {
 	@Override
 	public void handleEvent(final Event event) {
 		PersonId personId = null;
-		final List<FilterSensitivity<? extends Event>> filterSensitivities = eventClassToFilterSensitivityMap.get(event.getClass());
+		final List<FilterSensitivity<? extends Event>> filterSensitivities = eventClassToFilterSensitivityMap
+				.get(event.getClass());
 		if (filterSensitivities != null) {
 			for (final FilterSensitivity<? extends Event> filterSensitivity : filterSensitivities) {
 				final Optional<PersonId> optionalPersonId = filterSensitivity.requiresRefresh(partitionsContext, event);
@@ -170,7 +167,7 @@ public class DegeneratePopulationPartitionImpl implements PopulationPartition {
 
 		if (personId != null) {
 			if (filter.evaluate(partitionsContext, personId)) {
-				peopleContainer.safeAdd(personId);				
+				peopleContainer.safeAdd(personId);
 			} else {
 				peopleContainer.remove(personId);
 			}
@@ -185,7 +182,8 @@ public class DegeneratePopulationPartitionImpl implements PopulationPartition {
 	@Override
 	public Optional<PersonId> samplePartition(final PartitionSampler partitionSampler) {
 		RandomGenerator randomGenerator;
-		final RandomNumberGeneratorId randomNumberGeneratorId = partitionSampler.getRandomNumberGeneratorId().orElse(null);
+		final RandomNumberGeneratorId randomNumberGeneratorId = partitionSampler.getRandomNumberGeneratorId()
+				.orElse(null);
 		if (randomNumberGeneratorId != null) {
 			randomGenerator = stochasticsDataManager.getRandomGeneratorFromId(randomNumberGeneratorId);
 		} else {
@@ -219,7 +217,7 @@ public class DegeneratePopulationPartitionImpl implements PopulationPartition {
 	}
 
 	@Override
-	public <T> Optional<T> getPersonValue(LabelSetFunction<T> labelSetFunction, PersonId personId) {		
+	public <T> Optional<T> getPersonValue(LabelSetFunction<T> labelSetFunction, PersonId personId) {
 		return Optional.ofNullable(null);
 	}
 
