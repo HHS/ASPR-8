@@ -177,5 +177,24 @@ public class AT_ResourcePropertyReportPluginData {
 		assertTrue(observedHashCodes.size()>40);
 
 	}
+	
+	
+ 
+	@Test
+	@UnitTestMethod(target = ResourcePropertyReportPluginData.class, name = "toString", args = {})
+	public void testToString() {
+		for (int i = 0; i < 30; i++) {
+			ReportLabel expectedReportLabel = new SimpleReportLabel(i);
+			ResourcePropertyReportPluginData resourcePropertyReportPluginData = //
+					ResourcePropertyReportPluginData.builder()//
+													.setReportLabel(expectedReportLabel)//
+													.build();
 
+			String actualValue =  resourcePropertyReportPluginData.toString();
+			String expectedValue =  "ResourcePropertyReportPluginData [data=Data [reportLabel=SimpleReportLabel [value="+i+"], locked=true]]";
+			
+			assertEquals(expectedValue, actualValue);
+		}
+
+	}
 }

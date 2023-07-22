@@ -314,11 +314,8 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 	private double[] weights;
 
 	private Key[] weightedKeys;
+	
 	private final PeopleDataManager peopleDataManager;
-
-	public PopulationPartitionImpl(final PartitionsContext partitionsContext, final Partition partition) {
-		this(partitionsContext,partition,false);
-	}
 	
 	/**
 	 * Constructs a PopulationPartitionImpl

@@ -39,31 +39,32 @@ public class AT_ResourceReportPluginData {
 
 		// precondition test: if the report period is not assigned
 		ContractException contractException = assertThrows(ContractException.class, () -> //
-		ResourceReportPluginData	.builder()//
-										.setReportLabel(new SimpleReportLabel(getClass()))//
-										.build());
+		ResourceReportPluginData.builder()//
+				.setReportLabel(new SimpleReportLabel(getClass()))//
+				.build());
 		assertEquals(ReportError.NULL_REPORT_PERIOD, contractException.getErrorType());
 
 		// precondition test: if the report label is not assigned
 		contractException = assertThrows(ContractException.class, () -> //
-		ResourceReportPluginData	.builder()//
-										.setReportPeriod(ReportPeriod.DAILY)//
-										.build());
+		ResourceReportPluginData.builder()//
+				.setReportPeriod(ReportPeriod.DAILY)//
+				.build());
 		assertEquals(ReportError.NULL_REPORT_LABEL, contractException.getErrorType());
 
 	}
 
 	@Test
-	@UnitTestMethod(target = ResourceReportPluginData.Builder.class, name = "setReportLabel", args = { ReportLabel.class })
+	@UnitTestMethod(target = ResourceReportPluginData.Builder.class, name = "setReportLabel", args = {
+			ReportLabel.class })
 	public void testSetReportLabel() {
 
 		for (int i = 0; i < 30; i++) {
 			ReportLabel expectedReportLabel = new SimpleReportLabel(i);
 			ResourceReportPluginData resourceReportPluginData = //
-					ResourceReportPluginData	.builder()//
-													.setReportPeriod(ReportPeriod.DAILY)//
-													.setReportLabel(expectedReportLabel)//
-													.build();
+					ResourceReportPluginData.builder()//
+							.setReportPeriod(ReportPeriod.DAILY)//
+							.setReportLabel(expectedReportLabel)//
+							.build();
 
 			assertEquals(expectedReportLabel, resourceReportPluginData.getReportLabel());
 		}
@@ -76,17 +77,18 @@ public class AT_ResourceReportPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = ResourceReportPluginData.Builder.class, name = "setReportPeriod", args = { ReportPeriod.class })
+	@UnitTestMethod(target = ResourceReportPluginData.Builder.class, name = "setReportPeriod", args = {
+			ReportPeriod.class })
 	public void testSetReportPeriod() {
 
 		ReportLabel reportLabel = new SimpleReportLabel("report label");
 		for (ReportPeriod reportPeriod : ReportPeriod.values()) {
 
 			ResourceReportPluginData resourceReportPluginData = //
-					ResourceReportPluginData	.builder()//
-													.setReportPeriod(reportPeriod)//
-													.setReportLabel(reportLabel)//
-													.build();
+					ResourceReportPluginData.builder()//
+							.setReportPeriod(reportPeriod)//
+							.setReportLabel(reportLabel)//
+							.build();
 
 			assertEquals(reportPeriod, resourceReportPluginData.getReportPeriod());
 		}
@@ -99,48 +101,50 @@ public class AT_ResourceReportPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = ResourceReportPluginData.Builder.class, name = "setDefaultInclusion", args = { boolean.class })
+	@UnitTestMethod(target = ResourceReportPluginData.Builder.class, name = "setDefaultInclusion", args = {
+			boolean.class })
 	public void testSetDefaultInclusion() {
 		ReportLabel reportLabel = new SimpleReportLabel("report label");
 		ReportPeriod reportPeriod = ReportPeriod.DAILY;
 
 		// show the default value is true
 		ResourceReportPluginData resourceReportPluginData = //
-				ResourceReportPluginData	.builder()//
-												.setReportPeriod(reportPeriod)//
-												.setReportLabel(reportLabel)//
-												.build();
+				ResourceReportPluginData.builder()//
+						.setReportPeriod(reportPeriod)//
+						.setReportLabel(reportLabel)//
+						.build();
 		assertEquals(true, resourceReportPluginData.getDefaultInclusionPolicy());
 
 		resourceReportPluginData = //
-				ResourceReportPluginData	.builder()//
-												.setReportPeriod(reportPeriod)//
-												.setReportLabel(reportLabel)//
-												.setDefaultInclusion(true)//
-												.build();
+				ResourceReportPluginData.builder()//
+						.setReportPeriod(reportPeriod)//
+						.setReportLabel(reportLabel)//
+						.setDefaultInclusion(true)//
+						.build();
 		assertEquals(true, resourceReportPluginData.getDefaultInclusionPolicy());
 
 		resourceReportPluginData = //
-				ResourceReportPluginData	.builder()//
-												.setReportPeriod(reportPeriod)//
-												.setReportLabel(reportLabel)//
-												.setDefaultInclusion(false)//
-												.build();
+				ResourceReportPluginData.builder()//
+						.setReportPeriod(reportPeriod)//
+						.setReportLabel(reportLabel)//
+						.setDefaultInclusion(false)//
+						.build();
 		assertEquals(false, resourceReportPluginData.getDefaultInclusionPolicy());
 
 	}
 
 	@Test
-	@UnitTestMethod(target = ResourceReportPluginData.Builder.class, name = "includeResource", args = { ResourceId.class })
+	@UnitTestMethod(target = ResourceReportPluginData.Builder.class, name = "includeResource", args = {
+			ResourceId.class })
 	public void testIncludeResource() {
 		ReportLabel reportLabel = new SimpleReportLabel("report label");
 		ReportPeriod reportPeriod = ReportPeriod.DAILY;
 
 		ResourceReportPluginData resourceReportPluginData = //
-				ResourceReportPluginData	.builder()//
-												.setReportPeriod(reportPeriod)//
-												.setReportLabel(reportLabel)//
-												.build();
+				ResourceReportPluginData.builder()//
+						.setReportPeriod(reportPeriod)//
+						.setReportLabel(reportLabel)//
+						.build();
 		assertTrue(resourceReportPluginData.getIncludedResourceIds().isEmpty());
 
 		// show that inclusion alone works
@@ -150,9 +154,9 @@ public class AT_ResourceReportPluginData {
 		expectedResourceIds.add(TestResourceId.RESOURCE_4);
 		expectedResourceIds.add(TestResourceId.RESOURCE_2);
 
-		ResourceReportPluginData.Builder builder = ResourceReportPluginData	.builder()//
-																						.setReportPeriod(reportPeriod)//
-																						.setReportLabel(reportLabel);//
+		ResourceReportPluginData.Builder builder = ResourceReportPluginData.builder()//
+				.setReportPeriod(reportPeriod)//
+				.setReportLabel(reportLabel);//
 
 		for (ResourceId resourceId : expectedResourceIds) {
 			builder.includeResource(resourceId);
@@ -169,8 +173,8 @@ public class AT_ResourceReportPluginData {
 		expectedResourceIds.add(TestResourceId.RESOURCE_2);
 
 		builder = ResourceReportPluginData.builder()//
-												.setReportPeriod(reportPeriod)//
-												.setReportLabel(reportLabel);//
+				.setReportPeriod(reportPeriod)//
+				.setReportLabel(reportLabel);//
 
 		for (ResourceId resourceId : expectedResourceIds) {
 			builder.excludeResource(resourceId);
@@ -188,17 +192,18 @@ public class AT_ResourceReportPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = ResourceReportPluginData.Builder.class, name = "excludeResource", args = { ResourceId.class })
+	@UnitTestMethod(target = ResourceReportPluginData.Builder.class, name = "excludeResource", args = {
+			ResourceId.class })
 	public void testExcludeResource() {
 		ReportLabel reportLabel = new SimpleReportLabel("report label");
 		ReportPeriod reportPeriod = ReportPeriod.DAILY;
 
 		// show the default is non-exclusion
 		ResourceReportPluginData resourceReportPluginData = //
-				ResourceReportPluginData	.builder()//
-												.setReportPeriod(reportPeriod)//
-												.setReportLabel(reportLabel)//
-												.build();
+				ResourceReportPluginData.builder()//
+						.setReportPeriod(reportPeriod)//
+						.setReportLabel(reportLabel)//
+						.build();
 		assertTrue(resourceReportPluginData.getExcludedResourceIds().isEmpty());
 
 		// show that exclusion alone works
@@ -208,9 +213,9 @@ public class AT_ResourceReportPluginData {
 		expectedResourceIds.add(TestResourceId.RESOURCE_4);
 		expectedResourceIds.add(TestResourceId.RESOURCE_2);
 
-		ResourceReportPluginData.Builder builder = ResourceReportPluginData	.builder()//
-																						.setReportPeriod(reportPeriod)//
-																						.setReportLabel(reportLabel);//
+		ResourceReportPluginData.Builder builder = ResourceReportPluginData.builder()//
+				.setReportPeriod(reportPeriod)//
+				.setReportLabel(reportLabel);//
 
 		for (ResourceId resourceId : expectedResourceIds) {
 			builder.excludeResource(resourceId);
@@ -227,8 +232,8 @@ public class AT_ResourceReportPluginData {
 		expectedResourceIds.add(TestResourceId.RESOURCE_2);
 
 		builder = ResourceReportPluginData.builder()//
-												.setReportPeriod(reportPeriod)//
-												.setReportLabel(reportLabel);//
+				.setReportPeriod(reportPeriod)//
+				.setReportLabel(reportLabel);//
 
 		for (ResourceId resourceId : expectedResourceIds) {
 			builder.includeResource(resourceId);
@@ -251,10 +256,10 @@ public class AT_ResourceReportPluginData {
 		for (int i = 0; i < 30; i++) {
 			ReportLabel expectedReportLabel = new SimpleReportLabel(i);
 			ResourceReportPluginData resourceReportPluginData = //
-					ResourceReportPluginData	.builder()//
-													.setReportPeriod(ReportPeriod.DAILY)//
-													.setReportLabel(expectedReportLabel)//
-													.build();
+					ResourceReportPluginData.builder()//
+							.setReportPeriod(ReportPeriod.DAILY)//
+							.setReportLabel(expectedReportLabel)//
+							.build();
 
 			assertEquals(expectedReportLabel, resourceReportPluginData.getReportLabel());
 		}
@@ -268,10 +273,10 @@ public class AT_ResourceReportPluginData {
 		for (ReportPeriod reportPeriod : ReportPeriod.values()) {
 
 			ResourceReportPluginData resourceReportPluginData = //
-					ResourceReportPluginData	.builder()//
-													.setReportPeriod(reportPeriod)//
-													.setReportLabel(reportLabel)//
-													.build();
+					ResourceReportPluginData.builder()//
+							.setReportPeriod(reportPeriod)//
+							.setReportLabel(reportLabel)//
+							.build();
 
 			assertEquals(reportPeriod, resourceReportPluginData.getReportPeriod());
 		}
@@ -285,10 +290,10 @@ public class AT_ResourceReportPluginData {
 
 		// show the default is non-inclusion
 		ResourceReportPluginData resourceReportPluginData = //
-				ResourceReportPluginData	.builder()//
-												.setReportPeriod(reportPeriod)//
-												.setReportLabel(reportLabel)//
-												.build();
+				ResourceReportPluginData.builder()//
+						.setReportPeriod(reportPeriod)//
+						.setReportLabel(reportLabel)//
+						.build();
 		assertTrue(resourceReportPluginData.getIncludedResourceIds().isEmpty());
 
 		// show that inclusion alone works
@@ -298,9 +303,9 @@ public class AT_ResourceReportPluginData {
 		expectedResourceIds.add(TestResourceId.RESOURCE_4);
 		expectedResourceIds.add(TestResourceId.RESOURCE_2);
 
-		ResourceReportPluginData.Builder builder = ResourceReportPluginData	.builder()//
-																						.setReportPeriod(reportPeriod)//
-																						.setReportLabel(reportLabel);//
+		ResourceReportPluginData.Builder builder = ResourceReportPluginData.builder()//
+				.setReportPeriod(reportPeriod)//
+				.setReportLabel(reportLabel);//
 
 		for (ResourceId resourceId : expectedResourceIds) {
 			builder.includeResource(resourceId);
@@ -317,8 +322,8 @@ public class AT_ResourceReportPluginData {
 		expectedResourceIds.add(TestResourceId.RESOURCE_2);
 
 		builder = ResourceReportPluginData.builder()//
-												.setReportPeriod(reportPeriod)//
-												.setReportLabel(reportLabel);//
+				.setReportPeriod(reportPeriod)//
+				.setReportLabel(reportLabel);//
 
 		for (ResourceId resourceId : expectedResourceIds) {
 			builder.excludeResource(resourceId);
@@ -338,10 +343,10 @@ public class AT_ResourceReportPluginData {
 
 		// show the default is non-exclusion
 		ResourceReportPluginData resourceReportPluginData = //
-				ResourceReportPluginData	.builder()//
-												.setReportPeriod(reportPeriod)//
-												.setReportLabel(reportLabel)//
-												.build();
+				ResourceReportPluginData.builder()//
+						.setReportPeriod(reportPeriod)//
+						.setReportLabel(reportLabel)//
+						.build();
 		assertTrue(resourceReportPluginData.getExcludedResourceIds().isEmpty());
 
 		// show that exclusion alone works
@@ -351,9 +356,9 @@ public class AT_ResourceReportPluginData {
 		expectedResourceIds.add(TestResourceId.RESOURCE_4);
 		expectedResourceIds.add(TestResourceId.RESOURCE_2);
 
-		ResourceReportPluginData.Builder builder = ResourceReportPluginData	.builder()//
-																						.setReportPeriod(reportPeriod)//
-																						.setReportLabel(reportLabel);//
+		ResourceReportPluginData.Builder builder = ResourceReportPluginData.builder()//
+				.setReportPeriod(reportPeriod)//
+				.setReportLabel(reportLabel);//
 
 		for (ResourceId resourceId : expectedResourceIds) {
 			builder.excludeResource(resourceId);
@@ -370,8 +375,8 @@ public class AT_ResourceReportPluginData {
 		expectedResourceIds.add(TestResourceId.RESOURCE_2);
 
 		builder = ResourceReportPluginData.builder()//
-												.setReportPeriod(reportPeriod)//
-												.setReportLabel(reportLabel);//
+				.setReportPeriod(reportPeriod)//
+				.setReportLabel(reportLabel);//
 
 		for (ResourceId resourceId : expectedResourceIds) {
 			builder.includeResource(resourceId);
@@ -391,26 +396,26 @@ public class AT_ResourceReportPluginData {
 
 		// show the default value is true
 		ResourceReportPluginData resourceReportPluginData = //
-				ResourceReportPluginData	.builder()//
-												.setReportPeriod(reportPeriod)//
-												.setReportLabel(reportLabel)//
-												.build();
+				ResourceReportPluginData.builder()//
+						.setReportPeriod(reportPeriod)//
+						.setReportLabel(reportLabel)//
+						.build();
 		assertEquals(true, resourceReportPluginData.getDefaultInclusionPolicy());
 
 		resourceReportPluginData = //
-				ResourceReportPluginData	.builder()//
-												.setReportPeriod(reportPeriod)//
-												.setReportLabel(reportLabel)//
-												.setDefaultInclusion(true)//
-												.build();
+				ResourceReportPluginData.builder()//
+						.setReportPeriod(reportPeriod)//
+						.setReportLabel(reportLabel)//
+						.setDefaultInclusion(true)//
+						.build();
 		assertEquals(true, resourceReportPluginData.getDefaultInclusionPolicy());
 
 		resourceReportPluginData = //
-				ResourceReportPluginData	.builder()//
-												.setReportPeriod(reportPeriod)//
-												.setReportLabel(reportLabel)//
-												.setDefaultInclusion(false)//
-												.build();
+				ResourceReportPluginData.builder()//
+						.setReportPeriod(reportPeriod)//
+						.setReportLabel(reportLabel)//
+						.setDefaultInclusion(false)//
+						.build();
 		assertEquals(false, resourceReportPluginData.getDefaultInclusionPolicy());
 	}
 
@@ -426,9 +431,9 @@ public class AT_ResourceReportPluginData {
 			ReportPeriod reportPeriod = ReportPeriod.values()[randomGenerator.nextInt(ReportPeriod.values().length)];
 
 			ResourceReportPluginData.Builder builder = //
-					ResourceReportPluginData	.builder()//
-													.setReportPeriod(reportPeriod)//
-													.setReportLabel(reportLabel);
+					ResourceReportPluginData.builder()//
+							.setReportPeriod(reportPeriod)//
+							.setReportLabel(reportLabel);
 
 			for (int j = 0; j < 10; j++) {
 				TestResourceId testResourceId = TestResourceId.getRandomResourceId(randomGenerator);
@@ -496,9 +501,9 @@ public class AT_ResourceReportPluginData {
 
 			// change the default inclusion
 			resourceReportPluginData2 = //
-					resourceReportPluginData1	.getCloneBuilder()//
-													.setDefaultInclusion(!defaultInclusion)//
-													.build();
+					resourceReportPluginData1.getCloneBuilder()//
+							.setDefaultInclusion(!defaultInclusion)//
+							.build();
 			assertNotEquals(resourceReportPluginData2, resourceReportPluginData1);
 
 			// change the report period
@@ -506,35 +511,35 @@ public class AT_ResourceReportPluginData {
 			ord = ord % ReportPeriod.values().length;
 			reportPeriod = ReportPeriod.values()[ord];
 			resourceReportPluginData2 = //
-					resourceReportPluginData1	.getCloneBuilder()//
-													.setReportPeriod(reportPeriod)//
-													.build();
+					resourceReportPluginData1.getCloneBuilder()//
+							.setReportPeriod(reportPeriod)//
+							.build();
 			assertNotEquals(resourceReportPluginData2, resourceReportPluginData1);
 
 			// change the report label
 			reportLabel = new SimpleReportLabel(1000);
 			resourceReportPluginData2 = //
-					resourceReportPluginData1	.getCloneBuilder()//
-													.setReportLabel(reportLabel)//
-													.build();
+					resourceReportPluginData1.getCloneBuilder()//
+							.setReportLabel(reportLabel)//
+							.build();
 			assertNotEquals(resourceReportPluginData2, resourceReportPluginData1);
 
 			// change an included property id
 			if (!resourceReportPluginData1.getIncludedResourceIds().isEmpty()) {
 				ResourceId resourceId = resourceReportPluginData1.getIncludedResourceIds().iterator().next();
 				resourceReportPluginData2 = //
-						resourceReportPluginData1	.getCloneBuilder()//
-														.excludeResource(resourceId)//
-														.build();
+						resourceReportPluginData1.getCloneBuilder()//
+								.excludeResource(resourceId)//
+								.build();
 				assertNotEquals(resourceReportPluginData2, resourceReportPluginData1);
 			}
 			// change an excluded property id
 			if (!resourceReportPluginData1.getExcludedResourceIds().isEmpty()) {
 				ResourceId resourceId = resourceReportPluginData1.getExcludedResourceIds().iterator().next();
 				resourceReportPluginData2 = //
-						resourceReportPluginData1	.getCloneBuilder()//
-														.includeResource(resourceId)//
-														.build();
+						resourceReportPluginData1.getCloneBuilder()//
+								.includeResource(resourceId)//
+								.build();
 				assertNotEquals(resourceReportPluginData2, resourceReportPluginData1);
 			}
 
@@ -595,10 +600,37 @@ public class AT_ResourceReportPluginData {
 		}
 
 		/*
-		 * The hash codes should be dispersed -- we only show that they are
-		 * unique values -- this is dependent on the random seed
+		 * The hash codes should be dispersed -- we only show that they are unique
+		 * values -- this is dependent on the random seed
 		 */
 		assertEquals(50, observedHashCodes.size());
+
+	}
+
+	@Test
+	@UnitTestMethod(target = ResourceReportPluginData.class, name = "toString", args = {})
+	public void testToString() {
+		ResourceReportPluginData.Builder builder = ResourceReportPluginData.builder();
+		builder.setReportLabel(new SimpleReportLabel("report label"));
+		builder.setReportPeriod(ReportPeriod.DAILY);
+
+		boolean include = false;
+		for (TestResourceId testResourceId : TestResourceId.values()) {
+
+			if (include) {
+				builder.includeResource(testResourceId);
+			} else {
+				builder.excludeResource(testResourceId);
+			}
+			include = !include;
+		}
+
+		builder.setDefaultInclusion(true).build();
+
+		ResourceReportPluginData resourceReportPluginData = builder.build();
+		String actualValue = resourceReportPluginData.toString();
+		String expectedValue = "ResourceReportPluginData [data=Data [reportLabel=SimpleReportLabel [value=report label], reportPeriod=DAILY, includedResourceIds=[RESOURCE_2, RESOURCE_4], excludedResourceIds=[RESOURCE_1, RESOURCE_3, RESOURCE_5], defaultInclusionPolicy=true]]";
+		assertEquals(expectedValue, actualValue);
 
 	}
 
