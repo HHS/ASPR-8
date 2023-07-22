@@ -1,0 +1,39 @@
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="http://maven.apache.org/POM/4.0.0"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>gov.hhs.aspr.ms.gcm.taskit.protobuf</groupId>
+        <artifactId>protobuf-parent</artifactId>
+        <version>${revision}</version>
+    </parent>
+
+    <packaging>jar</packaging>
+    <artifactId>nucleus-translator</artifactId>
+    <name>gcm :: taskit :: protobuf :: nucleus-translator</name>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.xolstice.maven.plugins</groupId>
+                <artifactId>protobuf-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compile</goal>
+                            <goal>test-compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <protocArtifact>com.google.protobuf:protoc:${protoc.version}:exe:${os.detected.classifier}</protocArtifact>
+                    <protoSourceRoot>${project.build.outputDirectory}/gov/hhs/aspr/gcm/taskit/protobuf/nucleus</protoSourceRoot>
+                    <additionalProtoPathElements>
+                        <additionalProtoPathElement>${project.build.outputDirectory}/gov/hhs/aspr/taskit/core</additionalProtoPathElement>
+                    </additionalProtoPathElements>
+                    <attachProtoSources>false</attachProtoSources>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
