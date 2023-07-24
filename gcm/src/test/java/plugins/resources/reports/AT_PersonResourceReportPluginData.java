@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -600,6 +601,12 @@ public class AT_PersonResourceReportPluginData {
 		 */
 		assertEquals(50, observedHashCodes.size());
 
+	}
+	
+	@Test
+	@UnitTestMethod(target = PersonResourceReportPluginData.Builder.class, name = "toString", args = {})
+	public void testToString() {
+		fail();
 	}
 
 }

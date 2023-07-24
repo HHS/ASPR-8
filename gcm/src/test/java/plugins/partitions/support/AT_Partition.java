@@ -8,13 +8,18 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
+import nucleus.Event;
 import plugins.partitions.support.filters.Filter;
 import plugins.partitions.support.filters.TrueFilter;
 import plugins.partitions.testsupport.FunctionalAttributeLabeler;
+import plugins.partitions.testsupport.attributes.support.AttributeFilter;
 import plugins.partitions.testsupport.attributes.support.TestAttributeId;
+import plugins.people.support.PersonId;
 import util.annotations.UnitTestMethod;
+import util.random.RandomGeneratorProvider;
 
 public class AT_Partition {
 
@@ -31,9 +36,6 @@ public class AT_Partition {
 		assertTrue(partition.isDegenerate());
 	}
 
-	/**
-	 * Tests {@linkplain Partition#getLabelers()
-	 */
 	@Test
 	@UnitTestMethod(target = Partition.class, name = "getLabelers", args = {})
 	public void testGetLabelers() {
@@ -81,7 +83,8 @@ public class AT_Partition {
 		Partition partition = Partition.builder().build();//
 		assertTrue(partition.isDegenerate());
 
-		partition = Partition.builder().addLabeler(new FunctionalAttributeLabeler(TestAttributeId.BOOLEAN_0, (v) -> new Object())).build();
+		partition = Partition.builder()
+				.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.BOOLEAN_0, (v) -> new Object())).build();
 		assertFalse(partition.isDegenerate());
 	}
 
@@ -143,5 +146,145 @@ public class AT_Partition {
 		Set<Labeler> actualLabelers = partition.getLabelers();
 
 		assertEquals(expectedLabelers, actualLabelers);
+	}
+
+	private static class LocalLabeler implements Labeler {
+
+		private final int value;
+
+		public LocalLabeler(int value) {
+			this.value = value;
+		}
+
+		@Override
+		public Set<LabelerSensitivity<?>> getLabelerSensitivities() {
+			return null;
+		}
+
+		@Override
+		public Object getCurrentLabel(PartitionsContext partitionsContext, PersonId personId) {
+			return null;
+		}
+
+		@Override
+		public Object getPastLabel(PartitionsContext partitionsContext, Event event) {
+			return null;
+		}
+
+		@Override
+		public Object getId() {
+			return value;
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + value;
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (!(obj instanceof LocalLabeler)) {
+				return false;
+			}
+			LocalLabeler other = (LocalLabeler) obj;
+			if (value != other.value) {
+				return false;
+			}
+			return true;
+		}
+
+	}
+
+	private Partition getRandomPartition(long seed) {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
+		Partition.Builder builder = Partition.builder();
+		builder.setRetainPersonKeys(randomGenerator.nextBoolean());
+		Labeler labeler = new LocalLabeler(randomGenerator.nextInt());
+		builder.setFilter(new AttributeFilter(TestAttributeId.getRandomAttributeId(randomGenerator),
+				Equality.getRandomEquality(randomGenerator), randomGenerator.nextInt()));
+		builder.addLabeler(labeler);
+		return builder.build();
+	}
+
+	@Test
+	@UnitTestMethod(target = Partition.class, name = "equals", args = { Object.class })
+	public void testEquals() {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(2832165952351188895L);
+
+		// never equal null
+		for (int i = 0; i < 30; i++) {
+			Partition partition = getRandomPartition(randomGenerator.nextLong());//
+			assertFalse(partition.equals(null));
+		}
+
+		// reflexive
+		for (int i = 0; i < 30; i++) {
+			Partition partition = getRandomPartition(randomGenerator.nextLong());//
+			assertTrue(partition.equals(partition));
+		}
+
+		// symmetric, transitive, consistent
+		for (int i = 0; i < 30; i++) {
+			long seed = randomGenerator.nextLong();
+			Partition partition1 = getRandomPartition(seed);//
+			Partition partition2 = getRandomPartition(seed);//
+			for (int j = 0; j < 5; j++) {
+				assertTrue(partition1.equals(partition2));
+				assertTrue(partition2.equals(partition1));
+			}
+		}
+
+		// different inputs yield non-equal objects
+		Set<Partition> partitions = new LinkedHashSet<>();
+		for (int i = 0; i < 100; i++) {
+
+			Partition partition = getRandomPartition(randomGenerator.nextLong());//
+			partitions.add(partition);
+
+		}
+		assertEquals(100, partitions.size());
+
+	}
+
+	@Test
+	@UnitTestMethod(target = Partition.class, name = "hashCode", args = {})
+	public void testHashCode() {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(2170049186562286346L);
+
+		// equal objects have equal hash codes
+		for (int i = 0; i < 30; i++) {
+			long seed = randomGenerator.nextLong();
+			Partition partition1 = getRandomPartition(seed);//
+			Partition partition2 = getRandomPartition(seed);//
+			assertEquals(partition1, partition2);
+			assertEquals(partition1.hashCode(), partition2.hashCode());
+		}
+		
+		
+		//hash codes are reasonably distributed
+		Set<Integer> hashCodes = new LinkedHashSet<>();
+		for (int i = 0; i < 100; i++) {
+
+			Partition partition = getRandomPartition(randomGenerator.nextLong());//
+			hashCodes.add(partition.hashCode());
+
+		}
+		assertEquals(100, hashCodes.size());
+	}
+
+ 
+	@Test
+	@UnitTestMethod(target = Partition.class, name = "toString", args = {})
+	public void testToString() {
+		Partition randomPartition = getRandomPartition(5250756946904578664L);
+		String actualValue = randomPartition.toString();
+		String expectedValue =	"Partition [data=Data [filter=AttributeFilter [attributeId=BOOLEAN_1, value=2146794287, equality=LESS_THAN, attributesDataManager=null], labelers={1157575879=plugins.partitions.support.AT_Partition$LocalLabeler@44ff34e6}, retainPersonKeys=false]]";
+		assertEquals(expectedValue, actualValue);
 	}
 }
