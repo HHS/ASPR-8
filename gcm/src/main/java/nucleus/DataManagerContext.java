@@ -1,5 +1,6 @@
 package nucleus;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.BiConsumer;
@@ -290,5 +291,20 @@ public final class DataManagerContext {
 			Function<T, Consumer<DataManagerContext>> conversionFunction) {
 		simulation.setDataManagerPlanDataConverter(dataManagerId, planDataClass, conversionFunction);
 	}
+	
+	/**
+     * Returns the time (floating point days) of simulation start.
+     * 
+     */
+	public double getStartTime() {
+        return simulation.getStartTime();
+    }
 
+	 /**
+     * Returns the base date that synchronizes with simulation time zero.
+     * 
+     */
+    public LocalDate getBaseDate() {
+    	return simulation.getBaseDate();
+    }
 }

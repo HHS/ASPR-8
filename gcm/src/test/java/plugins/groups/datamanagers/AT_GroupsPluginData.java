@@ -405,9 +405,9 @@ public class AT_GroupsPluginData {
     }
 
     @Test
-    @UnitTestMethod(target = GroupsPluginData.Builder.class, name = "addPersonToGroup", args = { GroupId.class,
+    @UnitTestMethod(target = GroupsPluginData.Builder.class, name = "associatePersonToGroup", args = { GroupId.class,
             PersonId.class })
-    public void testAddPersonToGroup() {
+    public void testAssociatePersonToGroup() {
 
         Random random = new Random(7282493148489771700L);
 

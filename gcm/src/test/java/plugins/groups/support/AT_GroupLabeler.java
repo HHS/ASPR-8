@@ -31,7 +31,6 @@ import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
 import plugins.stochastics.datamanagers.StochasticsDataManager;
-import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 
@@ -39,7 +38,7 @@ public final class AT_GroupLabeler {
 	private static class LocalGroupLabeler extends GroupLabeler {
 		private final Function<GroupTypeCountMap, Object> labelingFunction;
 
-		public LocalGroupLabeler(Function<GroupTypeCountMap, Object> labelingFunction) {			
+		public LocalGroupLabeler(Function<GroupTypeCountMap, Object> labelingFunction) {
 			this.labelingFunction = labelingFunction;
 		}
 
@@ -49,11 +48,7 @@ public final class AT_GroupLabeler {
 		}
 
 	}
-	@Test
-	@UnitTestConstructor(target = GroupLabeler.class, args = { Function.class })
-	public void testConstructor() {
-		assertNotNull(new LocalGroupLabeler((g) -> null));
-	}
+
 
 	@Test
 	@UnitTestMethod(target = GroupLabeler.class, name = "getLabelerSensitivities", args = {})
@@ -100,8 +95,8 @@ public final class AT_GroupLabeler {
 	}
 
 	@Test
-	@UnitTestMethod(target = GroupLabeler.class, name = "getLabel", args = { PartitionsContext.class, PersonId.class })
-	public void testGetLabel() {
+	@UnitTestMethod(target = GroupLabeler.class, name = "getCurrentLabel", args = { PartitionsContext.class, PersonId.class })
+	public void testGetCurrentLabel() {
 
 		Consumer<ActorContext> consumer = (c) -> {
 			

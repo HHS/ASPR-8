@@ -143,7 +143,7 @@ public class AT_Plan {
 	}
 
 	@Test
-	@UnitTestMethod(target = Plan.class, name = "getKey", args = {})
+	@UnitTestMethod(target = Plan.class, name = "getPlanData", args = {})
 	public void testGetPlanData() {
 		for (int i = 0; i < 10; i++) {
 			TestPlanData1 testPlanData1 = new TestPlanData1();

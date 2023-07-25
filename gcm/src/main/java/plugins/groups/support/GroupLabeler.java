@@ -25,6 +25,8 @@ import plugins.people.support.PersonId;
  */
 public abstract class GroupLabeler implements Labeler {
 	
+	protected GroupLabeler() {}
+	
 	protected abstract Object getLabelFromGroupTypeCountMap(GroupTypeCountMap groupTypeCountMap);
 	
 	private GroupsDataManager groupsDataManager;

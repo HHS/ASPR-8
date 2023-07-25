@@ -32,11 +32,12 @@ public class AT_ExperimentParameterData {
 	}
 
 	@Test
-	@UnitTestMethod(target = ExperimentParameterData.Builder.class, name = "setExperimentProgressLog", args = { Path.class }, tags = { UnitTag.MANUAL })
+	@UnitTestMethod(target = ExperimentParameterData.Builder.class, name = "setExperimentProgressLog", args = {
+			Path.class }, tags = { UnitTag.MANUAL })
 	public void testSetExperimentProgressLog() {
 		// if no path is specified
-		ExperimentParameterData experimentParameterData = ExperimentParameterData	.builder()//
-																					.build();
+		ExperimentParameterData experimentParameterData = ExperimentParameterData.builder()//
+				.build();
 
 		Optional<Path> optional = experimentParameterData.getExperimentProgressLogPath();
 		assertFalse(optional.isPresent());
@@ -46,9 +47,9 @@ public class AT_ExperimentParameterData {
 			String pathName = "somePath_" + i;
 			Path expectedPath = Paths.get(pathName);
 
-			experimentParameterData = ExperimentParameterData	.builder()//
-																.setExperimentProgressLog(expectedPath)//
-																.build();
+			experimentParameterData = ExperimentParameterData.builder()//
+					.setExperimentProgressLog(expectedPath)//
+					.build();
 			optional = experimentParameterData.getExperimentProgressLogPath();
 			assertTrue(optional.isPresent());
 			Path actualPath = optional.get();
@@ -57,25 +58,26 @@ public class AT_ExperimentParameterData {
 	}
 
 	@Test
-	@UnitTestMethod(target = ExperimentParameterData.Builder.class, name = "setContinueFromProgressLog", args = { boolean.class }, tags = { UnitTag.MANUAL })
+	@UnitTestMethod(target = ExperimentParameterData.Builder.class, name = "setContinueFromProgressLog", args = {
+			boolean.class }, tags = { UnitTag.MANUAL })
 	public void testSetContinueFromProgressLog() {
 		// if the policy is not set
-		ExperimentParameterData experimentParameterData = ExperimentParameterData	.builder()//
-																					.build();
+		ExperimentParameterData experimentParameterData = ExperimentParameterData.builder()//
+				.build();
 
 		assertFalse(experimentParameterData.continueFromProgressLog());
 
 		// if the policy is set to false
-		experimentParameterData = ExperimentParameterData	.builder()//
-															.setContinueFromProgressLog(false)//
-															.build();
+		experimentParameterData = ExperimentParameterData.builder()//
+				.setContinueFromProgressLog(false)//
+				.build();
 
 		assertFalse(experimentParameterData.continueFromProgressLog());
 
 		// if the policy is set to true
-		experimentParameterData = ExperimentParameterData	.builder()//
-															.setContinueFromProgressLog(true)//
-															.build();
+		experimentParameterData = ExperimentParameterData.builder()//
+				.setContinueFromProgressLog(true)//
+				.build();
 
 		assertTrue(experimentParameterData.continueFromProgressLog());
 
@@ -88,16 +90,17 @@ public class AT_ExperimentParameterData {
 		for (int i = 0; i < 10; i++) {
 			int expectedThreadCount = i;
 
-			ExperimentParameterData experimentParameterData = ExperimentParameterData	.builder()//
-																						.setThreadCount(expectedThreadCount)//
-																						.build();
+			ExperimentParameterData experimentParameterData = ExperimentParameterData.builder()//
+					.setThreadCount(expectedThreadCount)//
+					.build();
 
 			int actualThreadCount = experimentParameterData.getThreadCount();
 			assertEquals(expectedThreadCount, actualThreadCount);
 		}
 
 		// precondition test: if the thread count is negative
-		ContractException contractException = assertThrows(ContractException.class, () -> ExperimentParameterData.builder().setThreadCount(-1).build());
+		ContractException contractException = assertThrows(ContractException.class,
+				() -> ExperimentParameterData.builder().setThreadCount(-1).build());
 		assertEquals(NucleusError.NEGATIVE_THREAD_COUNT, contractException.getErrorType());
 
 	}
@@ -109,40 +112,42 @@ public class AT_ExperimentParameterData {
 	}
 
 	@Test
-	@UnitTestMethod(target = ExperimentParameterData.Builder.class, name = "setHaltOnException", args = { boolean.class })
+	@UnitTestMethod(target = ExperimentParameterData.Builder.class, name = "setHaltOnException", args = {
+			boolean.class })
 	public void testSetHaltOnException() {
-		ExperimentParameterData experimentParameterData = ExperimentParameterData	.builder()//
-																					.setHaltOnException(true)//
-																					.build();
+		ExperimentParameterData experimentParameterData = ExperimentParameterData.builder()//
+				.setHaltOnException(true)//
+				.build();
 
 		assertTrue(experimentParameterData.haltOnException());
 
-		experimentParameterData = ExperimentParameterData	.builder()//
-															.setHaltOnException(false)//
-															.build();
+		experimentParameterData = ExperimentParameterData.builder()//
+				.setHaltOnException(false)//
+				.build();
 
 		assertFalse(experimentParameterData.haltOnException());
 	}
 
 	@Test
-	@UnitTestMethod(target = ExperimentParameterData.Builder.class, name = "addExplicitScenarioId", args = { Integer.class })
+	@UnitTestMethod(target = ExperimentParameterData.Builder.class, name = "addExplicitScenarioId", args = {
+			Integer.class })
 	public void testAddExplicitScenarioId() {
 		// if no scenarios are added
-		ExperimentParameterData experimentParameterData = ExperimentParameterData	.builder()//
-																					.build();
+		ExperimentParameterData experimentParameterData = ExperimentParameterData.builder()//
+				.build();
 		Set<Integer> expectedScenarioIds = new LinkedHashSet<>();
 		Set<Integer> actualScenarioIds = experimentParameterData.getExplicitScenarioIds();
 		assertEquals(expectedScenarioIds, actualScenarioIds);
 
 		// if some scenarios are added
-		experimentParameterData = ExperimentParameterData	.builder()//
-															.addExplicitScenarioId(12)//
-															.addExplicitScenarioId(45)//
-															.addExplicitScenarioId(12)//
-															.addExplicitScenarioId(11)//
-															.addExplicitScenarioId(-3)//
-															.addExplicitScenarioId(45)//
-															.build();
+		experimentParameterData = ExperimentParameterData.builder()//
+				.addExplicitScenarioId(12)//
+				.addExplicitScenarioId(45)//
+				.addExplicitScenarioId(12)//
+				.addExplicitScenarioId(11)//
+				.addExplicitScenarioId(-3)//
+				.addExplicitScenarioId(45)//
+				.build();
 
 		expectedScenarioIds.add(-3);
 		expectedScenarioIds.add(11);
@@ -157,36 +162,37 @@ public class AT_ExperimentParameterData {
 	@Test
 	@UnitTestMethod(target = ExperimentParameterData.Builder.class, name = "setRecordState", args = { boolean.class })
 	public void testSetRecordState() {
-		ExperimentParameterData experimentParameterData = ExperimentParameterData	.builder()//
-																					.setRecordState(true)//
-																					.build();
+		ExperimentParameterData experimentParameterData = ExperimentParameterData.builder()//
+				.setRecordState(true)//
+				.build();
 
 		assertTrue(experimentParameterData.haltOnException());
 
-		experimentParameterData = ExperimentParameterData	.builder()//
-															.setRecordState(false)//
-															.build();
+		experimentParameterData = ExperimentParameterData.builder()//
+				.setRecordState(false)//
+				.build();
 
 		assertFalse(experimentParameterData.stateRecordingIsScheduled());
 	}
 
 	@Test
-	@UnitTestMethod(target = ExperimentParameterData.Builder.class, name = "setSimulationHaltTime", args = { Double.class })
+	@UnitTestMethod(target = ExperimentParameterData.Builder.class, name = "setSimulationHaltTime", args = {
+			Double.class })
 	public void testSetSimulationHaltTime() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(4483845375009238350L);
 
 		// if the scenario halt time is not set
-		ExperimentParameterData experimentParameterData = ExperimentParameterData	.builder()//
-																					.build();
+		ExperimentParameterData experimentParameterData = ExperimentParameterData.builder()//
+				.build();
 
 		Optional<Double> optional = experimentParameterData.getSimulationHaltTime();
 		assertTrue(optional.isEmpty());
 
 		for (int i = 0; i < 10; i++) {
 			double expectedTime = randomGenerator.nextDouble() - 0.5;
-			experimentParameterData = ExperimentParameterData	.builder()//
-																.setSimulationHaltTime(expectedTime)//
-																.build();
+			experimentParameterData = ExperimentParameterData.builder()//
+					.setSimulationHaltTime(expectedTime)//
+					.build();
 
 			optional = experimentParameterData.getSimulationHaltTime();
 			assertTrue(optional.isPresent());
@@ -201,22 +207,22 @@ public class AT_ExperimentParameterData {
 	@UnitTestMethod(target = ExperimentParameterData.class, name = "continueFromProgressLog", args = {})
 	public void testContinueFromProgressLog() {
 		// if the policy is not set
-		ExperimentParameterData experimentParameterData = ExperimentParameterData	.builder()//
-																					.build();
+		ExperimentParameterData experimentParameterData = ExperimentParameterData.builder()//
+				.build();
 
 		assertFalse(experimentParameterData.continueFromProgressLog());
 
 		// if the policy is set to false
-		experimentParameterData = ExperimentParameterData	.builder()//
-															.setContinueFromProgressLog(false)//
-															.build();
+		experimentParameterData = ExperimentParameterData.builder()//
+				.setContinueFromProgressLog(false)//
+				.build();
 
 		assertFalse(experimentParameterData.continueFromProgressLog());
 
 		// if the policy is set to true
-		experimentParameterData = ExperimentParameterData	.builder()//
-															.setContinueFromProgressLog(true)//
-															.build();
+		experimentParameterData = ExperimentParameterData.builder()//
+				.setContinueFromProgressLog(true)//
+				.build();
 
 		assertTrue(experimentParameterData.continueFromProgressLog());
 	}
@@ -225,8 +231,8 @@ public class AT_ExperimentParameterData {
 	@UnitTestMethod(target = ExperimentParameterData.class, name = "getExperimentProgressLogPath", args = {})
 	public void testGetExperimentProgressLogPath() {
 		// if no path is specified
-		ExperimentParameterData experimentParameterData = ExperimentParameterData	.builder()//
-																					.build();
+		ExperimentParameterData experimentParameterData = ExperimentParameterData.builder()//
+				.build();
 
 		Optional<Path> optional = experimentParameterData.getExperimentProgressLogPath();
 		assertFalse(optional.isPresent());
@@ -236,9 +242,9 @@ public class AT_ExperimentParameterData {
 			String pathName = "somePath_" + i;
 			Path expectedPath = Paths.get(pathName);
 
-			experimentParameterData = ExperimentParameterData	.builder()//
-																.setExperimentProgressLog(expectedPath)//
-																.build();
+			experimentParameterData = ExperimentParameterData.builder()//
+					.setExperimentProgressLog(expectedPath)//
+					.build();
 			optional = experimentParameterData.getExperimentProgressLogPath();
 			assertTrue(optional.isPresent());
 			Path actualPath = optional.get();
@@ -250,21 +256,21 @@ public class AT_ExperimentParameterData {
 	@UnitTestMethod(target = ExperimentParameterData.class, name = "getExplicitScenarioIds", args = {})
 	public void testGetExplicitScenarioIds() {
 		// if no scenarios are added
-		ExperimentParameterData experimentParameterData = ExperimentParameterData	.builder()//
-																					.build();
+		ExperimentParameterData experimentParameterData = ExperimentParameterData.builder()//
+				.build();
 		Set<Integer> expectedScenarioIds = new LinkedHashSet<>();
 		Set<Integer> actualScenarioIds = experimentParameterData.getExplicitScenarioIds();
 		assertEquals(expectedScenarioIds, actualScenarioIds);
 
 		// if some scenarios are added
-		experimentParameterData = ExperimentParameterData	.builder()//
-															.addExplicitScenarioId(12)//
-															.addExplicitScenarioId(45)//
-															.addExplicitScenarioId(12)//
-															.addExplicitScenarioId(11)//
-															.addExplicitScenarioId(-3)//
-															.addExplicitScenarioId(45)//
-															.build();
+		experimentParameterData = ExperimentParameterData.builder()//
+				.addExplicitScenarioId(12)//
+				.addExplicitScenarioId(45)//
+				.addExplicitScenarioId(12)//
+				.addExplicitScenarioId(11)//
+				.addExplicitScenarioId(-3)//
+				.addExplicitScenarioId(45)//
+				.build();
 
 		expectedScenarioIds.add(-3);
 		expectedScenarioIds.add(11);
@@ -281,17 +287,17 @@ public class AT_ExperimentParameterData {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(4483845375009238350L);
 
 		// if the scenario halt time is not set
-		ExperimentParameterData experimentParameterData = ExperimentParameterData	.builder()//
-																					.build();
+		ExperimentParameterData experimentParameterData = ExperimentParameterData.builder()//
+				.build();
 
 		Optional<Double> optional = experimentParameterData.getSimulationHaltTime();
 		assertTrue(optional.isEmpty());
 
 		for (int i = 0; i < 10; i++) {
 			double expectedTime = randomGenerator.nextDouble() - 0.5;
-			experimentParameterData = ExperimentParameterData	.builder()//
-																.setSimulationHaltTime(expectedTime)//
-																.build();
+			experimentParameterData = ExperimentParameterData.builder()//
+					.setSimulationHaltTime(expectedTime)//
+					.build();
 
 			optional = experimentParameterData.getSimulationHaltTime();
 			assertTrue(optional.isPresent());
@@ -305,17 +311,17 @@ public class AT_ExperimentParameterData {
 	@UnitTestMethod(target = ExperimentParameterData.class, name = "getThreadCount", args = {})
 	public void testGetThreadCount() {
 
-		ExperimentParameterData experimentParameterData = ExperimentParameterData	.builder()//
-																					.build();
+		ExperimentParameterData experimentParameterData = ExperimentParameterData.builder()//
+				.build();
 
 		assertEquals(0, experimentParameterData.getThreadCount());
 
 		for (int i = 0; i < 10; i++) {
 			int expectedThreadCount = i;
 
-			experimentParameterData = ExperimentParameterData	.builder()//
-																.setThreadCount(expectedThreadCount)//
-																.build();
+			experimentParameterData = ExperimentParameterData.builder()//
+					.setThreadCount(expectedThreadCount)//
+					.build();
 
 			int actualThreadCount = experimentParameterData.getThreadCount();
 			assertEquals(expectedThreadCount, actualThreadCount);
@@ -327,19 +333,19 @@ public class AT_ExperimentParameterData {
 	@UnitTestMethod(target = ExperimentParameterData.class, name = "haltOnException", args = {})
 	public void testHaltOnException() {
 
-		ExperimentParameterData experimentParameterData = ExperimentParameterData	.builder()//
-																					.build();
+		ExperimentParameterData experimentParameterData = ExperimentParameterData.builder()//
+				.build();
 		assertTrue(experimentParameterData.haltOnException());
 
-		experimentParameterData = ExperimentParameterData	.builder()//
-															.setHaltOnException(true)//
-															.build();
+		experimentParameterData = ExperimentParameterData.builder()//
+				.setHaltOnException(true)//
+				.build();
 
 		assertTrue(experimentParameterData.haltOnException());
 
-		experimentParameterData = ExperimentParameterData	.builder()//
-															.setHaltOnException(false)//
-															.build();
+		experimentParameterData = ExperimentParameterData.builder()//
+				.setHaltOnException(false)//
+				.build();
 
 		assertFalse(experimentParameterData.haltOnException());
 
@@ -348,22 +354,108 @@ public class AT_ExperimentParameterData {
 	@Test
 	@UnitTestMethod(target = ExperimentParameterData.class, name = "stateRecordingIsScheduled", args = {})
 	public void testStateRecordingIsScheduled() {
-		ExperimentParameterData experimentParameterData = ExperimentParameterData	.builder()//
-																					.build();
+		ExperimentParameterData experimentParameterData = ExperimentParameterData.builder()//
+				.build();
 
 		assertFalse(experimentParameterData.stateRecordingIsScheduled());
 
-		experimentParameterData = ExperimentParameterData	.builder()//
-															.setRecordState(true)//
-															.build();
+		experimentParameterData = ExperimentParameterData.builder()//
+				.setRecordState(true)//
+				.build();
 
 		assertTrue(experimentParameterData.stateRecordingIsScheduled());
 
-		experimentParameterData = ExperimentParameterData	.builder()//
-															.setRecordState(false)//
-															.build();
+		experimentParameterData = ExperimentParameterData.builder()//
+				.setRecordState(false)//
+				.build();
 
 		assertFalse(experimentParameterData.stateRecordingIsScheduled());
+	}
+
+	private ExperimentParameterData getRandomExperimentParameterData(long seed) {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
+
+		ExperimentParameterData.Builder builder = ExperimentParameterData.builder();
+		if (randomGenerator.nextBoolean()) {
+			builder.addExplicitScenarioId(randomGenerator.nextInt(1000));
+		}
+		builder.setContinueFromProgressLog(randomGenerator.nextBoolean());
+		if (randomGenerator.nextBoolean()) {
+			builder.setExperimentProgressLog(Paths.get(""));
+		}
+		builder.setHaltOnException(randomGenerator.nextBoolean());
+		builder.setRecordState(randomGenerator.nextBoolean());
+		builder.setSimulationHaltTime(randomGenerator.nextDouble());
+		builder.setThreadCount(randomGenerator.nextInt(8));
+
+		return builder.build();
+	}
+
+	@Test
+	@UnitTestMethod(target = ExperimentParameterData.class, name = "equals", args = { Object.class })
+	public void testEquals() {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(2179495435117370503L);
+
+		// never equal null
+		for (int i = 0; i < 30; i++) {
+			ExperimentParameterData experimentParameterData = getRandomExperimentParameterData(
+					randomGenerator.nextLong());
+			assertFalse(experimentParameterData.equals(null));
+		}
+
+		// reflexive
+		for (int i = 0; i < 30; i++) {
+			ExperimentParameterData experimentParameterData = getRandomExperimentParameterData(
+					randomGenerator.nextLong());
+			assertTrue(experimentParameterData.equals(experimentParameterData));
+		}
+
+		// symmetric, transitive, consistent
+		for (int i = 0; i < 30; i++) {
+			long seed = randomGenerator.nextLong();
+			ExperimentParameterData experimentParameterData1 = getRandomExperimentParameterData(seed);
+			ExperimentParameterData experimentParameterData2 = getRandomExperimentParameterData(seed);
+			for (int j = 0; j < 5; j++) {
+				assertTrue(experimentParameterData1.equals(experimentParameterData2));
+				assertTrue(experimentParameterData2.equals(experimentParameterData1));
+			}
+		}
+
+		// different inputs yields non-equal objects
+		Set<ExperimentParameterData> experimentParameterDatas = new LinkedHashSet<>();
+		for (int i = 0; i < 100; i++) {
+			ExperimentParameterData experimentParameterData = getRandomExperimentParameterData(
+					randomGenerator.nextLong());
+			experimentParameterDatas.add(experimentParameterData);
+		}
+		assertEquals(100, experimentParameterDatas.size());
+
+	}
+
+	@Test
+	@UnitTestMethod(target = ExperimentParameterData.class, name = "hashCode", args = {})
+	public void testHashCode() {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6135009215375700684L);
+		/*
+		 * equals objects have equal hash codes symmetric, transitive, consistent
+		 */
+		for (int i = 0; i < 30; i++) {
+			long seed = randomGenerator.nextLong();
+			ExperimentParameterData experimentParameterData1 = getRandomExperimentParameterData(seed);
+			ExperimentParameterData experimentParameterData2 = getRandomExperimentParameterData(seed);
+
+			assertEquals(experimentParameterData1, experimentParameterData2);
+			assertEquals(experimentParameterData1.hashCode(), experimentParameterData2.hashCode());
+		}
+		
+		//hash codes are reasonably distributed
+		Set<Integer> hashCodes = new LinkedHashSet<>();
+		for (int i = 0; i < 100; i++) {
+			ExperimentParameterData experimentParameterData = getRandomExperimentParameterData(
+					randomGenerator.nextLong());
+			hashCodes.add(experimentParameterData.hashCode());
+		}
+		assertEquals(100, hashCodes.size());
 	}
 
 }
