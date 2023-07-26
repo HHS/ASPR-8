@@ -3,15 +3,15 @@ package lesson;
 import java.util.ArrayList;
 import java.util.List;
 
+import gov.hhs.aspr.ms.gcm.nucleus.Dimension;
+import gov.hhs.aspr.ms.gcm.nucleus.Experiment;
+import gov.hhs.aspr.ms.gcm.nucleus.FunctionalDimension;
+import gov.hhs.aspr.ms.gcm.nucleus.Plugin;
 import lesson.plugins.disease.DiseasePlugin;
 import lesson.plugins.disease.DiseasePluginData;
 import lesson.plugins.model.ModelPlugin;
 import lesson.plugins.policy.PolicyPlugin;
 import lesson.plugins.policy.PolicyPluginData;
-import nucleus.Dimension;
-import nucleus.Experiment;
-import nucleus.FunctionalDimension;
-import nucleus.Plugin;
 
 /* start code_ref=experiments_example_steamlined_dimension */
 public final class Example_9_C {

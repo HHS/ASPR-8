@@ -1,7 +1,7 @@
 /*start code_ref=hello_world_short*/
 package lesson;
 
-import nucleus.Simulation;
+import gov.hhs.aspr.ms.gcm.nucleus.Simulation;
 
 public final class Example_1 {
 

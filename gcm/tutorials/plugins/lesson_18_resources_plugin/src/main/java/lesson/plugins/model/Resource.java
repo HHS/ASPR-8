@@ -1,6 +1,6 @@
 package lesson.plugins.model;
 
-import plugins.resources.support.ResourceId;
+import gov.hhs.aspr.ms.gcm.plugins.resources.support.ResourceId;
 
 /* start code_ref=resources_resource_enum */
 public enum Resource implements ResourceId {

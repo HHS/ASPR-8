@@ -1,6 +1,6 @@
 package lesson.plugins.model.support;
 
-import plugins.groups.support.GroupPropertyId;
+import gov.hhs.aspr.ms.gcm.plugins.groups.support.GroupPropertyId;
 
 public enum GroupProperty implements GroupPropertyId {
 	TELEWORK, SCHOOL_STATUS,;

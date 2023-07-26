@@ -1,8 +1,8 @@
 package lesson.plugins.family;
 
+import gov.hhs.aspr.ms.gcm.nucleus.Plugin;
 import lesson.plugins.family.datamanagers.FamilyDataManager;
 import lesson.plugins.person.PersonPluginId;
-import nucleus.Plugin;
 
 public class FamilyPlugin {
 

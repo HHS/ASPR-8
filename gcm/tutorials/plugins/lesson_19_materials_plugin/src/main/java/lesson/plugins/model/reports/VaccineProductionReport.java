@@ -2,25 +2,25 @@ package lesson.plugins.model.reports;
 
 import java.util.List;
 
+import gov.hhs.aspr.ms.gcm.nucleus.ReportContext;
+import gov.hhs.aspr.ms.gcm.plugins.materials.datamangers.MaterialsDataManager;
+import gov.hhs.aspr.ms.gcm.plugins.materials.events.StageOfferUpdateEvent;
+import gov.hhs.aspr.ms.gcm.plugins.materials.support.BatchId;
+import gov.hhs.aspr.ms.gcm.plugins.materials.support.MaterialId;
+import gov.hhs.aspr.ms.gcm.plugins.materials.support.MaterialsProducerId;
+import gov.hhs.aspr.ms.gcm.plugins.materials.support.StageId;
+import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
+import gov.hhs.aspr.ms.gcm.plugins.regions.datamanagers.RegionsDataManager;
+import gov.hhs.aspr.ms.gcm.plugins.regions.support.RegionId;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.PeriodicReport;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportHeader;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportItem;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportLabel;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportPeriod;
+import gov.hhs.aspr.ms.gcm.plugins.resources.datamanagers.ResourcesDataManager;
 import lesson.plugins.model.support.Material;
 import lesson.plugins.model.support.MaterialsProducer;
 import lesson.plugins.model.support.Resource;
-import nucleus.ReportContext;
-import plugins.materials.datamangers.MaterialsDataManager;
-import plugins.materials.events.StageOfferUpdateEvent;
-import plugins.materials.support.BatchId;
-import plugins.materials.support.MaterialId;
-import plugins.materials.support.MaterialsProducerId;
-import plugins.materials.support.StageId;
-import plugins.people.support.PersonId;
-import plugins.regions.datamanagers.RegionsDataManager;
-import plugins.regions.support.RegionId;
-import plugins.reports.support.PeriodicReport;
-import plugins.reports.support.ReportHeader;
-import plugins.reports.support.ReportItem;
-import plugins.reports.support.ReportLabel;
-import plugins.reports.support.ReportPeriod;
-import plugins.resources.datamanagers.ResourcesDataManager;
 
 public final class VaccineProductionReport extends PeriodicReport {
 

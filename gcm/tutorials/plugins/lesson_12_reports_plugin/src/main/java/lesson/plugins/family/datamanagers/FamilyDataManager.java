@@ -8,6 +8,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import gov.hhs.aspr.ms.gcm.nucleus.DataManager;
+import gov.hhs.aspr.ms.gcm.nucleus.DataManagerContext;
+import gov.hhs.aspr.ms.gcm.nucleus.Event;
 import lesson.plugins.family.FamilyPluginData;
 import lesson.plugins.family.events.FamilyAdditionEvent;
 import lesson.plugins.family.events.FamilyMemberShipAdditionEvent;
@@ -15,9 +18,6 @@ import lesson.plugins.family.support.FamilyId;
 import lesson.plugins.person.datamanagers.PersonDataManager;
 import lesson.plugins.person.events.PersonRemovalEvent;
 import lesson.plugins.person.support.PersonId;
-import nucleus.DataManager;
-import nucleus.DataManagerContext;
-import nucleus.Event;
 
 public final class FamilyDataManager extends DataManager {
 

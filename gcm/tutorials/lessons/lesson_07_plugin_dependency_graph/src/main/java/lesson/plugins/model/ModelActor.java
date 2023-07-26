@@ -6,12 +6,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
+import gov.hhs.aspr.ms.gcm.nucleus.ActorContext;
 import lesson.plugins.family.FamilyDataManager;
 import lesson.plugins.family.FamilyId;
 import lesson.plugins.people.PersonDataManager;
 import lesson.plugins.people.PersonId;
 import lesson.plugins.vaccine.VaccinationDataManager;
-import nucleus.ActorContext;
 
 public final class ModelActor {
 

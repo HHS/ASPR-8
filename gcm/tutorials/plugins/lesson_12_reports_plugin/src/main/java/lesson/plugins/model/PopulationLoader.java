@@ -3,12 +3,12 @@ package lesson.plugins.model;
 
 import org.apache.commons.math3.random.RandomGenerator;
 
+import gov.hhs.aspr.ms.gcm.nucleus.ActorContext;
+import gov.hhs.aspr.ms.gcm.plugins.stochastics.datamanagers.StochasticsDataManager;
 import lesson.plugins.family.datamanagers.FamilyDataManager;
 import lesson.plugins.family.support.FamilyId;
 import lesson.plugins.person.datamanagers.PersonDataManager;
 import lesson.plugins.person.support.PersonId;
-import nucleus.ActorContext;
-import plugins.stochastics.datamanagers.StochasticsDataManager;
 
 public final class PopulationLoader {
 

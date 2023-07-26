@@ -1,9 +1,9 @@
 package lesson.plugins.model;
 
+import gov.hhs.aspr.ms.gcm.nucleus.Plugin;
 import lesson.plugins.model.actors.PersonMover;
 import lesson.plugins.model.actors.RegionCreator;
 import lesson.plugins.model.actors.Vaccinator;
-import nucleus.Plugin;
 
 public final class ModelPlugin {
 	private ModelPlugin() {

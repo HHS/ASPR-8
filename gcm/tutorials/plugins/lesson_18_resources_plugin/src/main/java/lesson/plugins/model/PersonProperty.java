@@ -1,6 +1,6 @@
 package lesson.plugins.model;
 
-import plugins.personproperties.support.PersonPropertyId;
+import gov.hhs.aspr.ms.gcm.plugins.personproperties.support.PersonPropertyId;
 
 public enum PersonProperty implements PersonPropertyId {
 	IMMUNE, // the person is immune

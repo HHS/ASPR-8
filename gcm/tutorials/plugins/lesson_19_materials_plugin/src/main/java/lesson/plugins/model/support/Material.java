@@ -1,6 +1,6 @@
 package lesson.plugins.model.support;
 
-import plugins.materials.support.MaterialId;
+import gov.hhs.aspr.ms.gcm.plugins.materials.support.MaterialId;
 
 /* start code_ref=materials_plugin_material_ids */
 public enum Material implements MaterialId {

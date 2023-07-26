@@ -6,18 +6,18 @@ import java.util.Map;
 
 import org.apache.commons.math3.util.FastMath;
 
+import gov.hhs.aspr.ms.gcm.nucleus.ActorContext;
+import gov.hhs.aspr.ms.gcm.plugins.globalproperties.datamanagers.GlobalPropertiesDataManager;
+import gov.hhs.aspr.ms.gcm.plugins.materials.datamangers.MaterialsDataManager;
+import gov.hhs.aspr.ms.gcm.plugins.materials.support.BatchConstructionInfo;
+import gov.hhs.aspr.ms.gcm.plugins.materials.support.BatchId;
+import gov.hhs.aspr.ms.gcm.plugins.materials.support.MaterialId;
+import gov.hhs.aspr.ms.gcm.plugins.materials.support.MaterialsProducerId;
+import gov.hhs.aspr.ms.gcm.plugins.materials.support.StageConversionInfo;
+import gov.hhs.aspr.ms.gcm.plugins.materials.support.StageId;
 import lesson.plugins.model.support.GlobalProperty;
 import lesson.plugins.model.support.Material;
 import lesson.plugins.model.support.MaterialManufactureSpecification;
-import nucleus.ActorContext;
-import plugins.globalproperties.datamanagers.GlobalPropertiesDataManager;
-import plugins.materials.datamangers.MaterialsDataManager;
-import plugins.materials.support.BatchConstructionInfo;
-import plugins.materials.support.BatchId;
-import plugins.materials.support.MaterialId;
-import plugins.materials.support.MaterialsProducerId;
-import plugins.materials.support.StageConversionInfo;
-import plugins.materials.support.StageId;
 
 public final class AntigenProducer {
 	private ActorContext actorContext;

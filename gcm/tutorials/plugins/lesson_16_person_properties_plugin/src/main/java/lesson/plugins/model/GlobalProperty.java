@@ -1,6 +1,6 @@
 package lesson.plugins.model;
 
-import plugins.globalproperties.support.GlobalPropertyId;
+import gov.hhs.aspr.ms.gcm.plugins.globalproperties.support.GlobalPropertyId;
 
 public enum GlobalProperty implements GlobalPropertyId {
 	IMMUNITY_START_TIME, // the time in days until immunity person property is added

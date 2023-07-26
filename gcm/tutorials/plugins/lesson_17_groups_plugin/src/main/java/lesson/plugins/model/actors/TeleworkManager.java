@@ -4,19 +4,19 @@ import java.util.List;
 
 import org.apache.commons.math3.random.RandomGenerator;
 
+import gov.hhs.aspr.ms.gcm.nucleus.ActorContext;
+import gov.hhs.aspr.ms.gcm.nucleus.Plan;
+import gov.hhs.aspr.ms.gcm.plugins.globalproperties.datamanagers.GlobalPropertiesDataManager;
+import gov.hhs.aspr.ms.gcm.plugins.groups.datamanagers.GroupsDataManager;
+import gov.hhs.aspr.ms.gcm.plugins.groups.support.GroupId;
+import gov.hhs.aspr.ms.gcm.plugins.people.datamanagers.PeopleDataManager;
+import gov.hhs.aspr.ms.gcm.plugins.personproperties.datamanagers.PersonPropertiesDataManager;
+import gov.hhs.aspr.ms.gcm.plugins.stochastics.datamanagers.StochasticsDataManager;
 import lesson.plugins.model.support.DiseaseState;
 import lesson.plugins.model.support.GlobalProperty;
 import lesson.plugins.model.support.GroupProperty;
 import lesson.plugins.model.support.GroupType;
 import lesson.plugins.model.support.PersonProperty;
-import nucleus.ActorContext;
-import nucleus.Plan;
-import plugins.globalproperties.datamanagers.GlobalPropertiesDataManager;
-import plugins.groups.datamanagers.GroupsDataManager;
-import plugins.groups.support.GroupId;
-import plugins.people.datamanagers.PeopleDataManager;
-import plugins.personproperties.datamanagers.PersonPropertiesDataManager;
-import plugins.stochastics.datamanagers.StochasticsDataManager;
 
 public class TeleworkManager {
 

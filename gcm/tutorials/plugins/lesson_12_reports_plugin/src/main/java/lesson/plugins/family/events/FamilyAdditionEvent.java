@@ -1,8 +1,8 @@
 package lesson.plugins.family.events;
 
+import gov.hhs.aspr.ms.gcm.nucleus.Event;
 import lesson.plugins.family.support.FamilyId;
 import net.jcip.annotations.Immutable;
-import nucleus.Event;
 
 @Immutable
 public final class FamilyAdditionEvent implements Event {

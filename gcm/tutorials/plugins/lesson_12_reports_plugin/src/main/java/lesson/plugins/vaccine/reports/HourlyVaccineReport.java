@@ -5,6 +5,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import gov.hhs.aspr.ms.gcm.nucleus.ReportContext;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.PeriodicReport;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportHeader;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportItem;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportLabel;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportPeriod;
 import lesson.plugins.family.datamanagers.FamilyDataManager;
 import lesson.plugins.family.events.FamilyAdditionEvent;
 import lesson.plugins.family.events.FamilyMemberShipAdditionEvent;
@@ -14,12 +20,6 @@ import lesson.plugins.person.events.PersonAdditionEvent;
 import lesson.plugins.person.support.PersonId;
 import lesson.plugins.vaccine.datamanagers.VaccinationDataManager;
 import lesson.plugins.vaccine.events.VaccinationEvent;
-import nucleus.ReportContext;
-import plugins.reports.support.PeriodicReport;
-import plugins.reports.support.ReportHeader;
-import plugins.reports.support.ReportLabel;
-import plugins.reports.support.ReportItem;
-import plugins.reports.support.ReportPeriod;
 import util.wrappers.MutableInteger;
 
 public class HourlyVaccineReport extends PeriodicReport {

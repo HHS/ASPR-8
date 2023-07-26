@@ -1,7 +1,7 @@
 package lesson.plugins.people;
 
+import gov.hhs.aspr.ms.gcm.nucleus.Event;
 import net.jcip.annotations.Immutable;
-import nucleus.Event;
 
 @Immutable
 /* start code_ref=plugin_dependencies_person_removal_event */

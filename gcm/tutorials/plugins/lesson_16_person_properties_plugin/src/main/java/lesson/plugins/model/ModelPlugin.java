@@ -1,10 +1,10 @@
 package lesson.plugins.model;
 
+import gov.hhs.aspr.ms.gcm.nucleus.Plugin;
 import lesson.plugins.model.actors.PopulationLoader;
 import lesson.plugins.model.actors.Vaccinator;
 import lesson.plugins.model.actors.VaccineEducator;
 import lesson.plugins.model.reports.VaccineReport;
-import nucleus.Plugin;
 
 public final class ModelPlugin {
 	private ModelPlugin() {
