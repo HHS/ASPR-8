@@ -17,12 +17,17 @@ import org.junit.jupiter.api.Test;
 import nucleus.ActorContext;
 import nucleus.NucleusError;
 import nucleus.Plugin;
+import nucleus.testsupport.TestFactoryUtil;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestPluginId;
 import nucleus.testsupport.testplugin.TestSimulation;
 import plugins.materials.MaterialsPluginId;
 import plugins.materials.datamangers.MaterialsPluginData;
+import plugins.materials.reports.BatchStatusReportPluginData;
+import plugins.materials.reports.MaterialsProducerPropertyReportPluginData;
+import plugins.materials.reports.MaterialsProducerResourceReportPluginData;
+import plugins.materials.reports.StageReportPluginData;
 import plugins.materials.support.BatchId;
 import plugins.materials.support.MaterialsError;
 import plugins.materials.support.StageId;
@@ -37,6 +42,7 @@ import plugins.regions.datamanagers.RegionsPluginData;
 import plugins.regions.support.RegionError;
 import plugins.regions.testsupport.TestRegionId;
 import plugins.regions.testsupport.TestRegionPropertyId;
+import plugins.reports.support.SimpleReportLabel;
 import plugins.resources.ResourcesPluginId;
 import plugins.resources.datamanagers.ResourcesPluginData;
 import plugins.resources.support.ResourceError;
@@ -48,7 +54,6 @@ import plugins.stochastics.datamanagers.StochasticsPluginData;
 import plugins.stochastics.support.StochasticsError;
 import plugins.stochastics.support.WellState;
 import plugins.stochastics.testsupport.TestRandomGeneratorId;
-import plugins.util.TestFactoryUtil;
 import plugins.util.properties.PropertyDefinition;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
@@ -448,4 +453,104 @@ public class AT_MaterialsTestPluginFactory {
         StochasticsPluginData actualPluginData = MaterialsTestPluginFactory.getStandardStochasticsPluginData(seed);
         assertEquals(expectedPluginData, actualPluginData);
     }
+    
+    
+ 
+ 
+    
+    @Test
+    @UnitTestMethod(target = MaterialsTestPluginFactory.Factory.class, name = "setMaterialsProducerResourceReportPluginData", args = {
+    		MaterialsProducerResourceReportPluginData.class })
+    public void testSetMaterialsProducerResourceReportPluginData() {
+        PeoplePluginData.Builder builder = PeoplePluginData.builder();
+        builder.addPersonRange(new PersonRange(0, 99));
+        PeoplePluginData peoplePluginData = builder.build();
+        
+        MaterialsProducerResourceReportPluginData materialsProducerResourceReportPluginData = MaterialsProducerResourceReportPluginData.builder()//
+        		.setReportLabel(new SimpleReportLabel("MaterialsProducerResourceReport"))//        		
+        		.build();
+        
+
+        Factory factory = MaterialsTestPluginFactory.factory(0, 0, 0, 0, t -> {
+        });
+        factory.setPeoplePluginData(peoplePluginData);
+        factory.setMaterialsProducerResourceReportPluginData(materialsProducerResourceReportPluginData);
+
+        List<Plugin> plugins = factory.getPlugins();
+        
+        
+        TestFactoryUtil.checkPluginDataExists(plugins, materialsProducerResourceReportPluginData, MaterialsPluginId.PLUGIN_ID);
+    }
+    
+    @Test
+    @UnitTestMethod(target = MaterialsTestPluginFactory.Factory.class, name = "setMaterialsProducerPropertyReportPluginData", args = {
+    		MaterialsProducerPropertyReportPluginData.class })
+    public void testSetMaterialsProducerPropertyReportPluginData() {
+        PeoplePluginData.Builder builder = PeoplePluginData.builder();
+        builder.addPersonRange(new PersonRange(0, 99));
+        PeoplePluginData peoplePluginData = builder.build();
+        
+        MaterialsProducerPropertyReportPluginData materialsProducerPropertyReportPluginData = MaterialsProducerPropertyReportPluginData.builder()//
+        		.setReportLabel(new SimpleReportLabel("MaterialsProducerPropertyReport"))// 
+        		.build();
+        
+
+        Factory factory = MaterialsTestPluginFactory.factory(0, 0, 0, 0, t -> {
+        });
+        factory.setPeoplePluginData(peoplePluginData);
+        factory.setMaterialsProducerPropertyReportPluginData(materialsProducerPropertyReportPluginData);
+
+        List<Plugin> plugins = factory.getPlugins();
+        
+        
+        TestFactoryUtil.checkPluginDataExists(plugins, materialsProducerPropertyReportPluginData, MaterialsPluginId.PLUGIN_ID);
+    }
+    @Test
+    @UnitTestMethod(target = MaterialsTestPluginFactory.Factory.class, name = "setStageReportPluginData", args = {
+    		StageReportPluginData.class })
+    public void testSetStageReportPluginData() {
+        PeoplePluginData.Builder builder = PeoplePluginData.builder();
+        builder.addPersonRange(new PersonRange(0, 99));
+        PeoplePluginData peoplePluginData = builder.build();
+        
+        StageReportPluginData stageReportPluginData = StageReportPluginData.builder()//
+        		.setReportLabel(new SimpleReportLabel("StageReport"))//        		
+        		.build();
+        
+
+        Factory factory = MaterialsTestPluginFactory.factory(0, 0, 0, 0, t -> {
+        });
+        factory.setPeoplePluginData(peoplePluginData);
+        factory.setStageReportPluginData(stageReportPluginData);
+
+        List<Plugin> plugins = factory.getPlugins();
+        
+        
+        TestFactoryUtil.checkPluginDataExists(plugins, stageReportPluginData, MaterialsPluginId.PLUGIN_ID);
+    }
+    
+    @Test
+    @UnitTestMethod(target = MaterialsTestPluginFactory.Factory.class, name = "setBatchStatusReportPluginData", args = {
+    		BatchStatusReportPluginData.class })
+    public void testSetBatchStatusReportPluginData() {
+        PeoplePluginData.Builder builder = PeoplePluginData.builder();
+        builder.addPersonRange(new PersonRange(0, 99));
+        PeoplePluginData peoplePluginData = builder.build();
+        
+        BatchStatusReportPluginData batchStatusReportPluginData = BatchStatusReportPluginData.builder()//
+        		.setReportLabel(new SimpleReportLabel("BatchStatusReport"))//
+        		.build();
+        
+
+        Factory factory = MaterialsTestPluginFactory.factory(0, 0, 0, 0, t -> {
+        });
+        factory.setPeoplePluginData(peoplePluginData);
+        factory.setBatchStatusReportPluginData(batchStatusReportPluginData);
+
+        List<Plugin> plugins = factory.getPlugins();
+        
+        
+        TestFactoryUtil.checkPluginDataExists(plugins, batchStatusReportPluginData, MaterialsPluginId.PLUGIN_ID);
+    }
+
 }

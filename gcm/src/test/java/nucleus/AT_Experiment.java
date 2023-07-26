@@ -30,38 +30,38 @@ public class AT_Experiment {
 	@UnitTestMethod(target = Experiment.Builder.class, name = "addDimension", args = { Dimension.class })
 	public void testAddDimension() {
 
-		Dimension dimension1 = FunctionalDimension	.builder()//
-													.addMetaDatum("Alpha")//
-													.addLevel((context) -> {
-														List<String> result = new ArrayList<>();
-														result.add("alpha1");
-														return result;
-													})//
-													.addLevel((context) -> {
-														List<String> result = new ArrayList<>();
-														result.add("alpha2");
-														return result;
-													})//
-													.build();//
+		Dimension dimension1 = FunctionalDimension.builder()//
+				.addMetaDatum("Alpha")//
+				.addLevel((context) -> {
+					List<String> result = new ArrayList<>();
+					result.add("alpha1");
+					return result;
+				})//
+				.addLevel((context) -> {
+					List<String> result = new ArrayList<>();
+					result.add("alpha2");
+					return result;
+				})//
+				.build();//
 
-		Dimension dimension2 = FunctionalDimension	.builder()//
-													.addMetaDatum("Beta")//
-													.addLevel((context) -> {
-														List<String> result = new ArrayList<>();
-														result.add("beta1");
-														return result;
-													})//
-													.addLevel((context) -> {
-														List<String> result = new ArrayList<>();
-														result.add("beta2");
-														return result;
-													})//
-													.addLevel((context) -> {
-														List<String> result = new ArrayList<>();
-														result.add("beta3");
-														return result;
-													})//
-													.build();//
+		Dimension dimension2 = FunctionalDimension.builder()//
+				.addMetaDatum("Beta")//
+				.addLevel((context) -> {
+					List<String> result = new ArrayList<>();
+					result.add("beta1");
+					return result;
+				})//
+				.addLevel((context) -> {
+					List<String> result = new ArrayList<>();
+					result.add("beta2");
+					return result;
+				})//
+				.addLevel((context) -> {
+					List<String> result = new ArrayList<>();
+					result.add("beta3");
+					return result;
+				})//
+				.build();//
 
 		Set<MultiKey> expectedExperimentInstances = new LinkedHashSet<>();
 		expectedExperimentInstances.add(new MultiKey("alpha1", "beta1"));
@@ -73,28 +73,28 @@ public class AT_Experiment {
 
 		Set<MultiKey> actualExperimentInstances = new LinkedHashSet<>();
 
-		Plugin plugin = Plugin	.builder()//
-								.setPluginId(new SimplePluginId("plugin")).setInitializer((c) -> {
-									c.addActor((c2) -> {
-										c2.releaseOutput(new Object());
-									});
-								}).build();//
+		Plugin plugin = Plugin.builder()//
+				.setPluginId(new SimplePluginId("plugin")).setInitializer((c) -> {
+					c.addActor((c2) -> {
+						c2.releaseOutput(new Object());
+					});
+				}).build();//
 
-		Experiment	.builder()//
-					.addExperimentContextConsumer(c -> {
-						c.subscribeToOutput(Object.class, (c2, s, e) -> {
-							List<String> scenarioMetaData = c2.getScenarioMetaData(s).get();
-							MultiKey.Builder builder = MultiKey.builder();
-							for (String scenarioMetaDatum : scenarioMetaData) {
-								builder.addKey(scenarioMetaDatum);
-							}
-							actualExperimentInstances.add(builder.build());
-						});
-					}).addPlugin(plugin)//
-					.addDimension(dimension1)//
-					.addDimension(dimension2)//
-					.build()//
-					.execute();//
+		Experiment.builder()//
+				.addExperimentContextConsumer(c -> {
+					c.subscribeToOutput(Object.class, (c2, s, e) -> {
+						List<String> scenarioMetaData = c2.getScenarioMetaData(s).get();
+						MultiKey.Builder builder = MultiKey.builder();
+						for (String scenarioMetaDatum : scenarioMetaData) {
+							builder.addKey(scenarioMetaDatum);
+						}
+						actualExperimentInstances.add(builder.build());
+					});
+				}).addPlugin(plugin)//
+				.addDimension(dimension1)//
+				.addDimension(dimension2)//
+				.build()//
+				.execute();//
 
 		assertEquals(expectedExperimentInstances, actualExperimentInstances);
 
@@ -105,11 +105,11 @@ public class AT_Experiment {
 	public void testAddExperimentContextConsumer() {
 
 		/*
-		 * Show that an output handler receives data released by the simulation
-		 * by adding a few actors that release data. Add output handlers that
-		 * show that the output is correctly directed. Note the use of
-		 * overlapping types for the output consumers and that the output type
-		 * may be a subclass of the consumer's type.
+		 * Show that an output handler receives data released by the simulation by
+		 * adding a few actors that release data. Add output handlers that show that the
+		 * output is correctly directed. Note the use of overlapping types for the
+		 * output consumers and that the output type may be a subclass of the consumer's
+		 * type.
 		 */
 
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
@@ -163,44 +163,44 @@ public class AT_Experiment {
 			});
 		};
 
-		Dimension dimension1 = FunctionalDimension	.builder()//
-													.addMetaDatum("dim1")//
-													.addLevel((tmap) -> {
-														List<String> result = new ArrayList<>();
-														result.add("var_1_1");
-														return result;
-													})//
-													.addLevel((tmap) -> {
-														List<String> result = new ArrayList<>();
-														result.add("var_1_2");
-														return result;
-													})//
-													.build();//
+		Dimension dimension1 = FunctionalDimension.builder()//
+				.addMetaDatum("dim1")//
+				.addLevel((tmap) -> {
+					List<String> result = new ArrayList<>();
+					result.add("var_1_1");
+					return result;
+				})//
+				.addLevel((tmap) -> {
+					List<String> result = new ArrayList<>();
+					result.add("var_1_2");
+					return result;
+				})//
+				.build();//
 
-		Dimension dimension2 = FunctionalDimension	.builder()//
-													.addMetaDatum("dim2")//
-													.addLevel((tmap) -> {
-														List<String> result = new ArrayList<>();
-														result.add("var_2_1");
-														return result;
-													})//
-													.addLevel((tmap) -> {
-														List<String> result = new ArrayList<>();
-														result.add("var_2_2");
-														return result;
-													})//
-													.build();//
+		Dimension dimension2 = FunctionalDimension.builder()//
+				.addMetaDatum("dim2")//
+				.addLevel((tmap) -> {
+					List<String> result = new ArrayList<>();
+					result.add("var_2_1");
+					return result;
+				})//
+				.addLevel((tmap) -> {
+					List<String> result = new ArrayList<>();
+					result.add("var_2_2");
+					return result;
+				})//
+				.build();//
 
-		Experiment	.builder()//
-					.addDimension(dimension1)//
-					.addDimension(dimension2)//
-					.addExperimentContextConsumer(integerOutputHandler)//
-					.addExperimentContextConsumer(stringOutputHandler)//
-					.addExperimentContextConsumer(doubleOutputHandler)//
-					.addExperimentContextConsumer(numberOutputHandler)//
-					.addPlugin(testPlugin)//
-					.build()//
-					.execute();//
+		Experiment.builder()//
+				.addDimension(dimension1)//
+				.addDimension(dimension2)//
+				.addExperimentContextConsumer(integerOutputHandler)//
+				.addExperimentContextConsumer(stringOutputHandler)//
+				.addExperimentContextConsumer(doubleOutputHandler)//
+				.addExperimentContextConsumer(numberOutputHandler)//
+				.addPlugin(testPlugin)//
+				.build()//
+				.execute();//
 
 		Set<MultiKey> expectedOutput = new LinkedHashSet<>();
 
@@ -242,8 +242,8 @@ public class AT_Experiment {
 		PluginId cId = new SimplePluginId("plugin C");
 
 		/*
-		 * Build the expected order of initialization based on the dependencies
-		 * between the plugins
+		 * Build the expected order of initialization based on the dependencies between
+		 * the plugins
 		 */
 		List<PluginId> expectedExecutedPlugins = new ArrayList<>();
 		expectedExecutedPlugins.add(cId);
@@ -255,34 +255,34 @@ public class AT_Experiment {
 
 		// create the three plugins with A depending on B and C and B depending
 		// on C alone.
-		Plugin pluginA = Plugin	.builder()//
-								.setPluginId(aId)//
-								.addPluginDependency(cId)//
-								.addPluginDependency(bId)//
-								.setInitializer((c) -> {
-									actualExecutedPlugins.add(aId);
-								}).build();//
+		Plugin pluginA = Plugin.builder()//
+				.setPluginId(aId)//
+				.addPluginDependency(cId)//
+				.addPluginDependency(bId)//
+				.setInitializer((c) -> {
+					actualExecutedPlugins.add(aId);
+				}).build();//
 
-		Plugin pluginB = Plugin	.builder()//
-								.setPluginId(bId)//
-								.addPluginDependency(cId)//
-								.setInitializer((c) -> {
-									actualExecutedPlugins.add(bId);
-								}).build();//
+		Plugin pluginB = Plugin.builder()//
+				.setPluginId(bId)//
+				.addPluginDependency(cId)//
+				.setInitializer((c) -> {
+					actualExecutedPlugins.add(bId);
+				}).build();//
 
-		Plugin pluginC = Plugin	.builder()//
-								.setPluginId(cId)//
-								.setInitializer((c) -> {
-									actualExecutedPlugins.add(cId);
-								}).build();//
+		Plugin pluginC = Plugin.builder()//
+				.setPluginId(cId)//
+				.setInitializer((c) -> {
+					actualExecutedPlugins.add(cId);
+				}).build();//
 
 		// create the simulation
-		Experiment	.builder()//
-					.addPlugin(pluginA)//
-					.addPlugin(pluginB)//
-					.addPlugin(pluginC)//
-					.build()//
-					.execute();//
+		Experiment.builder()//
+				.addPlugin(pluginA)//
+				.addPlugin(pluginB)//
+				.addPlugin(pluginC)//
+				.build()//
+				.execute();//
 
 		// show that the plugins initialized in the correct order
 		assertEquals(expectedExecutedPlugins, actualExecutedPlugins);
@@ -300,7 +300,8 @@ public class AT_Experiment {
 	}
 
 	@Test
-	@UnitTestMethod(target = Experiment.Builder.class, name = "setExperimentParameterData", args = { ExperimentParameterData.class }, tags = { UnitTag.INCOMPLETE })
+	@UnitTestMethod(target = Experiment.Builder.class, name = "setExperimentParameterData", args = {
+			ExperimentParameterData.class }, tags = { UnitTag.INCOMPLETE })
 	public void testSetExperimentParameterData() {
 		testSetHaltOnException();
 		testThreadCount();
@@ -333,8 +334,8 @@ public class AT_Experiment {
 		Dimension dimension2 = dimBuilder2.addMetaDatum("beta").build();
 
 		/*
-		 * Create a thread safe set to record the thread ids that are used by
-		 * each simulation
+		 * Create a thread safe set to record the thread ids that are used by each
+		 * simulation
 		 */
 		Set<Long> threadIds = Collections.synchronizedSet(new LinkedHashSet<>());
 
@@ -342,25 +343,25 @@ public class AT_Experiment {
 		 * Add a plugin that will add an actor that records the thread id of the
 		 * simulation running that actor
 		 */
-		Plugin plugin = Plugin	.builder()//
-								.setPluginId(new SimplePluginId("plugin"))//
-								.setInitializer((c) -> {
-									c.addActor((c2) -> {
-										threadIds.add(Thread.currentThread().getId());
-									});
-								}).build();//
-		ExperimentParameterData experimentParameterData = ExperimentParameterData	.builder()//
-																					.setThreadCount(6)//
-																					.build();
+		Plugin plugin = Plugin.builder()//
+				.setPluginId(new SimplePluginId("plugin"))//
+				.setInitializer((c) -> {
+					c.addActor((c2) -> {
+						threadIds.add(Thread.currentThread().getId());
+					});
+				}).build();//
+		ExperimentParameterData experimentParameterData = ExperimentParameterData.builder()//
+				.setThreadCount(6)//
+				.build();
 
 		// Run the experiment using several threads
-		Experiment	.builder()//
-					.addPlugin(plugin)//
-					.addDimension(dimension1)//
-					.addDimension(dimension2)//
-					.setExperimentParameterData(experimentParameterData)//
-					.build()//
-					.execute();//
+		Experiment.builder()//
+				.addPlugin(plugin)//
+				.addDimension(dimension1)//
+				.addDimension(dimension2)//
+				.setExperimentParameterData(experimentParameterData)//
+				.build()//
+				.execute();//
 
 		// We show that more than one thread was used. It is very difficult,
 		// especially with simulation instances that run very quickly, to reason
@@ -401,10 +402,10 @@ public class AT_Experiment {
 		MutableObject<ExperimentContext> experimentContext = new MutableObject<>();
 
 		// we create a dimension with two levels
-		Dimension dimension = FunctionalDimension	.builder()//
-													.addLevel((c) -> new ArrayList<>())//
-													.addLevel((c) -> new ArrayList<>())//
-													.build();
+		Dimension dimension = FunctionalDimension.builder()//
+				.addLevel((c) -> new ArrayList<>())//
+				.addLevel((c) -> new ArrayList<>())//
+				.build();
 
 		// we create a plugin that will instantiate three actors, with the
 		// second actor throwing a runtime exception
@@ -426,23 +427,24 @@ public class AT_Experiment {
 		};
 
 		/*
-		 * By setting the haltOnException to true, the simulation should execute
-		 * both scenarios, with each scenario executing only two of the actors
-		 * before the simulation fails. Thus we expect that the counter will be
-		 * equal to four after the experiment executes and that there will be no
-		 * exception bubbling out of the execute() invocation
+		 * By setting the haltOnException to true, the simulation should execute both
+		 * scenarios, with each scenario executing only two of the actors before the
+		 * simulation fails. Thus we expect that the counter will be equal to four after
+		 * the experiment executes and that there will be no exception bubbling out of
+		 * the execute() invocation
 		 */
 
-		ExperimentParameterData experimentParameterData = ExperimentParameterData.builder().setHaltOnException(true).build();
+		ExperimentParameterData experimentParameterData = ExperimentParameterData.builder().setHaltOnException(true)
+				.build();
 
 		// Explicitly setting the haltOnException to true
-		assertThrows(RuntimeException.class, () -> Experiment	.builder()//
-																.addDimension(dimension)//
-																.addPlugin(plugin)//
-																.addExperimentContextConsumer(experimentContextConsumer)//
-																.setExperimentParameterData(experimentParameterData)//
-																.build()//
-																.execute());
+		assertThrows(RuntimeException.class, () -> Experiment.builder()//
+				.addDimension(dimension)//
+				.addPlugin(plugin)//
+				.addExperimentContextConsumer(experimentContextConsumer)//
+				.setExperimentParameterData(experimentParameterData)//
+				.build()//
+				.execute());
 
 		// since the experiment should halt on the first failure, we expect only
 		// two of the actors to have initialized
@@ -463,10 +465,10 @@ public class AT_Experiment {
 		MutableObject<ExperimentContext> experimentContext = new MutableObject<>();
 
 		// we create a dimension with two levels
-		Dimension dimension = FunctionalDimension	.builder()//
-													.addLevel((c) -> new ArrayList<>())//
-													.addLevel((c) -> new ArrayList<>())//
-													.build();
+		Dimension dimension = FunctionalDimension.builder()//
+				.addLevel((c) -> new ArrayList<>())//
+				.addLevel((c) -> new ArrayList<>())//
+				.build();
 
 		// we create a plugin that will instantiate three actors, with the
 		// second actor throwing a runtime exception
@@ -487,18 +489,18 @@ public class AT_Experiment {
 			experimentContext.setValue(c);
 		};
 
-		ExperimentParameterData experimentParameterData = ExperimentParameterData	.builder()//
-																					.setHaltOnException(false)//
-																					.build();
+		ExperimentParameterData experimentParameterData = ExperimentParameterData.builder()//
+				.setHaltOnException(false)//
+				.build();
 
 		// Explicitly setting the haltOnException to false
-		Experiment	.builder()//
-					.addDimension(dimension)//
-					.addPlugin(plugin)//
-					.addExperimentContextConsumer(experimentContextConsumer)//
-					.setExperimentParameterData(experimentParameterData)//
-					.build()//
-					.execute();
+		Experiment.builder()//
+				.addDimension(dimension)//
+				.addPlugin(plugin)//
+				.addExperimentContextConsumer(experimentContextConsumer)//
+				.setExperimentParameterData(experimentParameterData)//
+				.build()//
+				.execute();
 		assertEquals(4, actorInitializationCounter.getValue());
 
 		// show that both scenarios executed and failed
@@ -516,10 +518,10 @@ public class AT_Experiment {
 		MutableObject<ExperimentContext> experimentContext = new MutableObject<>();
 
 		// we create a dimension with two levels
-		Dimension dimension = FunctionalDimension	.builder()//
-													.addLevel((c) -> new ArrayList<>())//
-													.addLevel((c) -> new ArrayList<>())//
-													.build();
+		Dimension dimension = FunctionalDimension.builder()//
+				.addLevel((c) -> new ArrayList<>())//
+				.addLevel((c) -> new ArrayList<>())//
+				.build();
 
 		// we create a plugin that will instantiate three actors, with the
 		// second actor throwing a runtime exception
@@ -541,20 +543,20 @@ public class AT_Experiment {
 		};
 
 		/*
-		 * By setting the haltOnException to true, the simulation should execute
-		 * both scenarios, with each scenario executing only two of the actors
-		 * before the simulation fails. Thus we expect that the counter will be
-		 * equal to four after the experiment executes and that there will be no
-		 * exception bubbling out of the execute() invocation
+		 * By setting the haltOnException to true, the simulation should execute both
+		 * scenarios, with each scenario executing only two of the actors before the
+		 * simulation fails. Thus we expect that the counter will be equal to four after
+		 * the experiment executes and that there will be no exception bubbling out of
+		 * the execute() invocation
 		 */
 
 		// Implicitly setting the haltOnException to true
-		assertThrows(RuntimeException.class, () -> Experiment	.builder()//
-																.addDimension(dimension)//
-																.addPlugin(plugin)//
-																.addExperimentContextConsumer(experimentContextConsumer)//
-																.build()//
-																.execute());
+		assertThrows(RuntimeException.class, () -> Experiment.builder()//
+				.addDimension(dimension)//
+				.addPlugin(plugin)//
+				.addExperimentContextConsumer(experimentContextConsumer)//
+				.build()//
+				.execute());
 
 		// since the experiment should halt on the first failure, we expect only
 		// two of the actors to have initialized
@@ -567,4 +569,34 @@ public class AT_Experiment {
 
 	}
 
+	@Test
+	@UnitTestMethod(target = Experiment.Builder.class, name = "setSimulationState", args = { SimulationState.class })
+	public void testSetSimulationState() {
+
+		//set a time for the simulation to start
+		double expectedStartTime = 456.789;
+		
+		//create the simulation state that will dictate the start time
+		SimulationState simulationState = SimulationState.builder()//
+				.setStartTime(expectedStartTime)//
+				.build();
+
+		/*
+		 * create a plugin that contains an actor. This actor will confirm that the
+		 * simulation starts at the expected time.
+		 */
+		Plugin plugin = Plugin.builder().setPluginId(new SimplePluginId("plugin id")).setInitializer((c) -> {
+			c.addActor((c2) -> {
+				assertEquals(expectedStartTime, c2.getTime());
+			});
+		}).build();
+
+		// execute the experiment
+		Experiment.builder()//
+				.addPlugin(plugin)//
+				.setSimulationState(simulationState)//
+				.build()//
+				.execute();//
+
+	}
 }

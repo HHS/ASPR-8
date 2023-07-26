@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import nucleus.ActorContext;
 import nucleus.NucleusError;
 import nucleus.Plugin;
+import nucleus.testsupport.TestFactoryUtil;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestPluginId;
@@ -42,7 +43,6 @@ import plugins.stochastics.StochasticsPluginId;
 import plugins.stochastics.datamanagers.StochasticsPluginData;
 import plugins.stochastics.support.StochasticsError;
 import plugins.stochastics.support.WellState;
-import plugins.util.TestFactoryUtil;
 import plugins.util.properties.PropertyDefinition;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
@@ -367,7 +367,7 @@ public class AT_ResourcesTestPluginFactory {
         List<Plugin> plugins = ResourcesTestPluginFactory.factory(0, 0, t -> {        	
         }).setPersonResourceReportPluginData(personResourceReportPluginData).getPlugins();
         
-        TestFactoryUtil.checkPluginDataExists(plugins, personResourceReportPluginData, ResourcesPluginId.PLUGIN_ID,2);
+        TestFactoryUtil.checkPluginDataExists(plugins, personResourceReportPluginData, ResourcesPluginId.PLUGIN_ID);
     }
  
     @Test
@@ -381,7 +381,7 @@ public class AT_ResourcesTestPluginFactory {
         List<Plugin> plugins = ResourcesTestPluginFactory.factory(0, 0, t -> {        	
         }).setResourcePropertyReportPluginData(resourcePropertyReportPluginData).getPlugins();
         
-        TestFactoryUtil.checkPluginDataExists(plugins, resourcePropertyReportPluginData, ResourcesPluginId.PLUGIN_ID,2);
+        TestFactoryUtil.checkPluginDataExists(plugins, resourcePropertyReportPluginData, ResourcesPluginId.PLUGIN_ID);
     }
     
     @Test
@@ -397,7 +397,7 @@ public class AT_ResourcesTestPluginFactory {
         List<Plugin> plugins = ResourcesTestPluginFactory.factory(0, 0, t -> {        	
         }).setResourceReportPluginData(resourceReportPluginData).getPlugins();
         
-        TestFactoryUtil.checkPluginDataExists(plugins, resourceReportPluginData, ResourcesPluginId.PLUGIN_ID,2);
+        TestFactoryUtil.checkPluginDataExists(plugins, resourceReportPluginData, ResourcesPluginId.PLUGIN_ID);
     }
 
 }

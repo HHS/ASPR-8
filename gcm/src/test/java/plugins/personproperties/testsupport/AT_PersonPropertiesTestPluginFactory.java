@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import nucleus.ActorContext;
 import nucleus.NucleusError;
 import nucleus.Plugin;
+import nucleus.testsupport.TestFactoryUtil;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestPluginId;
@@ -40,7 +41,6 @@ import plugins.stochastics.StochasticsPluginId;
 import plugins.stochastics.datamanagers.StochasticsPluginData;
 import plugins.stochastics.support.StochasticsError;
 import plugins.stochastics.support.WellState;
-import plugins.util.TestFactoryUtil;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.random.RandomGeneratorProvider;
@@ -374,7 +374,7 @@ public class AT_PersonPropertiesTestPluginFactory {
         List<Plugin> plugins = PersonPropertiesTestPluginFactory.factory(0, 0, t -> {
         }).setPersonPropertyReportPluginData(personPropertyReportPluginData).getPlugins();
 
-        TestFactoryUtil.checkPluginDataExists(plugins, personPropertyReportPluginData, PersonPropertiesPluginId.PLUGIN_ID,2);
+        TestFactoryUtil.checkPluginDataExists(plugins, personPropertyReportPluginData, PersonPropertiesPluginId.PLUGIN_ID);
     }
 
     
@@ -392,7 +392,7 @@ public class AT_PersonPropertiesTestPluginFactory {
         List<Plugin> plugins = PersonPropertiesTestPluginFactory.factory(0, 0, t -> {
         }).setPersonPropertyInteractionReportPluginData(personPropertyInteractionReportPluginData).getPlugins();
 
-        TestFactoryUtil.checkPluginDataExists(plugins, personPropertyInteractionReportPluginData, PersonPropertiesPluginId.PLUGIN_ID,2);
+        TestFactoryUtil.checkPluginDataExists(plugins, personPropertyInteractionReportPluginData, PersonPropertiesPluginId.PLUGIN_ID);
     }
     
     
