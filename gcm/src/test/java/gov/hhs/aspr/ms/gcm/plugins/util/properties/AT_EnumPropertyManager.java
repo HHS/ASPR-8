@@ -258,8 +258,9 @@ public class AT_EnumPropertyManager {
 			enumPropertyManager.setPropertyValue(8, Color.BLUE);
 
 			String actualValue = enumPropertyManager.toString();
+
 			
-			String expectedValue = "EnumPropertyManager [enumContainer=EnumContainer [values=[1=RED, 2=BLUE, 5=RED, 6=BLUE, 7=YELLOW], enumClass=class plugins.util.properties.AT_EnumPropertyManager$Color]]";
+			String expectedValue = "EnumPropertyManager [enumContainer=EnumContainer [values=[1=RED, 2=BLUE, 5=RED, 6=BLUE, 7=YELLOW], enumClass=class gov.hhs.aspr.ms.gcm.plugins.util.properties.AT_EnumPropertyManager$Color]]";
 
 			assertEquals(expectedValue, actualValue);
 		});
