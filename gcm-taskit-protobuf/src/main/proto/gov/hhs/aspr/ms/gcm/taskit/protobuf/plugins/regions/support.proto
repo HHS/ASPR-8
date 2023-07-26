@@ -2,10 +2,9 @@ syntax = "proto3";
 package gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins;
 
 option java_multiple_files = true;
-option java_package = "gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.regions.input";
+option java_package = "gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.regions.support.input";
 
-import "properties/properties.proto";
-import "reports/reports.proto";
+import "properties/support.proto";
 import "google/protobuf/any.proto";
 
 
@@ -43,27 +42,6 @@ message RegionPropertyDimensionInput {
     RegionIdInput regionId = 1;
     RegionPropertyIdInput regionPropertyId = 2;
     repeated google.protobuf.Any values = 3;
-}
-
-message RegionsPluginDataInput {
-    repeated RegionIdInput regionIds = 1;
-    repeated PropertyDefinitionMapInput regionPropertyDefinitions = 2;
-    repeated RegionPropertyValueMapInput regionPropertyValues = 3;
-    repeated RegionMembershipInput personRegions = 4;
-    bool trackRegionArrivalTimes = 5;
-}
-
-message RegionPropertyReportPluginDataInput {
-    ReportLabelInput reportLabel = 1;
-    ReportPeriodInput reportPeriod = 2;
-    repeated RegionPropertyIdInput includedProperties = 3;
-    repeated RegionPropertyIdInput excludedProperties = 4;
-    bool defaultInclusionPolicy = 5;
-}
-
-message RegionTransferReportPluginDataInput {
-    ReportLabelInput reportLabel = 1;
-    ReportPeriodInput reportPeriod = 2;
 }
 
 message RegionFilterInput {

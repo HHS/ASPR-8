@@ -2,13 +2,12 @@ syntax = "proto3";
 package gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins;
 
 option java_multiple_files = true;
-option java_package = "gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.resources.input";
+option java_package = "gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.resources.support.input";
 
-import "partitions/partitions.proto";
-import "regions/regions.proto";
-import "properties/properties.proto";
-import "reports/reports.proto";
 import "google/protobuf/any.proto";
+import "properties/support.proto";
+import "regions/support.proto";
+import "partitions/support.proto";
 
 
 message ResourceIdInput {
@@ -63,35 +62,6 @@ message ResourcePropertyValueMapInput {
 message RegionResourceLevelMapInput {
     RegionIdInput regionId = 1;
     repeated ResourceInitializationInput regionResourceLevels = 2;
-}
-
-message ResourcesPluginDataInput {
-    repeated ResourceIdMapInput resourceIds = 1;
-    repeated ResourcePropertyDefinitionMapInput resourcePropertyDefinitions = 2;
-    repeated ResourcePropertyValueMapInput resourcePropertyValues = 3;
-    repeated PersonResourceLevelMapInput personResourceLevels = 4;
-    repeated PersonResourceTimeMapInput personResourceTimes = 5;
-    repeated RegionResourceLevelMapInput regionResourceLevels = 6;
-}
-
-message PersonResourceReportPluginDataInput {
-    ReportLabelInput reportLabel = 1;
-    ReportPeriodInput reportPeriod = 2;
-    repeated ResourceIdInput includedProperties = 3;
-    repeated ResourceIdInput excludedProperties = 4;
-    bool defaultInclusionPolicy = 5;
-}
-
-message ResourcePropertyReportPluginDataInput {
-    ReportLabelInput reportLabel = 1;
-}
-
-message ResourceReportPluginDataInput {
-    ReportLabelInput reportLabel = 1;
-    ReportPeriodInput reportPeriod = 2;
-    repeated ResourceIdInput includedProperties = 3;
-    repeated ResourceIdInput excludedProperties = 4;
-    bool defaultInclusionPolicy = 5;
 }
 
 message ResourceFilterInput {

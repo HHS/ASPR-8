@@ -1,0 +1,17 @@
+syntax = "proto3";
+package gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins;
+
+option java_multiple_files = true;
+option java_package = "gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.resources.data.input";
+
+import "resources/support.proto";
+
+
+message ResourcesPluginDataInput {
+    repeated ResourceIdMapInput resourceIds = 1;
+    repeated ResourcePropertyDefinitionMapInput resourcePropertyDefinitions = 2;
+    repeated ResourcePropertyValueMapInput resourcePropertyValues = 3;
+    repeated PersonResourceLevelMapInput personResourceLevels = 4;
+    repeated PersonResourceTimeMapInput personResourceTimes = 5;
+    repeated RegionResourceLevelMapInput regionResourceLevels = 6;
+}

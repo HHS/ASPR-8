@@ -1,0 +1,32 @@
+syntax = "proto3";
+package gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins;
+
+option java_multiple_files = true;
+option java_package = "gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.partitions.support.filters.input";
+
+import "google/protobuf/any.proto";
+
+
+message FilterInput {
+    google.protobuf.Any filter = 1;
+}
+
+message AndFilterInput {
+    FilterInput a = 1;
+    FilterInput b = 2;
+}
+
+message FalseFilterInput {
+}
+
+message NotFilterInput {
+    FilterInput a = 1;
+}
+
+message OrFilterInput {
+    FilterInput a = 1;
+    FilterInput b = 2;
+}
+
+message TrueFilterInput {   
+}

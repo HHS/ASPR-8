@@ -1,0 +1,29 @@
+syntax = "proto3";
+package gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins;
+
+option java_multiple_files = true;
+option java_package = "gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.resources.reports.input";
+
+import "reports/support.proto";
+import "resources/support.proto";
+
+
+message PersonResourceReportPluginDataInput {
+    ReportLabelInput reportLabel = 1;
+    ReportPeriodInput reportPeriod = 2;
+    repeated ResourceIdInput includedProperties = 3;
+    repeated ResourceIdInput excludedProperties = 4;
+    bool defaultInclusionPolicy = 5;
+}
+
+message ResourcePropertyReportPluginDataInput {
+    ReportLabelInput reportLabel = 1;
+}
+
+message ResourceReportPluginDataInput {
+    ReportLabelInput reportLabel = 1;
+    ReportPeriodInput reportPeriod = 2;
+    repeated ResourceIdInput includedProperties = 3;
+    repeated ResourceIdInput excludedProperties = 4;
+    bool defaultInclusionPolicy = 5;
+}

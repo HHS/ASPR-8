@@ -2,12 +2,12 @@ syntax = "proto3";
 package gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins;
 
 option java_multiple_files = true;
-option java_package = "gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.materials.input";
+option java_package = "gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.materials.support.input";
 
-import "resources/resources.proto";
-import "properties/properties.proto";
-import "reports/reports.proto";
+import "resources/support.proto";
+import "properties/support.proto";
 import "google/protobuf/any.proto";
+
 
 message MaterialIdInput {
     google.protobuf.Any id = 1;
@@ -77,37 +77,4 @@ message StageBatchInput {
 message MaterialsProducerStagesInput {
     MaterialsProducerIdInput materialsProducerId = 1;
     repeated StageIdInput stages = 2;
-}
-
-message MaterialsPluginDataInput {
-    repeated MaterialIdInput materialIds = 1;
-    repeated MaterialsProducerIdInput materialsProducerIds = 2;
-    repeated BatchPropertyDefinitionMapInput batchPropertyDefinitions = 3;
-    repeated PropertyDefinitionMapInput materialsProducerPropertyDefinitions = 4;
-    repeated MaterialsProducerPropertyValueMapInput materialsProducerPropertyValues = 5;
-    repeated MaterialsProducerResourceLevelMapInput materialsProducerResourceLevels = 6;
-    repeated BatchInput batchIds = 7;
-    repeated BatchPropertyValueInput batchPropertyValues = 8;
-    repeated MaterialsProducerInventoryBatchesInput materialsProducerInverntoryBatches = 9;
-    repeated StageInput stageIds = 10;
-    repeated StageBatchInput stageBatches = 11;
-    repeated MaterialsProducerStagesInput materialsProducerStages = 12;
-    int32 nextBatchRecordId = 13;
-	int32 nextStageRecordId = 14;
-}
-
-message BatchStatusReportPluginDataInput {
-    ReportLabelInput reportLabel = 1;
-}
-
-message MaterialsProducerPropertyReportPluginDataInput {
-    ReportLabelInput reportLabel = 1;
-}
-
-message MaterialsProducerResourceReportPluginDataInput {
-    ReportLabelInput reportLabel = 1;
-}
-
-message StageReportPluginDataInput {
-    ReportLabelInput reportLabel = 1;
 }

@@ -1,0 +1,18 @@
+syntax = "proto3";
+package gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins;
+
+option java_multiple_files = true;
+option java_package = "gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.groups.data.input";
+
+import "groups/support.proto";
+
+
+message GroupsPluginDataInput {
+    repeated GroupTypeIdInput groupTypeIds = 1;
+    repeated GroupInput groups = 2;
+    repeated PersonToGroupMembershipInput personToGroupMemberships = 3;
+    repeated GroupToPersonMembershipInput groupToPersonMemberships = 4;
+    repeated GroupPropertyDefinitionMapInput groupPropertyDefinitions = 5;
+    repeated GroupPropertyValueMapInput groupPropertyValues = 6;
+    int32 nextGroupIdValue = 7;
+}

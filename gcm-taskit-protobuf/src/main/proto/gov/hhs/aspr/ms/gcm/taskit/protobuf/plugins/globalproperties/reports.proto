@@ -1,0 +1,17 @@
+syntax = "proto3";
+package gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins;
+
+option java_multiple_files = true;
+option java_package = "gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.globalproperties.reports.input";
+
+import "reports/support.proto";
+import "globalproperties/support.proto";
+
+
+message GlobalPropertyReportPluginDataInput {
+    ReportLabelInput reportLabel = 1;
+    ReportPeriodInput reportPeriod = 2;
+    repeated GlobalPropertyIdInput includedProperties = 3;
+    repeated GlobalPropertyIdInput excludedProperties = 4;
+    bool defaultInclusionPolicy = 5;
+}
