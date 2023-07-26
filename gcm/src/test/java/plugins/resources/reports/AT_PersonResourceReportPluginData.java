@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -611,10 +610,26 @@ public class AT_PersonResourceReportPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = PersonResourceReportPluginData.Builder.class, name = "toString", args = {}, tags = {
-			UnitTag.INCOMPLETE })
+	@UnitTestMethod(target = PersonResourceReportPluginData.class, name = "toString", args = {})
 	public void testToString() {
-		// fail();
+		PersonResourceReportPluginData personResourceReportPluginData = PersonResourceReportPluginData.builder()//
+		.setReportLabel(new SimpleReportLabel("report label"))//
+		.setDefaultInclusion(true)//
+		.setReportPeriod(ReportPeriod.DAILY)//
+		.includeResource(TestResourceId.RESOURCE_1)//
+		.includeResource(TestResourceId.RESOURCE_3)//
+		.excludeResource(TestResourceId.RESOURCE_2)//
+		.excludeResource(TestResourceId.RESOURCE_4)//
+		.build();//
+		
+		String actualValue = 
+		personResourceReportPluginData.toString();
+		
+		String expectedValue = "PersonResourceReportPluginData [data=Data [reportLabel=SimpleReportLabel [value=report label],"
+				+ " reportPeriod=DAILY, includedResourceIds=[RESOURCE_1, RESOURCE_3], excludedResourceIds=[RESOURCE_2, RESOURCE_4],"
+				+ " defaultInclusionPolicy=true]]";
+		
+		assertEquals(actualValue, expectedValue);
 	}
 
 }

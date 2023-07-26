@@ -1,5 +1,6 @@
 package nucleus;
 
+import java.time.LocalDate;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -2152,5 +2153,25 @@ public class Simulation {
 		}
 
 	}
+	
+	/**
+     * Returns the time (floating point days) of simulation start.
+     * 
+     */
+    protected double getStartTime() {
+        return data.simulationState.getStartTime();
+    }
+
+    /**
+     * Returns the base date that synchronizes with simulation time zero.
+     * 
+     */
+    protected LocalDate getBaseDate() {
+        return data.simulationState.getBaseDate();
+    }
+    
+    
+    
+    
 
 }

@@ -39,33 +39,32 @@ public class AT_PersonPropertyReportPluginData {
 
 		// precondition test: if the report period is not assigned
 		ContractException contractException = assertThrows(ContractException.class, () -> //
-		PersonPropertyReportPluginData	.builder()//
-										.setReportLabel(new SimpleReportLabel(getClass()))//
-										.build());
+		PersonPropertyReportPluginData.builder()//
+				.setReportLabel(new SimpleReportLabel(getClass()))//
+				.build());
 		assertEquals(ReportError.NULL_REPORT_PERIOD, contractException.getErrorType());
 
 		// precondition test: if the report label is not assigned
 		contractException = assertThrows(ContractException.class, () -> //
-		PersonPropertyReportPluginData	.builder()//
-										.setReportPeriod(ReportPeriod.DAILY)//
-										.build());
+		PersonPropertyReportPluginData.builder()//
+				.setReportPeriod(ReportPeriod.DAILY)//
+				.build());
 		assertEquals(ReportError.NULL_REPORT_LABEL, contractException.getErrorType());
 
 	}
 
-
-	
 	@Test
-	@UnitTestMethod(target = PersonPropertyReportPluginData.Builder.class, name = "setReportLabel", args = { ReportLabel.class })
+	@UnitTestMethod(target = PersonPropertyReportPluginData.Builder.class, name = "setReportLabel", args = {
+			ReportLabel.class })
 	public void testSetReportLabel() {
 
 		for (int i = 0; i < 30; i++) {
 			ReportLabel expectedReportLabel = new SimpleReportLabel(i);
 			PersonPropertyReportPluginData personPropertyReportPluginData = //
-					PersonPropertyReportPluginData	.builder()//
-													.setReportPeriod(ReportPeriod.DAILY)//
-													.setReportLabel(expectedReportLabel)//
-													.build();
+					PersonPropertyReportPluginData.builder()//
+							.setReportPeriod(ReportPeriod.DAILY)//
+							.setReportLabel(expectedReportLabel)//
+							.build();
 
 			assertEquals(expectedReportLabel, personPropertyReportPluginData.getReportLabel());
 		}
@@ -78,17 +77,18 @@ public class AT_PersonPropertyReportPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = PersonPropertyReportPluginData.Builder.class, name = "setReportPeriod", args = { ReportPeriod.class })
+	@UnitTestMethod(target = PersonPropertyReportPluginData.Builder.class, name = "setReportPeriod", args = {
+			ReportPeriod.class })
 	public void testSetReportPeriod() {
 
 		ReportLabel reportLabel = new SimpleReportLabel("report label");
 		for (ReportPeriod reportPeriod : ReportPeriod.values()) {
 
 			PersonPropertyReportPluginData personPropertyReportPluginData = //
-					PersonPropertyReportPluginData	.builder()//
-													.setReportPeriod(reportPeriod)//
-													.setReportLabel(reportLabel)//
-													.build();
+					PersonPropertyReportPluginData.builder()//
+							.setReportPeriod(reportPeriod)//
+							.setReportLabel(reportLabel)//
+							.build();
 
 			assertEquals(reportPeriod, personPropertyReportPluginData.getReportPeriod());
 		}
@@ -101,49 +101,50 @@ public class AT_PersonPropertyReportPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = PersonPropertyReportPluginData.Builder.class, name = "setDefaultInclusion", args = { boolean.class })
+	@UnitTestMethod(target = PersonPropertyReportPluginData.Builder.class, name = "setDefaultInclusion", args = {
+			boolean.class })
 	public void testSetDefaultInclusion() {
 		ReportLabel reportLabel = new SimpleReportLabel("report label");
 		ReportPeriod reportPeriod = ReportPeriod.DAILY;
 
 		// show the default value is true
 		PersonPropertyReportPluginData personPropertyReportPluginData = //
-				PersonPropertyReportPluginData	.builder()//
-												.setReportPeriod(reportPeriod)//
-												.setReportLabel(reportLabel)//
-												.build();
+				PersonPropertyReportPluginData.builder()//
+						.setReportPeriod(reportPeriod)//
+						.setReportLabel(reportLabel)//
+						.build();
 		assertEquals(true, personPropertyReportPluginData.getDefaultInclusionPolicy());
 
 		personPropertyReportPluginData = //
-				PersonPropertyReportPluginData	.builder()//
-												.setReportPeriod(reportPeriod)//
-												.setReportLabel(reportLabel)//
-												.setDefaultInclusion(true)//
-												.build();
+				PersonPropertyReportPluginData.builder()//
+						.setReportPeriod(reportPeriod)//
+						.setReportLabel(reportLabel)//
+						.setDefaultInclusion(true)//
+						.build();
 		assertEquals(true, personPropertyReportPluginData.getDefaultInclusionPolicy());
 
 		personPropertyReportPluginData = //
-				PersonPropertyReportPluginData	.builder()//
-												.setReportPeriod(reportPeriod)//
-												.setReportLabel(reportLabel)//
-												.setDefaultInclusion(false)//
-												.build();
+				PersonPropertyReportPluginData.builder()//
+						.setReportPeriod(reportPeriod)//
+						.setReportLabel(reportLabel)//
+						.setDefaultInclusion(false)//
+						.build();
 		assertEquals(false, personPropertyReportPluginData.getDefaultInclusionPolicy());
 
 	}
 
 	@Test
-	@UnitTestMethod(target = PersonPropertyReportPluginData.Builder.class, name = "includePersonProperty", args = { PersonPropertyId.class })
+	@UnitTestMethod(target = PersonPropertyReportPluginData.Builder.class, name = "includePersonProperty", args = {
+			PersonPropertyId.class })
 	public void testIncludePersonProperty() {
 		ReportLabel reportLabel = new SimpleReportLabel("report label");
 		ReportPeriod reportPeriod = ReportPeriod.DAILY;
 
-		
 		PersonPropertyReportPluginData personPropertyReportPluginData = //
-				PersonPropertyReportPluginData	.builder()//
-												.setReportPeriod(reportPeriod)//
-												.setReportLabel(reportLabel)//
-												.build();
+				PersonPropertyReportPluginData.builder()//
+						.setReportPeriod(reportPeriod)//
+						.setReportLabel(reportLabel)//
+						.build();
 		assertTrue(personPropertyReportPluginData.getIncludedProperties().isEmpty());
 
 		// show that inclusion alone works
@@ -153,9 +154,9 @@ public class AT_PersonPropertyReportPluginData {
 		expectedPersonPropertyIds.add(TestPersonPropertyId.PERSON_PROPERTY_4_BOOLEAN_MUTABLE_TRACK);
 		expectedPersonPropertyIds.add(TestPersonPropertyId.PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK);
 
-		PersonPropertyReportPluginData.Builder builder = PersonPropertyReportPluginData	.builder()//
-																						.setReportPeriod(reportPeriod)//
-																						.setReportLabel(reportLabel);//
+		PersonPropertyReportPluginData.Builder builder = PersonPropertyReportPluginData.builder()//
+				.setReportPeriod(reportPeriod)//
+				.setReportLabel(reportLabel);//
 
 		for (PersonPropertyId personPropertyId : expectedPersonPropertyIds) {
 			builder.includePersonProperty(personPropertyId);
@@ -172,8 +173,8 @@ public class AT_PersonPropertyReportPluginData {
 		expectedPersonPropertyIds.add(TestPersonPropertyId.PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK);
 
 		builder = PersonPropertyReportPluginData.builder()//
-												.setReportPeriod(reportPeriod)//
-												.setReportLabel(reportLabel);//
+				.setReportPeriod(reportPeriod)//
+				.setReportLabel(reportLabel);//
 
 		for (PersonPropertyId personPropertyId : expectedPersonPropertyIds) {
 			builder.excludePersonProperty(personPropertyId);
@@ -191,17 +192,18 @@ public class AT_PersonPropertyReportPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = PersonPropertyReportPluginData.Builder.class, name = "excludePersonProperty", args = { PersonPropertyId.class })
+	@UnitTestMethod(target = PersonPropertyReportPluginData.Builder.class, name = "excludePersonProperty", args = {
+			PersonPropertyId.class })
 	public void testExcludePersonProperty() {
 		ReportLabel reportLabel = new SimpleReportLabel("report label");
 		ReportPeriod reportPeriod = ReportPeriod.DAILY;
 
 		// show the default is non-exclusion
 		PersonPropertyReportPluginData personPropertyReportPluginData = //
-				PersonPropertyReportPluginData	.builder()//
-												.setReportPeriod(reportPeriod)//
-												.setReportLabel(reportLabel)//
-												.build();
+				PersonPropertyReportPluginData.builder()//
+						.setReportPeriod(reportPeriod)//
+						.setReportLabel(reportLabel)//
+						.build();
 		assertTrue(personPropertyReportPluginData.getExcludedProperties().isEmpty());
 
 		// show that exclusion alone works
@@ -211,9 +213,9 @@ public class AT_PersonPropertyReportPluginData {
 		expectedPersonPropertyIds.add(TestPersonPropertyId.PERSON_PROPERTY_4_BOOLEAN_MUTABLE_TRACK);
 		expectedPersonPropertyIds.add(TestPersonPropertyId.PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK);
 
-		PersonPropertyReportPluginData.Builder builder = PersonPropertyReportPluginData	.builder()//
-																						.setReportPeriod(reportPeriod)//
-																						.setReportLabel(reportLabel);//
+		PersonPropertyReportPluginData.Builder builder = PersonPropertyReportPluginData.builder()//
+				.setReportPeriod(reportPeriod)//
+				.setReportLabel(reportLabel);//
 
 		for (PersonPropertyId personPropertyId : expectedPersonPropertyIds) {
 			builder.excludePersonProperty(personPropertyId);
@@ -230,8 +232,8 @@ public class AT_PersonPropertyReportPluginData {
 		expectedPersonPropertyIds.add(TestPersonPropertyId.PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK);
 
 		builder = PersonPropertyReportPluginData.builder()//
-												.setReportPeriod(reportPeriod)//
-												.setReportLabel(reportLabel);//
+				.setReportPeriod(reportPeriod)//
+				.setReportLabel(reportLabel);//
 
 		for (PersonPropertyId personPropertyId : expectedPersonPropertyIds) {
 			builder.includePersonProperty(personPropertyId);
@@ -254,10 +256,10 @@ public class AT_PersonPropertyReportPluginData {
 		for (int i = 0; i < 30; i++) {
 			ReportLabel expectedReportLabel = new SimpleReportLabel(i);
 			PersonPropertyReportPluginData personPropertyReportPluginData = //
-					PersonPropertyReportPluginData	.builder()//
-													.setReportPeriod(ReportPeriod.DAILY)//
-													.setReportLabel(expectedReportLabel)//
-													.build();
+					PersonPropertyReportPluginData.builder()//
+							.setReportPeriod(ReportPeriod.DAILY)//
+							.setReportLabel(expectedReportLabel)//
+							.build();
 
 			assertEquals(expectedReportLabel, personPropertyReportPluginData.getReportLabel());
 		}
@@ -271,10 +273,10 @@ public class AT_PersonPropertyReportPluginData {
 		for (ReportPeriod reportPeriod : ReportPeriod.values()) {
 
 			PersonPropertyReportPluginData personPropertyReportPluginData = //
-					PersonPropertyReportPluginData	.builder()//
-													.setReportPeriod(reportPeriod)//
-													.setReportLabel(reportLabel)//
-													.build();
+					PersonPropertyReportPluginData.builder()//
+							.setReportPeriod(reportPeriod)//
+							.setReportLabel(reportLabel)//
+							.build();
 
 			assertEquals(reportPeriod, personPropertyReportPluginData.getReportPeriod());
 		}
@@ -288,10 +290,10 @@ public class AT_PersonPropertyReportPluginData {
 
 		// show the default is non-inclusion
 		PersonPropertyReportPluginData personPropertyReportPluginData = //
-				PersonPropertyReportPluginData	.builder()//
-												.setReportPeriod(reportPeriod)//
-												.setReportLabel(reportLabel)//
-												.build();
+				PersonPropertyReportPluginData.builder()//
+						.setReportPeriod(reportPeriod)//
+						.setReportLabel(reportLabel)//
+						.build();
 		assertTrue(personPropertyReportPluginData.getIncludedProperties().isEmpty());
 
 		// show that inclusion alone works
@@ -301,9 +303,9 @@ public class AT_PersonPropertyReportPluginData {
 		expectedPersonPropertyIds.add(TestPersonPropertyId.PERSON_PROPERTY_4_BOOLEAN_MUTABLE_TRACK);
 		expectedPersonPropertyIds.add(TestPersonPropertyId.PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK);
 
-		PersonPropertyReportPluginData.Builder builder = PersonPropertyReportPluginData	.builder()//
-																						.setReportPeriod(reportPeriod)//
-																						.setReportLabel(reportLabel);//
+		PersonPropertyReportPluginData.Builder builder = PersonPropertyReportPluginData.builder()//
+				.setReportPeriod(reportPeriod)//
+				.setReportLabel(reportLabel);//
 
 		for (PersonPropertyId personPropertyId : expectedPersonPropertyIds) {
 			builder.includePersonProperty(personPropertyId);
@@ -320,8 +322,8 @@ public class AT_PersonPropertyReportPluginData {
 		expectedPersonPropertyIds.add(TestPersonPropertyId.PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK);
 
 		builder = PersonPropertyReportPluginData.builder()//
-												.setReportPeriod(reportPeriod)//
-												.setReportLabel(reportLabel);//
+				.setReportPeriod(reportPeriod)//
+				.setReportLabel(reportLabel);//
 
 		for (PersonPropertyId personPropertyId : expectedPersonPropertyIds) {
 			builder.excludePersonProperty(personPropertyId);
@@ -341,10 +343,10 @@ public class AT_PersonPropertyReportPluginData {
 
 		// show the default is non-exclusion
 		PersonPropertyReportPluginData personPropertyReportPluginData = //
-				PersonPropertyReportPluginData	.builder()//
-												.setReportPeriod(reportPeriod)//
-												.setReportLabel(reportLabel)//
-												.build();
+				PersonPropertyReportPluginData.builder()//
+						.setReportPeriod(reportPeriod)//
+						.setReportLabel(reportLabel)//
+						.build();
 		assertTrue(personPropertyReportPluginData.getExcludedProperties().isEmpty());
 
 		// show that exclusion alone works
@@ -354,9 +356,9 @@ public class AT_PersonPropertyReportPluginData {
 		expectedPersonPropertyIds.add(TestPersonPropertyId.PERSON_PROPERTY_4_BOOLEAN_MUTABLE_TRACK);
 		expectedPersonPropertyIds.add(TestPersonPropertyId.PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK);
 
-		PersonPropertyReportPluginData.Builder builder = PersonPropertyReportPluginData	.builder()//
-																						.setReportPeriod(reportPeriod)//
-																						.setReportLabel(reportLabel);//
+		PersonPropertyReportPluginData.Builder builder = PersonPropertyReportPluginData.builder()//
+				.setReportPeriod(reportPeriod)//
+				.setReportLabel(reportLabel);//
 
 		for (PersonPropertyId personPropertyId : expectedPersonPropertyIds) {
 			builder.excludePersonProperty(personPropertyId);
@@ -373,8 +375,8 @@ public class AT_PersonPropertyReportPluginData {
 		expectedPersonPropertyIds.add(TestPersonPropertyId.PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK);
 
 		builder = PersonPropertyReportPluginData.builder()//
-												.setReportPeriod(reportPeriod)//
-												.setReportLabel(reportLabel);//
+				.setReportPeriod(reportPeriod)//
+				.setReportLabel(reportLabel);//
 
 		for (PersonPropertyId personPropertyId : expectedPersonPropertyIds) {
 			builder.includePersonProperty(personPropertyId);
@@ -394,26 +396,26 @@ public class AT_PersonPropertyReportPluginData {
 
 		// show the default value is true
 		PersonPropertyReportPluginData personPropertyReportPluginData = //
-				PersonPropertyReportPluginData	.builder()//
-												.setReportPeriod(reportPeriod)//
-												.setReportLabel(reportLabel)//
-												.build();
+				PersonPropertyReportPluginData.builder()//
+						.setReportPeriod(reportPeriod)//
+						.setReportLabel(reportLabel)//
+						.build();
 		assertEquals(true, personPropertyReportPluginData.getDefaultInclusionPolicy());
 
 		personPropertyReportPluginData = //
-				PersonPropertyReportPluginData	.builder()//
-												.setReportPeriod(reportPeriod)//
-												.setReportLabel(reportLabel)//
-												.setDefaultInclusion(true)//
-												.build();
+				PersonPropertyReportPluginData.builder()//
+						.setReportPeriod(reportPeriod)//
+						.setReportLabel(reportLabel)//
+						.setDefaultInclusion(true)//
+						.build();
 		assertEquals(true, personPropertyReportPluginData.getDefaultInclusionPolicy());
 
 		personPropertyReportPluginData = //
-				PersonPropertyReportPluginData	.builder()//
-												.setReportPeriod(reportPeriod)//
-												.setReportLabel(reportLabel)//
-												.setDefaultInclusion(false)//
-												.build();
+				PersonPropertyReportPluginData.builder()//
+						.setReportPeriod(reportPeriod)//
+						.setReportLabel(reportLabel)//
+						.setDefaultInclusion(false)//
+						.build();
 		assertEquals(false, personPropertyReportPluginData.getDefaultInclusionPolicy());
 	}
 
@@ -429,12 +431,13 @@ public class AT_PersonPropertyReportPluginData {
 			ReportPeriod reportPeriod = ReportPeriod.values()[randomGenerator.nextInt(ReportPeriod.values().length)];
 
 			PersonPropertyReportPluginData.Builder builder = //
-					PersonPropertyReportPluginData	.builder()//
-													.setReportPeriod(reportPeriod)//
-													.setReportLabel(reportLabel);
+					PersonPropertyReportPluginData.builder()//
+							.setReportPeriod(reportPeriod)//
+							.setReportLabel(reportLabel);
 
 			for (int j = 0; j < 10; j++) {
-				TestPersonPropertyId testPersonPropertyId = TestPersonPropertyId.getRandomPersonPropertyId(randomGenerator);
+				TestPersonPropertyId testPersonPropertyId = TestPersonPropertyId
+						.getRandomPersonPropertyId(randomGenerator);
 				if (randomGenerator.nextBoolean()) {
 					builder.includePersonProperty(testPersonPropertyId);
 				} else {
@@ -447,7 +450,8 @@ public class AT_PersonPropertyReportPluginData {
 			PersonPropertyReportPluginData personPropertyReportPluginData = builder.build();
 
 			// create the clone builder and have it build
-			PersonPropertyReportPluginData clonePersonPropertyReportPluginData = personPropertyReportPluginData.getCloneBuilder().build();
+			PersonPropertyReportPluginData clonePersonPropertyReportPluginData = personPropertyReportPluginData
+					.getCloneBuilder().build();
 
 			// the result should equal the original if the clone builder was
 			// initialized with the correct state
@@ -476,7 +480,8 @@ public class AT_PersonPropertyReportPluginData {
 			builder2.setReportPeriod(reportPeriod);
 
 			for (int j = 0; j < 10; j++) {
-				TestPersonPropertyId testPersonPropertyId = TestPersonPropertyId.getRandomPersonPropertyId(randomGenerator);
+				TestPersonPropertyId testPersonPropertyId = TestPersonPropertyId
+						.getRandomPersonPropertyId(randomGenerator);
 				if (randomGenerator.nextBoolean()) {
 					builder1.includePersonProperty(testPersonPropertyId);
 					builder2.includePersonProperty(testPersonPropertyId);
@@ -499,9 +504,9 @@ public class AT_PersonPropertyReportPluginData {
 
 			// change the default inclusion
 			personPropertyReportPluginData2 = //
-					personPropertyReportPluginData1	.getCloneBuilder()//
-													.setDefaultInclusion(!defaultInclusion)//
-													.build();
+					personPropertyReportPluginData1.getCloneBuilder()//
+							.setDefaultInclusion(!defaultInclusion)//
+							.build();
 			assertNotEquals(personPropertyReportPluginData2, personPropertyReportPluginData1);
 
 			// change the report period
@@ -509,35 +514,37 @@ public class AT_PersonPropertyReportPluginData {
 			ord = ord % ReportPeriod.values().length;
 			reportPeriod = ReportPeriod.values()[ord];
 			personPropertyReportPluginData2 = //
-					personPropertyReportPluginData1	.getCloneBuilder()//
-													.setReportPeriod(reportPeriod)//
-													.build();
+					personPropertyReportPluginData1.getCloneBuilder()//
+							.setReportPeriod(reportPeriod)//
+							.build();
 			assertNotEquals(personPropertyReportPluginData2, personPropertyReportPluginData1);
 
 			// change the report label
 			reportLabel = new SimpleReportLabel(1000);
 			personPropertyReportPluginData2 = //
-					personPropertyReportPluginData1	.getCloneBuilder()//
-													.setReportLabel(reportLabel)//
-													.build();
+					personPropertyReportPluginData1.getCloneBuilder()//
+							.setReportLabel(reportLabel)//
+							.build();
 			assertNotEquals(personPropertyReportPluginData2, personPropertyReportPluginData1);
 
 			// change an included property id
 			if (!personPropertyReportPluginData1.getIncludedProperties().isEmpty()) {
-				PersonPropertyId personPropertyId = personPropertyReportPluginData1.getIncludedProperties().iterator().next();
+				PersonPropertyId personPropertyId = personPropertyReportPluginData1.getIncludedProperties().iterator()
+						.next();
 				personPropertyReportPluginData2 = //
-						personPropertyReportPluginData1	.getCloneBuilder()//
-														.excludePersonProperty(personPropertyId)//
-														.build();
+						personPropertyReportPluginData1.getCloneBuilder()//
+								.excludePersonProperty(personPropertyId)//
+								.build();
 				assertNotEquals(personPropertyReportPluginData2, personPropertyReportPluginData1);
 			}
 			// change an excluded property id
 			if (!personPropertyReportPluginData1.getExcludedProperties().isEmpty()) {
-				PersonPropertyId personPropertyId = personPropertyReportPluginData1.getExcludedProperties().iterator().next();
+				PersonPropertyId personPropertyId = personPropertyReportPluginData1.getExcludedProperties().iterator()
+						.next();
 				personPropertyReportPluginData2 = //
-						personPropertyReportPluginData1	.getCloneBuilder()//
-														.includePersonProperty(personPropertyId)//
-														.build();
+						personPropertyReportPluginData1.getCloneBuilder()//
+								.includePersonProperty(personPropertyId)//
+								.build();
 				assertNotEquals(personPropertyReportPluginData2, personPropertyReportPluginData1);
 			}
 
@@ -566,7 +573,8 @@ public class AT_PersonPropertyReportPluginData {
 			builder2.setReportPeriod(reportPeriod);
 
 			for (int j = 0; j < 10; j++) {
-				TestPersonPropertyId testPersonPropertyId = TestPersonPropertyId.getRandomPersonPropertyId(randomGenerator);
+				TestPersonPropertyId testPersonPropertyId = TestPersonPropertyId
+						.getRandomPersonPropertyId(randomGenerator);
 				if (randomGenerator.nextBoolean()) {
 					builder1.includePersonProperty(testPersonPropertyId);
 					builder2.includePersonProperty(testPersonPropertyId);
@@ -598,11 +606,36 @@ public class AT_PersonPropertyReportPluginData {
 		}
 
 		/*
-		 * The hash codes should be dispersed -- we only show that they are
-		 * unique values -- this is dependent on the random seed
+		 * The hash codes should be dispersed -- we only show that they are unique
+		 * values -- this is dependent on the random seed
 		 */
 		assertEquals(50, observedHashCodes.size());
 
 	}
 
+	@Test
+	@UnitTestMethod(target = PersonPropertyReportPluginData.class, name = "toString", args = {})
+	public void testToString() {
+		PersonPropertyReportPluginData personPropertyReportPluginData = PersonPropertyReportPluginData.builder()//
+				.setDefaultInclusion(true)//
+				.setReportLabel(new SimpleReportLabel("report label"))//
+				.setReportPeriod(ReportPeriod.DAILY)//
+				.includePersonProperty(TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK)//
+				.includePersonProperty(TestPersonPropertyId.PERSON_PROPERTY_3_DOUBLE_MUTABLE_NO_TRACK)//
+				.excludePersonProperty(TestPersonPropertyId.PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK)//
+				.excludePersonProperty(TestPersonPropertyId.PERSON_PROPERTY_4_BOOLEAN_MUTABLE_TRACK).build();//
+
+		String actualValue = personPropertyReportPluginData.toString();
+
+		String expectedValue = "PersonPropertyReportPluginData ["
+				+ "data=Data ["
+				+ "reportLabel=SimpleReportLabel [value=report label], "
+				+ "reportPeriod=DAILY, "
+				+ "includedProperties=[PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK, PERSON_PROPERTY_3_DOUBLE_MUTABLE_NO_TRACK], "
+				+ "excludedProperties=[PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK, PERSON_PROPERTY_4_BOOLEAN_MUTABLE_TRACK], "
+				+ "defaultInclusionPolicy=true]]";
+
+		assertEquals(expectedValue, actualValue);
+
+	}
 }

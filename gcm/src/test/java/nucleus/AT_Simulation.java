@@ -349,5 +349,92 @@ public class AT_Simulation {
 		assertTrue(testOutputConsumer.getOutputItemMap(Plugin.class).isEmpty());
 
 	}
+	
+	
+ 
+	@Test
+	@UnitTestMethod(target = Simulation.Builder.class, name = "setRecordState", args = { boolean.class })
+	public void testSetRecordState() {
 
+		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+
+		
+
+		String expectedStateRecording = "expectedStateRecording";
+
+		// have the added test agent produce some output
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (context) -> {
+			context.subscribeToSimulationClose((c)->c.releaseOutput(expectedStateRecording));
+		}));
+
+		
+		TestOutputConsumer testOutputConsumer = new TestOutputConsumer();
+		
+
+		TestPluginData testPluginData = pluginBuilder.build();
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+
+		double haltTime = 20;
+		
+		// run the simulation
+		Simulation	.builder()//
+					.addPlugin(testPlugin)//
+					.setOutputConsumer(testOutputConsumer)//					
+					.setRecordState(true)//
+					.setSimulationHaltTime(haltTime)//
+					.build()//
+					.execute();//
+		
+		//show that the simulation halts at the given time
+		SimulationState simulationState = testOutputConsumer.getOutputItem(SimulationState.class).get();
+		assertEquals(haltTime, simulationState.getStartTime());
+	
+	
+		//show that the actor records its state in the output of the simulation
+		assertTrue(testOutputConsumer.getOutputItems(Object.class).contains(expectedStateRecording));
+	}
+
+	
+	@Test
+	@UnitTestMethod(target = Simulation.Builder.class, name = "setSimulationHaltTime", args = { Double.class })
+	public void testSetSimulationHaltTime() {
+
+		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+
+		
+
+		String expectedStateRecording = "expectedStateRecording";
+
+		// have the added test agent produce some output
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (context) -> {
+			context.subscribeToSimulationClose((c)->c.releaseOutput(expectedStateRecording));
+		}));
+
+		
+		TestOutputConsumer testOutputConsumer = new TestOutputConsumer();
+		
+
+		TestPluginData testPluginData = pluginBuilder.build();
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+
+		double haltTime = 20;
+		
+		// run the simulation
+		Simulation	.builder()//
+					.addPlugin(testPlugin)//
+					.setOutputConsumer(testOutputConsumer)//					
+					.setRecordState(true)//
+					.setSimulationHaltTime(haltTime)//
+					.build()//
+					.execute();//
+		
+		//show that the simulation halts at the given time
+		SimulationState simulationState = testOutputConsumer.getOutputItem(SimulationState.class).get();
+		assertEquals(haltTime, simulationState.getStartTime());
+	
+	
+		//show that the actor records its state in the output of the simulation
+		assertTrue(testOutputConsumer.getOutputItems(Object.class).contains(expectedStateRecording));
+	}
+	
 }

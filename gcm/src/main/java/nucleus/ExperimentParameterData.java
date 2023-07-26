@@ -156,8 +156,16 @@ public final class ExperimentParameterData {
 
 		@Override
 		public int hashCode() {
-			return Objects.hash(threadCount, stateRecordingIsScheduled, simulationHaltTime, haltOnException,
-					experimentProgressLogPath, continueFromProgressLog, explicitScenarioIds);
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + (continueFromProgressLog ? 1231 : 1237);
+			result = prime * result + ((experimentProgressLogPath == null) ? 0 : experimentProgressLogPath.hashCode());
+			result = prime * result + ((explicitScenarioIds == null) ? 0 : explicitScenarioIds.hashCode());
+			result = prime * result + (haltOnException ? 1231 : 1237);
+			result = prime * result + ((simulationHaltTime == null) ? 0 : simulationHaltTime.hashCode());
+			result = prime * result + (stateRecordingIsScheduled ? 1231 : 1237);
+			result = prime * result + threadCount;
+			return result;
 		}
 
 		@Override
@@ -165,20 +173,43 @@ public final class ExperimentParameterData {
 			if (this == obj) {
 				return true;
 			}
-			if (obj == null) {
-				return false;
-			}
-			if (getClass() != obj.getClass()) {
+			if (!(obj instanceof Data)) {
 				return false;
 			}
 			Data other = (Data) obj;
-			return threadCount == other.threadCount && stateRecordingIsScheduled == other.stateRecordingIsScheduled
-					&& Objects.equals(simulationHaltTime, other.simulationHaltTime)
-					&& haltOnException == other.haltOnException
-					&& Objects.equals(experimentProgressLogPath, other.experimentProgressLogPath)
-					&& continueFromProgressLog == other.continueFromProgressLog
-					&& Objects.equals(explicitScenarioIds, other.explicitScenarioIds);
+			if (continueFromProgressLog != other.continueFromProgressLog) {
+				return false;
+			}
+			if (experimentProgressLogPath == null) {
+				if (other.experimentProgressLogPath != null) {
+					return false;
+				}
+			} else if (!experimentProgressLogPath.equals(other.experimentProgressLogPath)) {
+				return false;
+			}
+			if (!explicitScenarioIds.equals(other.explicitScenarioIds)) {
+				return false;
+			}
+			if (haltOnException != other.haltOnException) {
+				return false;
+			}
+			if (simulationHaltTime == null) {
+				if (other.simulationHaltTime != null) {
+					return false;
+				}
+			} else if (!simulationHaltTime.equals(other.simulationHaltTime)) {
+				return false;
+			}
+			if (stateRecordingIsScheduled != other.stateRecordingIsScheduled) {
+				return false;
+			}
+			if (threadCount != other.threadCount) {
+				return false;
+			}
+			return true;
 		}
+
+		
 
 	}
 

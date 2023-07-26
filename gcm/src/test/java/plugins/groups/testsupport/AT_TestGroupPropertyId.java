@@ -17,7 +17,6 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import plugins.groups.support.GroupPropertyId;
-import plugins.groups.support.GroupTypeId;
 import plugins.util.properties.PropertyDefinition;
 import util.annotations.UnitTestMethod;
 import util.random.RandomGeneratorProvider;
@@ -119,7 +118,7 @@ public class AT_TestGroupPropertyId {
 
     @Test
     @UnitTestMethod(target = TestGroupPropertyId.class, name = "getShuffledTestGroupPropertyIds", args = {
-            GroupTypeId.class, RandomGenerator.class })
+    		TestGroupTypeId.class, RandomGenerator.class })
     public void testGetShuffledTestGroupPropertyIds() {
         RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(4386761356441288660L);
 

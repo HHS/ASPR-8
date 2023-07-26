@@ -183,6 +183,14 @@ public class AT_PersonPropertyLabeler {
 			assertEquals(testPersonPropertyId, new LocalPersonPropertyLabeler(testPersonPropertyId, (c) -> null).getId());
 		}
 	}
+	 
+	@Test
+	@UnitTestMethod(target = PersonPropertyLabeler.class, name = "getPersonPropertyId", args = {})
+	public void testGetPersonPropertyId() {
+		for (TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.values()) {
+			assertEquals(testPersonPropertyId, new LocalPersonPropertyLabeler(testPersonPropertyId, (c) -> null).getPersonPropertyId());
+		}
+	}
 
 	@Test
 	@UnitTestMethod(target = PersonPropertyLabeler.class, name = "getPastLabel", args = { PartitionsContext.class, Event.class })
@@ -244,6 +252,20 @@ public class AT_PersonPropertyLabeler {
 			}
 		});
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
+	}
+	
+	
+	@Test
+	@UnitTestMethod(target = PersonPropertyLabeler.class, name = "toString", args = {})
+	public void testToString() {
+		
+		for(TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.values()) {
+			LocalPersonPropertyLabeler localPersonPropertyLabeler = new LocalPersonPropertyLabeler(testPersonPropertyId,(value)->null);
+			String actualValue = localPersonPropertyLabeler.toString();
+			String expectedValue ="PersonPropertyLabeler [personPropertyId="+testPersonPropertyId+"]";
+			assertEquals(expectedValue, actualValue);
+		}
+		
 	}
 
 }

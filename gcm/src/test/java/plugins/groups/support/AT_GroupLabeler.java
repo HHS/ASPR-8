@@ -31,7 +31,6 @@ import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
 import plugins.stochastics.datamanagers.StochasticsDataManager;
-import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 
@@ -39,7 +38,7 @@ public final class AT_GroupLabeler {
 	private static class LocalGroupLabeler extends GroupLabeler {
 		private final Function<GroupTypeCountMap, Object> labelingFunction;
 
-		public LocalGroupLabeler(Function<GroupTypeCountMap, Object> labelingFunction) {			
+		public LocalGroupLabeler(Function<GroupTypeCountMap, Object> labelingFunction) {
 			this.labelingFunction = labelingFunction;
 		}
 
@@ -48,11 +47,6 @@ public final class AT_GroupLabeler {
 			return labelingFunction.apply(groupTypeCountMap);
 		}
 
-	}
-	@Test
-	@UnitTestConstructor(target = GroupLabeler.class, args = { Function.class })
-	public void testConstructor() {
-		assertNotNull(new LocalGroupLabeler((g) -> null));
 	}
 
 	@Test
@@ -74,7 +68,8 @@ public final class AT_GroupLabeler {
 				groupMembershipAdditionEventSensitivityFound = true;
 				PersonId personId = new PersonId(45253);
 
-				Optional<PersonId> optional = labelerSensitivity.getPersonId(new GroupMembershipAdditionEvent(personId, new GroupId(56)));
+				Optional<PersonId> optional = labelerSensitivity
+						.getPersonId(new GroupMembershipAdditionEvent(personId, new GroupId(56)));
 				assertTrue(optional.isPresent());
 				PersonId actualPersonId = optional.get();
 				assertEquals(personId, actualPersonId);
@@ -83,7 +78,8 @@ public final class AT_GroupLabeler {
 				groupMembershipRemovalEventSensitivityFound = true;
 				PersonId personId = new PersonId(45253);
 
-				Optional<PersonId> optional = labelerSensitivity.getPersonId(new GroupMembershipRemovalEvent(personId, new GroupId(56)));
+				Optional<PersonId> optional = labelerSensitivity
+						.getPersonId(new GroupMembershipRemovalEvent(personId, new GroupId(56)));
 				assertTrue(optional.isPresent());
 				PersonId actualPersonId = optional.get();
 				assertEquals(personId, actualPersonId);
@@ -100,13 +96,14 @@ public final class AT_GroupLabeler {
 	}
 
 	@Test
-	@UnitTestMethod(target = GroupLabeler.class, name = "getLabel", args = { PartitionsContext.class, PersonId.class })
-	public void testGetLabel() {
+	@UnitTestMethod(target = GroupLabeler.class, name = "getCurrentLabel", args = { PartitionsContext.class,
+			PersonId.class })
+	public void testGetCurrentLabel() {
 
 		Consumer<ActorContext> consumer = (c) -> {
-			
+
 			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
-			
+
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
 
@@ -124,7 +121,8 @@ public final class AT_GroupLabeler {
 			for (PersonId personId : peopleDataManager.getPeople()) {
 				GroupTypeCountMap.Builder builder = GroupTypeCountMap.builder();
 				for (GroupTypeId groupTypeId : groupsDataManager.getGroupTypeIds()) {
-					builder.setCount(groupTypeId, groupsDataManager.getGroupCountForGroupTypeAndPerson(groupTypeId, personId));
+					builder.setCount(groupTypeId,
+							groupsDataManager.getGroupCountForGroupTypeAndPerson(groupTypeId, personId));
 				}
 				GroupTypeCountMap groupTypeCountMap = builder.build();
 				Object expectedLabel = func.apply(groupTypeCountMap);
@@ -135,11 +133,13 @@ public final class AT_GroupLabeler {
 			// precondition tests
 
 			// if the person id is null
-			ContractException contractException = assertThrows(ContractException.class, () -> groupLabeler.getCurrentLabel(testPartitionsContext, null));
+			ContractException contractException = assertThrows(ContractException.class,
+					() -> groupLabeler.getCurrentLabel(testPartitionsContext, null));
 			assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
 
 			// if the person id is unknown
-			contractException = assertThrows(ContractException.class, () -> groupLabeler.getCurrentLabel(testPartitionsContext, new PersonId(100000)));
+			contractException = assertThrows(ContractException.class,
+					() -> groupLabeler.getCurrentLabel(testPartitionsContext, new PersonId(100000)));
 			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
 
 		};
@@ -161,9 +161,9 @@ public final class AT_GroupLabeler {
 	public void testGetPastLabel() {
 
 		Consumer<ActorContext> consumer = (c) -> {
-			
+
 			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
-			
+
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
@@ -238,18 +238,29 @@ public final class AT_GroupLabeler {
 			GroupId groupId = groupsDataManager.getGroupIds().get(0);
 
 			// precondition: person id is null
-			ContractException contractException = assertThrows(ContractException.class, () -> groupLabeler.getPastLabel(testPartitionsContext, new GroupMembershipAdditionEvent(null, groupId)));
+			ContractException contractException = assertThrows(ContractException.class, () -> groupLabeler
+					.getPastLabel(testPartitionsContext, new GroupMembershipAdditionEvent(null, groupId)));
 			assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
 
 			// precondition: person id is unknown
-			contractException = assertThrows(ContractException.class, () -> groupLabeler.getPastLabel(testPartitionsContext, new GroupMembershipAdditionEvent(new PersonId(100000), groupId)));
+			contractException = assertThrows(ContractException.class,
+					() -> groupLabeler.getPastLabel(testPartitionsContext,
+							new GroupMembershipAdditionEvent(new PersonId(100000), groupId)));
 			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
 
 		};
-		
-		
-		Factory factory = GroupsTestPluginFactory.factory(30, 3, 5, 8478102896119863988L,consumer);
-		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
+		Factory factory = GroupsTestPluginFactory.factory(30, 3, 5, 8478102896119863988L, consumer);
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
+
+	@Test
+	@UnitTestMethod(target = GroupLabeler.class, name = "toString", args = {})
+	public void testToString() {		
+		LocalGroupLabeler localGroupLabeler = new LocalGroupLabeler((g) -> null);
+		String actualValue = localGroupLabeler.toString();		
+		String expectedValue = "GroupLabeler []";
+		assertEquals(expectedValue, actualValue);
+	}
+
 }
