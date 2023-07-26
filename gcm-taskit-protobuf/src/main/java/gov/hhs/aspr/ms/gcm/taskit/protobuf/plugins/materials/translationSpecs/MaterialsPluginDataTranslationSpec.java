@@ -111,9 +111,7 @@ public class MaterialsPluginDataTranslationSpec
 						.convertObject(resourceInitializationInput.getResourceId());
 				long amount = resourceInitializationInput.getAmount();
 
-				if (amount > 0) {
-					builder.setMaterialsProducerResourceLevel(materialsProducerId, resourceId, amount);
-				}
+				builder.setMaterialsProducerResourceLevel(materialsProducerId, resourceId, amount);
 			}
 		}
 
@@ -305,13 +303,11 @@ public class MaterialsPluginDataTranslationSpec
 			for (ResourceId resourceId : resourceLevels.keySet()) {
 				long amount = appObject.getMaterialsProducerResourceLevel(materialsProducerId, resourceId);
 
-				if (amount > 0) {
-					ResourceInitializationInput resourceInitializationInput = ResourceInitializationInput.newBuilder()
-							.setAmount(amount).setResourceId(this.translationEngine.getAnyFromObject(resourceId))
-							.build();
+				ResourceInitializationInput resourceInitializationInput = ResourceInitializationInput.newBuilder()
+						.setAmount(amount).setResourceId(this.translationEngine.getAnyFromObject(resourceId))
+						.build();
 
-					resourceLevelMapBuilder.addResourceLevels(resourceInitializationInput);
-				}
+				resourceLevelMapBuilder.addResourceLevels(resourceInitializationInput);
 
 			}
 
