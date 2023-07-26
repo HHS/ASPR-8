@@ -1,6 +1,6 @@
 package gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.people.translationSpecs;
 
-import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
+import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationSpec;
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.people.data.input.PeoplePluginDataInput;
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.people.support.input.PersonRangeInput;
 import plugins.people.datamanagers.PeoplePluginData;

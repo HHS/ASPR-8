@@ -1,6 +1,6 @@
 package gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.globalproperties.translationSpecs;
 
-import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
+import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationSpec;
 
 import com.google.protobuf.Any;
 

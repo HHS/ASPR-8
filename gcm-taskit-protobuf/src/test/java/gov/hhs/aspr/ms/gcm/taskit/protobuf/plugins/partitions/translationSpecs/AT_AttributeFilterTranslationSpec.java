@@ -9,8 +9,8 @@ import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.partitions.PartitionsTranslat
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.partitions.support.attributes.input.AttributeFilterInput;
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.partitions.testsupport.translationSpecs.TestFilterTranslationSpec;
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.partitions.testsupport.translationSpecs.TestLabelerTranslationSpec;
-import gov.hhs.aspr.translation.core.TranslationController;
-import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
+import gov.hhs.aspr.ms.taskit.core.TranslationController;
+import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationEngine;
 import plugins.partitions.support.Equality;
 import plugins.partitions.testsupport.attributes.support.AttributeFilter;
 import plugins.partitions.testsupport.attributes.support.TestAttributeId;

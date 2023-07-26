@@ -7,8 +7,8 @@ import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.stochastics.StochasticsTranslator;
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.stochastics.data.input.StochasticsPluginDataInput;
-import gov.hhs.aspr.translation.core.TranslationController;
-import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
+import gov.hhs.aspr.ms.taskit.core.TranslationController;
+import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationEngine;
 import plugins.stochastics.datamanagers.StochasticsDataManager;
 import plugins.stochastics.datamanagers.StochasticsPluginData;
 import plugins.stochastics.support.RandomNumberGeneratorId;

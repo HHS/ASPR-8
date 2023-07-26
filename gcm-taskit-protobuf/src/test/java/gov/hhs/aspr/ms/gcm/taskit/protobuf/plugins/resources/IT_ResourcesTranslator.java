@@ -20,9 +20,9 @@ import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.resources.reports.input.Perso
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.resources.reports.input.ResourcePropertyReportPluginDataInput;
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.resources.reports.input.ResourceReportPluginDataInput;
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.resources.data.input.ResourcesPluginDataInput;
-import gov.hhs.aspr.translation.core.TranslationController;
-import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
-import gov.hhs.aspr.translation.core.testsupport.TestResourceHelper;
+import gov.hhs.aspr.ms.taskit.core.TranslationController;
+import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationEngine;
+import gov.hhs.aspr.ms.taskit.core.testsupport.TestResourceHelper;
 import plugins.people.support.PersonId;
 import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportPeriod;

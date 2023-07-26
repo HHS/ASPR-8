@@ -16,9 +16,9 @@ import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.partitions.translationSpecs.P
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.partitions.translationSpecs.PartitionsPluginDataTranslationSpec;
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.partitions.translationSpecs.TestAttributeIdTranslationSpec;
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.partitions.translationSpecs.TrueFilterTranslationSpec;
-import gov.hhs.aspr.translation.core.TranslationSpec;
-import gov.hhs.aspr.translation.core.Translator;
-import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
+import gov.hhs.aspr.ms.taskit.core.TranslationSpec;
+import gov.hhs.aspr.ms.taskit.core.Translator;
+import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationEngine;
 
 /**
  * Translator for the Partitions Plugin.

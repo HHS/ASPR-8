@@ -19,7 +19,7 @@ import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.resources.support.input.Resou
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.resources.support.input.ResourcePropertyDefinitionMapInput;
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.resources.support.input.ResourcePropertyValueMapInput;
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.resources.data.input.ResourcesPluginDataInput;
-import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
+import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationSpec;
 import plugins.people.support.PersonId;
 import plugins.regions.support.RegionId;
 import plugins.resources.datamanagers.ResourcesPluginData;

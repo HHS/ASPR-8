@@ -10,8 +10,8 @@ import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.groups.support.input.GroupPro
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.people.PeopleTranslator;
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.properties.PropertiesTranslator;
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.reports.ReportsTranslator;
-import gov.hhs.aspr.translation.core.TranslationController;
-import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
+import gov.hhs.aspr.ms.taskit.core.TranslationController;
+import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationEngine;
 import plugins.groups.support.GroupId;
 import plugins.groups.support.GroupPropertyDimension;
 import plugins.groups.testsupport.TestGroupPropertyId;

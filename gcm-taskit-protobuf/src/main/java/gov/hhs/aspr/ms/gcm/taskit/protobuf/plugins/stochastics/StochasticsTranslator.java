@@ -7,9 +7,9 @@ import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.stochastics.translationSpecs.
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.stochastics.translationSpecs.StochasticsPluginDataTranslationSpec;
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.stochastics.translationSpecs.TestRandomGeneratorIdTranslationSpec;
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.stochastics.translationSpecs.WellStateTranslationSpec;
-import gov.hhs.aspr.translation.core.TranslationSpec;
-import gov.hhs.aspr.translation.core.Translator;
-import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
+import gov.hhs.aspr.ms.taskit.core.TranslationSpec;
+import gov.hhs.aspr.ms.taskit.core.Translator;
+import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationEngine;
 
 /**
  * Translator for the Stochastics Plugin.

@@ -12,7 +12,7 @@ import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.personproperties.support.inpu
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.personproperties.support.input.PersonPropertyValueMapInput;
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.properties.support.input.PropertyDefinitionInput;
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.properties.support.input.PropertyDefinitionMapInput;
-import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
+import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationSpec;
 import plugins.people.support.PersonId;
 import plugins.personproperties.datamanagers.PersonPropertiesPluginData;
 import plugins.personproperties.support.PersonPropertyId;

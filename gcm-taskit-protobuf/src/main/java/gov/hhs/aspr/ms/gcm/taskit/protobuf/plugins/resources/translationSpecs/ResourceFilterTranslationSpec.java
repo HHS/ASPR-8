@@ -3,7 +3,7 @@ package gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.resources.translationSpecs;
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.partitions.support.input.EqualityInput;
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.resources.support.input.ResourceFilterInput;
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.resources.support.input.ResourceIdInput;
-import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
+import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationSpec;
 import plugins.partitions.support.Equality;
 import plugins.resources.support.ResourceFilter;
 import plugins.resources.support.ResourceId;

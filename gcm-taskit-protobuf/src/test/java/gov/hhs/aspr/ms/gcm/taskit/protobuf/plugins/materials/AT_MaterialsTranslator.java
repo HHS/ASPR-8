@@ -14,8 +14,8 @@ import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.properties.PropertiesTranslat
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.regions.RegionsTranslatorId;
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.reports.ReportsTranslatorId;
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.resources.ResourcesTranslatorId;
-import gov.hhs.aspr.translation.core.TranslationSpec;
-import gov.hhs.aspr.translation.core.Translator;
+import gov.hhs.aspr.ms.taskit.core.TranslationSpec;
+import gov.hhs.aspr.ms.taskit.core.Translator;
 import util.annotations.UnitTestForCoverage;
 import util.annotations.UnitTestMethod;
 

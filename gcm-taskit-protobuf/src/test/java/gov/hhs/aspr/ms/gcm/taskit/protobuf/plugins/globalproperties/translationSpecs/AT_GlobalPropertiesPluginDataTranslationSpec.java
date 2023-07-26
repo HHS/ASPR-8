@@ -9,8 +9,8 @@ import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.globalproperties.GlobalProper
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.globalproperties.data.input.GlobalPropertiesPluginDataInput;
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.properties.PropertiesTranslator;
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.reports.ReportsTranslator;
-import gov.hhs.aspr.translation.core.TranslationController;
-import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
+import gov.hhs.aspr.ms.taskit.core.TranslationController;
+import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationEngine;
 import plugins.globalproperties.datamanagers.GlobalPropertiesPluginData;
 import plugins.globalproperties.testsupport.GlobalPropertiesTestPluginFactory;
 import util.annotations.UnitTestConstructor;

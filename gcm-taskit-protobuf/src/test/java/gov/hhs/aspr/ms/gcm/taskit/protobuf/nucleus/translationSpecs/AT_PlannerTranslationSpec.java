@@ -7,8 +7,8 @@ import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.nucleus.NucleusTranslator;
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.nucleus.input.PlannerInput;
-import gov.hhs.aspr.translation.core.TranslationController;
-import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
+import gov.hhs.aspr.ms.taskit.core.TranslationController;
+import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationEngine;
 import nucleus.Planner;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestForCoverage;

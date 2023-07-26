@@ -12,8 +12,8 @@ import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.properties.PropertiesTranslatorId;
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.reports.ReportsTranslatorId;
-import gov.hhs.aspr.translation.core.TranslationSpec;
-import gov.hhs.aspr.translation.core.Translator;
+import gov.hhs.aspr.ms.taskit.core.TranslationSpec;
+import gov.hhs.aspr.ms.taskit.core.Translator;
 import util.annotations.UnitTestForCoverage;
 import util.annotations.UnitTestMethod;
 

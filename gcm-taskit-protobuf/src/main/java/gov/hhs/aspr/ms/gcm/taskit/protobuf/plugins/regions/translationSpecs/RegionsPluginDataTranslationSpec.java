@@ -13,7 +13,7 @@ import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.regions.support.input.RegionM
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.regions.support.input.RegionMembershipInput.RegionPersonInfo;
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.regions.support.input.RegionPropertyValueMapInput;
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.regions.data.input.RegionsPluginDataInput;
-import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
+import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationSpec;
 import plugins.people.support.PersonId;
 import plugins.regions.datamanagers.RegionsPluginData;
 import plugins.regions.support.RegionId;

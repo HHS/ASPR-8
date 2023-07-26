@@ -18,9 +18,9 @@ import gov.hhs.aspr.ms.gcm.taskit.protobuf.nucleus.translationSpecs.PlanDataTran
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.nucleus.translationSpecs.PlanQueueDataTranslationSpec;
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.nucleus.translationSpecs.PlannerTranslationSpec;
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.nucleus.translationSpecs.SimulationStateTranslationSpec;
-import gov.hhs.aspr.translation.core.TranslationSpec;
-import gov.hhs.aspr.translation.core.Translator;
-import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
+import gov.hhs.aspr.ms.taskit.core.TranslationSpec;
+import gov.hhs.aspr.ms.taskit.core.Translator;
+import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationEngine;
 import util.annotations.UnitTestForCoverage;
 import util.annotations.UnitTestMethod;
 

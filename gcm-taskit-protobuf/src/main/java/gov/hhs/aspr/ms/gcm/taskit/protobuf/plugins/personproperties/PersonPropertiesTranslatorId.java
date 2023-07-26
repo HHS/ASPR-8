@@ -1,6 +1,6 @@
 package gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.personproperties;
 
-import gov.hhs.aspr.translation.core.TranslatorId;
+import gov.hhs.aspr.ms.taskit.core.TranslatorId;
 
 /** 
  * TranslatorId for the PersonProperties Translator

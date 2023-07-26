@@ -17,9 +17,9 @@ import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.resources.translationSpecs.Re
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.resources.translationSpecs.ResourcesPluginDataTranslationSpec;
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.resources.translationSpecs.TestResourceIdTranslationSpec;
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.resources.translationSpecs.TestResourcePropertyIdTranslationSpec;
-import gov.hhs.aspr.translation.core.TranslationSpec;
-import gov.hhs.aspr.translation.core.Translator;
-import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
+import gov.hhs.aspr.ms.taskit.core.TranslationSpec;
+import gov.hhs.aspr.ms.taskit.core.Translator;
+import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationEngine;
 
 /**
  * Translator for the Resources Plugin.
