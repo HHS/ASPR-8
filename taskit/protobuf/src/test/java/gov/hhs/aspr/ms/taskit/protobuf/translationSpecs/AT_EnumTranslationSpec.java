@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import com.google.protobuf.BoolValue;
 
-import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.app.TestAppEnum;
+import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.TestAppEnum;
 import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationEngine;
 import gov.hhs.aspr.ms.taskit.protobuf.input.WrapperEnumValue;
 import gov.hhs.aspr.ms.taskit.protobuf.testsupport.testobject.input.TestInputEnum;

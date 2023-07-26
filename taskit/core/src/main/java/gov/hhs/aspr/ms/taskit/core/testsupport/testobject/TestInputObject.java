@@ -1,8 +1,8 @@
-package gov.hhs.aspr.ms.taskit.core.testsupport.testobject.input;
+package gov.hhs.aspr.ms.taskit.core.testsupport.testobject;
 
 import java.util.Objects;
 
-import gov.hhs.aspr.ms.taskit.core.testsupport.testcomplexobject.input.TestComplexInputObject;
+import gov.hhs.aspr.ms.taskit.core.testsupport.testcomplexobject.TestComplexInputObject;
 
 public class TestInputObject {
     private int integer;

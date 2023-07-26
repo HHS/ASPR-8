@@ -7,7 +7,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.ms.taskit.core.testsupport.TestObjectUtil;
-import gov.hhs.aspr.ms.taskit.core.testsupport.testcomplexobject.app.TestComplexAppObject;
+import gov.hhs.aspr.ms.taskit.core.testsupport.testcomplexobject.TestComplexAppObject;
+import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.TestAppEnum;
+import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.TestAppObject;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
 

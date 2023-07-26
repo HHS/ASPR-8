@@ -3,12 +3,12 @@ package gov.hhs.aspr.ms.taskit.core.testsupport;
 import java.util.ArrayList;
 import java.util.List;
 
-import gov.hhs.aspr.ms.taskit.core.testsupport.testcomplexobject.app.TestComplexAppObject;
-import gov.hhs.aspr.ms.taskit.core.testsupport.testcomplexobject.input.TestComplexInputObject;
-import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.app.TestAppChildObject;
-import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.app.TestAppObject;
-import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.input.TestInputChildObject;
-import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.input.TestInputObject;
+import gov.hhs.aspr.ms.taskit.core.testsupport.testcomplexobject.TestComplexAppObject;
+import gov.hhs.aspr.ms.taskit.core.testsupport.testcomplexobject.TestComplexInputObject;
+import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.TestAppChildObject;
+import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.TestAppObject;
+import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.TestInputChildObject;
+import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.TestInputObject;
 import util.random.RandomGeneratorProvider;
 
 public class TestObjectUtil {

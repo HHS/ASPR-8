@@ -10,7 +10,7 @@ import com.google.protobuf.Any;
 import com.google.protobuf.Int32Value;
 import com.google.protobuf.InvalidProtocolBufferException;
 
-import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.app.TestAppEnum;
+import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.TestAppEnum;
 import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationEngine;
 import gov.hhs.aspr.ms.taskit.protobuf.input.WrapperEnumValue;
 import gov.hhs.aspr.ms.taskit.protobuf.testsupport.testcomplexobject.translationSpecs.TestProtobufComplexObjectTranslationSpec;

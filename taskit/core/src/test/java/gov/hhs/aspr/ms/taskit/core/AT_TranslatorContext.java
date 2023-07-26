@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.ms.taskit.core.testsupport.TestTranslationEngine;
-import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.app.TestAppObject;
+import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.TestAppObject;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;

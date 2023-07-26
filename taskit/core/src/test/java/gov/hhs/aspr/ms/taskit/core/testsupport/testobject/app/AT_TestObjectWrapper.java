@@ -8,7 +8,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.ms.taskit.core.testsupport.TestObjectUtil;
-import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.input.TestInputObject;
+import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.TestAppObject;
+import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.TestInputObject;
+import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.TestObjectWrapper;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
 

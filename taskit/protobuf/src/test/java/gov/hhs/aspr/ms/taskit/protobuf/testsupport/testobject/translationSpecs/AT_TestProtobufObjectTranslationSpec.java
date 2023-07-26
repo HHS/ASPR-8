@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.Test;
 
-import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.app.TestAppObject;
+import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.TestAppObject;
 import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationEngine;
 import gov.hhs.aspr.ms.taskit.protobuf.testsupport.TestObjectUtil;
 import gov.hhs.aspr.ms.taskit.protobuf.testsupport.testcomplexobject.translationSpecs.TestProtobufComplexObjectTranslationSpec;

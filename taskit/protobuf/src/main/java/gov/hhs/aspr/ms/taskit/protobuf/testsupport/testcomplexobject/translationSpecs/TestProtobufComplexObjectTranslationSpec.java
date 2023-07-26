@@ -1,6 +1,6 @@
 package gov.hhs.aspr.ms.taskit.protobuf.testsupport.testcomplexobject.translationSpecs;
 
-import gov.hhs.aspr.ms.taskit.core.testsupport.testcomplexobject.app.TestComplexAppObject;
+import gov.hhs.aspr.ms.taskit.core.testsupport.testcomplexobject.TestComplexAppObject;
 import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationSpec;
 import gov.hhs.aspr.ms.taskit.protobuf.testsupport.testcomplexobject.input.TestComplexInputObject;
 
