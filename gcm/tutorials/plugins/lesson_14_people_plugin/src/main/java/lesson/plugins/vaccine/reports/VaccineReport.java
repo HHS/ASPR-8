@@ -5,15 +5,15 @@ import java.util.Map;
 
 import org.apache.commons.math3.util.FastMath;
 
+import gov.hhs.aspr.ms.gcm.nucleus.ReportContext;
+import gov.hhs.aspr.ms.gcm.plugins.people.datamanagers.PeopleDataManager;
+import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.PeriodicReport;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportHeader;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportItem;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportLabel;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportPeriod;
 import lesson.plugins.vaccine.datamanagers.VaccinationDataManager;
-import nucleus.ReportContext;
-import plugins.people.datamanagers.PeopleDataManager;
-import plugins.people.support.PersonId;
-import plugins.reports.support.PeriodicReport;
-import plugins.reports.support.ReportHeader;
-import plugins.reports.support.ReportLabel;
-import plugins.reports.support.ReportItem;
-import plugins.reports.support.ReportPeriod;
 import util.wrappers.MutableInteger;
 
 public final class VaccineReport extends PeriodicReport {

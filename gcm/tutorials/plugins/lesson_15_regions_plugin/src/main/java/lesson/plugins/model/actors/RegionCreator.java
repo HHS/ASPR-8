@@ -5,13 +5,13 @@ import java.util.Set;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.util.FastMath;
 
+import gov.hhs.aspr.ms.gcm.nucleus.ActorContext;
+import gov.hhs.aspr.ms.gcm.plugins.regions.datamanagers.RegionsDataManager;
+import gov.hhs.aspr.ms.gcm.plugins.regions.support.RegionConstructionData;
+import gov.hhs.aspr.ms.gcm.plugins.regions.support.RegionConstructionData.Builder;
+import gov.hhs.aspr.ms.gcm.plugins.stochastics.datamanagers.StochasticsDataManager;
 import lesson.plugins.model.Region;
 import lesson.plugins.model.RegionProperty;
-import nucleus.ActorContext;
-import plugins.regions.datamanagers.RegionsDataManager;
-import plugins.regions.support.RegionConstructionData;
-import plugins.regions.support.RegionConstructionData.Builder;
-import plugins.stochastics.datamanagers.StochasticsDataManager;
 
 public class RegionCreator {
 	/* start code_ref= regions_plugin_region_creator_add_region */

@@ -1,14 +1,14 @@
 package lesson.plugins.model.reports;
 
+import gov.hhs.aspr.ms.gcm.nucleus.ReportContext;
+import gov.hhs.aspr.ms.gcm.plugins.personproperties.datamanagers.PersonPropertiesDataManager;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.PeriodicReport;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportHeader;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportItem;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportLabel;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportPeriod;
 import lesson.plugins.model.support.DiseaseState;
 import lesson.plugins.model.support.PersonProperty;
-import nucleus.ReportContext;
-import plugins.personproperties.datamanagers.PersonPropertiesDataManager;
-import plugins.reports.support.PeriodicReport;
-import plugins.reports.support.ReportHeader;
-import plugins.reports.support.ReportItem;
-import plugins.reports.support.ReportLabel;
-import plugins.reports.support.ReportPeriod;
 
 /**
  * A report that groups people at the end of the simulation by their shared

@@ -1,9 +1,9 @@
 package lesson;
 
-import nucleus.Plugin;
-import nucleus.PluginId;
-import nucleus.SimplePluginId;
-import nucleus.Simulation;
+import gov.hhs.aspr.ms.gcm.nucleus.Plugin;
+import gov.hhs.aspr.ms.gcm.nucleus.PluginId;
+import gov.hhs.aspr.ms.gcm.nucleus.SimplePluginId;
+import gov.hhs.aspr.ms.gcm.nucleus.Simulation;
 
 public final class Example_5 {
 

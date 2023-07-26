@@ -1,13 +1,13 @@
 package lesson.plugins.model.actors;
 
+import gov.hhs.aspr.ms.gcm.nucleus.ActorContext;
+import gov.hhs.aspr.ms.gcm.nucleus.EventFilter;
+import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
+import gov.hhs.aspr.ms.gcm.plugins.personproperties.datamanagers.PersonPropertiesDataManager;
+import gov.hhs.aspr.ms.gcm.plugins.resources.datamanagers.ResourcesDataManager;
+import gov.hhs.aspr.ms.gcm.plugins.resources.events.PersonResourceUpdateEvent;
 import lesson.plugins.model.PersonProperty;
 import lesson.plugins.model.Resource;
-import nucleus.ActorContext;
-import nucleus.EventFilter;
-import plugins.people.support.PersonId;
-import plugins.personproperties.datamanagers.PersonPropertiesDataManager;
-import plugins.resources.datamanagers.ResourcesDataManager;
-import plugins.resources.events.PersonResourceUpdateEvent;
 
 public class QuestionnaireDistributor {
 	private PersonPropertiesDataManager personPropertiesDataManager;

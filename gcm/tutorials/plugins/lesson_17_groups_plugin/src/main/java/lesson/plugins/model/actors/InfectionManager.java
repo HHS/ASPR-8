@@ -9,21 +9,21 @@ import java.util.Random;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.util.FastMath;
 
+import gov.hhs.aspr.ms.gcm.nucleus.ActorContext;
+import gov.hhs.aspr.ms.gcm.plugins.globalproperties.datamanagers.GlobalPropertiesDataManager;
+import gov.hhs.aspr.ms.gcm.plugins.groups.datamanagers.GroupsDataManager;
+import gov.hhs.aspr.ms.gcm.plugins.groups.support.GroupId;
+import gov.hhs.aspr.ms.gcm.plugins.groups.support.GroupSampler;
+import gov.hhs.aspr.ms.gcm.plugins.groups.support.GroupTypeId;
+import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
+import gov.hhs.aspr.ms.gcm.plugins.personproperties.datamanagers.PersonPropertiesDataManager;
+import gov.hhs.aspr.ms.gcm.plugins.stochastics.datamanagers.StochasticsDataManager;
 import lesson.plugins.model.support.DiseaseState;
 import lesson.plugins.model.support.GlobalProperty;
 import lesson.plugins.model.support.GroupProperty;
 import lesson.plugins.model.support.GroupType;
 import lesson.plugins.model.support.PersonProperty;
 import lesson.plugins.model.support.SchoolStatus;
-import nucleus.ActorContext;
-import plugins.globalproperties.datamanagers.GlobalPropertiesDataManager;
-import plugins.groups.datamanagers.GroupsDataManager;
-import plugins.groups.support.GroupId;
-import plugins.groups.support.GroupSampler;
-import plugins.groups.support.GroupTypeId;
-import plugins.people.support.PersonId;
-import plugins.personproperties.datamanagers.PersonPropertiesDataManager;
-import plugins.stochastics.datamanagers.StochasticsDataManager;
 
 public class InfectionManager {
 	private ActorContext actorContext;

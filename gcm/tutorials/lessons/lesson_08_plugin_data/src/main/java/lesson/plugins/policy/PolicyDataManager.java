@@ -1,6 +1,6 @@
 package lesson.plugins.policy;
 
-import nucleus.DataManager;
+import gov.hhs.aspr.ms.gcm.nucleus.DataManager;
 
 public final class PolicyDataManager extends DataManager {
 	private double schoolClosingInfectionRate;

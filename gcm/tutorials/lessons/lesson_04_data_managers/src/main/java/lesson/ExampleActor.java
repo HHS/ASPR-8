@@ -1,7 +1,7 @@
 
 package lesson;
 
-import nucleus.ActorContext;
+import gov.hhs.aspr.ms.gcm.nucleus.ActorContext;
 
 /* start code_ref=data_managers_example_actor*/
 public final class ExampleActor {

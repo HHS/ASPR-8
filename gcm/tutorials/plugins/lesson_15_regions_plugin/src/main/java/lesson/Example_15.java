@@ -10,29 +10,29 @@ import java.util.stream.IntStream;
 
 import org.apache.commons.math3.random.RandomGenerator;
 
+import gov.hhs.aspr.ms.gcm.nucleus.Dimension;
+import gov.hhs.aspr.ms.gcm.nucleus.Experiment;
+import gov.hhs.aspr.ms.gcm.nucleus.FunctionalDimension;
+import gov.hhs.aspr.ms.gcm.nucleus.Plugin;
+import gov.hhs.aspr.ms.gcm.plugins.people.PeoplePlugin;
+import gov.hhs.aspr.ms.gcm.plugins.people.datamanagers.PeoplePluginData;
+import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
+import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonRange;
+import gov.hhs.aspr.ms.gcm.plugins.regions.RegionsPlugin;
+import gov.hhs.aspr.ms.gcm.plugins.regions.datamanagers.RegionsPluginData;
+import gov.hhs.aspr.ms.gcm.plugins.regions.reports.RegionPropertyReportPluginData;
+import gov.hhs.aspr.ms.gcm.plugins.regions.reports.RegionTransferReportPluginData;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.NIOReportItemHandler;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportPeriod;
+import gov.hhs.aspr.ms.gcm.plugins.stochastics.StochasticsPlugin;
+import gov.hhs.aspr.ms.gcm.plugins.stochastics.datamanagers.StochasticsPluginData;
+import gov.hhs.aspr.ms.gcm.plugins.stochastics.support.WellState;
+import gov.hhs.aspr.ms.gcm.plugins.util.properties.PropertyDefinition;
 import lesson.plugins.model.ModelPlugin;
 import lesson.plugins.model.ModelReportLabel;
 import lesson.plugins.model.Region;
 import lesson.plugins.model.RegionProperty;
 import lesson.plugins.vaccine.VaccinePlugin;
-import nucleus.Dimension;
-import nucleus.Experiment;
-import nucleus.FunctionalDimension;
-import nucleus.Plugin;
-import plugins.people.PeoplePlugin;
-import plugins.people.datamanagers.PeoplePluginData;
-import plugins.people.support.PersonId;
-import plugins.people.support.PersonRange;
-import plugins.regions.RegionsPlugin;
-import plugins.regions.datamanagers.RegionsPluginData;
-import plugins.regions.reports.RegionPropertyReportPluginData;
-import plugins.regions.reports.RegionTransferReportPluginData;
-import plugins.reports.support.NIOReportItemHandler;
-import plugins.reports.support.ReportPeriod;
-import plugins.stochastics.StochasticsPlugin;
-import plugins.stochastics.datamanagers.StochasticsPluginData;
-import plugins.stochastics.support.WellState;
-import plugins.util.properties.PropertyDefinition;
 import util.random.RandomGeneratorProvider;
 
 public final class Example_15 {

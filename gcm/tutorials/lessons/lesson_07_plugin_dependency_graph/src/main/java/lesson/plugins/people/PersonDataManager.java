@@ -3,9 +3,9 @@ package lesson.plugins.people;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import nucleus.DataManager;
-import nucleus.DataManagerContext;
-import nucleus.Event;
+import gov.hhs.aspr.ms.gcm.nucleus.DataManager;
+import gov.hhs.aspr.ms.gcm.nucleus.DataManagerContext;
+import gov.hhs.aspr.ms.gcm.nucleus.Event;
 
 public final class PersonDataManager extends DataManager {
 

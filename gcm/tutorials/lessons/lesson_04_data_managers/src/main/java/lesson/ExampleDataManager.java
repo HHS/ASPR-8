@@ -1,7 +1,7 @@
 package lesson;
 
-import nucleus.DataManager;
-import nucleus.DataManagerContext;
+import gov.hhs.aspr.ms.gcm.nucleus.DataManager;
+import gov.hhs.aspr.ms.gcm.nucleus.DataManagerContext;
 
 /* start code_ref=data_managers_example_data_manager*/
 public final class ExampleDataManager extends DataManager {

@@ -2,7 +2,7 @@ package lesson;
 
 import java.util.function.Consumer;
 
-import nucleus.ExperimentContext;
+import gov.hhs.aspr.ms.gcm.nucleus.ExperimentContext;
 
 /* start code_ref=output_consumer_B */
 public class OutputConsumer_B implements Consumer<ExperimentContext> {

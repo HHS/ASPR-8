@@ -7,20 +7,20 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+import gov.hhs.aspr.ms.gcm.nucleus.Dimension;
+import gov.hhs.aspr.ms.gcm.nucleus.Experiment;
+import gov.hhs.aspr.ms.gcm.nucleus.FunctionalDimension;
+import gov.hhs.aspr.ms.gcm.nucleus.Plugin;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.NIOReportItemHandler;
+import gov.hhs.aspr.ms.gcm.plugins.stochastics.StochasticsPlugin;
+import gov.hhs.aspr.ms.gcm.plugins.stochastics.datamanagers.StochasticsPluginData;
+import gov.hhs.aspr.ms.gcm.plugins.stochastics.support.WellState;
 import lesson.plugins.family.FamilyPlugin;
 import lesson.plugins.family.FamilyPluginData;
 import lesson.plugins.model.ModelLabel;
 import lesson.plugins.model.ModelPlugin;
 import lesson.plugins.person.PersonPlugin;
 import lesson.plugins.vaccine.VaccinePlugin;
-import nucleus.Dimension;
-import nucleus.Experiment;
-import nucleus.FunctionalDimension;
-import nucleus.Plugin;
-import plugins.reports.support.NIOReportItemHandler;
-import plugins.stochastics.StochasticsPlugin;
-import plugins.stochastics.datamanagers.StochasticsPluginData;
-import plugins.stochastics.support.WellState;
 
 public final class Example_12 {
 

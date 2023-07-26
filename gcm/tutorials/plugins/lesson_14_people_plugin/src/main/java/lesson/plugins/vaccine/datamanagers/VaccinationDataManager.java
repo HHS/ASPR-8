@@ -6,16 +6,16 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import gov.hhs.aspr.ms.gcm.nucleus.DataManager;
+import gov.hhs.aspr.ms.gcm.nucleus.DataManagerContext;
+import gov.hhs.aspr.ms.gcm.nucleus.Event;
+import gov.hhs.aspr.ms.gcm.plugins.people.datamanagers.PeopleDataManager;
+import gov.hhs.aspr.ms.gcm.plugins.people.events.PersonImminentAdditionEvent;
+import gov.hhs.aspr.ms.gcm.plugins.people.events.PersonRemovalEvent;
+import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonError;
+import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
 import lesson.plugins.vaccine.support.VaccineError;
 import lesson.plugins.vaccine.support.VaccineInitialization;
-import nucleus.DataManager;
-import nucleus.DataManagerContext;
-import nucleus.Event;
-import plugins.people.datamanagers.PeopleDataManager;
-import plugins.people.events.PersonImminentAdditionEvent;
-import plugins.people.events.PersonRemovalEvent;
-import plugins.people.support.PersonError;
-import plugins.people.support.PersonId;
 import util.errors.ContractException;
 import util.wrappers.MutableInteger;
 

@@ -4,17 +4,17 @@ import java.util.List;
 
 import org.apache.commons.math3.random.RandomGenerator;
 
+import gov.hhs.aspr.ms.gcm.nucleus.ActorContext;
+import gov.hhs.aspr.ms.gcm.plugins.globalproperties.datamanagers.GlobalPropertiesDataManager;
+import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
+import gov.hhs.aspr.ms.gcm.plugins.personproperties.datamanagers.PersonPropertiesDataManager;
+import gov.hhs.aspr.ms.gcm.plugins.regions.datamanagers.RegionsDataManager;
+import gov.hhs.aspr.ms.gcm.plugins.regions.support.RegionId;
+import gov.hhs.aspr.ms.gcm.plugins.resources.datamanagers.ResourcesDataManager;
+import gov.hhs.aspr.ms.gcm.plugins.stochastics.datamanagers.StochasticsDataManager;
 import lesson.plugins.model.GlobalProperty;
 import lesson.plugins.model.PersonProperty;
 import lesson.plugins.model.Resource;
-import nucleus.ActorContext;
-import plugins.globalproperties.datamanagers.GlobalPropertiesDataManager;
-import plugins.people.support.PersonId;
-import plugins.personproperties.datamanagers.PersonPropertiesDataManager;
-import plugins.regions.datamanagers.RegionsDataManager;
-import plugins.regions.support.RegionId;
-import plugins.resources.datamanagers.ResourcesDataManager;
-import plugins.stochastics.datamanagers.StochasticsDataManager;
 
 public class TreatmentManager {
 

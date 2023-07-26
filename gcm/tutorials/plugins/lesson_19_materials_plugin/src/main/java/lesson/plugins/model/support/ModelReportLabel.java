@@ -1,6 +1,6 @@
 package lesson.plugins.model.support;
 
-import plugins.reports.support.ReportLabel;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportLabel;
 
 public enum ModelReportLabel implements ReportLabel {
 

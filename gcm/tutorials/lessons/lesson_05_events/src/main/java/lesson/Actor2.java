@@ -1,7 +1,7 @@
 package lesson;
 
-import nucleus.ActorContext;
-import nucleus.EventFilter;
+import gov.hhs.aspr.ms.gcm.nucleus.ActorContext;
+import gov.hhs.aspr.ms.gcm.nucleus.EventFilter;
 
 /* start code_ref=events_actor_2_reacts_to_AlphaChangeEvent*/
 public final class Actor2 {

@@ -4,17 +4,17 @@ import java.util.List;
 
 import org.apache.commons.math3.random.RandomGenerator;
 
+import gov.hhs.aspr.ms.gcm.nucleus.ActorContext;
+import gov.hhs.aspr.ms.gcm.nucleus.EventFilter;
+import gov.hhs.aspr.ms.gcm.nucleus.Plan;
+import gov.hhs.aspr.ms.gcm.plugins.globalproperties.datamanagers.GlobalPropertiesDataManager;
+import gov.hhs.aspr.ms.gcm.plugins.people.datamanagers.PeopleDataManager;
+import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
+import gov.hhs.aspr.ms.gcm.plugins.personproperties.datamanagers.PersonPropertiesDataManager;
+import gov.hhs.aspr.ms.gcm.plugins.personproperties.events.PersonPropertyUpdateEvent;
+import gov.hhs.aspr.ms.gcm.plugins.stochastics.datamanagers.StochasticsDataManager;
 import lesson.plugins.model.GlobalProperty;
 import lesson.plugins.model.PersonProperty;
-import nucleus.ActorContext;
-import nucleus.EventFilter;
-import nucleus.Plan;
-import plugins.globalproperties.datamanagers.GlobalPropertiesDataManager;
-import plugins.people.datamanagers.PeopleDataManager;
-import plugins.people.support.PersonId;
-import plugins.personproperties.datamanagers.PersonPropertiesDataManager;
-import plugins.personproperties.events.PersonPropertyUpdateEvent;
-import plugins.stochastics.datamanagers.StochasticsDataManager;
 
 public final class Vaccinator {
 

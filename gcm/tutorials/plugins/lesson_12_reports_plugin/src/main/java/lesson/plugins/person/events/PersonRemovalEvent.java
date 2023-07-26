@@ -1,8 +1,8 @@
 package lesson.plugins.person.events;
 
+import gov.hhs.aspr.ms.gcm.nucleus.Event;
 import lesson.plugins.person.support.PersonId;
 import net.jcip.annotations.Immutable;
-import nucleus.Event;
 
 @Immutable
 public final class PersonRemovalEvent implements Event {

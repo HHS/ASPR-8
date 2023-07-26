@@ -1,6 +1,6 @@
 package lesson.plugins.model;
 
-import nucleus.Plugin;
+import gov.hhs.aspr.ms.gcm.nucleus.Plugin;
 
 public class ModelPlugin {
 
