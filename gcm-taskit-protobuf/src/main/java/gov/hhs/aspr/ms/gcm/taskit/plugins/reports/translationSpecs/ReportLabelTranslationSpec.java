@@ -1,7 +1,7 @@
-package gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.translationSpecs;
+package gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.reports.translationSpecs;
 
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.input.ReportLabelInput;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.reports.input.ReportLabelInput;
 import plugins.reports.support.ReportLabel;
 
 /**

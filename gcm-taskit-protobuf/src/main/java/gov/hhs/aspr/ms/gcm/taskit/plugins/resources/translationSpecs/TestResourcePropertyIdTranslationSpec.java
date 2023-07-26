@@ -1,6 +1,6 @@
-package gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.translationSpecs;
+package gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.resources.translationSpecs;
 
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.input.TestResourcePropertyIdInput;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.resources.input.TestResourcePropertyIdInput;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 import plugins.resources.testsupport.TestResourcePropertyId;
 

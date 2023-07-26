@@ -1,4 +1,4 @@
-package gov.hhs.aspr.gcm.translation.protobuf.nucleus;
+package gov.hhs.aspr.ms.gcm.taskit.protobuf.nucleus;
 
 import gov.hhs.aspr.translation.core.TranslationSpec;
 import gov.hhs.aspr.translation.core.Translator;
@@ -7,16 +7,16 @@ import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
 import java.util.ArrayList;
 import java.util.List;
 
-import gov.hhs.aspr.gcm.translation.protobuf.nucleus.input.PlanQueueDataInput;
-import gov.hhs.aspr.gcm.translation.protobuf.nucleus.input.SimulationStateInput;
-import gov.hhs.aspr.gcm.translation.protobuf.nucleus.testsupport.translationSpecs.ExampleDimensionTranslationSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.nucleus.testsupport.translationSpecs.ExamplePlanDataTranslationSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.nucleus.translationSpecs.DimensionTranslationSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.nucleus.translationSpecs.ExperimentParameterDataTranslationSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.nucleus.translationSpecs.PlanDataTranslationSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.nucleus.translationSpecs.PlanQueueDataTranslationSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.nucleus.translationSpecs.PlannerTranslationSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.nucleus.translationSpecs.SimulationStateTranslationSpec;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.nucleus.input.PlanQueueDataInput;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.nucleus.input.SimulationStateInput;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.nucleus.testsupport.translationSpecs.ExampleDimensionTranslationSpec;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.nucleus.testsupport.translationSpecs.ExamplePlanDataTranslationSpec;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.nucleus.translationSpecs.DimensionTranslationSpec;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.nucleus.translationSpecs.ExperimentParameterDataTranslationSpec;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.nucleus.translationSpecs.PlanDataTranslationSpec;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.nucleus.translationSpecs.PlanQueueDataTranslationSpec;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.nucleus.translationSpecs.PlannerTranslationSpec;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.nucleus.translationSpecs.SimulationStateTranslationSpec;
 
 /**
  * Translator for Nucleus

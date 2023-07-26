@@ -1,22 +1,22 @@
-package gov.hhs.aspr.gcm.translation.protobuf.plugins.resources;
+package gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.resources;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.PeopleTranslatorId;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.PropertiesTranslatorId;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.RegionsTranslatorId;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.ReportsTranslatorId;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.translationSpecs.PersonResourceReportPluginDataTranslationSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.translationSpecs.ResourceFilterTranslationSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.translationSpecs.ResourceIdTranslationSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.translationSpecs.ResourceInitializationTranslationSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.translationSpecs.ResourcePropertyIdTranslationSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.translationSpecs.ResourcePropertyReportPluginDataTranslationSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.translationSpecs.ResourceReportPluginDataTranslationSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.translationSpecs.ResourcesPluginDataTranslationSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.translationSpecs.TestResourceIdTranslationSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.translationSpecs.TestResourcePropertyIdTranslationSpec;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.people.PeopleTranslatorId;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.properties.PropertiesTranslatorId;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.regions.RegionsTranslatorId;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.reports.ReportsTranslatorId;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.resources.translationSpecs.PersonResourceReportPluginDataTranslationSpec;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.resources.translationSpecs.ResourceFilterTranslationSpec;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.resources.translationSpecs.ResourceIdTranslationSpec;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.resources.translationSpecs.ResourceInitializationTranslationSpec;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.resources.translationSpecs.ResourcePropertyIdTranslationSpec;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.resources.translationSpecs.ResourcePropertyReportPluginDataTranslationSpec;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.resources.translationSpecs.ResourceReportPluginDataTranslationSpec;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.resources.translationSpecs.ResourcesPluginDataTranslationSpec;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.resources.translationSpecs.TestResourceIdTranslationSpec;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.resources.translationSpecs.TestResourcePropertyIdTranslationSpec;
 import gov.hhs.aspr.translation.core.TranslationSpec;
 import gov.hhs.aspr.translation.core.Translator;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;

@@ -1,9 +1,9 @@
-package gov.hhs.aspr.gcm.translation.protobuf.plugins.stochastics.translationSpecs;
+package gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.stochastics.translationSpecs;
 
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.stochastics.input.RandomNumberGeneratorIdInput;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.stochastics.input.RandomNumberGeneratorMapInput;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.stochastics.input.StochasticsPluginDataInput;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.stochastics.input.WellStateInput;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.stochastics.input.RandomNumberGeneratorIdInput;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.stochastics.input.RandomNumberGeneratorMapInput;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.stochastics.input.StochasticsPluginDataInput;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.stochastics.input.WellStateInput;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 import plugins.stochastics.datamanagers.StochasticsPluginData;
 import plugins.stochastics.support.RandomNumberGeneratorId;

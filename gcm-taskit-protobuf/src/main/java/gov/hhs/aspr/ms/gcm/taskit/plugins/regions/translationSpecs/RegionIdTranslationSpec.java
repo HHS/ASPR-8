@@ -1,6 +1,6 @@
-package gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.translationSpecs;
+package gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.regions.translationSpecs;
 
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.input.RegionIdInput;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.regions.input.RegionIdInput;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 import plugins.regions.support.RegionId;
 

@@ -1,7 +1,7 @@
-package gov.hhs.aspr.gcm.translation.protobuf.plugins.partitions.testsupport.translationSpecs;
+package gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.partitions.testsupport.translationSpecs;
 
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.partitions.input.TestFilterInput;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.partitions.testsupport.TestFilter;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.partitions.input.TestFilterInput;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.partitions.testsupport.TestFilter;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 
 /**

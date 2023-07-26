@@ -1,18 +1,18 @@
-package gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.translationSpecs;
+package gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.regions.translationSpecs;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.input.PropertyDefinitionInput;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.input.PropertyDefinitionMapInput;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.input.PropertyValueMapInput;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.input.RegionIdInput;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.input.RegionMembershipInput;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.input.RegionMembershipInput.RegionPersonInfo;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.input.RegionPropertyValueMapInput;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.input.RegionsPluginDataInput;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.properties.input.PropertyDefinitionInput;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.properties.input.PropertyDefinitionMapInput;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.properties.input.PropertyValueMapInput;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.regions.input.RegionIdInput;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.regions.input.RegionMembershipInput;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.regions.input.RegionMembershipInput.RegionPersonInfo;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.regions.input.RegionPropertyValueMapInput;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.regions.input.RegionsPluginDataInput;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 import plugins.people.support.PersonId;
 import plugins.regions.datamanagers.RegionsPluginData;

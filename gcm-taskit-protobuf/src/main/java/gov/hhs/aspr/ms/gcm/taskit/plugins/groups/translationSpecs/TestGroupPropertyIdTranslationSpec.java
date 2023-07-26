@@ -1,6 +1,6 @@
-package gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.translationSpecs;
+package gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.groups.translationSpecs;
 
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.input.TestGroupPropertyIdInput;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.groups.input.TestGroupPropertyIdInput;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 import plugins.groups.testsupport.TestGroupPropertyId;
 

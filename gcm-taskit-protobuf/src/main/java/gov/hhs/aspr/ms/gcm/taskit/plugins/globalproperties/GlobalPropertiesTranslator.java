@@ -1,15 +1,15 @@
-package gov.hhs.aspr.gcm.translation.protobuf.plugins.globalproperties;
+package gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.globalproperties;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.globalproperties.translationSpecs.GlobalPropertiesPluginDataTranslationSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.globalproperties.translationSpecs.GlobalPropertyDimensionTranslationSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.globalproperties.translationSpecs.GlobalPropertyIdTranslationSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.globalproperties.translationSpecs.GlobalPropertyReportPluginDataTranslationSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.globalproperties.translationSpecs.TestGlobalPropertyIdTranslationSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.PropertiesTranslatorId;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.ReportsTranslatorId;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.globalproperties.translationSpecs.GlobalPropertiesPluginDataTranslationSpec;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.globalproperties.translationSpecs.GlobalPropertyDimensionTranslationSpec;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.globalproperties.translationSpecs.GlobalPropertyIdTranslationSpec;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.globalproperties.translationSpecs.GlobalPropertyReportPluginDataTranslationSpec;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.globalproperties.translationSpecs.TestGlobalPropertyIdTranslationSpec;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.properties.PropertiesTranslatorId;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.reports.ReportsTranslatorId;
 import gov.hhs.aspr.translation.core.TranslationSpec;
 import gov.hhs.aspr.translation.core.Translator;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;

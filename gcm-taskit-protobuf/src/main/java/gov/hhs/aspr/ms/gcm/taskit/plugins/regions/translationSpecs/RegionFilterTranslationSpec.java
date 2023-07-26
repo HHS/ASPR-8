@@ -1,10 +1,10 @@
-package gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.translationSpecs;
+package gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.regions.translationSpecs;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.input.RegionFilterInput;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.input.RegionIdInput;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.regions.input.RegionFilterInput;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.regions.input.RegionIdInput;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 import plugins.regions.support.RegionFilter;
 import plugins.regions.support.RegionId;

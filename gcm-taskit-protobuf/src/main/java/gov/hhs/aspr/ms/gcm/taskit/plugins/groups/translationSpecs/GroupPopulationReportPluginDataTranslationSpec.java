@@ -1,7 +1,7 @@
-package gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.translationSpecs;
+package gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.groups.translationSpecs;
 
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.input.GroupPopulationReportPluginDataInput;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.input.ReportLabelInput;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.groups.input.GroupPopulationReportPluginDataInput;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.reports.input.ReportLabelInput;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 import plugins.groups.reports.GroupPopulationReportPluginData;
 import plugins.reports.support.ReportLabel;

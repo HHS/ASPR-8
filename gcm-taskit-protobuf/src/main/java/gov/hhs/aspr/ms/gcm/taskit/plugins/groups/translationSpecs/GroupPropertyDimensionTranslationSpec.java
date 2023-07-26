@@ -1,10 +1,10 @@
-package gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.translationSpecs;
+package gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.groups.translationSpecs;
 
 import com.google.protobuf.Any;
 
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.input.GroupIdInput;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.input.GroupPropertyDimensionInput;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.groups.input.GroupPropertyIdInput;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.groups.input.GroupIdInput;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.groups.input.GroupPropertyDimensionInput;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.groups.input.GroupPropertyIdInput;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 import plugins.groups.support.GroupId;
 import plugins.groups.support.GroupPropertyDimension;

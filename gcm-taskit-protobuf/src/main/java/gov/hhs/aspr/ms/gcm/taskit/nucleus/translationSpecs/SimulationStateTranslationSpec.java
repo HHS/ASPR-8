@@ -1,11 +1,11 @@
-package gov.hhs.aspr.gcm.translation.protobuf.nucleus.translationSpecs;
+package gov.hhs.aspr.ms.gcm.taskit.protobuf.nucleus.translationSpecs;
 
 import java.time.LocalDate;
 
 import com.google.type.Date;
 
-import gov.hhs.aspr.gcm.translation.protobuf.nucleus.input.PlanQueueDataInput;
-import gov.hhs.aspr.gcm.translation.protobuf.nucleus.input.SimulationStateInput;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.nucleus.input.PlanQueueDataInput;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.nucleus.input.SimulationStateInput;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 import nucleus.PlanQueueData;
 import nucleus.SimulationState;

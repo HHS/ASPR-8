@@ -1,9 +1,9 @@
-package gov.hhs.aspr.gcm.translation.protobuf.plugins.properties;
+package gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.properties;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.translationSpecs.PropertyDefinitionTranslationSpec;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.properties.translationSpecs.PropertyDefinitionTranslationSpec;
 import gov.hhs.aspr.translation.core.TranslationSpec;
 import gov.hhs.aspr.translation.core.Translator;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;

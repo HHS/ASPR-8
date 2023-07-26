@@ -1,10 +1,10 @@
-package gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.translationSpecs;
+package gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.personproperties.translationSpecs;
 
 import com.google.protobuf.Any;
 
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.partitions.input.EqualityInput;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.input.PersonPropertyFilterInput;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.input.PersonPropertyIdInput;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.partitions.input.EqualityInput;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.personproperties.input.PersonPropertyFilterInput;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.personproperties.input.PersonPropertyIdInput;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 import plugins.partitions.support.Equality;
 import plugins.personproperties.support.PersonPropertyFilter;

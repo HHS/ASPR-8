@@ -1,8 +1,8 @@
-package gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.translationSpecs;
+package gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.properties.translationSpecs;
 
 import com.google.protobuf.Any;
 
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.input.PropertyDefinitionInput;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.properties.input.PropertyDefinitionInput;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 import plugins.util.properties.PropertyDefinition;
 

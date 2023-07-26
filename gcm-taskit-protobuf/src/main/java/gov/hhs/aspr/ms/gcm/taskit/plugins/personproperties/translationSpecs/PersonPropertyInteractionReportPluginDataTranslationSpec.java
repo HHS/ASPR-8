@@ -1,10 +1,10 @@
-package gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.translationSpecs;
+package gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.personproperties.translationSpecs;
 
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.input.PersonPropertyIdInput;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.input.PersonPropertyInteractionReportPluginDataInput;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.input.ReportLabelInput;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.input.ReportPeriodInput;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.personproperties.input.PersonPropertyIdInput;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.personproperties.input.PersonPropertyInteractionReportPluginDataInput;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.reports.input.ReportLabelInput;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.reports.input.ReportPeriodInput;
 import plugins.personproperties.reports.PersonPropertyInteractionReportPluginData;
 import plugins.personproperties.support.PersonPropertyId;
 import plugins.reports.support.ReportLabel;

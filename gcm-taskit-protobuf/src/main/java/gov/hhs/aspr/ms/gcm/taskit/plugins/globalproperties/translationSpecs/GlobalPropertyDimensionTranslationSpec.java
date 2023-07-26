@@ -1,9 +1,9 @@
-package gov.hhs.aspr.gcm.translation.protobuf.plugins.globalproperties.translationSpecs;
+package gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.globalproperties.translationSpecs;
 
 import com.google.protobuf.Any;
 
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.globalproperties.input.GlobalPropertyDimensionInput;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.globalproperties.input.GlobalPropertyIdInput;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.globalproperties.input.GlobalPropertyDimensionInput;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.globalproperties.input.GlobalPropertyIdInput;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 import plugins.globalproperties.support.GlobalPropertyDimension;
 import plugins.globalproperties.support.GlobalPropertyId;

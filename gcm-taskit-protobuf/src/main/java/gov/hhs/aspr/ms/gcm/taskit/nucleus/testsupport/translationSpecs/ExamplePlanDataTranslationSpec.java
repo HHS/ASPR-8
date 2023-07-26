@@ -1,8 +1,8 @@
-package gov.hhs.aspr.gcm.translation.protobuf.nucleus.testsupport.translationSpecs;
+package gov.hhs.aspr.ms.gcm.taskit.protobuf.nucleus.testsupport.translationSpecs;
 
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.nucleus.example.input.ExamplePlanDataInput;
-import gov.hhs.aspr.gcm.translation.protobuf.nucleus.testsupport.ExamplePlanData;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.nucleus.testsupport.input.ExamplePlanDataInput;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.nucleus.testsupport.ExamplePlanData;
 
 /**
  * TranslationSpec that defines how to convert between

@@ -1,4 +1,4 @@
-package gov.hhs.aspr.gcm.translation.protobuf.plugins.people;
+package gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.people;
 
 import gov.hhs.aspr.translation.core.TranslatorId;
 

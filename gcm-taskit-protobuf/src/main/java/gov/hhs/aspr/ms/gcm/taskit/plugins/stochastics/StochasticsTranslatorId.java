@@ -1,4 +1,4 @@
-package gov.hhs.aspr.gcm.translation.protobuf.plugins.stochastics;
+package gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.stochastics;
 
 import gov.hhs.aspr.translation.core.TranslatorId;
 

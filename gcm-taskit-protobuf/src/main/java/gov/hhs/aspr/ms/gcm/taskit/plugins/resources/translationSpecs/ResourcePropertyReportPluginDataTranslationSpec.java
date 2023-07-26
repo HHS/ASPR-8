@@ -1,8 +1,8 @@
-package gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.translationSpecs;
+package gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.resources.translationSpecs;
 
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.input.ReportLabelInput;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.input.ResourcePropertyReportPluginDataInput;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.reports.input.ReportLabelInput;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.resources.input.ResourcePropertyReportPluginDataInput;
 import plugins.reports.support.ReportLabel;
 import plugins.resources.reports.ResourcePropertyReportPluginData;
 

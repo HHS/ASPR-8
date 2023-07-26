@@ -1,4 +1,4 @@
-package gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties;
+package gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.personproperties;
 
 import gov.hhs.aspr.translation.core.TranslationSpec;
 import gov.hhs.aspr.translation.core.Translator;
@@ -7,17 +7,17 @@ import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
 import java.util.ArrayList;
 import java.util.List;
 
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.PeopleTranslatorId;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.input.PersonPropertyValueInput;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.translationSpecs.PersonPropertiesPluginDataTranslationSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.translationSpecs.PersonPropertyDimensionTranslationSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.translationSpecs.PersonPropertyFilterTranslationSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.translationSpecs.PersonPropertyIdTranslationSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.translationSpecs.PersonPropertyInteractionReportPluginDataTranslationSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.translationSpecs.PersonPropertyReportPluginDataTranslationSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.translationSpecs.TestPersonPropertyIdTranslationSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.PropertiesTranslatorId;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.ReportsTranslatorId;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.people.PeopleTranslatorId;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.personproperties.input.PersonPropertyValueInput;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.personproperties.translationSpecs.PersonPropertiesPluginDataTranslationSpec;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.personproperties.translationSpecs.PersonPropertyDimensionTranslationSpec;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.personproperties.translationSpecs.PersonPropertyFilterTranslationSpec;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.personproperties.translationSpecs.PersonPropertyIdTranslationSpec;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.personproperties.translationSpecs.PersonPropertyInteractionReportPluginDataTranslationSpec;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.personproperties.translationSpecs.PersonPropertyReportPluginDataTranslationSpec;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.personproperties.translationSpecs.TestPersonPropertyIdTranslationSpec;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.properties.PropertiesTranslatorId;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.reports.ReportsTranslatorId;
 
 /**
  * Translator for the PersonProperties Plugin.

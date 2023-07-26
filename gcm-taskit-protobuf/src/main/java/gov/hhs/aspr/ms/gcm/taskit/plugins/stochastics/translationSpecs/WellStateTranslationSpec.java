@@ -1,4 +1,4 @@
-package gov.hhs.aspr.gcm.translation.protobuf.plugins.stochastics.translationSpecs;
+package gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.stochastics.translationSpecs;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -6,7 +6,7 @@ import com.google.gson.JsonParser;
 import com.google.protobuf.ByteString;
 
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.stochastics.input.WellStateInput;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.stochastics.input.WellStateInput;
 import plugins.stochastics.support.WellState;
 
 /**

@@ -1,21 +1,21 @@
-package gov.hhs.aspr.gcm.translation.protobuf.plugins.partitions;
+package gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.partitions;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.partitions.translationSpecs.AndFilterTranslationSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.partitions.translationSpecs.AttributeFilterTranslationSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.partitions.translationSpecs.AttributeIdTranslationSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.partitions.translationSpecs.EqualityTranslationSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.partitions.translationSpecs.FalseFilterTranslationSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.partitions.translationSpecs.FilterTranslationSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.partitions.translationSpecs.LabelerTranslationSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.partitions.translationSpecs.NotFilterTranslationSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.partitions.translationSpecs.OrFilterTranslationSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.partitions.translationSpecs.PartitionTranslationSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.partitions.translationSpecs.PartitionsPluginDataTranslationSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.partitions.translationSpecs.TestAttributeIdTranslationSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.partitions.translationSpecs.TrueFilterTranslationSpec;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.partitions.translationSpecs.AndFilterTranslationSpec;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.partitions.translationSpecs.AttributeFilterTranslationSpec;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.partitions.translationSpecs.AttributeIdTranslationSpec;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.partitions.translationSpecs.EqualityTranslationSpec;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.partitions.translationSpecs.FalseFilterTranslationSpec;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.partitions.translationSpecs.FilterTranslationSpec;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.partitions.translationSpecs.LabelerTranslationSpec;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.partitions.translationSpecs.NotFilterTranslationSpec;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.partitions.translationSpecs.OrFilterTranslationSpec;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.partitions.translationSpecs.PartitionTranslationSpec;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.partitions.translationSpecs.PartitionsPluginDataTranslationSpec;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.partitions.translationSpecs.TestAttributeIdTranslationSpec;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.partitions.translationSpecs.TrueFilterTranslationSpec;
 import gov.hhs.aspr.translation.core.TranslationSpec;
 import gov.hhs.aspr.translation.core.Translator;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;

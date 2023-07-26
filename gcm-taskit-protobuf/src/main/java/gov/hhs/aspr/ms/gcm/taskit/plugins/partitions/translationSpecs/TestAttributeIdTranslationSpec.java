@@ -1,6 +1,6 @@
-package gov.hhs.aspr.gcm.translation.protobuf.plugins.partitions.translationSpecs;
+package gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.partitions.translationSpecs;
 
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.partitions.input.TestAttributeIdInput;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.partitions.input.TestAttributeIdInput;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 import plugins.partitions.testsupport.attributes.support.TestAttributeId;
 

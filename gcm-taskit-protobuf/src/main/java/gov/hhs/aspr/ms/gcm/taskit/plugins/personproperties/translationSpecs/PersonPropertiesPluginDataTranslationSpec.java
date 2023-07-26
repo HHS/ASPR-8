@@ -1,17 +1,17 @@
-package gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.translationSpecs;
+package gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.personproperties.translationSpecs;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.input.PersonPropertiesPluginDataInput;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.input.PersonPropertyIdInput;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.input.PersonPropertyTimeInput;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.input.PersonPropertyTimeMapInput;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.input.PersonPropertyValueInput;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.input.PersonPropertyValueMapInput;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.input.PropertyDefinitionInput;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.input.PropertyDefinitionMapInput;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.personproperties.input.PersonPropertiesPluginDataInput;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.personproperties.input.PersonPropertyIdInput;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.personproperties.input.PersonPropertyTimeInput;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.personproperties.input.PersonPropertyTimeMapInput;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.personproperties.input.PersonPropertyValueInput;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.personproperties.input.PersonPropertyValueMapInput;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.properties.input.PropertyDefinitionInput;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.properties.input.PropertyDefinitionMapInput;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 import plugins.people.support.PersonId;
 import plugins.personproperties.datamanagers.PersonPropertiesPluginData;

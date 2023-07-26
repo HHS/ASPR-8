@@ -1,4 +1,4 @@
-package gov.hhs.aspr.gcm.translation.protobuf.plugins.regions;
+package gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.regions;
 
 import gov.hhs.aspr.translation.core.TranslationSpec;
 import gov.hhs.aspr.translation.core.Translator;
@@ -7,21 +7,21 @@ import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
 import java.util.ArrayList;
 import java.util.List;
 
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.PeopleTranslatorId;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.PropertiesTranslatorId;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.input.RegionMembershipInput.RegionPersonInfo;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.translationSpecs.RegionFilterTranslationSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.translationSpecs.RegionIdTranslationSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.translationSpecs.RegionPropertyDimensionTranslationSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.translationSpecs.RegionPropertyIdTranslationSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.translationSpecs.RegionPropertyReportPluginDataTranslationSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.translationSpecs.RegionTransferReportPluginDataTranslationSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.translationSpecs.RegionsPluginDataTranslationSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.translationSpecs.SimpleRegionIdTranslationSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.translationSpecs.SimpleRegionPropertyIdTranslationSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.translationSpecs.TestRegionIdTranslationSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.translationSpecs.TestRegionPropertyIdTranslationSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.ReportsTranslatorId;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.people.PeopleTranslatorId;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.properties.PropertiesTranslatorId;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.regions.input.RegionMembershipInput.RegionPersonInfo;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.regions.translationSpecs.RegionFilterTranslationSpec;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.regions.translationSpecs.RegionIdTranslationSpec;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.regions.translationSpecs.RegionPropertyDimensionTranslationSpec;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.regions.translationSpecs.RegionPropertyIdTranslationSpec;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.regions.translationSpecs.RegionPropertyReportPluginDataTranslationSpec;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.regions.translationSpecs.RegionTransferReportPluginDataTranslationSpec;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.regions.translationSpecs.RegionsPluginDataTranslationSpec;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.regions.translationSpecs.SimpleRegionIdTranslationSpec;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.regions.translationSpecs.SimpleRegionPropertyIdTranslationSpec;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.regions.translationSpecs.TestRegionIdTranslationSpec;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.regions.translationSpecs.TestRegionPropertyIdTranslationSpec;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.reports.ReportsTranslatorId;
 
 /**
  * Translator for the Regions Plugin.

@@ -1,4 +1,4 @@
-package gov.hhs.aspr.gcm.translation.protobuf.plugins.materials;
+package gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.materials;
 
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
 import gov.hhs.aspr.translation.core.TranslationSpec;
@@ -7,27 +7,27 @@ import gov.hhs.aspr.translation.core.Translator;
 import java.util.ArrayList;
 import java.util.List;
 
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.input.BatchIdInput;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.input.StageIdInput;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.translationSpecs.BatchIdTranslationSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.translationSpecs.BatchPropertyIdTranslationSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.translationSpecs.BatchStatusReportPluginDataTranslationSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.translationSpecs.MaterialIdTranslationSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.translationSpecs.MaterialsPluginDataTranslationSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.translationSpecs.MaterialsProducerIdTranslationSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.translationSpecs.MaterialsProducerPropertyIdTranslationSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.translationSpecs.MaterialsProducerPropertyReportPluginDataTranslationSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.translationSpecs.MaterialsProducerResourceReportPluginDataTranslationSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.translationSpecs.StageIdTranslationSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.translationSpecs.StageReportPluginDataTranslationSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.translationSpecs.TestBatchPropertyIdTranslationSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.translationSpecs.TestMaterialIdTranslationSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.translationSpecs.TestMaterialsProducerIdTranslationSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.materials.translationSpecs.TestMaterialsProducerPropertyIdTranslationSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.PropertiesTranslatorId;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.RegionsTranslatorId;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.ReportsTranslatorId;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.resources.ResourcesTranslatorId;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.materials.input.BatchIdInput;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.materials.input.StageIdInput;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.materials.translationSpecs.BatchIdTranslationSpec;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.materials.translationSpecs.BatchPropertyIdTranslationSpec;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.materials.translationSpecs.BatchStatusReportPluginDataTranslationSpec;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.materials.translationSpecs.MaterialIdTranslationSpec;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.materials.translationSpecs.MaterialsPluginDataTranslationSpec;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.materials.translationSpecs.MaterialsProducerIdTranslationSpec;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.materials.translationSpecs.MaterialsProducerPropertyIdTranslationSpec;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.materials.translationSpecs.MaterialsProducerPropertyReportPluginDataTranslationSpec;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.materials.translationSpecs.MaterialsProducerResourceReportPluginDataTranslationSpec;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.materials.translationSpecs.StageIdTranslationSpec;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.materials.translationSpecs.StageReportPluginDataTranslationSpec;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.materials.translationSpecs.TestBatchPropertyIdTranslationSpec;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.materials.translationSpecs.TestMaterialIdTranslationSpec;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.materials.translationSpecs.TestMaterialsProducerIdTranslationSpec;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.materials.translationSpecs.TestMaterialsProducerPropertyIdTranslationSpec;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.properties.PropertiesTranslatorId;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.regions.RegionsTranslatorId;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.reports.ReportsTranslatorId;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.resources.ResourcesTranslatorId;
 
 /**
  * Translator for the Materials Plugin.

@@ -1,4 +1,4 @@
-package gov.hhs.aspr.gcm.translation.protobuf.plugins.people;
+package gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.people;
 
 import gov.hhs.aspr.translation.core.TranslationSpec;
 import gov.hhs.aspr.translation.core.Translator;
@@ -7,10 +7,10 @@ import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
 import java.util.ArrayList;
 import java.util.List;
 
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.input.PersonIdInput;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.translationSpecs.PeoplePluginDataTranslationSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.translationSpecs.PersonIdTranslationSpec;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.translationSpecs.PersonRangeTranslationSpec;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.people.input.PersonIdInput;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.people.translationSpecs.PeoplePluginDataTranslationSpec;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.people.translationSpecs.PersonIdTranslationSpec;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.people.translationSpecs.PersonRangeTranslationSpec;
 
 /**
  * Translator for the People Plugin.
