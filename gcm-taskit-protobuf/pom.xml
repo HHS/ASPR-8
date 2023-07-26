@@ -38,8 +38,6 @@
     <!--
         This element describes all of the dependencies associated with a project.
         These dependencies are used to construct a classpath for your project during the build process.
-        All projects that inherit this project (by specifing this project as their parent) will have these
-        dependencies by default.
     -->
     <dependencies>
         <!-- core protobuf taskit dependency  -->
@@ -89,7 +87,6 @@
 
     <build>
         <!--
-            The plugin executions defined here will be executed for each project that inherits this project.
             The plugins here are listed in order of execution to aid in understanding when they will run.
             Look up "maven lifecycle phases" and compare those to the phases in each execution for a more
             thorough understanding of when each plugin will execute.
@@ -233,7 +230,6 @@
                             <goal>test-compile</goal>
                         </goals>
                     </execution>
-                    
                 </executions>
                 <configuration>
                     <protocArtifact>com.google.protobuf:protoc:${protoc.version}:exe:${os.detected.classifier}</protocArtifact>
@@ -278,9 +274,7 @@
                 <version>${jacoco-maven-plugin.version}</version>
                 <configuration>
                     <excludes>
-                        <exclude>**/test/**/*.class</exclude>
                         <exclude>**/input/**/*.class</exclude>
-                        <exclude>**/testsupport/**/input/**/*.class</exclude>
                     </excludes>
                 </configuration>
                 <executions>
