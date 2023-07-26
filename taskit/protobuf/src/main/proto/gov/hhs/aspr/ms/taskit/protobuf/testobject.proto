@@ -1,8 +1,8 @@
 syntax = "proto3";
-package gov.hhs.aspr.gcm.translation.protobuf.testsupport;
+package gov.hhs.aspr.ms.taskit.protobuf;
 
 option java_multiple_files = true;
-option java_package = "gov.hhs.aspr.translation.protobuf.core.testsupport.testobject.input";
+option java_package = "gov.hhs.aspr.ms.taskit.protobuf.testsupport.testobject.input";
 
 import "testcomplexobject.proto";
 

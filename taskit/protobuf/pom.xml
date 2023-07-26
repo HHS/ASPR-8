@@ -85,7 +85,6 @@
 
     <build>
         <!-- 
-            The plugin executions defined here will be executed for each project that inherits this project.
             The plugins here are listed in order of execution to aid in understanding when they will run.
             Look up "maven lifecycle phases" and compare those to the phases in each execution for a more
             thorough understanding of when each plugin will execute.
@@ -105,7 +104,6 @@
                     </execution>
                 </executions>
             </plugin>
-
             <!-- attaches generated proto sources to classpath -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -126,7 +124,6 @@
                     </execution>
                 </executions>
             </plugin>
-
             <!-- some of the generated proto files have warnings that clutter the 'problems' id the IDE. This adds a SuppressWarnings("all") to each generated file to clear up the warnings. -->
             <plugin>
                 <groupId>com.google.code.maven-replacer-plugin</groupId>
@@ -185,8 +182,7 @@
                     </execution>
                 </executions>
             </plugin>
-
-            <!-- compiles any proto files -->
+            <!-- compiles proto files -->
             <plugin>
                 <groupId>org.xolstice.maven.plugins</groupId>
                 <artifactId>protobuf-maven-plugin</artifactId>
@@ -201,10 +197,9 @@
                 </executions>
                 <configuration>
                     <protocArtifact>com.google.protobuf:protoc:${protoc.version}:exe:${os.detected.classifier}</protocArtifact>
-                    <protoSourceRoot>src/main/proto/gov/hhs/aspr/translation/protobuf/core</protoSourceRoot>
+                    <protoSourceRoot>${basedir}/src/main/proto/gov/hhs/aspr/ms/taskit/protobuf</protoSourceRoot>
                 </configuration>
             </plugin>
-
             <!-- runs unit tests -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -216,6 +211,13 @@
                     </includes>
                 </configuration>
             </plugin>
+            <!-- runs integration tests -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>${maven-failsafe-plugin.version}</version>
+            </plugin>
+            <!-- jacoco report generator -->
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
@@ -273,14 +275,6 @@
                     </execution>
                 </executions>
             </plugin>
-
-            <!-- runs integration tests -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-failsafe-plugin</artifactId>
-                <version>${maven-failsafe-plugin.version}</version>
-            </plugin>
-
             <!-- attaches the source jar -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -296,7 +290,6 @@
                     </execution>
                 </executions>
             </plugin>
-
         </plugins>
     </build>
 
