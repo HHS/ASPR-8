@@ -26,7 +26,6 @@ import nucleus.testsupport.testplugin.TestDataManagerPlan;
 import nucleus.testsupport.testplugin.TestOutputConsumer;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
-import nucleus.testsupport.testplugin.TestReportPlan;
 import nucleus.testsupport.testplugin.TestScenarioReport;
 import nucleus.testsupport.testplugin.TestSimulation;
 import util.annotations.UnitTag;
