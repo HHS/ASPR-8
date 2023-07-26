@@ -232,11 +232,7 @@ public class ResourcesPluginDataTranslationSpec
 
             }
 
-            RegionResourceLevelMapInput regionResourceLevelsInput = regionResourceLevelsBuilder.build();
-
-            if (!regionResourceLevelsInput.getRegionResourceLevelsList().isEmpty()) {
-                builder.addRegionResourceLevels(regionResourceLevelsBuilder.build());
-            }
+            builder.addRegionResourceLevels(regionResourceLevelsBuilder.build());
         }
 
         // Person Resource Levels
