@@ -4,7 +4,7 @@ package gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins;
 option java_multiple_files = true;
 option java_package = "gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.partitions.support.attributes.input";
 
-import "partitions/support.proto";
+import "plugins/partitions/support.proto";
 import "google/protobuf/any.proto";
 
 

@@ -4,7 +4,7 @@ package gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins;
 option java_multiple_files = true;
 option java_package = "gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.materials.reports.input";
 
-import "reports/support.proto";
+import "plugins/reports/support.proto";
 
 
 message BatchStatusReportPluginDataInput {

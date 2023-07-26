@@ -4,8 +4,8 @@ package gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins;
 option java_multiple_files = true;
 option java_package = "gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.regions.reports.input";
 
-import "regions/support.proto";
-import "reports/support.proto";
+import "plugins/regions/support.proto";
+import "plugins/reports/support.proto";
 
 
 message RegionPropertyReportPluginDataInput {

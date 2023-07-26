@@ -4,7 +4,7 @@ package gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins;
 option java_multiple_files = true;
 option java_package = "gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.groups.data.input";
 
-import "groups/support.proto";
+import "plugins/groups/support.proto";
 
 
 message GroupsPluginDataInput {
