@@ -4,7 +4,6 @@ import net.jcip.annotations.ThreadSafe;
 
 /**
  * Thread safe state container for the Experiment Status Console
- * 
  *
  */
 
