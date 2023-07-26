@@ -16,7 +16,9 @@ import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.reports.ReportsTranslator;
 import gov.hhs.aspr.translation.core.TranslationController;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
 import plugins.groups.datamanagers.GroupsPluginData;
+import plugins.groups.support.GroupId;
 import plugins.groups.testsupport.GroupsTestPluginFactory;
+import plugins.groups.testsupport.TestGroupTypeId;
 import plugins.people.support.PersonId;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestForCoverage;
@@ -49,8 +51,8 @@ public class AT_GroupsPluginDataTranslationSpec {
 
         long seed = 524805676405822016L;
         int initialPopulation = 100;
-        int groupCount = 5;
-        int membershipCount = 100;
+        int expectedGroupsPerPerson = 5;
+        int expectedPeoplePerGroup = 100;
 
         List<PersonId> people = new ArrayList<>();
 
@@ -58,12 +60,30 @@ public class AT_GroupsPluginDataTranslationSpec {
             people.add(new PersonId(i));
         }
 
-        GroupsPluginData expectedAppValue = GroupsTestPluginFactory.getStandardGroupsPluginData(groupCount,
-                membershipCount, people, seed);
+        GroupsPluginData expectedAppValue = GroupsTestPluginFactory.getStandardGroupsPluginData(expectedGroupsPerPerson,
+                expectedPeoplePerGroup, people, seed);
 
         GroupsPluginDataInput inputValue = translationSpec.convertAppObject(expectedAppValue);
 
         GroupsPluginData actualAppValue = translationSpec.convertInputObject(inputValue);
+
+        assertEquals(expectedAppValue, actualAppValue);
+        assertEquals(expectedAppValue.toString(), actualAppValue.toString());
+
+        expectedGroupsPerPerson = 0;
+        expectedPeoplePerGroup = 0;
+        GroupsPluginData.Builder builder = (GroupsPluginData.Builder) GroupsTestPluginFactory
+                .getStandardGroupsPluginData(expectedGroupsPerPerson,
+                        expectedPeoplePerGroup, people, seed)
+                .getCloneBuilder();
+        builder.addGroup(new GroupId(100), TestGroupTypeId.GROUP_TYPE_1)
+                .associatePersonToGroup(new GroupId(100), new PersonId(110))
+                .setNextGroupIdValue(101);
+
+        expectedAppValue = builder.build();
+        inputValue = translationSpec.convertAppObject(expectedAppValue);
+
+        actualAppValue = translationSpec.convertInputObject(inputValue);
 
         assertEquals(expectedAppValue, actualAppValue);
         assertEquals(expectedAppValue.toString(), actualAppValue.toString());
