@@ -1,8 +1,9 @@
 syntax = "proto3";
-package gov.hhs.aspr.gcm.translation.protobuf;
+package gov.hhs.aspr.ms.gcm.taskit.protobuf.nucleus;
 
 option java_multiple_files = true;
-option java_package = "gov.hhs.aspr.gcm.translation.protobuf.nucleus.example.input";
+option java_package = "gov.hhs.aspr.ms.gcm.taskit.protobuf.nucleus.testsupport.input";
+
 
 message ExamplePlanDataInput {
     double planTime = 1;

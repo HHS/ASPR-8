@@ -1,0 +1,24 @@
+syntax = "proto3";
+package gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins;
+
+option java_multiple_files = true;
+option java_package = "gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.groups.testsupport.input";
+
+
+enum TestGroupTypeIdInput {
+    GROUP_TYPE_1 = 0;
+    GROUP_TYPE_2 = 1;
+    GROUP_TYPE_3 = 2;
+}
+
+enum TestGroupPropertyIdInput {
+    GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK = 0;
+    GROUP_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK = 1;
+    GROUP_PROPERTY_1_3_DOUBLE_MUTABLE_NO_TRACK = 2;
+    GROUP_PROPERTY_2_1_BOOLEAN_MUTABLE_TRACK = 3;
+    GROUP_PROPERTY_2_2_INTEGER_MUTABLE_TRACK = 4;
+    GROUP_PROPERTY_2_3_DOUBLE_MUTABLE_TRACK = 5;
+    GROUP_PROPERTY_3_1_BOOLEAN_IMMUTABLE_NO_TRACK = 6;
+    GROUP_PROPERTY_3_2_INTEGER_IMMUTABLE_NO_TRACK = 7;
+    GROUP_PROPERTY_3_3_DOUBLE_IMMUTABLE_NO_TRACK = 8;
+}

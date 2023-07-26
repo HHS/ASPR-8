@@ -1,8 +1,8 @@
 syntax = "proto3";
-package gov.hhs.aspr.gcm.translation.protobuf;
+package gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins;
 
 option java_multiple_files = true;
-option java_package = "gov.hhs.aspr.gcm.translation.protobuf.plugins.partitions.input";
+option java_package = "gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.partitions.input";
 
 import "google/protobuf/any.proto";
 
@@ -31,10 +31,6 @@ message OrFilterInput {
 message TrueFilterInput {   
 }
 
-message TestFilterInput {
-    int32 filterId = 1;
-}
-
 message AttributeFilterInput {
     AttributeIdInput attributeId = 1;
     EqualityInput equality = 2;
@@ -44,10 +40,6 @@ message AttributeFilterInput {
 // Labelers
 message LabelerInput {
     google.protobuf.Any labeler = 1;
-}
-
-message TestLabelerInput {
-    string id = 1;
 }
 
 // Equality
@@ -63,15 +55,6 @@ enum EqualityInput {
 // Attribute
 message AttributeIdInput {
     google.protobuf.Any id = 1;
-}
-
-enum TestAttributeIdInput {
-    INT_0 = 0;
-    INT_1 = 1;
-    DOUBLE_0 = 2;
-    DOUBLE_1 = 3;
-    BOOLEAN_0 = 4;
-    BOOLEAN_1 = 5;
 }
 
 // Partition

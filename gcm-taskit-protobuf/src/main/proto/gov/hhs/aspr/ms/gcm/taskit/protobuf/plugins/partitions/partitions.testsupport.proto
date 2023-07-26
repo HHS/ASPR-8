@@ -1,0 +1,23 @@
+syntax = "proto3";
+package gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins;
+
+option java_multiple_files = true;
+option java_package = "gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.partitions.testsupport.input";
+
+
+message TestFilterInput {
+    int32 filterId = 1;
+}
+
+message TestLabelerInput {
+    string id = 1;
+}
+
+enum TestAttributeIdInput {
+    INT_0 = 0;
+    INT_1 = 1;
+    DOUBLE_0 = 2;
+    DOUBLE_1 = 3;
+    BOOLEAN_0 = 4;
+    BOOLEAN_1 = 5;
+}
