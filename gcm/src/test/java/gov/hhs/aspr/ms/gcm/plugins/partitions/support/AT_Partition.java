@@ -284,7 +284,8 @@ public class AT_Partition {
 	public void testToString() {
 		Partition randomPartition = getRandomPartition(5250756946904578664L);
 		String actualValue = randomPartition.toString();
-		String expectedValue =	"Partition [data=Data [filter=AttributeFilter [attributeId=BOOLEAN_1, value=2146794287, equality=LESS_THAN, attributesDataManager=null], labelers={1157575879=plugins.partitions.support.AT_Partition$LocalLabeler@44ff34e6}, retainPersonKeys=false]]";
+		
+		String expectedValue =	"Partition [data=Data [filter=AttributeFilter [attributeId=BOOLEAN_1, value=2146794287, equality=LESS_THAN, attributesDataManager=null], labelers={1157575879=gov.hhs.aspr.ms.gcm.plugins.partitions.support.AT_Partition$LocalLabeler@44ff34e6}, retainPersonKeys=false]]";
 		assertEquals(expectedValue, actualValue);
 	}
 }
