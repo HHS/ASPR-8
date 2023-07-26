@@ -4,9 +4,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>gov.hhs.aspr.ms.gcm.taskit.protobuf</groupId>
-    <artifactId>protobuf-parent</artifactId>
+    <artifactId>gcm-taskit-protobuf</artifactId>
     <version>${revision}</version>
-    <name>gcm :: taskit :: protobuf :: protobuf-parent</name>
+    <name>gcm :: taskit :: protobuf :: gcm-taskit-protobuf</name>
 
     <properties>
         <!-- basic project properties -->
